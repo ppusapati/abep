@@ -1,0 +1,6428 @@
+{
+ "Te_max": {
+  "by_OOD_category": {
+   "DISSOCIATION_ONLY": {
+    "max": 20.682535822024928,
+    "median": 19.531044543595208,
+    "min": 16.393848527708965,
+    "n": 36,
+    "p10": 16.70320212722664,
+    "p90": 20.406211374843004
+   },
+   "FULL_45EV_FAMILY": {
+    "max": 25.248065662518943,
+    "median": 17.822041608098807,
+    "min": 13.102263483221932,
+    "n": 537,
+    "p10": 15.545213321526614,
+    "p90": 24.303685623855394
+   },
+   "IN_DOMAIN": {
+    "max": 22.94849816618919,
+    "median": 19.086840709672643,
+    "min": 12.690359572890921,
+    "n": 366,
+    "p10": 16.68095210522295,
+    "p90": 21.59984923999961
+   },
+   "NO_VIBRATIONAL": {
+    "max": 21.723843902315014,
+    "median": 17.458379152632723,
+    "min": 13.490889905857047,
+    "n": 135,
+    "p10": 15.851866226945925,
+    "p90": 20.2722823086706
+   },
+   "OTHER": {
+    "n": 0
+   },
+   "PARTIAL_VIBRATIONAL": {
+    "max": 20.02313032224982,
+    "median": 16.698333904777986,
+    "min": 13.150929385805997,
+    "n": 6,
+    "p10": 13.937088127846225,
+    "p90": 18.788745224150492
+   }
+  },
+  "by_candidate": {
+   "sgb-screen-01": {
+    "OOD": {
+     "max": 20.87925474740983,
+     "median": 18.40915576232426,
+     "min": 14.886072097188672,
+     "n": 70,
+     "p10": 15.180882128576906,
+     "p90": 20.581250863679475
+    },
+    "in_domain": {
+     "max": 20.50002689926686,
+     "median": 18.77637022756329,
+     "min": 14.992226868943543,
+     "n": 50,
+     "p10": 16.79846751866118,
+     "p90": 20.379683122937543
+    }
+   },
+   "sgb-screen-02": {
+    "OOD": {
+     "max": 25.248065662518943,
+     "median": 21.15260145195411,
+     "min": 16.37812949597655,
+     "n": 88,
+     "p10": 17.317692662835572,
+     "p90": 24.931134592523886
+    },
+    "in_domain": {
+     "max": 22.3149792611631,
+     "median": 21.432141554610574,
+     "min": 19.478256111522608,
+     "n": 32,
+     "p10": 19.595177965566233,
+     "p90": 21.993637804159402
+    }
+   },
+   "sgb-screen-03": {
+    "OOD": {
+     "max": 25.215551477240904,
+     "median": 21.708277760603572,
+     "min": 17.02835460056246,
+     "n": 99,
+     "p10": 18.14977396072557,
+     "p90": 24.674971723940743
+    },
+    "in_domain": {
+     "max": 22.94849816618919,
+     "median": 22.602066505535518,
+     "min": 19.799548598380525,
+     "n": 21,
+     "p10": 22.213342482748338,
+     "p90": 22.792216691117343
+    }
+   },
+   "sgb-screen-04": {
+    "OOD": {
+     "max": 24.878521611750976,
+     "median": 21.3477225611597,
+     "min": 15.687400887948243,
+     "n": 81,
+     "p10": 16.803247909140975,
+     "p90": 24.285212208429364
+    },
+    "in_domain": {
+     "max": 21.915150891747064,
+     "median": 20.56639601232795,
+     "min": 16.79775112270123,
+     "n": 39,
+     "p10": 16.953238292197106,
+     "p90": 21.394566206507164
+    }
+   },
+   "sgb-screen-05": {
+    "OOD": {
+     "max": 17.346871288872244,
+     "median": 16.571667791398525,
+     "min": 13.102263483221932,
+     "n": 55,
+     "p10": 13.532583396847187,
+     "p90": 17.10652061312164
+    },
+    "in_domain": {
+     "max": 19.678123252198937,
+     "median": 17.912035550782946,
+     "min": 13.050353792972896,
+     "n": 65,
+     "p10": 15.416580806118432,
+     "p90": 19.42179106955257
+    }
+   },
+   "sgb-screen-06": {
+    "OOD": {
+     "max": 18.228210846165716,
+     "median": 16.749147950660625,
+     "min": 13.174726704660795,
+     "n": 63,
+     "p10": 13.441994831872243,
+     "p90": 18.093432890328227
+    },
+    "in_domain": {
+     "max": 20.653206255547808,
+     "median": 18.116866018891063,
+     "min": 15.767071359242042,
+     "n": 57,
+     "p10": 16.915202144458966,
+     "p90": 20.49259841631262
+    }
+   },
+   "sgb-screen-07": {
+    "OOD": {
+     "max": 20.642168747458772,
+     "median": 17.525817548532878,
+     "min": 14.273510386245352,
+     "n": 78,
+     "p10": 15.366436045374648,
+     "p90": 19.10645896391618
+    },
+    "in_domain": {
+     "max": 20.710083720454733,
+     "median": 17.828100502868374,
+     "min": 17.13029015744213,
+     "n": 42,
+     "p10": 17.173691940437216,
+     "p90": 20.471039300997848
+    }
+   },
+   "sgb-screen-08": {
+    "OOD": {
+     "max": 20.239402299090393,
+     "median": 17.01697111942864,
+     "min": 13.220055691461656,
+     "n": 107,
+     "p10": 15.267795951341055,
+     "p90": 19.97571733231758
+    },
+    "in_domain": {
+     "max": 19.95693414474595,
+     "median": 17.142146579242613,
+     "min": 13.22447598953995,
+     "n": 13,
+     "p10": 13.329281290210343,
+     "p90": 19.913210941410213
+    }
+   },
+   "sgb-screen-09": {
+    "OOD": {
+     "max": 19.837773700121204,
+     "median": 16.382187910580484,
+     "min": 14.69590161082501,
+     "n": 73,
+     "p10": 15.18959681561577,
+     "p90": 19.14227154141804
+    },
+    "in_domain": {
+     "max": 19.634931999076453,
+     "median": 16.91737936547456,
+     "min": 12.690359572890921,
+     "n": 47,
+     "p10": 12.910720251984191,
+     "p90": 19.425909813720722
+    }
+   }
+  },
+  "by_point": {
+   "N1": {
+    "OOD": {
+     "max": 21.28670603794706,
+     "median": 16.401917723592913,
+     "min": 13.102263483221932,
+     "n": 184,
+     "p10": 13.698463120380767,
+     "p90": 18.655363729984884
+    },
+    "in_domain": {
+     "max": 20.03088876859947,
+     "median": 16.80921315334985,
+     "min": 12.690359572890921,
+     "n": 32,
+     "p10": 12.839451520901616,
+     "p90": 19.883400849046755
+    }
+   },
+   "N2": {
+    "OOD": {
+     "max": 23.830989950074017,
+     "median": 17.33235559689409,
+     "min": 14.69590161082501,
+     "n": 161,
+     "p10": 15.529898831407984,
+     "p90": 22.35898833047627
+    },
+    "in_domain": {
+     "max": 21.915150891747064,
+     "median": 18.348151866759665,
+     "min": 15.135919982236382,
+     "n": 55,
+     "p10": 15.416580806118432,
+     "p90": 19.823373373634954
+    }
+   },
+   "N3": {
+    "OOD": {
+     "max": 25.215551477240904,
+     "median": 19.926755061551994,
+     "min": 16.197017663504553,
+     "n": 136,
+     "p10": 16.88450088881268,
+     "p90": 24.644133062045213
+    },
+    "in_domain": {
+     "max": 22.82551822240098,
+     "median": 19.404721168849647,
+     "min": 16.731747475184378,
+     "n": 80,
+     "p10": 17.119695485140824,
+     "p90": 22.32034393299347
+    }
+   },
+   "N4": {
+    "OOD": {
+     "max": 25.248065662518943,
+     "median": 19.93868123334525,
+     "min": 16.04887897010703,
+     "n": 117,
+     "p10": 16.809244606647727,
+     "p90": 24.582442222044214
+    },
+    "in_domain": {
+     "max": 22.74505387894084,
+     "median": 19.298479340348802,
+     "min": 16.239180080018503,
+     "n": 99,
+     "p10": 16.93026842615926,
+     "p90": 21.972538295313633
+    }
+   },
+   "N5": {
+    "OOD": {
+     "max": 25.109439893867098,
+     "median": 19.97075353002176,
+     "min": 15.616086959237792,
+     "n": 116,
+     "p10": 16.668467954013174,
+     "p90": 24.444053817739402
+    },
+    "in_domain": {
+     "max": 22.94849816618919,
+     "median": 19.322882957790362,
+     "min": 15.823235360172832,
+     "n": 100,
+     "p10": 16.846468566084916,
+     "p90": 21.344527279943897
+    }
+   }
+  },
+  "by_registration": {
+   "L32-anode": {
+    "OOD": {
+     "max": 25.248065662518943,
+     "median": 20.352123753186472,
+     "min": 15.590212159622535,
+     "n": 229,
+     "p10": 16.51452715819369,
+     "p90": 24.733597607186702
+    },
+    "in_domain": {
+     "max": 21.915150891747064,
+     "median": 19.88610719234143,
+     "min": 16.49875145147491,
+     "n": 131,
+     "p10": 18.563100579493092,
+     "p90": 20.50002689926686
+    }
+   },
+   "L32-exit": {
+    "OOD": {
+     "max": 22.691630064012095,
+     "median": 17.20075503728032,
+     "min": 15.185272086938781,
+     "n": 352,
+     "p10": 15.888950834508337,
+     "p90": 21.429086335054127
+    },
+    "in_domain": {
+     "max": 17.15518508650906,
+     "median": 16.631020691506155,
+     "min": 15.823235360172832,
+     "n": 8,
+     "p10": 15.835772178504921,
+     "p90": 17.146058131422546
+    }
+   },
+   "L38-hist": {
+    "OOD": {
+     "max": 22.431103807980335,
+     "median": 16.524303238394225,
+     "min": 13.102263483221932,
+     "n": 133,
+     "p10": 13.46990531090883,
+     "p90": 20.3035867396998
+    },
+    "in_domain": {
+     "max": 22.94849816618919,
+     "median": 17.731103306481064,
+     "min": 12.690359572890921,
+     "n": 227,
+     "p10": 16.494406991871887,
+     "p90": 22.035478742298057
+    }
+   }
+  },
+  "definition": "Te_max_eV = maximum over cells of the time-averaged T_e profile (bridge_lib.jl: avg = het.time_average(sol, average_start_s); fr = avg.frames[1]; maximum(fr.Tev)). f_out uses instantaneous frames, so a run can be OOD with a time-averaged Te_max below 30 eV.",
+  "n_OOD_runs_with_time_averaged_mean_energy_1p5_Te_max_gt_45": 0,
+  "n_runs_with_time_averaged_mean_energy_1p5_Te_max_gt_45": 0,
+  "overall": {
+   "OOD": {
+    "max": 25.248065662518943,
+    "median": 17.809905546573553,
+    "min": 13.102263483221932,
+    "n": 714,
+    "p10": 15.605607733398568,
+    "p90": 23.632797357858152
+   },
+   "in_domain": {
+    "max": 22.94849816618919,
+    "median": 19.086840709672643,
+    "min": 12.690359572890921,
+    "n": 366,
+    "p10": 16.68095210522295,
+    "p90": 21.59984923999961
+   }
+  },
+  "ratio_45eV_family_max_eps_active_over_1p5_Te_max": {
+   "OOD": {
+    "max": 5.205162948518607,
+    "median": 2.4936889387061214,
+    "min": 1.3259781285346974,
+    "n": 714,
+    "p10": 1.7148423953891996,
+    "p90": 3.59655677338733
+   },
+   "in_domain": {
+    "max": 4.072417444497822,
+    "median": 1.67270427199982,
+    "min": 1.138186520823996,
+    "n": 366,
+    "p10": 1.2492013137893407,
+    "p90": 2.754744712895742
+   }
+  }
+ },
+ "breakdown": {
+  "candidate": {
+   "sgb-screen-01": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 6,
+     "FULL_45EV_FAMILY": 45,
+     "NO_VIBRATIONAL": 19,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 0
+    },
+    "OOD_share": 0.583333,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 96.15048068904122,
+     "median": 53.25911547731639,
+     "min": 35.895721437216515,
+     "n": 120,
+     "p10": 38.44402627354161,
+     "p90": 79.26097853795697
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.00030933538286447736,
+     "median": 2.336826757178832e-10,
+     "min": 1.0430792987237738e-12,
+     "n": 70,
+     "p10": 1.8580946508928276e-12,
+     "p90": 1.4687656380718064e-08
+    },
+    "n_OOD_run_readings": 140,
+    "n_OOD_runs": 70,
+    "n_runs": 120
+   },
+   "sgb-screen-02": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 2,
+     "FULL_45EV_FAMILY": 73,
+     "NO_VIBRATIONAL": 13,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 0
+    },
+    "OOD_share": 0.733333,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 102.13800651575292,
+     "median": 63.42345372580865,
+     "min": 36.82612184729007,
+     "n": 120,
+     "p10": 39.27285740265905,
+     "p90": 85.94466888222792
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.03721304431750567,
+     "median": 2.8889114794634394e-05,
+     "min": 1.3362639630745487e-12,
+     "n": 88,
+     "p10": 1.6659352614170985e-11,
+     "p90": 0.02658018283909426
+    },
+    "n_OOD_run_readings": 176,
+    "n_OOD_runs": 88,
+    "n_runs": 120
+   },
+   "sgb-screen-03": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 2,
+     "FULL_45EV_FAMILY": 90,
+     "NO_VIBRATIONAL": 7,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 0
+    },
+    "OOD_share": 0.825,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 117.51927068605598,
+     "median": 73.18659023377595,
+     "min": 42.5363740050071,
+     "n": 120,
+     "p10": 56.38206695013955,
+     "p90": 91.92668284709015
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.016855111541319696,
+     "median": 7.745801410236625e-07,
+     "min": 1.551009461183475e-12,
+     "n": 99,
+     "p10": 3.316375916789459e-11,
+     "p90": 0.01061769560688244
+    },
+    "n_OOD_run_readings": 198,
+    "n_OOD_runs": 99,
+    "n_runs": 120
+   },
+   "sgb-screen-04": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 2,
+     "FULL_45EV_FAMILY": 76,
+     "NO_VIBRATIONAL": 3,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 0
+    },
+    "OOD_share": 0.675,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 126.71843484164204,
+     "median": 52.323423060368626,
+     "min": 37.115683748740494,
+     "n": 120,
+     "p10": 41.04662739450197,
+     "p90": 79.26071803967059
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.04615198257431406,
+     "median": 2.851157511599275e-05,
+     "min": 1.10654795192898e-12,
+     "n": 81,
+     "p10": 2.6451496324033416e-08,
+     "p90": 0.029925124699631676
+    },
+    "n_OOD_run_readings": 162,
+    "n_OOD_runs": 81,
+    "n_runs": 120
+   },
+   "sgb-screen-05": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 0,
+     "FULL_45EV_FAMILY": 41,
+     "NO_VIBRATIONAL": 13,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 1
+    },
+    "OOD_share": 0.458333,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 127.93540083153,
+     "median": 49.63339345284166,
+     "min": 34.929386990278424,
+     "n": 120,
+     "p10": 35.38060644804887,
+     "p90": 82.56613089675143
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.03278977653571675,
+     "median": 2.901469576790286e-08,
+     "min": 2.960174762116289e-12,
+     "n": 55,
+     "p10": 4.1961218096027384e-12,
+     "p90": 0.019959969988013825
+    },
+    "n_OOD_run_readings": 110,
+    "n_OOD_runs": 55,
+    "n_runs": 120
+   },
+   "sgb-screen-06": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 4,
+     "FULL_45EV_FAMILY": 50,
+     "NO_VIBRATIONAL": 9,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 0
+    },
+    "OOD_share": 0.525,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 122.64108343408904,
+     "median": 63.0015002600868,
+     "min": 34.04026546917862,
+     "n": 120,
+     "p10": 34.57837737954258,
+     "p90": 88.72935956631986
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.0032234851559072033,
+     "median": 6.998832403576519e-10,
+     "min": 1.044139908031429e-12,
+     "n": 63,
+     "p10": 2.909044062744884e-12,
+     "p90": 0.0003585101291993216
+    },
+    "n_OOD_run_readings": 126,
+    "n_OOD_runs": 63,
+    "n_runs": 120
+   },
+   "sgb-screen-07": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 5,
+     "FULL_45EV_FAMILY": 56,
+     "NO_VIBRATIONAL": 16,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 1
+    },
+    "OOD_share": 0.65,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 125.35550926590224,
+     "median": 65.48119957915307,
+     "min": 35.086197027932464,
+     "n": 120,
+     "p10": 51.51074778924139,
+     "p90": 88.14547384553448
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 7.472177505923655e-07,
+     "median": 4.578231215127813e-10,
+     "min": 1.0963976449735814e-12,
+     "n": 78,
+     "p10": 3.439122479231171e-12,
+     "p90": 3.236291465569692e-08
+    },
+    "n_OOD_run_readings": 156,
+    "n_OOD_runs": 78,
+    "n_runs": 120
+   },
+   "sgb-screen-08": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 7,
+     "FULL_45EV_FAMILY": 62,
+     "NO_VIBRATIONAL": 36,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 2
+    },
+    "OOD_share": 0.891667,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 118.20519870121333,
+     "median": 73.35888612144709,
+     "min": 30.13591640604971,
+     "n": 120,
+     "p10": 49.11606112772648,
+     "p90": 96.37169678732766
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 1.810723454258584e-06,
+     "median": 4.1485179941107617e-10,
+     "min": 1.2103212889123977e-12,
+     "n": 107,
+     "p10": 2.7462661490109715e-12,
+     "p90": 1.70516457941369e-08
+    },
+    "n_OOD_run_readings": 214,
+    "n_OOD_runs": 107,
+    "n_runs": 120
+   },
+   "sgb-screen-09": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 8,
+     "FULL_45EV_FAMILY": 44,
+     "NO_VIBRATIONAL": 19,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 2
+    },
+    "OOD_share": 0.608333,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 113.42475554551106,
+     "median": 70.05919183444291,
+     "min": 36.0956638809359,
+     "n": 120,
+     "p10": 46.83061924721717,
+     "p90": 96.66275705035174
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 5.4913529234707784e-06,
+     "median": 2.6062764067628476e-10,
+     "min": 1.0123594732695356e-12,
+     "n": 73,
+     "p10": 1.9305026387585454e-12,
+     "p90": 9.035102801496738e-09
+    },
+    "n_OOD_run_readings": 146,
+    "n_OOD_runs": 73,
+    "n_runs": 120
+   }
+  },
+  "candidate_x_member": {
+   "sgb-screen-01": {
+    "members": {
+     "L32-anode|1p6kW|A": {
+      "n_FAIL_VALIDATION": 2,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 18,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|1p6kW|B": {
+      "n_FAIL_VALIDATION": 2,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 18,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|3p0kW|A": {
+      "n_FAIL_VALIDATION": 17,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 3,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|3p0kW|B": {
+      "n_FAIL_VALIDATION": 17,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 3,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-exit|1p6kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|1p6kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|3p0kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|3p0kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L38-hist|1p6kW|A": {
+      "n_FAIL_VALIDATION": 6,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 5,
+      "n_PASS": 9,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|1p6kW|B": {
+      "n_FAIL_VALIDATION": 10,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 5,
+      "n_PASS": 5,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|A": {
+      "n_FAIL_VALIDATION": 16,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 4,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|B": {
+      "n_FAIL_VALIDATION": 16,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 4,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     }
+    },
+    "official_candidate_verdict": "INCONCLUSIVE / NOT ELIGIBLE"
+   },
+   "sgb-screen-02": {
+    "members": {
+     "L32-anode|1p6kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-anode|1p6kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-anode|3p0kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-anode|3p0kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|1p6kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|1p6kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|3p0kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|3p0kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L38-hist|1p6kW|A": {
+      "n_FAIL_VALIDATION": 16,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 4,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|1p6kW|B": {
+      "n_FAIL_VALIDATION": 16,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 4,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|A": {
+      "n_FAIL_VALIDATION": 16,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 4,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|B": {
+      "n_FAIL_VALIDATION": 16,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 4,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     }
+    },
+    "official_candidate_verdict": "INCONCLUSIVE / NOT ELIGIBLE"
+   },
+   "sgb-screen-03": {
+    "members": {
+     "L32-anode|1p6kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-anode|1p6kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-anode|3p0kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-anode|3p0kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|1p6kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|1p6kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|3p0kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|3p0kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L38-hist|1p6kW|A": {
+      "n_FAIL_VALIDATION": 13,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 7,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|1p6kW|B": {
+      "n_FAIL_VALIDATION": 13,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 7,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|A": {
+      "n_FAIL_VALIDATION": 8,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 12,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|B": {
+      "n_FAIL_VALIDATION": 8,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 12,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     }
+    },
+    "official_candidate_verdict": "INCONCLUSIVE / NOT ELIGIBLE"
+   },
+   "sgb-screen-04": {
+    "members": {
+     "L32-anode|1p6kW|A": {
+      "n_FAIL_VALIDATION": 8,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 12,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|1p6kW|B": {
+      "n_FAIL_VALIDATION": 8,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 12,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|3p0kW|A": {
+      "n_FAIL_VALIDATION": 2,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 18,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|3p0kW|B": {
+      "n_FAIL_VALIDATION": 2,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 18,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-exit|1p6kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|1p6kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|3p0kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|3p0kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L38-hist|1p6kW|A": {
+      "n_FAIL_VALIDATION": 9,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 11,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|1p6kW|B": {
+      "n_FAIL_VALIDATION": 9,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 11,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|A": {
+      "n_FAIL_VALIDATION": 20,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 0,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|B": {
+      "n_FAIL_VALIDATION": 20,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 0,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     }
+    },
+    "official_candidate_verdict": "INCONCLUSIVE / NOT ELIGIBLE"
+   },
+   "sgb-screen-05": {
+    "members": {
+     "L32-anode|1p6kW|A": {
+      "n_FAIL_VALIDATION": 16,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 4,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|1p6kW|B": {
+      "n_FAIL_VALIDATION": 16,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 4,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|3p0kW|A": {
+      "n_FAIL_VALIDATION": 16,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 4,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|3p0kW|B": {
+      "n_FAIL_VALIDATION": 16,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 4,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-exit|1p6kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|1p6kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|3p0kW|A": {
+      "n_FAIL_VALIDATION": 1,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 19,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-exit|3p0kW|B": {
+      "n_FAIL_VALIDATION": 1,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 19,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|1p6kW|A": {
+      "n_FAIL_VALIDATION": 16,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 4,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|1p6kW|B": {
+      "n_FAIL_VALIDATION": 16,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 4,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|A": {
+      "n_FAIL_VALIDATION": 16,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 4,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|B": {
+      "n_FAIL_VALIDATION": 16,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 4,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     }
+    },
+    "official_candidate_verdict": "INCONCLUSIVE / NOT ELIGIBLE"
+   },
+   "sgb-screen-06": {
+    "members": {
+     "L32-anode|1p6kW|A": {
+      "n_FAIL_VALIDATION": 16,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 3,
+      "n_PASS": 1,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|1p6kW|B": {
+      "n_FAIL_VALIDATION": 16,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 3,
+      "n_PASS": 1,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|3p0kW|A": {
+      "n_FAIL_VALIDATION": 13,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 7,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|3p0kW|B": {
+      "n_FAIL_VALIDATION": 13,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 7,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-exit|1p6kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|1p6kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|3p0kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|3p0kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L38-hist|1p6kW|A": {
+      "n_FAIL_VALIDATION": 13,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 7,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|1p6kW|B": {
+      "n_FAIL_VALIDATION": 13,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 7,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|A": {
+      "n_FAIL_VALIDATION": 14,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 6,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|B": {
+      "n_FAIL_VALIDATION": 14,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 6,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     }
+    },
+    "official_candidate_verdict": "INCONCLUSIVE / NOT ELIGIBLE"
+   },
+   "sgb-screen-07": {
+    "members": {
+     "L32-anode|1p6kW|A": {
+      "n_FAIL_VALIDATION": 8,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 12,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|1p6kW|B": {
+      "n_FAIL_VALIDATION": 8,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 12,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|3p0kW|A": {
+      "n_FAIL_VALIDATION": 11,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 9,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|3p0kW|B": {
+      "n_FAIL_VALIDATION": 11,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 9,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-exit|1p6kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|1p6kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|3p0kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|3p0kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L38-hist|1p6kW|A": {
+      "n_FAIL_VALIDATION": 11,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 9,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|1p6kW|B": {
+      "n_FAIL_VALIDATION": 11,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 9,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|A": {
+      "n_FAIL_VALIDATION": 12,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 8,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|B": {
+      "n_FAIL_VALIDATION": 12,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 8,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     }
+    },
+    "official_candidate_verdict": "INCONCLUSIVE / NOT ELIGIBLE"
+   },
+   "sgb-screen-08": {
+    "members": {
+     "L32-anode|1p6kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 19,
+      "n_PASS": 1,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-anode|1p6kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 19,
+      "n_PASS": 1,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-anode|3p0kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 16,
+      "n_PASS": 4,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-anode|3p0kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 16,
+      "n_PASS": 4,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|1p6kW|A": {
+      "n_FAIL_VALIDATION": 4,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 16,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-exit|1p6kW|B": {
+      "n_FAIL_VALIDATION": 4,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 16,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-exit|3p0kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|3p0kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 20,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L38-hist|1p6kW|A": {
+      "n_FAIL_VALIDATION": 2,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 17,
+      "n_PASS": 1,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|1p6kW|B": {
+      "n_FAIL_VALIDATION": 2,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 17,
+      "n_PASS": 1,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|A": {
+      "n_FAIL_VALIDATION": 1,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 19,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|B": {
+      "n_FAIL_VALIDATION": 1,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 19,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     }
+    },
+    "official_candidate_verdict": "INCONCLUSIVE / NOT ELIGIBLE"
+   },
+   "sgb-screen-09": {
+    "members": {
+     "L32-anode|1p6kW|A": {
+      "n_FAIL_VALIDATION": 9,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 11,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|1p6kW|B": {
+      "n_FAIL_VALIDATION": 9,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 11,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|3p0kW|A": {
+      "n_FAIL_VALIDATION": 7,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 13,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-anode|3p0kW|B": {
+      "n_FAIL_VALIDATION": 7,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 13,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-exit|1p6kW|A": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 18,
+      "n_PASS": 2,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|1p6kW|B": {
+      "n_FAIL_VALIDATION": 0,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 18,
+      "n_PASS": 2,
+      "n_runs": 20,
+      "official_member_verdict": "INCONCLUSIVE"
+     },
+     "L32-exit|3p0kW|A": {
+      "n_FAIL_VALIDATION": 1,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 19,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L32-exit|3p0kW|B": {
+      "n_FAIL_VALIDATION": 1,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 19,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|1p6kW|A": {
+      "n_FAIL_VALIDATION": 14,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 6,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|1p6kW|B": {
+      "n_FAIL_VALIDATION": 14,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 6,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|A": {
+      "n_FAIL_VALIDATION": 14,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 6,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     },
+     "L38-hist|3p0kW|B": {
+      "n_FAIL_VALIDATION": 14,
+      "n_NUMERICAL_FAILURE": 0,
+      "n_OOD": 6,
+      "n_PASS": 0,
+      "n_runs": 20,
+      "official_member_verdict": "FAIL"
+     }
+    },
+    "official_candidate_verdict": "INCONCLUSIVE / NOT ELIGIBLE"
+   }
+  },
+  "candidate_x_member_OOD_count_histogram": {
+   "0": 2,
+   "3": 4,
+   "4": 14,
+   "5": 2,
+   "6": 6,
+   "7": 6,
+   "8": 2,
+   "9": 4,
+   "11": 4,
+   "12": 6,
+   "13": 2,
+   "16": 4,
+   "17": 2,
+   "18": 6,
+   "19": 8,
+   "20": 36
+  },
+  "chemistry": {
+   "n2_n.toml": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 6,
+     "FULL_45EV_FAMILY": 131,
+     "NO_VIBRATIONAL": 35,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 2
+    },
+    "OOD_share": 0.644444,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 117.51927068605598,
+     "median": 63.39037046355858,
+     "min": 34.21584180177048,
+     "n": 270,
+     "p10": 38.05937034801283,
+     "p90": 90.3329989486522
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.04615198257431406,
+     "median": 2.6232559203433336e-09,
+     "min": 1.10654795192898e-12,
+     "n": 174,
+     "p10": 3.4914613440096405e-12,
+     "p90": 0.01064193833597098
+    },
+    "n_OOD_run_readings": 348,
+    "n_OOD_runs": 174,
+    "n_runs": 270
+   },
+   "n2_n_di_lower.toml": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 8,
+     "FULL_45EV_FAMILY": 133,
+     "NO_VIBRATIONAL": 33,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 2
+    },
+    "OOD_share": 0.651852,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 118.20519870121333,
+     "median": 64.9063029935682,
+     "min": 30.13591640604971,
+     "n": 270,
+     "p10": 38.30237582211015,
+     "p90": 89.00124004014336
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.03666609430630192,
+     "median": 3.2498520773544387e-09,
+     "min": 1.0430792987237738e-12,
+     "n": 176,
+     "p10": 3.997957063493953e-12,
+     "p90": 0.01035668092673582
+    },
+    "n_OOD_run_readings": 352,
+    "n_OOD_runs": 176,
+    "n_runs": 270
+   },
+   "n2_n_di_lower_nel_wang.toml": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 9,
+     "FULL_45EV_FAMILY": 139,
+     "NO_VIBRATIONAL": 30,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 1
+    },
+    "OOD_share": 0.662963,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 125.35550926590224,
+     "median": 63.74974010341033,
+     "min": 34.103117413907796,
+     "n": 270,
+     "p10": 39.30733954714771,
+     "p90": 90.2813364025662
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.036003893252179064,
+     "median": 2.9830649997576983e-09,
+     "min": 1.0123594732695356e-12,
+     "n": 179,
+     "p10": 3.4863764791045206e-12,
+     "p90": 0.009699800998960008
+    },
+    "n_OOD_run_readings": 358,
+    "n_OOD_runs": 179,
+    "n_runs": 270
+   },
+   "n2_n_nel_wang.toml": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 13,
+     "FULL_45EV_FAMILY": 134,
+     "NO_VIBRATIONAL": 37,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 1
+    },
+    "OOD_share": 0.685185,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 127.93540083153,
+     "median": 66.08706636735391,
+     "min": 34.268725410931225,
+     "n": 270,
+     "p10": 38.496952748785404,
+     "p90": 90.77567791416725
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.03721304431750567,
+     "median": 2.3846292538287453e-09,
+     "min": 1.0708833074074507e-12,
+     "n": 185,
+     "p10": 2.7516288087539767e-12,
+     "p90": 0.012953014616807049
+    },
+    "n_OOD_run_readings": 370,
+    "n_OOD_runs": 185,
+    "n_runs": 270
+   }
+  },
+  "coil_shape": {
+   "1p6kW": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 19,
+     "FULL_45EV_FAMILY": 269,
+     "NO_VIBRATIONAL": 71,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 4
+    },
+    "OOD_share": 0.672222,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 127.93540083153,
+     "median": 63.85482400093253,
+     "min": 30.13591640604971,
+     "n": 540,
+     "p10": 38.496952748785404,
+     "p90": 91.69007097825002
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.03721304431750567,
+     "median": 5.143810951479082e-09,
+     "min": 1.0430792987237738e-12,
+     "n": 363,
+     "p10": 2.897395682345624e-12,
+     "p90": 0.011154278894261373
+    },
+    "n_OOD_run_readings": 726,
+    "n_OOD_runs": 363,
+    "n_runs": 540
+   },
+   "3p0kW": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 17,
+     "FULL_45EV_FAMILY": 268,
+     "NO_VIBRATIONAL": 64,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 2
+    },
+    "OOD_share": 0.65,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 108.6318413356237,
+     "median": 65.22235533876075,
+     "min": 34.04026546917862,
+     "n": 540,
+     "p10": 38.14491985467864,
+     "p90": 88.62962338498448
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.04615198257431406,
+     "median": 1.3858279985503138e-09,
+     "min": 1.0123594732695356e-12,
+     "n": 351,
+     "p10": 4.339669439263281e-12,
+     "p90": 0.01041138469947067
+    },
+    "n_OOD_run_readings": 702,
+    "n_OOD_runs": 351,
+    "n_runs": 540
+   }
+  },
+  "controlled_contrasts": {
+   "by_factor": {
+    "candidate": {
+     "group_size": 9,
+     "n_groups": 120,
+     "n_groups_with_mixed_OOD_status": 87,
+     "share": 0.725
+    },
+    "chemistry": {
+     "group_size": 4,
+     "n_groups": 270,
+     "n_groups_with_mixed_OOD_status": 34,
+     "share": 0.125926
+    },
+    "coil_shape": {
+     "group_size": 2,
+     "n_groups": 540,
+     "n_groups_with_mixed_OOD_status": 74,
+     "share": 0.137037
+    },
+    "point": {
+     "group_size": 5,
+     "n_groups": 216,
+     "n_groups_with_mixed_OOD_status": 116,
+     "share": 0.537037
+    },
+    "registration": {
+     "group_size": 3,
+     "n_groups": 360,
+     "n_groups_with_mixed_OOD_status": 243,
+     "share": 0.675
+    }
+   },
+   "note": "Groups of runs identical in every factor except the named one (the design is fully crossed: 9 candidates x 4 chemistry x 5 points x 3 registrations x 2 coil shapes, one run per cell). A group is 'mixed' when changing only that factor changes the OOD status. Descriptive within the model; not a physical attribution."
+  },
+  "global_layer1_member": {
+   "L32-anode|1p6kW|A": {
+    "OOD_share": 0.661111,
+    "n_OOD_runs": 119,
+    "n_runs": 180
+   },
+   "L32-anode|1p6kW|B": {
+    "OOD_share": 0.661111,
+    "n_OOD_runs": 119,
+    "n_runs": 180
+   },
+   "L32-anode|3p0kW|A": {
+    "OOD_share": 0.611111,
+    "n_OOD_runs": 110,
+    "n_runs": 180
+   },
+   "L32-anode|3p0kW|B": {
+    "OOD_share": 0.611111,
+    "n_OOD_runs": 110,
+    "n_runs": 180
+   },
+   "L32-exit|1p6kW|A": {
+    "OOD_share": 0.966667,
+    "n_OOD_runs": 174,
+    "n_runs": 180
+   },
+   "L32-exit|1p6kW|B": {
+    "OOD_share": 0.966667,
+    "n_OOD_runs": 174,
+    "n_runs": 180
+   },
+   "L32-exit|3p0kW|A": {
+    "OOD_share": 0.988889,
+    "n_OOD_runs": 178,
+    "n_runs": 180
+   },
+   "L32-exit|3p0kW|B": {
+    "OOD_share": 0.988889,
+    "n_OOD_runs": 178,
+    "n_runs": 180
+   },
+   "L38-hist|1p6kW|A": {
+    "OOD_share": 0.388889,
+    "n_OOD_runs": 70,
+    "n_runs": 180
+   },
+   "L38-hist|1p6kW|B": {
+    "OOD_share": 0.388889,
+    "n_OOD_runs": 70,
+    "n_runs": 180
+   },
+   "L38-hist|3p0kW|A": {
+    "OOD_share": 0.35,
+    "n_OOD_runs": 63,
+    "n_runs": 180
+   },
+   "L38-hist|3p0kW|B": {
+    "OOD_share": 0.35,
+    "n_OOD_runs": 63,
+    "n_runs": 180
+   }
+  },
+  "official_member_verdict_vs_OOD_count": {
+   "FAIL": {
+    "0": 2,
+    "3": 4,
+    "4": 14,
+    "5": 2,
+    "6": 6,
+    "7": 6,
+    "8": 2,
+    "9": 4,
+    "11": 4,
+    "12": 6,
+    "13": 2,
+    "16": 2,
+    "17": 2,
+    "18": 4,
+    "19": 6
+   },
+   "INCONCLUSIVE": {
+    "16": 2,
+    "18": 2,
+    "19": 2,
+    "20": 36
+   }
+  },
+  "point": {
+   "N1": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 4,
+     "FULL_45EV_FAMILY": 141,
+     "NO_VIBRATIONAL": 38,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 1
+    },
+    "OOD_share": 0.851852,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 126.71843484164204,
+     "median": 60.16418394460489,
+     "min": 30.13591640604971,
+     "n": 216,
+     "p10": 45.16969691592844,
+     "p90": 96.65925568236824
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 3.564179424883109e-05,
+     "median": 1.2789038978144075e-09,
+     "min": 1.10654795192898e-12,
+     "n": 184,
+     "p10": 7.022324301660463e-12,
+     "p90": 3.62370292592862e-07
+    },
+    "n_OOD_run_readings": 368,
+    "n_OOD_runs": 184,
+    "n_runs": 216
+   },
+   "N2": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 9,
+     "FULL_45EV_FAMILY": 110,
+     "NO_VIBRATIONAL": 39,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 3
+    },
+    "OOD_share": 0.74537,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 127.93540083153,
+     "median": 68.18109901144165,
+     "min": 35.14812031823182,
+     "n": 216,
+     "p10": 46.962382840570655,
+     "p90": 90.62192806574538
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.02218463526129917,
+     "median": 1.2215557018998196e-09,
+     "min": 1.0430792987237738e-12,
+     "n": 161,
+     "p10": 3.113759477291045e-12,
+     "p90": 8.261125349319265e-05
+    },
+    "n_OOD_run_readings": 322,
+    "n_OOD_runs": 161,
+    "n_runs": 216
+   },
+   "N3": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 11,
+     "FULL_45EV_FAMILY": 96,
+     "NO_VIBRATIONAL": 28,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 1
+    },
+    "OOD_share": 0.62963,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 117.51927068605598,
+     "median": 69.84053465463171,
+     "min": 34.04026546917862,
+     "n": 216,
+     "p10": 37.62102160006087,
+     "p90": 92.82436935162988
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.04615198257431406,
+     "median": 5.298196789110479e-09,
+     "min": 1.0963976449735814e-12,
+     "n": 136,
+     "p10": 2.0356567650172835e-12,
+     "p90": 0.01971946784065424
+    },
+    "n_OOD_run_readings": 272,
+    "n_OOD_runs": 136,
+    "n_runs": 216
+   },
+   "N4": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 5,
+     "FULL_45EV_FAMILY": 95,
+     "NO_VIBRATIONAL": 17,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 0
+    },
+    "OOD_share": 0.541667,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 105.2332057133656,
+     "median": 63.83802362173932,
+     "min": 34.07378546060211,
+     "n": 216,
+     "p10": 37.229253088442206,
+     "p90": 83.80574257632763
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.035354338878160294,
+     "median": 2.5063410063475566e-06,
+     "min": 1.0123594732695356e-12,
+     "n": 117,
+     "p10": 5.4509156486161865e-12,
+     "p90": 0.01708515992764043
+    },
+    "n_OOD_run_readings": 234,
+    "n_OOD_runs": 117,
+    "n_runs": 216
+   },
+   "N5": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 7,
+     "FULL_45EV_FAMILY": 95,
+     "NO_VIBRATIONAL": 13,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 1
+    },
+    "OOD_share": 0.537037,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 108.6318413356237,
+     "median": 58.07335799654798,
+     "min": 34.29247272436011,
+     "n": 216,
+     "p10": 36.43188308367873,
+     "p90": 83.86080177772932
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.0384900856842509,
+     "median": 2.2397957799444114e-06,
+     "min": 1.0708833074074507e-12,
+     "n": 116,
+     "p10": 2.5515648639213985e-12,
+     "p90": 0.024353975502430743
+    },
+    "n_OOD_run_readings": 232,
+    "n_OOD_runs": 116,
+    "n_runs": 216
+   }
+  },
+  "reading_independence": {
+   "members_A_and_B_have_identical_OOD_counts": true,
+   "n_runs_reading_dependent": 0,
+   "statement": "OOD does not depend on the divergence reading (A/B): the scorer's OOD predicate uses only the per-reaction chemistry fields and unresolved tables, never the reading, and the official statuses agree (OOD for both readings or for neither) in every run."
+  },
+  "registration": {
+   "L32-anode": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 23,
+     "FULL_45EV_FAMILY": 139,
+     "NO_VIBRATIONAL": 65,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 2
+    },
+    "OOD_share": 0.636111,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 108.6318413356237,
+     "median": 59.5809637457175,
+     "min": 35.14812031823182,
+     "n": 360,
+     "p10": 38.36261622756315,
+     "p90": 82.88404983745005
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.0011008100581588326,
+     "median": 4.218967332018892e-10,
+     "min": 1.0123594732695356e-12,
+     "n": 229,
+     "p10": 1.628973767346623e-12,
+     "p90": 8.521446525432382e-05
+    },
+    "n_OOD_run_readings": 458,
+    "n_OOD_runs": 229,
+    "n_runs": 360
+   },
+   "L32-exit": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 1,
+     "FULL_45EV_FAMILY": 333,
+     "NO_VIBRATIONAL": 17,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 1
+    },
+    "OOD_share": 0.977778,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 127.93540083153,
+     "median": 76.91467333750555,
+     "min": 30.13591640604971,
+     "n": 360,
+     "p10": 54.58545938630576,
+     "p90": 98.48679887579416
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.04615198257431406,
+     "median": 1.4220881972755026e-08,
+     "min": 1.0708833074074507e-12,
+     "n": 352,
+     "p10": 8.562693339173984e-11,
+     "p90": 0.02155824002383076
+    },
+    "n_OOD_run_readings": 704,
+    "n_OOD_runs": 352,
+    "n_runs": 360
+   },
+   "L38-hist": {
+    "OOD_categories": {
+     "DISSOCIATION_ONLY": 12,
+     "FULL_45EV_FAMILY": 65,
+     "NO_VIBRATIONAL": 53,
+     "OTHER": 0,
+     "PARTIAL_VIBRATIONAL": 3
+    },
+    "OOD_share": 0.369444,
+    "dissociation_max_mean_energy_active_eV_all_runs": {
+     "max": 98.73594876603718,
+     "median": 51.07552619704714,
+     "min": 34.04026546917862,
+     "n": 360,
+     "p10": 36.091884987508124,
+     "p90": 81.40864956948212
+    },
+    "f_out_max_over_OOD_runs": {
+     "max": 0.003109024521333991,
+     "median": 5.149365624517424e-11,
+     "min": 1.2572172048486692e-12,
+     "n": 133,
+     "p10": 2.294527680326485e-12,
+     "p90": 2.9600297097691694e-08
+    },
+    "n_OOD_run_readings": 266,
+    "n_OOD_runs": 133,
+    "n_runs": 360
+   }
+  },
+  "two_way": {
+   "candidate_x_chemistry": {
+    "sgb-screen-01|n2_n.toml": {
+     "OOD_share": 0.566667,
+     "n_OOD_runs": 17,
+     "n_runs": 30
+    },
+    "sgb-screen-01|n2_n_di_lower.toml": {
+     "OOD_share": 0.566667,
+     "n_OOD_runs": 17,
+     "n_runs": 30
+    },
+    "sgb-screen-01|n2_n_di_lower_nel_wang.toml": {
+     "OOD_share": 0.566667,
+     "n_OOD_runs": 17,
+     "n_runs": 30
+    },
+    "sgb-screen-01|n2_n_nel_wang.toml": {
+     "OOD_share": 0.633333,
+     "n_OOD_runs": 19,
+     "n_runs": 30
+    },
+    "sgb-screen-02|n2_n.toml": {
+     "OOD_share": 0.733333,
+     "n_OOD_runs": 22,
+     "n_runs": 30
+    },
+    "sgb-screen-02|n2_n_di_lower.toml": {
+     "OOD_share": 0.733333,
+     "n_OOD_runs": 22,
+     "n_runs": 30
+    },
+    "sgb-screen-02|n2_n_di_lower_nel_wang.toml": {
+     "OOD_share": 0.733333,
+     "n_OOD_runs": 22,
+     "n_runs": 30
+    },
+    "sgb-screen-02|n2_n_nel_wang.toml": {
+     "OOD_share": 0.733333,
+     "n_OOD_runs": 22,
+     "n_runs": 30
+    },
+    "sgb-screen-03|n2_n.toml": {
+     "OOD_share": 0.8,
+     "n_OOD_runs": 24,
+     "n_runs": 30
+    },
+    "sgb-screen-03|n2_n_di_lower.toml": {
+     "OOD_share": 0.833333,
+     "n_OOD_runs": 25,
+     "n_runs": 30
+    },
+    "sgb-screen-03|n2_n_di_lower_nel_wang.toml": {
+     "OOD_share": 0.833333,
+     "n_OOD_runs": 25,
+     "n_runs": 30
+    },
+    "sgb-screen-03|n2_n_nel_wang.toml": {
+     "OOD_share": 0.833333,
+     "n_OOD_runs": 25,
+     "n_runs": 30
+    },
+    "sgb-screen-04|n2_n.toml": {
+     "OOD_share": 0.666667,
+     "n_OOD_runs": 20,
+     "n_runs": 30
+    },
+    "sgb-screen-04|n2_n_di_lower.toml": {
+     "OOD_share": 0.666667,
+     "n_OOD_runs": 20,
+     "n_runs": 30
+    },
+    "sgb-screen-04|n2_n_di_lower_nel_wang.toml": {
+     "OOD_share": 0.7,
+     "n_OOD_runs": 21,
+     "n_runs": 30
+    },
+    "sgb-screen-04|n2_n_nel_wang.toml": {
+     "OOD_share": 0.666667,
+     "n_OOD_runs": 20,
+     "n_runs": 30
+    },
+    "sgb-screen-05|n2_n.toml": {
+     "OOD_share": 0.466667,
+     "n_OOD_runs": 14,
+     "n_runs": 30
+    },
+    "sgb-screen-05|n2_n_di_lower.toml": {
+     "OOD_share": 0.433333,
+     "n_OOD_runs": 13,
+     "n_runs": 30
+    },
+    "sgb-screen-05|n2_n_di_lower_nel_wang.toml": {
+     "OOD_share": 0.466667,
+     "n_OOD_runs": 14,
+     "n_runs": 30
+    },
+    "sgb-screen-05|n2_n_nel_wang.toml": {
+     "OOD_share": 0.466667,
+     "n_OOD_runs": 14,
+     "n_runs": 30
+    },
+    "sgb-screen-06|n2_n.toml": {
+     "OOD_share": 0.466667,
+     "n_OOD_runs": 14,
+     "n_runs": 30
+    },
+    "sgb-screen-06|n2_n_di_lower.toml": {
+     "OOD_share": 0.566667,
+     "n_OOD_runs": 17,
+     "n_runs": 30
+    },
+    "sgb-screen-06|n2_n_di_lower_nel_wang.toml": {
+     "OOD_share": 0.5,
+     "n_OOD_runs": 15,
+     "n_runs": 30
+    },
+    "sgb-screen-06|n2_n_nel_wang.toml": {
+     "OOD_share": 0.566667,
+     "n_OOD_runs": 17,
+     "n_runs": 30
+    },
+    "sgb-screen-07|n2_n.toml": {
+     "OOD_share": 0.666667,
+     "n_OOD_runs": 20,
+     "n_runs": 30
+    },
+    "sgb-screen-07|n2_n_di_lower.toml": {
+     "OOD_share": 0.633333,
+     "n_OOD_runs": 19,
+     "n_runs": 30
+    },
+    "sgb-screen-07|n2_n_di_lower_nel_wang.toml": {
+     "OOD_share": 0.633333,
+     "n_OOD_runs": 19,
+     "n_runs": 30
+    },
+    "sgb-screen-07|n2_n_nel_wang.toml": {
+     "OOD_share": 0.666667,
+     "n_OOD_runs": 20,
+     "n_runs": 30
+    },
+    "sgb-screen-08|n2_n.toml": {
+     "OOD_share": 0.833333,
+     "n_OOD_runs": 25,
+     "n_runs": 30
+    },
+    "sgb-screen-08|n2_n_di_lower.toml": {
+     "OOD_share": 0.866667,
+     "n_OOD_runs": 26,
+     "n_runs": 30
+    },
+    "sgb-screen-08|n2_n_di_lower_nel_wang.toml": {
+     "OOD_share": 0.933333,
+     "n_OOD_runs": 28,
+     "n_runs": 30
+    },
+    "sgb-screen-08|n2_n_nel_wang.toml": {
+     "OOD_share": 0.933333,
+     "n_OOD_runs": 28,
+     "n_runs": 30
+    },
+    "sgb-screen-09|n2_n.toml": {
+     "OOD_share": 0.6,
+     "n_OOD_runs": 18,
+     "n_runs": 30
+    },
+    "sgb-screen-09|n2_n_di_lower.toml": {
+     "OOD_share": 0.566667,
+     "n_OOD_runs": 17,
+     "n_runs": 30
+    },
+    "sgb-screen-09|n2_n_di_lower_nel_wang.toml": {
+     "OOD_share": 0.6,
+     "n_OOD_runs": 18,
+     "n_runs": 30
+    },
+    "sgb-screen-09|n2_n_nel_wang.toml": {
+     "OOD_share": 0.666667,
+     "n_OOD_runs": 20,
+     "n_runs": 30
+    }
+   },
+   "candidate_x_point": {
+    "sgb-screen-01|N1": {
+     "OOD_share": 0.875,
+     "n_OOD_runs": 21,
+     "n_runs": 24
+    },
+    "sgb-screen-01|N2": {
+     "OOD_share": 0.583333,
+     "n_OOD_runs": 14,
+     "n_runs": 24
+    },
+    "sgb-screen-01|N3": {
+     "OOD_share": 0.541667,
+     "n_OOD_runs": 13,
+     "n_runs": 24
+    },
+    "sgb-screen-01|N4": {
+     "OOD_share": 0.5,
+     "n_OOD_runs": 12,
+     "n_runs": 24
+    },
+    "sgb-screen-01|N5": {
+     "OOD_share": 0.416667,
+     "n_OOD_runs": 10,
+     "n_runs": 24
+    },
+    "sgb-screen-02|N1": {
+     "OOD_share": 1.0,
+     "n_OOD_runs": 24,
+     "n_runs": 24
+    },
+    "sgb-screen-02|N2": {
+     "OOD_share": 0.666667,
+     "n_OOD_runs": 16,
+     "n_runs": 24
+    },
+    "sgb-screen-02|N3": {
+     "OOD_share": 0.666667,
+     "n_OOD_runs": 16,
+     "n_runs": 24
+    },
+    "sgb-screen-02|N4": {
+     "OOD_share": 0.666667,
+     "n_OOD_runs": 16,
+     "n_runs": 24
+    },
+    "sgb-screen-02|N5": {
+     "OOD_share": 0.666667,
+     "n_OOD_runs": 16,
+     "n_runs": 24
+    },
+    "sgb-screen-03|N1": {
+     "OOD_share": 1.0,
+     "n_OOD_runs": 24,
+     "n_runs": 24
+    },
+    "sgb-screen-03|N2": {
+     "OOD_share": 0.958333,
+     "n_OOD_runs": 23,
+     "n_runs": 24
+    },
+    "sgb-screen-03|N3": {
+     "OOD_share": 0.666667,
+     "n_OOD_runs": 16,
+     "n_runs": 24
+    },
+    "sgb-screen-03|N4": {
+     "OOD_share": 0.666667,
+     "n_OOD_runs": 16,
+     "n_runs": 24
+    },
+    "sgb-screen-03|N5": {
+     "OOD_share": 0.833333,
+     "n_OOD_runs": 20,
+     "n_runs": 24
+    },
+    "sgb-screen-04|N1": {
+     "OOD_share": 0.541667,
+     "n_OOD_runs": 13,
+     "n_runs": 24
+    },
+    "sgb-screen-04|N2": {
+     "OOD_share": 0.5,
+     "n_OOD_runs": 12,
+     "n_runs": 24
+    },
+    "sgb-screen-04|N3": {
+     "OOD_share": 0.791667,
+     "n_OOD_runs": 19,
+     "n_runs": 24
+    },
+    "sgb-screen-04|N4": {
+     "OOD_share": 0.75,
+     "n_OOD_runs": 18,
+     "n_runs": 24
+    },
+    "sgb-screen-04|N5": {
+     "OOD_share": 0.791667,
+     "n_OOD_runs": 19,
+     "n_runs": 24
+    },
+    "sgb-screen-05|N1": {
+     "OOD_share": 0.958333,
+     "n_OOD_runs": 23,
+     "n_runs": 24
+    },
+    "sgb-screen-05|N2": {
+     "OOD_share": 0.333333,
+     "n_OOD_runs": 8,
+     "n_runs": 24
+    },
+    "sgb-screen-05|N3": {
+     "OOD_share": 0.333333,
+     "n_OOD_runs": 8,
+     "n_runs": 24
+    },
+    "sgb-screen-05|N4": {
+     "OOD_share": 0.333333,
+     "n_OOD_runs": 8,
+     "n_runs": 24
+    },
+    "sgb-screen-05|N5": {
+     "OOD_share": 0.333333,
+     "n_OOD_runs": 8,
+     "n_runs": 24
+    },
+    "sgb-screen-06|N1": {
+     "OOD_share": 0.958333,
+     "n_OOD_runs": 23,
+     "n_runs": 24
+    },
+    "sgb-screen-06|N2": {
+     "OOD_share": 0.666667,
+     "n_OOD_runs": 16,
+     "n_runs": 24
+    },
+    "sgb-screen-06|N3": {
+     "OOD_share": 0.333333,
+     "n_OOD_runs": 8,
+     "n_runs": 24
+    },
+    "sgb-screen-06|N4": {
+     "OOD_share": 0.333333,
+     "n_OOD_runs": 8,
+     "n_runs": 24
+    },
+    "sgb-screen-06|N5": {
+     "OOD_share": 0.333333,
+     "n_OOD_runs": 8,
+     "n_runs": 24
+    },
+    "sgb-screen-07|N1": {
+     "OOD_share": 1.0,
+     "n_OOD_runs": 24,
+     "n_runs": 24
+    },
+    "sgb-screen-07|N2": {
+     "OOD_share": 1.0,
+     "n_OOD_runs": 24,
+     "n_runs": 24
+    },
+    "sgb-screen-07|N3": {
+     "OOD_share": 0.583333,
+     "n_OOD_runs": 14,
+     "n_runs": 24
+    },
+    "sgb-screen-07|N4": {
+     "OOD_share": 0.333333,
+     "n_OOD_runs": 8,
+     "n_runs": 24
+    },
+    "sgb-screen-07|N5": {
+     "OOD_share": 0.333333,
+     "n_OOD_runs": 8,
+     "n_runs": 24
+    },
+    "sgb-screen-08|N1": {
+     "OOD_share": 0.708333,
+     "n_OOD_runs": 17,
+     "n_runs": 24
+    },
+    "sgb-screen-08|N2": {
+     "OOD_share": 1.0,
+     "n_OOD_runs": 24,
+     "n_runs": 24
+    },
+    "sgb-screen-08|N3": {
+     "OOD_share": 1.0,
+     "n_OOD_runs": 24,
+     "n_runs": 24
+    },
+    "sgb-screen-08|N4": {
+     "OOD_share": 0.916667,
+     "n_OOD_runs": 22,
+     "n_runs": 24
+    },
+    "sgb-screen-08|N5": {
+     "OOD_share": 0.833333,
+     "n_OOD_runs": 20,
+     "n_runs": 24
+    },
+    "sgb-screen-09|N1": {
+     "OOD_share": 0.625,
+     "n_OOD_runs": 15,
+     "n_runs": 24
+    },
+    "sgb-screen-09|N2": {
+     "OOD_share": 1.0,
+     "n_OOD_runs": 24,
+     "n_runs": 24
+    },
+    "sgb-screen-09|N3": {
+     "OOD_share": 0.75,
+     "n_OOD_runs": 18,
+     "n_runs": 24
+    },
+    "sgb-screen-09|N4": {
+     "OOD_share": 0.375,
+     "n_OOD_runs": 9,
+     "n_runs": 24
+    },
+    "sgb-screen-09|N5": {
+     "OOD_share": 0.291667,
+     "n_OOD_runs": 7,
+     "n_runs": 24
+    }
+   },
+   "candidate_x_registration": {
+    "sgb-screen-01|L32-anode": {
+     "OOD_share": 0.525,
+     "n_OOD_runs": 21,
+     "n_runs": 40
+    },
+    "sgb-screen-01|L32-exit": {
+     "OOD_share": 1.0,
+     "n_OOD_runs": 40,
+     "n_runs": 40
+    },
+    "sgb-screen-01|L38-hist": {
+     "OOD_share": 0.225,
+     "n_OOD_runs": 9,
+     "n_runs": 40
+    },
+    "sgb-screen-02|L32-anode": {
+     "OOD_share": 1.0,
+     "n_OOD_runs": 40,
+     "n_runs": 40
+    },
+    "sgb-screen-02|L32-exit": {
+     "OOD_share": 1.0,
+     "n_OOD_runs": 40,
+     "n_runs": 40
+    },
+    "sgb-screen-02|L38-hist": {
+     "OOD_share": 0.2,
+     "n_OOD_runs": 8,
+     "n_runs": 40
+    },
+    "sgb-screen-03|L32-anode": {
+     "OOD_share": 1.0,
+     "n_OOD_runs": 40,
+     "n_runs": 40
+    },
+    "sgb-screen-03|L32-exit": {
+     "OOD_share": 1.0,
+     "n_OOD_runs": 40,
+     "n_runs": 40
+    },
+    "sgb-screen-03|L38-hist": {
+     "OOD_share": 0.475,
+     "n_OOD_runs": 19,
+     "n_runs": 40
+    },
+    "sgb-screen-04|L32-anode": {
+     "OOD_share": 0.75,
+     "n_OOD_runs": 30,
+     "n_runs": 40
+    },
+    "sgb-screen-04|L32-exit": {
+     "OOD_share": 1.0,
+     "n_OOD_runs": 40,
+     "n_runs": 40
+    },
+    "sgb-screen-04|L38-hist": {
+     "OOD_share": 0.275,
+     "n_OOD_runs": 11,
+     "n_runs": 40
+    },
+    "sgb-screen-05|L32-anode": {
+     "OOD_share": 0.2,
+     "n_OOD_runs": 8,
+     "n_runs": 40
+    },
+    "sgb-screen-05|L32-exit": {
+     "OOD_share": 0.975,
+     "n_OOD_runs": 39,
+     "n_runs": 40
+    },
+    "sgb-screen-05|L38-hist": {
+     "OOD_share": 0.2,
+     "n_OOD_runs": 8,
+     "n_runs": 40
+    },
+    "sgb-screen-06|L32-anode": {
+     "OOD_share": 0.25,
+     "n_OOD_runs": 10,
+     "n_runs": 40
+    },
+    "sgb-screen-06|L32-exit": {
+     "OOD_share": 1.0,
+     "n_OOD_runs": 40,
+     "n_runs": 40
+    },
+    "sgb-screen-06|L38-hist": {
+     "OOD_share": 0.325,
+     "n_OOD_runs": 13,
+     "n_runs": 40
+    },
+    "sgb-screen-07|L32-anode": {
+     "OOD_share": 0.525,
+     "n_OOD_runs": 21,
+     "n_runs": 40
+    },
+    "sgb-screen-07|L32-exit": {
+     "OOD_share": 1.0,
+     "n_OOD_runs": 40,
+     "n_runs": 40
+    },
+    "sgb-screen-07|L38-hist": {
+     "OOD_share": 0.425,
+     "n_OOD_runs": 17,
+     "n_runs": 40
+    },
+    "sgb-screen-08|L32-anode": {
+     "OOD_share": 0.875,
+     "n_OOD_runs": 35,
+     "n_runs": 40
+    },
+    "sgb-screen-08|L32-exit": {
+     "OOD_share": 0.9,
+     "n_OOD_runs": 36,
+     "n_runs": 40
+    },
+    "sgb-screen-08|L38-hist": {
+     "OOD_share": 0.9,
+     "n_OOD_runs": 36,
+     "n_runs": 40
+    },
+    "sgb-screen-09|L32-anode": {
+     "OOD_share": 0.6,
+     "n_OOD_runs": 24,
+     "n_runs": 40
+    },
+    "sgb-screen-09|L32-exit": {
+     "OOD_share": 0.925,
+     "n_OOD_runs": 37,
+     "n_runs": 40
+    },
+    "sgb-screen-09|L38-hist": {
+     "OOD_share": 0.3,
+     "n_OOD_runs": 12,
+     "n_runs": 40
+    }
+   },
+   "point_x_registration": {
+    "N1|L32-anode": {
+     "OOD_share": 0.875,
+     "n_OOD_runs": 63,
+     "n_runs": 72
+    },
+    "N1|L32-exit": {
+     "OOD_share": 0.930556,
+     "n_OOD_runs": 67,
+     "n_runs": 72
+    },
+    "N1|L38-hist": {
+     "OOD_share": 0.75,
+     "n_OOD_runs": 54,
+     "n_runs": 72
+    },
+    "N2|L32-anode": {
+     "OOD_share": 0.708333,
+     "n_OOD_runs": 51,
+     "n_runs": 72
+    },
+    "N2|L32-exit": {
+     "OOD_share": 0.986111,
+     "n_OOD_runs": 71,
+     "n_runs": 72
+    },
+    "N2|L38-hist": {
+     "OOD_share": 0.541667,
+     "n_OOD_runs": 39,
+     "n_runs": 72
+    },
+    "N3|L32-anode": {
+     "OOD_share": 0.666667,
+     "n_OOD_runs": 48,
+     "n_runs": 72
+    },
+    "N3|L32-exit": {
+     "OOD_share": 1.0,
+     "n_OOD_runs": 72,
+     "n_runs": 72
+    },
+    "N3|L38-hist": {
+     "OOD_share": 0.222222,
+     "n_OOD_runs": 16,
+     "n_runs": 72
+    },
+    "N4|L32-anode": {
+     "OOD_share": 0.5,
+     "n_OOD_runs": 36,
+     "n_runs": 72
+    },
+    "N4|L32-exit": {
+     "OOD_share": 0.986111,
+     "n_OOD_runs": 71,
+     "n_runs": 72
+    },
+    "N4|L38-hist": {
+     "OOD_share": 0.138889,
+     "n_OOD_runs": 10,
+     "n_runs": 72
+    },
+    "N5|L32-anode": {
+     "OOD_share": 0.430556,
+     "n_OOD_runs": 31,
+     "n_runs": 72
+    },
+    "N5|L32-exit": {
+     "OOD_share": 0.986111,
+     "n_OOD_runs": 71,
+     "n_runs": 72
+    },
+    "N5|L38-hist": {
+     "OOD_share": 0.194444,
+     "n_OOD_runs": 14,
+     "n_runs": 72
+    }
+   },
+   "registration_x_coil_shape": {
+    "L32-anode|1p6kW": {
+     "OOD_share": 0.661111,
+     "n_OOD_runs": 119,
+     "n_runs": 180
+    },
+    "L32-anode|3p0kW": {
+     "OOD_share": 0.611111,
+     "n_OOD_runs": 110,
+     "n_runs": 180
+    },
+    "L32-exit|1p6kW": {
+     "OOD_share": 0.966667,
+     "n_OOD_runs": 174,
+     "n_runs": 180
+    },
+    "L32-exit|3p0kW": {
+     "OOD_share": 0.988889,
+     "n_OOD_runs": 178,
+     "n_runs": 180
+    },
+    "L38-hist|1p6kW": {
+     "OOD_share": 0.388889,
+     "n_OOD_runs": 70,
+     "n_runs": 180
+    },
+    "L38-hist|3p0kW": {
+     "OOD_share": 0.35,
+     "n_OOD_runs": 63,
+     "n_runs": 180
+    }
+   }
+  }
+ },
+ "co_occurrence": {
+  "45eV_family_identical_in_all_mandatory_configs": true,
+  "45eV_subfamilies": {
+   "dissociation": [
+    "dissociation_N2.dat"
+   ],
+   "electronic": [
+    "excitation_N2_A3Sigma_u.dat",
+    "excitation_N2_B3Pi_g.dat",
+    "excitation_N2_Bprime3Sigma_u.dat",
+    "excitation_N2_C3Pi_u.dat",
+    "excitation_N2_W3Delta_u.dat",
+    "excitation_N2_a1Pi_g.dat",
+    "excitation_N2_aprime1Sigma_u.dat",
+    "excitation_N2_w1Delta_u.dat"
+   ],
+   "rotational": [
+    "excitation_N2_rot_j0_to_j2.dat",
+    "excitation_N2_rot_j0_to_j4.dat"
+   ],
+   "vibrational": [
+    "excitation_N2_vib_0_to_1.dat",
+    "excitation_N2_vib_0_to_10.dat",
+    "excitation_N2_vib_0_to_2.dat",
+    "excitation_N2_vib_0_to_3.dat",
+    "excitation_N2_vib_0_to_4.dat",
+    "excitation_N2_vib_0_to_5.dat",
+    "excitation_N2_vib_0_to_6.dat",
+    "excitation_N2_vib_0_to_7.dat",
+    "excitation_N2_vib_0_to_8.dat",
+    "excitation_N2_vib_0_to_9.dat"
+   ]
+  },
+  "beyond_set_size_histogram": {
+   "1": 36,
+   "2": 5,
+   "3": 11,
+   "4": 4,
+   "5": 4,
+   "6": 3,
+   "7": 10,
+   "9": 5,
+   "10": 3,
+   "11": 90,
+   "12": 2,
+   "14": 1,
+   "15": 1,
+   "17": 2,
+   "21": 537
+  },
+  "category_counts_OOD_runs": {
+   "DISSOCIATION_ONLY": 36,
+   "FULL_45EV_FAMILY": 537,
+   "NO_VIBRATIONAL": 135,
+   "OTHER": 0,
+   "PARTIAL_VIBRATIONAL": 6
+  },
+  "category_definitions": {
+   "DISSOCIATION_ONLY": "dissociation_N2.dat is the only file beyond its limit",
+   "FULL_45EV_FAMILY": "every one of the run's 45 eV-capped files is beyond its limit (dissociation + 8 electronic + 10 vibrational + 2 rotational)",
+   "IN_DOMAIN": "no file beyond its limit (official status is not OUT_OF_DOMAIN)",
+   "NO_VIBRATIONAL": "dissociation plus some electronic and/or rotational files beyond, no vibrational file beyond",
+   "OTHER": "any other pattern (e.g. a 255 eV-capped file beyond, dissociation not beyond, or an unresolved table)",
+   "PARTIAL_VIBRATIONAL": "dissociation plus some but not all vibrational files beyond (electronic/rotational: see the sub-family pattern table)"
+  },
+  "limit_families": {
+   "255 eV": [
+    "dissociative_ionization_N2_lower.dat",
+    "dissociative_ionization_N2_to_N_Z2plus.dat",
+    "dissociative_ionization_N2_upper.dat",
+    "elastic_N2_song2023.dat",
+    "elastic_N_ragimkhanov2026.dat",
+    "elastic_N_wang2014_bsr.dat",
+    "ionization_N.dat",
+    "ionization_N2_song2023.dat",
+    "ionization_N_Z1plus_to_N_Z2plus.dat",
+    "ionization_N_to_N_Z2plus_hms2017.dat"
+   ],
+   "45 eV": [
+    "dissociation_N2.dat",
+    "excitation_N2_A3Sigma_u.dat",
+    "excitation_N2_B3Pi_g.dat",
+    "excitation_N2_Bprime3Sigma_u.dat",
+    "excitation_N2_C3Pi_u.dat",
+    "excitation_N2_W3Delta_u.dat",
+    "excitation_N2_a1Pi_g.dat",
+    "excitation_N2_aprime1Sigma_u.dat",
+    "excitation_N2_rot_j0_to_j2.dat",
+    "excitation_N2_rot_j0_to_j4.dat",
+    "excitation_N2_vib_0_to_1.dat",
+    "excitation_N2_vib_0_to_10.dat",
+    "excitation_N2_vib_0_to_2.dat",
+    "excitation_N2_vib_0_to_3.dat",
+    "excitation_N2_vib_0_to_4.dat",
+    "excitation_N2_vib_0_to_5.dat",
+    "excitation_N2_vib_0_to_6.dat",
+    "excitation_N2_vib_0_to_7.dat",
+    "excitation_N2_vib_0_to_8.dat",
+    "excitation_N2_vib_0_to_9.dat",
+    "excitation_N2_w1Delta_u.dat"
+   ],
+   "other_limits": []
+  },
+  "n_OOD_runs": 714,
+  "n_OOD_runs_beyond_set_exactly_full_45eV_family": 537,
+  "n_OOD_runs_beyond_set_within_45eV_family": 714,
+  "n_OOD_runs_dissociation_has_largest_f_out": 714,
+  "n_OOD_runs_electronic_or_rotational_beyond_without_dissociation_beyond": 0,
+  "n_OOD_runs_vibrational_beyond_without_all_electronic_and_rotational_beyond": 0,
+  "n_OOD_runs_with_dissociation_beyond": 714,
+  "n_runs_any_255eV_file_beyond": 0,
+  "n_runs_any_file_outside_45eV_family_beyond": 0,
+  "n_runs_with_unresolved_table": 0,
+  "nesting": {
+   "n_OOD_runs_breaking_the_majority_nesting_of_some_pair": 4,
+   "n_file_pairs": 210,
+   "non_nested_pairs": [
+    {
+     "file_a": "excitation_N2_rot_j0_to_j2.dat",
+     "file_b": "excitation_N2_a1Pi_g.dat",
+     "n_runs_a_beyond_b_not": 4,
+     "n_runs_b_beyond_a_not": 1
+    },
+    {
+     "file_a": "excitation_N2_rot_j0_to_j4.dat",
+     "file_b": "excitation_N2_w1Delta_u.dat",
+     "n_runs_a_beyond_b_not": 3,
+     "n_runs_b_beyond_a_not": 3
+    },
+    {
+     "file_a": "excitation_N2_rot_j0_to_j4.dat",
+     "file_b": "excitation_N2_aprime1Sigma_u.dat",
+     "n_runs_a_beyond_b_not": 6,
+     "n_runs_b_beyond_a_not": 2
+    },
+    {
+     "file_a": "excitation_N2_rot_j0_to_j4.dat",
+     "file_b": "excitation_N2_Bprime3Sigma_u.dat",
+     "n_runs_a_beyond_b_not": 9,
+     "n_runs_b_beyond_a_not": 1
+    },
+    {
+     "file_a": "excitation_N2_rot_j0_to_j4.dat",
+     "file_b": "excitation_N2_C3Pi_u.dat",
+     "n_runs_a_beyond_b_not": 18,
+     "n_runs_b_beyond_a_not": 1
+    }
+   ],
+   "note": "A pair (a, b) is nested when every OOD run with b beyond its limit also has a beyond (or vice versa). If all pairs were nested the beyond-limit sets would form one chain (dissociation first). For a non-nested pair the smaller of the two counts is the minority (on a tie, the second count); a run 'breaks the majority nesting' when it is in the minority of at least one pair.",
+   "order_by_n_runs_beyond": [
+    [
+     "dissociation_N2.dat",
+     714
+    ],
+    [
+     "excitation_N2_rot_j0_to_j2.dat",
+     677
+    ],
+    [
+     "excitation_N2_a1Pi_g.dat",
+     674
+    ],
+    [
+     "excitation_N2_rot_j0_to_j4.dat",
+     659
+    ],
+    [
+     "excitation_N2_w1Delta_u.dat",
+     659
+    ],
+    [
+     "excitation_N2_aprime1Sigma_u.dat",
+     655
+    ],
+    [
+     "excitation_N2_Bprime3Sigma_u.dat",
+     651
+    ],
+    [
+     "excitation_N2_C3Pi_u.dat",
+     642
+    ],
+    [
+     "excitation_N2_W3Delta_u.dat",
+     641
+    ],
+    [
+     "excitation_N2_A3Sigma_u.dat",
+     636
+    ],
+    [
+     "excitation_N2_B3Pi_g.dat",
+     633
+    ],
+    [
+     "excitation_N2_vib_0_to_10.dat",
+     543
+    ],
+    [
+     "excitation_N2_vib_0_to_8.dat",
+     541
+    ],
+    [
+     "excitation_N2_vib_0_to_9.dat",
+     541
+    ],
+    [
+     "excitation_N2_vib_0_to_7.dat",
+     540
+    ],
+    [
+     "excitation_N2_vib_0_to_5.dat",
+     539
+    ],
+    [
+     "excitation_N2_vib_0_to_6.dat",
+     539
+    ],
+    [
+     "excitation_N2_vib_0_to_1.dat",
+     537
+    ],
+    [
+     "excitation_N2_vib_0_to_2.dat",
+     537
+    ],
+    [
+     "excitation_N2_vib_0_to_3.dat",
+     537
+    ],
+    [
+     "excitation_N2_vib_0_to_4.dat",
+     537
+    ]
+   ]
+  },
+  "per_subfamily_OOD_runs_with_all_files_beyond": {
+   "dissociation": 714,
+   "electronic": 633,
+   "rotational": 659,
+   "vibrational": 537
+  },
+  "per_subfamily_OOD_runs_with_any_file_beyond": {
+   "dissociation": 714,
+   "electronic": 674,
+   "rotational": 677,
+   "vibrational": 543
+  },
+  "sole_cause_counts": {
+   "dissociation_N2.dat": 36,
+   "dissociative_ionization_N2_lower.dat": 0,
+   "dissociative_ionization_N2_to_N_Z2plus.dat": 0,
+   "dissociative_ionization_N2_upper.dat": 0,
+   "elastic_N2_song2023.dat": 0,
+   "elastic_N_ragimkhanov2026.dat": 0,
+   "elastic_N_wang2014_bsr.dat": 0,
+   "excitation_N2_A3Sigma_u.dat": 0,
+   "excitation_N2_B3Pi_g.dat": 0,
+   "excitation_N2_Bprime3Sigma_u.dat": 0,
+   "excitation_N2_C3Pi_u.dat": 0,
+   "excitation_N2_W3Delta_u.dat": 0,
+   "excitation_N2_a1Pi_g.dat": 0,
+   "excitation_N2_aprime1Sigma_u.dat": 0,
+   "excitation_N2_rot_j0_to_j2.dat": 0,
+   "excitation_N2_rot_j0_to_j4.dat": 0,
+   "excitation_N2_vib_0_to_1.dat": 0,
+   "excitation_N2_vib_0_to_10.dat": 0,
+   "excitation_N2_vib_0_to_2.dat": 0,
+   "excitation_N2_vib_0_to_3.dat": 0,
+   "excitation_N2_vib_0_to_4.dat": 0,
+   "excitation_N2_vib_0_to_5.dat": 0,
+   "excitation_N2_vib_0_to_6.dat": 0,
+   "excitation_N2_vib_0_to_7.dat": 0,
+   "excitation_N2_vib_0_to_8.dat": 0,
+   "excitation_N2_vib_0_to_9.dat": 0,
+   "excitation_N2_w1Delta_u.dat": 0,
+   "ionization_N.dat": 0,
+   "ionization_N2_song2023.dat": 0,
+   "ionization_N_Z1plus_to_N_Z2plus.dat": 0,
+   "ionization_N_to_N_Z2plus_hms2017.dat": 0
+  },
+  "subfamily_pattern_counts": {
+   "D1 E0 V0 R0": 36,
+   "D1 E0 V0 R1": 4,
+   "D1 E1 V0 R0": 1,
+   "D1 E1 V0 R1": 11,
+   "D1 E1 V0 R2": 3,
+   "D1 E2 V0 R1": 1,
+   "D1 E2 V0 R2": 3,
+   "D1 E3 V0 R1": 1,
+   "D1 E3 V0 R2": 3,
+   "D1 E4 V0 R2": 9,
+   "D1 E5 V0 R1": 1,
+   "D1 E6 V0 R2": 5,
+   "D1 E7 V0 R2": 3,
+   "D1 E8 V0 R2": 90,
+   "D1 E8 V1 R2": 2,
+   "D1 E8 V10 R2": 537,
+   "D1 E8 V3 R2": 1,
+   "D1 E8 V4 R2": 1,
+   "D1 E8 V6 R2": 2
+  }
+ },
+ "descriptive_non_gating": true,
+ "evidence_classes": {
+  "f_out, max_mean_energy_active_eV, Te_max_eV, I_d observables": "model-derived (HallThruster.jl v0.23.1 run records of the frozen dataset)",
+  "frame x cell count used for the proxy bound": "inferred from the pinned HallThruster.jl source - verify",
+  "hypothetical ladder counts": "hypothetical counting under a stated proxy; not a scoring",
+  "official statuses, reasons, member and candidate verdicts": "official pre-registered labels, read verbatim from the scores file",
+  "validity limits and bases": "as recorded in propellants/rate_validity.toml (not re-evaluated here)"
+ },
+ "f_out_magnitude": {
+  "f_out_max_OOD": {
+   "max": 0.04615198257431406,
+   "median": 2.823428737335938e-09,
+   "min": 1.0123594732695356e-12,
+   "n": 714,
+   "p10": 3.2181337832895504e-12,
+   "p90": 0.01046993239707352
+  },
+  "f_out_max_OOD_decade_histogram": {
+   "1e-10": 96,
+   "1e-11": 89,
+   "1e-12": 117,
+   "1e-2": 75,
+   "1e-3": 21,
+   "1e-4": 46,
+   "1e-5": 39,
+   "1e-6": 38,
+   "1e-7": 30,
+   "1e-8": 53,
+   "1e-9": 110
+  },
+  "f_out_max_in_domain": {
+   "max": 9.850534983163942e-13,
+   "median": 1.767490231514466e-14,
+   "min": 0.0,
+   "n": 366,
+   "p10": 7.090993925051372e-17,
+   "p90": 3.9796814305750736e-13
+  },
+  "f_out_max_in_domain_decade_histogram": {
+   "0": 23,
+   "1e-13": 101,
+   "1e-14": 98,
+   "1e-15": 94,
+   "1e-16": 34,
+   "1e-17": 13,
+   "1e-18": 3
+  },
+  "n_OOD_runs_f_out_max_ge_1e-2": 75,
+  "n_OOD_runs_f_out_max_lt_1e-11": 117,
+  "n_OOD_runs_f_out_max_lt_1e-6": 495,
+  "n_OOD_runs_f_out_max_lt_1e-9": 302,
+  "n_in_domain_runs_f_out_max_exactly_zero": 23,
+  "n_in_domain_runs_f_out_max_in_(0,tol]": 343,
+  "note": "f_out_max = largest recorded f_out over the run's reactions. Decade bins [1eK, 1e(K+1)). The pre-registered rule is f_out <= 1e-12 (numerical zero); this is a description of how far above or below it the runs sit."
+ },
+ "f_out_tolerance": 1e-12,
+ "f_out_tolerance_source": "hallthruster_bridge/prereg/p5_n2_run_status_rule_v1.json chemistry_trust_rule.f_out_tolerance",
+ "generated_by": "scripts/forensics/p5_n2_v1_ood_attribution.py",
+ "hypothetical_limit_ladder_45eV_family": {
+  "definition_checked_in_code": "bridge_lib.jl chemistry_activity: for each reaction, over every saved frame of the averaging window and every cell, R = n_e n_target k_r(3/2 T_e) dz; max_mean_energy_active_eV = the highest 3/2 T_e at which R > 1e-12 x max(R) (the largest single (frame, cell) activity of that reaction); f_out = sum of R where 3/2 T_e > limit / sum of R.",
+  "empirical_concordance_at_the_recorded_45eV_limit": {
+   "f_out_gt_tol_and_eps_active_gt_45": 12632,
+   "f_out_gt_tol_and_eps_active_le_45": 0,
+   "f_out_le_tol_and_eps_active_gt_45": 4278,
+   "f_out_le_tol_and_eps_active_le_45": 5770,
+   "n_officially_in_domain_runs_not_proxy_evaluable_at_45": 175,
+   "n_run_file_pairs_45eV_family": 22680,
+   "n_runs_officially_in_domain": 366,
+   "n_runs_proxy_evaluable_at_45": 191,
+   "note": "45 eV is the only limit at which both f_out and eps_active are recorded. There, no (run, file) pair had f_out > 1e-12 with eps_active <= 45 eV, so the proxy counted no officially OOD run as evaluable. It under-counts the officially in-domain runs: those whose sub-tolerance activity reaches above 45 eV. This is an observation on these records at 45 eV only, not a guarantee at any other L.",
+   "official_candidate_member_cells_with_zero_OOD_runs": 2,
+   "proxy_evaluable_subset_of_officially_in_domain": true
+  },
+  "frame_cell_count_for_the_bound": {
+   "derivation": "500 saved frames in the averaging window x 200 cells: HallThruster.jl v0.23.1 SimParams default num_save = 1000 evenly spaced saves over the 2 ms run, each an instantaneous snapshot (the time step is clipped to land on each save time), about 2.0 us apart (cases/p5_n2.json: cells 200, duration_s 0.002, average_start_s 0.001); the saves with t >= 1 ms are the last 500; sol.grid excludes the 2 ghost cells",
+   "evidence_class": "inferred from the pinned HallThruster.jl source (not in this repository) - verify; consistent with the recorded 100 final-10 % I_d samples per record (1000 saved frames)",
+   "resulting_bound_on_f_out_at_L_when_eps_active_le_L": 1e-07,
+   "value": 100000
+  },
+  "label": "HYPOTHETICAL COUNTING ONLY - not a scoring, not a verdict, not a proposal to change limits",
+  "ladder": [
+   {
+    "by_candidate": {
+     "sgb-screen-01": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 19
+     },
+     "sgb-screen-02": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 27
+     },
+     "sgb-screen-03": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 5
+     },
+     "sgb-screen-04": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 28
+     },
+     "sgb-screen-05": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 53
+     },
+     "sgb-screen-06": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 34
+     },
+     "sgb-screen-07": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 6
+     },
+     "sgb-screen-08": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 7
+     },
+     "sgb-screen-09": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 12
+     }
+    },
+    "by_point": {
+     "N1": 22,
+     "N2": 18,
+     "N3": 39,
+     "N4": 49,
+     "N5": 63
+    },
+    "by_registration": {
+     "L32-anode": 49,
+     "L32-exit": 6,
+     "L38-hist": 136
+    },
+    "hypothetical_limit_Te_eV": 30.0,
+    "hypothetical_limit_mean_energy_eV": 45.0,
+    "n_candidate_member_cells": 108,
+    "n_candidate_member_cells_all_20_runs_eps_active_le_L": 0,
+    "n_candidate_registration_coil_cells": 54,
+    "n_candidate_registration_coil_cells_all_20_runs_eps_active_le_L": 0,
+    "n_officially_OOD_runs_with_all_45eV_files_eps_active_le_L": 0,
+    "n_runs_all_45eV_files_eps_active_le_L": 191,
+    "per_file_runs_with_eps_active_gt_L": {
+     "dissociation_N2.dat": 889,
+     "excitation_N2_A3Sigma_u.dat": 843,
+     "excitation_N2_B3Pi_g.dat": 839,
+     "excitation_N2_Bprime3Sigma_u.dat": 856,
+     "excitation_N2_C3Pi_u.dat": 850,
+     "excitation_N2_W3Delta_u.dat": 849,
+     "excitation_N2_a1Pi_g.dat": 868,
+     "excitation_N2_aprime1Sigma_u.dat": 858,
+     "excitation_N2_rot_j0_to_j2.dat": 866,
+     "excitation_N2_rot_j0_to_j4.dat": 854,
+     "excitation_N2_vib_0_to_1.dat": 744,
+     "excitation_N2_vib_0_to_10.dat": 755,
+     "excitation_N2_vib_0_to_2.dat": 744,
+     "excitation_N2_vib_0_to_3.dat": 744,
+     "excitation_N2_vib_0_to_4.dat": 744,
+     "excitation_N2_vib_0_to_5.dat": 748,
+     "excitation_N2_vib_0_to_6.dat": 748,
+     "excitation_N2_vib_0_to_7.dat": 749,
+     "excitation_N2_vib_0_to_8.dat": 752,
+     "excitation_N2_vib_0_to_9.dat": 752,
+     "excitation_N2_w1Delta_u.dat": 858
+    },
+    "share_runs": 0.176852
+   },
+   {
+    "by_candidate": {
+     "sgb-screen-01": {
+      "n_members_all_20_runs_eps_active_le_L": 4,
+      "n_runs_all_45eV_files_eps_active_le_L": 74
+     },
+     "sgb-screen-02": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 53
+     },
+     "sgb-screen-03": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 16
+     },
+     "sgb-screen-04": {
+      "n_members_all_20_runs_eps_active_le_L": 2,
+      "n_runs_all_45eV_files_eps_active_le_L": 78
+     },
+     "sgb-screen-05": {
+      "n_members_all_20_runs_eps_active_le_L": 2,
+      "n_runs_all_45eV_files_eps_active_le_L": 83
+     },
+     "sgb-screen-06": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 56
+     },
+     "sgb-screen-07": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 32
+     },
+     "sgb-screen-08": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 34
+     },
+     "sgb-screen-09": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 42
+     }
+    },
+    "by_point": {
+     "N1": 108,
+     "N2": 74,
+     "N3": 79,
+     "N4": 96,
+     "N5": 111
+    },
+    "by_registration": {
+     "L32-anode": 184,
+     "L32-exit": 58,
+     "L38-hist": 226
+    },
+    "hypothetical_limit_Te_eV": 40.0,
+    "hypothetical_limit_mean_energy_eV": 60.0,
+    "n_candidate_member_cells": 108,
+    "n_candidate_member_cells_all_20_runs_eps_active_le_L": 8,
+    "n_candidate_registration_coil_cells": 54,
+    "n_candidate_registration_coil_cells_all_20_runs_eps_active_le_L": 4,
+    "n_officially_OOD_runs_with_all_45eV_files_eps_active_le_L": 211,
+    "n_runs_all_45eV_files_eps_active_le_L": 468,
+    "per_file_runs_with_eps_active_gt_L": {
+     "dissociation_N2.dat": 612,
+     "excitation_N2_A3Sigma_u.dat": 532,
+     "excitation_N2_B3Pi_g.dat": 532,
+     "excitation_N2_Bprime3Sigma_u.dat": 545,
+     "excitation_N2_C3Pi_u.dat": 537,
+     "excitation_N2_W3Delta_u.dat": 536,
+     "excitation_N2_a1Pi_g.dat": 578,
+     "excitation_N2_aprime1Sigma_u.dat": 551,
+     "excitation_N2_rot_j0_to_j2.dat": 584,
+     "excitation_N2_rot_j0_to_j4.dat": 563,
+     "excitation_N2_vib_0_to_1.dat": 407,
+     "excitation_N2_vib_0_to_10.dat": 420,
+     "excitation_N2_vib_0_to_2.dat": 407,
+     "excitation_N2_vib_0_to_3.dat": 407,
+     "excitation_N2_vib_0_to_4.dat": 407,
+     "excitation_N2_vib_0_to_5.dat": 410,
+     "excitation_N2_vib_0_to_6.dat": 410,
+     "excitation_N2_vib_0_to_7.dat": 414,
+     "excitation_N2_vib_0_to_8.dat": 419,
+     "excitation_N2_vib_0_to_9.dat": 419,
+     "excitation_N2_w1Delta_u.dat": 558
+    },
+    "share_runs": 0.433333
+   },
+   {
+    "by_candidate": {
+     "sgb-screen-01": {
+      "n_members_all_20_runs_eps_active_le_L": 8,
+      "n_runs_all_45eV_files_eps_active_le_L": 95
+     },
+     "sgb-screen-02": {
+      "n_members_all_20_runs_eps_active_le_L": 4,
+      "n_runs_all_45eV_files_eps_active_le_L": 90
+     },
+     "sgb-screen-03": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 70
+     },
+     "sgb-screen-04": {
+      "n_members_all_20_runs_eps_active_le_L": 4,
+      "n_runs_all_45eV_files_eps_active_le_L": 92
+     },
+     "sgb-screen-05": {
+      "n_members_all_20_runs_eps_active_le_L": 6,
+      "n_runs_all_45eV_files_eps_active_le_L": 98
+     },
+     "sgb-screen-06": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 85
+     },
+     "sgb-screen-07": {
+      "n_members_all_20_runs_eps_active_le_L": 4,
+      "n_runs_all_45eV_files_eps_active_le_L": 78
+     },
+     "sgb-screen-08": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 64
+     },
+     "sgb-screen-09": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 68
+     }
+    },
+    "by_point": {
+     "N1": 160,
+     "N2": 141,
+     "N3": 128,
+     "N4": 155,
+     "N5": 156
+    },
+    "by_registration": {
+     "L32-anode": 286,
+     "L32-exit": 158,
+     "L38-hist": 296
+    },
+    "hypothetical_limit_Te_eV": 50.0,
+    "hypothetical_limit_mean_energy_eV": 75.0,
+    "n_candidate_member_cells": 108,
+    "n_candidate_member_cells_all_20_runs_eps_active_le_L": 26,
+    "n_candidate_registration_coil_cells": 54,
+    "n_candidate_registration_coil_cells_all_20_runs_eps_active_le_L": 13,
+    "n_officially_OOD_runs_with_all_45eV_files_eps_active_le_L": 423,
+    "n_runs_all_45eV_files_eps_active_le_L": 740,
+    "per_file_runs_with_eps_active_gt_L": {
+     "dissociation_N2.dat": 340,
+     "excitation_N2_A3Sigma_u.dat": 272,
+     "excitation_N2_B3Pi_g.dat": 267,
+     "excitation_N2_Bprime3Sigma_u.dat": 286,
+     "excitation_N2_C3Pi_u.dat": 276,
+     "excitation_N2_W3Delta_u.dat": 276,
+     "excitation_N2_a1Pi_g.dat": 312,
+     "excitation_N2_aprime1Sigma_u.dat": 292,
+     "excitation_N2_rot_j0_to_j2.dat": 318,
+     "excitation_N2_rot_j0_to_j4.dat": 305,
+     "excitation_N2_vib_0_to_1.dat": 179,
+     "excitation_N2_vib_0_to_10.dat": 192,
+     "excitation_N2_vib_0_to_2.dat": 179,
+     "excitation_N2_vib_0_to_3.dat": 179,
+     "excitation_N2_vib_0_to_4.dat": 179,
+     "excitation_N2_vib_0_to_5.dat": 182,
+     "excitation_N2_vib_0_to_6.dat": 182,
+     "excitation_N2_vib_0_to_7.dat": 186,
+     "excitation_N2_vib_0_to_8.dat": 191,
+     "excitation_N2_vib_0_to_9.dat": 191,
+     "excitation_N2_w1Delta_u.dat": 301
+    },
+    "share_runs": 0.685185
+   },
+   {
+    "by_candidate": {
+     "sgb-screen-01": {
+      "n_members_all_20_runs_eps_active_le_L": 8,
+      "n_runs_all_45eV_files_eps_active_le_L": 116
+     },
+     "sgb-screen-02": {
+      "n_members_all_20_runs_eps_active_le_L": 4,
+      "n_runs_all_45eV_files_eps_active_le_L": 111
+     },
+     "sgb-screen-03": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 103
+     },
+     "sgb-screen-04": {
+      "n_members_all_20_runs_eps_active_le_L": 6,
+      "n_runs_all_45eV_files_eps_active_le_L": 114
+     },
+     "sgb-screen-05": {
+      "n_members_all_20_runs_eps_active_le_L": 8,
+      "n_runs_all_45eV_files_eps_active_le_L": 111
+     },
+     "sgb-screen-06": {
+      "n_members_all_20_runs_eps_active_le_L": 8,
+      "n_runs_all_45eV_files_eps_active_le_L": 110
+     },
+     "sgb-screen-07": {
+      "n_members_all_20_runs_eps_active_le_L": 6,
+      "n_runs_all_45eV_files_eps_active_le_L": 109
+     },
+     "sgb-screen-08": {
+      "n_members_all_20_runs_eps_active_le_L": 4,
+      "n_runs_all_45eV_files_eps_active_le_L": 95
+     },
+     "sgb-screen-09": {
+      "n_members_all_20_runs_eps_active_le_L": 0,
+      "n_runs_all_45eV_files_eps_active_le_L": 95
+     }
+    },
+    "by_point": {
+     "N1": 183,
+     "N2": 193,
+     "N3": 185,
+     "N4": 202,
+     "N5": 201
+    },
+    "by_registration": {
+     "L32-anode": 337,
+     "L32-exit": 278,
+     "L38-hist": 349
+    },
+    "hypothetical_limit_Te_eV": 60.0,
+    "hypothetical_limit_mean_energy_eV": 90.0,
+    "n_candidate_member_cells": 108,
+    "n_candidate_member_cells_all_20_runs_eps_active_le_L": 44,
+    "n_candidate_registration_coil_cells": 54,
+    "n_candidate_registration_coil_cells_all_20_runs_eps_active_le_L": 22,
+    "n_officially_OOD_runs_with_all_45eV_files_eps_active_le_L": 609,
+    "n_runs_all_45eV_files_eps_active_le_L": 964,
+    "per_file_runs_with_eps_active_gt_L": {
+     "dissociation_N2.dat": 116,
+     "excitation_N2_A3Sigma_u.dat": 98,
+     "excitation_N2_B3Pi_g.dat": 98,
+     "excitation_N2_Bprime3Sigma_u.dat": 99,
+     "excitation_N2_C3Pi_u.dat": 98,
+     "excitation_N2_W3Delta_u.dat": 98,
+     "excitation_N2_a1Pi_g.dat": 111,
+     "excitation_N2_aprime1Sigma_u.dat": 104,
+     "excitation_N2_rot_j0_to_j2.dat": 112,
+     "excitation_N2_rot_j0_to_j4.dat": 110,
+     "excitation_N2_vib_0_to_1.dat": 65,
+     "excitation_N2_vib_0_to_10.dat": 72,
+     "excitation_N2_vib_0_to_2.dat": 65,
+     "excitation_N2_vib_0_to_3.dat": 65,
+     "excitation_N2_vib_0_to_4.dat": 65,
+     "excitation_N2_vib_0_to_5.dat": 66,
+     "excitation_N2_vib_0_to_6.dat": 66,
+     "excitation_N2_vib_0_to_7.dat": 67,
+     "excitation_N2_vib_0_to_8.dat": 68,
+     "excitation_N2_vib_0_to_9.dat": 68,
+     "excitation_N2_w1Delta_u.dat": 106
+    },
+    "share_runs": 0.892593
+   },
+   {
+    "by_candidate": {
+     "sgb-screen-01": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-02": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-03": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-04": {
+      "n_members_all_20_runs_eps_active_le_L": 10,
+      "n_runs_all_45eV_files_eps_active_le_L": 119
+     },
+     "sgb-screen-05": {
+      "n_members_all_20_runs_eps_active_le_L": 10,
+      "n_runs_all_45eV_files_eps_active_le_L": 119
+     },
+     "sgb-screen-06": {
+      "n_members_all_20_runs_eps_active_le_L": 10,
+      "n_runs_all_45eV_files_eps_active_le_L": 119
+     },
+     "sgb-screen-07": {
+      "n_members_all_20_runs_eps_active_le_L": 10,
+      "n_runs_all_45eV_files_eps_active_le_L": 119
+     },
+     "sgb-screen-08": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-09": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     }
+    },
+    "by_point": {
+     "N1": 213,
+     "N2": 215,
+     "N3": 216,
+     "N4": 216,
+     "N5": 216
+    },
+    "by_registration": {
+     "L32-anode": 360,
+     "L32-exit": 356,
+     "L38-hist": 360
+    },
+    "hypothetical_limit_Te_eV": 80.0,
+    "hypothetical_limit_mean_energy_eV": 120.0,
+    "n_candidate_member_cells": 108,
+    "n_candidate_member_cells_all_20_runs_eps_active_le_L": 100,
+    "n_candidate_registration_coil_cells": 54,
+    "n_candidate_registration_coil_cells_all_20_runs_eps_active_le_L": 50,
+    "n_officially_OOD_runs_with_all_45eV_files_eps_active_le_L": 710,
+    "n_runs_all_45eV_files_eps_active_le_L": 1076,
+    "per_file_runs_with_eps_active_gt_L": {
+     "dissociation_N2.dat": 4,
+     "excitation_N2_A3Sigma_u.dat": 4,
+     "excitation_N2_B3Pi_g.dat": 4,
+     "excitation_N2_Bprime3Sigma_u.dat": 4,
+     "excitation_N2_C3Pi_u.dat": 4,
+     "excitation_N2_W3Delta_u.dat": 4,
+     "excitation_N2_a1Pi_g.dat": 4,
+     "excitation_N2_aprime1Sigma_u.dat": 4,
+     "excitation_N2_rot_j0_to_j2.dat": 4,
+     "excitation_N2_rot_j0_to_j4.dat": 4,
+     "excitation_N2_vib_0_to_1.dat": 4,
+     "excitation_N2_vib_0_to_10.dat": 4,
+     "excitation_N2_vib_0_to_2.dat": 4,
+     "excitation_N2_vib_0_to_3.dat": 4,
+     "excitation_N2_vib_0_to_4.dat": 4,
+     "excitation_N2_vib_0_to_5.dat": 4,
+     "excitation_N2_vib_0_to_6.dat": 4,
+     "excitation_N2_vib_0_to_7.dat": 4,
+     "excitation_N2_vib_0_to_8.dat": 4,
+     "excitation_N2_vib_0_to_9.dat": 4,
+     "excitation_N2_w1Delta_u.dat": 4
+    },
+    "share_runs": 0.996296
+   },
+   {
+    "by_candidate": {
+     "sgb-screen-01": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-02": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-03": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-04": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-05": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-06": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-07": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-08": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-09": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     }
+    },
+    "by_point": {
+     "N1": 216,
+     "N2": 216,
+     "N3": 216,
+     "N4": 216,
+     "N5": 216
+    },
+    "by_registration": {
+     "L32-anode": 360,
+     "L32-exit": 360,
+     "L38-hist": 360
+    },
+    "hypothetical_limit_Te_eV": 100.0,
+    "hypothetical_limit_mean_energy_eV": 150.0,
+    "n_candidate_member_cells": 108,
+    "n_candidate_member_cells_all_20_runs_eps_active_le_L": 108,
+    "n_candidate_registration_coil_cells": 54,
+    "n_candidate_registration_coil_cells_all_20_runs_eps_active_le_L": 54,
+    "n_officially_OOD_runs_with_all_45eV_files_eps_active_le_L": 714,
+    "n_runs_all_45eV_files_eps_active_le_L": 1080,
+    "per_file_runs_with_eps_active_gt_L": {
+     "dissociation_N2.dat": 0,
+     "excitation_N2_A3Sigma_u.dat": 0,
+     "excitation_N2_B3Pi_g.dat": 0,
+     "excitation_N2_Bprime3Sigma_u.dat": 0,
+     "excitation_N2_C3Pi_u.dat": 0,
+     "excitation_N2_W3Delta_u.dat": 0,
+     "excitation_N2_a1Pi_g.dat": 0,
+     "excitation_N2_aprime1Sigma_u.dat": 0,
+     "excitation_N2_rot_j0_to_j2.dat": 0,
+     "excitation_N2_rot_j0_to_j4.dat": 0,
+     "excitation_N2_vib_0_to_1.dat": 0,
+     "excitation_N2_vib_0_to_10.dat": 0,
+     "excitation_N2_vib_0_to_2.dat": 0,
+     "excitation_N2_vib_0_to_3.dat": 0,
+     "excitation_N2_vib_0_to_4.dat": 0,
+     "excitation_N2_vib_0_to_5.dat": 0,
+     "excitation_N2_vib_0_to_6.dat": 0,
+     "excitation_N2_vib_0_to_7.dat": 0,
+     "excitation_N2_vib_0_to_8.dat": 0,
+     "excitation_N2_vib_0_to_9.dat": 0,
+     "excitation_N2_w1Delta_u.dat": 0
+    },
+    "share_runs": 1.0
+   },
+   {
+    "by_candidate": {
+     "sgb-screen-01": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-02": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-03": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-04": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-05": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-06": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-07": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-08": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-09": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     }
+    },
+    "by_point": {
+     "N1": 216,
+     "N2": 216,
+     "N3": 216,
+     "N4": 216,
+     "N5": 216
+    },
+    "by_registration": {
+     "L32-anode": 360,
+     "L32-exit": 360,
+     "L38-hist": 360
+    },
+    "hypothetical_limit_Te_eV": 133.33333333333334,
+    "hypothetical_limit_mean_energy_eV": 200.0,
+    "n_candidate_member_cells": 108,
+    "n_candidate_member_cells_all_20_runs_eps_active_le_L": 108,
+    "n_candidate_registration_coil_cells": 54,
+    "n_candidate_registration_coil_cells_all_20_runs_eps_active_le_L": 54,
+    "n_officially_OOD_runs_with_all_45eV_files_eps_active_le_L": 714,
+    "n_runs_all_45eV_files_eps_active_le_L": 1080,
+    "per_file_runs_with_eps_active_gt_L": {
+     "dissociation_N2.dat": 0,
+     "excitation_N2_A3Sigma_u.dat": 0,
+     "excitation_N2_B3Pi_g.dat": 0,
+     "excitation_N2_Bprime3Sigma_u.dat": 0,
+     "excitation_N2_C3Pi_u.dat": 0,
+     "excitation_N2_W3Delta_u.dat": 0,
+     "excitation_N2_a1Pi_g.dat": 0,
+     "excitation_N2_aprime1Sigma_u.dat": 0,
+     "excitation_N2_rot_j0_to_j2.dat": 0,
+     "excitation_N2_rot_j0_to_j4.dat": 0,
+     "excitation_N2_vib_0_to_1.dat": 0,
+     "excitation_N2_vib_0_to_10.dat": 0,
+     "excitation_N2_vib_0_to_2.dat": 0,
+     "excitation_N2_vib_0_to_3.dat": 0,
+     "excitation_N2_vib_0_to_4.dat": 0,
+     "excitation_N2_vib_0_to_5.dat": 0,
+     "excitation_N2_vib_0_to_6.dat": 0,
+     "excitation_N2_vib_0_to_7.dat": 0,
+     "excitation_N2_vib_0_to_8.dat": 0,
+     "excitation_N2_vib_0_to_9.dat": 0,
+     "excitation_N2_w1Delta_u.dat": 0
+    },
+    "share_runs": 1.0
+   },
+   {
+    "by_candidate": {
+     "sgb-screen-01": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-02": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-03": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-04": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-05": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-06": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-07": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-08": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     },
+     "sgb-screen-09": {
+      "n_members_all_20_runs_eps_active_le_L": 12,
+      "n_runs_all_45eV_files_eps_active_le_L": 120
+     }
+    },
+    "by_point": {
+     "N1": 216,
+     "N2": 216,
+     "N3": 216,
+     "N4": 216,
+     "N5": 216
+    },
+    "by_registration": {
+     "L32-anode": 360,
+     "L32-exit": 360,
+     "L38-hist": 360
+    },
+    "hypothetical_limit_Te_eV": 170.0,
+    "hypothetical_limit_mean_energy_eV": 255.0,
+    "n_candidate_member_cells": 108,
+    "n_candidate_member_cells_all_20_runs_eps_active_le_L": 108,
+    "n_candidate_registration_coil_cells": 54,
+    "n_candidate_registration_coil_cells_all_20_runs_eps_active_le_L": 54,
+    "n_officially_OOD_runs_with_all_45eV_files_eps_active_le_L": 714,
+    "n_runs_all_45eV_files_eps_active_le_L": 1080,
+    "per_file_runs_with_eps_active_gt_L": {
+     "dissociation_N2.dat": 0,
+     "excitation_N2_A3Sigma_u.dat": 0,
+     "excitation_N2_B3Pi_g.dat": 0,
+     "excitation_N2_Bprime3Sigma_u.dat": 0,
+     "excitation_N2_C3Pi_u.dat": 0,
+     "excitation_N2_W3Delta_u.dat": 0,
+     "excitation_N2_a1Pi_g.dat": 0,
+     "excitation_N2_aprime1Sigma_u.dat": 0,
+     "excitation_N2_rot_j0_to_j2.dat": 0,
+     "excitation_N2_rot_j0_to_j4.dat": 0,
+     "excitation_N2_vib_0_to_1.dat": 0,
+     "excitation_N2_vib_0_to_10.dat": 0,
+     "excitation_N2_vib_0_to_2.dat": 0,
+     "excitation_N2_vib_0_to_3.dat": 0,
+     "excitation_N2_vib_0_to_4.dat": 0,
+     "excitation_N2_vib_0_to_5.dat": 0,
+     "excitation_N2_vib_0_to_6.dat": 0,
+     "excitation_N2_vib_0_to_7.dat": 0,
+     "excitation_N2_vib_0_to_8.dat": 0,
+     "excitation_N2_vib_0_to_9.dat": 0,
+     "excitation_N2_w1Delta_u.dat": 0
+    },
+    "share_runs": 1.0
+   }
+  ],
+  "what_is_counted": "For each hypothetical mean-energy limit L applied to the 21 files of the 45 eV family only (the 255 eV family is left as recorded), the number of runs in which max_mean_energy_active_eV <= L for EVERY 45 eV-family file of the run, and the number of (candidate, global layer-1 member) cells whose 20 runs (4 mandatory chemistry configs x 5 points) all satisfy that.",
+  "what_it_does_not_imply": [
+   "It is not a scoring, not a verdict, not a status and not a proposal to change any limit. The v1 statuses are final and are read only from the scores file.",
+   "f_out at any limit other than the recorded one (45 eV for this family) is NOT recorded. Only f_out(45 eV) and max_mean_energy_active_eV are in the records.",
+   "max_mean_energy_active_eV is NOT the maximum mean energy with nonzero activity (verified in bridge_lib.jl): (frame, cell) points above it may carry 0 < R <= 1e-12 max(R). eps_active <= L therefore guarantees only f_out(L) <= N_above x 1e-12 x max(R) / sum(R) <= N_frame_cell x 1e-12, not f_out(L) <= 1e-12. Conversely eps_active > L implies f_out(L) > 0, not f_out(L) > 1e-12. It is neither a sufficient nor a necessary condition for the pre-registered f_out <= 1e-12 at L.",
+   "Chemistry-evaluable under this proxy says nothing about the validity of the rate tables above 45 eV. The 45 eV cap is the pre-registered domain (T_e <= 30 eV) recorded in rate_validity.toml. Any extension would need independent published evidence and is the owner's decision; it would be a model change with its own reruns.",
+   "Nothing is said about what status such runs would receive."
+  ]
+ },
+ "id": "p5_n2_v1_ood_attribution",
+ "input_integrity_checks": {
+  "bridge_lib_defines_activity": true,
+  "bridge_lib_defines_eps_active": true,
+  "bridge_lib_defines_f_out": true,
+  "bridge_lib_defines_f_out_numerator": true,
+  "bridge_lib_defines_mean_energy": true,
+  "bridge_lib_defines_te_max": true,
+  "bridge_lib_defines_te_max_frame": true,
+  "bridge_lib_defines_time_average": true,
+  "bridge_lib_defines_tolerance": true,
+  "bridge_lib_defines_window": true,
+  "chemistry_config_n2_n.toml_sha256_matches_criteria": true,
+  "chemistry_config_n2_n_di_lower.toml_sha256_matches_criteria": true,
+  "chemistry_config_n2_n_di_lower_nel_wang.toml_sha256_matches_criteria": true,
+  "chemistry_config_n2_n_nel_wang.toml_sha256_matches_criteria": true,
+  "criteria_sha256_matches_prereg_lock": true,
+  "freeze_manifest_sha256_matches_release": true,
+  "raw_canonical_sha256_matches_manifest": true,
+  "raw_canonical_sha256_matches_release": true,
+  "raw_gz_sha256_matches_freeze_manifest": true,
+  "report_sha256_matches_release": true,
+  "run_status_rule_sha256_matches_prereg_lock": true,
+  "scorer_defines_o1": true,
+  "scorer_defines_o1_frac": true,
+  "scorer_defines_ood_predicate": true,
+  "scorer_defines_tolerance": true,
+  "scorer_sha256_matches_release": true,
+  "scores_sha256_matches_release": true
+ },
+ "inputs_sha256": {
+  "chemistry_config:n2_n.toml": "4f10db747cfb11cfefb8080a9cad52e502c2ab11f0e485ac644a532b929607de",
+  "chemistry_config:n2_n_di_lower.toml": "8b679aca9b223719d521890c391e227727ff2dfacdea6e3ebbbdee93d1b84372",
+  "chemistry_config:n2_n_di_lower_nel_wang.toml": "29325bda79f18006e9f3c62df2a1ccc6aa74b66a44040f08d1bbe4ccd4305749",
+  "chemistry_config:n2_n_nel_wang.toml": "398c795be786194d2caf9c8720f28b4c3cfab80033f43431d21c6e8b14ab1318",
+  "hallthruster_bridge/bridge_lib.jl": "cf26aab8607b640ebb78be9715f2c7c5d957f145ac17f52c1b23db2e980e21ab",
+  "hallthruster_bridge/prereg/p5_n2_prereg_lock_v1.json": "71ecd39fa25ea60e2e4aff9474bdd700ec8cd718e819dfdae774594709e805be",
+  "hallthruster_bridge/prereg/p5_n2_run_status_rule_v1.json": "e72eb4c65417ebda87fbb1f2df75b3d97156f4a4a25207a336197872d88151e0",
+  "hallthruster_bridge/prereg/p5_n2_validation_criteria_v1.json": "8ca75ae2fac3a47ba008474f706cdfa8b60e3d1cf27429e1a4ad55dc47068462",
+  "hallthruster_bridge/propellants/rate_validity.toml": "64b51be96ef30d6024a99ad9bc0b47384ba3c2434a4c096403cc2b1aa0290e3a",
+  "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json": "0a57a397883141be20196853b7d722404dc3cb20c72fba666121fd43507dc97c",
+  "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_raw.jsonl.gz": "5b11705cf1afa31df7202bfb12f4e4d99e8f03966373e23652b9066846627b6f",
+  "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_raw_manifest.json": "3a9ce99a6d024f9053631a8fa62ae340178b6fe204c772f60031d8f25e35119a",
+  "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores.json": "87895820e21e36fa8f9b07fa7475789f08d91d946d526a09acf142fe509be1bc",
+  "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores_report.md": "a83cb68a2b5eae546d4674b1f82cbe9ddeb4323ee11e730929251776e07d546e",
+  "scripts/score_p5_n2_campaign.py": "907ca7b5ef8e802ed97129ca9e3fd09b7493bc688088425b150ed02352a39fe3"
+ },
+ "official_status_crosstab": {
+  "in_domain_runs_split_by_sub_tolerance_activity_above_45eV": {
+   "eps_active_gt_45": {
+    "n_runs": 175,
+    "official_run_readings": {
+     "FAIL_VALIDATION:CURRENT": 90,
+     "FAIL_VALIDATION:CURRENT+THRUST": 128,
+     "FAIL_VALIDATION:SUSTAINMENT": 50,
+     "FAIL_VALIDATION:SUSTAINMENT+CURRENT": 22,
+     "FAIL_VALIDATION:SUSTAINMENT+CURRENT+THRUST": 18,
+     "FAIL_VALIDATION:SUSTAINMENT+THRUST": 10,
+     "FAIL_VALIDATION:THRUST": 4,
+     "PASS": 28
+    }
+   },
+   "eps_active_le_45": {
+    "n_runs": 191,
+    "official_run_readings": {
+     "FAIL_VALIDATION:CURRENT": 132,
+     "FAIL_VALIDATION:CURRENT+THRUST": 86,
+     "FAIL_VALIDATION:SUSTAINMENT": 62,
+     "FAIL_VALIDATION:SUSTAINMENT+CURRENT": 36,
+     "FAIL_VALIDATION:SUSTAINMENT+CURRENT+THRUST": 40,
+     "FAIL_VALIDATION:SUSTAINMENT+THRUST": 22,
+     "PASS": 4
+    }
+   },
+   "note": "In-domain runs (f_out <= 1e-12 for every file) in which some 45 eV-family file still has max_mean_energy_active_eV > 45 eV (activity above 45 eV that is > 1e-12 of its peak point but sums to f_out <= 1e-12) versus runs with none."
+  },
+  "note": "Official statuses and reasons per run-reading, read verbatim from the scores file, cross-tabulated against the OOD cause category derived from the recorded per-reaction fields. OOD run-readings carry no reasons (O2 precedence).",
+  "run_readings_by_category": {
+   "DISSOCIATION_ONLY": {
+    "OUT_OF_DOMAIN": 72
+   },
+   "FULL_45EV_FAMILY": {
+    "OUT_OF_DOMAIN": 1074
+   },
+   "IN_DOMAIN": {
+    "FAIL_VALIDATION:CURRENT": 222,
+    "FAIL_VALIDATION:CURRENT+THRUST": 214,
+    "FAIL_VALIDATION:SUSTAINMENT": 112,
+    "FAIL_VALIDATION:SUSTAINMENT+CURRENT": 58,
+    "FAIL_VALIDATION:SUSTAINMENT+CURRENT+THRUST": 58,
+    "FAIL_VALIDATION:SUSTAINMENT+THRUST": 32,
+    "FAIL_VALIDATION:THRUST": 4,
+    "PASS": 32
+   },
+   "NO_VIBRATIONAL": {
+    "OUT_OF_DOMAIN": 270
+   },
+   "PARTIAL_VIBRATIONAL": {
+    "OUT_OF_DOMAIN": 12
+   }
+  },
+  "sustainment_collapse_co_occurrence": {
+   "bridge_sustained_flag_diagnostic_only": {
+    "OOD|sustained=False": 703,
+    "OOD|sustained=True": 11,
+    "in_domain|sustained=False": 366,
+    "in_domain|sustained=True": 0
+   },
+   "by_OOD_category": {
+    "DISSOCIATION_ONLY": {
+     "n_runs": 36,
+     "n_with_O1_collapse_pattern": 7
+    },
+    "FULL_45EV_FAMILY": {
+     "n_runs": 537,
+     "n_with_O1_collapse_pattern": 106
+    },
+    "IN_DOMAIN": {
+     "n_runs": 366,
+     "n_with_O1_collapse_pattern": 130
+    },
+    "NO_VIBRATIONAL": {
+     "n_runs": 135,
+     "n_with_O1_collapse_pattern": 36
+    },
+    "OTHER": {
+     "n_runs": 0,
+     "n_with_O1_collapse_pattern": 0
+    },
+    "PARTIAL_VIBRATIONAL": {
+     "n_runs": 6,
+     "n_with_O1_collapse_pattern": 2
+    }
+   },
+   "by_candidate_OOD_runs": {
+    "sgb-screen-01": {
+     "n_OOD": 70,
+     "n_OOD_with_O1_collapse_pattern": 0
+    },
+    "sgb-screen-02": {
+     "n_OOD": 88,
+     "n_OOD_with_O1_collapse_pattern": 24
+    },
+    "sgb-screen-03": {
+     "n_OOD": 99,
+     "n_OOD_with_O1_collapse_pattern": 12
+    },
+    "sgb-screen-04": {
+     "n_OOD": 81,
+     "n_OOD_with_O1_collapse_pattern": 14
+    },
+    "sgb-screen-05": {
+     "n_OOD": 55,
+     "n_OOD_with_O1_collapse_pattern": 15
+    },
+    "sgb-screen-06": {
+     "n_OOD": 63,
+     "n_OOD_with_O1_collapse_pattern": 22
+    },
+    "sgb-screen-07": {
+     "n_OOD": 78,
+     "n_OOD_with_O1_collapse_pattern": 15
+    },
+    "sgb-screen-08": {
+     "n_OOD": 107,
+     "n_OOD_with_O1_collapse_pattern": 24
+    },
+    "sgb-screen-09": {
+     "n_OOD": 73,
+     "n_OOD_with_O1_collapse_pattern": 25
+    }
+   },
+   "by_point_OOD_runs": {
+    "N1": {
+     "n_OOD": 184,
+     "n_OOD_with_O1_collapse_pattern": 46
+    },
+    "N2": {
+     "n_OOD": 161,
+     "n_OOD_with_O1_collapse_pattern": 42
+    },
+    "N3": {
+     "n_OOD": 136,
+     "n_OOD_with_O1_collapse_pattern": 31
+    },
+    "N4": {
+     "n_OOD": 117,
+     "n_OOD_with_O1_collapse_pattern": 16
+    },
+    "N5": {
+     "n_OOD": 116,
+     "n_OOD_with_O1_collapse_pattern": 16
+    }
+   },
+   "check_pattern_equals_official_SUSTAINMENT_reason_on_in_domain_runs": true,
+   "f_out_max_OOD_with_pattern": {
+    "max": 0.04615198257431406,
+    "median": 9.400789390191821e-10,
+    "min": 1.0963976449735814e-12,
+    "n": 151,
+    "p10": 3.2064698664634978e-12,
+    "p90": 0.0032234851559072033
+   },
+   "f_out_max_OOD_without_pattern": {
+    "max": 0.0384900856842509,
+    "median": 4.123650102987784e-09,
+    "min": 1.0123594732695356e-12,
+    "n": 563,
+    "p10": 3.3495414548848464e-12,
+    "p90": 0.010474374952214097
+   },
+   "final10_mean_over_target_OOD": {
+    "max": 2.5290532805302517,
+    "median": 1.4299400745782007,
+    "min": 1.7549257296640637e-11,
+    "n": 714,
+    "p10": 0.000125987897757736,
+    "p90": 1.9948878316762881
+   },
+   "final10_mean_over_target_in_domain": {
+    "max": 2.7555748966393376,
+    "median": 1.6908689033018929,
+    "min": 2.5846013988319715e-14,
+    "n": 366,
+    "p10": 1.619699221322471e-10,
+    "p90": 2.4169818906570963
+   },
+   "label": "Descriptive co-occurrence only. The O1 collapse PATTERN (mean of the final-10 % I_d samples < 0.05 I_target AND >= 90 % of them < 0.10 I_target) is evaluated on the observables that the official scores file records for every numerically valid run. For OOD runs it is NOT a status or a reason: the official status is OUT_OF_DOMAIN (O2 precedence OUT_OF_DOMAIN before FAIL_VALIDATION) and no SUSTAINMENT reason is assigned.",
+   "n_OOD_runs_with_O1_collapse_pattern": 151,
+   "n_OOD_runs_without_O1_collapse_pattern": 563,
+   "n_in_domain_runs_with_official_SUSTAINMENT_reason": 130,
+   "share_OOD_runs_with_pattern": 0.211485,
+   "share_in_domain_runs_with_pattern": 0.355191
+  }
+ },
+ "per_file": {
+  "dissociation_N2.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 714,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 175,
+    "f_out_le_tol_and_eps_active_le_limit": 191
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.04615198257431406,
+    "median": 4.385082180115085e-11,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 2.8915650582973824e-15,
+    "p90": 0.00042604554944365106
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.04615198257431406,
+    "median": 2.823428737335938e-09,
+    "min": 1.0123594732695356e-12,
+    "n": 714,
+    "p10": 3.2181337832895504e-12,
+    "p90": 0.01046993239707352
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 64.57314363776106,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 38.36261622756316,
+    "p90": 90.37275385774142
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 71.08818017253998,
+    "min": 45.10684157501925,
+    "n": 714,
+    "p10": 51.0014332309616,
+    "p90": 94.11398764957391
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 108.6318413356237,
+    "median": 44.41809403745087,
+    "min": 30.13591640604971,
+    "n": 366,
+    "p10": 36.03602993301966,
+    "p90": 78.53100711862467
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.4349587475058012,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.8525025828347368,
+    "p90": 2.0082834190609202
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 714,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 714,
+   "n_runs_f_out_in_(0,tol]": 343,
+   "n_runs_max_mean_energy_active_gt_limit": 889,
+   "n_runs_sole_cause": 36,
+   "n_runs_using": 1080,
+   "subfamily": "dissociation",
+   "validity_basis": "JPCRD 2023 Table 9 ends at 200 eV; held tail carries 0.95 % of the rate at 45 eV mean energy (T_e = 30 eV), 3.8 % at 60 eV (scripts/build_n2_dissociation_table.py)",
+   "validity_status": "verified"
+  },
+  "dissociative_ionization_N2_lower.dat": {
+   "chemistry_configs_using": [
+    "n2_n_di_lower.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 0,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 0,
+    "f_out_le_tol_and_eps_active_le_limit": 540
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.0,
+    "median": 0.0,
+    "min": 0.0,
+    "n": 540,
+    "p10": 0.0,
+    "p90": 0.0
+   },
+   "f_out_over_runs_beyond": {
+    "n": 0
+   },
+   "limit_Te_eV": 170.0,
+   "limit_family": "255 eV",
+   "limit_mean_energy_eV": 255.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 125.35550926590224,
+    "median": 65.5814043460733,
+    "min": 30.13591640604971,
+    "n": 540,
+    "p10": 39.56498584984693,
+    "p90": 89.7925643294546
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "n": 0
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 125.35550926590224,
+    "median": 65.5814043460733,
+    "min": 30.13591640604971,
+    "n": 540,
+    "p10": 39.56498584984693,
+    "p90": 89.7925643294546
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 0.4915902324153029,
+    "median": 0.25718197782773844,
+    "min": 0.11818006433744985,
+    "n": 540,
+    "p10": 0.1551568072543017,
+    "p90": 0.35212770325276316
+   },
+   "n_OOD_runs_using": 355,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 540,
+   "n_runs_f_out_gt_tol": 0,
+   "n_runs_f_out_in_(0,tol]": 0,
+   "n_runs_max_mean_energy_active_gt_limit": 0,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 540,
+   "subfamily": "other",
+   "validity_basis": "as the upper variant, minus 0.01 x sigma_total (JPCRD Sec. 2.8 N2++ statement); held-tail share < 1 % at 255 eV mean energy",
+   "validity_status": "verified"
+  },
+  "dissociative_ionization_N2_to_N_Z2plus.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 0,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 0,
+    "f_out_le_tol_and_eps_active_le_limit": 1080
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.0,
+    "median": 0.0,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 0.0,
+    "p90": 0.0
+   },
+   "f_out_over_runs_beyond": {
+    "n": 0
+   },
+   "limit_Te_eV": 170.0,
+   "limit_family": "255 eV",
+   "limit_mean_energy_eV": 255.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 68.40453632918937,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 44.42228406556802,
+    "p90": 91.6498401817967
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "n": 0
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 127.93540083153,
+    "median": 68.40453632918937,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 44.42228406556802,
+    "p90": 91.6498401817967
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 0.5017074542412941,
+    "median": 0.2682530836438799,
+    "min": 0.11818006433744985,
+    "n": 1080,
+    "p10": 0.17420503555124714,
+    "p90": 0.35941113796783025
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 1080,
+   "n_runs_f_out_gt_tol": 0,
+   "n_runs_f_out_in_(0,tol]": 0,
+   "n_runs_max_mean_energy_active_gt_limit": 0,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "other",
+   "validity_basis": "JPCRD 2023 Table 10 sigma(N++) spans 70-1000 eV (ramp from 53.885 eV); held-tail share 0.946 % at 255 eV mean energy (scripts/build_n2_to_n_z2plus_table.py)",
+   "validity_status": "verified"
+  },
+  "dissociative_ionization_N2_upper.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 0,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 0,
+    "f_out_le_tol_and_eps_active_le_limit": 540
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.0,
+    "median": 0.0,
+    "min": 0.0,
+    "n": 540,
+    "p10": 0.0,
+    "p90": 0.0
+   },
+   "f_out_over_runs_beyond": {
+    "n": 0
+   },
+   "limit_Te_eV": 170.0,
+   "limit_family": "255 eV",
+   "limit_mean_energy_eV": 255.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 66.65211991690052,
+    "min": 34.268725410931225,
+    "n": 540,
+    "p10": 39.71660291699223,
+    "p90": 91.57619959151265
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "n": 0
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 127.93540083153,
+    "median": 66.65211991690052,
+    "min": 34.268725410931225,
+    "n": 540,
+    "p10": 39.71660291699223,
+    "p90": 91.57619959151265
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 0.5017074542412941,
+    "median": 0.26138086241921765,
+    "min": 0.1343871584742401,
+    "n": 540,
+    "p10": 0.15575138398820482,
+    "p90": 0.3591223513392653
+   },
+   "n_OOD_runs_using": 359,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 540,
+   "n_runs_f_out_gt_tol": 0,
+   "n_runs_f_out_in_(0,tol]": 0,
+   "n_runs_max_mean_energy_active_gt_limit": 0,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 540,
+   "subfamily": "other",
+   "validity_basis": "JPCRD 2023 Table 10 sigma(N+ + N2++) spans 30-1000 eV (ramp from 24.284 eV); held-tail share < 1 % at 255 eV mean energy (scripts/build_n2_dissociative_ionization_table.py)",
+   "validity_status": "verified"
+  },
+  "elastic_N2_song2023.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 0,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 0,
+    "f_out_le_tol_and_eps_active_le_limit": 1080
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.0,
+    "median": 0.0,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 0.0,
+    "p90": 0.0
+   },
+   "f_out_over_runs_beyond": {
+    "n": 0
+   },
+   "limit_Te_eV": 170.0,
+   "limit_family": "255 eV",
+   "limit_mean_energy_eV": 255.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 59.39764523240979,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 37.41985579984069,
+    "p90": 87.92973700091305
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "n": 0
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 127.93540083153,
+    "median": 59.39764523240979,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 37.41985579984069,
+    "p90": 87.92973700091305
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 0.5017074542412941,
+    "median": 0.23293194208788154,
+    "min": 0.11818006433744985,
+    "n": 1080,
+    "p10": 0.14674453254839487,
+    "p90": 0.3448224980427963
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 1080,
+   "n_runs_f_out_gt_tol": 0,
+   "n_runs_f_out_in_(0,tol]": 0,
+   "n_runs_max_mean_energy_active_gt_limit": 0,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "other",
+   "validity_basis": "JPCRD 2023 Table 5 MTCS spans 0.001 eV-10 keV; held-tail share 0.000000 % at 255 eV mean energy (scripts/build_n2_elastic_song2023_table.py)",
+   "validity_status": "verified"
+  },
+  "elastic_N_ragimkhanov2026.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 0,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 0,
+    "f_out_le_tol_and_eps_active_le_limit": 540
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.0,
+    "median": 0.0,
+    "min": 0.0,
+    "n": 540,
+    "p10": 0.0,
+    "p90": 0.0
+   },
+   "f_out_over_runs_beyond": {
+    "n": 0
+   },
+   "limit_Te_eV": 170.0,
+   "limit_family": "255 eV",
+   "limit_mean_energy_eV": 255.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 111.3094430828678,
+    "median": 60.9667695040109,
+    "min": 30.13591640604971,
+    "n": 540,
+    "p10": 43.43924008507183,
+    "p90": 82.65641086359803
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "n": 0
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 111.3094430828678,
+    "median": 60.9667695040109,
+    "min": 30.13591640604971,
+    "n": 540,
+    "p10": 43.43924008507183,
+    "p90": 82.65641086359803
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 0.4365076199328149,
+    "median": 0.23908537060396431,
+    "min": 0.11818006433744985,
+    "n": 540,
+    "p10": 0.17034996111792874,
+    "p90": 0.32414278770038446
+   },
+   "n_OOD_runs_using": 350,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 540,
+   "n_runs_f_out_gt_tol": 0,
+   "n_runs_f_out_in_(0,tol]": 0,
+   "n_runs_max_mean_energy_active_gt_limit": 0,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 540,
+   "subfamily": "other",
+   "validity_basis": "Ragimkhanov et al. EPJD 2026 Fig. 1b OPM MTCS, vector-extracted, 1 eV - 1 MeV; held-tail share 0.0000 % at 255 eV mean energy (scripts/build_n_elastic_tables.py)",
+   "validity_status": "verified"
+  },
+  "elastic_N_wang2014_bsr.dat": {
+   "chemistry_configs_using": [
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 0,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 0,
+    "f_out_le_tol_and_eps_active_le_limit": 540
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.0,
+    "median": 0.0,
+    "min": 0.0,
+    "n": 540,
+    "p10": 0.0,
+    "p90": 0.0
+   },
+   "f_out_over_runs_beyond": {
+    "n": 0
+   },
+   "limit_Te_eV": 170.0,
+   "limit_family": "255 eV",
+   "limit_mean_energy_eV": 255.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 126.71843484164204,
+    "median": 58.77345849973216,
+    "min": 34.694727586976256,
+    "n": 540,
+    "p10": 44.15710245115924,
+    "p90": 81.20286701037885
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "n": 0
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 126.71843484164204,
+    "median": 58.77345849973216,
+    "min": 34.694727586976256,
+    "n": 540,
+    "p10": 44.15710245115924,
+    "p90": 81.20286701037885
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 0.49693503859467464,
+    "median": 0.2304841509793418,
+    "min": 0.13605775524304414,
+    "n": 540,
+    "p10": 0.17316510765160484,
+    "p90": 0.3184426157269759
+   },
+   "n_OOD_runs_using": 364,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 540,
+   "n_runs_f_out_gt_tol": 0,
+   "n_runs_f_out_in_(0,tol]": 0,
+   "n_runs_max_mean_energy_active_gt_limit": 0,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 540,
+   "subfamily": "other",
+   "validity_basis": "Wang et al. 2014 BSR MTCS as re-plotted in Ragimkhanov Fig. 1b (0.95-128 eV), OPM above 128 eV; held-tail share 0.0000 % at 255 eV mean energy",
+   "validity_status": "verified"
+  },
+  "excitation_N2_A3Sigma_u.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 636,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 207,
+    "f_out_le_tol_and_eps_active_le_limit": 237
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.017034995576438276,
+    "median": 1.0064266640640343e-11,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 8.279295010327387e-16,
+    "p90": 0.00016679994182724876
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.017034995576438276,
+    "median": 1.934673315049125e-09,
+    "min": 1.0309397730371195e-12,
+    "n": 636,
+    "p10": 4.898379150668548e-12,
+    "p90": 0.004477596052201122
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 59.51957472157262,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 37.497771460275125,
+    "p90": 88.09628083338627
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 68.57878116991813,
+    "min": 45.10684157501925,
+    "n": 636,
+    "p10": 50.56552454062381,
+    "p90": 92.89937998020429
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 105.2332057133656,
+    "median": 44.41809403745087,
+    "min": 30.13591640604971,
+    "n": 444,
+    "p10": 35.82289632225908,
+    "p90": 77.19208520321014
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.3226572160349472,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.8332838102283362,
+    "p90": 1.957695129630806
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 636,
+   "n_runs_f_out_in_(0,tol]": 421,
+   "n_runs_max_mean_energy_active_gt_limit": 843,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "electronic",
+   "validity_basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_B3Pi_g.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 633,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 206,
+    "f_out_le_tol_and_eps_active_le_limit": 241
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.015952678478582075,
+    "median": 9.152791557705192e-12,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 7.628608894528333e-16,
+    "p90": 0.0001574131936026171
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.015952678478582075,
+    "median": 1.7879352263312341e-09,
+    "min": 1.0043442743805443e-12,
+    "n": 633,
+    "p10": 4.9414964745476945e-12,
+    "p90": 0.004222530453626181
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 59.51957472157262,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 37.46045613625486,
+    "p90": 87.92973700091305
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 68.45611009887479,
+    "min": 45.10684157501925,
+    "n": 633,
+    "p10": 50.51479083617627,
+    "p90": 92.90798934825932
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 105.2332057133656,
+    "median": 44.073761752273114,
+    "min": 30.13591640604971,
+    "n": 447,
+    "p10": 35.7509369311404,
+    "p90": 76.40526558806576
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.3226572160349472,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.8324545808056636,
+    "p90": 1.9539941555758455
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 633,
+   "n_runs_f_out_in_(0,tol]": 424,
+   "n_runs_max_mean_energy_active_gt_limit": 839,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "electronic",
+   "validity_basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_Bprime3Sigma_u.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 651,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 205,
+    "f_out_le_tol_and_eps_active_le_limit": 224
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.01921960868468621,
+    "median": 1.273557931494748e-11,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 9.90589458831237e-16,
+    "p90": 0.0001826995657752713
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.01921960868468621,
+    "median": 1.963301847404008e-09,
+    "min": 1.0056478148431702e-12,
+    "n": 651,
+    "p10": 4.833525940899388e-12,
+    "p90": 0.0050728109554752585
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 60.69416103794642,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 37.60763558375517,
+    "p90": 88.43690461369343
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 68.95645387039943,
+    "min": 45.10684157501925,
+    "n": 651,
+    "p10": 50.59446326109429,
+    "p90": 92.88503103344591
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 105.2332057133656,
+    "median": 44.584533815455444,
+    "min": 30.13591640604971,
+    "n": 429,
+    "p10": 35.88557081137046,
+    "p90": 77.32446941412259
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.348759134176587,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.8357252351945592,
+    "p90": 1.965264546970965
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 651,
+   "n_runs_f_out_in_(0,tol]": 406,
+   "n_runs_max_mean_energy_active_gt_limit": 856,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "electronic",
+   "validity_basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_C3Pi_u.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 642,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 208,
+    "f_out_le_tol_and_eps_active_le_limit": 230
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.017816261749367103,
+    "median": 1.1623325822453343e-11,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 9.05514136243908e-16,
+    "p90": 0.00017076524556721456
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.017816261749367103,
+    "median": 2.060131600832241e-09,
+    "min": 1.0101558941006317e-12,
+    "n": 642,
+    "p10": 5.0661387784840465e-12,
+    "p90": 0.00478319119703162
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 59.77437118634526,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 37.56395717141867,
+    "p90": 88.22002834166048
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 68.57878116991813,
+    "min": 45.10684157501925,
+    "n": 642,
+    "p10": 50.574311645934245,
+    "p90": 92.910859137611
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 105.2332057133656,
+    "median": 44.51620020969121,
+    "min": 30.13591640604971,
+    "n": 438,
+    "p10": 35.83550888553172,
+    "p90": 77.22338939054234
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.3283193596965615,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.8347546038093038,
+    "p90": 1.9604450742591217
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 642,
+   "n_runs_f_out_in_(0,tol]": 415,
+   "n_runs_max_mean_energy_active_gt_limit": 850,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "electronic",
+   "validity_basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_W3Delta_u.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 641,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 208,
+    "f_out_le_tol_and_eps_active_le_limit": 231
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.017599133873928093,
+    "median": 1.1237878123240451e-11,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 8.878503019745614e-16,
+    "p90": 0.00016937642986268524
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.017599133873928093,
+    "median": 2.0334388467625884e-09,
+    "min": 1.002135885320996e-12,
+    "n": 641,
+    "p10": 4.961398345569037e-12,
+    "p90": 0.004690952813550615
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 59.74922805828419,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 37.53072650269302,
+    "p90": 88.22002834166048
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 68.59873463478573,
+    "min": 45.10684157501925,
+    "n": 641,
+    "p10": 50.57207257758313,
+    "p90": 92.91372892696268
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 105.2332057133656,
+    "median": 44.551076535861306,
+    "min": 30.13591640604971,
+    "n": 439,
+    "p10": 35.80676205187193,
+    "p90": 77.2134778849128
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.3277606235174264,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.8340161445042893,
+    "p90": 1.9604450742591217
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 641,
+   "n_runs_f_out_in_(0,tol]": 416,
+   "n_runs_max_mean_energy_active_gt_limit": 849,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "electronic",
+   "validity_basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_a1Pi_g.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 674,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 194,
+    "f_out_le_tol_and_eps_active_le_limit": 212
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.02730996119652005,
+    "median": 2.0694609615609254e-11,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 1.512452004729804e-15,
+    "p90": 0.00025508158089694816
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.02730996119652005,
+    "median": 2.2102194213406238e-09,
+    "min": 1.0487268972783215e-12,
+    "n": 674,
+    "p10": 4.168626252017848e-12,
+    "p90": 0.007035032952920138
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 62.98905058060795,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 37.99190772132222,
+    "p90": 90.08430688022187
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 69.9855809911553,
+    "min": 45.10684157501925,
+    "n": 674,
+    "p10": 50.54305395372246,
+    "p90": 93.11546226814048
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 105.2332057133656,
+    "median": 44.529012551060205,
+    "min": 30.13591640604971,
+    "n": 406,
+    "p10": 36.04388163350219,
+    "p90": 77.96496597096707
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.3997566795690655,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.8442646160293827,
+    "p90": 2.0018734862271526
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 674,
+   "n_runs_f_out_in_(0,tol]": 383,
+   "n_runs_max_mean_energy_active_gt_limit": 868,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "electronic",
+   "validity_basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-200 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_aprime1Sigma_u.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 655,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 203,
+    "f_out_le_tol_and_eps_active_le_limit": 222
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.0202488959776778,
+    "median": 1.3647180975016167e-11,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 1.0587887067247878e-15,
+    "p90": 0.0001915830071480148
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.0202488959776778,
+    "median": 2.070482662280481e-09,
+    "min": 1.012997714808267e-12,
+    "n": 655,
+    "p10": 4.626732419140884e-12,
+    "p90": 0.005334094334557688
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 61.01472333954485,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 37.60763558375517,
+    "p90": 88.8876108654153
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 69.04265345938933,
+    "min": 45.10684157501925,
+    "n": 655,
+    "p10": 50.56421493323195,
+    "p90": 92.90224976955597
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 105.2332057133656,
+    "median": 44.48132388352112,
+    "min": 30.13591640604971,
+    "n": 425,
+    "p10": 35.928325469439976,
+    "p90": 77.38786838246956
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.3558827408787746,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.8357252351945592,
+    "p90": 1.9752802414536734
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 655,
+   "n_runs_f_out_in_(0,tol]": 402,
+   "n_runs_max_mean_energy_active_gt_limit": 858,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "electronic",
+   "validity_basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_rot_j0_to_j2.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 677,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 189,
+    "f_out_le_tol_and_eps_active_le_limit": 214
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.03004827748449818,
+    "median": 1.959432544153266e-11,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 1.6028231821117742e-15,
+    "p90": 0.00028328981323898775
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.03004827748449818,
+    "median": 2.0046843604266405e-09,
+    "min": 1.0041560270823585e-12,
+    "n": 677,
+    "p10": 3.936264135740574e-12,
+    "p90": 0.007239582086595081
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 63.40802274865471,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 37.87274181636805,
+    "p90": 90.2813364025662
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 70.22051734274565,
+    "min": 45.10684157501925,
+    "n": 677,
+    "p10": 50.523235769970064,
+    "p90": 93.10992890907566
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 108.6318413356237,
+    "median": 44.31457275059636,
+    "min": 30.13591640604971,
+    "n": 403,
+    "p10": 35.91774035436223,
+    "p90": 78.10124381330564
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.409067172192327,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.841616484808179,
+    "p90": 2.0062519200570264
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 677,
+   "n_runs_f_out_in_(0,tol]": 380,
+   "n_runs_max_mean_energy_active_gt_limit": 866,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "rotational",
+   "validity_basis": "JPCRD 2023 Table 6 (0.01-10 eV), held at the 10 eV value above (declared model), capped at the preregistered T_e <= 30 eV; gross j = 0 loss, no superelastic return",
+   "validity_status": "verified"
+  },
+  "excitation_N2_rot_j0_to_j4.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 659,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 195,
+    "f_out_le_tol_and_eps_active_le_limit": 226
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.025215100664204782,
+    "median": 1.3025261525601449e-11,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 1.1862707961213876e-15,
+    "p90": 0.000247652894973206
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.025215100664204782,
+    "median": 1.6630900435375736e-09,
+    "min": 1.0002495966206294e-12,
+    "n": 659,
+    "p10": 3.933047746409778e-12,
+    "p90": 0.00579824273481415
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 61.97715964091016,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 37.497771460275125,
+    "p90": 90.0264853413131
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 69.9131665226876,
+    "min": 45.10684157501925,
+    "n": 659,
+    "p10": 50.554427203681065,
+    "p90": 93.30825318691123
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 105.2332057133656,
+    "median": 43.94218217268913,
+    "min": 30.13591640604971,
+    "n": 421,
+    "p10": 35.29282884700829,
+    "p90": 77.96021004330836
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.377270214242448,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.8332838102283362,
+    "p90": 2.0005885631402913
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 659,
+   "n_runs_f_out_in_(0,tol]": 398,
+   "n_runs_max_mean_energy_active_gt_limit": 854,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "rotational",
+   "validity_basis": "JPCRD 2023 Table 6 (0.01-10 eV), held at the 10 eV value above (declared model), capped at the preregistered T_e <= 30 eV; gross j = 0 loss, no superelastic return",
+   "validity_status": "verified"
+  },
+  "excitation_N2_vib_0_to_1.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 537,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 207,
+    "f_out_le_tol_and_eps_active_le_limit": 336
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.00473689039258292,
+    "median": 8.760744044675169e-13,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 1.2471424018959006e-16,
+    "p90": 4.335241102184882e-05
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.00473689039258292,
+    "median": 6.120747931029602e-10,
+    "min": 1.079788231811108e-12,
+    "n": 537,
+    "p10": 5.29032747561559e-12,
+    "p90": 0.0011904143683595123
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 52.807286286631026,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 35.8514509972359,
+    "p90": 81.59278062922004
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 65.39813799688763,
+    "min": 45.10684157501925,
+    "n": 537,
+    "p10": 49.485953285025815,
+    "p90": 91.02717550563763
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 101.19963717778694,
+    "median": 41.53952364654016,
+    "min": 30.13591640604971,
+    "n": 543,
+    "p10": 34.810299417412224,
+    "p90": 66.6774672748921
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.1734952508140228,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.7966989110496866,
+    "p90": 1.8131729028715564
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 537,
+   "n_runs_f_out_in_(0,tol]": 520,
+   "n_runs_max_mean_energy_active_gt_limit": 744,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "vibrational",
+   "validity_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_vib_0_to_10.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 543,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 212,
+    "f_out_le_tol_and_eps_active_le_limit": 325
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.005069078749400233,
+    "median": 1.1158809789262262e-12,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 1.4544876917994053e-16,
+    "p90": 4.772610641820412e-05
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.005069078749400233,
+    "median": 6.349625458414119e-10,
+    "min": 1.0193819712433332e-12,
+    "n": 543,
+    "p10": 4.9781056476169504e-12,
+    "p90": 0.0013092501680236983
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 53.36080756840913,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 35.971806929039964,
+    "p90": 82.2308161646375
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 66.1676465637706,
+    "min": 45.10684157501925,
+    "n": 543,
+    "p10": 49.67435226928959,
+    "p90": 91.96157845069273
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 101.19963717778694,
+    "median": 42.0801734567925,
+    "min": 30.13591640604971,
+    "n": 537,
+    "p10": 34.94869918892699,
+    "p90": 68.30497781750735
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.1857957237424248,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.7993734873119992,
+    "p90": 1.827351470325278
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 543,
+   "n_runs_f_out_in_(0,tol]": 514,
+   "n_runs_max_mean_energy_active_gt_limit": 755,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "vibrational",
+   "validity_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_vib_0_to_2.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 537,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 207,
+    "f_out_le_tol_and_eps_active_le_limit": 336
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.004736890580570319,
+    "median": 8.760744379809518e-13,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 1.24714253035671e-16,
+    "p90": 4.3352410207681985e-05
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.004736890580570319,
+    "median": 6.120748186456097e-10,
+    "min": 1.0797882779057736e-12,
+    "n": 537,
+    "p10": 5.2903275371933195e-12,
+    "p90": 0.0011904144220787178
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 52.807286286631026,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 35.8514509972359,
+    "p90": 81.59278062922004
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 65.39813799688763,
+    "min": 45.10684157501925,
+    "n": 537,
+    "p10": 49.485953285025815,
+    "p90": 91.02717550563763
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 101.19963717778694,
+    "median": 41.53952364654016,
+    "min": 30.13591640604971,
+    "n": 543,
+    "p10": 34.810299417412224,
+    "p90": 66.6774672748921
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.1734952508140228,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.7966989110496866,
+    "p90": 1.8131729028715564
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 537,
+   "n_runs_f_out_in_(0,tol]": 520,
+   "n_runs_max_mean_energy_active_gt_limit": 744,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "vibrational",
+   "validity_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_vib_0_to_3.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 537,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 207,
+    "f_out_le_tol_and_eps_active_le_limit": 336
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.004736890218416255,
+    "median": 8.760744259318319e-13,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 1.247142476263906e-16,
+    "p90": 4.335240626391367e-05
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.004736890218416255,
+    "median": 6.120748162303796e-10,
+    "min": 1.0797882572550648e-12,
+    "n": 537,
+    "p10": 5.2903276698863796e-12,
+    "p90": 0.0011904145203600832
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 52.807286286631026,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 35.8514509972359,
+    "p90": 81.59278062922004
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 65.39813799688763,
+    "min": 45.10684157501925,
+    "n": 537,
+    "p10": 49.485953285025815,
+    "p90": 91.02717550563763
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 101.19963717778694,
+    "median": 41.53952364654016,
+    "min": 30.13591640604971,
+    "n": 543,
+    "p10": 34.810299417412224,
+    "p90": 66.6774672748921
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.1734952508140228,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.7966989110496866,
+    "p90": 1.8131729028715564
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 537,
+   "n_runs_f_out_in_(0,tol]": 520,
+   "n_runs_max_mean_energy_active_gt_limit": 744,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "vibrational",
+   "validity_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_vib_0_to_4.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 537,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 207,
+    "f_out_le_tol_and_eps_active_le_limit": 336
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.004736890227432569,
+    "median": 8.76074406679308e-13,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 1.2471424369163357e-16,
+    "p90": 4.335241099036684e-05
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.004736890227432569,
+    "median": 6.120747734399257e-10,
+    "min": 1.0797882444452348e-12,
+    "n": 537,
+    "p10": 5.290327489286389e-12,
+    "p90": 0.0011904143297258698
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 52.807286286631026,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 35.8514509972359,
+    "p90": 81.59278062922004
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 65.39813799688763,
+    "min": 45.10684157501925,
+    "n": 537,
+    "p10": 49.485953285025815,
+    "p90": 91.02717550563763
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 101.19963717778694,
+    "median": 41.53952364654016,
+    "min": 30.13591640604971,
+    "n": 543,
+    "p10": 34.810299417412224,
+    "p90": 66.6774672748921
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.1734952508140228,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.7966989110496866,
+    "p90": 1.8131729028715564
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 537,
+   "n_runs_f_out_in_(0,tol]": 520,
+   "n_runs_max_mean_energy_active_gt_limit": 744,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "vibrational",
+   "validity_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_vib_0_to_5.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 539,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 209,
+    "f_out_le_tol_and_eps_active_le_limit": 332
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.004810230124095022,
+    "median": 9.219727055128986e-13,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 1.2901336478752794e-16,
+    "p90": 4.385611542097247e-05
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.004810230124095022,
+    "median": 5.779837281000512e-10,
+    "min": 1.0092793369087237e-12,
+    "n": 539,
+    "p10": 5.175491792949938e-12,
+    "p90": 0.001211002125480026
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 52.91751892382244,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 35.8514509972359,
+    "p90": 81.61507272478634
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 65.660097605501,
+    "min": 45.10684157501925,
+    "n": 539,
+    "p10": 49.48973880907943,
+    "p90": 91.31379642978617
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 101.19963717778694,
+    "median": 41.79549037083984,
+    "min": 30.13591640604971,
+    "n": 541,
+    "p10": 34.788156969173414,
+    "p90": 66.90306985226145
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.175944864973832,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.7966989110496866,
+    "p90": 1.81366828277303
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 539,
+   "n_runs_f_out_in_(0,tol]": 518,
+   "n_runs_max_mean_energy_active_gt_limit": 748,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "vibrational",
+   "validity_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_vib_0_to_6.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 539,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 209,
+    "f_out_le_tol_and_eps_active_le_limit": 332
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.004810229705267385,
+    "median": 9.219727091841883e-13,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 1.2901336181616943e-16,
+    "p90": 4.3856112762895485e-05
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.004810229705267385,
+    "median": 5.779836661997019e-10,
+    "min": 1.0092793478892697e-12,
+    "n": 539,
+    "p10": 5.175491784601513e-12,
+    "p90": 0.0012110020147169031
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 52.91751892382244,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 35.8514509972359,
+    "p90": 81.61507272478634
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 65.660097605501,
+    "min": 45.10684157501925,
+    "n": 539,
+    "p10": 49.48973880907943,
+    "p90": 91.31379642978617
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 101.19963717778694,
+    "median": 41.79549037083984,
+    "min": 30.13591640604971,
+    "n": 541,
+    "p10": 34.788156969173414,
+    "p90": 66.90306985226145
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.175944864973832,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.7966989110496866,
+    "p90": 1.81366828277303
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 539,
+   "n_runs_f_out_in_(0,tol]": 518,
+   "n_runs_max_mean_energy_active_gt_limit": 748,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "vibrational",
+   "validity_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_vib_0_to_7.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 540,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 209,
+    "f_out_le_tol_and_eps_active_le_limit": 331
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.0048896745174667276,
+    "median": 9.778439349567743e-13,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 1.3358882760168055e-16,
+    "p90": 4.496270494804821e-05
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.0048896745174667276,
+    "median": 6.010904913335543e-10,
+    "min": 1.01800387475056e-12,
+    "n": 540,
+    "p10": 5.258289619289103e-12,
+    "p90": 0.001235584321128543
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 52.99082506593071,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 35.8514509972359,
+    "p90": 81.66898387225085
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 65.8367407557262,
+    "min": 45.10684157501925,
+    "n": 540,
+    "p10": 49.64143838709472,
+    "p90": 91.66143587819538
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 101.19963717778694,
+    "median": 41.9029645385213,
+    "min": 30.13591640604971,
+    "n": 540,
+    "p10": 34.77876557385989,
+    "p90": 67.46565098908356
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.1775738903540156,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.7966989110496866,
+    "p90": 1.814866308272241
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 540,
+   "n_runs_f_out_in_(0,tol]": 517,
+   "n_runs_max_mean_energy_active_gt_limit": 749,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "vibrational",
+   "validity_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_vib_0_to_8.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 541,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 211,
+    "f_out_le_tol_and_eps_active_le_limit": 328
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.004975815269529365,
+    "median": 1.0430831185558614e-12,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 1.3983898691524907e-16,
+    "p90": 4.628860711892179e-05
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.004975815269529365,
+    "median": 6.307143110339501e-10,
+    "min": 1.0008764135297874e-12,
+    "n": 541,
+    "p10": 5.179673524046029e-12,
+    "p90": 0.0012698158581565678
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 53.17291751573912,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 35.892168618181884,
+    "p90": 82.07793331029421
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 66.1676465637706,
+    "min": 45.10684157501925,
+    "n": 541,
+    "p10": 49.6733777324973,
+    "p90": 91.63514567054646
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 101.19963717778694,
+    "median": 41.984457377027,
+    "min": 30.13591640604971,
+    "n": 539,
+    "p10": 34.912645977816126,
+    "p90": 67.8820810799434
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.1816203892386472,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.7976037470707086,
+    "p90": 1.8239540735620936
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 541,
+   "n_runs_f_out_in_(0,tol]": 516,
+   "n_runs_max_mean_energy_active_gt_limit": 752,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "vibrational",
+   "validity_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_vib_0_to_9.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 541,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 211,
+    "f_out_le_tol_and_eps_active_le_limit": 328
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.004975814698554351,
+    "median": 1.0430830388907533e-12,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 1.3983898648535133e-16,
+    "p90": 4.6288603595290734e-05
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.004975814698554351,
+    "median": 6.307142907988878e-10,
+    "min": 1.000876351878664e-12,
+    "n": 541,
+    "p10": 5.179673011061587e-12,
+    "p90": 0.0012698156333594102
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 53.17291751573912,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 35.892168618181884,
+    "p90": 82.07793331029421
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 66.1676465637706,
+    "min": 45.10684157501925,
+    "n": 541,
+    "p10": 49.6733777324973,
+    "p90": 91.63514567054646
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 101.19963717778694,
+    "median": 41.984457377027,
+    "min": 30.13591640604971,
+    "n": 539,
+    "p10": 34.912645977816126,
+    "p90": 67.8820810799434
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.1816203892386472,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.7976037470707086,
+    "p90": 1.8239540735620936
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 541,
+   "n_runs_f_out_in_(0,tol]": 516,
+   "n_runs_max_mean_energy_active_gt_limit": 752,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "vibrational",
+   "validity_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "validity_status": "verified"
+  },
+  "excitation_N2_w1Delta_u.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 659,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 199,
+    "f_out_le_tol_and_eps_active_le_limit": 222
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.02139824876313675,
+    "median": 1.4666611426659322e-11,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 1.1210249619913053e-15,
+    "p90": 0.00020254104832548254
+   },
+   "f_out_over_runs_beyond": {
+    "max": 0.02139824876313675,
+    "median": 1.8936725455525966e-09,
+    "min": 1.0076414737326623e-12,
+    "n": 659,
+    "p10": 4.254825379853954e-12,
+    "p90": 0.005575413461591923
+   },
+   "limit_Te_eV": 30.0,
+   "limit_family": "45 eV",
+   "limit_mean_energy_eV": 45.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 61.22889843149672,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 37.60763558375517,
+    "p90": 89.44691184136049
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "max": 127.93540083153,
+    "median": 69.4774479513687,
+    "min": 45.10684157501925,
+    "n": 659,
+    "p10": 50.5694533627994,
+    "p90": 92.951493360968
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 105.2332057133656,
+    "median": 44.423331572597306,
+    "min": 30.13591640604971,
+    "n": 421,
+    "p10": 35.895721437216515,
+    "p90": 77.49509638285764
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 2.8430089073673335,
+    "median": 1.3606421873665937,
+    "min": 0.6696870312455491,
+    "n": 1080,
+    "p10": 0.8357252351945592,
+    "p90": 1.9877091520302332
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 23,
+   "n_runs_f_out_gt_tol": 659,
+   "n_runs_f_out_in_(0,tol]": 398,
+   "n_runs_max_mean_energy_active_gt_limit": 858,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "electronic",
+   "validity_basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+   "validity_status": "verified"
+  },
+  "ionization_N.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 0,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 0,
+    "f_out_le_tol_and_eps_active_le_limit": 1080
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.0,
+    "median": 0.0,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 0.0,
+    "p90": 0.0
+   },
+   "f_out_over_runs_beyond": {
+    "n": 0
+   },
+   "limit_Te_eV": 170.0,
+   "limit_family": "255 eV",
+   "limit_mean_energy_eV": 255.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 126.71843484164204,
+    "median": 62.13317211463811,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 45.81166878392372,
+    "p90": 84.22672590016963
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "n": 0
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 126.71843484164204,
+    "median": 62.13317211463811,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 45.81166878392372,
+    "p90": 84.22672590016963
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 0.49693503859467464,
+    "median": 0.24365949848877688,
+    "min": 0.11818006433744985,
+    "n": 1080,
+    "p10": 0.17965360307421066,
+    "p90": 0.3303008858830182
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 1080,
+   "n_runs_f_out_gt_tol": 0,
+   "n_runs_f_out_in_(0,tol]": 0,
+   "n_runs_max_mean_energy_active_gt_limit": 0,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "other",
+   "validity_basis": "NIST SRD 107 Kim & Desclaux N(4S) tabulation spans 15-5000 eV (audited 2026-09-26); held-tail share 0.0000 % up to 300 eV mean energy",
+   "validity_status": "verified"
+  },
+  "ionization_N2_song2023.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 0,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 0,
+    "f_out_le_tol_and_eps_active_le_limit": 1080
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.0,
+    "median": 0.0,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 0.0,
+    "p90": 0.0
+   },
+   "f_out_over_runs_beyond": {
+    "n": 0
+   },
+   "limit_Te_eV": 170.0,
+   "limit_family": "255 eV",
+   "limit_mean_energy_eV": 255.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 127.93540083153,
+    "median": 65.27962932410688,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 38.61524794811508,
+    "p90": 90.5406316868695
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "n": 0
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 127.93540083153,
+    "median": 65.27962932410688,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 38.61524794811508,
+    "p90": 90.5406316868695
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 0.5017074542412941,
+    "median": 0.25599854636904656,
+    "min": 0.11818006433744985,
+    "n": 1080,
+    "p10": 0.15143234489456897,
+    "p90": 0.35506130073282155
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 1080,
+   "n_runs_f_out_gt_tol": 0,
+   "n_runs_f_out_in_(0,tol]": 0,
+   "n_runs_max_mean_energy_active_gt_limit": 0,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "other",
+   "validity_basis": "JPCRD 2023 Table 10 sigma(N2+) spans 16-1000 eV; held-tail share 0.96 % at 255 eV mean energy, 0.22 % at 200 eV (scripts/build_n2_ionization_song2023_table.py)",
+   "validity_status": "verified"
+  },
+  "ionization_N_Z1plus_to_N_Z2plus.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 0,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 0,
+    "f_out_le_tol_and_eps_active_le_limit": 1080
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.0,
+    "median": 0.0,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 0.0,
+    "p90": 0.0
+   },
+   "f_out_over_runs_beyond": {
+    "n": 0
+   },
+   "limit_Te_eV": 170.0,
+   "limit_family": "255 eV",
+   "limit_mean_energy_eV": 255.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 126.71843484164204,
+    "median": 39.90234980355973,
+    "min": 24.009431292940317,
+    "n": 1080,
+    "p10": 33.942498536194876,
+    "p90": 54.90983259209432
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "n": 0
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 126.71843484164204,
+    "median": 39.90234980355973,
+    "min": 24.009431292940317,
+    "n": 1080,
+    "p10": 33.942498536194876,
+    "p90": 54.90983259209432
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 0.49693503859467464,
+    "median": 0.15647980315121462,
+    "min": 0.09415463252133457,
+    "n": 1080,
+    "p10": 0.13310783739684265,
+    "p90": 0.21533267683174245
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 1080,
+   "n_runs_f_out_gt_tol": 0,
+   "n_runs_f_out_in_(0,tol]": 0,
+   "n_runs_max_mean_energy_active_gt_limit": 0,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "other",
+   "validity_basis": "Bell et al. JPCRD 1983 Eq. (1) N II (+-10 %), analytic Bethe form evaluated 29.60 eV-10 keV; held-tail share 0.0000 % at 255 eV mean energy (scripts/build_n_z1plus_to_z2plus_table.py)",
+   "validity_status": "verified"
+  },
+  "ionization_N_to_N_Z2plus_hms2017.dat": {
+   "chemistry_configs_using": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "concordance_at_recorded_limit": {
+    "f_out_gt_tol_and_eps_active_gt_limit": 0,
+    "f_out_gt_tol_and_eps_active_le_limit": 0,
+    "f_out_le_tol_and_eps_active_gt_limit": 0,
+    "f_out_le_tol_and_eps_active_le_limit": 1080
+   },
+   "f_out_over_all_runs_using": {
+    "max": 0.0,
+    "median": 0.0,
+    "min": 0.0,
+    "n": 1080,
+    "p10": 0.0,
+    "p90": 0.0
+   },
+   "f_out_over_runs_beyond": {
+    "n": 0
+   },
+   "limit_Te_eV": 170.0,
+   "limit_family": "255 eV",
+   "limit_mean_energy_eV": 255.0,
+   "max_mean_energy_active_eV_over_all_runs_using": {
+    "max": 126.71843484164204,
+    "median": 64.0009158049993,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 46.70703324342789,
+    "p90": 85.4915176149149
+   },
+   "max_mean_energy_active_eV_over_runs_beyond": {
+    "n": 0
+   },
+   "max_mean_energy_active_eV_over_runs_not_beyond": {
+    "max": 126.71843484164204,
+    "median": 64.0009158049993,
+    "min": 30.13591640604971,
+    "n": 1080,
+    "p10": 46.70703324342789,
+    "p90": 85.4915176149149
+   },
+   "max_mean_energy_active_over_limit_ratio": {
+    "max": 0.49693503859467464,
+    "median": 0.25098398354901685,
+    "min": 0.11818006433744985,
+    "n": 1080,
+    "p10": 0.1831648362487368,
+    "p90": 0.3352608533918231
+   },
+   "n_OOD_runs_using": 714,
+   "n_OOD_runs_where_file_has_largest_f_out": 0,
+   "n_runs_f_out_exactly_zero": 1080,
+   "n_runs_f_out_gt_tol": 0,
+   "n_runs_f_out_in_(0,tol]": 0,
+   "n_runs_max_mean_energy_active_gt_limit": 0,
+   "n_runs_sole_cause": 0,
+   "n_runs_using": 1080,
+   "subfamily": "other",
+   "validity_basis": "HMS 2017 semi-empirical Eqs. (2)+(3), evaluated 44.14 eV-10 keV (source-model applicability; no neutral-N measurement exists; HMS state ~30 % for double ionization) (scripts/build_multiply_charged_tables.py)",
+   "validity_status": "verified"
+  }
+ },
+ "reconciliation": {
+  "OOD_status_reading_independent": true,
+  "final10_observables_reading_independent": true,
+  "input_consistency_OOD_predicate_on_raw_fields_agrees_with_official_label": true,
+  "input_consistency_n_disagreements": 0,
+  "input_consistency_note": "The scorer's OOD predicate (any unresolved table, or any reaction with f_out > 1e-12) is re-evaluated on the raw fields ONLY to confirm that the attribution below reads the same numbers the scorer read. The official label is always taken from the scores file.",
+  "n_OOD_run_readings": 1428,
+  "n_OOD_runs": 714,
+  "n_OOD_runs_with_unresolved_tables": 0,
+  "n_frames_final10_samples_per_record": [
+   100
+  ],
+  "n_in_domain_runs": 366,
+  "n_records": 1080,
+  "n_run_readings_in_scores_file": 2160,
+  "n_runs_with_reading_dependent_OOD": 0,
+  "official_f_out_max_equals_raw_max_in_OOD_runs": true,
+  "official_status_counts_vacuum": {
+   "FAIL_VALIDATION": 700,
+   "OUT_OF_DOMAIN": 1428,
+   "PASS": 32
+  },
+  "per_candidate": {
+   "sgb-screen-01": {
+    "OOD_runs": 70,
+    "official_OOD_run_readings_from_report": 140,
+    "official_OOD_run_readings_from_scores_file": 140
+   },
+   "sgb-screen-02": {
+    "OOD_runs": 88,
+    "official_OOD_run_readings_from_report": 176,
+    "official_OOD_run_readings_from_scores_file": 176
+   },
+   "sgb-screen-03": {
+    "OOD_runs": 99,
+    "official_OOD_run_readings_from_report": 198,
+    "official_OOD_run_readings_from_scores_file": 198
+   },
+   "sgb-screen-04": {
+    "OOD_runs": 81,
+    "official_OOD_run_readings_from_report": 162,
+    "official_OOD_run_readings_from_scores_file": 162
+   },
+   "sgb-screen-05": {
+    "OOD_runs": 55,
+    "official_OOD_run_readings_from_report": 110,
+    "official_OOD_run_readings_from_scores_file": 110
+   },
+   "sgb-screen-06": {
+    "OOD_runs": 63,
+    "official_OOD_run_readings_from_report": 126,
+    "official_OOD_run_readings_from_scores_file": 126
+   },
+   "sgb-screen-07": {
+    "OOD_runs": 78,
+    "official_OOD_run_readings_from_report": 156,
+    "official_OOD_run_readings_from_scores_file": 156
+   },
+   "sgb-screen-08": {
+    "OOD_runs": 107,
+    "official_OOD_run_readings_from_report": 214,
+    "official_OOD_run_readings_from_scores_file": 214
+   },
+   "sgb-screen-09": {
+    "OOD_runs": 73,
+    "official_OOD_run_readings_from_report": 146,
+    "official_OOD_run_readings_from_scores_file": 146
+   }
+  },
+  "per_candidate_matches_report": true,
+  "record_checks": {
+   "one_entry_per_file": true,
+   "per_reaction_files_match_config": true,
+   "record_limit_matches_rate_validity": true
+  },
+  "status_counts_recounted_from_scores_runs": {
+   "FAIL_VALIDATION": 700,
+   "OUT_OF_DOMAIN": 1428,
+   "PASS": 32
+  },
+  "t_end_s_values": [
+   0.002
+  ]
+ },
+ "statement": "Descriptive, non-gating attribution of the OUT_OF_DOMAIN statuses of the frozen P5-N2 v1 vacuum campaign. The v1 outcome is permanent: all nine screening candidates INCONCLUSIVE / NOT ELIGIBLE, credible set empty, gate 3 FAIL. No run is re-scored or re-labelled; no criterion, tolerance, validity limit, chemistry or transport parameter is changed or proposed. OUT_OF_DOMAIN is not evidence against a candidate (p5_n2_run_status_rule_v1)."
+}

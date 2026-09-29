@@ -1,0 +1,3338 @@
+{
+ "answer": "No veto today. 15 of 15 architecture x dimension cells are UNDETERMINED, 0 are NO_VETO_WITHIN_EVIDENCE and 0 are VETO_CANDIDATE: no verdict-eligible failing-side bound (hard physical bound, Vyovrinda or same-hardware measurement, validated closure-independent model) exists for any of them. The lane-24 evaluator eliminated nothing. Risk indicators exist, mostly common-mode: cathode Xe mass straddles the 40 kg limit across reference flows, and air-fed Hall channel / anode life on similar hardware points below 15,000 h; neither is verdict-bearing. This is missing evidence, not a finding that any architecture fits the envelope. No winner, no ranking.",
+ "architectures": [
+  "hall_only",
+  "rf_hall",
+  "ecr_hall"
+ ],
+ "base_commit": "bad6ea0d6b94c343082dbbc5c0740310e0e7726d",
+ "cells": {
+  "ecr_hall": {
+   "life_firing": {
+    "architecture_specific_missing": 1,
+    "common_mode_missing": 5,
+    "conditional_margins": [
+     {
+      "quantity": "stated life lower bound / RFP firing hours",
+      "range": [
+       0.666667,
+       null
+      ],
+      "relation": "lower bound only; upper end open",
+      "risk_indicator": "RI-LIFE-CATHODE-DEVELOPER-MODEL",
+      "unit": "1"
+     },
+     {
+      "quantity": "demonstrated steady hours / RFP firing hours",
+      "range": [
+       0.0209333,
+       0.0209333
+      ],
+      "relation": "ratio = steady hours before first flame-out / G4 threshold",
+      "risk_indicator": "RI-LIFE-HALL-ANODE-OXIDATION",
+      "unit": "1"
+     },
+     {
+      "hours_short": [
+       5500.0,
+       8000.0
+      ],
+      "quantity": "estimated life / RFP firing hours",
+      "range": [
+       0.466667,
+       0.633333
+      ],
+      "relation": "ratio = lifetime_estimate_h / G4 threshold",
+      "risk_indicator": "RI-LIFE-HALL-CHANNEL-AIR-EROSION",
+      "unit": "1"
+     }
+    ],
+    "criteria": [
+     {
+      "binding": true,
+      "can_eliminate_on_this_dimension": true,
+      "comparator": ">",
+      "criterion": "G4.firing_life",
+      "elements": [
+       "hall_discharge_channel",
+       "hall_magnet",
+       "cathode",
+       "compressor",
+       "valves_and_flow_control",
+       "ecr_source",
+       "ecr_magnet"
+      ],
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent",
+       "model_admitted_closure"
+      ],
+      "gate": "G4_firing_life",
+      "gate_status": "RFP",
+      "metric": "firing_life_h",
+      "notes": [],
+      "threshold": 15000,
+      "unit": "h"
+     },
+     {
+      "binding": false,
+      "can_eliminate_on_this_dimension": false,
+      "comparator": ">",
+      "criterion": "P2.cathode_life",
+      "elements": null,
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent",
+       "model_admitted_closure"
+      ],
+      "gate": "P2_cathode",
+      "gate_status": "PROPOSED",
+      "metric": "cathode_life_h",
+      "notes": [
+       "gate P2_cathode is PROPOSED (non-binding): a FAIL is reported as 'would eliminate only if the owner adopts this gate', never as an elimination"
+      ],
+      "threshold": 15000,
+      "unit": "h"
+     }
+    ],
+    "final_status": "UNDETERMINED",
+    "margin": {
+     "kind": "not_computable",
+     "reason": "no verdict-eligible failing-side bound exists for this architecture and dimension"
+    },
+    "missing_inputs": [
+     {
+      "blocking": [
+       "lane_32_wall_life (DB v1: no N/O design-life number derivable)",
+       "design_release:vyovrinda_channel",
+       "admitted Hall closure (gate 3) for wall_life_trustworthy maps"
+      ],
+      "input": "Hall wall erosion: erodible depth, peak/average flux, volumetric sputter yield of the wall grade for the N/O ion mix",
+      "requires": "Vyovrinda channel geometry; sourced N/O yields on BN/BN-SiO2",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_magnetic_circuit"
+      ],
+      "input": "Hall magnet insulation life basis",
+      "requires": "thermal-endurance evaluation of the actual EIS (iec60085_thermal_classes.life_basis_h TBD) or a coil life test",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_10_cathode_dossier",
+       "lane_19_cathode_integration"
+      ],
+      "input": "thermal_life limit record 'lab6_evaporation_rate'",
+      "requires": "a sourced LaB6 evaporation (mass-loss) rate versus emitter temperature, as a table (T_K, kg m^-2 s^-1) with provenance. Candidates: Goebel & Katz 2008 Fig. 6-8 (rate vs emission current density, from Leung, Pincosy & Ehlers, Rev. Sci. Instrum. 55, 1984 [24]) - graphical, needs digitization plus the A/phi set used to map J to T; Storms & Mueller, J. Chem. Phys. (LaB system vaporization) [23] - not accessed. No value is invented here. When sourced, the record must carry values T_K (list, K, increasing) and rate_kg_m2s (list, kg m^-2 s^-1, > 0), which thermal_life.lab6_evaporation_rate interpolates log-linearly inside the table only.",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_19_cathode_integration",
+       "lane_10_cathode_dossier",
+       "admitted Hall closure (gate 3)"
+      ],
+      "input": "cathode insert mass, emitting area, I_emit, emitter O/O2 partial pressure",
+      "requires": "selected cathode hardware; I_d from an admitted closure or measurement",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_33_upstream_icd (compressor load TBD)",
+       "design_release:vyovrinda_compressor"
+      ],
+      "input": "compressor and valve firing life",
+      "requires": "compressor / valve design and duty",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_08_ecr_evidence",
+       "design_release:ecr_source"
+      ],
+      "input": "ecr_source / ecr_magnet life (window/coupler erosion, magnet demagnetization over life)",
+      "requires": "ecr_source_structure_limit; demag and knee fields of the grade",
+      "scope": "architecture_specific"
+     }
+    ],
+    "risk_directions": [
+     "away_from_exceedance",
+     "toward_exceedance",
+     "uninformative"
+    ],
+    "risk_indicators": [
+     "RI-LIFE-CATHODE-AIR-EXPOSURE",
+     "RI-LIFE-CATHODE-DEVELOPER-MODEL",
+     "RI-LIFE-HALL-ANODE-OXIDATION",
+     "RI-LIFE-HALL-CHANNEL-AIR-EROSION",
+     "RI-LIFE-HALL-SHIELDED-COUNTER",
+     "RI-LIFE-SCALE-WALL-FLUX"
+    ],
+    "status": "UNDETERMINED",
+    "verdict_eligible_bounds": []
+   },
+   "life_mission": {
+    "architecture_specific_missing": 1,
+    "common_mode_missing": 2,
+    "conditional_margins": [],
+    "criteria": [
+     {
+      "binding": true,
+      "can_eliminate_on_this_dimension": true,
+      "comparator": ">=",
+      "criterion": "G5.mission_capability",
+      "elements": [
+       "intake",
+       "filter",
+       "compressor",
+       "atmospheric_gas_chamber",
+       "xenon_chamber_and_xenon_load",
+       "valves_and_flow_control",
+       "hall_thruster",
+       "cathode",
+       "power_processing",
+       "ecr_source",
+       "ecr_magnet"
+      ],
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent",
+       "model_admitted_closure"
+      ],
+      "gate": "G5_mission",
+      "gate_status": "RFP",
+      "metric": "mission_capability_h",
+      "notes": [],
+      "threshold": 26000,
+      "unit": "h"
+     }
+    ],
+    "final_status": "UNDETERMINED",
+    "margin": {
+     "kind": "not_computable",
+     "reason": "no verdict-eligible failing-side bound exists for this architecture and dimension"
+    },
+    "missing_inputs": [
+     {
+      "blocking": [
+       "lane_33_upstream_icd (compressor load TBD)",
+       "design_release:upstream_elements"
+      ],
+      "input": "mission-duration (26,000 h) capability of intake, filter, compressor, gas chambers and valves",
+      "requires": "upstream element design and life evidence",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_19_cathode_integration",
+       "lane_20_ppu_magnet",
+       "owner_decision:operations_concept"
+      ],
+      "input": "Hall thruster, cathode and PPU capability over 26,000 h including non-firing time (storage, cycling, cathode flow between firings)",
+      "requires": "operations concept (duty cycle, starts); cathode Xe-duty interpretation (mass_bom OD-M7)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_08_ecr_evidence"
+      ],
+      "input": "ecr_source / ecr_magnet capability over 26,000 h",
+      "requires": "source design and life evidence",
+      "scope": "architecture_specific"
+     }
+    ],
+    "risk_directions": [],
+    "risk_indicators": [],
+    "status": "UNDETERMINED",
+    "verdict_eligible_bounds": []
+   },
+   "mass": {
+    "architecture_specific_missing": 4,
+    "common_mode_missing": 16,
+    "conditional_margins": [
+     {
+      "cathode_xe_consumption_fraction_of_limit": [
+       0.108,
+       1.35
+      ],
+      "consumption_fraction_relation": "cathode Xe over the minimum firing / G3 threshold (consumption share, not a margin)",
+      "quantity": "40 kg limit minus cathode Xe over the minimum firing",
+      "range": [
+       -14.0,
+       35.68
+      ],
+      "relation": "margin = G3 threshold - xe_kg_over_min_firing (reference-flow extremes)",
+      "risk_indicator": "RI-MASS-CATHODE-XE",
+      "unit": "kg"
+     }
+    ],
+    "criteria": [
+     {
+      "binding": true,
+      "can_eliminate_on_this_dimension": true,
+      "comparator": "<",
+      "criterion": "G3.mass_mev",
+      "elements": [
+       "intake",
+       "filter",
+       "compressor",
+       "atmospheric_gas_chamber",
+       "xenon_chamber_and_xenon_load",
+       "valves_and_flow_control",
+       "hall_thruster",
+       "cathode",
+       "power_processing",
+       "thermal_control",
+       "harness_and_structure",
+       "ecr_source",
+       "ecr_magnet"
+      ],
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent"
+      ],
+      "gate": "G3_mass",
+      "gate_status": "RFP",
+      "metric": "mass_mev_kg",
+      "notes": [],
+      "threshold": 40,
+      "unit": "kg"
+     }
+    ],
+    "final_status": "UNDETERMINED",
+    "margin": {
+     "kind": "not_computable",
+     "reason": "no verdict-eligible failing-side bound exists for this architecture and dimension"
+    },
+    "missing_inputs": [
+     {
+      "blocking": [
+       "design_release:vyovrinda_intake",
+       "lane_33_upstream_icd"
+      ],
+      "input": "mass_bom item 'intake': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available; a bound needs a minimum frontal area (from drag/flow requirements) and a minimum areal mass, both sourced",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_filter",
+       "lane_33_upstream_icd"
+      ],
+      "input": "mass_bom item 'filter': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_compressor",
+       "lane_33_upstream_icd"
+      ],
+      "input": "mass_bom item 'compressor': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_gas_chamber",
+       "lane_33_upstream_icd"
+      ],
+      "input": "mass_bom item 'atmospheric_gas_chamber': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "part_selection:supplier_measured_mass",
+       "lane_33_upstream_icd"
+      ],
+      "input": "mass_bom item 'atmospheric_valve': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "part_selection:supplier_measured_mass"
+      ],
+      "input": "mass_bom item 'xe_valve_and_flow_control': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:OD-M4 (Xe allocation)",
+       "part_selection:tank"
+      ],
+      "input": "mass_bom item 'xe_tank': sourced lower bound",
+      "requires": "a lower bound becomes available once its inputs are declared: thin_wall_sphere_membrane (THIN_WALL_SPHERE) with MEOP, burst factor, wall strength and density, and internal volume (ESA R-M1-10: sized for the propellant plus at least 10 %), each sourced; monolithic isotropic metal shell only",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:OD-M4 (Xe allocation)",
+       "lane_19_cathode_integration (cathode Xe)"
+      ],
+      "input": "mass_bom item 'xe_load': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available; a physics bound would be a sourced minimum Xe flow (e.g. cathode) x the Xe-fed hours required by the RFP (interpretation open)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:OD-M4 (Xe allocation)"
+      ],
+      "input": "mass_bom item 'xe_residual': sourced lower bound",
+      "requires": "policy allocation, not a physical bound",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_hall_head (never from a closure)"
+      ],
+      "input": "mass_bom item 'hall_thruster_head': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_magnetic_circuit",
+       "lane_20_ppu_magnet (magnet_power)"
+      ],
+      "input": "mass_bom item 'hall_magnets': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_10_cathode_dossier",
+       "lane_19_cathode_integration",
+       "part_selection:cathode"
+      ],
+      "input": "mass_bom item 'cathode': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_20_ppu_magnet",
+       "part_selection:ppu"
+      ],
+      "input": "mass_bom item 'ppu': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "all other dry items (5 % allocation of nominal dry mass, OD-M6)"
+      ],
+      "input": "mass_bom item 'harness': sourced lower bound",
+      "requires": "policy allocation, not a physical bound",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_15_thermal_life (integrated thermal design)"
+      ],
+      "input": "mass_bom item 'thermal_hardware': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:configuration_and_launch_loads"
+      ],
+      "input": "mass_bom item 'structure': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_08_ecr_evidence",
+       "design_release:ecr_source"
+      ],
+      "input": "mass_bom item 'ecr_source': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "architecture_specific"
+     },
+     {
+      "blocking": [
+       "part_selection:microwave_source"
+      ],
+      "input": "mass_bom item 'microwave_source': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "architecture_specific"
+     },
+     {
+      "blocking": [
+       "part_selection:waveguide"
+      ],
+      "input": "mass_bom item 'waveguide': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "architecture_specific"
+     },
+     {
+      "blocking": [
+       "design_release:ecr_magnetic_circuit",
+       "lane_20_ppu_magnet (permanent_magnet mass)"
+      ],
+      "input": "mass_bom item 'ecr_magnets': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "architecture_specific"
+     }
+    ],
+    "risk_directions": [
+     "straddles_limit",
+     "uninformative"
+    ],
+    "risk_indicators": [
+     "RI-MASS-CATHODE-XE",
+     "RI-MASS-ECR-AMPLIFIER-BREADBOARD"
+    ],
+    "status": "UNDETERMINED",
+    "verdict_eligible_bounds": []
+   },
+   "startup": {
+    "architecture_specific_missing": 1,
+    "common_mode_missing": 4,
+    "conditional_margins": [
+     {
+      "limit_status": "PROPOSED (owner interpretation of '< 1.5 kW')",
+      "quantity": "PROPOSED start-up peak limit minus cathode heater power (heater alone)",
+      "range": [
+       1195.0,
+       1455.0
+      ],
+      "relation": "margin = startup_peak_limit - heater power (bracket extremes)",
+      "risk_indicator": "RI-STARTUP-CATHODE-HEATER",
+      "unit": "W"
+     }
+    ],
+    "criteria": [
+     {
+      "binding": true,
+      "can_eliminate_on_this_dimension": false,
+      "comparator": "<",
+      "criterion": "G2.bus_power_max",
+      "elements": [
+       "hall_discharge",
+       "hall_magnet",
+       "cathode_keeper",
+       "cathode_heater",
+       "flow_control",
+       "compressor",
+       "thermal_control",
+       "housekeeping",
+       "ecr_source",
+       "ecr_magnet"
+      ],
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent",
+       "model_admitted_closure"
+      ],
+      "gate": "G2_bus_power",
+      "gate_status": "RFP",
+      "metric": "bus_power_max_W",
+      "notes": [
+       "fail_must_cover.operating_modes = ['steady'] excludes 'startup': a startup-only bound cannot FAIL this criterion under matrix v1 (owner reading)"
+      ],
+      "threshold": 1500,
+      "unit": "W"
+     },
+     {
+      "binding": false,
+      "can_eliminate_on_this_dimension": false,
+      "comparator": ">=",
+      "criterion": "P2.start_cycles",
+      "elements": null,
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware"
+      ],
+      "gate": "P2_cathode",
+      "gate_status": "PROPOSED",
+      "metric": "cathode_start_cycles_capability",
+      "notes": [
+       "gate P2_cathode is PROPOSED (non-binding): a FAIL is reported as 'would eliminate only if the owner adopts this gate', never as an elimination",
+       "threshold TBD: TBD — requires the restart count (G6.restart_count, OD5)."
+      ],
+      "threshold": null,
+      "unit": "count"
+     }
+    ],
+    "final_status": "UNDETERMINED",
+    "margin": {
+     "kind": "not_computable",
+     "reason": "no verdict-eligible failing-side bound exists for this architecture and dimension"
+    },
+    "missing_inputs": [
+     {
+      "blocking": [
+       "admitted Hall closure (gate 3)",
+       "lane_06_experiment_protocol (measurement)"
+      ],
+      "input": "hall_discharge ignition transient at the bus boundary",
+      "requires": "measurement or an admitted closure (credible set empty)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_33_upstream_icd (compressor load TBD)"
+      ],
+      "input": "compressor bus draw during start-up",
+      "requires": "upstream ICD value; TBD, never filled here",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:OD5",
+       "lane_10_cathode_dossier (U15/G05)"
+      ],
+      "input": "mission start count and required start-cycle capability",
+      "requires": "operations concept; P2.start_cycles and G6.restart_count thresholds (TBD, OD5)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:startup_peak_limit"
+      ],
+      "input": "interpretation: does '< 1.5 kW' bound start-up transients",
+      "requires": "owner decision on the PROPOSED startup_peak_limit (cathode_integration_data_v1.json)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:preionizer_start_schedule",
+       "lane_18_interstage",
+       "lane_11_bus_boundary"
+      ],
+      "input": "pre-ionizer start schedule (V1 after keeper-off / V2 before discharge ignition) and its power",
+      "requires": "owner choice of V1/V2; source power at the boundary",
+      "scope": "architecture_specific"
+     }
+    ],
+    "risk_directions": [
+     "away_from_exceedance"
+    ],
+    "risk_indicators": [
+     "RI-STARTUP-CATHODE-HEATER"
+    ],
+    "status": "UNDETERMINED",
+    "verdict_eligible_bounds": []
+   },
+   "thermal": {
+    "architecture_specific_missing": 3,
+    "common_mode_missing": 6,
+    "conditional_margins": [],
+    "criteria": [
+     {
+      "binding": false,
+      "can_eliminate_on_this_dimension": false,
+      "comparator": ">=",
+      "criterion": "P1.thermal_margin",
+      "elements": [
+       "hall_thruster",
+       "hall_magnet",
+       "cathode",
+       "compressor",
+       "power_processing",
+       "valves_and_flow_control",
+       "ecr_source",
+       "ecr_magnet"
+      ],
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent",
+       "model_admitted_closure"
+      ],
+      "gate": "P1_thermal",
+      "gate_status": "PROPOSED",
+      "metric": "thermal_margin_min_K",
+      "notes": [
+       "gate P1_thermal is PROPOSED (non-binding): a FAIL is reported as 'would eliminate only if the owner adopts this gate', never as an elimination"
+      ],
+      "threshold": 0,
+      "unit": "K"
+     }
+    ],
+    "final_status": "UNDETERMINED",
+    "margin": {
+     "kind": "not_computable",
+     "reason": "no verdict-eligible failing-side bound exists for this architecture and dimension"
+    },
+    "missing_inputs": [
+     {
+      "blocking": [
+       "lane_11_bus_boundary (component allocations)",
+       "admitted Hall closure (gate 3; credible set empty)",
+       "thermal geometry / radiator design (rejection paths)"
+      ],
+      "input": "thermal_life component 'hall_discharge': 16 TBD inputs (additional_wall_heat_W, allowable_erosion_depth_m, anode_electron_temperature_eV, discharge_current_A, discharge_power_W, hot_spot_allowance_K, peak_to_average_flux_ratio, rejection_paths, volumetric_sputter_yield_m3_per_ion, wall_area_m2, wall_electron_temperature_eV, wall_environment, wall_ion_energy_eV, wall_ion_flux_m2s, wall_material_record, wall_see_yield)",
+      "requires": "HallMap field discharge_current_A; HallMap field discharge_power_W or bus-power 'hall_discharge'; HallMap field wall_ion_energy_eV of an ADMITTED ensemble member with wall_life_trustworthy = true (thermal_life.hallmap_wall_inputs), or measured hardware data with its evidence record; the record must carry wall_flux_provenance (see top-level wall_flux_provenance); HallMap field wall_ion_flux_m2s of an ADMITTED ensemble member with wall_life_trustworthy = true (thermal_life.hallmap_wall_inputs), or measured hardware data with its evidence record; the record must carry wall_flux_provenance (see top-level wall_flux_provenance); Vyovrinda channel geometry: inner + outer wall area over z <= L; Vyovrinda wall geometry (erodible thickness before the magnetic circuit is exposed); any wall heat not covered by the ion and electron terms (e.g. recombination, absorbed plasma radiation); zero only with a documented justification; axial wall-flux profile (hall_map_schema_v1 gives only the z <= L average); owner decision (ABEP air path: atomic-oxygen plasma has no sourced limit); solver output (WallSheath SEE yield, not a hall_map_schema_v1 field); must be the gamma of the same solve whose sheath is in wall_ion_energy_eV (not checked in v1); solver output (not a hall_map_schema_v1 field); must be the T_e of the same solve whose sheath is in wall_ion_energy_eV (not checked in v1); solver output near the anode (not a hall_map_schema_v1 field); sourced sputter yield of the wall material for the ion mix at wall_ion_energy_eV; thermal geometry model; wall material selection (record id in limits_v1.json); wall thermal model (peak vs lumped)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "sourced limit (datasheet / dossier)"
+      ],
+      "input": "thermal_life limit record 'bn_combat_m26'",
+      "requires": "Saint-Gobain Combat M26 (60 % hBN / 40 % SiO2) maximum-use temperatures for oxidizing and inert/vacuum atmospheres from the manufacturer datasheet. The datasheet URL (bn.saint-gobain.com/.../combat-bn-solids-ds.pdf) and a distributor copy returned bot challenges on 2026-09-26 and were not bypassed. Context: the historical P5 channel wall is Combat M26 (Schinder, Georgia Tech PhD dissertation, 2016, p. 30).",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_11_bus_boundary (component allocations)",
+       "design_release:hall_magnet",
+       "thermal geometry / radiator design (rejection paths)"
+      ],
+      "input": "thermal_life component 'hall_magnet': 10 TBD inputs (bus_power_allocation_W, coil_current_A, coil_resistance_ref_T_C, coil_resistance_ref_ohm, copper_model, derating_policy, external_heat_W, hot_spot_allowance_K, insulation_class_C, rejection_paths)",
+      "requires": "Vyovrinda magnetic-circuit design; bus-power boundary component 'hall_magnet'; coil design (thermal_life.coil_resistance_from_geometry) or coil measurement; coil thermal model (EEE-INST-002 note 1/a uses 10 C for MIL-style parts); magnet-wire / insulation-system selection (IEC 60085 class); owner choice; owner decision; same as coil_resistance_ref_ohm; thermal geometry model; thruster thermal model: discharge heat reaching the coil",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_11_bus_boundary (component allocations)",
+       "design_release:cathode",
+       "thermal geometry / radiator design (rejection paths)"
+      ],
+      "input": "thermal_life component 'cathode': 14 TBD inputs (assembly_limit_record, emission_current_A, emitter_pO2_Torr, emitter_plasma_heating_W, emitting_area_m2, heater_power_W, heater_qualified_cycles, heater_steady_state_duty, hot_spot_allowance_K, insert_mass_kg, keeper_heat_fraction_to_cathode, keeper_power_W, rejection_paths, required_heater_cycles)",
+      "requires": "HallMap discharge_current_A plus keeper current (thermally limited regime); bus-power boundary component 'cathode_heater'; bus-power boundary component 'cathode_keeper'; cathode dossier; cathode dossier (O2 partial pressure at the emitter; feed purity / air path); cathode dossier (heater qualification cycles); cathode dossier (insert geometry); cathode dossier (insert-plasma heating in steady state); cathode dossier / operations (0 for a self-heated cathode); cathode thermal model; limits_v1.json; operations concept (number of starts); thermal geometry model",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "sourced limit (datasheet / dossier)"
+      ],
+      "input": "thermal_life limit record 'cathode_assembly_temperature_limit'",
+      "requires": "the limiting temperature of the cathode assembly node (heater insulation, orifice plate, keeper, LaB6 support/boron-diffusion barrier) from the cathode dossier, with source. When sourced, the record must carry the value T_max_C (degC)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_11_bus_boundary (component allocations)",
+       "design_release:ecr_source",
+       "thermal geometry / radiator design (rejection paths)"
+      ],
+      "input": "thermal_life component 'ecr_source': 7 TBD inputs (heat_fraction_antenna_copper, heat_fraction_coupler_dielectric, heat_fraction_plasma_to_structure, hot_spot_allowance_K, rejection_paths, rf_power_W, structure_limit_record)",
+      "requires": "ECR source design / test; ECR source design / test (coupler conductor loss); ECR source design / test (window loss); bus-power boundary component 'ecr_source' (microwave power delivered to the coupler); limits_v1.json; source thermal model; thermal geometry model",
+      "scope": "architecture_specific"
+     },
+     {
+      "blocking": [
+       "sourced limit (datasheet / dossier)"
+      ],
+      "input": "thermal_life limit record 'ecr_source_structure_limit'",
+      "requires": "the limiting temperature of the ECR source structure node (waveguide/coupler, dielectric window, chamber) from the ECR-source design, with a sourced material limit. When sourced, the record must carry the value T_max_C (degC)",
+      "scope": "architecture_specific"
+     },
+     {
+      "blocking": [
+       "lane_11_bus_boundary (component allocations)",
+       "design_release:ecr_magnet",
+       "thermal geometry / radiator design (rejection paths)"
+      ],
+      "input": "thermal_life component 'ecr_magnet': 10 TBD inputs (bus_power_allocation_W, demag_field_max_A_per_m, ecr_rf_power_W, heat_fraction_to_magnets, hot_spot_allowance_K, knee_field_A_per_m, knee_field_at_T_C, magnet_grade_record, min_Br_fraction_required, rejection_paths)",
+      "requires": "ECR magnetic design: smallest Br(T)/Br(20 C) that keeps the resonance zone; ECR source design / test; bus-power boundary component 'ecr_magnet' (must be 0 W: permanent magnets only); bus-power boundary component 'ecr_source'; magnet selection (record id in limits_v1.json); magnet thermal model; magnetostatic design: largest opposing field at any magnet point; manufacturer demagnetization curve of the grade (H_K,90 or H_D5); temperature of the curve used for knee_field_A_per_m; thermal geometry model",
+      "scope": "architecture_specific"
+     },
+     {
+      "blocking": [
+       "lane_16_feed_envelope"
+      ],
+      "input": "valve-outlet feed state (thruster inlet)",
+      "requires": "lane_16 feed envelope value; TBD, never filled here",
+      "scope": "common_mode"
+     }
+    ],
+    "risk_directions": [
+     "straddles_limit"
+    ],
+    "risk_indicators": [
+     "RI-THERMAL-ECR-MICROWAVE-LINE"
+    ],
+    "status": "UNDETERMINED",
+    "verdict_eligible_bounds": []
+   }
+  },
+  "hall_only": {
+   "life_firing": {
+    "architecture_specific_missing": 0,
+    "common_mode_missing": 5,
+    "conditional_margins": [
+     {
+      "quantity": "stated life lower bound / RFP firing hours",
+      "range": [
+       0.666667,
+       null
+      ],
+      "relation": "lower bound only; upper end open",
+      "risk_indicator": "RI-LIFE-CATHODE-DEVELOPER-MODEL",
+      "unit": "1"
+     },
+     {
+      "quantity": "demonstrated steady hours / RFP firing hours",
+      "range": [
+       0.0209333,
+       0.0209333
+      ],
+      "relation": "ratio = steady hours before first flame-out / G4 threshold",
+      "risk_indicator": "RI-LIFE-HALL-ANODE-OXIDATION",
+      "unit": "1"
+     },
+     {
+      "hours_short": [
+       5500.0,
+       8000.0
+      ],
+      "quantity": "estimated life / RFP firing hours",
+      "range": [
+       0.466667,
+       0.633333
+      ],
+      "relation": "ratio = lifetime_estimate_h / G4 threshold",
+      "risk_indicator": "RI-LIFE-HALL-CHANNEL-AIR-EROSION",
+      "unit": "1"
+     }
+    ],
+    "criteria": [
+     {
+      "binding": true,
+      "can_eliminate_on_this_dimension": true,
+      "comparator": ">",
+      "criterion": "G4.firing_life",
+      "elements": [
+       "hall_discharge_channel",
+       "hall_magnet",
+       "cathode",
+       "compressor",
+       "valves_and_flow_control"
+      ],
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent",
+       "model_admitted_closure"
+      ],
+      "gate": "G4_firing_life",
+      "gate_status": "RFP",
+      "metric": "firing_life_h",
+      "notes": [],
+      "threshold": 15000,
+      "unit": "h"
+     },
+     {
+      "binding": false,
+      "can_eliminate_on_this_dimension": false,
+      "comparator": ">",
+      "criterion": "P2.cathode_life",
+      "elements": null,
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent",
+       "model_admitted_closure"
+      ],
+      "gate": "P2_cathode",
+      "gate_status": "PROPOSED",
+      "metric": "cathode_life_h",
+      "notes": [
+       "gate P2_cathode is PROPOSED (non-binding): a FAIL is reported as 'would eliminate only if the owner adopts this gate', never as an elimination"
+      ],
+      "threshold": 15000,
+      "unit": "h"
+     }
+    ],
+    "final_status": "UNDETERMINED",
+    "margin": {
+     "kind": "not_computable",
+     "reason": "no verdict-eligible failing-side bound exists for this architecture and dimension"
+    },
+    "missing_inputs": [
+     {
+      "blocking": [
+       "lane_32_wall_life (DB v1: no N/O design-life number derivable)",
+       "design_release:vyovrinda_channel",
+       "admitted Hall closure (gate 3) for wall_life_trustworthy maps"
+      ],
+      "input": "Hall wall erosion: erodible depth, peak/average flux, volumetric sputter yield of the wall grade for the N/O ion mix",
+      "requires": "Vyovrinda channel geometry; sourced N/O yields on BN/BN-SiO2",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_magnetic_circuit"
+      ],
+      "input": "Hall magnet insulation life basis",
+      "requires": "thermal-endurance evaluation of the actual EIS (iec60085_thermal_classes.life_basis_h TBD) or a coil life test",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_10_cathode_dossier",
+       "lane_19_cathode_integration"
+      ],
+      "input": "thermal_life limit record 'lab6_evaporation_rate'",
+      "requires": "a sourced LaB6 evaporation (mass-loss) rate versus emitter temperature, as a table (T_K, kg m^-2 s^-1) with provenance. Candidates: Goebel & Katz 2008 Fig. 6-8 (rate vs emission current density, from Leung, Pincosy & Ehlers, Rev. Sci. Instrum. 55, 1984 [24]) - graphical, needs digitization plus the A/phi set used to map J to T; Storms & Mueller, J. Chem. Phys. (LaB system vaporization) [23] - not accessed. No value is invented here. When sourced, the record must carry values T_K (list, K, increasing) and rate_kg_m2s (list, kg m^-2 s^-1, > 0), which thermal_life.lab6_evaporation_rate interpolates log-linearly inside the table only.",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_19_cathode_integration",
+       "lane_10_cathode_dossier",
+       "admitted Hall closure (gate 3)"
+      ],
+      "input": "cathode insert mass, emitting area, I_emit, emitter O/O2 partial pressure",
+      "requires": "selected cathode hardware; I_d from an admitted closure or measurement",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_33_upstream_icd (compressor load TBD)",
+       "design_release:vyovrinda_compressor"
+      ],
+      "input": "compressor and valve firing life",
+      "requires": "compressor / valve design and duty",
+      "scope": "common_mode"
+     }
+    ],
+    "risk_directions": [
+     "away_from_exceedance",
+     "toward_exceedance",
+     "uninformative"
+    ],
+    "risk_indicators": [
+     "RI-LIFE-CATHODE-AIR-EXPOSURE",
+     "RI-LIFE-CATHODE-DEVELOPER-MODEL",
+     "RI-LIFE-HALL-ANODE-OXIDATION",
+     "RI-LIFE-HALL-CHANNEL-AIR-EROSION",
+     "RI-LIFE-HALL-SHIELDED-COUNTER",
+     "RI-LIFE-SCALE-WALL-FLUX"
+    ],
+    "status": "UNDETERMINED",
+    "verdict_eligible_bounds": []
+   },
+   "life_mission": {
+    "architecture_specific_missing": 0,
+    "common_mode_missing": 2,
+    "conditional_margins": [],
+    "criteria": [
+     {
+      "binding": true,
+      "can_eliminate_on_this_dimension": true,
+      "comparator": ">=",
+      "criterion": "G5.mission_capability",
+      "elements": [
+       "intake",
+       "filter",
+       "compressor",
+       "atmospheric_gas_chamber",
+       "xenon_chamber_and_xenon_load",
+       "valves_and_flow_control",
+       "hall_thruster",
+       "cathode",
+       "power_processing"
+      ],
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent",
+       "model_admitted_closure"
+      ],
+      "gate": "G5_mission",
+      "gate_status": "RFP",
+      "metric": "mission_capability_h",
+      "notes": [],
+      "threshold": 26000,
+      "unit": "h"
+     }
+    ],
+    "final_status": "UNDETERMINED",
+    "margin": {
+     "kind": "not_computable",
+     "reason": "no verdict-eligible failing-side bound exists for this architecture and dimension"
+    },
+    "missing_inputs": [
+     {
+      "blocking": [
+       "lane_33_upstream_icd (compressor load TBD)",
+       "design_release:upstream_elements"
+      ],
+      "input": "mission-duration (26,000 h) capability of intake, filter, compressor, gas chambers and valves",
+      "requires": "upstream element design and life evidence",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_19_cathode_integration",
+       "lane_20_ppu_magnet",
+       "owner_decision:operations_concept"
+      ],
+      "input": "Hall thruster, cathode and PPU capability over 26,000 h including non-firing time (storage, cycling, cathode flow between firings)",
+      "requires": "operations concept (duty cycle, starts); cathode Xe-duty interpretation (mass_bom OD-M7)",
+      "scope": "common_mode"
+     }
+    ],
+    "risk_directions": [],
+    "risk_indicators": [],
+    "status": "UNDETERMINED",
+    "verdict_eligible_bounds": []
+   },
+   "mass": {
+    "architecture_specific_missing": 0,
+    "common_mode_missing": 16,
+    "conditional_margins": [
+     {
+      "cathode_xe_consumption_fraction_of_limit": [
+       0.108,
+       1.35
+      ],
+      "consumption_fraction_relation": "cathode Xe over the minimum firing / G3 threshold (consumption share, not a margin)",
+      "quantity": "40 kg limit minus cathode Xe over the minimum firing",
+      "range": [
+       -14.0,
+       35.68
+      ],
+      "relation": "margin = G3 threshold - xe_kg_over_min_firing (reference-flow extremes)",
+      "risk_indicator": "RI-MASS-CATHODE-XE",
+      "unit": "kg"
+     }
+    ],
+    "criteria": [
+     {
+      "binding": true,
+      "can_eliminate_on_this_dimension": true,
+      "comparator": "<",
+      "criterion": "G3.mass_mev",
+      "elements": [
+       "intake",
+       "filter",
+       "compressor",
+       "atmospheric_gas_chamber",
+       "xenon_chamber_and_xenon_load",
+       "valves_and_flow_control",
+       "hall_thruster",
+       "cathode",
+       "power_processing",
+       "thermal_control",
+       "harness_and_structure"
+      ],
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent"
+      ],
+      "gate": "G3_mass",
+      "gate_status": "RFP",
+      "metric": "mass_mev_kg",
+      "notes": [],
+      "threshold": 40,
+      "unit": "kg"
+     }
+    ],
+    "final_status": "UNDETERMINED",
+    "margin": {
+     "kind": "not_computable",
+     "reason": "no verdict-eligible failing-side bound exists for this architecture and dimension"
+    },
+    "missing_inputs": [
+     {
+      "blocking": [
+       "design_release:vyovrinda_intake",
+       "lane_33_upstream_icd"
+      ],
+      "input": "mass_bom item 'intake': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available; a bound needs a minimum frontal area (from drag/flow requirements) and a minimum areal mass, both sourced",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_filter",
+       "lane_33_upstream_icd"
+      ],
+      "input": "mass_bom item 'filter': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_compressor",
+       "lane_33_upstream_icd"
+      ],
+      "input": "mass_bom item 'compressor': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_gas_chamber",
+       "lane_33_upstream_icd"
+      ],
+      "input": "mass_bom item 'atmospheric_gas_chamber': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "part_selection:supplier_measured_mass",
+       "lane_33_upstream_icd"
+      ],
+      "input": "mass_bom item 'atmospheric_valve': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "part_selection:supplier_measured_mass"
+      ],
+      "input": "mass_bom item 'xe_valve_and_flow_control': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:OD-M4 (Xe allocation)",
+       "part_selection:tank"
+      ],
+      "input": "mass_bom item 'xe_tank': sourced lower bound",
+      "requires": "a lower bound becomes available once its inputs are declared: thin_wall_sphere_membrane (THIN_WALL_SPHERE) with MEOP, burst factor, wall strength and density, and internal volume (ESA R-M1-10: sized for the propellant plus at least 10 %), each sourced; monolithic isotropic metal shell only",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:OD-M4 (Xe allocation)",
+       "lane_19_cathode_integration (cathode Xe)"
+      ],
+      "input": "mass_bom item 'xe_load': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available; a physics bound would be a sourced minimum Xe flow (e.g. cathode) x the Xe-fed hours required by the RFP (interpretation open)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:OD-M4 (Xe allocation)"
+      ],
+      "input": "mass_bom item 'xe_residual': sourced lower bound",
+      "requires": "policy allocation, not a physical bound",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_hall_head (never from a closure)"
+      ],
+      "input": "mass_bom item 'hall_thruster_head': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_magnetic_circuit",
+       "lane_20_ppu_magnet (magnet_power)"
+      ],
+      "input": "mass_bom item 'hall_magnets': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_10_cathode_dossier",
+       "lane_19_cathode_integration",
+       "part_selection:cathode"
+      ],
+      "input": "mass_bom item 'cathode': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_20_ppu_magnet",
+       "part_selection:ppu"
+      ],
+      "input": "mass_bom item 'ppu': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "all other dry items (5 % allocation of nominal dry mass, OD-M6)"
+      ],
+      "input": "mass_bom item 'harness': sourced lower bound",
+      "requires": "policy allocation, not a physical bound",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_15_thermal_life (integrated thermal design)"
+      ],
+      "input": "mass_bom item 'thermal_hardware': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:configuration_and_launch_loads"
+      ],
+      "input": "mass_bom item 'structure': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     }
+    ],
+    "risk_directions": [
+     "straddles_limit"
+    ],
+    "risk_indicators": [
+     "RI-MASS-CATHODE-XE"
+    ],
+    "status": "UNDETERMINED",
+    "verdict_eligible_bounds": []
+   },
+   "startup": {
+    "architecture_specific_missing": 0,
+    "common_mode_missing": 4,
+    "conditional_margins": [
+     {
+      "limit_status": "PROPOSED (owner interpretation of '< 1.5 kW')",
+      "quantity": "PROPOSED start-up peak limit minus cathode heater power (heater alone)",
+      "range": [
+       1195.0,
+       1455.0
+      ],
+      "relation": "margin = startup_peak_limit - heater power (bracket extremes)",
+      "risk_indicator": "RI-STARTUP-CATHODE-HEATER",
+      "unit": "W"
+     }
+    ],
+    "criteria": [
+     {
+      "binding": true,
+      "can_eliminate_on_this_dimension": false,
+      "comparator": "<",
+      "criterion": "G2.bus_power_max",
+      "elements": [
+       "hall_discharge",
+       "hall_magnet",
+       "cathode_keeper",
+       "cathode_heater",
+       "flow_control",
+       "compressor",
+       "thermal_control",
+       "housekeeping"
+      ],
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent",
+       "model_admitted_closure"
+      ],
+      "gate": "G2_bus_power",
+      "gate_status": "RFP",
+      "metric": "bus_power_max_W",
+      "notes": [
+       "fail_must_cover.operating_modes = ['steady'] excludes 'startup': a startup-only bound cannot FAIL this criterion under matrix v1 (owner reading)"
+      ],
+      "threshold": 1500,
+      "unit": "W"
+     },
+     {
+      "binding": false,
+      "can_eliminate_on_this_dimension": false,
+      "comparator": ">=",
+      "criterion": "P2.start_cycles",
+      "elements": null,
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware"
+      ],
+      "gate": "P2_cathode",
+      "gate_status": "PROPOSED",
+      "metric": "cathode_start_cycles_capability",
+      "notes": [
+       "gate P2_cathode is PROPOSED (non-binding): a FAIL is reported as 'would eliminate only if the owner adopts this gate', never as an elimination",
+       "threshold TBD: TBD — requires the restart count (G6.restart_count, OD5)."
+      ],
+      "threshold": null,
+      "unit": "count"
+     }
+    ],
+    "final_status": "UNDETERMINED",
+    "margin": {
+     "kind": "not_computable",
+     "reason": "no verdict-eligible failing-side bound exists for this architecture and dimension"
+    },
+    "missing_inputs": [
+     {
+      "blocking": [
+       "admitted Hall closure (gate 3)",
+       "lane_06_experiment_protocol (measurement)"
+      ],
+      "input": "hall_discharge ignition transient at the bus boundary",
+      "requires": "measurement or an admitted closure (credible set empty)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_33_upstream_icd (compressor load TBD)"
+      ],
+      "input": "compressor bus draw during start-up",
+      "requires": "upstream ICD value; TBD, never filled here",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:OD5",
+       "lane_10_cathode_dossier (U15/G05)"
+      ],
+      "input": "mission start count and required start-cycle capability",
+      "requires": "operations concept; P2.start_cycles and G6.restart_count thresholds (TBD, OD5)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:startup_peak_limit"
+      ],
+      "input": "interpretation: does '< 1.5 kW' bound start-up transients",
+      "requires": "owner decision on the PROPOSED startup_peak_limit (cathode_integration_data_v1.json)",
+      "scope": "common_mode"
+     }
+    ],
+    "risk_directions": [
+     "away_from_exceedance"
+    ],
+    "risk_indicators": [
+     "RI-STARTUP-CATHODE-HEATER"
+    ],
+    "status": "UNDETERMINED",
+    "verdict_eligible_bounds": []
+   },
+   "thermal": {
+    "architecture_specific_missing": 0,
+    "common_mode_missing": 6,
+    "conditional_margins": [],
+    "criteria": [
+     {
+      "binding": false,
+      "can_eliminate_on_this_dimension": false,
+      "comparator": ">=",
+      "criterion": "P1.thermal_margin",
+      "elements": [
+       "hall_thruster",
+       "hall_magnet",
+       "cathode",
+       "compressor",
+       "power_processing",
+       "valves_and_flow_control"
+      ],
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent",
+       "model_admitted_closure"
+      ],
+      "gate": "P1_thermal",
+      "gate_status": "PROPOSED",
+      "metric": "thermal_margin_min_K",
+      "notes": [
+       "gate P1_thermal is PROPOSED (non-binding): a FAIL is reported as 'would eliminate only if the owner adopts this gate', never as an elimination"
+      ],
+      "threshold": 0,
+      "unit": "K"
+     }
+    ],
+    "final_status": "UNDETERMINED",
+    "margin": {
+     "kind": "not_computable",
+     "reason": "no verdict-eligible failing-side bound exists for this architecture and dimension"
+    },
+    "missing_inputs": [
+     {
+      "blocking": [
+       "lane_11_bus_boundary (component allocations)",
+       "admitted Hall closure (gate 3; credible set empty)",
+       "thermal geometry / radiator design (rejection paths)"
+      ],
+      "input": "thermal_life component 'hall_discharge': 16 TBD inputs (additional_wall_heat_W, allowable_erosion_depth_m, anode_electron_temperature_eV, discharge_current_A, discharge_power_W, hot_spot_allowance_K, peak_to_average_flux_ratio, rejection_paths, volumetric_sputter_yield_m3_per_ion, wall_area_m2, wall_electron_temperature_eV, wall_environment, wall_ion_energy_eV, wall_ion_flux_m2s, wall_material_record, wall_see_yield)",
+      "requires": "HallMap field discharge_current_A; HallMap field discharge_power_W or bus-power 'hall_discharge'; HallMap field wall_ion_energy_eV of an ADMITTED ensemble member with wall_life_trustworthy = true (thermal_life.hallmap_wall_inputs), or measured hardware data with its evidence record; the record must carry wall_flux_provenance (see top-level wall_flux_provenance); HallMap field wall_ion_flux_m2s of an ADMITTED ensemble member with wall_life_trustworthy = true (thermal_life.hallmap_wall_inputs), or measured hardware data with its evidence record; the record must carry wall_flux_provenance (see top-level wall_flux_provenance); Vyovrinda channel geometry: inner + outer wall area over z <= L; Vyovrinda wall geometry (erodible thickness before the magnetic circuit is exposed); any wall heat not covered by the ion and electron terms (e.g. recombination, absorbed plasma radiation); zero only with a documented justification; axial wall-flux profile (hall_map_schema_v1 gives only the z <= L average); owner decision (ABEP air path: atomic-oxygen plasma has no sourced limit); solver output (WallSheath SEE yield, not a hall_map_schema_v1 field); must be the gamma of the same solve whose sheath is in wall_ion_energy_eV (not checked in v1); solver output (not a hall_map_schema_v1 field); must be the T_e of the same solve whose sheath is in wall_ion_energy_eV (not checked in v1); solver output near the anode (not a hall_map_schema_v1 field); sourced sputter yield of the wall material for the ion mix at wall_ion_energy_eV; thermal geometry model; wall material selection (record id in limits_v1.json); wall thermal model (peak vs lumped)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "sourced limit (datasheet / dossier)"
+      ],
+      "input": "thermal_life limit record 'bn_combat_m26'",
+      "requires": "Saint-Gobain Combat M26 (60 % hBN / 40 % SiO2) maximum-use temperatures for oxidizing and inert/vacuum atmospheres from the manufacturer datasheet. The datasheet URL (bn.saint-gobain.com/.../combat-bn-solids-ds.pdf) and a distributor copy returned bot challenges on 2026-09-26 and were not bypassed. Context: the historical P5 channel wall is Combat M26 (Schinder, Georgia Tech PhD dissertation, 2016, p. 30).",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_11_bus_boundary (component allocations)",
+       "design_release:hall_magnet",
+       "thermal geometry / radiator design (rejection paths)"
+      ],
+      "input": "thermal_life component 'hall_magnet': 10 TBD inputs (bus_power_allocation_W, coil_current_A, coil_resistance_ref_T_C, coil_resistance_ref_ohm, copper_model, derating_policy, external_heat_W, hot_spot_allowance_K, insulation_class_C, rejection_paths)",
+      "requires": "Vyovrinda magnetic-circuit design; bus-power boundary component 'hall_magnet'; coil design (thermal_life.coil_resistance_from_geometry) or coil measurement; coil thermal model (EEE-INST-002 note 1/a uses 10 C for MIL-style parts); magnet-wire / insulation-system selection (IEC 60085 class); owner choice; owner decision; same as coil_resistance_ref_ohm; thermal geometry model; thruster thermal model: discharge heat reaching the coil",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_11_bus_boundary (component allocations)",
+       "design_release:cathode",
+       "thermal geometry / radiator design (rejection paths)"
+      ],
+      "input": "thermal_life component 'cathode': 14 TBD inputs (assembly_limit_record, emission_current_A, emitter_pO2_Torr, emitter_plasma_heating_W, emitting_area_m2, heater_power_W, heater_qualified_cycles, heater_steady_state_duty, hot_spot_allowance_K, insert_mass_kg, keeper_heat_fraction_to_cathode, keeper_power_W, rejection_paths, required_heater_cycles)",
+      "requires": "HallMap discharge_current_A plus keeper current (thermally limited regime); bus-power boundary component 'cathode_heater'; bus-power boundary component 'cathode_keeper'; cathode dossier; cathode dossier (O2 partial pressure at the emitter; feed purity / air path); cathode dossier (heater qualification cycles); cathode dossier (insert geometry); cathode dossier (insert-plasma heating in steady state); cathode dossier / operations (0 for a self-heated cathode); cathode thermal model; limits_v1.json; operations concept (number of starts); thermal geometry model",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "sourced limit (datasheet / dossier)"
+      ],
+      "input": "thermal_life limit record 'cathode_assembly_temperature_limit'",
+      "requires": "the limiting temperature of the cathode assembly node (heater insulation, orifice plate, keeper, LaB6 support/boron-diffusion barrier) from the cathode dossier, with source. When sourced, the record must carry the value T_max_C (degC)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_16_feed_envelope"
+      ],
+      "input": "valve-outlet feed state (thruster inlet)",
+      "requires": "lane_16 feed envelope value; TBD, never filled here",
+      "scope": "common_mode"
+     }
+    ],
+    "risk_directions": [],
+    "risk_indicators": [],
+    "status": "UNDETERMINED",
+    "verdict_eligible_bounds": []
+   }
+  },
+  "rf_hall": {
+   "life_firing": {
+    "architecture_specific_missing": 1,
+    "common_mode_missing": 5,
+    "conditional_margins": [
+     {
+      "quantity": "stated life lower bound / RFP firing hours",
+      "range": [
+       0.666667,
+       null
+      ],
+      "relation": "lower bound only; upper end open",
+      "risk_indicator": "RI-LIFE-CATHODE-DEVELOPER-MODEL",
+      "unit": "1"
+     },
+     {
+      "quantity": "demonstrated steady hours / RFP firing hours",
+      "range": [
+       0.0209333,
+       0.0209333
+      ],
+      "relation": "ratio = steady hours before first flame-out / G4 threshold",
+      "risk_indicator": "RI-LIFE-HALL-ANODE-OXIDATION",
+      "unit": "1"
+     },
+     {
+      "hours_short": [
+       5500.0,
+       8000.0
+      ],
+      "quantity": "estimated life / RFP firing hours",
+      "range": [
+       0.466667,
+       0.633333
+      ],
+      "relation": "ratio = lifetime_estimate_h / G4 threshold",
+      "risk_indicator": "RI-LIFE-HALL-CHANNEL-AIR-EROSION",
+      "unit": "1"
+     }
+    ],
+    "criteria": [
+     {
+      "binding": true,
+      "can_eliminate_on_this_dimension": true,
+      "comparator": ">",
+      "criterion": "G4.firing_life",
+      "elements": [
+       "hall_discharge_channel",
+       "hall_magnet",
+       "cathode",
+       "compressor",
+       "valves_and_flow_control",
+       "rf_source"
+      ],
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent",
+       "model_admitted_closure"
+      ],
+      "gate": "G4_firing_life",
+      "gate_status": "RFP",
+      "metric": "firing_life_h",
+      "notes": [],
+      "threshold": 15000,
+      "unit": "h"
+     },
+     {
+      "binding": false,
+      "can_eliminate_on_this_dimension": false,
+      "comparator": ">",
+      "criterion": "P2.cathode_life",
+      "elements": null,
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent",
+       "model_admitted_closure"
+      ],
+      "gate": "P2_cathode",
+      "gate_status": "PROPOSED",
+      "metric": "cathode_life_h",
+      "notes": [
+       "gate P2_cathode is PROPOSED (non-binding): a FAIL is reported as 'would eliminate only if the owner adopts this gate', never as an elimination"
+      ],
+      "threshold": 15000,
+      "unit": "h"
+     }
+    ],
+    "final_status": "UNDETERMINED",
+    "margin": {
+     "kind": "not_computable",
+     "reason": "no verdict-eligible failing-side bound exists for this architecture and dimension"
+    },
+    "missing_inputs": [
+     {
+      "blocking": [
+       "lane_32_wall_life (DB v1: no N/O design-life number derivable)",
+       "design_release:vyovrinda_channel",
+       "admitted Hall closure (gate 3) for wall_life_trustworthy maps"
+      ],
+      "input": "Hall wall erosion: erodible depth, peak/average flux, volumetric sputter yield of the wall grade for the N/O ion mix",
+      "requires": "Vyovrinda channel geometry; sourced N/O yields on BN/BN-SiO2",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_magnetic_circuit"
+      ],
+      "input": "Hall magnet insulation life basis",
+      "requires": "thermal-endurance evaluation of the actual EIS (iec60085_thermal_classes.life_basis_h TBD) or a coil life test",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_10_cathode_dossier",
+       "lane_19_cathode_integration"
+      ],
+      "input": "thermal_life limit record 'lab6_evaporation_rate'",
+      "requires": "a sourced LaB6 evaporation (mass-loss) rate versus emitter temperature, as a table (T_K, kg m^-2 s^-1) with provenance. Candidates: Goebel & Katz 2008 Fig. 6-8 (rate vs emission current density, from Leung, Pincosy & Ehlers, Rev. Sci. Instrum. 55, 1984 [24]) - graphical, needs digitization plus the A/phi set used to map J to T; Storms & Mueller, J. Chem. Phys. (LaB system vaporization) [23] - not accessed. No value is invented here. When sourced, the record must carry values T_K (list, K, increasing) and rate_kg_m2s (list, kg m^-2 s^-1, > 0), which thermal_life.lab6_evaporation_rate interpolates log-linearly inside the table only.",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_19_cathode_integration",
+       "lane_10_cathode_dossier",
+       "admitted Hall closure (gate 3)"
+      ],
+      "input": "cathode insert mass, emitting area, I_emit, emitter O/O2 partial pressure",
+      "requires": "selected cathode hardware; I_d from an admitted closure or measurement",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_33_upstream_icd (compressor load TBD)",
+       "design_release:vyovrinda_compressor"
+      ],
+      "input": "compressor and valve firing life",
+      "requires": "compressor / valve design and duty",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_07_rf_evidence",
+       "design_release:rf_source"
+      ],
+      "input": "rf_source life (dielectric erosion, antenna insulation, generator)",
+      "requires": "measured erosion / contamination on O-bearing feed; rf_source_structure_limit",
+      "scope": "architecture_specific"
+     }
+    ],
+    "risk_directions": [
+     "away_from_exceedance",
+     "toward_exceedance",
+     "uninformative"
+    ],
+    "risk_indicators": [
+     "RI-LIFE-CATHODE-AIR-EXPOSURE",
+     "RI-LIFE-CATHODE-DEVELOPER-MODEL",
+     "RI-LIFE-HALL-ANODE-OXIDATION",
+     "RI-LIFE-HALL-CHANNEL-AIR-EROSION",
+     "RI-LIFE-HALL-SHIELDED-COUNTER",
+     "RI-LIFE-RF-DIELECTRIC",
+     "RI-LIFE-SCALE-WALL-FLUX"
+    ],
+    "status": "UNDETERMINED",
+    "verdict_eligible_bounds": []
+   },
+   "life_mission": {
+    "architecture_specific_missing": 1,
+    "common_mode_missing": 2,
+    "conditional_margins": [],
+    "criteria": [
+     {
+      "binding": true,
+      "can_eliminate_on_this_dimension": true,
+      "comparator": ">=",
+      "criterion": "G5.mission_capability",
+      "elements": [
+       "intake",
+       "filter",
+       "compressor",
+       "atmospheric_gas_chamber",
+       "xenon_chamber_and_xenon_load",
+       "valves_and_flow_control",
+       "hall_thruster",
+       "cathode",
+       "power_processing",
+       "rf_source"
+      ],
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent",
+       "model_admitted_closure"
+      ],
+      "gate": "G5_mission",
+      "gate_status": "RFP",
+      "metric": "mission_capability_h",
+      "notes": [],
+      "threshold": 26000,
+      "unit": "h"
+     }
+    ],
+    "final_status": "UNDETERMINED",
+    "margin": {
+     "kind": "not_computable",
+     "reason": "no verdict-eligible failing-side bound exists for this architecture and dimension"
+    },
+    "missing_inputs": [
+     {
+      "blocking": [
+       "lane_33_upstream_icd (compressor load TBD)",
+       "design_release:upstream_elements"
+      ],
+      "input": "mission-duration (26,000 h) capability of intake, filter, compressor, gas chambers and valves",
+      "requires": "upstream element design and life evidence",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_19_cathode_integration",
+       "lane_20_ppu_magnet",
+       "owner_decision:operations_concept"
+      ],
+      "input": "Hall thruster, cathode and PPU capability over 26,000 h including non-firing time (storage, cycling, cathode flow between firings)",
+      "requires": "operations concept (duty cycle, starts); cathode Xe-duty interpretation (mass_bom OD-M7)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_07_rf_evidence"
+      ],
+      "input": "rf_source capability over 26,000 h",
+      "requires": "source design and life evidence",
+      "scope": "architecture_specific"
+     }
+    ],
+    "risk_directions": [],
+    "risk_indicators": [],
+    "status": "UNDETERMINED",
+    "verdict_eligible_bounds": []
+   },
+   "mass": {
+    "architecture_specific_missing": 3,
+    "common_mode_missing": 16,
+    "conditional_margins": [
+     {
+      "cathode_xe_consumption_fraction_of_limit": [
+       0.108,
+       1.35
+      ],
+      "consumption_fraction_relation": "cathode Xe over the minimum firing / G3 threshold (consumption share, not a margin)",
+      "quantity": "40 kg limit minus cathode Xe over the minimum firing",
+      "range": [
+       -14.0,
+       35.68
+      ],
+      "relation": "margin = G3 threshold - xe_kg_over_min_firing (reference-flow extremes)",
+      "risk_indicator": "RI-MASS-CATHODE-XE",
+      "unit": "kg"
+     }
+    ],
+    "criteria": [
+     {
+      "binding": true,
+      "can_eliminate_on_this_dimension": true,
+      "comparator": "<",
+      "criterion": "G3.mass_mev",
+      "elements": [
+       "intake",
+       "filter",
+       "compressor",
+       "atmospheric_gas_chamber",
+       "xenon_chamber_and_xenon_load",
+       "valves_and_flow_control",
+       "hall_thruster",
+       "cathode",
+       "power_processing",
+       "thermal_control",
+       "harness_and_structure",
+       "rf_source"
+      ],
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent"
+      ],
+      "gate": "G3_mass",
+      "gate_status": "RFP",
+      "metric": "mass_mev_kg",
+      "notes": [],
+      "threshold": 40,
+      "unit": "kg"
+     }
+    ],
+    "final_status": "UNDETERMINED",
+    "margin": {
+     "kind": "not_computable",
+     "reason": "no verdict-eligible failing-side bound exists for this architecture and dimension"
+    },
+    "missing_inputs": [
+     {
+      "blocking": [
+       "design_release:vyovrinda_intake",
+       "lane_33_upstream_icd"
+      ],
+      "input": "mass_bom item 'intake': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available; a bound needs a minimum frontal area (from drag/flow requirements) and a minimum areal mass, both sourced",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_filter",
+       "lane_33_upstream_icd"
+      ],
+      "input": "mass_bom item 'filter': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_compressor",
+       "lane_33_upstream_icd"
+      ],
+      "input": "mass_bom item 'compressor': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_gas_chamber",
+       "lane_33_upstream_icd"
+      ],
+      "input": "mass_bom item 'atmospheric_gas_chamber': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "part_selection:supplier_measured_mass",
+       "lane_33_upstream_icd"
+      ],
+      "input": "mass_bom item 'atmospheric_valve': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "part_selection:supplier_measured_mass"
+      ],
+      "input": "mass_bom item 'xe_valve_and_flow_control': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:OD-M4 (Xe allocation)",
+       "part_selection:tank"
+      ],
+      "input": "mass_bom item 'xe_tank': sourced lower bound",
+      "requires": "a lower bound becomes available once its inputs are declared: thin_wall_sphere_membrane (THIN_WALL_SPHERE) with MEOP, burst factor, wall strength and density, and internal volume (ESA R-M1-10: sized for the propellant plus at least 10 %), each sourced; monolithic isotropic metal shell only",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:OD-M4 (Xe allocation)",
+       "lane_19_cathode_integration (cathode Xe)"
+      ],
+      "input": "mass_bom item 'xe_load': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available; a physics bound would be a sourced minimum Xe flow (e.g. cathode) x the Xe-fed hours required by the RFP (interpretation open)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:OD-M4 (Xe allocation)"
+      ],
+      "input": "mass_bom item 'xe_residual': sourced lower bound",
+      "requires": "policy allocation, not a physical bound",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_hall_head (never from a closure)"
+      ],
+      "input": "mass_bom item 'hall_thruster_head': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:vyovrinda_magnetic_circuit",
+       "lane_20_ppu_magnet (magnet_power)"
+      ],
+      "input": "mass_bom item 'hall_magnets': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_10_cathode_dossier",
+       "lane_19_cathode_integration",
+       "part_selection:cathode"
+      ],
+      "input": "mass_bom item 'cathode': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_20_ppu_magnet",
+       "part_selection:ppu"
+      ],
+      "input": "mass_bom item 'ppu': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "all other dry items (5 % allocation of nominal dry mass, OD-M6)"
+      ],
+      "input": "mass_bom item 'harness': sourced lower bound",
+      "requires": "policy allocation, not a physical bound",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_15_thermal_life (integrated thermal design)"
+      ],
+      "input": "mass_bom item 'thermal_hardware': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "design_release:configuration_and_launch_loads"
+      ],
+      "input": "mass_bom item 'structure': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_07_rf_evidence",
+       "design_release:rf_source"
+      ],
+      "input": "mass_bom item 'rf_source': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "architecture_specific"
+     },
+     {
+      "blocking": [
+       "part_selection:rf_generator"
+      ],
+      "input": "mass_bom item 'rf_generator': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "architecture_specific"
+     },
+     {
+      "blocking": [
+       "part_selection:rf_matching_network"
+      ],
+      "input": "mass_bom item 'rf_matching_network': sourced lower bound",
+      "requires": "no closure-independent lower bound with architecture scope is available",
+      "scope": "architecture_specific"
+     }
+    ],
+    "risk_directions": [
+     "straddles_limit",
+     "uninformative"
+    ],
+    "risk_indicators": [
+     "RI-MASS-CATHODE-XE",
+     "RI-MASS-RF-HARDWARE-UNKNOWN"
+    ],
+    "status": "UNDETERMINED",
+    "verdict_eligible_bounds": []
+   },
+   "startup": {
+    "architecture_specific_missing": 1,
+    "common_mode_missing": 4,
+    "conditional_margins": [
+     {
+      "limit_status": "PROPOSED (owner interpretation of '< 1.5 kW')",
+      "quantity": "PROPOSED start-up peak limit minus cathode heater power (heater alone)",
+      "range": [
+       1195.0,
+       1455.0
+      ],
+      "relation": "margin = startup_peak_limit - heater power (bracket extremes)",
+      "risk_indicator": "RI-STARTUP-CATHODE-HEATER",
+      "unit": "W"
+     }
+    ],
+    "criteria": [
+     {
+      "binding": true,
+      "can_eliminate_on_this_dimension": false,
+      "comparator": "<",
+      "criterion": "G2.bus_power_max",
+      "elements": [
+       "hall_discharge",
+       "hall_magnet",
+       "cathode_keeper",
+       "cathode_heater",
+       "flow_control",
+       "compressor",
+       "thermal_control",
+       "housekeeping",
+       "rf_source"
+      ],
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent",
+       "model_admitted_closure"
+      ],
+      "gate": "G2_bus_power",
+      "gate_status": "RFP",
+      "metric": "bus_power_max_W",
+      "notes": [
+       "fail_must_cover.operating_modes = ['steady'] excludes 'startup': a startup-only bound cannot FAIL this criterion under matrix v1 (owner reading)"
+      ],
+      "threshold": 1500,
+      "unit": "W"
+     },
+     {
+      "binding": false,
+      "can_eliminate_on_this_dimension": false,
+      "comparator": ">=",
+      "criterion": "P2.start_cycles",
+      "elements": null,
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware"
+      ],
+      "gate": "P2_cathode",
+      "gate_status": "PROPOSED",
+      "metric": "cathode_start_cycles_capability",
+      "notes": [
+       "gate P2_cathode is PROPOSED (non-binding): a FAIL is reported as 'would eliminate only if the owner adopts this gate', never as an elimination",
+       "threshold TBD: TBD — requires the restart count (G6.restart_count, OD5)."
+      ],
+      "threshold": null,
+      "unit": "count"
+     }
+    ],
+    "final_status": "UNDETERMINED",
+    "margin": {
+     "kind": "not_computable",
+     "reason": "no verdict-eligible failing-side bound exists for this architecture and dimension"
+    },
+    "missing_inputs": [
+     {
+      "blocking": [
+       "admitted Hall closure (gate 3)",
+       "lane_06_experiment_protocol (measurement)"
+      ],
+      "input": "hall_discharge ignition transient at the bus boundary",
+      "requires": "measurement or an admitted closure (credible set empty)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_33_upstream_icd (compressor load TBD)"
+      ],
+      "input": "compressor bus draw during start-up",
+      "requires": "upstream ICD value; TBD, never filled here",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:OD5",
+       "lane_10_cathode_dossier (U15/G05)"
+      ],
+      "input": "mission start count and required start-cycle capability",
+      "requires": "operations concept; P2.start_cycles and G6.restart_count thresholds (TBD, OD5)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:startup_peak_limit"
+      ],
+      "input": "interpretation: does '< 1.5 kW' bound start-up transients",
+      "requires": "owner decision on the PROPOSED startup_peak_limit (cathode_integration_data_v1.json)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "owner_decision:preionizer_start_schedule",
+       "lane_18_interstage",
+       "lane_11_bus_boundary"
+      ],
+      "input": "pre-ionizer start schedule (V1 after keeper-off / V2 before discharge ignition) and its power",
+      "requires": "owner choice of V1/V2; source power at the boundary",
+      "scope": "architecture_specific"
+     }
+    ],
+    "risk_directions": [
+     "away_from_exceedance"
+    ],
+    "risk_indicators": [
+     "RI-STARTUP-CATHODE-HEATER"
+    ],
+    "status": "UNDETERMINED",
+    "verdict_eligible_bounds": []
+   },
+   "thermal": {
+    "architecture_specific_missing": 2,
+    "common_mode_missing": 6,
+    "conditional_margins": [],
+    "criteria": [
+     {
+      "binding": false,
+      "can_eliminate_on_this_dimension": false,
+      "comparator": ">=",
+      "criterion": "P1.thermal_margin",
+      "elements": [
+       "hall_thruster",
+       "hall_magnet",
+       "cathode",
+       "compressor",
+       "power_processing",
+       "valves_and_flow_control",
+       "rf_source"
+      ],
+      "fail_sufficient_bases": [
+       "hard_physical_bound",
+       "measurement_vyovrinda",
+       "measurement_same_hardware",
+       "model_closure_independent",
+       "model_admitted_closure"
+      ],
+      "gate": "P1_thermal",
+      "gate_status": "PROPOSED",
+      "metric": "thermal_margin_min_K",
+      "notes": [
+       "gate P1_thermal is PROPOSED (non-binding): a FAIL is reported as 'would eliminate only if the owner adopts this gate', never as an elimination"
+      ],
+      "threshold": 0,
+      "unit": "K"
+     }
+    ],
+    "final_status": "UNDETERMINED",
+    "margin": {
+     "kind": "not_computable",
+     "reason": "no verdict-eligible failing-side bound exists for this architecture and dimension"
+    },
+    "missing_inputs": [
+     {
+      "blocking": [
+       "lane_11_bus_boundary (component allocations)",
+       "admitted Hall closure (gate 3; credible set empty)",
+       "thermal geometry / radiator design (rejection paths)"
+      ],
+      "input": "thermal_life component 'hall_discharge': 16 TBD inputs (additional_wall_heat_W, allowable_erosion_depth_m, anode_electron_temperature_eV, discharge_current_A, discharge_power_W, hot_spot_allowance_K, peak_to_average_flux_ratio, rejection_paths, volumetric_sputter_yield_m3_per_ion, wall_area_m2, wall_electron_temperature_eV, wall_environment, wall_ion_energy_eV, wall_ion_flux_m2s, wall_material_record, wall_see_yield)",
+      "requires": "HallMap field discharge_current_A; HallMap field discharge_power_W or bus-power 'hall_discharge'; HallMap field wall_ion_energy_eV of an ADMITTED ensemble member with wall_life_trustworthy = true (thermal_life.hallmap_wall_inputs), or measured hardware data with its evidence record; the record must carry wall_flux_provenance (see top-level wall_flux_provenance); HallMap field wall_ion_flux_m2s of an ADMITTED ensemble member with wall_life_trustworthy = true (thermal_life.hallmap_wall_inputs), or measured hardware data with its evidence record; the record must carry wall_flux_provenance (see top-level wall_flux_provenance); Vyovrinda channel geometry: inner + outer wall area over z <= L; Vyovrinda wall geometry (erodible thickness before the magnetic circuit is exposed); any wall heat not covered by the ion and electron terms (e.g. recombination, absorbed plasma radiation); zero only with a documented justification; axial wall-flux profile (hall_map_schema_v1 gives only the z <= L average); owner decision (ABEP air path: atomic-oxygen plasma has no sourced limit); solver output (WallSheath SEE yield, not a hall_map_schema_v1 field); must be the gamma of the same solve whose sheath is in wall_ion_energy_eV (not checked in v1); solver output (not a hall_map_schema_v1 field); must be the T_e of the same solve whose sheath is in wall_ion_energy_eV (not checked in v1); solver output near the anode (not a hall_map_schema_v1 field); sourced sputter yield of the wall material for the ion mix at wall_ion_energy_eV; thermal geometry model; wall material selection (record id in limits_v1.json); wall thermal model (peak vs lumped)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "sourced limit (datasheet / dossier)"
+      ],
+      "input": "thermal_life limit record 'bn_combat_m26'",
+      "requires": "Saint-Gobain Combat M26 (60 % hBN / 40 % SiO2) maximum-use temperatures for oxidizing and inert/vacuum atmospheres from the manufacturer datasheet. The datasheet URL (bn.saint-gobain.com/.../combat-bn-solids-ds.pdf) and a distributor copy returned bot challenges on 2026-09-26 and were not bypassed. Context: the historical P5 channel wall is Combat M26 (Schinder, Georgia Tech PhD dissertation, 2016, p. 30).",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_11_bus_boundary (component allocations)",
+       "design_release:hall_magnet",
+       "thermal geometry / radiator design (rejection paths)"
+      ],
+      "input": "thermal_life component 'hall_magnet': 10 TBD inputs (bus_power_allocation_W, coil_current_A, coil_resistance_ref_T_C, coil_resistance_ref_ohm, copper_model, derating_policy, external_heat_W, hot_spot_allowance_K, insulation_class_C, rejection_paths)",
+      "requires": "Vyovrinda magnetic-circuit design; bus-power boundary component 'hall_magnet'; coil design (thermal_life.coil_resistance_from_geometry) or coil measurement; coil thermal model (EEE-INST-002 note 1/a uses 10 C for MIL-style parts); magnet-wire / insulation-system selection (IEC 60085 class); owner choice; owner decision; same as coil_resistance_ref_ohm; thermal geometry model; thruster thermal model: discharge heat reaching the coil",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_11_bus_boundary (component allocations)",
+       "design_release:cathode",
+       "thermal geometry / radiator design (rejection paths)"
+      ],
+      "input": "thermal_life component 'cathode': 14 TBD inputs (assembly_limit_record, emission_current_A, emitter_pO2_Torr, emitter_plasma_heating_W, emitting_area_m2, heater_power_W, heater_qualified_cycles, heater_steady_state_duty, hot_spot_allowance_K, insert_mass_kg, keeper_heat_fraction_to_cathode, keeper_power_W, rejection_paths, required_heater_cycles)",
+      "requires": "HallMap discharge_current_A plus keeper current (thermally limited regime); bus-power boundary component 'cathode_heater'; bus-power boundary component 'cathode_keeper'; cathode dossier; cathode dossier (O2 partial pressure at the emitter; feed purity / air path); cathode dossier (heater qualification cycles); cathode dossier (insert geometry); cathode dossier (insert-plasma heating in steady state); cathode dossier / operations (0 for a self-heated cathode); cathode thermal model; limits_v1.json; operations concept (number of starts); thermal geometry model",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "sourced limit (datasheet / dossier)"
+      ],
+      "input": "thermal_life limit record 'cathode_assembly_temperature_limit'",
+      "requires": "the limiting temperature of the cathode assembly node (heater insulation, orifice plate, keeper, LaB6 support/boron-diffusion barrier) from the cathode dossier, with source. When sourced, the record must carry the value T_max_C (degC)",
+      "scope": "common_mode"
+     },
+     {
+      "blocking": [
+       "lane_11_bus_boundary (component allocations)",
+       "design_release:rf_source",
+       "thermal geometry / radiator design (rejection paths)"
+      ],
+      "input": "thermal_life component 'rf_source': 7 TBD inputs (heat_fraction_antenna_copper, heat_fraction_coupler_dielectric, heat_fraction_plasma_to_structure, hot_spot_allowance_K, rejection_paths, rf_power_W, structure_limit_record)",
+      "requires": "RF source design / test; bus-power boundary component 'rf_source' (RF power delivered to the antenna); limits_v1.json; source thermal model; thermal geometry model",
+      "scope": "architecture_specific"
+     },
+     {
+      "blocking": [
+       "sourced limit (datasheet / dossier)"
+      ],
+      "input": "thermal_life limit record 'rf_source_structure_limit'",
+      "requires": "the limiting temperature of the RF source structure node (antenna conductor and its insulation, dielectric tube/window, matching network) from the RF-source design, with a sourced material limit. When sourced, the record must carry the value T_max_C (degC)",
+      "scope": "architecture_specific"
+     },
+     {
+      "blocking": [
+       "lane_16_feed_envelope"
+      ],
+      "input": "valve-outlet feed state (thruster inlet)",
+      "requires": "lane_16 feed envelope value; TBD, never filled here",
+      "scope": "common_mode"
+     }
+    ],
+    "risk_directions": [
+     "toward_exceedance"
+    ],
+    "risk_indicators": [
+     "RI-THERMAL-RF-PASSIVE-COOLING"
+    ],
+    "status": "UNDETERMINED",
+    "verdict_eligible_bounds": []
+   }
+  }
+ },
+ "common_mode_vs_architecture_specific": {
+  "architecture_specific_risk_indicators": {
+   "ecr_hall": [
+    "RI-MASS-ECR-AMPLIFIER-BREADBOARD",
+    "RI-THERMAL-ECR-MICROWAVE-LINE"
+   ],
+   "hall_only": [],
+   "rf_hall": [
+    "RI-LIFE-RF-DIELECTRIC",
+    "RI-MASS-RF-HARDWARE-UNKNOWN",
+    "RI-THERMAL-RF-PASSIVE-COOLING"
+   ]
+  },
+  "common_mode_risk_indicators": [
+   "RI-LIFE-CATHODE-AIR-EXPOSURE",
+   "RI-LIFE-CATHODE-DEVELOPER-MODEL",
+   "RI-LIFE-HALL-ANODE-OXIDATION",
+   "RI-LIFE-HALL-CHANNEL-AIR-EROSION",
+   "RI-LIFE-HALL-SHIELDED-COUNTER",
+   "RI-LIFE-SCALE-WALL-FLUX",
+   "RI-MASS-CATHODE-XE",
+   "RI-STARTUP-CATHODE-HEATER"
+  ],
+  "reading": "A common-mode veto, once demonstrated, would remove all three architectures together: it is a programme risk, not a discriminator. The indicators pointing toward exceedance today (Hall channel erosion and anode oxidation on O-bearing air, cathode exposure to air, channel scale-up of wall flux) sit on the common Hall accelerator and cathode; cathode Xe mass straddles the limit and is common-mode unless m_c,min(I_emit) differs between arms. Architecture-specific items (rf_source passive cooling, microwave-line heating, pre-ionizer hardware mass, dielectric/window life) have no quantitative bound in any pinned input."
+ },
+ "created": "2026-09-26",
+ "dimensions": [
+  "mass",
+  "thermal",
+  "life_firing",
+  "life_mission",
+  "startup"
+ ],
+ "eliminated_within_tested_envelope": [],
+ "external_blockers": {
+  "lane_10_cathode_dossier": {
+   "in_base_commit": true,
+   "lane_commit": "1b6fc10ab11798dce1e5ed3079cae1210fbb8d2d",
+   "note": "cathode dossier; pinned and read here. Its numeric cathode parameters enter this layer through lane_19_cathode_integration (which consumes the dossier); the dossier itself is cited for the baseline decision and the open uncertainty / hardware-test items (U.., G..) named in the cells.",
+   "path": "docs/evidence/cathode/",
+   "read": [
+    {
+     "file": "docs/evidence/cathode/cathode_evidence_v1.json",
+     "path": "baseline_decision.system_baseline_cathode",
+     "value": "Xe-fed hollow cathode"
+    },
+    {
+     "file": "docs/evidence/cathode/cathode_evidence_v1.json",
+     "path": "baseline_decision.atmospheric_gas_fed_cathode_operation",
+     "value": "UNRESOLVED"
+    }
+   ],
+   "verification": "two-lens-v2, second lens passed, verified commit unchanged (docs/orchestration/lane_registry_v1.json at base bad6ea0)"
+  },
+  "lane_16_feed_envelope": {
+   "in_base_commit": true,
+   "lane_commit": null,
+   "note": "valve-outlet feed state is TBD there; never filled here",
+   "path": "docs/architecture_comparison/feed_envelope/",
+   "read": [],
+   "verification": "not read by this layer"
+  },
+  "lane_32_wall_life": {
+   "in_base_commit": true,
+   "lane_commit": "f3c924a791a01f69e1a9165a74b88c1446e203d3",
+   "note": "wall erosion / sputter-yield evidence DB; pinned and read here. Not used as a life value because the DB itself states that no N/O design-life or erosion-rate number can be derived from this version (quoted in 'read'); it names the evidence a Hall-channel life bound still needs.",
+   "path": "docs/evidence/wall_life/",
+   "read": [
+    {
+     "file": "docs/evidence/wall_life/sputter_yield_db_v1.json",
+     "path": "hard_statements.no_design_life_from_this_version",
+     "value": "No N/O design-life or erosion-rate number is supported by this database version: no measured N+, N2+, O+ or O2+ yield on BN, BN-SiO2 or SiC was located, and the only located N/O measurement on a candidate ceramic (Espy et al. 1993, Al2O3 thin films, 50-200 eV) is closed-access with values TBD."
+    }
+   ],
+   "verification": "two-lens-v2, second lens passed; verified_pin f3c924a (docs/orchestration/lane_registry_v1.json at base bad6ea0)"
+  },
+  "lane_33_upstream_icd": {
+   "in_base_commit": true,
+   "lane_commit": "ced4aa08c4f19455a7b0c70b50a47d1f8e7727fe",
+   "note": "upstream ICD; pinned and read here. The compressor electrical input field lists a repository model producer (abep_sim.compressor, model-derived, validity domain D-DRAGCOMP, uncertainty TBD), i.e. a model interface, not a sourced or measured load; lane_20 electrical closure keeps the compressor load TBD (its code defaults are unsourced). This layer therefore keeps the compressor bus draw TBD and never fills it (lane brief).",
+   "path": "schemas/interfaces/",
+   "read": [
+    {
+     "file": "schemas/interfaces/upstream_icd_v1.json",
+     "path": "$defs.IF-A3.properties.electrical_power_W.x-field.status",
+     "value": "supplied"
+    },
+    {
+     "file": "schemas/interfaces/upstream_icd_v1.json",
+     "path": "$defs.IF-A3.properties.electrical_power_W.x-field.evidence_class_current",
+     "value": "model-derived"
+    },
+    {
+     "file": "schemas/interfaces/upstream_icd_v1.json",
+     "path": "$defs.IF-A3.properties.electrical_power_W.x-field.uncertainty",
+     "value": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+    },
+    {
+     "file": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
+     "path": "components.compressor.entries[CP-LOAD].evidence_class",
+     "value": "tbd"
+    }
+   ],
+   "verification": "two-lens-v2, second lens passed (docs/orchestration/lane_registry_v1.json at base bad6ea0)"
+  }
+ },
+ "follow_on": "fo_veto_layer",
+ "generated_by": "python docs/architecture_comparison/veto_layer/build_veto_layer.py",
+ "id": "veto_layer_v1",
+ "inputs": [
+  {
+   "lane": "lane_21_mass_bom",
+   "lane_commit": "41acbb9e8d43f68925b23d3449b83f28acddd7d1",
+   "path": "abep_sim/mass_bom.py",
+   "role": "mass BOM module (read for provenance; the v1 skeleton result is taken from mass_bom_v1.json)",
+   "sha256": "c785aeb14b789b20a20a796ab86d8acd354760b52ac30827b395a623430e4a39"
+  },
+  {
+   "lane": "lane_21_mass_bom",
+   "lane_commit": "41acbb9e8d43f68925b23d3449b83f28acddd7d1",
+   "path": "docs/architecture_comparison/mass_bom/mass_bom_v1.json",
+   "role": "items, lower bounds, plausibility screen (G3 FAIL-side feed)",
+   "sha256": "8ab97ff93f507899508374d4ce8116e7066c31e3fbe2c79300f5b55372ba7313"
+  },
+  {
+   "lane": "lane_21_mass_bom",
+   "lane_commit": "41acbb9e8d43f68925b23d3449b83f28acddd7d1",
+   "path": "docs/architecture_comparison/mass_bom/MASS_BOM.md",
+   "role": "mass accounting rules",
+   "sha256": "e050e2fb445ca613fac970b0a0cf2664a2f021dab381c5cce11b71d9e2a7387e"
+  },
+  {
+   "lane": "lane_15_thermal_life",
+   "lane_commit": "66ff83be5506097025905332b0b28e9e3fe4e19e",
+   "path": "abep_sim/thermal_life.py",
+   "role": "thermal/life framework (no Vyovrinda result exists; read for provenance)",
+   "sha256": "dce2048233746ecc596866c1d561c8828f820c7960b9778db0d6d66a9c86d83c"
+  },
+  {
+   "lane": "repository (not a lane; CLAUDE.md next-work 1)",
+   "lane_commit": "bad6ea0d6b94c343082dbbc5c0740310e0e7726d",
+   "path": "abep_sim/thermal.py",
+   "role": "legacy Phase-4 lumped thermal network with uncited dataclass defaults; NOT used as evidence",
+   "sha256": "3ad94b716dd78e863ad441a78ffdc7fd3ef38b2764a7aabaace6876a2f1444fb"
+  },
+  {
+   "lane": "lane_15_thermal_life",
+   "lane_commit": "66ff83be5506097025905332b0b28e9e3fe4e19e",
+   "path": "schemas/thermal_life/limits_v1.json",
+   "role": "sourced / TBD thermal and life limit records",
+   "sha256": "0df363f76dcb6efcef41bc0a07e1775b6255c2c9d84b185228862958ef827dbb"
+  },
+  {
+   "lane": "lane_15_thermal_life",
+   "lane_commit": "66ff83be5506097025905332b0b28e9e3fe4e19e",
+   "path": "schemas/thermal_life/inputs_v1.json",
+   "role": "thermal/life input contract (what each component needs, and from where)",
+   "sha256": "937e5c643ef6d1b567319ad788915cd8e9f9b6ab78fc8df91454bdb300f0777f"
+  },
+  {
+   "lane": "lane_15_thermal_life",
+   "lane_commit": "66ff83be5506097025905332b0b28e9e3fe4e19e",
+   "path": "docs/thermal_life/THERMAL_LIFE_FRAMEWORK.md",
+   "role": "thermal/life framework document",
+   "sha256": "c07c9441505669ee6d4c3fcd3cf54d2e03dc749ea991f99098e64c193d6f134e"
+  },
+  {
+   "lane": "lane_24_hard_gates",
+   "lane_commit": "08b9f9bf32a0b34142338b2003f2b2cf02ecaacc",
+   "path": "abep_sim/hard_gates.py",
+   "role": "lane-24 evaluator (called, never modified)",
+   "sha256": "a36fe3c9065291f0fe5be3f17e179d5b691f00c013f7f8ef299fa89db896dda8"
+  },
+  {
+   "lane": "lane_24_hard_gates",
+   "lane_commit": "08b9f9bf32a0b34142338b2003f2b2cf02ecaacc",
+   "path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+   "role": "gate thresholds, evidence-basis rules, elements",
+   "sha256": "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f"
+  },
+  {
+   "lane": "lane_24_hard_gates",
+   "lane_commit": "08b9f9bf32a0b34142338b2003f2b2cf02ecaacc",
+   "path": "schemas/architecture_comparison/hard_gates_v1.schema.json",
+   "role": "evidence-item schema",
+   "sha256": "e5c70c588f3e785720c0d9d01013e5725807b9fd288fa8a1bddf6ba6d86f54ba"
+  },
+  {
+   "lane": "lane_24_hard_gates",
+   "lane_commit": "08b9f9bf32a0b34142338b2003f2b2cf02ecaacc",
+   "path": "docs/architecture_comparison/hard_gates/evidence_register_v1.json",
+   "role": "registered hard-gate evidence (source of verdict-eligible bounds)",
+   "sha256": "45dfbfb311441aeb7c9c58f5dbb9ffb39c28fa448b85de552c37e8268ff94a3d"
+  },
+  {
+   "lane": "lane_24_hard_gates",
+   "lane_commit": "08b9f9bf32a0b34142338b2003f2b2cf02ecaacc",
+   "path": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+   "role": "committed hard-gate status",
+   "sha256": "2c82b3277067b22c85eabd25539b18101f429e6d34ee698d2f5d6e183aa44527"
+  },
+  {
+   "lane": "lane_19_cathode_integration",
+   "lane_commit": "eff15f85c53244556b1a9a9274fb7ffe80e9fa90",
+   "path": "abep_sim/cathode_integration.py",
+   "role": "cathode integration module (provenance)",
+   "sha256": "9c8e776b851c112da89b0621a2e1da0dd128ab647229214b81aed19c3e0561b0"
+  },
+  {
+   "lane": "lane_19_cathode_integration",
+   "lane_commit": "eff15f85c53244556b1a9a9274fb7ffe80e9fa90",
+   "path": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json",
+   "role": "cathode parameters, PROPOSED thresholds, RFP record",
+   "sha256": "df020bfe3ef87b0fc6f49c56db7e38dc585c4640b5c89dd167d1f18e928dbd6f"
+  },
+  {
+   "lane": "lane_19_cathode_integration",
+   "lane_commit": "eff15f85c53244556b1a9a9274fb7ffe80e9fa90",
+   "path": "docs/architecture_comparison/cathode_integration/cathode_integration_derived_v1.json",
+   "role": "derived cathode Xe mass vs RFP, start-up heater energy",
+   "sha256": "a0c8c247d2f87654568da3c01fece2ad562c1ca8e2ba78140813394aed81c125"
+  },
+  {
+   "lane": "lane_20_ppu_magnet",
+   "lane_commit": "f7c226848d85fedb70c03bae9971be3b2bbde1fe",
+   "path": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
+   "role": "component load brackets (cathode heater start-up), compressor model status",
+   "sha256": "d56f700198a64a919d736c8659b6e0aaaa01cd56521885772d2f5a40de374501"
+  },
+  {
+   "lane": "lane_22_scaling",
+   "lane_commit": "c43d2d6ebddc244dc02d96ffbe7d52526de905c7",
+   "path": "docs/architecture_comparison/scaling/scaling_similarity.json",
+   "role": "surface-to-volume / wall-life transfer risk (TR-10)",
+   "sha256": "a604d93f576c4106a819b5679f0562060f0f7d9dc8f7078924d29bfd025644fe"
+  },
+  {
+   "lane": "lane_09_hall_sustainment",
+   "lane_commit": "f458811a5720a20216379dd1f701a54d21faf2b6",
+   "path": "docs/evidence/hall_sustainment/hall_sustainment_matrix.json",
+   "role": "air-fed Hall endurance / erosion observations (E07, E09)",
+   "sha256": "76bba594eb1175b2186a8066b38665a2ce5e4cf77487c90f4af2e187a0b82dcc"
+  },
+  {
+   "lane": "lane_07_rf_evidence",
+   "lane_commit": "336d548042359f8559d0bf50a409a976c0158fc2",
+   "path": "docs/evidence/rf_source/rf_evidence_matrix.json",
+   "role": "RF source thermal / erosion / mass evidence",
+   "sha256": "5f6d4e0ede8b2e21e45b740c28ac9320e7ddd6cfd70ef05012f85712ae0ac8e8"
+  },
+  {
+   "lane": "lane_08_ecr_evidence",
+   "lane_commit": "a85fd592618cb15a02f14123659a0698db90df19",
+   "path": "docs/evidence/ecr_source/ecr_evidence_matrix.json",
+   "role": "ECR source thermal / mass / cathode-exposure evidence",
+   "sha256": "4a65dbeec34f16f048fa515ced3bb959c02a981113e25da89e8bb844337fec88"
+  },
+  {
+   "lane": "repository (not a lane; CLAUDE.md next-work 1)",
+   "lane_commit": "bad6ea0d6b94c343082dbbc5c0740310e0e7726d",
+   "path": "abep_sim/hall_ensemble.py",
+   "role": "admitted-member lookup used by the lane-24 evaluator",
+   "sha256": "218f890c8444af1f593396da5051e38d2d093bbb3cb0bc976cc44b01b67df704"
+  },
+  {
+   "lane": "repository (not a lane; CLAUDE.md next-work 1)",
+   "lane_commit": "bad6ea0d6b94c343082dbbc5c0740310e0e7726d",
+   "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
+   "role": "transport ensemble (admitted members: none; read-only)",
+   "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b"
+  },
+  {
+   "lane": "lane_32_wall_life",
+   "lane_commit": "f3c924a791a01f69e1a9165a74b88c1446e203d3",
+   "path": "docs/evidence/wall_life/sputter_yield_db_v1.json",
+   "role": "wall-life evidence DB (read for its no-design-life statement; blocker record)",
+   "sha256": "315fbd44da2ee16246edb95830be09e0f05b9237cd5ca0a4c86a02a7e25bfffa"
+  },
+  {
+   "lane": "lane_10_cathode_dossier",
+   "lane_commit": "1b6fc10ab11798dce1e5ed3079cae1210fbb8d2d",
+   "path": "docs/evidence/cathode/cathode_evidence_v1.json",
+   "role": "cathode dossier (baseline decision; numeric parameters enter via lane 19)",
+   "sha256": "050060204e443d5583c307becadaab55a9f213d406ff4454be856bca21249110"
+  },
+  {
+   "lane": "lane_33_upstream_icd",
+   "lane_commit": "ced4aa08c4f19455a7b0c70b50a47d1f8e7727fe",
+   "path": "schemas/interfaces/upstream_icd_v1.json",
+   "role": "upstream ICD (compressor electrical-input field status; the bus draw stays TBD)",
+   "sha256": "2437d125060f2f24da06ac33b22220483f70b411033c91682cdffb5f01310850"
+  }
+ ],
+ "lane24_evaluation": {
+  "admitted_members": [],
+  "architectures": {
+   "ecr_hall": {
+    "eliminated": false,
+    "elimination_basis": [],
+    "gate_verdicts": {
+     "G2_bus_power": "UNDETERMINED",
+     "G3_mass": "UNDETERMINED",
+     "G4_firing_life": "UNDETERMINED",
+     "G5_mission": "UNDETERMINED",
+     "P1_thermal": "UNDETERMINED",
+     "P2_cathode": "UNDETERMINED"
+    },
+    "items_not_verdict_bearing": [
+     {
+      "criterion": "P2.cathode_life",
+      "id": "veto.RI-LIFE-CATHODE-DEVELOPER-MODEL",
+      "reasons": [
+       "basis 'engineering_estimate' is never verdict-bearing: EVIDENCE.md level 6: engineering correlation or extrapolation outside its validated domain, including a life extrapolated from a shorter test with an unvalidated wear model.",
+       "inconclusive: the stated bound does not decide the criterion (point estimate, wrong-side bound, an interval straddling the threshold, or a bound AT a threshold whose strict/inclusive form is an open owner decision)",
+       "conditions.propellants ['xenon'] do not intersect ['atmospheric']"
+      ]
+     },
+     {
+      "criterion": "G4.firing_life",
+      "id": "veto.RI-LIFE-HALL-ANODE-OXIDATION",
+      "reasons": [
+       "basis 'measurement_similar_hardware' is never verdict-bearing: EVIDENCE.md level 3 on closely similar but different hardware: transfer to Vyovrinda hardware and flight conditions is uncertain. It can shape a condition or be a cited input to a hard bound; it is never a verdict by itself."
+      ]
+     },
+     {
+      "criterion": "G4.firing_life",
+      "id": "veto.RI-LIFE-HALL-CHANNEL-AIR-EROSION",
+      "reasons": [
+       "basis 'engineering_estimate' is never verdict-bearing: EVIDENCE.md level 6: engineering correlation or extrapolation outside its validated domain, including a life extrapolated from a shorter test with an unvalidated wear model."
+      ]
+     },
+     {
+      "criterion": "G3.mass_mev",
+      "id": "veto.RI-MASS-CATHODE-XE",
+      "reasons": [
+       "basis 'measurement_similar_hardware' is never verdict-bearing: EVIDENCE.md level 3 on closely similar but different hardware: transfer to Vyovrinda hardware and flight conditions is uncertain. It can shape a condition or be a cited input to a hard bound; it is never a verdict by itself.",
+       "inconclusive: the stated bound does not decide the criterion (point estimate, wrong-side bound, an interval straddling the threshold, or a bound AT a threshold whose strict/inclusive form is an open owner decision)"
+      ]
+     },
+     {
+      "criterion": "G2.bus_power_max",
+      "id": "veto.RI-STARTUP-CATHODE-HEATER",
+      "reasons": [
+       "basis 'measurement_similar_hardware' is never verdict-bearing: EVIDENCE.md level 3 on closely similar but different hardware: transfer to Vyovrinda hardware and flight conditions is uncertain. It can shape a condition or be a cited input to a hard bound; it is never a verdict by itself.",
+       "not stated at the common bus-power boundary 'bus_power_boundary_v1'",
+       "a ground measurement must state how its feed state maps to the envelope point (conditions.feed_equivalence, upstream ICD thruster-inlet interface)",
+       "conditions.altitude_km not stated (envelope: [180, 230])",
+       "conditions.atmosphere_states not stated (envelope: ['low', 'mean', 'high'])",
+       "conditions.propellants not stated (envelope: ['atmospheric', 'atmospheric_xenon_mixed'])",
+       "a passing bound on a sum must include every required element; missing: ['cathode_keeper', 'compressor', 'ecr_magnet', 'ecr_source', 'flow_control', 'hall_discharge', 'hall_magnet', 'housekeeping', 'thermal_control']"
+      ]
+     }
+    ],
+    "proposed_gate_failures": []
+   },
+   "hall_only": {
+    "eliminated": false,
+    "elimination_basis": [],
+    "gate_verdicts": {
+     "G2_bus_power": "UNDETERMINED",
+     "G3_mass": "UNDETERMINED",
+     "G4_firing_life": "UNDETERMINED",
+     "G5_mission": "UNDETERMINED",
+     "P1_thermal": "UNDETERMINED",
+     "P2_cathode": "UNDETERMINED"
+    },
+    "items_not_verdict_bearing": [
+     {
+      "criterion": "P2.cathode_life",
+      "id": "veto.RI-LIFE-CATHODE-DEVELOPER-MODEL",
+      "reasons": [
+       "basis 'engineering_estimate' is never verdict-bearing: EVIDENCE.md level 6: engineering correlation or extrapolation outside its validated domain, including a life extrapolated from a shorter test with an unvalidated wear model.",
+       "inconclusive: the stated bound does not decide the criterion (point estimate, wrong-side bound, an interval straddling the threshold, or a bound AT a threshold whose strict/inclusive form is an open owner decision)",
+       "conditions.propellants ['xenon'] do not intersect ['atmospheric']"
+      ]
+     },
+     {
+      "criterion": "G4.firing_life",
+      "id": "veto.RI-LIFE-HALL-ANODE-OXIDATION",
+      "reasons": [
+       "basis 'measurement_similar_hardware' is never verdict-bearing: EVIDENCE.md level 3 on closely similar but different hardware: transfer to Vyovrinda hardware and flight conditions is uncertain. It can shape a condition or be a cited input to a hard bound; it is never a verdict by itself."
+      ]
+     },
+     {
+      "criterion": "G4.firing_life",
+      "id": "veto.RI-LIFE-HALL-CHANNEL-AIR-EROSION",
+      "reasons": [
+       "basis 'engineering_estimate' is never verdict-bearing: EVIDENCE.md level 6: engineering correlation or extrapolation outside its validated domain, including a life extrapolated from a shorter test with an unvalidated wear model."
+      ]
+     },
+     {
+      "criterion": "G3.mass_mev",
+      "id": "veto.RI-MASS-CATHODE-XE",
+      "reasons": [
+       "basis 'measurement_similar_hardware' is never verdict-bearing: EVIDENCE.md level 3 on closely similar but different hardware: transfer to Vyovrinda hardware and flight conditions is uncertain. It can shape a condition or be a cited input to a hard bound; it is never a verdict by itself.",
+       "inconclusive: the stated bound does not decide the criterion (point estimate, wrong-side bound, an interval straddling the threshold, or a bound AT a threshold whose strict/inclusive form is an open owner decision)"
+      ]
+     },
+     {
+      "criterion": "G2.bus_power_max",
+      "id": "veto.RI-STARTUP-CATHODE-HEATER",
+      "reasons": [
+       "basis 'measurement_similar_hardware' is never verdict-bearing: EVIDENCE.md level 3 on closely similar but different hardware: transfer to Vyovrinda hardware and flight conditions is uncertain. It can shape a condition or be a cited input to a hard bound; it is never a verdict by itself.",
+       "not stated at the common bus-power boundary 'bus_power_boundary_v1'",
+       "a ground measurement must state how its feed state maps to the envelope point (conditions.feed_equivalence, upstream ICD thruster-inlet interface)",
+       "conditions.altitude_km not stated (envelope: [180, 230])",
+       "conditions.atmosphere_states not stated (envelope: ['low', 'mean', 'high'])",
+       "conditions.propellants not stated (envelope: ['atmospheric', 'atmospheric_xenon_mixed'])",
+       "a passing bound on a sum must include every required element; missing: ['cathode_keeper', 'compressor', 'flow_control', 'hall_discharge', 'hall_magnet', 'housekeeping', 'thermal_control']"
+      ]
+     }
+    ],
+    "proposed_gate_failures": []
+   },
+   "rf_hall": {
+    "eliminated": false,
+    "elimination_basis": [],
+    "gate_verdicts": {
+     "G2_bus_power": "UNDETERMINED",
+     "G3_mass": "UNDETERMINED",
+     "G4_firing_life": "UNDETERMINED",
+     "G5_mission": "UNDETERMINED",
+     "P1_thermal": "UNDETERMINED",
+     "P2_cathode": "UNDETERMINED"
+    },
+    "items_not_verdict_bearing": [
+     {
+      "criterion": "P2.cathode_life",
+      "id": "veto.RI-LIFE-CATHODE-DEVELOPER-MODEL",
+      "reasons": [
+       "basis 'engineering_estimate' is never verdict-bearing: EVIDENCE.md level 6: engineering correlation or extrapolation outside its validated domain, including a life extrapolated from a shorter test with an unvalidated wear model.",
+       "inconclusive: the stated bound does not decide the criterion (point estimate, wrong-side bound, an interval straddling the threshold, or a bound AT a threshold whose strict/inclusive form is an open owner decision)",
+       "conditions.propellants ['xenon'] do not intersect ['atmospheric']"
+      ]
+     },
+     {
+      "criterion": "G4.firing_life",
+      "id": "veto.RI-LIFE-HALL-ANODE-OXIDATION",
+      "reasons": [
+       "basis 'measurement_similar_hardware' is never verdict-bearing: EVIDENCE.md level 3 on closely similar but different hardware: transfer to Vyovrinda hardware and flight conditions is uncertain. It can shape a condition or be a cited input to a hard bound; it is never a verdict by itself."
+      ]
+     },
+     {
+      "criterion": "G4.firing_life",
+      "id": "veto.RI-LIFE-HALL-CHANNEL-AIR-EROSION",
+      "reasons": [
+       "basis 'engineering_estimate' is never verdict-bearing: EVIDENCE.md level 6: engineering correlation or extrapolation outside its validated domain, including a life extrapolated from a shorter test with an unvalidated wear model."
+      ]
+     },
+     {
+      "criterion": "G3.mass_mev",
+      "id": "veto.RI-MASS-CATHODE-XE",
+      "reasons": [
+       "basis 'measurement_similar_hardware' is never verdict-bearing: EVIDENCE.md level 3 on closely similar but different hardware: transfer to Vyovrinda hardware and flight conditions is uncertain. It can shape a condition or be a cited input to a hard bound; it is never a verdict by itself.",
+       "inconclusive: the stated bound does not decide the criterion (point estimate, wrong-side bound, an interval straddling the threshold, or a bound AT a threshold whose strict/inclusive form is an open owner decision)"
+      ]
+     },
+     {
+      "criterion": "G2.bus_power_max",
+      "id": "veto.RI-STARTUP-CATHODE-HEATER",
+      "reasons": [
+       "basis 'measurement_similar_hardware' is never verdict-bearing: EVIDENCE.md level 3 on closely similar but different hardware: transfer to Vyovrinda hardware and flight conditions is uncertain. It can shape a condition or be a cited input to a hard bound; it is never a verdict by itself.",
+       "not stated at the common bus-power boundary 'bus_power_boundary_v1'",
+       "a ground measurement must state how its feed state maps to the envelope point (conditions.feed_equivalence, upstream ICD thruster-inlet interface)",
+       "conditions.altitude_km not stated (envelope: [180, 230])",
+       "conditions.atmosphere_states not stated (envelope: ['low', 'mean', 'high'])",
+       "conditions.propellants not stated (envelope: ['atmospheric', 'atmospheric_xenon_mixed'])",
+       "a passing bound on a sum must include every required element; missing: ['cathode_keeper', 'compressor', 'flow_control', 'hall_discharge', 'hall_magnet', 'housekeeping', 'rf_source', 'thermal_control']"
+      ]
+     }
+    ],
+    "proposed_gate_failures": []
+   }
+  },
+  "eliminated": [],
+  "evaluator": "abep_sim.hard_gates.evaluate_all (lane_24_hard_gates, unmodified)",
+  "items_submitted": [
+   "veto.RI-LIFE-CATHODE-DEVELOPER-MODEL",
+   "veto.RI-LIFE-HALL-ANODE-OXIDATION",
+   "veto.RI-LIFE-HALL-CHANNEL-AIR-EROSION",
+   "veto.RI-MASS-CATHODE-XE",
+   "veto.RI-STARTUP-CATHODE-HEATER"
+  ],
+  "matrix_status": "DRAFT_PENDING_OWNER",
+  "matrix_version": "1.0.0",
+  "not_eliminated": [
+   "hall_only",
+   "rf_hall",
+   "ecr_hall"
+  ]
+ },
+ "milestones": {
+  "A": "Supported as a negative result with named conditions: no architecture is vetoed on mass, thermal, life or start-up, so a conditional selection is not blocked by this layer; each UNDETERMINED cell's missing inputs are the conditions that selection must carry (e.g. 'Hall channel and anode life > 15,000 h on O-bearing feed, demonstrated'; 'cathode spot-mode minimum Xe flow x firing hours within the Xe allocation').",
+  "B_needs": "verdict-eligible bounds: sourced per-item mass lower bounds and CBEs (mass BOM), thermal_life inputs and TBD limit records filled from design / datasheets, wall-erosion evidence on N/O (lane_32) and wall_life_trustworthy maps from an ADMITTED closure, measured cathode minimum flow and insert life inputs, the upstream ICD (lane_33) and feed envelope (lane_16) values.",
+  "C_needs": "an integrated design whose mass roll-up, heat rejection, life and start-up sequence close together at bus_power_boundary_v1, with hardware endurance evidence for the Hall channel, anode and cathode on O-bearing feed.",
+  "supports": [
+   "A"
+  ]
+ },
+ "not_used": [
+  {
+   "what": "abep_sim/thermal.py Node/ThermalParams defaults (emissivity, areal density, conductances)",
+   "why": "uncited dataclass defaults (legacy Phase 4); not evidence"
+  },
+  {
+   "what": "abep_sim/mass_bom.py legacy MGA dict and v1.7 sizing functions; earlier repository mass figures (withdrawn; not quoted)",
+   "why": "uncited / superseded 0-D Hall closure (MASS_BOM.md, OD-M3)"
+  },
+  {
+   "what": "any Hall-closure output (screening candidates sgb-screen-*, withdrawn 0-D closure)",
+   "why": "credible set empty (gate 3 FAIL); never a performance, heat or life source"
+  },
+  {
+   "what": "lane-09 entries with a repository_status (E03: HISTORICAL_UNSUPPORTED, E04: HISTORICAL_UNSUPPORTED; ECHT on pure N2)",
+   "why": "not cited by this layer: they are sustainment / operating-window observations, not mass, heat rejection, life or start-up evidence. Their status (HISTORICAL_UNSUPPORTED, hallthruster_bridge/identification/echt_n2/STATUS.json) keeps them non-score-bearing and never a transport discriminator; quoting the published sustainment as a level-3 literature measurement stays allowed. Any citing source_ref would carry the status (build check)."
+  },
+  {
+   "what": "Hall wall ion flux / energy (thermal_life hall_discharge.wall_ion_flux_m2s, wall_ion_energy_eV)",
+   "why": "not read and never passed: abep_sim/thermal_life.py (lane 15, G11 gate) accepts wall flux only from an admitted ensemble member's wall_life_trustworthy Hall map or from measured hardware with an evidence record; the pinned ensemble has 0 admitted members and no hardware measurement exists, so both inputs are TBD and every hall_discharge heat / erosion-life cell stays UNDETERMINED. This layer does not import thermal_life, does not call hallmap_wall_inputs or check_feasibility, and has never used a screening-candidate (sgb-screen-*) flux (build check)."
+  },
+  {
+   "what": "compressor bus draw and valve-outlet feed state",
+   "why": "the upstream ICD (lane_33) offers only a repository compressor model (evidence class model-derived, uncertainty TBD) and lane_20 keeps the compressor load TBD; the lane_16 valve-outlet feed state is TBD; neither is filled here"
+  }
+ ],
+ "note": "DRAFT for owner review. No winner, no ranking; eliminations only through the lane-24 evaluator. Thresholds not in the RFP are PROPOSED.",
+ "open_questions_for_owner": [
+  "Adopt P1 (thermal) and P2 (cathode life / start cycles) as binding, or keep them reporting-only?",
+  "Does '< 1.5 kW' bound start-up transients (startup_peak_limit), and should G2 fail_must_cover include 'startup'?",
+  "Xe allocation (OD-M4) and whether cathode flow continues between firings (x 26,000/15,000)."
+ ],
+ "pin_provenance_notes": [
+  {
+   "lane": "lane_15_thermal_life",
+   "lane_commit": "66ff83be5506097025905332b0b28e9e3fe4e19e",
+   "note": "The four lane_15 files (abep_sim/thermal_life.py, schemas/thermal_life/limits_v1.json, inputs_v1.json, docs/thermal_life/THERMAL_LIFE_FRAMEWORK.md) are pinned at the lane_15 repair commit 66ff83b (G11 wall-flux admission gate, on top of 1fb82f3). That commit is NOT in base bad6ea0, and at base neither docs/orchestration/lane_registry_v1.json nor trigger_ledger_v2.jsonl records it as verified: the T_VETO_LAYER claim records the verified lane_15 identity as d2325c8da3. Until the lane_15 repair is verified and merged, this layer does NOT rest on verified lane_15 inputs, and it must be merged only after that repair (merge order: lane_15 repair, then this layer). The branch carries the lane_15 repair commits only so that the pins resolve; this lane does not author them. No cell status depends on the difference from d2325c8da3 (the G11 gate only tightens the hall_discharge wall-flux contract)."
+  }
+ ],
+ "proposed_for_owner": [
+  {
+   "id": "VL-P1",
+   "item": "status rule: only bases in the lane-24 fail_sufficient_bases make a VETO_CANDIDATE; literature on similar hardware stays a risk indicator",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "VL-P2",
+   "item": "start-up peak limit 1500 W (cathode_integration startup_peak_limit, PROPOSED); under matrix v1 a start-up-only bound cannot FAIL G2 (fail_must_cover = steady)",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "VL-P3",
+   "item": "booking the Hall anode under the G4 element 'hall_discharge_channel'",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "VL-P4",
+   "item": "thermal vetoes map onto P1 (PROPOSED gate): even a demonstrated thermal FAIL eliminates nothing until the owner adopts P1",
+   "status": "PROPOSED"
+  }
+ ],
+ "question": "Can mass, thermal rejection, life (firing and mission) or start-up veto hall_only, rf_hall or ecr_hall against the RFP envelope as recorded (< 40 kg, < 1.5 kW, > 15,000 h firing, 26,000 h mission), and on what evidence?",
+ "rfp_limits_as_recorded": {
+  "G2.bus_power_max": {
+   "comparator": "<",
+   "gate_status": "RFP",
+   "threshold": 1500,
+   "threshold_source": "'< 1.5 kW' (R1); power_max_W 1500 (R2); '< 1500 W total' (R3). Verify against RFP document.",
+   "unit": "W"
+  },
+  "G3.mass_mev": {
+   "comparator": "<",
+   "gate_status": "RFP",
+   "threshold": 40,
+   "threshold_source": "'< 40 kg' (R1); mass_max_kg 40 (R2); '< 40 kg total incl. intake, compressor, PSE, Xe + tank, structure, 10 % margin' (R3). Verify against RFP document.",
+   "unit": "kg"
+  },
+  "G4.firing_life": {
+   "comparator": ">",
+   "gate_status": "RFP",
+   "threshold": 15000,
+   "threshold_source": "'> 15,000 h firing' (R1); ignition_hours 15000 with comment '\">15,000 h\"' (R2); the repository records the RFP wording as '>15,000 h ignition' (R3, R5). Verify against RFP document.",
+   "unit": "h"
+  },
+  "G5.mission_capability": {
+   "comparator": ">=",
+   "gate_status": "RFP",
+   "threshold": 26000,
+   "threshold_source": "'26,000 h mission' (R1); mission_hours 26000, '3 years' (R2); R3, R5. Verify against RFP document.",
+   "unit": "h"
+  },
+  "P1.thermal_margin": {
+   "comparator": ">=",
+   "gate_status": "PROPOSED",
+   "threshold": 0,
+   "threshold_source": "PROPOSED: zero margin against each element's allowable temperature; any required acceptance margin is an owner decision (OD9).",
+   "unit": "K"
+  },
+  "P2.cathode_life": {
+   "comparator": ">",
+   "gate_status": "PROPOSED",
+   "threshold": 15000,
+   "threshold_source": "the RFP firing-life threshold of G4 ('> 15,000 h', R1, R2) applied to the cathode. Verify against RFP document.",
+   "unit": "h"
+  },
+  "P2.start_cycles": {
+   "comparator": ">=",
+   "gate_status": "PROPOSED",
+   "threshold": null,
+   "threshold_source": "TBD — requires the restart count (G6.restart_count, OD5).",
+   "unit": "count"
+  }
+ },
+ "risk_indicators": [
+  {
+   "architecture_modulation": "only through I_emit (cathode is common, INV-CATH): TBD, needs an admitted Hall closure or measurement",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "conditional_margin": {
+    "cathode_xe_consumption_fraction_of_limit": [
+     0.108,
+     1.35
+    ],
+    "consumption_fraction_relation": "cathode Xe over the minimum firing / G3 threshold (consumption share, not a margin)",
+    "quantity": "40 kg limit minus cathode Xe over the minimum firing",
+    "range": [
+     -14.0,
+     35.68
+    ],
+    "relation": "margin = G3 threshold - xe_kg_over_min_firing (reference-flow extremes)",
+    "unit": "kg"
+   },
+   "dimension": "mass",
+   "direction": "straddles_limit",
+   "element": "xenon_chamber_and_xenon_load (cathode Xe share)",
+   "evidence_class": "inferred (arithmetic on measured / developer-stated flows of other cathodes)",
+   "evidence_levels": [
+    3
+   ],
+   "id": "RI-MASS-CATHODE-XE",
+   "lane24_basis": "measurement_similar_hardware",
+   "scope": "common_mode",
+   "source_refs": [
+    {
+     "file": "docs/architecture_comparison/cathode_integration/cathode_integration_derived_v1.json",
+     "path": "xe_mass_vs_rfp.reference_flows"
+    },
+    {
+     "file": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json",
+     "path": "parameters.hc1_design_flow_range_mg_s"
+    },
+    {
+     "file": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json",
+     "path": "parameters.hc3_design_flow_range_mg_s"
+    }
+   ],
+   "statement": "IF the common cathode needs a constant Xe flow in the range of the reference flows (P5 setpoint, SITAEL HC1/HC3 design ranges and diode tests), THEN the cathode Xe alone over the RFP minimum firing spans the 40 kg limit from well inside it to beyond it (tank, anode Xe and ignition Xe excluded).",
+   "to_become_verdict_bearing": "measured spot-mode minimum flow m_c,min(I_emit) of the selected cathode (measurement_same_hardware or Vyovrinda) with the required firing hours and the owner's Xe-duty interpretation (lane_19_cathode_integration, lane_10 dossier G06/U16, mass_bom OD-M4)",
+   "unit": "kg",
+   "values": {
+    "cathode_flow_mg_s": [
+     0.08,
+     1.0
+    ],
+    "flow_using_whole_limit_mg_s": 0.7407407407407407,
+    "xe_kg_if_flowing_whole_mission": [
+     7.488,
+     93.6
+    ],
+    "xe_kg_over_min_firing": [
+     4.32,
+     54.0
+    ]
+   },
+   "why_not_verdict_bearing": "flows of other cathodes (P5 setpoint, SITAEL HC1/HC3 diode tests), not a Vyovrinda cathode minimum-flow curve; EVIDENCE.md level 3 is never verdict-bearing (lane-24 basis measurement_similar_hardware); the range straddles the limit"
+  },
+  {
+   "architecture_modulation": "pre-ionization may change the ion species/energy mix reaching the walls (interstage, TR-16): TBD; the channel itself is common",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "conditional_margin": {
+    "hours_short": [
+     5500.0,
+     8000.0
+    ],
+    "quantity": "estimated life / RFP firing hours",
+    "range": [
+     0.466667,
+     0.633333
+    ],
+    "relation": "ratio = lifetime_estimate_h / G4 threshold",
+    "unit": "1"
+   },
+   "dimension": "life_firing",
+   "direction": "toward_exceedance",
+   "element": "hall_discharge_channel",
+   "evidence_class": "model-derived",
+   "evidence_levels": [
+    5
+   ],
+   "id": "RI-LIFE-HALL-CHANNEL-AIR-EROSION",
+   "lane24_basis": "engineering_estimate",
+   "scope": "common_mode",
+   "source_refs": [
+    {
+     "file": "docs/evidence/hall_sustainment/hall_sustainment_matrix.json",
+     "locator": "Page 24 of 57",
+     "path": "entries[E07].quantities[ceramic-erosion-compatible lifetime (authors' estimate)]",
+     "source_id": "ANDREUSSI2022"
+    }
+   ],
+   "statement": "A flight-type SPT (PPS1350) on N2/O2 with 10 % Xe was reported (second-hand) with ceramic erosion 'compatible with' a lifetime below the RFP firing requirement.",
+   "to_become_verdict_bearing": "Vyovrinda-geometry wall-erosion evidence: N/O sputter yields on the wall grade (lane_32_wall_life: no N/O design-life number derivable from DB v1), wall_life_trustworthy maps from an ADMITTED closure (gate 3), or an endurance test of the Vyovrinda channel",
+   "unit": "h",
+   "values": {
+    "lifetime_estimate_h": [
+     7000,
+     9500
+    ]
+   },
+   "why_not_verdict_bearing": "authors' extrapolation with method not given, reported second-hand (review, level 5) on different hardware (PPS1350, 10 % Xe in the anode flow); a life extrapolated with an unvalidated wear model is lane-24 basis engineering_estimate (never verdict-bearing); not of architecture scope: wall material, magnetic shielding (E09) and channel design are Vyovrinda design levers"
+  },
+  {
+   "architecture_modulation": "a pre-ionizer that dissociates O2 changes the atomic-O share reaching the anode: TBD (no model or measurement)",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "conditional_margin": {
+    "quantity": "demonstrated steady hours / RFP firing hours",
+    "range": [
+     0.0209333,
+     0.0209333
+    ],
+    "relation": "ratio = steady hours before first flame-out / G4 threshold",
+    "unit": "1"
+   },
+   "dimension": "life_firing",
+   "direction": "toward_exceedance",
+   "element": "hall_discharge_channel (anode; element booking is this layer's reading, verify)",
+   "evidence_class": "measured",
+   "evidence_levels": [
+    5
+   ],
+   "id": "RI-LIFE-HALL-ANODE-OXIDATION",
+   "lane24_basis": "measurement_similar_hardware",
+   "lane24_basis_note": "lane 24 has no level-5 basis. measurement_similar_hardware is the closest non-verdict basis in kind (a measured observation on other hardware), but its reason text ('EVIDENCE.md level 3') overstates this item: the source entry is level 5 (second-hand report via a review). Either label is non-verdict-bearing; the outcome is unchanged.",
+   "scope": "common_mode",
+   "source_refs": [
+    {
+     "file": "docs/evidence/hall_sustainment/hall_sustainment_matrix.json",
+     "locator": "Page 24 of 57",
+     "path": "entries[E07].quantities[steady duration before first flame-out]",
+     "source_id": "ANDREUSSI2022"
+    },
+    {
+     "file": "docs/evidence/hall_sustainment/hall_sustainment_matrix.json",
+     "path": "entries[E06].observations.erosion"
+    }
+   ],
+   "statement": "In the same PPS1350 N2/O2 + 10 % Xe endurance test, severe anode oxidation produced anomalous discharge behaviour and a flame-out after about 314 h; further flame-outs followed within 75 h.",
+   "to_become_verdict_bearing": "oxidation-resistant anode evidence or an endurance test on O-bearing feed of the Vyovrinda anode (Vyovrinda design release; experiment protocol lane_06)",
+   "unit": "h",
+   "values": {
+    "steady_hours_before_first_flameout": 314
+   },
+   "why_not_verdict_bearing": "different hardware and anode material, second-hand report (level 5); an anode material/design change is a design lever, so the observation has no architecture scope"
+  },
+  {
+   "architecture_modulation": "none known",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "conditional_margin": null,
+   "dimension": "life_firing",
+   "direction": "away_from_exceedance",
+   "element": "hall_discharge_channel",
+   "evidence_class": "measured",
+   "evidence_levels": [
+    3
+   ],
+   "id": "RI-LIFE-HALL-SHIELDED-COUNTER",
+   "lane24_basis": "measurement_similar_hardware",
+   "scope": "common_mode",
+   "source_refs": [
+    {
+     "file": "docs/evidence/hall_sustainment/hall_sustainment_matrix.json",
+     "path": "entries[E09].observations.erosion"
+    }
+   ],
+   "statement": "Counter-indicator: a magnetically shielded Hall thruster (SITAEL HT5k DM2) on N2/O2 showed shielding that 'seems effective' and no critical damage after a cumulative 10 h air test.",
+   "to_become_verdict_bearing": "Vyovrinda channel endurance / erosion measurement",
+   "unit": "n/a",
+   "values": {
+    "observation": "magnetic shielding 'seems effective'; plasma detachment from channel walls visible (p.5); no PFG critical damage after the air test"
+   },
+   "why_not_verdict_bearing": "qualitative, 10 h only, different hardware; shows a design lever exists, which is why E07 has no architecture scope"
+  },
+  {
+   "architecture_modulation": "a pre-ionizer that raises the atomic-O share of the back-flow could differ between architectures: TBD",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "conditional_margin": null,
+   "dimension": "life_firing",
+   "direction": "toward_exceedance",
+   "element": "cathode",
+   "evidence_class": "measured (as cited, secondary; levels not stated per statement)",
+   "evidence_levels": [],
+   "id": "RI-LIFE-CATHODE-AIR-EXPOSURE",
+   "lane24_basis": "measurement_similar_hardware",
+   "lane24_basis_note": "measurement_similar_hardware is the closest non-verdict lane-24 basis in kind, but its reason text ('EVIDENCE.md level 3') overstates this item: ECR-E155 is a secondary citation with no evidence level stated, and the lane-09 E09 cathode observation is a review's report. The item is treated as level 5-class (secondary); it is not submitted to the evaluator (no lane-24 metric) and is non-verdict-bearing under either label.",
+   "scope": "common_mode",
+   "source_refs": [
+    {
+     "doi_or_url": "https://doi.org/10.1088/1361-6463/acefe2",
+     "file": "docs/evidence/ecr_source/ecr_evidence_matrix.json",
+     "locator": "Sec. 1 (citing Andreussi et al. 2022, its ref. [1])",
+     "path": "entries[ECR-E155]"
+    },
+    {
+     "file": "docs/evidence/hall_sustainment/hall_sustainment_matrix.json",
+     "path": "entries[E09].observations.cathode"
+    }
+   ],
+   "statement": "LaB6 hollow cathodes exposed to air showed significant emitter/structure erosion at an air fraction in Xe (secondary citation), and a review reports severe erosion/embrittlement of an N2-fed HC20h after N2/O2 tests. The baseline cathode is Xe-fed; how much air reaches the emitter (plume back-flow, attenuation) is TBD.",
+   "to_become_verdict_bearing": "emitter partial pressures of O/O2/N2 in the Vyovrinda configuration and a tolerance measurement (lane_10 dossier U03-U05, G02/G03; lane_19)",
+   "unit": "1",
+   "values": {
+    "air_fraction_in_xe_with_significant_erosion": 0.12,
+    "hc20h_observation": "HC20h hollow cathode (LaB6 emitter per ANDREUSSI2022 Page 38 of 57) on N2 0.5-0.7 mg/s (FERRATO2022_PSST abstract); N2 cathode reduced I_d, thrust and efficiency vs Xe cathode at the same V_d and anode flow (p.5). The review reports severe erosion/embrittlement of the HC20h after tests with the N2/O2 mixture (Page 38 of 57)"
+   },
+   "why_not_verdict_bearing": "secondary citations on other cathodes and feed compositions; no hours-to-failure; the emitter environment of the Xe-fed baseline is unknown (attenuation TBD)"
+  },
+  {
+   "architecture_modulation": "through I_emit only (emitter temperature): TBD",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "conditional_margin": {
+    "quantity": "stated life lower bound / RFP firing hours",
+    "range": [
+     0.666667,
+     null
+    ],
+    "relation": "lower bound only; upper end open",
+    "unit": "1"
+   },
+   "dimension": "life_firing",
+   "direction": "uninformative",
+   "element": "cathode",
+   "evidence_class": "model-derived (lower bound stated by the developer)",
+   "evidence_levels": [
+    3
+   ],
+   "id": "RI-LIFE-CATHODE-DEVELOPER-MODEL",
+   "lane24_basis": "engineering_estimate",
+   "scope": "common_mode",
+   "source_refs": [
+    {
+     "file": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json",
+     "locator": "abstract p. 1; Sec. IV.A p. 5; Sec. V p. 8 ('higher than 10^4 hours', from emitter evaporation in the developer's model)",
+     "path": "parameters.hc1_hc3_predicted_life_h"
+    }
+   ],
+   "statement": "The SITAEL HC1/HC3 developer model states an emitter-evaporation life higher than 10^4 h; as a lower bound below the RFP firing hours it decides nothing.",
+   "to_become_verdict_bearing": "sourced LaB6 evaporation-rate table (thermal_life limit lab6_evaporation_rate TBD), insert mass/area and I_emit of the selected cathode (lane_19, lane_10)",
+   "unit": "h",
+   "values": {
+    "predicted_life_lower_bound_h": 10000.0
+   },
+   "why_not_verdict_bearing": "developer model on other cathodes, not life-tested to that duration; a lower bound below the threshold cannot show a failure"
+  },
+  {
+   "architecture_modulation": "none (common Hall accelerator)",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "conditional_margin": null,
+   "dimension": "life_firing",
+   "direction": "toward_exceedance",
+   "element": "hall_discharge_channel",
+   "evidence_class": "model-derived (analysis envelope from sourced xenon-derived scaling relations)",
+   "evidence_levels": [],
+   "id": "RI-LIFE-SCALE-WALL-FLUX",
+   "lane24_basis": "engineering_estimate",
+   "scope": "common_mode",
+   "source_refs": [
+    {
+     "file": "docs/architecture_comparison/scaling/scaling_similarity.json",
+     "path": "transfer_register[TR-10]"
+    },
+    {
+     "file": "docs/architecture_comparison/scaling/scaling_similarity.json",
+     "path": "comparison.N2.S1_anchor_L.inv_h"
+    }
+   ],
+   "statement": "The sourced sizing rules put the Vyovrinda channel mostly narrower than P5, so the surface-to-volume 1/h and wall-loss fraction rise; wall heat flux and erosion life are rated NOT_TRANSFERABLE with risk HIGH.",
+   "to_become_verdict_bearing": "wall_life_trustworthy maps on Vyovrinda geometry (ion_wall_losses = true, WallSheath) and hardware erosion data (wall-life evidence matrix, other lane)",
+   "unit": "1/m",
+   "values": {
+    "inv_h_p5_per_m": [
+     40.0,
+     40.0
+    ],
+    "inv_h_vyovrinda_envelope_per_m": [
+     38.3469,
+     194.765
+    ],
+    "worst_ratio_to_p5": 4.86912
+   },
+   "why_not_verdict_bearing": "a scale-risk flag on an analysis envelope, not a life bound"
+  },
+  {
+   "architecture_modulation": "rf_hall only",
+   "architectures": [
+    "rf_hall"
+   ],
+   "conditional_margin": null,
+   "dimension": "thermal",
+   "direction": "toward_exceedance",
+   "element": "rf_source",
+   "evidence_class": "measured",
+   "evidence_levels": [
+    3
+   ],
+   "id": "RI-THERMAL-RF-PASSIVE-COOLING",
+   "lane24_basis": "measurement_similar_hardware",
+   "scope": "architecture_specific",
+   "source_refs": [
+    {
+     "doi_or_url": "https://doi.org/10.1016/j.actaastro.2018.03.031",
+     "file": "docs/evidence/rf_source/rf_evidence_matrix.json",
+     "locator": "Sec. 3.1, Sec. 5, Sec. 5.1",
+     "path": "entries[RF-IPG6S-09]"
+    }
+   ],
+   "statement": "The water-cooled IPG6-S RF source absorbed most of its power in the cooling water; downscaling with passive cooling is named by the authors as the biggest challenge.",
+   "to_become_verdict_bearing": "rf_source heat fractions (thermal_life inputs rf_source.*) and the structure limit (thermal_life limit rf_source_structure_limit TBD), from source design or test (lane_07 evidence; rf_hall source design)",
+   "unit": "n/a",
+   "values": {
+    "observation": "'the power absorbed by the plasma is expected to be even lower as the cooling water absorbs most of the power'; downscaling 'with a passive cooling system' is named as the biggest challenge"
+   },
+   "why_not_verdict_bearing": "qualitative, water-cooled laboratory source at multi-kW class, not a flight-like passively cooled rf_source"
+  },
+  {
+   "architecture_modulation": "rf_hall only",
+   "architectures": [
+    "rf_hall"
+   ],
+   "conditional_margin": null,
+   "dimension": "life_firing",
+   "direction": "uninformative",
+   "element": "rf_source",
+   "evidence_class": "assumed / inferred",
+   "evidence_levels": [
+    5,
+    7
+   ],
+   "id": "RI-LIFE-RF-DIELECTRIC",
+   "lane24_basis": "assumption",
+   "scope": "architecture_specific",
+   "source_refs": [
+    {
+     "file": "docs/evidence/rf_source/rf_evidence_matrix.json",
+     "path": "entries[RF-IPG6S-10]"
+    },
+    {
+     "file": "docs/evidence/rf_source/rf_evidence_matrix.json",
+     "path": "entries[RF-DUPP26-01]"
+    }
+   ],
+   "statement": "The only statements on RF-source erosion are a design claim (no plasma-contacting critical components) and a review judgement ('Low' vulnerability); dielectric-tube erosion and O recombination over > 15,000 h are not addressed by any accessed measurement.",
+   "to_become_verdict_bearing": "measured dielectric erosion / contamination of the rf_source on O-bearing feed",
+   "unit": "n/a",
+   "values": {
+    "design_claim": "'No critical components have direct contact with the plasma, therefore any issues concerning erosion are eliminated.'",
+    "review_judgement": "Helicon thruster: critical component 'Dielectric tube (minimal)', vulnerability 'Low', materials 'Quartz, alumina', mitigation 'Contactless RF design, impedance matching' (review table, citing its ref. 39)."
+   },
+   "why_not_verdict_bearing": "assumed / review judgement; no erosion rate or test duration"
+  },
+  {
+   "architecture_modulation": "rf_hall only",
+   "architectures": [
+    "rf_hall"
+   ],
+   "conditional_margin": null,
+   "dimension": "mass",
+   "direction": "uninformative",
+   "element": "rf_source (generator, matching, antenna)",
+   "evidence_class": "none (quantity absent from source)",
+   "evidence_levels": [
+    3
+   ],
+   "id": "RI-MASS-RF-HARDWARE-UNKNOWN",
+   "lane24_basis": null,
+   "scope": "architecture_specific",
+   "source_refs": [
+    {
+     "file": "docs/evidence/rf_source/rf_evidence_matrix.json",
+     "path": "entries[RF-NO25-07]"
+    }
+   ],
+   "statement": "No accessed source states the mass of RF-stage hardware.",
+   "to_become_verdict_bearing": "supplier-measured masses of the selected RF generator, matching network and antenna (mass_bom items rf_source, rf_generator, rf_matching_network)",
+   "unit": "kg",
+   "values": {
+    "mass_kg": null
+   },
+   "why_not_verdict_bearing": "no value"
+  },
+  {
+   "architecture_modulation": "ecr_hall only",
+   "architectures": [
+    "ecr_hall"
+   ],
+   "conditional_margin": null,
+   "dimension": "thermal",
+   "direction": "straddles_limit",
+   "element": "ecr_source (microwave line and components)",
+   "evidence_class": "measured",
+   "evidence_levels": [],
+   "id": "RI-THERMAL-ECR-MICROWAVE-LINE",
+   "lane24_basis": "measurement_similar_hardware",
+   "scope": "architecture_specific",
+   "source_refs": [
+    {
+     "doi_or_url": "https://electricrocket.org/IEPC/ck35023e.pdf",
+     "file": "docs/evidence/ecr_source/ecr_evidence_matrix.json",
+     "locator": "Sec. IV (Results)",
+     "path": "entries[ECR-E170]"
+    }
+   ],
+   "statement": "In an ECR plasma thruster test, heating of cables and microwave components limited the transmitted microwave power.",
+   "to_become_verdict_bearing": "ecr_source heat fractions and the structure limit (thermal_life limit ecr_source_structure_limit TBD) for the selected microwave chain",
+   "unit": "W",
+   "values": {
+    "transmitted_power_limit_W": 51.0
+   },
+   "why_not_verdict_bearing": "a laboratory line limit of another device; whether it binds depends on the required ecr_source power (TBD: interstage lane_18 / bus boundary lane_11) and on the flight microwave chain design; the source matrix gives no evidence level"
+  },
+  {
+   "architecture_modulation": "ecr_hall only",
+   "architectures": [
+    "ecr_hall"
+   ],
+   "conditional_margin": null,
+   "dimension": "mass",
+   "direction": "uninformative",
+   "element": "ecr_source (microwave source)",
+   "evidence_class": "measured",
+   "evidence_levels": [],
+   "id": "RI-MASS-ECR-AMPLIFIER-BREADBOARD",
+   "lane24_basis": "measurement_similar_hardware",
+   "scope": "architecture_specific",
+   "source_refs": [
+    {
+     "doi_or_url": "https://electricrocket.org/2019/875.pdf",
+     "file": "docs/evidence/ecr_source/ecr_evidence_matrix.json",
+     "locator": "Fig. 9 caption",
+     "path": "entries[ECR-E043]"
+    }
+   ],
+   "statement": "A 5 W 2.45 GHz solid-state amplifier breadboard weighed about 100 g (housing, thermal and PPU excluded); it is not a bound on the microwave source the ecr_hall arm needs.",
+   "to_become_verdict_bearing": "supplier-measured mass of the selected microwave source, waveguide and ECR magnets (mass_bom items microwave_source, waveguide, ecr_magnets)",
+   "unit": "g",
+   "values": {
+    "mass_g": 100.0,
+    "power_W": 5.0
+   },
+   "why_not_verdict_bearing": "breadboard at a different power level; a mass of one existing part is not a lower bound for every design of the architecture (MASS_BOM.md)"
+  },
+  {
+   "architecture_modulation": "rf_hall / ecr_hall add their source power to the peak only if the pre-ionizer overlaps the heater phase (V2, PROPOSED): TBD",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "conditional_margin": {
+    "limit_status": "PROPOSED (owner interpretation of '< 1.5 kW')",
+    "quantity": "PROPOSED start-up peak limit minus cathode heater power (heater alone)",
+    "range": [
+     1195.0,
+     1455.0
+    ],
+    "relation": "margin = startup_peak_limit - heater power (bracket extremes)",
+    "unit": "W"
+   },
+   "dimension": "startup",
+   "direction": "away_from_exceedance",
+   "element": "cathode_heater",
+   "evidence_class": "measured (other LaB6 cathodes, load side)",
+   "evidence_levels": [
+    3,
+    6
+   ],
+   "id": "RI-STARTUP-CATHODE-HEATER",
+   "lane24_basis": "measurement_similar_hardware",
+   "scope": "common_mode",
+   "source_refs": [
+    {
+     "file": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
+     "path": "components.cathode_heater.entries[CH-PEDRINI17-HC3]"
+    },
+    {
+     "file": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
+     "path": "components.cathode_heater.entries[CH-PEDRINI17-HC1]"
+    },
+    {
+     "file": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
+     "path": "components.cathode_heater.entries[CH-MONTERO24]"
+    },
+    {
+     "file": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json",
+     "path": "proposed_thresholds.startup_peak_limit"
+    },
+    {
+     "file": "docs/architecture_comparison/cathode_integration/cathode_integration_derived_v1.json",
+     "path": "startup_heater_energy"
+    },
+    {
+     "file": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json",
+     "path": "parameters.jpl_h6_heater_starts_min"
+    }
+   ],
+   "statement": "Reported LaB6 heater powers at ignition are far below the PROPOSED start-up peak limit; they are only one contributor to the start-up peak (discharge ignition, magnets, flow control, housekeeping and, in the V2 sequence, the pre-ionizer are TBD). The bracket extremes rest on CH-PEDRINI17-HC1 (level 6) for 45 W and CH-MONTERO24 (level 6) for 305 W (lane_20 electrical_closure entries; evidence levels as recorded there).",
+   "to_become_verdict_bearing": "the full start-up sequence at the bus boundary: discharge-ignition transient (admitted closure or measurement), pre-ionizer schedule V1/V2 (owner), compressor bus draw (lane_33 upstream ICD: model interface only; TBD), and the mission start count (operations concept; P2.start_cycles threshold TBD)",
+   "unit": "W",
+   "values": {
+    "energy_per_start_Wh": [
+     3.33333,
+     7.5
+    ],
+    "heater_power_W": [
+     45.0,
+     305.0
+    ],
+    "heater_starts_demonstrated_lower_bound": 1000.0
+   },
+   "why_not_verdict_bearing": "other cathodes, load side (not at bus_power_boundary_v1), one contributor of a sum; a heater-only bound is a partial lower bound on the start-up peak"
+  }
+ ],
+ "schema": "veto_layer_v1",
+ "status": "DRAFT_FOR_OWNER_REVIEW",
+ "status_counts": {
+  "NO_VETO_WITHIN_EVIDENCE": 0,
+  "UNDETERMINED": 15,
+  "VETO_CANDIDATE": 0
+ },
+ "status_definitions": {
+  "ELIMINATED_WITHIN_TESTED_ENVELOPE": "reported only when the lane-24 evaluator returns a binding-gate FAIL for the architecture on the mapped gate",
+  "NO_VETO_WITHIN_EVIDENCE": "at least one verdict-eligible failing-side bound exists and none lies on the failing side; NOT a PASS (missing contributors stay listed)",
+  "UNDETERMINED": "no verdict-eligible failing-side bound exists; missing inputs are named with the lanes / decisions that unblock them",
+  "VETO_CANDIDATE": "a failing-side bound exists whose basis the lane-24 matrix lists in fail_sufficient_bases for the mapped criterion, and it lies on the failing side; it is submitted to abep_sim.hard_gates.evaluate_all"
+ },
+ "trigger": "T_VETO_LAYER",
+ "veto_candidates": []
+}

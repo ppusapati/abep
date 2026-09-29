@@ -1,0 +1,14 @@
+{
+ "abep_sim/constants.py": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+ "docs/architecture_comparison/experiment_package/experiment_package_v1.json": "9278dfffe43a37a2ea71c3215ce4a7eba022fa72e007ffa24f229371e1407e84",
+ "docs/architecture_comparison/experiment_protocol/protocol_draft.json": "287dd7ecd57087e46f2f3d786bfb2d64b01ac4fe29a29de21ef98b04c5ac96e3",
+ "docs/architecture_comparison/minimum_decisive_experiment/MINIMUM_DECISIVE_EXPERIMENT_DRAFT.md": "eadc0dacdf3bfd9260f8f588267445729237fe85a62b51a8d0b85c0817c40af2",
+ "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json": "54b7b00a60134f2d92f2eb5c9fb49f18d23623a566e04a4b7d70325a0e332509",
+ "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+ "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json": "f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6",
+ "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e",
+ "docs/experiments/instrumentation/snapshots/w3_hardware_requirements_v1_at_9a33979.json": "4752aafd4a42326f2cdf8387c3d9280d274ea96108be0450568d72e785f7ca61",
+ "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json": "e922aff24a49c4dbf4b192548c6fe26caf20a20249c2c7b4c6ee7212af9e095b",
+ "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json": "53e92f4536f7b30054d3521adbd504eca725c4c6d79a6cb3b51c2fc4ce220b32",
+ "schemas/thermal_life/inputs_v1.json": "937e5c643ef6d1b567319ad788915cd8e9f9b6ab78fc8df91454bdb300f0777f"
+}

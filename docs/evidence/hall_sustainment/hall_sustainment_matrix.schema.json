@@ -1,0 +1,185 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "hall_sustainment_matrix.schema.json",
+ "title": "Hall sustainment / ignition evidence matrix (N2, O2, air)",
+ "description": "Evidence audit only. Each entry is one published (or repository-audited) observation of a Hall-type discharge on atmospheric gas at a stated condition. Every number carries unit, source, locator, evidence class and uncertainty (or an explicit 'not stated' / 'TBD - requires ...').",
+ "type": "object",
+ "required": ["id", "date", "lane", "status", "schema", "builder", "definitions", "meta", "sources", "derived_checks", "entries", "excluded", "context_not_evidence"],
+ "additionalProperties": false,
+ "properties": {
+  "id": {"type": "string", "pattern": "^hall_sustainment_matrix_v[0-9]+$"},
+  "date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+  "lane": {"type": "string"},
+  "status": {"type": "string"},
+  "schema": {"type": "string"},
+  "builder": {"type": "string"},
+  "definitions": {"type": "object"},
+  "meta": {
+   "type": "object",
+   "required": ["repository_inputs"],
+   "properties": {
+    "repository_inputs": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "additionalProperties": false,
+      "properties": {"path": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+     }
+    }
+   }
+  },
+  "sources": {
+   "type": "object",
+   "additionalProperties": {"$ref": "#/$defs/source"}
+  },
+  "derived_checks": {"type": "object"},
+  "entries": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/entry"}},
+  "excluded": {
+   "type": "array",
+   "items": {"type": "object", "required": ["item", "reason"], "additionalProperties": false,
+             "properties": {"item": {"type": "string"}, "reason": {"type": "string"}}}
+  },
+  "context_not_evidence": {"type": "object"}
+ },
+ "$defs": {
+  "evidence_class": {"type": "string", "enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"]},
+  "source": {
+   "type": "object",
+   "required": ["citation", "doi", "urls_accessed", "access", "access_note", "sha256", "license"],
+   "additionalProperties": false,
+   "properties": {
+    "citation": {"type": "string", "minLength": 10},
+    "doi": {"type": ["string", "null"], "pattern": "^10\\.[0-9]{4,9}/\\S+$"},
+    "urls_accessed": {"type": "array", "items": {"type": "string", "pattern": "^https://"}},
+    "repository_files": {"type": "array", "items": {"type": "string"}},
+    "access": {"type": "string", "enum": ["open_full_text", "open_full_text_restrictive_license", "licensed_full_text_sha_pinned", "abstract_only", "repository_audit_file", "not_accessed"]},
+    "access_note": {"type": "string"},
+    "sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "license": {"type": "string"}
+   }
+  },
+  "value": {
+   "anyOf": [
+    {"type": "number"},
+    {"type": "array", "minItems": 2, "items": {"type": "number"}},
+    {"type": "string", "minLength": 3}
+   ]
+  },
+  "quantity": {
+   "type": "object",
+   "required": ["name", "value", "unit", "uncertainty", "evidence_class", "source", "locator"],
+   "additionalProperties": false,
+   "properties": {
+    "name": {"type": "string"},
+    "value": {"$ref": "#/$defs/value"},
+    "unit": {"type": "string", "minLength": 1},
+    "uncertainty": {"type": ["string", "number"]},
+    "evidence_class": {"type": ["string", "null"], "enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed", null], "description": "null only for a placeholder value ('not ...', 'TBD - requires ...', 'figure data ...'): a missing value has no quantity type"},
+    "source": {"type": "string"},
+    "locator": {"type": "string", "minLength": 1},
+    "note": {"type": "string"}
+   }
+  },
+  "entry": {
+   "type": "object",
+   "required": ["id", "title", "sources", "evidence_level", "evidence_class", "thruster", "propellant", "preionizer", "ignition", "flow", "voltage", "magnetic_field", "outcome", "outcome_statement", "observations", "quantities", "implication", "repository_derived"],
+   "additionalProperties": false,
+   "properties": {
+    "id": {"type": "string", "pattern": "^E[0-9]{2}$"},
+    "title": {"type": "string"},
+    "sources": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "evidence_level": {"type": "integer", "minimum": 1, "maximum": 7},
+    "evidence_class": {"$ref": "#/$defs/evidence_class"},
+    "thruster": {
+     "type": "object",
+     "required": ["name", "family", "power", "geometry", "geometry_note"],
+     "additionalProperties": false,
+     "properties": {
+      "name": {"type": "string"},
+      "family": {"type": "string"},
+      "power": {"$ref": "#/$defs/quantity"},
+      "geometry": {"type": "array", "items": {"$ref": "#/$defs/quantity"}, "description": "structured geometry quantities (each with unit, source, locator, evidence class, uncertainty); empty if none reported"},
+      "geometry_note": {"type": "string", "pattern": "^[^0-9]*$", "description": "free text without numbers; every number belongs in geometry or quantities"}
+     }
+    },
+    "propellant": {
+     "type": "object",
+     "required": ["anode_gas", "cathode_gas", "xenon_in_anode_flow"],
+     "additionalProperties": false,
+     "properties": {
+      "anode_gas": {"type": "string"},
+      "cathode_gas": {"type": "string"},
+      "xenon_in_anode_flow": {"type": "boolean"}
+     }
+    },
+    "preionizer": {
+     "type": "object",
+     "required": ["present", "type", "note"],
+     "additionalProperties": false,
+     "properties": {"present": {"type": "boolean"}, "type": {"type": ["string", "null"]}, "note": {"type": "string"}}
+    },
+    "ignition": {
+     "type": "object",
+     "required": ["mode", "evidence_class", "basis", "statement"],
+     "additionalProperties": false,
+     "properties": {
+      "mode": {"type": "string", "enum": ["direct_on_atmospheric_gas", "xenon_start_then_transition", "xenon_admixture_required", "not_reported"]},
+      "evidence_class": {"$ref": "#/$defs/evidence_class"},
+      "basis": {"type": "string", "enum": ["primary", "second_hand", "our_inference"], "description": "where the ignition classification comes from: the accessed primary text, a second-hand report (verify in the primary), or our inference because the source does not state the gas at ignition (verify)"},
+      "statement": {"type": "string"}
+     }
+    },
+    "flow": {"$ref": "#/$defs/quantity"},
+    "voltage": {"$ref": "#/$defs/quantity"},
+    "magnetic_field": {"$ref": "#/$defs/quantity"},
+    "outcome": {"type": "string", "enum": ["sustained", "extinguished", "unstable", "not_reported"]},
+    "outcome_statement": {"type": "string"},
+    "observations": {
+     "type": "object",
+     "required": ["oscillation_modes", "extinction", "erosion", "cathode"],
+     "additionalProperties": false,
+     "properties": {
+      "oscillation_modes": {"type": "string"},
+      "extinction": {"type": "string"},
+      "erosion": {"type": "string"},
+      "cathode": {"type": "string"}
+     }
+    },
+    "quantities": {"type": "array", "items": {"$ref": "#/$defs/quantity"}},
+    "implication": {
+     "type": "object",
+     "required": ["direction", "statement", "uncertainty", "applicability_limits", "abep_regime"],
+     "additionalProperties": false,
+     "properties": {
+      "direction": {"type": "string", "enum": ["operation_without_preionizer_demonstrated", "operation_without_preionizer_demonstrated_xenon_start", "operation_bounded_extinction_observed", "xenon_admixture_required_in_tested_regime", "xenon_admixture_improves_operating_mode", "preionization_stage_present_effect_not_isolated", "preionization_stage_tested_no_net_benefit_reported", "not_informative"]},
+      "statement": {"type": "string"},
+      "uncertainty": {"type": "string"},
+      "applicability_limits": {"type": "string"},
+      "abep_regime": {"type": "string", "pattern": "^TBD - requires "}
+     }
+    },
+    "repository_derived": {"type": "boolean"},
+    "repository_status": {
+     "type": "object",
+     "required": ["status", "status_file", "companion_document", "score_bearing", "transport_discriminator", "supporting_check_preregistered", "may_be_used_for", "must_not_be_used_for_ref", "sustainment_item", "forced_assumptions_relevant_to_transfer", "literature_transfer_use", "literature_transfer_statement"],
+     "additionalProperties": false,
+     "properties": {
+      "status": {"type": "string", "enum": ["HISTORICAL_UNSUPPORTED"]},
+      "status_file": {"type": "string", "minLength": 1},
+      "companion_document": {"type": "string", "minLength": 1},
+      "score_bearing": {"type": "boolean", "enum": [false]},
+      "transport_discriminator": {"type": "boolean", "enum": [false]},
+      "supporting_check_preregistered": {"type": "boolean"},
+      "may_be_used_for": {"type": "string", "minLength": 1},
+      "must_not_be_used_for_ref": {"type": "string", "minLength": 1},
+      "sustainment_item": {"type": "object", "required": ["value", "source", "evidence_level", "quantity_type", "use"]},
+      "forced_assumptions_relevant_to_transfer": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+      "literature_transfer_use": {"type": "string", "enum": ["PERMITTED_AS_PUBLISHED_MEASUREMENT_OF_THAT_THRUSTER", "NOT_PERMITTED"]},
+      "literature_transfer_statement": {"type": "string", "minLength": 1}
+     }
+    }
+   }
+  }
+ }
+}

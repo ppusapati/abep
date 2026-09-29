@@ -1,0 +1,597 @@
+{
+ "captured_from_commit": "d07249bef0f9d415cad1a33c5a427cfc105f7835",
+ "claim": {
+  "attempt": 2,
+  "config": {
+   "prereg_lock_sha256": "71ecd39fa25ea60e2e4aff9474bdd700ec8cd718e819dfdae774594709e805be",
+   "trigger_registry_sha256": "b243ce85325ad06d45cd8313b020a17f665bfa1c143f0fa6a2646b3016d65489"
+  },
+  "config_hash": "9dfd3b0ed3b3a8374be36a29dad8c096f2f9d60ad9240547c3c73a3b99a945ba",
+  "dependency_state_hash": "338530240c55f4d1ac2391088f4bdcdec62c6ab91b331ef8821fc5d96d2f0fc8",
+  "event": "CLAIMED",
+  "execution_key": "d45eda8e144c71eae9f5ebf0d1c1a560af20903571c60bbcdb605e361b68a148",
+  "member": null,
+  "prerequisites": {
+   "fo_ecr_breakeven_overlay": {
+    "identity": "d22bc6053a64230dd01b8df0e764d884bab722a9",
+    "state": "verified"
+   },
+   "fo_hall_sustainment_envelope": {
+    "identity": "de0ebd25f43e3302e659bf5a0d4d7df8aee97637",
+    "state": "verified"
+   },
+   "fo_rf_breakeven_overlay": {
+    "identity": "9ef356b536f84e203b87b583b7246e72dcc07d71",
+    "state": "verified"
+   },
+   "lane_07_rf_evidence": {
+    "identity": "336d548042359f8559d0bf50a409a976c0158fc2",
+    "state": "verified"
+   },
+   "lane_08_ecr_evidence": {
+    "identity": "a85fd592618cb15a02f14123659a0698db90df19",
+    "state": "verified"
+   },
+   "lane_09_hall_sustainment": {
+    "identity": "ac7970917fd0e88c065d75406ea90c1d7ebaca7b",
+    "state": "verified"
+   },
+   "lane_16_feed_envelope": {
+    "identity": "ab27dcc449690606defa09af59725c0ad2eeaab4",
+    "state": "verified"
+   },
+   "lane_17_hall_reference": {
+    "identity": "91ebd8a4017eb8609804846603063a25c41405c1",
+    "state": "verified"
+   },
+   "lane_18_interstage": {
+    "identity": "870514285c087382b21812c65bd9db196a5a985f",
+    "state": "verified"
+   },
+   "lane_20_ppu_magnet": {
+    "identity": "f7c226848d85fedb70c03bae9971be3b2bbde1fe",
+    "state": "verified"
+   },
+   "lane_24_hard_gates": {
+    "identity": "08b9f9bf32a0b34142338b2003f2b2cf02ecaacc",
+    "state": "verified"
+   },
+   "lane_28_break_even": {
+    "identity": "2ad4c463d7a7bd7b983e2de30f8fb34d8cac92fa",
+    "state": "verified"
+   }
+  },
+  "record_origin": "live",
+  "trigger": "T_BUNDLE1",
+  "utc": "2026-09-26T19:50:17+00:00"
+ },
+ "context_verified_events": {
+  "fo_aux_bus_comparison": {
+   "attempt": 1,
+   "event": "VERIFIED",
+   "evidence": {
+    "commit": "2f83aa41bbdefa7a6f0aa800e185ecd820dacae3",
+    "verification": "round 1: evidence and rules lenses both pass, 0 fix rounds",
+    "workflow_key": "AUXBUS",
+    "workflow_run": "wf_abc61c96-5ed"
+   },
+   "execution_key": "aa8ec26d793f627b088bd2c0639be9c071085b7dd0ae83d3c18ff2bed2fdd847",
+   "member": null,
+   "record_origin": "live",
+   "trigger": "T_AUX_BUS",
+   "utc": "2026-09-26T20:35:32+00:00"
+  },
+  "fo_dx5_cross_section_evidence": {
+   "attempt": 1,
+   "event": "VERIFIED",
+   "evidence": {
+    "commit": "768bb894636e0de73336221a6003d98dede5aff0",
+    "result": "P1/P2/P3 GAP_UNCHANGED (all adversarial checks: no material improvement); P4 deferred per owner ordering; reopening section DRAFT_PENDING_OWNER",
+    "verification": "two-lens pass, round 1, no open issues",
+    "workflow_key": "DX5",
+    "workflow_run": "wf_7a9892b9-5b6"
+   },
+   "execution_key": "fb3c35e292bc53d2ddfeda0b2ebbf17e177f2b6b60d1dc97c6bd1425acb8eff0",
+   "member": null,
+   "record_origin": "live",
+   "trigger": "T_DX5_EVIDENCE",
+   "utc": "2026-09-26T20:34:30+00:00"
+  },
+  "fo_experiment_package": {
+   "attempt": 1,
+   "event": "VERIFIED",
+   "evidence": {
+    "commit": "c09fac4cda6da476a355d41c9f46e38b1ef3b816",
+    "verification": "round 1: evidence and rules lenses both pass, 0 fix rounds",
+    "workflow_key": "EXPPKG",
+    "workflow_run": "wf_abc61c96-5ed"
+   },
+   "execution_key": "86fde1ecc2d1a75409c821250f0b8d719ad255968b9084ecdeb25b37e8dae1e5",
+   "member": null,
+   "record_origin": "live",
+   "trigger": "T_EXPERIMENT_PACKAGE",
+   "utc": "2026-09-26T20:35:33+00:00"
+  },
+  "fo_veto_layer": {
+   "attempt": 1,
+   "event": "VERIFIED",
+   "evidence": {
+    "commit": "3e7805c376b1489b2de62f3977c0c413a0adcdef",
+    "verification": "round 1: evidence and rules lenses both pass, 0 fix rounds",
+    "workflow_key": "VETO",
+    "workflow_run": "wf_abc61c96-5ed"
+   },
+   "execution_key": "a36f76a03a4b80cf29539aa028adc609c3f7aa40f318fee8db536c4f0bf5b326",
+   "member": null,
+   "record_origin": "live",
+   "trigger": "T_VETO_LAYER",
+   "utc": "2026-09-26T20:35:33+00:00"
+  }
+ },
+ "evidence_policy_checked": [
+  "measured",
+  "digitized",
+  "inferred",
+  "reconstructed",
+  "model-derived",
+  "assumed"
+ ],
+ "fo_ids": [
+  "fo_absolute_comparison",
+  "fo_aux_bus_comparison",
+  "fo_bundle1_conditional_selection",
+  "fo_dx5_cross_section_evidence",
+  "fo_ecr_breakeven_overlay",
+  "fo_experiment_package",
+  "fo_hall_sustainment_envelope",
+  "fo_johnsonlow_escalation_assessment",
+  "fo_o4_disposition_matrix",
+  "fo_rf_breakeven_overlay",
+  "fo_v2_domain_question_a",
+  "fo_v2_excitation_question_b",
+  "fo_veto_layer"
+ ],
+ "id": "bundle1_governance_snapshot_v4",
+ "lane_ids": [
+  "lane_01_n2_domain_extension",
+  "lane_02_ood_attribution",
+  "lane_03_scoreable_subset",
+  "lane_06_experiment_protocol",
+  "lane_07_rf_evidence",
+  "lane_08_ecr_evidence",
+  "lane_09_hall_sustainment",
+  "lane_10_cathode_dossier",
+  "lane_11_bus_boundary",
+  "lane_12_arch_harness",
+  "lane_13_o_o2_audit",
+  "lane_14_dual_feed",
+  "lane_15_thermal_life",
+  "lane_16_feed_envelope",
+  "lane_17_hall_reference",
+  "lane_18_interstage",
+  "lane_19_cathode_integration",
+  "lane_20_ppu_magnet",
+  "lane_21_mass_bom",
+  "lane_22_scaling",
+  "lane_23_comparison_grid",
+  "lane_24_hard_gates",
+  "lane_25_min_decisive_experiment",
+  "lane_26_failure_tree",
+  "lane_27_decision_dossier",
+  "lane_28_break_even",
+  "lane_29_exb_physics",
+  "lane_30_ci",
+  "lane_31_echt_disposition",
+  "lane_32_wall_life",
+  "lane_33_upstream_icd",
+  "lane_34_ledgers",
+  "lane_35_hallmap_spec",
+  "lane_36_traceability",
+  "lane_37_iist_package"
+ ],
+ "lane_titles": {
+  "fo_absolute_comparison": "Absolute comparison grid + design Hall maps + whole-system UQ",
+  "fo_aux_bus_comparison": "Full auxiliary / DC-bus power comparison",
+  "fo_bundle1_conditional_selection": "Bundle 1: Architecture Conditional Selection",
+  "fo_dx5_cross_section_evidence": "D-X5 bounded cross-section evidence acquisition (rotational >10 eV first)",
+  "fo_ecr_breakeven_overlay": "ECR evidence placed on the break-even surfaces with interstage transport efficiency",
+  "fo_experiment_package": "Experimental decision package from the minimum decisive experiment",
+  "fo_hall_sustainment_envelope": "Direct-Hall sustainment envelope over the common feed envelope",
+  "fo_johnsonlow_escalation_assessment": "Does the Johnson-low excitation uncertainty survive across the other primary chemistry combinations?",
+  "fo_o4_disposition_matrix": "O4 disposition matrix (owner records dispositions; ensemble/o4_dispositions_schema_v1.json)",
+  "fo_rf_breakeven_overlay": "RF evidence placed on the break-even surfaces with interstage transport efficiency",
+  "fo_v2_domain_question_a": "v2 Question A brief: is a wider energy domain source-supported? (owner decides)",
+  "fo_v2_excitation_question_b": "v2 Question B: which electronic-excitation representation is supportable (conditional on Question A)",
+  "fo_veto_layer": "Mass / thermal / life veto layer",
+  "lane_01_n2_domain_extension": "N2 high-T_e domain-extension evidence audit (+ DRAFT v2 outline)",
+  "lane_02_ood_attribution": "OOD attribution (v1 vacuum)",
+  "lane_03_scoreable_subset": "Scoreable-subset forensics",
+  "lane_06_experiment_protocol": "Common-condition experiment protocol (DRAFT)",
+  "lane_07_rf_evidence": "RF source evidence audit",
+  "lane_08_ecr_evidence": "ECR source evidence audit",
+  "lane_09_hall_sustainment": "Hall-only sustainment evidence",
+  "lane_10_cathode_dossier": "Cathode / neutralizer evidence dossier",
+  "lane_11_bus_boundary": "Common bus-power boundary module",
+  "lane_12_arch_harness": "Architecture comparison harness",
+  "lane_13_o_o2_audit": "O / O2 chemistry source audit",
+  "lane_14_dual_feed": "Dual-feed state machine",
+  "lane_15_thermal_life": "Thermal / life framework",
+  "lane_16_feed_envelope": "Thruster feed envelope",
+  "lane_17_hall_reference": "Common Hall accelerator reference",
+  "lane_18_interstage": "Pre-ionizer -> Hall interstage physics",
+  "lane_19_cathode_integration": "Neutralizer/cathode system integration",
+  "lane_20_ppu_magnet": "PPU + magnet electrical closure",
+  "lane_21_mass_bom": "Architecture mass BOM",
+  "lane_22_scaling": "Scaling / similarity audit P5 -> Vyovrinda",
+  "lane_23_comparison_grid": "Common operating-envelope comparison grid",
+  "lane_24_hard_gates": "Architecture hard-gate matrix + evaluator",
+  "lane_25_min_decisive_experiment": "Minimum decisive experiment (DRAFT)",
+  "lane_26_failure_tree": "Architecture failure trees",
+  "lane_27_decision_dossier": "Decision-dossier generator",
+  "lane_28_break_even": "Break-even surfaces (power, utilization, mass, life)",
+  "lane_29_exb_physics": "E x B / species-acceleration physics forensics",
+  "lane_30_ci": "CI / repository integrity (earlier lane B)",
+  "lane_31_echt_disposition": "ECHT historical/unsupported disposition (earlier lane C)",
+  "lane_32_wall_life": "Wall erosion / life evidence (earlier lane F)",
+  "lane_33_upstream_icd": "Upstream interface control document (earlier lane G)",
+  "lane_34_ledgers": "Engineering ledgers (earlier lane I)",
+  "lane_35_hallmap_spec": "Hall-map production specification (earlier lane J)",
+  "lane_36_traceability": "RFP traceability matrix (earlier lane K)",
+  "lane_37_iist_package": "Experimental decision package for IIST (earlier lane L)"
+ },
+ "note": "Exactly the governance content bundle1_v4 relies on, captured from the live files at captured_from_commit. The builder reads only this file (pinned by sha256), never the live registry / ledger, which keep growing.",
+ "operating_model_checked": {
+  "field_set": "{ṁ_s, P_feed, T_feed, x_s, V_d, T, P_bus, m, Q_reject, life, startup, η_u, stability}",
+  "phrases": [
+   "CONDITIONAL_BASELINE(X)",
+   "NO_BASELINE_YET",
+   "ELIMINATED_WITHIN_TESTED_ENVELOPE",
+   "bus_power_boundary_v1",
+   "single-lens-v1"
+  ]
+ },
+ "protocols": {
+  "fo_aux_bus_comparison": {
+   "notes": [],
+   "protocol": "two-lens (evidence + rules lenses)",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json decided.terminal_states.follow_on ('verified, exactly as a workflow_lane'); verification loop in docs/orchestration/workflow_scripts/followon-aux-veto-exppkg.js"
+  },
+  "fo_dx5_cross_section_evidence": {
+   "notes": [],
+   "protocol": "two-lens (evidence + rules lenses)",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json decided.terminal_states.follow_on ('verified, exactly as a workflow_lane'); verification loop in docs/orchestration/workflow_scripts/dx5-cross-section-evidence-wf_7a9892b9-5b6.js"
+  },
+  "fo_ecr_breakeven_overlay": {
+   "notes": [
+    "repairs registered (wf_ca08ec6e-665): targeted two-lens re-verification"
+   ],
+   "protocol": "two-lens (evidence + rules lenses)",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json decided.terminal_states.follow_on ('verified, exactly as a workflow_lane'); verification loop in docs/orchestration/workflow_scripts/followon-overlays-rf-ecr.js, docs/orchestration/workflow_scripts/reverify-ecr-hsenv-ftree.js"
+  },
+  "fo_experiment_package": {
+   "notes": [
+    "repairs registered (wf_16b7de5d-7b9): targeted two-lens re-verification"
+   ],
+   "protocol": "two-lens (evidence + rules lenses)",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json decided.terminal_states.follow_on ('verified, exactly as a workflow_lane'); verification loop in docs/orchestration/workflow_scripts/followon-aux-veto-exppkg.js, docs/orchestration/workflow_scripts/repin-exppkg-bundle1-v3.js"
+  },
+  "fo_hall_sustainment_envelope": {
+   "notes": [
+    "repairs registered (wf_ca08ec6e-665, wf_e16cec30-7b2): targeted two-lens re-verification"
+   ],
+   "protocol": "two-lens (evidence + rules lenses)",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json decided.terminal_states.follow_on ('verified, exactly as a workflow_lane'); verification loop in docs/orchestration/workflow_scripts/followon-fo_hall_sustainment_envelope.js, docs/orchestration/workflow_scripts/reverify-ecr-hsenv-ftree.js, docs/orchestration/workflow_scripts/repin-lane09-consumers-bundle1-v2.js"
+  },
+  "fo_rf_breakeven_overlay": {
+   "notes": [],
+   "protocol": "two-lens (evidence + rules lenses)",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json decided.terminal_states.follow_on ('verified, exactly as a workflow_lane'); verification loop in docs/orchestration/workflow_scripts/followon-overlays-rf-ecr.js"
+  },
+  "fo_veto_layer": {
+   "notes": [
+    "repairs registered (wf_e16cec30-7b2): targeted two-lens re-verification"
+   ],
+   "protocol": "two-lens (evidence + rules lenses)",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json decided.terminal_states.follow_on ('verified, exactly as a workflow_lane'); verification loop in docs/orchestration/workflow_scripts/followon-aux-veto-exppkg.js, docs/orchestration/workflow_scripts/repin-lane09-consumers-bundle1-v2.js"
+  },
+  "lane_07_rf_evidence": {
+   "notes": [],
+   "protocol": "two-lens-v2",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json lanes[lane_07_rf_evidence].verification_protocol"
+  },
+  "lane_08_ecr_evidence": {
+   "notes": [],
+   "protocol": "two-lens-v2",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json lanes[lane_08_ecr_evidence].verification_protocol"
+  },
+  "lane_09_hall_sustainment": {
+   "notes": [
+    "repairs registered (wf_6eb2fc0f-3f2); state from the latest repair run"
+   ],
+   "protocol": "two-lens-v2",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json lanes[lane_09_hall_sustainment].verification_protocol"
+  },
+  "lane_11_bus_boundary": {
+   "notes": [],
+   "protocol": "two-lens-v2",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json lanes[lane_11_bus_boundary].verification_protocol"
+  },
+  "lane_16_feed_envelope": {
+   "notes": [],
+   "protocol": "two-lens-v2",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json lanes[lane_16_feed_envelope].verification_protocol"
+  },
+  "lane_17_hall_reference": {
+   "notes": [
+    "repairs registered (wf_78429369-deb); state from the latest repair run"
+   ],
+   "protocol": "two-lens-v2",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json lanes[lane_17_hall_reference].verification_protocol"
+  },
+  "lane_18_interstage": {
+   "notes": [],
+   "protocol": "two-lens-v2",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json lanes[lane_18_interstage].verification_protocol"
+  },
+  "lane_20_ppu_magnet": {
+   "notes": [],
+   "protocol": "two-lens-v2",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json lanes[lane_20_ppu_magnet].verification_protocol"
+  },
+  "lane_23_comparison_grid": {
+   "notes": [],
+   "protocol": "two-lens-v2",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json lanes[lane_23_comparison_grid].verification_protocol"
+  },
+  "lane_24_hard_gates": {
+   "notes": [
+    "verified_pin at commit 08b9f9bf32a0b34142338b2003f2b2cf02ecaacc"
+   ],
+   "protocol": "two-lens-v2",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json lanes[lane_24_hard_gates].verification_protocol"
+  },
+  "lane_28_break_even": {
+   "notes": [],
+   "protocol": "two-lens-v2",
+   "protocol_source": "docs/orchestration/lane_registry_v1.json lanes[lane_28_break_even].verification_protocol"
+  }
+ },
+ "question_a_disposition": {
+  "decision": "A-NO",
+  "domain_path": "closed",
+  "id": "od_v2_question_a"
+ },
+ "registry_repairs": {
+  "fo_aux_bus_comparison": [],
+  "fo_dx5_cross_section_evidence": [],
+  "fo_ecr_breakeven_overlay": [
+   {
+    "reason": "2026-09-26 container reboot interrupted verification; targeted re-verify run (state confirmation of the unchanged worktree commit, then the standard two-lens loop) instead of resuming a workflow that contains a verified lane (commit d22bc60)",
+    "workflow_key": "ECROVL",
+    "workflow_run": "wf_ca08ec6e-665"
+   }
+  ],
+  "fo_experiment_package": [
+   {
+    "reason": "re-pin the re-verified Hall-sustainment envelope (da9b71b); input verification moved out of import so a changed pin FAILS tests instead of a collection error",
+    "workflow_key": "EXPPKG",
+    "workflow_run": "wf_16b7de5d-7b9"
+   }
+  ],
+  "fo_hall_sustainment_envelope": [
+   {
+    "reason": "2026-09-26 container reboot interrupted verification; targeted re-verify run (state confirmation of the unchanged worktree commit, then the standard two-lens loop) instead of resuming a workflow that contains a verified lane (commit de0ebd2)",
+    "workflow_key": "HSENV",
+    "workflow_run": "wf_ca08ec6e-665"
+   },
+   {
+    "reason": "re-pin after the lane_09 integration repair (f458811); tests must fail, not skip, on a pinned-hash mismatch (8 silent skips raised the suite skip count 5 -> 13)",
+    "workflow_key": "HSENV",
+    "workflow_run": "wf_e16cec30-7b2"
+   }
+  ],
+  "fo_rf_breakeven_overlay": [],
+  "fo_veto_layer": [
+   {
+    "reason": "re-pin after the lane_09 integration repair (f458811)",
+    "workflow_key": "VETO",
+    "workflow_run": "wf_e16cec30-7b2"
+   }
+  ],
+  "lane_07_rf_evidence": [],
+  "lane_08_ecr_evidence": [],
+  "lane_09_hall_sustainment": [
+   {
+    "reason": "integration repair: lane_31_echt_disposition (merged) set ECHT-N2 HISTORICAL_UNSUPPORTED and changed docs/EVIDENCE.md, which lane 09 pins and whose ECHT evidence it cites; fast-forward to 15e59db, carry the status, re-pin, regenerate, two-lens re-verification. Downstream: fo_hall_sustainment_envelope and Bundle 1 (bundle1_v2) follow.",
+    "workflow_key": "HSUS",
+    "workflow_run": "wf_6eb2fc0f-3f2"
+   }
+  ],
+  "lane_11_bus_boundary": [],
+  "lane_16_feed_envelope": [],
+  "lane_17_hall_reference": [
+   {
+    "reason": "done_open_issues 2026-09-26T13:57Z: evidence lens major (ideal-beam jet power vs anodic efficiency definitions mixed); operator repair in the existing worktree + two-lens re-verification",
+    "script": "docs/orchestration/workflow_scripts/repair-lane_17-hallref.js",
+    "workflow_key": "HALLREF",
+    "workflow_run": "wf_78429369-deb"
+   }
+  ],
+  "lane_18_interstage": [],
+  "lane_20_ppu_magnet": [],
+  "lane_23_comparison_grid": [],
+  "lane_24_hard_gates": [],
+  "lane_28_break_even": []
+ },
+ "repair_records": [
+  {
+   "lane": "fo_veto_layer",
+   "merge_commit": "2d254d1423923aa4e656e17d470bd638cdeaaeb1",
+   "merge_commit_subject": "Merge verified fo_veto_layer repair (7a7eb68bb38ce948211fcd2601104569b24f79ef) after the lane_09 integration repair",
+   "pinned_identity": "7a7eb68bb38ce948211fcd2601104569b24f79ef",
+   "registry_repair": {
+    "reason": "re-pin after the lane_09 integration repair (f458811)",
+    "workflow_key": "VETO",
+    "workflow_run": "wf_e16cec30-7b2"
+   }
+  },
+  {
+   "lane": "fo_experiment_package",
+   "merge_commit": "70aafcfd71591c12fce09e0fb0b7257277a8b663",
+   "merge_commit_subject": "Merge verified fo_experiment_package (83fe4c4ee47d2b97131e142598a516851ddda692) - re-pin after the envelope / veto-layer repairs",
+   "pinned_identity": "83fe4c4ee47d2b97131e142598a516851ddda692",
+   "registry_repair": {
+    "reason": "re-pin the re-verified Hall-sustainment envelope (da9b71b); input verification moved out of import so a changed pin FAILS tests instead of a collection error",
+    "workflow_key": "EXPPKG",
+    "workflow_run": "wf_16b7de5d-7b9"
+   }
+  },
+  {
+   "lane": "fo_hall_sustainment_envelope",
+   "merge_commit": "a1f45dab63b33c3072c3f2b1fc683b5a65ad64a4",
+   "merge_commit_subject": "Merge verified fo_hall_sustainment_envelope repair (da9b71bfda112c7deceb301169071af944444c3b) after the lane_09 integration repair",
+   "pinned_identity": "da9b71bfda112c7deceb301169071af944444c3b",
+   "registry_repair": {
+    "reason": "re-pin after the lane_09 integration repair (f458811); tests must fail, not skip, on a pinned-hash mismatch (8 silent skips raised the suite skip count 5 -> 13)",
+    "workflow_key": "HSENV",
+    "workflow_run": "wf_e16cec30-7b2"
+   }
+  },
+  {
+   "lane": "fo_bundle1_conditional_selection",
+   "merge_commit": "8ba7dea27faaa988e00a54d93f0b4e20919f9a72",
+   "merge_commit_subject": "Merge verified fo_bundle1_conditional_selection repair (8f288f9d3ba85e5953505d5e671b8862e393fde6) after the lane_09 integration repair",
+   "pinned_identity": "8f288f9d3ba85e5953505d5e671b8862e393fde6",
+   "registry_repair": {
+    "reason": "Bundle 1 v2 (new files; v1 kept byte-identical as the T_BUNDLE1 attempt-2 record): re-pinned inputs incl. repaired lane_09 and re-pinned envelope; governance inputs pinned so bookkeeping cannot break reproduction",
+    "workflow_key": "BUNDLE1",
+    "workflow_run": "wf_e16cec30-7b2"
+   }
+  },
+  {
+   "lane": "fo_bundle1_conditional_selection",
+   "merge_commit": "6f69d555ff6103ffe2ac5af8801b5c3aa6464131",
+   "merge_commit_subject": "Merge verified fo_bundle1_conditional_selection (b5559e40507e8200a9db91116531de99b921e012) - re-pin after the envelope / veto-layer repairs",
+   "pinned_identity": "b5559e40507e8200a9db91116531de99b921e012",
+   "registry_repair": {
+    "reason": "Bundle 1 v3: veto-layer context pin updated to the re-verified 7a7eb68 (orchestration race in wf_e16cec30-7b2); v1/v2 kept as records",
+    "workflow_key": "BUNDLE1",
+    "workflow_run": "wf_16b7de5d-7b9"
+   }
+  }
+ ],
+ "single_lens_lanes": [
+  "lane_14_dual_feed",
+  "lane_30_ci",
+  "lane_32_wall_life",
+  "lane_34_ledgers",
+  "lane_35_hallmap_spec",
+  "lane_36_traceability",
+  "lane_37_iist_package"
+ ],
+ "source_files_sha256": {
+  "docs/EVIDENCE.md": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61",
+  "docs/orchestration/OPERATING_MODEL.md": "730423be35442343fb13daa23d5a25ce3c9e28036ca4e60f00cf2eb2d66a6345",
+  "docs/orchestration/lane_registry_v1.json": "517caf203d9ea83c9125b6780a3a415fe358ef660596ac745d0a0f7bc3c6def9",
+  "docs/orchestration/trigger_ledger_v2.jsonl": "d4af3baeafe7963f836acab705a8c25a57143d44bcaaa0c0f0b79e222756717e",
+  "docs/orchestration/trigger_registry_v1.json": "b243ce85325ad06d45cd8313b020a17f665bfa1c143f0fa6a2646b3016d65489",
+  "docs/orchestration/workflow_scripts/dx5-cross-section-evidence-wf_7a9892b9-5b6.js": "729fb0e1f0f7c18745a6596ff574f84cd6e05cdb2d86ca84e4009d748914ddfb",
+  "docs/orchestration/workflow_scripts/followon-aux-veto-exppkg.js": "6312c3942f329729ffb3e99584208e2f7c11f202c4b750037a214f1fc6d6124b",
+  "docs/orchestration/workflow_scripts/followon-fo_hall_sustainment_envelope.js": "cdfdd234b3e71a158da25a258d0672dd44b10e31861167aa28537dbb4bf90793",
+  "docs/orchestration/workflow_scripts/followon-overlays-rf-ecr.js": "b54c95bb092cffe0caff848a0ae2f2cec10a0dbf526624fb15f4c339308bff7e",
+  "docs/orchestration/workflow_scripts/repin-exppkg-bundle1-v3.js": "8981ca34cff6c3850216e70918a218f0fbd574c6b2f6c67b1f92fa5043146689",
+  "docs/orchestration/workflow_scripts/repin-lane09-consumers-bundle1-v2.js": "1e671aea28e0c54c30070750ed7bf88e37dd28f048e3d1508d72ef122d078b6c",
+  "docs/orchestration/workflow_scripts/reverify-ecr-hsenv-ftree.js": "b76130c98afdb189afe5b7ed239385ac99f92a4016623add95645ecec57e6b11",
+  "docs/v2/question_a/QUESTION_A_DISPOSITION.json": "bdf3b404c8dc90ee72e3c4b43025d447e57d5aff167fb286e46b703a66d89cd2"
+ },
+ "t_bundle1": {
+  "prerequisites": [
+   {
+    "id": "lane_07_rf_evidence",
+    "state": "verified"
+   },
+   {
+    "id": "lane_08_ecr_evidence",
+    "state": "verified"
+   },
+   {
+    "id": "lane_09_hall_sustainment",
+    "state": "verified"
+   },
+   {
+    "id": "lane_16_feed_envelope",
+    "state": "verified"
+   },
+   {
+    "id": "lane_17_hall_reference",
+    "state": "verified"
+   },
+   {
+    "id": "lane_18_interstage",
+    "state": "verified"
+   },
+   {
+    "id": "lane_20_ppu_magnet",
+    "state": "verified"
+   },
+   {
+    "id": "lane_24_hard_gates",
+    "state": "verified"
+   },
+   {
+    "id": "lane_28_break_even",
+    "state": "verified"
+   },
+   {
+    "id": "fo_rf_breakeven_overlay",
+    "state": "verified"
+   },
+   {
+    "id": "fo_ecr_breakeven_overlay",
+    "state": "verified"
+   },
+   {
+    "id": "fo_hall_sustainment_envelope",
+    "state": "verified"
+   }
+  ],
+  "produces": "fo_bundle1_conditional_selection"
+ },
+ "trigger_ids": [
+  "T_ABSOLUTE_COMPARISON",
+  "T_AUX_BUS",
+  "T_BUNDLE1",
+  "T_DOSSIER",
+  "T_DX5_EVIDENCE",
+  "T_ECR_OVERLAY",
+  "T_EXPERIMENT_PACKAGE",
+  "T_FACILITY_RELAUNCH",
+  "T_FACILITY_SCORE",
+  "T_GRID",
+  "T_HALL_SUSTAIN_ENVELOPE",
+  "T_JOHNSONLOW_ESCALATION_ASSESSMENT",
+  "T_O4_DISPOSITION_MATRIX",
+  "T_O4_ESCALATE",
+  "T_O4_SCORE",
+  "T_RF_OVERLAY",
+  "T_V2_QUESTION_A",
+  "T_V2_QUESTION_B",
+  "T_VETO_LAYER"
+ ],
+ "v1_verified_event": {
+  "attempt": 2,
+  "event": "VERIFIED",
+  "evidence": {
+   "commit": "f79eb6cb4b865b05a1324632a4b6cff9fc646094",
+   "outcome": "NO_BASELINE_YET (PROPOSED rule B1-DR-1); admissibility ADMISSIBLE (formal); no ELIMINATED_WITHIN_TESTED_ENVELOPE",
+   "verification": "round 1: evidence/traceability and rules/recompute lenses both pass, 0 fix rounds",
+   "workflow_key": "BUNDLE1",
+   "workflow_run": "wf_f6969800-ccc"
+  },
+  "execution_key": "d45eda8e144c71eae9f5ebf0d1c1a560af20903571c60bbcdb605e361b68a148",
+  "member": null,
+  "record_origin": "live",
+  "trigger": "T_BUNDLE1",
+  "utc": "2026-09-26T20:11:37+00:00"
+ }
+}

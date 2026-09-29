@@ -1,0 +1,596 @@
+{
+  "schema": "dx5_acquisition_inputs_v1",
+  "status": "DRAFT_PENDING_OWNER",
+  "follow_on": "fo_closed_access_acquisition",
+  "trigger": "T_PIVOT_CLOSED_ACCESS_ACQUISITION",
+  "owner_disposition": {
+    "id": "od_hardware_pivot",
+    "file": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+    "key": ["also_decided", "dx5_closed_access_sources"],
+    "p4_key": ["also_decided", "dx5_p4_dissociation"]
+  },
+  "curated_utc": "2026-09-27",
+  "curation_note": "Hand-curated facts, each with the place it was read. Bibliographic metadata was read from the Crossref REST API (https://api.crossref.org/works/<DOI>) on 2026-09-27. Open-access status was read from the Semantic Scholar Graph API (https://api.semanticscholar.org/graph/v1/paper/DOI:<DOI>?fields=isOpenAccess,openAccessPdf) on 2026-09-27, and from the OpenAlex API (https://api.openalex.org/works/https://doi.org/<DOI>) where it answered before its anonymous daily budget was exhausted. Publisher pages were read with a plain HTTP fetch; HTTP 403 answers are recorded as such and not worked around. Dossier facts (energy ranges, processes, evidence classes, what each work could add) are quoted from docs/chemistry/n2_domain_extension/dx5/dx5_evidence_v1.json and are not re-derived here. Nothing was downloaded from behind a paywall; no author, lab or vendor was contacted.",
+  "publisher_routes": {
+    "APS": {
+      "publisher_page_pattern": "https://journals.aps.org/pra/abstract/<DOI>",
+      "publisher_page_observation": "HTTP 403 to an automated fetch on 2026-09-27 (journals.aps.org/pra/abstract/10.1103/PhysRevA.51.3819); https://www.aps.org/membership/journal-benefits-members also HTTP 403. The D-X5 dossier recorded the same 403 (DX5_EVIDENCE.md search log).",
+      "purchase_route": "Single-article purchase on the APS abstract page. A search-engine snippet (query 2026-09-27, result https://librarians.aps.org/ordering) describes a 'Purchase access to all versions of this article for 24 hours' box at the bottom of the abstract page. Not read first-hand (verify in a normal browser).",
+      "price_shown": "not shown (publisher page not readable by automated fetch; the owner reads the price in a browser before approving)",
+      "institutional_route": "Institutional or library subscription to Physical Review A including the back archive (1970-1996 volumes here). Whether a given library's licence covers these volumes is TBD - requires the owner's library to check its APS licence.",
+      "document_delivery_route": "Library document-delivery / interlibrary-loan request through the owner's institutional library (see document_delivery_routes)."
+    },
+    "IOP": {
+      "publisher_page_pattern": "https://iopscience.iop.org/article/<DOI>",
+      "publisher_page_observation": "Read 2026-09-27 for 10.1088/1361-6595/abe1d4, 10.1088/0953-4075/25/16/012 and 10.1088/0953-4075/28/17/029: 'The computer you are using is not registered by an institution with a subscription to this article. Please choose one of the options below.' Options listed: IOPscience login (institutional), purchase from Article Galaxy, CCC RightFind, rental via DeepDyve. For 10.1088/0022-3700/14/17/006 the fetched page showed no access or purchase block ('Published under licence by IOP Publishing Ltd' only): access state not determined.",
+      "purchase_route": "Purchase through the vendors linked on the IOP article page (Article Galaxy, CCC RightFind) or rental (DeepDyve).",
+      "price_shown": "not shown on the IOP article page (prices are shown only after following the vendor links, which were not followed)",
+      "institutional_route": "IOPscience institutional login (subscription to J. Phys. B / Plasma Sources Sci. Technol. including the relevant back volumes). TBD - requires the owner's library to check its IOP licence.",
+      "document_delivery_route": "Library document-delivery / interlibrary-loan request through the owner's institutional library (see document_delivery_routes)."
+    },
+    "AIP": {
+      "publisher_page_pattern": "https://pubs.aip.org/... (Crossref 'resource.primary' URL per article)",
+      "publisher_page_observation": "HTTP 403 to an automated fetch on 2026-09-27 (pubs.aip.org/jcp/article/51/9/3940/...). The D-X5 dossier recorded 'AIP page 403' for Skerbele & Lassettre 1970 and Liu 2019, and a 404 at the NIST SRD reprint path for Itikawa 2006.",
+      "purchase_route": "Single-article purchase on the AIP Publishing article page (existence and terms not read first-hand: verify in a normal browser).",
+      "price_shown": "not shown (publisher page not readable by automated fetch)",
+      "institutional_route": "Institutional subscription to J. Chem. Phys. / J. Phys. Chem. Ref. Data including the back archive. TBD - requires the owner's library to check its AIP licence.",
+      "document_delivery_route": "Library document-delivery / interlibrary-loan request through the owner's institutional library (see document_delivery_routes)."
+    },
+    "Elsevier": {
+      "publisher_page_pattern": "https://www.sciencedirect.com/science/article/pii/<PII>",
+      "publisher_page_observation": "HTTP 403 to an automated fetch on 2026-09-27 (sciencedirect.com/science/article/pii/S0370157305001559). The D-X5 dossier recorded ScienceDirect 403.",
+      "purchase_route": "Single-article purchase on ScienceDirect (not read first-hand: verify in a normal browser).",
+      "price_shown": "not shown (publisher page not readable by automated fetch)",
+      "institutional_route": "Institutional ScienceDirect subscription covering Physics Reports 2005. TBD - requires the owner's library to check.",
+      "document_delivery_route": "Library document-delivery / interlibrary-loan request through the owner's institutional library (see document_delivery_routes)."
+    }
+  },
+  "document_delivery_routes": [
+    {
+      "name": "Owner's institutional library interlibrary loan / document delivery",
+      "url": null,
+      "observation": "Generic legitimate route; which library the owner can use, and its terms and fees, are TBD - requires the owner.",
+      "eligibility": "TBD - requires the owner"
+    },
+    {
+      "name": "INFLIBNET Document Delivery Service through JCCC@UGC-INFONET (India)",
+      "url": "https://www.inflibnet.ac.in/services/dds.php",
+      "observation": "Read 2026-09-27: 'Universities can request for articles from the journal holdings of those libraries wherever they find useful articles in JCCC search, that are not available in that library.' No charges stated on the page.",
+      "eligibility": "Member universities only (per the page). Usable by Vyovrinda only through a university partner's library: TBD - requires the owner."
+    },
+    {
+      "name": "British Library document supply (BLDSS / On Demand)",
+      "url": null,
+      "observation": "Named as a remote document-delivery service in a search-engine result on 2026-09-27; https://www.bl.uk/on-demand returned HTTP 404 and no service page was read first-hand. Existence of an international commercial copy service and its fees: verify.",
+      "eligibility": "verify"
+    }
+  ],
+  "excluded_route_types": [
+    "shadow libraries of any kind (never listed, never used)",
+    "copies on social/academic networking sites or on third-party servers whose authorization to redistribute is unknown (the dossier saw one such listing for Kutz & Meyer 1995 and one for Itikawa & Mason 2005; both behind bot challenges or unreachable, neither is a route here)",
+    "LXCat (excluded by the D-X5 rules)",
+    "any bot-challenge, paywall or TLS workaround",
+    "contact with authors, labs or vendors by the team (vendor/facility contact is the owner's channel per od_hardware_pivot)"
+  ],
+  "rubric": {
+    "status": "PROPOSED (not in the RFP; for the owner to accept, change or replace)",
+    "purpose": "Order the closed-access works by expected gap-closing value per unit cost, using only facts recorded in the D-X5 dossier.",
+    "factors_per_work_and_gap": {
+      "class_points": {"measured_primary": 2, "model_derived_primary": 1, "evaluated_or_review": 1},
+      "reach_points": {
+        "reaches_E_req_1pct": 2,
+        "extends_beyond_table_last_point_only": 1,
+        "no_known_extension": 0,
+        "definition": "Computed by the build script. The work's maximum stated energy (from the dossier) is compared with the target tables' source_last_data_point_eV and with the lane-01 E_req at the 1 % tail-share level for L = 60 eV (hold-envelope value, or the flat-sigma reference where no hold envelope exists), both read from docs/chemistry/n2_domain_extension/domain_extension_requirements.json. 'Reaches' means max_energy >= the smallest such E_req among the work's target tables for that gap."
+      },
+      "sole_located_source_points": 1,
+      "independent_of_current_lineage_points": 1,
+      "no_direct_integral_cross_section_penalty": -1,
+      "quantity_not_confirmed_penalty": -2,
+      "per_gap_floor": 0
+    },
+    "cost": {
+      "rule": "No publisher showed a per-article price to the automated reader (see publisher_routes). Every work is therefore assigned cost_units = 1 (one article acquisition), evidence class 'assumed'. The owner replaces this with the prices seen in a browser; the build script then reorders.",
+      "cost_units_default": 1
+    },
+    "value": "sum over gaps of max(per_gap_floor, class + reach + sole + independent + penalties)",
+    "order": "value / cost_units descending; ties broken by maximum stated energy descending, then by work_key ascending",
+    "proposed_acquisition_rule": "PROPOSED: acquire in priority order until the owner's budget (TBD - requires the owner; 'reasonable cost' is the owner's judgement per od_hardware_pivot) is spent. Works sharing a publisher may be cheaper as a group through one institutional route; the grouping is listed but does not change the score."
+  },
+  "works": [
+    {
+      "work_key": "kutz_meyer_1995",
+      "dossier_ids": ["P1:kutz_meyer_1995"],
+      "doi": "10.1103/PhysRevA.51.3819",
+      "crossref": {
+        "authors": "Holger Kutz; Hans-Dieter Meyer",
+        "title": "Rotational excitation of N2 and Cl2 molecules by electron impact in the energy range 0.01-1000 eV: Investigation of excitation mechanisms",
+        "journal": "Physical Review A", "volume": "51", "issue": "5", "pages": "3819-3830", "year": 1995,
+        "publisher": "American Physical Society (APS)", "license": "http://link.aps.org/licenses/aps-default-license",
+        "landing": "https://link.aps.org/doi/10.1103/PhysRevA.51.3819"
+      },
+      "publisher_group": "APS",
+      "oa_check": {"semantic_scholar": "CLOSED", "openalex": "not answered (rate limit)", "dossier_access": "abstract_only"},
+      "author_deposited_open_version": "none found (Semantic Scholar CLOSED; the dossier found no open copy it could use)",
+      "targets": [
+        {
+          "gap": "P1",
+          "tables": ["excitation_N2_rot_j0_to_j2.dat", "excitation_N2_rot_j0_to_j4.dat"],
+          "data_sought": "Integral (and differential) rotational excitation cross sections j = 0->2, 0->4, 0->6 (and higher-Delta-j channels relevant to the rotational rainbow) above 10 eV, ideally to 1000 eV; numeric tables or figures to be transcribed with evidence class 'model-derived'.",
+          "stated_energy_range_eV": "0.01-1000 (ICS 0.001-1000 per NIFS-DATA-063)",
+          "max_energy_eV": 1000,
+          "evidence_class": "model-derived",
+          "class": "model_derived_primary",
+          "sole_located_source": true,
+          "sole_rationale": "dossier: 'The only located source whose stated range reaches the lane-01 E_req for rotational'",
+          "independent_of_current_lineage": true,
+          "direct_integral_cross_section": true,
+          "quantity_confirmed": true,
+          "quantity_confirmed_by": "NIFS-DATA-063 p. 23 entry 95Kut1 'ICS at 0.001-1000 eV' (quoted in the dossier)"
+        }
+      ]
+    },
+    {
+      "work_key": "gote_ehrhardt_1995",
+      "dossier_ids": ["P1:gote_ehrhardt_1995"],
+      "doi": "10.1088/0953-4075/28/17/029",
+      "crossref": {
+        "authors": "M Gote; H Ehrhardt",
+        "title": "Rotational excitation of diatomic molecules at intermediate energies: absolute differential state-to-state transition cross sections for electron scattering from N2, Cl2, CO and HCl",
+        "journal": "Journal of Physics B: Atomic, Molecular and Optical Physics", "volume": "28", "issue": "17", "pages": "3957-3986", "year": 1995,
+        "publisher": "IOP Publishing", "license": null,
+        "landing": "https://iopscience.iop.org/article/10.1088/0953-4075/28/17/029"
+      },
+      "publisher_group": "IOP",
+      "oa_check": {"semantic_scholar": "CLOSED", "openalex": "closed", "dossier_access": "abstract_only"},
+      "author_deposited_open_version": "none found (Semantic Scholar CLOSED; OpenAlex closed, no repository location)",
+      "targets": [
+        {
+          "gap": "P1",
+          "tables": ["excitation_N2_rot_j0_to_j2.dat", "excitation_N2_rot_j0_to_j4.dat"],
+          "data_sought": "Absolute state-to-state rotational DCS for N2 at primary energies 10-200 eV, angles 10-160 deg (tables if given); any integrated values (the dossier notes Ristic et al. 2023 used 'Gote and Ehrhardt' for elastic ICS at 10-70 eV, suggesting integrated values exist - not verified).",
+          "stated_energy_range_eV": "10-200 (IOP abstract); NIFS-DATA-063 'DCS at 2-200 eV'",
+          "max_energy_eV": 200,
+          "evidence_class": "measured (crossed beam), DCS only",
+          "class": "measured_primary",
+          "sole_located_source": true,
+          "sole_rationale": "dossier: 'The only measurement-based rotationally resolved data above 20 eV that was located.'",
+          "independent_of_current_lineage": true,
+          "direct_integral_cross_section": false,
+          "quantity_confirmed": true,
+          "quantity_confirmed_by": "IOP abstract page (dossier, read 2026-09-26): absolute differential state-to-state cross sections"
+        }
+      ]
+    },
+    {
+      "work_key": "bhattacharyya_goswami_1982",
+      "dossier_ids": ["P1:bhattacharyya_goswami_1982"],
+      "doi": "10.1103/PhysRevA.26.2592",
+      "crossref": {
+        "authors": "P. K. Bhattacharyya; K. K. Goswami",
+        "title": "Elastic and rotational excitation of the nitrogen molecule by intermediate-energy electrons",
+        "journal": "Physical Review A", "volume": "26", "issue": "5", "pages": "2592-2605", "year": 1982,
+        "publisher": "American Physical Society (APS)", "license": "http://link.aps.org/licenses/aps-default-license",
+        "landing": "https://link.aps.org/doi/10.1103/PhysRevA.26.2592"
+      },
+      "publisher_group": "APS",
+      "oa_check": {"semantic_scholar": "CLOSED", "openalex": "not answered (rate limit)", "dossier_access": "abstract_only"},
+      "author_deposited_open_version": "none found (Semantic Scholar CLOSED)",
+      "targets": [
+        {
+          "gap": "P1",
+          "tables": ["excitation_N2_rot_j0_to_j2.dat"],
+          "data_sought": "Rotational ICS J = 0->2 (and 1->3) at 20-200 eV; DCS at 20, 30, 50 eV.",
+          "stated_energy_range_eV": "20-200 (ICS); DCS at 20, 30, 50",
+          "max_energy_eV": 200,
+          "evidence_class": "model-derived (fixed-nuclei with eikonal amplitude; exchange not included)",
+          "class": "model_derived_primary",
+          "sole_located_source": false,
+          "sole_rationale": "Kutz & Meyer 1995 also covers this range (theory).",
+          "independent_of_current_lineage": true,
+          "direct_integral_cross_section": true,
+          "quantity_confirmed": true,
+          "quantity_confirmed_by": "NIFS-DATA-063 entry 82Bha1 'ICS at 20-200 eV' (quoted in the dossier)"
+        }
+      ]
+    },
+    {
+      "work_key": "choi_poe_sun_shan_1979",
+      "dossier_ids": ["P1:choi_poe_sun_shan_1979", "P3:choi1979"],
+      "doi": "10.1103/PhysRevA.19.116",
+      "crossref": {
+        "authors": "B. H. Choi; R. T. Poe; James C. Sun; Yueh Shan",
+        "title": "Two-potential approach for electron-molecular collisions at intermediate and high energies; application to e-N2 scatterings",
+        "journal": "Physical Review A", "volume": "19", "issue": "1", "pages": "116-124", "year": 1979,
+        "publisher": "American Physical Society (APS)", "license": "http://link.aps.org/licenses/aps-default-license",
+        "landing": "https://link.aps.org/doi/10.1103/PhysRevA.19.116"
+      },
+      "publisher_group": "APS",
+      "oa_check": {"semantic_scholar": "CLOSED", "openalex": "closed", "dossier_access": "abstract_only"},
+      "author_deposited_open_version": "none found (Semantic Scholar CLOSED; OpenAlex closed, no repository location)",
+      "targets": [
+        {
+          "gap": "P1",
+          "tables": ["excitation_N2_rot_j0_to_j2.dat", "excitation_N2_rot_j0_to_j4.dat"],
+          "data_sought": "Any rotational transition cross sections of N2 at 50-500 eV (the abstract does not show that rotational ICS are tabulated).",
+          "stated_energy_range_eV": "50-500",
+          "max_energy_eV": 500,
+          "evidence_class": "model-derived",
+          "class": "model_derived_primary",
+          "sole_located_source": false,
+          "sole_rationale": "Kutz & Meyer 1995 reaches further for rotational.",
+          "independent_of_current_lineage": true,
+          "direct_integral_cross_section": true,
+          "quantity_confirmed": false,
+          "quantity_confirmed_by": "dossier: 'The abstract does NOT show that N2 rotational ICS are tabulated'"
+        },
+        {
+          "gap": "P3",
+          "tables": ["excitation_N2_vib_0_to_1.dat"],
+          "data_sought": "Non-resonant vibrational transition cross sections of N2 (v = 0 -> 1 and overtones if given) at 50-500 eV.",
+          "stated_energy_range_eV": "50-500",
+          "max_energy_eV": 500,
+          "evidence_class": "model-derived",
+          "class": "model_derived_primary",
+          "sole_located_source": true,
+          "sole_rationale": "dossier: 'The only located source that nominally spans the required 50-500 eV range for N2 vibrational transitions.'",
+          "independent_of_current_lineage": true,
+          "direct_integral_cross_section": true,
+          "quantity_confirmed": false,
+          "quantity_confirmed_by": "dossier: 'Whether vibrational ICS are tabulated is not visible (APS closed).'"
+        }
+      ]
+    },
+    {
+      "work_key": "itikawa_mason_2005",
+      "dossier_ids": ["P1:itikawa_mason_2005"],
+      "doi": "10.1016/j.physrep.2005.04.002",
+      "crossref": {
+        "authors": "Yukikazu Itikawa; Nigel Mason",
+        "title": "Rotational excitation of molecules by electron collisions",
+        "journal": "Physics Reports", "volume": "414", "issue": "1", "pages": "1-41", "year": 2005,
+        "publisher": "Elsevier BV", "license": "https://www.elsevier.com/tdm/userlicense/1.0/",
+        "landing": "https://linkinghub.elsevier.com/retrieve/pii/S0370157305001559"
+      },
+      "publisher_group": "Elsevier",
+      "oa_check": {"semantic_scholar": "CLOSED", "openalex": "closed; lists a repository record https://oro.open.ac.uk/18225/ (submittedVersion, is_oa = false)", "dossier_access": "not_accessed"},
+      "author_deposited_open_version": "Repository record https://oro.open.ac.uk/18225/ (Open Research Online, submittedVersion per OpenAlex, flagged not open). HTTP 403 to an automated fetch on 2026-09-27; the dossier met a Cloudflare challenge there. The owner may check in a normal browser whether a public file exists; not bypassed here.",
+      "targets": [
+        {
+          "gap": "P1",
+          "tables": ["excitation_N2_rot_j0_to_j2.dat", "excitation_N2_rot_j0_to_j4.dat"],
+          "data_sought": "The review's N2 section: any tabulation of Kutz & Meyer 1995 / Gote & Ehrhardt 1995 rotational cross sections (the dossier: 'Likely the best secondary tabulation ... used by Ristic et al. 2023 for J=0->2, 0->4').",
+          "stated_energy_range_eV": "unknown (Song 2023 Fig. 8 shows its N2 j0->2 curve only below ~0.2 eV)",
+          "max_energy_eV": null,
+          "evidence_class": "review (secondary)",
+          "class": "evaluated_or_review",
+          "sole_located_source": false,
+          "sole_rationale": "Secondary to Kutz & Meyer 1995 and Gote & Ehrhardt 1995, which are listed separately.",
+          "independent_of_current_lineage": false,
+          "direct_integral_cross_section": true,
+          "quantity_confirmed": false,
+          "quantity_confirmed_by": "dossier: energy range unknown, not accessed"
+        }
+      ]
+    },
+    {
+      "work_key": "itikawa2006",
+      "dossier_ids": ["P1:itikawa2006", "P3:itikawa2006"],
+      "doi": "10.1063/1.1937426",
+      "crossref": {
+        "authors": "Yukikazu Itikawa",
+        "title": "Cross Sections for Electron Collisions with Nitrogen Molecules",
+        "journal": "Journal of Physical and Chemical Reference Data", "volume": "35", "issue": "1", "pages": "31-53", "year": 2006,
+        "year_note": "Crossref 'issued' 2005-12-08 (online); volume 35 is 2006",
+        "publisher": "AIP Publishing", "license": null,
+        "landing": "https://pubs.aip.org/jpr/article/35/1/31/242212/Cross-Sections-for-Electron-Collisions-with"
+      },
+      "publisher_group": "AIP",
+      "oa_check": {"semantic_scholar": "CLOSED", "openalex": "not answered (rate limit)", "dossier_access": "abstract_only (NIST SRD reprint path https://srd.nist.gov/jpcrdreprint/1.1937426.pdf returned 404)"},
+      "author_deposited_open_version": "none found (Semantic Scholar CLOSED; NIST SRD reprint 404 per dossier)",
+      "targets": [
+        {
+          "gap": "P1",
+          "tables": ["excitation_N2_rot_j0_to_j2.dat"],
+          "data_sought": "Recommended rotational cross sections (the dossier found no evidence above 10 eV; Song 2023 Fig. 8 shows the curve only to ~0.2 eV).",
+          "stated_energy_range_eV": "very low energy only (Song 2023 Fig. 8, secondary)",
+          "max_energy_eV": 0.2,
+          "evidence_class": "evaluated compilation",
+          "class": "evaluated_or_review",
+          "sole_located_source": false,
+          "sole_rationale": "dossier: 'No evidence above 10 eV identified'",
+          "independent_of_current_lineage": false,
+          "direct_integral_cross_section": true,
+          "quantity_confirmed": true,
+          "quantity_confirmed_by": "Song 2023 Fig. 8 (secondary, via dossier)"
+        },
+        {
+          "gap": "P3",
+          "tables": ["excitation_N2_vib_0_to_1.dat"],
+          "data_sought": "Recommended v = 0 -> 1 ICS and its stated uncertainty (+/-30 % per Song 2023), to 30 eV; first-hand check of the recommendation that lane-01 cites only via Song 2023.",
+          "stated_energy_range_eV": "to 30 (per Song 2023 Sec. 2.5)",
+          "max_energy_eV": 30,
+          "evidence_class": "evaluated compilation",
+          "class": "evaluated_or_review",
+          "sole_located_source": false,
+          "sole_rationale": "Content already reaches the project secondarily via Song 2023 Sec. 2.5.",
+          "independent_of_current_lineage": false,
+          "direct_integral_cross_section": true,
+          "quantity_confirmed": true,
+          "quantity_confirmed_by": "Song 2023 Sec. 2.5 (secondary, via dossier)"
+        }
+      ]
+    },
+    {
+      "work_key": "oda_osawa1981",
+      "dossier_ids": ["P2:oda_osawa1981"],
+      "doi": "10.1088/0022-3700/14/17/006",
+      "crossref": {
+        "authors": "N Oda; T Osawa",
+        "title": "Generalised oscillator strength and total cross sections for the X1Sigma_g+ -> a1Pi_g transition in molecular nitrogen at 500 to 2000 eV incident electron energies",
+        "journal": "Journal of Physics B: Atomic and Molecular Physics", "volume": "14", "issue": "17", "pages": "L563-L568", "year": 1981,
+        "publisher": "IOP Publishing", "license": null,
+        "landing": "https://iopscience.iop.org/article/10.1088/0022-3700/14/17/006"
+      },
+      "publisher_group": "IOP",
+      "oa_check": {"semantic_scholar": "CLOSED", "openalex": "not answered (rate limit)", "dossier_access": "abstract_only"},
+      "author_deposited_open_version": "none found (Semantic Scholar CLOSED)",
+      "targets": [
+        {
+          "gap": "P2",
+          "tables": ["excitation_N2_a1Pi_g.dat"],
+          "data_sought": "a1Pi_g total (integral) excitation cross sections at 500-2000 eV (derived both from the GOS and by integrating measured DCS, 4.75-133.5 deg) and their uncertainties.",
+          "stated_energy_range_eV": "500-2000",
+          "max_energy_eV": 2000,
+          "evidence_class": "measured (EEL DCS normalized to absolute elastic DCS) -> integral",
+          "class": "measured_primary",
+          "sole_located_source": true,
+          "sole_rationale": "dossier: 'The one measurement found that directly covers a1Pi_g ICS above 200 eV, to 2 keV'",
+          "independent_of_current_lineage": true,
+          "direct_integral_cross_section": true,
+          "quantity_confirmed": true,
+          "quantity_confirmed_by": "abstract (dossier): total cross sections 'derived for various impact energies in two ways'"
+        }
+      ]
+    },
+    {
+      "work_key": "fons1996",
+      "dossier_ids": ["P2:fons1996"],
+      "doi": "10.1103/PhysRevA.53.2239",
+      "crossref": {
+        "authors": "John T. Fons; R. Scott Schappe; Chun C. Lin",
+        "title": "Electron-impact excitation of the second positive band system (C3Pi_u -> B3Pi_g) and the C3Pi_u electronic state of the nitrogen molecule",
+        "journal": "Physical Review A", "volume": "53", "issue": "4", "pages": "2239-2247", "year": 1996,
+        "publisher": "American Physical Society (APS)", "license": "http://link.aps.org/licenses/aps-default-license",
+        "landing": "https://link.aps.org/doi/10.1103/PhysRevA.53.2239"
+      },
+      "publisher_group": "APS",
+      "oa_check": {"semantic_scholar": "CLOSED", "openalex": "closed (PubMed record 9913133, not full text)", "dossier_access": "abstract_only"},
+      "author_deposited_open_version": "none found (Semantic Scholar CLOSED; OpenAlex closed)",
+      "targets": [
+        {
+          "gap": "P2",
+          "tables": ["excitation_N2_C3Pi_u.dat"],
+          "data_sought": "Absolute optical emission / apparent excitation cross sections of C3Pi_u (v' = 0-4) from threshold to 600 eV with the per-cross-section uncertainties; cascade share for v' = 0-2.",
+          "stated_energy_range_eV": "threshold-600",
+          "max_energy_eV": 600,
+          "evidence_class": "measured emission -> apparent excitation cross section",
+          "class": "measured_primary",
+          "sole_located_source": true,
+          "sole_rationale": "dossier: 'The strongest candidate for an independent absolute C3Pi_u excitation cross section above 100 eV'",
+          "independent_of_current_lineage": true,
+          "direct_integral_cross_section": true,
+          "quantity_confirmed": true,
+          "quantity_confirmed_by": "abstract (dossier): absolute optical emission cross sections for v' = 0-4 'from threshold up to 600 eV'"
+        }
+      ]
+    },
+    {
+      "work_key": "chung_lin1972",
+      "dossier_ids": ["P2:chung_lin1972"],
+      "doi": "10.1103/PhysRevA.6.988",
+      "crossref": {
+        "authors": "S. Chung; Chun C. Lin",
+        "title": "Excitation of the Electronic States of the Nitrogen Molecule by Electron Impact",
+        "journal": "Physical Review A", "volume": "6", "issue": "3", "pages": "988-1002", "year": 1972,
+        "publisher": "American Physical Society (APS)", "license": "http://link.aps.org/licenses/aps-default-license",
+        "landing": "https://link.aps.org/doi/10.1103/PhysRevA.6.988"
+      },
+      "publisher_group": "APS",
+      "oa_check": {"semantic_scholar": "CLOSED", "openalex": "closed", "dossier_access": "abstract_only"},
+      "author_deposited_open_version": "none found (Semantic Scholar CLOSED; OpenAlex closed)",
+      "targets": [
+        {
+          "gap": "P2",
+          "tables": ["excitation_N2_a1Pi_g.dat", "excitation_N2_w1Delta_u.dat"],
+          "data_sought": "Born(-Ochkur-Rudge) ICS for the singlet states a1Pi_g and w1Delta_u over 0-2000 eV (triplets only to 40 eV; nothing for a'1Sigma_u-).",
+          "stated_energy_range_eV": "singlets 0-2000; triplets 0-40",
+          "max_energy_eV": 2000,
+          "evidence_class": "model-derived (Born)",
+          "class": "model_derived_primary",
+          "sole_located_source": true,
+          "sole_rationale": "dossier: 'Only theory found for w1Delta_u and a1Pi_g to 2 keV (Born).'",
+          "independent_of_current_lineage": true,
+          "direct_integral_cross_section": true,
+          "quantity_confirmed": true,
+          "quantity_confirmed_by": "abstract (dossier): 'calculated over the range of 0-2000 eV for the singlet states'"
+        }
+      ]
+    },
+    {
+      "work_key": "holland1969",
+      "dossier_ids": ["P2:holland1969"],
+      "doi": "10.1063/1.1672614",
+      "crossref": {
+        "authors": "R. F. Holland",
+        "title": "Excitation of Nitrogen by Electrons: The Lyman-Birge-Hopfield System of N2",
+        "journal": "The Journal of Chemical Physics", "volume": "51", "issue": "9", "pages": "3940-3950", "year": 1969,
+        "publisher": "AIP Publishing", "license": null,
+        "landing": "https://pubs.aip.org/jcp/article/51/9/3940/85584/Excitation-of-Nitrogen-by-Electrons-The-Lyman"
+      },
+      "publisher_group": "AIP",
+      "oa_check": {"semantic_scholar": "CLOSED", "openalex": "not answered (rate limit)", "dossier_access": "abstract_only"},
+      "author_deposited_open_version": "none found (Semantic Scholar CLOSED)",
+      "targets": [
+        {
+          "gap": "P2",
+          "tables": ["excitation_N2_a1Pi_g.dat"],
+          "data_sought": "Energy dependence of the apparent LBH (a1Pi_g) emission cross section, 100-2000 eV (absolute at 900 eV), with uncertainties and pressure/cascade treatment; the abstract gives only three numbers.",
+          "stated_energy_range_eV": "100-2000 (absolute at 900 eV)",
+          "max_energy_eV": 2000,
+          "evidence_class": "measured (apparent emission cross section; cascade included)",
+          "class": "measured_primary",
+          "sole_located_source": false,
+          "sole_rationale": "Oda & Osawa 1981 also covers a1Pi_g above 200 eV (direct EEL measurement).",
+          "independent_of_current_lineage": true,
+          "direct_integral_cross_section": true,
+          "quantity_confirmed": true,
+          "quantity_confirmed_by": "abstract (dossier): 1.1 +/- 0.2e-18 cm2 at 900 eV; totals at 100 and 2000 eV"
+        }
+      ]
+    },
+    {
+      "work_key": "skerbele_lassettre1970",
+      "dossier_ids": ["P2:skerbele_lassettre1970"],
+      "doi": "10.1063/1.1673844",
+      "crossref": {
+        "authors": "Ausma Skerbele; Edwin N. Lassettre",
+        "title": "Absolute Electron Collision Cross Sections for Two Forbidden Transitions in Nitrogen at Kinetic Energies of 300-500 eV",
+        "journal": "The Journal of Chemical Physics", "volume": "53", "issue": "10", "pages": "3806-3813", "year": 1970,
+        "publisher": "AIP Publishing", "license": null,
+        "landing": "https://pubs.aip.org/jcp/article/53/10/3806/85073/Absolute-Electron-Collision-Cross-Sections-for-Two"
+      },
+      "publisher_group": "AIP",
+      "oa_check": {"semantic_scholar": "CLOSED", "openalex": "not answered (rate limit)", "dossier_access": "abstract_only"},
+      "author_deposited_open_version": "none found (Semantic Scholar CLOSED)",
+      "targets": [
+        {
+          "gap": "P2",
+          "tables": ["excitation_N2_a1Pi_g.dat"],
+          "data_sought": "Absolute small-angle (2-6 deg) DCS / GOS for a1Pi_g at 300-500 eV (Born-behaviour check; no ICS).",
+          "stated_energy_range_eV": "300-500 (theta 2-6 deg only)",
+          "max_energy_eV": 500,
+          "evidence_class": "measured DCS (small angle)",
+          "class": "measured_primary",
+          "sole_located_source": false,
+          "sole_rationale": "Oda & Osawa 1981 and Holland 1969 also cover a1Pi_g above 200 eV.",
+          "independent_of_current_lineage": true,
+          "direct_integral_cross_section": false,
+          "quantity_confirmed": true,
+          "quantity_confirmed_by": "abstract (dossier): absolute cross sections at 300-500 eV"
+        }
+      ]
+    },
+    {
+      "work_key": "kawaguchi2021",
+      "dossier_ids": ["P2:kawaguchi2021", "P3:kawaguchi2021"],
+      "doi": "10.1088/1361-6595/abe1d4",
+      "crossref": {
+        "authors": "S Kawaguchi; K Takahashi; K Satoh",
+        "title": "Electron collision cross section set for N2 and electron transport in N2, N2/He, and N2/Ar",
+        "journal": "Plasma Sources Science and Technology", "volume": "30", "issue": "3", "pages": "035010", "year": 2021,
+        "publisher": "IOP Publishing", "license": "https://publishingsupport.iopscience.iop.org/iop-standard/v1",
+        "landing": "https://iopscience.iop.org/article/10.1088/1361-6595/abe1d4"
+      },
+      "publisher_group": "IOP",
+      "oa_check": {"semantic_scholar": "HYBRID flag (license 'other-oa') - CONTRADICTED by the IOP article page read 2026-09-27 (not registered by a subscribing institution; purchase options shown) and by the Crossref licence (iop-standard, not CC); treated as closed", "openalex": "hybrid flag, same contradiction", "dossier_access": "abstract_only (PDF URL returned a bot challenge, not bypassed)"},
+      "author_deposited_open_version": "none found for the 2021 paper. Related open work already used by the dossier: the Kawaguchi 2018 thesis (https://muroran-it.repo.nii.ac.jp/record/9681/files/A412.pdf), swarm-adjusted and anchored on Johnson at 100 eV.",
+      "targets": [
+        {
+          "gap": "P2",
+          "tables": ["excitation_N2_A3Sigma_u.dat", "excitation_N2_B3Pi_g.dat", "excitation_N2_W3Delta_u.dat", "excitation_N2_Bprime3Sigma_u.dat", "excitation_N2_aprime1Sigma_u.dat", "excitation_N2_a1Pi_g.dat", "excitation_N2_w1Delta_u.dat", "excitation_N2_C3Pi_u.dat"],
+          "data_sought": "The published swarm-consistent set: 17 electronic excitation cross sections to 10 keV (per Song 2023, secondary statement), to compare with the open 2018 thesis set and the repo continuations.",
+          "stated_energy_range_eV": "to 10000 per Song 2023 (not seen)",
+          "max_energy_eV": 10000,
+          "evidence_class": "evaluated (swarm-adjusted)",
+          "class": "evaluated_or_review",
+          "sole_located_source": false,
+          "sole_rationale": "Majeed & Strickland 1997 and the Kawaguchi 2018 thesis (both open) already provide evaluated sets above 100 eV.",
+          "independent_of_current_lineage": false,
+          "direct_integral_cross_section": true,
+          "quantity_confirmed": true,
+          "quantity_confirmed_by": "Song 2023 Sec. 2.6 (secondary statement, via dossier)"
+        },
+        {
+          "gap": "P3",
+          "tables": ["excitation_N2_vib_0_to_1.dat"],
+          "data_sought": "The set's 10 vibrational excitation cross sections and their high-energy extent (unknown).",
+          "stated_energy_range_eV": "unknown for vibrational",
+          "max_energy_eV": null,
+          "evidence_class": "evaluated (swarm-adjusted)",
+          "class": "evaluated_or_review",
+          "sole_located_source": false,
+          "sole_rationale": "Range unknown.",
+          "independent_of_current_lineage": false,
+          "direct_integral_cross_section": true,
+          "quantity_confirmed": false,
+          "quantity_confirmed_by": "dossier: 'its vib range and high-energy tail are unknown'"
+        }
+      ]
+    },
+    {
+      "work_key": "middleton1992",
+      "dossier_ids": ["P3:middleton1992"],
+      "doi": "10.1088/0953-4075/25/16/012",
+      "crossref": {
+        "authors": "A G Middleton; M J Brunger; P J O Teubner",
+        "title": "Vibrational excitation in isoelectronic molecules by electron impact: CO and N2",
+        "journal": "Journal of Physics B: Atomic, Molecular and Optical Physics", "volume": "25", "issue": "16", "pages": "3541-3549", "year": 1992,
+        "publisher": "IOP Publishing", "license": null,
+        "landing": "https://iopscience.iop.org/article/10.1088/0953-4075/25/16/012"
+      },
+      "publisher_group": "IOP",
+      "oa_check": {"semantic_scholar": "BRONZE flag - CONTRADICTED by the IOP article page read 2026-09-27 ('not registered by an institution with a subscription'; purchase options shown); treated as closed", "openalex": "bronze flag, same contradiction", "dossier_access": "abstract_only (subscription / bot challenge, not bypassed)"},
+      "author_deposited_open_version": "none found",
+      "targets": [
+        {
+          "gap": "P3",
+          "tables": ["excitation_N2_vib_0_to_1.dat"],
+          "data_sought": "v = 0 -> 1 DCS for N2 at 20, 30, 50 eV over 10-90 deg (no ICS), to adjudicate the factor-2.5 theory/experiment conflict at 50 eV noted in the dossier.",
+          "stated_energy_range_eV": "20, 30, 50 (N2), 10-90 deg",
+          "max_energy_eV": 50,
+          "evidence_class": "measured (DCS only)",
+          "class": "measured_primary",
+          "sole_located_source": false,
+          "sole_rationale": "Truhlar et al. 1977 reaches 75 eV.",
+          "independent_of_current_lineage": true,
+          "direct_integral_cross_section": false,
+          "quantity_confirmed": true,
+          "quantity_confirmed_by": "abstract via OpenAlex (dossier): 0->1 DCS at 20-50 eV, 10-90 deg"
+        }
+      ]
+    },
+    {
+      "work_key": "truhlar1977",
+      "dossier_ids": ["P3:truhlar1977"],
+      "doi": "10.1063/1.433939",
+      "crossref": {
+        "authors": "Donald G. Truhlar; Maynard A. Brandt; Santosh K. Srivastava; S. Trajmar; A. Chutjian",
+        "title": "Quantum mechanical and crossed beam study of vibrational excitation of N2 by electron impact at 30-75 eV",
+        "journal": "The Journal of Chemical Physics", "volume": "66", "issue": "2", "pages": "655-663", "year": 1977,
+        "publisher": "AIP Publishing", "license": null,
+        "landing": "https://pubs.aip.org/jcp/article/66/2/655/773676/Quantum-mechanical-and-crossed-beam-study-of"
+      },
+      "publisher_group": "AIP",
+      "oa_check": {"semantic_scholar": "CLOSED", "openalex": "not answered (rate limit)", "dossier_access": "abstract_only"},
+      "author_deposited_open_version": "none found (Semantic Scholar CLOSED)",
+      "targets": [
+        {
+          "gap": "P3",
+          "tables": ["excitation_N2_vib_0_to_1.dat"],
+          "data_sought": "Tables of v = 0 -> 1 / elastic DCS ratios at 20-75 eV (20-135 deg), the derived ICS and their uncertainties; the paper's own theory values.",
+          "stated_energy_range_eV": "20 (25-90 deg), 30, 35, 40, 45, 75 (20-135 deg)",
+          "max_energy_eV": 75,
+          "evidence_class": "measured (DCS ratios normalized to elastic DCS)",
+          "class": "measured_primary",
+          "sole_located_source": true,
+          "sole_rationale": "dossier: 'Primary measured source for the only non-resonant 0->1 data above 48.5 eV (to 75 eV).'",
+          "independent_of_current_lineage": false,
+          "direct_integral_cross_section": false,
+          "quantity_confirmed": true,
+          "quantity_confirmed_by": "abstract (dossier): DCS ratios at 30, 35, 40, 45 and 75 eV"
+        }
+      ]
+    }
+  ]
+}

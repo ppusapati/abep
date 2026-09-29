@@ -1,0 +1,50 @@
+{
+ "schema": "owner_disposition_addendum_v1",
+ "amends": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+ "amends_sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+ "decided_by": "owner",
+ "decided_utc": "2026-09-27",
+ "what": "owner review after the A3 execution and S12: compressor, S1a, capability demonstration, traceability, O4 dispositions, project conclusion",
+ "project_conclusion": "Simulation work has reached decision adequacy and does not identify a validated Hall transport candidate. The credible Hall set remains empty. Architecture selection must now come primarily from the controlled H-1 hardware experiment.",
+ "decisions": {
+  "DI_1_4_compressor_C1": "Keep C1 (bladed turbomolecular first stage) as the leading conditional candidate: status LEADING_CANDIDATE_PENDING_PRIMARY_EVIDENCE. DI-1.4 is NOT frozen until the Li 2015 compression claim is verified from a first-hand source; a secondary citation is not enough for a system-critical compressor choice.",
+  "compressor_power_allocation": "300 W approved as a design/screening allocation, NOT a hard physical elimination gate. The hard gate remains full-system P_bus < 1.5 kW: a compressor needing more than 300 W is not rejected if the overall system closes below 1.5 kW.",
+  "backflow_b": "b = 0.25 approved as the nominal conservative screening assumption; backflow stays an uncertainty/sensitivity parameter until experimentally or design-credibly established; never called a measured flight value.",
+  "S1a_verdicts": "only S1A_READY / S1A_NOT_READY; no intermediate verdict; the report may list partial precursors, the gate stays binary and fail-closed.",
+  "C1_diode_in_S1a": "allowed, provided Hall discharge is physically inhibited; data class NON_SCORE_BEARING_ENGINEERING_ONLY. C-1 heater/keeper/emission/diode behaviour may be commissioned; no H-1 thrust, Hall I_d, knee, extinction, T_e/n_e, species, divergence or other W5 held-out observable may be exposed.",
+  "registration_input_released_before_LOCK_H1": "freeze the exact released input and its hash as registration/calibration evidence; it can never later be treated as held-out. If anything originally intended as held-out is exposed, permanently mark that condition OUTPUTS_SEEN / not held-out and update the pre-registration BEFORE any score-bearing H-1 data. Never reclassify afterwards.",
+  "S1a_minimum_interlocks": [
+   "hardware E-stop",
+   "vacuum/background-pressure abort",
+   "loss-of-pumping/cooling abort",
+   "cathode heater/keeper overcurrent/overtemperature",
+   "magnet overcurrent/overtemperature",
+   "gas/oxidizer-state interlock",
+   "DAQ fault indication",
+   "explicit Hall-discharge inhibit during S1a"
+  ],
+  "S1a_interlock_limits": "limits come from real hardware/facility ratings, not invented thresholds",
+  "capability_demo_thresholds": "keep the existing planning thresholds; do not loosen them; the capability demonstration discovers whether hardware meets them; if not, LOCK-2 / experiment design changes before score-bearing data",
+  "S1_C4_categories": "do not reduce the nine-category score-bearing gate; stage them: S1a establishes the six no-plasma/calibration-capable categories; S1b / Hall-on qualification supplies pressure-under-operation, oscillation spectra and species/divergence capability",
+  "force_DC_RF_traceability": "SI-traceable calibration through an ISO/IEC 17025-accredited scope appropriate to the measurement; no invented 'class' where the standard defines none; calibration certificate, uncertainty budget, traceability chain and raw calibration record mandatory",
+  "metrology_specification": "approved as the procurement specification now (authorizes quotes / lab capability); it does NOT constitute a demonstrated measurement capability",
+  "HW_C1_09": "confirmed as written (tube thermocouple mandatory; pyrometer where optical access permits; tube temperature never reported as emitter temperature)",
+  "A3_in_N4": "keep A3 as fail-closed authority; do not weaken N4",
+  "instrumentation_version": "keep v1-r2; no v2",
+  "MFC_ranges": "0.030-3.14 mg/s is ~106:1 turndown; at least three overlapping ranges per gas path become part of procurement planning",
+  "intake_sizing": "the molecular-entrance constraint (0.098-0.377 m2 minimum inlet at b = 0.25, ~1.6-1.7x the earlier estimate) makes intake/compressor sizing a spacecraft-level driver before the flight geometry is locked",
+  "O4_dispositions": {
+   "file": "hallthruster_bridge/ensemble/o4_dispositions_p5_n2_campaign_v1.json",
+   "sha256": "dbef0df003c7db6e78eb394a6237c0f259c2b3952c640e0bf58afbdf33538df4",
+   "common_disposition": "Retain as sensitivity evidence only; material sensitivity and/or domain-boundary movement; no new predictive evidence for transport admission; no promotion, no retuning, no threshold change, P5-N2 v1 stays INCONCLUSIVE permanently",
+   "caution_clause": "families with counterfactual candidate-level FAIL_VALIDATION (Johnson-low, rot-off, HMS-high, N2 dication) increase caution around the affected candidates but validate no other candidate",
+   "cleared_for_admission": "none (explicit NONE_CLEARED decision, nothing PROMOTABLE)"
+  },
+  "deferred": "sgb-screen-09 forensics and OOD-boundary forensics stay deferred; facility attempt 2 continues, non-gating"
+ },
+ "critical_path": [
+  "primary compressor evidence + H-1 manufacture/configuration + facility + instrument procurement/calibration",
+  "S1a -> LOCK-1 -> W5 freeze -> S1/S1b -> LOCK-2",
+  "Phase 1 -> Phase 2 Hall/RF/ECR -> Phase 3 absolute thrust"
+ ]
+}

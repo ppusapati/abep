@@ -1,0 +1,22 @@
+{
+ "dataset": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+ "attempt": 2,
+ "started_utc": "2026-09-27T05:28:24+00:00",
+ "supersedes": "hallthruster_bridge/validation/interrupted/escalation_n2_n_ndd_hmslow_di_lower_nel_wang_attempt1/ (or not started before the interruption)",
+ "launch_manifest": "hallthruster_bridge/campaign/manifests/escalation_n2_n_ndd_hmslow_di_lower_nel_wang.json",
+ "launch_manifest_sha256": "76a7ce2c0dca71cd6fcc4febc7193fd3c6f7875cf41f8bf42f361244841a0319",
+ "runner_worktree_commit": "a83ab32014b0e15e992011c502225f2ae344712c",
+ "runner_worktree_clean": true,
+ "julia_version": "julia version 1.11.7",
+ "hallthruster_pinned_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+ "thread_env": {
+  "JULIA_NUM_THREADS": null,
+  "OPENBLAS_NUM_THREADS": null,
+  "OMP_NUM_THREADS": null,
+  "MKL_NUM_THREADS": null
+ },
+ "shards": 4,
+ "nproc": 4,
+ "host": "vm",
+ "python": "3.11.15"
+}

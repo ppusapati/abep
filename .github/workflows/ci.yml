@@ -1,0 +1,120 @@
+# CI for the ABEP-VLEO simulator: the repository's evidence discipline, enforced mechanically (docs/ci/CI.md).
+#   integrity  scripts/ci_checks.py: parse every JSON/TOML, verify the P5-N2 pre-registration lock and the audit snapshot
+#              MANIFEST, the HallThruster.jl pin, rate-validity coverage, generated artefacts == a fresh in-memory generation,
+#              and the transport-ensemble admission gate. Seconds; writes nothing.
+#   tests      python -m pytest -q tests (+ the CLAUDE.md rule 9 outcome: 5 SUPERSEDED skips, 1 strict xfail) and
+#              python -m abep_sim.golden check, with pymsis present and absent (gate 1: the frozen atmosphere needs no pymsis).
+# No Julia here: HallThruster.jl runs are offline. The optional construction-only smoke is julia-smoke.yml (manual only).
+name: CI
+
+on:
+  pull_request:
+  push:
+    # main, plus the pinned execution branch (CLAUDE.md: nobody executes from main until claude/nifty-ramanujan-w68f9z merges).
+    branches: [main, claude/nifty-ramanujan-w68f9z]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  # requirements-lock.txt (numpy 2.4.4, scipy 1.17.1, pandas 3.0.2) and the scripts' use of tomllib need Python >= 3.11
+  # (pyproject.toml requires-python >= 3.11).
+  PYTHON_VERSION: "3.11"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  # abep_sim is installed editable (`pip install --no-deps -e .`, explicit package discovery, docs/ci/PACKAGING.md) after
+  # the lock-file install, so no PYTHONPATH workaround is needed. --no-deps: the lock file is the dependency source of
+  # truth (the editable install can never add or upgrade an unpinned package); pymsis is only in the [msis] extra.
+
+jobs:
+  integrity:
+    name: Repository integrity (scripts/ci_checks.py)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history: several provenance tests resolve pinned lane commits with `git show` and skip in a shallow clone,
+          # which would break the CLAUDE.md rule-9 outcome (5 SUPERSEDED skips). ci_checks.py --pytest-junit refuses a shallow repo.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-lock.txt
+
+      - name: Install locked dependencies (pymsis not needed)
+        run: |
+          grep -v '^pymsis' requirements-lock.txt > "$RUNNER_TEMP/requirements-no-pymsis.txt"
+          python -m pip install -r "$RUNNER_TEMP/requirements-no-pymsis.txt"
+          python -m pip install --no-deps -e .
+
+      - name: Static integrity checks
+        run: python scripts/ci_checks.py
+
+      - name: Working tree unchanged
+        run: |
+          git status --porcelain
+          test -z "$(git status --porcelain)"
+
+  tests:
+    name: Tests + golden benchmarks (pymsis ${{ matrix.pymsis }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        pymsis: [present, absent]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history: several provenance tests resolve pinned lane commits with `git show` and skip in a shallow clone,
+          # which would break the CLAUDE.md rule-9 outcome (5 SUPERSEDED skips). ci_checks.py --pytest-junit refuses a shallow repo.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-lock.txt
+
+      - name: Install locked dependencies
+        run: |
+          if [ "${{ matrix.pymsis }}" = "present" ]; then
+            python -m pip install -r requirements-lock.txt
+          else
+            grep -v '^pymsis' requirements-lock.txt > "$RUNNER_TEMP/requirements-no-pymsis.txt"
+            python -m pip install -r "$RUNNER_TEMP/requirements-no-pymsis.txt"
+          fi
+          python -m pip install --no-deps -e .
+          python -m pip freeze
+
+      - name: Confirm the pymsis state of this leg
+        env:
+          WANT_PYMSIS: ${{ matrix.pymsis }}
+        run: |
+          python - <<'EOF'
+          import importlib.util, os, sys
+          have = importlib.util.find_spec("pymsis") is not None
+          print("pymsis importable:", have)
+          sys.exit(0 if have == (os.environ["WANT_PYMSIS"] == "present") else 1)
+          EOF
+
+      - name: Tests (python -m pytest -q tests)
+        run: python -m pytest -q tests --junitxml="$RUNNER_TEMP/pytest.xml"
+
+      - name: Expected test outcome (CLAUDE.md rule 9)
+        run: python scripts/ci_checks.py --pytest-junit "$RUNNER_TEMP/pytest.xml"
+
+      - name: Golden benchmarks (python -m abep_sim.golden check)
+        # Prints "OK" and exits 0, or prints each deviation and exits 1 (a moved golden is a model change, CLAUDE.md rule 2).
+        run: python -m abep_sim.golden check
+
+      - name: Working tree unchanged (tests and goldens must not rewrite committed files)
+        run: |
+          git status --porcelain
+          test -z "$(git status --porcelain)"

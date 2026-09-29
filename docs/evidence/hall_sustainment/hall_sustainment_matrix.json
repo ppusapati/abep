@@ -1,0 +1,3661 @@
+{
+ "builder": "docs/evidence/hall_sustainment/build_hall_sustainment_matrix.py",
+ "context_not_evidence": {
+  "p5_n2_v1_vacuum": {
+   "file": "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores.json",
+   "n_records": 1080,
+   "status": "CONTEXT ONLY - NOT EVIDENCE. These are counts of simulated run x reading evaluations of the P5-N2 v1 vacuum campaign. They are model results and say nothing about whether a physical discharge ignites or sustains. v1 is INCONCLUSIVE; no candidate is admitted; the credible set is empty. Basis for treating v1 as final: docs/HISTORY.md entry '2026-09-26 - P5-N2 v1 vacuum campaign: frozen, scored once, released' and the no-replace evidence publication recorded there. This audit's own practice: it never re-scores or re-labels v1 and reads these counts unchanged from the official frozen scores file.",
+   "vacuum_status_counts": {
+    "FAIL_VALIDATION": 700,
+    "OUT_OF_DOMAIN": 1428,
+    "PASS": 32
+   }
+  }
+ },
+ "date": "2026-09-26",
+ "definitions": {
+  "evidence_class": [
+   "measured",
+   "digitized",
+   "inferred",
+   "reconstructed",
+   "model-derived",
+   "assumed"
+  ],
+  "evidence_level": "docs/EVIDENCE.md hierarchy (1 = in-house hardware ... 7 = assumption); second-hand reports via a review are level 5",
+  "ignition_basis": {
+   "our_inference": "gas at ignition not stated by the source; the classification is our inference (verify)",
+   "primary": "classification read from the accessed primary text",
+   "second_hand": "classification known only from a review or another paper's report (verify in the primary)"
+  },
+  "ignition_modes": {
+   "direct_on_atmospheric_gas": "discharge started with the atmospheric gas on the anode (cathode gas recorded separately)",
+   "not_reported": "the accessed text does not say",
+   "xenon_admixture_required": "xenon kept in the anode flow because, as the source states, the atmospheric gas alone did not sustain at the tested condition",
+   "xenon_start_then_transition": "discharge started on xenon, then the anode (and possibly cathode) moved to atmospheric gas"
+  },
+  "outcomes": {
+   "extinguished": "discharge could not be sustained / ceased / flamed out at the reported condition",
+   "not_reported": "no atmospheric-gas outcome reported",
+   "sustained": "discharge operated steadily at the reported condition(s)",
+   "unstable": "operated but reported as unstable without loss of discharge"
+  },
+  "preionizer": "a dedicated ionization stage separate from the Hall acceleration discharge (RF/helicon/ECR stage, first stage of a two-stage device). The hollow cathode is recorded separately and is not counted as a pre-ionizer; its gas (Xe/Ar/N2) is recorded because it may assist ionization."
+ },
+ "derived_checks": {
+  "composition_1p27N2_O2_mass_fraction_N2": 0.5265,
+  "composition_1p27N2_O2_mole_fraction_N2": 0.5595,
+  "composition_note": "CIFALI2011 and FERRATO2019_IEPC886 give '1.27N2 + O2' (molecular composition); ANDREUSSI2022, ANDREUSSI2022_IEPC435 and FERRATO2022_PSST give '0.56N2 + 0.44O2'. 1.27:1 is a N2 mole fraction of 0.559 (mass fraction 0.526), so '0.56/0.44' reads as mole fractions (inferred, verify; the SITAEL papers do not state the basis).",
+  "gurciullo_min_xe_mass_fraction": [
+   0.1032,
+   0.1074
+  ],
+  "gurciullo_note": "lowest Xe 0.16 mg/s with N2 1.33-1.39 mg/s (GURCIULLO2020 p.177): Xe mass fraction of the anode flow 10.3-10.7 % (our arithmetic).",
+  "gurciullo_xeair_note": "GURCIULLO2020 Table 4.10 p.201: XeAir-2 1.97 mg/s Xe + 0.09 mg/s air; XeAir-3/4 0.78 mg/s Xe + 0.83 mg/s air. Xe mass fractions 0.956 and 0.484 (our arithmetic) agree with the 48-96 % quoted by ANDREUSSI2022 Page 26 of 57.",
+  "gurciullo_xeair_total_anode_flow_XeAir3_4_mg_s": 1.61,
+  "gurciullo_xeair_xe_mass_fraction_XeAir2": 0.9563,
+  "gurciullo_xeair_xe_mass_fraction_XeAir3_4": 0.4845,
+  "ht5k_dm2_pressure_bound_2.5e-5_mbar_in_Torr": 1.88e-05,
+  "moskovitz_n2_55sccm_mg_s": 1.1457,
+  "moskovitz_n2_75p4sccm_mg_s": 1.5706,
+  "moskovitz_note": "MOSKOVITZ2026 Table 5/6 list 55.0-75.4 sccm = 1.144-1.568 mg/s; our 0 degC/1 atm conversion gives the values above (0.1-0.2 % higher; the paper's reference conditions are not stated).",
+  "n2_mg_s_per_sccm": 0.0208,
+  "no_preionizer_n2_o2_sustained_flow_range": {
+   "entries": [
+    "E01",
+    "E03",
+    "E05",
+    "E06",
+    "E08",
+    "E09",
+    "E10",
+    "E12",
+    "E20"
+   ],
+   "entries_with_numeric_flow": [
+    "E01",
+    "E03",
+    "E05",
+    "E06",
+    "E08",
+    "E09",
+    "E10",
+    "E20"
+   ],
+   "entries_without_flow": [
+    "E12"
+   ],
+   "note": "min/max of the entries' flow fields; E20 is a review-reported 'total mass flow' whose basis relative to the 0.19 mg/s Xe cathode flow is not stated, every other value is an anode flow",
+   "range_mg_s": [
+    0.8,
+    7
+   ]
+  },
+  "no_preionizer_n2_o2_sustained_flow_range_excluding_E20": {
+   "entries": [
+    "E01",
+    "E03",
+    "E05",
+    "E06",
+    "E08",
+    "E09",
+    "E10",
+    "E12"
+   ],
+   "entries_with_numeric_flow": [
+    "E01",
+    "E03",
+    "E05",
+    "E06",
+    "E08",
+    "E09",
+    "E10"
+   ],
+   "entries_without_flow": [
+    "E12"
+   ],
+   "note": "min/max of the entries' flow fields; every value is an anode flow",
+   "range_mg_s": [
+    1.144,
+    7
+   ]
+  },
+  "pps1350_pressure_bound_6e-6_mbar_in_Torr": 4.5e-06,
+  "pressure_note": "unit conversions of the stated upper bounds (CIFALI2011 p.2; ANDREUSSI2022_IEPC435 p.2), our arithmetic",
+  "shabshelowitz_cathode_fraction": 0.3846,
+  "shabshelowitz_note": "ANDREUSSI2022 p.27: 1 mg/s Xe cathode with 2.6 mg/s N2 anode, 'a 38.4 % cathode flow fraction' (1/2.6 = 0.385, our arithmetic)."
+ },
+ "entries": [
+  {
+   "evidence_class": "measured",
+   "evidence_level": 3,
+   "flow": {
+    "evidence_class": "measured",
+    "locator": "Table 2 via audit points.*.table2",
+    "name": "anode N2 mass flow (N1-N5)",
+    "source": "REPO_P5_N2_AUDIT",
+    "uncertainty": "MFC 1 % of setpoint (BRABSTON2025 p.6): 0.05-0.054 mg/s per point (audit points.*.table2.mdot_anode_sigma_mg_s); the paper states a maximum test uncertainty of 0.05 mg/s",
+    "unit": "mg/s",
+    "value": [
+     5.0,
+     5.4
+    ]
+   },
+   "id": "E01",
+   "ignition": {
+    "basis": "primary",
+    "evidence_class": "measured",
+    "mode": "not_reported",
+    "statement": "The start-up / ignition procedure (gas at ignition) is not described in the accessed text (verify in the full paper if needed)."
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "5 kW-class channel (32 or 38 mm long), 3.1-4.8 kW, 1.1-2.1e-5 Torr facility background, Xe cathode; not a flight or intake-fed condition.",
+    "direction": "operation_without_preionizer_demonstrated",
+    "statement": "A single-stage Hall discharge without a dedicated pre-ionization stage sustained on a pure N2 anode flow of 5.0-5.4 mg/s at 232-279 V and 130 G in this thruster and facility.",
+    "uncertainty": "Electron supply and possibly ionization are assisted by a Xe cathode flow of 8.1-8.8 % of the anode mass flow, and by ingested background N2 (2.0-3.4 % of the anode flow, Eq. (13) correlation). The start-up gas is not reported, so this entry says nothing about Xe-free ignition."
+   },
+   "magnetic_field": {
+    "evidence_class": "measured",
+    "locator": "Table 2",
+    "name": "peak radial B at channel centre, exit plane",
+    "source": "REPO_P5_N2_AUDIT",
+    "uncertainty": "not stated; B(z) shape and coil currents unpublished (layer-1 hypotheses)",
+    "unit": "G",
+    "value": 130
+   },
+   "observations": {
+    "cathode": "Xe hollow cathode at 0.44 mg/s; paper assumes the Xe contribution negligible (no resolvable Xe in E x B spectra; findings F5)",
+    "erosion": "not reported",
+    "extinction": "see E02 (voltage window)",
+    "oscillation_modes": "qualitative only: B tuned to minimise I_d peak-to-peak oscillation; no amplitudes or spectra published (repository findings F6; BRABSTON2025 p.6)"
+   },
+   "outcome": "sustained",
+   "outcome_statement": "All five N2 setpoints were operated and measured (thrust, plume probes at N1-N3). Coils were tuned at N3 to minimise I_d and its peak-to-peak oscillation, then held fixed. The Xe cathode flow (4.5 sccm) was selected in preliminary testing as the lowest flow that maintained stable operation across all propellants and setpoints, to minimise xenon ingestion (BRABSTON2025 p.6, article-in-advance pagination; the open IEPC-2024-297 p.8 states only that the cathode is maintained at 4.5 sccm).",
+   "preionizer": {
+    "note": "single-stage Hall; hollow cathode (Xe) is the electron source",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "N2 (pure)",
+    "cathode_gas": "Xe",
+    "xenon_in_anode_flow": false
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "Table 2 via audit points.*.table2",
+     "name": "anode N2 mass flow (N1-N5)",
+     "source": "REPO_P5_N2_AUDIT",
+     "uncertainty": "MFC 1 % of setpoint (BRABSTON2025 p.6): 0.05-0.054 mg/s per point (audit points.*.table2.mdot_anode_sigma_mg_s); the paper states a maximum test uncertainty of 0.05 mg/s",
+     "unit": "mg/s",
+     "value": [
+      5.0,
+      5.4
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Table 2 (4.5 sccm)",
+     "name": "cathode Xe mass flow",
+     "source": "REPO_P5_N2_AUDIT",
+     "uncertainty": "MFC 1 % of setpoint (BRABSTON2025 p.6, anode and cathode MFCs)",
+     "unit": "mg/s",
+     "value": 0.44
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "our arithmetic on Table 2",
+     "name": "cathode Xe / anode N2 mass-flow ratio",
+     "source": "REPO_P5_N2_AUDIT",
+     "uncertainty": "propagated from MFC 1 % (each)",
+     "unit": "1",
+     "value": [
+      0.0815,
+      0.088
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Table 2",
+     "name": "discharge voltage",
+     "source": "REPO_P5_N2_AUDIT",
+     "uncertainty": "not stated",
+     "unit": "V",
+     "value": [
+      231.9,
+      278.6
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Table 2",
+     "name": "discharge power",
+     "source": "REPO_P5_N2_AUDIT",
+     "uncertainty": "rounding 0.005 kW (3 s.f.)",
+     "unit": "kW",
+     "value": [
+      3.08,
+      4.81
+     ]
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "audit points.*.I_d_raw_A",
+     "name": "discharge current, raw = P_d/V_d",
+     "source": "REPO_P5_N2_AUDIT",
+     "uncertainty": "P_d rounding 0.10-0.16 %; no I_d uncertainty stated by the source",
+     "unit": "A",
+     "value": [
+      13.2816,
+      17.4465
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Table 2",
+     "name": "peak radial B at channel centre, exit plane",
+     "source": "REPO_P5_N2_AUDIT",
+     "uncertainty": "not stated; B(z) shape and coil currents unpublished (layer-1 hypotheses)",
+     "unit": "G",
+     "value": 130
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Table 2",
+     "name": "chamber pressure (N2-corrected ion gauge)",
+     "source": "REPO_P5_N2_AUDIT",
+     "uncertainty": "not stated",
+     "unit": "Torr",
+     "value": [
+      1.14e-05,
+      2.14e-05
+     ]
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "audit points.*.mdot_ingested_eq13_mg_s",
+     "name": "ingested background N2 flow, Eq. (13)",
+     "source": "REPO_P5_N2_AUDIT",
+     "uncertainty": "engineering correlation (evidence level 6)",
+     "unit": "mg/s",
+     "value": [
+      0.0992,
+      0.1861
+     ]
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "our arithmetic",
+     "name": "ingested / anode flow",
+     "source": "REPO_P5_N2_AUDIT",
+     "uncertainty": "inherits Eq. (13) uncertainty",
+     "unit": "1",
+     "value": [
+      0.0198,
+      0.0345
+     ]
+    },
+    {
+     "evidence_class": "reconstructed",
+     "locator": "abstract end-points (N1, N5); Fig. 5 digitized (N2-N4)",
+     "name": "thrust, ingestion-corrected (N1..N5)",
+     "source": "REPO_P5_N2_AUDIT",
+     "uncertainty": "max uncertainty 2.6 mN (BRABSTON2025 Table 5, audit points.*.T_sigma_mN); Fig. 5 digitization about 0.4 mN at N2-N4 (repository findings)",
+     "unit": "mN",
+     "value": [
+      61.4,
+      90.0
+     ]
+    }
+   ],
+   "repository_derived": true,
+   "sources": [
+    "REPO_P5_N2_AUDIT",
+    "BRABSTON2025",
+    "BRABSTON_IEPC2024"
+   ],
+   "thruster": {
+    "family": "single-stage Hall (SPT-type)",
+    "geometry": [
+     {
+      "evidence_class": "measured",
+      "locator": "docs/EVIDENCE.md register row 'P5 channel depth' (measured, conflicting)",
+      "name": "discharge channel length/depth as reported by Brabston 2025",
+      "source": "REPO_P5_N2_AUDIT",
+      "uncertainty": "conflicts with the historical 38 mm; which value applies to the tested thruster is a layer-1 registration hypothesis (L38-hist / L32-anode / L32-exit), not resolved",
+      "unit": "mm",
+      "value": 32
+     },
+     {
+      "evidence_class": "measured",
+      "locator": "docs/EVIDENCE.md register row 'P5 channel depth' (measured, conflicting)",
+      "name": "discharge channel length/depth as reported historically (Peterson 2001, Hofer 2004)",
+      "source": "REPO_P5_N2_AUDIT",
+      "uncertainty": "conflicts with Brabston 2025 (32 mm); layer-1 registration hypothesis, not resolved",
+      "unit": "mm",
+      "value": 38
+     }
+    ],
+    "geometry_note": "channel length/depth conflicts between sources (see geometry); coil currents and B(z) for the tested thruster unpublished",
+    "name": "P5 (5 kW-class laboratory Hall thruster)",
+    "power": {
+     "evidence_class": "measured",
+     "locator": "Table 2",
+     "name": "discharge power",
+     "source": "REPO_P5_N2_AUDIT",
+     "uncertainty": "rounding 0.005 kW (3 s.f.)",
+     "unit": "kW",
+     "value": [
+      3.08,
+      4.81
+     ]
+    }
+   },
+   "title": "P5 on pure N2, five setpoints N1-N5 (GT VTF-1)",
+   "voltage": {
+    "evidence_class": "measured",
+    "locator": "Table 2",
+    "name": "discharge voltage",
+    "source": "REPO_P5_N2_AUDIT",
+    "uncertainty": "not stated",
+    "unit": "V",
+    "value": [
+     231.9,
+     278.6
+    ]
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 3,
+   "flow": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "anode N2 mass flow at the window boundary",
+    "source": "REPO_P5_N2_AUDIT",
+    "uncertainty": "n/a",
+    "unit": "mg/s",
+    "value": "not reported for the boundary (the window is stated generally for nitrogen)"
+   },
+   "id": "E02",
+   "ignition": {
+    "basis": "primary",
+    "evidence_class": "measured",
+    "mode": "not_reported",
+    "statement": "not described in the accessed text"
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "same as E01",
+    "direction": "operation_bounded_extinction_observed",
+    "statement": "Without a pre-ionizer, sustained N2 operation of this thruster was confined to a stated window of about 225-275 V at 5.0-5.4 mg/s and fixed B; the window is approximate, since setpoints at 5-5.4 mg/s ran at 275.7-278.6 V, above the stated 275 V upper bound.",
+    "uncertainty": "Boundary is a text statement (no data, no B or flow scan at the boundary); whether a pre-ionizer, a different B, or more flow widens the window is not tested."
+   },
+   "magnetic_field": {
+    "evidence_class": "measured",
+    "locator": "Table 2",
+    "name": "peak radial B at channel centre, exit plane",
+    "source": "REPO_P5_N2_AUDIT",
+    "uncertainty": "not stated; B(z) shape and coil currents unpublished (layer-1 hypotheses)",
+    "unit": "G",
+    "value": 130
+   },
+   "observations": {
+    "cathode": "Xe hollow cathode 0.44 mg/s",
+    "erosion": "not reported",
+    "extinction": "loss of discharge outside the window",
+    "oscillation_modes": "not quantified"
+   },
+   "outcome": "extinguished",
+   "outcome_statement": "The paper states that above 275 V and below 225 V the thruster becomes unstable and cannot sustain a discharge on nitrogen (text statement, no boundary data). qualitative: all five setpoints ran; the text says the discharge cannot be sustained above 275 V or below 225 V (N3-N5 are at 275.7-278.6 V)",
+   "preionizer": {
+    "note": "single-stage Hall; hollow cathode (Xe) is the electron source",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "N2 (pure)",
+    "cathode_gas": "Xe",
+    "xenon_in_anode_flow": false
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "Table 2",
+     "name": "discharge voltage",
+     "source": "REPO_P5_N2_AUDIT",
+     "uncertainty": "not stated",
+     "unit": "V",
+     "value": [
+      231.9,
+      278.6
+     ]
+    }
+   ],
+   "repository_derived": true,
+   "sources": [
+    "REPO_P5_N2_AUDIT",
+    "BRABSTON2025",
+    "BRABSTON_IEPC2024"
+   ],
+   "thruster": {
+    "family": "single-stage Hall (SPT-type)",
+    "geometry": [
+     {
+      "evidence_class": "measured",
+      "locator": "docs/EVIDENCE.md register row 'P5 channel depth' (measured, conflicting)",
+      "name": "discharge channel length/depth as reported by Brabston 2025",
+      "source": "REPO_P5_N2_AUDIT",
+      "uncertainty": "conflicts with the historical 38 mm; which value applies to the tested thruster is a layer-1 registration hypothesis (L38-hist / L32-anode / L32-exit), not resolved",
+      "unit": "mm",
+      "value": 32
+     },
+     {
+      "evidence_class": "measured",
+      "locator": "docs/EVIDENCE.md register row 'P5 channel depth' (measured, conflicting)",
+      "name": "discharge channel length/depth as reported historically (Peterson 2001, Hofer 2004)",
+      "source": "REPO_P5_N2_AUDIT",
+      "uncertainty": "conflicts with Brabston 2025 (32 mm); layer-1 registration hypothesis, not resolved",
+      "unit": "mm",
+      "value": 38
+     }
+    ],
+    "geometry_note": "channel length/depth conflicts between sources (see geometry); coil currents and B(z) for the tested thruster unpublished",
+    "name": "P5 (5 kW-class laboratory Hall thruster)",
+    "power": {
+     "evidence_class": "measured",
+     "locator": "Table 2",
+     "name": "discharge power",
+     "source": "REPO_P5_N2_AUDIT",
+     "uncertainty": "rounding 0.005 kW (3 s.f.)",
+     "unit": "kW",
+     "value": [
+      3.08,
+      4.81
+     ]
+    }
+   },
+   "title": "P5 on pure N2 outside about 225-275 V (operating-window statement)",
+   "voltage": {
+    "evidence_class": "measured",
+    "locator": "BRABSTON2025 p.6; repository findings F4",
+    "name": "stated N2 stability window",
+    "source": "BRABSTON2025",
+    "uncertainty": "approximate: setpoints N3-N5 were run at 275.7-278.6 V (above the stated 275 V)",
+    "unit": "V",
+    "value": [
+     225,
+     275
+    ]
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 3,
+   "flow": {
+    "evidence_class": "measured",
+    "locator": "S2 Table 6.1 p.98",
+    "name": "anode N2 mass flow",
+    "source": "REPO_ECHT_AUDIT",
+    "uncertainty": "1 % ambiguity (99 vs 100 sccm = 2.06 vs 2.083 mg/s); possible feed-line leakage",
+    "unit": "mg/s",
+    "value": 2.06
+   },
+   "id": "E03",
+   "ignition": {
+    "basis": "primary",
+    "evidence_class": "measured",
+    "mode": "direct_on_atmospheric_gas",
+    "statement": "S2 pp.84-85 give an ignition procedure with N2 set on the anode and Ar on the cathode (cathode puff, low B at ignition, B applied after the anode stabilises); S2 p.97 states a stable discharge was maintained on 100 % nitrogen with no xenon present."
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "0.27-0.77 kW, 180-220 V only (300 V supply limit, no data above 220 V), one flow (2.06 mg/s), elevated facility pressure; MSc-thesis measurement with fit-only thrust uncertainty. Any quantity the thesis does not publish (channel cross-section, B at the operating coil current, cathode or facility contribution) needs forced assumptions A1/A3/A5/A6 of the repository ECHT disposition.",
+    "direction": "operation_without_preionizer_demonstrated",
+    "statement": "The only accessed Hall case that both ignited and ran on a pure N2 anode flow with no xenon anywhere (Ar cathode) and no pre-ionization stage, at about 2 mg/s in an 86 mm channel. Repository status HISTORICAL_UNSUPPORTED (not score-bearing, not a transport discriminator) does not withdraw this published measurement; it stays a level-3 measurement of that thruster (see repository_status).",
+    "uncertainty": "Argon cathode flow was large (7.3-35.9 % of anode mass) and co-varied with the best points; facility background 8.1e-05-2.2e-04 Torr (inferred ingestion 2.0-6.0 % of anode flow, repository audit); 3 of 7 thrust runs strongly unstable; per-point I_d to 2 s.f.; no oscillation data."
+   },
+   "magnetic_field": {
+    "evidence_class": "digitized",
+    "locator": "S2 Fig. 4.7 p.66 (digitized by the repository audit)",
+    "name": "centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)",
+    "note": "digitized of a measured centreline profile: a flat plateau at about 4.7-8.6 cm, not exit-peaked. The '130 G' quoted in S2 (p.104, p.114) is the FEMM value at 3 A (model-derived), not a measured B_max, and is not used here (repository STATUS.json item \"'130 G' peak field\").",
+    "source": "REPO_ECHT_AUDIT",
+    "uncertainty": "reading +-0.2 G; probe uncertainty, component and radial position not stated; B at the operating coil currents needs forced assumption A3 (repository STATUS.json)",
+    "unit": "G",
+    "value": 85.3
+   },
+   "observations": {
+    "cathode": "argon, 0.15-0.74 mg/s (Table 6.1)",
+    "erosion": "not reported",
+    "extinction": "quenching linked to keeper-voltage runaway (30-40 V) of a degraded emitter; cathode flow raised ad hoc to keep the cathode running (repository audit, cathode.flow_mgps note; S2 p.98)",
+    "oscillation_modes": "qualitative only: mode changes during calibration (Fig. 6.12 LVDT trace), quenching, keeper runaway; discharge unstable/quenches below ~80 sccm (1.6 mg/s). No I_d time traces, spectra, or oscillation amplitudes."
+   },
+   "outcome": "sustained",
+   "outcome_statement": "13 operating points (Table 6.1) and 7 thrust runs (Table 6.2) on pure N2 at 2.06 mg/s. Runs 1, 3, 7 are flagged 'strong instability during calibration'; mode changes and quenching were attributed by the author to a degraded BaO cathode.",
+   "preionizer": {
+    "note": "single-stage; Ar-fed BaO hollow cathode (IonTech HCN-252) is the electron source",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "N2 (pure)",
+    "cathode_gas": "Ar",
+    "xenon_in_anode_flow": false
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "S2 Table 6.1 p.98",
+     "name": "anode N2 mass flow",
+     "source": "REPO_ECHT_AUDIT",
+     "uncertainty": "1 % ambiguity (99 vs 100 sccm = 2.06 vs 2.083 mg/s); possible feed-line leakage",
+     "unit": "mg/s",
+     "value": 2.06
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "S2 Table 6.1",
+     "name": "discharge voltage",
+     "source": "REPO_ECHT_AUDIT",
+     "uncertainty": "not stated",
+     "unit": "V",
+     "value": [
+      180,
+      220
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "S2 Table 6.1",
+     "name": "discharge current",
+     "source": "REPO_ECHT_AUDIT",
+     "uncertainty": "2 s.f. (rounding +-0.05 A)",
+     "unit": "A",
+     "value": [
+      1.5,
+      3.9
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "S2 Table 6.1",
+     "name": "magnet coil current",
+     "source": "REPO_ECHT_AUDIT",
+     "uncertainty": "not stated",
+     "unit": "A",
+     "value": [
+      0.8,
+      3.0
+     ]
+    },
+    {
+     "evidence_class": "digitized",
+     "locator": "S2 Fig. 4.7 p.66 (digitized by the repository audit)",
+     "name": "centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)",
+     "note": "digitized of a measured centreline profile: a flat plateau at about 4.7-8.6 cm, not exit-peaked. The '130 G' quoted in S2 (p.104, p.114) is the FEMM value at 3 A (model-derived), not a measured B_max, and is not used here (repository STATUS.json item \"'130 G' peak field\").",
+     "source": "REPO_ECHT_AUDIT",
+     "uncertainty": "reading +-0.2 G; probe uncertainty, component and radial position not stated; B at the operating coil currents needs forced assumption A3 (repository STATUS.json)",
+     "unit": "G",
+     "value": 85.3
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "S2 Table 6.1",
+     "name": "cathode Ar mass flow",
+     "source": "REPO_ECHT_AUDIT",
+     "uncertainty": "not stated",
+     "unit": "mg/s",
+     "value": [
+      0.15,
+      0.74
+     ]
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "our arithmetic on Table 6.1",
+     "name": "cathode Ar / anode N2 mass-flow ratio",
+     "source": "REPO_ECHT_AUDIT",
+     "uncertainty": "inherits the 2.06/2.083 mg/s ambiguity",
+     "unit": "1",
+     "value": [
+      0.0728,
+      0.3592
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "S2 Table 6.1",
+     "name": "chamber pressure (ion gauge)",
+     "source": "REPO_ECHT_AUDIT",
+     "uncertainty": "gauge location and gas correction not stated",
+     "unit": "Torr",
+     "value": [
+      8.1e-05,
+      0.00022
+     ]
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "V_d x I_d, S2 Table 6.2",
+     "name": "anode power, thrust runs",
+     "source": "REPO_ECHT_AUDIT",
+     "uncertainty": "from 2 s.f. I_d",
+     "unit": "W",
+     "value": [
+      270.0,
+      770.0
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "S2 Table 6.2 p.101",
+     "name": "thrust, one-side reduction (7 runs)",
+     "note": "measured on a thrust stand and reduced by the author (repository STATUS.json quantity type)",
+     "source": "REPO_ECHT_AUDIT",
+     "uncertainty": "published +- are calibration-fit only (0.02-2.66 mN); no total uncertainty; which reduction applies is forced assumption A7",
+     "unit": "mN",
+     "value": [
+      20.62,
+      23.41
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "S2 Table 6.3 p.108",
+     "name": "thrust, averaged reduction (4 runs)",
+     "note": "measured on a thrust stand and reduced by the author (repository STATUS.json quantity type)",
+     "source": "REPO_ECHT_AUDIT",
+     "uncertainty": "published +- 2.68-4.56 mN; 6-18 % below one-side; which reduction applies is forced assumption A7",
+     "unit": "mN",
+     "value": [
+      17.29,
+      21.31
+     ]
+    },
+    {
+     "evidence_class": "digitized",
+     "locator": "S2 Fig. 4.7 p.66; audit key magnetic_field.measured_Bz_at_2A.plateau_mean_4.7_8.3cm_G",
+     "name": "axial window over which the audit averages the B plateau (2 A coil current)",
+     "source": "REPO_ECHT_AUDIT",
+     "uncertainty": "reading +-0.014 cm; B(z) axis origin not defined in the text",
+     "unit": "cm",
+     "value": [
+      4.7,
+      8.3
+     ]
+    },
+    {
+     "evidence_class": "digitized",
+     "locator": "S2 Fig. 4.7 p.66 (audit magnetic_field.measured_Bz_at_2A.points)",
+     "name": "peak of the digitized B(z) at 2 A coil current",
+     "note": "at z = 6.257 cm on the figure axis, upstream of the digitized exit-plane marker (8.73 cm)",
+     "source": "REPO_ECHT_AUDIT",
+     "uncertainty": "reading +-0.2 G",
+     "unit": "G",
+     "value": 86.09
+    }
+   ],
+   "repository_derived": true,
+   "repository_status": {
+    "companion_document": "hallthruster_bridge/identification/echt_n2/ECHT_N2_EVIDENCE_STATUS.md",
+    "forced_assumptions_relevant_to_transfer": [
+     "A1 channel radii: 100 mm = channel OD (r 40/50 mm) vs BN piece OD (unknown wall thickness)",
+     "A3 B magnitude per run: FEMM interpolated in coil current, scaled (or not) by the single 2 A measured/FEMM ratio; 0.8 A extrapolated; radial position/component of the measured profile",
+     "A5 cathode: neglect the argon cathode flow (7-36 % of anode mass) and choose a cathode coupling voltage/position",
+     "A6 facility: background pressure/ingestion model (0.8-2.5e-4 Torr, no published correction; comparison mode facility vs vacuum)"
+    ],
+    "literature_transfer_statement": "Decided from STATUS.json: the disposition lists 'Context for the published ECHT operating envelope ..., quoted with its evidence class' under may_be_used_for, and classes the sustainment observation as evidence level 3, 'measured (qualitative)'. Its must_not_be_used_for list concerns transport discrimination, score-bearing validation or gate-3 verdicts, tuning, replacement simulation cases and the 250 V anchor / 225-275 V points; none of these is a literature-transfer sustainment statement. The published sustainment on pure N2 therefore remains a level-3 measurement of the ECHT in its own facility and may be quoted as such. HISTORICAL_UNSUPPORTED governs scoring and transport discrimination: ECHT is not score-bearing, cannot select, eliminate or rank any Hall closure, and no ECHT supporting check is pre-registered. Any transfer that needs a quantity the thesis does not publish (channel cross-section, B at the operating coil current, cathode or facility contribution) inherits the forced assumptions listed here and their evidence class.",
+    "literature_transfer_use": "PERMITTED_AS_PUBLISHED_MEASUREMENT_OF_THAT_THRUSTER",
+    "may_be_used_for": "Context for the published ECHT operating envelope (180-220 V, 2.06 mg/s N2), quoted with its evidence class.",
+    "must_not_be_used_for_ref": "hallthruster_bridge/identification/echt_n2/STATUS.json disposition.must_not_be_used_for (5 items: transport discrimination, score-bearing validation or gate-3 verdicts, tuning, replacement simulation cases, the 250 V anchor and 225-275 V points)",
+    "score_bearing": false,
+    "status": "HISTORICAL_UNSUPPORTED",
+    "status_file": "hallthruster_bridge/identification/echt_n2/STATUS.json",
+    "supporting_check_preregistered": false,
+    "sustainment_item": {
+     "evidence_level": 3,
+     "quantity_type": "measured (qualitative)",
+     "source": "S2 Table 6.1 p.98; p.104, p.107-110 (audit gap_register 'stability / sustainment')",
+     "use": "SUPPORTING_CHECK_CANDIDATE",
+     "value": "stable discharge at 180-220 V, 2.06 mg/s, magnet 0.8-3.0 A; unstable/quenching below ~1.6 mg/s; Runs 1, 3, 7 strongly unstable"
+    },
+    "transport_discriminator": false
+   },
+   "sources": [
+    "REPO_ECHT_AUDIT",
+    "MARCHIONI2020",
+    "MARCHIONI2021"
+   ],
+   "thruster": {
+    "family": "single-stage Hall (SPT-type, extended channel)",
+    "geometry": [
+     {
+      "evidence_class": "measured",
+      "locator": "S2 Sec. 4.1.1 p.63",
+      "name": "channel length",
+      "source": "REPO_ECHT_AUDIT",
+      "uncertainty": "not stated (design dimension)",
+      "unit": "mm",
+      "value": 86
+     },
+     {
+      "evidence_class": "measured",
+      "locator": "S2 Sec. 4.1.1 p.63",
+      "name": "channel height",
+      "source": "REPO_ECHT_AUDIT",
+      "uncertainty": "not stated (design dimension)",
+      "unit": "mm",
+      "value": 10
+     },
+     {
+      "evidence_class": "measured",
+      "locator": "S2 Sec. 4.1.1 p.63",
+      "name": "stated outer diameter of the BN chamber",
+      "source": "REPO_ECHT_AUDIT",
+      "uncertainty": "not stated; ambiguous: channel outer-wall diameter or BN piece OD (repository audit geometry.outer_diameter.ambiguity)",
+      "unit": "mm",
+      "value": 100
+     },
+     {
+      "evidence_class": "digitized",
+      "locator": "S2 Figs. 4.7/4.8 (audit geometry.exit_plane_on_Bz_axis)",
+      "name": "exit-plane marker position on the B(z) axis",
+      "source": "REPO_ECHT_AUDIT",
+      "uncertainty": "reading +-0.014 cm; axis origin not defined",
+      "unit": "cm",
+      "value": 8.73
+     }
+    ],
+    "geometry_note": "extended channel; the stated outer diameter is ambiguous (channel OD vs BN piece OD); the measured B(z) has a flat plateau inside the channel rather than an exit-plane peak (see quantities of the sustained-operation ECHT entry)",
+    "name": "ECHT (Stanford extended-channel Hall thruster)",
+    "power": {
+     "evidence_class": "inferred",
+     "locator": "V_d x I_d, S2 Table 6.2",
+     "name": "anode power, thrust runs",
+     "source": "REPO_ECHT_AUDIT",
+     "uncertainty": "from 2 s.f. I_d",
+     "unit": "W",
+     "value": [
+      270.0,
+      770.0
+     ]
+    }
+   },
+   "title": "ECHT on pure N2 with an argon cathode, 180-220 V (SPPL LVF)",
+   "voltage": {
+    "evidence_class": "measured",
+    "locator": "S2 Table 6.1",
+    "name": "discharge voltage",
+    "source": "REPO_ECHT_AUDIT",
+    "uncertainty": "not stated",
+    "unit": "V",
+    "value": [
+     180,
+     220
+    ]
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 3,
+   "flow": {
+    "evidence_class": "measured",
+    "locator": "S2 p.104 and p.110 (printed pages; MARCHIONI2020 sha256 d3b3ea99...); repository audit values.stability_oscillations",
+    "name": "anode N2 flow below which the discharge was reported unstable and easily quenched unless the potential was raised sufficiently (and at increasing magnet current)",
+    "note": "S2 p.104: under 80 sccm (1.6 mg/s) the discharge 'resulted unstable and easily quenched at increasing magnet current'; S2 p.110: 'easily quenched if the potential was not raised sufficiently'. Both passages also say flow variation was limited by the N2 mass flow controller (maximum 100 sccm = 2.06 mg/s).",
+    "source": "REPO_ECHT_AUDIT",
+    "uncertainty": "approximate text value ('under 80sccm'); no scan data; conditional on V and B (see note)",
+    "unit": "mg/s",
+    "value": 1.6
+   },
+   "id": "E04",
+   "ignition": {
+    "basis": "primary",
+    "evidence_class": "measured",
+    "mode": "direct_on_atmospheric_gas",
+    "statement": "as E03"
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "as E03",
+    "direction": "operation_bounded_extinction_observed",
+    "statement": "Even with an 86 mm channel, pure-N2 operation without a pre-ionizer became unstable and easily quenched below about 1.6 mg/s unless the voltage was raised sufficiently, and at increasing magnet current. The source describes a boundary that depends on V and B, not a fixed flow floor.",
+    "uncertainty": "Two short qualitative statements; the V and B values at the boundary are not given numerically, only the direction of their effect; the explored flow range was limited by the flow controller; the degraded cathode may have contributed."
+   },
+   "magnetic_field": {
+    "evidence_class": null,
+    "locator": "S2 p.104",
+    "name": "B at the flow boundary",
+    "source": "MARCHIONI2020",
+    "uncertainty": "n/a",
+    "unit": "G",
+    "value": "not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')"
+   },
+   "observations": {
+    "cathode": "Ar, degraded BaO emitter",
+    "erosion": "not reported",
+    "extinction": "easy quenching below about 1.6 mg/s, conditional on voltage and magnet current (not a fixed flow floor)",
+    "oscillation_modes": "not quantified"
+   },
+   "outcome": "extinguished",
+   "outcome_statement": "Qualitative: below about 80 sccm (1.6 mg/s) N2 the discharge was unstable and easily quenched at increasing magnet current (p.104) or if the potential was not raised sufficiently (p.110). The flow range explored was also limited by the flow controller.",
+   "preionizer": {
+    "note": "single-stage; Ar-fed BaO hollow cathode (IonTech HCN-252) is the electron source",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "N2 (pure)",
+    "cathode_gas": "Ar",
+    "xenon_in_anode_flow": false
+   },
+   "quantities": [],
+   "repository_derived": true,
+   "repository_status": {
+    "companion_document": "hallthruster_bridge/identification/echt_n2/ECHT_N2_EVIDENCE_STATUS.md",
+    "forced_assumptions_relevant_to_transfer": [
+     "A1 channel radii: 100 mm = channel OD (r 40/50 mm) vs BN piece OD (unknown wall thickness)",
+     "A3 B magnitude per run: FEMM interpolated in coil current, scaled (or not) by the single 2 A measured/FEMM ratio; 0.8 A extrapolated; radial position/component of the measured profile",
+     "A5 cathode: neglect the argon cathode flow (7-36 % of anode mass) and choose a cathode coupling voltage/position",
+     "A6 facility: background pressure/ingestion model (0.8-2.5e-4 Torr, no published correction; comparison mode facility vs vacuum)"
+    ],
+    "literature_transfer_statement": "Decided from STATUS.json: the disposition lists 'Context for the published ECHT operating envelope ..., quoted with its evidence class' under may_be_used_for, and classes the sustainment observation as evidence level 3, 'measured (qualitative)'. Its must_not_be_used_for list concerns transport discrimination, score-bearing validation or gate-3 verdicts, tuning, replacement simulation cases and the 250 V anchor / 225-275 V points; none of these is a literature-transfer sustainment statement. The published sustainment on pure N2 therefore remains a level-3 measurement of the ECHT in its own facility and may be quoted as such. HISTORICAL_UNSUPPORTED governs scoring and transport discrimination: ECHT is not score-bearing, cannot select, eliminate or rank any Hall closure, and no ECHT supporting check is pre-registered. Any transfer that needs a quantity the thesis does not publish (channel cross-section, B at the operating coil current, cathode or facility contribution) inherits the forced assumptions listed here and their evidence class.",
+    "literature_transfer_use": "PERMITTED_AS_PUBLISHED_MEASUREMENT_OF_THAT_THRUSTER",
+    "may_be_used_for": "Context for the published ECHT operating envelope (180-220 V, 2.06 mg/s N2), quoted with its evidence class.",
+    "must_not_be_used_for_ref": "hallthruster_bridge/identification/echt_n2/STATUS.json disposition.must_not_be_used_for (5 items: transport discrimination, score-bearing validation or gate-3 verdicts, tuning, replacement simulation cases, the 250 V anchor and 225-275 V points)",
+    "score_bearing": false,
+    "status": "HISTORICAL_UNSUPPORTED",
+    "status_file": "hallthruster_bridge/identification/echt_n2/STATUS.json",
+    "supporting_check_preregistered": false,
+    "sustainment_item": {
+     "evidence_level": 3,
+     "quantity_type": "measured (qualitative)",
+     "source": "S2 Table 6.1 p.98; p.104, p.107-110 (audit gap_register 'stability / sustainment')",
+     "use": "SUPPORTING_CHECK_CANDIDATE",
+     "value": "stable discharge at 180-220 V, 2.06 mg/s, magnet 0.8-3.0 A; unstable/quenching below ~1.6 mg/s; Runs 1, 3, 7 strongly unstable"
+    },
+    "transport_discriminator": false
+   },
+   "sources": [
+    "REPO_ECHT_AUDIT",
+    "MARCHIONI2020",
+    "MARCHIONI2021"
+   ],
+   "thruster": {
+    "family": "single-stage Hall (SPT-type, extended channel)",
+    "geometry": [
+     {
+      "evidence_class": "measured",
+      "locator": "S2 Sec. 4.1.1 p.63",
+      "name": "channel length",
+      "source": "REPO_ECHT_AUDIT",
+      "uncertainty": "not stated (design dimension)",
+      "unit": "mm",
+      "value": 86
+     },
+     {
+      "evidence_class": "measured",
+      "locator": "S2 Sec. 4.1.1 p.63",
+      "name": "channel height",
+      "source": "REPO_ECHT_AUDIT",
+      "uncertainty": "not stated (design dimension)",
+      "unit": "mm",
+      "value": 10
+     },
+     {
+      "evidence_class": "measured",
+      "locator": "S2 Sec. 4.1.1 p.63",
+      "name": "stated outer diameter of the BN chamber",
+      "source": "REPO_ECHT_AUDIT",
+      "uncertainty": "not stated; ambiguous: channel outer-wall diameter or BN piece OD (repository audit geometry.outer_diameter.ambiguity)",
+      "unit": "mm",
+      "value": 100
+     },
+     {
+      "evidence_class": "digitized",
+      "locator": "S2 Figs. 4.7/4.8 (audit geometry.exit_plane_on_Bz_axis)",
+      "name": "exit-plane marker position on the B(z) axis",
+      "source": "REPO_ECHT_AUDIT",
+      "uncertainty": "reading +-0.014 cm; axis origin not defined",
+      "unit": "cm",
+      "value": 8.73
+     }
+    ],
+    "geometry_note": "extended channel; the stated outer diameter is ambiguous (channel OD vs BN piece OD); the measured B(z) has a flat plateau inside the channel rather than an exit-plane peak (see quantities of the sustained-operation ECHT entry)",
+    "name": "ECHT (Stanford extended-channel Hall thruster)",
+    "power": {
+     "evidence_class": "inferred",
+     "locator": "V_d x I_d, S2 Table 6.2",
+     "name": "anode power, thrust runs",
+     "source": "REPO_ECHT_AUDIT",
+     "uncertainty": "from 2 s.f. I_d",
+     "unit": "W",
+     "value": [
+      270.0,
+      770.0
+     ]
+    }
+   },
+   "title": "ECHT on pure N2 below about 80 sccm (1.6 mg/s): V- and B-dependent instability / quenching",
+   "voltage": {
+    "evidence_class": null,
+    "locator": "S2 p.110",
+    "name": "discharge voltage at the flow boundary",
+    "source": "MARCHIONI2020",
+    "uncertainty": "n/a",
+    "unit": "V",
+    "value": "not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')"
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 3,
+   "flow": {
+    "evidence_class": "measured",
+    "locator": "Fig. 5/6 legends p.4",
+    "name": "anode N2 flow, characterization",
+    "source": "CIFALI2011",
+    "uncertainty": "not stated",
+    "unit": "mg/s",
+    "value": [
+     2.3,
+     2.85
+    ]
+   },
+   "id": "E05",
+   "ignition": {
+    "basis": "primary",
+    "evidence_class": "measured",
+    "mode": "xenon_start_then_transition",
+    "statement": "Always ignited with xenon, then a smooth anode transition from 100 % Xe to 100 % N2; the cathode stayed on xenon (CIFALI2011 p.2)."
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "about 1 kW, 2.3-2.85 mg/s, facility < 6e-6 mbar, Xe cathode.",
+    "direction": "operation_without_preionizer_demonstrated_xenon_start",
+    "statement": "Steady single-stage operation on pure N2 without a pre-ionizer, once lit on xenon and with a Xe cathode.",
+    "uncertainty": "Ignition on N2 itself was not attempted/reported; B, oscillations and plume not measured; performance only from the stand."
+   },
+   "magnetic_field": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "B",
+    "source": "CIFALI2011",
+    "uncertainty": "n/a",
+    "unit": "G",
+    "value": "not reported in the accessed text"
+   },
+   "observations": {
+    "cathode": "Xe hollow cathode throughout",
+    "erosion": "visual inspection after the campaign (see E06)",
+    "extinction": "none reported",
+    "oscillation_modes": "not reported"
+   },
+   "outcome": "sustained",
+   "outcome_statement": "Operated over 2.3-2.85 mg/s N2; 10 h long firing at 305 V, 3 A 'very stable', thrust always 19-21 mN; Xe performance afterwards substantially unaffected.",
+   "preionizer": {
+    "note": "single-stage",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "N2 (pure)",
+    "cathode_gas": "Xe",
+    "xenon_in_anode_flow": false
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "p.3",
+     "name": "reference point: voltage",
+     "source": "CIFALI2011",
+     "uncertainty": "not stated",
+     "unit": "V",
+     "value": 305
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "p.3",
+     "name": "reference point: discharge current",
+     "source": "CIFALI2011",
+     "uncertainty": "not stated",
+     "unit": "A",
+     "value": 3.48
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "p.3",
+     "name": "reference point: power-to-thrust",
+     "note": "ratio computed by the authors",
+     "source": "CIFALI2011",
+     "uncertainty": "not stated",
+     "unit": "W/mN",
+     "value": 41.6
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "p.4",
+     "name": "long firing: discharge current",
+     "source": "CIFALI2011",
+     "uncertainty": "not stated",
+     "unit": "A",
+     "value": 3
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "p.4",
+     "name": "long firing: duration",
+     "source": "CIFALI2011",
+     "uncertainty": "not stated",
+     "unit": "h",
+     "value": 10
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "p.4",
+     "name": "long firing: thrust band",
+     "source": "CIFALI2011",
+     "uncertainty": "stand accuracy 1 % of full scale (range 5-300 mN), resolution 1 mN (p.2)",
+     "unit": "mN",
+     "value": [
+      19,
+      21
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "p.5",
+     "name": "long firing: anode N2 flow",
+     "source": "CIFALI2011",
+     "uncertainty": "not stated",
+     "unit": "mg/s",
+     "value": 2.65
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "p.2",
+     "name": "chamber pressure during N2 long firing",
+     "source": "CIFALI2011",
+     "uncertainty": "upper bound as stated",
+     "unit": "mbar",
+     "value": "< 6.0e-6"
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "p.2",
+     "name": "prior cumulative operation of the test article (TSD campaigns, Alta IV4 facility)",
+     "source": "CIFALI2011",
+     "uncertainty": "'nearly' (as stated)",
+     "unit": "h",
+     "value": 554
+    }
+   ],
+   "repository_derived": false,
+   "sources": [
+    "CIFALI2011",
+    "ANDREUSSI2022"
+   ],
+   "thruster": {
+    "family": "single-stage Hall (SPT-type)",
+    "geometry": [],
+    "geometry_note": "flight-type SPT reconverted from the thrust-steering (TSD) configuration after earlier campaigns (prior operating time is listed among the quantities); channel dimensions not given in the accessed text",
+    "name": "Snecma PPS1350-TSD (reconverted to PPS1350 configuration)",
+    "power": {
+     "evidence_class": "measured",
+     "locator": "p.2",
+     "name": "discharge power limit applied during the tests",
+     "note": "a test limit, not an operating point; the voltage limit was 350 V (p.2)",
+     "source": "CIFALI2011",
+     "uncertainty": "n/a (a stated limit)",
+     "unit": "kW",
+     "value": 1.4
+    }
+   },
+   "title": "PPS1350-TSD on pure N2 (Alta IV10, ESA contract)",
+   "voltage": {
+    "evidence_class": "measured",
+    "locator": "p.3-4",
+    "name": "discharge voltage at the reference point and the 10 h firing",
+    "note": "the Fig. 5 characterization curves span other voltages (not tabulated); 350 V is also discussed on p.3",
+    "source": "CIFALI2011",
+    "uncertainty": "not stated",
+    "unit": "V",
+    "value": 305
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 3,
+   "flow": {
+    "evidence_class": "measured",
+    "locator": "p.5",
+    "name": "minimum stable mixture flow",
+    "source": "CIFALI2011",
+    "uncertainty": "not stated",
+    "unit": "mg/s",
+    "value": 2.1
+   },
+   "id": "E06",
+   "ignition": {
+    "basis": "primary",
+    "evidence_class": "measured",
+    "mode": "xenon_start_then_transition",
+    "statement": "as E05 (always ignited with xenon, CIFALI2011 p.2)"
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "about 1 kW, 2.1-4 mg/s, 220-350 V, facility-fed gas, no atomic oxygen.",
+    "direction": "operation_without_preionizer_demonstrated_xenon_start",
+    "statement": "Steady operation on an N2/O2 anode flow without a pre-ionizer after a xenon start; O2 addition did not degrade sustainment at low flow in this test (stable to 2.1 mg/s).",
+    "uncertainty": "Xe start and Xe cathode; no B data; oxidation of the anode is a separate life issue (E07)."
+   },
+   "magnetic_field": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "B",
+    "source": "CIFALI2011",
+    "uncertainty": "n/a",
+    "unit": "G",
+    "value": "not reported in the accessed text"
+   },
+   "observations": {
+    "cathode": "Xe",
+    "erosion": "anode 'rusty' (oxidation) and signs of oxygen operation on the ceramics after the test; anode oxidation named the main concern for endurance (p.5)",
+    "extinction": "none reported",
+    "oscillation_modes": "flow-controller perturbations 'induced by oscillations on the main discharge circuit' mentioned for the Xe re-check after the mixture test (p.5); not quantified"
+   },
+   "outcome": "sustained",
+   "outcome_statement": "Stable operation down to 2.1 mg/s; 10 h stable test at 305 V, 2.75 mg/s, thrust 24 mN.",
+   "preionizer": {
+    "note": "single-stage",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "N2/O2, 1.27N2 + O2 (molecular composition)",
+    "cathode_gas": "Xe",
+    "xenon_in_anode_flow": false
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "p.5 / Fig. 7 caption",
+     "name": "long firing: flow",
+     "source": "CIFALI2011",
+     "uncertainty": "not stated",
+     "unit": "mg/s",
+     "value": 2.75
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Fig. 7 caption p.4",
+     "name": "long firing: voltage",
+     "source": "CIFALI2011",
+     "uncertainty": "not stated",
+     "unit": "V",
+     "value": 305
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "p.5",
+     "name": "long firing: thrust",
+     "source": "CIFALI2011",
+     "uncertainty": "stand accuracy 1 % of full scale",
+     "unit": "mN",
+     "value": 24
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "p.5",
+     "name": "long firing: duration",
+     "source": "CIFALI2011",
+     "uncertainty": "not stated",
+     "unit": "h",
+     "value": 10
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "our arithmetic",
+     "name": "N2 mole fraction of 1.27N2 + O2",
+     "source": "CIFALI2011",
+     "uncertainty": "exact for the stated ratio",
+     "unit": "1",
+     "value": 0.5595
+    }
+   ],
+   "repository_derived": false,
+   "sources": [
+    "CIFALI2011",
+    "ANDREUSSI2022"
+   ],
+   "thruster": {
+    "family": "single-stage Hall (SPT-type)",
+    "geometry": [],
+    "geometry_note": "flight-type SPT reconverted from the thrust-steering (TSD) configuration after earlier campaigns (prior operating time is listed among the quantities); channel dimensions not given in the accessed text",
+    "name": "Snecma PPS1350-TSD (reconverted to PPS1350 configuration)",
+    "power": {
+     "evidence_class": "measured",
+     "locator": "p.2",
+     "name": "discharge power limit applied during the tests",
+     "note": "a test limit, not an operating point; the voltage limit was 350 V (p.2)",
+     "source": "CIFALI2011",
+     "uncertainty": "n/a (a stated limit)",
+     "unit": "kW",
+     "value": 1.4
+    }
+   },
+   "title": "PPS1350-TSD on N2/O2 mixture 1.27N2 + O2 (200 km-representative)",
+   "voltage": {
+    "evidence_class": "measured",
+    "locator": "Fig. 8/9 legends (220, 263, 305, 350 V)",
+    "name": "discharge voltages scanned",
+    "source": "CIFALI2011",
+    "uncertainty": "not stated",
+    "unit": "V",
+    "value": [
+     220,
+     350
+    ]
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 5,
+   "flow": {
+    "evidence_class": "measured",
+    "locator": "Page 24 of 57",
+    "name": "mixture flow",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "not stated",
+    "unit": "mg/s",
+    "value": 2.75
+   },
+   "id": "E07",
+   "ignition": {
+    "basis": "second_hand",
+    "evidence_class": "measured",
+    "mode": "not_reported",
+    "statement": "not reported in the review"
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "PPS1350, 305 V, 2.75 mg/s, facility-fed N2/O2 + Xe.",
+    "direction": "not_informative",
+    "statement": "Says nothing on pre-ionization; shows that with oxygen in the anode flow, sustainment over hundreds of hours was limited by anode oxidation (flame-outs), with 10 % Xe already added.",
+    "uncertainty": "Second-hand (primary SP2012 paper not accessed)."
+   },
+   "magnetic_field": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "B",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "n/a",
+    "unit": "G",
+    "value": "not reported in the accessed text"
+   },
+   "observations": {
+    "cathode": "not reported",
+    "erosion": "ceramic erosion reported compatible with 7000-9500 h lifetime; anode oxidation life-limiting",
+    "extinction": "flame-outs attributed to anode oxidation",
+    "oscillation_modes": "anomalous discharge behaviour (not quantified)"
+   },
+   "outcome": "extinguished",
+   "outcome_statement": "Steady for about 314 h at 3.8-4 A; then severe anode oxidation produced anomalous discharge behaviour and a spontaneous flame-out; after refurbishment, several flame-outs in the next 75 h and the test was stopped early.",
+   "preionizer": {
+    "note": "single-stage",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "N2/O2 mixture with a 10 % xenon mass-flow addition",
+    "cathode_gas": "not reported",
+    "xenon_in_anode_flow": true
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "Page 24 of 57",
+     "name": "steady duration before first flame-out",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "'about'",
+     "unit": "h",
+     "value": 314
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Page 24 of 57",
+     "name": "discharge current during steady phase",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "A",
+     "value": [
+      3.8,
+      4.0
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Page 24 of 57",
+     "name": "subsequent firing with several flame-outs",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "h",
+     "value": 75
+    },
+    {
+     "evidence_class": "model-derived",
+     "locator": "Page 24 of 57",
+     "name": "ceramic-erosion-compatible lifetime (authors' estimate)",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "extrapolation method not given in the review",
+     "unit": "h",
+     "value": [
+      7000,
+      9500
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Page 23 of 57",
+     "name": "effect of the 10 % Xe addition on I_d (characterization)",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "%",
+     "value": [
+      17,
+      40
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Page 23 of 57",
+     "name": "effect of the 10 % Xe addition on thrust (characterization)",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "%",
+     "value": [
+      4,
+      40
+     ]
+    }
+   ],
+   "repository_derived": false,
+   "sources": [
+    "ANDREUSSI2022",
+    "CIFALI2012"
+   ],
+   "thruster": {
+    "family": "single-stage Hall (SPT-type)",
+    "geometry": [],
+    "geometry_note": "flight-type SPT reconverted from the thrust-steering (TSD) configuration after earlier campaigns (prior operating time is listed among the quantities); channel dimensions not given in the accessed text",
+    "name": "Snecma PPS1350-TSD (reconverted to PPS1350 configuration)",
+    "power": {
+     "evidence_class": null,
+     "locator": "n/a",
+     "name": "discharge power",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "n/a",
+     "unit": "kW",
+     "value": "not reported in the review"
+    }
+   },
+   "title": "PPS1350 endurance on N2/O2 + 10 % Xe (secondary report)",
+   "voltage": {
+    "evidence_class": "measured",
+    "locator": "Page 24 of 57",
+    "name": "discharge voltage",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "not stated",
+    "unit": "V",
+    "value": 305
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 5,
+   "flow": {
+    "evidence_class": "measured",
+    "locator": "Page 24 of 57",
+    "name": "anode mixture flow",
+    "note": "FERRATO2019_IEPC886 Fig. 2 caption (p.3): 4.7 mg/s of 1.27N2 + O2",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "not stated",
+    "unit": "mg/s",
+    "value": [
+     4.3,
+     4.7
+    ]
+   },
+   "id": "E08",
+   "ignition": {
+    "basis": "second_hand",
+    "evidence_class": "measured",
+    "mode": "not_reported",
+    "statement": "not reported"
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "5 kW-class, 225 V, facility-fed gas.",
+    "direction": "operation_without_preionizer_demonstrated",
+    "statement": "Single-stage operation on an N2/O2 anode flow without a pre-ionizer at 4.3-4.7 mg/s.",
+    "uncertainty": "Second-hand for the performance values (IEPC-2017-377 not accessed); ignition gas not reported; Xe cathode."
+   },
+   "magnetic_field": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "B",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "n/a",
+    "unit": "G",
+    "value": "not reported in the accessed text"
+   },
+   "observations": {
+    "cathode": "Xe",
+    "erosion": "not reported",
+    "extinction": "not reported",
+    "oscillation_modes": "not reported"
+   },
+   "outcome": "sustained",
+   "outcome_statement": "Stable operation verified at 225 V, 4.3-4.7 mg/s; 64 mN at 2.4 kW; plume half-angle divergence 52 deg (review p.43).",
+   "preionizer": {
+    "note": "single-stage",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "0.56N2/0.44O2 (= 1.27N2 + O2)",
+    "cathode_gas": "Xe",
+    "xenon_in_anode_flow": false
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "Page 24 of 57",
+     "name": "thrust",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "mN",
+     "value": 64
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Page 24 of 57",
+     "name": "discharge power",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "kW",
+     "value": 2.4
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Page 43 of 57",
+     "name": "plume half-angle divergence",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "deg",
+     "value": 52
+    }
+   ],
+   "repository_derived": false,
+   "sources": [
+    "ANDREUSSI2022",
+    "FERRATO2019_IEPC886",
+    "ANDREUSSI2017_IEPC377"
+   ],
+   "thruster": {
+    "family": "single-stage Hall (SPT-type)",
+    "geometry": [],
+    "geometry_note": "not reported in the accessed text",
+    "name": "SITAEL HT5k (first development model)",
+    "power": {
+     "evidence_class": "measured",
+     "locator": "Page 24 of 57",
+     "name": "discharge power",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "kW",
+     "value": 2.4
+    }
+   },
+   "title": "SITAEL HT5k (first development model) as particle-flow generator on N2/O2 (2017)",
+   "voltage": {
+    "evidence_class": "measured",
+    "locator": "Page 24 of 57",
+    "name": "discharge voltage",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "not stated",
+    "unit": "V",
+    "value": 225
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 3,
+   "flow": {
+    "evidence_class": "measured",
+    "locator": "p.2, p.5",
+    "name": "anode N2/O2 flow",
+    "source": "ANDREUSSI2022_IEPC435",
+    "uncertainty": "not stated",
+    "unit": "mg/s",
+    "value": [
+     5,
+     7
+    ]
+   },
+   "id": "E09",
+   "ignition": {
+    "basis": "primary",
+    "evidence_class": "measured",
+    "mode": "xenon_start_then_transition",
+    "statement": "Ignited at 225 V on 10 mg/s Xe (anode) + 1 mg/s Xe (cathode); anode switched gradually to 6 mg/s N2/O2; then cathode Xe reduced to 0 while N2 raised to 0.6 mg/s (p.3)."
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "5 kW class, 1.2-5.2 kW, 225-300 V, facility < 2.5e-5 mbar, lab-fed gas (no atomic O).",
+    "direction": "operation_without_preionizer_demonstrated_xenon_start",
+    "statement": "After a xenon start, a single-stage magnetically shielded Hall discharge was sustained with no xenon anywhere (N2/O2 anode, N2 cathode) and no pre-ionizer at 5-7 mg/s.",
+    "uncertainty": "Ignition itself used xenon; B and geometry not published; only 10 h; efficiency range differs between the two SITAEL sources."
+   },
+   "magnetic_field": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "B",
+    "source": "ANDREUSSI2022_IEPC435",
+    "uncertainty": "n/a",
+    "unit": "G",
+    "value": "not reported in the accessed text"
+   },
+   "observations": {
+    "cathode": "HC20h hollow cathode (LaB6 emitter per ANDREUSSI2022 Page 38 of 57) on N2 0.5-0.7 mg/s (FERRATO2022_PSST abstract); N2 cathode reduced I_d, thrust and efficiency vs Xe cathode at the same V_d and anode flow (p.5). The review reports severe erosion/embrittlement of the HC20h after tests with the N2/O2 mixture (Page 38 of 57)",
+    "erosion": "magnetic shielding 'seems effective'; plasma detachment from channel walls visible (p.5); no PFG critical damage after the air test",
+    "extinction": "none reported",
+    "oscillation_modes": "I_d acquired at 10 MHz; the review reports the discharge current signal stable in all points (Page 25 of 57); no spectra published"
+   },
+   "outcome": "sustained",
+   "outcome_statement": "Discharge and thermal stability demonstrated at 225 V and 300 V, 5-7 mg/s, with the N2-fed cathode (xenon-free steady state after the xenon start); six operating conditions; cumulative 10 h on atmospheric propellant; Xe reference tests before/after repeatable.",
+   "preionizer": {
+    "note": "single-stage",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "0.56N2 + 0.44O2",
+    "cathode_gas": "N2 (after transition from Xe)",
+    "xenon_in_anode_flow": false
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "p.5",
+     "name": "thrust range",
+     "source": "ANDREUSSI2022_IEPC435",
+     "uncertainty": "stand accuracy +-3 mN (p.3)",
+     "unit": "mN",
+     "value": [
+      30,
+      120
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "p.5",
+     "name": "discharge power range",
+     "source": "ANDREUSSI2022_IEPC435",
+     "uncertainty": "not stated",
+     "unit": "kW",
+     "value": [
+      1.2,
+      5.2
+     ]
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "p.5",
+     "name": "anodic efficiency range",
+     "source": "ANDREUSSI2022_IEPC435",
+     "uncertainty": "FERRATO2022_PSST abstract gives 8-18 % (discrepancy not resolved)",
+     "unit": "%",
+     "value": [
+      10,
+      20
+     ]
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "p.5",
+     "name": "specific impulse range",
+     "source": "ANDREUSSI2022_IEPC435",
+     "uncertainty": "not stated",
+     "unit": "s",
+     "value": [
+      600,
+      1600
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "abstract",
+     "name": "cathode N2 flow",
+     "source": "FERRATO2022_PSST",
+     "uncertainty": "not stated",
+     "unit": "mg/s",
+     "value": [
+      0.5,
+      0.7
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "p.3",
+     "name": "cathode/anode flow ratio (held during the scan)",
+     "source": "ANDREUSSI2022_IEPC435",
+     "uncertainty": "not stated",
+     "unit": "1",
+     "value": 0.1
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "p.2",
+     "name": "facility pressure (ITR90, 3 m downstream)",
+     "source": "ANDREUSSI2022_IEPC435",
+     "uncertainty": "upper bound",
+     "unit": "mbar",
+     "value": "< 2.5e-5"
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "p.5",
+     "name": "cumulative firing on atmospheric propellant",
+     "source": "ANDREUSSI2022_IEPC435",
+     "uncertainty": "not stated",
+     "unit": "h",
+     "value": 10
+    }
+   ],
+   "repository_derived": false,
+   "sources": [
+    "ANDREUSSI2022_IEPC435",
+    "FERRATO2022_PSST",
+    "ANDREUSSI2022"
+   ],
+   "thruster": {
+    "family": "magnetically shielded Hall",
+    "geometry": [],
+    "geometry_note": "not reported in the accessed text",
+    "name": "SITAEL HT5k DM2 with HC20h hollow cathode",
+    "power": {
+     "evidence_class": "measured",
+     "locator": "p.5",
+     "name": "discharge power range",
+     "source": "ANDREUSSI2022_IEPC435",
+     "uncertainty": "not stated",
+     "unit": "kW",
+     "value": [
+      1.2,
+      5.2
+     ]
+    }
+   },
+   "title": "SITAEL HT5k DM2 (magnetically shielded), AETHER particle-flow generator, N2/O2 anode and N2 cathode (Nov 2021)",
+   "voltage": {
+    "evidence_class": "measured",
+    "locator": "p.5",
+    "name": "discharge voltage (stability demonstrated)",
+    "note": "test description (p.2) says characterization in the 225-375 V range; results (p.5) report stability at 225 and 300 V",
+    "source": "ANDREUSSI2022_IEPC435",
+    "uncertainty": "not stated",
+    "unit": "V",
+    "value": [
+     225,
+     300
+    ]
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 3,
+   "flow": {
+    "evidence_class": "measured",
+    "locator": "Table 5 p.8",
+    "name": "anode N2 flow range operated",
+    "note": "55.0-75.4 sccm",
+    "source": "MOSKOVITZ2026",
+    "uncertainty": "MFC 1 % of full scale (0-1.96 mg/s)",
+    "unit": "mg/s",
+    "value": [
+     1.144,
+     1.568
+    ]
+   },
+   "id": "E10",
+   "ignition": {
+    "basis": "our_inference",
+    "evidence_class": "inferred",
+    "mode": "direct_on_atmospheric_gas",
+    "statement": "The thruster was ignited at known stable points and re-ignited after shutdowns with a higher flow (p.9); the gas at ignition is not stated explicitly, read here as direct ignition on the N2 anode flow with a Xe cathode (inferred, verify)."
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "0.2-0.45 kW, 180-250 V, coaxial-anode geometry (not a conventional SPT).",
+    "direction": "operation_without_preionizer_demonstrated",
+    "statement": "A low-power single-stage Hall thruster sustained pure-N2 discharges without a pre-ionizer at 1.1-1.6 mg/s, but only with about 1.48x the Xe magnetic field and within a narrow, voltage-dependent flow envelope.",
+    "uncertainty": "Ignition gas inferred, not stated; Xe cathode; facility pressure effect addressed only in an appendix; envelope minima are in a figure only (TBD digitization)."
+   },
+   "magnetic_field": {
+    "evidence_class": "measured",
+    "locator": "abstract; p.13 ('48 %')",
+    "name": "B required relative to Xe/Kr",
+    "source": "MOSKOVITZ2026",
+    "uncertainty": "not stated; the N2 B range is not legible in Table 5 of the accessed text layer",
+    "unit": "ratio to Xe/Kr field",
+    "value": 1.48
+   },
+   "observations": {
+    "cathode": "Xe only, 0.15 or 0.20 mg/s; 2.00 sccm for Ar/CO2/N2 vs 1.50 sccm for Xe/Kr (p.6, p.14)",
+    "erosion": "not measured (endurance recommended as future work, p.21)",
+    "extinction": "see E11",
+    "oscillation_modes": "not quantified; I_d/I_b described as highly sensitive to changes (p.9)"
+   },
+   "outcome": "sustained",
+   "outcome_statement": "Operated on N2 within an envelope (stability = discharge sustained > 5 min); the authors call N2 the narrowest envelope and note numerous spontaneous shutdowns with light gases.",
+   "preionizer": {
+    "note": "single-stage; BaO hollow cathode on Xe",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "N2 (pure)",
+    "cathode_gas": "Xe",
+    "xenon_in_anode_flow": false
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "Table 6 p.11",
+     "name": "peak anode efficiency point: voltage",
+     "source": "MOSKOVITZ2026",
+     "uncertainty": "not stated",
+     "unit": "V",
+     "value": 250
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Table 6 p.11",
+     "name": "peak anode efficiency point: flow",
+     "source": "MOSKOVITZ2026",
+     "uncertainty": "not stated",
+     "unit": "mg/s",
+     "value": 1.144
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Table 6 p.11",
+     "name": "peak anode efficiency point: power",
+     "source": "MOSKOVITZ2026",
+     "uncertainty": "not stated",
+     "unit": "W",
+     "value": 400
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Table 6 p.11",
+     "name": "peak anode efficiency point: thrust",
+     "source": "MOSKOVITZ2026",
+     "uncertainty": "stand accuracy stated per range on p.7 (symbols lost in text layer)",
+     "unit": "mN",
+     "value": 8.2
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "Table 6 p.11",
+     "name": "peak anode efficiency",
+     "source": "MOSKOVITZ2026",
+     "uncertainty": "not stated",
+     "unit": "%",
+     "value": 7.35
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Table 7 p.16",
+     "name": "fixed-power points: N2 flow at 350/400/450 W",
+     "note": "Table 7 title says 200 V, Fig. 8 caption says 250 V (inconsistent; verify)",
+     "source": "MOSKOVITZ2026",
+     "uncertainty": "not stated",
+     "unit": "mg/s",
+     "value": [
+      1.34,
+      1.475,
+      1.543
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Table 7 p.16",
+     "name": "fixed-power points: thrust at 350/400/450 W",
+     "source": "MOSKOVITZ2026",
+     "uncertainty": "not stated",
+     "unit": "mN",
+     "value": [
+      7.25,
+      8.6,
+      9.7
+     ]
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "Table 7 p.16",
+     "name": "fixed-power points: mass utilization",
+     "source": "MOSKOVITZ2026",
+     "uncertainty": "Faraday probe 10 %",
+     "unit": "%",
+     "value": [
+      24,
+      25,
+      27
+     ]
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "our arithmetic",
+     "name": "N2 flow conversion check 55.0 sccm",
+     "source": "MOSKOVITZ2026",
+     "uncertainty": "reference conditions of the paper not stated",
+     "unit": "mg/s",
+     "value": 1.1457
+    }
+   ],
+   "repository_derived": false,
+   "sources": [
+    "MOSKOVITZ2026"
+   ],
+   "thruster": {
+    "family": "single-stage Hall with coaxial anodes extending into the channel (low power)",
+    "geometry": [
+     {
+      "evidence_class": "measured",
+      "locator": "Table 3 p.6",
+      "name": "channel mean diameter",
+      "note": "Table 3 lists CAMILA dimensions together with its xenon performance",
+      "source": "MOSKOVITZ2026",
+      "uncertainty": "not stated",
+      "unit": "mm",
+      "value": 49
+     },
+     {
+      "evidence_class": "measured",
+      "locator": "Table 3 p.6",
+      "name": "channel width",
+      "source": "MOSKOVITZ2026",
+      "uncertainty": "not stated",
+      "unit": "mm",
+      "value": 12
+     }
+    ],
+    "geometry_note": "coaxial metallic cylinders at anode potential form the channel (thruster description section)",
+    "name": "Simplified CAMILA (ASRI Technion)",
+    "power": {
+     "evidence_class": "measured",
+     "locator": "Table 5 p.8",
+     "name": "power range operated on N2",
+     "source": "MOSKOVITZ2026",
+     "uncertainty": "not stated",
+     "unit": "W",
+     "value": [
+      212,
+      452
+     ]
+    }
+   },
+   "title": "Simplified CAMILA low-power Hall thruster on pure N2 (inside its operating envelope)",
+   "voltage": {
+    "evidence_class": "measured",
+    "locator": "Table 5 p.8",
+    "name": "discharge voltage range operated",
+    "source": "MOSKOVITZ2026",
+    "uncertainty": "not stated",
+    "unit": "V",
+    "value": [
+     180,
+     250
+    ]
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 3,
+   "flow": {
+    "evidence_class": null,
+    "locator": "Fig. 6 p.11",
+    "name": "minimum N2 flow for > 5 min operation vs voltage",
+    "note": "evidence class will be 'digitized' once the figure is digitized",
+    "source": "MOSKOVITZ2026",
+    "uncertainty": "n/a",
+    "unit": "mg/s",
+    "value": "TBD - requires digitization of Fig. 6 (p.11); values not tabulated"
+   },
+   "id": "E11",
+   "ignition": {
+    "basis": "our_inference",
+    "evidence_class": "inferred",
+    "mode": "direct_on_atmospheric_gas",
+    "statement": "as E10 (gas at ignition not stated in the source; inferred, verify)"
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "as E10",
+    "direction": "operation_bounded_extinction_observed",
+    "statement": "Without a pre-ionizer, pure-N2 sustainment in this thruster has a voltage-dependent minimum flow.",
+    "uncertainty": "Boundary values need digitization; 5-min stability criterion only."
+   },
+   "magnetic_field": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "B at the boundary",
+    "source": "MOSKOVITZ2026",
+    "uncertainty": "n/a",
+    "unit": "G",
+    "value": "not legible / not reported per point"
+   },
+   "observations": {
+    "cathode": "Xe",
+    "erosion": "not measured",
+    "extinction": "spontaneous shutdowns; restart needed a more stable parameter set",
+    "oscillation_modes": "not quantified"
+   },
+   "outcome": "extinguished",
+   "outcome_statement": "Below the minimum voltage/flow combination the discharge shut down spontaneously; lower voltages required more flow, and the boundary slope is steepest for light gases.",
+   "preionizer": {
+    "note": "single-stage",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "N2 (pure)",
+    "cathode_gas": "Xe",
+    "xenon_in_anode_flow": false
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "p.9",
+     "name": "boundary probe step in voltage",
+     "note": "flow steps 0.1-2.0 sccm, at least 1 min apart; stability = sustained > 5 min",
+     "source": "MOSKOVITZ2026",
+     "uncertainty": "not stated",
+     "unit": "V",
+     "value": [
+      0.5,
+      5.0
+     ]
+    }
+   ],
+   "repository_derived": false,
+   "sources": [
+    "MOSKOVITZ2026"
+   ],
+   "thruster": {
+    "family": "single-stage Hall with coaxial anodes extending into the channel (low power)",
+    "geometry": [
+     {
+      "evidence_class": "measured",
+      "locator": "Table 3 p.6",
+      "name": "channel mean diameter",
+      "note": "Table 3 lists CAMILA dimensions together with its xenon performance",
+      "source": "MOSKOVITZ2026",
+      "uncertainty": "not stated",
+      "unit": "mm",
+      "value": 49
+     },
+     {
+      "evidence_class": "measured",
+      "locator": "Table 3 p.6",
+      "name": "channel width",
+      "source": "MOSKOVITZ2026",
+      "uncertainty": "not stated",
+      "unit": "mm",
+      "value": 12
+     }
+    ],
+    "geometry_note": "coaxial metallic cylinders at anode potential form the channel (thruster description section)",
+    "name": "Simplified CAMILA (ASRI Technion)",
+    "power": {
+     "evidence_class": "measured",
+     "locator": "Table 5 p.8",
+     "name": "power range operated on N2",
+     "source": "MOSKOVITZ2026",
+     "uncertainty": "not stated",
+     "unit": "W",
+     "value": [
+      212,
+      452
+     ]
+    }
+   },
+   "title": "Simplified CAMILA on pure N2 below its minimum voltage/flow envelope",
+   "voltage": {
+    "evidence_class": null,
+    "locator": "Fig. 6 p.11",
+    "name": "minimum discharge voltage for > 5 min operation",
+    "note": "evidence class will be 'digitized' once the figure is digitized",
+    "source": "MOSKOVITZ2026",
+    "uncertainty": "n/a",
+    "unit": "V",
+    "value": "TBD - requires digitization of Fig. 6 (p.11)"
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 5,
+   "flow": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "anode N2 flow",
+    "source": "MUNRO2023",
+    "uncertainty": "n/a",
+    "unit": "mg/s",
+    "value": "not accessed (abstract only)"
+   },
+   "id": "E12",
+   "ignition": {
+    "basis": "second_hand",
+    "evidence_class": "measured",
+    "mode": "direct_on_atmospheric_gas",
+    "statement": "Second-hand: MOSKOVITZ2026 p.4 reports that the thruster could 'eventually' be ignited with pure N2, and that only three N2 data points were collected because of a component failure (verify in the primary)."
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "about 0.1 kW class; unknown flow regime.",
+    "direction": "operation_without_preionizer_demonstrated",
+    "statement": "Indicates direct N2 ignition and operation of a ~100 W single-stage Hall thruster without a pre-ionizer, but with few points.",
+    "uncertainty": "Abstract plus second-hand statements only; flow, voltage, cathode gas and stability not accessed."
+   },
+   "magnetic_field": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "B",
+    "source": "MUNRO2023",
+    "uncertainty": "n/a",
+    "unit": "G",
+    "value": "not accessed (abstract only)"
+   },
+   "observations": {
+    "cathode": "not accessed",
+    "erosion": "not accessed",
+    "extinction": "not accessed",
+    "oscillation_modes": "not accessed"
+   },
+   "outcome": "sustained",
+   "outcome_statement": "The abstract states that the thruster was operated on diatomic nitrogen successfully (neon: unstable).",
+   "preionizer": {
+    "note": "single-stage (from the abstract)",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "N2 (pure)",
+    "cathode_gas": "not accessed",
+    "xenon_in_anode_flow": false
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "abstract",
+     "name": "peak thrust on N2",
+     "source": "MUNRO2023",
+     "uncertainty": "not stated",
+     "unit": "mN",
+     "value": 5.7
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "abstract",
+     "name": "peak anode efficiency on N2",
+     "source": "MUNRO2023",
+     "uncertainty": "not stated",
+     "unit": "%",
+     "value": 5.4
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "abstract",
+     "name": "peak specific impulse on N2",
+     "source": "MUNRO2023",
+     "uncertainty": "not stated",
+     "unit": "s",
+     "value": 1000
+    }
+   ],
+   "repository_derived": false,
+   "sources": [
+    "MUNRO2023",
+    "MOSKOVITZ2026"
+   ],
+   "thruster": {
+    "family": "magnetically shielded Hall (low power)",
+    "geometry": [],
+    "geometry_note": "not accessed",
+    "name": "MaSHEKT-100 (Southampton)",
+    "power": {
+     "evidence_class": "measured",
+     "locator": "abstract (OpenAlex)",
+     "name": "discharge power range across all propellants (not N2 only)",
+     "note": "nominally 100 W (abstract)",
+     "source": "MUNRO2023",
+     "uncertainty": "not stated",
+     "unit": "W",
+     "value": [
+      30,
+      810
+     ]
+    }
+   },
+   "title": "MaSHEKT-100 low-power magnetically shielded Hall thruster on N2 (abstract only)",
+   "voltage": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "discharge voltage",
+    "source": "MUNRO2023",
+    "uncertainty": "n/a",
+    "unit": "V",
+    "value": "not accessed (abstract only)"
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 3,
+   "flow": {
+    "evidence_class": "measured",
+    "locator": "p.177",
+    "name": "anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)",
+    "source": "GURCIULLO2020",
+    "uncertainty": "not stated",
+    "unit": "mg/s",
+    "value": [
+     1.33,
+     1.39
+    ]
+   },
+   "id": "E13",
+   "ignition": {
+    "basis": "primary",
+    "evidence_class": "measured",
+    "mode": "xenon_admixture_required",
+    "statement": "A share of xenon was used because the discharge could not be sustained at the anode power investigated, which was limited by the 300 V supply (p.126)."
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "0.4-0.75 kW, 270-290 V, 23 mm channel, facility 6.5e-5 Torr on Xe (p.147).",
+    "direction": "xenon_admixture_required_in_tested_regime",
+    "statement": "In a short (23 mm) xenon-optimized channel at <= 0.7 kW and 290 V, pure-N2 operation without a pre-ionizer was not achieved; about 10 % Xe by mass was the lowest admixture that sustained.",
+    "uncertainty": "The author attributes the limit to available power (supply voltage), and states pure N2/air would be possible at higher power (citing CIFALI2011); not tested here."
+   },
+   "magnetic_field": {
+    "evidence_class": "measured",
+    "locator": "p.148",
+    "name": "radial B at channel centreline, exit plane",
+    "source": "GURCIULLO2020",
+    "uncertainty": "not stated",
+    "unit": "G",
+    "value": 135
+   },
+   "observations": {
+    "cathode": "IonTech HC-252 (BaO) on Xe, 0.46 mg/s (p.148)",
+    "erosion": "not reported",
+    "extinction": "loss of discharge below 0.16 mg/s Xe",
+    "oscillation_modes": "not reported"
+   },
+   "outcome": "extinguished",
+   "outcome_statement": "With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.",
+   "preionizer": {
+    "note": "single-stage",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "Xe/N2 mixtures (Xe mass fraction down to about 10 %); pure N2 not sustained",
+    "cathode_gas": "Xe",
+    "xenon_in_anode_flow": true
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "p.177",
+     "name": "lowest anode Xe flow that sustained (with N2 1.33-1.39 mg/s)",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated",
+     "unit": "mg/s",
+     "value": 0.16
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Tables 4.6/4.7 captions",
+     "name": "anode power at the lowest-Xe points",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated",
+     "unit": "W",
+     "value": [
+      603.2,
+      681.5
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Tables 4.6/4.7 captions",
+     "name": "anode current at the lowest-Xe points",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated",
+     "unit": "A",
+     "value": [
+      2.08,
+      2.35
+     ]
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "our arithmetic on p.177 values",
+     "name": "Xe mass fraction of anode flow at the lowest-Xe points",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated",
+     "unit": "1",
+     "value": [
+      0.1032,
+      0.1074
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "p.148",
+     "name": "cathode Xe flow",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated",
+     "unit": "mg/s",
+     "value": 0.46
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "p.147",
+     "name": "anode supply voltage limit",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated",
+     "unit": "V",
+     "value": 300
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "p.148",
+     "name": "electromagnet current at which the 135 G exit-plane value is given",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated",
+     "unit": "A",
+     "value": 1.5
+    }
+   ],
+   "repository_derived": false,
+   "sources": [
+    "GURCIULLO2020",
+    "GURCIULLO2019",
+    "ANDREUSSI2022"
+   ],
+   "thruster": {
+    "family": "single-stage Hall (SPT-type)",
+    "geometry": [
+     {
+      "evidence_class": "measured",
+      "locator": "p.148",
+      "name": "BN channel outer diameter",
+      "source": "GURCIULLO2020",
+      "uncertainty": "not stated (design dimension)",
+      "unit": "mm",
+      "value": 72
+     },
+     {
+      "evidence_class": "measured",
+      "locator": "p.148",
+      "name": "BN channel inner diameter",
+      "source": "GURCIULLO2020",
+      "uncertainty": "not stated (design dimension)",
+      "unit": "mm",
+      "value": 42
+     },
+     {
+      "evidence_class": "measured",
+      "locator": "p.148",
+      "name": "channel depth",
+      "source": "GURCIULLO2020",
+      "uncertainty": "not stated (design dimension)",
+      "unit": "mm",
+      "value": 23
+     }
+    ],
+    "geometry_note": "boron-nitride channel; refurbished xenon thruster (see geometry)",
+    "name": "Z-70 (Stanford, refurbished)",
+    "power": {
+     "evidence_class": "measured",
+     "locator": "Table A.1 printed p.214 (min, run XeN2-14) and Table A.2 printed p.218 (max, run XeAir-3)",
+     "name": "tabulated anode power over the Xe/N2 and Xe/air runs",
+     "note": "tabulated anode power equals anode voltage x anode current",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated",
+     "unit": "W",
+     "value": [
+      330.6,
+      745.3
+     ]
+    }
+   },
+   "title": "Z-70 on Xe/N2 mixtures: xenon needed to sustain the discharge at <= about 0.7 kW",
+   "voltage": {
+    "evidence_class": "measured",
+    "locator": "p.177, Tables 4.6/4.7 pp.198-199",
+    "name": "anode voltage",
+    "source": "GURCIULLO2020",
+    "uncertainty": "not stated",
+    "unit": "V",
+    "value": 290
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 3,
+   "flow": {
+    "evidence_class": "measured",
+    "locator": "Table 4.10 p.201",
+    "name": "anode air flow, runs XeAir-3/4 (+ 0.78 mg/s Xe in the anode flow)",
+    "note": "the anode flow is 0.78 mg/s Xe plus 0.83 mg/s air (two gases)",
+    "source": "GURCIULLO2020",
+    "uncertainty": "not stated",
+    "unit": "mg/s",
+    "value": 0.83
+   },
+   "id": "E14",
+   "ignition": {
+    "basis": "primary",
+    "evidence_class": "measured",
+    "mode": "xenon_admixture_required",
+    "statement": "as E13"
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "as E13",
+    "direction": "xenon_admixture_required_in_tested_regime",
+    "statement": "Air operation in this thruster was only shown with substantial xenon admixture; no pre-ionizer was used and pure air was not attempted at the available power.",
+    "uncertainty": "Lowest Xe share run with air in the thesis is 0.78 mg/s Xe with 0.83 mg/s air (48 % Xe by mass, our arithmetic); a minimum Xe share for air was not reported. Performance ratios are Wien-filter-based estimates, not thrust-stand data."
+   },
+   "magnetic_field": {
+    "evidence_class": "measured",
+    "locator": "p.201",
+    "name": "radial B at channel-exit centreline (XeAir-3 135 G, XeAir-4 160 G)",
+    "source": "GURCIULLO2020",
+    "uncertainty": "'about' (text)",
+    "unit": "G",
+    "value": [
+     135,
+     160
+    ]
+   },
+   "observations": {
+    "cathode": "Xe 0.46 mg/s",
+    "erosion": "not reported",
+    "extinction": "not reported for air",
+    "oscillation_modes": "not reported"
+   },
+   "outcome": "sustained",
+   "outcome_statement": "Operated on Xe/air mixtures down to about 48 % Xe (review) / 0.78 mg/s Xe with 0.83 mg/s air (thesis); the author reports better performance with air than with N2.",
+   "preionizer": {
+    "note": "single-stage",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "Xe/air mixtures (Xe mass fraction 48-96 % per ANDREUSSI2022 p.26)",
+    "cathode_gas": "Xe",
+    "xenon_in_anode_flow": true
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "Table 4.10 p.201",
+     "name": "anode Xe flow, runs XeAir-3/4",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated",
+     "unit": "mg/s",
+     "value": 0.78
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Table 4.10 p.201",
+     "name": "anode air flow, runs XeAir-3/4",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated",
+     "unit": "mg/s",
+     "value": 0.83
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "our arithmetic on Table 4.10 p.201",
+     "name": "total anode flow (Xe + air), runs XeAir-3/4",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated",
+     "unit": "mg/s",
+     "value": 1.61
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "our arithmetic on Table 4.10 p.201",
+     "name": "Xe mass fraction of the anode flow, runs XeAir-3/4",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated",
+     "unit": "1",
+     "value": 0.4845
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Table 4.10 p.201",
+     "name": "anode current XeAir-3 (135 G)",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated",
+     "unit": "A",
+     "value": 2.57
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Table 4.10 p.201",
+     "name": "anode current XeAir-4 (160 G)",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated",
+     "unit": "A",
+     "value": 2.45
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "Table 4.10 p.201",
+     "name": "total thrust ratio to Xe-only run XeAir-1, XeAir-3 (135 G)",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated; estimated from uncorrected Wien filter spectra, not a thrust-stand measurement",
+     "unit": "1",
+     "value": 0.83
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "Table 4.10 p.201",
+     "name": "total thrust ratio to Xe-only run XeAir-1, XeAir-4 (160 G)",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated; estimated from uncorrected Wien filter spectra, not a thrust-stand measurement",
+     "unit": "1",
+     "value": 0.79
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "Table 4.10 p.201",
+     "name": "anode efficiency ratio to XeAir-1, XeAir-3 (135 G)",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated; Wien-filter-based estimate",
+     "unit": "1",
+     "value": 0.64
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "Table 4.10 p.201",
+     "name": "anode efficiency ratio to XeAir-1, XeAir-4 (160 G)",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated; Wien-filter-based estimate",
+     "unit": "1",
+     "value": 0.61
+    }
+   ],
+   "repository_derived": false,
+   "sources": [
+    "GURCIULLO2020",
+    "GURCIULLO2019",
+    "ANDREUSSI2022"
+   ],
+   "thruster": {
+    "family": "single-stage Hall (SPT-type)",
+    "geometry": [
+     {
+      "evidence_class": "measured",
+      "locator": "p.148",
+      "name": "BN channel outer diameter",
+      "source": "GURCIULLO2020",
+      "uncertainty": "not stated (design dimension)",
+      "unit": "mm",
+      "value": 72
+     },
+     {
+      "evidence_class": "measured",
+      "locator": "p.148",
+      "name": "BN channel inner diameter",
+      "source": "GURCIULLO2020",
+      "uncertainty": "not stated (design dimension)",
+      "unit": "mm",
+      "value": 42
+     },
+     {
+      "evidence_class": "measured",
+      "locator": "p.148",
+      "name": "channel depth",
+      "source": "GURCIULLO2020",
+      "uncertainty": "not stated (design dimension)",
+      "unit": "mm",
+      "value": 23
+     }
+    ],
+    "geometry_note": "boron-nitride channel; refurbished xenon thruster (see geometry)",
+    "name": "Z-70 (Stanford, refurbished)",
+    "power": {
+     "evidence_class": "measured",
+     "locator": "Table A.1 printed p.214 (min, run XeN2-14) and Table A.2 printed p.218 (max, run XeAir-3)",
+     "name": "tabulated anode power over the Xe/N2 and Xe/air runs",
+     "note": "tabulated anode power equals anode voltage x anode current",
+     "source": "GURCIULLO2020",
+     "uncertainty": "not stated",
+     "unit": "W",
+     "value": [
+      330.6,
+      745.3
+     ]
+    }
+   },
+   "title": "Z-70 on Xe/air mixtures (sustained with xenon admixture)",
+   "voltage": {
+    "evidence_class": "measured",
+    "locator": "Table 4.10 p.201",
+    "name": "anode voltage",
+    "source": "GURCIULLO2020",
+    "uncertainty": "not stated",
+    "unit": "V",
+    "value": 290
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 3,
+   "flow": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "flows",
+    "source": "SEMENKIN1995",
+    "uncertainty": "n/a",
+    "unit": "sccm",
+    "value": "figure data not legible in the accessed scan"
+   },
+   "id": "E15",
+   "ignition": {
+    "basis": "primary",
+    "evidence_class": "measured",
+    "mode": "not_reported",
+    "statement": "Ignition is not described. The source tested only Xe + air mixtures (no pure-air run is reported, neither success nor failure); it states that Xe additions allowed an effective 'acceleration mode' with Xe + air (printed p.524) and that Xe added to light propellants changes the operating mode and increases their ionization (abstract, printed p.521)."
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "TAL geometry, 1995 laboratory conditions.",
+    "direction": "xenon_admixture_improves_operating_mode",
+    "statement": "Xe added to air improved the operating mode of a TAL (effective 'acceleration mode'); the source does not report pure-air operation, so it does not show that xenon is required. Its pure-argon result (acceleration mode reached only at high power) indicates that a light gas can operate alone in this thruster at high power. No separate pre-ionizer was tested.",
+    "uncertainty": "Qualitative; figures illegible; mixture ratios for air unknown; whether pure air would ignite or sustain in these thrusters is not reported."
+   },
+   "magnetic_field": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "B",
+    "source": "SEMENKIN1995",
+    "uncertainty": "n/a",
+    "unit": "G",
+    "value": "not reported in the accessed text"
+   },
+   "observations": {
+    "cathode": "not reported",
+    "erosion": "not reported",
+    "extinction": "not reported",
+    "oscillation_modes": "not reported"
+   },
+   "outcome": "sustained",
+   "outcome_statement": "Volt-ampere characteristics for Xe + air were measured; Xe additions allowed an effective 'acceleration mode' (printed p.524). For pure argon, the other light gas tested, the 'acceleration mode' could be reached only at high power near the thruster's upper limit (printed p.524).",
+   "preionizer": {
+    "note": "single-stage TAL",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "Xe + air mixtures (fractions not legible in the accessed scan)",
+    "cathode_gas": "not reported",
+    "xenon_in_anode_flow": true
+   },
+   "quantities": [],
+   "repository_derived": false,
+   "sources": [
+    "SEMENKIN1995",
+    "ANDREUSSI2022"
+   ],
+   "thruster": {
+    "family": "anode-layer Hall (TAL)",
+    "geometry": [
+     {
+      "evidence_class": "measured",
+      "locator": "printed p.523",
+      "name": "anode diameter, smaller thruster",
+      "source": "SEMENKIN1995",
+      "uncertainty": "not stated",
+      "unit": "mm",
+      "value": 27
+     },
+     {
+      "evidence_class": "measured",
+      "locator": "printed p.523",
+      "name": "anode diameter, larger thruster",
+      "source": "SEMENKIN1995",
+      "uncertainty": "not stated",
+      "unit": "mm",
+      "value": 55
+     }
+    ],
+    "geometry_note": "designed for xenon and not changed to operate with other gases (same page as the anode diameters)",
+    "name": "TsNIIMASH anode-layer thrusters (two anode diameters; D-55 type)",
+    "power": {
+     "evidence_class": null,
+     "locator": "n/a",
+     "name": "power",
+     "source": "SEMENKIN1995",
+     "uncertainty": "n/a",
+     "unit": "kW",
+     "value": "not legible in the accessed scan"
+    }
+   },
+   "title": "TsNIIMASH anode-layer thrusters on Xe + air mixtures (1995)",
+   "voltage": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "voltages",
+    "source": "SEMENKIN1995",
+    "uncertainty": "n/a",
+    "unit": "V",
+    "value": "figure data not legible in the accessed scan"
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 5,
+   "flow": {
+    "evidence_class": "measured",
+    "locator": "Page 25 of 57",
+    "name": "best-efficiency point flow",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "not stated",
+    "unit": "mg/s",
+    "value": 2.94
+   },
+   "id": "E16",
+   "ignition": {
+    "basis": "second_hand",
+    "evidence_class": "measured",
+    "mode": "not_reported",
+    "statement": "not reported in the review"
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "2 kW class, 1-5.5 kW, lab-fed gas.",
+    "direction": "operation_without_preionizer_demonstrated",
+    "statement": "A conventional Hall thruster ran on an N2-rich simulant without a pre-ionizer.",
+    "uncertainty": "Second-hand; 25 % argon (not atomic O) in the feed eases ionization; ignition and cathode gas unknown."
+   },
+   "magnetic_field": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "B",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "n/a",
+    "unit": "G",
+    "value": "not reported in the accessed text"
+   },
+   "observations": {
+    "cathode": "not reported",
+    "erosion": "not reported",
+    "extinction": "not reported",
+    "oscillation_modes": "not reported"
+   },
+   "outcome": "sustained",
+   "outcome_statement": "Tested over 200-350 V and 1-5.5 kW; best anodic efficiency about 27 % at 350 V, 2.94 mg/s.",
+   "preionizer": {
+    "note": "conventional single-stage",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "air simulant 68.3 % N2, 6.7 % O2, 25 % Ar (Ar as surrogate for atomic O)",
+    "cathode_gas": "not reported",
+    "xenon_in_anode_flow": false
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "Page 25 of 57",
+     "name": "discharge power range",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "kW",
+     "value": [
+      1,
+      5.5
+     ]
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "Page 25 of 57",
+     "name": "best anodic efficiency",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "'about'",
+     "unit": "%",
+     "value": 27
+    }
+   ],
+   "repository_derived": false,
+   "sources": [
+    "ANDREUSSI2022",
+    "HRUBY2022"
+   ],
+   "thruster": {
+    "family": "single-stage Hall (SPT-type)",
+    "geometry": [],
+    "geometry_note": "not reported in the review",
+    "name": "Busek BHT (2 kW nominal)",
+    "power": {
+     "evidence_class": "measured",
+     "locator": "Page 25 of 57",
+     "name": "discharge power range",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "kW",
+     "value": [
+      1,
+      5.5
+     ]
+    }
+   },
+   "title": "Busek 2 kW-class BHT on 'air simulant' 68.3 % N2 / 6.7 % O2 / 25 % Ar (2005; secondary)",
+   "voltage": {
+    "evidence_class": "measured",
+    "locator": "Page 25 of 57",
+    "name": "discharge voltage range",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "not stated",
+    "unit": "V",
+    "value": [
+     200,
+     350
+    ]
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 5,
+   "flow": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "flow",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "n/a",
+    "unit": "mg/s",
+    "value": "not reported in the accessed text"
+   },
+   "id": "E17",
+   "ignition": {
+    "basis": "second_hand",
+    "evidence_class": "measured",
+    "mode": "not_reported",
+    "statement": "not reported"
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "unknown",
+    "direction": "not_informative",
+    "statement": "Qualitative operation with a pre-ionized upstream flow source; cannot separate the role of the incoming ions from the thruster's own ionization.",
+    "uncertainty": "Second-hand, qualitative, high facility pressure."
+   },
+   "magnetic_field": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "B",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "n/a",
+    "unit": "G",
+    "value": "not reported in the accessed text"
+   },
+   "observations": {
+    "cathode": "not reported",
+    "erosion": "not reported",
+    "extinction": "not reported",
+    "oscillation_modes": "not reported"
+   },
+   "outcome": "sustained",
+   "outcome_statement": "The review states the ABHET was able to operate with the simulated VLEO flow; no performance data (stand impingement, facility > 1e-4 Torr).",
+   "preionizer": {
+    "note": "the upstream RF Hall flow source delivers a partly ionized flow (large ion fraction), i.e. the incoming flow is not neutral",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "air simulant in an inlet duct, or collected flow from an RF Hall source",
+    "cathode_gas": "not reported (the RF Hall source used a Xe cathode)",
+    "xenon_in_anode_flow": false
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "Page 35 of 57",
+     "name": "facility pressure during operation",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "Torr",
+     "value": "> 1e-4"
+    }
+   ],
+   "repository_derived": false,
+   "sources": [
+    "ANDREUSSI2022",
+    "HRUBY2022"
+   ],
+   "thruster": {
+    "family": "single-stage Hall (open-ended, extended channel per patent; details unpublished)",
+    "geometry": [],
+    "geometry_note": "not reported",
+    "name": "Busek ABHET LX2 prototype",
+    "power": {
+     "evidence_class": null,
+     "locator": "n/a",
+     "name": "power",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "n/a",
+     "unit": "kW",
+     "value": "not reported in the accessed text"
+    }
+   },
+   "title": "Busek ABHET prototype fed by duct / RF-Hall-generated flow (secondary)",
+   "voltage": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "voltage",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "n/a",
+    "unit": "V",
+    "value": "not reported in the accessed text"
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 3,
+   "flow": {
+    "evidence_class": "measured",
+    "locator": "Fig. 2 caption p.3",
+    "name": "PFG anode flow (upstream source, not the thruster inlet flow)",
+    "note": "intake-delivered flow at the RAM-EP inlet was not measured (review p.46)",
+    "source": "FERRATO2019_IEPC886",
+    "uncertainty": "not stated",
+    "unit": "mg/s",
+    "value": 4.7
+   },
+   "id": "E18",
+   "ignition": {
+    "basis": "primary",
+    "evidence_class": "measured",
+    "mode": "not_reported",
+    "statement": "'first ignition and stable operation' of the full system is claimed (IEPC-2019-886 p.3); procedure not given"
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "ground end-to-end test at 500 mm from a Hall-thruster flow source.",
+    "direction": "preionization_stage_present_effect_not_isolated",
+    "statement": "The only accessed intake-fed Hall-type operation used a dedicated ionization stage; it does not show whether that stage was necessary.",
+    "uncertainty": "Inlet density/flow not measured; upstream source partly ionized; Xe cathode; no single-stage control case."
+   },
+   "magnetic_field": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "B",
+    "source": "FERRATO2019_IEPC886",
+    "uncertainty": "n/a",
+    "unit": "G",
+    "value": "not reported in the accessed text"
+   },
+   "observations": {
+    "cathode": "conventional Xe-fed hollow cathode",
+    "erosion": "not reported",
+    "extinction": "not reported",
+    "oscillation_modes": "not reported"
+   },
+   "outcome": "sustained",
+   "outcome_statement": "The integrated system operated on the collected flow; 'good ionization capability', acceleration stage below expectations.",
+   "preionizer": {
+    "note": "the collected flow from the PFG also contains ions",
+    "present": true,
+    "type": "dedicated first (ionization) stage of a double-stage device"
+   },
+   "propellant": {
+    "anode_gas": "intake-collected flow from the HT5k PFG (4.7 mg/s 1.27N2 + O2 at the PFG); PFG also run on Xe",
+    "cathode_gas": "Xe (hollow cathode neutralizer)",
+    "xenon_in_anode_flow": false
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "Fig. 1b caption and text p.3",
+     "name": "thrust produced by the system on the collected flow",
+     "source": "FERRATO2019_IEPC886",
+     "uncertainty": "+-1 mN as stated (meaning of the bound not defined)",
+     "unit": "mN",
+     "value": 6
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Fig. 1b caption and text p.3",
+     "name": "drag on system with thruster off",
+     "source": "FERRATO2019_IEPC886",
+     "uncertainty": "+-1 mN as stated (meaning of the bound not defined)",
+     "unit": "mN",
+     "value": 26
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Fig. 2 caption p.3",
+     "name": "PFG-to-intake distance",
+     "source": "FERRATO2019_IEPC886",
+     "uncertainty": "not stated",
+     "unit": "mm",
+     "value": 500
+    }
+   ],
+   "repository_derived": false,
+   "sources": [
+    "FERRATO2019_IEPC886",
+    "ANDREUSSI2022",
+    "ANDREUSSI2017_IEPC377"
+   ],
+   "thruster": {
+    "family": "two-stage Hall (ionization stage + Hall-like acceleration stage)",
+    "geometry": [],
+    "geometry_note": "not reported",
+    "name": "SITAEL RAM-EP prototype",
+    "power": {
+     "evidence_class": null,
+     "locator": "n/a",
+     "name": "power",
+     "source": "FERRATO2019_IEPC886",
+     "uncertainty": "n/a",
+     "unit": "kW",
+     "value": "not reported in the accessed text"
+    }
+   },
+   "title": "SITAEL RAM-EP double-stage thruster, end-to-end with intake and PFG (2017)",
+   "voltage": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "RAM-EP stage voltages",
+    "source": "FERRATO2019_IEPC886",
+    "uncertainty": "n/a",
+    "unit": "V",
+    "value": "not reported in the accessed text"
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 5,
+   "flow": {
+    "evidence_class": "measured",
+    "locator": "Page 27 of 57",
+    "name": "anode N2 flow",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "not stated",
+    "unit": "mg/s",
+    "value": 2.6
+   },
+   "id": "E19",
+   "ignition": {
+    "basis": "second_hand",
+    "evidence_class": "measured",
+    "mode": "not_reported",
+    "statement": "not reported in the review"
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "one flow (2.6 mg/s), 200 V, laboratory facility.",
+    "direction": "preionization_stage_tested_no_net_benefit_reported",
+    "statement": "The single-stage Hall mode sustained on N2 without the RF stage; adding RF pre-ionization raised utilization slightly but did not pay for its power in this device.",
+    "uncertainty": "Second-hand (primary not accessible); very large Xe cathode fraction (about 38 %) may have assisted sustainment."
+   },
+   "magnetic_field": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "B",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "n/a",
+    "unit": "G",
+    "value": "not reported in the accessed text"
+   },
+   "observations": {
+    "cathode": "Xe 1 mg/s (38.4 % cathode flow fraction per the review)",
+    "erosion": "not reported",
+    "extinction": "not reported",
+    "oscillation_modes": "not reported"
+   },
+   "outcome": "sustained",
+   "outcome_statement": "Operated on N2 in single-stage mode (RF off) and with RF up to 302 W. RF produced a minor thrust increase while thrust-to-power and anode efficiency decreased consistently.",
+   "preionizer": {
+    "note": "operated both off and on",
+    "present": true,
+    "type": "helicon RF stage (0-302 W)"
+   },
+   "propellant": {
+    "anode_gas": "N2 (pure)",
+    "cathode_gas": "Xe",
+    "xenon_in_anode_flow": false
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "Page 27 of 57",
+     "name": "RF power range",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "W",
+     "value": [
+      0,
+      302
+     ]
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Page 27 of 57",
+     "name": "cathode Xe flow",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "mg/s",
+     "value": 1
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "our arithmetic",
+     "name": "cathode/anode flow ratio",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "1",
+     "value": 0.3846
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "Page 28 of 57",
+     "name": "single-stage propellant utilization",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "'~'",
+     "unit": "1",
+     "value": 0.1
+    },
+    {
+     "evidence_class": "inferred",
+     "locator": "Page 28 of 57",
+     "name": "single-stage beam divergence efficiency",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "'~'",
+     "unit": "1",
+     "value": 0.6
+    }
+   ],
+   "repository_derived": false,
+   "sources": [
+    "ANDREUSSI2022",
+    "SHABSHELOWITZ2014"
+   ],
+   "thruster": {
+    "family": "two-stage Hall (helicon RF first stage + Hall stage)",
+    "geometry": [],
+    "geometry_note": "not accessed",
+    "name": "Helicon Hall thruster (HHT)",
+    "power": {
+     "evidence_class": "digitized",
+     "locator": "Table 3, Page 22 of 57",
+     "name": "power",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "'~'; the review's Table 3 footnote says values for this device are partially extracted from graphs and indicate operating ranges only",
+     "unit": "kW",
+     "value": 1.75
+    }
+   },
+   "title": "Michigan helicon Hall thruster on N2: single-stage vs RF-assisted (secondary)",
+   "voltage": {
+    "evidence_class": "measured",
+    "locator": "Page 27 of 57",
+    "name": "discharge voltage",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "not stated",
+    "unit": "V",
+    "value": 200
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 5,
+   "flow": {
+    "evidence_class": "measured",
+    "locator": "Page 26 of 57",
+    "name": "total mass flow (review wording; whether it includes the 0.19 mg/s Xe cathode flow is not stated)",
+    "note": "0.8, 0.9, 1.0 mg/s; verify the flow basis in the primary (DUKHOPELNIKOV2021, abstract only)",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "not stated",
+    "unit": "mg/s",
+    "value": [
+     0.8,
+     1.0
+    ]
+   },
+   "id": "E20",
+   "ignition": {
+    "basis": "second_hand",
+    "evidence_class": "measured",
+    "mode": "not_reported",
+    "statement": "not reported"
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "small TAL-type device, 0.8-1.0 mg/s.",
+    "direction": "operation_without_preionizer_demonstrated",
+    "statement": "A small xenon-design closed-drift thruster operated on air and N2/O2 at about 1 mg/s without a pre-ionizer (Xe cathode).",
+    "uncertainty": "Abstract + review only; thrust inferred with an assumed voltage utilization; ignition not reported."
+   },
+   "magnetic_field": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "B",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "n/a",
+    "unit": "G",
+    "value": "not reported in the accessed text"
+   },
+   "observations": {
+    "cathode": "Xe 0.19 mg/s",
+    "erosion": "not reported",
+    "extinction": "not reported",
+    "oscillation_modes": "not reported"
+   },
+   "outcome": "sustained",
+   "outcome_statement": "Operated on air and N2/O2; I_d-V plateau 50-100 V higher than Xe; I_d 2.1-2.4x (air) and 1.9-2.7x (N2/O2) the Xe value at 200-350 V; mass utilization on average 2.3x lower than Xe.",
+   "preionizer": {
+    "note": "single-stage",
+    "present": false,
+    "type": null
+   },
+   "propellant": {
+    "anode_gas": "air; N2/O2 2:1",
+    "cathode_gas": "Xe",
+    "xenon_in_anode_flow": false
+   },
+   "quantities": [
+    {
+     "evidence_class": "measured",
+     "locator": "Page 26 of 57",
+     "name": "cathode Xe flow",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "mg/s",
+     "value": 0.19
+    },
+    {
+     "evidence_class": "measured",
+     "locator": "Page 27 of 57",
+     "name": "I_d ratio air/Xe (200-350 V)",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "1",
+     "value": [
+      2.1,
+      2.4
+     ]
+    },
+    {
+     "evidence_class": "assumed",
+     "locator": "Page 26 of 57",
+     "name": "thrust estimate basis: assumed voltage utilization",
+     "note": "thrust was not measured; estimated from Faraday data",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated",
+     "unit": "1",
+     "value": 0.75
+    }
+   ],
+   "repository_derived": false,
+   "sources": [
+    "DUKHOPELNIKOV2021",
+    "ANDREUSSI2022"
+   ],
+   "thruster": {
+    "family": "anode-layer / closed-drift Hall (title: 'thruster with anode layer')",
+    "geometry": [
+     {
+      "evidence_class": "measured",
+      "locator": "Page 26 of 57",
+      "name": "average channel diameter",
+      "source": "ANDREUSSI2022",
+      "uncertainty": "not stated (second-hand)",
+      "unit": "mm",
+      "value": 38
+     }
+    ],
+    "geometry_note": "xenon-design laboratory model (see geometry)",
+    "name": "laboratory model, Moscow State Technical University per review Table 3 (xenon design)",
+    "power": {
+     "evidence_class": "digitized",
+     "locator": "Table 3, Page 22 of 57",
+     "name": "power range",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "not stated; the review's Table 3 footnote says values for this device are partially extracted from graphs and indicate operating ranges only",
+     "unit": "kW",
+     "value": [
+      0.3,
+      1.4
+     ]
+    }
+   },
+   "title": "Laboratory closed-drift thruster (38 mm mean channel diameter) on air and 2:1 N2/O2",
+   "voltage": {
+    "evidence_class": "measured",
+    "locator": "Page 26 of 57",
+    "name": "discharge voltage",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "not stated",
+    "unit": "V",
+    "value": "from below 100 up to 350"
+   }
+  },
+  {
+   "evidence_class": "measured",
+   "evidence_level": 5,
+   "flow": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "flow",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "n/a",
+    "unit": "mg/s",
+    "value": "not reported in the accessed text"
+   },
+   "id": "E21",
+   "ignition": {
+    "basis": "second_hand",
+    "evidence_class": "measured",
+    "mode": "not_reported",
+    "statement": "not reported"
+   },
+   "implication": {
+    "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
+    "applicability_limits": "none for N2/O2/air (xenon tests only).",
+    "direction": "not_informative",
+    "statement": "No atmospheric-gas evidence; a pre-ionizer concept without a test on N2/O2/air.",
+    "uncertainty": "Second-hand; no atmospheric-gas data exist in the accessed record."
+   },
+   "magnetic_field": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "B",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "n/a",
+    "unit": "G",
+    "value": "not reported in the accessed text"
+   },
+   "observations": {
+    "cathode": "filament",
+    "erosion": "not reported",
+    "extinction": "not reported",
+    "oscillation_modes": "not reported"
+   },
+   "outcome": "not_reported",
+   "outcome_statement": "Prototype assembled but only tested with xenon (review p.37).",
+   "preionizer": {
+    "note": "designed for low-pressure air ionization",
+    "present": true,
+    "type": "ECR stage"
+   },
+   "propellant": {
+    "anode_gas": "xenon only (no atmospheric gas test reported)",
+    "cathode_gas": "not reported (1 % thoriated W filament selected for the concept, review p.38)",
+    "xenon_in_anode_flow": true
+   },
+   "quantities": [],
+   "repository_derived": false,
+   "sources": [
+    "ANDREUSSI2022",
+    "DIAMANT2010"
+   ],
+   "thruster": {
+    "family": "two-stage Hall (ECR ionization + cylindrical Hall acceleration)",
+    "geometry": [],
+    "geometry_note": "not reported",
+    "name": "ABCHT prototype",
+    "power": {
+     "evidence_class": null,
+     "locator": "n/a",
+     "name": "power",
+     "source": "ANDREUSSI2022",
+     "uncertainty": "n/a",
+     "unit": "kW",
+     "value": "not reported in the accessed text"
+    }
+   },
+   "title": "Aerospace Corp. 2-stage air-breathing cylindrical Hall thruster (ECR + CHT) - xenon only",
+   "voltage": {
+    "evidence_class": null,
+    "locator": "n/a",
+    "name": "voltage",
+    "source": "ANDREUSSI2022",
+    "uncertainty": "n/a",
+    "unit": "V",
+    "value": "not reported in the accessed text"
+   }
+  }
+ ],
+ "excluded": [
+  {
+   "item": "MCFT-2139 multi-cusped field thruster on N2 (Hu et al., Vacuum 190, 110275, 2021, doi:10.1016/j.vacuum.2021.110275)",
+   "reason": "cusped-field device, not a Hall (closed E x B drift) thruster; outside the Hall-only lane (reported in ANDREUSSI2022 p.27)"
+  },
+  {
+   "item": "RIT-10 on N2 and O2 (CIFALI2011 section III)",
+   "reason": "gridded ion engine, not Hall"
+  },
+  {
+   "item": "JAXA ABIE (ECR + grids), IRS IPT/IPG6-S (RF, magnetic nozzle), helicon double layer, MET, PPT",
+   "reason": "not Hall discharges"
+  },
+  {
+   "item": "Cha 2015 simulations of N2 in the SHT (cited in MARCHIONI2020)",
+   "reason": "model results, not evidence of physical sustainment"
+  },
+  {
+   "item": "P5-N2 v1 vacuum simulation campaign (this repository)",
+   "reason": "model results (INCONCLUSIVE); kept only as context_not_evidence"
+  }
+ ],
+ "id": "hall_sustainment_matrix_v1",
+ "lane": "HSUS - Hall-only sustainment / ignition evidence on N2, O2, air",
+ "meta": {
+  "repository_inputs": {
+   "echt_audit": {
+    "path": "hallthruster_bridge/identification/echt_n2/echt_n2_evidence_audit_v1.json",
+    "sha256": "87243283ed9e0d23eb6e17c5bf1daf789e1f51c845c33b5f0eeb165a9c3d0922"
+   },
+   "echt_status": {
+    "path": "hallthruster_bridge/identification/echt_n2/STATUS.json",
+    "sha256": "eee3e13fff2e96bafe1e8d10f7e54514f6a9a7cb25dfe1c76550229ec3650c12"
+   },
+   "echt_status_md": {
+    "path": "hallthruster_bridge/identification/echt_n2/ECHT_N2_EVIDENCE_STATUS.md",
+    "sha256": "42df0adae8c11ab427b850cc3f90e0d0198cd61bb98d3606f11e4847da2866c1"
+   },
+   "echt_tables": {
+    "path": "hallthruster_bridge/identification/echt_n2/echt_table_checks_v1.json",
+    "sha256": "d4bb2151dcb2059390712143a769d13cfa55c098af52ecac01de3a6df0a5624c"
+   },
+   "evidence_policy": {
+    "path": "docs/EVIDENCE.md",
+    "sha256": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61"
+   },
+   "p5_audit": {
+    "path": "hallthruster_bridge/identification/brabston_p5_n2_measurement_audit_v1.json",
+    "sha256": "f93ce2c25eb0a794ff192a5a0ab0dae1448cab824642bca8eff57e27079f4397"
+   },
+   "p5_findings": {
+    "path": "hallthruster_bridge/identification/p5_n2_measurement_audit_findings_v1.json",
+    "sha256": "588ce98c26c8353a667ab0e57021034b7622a3d6f507d09d0d84e1fab98a1838"
+   },
+   "v1_scores": {
+    "path": "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores.json",
+    "sha256": "87895820e21e36fa8f9b07fa7475789f08d91d946d526a09acf142fe509be1bc"
+   }
+  }
+ },
+ "schema": "hall_sustainment_matrix.schema.json",
+ "sources": {
+  "ANDREUSSI2017_IEPC377": {
+   "access": "not_accessed",
+   "access_note": "content taken only as reported by ANDREUSSI2022 (secondary)",
+   "citation": "T. Andreussi et al., 'Development and Experimental Validation of a Hall Effect Thruster RAM-EP Concept', IEPC-2017-377 (2017)",
+   "doi": null,
+   "license": "unknown",
+   "sha256": null,
+   "urls_accessed": []
+  },
+  "ANDREUSSI2022": {
+   "access": "open_full_text",
+   "access_note": "review (evidence level 5 for anything it reports second-hand); page locators are 'Page N of 57'. sha256 is of the IRIS copy (the Springer PDF bytes differ; same article)",
+   "citation": "T. Andreussi, E. Ferrato, V. Giannetti, 'A review of air-breathing electric propulsion: from mission studies to technology verification', J. Electr. Propuls. 1:31 (2022)",
+   "doi": "10.1007/s44205-022-00024-9",
+   "license": "CC BY 4.0",
+   "sha256": "092befade9a4dc9cb50ec9b54cb2401e9d66cd3ef2fd9d10c8eb87a16b50c02d",
+   "urls_accessed": [
+    "https://www.iris.sssup.it/retrieve/ea75eb42-2e80-462b-be1e-588ed43871e3/Andreussi%20et.al.%202022.pdf",
+    "https://link.springer.com/content/pdf/10.1007/s44205-022-00024-9.pdf"
+   ]
+  },
+  "ANDREUSSI2022_IEPC435": {
+   "access": "open_full_text",
+   "access_note": "ERPS conference upload host; the AETHER-project copy (aether-h2020.eu) answered with a captcha and was not bypassed",
+   "citation": "T. Andreussi, E. Ferrato, A. Kitaeva, et al., 'Characterization of an Atmospheric Propellant-fed Hall Thruster as a VLEO Simulator', IEPC-2022-435 (2022)",
+   "doi": null,
+   "license": "ERPS",
+   "sha256": "525d3ad2ebbd9335fabeed44ccea9bce63b2530a2f159bbb39696e0dc22083b4",
+   "urls_accessed": [
+    "https://www.jotform.com/uploads/electricrocket/220994246997171/5305264492529551410/IEPC_2022_AETHER_final.pdf"
+   ]
+  },
+  "BRABSTON2025": {
+   "access": "licensed_full_text_sha_pinned",
+   "access_note": "Full text read from a local copy whose sha256 equals the pin used by the repository audit (scripts/audit_p5_n2_measurements.py); publisher terms apply; not redistributed. Numeric values are taken from the repository audit files, not re-transcribed.",
+   "citation": "W. P. Brabston, L. A. Marino, D. Lev, M. L. R. Walker, 'Hall Thruster Performance and Efficiency Analysis of a Molecular Propellant', J. Propuls. Power 41(6):676-689 (2025)",
+   "doi": "10.2514/1.B39623",
+   "license": "AIAA (publisher)",
+   "sha256": "14db7e8c1a0e7e4cae472038184a79b88ef4de6cb52071edb2a406d6a52e4d9d",
+   "urls_accessed": []
+  },
+  "BRABSTON_IEPC2024": {
+   "access": "open_full_text",
+   "access_note": "Same P5 N2/Ar/Xe campaign as BRABSTON2025; used only as corroboration (no separate values).",
+   "citation": "W. P. Brabston, L. A. Marino, D. Lev, M. L. R. Walker, 'Analysis of the Ionization and Acceleration Efficiencies of Molecular Nitrogen in a Hall Effect Thruster', IEPC-2024-297 (2024)",
+   "doi": null,
+   "license": "ERPS copyright",
+   "sha256": "ea9e763be1cd0ae2fe357c9de6717eca8e2a194c08a95d4c284f3f6a18b2f226",
+   "urls_accessed": [
+    "https://hpepl.ae.gatech.edu/sites/default/files/gbb-uploads/IEPC-24-297.pdf"
+   ]
+  },
+  "CIFALI2011": {
+   "access": "open_full_text",
+   "access_note": "ERPS IEPC repository",
+   "citation": "G. Cifali, T. Misuri, P. Rossetti, M. Andrenucci, D. Valentian, D. Feili, B. Lotz, 'Experimental characterization of HET and RIT with atmospheric propellants', IEPC-2011-224 (2011)",
+   "doi": null,
+   "license": "ERPS",
+   "sha256": "44b0fc265f35bbf707b1d99f8cbbdcf938aef48831ad28f97350550803254d11",
+   "urls_accessed": [
+    "https://electricrocket.org/IEPC/IEPC-2011-224.pdf"
+   ]
+  },
+  "CIFALI2012": {
+   "access": "not_accessed",
+   "access_note": "primary not located openly; content taken only as reported by ANDREUSSI2022 (secondary)",
+   "citation": "G. Cifali et al., 'Completion of HET and RIT characterization with atmospheric propellants', Space Propulsion 2012, SP2012-2355386",
+   "doi": null,
+   "license": "unknown",
+   "sha256": null,
+   "urls_accessed": []
+  },
+  "DIAMANT2010": {
+   "access": "not_accessed",
+   "access_note": "closed; content taken only as reported by ANDREUSSI2022",
+   "citation": "K. Diamant, 'A 2-Stage Cylindrical Hall Thruster for Air Breathing Electric Propulsion', AIAA 2010-6522 (2010)",
+   "doi": "10.2514/6.2010-6522",
+   "license": "publisher",
+   "sha256": null,
+   "urls_accessed": []
+  },
+  "DUKHOPELNIKOV2021": {
+   "access": "abstract_only",
+   "access_note": "abstract (Semantic Scholar) plus the ANDREUSSI2022 summary",
+   "citation": "D. V. Dukhopelnikov et al., 'Investigation of the laboratory model of a thruster with anode layer operating with air and nitrogen-oxygen mixture', AIP Conf. Proc. 2318, 040006 (2021)",
+   "doi": "10.1063/5.0036251",
+   "license": "publisher",
+   "sha256": null,
+   "urls_accessed": [
+    "https://api.semanticscholar.org/graph/v1/paper/DOI:10.1063/5.0036251?fields=title,abstract"
+   ]
+  },
+  "FERRATO2019_IEPC886": {
+   "access": "open_full_text",
+   "access_note": "ERPS IEPC repository",
+   "citation": "E. Ferrato, V. Giannetti, A. Piragino, M. Andrenucci, T. Andreussi, C. A. Paissoni, 'Development Roadmap of SITAEL's RAM-EP System', IEPC-2019-886 (2019)",
+   "doi": null,
+   "license": "ERPS",
+   "sha256": "cba16dc5e56246e89b9116933d0d12e6037cdc99b1c4b2d27a695199e381ed99",
+   "urls_accessed": [
+    "https://electricrocket.org/2019/886.pdf"
+   ]
+  },
+  "FERRATO2022_PSST": {
+   "access": "abstract_only",
+   "access_note": "abstract via Crossref metadata only",
+   "citation": "E. Ferrato, V. Giannetti, F. Califano, T. Andreussi, 'Atmospheric propellant fed Hall thruster discharges: 0D-hybrid model and experimental results', Plasma Sources Sci. Technol. 31, 075003 (2022)",
+   "doi": "10.1088/1361-6595/ac7904",
+   "license": "IOP",
+   "sha256": null,
+   "urls_accessed": [
+    "https://api.crossref.org/works/10.1088/1361-6595/ac7904"
+   ]
+  },
+  "GURCIULLO2019": {
+   "access": "abstract_only",
+   "access_note": "abstract via Crossref; the same measurements are read from GURCIULLO2020",
+   "citation": "A. Gurciullo, A. Lucca Fabris, M. A. Cappelli, 'Ion plume investigation of a Hall effect thruster operating with Xe/N2 and Xe/air mixtures', J. Phys. D 52, 464003 (2019)",
+   "doi": "10.1088/1361-6463/ab36c5",
+   "license": "IOP",
+   "sha256": null,
+   "urls_accessed": [
+    "https://api.crossref.org/works/10.1088/1361-6463/ab36c5"
+   ]
+  },
+  "GURCIULLO2020": {
+   "access": "open_full_text_restrictive_license",
+   "access_note": "Surrey Open Research, CC BY-NC-SA 4.0 (cover page); numbers and short statements only; locators are printed page numbers (pdf page = printed + 25)",
+   "citation": "A. Gurciullo, 'Electric propulsion technologies for enabling the use of molecular propellants', PhD thesis, University of Surrey (2020)",
+   "doi": "10.15126/thesis.00850793",
+   "license": "CC BY-NC-SA 4.0",
+   "sha256": "085e514c9c5a2eddae5de628f83a61c4ceced05b980b2fd21524e56190186f4e",
+   "urls_accessed": [
+    "https://doi.org/10.15126/thesis.00850793",
+    "https://openresearch.surrey.ac.uk/esploro/outputs/doctoral/Electric-propulsion-technologies-for-enabling-the/99511796902346"
+   ]
+  },
+  "HRUBY2022": {
+   "access": "not_accessed",
+   "access_note": "not located in an open copy during this audit; content taken only as reported by ANDREUSSI2022",
+   "citation": "V. Hruby, K. Hohman, J. Szabo, 'Air Breathing Hall Effect Thruster Design Studies and Experiments', IEPC-2022-446 (2022)",
+   "doi": null,
+   "license": "unknown",
+   "sha256": null,
+   "urls_accessed": []
+  },
+  "MARCHIONI2020": {
+   "access": "open_full_text_restrictive_license",
+   "access_note": "Open institutional repository; CC BY-NC-ND 3.0: cited for numbers and short factual statements only, never redistributed. Text read from the copy downloaded by the repository ECHT audit (sha256 below = the audit's pin).",
+   "citation": "F. Marchioni, 'Design and Performance Measurements of a Long Channel Hall Thruster for Air-Breathing Electric Propulsion', MSc thesis, Politecnico di Torino / Stanford (2020)",
+   "doi": null,
+   "license": "CC BY-NC-ND 3.0",
+   "sha256": "d3b3ea9927792fedafaec013a9b0db169aeea6901a314933adfc425b9c9d7652",
+   "urls_accessed": [
+    "https://webthesis.biblio.polito.it/14618/"
+   ]
+  },
+  "MARCHIONI2021": {
+   "access": "abstract_only",
+   "access_note": "paywalled (publisher 403); abstract only, as recorded by the repository ECHT audit",
+   "citation": "F. Marchioni, M. A. Cappelli, 'Extended channel Hall thruster for air-breathing electric propulsion', J. Appl. Phys. 130, 053306 (2021)",
+   "doi": "10.1063/5.0048283",
+   "license": "publisher",
+   "sha256": null,
+   "urls_accessed": [
+    "https://api.crossref.org/works/10.1063/5.0048283"
+   ]
+  },
+  "MOSKOVITZ2026": {
+   "access": "open_full_text",
+   "access_note": "several inline symbols are lost in the PDF text layer; values used here are those legible in tables/text",
+   "citation": "J. A. Moskovitz, M. Rubanovich, W. P. Brabston, D. Lev, M. L. R. Walker, V. Balabanov, 'Performance comparison and analysis of low-power hall thruster operation on atomic and molecular propellants', J. Electr. Propuls. 5:32 (2026)",
+   "doi": "10.1007/s44205-026-00199-5",
+   "license": "CC BY 4.0",
+   "sha256": "44954c17649b9beb62b2e3112791d6a0b22c957be70901cb8804a9aa549f918b",
+   "urls_accessed": [
+    "https://link.springer.com/content/pdf/10.1007/s44205-026-00199-5.pdf"
+   ]
+  },
+  "MUNRO2023": {
+   "access": "abstract_only",
+   "access_note": "CC BY 4.0 per Crossref, but ScienceDirect and the Southampton ePrints copy answered 403 to automated access; abstract (OpenAlex) only. Statements on N2 ignition and component failure are second-hand via MOSKOVITZ2026",
+   "citation": "T. F. Munro-O'Brien, C. N. Ryan, 'Performance of a low power Hall effect thruster with several gaseous propellants', Acta Astronaut. 206:257-273 (2023)",
+   "doi": "10.1016/j.actaastro.2023.01.033",
+   "license": "CC BY 4.0",
+   "sha256": null,
+   "urls_accessed": [
+    "https://api.openalex.org/works/doi:10.1016/j.actaastro.2023.01.033"
+   ]
+  },
+  "REPO_ECHT_AUDIT": {
+   "access": "repository_audit_file",
+   "access_note": "frozen repository files (sha256 recorded in meta)",
+   "citation": "Repository ECHT-N2 evidence audit v1 (values from MARCHIONI2020 Tables 6.1-6.3, Figs. 4.7/4.8) and the ECHT-N2 status disposition (STATUS.json: HISTORICAL_UNSUPPORTED, not score-bearing, not a transport discriminator)",
+   "doi": null,
+   "license": "repository",
+   "repository_files": [
+    "hallthruster_bridge/identification/echt_n2/echt_n2_evidence_audit_v1.json",
+    "hallthruster_bridge/identification/echt_n2/echt_table_checks_v1.json",
+    "hallthruster_bridge/identification/echt_n2/STATUS.json",
+    "hallthruster_bridge/identification/echt_n2/ECHT_N2_EVIDENCE_STATUS.md",
+    "docs/EVIDENCE.md"
+   ],
+   "sha256": null,
+   "urls_accessed": []
+  },
+  "REPO_P5_N2_AUDIT": {
+   "access": "repository_audit_file",
+   "access_note": "frozen repository files (sha256 recorded in meta)",
+   "citation": "Repository audit of the P5-N2 measurements (values from BRABSTON2025 Table 2, Table 5, Figs. 5, 8-10)",
+   "doi": null,
+   "license": "repository",
+   "repository_files": [
+    "hallthruster_bridge/identification/brabston_p5_n2_measurement_audit_v1.json",
+    "hallthruster_bridge/identification/p5_n2_measurement_audit_findings_v1.json",
+    "docs/EVIDENCE.md"
+   ],
+   "sha256": null,
+   "urls_accessed": []
+  },
+  "SEMENKIN1995": {
+   "access": "open_full_text",
+   "access_note": "scanned proceedings; figure data are not legible in the text layer",
+   "citation": "A. V. Semenkin, G. O. Chislov, 'Study of anode layer thruster operation with gas mixtures', IEPC-95-78 (1995)",
+   "doi": null,
+   "license": "ERPS",
+   "sha256": "b566bb807016f0ba39bb7612ce31e92e8848cbdaa5d9686e12609f16a60f7935",
+   "urls_accessed": [
+    "https://electricrocket.org/IEPC/IEPC1995-78.pdf"
+   ]
+  },
+  "SHABSHELOWITZ2014": {
+   "access": "not_accessed",
+   "access_note": "listed green OA (Deep Blue) but the repository answered 403 to automated access; content taken only as reported by ANDREUSSI2022",
+   "citation": "A. Shabshelowitz, A. D. Gallimore, P. Y. Peterson, 'Performance of a Helicon Hall Thruster Operating with Xenon, Argon, and Nitrogen', J. Propuls. Power 30(3):664-671 (2014)",
+   "doi": "10.2514/1.B35041",
+   "license": "unknown",
+   "sha256": null,
+   "urls_accessed": [
+    "https://hdl.handle.net/2027.42/140449"
+   ]
+  }
+ },
+ "status": "EVIDENCE AUDIT ONLY. Nothing simulated, scored, tuned or admitted. No architecture conclusion."
+}

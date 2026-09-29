@@ -1,0 +1,23 @@
+{
+ "schema": "owner_disposition_v1",
+ "id": "od_hardware_pivot",
+ "decided_by": "owner",
+ "decided_utc": "2026-09-27",
+ "decision": "APPROVED",
+ "statement": "Pivot the decisive-thrust question from literature/simulation to a controlled common-hardware experiment while modelling continues in parallel. Two separate decisions: (1) absolute thrust feasibility on the actual atmospheric feed within P_bus < 1.5 kW (T_measured; sustained >= 12 mN; the registered 25 mN capability condition); (2) architecture discrimination via R_arch = (T/P_bus)_{RF|ECR+Hall} / (T/P_bus)_{Hall-only} on one Hall accelerator H-1, one cathode C-1, same magnetic circuit, V_d, feed state, facility and diagnostics, changing only the pre-ionizer (HW-0 / HW-RF / HW-ECR). Sequence: Phase 1 Hall-only sustainment knee on N2 first; Phase 2 common-condition three-arm comparison; Phase 3 absolute thrust demonstration across the representative feed envelope. Experiment path: resolve D-01..D-15 -> LOCK-1 -> hardware and instrumentation -> S1 qualification -> LOCK-2 from measured S1 noise/calibration -> only then score-bearing comparison. Do not simplify the paired design. Part of the new measurements are pre-registered, before any data, as held-out Hall-transport validation evidence (new evidence; P5-N2 v1 unchanged and INCONCLUSIVE).",
+ "workstreams": {
+  "W1_feed_state_closure": "180/200/230 km atmosphere -> intake -> compressor -> buffer -> valve-outlet test points {m_dot_s, P_feed, T_feed, x_s}; ground-reproducible (MFC, pressure control, bottles) but representing a sourced flight-design condition, never an arbitrary lab flow",
+  "W2_lock1": "resolve D-01..D-15 (owner decides; the team prepares recommendations) and produce LOCK-1",
+  "W3_hardware_definition": "same Hall accelerator and cathode + removable RF and ECR pre-ionizer modules",
+  "W4_instrumentation": "thrust stand, bus-power metering, I_d, flow, pressure, temperature, B(z), stability, species/divergence diagnostics",
+  "W5_validation_prereg": "decide before any data which measurements are held-out Hall-transport validation evidence (I_d, T, B(z) at actual coil currents, feed state, species fractions, ion energy, divergence, T_e/n_e if feasible, oscillations, ignition/extinction limits)",
+  "W6_o4_s12": "finish O4 attempt 2 and the S12 disposition matrix in parallel; never delays hardware preparation",
+  "W7_o_o2_chemistry": "continue toward the actual atmospheric composition (O/O2), not N2-only"
+ },
+ "also_decided": {
+  "dx5_closed_access_sources": "APPROVED: obtain the D-X5-identified closed-access primaries through legitimate institutional/library or purchase access if the cost is reasonable; small parallel evidence task; never holds the experiment",
+  "dx5_p4_dissociation": "DEFERRED (not the limiting reason Question A remains closed)",
+  "hardening_h1_h3": "continues in the background; not on the scientific critical path"
+ },
+ "unchanged": ["Question A = A-NO", "P5-N2 v1 INCONCLUSIVE permanently", "credible set empty; no admission from literature or simulation", "no contact with persons or labs by the team; facility / supplier contact is the owner's channel"]
+}

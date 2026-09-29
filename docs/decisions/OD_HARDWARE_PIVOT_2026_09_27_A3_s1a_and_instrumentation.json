@@ -1,0 +1,24 @@
+{
+ "schema": "owner_disposition_addendum_v1",
+ "amends": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+ "amends_sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+ "decided_by": "owner",
+ "decided_utc": "2026-09-27",
+ "what": "owner review of a92a856: instrumentation open questions closed; S1a engineering path; state correction",
+ "decisions": {
+  "metrology_lab": "ISO/IEC 17025-accredited laboratory with the relevant measurement explicitly inside its accredited scope (in India normally an appropriate NABL-accredited scope). Witness mass: SI-traceable microbalance calibration with OIML E2 or better certified reference masses where appropriate (OIML R111 certificates and traceability). Profilometry: calibration/verification with traceable surface standards consistent with ISO 25178-700. Quantitative SEM/EDS: documented quantitative method consistent with ASTM E1508. XPS energy-scale calibration per ISO 15472 or equivalent traceable procedure. No commercial lab is named yet: W4 issues the measurement specification first, then a lab satisfying it is procured.",
+  "cathode_temperature": "Both where mechanically possible: a cathode-tube thermocouple is mandatory (robust, continuous); add an emitter pyrometer if there is a defensible line of sight and emissivity treatment. The tube thermocouple is never labelled emitter temperature; if pyrometry is impossible, emitter temperature is reported as unmeasured.",
+  "near_cathode_rga": "Quantitative for the AO/lifetime programme (at least O2/N2/H2O partial pressures or calibrated response). For S1a engineering checkout an uncalibrated RGA may be used qualitatively, but such data cannot support an exposure-dose or lifetime claim. Before score-bearing or life use, calibrate the relevant species or establish traceable sensitivity factors.",
+  "ins_p12_coverage_factor": "Planning coverage factor k = 2 for the witness-holder non-interference demonstration (the ~95 % expanded-uncertainty convention, not a substitute for the measured uncertainty model); with low effective degrees of freedom use the evaluated coverage factor and document it.",
+  "instrumentation_version": "Keep v1-r2 (additive changes). v2 is reserved for a breaking schema change, changed measurement semantics, changed acceptance rules or incompatible id meaning."
+ },
+ "state_correction": "N1-N5 (fo_ao_lifetime_register, fo_hallmap_schema_v2_registry, fo_magnet_coil_qualification, fo_s1_readiness_gate, fo_repo_decisions_batch) are VERIFIED, not building; the instrumentation integration is merged on top of them (a92a856).",
+ "next_execution": {
+  "W3_integration_review": "one bounded W3 integration repair/review against N1/N3/W4 - no H-1 redesign; verify H-1 incorporates: replaceable serialized anode/distributor, 4-wire anode-resistance leads, replaceable/fiducial exit wall rings, witness-coupon locations, near-cathode RGA port, cathode temperature provision (tube thermocouple + pyrometer view where possible), coil hot-spot thermocouples, 4-wire winding-temperature measurement, B(z) access, AO-facing magnetic-material coupons; anything missing added through the producer -> consumer re-pin chain",
+  "S1a_engineering_gate": "a separate gate answering 'can we safely and usefully begin non-score-bearing engineering qualification?'; N4 (S1_NOT_READY 0/8) is not modified. S1a requires only the hardware needed for calibration/shakedown, safe operational limits, released ground-qualification feed points, frozen calibration procedures and an engineering facility; it explicitly forbids held-out H-1 physics outputs from leaking into W5",
+  "W4_capability_demonstration_prep": "prepare the actual-hardware capability demonstration: thrust-stand force calibration/repeatability, installation/reinstallation reproducibility, power-channel calibration, MFC behaviour across the required low-flow range, B(z) measurement repeatability, DAQ synchronization, temperature-channel performance",
+  "DI_1_4_compressor_downselect": "separate engineering critical path: real compressor performance data to obtain m_dot, P_feed, T_feed, x_s and P_compressor at the nine atmospheric cases; the 0.030-3.14 mg/s envelope remains a candidate range, not a flight truth",
+  "O4_S12": "5/7 scored; the two attempt-3 di_lower_nel_wang escalations run to completion -> structural audit -> freeze -> score once individually; then build S12 immediately and bring the matrix to owner review before any dispositions; facility relaunch follows S12, non-gating"
+ },
+ "principle": "additional value should increasingly come from real calibration, hardware and facility evidence, not from more architecture documents"
+}

@@ -1,0 +1,767 @@
+"""Checks for the H-1 lifetime / atomic-oxygen degradation register (fo_ao_lifetime_register).
+
+Covers: deterministic build (--check), schema conformance (small local validator; no jsonschema dependency), evidence
+discipline (every numeric value sourced and classed; life numbers only measured / other-device literature / TBD; no
+screening candidate or Hall-closure life), referential integrity (mechanisms <-> requirements <-> coupons <-> interface
+table), the derived AO environment against the frozen atmosphere, and the 314 h datum against the hall-sustainment
+matrix when that file is present. v5 (current; pin-only re-issue of v4): re-verification of every W3/W4 reference
+against the merged W3 (which now pins W4 through an immutable snapshot) and W4 v1-r2 files, read as sha256-pinned
+immutable git blobs at a named commit (never the live files), the control-C5 adoption check with the W4 c5_adoption
+dispositions, and the check of W3's integration review of register v3. v1 (pinned by W3 SRC-AOL), v2 (pinned by W4
+v1-r2), v3 (pinned by W3 SRC-AOL-V3) and v4 are historical records: byte-identical and still reproduced by the builder
+(v2, v3 and v4 from their pinned inputs in git history). Does not require any in-flight lane (W3/W4 are merged in the base).
+"""
+import csv
+import importlib.util
+import json
+import math
+import os
+import re
+import subprocess
+import sys
+
+import pytest
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+DIR = os.path.join(ROOT, "docs", "experiments", "lifetime_ao")
+BUILDER = os.path.join(DIR, "build_ao_lifetime_register.py")
+JSON_V1_PATH = os.path.join(DIR, "ao_lifetime_register_v1.json")
+SCHEMA_V1_PATH = os.path.join(DIR, "ao_lifetime_register_v1.schema.json")
+MD_V1_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER.md")
+JSON_V2_PATH = os.path.join(DIR, "ao_lifetime_register_v2.json")
+SCHEMA_V2_PATH = os.path.join(DIR, "ao_lifetime_register_v2.schema.json")
+MD_V2_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER_v2.md")
+JSON_V3_PATH = os.path.join(DIR, "ao_lifetime_register_v3.json")
+SCHEMA_V3_PATH = os.path.join(DIR, "ao_lifetime_register_v3.schema.json")
+MD_V3_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER_v3.md")
+JSON_V4_PATH = os.path.join(DIR, "ao_lifetime_register_v4.json")
+SCHEMA_V4_PATH = os.path.join(DIR, "ao_lifetime_register_v4.schema.json")
+MD_V4_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER_v4.md")
+JSON_PATH = os.path.join(DIR, "ao_lifetime_register_v5.json")
+SCHEMA_PATH = os.path.join(DIR, "ao_lifetime_register_v5.schema.json")
+MD_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER_v5.md")
+V1_SHA256 = "237c99aa8ee582b520d17aecff262020d79f3776f47af69b9c46185a230a2e12"
+V2_SHA256 = "e922aff24a49c4dbf4b192548c6fe26caf20a20249c2c7b4c6ee7212af9e095b"
+V3_SHA256 = "4dea755df9252486f6e2234aacba17f9346c33fad722e6e562fd61cd404d6866"
+V4_SHA256 = "1afc668fa82528b55f0e3cdb60cd718e3ca8dcbb4b2769afd124983aa03dd3e8"
+W4_PINS = os.path.join(ROOT, "docs", "experiments", "instrumentation", "pinned_inputs.json")
+W3_JSON = os.path.join(ROOT, "docs", "experiments", "hardware", "hardware_requirements_v1.json")
+W4_JSON = os.path.join(ROOT, "docs", "experiments", "instrumentation", "instrumentation_definition_v1.json")
+
+EVIDENCE_CLASSES = {"measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"}
+
+
+@pytest.fixture(scope="module")
+def reg():
+    with open(JSON_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def schema():
+    with open(SCHEMA_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def reg_v4():
+    with open(JSON_V4_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def schema_v4():
+    with open(SCHEMA_V4_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def reg_v3():
+    with open(JSON_V3_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def schema_v3():
+    with open(SCHEMA_V3_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def reg_v2():
+    with open(JSON_V2_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def schema_v2():
+    with open(SCHEMA_V2_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def reg_v1():
+    with open(JSON_V1_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def schema_v1():
+    with open(SCHEMA_V1_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _builder_module():
+    spec = importlib.util.spec_from_file_location("build_ao_lifetime_register", BUILDER)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_PINNED_CACHE = {}
+
+
+def _pinned_input(rel):
+    """A W3 / W4 input of the current register exactly as it pins it: the immutable git blob at the v5 inputs commit
+    (never the live file), checked against the v5 pin."""
+    if rel not in _PINNED_CACHE:
+        import hashlib
+        mod = _builder_module()
+        raw = mod._read_at_commit(rel, mod.V5_INPUTS_COMMIT)
+        assert hashlib.sha256(raw).hexdigest() == mod.MERGED_PINS_V5[rel], rel
+        _PINNED_CACHE[rel] = json.loads(raw.decode("utf-8"))
+    return _PINNED_CACHE[rel]
+
+
+W3_JSON_REL = "docs/experiments/hardware/hardware_requirements_v1.json"
+W4_JSON_REL = "docs/experiments/instrumentation/instrumentation_definition_v1.json"
+
+
+# ---- minimal JSON-schema validator (subset used by the schema) -------------------------------------------------------
+_TYPES = {"object": dict, "array": list, "string": str, "boolean": bool, "null": type(None)}
+
+
+def _is_type(v, t):
+    if t == "integer":
+        return isinstance(v, int) and not isinstance(v, bool)
+    if t == "number":
+        return isinstance(v, (int, float)) and not isinstance(v, bool)
+    return isinstance(v, _TYPES[t])
+
+
+# Keywords this validator implements. Annotation-only keywords are accepted without checking. Any other keyword in
+# the schema makes the test FAIL (so a keyword outside the subset can never go silently unchecked).
+_SUPPORTED_KEYWORDS = {"$ref", "type", "const", "enum", "pattern", "minimum", "maximum", "required", "properties",
+                       "additionalProperties", "minItems", "items"}
+_ANNOTATION_KEYWORDS = {"$schema", "$id", "$defs", "title", "description"}
+
+
+def _schema_keywords(s, out, in_properties=False):
+    if isinstance(s, dict):
+        for k, v in s.items():
+            if in_properties:
+                _schema_keywords(v, out)
+                continue
+            out.add(k)
+            if k in ("properties", "$defs"):
+                _schema_keywords(v, out, in_properties=True)
+            elif k in ("items", "additionalProperties") and isinstance(v, dict):
+                _schema_keywords(v, out)
+    return out
+
+
+def _validate(v, s, root, path="$"):
+    errs = []
+    if "$ref" in s:
+        ref = s["$ref"]
+        assert ref.startswith("#/$defs/"), ref
+        return _validate(v, root["$defs"][ref.split("/")[-1]], root, path)
+    if "type" in s:
+        ts = s["type"] if isinstance(s["type"], list) else [s["type"]]
+        if not any(_is_type(v, t) for t in ts):
+            return [f"{path}: type {type(v).__name__} not in {ts}"]
+    if "const" in s and v != s["const"]:
+        errs.append(f"{path}: {v!r} != const {s['const']!r}")
+    if "enum" in s and v not in s["enum"]:
+        errs.append(f"{path}: {v!r} not in enum")
+    if "pattern" in s and isinstance(v, str) and not re.search(s["pattern"], v):
+        errs.append(f"{path}: {v!r} does not match {s['pattern']}")
+    if "minimum" in s and isinstance(v, (int, float)) and v < s["minimum"]:
+        errs.append(f"{path}: below minimum")
+    if "maximum" in s and isinstance(v, (int, float)) and v > s["maximum"]:
+        errs.append(f"{path}: above maximum")
+    if isinstance(v, dict):
+        for k in s.get("required", []):
+            if k not in v:
+                errs.append(f"{path}: missing {k}")
+        props = s.get("properties", {})
+        ap = s.get("additionalProperties", True)
+        for k, vv in v.items():
+            if k in props:
+                errs += _validate(vv, props[k], root, f"{path}.{k}")
+            elif ap is False:
+                errs.append(f"{path}: unexpected key {k}")
+            elif isinstance(ap, dict):
+                errs += _validate(vv, ap, root, f"{path}.{k}")
+    if isinstance(v, list):
+        if "minItems" in s and len(v) < s["minItems"]:
+            errs.append(f"{path}: fewer than {s['minItems']} items")
+        if "items" in s:
+            for i, vv in enumerate(v):
+                errs += _validate(vv, s["items"], root, f"{path}[{i}]")
+    return errs
+
+
+# ---- tests -----------------------------------------------------------------------------------------------------------
+def test_build_is_deterministic_and_up_to_date():
+    r = subprocess.run([sys.executable, BUILDER, "--check"], cwd=ROOT, capture_output=True, text=True, timeout=60)
+    assert r.returncode == 0, r.stdout + r.stderr
+
+
+def test_builder_is_pure_and_not_wired():
+    src = open(BUILDER, encoding="utf-8").read()
+    assert not re.search(r"^\s*(import|from)\s+(abep_sim|hallthruster_bridge)", src, re.M)
+    assert "archengine" not in re.findall(r"^\s*(?:import|from)\s+(\S+)", src, re.M)
+
+
+def test_schema_uses_only_supported_keywords(schema, schema_v4, schema_v3, schema_v2, schema_v1):
+    for sch in (schema, schema_v4, schema_v3, schema_v2, schema_v1):
+        used = _schema_keywords(sch, set())
+        unknown = used - _SUPPORTED_KEYWORDS - _ANNOTATION_KEYWORDS
+        assert not unknown, f"schema keywords not implemented by the local validator: {sorted(unknown)}"
+
+
+def test_local_validator_rejects_bad_documents(reg, schema):
+    bad = json.loads(json.dumps(reg))
+    bad["unexpected_top_level"] = 1
+    del bad["derived"]["wall_sputter_index"]["entries"][0]["evidence_class"]
+    bad["interface_table"]["rows"][0]["related_ids"][0]["verdict"] = "UNVERIFIED_UNMERGED_DRAFT"
+    errs = "\n".join(_validate(bad, schema, schema))
+    assert "unexpected key unexpected_top_level" in errs
+    assert "missing evidence_class" in errs
+    assert "not in enum" in errs
+
+
+def test_schema_conformance(reg, schema, reg_v4, schema_v4, reg_v3, schema_v3, reg_v2, schema_v2, reg_v1, schema_v1):
+    errs = _validate(reg, schema, schema)
+    assert not errs, "\n".join(errs[:30])
+    errs = _validate(reg_v4, schema_v4, schema_v4)
+    assert not errs, "\n".join(errs[:30])
+    errs = _validate(reg_v3, schema_v3, schema_v3)
+    assert not errs, "\n".join(errs[:30])
+    errs = _validate(reg_v2, schema_v2, schema_v2)
+    assert not errs, "\n".join(errs[:30])
+    errs = _validate(reg_v1, schema_v1, schema_v1)
+    assert not errs, "\n".join(errs[:30])
+
+
+def test_status_draft_and_milestones(reg):
+    assert reg["status"] == "DRAFT_FOR_OWNER_REVIEW"
+    assert set(reg["milestones"]["supports"]) <= {"A", "B", "C"} and reg["milestones"]["supports"]
+    assert reg["milestones"]["to_reach_next"]
+    assert all(r["status"] == "PROPOSED" for r in reg["requirements"])
+    assert all(p["status"].startswith("PROPOSED") for p in reg["proposed_thresholds"])
+
+
+def test_required_mechanisms_covered(reg):
+    text = " ".join(m["title"].lower() for m in reg["mechanisms"])
+    for needle in ("anode", "channel-wall physical sputtering", "cathode emitter", "magnetic", "insulation",
+                   "coatings", "external atomic-oxygen"):
+        assert needle in text, needle
+    species = {s for m in reg["mechanisms"] for s in m["species"]}
+    for sp in ("N+", "N2+", "O+", "O2+"):
+        assert sp in species
+    regimes = {m["energy_regime"] for m in reg["mechanisms"]}
+    assert {"thermal_neutral_ram_AO", "sheath_accelerated_ions"} <= regimes
+
+
+def test_every_mechanism_complete(reg):
+    for m in reg["mechanisms"]:
+        re_ = m["required_experiment"]
+        for k in ("ground_ao_source", "in_thruster_witness", "post_test_metrology"):
+            assert re_[k].strip(), (m["id"], k)
+        assert m["measurable_quantities"], m["id"]
+        assert m["linked_requirements"], m["id"]
+
+
+def test_evidence_values_are_sourced_and_classed(reg):
+    for m in reg["mechanisms"]:
+        for e in m["evidence"]:
+            assert e["evidence_class"] in EVIDENCE_CLASSES
+            assert 1 <= e["evidence_level"] <= 7
+            assert e["locator"].strip()
+            if e["source_id"] == "REPO":
+                assert os.path.exists(os.path.join(ROOT, e["repo_path"])), e["repo_path"]
+            else:
+                assert e["source_id"] in reg["sources"], e["source_id"]
+                src = reg["sources"][e["source_id"]]
+                # values quoted from a source must come from a file this lane actually opened
+                if e["value"] is not None:
+                    assert src["access"] == "open_full_text" and src["sha256_of_accessed_file"], e["source_id"]
+                    assert e["verified_by_this_lane"] is True
+            assert "NOT transferred" in e["transfer"]
+
+
+def test_life_numbers_c6(reg):
+    """Control C6: no H-1 life from a closure; life = measured on hardware, other-device literature (labelled) or TBD."""
+    for m in reg["mechanisms"]:
+        ln = m["life_number"]
+        assert ln["status"] in {"measured_vyovrinda_hardware", "literature_other_device", "TBD"}
+        # nothing is measured on H-1 yet: H-1 does not exist
+        assert ln["status"] != "measured_vyovrinda_hardware"
+        if ln["status"] == "TBD":
+            assert ln["value"] is None and ln["statement"].startswith(("TBD", "not a life"))
+        else:
+            assert ln["value"] is not None and ln["device"] and ln["source_id"] in reg["sources"]
+            assert ln["evidence_class"] in EVIDENCE_CLASSES and ln["locator"]
+            assert "H-1" not in ln["device"]
+    blob = json.dumps(reg)
+    assert "sgb-screen-0" not in blob.replace("sgb-screen-*", "")
+    assert not re.search(r"15,?000 h (life|lifetime) (is|of H-1)", blob)
+
+
+def test_314h_verified_and_consistent_with_repo(reg):
+    m01 = next(m for m in reg["mechanisms"] if m["id"] == "AOL-M01")
+    e = next(x for x in m01["evidence"] if x["value"] == 314)
+    assert e["source_id"] == "ANDREUSSI2022" and e["locator"].startswith("Page 24 of 57")
+    assert e["verified_by_this_lane"] and e["evidence_level"] == 5
+    assert reg["sources"]["ANDREUSSI2022"]["doi"] == "10.1007/s44205-022-00024-9"
+    hs = os.path.join(ROOT, "docs/evidence/hall_sustainment/hall_sustainment_matrix.json")
+    if not os.path.exists(hs):
+        pytest.skip("hall-sustainment matrix not present")
+    d = json.load(open(hs, encoding="utf-8"))
+    e07 = next(x for x in d["entries"] if x["id"] == "E07")
+    q = next(x for x in e07["quantities"] if x["name"] == "steady duration before first flame-out")
+    assert q["value"] == 314 and q["locator"] == "Page 24 of 57" and q["source"] == "ANDREUSSI2022"
+
+
+def test_requirement_integrity(reg):
+    req_ids = [r["id"] for r in reg["requirements"]]
+    assert len(req_ids) == len(set(req_ids))
+    mech_ids = {m["id"] for m in reg["mechanisms"]}
+    for r in reg["requirements"]:
+        assert set(r["mechanisms"]) <= mech_ids, r["id"]
+        assert r["verification"].strip() and r["rationale"].strip()
+    for m in reg["mechanisms"]:
+        assert set(m["linked_requirements"]) <= set(req_ids), m["id"]
+    # every witness coupon is also a requirement, and vice versa for the WC category
+    wc = {w["id"] for w in reg["witness_coupons"]}
+    assert wc == {r["id"] for r in reg["requirements"] if r["category"] == "witness_coupon"}
+    for w in reg["witness_coupons"]:
+        assert set(w["mechanisms"]) <= mech_ids
+    # primary-output categories required by the lane brief
+    cats = {r["category"] for r in reg["requirements"]}
+    assert {"witness_coupon", "replaceable_component", "cathode_exposure", "post_test_metrology"} <= cats
+
+
+def test_interface_table_covers_every_requirement(reg):
+    rows = reg["interface_table"]["rows"]
+    covered = {r["requirement"] for r in rows}
+    assert covered == {r["id"] for r in reg["requirements"]}
+    adopters = {r["adopter"] for r in rows}
+    assert {"W3", "W4"} <= adopters
+
+
+def test_no_unsourced_number_in_requirements(reg):
+    """Requirements carry no hidden physical values: numbers only as ids, phases, pinned quotes or explicit TBD."""
+    allowed = re.compile(r"AOL-[A-Z]{2}-\d{2}|AOL-M\d{2}|H-1'?|C-1|W\d|HW-[A-Z0-9-]+|INS-\d+|G\d{2}|U\d{2}|H\d|"
+                         r"S1|LOCK-[12]|D-15-B|IP-DN|4-wire|0 W|p\. \d+|Eqs?\. \d+(-\d+)?|2 %|314 h|60-100 mtorr|"
+                         r"30-600 degC|NASA/TM-2006-214482|1-3|15,000 h|v1|C[1-6]|sgb-screen-\*|2011|0-D|HW-0|"
+                         r"H2O|O2|N2|B2O3|SiO2|LaB6|[Ll]ane \d+|PPS1350|gate \d|DEGROH2006|MISSE 2|schema v2|sections? \d+(\.\d+)?")
+    for r in reg["requirements"]:
+        txt = allowed.sub("", r["requirement"] + " " + r["rationale"] + " " + r["verification"])
+        stray = re.findall(r"\d+(?:\.\d+)?", txt)
+        assert not stray, (r["id"], stray, txt)
+
+
+def test_ao_environment_reproduces_from_frozen_atmosphere(reg):
+    ao = reg["derived"]["ao_environment"]
+    csv_path = os.path.join(ROOT, ao["inputs"]["atmosphere"]["path"])
+    rows = {(float(r["alt_km"]), float(r["f107"])): r for r in csv.DictReader(open(csv_path, newline=""))}
+    m_o = 16.0 * 1.66053906660e-27
+    for t in ao["table"]:
+        r = rows[(float(t["alt_km"]), float(t["f107"]))]
+        n_o = float(r["rho"]) * float(r["fO"]) / m_o
+        v = math.sqrt(3.986004418e14 / (6371.0e3 + t["alt_km"] * 1e3))
+        assert math.isclose(t["n_O_m3"], n_o, rel_tol=1e-5)
+        assert math.isclose(t["V_orb_m_s"], v, rel_tol=1e-5)
+        assert math.isclose(t["ram_flux_atoms_cm2_s"], n_o * v * 1e-4, rel_tol=1e-3)
+        assert math.isclose(t["fluence_rfp_mission_26000h_atoms_cm2"], n_o * v * 1e-4 * 26000 * 3600, rel_tol=1e-3)
+        assert 4.5 < t["E_ram_O_eV"] < 5.5
+    assert {t["alt_km"] for t in ao["table"]} == {180, 200, 230}
+    assert ao["evidence_class"] == "model-derived"
+    assert "ILLUSTRATIVE" in ao["illustrative_recession_equivalents"]["status"]
+
+
+def test_builder_constants_match_repository():
+    mod = _builder_module()
+    spec = importlib.util.spec_from_file_location("abep_constants", os.path.join(ROOT, "abep_sim", "constants.py"))
+    c = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(c)
+    assert mod.AMU_KG == c.AMU and mod.MU_EARTH_M3_S2 == c.MU_EARTH and mod.R_EARTH_M == c.R_EARTH
+    assert mod.E_CHARGE_C == c.E_CHARGE and mod.M_O_AMU * mod.AMU_KG == c.M_SPECIES["O"]
+    assert mod.RFP_MISSION_H == c.RFP.mission_hours and mod.RFP_FIRING_H == c.RFP.ignition_hours
+
+
+def test_ao_environment_matches_atmosphere_module(reg):
+    pytest.importorskip("pandas")
+    from abep_sim.atmosphere import atmosphere
+    t = next(x for x in reg["derived"]["ao_environment"]["table"] if x["alt_km"] == 200 and x["f107"] == 150.0)
+    a = atmosphere(200, "mean")
+    assert math.isclose(a["n_O"], t["n_O_m3"], rel_tol=1e-5)
+    assert math.isclose(a["V"], t["V_orb_m_s"], rel_tol=1e-5)
+
+
+def test_frozen_atmosphere_pin_enforced(tmp_path, monkeypatch):
+    mod = _builder_module()
+    monkeypatch.setattr(mod, "ATMOSPHERE_CSV_SHA256", "0" * 64)
+    with pytest.raises(RuntimeError, match="sha256"):
+        mod.compute_ao_environment()
+
+
+def test_markdown_mentions_c5_and_primary_output():
+    for path in (MD_PATH, MD_V4_PATH, MD_V3_PATH, MD_V2_PATH, MD_V1_PATH):
+        md = open(path, encoding="utf-8").read()
+        for s in ("control C5", "Witness coupons", "DRAFT", "AOL-WC-01", "AOL-RC-01", "AOL-CX-01", "AOL-PM-01"):
+            assert s in md, (path, s)
+    for path in (MD_PATH, MD_V4_PATH, MD_V3_PATH, MD_V2_PATH):
+        md = open(path, encoding="utf-8").read()
+        for s in ("Re-verification of the v1 draft references", "C5 adoption check", "Not adopted", V1_SHA256):
+            assert s in md, (path, s)
+    md = open(MD_PATH, encoding="utf-8").read()
+    for s in ("Partially adopted", V2_SHA256, "v1-r2", "W4 adopting ids"):
+        assert s in md, s
+    for s in (V3_SHA256, "SRC-AOL-V3", "W3 integration review of register v3", "owner addendum A3"):
+        assert s in md, s
+
+
+def test_degroh_p1_ao_energy_recorded(reg):
+    """DEGROH2006 printed p. 1 states 4.5 eV average ram impact energy (review statement citing its ref. [1])."""
+    note = reg["sources"]["DEGROH2006"]["note"]
+    assert "4.5 eV" in note and "p. 1" in note and "does not state the AO impact energy" not in note
+    flags = " ".join(reg["derived"]["ao_environment"]["flags"])
+    assert "4.5 eV" in flags and "NOT corrected" in flags
+    m09 = next(m for m in reg["mechanisms"] if m["id"] == "AOL-M09")
+    e = next(x for x in m09["evidence"] if x["value"] == 4.5)
+    assert e["source_id"] == "DEGROH2006" and e["locator"] == "p. 1" and e["evidence_level"] == 5
+    assert "AO energy there is not stated" not in json.dumps(reg)
+
+
+def test_ratio_and_recession_from_unrounded_fluence(reg):
+    ao = reg["derived"]["ao_environment"]
+    csv_path = os.path.join(ROOT, ao["inputs"]["atmosphere"]["path"])
+    rows = {(float(r["alt_km"]), float(r["f107"])): r for r in csv.DictReader(open(csv_path, newline=""))}
+    m_o = 16.0 * 1.66053906660e-27
+    fl = []
+    for t in ao["table"]:
+        r = rows[(float(t["alt_km"]), float(t["f107"]))]
+        v = math.sqrt(3.986004418e14 / (6371.0e3 + t["alt_km"] * 1e3))
+        f = float(r["rho"]) * float(r["fO"]) / m_o * v * 1e-4 * 26000 * 3600
+        fl.append(f)
+        assert math.isclose(t["ratio_to_misse2_fluence"], f / 8.43e21, rel_tol=1e-5)
+    rr = ao["illustrative_recession_equivalents"]
+    assert math.isclose(rr["mission_fluence_range_atoms_cm2"][0], min(fl), rel_tol=1e-5)
+    assert math.isclose(rr["mission_fluence_range_atoms_cm2"][1], max(fl), rel_tol=1e-5)
+    for row in rr["rows"]:
+        ey = row["misse2_erosion_yield_cm3_per_atom"]
+        assert math.isclose(row["illustrative_recession_um_at_min_mission_fluence"], ey * min(fl) * 1e4, rel_tol=5e-3)
+        assert math.isclose(row["illustrative_recession_um_at_max_mission_fluence"], ey * max(fl) * 1e4, rel_tol=5e-3)
+
+
+def test_wall_sputter_index_matches_lane32(reg):
+    wi = reg["derived"]["wall_sputter_index"]
+    db = json.load(open(os.path.join(ROOT, wi["input"]["path"]), encoding="utf-8"))
+    assert [e["entry_id"] for e in wi["entries"]] == [e["id"] for e in db["entries"]]
+    for ie, de in zip(wi["entries"], db["entries"]):
+        assert (ie["projectile"], ie["target"], ie["evidence_class"]) == (de["projectile"], de["target"],
+                                                                           de["evidence_class"])
+        assert ie["energy_min_eV"] == de["energy_range_eV"].get("min")
+        assert ie["energy_max_eV"] == de["energy_range_eV"].get("max")
+    # the headline statement of AOL-M02 matches the index: no N/O yield on BN, BN-SiO2 or SiC
+    for c in wi["coverage"]:
+        if c["projectile"] in ("N+", "N2+", "O+", "O2+") and c["target"] in ("BN-SiO2", "SiC"):
+            assert c["status"] == "none_located", c
+        if c["projectile"] in ("N+", "N2+", "O2+") and c["target"] == "BN":
+            assert c["status"] == "none_located", c
+    m02 = next(m for m in reg["mechanisms"] if m["id"] == "AOL-M02")
+    assert "derived.wall_sputter_index" in m02["energy_statement"]
+
+
+def test_wall_sputter_index_pin_enforced(monkeypatch):
+    mod = _builder_module()
+    monkeypatch.setattr(mod, "WALL_LIFE_DB_SHA256", "0" * 64)
+    with pytest.raises(RuntimeError, match="sha256"):
+        mod.compute_wall_sputter_index()
+
+
+def test_v1_every_draft_id_is_flagged_unverified(reg_v1):
+    reg = reg_v1
+    ud = reg["unmerged_draft_references"]
+    assert ud["status"] == "UNVERIFIED_UNMERGED_DRAFT"
+    blob = json.dumps({k: v for k, v in reg.items() if k != "unmerged_draft_references"})
+    found = set(re.findall(r"\b(?:HW-(?:H1|C1|MC|PIM|ELEC)-\d+|INS-\d+)\b", blob))
+    assert found <= set(ud["ids"]), found - set(ud["ids"])
+    for row in reg["interface_table"]["rows"]:
+        assert row["related_ids_status"] == ("UNVERIFIED_UNMERGED_DRAFT" if row["observed_related_ids"] else "none")
+    assert "UNVERIFIED_UNMERGED_DRAFT" in reg["interface_table"]["note"]
+
+
+# ---- v1 historical record / v2 re-verification ----------------------------------------------------------------------
+def _sha(path):
+    import hashlib
+    with open(path, "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+
+def test_v1_is_byte_identical_historical_record(reg, reg_v2):
+    assert _sha(JSON_V1_PATH) == V1_SHA256
+    assert reg_v2["supersedes"]["sha256"] == V1_SHA256 and reg_v2["version"] == "v2"
+    w3 = json.load(open(W3_JSON, encoding="utf-8"))
+    src = w3["references"]["SRC-AOL"]
+    assert src["path"] == "docs/experiments/lifetime_ao/ao_lifetime_register_v1.json" and src["sha256"] == V1_SHA256
+
+
+def test_v2_is_byte_identical_historical_record(reg, reg_v2):
+    """W4 v1-r2 pins v2; v3, v4 and v5 supersede it and v2 stays byte-identical."""
+    assert _sha(JSON_V2_PATH) == V2_SHA256
+    pins = json.load(open(W4_PINS, encoding="utf-8"))
+    assert pins["docs/experiments/lifetime_ao/ao_lifetime_register_v2.json"] == V2_SHA256
+    assert reg["version"] == "v5" and reg["supersedes"]["version"] == "v4"
+    assert reg["supersedes"]["sha256"] == V4_SHA256
+    assert [(h["version"], h["sha256"]) for h in reg["history"]] == [("v1", V1_SHA256), ("v2", V2_SHA256),
+                                                                     ("v3", V3_SHA256), ("v4", V4_SHA256)]
+    assert [c["version"] for c in reg["change_log"]] == ["v1", "v2", "v3", "v4", "v5"]
+    assert reg["change_log"][:2] == reg_v2["change_log"]
+    assert reg["merged_inputs"]["w4_pins_this_register"]["sha256"] == V2_SHA256
+
+
+def test_merged_inputs_pinned(reg):
+    """v5 pins W3 / W4 as immutable git blobs at a named commit; each pinned file reproduces from that blob."""
+    import hashlib
+    mod = _builder_module()
+    src = reg["merged_inputs"]["inputs_source"]
+    assert src["kind"] == "git_blob" and src["commit"] == mod.V5_INPUTS_COMMIT
+    files = {f["path"]: f["sha256"] for f in reg["merged_inputs"]["files"]}
+    assert files == mod.MERGED_PINS_V5
+    assert {W3_JSON_REL, W4_JSON_REL} <= set(files)
+    for p, h in files.items():
+        assert hashlib.sha256(mod._read_at_commit(p, src["commit"])).hexdigest() == h, p
+
+
+def test_merged_pin_enforced(monkeypatch):
+    mod = _builder_module()
+    monkeypatch.setitem(mod.MERGED_PINS_V5, mod.W4_JSON_REL, "0" * 64)
+    with pytest.raises(RuntimeError, match="sha256"):
+        mod.build_register_v5()
+
+
+def test_v2_v3_historical_inputs_are_not_the_working_tree():
+    """v2 and v3 must be rebuilt from their pinned inputs (git history), never from the moved working-tree W3/W4."""
+    mod = _builder_module()
+    assert mod.MERGED_PINS[mod.W4_JSON_REL] != mod.MERGED_PINS_V3[mod.W4_JSON_REL]
+    assert mod.MERGED_PINS[mod.W3_JSON_REL] == mod.MERGED_PINS_V3[mod.W3_JSON_REL]
+    assert mod.MERGED_PINS_V3[mod.W3_JSON_REL] != mod.MERGED_PINS_V4[mod.W3_JSON_REL]
+    assert mod.MERGED_PINS_V3[mod.W4_JSON_REL] != mod.MERGED_PINS_V4[mod.W4_JSON_REL]
+    for pins in (mod.MERGED_PINS, mod.MERGED_PINS_V3):
+        with pytest.raises(RuntimeError, match="sha256"):
+            mod._load_merged(pins, None)
+
+
+def test_v4_historical_inputs_and_v5_pin_only_repin():
+    """W3 re-pinned W4 via an immutable snapshot (bytes moved, no requirement changed): v4 is rebuilt from its inputs
+    at V4_INPUTS_COMMIT; v5 re-pins only W3 (W4 bytes unchanged) and reads both as git blobs, never the live files."""
+    import hashlib
+    mod = _builder_module()
+    for pins, commit in ((mod.MERGED_PINS_V4, mod.V4_INPUTS_COMMIT), (mod.MERGED_PINS_V5, mod.V5_INPUTS_COMMIT)):
+        for rel, h in pins.items():
+            assert hashlib.sha256(mod._read_at_commit(rel, commit)).hexdigest() == h, (rel, commit)
+    assert mod.MERGED_PINS_V4[mod.W3_JSON_REL] != mod.MERGED_PINS_V5[mod.W3_JSON_REL]
+    assert mod.MERGED_PINS_V4[mod.W3_MD_REL] != mod.MERGED_PINS_V5[mod.W3_MD_REL]
+    assert mod.MERGED_PINS_V4[mod.W4_JSON_REL] == mod.MERGED_PINS_V5[mod.W4_JSON_REL]
+    assert mod.MERGED_PINS_V4[mod.W4_MD_REL] == mod.MERGED_PINS_V5[mod.W4_MD_REL]
+    # W3 at the v5 commit pins W4 through the immutable snapshot whose bytes equal the W4 file v5 pins
+    w3 = _pinned_input(W3_JSON_REL)
+    snap = w3["references"]["SRC-INS-V1R2"]
+    assert snap["kind"] == "repository_snapshot" and snap["sha256"] == mod.MERGED_PINS_V5[mod.W4_JSON_REL]
+    assert hashlib.sha256(mod._read_at_commit(snap["path"], mod.V5_INPUTS_COMMIT)).hexdigest() == snap["sha256"]
+    with open(os.path.join(ROOT, "docs", "experiments", "lifetime_ao", "build_ao_lifetime_register.py"),
+              encoding="utf-8") as f:
+        src = f.read()
+    body = src[src.index("def build_register_v5"):src.index("# Markdown rendering")]
+    assert "None)" not in body   # v5 never reads the working-tree W3 / W4
+
+
+def test_v5_is_pin_only_reissue_of_v4(reg, reg_v4):
+    assert _sha(JSON_V4_PATH) == V4_SHA256 and reg_v4["version"] == "v4"
+    pin_layer = {"schema", "schema_file", "version", "hard_statements", "merged_inputs", "supersedes", "history",
+                 "change_log"}
+    assert {k for k in set(reg) | set(reg_v4) if reg.get(k) != reg_v4.get(k)} <= pin_layer
+    assert reg["hard_statements"][:-1] == reg_v4["hard_statements"][:-1]
+    assert reg["change_log"][:-1] == reg_v4["change_log"]
+    a = {k: v for k, v in reg["merged_inputs"].items() if k not in ("statement", "files", "commits", "inputs_source")}
+    b = {k: v for k, v in reg_v4["merged_inputs"].items() if k not in ("statement", "files", "commits")}
+    assert a == b
+
+
+def test_v3_is_byte_identical_historical_record(reg, reg_v3):
+    """W3 pins v3 as SRC-AOL-V3 (A3 integration review); v4 supersedes it and v3 stays byte-identical."""
+    assert _sha(JSON_V3_PATH) == V3_SHA256
+    w3 = json.load(open(W3_JSON, encoding="utf-8"))
+    src = w3["references"]["SRC-AOL-V3"]
+    assert src["path"] == "docs/experiments/lifetime_ao/ao_lifetime_register_v3.json" and src["sha256"] == V3_SHA256
+    assert w3["w3_integration_review"]["reviewed_against"]["SRC-AOL-V3"] == V3_SHA256
+    assert reg_v3["version"] == "v3" and reg["change_log"][:3] == reg_v3["change_log"]
+    assert reg["merged_inputs"]["w3_pins_register_v3"]["sha256"] == V3_SHA256
+
+
+def test_owner_addendum_a3_pinned(reg):
+    a3 = reg["merged_inputs"]["owner_addendum_a3"]
+    assert _sha(os.path.join(ROOT, a3["path"])) == a3["sha256"]
+
+
+def test_w3_integration_review_check(reg):
+    w3 = _pinned_input(W3_JSON_REL)
+    hw = {r["id"]: r for r in w3["requirements"]}
+    aol = {r["id"] for r in reg["requirements"]}
+    chk = reg["w3_integration_review_check"]
+    src = w3["w3_integration_review"]["provisions"]
+    assert [r["provision"] for r in chk["rows"]] == [p["provision"] for p in src]
+    for r, p in zip(chk["rows"], src):
+        assert r["w3_status"] == p["status"] and r["hw_requirement_ids"] == p["hw_requirement_ids"]
+        assert set(r["hw_requirement_ids"]) <= set(hw) and set(r["aol_traces"]) <= aol
+        for t, ids in r["aol_back_trace"].items():
+            assert ids == sorted(h for h in r["hw_requirement_ids"] if t in hw[h].get("traces_to", []))
+        assert r["aol_without_hw_trace"] == [t for t, v in r["aol_back_trace"].items() if not v]
+    assert chk["counts"]["provisions"] == len(src)
+
+
+def test_every_v1_draft_id_has_one_verdict(reg, reg_v1):
+    dv = reg["draft_reference_verification"]
+    ids = [v["id"] for v in dv["verdicts"]]
+    assert sorted(ids) == sorted(reg_v1["unmerged_draft_references"]["ids"]) and len(ids) == len(set(ids))
+    w3 = _pinned_input(W3_JSON_REL)
+    w4 = _pinned_input(W4_JSON_REL)
+    hw = {r["id"] for r in w3["requirements"]}
+    ins = {i["id"] for i in w4["instruments"]}
+    for v in dv["verdicts"]:
+        if v["id"].startswith("HW-"):
+            assert (v["id"] in hw) == (v["verdict"] != "ABSENT"), v["id"]
+        elif v["id"].startswith("INS-"):
+            assert (v["id"] in ins) == (v["verdict"] != "ABSENT"), v["id"]
+        if v["verdict"] == "CHANGED":
+            assert v["note"] and any(v["id"] in " ".join(f["v1"]) for f in dv["reference_fixes"]), v["id"]
+    # no CHANGED usage survives in v2: fixed ids are gone from the rows / cross-refs they were fixed in
+    for f in dv["reference_fixes"]:
+        if f["field_or_adopter"] == "cross_refs":
+            m = next(m for m in reg["mechanisms"] if m["id"] == f["where"])
+            assert m["cross_refs"][-len(f["fixed"]):] == f["fixed"]
+        else:
+            row = next(r for r in reg["interface_table"]["rows"]
+                       if (r["requirement"], r["adopter"]) == (f["where"], f["field_or_adopter"]))
+            assert [x["id"] for x in row["related_ids"]] == f["fixed"]
+            assert all(x["usage_fixed"] for x in row["related_ids"])
+    # ids introduced by a fix exist in the merged files
+    for f in dv["reference_fixes"]:
+        for i in f["fixed"]:
+            if i.startswith("INS-"):
+                assert i in ins, i
+            elif i.startswith("HW-") and "(" not in i:
+                assert i in hw, i
+
+
+def test_v2_v3_have_no_unmerged_draft_wording(reg, reg_v3, reg_v2):
+    for r in (reg, reg_v3, reg_v2):
+        blob = json.dumps({k: v for k, v in r.items() if k not in ("draft_reference_verification", "change_log")})
+        assert "W3 draft" not in blob and "W4 draft" not in blob and "UNVERIFIED_UNMERGED_DRAFT" not in blob
+
+
+def test_v3_v4_content_equals_v2(reg, reg_v4, reg_v3, reg_v2):
+    """v3, v4 and v5 change only the W3/W4 re-verification layer; register content is identical to v2."""
+    for k in ("mechanisms", "witness_coupons", "requirements", "proposed_thresholds", "derived", "sources",
+              "open_owner_questions", "vocabulary", "repository_references"):
+        assert reg[k] == reg_v2[k], k
+        assert reg_v4[k] == reg_v2[k], k
+        assert reg_v3[k] == reg_v2[k], k
+
+
+def test_v2_content_unchanged_in_meaning(reg_v2, reg_v1):
+    reg = reg_v2
+    for k in ("mechanisms", "witness_coupons", "requirements", "proposed_thresholds", "derived", "sources"):
+        a = json.dumps(reg_v1[k]).replace("W3 draft ", "W3 ").replace("W4 draft ", "W4 ")
+        b = json.dumps(reg[k])
+        if k == "mechanisms":
+            a = a.replace('"W3 HW-C1-05"', '"W3 HW-C1-05 (keeper voltage metering)", '
+                                           '"W3 HW-C1-08 (post-test C-1 inspectability)"')
+            a = a.replace("W3 draft section 6", "W3 section 6")
+        assert a == b, k
+
+
+def test_c5_adoption_check(reg):
+    c5 = reg["c5_adoption_check"]
+    w3 = _pinned_input(W3_JSON_REL)
+    hw = {r["id"] for r in w3["requirements"]}
+    w3rows = {r["source_id"]: r for r in w3["c5_integration"]["rows"]}
+    provisions = ([r["id"] for r in reg["requirements"]] + [q["id"] for q in reg["open_owner_questions"]]
+                  + [p["id"] for p in reg["proposed_thresholds"]])
+    assert [r["id"] for r in c5["rows"]] == provisions
+    na = {(n["id"], n["by"]) for n in c5["not_adopted"]}
+    for r in c5["rows"]:
+        assert r["w3_disposition"] == w3rows[r["id"]]["disposition"]
+        assert set(r["w3_requirement_ids"]) <= hw
+        assert ((r["id"], "W3") in na) == (r["w3_disposition"] in ("NOT_ADOPTED", "MISSING_DISPOSITION"))
+        assert ((r["id"], "W4") in na) == (r["w4_status"] in ("NOT_ADOPTED", "MISSING_W4_DISPOSITION"))
+    assert c5["counts"]["w3_by_disposition"]["MISSING_DISPOSITION"] == 0
+    # every witness / replaceable / cathode-exposure provision that W3 must carry has an H-1 requirement id
+    for r in c5["rows"]:
+        if r["id"].startswith(("AOL-WC-", "AOL-RC-")) and r["id"] != "AOL-RC-04":
+            assert r["w3_requirement_ids"], r["id"]
+    # the W3 rows of the interface table carry W3's disposition
+    for row in reg["interface_table"]["rows"]:
+        if row["adopter"] == "W3":
+            assert row["adoption_status"] == w3rows[row["requirement"]]["disposition"]
+
+
+def test_c5_w4_status_from_w4_v1r2(reg, reg_v2):
+    """Per-provision W4 status equals the W4 v1-r2 c5_adoption disposition; adopting ids exist and trace back."""
+    w4 = _pinned_input(W4_JSON_REL)
+    assert w4["revision"] == "v1-r2"
+    ins = {i["id"]: i for i in w4["instruments"]}
+    procs = {p["id"]: p for p in w4["procedures"]}
+    w4rows = {r["provision"]: r for r in w4["c5_adoption"]["rows"] if r["provision"].startswith("AOL-")}
+    c5 = reg["c5_adoption_check"]
+    assert c5["w4_source"]["revision"] == "v1-r2"
+    w4_involved = {r["requirement"] for r in reg["interface_table"]["rows"] if r["adopter"] == "W4"}
+    assert set(w4rows) <= w4_involved
+    v2_status = {r["id"]: r["w4_status"] for r in reg_v2["c5_adoption_check"]["rows"]}
+    for r in c5["rows"]:
+        if r["id"] not in w4_involved:
+            assert r["w4_status"] == "not_a_W4_row" and not r["w4_adopted_ids"]
+            continue
+        wr = w4rows.get(r["id"])
+        assert r["w4_status"] == (wr["status"] if wr else "MISSING_W4_DISPOSITION"), r["id"]
+        if wr:
+            assert wr["register_status_before"] == v2_status[r["id"]]
+            assert r["w4_adopted_ids"] == wr["adopted_ids"] and r["w4_needs"] == wr["needs"]
+            for aid, bt in r["w4_back_trace"].items():
+                if aid in ins:
+                    assert bt == ("traces_to_provisions" if r["id"] in ins[aid]["traces_to_provisions"] else "none")
+                else:
+                    assert bt == ("procedure_provisions" if r["id"] in procs[aid]["provisions"] else "none")
+    counts = c5["counts"]["w4_by_status"]
+    assert counts["NOT_ADOPTED"] + counts["MISSING_W4_DISPOSITION"] == sum(
+        1 for n in c5["not_adopted"] if n["by"] == "W4")
+    partial = {(p["id"], p["by"]) for p in c5["partial_open"]}
+    for r in c5["rows"]:
+        assert ((r["id"], "W4") in partial) == (r["w4_status"] == "ADOPTED_PARTIAL")
+        assert ((r["id"], "W3") in partial) == (r["w3_disposition"] == "ADOPTED_PARTIAL")
+    # interface W4 rows carry the W4 status and ids
+    for row in reg["interface_table"]["rows"]:
+        if row["adopter"] == "W4":
+            c = next(x for x in c5["rows"] if x["id"] == row["requirement"])
+            assert row["adoption_status"] == c["w4_status"] and row["adopted_ids"] == c["w4_adopted_ids"]
+    # the milestone path names the open W4 remainder, not a blanket "W4 adopts" item
+    line = reg["milestones"]["to_reach_next"][1]
+    for p in c5["partial_open"]:
+        if p["by"] == "W4":
+            assert p["id"] in line
+    assert "carries no AOL provision" not in json.dumps(reg)

@@ -1,0 +1,731 @@
+{
+ "schema": "abep_trigger_registry_v1",
+ "decided": "owner operating rules 2026-09-26",
+ "rule": "follow-on work launches ONLY from these triggers; a trigger fires once (fired-trigger ledger docs/orchestration/fired_triggers.jsonl); prerequisites are machine ids with explicit terminal states",
+ "triggers": [
+  {
+   "id": "T_RF_OVERLAY",
+   "prerequisites": [
+    {
+     "id": "lane_07_rf_evidence",
+     "state": "verified"
+    },
+    {
+     "id": "lane_18_interstage",
+     "state": "verified"
+    },
+    {
+     "id": "lane_28_break_even",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_rf_breakeven_overlay",
+   "kind": "follow_on_launch"
+  },
+  {
+   "id": "T_ECR_OVERLAY",
+   "prerequisites": [
+    {
+     "id": "lane_08_ecr_evidence",
+     "state": "verified"
+    },
+    {
+     "id": "lane_18_interstage",
+     "state": "verified"
+    },
+    {
+     "id": "lane_28_break_even",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_ecr_breakeven_overlay",
+   "kind": "follow_on_launch"
+  },
+  {
+   "id": "T_HALL_SUSTAIN_ENVELOPE",
+   "prerequisites": [
+    {
+     "id": "lane_09_hall_sustainment",
+     "state": "verified"
+    },
+    {
+     "id": "lane_16_feed_envelope",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_hall_sustainment_envelope",
+   "kind": "follow_on_launch"
+  },
+  {
+   "id": "T_BUNDLE1",
+   "prerequisites": [
+    {
+     "id": "lane_07_rf_evidence",
+     "state": "verified"
+    },
+    {
+     "id": "lane_08_ecr_evidence",
+     "state": "verified"
+    },
+    {
+     "id": "lane_09_hall_sustainment",
+     "state": "verified"
+    },
+    {
+     "id": "lane_16_feed_envelope",
+     "state": "verified"
+    },
+    {
+     "id": "lane_17_hall_reference",
+     "state": "verified"
+    },
+    {
+     "id": "lane_18_interstage",
+     "state": "verified"
+    },
+    {
+     "id": "lane_20_ppu_magnet",
+     "state": "verified"
+    },
+    {
+     "id": "lane_24_hard_gates",
+     "state": "verified"
+    },
+    {
+     "id": "lane_28_break_even",
+     "state": "verified"
+    },
+    {
+     "id": "fo_rf_breakeven_overlay",
+     "state": "verified"
+    },
+    {
+     "id": "fo_ecr_breakeven_overlay",
+     "state": "verified"
+    },
+    {
+     "id": "fo_hall_sustainment_envelope",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_bundle1_conditional_selection",
+   "kind": "bundle",
+   "note": "lane_24_hard_gates is a HARD prerequisite (owner 2026-09-26): elimination statements need the gate logic. The three overlays are triggered by subsets of these prerequisites, so they are always launched first."
+  },
+  {
+   "id": "T_AUX_BUS",
+   "prerequisites": [
+    {
+     "id": "lane_20_ppu_magnet",
+     "state": "verified"
+    },
+    {
+     "id": "lane_19_cathode_integration",
+     "state": "verified"
+    },
+    {
+     "id": "lane_11_bus_boundary",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_aux_bus_comparison",
+   "kind": "follow_on_launch",
+   "note": "lane_11 added to the owner's '20 + cathode' because the comparison must use the bus_power_boundary_v1 module; lane_10 (cathode dossier) is consumed by lane_19 when present"
+  },
+  {
+   "id": "T_VETO_LAYER",
+   "prerequisites": [
+    {
+     "id": "lane_21_mass_bom",
+     "state": "verified"
+    },
+    {
+     "id": "lane_15_thermal_life",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_veto_layer",
+   "kind": "follow_on_launch"
+  },
+  {
+   "id": "T_EXPERIMENT_PACKAGE",
+   "prerequisites": [
+    {
+     "id": "lane_25_min_decisive_experiment",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_experiment_package",
+   "kind": "follow_on_launch"
+  },
+  {
+   "id": "T_DOSSIER",
+   "prerequisites": [
+    {
+     "id": "lane_24_hard_gates",
+     "state": "verified"
+    },
+    {
+     "id": "lane_26_failure_tree",
+     "state": "verified"
+    }
+   ],
+   "produces": "lane_27_decision_dossier",
+   "kind": "workflow_internal",
+   "note": "runs inside workflow wf_e3c01fb8-eed, which starts the dependent lane at its prerequisites' terminal state and passes their verification flag; lane_27 counts as verified only if both prerequisites are verified (registry terminal-state rule)"
+  },
+  {
+   "id": "T_GRID",
+   "prerequisites": [
+    {
+     "id": "lane_16_feed_envelope",
+     "state": "verified"
+    },
+    {
+     "id": "lane_17_hall_reference",
+     "state": "verified"
+    }
+   ],
+   "produces": "lane_23_comparison_grid",
+   "kind": "workflow_internal",
+   "note": "as T_DOSSIER, inside wf_3da51c0c-3b4"
+  },
+  {
+   "id": "T_V2_QUESTION_A",
+   "prerequisites": [
+    {
+     "id": "lane_01_n2_domain_extension",
+     "state": "verified"
+    },
+    {
+     "id": "lane_02_ood_attribution",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_v2_domain_question_a",
+   "kind": "owner_decision_brief"
+  },
+  {
+   "id": "T_O4_SCORE",
+   "family": [
+    "ds_staged_n2_n_exc_johnsonlow",
+    "ds_staged_n2_n_rot_off",
+    "ds_staged_n2_n_ndd_hmslow",
+    "ds_staged_n2_n_ndd_hmshigh",
+    "ds_staged_n2_n_n2dication",
+    "ds_escalation_n2_n_exc_johnsonlow_di_lower",
+    "ds_escalation_n2_n_exc_johnsonlow_nel_wang",
+    "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+    "ds_escalation_n2_n_rot_off_di_lower",
+    "ds_escalation_n2_n_rot_off_nel_wang",
+    "ds_escalation_n2_n_rot_off_di_lower_nel_wang",
+    "ds_escalation_n2_n_ndd_hmslow_di_lower",
+    "ds_escalation_n2_n_ndd_hmslow_nel_wang",
+    "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+    "ds_escalation_n2_n_ndd_hmshigh_di_lower",
+    "ds_escalation_n2_n_ndd_hmshigh_nel_wang",
+    "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+    "ds_escalation_n2_n_n2dication_nel_wang"
+   ],
+   "prerequisite_state": "structural_pass",
+   "action": "freeze + score once (scripts/score_p5_n2_staged.py freeze|score)",
+   "kind": "mechanical_preregistered"
+  },
+  {
+   "id": "T_O4_ESCALATE",
+   "family": [
+    "ds_staged_n2_n_exc_johnsonlow",
+    "ds_staged_n2_n_rot_off",
+    "ds_staged_n2_n_ndd_hmslow",
+    "ds_staged_n2_n_ndd_hmshigh",
+    "ds_staged_n2_n_n2dication"
+   ],
+   "prerequisite_state": "scored AND o4_trigger_fired",
+   "action": "launch the pinned escalation manifests of that first stage exactly as registered",
+   "kind": "mechanical_preregistered"
+  },
+  {
+   "id": "T_JOHNSONLOW_ESCALATION_ASSESSMENT",
+   "prerequisites": [
+    {
+     "id": "ds_escalation_n2_n_exc_johnsonlow_di_lower",
+     "state": "scored"
+    },
+    {
+     "id": "ds_escalation_n2_n_exc_johnsonlow_nel_wang",
+     "state": "scored"
+    },
+    {
+     "id": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "state": "scored"
+    }
+   ],
+   "produces": "fo_johnsonlow_escalation_assessment",
+   "kind": "follow_on_launch"
+  },
+  {
+   "id": "T_V2_QUESTION_B",
+   "prerequisites": [
+    {
+     "id": "lane_01_n2_domain_extension",
+     "state": "verified"
+    },
+    {
+     "id": "fo_johnsonlow_escalation_assessment",
+     "state": "verified"
+    },
+    {
+     "id": "od_v2_question_a",
+     "state": "domain_path_open"
+    }
+   ],
+   "produces": "fo_v2_excitation_question_b",
+   "kind": "follow_on_launch",
+   "note": "Question B is conditional on Question A: it requires the OWNER DISPOSITION (docs/v2/question_a/QUESTION_A_DISPOSITION.json) to leave the domain path open, not merely a verified brief. Owner decision 2026-09-26: A-NO (domain_path closed) => BLOCKED_BY_QUESTION_A_DISPOSITION; never READY while A-NO stands. Johnson-low stays a sensitivity."
+  },
+  {
+   "id": "T_O4_DISPOSITION_MATRIX",
+   "prerequisites": [
+    {
+     "id": "ds_staged_n2_n_exc_johnsonlow",
+     "state": "scored"
+    },
+    {
+     "id": "ds_staged_n2_n_rot_off",
+     "state": "scored"
+    },
+    {
+     "id": "ds_staged_n2_n_ndd_hmslow",
+     "state": "scored"
+    },
+    {
+     "id": "ds_staged_n2_n_ndd_hmshigh",
+     "state": "scored"
+    },
+    {
+     "id": "ds_staged_n2_n_n2dication",
+     "state": "scored"
+    }
+   ],
+   "plus": "every escalation dataset of each first stage whose o4_trigger_fired is true must be 'scored'",
+   "produces": "fo_o4_disposition_matrix",
+   "kind": "owner_decision_brief"
+  },
+  {
+   "id": "T_FACILITY_SCORE",
+   "prerequisites": [
+    {
+     "id": "ds_facility_mandatory",
+     "state": "structural_pass"
+    }
+   ],
+   "action": "freeze (freeze_p5_n2_dataset.py facility) + score once (score_p5_n2_frozen.py) + report (non-gating)",
+   "kind": "mechanical_preregistered",
+   "note": "scores ONLY the replacement attempt (followon/facility_mandatory_attempt2) after its complete structural audit; attempt 1 (INCOMPLETE_INFRASTRUCTURE_INTERRUPTION) is never scored"
+  },
+  {
+   "id": "T_ABSOLUTE_COMPARISON",
+   "prerequisites": [
+    {
+     "id": "ensemble_admitted_members",
+     "state": "non_empty"
+    }
+   ],
+   "produces": "fo_absolute_comparison",
+   "kind": "follow_on_launch",
+   "note": "only when hall_ensemble.load_ensemble() returns >= 1 admitted member (admission incl. O4 dispositions)"
+  },
+  {
+   "id": "T_DX5_EVIDENCE",
+   "prerequisites": [
+    {
+     "id": "od_v2_question_a",
+     "state": "domain_path_closed"
+    }
+   ],
+   "produces": "fo_dx5_cross_section_evidence",
+   "kind": "follow_on_launch",
+   "note": "owner D-X5 = YES (bounded): rotational >10 eV, electronic >100 eV (a1Pi_g >200 eV), non-resonant vibrational, then dissociation >~300 eV; published/open only; may lead to reopening Question A"
+  },
+  {
+   "id": "T_FACILITY_RELAUNCH",
+   "prerequisites": [
+    {
+     "id": "ds_escalation_n2_n_ndd_hmslow_di_lower",
+     "state": "scored"
+    },
+    {
+     "id": "ds_escalation_n2_n_ndd_hmslow_nel_wang",
+     "state": "scored"
+    },
+    {
+     "id": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+     "state": "scored"
+    },
+    {
+     "id": "ds_escalation_n2_n_ndd_hmshigh_di_lower",
+     "state": "scored"
+    },
+    {
+     "id": "ds_escalation_n2_n_ndd_hmshigh_nel_wang",
+     "state": "scored"
+    },
+    {
+     "id": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+     "state": "scored"
+    },
+    {
+     "id": "ds_escalation_n2_n_n2dication_nel_wang",
+     "state": "scored"
+    },
+    {
+     "id": "fo_johnsonlow_escalation_assessment",
+     "state": "verified"
+    },
+    {
+     "id": "fo_o4_disposition_matrix",
+     "state": "verified"
+    }
+   ],
+   "kind": "mechanical_owner_ordered",
+   "action": "launch a fresh facility_mandatory campaign (pinned manifest, 4 shards) into <scratchpad>/followon/facility_mandatory_attempt2 with fresh execution provenance linked to validation/interrupted/facility_mandatory_attempt1/STATUS.json",
+   "note": "owner decision 2026-09-26: facility waits for the gating O4 escalations; the interrupted attempt 1 is preserved and never reused; sequence (owner 2026-09-26): 7 escalations scored + S9 (Johnson-low assessment) verified + S12 (O4 disposition matrix) verified -> relaunch. Scheduling order only: facility is not an admission or O4-disposition input."
+  },
+  {
+   "id": "T_PIVOT_FEED_STATE_CLOSURE",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_feed_state_closure",
+   "kind": "follow_on_launch",
+   "note": "owner hardware-experiment pivot 2026-09-27 (docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json)"
+  },
+  {
+   "id": "T_PIVOT_LOCK1_DECISION_BRIEF",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_lock1_decision_brief",
+   "kind": "follow_on_launch",
+   "note": "owner hardware-experiment pivot 2026-09-27 (docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json)"
+  },
+  {
+   "id": "T_PIVOT_HARDWARE_DEFINITION",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_hardware_definition",
+   "kind": "follow_on_launch",
+   "note": "owner hardware-experiment pivot 2026-09-27 (docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json)"
+  },
+  {
+   "id": "T_PIVOT_INSTRUMENTATION_DEFINITION",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_instrumentation_definition",
+   "kind": "follow_on_launch",
+   "note": "owner hardware-experiment pivot 2026-09-27 (docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json)"
+  },
+  {
+   "id": "T_PIVOT_HALL_VALIDATION_PREREG_DRAFT",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_hall_validation_prereg_draft",
+   "kind": "follow_on_launch",
+   "note": "owner hardware-experiment pivot 2026-09-27 (docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json)"
+  },
+  {
+   "id": "T_PIVOT_O_O2_CHEMISTRY_V0",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_o_o2_chemistry_v0",
+   "kind": "follow_on_launch",
+   "note": "owner hardware-experiment pivot 2026-09-27 (docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json)"
+  },
+  {
+   "id": "T_PIVOT_CLOSED_ACCESS_ACQUISITION",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_closed_access_acquisition",
+   "kind": "follow_on_launch",
+   "note": "owner hardware-experiment pivot 2026-09-27 (docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json)"
+  },
+  {
+   "id": "T_PIVOT_AO_LIFETIME_REGISTER",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_ao_lifetime_register",
+   "kind": "follow_on_launch",
+   "note": "owner execution directive 2026-09-27 (OD_HARDWARE_PIVOT execution_directive_2026_09_27)"
+  },
+  {
+   "id": "T_PIVOT_HALLMAP_SCHEMA_V2_REGISTRY",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_hallmap_schema_v2_registry",
+   "kind": "follow_on_launch",
+   "note": "owner execution directive 2026-09-27 (OD_HARDWARE_PIVOT execution_directive_2026_09_27)"
+  },
+  {
+   "id": "T_PIVOT_MAGNET_COIL_QUALIFICATION",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_magnet_coil_qualification",
+   "kind": "follow_on_launch",
+   "note": "owner execution directive 2026-09-27 (OD_HARDWARE_PIVOT execution_directive_2026_09_27)"
+  },
+  {
+   "id": "T_PIVOT_S1_READINESS_GATE",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_s1_readiness_gate",
+   "kind": "follow_on_launch",
+   "note": "owner execution directive 2026-09-27 (OD_HARDWARE_PIVOT execution_directive_2026_09_27)"
+  },
+  {
+   "id": "T_PIVOT_REPO_DECISIONS_BATCH",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_repo_decisions_batch",
+   "kind": "follow_on_launch",
+   "note": "owner execution directive 2026-09-27 (OD_HARDWARE_PIVOT execution_directive_2026_09_27)"
+  },
+  {
+   "id": "T_PIVOT_S1A_ENGINEERING_GATE",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_s1a_engineering_gate",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A3 2026-09-27"
+  },
+  {
+   "id": "T_PIVOT_CAPABILITY_DEMO_PREP",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_capability_demo_prep",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A3 2026-09-27"
+  },
+  {
+   "id": "T_PIVOT_COMPRESSOR_DOWNSELECT",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_compressor_downselect",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A3 2026-09-27"
+  },
+  {
+   "id": "T_A5_PREIONIZER_ICD",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_preionizer_module_icd",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A6 2026-09-27 (A5 follow-ons)"
+  },
+  {
+   "id": "T_A5_XE_LEDGER",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_xe_system_ledger",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A6 2026-09-27 (A5 follow-ons)"
+  },
+  {
+   "id": "T_A5_PHASE1_PREREG_FRAMEWORK",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_phase1_prereg_framework",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A6 2026-09-27 (A5 follow-ons)"
+  },
+  {
+   "id": "T_A5_SUBSYSTEM_MATURITY",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_subsystem_maturity_matrix",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A6 2026-09-27 (A5 follow-ons)"
+  },
+  {
+   "id": "T_H2_1_HALL_CHAMBER_MAGNET",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_h2_1_hall_chamber_magnet",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A7 2026-09-27 (hardware wave H2; drafting in parallel with the A6 lanes; merges after the integration checkpoint)"
+  },
+  {
+   "id": "T_H2_2_CATHODE_INTEGRATION",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_h2_2_cathode_integration",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A7 2026-09-27 (hardware wave H2; drafting in parallel with the A6 lanes; merges after the integration checkpoint)"
+  },
+  {
+   "id": "T_H2_3_GAS_PATH_PLENUM",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_h2_3_gas_path_plenum",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A7 2026-09-27 (hardware wave H2; drafting in parallel with the A6 lanes; merges after the integration checkpoint)"
+  },
+  {
+   "id": "T_H2_4_PPU_BUS",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_h2_4_ppu_bus",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A7 2026-09-27 (hardware wave H2; drafting in parallel with the A6 lanes; merges after the integration checkpoint)"
+  },
+  {
+   "id": "T_H2_5_THERMAL_NETWORK",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_h2_5_thermal_network",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A7 2026-09-27 (hardware wave H2; drafting in parallel with the A6 lanes; merges after the integration checkpoint)"
+  },
+  {
+   "id": "T_H2_6_DIAGNOSTICS_FIXTURE",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_h2_6_diagnostics_fixture",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A7 2026-09-27 (hardware wave H2; drafting in parallel with the A6 lanes; merges after the integration checkpoint)"
+  },
+  {
+   "id": "T_H2_7_MECHANICAL_BOM",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_h2_7_mechanical_bom",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A7 2026-09-27 (hardware wave H2; drafting in parallel with the A6 lanes; merges after the integration checkpoint)"
+  },
+  {
+   "id": "T_A6_INTEGRATION_REFRESH",
+   "prerequisites": [
+    {
+     "id": "fo_preionizer_module_icd",
+     "state": "verified"
+    },
+    {
+     "id": "fo_xe_system_ledger",
+     "state": "verified"
+    },
+    {
+     "id": "fo_phase1_prereg_framework",
+     "state": "verified"
+    },
+    {
+     "id": "fo_subsystem_maturity_matrix",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_a6_integration_refresh",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A7: integration pass + M16 scheduler refresh, then the checkpoint merge"
+  }
+ ]
+}

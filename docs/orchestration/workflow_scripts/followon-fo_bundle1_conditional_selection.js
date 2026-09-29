@@ -1,0 +1,116 @@
+export const meta = {
+  name: 'followon-bundle1',
+  description: 'Bundle 1 (Milestone A conditional selection): synthesis of 12 verified prerequisites, two-lens adversarial verification, up to two repair rounds',
+  phases: [
+    { title: 'Build', detail: 'one isolated worktree per lane; dependent lanes start when prerequisites finish' },
+    { title: 'Verify', detail: 'evidence lens + rules/recompute lens, independent' },
+    { title: 'Fix', detail: 'repair rounds on failing lanes (max 2)' },
+  ],
+}
+
+const ARGS_EMBEDDED = {"base": "1a1f7e4b7767d41ca99e20641c11dc4d3cafcda7", "lanes": [{"key": "BUNDLE1", "title": "fo_bundle1_conditional_selection", "allowed": ["docs/milestones/bundle1/**", "tests/test_bundle1.py"], "prompt": "Registered follow-on fo_bundle1_conditional_selection (trigger T_BUNDLE1, attempt 2, execution key d45eda8e144c71eae9f5ebf0d1c1a560af20903571c60bbcdb605e361b68a148). This is MILESTONE A: conditional selection. It is a SYNTHESIS of verified deliverables already merged into your base; it introduces NO new physics, sources or numbers of its own.\nFIRST STEP: your worktree may have been created from main (daa0e75). If `git rev-parse HEAD` != 1a1f7e4b7767d41ca99e20641c11dc4d3cafcda7 and `git status --porcelain` is empty, run `git reset --hard 1a1f7e4b7767d41ca99e20641c11dc4d3cafcda7`; confirm the files below exist before anything else.\nINPUTS (all in your checkout at the base; the 12 registered prerequisites, each verified under the two-lens protocol, identity = commit): lane_07_rf_evidence 336d548042 (docs/evidence/rf_source/), lane_08_ecr_evidence a85fd59261 (docs/evidence/ecr_source/), lane_09_hall_sustainment ac7970917f (docs/evidence/hall_sustainment/), lane_16_feed_envelope ab27dcc449 (docs/architecture_comparison/feed_envelope/), lane_17_hall_reference 91ebd8a401 (docs/architecture_comparison/hall_reference/), lane_18_interstage 870514285c (abep_sim/interstage.py, docs/architecture_comparison/interstage/), lane_20_ppu_magnet f7c226848d (abep_sim/magnet_power.py, docs/architecture_comparison/electrical_closure/), lane_24_hard_gates 08b9f9bf32 (abep_sim/hard_gates.py, docs/architecture_comparison/hard_gates/: hard_gate_matrix_v1.json, hard_gate_status_v1.json, evidence_register_v1.json), lane_28_break_even 2ad4c463d7 (abep_sim/breakeven.py, docs/architecture_comparison/breakeven/), fo_rf_breakeven_overlay 9ef356b536 (docs/architecture_comparison/overlays/rf/), fo_ecr_breakeven_overlay d22bc6053a (docs/architecture_comparison/overlays/ecr/), fo_hall_sustainment_envelope de0ebd25f4 (docs/architecture_comparison/overlays/hall_sustainment/). Context, not prerequisites (verified, merged): lane_23_comparison_grid 3b9af54be8 (docs/architecture_comparison/comparison_grid/), lane_11_bus_boundary a2a139686d (abep_sim/arch_boundary.py, docs/architecture_comparison/power_boundary/, schemas/architecture_comparison/bus_power_boundary_v1.json). Binding rules: docs/orchestration/OPERATING_MODEL.md (read it), CLAUDE.md.\nDELIVERABLES (ALLOWED paths only): docs/milestones/bundle1/build_bundle1.py (deterministic; reads the inputs, pins each input file by sha256 + lane id + commit, raises on any missing/changed input, no fallback; --check reproduces byte for byte), docs/milestones/bundle1/bundle1_v1.json, docs/milestones/bundle1/bundle1_v1.schema.json, docs/milestones/bundle1/BUNDLE1.md (generated tables + short prose), tests/test_bundle1.py.\nCONTENT, in this order:\n(1) ADMISSIBILITY. For each of 'hall_only', 'rf_hall', 'ecr_hall', normalized to bus_power_boundary_v1: the 13 mandatory fields {m_dot_s, P_feed, T_feed, x_s, V_d, T, P_bus, m, Q_reject, life, startup, eta_u, stability}. Each field is either POPULATED or EXPLICITLY_UNAVAILABLE, and in both cases carries: units, operating point, evidence/source (repository path + input lane id), uncertainty/status (evidence class per docs/EVIDENCE.md), derivation, and for unavailable fields the blocking lane(s)/measurement. P_feed/T_feed = feed-state (valve-outlet) pressure and temperature: lane 16 leaves the valve-outlet state TBD (no sourced design baseline); it stays EXPLICITLY_UNAVAILABLE and is NEVER filled from the superseded 0-D assumptions or anything else. P_bus = all DC-bus power per bus_power_boundary_v1 components (discharge, magnets, cathode keeper/heater, pre-ionizer source incl. its magnets, PPU losses, flow control, compressor, thermal control, housekeeping); never absorbed RF, ECR source-only or Hall discharge-only power. No absolute Hall performance number from any closure: the credible set is empty (gate 3 FAIL), so Hall-dependent fields (T, eta_u, stability at a flight point, ...) are unavailable or bounded only where a verified input bounds them. Output an admissibility verdict per the owner rule (admissible only when every field for every architecture is populated or explicitly unavailable with the full metadata).\n(2) HARD GATES. Per architecture: ELIMINATED_WITHIN_TESTED_ENVELOPE only if lane_24's hard_gate_status_v1.json records a demonstrated hard-gate failure (quote the gate id, evidence ids and evidence class); otherwise report the lane-24 status verbatim (e.g. not eliminated / open gates). Never create an elimination the lane-24 logic does not produce. Also record what the overlays say about hard-gate candidates (RF: 7 STRADDLES / 11 NOT_PLACEABLE; ECR: 0 above / 0 below / 7 STRADDLES / 6 NOT_PLACEABLE; Hall sustainment F-9: no air case SUPPORTED by literature transfer without DM-2 or an owner composition rule) - verify these numbers from the files, do not trust this brief.\n(3) OUTCOME: exactly ONE of CONDITIONAL_BASELINE(X) (X in the three ids; at most one; a PROPOSAL for the owner) with explicit, checkable conditions (each condition = a demonstrable measurement/analysis with its pass criterion taken from a verified input, and the lane or experiment that would demonstrate it), or NO_BASELINE_YET with the blocking fields and lanes. State the decision rule you apply BEFORE the tables (in the doc and in the JSON), mark it PROPOSED, and apply it mechanically. Be honest: if the evidence does not support singling out an architecture even conditionally, the outcome is NO_BASELINE_YET. If you propose CONDITIONAL_BASELINE(X), explain why no other architecture has an equal claim and what the conditions for X are, including the conditions X shares with the others (e.g. Hall sustainment on air).\n(4) The three questions each lane answers: (i) conditional selection now, (ii) what blocks physics-backed selection (Milestone B: admitted Hall closure, chemistry, common-boundary performance; name lanes/triggers by their machine ids), (iii) what could overturn the outcome (specific evidence that would flip it).\n(5) EVIDENCE WEIGHT: per input, its verification protocol (two-lens vs single-lens-v1 per lane_registry_v1.json / OPERATING_MODEL.md); single-lens-v1 inputs cannot be decisive for Milestone B or C - flag them. List the owner questions the prerequisite lanes left open that affect this outcome (read them from their docs), without answering them.\nWording: never 'winner', 'selected', 'validated', 'demonstrated performance' for anything not demonstrated; the bundle is DRAFT for owner review. Test: build reproduces; every architecture x field cell has the full metadata; outcome is one of the two allowed forms; any ELIMINATED_WITHIN_TESTED_ENVELOPE traces to a lane-24 demonstrated gate; P_feed/T_feed are EXPLICITLY_UNAVAILABLE; input sha256 pins verified; forbidden wording absent."}]}
+
+const BASE = ARGS_EMBEDDED.base
+const SP = '/tmp/claude-0/-home-user-abep/275befef-ee58-5bbd-84f0-21c33eb50eb4/scratchpad'
+const COMMON = `You are working on the ABEP-VLEO simulator repository (GitHub ppusapati/abep; primary checkout /home/user/abep). You run in an ISOLATED git worktree created for you (your current working directory); do all edits there. Base commit: ${BASE}.
+
+CONTEXT (read CLAUDE.md in your worktree first):
+- RFP envelope (DRDO TDF, CLAUDE.md): 180-230 km, 12-25 mN, < 1.5 kW, < 40 kg, 26,000 h mission, > 15,000 h firing, Hall preferred, air + Xe.
+- Three candidate thrust architectures, identified everywhere by these exact ids: 'hall_only', 'rf_hall', 'ecr_hall'. The RF/ECR arms change ONLY the pre-ionization method; the downstream Hall accelerator, feed state, cathode and bus boundary are common.
+- Two tracks run in parallel: (1) physics validation (P5-N2 v1 is final: all 9 SGB screening candidates INCONCLUSIVE / NOT ELIGIBLE, credible set empty, gate 3 FAIL; v2 only if independent evidence justifies a wider chemistry domain) and (2) architecture comparison preparation (your track). They meet only when an admitted Hall transport closure is needed for absolute performance. Build everything so it works WITHOUT absolute Hall predictions today and accepts admitted closures later.
+- Owner decision milestones: A = conditional selection ('architecture X is baseline provided conditions A/B/C are demonstrated'; does not require Physics Baseline 1.0); B = physics-backed selection (credible envelopes from validated Hall transport, chemistry and common-boundary performance); C = proposal/PDR freeze (mass, power, thermal, life, startup, cathode, mission closure integrated). Every deliverable states which milestone(s) it supports and what it needs to reach the next one.
+- Shared naming contracts (use exactly): bus-power boundary module abep_sim/arch_boundary.py (BOUNDARY_VERSION 'bus_power_boundary_v1'; components hall_discharge, hall_magnet, cathode_keeper, cathode_heater, flow_control, compressor, thermal_control, housekeeping, rf_source (rf_hall), ecr_source and ecr_magnet (ecr_hall); ledger(arch, loads, efficiencies)); comparison harness abep_sim/arch_compare.py; thermal/life abep_sim/thermal_life.py; evidence matrices docs/evidence/rf_source/, docs/evidence/ecr_source/, docs/evidence/hall_sustainment/, docs/evidence/cathode/, docs/evidence/wall_life/; experiment protocol docs/architecture_comparison/experiment_protocol/; upstream ICD schemas/interfaces/; ledgers schemas/ledgers/; Hall-map spec docs/hallmap/. These are being built by OTHER lanes right now and are mostly NOT in your worktree: you may read them READ-ONLY if they exist under /home/user/abep/.claude/worktrees/*/ (find them), reference them by repository-relative path, and never copy them into your paths or depend on them at import time (lazy resolution with a clear error if missing; tests must not require them).
+- Pre-registered follow-on runs are RUNNING on every CPU core under ${SP}/followon and ${SP}/wt_followon — NEVER read, list or touch those paths.
+
+HARD RULES (breaking any = lane rejected):
+1. Modify/create files ONLY under your lane's ALLOWED paths. NEVER modify: hallthruster_bridge/** (prereg, campaign, propellants, audit, ensemble, validation, cases, bridge_lib.jl, PINNED.toml), the frozen P5-N2 pipeline scripts (scripts/score_p5_n2_*.py, scripts/audit_p5_n2_campaign_records.py, scripts/freeze_p5_n2_dataset.py, scripts/report_p5_n2_campaign.py, scripts/make_validation_release.py, scripts/make_p5_n2_launch_manifests.py), existing abep_sim modules (archengine.py, hall_map.py, hall_ensemble.py, intake*.py, compressor.py, reservoir.py, atmosphere.py, plasma_*.py, golden.py, ...), abep_sim/data/**, docs/HISTORY.md, CLAUDE.md, README.md, tests/test_sim.py. New modules are pure and NOT wired into archengine (wiring would be a model change; goldens must not move).
+2. Evidence discipline (CLAUDE.md rules 6 and 10, docs/EVIDENCE.md): never invent numbers, sources, page/table numbers or DOIs. Every numeric value carries a source and an evidence class (measured / digitized / inferred / reconstructed / model-derived / assumed) or is explicitly "TBD — requires <what>". Computed values come from a committed deterministic script. No default physical/efficiency values hidden in code: inputs are explicit, missing inputs raise (CLAUDE.md rule 3, no silent fallbacks). Thresholds that are not in the RFP are PROPOSED for the owner.
+3. Sources: published / openly accessible only; no contact with persons or labs; no email; no LXCat; no paywall/bot-challenge bypass (abstract-only labelled); never change TLS/trust settings. Cite DOIs/URLs actually accessed (WebSearch/WebFetch are deferred tools: load them with ToolSearch). From memory => "verify".
+4. CPU: do NOT run Julia, do NOT run the full test suite, no computation > 1 min. Run only your own new test file(s).
+5. Never use screening candidates or unadmitted Hall closures as performance sources; no retuning; never declare an architecture winner; eliminations only via explicit hard-gate logic with the evidence class that supports them. P5 calibration nuisance (registration, coil shape, divergence reading, facility interpretation) is never a design variable or grid axis. Hall-closure uncertainty never leaks upstream into intake/compressor/gas chambers/valves.
+6. When done: git add your files and commit in the worktree with a clear message whose last two lines are exactly:
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01FzUuRP7UUVEypuFNeEaN4U
+Do NOT push. Report the worktree absolute path (pwd), branch name (git rev-parse --abbrev-ref HEAD) and commit sha.
+
+YOUR LANE:
+`
+
+const RESULT = {
+  type: 'object',
+  properties: {
+    worktree_path: { type: 'string' }, branch: { type: 'string' }, commit: { type: 'string' },
+    files: { type: 'array', items: { type: 'string' } },
+    summary: { type: 'string' },
+    key_findings: { type: 'array', items: { type: 'string' } },
+    unlocks: { type: 'array', items: { type: 'string' }, description: 'which other lanes/decisions this result enables, eliminates a dependency for, or suggests as a new parallel branch' },
+    open_questions_for_owner: { type: 'array', items: { type: 'string' } },
+    tests_run: { type: 'string' }, tests_passed: { type: 'boolean' },
+  },
+  required: ['worktree_path', 'branch', 'commit', 'files', 'summary', 'key_findings', 'unlocks', 'open_questions_for_owner', 'tests_passed'],
+}
+const VERDICT = {
+  type: 'object',
+  properties: {
+    pass: { type: 'boolean' },
+    issues: { type: 'array', items: { type: 'object', properties: {
+      severity: { type: 'string', enum: ['blocker', 'major', 'minor'] }, file: { type: 'string' }, description: { type: 'string' } },
+      required: ['severity', 'description'] } },
+    checked: { type: 'array', items: { type: 'string' } },
+  },
+  required: ['pass', 'issues', 'checked'],
+}
+const LENSES = {
+  evidence: `EVIDENCE/TRACEABILITY LENS. (a) Every value, status, count and claim in the bundle traces to a verified input file in the checkout: open the inputs and confirm (overlay placement counts, hard-gate statuses, feed-envelope TBDs, Hall-sustainment F-9, electrical-closure values, break-even relations). A value not traceable to an input, or a new external source/number introduced by the bundle, is MAJOR. (b) Any ELIMINATED_WITHIN_TESTED_ENVELOPE not backed by a demonstrated gate in lane 24's hard_gate_status_v1.json is a BLOCKER. (c) Any absolute Hall performance number, use of screening candidates as performance, filled valve-outlet feed state (P_feed/T_feed), or P_bus that is absorbed-RF / source-only / discharge-only is a BLOCKER. (d) A CONDITIONAL_BASELINE(X) whose conditions are not checkable or not traceable, or that claims more support than the inputs give (e.g. X singled out although the inputs treat architectures symmetrically), is a BLOCKER; so is winner/validated wording. (e) Open owner questions from the input lanes that bear on the outcome are listed, not answered.`,
+  rules: `RULES/RECOMPUTE LENS. (a) SCOPE: git -C <worktree> diff --name-only ${BASE}...HEAD within ALLOWED paths; no forbidden file touched; no uncommitted leftovers. (b) RECOMPUTE: for headline numbers derived from repository data or equations, write your own independent Python (do not reuse the lane's code) and compare; mismatch beyond rounding is major. (c) CORRECTNESS: JSON/schemas parse and validate; code consistent with the modules/fields it references (grep them); no hidden defaults; refusal paths raise; run ONLY the lane's own test file(s): they must pass and test something meaningful. (d) RULES: the three architecture ids used exactly; outcome is exactly one of CONDITIONAL_BASELINE(X) / NO_BASELINE_YET; the decision rule is stated before the results and applied mechanically (re-apply it yourself); all 13 mandatory fields x 3 architectures present with units, operating point, evidence/source, uncertainty/status, derivation; milestone A/B/C statement present; PROPOSED/DRAFT markers; no winner, no retuning. (e) USEFULNESS: every required deliverable in the brief present and substantive; the 'unlocks' claims are justified.`,
+}
+const verifyPrompt = (lane, res, lens) => `You are an ADVERSARIAL reviewer. Default to finding problems; pass only if there are no blocker or major issues under your lens.
+Repository: ABEP-VLEO simulator. Lane "${lane.key} — ${lane.title}" was built in worktree ${res.worktree_path} (branch ${res.branch}, commit ${res.commit}), base ${BASE}. Work READ-ONLY there; scratch scripts only under ${SP}/verify_${lane.key}_${lens}/. Never touch ${SP}/followon or ${SP}/wt_followon. Do NOT run Julia or the full test suite.
+Lane brief: ${lane.prompt}
+ALLOWED paths: ${lane.allowed.join(', ')}
+${LENSES[lens]}
+Return pass=true only if no blocker/major issues remain.`
+const fixPrompt = (lane, res, issues) => `Repair lane "${lane.key} — ${lane.title}" in its existing worktree ${res.worktree_path} (cd there; do NOT create a new worktree; stay on branch ${res.branch}).
+${COMMON.split('YOUR LANE:')[0]}
+Lane brief: ${lane.prompt}
+ALLOWED paths: ${lane.allowed.join(', ')}
+Independent adversarial reviewers reported these issues — fix every blocker and major one (minors where cheap). Unsourceable claims: mark TBD/verify or remove. Non-reproducing numbers: find the true value, fix code and text. Revert anything outside ALLOWED paths.
+ISSUES: ${JSON.stringify(issues)}
+Commit the repair as a new commit in the same worktree (same trailer lines). Report as before.`
+
+async function verifyBoth(lane, res, round) {
+  const vs = await parallel(['evidence', 'rules'].map(lens => () =>
+    agent(verifyPrompt(lane, res, lens), { label: `verify${round}:${lane.key}:${lens}`, phase: 'Verify', schema: VERDICT })))
+  const ok = vs.filter(Boolean)
+  return { pass: ok.length === 2 && ok.every(v => v.pass), issues: ok.flatMap(v => v.issues || []) }
+}
+
+const lanes = ARGS_EMBEDDED.lanes
+const laneMap = Object.fromEntries(lanes.map(l => [l.key, l]))
+const promises = {}
+function runLane(lane) {
+  if (promises[lane.key]) return promises[lane.key]
+  promises[lane.key] = (async () => {
+    const deps = await Promise.all((lane.deps || []).map(k => runLane(laneMap[k])))
+    const depText = deps.map((d, i) => d && d.res
+      ? `- ${lane.deps[i]}: worktree ${d.res.worktree_path} (branch ${d.res.branch}, commit ${d.res.commit}), verified=${d.pass}; files: ${(d.res.files || []).join(', ')}; summary: ${d.res.summary}`
+      : `- ${lane.deps[i]}: FAILED / unavailable — treat its deliverable as missing (TBD) and say so`).join('\n')
+    if (deps.length) log(`${lane.key}: prerequisites ${lane.deps.join(', ')} finished — starting`)
+    const res = await agent(COMMON + `${lane.key} — ${lane.title}\n${lane.prompt}\nALLOWED paths: ${lane.allowed.join(', ')}` +
+      (deps.length ? `\nPREREQUISITE LANES (finished; read their deliverables READ-ONLY from their worktrees, build on them, reference them by repository-relative path — they will be merged with yours; never copy them into your paths):\n${depText}` : ''),
+      { label: `build:${lane.key}`, phase: 'Build', isolation: 'worktree', schema: RESULT })
+    if (!res) return null
+    let cur = res, v = await verifyBoth(lane, cur, 1), rounds = 0
+    while (!v.pass && rounds < 2) {
+      rounds++
+      const fx = await agent(fixPrompt(lane, cur, v.issues), { label: `fix${rounds}:${lane.key}`, phase: 'Fix', schema: RESULT })
+      if (fx) cur = fx
+      v = await verifyBoth(lane, cur, rounds + 1)
+    }
+    log(`${lane.key}: done (verified=${v.pass}, fix rounds ${rounds}); unlocks: ${(cur.unlocks || []).join('; ').slice(0, 300)}`)
+    return { lane: lane.key, res: cur, pass: v.pass, fix_rounds: rounds, open_issues: v.pass ? [] : v.issues }
+  })()
+  return promises[lane.key]
+}
+const results = await parallel(lanes.map(l => () => runLane(l)))
+return results.map((r, i) => r || { lane: lanes[i].key, failed: true })

@@ -1,0 +1,3296 @@
+{
+  "matrix_id": "rf_source_evidence_matrix",
+  "matrix_version": "v1",
+  "status": "Evidence audit (2026-09-26). No model implementation, no architecture conclusion, no statement on whether RF pre-ionization is worth its power (to be decided later on a common bus-power boundary). Non-gating; does not touch the P5-N2 v1 result, the prereg, the chemistry set or any simulator prior.",
+  "scope": "RF plasma sources (inductively coupled, helicon / B-assisted inductive, capacitive E-mode of ICPs) operated on N2, O2, O or air, as a pre-ionizer or ionization stage ahead of a Hall discharge, plus RF-based ABEP heritage documented in open sources. ECR/microwave sources are outside this lane.",
+  "abep_side": "ABEP ionizer-inlet densities, pressures, temperatures, composition and flow come from the upstream ICD (intake -> filter -> compressor -> atmospheric gas chamber -> valve). None is defined yet: every ABEP-side value is TBD and no entry may claim regime_match 'yes' until the ICD exists.",
+  "conventions": {
+    "doi_or_url": "DOI of the published version when one exists, otherwise the URL accessed. accessed_version_url gives the copy actually read when it differs (arXiv, repository, preprint).",
+    "access": "'open' = full text read from a freely accessible copy; 'abstract_only' = only the abstract/metadata was read, the full text was not accessed.",
+    "evidence_class": "docs/EVIDENCE.md quantity type of this number: measured (as reported by the experimenters, incl. reported setpoints/hardware specs and observed events), digitized, inferred (a ratio/bound/judgement computed from reported quantities, by the source or by us), reconstructed, model-derived (simulation/theory output), assumed (model input or design claim without validating evidence). null only for value_kind 'tbd'.",
+    "evidence_level": "docs/EVIDENCE.md hierarchy relative to the question 'RF ionization stage for an ABEP Hall system': 3 = primary experimental report by the experimenters; 4 = evaluated data / validated physics; 5 = secondary or summary statement whose primary data cannot be inspected; 6 = model or correlation applied outside its validated domain (e.g. Xe-fitted closures reused for air); 7 = bare assumption. Hardware or gas dissimilarity is carried in applicability_to_abep, not in the level.",
+    "value": "Preserved as reported, in the reported units. Ranges are {min, max}; one-sided bounds use only min or max. qualitative = verbatim or near-verbatim statement; tbd = the accessed source explicitly leaves it unmeasured/unstated.",
+    "conditions": "Normalised to SI by unit conversion only (mT -> T, MHz -> Hz, mbar -> Pa, kW -> W). null = not stated in the source for that entry.",
+    "derived": "Entries with a 'derived' block are computed by docs/evidence/rf_source/derive_rf_evidence.py from the listed entries (4 significant figures); assumed_inputs are declared with reasons."
+  },
+  "entries": [
+    {
+      "id": "RF-IPG6S-01",
+      "source": {
+        "citation": "Romano F., Massuti-Ballester B., Binder T., Herdrich G., Fasoulas S., Schoenherr T., 'System analysis and test-bed for an atmosphere-breathing electric propulsion system using an inductive plasma thruster', Acta Astronautica 147 (2018) 114-126. Read as the author manuscript arXiv:2103.02328v2 (CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2018.03.031",
+        "accessed_version_url": "https://arxiv.org/abs/2103.02328",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "operating_envelope",
+      "quantity": "RF operating frequency of the IPG6-S inductively heated plasma generator (tetrode oscillator Himmelwerk HGL 20-4B, 20 kW max)",
+      "value_kind": "number",
+      "value": 4,
+      "units": "MHz",
+      "uncertainty": "approximate as reported ('f ~ 4 MHz depending on the impedance of the IPG'); not a measured spectrum",
+      "locator": "Sec. 3.1 and 3.3",
+      "transformation_chain": "reported operating parameter -> transcribed",
+      "conditions": {
+        "gas": "air; O2 (O2 used as a surrogate for atomic O)",
+        "pressure_Pa": null,
+        "power_W": {
+          "min": 500,
+          "max": 3500
+        },
+        "frequency_Hz": 4000000.0,
+        "B_T": null,
+        "mass_flow_mg_s": {
+          "min": 0.2,
+          "max": 120
+        },
+        "notes": "coil 5.5 turns around a water-cooled quartz tube (37 mm ID, 180 mm long); no applied magnetic field is described for this test series"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Inductive source run on air/O2, but a water-cooled plasma-wind-tunnel generator tested at >= 26 Pa facility background; frequency is set by the resonant circuit of this specific coil."
+      }
+    },
+    {
+      "id": "RF-IPG6S-02",
+      "source": {
+        "citation": "Romano F., Massuti-Ballester B., Binder T., Herdrich G., Fasoulas S., Schoenherr T., 'System analysis and test-bed for an atmosphere-breathing electric propulsion system using an inductive plasma thruster', Acta Astronautica 147 (2018) 114-126. Read as the author manuscript arXiv:2103.02328v2 (CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2018.03.031",
+        "accessed_version_url": "https://arxiv.org/abs/2103.02328",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "operating_envelope",
+      "quantity": "Active RF power range reached in the O2 and air tests (power-supply reading, not plasma-absorbed power)",
+      "value_kind": "range",
+      "value": {
+        "min": 0.5,
+        "max": 3.5
+      },
+      "units": "kW",
+      "uncertainty": "read from analogue power-supply displays; the source states the power absorbed by the plasma is lower because the cooling water absorbs most of the power",
+      "locator": "Sec. 3.3 ('active power never exceeded 3.5 kW'); Sec. 5",
+      "transformation_chain": "power-supply active power reading -> text statement -> transcribed",
+      "conditions": {
+        "gas": "air; O2",
+        "pressure_Pa": null,
+        "power_W": {
+          "min": 500,
+          "max": 3500
+        },
+        "frequency_Hz": 4000000.0,
+        "B_T": null,
+        "mass_flow_mg_s": {
+          "min": 0.2,
+          "max": 120
+        },
+        "notes": "screen-grid voltages 0.55, 0.85, 1.00 kV"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Upper end exceeds the RFP whole-system power envelope (< 1.5 kW, CLAUDE.md); ABEP-relevant RF-stage power is TBD on the common bus-power boundary."
+      }
+    },
+    {
+      "id": "RF-IPG6S-03",
+      "source": {
+        "citation": "Romano F., Massuti-Ballester B., Binder T., Herdrich G., Fasoulas S., Schoenherr T., 'System analysis and test-bed for an atmosphere-breathing electric propulsion system using an inductive plasma thruster', Acta Astronautica 147 (2018) 114-126. Read as the author manuscript arXiv:2103.02328v2 (CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2018.03.031",
+        "accessed_version_url": "https://arxiv.org/abs/2103.02328",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 3,
+      "topic": "power_coupling",
+      "quantity": "Power coupling efficiency with O2 = calorimeter power / active power (maximum over the sweep)",
+      "value_kind": "number",
+      "value": 0.3,
+      "units": "fraction",
+      "uncertainty": "approximate ('reaching the maximum of ~30 %'); the calorimeter gives a lower limit of plasma power (source); curves in Fig. 17b not digitized",
+      "locator": "Sec. 4.1, Fig. 17(b)",
+      "transformation_chain": "cavity-calorimeter water heat flux and power-supply active power (measured) -> source's ratio -> text value -> transcribed",
+      "conditions": {
+        "gas": "O2",
+        "pressure_Pa": null,
+        "power_W": {
+          "min": 500,
+          "max": 3500
+        },
+        "frequency_Hz": 4000000.0,
+        "B_T": null,
+        "mass_flow_mg_s": {
+          "min": 0.2,
+          "max": 120
+        },
+        "notes": "higher at lower mass flow and lower screen-grid voltage (source)"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Definition is plume enthalpy flux / supply active power: it lumps coil, tube-wall/cooling and frozen-flow losses and is not an antenna power-transfer efficiency or an ionization measure."
+      }
+    },
+    {
+      "id": "RF-IPG6S-04",
+      "source": {
+        "citation": "Romano F., Massuti-Ballester B., Binder T., Herdrich G., Fasoulas S., Schoenherr T., 'System analysis and test-bed for an atmosphere-breathing electric propulsion system using an inductive plasma thruster', Acta Astronautica 147 (2018) 114-126. Read as the author manuscript arXiv:2103.02328v2 (CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2018.03.031",
+        "accessed_version_url": "https://arxiv.org/abs/2103.02328",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 3,
+      "topic": "power_coupling",
+      "quantity": "Power coupling efficiency with air = calorimeter power / active power (maximum over the sweep)",
+      "value_kind": "number",
+      "value": 0.25,
+      "units": "fraction",
+      "uncertainty": "approximate ('maximum of ~25 %'); lower limit of plasma power (source); source attributes the lower value to higher dissociation energy",
+      "locator": "Sec. 4.1, Fig. 17(a)",
+      "transformation_chain": "cavity-calorimeter heat flux and power-supply active power (measured) -> source's ratio -> text value -> transcribed",
+      "conditions": {
+        "gas": "air",
+        "pressure_Pa": null,
+        "power_W": {
+          "min": 500,
+          "max": 3500
+        },
+        "frequency_Hz": 4000000.0,
+        "B_T": null,
+        "mass_flow_mg_s": {
+          "min": 0.2,
+          "max": 120
+        },
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Same definition caveat as RF-IPG6S-03; gas matches (air), flow and pressure regime relative to the ABEP ionizer inlet are TBD (ICD)."
+      }
+    },
+    {
+      "id": "RF-IPG6S-05",
+      "source": {
+        "citation": "Romano F., Massuti-Ballester B., Binder T., Herdrich G., Fasoulas S., Schoenherr T., 'System analysis and test-bed for an atmosphere-breathing electric propulsion system using an inductive plasma thruster', Acta Astronautica 147 (2018) 114-126. Read as the author manuscript arXiv:2103.02328v2 (CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2018.03.031",
+        "accessed_version_url": "https://arxiv.org/abs/2103.02328",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "plasma_state",
+      "quantity": "Maximum specific plasma-plume enthalpy (cavity calorimeter), air",
+      "value_kind": "number",
+      "value": 7.5,
+      "units": "MJ/kg",
+      "uncertainty": "not stated; calorimeter is a lower limit of plasma power (source); the value follows a sentence citing the generator's previous characterization [47], so whether it was measured in this campaign or taken from [47] is ambiguous; low dissociation is assumed by the source, not measured",
+      "locator": "Sec. 3.5",
+      "transformation_chain": "calorimeter water flow x c_p x temperature rise / gas mass flow (source Eq. 7) -> text value -> transcribed",
+      "conditions": {
+        "gas": "air",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": 4000000.0,
+        "B_T": null,
+        "mass_flow_mg_s": 60,
+        "notes": "the exhaust-velocity (~3900 m/s) and thrust (~230 mN) figures in the same section are the source's upper-limit estimates assuming full enthalpy-to-kinetic conversion; not recorded as evidence here"
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Energy per unit mass delivered to the flow, not an ion production measure; relevance depends on the ABEP flow (ICD)."
+      }
+    },
+    {
+      "id": "RF-IPG6S-06",
+      "source": {
+        "citation": "Romano F., Massuti-Ballester B., Binder T., Herdrich G., Fasoulas S., Schoenherr T., 'System analysis and test-bed for an atmosphere-breathing electric propulsion system using an inductive plasma thruster', Acta Astronautica 147 (2018) 114-126. Read as the author manuscript arXiv:2103.02328v2 (CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2018.03.031",
+        "accessed_version_url": "https://arxiv.org/abs/2103.02328",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "power_coupling",
+      "quantity": "Operating-map gaps caused by reflected power",
+      "value_kind": "qualitative",
+      "value": "'Missing points are due to automatic switch-off of the power supply, due to too high reflected power.'",
+      "units": "n/a",
+      "uncertainty": "the flows/voltages at which switch-off occurred are only visible in Figs. 16-17 (not digitized)",
+      "locator": "Sec. 4.1",
+      "transformation_chain": "observed power-supply trips -> text statement -> quoted",
+      "conditions": {
+        "gas": "air; O2",
+        "pressure_Pa": null,
+        "power_W": {
+          "min": 500,
+          "max": 3500
+        },
+        "frequency_Hz": 4000000.0,
+        "B_T": null,
+        "mass_flow_mg_s": {
+          "min": 0.2,
+          "max": 120
+        },
+        "notes": "fixed-tuning tetrode oscillator without an automatic matching network"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Shows that an unmatched fixed-frequency RF supply can lose operating points across a flow sweep; ABEP flow variability is TBD (ICD)."
+      }
+    },
+    {
+      "id": "RF-IPG6S-07",
+      "source": {
+        "citation": "Romano F., Massuti-Ballester B., Binder T., Herdrich G., Fasoulas S., Schoenherr T., 'System analysis and test-bed for an atmosphere-breathing electric propulsion system using an inductive plasma thruster', Acta Astronautica 147 (2018) 114-126. Read as the author manuscript arXiv:2103.02328v2 (CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2018.03.031",
+        "accessed_version_url": "https://arxiv.org/abs/2103.02328",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "pressure_mode_limits",
+      "quantity": "Vacuum-chamber base pressure without gas flow during the IPG6-S ABEP tests (facility background)",
+      "value_kind": "number",
+      "value": 26,
+      "units": "Pa",
+      "uncertainty": "not stated; pressure rises with mass flow (Fig. 9, not digitized)",
+      "locator": "Sec. 3.1",
+      "transformation_chain": "Pfeiffer PKR 251 gauge reading -> text -> transcribed",
+      "conditions": {
+        "gas": "residual (no flow)",
+        "pressure_Pa": 26,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "notes": "0.4 m chamber, rotary-vane pumping only"
+      },
+      "applicability_to_abep": {
+        "regime_match": "no",
+        "notes": "Tests were run at >= 26 Pa background, so neither ignition nor coupling at low density is demonstrated by this series; the source itself calls for a larger, lower-pressure facility."
+      }
+    },
+    {
+      "id": "RF-IPG6S-08",
+      "source": {
+        "citation": "Romano F., Massuti-Ballester B., Binder T., Herdrich G., Fasoulas S., Schoenherr T., 'System analysis and test-bed for an atmosphere-breathing electric propulsion system using an inductive plasma thruster', Acta Astronautica 147 (2018) 114-126. Read as the author manuscript arXiv:2103.02328v2 (CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2018.03.031",
+        "accessed_version_url": "https://arxiv.org/abs/2103.02328",
+        "access": "open"
+      },
+      "evidence_class": null,
+      "evidence_level": 3,
+      "topic": "ionization_fraction",
+      "quantity": "Ionization degree of the IPG6-S air/O2 plasma",
+      "value_kind": "tbd",
+      "value": null,
+      "units": "fraction",
+      "uncertainty": "not measured; source: 'the ionization level has to be evaluated'",
+      "locator": "Sec. 5.1",
+      "transformation_chain": "none (quantity absent from source)",
+      "conditions": {
+        "gas": "air; O2",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": 4000000.0,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Ionization fraction of an RF stage on air is exactly what a pre-ionizer trade needs; this source does not provide it."
+      }
+    },
+    {
+      "id": "RF-IPG6S-09",
+      "source": {
+        "citation": "Romano F., Massuti-Ballester B., Binder T., Herdrich G., Fasoulas S., Schoenherr T., 'System analysis and test-bed for an atmosphere-breathing electric propulsion system using an inductive plasma thruster', Acta Astronautica 147 (2018) 114-126. Read as the author manuscript arXiv:2103.02328v2 (CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2018.03.031",
+        "accessed_version_url": "https://arxiv.org/abs/2103.02328",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "thermal_load",
+      "quantity": "Heat partition in the water-cooled IPG6-S (coil, quartz tube, injector, oscillator all water-cooled)",
+      "value_kind": "qualitative",
+      "value": "'the power absorbed by the plasma is expected to be even lower as the cooling water absorbs most of the power'; downscaling 'with a passive cooling system' is named as the biggest challenge",
+      "units": "n/a",
+      "uncertainty": "no quantitative heat split given in the text (refers to its refs [47],[48] and Fig. 17)",
+      "locator": "Sec. 3.1, Sec. 5, Sec. 5.1",
+      "transformation_chain": "text statement -> quoted",
+      "conditions": {
+        "gas": "air; O2",
+        "pressure_Pa": null,
+        "power_W": {
+          "min": 500,
+          "max": 3500
+        },
+        "frequency_Hz": 4000000.0,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Flight hardware needs a radiatively/conductively cooled coil and tube; the heat split for that case is not in the accessed literature."
+      }
+    },
+    {
+      "id": "RF-IPG6S-10",
+      "source": {
+        "citation": "Romano F., Massuti-Ballester B., Binder T., Herdrich G., Fasoulas S., Schoenherr T., 'System analysis and test-bed for an atmosphere-breathing electric propulsion system using an inductive plasma thruster', Acta Astronautica 147 (2018) 114-126. Read as the author manuscript arXiv:2103.02328v2 (CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2018.03.031",
+        "accessed_version_url": "https://arxiv.org/abs/2103.02328",
+        "access": "open"
+      },
+      "evidence_class": "assumed",
+      "evidence_level": 7,
+      "topic": "material_interaction",
+      "quantity": "Erosion claim for an electrodeless inductive source",
+      "value_kind": "qualitative",
+      "value": "'No critical components have direct contact with the plasma, therefore any issues concerning erosion are eliminated.'",
+      "units": "n/a",
+      "uncertainty": "design claim; no erosion, oxidation or contamination measurement is reported; the quartz discharge tube is itself plasma-facing",
+      "locator": "Sec. 3",
+      "transformation_chain": "text statement -> quoted",
+      "conditions": {
+        "gas": "air; O2",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Dielectric-wall erosion/sputtering and O recombination on the tube for 15,000+ h firing are not addressed by any accessed measurement."
+      }
+    },
+    {
+      "id": "RF-IPG6S-11",
+      "source": {
+        "citation": "Romano F., Massuti-Ballester B., Binder T., Herdrich G., Fasoulas S., Schoenherr T., 'System analysis and test-bed for an atmosphere-breathing electric propulsion system using an inductive plasma thruster', Acta Astronautica 147 (2018) 114-126. Read as the author manuscript arXiv:2103.02328v2 (CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2018.03.031",
+        "accessed_version_url": "https://arxiv.org/abs/2103.02328",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "power_coupling",
+      "quantity": "IPG6-S coil inductance (5.5-turn coil around 37 mm ID x 180 mm quartz tube)",
+      "value_kind": "number",
+      "value": 0.489,
+      "units": "uH",
+      "uncertainty": "not stated (value from source's ref. [47])",
+      "locator": "Sec. 3.3",
+      "transformation_chain": "reported hardware parameter -> transcribed",
+      "conditions": {
+        "gas": "n/a (hardware parameter)",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": 4000000.0,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "no",
+        "notes": "Hardware-specific; recorded only because matching-network reactance and coil loss scale with it."
+      }
+    },
+    {
+      "id": "RF-IAC18-01",
+      "source": {
+        "citation": "Romano F., Herdrich G.H., Boxberger A., Roberts P.C.E., et al., 'Advances on the Inductive Plasma Thruster Design for an Atmosphere-Breathing EP System', 69th International Astronautical Congress, Bremen, 1-5 Oct 2018, IAC-18.C4.6.4x46387. Read as the accepted author manuscript (UCL Discovery).",
+        "doi_or_url": "https://discovery.ucl.ac.uk/id/eprint/10118318/1/2018_Romano_et_al._Advances_on_the_Inductive_Plasma_Thruster_Design_for_an_Atmosphere_Breathing_EP_System.pdf",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "pressure_mode_limits",
+      "quantity": "Applied axial magnetic field that triggered ignition 'in most cases' (IPG6-S with electromagnet)",
+      "value_kind": "number",
+      "value": 5,
+      "units": "mT",
+      "uncertainty": "'In most cases, 5 mT have been enough'; field measured by Teslameter on the electromagnet axis vs current (Fig. 4); per-case values only in Figs. 8-10",
+      "locator": "Sec. 7 (Electromagnet Testing)",
+      "transformation_chain": "electromagnet current -> calibrated axial field -> text -> transcribed",
+      "conditions": {
+        "gas": "N2, O2, Ar (N2 ignited without the field; O2 and Ar needed it)",
+        "pressure_Pa": {
+          "max": 15
+        },
+        "power_W": null,
+        "frequency_Hz": 3300000.0,
+        "B_T": 0.005,
+        "mass_flow_mg_s": {
+          "max": 10
+        },
+        "notes": "injector (discharge-chamber) pressure < 15 Pa at < 10 mg/s; tank 0.2-0.7 Pa with flow; field applied when anode current was 1.8-2 A"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Ignition aid at < 15 Pa discharge-chamber pressure on N2/O2; the ABEP ionizer-inlet pressure is TBD (ICD)."
+      }
+    },
+    {
+      "id": "RF-IAC18-02",
+      "source": {
+        "citation": "Romano F., Herdrich G.H., Boxberger A., Roberts P.C.E., et al., 'Advances on the Inductive Plasma Thruster Design for an Atmosphere-Breathing EP System', 69th International Astronautical Congress, Bremen, 1-5 Oct 2018, IAC-18.C4.6.4x46387. Read as the accepted author manuscript (UCL Discovery).",
+        "doi_or_url": "https://discovery.ucl.ac.uk/id/eprint/10118318/1/2018_Romano_et_al._Advances_on_the_Inductive_Plasma_Thruster_Design_for_an_Atmosphere_Breathing_EP_System.pdf",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "magnetic_field",
+      "quantity": "N2: RF active power P_RF with 18.2 mT applied field ('however, with high reflection'); 5.4 mT already doubled P_RF",
+      "value_kind": "number",
+      "value": 2800,
+      "units": "W",
+      "uncertainty": "read from text; P_RF is the power-supply value built from coil RF current and voltage (the source labels the plotted curves 'power absorbed by the plasma', but a coil-terminal power includes coil and tube/cooling losses - our reading); reflection level not quantified",
+      "locator": "Sec. 8 (Results), Fig. 8",
+      "transformation_chain": "coil RF current and voltage -> supply active power -> text value -> transcribed",
+      "conditions": {
+        "gas": "N2",
+        "pressure_Pa": {
+          "max": 15
+        },
+        "power_W": 2800,
+        "frequency_Hz": 3300000.0,
+        "B_T": 0.0182,
+        "mass_flow_mg_s": 1.29,
+        "notes": "anode current at facility maximum (4 A); increasing to 4.2 A (above the supply limit) raised P_RF further"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Shows B-field raising coupled power on N2 at ~1.3 mg/s; magnet power is not reported; absorbed-vs-reflected split not quantified."
+      }
+    },
+    {
+      "id": "RF-IAC18-03",
+      "source": {
+        "citation": "Romano F., Herdrich G.H., Boxberger A., Roberts P.C.E., et al., 'Advances on the Inductive Plasma Thruster Design for an Atmosphere-Breathing EP System', 69th International Astronautical Congress, Bremen, 1-5 Oct 2018, IAC-18.C4.6.4x46387. Read as the accepted author manuscript (UCL Discovery).",
+        "doi_or_url": "https://discovery.ucl.ac.uk/id/eprint/10118318/1/2018_Romano_et_al._Advances_on_the_Inductive_Plasma_Thruster_Design_for_an_Atmosphere_Breathing_EP_System.pdf",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "magnetic_field",
+      "quantity": "O2: 'absorbed power' (source's term for the coil active power) raised by a 27.1 mT applied field",
+      "value_kind": "range",
+      "value": {
+        "min": 500,
+        "max": 3700
+      },
+      "units": "W",
+      "uncertainty": "read from text; same power-definition caveat as RF-IAC18-02; O2 showed 'much lower signal oscillation, corresponding to a better matching'",
+      "locator": "Sec. 8 (Results), Fig. 9",
+      "transformation_chain": "coil RF current and voltage -> supply active power -> text values -> transcribed",
+      "conditions": {
+        "gas": "O2",
+        "pressure_Pa": {
+          "max": 15
+        },
+        "power_W": {
+          "min": 500,
+          "max": 3700
+        },
+        "frequency_Hz": 3300000.0,
+        "B_T": 0.0271,
+        "mass_flow_mg_s": 4.36,
+        "notes": "ignition aided by 5 mT"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "O2 as O surrogate; power level above the RFP whole-system envelope; magnet power not reported."
+      }
+    },
+    {
+      "id": "RF-IAC18-04",
+      "source": {
+        "citation": "Romano F., Herdrich G.H., Boxberger A., Roberts P.C.E., et al., 'Advances on the Inductive Plasma Thruster Design for an Atmosphere-Breathing EP System', 69th International Astronautical Congress, Bremen, 1-5 Oct 2018, IAC-18.C4.6.4x46387. Read as the accepted author manuscript (UCL Discovery).",
+        "doi_or_url": "https://discovery.ucl.ac.uk/id/eprint/10118318/1/2018_Romano_et_al._Advances_on_the_Inductive_Plasma_Thruster_Design_for_an_Atmosphere_Breathing_EP_System.pdf",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "pressure_mode_limits",
+      "quantity": "Ar: applied field needed for ignition at ~5 Pa discharge-chamber pressure (source attributes the higher field to the lower pressure)",
+      "value_kind": "number",
+      "value": 11.3,
+      "units": "mT",
+      "uncertainty": "read from text; raising anode current from 2.5 A to 3 A switched the plasma off ('requires further investigation')",
+      "locator": "Sec. 8 (Results), Fig. 10",
+      "transformation_chain": "electromagnet current -> calibrated field -> text -> transcribed",
+      "conditions": {
+        "gas": "Ar",
+        "pressure_Pa": 5,
+        "power_W": null,
+        "frequency_Hz": 3300000.0,
+        "B_T": 0.0113,
+        "mass_flow_mg_s": 1.38,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "no",
+        "notes": "Argon; recorded only for the reported trend that lower discharge-chamber pressure required a stronger field to ignite."
+      }
+    },
+    {
+      "id": "RF-IAC18-05",
+      "source": {
+        "citation": "Romano F., Herdrich G.H., Boxberger A., Roberts P.C.E., et al., 'Advances on the Inductive Plasma Thruster Design for an Atmosphere-Breathing EP System', 69th International Astronautical Congress, Bremen, 1-5 Oct 2018, IAC-18.C4.6.4x46387. Read as the accepted author manuscript (UCL Discovery).",
+        "doi_or_url": "https://discovery.ucl.ac.uk/id/eprint/10118318/1/2018_Romano_et_al._Advances_on_the_Inductive_Plasma_Thruster_Design_for_an_Atmosphere_Breathing_EP_System.pdf",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "pressure_mode_limits",
+      "quantity": "Low-flow ignition limit without magnetic field",
+      "value_kind": "qualitative",
+      "value": "'At the lowest mass flows, ignition could not be achieved without the aid of the EM.'",
+      "units": "n/a",
+      "uncertainty": "the lowest flows are not given numerically in the text (tests at < 10 mg/s)",
+      "locator": "Sec. 7",
+      "transformation_chain": "observation -> text -> quoted",
+      "conditions": {
+        "gas": "N2, O2, Ar",
+        "pressure_Pa": {
+          "max": 15
+        },
+        "power_W": null,
+        "frequency_Hz": 3300000.0,
+        "B_T": null,
+        "mass_flow_mg_s": {
+          "max": 10
+        },
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Evidence that unmagnetized inductive ignition has a low-density limit on molecular gases in this source; the numeric limit at ABEP inlet density is not established."
+      }
+    },
+    {
+      "id": "RF-IAC18-06",
+      "source": {
+        "citation": "Romano F., Herdrich G.H., Boxberger A., Roberts P.C.E., et al., 'Advances on the Inductive Plasma Thruster Design for an Atmosphere-Breathing EP System', 69th International Astronautical Congress, Bremen, 1-5 Oct 2018, IAC-18.C4.6.4x46387. Read as the accepted author manuscript (UCL Discovery).",
+        "doi_or_url": "https://discovery.ucl.ac.uk/id/eprint/10118318/1/2018_Romano_et_al._Advances_on_the_Inductive_Plasma_Thruster_Design_for_an_Atmosphere_Breathing_EP_System.pdf",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "pressure_mode_limits",
+      "quantity": "Injector (discharge-chamber) pressure during the B-field tests (upper bound)",
+      "value_kind": "bound",
+      "value": {
+        "max": 15
+      },
+      "units": "Pa",
+      "uncertainty": "stated as '< 15 Pa' for mass flows < 10 mg/s; tank pressure 0.2-0.7 Pa with flow",
+      "locator": "Sec. 7",
+      "transformation_chain": "injector-head gauge -> text -> transcribed",
+      "conditions": {
+        "gas": "N2, O2, Ar",
+        "pressure_Pa": {
+          "max": 15
+        },
+        "power_W": null,
+        "frequency_Hz": 3300000.0,
+        "B_T": null,
+        "mass_flow_mg_s": {
+          "max": 10
+        },
+        "notes": "facility: 4.8 m x 2 m chamber, base < 0.3 Pa without flow"
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Direct pressure comparison needs the ABEP ionizer-inlet pressure from the ICD."
+      }
+    },
+    {
+      "id": "RF-IAC18-07",
+      "source": {
+        "citation": "Romano F., Herdrich G.H., Boxberger A., Roberts P.C.E., et al., 'Advances on the Inductive Plasma Thruster Design for an Atmosphere-Breathing EP System', 69th International Astronautical Congress, Bremen, 1-5 Oct 2018, IAC-18.C4.6.4x46387. Read as the accepted author manuscript (UCL Discovery).",
+        "doi_or_url": "https://discovery.ucl.ac.uk/id/eprint/10118318/1/2018_Romano_et_al._Advances_on_the_Inductive_Plasma_Thruster_Design_for_an_Atmosphere_Breathing_EP_System.pdf",
+        "access": "open"
+      },
+      "evidence_class": "model-derived",
+      "evidence_level": 6,
+      "topic": "magnetic_field",
+      "quantity": "DC magnetic field 'required to efficiently increase the plasma coupling efficiency' (HELIC simulations applied to IPG6-S parameters)",
+      "value_kind": "range",
+      "value": {
+        "min": 20,
+        "max": 60
+      },
+      "units": "mT",
+      "uncertainty": "simulation-based design requirement; gas, density and validation of the HELIC runs are not given in the text",
+      "locator": "Sec. 3-4 (HELIC simulations applied to IPG6-S; electromagnet design requirements)",
+      "transformation_chain": "HELIC runs (source ref. [16]) -> text requirement -> transcribed",
+      "conditions": {
+        "gas": "not stated",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": {
+          "min": 0.02,
+          "max": 0.06
+        },
+        "notes": "electromagnet built to > 60 mT at 15 A without water cooling"
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "A helicon-assisted stage needs a magnet whose power and mass enter the bus-power boundary; not quantified here."
+      }
+    },
+    {
+      "id": "RF-IAC18-08",
+      "source": {
+        "citation": "Romano F., Herdrich G.H., Boxberger A., Roberts P.C.E., et al., 'Advances on the Inductive Plasma Thruster Design for an Atmosphere-Breathing EP System', 69th International Astronautical Congress, Bremen, 1-5 Oct 2018, IAC-18.C4.6.4x46387. Read as the accepted author manuscript (UCL Discovery).",
+        "doi_or_url": "https://discovery.ucl.ac.uk/id/eprint/10118318/1/2018_Romano_et_al._Advances_on_the_Inductive_Plasma_Thruster_Design_for_an_Atmosphere_Breathing_EP_System.pdf",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "power_coupling",
+      "quantity": "Observed effects of the applied field on the inductive discharge",
+      "value_kind": "qualitative",
+      "value": "'Plasma ignition is aided by B-field; Power reflection is reduced by B-field; Power absorbed is amplified by B-field.' A saturation in magnetic field is reached at gas-dependent intensities.",
+      "units": "n/a",
+      "uncertainty": "preliminary tests ('only preliminary results are hereby shown'); reflection inferred from reduced signal oscillation, not a forward/reflected power measurement",
+      "locator": "Sec. 7-8, conclusions",
+      "transformation_chain": "observations -> text -> quoted",
+      "conditions": {
+        "gas": "N2, O2, Ar",
+        "pressure_Pa": {
+          "max": 15
+        },
+        "power_W": null,
+        "frequency_Hz": 3300000.0,
+        "B_T": {
+          "min": 0,
+          "max": 0.0678
+        },
+        "notes": "largest field shown in the figures: 67.8 mT (Ar)"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Qualitative mechanism evidence on N2/O2; not a coupling-efficiency number."
+      }
+    },
+    {
+      "id": "RF-IPT20-01",
+      "source": {
+        "citation": "Romano F., Chan Y.-A., Herdrich G., Traub C., Fasoulas S., Roberts P.C.E., et al., 'RF Helicon-based Inductive Plasma Thruster (IPT) Design for an Atmosphere-Breathing Electric Propulsion system (ABEP)', Acta Astronautica 176 (2020) 476-483. Read as arXiv:2007.06397v2 (manuscript footer: CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2020.07.008",
+        "accessed_version_url": "https://arxiv.org/abs/2007.06397",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "operating_envelope",
+      "quantity": "IPT RF generator: 4 kW, 40.68 MHz power supply with auto-matching network (as acquired)",
+      "value_kind": "number",
+      "value": 40.68,
+      "units": "MHz",
+      "uncertainty": "hardware specification",
+      "locator": "Sec. 3.1",
+      "transformation_chain": "reported hardware specification -> transcribed",
+      "conditions": {
+        "gas": "n/a (design paper; no plasma operation reported)",
+        "pressure_Pa": null,
+        "power_W": {
+          "max": 4000
+        },
+        "frequency_Hz": 40680000.0,
+        "B_T": null,
+        "notes": "birdcage antenna around the discharge channel, brass structure and RF shield"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "An ABEP-intended electrodeless helicon-type stage; no plasma data in this paper."
+      }
+    },
+    {
+      "id": "RF-IPT20-02",
+      "source": {
+        "citation": "Romano F., Chan Y.-A., Herdrich G., Traub C., Fasoulas S., Roberts P.C.E., et al., 'RF Helicon-based Inductive Plasma Thruster (IPT) Design for an Atmosphere-Breathing Electric Propulsion system (ABEP)', Acta Astronautica 176 (2020) 476-483. Read as arXiv:2007.06397v2 (manuscript footer: CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2020.07.008",
+        "accessed_version_url": "https://arxiv.org/abs/2007.06397",
+        "access": "open"
+      },
+      "evidence_class": "model-derived",
+      "evidence_level": 6,
+      "topic": "pressure_mode_limits",
+      "quantity": "Frequency selection: 'equal or higher than 27.12 MHz, as it leads to easier ignition at low pressure, and better power absorption at higher plasma densities'",
+      "value_kind": "bound",
+      "value": {
+        "min": 27.12
+      },
+      "units": "MHz",
+      "uncertainty": "based on literature and preliminary HELIC/ADAMANT results (source refs [37]-[43]); gas and density of those runs not given",
+      "locator": "Sec. 3.1",
+      "transformation_chain": "simulation + literature -> design rule -> transcribed",
+      "conditions": {
+        "gas": "not stated",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": {
+          "min": 27120000.0
+        },
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Design heuristic; its validity for air at the ABEP inlet density is not demonstrated in accessed sources."
+      }
+    },
+    {
+      "id": "RF-IPT20-03",
+      "source": {
+        "citation": "Romano F., Chan Y.-A., Herdrich G., Traub C., Fasoulas S., Roberts P.C.E., et al., 'RF Helicon-based Inductive Plasma Thruster (IPT) Design for an Atmosphere-Breathing Electric Propulsion system (ABEP)', Acta Astronautica 176 (2020) 476-483. Read as arXiv:2007.06397v2 (manuscript footer: CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2020.07.008",
+        "accessed_version_url": "https://arxiv.org/abs/2007.06397",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "magnetic_field",
+      "quantity": "IPT external solenoid: maximum axial field at 15 A DC",
+      "value_kind": "number",
+      "value": 70,
+      "units": "mT",
+      "uncertainty": "capability statement; solenoid electrical power and mass not given",
+      "locator": "Sec. 2.2",
+      "transformation_chain": "reported hardware capability -> transcribed",
+      "conditions": {
+        "gas": "n/a",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": 0.07,
+        "notes": "15 A DC"
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Magnet power/mass for a flight ABEP stage are not reported; a Hall thruster's own magnetic circuit may interact with such a field (not addressed)."
+      }
+    },
+    {
+      "id": "RF-IPT20-04",
+      "source": {
+        "citation": "Romano F., Chan Y.-A., Herdrich G., Traub C., Fasoulas S., Roberts P.C.E., et al., 'RF Helicon-based Inductive Plasma Thruster (IPT) Design for an Atmosphere-Breathing Electric Propulsion system (ABEP)', Acta Astronautica 176 (2020) 476-483. Read as arXiv:2007.06397v2 (manuscript footer: CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2020.07.008",
+        "accessed_version_url": "https://arxiv.org/abs/2007.06397",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "thermal_load",
+      "quantity": "IPT solenoid continuous operation at 15 A without overheating (passively cooled lab model)",
+      "value_kind": "bound",
+      "value": {
+        "min": 30
+      },
+      "units": "min",
+      "uncertainty": "'more than 30 min operation is possible without overheating'; temperature not reported",
+      "locator": "Sec. 2.2",
+      "transformation_chain": "reported capability -> transcribed",
+      "conditions": {
+        "gas": "n/a",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": 0.07,
+        "notes": "lab model 'designed for maximum (technical) flexibility and passive cooling'"
+      },
+      "applicability_to_abep": {
+        "regime_match": "no",
+        "notes": "Minutes-scale lab duty versus a > 15,000 h firing requirement (RFP); a continuous-duty flight magnet is a separate design."
+      }
+    },
+    {
+      "id": "RF-IPT20-05",
+      "source": {
+        "citation": "Romano F., Chan Y.-A., Herdrich G., Traub C., Fasoulas S., Roberts P.C.E., et al., 'RF Helicon-based Inductive Plasma Thruster (IPT) Design for an Atmosphere-Breathing Electric Propulsion system (ABEP)', Acta Astronautica 176 (2020) 476-483. Read as arXiv:2007.06397v2 (manuscript footer: CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2020.07.008",
+        "accessed_version_url": "https://arxiv.org/abs/2007.06397",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "power_coupling",
+      "quantity": "Birdcage antenna k = 1 resonance frequency, measured without plasma (simulated 42.55 MHz)",
+      "value_kind": "number",
+      "value": 44.25,
+      "units": "MHz",
+      "uncertainty": "3.84 % above the XFdtd simulation (source); spectrum analyser R&S FSH4; average capacitance 717.475 pF",
+      "locator": "Sec. 4.2, Fig. 13",
+      "transformation_chain": "S11 sweep -> resonance peak -> text -> transcribed",
+      "conditions": {
+        "gas": "none (no plasma)",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": 44250000.0,
+        "B_T": null,
+        "notes": "plasma is expected to shift resonance; tuning by the movable brass injector shifted up to +1 MHz in preliminary tests"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Antenna-circuit characterization of an ABEP-intended stage; plasma loading and its variation with ABEP flow are not measured."
+      }
+    },
+    {
+      "id": "RF-IPT20-06",
+      "source": {
+        "citation": "Romano F., Chan Y.-A., Herdrich G., Traub C., Fasoulas S., Roberts P.C.E., et al., 'RF Helicon-based Inductive Plasma Thruster (IPT) Design for an Atmosphere-Breathing Electric Propulsion system (ABEP)', Acta Astronautica 176 (2020) 476-483. Read as arXiv:2007.06397v2 (manuscript footer: CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2020.07.008",
+        "accessed_version_url": "https://arxiv.org/abs/2007.06397",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "power_coupling",
+      "quantity": "Birdcage antenna S11 at the k = 1 resonance, measured without plasma (simulated -8.4 dB)",
+      "value_kind": "number",
+      "value": -6.0,
+      "units": "dB",
+      "uncertainty": "single measurement; capacitor non-idealities and assembly tolerances cited as causes of the model difference",
+      "locator": "Sec. 4.2, Fig. 13",
+      "transformation_chain": "spectrum-analyser S11 -> text -> transcribed",
+      "conditions": {
+        "gas": "none (no plasma)",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": 44250000.0,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Vacuum (no-plasma) match only; the loaded match on air at ABEP flow is not measured."
+      }
+    },
+    {
+      "id": "RF-IPT20-D1",
+      "source": {
+        "citation": "Romano F., Chan Y.-A., Herdrich G., Traub C., Fasoulas S., Roberts P.C.E., et al., 'RF Helicon-based Inductive Plasma Thruster (IPT) Design for an Atmosphere-Breathing Electric Propulsion system (ABEP)', Acta Astronautica 176 (2020) 476-483. Read as arXiv:2007.06397v2 (manuscript footer: CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2020.07.008",
+        "accessed_version_url": "https://arxiv.org/abs/2007.06397",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 3,
+      "topic": "power_coupling",
+      "quantity": "Reflected power fraction |Gamma|^2 implied by the measured no-plasma S11 at resonance (before any matching network)",
+      "value_kind": "number",
+      "value": 0.2512,
+      "units": "fraction",
+      "uncertainty": "inherits the single S11 reading; applies to the unloaded antenna only",
+      "locator": "derived from RF-IPT20-06",
+      "transformation_chain": "measured S11 (dB) -> our conversion 10^(S11/10) (derive_rf_evidence.py)",
+      "conditions": {
+        "gas": "none (no plasma)",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": 44250000.0,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Illustrates why a matching network is needed in the lab; the source states it 'works mainly as protection for the RF generator, but it does not improve the load itself'."
+      },
+      "derived": {
+        "function": "s11_reflected_fraction",
+        "inputs": {
+          "s11_dB": -6.0
+        },
+        "from_ids": [
+          "RF-IPT20-06"
+        ]
+      }
+    },
+    {
+      "id": "RF-IPT20-07",
+      "source": {
+        "citation": "Romano F., Chan Y.-A., Herdrich G., Traub C., Fasoulas S., Roberts P.C.E., et al., 'RF Helicon-based Inductive Plasma Thruster (IPT) Design for an Atmosphere-Breathing Electric Propulsion system (ABEP)', Acta Astronautica 176 (2020) 476-483. Read as arXiv:2007.06397v2 (manuscript footer: CC BY-NC-ND 4.0).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2020.07.008",
+        "accessed_version_url": "https://arxiv.org/abs/2007.06397",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 3,
+      "topic": "power_coupling",
+      "quantity": "Forward/reflected power accounting in the RF chain (generator, lambda/4 and lambda/2 RG393/U cables, matching network, antenna)",
+      "value_kind": "qualitative",
+      "value": "Forward power P_f is split between the IPT (P_IPT) and the matching network, which absorbs the reflected power P_r; 'The matching network works mainly as protection for the RF generator, but it does not improve the load itself.' A lambda/2 cable to the load avoids impedance transformation and 'misreadings of forward and reflected powers'.",
+      "units": "n/a",
+      "uncertainty": "engineering description; no measured split",
+      "locator": "Sec. 3.1, Fig. 5",
+      "transformation_chain": "text -> paraphrase with quotes",
+      "conditions": {
+        "gas": "n/a",
+        "pressure_Pa": null,
+        "power_W": {
+          "max": 4000
+        },
+        "frequency_Hz": 40680000.0,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Defines the accounting that any ABEP RF-stage measurement must report (forward, reflected, matching-network and antenna losses, plasma-absorbed)."
+      }
+    },
+    {
+      "id": "RF-IRS20-01",
+      "source": {
+        "citation": "Institute of Space Systems (IRS), University of Stuttgart, news item 'A breakthrough: First Ignition of the Helicon-based Radio-Frequency Inductive Plasma Thruster (IPT)', 9 April 2020.",
+        "doi_or_url": "https://www.irs.uni-stuttgart.de/en/institute/news/A-breakthrough-First-Ignition-of-the-Helicon-based-Radio-Frequency-Inductive-Plasma-Thruster-IPT/",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 5,
+      "topic": "architecture_heritage",
+      "quantity": "First ignition of the IPT (helicon-based RF inductive plasma thruster for ABEP)",
+      "value_kind": "qualitative",
+      "value": "Ignition with 'Nitrogen as propellant'; 'The first tests showed very good power coupling efficiency and a plasma jet.'",
+      "units": "n/a",
+      "uncertainty": "news item; no power, flow, pressure, field or coupling number given",
+      "locator": "news text and Fig. 3 caption",
+      "transformation_chain": "institutional news -> quoted",
+      "conditions": {
+        "gas": "N2",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Demonstrates N2 operation of an ABEP-intended RF stage exists; no quantitative evidence."
+      }
+    },
+    {
+      "id": "RF-IRS20-02",
+      "source": {
+        "citation": "Institute of Space Systems (IRS), University of Stuttgart, news item 'A breakthrough: First Ignition of the Helicon-based Radio-Frequency Inductive Plasma Thruster (IPT)', 9 April 2020.",
+        "doi_or_url": "https://www.irs.uni-stuttgart.de/en/institute/news/A-breakthrough-First-Ignition-of-the-Helicon-based-Radio-Frequency-Inductive-Plasma-Thruster-IPT/",
+        "access": "open"
+      },
+      "evidence_class": null,
+      "evidence_level": 5,
+      "topic": "power_coupling",
+      "quantity": "IPT power-coupling efficiency on N2",
+      "value_kind": "tbd",
+      "value": null,
+      "units": "fraction",
+      "uncertainty": "claimed 'very good' without a number; not quantified in any accessed source",
+      "locator": "news text",
+      "transformation_chain": "none (quantity absent from source)",
+      "conditions": {
+        "gas": "N2",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Needs a measured forward/reflected/absorbed split on N2 and air."
+      }
+    },
+    {
+      "id": "RF-ZHOU24-01",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "model-derived",
+      "evidence_level": 6,
+      "topic": "performance_context",
+      "quantity": "Absorbed power at maximum thrust efficiency, N2, 1 mg/s (hybrid 2D HYPHEN simulation of a virtual electrodeless plasma thruster)",
+      "value_kind": "number",
+      "value": 2000,
+      "units": "W",
+      "uncertainty": "'about' (text); Xe-fitted anomalous-transport parameters reused for air 'due to the lack of experimental data'; power deposition prescribed (Gaussian), not an RF field solution",
+      "locator": "Sec. 4, Fig. 3(d)",
+      "transformation_chain": "simulation sweep -> text value -> transcribed",
+      "conditions": {
+        "gas": "N2",
+        "pressure_Pa": null,
+        "power_W": 2000,
+        "frequency_Hz": null,
+        "B_T": 0.12,
+        "mass_flow_mg_s": 1,
+        "notes": "virtual thruster: BN walls, R = 1.25 cm (text L = 3 cm but Table 4 lists 6 cm); max applied field about 1200 G"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "P_a is plasma-absorbed power: RF-generator, matching and antenna losses must be added on top; the device is a stand-alone thruster, not a pre-ionizer."
+      }
+    },
+    {
+      "id": "RF-ZHOU24-02",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "model-derived",
+      "evidence_level": 6,
+      "topic": "performance_context",
+      "quantity": "Absorbed power at maximum thrust efficiency, atomic O, 1 mg/s (HYPHEN)",
+      "value_kind": "number",
+      "value": 1250,
+      "units": "W",
+      "uncertainty": "'about' (text); same model caveats as RF-ZHOU24-01",
+      "locator": "Sec. 4, Fig. 3(d)",
+      "transformation_chain": "simulation sweep -> text value -> transcribed",
+      "conditions": {
+        "gas": "O",
+        "pressure_Pa": null,
+        "power_W": 1250,
+        "frequency_Hz": null,
+        "B_T": 0.12,
+        "mass_flow_mg_s": 1,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Model-only; atomic O is the dominant ambient species at the upper RFP altitudes but the O/O2 split at the ionizer inlet is TBD (ICD)."
+      }
+    },
+    {
+      "id": "RF-ZHOU24-03",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "model-derived",
+      "evidence_level": 6,
+      "topic": "ionization_fraction",
+      "quantity": "Absorbed power at which propellant utilization eta_u ~ 75 % is reached, N2, 1 mg/s",
+      "value_kind": "number",
+      "value": 1400,
+      "units": "W",
+      "uncertainty": "'about' (text); model caveats as RF-ZHOU24-01",
+      "locator": "Sec. 4, Fig. 3(a)",
+      "transformation_chain": "simulation sweep -> text value -> transcribed",
+      "conditions": {
+        "gas": "N2",
+        "pressure_Pa": null,
+        "power_W": 1400,
+        "frequency_Hz": null,
+        "B_T": 0.12,
+        "mass_flow_mg_s": 1,
+        "notes": "Xe reaches the same eta_u at about 100 W and O at about 700 W in the same geometry"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Model-derived utilization vs absorbed power for a full electrodeless thruster; not measured."
+      }
+    },
+    {
+      "id": "RF-ZHOU24-04",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "model-derived",
+      "evidence_level": 6,
+      "topic": "ionization_fraction",
+      "quantity": "Absorbed power at which propellant utilization eta_u ~ 75 % is reached, atomic O, 1 mg/s",
+      "value_kind": "number",
+      "value": 700,
+      "units": "W",
+      "uncertainty": "'about' (text); model caveats as RF-ZHOU24-01",
+      "locator": "Sec. 4, Fig. 3(a)",
+      "transformation_chain": "simulation sweep -> text value -> transcribed",
+      "conditions": {
+        "gas": "O",
+        "pressure_Pa": null,
+        "power_W": 700,
+        "frequency_Hz": null,
+        "B_T": 0.12,
+        "mass_flow_mg_s": 1,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Model-only."
+      }
+    },
+    {
+      "id": "RF-ZHOU24-05",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "model-derived",
+      "evidence_level": 6,
+      "topic": "ionization_fraction",
+      "quantity": "Propellant utilization eta_u (beam ion mass flow / injected mass flow), N2, 1500 W absorbed, 1 mg/s (Table 5 case 5)",
+      "value_kind": "number",
+      "value": 0.82,
+      "units": "fraction",
+      "uncertainty": "model output; production efficiency eta_prod = 0.32 in the same case (a produced ion is re-ionized ~3 times)",
+      "locator": "Table 5, case 5",
+      "transformation_chain": "simulation -> table -> transcribed",
+      "conditions": {
+        "gas": "N2",
+        "pressure_Pa": null,
+        "power_W": 1500,
+        "frequency_Hz": null,
+        "B_T": 0.12,
+        "mass_flow_mg_s": 1,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Model-only; mass-based utilization, species split (N2+ vs N+) not given per case."
+      }
+    },
+    {
+      "id": "RF-ZHOU24-06",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "model-derived",
+      "evidence_level": 6,
+      "topic": "ion_production_cost",
+      "quantity": "Inelastic-collision share of absorbed power P_inel/P_a, N2, 1500 W, 1 mg/s (Table 5 case 5)",
+      "value_kind": "number",
+      "value": 0.687,
+      "units": "fraction",
+      "uncertainty": "model output; P_wall/P_a = 0.178 in the same case",
+      "locator": "Table 5, case 5",
+      "transformation_chain": "simulation -> table -> transcribed",
+      "conditions": {
+        "gas": "N2",
+        "pressure_Pa": null,
+        "power_W": 1500,
+        "frequency_Hz": null,
+        "B_T": 0.12,
+        "mass_flow_mg_s": 1,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Indicates how much of the absorbed power goes to excitation/dissociation/ionization in N2 in this model; not measured."
+      }
+    },
+    {
+      "id": "RF-ZHOU24-07",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "model-derived",
+      "evidence_level": 6,
+      "topic": "ionization_fraction",
+      "quantity": "Propellant utilization eta_u, N2, 2000 W, 1 mg/s (Table 5 case 6)",
+      "value_kind": "number",
+      "value": 0.97,
+      "units": "fraction",
+      "uncertainty": "model output; eta_prod = 0.29",
+      "locator": "Table 5, case 6",
+      "transformation_chain": "simulation -> table -> transcribed",
+      "conditions": {
+        "gas": "N2",
+        "pressure_Pa": null,
+        "power_W": 2000,
+        "frequency_Hz": null,
+        "B_T": 0.12,
+        "mass_flow_mg_s": 1,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Model-only."
+      }
+    },
+    {
+      "id": "RF-ZHOU24-08",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "model-derived",
+      "evidence_level": 6,
+      "topic": "ion_production_cost",
+      "quantity": "Inelastic-collision share of absorbed power P_inel/P_a, N2, 2000 W, 1 mg/s (Table 5 case 6)",
+      "value_kind": "number",
+      "value": 0.514,
+      "units": "fraction",
+      "uncertainty": "model output; P_wall/P_a = 0.295",
+      "locator": "Table 5, case 6",
+      "transformation_chain": "simulation -> table -> transcribed",
+      "conditions": {
+        "gas": "N2",
+        "pressure_Pa": null,
+        "power_W": 2000,
+        "frequency_Hz": null,
+        "B_T": 0.12,
+        "mass_flow_mg_s": 1,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Model-only."
+      }
+    },
+    {
+      "id": "RF-ZHOU24-09",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "model-derived",
+      "evidence_level": 6,
+      "topic": "ionization_fraction",
+      "quantity": "Propellant utilization eta_u, atomic O, 1500 W, 1 mg/s (Table 5 case 3)",
+      "value_kind": "number",
+      "value": 0.97,
+      "units": "fraction",
+      "uncertainty": "model output; eta_prod = 0.28; P_wall/P_a = 0.461",
+      "locator": "Table 5, case 3",
+      "transformation_chain": "simulation -> table -> transcribed",
+      "conditions": {
+        "gas": "O",
+        "pressure_Pa": null,
+        "power_W": 1500,
+        "frequency_Hz": null,
+        "B_T": 0.12,
+        "mass_flow_mg_s": 1,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Model-only."
+      }
+    },
+    {
+      "id": "RF-ZHOU24-10",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "model-derived",
+      "evidence_level": 6,
+      "topic": "ion_production_cost",
+      "quantity": "Inelastic-collision share of absorbed power P_inel/P_a, atomic O, 1500 W, 1 mg/s (Table 5 case 3)",
+      "value_kind": "number",
+      "value": 0.271,
+      "units": "fraction",
+      "uncertainty": "model output",
+      "locator": "Table 5, case 3",
+      "transformation_chain": "simulation -> table -> transcribed",
+      "conditions": {
+        "gas": "O",
+        "pressure_Pa": null,
+        "power_W": 1500,
+        "frequency_Hz": null,
+        "B_T": 0.12,
+        "mass_flow_mg_s": 1,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Model-only."
+      }
+    },
+    {
+      "id": "RF-ZHOU24-11",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "model-derived",
+      "evidence_level": 6,
+      "topic": "ionization_fraction",
+      "quantity": "Propellant utilization eta_u, O2, 1500 W, 1 mg/s (Table 5 case 10)",
+      "value_kind": "number",
+      "value": 0.97,
+      "units": "fraction",
+      "uncertainty": "model output; P_inel/P_a = 0.287, P_wall/P_a = 0.445",
+      "locator": "Table 5, case 10",
+      "transformation_chain": "simulation -> table -> transcribed",
+      "conditions": {
+        "gas": "O2",
+        "pressure_Pa": null,
+        "power_W": 1500,
+        "frequency_Hz": null,
+        "B_T": 0.12,
+        "mass_flow_mg_s": 1,
+        "notes": "O2 performance 'very similar' to atomic O in this model (source)"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Model-only; relevant because O may recombine to O2 on intake walls (source's own motivation)."
+      }
+    },
+    {
+      "id": "RF-ZHOU24-12",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "model-derived",
+      "evidence_level": 6,
+      "topic": "plasma_state",
+      "quantity": "Mean source electron temperature at the thrust-efficiency maxima (Xe, O, N2)",
+      "value_kind": "range",
+      "value": {
+        "min": 8,
+        "max": 10
+      },
+      "units": "eV",
+      "uncertainty": "'~8-10 eV' (text); model output",
+      "locator": "Sec. 4, Fig. 3(c)",
+      "transformation_chain": "simulation -> text -> transcribed",
+      "conditions": {
+        "gas": "Xe, O, N2",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": 0.12,
+        "mass_flow_mg_s": 1,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Model-only; falls inside the project's N2 chemistry validity domain (T_e 2-30 eV) but that domain concerns the Hall solver, not this model."
+      }
+    },
+    {
+      "id": "RF-ZHOU24-13",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "assumed",
+      "evidence_level": 5,
+      "topic": "material_interaction",
+      "quantity": "Associative wall-recombination coefficient of atomic O used on the BN walls (model input)",
+      "value_kind": "number",
+      "value": 0.17,
+      "units": "fraction",
+      "uncertainty": "model input 'based on Refs. [42, 43]' (not accessed); gamma_N = 0.07 in the same model",
+      "locator": "Sec. 3.3, Table 4",
+      "transformation_chain": "literature (not accessed) -> model input -> transcribed",
+      "conditions": {
+        "gas": "O (N: gamma_N = 0.07)",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "notes": "full thermal accommodation alpha_W = 1 assumed"
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Surface recombination on the RF-stage dielectric changes the O/O2 ratio delivered to the Hall channel; wall material and temperature of a Vyovrinda stage are TBD."
+      }
+    },
+    {
+      "id": "RF-ZHOU24-14",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "assumed",
+      "evidence_level": 6,
+      "topic": "plasma_state",
+      "quantity": "Transport closure transferred from xenon to air in the model",
+      "value_kind": "qualitative",
+      "value": "Anomalous-transport parameters fitted for Xe (alpha_ano = 0.02, nu_q = 5e8 s^-1) 'Due to the lack of experimental data, these values are also used for the air species.'",
+      "units": "n/a",
+      "uncertainty": "transfer not validated for N2/O",
+      "locator": "Sec. 3.3",
+      "transformation_chain": "text -> quoted",
+      "conditions": {
+        "gas": "N2, O, O2",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": 0.12,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Same class of limitation as the project's own Hall transport non-identifiability (gate 3); model numbers above inherit it."
+      }
+    },
+    {
+      "id": "RF-ZHOU24-D1",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 6,
+      "topic": "ion_production_cost",
+      "quantity": "Absorbed energy per injected N2 molecule at the N2 1500 W, 1 mg/s operating point (model input configuration)",
+      "value_kind": "number",
+      "value": 435.3,
+      "units": "eV per injected molecule",
+      "uncertainty": "exact arithmetic on the source's set point with nominal mass 28 u (abep_sim/constants.py); not a cost per beam ion (beam species split not given)",
+      "locator": "derived from RF-ZHOU24-05",
+      "transformation_chain": "model set point (P_a, mdot) -> our ratio P_a / (mdot / m_N2) / e (derive_rf_evidence.py)",
+      "conditions": {
+        "gas": "N2",
+        "pressure_Pa": null,
+        "power_W": 1500,
+        "frequency_Hz": null,
+        "B_T": 0.12,
+        "mass_flow_mg_s": 1,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Puts the model operating point on a per-particle energy scale comparable with Hall discharge budgets on a common boundary; plasma-absorbed, excludes RF-chain losses."
+      },
+      "derived": {
+        "function": "energy_per_injected_particle_eV",
+        "inputs": {
+          "P_W": 1500,
+          "mdot_mg_s": 1,
+          "species": "N2"
+        },
+        "from_ids": [
+          "RF-ZHOU24-05"
+        ]
+      }
+    },
+    {
+      "id": "RF-ZHOU24-D2",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 6,
+      "topic": "ion_production_cost",
+      "quantity": "Absorbed energy per injected N2 molecule at the N2 2000 W, 1 mg/s operating point (model maximum thrust efficiency)",
+      "value_kind": "number",
+      "value": 580.4,
+      "units": "eV per injected molecule",
+      "uncertainty": "exact arithmetic on the source's set point with nominal mass 28 u; not a cost per beam ion",
+      "locator": "derived from RF-ZHOU24-07",
+      "transformation_chain": "model set point (P_a, mdot) -> our ratio (derive_rf_evidence.py)",
+      "conditions": {
+        "gas": "N2",
+        "pressure_Pa": null,
+        "power_W": 2000,
+        "frequency_Hz": null,
+        "B_T": 0.12,
+        "mass_flow_mg_s": 1,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "As RF-ZHOU24-D1."
+      },
+      "derived": {
+        "function": "energy_per_injected_particle_eV",
+        "inputs": {
+          "P_W": 2000,
+          "mdot_mg_s": 1,
+          "species": "N2"
+        },
+        "from_ids": [
+          "RF-ZHOU24-07"
+        ]
+      }
+    },
+    {
+      "id": "RF-ZHOU24-D3",
+      "source": {
+        "citation": "Zhou J., Taccogna F., Fajardo P., Ahedo E., 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4) (2024) 459-474. Read as arXiv:2407.19322v1.",
+        "doi_or_url": "https://doi.org/10.1016/j.jppr.2024.10.001",
+        "accessed_version_url": "https://arxiv.org/abs/2407.19322",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 6,
+      "topic": "ion_production_cost",
+      "quantity": "Absorbed energy per injected O atom at the O 1500 W, 1 mg/s operating point (model input configuration)",
+      "value_kind": "number",
+      "value": 248.7,
+      "units": "eV per injected atom",
+      "uncertainty": "exact arithmetic on the source's set point with nominal mass 16 u; not a cost per beam ion",
+      "locator": "derived from RF-ZHOU24-09",
+      "transformation_chain": "model set point (P_a, mdot) -> our ratio (derive_rf_evidence.py)",
+      "conditions": {
+        "gas": "O",
+        "pressure_Pa": null,
+        "power_W": 1500,
+        "frequency_Hz": null,
+        "B_T": 0.12,
+        "mass_flow_mg_s": 1,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "As RF-ZHOU24-D1."
+      },
+      "derived": {
+        "function": "energy_per_injected_particle_eV",
+        "inputs": {
+          "P_W": 1500,
+          "mdot_mg_s": 1,
+          "species": "O"
+        },
+        "from_ids": [
+          "RF-ZHOU24-09"
+        ]
+      }
+    },
+    {
+      "id": "RF-SCHU24-01",
+      "source": {
+        "citation": "Schuecke L., Torres Segura A.N., Korolov I., Awakowicz P., Gibson A.R., 'Decoupling NO production and UV emission intensity over the E-H mode transition in a low-pressure inductively coupled plasma device', arXiv:2407.04441v1 (5 July 2024).",
+        "doi_or_url": "https://doi.org/10.48550/arXiv.2407.04441",
+        "accessed_version_url": "https://arxiv.org/abs/2407.04441",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "pressure_mode_limits",
+      "quantity": "E-H mode transition RF power, 80 % N2 / 20 % O2, 10 Pa (double planar-coil ICP)",
+      "value_kind": "number",
+      "value": 200,
+      "units": "W",
+      "uncertainty": "'at around 200 W' (text); identified from gas-temperature rise and n_e jump; the transition is gradual at low pressure; coil/matchbox losses not separated (generator power)",
+      "locator": "Sec. 4.1, Figs. 2-3",
+      "transformation_chain": "generator rf power scan with OES/MRP diagnostics -> text value -> transcribed",
+      "conditions": {
+        "gas": "N2/O2 80/20 (16 sccm N2 + 4 sccm O2)",
+        "pressure_Pa": 10,
+        "power_W": 200,
+        "frequency_Hz": 13560000.0,
+        "B_T": 0,
+        "notes": "two in-phase copper planar coils outside borosilicate lid/bottom; power scan 10-800 W; pressures 10, 15, 25, 35 Pa"
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Air-like mixture, unmagnetized ICP; the lowest pressure studied (10 Pa) must be compared with the ABEP ionizer-inlet pressure from the ICD."
+      }
+    },
+    {
+      "id": "RF-SCHU24-02",
+      "source": {
+        "citation": "Schuecke L., Torres Segura A.N., Korolov I., Awakowicz P., Gibson A.R., 'Decoupling NO production and UV emission intensity over the E-H mode transition in a low-pressure inductively coupled plasma device', arXiv:2407.04441v1 (5 July 2024).",
+        "doi_or_url": "https://doi.org/10.48550/arXiv.2407.04441",
+        "accessed_version_url": "https://arxiv.org/abs/2407.04441",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "pressure_mode_limits",
+      "quantity": "E-H mode transition RF power, 80 % N2 / 20 % O2, 35 Pa",
+      "value_kind": "number",
+      "value": 600,
+      "units": "W",
+      "uncertainty": "'only at around 600 W' (text); abrupt transition at 25-35 Pa; MRP did not show the n_e increase at 35 Pa (model limitation noted by the source)",
+      "locator": "Sec. 4.1, Figs. 2-3",
+      "transformation_chain": "generator rf power scan -> text value -> transcribed",
+      "conditions": {
+        "gas": "N2/O2 80/20 (16 sccm N2 + 4 sccm O2)",
+        "pressure_Pa": 35,
+        "power_W": 600,
+        "frequency_Hz": 13560000.0,
+        "B_T": 0,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Transition power rises with pressure in this N2/O2 ICP; ABEP pressure TBD (ICD)."
+      }
+    },
+    {
+      "id": "RF-SCHU24-03",
+      "source": {
+        "citation": "Schuecke L., Torres Segura A.N., Korolov I., Awakowicz P., Gibson A.R., 'Decoupling NO production and UV emission intensity over the E-H mode transition in a low-pressure inductively coupled plasma device', arXiv:2407.04441v1 (5 July 2024).",
+        "doi_or_url": "https://doi.org/10.48550/arXiv.2407.04441",
+        "accessed_version_url": "https://arxiv.org/abs/2407.04441",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "plasma_state",
+      "quantity": "Electron density at 800 W, 10 Pa, H-mode (multipole resonance probe); < 1e14 m^-3 at 10 W",
+      "value_kind": "bound",
+      "value": {
+        "min": 3e+16
+      },
+      "units": "m^-3",
+      "uncertainty": "'to over 3 x 10^16 m^-3'; MRP evaluation model developed for idealized electropositive low-pressure plasmas (source); error bars not given for n_e ('unknown')",
+      "locator": "Sec. 4.1, Fig. 3(a)",
+      "transformation_chain": "MRP resonance -> source's evaluation model -> text value -> transcribed",
+      "conditions": {
+        "gas": "N2/O2 80/20",
+        "pressure_Pa": 10,
+        "power_W": 800,
+        "frequency_Hz": 13560000.0,
+        "B_T": 0,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Measured plasma density of an unmagnetized N2/O2 ICP at 10 Pa; ABEP inlet pressure TBD."
+      }
+    },
+    {
+      "id": "RF-SCHU24-04",
+      "source": {
+        "citation": "Schuecke L., Torres Segura A.N., Korolov I., Awakowicz P., Gibson A.R., 'Decoupling NO production and UV emission intensity over the E-H mode transition in a low-pressure inductively coupled plasma device', arXiv:2407.04441v1 (5 July 2024).",
+        "doi_or_url": "https://doi.org/10.48550/arXiv.2407.04441",
+        "accessed_version_url": "https://arxiv.org/abs/2407.04441",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "thermal_load",
+      "quantity": "Neutral gas temperature: ~300-360 K in E-mode, up to ~1000 K in H-mode (OES)",
+      "value_kind": "range",
+      "value": {
+        "min": 300,
+        "max": 1000
+      },
+      "units": "K",
+      "uncertainty": "estimated error 13.5 % (source); values per setpoint only in Fig. 2(c)",
+      "locator": "Sec. 4.1, Fig. 2(c)",
+      "transformation_chain": "OES rotational spectra -> source's fit -> text -> transcribed",
+      "conditions": {
+        "gas": "N2/O2 80/20",
+        "pressure_Pa": {
+          "min": 10,
+          "max": 35
+        },
+        "power_W": {
+          "min": 10,
+          "max": 800
+        },
+        "frequency_Hz": 13560000.0,
+        "B_T": 0,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Gas heating in H-mode lowers neutral density at fixed pressure and loads the walls; relevant to thermal design of an RF stage."
+      }
+    },
+    {
+      "id": "RF-SCHU24-05",
+      "source": {
+        "citation": "Schuecke L., Torres Segura A.N., Korolov I., Awakowicz P., Gibson A.R., 'Decoupling NO production and UV emission intensity over the E-H mode transition in a low-pressure inductively coupled plasma device', arXiv:2407.04441v1 (5 July 2024).",
+        "doi_or_url": "https://doi.org/10.48550/arXiv.2407.04441",
+        "accessed_version_url": "https://arxiv.org/abs/2407.04441",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "power_coupling",
+      "quantity": "Reflected power in steady state with automatic matching (fraction of generator power)",
+      "value_kind": "bound",
+      "value": {
+        "max": 0.01
+      },
+      "units": "fraction",
+      "uncertainty": "'generally below 1 %, once the system is in steady state'; matching reaches steady state within a few seconds and transitions smoothly E -> H; losses inside matchbox and coils are not reported",
+      "locator": "Sec. 2 (experimental set-up, rf power supply and matching)",
+      "transformation_chain": "generator forward/reflected readings -> text -> transcribed",
+      "conditions": {
+        "gas": "N2/O2 mixtures",
+        "pressure_Pa": {
+          "min": 1,
+          "max": 80
+        },
+        "power_W": {
+          "max": 800
+        },
+        "frequency_Hz": 13560000.0,
+        "B_T": 0,
+        "notes": "Advanced Energy Dressler CESAR 1350D generator with custom matchbox; 1-80 Pa is the system's pressure-control range, the reported scans were 10-35 Pa"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Low reflection does not imply high plasma-absorbed fraction: matchbox/coil dissipation is not separated (see RF-DALT08-01)."
+      }
+    },
+    {
+      "id": "RF-SCHU24-D1",
+      "source": {
+        "citation": "Schuecke L., Torres Segura A.N., Korolov I., Awakowicz P., Gibson A.R., 'Decoupling NO production and UV emission intensity over the E-H mode transition in a low-pressure inductively coupled plasma device', arXiv:2407.04441v1 (5 July 2024).",
+        "doi_or_url": "https://doi.org/10.48550/arXiv.2407.04441",
+        "accessed_version_url": "https://arxiv.org/abs/2407.04441",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 3,
+      "topic": "pressure_mode_limits",
+      "quantity": "Neutral number density at the E-H transition pressures 10 Pa and 35 Pa, evaluated at 300 K",
+      "value_kind": "range",
+      "value": {
+        "min": 2.414e+21,
+        "max": 8.45e+21
+      },
+      "units": "m^-3",
+      "uncertainty": "ideal gas at an assumed 300 K; H-mode gas heating to ~1000 K would lower n by up to 3.3x at the same pressure",
+      "locator": "derived from RF-SCHU24-01, RF-SCHU24-02",
+      "transformation_chain": "reported pressures -> our n = p / (k_B T) at assumed T (derive_rf_evidence.py)",
+      "conditions": {
+        "gas": "N2/O2 80/20",
+        "pressure_Pa": {
+          "min": 10,
+          "max": 35
+        },
+        "power_W": {
+          "min": 200,
+          "max": 600
+        },
+        "frequency_Hz": 13560000.0,
+        "B_T": 0,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Expressed as number density so it can be compared with the ICD ionizer-inlet density once that exists."
+      },
+      "derived": {
+        "function": "number_density",
+        "inputs": {
+          "p_Pa": {
+            "min": 10,
+            "max": 35
+          },
+          "T_K": 300
+        },
+        "from_ids": [
+          "RF-SCHU24-01",
+          "RF-SCHU24-02",
+          "RF-SCHU24-04"
+        ],
+        "assumed_inputs": {
+          "T_K": "room temperature assumed for the neutral gas; the source measured 300-360 K in E-mode (RF-SCHU24-04)"
+        }
+      }
+    },
+    {
+      "id": "RF-SCHU24-D2",
+      "source": {
+        "citation": "Schuecke L., Torres Segura A.N., Korolov I., Awakowicz P., Gibson A.R., 'Decoupling NO production and UV emission intensity over the E-H mode transition in a low-pressure inductively coupled plasma device', arXiv:2407.04441v1 (5 July 2024).",
+        "doi_or_url": "https://doi.org/10.48550/arXiv.2407.04441",
+        "accessed_version_url": "https://arxiv.org/abs/2407.04441",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 3,
+      "topic": "ionization_fraction",
+      "quantity": "Ionization fraction n_e / n_n at 800 W, 10 Pa (H-mode), bracketing the gas temperature between 300 K and 1000 K",
+      "value_kind": "range",
+      "value": {
+        "min": 1.243e-05,
+        "max": 4.142e-05
+      },
+      "units": "fraction",
+      "uncertainty": "n_e is a lower bound ('over 3e16'); T_g at this exact setpoint only in Fig. 2(c), bracketed by the reported 300-1000 K; neutral depletion ignored",
+      "locator": "derived from RF-SCHU24-03, RF-SCHU24-04",
+      "transformation_chain": "measured n_e bound and pressure, reported T_g range -> our n_e / (p / k_B T) (derive_rf_evidence.py)",
+      "conditions": {
+        "gas": "N2/O2 80/20",
+        "pressure_Pa": 10,
+        "power_W": 800,
+        "frequency_Hz": 13560000.0,
+        "B_T": 0,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Order-of-magnitude ionization fraction of an air-like unmagnetized ICP at 10 Pa; not transferable to other densities without a model."
+      },
+      "derived": {
+        "function": "ionization_fraction",
+        "inputs": {
+          "n_e_m3": 3e+16,
+          "p_Pa": 10,
+          "T_K": {
+            "min": 300,
+            "max": 1000
+          }
+        },
+        "from_ids": [
+          "RF-SCHU24-03",
+          "RF-SCHU24-04"
+        ]
+      }
+    },
+    {
+      "id": "RF-SCHU24-06",
+      "source": {
+        "citation": "Schuecke L., Torres Segura A.N., Korolov I., Awakowicz P., Gibson A.R., 'Decoupling NO production and UV emission intensity over the E-H mode transition in a low-pressure inductively coupled plasma device', arXiv:2407.04441v1 (5 July 2024).",
+        "doi_or_url": "https://doi.org/10.48550/arXiv.2407.04441",
+        "accessed_version_url": "https://arxiv.org/abs/2407.04441",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "plasma_state",
+      "quantity": "NO ground-state density across the E-H transition (maximum; lowest values reported as < 1e17 m^-3)",
+      "value_kind": "bound",
+      "value": {
+        "max": 1.8e+19
+      },
+      "units": "m^-3",
+      "uncertainty": "LIF, estimated error 21 %; the source gives the range as 'less than 1e17 m^-3 up to 1.8e19 m^-3'; NO rises with power in E-mode and drops abruptly on entering H-mode",
+      "locator": "Sec. 4.1, Fig. 2(b)",
+      "transformation_chain": "calibrated LIF -> text range -> transcribed",
+      "conditions": {
+        "gas": "N2/O2 80/20",
+        "pressure_Pa": {
+          "min": 10,
+          "max": 35
+        },
+        "power_W": {
+          "min": 10,
+          "max": 800
+        },
+        "frequency_Hz": 13560000.0,
+        "B_T": 0,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Shows that an RF stage on air produces NO and that its density depends on the mode; NO/NO+ are not in the project's N2/N Hall chemistry set."
+      }
+    },
+    {
+      "id": "RF-TAKA22-01",
+      "source": {
+        "citation": "Takahashi K., 'Thirty percent conversion efficiency from radiofrequency power to thrust energy in a magnetic nozzle plasma thruster', Scientific Reports 12 (2022) 18618 (CC BY 4.0). Read as Europe PMC full text PMC9649674.",
+        "doi_or_url": "https://doi.org/10.1038/s41598-022-22789-7",
+        "accessed_version_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9649674/fullTextXML",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 3,
+      "topic": "power_coupling",
+      "quantity": "RF power transfer efficiency eta_p = R_p / R_total (antenna-current / equivalent-circuit method), all data of Fig. 2",
+      "value_kind": "number",
+      "value": 0.9,
+      "units": "fraction",
+      "uncertainty": "'about 90 %'; R_total from Rogowski antenna current and generator net power (forward minus reflected); R_vac measured with no gas; both water-cooled at 20 C",
+      "locator": "Results; Methods 'RF power transfer efficiency'",
+      "transformation_chain": "antenna current and net generator power (measured) -> resistances -> source's ratio -> transcribed",
+      "conditions": {
+        "gas": "Ar",
+        "pressure_Pa": 0.028,
+        "power_W": 5000,
+        "frequency_Hz": 13560000.0,
+        "B_T": null,
+        "mass_flow_mg_s": 2.1,
+        "notes": "loop antenna on a 10.5 cm ID glass tube, two solenoids (I_Bdown = 22.3 A); B only in Fig. 1(b); 28 mPa is the chamber sidewall pressure; no detectable reflected power"
+      },
+      "applicability_to_abep": {
+        "regime_match": "no",
+        "notes": "Argon at 5 kW; recorded because the method separates antenna/matching losses (inside R_vac) from plasma absorption, which is the accounting an ABEP RF stage needs; the generator DC-to-RF loss is outside this definition."
+      }
+    },
+    {
+      "id": "RF-TAKA22-02",
+      "source": {
+        "citation": "Takahashi K., 'Thirty percent conversion efficiency from radiofrequency power to thrust energy in a magnetic nozzle plasma thruster', Scientific Reports 12 (2022) 18618 (CC BY 4.0). Read as Europe PMC full text PMC9649674.",
+        "doi_or_url": "https://doi.org/10.1038/s41598-022-22789-7",
+        "accessed_version_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9649674/fullTextXML",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "power_coupling",
+      "quantity": "Total resistance R_total (antenna + plasma) during plasma production",
+      "value_kind": "range",
+      "value": {
+        "min": 4.5,
+        "max": 6
+      },
+      "units": "ohm",
+      "uncertainty": "the next sentence of the source quotes '4.5-6.5 ohm' (internal inconsistency, carried)",
+      "locator": "Results",
+      "transformation_chain": "antenna current and net power -> resistance -> text -> transcribed",
+      "conditions": {
+        "gas": "Ar",
+        "pressure_Pa": 0.028,
+        "power_W": 5000,
+        "frequency_Hz": 13560000.0,
+        "B_T": null,
+        "mass_flow_mg_s": 2.1,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "no",
+        "notes": "Argon; input to RF-TAKA22-D1."
+      }
+    },
+    {
+      "id": "RF-TAKA22-03",
+      "source": {
+        "citation": "Takahashi K., 'Thirty percent conversion efficiency from radiofrequency power to thrust energy in a magnetic nozzle plasma thruster', Scientific Reports 12 (2022) 18618 (CC BY 4.0). Read as Europe PMC full text PMC9649674.",
+        "doi_or_url": "https://doi.org/10.1038/s41598-022-22789-7",
+        "accessed_version_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9649674/fullTextXML",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "power_coupling",
+      "quantity": "Antenna-circuit resistance without plasma R_vac (antenna, feedthrough and matching-box components)",
+      "value_kind": "number",
+      "value": 0.56,
+      "units": "ohm",
+      "uncertainty": "'about 0.56 ohm'; held constant by 20 C water cooling",
+      "locator": "Methods",
+      "transformation_chain": "antenna current and net power with no gas -> resistance -> transcribed",
+      "conditions": {
+        "gas": "none (no gas, no plasma)",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": 13560000.0,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "no",
+        "notes": "Hardware-specific; input to RF-TAKA22-D1."
+      }
+    },
+    {
+      "id": "RF-TAKA22-D1",
+      "source": {
+        "citation": "Takahashi K., 'Thirty percent conversion efficiency from radiofrequency power to thrust energy in a magnetic nozzle plasma thruster', Scientific Reports 12 (2022) 18618 (CC BY 4.0). Read as Europe PMC full text PMC9649674.",
+        "doi_or_url": "https://doi.org/10.1038/s41598-022-22789-7",
+        "accessed_version_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9649674/fullTextXML",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 3,
+      "topic": "power_coupling",
+      "quantity": "Power transfer efficiency recomputed from the reported R_total range and R_vac (cross-check of the 'about 90 %')",
+      "value_kind": "range",
+      "value": {
+        "min": 0.8756,
+        "max": 0.9067
+      },
+      "units": "fraction",
+      "uncertainty": "with the alternative 6.5 ohm upper bound the maximum becomes 0.914",
+      "locator": "derived from RF-TAKA22-02, RF-TAKA22-03",
+      "transformation_chain": "reported resistances -> our (R_total - R_vac)/R_total (derive_rf_evidence.py)",
+      "conditions": {
+        "gas": "Ar",
+        "pressure_Pa": 0.028,
+        "power_W": 5000,
+        "frequency_Hz": 13560000.0,
+        "B_T": null,
+        "mass_flow_mg_s": 2.1,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "no",
+        "notes": "Consistency check only."
+      },
+      "derived": {
+        "function": "power_transfer_efficiency",
+        "inputs": {
+          "R_total_ohm": {
+            "min": 4.5,
+            "max": 6
+          },
+          "R_vac_ohm": 0.56
+        },
+        "from_ids": [
+          "RF-TAKA22-02",
+          "RF-TAKA22-03"
+        ]
+      }
+    },
+    {
+      "id": "RF-TAKA22-04",
+      "source": {
+        "citation": "Takahashi K., 'Thirty percent conversion efficiency from radiofrequency power to thrust energy in a magnetic nozzle plasma thruster', Scientific Reports 12 (2022) 18618 (CC BY 4.0). Read as Europe PMC full text PMC9649674.",
+        "doi_or_url": "https://doi.org/10.1038/s41598-022-22789-7",
+        "accessed_version_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9649674/fullTextXML",
+        "access": "open"
+      },
+      "evidence_class": null,
+      "evidence_level": 3,
+      "topic": "magnetic_field",
+      "quantity": "Electric power of the DC solenoids that create the source/nozzle field (638-turn copper solenoids)",
+      "value_kind": "tbd",
+      "value": null,
+      "units": "W",
+      "uncertainty": "not reported; the source states 'the electric power for the solenoids is not taken into account' in eta_T",
+      "locator": "Results (definition of eta_T); Methods",
+      "transformation_chain": "none (quantity absent from source)",
+      "conditions": {
+        "gas": "Ar",
+        "pressure_Pa": 0.028,
+        "power_W": 5000,
+        "frequency_Hz": 13560000.0,
+        "B_T": null,
+        "mass_flow_mg_s": 2.1,
+        "notes": "see RF-TMIT24-03 for a third-party estimate"
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Magnet power belongs inside any common bus-power boundary for a helicon/B-assisted RF stage."
+      }
+    },
+    {
+      "id": "RF-TAKA22-05",
+      "source": {
+        "citation": "Takahashi K., 'Thirty percent conversion efficiency from radiofrequency power to thrust energy in a magnetic nozzle plasma thruster', Scientific Reports 12 (2022) 18618 (CC BY 4.0). Read as Europe PMC full text PMC9649674. Table 1 row 6 re-tabulates Shabshelowitz A., Gallimore A.D., 'Performance and probe measurements of a radio-frequency plasma thruster', J. Propul. Power 29 (2013) 919, doi:10.2514/1.B34720 (primary not accessed).",
+        "doi_or_url": "https://doi.org/10.1038/s41598-022-22789-7",
+        "accessed_version_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9649674/fullTextXML",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 5,
+      "topic": "performance_context",
+      "quantity": "Michigan RF plasma thruster (Shabshelowitz & Gallimore 2013) as re-tabulated: P_rf 1.5 kW, F 11 mN, F/P_rf 7.33 mN/kW, thruster efficiency",
+      "value_kind": "number",
+      "value": 0.58,
+      "units": "%",
+      "uncertainty": "secondary re-tabulation; gas and operating conditions are not given in the citing table (verify against the primary)",
+      "locator": "Table 1, row 6",
+      "transformation_chain": "primary measurement (not accessed) -> Takahashi Table 1 -> transcribed",
+      "conditions": {
+        "gas": "not stated in the citing table (verify)",
+        "pressure_Pa": null,
+        "power_W": 1500,
+        "frequency_Hz": null,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Only accessible trace of the Michigan RF air-breathing work; a stand-alone RF thruster, not the helicon-Hall pre-ionizer configuration."
+      }
+    },
+    {
+      "id": "RF-TMIT24-01",
+      "source": {
+        "citation": "Smirnova M., Mingo A., Smirnov P., Pessina V., 'Radio Frequency Atmosphere Breathing Ion Engine development', 38th International Electric Propulsion Conference, Toulouse, 23-28 June 2024, IEPC-2024-499. Summarises TransMIT test reports that are not public (ESA contract 22946/09/NL/CO; H2020 AETHER GA 870436).",
+        "doi_or_url": "https://iqm.transmit.de/images/iqm/pdf/iepc-2024-499_radio_frequency_atmosphere_breathing_ion_engine_development.pdf",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 5,
+      "topic": "material_interaction",
+      "quantity": "RIT-10 (RF ion thruster) 10-hour test on N2 and O2: grid erosion observation",
+      "value_kind": "qualitative",
+      "value": "'initial 10-hours-long test of the thruster showed no signs of erosion operating with N2, whilst noticeable O2 erosion was identified in the acceleration grid.'",
+      "units": "n/a",
+      "uncertainty": "summary of a non-public test report; erosion rate, grid material and conditions not given",
+      "locator": "Sec. I",
+      "transformation_chain": "test report (not public) -> conference summary -> quoted",
+      "conditions": {
+        "gas": "O2, N2, O2/N2, O2/N2/Xe",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "notes": "tested in the Jumbo facility, University of Giessen"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "O2 attack on extraction-grid metal in an RF ion source; an RF pre-ionizer without grids has different plasma-facing parts (tube, possibly Faraday shield)."
+      }
+    },
+    {
+      "id": "RF-TMIT24-02",
+      "source": {
+        "citation": "Smirnova M., Mingo A., Smirnov P., Pessina V., 'Radio Frequency Atmosphere Breathing Ion Engine development', 38th International Electric Propulsion Conference, Toulouse, 23-28 June 2024, IEPC-2024-499. Summarises TransMIT test reports that are not public (ESA contract 22946/09/NL/CO; H2020 AETHER GA 870436).",
+        "doi_or_url": "https://iqm.transmit.de/images/iqm/pdf/iepc-2024-499_radio_frequency_atmosphere_breathing_ion_engine_development.pdf",
+        "access": "open"
+      },
+      "evidence_class": "model-derived",
+      "evidence_level": 5,
+      "topic": "material_interaction",
+      "quantity": "RIT grid lifetime for the project target thrust profile after changing grid materials (500 h endurance test plus calculations)",
+      "value_kind": "bound",
+      "value": {
+        "min": 60000
+      },
+      "units": "h",
+      "uncertainty": "extrapolation from a 500 h test via unpublished calculations; materials not named",
+      "locator": "Sec. I",
+      "transformation_chain": "500 h endurance test + calculations (not public) -> conference summary -> transcribed",
+      "conditions": {
+        "gas": "O2/N2 (project mixture; not specified)",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Grid life, not RF-source wall life; not inspectable, so not usable as a design input without the primary report."
+      }
+    },
+    {
+      "id": "RF-TMIT24-03",
+      "source": {
+        "citation": "Smirnova M., Mingo A., Smirnov P., Pessina V., 'Radio Frequency Atmosphere Breathing Ion Engine development', 38th International Electric Propulsion Conference, Toulouse, 23-28 June 2024, IEPC-2024-499. Summarises TransMIT test reports that are not public (ESA contract 22946/09/NL/CO; H2020 AETHER GA 870436).",
+        "doi_or_url": "https://iqm.transmit.de/images/iqm/pdf/iepc-2024-499_radio_frequency_atmosphere_breathing_ion_engine_development.pdf",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 5,
+      "topic": "magnetic_field",
+      "quantity": "Magnet-coil power of the best-reported magnetic-nozzle RF thruster (Takahashi, Sci. Rep. 2022), not counted in its efficiency: third-party estimate",
+      "value_kind": "bound",
+      "value": {
+        "min": 1000
+      },
+      "units": "W",
+      "uncertainty": "'estimated to minimum of 1000 W or 1/6th of total power'; basis of the estimate not given",
+      "locator": "Sec. III",
+      "transformation_chain": "TransMIT estimate -> text -> transcribed",
+      "conditions": {
+        "gas": "Ar (the referenced experiment)",
+        "pressure_Pa": null,
+        "power_W": 5000,
+        "frequency_Hz": 13560000.0,
+        "B_T": null,
+        "notes": "the referenced experiment ran at P_rf = 5 kW (RF-TAKA22-01); '1/6th of total power' is consistent with ~1 kW of magnets on top of 5 kW RF (our arithmetic, not a source number)"
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Illustrates that magnet power can be a large, often unreported, share of a helicon-type stage's electrical budget."
+      }
+    },
+    {
+      "id": "RF-TMIT24-04",
+      "source": {
+        "citation": "Smirnova M., Mingo A., Smirnov P., Pessina V., 'Radio Frequency Atmosphere Breathing Ion Engine development', 38th International Electric Propulsion Conference, Toulouse, 23-28 June 2024, IEPC-2024-499. Summarises TransMIT test reports that are not public (ESA contract 22946/09/NL/CO; H2020 AETHER GA 870436).",
+        "doi_or_url": "https://iqm.transmit.de/images/iqm/pdf/iepc-2024-499_radio_frequency_atmosphere_breathing_ion_engine_development.pdf",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 5,
+      "topic": "plasma_state",
+      "quantity": "Dissociation in an O2-fed RF ion engine",
+      "value_kind": "qualitative",
+      "value": "'In experiments with Oxygen, TransMIT has shown that under certain proportionality between injected power and available mass flow, dissociation could be avoided almost entirely.'",
+      "units": "n/a",
+      "uncertainty": "no data shown; power/flow proportion not given",
+      "locator": "Sec. IV",
+      "transformation_chain": "unpublished experiments -> conference statement -> quoted",
+      "conditions": {
+        "gas": "O2",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "If confirmed, the molecular-ion fraction leaving an RF stage depends on specific power; not usable quantitatively."
+      }
+    },
+    {
+      "id": "RF-TMIT24-05",
+      "source": {
+        "citation": "Smirnova M., Mingo A., Smirnov P., Pessina V., 'Radio Frequency Atmosphere Breathing Ion Engine development', 38th International Electric Propulsion Conference, Toulouse, 23-28 June 2024, IEPC-2024-499. Summarises TransMIT test reports that are not public (ESA contract 22946/09/NL/CO; H2020 AETHER GA 870436).",
+        "doi_or_url": "https://iqm.transmit.de/images/iqm/pdf/iepc-2024-499_radio_frequency_atmosphere_breathing_ion_engine_development.pdf",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 5,
+      "topic": "operating_envelope",
+      "quantity": "Mass-flow range over which a 22 cm RF gridded ion engine was characterised on N2/O2 (4 N2:O2 proportions, AETHER)",
+      "value_kind": "range",
+      "value": {
+        "min": 0.12,
+        "max": 0.58
+      },
+      "units": "mg/s",
+      "uncertainty": "summary statement; beam currents and RF powers not given",
+      "locator": "Sec. I",
+      "transformation_chain": "test report (not public) -> conference summary -> transcribed",
+      "conditions": {
+        "gas": "N2/O2 at 4 proportions (source maps them to ~190-250 km)",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "mass_flow_mg_s": {
+          "min": 0.12,
+          "max": 0.58
+        },
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Sub-mg/s air flows through an inductive source exist in the literature; comparison with the Vyovrinda flow needs the ICD."
+      }
+    },
+    {
+      "id": "RF-NO25-01",
+      "source": {
+        "citation": "Schwertheim A., Gondol N., Rakhimov R., Arteaga J., Singh P., Noal D., Eagland T., Sheppard P., Papulov A., 'Air-Breathing Electric Propulsion Developments at NewOrbit Space', 39th International Electric Propulsion Conference, London, 14-19 Sept 2025, IEPC-2025-378; Research Square preprint posted 26 March 2026 (CC BY 4.0).",
+        "doi_or_url": "https://doi.org/10.21203/rs.3.rs-9039885/v1",
+        "accessed_version_url": "https://www.researchsquare.com/article/rs-9039885/v1",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "rf_generator_efficiency",
+      "quantity": "RF generator nominal power efficiency, unregulated bus (26-32 V) to RF, thruster and cathode RFGs",
+      "value_kind": "number",
+      "value": 0.92,
+      "units": "fraction",
+      "uncertainty": "'nominal power efficiency of 92 %'; measurement method, load range and variation with plasma impedance not given",
+      "locator": "Sec. II.C",
+      "transformation_chain": "manufacturer-reported nominal value -> transcribed",
+      "conditions": {
+        "gas": "50:50 N2/O2 by volume (also Xe)",
+        "pressure_Pa": null,
+        "power_W": {
+          "min": 60,
+          "max": 250
+        },
+        "frequency_Hz": {
+          "min": 1000000.0,
+          "max": 7000000.0
+        },
+        "B_T": 0,
+        "notes": "thruster RFG 0-20 A at 1-5 MHz; cathode RFG 0-15 A at 3-7 MHz; electronics volume 200 x 168 x 42 mm, 8 PCBs"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Flight-oriented RFG on an air-breathing RF source at sub-kW power; its efficiency at the load extremes of an ABEP flow envelope is not reported (cf. RF-VOLK18-01)."
+      }
+    },
+    {
+      "id": "RF-NO25-02",
+      "source": {
+        "citation": "Schwertheim A., Gondol N., Rakhimov R., Arteaga J., Singh P., Noal D., Eagland T., Sheppard P., Papulov A., 'Air-Breathing Electric Propulsion Developments at NewOrbit Space', 39th International Electric Propulsion Conference, London, 14-19 Sept 2025, IEPC-2025-378; Research Square preprint posted 26 March 2026 (CC BY 4.0).",
+        "doi_or_url": "https://doi.org/10.21203/rs.3.rs-9039885/v1",
+        "accessed_version_url": "https://www.researchsquare.com/article/rs-9039885/v1",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "ion_production_cost",
+      "quantity": "Thruster RFG input power needed to sustain constant beam currents of 100, 200 and 300 mA on 50:50 N2/O2 at 6-14 sccm",
+      "value_kind": "range",
+      "value": {
+        "min": 62,
+        "max": 160
+      },
+      "units": "W",
+      "uncertainty": "range over all setpoints; per-setpoint pairing of power and current only in figures (not digitized); includes RFG losses (RF-NO25-01) and grid-extraction transparency",
+      "locator": "Sec. V (direct/indirect thrust, atmospheric configuration)",
+      "transformation_chain": "RFG DC input power at controlled beam current -> text range -> transcribed",
+      "conditions": {
+        "gas": "50:50 N2/O2 by volume",
+        "pressure_Pa": null,
+        "power_W": {
+          "min": 62,
+          "max": 160
+        },
+        "frequency_Hz": {
+          "min": 1000000.0,
+          "max": 5000000.0
+        },
+        "B_T": 0,
+        "mass_flow_mg_s": {
+          "min": 0.129,
+          "max": 0.312
+        },
+        "notes": "beam current setpoints in RF-NO25-09; V_sc = 2000 V, V_acc = -400 V; the source converts 5.8-14 sccm to 0.129-0.312 mg/s"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "The only accessed measurement of RF power versus extracted ion current on an air mixture; a gridded source, so extracted current is not the same as ion production in a pre-ionizer."
+      }
+    },
+    {
+      "id": "RF-NO25-09",
+      "source": {
+        "citation": "Schwertheim A., Gondol N., Rakhimov R., Arteaga J., Singh P., Noal D., Eagland T., Sheppard P., Papulov A., 'Air-Breathing Electric Propulsion Developments at NewOrbit Space', 39th International Electric Propulsion Conference, London, 14-19 Sept 2025, IEPC-2025-378; Research Square preprint posted 26 March 2026 (CC BY 4.0).",
+        "doi_or_url": "https://doi.org/10.21203/rs.3.rs-9039885/v1",
+        "accessed_version_url": "https://www.researchsquare.com/article/rs-9039885/v1",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "operating_envelope",
+      "quantity": "Beam (screen) current setpoints held constant by RFG power control during the 50:50 N2/O2 thrust comparison",
+      "value_kind": "range",
+      "value": {
+        "min": 100,
+        "max": 300
+      },
+      "units": "mA",
+      "uncertainty": "setpoints (100, 200, 300 mA) as stated; control accuracy not given",
+      "locator": "Sec. V (direct/indirect thrust, atmospheric configuration)",
+      "transformation_chain": "reported setpoints -> transcribed",
+      "conditions": {
+        "gas": "50:50 N2/O2 by volume",
+        "pressure_Pa": null,
+        "power_W": {
+          "min": 62,
+          "max": 160
+        },
+        "frequency_Hz": {
+          "min": 1000000.0,
+          "max": 5000000.0
+        },
+        "B_T": 0,
+        "mass_flow_mg_s": {
+          "min": 0.129,
+          "max": 0.312
+        },
+        "notes": "V_sc = 2000 V, V_acc = -400 V; accelerator current rose sharply above ~350 mA screen current in the air mapping (points with I_acc > 4 % of I_sc excluded by the source)"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Operating-point definition for RF-NO25-02 and RF-NO25-D1."
+      }
+    },
+    {
+      "id": "RF-NO25-D1",
+      "source": {
+        "citation": "Schwertheim A., Gondol N., Rakhimov R., Arteaga J., Singh P., Noal D., Eagland T., Sheppard P., Papulov A., 'Air-Breathing Electric Propulsion Developments at NewOrbit Space', 39th International Electric Propulsion Conference, London, 14-19 Sept 2025, IEPC-2025-378; Research Square preprint posted 26 March 2026 (CC BY 4.0).",
+        "doi_or_url": "https://doi.org/10.21203/rs.3.rs-9039885/v1",
+        "accessed_version_url": "https://www.researchsquare.com/article/rs-9039885/v1",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 3,
+      "topic": "ion_production_cost",
+      "quantity": "RFG input power per ampere of extracted beam current on 50:50 N2/O2 - loose bound from the reported power and current ranges",
+      "value_kind": "range",
+      "value": {
+        "min": 206.7,
+        "max": 1600.0
+      },
+      "units": "W/A",
+      "uncertainty": "corner bound (min power / max current to max power / min current); the true per-setpoint values lie inside and need the source's Fig. 14 or data",
+      "locator": "derived from RF-NO25-02 and RF-NO25-09",
+      "transformation_chain": "reported ranges -> our P/I corner evaluation (derive_rf_evidence.py)",
+      "conditions": {
+        "gas": "50:50 N2/O2 by volume",
+        "pressure_Pa": null,
+        "power_W": {
+          "min": 62,
+          "max": 160
+        },
+        "frequency_Hz": {
+          "min": 1000000.0,
+          "max": 5000000.0
+        },
+        "B_T": 0,
+        "mass_flow_mg_s": {
+          "min": 0.129,
+          "max": 0.312
+        },
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "DC-side cost per extracted ion ampere of a gridded inductive source on air; excludes grid power and neutraliser; not a pre-ionizer cost."
+      },
+      "derived": {
+        "function": "power_per_current",
+        "inputs": {
+          "P_W": {
+            "min": 62,
+            "max": 160
+          },
+          "I_A": {
+            "min": 0.1,
+            "max": 0.3
+          }
+        },
+        "from_ids": [
+          "RF-NO25-02",
+          "RF-NO25-09"
+        ]
+      }
+    },
+    {
+      "id": "RF-NO25-03",
+      "source": {
+        "citation": "Schwertheim A., Gondol N., Rakhimov R., Arteaga J., Singh P., Noal D., Eagland T., Sheppard P., Papulov A., 'Air-Breathing Electric Propulsion Developments at NewOrbit Space', 39th International Electric Propulsion Conference, London, 14-19 Sept 2025, IEPC-2025-378; Research Square preprint posted 26 March 2026 (CC BY 4.0).",
+        "doi_or_url": "https://doi.org/10.21203/rs.3.rs-9039885/v1",
+        "accessed_version_url": "https://www.researchsquare.com/article/rs-9039885/v1",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "ion_production_cost",
+      "quantity": "Inductively coupled RF plasma cathode: maximum electron current on 0.8 sccm 50:50 N2/O2 at 90 W RF input",
+      "value_kind": "number",
+      "value": 450,
+      "units": "mA",
+      "uncertainty": "'can deliver a current of up to 450 mA'; uncertainty not stated",
+      "locator": "Sec. II.B",
+      "transformation_chain": "reported capability -> transcribed",
+      "conditions": {
+        "gas": "50:50 N2/O2 (0.8 sccm, 0.0178 mg/s)",
+        "pressure_Pa": null,
+        "power_W": 90,
+        "frequency_Hz": {
+          "min": 3000000.0,
+          "max": 7000000.0
+        },
+        "B_T": 0,
+        "mass_flow_mg_s": 0.0178,
+        "notes": "25 W with 0.15 sccm Xe for the same current"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "A small inductive source sustained on air at ~0.02 mg/s; electron extraction, not ion production."
+      }
+    },
+    {
+      "id": "RF-NO25-D2",
+      "source": {
+        "citation": "Schwertheim A., Gondol N., Rakhimov R., Arteaga J., Singh P., Noal D., Eagland T., Sheppard P., Papulov A., 'Air-Breathing Electric Propulsion Developments at NewOrbit Space', 39th International Electric Propulsion Conference, London, 14-19 Sept 2025, IEPC-2025-378; Research Square preprint posted 26 March 2026 (CC BY 4.0).",
+        "doi_or_url": "https://doi.org/10.21203/rs.3.rs-9039885/v1",
+        "accessed_version_url": "https://www.researchsquare.com/article/rs-9039885/v1",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 3,
+      "topic": "ion_production_cost",
+      "quantity": "RF cathode input power per ampere of extracted electron current on 50:50 N2/O2 (at the maximum current)",
+      "value_kind": "number",
+      "value": 200.0,
+      "units": "W/A",
+      "uncertainty": "single operating point; RF input power (DC side, includes RFG loss)",
+      "locator": "derived from RF-NO25-03",
+      "transformation_chain": "reported power and current -> our ratio (derive_rf_evidence.py)",
+      "conditions": {
+        "gas": "50:50 N2/O2",
+        "pressure_Pa": null,
+        "power_W": 90,
+        "frequency_Hz": {
+          "min": 3000000.0,
+          "max": 7000000.0
+        },
+        "B_T": 0,
+        "mass_flow_mg_s": 0.0178,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Order of magnitude for an air-fed inductive plasma bridge; not an ion-production cost."
+      },
+      "derived": {
+        "function": "power_per_current",
+        "inputs": {
+          "P_W": 90,
+          "I_A": 0.45
+        },
+        "from_ids": [
+          "RF-NO25-03"
+        ]
+      }
+    },
+    {
+      "id": "RF-NO25-04",
+      "source": {
+        "citation": "Schwertheim A., Gondol N., Rakhimov R., Arteaga J., Singh P., Noal D., Eagland T., Sheppard P., Papulov A., 'Air-Breathing Electric Propulsion Developments at NewOrbit Space', 39th International Electric Propulsion Conference, London, 14-19 Sept 2025, IEPC-2025-378; Research Square preprint posted 26 March 2026 (CC BY 4.0).",
+        "doi_or_url": "https://doi.org/10.21203/rs.3.rs-9039885/v1",
+        "accessed_version_url": "https://www.researchsquare.com/article/rs-9039885/v1",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "pressure_mode_limits",
+      "quantity": "Low-flow / low-power sustainment of the air-fed inductive discharge",
+      "value_kind": "qualitative",
+      "value": "'At low mass flow rates and RF power levels, the RF generator had to be tuned to slightly lower frequencies to sustain the plasma.' Also: 'the RF generator voltage limits were reached at specific operating conditions, restricting the maximum achievable RF power.'",
+      "units": "n/a",
+      "uncertainty": "flows/powers affected are marked f1/f2 in figures only",
+      "locator": "Sec. V (air performance mapping)",
+      "transformation_chain": "operator observation -> text -> quoted",
+      "conditions": {
+        "gas": "50:50 N2/O2 by volume",
+        "pressure_Pa": null,
+        "power_W": {
+          "min": 60,
+          "max": 250
+        },
+        "frequency_Hz": {
+          "min": 1000000.0,
+          "max": 5000000.0
+        },
+        "B_T": 0,
+        "mass_flow_mg_s": {
+          "min": 0.129,
+          "max": 0.312
+        },
+        "notes": "facility dynamic pressure below 1e-4 mbar up to 16 sccm N2+O2"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Direct evidence of a low-density sustainment/matching edge for an air-fed inductive source at 0.13-0.31 mg/s."
+      }
+    },
+    {
+      "id": "RF-NO25-05",
+      "source": {
+        "citation": "Schwertheim A., Gondol N., Rakhimov R., Arteaga J., Singh P., Noal D., Eagland T., Sheppard P., Papulov A., 'Air-Breathing Electric Propulsion Developments at NewOrbit Space', 39th International Electric Propulsion Conference, London, 14-19 Sept 2025, IEPC-2025-378; Research Square preprint posted 26 March 2026 (CC BY 4.0).",
+        "doi_or_url": "https://doi.org/10.21203/rs.3.rs-9039885/v1",
+        "accessed_version_url": "https://www.researchsquare.com/article/rs-9039885/v1",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 3,
+      "topic": "plasma_state",
+      "quantity": "Mean thrust correction factor gamma_ATM for 50:50 N2/O2 (direct thrust vs indirect thrust from beam current), vs 0.97 for Xe",
+      "value_kind": "number",
+      "value": 0.8641,
+      "units": "-",
+      "uncertainty": "individual values 0.85-0.92; spread dominated by thrust-balance error (source)",
+      "locator": "Sec. V, Fig. 9",
+      "transformation_chain": "measured thrust and beam current -> source's gamma from Eq. 4 -> transcribed",
+      "conditions": {
+        "gas": "50:50 N2/O2 by volume",
+        "pressure_Pa": null,
+        "power_W": {
+          "min": 62,
+          "max": 160
+        },
+        "frequency_Hz": {
+          "min": 1000000.0,
+          "max": 5000000.0
+        },
+        "B_T": 0,
+        "mass_flow_mg_s": {
+          "min": 0.129,
+          "max": 0.312
+        },
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Source suggests dissociation producing 'a significant population of monatomic ions' or larger divergence; cannot separate the two. Relevant to the species mix an RF stage would hand to a Hall channel."
+      }
+    },
+    {
+      "id": "RF-NO25-06",
+      "source": {
+        "citation": "Schwertheim A., Gondol N., Rakhimov R., Arteaga J., Singh P., Noal D., Eagland T., Sheppard P., Papulov A., 'Air-Breathing Electric Propulsion Developments at NewOrbit Space', 39th International Electric Propulsion Conference, London, 14-19 Sept 2025, IEPC-2025-378; Research Square preprint posted 26 March 2026 (CC BY 4.0).",
+        "doi_or_url": "https://doi.org/10.21203/rs.3.rs-9039885/v1",
+        "accessed_version_url": "https://www.researchsquare.com/article/rs-9039885/v1",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 3,
+      "topic": "material_interaction",
+      "quantity": "Choice of an RF (inductive) cathode over thermionic emitters because of oxidation sensitivity",
+      "value_kind": "qualitative",
+      "value": "An RF cathode was selected over thermionic emitter-type neutralisers 'to significantly reduce sensitivity to oxidation when operating on atmospheric propellants (particularly O2) or ... under the high atomic oxygen fluxes found in ULEO.'",
+      "units": "n/a",
+      "uncertainty": "design rationale; no oxidation/erosion measurement reported; grid-electrode erosion is to be monitored in a planned 300 h endurance test",
+      "locator": "Sec. II.B; Sec. VI.C",
+      "transformation_chain": "text -> quoted",
+      "conditions": {
+        "gas": "N2/O2; Xe",
+        "pressure_Pa": null,
+        "power_W": 90,
+        "frequency_Hz": {
+          "min": 3000000.0,
+          "max": 7000000.0
+        },
+        "B_T": 0,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "No life data yet; the planned endurance test is the first place such data could appear."
+      }
+    },
+    {
+      "id": "RF-NO25-07",
+      "source": {
+        "citation": "Schwertheim A., Gondol N., Rakhimov R., Arteaga J., Singh P., Noal D., Eagland T., Sheppard P., Papulov A., 'Air-Breathing Electric Propulsion Developments at NewOrbit Space', 39th International Electric Propulsion Conference, London, 14-19 Sept 2025, IEPC-2025-378; Research Square preprint posted 26 March 2026 (CC BY 4.0).",
+        "doi_or_url": "https://doi.org/10.21203/rs.3.rs-9039885/v1",
+        "accessed_version_url": "https://www.researchsquare.com/article/rs-9039885/v1",
+        "access": "open"
+      },
+      "evidence_class": null,
+      "evidence_level": 3,
+      "topic": "hardware_mass",
+      "quantity": "Mass of the RF generators / thruster-assembly RF hardware",
+      "value_kind": "tbd",
+      "value": null,
+      "units": "kg",
+      "uncertainty": "not stated; only the RFG electronics volume (200 x 168 x 42 mm, eight PCBs) and the 26-32 V input are given",
+      "locator": "Sec. II.C",
+      "transformation_chain": "none (quantity absent from source)",
+      "conditions": {
+        "gas": "n/a",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": {
+          "min": 1000000.0,
+          "max": 7000000.0
+        },
+        "B_T": 0,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "No accessed source states the mass of RF-stage hardware (generator, matching, antenna, magnet)."
+      }
+    },
+    {
+      "id": "RF-NO25-08",
+      "source": {
+        "citation": "Schwertheim A., Gondol N., Rakhimov R., Arteaga J., Singh P., Noal D., Eagland T., Sheppard P., Papulov A., 'Air-Breathing Electric Propulsion Developments at NewOrbit Space', 39th International Electric Propulsion Conference, London, 14-19 Sept 2025, IEPC-2025-378; Research Square preprint posted 26 March 2026 (CC BY 4.0).",
+        "doi_or_url": "https://doi.org/10.21203/rs.3.rs-9039885/v1",
+        "accessed_version_url": "https://www.researchsquare.com/article/rs-9039885/v1",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "thermal_load",
+      "quantity": "Thermal design constraint on RF conductors and generators",
+      "value_kind": "qualitative",
+      "value": "Placement, alignment and shielding of RF conductors must couple the plasma 'and not other structures', while 'preventing electromagnetic interference, and overheating from ohmic losses and thermal coupling to the thruster'; in test, a water chiller simulated the radiator heat draw.",
+      "units": "n/a",
+      "uncertainty": "no heat-load numbers given",
+      "locator": "Sec. II.C; Sec. III",
+      "transformation_chain": "text -> quoted",
+      "conditions": {
+        "gas": "n/a",
+        "pressure_Pa": null,
+        "power_W": {
+          "min": 60,
+          "max": 250
+        },
+        "frequency_Hz": {
+          "min": 1000000.0,
+          "max": 7000000.0
+        },
+        "B_T": 0,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Confirms coil/RFG ohmic heating is a design driver; quantitative split still missing."
+      }
+    },
+    {
+      "id": "RF-VOLK18-01",
+      "source": {
+        "citation": "Volkmar C., Geile C., Hannemann K., 'Radio-Frequency Ion Thrusters - Power Measurement and Power Distribution Modeling', Journal of Propulsion and Power 34(4) (2018) 1061-1069. Read as the authors' preprint at DLR elib.",
+        "doi_or_url": "https://doi.org/10.2514/1.B36868",
+        "accessed_version_url": "https://elib.dlr.de/120608/1/Volkmar_JPP_preprint.pdf",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "rf_generator_efficiency",
+      "quantity": "Power lost between RFG DC input and forwarded RF power at the coil (generator + feed cable), especially at low mass flow",
+      "value_kind": "range",
+      "value": {
+        "min": 0.3,
+        "max": 0.4
+      },
+      "units": "fraction of DC input",
+      "uncertainty": "'a difference of about 30-40 % between DC input and forwarded RF power' in the low-mass-flow region; phase-resolved V/I sensor near the coil; per-point coupling efficiency only in Fig. 11b (not digitized)",
+      "locator": "Sec. IV-V, Fig. 11",
+      "transformation_chain": "DC input power and coil-side RF V/I (measured) -> source's eta = P_RF/P_DC -> text -> transcribed",
+      "conditions": {
+        "gas": "Xe",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": 0,
+        "notes": "RIT-10/37, xenon 1-10 sccm (mode 1) and 1-8 sccm (mode 2); half-bridge RFG; typical RIT RFG frequency 1-2 MHz (source, general statement)"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Xenon, but the mechanism (load resistance falls at low flow, mismatching the generator) is generic to inductive sources on a variable-flow feed like ABEP."
+      }
+    },
+    {
+      "id": "RF-VOLK18-D1",
+      "source": {
+        "citation": "Volkmar C., Geile C., Hannemann K., 'Radio-Frequency Ion Thrusters - Power Measurement and Power Distribution Modeling', Journal of Propulsion and Power 34(4) (2018) 1061-1069. Read as the authors' preprint at DLR elib.",
+        "doi_or_url": "https://doi.org/10.2514/1.B36868",
+        "accessed_version_url": "https://elib.dlr.de/120608/1/Volkmar_JPP_preprint.pdf",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 3,
+      "topic": "rf_generator_efficiency",
+      "quantity": "Implied DC-to-forwarded-RF efficiency (generator + cable) in the low-mass-flow region",
+      "value_kind": "range",
+      "value": {
+        "min": 0.6,
+        "max": 0.7
+      },
+      "units": "fraction",
+      "uncertainty": "complement of the reported loss range",
+      "locator": "derived from RF-VOLK18-01",
+      "transformation_chain": "reported loss fraction -> our 1 - x (derive_rf_evidence.py)",
+      "conditions": {
+        "gas": "Xe",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": 0,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Contrast with the 0.92 nominal of RF-NO25-01: the definitions (bus-to-RF) agree, the operating points do not."
+      },
+      "derived": {
+        "function": "one_minus",
+        "inputs": {
+          "x": {
+            "min": 0.3,
+            "max": 0.4
+          }
+        },
+        "from_ids": [
+          "RF-VOLK18-01"
+        ]
+      }
+    },
+    {
+      "id": "RF-VOLK18-02",
+      "source": {
+        "citation": "Volkmar C., Geile C., Hannemann K., 'Radio-Frequency Ion Thrusters - Power Measurement and Power Distribution Modeling', Journal of Propulsion and Power 34(4) (2018) 1061-1069. Read as the authors' preprint at DLR elib.",
+        "doi_or_url": "https://doi.org/10.2514/1.B36868",
+        "accessed_version_url": "https://elib.dlr.de/120608/1/Volkmar_JPP_preprint.pdf",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "rf_generator_efficiency",
+      "quantity": "Load-resistance trend with mass flow and its consequence",
+      "value_kind": "qualitative",
+      "value": "'the resistance of the load strongly decreases when approaching low mass flow rates. This decrease leads to an electrically adverse relation between source and load resistance, which again results in power loss within the generator.' Assembly power 'has to be interpreted with great care due to effects like impedance bridge mismatch.'",
+      "units": "n/a",
+      "uncertainty": "load resistance values only in the Fig. 11b inset (~2.8-4.8 ohm axis, not digitized)",
+      "locator": "Sec. IV-V",
+      "transformation_chain": "text -> quoted",
+      "conditions": {
+        "gas": "Xe",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": 0,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Warns against attributing generator mismatch loss to plasma physics when comparing an RF stage with a Hall discharge on a common boundary."
+      }
+    },
+    {
+      "id": "RF-BELL22-01",
+      "source": {
+        "citation": "Beller E., Roessler C., Probst U., Thueringer R., Volkmar C., 'A radio-frequency generator for ion thrusters based on a Class-E power circuit', Journal of Electric Propulsion 1 (2022) 8 (open access). Read via the Deutsche Nationalbibliothek copy.",
+        "doi_or_url": "https://doi.org/10.1007/s44205-022-00008-9",
+        "accessed_version_url": "https://d-nb.info/1273167112/34",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "power_coupling",
+      "quantity": "Accuracy limit of coil-side RF active-power measurement with VI probes",
+      "value_kind": "qualitative",
+      "value": "VI-probe active power 'can be inaccurate due to high phase angles between RF current and voltage. Particularly with high quality factor of the induction coil, the phase angle approaches 90 degrees which in conjunction with the devices accuracy of +/-1 deg leads to erroneous phase measurements.' The authors therefore benchmarked RFGs by DC input power at equal beam current.",
+      "units": "n/a",
+      "uncertainty": "qualitative; no error magnitude given",
+      "locator": "measurement/benchmark description preceding the Results section (pp. 6-7)",
+      "transformation_chain": "text -> quoted",
+      "conditions": {
+        "gas": "Xe",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": {
+          "min": 500000.0,
+          "max": 2000000.0
+        },
+        "B_T": 0,
+        "notes": "RIT-10; RIT frequencies 0.5-2 MHz depending on size (source, general statement)"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Measurement-method constraint for any RF-stage power-transfer claim on air: coil-side active power needs phase accuracy far better than +/-1 deg, or an independent method."
+      }
+    },
+    {
+      "id": "RF-BELL22-02",
+      "source": {
+        "citation": "Beller E., Roessler C., Probst U., Thueringer R., Volkmar C., 'A radio-frequency generator for ion thrusters based on a Class-E power circuit', Journal of Electric Propulsion 1 (2022) 8 (open access). Read via the Deutsche Nationalbibliothek copy.",
+        "doi_or_url": "https://doi.org/10.1007/s44205-022-00008-9",
+        "accessed_version_url": "https://d-nb.info/1273167112/34",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "rf_generator_efficiency",
+      "quantity": "Class-E RFG operating range and electrical efficiency vs half-bridge",
+      "value_kind": "qualitative",
+      "value": "Power consumption at each beam current 'either similar or slightly higher for the Class-E RFG when compared to the HBD RFG'; 'Nominal operation can only be ensured for a single load impedance, which is influenced by thruster geometry, cable length, propellant and mass flow.'",
+      "units": "n/a",
+      "uncertainty": "no absolute DC-to-RF efficiency number reported",
+      "locator": "Results; Conclusion",
+      "transformation_chain": "text -> quoted",
+      "conditions": {
+        "gas": "Xe",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": {
+          "min": 500000.0,
+          "max": 2000000.0
+        },
+        "B_T": 0,
+        "mass_flow_mg_s": null,
+        "notes": "xenon 1.55-4 sccm; beam 100-120 mA; V_screen 1200 V"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "An ABEP RF stage sees flow and composition changes around the orbit; a single-impedance-optimised generator would leave its nominal point (quantity to be measured on air)."
+      }
+    },
+    {
+      "id": "RF-BELL22-03",
+      "source": {
+        "citation": "Beller E., Roessler C., Probst U., Thueringer R., Volkmar C., 'A radio-frequency generator for ion thrusters based on a Class-E power circuit', Journal of Electric Propulsion 1 (2022) 8 (open access). Read via the Deutsche Nationalbibliothek copy.",
+        "doi_or_url": "https://doi.org/10.1007/s44205-022-00008-9",
+        "accessed_version_url": "https://d-nb.info/1273167112/34",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "power_coupling",
+      "quantity": "RIT-10 load resistance across six operating points (Table 2)",
+      "value_kind": "range",
+      "value": {
+        "min": 1.059,
+        "max": 1.273
+      },
+      "units": "ohm",
+      "uncertainty": "VI-probe based 'rough estimates' (source); load inductance 5.371-5.506 uH in the same table",
+      "locator": "Table 2",
+      "transformation_chain": "VI-probe impedance -> table -> transcribed",
+      "conditions": {
+        "gas": "Xe",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": {
+          "min": 500000.0,
+          "max": 2000000.0
+        },
+        "B_T": 0,
+        "notes": "1.55-2.40 sccm xenon, 100-120 mA beam"
+      },
+      "applicability_to_abep": {
+        "regime_match": "no",
+        "notes": "Xenon; shows the ~20 % load-resistance swing a generator must absorb over a modest flow range."
+      }
+    },
+    {
+      "id": "RF-DALT08-01",
+      "source": {
+        "citation": "Daltrini A.M., Moshkalev S.A., Morgan T.J., Piejak R.B., Graham W.G., 'Plasma power measurement and hysteresis in the E-H transition of a rf inductively coupled plasma system', Applied Physics Letters 92(6) (2008) 061504. Only the abstract was read (OSTI ETDEWEB record 21016327).",
+        "doi_or_url": "https://doi.org/10.1063/1.2844885",
+        "accessed_version_url": "https://www.osti.gov/etdeweb/biblio/21016327",
+        "access": "abstract_only"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "pressure_mode_limits",
+      "quantity": "E-H hysteresis versus plasma power corrected for coil and hardware losses (argon, GEC reference cell)",
+      "value_kind": "qualitative",
+      "value": "'When plotted versus plasma power, applied power corrected for coil and hardware losses, no hysteresis is observed ... This suggests that hysteresis in the E-H mode transition is due to ignoring inherent power loss, primarily in the matching system.'",
+      "units": "n/a",
+      "uncertainty": "abstract only; loss magnitudes not available to us",
+      "locator": "abstract",
+      "transformation_chain": "abstract -> quoted",
+      "conditions": {
+        "gas": "Ar",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": 0,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Argon, but directly about power accounting: E-H thresholds quoted as generator power (e.g. RF-SCHU24-01/02) include matching/coil loss."
+      }
+    },
+    {
+      "id": "RF-DEGR19-01",
+      "source": {
+        "citation": "de Groh K.K., Banks B.A., 'Atomic Oxygen Erosion Data From the MISSE 2-8 Missions', NASA/TM-2019-219982, NASA Glenn Research Center, May 2019.",
+        "doi_or_url": "https://ntrs.nasa.gov/api/citations/20190025445/downloads/20190025445.pdf",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 4,
+      "topic": "material_interaction",
+      "quantity": "Atomic-oxygen erosion yield of polyimide Kapton H for LEO 4.5 eV atomic oxygen (reference witness value)",
+      "value_kind": "number",
+      "value": 3e-24,
+      "units": "cm^3/atom",
+      "uncertainty": "+/- 0.07e-24 cm^3/atom (source)",
+      "locator": "Sec. 1 (Introduction)",
+      "transformation_chain": "flight/witness mass-loss measurements (source refs 11-14) -> reported yield -> transcribed",
+      "conditions": {
+        "gas": "atomic O (LEO ram, ~4.5 eV)",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "notes": "the report tabulates yields for many polymers (e.g. FEP about an order of magnitude lower); not transcribed here"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Applies to polymer insulation (coil wire, cable jackets, potting) exposed to ambient ram AO outside the discharge; not to ion bombardment of a plasma-facing tube or antenna inside an RF stage."
+      }
+    },
+    {
+      "id": "RF-SITA19-01",
+      "source": {
+        "citation": "Ferrato E., Giannetti V., Piragino A., Andrenucci M., Andreussi T., Paissoni C.A., 'Development Roadmap of SITAEL's RAM-EP System', 36th International Electric Propulsion Conference, Vienna, 15-20 Sept 2019, IEPC-2019-886.",
+        "doi_or_url": "https://electricrocket.org/2019/886.pdf",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "architecture_heritage",
+      "quantity": "Ionization-stage type of the SITAEL/ESA RAM-EP thruster",
+      "value_kind": "qualitative",
+      "value": "'SITAEL's RAM-EP design is based on a double-stage EP device, in which electrostatic acceleration occurs in the second stage'; the thruster 'ionizes the flow within the first stage'. The performance model powers the ionization stage by a discharge voltage V_io plus magnet (auxiliary) power; no RF source is described.",
+      "units": "n/a",
+      "uncertainty": "the accessed open sources do not document the first-stage ionization mechanism in detail; nothing in them describes it as RF",
+      "locator": "Sec. I, Sec. III.A (Eq. 8), Table 1 ('Double stage Hall thruster')",
+      "transformation_chain": "text -> quoted/paraphrased",
+      "conditions": {
+        "gas": "1.27 N2 + O2 mixture (flow simulator)",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "mass_flow_mg_s": 4.7,
+        "notes": "the same paper lists IRS's IPG6-S as the inductive (RF) European ABEP line"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "RAM-EP is a two-stage Hall (ionization + acceleration) heritage, but not RF-based per the accessed sources; it cannot be cited as RF pre-ionizer evidence."
+      }
+    },
+    {
+      "id": "RF-SITA19-02",
+      "source": {
+        "citation": "Ferrato E., Giannetti V., Piragino A., Andrenucci M., Andreussi T., Paissoni C.A., 'Development Roadmap of SITAEL's RAM-EP System', 36th International Electric Propulsion Conference, Vienna, 15-20 Sept 2019, IEPC-2019-886.",
+        "doi_or_url": "https://electricrocket.org/2019/886.pdf",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "performance_context",
+      "quantity": "RAM-EP integrated intake + thruster test: thrust with 4.7 mg/s of 1.27N2+O2 from the flow simulator (measured drag 26 +/- 1 mN)",
+      "value_kind": "number",
+      "value": 6,
+      "units": "mN",
+      "uncertainty": "+/- 1 mN (source)",
+      "locator": "Fig. 1 caption; Sec. I",
+      "transformation_chain": "thrust-stand measurement -> caption/text -> transcribed",
+      "conditions": {
+        "gas": "1.27 N2 + O2 (flow simulator: SITAEL HT5k firing 4.7 mg/s)",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "mass_flow_mg_s": 4.7,
+        "notes": "the source states the first stage 'showed a good capability to ionize' and the acceleration stage performed 'below expectations'"
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Non-RF two-stage heritage; context only."
+      }
+    },
+    {
+      "id": "RF-SITA19-03",
+      "source": {
+        "citation": "Ferrato E., Giannetti V., Piragino A., Andrenucci M., Andreussi T., Paissoni C.A., 'Development Roadmap of SITAEL's RAM-EP System', 36th International Electric Propulsion Conference, Vienna, 15-20 Sept 2019, IEPC-2019-886.",
+        "doi_or_url": "https://electricrocket.org/2019/886.pdf",
+        "access": "open"
+      },
+      "evidence_class": "model-derived",
+      "evidence_level": 6,
+      "topic": "magnetic_field",
+      "quantity": "Ionization-stage auxiliary (magnet) power relative to discharge power in the SITAEL system model",
+      "value_kind": "qualitative",
+      "value": "'our model estimates the ionization stage auxiliary power consumption, which in some cases may be comparable to the discharge power.'",
+      "units": "n/a",
+      "uncertainty": "model statement; magnitudes not given in text",
+      "locator": "Sec. III.A",
+      "transformation_chain": "text -> quoted",
+      "conditions": {
+        "gas": "O, O2, N2 (model)",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "A magnetized ionization stage (RF or not) can carry a magnet-power bill comparable to its discharge power; belongs on the common bus-power boundary."
+      }
+    },
+    {
+      "id": "RF-ESA18-01",
+      "source": {
+        "citation": "European Space Agency, 'World-first firing of air-breathing electric thruster', press release, 6 March 2018. esa.int returned HTTP 403 to our fetch; read as the verbatim reprint 'Provided by European Space Agency' on phys.org.",
+        "doi_or_url": "https://phys.org/news/2018-03-world-first-air-breathing-electric-thruster.html",
+        "access": "open"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 5,
+      "topic": "architecture_heritage",
+      "quantity": "RAM-EP ground demonstration as described by ESA",
+      "value_kind": "qualitative",
+      "value": "A 'dual-stage thruster' was used 'to ensure better charging and acceleration of the incoming air'; run first on xenon, then on 'a nitrogen-oxygen air mixture', and 'finally ignited repeatedly solely with atmospheric propellant' in a chamber 'simulating the environment at 200 km altitude'.",
+      "units": "n/a",
+      "uncertainty": "press release; no RF source mentioned",
+      "locator": "press-release text",
+      "transformation_chain": "press release -> reprint -> quoted",
+      "conditions": {
+        "gas": "Xe, then N2/O2",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "partial",
+        "notes": "Heritage context; confirms the two-stage (not RF) architecture reading of RF-SITA19-01."
+      }
+    },
+    {
+      "id": "RF-ANDR24-01",
+      "source": {
+        "citation": "Andrews S., Andriulli R., Souhair N., Magarotto M., Ponti F., 'Cathode-less RF plasma thruster design and optimisation for an atmosphere-breathing electric propulsion (ABEP) system', Acta Astronautica 225 (2024) 833-844. Read as the authors' accepted manuscript (IRIS Universita di Bologna, hdl 11585/992435).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2024.09.041",
+        "accessed_version_url": "https://cris.unibo.it/retrieve/ba059b64-485e-4548-ada1-54e3128edae9/cathode%20less%20RF%20postprint.pdf",
+        "access": "open"
+      },
+      "evidence_class": "assumed",
+      "evidence_level": 6,
+      "topic": "power_coupling",
+      "quantity": "RF coupling efficiency eta_RF = P_a / P_RF used as a constant in the O-N global source model",
+      "value_kind": "number",
+      "value": 0.8,
+      "units": "fraction",
+      "uncertainty": "taken as constant 'from previous measurements [24-27]'; by title those references are REGULUS numerical/modelling papers (not accessed), and REGULUS thrusters operate on xenon and iodine (source); constant with flow and composition by assumption",
+      "locator": "Sec. 2 (global source model)",
+      "transformation_chain": "values from REGULUS work on other propellants (refs not accessed) -> constant model input -> transcribed",
+      "conditions": {
+        "gas": "N2/O/O2 (model)",
+        "pressure_Pa": null,
+        "power_W": {
+          "min": 50,
+          "max": 1000
+        },
+        "frequency_Hz": null,
+        "B_T": null,
+        "notes": "50-1000 W are the design-variable bounds for the minimum/maximum operating power (Table 2); T4i REGULUS-derived cathode-less helicon-type thruster"
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "An assumption transferred from non-air propellants; illustrates that published ABEP RF models do not yet rest on air coupling measurements."
+      }
+    },
+    {
+      "id": "RF-ANDR24-02",
+      "source": {
+        "citation": "Andrews S., Andriulli R., Souhair N., Magarotto M., Ponti F., 'Cathode-less RF plasma thruster design and optimisation for an atmosphere-breathing electric propulsion (ABEP) system', Acta Astronautica 225 (2024) 833-844. Read as the authors' accepted manuscript (IRIS Universita di Bologna, hdl 11585/992435).",
+        "doi_or_url": "https://doi.org/10.1016/j.actaastro.2024.09.041",
+        "accessed_version_url": "https://cris.unibo.it/retrieve/ba059b64-485e-4548-ada1-54e3128edae9/cathode%20less%20RF%20postprint.pdf",
+        "access": "open"
+      },
+      "evidence_class": "assumed",
+      "evidence_level": 6,
+      "topic": "pressure_mode_limits",
+      "quantity": "Minimum mass flow for ignition used as an optimisation constraint (proxy for minimum neutral density under the antenna)",
+      "value_kind": "bound",
+      "value": {
+        "min": 0.05
+      },
+      "units": "mg/s",
+      "uncertainty": "'comes directly from the vast experience of REGULUS experimental campaigns [13-17]' (REGULUS operates on xenon and iodine per the source; refs not accessed); transfer to air not demonstrated",
+      "locator": "Sec. 4 (optimisation constraints)",
+      "transformation_chain": "experience on other propellants -> model constraint -> transcribed",
+      "conditions": {
+        "gas": "air (model)",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "mass_flow_mg_s": {
+          "min": 0.05
+        },
+        "notes": "the source equates minimum inflow with a minimum-density ignition constraint because the model thermalises the flow at source entry"
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "A density-based ignition limit for air in a magnetised RF source remains to be measured."
+      }
+    },
+    {
+      "id": "RF-DUPP26-01",
+      "source": {
+        "citation": "Duppada G.S., Taploo A., Zhuang T., Spinelli J., Keidar M., 'The quest and opportunities for air-breathing propulsion', npj Microgravity 12 (2026) 47 (CC BY 4.0). Read as Europe PMC full text PMC13230546.",
+        "doi_or_url": "https://doi.org/10.1038/s41526-026-00573-5",
+        "accessed_version_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13230546/fullTextXML",
+        "access": "open"
+      },
+      "evidence_class": "inferred",
+      "evidence_level": 5,
+      "topic": "material_interaction",
+      "quantity": "Review judgement of erosion vulnerability for helicon thrusters",
+      "value_kind": "qualitative",
+      "value": "Helicon thruster: critical component 'Dielectric tube (minimal)', vulnerability 'Low', materials 'Quartz, alumina', mitigation 'Contactless RF design, impedance matching' (review table, citing its ref. 39).",
+      "units": "n/a",
+      "uncertainty": "review judgement; no erosion rate or test duration given",
+      "locator": "materials/erosion table (text around refs 20-62)",
+      "transformation_chain": "review table -> quoted",
+      "conditions": {
+        "gas": "air (generic)",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Not evidence of life; the RF stage's dielectric erosion and contamination still need measurement."
+      }
+    },
+    {
+      "id": "RF-DUPP26-02",
+      "source": {
+        "citation": "Duppada G.S., Taploo A., Zhuang T., Spinelli J., Keidar M., 'The quest and opportunities for air-breathing propulsion', npj Microgravity 12 (2026) 47 (CC BY 4.0). Read as Europe PMC full text PMC13230546.",
+        "doi_or_url": "https://doi.org/10.1038/s41526-026-00573-5",
+        "accessed_version_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13230546/fullTextXML",
+        "access": "open"
+      },
+      "evidence_class": "assumed",
+      "evidence_level": 5,
+      "topic": "performance_context",
+      "quantity": "Review table entry 'RF Helicon IPT': thrust 'single- to low-double-digit mN', thrust/power '~5-15' mN/kW ('Estimated or typical performance characteristic values')",
+      "value_kind": "range",
+      "value": {
+        "min": 5,
+        "max": 15
+      },
+      "units": "mN/kW",
+      "uncertainty": "labelled estimated or typical; the cited IPT source (Romano 2020) is a design paper with no thrust measurement, and no accessed primary source reports IPT thrust",
+      "locator": "Table 1, column 'RF Helicon IPT'",
+      "transformation_chain": "review estimate -> transcribed",
+      "conditions": {
+        "gas": "air (generic)",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Recorded as a warning: an untraceable estimate that must not be used as performance evidence."
+      }
+    },
+    {
+      "id": "RF-ZHEN23-01",
+      "source": {
+        "citation": "Zheng P., Wu J., Zhang Y., Zhao Y., 'Optical diagnosis of an inductively coupled plasma source for atmosphere-breathing electric propulsion system', Physics of Plasmas 30(2) (2023) 023503. Only the abstract (Crossref metadata) was read.",
+        "doi_or_url": "https://doi.org/10.1063/5.0130530",
+        "accessed_version_url": "https://api.crossref.org/works/10.1063/5.0130530",
+        "access": "abstract_only"
+      },
+      "evidence_class": "measured",
+      "evidence_level": 3,
+      "topic": "plasma_state",
+      "quantity": "OES of an ICP source for ABEP fed with N2/O2 mixtures",
+      "value_kind": "qualitative",
+      "value": "Emission spectra of N2/O2 mixtures in a low-pressure ICP show 'excited molecules, molecular ions, atoms, and excited atoms'; plasma parameters are analysed vs N2:O2 ratio; the authors call it 'only a preliminary study and ... not fully representative of the potential of ABEP systems'.",
+      "units": "n/a",
+      "uncertainty": "abstract only; pressures, powers and densities not available to us",
+      "locator": "abstract",
+      "transformation_chain": "abstract -> quoted",
+      "conditions": {
+        "gas": "N2/O2 mixtures",
+        "pressure_Pa": null,
+        "power_W": null,
+        "frequency_Hz": null,
+        "B_T": null,
+        "notes": ""
+      },
+      "applicability_to_abep": {
+        "regime_match": "TBD",
+        "notes": "Full text needed before any number can be used."
+      }
+    }
+  ]
+}

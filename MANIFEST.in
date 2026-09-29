@@ -1,0 +1,4 @@
+# sdist contents beyond the package modules (docs/ci/PACKAGING.md). The frozen data under abep_sim/data are declared as
+# package data in pyproject.toml; they are listed here too so an sdist built without VCS metadata still carries them.
+include README.md requirements-lock.txt
+recursive-include abep_sim/data *.json *.csv *.dat *.md

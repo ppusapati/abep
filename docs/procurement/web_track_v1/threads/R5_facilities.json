@@ -1,0 +1,775 @@
+{
+ "schema": "r5_facilities_v1",
+ "generated": "2026-09-27",
+ "repo_commit": "782f900",
+ "compliance": [
+  "published information only",
+  "no contact with any lab or person",
+  "no captcha/login bypass (SITAEL page captcha and ISRO eproc 'Unauthorized' not bypassed)",
+  "numbers quoted only from sources read; search-snippet-only values marked 'verify'",
+  "no access or availability asserted"
+ ],
+ "requirement_context": {
+  "req_fac_01": "Repository planning numbers (REQ-FAC-01, model-derived): S_eff = 66,818 (N2) / 58,466 (O2) L/s per mg/s at 1.0e-5 Torr; 13,364 / 11,693 at 5.0e-5 Torr. At 3.2 mg/s total: ~214,000 L/s (N2, 1e-5 Torr) to ~42,800 L/s (N2, 5e-5 Torr); cathode flow adds load. T-PB-MAX is TBD (owner, LOCK-1).",
+  "test_gas": "N2/O2 (O2 mass fraction up to 0.60) up to ~3.2 mg/s plus Xe; P_d ~1-1.35 kW; T 12-25 mN",
+  "thrust_target": "REQ-HW-01: 0.50 % per-reading repeatability (n=4) ~60 uN at 12 mN; absolute 1 % (1 sigma) for the gate",
+  "source_id": "REPO-EXPPKG"
+ },
+ "source_register": [
+  {
+   "id": "REPO-EXPPKG",
+   "url_or_path": "docs/architecture_comparison/experiment_package/experiment_package_v1.json (REQ-FAC-01..05, REQ-HW-01..08) and lock1_decision_brief_v1.json D-12",
+   "description": "repository @782f900",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "REPO-METSPEC",
+   "url_or_path": "docs/experiments/instrumentation/metrology_spec/metrology_measurement_spec_v1.json + A3 decision OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
+   "description": "repository @782f900",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "REPO-MINEXP-IIST",
+   "url_or_path": "docs/architecture_comparison/minimum_decisive_experiment/MINIMUM_DECISIVE_EXPERIMENT_DRAFT.md Sec. 12 (IIST published info) and docs/experiments/DISCRIMINATING_EXPERIMENTS.md Sec. 10",
+   "description": "repository @782f900",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-LPSC-ADV",
+   "url_or_path": "https://www.lpsc.gov.in/advpropulsionsystems.html",
+   "description": "LPSC official page",
+   "access": "full page read via fetch tool",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-ISRO-1000H",
+   "url_or_path": "https://www.isro.gov.in/ISRO_successfully_conducts_1000hrs_life_test_of_SPT.html",
+   "description": "ISRO press release (1000 h life test, 300 mN SPT, 5.4 kW, 27 Mar 2025)",
+   "access": "full page read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-ISRO-EPROC",
+   "url_or_path": "https://eproc.isro.gov.in/viewDocumentPT?tenderId=LB202600003501",
+   "description": "ISRO e-procurement tender titled 'Tender for REPLACEMENT OF THRUST MEASUREMENT ...' (title from search result only)",
+   "access": "page returned 'Unauthorized Access' - not bypassed; title only",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-ISTI-LPSC",
+   "url_or_path": "https://www.indiascienceandtechnology.gov.in/research/modelling-plasma-and-its-interaction-vacuum-chamber-during-hall-thruster-firing",
+   "description": "ISTI portal: LPSC Valiamala project on Hall thruster plume / chamber / background-pressure modelling",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-IIST-WEB",
+   "url_or_path": "https://iist.ac.in/space-research",
+   "description": "IIST Space Research page",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-INC42-BELLATRIX",
+   "url_or_path": "https://inc42.com/buzz/bellatrix-aerospace-test-fires-indias-first-commercial-hall-thruster/",
+   "description": "news, 28 May 2021",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-PRINT-BELLATRIX",
+   "url_or_path": "https://theprint.in/ground-reports/bellatrix-aerospace-is-rising-with-isro-nano-thrusters-are-its-big-game-now/2272660/",
+   "description": "news, 18 Sep 2024",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-WIKI-BELLATRIX",
+   "url_or_path": "https://en.wikipedia.org/wiki/Bellatrix_Aerospace",
+   "description": "Wikipedia (secondary)",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-IPR-FAC",
+   "url_or_path": "https://www.ipr.res.in/research-facilities",
+   "description": "IPR research facilities page",
+   "access": "read (lists 'Plasma Thruster Technology', no specs)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-IITK-PROP",
+   "url_or_path": "https://www.iitk.ac.in/aero/propulsion-lab",
+   "description": "IIT Kanpur propulsion lab page",
+   "access": "read (pulsed plasma thruster only)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-AETHER-IEPC2022",
+   "url_or_path": "https://aether-h2020.eu/wp-content/uploads/2023/11/IEPC-2022-435.pdf",
+   "description": "Andreussi, Ferrato et al. (SITAEL), 'Characterization of an Atmospheric Propellant-fed Hall ...', IEPC-2022-435",
+   "access": "PDF text extracted and read (facility paragraph, diagnostics)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-SITAEL-TOOLS",
+   "url_or_path": "https://www.sitael.com/electric-propulsion/tools-services/",
+   "description": "SITAEL tools & testing services page",
+   "access": "NOT read: site served a captcha challenge (not bypassed); facility figures quoted from the search-engine snippet only - verify",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-PHYS-RAMEP",
+   "url_or_path": "https://phys.org/news/2018-03-world-first-air-breathing-electric-thruster.html",
+   "description": "ESA/phys.org news on RAM-EP firing (2018)",
+   "access": "search snippet",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-UM-LVTF",
+   "url_or_path": "https://pepl.engin.umich.edu/pdf/IEPC-2019-653.pdf",
+   "description": "Viges, Jorns, Gallimore, Sheehan, 'University of Michigan's Upgraded Large Vacuum Test Facility', IEPC-2019-653",
+   "access": "search snippet only (numbers verify against the PDF)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-UM-APTF",
+   "url_or_path": "https://aero.engin.umich.edu/2025/11/17/the-plasmadynamics-and-electric-propulsion-laboratory-unveils-new-alternative-propellant-test-facility/",
+   "description": "UM Aerospace news 17 Nov 2025: PEPL Alternative Propellant Test Facility",
+   "access": "page 403 to fetch tool; content from search snippet only",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-ESA-EPL",
+   "url_or_path": "https://technology.esa.int/lab/tec-m-epl-esa-propulsion-laboratory",
+   "description": "ESA Propulsion Laboratory page (+ academia/researchgate 'ESA Propulsion Lab at ESTEC')",
+   "access": "search snippet only",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-MARCHIONI2021",
+   "url_or_path": "https://pubs.aip.org/aip/jap/article/130/5/053306/1079086/Extended-channel-Hall-thruster-for-air-breathing",
+   "description": "Marchioni & Cappelli, J. Appl. Phys. 130, 053306 (2021) (ECHT, Stanford)",
+   "access": "metadata via search; publisher page 403",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-PPPL-RAITSES",
+   "url_or_path": "https://htx.pppl.gov/publication/Conference/2022-06-IEPC-2022-%20443_Raitses_Electron-Beam%20Generated%20ExB%20Plasma%20for%20Air-Breathing.pdf",
+   "description": "Raitses et al., IEPC-2022-443, e-beam ExB plasma for air-breathing (PPPL)",
+   "access": "title only (search)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-ABEP-REVIEW",
+   "url_or_path": "https://link.springer.com/article/10.1007/s44205-022-00024-9",
+   "description": "Review of air-breathing EP (J. Electric Propulsion 2022): PPS1350 on N2/O2 (ESA 2011-12), RAM-HET 6+/-1 mN, Lanzhou intake",
+   "access": "search snippet",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-IRS-IPT",
+   "url_or_path": "https://arxiv.org/abs/2007.06397",
+   "description": "Romano et al., RF helicon IPT for ABEP (IRS Stuttgart)",
+   "access": "PDF grepped: no chamber pumping data found",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-NPL-MASS",
+   "url_or_path": "https://www.nplindia.in/index.php/science-technology/physico-mechanical-metrology/mass-metrology-section/",
+   "description": "CSIR-NPL Mass Metrology section",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-NPL-CFCT",
+   "url_or_path": "https://www.nplindia.org/index.php/commercial-services/calibration-testing/",
+   "description": "CSIR-NPL Centre for Calibration & Testing (via search snippet: ISO/IEC 17025:2017, CIPM-MRA, weights 1 mg - 2000 kg)",
+   "access": "search snippet",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-CMTI-MET",
+   "url_or_path": "https://cmti.res.in/precision-metrology-calibration/",
+   "description": "CMTI Precision Metrology & Calibration page",
+   "access": "HTTP 503 to fetch tool; content from search snippet (NABL accreditation in dimensional metrology; roughness masters)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-NABL500-2020",
+   "url_or_path": "https://nabl-india.org/wp-content/uploads/2020/04/Calibration-directory-2-dtd-22.04.2020-1-1.pdf",
+   "description": "NABL 500 Directory of Accredited Calibration Laboratories as on 31-Mar-2020 (historical)",
+   "access": "PDF downloaded and grepped",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-NABL-SEARCH",
+   "url_or_path": "https://nablwp.qci.org.in/laboratorysearchone",
+   "description": "NABL public laboratory search (ASP.NET form, no captcha observed)",
+   "access": "reachable; one automated name query returned no parsable record - manual lookup needed",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-ULVAC-CRYO",
+   "url_or_path": "https://showcase.ulvac.co.jp/en/how-to/trouble-shooting/cryo-pump-safety.html",
+   "description": "ULVAC cryopump safety instructions (O2/ozone during regeneration)",
+   "access": "search snippet",
+   "accessed": "2026-09-27"
+  },
+  {
+   "id": "S-ASTM-E1508",
+   "url_or_path": "https://store.astm.org/e1508-12ar19.html",
+   "description": "ASTM E1508-12a(2019) scope (elements >= Na, > 0.1 wt%)",
+   "access": "search snippet (consistent with REPO-METSPEC)",
+   "accessed": "2026-09-27"
+  }
+ ],
+ "facilities": [
+  {
+   "name": "ISRO LPSC electric-propulsion test facility (Valiamala and/or Bengaluru)",
+   "location": "Thiruvananthapuram (Valiamala) / Bengaluru",
+   "country": "India",
+   "capability_categories": [
+    "vacuum_facility",
+    "thrust_measurement",
+    "plume_diagnostics"
+   ],
+   "claimed_capabilities": [
+    {
+     "capability": "large vacuum chamber established under the High Thrust Electric Propulsion project",
+     "value": "no dimensions/pumping published",
+     "source_id": "S-LPSC-ADV"
+    },
+    {
+     "capability": "Thrust Measurement System and Laser Induced Fluorescence system for plume analysis 'being developed'",
+     "value": "no specs",
+     "source_id": "S-LPSC-ADV"
+    },
+    {
+     "capability": "1000 h life test of 300 mN SPT at 5.4 kW in a chamber simulating space vacuum (Xe); liner erosion monitored",
+     "value": "completed 27 Mar 2025; test site and p_b not stated",
+     "source_id": "S-ISRO-1000H"
+    },
+    {
+     "capability": "thrust-measurement replacement tender exists on ISRO e-procurement",
+     "value": "title only; content not accessible",
+     "source_id": "S-ISRO-EPROC"
+    },
+    {
+     "capability": "in-house modelling of chamber/background-pressure effects on Hall plumes",
+     "value": "project description only",
+     "source_id": "S-ISTI-LPSC"
+    }
+   ],
+   "accreditation": {
+    "body": "not found",
+    "scope": "not found",
+    "certificate": "not found",
+    "source_id": null
+   },
+   "gas_compatibility_notes": "Only Xe operation published. A 5.4 kW Xe-capable chamber is likely large, but N2/O2 pumping speed, cryopanel temperature and O2-service (regeneration, ozone, backing-pump oil) are unpublished.",
+   "needs_confirmation": [
+    "chamber size, pumping type and speed for N2, O2 and Xe",
+    "base and operating p_b at 3.2 mg/s N2/O2 (+ cathode flow); gauge type/position/gas calibration (REQ-FAC-03)",
+    "O2 compatibility and safety case (REQ-FAC-04)",
+    "thrust stand range/resolution, in-situ calibration and traceability; ability to hold 0.5 % per-reading repeatability at 12-25 mN (REQ-HW-01)",
+    "ExB/RPA/Faraday/RGA availability",
+    "whether a non-ISRO programme (DRDO TDF bidder) can use the facility at all"
+   ],
+   "score_bearing_potential": "unknown",
+   "reasoning": "Highest-capability Indian Hall facility by inference (5.4 kW SPT life test), but no published specification, no accreditation evidence and no evidence of third-party access.",
+   "access_realism_notes": "Strategic ISRO facility; access for a private DRDO-TDF bidder is unestablished (owner's channel only; no contact made). No export-control barrier (domestic)."
+  },
+  {
+   "name": "IIST plasma / ionospheric-plasma-simulator facility",
+   "location": "Thiruvananthapuram",
+   "country": "India",
+   "capability_categories": [
+    "vacuum_facility",
+    "plume_diagnostics"
+   ],
+   "claimed_capabilities": [
+    {
+     "capability": "collaborates in LPSC-led HTEP on design/testing of diagnostic tools for SPT characterisation",
+     "value": "-",
+     "source_id": "S-IIST-WEB"
+    },
+    {
+     "capability": "'India's only ionospheric plasma simulator'; in-house back-diffusion plasma source and ion-beam source; ion-beam deflector for probe calibration",
+     "value": "no chamber dimensions, pumping or p_b",
+     "source_id": "S-IIST-WEB"
+    }
+   ],
+   "accreditation": {
+    "body": "not found",
+    "scope": "not found",
+    "certificate": "not found",
+    "source_id": null
+   },
+   "gas_compatibility_notes": "Unknown; gas lines mentioned only generically.",
+   "needs_confirmation": [
+    "whether any chamber can take a ~1-1.35 kW Hall thruster at 3.2 mg/s N2/O2",
+    "pumping speed per gas and p_b",
+    "thrust stand existence",
+    "diagnostics inventory (DISCRIMINATING_EXPERIMENTS.md Sec. 10 question list)"
+   ],
+   "score_bearing_potential": "unknown",
+   "reasoning": "Diagnostic-development role published; no evidence of a Hall-on thrust facility meeting REQ-FAC-01. Plausible for probe calibration / S3 source bench (engineering) subject to specs.",
+   "access_realism_notes": "Academic (DoS institute); the repository already carries an IIST discussion package (lane_37). Access is the owner's channel."
+  },
+  {
+   "name": "Bellatrix Aerospace Spacecraft Propulsion Research Laboratory (SID-IISc) and Peenya facility",
+   "location": "Bengaluru",
+   "country": "India",
+   "capability_categories": [
+    "vacuum_facility"
+   ],
+   "claimed_capabilities": [
+    {
+     "capability": "'ultra-high vacuum facility' at the Spacecraft Propulsion Research Laboratory set up at SID-IISc; Hall thruster test 'according to ISRO and ESA standards' (Xe)",
+     "value": "no specs",
+     "source_id": "S-INC42-BELLATRIX"
+    },
+    {
+     "capability": "vacuum-chamber thruster testing facilities at Peenya; founder claim 'We and ISRO are the only two people to have testing facilities for thrusters in India'",
+     "value": "no specs",
+     "source_id": "S-PRINT-BELLATRIX"
+    },
+    {
+     "capability": "ARKA Hall thrusters; Project 200 ultra-low-orbit satellite",
+     "value": "-",
+     "source_id": "S-WIKI-BELLATRIX"
+    }
+   ],
+   "accreditation": {
+    "body": "not found",
+    "scope": "not found",
+    "certificate": "not found",
+    "source_id": null
+   },
+   "gas_compatibility_notes": "Xe only published; low-power (microsatellite) thrusters imply chamber sizing for ~1 mg/s-class Xe - likely far below 3.2 mg/s N2/O2 needs (inference, verify).",
+   "needs_confirmation": [
+    "chamber size/pumping/p_b per gas",
+    "thrust stand specs",
+    "O2 service",
+    "conflict of interest: Bellatrix announced a VLEO 'Project 200' satellite (potential competitor) - data custody / blinding (MS-G-05) and IP implications"
+   ],
+   "score_bearing_potential": "unknown",
+   "reasoning": "Private facility, no published specs or accreditation.",
+   "access_realism_notes": "Commercial; possible competitor in VLEO. Owner's channel only."
+  },
+  {
+   "name": "Institute for Plasma Research (IPR) / FCIPT",
+   "location": "Gandhinagar",
+   "country": "India",
+   "capability_categories": [
+    "vacuum_facility"
+   ],
+   "claimed_capabilities": [
+    {
+     "capability": "'Plasma Thruster Technology' listed among plasma applications; UHV core competence",
+     "value": "no specs",
+     "source_id": "S-IPR-FAC"
+    }
+   ],
+   "accreditation": {
+    "body": "not found",
+    "scope": "not found",
+    "certificate": "not found",
+    "source_id": null
+   },
+   "gas_compatibility_notes": "Unknown.",
+   "needs_confirmation": [
+    "any Hall-capable chamber, pumping, thrust stand",
+    "low-energy ion-beam erosion facility (search snippet claim for VSSC materials; unverified)"
+   ],
+   "score_bearing_potential": "unknown",
+   "reasoning": "Only a capability heading found. A search-engine summary claiming IPR develops the TDS-01 300 mN thruster contradicts Wikipedia/ISRO (LPSC is the developer) and is NOT used.",
+   "access_realism_notes": "DAE institute; owner's channel."
+  },
+  {
+   "name": "IIT Kanpur / IIT Madras / IIT Bombay / IISc departmental labs",
+   "location": "various",
+   "country": "India",
+   "capability_categories": [
+    "vacuum_facility"
+   ],
+   "claimed_capabilities": [
+    {
+     "capability": "IIT Kanpur propulsion lab lists a pulsed plasma thruster facility only",
+     "value": "no specs",
+     "source_id": "S-IITK-PROP"
+    }
+   ],
+   "accreditation": {
+    "body": "not found",
+    "scope": "not found",
+    "certificate": "not found",
+    "source_id": null
+   },
+   "gas_compatibility_notes": "Unknown.",
+   "needs_confirmation": [
+    "no published Hall-capable chamber found for IIT Madras, IIT Bombay or IISc departments (search 2026-09-27)"
+   ],
+   "score_bearing_potential": "unknown",
+   "reasoning": "No published Hall-on facility evidence found.",
+   "access_realism_notes": "Academic."
+  },
+  {
+   "name": "SITAEL IV10 (and IV4) vacuum facilities",
+   "location": "Pisa",
+   "country": "Italy",
+   "capability_categories": [
+    "vacuum_facility",
+    "thrust_measurement",
+    "plume_diagnostics",
+    "air_breathing_heritage"
+   ],
+   "claimed_capabilities": [
+    {
+     "capability": "IV10: inner diameter 5.4 m, internal length 6 m, pumping capability 4.2e5 l/s (gas not stated)",
+     "value": "p_b below 2.5e-5 mbar (Leybold ITR90, 3 m downstream) throughout N2/O2 testing",
+     "source_id": "S-AETHER-IEPC2022"
+    },
+    {
+     "capability": "Nov 2021 test of HT5k DM2 on 0.56N2+0.44O2 at 5-7 mg/s anode flow, 225-375 V; cathode on Xe or pure N2",
+     "value": "thermal and discharge stability demonstrated",
+     "source_id": "S-AETHER-IEPC2022"
+    },
+    {
+     "capability": "single-axis double-pendulum thrust stand, load cells, electromagnetic calibrator, calibration >= twice daily hot and cold",
+     "value": "estimated accuracy +/-3 mN",
+     "source_id": "S-AETHER-IEPC2022"
+    },
+    {
+     "capability": "18 Faraday probes on a movable rack at 0.9 m, RPA (filter up to 600 V), movable triple Langmuir probe; 10 MHz I_d acquisition",
+     "value": "-",
+     "source_id": "S-AETHER-IEPC2022"
+    },
+    {
+     "capability": "IV4: diameter 2 m, length 4.2 m, thrusters up to 7 kW; thrust balance 1-200 mN, 0.1 mN resolution, 0.5 mN declared accuracy; RPA-Faraday rake, Langmuir, telemicroscopy for erosion, thermal cameras",
+     "value": "from search snippet of captcha-protected page - verify",
+     "source_id": "S-SITAEL-TOOLS"
+    },
+    {
+     "capability": "IV10 xenon pumped on ~30 K cryopanels; LN2 shroud; up to 35 kW; ~3e5 l/s order (another snippet)",
+     "value": "verify",
+     "source_id": "S-SITAEL-TOOLS"
+    },
+    {
+     "capability": "RAM-EP (ESA) first air-breathing Hall firing 2018 with particle flow generator",
+     "value": "RAM-HET thrust 6+/-1 mN vs drag 26+/-1 mN",
+     "source_id": "S-ABEP-REVIEW"
+    }
+   ],
+   "accreditation": {
+    "body": "not found",
+    "scope": "not found",
+    "certificate": "not found",
+    "source_id": null
+   },
+   "gas_compatibility_notes": "Only facility found with published multi-hour N2/O2 Hall operation (O2 mass fraction 0.44 at 5-7 mg/s) at ~2.5e-5 mbar (~1.9e-5 Torr; gauge gas correction not stated). O2 fraction up to 0.60 and the regeneration/safety case need confirmation.",
+   "needs_confirmation": [
+    "pumping speed per gas (N2, O2, Xe) and p_b at 3.2 mg/s + cathode flow with gas-corrected gauges",
+    "O2 fraction 0.60 acceptance",
+    "thrust stand repeatability vs the 0.5 % per-reading / ~60 uN (12 mN) target; the published +/-3 mN accuracy of the IV10 stand is far coarser than needed",
+    "ExB and RGA availability (not listed)",
+    "ISO/IEC 17025 or other accreditation",
+    "data release/raw data terms (MS-G-04)"
+   ],
+   "score_bearing_potential": "unknown",
+   "reasoning": "Best published match for gas and background pressure; thrust stand as published (+/-3 mN) is engineering-grade for the R_arch target; no accreditation found. Could become score-bearing only if its stand meets REQ-HW-01 in S1b and traceability is documented.",
+   "access_realism_notes": "Commercial test services are marketed (page title). EU dual-use export rules and Italian/ESA programme priorities apply to foreign hardware/data; H-1 would be exported from India for test (Indian export control, DRDO TDF confidentiality) - owner/legal check. SITAEL is also an ABEP competitor (RAM-EP/AETHER) - custody/IP concern."
+  },
+  {
+   "name": "ESA Propulsion Laboratory (EPL), ESTEC",
+   "location": "Noordwijk",
+   "country": "Netherlands (ESA)",
+   "capability_categories": [
+    "vacuum_facility",
+    "thrust_measurement",
+    "plume_diagnostics"
+   ],
+   "claimed_capabilities": [
+    {
+     "capability": "modular cryopumping 200,000 l/s continuous Xe; facilities 1e-5 to 1e-9 mbar; Faraday probes, RPAs, customised thrust balances",
+     "value": "search snippet - verify",
+     "source_id": "S-ESA-EPL"
+    }
+   ],
+   "accreditation": {
+    "body": "not found",
+    "scope": "not found",
+    "certificate": "not found",
+    "source_id": null
+   },
+   "gas_compatibility_notes": "Xe-rated; N2/O2 speed not found.",
+   "needs_confirmation": [
+    "N2/O2 pumping and O2 service",
+    "eligibility of non-ESA-programme users"
+   ],
+   "score_bearing_potential": "unknown",
+   "reasoning": "Serves ESA's own division per its page; no route for a non-member-state commercial bidder found.",
+   "access_realism_notes": "Low realism: EPL provides services to the ESA Propulsion division; India is not an ESA member state."
+  },
+  {
+   "name": "University of Michigan PEPL: LVTF and Alternative Propellant Test Facility",
+   "location": "Ann Arbor, MI",
+   "country": "USA",
+   "capability_categories": [
+    "vacuum_facility",
+    "thrust_measurement",
+    "plume_diagnostics"
+   ],
+   "claimed_capabilities": [
+    {
+     "capability": "LVTF 6 m x 9 m, 13 cryopumps; upgraded effective Xe speed 500,000 l/s operating (600,000 cold flow); earlier configuration >100,000 l/s N2",
+     "value": "search snippet - verify",
+     "source_id": "S-UM-LVTF"
+    },
+    {
+     "capability": "Alternative Propellant Test Facility (2025): large charcoal-arrayed cryopump for high speed on N2, O2, H2; 'defense-relevant propellants'",
+     "value": "no numbers",
+     "source_id": "S-UM-APTF"
+    }
+   ],
+   "accreditation": {
+    "body": "not found",
+    "scope": "not found",
+    "certificate": "not found",
+    "source_id": null
+   },
+   "gas_compatibility_notes": "New facility explicitly targets N2/O2; charcoal arrays pumping O2 raise regeneration/ozone hazards (S-ULVAC-CRYO) - facility practice unknown.",
+   "needs_confirmation": [
+    "APTF numbers",
+    "O2 fraction limits",
+    "US export-control applicability for foreign Hall hardware and resulting data (EAR/ITAR classification - verify)"
+   ],
+   "score_bearing_potential": "unknown",
+   "reasoning": "Technically the most directly purpose-built N2/O2 facility found; access for a foreign defence-funded bidder is doubtful.",
+   "access_realism_notes": "Low: US university with defence sponsors; export control and DRDO confidentiality - owner/legal only."
+  },
+  {
+   "name": "Stanford (Cappelli group) ECHT and PPPL HTX (Raitses) air-breathing ExB work",
+   "location": "Stanford CA / Princeton NJ",
+   "country": "USA",
+   "capability_categories": [
+    "air_breathing_heritage"
+   ],
+   "claimed_capabilities": [
+    {
+     "capability": "Extended-channel Hall thruster for air-breathing EP (ECHT)",
+     "value": "J. Appl. Phys. 130, 053306 (2021)",
+     "source_id": "S-MARCHIONI2021"
+    },
+    {
+     "capability": "e-beam generated ExB plasma for air-breathing",
+     "value": "IEPC-2022-443",
+     "source_id": "S-PPPL-RAITSES"
+    }
+   ],
+   "accreditation": {
+    "body": "not found",
+    "scope": "not found",
+    "certificate": "not found",
+    "source_id": null
+   },
+   "gas_compatibility_notes": "Facility specs not read.",
+   "needs_confirmation": [
+    "facility specs"
+   ],
+   "score_bearing_potential": "unknown",
+   "reasoning": "Listed for heritage only; the repository already uses the ECHT geometry (CLAUDE.md).",
+   "access_realism_notes": "Low (US; export control)."
+  },
+  {
+   "name": "IRS Stuttgart (ABEP IPT) and Chinese/Japanese/Russian ABEP groups",
+   "location": "Stuttgart / Lanzhou / Japan / Russia",
+   "country": "Germany / China / Japan / Russia",
+   "capability_categories": [
+    "air_breathing_heritage"
+   ],
+   "claimed_capabilities": [
+    {
+     "capability": "IRS: RF helicon IPT for ABEP (not Hall); no chamber pumping data found in the paper",
+     "value": "-",
+     "source_id": "S-IRS-IPT"
+    },
+    {
+     "capability": "Lanzhou Institute of Space Technology Physics: ABEP intake (2015); PPS1350 N2/O2 tests (ESA 2011-12); JAXA ABIE (ECR ion engine)",
+     "value": "-",
+     "source_id": "S-ABEP-REVIEW"
+    }
+   ],
+   "accreditation": {
+    "body": "not found",
+    "scope": "not found",
+    "certificate": "not found",
+    "source_id": null
+   },
+   "gas_compatibility_notes": "Not established.",
+   "needs_confirmation": [
+    "IRS chamber specs (Hall-capable?)"
+   ],
+   "score_bearing_potential": "unknown",
+   "reasoning": "Heritage only; no Hall-on N2/O2 facility specification located.",
+   "access_realism_notes": "China: unrealistic for a DRDO-TDF bid. Russia: sanctions/payment constraints (verify). Japan/Germany: possible only through formal collaboration; owner's channel."
+  },
+  {
+   "name": "CSIR-National Physical Laboratory (NMI of India) - Mass Metrology Section / CFCT",
+   "location": "New Delhi",
+   "country": "India",
+   "capability_categories": [
+    "mass_metrology",
+    "thrust_calibration_traceability"
+   ],
+   "claimed_capabilities": [
+    {
+     "capability": "custodian of NPK-57; mass value transferred to weights 1 mg - 2000 kg",
+     "value": "-",
+     "source_id": "S-NPL-MASS"
+    },
+    {
+     "capability": "comparators: 1 kg vacuum (0.1 ug), robotic 6.1 g (0.1 ug readability), 1 kg (1 ug), 50 kg (0.1 mg)",
+     "value": "-",
+     "source_id": "S-NPL-MASS"
+    },
+    {
+     "capability": "CMCs peer-reviewed and published in BIPM KCDB; quality system ISO/IEC 17025:2017 and ISO 17034; CIPM-MRA signatory; commercial calibration via CFCT",
+     "value": "-",
+     "source_id": "S-NPL-CFCT"
+    }
+   ],
+   "accreditation": {
+    "body": "CIPM-MRA (NMI; KCDB CMCs) - NABL certificate not applicable/not found",
+    "scope": "mass 1 mg - 2000 kg (per page); E2 class specifically: verify KCDB entries",
+    "certificate": "not found",
+    "source_id": "S-NPL-MASS"
+   },
+   "gas_compatibility_notes": "n/a",
+   "needs_confirmation": [
+    "KCDB CMC lines for the mass range of coupons/parts and for E2 weights",
+    "whether NPL calibrates the lab's microbalance on site or only the reference weights",
+    "turnaround"
+   ],
+   "score_bearing_potential": "score_bearing_possible",
+   "reasoning": "Top of the Indian traceability chain for OIML R111 E2 reference masses (MS-M-01) and for the thrust-stand calibration masses (REQ-HW-01 force traceability). It calibrates standards; the coupon weighing itself still needs a lab with the measurement in scope.",
+   "access_realism_notes": "Public calibration service (CFCT). No contact made."
+  },
+  {
+   "name": "CMTI Metrology Laboratory (Central Manufacturing Technology Institute)",
+   "location": "Bengaluru",
+   "country": "India",
+   "capability_categories": [
+    "surface_profilometry",
+    "dimensional_metrology"
+   ],
+   "claimed_capabilities": [
+    {
+     "capability": "NABL-accredited (ISO/IEC 17025) in dimensional metrology; calibrates roughness masters, optical flats, step gauges, gauge blocks",
+     "value": "search snippet of 503 page - verify",
+     "source_id": "S-CMTI-MET"
+    },
+    {
+     "capability": "nano-metrology facility: surface roughness and 3D topography by scanning probe microscopy",
+     "value": "verify",
+     "source_id": "S-CMTI-MET"
+    },
+    {
+     "capability": "listed in NABL 500 (31-Mar-2020) as 'Metrology Laboratory, CMTI', CC-2153, Mechanical, 31.08.2018-30.08.2020",
+     "value": "historical; current certificate not verified",
+     "source_id": "S-NABL500-2020"
+    }
+   ],
+   "accreditation": {
+    "body": "NABL",
+    "scope": "Mechanical/dimensional (2020 directory); areal (ISO 25178) scope not found",
+    "certificate": "CC-2153 (2018-2020, historical - verify current)",
+    "source_id": "S-NABL500-2020"
+   },
+   "gas_compatibility_notes": "n/a",
+   "needs_confirmation": [
+    "current certificate and scope lines for roughness/areal topography and whether verification follows ISO 25178-700",
+    "step-height/fiducial profile measurement on wall rings as a TESTING service (not only calibration)",
+    "C-1 orifice-diameter optical measurement (MS-M-05)"
+   ],
+   "score_bearing_potential": "score_bearing_possible",
+   "reasoning": "Government NABL-accredited dimensional lab with roughness-master capability: best Indian candidate found for MS-M-02 / MS-M-05, conditional on the scope covering the measurand.",
+   "access_realism_notes": "Public-sector institute offering services."
+  },
+  {
+   "name": "CSIR-NAL Metrology and Calibration Lab (APMF)",
+   "location": "Bengaluru",
+   "country": "India",
+   "capability_categories": [
+    "dimensional_metrology"
+   ],
+   "claimed_capabilities": [
+    {
+     "capability": "NABL 500 (2020): CC-2704, Mechanical, 28.05.2018-27.05.2020",
+     "value": "historical",
+     "source_id": "S-NABL500-2020"
+    }
+   ],
+   "accreditation": {
+    "body": "NABL",
+    "scope": "Mechanical (details not read)",
+    "certificate": "CC-2704 (historical - verify)",
+    "source_id": "S-NABL500-2020"
+   },
+   "gas_compatibility_notes": "n/a",
+   "needs_confirmation": [
+    "current scope; any SEM/EDS/XPS testing accreditation at NAL materials divisions"
+   ],
+   "score_bearing_potential": "unknown",
+   "reasoning": "Accredited calibration lab of unknown relevant scope.",
+   "access_realism_notes": "CSIR lab; aerospace."
+  },
+  {
+   "name": "Commercial NABL testing labs offering SEM-EDS / XPS (unidentified)",
+   "location": "India",
+   "country": "India",
+   "capability_categories": [
+    "sem_eds",
+    "xps"
+   ],
+   "claimed_capabilities": [],
+   "accreditation": {
+    "body": "NABL",
+    "scope": "no scope document found listing ASTM E1508, light-element EDS/WDS or XPS (ISO 15472)",
+    "certificate": "not found",
+    "source_id": "S-NABL-SEARCH"
+   },
+   "gas_compatibility_notes": "n/a",
+   "needs_confirmation": [
+    "NABL directory search by discipline 'Chemical/Mechanical' with SEM-EDS / XPS scope lines",
+    "light-element method (windowless/thin-window SDD or WDS/EPMA) and its uncertainty for N, O, B, C",
+    "XPS energy-scale calibration per ISO 15472 (Cu 2p3/2, Au 4f7/2), sealed dry transfer"
+   ],
+   "score_bearing_potential": "unknown",
+   "reasoning": "Accredited XPS and quantitative light-element EDS are rare in any accreditation scheme; academic central facilities (IISc, IITs) have instruments but typically no ISO/IEC 17025 scope (verify). Without scope the data are engineering-only or 'semi-quantitative' per MS-M-03.",
+   "access_realism_notes": "Procurement by owner after specification (A3)."
+  }
+ ],
+ "gaps": [
+  "No Indian Hall-capable facility publishes chamber size, pumping speed per gas, or background pressure; REQ-FAC-01 cannot be screened for any Indian site from public data.",
+  "No published N2/O2 pumping speed for any Indian chamber; cryopanel N2/O2 speed differs from Xe (lighter molecules; 20 K-class panels needed; charcoal arrays and O2 regeneration/ozone hazard per S-ULVAC-CRYO) - facility-specific data required.",
+  "SITAEL IV10 is the only facility with published N2/O2 Hall operation near the needed flow and pressure; its published thrust accuracy (+/-3 mN) does not meet REQ-HW-01 as published.",
+  "No ExB probe or calibrated RGA was found in any published facility description relevant here.",
+  "No accredited (ISO/IEC 17025) scope found for XPS (ISO 15472) or quantitative light-element EDS (N, O, B) in India; ASTM E1508 excludes elements lighter than Na from routine quantification.",
+  "NABL certificate numbers found are from the 2020 directory (expired dates); current status needs a manual NABL directory lookup (automated form query did not return a parsable record).",
+  "No published B-field mapping (Hall-probe on stage) capability found at any candidate; gaussmeter calibration traceability source (NABL magnetic-field scope or NPL) not identified.",
+  "Georgia Tech HPEPL, NASA GRC, ICARE/PIVOINE, JAXA and Chinese chambers not researched to source level (memory only - not recorded as facts)."
+ ],
+ "owner_questions": [
+  "Is a foreign facility (e.g. SITAEL IV10) admissible for score-bearing Phase 2/3 data under DRDO TDF rules, export of H-1, and data custody given SITAEL/Bellatrix are ABEP/VLEO competitors?",
+  "Should the owner request ISRO LPSC facility specifications (chamber, per-gas pumping speed, O2 service, thrust stand) through official channels before T-PB-MAX is fixed at LOCK-1?",
+  "Which T-PB-MAX is acceptable if no reachable facility meets ~1e-5 Torr at 3.2 mg/s (~214,000 L/s N2)? Would 5e-5 Torr (~43,000 L/s) with the S5 slope reported be accepted?",
+  "Is Xe-only accreditation evidence acceptable, or must thrust-stand calibration masses be traced to CSIR-NPL/NABL E2 certificates (REQ-HW-01 'traceable calibration class' TBD)?",
+  "For XPS and light-element EDS, is an accredited-scope lab mandatory (then possibly a foreign accredited lab), or may an academic facility be used with results labelled semi-quantitative / engineering-only?",
+  "Should the engineering-only S1a checkout use a smaller domestic chamber (Bellatrix/IIST/academic) while score-bearing stages go to one facility meeting REQ-FAC-05?"
+ ]
+}

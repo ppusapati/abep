@@ -1,0 +1,1110 @@
+{
+ "id": "o_o2_source_matrix_v1",
+ "kind": "literature / source audit for the O/O2 electron-impact reaction set (no implementation)",
+ "status": "SOURCE_AUDIT_ONLY",
+ "compiled": "2026-09-26",
+ "compiled_by": "source-audit lane D (agent session); not reviewed by the project owner",
+ "authority": "None. This file records which published sources exist, how they can be accessed and what they cover. It builds no rate table, changes no chemistry, threshold, solver setting or frozen dataset, and is not a pre-registration. Status values here say whether a source was found, not that a process is included, promoted or validated.",
+ "gating": "CLAUDE.md 'Next work' item 4: O2/O chemistry is taken up only if items 1-3 succeed. The draft completeness rule (o_o2_completeness_prereg_DRAFT.json, same folder) must be frozen by the owner before any O/O2 rate table is built or any O/O2 reaction enters a propellant configuration.",
+ "scope": {
+  "targets": ["O", "O2", "O+", "O2+"],
+  "conditional_targets": ["O-", "O(1D) / O(1S) metastables", "O2(a1Delta_g) / O2(b1Sigma_g+) metastables", "O^2+ (atomic dication)"],
+  "why": "Atmospheric (VLEO, 180-230 km per the RFP envelope in CLAUDE.md) Hall operation ingests atomic O together with N2 and O2 after the intake/compressor path. Species fractions are not stated here; they come from the frozen atmosphere + intake model and are outside this audit.",
+  "excluded": [
+   "heavy-particle chemistry (charge exchange, ion-molecule reactions such as O+ + N2, NO formation): not electron-impact; not surveyed in this lane",
+   "surface processes (wall recombination of O in the intake, compressor or channel): outside the ionization/discharge block and outside this audit",
+   "photon processes"
+  ]
+ },
+ "policy": {
+  "lxcat": "NOT USED. No LXCat page, database or download was accessed for this audit, and no row relies on an LXCat-distributed dataset (see source ALVES2016 note). Same position as hallthruster_bridge/propellants/PROVENANCE.md (2026-09-25).",
+  "published_sources_only": "Only published, openly listed sources are recorded. No person or laboratory was contacted. Private communications cited by reviews are flagged as not usable (source BG_OP).",
+  "access": "Paywalled full texts were not accessed. Two pages returned HTTP 403 to automated fetches (the AIP article page of SONG2026 and the UCL Discovery record page); these were not bypassed. No TLS or trust setting was changed.",
+  "verification": "A source is listed only if its existence was confirmed from at least one of: Crossref metadata (api.crossref.org), a publisher/arXiv/OSTI/PubMed record returned by search, or a document actually downloaded and read (sha256 recorded). Items whose bibliographic detail was taken only from a reference list are marked 'citation per <list>; DOI not verified'.",
+  "numbers": "Every number in this file is quoted from the named source with the source's own wording where possible. Nothing is fitted, derived or interpolated here. Values read from a PDF text layer (not the page image) are marked 'text layer; verify against page image'. SONG2026 values were read from the accepted manuscript; they must be checked against the version of record or its supplementary data before any table is built."
+ },
+ "vocabulary": {
+  "status": {
+   "source-identified": "At least one verified published source gives the needed quantity for this process over its main energy range. Remaining choices are recorded in open_issues.",
+   "source-open": "Sources exist, but a substantive owner decision is needed before a table could be built: evaluators could not recommend values, sources conflict without resolution, the recommended data stop inside the physically relevant range, the process is model-only, or two candidate processes overlap (double counting).",
+   "gap": "No usable published source was located in this audit for the needed quantity (which may simply mean it was not surveyed; the row says which)."
+  },
+  "access": {
+   "open": "The numeric content needed is readable without subscription (open reprint, arXiv, NIST, open accepted manuscript) and was accessed.",
+   "paywalled": "The primary text is behind a subscription and was not accessed; only metadata/abstract were seen.",
+   "mixed": "The recommended source is paywalled or its numeric supplement was not accessed, but an open route to the recommendation or to an alternative exists (stated in access_detail).",
+   "not-verified": "Access could not be determined without bypassing a block or was not attempted.",
+   "none": "No source, so no access route."
+  },
+  "evidence_level": "docs/EVIDENCE.md hierarchy (1 = in-house hardware ... 4 = validated physics or evaluated-data literature, 5 = indirect/secondary, 6 = extrapolation, 7 = assumption). Recorded per source.",
+  "quantity_type": "docs/EVIDENCE.md: measured / digitized / inferred / reconstructed / model-derived / assumed. Recorded per candidate-source entry."
+ },
+ "sources": {
+  "SONG2026": {
+   "citation": "M.-Y. Song, H. Cho, G. P. Karwasz, V. Kokoouline, J. Tennyson and K. Bartschat, 'Cross Sections for Electron Collisions with Molecular and Atomic Oxygen', J. Phys. Chem. Ref. Data 55, 013102 (2026)",
+   "doi": "10.1063/5.0287254",
+   "verified_by": "Crossref metadata (journal, volume 55, issue 1, article 013102, published 2026-03-01 print / 2026-03-02 online); accepted manuscript downloaded and read in full",
+   "url_accessed": "https://discovery.ucl.ac.uk/id/eprint/10222954/1/JPCRD25-AR-00038-revised.pdf",
+   "document_sha256": "32d163a3af584ce48b672a4dd49d3eafa182ae234161773b1e9fa44376d9f88b",
+   "document_version": "accepted manuscript, 'Revised 26 November 2025' (22 pages); version of record not accessed (AIP page returned HTTP 403 to fetch); licence of the manuscript copy not verified (UCL record page returned HTTP 403)",
+   "access": "mixed",
+   "access_detail": "Accepted manuscript open on UCL Discovery; version of record at AIP not accessed; the recommended datasets are provided as supplementary material (Data Availability section), which was not accessed.",
+   "evidence_level": 4,
+   "role": "Primary recommended compilation for both O2 and O (literature to end of 2024). The direct analogue of Song et al. JPCRD 52, 023104 (2023) used for N2.",
+   "known_manuscript_issues": [
+    "Table V (O2 MTCS) has a row '0.008 eV | 2.30' between 0.060 and 0.090 eV, apparently 0.080 eV; verify against the version of record.",
+    "Reference 10 (Itikawa, JPCRD 38, 1) is dated 2008 in the manuscript; the NIST-hosted reprints of other Itikawa papers cite it as 2009, and Crossref lists 'issued' 2008. Bibliographic detail only.",
+    "Section F text writes the Schumann-Runge upper state as 'b3Sigma_u-' in the text layer; conventionally B3Sigma_u-. Verify against the version of record.",
+    "Fig. 25 (atomic O, optically allowed): the caption names the lower panel (2p3 3s) 3D while the in-plot label reads (2p3 3d) 3D. Which transition is shown must be verified against the version of record."
+   ]
+  },
+  "ITIKAWA2009": {
+   "citation": "Y. Itikawa, 'Cross Sections for Electron Collisions with Oxygen Molecules', J. Phys. Chem. Ref. Data 38, 1-20 (2009)",
+   "doi": "10.1063/1.3025886",
+   "verified_by": "Crossref metadata; ADS record 2009JPCRD..38....1I (search result)",
+   "url_accessed": null,
+   "access": "not-verified",
+   "access_detail": "No NIST-hosted reprint found (https://srd.nist.gov/jpcrdreprint/1.3025886.pdf returned HTTP 404). AIP copy not accessed.",
+   "evidence_level": 4,
+   "role": "Previous O2 recommendation (literature to end of 2007). Superseded by SONG2026 for most processes; cross-check only."
+  },
+  "ITIKAWA1989": {
+   "citation": "Y. Itikawa, A. Ichimura, K. Onda, K. Sakimoto, K. Takayanagi, Y. Hatano, M. Hayashi, H. Nishimura and S. Tsurubuchi, 'Cross Sections for Collisions of Electrons and Photons with Oxygen Molecules', J. Phys. Chem. Ref. Data 18, 23-42 (1989)",
+   "doi": "10.1063/1.555841",
+   "verified_by": "Crossref metadata; NIST-hosted reprint downloaded (first page read)",
+   "url_accessed": "https://srd.nist.gov/jpcrdreprint/1.555841.pdf",
+   "document_sha256": "a348f32884511b4731fc5aeb3cdb2aa822b405228e5493c40884b5c8c4afabc5",
+   "access": "open",
+   "evidence_level": 4,
+   "role": "Historical O2 compilation; context only."
+  },
+  "II1990": {
+   "citation": "Y. Itikawa and A. Ichimura, 'Cross Sections for Collisions of Electrons and Photons with Atomic Oxygen', J. Phys. Chem. Ref. Data 19, 637-651 (1990)",
+   "doi": "10.1063/1.555857",
+   "verified_by": "Crossref metadata; NIST-hosted reprint downloaded and sections 4, 5.1 and 7 read",
+   "url_accessed": "https://srd.nist.gov/jpcrdreprint/1.555857.pdf",
+   "document_sha256": "299e5a24f5309d22c7383523088525cb56c017e5f6352afee6a076f2462c5f25",
+   "access": "open",
+   "evidence_level": 4,
+   "role": "Older atomic-O compilation: elastic and momentum transfer (Sec. 4.1: only one Q_m source, Thomas & Nesbet), fine-structure transitions of the ground term (Sec. 5.1, from Berrington's R-matrix collision strengths), radiative and three-body attachment to O (Sec. 7)."
+  },
+  "LG1990": {
+   "citation": "R. R. Laher and F. R. Gilmore, 'Updated Excitation and Ionization Cross Sections for Electron Impact on Atomic Oxygen', J. Phys. Chem. Ref. Data 19, 277-305 (1990)",
+   "doi": "10.1063/1.555872",
+   "verified_by": "NIST-hosted reprint downloaded (abstract and contents read); ADS record 1990JPCRD..19..277L (search result)",
+   "url_accessed": "https://srd.nist.gov/jpcrdreprint/1.555872.pdf",
+   "document_sha256": "b341879e1dc106591cdc7c1d3c1a20106eb4462a8621314f14d140d0d88d1907",
+   "access": "open",
+   "evidence_level": 4,
+   "role": "Critical review of O excitation (more than 60 profiles: the metastable 2p4 1D and 1S, the autoionizing 2p5 3P, nine allowed and twenty-nine forbidden Rydberg series) and ionization to O+(4S, 2D, 2P), inner-shell O+(4P) and O^2+ (abstract). Open alternative/cross-check to TZ2016.",
+   "note": "A DTIC report version exists (https://apps.dtic.mil/sti/tr/pdf/ADA206987.pdf per search) but returned HTTP 403 and was not accessed."
+  },
+  "BELL1983": {
+   "citation": "K. L. Bell, H. B. Gilbody, J. G. Hughes, A. E. Kingston and F. J. Smith, 'Recommended Data on the Electron Impact Ionization of Light Atoms and Ions', J. Phys. Chem. Ref. Data 12, 891-916 (1983)",
+   "doi": "10.1063/1.555700",
+   "verified_by": "Crossref metadata; NIST-hosted reprint downloaded (sha256 identical to the copy recorded in scripts/build_n_z1plus_to_z2plus_table.py); Table 5 and Sec. 4.8 read from the text layer",
+   "url_accessed": "https://srd.nist.gov/jpcrdreprint/1.555700.pdf",
+   "document_sha256": "2427d619172a06ccf49e20af3cc0ab44a17e58262902600502786351f52261df",
+   "access": "open",
+   "evidence_level": 4,
+   "role": "Recommended Eq. (1) fits for O I, O II (O+ -> O^2+), O III (O^2+ -> O^3+). Table 5 reliability at 67 % confidence."
+  },
+  "AH1971": {
+   "citation": "K. L. Aitken and M. F. A. Harrison, 'Measurement of the cross sections for electron impact ionization of multi-electron ions; I. O+ to O2+ and O2+ to O3+', J. Phys. B 4, 1176-1188 (1971)",
+   "doi": "10.1088/0022-3700/4/9/007",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Crossed-beam measurement underlying the BELL1983 O II recommendation; BELL1983 Sec. 4.8 notes 2P and 2D metastable ions in the O+ beam."
+  },
+  "NIST107_O": {
+   "citation": "NIST Standard Reference Database 107 (Electron-Impact Cross Sections for Ionization and Excitation), atomic O table: BEB direct + excitation-autoionization of Kim & Desclaux 2002, with experimental points of Brook et al. 1978 (2 kV and 4 kV), Thompson et al. 1995 and Zipf 1985",
+   "doi": null,
+   "verified_by": "table fetched 2026-09-26 (tab-separated ASCII); columns parsed",
+   "url_accessed": "https://physics.nist.gov/cgi-bin/Ionization/merge.php?file=OI--&mode=ASCII",
+   "access": "open",
+   "evidence_level": 4,
+   "role": "Open numeric route to the BEB ionization cross section of O(3P) and to the THOMPSON1995 points (same access pattern as ionization_N.dat; the NIST table itself is not committed).",
+   "coverage_as_fetched": "BEB total: 129 energies, 13.62-5000 eV; Thompson 1995: 47 points, 14.1-2000 eV; Brook 1978 2 kV: 21 points, 14.7-397 eV; Brook 1978 4 kV: 10 points, 47-997 eV; Zipf 1985: 16 points, 40-300 eV (counts from our parse of the fetched table)."
+  },
+  "NIST107_O2": {
+   "citation": "NIST Standard Reference Database 107, O2 molecule entry: BEB orbital constants and cross section, reference W. Hwang, Y.-K. Kim and M. E. Rudd, J. Chem. Phys. 104, 2956-2966 (1996)",
+   "doi": null,
+   "verified_by": "molecule index and O2 page fetched 2026-09-26 (orbital constants table read; cross-section table not downloaded). Hwang et al. citation as printed by NIST; DOI not verified (Crossref lookup rate-limited).",
+   "url_accessed": "https://physics.nist.gov/cgi-bin/Ionization/table.pl?ionization=O2",
+   "access": "open",
+   "evidence_level": 4,
+   "role": "Model cross-check for total (counting) O2 ionization only; BEB does not partition O2+ / O+ / O^2+."
+  },
+  "KD2002": {
+   "citation": "Y.-K. Kim and J.-P. Desclaux, 'Ionization of carbon, nitrogen, and oxygen by electron impact', Phys. Rev. A 66, 012708 (2002)",
+   "doi": "10.1103/PhysRevA.66.012708",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 4,
+   "role": "BEB theory behind NIST107_O (already used for N in ionization_N.dat)."
+  },
+  "THOMPSON1995": {
+   "citation": "W. R. Thompson, M. B. Shah and H. B. Gilbody, 'Single and double ionization of atomic oxygen by electron impact', J. Phys. B 28, 1321-1330 (1995)",
+   "doi": "10.1088/0953-4075/28/7/023",
+   "verified_by": "Crossref metadata; data points tabulated in NIST107_O",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Recommended O ionization by SONG2026 ('most recent experimental data ... agree very well with the BEB predictions'); also measures double ionization of O."
+  },
+  "BROOK1978": {
+   "citation": "E. Brook, M. F. A. Harrison and A. C. H. Smith, 'Measurements of the electron impact ionisation cross sections of He, C, O and N atoms', J. Phys. B 11, 3115-3132 (1978)",
+   "doi": "10.1088/0022-3700/11/17/021",
+   "verified_by": "Crossref metadata; points tabulated in NIST107_O",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Earlier O ionization measurement; SONG2026 notes an ion signal already at 12.9 eV (below the 13.62 eV threshold) and the possibility of ionization from metastable 1D."
+  },
+  "TZ2016": {
+   "citation": "S. S. Tayal and O. Zatsarinny, 'B-spline R-matrix-with-pseudostates approach for excitation and ionization of atomic oxygen by electron collisions', Phys. Rev. A 94, 042707 (2016)",
+   "doi": "10.1103/PhysRevA.94.042707",
+   "verified_by": "Crossref metadata (APS default licence and APS accepted-manuscript licence listed); APS abstract returned by search",
+   "url_accessed": null,
+   "access": "paywalled",
+   "access_detail": "APS article paywalled; the APS accepted-manuscript link (https://link.aps.org/accepted/10.1103/PhysRevA.94.042707) returned HTTP 403 and was not bypassed; access to its supplemental data file not verified. SONG2026's own supplementary material (not accessed) is the other route to the BSR-1116 numbers it recommends.",
+   "evidence_level": 4,
+   "role": "BSR-1116 model (19 spectroscopic bound states + 1097 pseudo-states, per SONG2026). SONG2026 recommends it for O elastic, momentum transfer and all excitation cross sections, 'on a narrow energy grid between the respective thresholds and 200 eV'; also gives ionization of O(3P) and O(1D)."
+  },
+  "WA1989": {
+   "citation": "J. F. Williams and L. J. Allen, 'Low-energy elastic scattering of electrons from atomic oxygen', J. Phys. B 22, 3529-3539 (1989)",
+   "doi": "10.1088/0953-4075/22/21/015",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Only elastic DCS measurement for O used by SONG2026 (five energies); experimental cross-check for the O MTCS."
+  },
+  "BG_OP": {
+   "citation": "F. Blanco and G. Garcia, optical-potential (OP) calculation for e-O, cited by SONG2026 as 'private communication (2025)', method described in K. R. Hamilton et al., J. Phys. Chem. Ref. Data 50, 013101 (2021)",
+   "doi": null,
+   "verified_by": "SONG2026 reference 123 only",
+   "url_accessed": null,
+   "access": "none",
+   "evidence_level": 5,
+   "role": "Proposed by SONG2026 as an alternative for O cross sections at and above 200 eV. As a private communication it is NOT usable under the project's published-sources rule unless the numbers are published (e.g. in SONG2026's supplementary material, then as a secondary model-derived source)."
+  },
+  "HMS2017": {
+   "citation": "M. Hahn, A. Mueller and D. W. Savin, 'Electron-impact Multiple-ionization Cross Sections for Atoms and Ions of Helium through Zinc', Astrophys. J. 850, 122 (2017)",
+   "doi": "10.3847/1538-4357/aa9276",
+   "verified_by": "Crossref metadata; already used for N in hallthruster_bridge/propellants/PROVENANCE.md (arXiv:1708.02155, VizieR J/ApJ/850/122)",
+   "url_accessed": null,
+   "access": "open",
+   "access_detail": "Open via arXiv:1708.02155 and VizieR (as recorded in PROVENANCE.md; not re-fetched in this audit).",
+   "evidence_level": 4,
+   "role": "Semi-empirical direct double ionization. PROVENANCE.md records HMS Sec. 3.7: the scheme overestimates neutral O by about a factor 2, so for O it is a bound, not a nominal."
+  },
+  "LM2003": {
+   "citation": "B. G. Lindsay and M. A. Mangan, '5.1 Ionization', Landolt-Boernstein Group I Vol. 17C, Interactions of Photons and Electrons with Molecules (Springer, 2003)",
+   "doi": null,
+   "verified_by": "citation per SONG2026 reference 17; DOI not verified",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 4,
+   "role": "Evaluation behind SONG2026 Table VII (O2 total and partial ionization), based on STRAUB1996 renormalized."
+  },
+  "STRAUB1996": {
+   "citation": "H. C. Straub, P. Renault, B. G. Lindsay, K. A. Smith and R. F. Stebbings, 'Absolute partial cross sections for electron-impact ionization of H2, N2, and O2 from threshold to 1000 eV', Phys. Rev. A 54, 2146-2153 (1996)",
+   "doi": "10.1103/PhysRevA.54.2146",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Measured partial O2 ionization (O2+, O+, O^2+) underlying LM2003 / SONG2026 Table VII."
+  },
+  "TV1998": {
+   "citation": "C. Tian and C. R. Vidal, 'Electron impact ionization of N2 and O2: contributions from different dissociation channels of multiply ionized molecules', J. Phys. B 31, 5369-5381 (1998)",
+   "doi": "10.1088/0953-4075/31/24/018",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Channel-resolved O+ production: single (O+ + O) versus double (O+ + O+) ionization (plotted as lines in SONG2026 Fig. 16)."
+  },
+  "MARK1975": {
+   "citation": "T. D. Maerk, 'Cross section for single and double ionization of N2 and O2 molecules by electron impact from threshold up to 170 eV', J. Chem. Phys. 63, 3731-3736 (1975)",
+   "doi": "10.1063/1.431864",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Early separate O2^2+ yield (on 17O16O, per SONG2026)."
+  },
+  "SIGAUD2013": {
+   "citation": "L. Sigaud, N. Ferreira and E. C. Montenegro, 'Absolute cross sections for O2 dication production by electron impact', J. Chem. Phys. 139, 024302 (2013)",
+   "doi": "10.1063/1.4812779",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "O2^2+ yield measurement (SONG2026 Fig. 17)."
+  },
+  "BULL2015": {
+   "citation": "J. N. Bull, J. W. L. Lee and C. Vallance, 'Electron ionization dynamics of N2 and O2 molecules: Velocity-map imaging', Phys. Rev. A 91, 022704 (2015)",
+   "doi": "10.1103/PhysRevA.91.022704",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "O2^2+ yield (about 10 % of the O+ signal at 100 eV, per SONG2026) and O+ product-state distribution."
+  },
+  "JIA2023": {
+   "citation": "S. Jia et al., 'Cold-target electron-ion-coincidence momentum-spectroscopy study of electron-impact single and double ionization of N2 and O2 molecules', Phys. Rev. A 107, 032819 (2023)",
+   "doi": "10.1103/PhysRevA.107.032819",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "O2^2+ yield by TOF and position-sensitive methods (SONG2026 Fig. 17)."
+  },
+  "RE1965": {
+   "citation": "D. Rapp and P. Englander-Golden, 'Total Cross Sections for Ionization and Attachment in Gases by Electron Impact. I. Positive Ionization', J. Chem. Phys. 43, 1464-1479 (1965)",
+   "doi": "10.1063/1.1696957",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Gross (ion-current) O2 ionization; cross-check only."
+  },
+  "COSBY1993": {
+   "citation": "P. C. Cosby, 'Electron-impact dissociation of oxygen', J. Chem. Phys. 98, 9560-9569 (1993)",
+   "doi": "10.1063/1.464387",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Measured total dissociation of O2 into neutrals; SONG2026 Table VI (companion of the N2 paper used for dissociation_N2.dat)."
+  },
+  "LECLAIR1993": {
+   "citation": "L. R. LeClair and J. W. McConkey, 'Selective detection of O(1S) following electron impact dissociation of O2 and N2O using a XeO* conversion technique', J. Chem. Phys. 99, 4566-4577 (1993)",
+   "doi": "10.1063/1.466056",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "O(1S) fragment production (a factor 50 below COSBY1993's total, per SONG2026)."
+  },
+  "LAPORTA2013": {
+   "citation": "V. Laporta, R. Celiberto and J. Tennyson, 'Resonant vibrational-excitation cross sections and rate constants for low-energy electron scattering by molecular oxygen', Plasma Sources Sci. Technol. 22, 025001 (2013)",
+   "doi": "10.1088/0963-0252/22/2/025001",
+   "verified_by": "Crossref metadata; arXiv:1604.05871 record and PDF downloaded and scanned",
+   "url_accessed": "https://arxiv.org/pdf/1604.05871",
+   "document_sha256": "8bca27d23eda5752d660b8090f028d15bf9668e72aa9f2b886c7eb363771821d",
+   "access": "mixed",
+   "access_detail": "Preprint open on arXiv (licence nonexclusive-distrib/1.0: read, not redistribute). The numeric cross sections are 'made available for use by modelers' as supplementary material of the journal article; that supplement was not accessed.",
+   "evidence_level": 4,
+   "role": "Recommended O2 vibrational excitation (SONG2026): all 42 vibrational levels, four O2- resonances (2Pi_g, 2Pi_u, 4Sigma_u-, 2Sigma_u-), R-matrix + boomerang model, rotation J = 1-151."
+  },
+  "ALTHOUFEK2021": {
+   "citation": "V. Alt and K. Houfek, 'Resonant collisions of electrons with O2 via the lowest-lying 2Pi_g state of O2-', Phys. Rev. A 103, 032829 (2021)",
+   "doi": "10.1103/PhysRevA.103.032829",
+   "verified_by": "PDF downloaded from the authors' institute site (journal header read); DOI as printed, Crossref not queried",
+   "url_accessed": "https://utf.mff.cuni.cz/librtfy/papers/0000842/physreva.103.032829_alt.houfek.pdf",
+   "document_sha256": "2e1b06e2302b8f8805e178770a33460ac3531aad3e889a798073b47fd6b33fbe",
+   "access": "open",
+   "evidence_level": 4,
+   "role": "Alternative O2 vibrational excitation (nonlocal resonance model, v = 0 -> 1-7). SONG2026: cross sections for certain transitions differ from LAPORTA2013 'by as much as a factor of 4'; LAPORTA2013 agrees better with measurements."
+  },
+  "GS1955": {
+   "citation": "E. Gerjuoy and S. Stein, 'Rotational Excitation by Slow Electrons', Phys. Rev. 97, 1671-1679 (1955)",
+   "doi": "10.1103/PhysRev.97.1671",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 6,
+   "role": "Born-approximation quadrupole rotational excitation formula quoted in SONG2026 Eq. (1) (the formula itself is open in the SONG2026 manuscript)."
+  },
+  "HUANG2022": {
+   "citation": "C. Huang, H. Zhang and X. Cheng, 'R-Matrix Calculation of Electron Collisions with Molecular Oxygen in Its Electronically Excited States', J. Phys. Chem. A 126, 2061-2074 (2022)",
+   "doi": "10.1021/acs.jpca.1c09153",
+   "verified_by": "Crossref metadata; PubMed record 35324182 (search result)",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 4,
+   "role": "Recommended O2 electronic excitation (SONG2026): fixed-nuclei R-matrix, ground and excited initial states; per the abstract returned by search it reports (de-)excitation for the Herzberg states and the B3Sigma_u- state."
+  },
+  "TASHIRO2006": {
+   "citation": "M. Tashiro, K. Morokuma and J. Tennyson, 'R-matrix calculation of electron collisions with electronically excited O2 molecules', Phys. Rev. A 73, 052707 (2006)",
+   "doi": "10.1103/PhysRevA.73.052707",
+   "verified_by": "Crossref metadata; arXiv:physics/0604098 record (citation_doi matches)",
+   "url_accessed": "https://arxiv.org/abs/physics/0604098",
+   "access": "open",
+   "evidence_level": 4,
+   "role": "Earlier R-matrix set, close to HUANG2022 (SONG2026); open alternative; source of SONG2026 Fig. 12 (b1Sigma_g+ initial state)."
+  },
+  "SHYN1993": {
+   "citation": "T. W. Shyn and C. J. Sweeney, 'Differential electronic-excitation cross sections of molecular oxygen by electron impact: The a1Delta_g and b1Sigma_g+ states', Phys. Rev. A 47, 1006 (1993)",
+   "doi": null,
+   "verified_by": "citation per SONG2026 reference 75; DOI not verified",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Measured a and b excitation; the previous recommendation (ITIKAWA2009 via SONG2026)."
+  },
+  "SHYN1994": {
+   "citation": "T. W. Shyn, C. J. Sweeney, A. Grafe and W. E. Sharp, 'Absolute differential cross sections for the excitation of molecular oxygen by electron impact: Decomposition of the Schumann-Runge continuum', Phys. Rev. A 50, 4794 (1994)",
+   "doi": null,
+   "verified_by": "citation per SONG2026 reference 77; DOI not verified",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Measured Schumann-Runge-region excitation; ITIKAWA2009 did not recommend such data 'due to the large uncertainty' (SONG2026)."
+  },
+  "TB1989": {
+   "citation": "D. Teillet-Billy, L. Malegat, J. P. Gauyacq, R. Abouaf and C. Benoit, 'Electronic excitation to the O2 (... pi_u^3 pi_g^3) states in e-O2 collisions', J. Phys. B 22, 1095 (1989)",
+   "doi": null,
+   "verified_by": "citation per SONG2026 reference 86; DOI not verified",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Measured sum of the three Herzberg-state excitations (SONG2026 Fig. 10)."
+  },
+  "RB1965": {
+   "citation": "D. Rapp and D. D. Briglia, 'Total Cross Sections for Ionization and Attachment in Gases by Electron Impact. II. Negative-Ion Formation', J. Chem. Phys. 43, 1480-1489 (1965)",
+   "doi": "10.1063/1.1696958",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Dissociative electron attachment of O2, recommended by SONG2026 Table VIII (and by the previous reviews)."
+  },
+  "CHRISTOPHOROU1965": {
+   "citation": "L. G. Christophorou, R. N. Compton, G. S. Hurst and P. W. Reinhardt, 'Determination of Electron-Capture Cross Sections with Swarm-Beam Techniques', J. Chem. Phys. 43, 4273-4281 (1965)",
+   "doi": "10.1063/1.1696685",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Swarm-beam DEA of O2, in agreement with RB1965 (SONG2026)."
+  },
+  "LAPORTA2015": {
+   "citation": "V. Laporta, R. Celiberto and J. Tennyson, 'Dissociative electron attachment and electron-impact resonant dissociation of vibrationally excited O2 molecules', Phys. Rev. A 91, 012701 (2015)",
+   "doi": "10.1103/PhysRevA.91.012701",
+   "verified_by": "arXiv:1501.01771 record (journal reference and DOI listed there)",
+   "url_accessed": "https://arxiv.org/abs/1501.01771",
+   "access": "open",
+   "evidence_level": 4,
+   "role": "Vibrational-state-resolved DEA and resonant dissociation. Note: the arXiv abstract says the main v = 0 contribution is the 2Pi_u resonance with a significant 4Sigma contribution, whereas the SONG2026 manuscript text says DEA from low v 'largely goes via the 4Sigma_u- resonance'; recorded, not resolved."
+  },
+  "CH2006": {
+   "citation": "S. Cherkani-Hassani, D. S. Belic, J. J. Jureta and P. Defrance, 'Absolute cross sections for electron impact ionization and dissociation of O2+', J. Phys. B 39, 5105-5117 (2006)",
+   "doi": "10.1088/0953-4075/39/24/008",
+   "verified_by": "Crossref metadata (authors, pages); abstract as returned by search (IOPscience / OSTI ETDEWEB 20907331 records)",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Crossed-beam O2+ single ionization (O2+ -> O2^2+), dissociative ionization and dissociative excitation, threshold to about 2.5 keV. Abstract maxima: (2.20 +/- 0.09) x 1e-17 cm^2 simple ionization, (5.3 +/- 1.0) x 1e-17 cm^2 dissociative ionization, (22.0 +/- 4.6) x 1e-17 cm^2 dissociative excitation; fragment kinetic energy release up to about 20 eV."
+  },
+  "VK1996": {
+   "citation": "L. Vejby-Christensen, D. Kella, D. Mathur, H. B. Pedersen, H. T. Schmidt and L. H. Andersen, 'Electron-impact detachment from negative ions', Phys. Rev. A 53, 2371-2378 (1996)",
+   "doi": "10.1103/PhysRevA.53.2371",
+   "verified_by": "Crossref metadata; OSTI record 279920 summary returned by search (D- and O-, threshold to about 30 eV)",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Electron-impact detachment of O- (e + O- -> O + 2e)."
+  },
+  "PEVERALL2001": {
+   "citation": "R. Peverall et al., 'Dissociative recombination and excitation of O2+: Cross sections, product yields and implications for studies of ionospheric airglows', J. Chem. Phys. 114, 6679-6689 (2001)",
+   "doi": "10.1063/1.1349079",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 3,
+   "role": "Storage-ring DR and dissociative excitation cross sections of O2+."
+  },
+  "FMM2006": {
+   "citation": "A. I. Florescu-Mitchell and J. B. A. Mitchell, 'Dissociative recombination', Phys. Rep. 430, 277-374 (2006)",
+   "doi": "10.1016/j.physrep.2006.04.002",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "paywalled",
+   "evidence_level": 5,
+   "role": "Review of DR data (secondary)."
+  },
+  "ANZAI2012": {
+   "citation": "K. Anzai et al., 'Cross section data sets for electron collisions with H2, O2, CO, CO2, N2O and H2O', Eur. Phys. J. D 66, 36 (2012)",
+   "doi": "10.1140/epjd/e2011-20630-1",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "not-verified",
+   "evidence_level": 5,
+   "role": "Earlier multi-molecule compilation; secondary cross-check only."
+  },
+  "ALVES2016": {
+   "citation": "L. L. Alves, P. Coche, M. A. Ridenti and V. Guerra, 'Electron scattering cross sections for the modelling of oxygen-containing plasmas', Eur. Phys. J. D 70, 124 (2016)",
+   "doi": "10.1140/epjd/e2016-70102-1",
+   "verified_by": "Crossref metadata",
+   "url_accessed": null,
+   "access": "not-verified",
+   "evidence_level": 5,
+   "role": "Context only. Its numeric cross-section set is distributed through LXCat, so it is not used as a data source here (project policy)."
+  },
+  "JEON2003": {
+   "citation": "B.-H. Jeon, 'Determination of electron collision cross-sections for the oxygen molecule by using an electron swarm study', J. Korean Phys. Soc. 43, 513-525 (2003)",
+   "doi": null,
+   "verified_by": "citation per SONG2026 reference 45; DOI not verified (Crossref lookup rate-limited)",
+   "url_accessed": null,
+   "access": "not-verified",
+   "evidence_level": 4,
+   "role": "Swarm-derived O2 MTCS used by SONG2026 from 0.001 to 0.8 eV (no uncertainties given by Jeon)."
+  },
+  "TANAKA2016": {
+   "citation": "H. Tanaka, M. J. Brunger, L. Campbell, H. Kato, M. Hoshino and A. Rau, 'Scaled plane-wave Born cross sections for atoms and molecules', Rev. Mod. Phys. 88, 025004 (2016)",
+   "doi": null,
+   "verified_by": "citation per SONG2026 reference 46; DOI not verified",
+   "url_accessed": null,
+   "access": "not-verified",
+   "evidence_level": 5,
+   "role": "Candidate route for high-energy extension of electronic excitation (scaled Born); SONG2026 says it repeated the ITIKAWA2009 electronic-excitation recommendations. Not evaluated here."
+  }
+ },
+ "context_only_sources": {
+  "ITIKAWA1989": "historical O2 compilation",
+  "ANZAI2012": "secondary multi-molecule compilation",
+  "ALVES2016": "context only; numeric set distributed via LXCat, not used"
+ },
+ "rows": [
+  {
+   "id": "OO2-01",
+   "target": "O",
+   "process": "O ionization (single)",
+   "reaction": "e + O(3P) -> O+ + 2e",
+   "quantity_needed": "integral ionization cross section from threshold -> Maxwellian rate table; threshold / loss energy header",
+   "solver_reaction_type": "electron_impact (documented in the pinned HallThruster.jl how-to)",
+   "candidate_sources": [
+    {"source": "THOMPSON1995", "role": "recommended by SONG2026", "quantity_type": "measured", "energy_range_eV": "14.1-2000 (points tabulated in NIST107_O)", "stated_uncertainty": "not read (paper paywalled); verify"},
+    {"source": "NIST107_O", "role": "open numeric route (BEB theory + experimental points)", "quantity_type": "model-derived (BEB) with measured points", "energy_range_eV": "13.62-5000 (BEB, as fetched)", "stated_uncertainty": "none stated in the table"},
+    {"source": "KD2002", "role": "BEB theory behind NIST107_O", "quantity_type": "model-derived", "energy_range_eV": "as NIST107_O", "stated_uncertainty": "not read"},
+    {"source": "TZ2016", "role": "alternative (BSR-1116 ionization of 3P and 1D, compared in SONG2026 Figs. 27/28)", "quantity_type": "model-derived", "energy_range_eV": "not verified (BSR-1116 grid stated as up to 200 eV for elastic/excitation in SONG2026)", "stated_uncertainty": "none stated in SONG2026"},
+    {"source": "BROOK1978", "role": "cross-check", "quantity_type": "measured", "energy_range_eV": "14.7-997 (points tabulated in NIST107_O)", "stated_uncertainty": "not read; verify"},
+    {"source": "LG1990", "role": "open alternative (includes O+ 4S, 2D, 2P and inner 4P partials)", "quantity_type": "evaluated measurement", "energy_range_eV": "not read in this audit", "stated_uncertainty": "not read in this audit"}
+   ],
+   "recommended_source": "THOMPSON1995",
+   "energy_range_eV": "threshold 13.62 eV (NIST107_O first row; SONG2026 text) to 2000 eV measured / 5000 eV BEB",
+   "stated_uncertainty": "SONG2026 overall: recommended O cross sections expected accurate to at least 20 % for those that matter in CRM models (their Sec. IV); no process-specific figure for Thompson read here",
+   "applicability": "Ground-state O(3P) target. BROOK1978 saw ion signal from 12.9 eV, attributed possibly to metastable 1D in the beam (SONG2026).",
+   "status": "source-identified",
+   "access": "open",
+   "access_detail": "NIST107_O gives BEB and the Thompson points openly (same route as ionization_N.dat).",
+   "open_issues": [
+    "Nominal choice between Thompson points (interpolated) and BEB total: owner decision; SONG2026 says they agree very well.",
+    "State-resolved O+ products (4S, 2D, 2P) matter only if ion excited states are tracked; not proposed."
+   ],
+   "current_0d_model_entry": "abep_sim/plasma_chem.py RATES[('O','iz')]: Arrhenius fit, unverified (CLAUDE.md next-work 6); not modified by this audit",
+   "proposed_tier_DRAFT": "1"
+  },
+  {
+   "id": "OO2-02",
+   "target": "O",
+   "process": "O elastic momentum transfer",
+   "reaction": "e + O -> e + O (momentum transfer)",
+   "quantity_needed": "momentum-transfer cross section (MTCS), not integral elastic, because HallThruster uses the elastic rate as the momentum-transfer collision frequency (same convention as elastic_N2_song2023.dat)",
+   "solver_reaction_type": "elastic",
+   "candidate_sources": [
+    {"source": "TZ2016", "role": "recommended by SONG2026 (BSR-1116 MTCS)", "quantity_type": "model-derived", "energy_range_eV": "'narrow energy grid up to 200 eV' (SONG2026 Sec. III.B)", "stated_uncertainty": "SONG2026 overall 'at least 20 %' statement; SONG2026 favours theory over the WA1989 small-angle data"},
+    {"source": "WA1989", "role": "experimental cross-check (DCS at five energies)", "quantity_type": "measured", "energy_range_eV": "five energies (plotted in SONG2026 Fig. 22: 0.54, 2.18, 3.40, 4.90, 8.70 eV)", "stated_uncertainty": "'usually 20 %' for the method (SONG2026 Sec. III)"},
+    {"source": "II1990", "role": "older open compilation (Thomas & Nesbet MTCS, the only Q_m then available)", "quantity_type": "model-derived", "energy_range_eV": "plotted in II1990 Fig. 4.1 below about 14 eV; tabulation not read", "stated_uncertainty": "II1990: 'uncertain how the difference in the DCS affects the resulting Q_m'"},
+    {"source": "BG_OP", "role": "high-energy (>= 200 eV) option proposed by SONG2026", "quantity_type": "model-derived", "energy_range_eV": ">= 200", "stated_uncertainty": "not published"}
+   ],
+   "recommended_source": "TZ2016",
+   "energy_range_eV": "to 200 eV (BSR-1116 grid, per SONG2026); above 200 eV no published source located",
+   "stated_uncertainty": "see candidate entries; no quantitative MTCS uncertainty stated for BSR-1116 in SONG2026",
+   "applicability": "O(3P) ground state.",
+   "status": "source-identified",
+   "access": "mixed",
+   "access_detail": "BSR-1116 numbers: TZ2016 supplement (access not verified) or SONG2026 supplementary material (not accessed). Open fallback only the 1990 compilation.",
+   "open_issues": [
+    "Above 200 eV: SONG2026 proposes either a high-energy dependence or the BG_OP private-communication data; BG_OP is not usable unless published. The rate share resting above 200 eV at the audit ceiling must be computed as for rate_validity.toml before the table is marked verified.",
+    "Obtain BSR-1116 MTCS numbers from a published supplement (TZ2016 or SONG2026); do not digitize figures if tabulated data are published."
+   ],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "1"
+  },
+  {
+   "id": "OO2-03",
+   "target": "O",
+   "process": "O electronic excitation (state-resolved or lumped)",
+   "reaction": "e + O(3P) -> e + O(n l 2S+1 L)",
+   "quantity_needed": "integral excitation cross sections per state (or per owner-defined lump) with a header energy per reaction",
+   "solver_reaction_type": "excitation (energy loss only; the excited state is not tracked unless excited-state options are configured)",
+   "candidate_sources": [
+    {"source": "TZ2016", "role": "recommended by SONG2026 for all O excitation", "quantity_type": "model-derived", "energy_range_eV": "threshold to 200 eV (SONG2026 Sec. IV)", "stated_uncertainty": "SONG2026 overall 'at least 20 %' for cross sections large enough to matter; experimental bars up to about 30 % (SONG2026 Sec. III.C)"},
+    {"source": "LG1990", "role": "open evaluated alternative (more than 60 profiles)", "quantity_type": "evaluated measurement + scaling", "energy_range_eV": "not read in this audit", "stated_uncertainty": "LG1990 abstract: values differ from previously accepted ones by factors of about 2-3, in a few cases up to 10"}
+   ],
+   "recommended_source": "TZ2016",
+   "energy_range_eV": "threshold to 200 eV (BSR-1116)",
+   "stated_uncertainty": "see candidate entries",
+   "applicability": "From O(3P). SONG2026 highlights 3P -> 1D, 3P -> 1S, 3P -> 3s 5S (forbidden, Fig. 26) and 3P -> 3s 3S plus one 3D transition (allowed, Fig. 25; caption says 3s 3D, plot label says 3d 3D - verify) and notes the largest close-coupling calculation gives the smallest individual cross sections from the ground state.",
+   "status": "source-identified",
+   "access": "mixed",
+   "access_detail": "BSR-1116 numbers via TZ2016 or SONG2026 supplements (not accessed); LG1990 is open (NIST reprint).",
+   "open_issues": [
+    "Which states are modelled individually and whether the remainder is lumped is an owner decision (see draft prereg tier 1 candidate list); a lumped channel needs a declared header energy and its own validity limit.",
+    "Header energies must come from a cited level list (e.g. NIST Atomic Spectra Database or the II1990 Table 2.1); not tabulated here.",
+    "Above 200 eV: same extension question as OO2-02."
+   ],
+   "current_0d_model_entry": "abep_sim/plasma_chem.py EPS_C['O'] (lumped cost per ion; not a cross section); not modified",
+   "proposed_tier_DRAFT": "1 (selected states) / assessed lump"
+  },
+  {
+   "id": "OO2-04",
+   "target": "O",
+   "process": "O ground-term fine-structure transitions",
+   "reaction": "e + O(3P_J) -> e + O(3P_J')",
+   "quantity_needed": "fine-structure excitation/de-excitation cross sections (low-energy cooling channel)",
+   "solver_reaction_type": "excitation (would need J-resolved O, not available; only as a lumped loss)",
+   "candidate_sources": [
+    {"source": "II1990", "role": "only source located (Sec. 5.1, from Berrington's R-matrix collision strengths; compared with four older sets that disagree at low energy)", "quantity_type": "model-derived", "energy_range_eV": "not read", "stated_uncertainty": "II1990: large disagreement between calculations at lower energies"}
+   ],
+   "recommended_source": null,
+   "energy_range_eV": "TBD - requires reading II1990 Sec. 5.1 figures/tables",
+   "stated_uncertainty": "none quantified",
+   "applicability": "Matters only at the lowest electron energies; O ground-state population split over J assumed thermal by any model (assumption, not sourced here).",
+   "status": "source-open",
+   "access": "open",
+   "access_detail": "II1990 open via NIST reprint; underlying Berrington paper not accessed.",
+   "open_issues": ["No modern recommendation located (SONG2026 does not treat it). Tier-3 bound only."],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "3"
+  },
+  {
+   "id": "OO2-05",
+   "target": "O2",
+   "process": "O2 non-dissociative ionization",
+   "reaction": "e + O2 -> O2+ + 2e",
+   "quantity_needed": "partial ionization cross section sigma(O2+) (not the total, which also counts O+ and O^2+) -> rate table",
+   "solver_reaction_type": "electron_impact",
+   "candidate_sources": [
+    {"source": "SONG2026", "role": "recommended (Table VII, from LM2003)", "quantity_type": "evaluated measurement", "energy_range_eV": "13.0-998", "stated_uncertainty": "5 % on the O2+ partial and on the total (Table VII caption)"},
+    {"source": "STRAUB1996", "role": "underlying measurement", "quantity_type": "measured", "energy_range_eV": "threshold-1000 (title)", "stated_uncertainty": "not read; SONG2026: about 5 % remains on the counting total"},
+    {"source": "LM2003", "role": "evaluation behind SONG2026 Table VII", "quantity_type": "evaluated measurement", "energy_range_eV": "as SONG2026 Table VII", "stated_uncertainty": "as SONG2026 Table VII"},
+    {"source": "ITIKAWA2009", "role": "previous recommendation (cross-check)", "quantity_type": "evaluated measurement", "energy_range_eV": "not read", "stated_uncertainty": "not read"},
+    {"source": "RE1965", "role": "gross (ion-current) total; SONG2026: nearly coincides with the counting total of STRAUB1996 once corrected for double ionization", "quantity_type": "measured", "energy_range_eV": "not read", "stated_uncertainty": "not read"},
+    {"source": "NIST107_O2", "role": "model cross-check of the total only", "quantity_type": "model-derived", "energy_range_eV": "not downloaded", "stated_uncertainty": "none stated"}
+   ],
+   "recommended_source": "SONG2026",
+   "energy_range_eV": "13.0-998 eV (SONG2026 Table VII rows)",
+   "stated_uncertainty": "5 % (SONG2026 Table VII caption)",
+   "applicability": "Ground-state O2; SONG2026 notes shock-heated O2 up to 5000 K showed no ionization difference within uncertainty. O2+ produced in X, a4Pi_u and b4Sigma_g- states in ratio 9:5:2 at 100 eV (Doering & Yang via SONG2026).",
+   "status": "source-identified",
+   "access": "mixed",
+   "access_detail": "Table VII readable in the open accepted manuscript; version of record / supplement not accessed.",
+   "open_issues": ["Verify Table VII against the version of record before transcription (manuscript copy only)."],
+   "current_0d_model_entry": "abep_sim/plasma_chem.py RATES[('O2','iz')]: Arrhenius fit, unverified; not modified",
+   "proposed_tier_DRAFT": "1"
+  },
+  {
+   "id": "OO2-06",
+   "target": "O2",
+   "process": "O2 dissociative ionization to O+ + O",
+   "reaction": "e + O2 -> O+ + O + 2e",
+   "quantity_needed": "partial cross section sigma(O+) for the single-ionization channel -> rate table; appearance energy header",
+   "solver_reaction_type": "electron_impact (dissociative ionization is documented)",
+   "candidate_sources": [
+    {"source": "SONG2026", "role": "recommended (Table VII column 'O+ (+O2^2+)', from LM2003)", "quantity_type": "evaluated measurement", "energy_range_eV": "23-998 (first nonzero row 23 eV)", "stated_uncertainty": "7 % (Table VII caption)"},
+    {"source": "TV1998", "role": "channel split O+ + O vs O+ + O+", "quantity_type": "measured", "energy_range_eV": "not read", "stated_uncertainty": "not read"},
+    {"source": "STRAUB1996", "role": "underlying measurement", "quantity_type": "measured", "energy_range_eV": "threshold-1000", "stated_uncertainty": "not read"}
+   ],
+   "recommended_source": "SONG2026",
+   "energy_range_eV": "23-998 eV tabulated (SONG2026 Table VII)",
+   "stated_uncertainty": "7 % (SONG2026 Table VII caption)",
+   "applicability": "The Table VII O+ column is O+ plus O2^2+ (same m/q; 'in the majority of experiments indistinguishable'). O+ yield is 'roughly half of the O2+ yield' (SONG2026). At 100 eV 68 % of atomic ions in 4S, 25 % 2D, 8 % 2P (Bull et al. via SONG2026).",
+   "status": "source-identified",
+   "access": "mixed",
+   "access_detail": "As OO2-05.",
+   "open_issues": [
+    "Ambiguity O+ vs O2^2+ in the same column (the N2 analogue produced dissociative_ionization_N2_upper/_lower.dat): an upper (column as is) / lower (column minus an O2^2+ estimate) pair would need a published O2^2+ yield; SONG2026 could not recommend one (see OO2-15). Owner decision.",
+    "Double dissociative ionization O+ + O+ (two ions per event) is inside the same column; TV1998 separates it (paywalled).",
+    "Threshold treatment between the appearance energy and the first tabulated point (the N2 table used a linear ramp from the appearance energy, our construction): owner decision; appearance energy must be cited, not computed here."
+   ],
+   "current_0d_model_entry": "abep_sim/plasma_chem.py RATES[('O2','diz')]: Arrhenius fit, unverified; not modified",
+   "proposed_tier_DRAFT": "1"
+  },
+  {
+   "id": "OO2-07",
+   "target": "O2",
+   "process": "O2 dissociative ionization to multiply charged atomic fragments",
+   "reaction": "e + O2 -> O^2+ + O + 3e ; e + O2 -> O+ + O+ + 3e",
+   "quantity_needed": "partial sigma(O^2+) and the O+ + O+ share",
+   "solver_reaction_type": "electron_impact (O max_charge 2 would be needed for O^2+)",
+   "candidate_sources": [
+    {"source": "SONG2026", "role": "recommended sigma(O^2+) (Table VII 'O2+' column, i.e. atomic O^2+, from LM2003)", "quantity_type": "evaluated measurement", "energy_range_eV": "73-998 (first nonzero row 73 eV)", "stated_uncertainty": "10 % (Table VII caption)"},
+    {"source": "TV1998", "role": "O+ + O+ channel", "quantity_type": "measured", "energy_range_eV": "not read", "stated_uncertainty": "not read"}
+   ],
+   "recommended_source": "SONG2026",
+   "energy_range_eV": "73-998 eV tabulated (O^2+)",
+   "stated_uncertainty": "10 % (O^2+)",
+   "applicability": "SONG2026: maximum O^2+ yield roughly 1 % of the O2+ signal.",
+   "status": "source-identified",
+   "access": "mixed",
+   "access_detail": "O^2+ open via the accepted manuscript; O+ + O+ split paywalled (TV1998).",
+   "open_issues": ["Mirror of the N2 -> N^2+ + N tier-3 case; bound first, include only if the draft rule promotes it."],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "3"
+  },
+  {
+   "id": "OO2-08",
+   "target": "O2",
+   "process": "O2 dissociation into neutrals",
+   "reaction": "e + O2 -> O + O + e (channel-summed: O(3P)+O(3P) and O(1D)+O(3P))",
+   "quantity_needed": "total neutral-dissociation cross section -> rate table; representative energy loss (channel-dependent)",
+   "solver_reaction_type": "electron_impact",
+   "candidate_sources": [
+    {"source": "SONG2026", "role": "recommended (Table VI, data of COSBY1993)", "quantity_type": "evaluated measurement (transcribed table)", "energy_range_eV": "13.5-198.5", "stated_uncertainty": "about +/-35 % (Table VI caption)"},
+    {"source": "COSBY1993", "role": "underlying measurement", "quantity_type": "measured", "energy_range_eV": "13.5-198.5 (as tabulated by SONG2026)", "stated_uncertainty": "+/-35 % per SONG2026"},
+    {"source": "LECLAIR1993", "role": "O(1S) fragment channel", "quantity_type": "measured", "energy_range_eV": "not read", "stated_uncertainty": "not read"}
+   ],
+   "recommended_source": "SONG2026",
+   "energy_range_eV": "13.5-198.5 eV tabulated; dissociation energy 5.12 eV (SONG2026 Sec. II.G)",
+   "stated_uncertainty": "about +/-35 % (SONG2026 Table VI)",
+   "applicability": "Cosby's two overall channels: O(1D)+O(3P) from B, B', 2 3Pi_u states; O(3P)+O(3P) from c, A', A (Herzberg) states. Maximum 0.66e-16 cm^2 near 35 eV. SONG2026: all dipole-allowed transitions lie above the first dissociation limit and appear to dissociate.",
+   "status": "source-open",
+   "access": "mixed",
+   "access_detail": "Table VI open in the accepted manuscript; COSBY1993 paywalled.",
+   "open_issues": [
+    "No total measurement below 13.5 eV, yet the dissociation threshold is 5.12 eV and the dissociative Herzberg (about 5-7 eV) and Schumann-Runge (about 7-9.5 eV) excitations lie below it (energies as stated in SONG2026 Sec. II.F).",
+    "Double counting: excitation of dissociative states (OO2-10..12) and Cosby's total dissociation count the same events at >= 13.5 eV. Owner must choose one accounting (e.g. excitation-as-dissociation below a crossover and Cosby above, or excitation as energy loss only) before any table is built.",
+    "Energy loss per event differs between the O(3P)+O(3P) and O(1D)+O(3P) channels; a single representative loss (as for dissociation_N2.dat) would need a cited basis and a model-uncertainty range."
+   ],
+   "current_0d_model_entry": "abep_sim/plasma_chem.py RATES[('O2','diss')] and E_DISS['O2']: unverified Arrhenius fit ('Gudmundsson-class' comment); not modified",
+   "proposed_tier_DRAFT": "1"
+  },
+  {
+   "id": "OO2-09",
+   "target": "O2",
+   "process": "O2 elastic momentum transfer",
+   "reaction": "e + O2 -> e + O2 (momentum transfer)",
+   "quantity_needed": "MTCS -> rate table (elastic)",
+   "solver_reaction_type": "elastic",
+   "candidate_sources": [
+    {"source": "SONG2026", "role": "recommended (Table V)", "quantity_type": "evaluated (beam DCS-derived above 1 eV; swarm below 0.8 eV)", "energy_range_eV": "0.001-1000", "stated_uncertainty": "about 20 % for 1-10 eV, 10-15 % for 10-1000 eV; below 1 eV none (JEON2003 gave none) (Table V caption)"},
+    {"source": "JEON2003", "role": "low-energy part (0.001-0.8 eV)", "quantity_type": "inferred (swarm unfolding)", "energy_range_eV": "0.001-0.8", "stated_uncertainty": "not provided"}
+   ],
+   "recommended_source": "SONG2026",
+   "energy_range_eV": "0.001-1000 eV",
+   "stated_uncertainty": "see candidate entries",
+   "applicability": "Ground-state O2. Not in the lane's minimum list but required for any O2-containing Hall run (momentum transfer).",
+   "status": "source-identified",
+   "access": "mixed",
+   "access_detail": "Table V readable in the open accepted manuscript.",
+   "open_issues": ["Table V manuscript row '0.008 eV' out of order (probably 0.080 eV): verify against the version of record before transcription."],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "1"
+  },
+  {
+   "id": "OO2-10",
+   "target": "O2",
+   "process": "O2 electronic excitation to a1Delta_g and b1Sigma_g+",
+   "reaction": "e + O2(X3Sigma_g-) -> e + O2(a1Delta_g) ; -> e + O2(b1Sigma_g+)",
+   "quantity_needed": "ICS per state -> excitation rate tables (header = excitation energy)",
+   "solver_reaction_type": "excitation",
+   "candidate_sources": [
+    {"source": "HUANG2022", "role": "recommended by SONG2026", "quantity_type": "model-derived (fixed-nuclei R-matrix)", "energy_range_eV": "shown to 20 eV in SONG2026 Figs. 8-9; tabulated range not verified", "stated_uncertainty": "none stated"},
+    {"source": "TASHIRO2006", "role": "open alternative (close to HUANG2022 per SONG2026)", "quantity_type": "model-derived", "energy_range_eV": "not read", "stated_uncertainty": "none stated"},
+    {"source": "SHYN1993", "role": "measured; previous recommendation", "quantity_type": "measured", "energy_range_eV": "not read", "stated_uncertainty": "not read"},
+    {"source": "ITIKAWA2009", "role": "previous review that recommended SHYN1993 (per SONG2026)", "quantity_type": "evaluated measurement", "energy_range_eV": "not read", "stated_uncertainty": "not read"}
+   ],
+   "recommended_source": "HUANG2022",
+   "energy_range_eV": "thresholds 0.98 eV (a) and 1.63 eV (b) (SONG2026) to 20 eV as plotted",
+   "stated_uncertainty": "none quantified in SONG2026 for these theoretical values",
+   "applicability": "Low thresholds make these important for the low-T_e electron energy balance. Fixed-nuclei calculation (SONG2026: vibrational motion would flatten peaks).",
+   "status": "source-open",
+   "access": "mixed",
+   "access_detail": "HUANG2022 paywalled (ACS); TASHIRO2006 open on arXiv; SONG2026 supplement not accessed.",
+   "open_issues": [
+    "Recommended theory plotted only to 20 eV (same situation as N2 Su 2021): the extension source above that is an owner decision (see OO2-13).",
+    "Experiment (SHYN1993) vs theory (HUANG2022) disagreement not quantified here (SONG2026 Figs. 8-9)."
+   ],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "1"
+  },
+  {
+   "id": "OO2-11",
+   "target": "O2",
+   "process": "O2 electronic excitation to the Herzberg states c1Sigma_u-, A'3Delta_u, A3Sigma_u+",
+   "reaction": "e + O2(X) -> e + O2(c, A', A) (dissociative to O(3P)+O(3P) per COSBY1993 via SONG2026)",
+   "quantity_needed": "ICS per state or their sum",
+   "solver_reaction_type": "excitation, or electron_impact dissociation if counted as dissociation (see OO2-08)",
+   "candidate_sources": [
+    {"source": "HUANG2022", "role": "recommended by SONG2026 (individual states)", "quantity_type": "model-derived", "energy_range_eV": "shown 6-20 eV (SONG2026 Fig. 10)", "stated_uncertainty": "none stated"},
+    {"source": "TASHIRO2006", "role": "open alternative", "quantity_type": "model-derived", "energy_range_eV": "not read", "stated_uncertainty": "none stated"},
+    {"source": "TB1989", "role": "measured sum of the three", "quantity_type": "measured", "energy_range_eV": "not read", "stated_uncertainty": "error bars shown in SONG2026 Fig. 10; values not read"}
+   ],
+   "recommended_source": "HUANG2022",
+   "energy_range_eV": "excitation energies 6.12, 6.27, 6.47 eV (c, A', A; SONG2026 citing Teillet-Billy 1987) to 20 eV as plotted",
+   "stated_uncertainty": "none quantified",
+   "applicability": "Fixed-nuclei theory; states are dissociative (overlap with OO2-08).",
+   "status": "source-open",
+   "access": "mixed",
+   "access_detail": "As OO2-10.",
+   "open_issues": ["Double counting with OO2-08.", "Extension above 20 eV (OO2-13)."],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "1"
+  },
+  {
+   "id": "OO2-12",
+   "target": "O2",
+   "process": "O2 electronic excitation to B3Sigma_u- (Schumann-Runge continuum) and higher states",
+   "reaction": "e + O2(X) -> e + O2(B3Sigma_u-) -> O(1D) + O(3P); higher: E3Sigma_u- (about 10.0/10.3 eV per SONG2026) and Rydberg states",
+   "quantity_needed": "ICS per state or lumped",
+   "solver_reaction_type": "excitation, or electron_impact dissociation (see OO2-08)",
+   "candidate_sources": [
+    {"source": "HUANG2022", "role": "reports B3Sigma_u- (per abstract); not shown in SONG2026 figures", "quantity_type": "model-derived", "energy_range_eV": "not verified", "stated_uncertainty": "none stated"},
+    {"source": "SHYN1994", "role": "measured Schumann-Runge decomposition (not recommended by ITIKAWA2009, 'large uncertainty')", "quantity_type": "measured", "energy_range_eV": "not read", "stated_uncertainty": "not read"}
+   ],
+   "recommended_source": null,
+   "energy_range_eV": "band about 7-9.5 eV in forward-scattering spectra (SONG2026 Sec. II.F); cross-section range TBD",
+   "stated_uncertainty": "none quantified",
+   "applicability": "Dissociative (O(1D)+O(3P) channel of COSBY1993); overlaps OO2-08.",
+   "status": "source-open",
+   "access": "paywalled",
+   "access_detail": "HUANG2022 and SHYN1994 paywalled; whether SONG2026's supplement contains B3Sigma_u- is not verified.",
+   "open_issues": [
+    "SONG2026 recommends HUANG2022 generally but plots only a, b and the Herzberg states; whether a B3Sigma_u- recommendation exists in its supplement: verify.",
+    "No recommended data located for E3Sigma_u- and higher states."
+   ],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "2"
+  },
+  {
+   "id": "OO2-13",
+   "target": "O2",
+   "process": "O2 electronic excitation above the R-matrix range (all states)",
+   "reaction": "e + O2(X) -> e + O2(*) at E > 20 eV",
+   "quantity_needed": "high-energy continuation of per-state ICS",
+   "solver_reaction_type": "excitation",
+   "candidate_sources": [
+    {"source": "TANAKA2016", "role": "candidate scaled-Born route (not evaluated)", "quantity_type": "model-derived", "energy_range_eV": "not read", "stated_uncertainty": "not read"}
+   ],
+   "recommended_source": null,
+   "energy_range_eV": "TBD - requires locating a per-state source above 20 eV",
+   "stated_uncertainty": "TBD",
+   "applicability": "Needed only if the tail above 20 eV carries a non-negligible share of the rate inside the audit domain (to be computed, not assumed).",
+   "status": "gap",
+   "access": "none",
+   "access_detail": "No per-state source above 20 eV located in this audit.",
+   "open_issues": ["Owner decision on the extension rule (the N2 precedent used Johnson 2005 measurements from 20 eV plus a power-law continuation)."],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "1 (as part of OO2-10/11 completeness)"
+  },
+  {
+   "id": "OO2-14",
+   "target": "O2",
+   "process": "O2 vibrational excitation",
+   "reaction": "e + O2(v=0) -> e + O2(v'>0)",
+   "quantity_needed": "resonant VE cross sections or rate coefficients per v' -> excitation tables",
+   "solver_reaction_type": "excitation",
+   "candidate_sources": [
+    {"source": "LAPORTA2013", "role": "recommended by SONG2026", "quantity_type": "model-derived (R-matrix + boomerang)", "energy_range_eV": "two regions: below about 4 eV (2Pi_g) and the broad peak near 10 eV (4Sigma_u- etc.) (arXiv abstract/text)", "stated_uncertainty": "SONG2026 estimate '20 % or less' by comparison with measurements (source itself gave none)"},
+    {"source": "ALTHOUFEK2021", "role": "alternative (v = 0 -> 1-7)", "quantity_type": "model-derived", "energy_range_eV": "low energy (2Pi_g region)", "stated_uncertainty": "differs from LAPORTA2013 by up to a factor 4 for certain transitions (SONG2026)"}
+   ],
+   "recommended_source": "LAPORTA2013",
+   "energy_range_eV": "resonance regions below about 4 eV and near 10 eV",
+   "stated_uncertainty": "'20 % or less' (SONG2026 estimate)",
+   "applicability": "Resonant only (no non-resonant background), fixed rotational parametrisation; all 42 levels computed. Same closure-limited situation as the N2 Laporta 2014 tables.",
+   "status": "source-identified",
+   "access": "mixed",
+   "access_detail": "arXiv preprint open; numeric supplement not accessed.",
+   "open_issues": ["Which v' to include and whether superelastic return is modelled: owner decision (N2 precedent: v = 0 -> 1..10, no superelastic)."],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "2"
+  },
+  {
+   "id": "OO2-15",
+   "target": "O2",
+   "process": "O2 rotational excitation",
+   "reaction": "e + O2(N) -> e + O2(N +/- 2) (odd N only for 16O2)",
+   "quantity_needed": "rotational ICS (quadrupole Born) -> lumped low-energy loss",
+   "solver_reaction_type": "excitation",
+   "candidate_sources": [
+    {"source": "SONG2026", "role": "formula and constants (Eq. 1; B0 = 1.792e-4 eV and Q0 = -0.230 a0^2 (atomic units, as printed) for v = 0, experimental values that SONG2026 attributes to Irikura 2007 and Couling & Ntombela 2014)", "quantity_type": "model-derived (Born approximation)", "energy_range_eV": "not bounded by the source", "stated_uncertainty": "SONG2026: 'no experimental or accurate theoretical data available'; approximation neglects spin-rotation fine structure; short-range interactions may dominate"},
+    {"source": "GS1955", "role": "original Born formula", "quantity_type": "model-derived", "energy_range_eV": "-", "stated_uncertainty": "-"}
+   ],
+   "recommended_source": null,
+   "energy_range_eV": "TBD",
+   "stated_uncertainty": "unquantified (model-only)",
+   "applicability": "Model-only; SONG2026 excludes it from its recommendations ('only estimates based on a very simplified theoretical treatment are available').",
+   "status": "source-open",
+   "access": "open",
+   "access_detail": "Formula and constants in the open SONG2026 manuscript.",
+   "open_issues": ["Mirror of the N2 rotational tier-3 case (gross vs net convention must be pre-registered before any bound is seen)."],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "3"
+  },
+  {
+   "id": "OO2-16",
+   "target": "O2",
+   "process": "O2 dissociative electron attachment",
+   "reaction": "e + O2(X) -> O- + O(3P)",
+   "quantity_needed": "DEA cross section -> electron-loss and O- production rate",
+   "solver_reaction_type": "not in the documented reaction types; parser accepts negative charges (see cross-cutting finding CC-2)",
+   "candidate_sources": [
+    {"source": "SONG2026", "role": "recommended (Table VIII, data of RB1965)", "quantity_type": "evaluated measurement", "energy_range_eV": "4.2-9.9 (tabulated; zero at 4.2)", "stated_uncertainty": "'no more than 20 %' (SONG2026's conservative suggestion; RB1965 gave none)"},
+    {"source": "RB1965", "role": "underlying measurement", "quantity_type": "measured", "energy_range_eV": "peak at 6.5 eV, 1.41e-18 cm^2 (SONG2026)", "stated_uncertainty": "not provided by RB1965 (SONG2026)"},
+    {"source": "CHRISTOPHOROU1965", "role": "swarm-beam agreement", "quantity_type": "measured", "energy_range_eV": "not read", "stated_uncertainty": "not read"},
+    {"source": "LAPORTA2015", "role": "vibrationally resolved theory (open)", "quantity_type": "model-derived", "energy_range_eV": "not read", "stated_uncertainty": "none stated"}
+   ],
+   "recommended_source": "SONG2026",
+   "energy_range_eV": "4.2-9.9 eV",
+   "stated_uncertainty": "'no more than 20 %' (SONG2026)",
+   "applicability": "Ground vibrational state; hot or metastable O2 not included in the SONG2026 evaluation (vibrational excitation lowers the threshold per LAPORTA2015).",
+   "status": "source-identified",
+   "access": "mixed",
+   "access_detail": "Table VIII open in the accepted manuscript; RB1965 paywalled.",
+   "open_issues": [
+    "Only meaningful if O- is modelled; then O- sinks (OO2-19, OO2-20) must be sourced first (CC-2).",
+    "A completeness metric for electron loss is not defined in the N2 rule; proposed in the draft prereg as an owner decision."
+   ],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "2 (conditional)"
+  },
+  {
+   "id": "OO2-17",
+   "target": "O+",
+   "process": "Sequential ionization O+ -> O^2+",
+   "reaction": "e + O+ -> O^2+ + 2e",
+   "quantity_needed": "ionization cross section -> rate table (energy link for the O^2+ species energy, as N+ -> N^2+ was for N)",
+   "solver_reaction_type": "electron_impact (O max_charge 2)",
+   "candidate_sources": [
+    {"source": "BELL1983", "role": "recommended fit (Table 5, O II)", "quantity_type": "evaluated measurement, analytic fit", "energy_range_eV": "from I = 35.12 eV (text layer; verify against page image)", "stated_uncertainty": "+/-10 % at 67 % confidence (Table 5, text layer; verify)"},
+    {"source": "AH1971", "role": "underlying crossed-beam data", "quantity_type": "measured", "energy_range_eV": "not read", "stated_uncertainty": "BELL1983 Sec. 4.8: AH1971 and Mueller et al. differ by about 20 %"}
+   ],
+   "recommended_source": "BELL1983",
+   "energy_range_eV": "threshold 35.12 eV (BELL1983 Table 5, text layer) upward",
+   "stated_uncertainty": "+/-10 % (67 % confidence)",
+   "applicability": "BELL1983 Sec. 4.8: the O+ beam contained 2P and 2D metastable ions (flagged by Bell, unlike the N II case).",
+   "status": "source-identified",
+   "access": "open",
+   "access_detail": "NIST-hosted reprint of BELL1983.",
+   "open_issues": [
+    "Metastable content of the measured beam: effect on a ground-state rate is a stated limitation, not quantified here.",
+    "Next stage O^2+ -> O^3+ (tier-3 bound only): BELL1983 Table 5 O III row (I = 54.93 eV, +/-7 %; text layer, verify against page image) and AH1971 (measured O2+ -> O3+)."
+   ],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "3 (energy link; required only if O^2+ is modelled)"
+  },
+  {
+   "id": "OO2-18",
+   "target": "O",
+   "process": "Direct double ionization of O",
+   "reaction": "e + O -> O^2+ + 3e",
+   "quantity_needed": "double-ionization cross section",
+   "solver_reaction_type": "electron_impact",
+   "candidate_sources": [
+    {"source": "THOMPSON1995", "role": "measured single and double ionization", "quantity_type": "measured", "energy_range_eV": "not read", "stated_uncertainty": "not read"},
+    {"source": "LG1990", "role": "open evaluated O^2+ cross section (Sec. 3.2)", "quantity_type": "evaluated measurement", "energy_range_eV": "not read", "stated_uncertainty": "not read"},
+    {"source": "HMS2017", "role": "semi-empirical bound", "quantity_type": "model-derived", "energy_range_eV": "-", "stated_uncertainty": "overestimates neutral O by about 2 (HMS Sec. 3.7 as recorded in PROVENANCE.md)"}
+   ],
+   "recommended_source": null,
+   "energy_range_eV": "TBD from LG1990 Sec. 3.2 / THOMPSON1995",
+   "stated_uncertainty": "TBD",
+   "applicability": "SONG2026: O^2+ formation in 200-2000 eV is about 3 % of O+ (BROOK1978, THOMPSON1995).",
+   "status": "source-identified",
+   "access": "mixed",
+   "access_detail": "LG1990 open; THOMPSON1995 paywalled; HMS2017 open.",
+   "open_issues": ["Unlike N (no neutral measurement), O has a measurement; the N choice of HMS as nominal does not transfer."],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "3"
+  },
+  {
+   "id": "OO2-19",
+   "target": "O2+",
+   "process": "Sequential ionization O2+ -> O2^2+ and ion dissociation channels",
+   "reaction": "e + O2+ -> O2^2+ + 2e ; e + O2+ -> O+ + O+ + 2e (dissociative ionization) ; e + O2+ -> O+ + O + e (dissociative excitation)",
+   "quantity_needed": "cross sections for the three channels (O2+ destruction; O+ production)",
+   "solver_reaction_type": "electron_impact (ion target, as N+ -> N^2+ and N2+ -> N2^2+ were expressed)",
+   "candidate_sources": [
+    {"source": "CH2006", "role": "only measurement located (crossed beam)", "quantity_type": "measured", "energy_range_eV": "threshold to about 2500 (abstract)", "stated_uncertainty": "at the maxima: +/-0.09, +/-1.0 and +/-4.6 in units of 1e-17 cm^2 for simple ionization, dissociative ionization and dissociative excitation (abstract)"}
+   ],
+   "recommended_source": "CH2006",
+   "energy_range_eV": "threshold to about 2.5 keV",
+   "stated_uncertainty": "see candidate entry (abstract values)",
+   "applicability": "Ion-beam target; vibrational/electronic state content of the O2+ beam not read (paper paywalled).",
+   "status": "source-identified",
+   "access": "paywalled",
+   "access_detail": "Only the abstract (via search results) was read.",
+   "open_issues": [
+    "Dissociative excitation of O2+ (largest of the three at its maximum per the abstract) is an O2+ destruction / O+ production channel not in the lane's minimum list; it should be bounded under F_S(O2+ destruction).",
+    "O2^2+ product is metastable (lifetime about 1-2 microseconds, SONG2026) - fate in the model is an owner decision if ever promoted."
+   ],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "2 (O2+ dissociative excitation) / 3 (O2+ -> O2^2+, O+ + O+)"
+  },
+  {
+   "id": "OO2-20",
+   "target": "O2",
+   "process": "Direct double ionization to the molecular dication",
+   "reaction": "e + O2 -> O2^2+ + 3e",
+   "quantity_needed": "sigma(O2^2+)",
+   "solver_reaction_type": "electron_impact (O2 max_charge 2)",
+   "candidate_sources": [
+    {"source": "SIGAUD2013", "role": "measurement", "quantity_type": "measured", "energy_range_eV": "not read", "stated_uncertainty": "not read"},
+    {"source": "BULL2015", "role": "measurement (about 10 % of the O+ signal at 100 eV per SONG2026)", "quantity_type": "measured", "energy_range_eV": "not read", "stated_uncertainty": "not read"},
+    {"source": "JIA2023", "role": "measurement", "quantity_type": "measured", "energy_range_eV": "not read", "stated_uncertainty": "not read"},
+    {"source": "MARK1975", "role": "early measurement", "quantity_type": "measured", "energy_range_eV": "threshold-170 (title)", "stated_uncertainty": "not read"}
+   ],
+   "recommended_source": null,
+   "energy_range_eV": "TBD",
+   "stated_uncertainty": "SONG2026: 'the spread between different data obtained with different methodologies is large ... we are unable to recommend data'",
+   "applicability": "Also the unresolved part of the OO2-06 column.",
+   "status": "source-open",
+   "access": "paywalled",
+   "access_detail": "All four measurements paywalled; SONG2026 Fig. 17 shows them graphically (read from figures by SONG2026 itself).",
+   "open_issues": ["Mirror of the N2^2+ uncertainty-variant case: an envelope bound would be an assumed quantity and must be labelled so."],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "3"
+  },
+  {
+   "id": "OO2-21",
+   "target": "O2+",
+   "process": "Dissociative recombination of O2+ (relevance check)",
+   "reaction": "e + O2+ -> O + O",
+   "quantity_needed": "DR cross section or rate coefficient vs electron energy; product branching",
+   "solver_reaction_type": "unverified: not a documented reaction type; whether 'O2(+) + e -> O + O' is accepted and conserves electrons correctly in the pinned solver was not checked (verify)",
+   "candidate_sources": [
+    {"source": "PEVERALL2001", "role": "storage-ring cross sections and product yields", "quantity_type": "measured", "energy_range_eV": "not read", "stated_uncertainty": "not read"},
+    {"source": "FMM2006", "role": "review", "quantity_type": "secondary", "energy_range_eV": "-", "stated_uncertainty": "-"}
+   ],
+   "recommended_source": null,
+   "energy_range_eV": "TBD",
+   "stated_uncertainty": "TBD",
+   "applicability": "Volume electron-ion loss; its size relative to wall losses in a Hall channel is not assessed here (requires a bound from a cited rate).",
+   "status": "source-identified",
+   "access": "paywalled",
+   "access_detail": "Both sources paywalled.",
+   "open_issues": ["Not an electron-impact excitation/ionization channel; the N2 audit had no recombination category. Relevance rule is an owner decision (draft prereg, out-of-scope list)."],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "out of electron-impact scope (owner decision)"
+  },
+  {
+   "id": "OO2-22",
+   "target": "O-",
+   "process": "Electron-impact detachment of O- (relevance check)",
+   "reaction": "e + O- -> O + 2e",
+   "quantity_needed": "detachment cross section -> rate (O- sink, electron source)",
+   "solver_reaction_type": "unverified (negative-ion reactants not in the documented how-to)",
+   "candidate_sources": [
+    {"source": "VK1996", "role": "storage-ring measurement (D- and O-)", "quantity_type": "measured", "energy_range_eV": "threshold to about 30 (OSTI summary)", "stated_uncertainty": "not read"}
+   ],
+   "recommended_source": "VK1996",
+   "energy_range_eV": "threshold to about 30 eV",
+   "stated_uncertainty": "not read",
+   "applicability": "Only if O- is modelled (OO2-16).",
+   "status": "source-identified",
+   "access": "paywalled",
+   "access_detail": "Abstract/summary only.",
+   "open_issues": ["Above about 30 eV no source located."],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "conditional on O- (owner decision)"
+  },
+  {
+   "id": "OO2-23",
+   "target": "O-",
+   "process": "Heavy-particle O- sinks: associative detachment (O- + O -> O2 + e) and mutual neutralization (O- + O+ / O2+)",
+   "reaction": "O- + O -> O2 + e ; O- + O+ -> O + O ; O- + O2+ -> products",
+   "quantity_needed": "rate coefficients with temperature dependence",
+   "solver_reaction_type": "not electron-impact; the installed solver applies hard-coded generic constants (CC-2)",
+   "candidate_sources": [],
+   "recommended_source": null,
+   "energy_range_eV": "TBD",
+   "stated_uncertainty": "TBD",
+   "applicability": "Only if O- is modelled.",
+   "status": "gap",
+   "access": "none",
+   "access_detail": "Not surveyed in this lane (heavy-particle chemistry is outside its electron-impact scope).",
+   "open_issues": ["Must be sourced before any O- modelling; the solver's generic 1e-12 m^3/s constants are not a source (CC-2)."],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "conditional on O- (owner decision)"
+  },
+  {
+   "id": "OO2-24",
+   "target": "O+",
+   "process": "Radiative (and three-body) recombination of O+ (relevance check)",
+   "reaction": "e + O+ -> O + h nu ; e + e + O+ -> O + e",
+   "quantity_needed": "rate coefficients",
+   "solver_reaction_type": "not a documented reaction type",
+   "candidate_sources": [],
+   "recommended_source": null,
+   "energy_range_eV": "TBD",
+   "stated_uncertainty": "TBD",
+   "applicability": "Volume electron-ion loss for atomic ions; no source surveyed in this lane.",
+   "status": "gap",
+   "access": "none",
+   "access_detail": "No source located or surveyed in this lane.",
+   "open_issues": [
+    "Relevance bound would need a cited rate; not assessed.",
+    "Related but distinct: radiative attachment to atomic O and three-body attachment are compiled in II1990 Secs. 7.1-7.2 (open NIST reprint; content not read). Relevant only if O- is modelled."
+   ],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "out of electron-impact scope (owner decision)"
+  },
+  {
+   "id": "OO2-25",
+   "target": "O, O2 (metastable initial states)",
+   "process": "Collisions from metastables: O(1D), O(1S), O2(a1Delta_g), O2(b1Sigma_g+)",
+   "reaction": "e + O(1D) -> O+ + 2e ; e + O2(a) -> e + O2(X, b, ...) etc.",
+   "quantity_needed": "ICS from excited initial states (ionization, excitation, superelastic)",
+   "solver_reaction_type": "requires excited-state species (the how-to mentions excited-state options; not verified for this use)",
+   "candidate_sources": [
+    {"source": "TZ2016", "role": "O(1D) ionization and transitions (BSR-1116)", "quantity_type": "model-derived", "energy_range_eV": "to 200", "stated_uncertainty": "SONG2026 overall statement"},
+    {"source": "HUANG2022", "role": "O2(a), O2(b) initial states (recommended)", "quantity_type": "model-derived", "energy_range_eV": "shown 0-14 eV (SONG2026 Figs. 11-12)", "stated_uncertainty": "none stated"},
+    {"source": "TASHIRO2006", "role": "O2(b) initial state (SONG2026 Fig. 12 source)", "quantity_type": "model-derived", "energy_range_eV": "shown 0-14 eV", "stated_uncertainty": "none stated"}
+   ],
+   "recommended_source": null,
+   "energy_range_eV": "see candidates",
+   "stated_uncertainty": "unquantified",
+   "applicability": "Only if metastable populations are tracked; SONG2026 notes lifetimes should be derived from spectroscopic data.",
+   "status": "source-identified",
+   "access": "mixed",
+   "access_detail": "TASHIRO2006 open; others paywalled / supplement not accessed.",
+   "open_issues": ["Not proposed for the first set; listed so that the omission is explicit."],
+   "current_0d_model_entry": null,
+   "proposed_tier_DRAFT": "not proposed (explicit omission, owner decision)"
+  }
+ ],
+ "cross_cutting_findings": [
+  {
+   "id": "CC-1",
+   "finding": "A new evaluated compilation exists for both O2 and O: SONG2026 (JPCRD 55, 013102, 2026), from the same group whose 2023 N2 review underlies most of abep-n2n. Its accepted manuscript is open; its version of record and supplementary datasets were not accessed. Every transcription must be checked against the version of record or the supplement (known manuscript issues are listed under the source)."
+  },
+  {
+   "id": "CC-2",
+   "finding": "Negative ions in the installed solver. The locally installed HallThruster package source (~/.julia/packages/HallThruster/zHCae, Project.toml version 0.23.1) contains negative-ion handling: src/simulation/heavy_species_update.jl defines _K_MUTUAL_NEUTRALIZATION = 1.0e-12 m^3/s (comment: 'lit. ~4e-14 to ~1e-12') and _K_NEUTRAL_DETACHMENT = 1.0e-12 m^3/s, applied to any fluid with Z < 0, plus an electronegative Bohm correction citing 'Ridenti et al (2025) Eq. (18)'. These constants carry no citation in the code and are species-independent. If O- were ever modelled, they would enter silently, which conflicts with CLAUDE.md rules 3 (no silent fallbacks) and 6 (cite data). Whether this installed tree is byte-identical to the pinned commit bfb3019 (hallthruster_bridge/Manifest.toml git-tree-sha1 7505b3a2...) was not checked in this audit (verify). No Julia was run."
+  },
+  {
+   "id": "CC-3",
+   "finding": "Documented reaction types of the pinned solver (docs/src/howto/new_propellant.md in the installed package): elastic/momentum transfer, excitation, and electron-impact reactions (dissociation, ionization, dissociative ionization). Attachment, detachment and recombination are not documented. Rows OO2-16 and OO2-21..24 therefore also carry an implementability question, separate from source availability."
+  },
+  {
+   "id": "CC-4",
+   "finding": "O2 dissociation versus electronic excitation double counting (OO2-08, OO2-11, OO2-12): the recommended total dissociation (Cosby) starts at 13.5 eV while the dissociative Herzberg and Schumann-Runge excitations lie below it, and above 13.5 eV both count the same events. N2 did not force this choice as sharply. An owner decision on the accounting must precede any table."
+  },
+  {
+   "id": "CC-5",
+   "finding": "Recommended O data (BSR-1116) end at 200 eV and the SONG2026-suggested high-energy continuation (BG_OP) is a private communication. Because HallThruster tables run to 255 eV mean energy, the rate share beyond the last cited point must be computed and a validity limit set in rate_validity.toml style before any O table is called verified."
+  },
+  {
+   "id": "CC-6",
+   "finding": "The 0-D chemistry (abep_sim/plasma_chem.py) uses unverified Arrhenius fits for O and O2 ionization, O2 dissociative ionization and O2 dissociation (CLAUDE.md next-work 6). The rows note which source would replace each entry. Nothing in abep_sim was modified; wiring any table into plasma_chem would be a model change (goldens move, log it)."
+  },
+  {
+   "id": "CC-7",
+   "finding": "No published O2/air Hall-thruster validation measurements were surveyed in this lane. Any O/O2 validation target is TBD and requires its own measurement audit and pre-registration (the P5-N2 workflow), after the chemistry rule is frozen."
+  }
+ ],
+ "not_claimed": [
+  "No O/O2 process is included, promoted, excluded or validated by this file.",
+  "No rate table was built; no cross section was transcribed for use.",
+  "No statement about ABEP performance, architecture choice or transport admission is made or implied.",
+  "Nothing about the running P5-N2 campaign was read or is stated."
+ ]
+}

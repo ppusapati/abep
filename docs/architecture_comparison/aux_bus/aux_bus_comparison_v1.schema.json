@@ -1,0 +1,209 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "docs/architecture_comparison/aux_bus/aux_bus_comparison_v1.schema.json",
+ "title": "Auxiliary / DC-bus power comparison on bus_power_boundary_v1 (aux_bus_comparison_v1)",
+ "description": "Output of docs/architecture_comparison/aux_bus/build_aux_bus.py. Uses only the keyword subset checked by abep_sim.hard_gates.schema_errors.",
+ "type": "object",
+ "required": ["id", "follow_on", "trigger", "prerequisites", "status", "base_commit", "boundary_version", "generated_by",
+              "regenerate", "inputs", "architectures", "components_by_architecture", "modes", "evidence_classes",
+              "components", "ledgers", "ledger_summary", "differential", "startup", "headroom", "hard_gates",
+              "tbd_register", "milestones", "owner_questions", "self_checks", "not_used"],
+ "additionalProperties": false,
+ "properties": {
+  "id": {"const": "aux_bus_comparison_v1"},
+  "follow_on": {"const": "fo_aux_bus_comparison"},
+  "trigger": {"const": "T_AUX_BUS"},
+  "prerequisites": {
+   "type": "object",
+   "required": ["lane_20_ppu_magnet", "lane_19_cathode_integration", "lane_11_bus_boundary"],
+   "additionalProperties": false,
+   "properties": {
+    "lane_20_ppu_magnet": {"type": "string"},
+    "lane_19_cathode_integration": {"type": "string"},
+    "lane_11_bus_boundary": {"type": "string"}
+   }
+  },
+  "status": {"type": "string", "pattern": "^DRAFT"},
+  "base_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+  "boundary_version": {"const": "bus_power_boundary_v1"},
+  "generated_by": {"type": "string"},
+  "regenerate": {"type": "string"},
+  "inputs": {
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "type": "object",
+    "required": ["key", "path", "lane", "lane_commit", "sha256", "role"],
+    "additionalProperties": false,
+    "properties": {
+     "key": {"type": "string"},
+     "path": {"type": "string"},
+     "lane": {"type": "string"},
+     "lane_commit": {"anyOf": [{"type": "string", "pattern": "^[0-9a-f]{40}$"}, {"type": "null"}]},
+     "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+     "role": {"type": "string"}
+    }
+   }
+  },
+  "architectures": {"const": ["hall_only", "rf_hall", "ecr_hall"]},
+  "components_by_architecture": {
+   "type": "object",
+   "required": ["hall_only", "rf_hall", "ecr_hall"],
+   "additionalProperties": false,
+   "properties": {
+    "hall_only": {"$ref": "#/$defs/component_list"},
+    "rf_hall": {"$ref": "#/$defs/component_list"},
+    "ecr_hall": {"$ref": "#/$defs/component_list"}
+   }
+  },
+  "modes": {
+   "type": "object",
+   "required": ["steady", "startup"],
+   "additionalProperties": false,
+   "properties": {"steady": {"type": "string"}, "startup": {"type": "string"}}
+  },
+  "evidence_classes": {"type": "array", "items": {"type": "string"}},
+  "components": {
+   "type": "object",
+   "required": ["hall_discharge", "hall_magnet", "cathode_keeper", "cathode_heater", "flow_control", "compressor",
+                "thermal_control", "housekeeping", "rf_source", "ecr_source", "ecr_magnet"],
+   "propertyNames": {"$ref": "#/$defs/component_name"},
+   "additionalProperties": {"$ref": "#/$defs/component"}
+  },
+  "ledgers": {
+   "type": "array",
+   "minItems": 6,
+   "maxItems": 6,
+   "items": {
+    "type": "object",
+    "required": ["architecture", "mode", "status", "conditional_components"],
+    "properties": {
+     "architecture": {"enum": ["hall_only", "rf_hall", "ecr_hall"]},
+     "mode": {"enum": ["steady", "startup"]},
+     "status": {"enum": ["EVALUATED", "NOT_EVALUABLE"]},
+     "boundary_refusal": {"type": "string"},
+     "ledger": {"type": "object"},
+     "sourced_components_passed": {"type": "array", "items": {"$ref": "#/$defs/component_name"}},
+     "conditional_components": {"type": "array", "items": {"$ref": "#/$defs/component_name"}},
+     "blocking_components": {"type": "array", "items": {"$ref": "#/$defs/component_name"}}
+    },
+    "if": {"properties": {"status": {"const": "NOT_EVALUABLE"}}},
+    "then": {"required": ["boundary_refusal", "blocking_components", "sourced_components_passed"]}
+   }
+  },
+  "ledger_summary": {
+   "type": "object",
+   "required": ["attempted", "evaluated", "not_evaluable"],
+   "additionalProperties": false,
+   "properties": {"attempted": {"type": "integer"}, "evaluated": {"type": "integer"}, "not_evaluable": {"type": "integer"}}
+  },
+  "differential": {
+   "type": "object",
+   "required": ["classes", "arms"],
+   "properties": {
+    "classes": {"type": "array", "items": {"type": "string"}},
+    "arms": {
+     "type": "object",
+     "required": ["rf_hall-hall_only", "ecr_hall-hall_only"],
+     "additionalProperties": false,
+     "properties": {
+      "rf_hall-hall_only": {"$ref": "#/$defs/arm"},
+      "ecr_hall-hall_only": {"$ref": "#/$defs/arm"}
+     }
+    }
+   }
+  },
+  "startup": {"type": "object", "required": ["phase_order", "variants", "phase_bus_lower_bounds_all_architectures",
+                                             "differential", "peak_limit", "startup_ledger"]},
+  "headroom": {"type": "object", "required": ["limit_W", "limit_status", "inequalities", "numeric_headroom", "scope_open"]},
+  "hard_gates": {
+   "type": "object",
+   "required": ["evaluator", "evidence_submitted", "G2_bus_power_verdicts", "eliminated", "not_eliminated",
+                "admitted_members"],
+   "properties": {
+    "G2_bus_power_verdicts": {
+     "type": "object",
+     "required": ["hall_only", "rf_hall", "ecr_hall"],
+     "additionalProperties": {"enum": ["PASS", "FAIL", "UNDETERMINED"]}
+    },
+    "eliminated": {"type": "array"},
+    "not_eliminated": {"type": "array"}
+   }
+  },
+  "tbd_register": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["component", "item", "requires", "blocking"],
+    "additionalProperties": false,
+    "properties": {"component": {"type": "string"}, "item": {"type": "string"}, "requires": {"type": "string"},
+                   "blocking": {"type": "string"}}
+   }
+  },
+  "milestones": {
+   "type": "object",
+   "required": ["supports", "A", "to_reach_B", "to_reach_C"],
+   "properties": {"supports": {"type": "array", "items": {"enum": ["A", "B", "C"]}}}
+  },
+  "owner_questions": {"type": "array", "items": {"type": "string"}},
+  "self_checks": {
+   "type": "object",
+   "additionalProperties": {"type": "object", "required": ["pass"], "properties": {"pass": {"const": true}}}
+  },
+  "not_used": {"type": "array", "items": {"type": "string"}}
+ },
+ "$defs": {
+  "component_name": {"enum": ["hall_discharge", "hall_magnet", "cathode_keeper", "cathode_heater", "flow_control",
+                              "compressor", "thermal_control", "housekeeping", "rf_source", "ecr_source", "ecr_magnet"]},
+  "component_list": {"type": "array", "minItems": 8, "items": {"$ref": "#/$defs/component_name"}},
+  "quantity": {
+   "type": "object",
+   "required": ["status"],
+   "properties": {
+    "status": {"enum": ["TBD", "OPTIONS", "BRACKET", "ZERO_CONDITIONAL", "DEFINITION", "EVIDENCE_RANGE",
+                        "REFERENCE_AND_STAGE_BOUNDS", "PARTIAL", "LOWER_BOUND", "LOWER_BOUND_PER_VALVE"]}
+   },
+   "if": {"properties": {"status": {"const": "TBD"}}, "required": ["status"]},
+   "then": {"anyOf": [{"required": ["requires", "blocking"]}, {"required": ["reason"]}]}
+  },
+  "mode_entry": {
+   "type": "object",
+   "required": ["load", "efficiency", "bus_draw", "loss"],
+   "properties": {
+    "load": {"$ref": "#/$defs/quantity"},
+    "efficiency": {"$ref": "#/$defs/quantity"},
+    "bus_draw": {"$ref": "#/$defs/quantity"},
+    "loss": {"type": "object", "required": ["status"]}
+   }
+  },
+  "component": {
+   "type": "object",
+   "required": ["in_architectures", "modes"],
+   "properties": {
+    "in_architectures": {"type": "array", "minItems": 1, "items": {"enum": ["hall_only", "rf_hall", "ecr_hall"]}},
+    "modes": {
+     "type": "object",
+     "required": ["steady", "startup"],
+     "additionalProperties": false,
+     "properties": {"steady": {"$ref": "#/$defs/mode_entry"}, "startup": {"$ref": "#/$defs/mode_entry"}}
+    }
+   }
+  },
+  "arm": {
+   "type": "object",
+   "required": ["terms", "cancels", "cancels_conditionally", "does_not_cancel", "total", "overhead_for_breakeven",
+                "sourced_lower_bound", "numeric_value"],
+   "properties": {
+    "terms": {
+     "type": "object",
+     "propertyNames": {"$ref": "#/$defs/component_name"},
+     "additionalProperties": {
+      "type": "object",
+      "required": ["class", "formula", "reason", "value"],
+      "properties": {"class": {"enum": ["NOT_COMMON", "COMMON_MODE", "COMMON_MODE_CONDITIONAL", "ARCH_SPECIFIC"]}}
+     }
+    }
+   }
+  }
+ }
+}

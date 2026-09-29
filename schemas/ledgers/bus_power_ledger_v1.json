@@ -1,0 +1,676 @@
+{
+ "schema": "bus_power_ledger_v1",
+ "version": "1.0",
+ "status": "DRAFT — PROPOSED for owner decision. Schema only: term definitions, origins, closure rules and the crosswalk onto bus_power_boundary_v1. It carries no power numbers and is not wired into abep_sim (wiring is a model change for the owner).",
+ "role": "Decomposition of the archengine / ppu P_bus (the legacy trade view: load-plane terms plus POOLED converter and harness losses) and its term-by-term crosswalk onto the common bus-power boundary. The admissibility-bearing architecture-comparison ledger is the one produced by abep_sim/arch_boundary.py (function bus_power_ledger, BOUNDARY_VERSION 'bus_power_boundary_v1', schema schemas/architecture_comparison/bus_power_boundary_v1.json, lane_11_bus_boundary). This schema never redefines it and never replaces it: an architecture comparison is admissible only on the boundary ledger (CLAUDE.md admissibility). The id 'bus_power_ledger_v1' names this decomposition schema; its instances are called 'decomposition instances' to keep them apart from arch_boundary.bus_power_ledger outputs.",
+ "milestones": {
+  "supports": [
+   "A",
+   "C"
+  ],
+  "A": "supplies the vocabulary and the crosswalk so a conditional selection can state P_bus conditions on the common boundary per architecture (numbers TBD; no absolute Hall numbers exist)",
+  "B": "not supported alone: needs evidenced loads and efficiencies per boundary component (lane_20_ppu_magnet electrical closure), an admitted Hall transport closure for hall_discharge (credible set is empty), OD-L1/OD-L2 decided, and the second lens on this single-lens-v1 lane",
+  "C": "the ledger set is listed as a Milestone C integration deliverable (docs/architecture_comparison/dossier/dossier.json, 'schemas/ledgers/'); reaching C needs instances produced from integrated designs for every mode (steady, startup, peak) with every term computed"
+ },
+ "companions": [
+  "schemas/ledgers/subsystem_ledger_v1.json",
+  "schemas/ledgers/thermal_rejection_ledger_v1.json",
+  "docs/ledgers/LEDGERS.md",
+  "schemas/architecture_comparison/bus_power_boundary_v1.json (lane_11_bus_boundary, read-only)"
+ ],
+ "architectures": {
+  "ids": [
+   "hall_only",
+   "rf_hall",
+   "ecr_hall"
+  ],
+  "note": "the RF/ECR arms change ONLY the pre-ionization method; the Hall accelerator, feed state, cathode and bus boundary are common. archengine names (abep_sim/archengine.py:arch_name) that correspond: hall_only = 'hall_internal+hall+<neutralizer>', rf_hall = 'rf_icp+hall+<neutralizer>', ecr_hall = 'ecr+hall+<neutralizer>'. archengine 'helicon+hall' (rf converter plus axial field) and 'dc_discharge+hall' are not covered by v1 (BUS_POWER_BOUNDARY.md section 3).",
+  "hall_only": {
+   "boundary_components": [
+    "hall_discharge",
+    "hall_magnet",
+    "cathode_keeper",
+    "cathode_heater",
+    "flow_control",
+    "compressor",
+    "thermal_control",
+    "housekeeping"
+   ],
+   "preionizer_components": [],
+   "decomposition_terms": [
+    "P_discharge",
+    "P_cathode",
+    "P_magnets",
+    "P_compressor",
+    "P_valves_control",
+    "P_aux_unallocated",
+    "P_thermal",
+    "P_housekeeping",
+    "P_PPU_losses",
+    "P_harness_losses"
+   ]
+  },
+  "rf_hall": {
+   "boundary_components": [
+    "hall_discharge",
+    "hall_magnet",
+    "cathode_keeper",
+    "cathode_heater",
+    "flow_control",
+    "compressor",
+    "thermal_control",
+    "housekeeping",
+    "rf_source"
+   ],
+   "preionizer_components": [
+    "rf_source"
+   ],
+   "decomposition_terms": [
+    "P_discharge",
+    "P_preionizer",
+    "P_cathode",
+    "P_magnets",
+    "P_compressor",
+    "P_valves_control",
+    "P_aux_unallocated",
+    "P_thermal",
+    "P_housekeeping",
+    "P_PPU_losses",
+    "P_harness_losses"
+   ]
+  },
+  "ecr_hall": {
+   "boundary_components": [
+    "hall_discharge",
+    "hall_magnet",
+    "cathode_keeper",
+    "cathode_heater",
+    "flow_control",
+    "compressor",
+    "thermal_control",
+    "housekeeping",
+    "ecr_source",
+    "ecr_magnet"
+   ],
+   "preionizer_components": [
+    "ecr_source",
+    "ecr_magnet"
+   ],
+   "decomposition_terms": [
+    "P_discharge",
+    "P_preionizer",
+    "P_cathode",
+    "P_magnets",
+    "P_compressor",
+    "P_valves_control",
+    "P_aux_unallocated",
+    "P_thermal",
+    "P_housekeeping",
+    "P_PPU_losses",
+    "P_harness_losses"
+   ]
+  },
+  "source": "component sets copied by name from abep_sim/arch_boundary.py COMMON_COMPONENTS / PREIONIZER_COMPONENTS at execution branch e15f66f; tests/test_ledger_schemas.py compares them with the module whenever it is present"
+ },
+ "boundary": {
+  "definition": "P_bus = all electrical power crossing the spacecraft-side DC boundary into the propulsion system: discharge + pre-ionizer + cathode + magnets + PPU losses + gas path (compressor, valves/flow control) + controls + thermal control (heaters) + any other propulsion load. Wording follows the CLAUDE.md admissibility rule for bus_power_boundary_v1.",
+  "plane": "input terminals of the PPU converters on the regulated spacecraft bus (abep_sim/ppu.py:PPU.V_bus); matches loads['P_bus_W'] of abep_sim/ppu.py:PPU.loads as used by abep_sim/archengine.py:close_architecture",
+  "never_P_bus": [
+   "absorbed RF or microwave power in the source plasma (abep_sim/plasma_devices.py:ECRSource.absorbed, RFSource.absorbed); the bus-side quantity is the DC converter output P_ion_W plus its conversion loss",
+   "Hall discharge-only power (I_d x V_d) reported alone",
+   "jet or beam power"
+  ],
+  "outside": "solar-array generation, battery/PCDU round trip and bus distribution upstream of the propulsion input terminal, and SPACECRAFT-level housekeeping (spacecraft avionics, ADCS, communications, payload; abep_sim/mission_env.py:Spacecraft bus_housekeeping_W and eps_eff). Propulsion-side housekeeping (controller, PPU control, sensors, TM/TC interface) is INSIDE, as P_housekeeping = boundary component 'housekeeping'. abep_sim/mission_env.py:array_area_for sizes arrays from P_bus.",
+  "alignment": "aligned to bus_power_boundary_v1 (present on the execution branch since a2a1396): same boundary plane (propulsion DC bus input terminal(s)), same inside/outside split. The boundary's component names and per-component loss convention take precedence; the term-by-term mapping is boundary_crosswalk below."
+ },
+ "modes": {
+  "steady": "firing steady state; the only mode archengine close_architecture evaluates",
+  "startup": "cathode heater + keeper x1.5 + compressor spin-up x1.8 (abep_sim/ppu.py:load_modes 'startup'); not evaluated by archengine (gap G7)",
+  "peak": "maximum simultaneous draw (e.g. solar-max flow, Xe augmentation); no producer in archengine (gap G7)"
+ },
+ "value_record": "as defined in subsystem_ledger_v1.value_record (value, unit, status, origin, evidence; null value unless status is computed)",
+ "terms": [
+  {
+   "id": "P_discharge",
+   "definition": "DC output of the Hall anode supply at its load plane (discharge power I_d x V_d)",
+   "subsystems": [
+    "hall_discharge"
+   ],
+   "ppu_converters": [
+    "anode"
+   ],
+   "archengine_energy_ledger_terms": [
+    "jet",
+    "plume",
+    "accelerator_body"
+   ],
+   "origin": "abep_sim/archengine.py:_propulsion P_acc_W (Hall branch, from abep_sim/plasma_devices.py:hall_run_coupled)",
+   "status": "superseded",
+   "superseded_by": "discharge_power_W of an admitted transport-ensemble member's design Hall map (hallthruster_bridge/hall_map_schema_v1.json, abep_sim/hall_map.py:HallMap); the credible set is empty, so value is null (TBD)",
+   "hall_transport_ensemble_role": "carrier",
+   "gaps": [
+    "G13"
+   ],
+   "boundary_components": [
+    "hall_discharge"
+   ],
+   "boundary_booking": "load",
+   "plane": "load"
+  },
+  {
+   "id": "P_accelerator_other",
+   "definition": "accelerating-stage supply of non-Hall families screened by archengine (grids anode, MPD, PIT capacitor charger, electrothermal heater)",
+   "subsystems": [
+    "accelerator_other_family"
+   ],
+   "ppu_converters": [
+    "anode",
+    "mpd_hc",
+    "cap_charger",
+    "heater_main"
+   ],
+   "archengine_energy_ledger_terms": [
+    "jet",
+    "plume",
+    "accelerator_body"
+   ],
+   "origin": "abep_sim/archengine.py:_propulsion P_acc_W (grids / mpd / pit / thermal branches)",
+   "status": "computed",
+   "note": "screening families only; CLAUDE.md rule 8 (no new propulsion families) applies. Not representable on bus_power_boundary_v1, which covers only the three Hall-accelerated architectures (BUS_POWER_BOUNDARY.md section 3, 'Not covered by v1')",
+   "hall_transport_ensemble_role": "not_applicable",
+   "boundary_components": [],
+   "boundary_booking": "outside_boundary_v1",
+   "plane": "load"
+  },
+  {
+   "id": "P_preionizer",
+   "definition": "DC output of the pre-ionizer supply (RF amplifier or ECR/microwave HV supply) into the source, when the architecture has one",
+   "subsystems": [
+    "preionizer"
+   ],
+   "ppu_converters": [
+    "hv_mw",
+    "rf_amp"
+   ],
+   "archengine_energy_ledger_terms": [
+    "ionizer",
+    "jet"
+   ],
+   "origin": "abep_sim/archengine.py:_propulsion P_ion_W (design variable, abep_sim/archengine.py:_variables)",
+   "status": "computed",
+   "note": "the 'jet' share appears only when jet power exceeds the accelerating supply (from_src in close_architecture); absorbed plasma power is not a bus term. On the boundary it is rf_source (rf_amp converter, architecture rf_hall) OR ecr_source (hv_mw converter, architecture ecr_hall), never both; the ECR resonance-field coil is ecr_magnet (see P_magnets), not part of this term",
+   "hall_transport_ensemble_role": "independent",
+   "boundary_components": [
+    "rf_source",
+    "ecr_source"
+   ],
+   "boundary_booking": "load",
+   "plane": "load"
+  },
+  {
+   "id": "P_cathode",
+   "definition": "cathode/neutralizer supplies: keeper (LaB6), heater (startup), plasma-bridge source (air cathodes)",
+   "subsystems": [
+    "cathode"
+   ],
+   "ppu_converters": [
+    "keeper",
+    "heater",
+    "cathode_src"
+   ],
+   "archengine_energy_ledger_terms": [
+    "neutralizer"
+   ],
+   "origin": "abep_sim/archengine.py:Neutralizer.operate P_W (LaB6 via abep_sim/plasma_devices.py:LaB6Cathode.operate)",
+   "status": "partial",
+   "note": "archengine routes the LaB6 heater share through the keeper converter (steady total only). On the boundary it splits into cathode_keeper and cathode_heater; the split producer on the execution branch is abep_sim.cathode_integration (lane 19: keeper mode, heater, start-up transient). In an archengine-derived crosswalk instance the keeper-converter efficiency applies to both and the split is TBD",
+   "hall_transport_ensemble_role": "downstream_consumer",
+   "gaps": [
+    "G6",
+    "G7"
+   ],
+   "boundary_components": [
+    "cathode_keeper",
+    "cathode_heater"
+   ],
+   "boundary_booking": "load",
+   "plane": "load"
+  },
+  {
+   "id": "P_magnets",
+   "definition": "electromagnet coil supply",
+   "subsystems": [
+    "magnets"
+   ],
+   "ppu_converters": [
+    "magnet"
+   ],
+   "archengine_energy_ledger_terms": [
+    "magnets"
+   ],
+   "origin": "abep_sim/archengine.py:close_architecture P_mag (code constant for hall / nozzle / ECR architectures)",
+   "status": "partial",
+   "hall_transport_ensemble_role": "independent",
+   "gaps": [
+    "G5"
+   ],
+   "boundary_components": [
+    "hall_magnet",
+    "ecr_magnet"
+   ],
+   "boundary_booking": "load",
+   "plane": "load",
+   "note": "archengine charges one 25 W code constant for the Hall circuit whether or not an ECR source is present, so the ECR resonance-field supply is indistinguishable (BUS_POWER_BOUNDARY.md section 6). On the boundary the term splits into hall_magnet (every architecture) and ecr_magnet (ecr_hall only; explicit 0 W / efficiency 1 for a permanent-magnet circuit). Load-side producer on the execution branch: abep_sim.magnet_power (lane PPUMAG)"
+  },
+  {
+   "id": "P_compressor",
+   "definition": "compressor motor drive",
+   "subsystems": [
+    "compressor"
+   ],
+   "ppu_converters": [
+    "motor"
+   ],
+   "archengine_energy_ledger_terms": [
+    "compressor"
+   ],
+   "origin": "abep_sim/archengine.py:gas_path_state comp_power (from abep_sim/system.py:evaluate, gaspath_physics=True)",
+   "status": "computed",
+   "hall_transport_ensemble_role": "forbidden_upstream",
+   "boundary_components": [
+    "compressor"
+   ],
+   "boundary_booking": "load",
+   "plane": "load"
+  },
+  {
+   "id": "P_valves_control",
+   "definition": "valve actuation/holding and flow-controller power on both propellant paths (atmospheric valve, Xe valve/regulator)",
+   "subsystems": [
+    "valves",
+    "xe_tank"
+   ],
+   "ppu_converters": [],
+   "archengine_energy_ledger_terms": [],
+   "origin": "TBD — requires valve and flow-controller selection for both propellant paths with holding/actuation power data",
+   "status": "TBD",
+   "hall_transport_ensemble_role": "forbidden_upstream",
+   "gaps": [
+    "G3"
+   ],
+   "boundary_components": [
+    "flow_control"
+   ],
+   "boundary_booking": "load",
+   "plane": "load"
+  },
+  {
+   "id": "P_aux_unallocated",
+   "definition": "the 'aux' converter load that the code carries without naming its consumer",
+   "subsystems": [
+    "valves",
+    "avionics"
+   ],
+   "ppu_converters": [
+    "aux"
+   ],
+   "archengine_energy_ledger_terms": [
+    "aux"
+   ],
+   "origin": "abep_sim/archengine.py:close_architecture ledger['aux'] and demand['aux'] (code constant)",
+   "status": "partial",
+   "note": "counted so the archengine decomposition closes; it cannot be placed on bus_power_boundary_v1 until the owner assigns it to exactly one of flow_control or housekeeping (open decision OD-L1; BUS_POWER_BOUNDARY.md section 6 lists it as 'not attributable')",
+   "hall_transport_ensemble_role": "independent",
+   "gaps": [
+    "G2"
+   ],
+   "boundary_components": [],
+   "boundary_booking": "unattributed",
+   "plane": "load"
+  },
+  {
+   "id": "P_thermal",
+   "definition": "heater power (gas chamber, Xe tank/lines, electronics survival) set by the cold-case (eclipse) thermal solution",
+   "subsystems": [
+    "thermal_control",
+    "buffer",
+    "xe_tank"
+   ],
+   "ppu_converters": [],
+   "archengine_energy_ledger_terms": [],
+   "origin": "TBD — requires heater set-points and a heater-power derivation from the cold case of abep_sim/thermal.py:size_radiator (computed there, not converted into heater power)",
+   "status": "TBD",
+   "hall_transport_ensemble_role": "downstream_consumer",
+   "gaps": [
+    "G4"
+   ],
+   "boundary_components": [
+    "thermal_control"
+   ],
+   "boundary_booking": "load",
+   "plane": "load"
+  },
+  {
+   "id": "P_housekeeping",
+   "definition": "propulsion-side housekeeping electronics: propulsion controller / PPU control electronics and sensors (boundary component 'housekeeping'; NOT spacecraft avionics or spacecraft housekeeping, which are outside)",
+   "subsystems": [
+    "avionics"
+   ],
+   "ppu_converters": [],
+   "archengine_energy_ledger_terms": [
+    "ppu_loss_control"
+   ],
+   "origin": "abep_sim/ppu.py:PPU.loads (controller_W + sensors_W, code constants, included in P_bus_W and P_loss_W)",
+   "status": "partial",
+   "hall_transport_ensemble_role": "independent",
+   "gaps": [
+    "G17"
+   ],
+   "boundary_components": [
+    "housekeeping"
+   ],
+   "boundary_booking": "load",
+   "plane": "load"
+  },
+  {
+   "id": "P_PPU_losses",
+   "definition": "conversion losses of all PPU converters, P_in - P_out summed over converters (ppu.loads P_loss_W minus controller_W and sensors_W). Decomposition view only: it is a pooled term",
+   "subsystems": [
+    "ppu"
+   ],
+   "ppu_converters": [
+    "*"
+   ],
+   "archengine_energy_ledger_terms": [
+    "ppu_loss_control"
+   ],
+   "origin": "abep_sim/ppu.py:PPU.loads (P_loss_W minus controller_W and sensors_W) with abep_sim/ppu.py:Converter.efficiency",
+   "status": "computed",
+   "hall_transport_ensemble_role": "downstream_consumer",
+   "gaps": [
+    "G17"
+   ],
+   "boundary_components": [],
+   "boundary_booking": "distributed_into_component_efficiency",
+   "plane": "loss"
+  },
+  {
+   "id": "P_harness_losses",
+   "definition": "resistive loss in the harness between the bus input terminal and each load plane. Decomposition view only: on bus_power_boundary_v1 the harness loss is inside each component's efficiency and is never a separate term",
+   "subsystems": [
+    "ppu"
+   ],
+   "ppu_converters": [],
+   "archengine_energy_ledger_terms": [],
+   "origin": "TBD — requires harness lengths, gauges and currents; abep_sim/ppu.py:PPU.mass sizes harness mass only",
+   "status": "TBD",
+   "hall_transport_ensemble_role": "downstream_consumer",
+   "gaps": [
+    "G15"
+   ],
+   "boundary_components": [],
+   "boundary_booking": "distributed_into_component_efficiency",
+   "plane": "loss"
+  }
+ ],
+ "boundary_crosswalk": {
+  "boundary_version": "bus_power_boundary_v1",
+  "authority": "abep_sim/arch_boundary.py (COMMON_COMPONENTS, PREIONIZER_COMPONENTS, REQUIRED_COMPONENTS, COMPONENT_DEFINITIONS, bus_power_ledger) and docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md sections 3 and 6 (archengine discrepancy audit); read-only, resolved lazily, never imported by this lane",
+  "execution_branch_refs": [
+   "abep_sim.arch_boundary.BOUNDARY_VERSION",
+   "abep_sim.arch_boundary.COMMON_COMPONENTS",
+   "abep_sim.arch_boundary.PREIONIZER_COMPONENTS",
+   "abep_sim.arch_boundary.REQUIRED_COMPONENTS",
+   "abep_sim.arch_boundary.ALL_COMPONENTS",
+   "abep_sim.arch_boundary.bus_power_ledger",
+   "abep_sim.magnet_power.electromagnet",
+   "abep_sim.magnet_power.permanent_magnet",
+   "abep_sim.cathode_integration.startup_transient",
+   "abep_sim.cathode_integration.boundary_components",
+   "abep_sim.mass_bom.check_power_boundary_coverage",
+   "abep_sim.mass_bom.architecture_items",
+   "abep_sim.thermal_life.THERMAL_COMPONENTS",
+   "abep_sim.thermal_life.BUS_POWER_COMPONENTS"
+  ],
+  "loss_convention": "bus_power_boundary_v1 books every loss per component: P_bus_c = P_load_c / efficiency_c, P_loss_c = P_bus_c - P_load_c, where efficiency_c is the end-to-end bus-terminal-to-load-plane ratio at the operating point and includes that component's converter, filters, generator/matching/isolator and HARNESS. Adopted here for every boundary instance. The pooled P_PPU_losses and P_harness_losses of the decomposition view are NOT boundary components; they are distributed into the component efficiencies by the allocation rules below, and a boundary instance never carries them as additional terms.",
+  "components": {
+   "hall_discharge": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "load_terms": [
+     "P_discharge"
+    ],
+    "ppu_converters": [
+     "anode"
+    ],
+    "archengine_status": "included (BUS_POWER_BOUNDARY.md section 6)",
+    "producer": "an admitted transport-ensemble member's design Hall map (discharge_power_W); credible set empty, so TBD",
+    "status": "superseded"
+   },
+   "hall_magnet": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "load_terms": [
+     "P_magnets"
+    ],
+    "ppu_converters": [
+     "magnet"
+    ],
+    "archengine_status": "included, fixed code constant (assumed, unsourced)",
+    "producer": "abep_sim.magnet_power (load-side I^2 R from the Vyovrinda magnetic-circuit design; efficiency from docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json)",
+    "status": "TBD",
+    "requires": "Vyovrinda magnetic-circuit design (own geometry and B(z)) and supply-efficiency evidence"
+   },
+   "cathode_keeper": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "load_terms": [
+     "P_cathode"
+    ],
+    "ppu_converters": [
+     "keeper",
+     "cathode_src"
+    ],
+    "archengine_status": "included (LaB6 keeper converter; plasma-bridge cathodes via cathode_src)",
+    "producer": "abep_sim.cathode_integration",
+    "status": "partial"
+   },
+   "cathode_heater": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "load_terms": [
+     "P_cathode"
+    ],
+    "ppu_converters": [
+     "heater"
+    ],
+    "archengine_status": "lumped into keeper (the heater converter gets no steady demand; ppu.load_modes is not called by archengine)",
+    "producer": "abep_sim.cathode_integration (start-up transient; heater energy)",
+    "status": "TBD",
+    "requires": "cathode operating data per mode (keeper/heater split)"
+   },
+   "flow_control": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "load_terms": [
+     "P_valves_control"
+    ],
+    "ppu_converters": [],
+    "archengine_status": "excluded (unless inside the unattributed 5 W aux)",
+    "producer": "none",
+    "status": "TBD",
+    "requires": "valve and flow-controller selection for both propellant paths"
+   },
+   "compressor": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "load_terms": [
+     "P_compressor"
+    ],
+    "ppu_converters": [
+     "motor"
+    ],
+    "archengine_status": "included; same load plane (motor + drive losses inside the load)",
+    "producer": "abep_sim/archengine.py:gas_path_state comp_power",
+    "status": "computed"
+   },
+   "thermal_control": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "load_terms": [
+     "P_thermal"
+    ],
+    "ppu_converters": [],
+    "archengine_status": "excluded",
+    "producer": "none",
+    "status": "TBD",
+    "requires": "heater set-points and a heater-power derivation (gap G4)"
+   },
+   "housekeeping": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "load_terms": [
+     "P_housekeeping"
+    ],
+    "ppu_converters": [],
+    "archengine_status": "partly included, mis-classed (controller_W + sensors_W added at the bus with no conversion loss and booked inside ppu_loss_control)",
+    "producer": "abep_sim/ppu.py:PPU.loads (code constants)",
+    "status": "partial"
+   },
+   "rf_source": {
+    "architectures": [
+     "rf_hall"
+    ],
+    "load_terms": [
+     "P_preionizer"
+    ],
+    "ppu_converters": [
+     "rf_amp"
+    ],
+    "archengine_status": "included at the generator DC input; RF generation efficiency inside the source physics",
+    "producer": "abep_sim/archengine.py:_propulsion P_ion_W (design variable); boundary load plane is NET RF power at the coil feed, so the archengine value is a DC-input quantity and must be re-referenced (see load_plane_note)",
+    "status": "partial"
+   },
+   "ecr_source": {
+    "architectures": [
+     "ecr_hall"
+    ],
+    "load_terms": [
+     "P_preionizer"
+    ],
+    "ppu_converters": [
+     "hv_mw"
+    ],
+    "archengine_status": "included at the magnetron DC input; magnetron and feed efficiency inside the source physics",
+    "producer": "abep_sim/archengine.py:_propulsion P_ion_W (design variable); re-reference as for rf_source",
+    "status": "partial"
+   },
+   "ecr_magnet": {
+    "architectures": [
+     "ecr_hall"
+    ],
+    "load_terms": [
+     "P_magnets"
+    ],
+    "ppu_converters": [],
+    "archengine_status": "excluded / indistinguishable (one P_mag constant for Hall and ECR)",
+    "producer": "abep_sim.magnet_power (electromagnet or permanent_magnet; a permanent-magnet circuit is 0 W, efficiency 1, explicit)",
+    "status": "TBD",
+    "requires": "owner choice permanent magnet vs electromagnet (BUS_POWER_BOUNDARY.md section 9, BND-Q3) and the ECR circuit design"
+   }
+  },
+  "load_plane_note": "rf_source / ecr_source: archengine P_ion_W is the converter output into the generator (a DC quantity); the boundary load is the net RF/microwave power at the coupling structure, with the generator inside the efficiency. BUS_POWER_BOUNDARY.md section 6 gives the mapping (rf_source efficiency = eta_conv(rf_amp) x eta_dc_rf). The bus total is unchanged by this re-referencing.",
+  "not_on_boundary": {
+   "P_accelerator_other": "outside v1 (non-Hall screening families); a comparison containing it is not admissible on bus_power_boundary_v1",
+   "P_aux_unallocated": "unattributed; must be assigned to exactly one of flow_control or housekeeping (OD-L1) before a boundary instance is formed from archengine output; until then such an instance is NOT_EVALUABLE",
+   "P_PPU_losses": "pooled; distributed per converter (allocation rule A1)",
+   "P_harness_losses": "pooled; distributed per component run (allocation rule A2)"
+  },
+  "allocation_rules": {
+   "A1_converter_losses": "the loss of converter k (ppu.loads detail[k]: P_in - P_out) goes entirely into the efficiency of the boundary component that owns k (ppu_converters above), efficiency_c = sum_k P_out_k / sum_k P_in_k over the converters of c; each converter belongs to exactly one component (tested), so each converter watt is booked once. Converters with no boundary owner ('aux' until OD-L1; 'mpd_hc', 'cap_charger', 'heater_main' outside v1) make the instance NOT_EVALUABLE on the boundary.",
+   "A2_harness_losses": "when a harness model exists, its loss per run is added to the owning component's P_bus_c inside efficiency_c; P_harness_losses is then zero in the boundary instance by construction. A decomposition instance that carries P_harness_losses > 0 and a boundary instance of the same point must satisfy sum_c P_loss_c = P_PPU_losses + P_harness_losses (checked, not gated here; PROPOSED).",
+   "A3_housekeeping": "controller_W + sensors_W are a LOAD of housekeeping (not a loss). archengine adds them at the bus with no conversion, so an archengine-derived crosswalk instance carries housekeeping efficiency 1 as a statement about the code, not about hardware (evidence class 'assumed', inherited from abep_sim/ppu.py:PPU constants).",
+   "A4_no_double_count": "a watt appears in a boundary instance exactly once: as P_load_c or inside P_loss_c of exactly one component. P_PPU_losses, P_harness_losses and the archengine key ppu_loss_control never appear as additional boundary items."
+  },
+  "execution_branch_markers": {
+   "abep_sim.arch_boundary": "BOUNDARY_VERSION",
+   "abep_sim.magnet_power": "MAGNET_POWER_VERSION",
+   "abep_sim.cathode_integration": "CATHODE_INTEGRATION_VERSION",
+   "abep_sim.mass_bom": "BOM_VERSION",
+   "abep_sim.thermal_life": "RESULT_SCHEMA"
+  }
+ },
+ "closure": {
+  "decomposition_view": {
+   "identity": "P_bus_W = sum of the load-plane terms (P_discharge, P_accelerator_other, P_preionizer, P_cathode, P_magnets, P_compressor, P_valves_control, P_aux_unallocated, P_thermal, P_housekeeping) + P_PPU_losses + P_harness_losses. This is what abep_sim/archengine.py:close_architecture closes against abep_sim/ppu.py:PPU.loads (P_bus = controller_W + sensors_W + sum_k P_out_k / eta_k); the harness term is absent from the code (TBD).",
+   "residual": "resid = (P_bus_W - sum_terms P_term_W) / P_bus_W, with P_bus_W taken from abep_sim/ppu.py:PPU.loads",
+   "gate": "|resid| <= 0.02 (abep_sim/archengine.py:close_architecture rejects the candidate as 'energy_ledger' otherwise; CLAUDE.md rule 4)",
+   "gate_rel_tol": 0.02,
+   "gate_rel_tol_source": "abep_sim/archengine.py:close_architecture ('if abs(resid) > 0.02'); code constant, verified by tests/test_ledger_schemas.py",
+   "golden_comparison": "near-zero ledger_resid values are compared with an absolute tolerance (CLAUDE.md gate 6)",
+   "not_a_completeness_check": "the archengine ledger closes by construction (BUS_POWER_BOUNDARY.md section 6, point 1): a missing consumer (flow_control, thermal_control, a separate heater, an ECR magnet) leaves resid at zero. Completeness is carried by the completeness flag, never by resid."
+  },
+  "boundary_view": {
+   "identity": "P_bus_W = sum over REQUIRED_COMPONENTS[arch] of P_load_c / efficiency_c (bus_power_boundary_v1)",
+   "residual": "residual_W = (sum_c P_load_c + sum_c P_loss_c) - sum_c P_bus_c, absolute, in W",
+   "gate": "rounding-level: |residual_W| <= 1e-12 x max(sum_c P_bus_c, 1 W), else RuntimeError; enforced by abep_sim/arch_boundary.py (function bus_power_ledger), not by this schema",
+   "producer": "abep_sim.arch_boundary.bus_power_ledger; this schema never recomputes a boundary ledger",
+   "note": "the two gates are different on purpose: the 2 % relative gate belongs to the archengine decomposition, the rounding-level absolute gate to the boundary"
+  },
+  "crosswalk_consistency": "for the same architecture, operating point and mode, the decomposition P_bus_W and the boundary P_bus_W are reported side by side with their difference and its itemization (terms present in one view only, OD-L1 allocation). No tolerance is set by this lane: PROPOSED for owner decision (OD-L2).",
+  "completeness": {
+   "rule": "closure is reported with a completeness flag, never as complete while a term is TBD",
+   "values": {
+    "CLOSED_ALL_TERMS": "|resid| <= 0.02 and every applicable term has status computed",
+    "CLOSED_MODELED_TERMS_ONLY": "|resid| <= 0.02 over computed/partial terms; at least one applicable term is TBD (list them in open_terms)",
+    "NOT_EVALUABLE": "an applicable term is superseded (e.g. P_discharge while the Hall credible set is empty), or a crosswalk to the boundary is blocked (P_aux_unallocated unattributed, a converter with no boundary owner); no P_bus is reported",
+    "OPEN": "|resid| > 0.02"
+   }
+  },
+  "cap_check": "P_bus_W <= abep_sim/constants.py:RFPConstraints power_max_W is checked only on CLOSED_ALL_TERMS instances; on CLOSED_MODELED_TERMS_ONLY it is reported as a lower bound (missing TBD terms can only add power). Architecture comparison uses the boundary P_bus only.",
+  "per_mode": "the identity and gate apply to each mode separately (steady, startup, peak); a mode without a producer is status TBD, not copied from steady"
+ },
+ "instance_required_fields": {
+  "schema": "\"bus_power_ledger_v1\"",
+  "architecture": "one of hall_only | rf_hall | ecr_hall (plus the archengine arch_name abep_sim/archengine.py:arch_name when the instance is derived from archengine)",
+  "operating_point_ref": "design variables x_* and gas-path state",
+  "mode": "steady | startup | peak",
+  "V_bus_V": "value_record (abep_sim/ppu.py:PPU.V_bus)",
+  "terms": "{term_id: value_record} for every term above (not_applicable with reason where the architecture lacks it)",
+  "P_bus_W": "value_record",
+  "resid": "value_record (dimensionless)",
+  "completeness": "one of closure.completeness.values",
+  "open_terms": "list of TBD term ids",
+  "ensemble_member_id": "required when P_discharge is computed from an admitted member's design Hall map; null otherwise",
+  "boundary_crosswalk": "{boundary component: {P_load_W, efficiency, P_bus_W} value_records} for REQUIRED_COMPONENTS[architecture], or null with the blocking reason (OD-L1, superseded hall_discharge, ...)"
+ },
+ "open_owner_decisions": {
+  "OD-L1": "assign the archengine 'aux' 5 W load (1 A at 5 V, unnamed consumer) to flow_control or housekeeping; PROPOSED: housekeeping until a valve driver is specified, because BUS_POWER_BOUNDARY.md section 2 books unrepresentable standby draw there",
+  "OD-L2": "tolerance (if any) on the decomposition-vs-boundary P_bus difference; PROPOSED: none (report only) until both views are produced from the same evidenced inputs",
+  "OD-L3": "keep the schema id bus_power_ledger_v1 (decomposition) next to abep_sim/arch_boundary.py function bus_power_ledger (boundary)? PROPOSED: keep, with the role statement above; rename only in a v2 if confusion persists"
+ }
+}

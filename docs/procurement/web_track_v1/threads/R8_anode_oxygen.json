@@ -1,0 +1,790 @@
+{
+ "title": "R8 - anode / electrode materials in oxygen-bearing plasma and high-temperature oxygen (web evidence pass)",
+ "date": "2026-09-27",
+ "status": "RESEARCH_EVIDENCE_ONLY - no requirement, material or coupon list is decided here",
+ "repo_context": {
+  "commit": "c1ce3a5",
+  "requirements": [
+   "HW-H1-05 (PROPOSED)",
+   "HWQ-08"
+  ],
+  "register": [
+   "AOL-M01",
+   "AOL-M08",
+   "AOL-WC-02",
+   "AOL-RC-01",
+   "AOL-RC-02",
+   "AOL-CX-07",
+   "AOL-EX-02",
+   "AOL-OQ-03"
+  ],
+  "risk": "A5 risk rank 2 'oxygen/anode/channel lifetime'"
+ },
+ "source_register": [
+  {
+   "id": "CIFALI2011",
+   "cite": "Cifali G., Misuri T., Rossetti P., Andrenucci M., et al., 'Experimental characterization of HET and RIT with atmospheric propellants', IEPC-2011-224, Wiesbaden, 2011",
+   "url": "https://electricrocket.org/IEPC/IEPC-2011-224.pdf",
+   "access": "full text read (open PDF)"
+  },
+  {
+   "id": "TEJEDA2023",
+   "cite": "Tejeda J.M., Knoll A., 'An oxygen-fuelled Hall Effect Thruster: Channel length, ceramic walls and anode material experimental analyses', Acta Astronautica 203 (2023) 268-279, doi:10.1016/j.actaastro.2022.11.055",
+   "url": "https://ui.adsabs.harvard.edu/abs/2023AcAau.203..268T/abstract",
+   "access": "full text NOT accessed (ScienceDirect/ResearchGate 403); abstract content only via search-engine snippets -> verify"
+  },
+  {
+   "id": "TEJEDA2024",
+   "cite": "Tejeda J.M., Potrivitu G.-C., Rosati Azevedo E., Moloney R., Knoll A., 'Experimental demonstration of a water electrolysis Hall Effect Thruster (WET-HET) operating with a hydrogen cathode', Acta Astronautica 219 (2024) 542-554, doi:10.1016/j.actaastro.2024.03.043",
+   "url": "https://www.imperial.ac.uk/bitstreams/ab3884e8-130c-4451-9d20-31b60b8607a9/download",
+   "access": "full text read (Imperial Spiral open copy)"
+  },
+  {
+   "id": "MUNOZTEJEDA2024",
+   "cite": "Munoz Tejeda J.M., Schwertheim A., Moloney R., Knoll A., Saryczew J., 'First end-to-end technological demonstration of a water electrolysis Hall effect thruster operating with a water electrolyser', IEPC 2024, Toulouse",
+   "url": "https://spiral.imperial.ac.uk/server/api/core/bitstreams/e2315fb4-4be7-45a4-a754-2d6433696df5/content",
+   "access": "full text read (open)"
+  },
+  {
+   "id": "SCHWERTHEIM2022",
+   "cite": "Schwertheim A., Knoll A., 'Experimental investigation of a water electrolysis Hall effect thruster', Acta Astronautica 193 (2022) 607-618, doi:10.1016/j.actaastro.2021.11.002",
+   "url": "https://spiral.imperial.ac.uk/server/api/core/bitstreams/656ff833-cdee-470c-b3fc-381134a67f96/content",
+   "access": "accepted manuscript read (open)"
+  },
+  {
+   "id": "IPPL_WEB",
+   "cite": "Imperial Plasma Propulsion Laboratory, 'Oxidation and erosion reduction methods in water-fuelled HETs' (research web page; cites Bayliss F., Knoll A., IEPC 2025 plasma-material interaction study of WET-HET)",
+   "url": "https://www.imperial.ac.uk/a-z-research/plasma-propulsion-lab/research/oxidation-and-erosion-reduction-methods-in-water-fuelled-hets/",
+   "access": "web page read; Bayliss & Knoll IEPC-2025 paper NOT accessed"
+  },
+  {
+   "id": "GABRIEL1993",
+   "cite": "Gabriel S.B., Wood N.J., Roberts G.T., Tatnall A.R.L., 'Atomic oxygen simulation using MPD thruster technology', IEPC-93-167",
+   "url": "https://electricrocket.org/IEPC/IEPC1993-167.pdf",
+   "access": "full text read (scan; two-column layout partly garbled in text extraction)"
+  },
+  {
+   "id": "ANDREUSSI2022",
+   "cite": "Andreussi T. et al. 2022 ABEP review (as recorded in repo lane 17 EV-W2 and docs/procurement/web_track_v1/threads/R3_materials.md)",
+   "url": "(repo record)",
+   "access": "second-hand via repo; not re-read here"
+  },
+  {
+   "id": "SITAEL2017",
+   "cite": "SITAEL/Andreussi et al., 'Development and experimental validation of a Hall effect thruster RAM-EP concept', IEPC-2017-377",
+   "url": "https://electricrocket.org/IEPC/IEPC_2017_377.pdf",
+   "access": "full text read (grep for anode/oxidation/material)"
+  },
+  {
+   "id": "BANKS2004",
+   "cite": "Banks B.A., de Groh K.K., Miller S.K., 'Low Earth Orbital Atomic Oxygen Interactions With Spacecraft Materials', NASA/TM-2004-213400",
+   "url": "https://ntrs.nasa.gov/api/citations/20040191331/downloads/20040191331.pdf",
+   "access": "full text read"
+  },
+  {
+   "id": "MCCARTHY2010",
+   "cite": "McCarthy C.E. et al., 'MISSE 2 PEACE Polymers Experiment Atomic Oxygen Erosion Yield Error Analysis', NASA/TM-2010-216903",
+   "url": "https://ntrs.nasa.gov/api/citations/20100040422/downloads/20100040422.pdf",
+   "access": "full text read"
+  },
+  {
+   "id": "SMOLIK2000",
+   "cite": "Smolik G.R., Petti D.A., Schuetz S.T., 'Oxidation, Volatilization, and Redistribution of Molybdenum from TZM Alloy in Air', INEEL/EXT-99-01353, Jan 2000",
+   "url": "https://www.osti.gov/servlets/purl/752007",
+   "access": "full text read"
+  },
+  {
+   "id": "ZHAO2019",
+   "cite": "Zhao S. et al., 'Microstructure and Isothermal Oxidation of Ir-Rh Spark Plug Electrodes', Materials 12(19) (2019) 3226, doi:10.3390/ma12193226",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6804067/",
+   "access": "read via fetch-tool summary of PMC full text; table values should be re-checked -> verify"
+  },
+  {
+   "id": "PGM1400_SNIPPET",
+   "cite": "Linear weight-loss rates of Rh, Pt, Ir, Ru, Os at 1400 C in slowly moving air; origin appears to be Krier C.A., Jaffee R.I., 'Oxidation of the platinum-group metals', J. Less-Common Metals (1963) (ScienceDirect 0022508863900559) -> attribution verify",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/0022508863900559",
+   "access": "search-engine snippet only; source page 403 -> verify"
+  },
+  {
+   "id": "SMC_IN601",
+   "cite": "Special Metals, 'INCONEL alloy 601' technical bulletin",
+   "url": "https://www.specialmetals.com/documents/technical-bulletins/inconel/inconel-alloy-601.pdf",
+   "access": "read"
+  },
+  {
+   "id": "SMC_IN600",
+   "cite": "Special Metals, 'INCONEL alloy 600' technical bulletin",
+   "url": "https://www.specialmetals.com/documents/technical-bulletins/inconel/inconel-alloy-600.pdf",
+   "access": "read"
+  },
+  {
+   "id": "SS316L_SLM2020",
+   "cite": "'Impact of Selective Laser Melting Additive Manufacturing on the High Temperature Behavior of AISI 316L Austenitic Stainless Steel', Oxidation of Metals / High Temperature Corrosion of Materials (2020), doi:10.1007/s11085-020-10005-8",
+   "url": "https://link.springer.com/article/10.1007/s11085-020-10005-8",
+   "access": "search snippet of abstract only (Springer login redirect) -> verify"
+  },
+  {
+   "id": "TIN_CVD2020",
+   "cite": "'In-situ investigation of the oxidation behavior of powdered TiN, Ti(C,N) and TiC coatings grown by chemical vapor deposition', Surface & Coatings Technology (2020), pii S0257897220313037",
+   "url": "https://www.sciencedirect.com/science/article/pii/S0257897220313037",
+   "access": "search snippet of abstract only (403) -> verify"
+  },
+  {
+   "id": "ZRN_COAT2021",
+   "cite": "'In-Situ Investigation of the Oxidation Behaviour of Chemical Vapour Deposited Zr(C,N) Hard Coatings Using Synchrotron X-ray Diffraction', Coatings 11(3) (2021) 264, doi:10.3390/coatings11030264",
+   "url": "https://www.mdpi.com/2079-6412/11/3/264",
+   "access": "search snippet only (403) -> verify"
+  },
+  {
+   "id": "THEODOSIOU2017",
+   "cite": "Theodosiou A., Jones A.N., Marsden B.J., 'Thermal oxidation of nuclear graphite: A large scale waste treatment option', PLoS One 12(8) (2017) e0182860, doi:10.1371/journal.pone.0182860",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5549958/",
+   "access": "read via fetch-tool summary -> values re-check recommended"
+  },
+  {
+   "id": "HF_ARC_SNIPPET",
+   "cite": "'Unique erosion features of hafnium cathode in atmospheric pressure arcs of air, nitrogen and oxygen' (ResearchGate 304479718) and related plasma-arc-cutting literature",
+   "url": "https://www.researchgate.net/publication/304479718",
+   "access": "search snippet only -> verify"
+  },
+  {
+   "id": "WANG1995",
+   "cite": "Wang C., Akbar S., Chen W., Patton V., 'Electrical properties of high-temperature oxides, borides, carbides, and nitrides', J. Mater. Sci. 30 (1995) 1627-1641 (cited by SCHWERTHEIM2022 ref [42])",
+   "url": "(paywalled; not accessed)",
+   "access": "not accessed"
+  },
+  {
+   "id": "GUARNIERI1988",
+   "cite": "Guarnieri C.R. et al., J. Vac. Sci. Technol. A6(4) (1988) 2582-2583 (cited by GABRIEL1993 ref [13])",
+   "url": "(not accessed)",
+   "access": "second-hand via GABRIEL1993"
+  },
+  {
+   "id": "HENTSCHEL1992",
+   "cite": "Hentschel R., Henke D., Rev. Sci. Instrum. 63(4) (1992) 2590-2594 (cited by GABRIEL1993 ref [14])",
+   "url": "(not accessed)",
+   "access": "second-hand via GABRIEL1993"
+  }
+ ],
+ "evidence": [
+  {
+   "material": "PPS1350-TSD anode (material not stated)",
+   "context": "Hall thruster, 10 h test",
+   "atmosphere": "1.27N2+O2 (anode); Xe cathode",
+   "temperature": "not stated",
+   "result": "anode 'seems rusty'; 'anode oxidation with the consequent increase in electrical resistance is the main concern' for a future endurance test",
+   "value": "10",
+   "unit": "h",
+   "source_id": "CIFALI2011",
+   "locator": "p.5, last paragraph",
+   "evidence_class": "L3 primary, other device",
+   "applicability": "Direct O-bearing Hall anode evidence; failure mode = resistance increase",
+   "limitations": "Anode material and temperature not given; visual only; no resistance measured"
+  },
+  {
+   "material": "PPS1350-TSD anode",
+   "context": "Hall thruster test planning",
+   "atmosphere": "pure O2 (avoided)",
+   "temperature": "n/a",
+   "result": "pure O2 test replaced by 1.27N2+O2 'in order to limit anode oxidation'",
+   "value": null,
+   "unit": null,
+   "source_id": "CIFALI2011",
+   "locator": "p.2 (Sec. II test plan)",
+   "evidence_class": "L3 primary",
+   "applicability": "Shows O2 fraction was deliberately capped; delivered H-1 O2 fraction (to 0.60) exceeds that tested",
+   "limitations": "-"
+  },
+  {
+   "material": "RIT-10 grids (graphite)",
+   "context": "gridded RF ion thruster, 10 h at 150 mA beam, 9.89 sccm",
+   "atmosphere": "pure O2",
+   "temperature": "not stated",
+   "result": "grid erosion 'noticeably higher than after test with nitrogen'; attributed 'probably' to chemical processes between graphite and oxygen",
+   "value": null,
+   "unit": null,
+   "source_id": "CIFALI2011",
+   "locator": "p.10 (after Fig. 17)",
+   "evidence_class": "L3 primary, other device class",
+   "applicability": "Graphite electrode chemically attacked by O-plasma",
+   "limitations": "Qualitative; no rate"
+  },
+  {
+   "material": "Tungsten anode plate",
+   "context": "WET-HET, O2 anode feed, Kr cathode",
+   "atmosphere": "O2 plasma",
+   "temperature": "not stated",
+   "result": "'anode plates made out of tungsten quickly (20-30 min) develop an oxidation layer which is non-conductive'; 'imposes severe constraints' on endurance tests",
+   "value": "20-30",
+   "unit": "min",
+   "source_id": "TEJEDA2024",
+   "locator": "Sec. 3.5 'Oxidation of the hardware', p.550 (reporting TEJEDA2023 [21])",
+   "evidence_class": "L3 primary (second statement of authors' own prior result)",
+   "applicability": "Strong negative evidence for bare W as O-plasma anode",
+   "limitations": "Anode temperature, power and discharge conditions for W test not given in TEJEDA2024"
+  },
+  {
+   "material": "Stainless steel anode plate (316L per snippet of TEJEDA2023; grade not stated in TEJEDA2024)",
+   "context": "WET-HET / AQUAHET, O2 anode",
+   "atmosphere": "O2 plasma; 200-1953 W (TEJEDA2024 Table 1)",
+   "temperature": "not stated",
+   "result": "'exhibit a prolonged resistance to oxidation, thereby preserving their electrical conductivity for longer periods of time, particularly during low-power testing. However ... when subjected to higher power levels the issue of surface oxidation becomes more pronounced.'",
+   "value": null,
+   "unit": null,
+   "source_id": "TEJEDA2024",
+   "locator": "Sec. 3.5 p.550; Sec. 1 p.543; Table 1 (anode material: stainless steel)",
+   "evidence_class": "L3 primary",
+   "applicability": "Best available positive laboratory evidence for SS anode in pure-O2 Hall discharge",
+   "limitations": "Hours of O2 operation not stated; no resistance/mass data; 'lab conditions' only; grade (316L) only via search snippet of TEJEDA2023 (verify)"
+  },
+  {
+   "material": "Tungsten vs stainless steel anode",
+   "context": "oxygen-fuelled HET",
+   "atmosphere": "O2",
+   "temperature": "not stated",
+   "result": "Abstract (snippet): W develops non-conductive layer 'after just a few hours'; stainless-steel oxidation layer 'still conductive and did not compromise the functionality of the thruster throughout the duration of the experimental campaigns'; W covered with rhodium and chromium layer named as suitable because of low oxidation rates",
+   "value": null,
+   "unit": null,
+   "source_id": "TEJEDA2023",
+   "locator": "abstract (via search snippets; full text not accessed)",
+   "evidence_class": "verify",
+   "applicability": "Same group as TEJEDA2024",
+   "limitations": "Snippet wording differs from TEJEDA2024 (few hours vs 20-30 min); Rh/Cr statement unverified -> verify against full text"
+  },
+  {
+   "material": "Stainless steel anode plate + BN-SiO2 M26 walls",
+   "context": "end-to-end electrolyser-fed HET",
+   "atmosphere": "O2 1.3-3.2 mg/s anode, H2 cathode",
+   "temperature": "not stated",
+   "result": "material selection retained from TEJEDA2023; test duration ~34 min",
+   "value": 34,
+   "unit": "min",
+   "source_id": "MUNOZTEJEDA2024",
+   "locator": "Sec. II.A (Hall thrusters) and Sec. IV (stability range)",
+   "evidence_class": "L3 primary",
+   "applicability": "Confirms SS anode is the group's standing choice",
+   "limitations": "Short duration; no oxidation metrology"
+  },
+  {
+   "material": "Copper anode",
+   "context": "WET-HET, O2 anode, 490-2880 W, 0.96-1.85 mg/s",
+   "atmosphere": "O2",
+   "temperature": "not stated",
+   "result": "copper anode sections used; authors state 'most metals will oxidise in sustained contact with oxygen, particularly when heated'; no anode oxidation outcome reported in the read text",
+   "value": null,
+   "unit": null,
+   "source_id": "SCHWERTHEIM2022",
+   "locator": "Sec. 2 (thruster design, Fig. 3 description); abstract",
+   "evidence_class": "L3 primary",
+   "applicability": "Cu anode operated at up to 2880 W on O2 in a campaign",
+   "limitations": "No oxidation/resistance findings located; hours not extracted"
+  },
+  {
+   "material": "Stainless steel anode cap; Rh and Cr proposed",
+   "context": "WET-HET",
+   "atmosphere": "O2 plasma",
+   "temperature": "not stated",
+   "result": "SS anode cap shows visible oxidation; 'Rhodium, due to its reduced oxidation rates at high temperatures, and chromium, due to the conductive properties of its oxidation layer, both emerge as potentially viable alternative surface materials'; ~10,000 h target without significant performance loss",
+   "value": 10000,
+   "unit": "h (target, not demonstrated)",
+   "source_id": "IPPL_WEB",
+   "locator": "web page, Fig. 1 and text",
+   "evidence_class": "L5 web summary / proposal",
+   "applicability": "Names Rh and Cr coatings as candidates",
+   "limitations": "Proposal only; no test data; Bayliss & Knoll IEPC-2025 not accessed"
+  },
+  {
+   "material": "Thoriated-tungsten cathode / copper anode",
+   "context": "steady-state MPD on O2 (atomic-O source)",
+   "atmosphere": "pure O2",
+   "temperature": "arc",
+   "result": "ThW cathode oxidation 'will rapidly passivate the cathode extinguishing the discharge'; Southampton pure-O2 run-times 'of only a few seconds' (text extraction garbled -> verify)",
+   "value": null,
+   "unit": null,
+   "source_id": "GABRIEL1993",
+   "locator": "p.4-5 'MPD Operation with Oxygen as the Propellant'",
+   "evidence_class": "L3 primary (scan)",
+   "applicability": "Refractory W-based electrodes fail in O2 arcs",
+   "limitations": "Layout garbled; cathode not anode for the passivation statement"
+  },
+  {
+   "material": "Anode (generic) in O2 ion sources",
+   "context": "reactive-gas ion sources and MPD",
+   "atmosphere": "O2",
+   "temperature": "not stated",
+   "result": "'build-up of an insulating oxide on the surface of the anode which will quickly reduce the current and extinguish the discharge'; remedies suggested: oxidation-resistant alloy 'Inconel x750' or 'Hastealloy', or 'an anode coated with a conducting layer of IrO2 (or perhaps ruthenium oxide rhenium oxide)', or an iridium anode ('prohibitively expensive')",
+   "value": null,
+   "unit": null,
+   "source_id": "GABRIEL1993",
+   "locator": "p.5 right column (citing Guarnieri et al. 1988)",
+   "evidence_class": "L4 secondary/suggestion",
+   "applicability": "Names conductive-oxide (IrO2/RuO2) anode coatings and Ni superalloys as remedies",
+   "limitations": "Suggestions, not tested in this paper"
+  },
+  {
+   "material": "SrO on Pt cathode vs Ta wire",
+   "context": "reflex-discharge ion source",
+   "atmosphere": "O2",
+   "temperature": "~1400-1900 K (emitter)",
+   "result": "lifetime 63 h for SrO-on-Pt cathode vs 3 to 5 h for 1.5 mm Ta wire",
+   "value": "63 vs 3-5",
+   "unit": "h",
+   "source_id": "GABRIEL1993",
+   "locator": "p.5 (citing Hentschel & Henke 1992)",
+   "evidence_class": "L4 second-hand",
+   "applicability": "Pt substrate survives O2 discharge at high T (cathode role)",
+   "limitations": "Cathode, not anode; second-hand"
+  },
+  {
+   "material": "Thoria-coated iridium filament",
+   "context": "0.1 kW ion source",
+   "atmosphere": "O2",
+   "temperature": "thermionic",
+   "result": "lifetimes 'of the order of 1000+ hours at 0.2 A/cm2' quoted",
+   "value": 1000,
+   "unit": "h (order)",
+   "source_id": "GABRIEL1993",
+   "locator": "p.5 (citing Guarnieri et al. 1988)",
+   "evidence_class": "L4 second-hand",
+   "applicability": "Ir tolerates O2 discharge as emitter",
+   "limitations": "Cathode, second-hand"
+  },
+  {
+   "material": "RAM-HET (anode material not stated)",
+   "context": "SITAEL double-stage air-breathing HET",
+   "atmosphere": "N2-O2",
+   "temperature": "n/a",
+   "result": "'a certain amount of xenon (~1.5 mg/s) has always been necessary to prevent the flame out'; collector = stainless steel cone",
+   "value": 1.5,
+   "unit": "mg/s Xe",
+   "source_id": "SITAEL2017",
+   "locator": "p.7 (Fig. 8 text); p.4 collector",
+   "evidence_class": "L3 primary",
+   "applicability": "Flame-out context; no anode oxidation data",
+   "limitations": "No material info for anode"
+  },
+  {
+   "material": "PPS1350 anode",
+   "context": "N2/O2 + 10% Xe, 305 V",
+   "atmosphere": "N2/O2+Xe",
+   "temperature": "n/a",
+   "result": "~314 h before anode-oxidation flame-outs",
+   "value": 314,
+   "unit": "h",
+   "source_id": "ANDREUSSI2022",
+   "locator": "p.24 (repo record)",
+   "evidence_class": "L5 review, second-hand",
+   "applicability": "Only duration datum for an O-bearing Hall anode",
+   "limitations": "Second-hand of Cifali 2012; material unknown"
+  },
+  {
+   "material": "Titanium vs graphite RIT grids",
+   "context": "RIT on O2",
+   "atmosphere": "O2",
+   "temperature": "n/a",
+   "result": "Ti grids lower erosion than graphite on O2 (repo record)",
+   "value": null,
+   "unit": null,
+   "source_id": "ANDREUSSI2022",
+   "locator": "repo R3 thread",
+   "evidence_class": "L5 second-hand",
+   "applicability": "Ti as O-tolerant electrode in grid role",
+   "limitations": "Not re-read here"
+  },
+  {
+   "material": "Pyrolytic graphite (PG) / HOPG / diamond",
+   "context": "LEO atomic oxygen (ram, ~4.5 eV)",
+   "atmosphere": "atomic O",
+   "temperature": "ambient",
+   "result": "erosion yield PG 0.61-1.2 and 1.2 (x1e-24 cm3/atom); HOPG 1.04-1.2, 1.2-1.7, 1.2; diamond 0.0000+/-0.000023 and 0.021; 'erosion yield is not a meaningful number for ... most metals ... where the majority of the oxidation products are non-volatile'",
+   "value": "0.61-1.2",
+   "unit": "1e-24 cm3/atom",
+   "source_id": "BANKS2004",
+   "locator": "Table 1 and text following Fig. 7",
+   "evidence_class": "L2 flight data compilation",
+   "applicability": "Carbon anodes/distributors lose mass to O; metals form non-volatile scales instead",
+   "limitations": "Thermal AO (~4.5 eV), room temperature; not plasma-sheath ion fluxes"
+  },
+  {
+   "material": "Pyrolytic graphite",
+   "context": "MISSE 2 (ISS, ~4 yr)",
+   "atmosphere": "atomic O",
+   "temperature": "ambient",
+   "result": "erosion yield 4.15 +/- 0.45 E-25 cm3/atom",
+   "value": 4.15e-25,
+   "unit": "cm3/atom",
+   "source_id": "MCCARTHY2010",
+   "locator": "erosion-yield error table, PG row",
+   "evidence_class": "L2 flight data",
+   "applicability": "AO mass-loss for C",
+   "limitations": "Room temperature, thermal AO"
+  },
+  {
+   "material": "TZM (Mo alloy)",
+   "context": "furnace, flowing air",
+   "atmosphere": "air, 1000 sccm (unless noted)",
+   "temperature": "400-800 C",
+   "result": "measured Mo mass flux 6.04E-5 (400 C, max), 4.10E-3/2.73E-3 (500 C), 3.62E-2 (550 C), 1.62E-1 (599 C, 24 h), 3.43 (650 C), 2.62E+1 (700 C), 3.82E+2 (750 C), 2.42E+3 (800 C) g/(m2 h); measured recession 3.85E-1 mm/h at 800 C; 'volatilization process is dominated by MoO3 above 550 C'",
+   "value": "see result",
+   "unit": "g/(m2 h)",
+   "source_id": "SMOLIK2000",
+   "locator": "Table 2 p.4; Abstract",
+   "evidence_class": "L2 primary lab data",
+   "applicability": "Mo (and by analogy W, verify) unsuitable as hot anode in O-bearing gas",
+   "limitations": "Air furnace, no plasma; TZM not pure Mo"
+  },
+  {
+   "material": "Ir, IrRh10, IrRh25, IrRh40, Rh",
+   "context": "isothermal furnace oxidation",
+   "atmosphere": "air",
+   "temperature": "1100 C, 60 h",
+   "result": "weight loss: Ir 53.69 %, IrRh10 15.90 %, IrRh25 9.39 %, IrRh40 0.63 %; Rh mass gain 2.73 %",
+   "value": "see result",
+   "unit": "% mass change",
+   "source_id": "ZHAO2019",
+   "locator": "Table 1",
+   "evidence_class": "verify",
+   "applicability": "Ir alone volatilizes (IrO3); Rh stabilizes; Rh forms stable Rh2O3 per authors",
+   "limitations": "Furnace, not plasma; values relayed via fetch tool summary"
+  },
+  {
+   "material": "Rh, Pt, Ir, Ru, Os",
+   "context": "oxidation in slowly moving air, 1 atm",
+   "atmosphere": "air",
+   "temperature": "1400 C",
+   "result": "linear weight-loss rates Rh 6.8e-3, Pt 9.6e-3, Ir 3.1, Ru 1.2e2, Os 1.2e3",
+   "value": "see result",
+   "unit": "mg/(cm2 h)",
+   "source_id": "PGM1400_SNIPPET",
+   "locator": "snippet; original table not seen",
+   "evidence_class": "verify",
+   "applicability": "Ranks PGMs: Rh ~ Pt << Ir << Ru << Os",
+   "limitations": "Temperature far above plausible anode T; attribution unverified"
+  },
+  {
+   "material": "INCONEL alloy 601 (Ni-Cr-Al)",
+   "context": "furnace cyclic oxidation",
+   "atmosphere": "air",
+   "temperature": "to 1200 C",
+   "result": "'resistance to oxidation at temperatures up to 2200 F (1200 C)'; cyclic data in Figs. 9-11 (1095, 1150, 1200 C)",
+   "value": 1200,
+   "unit": "C",
+   "source_id": "SMC_IN601",
+   "locator": "p.8-9 'Oxidation', Figs. 9-11",
+   "evidence_class": "L2 manufacturer",
+   "applicability": "Superalloy option",
+   "limitations": "Alumina-containing scale may be less conductive than chromia (inference, verify); no plasma; figures not digitized"
+  },
+  {
+   "material": "INCONEL alloy 600 vs Type 304/309",
+   "context": "furnace cyclic oxidation",
+   "atmosphere": "air",
+   "temperature": "980 C",
+   "result": "comparison of weight loss in cyclic oxidation (15 min heat / 5 min cool) in Fig. 11",
+   "value": null,
+   "unit": null,
+   "source_id": "SMC_IN600",
+   "locator": "'High-Temperature Applications', Fig. 11",
+   "evidence_class": "L2 manufacturer",
+   "applicability": "Chromia-forming Ni alloy vs austenitic SS",
+   "limitations": "Figure only, not digitized"
+  },
+  {
+   "material": "AISI 316L (wrought vs SLM)",
+   "context": "furnace oxidation 100 h, 700-1000 C",
+   "atmosphere": "dry air",
+   "temperature": "900 C",
+   "result": "parabolic constant 1.54e-12 (wrought) vs 1.73e-13 (SLM) g2 cm-4 s-1",
+   "value": "1.54e-12",
+   "unit": "g2 cm-4 s-1",
+   "source_id": "SS316L_SLM2020",
+   "locator": "abstract (snippet)",
+   "evidence_class": "verify",
+   "applicability": "316L baseline scaling rate at high T",
+   "limitations": "No plasma, no atomic O; anode T unknown"
+  },
+  {
+   "material": "TiN (CVD powder)",
+   "context": "in-situ XRD 420-940 C",
+   "atmosphere": "ambient air",
+   "temperature": "640 C",
+   "result": "oxidation onset temperature 640 C (highest of TiN, Ti(C,N), TiC)",
+   "value": 640,
+   "unit": "C",
+   "source_id": "TIN_CVD2020",
+   "locator": "abstract (snippet)",
+   "evidence_class": "verify",
+   "applicability": "TiN coating would oxidize to TiO2 above ~640 C",
+   "limitations": "Powder, not coating on anode; TiO2 conductivity not addressed"
+  },
+  {
+   "material": "ZrN (CVD)",
+   "context": "in-situ synchrotron XRD, 100-1000 C",
+   "atmosphere": "air",
+   "temperature": "~670 C",
+   "result": "full oxidation of ZrN at ~670 C",
+   "value": 670,
+   "unit": "C",
+   "source_id": "ZRN_COAT2021",
+   "locator": "abstract (snippet)",
+   "evidence_class": "verify",
+   "applicability": "ZrN not better than TiN",
+   "limitations": "Snippet only"
+  },
+  {
+   "material": "Nuclear graphite",
+   "context": "furnace oxidation",
+   "atmosphere": "air",
+   "temperature": "400-1200 C",
+   "result": "400 and 500 C rates 'too low to measure confidently'; 0.51 (700 C), 2.89 (800 C), 8.8 (1000 C), 13.8 (1200 C) mg/min",
+   "value": "see result",
+   "unit": "mg/min per specimen",
+   "source_id": "THEODOSIOU2017",
+   "locator": "Results section",
+   "evidence_class": "verify",
+   "applicability": "Thermal oxidation of C negligible <=500 C in air",
+   "limitations": "Specimen-size dependent (not area-normalized); plasma/AO attack much faster at low T (see BANKS2004)"
+  },
+  {
+   "material": "Hafnium cathode",
+   "context": "atmospheric-pressure arcs",
+   "atmosphere": "air, N2, O2",
+   "temperature": "arc",
+   "result": "distinct erosion features by gas; Hf/Zr chosen in O-containing plasma cutting because their oxides are stable/high-melting",
+   "value": null,
+   "unit": null,
+   "source_id": "HF_ARC_SNIPPET",
+   "locator": "abstract (snippet)",
+   "evidence_class": "verify",
+   "applicability": "Hf/Zr are the industrial O-plasma cathode materials; not an anode analogue",
+   "limitations": "High-pressure arc cathode; not accessed"
+  }
+ ],
+ "candidate_matrix": [
+  {
+   "material": "Austenitic stainless 316L",
+   "evidence_in_O_plasma": "YES - O2 Hall anode (Imperial WET-HET/AQUAHET; conductivity 'mostly preserved', worse at higher power) [TEJEDA2024, TEJEDA2023 snippet]",
+   "oxidation_vs_T": "parabolic scaling; kp 1.54e-12 g2cm-4s-1 at 900 C in dry air (verify) [SS316L_SLM2020]",
+   "conductivity": "metal; Cr/Fe-oxide scale reported 'still conductive' in O2 HET (qualitative)",
+   "machinability_availability": "excellent; commodity; non-magnetic annealed (verify)",
+   "known_failure_modes": "progressive oxidation at higher power; resistance rise (PPS1350 anode material unknown); Cr volatilization at high T not assessed",
+   "status": "leading heritage candidate (lab-scale, hours)"
+  },
+  {
+   "material": "Chromia-forming Ni superalloys (Inconel 600/625/X-750, Haynes 230, Hastelloy)",
+   "evidence_in_O_plasma": "NO direct; suggested for O2 ion-source/MPD anodes [GABRIEL1993]",
+   "oxidation_vs_T": "Inconel 600 cyclic 980 C figure vs 304/309 [SMC_IN600]; 230 claim to 1150 C not retrieved (Haynes 403)",
+   "conductivity": "metal; Cr2O3 scale semiconducting (verify, WANG1995 not accessed)",
+   "machinability_availability": "good; available; Ni is ferromagnetic in some grades? (600/625 essentially non-magnetic - verify)",
+   "known_failure_modes": "unknown in O plasma",
+   "status": "candidate, no plasma evidence"
+  },
+  {
+   "material": "Alumina-forming alloys (Inconel 601, Haynes 214, FeCrAl)",
+   "evidence_in_O_plasma": "NO",
+   "oxidation_vs_T": "601 resistant to 1200 C in air [SMC_IN601]",
+   "conductivity": "Al2O3 scale is an insulator (general knowledge - verify) -> risk of the W-type failure",
+   "machinability_availability": "good",
+   "known_failure_modes": "possible insulating scale on anode (hypothesis)",
+   "status": "test only as hypothesis-control"
+  },
+  {
+   "material": "Tungsten (bare)",
+   "evidence_in_O_plasma": "YES - FAILED: non-conductive oxide in 20-30 min [TEJEDA2024]; ThW cathodes passivate in O2 MPD [GABRIEL1993]",
+   "oxidation_vs_T": "WO3 formation/sublimation (numbers not sourced here - verify)",
+   "conductivity": "oxide non-conductive in use",
+   "machinability_availability": "hard to machine",
+   "known_failure_modes": "insulating oxide, discharge extinction",
+   "status": "REJECT as bare anode (evidence)"
+  },
+  {
+   "material": "Molybdenum / TZM",
+   "evidence_in_O_plasma": "NO (air furnace only)",
+   "oxidation_vs_T": "Mo flux 3.43 g/m2h at 650 C, 2.42e3 g/m2h at 800 C; MoO3 volatilization dominant >550 C [SMOLIK2000]",
+   "conductivity": "metal; volatile oxide",
+   "machinability_availability": "moderate",
+   "known_failure_modes": "catastrophic volatile-oxide loss; redeposition of MoO3 on insulators",
+   "status": "REJECT for hot O-exposed parts"
+  },
+  {
+   "material": "Copper",
+   "evidence_in_O_plasma": "used as O2 HET anode up to 2880 W [SCHWERTHEIM2022], outcome not reported; Cu anode in O2 MPD [GABRIEL1993]",
+   "oxidation_vs_T": "not sourced",
+   "conductivity": "high; oxide conductivity not sourced",
+   "machinability_availability": "excellent",
+   "known_failure_modes": "listed among O-reactive metals [TEJEDA2024 Sec.3.5]; spallation? (verify)",
+   "status": "low priority unless actively cooled"
+  },
+  {
+   "material": "Platinum (bulk or clad/plated)",
+   "evidence_in_O_plasma": "indirect: Pt substrate for SrO cathode, 63 h in O2 ion source [GABRIEL1993/HENTSCHEL1992]",
+   "oxidation_vs_T": "1400 C air loss 9.6e-3 mg/cm2h (snippet, verify) [PGM1400_SNIPPET]",
+   "conductivity": "noble metal; no insulating scale expected (verify)",
+   "machinability_availability": "costly; plating/cladding available (verify)",
+   "known_failure_modes": "PtO2 volatilization at very high T; sputtering by ions; coating adhesion/pinholes",
+   "status": "coupon candidate"
+  },
+  {
+   "material": "Rhodium (plating)",
+   "evidence_in_O_plasma": "NO; proposed by Imperial [IPPL_WEB, TEJEDA2023 snippet]",
+   "oxidation_vs_T": "Rh mass gain 2.73 % at 1100 C/60 h air [ZHAO2019]; 6.8e-3 mg/cm2h at 1400 C (verify)",
+   "conductivity": "metal; Rh2O3",
+   "machinability_availability": "plating common (verify)",
+   "known_failure_modes": "thin-plating wear/sputter-through",
+   "status": "coupon candidate"
+  },
+  {
+   "material": "Iridium",
+   "evidence_in_O_plasma": "Ir/thoria-coated Ir emitters in O2 ion sources, ~1000+ h (second-hand) [GABRIEL1993]",
+   "oxidation_vs_T": "53.69 % loss at 1100 C/60 h air [ZHAO2019]; 3.1 mg/cm2h at 1400 C (verify)",
+   "conductivity": "metal; IrO2 conductive (verify)",
+   "machinability_availability": "very costly",
+   "known_failure_modes": "volatile IrO3 at high T",
+   "status": "low priority bulk; see IrO2 coating"
+  },
+  {
+   "material": "Chromium (plating)",
+   "evidence_in_O_plasma": "NO; proposed because 'conductive properties of its oxidation layer' [IPPL_WEB]",
+   "oxidation_vs_T": "not sourced",
+   "conductivity": "Cr2O3 semiconducting (verify)",
+   "machinability_availability": "plating common",
+   "known_failure_modes": "CrO3 volatility in O2 at high T (verify)",
+   "status": "coupon candidate"
+  },
+  {
+   "material": "Conductive-oxide coatings (IrO2, RuO2; e.g. mixed-metal-oxide on Ti)",
+   "evidence_in_O_plasma": "suggested for O2 ion-source anodes [GABRIEL1993 citing GUARNIERI1988]",
+   "oxidation_vs_T": "already oxidized; thermal stability not sourced",
+   "conductivity": "metallic-type oxide conductivity (verify)",
+   "machinability_availability": "MMO anodes commercial for electrochemistry (verify)",
+   "known_failure_modes": "RuO4 volatility (verify); sputter erosion; Ti substrate passivation under coating (verify)",
+   "status": "coupon candidate (novel)"
+  },
+  {
+   "material": "Graphite (incl. pyrolytic)",
+   "evidence_in_O_plasma": "YES - RIT-10 graphite grids eroded noticeably more on O2 [CIFALI2011]",
+   "oxidation_vs_T": "AO yield 0.415-1.2e-24 cm3/atom [MCCARTHY2010, BANKS2004]; thermal air oxidation negligible <=500 C [THEODOSIOU2017]",
+   "conductivity": "conductive; oxidation product volatile (no insulating layer)",
+   "machinability_availability": "excellent",
+   "known_failure_modes": "chemical erosion by O/O+ -> mass loss, carbon redeposition on walls",
+   "status": "reference coupon only"
+  },
+  {
+   "material": "Titanium",
+   "evidence_in_O_plasma": "Ti grids lower erosion than graphite on O2 (second-hand) [ANDREUSSI2022]",
+   "oxidation_vs_T": "not sourced",
+   "conductivity": "TiO2 scale poorly conductive (verify)",
+   "machinability_availability": "good",
+   "known_failure_modes": "insulating scale when hot (hypothesis)",
+   "status": "optional"
+  },
+  {
+   "material": "TiN / ZrN coatings",
+   "evidence_in_O_plasma": "NO",
+   "oxidation_vs_T": "TiN onset 640 C; ZrN full oxidation ~670 C in air (snippets, verify)",
+   "conductivity": "nitride metallic; oxide not",
+   "machinability_availability": "PVD commercial",
+   "known_failure_modes": "converts to oxide above ~640 C",
+   "status": "optional, only if anode T well below 600 C"
+  },
+  {
+   "material": "ZrB2/HfB2 UHTC, SiC",
+   "evidence_in_O_plasma": "NO (none found)",
+   "oxidation_vs_T": "not sourced in this pass",
+   "conductivity": "borides conductive; SiC semiconducting; SiO2/B2O3 scales insulating (verify)",
+   "machinability_availability": "poor (EDM/grinding)",
+   "known_failure_modes": "glassy insulating scale (hypothesis)",
+   "status": "not recommended now"
+  },
+  {
+   "material": "Hafnium / zirconium",
+   "evidence_in_O_plasma": "industrial O2/air plasma-arc cathode inserts [HF_ARC_SNIPPET]",
+   "oxidation_vs_T": "not sourced",
+   "conductivity": "HfO2/ZrO2 insulating at low T (verify)",
+   "machinability_availability": "specialty",
+   "known_failure_modes": "insulating oxide for diffuse anode current (hypothesis)",
+   "status": "not an anode analogue"
+  }
+ ],
+ "proposed_coupon_candidates": {
+  "label": "PROPOSAL FOR OWNER - NOT A DECISION (answers AOL-OQ-03 / HWQ-08 / OQ-R3-3 only as input)",
+  "items": [
+   {
+    "id": "R8-C01",
+    "material": "316L (anode-lot, same heat as H-1 anode)",
+    "role": "baseline / heritage (Imperial O2 HET)",
+    "basis": "TEJEDA2024 Sec.3.5; TEJEDA2023"
+   },
+   {
+    "id": "R8-C02",
+    "material": "Chromia-forming Ni alloy (one of Inconel 600, 625 or Haynes 230 - owner pick)",
+    "role": "higher-T metallic alternative",
+    "basis": "GABRIEL1993 suggestion; SMC_IN600"
+   },
+   {
+    "id": "R8-C03",
+    "material": "Alumina-forming alloy (Inconel 601 or FeCrAl)",
+    "role": "hypothesis control: does an Al2O3-forming alloy develop an insulating scale?",
+    "basis": "SMC_IN601; inference (verify)"
+   },
+   {
+    "id": "R8-C04",
+    "material": "Rh electroplate on 316L (thickness TBD by owner/vendor)",
+    "role": "Imperial-proposed coating",
+    "basis": "IPPL_WEB; ZHAO2019"
+   },
+   {
+    "id": "R8-C05",
+    "material": "Pt clad or plate on 316L",
+    "role": "noble-metal coating",
+    "basis": "GABRIEL1993/HENTSCHEL1992; PGM1400_SNIPPET"
+   },
+   {
+    "id": "R8-C06",
+    "material": "Cr electroplate on 316L",
+    "role": "Imperial-proposed conductive-oxide former",
+    "basis": "IPPL_WEB"
+   },
+   {
+    "id": "R8-C07",
+    "material": "IrO2- or RuO2-based conductive-oxide coating (e.g. commercial MMO on Ti)",
+    "role": "pre-oxidized conductive surface",
+    "basis": "GABRIEL1993 citing GUARNIERI1988"
+   },
+   {
+    "id": "R8-C08",
+    "material": "Bare W",
+    "role": "negative control (known insulating oxide in 20-30 min) to validate the resistance-rise measurement",
+    "basis": "TEJEDA2024"
+   },
+   {
+    "id": "R8-C09",
+    "material": "Graphite (isotropic grade)",
+    "role": "optional mass-loss reference (volatile oxide)",
+    "basis": "CIFALI2011; BANKS2004"
+   }
+  ],
+  "suggested_observables": "per coupon: 4-wire sheet/contact resistance before/after (the PPS1350 and WET-HET failure mode is resistance rise, not mass loss), mass (AOL-PM-02 protocol), oxide thickness/phase (SEM/XPS), adjacent thermocouple (AOL-CX-07); exposure in N2+O2 up to the delivered O2 mass fraction 0.60 plus atomic-O (AOL-EX-02); electron-collecting bias for at least one coupon of each material, since the anode role (electron current, sheath) differs from a floating witness - owner to decide",
+  "notes": "Thresholds (acceptable resistance rise, hours) must be pre-registered via LOCK-1/LOCK-2; none are proposed here."
+ },
+ "gaps": [
+  "No published anode temperature for any O-bearing Hall test (Cifali 2011, Imperial, SITAEL) - oxidation data cannot be mapped to temperature.",
+  "No published anode-resistance or mass-change measurement vs hours for any O-bearing Hall anode; only qualitative ('rusty', 'mostly preserved', 20-30 min for W).",
+  "PPS1350 anode material still unknown; 314 h flame-out datum remains second-hand (Andreussi 2022 of Cifali 2012; Cifali 2012 not accessed).",
+  "TEJEDA2023 full text (anode section, test hours, Rh/Cr claim, 316L grade) not accessed (paywall/403).",
+  "Bayliss & Knoll IEPC-2025 WET-HET plasma-material interaction study not accessed (may contain the best O2-anode data).",
+  "No evidence for N2/O2 mixtures (nitridation + oxidation) on any candidate; all Imperial data are pure O2 (+ H2 cathode).",
+  "No coating (Rh, Pt, Cr, IrO2) has been tested as a Hall anode in O plasma in any accessed source.",
+  "Conductivity of oxide scales (Cr2O3, Al2O3, TiO2, NiO) at anode temperature not sourced (Wang et al. 1995 not accessed).",
+  "PGM 1400 C loss rates and 316L/TiN/ZrN numbers are search-snippet level (verify).",
+  "No Chinese, Japanese or Kurchatov/Dukhopelnikov anode-material data found (Dukhopelnikov AIP Conf Proc 2318, 040006 on TAL with air - abstract only, no material data seen).",
+  "Haynes datasheets (230/214 oxidation tables) blocked (403); W oxidation numbers not sourced from a primary document."
+ ],
+ "owner_questions": [
+  "OQ-R8-1: Accept 316L as the H-1 baseline anode with the recorded limitation (lab-scale, pure-O2, hours, degrades at higher power), pending coupon results?",
+  "OQ-R8-2: Which of R8-C01..C09 go on AOL-EX-02 / AOL-WC-02 coupons, and should coupons be electron-collecting (biased) rather than floating?",
+  "OQ-R8-3: Authorize acquisition (legitimate access, owner channel) of Tejeda & Knoll 2023 full text, Bayliss & Knoll IEPC-2025, Cifali 2012 (PPS1350 endurance) and Wang et al. 1995?",
+  "OQ-R8-4: Set the anode thermal design target (H2-5 gives no sourced anode limit) so that oxidation evidence can be read at a temperature?",
+  "OQ-R8-5: Include a bare-W negative control coupon to demonstrate that the resistance-rise measurement detects the known failure?"
+ ]
+}

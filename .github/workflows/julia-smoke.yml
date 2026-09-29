@@ -1,0 +1,106 @@
+# OPTIONAL, MANUAL ONLY: construction-only smoke of the pinned HallThruster.jl bridge (docs/ci/CI.md, "Julia smoke").
+# It never runs on push or pull_request and it never produces score-bearing output:
+#   - the campaign driver runs with P5N2_SMOKE=1: 2 us simulated time, measured targets stripped from the case, every record
+#     carries "smoke": true, which the scorer (scripts/score_p5_n2_campaign.py) and both structural gates refuse;
+#   - exactly ONE job (first job of the nominal chemistry n2_n.toml, vacuum mode) is selected by sharding;
+#   - the record goes to $RUNNER_TEMP (outside the checkout), is checked for smoke == true and absence of any target field,
+#     is never uploaded as an artifact, and is deleted at the end; only its run key and return code are printed, the same
+#     log discipline as the campaign driver (no current, thrust or residual);
+#   - the job fails if the checkout changed (the committed Manifest.toml must install as is; nothing is written into the tree).
+# Pin: hallthruster_bridge/PINNED.toml (HallThruster.jl v0.23.1, commit bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5). Locally,
+# hallthruster_bridge/setup.jl does the one-time install with Pkg.add(url, rev = <commit>); here Pkg.instantiate() installs
+# exactly the committed Manifest.toml (same repo-rev, git-tree-sha1 checked, no re-resolution), and the driver's own
+# check_pin() refuses any other commit or version.
+name: Julia construction smoke (manual, never score-bearing)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_construction_only:
+        description: "Run the P5N2_SMOKE=1 construction check (2 us, targets stripped, smoke=true, never scored, never uploaded)"
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: julia-smoke
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    if: ${{ inputs.confirm_construction_only }}
+    name: HallThruster.jl pinned install + one smoke job
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Read the pin (PINNED.toml / Manifest.toml) and verify the pre-registered inputs
+        id: pin
+        run: |
+          python scripts/ci_checks.py --only hallthruster_pin,prereg_lock
+          python - <<'EOF' >> "$GITHUB_OUTPUT"
+          import tomllib
+          pin = tomllib.load(open("hallthruster_bridge/PINNED.toml", "rb"))
+          man = tomllib.load(open("hallthruster_bridge/Manifest.toml", "rb"))
+          print(f"commit={pin['hallthruster']['commit']}")
+          print(f"version={pin['hallthruster']['version']}")
+          print(f"julia_version={man['julia_version']}")
+          EOF
+          cat "$GITHUB_OUTPUT"
+
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ steps.pin.outputs.julia_version }}
+
+      - name: Install the pinned HallThruster.jl from the committed Manifest.toml
+        run: |
+          julia --project=hallthruster_bridge -e 'using Pkg; Pkg.instantiate(); Pkg.status()'
+          julia --project=hallthruster_bridge -e 'include("hallthruster_bridge/bridge_lib.jl"); rev = check_pin(); println("HallThruster.jl pinned commit: ", rev); rev == ARGS[1] || error("pin mismatch")' "${{ steps.pin.outputs.commit }}"
+          git status --porcelain
+          test -z "$(git status --porcelain)"
+
+      - name: Construction smoke (P5N2_SMOKE=1, one job, output outside the checkout)
+        env:
+          P5N2_SMOKE: "1"
+        run: |
+          # jobs = screening candidates x 1 chemistry x cases; nshards = jobs, so shard 0 is exactly the first job.
+          NJOBS=$(python -c 'import json; e = json.load(open("hallthruster_bridge/ensemble/transport_ensemble_v0.json")); c = json.load(open("hallthruster_bridge/cases/p5_n2.json")); print(len(e["screening_candidates"]) * len(c["cases"]))')
+          echo "jobs in the n2_n.toml vacuum set: $NJOBS (running shard 0 of $NJOBS = one job)"
+          mkdir -p "$RUNNER_TEMP/p5n2_smoke"
+          julia --project=hallthruster_bridge hallthruster_bridge/campaign/p5_n2_campaign.jl \
+            "$RUNNER_TEMP/p5n2_smoke/smoke.jsonl" vacuum 0 "$NJOBS" n2_n.toml
+
+      - name: Verify the record is a smoke record (no target, never score-bearing)
+        run: |
+          python - <<'EOF'
+          import json, os, sys
+          p = os.path.join(os.environ["RUNNER_TEMP"], "p5n2_smoke", "smoke.jsonl")
+          recs = [json.loads(l) for l in open(p) if l.strip()]
+          forbidden = ("measured", "Id_target_A", "Id_target_kind", "T_target_N", "T_target_kind", "Id_err_rel", "T_err_rel",
+                       "T_err_sigma", "Id_raw_A")
+          bad = [] if len(recs) == 1 else [f"{len(recs)} records, expected exactly 1"]
+          for r in recs:
+              if r.get("smoke") is not True:
+                  bad.append(f"{r.get('key')}: smoke flag is not true")
+              bad += [f"{r.get('key')}: target field {k} present" for k in forbidden if k in r]
+              print(r.get("key"), r.get("retcode"))              # key and return code only, as the driver logs
+              if r.get("retcode") != "success":
+                  bad.append(f"{r.get('key')}: construction smoke did not complete ({r.get('error', 'no error text')})")
+          print("\n".join(bad) or "smoke record OK (construction only; not scoreable)")
+          sys.exit(1 if bad else 0)
+          EOF
+
+      - name: Delete the smoke output and confirm the checkout is unchanged
+        if: always()
+        run: |
+          rm -rf "$RUNNER_TEMP/p5n2_smoke"
+          git status --porcelain
+          test -z "$(git status --porcelain)"

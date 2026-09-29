@@ -1,0 +1,33 @@
+{
+ "input_dataset": "validation/p5_n2_campaign_v1_staged_n2_n_exc_johnsonlow_raw.jsonl.gz",
+ "input_sha256_canonical_jsonl": "9332ecdb6388b79491b570f063d06329274113b940e0410b35a0f610089fe1eb",
+ "input_n_records": 270,
+ "mode": "vacuum",
+ "o4": {
+  "role": "O4 first stage (compare with its baseline)",
+  "chemistry": {
+   "n2_n_exc_johnsonlow.toml": "95c9bec9f69993691e2539fc55ec20713fccca93376f3ff4ded9133d62721f9e"
+  },
+  "baseline": "n2_n.toml"
+ },
+ "input_mandatory_dataset": "validation/p5_n2_campaign_v1_vacuum_raw.jsonl.gz",
+ "input_mandatory_sha256": "20e926d507598a2ca3d4789929f7e99b179e5fc56c81403286552bbd54097468",
+ "mandatory_scores_sha256": "87895820e21e36fa8f9b07fa7475789f08d91d946d526a09acf142fe509be1bc",
+ "mandatory_reproduced": true,
+ "scorer": "scripts/score_p5_n2_campaign.py",
+ "scorer_sha256": "907ca7b5ef8e802ed97129ca9e3fd09b7493bc688088425b150ed02352a39fe3",
+ "scorer_expected_commit": "10842ce1fca42c260f902ebd038b8379db9fe0ac",
+ "prereg_lock_sha256": "71ecd39fa25ea60e2e4aff9474bdd700ec8cd718e819dfdae774594709e805be",
+ "scored_utc": "2026-09-26T12:38:54+00:00",
+ "output": "validation/p5_n2_campaign_v1_staged_n2_n_exc_johnsonlow_scores.json",
+ "output_sha256": "ee55fce1c51458692a39858dcf353587f50a0393194f48f6b72cffe3447ebc0d",
+ "o4_trigger_fired": {
+  "n2_n_exc_johnsonlow.toml": true
+ },
+ "chain": {
+  "driver_commit": "79d4e128bfb9ad672dc8e6e81a6e88445bc5b62a",
+  "integrity_gate_commit": "fcd6720ce8de6f33c0348e9f46144c8e27330a8b",
+  "scorer_commit": "10842ce1fca42c260f902ebd038b8379db9fe0ac",
+  "preregistration": "PR #27 (17a99cd), prereg/p5_n2_validation_criteria_v1.json"
+ }
+}

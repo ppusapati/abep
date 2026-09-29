@@ -2,7 +2,8 @@
 
 Only data that can be cited is loaded. Each record states what was measured, what is derived, and what is uncertain.
 The coupled (n_e, T_e) Hall model is calibrated on ONE anchor (Marchioni & Cappelli 2021, N2, 2 mg/s, 250 V); every other
-dataset here is a BLIND prediction with that calibration unchanged.
+dataset here is a BLIND prediction with that calibration unchanged. The presently available open evidence does not
+support that 250 V anchor (status HISTORICAL_UNSUPPORTED; see "Evidence status of CAL" below).
 
 Datasets
 --------
@@ -11,6 +12,23 @@ CAL  (SUPERSEDED for absolute predictions: the 0-D calibration used an invented 
      Marchioni F., Cappelli M. A., "Extended channel Hall thruster for air-breathing electric propulsion",
      J. Appl. Phys. 130, 053306 (2021). N2, 2 mg/s anode flow, 500-800 W anode power: 17-22 mN, 1000-1100 s, 14-18 %.
      (calibration anchor — not a validation point)
+
+     Evidence status of CAL: HISTORICAL_UNSUPPORTED. This is documentation only; no value or behaviour in this module
+     changed. The presently available open evidence supports neither the 250 V operating point used by
+     calibration_anchor() nor the "2 mg/s, 250 V -> 24 mN, 690 W, 1230 s" calibration record in docs/HISTORY.md.
+     Basis: ECHT-N2 evidence audit, hallthruster_bridge/identification/echt_n2/echt_n2_evidence_audit_v1.json
+     (finding E2); disposition in hallthruster_bridge/identification/echt_n2/STATUS.json.
+     - The JAP paper (doi:10.1063/5.0048283) is paywalled, and only its abstract was accessible (via Crossref). The
+       abstract gives ranges only (500-800 W anode, 17-22 mN, 1000-1100 s, 14-18 % total efficiency, 2 mg/s N2) and no
+       per-point values.
+     - The open MSc thesis (F. Marchioni, Politecnico di Torino / Stanford, 2020, https://webthesis.biblio.polito.it/14618/)
+       is the only open per-point source. It tabulates 180/200/220 V only (Tables 6.1-6.3) and has no 250 V data.
+     The anchor is kept unchanged only so the withdrawn v1.2-v1.6 0-D results can be reproduced. It is not a validation
+     or calibration target. Verify it against the JAP full text only if that text becomes legitimately accessible. The
+     COUPLED_* constants in abep_sim/plasma_devices.py were calibrated against this same anchor (comment there).
+     Geometry: "Sec. 3" of the JAP paper could not be checked (paywalled). The open thesis gives 86 mm length, 10 mm
+     channel height and "100 mm outer diameter" of the BN chamber (Sec. 4.1.1, p. 63). r_in/r_out = 40/50 mm (ECHT_GEOM)
+     is one reading of that (inferred, verify; audit forced assumption A1).
 
 VAL1 Brabston W. P., Marino L. A., Lev D., Walker M. L. R., "Hall Thruster Performance and Efficiency Analysis of a
      Molecular Propellant", J. Propulsion & Power, doi:10.2514/1.B39623 (2025). P5 5-kW HET on pure N2, Table 2 setpoints
@@ -37,6 +55,14 @@ ECHT_GEOM = {"r_in_m": 0.040, "r_out_m": 0.050, "L_m": 0.086, "wall": "BN",
 P5_XE = [  # setpoint, mdot mg/s, Vd V, Pd kW, peak B 162.5 G  (Brabston et al. 2025, Table 4) — conventional-propellant validation
     ("Xe1", 5.0, 230.8, 1.75), ("Xe2", 5.0, 250.3, 2.15), ("Xe3", 5.0, 274.3, 2.03)]
 P5_XE_RANGES = {"T_mN": (72.8, 86.8), "Isp_s": (1485.0, 1770.0), "eta_anode": (0.329, 0.396)}
+# Provenance metadata only; no code reads it. Evidence status of the CAL anchor used by calibration_anchor().
+CAL_ANCHOR_PROVENANCE = (
+    "HISTORICAL_UNSUPPORTED: the presently available open evidence supports neither the 2 mg/s N2, 250 V anchor nor "
+    "the '250 V -> 24 mN, 690 W' calibration record (docs/HISTORY.md). The JAP 2021 paper (doi:10.1063/5.0048283) is "
+    "paywalled, and its abstract gives only ranges (500-800 W anode, 17-22 mN, 1000-1100 s, 14-18 %). The open "
+    "Marchioni 2020 MSc thesis has no 250 V data (180/200/220 V only). The anchor is kept only to reproduce withdrawn "
+    "0-D results and is never a validation or calibration target. Basis: "
+    "hallthruster_bridge/identification/echt_n2/echt_n2_evidence_audit_v1.json (E2) and STATUS.json in that directory.")
 
 
 def validate_p5(L_acc_m: float | None = None) -> tuple[pd.DataFrame, dict]:
@@ -69,6 +95,9 @@ def validate_p5(L_acc_m: float | None = None) -> tuple[pd.DataFrame, dict]:
 
 
 def calibration_anchor() -> dict:
+    """SUPERSEDED 0-D calibration anchor at 250 V, N2 2 mg/s. Its status is HISTORICAL_UNSUPPORTED because no openly
+    accessible source has ECHT data at 250 V (see CAL_ANCHOR_PROVENANCE and the module docstring). It is kept only to
+    reproduce withdrawn results and is not a validation point."""
     from .plasma_devices import coupled_channel, hall_run_coupled
     r = hall_run_coupled(coupled_channel(), 250.0, {"N2": 2e-6})
     T = r["T_N"]

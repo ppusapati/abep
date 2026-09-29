@@ -1,0 +1,17 @@
+{
+  "schema": "baseline_verification_v1",
+  "lane": "G0 governance baseline (owner addendum A6)",
+  "verified_commit": "23b79c843528656f21333fd44bdf02c2e9e3e3b8",
+  "a5_commit": "71c2a48",
+  "a5_file": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+  "a5_sha256": "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
+  "od_hardware_pivot_sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+  "run_utc": "2026-09-27T10:40Z",
+  "results": {
+    "pytest": {"command": "python -m pytest -q tests", "outcome": "1617 passed, 5 skipped, 1 xfailed", "rc": 0, "expected": "all pass, 5 skipped, 1 strict xfail (CLAUDE.md rule 9)"},
+    "golden": {"command": "python -m abep_sim.golden check", "outcome": "OK", "rc": 0},
+    "integrity": {"command": "python scripts/ci_checks.py", "outcome": "10/10 passed (parse, prereg_lock, audit_manifest, hallthruster_pin, rate_validity_coverage, variant_configs, p5_n2_cases, launch_manifests, multiply_charged_tables, ensemble_gate)", "rc": 0}
+  },
+  "verdict": "CLEAN",
+  "consequence": "downstream artifacts may pin A5 by the sha256 above"
+}

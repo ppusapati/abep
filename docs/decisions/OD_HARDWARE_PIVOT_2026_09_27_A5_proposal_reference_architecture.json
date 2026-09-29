@@ -1,0 +1,87 @@
+{
+  "schema": "owner_disposition_addendum_v1",
+  "amends": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+  "amends_sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+  "follows": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A4_owner_decisions.json",
+  "follows_sha256": "beec91f9eca3ca0257c5ee88dcd193c87481660b9368b65c6d10b3b3bdae23b4",
+  "decided_by": "owner",
+  "decided_utc": "2026-09-27",
+  "title": "A5 - Proposal Reference Architecture / Phase-1 Baseline",
+  "status": "FROZEN_PROPOSAL_REFERENCE_NOT_FLIGHT_ARCHITECTURE",
+  "decision_statement": "A5 freezes the dual-feed extended-Hall architecture as the proposal reference configuration. Atmospheric propellant is the primary discharge feed. Xe is reserved for ignition, the isolated LaB6 cathode and bounded contingency usage; continuous Xe augmentation of the atmospheric discharge is not an acceptable nominal operating mode. RF pre-ionization is retained as an interface-ready Phase-1 contingency, with ECR as the alternate. H-1 determines whether the flight propulsion branch is Hall-only, RF+Hall or ECR+Hall using same-condition atmospheric sustainment and common-bus performance tests. Until H-1 is passed, the architecture is a proposal baseline, not a validated flight design.",
+  "what_this_is_not": [
+    "not a validated flight design",
+    "not a claim that Hall-only atmospheric operation has been validated",
+    "not an admission of any Hall transport closure (credible set remains empty; A4 project conclusion unchanged)",
+    "not a performance prediction: all thrust, power, mass and life numbers below are allocations or requirements"
+  ],
+  "effect_on_parallel_work": "Hall, RF+Hall and ECR+Hall are no longer carried as three equal proposal architectures. All lanes work inside this frozen architecture; the single open branch is the propulsion-source branch (Hall-only / RF+Hall / ECR+Hall / no viable case), resolved by H-1 Phase 1. Facility, ExB, O/O2 and Hall-map work do not gate A5.",
+  "architecture": {
+    "atmospheric_branch": ["intake", "protective/filter stage", "compressor", "buffer/plenum", "atmospheric metering valve"],
+    "xe_branch": ["Xe tank", "Xe regulator", "Xe metering (splits to ignition/transition feed and cathode feed)"],
+    "propulsion": ["extended-channel Hall discharge chamber/accelerator", "magnetic circuit", "shielded Xe-fed LaB6 hollow cathode"],
+    "support": ["PPU/power distribution", "thermal control", "control/FDIR", "sensors/diagnostics", "mechanical/structural interfaces"],
+    "baseline_subsystem_count": 16,
+    "reserved_interface": {
+      "name": "RF pre-ionization module interface",
+      "location": "between feed/plenum and Hall ionization region",
+      "baseline_flight_hardware": false,
+      "requirement": "a defined electrical, mechanical, gas and control ICD is produced now so that fitting RF after H-1 does not require redesigning the thruster"
+    },
+    "alternate": "ECR pre-ionization: alternate test module only, not baseline installed flight hardware; used only if RF fails the common-boundary comparison"
+  },
+  "operating_modes": {
+    "sequence": ["OFF", "Xe ignition/startup", "brief transition support", "atmospheric Hall + Xe cathode (nominal)", "degraded", "time-limited Xe contingency/fallback", "shutdown"],
+    "nominal_mode": "atmospheric Hall discharge with Xe-fed cathode",
+    "rules": [
+      "continuous Xe support of the main discharge is not a nominal mode; if the atmospheric discharge needs it to stay lit, the atmospheric Hall concept has failed its Phase-1 objective",
+      "every mode that consumes Xe carries an explicit maximum duration and draws on the single fixed Xe allocation",
+      "mixed/transition operation never silently becomes a long-duration operating mode"
+    ]
+  },
+  "xe_mass_allocation": {
+    "ledger": "m_Xe_total = m_cathode + m_startup + m_transition + m_fallback + m_reserve; every operating mode consumes against this one fixed tank allocation",
+    "cathode_flow_design_target_mg_s": 0.10,
+    "cathode_flow_experimental_upper_test_point_mg_s": 0.15,
+    "cathode_flow_upper_status": "test point only until the mass ledger demonstrates it is affordable",
+    "reference_arithmetic_15000h": {"0.10_mg_s_kg": 5.4, "0.15_mg_s_kg": 8.1},
+    "rejection_illustration": "0.74 mg/s over 15,000 h consumes the whole 40 kg; illustrates rejection only, never an allowable allocation",
+    "m_Xe_total_value": "PENDING_OWNER: set from the system mass ledger; the startup, transition, fallback and reserve terms are to be allocated"
+  },
+  "allocations_and_requirements": [
+    {"quantity": "thrust operating target", "value": "15-22 mN", "status": "allocation; to be demonstrated"},
+    {"quantity": "absolute RFP thrust envelope", "value": "12-25 mN", "status": "requirement"},
+    {"quantity": "bus-power design allocation", "value": "<= 1.30-1.35 kW", "status": "allocation leaving margin to the 1.5 kW requirement; P_bus per bus_power_boundary_v1"},
+    {"quantity": "system mass design allocation", "value": "<= 34-36 kg", "status": "allocation leaving margin to the 40 kg requirement"},
+    {"quantity": "firing life", "value": ">= 15,000 h", "status": "requirement, not demonstrated"},
+    {"quantity": "internal design life target", "value": ">= 18,000 h", "status": "design margin target, not evidenced"},
+    {"quantity": "non-consumable life", "value": "26,000 h mission", "status": "requirement"}
+  ],
+  "allocation_rule": "ECHT and other analogue data are never presented as predictions of Vyovrinda hardware; these values never enter a predicted-performance table",
+  "phase1_branch_decision": {
+    "test_matrix": "H-1 sweeps mdot_atm x x_O2 x V_d jointly, with point density concentrated near the anticipated low-flow knee around the delivered-flow region (<= ~3.2 mg/s under H_RAM) and across the delivered O2 mass fraction 0.42-0.60",
+    "order_at_every_point": ["Hall-only", "RF+Hall", "ECR+Hall"],
+    "common_condition": "same feed state and same accelerator condition for all three at a point",
+    "minimum_measurements": ["discharge current", "thrust", "bus power", "source power", "cathode flow and power", "oscillation/stability", "ignition/restart behaviour", "species/acceleration diagnostics where available"],
+    "discriminators": ["T/P_bus", "sustainment", "eta_u", "operating-envelope width"],
+    "discriminator_note": "source power is never assessed separately; it enters through P_bus",
+    "cases": {
+      "A_extended_hall": "atmospheric discharge sustains across the required low-flow/composition envelope, meets the pre-registered stability/utilization criteria, and needs no continuous Xe support",
+      "B_rf_hall": "Hall-only fails one or more required atmospheric points, and RF restores operation with a net system-level benefit after RF source, matching and PPU power and mass are counted",
+      "C_ecr_hall": "Hall-only fails, RF fails its common-boundary criterion, and ECR passes it",
+      "NO_VIABLE_CASE": "none meets the common bus-power, thrust, stability, mass and life constraints; no case is forced to win"
+    },
+    "preregistration": "the acceptance criteria for these cases are pre-registered through the existing LOCK-1/LOCK-2 path before any score-bearing H-1 data; A5 fixes the structure, not the numeric thresholds"
+  },
+  "architecture_closing_risks": [
+    {"rank": 1, "risk": "atmospheric sustainment at low mass flow and high O2 fraction", "evidence": "all 9 air cases UNDETERMINED; delivered O2 fraction 0.42-0.60 vs 0.47 max tested; published air/N2-O2 points at 2.75-7 mg/s vs <= ~3.2 mg/s delivered", "response": "H-1 Phase 1; RF/ECR are the contingency response to this risk"},
+    {"rank": 2, "risk": "oxygen/anode/channel lifetime", "evidence": "PPS1350 on N2/O2 + 10 % Xe: 7,000-9,500 h (0.47-0.63 of requirement); anode-oxidation flame-out ~314 h (Andreussi 2022, second-hand review)", "response": "oxidation-resistant anode/channel materials and a life test"},
+    {"rank": 3, "risk": "Xe-fed cathode consumption and oxygen isolation", "evidence": "veto layer RI-MASS-CATHODE-XE", "response": "measured cathode flow at <= 0.10 mg/s design target; shielding/isolation from the atmospheric plume"},
+    {"rank": 4, "risk": "total bus-power and mass closure with all auxiliaries", "evidence": "aux bus: 0/6 ledgers evaluable", "response": "bus_power_boundary_v1 ledger closure under the allocations above"}
+  ],
+  "evidence_basis": [
+    "docs/evidence/hall_sustainment/hall_sustainment_matrix.json",
+    "docs/architecture_comparison/ (feed-state closure, RF/ECR overlays, aux bus, veto layer)",
+    "docs/milestones/bundle1/ (NO_BASELINE_YET under B1-DR-1; A5 is a proposal reference, not a Bundle-1 CONDITIONAL_BASELINE verdict)"
+  ]
+}

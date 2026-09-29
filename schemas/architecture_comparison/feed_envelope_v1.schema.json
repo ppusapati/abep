@@ -1,0 +1,529 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "schemas/architecture_comparison/feed_envelope_v1.schema.json",
+ "title": "Thruster feed envelope v1 (common feed state for hall_only / rf_hall / ecr_hall)",
+ "description": "Schema of docs/architecture_comparison/feed_envelope/feed_envelope_v1.json, produced by scripts/architecture/build_feed_envelope.py. Field names follow the upstream ICD (schemas/interfaces/upstream_icd_v1.json, IF-A0 free stream, IF-A5 / IF-X2 thruster boundary). Every numeric value carries unit, evidence class, uncertainty, source, validity domain and producer; a null value carries evidence class 'TBD' and 'requires'. Uses only the keyword subset in build_feed_envelope.SUPPORTED_SCHEMA_KEYWORDS (checked by tests/test_feed_envelope.py). Species-fraction closure (sum = 1) is checked by the script and the test, not by this schema.",
+ "type": "object",
+ "required": ["envelope", "envelope_version", "schema", "status", "generated_by", "what_it_is", "what_it_is_not",
+              "milestones", "architectures", "interface_alignment", "provenance", "validity_domains",
+              "atmosphere_levels", "extremes", "design_inputs", "design_input_contract", "cases", "envelope_ranges",
+              "xe_path", "exposed_uncertainty", "not_adopted", "chain_findings", "open_questions"],
+ "additionalProperties": false,
+ "properties": {
+  "envelope": {"const": "feed_envelope"},
+  "envelope_version": {"const": "1.0.0"},
+  "schema": {"const": "schemas/architecture_comparison/feed_envelope_v1.schema.json"},
+  "status": {"$ref": "#/$defs/nonempty_string"},
+  "generated_by": {
+   "type": "object",
+   "required": ["script", "command", "deterministic", "output_rounding_significant_digits"],
+   "additionalProperties": false,
+   "properties": {
+    "script": {"const": "scripts/architecture/build_feed_envelope.py"},
+    "command": {"$ref": "#/$defs/nonempty_string"},
+    "deterministic": {"const": true},
+    "output_rounding_significant_digits": {"type": "integer", "minimum": 6}
+   }
+  },
+  "what_it_is": {"$ref": "#/$defs/nonempty_string"},
+  "what_it_is_not": {"$ref": "#/$defs/nonempty_string"},
+  "milestones": {
+   "type": "object",
+   "required": ["supports", "statement", "to_reach_B", "to_reach_C"],
+   "additionalProperties": false,
+   "properties": {
+    "supports": {"type": "array", "minItems": 1, "items": {"enum": ["A", "B", "C"]}},
+    "statement": {"$ref": "#/$defs/nonempty_string"},
+    "to_reach_B": {"$ref": "#/$defs/string_list"},
+    "to_reach_C": {"$ref": "#/$defs/string_list"}
+   }
+  },
+  "architectures": {
+   "type": "object",
+   "required": ["ids", "common_feed_rule", "architecture_dependent_fields"],
+   "additionalProperties": false,
+   "properties": {
+    "ids": {"const": ["hall_only", "rf_hall", "ecr_hall"]},
+    "common_feed_rule": {"$ref": "#/$defs/nonempty_string"},
+    "architecture_dependent_fields": {"const": []}
+   }
+  },
+  "interface_alignment": {
+   "type": "object",
+   "required": ["icd_schema", "icd_version", "icd_status", "free_stream", "feed_state", "xe_feed_state",
+                "shared_field_names", "added_fields", "quantity_shape", "composition_basis"],
+   "additionalProperties": false,
+   "properties": {
+    "icd_schema": {"const": "schemas/interfaces/upstream_icd_v1.json"},
+    "icd_version": {"type": "string"},
+    "icd_status": {"type": "string"},
+    "free_stream": {"const": "IF-A0"},
+    "feed_state": {"const": "IF-A5"},
+    "xe_feed_state": {"const": "IF-X2"},
+    "shared_field_names": {"$ref": "#/$defs/string_list"},
+    "added_fields": {"$ref": "#/$defs/string_list"},
+    "quantity_shape": {"type": "string"},
+    "composition_basis": {"type": "string"}
+   }
+  },
+  "provenance": {
+   "type": "object",
+   "required": ["input_files", "files_read", "frozen_atmosphere", "frozen_intake_surface", "chain_mirrored"],
+   "additionalProperties": false,
+   "properties": {
+    "input_files": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": ["path", "sha256", "role"],
+      "additionalProperties": false,
+      "properties": {
+       "path": {"$ref": "#/$defs/nonempty_string"},
+       "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+       "role": {"$ref": "#/$defs/nonempty_string"}
+      }
+     }
+    },
+    "files_read": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": ["path", "role"],
+      "additionalProperties": false,
+      "properties": {"path": {"$ref": "#/$defs/nonempty_string"}, "role": {"$ref": "#/$defs/nonempty_string"}}
+     }
+    },
+    "frozen_atmosphere": {
+     "type": "object",
+     "required": ["model", "pymsis", "epoch", "ap", "f107_grid", "alt_km_grid", "averaging", "sha256_16",
+                  "species_dropped"],
+     "additionalProperties": false,
+     "properties": {
+      "model": {"type": "string"}, "pymsis": {"type": "string"}, "epoch": {"type": "string"},
+      "ap": {"type": "number"}, "f107_grid": {"type": "array", "items": {"type": "number"}},
+      "alt_km_grid": {"type": "array", "items": {"type": "number"}}, "averaging": {"type": "string"},
+      "sha256_16": {"type": "string", "pattern": "^[0-9a-f]{16}$"}, "species_dropped": {"type": "string"}
+     }
+    },
+    "frozen_intake_surface": {
+     "type": "object",
+     "required": ["sha256_16", "atmosphere", "species", "scattering", "grid", "n_per_point", "max_unresolved"],
+     "additionalProperties": false,
+     "properties": {
+      "sha256_16": {"type": "string", "pattern": "^[0-9a-f]{16}$"}, "atmosphere": {"type": "string"},
+      "species": {"type": "array", "items": {"type": "string"}},
+      "scattering": {"type": "array", "items": {"type": "string"}},
+      "grid": {"type": "object"}, "n_per_point": {"type": "integer", "minimum": 1},
+      "max_unresolved": {"type": "number", "minimum": 0}
+     }
+    },
+    "chain_mirrored": {"$ref": "#/$defs/nonempty_string"}
+   }
+  },
+  "validity_domains": {"type": "object", "minProperties": 1, "additionalProperties": {"$ref": "#/$defs/nonempty_string"}},
+  "atmosphere_levels": {
+   "type": "object",
+   "required": ["mapping", "source", "evidence_class", "note"],
+   "additionalProperties": false,
+   "properties": {
+    "mapping": {
+     "type": "object",
+     "required": ["low", "mean", "high"],
+     "additionalProperties": false,
+     "properties": {
+      "low": {"$ref": "#/$defs/level"}, "mean": {"$ref": "#/$defs/level"}, "high": {"$ref": "#/$defs/level"}
+     }
+    },
+    "source": {"$ref": "#/$defs/nonempty_string"},
+    "evidence_class": {"$ref": "#/$defs/evidence_class_known"},
+    "note": {"type": "string"}
+   }
+  },
+  "extremes": {
+   "type": "object",
+   "required": ["status", "requires", "covered_here"],
+   "additionalProperties": false,
+   "properties": {
+    "status": {"enum": ["TBD", "evaluated"]},
+    "requires": {"type": "string"},
+    "covered_here": {"type": "string"}
+   }
+  },
+  "design_inputs": {
+   "type": "object",
+   "required": ["supplied", "label", "entries"],
+   "additionalProperties": false,
+   "properties": {
+    "supplied": {"type": "boolean"},
+    "label": {"type": ["string", "null"]},
+    "entries": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "object",
+      "required": ["value", "source", "evidence_class"],
+      "additionalProperties": false,
+      "properties": {
+       "value": {"type": ["number", "string"]},
+       "source": {"$ref": "#/$defs/nonempty_string"},
+       "evidence_class": {"$ref": "#/$defs/evidence_class_known"},
+       "note": {"type": "string"}
+      }
+     }
+    },
+    "note": {"type": "string"}
+   }
+  },
+  "design_input_contract": {
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "type": "object",
+    "required": ["name", "kind", "unit", "consumer", "description", "required_when", "status", "documented_baseline",
+                 "code_defaults"],
+    "additionalProperties": false,
+    "properties": {
+     "name": {"type": "string", "pattern": "^(intake|plenum|compressor|chamber|valve)\\.[A-Za-z0-9_.]+$"},
+     "kind": {"enum": ["positive_number", "nonneg_number", "fraction", "grid_number", "enum", "material",
+                       "nonneg_integer", "positive_integer", "positive_number_or_token", "nonneg_number_or_token"]},
+     "unit": {"type": "string", "minLength": 1},
+     "consumer": {"$ref": "#/$defs/nonempty_string"},
+     "description": {"$ref": "#/$defs/nonempty_string"},
+     "required_when": {"enum": ["always", "compressor.mode == fixed", "compressor.mode == size_for",
+                                "valve.mode == pressure_setpoint", "valve.mode == orifice_area"]},
+     "status": {"enum": ["TBD", "supplied", "not_required_in_selected_modes"]},
+     "documented_baseline": {"type": "null"},
+     "code_defaults": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "required": ["value", "source", "evidence_class", "adopted"],
+       "additionalProperties": false,
+       "properties": {
+        "value": {"type": ["number", "string", "boolean"]},
+        "source": {"$ref": "#/$defs/nonempty_string"},
+        "evidence_class": {"const": "assumed"},
+        "adopted": {"const": false}
+       }
+      }
+     },
+     "domain": {"type": "array"},
+     "note": {"type": "string"}
+    }
+   }
+  },
+  "cases": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/case"}},
+  "envelope_ranges": {
+   "type": "object",
+   "required": ["kind", "basis", "free_stream", "feed_state"],
+   "additionalProperties": false,
+   "properties": {
+    "kind": {"const": "scenario_set"},
+    "basis": {"$ref": "#/$defs/nonempty_string"},
+    "free_stream": {
+     "type": "object",
+     "minProperties": 1,
+     "additionalProperties": {
+      "type": "object",
+      "required": ["overall", "by_altitude"],
+      "additionalProperties": false,
+      "properties": {
+       "overall": {"$ref": "#/$defs/range"},
+       "by_altitude": {"type": "object", "additionalProperties": {"$ref": "#/$defs/range"}}
+      }
+     }
+    },
+    "feed_state": {
+     "anyOf": [
+      {"type": "object", "required": ["status", "requires"], "additionalProperties": false,
+       "properties": {"status": {"const": "TBD"}, "requires": {"$ref": "#/$defs/nonempty_string"}}},
+      {"type": "object", "required": ["status", "n_ok_cases", "n_cases", "ranges"], "additionalProperties": false,
+       "properties": {"status": {"const": "evaluated"}, "n_ok_cases": {"type": "integer", "minimum": 1},
+                      "n_cases": {"type": "integer", "minimum": 1},
+                      "ranges": {"type": "object", "additionalProperties": {
+                        "type": "object", "required": ["overall"], "additionalProperties": false,
+                        "properties": {"overall": {"$ref": "#/$defs/range"}}}}}}
+     ]
+    }
+   }
+  },
+  "xe_path": {
+   "type": "object",
+   "required": ["interface", "altitude_dependent", "architecture_dependent", "status", "feed_state",
+                "mixed_air_xe_feed"],
+   "additionalProperties": false,
+   "properties": {
+    "interface": {"const": "IF-X2"},
+    "altitude_dependent": {"const": false},
+    "architecture_dependent": {"const": false},
+    "status": {"$ref": "#/$defs/case_status"},
+    "feed_state": {
+     "type": "object",
+     "required": ["mdot_xe_anode_kgps", "mdot_xe_cathode_kgps", "p_feed_Pa", "T_gas_K", "w_s", "x_s"],
+     "additionalProperties": false,
+     "properties": {
+      "mdot_xe_anode_kgps": {"allOf": [{"$ref": "#/$defs/quantity"}, {"properties": {"unit": {"const": "kg s^-1"}}}]},
+      "mdot_xe_cathode_kgps": {"allOf": [{"$ref": "#/$defs/quantity"}, {"properties": {"unit": {"const": "kg s^-1"}}}]},
+      "p_feed_Pa": {"allOf": [{"$ref": "#/$defs/quantity"}, {"properties": {"unit": {"const": "Pa"}}}]},
+      "T_gas_K": {"allOf": [{"$ref": "#/$defs/quantity"}, {"properties": {"unit": {"const": "K"}}}]},
+      "w_s": {"allOf": [{"$ref": "#/$defs/species_quantity"}, {"$ref": "#/$defs/xe_species"},
+                        {"properties": {"unit": {"const": "-"}}}]},
+      "x_s": {"allOf": [{"$ref": "#/$defs/species_quantity"}, {"$ref": "#/$defs/xe_species"},
+                        {"properties": {"unit": {"const": "-"}}}]}
+     }
+    },
+    "mixed_air_xe_feed": {
+     "type": "object", "required": ["status", "requires"], "additionalProperties": false,
+     "properties": {"status": {"const": "TBD"}, "requires": {"$ref": "#/$defs/nonempty_string"}}
+    }
+   }
+  },
+  "exposed_uncertainty": {
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "type": "object",
+    "required": ["module", "quantity", "exposed", "note"],
+    "additionalProperties": false,
+    "properties": {
+     "module": {"$ref": "#/$defs/nonempty_string"},
+     "quantity": {"$ref": "#/$defs/nonempty_string"},
+     "exposed": {"type": ["object", "null"]},
+     "evidence_class": {"$ref": "#/$defs/evidence_class_known"},
+     "note": {"$ref": "#/$defs/nonempty_string"}
+    }
+   }
+  },
+  "not_adopted": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["quantity", "value", "unit", "file", "evidence_token", "evidence_class", "reason"],
+    "additionalProperties": false,
+    "properties": {
+     "quantity": {"$ref": "#/$defs/nonempty_string"},
+     "value": {"type": ["number", "null"]},
+     "unit": {"type": "string"},
+     "file": {"$ref": "#/$defs/nonempty_string"},
+     "evidence_token": {"type": ["string", "null"]},
+     "evidence_class": {"$ref": "#/$defs/evidence_class_known"},
+     "reason": {"$ref": "#/$defs/nonempty_string"}
+    }
+   }
+  },
+  "chain_findings": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["id", "icd_gap", "where", "finding", "handling"],
+    "additionalProperties": false,
+    "properties": {
+     "id": {"type": "string", "pattern": "^FE-[0-9]{2}$"},
+     "icd_gap": {"type": ["string", "null"]},
+     "where": {"$ref": "#/$defs/nonempty_string"},
+     "finding": {"$ref": "#/$defs/nonempty_string"},
+     "handling": {"$ref": "#/$defs/nonempty_string"}
+    }
+   }
+  },
+  "open_questions": {"$ref": "#/$defs/string_list"}
+ },
+ "$defs": {
+  "nonempty_string": {"type": "string", "minLength": 1},
+  "string_list": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+  "evidence_class": {
+   "enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed", "TBD"],
+   "description": "quantity type (docs/EVIDENCE.md); 'TBD' only for a null value"
+  },
+  "evidence_class_known": {"enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"]},
+  "species": {"enum": ["O", "N2", "O2", "Xe"], "description": "ICD species set (abep_sim/constants.py M_SPECIES)"},
+  "case_status": {"enum": ["DESIGN_INPUTS_MISSING", "OK", "INFEASIBLE", "MODEL_ERROR"]},
+  "uncertainty": {
+   "type": "object",
+   "required": ["kind", "basis"],
+   "additionalProperties": false,
+   "properties": {
+    "kind": {"enum": ["TBD", "not_applicable", "standard_abs_1sigma", "standard_rel_1sigma", "interval", "scenario_set"]},
+    "basis": {"$ref": "#/$defs/nonempty_string"},
+    "value": {"type": ["number", "object", "null"]},
+    "lower": {"type": ["number", "object", "null"]},
+    "upper": {"type": ["number", "object", "null"]},
+    "scenarios": {"type": "array", "minItems": 1, "items": {"type": "object"}}
+   }
+  },
+  "producer": {
+   "type": "object",
+   "required": ["call"],
+   "additionalProperties": false,
+   "properties": {
+    "call": {"$ref": "#/$defs/nonempty_string"},
+    "module": {"$ref": "#/$defs/nonempty_string"},
+    "function": {"$ref": "#/$defs/nonempty_string"},
+    "output_key": {"$ref": "#/$defs/nonempty_string"},
+    "derivation": {"$ref": "#/$defs/nonempty_string"}
+   }
+  },
+  "quantity_common": {
+   "type": "object",
+   "required": ["unit", "evidence_class", "uncertainty", "source", "validity_domain", "in_domain", "producer"],
+   "properties": {
+    "unit": {"type": "string", "minLength": 1},
+    "evidence_class": {"$ref": "#/$defs/evidence_class"},
+    "uncertainty": {"$ref": "#/$defs/uncertainty"},
+    "source": {"$ref": "#/$defs/nonempty_string"},
+    "validity_domain": {"$ref": "#/$defs/nonempty_string"},
+    "in_domain": {"type": ["boolean", "null"]},
+    "producer": {"$ref": "#/$defs/producer"},
+    "requires": {"type": "string", "pattern": "^TBD"},
+    "requires_design_inputs": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+   }
+  },
+  "quantity": {
+   "description": "ICD scalar_quantity shape + producer (+ requires for TBD)",
+   "allOf": [{"$ref": "#/$defs/quantity_common"}],
+   "type": "object",
+   "required": ["value"],
+   "additionalProperties": false,
+   "properties": {
+    "value": {"type": ["number", "null"]},
+    "unit": {}, "evidence_class": {}, "uncertainty": {}, "source": {}, "validity_domain": {}, "in_domain": {},
+    "producer": {}, "requires": {}, "requires_design_inputs": {}
+   },
+   "anyOf": [
+    {"properties": {"value": {"type": "number"}, "evidence_class": {"$ref": "#/$defs/evidence_class_known"}}},
+    {"required": ["requires"], "properties": {"value": {"type": "null"}, "evidence_class": {"const": "TBD"}}}
+   ]
+  },
+  "species_quantity": {
+   "description": "ICD species_quantity shape + producer (+ requires for TBD); either every value numeric or every value null",
+   "allOf": [{"$ref": "#/$defs/quantity_common"}],
+   "type": "object",
+   "required": ["values"],
+   "additionalProperties": false,
+   "properties": {
+    "values": {"type": "object", "minProperties": 1, "propertyNames": {"$ref": "#/$defs/species"}},
+    "unit": {}, "evidence_class": {}, "uncertainty": {}, "source": {}, "validity_domain": {}, "in_domain": {},
+    "producer": {}, "requires": {}, "requires_design_inputs": {}
+   },
+   "anyOf": [
+    {"properties": {"values": {"additionalProperties": {"type": "number", "minimum": 0}},
+                    "evidence_class": {"$ref": "#/$defs/evidence_class_known"}}},
+    {"required": ["requires"], "properties": {"values": {"additionalProperties": {"type": "null"}},
+                                              "evidence_class": {"const": "TBD"}}}
+   ]
+  },
+  "air_species": {"properties": {"values": {"required": ["O", "N2", "O2"], "propertyNames": {"enum": ["O", "N2", "O2"]}}}},
+  "xe_species": {"properties": {"values": {"required": ["Xe"], "propertyNames": {"enum": ["Xe"]}}}},
+  "label": {
+   "type": "object", "required": ["value", "unit", "source"], "additionalProperties": false,
+   "properties": {"value": {"type": ["string", "null"]}, "unit": {"const": "-"}, "source": {"$ref": "#/$defs/nonempty_string"}}
+  },
+  "flag": {
+   "type": "object", "required": ["value", "unit", "source"], "additionalProperties": false,
+   "properties": {"value": {"type": ["boolean", "null"]}, "unit": {"const": "-"},
+                  "source": {"$ref": "#/$defs/nonempty_string"}, "reason": {"type": "string"}}
+  },
+  "call": {
+   "type": "object", "required": ["module", "function", "inputs"], "additionalProperties": false,
+   "properties": {"module": {"$ref": "#/$defs/nonempty_string"}, "function": {"$ref": "#/$defs/nonempty_string"},
+                  "inputs": {"type": "object"}}
+  },
+  "level": {
+   "type": "object", "required": ["f107", "f107a", "ap"], "additionalProperties": false,
+   "properties": {"f107": {"type": "number", "minimum": 0}, "f107a": {"type": "number", "minimum": 0},
+                  "ap": {"type": "number", "minimum": 0}}
+  },
+  "range": {
+   "type": "object",
+   "required": ["unit", "min", "max", "min_at", "max_at", "max_over_min", "n"],
+   "additionalProperties": false,
+   "properties": {
+    "unit": {"type": "string"}, "min": {"type": "number"}, "max": {"type": "number"},
+    "min_at": {"type": "string"}, "max_at": {"type": "string"}, "max_over_min": {"type": ["number", "null"]},
+    "n": {"type": "integer", "minimum": 1}
+   }
+  },
+  "free_stream": {
+   "type": "object",
+   "required": ["rho_kgpm3", "n_total_m3", "T_ambient_K", "V_mps", "mass_flux_kgpm2ps", "p_ambient_Pa", "m_mean_kg",
+                "w_s", "x_s", "species_mass_flux_kgpm2ps", "atmosphere_source", "atmosphere_in_domain"],
+   "additionalProperties": false,
+   "properties": {
+    "rho_kgpm3": {"allOf": [{"$ref": "#/$defs/quantity"}, {"properties": {"unit": {"const": "kg m^-3"}}}]},
+    "n_total_m3": {"allOf": [{"$ref": "#/$defs/quantity"}, {"properties": {"unit": {"const": "m^-3"}}}]},
+    "T_ambient_K": {"allOf": [{"$ref": "#/$defs/quantity"}, {"properties": {"unit": {"const": "K"}}}]},
+    "V_mps": {"allOf": [{"$ref": "#/$defs/quantity"}, {"properties": {"unit": {"const": "m s^-1"}}}]},
+    "mass_flux_kgpm2ps": {"allOf": [{"$ref": "#/$defs/quantity"}, {"properties": {"unit": {"const": "kg m^-2 s^-1"}}}]},
+    "p_ambient_Pa": {"allOf": [{"$ref": "#/$defs/quantity"}, {"properties": {"unit": {"const": "Pa"}}}]},
+    "m_mean_kg": {"allOf": [{"$ref": "#/$defs/quantity"}, {"properties": {"unit": {"const": "kg"}}}]},
+    "w_s": {"allOf": [{"$ref": "#/$defs/species_quantity"}, {"$ref": "#/$defs/air_species"},
+                      {"properties": {"unit": {"const": "-"}}}]},
+    "x_s": {"allOf": [{"$ref": "#/$defs/species_quantity"}, {"$ref": "#/$defs/air_species"},
+                      {"properties": {"unit": {"const": "-"}}}]},
+    "species_mass_flux_kgpm2ps": {"allOf": [{"$ref": "#/$defs/species_quantity"}, {"$ref": "#/$defs/air_species"},
+                                            {"properties": {"unit": {"const": "kg m^-2 s^-1"}}}]},
+    "atmosphere_source": {"$ref": "#/$defs/label"},
+    "atmosphere_in_domain": {"$ref": "#/$defs/flag"}
+   }
+  },
+  "feed_state": {
+   "description": "valve-outlet state (ICD IF-A5); identical for every architecture",
+   "type": "object",
+   "required": ["mdot_total_kgps", "mdot_s_kgps", "p_feed_Pa", "T_gas_K", "w_s", "x_s"],
+   "additionalProperties": false,
+   "properties": {
+    "mdot_total_kgps": {"allOf": [{"$ref": "#/$defs/quantity"}, {"properties": {"unit": {"const": "kg s^-1"}}}]},
+    "mdot_s_kgps": {"allOf": [{"$ref": "#/$defs/species_quantity"}, {"$ref": "#/$defs/air_species"},
+                              {"properties": {"unit": {"const": "kg s^-1"}}}]},
+    "p_feed_Pa": {"allOf": [{"$ref": "#/$defs/quantity"}, {"properties": {"unit": {"const": "Pa"}}}]},
+    "T_gas_K": {"allOf": [{"$ref": "#/$defs/quantity"}, {"properties": {"unit": {"const": "K"}}}]},
+    "w_s": {"allOf": [{"$ref": "#/$defs/species_quantity"}, {"$ref": "#/$defs/air_species"},
+                      {"properties": {"unit": {"const": "-"}}}]},
+    "x_s": {"allOf": [{"$ref": "#/$defs/species_quantity"}, {"$ref": "#/$defs/air_species"},
+                      {"properties": {"unit": {"const": "-"}}}]}
+   }
+  },
+  "case": {
+   "type": "object",
+   "required": ["case_id", "alt_km", "atmosphere_level", "averaging", "f107", "f107a", "ap", "status",
+                "status_reasons", "architecture_dependent", "calls", "free_stream", "feed_state", "feed_scaling",
+                "closures", "chain_detail"],
+   "additionalProperties": false,
+   "properties": {
+    "case_id": {"type": "string", "pattern": "^alt[0-9]{3}_(low|mean|high)_orbit_averaged$"},
+    "alt_km": {"type": "number", "minimum": 180, "maximum": 230},
+    "atmosphere_level": {"enum": ["low", "mean", "high"]},
+    "averaging": {"const": "orbit_averaged"},
+    "f107": {"type": "number", "minimum": 0},
+    "f107a": {"type": "number", "minimum": 0},
+    "ap": {"type": "number", "minimum": 0},
+    "status": {"$ref": "#/$defs/case_status"},
+    "status_reasons": {"type": "array", "items": {"type": "string"}},
+    "architecture_dependent": {"const": false},
+    "calls": {
+     "type": "object", "required": ["atmosphere"], "additionalProperties": false,
+     "properties": {"atmosphere": {"$ref": "#/$defs/call"}, "chain": {"$ref": "#/$defs/call"}}
+    },
+    "free_stream": {"$ref": "#/$defs/free_stream"},
+    "feed_state": {"$ref": "#/$defs/feed_state"},
+    "feed_scaling": {
+     "type": "object", "required": ["relation", "A_eff_m2"], "additionalProperties": false,
+     "properties": {
+      "relation": {"$ref": "#/$defs/nonempty_string"},
+      "A_eff_m2": {"allOf": [{"$ref": "#/$defs/quantity"}, {"properties": {"unit": {"const": "m^2"}}}]}
+     }
+    },
+    "closures": {"type": "object", "minProperties": 2, "additionalProperties": {"type": "number"}},
+    "chain_detail": {"type": ["object", "null"]}
+   },
+   "anyOf": [
+    {"properties": {"status": {"const": "DESIGN_INPUTS_MISSING"}, "chain_detail": {"type": "null"},
+                    "feed_state": {"properties": {"mdot_total_kgps": {"properties": {"value": {"type": "null"}}}}}}},
+    {"properties": {"status": {"const": "OK"}, "chain_detail": {"type": "object"},
+                    "feed_state": {"properties": {"mdot_total_kgps": {"properties": {"value": {"type": "number"}}}}}}},
+    {"properties": {"status": {"enum": ["INFEASIBLE", "MODEL_ERROR"]}, "chain_detail": {"type": "object"},
+                    "feed_state": {"properties": {"mdot_total_kgps": {"properties": {"value": {"type": "null"}}}}}}}
+   ]
+  }
+ }
+}

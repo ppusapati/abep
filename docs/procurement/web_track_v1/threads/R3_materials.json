@@ -1,0 +1,1294 @@
+{
+ "schema": "r3_materials_v1",
+ "date": "2026-09-27",
+ "base_commit": "782f900",
+ "author_lane": "research agent R3 (web track), read-only on repo",
+ "status": "RESEARCH_INPUT_NOT_A_SELECTION",
+ "hard_statements": [
+  "No supplier contacted; published open sources only; no paywall/bot-challenge bypassed; TLS never altered.",
+  "Nothing is 'safe to procure now': every relevant HW requirement is PROPOSED/TBD in hardware_requirements_v1.json (status DRAFT_PENDING_OWNER), the H2 preliminary hardware freeze has not happened (A7) and the H3 procurement wave is PLANNED_NOT_REGISTERED.",
+  "Evidence classes follow docs/EVIDENCE.md levels; supplier datasheets are L5 (measured-typical, procedure unpublished); maximum-use temperatures are L5 assumed (manufacturer recommendation).",
+  "Values marked 'verify' are not from an accessed source."
+ ],
+ "source_register": [
+  {
+   "id": "CARP-H50A",
+   "citation": "Carpenter Technology / Carpenter Electrification, Hiperco 50A data sheet (E199), v 05-20, (c) 2020",
+   "url": "https://f.hubspotusercontent20.net/hubfs/7407327/carpenter_electrification/Resources/Datasheets/Hiperco_50A_Alloy_(E199).pdf",
+   "accessed": "2026-09-27",
+   "access_level": "open manufacturer datasheet; 'typical or average values, not a guarantee'",
+   "local_copy": "src/carpenter_hiperco50a_E199.pdf",
+   "sha256": "210b476850f30cbff8a8a74b0ea718b1897155bdc0c1a9d54d7d1141bcbc919e",
+   "locator_convention": "printed page 1-6"
+  },
+  {
+   "id": "VAC-VF50",
+   "citation": "VACUUMSCHMELZE GmbH & Co. KG, VACOFLUX 50 datasheet, July 2022",
+   "url": "https://vacuumschmelze.com/03_Documents/Brochures/Datasheet%20%20VACOFLUX%2050.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "open manufacturer datasheet; 'typical values'",
+   "local_copy": "src/vac_vacoflux50_ds.pdf",
+   "sha256": "dddfac04d6165f6e8b88ec712b7cd3b76a749330a44b0426fc47c50dde21756f",
+   "locator_convention": "p.1"
+  },
+  {
+   "id": "CLF-ARMCO",
+   "citation": "AK Steel International (Cleveland-Cliffs), ARMCO Pure Iron - High Purity Iron, Product Data Bulletin (Euro, 07/2022; PDF created 2022-10-13)",
+   "url": "https://www.aksteel.nl/files/downloads/clf_productdata__armco_pure_iron_pdb_euro_final_072022_92.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "open manufacturer bulletin; mechanical values 'for information only'",
+   "local_copy": "src/aksteel_armco_pure_iron_pdb_072022.pdf",
+   "sha256": "b3306c48e295f80ad1c63e93854d495338682906665850121159a7e4e4c8a0e9",
+   "locator_convention": "printed page numbers 1-19"
+  },
+  {
+   "id": "CARP-430FSQ",
+   "citation": "Carpenter Electrification, 430F Solenoid Quality Stainless data sheet (file 20200717)",
+   "url": "https://www.carpenterelectrification.com/hubfs/Resources/Datasheets/20200717-CT-430F-Solenoid-Quality-Electrification-Datasheet_F.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "open manufacturer datasheet",
+   "local_copy": "src/carpenter_430F_SQ_20200717.pdf",
+   "sha256": "e35c1bcfdc9e6921faf295a06c45358ad34abb39e820f513ce6547364007a905",
+   "locator_convention": "printed page 1-7"
+  },
+  {
+   "id": "PC-BN-MM26",
+   "citation": "Precision Ceramics (UK/USA/EU), Material Datasheet Boron Nitride (BN) Grades M & M26 (2018 upload)",
+   "url": "https://precision-ceramics.com/wp-content/uploads/2018/07/Boron-Nitride-Grade-M-M26-Technical-Data-Sheet-en.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "open distributor/machinist datasheet (not the powder/billet manufacturer); 'mean and typical ... not guaranteed'",
+   "local_copy": "src/pc_bn_M_M26.pdf",
+   "sha256": "ee28f3f08b899515d25717e7d5ffddf1f8f8e5fce54b696cd45574255277a5c2",
+   "locator_convention": "single page; column alignment verified on a rendered image (src/pc_m_m26-1.png)"
+  },
+  {
+   "id": "PC-BN-AX05",
+   "citation": "Precision Ceramics, Material Datasheet Boron Nitride (BN) Grade AX05 (2018 upload)",
+   "url": "https://precision-ceramics.com/wp-content/uploads/2018/07/Boron-Nitride-Grade-AX05-Technical-Data-Sheet-en.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "open distributor datasheet; typical values",
+   "local_copy": "src/pc_bn_AX05.pdf",
+   "sha256": "bb917555389e881c8ea11781017c2f22b951a615e9b58e8b73f50b68b98fbf9e",
+   "locator_convention": "single page"
+  },
+  {
+   "id": "HENZE-HEBOSINT",
+   "citation": "Henze Boron Nitride Products AG, HeBoSint qualities datasheet 08.2021 (as recorded in repo schemas/thermal_life/limits_v1.json, accessed 2026-09-26 by lane 15)",
+   "url": "https://nitrid.eu/files/henze/en/HS_Qualities_en.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "open manufacturer datasheet; NOT re-read by this lane (repo record reused)"
+  },
+  {
+   "id": "SCHUPP-KD500",
+   "citation": "Karl Schupp AG, 'KD500 high temperature winding wires with ceramic insulation (500 °C)' product web page",
+   "url": "https://schupp.ch/en/p/kd500-winding-wires-with-ceramic-insulation-500c/",
+   "accessed": "2026-09-27",
+   "access_level": "open manufacturer web page (values read via fetch summary; no PDF hash)",
+   "locator_convention": "web page body"
+  },
+  {
+   "id": "CERAMAWIRE-HT",
+   "citation": "Ceramawire HT technical specification (repo MCQ source ceramawire_ht, distributor copy)",
+   "url": "https://www.motionsensors.com/wp-content/uploads/2022/07/ceramaTechspec.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "as recorded in docs/experiments/magnet_coil/magnet_coil_qualification_v1.json; not re-read"
+  },
+  {
+   "id": "REMINGTON-MW16C",
+   "citation": "Remington Industries, polyimide MW 16-C data sheet (repo MCQ source remington_mw16c)",
+   "url": "https://www.remingtonindustries.com/content/Polyimide%20Magnet%20Wire%20Data%20Sheet.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "as recorded in the MCQ register; not re-read"
+  },
+  {
+   "id": "NASA-TB-LAB6",
+   "citation": "NASA Tech Briefs, 'Improved Rare-Earth Emitter Hollow Cathode' (JPL; NTRS 20110012226)",
+   "url": "https://ntrs.nasa.gov/api/citations/20110012226/downloads/20110012226.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "open NASA technical brief",
+   "local_copy": "src/ntrs_20110012226.pdf",
+   "sha256": "ba0f3085b7c2e4d50212049f17c98107de2dc196cd33a46004593f435553449a",
+   "locator_convention": "single page text"
+  },
+  {
+   "id": "GK2008-CH6",
+   "citation": "D. M. Goebel and I. Katz, Fundamentals of Electric Propulsion, JPL 2008, Chapter 6 Hollow Cathodes (separate chapter PDF)",
+   "url": "https://descanso.jpl.nasa.gov/SciTechBook/series1/Goebel_06_Chap6_cathodes.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "open (JPL DESCANSO)",
+   "local_copy": "src/goebel_ch6.pdf",
+   "sha256": "61ea4e1069e9beaab71ead29ea9dcf91deb8812859dd4c2c0f82d129f92a00f6",
+   "locator_convention": "PDF page 12 of the chapter file (printed page ~254, verify)"
+  },
+  {
+   "id": "ALLECTRA-311",
+   "citation": "allectra GmbH, 'Kapton and PEEK insulated wires for UHV use' overview (file 311-Kaptonwires-overview-2023-10)",
+   "url": "https://www.allectra.com/wp-content/uploads/2025/02/311-Kaptonwires-overview-2023-10.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "open manufacturer catalogue sheet",
+   "local_copy": "src/allectra_311_kapton_peek.pdf",
+   "sha256": "7031cb0330785cedcfdcb16cddae94657703c7d6930b863e2fd0d4fd0629ff32",
+   "locator_convention": "table rows"
+  },
+  {
+   "id": "SWG-MS-01-24",
+   "citation": "Swagelok, VCR Metal Gasket Face Seal Fittings catalog MS-01-24",
+   "url": "https://www.swagelok.com/downloads/webcatalogs/en/ms-01-24.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "open manufacturer catalogue",
+   "local_copy": "src/swagelok_ms-01-24.pdf",
+   "sha256": "8025dc1284cfa31b7478a9a69ec9f399c65cab1e4aff8bd12fb78fcd4a1f2adc",
+   "locator_convention": "p.3 Temperature Ratings / Testing"
+  },
+  {
+   "id": "SWG-SC11",
+   "citation": "Swagelok, Special Cleaning and Packaging (SC-11), specification SCS-00011, MS-06-63",
+   "url": "https://www.swagelok.com/downloads/webcatalogs/en/ms-06-63.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "open manufacturer specification",
+   "local_copy": "src/swagelok_ms-06-63_sc11.pdf",
+   "sha256": "9862eb882bbf957674611411330f9abb752916ffe532197ca221873a9b44d6e0",
+   "locator_convention": "pp.1-2"
+  },
+  {
+   "id": "SST-13KV",
+   "citation": "Solid Sealing Technology, 13 kV Ceramic Vacuum Break, Electrical Isolator, 0.25 in ID, -200 to 450 °C, 1/4 VCR (product page 203)",
+   "url": "https://www.solidsealing.com/products/203/13kV-Ceramic-Vacuum-Break-Electrical-Isolator-0-25-Inch-Insulator-ID-Rated-from-200-C-to-450-C-1-4-VCR-Break/",
+   "accessed": "2026-09-27",
+   "access_level": "open manufacturer web page (fetch summary; no hash)"
+  },
+  {
+   "id": "CIFALI2011",
+   "citation": "G. Cifali et al., 'Experimental characterization of HET and RIT with atmospheric propellants', IEPC-2011-224 (as recorded and verified by the AO register v5, CIFALI2011, p. 2 and p. 5)",
+   "url": "https://electricrocket.org/IEPC/IEPC-2011-224.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "open; repo record reused, not re-read"
+  },
+  {
+   "id": "ANDREUSSI2022",
+   "citation": "T. Andreussi, E. Ferrato, V. Giannetti, J. Electr. Propuls. 1:31 (2022), doi:10.1007/s44205-022-00024-9 (as recorded by AO register v5, Page 24 and 38 of 57)",
+   "url": "https://link.springer.com/content/pdf/10.1007/s44205-022-00024-9.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "open CC BY; repo record reused, not re-read"
+  },
+  {
+   "id": "DEGROH2006",
+   "citation": "de Groh et al., NASA/TM-2006-214482, MISSE PEACE polymers (as recorded by AO register v5; Kapton H erosion yield 3.00E-24 cm3/atom, Table 4 p.17)",
+   "url": "https://ntrs.nasa.gov/api/citations/20070002707/downloads/20070002707.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "open; repo record reused"
+  }
+ ],
+ "access_failures": [
+  {
+   "url": "https://www.bn.saint-gobain.com/sites/hps-mac3-cma-boron-nitride/files/2022-06/combat-bn-solids-ds.pdf",
+   "result": "HTTP 403 (WAF page) on 2026-09-27; also bot-challenged 2026-09-26 per lane 15; not bypassed"
+  },
+  {
+   "url": "https://www.professionalplastics.com/professionalplastics/content/downloads/Combat-BoronNitrideData.pdf",
+   "result": "Incapsula bot challenge (HTML); not bypassed"
+  },
+  {
+   "url": "https://www.astm.org/a0848-17.html",
+   "result": "HTTP 403; ASTM A848 scope not read"
+  },
+  {
+   "url": "https://www.mdpi.com/1996-1073/15/15/5362",
+   "result": "HTTP 403 (Energies 15:5362 anodized-Al strip wire ageing study); not read, no value taken"
+  },
+  {
+   "url": "https://www.coorstek.com/media/4235/advanced-alumina.pdf",
+   "result": "curl TLS verify failure; WebFetch HTTP 503; TLS not altered; no CoorsTek value taken (search-snippet values deliberately NOT used)"
+  },
+  {
+   "url": "https://www.dupont.com/.../EI-10142-Kapton-Summary-of-Properties.pdf",
+   "result": "HTTP 404 (guessed URL); DuPont Kapton HN temperature limits not sourced here"
+  },
+  {
+   "url": "https://www.plansee.com/en/materials/molybdenum.html",
+   "result": "accessed; contains no oxidation statement (melting point 2620 °C only); Mo/W oxidation remains unsourced"
+  }
+ ],
+ "categories": [
+  {
+   "category": "1a magnetic pole/core materials (MC-1)",
+   "requirement_refs": [
+    "HW-MC-13 (TBD; grade not selected, HWQ-18)",
+    "HW-MC-06",
+    "HW-H1-14",
+    "HW-MC-12",
+    "HW-MC-15",
+    "AOL-M06",
+    "MCQ-OQ-05"
+   ],
+   "options": [
+    {
+     "name": "ARMCO Pure Iron (Grade 2 / Grade 4)",
+     "supplier_or_grade": "AK Steel International / Cleveland-Cliffs (ARMCO is a trade name; comparable low-carbon magnetic irons exist under ASTM A848, not read)",
+     "key_specs": [
+      {
+       "quantity": "Fe content",
+       "value": "min 99.85",
+       "unit": "%",
+       "source_id": "CLF-ARMCO",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "C max (Grade 2 / 4)",
+       "value": "0.010 / 0.010",
+       "unit": "wt%",
+       "source_id": "CLF-ARMCO",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "saturation (max intrinsic induction)",
+       "value": "2.15",
+       "unit": "T",
+       "source_id": "CLF-ARMCO",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "B at 24 kA/m (all anneal states)",
+       "value": "2.05-2.10",
+       "unit": "T",
+       "source_id": "CLF-ARMCO",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "Hc after SRA/recrystallization anneal",
+       "value": "16-120",
+       "unit": "A/m",
+       "source_id": "CLF-ARMCO",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "Hc after normalization/special anneal",
+       "value": "24-45",
+       "unit": "A/m",
+       "source_id": "CLF-ARMCO",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "mu_max after SRA/recryst. anneal",
+       "value": "5000-19000",
+       "unit": "-",
+       "source_id": "CLF-ARMCO",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "resistivity 0 / 400 / 800 C",
+       "value": "9.6 / 43.1 / 105.5",
+       "unit": "uOhm cm",
+       "source_id": "CLF-ARMCO",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "CTE 20-399 C",
+       "value": "13.7",
+       "unit": "um/m/C",
+       "source_id": "CLF-ARMCO",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "recommended magnetic anneal",
+       "value": "820 +/- 20 (reducing or inert atmosphere; dry N2, Ar or vacuum acceptable)",
+       "unit": "C",
+       "source_id": "CLF-ARMCO",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "magnetic ageing maximum rate",
+       "value": "100-150 C (bake 177-260 C after anneal to stabilise)",
+       "unit": "C",
+       "source_id": "CLF-ARMCO",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "Curie temperature",
+       "value": "not stated in accessed source (textbook ~770 C: verify)",
+       "unit": "C",
+       "source_id": "CLF-ARMCO",
+       "evidence_class": "not sourced"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen yet (HW-MC-13 TBD). Candidate data cover HW-MC-13's 'sourced B-H and saturation' item only at room temperature; temperature dependence, outgassing and O-exposure data NOT in the source.",
+     "oxygen_compatibility": "Bulletin claims 'adhering, protective layers of scale' vs normal steel (qualitative, air, no temperature/time); 'excessive oxidation is injurious to the magnetic qualities'. No O/O-plasma data. Needs AOL-EX-02 / HW-MC-06 coupons and likely a coating (open).",
+     "availability_notes": "Bulletin lists hot-rolled sheet samples (2 and 3 mm) and forged/bar use; no lead times published.",
+     "limitations": "Machining stresses degrade permeability -> anneal after machining (bulletin). Tends to smear in turning. Bs vs temperature not given. Ferromagnetic coupon affects B(z) (HW-MC-06)."
+    },
+    {
+     "name": "Hiperco 50A (FeCo-2V)",
+     "supplier_or_grade": "Carpenter Technology; ASTM A801 Alloy Type 1, MIL A 47182 (datasheet statement)",
+     "key_specs": [
+      {
+       "quantity": "composition",
+       "value": "Fe bal, Co 48.5, V 2.00, Nb 0.01, C 0.001",
+       "unit": "wt%",
+       "source_id": "CARP-H50A",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "saturation",
+       "value": "24 (2.4)",
+       "unit": "kG (T)",
+       "source_id": "CARP-H50A",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "B at 16 kA/m, bar, std magnetic anneal",
+       "value": "2.30",
+       "unit": "T",
+       "source_id": "CARP-H50A",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "Hc bar / 0.355 mm strip",
+       "value": "209 / 30",
+       "unit": "A/m",
+       "source_id": "CARP-H50A",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "mu_max bar / strip",
+       "value": "3350 / 22000",
+       "unit": "-",
+       "source_id": "CARP-H50A",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "Curie temperature",
+       "value": "938 (1720 F)",
+       "unit": "C",
+       "source_id": "CARP-H50A",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "resistivity 21 C",
+       "value": "40.1e-8",
+       "unit": "Ohm m",
+       "source_id": "CARP-H50A",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "CTE 25-400 C",
+       "value": "10.1e-6",
+       "unit": "1/C",
+       "source_id": "CARP-H50A",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "anneal",
+       "value": "857-871 C, 4 h, dry H2 or vacuum",
+       "unit": "-",
+       "source_id": "CARP-H50A",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "elongation after magnetic anneal (strip)",
+       "value": "6.7",
+       "unit": "%",
+       "source_id": "CARP-H50A",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen yet (HW-MC-13 TBD).",
+     "oxygen_compatibility": "Datasheet: laminations deliberately oxidised in O-bearing atmosphere at 300-500 C to grow an insulating oxide -> the alloy oxidises readily in that range (inferred from the datasheet coating note). No plasma/AO data.",
+     "availability_notes": "Forms manufactured: strip, plate, bar, billet. Lead times not published. Export-control: none stated in the accessed sheet.",
+     "limitations": "Bar properties markedly softer-magnetically than strip (Hc 209 vs 30 A/m). Low ductility; must be annealed in H2/vacuum after machining. Cost/Co supply not published here."
+    },
+    {
+     "name": "VACOFLUX 50 (49Co-49Fe-2V)",
+     "supplier_or_grade": "VACUUMSCHMELZE; IEC 60404-8-6 F11",
+     "key_specs": [
+      {
+       "quantity": "Js",
+       "value": "2.30",
+       "unit": "T",
+       "source_id": "VAC-VF50",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "Bs at 40 kA/m",
+       "value": "2.35",
+       "unit": "T",
+       "source_id": "VAC-VF50",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "Hc (solid)",
+       "value": "~100",
+       "unit": "A/m",
+       "source_id": "VAC-VF50",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "mu_max",
+       "value": "~7000",
+       "unit": "-",
+       "source_id": "VAC-VF50",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "Curie temperature",
+       "value": "950",
+       "unit": "C",
+       "source_id": "VAC-VF50",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "resistivity",
+       "value": "0.42",
+       "unit": "uOhm m",
+       "source_id": "VAC-VF50",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "CTE 20-100 C",
+       "value": "9.4e-6",
+       "unit": "1/K",
+       "source_id": "VAC-VF50",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "final anneal",
+       "value": "H2, 820 C, 10 h, 100-200 K/h",
+       "unit": "-",
+       "source_id": "VAC-VF50",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "elongation (final annealed)",
+       "value": "<3",
+       "unit": "%",
+       "source_id": "VAC-VF50",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen yet (HW-MC-13 TBD).",
+     "oxygen_compatibility": "Not stated in the source.",
+     "availability_notes": "Solid rods 12.5-182 mm diameter; others on request. No lead time published.",
+     "limitations": "Brittle (<3 % elongation); H2 anneal required; same Co-alloy supply considerations as Hiperco (not quantified)."
+    },
+    {
+     "name": "430F Solenoid Quality (ferritic 17Cr free-machining)",
+     "supplier_or_grade": "Carpenter; ASTM A838, A314, A581, A473, A582 (listed)",
+     "key_specs": [
+      {
+       "quantity": "Cr",
+       "value": "17.25-18.25",
+       "unit": "wt%",
+       "source_id": "CARP-430FSQ",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "S",
+       "value": "0.250-0.400",
+       "unit": "wt%",
+       "source_id": "CARP-430FSQ",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "Bs",
+       "value": "1.56 (15.6 kG)",
+       "unit": "T",
+       "source_id": "CARP-430FSQ",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "Curie temperature",
+       "value": "671",
+       "unit": "C",
+       "source_id": "CARP-430FSQ",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "Hc full anneal (845 C, dry H2)",
+       "value": "120-200",
+       "unit": "A/m",
+       "source_id": "CARP-430FSQ",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "mu_max full anneal",
+       "value": "1100-2400",
+       "unit": "-",
+       "source_id": "CARP-430FSQ",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "resistivity",
+       "value": "60",
+       "unit": "uOhm cm",
+       "source_id": "CARP-430FSQ",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "CTE 0-649 C",
+       "value": "13.0e-6 (sheet prints 12.996)",
+       "unit": "1/C",
+       "source_id": "CARP-430FSQ",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen yet (HW-MC-13 TBD).",
+     "oxygen_compatibility": "Corrosion rating 'Humidity: Excellent' (room-temperature aqueous scale); no high-temperature oxidation or plasma data.",
+     "availability_notes": "Bar rounds, billet, wire; annealed ground bar >= 9.53 mm dia.",
+     "limitations": "Bs ~1.56 T (~27 % below pure iron) -> more ampere-turns. 0.25-0.40 % S free-machining additive: vacuum suitability (sulfide outgassing) is not addressed by the source (verify). Not recommended for welding (datasheet)."
+    }
+   ],
+   "procurement_status": "wait",
+   "wait_reason": "HWQ-18 (grade) and HWQ-19 (electromagnet vs PM) open; HW-MC-13 TBD; H2-1 Hall chamber + magnetic-circuit sizing and preliminary hardware freeze (A7) not done; H3 procurement wave PLANNED_NOT_REGISTERED."
+  },
+  {
+   "category": "1b electromagnet hardware: high-temperature magnet wire and bobbins",
+   "requirement_refs": [
+    "HW-MC-07",
+    "HW-MC-08 (TBD)",
+    "HW-MC-10",
+    "HW-MC-11 (TBD)",
+    "HW-MC-12",
+    "HW-MC-16 (TBD)",
+    "HWQ-20",
+    "MCQ-EM-01..06",
+    "MCQ-QT-01..08"
+   ],
+   "options": [
+    {
+     "name": "Polyimide-enamelled copper MW 16-C",
+     "supplier_or_grade": "Remington (distributor) per MCQ-EM-01",
+     "key_specs": [
+      {
+       "quantity": "thermal class (material)",
+       "value": "240",
+       "unit": "C",
+       "source_id": "REMINGTON-MW16C",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen (HW-MC-07 PROPOSED; EIS family is HWQ-20).",
+     "oxygen_compatibility": "Polyimide (Kapton H) ram-AO erosion yield 3.00E-24 cm3/atom (DEGROH2006, L3, ISS exterior) -> organic enamel is AO-susceptible if exposed; no in-thruster data.",
+     "availability_notes": "Already in MCQ register; no lead time published.",
+     "limitations": "Material class, not EIS class; E595 not retrieved (MCQ)."
+    },
+    {
+     "name": "Ceramic-insulated Ni-plated copper KD500",
+     "supplier_or_grade": "Karl Schupp AG (CH)",
+     "key_specs": [
+      {
+       "quantity": "conductor",
+       "value": "Cu with 27 % Ni plating",
+       "unit": "-",
+       "source_id": "SCHUPP-KD500",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "insulation thickness",
+       "value": "5-20",
+       "unit": "um",
+       "source_id": "SCHUPP-KD500",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "continuous temperature",
+       "value": "-90 to +500 (2500 h min.)",
+       "unit": "C",
+       "source_id": "SCHUPP-KD500",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      },
+      {
+       "quantity": "short term",
+       "value": "up to 800 (240 h tested)",
+       "unit": "C",
+       "source_id": "SCHUPP-KD500",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      },
+      {
+       "quantity": "test voltage / breakdown",
+       "value": "150 V AC (212 V DC) / >150 V AC",
+       "unit": "V",
+       "source_id": "SCHUPP-KD500",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "diameter range",
+       "value": "0.07-1.0 (AWG 41-18)",
+       "unit": "mm",
+       "source_id": "SCHUPP-KD500",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "min bend radius",
+       "value": "5x outer diameter",
+       "unit": "-",
+       "source_id": "SCHUPP-KD500",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "outgassing",
+       "value": "'None' (supplier statement, no E595 value)",
+       "unit": "-",
+       "source_id": "SCHUPP-KD500",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen. Low turn voltage rating directly constrains HW-MC-11 (TBD).",
+     "oxygen_compatibility": "Ceramic insulation; Ni plating oxidises at temperature (not quantified in source).",
+     "availability_notes": "Catalogue item; no lead time published.",
+     "limitations": "Ni cladding is ferromagnetic -> HW-MC-12 check. 'Ceramic is sensitive to moisture... may need to be impregnated'; dry storage. 2500 h basis is far below 15,000 h (not a life basis). Values read via page summary (no hash) -> re-read before any decision."
+    },
+    {
+     "name": "Ceramawire HT (Kulgrid 28 27 % Ni-clad Cu / all-Ni)",
+     "supplier_or_grade": "Ceramawire (MCQ-EM-03/04)",
+     "key_specs": [
+      {
+       "quantity": "continuous",
+       "value": "-267.8 to 537.8",
+       "unit": "C",
+       "source_id": "CERAMAWIRE-HT",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      },
+      {
+       "quantity": "dielectric rating",
+       "value": "150 V DC (<= #32) / 200 V DC",
+       "unit": "V",
+       "source_id": "CERAMAWIRE-HT",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen.",
+     "oxygen_compatibility": "vitreous enamel; Ni migration above 600 F (MCQ).",
+     "availability_notes": "manufacturer host 502 in MCQ lane; distributor copy.",
+     "limitations": "See MCQ register; life '>2500 h' not a 15,000 h basis."
+    },
+    {
+     "name": "Anodized-aluminium strip/wire",
+     "supplier_or_grade": "generic (MCQ-EM-05)",
+     "key_specs": [],
+     "satisfies_requirement": "No requirement frozen.",
+     "oxygen_compatibility": "Al2O3 insulation (inherently oxidised) - no sourced data.",
+     "availability_notes": "Energies 15:5362 (2022) thermal-ageing study found but HTTP 403; no value taken.",
+     "limitations": "NOT_SOURCED_FOR_SELECTION"
+    },
+    {
+     "name": "Bobbin / coil former: BN, alumina or machinable glass-ceramic",
+     "supplier_or_grade": "see category 2 for BN grade data",
+     "key_specs": [],
+     "satisfies_requirement": "No requirement exists for the bobbin.",
+     "oxygen_compatibility": "see category 2",
+     "availability_notes": "",
+     "limitations": "Bobbin must be non-ferromagnetic (HW-MC-12). No bobbin-specific source accessed."
+    }
+   ],
+   "procurement_status": "wait",
+   "wait_reason": "HWQ-20 (conductor/insulation family and hot-spot margin) decided only after the H-1 thermal model hot-spot estimate; HWQ-19; MCQ-S1-01 open; H2-1/H2-5 preliminary sizing and hardware freeze pending. Exception worth an owner decision: a small sacrificial-coil lot (HW-MC-16) could be bought early for MCQ-QT-05/08 screening once HWQ-20 names a family."
+  },
+  {
+   "category": "2 discharge-channel wall ceramics (BN, BN-SiO2, alumina)",
+   "requirement_refs": [
+    "HW-H1-04 (TBD; owner decision lane 17 Q6 / HWQ-08)",
+    "HW-H1-11",
+    "HW-H1-14",
+    "HWQ-17",
+    "AOL-M02",
+    "AOL-M03",
+    "HW-PIM-14"
+   ],
+   "options": [
+    {
+     "name": "BN-SiO2 composite, Grade M26 (Combat-type; historical P5 wall per repo)",
+     "supplier_or_grade": "Saint-Gobain Combat M26 (manufacturer sheet 403, not read); values from Precision Ceramics sheet",
+     "key_specs": [
+      {
+       "quantity": "density",
+       "value": "2.1",
+       "unit": "g/cm3",
+       "source_id": "PC-BN-MM26",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "thermal conductivity par / perp",
+       "value": "11 / 29",
+       "unit": "W/mK",
+       "source_id": "PC-BN-MM26",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "CTE 25-400 C par / perp",
+       "value": "3 / 0.4",
+       "unit": "1e-6/K",
+       "source_id": "PC-BN-MM26",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "flexural strength par / perp",
+       "value": "62 / 34",
+       "unit": "MPa",
+       "source_id": "PC-BN-MM26",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "max temperature air / inert",
+       "value": "1000+ / 1000+",
+       "unit": "C",
+       "source_id": "PC-BN-MM26",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      },
+      {
+       "quantity": "dielectric strength DC",
+       "value": "66",
+       "unit": "kV/mm",
+       "source_id": "PC-BN-MM26",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen (HW-H1-04 TBD).",
+     "oxygen_compatibility": "Air rating 1000+ C (thermal, no plasma/AO). No N+/O+ sputter yield on BN-SiO2 exists (lane 32). Cifali 2011: 'signs of operation with oxygen ... visible on the ceramics' (L3, visual, 10 h).",
+     "availability_notes": "Hydrophobic (passes MIL-I-10A L542 48 h immersion). No lead time published. Manufacturer sheet blocked.",
+     "limitations": "Conflict: an AZoM article snippet attributes 12/14 W/mK to M26 and 11/29 to M; the rendered Precision Ceramics sheet shows the reverse (M=12/14, M26=11/29). Resolve from the manufacturer sheet before use."
+    },
+    {
+     "name": "BN Grade M (BN + silica)",
+     "supplier_or_grade": "Saint-Gobain Combat M via Precision Ceramics",
+     "key_specs": [
+      {
+       "quantity": "density",
+       "value": "2.3",
+       "unit": "g/cm3",
+       "source_id": "PC-BN-MM26",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "thermal conductivity par / perp",
+       "value": "12 / 14",
+       "unit": "W/mK",
+       "source_id": "PC-BN-MM26",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "flexural par/perp",
+       "value": "103 / 76",
+       "unit": "MPa",
+       "source_id": "PC-BN-MM26",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "max temperature air",
+       "value": "1000+",
+       "unit": "C",
+       "source_id": "PC-BN-MM26",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen.",
+     "oxygen_compatibility": "as M26 (thermal air rating only)",
+     "availability_notes": "",
+     "limitations": "not a flight Hall wall grade in accessed sources"
+    },
+    {
+     "name": "High-purity diffusion-bonded hBN Grade AX05",
+     "supplier_or_grade": "Saint-Gobain Combat AX05 via Precision Ceramics",
+     "key_specs": [
+      {
+       "quantity": "density",
+       "value": "1.9",
+       "unit": "g/cm3",
+       "source_id": "PC-BN-AX05",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "thermal conductivity par / perp",
+       "value": "78 / 130",
+       "unit": "W/mK",
+       "source_id": "PC-BN-AX05",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "max temperature air / inert",
+       "value": "850 / 2000",
+       "unit": "C",
+       "source_id": "PC-BN-AX05",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      },
+      {
+       "quantity": "flexural par / perp",
+       "value": "22 / 21",
+       "unit": "MPa",
+       "source_id": "PC-BN-AX05",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "dielectric strength DC",
+       "value": "79",
+       "unit": "kV/mm",
+       "source_id": "PC-BN-AX05",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen.",
+     "oxygen_compatibility": "Lowest air rating (850 C) of the grades read; binder-free, so no B2O3/SiO2 phase (source), but pure BN oxidises to B2O3 (lane 32, model-level).",
+     "availability_notes": "",
+     "limitations": "Low strength; moisture behaviour not stated."
+    },
+    {
+     "name": "HeBoSint PL/CL/CL-S 200 (BN+SiO2)/CL-Z/SL-A grades",
+     "supplier_or_grade": "Henze BNP AG",
+     "key_specs": [
+      {
+       "quantity": "use temperature max, oxidizing",
+       "value": "~900 (all grades)",
+       "unit": "C",
+       "source_id": "HENZE-HEBOSINT",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      },
+      {
+       "quantity": "use temperature max, inert/vacuum",
+       "value": "1500-2000 (grade-dependent)",
+       "unit": "C",
+       "source_id": "HENZE-HEBOSINT",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen.",
+     "oxygen_compatibility": "~900 C oxidizing guide; no plasma/AO coverage (repo lane 15).",
+     "availability_notes": "repo record reused",
+     "limitations": "CL-S 200 is BN-SiO2 but not M26."
+    },
+    {
+     "name": "High-purity alumina (e.g. 99.5 %)",
+     "supplier_or_grade": "CoorsTek AD-995 etc.",
+     "key_specs": [],
+     "satisfies_requirement": "No requirement frozen.",
+     "oxygen_compatibility": "fully oxidised ceramic; Espy 1993 O+ yields on Al2O3 exist but not accessed (lane 32).",
+     "availability_notes": "CoorsTek PDF: TLS failure / HTTP 503; no value recorded.",
+     "limitations": "Not a flight Hall wall material per HW-H1-04 context; unsourced here."
+    }
+   ],
+   "procurement_status": "wait",
+   "wait_reason": "Wall grade is an owner decision (HWQ-08, lane 17 Q6); HWQ-17 (alternative sector inserts); H-1 geometry release (HW-H1-03 TBD) and wall-ring design (HW-H1-11) needed to size billets; coupons must share the installed lot (HW-H1-14), so coupon stock cannot be bought ahead of the wall lot."
+  },
+  {
+   "category": "3 anode / gas-distributor materials for O2-bearing feed",
+   "requirement_refs": [
+    "HW-H1-05 (PROPOSED)",
+    "HW-H1-09 (TBD)",
+    "HW-H1-10",
+    "HWQ-08",
+    "AOL-M01",
+    "AOL-M08",
+    "AOL-OQ-03",
+    "HW-ELEC-04"
+   ],
+   "options": [
+    {
+     "name": "Literature evidence (no material named)",
+     "supplier_or_grade": "n/a",
+     "key_specs": [
+      {
+       "quantity": "PPS1350-TSD anode after 10 h N2/O2",
+       "value": "'seems rusty'; oxidation 'main concern' for endurance",
+       "unit": "-",
+       "source_id": "CIFALI2011",
+       "evidence_class": "L3 primary literature, other device (NOT transferred to H-1)"
+      },
+      {
+       "quantity": "pure-O2 test replaced by 1.27N2+O2",
+       "value": "'in order to limit anode oxidation'",
+       "unit": "-",
+       "source_id": "CIFALI2011",
+       "evidence_class": "L3 primary literature, other device (NOT transferred to H-1)"
+      },
+      {
+       "quantity": "PPS1350 N2/O2+10 % Xe steady before first oxidation flame-out",
+       "value": "~314",
+       "unit": "h",
+       "source_id": "ANDREUSSI2022",
+       "evidence_class": "L5 review (second-hand of CIFALI2012)"
+      },
+      {
+       "quantity": "authors' remedy",
+       "value": "'alternative, oxidation-resistant anode materials' (none named)",
+       "unit": "-",
+       "source_id": "ANDREUSSI2022",
+       "evidence_class": "L5 assumed"
+      },
+      {
+       "quantity": "RIT10 graphite grids on pure O2",
+       "value": "erosion 'noticeably higher' than N2; Ti grids lower",
+       "unit": "-",
+       "source_id": "ANDREUSSI2022",
+       "evidence_class": "L5, other device class"
+      }
+     ],
+     "satisfies_requirement": "Supports HW-H1-05 evidence basis; does not select a material.",
+     "oxygen_compatibility": "see specs",
+     "availability_notes": "Anode material of the PPS1350 not stated in accessed text.",
+     "limitations": "Other device; not transferred to H-1."
+    },
+    {
+     "name": "Austenitic stainless 316L (fitting/bar grade)",
+     "supplier_or_grade": "generic; Swagelok 316L fittings rated 537 C (SWG-MS-01-24)",
+     "key_specs": [
+      {
+       "quantity": "316L fitting temperature rating",
+       "value": "1000 F (537 C)",
+       "unit": "C",
+       "source_id": "SWG-MS-01-24",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen.",
+     "oxygen_compatibility": "No sourced oxidation data at anode temperature in O/O2 plasma (verify). Non-magnetic in annealed state (general knowledge, verify) - relevant to HW-MC-12.",
+     "availability_notes": "commodity",
+     "limitations": "Only a pressure-fitting temperature rating was sourced, not an oxidation limit."
+    },
+    {
+     "name": "Ni-base alloys (e.g. Inconel 600/625, Haynes 214/230)",
+     "supplier_or_grade": "not sourced this pass",
+     "key_specs": [],
+     "satisfies_requirement": "No requirement frozen.",
+     "oxygen_compatibility": "unsourced (verify from Special Metals/Haynes datasheets)",
+     "availability_notes": "",
+     "limitations": "Ni-rich alloys can be ferromagnetic depending on grade/temperature (verify) -> HW-MC-12."
+    },
+    {
+     "name": "Mo / W",
+     "supplier_or_grade": "Plansee page read (no oxidation statement)",
+     "key_specs": [
+      {
+       "quantity": "Mo melting point",
+       "value": "2620",
+       "unit": "C",
+       "source_id": "(plansee.com molybdenum page, not hashed)",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen.",
+     "oxygen_compatibility": "Volatile-oxide behaviour in O2 is common knowledge but NOT sourced here (verify). Lane 10: AMPCAT microwave cathode on O2/N2 showed MoOx deposition within ~1 h (L3, other device).",
+     "availability_notes": "",
+     "limitations": "Evidence of MoOx deposition makes Mo unattractive for O-wetted surfaces pending sourced data."
+    },
+    {
+     "name": "Platinum-group coatings (Pt, Ir) on anode",
+     "supplier_or_grade": "not sourced",
+     "key_specs": [],
+     "satisfies_requirement": "No requirement frozen.",
+     "oxygen_compatibility": "unsourced",
+     "availability_notes": "",
+     "limitations": "Coupon pairs coated/uncoated required by AOL-M08 if pursued."
+    }
+   ],
+   "procurement_status": "wait",
+   "wait_reason": "HWQ-08 (anode/distributor material or coating) and AOL-OQ-03 (candidate list) open; HW-H1-09 TBD; H-1 design release; H2-1 sizing. Candidate coupon materials could be listed now but none is fixed by a requirement."
+  },
+  {
+   "category": "4 high-temperature vacuum wiring and insulation",
+   "requirement_refs": [
+    "HW-ELEC-04 (insulation to HW-ENV-01 rating)",
+    "HW-ELEC-05 (TBD)",
+    "HW-MC-14 (TBD)",
+    "HW-H1-12",
+    "HW-C1-09",
+    "HW-ENV-01 (V_d rating, PROPOSED up to 350 V, HWQ-03)",
+    "AOL-M07"
+   ],
+   "options": [
+    {
+     "name": "Kapton-insulated UHV wire (standard 311-KAP series)",
+     "supplier_or_grade": "allectra",
+     "key_specs": [
+      {
+       "quantity": "max voltage in vacuum (e.g. 311-KAP-100, AWG18)",
+       "value": "10,000",
+       "unit": "V DC",
+       "source_id": "ALLECTRA-311",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "voltage rating condition",
+       "value": "pressure < 1e-3 mbar; 'not recommended for air use'",
+       "unit": "-",
+       "source_id": "ALLECTRA-311",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen; ratings far above the 350 V PROPOSED envelope.",
+     "oxygen_compatibility": "Kapton H AO erosion yield 3.00E-24 cm3/atom (DEGROH2006, L3); keep out of plume/O-rich line of sight.",
+     "availability_notes": "catalogue item",
+     "limitations": "Standard-grade max temperature not extracted from the sheet (only radiation-resistant grades carry 300 C); DuPont Kapton HN sheet not retrieved (404)."
+    },
+    {
+     "name": "Radiation-resistant Kapton wire (301-KAP/KAPM series)",
+     "supplier_or_grade": "allectra",
+     "key_specs": [
+      {
+       "quantity": "max temperature",
+       "value": "300",
+       "unit": "C",
+       "source_id": "ALLECTRA-311",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      },
+      {
+       "quantity": "radiation resistance",
+       "value": "1e9",
+       "unit": "rad",
+       "source_id": "ALLECTRA-311",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen.",
+     "oxygen_compatibility": "as Kapton",
+     "availability_notes": "",
+     "limitations": ""
+    },
+    {
+     "name": "PEEK-insulated UHV wire / ribbon",
+     "supplier_or_grade": "allectra",
+     "key_specs": [
+      {
+       "quantity": "max temperature (ribbon / wire rows)",
+       "value": "260 / 250",
+       "unit": "C",
+       "source_id": "ALLECTRA-311",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen.",
+     "oxygen_compatibility": "organic; no AO data sourced",
+     "availability_notes": "",
+     "limitations": ""
+    },
+    {
+     "name": "Bare conductor on alumina fish-spine/ceramic beads",
+     "supplier_or_grade": "generic",
+     "key_specs": [],
+     "satisfies_requirement": "No requirement frozen.",
+     "oxygen_compatibility": "inorganic; unsourced",
+     "availability_notes": "",
+     "limitations": "Not sourced this pass (verify)."
+    },
+    {
+     "name": "MgO mineral-insulated cable / thermocouple",
+     "supplier_or_grade": "generic",
+     "key_specs": [],
+     "satisfies_requirement": "No requirement frozen.",
+     "oxygen_compatibility": "unsourced",
+     "availability_notes": "",
+     "limitations": "MCQ-EM-06 NOT_SOURCED (403 in MCQ lane); not sourced here either."
+    }
+   ],
+   "procurement_status": "wait",
+   "wait_reason": "Harness temperature zones depend on H-1 thermal model (H2-5) and coil hot-spot (HWQ-20); HW-ELEC-05 test voltage TBD (MCQ-QT-08, owner); V_d rating HWQ-03 open; W4 channel map. Generic Kapton/PEEK UHV wire for cold facility runs is low-risk but still not fixed by a requirement."
+  },
+  {
+   "category": "5 LaB6 hollow-cathode support materials and commercial cathodes (C-1)",
+   "requirement_refs": [
+    "HW-C1-01 (PROPOSED; HWQ-09)",
+    "HW-C1-02",
+    "HW-C1-03",
+    "HW-C1-06",
+    "HW-C1-08",
+    "HW-C1-09",
+    "AOL-M04",
+    "AOL-M05"
+   ],
+   "options": [
+    {
+     "name": "Graphite (insert sleeves/contact)",
+     "supplier_or_grade": "grade not named in source",
+     "key_specs": [
+      {
+       "quantity": "reason for graphite",
+       "value": "LaB6 'cannot be touched by metals during operation due to boron diffusion causing embrittlement issues in high-temperature refractory materials'",
+       "unit": "-",
+       "source_id": "NASA-TB-LAB6",
+       "evidence_class": "L5 NASA tech brief (design statement)"
+      },
+      {
+       "quantity": "general statement",
+       "value": "LaB6 must be supported/contacted by 'materials that inhibit boron diffusion at the operating temperatures'",
+       "unit": "-",
+       "source_id": "GK2008-CH6",
+       "evidence_class": "L4/5 textbook"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen (C-1 type is HWQ-09).",
+     "oxygen_compatibility": "Graphite reacts with O (RIT10 graphite grids eroded faster on O2, ANDREUSSI2022, L5); C-1 is Xe-fed but exposed to O back-flow (HW-C1-03).",
+     "availability_notes": "",
+     "limitations": "Original all-graphite tube 'difficult to machine and ... subject to vibration-induced fracturing' (NASA-TB-LAB6)."
+    },
+    {
+     "name": "Mo or Mo-Re cathode tube with graphite sleeves, W spring, BN/AlN heater former",
+     "supplier_or_grade": "JPL design (NASA-TB-LAB6)",
+     "key_specs": [
+      {
+       "quantity": "tube material",
+       "value": "molybdenum or molybdenum-rhenium",
+       "unit": "-",
+       "source_id": "NASA-TB-LAB6",
+       "evidence_class": "L5"
+      },
+      {
+       "quantity": "heater insulator",
+       "value": "boron nitride or aluminum nitride",
+       "unit": "-",
+       "source_id": "NASA-TB-LAB6",
+       "evidence_class": "L5"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen.",
+     "oxygen_compatibility": "Mo in O environment: MoOx deposition seen on AMPCAT (lane 10, L3); HC20h LaB6 cathode FED with N2/O2 showed 'severe erosion and embrittlement of the cathode tube' (ANDREUSSI2022 p.38, L5) - C-1 is Xe-fed, so partially mitigated.",
+     "availability_notes": "Design reference, not a product.",
+     "limitations": ""
+    },
+    {
+     "name": "Tantalum / rhenium",
+     "supplier_or_grade": "n/a",
+     "key_specs": [
+      {
+       "quantity": "Ta work function / Richardson const (as emitter)",
+       "value": "4.1 eV / 37",
+       "unit": "-",
+       "source_id": "GK2008-CH6",
+       "evidence_class": "L4"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen.",
+     "oxygen_compatibility": "unsourced",
+     "availability_notes": "",
+     "limitations": "No sourced LaB6-compatibility statement for Ta/Re accessed this pass (verify)."
+    },
+    {
+     "name": "Commercial LaB6 hollow-cathode assemblies / inserts",
+     "supplier_or_grade": "none found in an open published catalogue this pass",
+     "key_specs": [],
+     "satisfies_requirement": "HW-C1-02 emission rating not checkable without a datasheet.",
+     "oxygen_compatibility": "",
+     "availability_notes": "Search returned research designs (JPL, MEERCAT, IEPC-2015-47) not catalogues. Export control of flight-derived cathodes: not published in accessed sources (verify before any foreign procurement).",
+     "limitations": "unresolved"
+    }
+   ],
+   "procurement_status": "wait",
+   "wait_reason": "HWQ-09 (C-1 type and emission rating) open; keeper/interstage currents TBD (HW-C1-02); H2-2 cathode integration lane not done. Note A4 allows a C-1 diode in S1a, which makes C-1 an early S1a long-lead item once HWQ-09 closes."
+  },
+  {
+   "category": "6 vacuum-compatible fittings, feedthroughs and gas-line electrical breaks",
+   "requirement_refs": [
+    "HW-FS-06 (PROPOSED; margin TBD)",
+    "HW-FS-07 (TBD; O2 cleaning standard TBD at HRR)",
+    "HW-PIM-01",
+    "PMI-02 (o2_cleaning_standard TBD)",
+    "PMI-06 (isolator_margin TBD)",
+    "HW-ENV-01 / HWQ-03",
+    "HW-MC-12 / HW-PIM-03 (non-ferromagnetic)"
+   ],
+   "options": [
+    {
+     "name": "VCR metal gasket face seal fittings",
+     "supplier_or_grade": "Swagelok (316L / 316L VAR)",
+     "key_specs": [
+      {
+       "quantity": "He leak rate max, Ag-plated/Cu gasket",
+       "value": "4e-9",
+       "unit": "std cm3/s",
+       "source_id": "SWG-MS-01-24",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "He leak rate max, unplated gasket",
+       "value": "4e-11",
+       "unit": "std cm3/s",
+       "source_id": "SWG-MS-01-24",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "temperature rating 316L fittings",
+       "value": "537 (1000 F)",
+       "unit": "C",
+       "source_id": "SWG-MS-01-24",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      },
+      {
+       "quantity": "gasket temperature Ni / Cu",
+       "value": "315 / 204",
+       "unit": "C",
+       "source_id": "SWG-MS-01-24",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      }
+     ],
+     "satisfies_requirement": "No requirement frozen (leak_rate_max TBD, PMI-02).",
+     "oxygen_compatibility": "Available with SC-11 cleaning to ASTM G93 Level C: NVR <= 66 mg/m2 (6 mg/ft2), non-hydrocarbon lubricant (SWG-SC11).",
+     "availability_notes": "catalogue; traceability to raw material stated in catalogue.",
+     "limitations": "Ni gaskets ferromagnetic (verify) -> keep away from MC-1 (HW-MC-12)."
+    },
+    {
+     "name": "Ceramic gas-line electrical break (1/4 VCR)",
+     "supplier_or_grade": "Solid Sealing Technology 13 kV (also 30 kV variant listed); alternatives MDC, Accu-Glass, Kurt J. Lesker (pages not read)",
+     "key_specs": [
+      {
+       "quantity": "voltage rating",
+       "value": "13,000",
+       "unit": "V",
+       "source_id": "SST-13KV",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      },
+      {
+       "quantity": "temperature rating",
+       "value": "-200 to 450",
+       "unit": "C",
+       "source_id": "SST-13KV",
+       "evidence_class": "L5 supplier statement / assumed (manufacturer recommendation)"
+      },
+      {
+       "quantity": "ceramic",
+       "value": "alumina",
+       "unit": "-",
+       "source_id": "SST-13KV",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      },
+      {
+       "quantity": "pressure rating",
+       "value": "900",
+       "unit": "psig",
+       "source_id": "SST-13KV",
+       "evidence_class": "L5 supplier datasheet / measured-typical (procedure unpublished)"
+      }
+     ],
+     "satisfies_requirement": "Rating >> 350 V PROPOSED V_d (HW-FS-06) but isolator_margin is TBD, so not formally satisfied.",
+     "oxygen_compatibility": "O2 cleaning not addressed on page -> would need SC-11-type cleaning order (HW-FS-07).",
+     "availability_notes": "catalogue part; rating conditions (vacuum/atmosphere side) not stated on page.",
+     "limitations": "Kovar-type sleeves in similar products are ferromagnetic (search snippet, verify); leak rate not stated."
+    },
+    {
+     "name": "CF/KF flanges and multi-pin UHV feedthroughs",
+     "supplier_or_grade": "not sourced this pass",
+     "key_specs": [],
+     "satisfies_requirement": "No requirement frozen (flange pattern HW-PIM-01 PROPOSED; interface_dimensions TBD).",
+     "oxygen_compatibility": "",
+     "availability_notes": "",
+     "limitations": "Choice waits for IP-UP/IP-DN interface drawing (HWQ-15)."
+    }
+   ],
+   "procurement_status": "wait",
+   "wait_reason": "HW-FS-07 O2 cleaning standard TBD (facility safety case, closes at HRR); isolator_margin TBD (S1a hipot); HWQ-03 (350 V rating); IP-UP/IP-DN drawing (HWQ-15) and H2-3 gas path/plenum lane. Standard VCR/SC-11 parts are commodity and low-risk, but no requirement fixes them yet."
+  }
+ ],
+ "unresolved": [
+  "Saint-Gobain Combat M26/AX05/HP manufacturer datasheets (403/bot challenge); M vs M26 thermal-conductivity column conflict (Precision Ceramics sheet vs AZoM snippet).",
+  "Temperature dependence of Bs/permeability for any pole grade up to the (unknown) pole temperature (HW-MC-13 needs it).",
+  "Pure-iron Curie temperature not in the ARMCO bulletin.",
+  "Mo/W/Ni-alloy/Pt-coating oxidation data in O2 at anode temperature: not sourced.",
+  "DuPont Kapton HN temperature/outgassing sheet not retrieved; ASTM E595 values for any wire/enamel not retrieved.",
+  "MgO mineral-insulated cable and ceramic-bead wiring: no open datasheet read.",
+  "No open commercial LaB6 hollow-cathode catalogue with emission rating found; export-control status unknown.",
+  "CoorsTek alumina properties not read (TLS/503).",
+  "Anodized-Al wire (Energies 15:5362) not read (403).",
+  "ASTM A848/A801/A838 scopes not read (403)."
+ ],
+ "owner_questions": [
+  "OQ-R3-1 (HWQ-18/19): Pole material - pure iron (Bs 2.15 T, cheap, anneal after machining) vs FeCo-2V (2.3-2.4 T, Curie 938-950 C, brittle, H2 anneal) vs 430F SQ (1.56 T, corrosion-resistant, S-bearing)? Decide with the H2-1 flux-density estimate.",
+  "OQ-R3-2 (HWQ-20/HW-MC-11): If ceramic-insulated Ni-plated wire is chosen, accept ~150 V AC turn rating and Ni ferromagnetism near MC-1?",
+  "OQ-R3-3 (HWQ-08): Which anode candidates go on AOL-EX-02 coupons (e.g. 316L, a Ni-base alloy, Pt/Ir coating)? None is sourced as O-plasma-resistant.",
+  "OQ-R3-4 (HW-FS-07/PMI-02): Adopt ASTM G93 Level C (e.g. Swagelok SC-11 equivalent) as the O2 cleaning standard?",
+  "OQ-R3-5: Authorise acquisition of manufacturer datasheets through the owner channel (control C4) for Combat BN grades and C-1 cathode candidates?"
+ ]
+}

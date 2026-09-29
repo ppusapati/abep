@@ -1,0 +1,122 @@
+{
+  "schema": "owner_disposition_addendum_v1",
+  "amends": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+  "amends_sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+  "follows": [
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A6_a5_followon_authorization.json"
+  ],
+  "follows_sha256": [
+    "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
+    "aaeb7c503c3791f81d4c589e8e25289befa6fcb3b16ce6f962b153715c883180"
+  ],
+  "decided_by": "owner",
+  "decided_utc": "2026-09-27",
+  "title": "A7 - execution model toward the final thrust architecture (waves H2-H4, architecture-changing blockers, M16 as scheduler)",
+  "objective": "optimize for time-to-final-thrust-architecture, not for finishing every analysis",
+  "waves": [
+    {
+      "wave": "current",
+      "lanes": [
+        "fo_preionizer_module_icd",
+        "fo_xe_system_ledger",
+        "fo_phase1_prereg_framework",
+        "fo_subsystem_maturity_matrix"
+      ],
+      "start": "running (A6)",
+      "resolves": "interfaces and decision framework"
+    },
+    {
+      "wave": "H2 hardware",
+      "lanes": [
+        "H2-1 Hall chamber + magnetic circuit",
+        "H2-2 cathode integration",
+        "H2-3 atmospheric gas path/plenum",
+        "H2-4 PPU and bus allocation",
+        "H2-5 thermal network",
+        "H2-6 diagnostics + H-1 fixture",
+        "H2-7 mechanical envelope/BOM"
+      ],
+      "start": "drafting now against A5/A6 with interface-dependent values PENDING; short integration update when the current lanes land",
+      "resolves": "makes the baseline buildable"
+    },
+    {
+      "wave": "H3 procurement",
+      "lanes": [
+        "long-lead magnets/materials",
+        "cathode hardware",
+        "flow control",
+        "RF contingency components",
+        "diagnostics",
+        "vacuum/facility fixtures"
+      ],
+      "start": "after preliminary sizing, before final design freeze",
+      "resolves": "removes calendar risk",
+      "status": "PLANNED_NOT_REGISTERED"
+    },
+    {
+      "wave": "H4 test",
+      "lanes": [
+        "H-1 fixture",
+        "S1a calibration",
+        "LOCK-1",
+        "S1/S1b reproducibility",
+        "LOCK-2"
+      ],
+      "start": "hardware ready",
+      "resolves": "decides A/B/C",
+      "status": "PLANNED_NOT_REGISTERED"
+    },
+    {
+      "wave": "architecture closure",
+      "lanes": [
+        "hall_only vs rf_hall vs ecr_hall under identical conditions"
+      ],
+      "start": "LOCK-2",
+      "resolves": "final thrust architecture",
+      "status": "PLANNED_NOT_REGISTERED"
+    }
+  ],
+  "architecture_changing_blockers": [
+    "1 Hall-only sustainment at the actual atmospheric feed state, especially low flow and high O2 fraction",
+    "2 incremental benefit of RF/ECR after full bus-power accounting (not source efficiency in isolation)",
+    "3 Xe/cathode closure: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation"
+  ],
+  "everything_else_rule": "thermal detail, mounting, compressor refinement, diagnostics, life, software infrastructure proceed in parallel and veto the architecture ONLY if they expose a hard incompatibility",
+  "h2_scope": "design/preliminary-sizing lanes, NOT architecture-selection lanes; they never predict thrust or efficiency from unadmitted Hall transport closures and never select hall_only / rf_hall / ecr_hall",
+  "m16_as_scheduler": {
+    "applied_at": "the integration pass after the four current lanes are verified (fo_a6_integration_refresh)",
+    "execution_states": [
+      "READY",
+      "RUNNING",
+      "BLOCKED",
+      "VERIFIED"
+    ],
+    "blocked_rule": "every BLOCKED row points to exactly one blocking evidence/interface item",
+    "rollup_categories": [
+      "architecture blocker",
+      "hardware-definition blocker",
+      "procurement blocker",
+      "test-readiness blocker",
+      "proposal-only documentation gap"
+    ],
+    "purpose": "distinguish an immature subsystem from one that actually prevents H-1 or prevents the architecture decision"
+  },
+  "phase1_is_the_decisive_event": {
+    "path": "common hardware -> S1a characterization -> LOCK-1 -> S1/S1b uncertainty + remount -> LOCK-2 -> hall_only / rf_hall / ecr_hall experiment",
+    "no_new_simulation_campaigns_before_H1": true,
+    "mechanical_case_logic": {
+      "A": "Hall-only satisfies sustainment + thrust + full P_bus + stability -> pre-ionizer removed from the flight baseline",
+      "B": "Hall-only fails, RF+Hall closes within power/mass/life -> RF contingency becomes necessary hardware",
+      "C": "RF does not close but ECR does -> ECR becomes necessary",
+      "NO_VIABLE_CASE": "none satisfies the frozen Phase-1 criteria -> never disguised by continuous Xe augmentation or post hoc threshold changes"
+    }
+  },
+  "repository_management": {
+    "integration_checkpoint": "after the four current lanes pass review: integration pass + M16 refresh -> full suite/golden/ci_checks -> checkpoint merge to main (owner-directed), so the next hardware wave does not pile onto the long-lived branch",
+    "h2_merge_order": "H2 drafting runs now in isolated worktrees; H2 deliverables merge after the checkpoint",
+    "sequence": "finish current 4 lanes (+ draft H2-1..H2-7 in parallel) -> integration pass + M16 refresh -> merge checkpoint -> preliminary hardware freeze -> H-1 build/test -> architecture decision"
+  },
+  "fan_out_rule": "whenever a lane enters compute, review, procurement or waiting state, look for independent work that can run alongside it; never wait for one lane to finish before starting work that has no dependency on it",
+  "execution_note": "the 4-CPU host caps each workflow at 2 concurrent agents; lanes are launched one workflow per lane so that independent lanes are not serialized"
+}

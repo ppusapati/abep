@@ -1,0 +1,207 @@
+{
+ "id": "hallmap_convergence_prereg_v1_DRAFT",
+ "status": "DRAFT_PENDING_OWNER",
+ "frozen": false,
+ "registered": null,
+ "decided_by": null,
+ "hash_lock": null,
+ "drafted": "2026-09-26",
+ "location_rule": "This file is a DRAFT and deliberately lives under docs/hallmap/drafts/, NOT under hallthruster_bridge/prereg/. Nothing in it is decided. It becomes a pre-registration only when the owner decides every item marked PROPOSED, writes the frozen version to hallthruster_bridge/prereg/ with its own id (no '_DRAFT'), and hash-locks it, all BEFORE any design Hall map or any refined run is generated. The provenance schema (schemas/hallmap/hallmap_provenance_v1.json) refuses a convergence prereg path containing 'DRAFT'.",
+ "purpose": "Numerical-convergence check for frozen DESIGN Hall maps (one map set per admitted transport member, docs/hallmap/HALLMAP_PRODUCTION_SPEC.md section 11). It asks one question: does the map content change materially when the grid, timestep or simulated time is refined? It is not a validation, does not touch the P5-N2 campaign or its fixed numerics, and never retunes transport, chemistry, wall model or B(z).",
+ "blocked_until": [
+  "at least one admitted member exists (credible set is EMPTY as of 2026-09-26, hallthruster_bridge/ensemble/transport_ensemble_v0.json admission_rule_status)",
+  "Vyovrinda's own geometry and B(z) are released into the repository with a source and sha256 (none exists as of 2026-09-26)",
+  "the owner freezes this draft (every PROPOSED item decided)"
+ ],
+ "baseline_numerics": {
+  "status": "PROPOSED (baseline = the numerics under which any member would have been admitted)",
+  "grid": "EvenGrid",
+  "cells": 200,
+  "dt_s": 5e-09,
+  "duration_s": 0.002,
+  "average_start_s": 0.001,
+  "averaging_window_s": 0.001,
+  "source": "hallthruster_bridge/prereg/p5_n2_validation_criteria_v1.json 'no_retuning' (200 cells, dt 5 ns, 2 ms, average 1-2 ms) and every case of hallthruster_bridge/cases/p5_n2.json (cells 200, dt_s 5e-9, duration_s 0.002, average_start_s 0.001)",
+  "evidence_class": "assumed (numerical setting chosen by the project; not a physical quantity)",
+  "timestepping_as_run": {
+   "adaptive": true,
+   "CFL": 0.799,
+   "min_dt_s": 1e-10,
+   "max_dt_s": 1e-07,
+   "max_small_steps": 100,
+   "num_save": 1000,
+   "basis": "solver defaults: hallthruster_bridge/bridge_lib.jl calls SimParams(grid=EvenGrid(cells), dt, duration, verbose=false) and passes none of these, so the SimParams keyword defaults of HallThruster.jl v0.23.1 apply (src/simulation/types.jl docstrings and keyword defaults)",
+   "source": "HallThruster.jl v0.23.1 source as installed for the bridge (Project.toml version 0.23.1); read in this lane, not executed. That this installed copy is the pinned commit bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 is enforced by bridge check_pin() at run time but was not re-verified here: verify",
+   "evidence_class": "assumed (software default)"
+  }
+ },
+ "solver_timestep_finding": {
+  "summary": "With adaptive = true (the v0.23.1 default, which the bridge does not override) the step actually taken is clamp(min(min(CFL, 0.799) * dt_iz, sqrt(CFL) * dt_E, CFL * dt_u), min_dt, max_dt), and the simulation starts from 100 * eps(). SimParams.dt is used only as the uniform step of the escape hatch that engages after max_small_steps consecutive min_dt steps. A pure 'dt -> dt/2' refinement can therefore be a no-op in runs that never enter the escape hatch.",
+  "source": "HallThruster.jl v0.23.1 src/simulation/simulation.jl (adaptive initial step 100*eps()), src/simulation/solution.jl (adaptive step clamp and uniform-step escape hatch), src/simulation/heavy_species_update.jl (cache.dt = min(chemistry_CFL*dt_iz, sqrt(CFL)*dt_E, CFL*min_dt_u), chemistry_CFL = min(CFL, 0.799)); installed copy, identity with the pinned commit: verify",
+  "evidence_class": "inferred (from reading the solver source; not tested by a run)",
+  "consequence": "R2 is kept exactly as requested (dt -> dt/2) and R2b (CFL -> CFL/2) is PROPOSED as the effective time-step refinement. Owner decides which (or both) is mandatory. R2b needs a producer change (the bridge does not pass CFL today); that change is outside this lane."
+ },
+ "refinement_design": {
+  "one_factor_at_a_time": true,
+  "status": "PROPOSED",
+  "rationale": "Each refinement is compared with the SAME baseline run, so a failure can be attributed to grid, time step or run length. A combined run (R4) is optional and only diagnostic."
+ },
+ "refinements": [
+  {
+   "id": "R1_grid",
+   "status": "PROPOSED",
+   "change": {"cells": {"baseline": 200, "refined": 400}},
+   "held_fixed": ["grid type EvenGrid", "dt_s", "duration_s", "average_start_s", "num_save", "timestepping", "transport", "chemistry config", "wall model", "ion_wall_losses", "B(z) and B_ref", "geometry"],
+   "note": "Under adaptive stepping the CFL limit also shrinks the step on the finer grid; R1 therefore tests grid and implied step together."
+  },
+  {
+   "id": "R2_dt",
+   "status": "PROPOSED",
+   "change": {"dt_s": {"baseline": 5e-09, "refined": 2.5e-09}},
+   "held_fixed": ["cells", "duration_s", "average_start_s", "num_save", "timestepping except dt", "everything physical"],
+   "note": "Per solver_timestep_finding, this changes only the escape-hatch uniform step under adaptive stepping. The producer must record whether the escape hatch engaged in the baseline and refined runs (TBD: requires a producer change; the solver does not report it in the bridge record today). If it never engaged, R2 is recorded as 'not informative', not as PASS."
+  },
+  {
+   "id": "R2b_cfl",
+   "status": "PROPOSED_ALTERNATIVE_OWNER_DECIDES",
+   "change": {"CFL": {"baseline": 0.799, "refined": 0.3995}},
+   "held_fixed": ["cells", "dt_s", "duration_s", "average_start_s", "num_save", "everything physical"],
+   "note": "Halving CFL halves the chemistry and transport step limits and scales the field limit by 1/sqrt(2) (heavy_species_update.jl formula above). Requires the bridge to pass CFL (producer change, outside this lane)."
+  },
+  {
+   "id": "R3_duration",
+   "status": "PROPOSED",
+   "change": {
+    "duration_s": {"baseline": 0.002, "refined": 0.004},
+    "average_start_s": {"baseline": 0.001, "refined": 0.002},
+    "num_save": {"baseline": 1000, "refined": 2000}
+   },
+   "held_fixed": ["cells", "dt_s", "timestepping", "everything physical"],
+   "averaging_window_options": {
+    "A_proposed": "average over 2-4 ms (keeps the baseline's 50 % transient-discard fraction; window 2 ms)",
+    "B_alternative": "average over 3-4 ms (keeps the baseline's 1 ms window length, so the I_d spectrum resolution stays 1 kHz)"
+   },
+   "num_save_rationale": "num_save 2000 keeps the saved-frame spacing of the baseline (2 ms / 1000 frames). chemistry_trustworthy (f_out) and the wall-flux metrics are evaluated per saved frame, so changing the frame spacing would change how they are sampled. The bridge does not pass num_save today: producer change needed (outside this lane). If it cannot be passed, R3 runs at the default 1000 and the doubled frame spacing is recorded.",
+   "stationarity_diagnostic": "report the refined run's 2-3 ms and 3-4 ms averages side by side (diagnostic only, no tolerance proposed)"
+  },
+  {
+   "id": "R4_combined",
+   "status": "OPTIONAL_DIAGNOSTIC",
+   "change": {"cells": 400, "dt_s": 2.5e-09, "duration_s": 0.004},
+   "note": "Not part of the verdict unless the owner makes it so."
+  }
+ ],
+ "node_selection": {
+  "status": "PROPOSED",
+  "rule": [
+   "all 2^d corner nodes of the map's axis box (d = number of axes)",
+   "the node nearest the box centre (ties broken by the lower index on every axis)",
+   "every node that shares a grid cell with a baseline node whose converged, sustained, chemistry_trustworthy, wall_life_trustworthy or quiet class (Id_rms_rel < 0.5) differs from a neighbour's",
+   "a stride sub-grid: every k-th node along each axis, k fixed by the owner before any refined run (CPU budget)"
+  ],
+  "applies_to": "every map set separately (member x chemistry config x propellant x geometry x B-field x wall setting)",
+  "rationale": "Corners and centre probe the extremes of the operating box. Nodes next to flag or regime changes are where numerics are most likely to move a boundary; they are identified from the baseline map alone, before any refined result exists, so the selection cannot be steered by convergence outcomes."
+ },
+ "metric_definitions": {
+  "relative": "delta_rel = |X_refined - X_baseline| / |X_baseline|, per node, per refinement",
+  "absolute": "delta_abs = |X_refined - X_baseline|, per node, per refinement (used for bounded efficiencies)",
+  "both runs must have produced the observable": "if either run lacks the value (solver failure), the node fails that refinement"
+ },
+ "observables": {
+  "discharge_current_A": {
+   "metric": "relative",
+   "proposed_tolerance": 0.02,
+   "status": "PROPOSED",
+   "rationale": [
+    "Keeps numerical error far below the 15 % I_d tolerance used for P5-N2 validation (prereg/p5_n2_validation_criteria_v1.json D3), so resolution cannot decide whether a map node looks like the admitted closure.",
+    "Prior model-derived evidence: for quiescent xenon runs (Gaussian placeholder B, default TwoZoneBohm) 400 cells and 4 ms changed I_d by < 0.2 % (docs/HISTORY.md, section 'HallThruster.jl driver runs - P5 xenon, untuned (next-work step 1, 2026-09-25)'), about 10x inside 2 %.",
+    "Breathing runs with the measured P5 field moved their time-averaged I_d by up to 21 % between 200/400 cells and 2/4 ms (docs/HISTORY.md, section 'P5 xenon rerun with measured B(z) and facility ingestion; harness fixes (2026-09-25)'). Such nodes are meant to fail: their averages are not operating points.",
+    "discharge_power_W = I_d x V_d (hall_map_schema_v1), so it inherits this tolerance and needs none of its own."
+   ]
+  },
+  "thrust_N": {
+   "metric": "relative",
+   "proposed_tolerance": 0.02,
+   "status": "PROPOSED",
+   "rationale": [
+    "Same order as I_d: both are time-averaged integral quantities of the same solution.",
+    "At the top of the RFP thrust band (25 mN, requirement as summarised in CLAUDE.md; verify against the RFP text) 2 % is 0.5 mN, below the 5.2-5.6 mN absolute thrust tolerances pre-registered for P5-N2 N1-N3 (D3). That comparison is context only: the P5-N2 tolerances belong to a different thruster and thrust scale and do not justify this value, which remains PROPOSED.",
+    "No in-repo convergence evidence for thrust alone exists yet (the 2026-09-25 entry reports I_d only), so the owner may prefer to tie it to I_d or loosen it."
+   ]
+  },
+  "mass_eff": {
+   "label": "propellant (mass) utilization, HallThruster.mass_eff",
+   "metric": "absolute",
+   "proposed_tolerance": 0.02,
+   "status": "PROPOSED",
+   "rationale": [
+    "A bounded fraction: an absolute tolerance avoids inflating relative errors at low-utilization nodes.",
+    "0.02 absolute matches the 2 % relative tolerance on I_d/thrust for utilization near 1.",
+    "The owner may add current_eff (ion_current_A / discharge_current_A) with the same absolute tolerance; it is report-only in this draft."
+   ]
+  },
+  "wall_ion_flux_m2s": {
+   "metric": "relative",
+   "proposed_tolerance": 0.05,
+   "status": "PROPOSED",
+   "applies_only_to": "nodes that are wall_life_trustworthy in the baseline (erosion-grade nodes). Elsewhere it is report-only because it is diagnostic there (hall_map_schema_v1)",
+   "rationale": [
+    "A channel-averaged Bohm flux (loss_scale * h * sum n sqrt(Z e T_e / m)) evaluated per saved frame (hall_map_schema_v1, bridge_lib.jl wall_ion_metrics). It depends on near-wall density and T_e profiles, which are more grid-sensitive than integral quantities, hence looser than I_d/thrust.",
+    "No in-repo convergence evidence for the wall fields exists yet: 5 % is a proposal, not an inherited number.",
+    "Erosion life scales with flux times an energy-dependent sputter yield. The owner should judge 5 % against the life requirement (> 15,000 h firing within a 26,000 h mission, RFP as summarised in CLAUDE.md; verify)."
+   ]
+  },
+  "wall_ion_energy_eV": {
+   "metric": "relative",
+   "proposed_tolerance": 0.05,
+   "status": "PROPOSED",
+   "applies_only_to": "as wall_ion_flux_m2s",
+   "rationale": [
+    "Paired with the flux: erosion needs both. The sheath-plus-presheath energy (Z phi_s + T_e/2) follows the near-wall T_e, so it is proposed with the same tolerance as the flux.",
+    "Sputter yields rise steeply with ion energy near threshold, so the owner may want a tighter energy tolerance than flux tolerance. Owner decides."
+   ]
+  }
+ },
+ "categorical_invariants": {
+  "status": "PROPOSED",
+  "rule": "At every checked node, converged, sustained, chemistry_trustworthy, wall_life_trustworthy and the quiet class (Id_rms_rel < 0.5, the bridge's internal diagnostic, not a validation criterion) must be identical in the baseline and every refinement. Any flip fails that node, whatever the continuous deltas are.",
+  "chemistry_detail": "chemistry_trustworthy is compared together with the per-reaction record: every reaction's extrapolated activity share stays <= 1e-12 and no unresolved table is used, in both runs (f_out = 0 is not relaxed; hall_map_schema_v1 / CLAUDE.md item 5).",
+  "rationale": "A trust flag or regime that depends on resolution is a numerical artefact, not physics (compare the withdrawn v1.3 Hall hysteresis, CLAUDE.md 'Superseded'). Continuous tolerances are meaningless if the node changes regime."
+ },
+ "report_only": {
+  "status": "PROPOSED",
+  "fields": ["Te_max_eV", "ne_max_m3", "ion_current_A", "anode_eff", "current_eff", "voltage_eff", "divergence_eff", "ion_species_fraction_atomic", "Id_rms_rel", "Id_pp_rel", "Id_f_dominant_Hz", "wall_ion_flux_m2s and wall_ion_energy_eV at non-erosion-grade nodes"],
+  "note": "Deltas are reported for every checked node, with no tolerance. Id_f_dominant_Hz has a resolution of 1 / window length (hall_map_schema_v1), i.e. 1 kHz for the 1 ms baseline window; differences within one bin are not differences."
+ },
+ "verdict_rule": {
+  "status": "PROPOSED",
+  "map_set_PASS": "every checked node passes every mandatory refinement (tolerances plus categorical invariants)",
+  "map_set_FAIL": "any checked node fails any mandatory refinement",
+  "no_post_hoc": "Tolerances, node selection, mandatory refinements and averaging windows are fixed before any refined run. Failing nodes are never dropped after the fact, and numerics are never mixed within one map set.",
+  "provenance": "the verdict and a report sha256 go into meta.provenance.numerics.convergence; a FROZEN map set requires verdict PASS (schema allOf rule)"
+ },
+ "on_failure_options_for_owner": [
+  "(a) Regenerate the whole map set at refined numerics. The member was admitted at the baseline numerics, so the owner must also decide whether the admission evidence needs a consistency re-check at the refined numerics before the maps are used.",
+  "(b) Keep the baseline and mark the failing cells non-trustworthy. This needs a consumer/schema change (hall_map_schema_v1 has no numerical-convergence node flag), which is outside this lane.",
+  "(c) Shrink the axis box to exclude the failing region, using a rule fixed in advance."
+ ],
+ "owner_decisions_required": [
+  "D-C1: baseline numerics = admission numerics (200 cells, 5 ns, 2 ms, average 1-2 ms)?",
+  "D-C2: which time-step refinement is mandatory: R2 (dt/2, as requested), R2b (CFL/2), or both?",
+  "D-C3: R3 averaging window A (2-4 ms) or B (3-4 ms); num_save scaled to 2000 or left at the default?",
+  "D-C4: tolerances: I_d 2 % rel, thrust 2 % rel, mass_eff 0.02 abs, wall flux 5 % rel, wall energy 5 % rel (all PROPOSED)",
+  "D-C5: node-selection stride k, and whether the flag/regime-adjacency rule is kept",
+  "D-C6: which on-failure option applies",
+  "D-C7: whether R4 (combined) is only diagnostic",
+  "D-C8: producer changes needed for R2b / num_save / escape-hatch reporting (bridge_lib.jl, outside this lane)"
+ ],
+ "sources": [
+  "hallthruster_bridge/prereg/p5_n2_validation_criteria_v1.json (no_retuning numerics; D3 tolerances) - read only",
+  "hallthruster_bridge/cases/p5_n2.json (per-case cells, dt_s, duration_s, average_start_s) - read only",
+  "hallthruster_bridge/bridge_lib.jl (SimParams call; quasi_steady diagnostic; per-frame wall and chemistry metrics) - read only",
+  "hallthruster_bridge/hall_map_schema_v1.json (field definitions; Id_f_dominant_Hz resolution)",
+  "HallThruster.jl v0.23.1 installed source: src/simulation/types.jl, simulation.jl, solution.jl, heavy_species_update.jl (identity with the pinned commit: verify)",
+  "docs/HISTORY.md 2026-09-25 entries (earlier 400-cell / 4 ms checks; model-derived)",
+  "CLAUDE.md (RFP envelope summary; requirement values to verify against the RFP text)"
+ ]
+}

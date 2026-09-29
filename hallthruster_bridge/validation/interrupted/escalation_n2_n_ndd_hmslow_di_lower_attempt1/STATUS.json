@@ -1,0 +1,45 @@
+{
+ "status": "INCOMPLETE_INFRASTRUCTURE_INTERRUPTION",
+ "dataset": "escalation_n2_n_ndd_hmslow_di_lower (launch manifest hallthruster_bridge/campaign/manifests/escalation_n2_n_ndd_hmslow_di_lower.json)",
+ "started_utc": "2026-09-26T19:37:27Z",
+ "interrupted": "container stop between 21:21Z (last shard writes; daemon events end 21:16Z) and restart at 2026-09-27T01:37Z; all julia runners lost",
+ "records": 212,
+ "expected": 270,
+ "files": {
+  "s0.jsonl": {
+   "sha256": "ee9c08078bd42b407084e7c1ebd633f02d5b5ce0cab05bd993177a9af91f82a5",
+   "n_records": 53
+  },
+  "s0.log": {
+   "sha256": "5dda5a77ed10cf10db3542d118af9b529a2d09c0050a4637035dcb81f64bef19"
+  },
+  "s1.jsonl": {
+   "sha256": "7c4be31d10a5f91befe9ee0db4adf88816ea8974f33ec0abfecd2fce38657eb1",
+   "n_records": 53
+  },
+  "s1.log": {
+   "sha256": "5b5d1f494eca0a3d3811a795fc6817395140ebda972e5dfb2778d414511307a6"
+  },
+  "s2.jsonl": {
+   "sha256": "c6efe0740de2e826592cd5f90851b94714b84ae6013e157b2256aa692801572e",
+   "n_records": 53
+  },
+  "s2.log": {
+   "sha256": "7de68c7b1c1599cb24529f5d175f45cb8e9cb238a907c9fd0b419ab7cc18e5ab"
+  },
+  "s3.jsonl": {
+   "sha256": "33f8c58fb1b0072dbecaa01356e1468f0bd38df93c8e63505f3099c5de029be9",
+   "n_records": 53
+  },
+  "s3.log": {
+   "sha256": "3fadc404ee30acb3e02a45df8215e3f806a59ac2a0da7affa4707dbbc7835704"
+  }
+ },
+ "not": "not a NUMERICAL_FAILURE and not a physics result: the container stop, not the solver, caused the incompleteness",
+ "rules": [
+  "preserved unchanged as a historical artifact; never concatenated into, or overwritten by, the replacement dataset",
+  "never frozen or scored"
+ ],
+ "owner_decision_2026_09_27": "fresh attempt 2 for all 7 pending O4 escalations: this partial output preserved (never reused), T_O4_ESCALATE claim closed FAILED(infrastructure_interruption), attempt 2 claimed and relaunched in fresh output directories with per-run execution provenance (threads/BLAS, Julia version, HallThruster commit)",
+ "replacement_output_dir": "<scratchpad>/followon/escalation_n2_n_ndd_hmslow_di_lower_attempt2"
+}

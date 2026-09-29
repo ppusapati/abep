@@ -1,0 +1,129 @@
+{
+ "id": "o_o2_completeness_audit_v1_DRAFT",
+ "status": "DRAFT_PENDING_OWNER",
+ "status_meaning": "Proposal only. It is NOT a pre-registration and binds nothing until the project owner edits it as needed, sets 'registered' and 'decided_by', and freezes it under hallthruster_bridge/prereg/ (the owner's step; this file deliberately lives outside that folder). Until then no O/O2 verdict may be computed under it.",
+ "drafted": "2026-09-26",
+ "drafted_by": "source-audit lane D (agent session)",
+ "registered": null,
+ "decided_by": null,
+ "must_be_frozen_before": "any O/O2 rate table is built, any O/O2 reaction enters a propellant configuration, any O/O2 rate or cross section is compared with another (beyond the existence/coverage audit in o_o2_source_matrix_v1.json), and any Hall run containing O or O2 is made or scored",
+ "disclosure": "Drafted after a literature/source audit only (o_o2_source_matrix_v1.json). No O/O2 rate coefficient, F_P, F_ion or F_S value has been computed, and no O/O2 Hall run exists. The N2 audit outcomes (hallthruster_bridge/audit/) were known to the drafter; the thresholds below are copied from the N2 rule, not chosen from any O/O2 number.",
+ "gating": "CLAUDE.md 'Next work' item 4: O2/O chemistry only if items 1-3 succeed. Freezing this rule does not authorize implementation; it only fixes the completeness criteria in advance.",
+ "modelled_on": [
+  "hallthruster_bridge/prereg/n2_completeness_audit_v1.json",
+  "hallthruster_bridge/prereg/n2_completeness_audit_v1_addendum1_ambiguity.json",
+  "hallthruster_bridge/prereg/n2_completeness_audit_v1_addendum2_crosscheck.json"
+ ],
+ "purpose": "Decide which electron-impact processes must be added to an O/O2 reaction set before it may be called complete for a stated use. Evaluated from cross sections and rate coefficients (and, for F_S, from a pre-declared state envelope), without reference to any fit quality or validation outcome.",
+ "species_scope": {
+  "baseline": ["O", "O2", "O+", "O2+"],
+  "conditional_on_promotion": ["O^2+ (O max_charge 2)", "O2^2+ (O2 max_charge 2)", "O- (requires owner decision OD-5 first)"],
+  "not_proposed": ["metastable O(1D), O(1S), O2(a1Delta_g), O2(b1Sigma_g+) as tracked species (explicit omission; row OO2-25)"]
+ },
+ "domains": {
+  "default": {
+   "Te_eV": [2.0, 30.0],
+   "mean_energy_eV": [3.0, 45.0],
+   "status": "PROPOSED, mirrors N2",
+   "basis": "The N2 upper limit came from its tightest verified table (dissociation_N2, 45 eV mean energy). For O/O2 the tightest limit is not known until tables are built and their tail shares computed (candidates: O data end at 200 eV per SONG2026; O2 electronic excitation theory is plotted only to 20 eV). Owner decision OD-1: keep 2-30 eV and treat states beyond a verified table limit as outside the domain (as for N2), or set the limit after the validity audit."
+  },
+  "low_energy_channels": {
+   "Te_eV": [0.2, 30.0],
+   "applies_to": ["O2 vibrational excitation", "O2 rotational excitation", "O2 a1Delta_g and b1Sigma_g+ excitation", "O fine-structure transitions"],
+   "status": "PROPOSED",
+   "basis": "Mirrors the N2 vibrational/rotational window; these channels have thresholds near or below 2 eV (a: 0.98 eV, b: 1.63 eV per SONG2026)."
+  }
+ },
+ "fractions": {
+  "F_P": "k_omit(Te) dE_omit / sum_j k_j(Te) dE_j: share of total electron inelastic power (same definition as N2)",
+  "F_ion": "nu_ions,omit k_omit(Te) / sum_j nu_ions,j k_j(Te): share of total positive-ion production (ionizing channels only; same definition as N2)",
+  "F_S_s": "share of the production or destruction of a particular modeled species s due to the omitted channel (same definition as N2)",
+  "F_att_PROPOSED": "k_att(Te) n_O2 / sum_j nu_ions,j k_j(Te) n_j: electron loss by attachment relative to electron production by ionization. Not in the N2 rule (N2 has no attachment channel); inclusion and threshold are owner decision OD-5."
+ },
+ "thresholds": {
+  "F_P": 0.01,
+  "F_ion": 0.01,
+  "F_S_s": 0.05,
+  "F_att_PROPOSED": "TBD - owner decision OD-5 (the drafter's suggestion is to mirror F_ion, 0.01; not adopted)",
+  "basis": "Copied from n2_completeness_audit_v1 so that both reaction sets are judged by one standard; no O/O2 number was consulted."
+ },
+ "rule": "Promote the omitted process if F_P > 0.01 OR F_ion > 0.01 OR F_S_s > 0.05 anywhere in its applicable Te domain (identical to the N2 rule).",
+ "ambiguity_rule_PROPOSED_ADOPTION": {
+  "source": "n2_completeness_audit_v1_addendum1_ambiguity.json",
+  "rule": {
+   "upper_bound_below_threshold": "EXCLUDE",
+   "lower_bound_above_threshold": "PROMOTE (nominal chemistry)",
+   "threshold_between_lower_and_upper": "PROMOTE AS AN UNCERTAINTY VARIANT"
+  },
+  "bounds_over": "all evaluated nuisance choices (composition grid, chemistry variant, and, if a state envelope is used, operating point and transport candidate)",
+  "robustness": "If a verdict changes with a nuisance choice, the uncertainty belongs in the validation set (between-bounds case)."
+ },
+ "crosscheck_rule_PROPOSED_ADOPTION": {
+  "source": "n2_completeness_audit_v1_addendum2_crosscheck.json",
+  "rule": "Earlier and later evaluation sets are an implementation-consistency check only; the newest set carrying the full metric list is authoritative; sets are never averaged; any discrepancy that could alter a verdict is resolved before the rule is applied. Verdicts applied literally, no judgment adjustment near a threshold."
+ },
+ "denominators": "Sum over the best currently available complete set of included processes. Any evaluation made before every tier-1 process exists as a verified table is PROVISIONAL and must be repeated once they are in place (same as N2).",
+ "state_basis_for_F_S": {
+  "status": "OWNER DECISION OD-2",
+  "options": [
+   "rate-coefficient-only evaluation over a pre-declared grid of composition ratios (n_O/n_O2, n_ion/n_neutral), as the provisional N2 dissociative-ionization audit did",
+   "a blind state envelope from Hall runs with measured targets removed, as the N2 tier-3 closure did"
+  ],
+  "requirement": "Whichever is chosen, the composition grid (or run design) must be fixed here before any value is computed. It must cover the intake-delivered composition range given by the frozen atmosphere + intake model; the ranges are not stated in this draft (TBD - requires a sourced extraction from abep_sim's frozen datasets, which this lane did not perform)."
+ },
+ "tiers": {
+  "1_required_before_any_scoring": [
+   "O ionization O -> O+ (OO2-01)",
+   "O momentum transfer (OO2-02)",
+   "O electronic excitation: state list OWNER DECISION OD-3; drafter's candidate list = 2p4 1D, 2p4 1S, 3s 5S, 3s 3S and the allowed 3D transition of SONG2026 Fig. 25 (caption: 3s 3D; plot label: 3d 3D; verify which) - the transitions SONG2026 singles out in Figs. 25-26 - with the remaining BSR-1116 transitions assessed as one lumped omitted process under F_P (OO2-03)",
+   "O2 ionization O2 -> O2+ (OO2-05)",
+   "O2 dissociative ionization O2 -> O+ + O, with the O+/O2^2+ column ambiguity carried as upper/lower variants if a published O2^2+ estimate is adopted (OO2-06)",
+   "O2 dissociation into neutrals, with the accounting against dissociative electronic excitation fixed by OWNER DECISION OD-4 (OO2-08)",
+   "O2 momentum transfer (OO2-09)",
+   "O2 electronic excitation a1Delta_g, b1Sigma_g+ and the Herzberg states c, A', A, with the extension above the R-matrix range fixed by OWNER DECISION OD-6 (OO2-10, OO2-11, OO2-13)"
+  ],
+  "2_assess_before_complete": [
+   "O2 vibrational excitation (OO2-14)",
+   "O2 B3Sigma_u- (Schumann-Runge) and higher electronic states (OO2-12)",
+   "O2+ dissociative excitation e + O2+ -> O+ + O + e (OO2-19)",
+   "O2 dissociative electron attachment -> O- (OO2-16), assessed under F_att only if OD-5 admits O-"
+  ],
+  "3_assessed_not_included_unless_bound_exceeds": [
+   "O2 rotational excitation (OO2-15; gross vs net convention fixed here before any bound is seen: OWNER DECISION OD-7)",
+   "O fine-structure transitions (OO2-04)",
+   "O2 -> O^2+ + O and O2 -> O+ + O+ (OO2-07)",
+   "direct O -> O^2+ (OO2-18)",
+   "O+ -> O^2+ (OO2-17; energy link, required if any O^2+ channel is promoted)",
+   "O2 -> O2^2+ (OO2-20) and O2+ -> O2^2+ (OO2-19)",
+   "O^2+ -> O^3+ (BELL1983 O III; bound only)"
+  ]
+ },
+ "outside_this_rule": {
+  "items": [
+   "dissociative recombination of O2+ (OO2-21)",
+   "radiative / three-body recombination of O+ (OO2-24)",
+   "O- sinks: electron-impact detachment (OO2-22), associative detachment and mutual neutralization (OO2-23)",
+   "heavy-particle chemistry (charge exchange, ion-molecule reactions, NO formation) and all surface processes",
+   "processes from metastable initial states (OO2-25)"
+  ],
+  "note": "The F_P / F_ion / F_S rule is written for electron-impact channels. Volume recombination and negative-ion chemistry need their own relevance criterion (OWNER DECISION OD-5, OD-8) before they can be excluded or promoted. Listing them here records the omission; it does not assert they are negligible."
+ },
+ "preconditions_before_freezing": [
+  "Obtain and hash the SONG2026 version of record or its supplementary datasets and re-check every value the tier-1 tables will use (the audit read only the accepted manuscript).",
+  "Resolve CC-2 of the source matrix: confirm whether the installed HallThruster tree equals the pinned commit, and decide how its uncited negative-ion constants are handled if O- is ever admitted.",
+  "Fix OD-1 to OD-8 below.",
+  "Record in PINNED.toml a separate reaction-set label for O/O2 (the N2 label abep-n2n-* must never refer to a set containing O/O2)."
+ ],
+ "owner_decisions_required": {
+  "OD-1": "Domain upper limit (keep T_e 2-30 eV, or set after the O/O2 validity audit).",
+  "OD-2": "State basis for F_S (composition grid vs blind state envelope) and the grid itself.",
+  "OD-3": "O excitation: individual states vs lumped remainder; header energies from a cited level list.",
+  "OD-4": "O2 dissociation vs dissociative electronic excitation accounting (double counting, sub-13.5 eV coverage, representative energy loss).",
+  "OD-5": "Whether O- is admitted at all; if so, the F_att metric and threshold, and sourced O- sinks before any run.",
+  "OD-6": "Extension of O2 electronic excitation above the R-matrix range (the N2 precedent used measured data from 20 eV plus a power-law continuation).",
+  "OD-7": "Rotational excitation convention (gross vs net) fixed before any bound is computed.",
+  "OD-8": "Relevance criterion for volume recombination (O2+ DR, O+ radiative) versus wall loss."
+ },
+ "status_rule": "A future O/O2 reaction-set status stays INCOMPLETE until every tier-2 and tier-3 process has a final (non-provisional) verdict under the frozen version of this rule, and every tier-1 process exists as a verified table.",
+ "no_claims": "This draft makes no claim about O/O2 chemistry completeness, Hall performance, ABEP closure, architecture choice or transport admission."
+}

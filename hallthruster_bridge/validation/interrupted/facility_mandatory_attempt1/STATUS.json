@@ -1,0 +1,33 @@
+{
+ "status": "INCOMPLETE_INFRASTRUCTURE_INTERRUPTION",
+ "dataset": "facility_mandatory (launch manifest hallthruster_bridge/campaign/manifests/facility_mandatory.json)",
+ "started_utc": "2026-09-26T19:10:12Z",
+ "interrupted": "container reboot between 19:14:26Z (last daemon heartbeat) and 19:35Z",
+ "records": 36,
+ "expected": 1080,
+ "files": {
+  "s0.jsonl": {
+   "sha256": "66c0ccd0a38537fe40219d7a8102cfaff136f951d8cc7013a3ec2b0866260885",
+   "n_records": 9
+  },
+  "s1.jsonl": {
+   "sha256": "4dbe7ea9597feb468afec05cbf8688bde78d22fccaede1ee88e955e5c680b108",
+   "n_records": 9
+  },
+  "s2.jsonl": {
+   "sha256": "85af27fc416b405698822d0ee48a1e49604d6efc8894efa4c8c13a352a226e0e",
+   "n_records": 9
+  },
+  "s3.jsonl": {
+   "sha256": "33ec12c7f3eda3108f70b1ab466fdec0c117476ca3ed44dac9ddc6bf94ab3669",
+   "n_records": 9
+  }
+ },
+ "not": "not a NUMERICAL_FAILURE and not a physics result: the reboot, not the solver, caused the incompleteness",
+ "rules": [
+  "preserved unchanged as a historical artifact; never concatenated into, or overwritten by, the replacement dataset",
+  "never frozen or scored"
+ ],
+ "owner_decision_2026_09_26": "relaunch a fresh 1080-record facility campaign from record 0 in a new output directory only after the 7 active O4 escalations (HMS-low x3, HMS-high x3, dication x1) are frozen and scored and their mechanical consequences settled; fresh execution provenance with an explicit link to this attempt; T_FACILITY_SCORE only after the replacement passes its complete structural audit. Facility is non-gating.",
+ "replacement_output_dir": "<scratchpad>/followon/facility_mandatory_attempt2"
+}

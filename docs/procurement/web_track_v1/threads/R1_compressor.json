@@ -1,0 +1,291 @@
+{
+ "task": "DI-1.4 compressor primary evidence (Li 2015)",
+ "repo_commit": "782f900",
+ "access_date": "2026-09-27",
+ "source_register": [
+  {
+   "id": "LI2015",
+   "citation": "Y. Li, X. Chen, D. Li, Y. Xiao, P. Dai, C. Gong, 'Design and analysis of vacuum air-intake device used in air-breathing electric propulsion', Vacuum 120 (2015) 89-95, doi:10.1016/j.vacuum.2015.06.011 (PII S0042207X15002730). Affiliation (OpenAlex raw string): National Key Laboratory of Science and Technology on Vacuum Technology and Physics, Lanzhou Institute of Space Technology and Physics, Lanzhou 730000, PR China.",
+   "url": "https://doi.org/10.1016/j.vacuum.2015.06.011",
+   "access_date": "2026-09-27",
+   "access_level": "not_accessible (full text); abstract content available only as search_engine_excerpt",
+   "access_log": [
+    "doi.org -> 302 linkinghub.elsevier.com (200, JS redirect page) -> www.sciencedirect.com/science/article/pii/S0042207X15002730: HTTP 403 (WebFetch and curl); /abs/ variant: HTTP 403; not bypassed",
+    "Crossref API: metadata + 36 references, no abstract; TDM links require Elsevier API key/entitlement (not attempted)",
+    "OpenAlex: oa_status closed, any_repository_has_fulltext false, no abstract",
+    "Semantic Scholar: isOpenAccess false; abstract elided by publisher",
+    "Unpaywall: no OA location returned",
+    "ResearchGate/x-mol/scilit/ouci: 403/429 or not found; not bypassed"
+   ],
+   "note": "abstract sentences were obtained only through web-search result excerpts of the ScienceDirect abstract page (three independent queries returned mutually consistent wording); the abstract was NOT read verbatim first-hand. Treat as verify."
+  },
+  {
+   "id": "MOON2025",
+   "citation": "G. Moon, Y. Ko, M. Yi, E. Jun, 'Operational feasibility analysis of a cryogenic active intake device for atmosphere-breathing electric propulsion', arXiv:2503.02021v1 (2025); published Aerosp. Sci. Technol. (2026) doi:10.1016/j.ast.2026.112138 (per Semantic Scholar, verify)",
+   "url": "https://arxiv.org/pdf/2503.02021v1",
+   "access_date": "2026-09-27",
+   "access_level": "full_text"
+  },
+  {
+   "id": "ROMANO2021",
+   "citation": "F. Romano, J. Espinosa-Orozco, M. Pfeiffer, G. Herdrich, N.H. Crisp, P.C.E. Roberts, et al., 'Intake design for an Atmosphere-Breathing Electric Propulsion System (ABEP)', Acta Astronautica 187 (2021) 225-235 (volume/pages verify), doi:10.1016/j.actaastro.2021.06.033; arXiv:2106.15912v2 (CC-BY-NC-ND accepted manuscript)",
+   "url": "https://arxiv.org/pdf/2106.15912",
+   "access_date": "2026-09-27",
+   "access_level": "full_text"
+  },
+  {
+   "id": "ANDREUSSI2022",
+   "citation": "T. Andreussi et al., 'A review of air-breathing electric propulsion: from mission studies to technology verification', J. Electr. Propuls. 1 (2022), doi:10.1007/s44205-022-00024-9",
+   "url": "https://link.springer.com/article/10.1007/s44205-022-00024-9",
+   "access_date": "2026-09-27",
+   "access_level": "secondary_citation (citation contexts via Semantic Scholar API only; Springer returned a JS client challenge / idp cookie redirect, not bypassed)"
+  },
+  {
+   "id": "TAES2023",
+   "citation": "'Maintenance Strategy for Elliptical Orbit Satellite With Air-Breathing Electric Propulsion', IEEE Trans. Aerosp. Electron. Syst. (2023), doi:10.1109/TAES.2023.3282611 (authors not retrieved, verify)",
+   "url": "https://doi.org/10.1109/TAES.2023.3282611",
+   "access_date": "2026-09-27",
+   "access_level": "secondary_citation (citation contexts via Semantic Scholar API only)"
+  },
+  {
+   "id": "MOON2024",
+   "citation": "G. Moon, M. Yi, E. Jun, 'Design and operational concept of a cryogenic active intake device for atmosphere-breathing electric propulsion', Aerosp. Sci. Technol. 151 (2024) 109300, doi:10.1016/j.ast.2024.109300",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S1270963824004310",
+   "access_date": "2026-09-27",
+   "access_level": "secondary_citation (search_engine_excerpt of abstract/intro only; not read)"
+  },
+  {
+   "id": "LI2013",
+   "citation": "Y. Li, X. Chen, L. Wang, L. Guo, Y. Li, 'Molecular flow transmission probabilities of any regular polygon tubes', Vacuum 92 (2013) 81-, doi:10.1016/j.vacuum.2012.11.013",
+   "url": "https://doi.org/10.1016/j.vacuum.2012.11.013",
+   "access_date": "2026-09-27",
+   "access_level": "not_accessible (metadata only; closed)"
+  },
+  {
+   "id": "LI2014A",
+   "citation": "Y. Li, X. Chen, Y. Jia, M. Liu, Z. Wang, 'Numerical investigation of three turbomolecular pump models in the free molecular flow range', Vacuum 101 (2014) 337-, doi:10.1016/j.vacuum.2013.10.002",
+   "url": "https://doi.org/10.1016/j.vacuum.2013.10.002",
+   "access_date": "2026-09-27",
+   "access_level": "not_accessible (metadata only; closed)"
+  },
+  {
+   "id": "LI2014B",
+   "citation": "Y. Li, X. Chen, W. Guo, D. Li, Q. Wang, K. Feng, 'Accurate simulation of turbomolecular pumps with modified algorithm by 3D direct simulation Monte Carlo method', Vacuum 109 (2014) 354-, doi:10.1016/j.vacuum.2014.03.023",
+   "url": "https://doi.org/10.1016/j.vacuum.2014.03.023",
+   "access_date": "2026-09-27",
+   "access_level": "not_accessible (metadata only; closed)"
+  },
+  {
+   "id": "AIP2016",
+   "citation": "'Transmission probabilities of rarefied flows in the application of atmosphere-breathing electric propulsion', AIP Conf. Proc. (RGD30, 2016), doi:10.1063/1.4967689 (authors not retrieved; possibly same group, verify)",
+   "url": "https://doi.org/10.1063/1.4967689",
+   "access_date": "2026-09-27",
+   "access_level": "not_accessible (title/DOI only from Semantic Scholar citing list)"
+  },
+  {
+   "id": "US12286943",
+   "citation": "US patent 12286943, 'Turbomolecular air-scoop for satellite air-breathing electric propulsion' (title from search result only; assignee/inventors/dates not retrieved, verify)",
+   "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12286943",
+   "access_date": "2026-09-27",
+   "access_level": "not_accessible (HTTP 403)"
+  }
+ ],
+ "primary_findings": [
+  {
+   "quantity": "device architecture",
+   "value": "multi-hole plate + 'big turbo' + small turbomolecular pump + miniature scroll pump, in series",
+   "unit": "-",
+   "conditions": "design",
+   "source_id": "LI2015",
+   "locator": "abstract (search_engine_excerpt; verify)",
+   "evidence_class": "reconstructed (abstract wording via search excerpts)",
+   "applicability": "supports C1 topology (throat-spanning bladed rotor first stage) plus a storage/boost chain",
+   "limitations": "not read first-hand; big-turbo geometry, blade rows, rpm not available"
+  },
+  {
+   "quantity": "inlet diameter",
+   "value": 500,
+   "unit": "mm",
+   "conditions": "design",
+   "source_id": "LI2015",
+   "locator": "abstract (search_engine_excerpt; verify)",
+   "evidence_class": "reconstructed",
+   "applicability": "area pi*0.25^2 = 0.196 m^2 (computed here), inside the repo's b=0.25 minimum-inlet range 0.0979-0.377 m^2",
+   "limitations": "rotor/blade dimensions unknown"
+  },
+  {
+   "quantity": "collection (capture) efficiency, high rotational speed case",
+   "value": "56.47-57.85",
+   "unit": "%",
+   "conditions": "altitudes 150-240 km; DSMC computation of multi-hole plate + big turbo",
+   "source_id": "LI2015",
+   "locator": "abstract (search_engine_excerpt; verify)",
+   "evidence_class": "model-derived (DSMC)",
+   "applicability": "the '~60 %' quoted by MOON2025 is a rounding of this simulated value",
+   "limitations": "rpm values, species, GSI model and efficiency definition not accessed; simulation, not measurement"
+  },
+  {
+   "quantity": "collection efficiency, low rotational speed case",
+   "value": "41.67-42.60",
+   "unit": "%",
+   "conditions": "altitudes 150-240 km; DSMC",
+   "source_id": "LI2015",
+   "locator": "abstract (search_engine_excerpt; verify)",
+   "evidence_class": "model-derived (DSMC)",
+   "applicability": "as above",
+   "limitations": "as above"
+  },
+  {
+   "quantity": "role of the stages",
+   "value": "collection efficiency determined mainly by multi-hole plate and big turbo (investigated by Monte Carlo); high-pressure storage achieved mainly by small TMP and miniature scroll pump (analyzed experimentally)",
+   "unit": "-",
+   "conditions": "-",
+   "source_id": "LI2015",
+   "locator": "abstract (search_engine_excerpt; verify)",
+   "evidence_class": "reconstructed",
+   "applicability": "KEY: the throat-scale first-stage rotor (the C1 element) was simulated only; the experiment covered the commercial-scale small TMP + scroll pump storage chain",
+   "limitations": "experimental set-up, gas, flow and pressures not accessed"
+  },
+  {
+   "quantity": "compression outcome (experiment)",
+   "value": "rarefied gas 'can be compressed and get an atmospheric pressure'",
+   "unit": "-",
+   "conditions": "experimental results of the storage chain (small TMP + scroll pump); inlet pressure, throughput, gas not accessed",
+   "source_id": "LI2015",
+   "locator": "abstract (search_engine_excerpt; verify)",
+   "evidence_class": "measured (as reported in abstract; not verified)",
+   "applicability": "a TMP+scroll backing chain reaching ~atmospheric pressure is standard vacuum practice; says nothing about CR of the throat-spanning rotor at ABEP inlet pressures",
+   "limitations": "no numeric CR, inlet pressure, throughput, power or mass in the accessible text"
+  },
+  {
+   "quantity": "compression ratio >= 3500",
+   "value": "NOT FOUND in any accessible LI2015 text",
+   "unit": "-",
+   "conditions": "-",
+   "source_id": "LI2015",
+   "locator": "-",
+   "evidence_class": "-",
+   "applicability": "the number exists only in secondary sources (MOON2025, MOON2024 excerpt)",
+   "limitations": "cannot establish whether 3500 is simulated or measured, for which species, stage(s), inlet/outlet pressure or throughput"
+  }
+ ],
+ "secondary_citations": [
+  {
+   "citing_source_id": "MOON2025",
+   "locator": "Sec. 1, ref. [26] (arXiv txt lines ~151-155)",
+   "quote": "Numerical simulations and subsystem experiments estimated a promising intake performance for the TMP-based active intake device, with an ηc of approximately 60% and a CR of 3500 or higher [26]",
+   "numbers": {
+    "capture_efficiency": "~60 %",
+    "CR": ">= 3500"
+   },
+   "access_level": "full_text",
+   "note": "the repository's EV-08 source"
+  },
+  {
+   "citing_source_id": "MOON2024",
+   "locator": "abstract/introduction (search_engine_excerpt)",
+   "quote": "about 60% capture efficiency and CR greater than 3500 can be achieved by integrating a 500 mm diameter TMP; ... multi-blade high speed rotors might generate high angular momentum ... large actuators for attitude control ... structural vibration",
+   "numbers": {
+    "capture_efficiency": "~60 %",
+    "CR": "> 3500",
+    "TMP diameter": "500 mm"
+   },
+   "access_level": "secondary_citation (search excerpt; verify)",
+   "note": "same research group as MOON2025, not independent"
+  },
+  {
+   "citing_source_id": "ROMANO2021",
+   "locator": "Sec. 1 and Table 1 (arXiv v2 p. 4-5)",
+   "quote": "a passive multi-hole plate followed by an active compression with a turbo pump system that can achieve ηc = 0.42 − 0.58",
+   "numbers": {
+    "capture_efficiency": "0.42-0.58"
+   },
+   "access_level": "full_text",
+   "note": "quotes no CR; consistent with the abstract's two DSMC ranges"
+  },
+  {
+   "citing_source_id": "ANDREUSSI2022",
+   "locator": "ref. [80] contexts (Semantic Scholar)",
+   "quote": "In 2015, theoretical and experimental activities on an active intake were performed at the Lanzhou Institute of Physics [80]; ... turbomolecular pump technology has a relatively low power consumption and significant heritage ...; magnetic levitation can remove these issues ...; [another study] adopted the model of [80] to compute the compression and transmission probability of the compressor blades",
+   "numbers": {},
+   "access_level": "secondary_citation (contexts only)",
+   "note": "no numbers in retrieved contexts; 'low power consumption' is a qualitative claim, unverified"
+  },
+  {
+   "citing_source_id": "TAES2023",
+   "locator": "ref. [23] contexts (Semantic Scholar)",
+   "quote": "altitude range of 150–240 km is suitable for ABEP operation according to [23]; ... a multihole plate, a turbo, a small hybrid turbomolecular pump and a miniature scroll pump in series ...; The energy consumption of gas accumulation system is computational complex ... experiments are generally required",
+   "numbers": {
+    "altitude": "150-240 km"
+   },
+   "access_level": "secondary_citation (contexts only)",
+   "note": "implies LI2015 gives no closed energy/power value (inferred, verify)"
+  }
+ ],
+ "related_primary_sources": [
+  {
+   "id": "LI2013",
+   "relation": "same first author/institute; molecular-flow transmission probability method used for the multi-hole plate (inferred from title)",
+   "numbers": "none accessed",
+   "access_level": "not_accessible"
+  },
+  {
+   "id": "LI2014A",
+   "relation": "same group; TMP models in free-molecular range (test-particle/DSMC, inferred from title) — likely the rotor-modelling basis of LI2015",
+   "numbers": "none accessed",
+   "access_level": "not_accessible"
+  },
+  {
+   "id": "LI2014B",
+   "relation": "same group; 3D DSMC TMP simulation algorithm",
+   "numbers": "none accessed",
+   "access_level": "not_accessible"
+  },
+  {
+   "id": "AIP2016",
+   "relation": "ABEP rarefied transmission probabilities (possibly same group; verify)",
+   "numbers": "none accessed",
+   "access_level": "not_accessible"
+  },
+  {
+   "id": "US12286943",
+   "relation": "patent on a turbomolecular air-scoop for ABEP; a patent is not performance evidence",
+   "numbers": "none accessed",
+   "access_level": "not_accessible"
+  },
+  {
+   "id": "none",
+   "relation": "no independent primary source (other group) with measured or simulated numbers for a rotor-based ABEP intake compressor was found; Chinese-language search (吸气式电推进 进气装置 分子泵) returned only passive-intake work (e.g. CR ~200, efficiency 0.65 at aspect ratio 7, search excerpt) and reviews",
+   "numbers": "-",
+   "access_level": "-"
+  }
+ ],
+ "di14_rule_quoted": [
+  "A4 (docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A4_owner_decisions.json#decisions.DI_1_4_compressor_C1): \"Keep C1 (bladed turbomolecular first stage) as the leading conditional candidate: status LEADING_CANDIDATE_PENDING_PRIMARY_EVIDENCE. DI-1.4 is NOT frozen until the Li 2015 compression claim is verified from a first-hand source; a secondary citation is not enough for a system-critical compressor choice.\"",
+  "compressor_downselect_v1.json#minimum_data_to_freeze_DI_1_4: T-1..T-9 (T-1 'compression ratio vs inlet pressure (1e-3 - 1e-1 Pa) and throughput for N2 and O2 on a throat-scale bladed rotor stage ...', T-2 pumping speed, T-3 AO-bearing flow, T-4 bus power, T-5 T_feed, T-6 AO materials, T-7 mass, T-8 back-streaming, T-9 life)"
+ ],
+ "assessment": {
+  "status_recommendation": "KEEP LEADING_CANDIDATE_PENDING_PRIMARY_EVIDENCE (not primary-evidence-supported; evidence insufficient). Recommend the owner additionally annotate EV-08: the CR >= 3500 figure is unverified and possibly not a throat-rotor value; the ~60 % is a DSMC value (56.47-57.85 % high-speed case).",
+  "reasoning": [
+   "The Li 2015 full text was not legitimately accessible (ScienceDirect 403; closed per OpenAlex/Unpaywall/Semantic Scholar); the A4 condition 'verified from a first-hand source' is therefore NOT met.",
+   "Abstract content (search-engine excerpts, consistent across queries) reframes EV-08: the capture efficiency is DSMC (model-derived), and only the storage chain (small TMP + scroll pump) was tested experimentally, reaching ~atmospheric pressure; the throat-scale 'big turbo' rotor, which is the C1 element, appears to be simulation-only.",
+   "No accessible text states CR >= 3500; its species, stage, inlet pressure and throughput remain unknown, so HG-4 (CR on atomic O, 2.37-142) cannot be credited from it even if verified.",
+   "Positive consistency: the 500 mm inlet (0.196 m^2) lies within the repo's minimum-inlet range 0.098-0.377 m^2, supporting the throat-spanning-rotor topology as physically plausible (not demonstrated).",
+   "No independent group has published numbers on a rotor-based ABEP compressor; secondary sources flag angular momentum and vibration (MOON2024 excerpt) - relevant to T-9.",
+   "C1's leading status rests on the physics bounds (EV-01/EV-03/EV-20 pumping-speed argument), not on Li 2015; so demotion is not warranted either."
+  ],
+  "what_would_close_it": [
+   "First-hand read of LI2015 via legitimate access (institutional subscription, library ILL, or purchase) extracting: CR definition, species, inlet/outlet pressure, throughput, which stage(s) the 3500 refers to, simulation vs experiment, rpm, blade geometry, power, mass.",
+   "Even then, DI-1.4 freeze per the repo's own rule needs Vyovrinda/vendor test data T-1..T-5, T-8 (CR vs inlet pressure 1e-3-1e-1 Pa for N2/O2 on a throat-scale rotor, pumping speed vs rpm, AO-bearing flow, bus power, T_feed, back-streaming) and T-6, T-7, T-9 for Milestone C.",
+   "Optionally: first-hand reads of LI2014A/LI2014B (TMP DSMC model basis) to judge the fidelity of the rotor simulation."
+  ]
+ },
+ "unresolved_questions": [
+  "Is 'CR >= 3500' in LI2015 at all, and if so is it the big-turbo stage (simulated) or the small-TMP storage chain (experimental)? (verify)",
+  "Gas species, inlet pressure, throughput and rpm of the high/low speed cases (verify)",
+  "Collection-efficiency definition in LI2015 (verify)",
+  "Power and mass of the device - TAES2023 context suggests not given (verify)",
+  "Authors/content of AIP2016 and US12286943 (verify)",
+  "Exact abstract wording: only search-engine excerpts seen"
+ ]
+}

@@ -1,0 +1,135 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "abep_experiment_package_v1",
+ "title": "Experimental decision package from the minimum decisive experiment (fo_experiment_package)",
+ "description": "Structure of experiment_package_v1.json. Uses only the JSON-Schema keywords supported by the lane-24 minimal validator (abep_sim/hard_gates.py). Number objects are additionally checked by the build script: every numeric leaf is the 'value' of an object that carries unit, evidence_class and source.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": ["schema", "id", "follow_on", "trigger", "prerequisite", "status", "base_commit", "generated_by",
+              "not_locked", "compliance", "inputs", "input_repin_log", "milestones", "decisions", "traceability", "hard_gate_context",
+              "reconciliation", "requirements", "tbd_register"],
+ "properties": {
+  "schema": {"const": "abep_experiment_package_v1"},
+  "id": {"const": "fo_experiment_package_v1"},
+  "follow_on": {"const": "fo_experiment_package"},
+  "trigger": {"const": "T_EXPERIMENT_PACKAGE"},
+  "prerequisite": {"const": "lane_25_min_decisive_experiment"},
+  "status": {"const": "DRAFT_PENDING_OWNER"},
+  "base_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+  "generated_by": {"type": "string", "minLength": 1},
+  "not_locked": {"type": "string", "minLength": 1},
+  "compliance": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+  "inputs": {
+   "type": "array", "minItems": 1,
+   "items": {"type": "object", "additionalProperties": false, "required": ["key", "path", "lane", "sha256"],
+             "properties": {"key": {"type": "string", "minLength": 1}, "path": {"type": "string", "minLength": 1},
+                            "lane": {"type": "string", "minLength": 1},
+                            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}
+  },
+  "input_repin_log": {
+   "type": "array",
+   "items": {"type": "object", "additionalProperties": false,
+             "required": ["date", "key", "path", "lane", "from_sha256", "to_sha256", "reason",
+                          "effect_on_this_package", "other_pinned_inputs_changed"],
+             "properties": {"date": {"type": "string", "minLength": 1}, "key": {"type": "string", "minLength": 1},
+                            "path": {"type": "string", "minLength": 1}, "lane": {"type": "string", "minLength": 1},
+                            "from_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                            "to_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                            "reason": {"type": "string", "minLength": 1},
+                            "effect_on_this_package": {"type": "string", "minLength": 1},
+                            "other_pinned_inputs_changed": {"type": "string", "minLength": 1}}}
+  },
+  "milestones": {
+   "type": "object", "additionalProperties": false, "required": ["supports", "A", "to_reach_B", "to_reach_C"],
+   "properties": {"supports": {"type": "array", "minItems": 1, "items": {"enum": ["A", "B", "C"]}},
+                  "A": {"type": "object", "required": ["unlocks", "does_not"]},
+                  "to_reach_B": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+                  "to_reach_C": {"type": "array", "minItems": 1, "items": {"type": "string"}}}
+  },
+  "decisions": {
+   "type": "array", "minItems": 1,
+   "items": {
+    "type": "object",
+    "required": ["id", "title", "source", "status", "options", "recommendation"],
+    "properties": {
+     "id": {"type": "string", "pattern": "^D-[0-9]{2}$"},
+     "title": {"type": "string", "minLength": 1},
+     "source": {"type": "object", "required": ["input"]},
+     "status": {"const": "OPEN_OWNER_DECISION"},
+     "options": {"type": "array", "minItems": 2,
+                 "items": {"type": "object", "required": ["id", "label"],
+                           "properties": {"id": {"type": "string", "pattern": "^D-[0-9]{2}-[A-Z]$"},
+                                          "label": {"type": "string", "minLength": 1}}}},
+     "recommendation": {"type": "object", "additionalProperties": false, "required": ["status", "option", "rationale"],
+                        "properties": {"status": {"const": "PROPOSED"},
+                                       "option": {"type": "string", "pattern": "^D-[0-9]{2}-[A-Z]$"},
+                                       "rationale": {"type": "string", "minLength": 1}}}
+    }
+   }
+  },
+  "traceability": {
+   "type": "object", "required": ["rows", "failure_tree_nodes_naming_M_PREION", "M_PREION_nodes_not_traced"],
+   "properties": {
+    "rows": {"type": "array", "minItems": 1,
+             "items": {"type": "object", "additionalProperties": false,
+                       "required": ["id", "measurement", "what", "breakeven_placement", "bundle1_conditions",
+                                    "hard_gates", "failure_tree", "limits"],
+                       "properties": {"id": {"type": "string", "pattern": "^TR-[0-9]{2}$"},
+                                      "measurement": {"type": "object", "required": ["lane25", "quantities",
+                                                                                     "stages"]},
+                                      "what": {"type": "string", "minLength": 1},
+                                      "breakeven_placement": {"type": "object"},
+                                      "bundle1_conditions": {"type": "array",
+                                                             "items": {"type": "object",
+                                                                       "required": ["condition", "source",
+                                                                                    "coverage"],
+                                                                       "properties": {"coverage": {
+                                                                        "enum": ["direct", "partial"]}}}},
+                                      "hard_gates": {"type": "array",
+                                                     "items": {"type": "object",
+                                                               "required": ["criterion",
+                                                                            "can_eliminate_from_minimum_experiment"],
+                                                               "properties": {
+                                                                "can_eliminate_from_minimum_experiment": {
+                                                                 "const": false}}}},
+                                      "failure_tree": {"type": "array",
+                                                       "items": {"type": "object",
+                                                                 "required": ["node", "action", "effect_in_tree"]}},
+                                      "limits": {"type": "array", "items": {"type": "string"}}}}},
+    "failure_tree_nodes_naming_M_PREION": {"type": "array", "items": {"type": "string"}},
+    "M_PREION_nodes_not_traced": {"type": "array", "items": {"type": "string"}}
+   }
+  },
+  "hard_gate_context": {
+   "type": "object", "required": ["current_status", "outcome_templates"],
+   "properties": {
+    "outcome_templates": {
+     "type": "object", "required": ["evaluator", "templates", "reading"],
+     "properties": {"templates": {"type": "array", "minItems": 1,
+                                  "items": {"type": "object",
+                                            "required": ["template", "architecture", "evaluator_eliminated",
+                                                         "criterion_verdict"],
+                                            "properties": {"architecture": {"enum": ["hall_only", "rf_hall",
+                                                                                     "ecr_hall"]},
+                                                           "evaluator_eliminated": {"const": false}}}}}
+    }
+   }
+  },
+  "reconciliation": {"type": "object", "required": ["mapping_check", "dimensions", "status"],
+                     "properties": {"status": {"const": "PROPOSED"},
+                                    "dimensions": {"type": "array", "minItems": 1,
+                                                   "items": {"type": "object",
+                                                             "required": ["dimension", "lane25", "lane06",
+                                                                          "proposed_single_basis", "why"]}}}},
+  "requirements": {"type": "array", "minItems": 1,
+                   "items": {"type": "object", "required": ["id", "requirement", "values", "tbd", "reference"],
+                             "properties": {"id": {"type": "string", "pattern": "^REQ-(FAC|HW)-[0-9]{2}$"}}}},
+  "tbd_register": {"type": "array", "minItems": 1,
+                   "items": {"type": "object", "additionalProperties": false,
+                             "required": ["path", "what", "requires", "blocked_by"],
+                             "properties": {"path": {"type": "string"}, "what": {"type": "string"},
+                                            "requires": {"type": "string"},
+                                            "blocked_by": {"type": "array", "minItems": 1,
+                                                           "items": {"type": "string"}}}}}
+ }
+}

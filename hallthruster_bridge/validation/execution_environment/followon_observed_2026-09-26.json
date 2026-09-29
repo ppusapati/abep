@@ -1,0 +1,130 @@
+{
+ "observed_utc": "2026-09-26T12:43:31+00:00",
+ "method": "read-only inspection of /proc/<pid>/environ and cmdline of the running julia processes; nothing about the runs was changed",
+ "processes": [
+  {
+   "pid": 18626,
+   "cmdline": [
+    "julia",
+    "--project=hallthruster_bridge",
+    "hallthruster_bridge/campaign/p5_n2_campaign.jl",
+    "/tmp/claude-0/-home-user-abep/275befef-ee58-5bbd-84f0-21c33eb50eb4/scratchpad/followon/staged_n2_n_rot_off/s0.jsonl",
+    "vacuum",
+    "0",
+    "4",
+    "n2_n_rot_off.toml"
+   ],
+   "thread_env": {},
+   "n_os_threads": 4
+  },
+  {
+   "pid": 18627,
+   "cmdline": [
+    "julia",
+    "--project=hallthruster_bridge",
+    "hallthruster_bridge/campaign/p5_n2_campaign.jl",
+    "/tmp/claude-0/-home-user-abep/275befef-ee58-5bbd-84f0-21c33eb50eb4/scratchpad/followon/staged_n2_n_rot_off/s1.jsonl",
+    "vacuum",
+    "1",
+    "4",
+    "n2_n_rot_off.toml"
+   ],
+   "thread_env": {},
+   "n_os_threads": 4
+  },
+  {
+   "pid": 18628,
+   "cmdline": [
+    "julia",
+    "--project=hallthruster_bridge",
+    "hallthruster_bridge/campaign/p5_n2_campaign.jl",
+    "/tmp/claude-0/-home-user-abep/275befef-ee58-5bbd-84f0-21c33eb50eb4/scratchpad/followon/staged_n2_n_rot_off/s2.jsonl",
+    "vacuum",
+    "2",
+    "4",
+    "n2_n_rot_off.toml"
+   ],
+   "thread_env": {},
+   "n_os_threads": 4
+  },
+  {
+   "pid": 18629,
+   "cmdline": [
+    "julia",
+    "--project=hallthruster_bridge",
+    "hallthruster_bridge/campaign/p5_n2_campaign.jl",
+    "/tmp/claude-0/-home-user-abep/275befef-ee58-5bbd-84f0-21c33eb50eb4/scratchpad/followon/staged_n2_n_rot_off/s3.jsonl",
+    "vacuum",
+    "3",
+    "4",
+    "n2_n_rot_off.toml"
+   ],
+   "thread_env": {},
+   "n_os_threads": 4
+  },
+  {
+   "pid": 21508,
+   "cmdline": [
+    "julia",
+    "--project=hallthruster_bridge",
+    "hallthruster_bridge/campaign/p5_n2_campaign.jl",
+    "/tmp/claude-0/-home-user-abep/275befef-ee58-5bbd-84f0-21c33eb50eb4/scratchpad/followon/escalation_n2_n_exc_johnsonlow_di_lower/s0.jsonl",
+    "vacuum",
+    "0",
+    "4",
+    "n2_n_exc_johnsonlow_di_lower.toml"
+   ],
+   "thread_env": {},
+   "n_os_threads": 4
+  },
+  {
+   "pid": 21509,
+   "cmdline": [
+    "julia",
+    "--project=hallthruster_bridge",
+    "hallthruster_bridge/campaign/p5_n2_campaign.jl",
+    "/tmp/claude-0/-home-user-abep/275befef-ee58-5bbd-84f0-21c33eb50eb4/scratchpad/followon/escalation_n2_n_exc_johnsonlow_di_lower/s1.jsonl",
+    "vacuum",
+    "1",
+    "4",
+    "n2_n_exc_johnsonlow_di_lower.toml"
+   ],
+   "thread_env": {},
+   "n_os_threads": 4
+  },
+  {
+   "pid": 21510,
+   "cmdline": [
+    "julia",
+    "--project=hallthruster_bridge",
+    "hallthruster_bridge/campaign/p5_n2_campaign.jl",
+    "/tmp/claude-0/-home-user-abep/275befef-ee58-5bbd-84f0-21c33eb50eb4/scratchpad/followon/escalation_n2_n_exc_johnsonlow_di_lower/s2.jsonl",
+    "vacuum",
+    "2",
+    "4",
+    "n2_n_exc_johnsonlow_di_lower.toml"
+   ],
+   "thread_env": {},
+   "n_os_threads": 4
+  },
+  {
+   "pid": 21511,
+   "cmdline": [
+    "julia",
+    "--project=hallthruster_bridge",
+    "hallthruster_bridge/campaign/p5_n2_campaign.jl",
+    "/tmp/claude-0/-home-user-abep/275befef-ee58-5bbd-84f0-21c33eb50eb4/scratchpad/followon/escalation_n2_n_exc_johnsonlow_di_lower/s3.jsonl",
+    "vacuum",
+    "3",
+    "4",
+    "n2_n_exc_johnsonlow_di_lower.toml"
+   ],
+   "thread_env": {},
+   "n_os_threads": 4
+  }
+ ],
+ "julia_version": "julia version 1.11.7",
+ "nproc": 4,
+ "hallthruster_commit_pinned": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+ "note": "No JULIA_NUM_THREADS / BLAS / OMP thread variables are set unless listed in thread_env (Julia then defaults to 1 compute thread per process; OS threads include runtime/GC/BLAS helpers). The driver has no wall-clock limit; runs are independent processes, so CPU oversubscription affects elapsed time only. Applies to the processes observed; runs launched earlier by the same launcher scripts are inferred to share this environment (evidence class: inferred)."
+}

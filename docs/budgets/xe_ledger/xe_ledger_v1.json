@@ -1,0 +1,4747 @@
+{
+ "schema": "xe_ledger_v1",
+ "version": "1.0.0",
+ "ledger_version": "xe_ledger_v1",
+ "follow_on": "fo_xe_system_ledger",
+ "trigger": "T_A5_XE_LEDGER",
+ "status": "PARAMETRIC_LEDGER — total Xe mass and stored-Xe subsystem mass REFUSED (TBD inputs); nothing frozen",
+ "generated_by": "docs/budgets/xe_ledger/build_xe_ledger.py",
+ "module": "abep_sim/xe_ledger.py",
+ "base_commit": "302e1c94b3bddeb005f17bb189407f2e4641519a",
+ "decision_pins": {
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json": "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A6_a5_followon_authorization.json": "aaeb7c503c3791f81d4c589e8e25289befa6fcb3b16ce6f962b153715c883180",
+  "docs/decisions/verification/A5_BASELINE_VERIFICATION.json": "4bd0fb4312fba97b18bba92ca0726133947ea6d86327f5e1360ea6af2b163523"
+ },
+ "g0_precondition": {
+  "record": "docs/decisions/verification/A5_BASELINE_VERIFICATION.json",
+  "verdict": "CLEAN",
+  "verified_commit": "23b79c843528656f21333fd44bdf02c2e9e3e3b8",
+  "a5_sha256": "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
+  "consequence": "downstream artifacts may pin A5 by the sha256 above"
+ },
+ "a5_basis": {
+  "ledger": "m_Xe_total = m_cathode + m_startup + m_transition + m_fallback + m_reserve; every operating mode consumes against this one fixed tank allocation",
+  "m_Xe_total_value": "PENDING_OWNER: set from the system mass ledger; the startup, transition, fallback and reserve terms are to be allocated",
+  "mode_rules": [
+   "continuous Xe support of the main discharge is not a nominal mode; if the atmospheric discharge needs it to stay lit, the atmospheric Hall concept has failed its Phase-1 objective",
+   "every mode that consumes Xe carries an explicit maximum duration and draws on the single fixed Xe allocation",
+   "mixed/transition operation never silently becomes a long-duration operating mode"
+  ],
+  "system_mass_design_allocation": {
+   "quantity": "system mass design allocation",
+   "value": "<= 34-36 kg",
+   "status": "allocation leaving margin to the 40 kg requirement"
+  }
+ },
+ "architectures": [
+  "hall_only",
+  "rf_hall",
+  "ecr_hall"
+ ],
+ "architecture_neutrality": "COMMON_MODE: hall_only, rf_hall and ecr_hall draw on the one A5 Xe allocation with the same ledger. A branch can modulate the ledger only through measured per-event startup/transition Xe (e.g. whether a pre-ionizer changes the Xe ignition need): TBD, H-1 Phase 1. Nothing here ranks or eliminates a branch.",
+ "hall_closure_isolation": "The Xe path is upstream of the discharge: no Hall-transport closure, ensemble member, screening candidate or P5 calibration-nuisance variable enters it (abep_sim.xe_ledger.reject_forbidden_keys). Credible set: empty.",
+ "equations": {
+  "m_cathode": "mdot_cathode x t_firing",
+  "m_startup": "N_starts x t_startup x mdot_startup",
+  "m_transition": "N_transitions x t_transition x mdot_transition",
+  "m_fallback": "t_fallback_max x mdot_fallback",
+  "m_reserve": "explicit policy term, one of: fraction_of_other_terms: m_reserve = f_reserve x (m_cathode + m_startup + m_transition + m_fallback); f_reserve dimensionless ('1'), >= 0 OR absolute_mass: m_reserve = m_reserve_abs (mass unit), >= 0",
+  "m_Xe_total": "m_cathode + m_startup + m_transition + m_fallback + m_reserve",
+  "m_tank": "explicit tank model, one of: tankage_fraction: m_tank = f_tank x m_Xe_total (the loaded Xe, all five terms); f_tank dimensionless ('1'), >= 0 OR tank_mass: m_tank = m_tank_abs (mass unit), >= 0, for the tank selected for the declared Xe load",
+  "m_Xe_subsystem": "m_Xe_total + m_tank + m_regulator + m_valves + m_plumbing + m_mounting_thermal"
+ },
+ "accounting_conventions": {
+  "PHASE_TOTAL_FLOW": "Each phase term (startup, transition, fallback) carries the TOTAL Xe flow during that phase (anode-side Xe plus cathode Xe). m_cathode carries the cathode flow over t_firing only. Phase hours are booked in their own terms. Where a phase's hours are also counted inside t_firing, the cathode flow over those hours is booked twice, at most mdot_cathode x overlap hours (conservative).",
+  "CATHODE_CONTINUOUS_INCREMENTAL": "m_cathode carries the cathode flow over every hour the cathode flows (t_firing must then include startup, transition and fallback hours). Each phase term carries only the Xe ABOVE that cathode flow (anode-side Xe plus any cathode flow above mdot_cathode). If t_firing is held at the RFP firing hours, the cathode flow during phases outside those hours is missing (non-conservative)."
+ },
+ "mass_references": [
+  {
+   "id": "RFP_40kg",
+   "value_kg": 40.0,
+   "kind": "requirement",
+   "source": "RFP '< 40 kg' total system mass (abep_sim/constants.py RFPConstraints.mass_max_kg; CLAUDE.md; A5 allocations_and_requirements 'the 40 kg requirement'); verify against the RFP document"
+  },
+  {
+   "id": "A5_alloc_36kg",
+   "value_kg": 36.0,
+   "kind": "allocation",
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json allocations_and_requirements 'system mass design allocation <= 34-36 kg' (upper end)"
+  },
+  {
+   "id": "A5_alloc_34kg",
+   "value_kg": 34.0,
+   "kind": "allocation",
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json allocations_and_requirements 'system mass design allocation <= 34-36 kg' (lower end)"
+  }
+ ],
+ "reporting_rule": "masses are reported as a share of each reference, never as a prediction or a verdict",
+ "parameters": [
+  {
+   "id": "mdot_cathode",
+   "term": "m_cathode",
+   "unit": "mg/s",
+   "nature": "allocation (A5 design target)",
+   "status": "FIXED_DESIGN_TERM — A5 design target, not a demonstrated flow",
+   "value": 0.1,
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json xe_mass_allocation.cathode_flow_design_target_mg_s (owner allocation: design target)",
+   "evidence_class": "assumed",
+   "upper_test_point": {
+    "value": 0.15,
+    "unit": "mg/s",
+    "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json xe_mass_allocation.cathode_flow_experimental_upper_test_point_mg_s (test point only)",
+    "evidence_class": "assumed",
+    "status": "A5 experimental upper test point only, until this ledger demonstrates it is affordable"
+   },
+   "closes_with": "C-1 measured spot-mode minimum Xe flow at the required emission current, with the thruster magnetic field and an air-fed anode (cathode_integration tbd 'cathode_min_flow'; cathode dossier G06; A5 architecture-closing risk rank 3)",
+   "milestone": "B",
+   "analogues": [
+    "AN-01"
+   ]
+  },
+  {
+   "id": "t_firing",
+   "term": "m_cathode",
+   "unit": "h",
+   "nature": "requirement (RFP minimum firing)",
+   "status": "FIXED — A5 books the cathode term over the RFP 15,000 firing hours",
+   "value": 15000.0,
+   "source": "RFP '> 15,000 h firing' used as the minimum (abep_sim/constants.py RFPConstraints.ignition_hours; A5 xe_mass_allocation.reference_arithmetic_15000h)",
+   "evidence_class": "assumed",
+   "sensitivity": "A5 internal design life target >= 18,000 h ('design margin target, not evidenced'): see cathode_term.firing_hours_sensitivity; the basis is owner decision OD-XE-5",
+   "closes_with": "fixed by A5/RFP; the owner may rebase it on the design-life target (OD-XE-5)",
+   "milestone": "A",
+   "analogues": []
+  },
+  {
+   "id": "N_starts",
+   "term": "m_startup",
+   "unit": "1",
+   "nature": "parameter",
+   "status": "TBD — requires the mission operations concept (eclipse/duty cycling, anomaly restarts) and FDIR",
+   "closes_with": "operations concept + FDIR restart policy (cathode_integration tbd 'starts', milestone C); start-cycle qualification of C-1 (cathode dossier G05)",
+   "milestone": "C",
+   "analogues": [
+    "AN-04"
+   ]
+  },
+  {
+   "id": "t_startup",
+   "term": "m_startup",
+   "unit": "s",
+   "nature": "parameter",
+   "status": "TBD — requires H-1/C-1 measurement of the start sequence (Xe-flowing preheat/conditioning + Xe discharge ignition dwell)",
+   "closes_with": "H-1/C-1 start-sequence test with Xe flow logged per phase",
+   "milestone": "B",
+   "analogues": [
+    "AN-03"
+   ]
+  },
+  {
+   "id": "mdot_startup",
+   "term": "m_startup",
+   "unit": "mg/s",
+   "nature": "parameter",
+   "status": "TBD — requires H-1/C-1 measurement (time-averaged Xe flow over t_startup, per the accounting convention)",
+   "closes_with": "H-1/C-1 start-sequence test (integrated Xe per start = t_startup x mdot_startup)",
+   "milestone": "B",
+   "analogues": [
+    "AN-02"
+   ]
+  },
+  {
+   "id": "N_transitions",
+   "term": "m_transition",
+   "unit": "1",
+   "nature": "parameter",
+   "status": "TBD — requires the operations concept (one per start plus one per recovery from Xe fallback) and FDIR",
+   "closes_with": "operations concept + FDIR",
+   "milestone": "C",
+   "analogues": []
+  },
+  {
+   "id": "t_transition",
+   "term": "m_transition",
+   "unit": "s",
+   "nature": "parameter",
+   "status": "TBD — requires H-1 measurement of the Xe-to-atmosphere transfer ('brief transition support', A5)",
+   "closes_with": "H-1 Phase 1 transfer profile (no accessed source reports a transition duration)",
+   "milestone": "B",
+   "analogues": [
+    "AN-02"
+   ]
+  },
+  {
+   "id": "mdot_transition",
+   "term": "m_transition",
+   "unit": "mg/s",
+   "nature": "parameter",
+   "status": "TBD — requires H-1 measurement (time-averaged Xe flow during the transfer)",
+   "closes_with": "H-1 Phase 1 transfer profile",
+   "milestone": "B",
+   "analogues": [
+    "AN-02"
+   ]
+  },
+  {
+   "id": "t_fallback_max",
+   "term": "m_fallback",
+   "unit": "h",
+   "nature": "parameter (owner/FDIR limit)",
+   "status": "TBD — requires the owner/FDIR maximum cumulative Xe-contingency duration (A5: every Xe-consuming mode carries an explicit maximum duration)",
+   "closes_with": "owner decision informed by sensitivity surface SS-3; FDIR design",
+   "milestone": "B",
+   "analogues": []
+  },
+  {
+   "id": "mdot_fallback",
+   "term": "m_fallback",
+   "unit": "mg/s",
+   "nature": "parameter",
+   "status": "TBD — requires H-1 measurement of the Xe-fed discharge flow at the fallback operating point",
+   "closes_with": "H-1 Xe reference/fallback point on the H-1 accelerator",
+   "milestone": "B",
+   "analogues": [
+    "AN-02"
+   ]
+  },
+  {
+   "id": "reserve_policy",
+   "term": "m_reserve",
+   "unit": "1 or kg",
+   "nature": "owner policy",
+   "status": "TBD — requires the owner's reserve policy: form (fraction_of_other_terms | absolute_mass) and value",
+   "closes_with": "owner decision OD-XE-2",
+   "milestone": "B",
+   "analogues": []
+  },
+  {
+   "id": "tank_model",
+   "term": "m_tank",
+   "unit": "1 or kg",
+   "nature": "hardware (explicit tank model input)",
+   "status": "TBD — requires procurement selection (supplier tank mass at the declared Xe load and MEOP) or a sourced tank sizing model (form tankage_fraction | tank_mass)",
+   "closes_with": "tank selection; mass_bom xe_tank item (G3 lower-bound relation thin_wall_sphere_min_mass_kg exists there for FAIL screening only)",
+   "milestone": "B",
+   "analogues": [
+    "AN-05"
+   ]
+  },
+  {
+   "id": "m_regulator",
+   "term": "hardware",
+   "unit": "kg",
+   "nature": "hardware",
+   "status": "TBD — requires procurement selection (supplier mass of the selected part at the declared Xe load, MEOP and flow)",
+   "closes_with": "Xe regulator selection (upstream ICD gap G-12: no regulator model)",
+   "milestone": "B",
+   "analogues": []
+  },
+  {
+   "id": "m_valves",
+   "term": "hardware",
+   "unit": "kg",
+   "nature": "hardware",
+   "status": "TBD — requires procurement selection (supplier mass of the selected part at the declared Xe load, MEOP and flow)",
+   "closes_with": "Xe isolation/metering valve selection (A5 Xe branch: metering splits to ignition/transition feed and cathode feed)",
+   "milestone": "B",
+   "analogues": []
+  },
+  {
+   "id": "m_plumbing",
+   "term": "hardware",
+   "unit": "kg",
+   "nature": "hardware",
+   "status": "TBD — requires procurement selection (supplier mass of the selected part at the declared Xe load, MEOP and flow)",
+   "closes_with": "Xe feed-line layout (filters, lines, fittings, fill/drain, pressure transducers)",
+   "milestone": "B",
+   "analogues": []
+  },
+  {
+   "id": "m_mounting_thermal",
+   "term": "hardware",
+   "unit": "kg",
+   "nature": "hardware",
+   "status": "TBD — requires procurement selection (supplier mass of the selected part at the declared Xe load, MEOP and flow)",
+   "closes_with": "tank mounts/brackets and Xe-path thermal hardware (heaters, insulation); boundary with mass_bom structure/thermal_hardware is OD-XE-7",
+   "milestone": "B",
+   "analogues": []
+  }
+ ],
+ "cathode_term": {
+  "formula": "m_cathode = mdot_cathode x t_firing",
+  "design_term": {
+   "mdot_mg_s": 0.1,
+   "t_firing_h": 15000.0,
+   "m_cathode_kg": 5.4,
+   "a5_reference_kg": 5.4,
+   "arithmetic": "0.10e-6 kg/s x 15,000 h x 3600 s/h = 5.4 kg",
+   "status": "FIXED_DESIGN_TERM (A5 allocation; not a demonstrated flow)",
+   "shares": [
+    {
+     "id": "RFP_40kg",
+     "kind": "requirement",
+     "value_kg": 40.0,
+     "share": 0.135,
+     "source": "RFP '< 40 kg' total system mass (abep_sim/constants.py RFPConstraints.mass_max_kg; CLAUDE.md; A5 allocations_and_requirements 'the 40 kg requirement'); verify against the RFP document"
+    },
+    {
+     "id": "A5_alloc_36kg",
+     "kind": "allocation",
+     "value_kg": 36.0,
+     "share": 0.15,
+     "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json allocations_and_requirements 'system mass design allocation <= 34-36 kg' (upper end)"
+    },
+    {
+     "id": "A5_alloc_34kg",
+     "kind": "allocation",
+     "value_kg": 34.0,
+     "share": 0.158824,
+     "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json allocations_and_requirements 'system mass design allocation <= 34-36 kg' (lower end)"
+    }
+   ]
+  },
+  "upper_test_point": {
+   "mdot_mg_s": 0.15,
+   "t_firing_h": 15000.0,
+   "m_cathode_kg": 8.1,
+   "a5_reference_kg": 8.1,
+   "arithmetic": "0.15e-6 kg/s x 5.4e7 s = 8.1 kg",
+   "status": "A5 experimental upper test point only; never the allocation",
+   "shares": [
+    {
+     "id": "RFP_40kg",
+     "kind": "requirement",
+     "value_kg": 40.0,
+     "share": 0.2025,
+     "source": "RFP '< 40 kg' total system mass (abep_sim/constants.py RFPConstraints.mass_max_kg; CLAUDE.md; A5 allocations_and_requirements 'the 40 kg requirement'); verify against the RFP document"
+    },
+    {
+     "id": "A5_alloc_36kg",
+     "kind": "allocation",
+     "value_kg": 36.0,
+     "share": 0.225,
+     "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json allocations_and_requirements 'system mass design allocation <= 34-36 kg' (upper end)"
+    },
+    {
+     "id": "A5_alloc_34kg",
+     "kind": "allocation",
+     "value_kg": 34.0,
+     "share": 0.238235,
+     "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json allocations_and_requirements 'system mass design allocation <= 34-36 kg' (lower end)"
+    }
+   ]
+  },
+  "rejection_illustration": {
+   "flow_consuming_40kg_in_15000h_mg_s": 0.740741,
+   "a5_statement": "0.74 mg/s over 15,000 h consumes the whole 40 kg (A5; illustrates rejection only, never an allowable allocation)",
+   "check_0p74_kg": 39.96
+  },
+  "firing_hours_sensitivity": {
+   "label": "sensitivity only; A5 fixes the cathode term at 15,000 h (OD-XE-5)",
+   "t_firing_h": 18000.0,
+   "m_cathode_kg_at_0p10": 6.48,
+   "m_cathode_kg_at_0p15": 9.72
+  },
+  "cathode_flow_context": {
+   "label": "AN-01 flows of other cathodes and the A5 flows over 15,000 h (arithmetic); never a Vyovrinda value",
+   "rows": [
+    {
+     "flow_name": "HC1/HC3 design range, lower end",
+     "mdot_mg_s": 0.08,
+     "m_cathode_kg_15000h": 4.32,
+     "shares": [
+      {
+       "id": "RFP_40kg",
+       "share": 0.108
+      },
+      {
+       "id": "A5_alloc_36kg",
+       "share": 0.12
+      },
+      {
+       "id": "A5_alloc_34kg",
+       "share": 0.127059
+      }
+     ]
+    },
+    {
+     "flow_name": "A5 design target",
+     "mdot_mg_s": 0.1,
+     "m_cathode_kg_15000h": 5.4,
+     "shares": [
+      {
+       "id": "RFP_40kg",
+       "share": 0.135
+      },
+      {
+       "id": "A5_alloc_36kg",
+       "share": 0.15
+      },
+      {
+       "id": "A5_alloc_34kg",
+       "share": 0.158824
+      }
+     ]
+    },
+    {
+     "flow_name": "A5 experimental upper test point",
+     "mdot_mg_s": 0.15,
+     "m_cathode_kg_15000h": 8.1,
+     "shares": [
+      {
+       "id": "RFP_40kg",
+       "share": 0.2025
+      },
+      {
+       "id": "A5_alloc_36kg",
+       "share": 0.225
+      },
+      {
+       "id": "A5_alloc_34kg",
+       "share": 0.238235
+      }
+     ]
+    },
+    {
+     "flow_name": "P5 cathode setpoint",
+     "mdot_mg_s": 0.44,
+     "m_cathode_kg_15000h": 23.76,
+     "shares": [
+      {
+       "id": "RFP_40kg",
+       "share": 0.594
+      },
+      {
+       "id": "A5_alloc_36kg",
+       "share": 0.66
+      },
+      {
+       "id": "A5_alloc_34kg",
+       "share": 0.698824
+      }
+     ]
+    },
+    {
+     "flow_name": "HC1 upper design / HC3 endurance flow",
+     "mdot_mg_s": 0.5,
+     "m_cathode_kg_15000h": 27.0,
+     "shares": [
+      {
+       "id": "RFP_40kg",
+       "share": 0.675
+      },
+      {
+       "id": "A5_alloc_36kg",
+       "share": 0.75
+      },
+      {
+       "id": "A5_alloc_34kg",
+       "share": 0.794118
+      }
+     ]
+    },
+    {
+     "flow_name": "HC3 minimum spot-mode flow (diode)",
+     "mdot_mg_s": 0.6,
+     "m_cathode_kg_15000h": 32.4,
+     "shares": [
+      {
+       "id": "RFP_40kg",
+       "share": 0.81
+      },
+      {
+       "id": "A5_alloc_36kg",
+       "share": 0.9
+      },
+      {
+       "id": "A5_alloc_34kg",
+       "share": 0.952941
+      }
+     ]
+    },
+    {
+     "flow_name": "HC1 diode plume-mode onset",
+     "mdot_mg_s": 0.8,
+     "m_cathode_kg_15000h": 43.2,
+     "shares": [
+      {
+       "id": "RFP_40kg",
+       "share": 1.08
+      },
+      {
+       "id": "A5_alloc_36kg",
+       "share": 1.2
+      },
+      {
+       "id": "A5_alloc_34kg",
+       "share": 1.27059
+      }
+     ]
+    },
+    {
+     "flow_name": "HC3 upper design flow",
+     "mdot_mg_s": 1.0,
+     "m_cathode_kg_15000h": 54.0,
+     "shares": [
+      {
+       "id": "RFP_40kg",
+       "share": 1.35
+      },
+      {
+       "id": "A5_alloc_36kg",
+       "share": 1.5
+      },
+      {
+       "id": "A5_alloc_34kg",
+       "share": 1.58824
+      }
+     ]
+    }
+   ]
+  },
+  "flow_consuming_share_alone": {
+   "note": "share axis: 0.25 = lane-19 PROPOSED 'dominance_fraction' (cathode_integration_data_v1.json proposed_thresholds.dominance_fraction; not in the RFP; owner decides); 0.5 = axis value; 1.0 = the whole reference (the subsystem can never exceed the whole system). The owner's share threshold is OD-XE-3 (PROPOSED)",
+   "rows": [
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "cap_kg": 10.0,
+     "mdot_mg_s_consuming_cap_alone": 0.185185
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "cap_kg": 20.0,
+     "mdot_mg_s_consuming_cap_alone": 0.37037
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "cap_kg": 40.0,
+     "mdot_mg_s_consuming_cap_alone": 0.740741
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "cap_kg": 9.0,
+     "mdot_mg_s_consuming_cap_alone": 0.166667
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "cap_kg": 18.0,
+     "mdot_mg_s_consuming_cap_alone": 0.333333
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "cap_kg": 36.0,
+     "mdot_mg_s_consuming_cap_alone": 0.666667
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "cap_kg": 8.5,
+     "mdot_mg_s_consuming_cap_alone": 0.157407
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "cap_kg": 17.0,
+     "mdot_mg_s_consuming_cap_alone": 0.314815
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "cap_kg": 34.0,
+     "mdot_mg_s_consuming_cap_alone": 0.62963
+    }
+   ]
+  }
+ },
+ "ledger_state": {
+  "label": "the ledger as it stands: only the A5 cathode design term is explicit",
+  "terms_kg": {
+   "m_cathode": 5.4,
+   "m_startup": null,
+   "m_transition": null,
+   "m_fallback": null,
+   "m_reserve": null
+  },
+  "m_Xe_total_kg": null,
+  "m_tank_kg": null,
+  "m_Xe_subsystem_kg": null,
+  "refused": true,
+  "n_missing": 14,
+  "subsystem_share_report": "REFUSED: m_Xe_subsystem is not closed, so no share of 40 / 36 / 34 kg is reported for it. Shares are reported for the fixed cathode term (cathode_term.design_term.shares) and, per scenario, for the propellant with the hardware headroom left inside each share (scenarios[*].results).",
+  "missing": [
+   "N_starts",
+   "t_startup",
+   "mdot_startup",
+   "N_transitions",
+   "t_transition",
+   "mdot_transition",
+   "t_fallback_max",
+   "mdot_fallback",
+   "reserve_policy",
+   "tank_model",
+   "m_regulator",
+   "m_valves",
+   "m_plumbing",
+   "m_mounting_thermal"
+  ]
+ },
+ "scenario_per_event_derivation": [
+  {
+   "quantity": "t_preheat",
+   "value": 600.0,
+   "unit": "s",
+   "source": "AN-03: HC1 preheat 'about 600 s at about 45 W' (docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json parameters.hc1_heating_time_s)",
+   "evidence_class": "measured",
+   "role": "analogue duration (level 3)"
+  },
+  {
+   "quantity": "mdot during preheat/conditioning",
+   "value": 0.1,
+   "unit": "mg/s",
+   "source": "A5 cathode design target applied during conditioning (booking per docs/controls/DUAL_FEED_STATES.md CATHODE_CONDITIONING, a design proposal)",
+   "evidence_class": "assumed"
+  },
+  {
+   "quantity": "mdot at Xe discharge ignition",
+   "value": 11.0,
+   "unit": "mg/s",
+   "source": "AN-02: E09 ignition 10 mg/s anode + 1 mg/s cathode Xe (docs/evidence/hall_sustainment/hall_sustainment_matrix.json E09, ANDREUSSI2022_IEPC435 p. 3; 5 kW class, out of the A5 power class)",
+   "evidence_class": "measured",
+   "role": "analogue flow (level 3), out of power class"
+  },
+  {
+   "quantity": "t_ignition_dwell",
+   "value": 60.0,
+   "unit": "s",
+   "source": "scenario assumption of this ledger (no source fixes it; H-1/C-1 or the owner replaces it)",
+   "evidence_class": "assumed",
+   "role": "no accessed source reports an ignition dwell"
+  },
+  {
+   "quantity": "t_startup = t_preheat + t_ignition_dwell",
+   "value": 660.0,
+   "unit": "s",
+   "evidence_class": "model-derived",
+   "source": "arithmetic on the rows above"
+  },
+  {
+   "quantity": "Xe per start = t_preheat x mdot_pre + t_ign x mdot_ign",
+   "value": 0.72,
+   "unit": "g",
+   "evidence_class": "model-derived",
+   "source": "arithmetic on the rows above"
+  },
+  {
+   "quantity": "mdot_startup = Xe per start / t_startup (time average)",
+   "value": 1.09091,
+   "unit": "mg/s",
+   "evidence_class": "model-derived",
+   "source": "arithmetic on the rows above"
+  },
+  {
+   "quantity": "t_transition",
+   "value": 60.0,
+   "unit": "s",
+   "source": "scenario assumption of this ledger (no source fixes it; H-1/C-1 or the owner replaces it)",
+   "evidence_class": "assumed",
+   "role": "E05 'smooth' and E09 'gradual' transitions report no duration"
+  },
+  {
+   "quantity": "mdot_transition = (mdot_ign + mdot_pre)/2",
+   "value": 5.55,
+   "unit": "mg/s",
+   "evidence_class": "model-derived",
+   "source": "linear ramp from the ignition flow to the A5 nominal cathode flow (ramp shape assumed)"
+  },
+  {
+   "quantity": "Xe per transition",
+   "value": 0.333,
+   "unit": "g",
+   "evidence_class": "model-derived",
+   "source": "arithmetic"
+  }
+ ],
+ "scenarios": [
+  {
+   "id": "SC-0",
+   "name": "cathode_only_minimum",
+   "label": "scenario / illustrative: not an allocation, not a prediction, not frozen (A6 not_authorized)",
+   "purpose": "Isolates the A5 fixed term: no start, transition, fallback or reserve. Not an operating scenario (at least one Xe start is needed); a floor under the A5 design target, not a lower bound on flight Xe.",
+   "architecture_scope": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "accounting_convention": "PHASE_TOTAL_FLOW",
+   "parameters": {
+    "mdot_cathode": {
+     "value": 0.1,
+     "unit": "mg/s",
+     "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json xe_mass_allocation.cathode_flow_design_target_mg_s (owner allocation: design target)",
+     "evidence_class": "assumed"
+    },
+    "t_firing": {
+     "value": 15000.0,
+     "unit": "h",
+     "source": "RFP '> 15,000 h firing' used as the minimum (abep_sim/constants.py RFPConstraints.ignition_hours; A5 xe_mass_allocation.reference_arithmetic_15000h)",
+     "evidence_class": "assumed"
+    },
+    "N_starts": {
+     "value": 0.0,
+     "unit": "1",
+     "source": "scenario assumption: term switched off in this scenario (N = 0 or t = 0)",
+     "evidence_class": "assumed"
+    },
+    "t_startup": {
+     "value": 0.0,
+     "unit": "s",
+     "source": "scenario assumption: term switched off in this scenario (N = 0 or t = 0)",
+     "evidence_class": "assumed"
+    },
+    "mdot_startup": {
+     "value": 0.0,
+     "unit": "mg/s",
+     "source": "scenario assumption: term switched off in this scenario (N = 0 or t = 0)",
+     "evidence_class": "assumed"
+    },
+    "N_transitions": {
+     "value": 0.0,
+     "unit": "1",
+     "source": "scenario assumption: one Xe-to-atmosphere transfer per start (A5 sequence)",
+     "evidence_class": "assumed"
+    },
+    "t_transition": {
+     "value": 0.0,
+     "unit": "s",
+     "source": "scenario assumption: term switched off in this scenario (N = 0 or t = 0)",
+     "evidence_class": "assumed"
+    },
+    "mdot_transition": {
+     "value": 0.0,
+     "unit": "mg/s",
+     "source": "scenario assumption: term switched off in this scenario (N = 0 or t = 0)",
+     "evidence_class": "assumed"
+    },
+    "t_fallback_max": {
+     "value": 0.0,
+     "unit": "h",
+     "source": "scenario assumption: term switched off in this scenario (N = 0 or t = 0)",
+     "evidence_class": "assumed"
+    },
+    "mdot_fallback": {
+     "value": 0.0,
+     "unit": "mg/s",
+     "source": "scenario assumption: term switched off in this scenario (N = 0 or t = 0)",
+     "evidence_class": "assumed"
+    },
+    "reserve_policy": {
+     "form": "absolute_mass",
+     "value": 0.0,
+     "unit": "kg",
+     "source": "scenario assumption: reserve excluded to isolate the fixed term (not a recommendation)",
+     "evidence_class": "assumed"
+    }
+   },
+   "results": {
+    "terms_kg": {
+     "m_cathode": 5.4,
+     "m_startup": 0.0,
+     "m_transition": 0.0,
+     "m_fallback": 0.0,
+     "m_reserve": 0.0
+    },
+    "m_Xe_total_kg_scenario": 5.4,
+    "propellant_shares": [
+     {
+      "id": "RFP_40kg",
+      "kind": "requirement",
+      "share": 0.135
+     },
+     {
+      "id": "A5_alloc_36kg",
+      "kind": "allocation",
+      "share": 0.15
+     },
+     {
+      "id": "A5_alloc_34kg",
+      "kind": "allocation",
+      "share": 0.158824
+     }
+    ],
+    "hardware_headroom": {
+     "meaning": "largest m_tank + m_regulator + m_valves + m_plumbing + m_mounting_thermal that keeps m_Xe_subsystem <= share x reference (hardware masses are TBD; nothing is assumed for them)",
+     "note": "share axis: 0.25 = lane-19 PROPOSED 'dominance_fraction' (cathode_integration_data_v1.json proposed_thresholds.dominance_fraction; not in the RFP; owner decides); 0.5 = axis value; 1.0 = the whole reference (the subsystem can never exceed the whole system). The owner's share threshold is OD-XE-3 (PROPOSED)",
+     "rows": [
+      {
+       "reference": "RFP_40kg",
+       "share": 0.25,
+       "cap_kg": 10.0,
+       "hardware_headroom_kg": 4.6,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 0.851852
+      },
+      {
+       "reference": "RFP_40kg",
+       "share": 0.5,
+       "cap_kg": 20.0,
+       "hardware_headroom_kg": 14.6,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 2.7037
+      },
+      {
+       "reference": "RFP_40kg",
+       "share": 1.0,
+       "cap_kg": 40.0,
+       "hardware_headroom_kg": 34.6,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 6.40741
+      },
+      {
+       "reference": "A5_alloc_36kg",
+       "share": 0.25,
+       "cap_kg": 9.0,
+       "hardware_headroom_kg": 3.6,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 0.666667
+      },
+      {
+       "reference": "A5_alloc_36kg",
+       "share": 0.5,
+       "cap_kg": 18.0,
+       "hardware_headroom_kg": 12.6,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 2.33333
+      },
+      {
+       "reference": "A5_alloc_36kg",
+       "share": 1.0,
+       "cap_kg": 36.0,
+       "hardware_headroom_kg": 30.6,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 5.66667
+      },
+      {
+       "reference": "A5_alloc_34kg",
+       "share": 0.25,
+       "cap_kg": 8.5,
+       "hardware_headroom_kg": 3.1,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 0.574074
+      },
+      {
+       "reference": "A5_alloc_34kg",
+       "share": 0.5,
+       "cap_kg": 17.0,
+       "hardware_headroom_kg": 11.6,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 2.14815
+      },
+      {
+       "reference": "A5_alloc_34kg",
+       "share": 1.0,
+       "cap_kg": 34.0,
+       "hardware_headroom_kg": 28.6,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 5.2963
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "SC-1",
+   "name": "nominal_restart",
+   "label": "scenario / illustrative: not an allocation, not a prediction, not frozen (A6 not_authorized)",
+   "purpose": "1000 starts, each followed by one transfer; N anchored on the > 1000 heater starts demonstrated on the JPL H6 LaB6 cathode (AN-04: a demonstrated cycle count of another cathode, NOT a mission start count). Fallback evaluated separately (SC-3).",
+   "architecture_scope": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "accounting_convention": "PHASE_TOTAL_FLOW",
+   "parameters": {
+    "mdot_cathode": {
+     "value": 0.1,
+     "unit": "mg/s",
+     "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json xe_mass_allocation.cathode_flow_design_target_mg_s (owner allocation: design target)",
+     "evidence_class": "assumed"
+    },
+    "t_firing": {
+     "value": 15000.0,
+     "unit": "h",
+     "source": "RFP '> 15,000 h firing' used as the minimum (abep_sim/constants.py RFPConstraints.ignition_hours; A5 xe_mass_allocation.reference_arithmetic_15000h)",
+     "evidence_class": "assumed"
+    },
+    "N_starts": {
+     "value": 1000.0,
+     "unit": "1",
+     "source": "scenario assumption anchored on AN-04: > 1000 heater starts demonstrated on the JPL H6 LaB6 cathode (goebel_polk_2015_iepc43 Sec. 4 p. 3); a demonstrated cycle count of another cathode, not a mission start count",
+     "evidence_class": "assumed"
+    },
+    "t_startup": {
+     "value": 660.0,
+     "unit": "s",
+     "source": "model-derived per-event value (scenario derivation above)",
+     "evidence_class": "model-derived"
+    },
+    "mdot_startup": {
+     "value": 1.0909090909090908,
+     "unit": "mg/s",
+     "source": "model-derived per-event value (scenario derivation above)",
+     "evidence_class": "model-derived"
+    },
+    "N_transitions": {
+     "value": 1000.0,
+     "unit": "1",
+     "source": "scenario assumption: one Xe-to-atmosphere transfer per start (A5 sequence)",
+     "evidence_class": "assumed"
+    },
+    "t_transition": {
+     "value": 60.0,
+     "unit": "s",
+     "source": "scenario assumption of this ledger (no source fixes it; H-1/C-1 or the owner replaces it)",
+     "evidence_class": "assumed"
+    },
+    "mdot_transition": {
+     "value": 5.55,
+     "unit": "mg/s",
+     "source": "model-derived per-event value (scenario derivation above)",
+     "evidence_class": "model-derived"
+    },
+    "t_fallback_max": {
+     "value": 0.0,
+     "unit": "h",
+     "source": "scenario assumption: fallback booked separately (SC-3 solves its limit)",
+     "evidence_class": "assumed"
+    },
+    "mdot_fallback": {
+     "value": 11.0,
+     "unit": "mg/s",
+     "source": "AN-02: E09 ignition 10 mg/s anode + 1 mg/s cathode Xe (docs/evidence/hall_sustainment/hall_sustainment_matrix.json E09, ANDREUSSI2022_IEPC435 p. 3; 5 kW class, out of the A5 power class)",
+     "evidence_class": "measured"
+    },
+    "reserve_policy": {
+     "form": "fraction_of_other_terms",
+     "value": 0.1,
+     "unit": "1",
+     "source": "scenario assumption (owner reserve policy TBD, OD-XE-2; SS-1 shows 0 / 0.10 / 0.25)",
+     "evidence_class": "assumed"
+    }
+   },
+   "results": {
+    "terms_kg": {
+     "m_cathode": 5.4,
+     "m_startup": 0.72,
+     "m_transition": 0.333,
+     "m_fallback": 0.0,
+     "m_reserve": 0.6453
+    },
+    "m_Xe_total_kg_scenario": 7.0983,
+    "propellant_shares": [
+     {
+      "id": "RFP_40kg",
+      "kind": "requirement",
+      "share": 0.177457
+     },
+     {
+      "id": "A5_alloc_36kg",
+      "kind": "allocation",
+      "share": 0.197175
+     },
+     {
+      "id": "A5_alloc_34kg",
+      "kind": "allocation",
+      "share": 0.208774
+     }
+    ],
+    "hardware_headroom": {
+     "meaning": "largest m_tank + m_regulator + m_valves + m_plumbing + m_mounting_thermal that keeps m_Xe_subsystem <= share x reference (hardware masses are TBD; nothing is assumed for them)",
+     "note": "share axis: 0.25 = lane-19 PROPOSED 'dominance_fraction' (cathode_integration_data_v1.json proposed_thresholds.dominance_fraction; not in the RFP; owner decides); 0.5 = axis value; 1.0 = the whole reference (the subsystem can never exceed the whole system). The owner's share threshold is OD-XE-3 (PROPOSED)",
+     "rows": [
+      {
+       "reference": "RFP_40kg",
+       "share": 0.25,
+       "cap_kg": 10.0,
+       "hardware_headroom_kg": 2.9017,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 0.408788
+      },
+      {
+       "reference": "RFP_40kg",
+       "share": 0.5,
+       "cap_kg": 20.0,
+       "hardware_headroom_kg": 12.9017,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 1.81758
+      },
+      {
+       "reference": "RFP_40kg",
+       "share": 1.0,
+       "cap_kg": 40.0,
+       "hardware_headroom_kg": 32.9017,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 4.63515
+      },
+      {
+       "reference": "A5_alloc_36kg",
+       "share": 0.25,
+       "cap_kg": 9.0,
+       "hardware_headroom_kg": 1.9017,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 0.267909
+      },
+      {
+       "reference": "A5_alloc_36kg",
+       "share": 0.5,
+       "cap_kg": 18.0,
+       "hardware_headroom_kg": 10.9017,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 1.53582
+      },
+      {
+       "reference": "A5_alloc_36kg",
+       "share": 1.0,
+       "cap_kg": 36.0,
+       "hardware_headroom_kg": 28.9017,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 4.07164
+      },
+      {
+       "reference": "A5_alloc_34kg",
+       "share": 0.25,
+       "cap_kg": 8.5,
+       "hardware_headroom_kg": 1.4017,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 0.19747
+      },
+      {
+       "reference": "A5_alloc_34kg",
+       "share": 0.5,
+       "cap_kg": 17.0,
+       "hardware_headroom_kg": 9.9017,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 1.39494
+      },
+      {
+       "reference": "A5_alloc_34kg",
+       "share": 1.0,
+       "cap_kg": 34.0,
+       "hardware_headroom_kg": 26.9017,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 3.78988
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "SC-2",
+   "name": "heavy_restart",
+   "label": "scenario / illustrative: not an allocation, not a prediction, not frozen (A6 not_authorized)",
+   "purpose": "One start per orbit over the whole mission (eclipse/duty cycling every orbit, assumed ops concept): N = floor(mission hours / orbital period at 180 km). Same per-event Xe as SC-1, so only N changes.",
+   "architecture_scope": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "accounting_convention": "PHASE_TOTAL_FLOW",
+   "parameters": {
+    "mdot_cathode": {
+     "value": 0.1,
+     "unit": "mg/s",
+     "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json xe_mass_allocation.cathode_flow_design_target_mg_s (owner allocation: design target)",
+     "evidence_class": "assumed"
+    },
+    "t_firing": {
+     "value": 15000.0,
+     "unit": "h",
+     "source": "RFP '> 15,000 h firing' used as the minimum (abep_sim/constants.py RFPConstraints.ignition_hours; A5 xe_mass_allocation.reference_arithmetic_15000h)",
+     "evidence_class": "assumed"
+    },
+    "N_starts": {
+     "value": 17737.0,
+     "unit": "1",
+     "source": "model-derived under an assumed ops concept: one start per orbit over the 26,000 h mission, orbital period at 180 km from abep_sim/constants.py MU_EARTH, R_EARTH (see N_starts_derivation)",
+     "evidence_class": "model-derived"
+    },
+    "t_startup": {
+     "value": 660.0,
+     "unit": "s",
+     "source": "model-derived per-event value (scenario derivation above)",
+     "evidence_class": "model-derived"
+    },
+    "mdot_startup": {
+     "value": 1.0909090909090908,
+     "unit": "mg/s",
+     "source": "model-derived per-event value (scenario derivation above)",
+     "evidence_class": "model-derived"
+    },
+    "N_transitions": {
+     "value": 17737.0,
+     "unit": "1",
+     "source": "scenario assumption: one Xe-to-atmosphere transfer per start (A5 sequence)",
+     "evidence_class": "assumed"
+    },
+    "t_transition": {
+     "value": 60.0,
+     "unit": "s",
+     "source": "scenario assumption of this ledger (no source fixes it; H-1/C-1 or the owner replaces it)",
+     "evidence_class": "assumed"
+    },
+    "mdot_transition": {
+     "value": 5.55,
+     "unit": "mg/s",
+     "source": "model-derived per-event value (scenario derivation above)",
+     "evidence_class": "model-derived"
+    },
+    "t_fallback_max": {
+     "value": 0.0,
+     "unit": "h",
+     "source": "scenario assumption: fallback booked separately (SC-3 solves its limit)",
+     "evidence_class": "assumed"
+    },
+    "mdot_fallback": {
+     "value": 11.0,
+     "unit": "mg/s",
+     "source": "AN-02: E09 ignition 10 mg/s anode + 1 mg/s cathode Xe (docs/evidence/hall_sustainment/hall_sustainment_matrix.json E09, ANDREUSSI2022_IEPC435 p. 3; 5 kW class, out of the A5 power class)",
+     "evidence_class": "measured"
+    },
+    "reserve_policy": {
+     "form": "fraction_of_other_terms",
+     "value": 0.1,
+     "unit": "1",
+     "source": "scenario assumption (owner reserve policy TBD, OD-XE-2; SS-1 shows 0 / 0.10 / 0.25)",
+     "evidence_class": "assumed"
+    }
+   },
+   "N_starts_derivation": {
+    "orbital_period_h_180km": 1.46578,
+    "mission_hours": 26000.0,
+    "N_starts": 17737.0,
+    "evidence_class": "model-derived",
+    "source": "two-body circular orbit, T = 2 pi sqrt(a^3/MU_EARTH), a = R_EARTH + 180 km (abep_sim/constants.py); J2 and decay ignored (altitude held by the thruster); ops concept assumed"
+   },
+   "results": {
+    "terms_kg": {
+     "m_cathode": 5.4,
+     "m_startup": 12.7706,
+     "m_transition": 5.90642,
+     "m_fallback": 0.0,
+     "m_reserve": 2.40771
+    },
+    "m_Xe_total_kg_scenario": 26.4848,
+    "propellant_shares": [
+     {
+      "id": "RFP_40kg",
+      "kind": "requirement",
+      "share": 0.662119
+     },
+     {
+      "id": "A5_alloc_36kg",
+      "kind": "allocation",
+      "share": 0.735688
+     },
+     {
+      "id": "A5_alloc_34kg",
+      "kind": "allocation",
+      "share": 0.778964
+     }
+    ],
+    "hardware_headroom": {
+     "meaning": "largest m_tank + m_regulator + m_valves + m_plumbing + m_mounting_thermal that keeps m_Xe_subsystem <= share x reference (hardware masses are TBD; nothing is assumed for them)",
+     "note": "share axis: 0.25 = lane-19 PROPOSED 'dominance_fraction' (cathode_integration_data_v1.json proposed_thresholds.dominance_fraction; not in the RFP; owner decides); 0.5 = axis value; 1.0 = the whole reference (the subsystem can never exceed the whole system). The owner's share threshold is OD-XE-3 (PROPOSED)",
+     "rows": [
+      {
+       "reference": "RFP_40kg",
+       "share": 0.25,
+       "cap_kg": 10.0,
+       "hardware_headroom_kg": null,
+       "status": "PROPELLANT_ALONE_EXCEEDS_SHARE",
+       "max_tankage_fraction_if_no_other_hardware": null
+      },
+      {
+       "reference": "RFP_40kg",
+       "share": 0.5,
+       "cap_kg": 20.0,
+       "hardware_headroom_kg": null,
+       "status": "PROPELLANT_ALONE_EXCEEDS_SHARE",
+       "max_tankage_fraction_if_no_other_hardware": null
+      },
+      {
+       "reference": "RFP_40kg",
+       "share": 1.0,
+       "cap_kg": 40.0,
+       "hardware_headroom_kg": 13.5152,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 0.510302
+      },
+      {
+       "reference": "A5_alloc_36kg",
+       "share": 0.25,
+       "cap_kg": 9.0,
+       "hardware_headroom_kg": null,
+       "status": "PROPELLANT_ALONE_EXCEEDS_SHARE",
+       "max_tankage_fraction_if_no_other_hardware": null
+      },
+      {
+       "reference": "A5_alloc_36kg",
+       "share": 0.5,
+       "cap_kg": 18.0,
+       "hardware_headroom_kg": null,
+       "status": "PROPELLANT_ALONE_EXCEEDS_SHARE",
+       "max_tankage_fraction_if_no_other_hardware": null
+      },
+      {
+       "reference": "A5_alloc_36kg",
+       "share": 1.0,
+       "cap_kg": 36.0,
+       "hardware_headroom_kg": 9.51523,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 0.359272
+      },
+      {
+       "reference": "A5_alloc_34kg",
+       "share": 0.25,
+       "cap_kg": 8.5,
+       "hardware_headroom_kg": null,
+       "status": "PROPELLANT_ALONE_EXCEEDS_SHARE",
+       "max_tankage_fraction_if_no_other_hardware": null
+      },
+      {
+       "reference": "A5_alloc_34kg",
+       "share": 0.5,
+       "cap_kg": 17.0,
+       "hardware_headroom_kg": null,
+       "status": "PROPELLANT_ALONE_EXCEEDS_SHARE",
+       "max_tankage_fraction_if_no_other_hardware": null
+      },
+      {
+       "reference": "A5_alloc_34kg",
+       "share": 1.0,
+       "cap_kg": 34.0,
+       "hardware_headroom_kg": 7.51523,
+       "status": "HEADROOM",
+       "max_tankage_fraction_if_no_other_hardware": 0.283757
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "SC-3",
+   "name": "fallback_limited",
+   "label": "scenario / illustrative: not an allocation, not a prediction, not frozen (A6 not_authorized)",
+   "purpose": "SC-1 restarts plus the LONGEST cumulative Xe fallback the cap allows, at the E09 analogue flow (11 mg/s, out of power class). Regulator, valves, plumbing and mounting are set to 0 kg (bounding: a real part only shortens the allowance). The result is an upper bound on t_fallback_max for these inputs, never a frozen value; SS-3 covers other flows.",
+   "architecture_scope": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "accounting_convention": "PHASE_TOTAL_FLOW",
+   "parameters": {
+    "mdot_cathode": {
+     "value": 0.1,
+     "unit": "mg/s",
+     "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json xe_mass_allocation.cathode_flow_design_target_mg_s (owner allocation: design target)",
+     "evidence_class": "assumed"
+    },
+    "t_firing": {
+     "value": 15000.0,
+     "unit": "h",
+     "source": "RFP '> 15,000 h firing' used as the minimum (abep_sim/constants.py RFPConstraints.ignition_hours; A5 xe_mass_allocation.reference_arithmetic_15000h)",
+     "evidence_class": "assumed"
+    },
+    "N_starts": {
+     "value": 1000.0,
+     "unit": "1",
+     "source": "scenario assumption anchored on AN-04: > 1000 heater starts demonstrated on the JPL H6 LaB6 cathode (goebel_polk_2015_iepc43 Sec. 4 p. 3); a demonstrated cycle count of another cathode, not a mission start count",
+     "evidence_class": "assumed"
+    },
+    "t_startup": {
+     "value": 660.0,
+     "unit": "s",
+     "source": "model-derived per-event value (scenario derivation above)",
+     "evidence_class": "model-derived"
+    },
+    "mdot_startup": {
+     "value": 1.0909090909090908,
+     "unit": "mg/s",
+     "source": "model-derived per-event value (scenario derivation above)",
+     "evidence_class": "model-derived"
+    },
+    "N_transitions": {
+     "value": 1000.0,
+     "unit": "1",
+     "source": "scenario assumption: one Xe-to-atmosphere transfer per start (A5 sequence)",
+     "evidence_class": "assumed"
+    },
+    "t_transition": {
+     "value": 60.0,
+     "unit": "s",
+     "source": "scenario assumption of this ledger (no source fixes it; H-1/C-1 or the owner replaces it)",
+     "evidence_class": "assumed"
+    },
+    "mdot_transition": {
+     "value": 5.55,
+     "unit": "mg/s",
+     "source": "model-derived per-event value (scenario derivation above)",
+     "evidence_class": "model-derived"
+    },
+    "t_fallback_max": {
+     "tbd": "solved for in this scenario"
+    },
+    "mdot_fallback": {
+     "value": 11.0,
+     "unit": "mg/s",
+     "source": "AN-02: E09 ignition 10 mg/s anode + 1 mg/s cathode Xe (docs/evidence/hall_sustainment/hall_sustainment_matrix.json E09, ANDREUSSI2022_IEPC435 p. 3; 5 kW class, out of the A5 power class)",
+     "evidence_class": "measured"
+    },
+    "reserve_policy": {
+     "form": "fraction_of_other_terms",
+     "value": 0.1,
+     "unit": "1",
+     "source": "scenario assumption (owner reserve policy TBD, OD-XE-2; SS-1 shows 0 / 0.10 / 0.25)",
+     "evidence_class": "assumed"
+    }
+   },
+   "results": {
+    "solved_for": "t_fallback_max",
+    "note": "share axis: 0.25 = lane-19 PROPOSED 'dominance_fraction' (cathode_integration_data_v1.json proposed_thresholds.dominance_fraction; not in the RFP; owner decides); 0.5 = axis value; 1.0 = the whole reference (the subsystem can never exceed the whole system). The owner's share threshold is OD-XE-3 (PROPOSED)",
+    "rows": [
+     {
+      "reference": "RFP_40kg",
+      "share": 0.25,
+      "cap_kg": 10.0,
+      "f_tank_axis": 0.0,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 66.6139,
+      "fallback_xe_allowance_kg": 2.63791
+     },
+     {
+      "reference": "RFP_40kg",
+      "share": 0.25,
+      "cap_kg": 10.0,
+      "f_tank_axis": 0.1,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 45.744,
+      "fallback_xe_allowance_kg": 1.81146
+     },
+     {
+      "reference": "RFP_40kg",
+      "share": 0.25,
+      "cap_kg": 10.0,
+      "f_tank_axis": 0.25,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 20.7002,
+      "fallback_xe_allowance_kg": 0.819727
+     },
+     {
+      "reference": "RFP_40kg",
+      "share": 0.5,
+      "cap_kg": 20.0,
+      "f_tank_axis": 0.0,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 296.182,
+      "fallback_xe_allowance_kg": 11.7288
+     },
+     {
+      "reference": "RFP_40kg",
+      "share": 0.5,
+      "cap_kg": 20.0,
+      "f_tank_axis": 0.1,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 254.443,
+      "fallback_xe_allowance_kg": 10.0759
+     },
+     {
+      "reference": "RFP_40kg",
+      "share": 0.5,
+      "cap_kg": 20.0,
+      "f_tank_axis": 0.25,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 204.355,
+      "fallback_xe_allowance_kg": 8.09245
+     },
+     {
+      "reference": "RFP_40kg",
+      "share": 1.0,
+      "cap_kg": 40.0,
+      "f_tank_axis": 0.0,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 755.319,
+      "fallback_xe_allowance_kg": 29.9106
+     },
+     {
+      "reference": "RFP_40kg",
+      "share": 1.0,
+      "cap_kg": 40.0,
+      "f_tank_axis": 0.1,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 671.84,
+      "fallback_xe_allowance_kg": 26.6049
+     },
+     {
+      "reference": "RFP_40kg",
+      "share": 1.0,
+      "cap_kg": 40.0,
+      "f_tank_axis": 0.25,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 571.664,
+      "fallback_xe_allowance_kg": 22.6379
+     },
+     {
+      "reference": "A5_alloc_36kg",
+      "share": 0.25,
+      "cap_kg": 9.0,
+      "f_tank_axis": 0.0,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 43.657,
+      "fallback_xe_allowance_kg": 1.72882
+     },
+     {
+      "reference": "A5_alloc_36kg",
+      "share": 0.25,
+      "cap_kg": 9.0,
+      "f_tank_axis": 0.1,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 24.8742,
+      "fallback_xe_allowance_kg": 0.985017
+     },
+     {
+      "reference": "A5_alloc_36kg",
+      "share": 0.25,
+      "cap_kg": 9.0,
+      "f_tank_axis": 0.25,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 2.33471,
+      "fallback_xe_allowance_kg": 0.0924545
+     },
+     {
+      "reference": "A5_alloc_36kg",
+      "share": 0.5,
+      "cap_kg": 18.0,
+      "f_tank_axis": 0.0,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 250.269,
+      "fallback_xe_allowance_kg": 9.91064
+     },
+     {
+      "reference": "A5_alloc_36kg",
+      "share": 0.5,
+      "cap_kg": 18.0,
+      "f_tank_axis": 0.1,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 212.703,
+      "fallback_xe_allowance_kg": 8.42303
+     },
+     {
+      "reference": "A5_alloc_36kg",
+      "share": 0.5,
+      "cap_kg": 18.0,
+      "f_tank_axis": 0.25,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 167.624,
+      "fallback_xe_allowance_kg": 6.63791
+     },
+     {
+      "reference": "A5_alloc_36kg",
+      "share": 1.0,
+      "cap_kg": 36.0,
+      "f_tank_axis": 0.0,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 663.492,
+      "fallback_xe_allowance_kg": 26.2743
+     },
+     {
+      "reference": "A5_alloc_36kg",
+      "share": 1.0,
+      "cap_kg": 36.0,
+      "f_tank_axis": 0.1,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 588.36,
+      "fallback_xe_allowance_kg": 23.2991
+     },
+     {
+      "reference": "A5_alloc_36kg",
+      "share": 1.0,
+      "cap_kg": 36.0,
+      "f_tank_axis": 0.25,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 498.202,
+      "fallback_xe_allowance_kg": 19.7288
+     },
+     {
+      "reference": "A5_alloc_34kg",
+      "share": 0.25,
+      "cap_kg": 8.5,
+      "f_tank_axis": 0.0,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 32.1786,
+      "fallback_xe_allowance_kg": 1.27427
+     },
+     {
+      "reference": "A5_alloc_34kg",
+      "share": 0.25,
+      "cap_kg": 8.5,
+      "f_tank_axis": 0.1,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 14.4392,
+      "fallback_xe_allowance_kg": 0.571793
+     },
+     {
+      "reference": "A5_alloc_34kg",
+      "share": 0.25,
+      "cap_kg": 8.5,
+      "f_tank_axis": 0.25,
+      "status": "EXCEEDED_WITHOUT_THIS_TERM",
+      "t_fallback_max_allowable_h": null,
+      "fallback_xe_allowance_kg": -0.271182
+     },
+     {
+      "reference": "A5_alloc_34kg",
+      "share": 0.5,
+      "cap_kg": 17.0,
+      "f_tank_axis": 0.0,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 227.312,
+      "fallback_xe_allowance_kg": 9.00155
+     },
+     {
+      "reference": "A5_alloc_34kg",
+      "share": 0.5,
+      "cap_kg": 17.0,
+      "f_tank_axis": 0.1,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 191.833,
+      "fallback_xe_allowance_kg": 7.59659
+     },
+     {
+      "reference": "A5_alloc_34kg",
+      "share": 0.5,
+      "cap_kg": 17.0,
+      "f_tank_axis": 0.25,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 149.258,
+      "fallback_xe_allowance_kg": 5.91064
+     },
+     {
+      "reference": "A5_alloc_34kg",
+      "share": 1.0,
+      "cap_kg": 34.0,
+      "f_tank_axis": 0.0,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 617.578,
+      "fallback_xe_allowance_kg": 24.4561
+     },
+     {
+      "reference": "A5_alloc_34kg",
+      "share": 1.0,
+      "cap_kg": 34.0,
+      "f_tank_axis": 0.1,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 546.621,
+      "fallback_xe_allowance_kg": 21.6462
+     },
+     {
+      "reference": "A5_alloc_34kg",
+      "share": 1.0,
+      "cap_kg": 34.0,
+      "f_tank_axis": 0.25,
+      "status": "ALLOWANCE",
+      "t_fallback_max_allowable_h": 461.472,
+      "fallback_xe_allowance_kg": 18.2743
+     }
+    ]
+   }
+  }
+ ],
+ "sensitivity_surfaces": [
+  {
+   "id": "SS-1",
+   "title": "Xe sum cap S_max and non-cathode headroom H",
+   "formula": "S_max = (share x M - m_hw_nontank) / ((1 + f_tank) (1 + f_reserve));  H = S_max - m_cathode (tankage-fraction tank model, reserve as a fraction of the other four terms; other forms: abep_sim.xe_ledger.xe_sum_cap_kg)",
+   "meaning": "S_max = the largest m_cathode + m_startup + m_transition + m_fallback that keeps m_Xe_subsystem <= share x M. H = what remains for startup + transition + fallback after the cathode term (5.4 kg at 0.10 mg/s, 8.1 kg at 0.15 mg/s). Negative H: the cathode term with that tank, hardware and reserve already exceeds the cap.",
+   "axes": {
+    "reference_M": [
+     "RFP_40kg",
+     "A5_alloc_36kg",
+     "A5_alloc_34kg"
+    ],
+    "share": [
+     0.25,
+     0.5,
+     1.0
+    ],
+    "f_tank": [
+     0.0,
+     0.1,
+     0.25
+    ],
+    "m_hw_nontank_kg": [
+     0.0,
+     2.0,
+     4.0
+    ],
+    "f_reserve": [
+     0.0,
+     0.1,
+     0.25
+    ]
+   },
+   "axes_label": "sensitivity axis value (not evidence, not a threshold); f_tank = 0 and m_hw = 0 are bounding (physically unattainable) values",
+   "rows": [
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 10.0,
+     "H_kg_at_0p10": 4.6,
+     "H_kg_at_0p15": 1.9
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 9.09091,
+     "H_kg_at_0p10": 3.69091,
+     "H_kg_at_0p15": 0.990909
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 8.0,
+     "H_kg_at_0p10": 2.6,
+     "H_kg_at_0p15": -0.1
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 8.0,
+     "H_kg_at_0p10": 2.6,
+     "H_kg_at_0p15": -0.1
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 7.27273,
+     "H_kg_at_0p10": 1.87273,
+     "H_kg_at_0p15": -0.827273
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 6.4,
+     "H_kg_at_0p10": 1.0,
+     "H_kg_at_0p15": -1.7
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 6.0,
+     "H_kg_at_0p10": 0.6,
+     "H_kg_at_0p15": -2.1
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 5.45455,
+     "H_kg_at_0p10": 0.0545455,
+     "H_kg_at_0p15": -2.64545
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 4.8,
+     "H_kg_at_0p10": -0.6,
+     "H_kg_at_0p15": -3.3
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 9.09091,
+     "H_kg_at_0p10": 3.69091,
+     "H_kg_at_0p15": 0.990909
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 8.26446,
+     "H_kg_at_0p10": 2.86446,
+     "H_kg_at_0p15": 0.164463
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 7.27273,
+     "H_kg_at_0p10": 1.87273,
+     "H_kg_at_0p15": -0.827273
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 7.27273,
+     "H_kg_at_0p10": 1.87273,
+     "H_kg_at_0p15": -0.827273
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 6.61157,
+     "H_kg_at_0p10": 1.21157,
+     "H_kg_at_0p15": -1.48843
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 5.81818,
+     "H_kg_at_0p10": 0.418182,
+     "H_kg_at_0p15": -2.28182
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 5.45455,
+     "H_kg_at_0p10": 0.0545455,
+     "H_kg_at_0p15": -2.64545
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 4.95868,
+     "H_kg_at_0p10": -0.441322,
+     "H_kg_at_0p15": -3.14132
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 4.36364,
+     "H_kg_at_0p10": -1.03636,
+     "H_kg_at_0p15": -3.73636
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 8.0,
+     "H_kg_at_0p10": 2.6,
+     "H_kg_at_0p15": -0.1
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 7.27273,
+     "H_kg_at_0p10": 1.87273,
+     "H_kg_at_0p15": -0.827273
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 6.4,
+     "H_kg_at_0p10": 1.0,
+     "H_kg_at_0p15": -1.7
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 6.4,
+     "H_kg_at_0p10": 1.0,
+     "H_kg_at_0p15": -1.7
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 5.81818,
+     "H_kg_at_0p10": 0.418182,
+     "H_kg_at_0p15": -2.28182
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 5.12,
+     "H_kg_at_0p10": -0.28,
+     "H_kg_at_0p15": -2.98
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 4.8,
+     "H_kg_at_0p10": -0.6,
+     "H_kg_at_0p15": -3.3
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 4.36364,
+     "H_kg_at_0p10": -1.03636,
+     "H_kg_at_0p15": -3.73636
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 3.84,
+     "H_kg_at_0p10": -1.56,
+     "H_kg_at_0p15": -4.26
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 20.0,
+     "H_kg_at_0p10": 14.6,
+     "H_kg_at_0p15": 11.9
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 18.1818,
+     "H_kg_at_0p10": 12.7818,
+     "H_kg_at_0p15": 10.0818
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 16.0,
+     "H_kg_at_0p10": 10.6,
+     "H_kg_at_0p15": 7.9
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 18.0,
+     "H_kg_at_0p10": 12.6,
+     "H_kg_at_0p15": 9.9
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 16.3636,
+     "H_kg_at_0p10": 10.9636,
+     "H_kg_at_0p15": 8.26364
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 14.4,
+     "H_kg_at_0p10": 9.0,
+     "H_kg_at_0p15": 6.3
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 16.0,
+     "H_kg_at_0p10": 10.6,
+     "H_kg_at_0p15": 7.9
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 14.5455,
+     "H_kg_at_0p10": 9.14545,
+     "H_kg_at_0p15": 6.44545
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 12.8,
+     "H_kg_at_0p10": 7.4,
+     "H_kg_at_0p15": 4.7
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 18.1818,
+     "H_kg_at_0p10": 12.7818,
+     "H_kg_at_0p15": 10.0818
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 16.5289,
+     "H_kg_at_0p10": 11.1289,
+     "H_kg_at_0p15": 8.42893
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 14.5455,
+     "H_kg_at_0p10": 9.14545,
+     "H_kg_at_0p15": 6.44545
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 16.3636,
+     "H_kg_at_0p10": 10.9636,
+     "H_kg_at_0p15": 8.26364
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 14.876,
+     "H_kg_at_0p10": 9.47603,
+     "H_kg_at_0p15": 6.77603
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 13.0909,
+     "H_kg_at_0p10": 7.69091,
+     "H_kg_at_0p15": 4.99091
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 14.5455,
+     "H_kg_at_0p10": 9.14545,
+     "H_kg_at_0p15": 6.44545
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 13.2231,
+     "H_kg_at_0p10": 7.82314,
+     "H_kg_at_0p15": 5.12314
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 11.6364,
+     "H_kg_at_0p10": 6.23636,
+     "H_kg_at_0p15": 3.53636
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 16.0,
+     "H_kg_at_0p10": 10.6,
+     "H_kg_at_0p15": 7.9
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 14.5455,
+     "H_kg_at_0p10": 9.14545,
+     "H_kg_at_0p15": 6.44545
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 12.8,
+     "H_kg_at_0p10": 7.4,
+     "H_kg_at_0p15": 4.7
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 14.4,
+     "H_kg_at_0p10": 9.0,
+     "H_kg_at_0p15": 6.3
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 13.0909,
+     "H_kg_at_0p10": 7.69091,
+     "H_kg_at_0p15": 4.99091
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 11.52,
+     "H_kg_at_0p10": 6.12,
+     "H_kg_at_0p15": 3.42
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 12.8,
+     "H_kg_at_0p10": 7.4,
+     "H_kg_at_0p15": 4.7
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 11.6364,
+     "H_kg_at_0p10": 6.23636,
+     "H_kg_at_0p15": 3.53636
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 10.24,
+     "H_kg_at_0p10": 4.84,
+     "H_kg_at_0p15": 2.14
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 40.0,
+     "H_kg_at_0p10": 34.6,
+     "H_kg_at_0p15": 31.9
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 36.3636,
+     "H_kg_at_0p10": 30.9636,
+     "H_kg_at_0p15": 28.2636
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 32.0,
+     "H_kg_at_0p10": 26.6,
+     "H_kg_at_0p15": 23.9
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 38.0,
+     "H_kg_at_0p10": 32.6,
+     "H_kg_at_0p15": 29.9
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 34.5455,
+     "H_kg_at_0p10": 29.1455,
+     "H_kg_at_0p15": 26.4455
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 30.4,
+     "H_kg_at_0p10": 25.0,
+     "H_kg_at_0p15": 22.3
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 36.0,
+     "H_kg_at_0p10": 30.6,
+     "H_kg_at_0p15": 27.9
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 32.7273,
+     "H_kg_at_0p10": 27.3273,
+     "H_kg_at_0p15": 24.6273
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 28.8,
+     "H_kg_at_0p10": 23.4,
+     "H_kg_at_0p15": 20.7
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 36.3636,
+     "H_kg_at_0p10": 30.9636,
+     "H_kg_at_0p15": 28.2636
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 33.0579,
+     "H_kg_at_0p10": 27.6579,
+     "H_kg_at_0p15": 24.9579
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 29.0909,
+     "H_kg_at_0p10": 23.6909,
+     "H_kg_at_0p15": 20.9909
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 34.5455,
+     "H_kg_at_0p10": 29.1455,
+     "H_kg_at_0p15": 26.4455
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 31.405,
+     "H_kg_at_0p10": 26.005,
+     "H_kg_at_0p15": 23.305
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 27.6364,
+     "H_kg_at_0p10": 22.2364,
+     "H_kg_at_0p15": 19.5364
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 32.7273,
+     "H_kg_at_0p10": 27.3273,
+     "H_kg_at_0p15": 24.6273
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 29.7521,
+     "H_kg_at_0p10": 24.3521,
+     "H_kg_at_0p15": 21.6521
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 26.1818,
+     "H_kg_at_0p10": 20.7818,
+     "H_kg_at_0p15": 18.0818
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 32.0,
+     "H_kg_at_0p10": 26.6,
+     "H_kg_at_0p15": 23.9
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 29.0909,
+     "H_kg_at_0p10": 23.6909,
+     "H_kg_at_0p15": 20.9909
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 25.6,
+     "H_kg_at_0p10": 20.2,
+     "H_kg_at_0p15": 17.5
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 30.4,
+     "H_kg_at_0p10": 25.0,
+     "H_kg_at_0p15": 22.3
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 27.6364,
+     "H_kg_at_0p10": 22.2364,
+     "H_kg_at_0p15": 19.5364
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 24.32,
+     "H_kg_at_0p10": 18.92,
+     "H_kg_at_0p15": 16.22
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 28.8,
+     "H_kg_at_0p10": 23.4,
+     "H_kg_at_0p15": 20.7
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 26.1818,
+     "H_kg_at_0p10": 20.7818,
+     "H_kg_at_0p15": 18.0818
+    },
+    {
+     "reference": "RFP_40kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 23.04,
+     "H_kg_at_0p10": 17.64,
+     "H_kg_at_0p15": 14.94
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 9.0,
+     "H_kg_at_0p10": 3.6,
+     "H_kg_at_0p15": 0.9
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 8.18182,
+     "H_kg_at_0p10": 2.78182,
+     "H_kg_at_0p15": 0.0818182
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 7.2,
+     "H_kg_at_0p10": 1.8,
+     "H_kg_at_0p15": -0.9
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 7.0,
+     "H_kg_at_0p10": 1.6,
+     "H_kg_at_0p15": -1.1
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 6.36364,
+     "H_kg_at_0p10": 0.963636,
+     "H_kg_at_0p15": -1.73636
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 5.6,
+     "H_kg_at_0p10": 0.2,
+     "H_kg_at_0p15": -2.5
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 5.0,
+     "H_kg_at_0p10": -0.4,
+     "H_kg_at_0p15": -3.1
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 4.54545,
+     "H_kg_at_0p10": -0.854545,
+     "H_kg_at_0p15": -3.55455
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 4.0,
+     "H_kg_at_0p10": -1.4,
+     "H_kg_at_0p15": -4.1
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 8.18182,
+     "H_kg_at_0p10": 2.78182,
+     "H_kg_at_0p15": 0.0818182
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 7.43802,
+     "H_kg_at_0p10": 2.03802,
+     "H_kg_at_0p15": -0.661983
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 6.54545,
+     "H_kg_at_0p10": 1.14545,
+     "H_kg_at_0p15": -1.55455
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 6.36364,
+     "H_kg_at_0p10": 0.963636,
+     "H_kg_at_0p15": -1.73636
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 5.78512,
+     "H_kg_at_0p10": 0.385124,
+     "H_kg_at_0p15": -2.31488
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 5.09091,
+     "H_kg_at_0p10": -0.309091,
+     "H_kg_at_0p15": -3.00909
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 4.54545,
+     "H_kg_at_0p10": -0.854545,
+     "H_kg_at_0p15": -3.55455
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 4.13223,
+     "H_kg_at_0p10": -1.26777,
+     "H_kg_at_0p15": -3.96777
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 3.63636,
+     "H_kg_at_0p10": -1.76364,
+     "H_kg_at_0p15": -4.46364
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 7.2,
+     "H_kg_at_0p10": 1.8,
+     "H_kg_at_0p15": -0.9
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 6.54545,
+     "H_kg_at_0p10": 1.14545,
+     "H_kg_at_0p15": -1.55455
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 5.76,
+     "H_kg_at_0p10": 0.36,
+     "H_kg_at_0p15": -2.34
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 5.6,
+     "H_kg_at_0p10": 0.2,
+     "H_kg_at_0p15": -2.5
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 5.09091,
+     "H_kg_at_0p10": -0.309091,
+     "H_kg_at_0p15": -3.00909
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 4.48,
+     "H_kg_at_0p10": -0.92,
+     "H_kg_at_0p15": -3.62
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 4.0,
+     "H_kg_at_0p10": -1.4,
+     "H_kg_at_0p15": -4.1
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 3.63636,
+     "H_kg_at_0p10": -1.76364,
+     "H_kg_at_0p15": -4.46364
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 3.2,
+     "H_kg_at_0p10": -2.2,
+     "H_kg_at_0p15": -4.9
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 18.0,
+     "H_kg_at_0p10": 12.6,
+     "H_kg_at_0p15": 9.9
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 16.3636,
+     "H_kg_at_0p10": 10.9636,
+     "H_kg_at_0p15": 8.26364
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 14.4,
+     "H_kg_at_0p10": 9.0,
+     "H_kg_at_0p15": 6.3
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 16.0,
+     "H_kg_at_0p10": 10.6,
+     "H_kg_at_0p15": 7.9
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 14.5455,
+     "H_kg_at_0p10": 9.14545,
+     "H_kg_at_0p15": 6.44545
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 12.8,
+     "H_kg_at_0p10": 7.4,
+     "H_kg_at_0p15": 4.7
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 14.0,
+     "H_kg_at_0p10": 8.6,
+     "H_kg_at_0p15": 5.9
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 12.7273,
+     "H_kg_at_0p10": 7.32727,
+     "H_kg_at_0p15": 4.62727
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 11.2,
+     "H_kg_at_0p10": 5.8,
+     "H_kg_at_0p15": 3.1
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 16.3636,
+     "H_kg_at_0p10": 10.9636,
+     "H_kg_at_0p15": 8.26364
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 14.876,
+     "H_kg_at_0p10": 9.47603,
+     "H_kg_at_0p15": 6.77603
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 13.0909,
+     "H_kg_at_0p10": 7.69091,
+     "H_kg_at_0p15": 4.99091
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 14.5455,
+     "H_kg_at_0p10": 9.14545,
+     "H_kg_at_0p15": 6.44545
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 13.2231,
+     "H_kg_at_0p10": 7.82314,
+     "H_kg_at_0p15": 5.12314
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 11.6364,
+     "H_kg_at_0p10": 6.23636,
+     "H_kg_at_0p15": 3.53636
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 12.7273,
+     "H_kg_at_0p10": 7.32727,
+     "H_kg_at_0p15": 4.62727
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 11.5702,
+     "H_kg_at_0p10": 6.17025,
+     "H_kg_at_0p15": 3.47025
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 10.1818,
+     "H_kg_at_0p10": 4.78182,
+     "H_kg_at_0p15": 2.08182
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 14.4,
+     "H_kg_at_0p10": 9.0,
+     "H_kg_at_0p15": 6.3
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 13.0909,
+     "H_kg_at_0p10": 7.69091,
+     "H_kg_at_0p15": 4.99091
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 11.52,
+     "H_kg_at_0p10": 6.12,
+     "H_kg_at_0p15": 3.42
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 12.8,
+     "H_kg_at_0p10": 7.4,
+     "H_kg_at_0p15": 4.7
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 11.6364,
+     "H_kg_at_0p10": 6.23636,
+     "H_kg_at_0p15": 3.53636
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 10.24,
+     "H_kg_at_0p10": 4.84,
+     "H_kg_at_0p15": 2.14
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 11.2,
+     "H_kg_at_0p10": 5.8,
+     "H_kg_at_0p15": 3.1
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 10.1818,
+     "H_kg_at_0p10": 4.78182,
+     "H_kg_at_0p15": 2.08182
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 8.96,
+     "H_kg_at_0p10": 3.56,
+     "H_kg_at_0p15": 0.86
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 36.0,
+     "H_kg_at_0p10": 30.6,
+     "H_kg_at_0p15": 27.9
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 32.7273,
+     "H_kg_at_0p10": 27.3273,
+     "H_kg_at_0p15": 24.6273
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 28.8,
+     "H_kg_at_0p10": 23.4,
+     "H_kg_at_0p15": 20.7
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 34.0,
+     "H_kg_at_0p10": 28.6,
+     "H_kg_at_0p15": 25.9
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 30.9091,
+     "H_kg_at_0p10": 25.5091,
+     "H_kg_at_0p15": 22.8091
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 27.2,
+     "H_kg_at_0p10": 21.8,
+     "H_kg_at_0p15": 19.1
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 32.0,
+     "H_kg_at_0p10": 26.6,
+     "H_kg_at_0p15": 23.9
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 29.0909,
+     "H_kg_at_0p10": 23.6909,
+     "H_kg_at_0p15": 20.9909
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 25.6,
+     "H_kg_at_0p10": 20.2,
+     "H_kg_at_0p15": 17.5
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 32.7273,
+     "H_kg_at_0p10": 27.3273,
+     "H_kg_at_0p15": 24.6273
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 29.7521,
+     "H_kg_at_0p10": 24.3521,
+     "H_kg_at_0p15": 21.6521
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 26.1818,
+     "H_kg_at_0p10": 20.7818,
+     "H_kg_at_0p15": 18.0818
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 30.9091,
+     "H_kg_at_0p10": 25.5091,
+     "H_kg_at_0p15": 22.8091
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 28.0992,
+     "H_kg_at_0p10": 22.6992,
+     "H_kg_at_0p15": 19.9992
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 24.7273,
+     "H_kg_at_0p10": 19.3273,
+     "H_kg_at_0p15": 16.6273
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 29.0909,
+     "H_kg_at_0p10": 23.6909,
+     "H_kg_at_0p15": 20.9909
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 26.4463,
+     "H_kg_at_0p10": 21.0463,
+     "H_kg_at_0p15": 18.3463
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 23.2727,
+     "H_kg_at_0p10": 17.8727,
+     "H_kg_at_0p15": 15.1727
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 28.8,
+     "H_kg_at_0p10": 23.4,
+     "H_kg_at_0p15": 20.7
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 26.1818,
+     "H_kg_at_0p10": 20.7818,
+     "H_kg_at_0p15": 18.0818
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 23.04,
+     "H_kg_at_0p10": 17.64,
+     "H_kg_at_0p15": 14.94
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 27.2,
+     "H_kg_at_0p10": 21.8,
+     "H_kg_at_0p15": 19.1
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 24.7273,
+     "H_kg_at_0p10": 19.3273,
+     "H_kg_at_0p15": 16.6273
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 21.76,
+     "H_kg_at_0p10": 16.36,
+     "H_kg_at_0p15": 13.66
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 25.6,
+     "H_kg_at_0p10": 20.2,
+     "H_kg_at_0p15": 17.5
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 23.2727,
+     "H_kg_at_0p10": 17.8727,
+     "H_kg_at_0p15": 15.1727
+    },
+    {
+     "reference": "A5_alloc_36kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 20.48,
+     "H_kg_at_0p10": 15.08,
+     "H_kg_at_0p15": 12.38
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 8.5,
+     "H_kg_at_0p10": 3.1,
+     "H_kg_at_0p15": 0.4
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 7.72727,
+     "H_kg_at_0p10": 2.32727,
+     "H_kg_at_0p15": -0.372727
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 6.8,
+     "H_kg_at_0p10": 1.4,
+     "H_kg_at_0p15": -1.3
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 6.5,
+     "H_kg_at_0p10": 1.1,
+     "H_kg_at_0p15": -1.6
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 5.90909,
+     "H_kg_at_0p10": 0.509091,
+     "H_kg_at_0p15": -2.19091
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 5.2,
+     "H_kg_at_0p10": -0.2,
+     "H_kg_at_0p15": -2.9
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 4.5,
+     "H_kg_at_0p10": -0.9,
+     "H_kg_at_0p15": -3.6
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 4.09091,
+     "H_kg_at_0p10": -1.30909,
+     "H_kg_at_0p15": -4.00909
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 3.6,
+     "H_kg_at_0p10": -1.8,
+     "H_kg_at_0p15": -4.5
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 7.72727,
+     "H_kg_at_0p10": 2.32727,
+     "H_kg_at_0p15": -0.372727
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 7.02479,
+     "H_kg_at_0p10": 1.62479,
+     "H_kg_at_0p15": -1.07521
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 6.18182,
+     "H_kg_at_0p10": 0.781818,
+     "H_kg_at_0p15": -1.91818
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 5.90909,
+     "H_kg_at_0p10": 0.509091,
+     "H_kg_at_0p15": -2.19091
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 5.3719,
+     "H_kg_at_0p10": -0.0280992,
+     "H_kg_at_0p15": -2.7281
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 4.72727,
+     "H_kg_at_0p10": -0.672727,
+     "H_kg_at_0p15": -3.37273
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 4.09091,
+     "H_kg_at_0p10": -1.30909,
+     "H_kg_at_0p15": -4.00909
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 3.71901,
+     "H_kg_at_0p10": -1.68099,
+     "H_kg_at_0p15": -4.38099
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 3.27273,
+     "H_kg_at_0p10": -2.12727,
+     "H_kg_at_0p15": -4.82727
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 6.8,
+     "H_kg_at_0p10": 1.4,
+     "H_kg_at_0p15": -1.3
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 6.18182,
+     "H_kg_at_0p10": 0.781818,
+     "H_kg_at_0p15": -1.91818
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 5.44,
+     "H_kg_at_0p10": 0.04,
+     "H_kg_at_0p15": -2.66
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 5.2,
+     "H_kg_at_0p10": -0.2,
+     "H_kg_at_0p15": -2.9
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 4.72727,
+     "H_kg_at_0p10": -0.672727,
+     "H_kg_at_0p15": -3.37273
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 4.16,
+     "H_kg_at_0p10": -1.24,
+     "H_kg_at_0p15": -3.94
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 3.6,
+     "H_kg_at_0p10": -1.8,
+     "H_kg_at_0p15": -4.5
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 3.27273,
+     "H_kg_at_0p10": -2.12727,
+     "H_kg_at_0p15": -4.82727
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.25,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 2.88,
+     "H_kg_at_0p10": -2.52,
+     "H_kg_at_0p15": -5.22
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 17.0,
+     "H_kg_at_0p10": 11.6,
+     "H_kg_at_0p15": 8.9
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 15.4545,
+     "H_kg_at_0p10": 10.0545,
+     "H_kg_at_0p15": 7.35455
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 13.6,
+     "H_kg_at_0p10": 8.2,
+     "H_kg_at_0p15": 5.5
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 15.0,
+     "H_kg_at_0p10": 9.6,
+     "H_kg_at_0p15": 6.9
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 13.6364,
+     "H_kg_at_0p10": 8.23636,
+     "H_kg_at_0p15": 5.53636
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 12.0,
+     "H_kg_at_0p10": 6.6,
+     "H_kg_at_0p15": 3.9
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 13.0,
+     "H_kg_at_0p10": 7.6,
+     "H_kg_at_0p15": 4.9
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 11.8182,
+     "H_kg_at_0p10": 6.41818,
+     "H_kg_at_0p15": 3.71818
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 10.4,
+     "H_kg_at_0p10": 5.0,
+     "H_kg_at_0p15": 2.3
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 15.4545,
+     "H_kg_at_0p10": 10.0545,
+     "H_kg_at_0p15": 7.35455
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 14.0496,
+     "H_kg_at_0p10": 8.64959,
+     "H_kg_at_0p15": 5.94959
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 12.3636,
+     "H_kg_at_0p10": 6.96364,
+     "H_kg_at_0p15": 4.26364
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 13.6364,
+     "H_kg_at_0p10": 8.23636,
+     "H_kg_at_0p15": 5.53636
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 12.3967,
+     "H_kg_at_0p10": 6.99669,
+     "H_kg_at_0p15": 4.29669
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 10.9091,
+     "H_kg_at_0p10": 5.50909,
+     "H_kg_at_0p15": 2.80909
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 11.8182,
+     "H_kg_at_0p10": 6.41818,
+     "H_kg_at_0p15": 3.71818
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 10.7438,
+     "H_kg_at_0p10": 5.3438,
+     "H_kg_at_0p15": 2.6438
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 9.45455,
+     "H_kg_at_0p10": 4.05455,
+     "H_kg_at_0p15": 1.35455
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 13.6,
+     "H_kg_at_0p10": 8.2,
+     "H_kg_at_0p15": 5.5
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 12.3636,
+     "H_kg_at_0p10": 6.96364,
+     "H_kg_at_0p15": 4.26364
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 10.88,
+     "H_kg_at_0p10": 5.48,
+     "H_kg_at_0p15": 2.78
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 12.0,
+     "H_kg_at_0p10": 6.6,
+     "H_kg_at_0p15": 3.9
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 10.9091,
+     "H_kg_at_0p10": 5.50909,
+     "H_kg_at_0p15": 2.80909
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 9.6,
+     "H_kg_at_0p10": 4.2,
+     "H_kg_at_0p15": 1.5
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 10.4,
+     "H_kg_at_0p10": 5.0,
+     "H_kg_at_0p15": 2.3
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 9.45455,
+     "H_kg_at_0p10": 4.05455,
+     "H_kg_at_0p15": 1.35455
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 0.5,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 8.32,
+     "H_kg_at_0p10": 2.92,
+     "H_kg_at_0p15": 0.22
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 34.0,
+     "H_kg_at_0p10": 28.6,
+     "H_kg_at_0p15": 25.9
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 30.9091,
+     "H_kg_at_0p10": 25.5091,
+     "H_kg_at_0p15": 22.8091
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 27.2,
+     "H_kg_at_0p10": 21.8,
+     "H_kg_at_0p15": 19.1
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 32.0,
+     "H_kg_at_0p10": 26.6,
+     "H_kg_at_0p15": 23.9
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 29.0909,
+     "H_kg_at_0p10": 23.6909,
+     "H_kg_at_0p15": 20.9909
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 25.6,
+     "H_kg_at_0p10": 20.2,
+     "H_kg_at_0p15": 17.5
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 30.0,
+     "H_kg_at_0p10": 24.6,
+     "H_kg_at_0p15": 21.9
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 27.2727,
+     "H_kg_at_0p10": 21.8727,
+     "H_kg_at_0p15": 19.1727
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.0,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 24.0,
+     "H_kg_at_0p10": 18.6,
+     "H_kg_at_0p15": 15.9
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 30.9091,
+     "H_kg_at_0p10": 25.5091,
+     "H_kg_at_0p15": 22.8091
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 28.0992,
+     "H_kg_at_0p10": 22.6992,
+     "H_kg_at_0p15": 19.9992
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 24.7273,
+     "H_kg_at_0p10": 19.3273,
+     "H_kg_at_0p15": 16.6273
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 29.0909,
+     "H_kg_at_0p10": 23.6909,
+     "H_kg_at_0p15": 20.9909
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 26.4463,
+     "H_kg_at_0p10": 21.0463,
+     "H_kg_at_0p15": 18.3463
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 23.2727,
+     "H_kg_at_0p10": 17.8727,
+     "H_kg_at_0p15": 15.1727
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 27.2727,
+     "H_kg_at_0p10": 21.8727,
+     "H_kg_at_0p15": 19.1727
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 24.7934,
+     "H_kg_at_0p10": 19.3934,
+     "H_kg_at_0p15": 16.6934
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.1,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 21.8182,
+     "H_kg_at_0p10": 16.4182,
+     "H_kg_at_0p15": 13.7182
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 27.2,
+     "H_kg_at_0p10": 21.8,
+     "H_kg_at_0p15": 19.1
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 24.7273,
+     "H_kg_at_0p10": 19.3273,
+     "H_kg_at_0p15": 16.6273
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 0.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 21.76,
+     "H_kg_at_0p10": 16.36,
+     "H_kg_at_0p15": 13.66
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 25.6,
+     "H_kg_at_0p10": 20.2,
+     "H_kg_at_0p15": 17.5
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 23.2727,
+     "H_kg_at_0p10": 17.8727,
+     "H_kg_at_0p15": 15.1727
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 2.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 20.48,
+     "H_kg_at_0p10": 15.08,
+     "H_kg_at_0p15": 12.38
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.0,
+     "S_max_kg": 24.0,
+     "H_kg_at_0p10": 18.6,
+     "H_kg_at_0p15": 15.9
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.1,
+     "S_max_kg": 21.8182,
+     "H_kg_at_0p10": 16.4182,
+     "H_kg_at_0p15": 13.7182
+    },
+    {
+     "reference": "A5_alloc_34kg",
+     "share": 1.0,
+     "f_tank": 0.25,
+     "m_hw_nontank_kg": 4.0,
+     "f_reserve": 0.25,
+     "S_max_kg": 19.2,
+     "H_kg_at_0p10": 13.8,
+     "H_kg_at_0p15": 11.1
+    }
+   ]
+  },
+  {
+   "id": "SS-2",
+   "title": "maximum starts for a given headroom and Xe per start+transition cycle",
+   "formula": "N_starts_max = floor(H_s / (t_startup mdot_startup + t_transition mdot_transition)), with N_transitions = N_starts and H_s = H - m_fallback",
+   "axes_label": "sensitivity axis value (not evidence, not a threshold)",
+   "reference_point": {
+    "xe_per_cycle_g_SC1": 1.053,
+    "label": "scenario / illustrative: not an allocation, not a prediction, not frozen (A6 not_authorized)"
+   },
+   "rows": [
+    {
+     "H_kg": 0.5,
+     "xe_per_cycle_g": 0.03,
+     "N_starts_max": 16666
+    },
+    {
+     "H_kg": 0.5,
+     "xe_per_cycle_g": 0.1,
+     "N_starts_max": 5000
+    },
+    {
+     "H_kg": 0.5,
+     "xe_per_cycle_g": 0.3,
+     "N_starts_max": 1666
+    },
+    {
+     "H_kg": 0.5,
+     "xe_per_cycle_g": 1.0,
+     "N_starts_max": 500
+    },
+    {
+     "H_kg": 0.5,
+     "xe_per_cycle_g": 3.0,
+     "N_starts_max": 166
+    },
+    {
+     "H_kg": 1.0,
+     "xe_per_cycle_g": 0.03,
+     "N_starts_max": 33333
+    },
+    {
+     "H_kg": 1.0,
+     "xe_per_cycle_g": 0.1,
+     "N_starts_max": 10000
+    },
+    {
+     "H_kg": 1.0,
+     "xe_per_cycle_g": 0.3,
+     "N_starts_max": 3333
+    },
+    {
+     "H_kg": 1.0,
+     "xe_per_cycle_g": 1.0,
+     "N_starts_max": 1000
+    },
+    {
+     "H_kg": 1.0,
+     "xe_per_cycle_g": 3.0,
+     "N_starts_max": 333
+    },
+    {
+     "H_kg": 2.0,
+     "xe_per_cycle_g": 0.03,
+     "N_starts_max": 66666
+    },
+    {
+     "H_kg": 2.0,
+     "xe_per_cycle_g": 0.1,
+     "N_starts_max": 20000
+    },
+    {
+     "H_kg": 2.0,
+     "xe_per_cycle_g": 0.3,
+     "N_starts_max": 6666
+    },
+    {
+     "H_kg": 2.0,
+     "xe_per_cycle_g": 1.0,
+     "N_starts_max": 2000
+    },
+    {
+     "H_kg": 2.0,
+     "xe_per_cycle_g": 3.0,
+     "N_starts_max": 666
+    },
+    {
+     "H_kg": 4.0,
+     "xe_per_cycle_g": 0.03,
+     "N_starts_max": 133333
+    },
+    {
+     "H_kg": 4.0,
+     "xe_per_cycle_g": 0.1,
+     "N_starts_max": 40000
+    },
+    {
+     "H_kg": 4.0,
+     "xe_per_cycle_g": 0.3,
+     "N_starts_max": 13333
+    },
+    {
+     "H_kg": 4.0,
+     "xe_per_cycle_g": 1.0,
+     "N_starts_max": 4000
+    },
+    {
+     "H_kg": 4.0,
+     "xe_per_cycle_g": 3.0,
+     "N_starts_max": 1333
+    },
+    {
+     "H_kg": 8.0,
+     "xe_per_cycle_g": 0.03,
+     "N_starts_max": 266666
+    },
+    {
+     "H_kg": 8.0,
+     "xe_per_cycle_g": 0.1,
+     "N_starts_max": 80000
+    },
+    {
+     "H_kg": 8.0,
+     "xe_per_cycle_g": 0.3,
+     "N_starts_max": 26666
+    },
+    {
+     "H_kg": 8.0,
+     "xe_per_cycle_g": 1.0,
+     "N_starts_max": 8000
+    },
+    {
+     "H_kg": 8.0,
+     "xe_per_cycle_g": 3.0,
+     "N_starts_max": 2666
+    }
+   ]
+  },
+  {
+   "id": "SS-3",
+   "title": "maximum cumulative Xe fallback duration for a given headroom and fallback flow",
+   "formula": "t_fallback_max_allowable = H_f / mdot_fallback, with H_f = H - m_startup - m_transition; hours per kg = 277.78 / mdot_fallback[mg/s]",
+   "axes_label": "sensitivity axis value (not evidence, not a threshold); 11 mg/s = AN-02 E09 ignition flow (5 kW class, out of power class)",
+   "rows": [
+    {
+     "H_kg": 0.5,
+     "mdot_fallback_mg_s": 0.5,
+     "t_fallback_max_h": 277.778
+    },
+    {
+     "H_kg": 0.5,
+     "mdot_fallback_mg_s": 1.0,
+     "t_fallback_max_h": 138.889
+    },
+    {
+     "H_kg": 0.5,
+     "mdot_fallback_mg_s": 2.0,
+     "t_fallback_max_h": 69.4444
+    },
+    {
+     "H_kg": 0.5,
+     "mdot_fallback_mg_s": 5.0,
+     "t_fallback_max_h": 27.7778
+    },
+    {
+     "H_kg": 0.5,
+     "mdot_fallback_mg_s": 11.0,
+     "t_fallback_max_h": 12.6263
+    },
+    {
+     "H_kg": 1.0,
+     "mdot_fallback_mg_s": 0.5,
+     "t_fallback_max_h": 555.556
+    },
+    {
+     "H_kg": 1.0,
+     "mdot_fallback_mg_s": 1.0,
+     "t_fallback_max_h": 277.778
+    },
+    {
+     "H_kg": 1.0,
+     "mdot_fallback_mg_s": 2.0,
+     "t_fallback_max_h": 138.889
+    },
+    {
+     "H_kg": 1.0,
+     "mdot_fallback_mg_s": 5.0,
+     "t_fallback_max_h": 55.5556
+    },
+    {
+     "H_kg": 1.0,
+     "mdot_fallback_mg_s": 11.0,
+     "t_fallback_max_h": 25.2525
+    },
+    {
+     "H_kg": 2.0,
+     "mdot_fallback_mg_s": 0.5,
+     "t_fallback_max_h": 1111.11
+    },
+    {
+     "H_kg": 2.0,
+     "mdot_fallback_mg_s": 1.0,
+     "t_fallback_max_h": 555.556
+    },
+    {
+     "H_kg": 2.0,
+     "mdot_fallback_mg_s": 2.0,
+     "t_fallback_max_h": 277.778
+    },
+    {
+     "H_kg": 2.0,
+     "mdot_fallback_mg_s": 5.0,
+     "t_fallback_max_h": 111.111
+    },
+    {
+     "H_kg": 2.0,
+     "mdot_fallback_mg_s": 11.0,
+     "t_fallback_max_h": 50.5051
+    },
+    {
+     "H_kg": 4.0,
+     "mdot_fallback_mg_s": 0.5,
+     "t_fallback_max_h": 2222.22
+    },
+    {
+     "H_kg": 4.0,
+     "mdot_fallback_mg_s": 1.0,
+     "t_fallback_max_h": 1111.11
+    },
+    {
+     "H_kg": 4.0,
+     "mdot_fallback_mg_s": 2.0,
+     "t_fallback_max_h": 555.556
+    },
+    {
+     "H_kg": 4.0,
+     "mdot_fallback_mg_s": 5.0,
+     "t_fallback_max_h": 222.222
+    },
+    {
+     "H_kg": 4.0,
+     "mdot_fallback_mg_s": 11.0,
+     "t_fallback_max_h": 101.01
+    },
+    {
+     "H_kg": 8.0,
+     "mdot_fallback_mg_s": 0.5,
+     "t_fallback_max_h": 4444.44
+    },
+    {
+     "H_kg": 8.0,
+     "mdot_fallback_mg_s": 1.0,
+     "t_fallback_max_h": 2222.22
+    },
+    {
+     "H_kg": 8.0,
+     "mdot_fallback_mg_s": 2.0,
+     "t_fallback_max_h": 1111.11
+    },
+    {
+     "H_kg": 8.0,
+     "mdot_fallback_mg_s": 5.0,
+     "t_fallback_max_h": 444.444
+    },
+    {
+     "H_kg": 8.0,
+     "mdot_fallback_mg_s": 11.0,
+     "t_fallback_max_h": 202.02
+    }
+   ],
+   "hours_per_kg": [
+    {
+     "mdot_fallback_mg_s": 0.5,
+     "hours_of_xe_fed_discharge_per_kg": 555.556
+    },
+    {
+     "mdot_fallback_mg_s": 1.0,
+     "hours_of_xe_fed_discharge_per_kg": 277.778
+    },
+    {
+     "mdot_fallback_mg_s": 2.0,
+     "hours_of_xe_fed_discharge_per_kg": 138.889
+    },
+    {
+     "mdot_fallback_mg_s": 5.0,
+     "hours_of_xe_fed_discharge_per_kg": 55.5556
+    },
+    {
+     "mdot_fallback_mg_s": 11.0,
+     "hours_of_xe_fed_discharge_per_kg": 25.2525
+    }
+   ]
+  },
+  {
+   "id": "SS-4",
+   "title": "combined start / fallback trade line",
+   "formula": "N_starts x (Xe per start+transition cycle) + t_fallback_max x mdot_fallback <= H  (linear; every point on the line spends the same headroom)",
+   "meaning": "exchange rate: fallback hours that cost the same Xe as 1000 start+transition cycles at the SC-1 per-cycle Xe (scenario value)",
+   "axes_label": "sensitivity axis value (not evidence, not a threshold)",
+   "rows": [
+    {
+     "mdot_fallback_mg_s": 0.5,
+     "xe_per_cycle_g": 1.053,
+     "fallback_h_equivalent_to_1000_cycles": 585.0
+    },
+    {
+     "mdot_fallback_mg_s": 1.0,
+     "xe_per_cycle_g": 1.053,
+     "fallback_h_equivalent_to_1000_cycles": 292.5
+    },
+    {
+     "mdot_fallback_mg_s": 2.0,
+     "xe_per_cycle_g": 1.053,
+     "fallback_h_equivalent_to_1000_cycles": 146.25
+    },
+    {
+     "mdot_fallback_mg_s": 5.0,
+     "xe_per_cycle_g": 1.053,
+     "fallback_h_equivalent_to_1000_cycles": 58.5
+    },
+    {
+     "mdot_fallback_mg_s": 11.0,
+     "xe_per_cycle_g": 1.053,
+     "fallback_h_equivalent_to_1000_cycles": 26.5909
+    }
+   ]
+  },
+  {
+   "id": "SS-5",
+   "title": "Xe-per-cycle ceiling for a planned number of start+transition cycles",
+   "formula": "xe_per_cycle_max = H / N_cycles",
+   "axes_label": "sensitivity axis value (not evidence, not a threshold); N = 1000 (SC-1) and the SC-2 per-orbit count",
+   "meaning": "a candidate H-1/C-1 test requirement (PROPOSED, owner decides), not a prediction: the start and transfer Xe per cycle that the ops concept can afford",
+   "rows": [
+    {
+     "H_kg": 0.5,
+     "N_cycles": 1000.0,
+     "xe_per_cycle_max_g": 0.5
+    },
+    {
+     "H_kg": 0.5,
+     "N_cycles": 17737.0,
+     "xe_per_cycle_max_g": 0.0281897
+    },
+    {
+     "H_kg": 1.0,
+     "N_cycles": 1000.0,
+     "xe_per_cycle_max_g": 1.0
+    },
+    {
+     "H_kg": 1.0,
+     "N_cycles": 17737.0,
+     "xe_per_cycle_max_g": 0.0563793
+    },
+    {
+     "H_kg": 2.0,
+     "N_cycles": 1000.0,
+     "xe_per_cycle_max_g": 2.0
+    },
+    {
+     "H_kg": 2.0,
+     "N_cycles": 17737.0,
+     "xe_per_cycle_max_g": 0.112759
+    },
+    {
+     "H_kg": 4.0,
+     "N_cycles": 1000.0,
+     "xe_per_cycle_max_g": 4.0
+    },
+    {
+     "H_kg": 4.0,
+     "N_cycles": 17737.0,
+     "xe_per_cycle_max_g": 0.225517
+    },
+    {
+     "H_kg": 8.0,
+     "N_cycles": 1000.0,
+     "xe_per_cycle_max_g": 8.0
+    },
+    {
+     "H_kg": 8.0,
+     "N_cycles": 17737.0,
+     "xe_per_cycle_max_g": 0.451035
+    }
+   ]
+  }
+ ],
+ "illustrative_analogues": [
+  {
+   "id": "AN-01",
+   "topic": "cathode Xe flows of other cathodes (context for the fixed cathode term)",
+   "label": "analogue / illustrative: another thruster or cathode; never the allocation",
+   "values": [
+    {
+     "name": "P5 cathode Xe flow setpoint",
+     "value": 0.44,
+     "unit": "mg/s",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "pointer": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json parameters.p5_cathode_xe_flow_mg_s.value",
+     "source": "brabston_2025_repo (Brabston et al., JPP 2025, Tables 2/4, as frozen in the repository)",
+     "applicability": "P5 (3-5 kW class) with its own cathode; a setpoint, not a minimum flow"
+    },
+    {
+     "name": "SITAEL HC1 design flow range",
+     "value": [
+      0.08,
+      0.5
+     ],
+     "unit": "mg/s",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "pointer": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json parameters.hc1_design_flow_range_mg_s.value",
+     "source": "pedrini_2017_iepc365 (IEPC-2017-365), abstract p. 1 and Sec. IV.A p. 5",
+     "applicability": "HC1 LaB6, 0.3-1 A (developer statement)"
+    },
+    {
+     "name": "SITAEL HC3 design flow range",
+     "value": [
+      0.08,
+      1.0
+     ],
+     "unit": "mg/s",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "pointer": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json parameters.hc3_design_flow_range_mg_s.value",
+     "source": "pedrini_2017_iepc365, Sec. V p. 8 (abstract states 0.08-0.5; inconsistency kept)",
+     "applicability": "HC3 LaB6, 1-3 A (developer statement)"
+    },
+    {
+     "name": "HC3 minimum spot-mode flow (diode, 2.5-4 A)",
+     "value": 0.6,
+     "unit": "mg/s",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "pointer": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json parameters.hc3_diode_spot_mode_min_flow_mg_s.value",
+     "source": "pedrini_2017_iepc365, Sec. V p. 9",
+     "applicability": "diode mode, no thruster magnetic field, Xe only"
+    },
+    {
+     "name": "HC1 diode flow below which plume mode appeared",
+     "value": 0.8,
+     "unit": "mg/s",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "pointer": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json parameters.hc1_diode_flow_mg_s.value",
+     "source": "pedrini_2017_iepc365, Sec. IV.B p. 7",
+     "applicability": "diode mode, 1.25-1.5 A"
+    }
+   ],
+   "reading": "The A5 design target 0.10 mg/s sits at the low end of the developer design ranges (0.08 mg/s) and below every measured diode-mode minimum flow (0.6-0.8 mg/s). The veto layer carries this as RI-MASS-CATHODE-XE (straddles the 40 kg limit; not verdict-bearing). The 5.4 kg term therefore rests on a design target that C-1 must demonstrate."
+  },
+  {
+   "id": "AN-02",
+   "topic": "Xe flow at discharge ignition (start-then-transition)",
+   "label": "analogue / illustrative: another thruster or cathode; never the allocation",
+   "values": [
+    {
+     "name": "HT5k DM2 ignition: anode Xe",
+     "value": 10.0,
+     "unit": "mg/s",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "pointer": "docs/evidence/hall_sustainment/hall_sustainment_matrix.json entries[id=E09].ignition.statement",
+     "source": "ANDREUSSI2022_IEPC435 (IEPC-2022-435) p. 3",
+     "applicability": "SITAEL HT5k DM2, 5 kW class (1.2-5.2 kW), magnetically shielded; out of the A5 power class (<= 1.30-1.35 kW bus allocation)"
+    },
+    {
+     "name": "HT5k DM2 ignition: cathode Xe",
+     "value": 1.0,
+     "unit": "mg/s",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "pointer": "docs/evidence/hall_sustainment/hall_sustainment_matrix.json entries[id=E09].ignition.statement",
+     "source": "ANDREUSSI2022_IEPC435 p. 3",
+     "applicability": "HC20h hollow cathode, as above"
+    }
+   ],
+   "reading": "The only ignition Xe flows recorded in the base. The PPS1350 (E05/E06, ~1 kW class, the closest class) also ignited on Xe and then transitioned the anode to N2 or N2/O2 (CIFALI2011 p. 2), but the Xe flow and the duration of the Xe phase are not reported in the accessed text. No accessed source reports an ignition dwell or a transition duration."
+  },
+  {
+   "id": "AN-03",
+   "topic": "cathode preheat durations (start sequence)",
+   "label": "analogue / illustrative: another thruster or cathode; never the allocation",
+   "values": [
+    {
+     "name": "HC1 preheat to ~1460 K",
+     "value": [
+      600.0,
+      200.0
+     ],
+     "unit": "s",
+     "value_display": "600 (at ~45 W) / 200 (at ~60 W)",
+     "paired_with": "heater power [45, 60] W ('about')",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "pointer": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json parameters.hc1_heating_time_s.value",
+     "source": "pedrini_2017_iepc365, Sec. IV.A p. 5",
+     "applicability": "SITAEL HC1 (0.3-1 A)"
+    },
+    {
+     "name": "JPL 1.5-cm LaB6 preheat",
+     "value": [
+      18.0,
+      20.0
+     ],
+     "unit": "min",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "pointer": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json parameters.jpl_1p5cm_preheat_min.value",
+     "source": "goebel_2017_iepc276 (IEPC-2017-276) p. 3",
+     "applicability": "1.5-cm LaB6 cathode (HERMeS class), a larger cathode"
+    }
+   ],
+   "reading": "Heater durations, not Xe quantities: whether and how much Xe flows during preheat is not stated in these sources. The repository dual-feed state machine (docs/controls/DUAL_FEED_STATES.md, CATHODE_CONDITIONING) books mdot_Xe_cathode during conditioning; that is a design proposal, not evidence."
+  },
+  {
+   "id": "AN-04",
+   "topic": "demonstrated start/ignition counts of other cathodes",
+   "label": "analogue / illustrative: another thruster or cathode; never the allocation",
+   "values": [
+    {
+     "name": "JPL H6 LaB6 cathode heater starts (lower bound)",
+     "value": 1000.0,
+     "unit": "1",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "pointer": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json parameters.jpl_h6_heater_starts_min.value",
+     "source": "goebel_polk_2015_iepc43 (IEPC-2015-43) Sec. 4 p. 3 ('over 1000 starts to date')",
+     "applicability": "0.63-cm LaB6 cathode of a ~6 kW Hall thruster; laboratory"
+    },
+    {
+     "name": "SITAEL HC1 ignitions",
+     "value": "120-ignition test and > 350 ignitions",
+     "unit": "1",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "pointer": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json parameters.hc1_ignition_keeper_voltage_V.validation_status",
+     "source": "pedrini_2017_iepc365 Sec. IV.B pp. 6-7",
+     "applicability": "HC1"
+    },
+    {
+     "name": "heaterless LaB6 ignitions",
+     "value": "25,000 (title only, verify)",
+     "unit": "1",
+     "evidence_class": "measured",
+     "evidence_level": 5,
+     "pointer": "docs/evidence/cathode/CATHODE_DOSSIER.md section 3.1 'A heaterless design reports 25,000 ignitions (title only, verify)'",
+     "source": "cathode dossier (title-level record; primary not read)",
+     "applicability": "not used numerically anywhere in this ledger"
+    }
+   ],
+   "reading": "Qualification-type cycle counts of other hardware, not mission start counts. The mission start count comes from the operations concept (cathode_integration tbd 'starts', milestone C); the start-cycle qualification is cathode dossier gap G05."
+  },
+  {
+   "id": "AN-05",
+   "topic": "Xe tank mass vs Xe capacity (tankage fraction)",
+   "label": "analogue / illustrative: another thruster or cathode; never the allocation",
+   "values": [
+    {
+     "name": "ESA L-XTA 300 L: tank mass",
+     "value": 44.0,
+     "unit": "kg",
+     "evidence_class": "measured",
+     "evidence_level": 5,
+     "note": "developer-stated product figure ('weighs merely 44 kg'); measurement basis not stated",
+     "pointer": "web: see source"
+    },
+    {
+     "name": "ESA L-XTA 300 L: Xe carried",
+     "value": 516.0,
+     "unit": "kg",
+     "evidence_class": "measured",
+     "evidence_level": 5,
+     "note": "developer-stated",
+     "pointer": "web: see source"
+    },
+    {
+     "name": "ESA L-XTA 900 L: empty tank mass (upper bound)",
+     "value": "< 104",
+     "unit": "kg",
+     "evidence_class": "measured",
+     "evidence_level": 5,
+     "note": "'less than 104 kg'",
+     "pointer": "web"
+    },
+    {
+     "name": "ESA L-XTA 900 L: Xe carried",
+     "value": 1548.0,
+     "unit": "kg",
+     "evidence_class": "measured",
+     "evidence_level": 5,
+     "note": "developer-stated; MEOP 177 bar; Ti-lined COPV",
+     "pointer": "web"
+    },
+    {
+     "name": "tankage fraction, 300 L",
+     "value": 0.0852713,
+     "unit": "1",
+     "evidence_class": "inferred",
+     "evidence_level": 5,
+     "note": "our arithmetic 44/516",
+     "pointer": "derived here"
+    },
+    {
+     "name": "tankage fraction, 900 L (upper bound)",
+     "value": "< 0.0671835",
+     "unit": "1",
+     "evidence_class": "inferred",
+     "evidence_level": 5,
+     "note": "our arithmetic 104/1548",
+     "pointer": "derived"
+    }
+   ],
+   "source": {
+    "citation": "ESA, 'L-XTA - Large Xenon Tank Assembly' project page (status date 02/09/2021)",
+    "url": "https://resilience.esa.int/archives/projects/l-xta-large-xenon-tank-assembly",
+    "access": "open web page (project summary)",
+    "accessed": "2026-09-27"
+   },
+   "reading": "OUT OF APPLICABILITY: these tanks carry 516-1548 kg Xe, 30-300 times the Xe loads in this ledger. On this one family the fraction rises as the tank shrinks (0.085 at 300 L vs < 0.067 at 900 L), so it is not transferable to a ~5-30 kg load. Scale context only; the tank mass stays TBD (procurement selection)."
+  }
+ ],
+ "open_owner_decisions": [
+  {
+   "id": "OD-XE-1",
+   "topic": "accounting convention of the phase terms",
+   "options": [
+    "PHASE_TOTAL_FLOW",
+    "CATHODE_CONTINUOUS_INCREMENTAL"
+   ],
+   "proposed": "PHASE_TOTAL_FLOW (conservative: overlap with t_firing books the cathode flow twice, at most mdot_cathode x overlap hours); every scenario declares it explicitly"
+  },
+  {
+   "id": "OD-XE-2",
+   "topic": "reserve policy (form and value)",
+   "options": [
+    "fraction_of_other_terms",
+    "absolute_mass"
+   ],
+   "proposed": "none; the reserve is always its own term (A6); scenarios use explicit assumed values"
+  },
+  {
+   "id": "OD-XE-3",
+   "topic": "share of the mass reference the stored-Xe subsystem may take",
+   "proposed": "PROPOSED screening level 0.25 (lane-19 dominance_fraction); the surfaces carry 0.25 / 0.5 / 1.0"
+  },
+  {
+   "id": "OD-XE-4",
+   "topic": "residual (unusable) Xe",
+   "note": "A5/A6 define no residual term. docs/architecture_comparison/mass_bom/MASS_BOM.md books xe_residual = 0.02 x xe_load (ESA R-M1-6, a margin policy) as its own propellant item. The owner decides whether it enters this ledger as a separate term in a revision or stays in mass_bom only; it is never folded silently into m_reserve or any other term, and it must not be booked twice."
+  },
+  {
+   "id": "OD-XE-5",
+   "topic": "firing-hours basis of the cathode term",
+   "note": "A5 fixes 15,000 h (5.4 kg at 0.10 mg/s); the A5 internal design life target of 18,000 h would give 6.48 kg (sensitivity only)"
+  },
+  {
+   "id": "OD-XE-6",
+   "topic": "RFP 'air + Xe' Xe-mode operation",
+   "note": "The hard-gate matrix carries G7.xenon_operation and a 25 mN peak with Xe (OD1 reading ii). If the RFP requires Xe-mode operation for a duration that consumes stored Xe beyond ignition, cathode and contingency, it becomes a new explicit ledger term (owner decision); it is never folded into m_fallback."
+  },
+  {
+   "id": "OD-XE-7",
+   "topic": "hardware boundary with mass_bom",
+   "note": "m_regulator / m_valves / m_plumbing map to mass_bom xe_valve_and_flow_control, m_tank to xe_tank, m_mounting_thermal to parts of structure and thermal_hardware (PROPOSED mapping). Hardware inputs here are margin-free (CBE) unless their source says otherwise; MGA and system margin stay in mass_bom (G3 roll-up)."
+  },
+  {
+   "id": "OD-XE-8",
+   "topic": "whether the 40 kg includes the Xe load",
+   "note": "mass_bom OD-M7: included as propellant (R3 as recorded; verify against the RFP). This ledger reports shares of 40 kg on that reading."
+  }
+ ],
+ "a6_not_authorized_compliance": [
+  {
+   "item": "freezing total Xe mass",
+   "respected_by": "ledger_state.m_Xe_total_kg is null (REFUSED); scenario totals carry the label 'scenario / illustrative' and are never an allocation"
+  },
+  {
+   "item": "freezing startup/transition/fallback quantities without evidence",
+   "respected_by": "all eight inputs are TBD in the parameter table; scenario values are labelled assumptions or analogues"
+  },
+  {
+   "item": "freezing Phase-1 numeric thresholds",
+   "respected_by": "not touched (the share axis is PROPOSED for the owner; no Phase-1 threshold is set)"
+  },
+  {
+   "item": "changing Bundle 1 from NO_BASELINE_YET",
+   "respected_by": "not touched; Bundle 1 stays NO_BASELINE_YET"
+  },
+  {
+   "item": "further broad Hall-transport sensitivity research",
+   "respected_by": "none; no Hall closure enters the Xe path"
+  },
+  {
+   "item": "another facility simulation campaign",
+   "respected_by": "none"
+  }
+ ],
+ "milestones": {
+  "supports": [
+   "A"
+  ],
+  "A": "Conditional-selection support: one Xe ledger and stored-Xe subsystem structure common to hall_only, rf_hall and ecr_hall, with the conditions (surfaces SS-1..SS-5) under which the stored-Xe subsystem stays within a stated share of the 40 kg requirement or the A5 34-36 kg allocation. No total is frozen; Bundle 1 stays NO_BASELINE_YET.",
+  "to_B": "C-1 measured cathode flow at <= 0.10 mg/s (or the owner re-books the term); H-1/C-1 measured Xe per start and per transfer and the Xe-fallback flow; owner reserve policy and share (OD-XE-2/3); tank, regulator, valves and plumbing selected with supplier masses.",
+  "to_C": "operations concept (N_starts, N_transitions), FDIR maximum fallback duration, qualified hardware masses, cathode start-cycle qualification (dossier G05) and integrated mass closure through mass_bom (MGA, system margin, residual per OD-XE-4)."
+ },
+ "evidence_basis": [
+  "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json",
+  "docs/evidence/hall_sustainment/hall_sustainment_matrix.json",
+  "docs/evidence/cathode/CATHODE_DOSSIER.md",
+  "docs/architecture_comparison/mass_bom/MASS_BOM.md",
+  "docs/architecture_comparison/veto_layer/veto_layer_v1.json (RI-MASS-CATHODE-XE)",
+  "docs/controls/DUAL_FEED_STATES.md"
+ ]
+}

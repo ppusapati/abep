@@ -1,0 +1,353 @@
+{
+ "discharge_28Vin_measured_points": {
+  "note": "loads are the source's measured test points (no interpolation); efficiency from S-RHODES24 slide 11",
+  "rows": [
+   {
+    "P_bus_W": 289.761,
+    "P_load_W": 249.6,
+    "P_loss_W": 40.161,
+    "V_out_V": 250,
+    "efficiency": 0.8614
+   },
+   {
+    "P_bus_W": 344.863,
+    "P_load_W": 300.1,
+    "P_loss_W": 44.763,
+    "V_out_V": 250,
+    "efficiency": 0.8702
+   },
+   {
+    "P_bus_W": 453.063,
+    "P_load_W": 400.1,
+    "P_loss_W": 52.963,
+    "V_out_V": 250,
+    "efficiency": 0.8831
+   },
+   {
+    "P_bus_W": 562.352,
+    "P_load_W": 500.1,
+    "P_loss_W": 62.252,
+    "V_out_V": 250,
+    "efficiency": 0.8893
+   },
+   {
+    "P_bus_W": 668.635,
+    "P_load_W": 600.1,
+    "P_loss_W": 68.535,
+    "V_out_V": 250,
+    "efficiency": 0.8975
+   },
+   {
+    "P_bus_W": 777.112,
+    "P_load_W": 700.1,
+    "P_loss_W": 77.012,
+    "V_out_V": 250,
+    "efficiency": 0.9009
+   },
+   {
+    "P_bus_W": 887.619,
+    "P_load_W": 800.1,
+    "P_loss_W": 87.519,
+    "V_out_V": 250,
+    "efficiency": 0.9014
+   },
+   {
+    "P_bus_W": 1000.11,
+    "P_load_W": 900.1,
+    "P_loss_W": 100.01,
+    "V_out_V": 250,
+    "efficiency": 0.9
+   },
+   {
+    "P_bus_W": 1112.09,
+    "P_load_W": 1000.1,
+    "P_loss_W": 111.99,
+    "V_out_V": 250,
+    "efficiency": 0.8993
+   },
+   {
+    "P_bus_W": 259.331,
+    "P_load_W": 200.1,
+    "P_loss_W": 59.231,
+    "V_out_V": 400,
+    "efficiency": 0.7716
+   },
+   {
+    "P_bus_W": 367.165,
+    "P_load_W": 299.9,
+    "P_loss_W": 67.265,
+    "V_out_V": 400,
+    "efficiency": 0.8168
+   },
+   {
+    "P_bus_W": 473.36,
+    "P_load_W": 399.8,
+    "P_loss_W": 73.56,
+    "V_out_V": 400,
+    "efficiency": 0.8446
+   },
+   {
+    "P_bus_W": 580.904,
+    "P_load_W": 500.1,
+    "P_loss_W": 80.804,
+    "V_out_V": 400,
+    "efficiency": 0.8609
+   },
+   {
+    "P_bus_W": 686.384,
+    "P_load_W": 599.9,
+    "P_loss_W": 86.484,
+    "V_out_V": 400,
+    "efficiency": 0.874
+   },
+   {
+    "P_bus_W": 794.662,
+    "P_load_W": 699.7,
+    "P_loss_W": 94.962,
+    "V_out_V": 400,
+    "efficiency": 0.8805
+   },
+   {
+    "P_bus_W": 904.068,
+    "P_load_W": 800.1,
+    "P_loss_W": 103.97,
+    "V_out_V": 400,
+    "efficiency": 0.885
+   },
+   {
+    "P_bus_W": 1000.33,
+    "P_load_W": 899.9,
+    "P_loss_W": 100.43,
+    "V_out_V": 400,
+    "efficiency": 0.8996
+   },
+   {
+    "P_bus_W": 1102.51,
+    "P_load_W": 1000.2,
+    "P_loss_W": 102.31,
+    "V_out_V": 400,
+    "efficiency": 0.9072
+   }
+  ]
+ },
+ "efficiency_spreads": {
+  "ecr_source": {
+   "bus_W_per_100W_delivered": {
+    "gan_stage_drain": 137.17,
+    "gan_stage_pae": 156.25,
+    "hayabusa_twta_system": 275.03,
+    "magnetron_tube": 185.19
+   },
+   "bus_draw_ratio_max_over_min": 2.005,
+   "note": "stage-only values (GaN, magnetron) are upper bounds on the chain; only the Hayabusa value is system-level",
+   "values": {
+    "gan_stage_drain": 0.729,
+    "gan_stage_pae": 0.64,
+    "hayabusa_twta_system": 0.3636,
+    "magnetron_tube": 0.54
+   }
+  },
+  "hall_discharge_28Vin_200_1000W": {
+   "bus_draw_ratio_max_over_min": 1.176,
+   "max": 0.9072,
+   "min": 0.7716
+  },
+  "hall_discharge_28Vin_500_1000W": {
+   "bus_draw_ratio_max_over_min": 1.054,
+   "max": 0.9072,
+   "min": 0.8609
+  },
+  "rf_source": {
+   "bus_W_per_100W_delivered": {
+    "at_max": 108.7,
+    "at_min": 166.67
+   },
+   "bus_draw_ratio_max_over_min": 1.533,
+   "max": 0.92,
+   "min": 0.6
+  }
+ },
+ "flow_control_pfcv_per_valve_W": {
+  "max": 1.46,
+  "min": 0.4191
+ },
+ "generated_by": "docs/architecture_comparison/electrical_closure/tools/build_electrical_closure_data.py",
+ "label": "WORKED EXAMPLE - sourced numbers and explicitly labelled analysis inputs only; NOT predictions for Vyovrinda",
+ "ledger_closure_status": {
+  "ecr_hall": {
+   "components": [
+    "hall_discharge",
+    "hall_magnet",
+    "cathode_keeper",
+    "cathode_heater",
+    "flow_control",
+    "compressor",
+    "thermal_control",
+    "housekeeping",
+    "ecr_source",
+    "ecr_magnet"
+   ],
+   "efficiency_TBD": [
+    "hall_magnet",
+    "cathode_keeper",
+    "cathode_heater",
+    "flow_control",
+    "compressor",
+    "thermal_control",
+    "housekeeping",
+    "ecr_magnet"
+   ],
+   "efficiency_evidence_available": [
+    "hall_discharge",
+    "ecr_source"
+   ],
+   "ledger_closes_today": false,
+   "load_status": {
+    "cathode_heater": "brackets-only (start-up mode); 0 W in steady mode if self-heating",
+    "cathode_keeper": "brackets-only (policy-dependent; 0 W if off in the mode)",
+    "compressor": "TBD (model exists in abep_sim.compressor, but its motor/overhead inputs are unsourced)",
+    "ecr_magnet": "model-available (abep_sim.magnet_power; design inputs TBD) or 0 W permanent magnet",
+    "ecr_source": "TBD",
+    "flow_control": "brackets-only (Xe PFCV coil I^2R; air-path valve TBD)",
+    "hall_discharge": "TBD (absolute Hall discharge power withdrawn; needs an admitted closure, gate 3)",
+    "hall_magnet": "model-available (abep_sim.magnet_power; design inputs TBD)",
+    "housekeeping": "TBD",
+    "thermal_control": "TBD"
+   },
+   "reason": "bus_power_ledger requires every component's load and efficiency; the TBD lists are non-empty"
+  },
+  "hall_only": {
+   "components": [
+    "hall_discharge",
+    "hall_magnet",
+    "cathode_keeper",
+    "cathode_heater",
+    "flow_control",
+    "compressor",
+    "thermal_control",
+    "housekeeping"
+   ],
+   "efficiency_TBD": [
+    "hall_magnet",
+    "cathode_keeper",
+    "cathode_heater",
+    "flow_control",
+    "compressor",
+    "thermal_control",
+    "housekeeping"
+   ],
+   "efficiency_evidence_available": [
+    "hall_discharge"
+   ],
+   "ledger_closes_today": false,
+   "load_status": {
+    "cathode_heater": "brackets-only (start-up mode); 0 W in steady mode if self-heating",
+    "cathode_keeper": "brackets-only (policy-dependent; 0 W if off in the mode)",
+    "compressor": "TBD (model exists in abep_sim.compressor, but its motor/overhead inputs are unsourced)",
+    "flow_control": "brackets-only (Xe PFCV coil I^2R; air-path valve TBD)",
+    "hall_discharge": "TBD (absolute Hall discharge power withdrawn; needs an admitted closure, gate 3)",
+    "hall_magnet": "model-available (abep_sim.magnet_power; design inputs TBD)",
+    "housekeeping": "TBD",
+    "thermal_control": "TBD"
+   },
+   "reason": "bus_power_ledger requires every component's load and efficiency; the TBD lists are non-empty"
+  },
+  "rf_hall": {
+   "components": [
+    "hall_discharge",
+    "hall_magnet",
+    "cathode_keeper",
+    "cathode_heater",
+    "flow_control",
+    "compressor",
+    "thermal_control",
+    "housekeeping",
+    "rf_source"
+   ],
+   "efficiency_TBD": [
+    "hall_magnet",
+    "cathode_keeper",
+    "cathode_heater",
+    "flow_control",
+    "compressor",
+    "thermal_control",
+    "housekeeping"
+   ],
+   "efficiency_evidence_available": [
+    "hall_discharge",
+    "rf_source"
+   ],
+   "ledger_closes_today": false,
+   "load_status": {
+    "cathode_heater": "brackets-only (start-up mode); 0 W in steady mode if self-heating",
+    "cathode_keeper": "brackets-only (policy-dependent; 0 W if off in the mode)",
+    "compressor": "TBD (model exists in abep_sim.compressor, but its motor/overhead inputs are unsourced)",
+    "flow_control": "brackets-only (Xe PFCV coil I^2R; air-path valve TBD)",
+    "hall_discharge": "TBD (absolute Hall discharge power withdrawn; needs an admitted closure, gate 3)",
+    "hall_magnet": "model-available (abep_sim.magnet_power; design inputs TBD)",
+    "housekeeping": "TBD",
+    "rf_source": "TBD",
+    "thermal_control": "TBD"
+   },
+   "reason": "bus_power_ledger requires every component's load and efficiency; the TBD lists are non-empty"
+  }
+ },
+ "magnet_model_exercise": {
+  "analysis_inputs": {
+   "B_gap_T": 0.015,
+   "awg": 24,
+   "core": {
+    "B_max_T": 1.0,
+    "area_m2": 0.001,
+    "length_m": 0.2,
+    "mu_r": 1000.0
+   },
+   "fill_factor": 0.5,
+   "gap_area_m2": 0.002,
+   "gap_length_m": 0.02,
+   "leakage_factor": 1.5,
+   "mean_turn_length_m": 0.2,
+   "window_area_m2": 0.0001
+  },
+  "analysis_inputs_evidence": "assumed (analysis inputs chosen only to exercise the equations), except B_gap_T = 0.015 T = 'typical radial field 150 G' (S-GOEBEL08 p. 331, illustrative)",
+  "ecr_same_geometry_2p45GHz": {
+   "B_gap_T": 0.0875235,
+   "P_load_W": 142.1,
+   "note": "P scales with B^2 at fixed geometry and linear core (E5)",
+   "ratio_to_hall_20C": 34.046
+  },
+  "hall_rows": [
+   {
+    "I_A": 1.0078,
+    "NI_A": 245.894,
+    "N_turns": 244,
+    "P_continuous_limit_W": 4.1698,
+    "P_load_W": 4.1737,
+    "R_ohm": 4.1096,
+    "T_C": 20.0,
+    "copper_mass_kg": 0.08882
+   },
+   {
+    "I_A": 1.0078,
+    "NI_A": 245.894,
+    "N_turns": 244,
+    "P_continuous_limit_W": 5.4808,
+    "P_load_W": 5.4859,
+    "R_ohm": 5.4017,
+    "T_C": 100.0,
+    "copper_mass_kg": 0.08882
+   },
+   {
+    "I_A": 1.0078,
+    "NI_A": 245.894,
+    "N_turns": 244,
+    "P_continuous_limit_W": 7.1196,
+    "P_load_W": 7.1261,
+    "R_ohm": 7.0167,
+    "T_C": 200.0,
+    "copper_mass_kg": 0.08882
+   }
+  ]
+ },
+ "schema_version": "electrical_closure_worked_example_v1"
+}

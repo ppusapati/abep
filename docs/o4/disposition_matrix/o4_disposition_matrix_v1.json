@@ -1,0 +1,4577 @@
+{
+ "campaign_id": "p5_n2_campaign_v1",
+ "families": {
+  "n2_n_exc_johnsonlow.toml": {
+   "all_required_scored": true,
+   "baseline": "n2_n.toml",
+   "combinations_scored": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_di_lower_nel_wang.toml",
+    "n2_n_nel_wang.toml"
+   ],
+   "combinations_with_trigger_fired": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_di_lower_nel_wang.toml",
+    "n2_n_nel_wang.toml"
+   ],
+   "escalations_missing": [],
+   "escalations_required": [
+    "ds_escalation_n2_n_exc_johnsonlow_di_lower",
+    "ds_escalation_n2_n_exc_johnsonlow_nel_wang",
+    "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang"
+   ],
+   "first_stage_dataset": "ds_staged_n2_n_exc_johnsonlow",
+   "first_stage_trigger_fired": true,
+   "owner_disposition": null
+  },
+  "n2_n_n2dication.toml": {
+   "all_required_scored": true,
+   "baseline": "n2_n_di_lower.toml",
+   "combinations_scored": [
+    "n2_n_di_lower.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "combinations_with_trigger_fired": [
+    "n2_n_di_lower.toml",
+    "n2_n_di_lower_nel_wang.toml"
+   ],
+   "escalations_missing": [],
+   "escalations_required": [
+    "ds_escalation_n2_n_n2dication_nel_wang"
+   ],
+   "first_stage_dataset": "ds_staged_n2_n_n2dication",
+   "first_stage_trigger_fired": true,
+   "owner_disposition": null
+  },
+  "n2_n_ndd_hmshigh.toml": {
+   "all_required_scored": true,
+   "baseline": "n2_n.toml",
+   "combinations_scored": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_di_lower_nel_wang.toml",
+    "n2_n_nel_wang.toml"
+   ],
+   "combinations_with_trigger_fired": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_di_lower_nel_wang.toml",
+    "n2_n_nel_wang.toml"
+   ],
+   "escalations_missing": [],
+   "escalations_required": [
+    "ds_escalation_n2_n_ndd_hmshigh_di_lower",
+    "ds_escalation_n2_n_ndd_hmshigh_nel_wang",
+    "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang"
+   ],
+   "first_stage_dataset": "ds_staged_n2_n_ndd_hmshigh",
+   "first_stage_trigger_fired": true,
+   "owner_disposition": null
+  },
+  "n2_n_ndd_hmslow.toml": {
+   "all_required_scored": true,
+   "baseline": "n2_n.toml",
+   "combinations_scored": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_di_lower_nel_wang.toml",
+    "n2_n_nel_wang.toml"
+   ],
+   "combinations_with_trigger_fired": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_di_lower_nel_wang.toml",
+    "n2_n_nel_wang.toml"
+   ],
+   "escalations_missing": [],
+   "escalations_required": [
+    "ds_escalation_n2_n_ndd_hmslow_di_lower",
+    "ds_escalation_n2_n_ndd_hmslow_nel_wang",
+    "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang"
+   ],
+   "first_stage_dataset": "ds_staged_n2_n_ndd_hmslow",
+   "first_stage_trigger_fired": true,
+   "owner_disposition": null
+  },
+  "n2_n_rot_off.toml": {
+   "all_required_scored": true,
+   "baseline": "n2_n.toml",
+   "combinations_scored": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_di_lower_nel_wang.toml",
+    "n2_n_nel_wang.toml"
+   ],
+   "combinations_with_trigger_fired": [
+    "n2_n.toml",
+    "n2_n_di_lower.toml",
+    "n2_n_di_lower_nel_wang.toml",
+    "n2_n_nel_wang.toml"
+   ],
+   "escalations_missing": [],
+   "escalations_required": [
+    "ds_escalation_n2_n_rot_off_di_lower",
+    "ds_escalation_n2_n_rot_off_nel_wang",
+    "ds_escalation_n2_n_rot_off_di_lower_nel_wang"
+   ],
+   "first_stage_dataset": "ds_staged_n2_n_rot_off",
+   "first_stage_trigger_fired": true,
+   "owner_disposition": null
+  }
+ },
+ "follow_on": "fo_o4_disposition_matrix",
+ "johnsonlow_assessment": {
+  "file": "docs/o4/johnsonlow_assessment/johnsonlow_assessment_v1.json",
+  "ledger_verified_commit": "a4f82a1869fea42116b804be58895c5a1ccb1e45",
+  "sha256": "b275e9ef47df2c58dd990277416aafe42aecb2d3e72e162b4c186ae34808c91c"
+ },
+ "o4_dispositions_feed": {
+  "campaign_id": "p5_n2_campaign_v1",
+  "cleared_for_admission": [],
+  "decided_by": null,
+  "decided_utc": null,
+  "mandatory_decision_file": "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores_decision.json",
+  "mandatory_decision_sha256": null,
+  "owner_fills": [
+   "sensitivities.*.disposition",
+   "cleared_for_admission",
+   "decided_by",
+   "decided_utc",
+   "mandatory_decision_sha256 (left empty by the builder; the owner binds it when the dispositions are actually made, and it must equal the decision_sha256 of the record that cites this file)"
+  ],
+  "schema": "o4_dispositions_v1",
+  "sensitivities": {
+   "n2_n_exc_johnsonlow.toml": {
+    "baseline": "n2_n.toml",
+    "disposition": null,
+    "escalations": {
+     "n2_n_exc_johnsonlow_di_lower.toml": {
+      "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_di_lower_scores_provenance.json",
+      "scores_provenance_sha256": "8a1e81095ec4c9b203b81d87be7defa5abeccec1d47c33431f56a0c55a6c366d"
+     },
+     "n2_n_exc_johnsonlow_di_lower_nel_wang.toml": {
+      "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang_scores_provenance.json",
+      "scores_provenance_sha256": "07ed37f178afc4e9ae19c688fc5d3a39273786ea52cd8bfe8abd9beb79bb2aa8"
+     },
+     "n2_n_exc_johnsonlow_nel_wang.toml": {
+      "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_nel_wang_scores_provenance.json",
+      "scores_provenance_sha256": "a0792fe82c2942c23cb4688330c464c7538e4b23f1a3ea2d8204f68c8e5ba341"
+     }
+    },
+    "first_stage": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_staged_n2_n_exc_johnsonlow_scores_provenance.json",
+     "scores_provenance_sha256": "dc902155f740167299e6ccfa9447ddcc6b42042070ab47b097e6990f2af5c574"
+    },
+    "trigger_fired": true
+   },
+   "n2_n_n2dication.toml": {
+    "baseline": "n2_n_di_lower.toml",
+    "disposition": null,
+    "escalations": {
+     "n2_n_n2dication_nel_wang.toml": {
+      "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_n2dication_nel_wang_scores_provenance.json",
+      "scores_provenance_sha256": "e5468f7cf8d07e66cdeeee666d3b354066764ea7a8cfa60f6df69889e94c2849"
+     }
+    },
+    "first_stage": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_staged_n2_n_n2dication_scores_provenance.json",
+     "scores_provenance_sha256": "befaf2a7b58a9f9c1c1badb2543ec42866cdf0ef9847a37d1f4e7d1c14096155"
+    },
+    "trigger_fired": true
+   },
+   "n2_n_ndd_hmshigh.toml": {
+    "baseline": "n2_n.toml",
+    "disposition": null,
+    "escalations": {
+     "n2_n_ndd_hmshigh_di_lower.toml": {
+      "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmshigh_di_lower_scores_provenance.json",
+      "scores_provenance_sha256": "392e1142424f92c783c523059641656b6e611e9d4a1ce433068b59937d03d9e9"
+     },
+     "n2_n_ndd_hmshigh_di_lower_nel_wang.toml": {
+      "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang_scores_provenance.json",
+      "scores_provenance_sha256": "750a9d02a1a465a0cec21b014043251bf58537cc7211ca2604d0cdcdfab08e80"
+     },
+     "n2_n_ndd_hmshigh_nel_wang.toml": {
+      "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmshigh_nel_wang_scores_provenance.json",
+      "scores_provenance_sha256": "9a29b7464d1c13144aa55defc69cf169a2ca17d8e32bb11ddb397297028deaa8"
+     }
+    },
+    "first_stage": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_staged_n2_n_ndd_hmshigh_scores_provenance.json",
+     "scores_provenance_sha256": "b6180309f62b82ea50548636fc95491386538cbbea27e49e60e37b62bef94b31"
+    },
+    "trigger_fired": true
+   },
+   "n2_n_ndd_hmslow.toml": {
+    "baseline": "n2_n.toml",
+    "disposition": null,
+    "escalations": {
+     "n2_n_ndd_hmslow_di_lower.toml": {
+      "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmslow_di_lower_scores_provenance.json",
+      "scores_provenance_sha256": "6c39c96c4cd309d8fe9e33e38fdf86ae3044029dad797b64eb6f5897eaaf3cb7"
+     },
+     "n2_n_ndd_hmslow_di_lower_nel_wang.toml": {
+      "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmslow_di_lower_nel_wang_scores_provenance.json",
+      "scores_provenance_sha256": "d0335608c2b3640da50f8399efa6e772fb321596ad578cddf4b4de0cfd31f3d5"
+     },
+     "n2_n_ndd_hmslow_nel_wang.toml": {
+      "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmslow_nel_wang_scores_provenance.json",
+      "scores_provenance_sha256": "b37f5c3b35ca5cd58dedb307931ae6f18022fbb107824e2b4579e4712b882de6"
+     }
+    },
+    "first_stage": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_staged_n2_n_ndd_hmslow_scores_provenance.json",
+     "scores_provenance_sha256": "f806017e6622927441137b896c1a0f1a0c3e3a280484d75e9d238a3ee0f801a5"
+    },
+    "trigger_fired": true
+   },
+   "n2_n_rot_off.toml": {
+    "baseline": "n2_n.toml",
+    "disposition": null,
+    "escalations": {
+     "n2_n_rot_off_di_lower.toml": {
+      "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_rot_off_di_lower_scores_provenance.json",
+      "scores_provenance_sha256": "36db0cf05df34011f85407ccfd8c04f03651e99d544a951e4b6c1265c812cee9"
+     },
+     "n2_n_rot_off_di_lower_nel_wang.toml": {
+      "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_rot_off_di_lower_nel_wang_scores_provenance.json",
+      "scores_provenance_sha256": "5a69025c270cb643e4e6a58c2525e6fd3dc710c13e62dffcbb14a5ca92e26142"
+     },
+     "n2_n_rot_off_nel_wang.toml": {
+      "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_rot_off_nel_wang_scores_provenance.json",
+      "scores_provenance_sha256": "ab864d3efd97203cc5a5eb83fb7e229728a92dd8f164e570079919d9399ec635"
+     }
+    },
+    "first_stage": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_staged_n2_n_rot_off_scores_provenance.json",
+     "scores_provenance_sha256": "d23567cf791eaffb83804a1c2f8bcc35fc9f9556314982478bed87579602d55d"
+    },
+    "trigger_fired": true
+   }
+  }
+ },
+ "o4_rule": {
+  "facility": "facility sensitivity results may be produced as secondary evidence; facility-only differences never trigger escalation",
+  "first_run": "each staged sensitivity against ITS BASELINE (n2_n.toml for Johnson-low, rotational-off, HMS x0.5, HMS x1.3; n2_n_di_lower.toml for molecular N2^2+), in VACUUM, 9 candidates x 30 cases; deltas are sensitivity minus baseline for the same candidate, case and mode",
+  "triggers": [
+   "a run status changes",
+   "|delta I_d| >= 0.075 x I_d,target",
+   "|delta T_axial| >= 0.5 x T_tolerance: N1 2.6 mN, N2 2.8 mN, N3 2.8 mN",
+   "replacing nominal chemistry by the sensitivity changes a provisional global-member or candidate verdict"
+  ]
+ },
+ "provenance": {
+  "all_checks_passed": true,
+  "checks": [
+   {
+    "check": "mandatory raw canonical sha256 == its freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "mandatory provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "mandatory scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "mandatory prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "scorer file sha256 == mandatory provenance scorer_sha256",
+    "ok": true
+   },
+   {
+    "check": "mandatory decision bound to the mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: pre-registered baseline n2_n.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: belongs to sensitivity n2_n_exc_johnsonlow.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_exc_johnsonlow: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: pre-registered baseline n2_n.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: belongs to sensitivity n2_n_rot_off.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_rot_off: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: pre-registered baseline n2_n.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: belongs to sensitivity n2_n_ndd_hmslow.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmslow: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: pre-registered baseline n2_n.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: belongs to sensitivity n2_n_ndd_hmshigh.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_ndd_hmshigh: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: pre-registered baseline n2_n_di_lower.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: belongs to sensitivity n2_n_n2dication.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_staged_n2_n_n2dication: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: pre-registered baseline n2_n_di_lower.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: belongs to sensitivity n2_n_exc_johnsonlow.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: pre-registered baseline n2_n_nel_wang.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: belongs to sensitivity n2_n_exc_johnsonlow.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_nel_wang: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: pre-registered baseline n2_n_di_lower_nel_wang.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: belongs to sensitivity n2_n_exc_johnsonlow.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: pre-registered baseline n2_n_di_lower.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: belongs to sensitivity n2_n_rot_off.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: pre-registered baseline n2_n_nel_wang.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: belongs to sensitivity n2_n_rot_off.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_nel_wang: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: pre-registered baseline n2_n_di_lower_nel_wang.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: belongs to sensitivity n2_n_rot_off.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_rot_off_di_lower_nel_wang: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: pre-registered baseline n2_n_di_lower.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: belongs to sensitivity n2_n_ndd_hmslow.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: pre-registered baseline n2_n_nel_wang.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: belongs to sensitivity n2_n_ndd_hmslow.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_nel_wang: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: pre-registered baseline n2_n_di_lower_nel_wang.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: belongs to sensitivity n2_n_ndd_hmslow.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: pre-registered baseline n2_n_di_lower.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: belongs to sensitivity n2_n_ndd_hmshigh.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: pre-registered baseline n2_n_nel_wang.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: belongs to sensitivity n2_n_ndd_hmshigh.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_nel_wang: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: pre-registered baseline n2_n_di_lower_nel_wang.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: belongs to sensitivity n2_n_ndd_hmshigh.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: raw gz sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: freeze manifest names this raw file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: provenance output names this scores file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: mode is vacuum",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: pre-registered baseline n2_n_di_lower_nel_wang.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: belongs to sensitivity n2_n_n2dication.toml",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: scores mandatory statistics == official mandatory scores (mandatory reproduced)",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: record count == freeze manifest == block n_runs",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: every record carries this chemistry",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: frozen scorer reproduces run_level_triggers",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: frozen scorer reproduces verdict_changes",
+    "ok": true
+   },
+   {
+    "check": "ds_escalation_n2_n_n2dication_nel_wang: trigger_fired == (any run-level trigger or verdict change)",
+    "ok": true
+   },
+   {
+    "check": "johnsonlow assessment: schema johnsonlow_assessment_v1",
+    "ok": true
+   },
+   {
+    "check": "johnsonlow assessment: its own provenance checks all passed",
+    "ok": true
+   },
+   {
+    "check": "johnsonlow assessment: fo_johnsonlow_escalation_assessment has a VERIFIED ledger event",
+    "ok": true
+   },
+   {
+    "check": "johnsonlow assessment: cites the four Johnson-low datasets",
+    "ok": true
+   },
+   {
+    "check": "johnsonlow assessment: staged_n2_n_exc_johnsonlow is scored and verified here",
+    "ok": true
+   },
+   {
+    "check": "johnsonlow assessment: staged_n2_n_exc_johnsonlow scores/provenance/raw sha256 identical",
+    "ok": true
+   },
+   {
+    "check": "johnsonlow assessment: escalation_n2_n_exc_johnsonlow_di_lower is scored and verified here",
+    "ok": true
+   },
+   {
+    "check": "johnsonlow assessment: escalation_n2_n_exc_johnsonlow_di_lower scores/provenance/raw sha256 identical",
+    "ok": true
+   },
+   {
+    "check": "johnsonlow assessment: escalation_n2_n_exc_johnsonlow_nel_wang is scored and verified here",
+    "ok": true
+   },
+   {
+    "check": "johnsonlow assessment: escalation_n2_n_exc_johnsonlow_nel_wang scores/provenance/raw sha256 identical",
+    "ok": true
+   },
+   {
+    "check": "johnsonlow assessment: escalation_n2_n_exc_johnsonlow_di_lower_nel_wang is scored and verified here",
+    "ok": true
+   },
+   {
+    "check": "johnsonlow assessment: escalation_n2_n_exc_johnsonlow_di_lower_nel_wang scores/provenance/raw sha256 identical",
+    "ok": true
+   }
+  ],
+  "datasets": [
+   {
+    "dataset": "mandatory v1 vacuum",
+    "n_records": 1080,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores_provenance.json",
+    "provenance_sha256": "6f10b02e505a1c48adc47b77a1d7b84fd8c569a7867b611d6d1099bb75c2ca8c",
+    "raw_sha256_canonical": "20e926d507598a2ca3d4789929f7e99b179e5fc56c81403286552bbd54097468",
+    "scores": "validation/p5_n2_campaign_v1_vacuum_scores.json",
+    "scores_sha256": "87895820e21e36fa8f9b07fa7475789f08d91d946d526a09acf142fe509be1bc"
+   },
+   {
+    "baseline": "n2_n.toml",
+    "config": "n2_n_exc_johnsonlow.toml",
+    "dataset": "staged_n2_n_exc_johnsonlow",
+    "dataset_id": "ds_staged_n2_n_exc_johnsonlow",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_staged_n2_n_exc_johnsonlow_scores_provenance.json",
+    "provenance_sha256": "dc902155f740167299e6ccfa9447ddcc6b42042070ab47b097e6990f2af5c574",
+    "raw_sha256_canonical": "9332ecdb6388b79491b570f063d06329274113b940e0410b35a0f610089fe1eb",
+    "raw_sha256_gz": "95bf909a6f4348249d2336948ee71a952f91899a217cf4ffaaf68a07d77be359",
+    "scored_utc": "2026-09-26T12:38:54+00:00",
+    "scores": "validation/p5_n2_campaign_v1_staged_n2_n_exc_johnsonlow_scores.json",
+    "scores_sha256": "ee55fce1c51458692a39858dcf353587f50a0393194f48f6b72cffe3447ebc0d"
+   },
+   {
+    "baseline": "n2_n.toml",
+    "config": "n2_n_rot_off.toml",
+    "dataset": "staged_n2_n_rot_off",
+    "dataset_id": "ds_staged_n2_n_rot_off",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_staged_n2_n_rot_off_scores_provenance.json",
+    "provenance_sha256": "d23567cf791eaffb83804a1c2f8bcc35fc9f9556314982478bed87579602d55d",
+    "raw_sha256_canonical": "6742f291ca88b82483e65a37d8e9ec5c946a1d2bc50f69f934bae2fdf19d6b4c",
+    "raw_sha256_gz": "bbe32a669aa0473951c6b0922f77ba19331b2b315ebc6b6523be0b6fcc05be38",
+    "scored_utc": "2026-09-26T14:01:22+00:00",
+    "scores": "validation/p5_n2_campaign_v1_staged_n2_n_rot_off_scores.json",
+    "scores_sha256": "d4881fcb243105d190fa70265794c82fbbb8a57b5a8fedc85ff19299c7032049"
+   },
+   {
+    "baseline": "n2_n.toml",
+    "config": "n2_n_ndd_hmslow.toml",
+    "dataset": "staged_n2_n_ndd_hmslow",
+    "dataset_id": "ds_staged_n2_n_ndd_hmslow",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_staged_n2_n_ndd_hmslow_scores_provenance.json",
+    "provenance_sha256": "f806017e6622927441137b896c1a0f1a0c3e3a280484d75e9d238a3ee0f801a5",
+    "raw_sha256_canonical": "d1cd23235d0e8eea96fe5226076e245b1f9fc8f4e2047ca371104be65d8ac211",
+    "raw_sha256_gz": "f5d1b4f3206304d2625e84838dfaa764f3f113eeda150931c143611fac9a704b",
+    "scored_utc": "2026-09-26T19:36:45+00:00",
+    "scores": "validation/p5_n2_campaign_v1_staged_n2_n_ndd_hmslow_scores.json",
+    "scores_sha256": "f2083a08ed6d4cf58b5d869009346cb6fc959666214d16581be159c9c28f7080"
+   },
+   {
+    "baseline": "n2_n.toml",
+    "config": "n2_n_ndd_hmshigh.toml",
+    "dataset": "staged_n2_n_ndd_hmshigh",
+    "dataset_id": "ds_staged_n2_n_ndd_hmshigh",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_staged_n2_n_ndd_hmshigh_scores_provenance.json",
+    "provenance_sha256": "b6180309f62b82ea50548636fc95491386538cbbea27e49e60e37b62bef94b31",
+    "raw_sha256_canonical": "5535613c4b34a67201c0c2ce353031be199ffd0149a0a3c5a831ed97c5c79c2e",
+    "raw_sha256_gz": "fdf24247330a25d3079d046ff5612e6469e936bfc1e4e90befb41ceaab902c1a",
+    "scored_utc": "2026-09-26T19:36:48+00:00",
+    "scores": "validation/p5_n2_campaign_v1_staged_n2_n_ndd_hmshigh_scores.json",
+    "scores_sha256": "e47eb2e791cb1665f4dd241f7e04a746094390e7e684e198f3683afab5e3de18"
+   },
+   {
+    "baseline": "n2_n_di_lower.toml",
+    "config": "n2_n_n2dication.toml",
+    "dataset": "staged_n2_n_n2dication",
+    "dataset_id": "ds_staged_n2_n_n2dication",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_staged_n2_n_n2dication_scores_provenance.json",
+    "provenance_sha256": "befaf2a7b58a9f9c1c1badb2543ec42866cdf0ef9847a37d1f4e7d1c14096155",
+    "raw_sha256_canonical": "496eba0da74587fe7507cbfffefe15d1368282eaefdd011b06e92ba07b673b65",
+    "raw_sha256_gz": "514f7867011ee7d513416343788d29b63e0d6e97624671528228693c4ef76107",
+    "scored_utc": "2026-09-26T19:36:51+00:00",
+    "scores": "validation/p5_n2_campaign_v1_staged_n2_n_n2dication_scores.json",
+    "scores_sha256": "135b0305bbb84e095d79c9634c1c921bed06d47eb78ac30298eee7b3a2364a99"
+   },
+   {
+    "baseline": "n2_n_di_lower.toml",
+    "config": "n2_n_exc_johnsonlow_di_lower.toml",
+    "dataset": "escalation_n2_n_exc_johnsonlow_di_lower",
+    "dataset_id": "ds_escalation_n2_n_exc_johnsonlow_di_lower",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_di_lower_scores_provenance.json",
+    "provenance_sha256": "8a1e81095ec4c9b203b81d87be7defa5abeccec1d47c33431f56a0c55a6c366d",
+    "raw_sha256_canonical": "9e1d797683d81a52133c8115ddc6bb9979255ed2afcf47c3bdbd84846e3b50f6",
+    "raw_sha256_gz": "cc594216a7cce80adc6aa939ce02061ae338dae288b74f77e01023a0ffba4069",
+    "scored_utc": "2026-09-26T14:09:33+00:00",
+    "scores": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_di_lower_scores.json",
+    "scores_sha256": "d6631ceb77948c3bae3c74237d628c1af08cd7488272cac2db760a07ee893491"
+   },
+   {
+    "baseline": "n2_n_nel_wang.toml",
+    "config": "n2_n_exc_johnsonlow_nel_wang.toml",
+    "dataset": "escalation_n2_n_exc_johnsonlow_nel_wang",
+    "dataset_id": "ds_escalation_n2_n_exc_johnsonlow_nel_wang",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_nel_wang_scores_provenance.json",
+    "provenance_sha256": "a0792fe82c2942c23cb4688330c464c7538e4b23f1a3ea2d8204f68c8e5ba341",
+    "raw_sha256_canonical": "9667a541645c8d22b4639bb7a261f330a38524bc9b2bb3c9c064ffd6295e9699",
+    "raw_sha256_gz": "f41d19c78928429b4000b6bdcc8f8dab084847f62b0493718cd7615914eecc1e",
+    "scored_utc": "2026-09-26T19:36:54+00:00",
+    "scores": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_nel_wang_scores.json",
+    "scores_sha256": "31276be1fa1b2deade8e46ae39168b21ecf2b7fef384ed30fde8f2cbb3c293b5"
+   },
+   {
+    "baseline": "n2_n_di_lower_nel_wang.toml",
+    "config": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml",
+    "dataset": "escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+    "dataset_id": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang_scores_provenance.json",
+    "provenance_sha256": "07ed37f178afc4e9ae19c688fc5d3a39273786ea52cd8bfe8abd9beb79bb2aa8",
+    "raw_sha256_canonical": "cd56310cb27bb96b0eb1f1598f423ec3edb2c19e8421a3bd5612ab480da2903d",
+    "raw_sha256_gz": "a068fdb6fc8e09561a7b86c7ccaeeefba75361ff0806751de21c1d670efa5bfa",
+    "scored_utc": "2026-09-26T19:36:57+00:00",
+    "scores": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang_scores.json",
+    "scores_sha256": "57d8614090e885471360ab8a0234779ee2849bd402cb8e138824e05a90f4ebaf"
+   },
+   {
+    "baseline": "n2_n_di_lower.toml",
+    "config": "n2_n_rot_off_di_lower.toml",
+    "dataset": "escalation_n2_n_rot_off_di_lower",
+    "dataset_id": "ds_escalation_n2_n_rot_off_di_lower",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_escalation_n2_n_rot_off_di_lower_scores_provenance.json",
+    "provenance_sha256": "36db0cf05df34011f85407ccfd8c04f03651e99d544a951e4b6c1265c812cee9",
+    "raw_sha256_canonical": "3a94a19cac44e3cd05ecec171c37961a2e7daca287f99d698c266fea2854ff4b",
+    "raw_sha256_gz": "a9d1071344709d6bf78f4258569114e7ebe23ecbdafe72df5a135c8e899c32f9",
+    "scored_utc": "2026-09-26T19:37:00+00:00",
+    "scores": "validation/p5_n2_campaign_v1_escalation_n2_n_rot_off_di_lower_scores.json",
+    "scores_sha256": "9647c3ba07bf5ce36f1ef63ff0c079637de1f08e3db356e0813cf573c5cba26f"
+   },
+   {
+    "baseline": "n2_n_nel_wang.toml",
+    "config": "n2_n_rot_off_nel_wang.toml",
+    "dataset": "escalation_n2_n_rot_off_nel_wang",
+    "dataset_id": "ds_escalation_n2_n_rot_off_nel_wang",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_escalation_n2_n_rot_off_nel_wang_scores_provenance.json",
+    "provenance_sha256": "ab864d3efd97203cc5a5eb83fb7e229728a92dd8f164e570079919d9399ec635",
+    "raw_sha256_canonical": "cb80715045d127bef150799bed3798e648e0280f90b0ba425bb20923ccb28575",
+    "raw_sha256_gz": "c20916bed3adc288ee12768b333c237722abdcd3d68a0a9d5166d1baa660cee1",
+    "scored_utc": "2026-09-26T19:37:04+00:00",
+    "scores": "validation/p5_n2_campaign_v1_escalation_n2_n_rot_off_nel_wang_scores.json",
+    "scores_sha256": "eac1864f956022b96e750c473d077f81f6e884e75c9edde5f8b4eb3936955c0f"
+   },
+   {
+    "baseline": "n2_n_di_lower_nel_wang.toml",
+    "config": "n2_n_rot_off_di_lower_nel_wang.toml",
+    "dataset": "escalation_n2_n_rot_off_di_lower_nel_wang",
+    "dataset_id": "ds_escalation_n2_n_rot_off_di_lower_nel_wang",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_escalation_n2_n_rot_off_di_lower_nel_wang_scores_provenance.json",
+    "provenance_sha256": "5a69025c270cb643e4e6a58c2525e6fd3dc710c13e62dffcbb14a5ca92e26142",
+    "raw_sha256_canonical": "2da2831190e94f14549300a54d108afbdd2e7cfbcde91d520bdd5877fbc6c83d",
+    "raw_sha256_gz": "f090bf9e10c575332820eb6f5e5ca86687f02692e0e7d3c5676b4382304d550e",
+    "scored_utc": "2026-09-26T19:37:06+00:00",
+    "scores": "validation/p5_n2_campaign_v1_escalation_n2_n_rot_off_di_lower_nel_wang_scores.json",
+    "scores_sha256": "31fc64f72bc78ee051531b82821fd21a1556e3a3c51779f5c08ca049dbce3055"
+   },
+   {
+    "baseline": "n2_n_di_lower.toml",
+    "config": "n2_n_ndd_hmslow_di_lower.toml",
+    "dataset": "escalation_n2_n_ndd_hmslow_di_lower",
+    "dataset_id": "ds_escalation_n2_n_ndd_hmslow_di_lower",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmslow_di_lower_scores_provenance.json",
+    "provenance_sha256": "6c39c96c4cd309d8fe9e33e38fdf86ae3044029dad797b64eb6f5897eaaf3cb7",
+    "raw_sha256_canonical": "5fd9b32151a92d1582af9bfb5bba736c8c0aed298ab8d2f9de50e2c0db943abe",
+    "raw_sha256_gz": "24228b004ff25d236450f2f1d1483422abdc28fcfce9bfed0505169e5ed74cd3",
+    "scored_utc": "2026-09-27T04:14:53+00:00",
+    "scores": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmslow_di_lower_scores.json",
+    "scores_sha256": "c42b202593054a4d5017675a4b5995553b6a73b5665f8f903a2e2e04cbb7f0e0"
+   },
+   {
+    "baseline": "n2_n_nel_wang.toml",
+    "config": "n2_n_ndd_hmslow_nel_wang.toml",
+    "dataset": "escalation_n2_n_ndd_hmslow_nel_wang",
+    "dataset_id": "ds_escalation_n2_n_ndd_hmslow_nel_wang",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmslow_nel_wang_scores_provenance.json",
+    "provenance_sha256": "b37f5c3b35ca5cd58dedb307931ae6f18022fbb107824e2b4579e4712b882de6",
+    "raw_sha256_canonical": "465bfce01644180ff6c640bbb73b5a3287e4cad9f4fa2db62794a9bb2567c38b",
+    "raw_sha256_gz": "11992d9a2a2b53f4ea8ed3f2700de1d9685cb59e14c260dbe778b4317c571152",
+    "scored_utc": "2026-09-27T06:37:08+00:00",
+    "scores": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmslow_nel_wang_scores.json",
+    "scores_sha256": "e0d387d2dce710019f6150bc1471ef717dc2036db635862005bdc6fd23f3a080"
+   },
+   {
+    "baseline": "n2_n_di_lower_nel_wang.toml",
+    "config": "n2_n_ndd_hmslow_di_lower_nel_wang.toml",
+    "dataset": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+    "dataset_id": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmslow_di_lower_nel_wang_scores_provenance.json",
+    "provenance_sha256": "d0335608c2b3640da50f8399efa6e772fb321596ad578cddf4b4de0cfd31f3d5",
+    "raw_sha256_canonical": "30a8ac500514dd76a3fb5333c35b18bb757d666600e446ce5706b501b608cb74",
+    "raw_sha256_gz": "a9d0b45f7592b144a3b40bc0518e1c2f9bee372314f37ee4636c72da041d127a",
+    "scored_utc": "2026-09-27T07:50:55+00:00",
+    "scores": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmslow_di_lower_nel_wang_scores.json",
+    "scores_sha256": "dd6c1f4a313a4fff93a4e65af6f89f02ac442082da066620cf772e83eea088f3"
+   },
+   {
+    "baseline": "n2_n_di_lower.toml",
+    "config": "n2_n_ndd_hmshigh_di_lower.toml",
+    "dataset": "escalation_n2_n_ndd_hmshigh_di_lower",
+    "dataset_id": "ds_escalation_n2_n_ndd_hmshigh_di_lower",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmshigh_di_lower_scores_provenance.json",
+    "provenance_sha256": "392e1142424f92c783c523059641656b6e611e9d4a1ce433068b59937d03d9e9",
+    "raw_sha256_canonical": "eaed0b0d9a3142df7e812f8e09bfb6a975cd365b25cea73106ab33ff93480d3a",
+    "raw_sha256_gz": "9a0bef70c195e2a880727fd8e83caeae1589791764c6da9ddfe69f217be69efa",
+    "scored_utc": "2026-09-27T04:11:15+00:00",
+    "scores": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmshigh_di_lower_scores.json",
+    "scores_sha256": "e2a36531905a55d22f5be405dfa6b15404d175b62039ab6bce81e766a5806f31"
+   },
+   {
+    "baseline": "n2_n_nel_wang.toml",
+    "config": "n2_n_ndd_hmshigh_nel_wang.toml",
+    "dataset": "escalation_n2_n_ndd_hmshigh_nel_wang",
+    "dataset_id": "ds_escalation_n2_n_ndd_hmshigh_nel_wang",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmshigh_nel_wang_scores_provenance.json",
+    "provenance_sha256": "9a29b7464d1c13144aa55defc69cf169a2ca17d8e32bb11ddb397297028deaa8",
+    "raw_sha256_canonical": "b3b1644d804d91967b364bc93098de1edd7927f5f9cfd39c244fc1c4fe94b08d",
+    "raw_sha256_gz": "4796721fc944d3d681fb9a9adbd05c14ac1c7938957489db9843c103bdd39ec3",
+    "scored_utc": "2026-09-27T06:37:06+00:00",
+    "scores": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmshigh_nel_wang_scores.json",
+    "scores_sha256": "0c928f3375a23c9fa4f4eea1f81f370e6a2b28324a41105173af2ab745d6030e"
+   },
+   {
+    "baseline": "n2_n_di_lower_nel_wang.toml",
+    "config": "n2_n_ndd_hmshigh_di_lower_nel_wang.toml",
+    "dataset": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+    "dataset_id": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang_scores_provenance.json",
+    "provenance_sha256": "750a9d02a1a465a0cec21b014043251bf58537cc7211ca2604d0cdcdfab08e80",
+    "raw_sha256_canonical": "02bbd2cabb1a6b14be1cebcd41d01ef2b3b61f205e807156c244b7d7e271c4f3",
+    "raw_sha256_gz": "f5bca68706d428aeb8c32fb1c92efbf26d96e2d08e11bb786ec2a93bc80a5cb9",
+    "scored_utc": "2026-09-27T07:49:55+00:00",
+    "scores": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang_scores.json",
+    "scores_sha256": "4ef548f3cf9580b9d8d2eeaf23218c023401bfde9e9d8d2bafccf56efb39b841"
+   },
+   {
+    "baseline": "n2_n_di_lower_nel_wang.toml",
+    "config": "n2_n_n2dication_nel_wang.toml",
+    "dataset": "escalation_n2_n_n2dication_nel_wang",
+    "dataset_id": "ds_escalation_n2_n_n2dication_nel_wang",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_escalation_n2_n_n2dication_nel_wang_scores_provenance.json",
+    "provenance_sha256": "e5468f7cf8d07e66cdeeee666d3b354066764ea7a8cfa60f6df69889e94c2849",
+    "raw_sha256_canonical": "b5c10cf91dca7a3462bcd95cfae156823e4ba7942992d83bf26cbc2dd7dd5478",
+    "raw_sha256_gz": "2f53dfd27edda769cd45f6d3486d5325f3f4c32dce666e153e4f582e13f02c6d",
+    "scored_utc": "2026-09-27T04:22:58+00:00",
+    "scores": "validation/p5_n2_campaign_v1_escalation_n2_n_n2dication_nel_wang_scores.json",
+    "scores_sha256": "3a68ede501e338dd712b0d2b43e95c1d44c794ba8922999d456f63b062f84254"
+   }
+  ],
+  "inputs_sha256": {
+   "docs/o4/johnsonlow_assessment/johnsonlow_assessment_v1.json": "b275e9ef47df2c58dd990277416aafe42aecb2d3e72e162b4c186ae34808c91c",
+   "hallthruster_bridge/ensemble/o4_dispositions_schema_v1.json": "37acdbdb449bc06b9e8be8d332c13f1867fd1d463d201758ca82953aa1b23ba8",
+   "hallthruster_bridge/prereg/p5_n2_prereg_lock_v1.json": "71ecd39fa25ea60e2e4aff9474bdd700ec8cd718e819dfdae774594709e805be",
+   "hallthruster_bridge/prereg/p5_n2_validation_criteria_v1.json": "8ca75ae2fac3a47ba008474f706cdfa8b60e3d1cf27429e1a4ad55dc47068462",
+   "scripts/score_p5_n2_campaign.py": "907ca7b5ef8e802ed97129ca9e3fd09b7493bc688088425b150ed02352a39fe3"
+  },
+  "n_checks": 432,
+  "registry_identity": {
+   "lane_registry_o4_datasets_projection_keys": [
+    "id",
+    "manifest",
+    "role",
+    "escalations"
+   ],
+   "lane_registry_o4_datasets_projection_sha256": "5e3eedbf334e95d3707b90712f9b3cf7c63ec3244f34b1f7940b1c3cb3b06126",
+   "note": "mutable governance files are never hashed whole; only these canonical projections (sorted keys, compact JSON) bind their identity",
+   "trigger_projection_keys": [
+    "id",
+    "prerequisites",
+    "plus"
+   ],
+   "trigger_projection_sha256": "99f8f56285148501dd539e26963df52c5b2220c3bce065c24d82b8c169111f89"
+  }
+ },
+ "required_datasets": {
+  "missing": [],
+  "not_required_trigger_not_fired": [],
+  "required": [
+   "ds_staged_n2_n_exc_johnsonlow",
+   "ds_escalation_n2_n_exc_johnsonlow_di_lower",
+   "ds_escalation_n2_n_exc_johnsonlow_nel_wang",
+   "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+   "ds_staged_n2_n_rot_off",
+   "ds_escalation_n2_n_rot_off_di_lower",
+   "ds_escalation_n2_n_rot_off_nel_wang",
+   "ds_escalation_n2_n_rot_off_di_lower_nel_wang",
+   "ds_staged_n2_n_ndd_hmslow",
+   "ds_escalation_n2_n_ndd_hmslow_di_lower",
+   "ds_escalation_n2_n_ndd_hmslow_nel_wang",
+   "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+   "ds_staged_n2_n_ndd_hmshigh",
+   "ds_escalation_n2_n_ndd_hmshigh_di_lower",
+   "ds_escalation_n2_n_ndd_hmshigh_nel_wang",
+   "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+   "ds_staged_n2_n_n2dication",
+   "ds_escalation_n2_n_n2dication_nel_wang"
+  ],
+  "scored": [
+   "ds_escalation_n2_n_exc_johnsonlow_di_lower",
+   "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+   "ds_escalation_n2_n_exc_johnsonlow_nel_wang",
+   "ds_escalation_n2_n_n2dication_nel_wang",
+   "ds_escalation_n2_n_ndd_hmshigh_di_lower",
+   "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+   "ds_escalation_n2_n_ndd_hmshigh_nel_wang",
+   "ds_escalation_n2_n_ndd_hmslow_di_lower",
+   "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+   "ds_escalation_n2_n_ndd_hmslow_nel_wang",
+   "ds_escalation_n2_n_rot_off_di_lower",
+   "ds_escalation_n2_n_rot_off_di_lower_nel_wang",
+   "ds_escalation_n2_n_rot_off_nel_wang",
+   "ds_staged_n2_n_exc_johnsonlow",
+   "ds_staged_n2_n_n2dication",
+   "ds_staged_n2_n_ndd_hmshigh",
+   "ds_staged_n2_n_ndd_hmslow",
+   "ds_staged_n2_n_rot_off"
+  ],
+  "undetermined": []
+ },
+ "rows": [
+  {
+   "baseline": "n2_n.toml",
+   "config": "n2_n_exc_johnsonlow.toml",
+   "dataset_id": "ds_staged_n2_n_exc_johnsonlow",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n.toml (scored block, reproduced by the frozen scorer)",
+    "79 of 270 runs carry a run-level trigger (61 status, 64 dI_d, 96 dT readings)",
+    "31 runs change status under at least one reading",
+    "verdict changes: 1 candidate-level, 4 member-level",
+    "Johnson-low assessment (docs/o4/johnsonlow_assessment/johnsonlow_assessment_v1.json): mode TAIL_AND_BOUNDARY_ON_ALL_FOUR; material_on_every_primary_combination = True; this baseline: 79 runs with any trigger, 29 status changes across the OUT_OF_DOMAIN boundary"
+   ],
+   "family": "n2_n_exc_johnsonlow.toml",
+   "n_run_level_triggers": 221,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 79,
+   "n_runs_with_status_change": 31,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_staged_n2_n_exc_johnsonlow_scores_provenance.json",
+    "scores_provenance_sha256": "dc902155f740167299e6ccfa9447ddcc6b42042070ab47b097e6990f2af5c574"
+   },
+   "stage": "first_stage",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 9,
+     "FAIL_VALIDATION -> PASS": 1,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 13,
+     "OUT_OF_DOMAIN -> PASS": 3,
+     "PASS -> OUT_OF_DOMAIN": 4
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 9,
+     "FAIL_VALIDATION -> PASS": 2,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 13,
+     "OUT_OF_DOMAIN -> PASS": 3,
+     "PASS -> OUT_OF_DOMAIN": 4
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 64,
+     "dT": 96,
+     "status": 61
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 32,
+      "B": 32
+     },
+     "dT": {
+      "A": 47,
+      "B": 49
+     },
+     "status": {
+      "A": 30,
+      "B": 31
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 20,
+      "dT": 30,
+      "status": 24
+     },
+     "N2": {
+      "dI_d": 12,
+      "dT": 30,
+      "status": 8
+     },
+     "N3": {
+      "dI_d": 14,
+      "dT": 36,
+      "status": 13
+     },
+     "N4": {
+      "dI_d": 8,
+      "dT": 0,
+      "status": 8
+     },
+     "N5": {
+      "dI_d": 10,
+      "dT": 0,
+      "status": 8
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {
+     "sgb-screen-09": [
+      "INCONCLUSIVE / NOT ELIGIBLE",
+      "FAIL_VALIDATION"
+     ]
+    },
+    "member_verdict_changes": {
+     "sgb-screen-08": {
+      "L38-hist|3p0kW|A": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ],
+      "L38-hist|3p0kW|B": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ]
+     },
+     "sgb-screen-09": {
+      "L32-exit|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     }
+    },
+    "n_candidates_with_any_change": 2,
+    "n_member_verdict_changes": 4
+   }
+  },
+  {
+   "baseline": "n2_n.toml",
+   "config": "n2_n_rot_off.toml",
+   "dataset_id": "ds_staged_n2_n_rot_off",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n.toml (scored block, reproduced by the frozen scorer)",
+    "120 of 270 runs carry a run-level trigger (80 status, 148 dI_d, 141 dT readings)",
+    "41 runs change status under at least one reading",
+    "verdict changes: 1 candidate-level, 6 member-level"
+   ],
+   "family": "n2_n_rot_off.toml",
+   "n_run_level_triggers": 369,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 120,
+   "n_runs_with_status_change": 41,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_staged_n2_n_rot_off_scores_provenance.json",
+    "scores_provenance_sha256": "d23567cf791eaffb83804a1c2f8bcc35fc9f9556314982478bed87579602d55d"
+   },
+   "stage": "first_stage",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 18,
+     "FAIL_VALIDATION -> PASS": 8,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 9,
+     "PASS -> FAIL_VALIDATION": 1,
+     "PASS -> OUT_OF_DOMAIN": 5
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 19,
+     "FAIL_VALIDATION -> PASS": 6,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 9,
+     "PASS -> FAIL_VALIDATION": 1,
+     "PASS -> OUT_OF_DOMAIN": 4
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 148,
+     "dT": 141,
+     "status": 80
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 74,
+      "B": 74
+     },
+     "dT": {
+      "A": 70,
+      "B": 71
+     },
+     "status": {
+      "A": 41,
+      "B": 39
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 52,
+      "dT": 54,
+      "status": 20
+     },
+     "N2": {
+      "dI_d": 40,
+      "dT": 54,
+      "status": 14
+     },
+     "N3": {
+      "dI_d": 18,
+      "dT": 33,
+      "status": 10
+     },
+     "N4": {
+      "dI_d": 16,
+      "dT": 0,
+      "status": 20
+     },
+     "N5": {
+      "dI_d": 22,
+      "dT": 0,
+      "status": 16
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {
+     "sgb-screen-09": [
+      "INCONCLUSIVE / NOT ELIGIBLE",
+      "FAIL_VALIDATION"
+     ]
+    },
+    "member_verdict_changes": {
+     "sgb-screen-06": {
+      "L32-exit|3p0kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-08": {
+      "L32-exit|3p0kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-09": {
+      "L32-exit|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     }
+    },
+    "n_candidates_with_any_change": 3,
+    "n_member_verdict_changes": 6
+   }
+  },
+  {
+   "baseline": "n2_n.toml",
+   "config": "n2_n_ndd_hmslow.toml",
+   "dataset_id": "ds_staged_n2_n_ndd_hmslow",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n.toml (scored block, reproduced by the frozen scorer)",
+    "66 of 270 runs carry a run-level trigger (50 status, 30 dI_d, 68 dT readings)",
+    "25 runs change status under at least one reading",
+    "verdict changes: 0 candidate-level, 2 member-level"
+   ],
+   "family": "n2_n_ndd_hmslow.toml",
+   "n_run_level_triggers": 148,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 66,
+   "n_runs_with_status_change": 25,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_staged_n2_n_ndd_hmslow_scores_provenance.json",
+    "scores_provenance_sha256": "f806017e6622927441137b896c1a0f1a0c3e3a280484d75e9d238a3ee0f801a5"
+   },
+   "stage": "first_stage",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 13,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 8,
+     "OUT_OF_DOMAIN -> PASS": 1,
+     "PASS -> OUT_OF_DOMAIN": 3
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 13,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 9,
+     "PASS -> OUT_OF_DOMAIN": 3
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 30,
+     "dT": 68,
+     "status": 50
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 15,
+      "B": 15
+     },
+     "dT": {
+      "A": 33,
+      "B": 35
+     },
+     "status": {
+      "A": 25,
+      "B": 25
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 6,
+      "dT": 6,
+      "status": 14
+     },
+     "N2": {
+      "dI_d": 6,
+      "dT": 24,
+      "status": 10
+     },
+     "N3": {
+      "dI_d": 4,
+      "dT": 38,
+      "status": 12
+     },
+     "N4": {
+      "dI_d": 6,
+      "dT": 0,
+      "status": 8
+     },
+     "N5": {
+      "dI_d": 8,
+      "dT": 0,
+      "status": 6
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {},
+    "member_verdict_changes": {
+     "sgb-screen-08": {
+      "L38-hist|3p0kW|A": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ],
+      "L38-hist|3p0kW|B": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ]
+     }
+    },
+    "n_candidates_with_any_change": 1,
+    "n_member_verdict_changes": 2
+   }
+  },
+  {
+   "baseline": "n2_n.toml",
+   "config": "n2_n_ndd_hmshigh.toml",
+   "dataset_id": "ds_staged_n2_n_ndd_hmshigh",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n.toml (scored block, reproduced by the frozen scorer)",
+    "53 of 270 runs carry a run-level trigger (38 status, 22 dI_d, 60 dT readings)",
+    "19 runs change status under at least one reading",
+    "verdict changes: 1 candidate-level, 4 member-level"
+   ],
+   "family": "n2_n_ndd_hmshigh.toml",
+   "n_run_level_triggers": 120,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 53,
+   "n_runs_with_status_change": 19,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_staged_n2_n_ndd_hmshigh_scores_provenance.json",
+    "scores_provenance_sha256": "b6180309f62b82ea50548636fc95491386538cbbea27e49e60e37b62bef94b31"
+   },
+   "stage": "first_stage",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 5,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 8,
+     "OUT_OF_DOMAIN -> PASS": 2,
+     "PASS -> OUT_OF_DOMAIN": 4
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 5,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 8,
+     "OUT_OF_DOMAIN -> PASS": 2,
+     "PASS -> OUT_OF_DOMAIN": 4
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 22,
+     "dT": 60,
+     "status": 38
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 11,
+      "B": 11
+     },
+     "dT": {
+      "A": 29,
+      "B": 31
+     },
+     "status": {
+      "A": 19,
+      "B": 19
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 4,
+      "dT": 8,
+      "status": 16
+     },
+     "N2": {
+      "dI_d": 6,
+      "dT": 20,
+      "status": 2
+     },
+     "N3": {
+      "dI_d": 4,
+      "dT": 32,
+      "status": 6
+     },
+     "N4": {
+      "dI_d": 4,
+      "dT": 0,
+      "status": 8
+     },
+     "N5": {
+      "dI_d": 4,
+      "dT": 0,
+      "status": 6
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {
+     "sgb-screen-09": [
+      "INCONCLUSIVE / NOT ELIGIBLE",
+      "FAIL_VALIDATION"
+     ]
+    },
+    "member_verdict_changes": {
+     "sgb-screen-08": {
+      "L38-hist|3p0kW|A": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ],
+      "L38-hist|3p0kW|B": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ]
+     },
+     "sgb-screen-09": {
+      "L32-exit|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     }
+    },
+    "n_candidates_with_any_change": 2,
+    "n_member_verdict_changes": 4
+   }
+  },
+  {
+   "baseline": "n2_n_di_lower.toml",
+   "config": "n2_n_n2dication.toml",
+   "dataset_id": "ds_staged_n2_n_n2dication",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n_di_lower.toml (scored block, reproduced by the frozen scorer)",
+    "188 of 270 runs carry a run-level trigger (83 status, 214 dI_d, 235 dT readings)",
+    "42 runs change status under at least one reading",
+    "verdict changes: 2 candidate-level, 12 member-level"
+   ],
+   "family": "n2_n_n2dication.toml",
+   "n_run_level_triggers": 532,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 188,
+   "n_runs_with_status_change": 42,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_staged_n2_n_n2dication_scores_provenance.json",
+    "scores_provenance_sha256": "befaf2a7b58a9f9c1c1badb2543ec42866cdf0ef9847a37d1f4e7d1c14096155"
+   },
+   "stage": "first_stage",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 3,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 27,
+     "OUT_OF_DOMAIN -> PASS": 7,
+     "PASS -> FAIL_VALIDATION": 3,
+     "PASS -> OUT_OF_DOMAIN": 2
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 3,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 28,
+     "OUT_OF_DOMAIN -> PASS": 6,
+     "PASS -> FAIL_VALIDATION": 2,
+     "PASS -> OUT_OF_DOMAIN": 2
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 214,
+     "dT": 235,
+     "status": 83
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 107,
+      "B": 107
+     },
+     "dT": {
+      "A": 114,
+      "B": 121
+     },
+     "status": {
+      "A": 42,
+      "B": 41
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 34,
+      "dT": 74,
+      "status": 20
+     },
+     "N2": {
+      "dI_d": 42,
+      "dT": 80,
+      "status": 22
+     },
+     "N3": {
+      "dI_d": 50,
+      "dT": 81,
+      "status": 13
+     },
+     "N4": {
+      "dI_d": 46,
+      "dT": 0,
+      "status": 16
+     },
+     "N5": {
+      "dI_d": 42,
+      "dT": 0,
+      "status": 12
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {
+     "sgb-screen-05": [
+      "INCONCLUSIVE / NOT ELIGIBLE",
+      "FAIL_VALIDATION"
+     ],
+     "sgb-screen-09": [
+      "INCONCLUSIVE / NOT ELIGIBLE",
+      "FAIL_VALIDATION"
+     ]
+    },
+    "member_verdict_changes": {
+     "sgb-screen-01": {
+      "L32-exit|3p0kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-02": {
+      "L32-anode|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-anode|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-05": {
+      "L32-exit|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-07": {
+      "L32-exit|3p0kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-08": {
+      "L32-exit|3p0kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-09": {
+      "L32-exit|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     }
+    },
+    "n_candidates_with_any_change": 6,
+    "n_member_verdict_changes": 12
+   }
+  },
+  {
+   "baseline": "n2_n_di_lower.toml",
+   "config": "n2_n_exc_johnsonlow_di_lower.toml",
+   "dataset_id": "ds_escalation_n2_n_exc_johnsonlow_di_lower",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n_di_lower.toml (scored block, reproduced by the frozen scorer)",
+    "72 of 270 runs carry a run-level trigger (52 status, 68 dI_d, 89 dT readings)",
+    "26 runs change status under at least one reading",
+    "verdict changes: 1 candidate-level, 6 member-level",
+    "Johnson-low assessment (docs/o4/johnsonlow_assessment/johnsonlow_assessment_v1.json): mode TAIL_AND_BOUNDARY_ON_ALL_FOUR; material_on_every_primary_combination = True; this baseline: 72 runs with any trigger, 25 status changes across the OUT_OF_DOMAIN boundary"
+   ],
+   "family": "n2_n_exc_johnsonlow.toml",
+   "n_run_level_triggers": 209,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 72,
+   "n_runs_with_status_change": 26,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_di_lower_scores_provenance.json",
+    "scores_provenance_sha256": "8a1e81095ec4c9b203b81d87be7defa5abeccec1d47c33431f56a0c55a6c366d"
+   },
+   "stage": "escalation",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 9,
+     "FAIL_VALIDATION -> PASS": 1,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 11,
+     "OUT_OF_DOMAIN -> PASS": 2,
+     "PASS -> OUT_OF_DOMAIN": 3
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 9,
+     "FAIL_VALIDATION -> PASS": 1,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 11,
+     "OUT_OF_DOMAIN -> PASS": 2,
+     "PASS -> OUT_OF_DOMAIN": 3
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 68,
+     "dT": 89,
+     "status": 52
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 34,
+      "B": 34
+     },
+     "dT": {
+      "A": 44,
+      "B": 45
+     },
+     "status": {
+      "A": 26,
+      "B": 26
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 24,
+      "dT": 28,
+      "status": 14
+     },
+     "N2": {
+      "dI_d": 14,
+      "dT": 23,
+      "status": 8
+     },
+     "N3": {
+      "dI_d": 14,
+      "dT": 38,
+      "status": 10
+     },
+     "N4": {
+      "dI_d": 6,
+      "dT": 0,
+      "status": 12
+     },
+     "N5": {
+      "dI_d": 10,
+      "dT": 0,
+      "status": 8
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {
+     "sgb-screen-09": [
+      "INCONCLUSIVE / NOT ELIGIBLE",
+      "FAIL_VALIDATION"
+     ]
+    },
+    "member_verdict_changes": {
+     "sgb-screen-04": {
+      "L32-exit|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-05": {
+      "L32-exit|3p0kW|A": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ],
+      "L32-exit|3p0kW|B": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ]
+     },
+     "sgb-screen-09": {
+      "L32-exit|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     }
+    },
+    "n_candidates_with_any_change": 3,
+    "n_member_verdict_changes": 6
+   }
+  },
+  {
+   "baseline": "n2_n_nel_wang.toml",
+   "config": "n2_n_exc_johnsonlow_nel_wang.toml",
+   "dataset_id": "ds_escalation_n2_n_exc_johnsonlow_nel_wang",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n_nel_wang.toml (scored block, reproduced by the frozen scorer)",
+    "62 of 270 runs carry a run-level trigger (24 status, 76 dI_d, 83 dT readings)",
+    "12 runs change status under at least one reading",
+    "verdict changes: 0 candidate-level, 0 member-level",
+    "Johnson-low assessment (docs/o4/johnsonlow_assessment/johnsonlow_assessment_v1.json): mode TAIL_AND_BOUNDARY_ON_ALL_FOUR; material_on_every_primary_combination = True; this baseline: 62 runs with any trigger, 10 status changes across the OUT_OF_DOMAIN boundary"
+   ],
+   "family": "n2_n_exc_johnsonlow.toml",
+   "n_run_level_triggers": 183,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 62,
+   "n_runs_with_status_change": 12,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_nel_wang_scores_provenance.json",
+    "scores_provenance_sha256": "a0792fe82c2942c23cb4688330c464c7538e4b23f1a3ea2d8204f68c8e5ba341"
+   },
+   "stage": "escalation",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 3,
+     "FAIL_VALIDATION -> PASS": 2,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 6,
+     "OUT_OF_DOMAIN -> PASS": 1
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 3,
+     "FAIL_VALIDATION -> PASS": 2,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 6,
+     "OUT_OF_DOMAIN -> PASS": 1
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 76,
+     "dT": 83,
+     "status": 24
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 38,
+      "B": 38
+     },
+     "dT": {
+      "A": 40,
+      "B": 43
+     },
+     "status": {
+      "A": 12,
+      "B": 12
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 18,
+      "dT": 30,
+      "status": 4
+     },
+     "N2": {
+      "dI_d": 18,
+      "dT": 23,
+      "status": 6
+     },
+     "N3": {
+      "dI_d": 18,
+      "dT": 30,
+      "status": 8
+     },
+     "N4": {
+      "dI_d": 14,
+      "dT": 0,
+      "status": 4
+     },
+     "N5": {
+      "dI_d": 8,
+      "dT": 0,
+      "status": 2
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {},
+    "member_verdict_changes": {},
+    "n_candidates_with_any_change": 0,
+    "n_member_verdict_changes": 0
+   }
+  },
+  {
+   "baseline": "n2_n_di_lower_nel_wang.toml",
+   "config": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml",
+   "dataset_id": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n_di_lower_nel_wang.toml (scored block, reproduced by the frozen scorer)",
+    "78 of 270 runs carry a run-level trigger (45 status, 78 dI_d, 89 dT readings)",
+    "23 runs change status under at least one reading",
+    "verdict changes: 0 candidate-level, 4 member-level",
+    "Johnson-low assessment (docs/o4/johnsonlow_assessment/johnsonlow_assessment_v1.json): mode TAIL_AND_BOUNDARY_ON_ALL_FOUR; material_on_every_primary_combination = True; this baseline: 78 runs with any trigger, 20 status changes across the OUT_OF_DOMAIN boundary"
+   ],
+   "family": "n2_n_exc_johnsonlow.toml",
+   "n_run_level_triggers": 212,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 78,
+   "n_runs_with_status_change": 23,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang_scores_provenance.json",
+    "scores_provenance_sha256": "07ed37f178afc4e9ae19c688fc5d3a39273786ea52cd8bfe8abd9beb79bb2aa8"
+   },
+   "stage": "escalation",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 5,
+     "FAIL_VALIDATION -> PASS": 3,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 12,
+     "OUT_OF_DOMAIN -> PASS": 1,
+     "PASS -> OUT_OF_DOMAIN": 2
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 5,
+     "FAIL_VALIDATION -> PASS": 2,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 12,
+     "OUT_OF_DOMAIN -> PASS": 1,
+     "PASS -> OUT_OF_DOMAIN": 2
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 78,
+     "dT": 89,
+     "status": 45
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 39,
+      "B": 39
+     },
+     "dT": {
+      "A": 44,
+      "B": 45
+     },
+     "status": {
+      "A": 23,
+      "B": 22
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 20,
+      "dT": 26,
+      "status": 12
+     },
+     "N2": {
+      "dI_d": 14,
+      "dT": 23,
+      "status": 6
+     },
+     "N3": {
+      "dI_d": 16,
+      "dT": 40,
+      "status": 11
+     },
+     "N4": {
+      "dI_d": 16,
+      "dT": 0,
+      "status": 8
+     },
+     "N5": {
+      "dI_d": 12,
+      "dT": 0,
+      "status": 8
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {},
+    "member_verdict_changes": {
+     "sgb-screen-02": {
+      "L32-anode|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-anode|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-09": {
+      "L32-exit|3p0kW|A": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ],
+      "L32-exit|3p0kW|B": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ]
+     }
+    },
+    "n_candidates_with_any_change": 2,
+    "n_member_verdict_changes": 4
+   }
+  },
+  {
+   "baseline": "n2_n_di_lower.toml",
+   "config": "n2_n_rot_off_di_lower.toml",
+   "dataset_id": "ds_escalation_n2_n_rot_off_di_lower",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n_di_lower.toml (scored block, reproduced by the frozen scorer)",
+    "128 of 270 runs carry a run-level trigger (93 status, 150 dI_d, 147 dT readings)",
+    "47 runs change status under at least one reading",
+    "verdict changes: 1 candidate-level, 6 member-level"
+   ],
+   "family": "n2_n_rot_off.toml",
+   "n_run_level_triggers": 390,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 128,
+   "n_runs_with_status_change": 47,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_rot_off_di_lower_scores_provenance.json",
+    "scores_provenance_sha256": "36db0cf05df34011f85407ccfd8c04f03651e99d544a951e4b6c1265c812cee9"
+   },
+   "stage": "escalation",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 20,
+     "FAIL_VALIDATION -> PASS": 7,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 14,
+     "OUT_OF_DOMAIN -> PASS": 1,
+     "PASS -> FAIL_VALIDATION": 1,
+     "PASS -> OUT_OF_DOMAIN": 4
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 21,
+     "FAIL_VALIDATION -> PASS": 6,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 14,
+     "OUT_OF_DOMAIN -> PASS": 1,
+     "PASS -> FAIL_VALIDATION": 1,
+     "PASS -> OUT_OF_DOMAIN": 3
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 150,
+     "dT": 147,
+     "status": 93
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 75,
+      "B": 75
+     },
+     "dT": {
+      "A": 71,
+      "B": 76
+     },
+     "status": {
+      "A": 47,
+      "B": 46
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 44,
+      "dT": 52,
+      "status": 24
+     },
+     "N2": {
+      "dI_d": 40,
+      "dT": 52,
+      "status": 14
+     },
+     "N3": {
+      "dI_d": 26,
+      "dT": 43,
+      "status": 15
+     },
+     "N4": {
+      "dI_d": 18,
+      "dT": 0,
+      "status": 24
+     },
+     "N5": {
+      "dI_d": 22,
+      "dT": 0,
+      "status": 16
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {
+     "sgb-screen-09": [
+      "INCONCLUSIVE / NOT ELIGIBLE",
+      "FAIL_VALIDATION"
+     ]
+    },
+    "member_verdict_changes": {
+     "sgb-screen-08": {
+      "L32-anode|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-anode|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-09": {
+      "L32-exit|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     }
+    },
+    "n_candidates_with_any_change": 2,
+    "n_member_verdict_changes": 6
+   }
+  },
+  {
+   "baseline": "n2_n_nel_wang.toml",
+   "config": "n2_n_rot_off_nel_wang.toml",
+   "dataset_id": "ds_escalation_n2_n_rot_off_nel_wang",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n_nel_wang.toml (scored block, reproduced by the frozen scorer)",
+    "114 of 270 runs carry a run-level trigger (83 status, 142 dI_d, 137 dT readings)",
+    "42 runs change status under at least one reading",
+    "verdict changes: 2 candidate-level, 8 member-level"
+   ],
+   "family": "n2_n_rot_off.toml",
+   "n_run_level_triggers": 362,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 114,
+   "n_runs_with_status_change": 42,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_rot_off_nel_wang_scores_provenance.json",
+    "scores_provenance_sha256": "ab864d3efd97203cc5a5eb83fb7e229728a92dd8f164e570079919d9399ec635"
+   },
+   "stage": "escalation",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 17,
+     "FAIL_VALIDATION -> PASS": 7,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 15,
+     "OUT_OF_DOMAIN -> PASS": 2,
+     "PASS -> OUT_OF_DOMAIN": 1
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 17,
+     "FAIL_VALIDATION -> PASS": 6,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 15,
+     "OUT_OF_DOMAIN -> PASS": 2,
+     "PASS -> OUT_OF_DOMAIN": 1
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 142,
+     "dT": 137,
+     "status": 83
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 71,
+      "B": 71
+     },
+     "dT": {
+      "A": 67,
+      "B": 70
+     },
+     "status": {
+      "A": 42,
+      "B": 41
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 50,
+      "dT": 51,
+      "status": 26
+     },
+     "N2": {
+      "dI_d": 40,
+      "dT": 46,
+      "status": 12
+     },
+     "N3": {
+      "dI_d": 18,
+      "dT": 40,
+      "status": 11
+     },
+     "N4": {
+      "dI_d": 18,
+      "dT": 0,
+      "status": 16
+     },
+     "N5": {
+      "dI_d": 16,
+      "dT": 0,
+      "status": 18
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {
+     "sgb-screen-06": [
+      "INCONCLUSIVE / NOT ELIGIBLE",
+      "FAIL_VALIDATION"
+     ],
+     "sgb-screen-09": [
+      "INCONCLUSIVE / NOT ELIGIBLE",
+      "FAIL_VALIDATION"
+     ]
+    },
+    "member_verdict_changes": {
+     "sgb-screen-06": {
+      "L32-exit|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-08": {
+      "L32-exit|3p0kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-09": {
+      "L32-exit|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     }
+    },
+    "n_candidates_with_any_change": 3,
+    "n_member_verdict_changes": 8
+   }
+  },
+  {
+   "baseline": "n2_n_di_lower_nel_wang.toml",
+   "config": "n2_n_rot_off_di_lower_nel_wang.toml",
+   "dataset_id": "ds_escalation_n2_n_rot_off_di_lower_nel_wang",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n_di_lower_nel_wang.toml (scored block, reproduced by the frozen scorer)",
+    "110 of 270 runs carry a run-level trigger (88 status, 140 dI_d, 125 dT readings)",
+    "45 runs change status under at least one reading",
+    "verdict changes: 1 candidate-level, 8 member-level"
+   ],
+   "family": "n2_n_rot_off.toml",
+   "n_run_level_triggers": 353,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 110,
+   "n_runs_with_status_change": 45,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_rot_off_di_lower_nel_wang_scores_provenance.json",
+    "scores_provenance_sha256": "5a69025c270cb643e4e6a58c2525e6fd3dc710c13e62dffcbb14a5ca92e26142"
+   },
+   "stage": "escalation",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 20,
+     "FAIL_VALIDATION -> PASS": 7,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 14,
+     "OUT_OF_DOMAIN -> NUMERICAL_FAILURE": 1,
+     "PASS -> FAIL_VALIDATION": 1,
+     "PASS -> OUT_OF_DOMAIN": 2
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 20,
+     "FAIL_VALIDATION -> PASS": 6,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 14,
+     "OUT_OF_DOMAIN -> NUMERICAL_FAILURE": 1,
+     "PASS -> OUT_OF_DOMAIN": 2
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 140,
+     "dT": 125,
+     "status": 88
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 70,
+      "B": 70
+     },
+     "dT": {
+      "A": 61,
+      "B": 64
+     },
+     "status": {
+      "A": 45,
+      "B": 43
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 46,
+      "dT": 48,
+      "status": 22
+     },
+     "N2": {
+      "dI_d": 38,
+      "dT": 42,
+      "status": 16
+     },
+     "N3": {
+      "dI_d": 22,
+      "dT": 35,
+      "status": 18
+     },
+     "N4": {
+      "dI_d": 16,
+      "dT": 0,
+      "status": 16
+     },
+     "N5": {
+      "dI_d": 18,
+      "dT": 0,
+      "status": 16
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {
+     "sgb-screen-09": [
+      "INCONCLUSIVE / NOT ELIGIBLE",
+      "FAIL_VALIDATION"
+     ]
+    },
+    "member_verdict_changes": {
+     "sgb-screen-01": {
+      "L32-exit|3p0kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-06": {
+      "L32-exit|3p0kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-08": {
+      "L32-exit|3p0kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-09": {
+      "L32-exit|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     }
+    },
+    "n_candidates_with_any_change": 4,
+    "n_member_verdict_changes": 8
+   }
+  },
+  {
+   "attempt_history_note": "earlier attempts are not evidence; only the scored dataset named here is read",
+   "baseline": "n2_n_di_lower.toml",
+   "config": "n2_n_ndd_hmslow_di_lower.toml",
+   "dataset_id": "ds_escalation_n2_n_ndd_hmslow_di_lower",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n_di_lower.toml (scored block, reproduced by the frozen scorer)",
+    "50 of 270 runs carry a run-level trigger (34 status, 38 dI_d, 54 dT readings)",
+    "17 runs change status under at least one reading",
+    "verdict changes: 0 candidate-level, 2 member-level"
+   ],
+   "family": "n2_n_ndd_hmslow.toml",
+   "n_run_level_triggers": 126,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 50,
+   "n_runs_with_status_change": 17,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmslow_di_lower_scores_provenance.json",
+    "scores_provenance_sha256": "6c39c96c4cd309d8fe9e33e38fdf86ae3044029dad797b64eb6f5897eaaf3cb7"
+   },
+   "stage": "escalation",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 6,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 6,
+     "OUT_OF_DOMAIN -> PASS": 2,
+     "PASS -> OUT_OF_DOMAIN": 3
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 6,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 6,
+     "OUT_OF_DOMAIN -> PASS": 2,
+     "PASS -> OUT_OF_DOMAIN": 3
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 38,
+     "dT": 54,
+     "status": 34
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 19,
+      "B": 19
+     },
+     "dT": {
+      "A": 26,
+      "B": 28
+     },
+     "status": {
+      "A": 17,
+      "B": 17
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 4,
+      "dT": 8,
+      "status": 8
+     },
+     "N2": {
+      "dI_d": 10,
+      "dT": 13,
+      "status": 6
+     },
+     "N3": {
+      "dI_d": 12,
+      "dT": 33,
+      "status": 6
+     },
+     "N4": {
+      "dI_d": 6,
+      "dT": 0,
+      "status": 8
+     },
+     "N5": {
+      "dI_d": 6,
+      "dT": 0,
+      "status": 6
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {},
+    "member_verdict_changes": {
+     "sgb-screen-05": {
+      "L32-exit|3p0kW|A": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ],
+      "L32-exit|3p0kW|B": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ]
+     }
+    },
+    "n_candidates_with_any_change": 1,
+    "n_member_verdict_changes": 2
+   }
+  },
+  {
+   "attempt_history_note": "earlier attempts are not evidence; only the scored dataset named here is read",
+   "baseline": "n2_n_nel_wang.toml",
+   "config": "n2_n_ndd_hmslow_nel_wang.toml",
+   "dataset_id": "ds_escalation_n2_n_ndd_hmslow_nel_wang",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n_nel_wang.toml (scored block, reproduced by the frozen scorer)",
+    "55 of 270 runs carry a run-level trigger (40 status, 24 dI_d, 61 dT readings)",
+    "20 runs change status under at least one reading",
+    "verdict changes: 0 candidate-level, 2 member-level"
+   ],
+   "family": "n2_n_ndd_hmslow.toml",
+   "n_run_level_triggers": 125,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 55,
+   "n_runs_with_status_change": 20,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmslow_nel_wang_scores_provenance.json",
+    "scores_provenance_sha256": "b37f5c3b35ca5cd58dedb307931ae6f18022fbb107824e2b4579e4712b882de6"
+   },
+   "stage": "escalation",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 3,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 14,
+     "OUT_OF_DOMAIN -> PASS": 2,
+     "PASS -> OUT_OF_DOMAIN": 1
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 3,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 14,
+     "OUT_OF_DOMAIN -> PASS": 2,
+     "PASS -> OUT_OF_DOMAIN": 1
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 24,
+     "dT": 61,
+     "status": 40
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 12,
+      "B": 12
+     },
+     "dT": {
+      "A": 27,
+      "B": 34
+     },
+     "status": {
+      "A": 20,
+      "B": 20
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 2,
+      "dT": 8,
+      "status": 14
+     },
+     "N2": {
+      "dI_d": 6,
+      "dT": 21,
+      "status": 8
+     },
+     "N3": {
+      "dI_d": 4,
+      "dT": 32,
+      "status": 14
+     },
+     "N4": {
+      "dI_d": 6,
+      "dT": 0,
+      "status": 2
+     },
+     "N5": {
+      "dI_d": 6,
+      "dT": 0,
+      "status": 2
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {},
+    "member_verdict_changes": {
+     "sgb-screen-04": {
+      "L32-exit|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     }
+    },
+    "n_candidates_with_any_change": 1,
+    "n_member_verdict_changes": 2
+   }
+  },
+  {
+   "attempt_history_note": "earlier attempts are not evidence; only the scored dataset named here is read",
+   "baseline": "n2_n_di_lower_nel_wang.toml",
+   "config": "n2_n_ndd_hmslow_di_lower_nel_wang.toml",
+   "dataset_id": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n_di_lower_nel_wang.toml (scored block, reproduced by the frozen scorer)",
+    "53 of 270 runs carry a run-level trigger (36 status, 32 dI_d, 59 dT readings)",
+    "18 runs change status under at least one reading",
+    "verdict changes: 0 candidate-level, 4 member-level"
+   ],
+   "family": "n2_n_ndd_hmslow.toml",
+   "n_run_level_triggers": 127,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 53,
+   "n_runs_with_status_change": 18,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmslow_di_lower_nel_wang_scores_provenance.json",
+    "scores_provenance_sha256": "d0335608c2b3640da50f8399efa6e772fb321596ad578cddf4b4de0cfd31f3d5"
+   },
+   "stage": "escalation",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 10,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 7,
+     "PASS -> OUT_OF_DOMAIN": 1
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 10,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 7,
+     "PASS -> OUT_OF_DOMAIN": 1
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 32,
+     "dT": 59,
+     "status": 36
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 16,
+      "B": 16
+     },
+     "dT": {
+      "A": 28,
+      "B": 31
+     },
+     "status": {
+      "A": 18,
+      "B": 18
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 0,
+      "dT": 4,
+      "status": 8
+     },
+     "N2": {
+      "dI_d": 12,
+      "dT": 20,
+      "status": 12
+     },
+     "N3": {
+      "dI_d": 8,
+      "dT": 35,
+      "status": 12
+     },
+     "N4": {
+      "dI_d": 6,
+      "dT": 0,
+      "status": 0
+     },
+     "N5": {
+      "dI_d": 6,
+      "dT": 0,
+      "status": 4
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {},
+    "member_verdict_changes": {
+     "sgb-screen-09": {
+      "L32-exit|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|A": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ],
+      "L32-exit|3p0kW|B": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ]
+     }
+    },
+    "n_candidates_with_any_change": 1,
+    "n_member_verdict_changes": 4
+   }
+  },
+  {
+   "attempt_history_note": "earlier attempts are not evidence; only the scored dataset named here is read",
+   "baseline": "n2_n_di_lower.toml",
+   "config": "n2_n_ndd_hmshigh_di_lower.toml",
+   "dataset_id": "ds_escalation_n2_n_ndd_hmshigh_di_lower",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n_di_lower.toml (scored block, reproduced by the frozen scorer)",
+    "51 of 270 runs carry a run-level trigger (42 status, 22 dI_d, 57 dT readings)",
+    "21 runs change status under at least one reading",
+    "verdict changes: 0 candidate-level, 4 member-level"
+   ],
+   "family": "n2_n_ndd_hmshigh.toml",
+   "n_run_level_triggers": 121,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 51,
+   "n_runs_with_status_change": 21,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmshigh_di_lower_scores_provenance.json",
+    "scores_provenance_sha256": "392e1142424f92c783c523059641656b6e611e9d4a1ce433068b59937d03d9e9"
+   },
+   "stage": "escalation",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 8,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 9,
+     "OUT_OF_DOMAIN -> PASS": 2,
+     "PASS -> FAIL_VALIDATION": 1,
+     "PASS -> OUT_OF_DOMAIN": 1
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 8,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 8,
+     "OUT_OF_DOMAIN -> PASS": 3,
+     "PASS -> FAIL_VALIDATION": 1,
+     "PASS -> OUT_OF_DOMAIN": 1
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 22,
+     "dT": 57,
+     "status": 42
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 11,
+      "B": 11
+     },
+     "dT": {
+      "A": 28,
+      "B": 29
+     },
+     "status": {
+      "A": 21,
+      "B": 21
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 4,
+      "dT": 8,
+      "status": 8
+     },
+     "N2": {
+      "dI_d": 8,
+      "dT": 14,
+      "status": 12
+     },
+     "N3": {
+      "dI_d": 4,
+      "dT": 35,
+      "status": 12
+     },
+     "N4": {
+      "dI_d": 2,
+      "dT": 0,
+      "status": 6
+     },
+     "N5": {
+      "dI_d": 4,
+      "dT": 0,
+      "status": 4
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {},
+    "member_verdict_changes": {
+     "sgb-screen-02": {
+      "L32-anode|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-anode|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-05": {
+      "L32-exit|3p0kW|A": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ],
+      "L32-exit|3p0kW|B": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ]
+     }
+    },
+    "n_candidates_with_any_change": 2,
+    "n_member_verdict_changes": 4
+   }
+  },
+  {
+   "attempt_history_note": "earlier attempts are not evidence; only the scored dataset named here is read",
+   "baseline": "n2_n_nel_wang.toml",
+   "config": "n2_n_ndd_hmshigh_nel_wang.toml",
+   "dataset_id": "ds_escalation_n2_n_ndd_hmshigh_nel_wang",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n_nel_wang.toml (scored block, reproduced by the frozen scorer)",
+    "28 of 270 runs carry a run-level trigger (22 status, 18 dI_d, 38 dT readings)",
+    "11 runs change status under at least one reading",
+    "verdict changes: 0 candidate-level, 0 member-level"
+   ],
+   "family": "n2_n_ndd_hmshigh.toml",
+   "n_run_level_triggers": 78,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 28,
+   "n_runs_with_status_change": 11,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmshigh_nel_wang_scores_provenance.json",
+    "scores_provenance_sha256": "9a29b7464d1c13144aa55defc69cf169a2ca17d8e32bb11ddb397297028deaa8"
+   },
+   "stage": "escalation",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 3,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 6,
+     "OUT_OF_DOMAIN -> PASS": 1,
+     "PASS -> FAIL_VALIDATION": 1
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 3,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 6,
+     "OUT_OF_DOMAIN -> PASS": 1,
+     "PASS -> FAIL_VALIDATION": 1
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 18,
+     "dT": 38,
+     "status": 22
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 9,
+      "B": 9
+     },
+     "dT": {
+      "A": 19,
+      "B": 19
+     },
+     "status": {
+      "A": 11,
+      "B": 11
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 6,
+      "dT": 6,
+      "status": 8
+     },
+     "N2": {
+      "dI_d": 4,
+      "dT": 10,
+      "status": 8
+     },
+     "N3": {
+      "dI_d": 6,
+      "dT": 22,
+      "status": 4
+     },
+     "N4": {
+      "dI_d": 2,
+      "dT": 0,
+      "status": 2
+     },
+     "N5": {
+      "dI_d": 0,
+      "dT": 0,
+      "status": 0
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {},
+    "member_verdict_changes": {},
+    "n_candidates_with_any_change": 0,
+    "n_member_verdict_changes": 0
+   }
+  },
+  {
+   "attempt_history_note": "earlier attempts are not evidence; only the scored dataset named here is read",
+   "baseline": "n2_n_di_lower_nel_wang.toml",
+   "config": "n2_n_ndd_hmshigh_di_lower_nel_wang.toml",
+   "dataset_id": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n_di_lower_nel_wang.toml (scored block, reproduced by the frozen scorer)",
+    "34 of 270 runs carry a run-level trigger (30 status, 16 dI_d, 32 dT readings)",
+    "15 runs change status under at least one reading",
+    "verdict changes: 0 candidate-level, 2 member-level"
+   ],
+   "family": "n2_n_ndd_hmshigh.toml",
+   "n_run_level_triggers": 78,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 34,
+   "n_runs_with_status_change": 15,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang_scores_provenance.json",
+    "scores_provenance_sha256": "750a9d02a1a465a0cec21b014043251bf58537cc7211ca2604d0cdcdfab08e80"
+   },
+   "stage": "escalation",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 2,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 10,
+     "OUT_OF_DOMAIN -> PASS": 2,
+     "PASS -> OUT_OF_DOMAIN": 1
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 2,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 10,
+     "OUT_OF_DOMAIN -> PASS": 2,
+     "PASS -> OUT_OF_DOMAIN": 1
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 16,
+     "dT": 32,
+     "status": 30
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 8,
+      "B": 8
+     },
+     "dT": {
+      "A": 15,
+      "B": 17
+     },
+     "status": {
+      "A": 15,
+      "B": 15
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 4,
+      "dT": 7,
+      "status": 8
+     },
+     "N2": {
+      "dI_d": 4,
+      "dT": 2,
+      "status": 6
+     },
+     "N3": {
+      "dI_d": 2,
+      "dT": 23,
+      "status": 8
+     },
+     "N4": {
+      "dI_d": 2,
+      "dT": 0,
+      "status": 6
+     },
+     "N5": {
+      "dI_d": 4,
+      "dT": 0,
+      "status": 2
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {},
+    "member_verdict_changes": {
+     "sgb-screen-02": {
+      "L32-anode|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-anode|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     }
+    },
+    "n_candidates_with_any_change": 1,
+    "n_member_verdict_changes": 2
+   }
+  },
+  {
+   "attempt_history_note": "earlier attempts are not evidence; only the scored dataset named here is read",
+   "baseline": "n2_n_di_lower_nel_wang.toml",
+   "config": "n2_n_n2dication_nel_wang.toml",
+   "dataset_id": "ds_escalation_n2_n_n2dication_nel_wang",
+   "evidence_only_for_owner": [
+    "O4 trigger_fired = True against n2_n_di_lower_nel_wang.toml (scored block, reproduced by the frozen scorer)",
+    "184 of 270 runs carry a run-level trigger (69 status, 222 dI_d, 254 dT readings)",
+    "35 runs change status under at least one reading",
+    "verdict changes: 1 candidate-level, 14 member-level"
+   ],
+   "family": "n2_n_n2dication.toml",
+   "n_run_level_triggers": 545,
+   "n_runs": 270,
+   "n_runs_with_any_run_level_trigger": 184,
+   "n_runs_with_status_change": 35,
+   "owner_disposition": null,
+   "required": true,
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "scores_provenance": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_n2dication_nel_wang_scores_provenance.json",
+    "scores_provenance_sha256": "e5468f7cf8d07e66cdeeee666d3b354066764ea7a8cfa60f6df69889e94c2849"
+   },
+   "stage": "escalation",
+   "state": "SCORED",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 5,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 23,
+     "OUT_OF_DOMAIN -> NUMERICAL_FAILURE": 1,
+     "OUT_OF_DOMAIN -> PASS": 4,
+     "PASS -> FAIL_VALIDATION": 2
+    },
+    "B": {
+     "FAIL_VALIDATION -> OUT_OF_DOMAIN": 5,
+     "OUT_OF_DOMAIN -> FAIL_VALIDATION": 24,
+     "OUT_OF_DOMAIN -> NUMERICAL_FAILURE": 1,
+     "OUT_OF_DOMAIN -> PASS": 3,
+     "PASS -> FAIL_VALIDATION": 1
+    }
+   },
+   "trigger_counts": {
+    "by_kind": {
+     "dI_d": 222,
+     "dT": 254,
+     "status": 69
+    },
+    "by_kind_and_reading": {
+     "dI_d": {
+      "A": 111,
+      "B": 111
+     },
+     "dT": {
+      "A": 126,
+      "B": 128
+     },
+     "status": {
+      "A": 35,
+      "B": 34
+     }
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 38,
+      "dT": 84,
+      "status": 20
+     },
+     "N2": {
+      "dI_d": 40,
+      "dT": 85,
+      "status": 14
+     },
+     "N3": {
+      "dI_d": 56,
+      "dT": 85,
+      "status": 15
+     },
+     "N4": {
+      "dI_d": 50,
+      "dT": 0,
+      "status": 10
+     },
+     "N5": {
+      "dI_d": 38,
+      "dT": 0,
+      "status": 10
+     }
+    }
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_verdict_changes": {
+     "sgb-screen-05": [
+      "INCONCLUSIVE / NOT ELIGIBLE",
+      "FAIL_VALIDATION"
+     ]
+    },
+    "member_verdict_changes": {
+     "sgb-screen-01": {
+      "L32-exit|3p0kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-02": {
+      "L32-anode|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-anode|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-05": {
+      "L32-exit|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-06": {
+      "L32-exit|3p0kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-08": {
+      "L32-anode|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-anode|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ]
+     },
+     "sgb-screen-09": {
+      "L32-exit|1p6kW|A": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|1p6kW|B": [
+       "INCONCLUSIVE",
+       "FAIL"
+      ],
+      "L32-exit|3p0kW|A": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ],
+      "L32-exit|3p0kW|B": [
+       "FAIL",
+       "INCONCLUSIVE"
+      ]
+     }
+    },
+    "n_candidates_with_any_change": 6,
+    "n_member_verdict_changes": 14
+   }
+  }
+ ],
+ "schema": "o4_disposition_matrix_v1",
+ "status_of_this_document": "evidence matrix for the owner; decides nothing; every owner_disposition is null and is recorded only by the owner in an o4_dispositions_v1 file; no criterion, tolerance, chemistry or transport change; the v1 result is unchanged",
+ "trigger": "T_O4_DISPOSITION_MATRIX"
+}

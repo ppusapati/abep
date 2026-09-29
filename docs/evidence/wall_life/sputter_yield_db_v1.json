@@ -1,0 +1,1465 @@
+{
+ "id": "sputter_yield_db_v1",
+ "version": "1.0",
+ "date": "2026-09-26",
+ "status": "EVIDENCE DATABASE ONLY. Not wired into any simulator module; no model, threshold, chemistry, frozen dataset or campaign was changed. It records what the open literature does and does not establish about sputter/erosion yields of Hall-channel wall ceramics, for later N/O Hall-channel life work. NO DESIGN-LIFE NUMBER MAY BE DERIVED FROM THIS VERSION (see extrapolation_policy and coverage_matrix: no measured N+/N2+/O+/O2+ yield on BN, BN-SiO2 or SiC was located).",
+ "companion_document": "docs/evidence/wall_life/WALL_LIFE_EVIDENCE.md",
+ "evidence_policy": "docs/EVIDENCE.md (CLAUDE.md rules 6 and 10). evidence_level = strength/proximity of the source (1-7). evidence_class = quantity type of the numbers in the entry (measured / digitized / inferred / reconstructed / model-derived / assumed). Unit conversion, digitization or fitting never changes evidence_level; it is recorded in transformation_chain.",
+ "scope": {
+  "purpose": "Sputter-yield / erosion evidence needed later for Hall-channel wall life predictions with nitrogen and oxygen ions (atmosphere-breathing propellant), with xenon as the reference projectile.",
+  "projectiles_requested": ["N+", "N2+", "O+", "O2+", "Xe+ (reference)"],
+  "targets_requested": ["BN (h-BN grades)", "BN-SiO2 (Borosil / BGP / M26-type)", "SiC", "Al2O3 (alumina)", "other candidate ceramics"],
+  "target_naming_note": "'Borosil' = BN-SiO2 channel ceramic of the SPT-100 (S14 Sec. III); 'BGP' = boron nitride-silicon oxide composition (S06). 'M26' is used only as the grade label of the task and of abep_sim/materials.py ('M26/Borosil-class'); no source read here gives the M26 composition (verify). No yield entry is for an M26-labelled sample.",
+  "out_of_scope": "Gridded-ion-optics metals (Mo, C grids), cathode materials, intake/compressor surfaces, neutral atomic-oxygen erosion of spacecraft surfaces (abep_sim/aochem.py). The Hall-transport uncertainty of CLAUDE.md item 1 is not touched."
+ },
+ "scope_rules_followed": ["published / openly accessible sources only; no contact with any person or lab; no e-mail", "LXCat not used", "no paywall or bot-challenge bypass: pubs.aip.org (Cloudflare 'Just a moment...' challenge), mdpi.com (HTTP 403), sciencedirect.com (HTTP 403), apps.dtic.mil (HTTP 403 to automated fetch), SPIE (closed) were NOT circumvented; those sources are cited at abstract/metadata level with values marked TBD", "TLS/trust settings unchanged", "numbers transcribed only from documents actually read; anything recalled from memory is marked 'verify'", "downloaded PDFs kept in the session scratchpad only (not committed); their sha256 is recorded per source so the owner can confirm identity"],
+ "units_and_conventions": {
+  "volumetric_yield": "mm3/C = volume of target removed per coulomb of incident singly charged ions. Preferred by the EP sputter literature for multi-component ceramics because 'atoms/ion' is ill-defined under preferential sputtering (Tartz et al. IEPC-2009-240, Sec. IV). Converting to atoms/ion needs the material density and the sputtered-species composition, both grade-specific; no such conversion is made here.",
+  "atomic_yield": "atoms/ion = sputtered target atoms per incident projectile (TRIM.SP tables of Eckstein IPP 9/132).",
+  "erosion_rate_britton": "Britton et al. (NASA/TM-2002-211837) report erosion rate in Angstrom/(s * mA/cm2). Exact unit arithmetic: 1 Angstrom/(s * mA/cm2) = 1e-2 mm3/C (our transformation).",
+  "angle": "Incidence angle beta measured from the surface normal unless stated. Britton et al. use theta measured from the surface plane (their Fig. 5); converted as beta = 90 deg - theta (our transformation, checked against their Fig. 5 drawing).",
+  "QCM_condensable": "Quartz-crystal-microbalance yields register only condensable products (B-containing species for BN); the source papers convert to full BN yield with Y_BN = Y_QCM (M_B + M_N)/M_B (Rubin et al. IEPC-2009-042 Eq. 1), i.e. a factor ~2.30 (our arithmetic check of their Table 1 ratios: 2.29-2.30).",
+  "number_precision": "Values are stored as JSON numbers, which cannot keep printed trailing zeros (e.g. a printed 0.0170 or 3.50 is stored as 0.017 or 3.5). The numeric value is exact; the printed significant figures are in the cited table (source_locator)."
+ },
+ "hard_statements": {
+  "solver_wall_flux_is_not_an_erosion_prediction": "The Hall solver's wall ion flux (hall_map_schema_v1 'wall_ion_flux_m2s' / 'wall_ion_energy_eV', re-evaluated in hallthruster_bridge/bridge_lib.jl wall_ion_metrics from HallThruster.jl's WallSheath model: Gamma_i = loss_scale * h * sum_s n_s sqrt(Z_s e T_e / m_s), impact energy Z phi_s + T_e/2, axial ion kinetic energy and incidence angle excluded) is a model-derived Bohm-flux closure. It is NOT a validated erosion prediction: (1) it has never been compared with a measured wall erosion profile in this project; (2) with ion_wall_losses=false the flux is not even removed from the ion fluid (schema 'wall_ion_basis'); (3) 'wall_life_trustworthy' (converged AND sustained AND ion_wall_losses=true AND WallSheath AND unshielded) certifies dynamic self-consistency of the flux inside the solve, not agreement with erosion data; (4) the 1-D solver carries no radial resolution, no magnetic-field-line incidence geometry and no ion energy/angle distribution at the wall; (5) the anomalous-transport closure that sets the plasma state is not identified (CLAUDE.md gate 3 FAIL; credible set empty). Multiplying that flux by any yield in this database produces a sensitivity number, never a life prediction.",
+  "screening_candidates_not_for_design_life": "The nine ScaledGaussianBohm screening candidates (sgb-screen-01..09) are not admitted transport-ensemble members (credible set = empty per CLAUDE.md item 1 and the gate-3 row of the gate table). Per CLAUDE.md item 1 they never produce design Hall maps and never enter the architecture trade or UQ. Their wall flux/energy fields MUST NOT be used for design life, erosion budgets, wall-thickness sizing or any Vyovrinda design decision.",
+  "no_design_life_from_this_version": "No N/O design-life or erosion-rate number is supported by this database version: no measured N+, N2+, O+ or O2+ yield on BN, BN-SiO2 or SiC was located, and the only located N/O measurement on a candidate ceramic (Espy et al. 1993, Al2O3 thin films, 50-200 eV) is closed-access with values TBD.",
+  "in_repo_priors_not_endorsed": "abep_sim/materials.py sputter_Eth_eV / sputter_Y300 (tagged 'literature-class prior', no citation) and the erosion paths that use them (superseded 0-D HallChannel in abep_sim/plasma_devices.py; life.py defaults) are NOT supported or validated by this database. See in_repo_audit."
+ },
+ "milestone_relevance": {
+  "lane_id": "lane_32_wall_life",
+  "registry": "docs/orchestration/lane_registry_v1.json (answers 'iii', verification_protocol 'single-lens-v1'); question list per docs/orchestration/OPERATING_MODEL.md section 1",
+  "answers": "iii",
+  "answers_text": "(iii) what engineering issue could later overturn the choice: Hall-channel wall erosion by N+, N2+, O+ and O2+ (physical sputtering plus O/N surface chemistry) is unquantified for every candidate wall ceramic; the > 15,000 h RFP firing requirement cannot be shown for any architecture until hardware tests H1-H9 (at least H1, H3, H4, H6, H7) close gaps G1-G10.",
+  "architecture_scope": "Common to hall_only, rf_hall and ecr_hall (the downstream Hall accelerator and its wall are common); it does not discriminate between architectures and supports no elimination.",
+  "milestone_A": "NON-DECISIVE. Provides no selection input. A conditional baseline may cite it only as a stated condition to be demonstrated (N/O wall-erosion life of the chosen wall grade >= the required firing hours, demonstrated by H1/H4/H6).",
+  "milestone_B": "Evidence only. Cannot supply a credible wall-life envelope: no measured N/O yield on BN, BN-SiO2 or SiC, and no admitted Hall transport closure (credible set empty) for the wall flux. Needs to reach B: second-lens verification of this lane (this repair is that lens), N/O coupon yields (H1-H3) and an admitted closure whose wall fields are wall_life_trustworthy and validated against near-wall data (H7).",
+  "milestone_C": "Evidence only; cannot support a life number. Needs for C: thruster wear-test erosion profiles on N2/O2 mixtures with the Vyovrinda channel (H6) plus H1-H5, H7-H9, integrated through a consumer that honours consumer_requirements.",
+  "integration_followup": "This file's sha256 changes with every repair round. At d07249b docs/architecture_comparison/dossier/dossier.json and DECISION_DOSSIER.md pin the pre-repair hash (9b45531e...) in their provenance; that record goes stale on merge and must be regenerated by the dossier lane (outside this lane's allowed paths). No test catches it because test_decision_dossier rebuilds the dossier live.",
+  "verification_status": "single-lens-v1 at merge 6bbfeb2; second-lens repair committed on 6bbfeb2 (fix round 1, e9122c6; fix round 2 follows it), audited against the integrated branches e15f66f and d07249b. Not decisive for Milestone B or C until the second-lens verification is recorded as passed under the operating model."
+ },
+ "consumer_requirements": {
+  "note": "Binding on any code that takes a yield from this database (currently none reads it). Wiring is a model change (owner decision + docs/HISTORY.md).",
+  "known_consumer": "abep_sim/thermal_life.py _check_hall_discharge (merged after this lane; not modified here - outside this lane's allowed paths). Its volumetric_sputter_yield_m3_per_ion input is caller-supplied; nothing links it to this database today.",
+  "unit_crosswalk": "Y[m3/ion] = Y[mm3/C] * 1e-9 [m3/mm3] * e [C/ion], with e = 1.602176634e-19 C (exact SI value), valid for singly charged incident ions only (the mm3/C convention counts incident charge). Atomic yields (atoms/ion, TRIM.SP entries) need the grade density and sputtered composition and have no crosswalk here.",
+  "required_behaviour": ["carry the entry id and the full extrapolation flag set (E_BELOW_MEASURED, E_ABOVE_MEASURED, ANGLE_OUTSIDE_MEASURED, PROJECTILE_PROXY, TARGET_PROXY, TEMPERATURE_OUTSIDE_MEASURED, MOLECULAR_ION_ASSUMPTION, SURFACE_STATE, NEUTRALIZATION_STATE, VALUES_TBD) into the result", "apply result_status_rule: any flagged yield makes the erosion-life check OUT_OF_DOMAIN, reported as NOT_DEMONSTRATED (never PASS or FAIL) and usable in sensitivity/bracketing tables only", "for N+, N2+, O+ or O2+ on BN, BN-SiO2 or SiC with this database version the wall-erosion check must return NOT_DEMONSTRATED (current_consequence: every lookup is OUT_OF_DOMAIN)", "a missing projectile/target pair raises; no substitution of Xe data, proxy targets or abep_sim/materials.py priors", "the wall flux must come from an admitted ensemble member with wall_life_trustworthy = true; screening candidates never. NOT enforced today: at d07249b thermal_life._check_hall_discharge accepts caller-supplied wall_ion_flux_m2s, wall_ion_energy_eV and volumetric_sputter_yield_m3_per_ion with no admission or wall_life_trustworthy gate; those checks exist only in the optional helper hallmap_wall_inputs, which itself checks only that ensemble_member_id is non-empty, not that the member is admitted (gap G11)"],
+  "status_at_e15f66f": "thermal_life.py (unchanged in this respect at d07249b) does not yet implement the flag carry-through, the OUT_OF_DOMAIN -> NOT_DEMONSTRATED mapping, or a flux-provenance/admission gate inside _check_hall_discharge; follow-on item for the thermal/life lane (gap G11)."
+ },
+ "extrapolation_policy": {
+  "principle": "A yield may be used without a flag only for the same projectile, the same target material class and grade family, inside the entry's energy_range_eV and measured incidence angles, at a surface temperature inside the measured range. Every other use carries one or more flags below, and any flagged result is OUT_OF_DOMAIN: sensitivity or bracketing only, never a design-life, erosion-budget or wall-thickness number. No silent fallback: a consumer asking for a projectile/target pair with no entry must raise, not substitute xenon data, a proxy target or the abep_sim/materials.py priors.",
+  "flags": {
+   "E_BELOW_MEASURED": "impact energy below the entry's energy_range_eV.min. Near-threshold behaviour is not constrained: published Xe->BN thresholds span 18.3 eV (MD fit, Yim 2008) to 57 eV (Zhang fit, Rubin 2009), and models of borosil used 30-70 eV (Cheng & Martinez-Sanchez 2007 Table 1). Must be bracketed with several thresholds, never a single fitted curve.",
+   "E_ABOVE_MEASURED": "impact energy above energy_range_eV.max. Note Ranjan et al. 2016 (abstract) report a sudden jump in Xe->BN and BN-SiO2 yields above 500 eV, so trends need not continue.",
+   "ANGLE_OUTSIDE_MEASURED": "incidence angle outside the measured set. Ceramic angular dependence is roughness-controlled and flatter than smooth-surface theory (Garnier 1999 abstract; Tondu 2011 Sec. V); smooth-surface fits (Yamamura, Wei) are not transferable to an eroded, roughened channel wall.",
+   "PROJECTILE_PROXY": "yield measured with a different projectile (e.g. Xe+ data applied to N+, N2+, O+ or O2+). Mass ratio, energy transfer, chemical reactivity (O oxidizes B, Si, C; N is a lattice constituent of BN) and implantation all differ. Forbidden for design life. The energy-transfer-factor scaling used in abep_sim/archengine.py for Mo grids is an assumption of this kind (evidence level 7).",
+   "TARGET_PROXY": "yield measured/computed on a different material or grade (elemental B, B2O3, C, SiO2 constituent, another BN grade or binder). Grade matters: Rubin 2009 HP vs HBC differ up to ~1.8x at 250 eV within one laboratory; across laboratories (grade and lab confounded) Tartz 2009 Ca-borate-bound BN vs Rubin 2009 HBC differ 4.6-11.8x and vs Rubin 2009 HP (also Ca-borate-bound) 12.2-12.8x at the same energy (our arithmetic from transcribed values).",
+   "TEMPERATURE_OUTSIDE_MEASURED": "wall temperature outside the measured range. Xe->BN yields rise from ~520 C (Rubin 2009 Fig. 14, preliminary); MD predicts ~2x between 423 K and 850 K (Yim 2008); Passet et al. 2024 (abstract) attribute a 50-60 % under-prediction of SPT-100 exit erosion to a stronger temperature dependence.",
+   "MOLECULAR_ION_ASSUMPTION": "treating N2+ / O2+ as two atoms each carrying half the ion energy is an ASSUMPTION (evidence level 7, verify). It is common practice in the sputtering literature (recalled, not source-checked here: verify) but has not been checked against molecular-ion data for any candidate ceramic in this database. Espy et al. 1993 used O+, O2+, N+ and N2+ beams at 50-200 eV on Al and Al2O3 (abstract/title only); whether it reports a matched-energy-per-atom molecular-vs-atomic comparison is INFERRED from the abstract, not read (verify). Values TBD; it is the first place to look.",
+   "SURFACE_STATE": "fluence-dependent surface state not represented: preferential sputtering, Xe/N/O implantation, oxidation of BN to a B2O3-bearing surface (abep_sim/aochem.py note: 'slight B2O3 surface glass'), SiC passivation, roughening, grain detachment (Tondu 2011), moisture uptake of BN (Topper 2011; Tartz 2009; Abashkin 2007). TRIM.SP entries are 'only low fluence' (Eckstein IPP 9/132).",
+   "NEUTRALIZATION_STATE": "yield measured with a neutralization/surface-potential condition that differs from a floating Hall-channel wall. Topper 2011 / Rubin 2009 found BN yields rise ~2x with aggressive plasma-bridge neutralization; Nikiporetz 2007 found no difference up to +30 V surface potential (Xe plasma on Si3N4+BN); Tondu 2011 attributes an alumina discrepancy to surface bias. Treated as a systematic uncertainty of order 2x for insulators.",
+   "VALUES_TBD": "entry exists but its numbers were not accessed (closed access or bot challenge); it can only motivate a test plan, never be used numerically."
+  },
+  "result_status_rule": "result_status = IN_DOMAIN only if the flag set is empty AND the entry evidence_class is measured (or a fit whose fit_domain covers the query); else OUT_OF_DOMAIN. An OUT_OF_DOMAIN erosion estimate may appear only in sensitivity/bracketing tables labelled as such, and never feeds a trade, UQ envelope or life margin as if it were a prediction.",
+  "current_consequence": "For N+, N2+, O+, O2+ on BN, BN-SiO2 and SiC every possible lookup is OUT_OF_DOMAIN (PROJECTILE_PROXY or TARGET_PROXY at best). Hardware tests (hardware_tests_required) are the only route to IN_DOMAIN."
+ },
+ "sources": [
+  {
+   "id": "S01",
+   "citation": "B. Rubin, J. L. Topper, A. P. Yalin, 'Total and Differential Sputter Yields of Boron Nitride Measured by Quartz Crystal Microbalance', 31st International Electric Propulsion Conference, Ann Arbor, MI, 20-24 Sept 2009, IEPC-2009-042",
+   "url": "https://projects-web.engr.colostate.edu/ionstand/publications/papers/IEPC-2009_042_Boron_Nitride_Sputter_Yields.pdf",
+   "access": "OPEN (Colorado State University project page; 'Distribution A: approved for public release')",
+   "retrieved": "2026-09-26",
+   "sha256": "53f51880e4911f5393af0305c46fe6b5ea209665c6ab39d395a0cc943742b5f6",
+   "evidence_level": 3,
+   "used_for": "Xe+ -> BN (HBC, HBR, HP) total yields, Tables 1-3; Bohdansky x Yamamura fit parameters, Tables 4-5; ~30 % uncertainty statement; temperature trend (Fig. 14); neutralization discussion",
+   "related": "Journal version: B. Rubin, J. L. Topper, A. P. Yalin, J. Phys. D: Appl. Phys. 42, 205205 (2009) (reference 35 of S02; not accessed; DOI not retrieved - verify)"
+  },
+  {
+   "id": "S02",
+   "citation": "J. L. Topper IV, 'Total and Differential Sputter Yields of Boron Nitride', M.S. thesis, Department of Mechanical Engineering, Colorado State University, Spring 2011 (advisor A. Yalin)",
+   "url": "https://api.mountainscholar.org/server/api/core/bitstreams/3b0db9d4-b899-4380-aa36-9dc61ceac569/content",
+   "access": "OPEN (Mountain Scholar institutional repository)",
+   "retrieved": "2026-09-26",
+   "sha256": "5775f8f611e55da7af9a1500415caf61ce1a7106c484fc64d8b233744503f5d5",
+   "evidence_level": 3,
+   "used_for": "raw per-run condensable yields incl. 40-80 eV points (Appendix A, Tables A1-A3); grade descriptions (HBC no binder >99 % B+N; HBR and HP contain calcium-borate binder); sample steady-state temperature ~80 C; factor-2 neutralization effect; moisture uptake"
+  },
+  {
+   "id": "S03",
+   "citation": "M. Britton, D. Waters, R. Messer, E. Sechkar, B. Banks, 'Sputtering Erosion Measurement on Boron Nitride as a Hall Thruster Material', NASA/TM-2002-211837 (Sept 2002), NTRS 20020082939",
+   "url": "https://ntrs.nasa.gov/api/citations/20020082939/downloads/20020082939.pdf",
+   "access": "OPEN (NASA Technical Reports Server)",
+   "retrieved": "2026-09-26",
+   "sha256": "1aa4257d1a84af5a126a649530cd94355d924566397e0771c0dc8dda41eddd51",
+   "evidence_level": 3,
+   "used_for": "Xe+ -> BN (grade not stated; 'supplied by the On-Board Propulsion branch') erosion rates at 300/600/1000 eV and three angles, Table 1 (values checked against the rendered page image)"
+  },
+  {
+   "id": "S04",
+   "citation": "M. Tartz, T. Heyn, C. Bundesmann, H. Neumann, 'Measuring sputter yields of ceramic materials', 31st International Electric Propulsion Conference, Ann Arbor, MI, 20-24 Sept 2009, IEPC-2009-240",
+   "url": "https://electricrocket.org/IEPC/IEPC-2009-240.pdf",
+   "access": "OPEN (Electric Rocket Propulsion Society IEPC archive)",
+   "retrieved": "2026-09-26",
+   "sha256": "e85dd19c366cbb5be4dbcd56c8806428350b3457e5b5e844b70a385d9e5ea259",
+   "evidence_level": 3,
+   "used_for": "Xe+ -> quartz, Al2O3, BN (isotropic pressed high-density BN with calcium-borate binder, Sindlhauser Materials) yields at normal incidence 100-800 eV, summary table (Sec. V); neutralizer effects; moisture uptake"
+  },
+  {
+   "id": "S05",
+   "citation": "T. Tondu, J.-P. Chardon, S. Zurbach, 'Sputtering yield of potential ceramics for Hall Effect Thruster discharge channel', 32nd International Electric Propulsion Conference, Wiesbaden, 11-15 Sept 2011, IEPC-2011-106",
+   "url": "https://electricrocket.org/IEPC/IEPC-2011-106.pdf",
+   "access": "OPEN (ERPS IEPC archive)",
+   "retrieved": "2026-09-26",
+   "sha256": "967c7e4279013032b5105119b05621005d93b699547f0f18d22559779e49d997",
+   "evidence_level": 3,
+   "used_for": "Xe+ -> BN, SiO2, Al2O3 mass-loss yields 200-800 eV (normal) and 0-75 deg at 500 eV: figures only (values not transcribed, digitization TBD); CSiPI Monte Carlo binding-energy inputs (Table 1); grain detachment and surface-charge discussion"
+  },
+  {
+   "id": "S06",
+   "citation": "V. V. Abashkin, O. A. Gorshkov, A. S. Lovtsov, A. A. Shagaida, 'Analysis of Ceramic Erosion Characteristic in Hall-Effect Thruster with Higher Specific Impulse', 30th International Electric Propulsion Conference, Florence, 17-20 Sept 2007, IEPC-2007-133",
+   "url": "https://electricrocket.org/IEPC/IEPC-2007-133.pdf",
+   "access": "OPEN (ERPS IEPC archive)",
+   "retrieved": "2026-09-26",
+   "sha256": "adf5812ec86b1da64d6db48546d3413229e28710dea8d9be4acd64bb407e8bcb",
+   "evidence_level": 3,
+   "used_for": "Xe plasma-plume exposure of BGP (BN-SiO2) and BN-05 (hot-pressed h-BN, <4 % B2O3-CaO binder): yields vs angle 0-70 deg at 325 and 500 V discharge (Figs. 4-5; values not transcribed); 'BN-05 yield 1.5-18 times lower than BGP'; 500 h life tests; sputter threshold ASSUMED 50 eV in their wall analysis"
+  },
+  {
+   "id": "S07",
+   "citation": "Y. Garnier, V. Viel, J.-F. Roussel, J. Bernard, 'Low-energy xenon ion sputtering of ceramics investigated for stationary plasma thrusters', J. Vac. Sci. Technol. A 17(6), 3246-3254 (1999)",
+   "doi": "10.1116/1.582050",
+   "access": "CLOSED (OpenAlex: oa_status closed). Only the abstract (OpenAlex metadata) was read.",
+   "retrieved": "2026-09-26",
+   "evidence_level": 3,
+   "used_for": "existence and scope only: Xe+ on BN, MgO, BN-AlN and BN-SiO2 at 350 eV, 500 eV and 1 keV; weak angular dependence attributed to surface roughness; grain/matrix differential erosion; near-linear normal-incidence energy dependence 0.35-1 keV. Values TBD."
+  },
+  {
+   "id": "S08",
+   "citation": "M. W. Crofton, J. A. Young, 'Low energy Xe+ sputter yields for alumina, Hiperco 50, and boron nitride', AIP Advances 11(12), 125126 (2021)",
+   "doi": "10.1063/5.0067346",
+   "license": "CC BY (OpenAlex)",
+   "access": "Open access by licence, but pubs.aip.org answered every automated request with a Cloudflare bot challenge; NOT bypassed. No repository copy found (OpenAlex locations: publisher, DOAJ). Abstract read via OpenAlex.",
+   "retrieved": "2026-09-26",
+   "evidence_level": 3,
+   "used_for": "existence and scope only: angular profiles at a single energy and normal-incidence energy dependence for alumina and HP-grade BN; least-squares fits. Values TBD (owner can read the CC BY PDF manually)."
+  },
+  {
+   "id": "S09",
+   "citation": "M. Ranjan, A. Sharma, A. Vaid, T. Bhatt, V. Nandalan, M. G. James, H. Revathi, S. Mukherjee, 'BN/BNSiO2 sputtering yield shape profiles under stationary plasma thruster operating conditions', AIP Advances 6(9), 095224 (2016)",
+   "url": "https://pubs.aip.org/aip/adv/article/6/9/095224/878349/BN-BNSiO2-sputtering-yield-shape-profiles-under",
+   "doi": "10.1063/1.4964312",
+   "doi_check": "Crossref metadata (api.crossref.org/works/10.1063/1.4964312, queried 2026-09-26, second-lens repair): title, journal AIP Advances vol. 6 issue 9 article 095224, publication 2016-09, and the eight author family names listed here all match. Metadata only; the paper body was still not read.",
+   "access": "Open-access journal, but pubs.aip.org bot challenge; NOT bypassed. Bibliographic data confirmed via Crossref (doi_check); abstract read via the OpenAlex API (api.openalex.org/works/doi:10.1063/1.4964312, abstract_inverted_index, retrieved 2026-09-27, second-lens round 2); paper body not read.",
+   "retrieved": "2026-09-26",
+   "evidence_level": 3,
+   "used_for": "existence and scope only: QCM volumetric and total yields of BN and BN-SiO2 under Xe+ 100-550 eV, 0-85 deg; 'sudden jump' in yield above 500 eV and at 45-65 deg; BNSiO2 marginally higher yield than BN; generalized-Bohdansky prediction of BN erosion at energies as low as 74 eV (all from the OpenAlex abstract). Values TBD. Author affiliation not retrieved."
+  },
+  {
+   "id": "S10",
+   "citation": "J. T. Yim, M. L. Falk, I. D. Boyd, 'Modeling low energy sputtering of hexagonal boron nitride by xenon ions', arXiv:0802.1960v1 (14 Feb 2008); published as J. Appl. Phys. 104, 123507 (2008)",
+   "url": "https://arxiv.org/pdf/0802.1960",
+   "access": "OPEN (arXiv preprint). Journal reference taken from the publisher URL returned by a web search (pubs.aip.org/aip/jap/article-abstract/104/12/123507); journal version not accessed; numbers taken from the preprint (verify against the journal version).",
+   "retrieved": "2026-09-26",
+   "sha256": "f318ff98547f859035c52e30663391eed334e2768224da1b1fb0ad90098cee9a",
+   "evidence_level": 4,
+   "used_for": "molecular-dynamics Xe -> h-BN yields 10-350 eV at 45 deg, 423 K; Bohdansky fit Eq. (5); ~2x yield increase 423 K -> 850 K"
+  },
+  {
+   "id": "S11",
+   "citation": "J. T. Yim, 'A survey of xenon ion sputter yield data and fits relevant to electric propulsion spacecraft integration', 35th International Electric Propulsion Conference, Atlanta, GA, 8-12 Oct 2017, IEPC-2017-060 (NTRS 20170009068)",
+   "url": "https://ntrs.nasa.gov/api/citations/20170009068/downloads/20170009068.pdf",
+   "access": "OPEN (NTRS)",
+   "retrieved": "2026-09-26",
+   "sha256": "d3f11b57eb7d9082c6003b04cbe465c33ce4d123643d91df1d1d3c93b81f7280",
+   "evidence_level": 5,
+   "used_for": "Bayesian (MCMC) Eckstein-formula fits for Xe+ -> Al2O3 and SiO2 (Table 6) and Wei angular fits (Table 7); Table 1 list of sputter-data uncertainty sources. A compilation/fit of other groups' data (level 5)."
+  },
+  {
+   "id": "S12",
+   "citation": "W. Eckstein, 'Calculated Sputtering, Reflection and Range Values', IPP-Report 9/132, Max-Planck-Institut fuer Plasmaphysik, Garching, June 2002",
+   "url": "https://pure.mpg.de/rest/items/item_2138250_2/component/file_3587319/content",
+   "handle": "https://hdl.handle.net/11858/00-001M-0000-0027-4523-3 (per web-search result; verify)",
+   "access": "OPEN (MPG PuRe). Scanned report with an OCR text layer; every value used here was checked against the rendered page image.",
+   "retrieved": "2026-09-26",
+   "sha256": "2a5726734b3b13038def69bf6000629ccf6373c4eb498a1bb3424949ece74fe8",
+   "evidence_level": 4,
+   "used_for": "TRIM.SP (binary-collision Monte Carlo) yields for O -> B (p. 40), O -> C (p. 65), O -> B2O3 (p. 278). Report states statistical errors usually < 3 % for yields > 1e-5, up to 100 % at the lowest values; 'valid for nearly flat surfaces'. The report has no SiC, Al2O3 or BN target, no O on Si or Al, and N projectiles only on Be, C (15-30 keV only) and W - none a candidate wall or a sensible proxy (index pp. 5-6)."
+  },
+  {
+   "id": "S13",
+   "citation": "S. L. Espy, I. F. Urazgil'din, A. V. Barnes, Y. Yao, J. L. Allen, R. G. Albridge, N. H. Tolk, 'Low-energy sputtering yield measurements of O+, O2+, N+, and N2+ incident on Al and Al2O3 surfaces', Proc. SPIE 1761 (Damage to Space Optics, and Properties and Characteristics of Optical Glass), pp. 130-140 (1993)",
+   "doi": "10.1117/12.138921",
+   "access": "CLOSED (OpenAlex: oa_status closed). Abstract read via OpenAlex.",
+   "retrieved": "2026-09-26",
+   "evidence_level": 3,
+   "used_for": "existence and scope only: the ONLY located measurement of N+, N2+, O+, O2+ yields on a candidate wall ceramic. 50-200 eV beams; QCM mass loss on samples vacuum-deposited on the crystal (thin films, not sintered ceramic). Values TBD."
+  },
+  {
+   "id": "S14",
+   "citation": "S. Y. Cheng, M. Martinez-Sanchez, 'Modeling of Hall thruster lifetime and erosion mechanisms', 30th International Electric Propulsion Conference, Florence, 17-20 Sept 2007, IEPC-2007-250",
+   "url": "https://electricrocket.org/IEPC/IEPC-2007-250.pdf",
+   "access": "OPEN (ERPS IEPC archive)",
+   "retrieved": "2026-09-26",
+   "sha256": "2f3e3171c93a7936674fab614c23af272710ebf6324f046e1e38cceae48ff24d",
+   "evidence_level": 6,
+   "used_for": "Table 1: borosil sputter thresholds assumed by different erosion models (30-70 eV); Table 2: Xe+ -> BN normal-yield fit parameters for imposed thresholds 0-50 eV (fitted to Yalin et al. data); statement that models all used Garnier's borosil data taken above the Hall-relevant energies"
+  },
+  {
+   "id": "S15",
+   "citation": "M. Passet, M. Panelli, F. Battista, 'Numerical Modeling of Erosion in Hall Effect Thrusters', Particles 7(1), 121-143 (2024)",
+   "doi": "10.3390/particles7010007",
+   "access": "Gold OA, but mdpi.com returned HTTP 403 to automated fetch; NOT bypassed. Abstract read via OpenAlex.",
+   "retrieved": "2026-09-26",
+   "evidence_level": 5,
+   "used_for": "abstract statements: Xe-Borosil yield model based on Ranjan et al. with a linear temperature factor (Parida et al.); SPT-100 exit erosion under-predicted by 50-60 %; need for new measurements at 10-250 eV, 0-85 deg, 30-600 C"
+  },
+  {
+   "id": "S16",
+   "citation": "E. N. Nikiporetz, A. A. Semenov, I. I. Shkarban, E. S. Khartova, 'Sputtering process of BN based ceramic by the flows of noncompensated charge plasma', 30th International Electric Propulsion Conference, Florence, 17-20 Sept 2007, IEPC-2007-7",
+   "url": "https://electricrocket.org/IEPC/IEPC-2007-007.pdf",
+   "access": "OPEN (ERPS IEPC archive)",
+   "retrieved": "2026-09-26",
+   "sha256": "927c51f1e7b7d22b06213aeca833baa3eab5b3bafdbca4d7426f25c16cea528d",
+   "evidence_level": 3,
+   "used_for": "Si3N4+BN ceramic under Xe plasma flow: no yield difference within experimental error up to +30 V surface potential (conclusion); yield values in Fig. 6 not transcribed"
+  },
+  {
+   "id": "S17",
+   "citation": "Tejeda, Knoll (initials not retrieved), 'An oxygen-fuelled Hall Effect Thruster: Channel length, ceramic walls and anode material experimental analyses', Acta Astronautica 203, 268- (2023) (ADS bibcode 2023AcAau.203..268T)",
+   "doi": "10.1016/j.actaastro.2022.11.055",
+   "access": "Full text NOT accessed (sciencedirect.com HTTP 403; ADS HTTP 405). Existence and scope known only from web-search result summaries (verify).",
+   "retrieved": "2026-09-26",
+   "evidence_level": 3,
+   "used_for": "existence only: an O2-fuelled Hall thruster tested with different ceramic walls and anode materials at Imperial College (keywords include oxidation, ceramic walls). Whether it reports wall erosion/mass loss is TBD."
+  },
+  {
+   "id": "S18",
+   "citation": "V. Kim, V. Kozlov, A. Semenov, I. Shkarban, 'Investigation of the Boron Nitride Based Ceramics Sputtering Yield Under It's Bombardment by Xe and Kr Ions', 27th International Electric Propulsion Conference, Pasadena, CA, 2001, IEPC-2001-073 (as cited by S01 ref. 48; S02 ref. 46 gives IEPC-2007-133, which is S06's number - citation conflict, verify)",
+   "access": "NOT accessed (electricrocket.org/IEPC/IEPC-2001-073.pdf returned HTTP 404).",
+   "evidence_level": 3,
+   "used_for": "existence only: Xe and Kr on BN-based ceramics. Values TBD."
+  },
+  {
+   "id": "S19",
+   "citation": "X. Duan et al., 'Ion sputtering erosion mechanisms of h-BN composite ceramics with textured microstructures', Journal of Alloys and Compounds 613, 1-7 (2014) (as cited by S11 ref. 17)",
+   "access": "NOT accessed.",
+   "evidence_level": 3,
+   "used_for": "existence only: candidate textured h-BN composite wall ceramics (Xe). Values TBD."
+  },
+  {
+   "id": "S20",
+   "citation": "T. Tondu, V. Viel-Inguimbert, J.-F. Roussel, S. D'Escrivan, 'Hall Effect Thrusters ceramics sputtering yield determination by Monte Carlo simulations', AIAA-2008-5090 (as cited by S04 ref. 12)",
+   "access": "NOT accessed.",
+   "evidence_level": 4,
+   "used_for": "existence only: CSiPI Monte Carlo yields for HET ceramics (Xe). Values TBD."
+  },
+  {
+   "id": "S21",
+   "citation": "Y. Yamamura, H. Tawara, 'Energy Dependence of Ion-Induced Sputtering Yields from Monatomic Solids at Normal Incidence', At. Data Nucl. Data Tables 62, 149-253 (1996) (as cited by S02 ref. 5); W. Eckstein, 'Sputtering yields', in Sputtering by Particle Bombardment, Topics in Applied Physics 110, eds. R. Behrisch, W. Eckstein (Springer, 2007) (as cited by S11 ref. 34)",
+   "access": "NOT accessed (closed).",
+   "evidence_level": 4,
+   "used_for": "candidate sources of elemental N/O-projectile fits (monatomic targets only; not applicable to compound ceramics without a TARGET_PROXY flag). To be checked by the owner."
+  },
+  {
+   "id": "S22",
+   "citation": "Repository-internal: hallthruster_bridge/hall_map_schema_v1.json (fields wall_ion_flux_m2s, wall_ion_energy_eV, wall_life_trustworthy, ion_wall_losses), hallthruster_bridge/bridge_lib.jl wall_ion_metrics, abep_sim/hall_map.py HallMap.__call__, abep_sim/materials.py, abep_sim/plasma_devices.py, abep_sim/life.py, CLAUDE.md items 1 and 5",
+   "access": "read-only in this worktree",
+   "evidence_level": 7,
+   "used_for": "hard_statements and in_repo_audit"
+  },
+  {
+   "id": "S23",
+   "citation": "'Sputtering yield and nanopattern formation study of BNSiO2 (Borosil) at elevated temperature relevance to Hall Effect Thruster', Nuclear Instruments and Methods in Physics Research B (2022; ScienceDirect PII S0168583X22000015). Authors not retrieved; possibly the 'Parida et al.' temperature study cited by S15 (verify).",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0168583X22000015",
+   "access": "NOT accessed (sciencedirect.com HTTP 403 to automated fetch; OpenAlex rate-limited). Existence known from web-search results only.",
+   "evidence_level": 3,
+   "used_for": "existence only: Xe on BN-SiO2 (Borosil) sputter yield at elevated temperature. Values TBD."
+  }
+ ],
+ "entries": [
+  {
+   "id": "Y-XE-BN-HBC-RUBIN2009",
+   "projectile": "Xe+",
+   "target": "BN",
+   "target_detail": "h-BN, HBC grade (GE Advanced Materials): hot-pressed, diffusion-bonded, no binder, >99 % B+N (grade description from S02 Sec. 2.5)",
+   "source": ["S01"],
+   "source_locator": "IEPC-2009-042 Table 1 (pp. 11-12)",
+   "evidence_level": 3,
+   "evidence_class": "measured",
+   "method": "QCM differential yields of condensable products, total yield from the best-fit modified-Zhang profile; four-grid optics 60-350 eV, two-grid 250-500 eV; plasma-bridge neutralizer in the saturated regime",
+   "energy_range_eV": {
+    "min": 60,
+    "max": 500
+   },
+   "incidence_angles_deg": [0, 15, 30, 45],
+   "surface_temperature": "not cooled; ~80 C steady state (S02 p. 62)",
+   "units": "mm3/C",
+   "data": {
+    "columns": ["E_eV", "beta_deg", "Y_QCM_condensable_mm3_per_C", "Y_BN_full_mm3_per_C", "Estar_eV"],
+    "rows": [
+     [60, 0, 0.0063, 0.0145, 8],
+     [100, 0, 0.0136, 0.0312, 18],
+     [100, 15, 0.0142, 0.0327, 13],
+     [100, 30, 0.0145, 0.0333, 18],
+     [100, 45, 0.0181, 0.0417, 21],
+     [150, 0, 0.017, 0.039, 13],
+     [200, 0, 0.0268, 0.0614, 40],
+     [250, 0, 0.0291, 0.0669, 63],
+     [250, 15, 0.0234, 0.0539, 65],
+     [250, 30, 0.0287, 0.066, 96],
+     [250, 45, 0.0258, 0.0594, 86],
+     [300, 0, 0.0367, 0.0842, 67],
+     [350, 0, 0.0316, 0.0726, 84],
+     [350, 15, 0.02, 0.0459, 97],
+     [350, 30, 0.0243, 0.0559, 148],
+     [350, 45, 0.0308, 0.0707, 163],
+     [500, 0, 0.0423, 0.0973, 123],
+     [500, 15, 0.0473, 0.109, 150],
+     [500, 30, 0.0485, 0.112, 207],
+     [500, 45, 0.0545, 0.125, 231]
+    ]
+   },
+   "threshold_eV": {
+    "value": null,
+    "note": "not measured; fits give 24 +/- 6 eV (Bohdansky) and 57 eV (Zhang) - see Y-XE-BN-FIT-RUBIN2009. Lowest detected sputtering 40 eV, not reported due to significant uncertainty (S01 p. 14)."
+   },
+   "uncertainty": "~30 % on total and differential yields, from repeatability (S01 Sec. IV.A). Additional systematic: neutralization state (~2x, S02), background-gas scattering <= 10 % (S01 Sec. II). Inter-laboratory spread vs S04 at equal energy 4.6-11.8x (our arithmetic).",
+   "applicability_domain": "Xe+ beam, 60-500 eV, 0-45 deg, HBC grade, ~80 C, flat polished coupon, post-presputter steady state",
+   "validation_status": "method validated on Mo against Doerner 2003 (S01 Fig. 6); not reproduced by an independent lab (S04 BN values are 4.6-11.8x lower)",
+   "transformation_chain": "QCM frequency -> condensable differential yield -> MZ-fit integral Y_QCM -> x (M_B+M_N)/M_B -> Y_BN (both done by the source) -> transcribed here exactly",
+   "values_status": "transcribed",
+   "extrapolation_flags_for_ABEP": ["PROJECTILE_PROXY for any N/O use"]
+  },
+  {
+   "id": "Y-XE-BN-HBR-RUBIN2009",
+   "projectile": "Xe+",
+   "target": "BN",
+   "target_detail": "h-BN, HBR grade (GE): contains calcium-borate binder (S02 Sec. 2.5)",
+   "source": ["S01"],
+   "source_locator": "IEPC-2009-042 Table 2 (p. 12)",
+   "evidence_level": 3,
+   "evidence_class": "measured",
+   "method": "as Y-XE-BN-HBC-RUBIN2009",
+   "energy_range_eV": {
+    "min": 60,
+    "max": 500
+   },
+   "incidence_angles_deg": [0, 15, 30, 45],
+   "surface_temperature": "~80 C (S02)",
+   "units": "mm3/C",
+   "data": {
+    "columns": ["E_eV", "beta_deg", "Y_QCM_condensable_mm3_per_C", "Y_BN_full_mm3_per_C", "Estar_eV"],
+    "rows": [
+     [60, 0, 0.0064, 0.015, 2],
+     [100, 0, 0.0158, 0.036, 6],
+     [100, 15, 0.0185, 0.0425, 27],
+     [100, 30, 0.0218, 0.0502, 38],
+     [100, 45, 0.0233, 0.0535, 27],
+     [200, 0, 0.025, 0.058, 53],
+     [250, 0, 0.034, 0.079, 46],
+     [250, 15, 0.0276, 0.0634, 58],
+     [250, 30, 0.0566, 0.13, 69],
+     [250, 45, 0.0497, 0.114, 97],
+     [350, 0, 0.0365, 0.0838, 94],
+     [350, 15, 0.0328, 0.0753, 134],
+     [350, 30, 0.0514, 0.118, 135],
+     [350, 45, 0.0644, 0.148, 182],
+     [500, 0, 0.0388, 0.089, 191],
+     [500, 15, 0.0669, 0.154, 213],
+     [500, 30, 0.0657, 0.151, 250],
+     [500, 45, 0.101, 0.233, 261]
+    ]
+   },
+   "threshold_eV": {
+    "value": null,
+    "note": "not measured; Bohdansky fit Eth^E 29 eV (S01 Table 4)"
+   },
+   "uncertainty": "~30 % (S01); systematic as HBC entry",
+   "applicability_domain": "Xe+ beam, 60-500 eV, 0-45 deg, HBR grade",
+   "validation_status": "single laboratory",
+   "transformation_chain": "as HBC entry; transcribed exactly. Rounding note: the printed Y_QCM and Y_BN carry only 1-2 significant figures (our reading of the transcribed values), so recomputing Y_BN = Y_QCM (M_B+M_N)/M_B from the printed Y_QCM need not match the printed Y_BN exactly; e.g. 60 eV / 0 deg: 0.0064 x 2.296 (M_B = 10.81, M_N = 14.007) = 0.01469 vs printed 0.015 (+2 %). Both printed values are kept; this is not a conversion error and is inside the stated uncertainty.",
+   "values_status": "transcribed",
+   "extrapolation_flags_for_ABEP": ["PROJECTILE_PROXY for any N/O use"]
+  },
+  {
+   "id": "Y-XE-BN-HP-RUBIN2009",
+   "projectile": "Xe+",
+   "target": "BN",
+   "target_detail": "h-BN, HP grade (Saint-Gobain): calcium-borate binder (S02 Sec. 2.5)",
+   "source": ["S01"],
+   "source_locator": "IEPC-2009-042 Table 3 (p. 12)",
+   "evidence_level": 3,
+   "evidence_class": "measured",
+   "method": "as Y-XE-BN-HBC-RUBIN2009",
+   "energy_range_eV": {
+    "min": 60,
+    "max": 250
+   },
+   "incidence_angles_deg": [0, 15, 30, 45],
+   "surface_temperature": "~80 C (S02)",
+   "units": "mm3/C",
+   "data": {
+    "columns": ["E_eV", "beta_deg", "Y_QCM_condensable_mm3_per_C", "Y_BN_full_mm3_per_C", "Estar_eV"],
+    "rows": [
+     [60, 0, 0.004, 0.01, 5],
+     [100, 0, 0.015, 0.034, 25],
+     [100, 15, 0.015, 0.034, 19],
+     [100, 30, 0.018, 0.041, 10],
+     [100, 45, 0.016, 0.037, 15],
+     [200, 0, 0.035, 0.08, 61],
+     [250, 0, 0.053, 0.122, 71]
+    ]
+   },
+   "threshold_eV": {
+    "value": null,
+    "note": "Bohdansky fit Eth^E 35 eV (S01 Table 4)"
+   },
+   "uncertainty": "~30 % (S01). HP moisture uptake strongest of the three grades (S01 Sec. II: 'HBC has the lowest moisture pickup, followed by HBR and HP'; S02 Figs. 15-16) - affects weight-loss cross-checks, not QCM",
+   "applicability_domain": "Xe+ beam, 60-250 eV, 0-45 deg, HP grade",
+   "validation_status": "single laboratory; S04 (also Ca-borate-bound BN) is 12.2-12.8x lower at 100 and 250 eV (our arithmetic)",
+   "transformation_chain": "as HBC entry; transcribed exactly. Rounding note: the printed Y_QCM and Y_BN carry only 1-2 significant figures (our reading of the transcribed values), so recomputing Y_BN = Y_QCM (M_B+M_N)/M_B from the printed Y_QCM need not match the printed Y_BN exactly; e.g. 60 eV / 0 deg: 0.004 x 2.296 (M_B = 10.81, M_N = 14.007) = 0.00918 vs printed 0.01 (+9 %). Both printed values are kept; this is not a conversion error and is inside the stated uncertainty.",
+   "values_status": "transcribed",
+   "extrapolation_flags_for_ABEP": ["PROJECTILE_PROXY for any N/O use"]
+  },
+  {
+   "id": "Y-XE-BN-FIT-RUBIN2009",
+   "projectile": "Xe+",
+   "target": "BN",
+   "target_detail": "HBC, HBR, HP grades (fits per grade)",
+   "source": ["S01"],
+   "source_locator": "IEPC-2009-042 Eqs. (4)-(6), Tables 4-5, p. 13-15 (equations checked against the rendered page)",
+   "evidence_level": 3,
+   "evidence_class": "model-derived",
+   "method": "least-squares fit of Y = Y_E * Y_beta to all measured condensable yields (Fig. 15 axis: Y_QCM). Y_E = k [1 - (Eth_E/E)^(2/3)] (1 - Eth_E/E)^2 (Bohdansky). Y_beta as printed: (cos b)^f exp[-Sigma (1/cos b - 1)], f = 1.71 [1 + 2.5 sqrt(Eth_b/E) / (1 - sqrt(Eth_b/E))], Sigma = f cos(90 - 286 [0.09145/sqrt(E)]^0.45) (degrees). NOTE: the printed exponent (cos b)^f cannot produce the peaked fit of their Fig. 16; the standard Yamamura form is (cos b)^(-f) - verify before any use.",
+   "energy_range_eV": {
+    "min": 60,
+    "max": 500
+   },
+   "fit_domain": "60-500 eV, 0-45 deg (stated by S01: 'may provide very inadequate descriptions outside of the domain where experimental data are available')",
+   "incidence_angles_deg": [0, 15, 30, 45],
+   "units": "k in mm3/C (condensable basis per Fig. 15; verify)",
+   "data": {
+    "columns": ["grade", "k_mm3_per_C", "Eth_E_eV", "Eth_beta_eV", "max_error_pct", "error_sd_pct", "fit_energy_range_eV"],
+    "rows": [
+     ["HBC", 0.037, 24, 0, 40, 12, "60-500"],
+     ["HBR", 0.055, 29, 17, 34, 11, "60-500"],
+     ["HP", 0.073, 35, 0, 25, 9, "60-500 (HP data 60-250)"],
+     ["HBC composite low", 0.038, 23, 0, 29, 9, "60-300"],
+     ["HBC composite high", 0.104, 116, 0, 26, 8, "350-500"]
+    ]
+   },
+   "threshold_eV": {
+    "value": 24,
+    "uncertainty": 6,
+    "basis": "Bohdansky fit parameter for HBC (S01 text p. 13-14); Zhang-fit threshold 57 eV (S01 p. 14). A fitted threshold, not a measured one."
+   },
+   "uncertainty": "fit max errors 25-40 %, sd 9-12 % vs the data (Table 4), on top of the ~30 % data uncertainty. INTERNAL INCONSISTENCY: S01 text gives k = 0.053 mm3/C for the HBC single fit, Table 4 gives 0.037 (both kept; unresolved). The 350-500 eV composite 'Eth_E = 116 eV' is a curve-shape parameter, not a physical threshold.",
+   "applicability_domain": "Xe+, 60-500 eV, 0-45 deg, the three grades",
+   "validation_status": "fit to single-lab data; not independently validated",
+   "transformation_chain": "measured Y_QCM (S01 Tables 1-3) -> source's least-squares fit -> parameters transcribed exactly",
+   "values_status": "transcribed",
+   "extrapolation_flags_for_ABEP": ["PROJECTILE_PROXY for any N/O use", "E_BELOW_MEASURED below 60 eV"]
+  },
+  {
+   "id": "Y-XE-BN-LOWE-RAW-TOPPER2011",
+   "projectile": "Xe+",
+   "target": "BN",
+   "target_detail": "HBC, HBR, HP grades (raw single runs)",
+   "source": ["S02"],
+   "source_locator": "Topper 2011 thesis Appendix A, Tables A1-A3 (pp. 88-90), low-energy rows only",
+   "evidence_level": 3,
+   "evidence_class": "measured",
+   "method": "QCM, condensable yields, individual runs (not averaged, not converted to full BN yield); azimuth = target azimuthal angle of the QCM chord",
+   "energy_range_eV": {
+    "min": 40,
+    "max": 80
+   },
+   "incidence_angles_deg": [0, 15, 30, 45],
+   "surface_temperature": "~80 C",
+   "units": "mm3/C (condensable only)",
+   "data": {
+    "columns": ["grade", "E_eV", "beta_deg", "azimuth_deg", "Y_QCM_condensable_mm3_per_C"],
+    "rows": [
+     ["HBC", 80, 0, 0, 0.012],
+     ["HBC", 80, 15, 0, 0.015],
+     ["HBC", 60, 0, 0, 0.006],
+     ["HBC", 60, 0, 0, 0.009],
+     ["HBC", 40, 0, 0, 0.013],
+     ["HBC", 40, 0, 0, 0.009],
+     ["HBC", 40, 15, 0, 0.002],
+     ["HBC", 40, 15, 0, 0.018],
+     ["HBC", 40, 15, 0, 0.011],
+     ["HBC", 40, 45, 0, 0.021],
+     ["HBR", 80, 0, 0, 0.014],
+     ["HBR", 80, 0, 60, 0.011],
+     ["HBR", 80, 0, 0, 0.014],
+     ["HBR", 80, 15, 0, 0.02],
+     ["HBR", 80, 15, 60, 0.016],
+     ["HBR", 80, 15, 0, 0.021],
+     ["HBR", 80, 30, 0, 0.021],
+     ["HBR", 80, 30, 60, 0.02],
+     ["HBR", 80, 30, 0, 0.021],
+     ["HBR", 60, 0, 0, 0.006],
+     ["HP", 80, 15, 0, 0.028],
+     ["HP", 80, 15, 60, 0.02],
+     ["HP", 80, 15, 0, 0.027],
+     ["HP", 60, 0, 0, 0.004],
+     ["HP", 60, 45, 0, 0.006]
+    ]
+   },
+   "threshold_eV": {
+    "value": null,
+    "note": "40 eV runs scatter 0.002-0.021 mm3/C at 15-45 deg: the near-threshold region is not resolved by these data"
+   },
+   "uncertainty": "single runs; S01 declined to report 40 eV results because the 'experimental uncertainty was significant'. Treat 40 eV rows as indicative only.",
+   "applicability_domain": "Xe+, 40-80 eV, HBC/HBR/HP",
+   "validation_status": "not validated; retained only as evidence that sputtering is detectable at 40 eV and that the low-energy region is poorly constrained",
+   "transformation_chain": "thesis table -> transcribed exactly (condensable basis; no conversion applied)",
+   "values_status": "transcribed",
+   "extrapolation_flags_for_ABEP": ["PROJECTILE_PROXY for any N/O use"]
+  },
+  {
+   "id": "Y-XE-BN-BRITTON2002",
+   "projectile": "Xe+",
+   "target": "BN",
+   "target_detail": "BN, grade not stated (1-inch samples supplied by the NASA GRC On-Board Propulsion branch), polished",
+   "source": ["S03"],
+   "source_locator": "NASA/TM-2002-211837 Table 1 (p. 3); angle definition Fig. 5 (p. 5)",
+   "evidence_level": 3,
+   "evidence_class": "measured",
+   "method": "5-cm Kaufman ion source (Ion Tech Dual Beam II); masked-step profilometry (Dektak IIA, 10 points); current density from a probe biased -15 V at the sample position before/after; probable errors propagated",
+   "energy_range_eV": {
+    "min": 300,
+    "max": 1000
+   },
+   "incidence_angles_deg": [15, 40, 60],
+   "angle_note": "source reports theta = 75, 50, 30 deg measured from the surface plane; beta = 90 - theta (our transformation)",
+   "surface_temperature": "not reported",
+   "units": "reported: Angstrom/(s * mA/cm2); converted: mm3/C",
+   "data": {
+    "columns": ["E_eV", "theta_from_surface_deg", "beta_from_normal_deg", "rate_A_per_s_per_mA_cm2", "rate_probable_error", "Y_mm3_per_C_converted", "Y_probable_error_mm3_per_C"],
+    "rows": [
+     [1000, 75, 15, 8.79, 0.53, 0.0879, 0.0053],
+     [600, 75, 15, 5.76, 0.45, 0.0576, 0.0045],
+     [300, 75, 15, 3.5, 0.58, 0.035, 0.0058],
+     [1000, 50, 40, 8.9, 0.97, 0.089, 0.0097],
+     [600, 50, 40, 5.11, 0.4, 0.0511, 0.004],
+     [300, 50, 40, 3.41, 0.86, 0.0341, 0.0086],
+     [1000, 30, 60, 14.37, 1.39, 0.1437, 0.0139],
+     [600, 30, 60, 8.34, 1.64, 0.0834, 0.0164],
+     [300, 30, 60, 5.93, 0.77, 0.0593, 0.0077]
+    ]
+   },
+   "threshold_eV": {
+    "value": null,
+    "note": "not addressed"
+   },
+   "uncertainty": "probable errors (0.6745 sigma) as tabulated; largest source is profilometer step-height variance (S03 Sec. 2.2). No correction for charge-exchange neutrals or beam neutralization state reported.",
+   "applicability_domain": "Xe+, 300-1000 eV, beta 15/40/60 deg, unspecified BN grade",
+   "validation_status": "single laboratory; 15 and 40 deg values overlap within probable error (S03)",
+   "transformation_chain": "profilometer step height -> source Eq. (1) rate per mA/cm2 (Table 1) -> transcribed -> our exact unit conversion x 1e-2 to mm3/C and angle conversion beta = 90 - theta",
+   "values_status": "transcribed",
+   "extrapolation_flags_for_ABEP": ["PROJECTILE_PROXY for any N/O use", "E_BELOW_MEASURED below 300 eV (the Hall-relevant low-energy region; S01 Sec. I, S14 Sec. IV.A)"]
+  },
+  {
+   "id": "Y-XE-BN-TARTZ2009",
+   "projectile": "Xe+",
+   "target": "BN",
+   "target_detail": "isotropic pressed high-density BN with calcium-borate binder (Sindlhauser Materials)",
+   "source": ["S04"],
+   "source_locator": "IEPC-2009-240 Sec. V summary table (p. 14); Sec. IV.B",
+   "evidence_level": 3,
+   "evidence_class": "measured",
+   "method": "weight loss (microbalance 10 ug); target current from reference silver sample with neutralizer set for 0 V on the reference; CEX correction ~0.95; samples weighed after >= 8 h in air to reach moisture steady state",
+   "energy_range_eV": {
+    "min": 100,
+    "max": 800
+   },
+   "incidence_angles_deg": [0],
+   "surface_temperature": "not reported",
+   "units": "mm3/C",
+   "data": {
+    "columns": ["E_eV", "beta_deg", "Y_mm3_per_C"],
+    "rows": [
+     [100, 0, 0.00265],
+     [250, 0, 0.01],
+     [350, 0, 0.0133],
+     [500, 0, 0.021],
+     [800, 0, 0.034]
+    ]
+   },
+   "threshold_eV": {
+    "value": null,
+    "note": "not addressed"
+   },
+   "uncertainty": "not stated numerically; source reports strong neutralizer effects on beam properties and a slight BN yield decrease with neutralizer voltage (Fig. 17). Source: 'Our yields are the lowest' of published BN data; agrees with CSU 2007 weight-loss data, disagrees with Topper 2008 (reason unknown).",
+   "applicability_domain": "Xe+, 100-800 eV, normal incidence, Ca-borate-bound BN",
+   "validation_status": "method cross-checked with metals; BN disagrees with S01 by 4.6-11.8x (our arithmetic: HBC Y_BN / this entry at 500, 350, 250, 100 eV = 4.63, 5.46, 6.69, 11.77)",
+   "transformation_chain": "mass loss / corrected charge / density (by source) -> table -> transcribed exactly",
+   "values_status": "transcribed",
+   "extrapolation_flags_for_ABEP": ["PROJECTILE_PROXY for any N/O use", "ANGLE_OUTSIDE_MEASURED for any oblique use"]
+  },
+  {
+   "id": "Y-XE-AL2O3-TARTZ2009",
+   "projectile": "Xe+",
+   "target": "Al2O3",
+   "target_detail": "alumina, purity >= 99.9 % 'as delivered' (grade/density not stated)",
+   "source": ["S04"],
+   "source_locator": "IEPC-2009-240 Sec. V summary table (p. 14); Fig. 18",
+   "evidence_level": 3,
+   "evidence_class": "measured",
+   "method": "weight loss, as Y-XE-BN-TARTZ2009",
+   "energy_range_eV": {
+    "min": 100,
+    "max": 800
+   },
+   "incidence_angles_deg": [0],
+   "surface_temperature": "not reported",
+   "units": "mm3/C",
+   "data": {
+    "columns": ["E_eV", "beta_deg", "Y_mm3_per_C"],
+    "rows": [
+     [100, 0, 0.00189],
+     [250, 0, 0.0076],
+     [350, 0, 0.013],
+     [500, 0, 0.0213],
+     [800, 0, 0.0326]
+    ]
+   },
+   "threshold_eV": {
+    "value": null,
+    "note": "not addressed; the S11 Eckstein fit to these and S05 data puts Eth at 5 eV, i.e. unidentified"
+   },
+   "uncertainty": "not stated numerically. Tondu 2011 (S05) measured lower alumina erosion than CSiPI predicts except at 800 eV, while these values agree better with CSiPI; S05 attributes the difference to surface-bias / Al+ re-collection (hypothesis).",
+   "applicability_domain": "Xe+, 100-800 eV, normal incidence",
+   "validation_status": "two-lab comparison (S05) disagrees; unresolved",
+   "transformation_chain": "as BN entry; transcribed exactly",
+   "values_status": "transcribed",
+   "extrapolation_flags_for_ABEP": ["PROJECTILE_PROXY for any N/O use"]
+  },
+  {
+   "id": "Y-XE-SIO2-TARTZ2009",
+   "projectile": "Xe+",
+   "target": "SiO2",
+   "target_detail": "quartz - listed as the SiO2 constituent reference for BN-SiO2; NOT a BN-SiO2 yield",
+   "source": ["S04"],
+   "source_locator": "IEPC-2009-240 Sec. V summary table (p. 14)",
+   "evidence_level": 3,
+   "evidence_class": "measured",
+   "method": "weight loss, as Y-XE-BN-TARTZ2009",
+   "energy_range_eV": {
+    "min": 100,
+    "max": 800
+   },
+   "incidence_angles_deg": [0],
+   "units": "mm3/C",
+   "data": {
+    "columns": ["E_eV", "beta_deg", "Y_mm3_per_C"],
+    "rows": [
+     [100, 0, 0.0132],
+     [250, 0, 0.0395],
+     [350, 0, 0.0577],
+     [500, 0, 0.076],
+     [800, 0, 0.118]
+    ]
+   },
+   "threshold_eV": {
+    "value": null,
+    "note": "S11 Eckstein fit to pooled SiO2 data gives Eth 59 eV (best) / 11 eV (conservative)"
+   },
+   "uncertainty": "not stated numerically; source notes its quartz values are somewhat below Yalin et al. and agree with Tondu's simulation",
+   "applicability_domain": "Xe+, 100-800 eV, normal incidence, quartz",
+   "validation_status": "consistent with CSiPI simulation (S04, S05)",
+   "transformation_chain": "transcribed exactly",
+   "values_status": "transcribed",
+   "extrapolation_flags_for_ABEP": ["PROJECTILE_PROXY for any N/O use", "TARGET_PROXY if used for BN-SiO2 (constituent yields do not combine linearly: S11 Sec. on multi-component materials)"]
+  },
+  {
+   "id": "Y-XE-AL2O3-FIT-YIM2017",
+   "projectile": "Xe+",
+   "target": "Al2O3",
+   "target_detail": "fit to pooled alumina data of S04 and S05",
+   "source": ["S11"],
+   "source_locator": "IEPC-2017-060 Table 2 (Eckstein generalized form), Eq. (7)-(8), Table 6, Table 7, Eq. (10) (checked against rendered pages)",
+   "evidence_level": 5,
+   "evidence_class": "model-derived",
+   "method": "Bayesian MCMC fit. Energy: Y = Q s_n(eps) (E/Eth - 1)^mu / [lambda/w + (E/Eth - 1)^mu], w = eps + 0.1728 sqrt(eps) + 0.008 eps^0.1504, s_n = KrC form 0.5 ln(1 + 1.2288 eps)/w (Eq. 7, implied by the w definition - verify), eps = (eps/E) * E. Angle (Wei, Eq. 10): Y'/Y'(0) = [1 + (b/a)^2 tan^2 t]^(-1/2) exp{0.5 (a_W/a)^2 [1 - 1/(1 + (b/a)^2 tan^2 t)]} with b/a = beta/alpha and a_W/a = a/alpha.",
+   "energy_range_eV": {
+    "min": 100,
+    "max": 800
+   },
+   "fit_domain": "underlying data: S04 100-800 eV normal; S05 200-800 eV normal and 0-75 deg at 500 eV",
+   "incidence_angles_deg": [],
+   "incidence_angle_range_deg": [0, 75],
+   "units": "Q in mm3/C",
+   "data": {
+    "columns": ["quantity", "eps_over_E_per_eV", "Q_mm3_per_C", "lambda", "mu", "Eth_eV", "beta_over_alpha", "a_over_alpha", "theta_max_deg", "Yprime_max"],
+    "rows": [
+     ["max-likelihood (best fit)", 1.9e-06, 0.3, 2.8, 1.6, 5, 0.71, 2.48, 73, 5.3],
+     ["50 % likelihood upper range (energy only)", 1.9e-06, 0.5, 0.3, 1.1, 5, null, null, null, null]
+    ]
+   },
+   "threshold_eV": {
+    "value": 5,
+    "basis": "fit parameter; the same 5 eV recurs for many materials in Tables 5-6 and the text mentions imposed bounds (no asterisks are visible in the published table). Not a physical threshold - the data start at 100 eV. Treat as unidentified."
+   },
+   "uncertainty": "posterior ranges in the source; S11 states the angular fits carry 'relatively high uncertainties' and should be used with caution; source data disagree between labs (S05)",
+   "applicability_domain": "Xe+, 100-800 eV; below 100 eV the curve is an extrapolation by construction",
+   "validation_status": "compilation fit; not validated against independent data",
+   "transformation_chain": "S04 + S05 measurements -> S11 MCMC fit -> parameters transcribed exactly",
+   "values_status": "transcribed",
+   "extrapolation_flags_for_ABEP": ["PROJECTILE_PROXY for any N/O use", "E_BELOW_MEASURED below 100 eV"]
+  },
+  {
+   "id": "Y-XE-SIO2-FIT-YIM2017",
+   "projectile": "Xe+",
+   "target": "SiO2",
+   "target_detail": "fit to pooled SiO2/quartz data (S11 data refs 5, 6, 57, 67); constituent reference for BN-SiO2 only",
+   "source": ["S11"],
+   "source_locator": "IEPC-2017-060 Tables 6-7",
+   "evidence_level": 5,
+   "evidence_class": "model-derived",
+   "method": "as Y-XE-AL2O3-FIT-YIM2017",
+   "energy_range_eV": {
+    "min": 100,
+    "max": 800
+   },
+   "fit_domain": "underlying data include S04 100-800 eV and S05 200-800 eV; other refs not accessed (range of the pooled set: verify)",
+   "incidence_angles_deg": [],
+   "incidence_angle_range_deg": [0, 75],
+   "units": "Q in mm3/C",
+   "data": {
+    "columns": ["quantity", "eps_over_E_per_eV", "Q_mm3_per_C", "lambda", "mu", "Eth_eV", "beta_over_alpha", "a_over_alpha", "theta_max_deg", "Yprime_max"],
+    "rows": [
+     ["max-likelihood (best fit)", 1.8e-06, 1.4, 0.01, 1.0, 59, 0.97, 1.92, 59, 2.0],
+     ["50 % likelihood upper range (energy only)", 1.8e-06, 2.4, 0.04, 1.0, 11, null, null, null, null]
+    ]
+   },
+   "threshold_eV": {
+    "value": null,
+    "note": "best fit 59 eV vs conservative 11 eV: threshold unidentified"
+   },
+   "uncertainty": "as Y-XE-AL2O3-FIT-YIM2017",
+   "applicability_domain": "Xe+ on SiO2; not BN-SiO2",
+   "validation_status": "compilation fit",
+   "transformation_chain": "transcribed exactly",
+   "values_status": "transcribed",
+   "extrapolation_flags_for_ABEP": ["PROJECTILE_PROXY", "TARGET_PROXY for BN-SiO2"]
+  },
+  {
+   "id": "Y-XE-BN-MD-YIM2008",
+   "projectile": "Xe+",
+   "target": "BN",
+   "target_detail": "hexagonal BN, MD model (Albe-type potential for B-N; Moliere for ion impacts; surface amorphized by prior impacts)",
+   "source": ["S10"],
+   "source_locator": "arXiv:0802.1960v1 Sec. III, Eq. (5), Figs. 4-8",
+   "evidence_level": 4,
+   "evidence_class": "model-derived",
+   "method": "molecular dynamics, typically 300 impacts per point (200 at 250 and 350 eV); Bohdansky fit Y = alpha [1 - (Eth/E)^(2/3)] (1 - Eth/E)^2",
+   "energy_range_eV": {
+    "min": 10,
+    "max": 350
+   },
+   "incidence_angles_deg": [45],
+   "surface_temperature": "423 K (150 C) bath; temperature study up to 850 K",
+   "units": "mm3/C",
+   "data": {
+    "columns": ["quantity", "alpha_mm3_per_C", "alpha_unc", "Eth_eV", "Eth_unc", "beta_deg", "T_K"],
+    "rows": [
+     ["Bohdansky fit to MD yields", 0.062, 0.004, 18.3, 1.1, 45, 423]
+    ]
+   },
+   "temperature_effect": "yield at 850 K approximately twice that at 423 K (abstract and Sec. III)",
+   "threshold_eV": {
+    "value": 18.3,
+    "uncertainty": 1.1,
+    "basis": "fit parameter to MD data; source notes the yield likely approaches zero asymptotically rather than cutting off"
+   },
+   "uncertainty": "MD statistical scatter (error bars = sd of averages); interatomic-potential dependence not quantified; MD 'falls within the expected range' of scattered experiments (Garnier, Yalin QCM) and above weight-loss data",
+   "applicability_domain": "Xe on h-BN, 10-350 eV, 45 deg, 423 K model surface",
+   "validation_status": "compared with scattered Xe data only; no N/O projectile modelled",
+   "transformation_chain": "MD yields -> source's least-squares Bohdansky fit -> transcribed from the preprint (journal version JAP 104, 123507 not checked - verify)",
+   "values_status": "transcribed",
+   "extrapolation_flags_for_ABEP": ["PROJECTILE_PROXY for any N/O use"]
+  },
+  {
+   "id": "Y-XE-BN-FITS-CHENG2007",
+   "projectile": "Xe+",
+   "target": "BN",
+   "target_detail": "BN grade of Yalin et al. data used by the source (BHT-200/600 channel grade per source)",
+   "source": ["S14"],
+   "source_locator": "IEPC-2007-250 Eq. (5), Table 2; Table 1 (borosil thresholds)",
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "method": "normal-yield approximation Y_n = A E^0.474 / (1 + B E^0.3) x (1 - sqrt(Eth/E))^2.5 (Eq. 5, checked against the rendered page; E in eV, Y_n in mm3/C per their Fig. 3 axis) fitted to Yalin et al. HBC-grade Xe/BN data (AIAA-2007-5314 era, not S01) for a range of imposed thresholds; threshold then chosen by matching thruster erosion profiles",
+   "energy_range_eV": {
+    "min": null,
+    "max": null,
+    "tbd": "energy range of the Yalin et al. data used by the source is shown only graphically (their Fig. 3, axis 0-600 eV); TBD - requires reading the figure or the Yalin AIAA-2007-5314 paper. Curves below the data are threshold assumptions."
+   },
+   "incidence_angles_deg": [0],
+   "units": "mm3/C",
+   "data": {
+    "columns": ["Eth_eV_imposed", "A", "B"],
+    "rows": [
+     [0, 8.35484e-05, -0.151824],
+     [10, 0.000164433, -0.146887],
+     [20, 0.000233999, -0.143251],
+     [30, 0.000320828, -0.139106],
+     [40, 0.000436831, -0.133966],
+     [50, 0.000600157, -0.12718]
+    ]
+   },
+   "borosil_thresholds_assumed_by_models_eV": {
+    "values": [50, 50, 70, 50, 60, 70, "30-70", 56.9, 50],
+    "basis": "S14 Table 1 compilation of model inputs (Manzella, Yim, Garrigues, Gamero, Sommier, others); evidence_class assumed"
+   },
+   "threshold_eV": {
+    "value": null,
+    "note": "the source: 'Since the threshold energy of boron nitride is not known, choice of the appropriate Eth is one of the goals of the modeling' - i.e. a calibration parameter"
+   },
+   "uncertainty": "the threshold is tuned to erosion data of a specific thruster; such thresholds are calibration parameters and not transferable material properties (project rule: no retuning; evidence level 6)",
+   "applicability_domain": "Xe on BN in the BHT-200/600 context",
+   "validation_status": "calibrated against BHT-200 erosion, tested on BHT-600 (source); not a material measurement",
+   "transformation_chain": "Yalin data -> source fit per imposed Eth -> parameters transcribed exactly",
+   "values_status": "transcribed",
+   "extrapolation_flags_for_ABEP": ["PROJECTILE_PROXY", "E_BELOW_MEASURED"]
+  },
+  {
+   "id": "Y-XE-BN-SIO2-AL2O3-TONDU2011",
+   "projectile": "Xe+",
+   "target": "BN",
+   "additional_targets": ["SiO2", "Al2O3"],
+   "target_detail": "10 x 10 x 1 mm ceramic blocks (BN grade not stated; samples managed by Snecma); SiO2 mirror polished",
+   "source": ["S05"],
+   "source_locator": "IEPC-2011-106 Figs. 4-8 (energy 200-800 eV normal; angle 0-75 deg at 500 eV)",
+   "evidence_level": 3,
+   "evidence_class": "measured",
+   "method": "mass loss (+/- 2 ug), Kaufman 3 cm source, +/- 5 eV beam, flat Langmuir probes for current, first erosion step discarded; fast-neutral share extrapolated to 2 % at 200 eV and neglected",
+   "energy_range_eV": {
+    "min": 200,
+    "max": 800
+   },
+   "incidence_angles_deg": [],
+   "incidence_angle_range_deg": [0, 75],
+   "units": "mm3/C",
+   "data": null,
+   "qualitative_findings": ["Al2O3 least eroded, SiO2 most (normal incidence, 200-800 eV)", "BN at 200 eV higher than at 350 and 500 eV - believed a true effect; attributed to grain detachment of fragile BN", "BN angle dependence characteristic of a slightly rough surface", "measured alumina erosion below CSiPI except 800 eV; hypothesis: Al+ emission re-collected by a negatively biased surface"],
+   "threshold_eV": {
+    "value": null,
+    "note": "not addressed"
+   },
+   "uncertainty": "TBD - requires digitization of Figs. 4-8 (raster)",
+   "applicability_domain": "Xe+, 200-800 eV",
+   "validation_status": "compared with CSiPI Monte Carlo and S04",
+   "transformation_chain": "mass loss -> plotted (raster figures) -> NOT digitized here",
+   "values_status": "TBD - requires digitization of IEPC-2011-106 Figs. 4-8",
+   "extrapolation_flags_for_ABEP": ["VALUES_TBD", "PROJECTILE_PROXY"]
+  },
+  {
+   "id": "Y-XE-BNSIO2-BN05-ABASHKIN2007",
+   "projectile": "Xe+",
+   "target": "BN-SiO2",
+   "additional_targets": ["BN (BN-05)"],
+   "target_detail": "BGP (boron nitride-silicon oxide composition) and BN-05 (hot-pressed h-BN, < 4 % boron oxide + calcium oxide binder), 20 mm dia x 3 mm discs",
+   "source": ["S06"],
+   "source_locator": "IEPC-2007-133 Sec. II, Figs. 4-5; Sec. on local yield (Fig. 28)",
+   "evidence_level": 3,
+   "evidence_class": "measured",
+   "method": "exposure in the plume of a 3 kW HET (collimated through 5 mm holes 130 mm from exit), discharge 325 and 500 V at 3.25 mg/s; weight loss (0.1 mg) after bake to 180-200 C; Faraday cups for current density (8-18 mA/cm2 per text); angles 0, 20, 40, 50, 60, 70 deg; sample temperatures 250 and 480 C",
+   "energy_range_eV": {
+    "min": null,
+    "max": null,
+    "tbd": "ion energy distribution of a HET plume, not monoenergetic; nominal discharge voltages 325 and 500 V (source). Energy axis of Figs. 4-5 TBD - requires reading the figures"
+   },
+   "incidence_angles_deg": [0, 20, 40, 50, 60, 70],
+   "units": "mm3/C",
+   "data": null,
+   "qualitative_findings": ["BN-05 erosion yield 1.5-18 times lower than BGP depending on ion energy and incidence angle (source Sec. I)", "gamma(alpha) maximum 1.5-2.5x the normal-incidence value (source Sec. II)", "500 h life tests: predicted lifetime ~3000 h for both materials despite BN-05's lower plume yield (source abstract)", "wall analysis ASSUMES a 50 eV sputter threshold and a linear Y(E) (source Fig. 28 text)"],
+   "threshold_eV": {
+    "value": 50,
+    "basis": "ASSUMED by the source for its in-channel estimate (evidence_class assumed)"
+   },
+   "uncertainty": "TBD - requires reading Figs. 4-5; differences between 325 and 500 V lie within random error for BN-05 (source)",
+   "applicability_domain": "Xe HET plume, BGP and BN-05, 250-480 C",
+   "validation_status": "plume coupon data vs 500 h thruster wear: coupon ranking (BN-05 better) did NOT carry over to thruster life (both ~3000 h). Important caution for coupon-to-thruster transfer.",
+   "transformation_chain": "weight loss -> figures -> not digitized here",
+   "values_status": "TBD - requires digitization of IEPC-2007-133 Figs. 4-5",
+   "extrapolation_flags_for_ABEP": ["VALUES_TBD", "PROJECTILE_PROXY"]
+  },
+  {
+   "id": "Y-XE-CERAMICS-GARNIER1999",
+   "projectile": "Xe+",
+   "target": "BN-SiO2",
+   "additional_targets": ["BN", "BN-AlN", "MgO"],
+   "target_detail": "BN, MgO, BN-AlN, BN-SiO2 (per abstract; S10 states Garnier used pyrolytic BN - verify)",
+   "source": ["S07"],
+   "source_locator": "abstract only",
+   "evidence_level": 3,
+   "evidence_class": "measured",
+   "method": "short (~10 h) plasma sputtering experiments with planar probes; slow-ion current estimated by simulation and subtracted (abstract)",
+   "energy_range_eV": {
+    "min": 350,
+    "max": 1000
+   },
+   "incidence_angles_deg": [],
+   "units": "TBD",
+   "data": null,
+   "qualitative_findings": ["angular effect weaker than theory/smooth surfaces because of ceramic surface roughness (abstract)", "BN-SiO2 and BN-AlN erode differentially grain-to-grain and grain-to-matrix (abstract)", "normal-incidence yield almost linear in energy over 0.35-1 keV (abstract)", "historically the only borosil data used by most HET erosion models (S14)"],
+   "threshold_eV": {
+    "value": null,
+    "note": "not addressed in abstract"
+   },
+   "uncertainty": "TBD - closed access",
+   "applicability_domain": "Xe+, 350-1000 eV",
+   "validation_status": "widely used; values not checked here",
+   "transformation_chain": "not accessed",
+   "values_status": "TBD - requires the JVST A full text (closed access)",
+   "extrapolation_flags_for_ABEP": ["VALUES_TBD", "PROJECTILE_PROXY", "E_BELOW_MEASURED below 350 eV"]
+  },
+  {
+   "id": "Y-XE-AL2O3-BN-CROFTON2021",
+   "projectile": "Xe+",
+   "target": "Al2O3",
+   "additional_targets": ["BN (HP grade)"],
+   "target_detail": "alumina and HP-grade BN (abstract)",
+   "source": ["S08"],
+   "source_locator": "abstract only",
+   "evidence_level": 3,
+   "evidence_class": "measured",
+   "method": "angular profiles at a single ion energy; energy dependence at normal incidence; least-squares fits (abstract)",
+   "energy_range_eV": {
+    "min": null,
+    "max": null,
+    "tbd": "'low energy' per title; exact range TBD - requires the CC BY full text"
+   },
+   "incidence_angles_deg": [],
+   "units": "TBD",
+   "data": null,
+   "threshold_eV": {
+    "value": null,
+    "note": "TBD"
+   },
+   "uncertainty": "TBD",
+   "applicability_domain": "Xe+ on alumina and HP BN",
+   "validation_status": "TBD",
+   "transformation_chain": "not accessed",
+   "values_status": "TBD - requires manual reading of the CC BY PDF (automated access blocked by a bot challenge; not bypassed)",
+   "extrapolation_flags_for_ABEP": ["VALUES_TBD", "PROJECTILE_PROXY"]
+  },
+  {
+   "id": "Y-XE-BN-BNSIO2-RANJAN2016",
+   "projectile": "Xe+",
+   "target": "BN-SiO2",
+   "additional_targets": ["BN"],
+   "target_detail": "BN and BNSiO2 (abstract via OpenAlex)",
+   "source": ["S09"],
+   "source_locator": "abstract only (OpenAlex abstract_inverted_index, retrieved 2026-09-27)",
+   "evidence_level": 3,
+   "evidence_class": "measured",
+   "method": "QCM volumetric and total yields; yield shape profiles compared with the modified Zhang model",
+   "energy_range_eV": {
+    "min": 100,
+    "max": 550
+   },
+   "incidence_angles_deg": [],
+   "incidence_angle_range_deg": [0, 85],
+   "angle_note": "0-85 deg with surface normal, per abstract",
+   "units": "TBD",
+   "data": null,
+   "qualitative_findings": ["sudden jump in yield above 500 eV and at 45-65 deg incidence for both materials (abstract)", "BNSiO2 shows a marginally higher yield than BN (abstract)", "erosion of BN at ion energies as low as 74 eV predicted with a generalized Bohdansky model (abstract; model-derived, not a measured threshold)", "basis of the Xe-Borosil yield model of S15 (with a linear temperature factor from Parida et al.)"],
+   "threshold_eV": {
+    "value": null,
+    "note": "TBD for a measured threshold. The abstract reports a generalized-Bohdansky model prediction of BN erosion at ion energies as low as 74 eV (model-derived, value not a threshold fit in this database); it widens the documented spread of BN threshold estimates and is not used as a threshold value here."
+   },
+   "uncertainty": "TBD",
+   "applicability_domain": "Xe+, 100-550 eV, BN and BN-SiO2",
+   "validation_status": "TBD",
+   "transformation_chain": "not accessed",
+   "values_status": "TBD - requires the full text (AIP bot challenge; not bypassed)",
+   "extrapolation_flags_for_ABEP": ["VALUES_TBD", "PROJECTILE_PROXY"]
+  },
+  {
+   "id": "Y-NO-AL2O3-ESPY1993",
+   "projectile": "O+",
+   "additional_projectiles": ["O2+", "N+", "N2+"],
+   "target": "Al2O3",
+   "additional_targets": ["Al (metal; not a wall ceramic)"],
+   "target_detail": "vacuum-deposited films on a quartz crystal (not sintered ceramic)",
+   "source": ["S13"],
+   "source_locator": "abstract only",
+   "evidence_level": 3,
+   "evidence_class": "measured",
+   "method": "QCM mass loss with a sensitivity-enhancing technique (abstract)",
+   "energy_range_eV": {
+    "min": 50,
+    "max": 200
+   },
+   "incidence_angles_deg": [],
+   "units": "TBD",
+   "data": null,
+   "threshold_eV": {
+    "value": null,
+    "note": "TBD"
+   },
+   "uncertainty": "TBD",
+   "applicability_domain": "O+, O2+, N+, N2+ at 50-200 eV on thin-film Al and Al2O3 (Space Station context)",
+   "validation_status": "TBD",
+   "transformation_chain": "not accessed",
+   "values_status": "TBD - requires the SPIE full text (closed access). Highest-priority literature item: the only located N/O measurement on a candidate wall ceramic, and the only located source that used both molecular and atomic N/O ions on one target (whether it presents a matched-energy molecular-vs-atomic comparison is inferred from the abstract only: verify).",
+   "extrapolation_flags_for_ABEP": ["VALUES_TBD", "TARGET_PROXY (thin film vs sintered alumina)"]
+  },
+  {
+   "id": "Y-O-B-TRIMSP-ECKSTEIN2002",
+   "projectile": "O+",
+   "projectile_note": "TRIM.SP projectile O (charge state irrelevant in BCA)",
+   "target": "B (elemental; proxy for the B sublattice of BN)",
+   "target_detail": "amorphous B, rho 2.35 g/cm3, surface binding energy 5.90 eV (heat of sublimation), KrC potential, esb 1.00 eV, cutoff 0.95 eV; 'only low fluence!'",
+   "source": ["S12"],
+   "source_locator": "IPP 9/132 p. 40 ('program: IPP 9/82'); checked against page image",
+   "evidence_level": 4,
+   "evidence_class": "model-derived",
+   "method": "TRIM.SP binary-collision Monte Carlo, normal incidence, flat surface",
+   "energy_range_eV": {
+    "min": 150,
+    "max": 6000
+   },
+   "incidence_angles_deg": [0],
+   "units": "atoms/ion",
+   "data": {
+    "columns": ["E_eV", "beta_deg", "Y_atoms_per_ion"],
+    "rows": [
+     [150, 0, 0.0375],
+     [300, 0, 0.114],
+     [1000, 0, 0.277],
+     [3000, 0, 0.387],
+     [6000, 0, 0.416]
+    ]
+   },
+   "threshold_eV": {
+    "value": null,
+    "note": "not tabulated below 150 eV"
+   },
+   "uncertainty": "statistical < 3 % (report Sec. 0.2); model uncertainty from the surface binding energy (sublimation energy of elemental B, not BN bonding) and potential choice not quantified; no oxidation chemistry",
+   "applicability_domain": "O on elemental B, 150-6000 eV, low fluence, flat surface",
+   "validation_status": "no O->B or O->BN measurement located to compare",
+   "transformation_chain": "TRIM.SP output (IPP 9/82) -> IPP 9/132 table (scanned) -> transcribed and checked against page image",
+   "values_status": "transcribed",
+   "extrapolation_flags_for_ABEP": ["TARGET_PROXY (elemental B is not BN)", "SURFACE_STATE (O oxidizes B)", "E_BELOW_MEASURED below 150 eV"]
+  },
+  {
+   "id": "Y-O-B2O3-TRIMSP-ECKSTEIN2002",
+   "projectile": "O+",
+   "projectile_note": "TRIM.SP projectile O",
+   "target": "B2O3 (proxy for an oxidized BN surface layer)",
+   "target_detail": "B2O3, B 0.4 / O 0.6, rho 1.62 g/cm3, sbe 5.90 (B) and 2.50 (O) eV, sbe(average) 1.28 eV, esb 2.60 eV, cutoff 2.10 eV; 'only low fluence!'",
+   "source": ["S12"],
+   "source_locator": "IPP 9/132 p. 278; checked against page image",
+   "evidence_level": 4,
+   "evidence_class": "model-derived",
+   "method": "TRIM.SP (trspvmc), normal incidence, partial yields by species",
+   "energy_range_eV": {
+    "min": 150,
+    "max": 3000
+   },
+   "incidence_angles_deg": [0],
+   "units": "atoms/ion",
+   "data": {
+    "columns": ["E_eV", "beta_deg", "Y_B_atoms_per_ion", "Y_O_atoms_per_ion", "Y_total_atoms_per_ion"],
+    "rows": [
+     [150, 0, 0.326, 0.427, 0.752],
+     [300, 0, 0.451, 0.621, 1.07],
+     [1000, 0, 0.672, 0.854, 1.53],
+     [3000, 0, 0.629, 0.917, 1.55]
+    ]
+   },
+   "threshold_eV": {
+    "value": null,
+    "note": "not tabulated below 150 eV"
+   },
+   "uncertainty": "dominated by the very low average surface binding energy (1.28 eV) chosen for the compound; yields scale strongly with it. The same report's O -> B4C tables show the yield varying several-fold across sbe/density choices (p. 276), illustrating this sensitivity.",
+   "applicability_domain": "O on B2O3 glass, 150-3000 eV, low fluence",
+   "validation_status": "none located",
+   "transformation_chain": "TRIM.SP output -> IPP 9/132 table -> transcribed and checked against page image",
+   "values_status": "transcribed",
+   "extrapolation_flags_for_ABEP": ["TARGET_PROXY (B2O3 is a possible surface phase, not the wall)", "SURFACE_STATE", "E_BELOW_MEASURED below 150 eV"]
+  },
+  {
+   "id": "Y-O-C-TRIMSP-ECKSTEIN2002",
+   "projectile": "O+",
+   "projectile_note": "TRIM.SP projectile O",
+   "target": "C (graphite; physical sputtering only)",
+   "target_detail": "C, sbe 7.41 eV, rho 1.85 and 2.00 g/cm3 listed, ef 0.95/2.10 eV, esb 1.00/2.60 eV (two parameter sets listed in the header for one yield column - which set applies is not stated; verify); 'only low fluence!'",
+   "source": ["S12"],
+   "source_locator": "IPP 9/132 p. 65; checked against page image",
+   "evidence_level": 4,
+   "evidence_class": "model-derived",
+   "method": "TRIM.SP (trvmc95, newtrim), normal incidence",
+   "energy_range_eV": {
+    "min": 38,
+    "max": 6000
+   },
+   "incidence_angles_deg": [0],
+   "units": "atoms/ion",
+   "data": {
+    "columns": ["E_eV", "beta_deg", "Y_atoms_per_ion"],
+    "rows": [
+     [38, 0, 4.6e-06],
+     [40, 0, 7.98e-06],
+     [42, 0, 1.3e-05],
+     [45, 0, 2.56e-05],
+     [50, 0, 6.56e-05],
+     [60, 0, 0.000287],
+     [70, 0, 0.000779],
+     [100, 0, 0.00459],
+     [150, 0, 0.018],
+     [300, 0, 0.0685],
+     [1000, 0, 0.215],
+     [3000, 0, 0.323],
+     [6000, 0, 0.34]
+    ]
+   },
+   "threshold_eV": {
+    "value": null,
+    "note": "model yields fall to ~1e-5-1e-6 near 38-42 eV; statistical error up to 100 % at the lowest values (report Sec. 0.2)"
+   },
+   "uncertainty": "PHYSICAL sputtering only. Oxygen chemically erodes carbon (CO/CO2; abep_sim/aochem.py and materials.py note it qualitatively); total erosion by O is not represented and may dominate.",
+   "applicability_domain": "O on carbon, 38-6000 eV, low fluence; graphite is not a baseline Hall wall ceramic (listed as an 'other candidate' because of graphite/BN bimaterial proposals)",
+   "validation_status": "none checked here",
+   "transformation_chain": "TRIM.SP output -> IPP 9/132 table -> transcribed and checked against page image",
+   "values_status": "transcribed",
+   "extrapolation_flags_for_ABEP": ["SURFACE_STATE (chemical erosion by O omitted)"]
+  }
+ ],
+ "coverage_matrix": {
+  "legend": {
+   "measured_transcribed": "measured values transcribed here (still a proxy unless projectile, grade, energy and angle match)",
+   "measured_values_TBD": "a measurement exists but its values were not accessible",
+   "model_proxy_only": "only model-derived values on an elemental or oxide proxy target",
+   "none_located": "no measured or model value located in this search (see search_log)"
+  },
+  "Xe+": {
+   "BN": {
+    "status": "measured_transcribed",
+    "entries": ["Y-XE-BN-HBC-RUBIN2009", "Y-XE-BN-HBR-RUBIN2009", "Y-XE-BN-HP-RUBIN2009", "Y-XE-BN-FIT-RUBIN2009", "Y-XE-BN-LOWE-RAW-TOPPER2011", "Y-XE-BN-BRITTON2002", "Y-XE-BN-TARTZ2009", "Y-XE-BN-MD-YIM2008", "Y-XE-BN-FITS-CHENG2007", "Y-XE-BN-SIO2-AL2O3-TONDU2011", "Y-XE-AL2O3-BN-CROFTON2021", "Y-XE-BN-BNSIO2-RANJAN2016"]
+   },
+   "BN-SiO2": {
+    "status": "measured_values_TBD",
+    "entries": ["Y-XE-BNSIO2-BN05-ABASHKIN2007", "Y-XE-CERAMICS-GARNIER1999", "Y-XE-BN-BNSIO2-RANJAN2016"],
+    "note": "SiO2 constituent only: Y-XE-SIO2-TARTZ2009, Y-XE-SIO2-FIT-YIM2017 (TARGET_PROXY); elevated-temperature Borosil study S23 not accessed (values TBD)"
+   },
+   "SiC": {
+    "status": "none_located",
+    "entries": [],
+    "note": "a NIM B paper 'The estimation of sputtering yields for SiC and Si' (Ne+, Ar+, Xe+ at 0.5-5 keV, 60 deg, per web-search snippet) was found but not accessed, and is above the Hall-wall energy range"
+   },
+   "Al2O3": {
+    "status": "measured_transcribed",
+    "entries": ["Y-XE-AL2O3-TARTZ2009", "Y-XE-AL2O3-FIT-YIM2017", "Y-XE-BN-SIO2-AL2O3-TONDU2011", "Y-XE-AL2O3-BN-CROFTON2021"]
+   },
+   "other": {
+    "status": "measured_values_TBD",
+    "entries": ["Y-XE-CERAMICS-GARNIER1999 (BN-AlN, MgO)", "Y-XE-BNSIO2-BN05-ABASHKIN2007 (BN-05)"],
+    "note": "Si3N4+BN (S16), textured h-BN composites (S19), Kr+ on BN ceramics (S18): values TBD"
+   }
+  },
+  "N+": {
+   "BN": {
+    "status": "none_located",
+    "entries": []
+   },
+   "BN-SiO2": {
+    "status": "none_located",
+    "entries": []
+   },
+   "SiC": {
+    "status": "none_located",
+    "entries": []
+   },
+   "Al2O3": {
+    "status": "measured_values_TBD",
+    "entries": ["Y-NO-AL2O3-ESPY1993"]
+   },
+   "other": {
+    "status": "none_located",
+    "entries": [],
+    "note": "IPP 9/132 has N only on Be, C and W and on C only at 15-30 keV"
+   }
+  },
+  "N2+": {
+   "BN": {
+    "status": "none_located",
+    "entries": []
+   },
+   "BN-SiO2": {
+    "status": "none_located",
+    "entries": []
+   },
+   "SiC": {
+    "status": "none_located",
+    "entries": []
+   },
+   "Al2O3": {
+    "status": "measured_values_TBD",
+    "entries": ["Y-NO-AL2O3-ESPY1993"]
+   },
+   "other": {
+    "status": "none_located",
+    "entries": []
+   }
+  },
+  "O+": {
+   "BN": {
+    "status": "model_proxy_only",
+    "entries": ["Y-O-B-TRIMSP-ECKSTEIN2002", "Y-O-B2O3-TRIMSP-ECKSTEIN2002"]
+   },
+   "BN-SiO2": {
+    "status": "none_located",
+    "entries": [],
+    "note": "no O->SiO2 or O->Si table in IPP 9/132"
+   },
+   "SiC": {
+    "status": "none_located",
+    "entries": []
+   },
+   "Al2O3": {
+    "status": "measured_values_TBD",
+    "entries": ["Y-NO-AL2O3-ESPY1993"]
+   },
+   "other": {
+    "status": "model_proxy_only",
+    "entries": ["Y-O-C-TRIMSP-ECKSTEIN2002 (graphite, physical only)"]
+   }
+  },
+  "O2+": {
+   "BN": {
+    "status": "none_located",
+    "entries": [],
+    "note": "only via MOLECULAR_ION_ASSUMPTION on the O proxies"
+   },
+   "BN-SiO2": {
+    "status": "none_located",
+    "entries": []
+   },
+   "SiC": {
+    "status": "none_located",
+    "entries": []
+   },
+   "Al2O3": {
+    "status": "measured_values_TBD",
+    "entries": ["Y-NO-AL2O3-ESPY1993"]
+   },
+   "other": {
+    "status": "none_located",
+    "entries": []
+   }
+  }
+ },
+ "key_findings": ["No measured N+, N2+, O+ or O2+ sputter yield on BN, BN-SiO2 or SiC was located in open sources. The only located N/O measurement on a candidate ceramic is Espy et al. 1993 (Al2O3 thin films, 50-200 eV, closed access, values TBD).", "O-projectile evidence is model-only (TRIM.SP) and on proxy targets: elemental B (0.0375 atoms/ion at 150 eV, 0.114 at 300 eV) and B2O3 (0.752 atoms/ion at 150 eV total) - a ~20x spread at 150 eV between two proxies of the same wall, driven by surface-binding-energy assumptions.", "Even the best-studied reference pair (Xe+ -> BN) is uncertain by up to an order of magnitude between laboratories at Hall-relevant energies: Rubin 2009 HBC vs Tartz 2009 differ 11.8x at 100 eV and 4.6x at 500 eV (our arithmetic on transcribed values); grade/binder and neutralization state (~2x) are the leading suspected causes.", "The Xe->BN threshold is not identified: fitted values 18.3 eV (MD), 24 +/- 6 eV (Bohdansky), 57 eV (Zhang); erosion models of borosil assumed 30-70 eV; one yield fit (Yim 2017, Al2O3) returns 5 eV, i.e. unconstrained. Most Hall-wall impacts lie in the unconstrained near-threshold region (Passet 2024 call for 10-250 eV data).", "Temperature matters: ~2x (MD, 423 -> 850 K) and a rise from ~520 C (Rubin 2009); a 50-60 % exit-erosion under-prediction for SPT-100 is attributed to temperature (Passet 2024).", "Coupon rankings did not transfer to thruster life in the one located comparison (Abashkin 2007: BN-05 lower plume yield, yet both BN-05 and BGP ~3000 h predicted life).", "Reactive chemistry is outside all yield entries: O oxidizes B (B2O3 surface), Si and C; N is a constituent of BN (implantation/stoichiometry changes). Physical-sputtering yields therefore cannot bound N/O erosion from above or below without tests."],
+ "gaps": [
+  {
+   "id": "G1",
+   "gap": "N+, N2+, O+, O2+ yields on the actual candidate wall grades (BN, BN-SiO2, SiC, Al2O3) at 10-300 eV",
+   "requires": "ion-beam coupon tests (hardware test H1); literature cannot close it"
+  },
+  {
+   "id": "G2",
+   "gap": "sputter thresholds for N/O on BN-type ceramics",
+   "requires": "near-threshold (10-100 eV) measurements with a low-energy, well-collimated beam and controlled neutralization (H1, H2)"
+  },
+  {
+   "id": "G3",
+   "gap": "molecular vs atomic ion equivalence (N2+ vs 2 x N+ at E/2; O2+ vs 2 x O+)",
+   "requires": "Espy 1993 full text (literature) and H3"
+  },
+  {
+   "id": "G4",
+   "gap": "chemical/reactive erosion: BN oxidation to B2O3 and its removal, SiC oxidation, N implantation, synergy with neutral atomic O, temperature dependence",
+   "requires": "H4 combined-flux tests with post-test surface analysis"
+  },
+  {
+   "id": "G5",
+   "gap": "fluence-dependent surface state (roughness, grain detachment, preferential sputtering)",
+   "requires": "long-fluence coupon tests with profilometry/SEM (H5)"
+  },
+  {
+   "id": "G6",
+   "gap": "validated wall ion flux and impact energy/angle distribution in an N2/air/O2 Hall channel",
+   "requires": "in-channel probes/RPA and wall erosion profiles on the Vyovrinda thruster (H6, H7); the WallSheath Bohm flux is not validated"
+  },
+  {
+   "id": "G7",
+   "gap": "Xe reference on the Vyovrinda wall grade (to anchor lab-to-lab scatter)",
+   "requires": "H8"
+  },
+  {
+   "id": "G8",
+   "gap": "values of S05 (Tondu), S06 (Abashkin) figures",
+   "requires": "vector/raster digitization with recorded axis residuals (literature task, owner decision)"
+  },
+  {
+   "id": "G9",
+   "gap": "values of S07 Garnier, S08 Crofton & Young, S09 Ranjan, S13 Espy, S17 Tejeda & Knoll, S18 Kim, S19 Duan, S20 Tondu 2008, S21 compilations, S23 Borosil temperature study",
+   "requires": "owner access to the full texts (closed or bot-challenged; not bypassed)"
+  },
+  {
+   "id": "G10",
+   "gap": "secondary electron emission of candidate walls after N/O exposure (sets sheath potential and hence impact energy)",
+   "requires": "H9"
+  },
+  {
+   "id": "G11",
+   "gap": "consumer-side: abep_sim/thermal_life.py wall_erosion_life takes a caller-supplied volumetric_sputter_yield_m3_per_ion without this database's entry id, extrapolation flags or OUT_OF_DOMAIN -> NOT_DEMONSTRATED mapping; and _check_hall_discharge takes caller-supplied wall_ion_flux_m2s / wall_ion_energy_eV with no flux-provenance or admission gate (screening-candidate or hand-entered flux reaches PASS/FAIL; hallmap_wall_inputs is optional and checks only a non-empty ensemble_member_id). Required: a flux-provenance and admission gate inside _check_hall_discharge (admitted member verified against the ensemble, wall_life_trustworthy = true) (see consumer_requirements)",
+   "requires": "code change in the thermal/life lane (outside this lane's allowed paths); owner decision if it changes any reported status"
+  }
+ ],
+ "hardware_tests_required": [
+  {
+   "id": "H1",
+   "test": "Ion-beam sputter-yield coupons of the Vyovrinda wall grade(s): N+, N2+, O+, O2+ (mass-selected where possible) at 20-300 eV, incidence 0-85 deg",
+   "measure": "total yield (weight loss AND QCM with species accounting), angular dependence, beam energy distribution, doubly charged fraction, neutral fraction",
+   "why": "G1, G2; only route to IN_DOMAIN N/O yields"
+  },
+  {
+   "id": "H2",
+   "test": "Neutralization/surface-potential sweep on insulating coupons",
+   "measure": "yield vs neutralizer current and surface potential",
+   "why": "~2x neutralization effect (Topper 2011) vs no effect to +30 V (Nikiporetz 2007)"
+  },
+  {
+   "id": "H3",
+   "test": "Molecular vs atomic ion comparison at matched energy per atom",
+   "measure": "Y(N2+, E) vs 2 Y(N+, E/2); Y(O2+, E) vs 2 Y(O+, E/2)",
+   "why": "G3; removes MOLECULAR_ION_ASSUMPTION"
+  },
+  {
+   "id": "H4",
+   "test": "Combined ion + neutral atomic-O + N2 exposure at wall temperatures 30-600 C",
+   "measure": "mass loss, XPS/SEM surface composition (B2O3 formation, SiO2 on SiC), implantation depth",
+   "why": "G4; chemical erosion is outside every yield entry"
+  },
+  {
+   "id": "H5",
+   "test": "Long-fluence coupon exposure",
+   "measure": "yield vs fluence, roughness evolution, grain detachment",
+   "why": "G5; roughness flattens angular dependence (Garnier 1999; Tondu 2011)"
+  },
+  {
+   "id": "H6",
+   "test": "Thruster wear segment on N2, air-like N2/O2 mixture and Xe with the Vyovrinda channel and B(z)",
+   "measure": "wall erosion profiles (profilometry / laser scanning) at intervals, wall temperature map, operating point history",
+   "why": "G6; the only test that validates an erosion model end to end (literature coupon-to-thruster transfer failed in Abashkin 2007)"
+  },
+  {
+   "id": "H7",
+   "test": "Near-wall plasma diagnostics in the same thruster",
+   "measure": "ion flux and ion energy/angle distribution at the wall (flush probes, RPA), T_e, sheath potential",
+   "why": "G6; validates or rejects the WallSheath Bohm-flux closure"
+  },
+  {
+   "id": "H8",
+   "test": "Xe+ reference yields of the same coupons in the same facility",
+   "measure": "Y(E) at 100-500 eV",
+   "why": "G7; ties the Vyovrinda grade to S01/S04 and quantifies lab-to-lab offset"
+  },
+  {
+   "id": "H9",
+   "test": "SEE yield of candidate walls before/after N/O exposure",
+   "measure": "total electron emission yield vs primary energy",
+   "why": "G10; SEE sets the space-charge-limited sheath potential used by WallSheath"
+  }
+ ],
+ "in_repo_audit": {
+  "note": "Read-only audit of existing erosion inputs; nothing changed. These values have no cited source and are NOT supported by this database.",
+  "materials_py_priors": {
+   "file": "abep_sim/materials.py",
+   "fields": "sputter_Eth_eV, sputter_Y300 (atoms/ion at 300 eV normal, 'Xe-referenced'), Y(E) = Y300 ((E/Eth - 1)/(300/Eth - 1))^1.5",
+   "values_as_found": {
+    "BN": [45, 0.25],
+    "BN_SiO2": [45, 0.2],
+    "SiC": [50, 0.3],
+    "Al2O3_anodised": [60, 0.35],
+    "Quartz": [40, 0.3],
+    "Graphite": [35, 0.2]
+   },
+   "source_tag": "fidelity 'literature', source 'literature-class prior' (no citation)",
+   "evidence_level": 7,
+   "evidence_class": "assumed",
+   "assessment": "No measured Xe->BN source above gives a threshold of 45 eV (fits: 18.3, 24 +/- 6, 57 eV); units differ (atoms/ion vs the mm3/C of all ceramic sources) and a density/composition conversion would be needed to compare Y300. Species dependence (N, O vs Xe) is absent."
+  },
+  "erosion_paths_using_them": ["abep_sim/plasma_devices.py HallChannel / hall_run_coupled: Y(5 T_e + 20 V), wall flux 0.2 n_e u_B x magnetic_shielding - superseded 0-D closure (CLAUDE.md: absolute Hall results withdrawn)", "abep_sim/archengine.py Hall branch: life_items['hall_channel'] = 6.0e3 / wall_erosion_um_per_kh * 1e3 (6 mm wall) - inherits the above", "abep_sim/archengine.py cathode/antenna: DB['SiC'] / DB['Mo'].sputter_yield(3 T_e + 10) - same prior", "abep_sim/archengine.py grid optics: Mo yields scaled by energy-transfer factor vs Xe for N/O ions - PROJECTILE_PROXY assumption (out of this lane's Hall scope)", "abep_sim/life.py LifeInputs.hall_sputter_um_per_kh = 300 default (dataclass field, line 22) and hall_channel_life life = t0 / rate - assumed", "abep_sim/mission5.py line 83: hall_sputter_um_per_kh = base.get('pl_wall_erosion_um_per_kh', 150.0) fallback - assumed", "abep_sim/system.py line 169 forwards the plasma result's wall_erosion_um_per_kh as pl_wall_erosion_um_per_kh; line 292 repeats the 150.0 fallback - assumed", "abep_sim/thermal_life.py (merged after this lane, second-lens audit at e15f66f): _check_hall_discharge 'wall_erosion_life' margin check, life = allowable_erosion_depth_m / (Gamma_i * peak_to_average_flux_ratio * volumetric_sputter_yield_m3_per_ion), returns PASS/FAIL. It does NOT gate the flux: _check_hall_discharge takes caller-supplied flux, energy and yield (admission/wall_life_trustworthy checks exist only in the optional helper hallmap_wall_inputs, which checks only a non-empty member id, not admission), so a screening-candidate or hand-entered flux can return PASS/FAIL; and the caller-supplied yield carries none of this database's extrapolation flags or the OUT_OF_DOMAIN rule - see consumer_requirements"]
+ },
+ "search_log": [
+  {
+   "query": "Garnier 1999 low-energy xenon ion sputtering of ceramics (web)",
+   "result": "found S07 (closed); abstract via OpenAlex"
+  },
+  {
+   "query": "sputtering yield boron nitride nitrogen ions oxygen ions air-breathing Hall thruster (web)",
+   "result": "Xe-only BN sources (S01/S02, S09, S10); no N/O data"
+  },
+  {
+   "query": "air-breathing Hall thruster channel wall erosion nitrogen oxygen ions sputtering yield BN SRIM (web)",
+   "result": "Xe-only erosion modelling papers; no N/O yields"
+  },
+  {
+   "query": "sputtering yield hexagonal boron nitride N2+ ions measured cubic boron nitride deposition (web)",
+   "result": "c-BN deposition papers (Reinke/Kulisch sputter model) - no accessible N2+ yield values"
+  },
+  {
+   "query": "SDTrimSP OR TRIDYN sputtering yield boron nitride nitrogen oxygen ion (web)",
+   "result": "generic code comparisons; IEEE 'Simulation of boron nitride sputtering process' (not accessed); no N/O-on-BN values"
+  },
+  {
+   "query": "sputtering yield silicon carbide low energy oxygen ions (web)",
+   "result": "SiC H/He/Ne/Ar/Xe studies at keV; no low-energy O data"
+  },
+  {
+   "query": "sputtering yield alumina oxygen ions low energy (web)",
+   "result": "found S13 Espy 1993 (O+, O2+, N+, N2+ on Al/Al2O3)"
+  },
+  {
+   "query": "atmosphere-breathing Hall thruster nitrogen oxygen discharge channel erosion (web)",
+   "result": "found S17 Tejeda & Knoll 2023 (O2 HET, ceramic walls; full text not accessed)"
+  },
+  {
+   "query": "Eckstein IPP 9/132 (web) + report index",
+   "result": "S12 downloaded; index shows O on B, C, B2O3, B4C, BeO, Mo, W...; N only on Be, C (keV), W; no SiC/Al2O3/BN/Si-by-O tables"
+  },
+  {
+   "query": "IAEA/NIFS sputtering yield database compound targets N/O (web)",
+   "result": "no openly reachable compound-target N/O compilation found; IAEA INDC reports listed only"
+  }
+ ],
+ "access_log": [
+  {
+   "url": "https://pubs.aip.org/aip/adv/article-pdf/doi/10.1063/5.0067346/12936047/125126_1_online.pdf",
+   "outcome": "HTTP 403 with Cloudflare 'Just a moment...' challenge; not bypassed"
+  },
+  {
+   "url": "https://www.mdpi.com/2076-3417/10/11/3775",
+   "outcome": "HTTP 403; not bypassed (review 'Review of Plasma-Induced Hall Thruster Erosion' not read)"
+  },
+  {
+   "url": "https://apps.dtic.mil/sti/tr/pdf/ADA484950.pdf",
+   "outcome": "HTTP 403 to automated fetch; not bypassed (Topper et al. 'Preliminary Results of Low Energy Sputter Yields of Boron Nitride...' - superseded by S01/S02)"
+  },
+  {
+   "url": "https://www.sciencedirect.com/science/article/pii/S0094576522006713",
+   "outcome": "HTTP 403; not bypassed"
+  },
+  {
+   "url": "https://electricrocket.org/IEPC/IEPC-2001-073.pdf",
+   "outcome": "HTTP 404"
+  },
+  {
+   "url": "https://electricrocket.org/IEPC/IEPC-99-083.pdf",
+   "outcome": "HTTP 404 (Garnier et al. IEPC-99-083, cited by S06)"
+  },
+  {
+   "url": "https://link.springer.com/article/10.1007/s44205-025-00124-2",
+   "outcome": "redirect to a Springer login/cookie endpoint; not followed"
+  }
+ ]
+}

@@ -2165,3 +2165,137 @@ and all 10 link checks pass. Nothing was rescored.
 (2) Evidence publication is now no-replace: release, score-once scores/provenance (frozen and staged), freeze datasets/manifests and
 report/decision use a hard link or exclusive creation instead of replacing writes. A concurrent invocation can therefore never
 overwrite a published artifact, and a rollback only removes the attempt's own file (inode-checked).
+
+### 2026-09-26 — PR #30 merged; critical path re-ordered after the v1 result (owner decision)
+PR #30 merged (daa0e75): the v1 vacuum result, the O4-disposition admission gate and the O4 freeze/score path. The owner's reading of
+the result is that v1 could not discriminate, mainly because 1428 of 2160 run-reading evaluations are OUT_OF_DOMAIN and there are no
+numerical failures. The fastest legitimate route to the thrust-architecture decision is to attack that cause, not to polish v1.
+New critical path: OOD reactions → independent published evidence for a wider validity domain → a v2 N₂ validation pre-registration only
+if justified → rerun only what v2 requires → admission. In parallel, a common-boundary Hall-only / RF+Hall / ECR+Hall comparison is
+prepared. Rules: never extend a validity limit because the solver reached a higher T_e; v1 stays INCONCLUSIVE permanently; the E×B
+diagnostic stays non-gating (physics forensics, no tuning); fixed-time polling is replaced by milestone watchers.
+Parallel lanes launched as workflows in isolated worktrees, each checked by two independent adversarial reviewers (evidence lens and
+rules/recompute lens) with up to two repair rounds:
+- OOD attribution; N₂ domain-extension evidence audit with a DRAFT v2 outline; scoreable-subset forensics; E×B physics forensics.
+- RF and ECR source evidence; Hall-only sustainment evidence.
+- Common-condition experiment protocol (DRAFT); common bus-power boundary module; comparison harness (refuses while the credible set is
+  empty); thermal/life framework.
+These run alongside the earlier lanes (CI, ECHT disposition, Hall-map spec, ICD, O/O₂ audit, cathode, wall life, dual-feed, ledgers,
+traceability, experiment package), the O4 first stage and the facility campaign.
+
+### 2026-09-26 — O4 first stage 1/5: Johnson-low — trigger FIRED; escalations launched (pre-registered)
+`staged_n2_n_exc_johnsonlow` (270 vacuum runs, `n2_n_exc_johnsonlow.toml` against baseline `n2_n.toml`):
+- structural gate PASS (270/270, all `success`);
+- frozen via `scripts/score_p5_n2_staged.py` (canonical sha256 9332ecdb…fe1eb);
+- scored once with the frozen scorer on mandatory + staged records (mandatory scores reproduced exactly); scores sha256 ee55fce1…bc0d.
+O4 evaluation (mechanical; `staged_escalation`): **trigger fired**.
+- 221 run-level triggers: 96 |ΔT_axial| ≥ half tolerance, 64 |ΔI_d| ≥ 7.5 % of target, 61 status changes.
+- Verdict changes when the baseline chemistry is replaced: sgb-screen-09 goes INCONCLUSIVE → FAIL_VALIDATION (members L32-exit|1p6kW|A/B
+  go INCONCLUSIVE → FAIL); sgb-screen-08 L38-hist|3p0kW|A/B go FAIL → INCONCLUSIVE.
+This is a sensitivity result, not a v1 verdict change: v1 stays as scored, and dispositions are the owner's (ensemble/o4_dispositions_schema_v1.json).
+Per the pre-registration, Johnson-low is now run on the other three primary combinations. The escalation manifests are
+`escalation_n2_n_exc_johnsonlow_{di_lower,nel_wang,di_lower_nel_wang}`, 3 × 270 runs, executed exactly as pinned. They run concurrently
+with the remaining first-stage branches; the driver has no wall-clock limit, so oversubscribing the CPUs changes speed, not results.
+Also recorded (owner): decision milestones A/B/C, the two-track structure, and the fan-out rule (CLAUDE.md next-work 3). The
+Architecture Decision Acceleration lanes 16–27 and break-even surfaces were launched as dependency-aware workflows.
+
+### 2026-09-26 — Orchestration governance tightened (owner review of the operating model)
+The owner found two governance inconsistencies in my operating-model summary and asked for precision fixes. All are now implemented
+in `docs/orchestration/`:
+- Bundle 1 had an ambiguous dependency on lane 24 ("whatever … by then"). **lane_24_hard_gates is now a hard prerequisite**, because the
+  bundle's elimination statements need the gate logic.
+- The O4 disposition matrix was not a registered trigger. It is now registered as `T_O4_DISPOSITION_MATRIX`: all 5 first stages scored,
+  plus every escalation of a fired first stage scored. The mechanical steps are registered too (`T_O4_SCORE`, `T_O4_ESCALATE`,
+  `T_FACILITY_SCORE`), as are the v2 briefs `T_V2_QUESTION_A` / `T_V2_QUESTION_B` and `T_JOHNSONLOW_ESCALATION_ASSESSMENT`.
+- Every dependency is now a machine id (lane_NN_*, ds_*, fo_*; break-even = lane_28_break_even). Triggers require the terminal state
+  `verified` (both lenses, verified deps), not completion. A tracker test pins these semantics.
+- The watcher claim was overstated. Two harness background-shell watchers (byu2qv4f0, bbdjklhst) had died silently: empty output, no
+  exit notice, cause not determined. They are replaced by a detached daemon (setsid, PPID 1, PID 27068) that derives state every 60 s
+  and appends transitions and READY triggers to a durable event log, plus a harness Monitor on that log (30-min expiry, re-armed).
+  PIDs, survival limits and restart semantics are recorded in `runtime_state.json`. No event was lost, because state is re-derived
+  rather than event-sourced.
+- Other recorded changes: an admissibility rule with per-field metadata for the frozen comparison vector (P_feed/T_feed are
+  feed-state pressure/temperature; electrically driven feed loads are inside P_bus); the strict Bundle-1 outcome vocabulary; and the
+  separation of v2 Question A and Question B.
+
+### 2026-09-26 — Transactional, idempotent trigger lifecycle (owner rule; governance cleared to continue)
+The owner cleared the orchestration layer for continued execution and made one more control binding: trigger execution must be
+transactional and idempotent.
+- Implemented in `scripts/orchestration/trigger_ledger.py` with the append-only ledger `docs/orchestration/trigger_ledger_v2.jsonl`:
+  READY → CLAIMED → LAUNCHED → VERIFIED | FAILED.
+- The execution key is deterministic: trigger + dependency-state hash + prereg/config hash.
+- The claim is persisted before launch through an exclusive-create claim file. A live claim is never READY again, so a daemon crash
+  after launch cannot relaunch.
+- LAUNCHED needs checkable evidence. Stale claims and unconfirmed launches raise alerts and are resolved by the operator, never relaunched
+  automatically.
+- The two firings from before the ledger existed are marked `record_origin=retroactive_reconstruction`, with reconstruction time,
+  original time and evidence. The v1 ledger is frozen.
+- During the migration a transient READY was announced (incident recorded in `runtime_state.json`). No action was taken, and the claim
+  protocol would have refused a second launch.
+- The daemon was replaced by v2 (PID 29739), which announces READY on transitions and raises alerts.
+- `single-lens-v1` lanes must pass the second lens before becoming decisive evidence for Milestone B or C.
+- No broader governance redesign (owner).
+
+### 2026-09-26 — O4 first stage 2/5: rotational-off — trigger FIRED; escalations launched (transactional lifecycle)
+`staged_n2_n_rot_off` (270 vacuum runs against `n2_n.toml`):
+- structural gate PASS (270/270 success);
+- frozen and scored once (mandatory scores reproduced exactly);
+- ledger: T_O4_SCORE CLAIMED → LAUNCHED → VERIFIED.
+O4 evaluation (mechanical): **trigger fired**.
+- 369 run-level triggers: 148 |ΔI_d| ≥ 7.5 %, 141 |ΔT_axial| ≥ half tolerance, 80 status changes.
+- Verdict changes with the baseline replaced: sgb-screen-09 goes INCONCLUSIVE → FAIL_VALIDATION (L32-exit|1p6kW|A/B become FAIL); in
+  sgb-screen-06 and sgb-screen-08, L32-exit|3p0kW|A/B go INCONCLUSIVE → FAIL.
+This is a sensitivity result, not a v1 change. The pinned rot-off escalations (3 × 270) were launched through T_O4_ESCALATE (claim
+efb02512…, runner PID 8241, launch evidence = runner log start line).
+Also: lane 17 went to operator repair (repair run registered), and the earlier watcher-death diagnosis was corrected in runtime_state.json.
+
+### 2026-09-26 — v2 Question A: owner disposition A-NO (binding)
+The verified Question-A brief (fo_v2_domain_question_a) was dispositioned by the owner: **A-NO**. The active N₂ chemistry domain stays
+at 45 eV mean energy, and no P5-N₂ v2 is opened now.
+Why: the only defensible partial extension (dissociation to 60 eV) does not unblock validation. With rotational excitation capped, at
+most 37 of 714 OOD runs are recoverable (≤ 9 per candidate), so a minimal v2 on the same P5 data cannot produce a promotable candidate.
+The dissociation→60 eV finding is kept as candidate evidence for a future revision, not as the active domain; it rests on two
+reconstructed, not fully independent points.
+Binding rules:
+1. A limit-only change is a controlled model-domain change.
+2. The same P5 measurements scored again are not new evidence for promotion (recorded in `admission_record_schema_v1.json`).
+3. Question B is BLOCKED_BY_QUESTION_A_DISPOSITION, enforced in the trigger registry (owner-disposition prerequisite).
+Sub-decisions: D-X1 NO, D-X12 NO (retain as support), D-X2 no change, D-X3 NO, D-X4 NO, D-X5 YES (bounded: rotational > 10 eV first,
+then electronic, non-resonant vibrational, then dissociation), D-X6..10 deferred, D-X11 n/a. Reopen only on genuinely new published
+evidence. O4 (stages 3–5, escalations, disposition matrix) and Bundle 1 continue unchanged.
+
+### 2026-09-26 — O4 first stage complete (5/5 fired); Johnson-low and rot-off escalations scored; 7 further escalations launched
+All scored once through the transactional lifecycle, with the mandatory scores reproduced exactly each time. Every trigger fired.
+First stages:
+- HMS-low: 148 run-level triggers, 2 member changes.
+- HMS-high: 120 triggers; sgb-09 goes INCONCLUSIVE → FAIL_VALIDATION.
+- N₂²⁺ dication (baseline DI-lower): 532 triggers; sgb-05 and sgb-09 → FAIL_VALIDATION.
+Johnson-low escalations:
+- nel_wang: 183 triggers.
+- di_lower_nel_wang: 212 triggers.
+- The earlier di_lower escalation: 209 triggers.
+Rot-off escalations:
+- di_lower: 390 triggers; sgb-09 → FAIL.
+- nel_wang: 362 triggers; sgb-06 and sgb-09 → FAIL.
+- di_lower_nel_wang: 353 triggers; sgb-09 → FAIL.
+These are sensitivity results; v1 is unchanged. The pinned escalations of HMS-low (3), HMS-high (3) and dication (1) are running.
+A container reboot (~19:15–19:35Z) cut off the non-gating facility campaign after 36 of 1080 records; it is not rerun without the owner.
+
+### 2026-09-26 — Facility campaign: owner decision after the reboot
+The reboot-interrupted facility attempt (36 of 1080 records, started 19:10:12Z) is preserved unchanged in
+`hallthruster_bridge/validation/interrupted/facility_mandatory_attempt1/` (STATUS.json: INCOMPLETE_INFRASTRUCTURE_INTERRUPTION, file sha256).
+It is not a numerical failure and not a physics result, and it is never scored or concatenated.
+A fresh 1080-record attempt (`facility_mandatory_attempt2`) launches only via `T_FACILITY_RELAUNCH`, after the 7 active O4 escalations
+are frozen and scored. It gets fresh execution provenance linked to attempt 1, and `T_FACILITY_SCORE` runs only after its complete
+structural audit. Facility stays non-gating; the priority after the escalations is S9/S12.
+
+## 2026-09-27 — A5: Proposal Reference Architecture / Phase-1 Baseline (owner decision)
+`docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json`. It freezes a dual-feed extended-channel
+Hall thruster as the proposal reference, **not** the flight architecture. Atmospheric propellant is the primary feed. Xe is used
+only for ignition, the shielded LaB6 cathode and time-limited contingency, drawing on one fixed Xe mass ledger. The cathode design
+target is 0.10 mg/s; 0.15 mg/s is a test point only. Continuous Xe support of the discharge counts as a Phase-1 failure. The RF
+pre-ionizer is interface-ready (its ICD is to be written now) but is not baseline flight hardware; ECR is the alternate.
+H-1 Phase 1 picks the branch: A (Hall-only), B (RF+Hall), C (ECR+Hall) or NO_VIABLE_CASE. It sweeps mdot_atm x x_O2 x V_d
+and runs Hall-only, then RF, then ECR at each point under common conditions. The discriminators are T/P_bus, sustainment, eta_u
+and envelope width. Thrust, power, mass and life figures are allocations or requirements, never predictions. Hall validation
+status is unchanged: the credible set remains empty.

@@ -1,0 +1,37 @@
+{
+  "schema": "owner_disposition_addendum_v1",
+  "amends": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+  "amends_sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+  "follows": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+  "follows_sha256": "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
+  "decided_by": "owner",
+  "decided_utc": "2026-09-27",
+  "what": "execution authorization for the A5 follow-ons; A5 itself is unchanged",
+  "precondition": "one full-suite + golden + ci_checks baseline at the post-A5 head before any downstream artifact pins the A5 hash",
+  "authorized_now": {
+    "fo_preionizer_module_icd": "common H-1 Pre-Ionizer Module Interface with fixed common boundaries: mechanical envelope and mounting datum; gas-flow path and pressure boundary; electrical power boundary; control/enable/interlock lines; thermal rejection interface; grounding/shielding; diagnostics; service-line routing; permitted magnetic-field disturbance; allowable pressure drop; installation/removal reproducibility. Annexes: RF module (primary contingency) and ECR module (alternate). RF stays the preferred contingency; ECR is NOT elevated to an equal proposal baseline; the common interface only prevents the fixture from structurally disadvantaging a Phase-1 branch before measurement. HW-0 uses a blank/spacer module with equivalent interfaces and service-line presence, so module exchange is the controlled variable.",
+    "fo_xe_system_ledger": "parametric Xe ledger m_Xe_total = m_cathode + m_startup + m_transition + m_fallback + m_reserve. Cathode design term 0.10 mg/s -> 5.4 kg over 15,000 firing hours. m_startup = N_starts * t_startup * mdot_startup; m_transition = N_transitions * t_transition * mdot_transition; m_fallback = t_fallback_max * mdot_fallback; reserve is an explicit policy term, never folded into another category. The system decision is made on the complete stored-Xe subsystem m_Xe_subsystem = m_Xe + m_tank + m_regulator + m_valves + m_plumbing + m_mounting/thermal, not on propellant mass alone, against the 40 kg requirement. Startup, transition and fallback stay symbolic or scenario-based until H-1/C-1 measure them.",
+    "fo_phase1_prereg_framework": "Phase-1 pre-registration FRAMEWORK only. Frozen now: the list of decision quantities (sustainment; T/P_bus; eta_u; operating-envelope width; ignition/restart behaviour; stability/oscillation; absolute thrust compatibility; full bus-power compatibility; no continuous Xe augmentation). Numeric thresholds are NOT frozen: sequence S1a -> LOCK-1 -> W5 freeze -> S1/S1b -> LOCK-2 -> Phase 1; S1/S1b establish uncertainty, noise, remount reproducibility and pressure behaviour; LOCK-2 finalizes statistical decision boundaries. The framework freezes the decision TOPOLOGY now: measured quantities, same-condition definition, counterbalancing scheme, missing-data handling, data-quality rules, repeatability/remount procedure, the no-continuous-Xe rule and the four outcomes A / B / C / NO_VIABLE_CASE. LOCK-2 inserts the numeric boundaries after S1/S1b quantify thrust uncertainty, power uncertainty, remount reproducibility, drift and stability/noise.",
+    "fo_subsystem_maturity_matrix": "16-subsystem maturity matrix (plus the reserved pre-ionizer interface row), the CENTRAL execution dashboard from A6 on. Per row: requirement -> allocation -> interface status -> preliminary design -> evidence status -> procurement status -> analysis/test needed -> blocker -> owner. Purpose: show whether the real architecture blockers are propulsion physics, cathode/Xe, mass, thermal, compressor or an unresolved interface."
+  },
+  "clarification_execution_order": "A5's per-point order Hall-only -> RF+Hall -> ECR+Hall names the three configurations; it is NOT the score-bearing execution order. The Phase-1 protocol uses an order-balanced scheme (paired/randomized or counterbalanced permutations across blocks, with HW-0 reference points inserted) so that architecture is not confounded with chamber conditioning, wall temperature, cathode history, magnet heating, facility drift, contamination or hysteresis. A5 is not rewritten; the clarification lives in the Phase-1 pre-registration/protocol.",
+  "not_authorized": [
+    "freezing total Xe mass",
+    "freezing startup/transition/fallback quantities without evidence",
+    "freezing Phase-1 numeric thresholds",
+    "changing Bundle 1 from NO_BASELINE_YET",
+    "further broad Hall-transport sensitivity research",
+    "another facility simulation campaign"
+  ],
+  "facility_attempt2": "closed for project purposes (scored 23b79c8: none promoted; credible set empty; sgb-screen-08 FAIL_VALIDATION in facility mode only; facility and vacuum validation stay separate)",
+  "lane_names": {
+    "G0": "governance baseline (A5_BASELINE_VERIFICATION.json)",
+    "H1-ICD": "fo_preionizer_module_icd",
+    "XE": "fo_xe_system_ledger",
+    "P1-PREG": "fo_phase1_prereg_framework",
+    "M16": "fo_subsystem_maturity_matrix"
+  },
+  "execution": "the four build lanes run simultaneously; drafting does not wait for G0, but no deliverable pins A5/A6 or is frozen until G0 passes",
+  "common_interface_rule": "the common pre-ionizer interface must not be secretly RF-specific",
+  "next_wave_planned": "hardware-oriented, not broad architecture analysis: Hall chamber/magnet preliminary sizing, cathode mechanical isolation, gas-path/plenum design, PPU/bus allocation, thermal paths, diagnostic ports, H-1 fixture/instrumentation (not yet registered; launched only via new registry triggers)"
+}

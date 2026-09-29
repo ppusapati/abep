@@ -1,0 +1,3844 @@
+{
+ "schema": "abep_experiment_package_v1",
+ "id": "fo_experiment_package_v1",
+ "follow_on": "fo_experiment_package",
+ "trigger": "T_EXPERIMENT_PACKAGE",
+ "prerequisite": "lane_25_min_decisive_experiment",
+ "status": "DRAFT_PENDING_OWNER",
+ "base_commit": "d939ef66324b7d1036b2c9bcd5e7674df218342b",
+ "generated_by": "docs/architecture_comparison/experiment_package/build_experiment_package.py",
+ "not_locked": "Nothing in this package is pre-registered, locked or decided. Every recommendation is PROPOSED for the owner; thresholds not in the RFP are PROPOSED. No score-bearing run may take place before the owner's LOCK-1 and LOCK-2 (lane 25 Sec. 10).",
+ "compliance": [
+  "no absolute Hall performance from any closure (credible set empty; gate 3 FAIL); no screening candidate as a performance source; no retuning",
+  "valve-outlet feed state (lane 16) and compressor bus draw (lane 33) are TBD, never filled",
+  "no architecture named as preferred; eliminations only through lane 24's evaluator (none results)",
+  "P5 calibration nuisance is never an axis; Hall-closure uncertainty does not reach upstream elements",
+  "every number carries a unit, evidence class and source (input pointer or computation), else TBD with its blocking lane or measurement"
+ ],
+ "inputs": [
+  {
+   "key": "minexp_draft",
+   "path": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json",
+   "lane": "lane_25_min_decisive_experiment",
+   "sha256": "54b7b00a60134f2d92f2eb5c9fb49f18d23623a566e04a4b7d70325a0e332509"
+  },
+  {
+   "key": "minexp_doc",
+   "path": "docs/architecture_comparison/minimum_decisive_experiment/MINIMUM_DECISIVE_EXPERIMENT_DRAFT.md",
+   "lane": "lane_25_min_decisive_experiment",
+   "sha256": "eadc0dacdf3bfd9260f8f588267445729237fe85a62b51a8d0b85c0817c40af2"
+  },
+  {
+   "key": "minexp_tools",
+   "path": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py",
+   "lane": "lane_25_min_decisive_experiment",
+   "sha256": "3ee68a28ddd98d25705a58e293944d89dc102b44caad7ac55b912e55fafd7f4b"
+  },
+  {
+   "key": "protocol",
+   "path": "docs/architecture_comparison/experiment_protocol/protocol_draft.json",
+   "lane": "lane_06_experiment_protocol",
+   "sha256": "287dd7ecd57087e46f2f3d786bfb2d64b01ac4fe29a29de21ef98b04c5ac96e3"
+  },
+  {
+   "key": "protocol_doc",
+   "path": "docs/architecture_comparison/experiment_protocol/EXPERIMENT_PROTOCOL_DRAFT.md",
+   "lane": "lane_06_experiment_protocol",
+   "sha256": "8ef5329fb26a0c90d15ae6067c1af81b141b30b95152daf0e5fcff1e4951fb66"
+  },
+  {
+   "key": "failure_tree",
+   "path": "docs/architecture_comparison/failure_tree/failure_trees_v1.json",
+   "lane": "lane_26_failure_tree",
+   "sha256": "5b81c1e99fd7ed9a4fbb4f3e4ef0abda5a753af668ffb20003a3888cb0365d93"
+  },
+  {
+   "key": "overlay_rf",
+   "path": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json",
+   "lane": "fo_rf_breakeven_overlay",
+   "sha256": "ba739be2fdf431ac33900207cd8365d265456ad7b9d7e6a71e0875524c662359"
+  },
+  {
+   "key": "overlay_ecr",
+   "path": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json",
+   "lane": "fo_ecr_breakeven_overlay",
+   "sha256": "3ee12e66f94204955f61cbb78d7c5036044cc59a9bc50f675704592bfbfabfcd"
+  },
+  {
+   "key": "overlay_hs",
+   "path": "docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json",
+   "lane": "fo_hall_sustainment_envelope",
+   "sha256": "3381c88b81670c37836c04e1ee8dea78898718fa9219df12140f2dbe24f612bb"
+  },
+  {
+   "key": "hg_matrix",
+   "path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+   "lane": "lane_24_hard_gates",
+   "sha256": "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f"
+  },
+  {
+   "key": "hg_status",
+   "path": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+   "lane": "lane_24_hard_gates",
+   "sha256": "2c82b3277067b22c85eabd25539b18101f429e6d34ee698d2f5d6e183aa44527"
+  },
+  {
+   "key": "hg_register",
+   "path": "docs/architecture_comparison/hard_gates/evidence_register_v1.json",
+   "lane": "lane_24_hard_gates",
+   "sha256": "45dfbfb311441aeb7c9c58f5dbb9ffb39c28fa448b85de552c37e8268ff94a3d"
+  },
+  {
+   "key": "hg_module",
+   "path": "abep_sim/hard_gates.py",
+   "lane": "lane_24_hard_gates",
+   "sha256": "a36fe3c9065291f0fe5be3f17e179d5b691f00c013f7f8ef299fa89db896dda8"
+  },
+  {
+   "key": "hg_schema",
+   "path": "schemas/architecture_comparison/hard_gates_v1.schema.json",
+   "lane": "lane_24_hard_gates",
+   "sha256": "e5c70c588f3e785720c0d9d01013e5725807b9fd288fa8a1bddf6ba6d86f54ba"
+  },
+  {
+   "key": "arch_boundary",
+   "path": "abep_sim/arch_boundary.py",
+   "lane": "lane_11_bus_boundary",
+   "sha256": "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae"
+  },
+  {
+   "key": "feed_envelope",
+   "path": "docs/architecture_comparison/feed_envelope/feed_envelope_v1.json",
+   "lane": "lane_16_feed_envelope",
+   "sha256": "ada3ee720b1b8d60526d3b092492589f62a4144112845b4d813dbc8dc7d5ca02"
+  },
+  {
+   "key": "constants",
+   "path": "abep_sim/constants.py",
+   "lane": "repository (RFP record and physical constants; read by minexp_numbers.py)",
+   "sha256": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"
+  },
+  {
+   "key": "hall_ensemble",
+   "path": "abep_sim/hall_ensemble.py",
+   "lane": "repository (admission guard; read by the lane-24 evaluator)",
+   "sha256": "218f890c8444af1f593396da5051e38d2d093bbb3cb0bc976cc44b01b67df704"
+  },
+  {
+   "key": "transport_ensemble",
+   "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
+   "lane": "physics track (transport ensemble; read-only, admitted set empty)",
+   "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b"
+  }
+ ],
+ "input_repin_log": [
+  {
+   "date": "2026-09-26",
+   "key": "overlay_hs",
+   "path": "docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json",
+   "lane": "fo_hall_sustainment_envelope",
+   "from_sha256": "c7d05fd04aafe249ff0dce575902067dea9bdd048fa857283cb66066e612b19e",
+   "to_sha256": "3381c88b81670c37836c04e1ee8dea78898718fa9219df12140f2dbe24f612bb",
+   "reason": "envelope re-pinned and re-verified after the lane_09 ECHT integration repair (commit da9b71b, merged): its own input_repin_log records that ECHT-N2 items E03/E04 carry repository_status HISTORICAL_UNSUPPORTED (hallthruster_bridge/identification/echt_n2/STATUS.json) and that the ECHT channel area carries forced assumption A1 (inferred channel radii) as declared_uncertainty; ECHT-OD-READING names A1; no case status, coverage verdict or F-9 changed",
+   "effect_on_this_package": "none substantive: the package reads only the envelope's milestone_A_conditions (HS-A1..HS-A7), which are identical before and after the repair; the package cites no ECHT evidence item (E03/E04), channel area or flow density, so A1 / HISTORICAL_UNSUPPORTED has no entry to attach to here. Any future revision that cites an ECHT item must carry A1 and HISTORICAL_UNSUPPORTED with it (enforced in validate())",
+   "other_pinned_inputs_changed": "none (all other sha256 pins verified unchanged at f44087adc2)"
+  }
+ ],
+ "milestones": {
+  "supports": [
+   "A"
+  ],
+  "A": {
+   "unlocks": [
+    "LOCK-1 can be written once the owner decides D-01..D-15 (this package is the decision record)",
+    "S1 (qualification) can start; D0 then decides from measured S1 values whether delta is reachable",
+    "the measurements in the traceability matrix can move overlay placements from STRADDLES to CLEARLY_ABOVE_BREAKEVEN or CLEARLY_BELOW at the tested hardware point (thresholds carried per entry)",
+    "Bundle-1 conditions RF C1/C2/C4, ECR (A)/(B) and HS-A2 become checkable on measured data (partial where the matrix says so)"
+   ],
+   "does_not": [
+    "name a baseline or set any architecture aside",
+    "eliminate through lane 24 (outcome templates: point_design scope, n2_surrogate feed)"
+   ]
+  },
+  "to_reach_B": [
+   "an admitted Hall transport closure (credible set empty, gate 3 FAIL) to carry the tested-point C*, y and kappa to the Vyovrinda design envelope",
+   "O / O2 chemistry and an atomic-O-bearing feed (the bottled surrogate has none)",
+   "the valve-outlet feed state (lane 16 design inputs) and the ICD compressor draw (lane 33) for the V1 boundary",
+   "the physics-track pre-registration (D-14) if the data are to count as closure evidence",
+   "second-lens verification of any single-lens-v1 lane used as decisive evidence"
+  ],
+  "to_reach_C": [
+   "mass, thermal, life, startup, cathode and mission closure on one integrated design; flight-representative PPU and source chains (M-MWCHAIN); endurance on an O-bearing feed (DM-6)"
+  ]
+ },
+ "decisions": [
+  {
+   "id": "D-01",
+   "title": "T-BUDGET-SHARES: allocation of the ln R uncertainty budget over the variance groups G1-G5",
+   "source": {
+    "lane_25_open_decision": [
+     "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/open_owner_decisions/0"
+    ],
+    "lane_25_threshold": "T-BUDGET-SHARES",
+    "input": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds (id T-BUDGET-SHARES)"
+   },
+   "status": "OPEN_OWNER_DECISION",
+   "structural_finding": "The shares set only the PLANNING targets (instrument and mount specifications). D0 (readiness_n) and scoring use the actual S1 variance components and never the shares (minexp_numbers.readiness_n takes no share argument), so the choice cannot move a classification; it moves what the instruments must achieve before D0 can pass.",
+   "options": [
+    {
+     "id": "D-01-A",
+     "label": "equal five-way (lane-25 proposal)",
+     "shares": {
+      "G1": {
+       "value": 0.2,
+       "unit": "fraction of sigma_max^2",
+       "evidence_class": "assumed",
+       "source": "lane-25 proposal: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds (id T-BUDGET-SHARES)"
+      },
+      "G2": {
+       "value": 0.2,
+       "unit": "fraction of sigma_max^2",
+       "evidence_class": "assumed",
+       "source": "lane-25 proposal: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds (id T-BUDGET-SHARES)"
+      },
+      "G3": {
+       "value": 0.2,
+       "unit": "fraction of sigma_max^2",
+       "evidence_class": "assumed",
+       "source": "lane-25 proposal: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds (id T-BUDGET-SHARES)"
+      },
+      "G4": {
+       "value": 0.2,
+       "unit": "fraction of sigma_max^2",
+       "evidence_class": "assumed",
+       "source": "lane-25 proposal: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds (id T-BUDGET-SHARES)"
+      },
+      "G5": {
+       "value": 0.2,
+       "unit": "fraction of sigma_max^2",
+       "evidence_class": "assumed",
+       "source": "lane-25 proposal: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds (id T-BUDGET-SHARES)"
+      }
+     },
+     "evidence_class": "assumed",
+     "consequences": {
+      "statistics_and_targets": {
+       "4": {
+        "nu_eff": {
+         "value": 28.846154,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4"
+        },
+        "k_primary": {
+         "value": 3.1726749,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4"
+        },
+        "sigma_lnR_max": {
+         "value": 0.0078797862,
+         "unit": "ln-ratio",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4"
+        },
+        "u_T_max": {
+         "value": 0.0049836144,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4: 2 u_T^2/n = share(G1) sigma_max^2"
+        },
+        "u_P_max": {
+         "value": 0.0049836144,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4: 2 u_P^2/n = share(G2) sigma_max^2"
+        },
+        "u_src_max_times_f_src": {
+         "value": 0.0035239475,
+         "unit": "relative (1 sigma) x f_src",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4: (f_src u_src)^2 = share(G3) sigma_max^2"
+        },
+        "u_inst_max": {
+         "value": 0.0024918072,
+         "unit": "ln-ratio (1 sigma, per installation)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4: 2 u_inst^2 = share(G5) sigma_max^2"
+        }
+       },
+       "6": {
+        "nu_eff": {
+         "value": 41.666667,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6"
+        },
+        "k_primary": {
+         "value": 3.0887182,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6"
+        },
+        "sigma_lnR_max": {
+         "value": 0.0080939725,
+         "unit": "ln-ratio",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6"
+        },
+        "u_T_max": {
+         "value": 0.0062695641,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6: 2 u_T^2/n = share(G1) sigma_max^2"
+        },
+        "u_P_max": {
+         "value": 0.0062695641,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6: 2 u_P^2/n = share(G2) sigma_max^2"
+        },
+        "u_src_max_times_f_src": {
+         "value": 0.0036197345,
+         "unit": "relative (1 sigma) x f_src",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6: (f_src u_src)^2 = share(G3) sigma_max^2"
+        },
+        "u_inst_max": {
+         "value": 0.0025595388,
+         "unit": "ln-ratio (1 sigma, per installation)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6: 2 u_inst^2 = share(G5) sigma_max^2"
+        }
+       },
+       "8": {
+        "nu_eff": {
+         "value": 51.470588,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8"
+        },
+        "k_primary": {
+         "value": 3.0539391,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8"
+        },
+        "sigma_lnR_max": {
+         "value": 0.0081861489,
+         "unit": "ln-ratio",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8"
+        },
+        "u_T_max": {
+         "value": 0.0073219142,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8: 2 u_T^2/n = share(G1) sigma_max^2"
+        },
+        "u_P_max": {
+         "value": 0.0073219142,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8: 2 u_P^2/n = share(G2) sigma_max^2"
+        },
+        "u_src_max_times_f_src": {
+         "value": 0.0036609571,
+         "unit": "relative (1 sigma) x f_src",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8: (f_src u_src)^2 = share(G3) sigma_max^2"
+        },
+        "u_inst_max": {
+         "value": 0.0025886876,
+         "unit": "ln-ratio (1 sigma, per installation)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(equal) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8: 2 u_inst^2 = share(G5) sigma_max^2"
+        }
+       },
+       "n_required_by_u_reading": {
+        "0.005": {
+         "value": 6,
+         "unit": "blocks",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.n_required(u = 0.005, T-DELTA, T-ALPHA-FW, m_primary, K, shares equal, T-N-MIN)"
+        },
+        "0.01": {
+         "value": 16,
+         "unit": "blocks",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.n_required(u = 0.01, T-DELTA, T-ALPHA-FW, m_primary, K, shares equal, T-N-MIN)"
+        },
+        "0.02": {
+         "value": 58,
+         "unit": "blocks",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.n_required(u = 0.02, T-DELTA, T-ALPHA-FW, m_primary, K, shares equal, T-N-MIN)"
+        }
+       }
+      }
+     }
+    },
+    {
+     "id": "D-01-B",
+     "label": "G5 removed, four equal shares (only with a no-vent arm switch, D-06-B)",
+     "shares": {
+      "G1": {
+       "value": 0.25,
+       "unit": "fraction of sigma_max^2",
+       "evidence_class": "assumed",
+       "source": "package option (assumed): lane-25 rationale 'G5 -> 0 with OPTION-DIVERTER', remaining shares equal"
+      },
+      "G2": {
+       "value": 0.25,
+       "unit": "fraction of sigma_max^2",
+       "evidence_class": "assumed",
+       "source": "package option (assumed): lane-25 rationale 'G5 -> 0 with OPTION-DIVERTER', remaining shares equal"
+      },
+      "G3": {
+       "value": 0.25,
+       "unit": "fraction of sigma_max^2",
+       "evidence_class": "assumed",
+       "source": "package option (assumed): lane-25 rationale 'G5 -> 0 with OPTION-DIVERTER', remaining shares equal"
+      },
+      "G4": {
+       "value": 0.25,
+       "unit": "fraction of sigma_max^2",
+       "evidence_class": "assumed",
+       "source": "package option (assumed): lane-25 rationale 'G5 -> 0 with OPTION-DIVERTER', remaining shares equal"
+      }
+     },
+     "evidence_class": "assumed",
+     "consequences": {
+      "statistics_and_targets": {
+       "4": {
+        "nu_eff": {
+         "value": 24.0,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4"
+        },
+        "k_primary": {
+         "value": 3.2299865,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4"
+        },
+        "sigma_lnR_max": {
+         "value": 0.0077399704,
+         "unit": "ln-ratio",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4"
+        },
+        "u_T_max": {
+         "value": 0.0054729856,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4: 2 u_T^2/n = share(G1) sigma_max^2"
+        },
+        "u_P_max": {
+         "value": 0.0054729856,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4: 2 u_P^2/n = share(G2) sigma_max^2"
+        },
+        "u_src_max_times_f_src": {
+         "value": 0.0038699852,
+         "unit": "relative (1 sigma) x f_src",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4: (f_src u_src)^2 = share(G3) sigma_max^2"
+        },
+        "u_inst_max": {
+         "value": "not applicable",
+         "reason": "G5 removed (no cross-installation comparison)"
+        }
+       },
+       "6": {
+        "nu_eff": {
+         "value": 40.0,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6"
+        },
+        "k_primary": {
+         "value": 3.0964207,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6"
+        },
+        "sigma_lnR_max": {
+         "value": 0.0080738382,
+         "unit": "ln-ratio",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6"
+        },
+        "u_T_max": {
+         "value": 0.006992149,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6: 2 u_T^2/n = share(G1) sigma_max^2"
+        },
+        "u_P_max": {
+         "value": 0.006992149,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6: 2 u_P^2/n = share(G2) sigma_max^2"
+        },
+        "u_src_max_times_f_src": {
+         "value": 0.0040369191,
+         "unit": "relative (1 sigma) x f_src",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6: (f_src u_src)^2 = share(G3) sigma_max^2"
+        },
+        "u_inst_max": {
+         "value": "not applicable",
+         "reason": "G5 removed (no cross-installation comparison)"
+        }
+       },
+       "8": {
+        "nu_eff": {
+         "value": 56.0,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8"
+        },
+        "k_primary": {
+         "value": 3.0421458,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8"
+        },
+        "sigma_lnR_max": {
+         "value": 0.0082178837,
+         "unit": "ln-ratio",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8"
+        },
+        "u_T_max": {
+         "value": 0.0082178837,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8: 2 u_T^2/n = share(G1) sigma_max^2"
+        },
+        "u_P_max": {
+         "value": 0.0082178837,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8: 2 u_P^2/n = share(G2) sigma_max^2"
+        },
+        "u_src_max_times_f_src": {
+         "value": 0.0041089418,
+         "unit": "relative (1 sigma) x f_src",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(G5 removed) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8: (f_src u_src)^2 = share(G3) sigma_max^2"
+        },
+        "u_inst_max": {
+         "value": "not applicable",
+         "reason": "G5 removed (no cross-installation comparison)"
+        }
+       },
+       "n_required_by_u_reading": {
+        "0.005": {
+         "value": 4,
+         "unit": "blocks",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.n_required(u = 0.005, T-DELTA, T-ALPHA-FW, m_primary, K, shares G5 removed, T-N-MIN)"
+        },
+        "0.01": {
+         "value": 12,
+         "unit": "blocks",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.n_required(u = 0.01, T-DELTA, T-ALPHA-FW, m_primary, K, shares G5 removed, T-N-MIN)"
+        },
+        "0.02": {
+         "value": 46,
+         "unit": "blocks",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.n_required(u = 0.02, T-DELTA, T-ALPHA-FW, m_primary, K, shares G5 removed, T-N-MIN)"
+        }
+       }
+      },
+      "condition": "valid only if hall_only and the source arm share one installation (OPTION-DIVERTER); requires one check against a true HW-0 (lane 25 Sec. 2)"
+     }
+    },
+    {
+     "id": "D-01-C",
+     "label": "non-averaging groups G3-G5 at half the equal share (0.1 each), G1/G2 0.35",
+     "shares": {
+      "G1": {
+       "value": 0.35,
+       "unit": "fraction of sigma_max^2",
+       "evidence_class": "assumed",
+       "source": "package option (assumed, illustrative): G3-G5 at half the equal share"
+      },
+      "G2": {
+       "value": 0.35,
+       "unit": "fraction of sigma_max^2",
+       "evidence_class": "assumed",
+       "source": "package option (assumed, illustrative): G3-G5 at half the equal share"
+      },
+      "G3": {
+       "value": 0.1,
+       "unit": "fraction of sigma_max^2",
+       "evidence_class": "assumed",
+       "source": "package option (assumed, illustrative): G3-G5 at half the equal share"
+      },
+      "G4": {
+       "value": 0.1,
+       "unit": "fraction of sigma_max^2",
+       "evidence_class": "assumed",
+       "source": "package option (assumed, illustrative): G3-G5 at half the equal share"
+      },
+      "G5": {
+       "value": 0.1,
+       "unit": "fraction of sigma_max^2",
+       "evidence_class": "assumed",
+       "source": "package option (assumed, illustrative): G3-G5 at half the equal share"
+      }
+     },
+     "evidence_class": "assumed",
+     "consequences": {
+      "statistics_and_targets": {
+       "4": {
+        "nu_eff": {
+         "value": 11.952191,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4"
+        },
+        "k_primary": {
+         "value": 3.6145996,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4"
+        },
+        "sigma_lnR_max": {
+         "value": 0.0069163954,
+         "unit": "ln-ratio",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4"
+        },
+        "u_T_max": {
+         "value": 0.0057866715,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4: 2 u_T^2/n = share(G1) sigma_max^2"
+        },
+        "u_P_max": {
+         "value": 0.0057866715,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4: 2 u_P^2/n = share(G2) sigma_max^2"
+        },
+        "u_src_max_times_f_src": {
+         "value": 0.0021871563,
+         "unit": "relative (1 sigma) x f_src",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4: (f_src u_src)^2 = share(G3) sigma_max^2"
+        },
+        "u_inst_max": {
+         "value": 0.001546553,
+         "unit": "ln-ratio (1 sigma, per installation)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 4: 2 u_inst^2 = share(G5) sigma_max^2"
+        }
+       },
+       "6": {
+        "nu_eff": {
+         "value": 19.607843,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6"
+        },
+        "k_primary": {
+         "value": 3.3092574,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6"
+        },
+        "sigma_lnR_max": {
+         "value": 0.007554565,
+         "unit": "ln-ratio",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6"
+        },
+        "u_T_max": {
+         "value": 0.0077411256,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6: 2 u_T^2/n = share(G1) sigma_max^2"
+        },
+        "u_P_max": {
+         "value": 0.0077411256,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6: 2 u_P^2/n = share(G2) sigma_max^2"
+        },
+        "u_src_max_times_f_src": {
+         "value": 0.0023889632,
+         "unit": "relative (1 sigma) x f_src",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6: (f_src u_src)^2 = share(G3) sigma_max^2"
+        },
+        "u_inst_max": {
+         "value": 0.0016892521,
+         "unit": "ln-ratio (1 sigma, per installation)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 6: 2 u_inst^2 = share(G5) sigma_max^2"
+        }
+       },
+       "8": {
+        "nu_eff": {
+         "value": 27.027027,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8"
+        },
+        "k_primary": {
+         "value": 3.1915795,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8"
+        },
+        "sigma_lnR_max": {
+         "value": 0.007833112,
+         "unit": "ln-ratio",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8"
+        },
+        "u_T_max": {
+         "value": 0.0092682632,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8: 2 u_T^2/n = share(G1) sigma_max^2"
+        },
+        "u_P_max": {
+         "value": 0.0092682632,
+         "unit": "relative (1 sigma, per reading)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8: 2 u_P^2/n = share(G2) sigma_max^2"
+        },
+        "u_src_max_times_f_src": {
+         "value": 0.0024770475,
+         "unit": "relative (1 sigma) x f_src",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8: (f_src u_src)^2 = share(G3) sigma_max^2"
+        },
+        "u_inst_max": {
+         "value": 0.0017515371,
+         "unit": "ln-ratio (1 sigma, per installation)",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via MinexpContext.plan(non-averaging halved) -> minexp_numbers.plan_nu_eff / t_two_sided_bonferroni / sigma_lnR_max, n = 8: 2 u_inst^2 = share(G5) sigma_max^2"
+        }
+       },
+       "n_required_by_u_reading": {
+        "0.005": {
+         "value": 4,
+         "unit": "blocks",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.n_required(u = 0.005, T-DELTA, T-ALPHA-FW, m_primary, K, shares non-averaging halved, T-N-MIN)"
+        },
+        "0.01": {
+         "value": 10,
+         "unit": "blocks",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.n_required(u = 0.01, T-DELTA, T-ALPHA-FW, m_primary, K, shares non-averaging halved, T-N-MIN)"
+        },
+        "0.02": {
+         "value": 34,
+         "unit": "blocks",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.n_required(u = 0.02, T-DELTA, T-ALPHA-FW, m_primary, K, shares non-averaging halved, T-N-MIN)"
+        }
+       }
+      }
+     }
+    }
+   ],
+   "recommendation": {
+    "status": "PROPOSED",
+    "option": "D-01-A",
+    "rationale": "Keep the transparent equal allocation until S1 gives the actual components; re-allocate at LOCK-1 only together with D-06 (a no-vent switch removes G5)."
+   },
+   "cost_note": "No change in readings or conditions; changes instrument / mount specifications only."
+  },
+  {
+   "id": "D-02",
+   "title": "Stop rule D3: sign form (upper bound of ln R_arch < 0) or STOP-MARGIN (upper bound < -delta)",
+   "source": {
+    "lane_25_open_decision": [
+     "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/open_owner_decisions/3"
+    ],
+    "lane_25_threshold": "T-STOP-RULE",
+    "input": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds (id T-STOP-RULE)"
+   },
+   "status": "OPEN_OWNER_DECISION",
+   "options": [
+    {
+     "id": "D-02-A",
+     "label": "sign form (lane-25 proposal)",
+     "consequences": {
+      "statistics": [
+       {
+        "what": "smallest true R_arch that can support a stop at the planned precision (estimate below -h)",
+        "R_threshold": {
+         "value": 0.97530991,
+         "unit": "ratio",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via exp(-T-DELTA/2)"
+        }
+       }
+      ],
+      "meaning": "equals 'C_del > C* with simultaneous confidence' (break-even identity, lane 25 Sec. 3.2); matches the overlays' break-even inequality, which has no margin"
+     }
+    },
+    {
+     "id": "D-02-B",
+     "label": "STOP-MARGIN",
+     "consequences": {
+      "statistics": [
+       {
+        "what": "smallest true R_arch that can support a stop at the planned precision (estimate below -delta - h)",
+        "R_threshold": {
+         "value": 0.92774349,
+         "unit": "ratio",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via exp(-T-DELTA - T-DELTA/2)"
+        }
+       }
+      ],
+      "meaning": "keeps running an arm whose bus-referred thrust per watt is confidently below hall_only but within delta of it"
+     }
+    }
+   ],
+   "grid_comparison": [
+    {
+     "h": {
+      "value": 0.025,
+      "unit": "ln-ratio",
+      "evidence_class": "model-derived",
+      "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via h = T-DELTA/2 (planned k sigma_max)"
+     },
+     "grid_points": {
+      "value": 25,
+      "unit": "estimates",
+      "evidence_class": "assumed",
+      "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via illustrative grid ln R_hat = -0.10 .. +0.02, step 0.005"
+     },
+     "sign_form_stop_supporting": {
+      "value": 15,
+      "unit": "grid points",
+      "evidence_class": "model-derived",
+      "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.stop_supporting(x, h)"
+     },
+     "stop_margin_stop_supporting": {
+      "value": 5,
+      "unit": "grid points",
+      "evidence_class": "model-derived",
+      "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via upper bound x + h < -T-DELTA"
+     },
+     "stop_margin_subset_of_sign_form": true,
+     "size_classes_on_grid": {
+      "EQUIVALENT": {
+       "value": 9,
+       "unit": "grid points",
+       "evidence_class": "model-derived",
+       "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.classify(x, h, T-DELTA)"
+      },
+      "SOURCE_WORSE": {
+       "value": 15,
+       "unit": "grid points",
+       "evidence_class": "model-derived",
+       "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.classify(x, h, T-DELTA)"
+      },
+      "UNRESOLVED": {
+       "value": 1,
+       "unit": "grid points",
+       "evidence_class": "model-derived",
+       "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.classify(x, h, T-DELTA)"
+      }
+     }
+    },
+    {
+     "h": {
+      "value": 0.0375,
+      "unit": "ln-ratio",
+      "evidence_class": "model-derived",
+      "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via h = 0.75 T-DELTA (lane-25 Sec. 6.2 example)"
+     },
+     "grid_points": {
+      "value": 25,
+      "unit": "estimates",
+      "evidence_class": "assumed",
+      "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via illustrative grid ln R_hat = -0.10 .. +0.02, step 0.005"
+     },
+     "sign_form_stop_supporting": {
+      "value": 13,
+      "unit": "grid points",
+      "evidence_class": "model-derived",
+      "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.stop_supporting(x, h)"
+     },
+     "stop_margin_stop_supporting": {
+      "value": 3,
+      "unit": "grid points",
+      "evidence_class": "model-derived",
+      "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via upper bound x + h < -T-DELTA"
+     },
+     "stop_margin_subset_of_sign_form": true,
+     "size_classes_on_grid": {
+      "EQUIVALENT": {
+       "value": 5,
+       "unit": "grid points",
+       "evidence_class": "model-derived",
+       "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.classify(x, h, T-DELTA)"
+      },
+      "SOURCE_WORSE": {
+       "value": 13,
+       "unit": "grid points",
+       "evidence_class": "model-derived",
+       "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.classify(x, h, T-DELTA)"
+      },
+      "UNRESOLVED": {
+       "value": 7,
+       "unit": "grid points",
+       "evidence_class": "model-derived",
+       "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.classify(x, h, T-DELTA)"
+      }
+     }
+    }
+   ],
+   "cost_note": "Neither form changes the planned readings; a stop only removes the arm's remaining S4/S5 rows (readings_if_stopped below). Every STOP-MARGIN stop is also a sign-form stop (checked on the grid), so the sign form can only save readings, never add them. A stop is an experiment-internal decision, not an architecture elimination (hard-gate outcome templates).",
+   "readings_if_stopped": {
+    "hall_on_readings_full_at_n_min": {
+     "value": 208,
+     "unit": "readings",
+     "evidence_class": "model-derived",
+     "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(n = T-N-MIN)"
+    },
+    "hall_on_readings_if_both_arms_stop_at_subset_at_n_min": {
+     "value": 128,
+     "unit": "readings",
+     "evidence_class": "model-derived",
+     "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(n = T-N-MIN)"
+    }
+   },
+   "recommendation": {
+    "status": "PROPOSED",
+    "option": "D-02-A",
+    "rationale": "The sign statement is the break-even condition itself; the margin form would require a larger measured deficit than the break-even surfaces and overlays use, and it is monotone in precision too, so it offers no robustness gain."
+   }
+  },
+  {
+   "id": "D-03",
+   "title": "Does a stop from the confirmation subset require Hall-on data at P_lo?",
+   "source": {
+    "lane_25_open_decision": [
+     "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/open_owner_decisions/4"
+    ],
+    "input": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/open_owner_decisions/4"
+   },
+   "status": "OPEN_OWNER_DECISION",
+   "options": [
+    {
+     "id": "D-03-A",
+     "label": "no: P_lo conditions of a stopped arm are NOT_TESTED (lane-25 draft)",
+     "consequences": {
+      "readings": {
+       "subset_conditions_per_block_per_arm": {
+        "ecr_hall": {
+         "value": 8,
+         "unit": "conditions per block",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(run_matrix, reading_rule, n = T-N-MIN)"
+        },
+        "rf_hall": {
+         "value": 8,
+         "unit": "conditions per block",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(run_matrix, reading_rule, n = T-N-MIN)"
+        }
+       },
+       "hall_on_readings_if_both_arms_stop_at_subset": {
+        "value": 128,
+        "unit": "readings",
+        "evidence_class": "model-derived",
+        "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(run_matrix, reading_rule, n = T-N-MIN)"
+       }
+      },
+      "evidence": "the break-even surface at P_lo stays unmeasured for a stopped arm (NOT_TESTED: no evidence either way)"
+     }
+    },
+    {
+     "id": "D-03-B",
+     "label": "yes: add OP1-OP3 x lo to the subset (rows R12, R15, R18, R27, R30, R33)",
+     "consequences": {
+      "readings": {
+       "subset_conditions_per_block_per_arm": {
+        "ecr_hall": {
+         "value": 11,
+         "unit": "conditions per block",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(run_matrix, reading_rule, n = T-N-MIN) with the lo rows flagged confirmation_subset"
+        },
+        "rf_hall": {
+         "value": 11,
+         "unit": "conditions per block",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(run_matrix, reading_rule, n = T-N-MIN) with the lo rows flagged confirmation_subset"
+        }
+       },
+       "hall_on_readings_if_both_arms_stop_at_subset": {
+        "value": 152,
+        "unit": "readings",
+        "evidence_class": "model-derived",
+        "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(run_matrix, reading_rule, n = T-N-MIN) with the lo rows flagged confirmation_subset"
+       },
+       "added_readings_at_n_min": {
+        "value": 24,
+        "unit": "readings",
+        "evidence_class": "model-derived",
+        "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via difference of the two run_counts results"
+       },
+       "full_campaign_readings_at_n_min_for_reference": {
+        "value": 208,
+        "unit": "readings",
+        "evidence_class": "model-derived",
+        "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(run_matrix, reading_rule, n = T-N-MIN)"
+       }
+      },
+      "statistics": {
+       "m_primary_unchanged": {
+        "value": 14,
+        "unit": "comparisons",
+        "evidence_class": "model-derived",
+        "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.family_sizes with the lo rows flagged"
+       },
+       "note": "the lo conditions are already primary-family members, so k and the uncertainty targets do not change"
+      },
+      "evidence": "C_del and C* are then measured at both source powers wherever an arm stops; the power dependence of C_del is unknown (lane 25 Sec. 4) and the RF overlay places its evidence units per source power level"
+     }
+    }
+   ],
+   "recommendation": {
+    "status": "PROPOSED",
+    "option": "D-03-B",
+    "rationale": "A stop then rests on both tested source powers; the added readings are a small fraction of the full campaign (computed above)."
+   }
+  },
+  {
+   "id": "D-04",
+   "title": "T-ISO-INTERP: chord model error u_interp of the iso-power reference",
+   "source": {
+    "lane_25_open_decision": [
+     "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/open_owner_decisions/5"
+    ],
+    "lane_25_threshold": "T-ISO-INTERP",
+    "input": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds (id T-ISO-INTERP)"
+   },
+   "status": "OPEN_OWNER_DECISION",
+   "options": [
+    {
+     "id": "D-04-A",
+     "label": "pre-registered Type B bound (evidence class assumed)",
+     "consequences": {
+      "statistics": {
+       "u_interp_budget_at_n": {
+        "4": {
+         "value": 0.0031207221,
+         "unit": "ln-ratio",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/plan_by_n/4/u_interp_max"
+        },
+        "6": {
+         "value": 0.0031344569,
+         "unit": "ln-ratio",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/plan_by_n/6/u_interp_max"
+        },
+        "8": {
+         "value": 0.003139741,
+         "unit": "ln-ratio",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/plan_by_n/8/u_interp_max"
+        }
+       }
+      },
+      "readings": {
+       "value": 0,
+       "unit": "added readings",
+       "evidence_class": "model-derived",
+       "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via no added condition"
+      },
+      "evidence": "R_iso classes then rest on an assumed chord error"
+     }
+    },
+    {
+     "id": "D-04-B",
+     "label": "V_mid reading on HW-0 at OP2 and OP3 (+2 conditions per block)",
+     "consequences": {
+      "readings": {
+       "hall_on_readings_per_block": {
+        "value": 54,
+        "unit": "readings per block",
+        "evidence_class": "model-derived",
+        "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(run_matrix, reading_rule, n = T-N-MIN) with two HW-0 S2 V_mid rows added"
+       },
+       "baseline_hall_on_readings_per_block": {
+        "value": 52,
+        "unit": "readings per block",
+        "evidence_class": "model-derived",
+        "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(run_matrix, reading_rule, n = T-N-MIN)"
+       },
+       "added_readings_at_n_min": {
+        "value": 8,
+        "unit": "readings",
+        "evidence_class": "model-derived",
+        "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via difference x T-N-MIN"
+       }
+      },
+      "statistics": "families unchanged (the V_mid rows are references, not comparisons)",
+      "evidence": "the chord error is bounded by a measured deviation (measured, not assumed)"
+     }
+    }
+   ],
+   "recommendation": {
+    "status": "PROPOSED",
+    "option": "D-04-B",
+    "rationale": "Replaces an assumed bound in the iso-power family by a measurement at a small, computed cost."
+   }
+  },
+  {
+   "id": "D-05",
+   "title": "Location of the LOCK-1 / LOCK-2 pre-registration files",
+   "source": {
+    "lane_25_open_decision": [
+     "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/open_owner_decisions/10"
+    ],
+    "lane_06_item": "preregistration.lock_location",
+    "input": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/preregistration/location"
+   },
+   "status": "OPEN_OWNER_DECISION",
+   "constraint": "never under hallthruster_bridge/prereg/ (physics-track validation locks; lane 25 Sec. 10)",
+   "options": [
+    {
+     "id": "D-05-A",
+     "label": "docs/architecture_comparison/experiment_protocol/prereg/ (lane-06 PR-3 proposal)",
+     "consequences": {
+      "statistics": "none",
+      "readings": "none",
+      "governance": "one lock location for the single protocol basis (reconciliation)"
+     }
+    },
+    {
+     "id": "D-05-B",
+     "label": "docs/architecture_comparison/minimum_decisive_experiment/prereg/",
+     "consequences": {
+      "statistics": "none",
+      "readings": "none",
+      "governance": "locks sit next to the lane-25 draft; lane 06 needs a pointer"
+     }
+    },
+    {
+     "id": "D-05-C",
+     "label": "docs/architecture_comparison/experiment_package/prereg/",
+     "consequences": {
+      "statistics": "none",
+      "readings": "none",
+      "governance": "locks sit next to this decision record"
+     }
+    }
+   ],
+   "recommendation": {
+    "status": "PROPOSED",
+    "option": "D-05-A",
+    "rationale": "If the owner adopts one protocol basis (D-10), its lock belongs with the protocol; LOCK-1 then records this package's sha256 as the decision source."
+   }
+  },
+  {
+   "id": "D-06",
+   "title": "Hardware configuration: HW-0 spacer + S1b re-mounts, OPTION-DIVERTER, or lane-06 CFG-A/CFG-B",
+   "source": {
+    "lane_25_open_decision": [
+     "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/open_owner_decisions/2",
+     "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/open_owner_decisions/9"
+    ],
+    "lane_06_item": "hardware_configurations (CFG-A / CFG-B)",
+    "input": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/hardware_configurations"
+   },
+   "status": "OPEN_OWNER_DECISION",
+   "options": [
+    {
+     "id": "D-06-A",
+     "label": "HW-0 flow-equivalent spacer; K re-mount cycles in S1b (lane-25 default)",
+     "consequences": {
+      "statistics": {
+       "k_primary_by_K_at_n_min": {
+        "K=3": {
+         "k_primary": {
+          "value": 3.2720391,
+          "unit": "-",
+          "evidence_class": "model-derived",
+          "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/k_primary_by_remount_cycles/K=3/k_primary"
+         },
+         "S1b_readings": {
+          "value": 9,
+          "unit": "readings (non-score-bearing)",
+          "evidence_class": "model-derived",
+          "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via K=3 x T-S1-READINGS-PER-CYCLE"
+         }
+        },
+        "K=6": {
+         "k_primary": {
+          "value": 3.1726749,
+          "unit": "-",
+          "evidence_class": "model-derived",
+          "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/k_primary_by_remount_cycles/K=6/k_primary"
+         },
+         "S1b_readings": {
+          "value": 18,
+          "unit": "readings (non-score-bearing)",
+          "evidence_class": "model-derived",
+          "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via K=6 x T-S1-READINGS-PER-CYCLE"
+         }
+        },
+        "K=11": {
+         "k_primary": {
+          "value": 3.1407222,
+          "unit": "-",
+          "evidence_class": "model-derived",
+          "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/k_primary_by_remount_cycles/K=11/k_primary"
+         },
+         "S1b_readings": {
+          "value": 33,
+          "unit": "readings (non-score-bearing)",
+          "evidence_class": "model-derived",
+          "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via K=11 x T-S1-READINGS-PER-CYCLE"
+         }
+        }
+       }
+      },
+      "hardware": "no new hardware; installation reproducibility must reach u_inst_max (D-01) or D0 fails"
+     }
+    },
+    {
+     "id": "D-06-B",
+     "label": "OPTION-DIVERTER: in-vacuum feed-path switch, hall_only in the same installation",
+     "consequences": {
+      "statistics": "G5 removed: targets of D-01-B",
+      "readings": "one check against a true HW-0 (count TBD - requires the diverter design)",
+      "hardware": "TBD - requires a feasibility review of the diverter (gas path must be flow-equivalent in both positions)"
+     }
+    },
+    {
+     "id": "D-06-C",
+     "label": "lane-06 CFG-A: both applicators installed, hall_only = both unenergized",
+     "consequences": {
+      "statistics": "no installation term between arms",
+      "bias": "the reference is not bare hall_only: gas passes both source chambers and an ECR permanent magnet perturbs B(z) (lane 25 Sec. 2); needs an HW-0 anchor to separate that installation effect",
+      "hardware": "TBD - requires a feasibility review of two applicators on one article"
+     }
+    },
+    {
+     "id": "D-06-D",
+     "label": "lane-06 CFG-B: separate builds, sham controls, replicate builds",
+     "consequences": {
+      "statistics": "equivalent to D-06-A with the installed-off state as the sham (R_arch = R_within x R_install); replicate builds play the S1b role",
+      "hardware": "no new hardware"
+     }
+    }
+   ],
+   "recommendation": {
+    "status": "PROPOSED",
+    "option": "D-06-A",
+    "rationale": "Needs no unproven hardware and keeps a true hall_only reference; adopt D-06-B later only if its feasibility review passes (then re-allocate G5, D-01-B)."
+   }
+  },
+  {
+   "id": "D-07",
+   "title": "T-DELTA: equivalence / decision margin on ln R",
+   "source": {
+    "lane_25_open_decision": [
+     "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/open_owner_decisions/0"
+    ],
+    "lane_25_threshold": "T-DELTA",
+    "lane_06_item": "delta_m1 (TBD)",
+    "input": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds (id T-DELTA)"
+   },
+   "status": "OPEN_OWNER_DECISION",
+   "options": [
+    {
+     "id": "D-07-A",
+     "label": "delta = 0.05",
+     "consequences": {
+      "blocks_required_by_u_reading": {
+       "u=0.005": {
+        "value": 6,
+        "unit": "blocks",
+        "evidence_class": "model-derived",
+        "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/n_required/delta=0.05/u=0.005"
+       },
+       "u=0.01": {
+        "value": 16,
+        "unit": "blocks",
+        "evidence_class": "model-derived",
+        "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/n_required/delta=0.05/u=0.01"
+       },
+       "u=0.02": {
+        "value": 58,
+        "unit": "blocks",
+        "evidence_class": "model-derived",
+        "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/n_required/delta=0.05/u=0.02"
+       }
+      },
+      "within_T_N_MAX": {
+       "u=0.005": true,
+       "u=0.01": false,
+       "u=0.02": false
+      }
+     }
+    },
+    {
+     "id": "D-07-B",
+     "label": "delta = 0.1",
+     "consequences": {
+      "blocks_required_by_u_reading": {
+       "u=0.005": {
+        "value": 4,
+        "unit": "blocks",
+        "evidence_class": "model-derived",
+        "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/n_required/delta=0.1/u=0.005"
+       },
+       "u=0.01": {
+        "value": 6,
+        "unit": "blocks",
+        "evidence_class": "model-derived",
+        "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/n_required/delta=0.1/u=0.01"
+       },
+       "u=0.02": {
+        "value": 16,
+        "unit": "blocks",
+        "evidence_class": "model-derived",
+        "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/n_required/delta=0.1/u=0.02"
+       }
+      },
+      "within_T_N_MAX": {
+       "u=0.005": true,
+       "u=0.01": true,
+       "u=0.02": false
+      }
+     }
+    }
+   ],
+   "recommendation": {
+    "status": "PROPOSED",
+    "option": "D-07-A",
+    "rationale": "Keep the lane-25 T-DELTA at LOCK-1; D0 then tells whether the S1 repeatability supports it (widening delta after S1 is allowed only as a LOCK-1 restart)."
+   }
+  },
+  {
+   "id": "D-08",
+   "title": "T-N-MIN / T-N-MAX: admissible block counts (n fixed at LOCK-2 by readiness_n)",
+   "source": {
+    "lane_25_open_decision": [
+     "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/open_owner_decisions/0"
+    ],
+    "lane_06_item": "replicates_min (3)",
+    "input": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds (ids T-N-MIN, T-N-MAX)"
+   },
+   "status": "OPEN_OWNER_DECISION",
+   "options": [
+    {
+     "id": "D-08-A",
+     "label": "even n in [4, 8] (lane-25 proposal)",
+     "consequences": {
+      "readings_by_n": {
+       "4": {
+        "hall_on_readings_full": {
+         "value": 208,
+         "unit": "readings",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(n = 4)"
+        },
+        "bench_readings": {
+         "value": 120,
+         "unit": "readings",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(n = 4)"
+        }
+       },
+       "6": {
+        "hall_on_readings_full": {
+         "value": 312,
+         "unit": "readings",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(n = 6)"
+        },
+        "bench_readings": {
+         "value": 180,
+         "unit": "readings",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(n = 6)"
+        }
+       },
+       "8": {
+        "hall_on_readings_full": {
+         "value": 416,
+         "unit": "readings",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(n = 8)"
+        },
+        "bench_readings": {
+         "value": 240,
+         "unit": "readings",
+         "evidence_class": "model-derived",
+         "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(n = 8)"
+        }
+       }
+      },
+      "knee_scan_readings": {
+       "value": 10,
+       "unit": "readings",
+       "evidence_class": "model-derived",
+       "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(run_matrix, reading_rule, n = T-N-MIN)"
+      },
+      "s1b_readings": {
+       "value": 18,
+       "unit": "readings",
+       "evidence_class": "model-derived",
+       "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.run_counts(run_matrix, reading_rule, n = T-N-MIN)"
+      }
+     }
+    },
+    {
+     "id": "D-08-B",
+     "label": "lane-06 replicates_min = 3 (odd; no drift cancellation over pairs)",
+     "consequences": {
+      "statistics": "below T-N-MIN; the lane-25 drift cancellation needs an even n",
+      "value": {
+       "value": 3,
+       "unit": "replicates per (arm, point)",
+       "evidence_class": "assumed",
+       "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/design/replication/replicates_min"
+      }
+     }
+    }
+   ],
+   "recommendation": {
+    "status": "PROPOSED",
+    "option": "D-08-A",
+    "rationale": "Even n keeps the alternating source-level order; n itself is not chosen by the owner but computed by readiness_n from S1 values."
+   }
+  },
+  {
+   "id": "D-09",
+   "title": "Tested Hall unit H-1: Vyovrinda design or a surrogate",
+   "source": {
+    "lane_25_open_decision": [
+     "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/open_owner_decisions/6"
+    ],
+    "input": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/hardware_minimum/0"
+   },
+   "status": "OPEN_OWNER_DECISION",
+   "options": [
+    {
+     "id": "D-09-A",
+     "label": "Vyovrinda design (evidence level 1)",
+     "consequences": {
+      "hard_gate_basis": "measurement_vyovrinda (verdict-bearing basis in the lane-24 matrix, still point_design scope: hard-gate outcome templates)",
+      "milestone": "results are evidence about the proposed hardware"
+     }
+    },
+    {
+     "id": "D-09-B",
+     "label": "surrogate Hall unit (evidence level 3)",
+     "consequences": {
+      "hard_gate_basis": "measurement_similar_hardware: not verdict-bearing in the lane-24 matrix (computed: traceability.rows[].hard_gates[].measurement_similar_hardware_verdict_bearing)",
+      "milestone": "transfers to the Vyovrinda design only through an admitted closure (credible set empty)"
+     }
+    }
+   ],
+   "recommendation": {
+    "status": "PROPOSED",
+    "option": "D-09-A",
+    "rationale": "Only level-1 data can serve milestone A without an admitted closure."
+   }
+  },
+  {
+   "id": "D-10",
+   "title": "Single protocol basis: adopt the reconciliation (boundary, classes, multiplicity, extinction, ordering, controls)",
+   "source": {
+    "lane_25_open_decision": [
+     "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/open_owner_decisions/9"
+    ],
+    "lane_06_item": "open_items_for_owner",
+    "input": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/related_lanes/0"
+   },
+   "status": "OPEN_OWNER_DECISION",
+   "options": [
+    {
+     "id": "D-10-A",
+     "label": "adopt the PROPOSED single basis (reconciliation section)",
+     "consequences": {
+      "see": "reconciliation.proposed_single_basis"
+     }
+    },
+    {
+     "id": "D-10-B",
+     "label": "run lane 25 and lane 06 as separate protocols",
+     "consequences": {
+      "risk": "two classification vocabularies and two P_bus bases for the same readings; the admissibility rule (one boundary) is then met by only one"
+     }
+    }
+   ],
+   "recommendation": {
+    "status": "PROPOSED",
+    "option": "D-10-A",
+    "rationale": "One boundary basis and one class vocabulary are needed for an admissible comparison (operating model Sec. 3)."
+   }
+  },
+  {
+   "id": "D-11",
+   "title": "Unmeasured common loads: compressor bus draw and valve-outlet feed state",
+   "source": {
+    "lane_25_open_decision": [
+     "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/open_owner_decisions/1"
+    ],
+    "lane_06_item": "compressor_bus_power (TBD)",
+    "input": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/bus_power_boundary/laboratory_subset"
+   },
+   "status": "OPEN_OWNER_DECISION",
+   "tbd": [
+    {
+     "value": "TBD",
+     "what": "compressor bus draw per operating point",
+     "requires": "upstream ICD compressor bus power",
+     "blocked_by": [
+      "lane_33_upstream_icd (not verified)"
+     ]
+    },
+    {
+     "value": "TBD",
+     "what": "valve-outlet feed state (mdot_min, mdot_nom, composition, p_feed, T_feed; IF-A5)",
+     "requires": "feed design inputs with provenance (feed envelope status DESIGN_INPUTS_MISSING)",
+     "blocked_by": [
+      "lane_16_feed_envelope (design inputs)"
+     ]
+    }
+   ],
+   "options": [
+    {
+     "id": "D-11-A",
+     "label": "report PARTIAL_BOUNDARY classes until the ICD compressor draw exists; V1-basis classes only after it",
+     "consequences": {
+      "admissibility": "PARTIAL-basis classes are not bus_power_boundary_v1 results and are not admissible Bundle-1 comparison fields",
+      "direction": "a common additive load P_c multiplies R: R_v1 = R_lab x (1 + P_c/P_0) / (1 + P_c/P_X), a factor > 1 when P_X > P_0, so a PARTIAL-basis class is biased against the source arm relative to the V1 basis (lane 25 Sec. 3.7: common loads raise C*)"
+     }
+    },
+    {
+     "id": "D-11-B",
+     "label": "fix a compressor ledger input at LOCK-1 (lane-25 Sec. 6.7 style)",
+     "consequences": {
+      "compliance": "would fill the compressor draw before lane 33 is verified; not available to this package (task rule)"
+     }
+    }
+   ],
+   "recommendation": {
+    "status": "PROPOSED",
+    "option": "D-11-A",
+    "rationale": "Never fills the compressor draw or the feed state; the V1 basis is added when the upstream ICD supplies it, with its own evidence class."
+   }
+  },
+  {
+   "id": "D-12",
+   "title": "Facility per stage and T-PB-MAX; number of elevated background-pressure levels",
+   "source": {
+    "lane_25_open_decision": [
+     "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/open_owner_decisions/7"
+    ],
+    "lane_25_threshold": "T-PB-MAX, T-PB-ELEV-FACTOR",
+    "lane_06_item": "pbg_elevated_levels_min",
+    "input": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds (id T-PB-MAX)"
+   },
+   "status": "OPEN_OWNER_DECISION",
+   "tbd": [
+    {
+     "value": "TBD",
+     "what": "T-PB-MAX",
+     "requires": "facility specification and owner decision at LOCK-1",
+     "blocked_by": [
+      "owner",
+      "facility data"
+     ]
+    },
+    {
+     "value": "TBD",
+     "what": "total grid flow (sets S_eff = Q/p_b)",
+     "requires": "IF-A5 feed envelope",
+     "blocked_by": [
+      "lane_16_feed_envelope"
+     ]
+    }
+   ],
+   "options": [
+    {
+     "id": "D-12-A",
+     "label": "one elevated level (2 x base p_b, lane 25)",
+     "consequences": {
+      "S5_readings_per_block": {
+       "value": 14,
+       "unit": "readings per block",
+       "evidence_class": "model-derived",
+       "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via minexp_numbers.readings_per_visit over the S5 rows of the run matrix"
+      }
+     }
+    },
+    {
+     "id": "D-12-B",
+     "label": "two elevated levels (lane 06 pbg_elevated_levels_min = 2)",
+     "consequences": {
+      "S5_readings_per_block": {
+       "value": 28,
+       "unit": "readings per block",
+       "evidence_class": "model-derived",
+       "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via 2 x the S5 readings (second elevated level repeats every S5 visit)"
+      },
+      "statistics": {
+       "m_facility_one_level": {
+        "value": 4,
+        "unit": "-",
+        "evidence_class": "model-derived",
+        "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/m_family/facility"
+       },
+       "m_facility_two_levels_classified": {
+        "value": 8,
+        "unit": "comparisons",
+        "evidence_class": "model-derived",
+        "source": "computed: docs/architecture_comparison/experiment_package/build_experiment_package.py via 2 x minexp_numbers.family_sizes(...)['facility']"
+       },
+       "note": "unless the second level is reported without classification"
+      },
+      "value": {
+       "value": 2,
+       "unit": "elevated background-pressure levels in addition to the base level",
+       "evidence_class": "assumed",
+       "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/facility_effect_controls/elevated_levels_min"
+      }
+     }
+    }
+   ],
+   "recommendation": {
+    "status": "PROPOSED",
+    "option": "D-12-A",
+    "rationale": "One classified elevated level (sign and size of the p_b sensitivity); a second level only as an unclassified slope check if the facility allows."
+   }
+  },
+  {
+   "id": "D-13",
+   "title": "Ignition / start attempts (not in the lane-25 minimum; lane-06 M5; G6.ignition, HS-A6)",
+   "source": {
+    "lane_06_item": "decision_metrics M5, statistics.ignition_decision_aid",
+    "input": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/statistics/ignition_decision_aid",
+    "lane_25_open_decision": []
+   },
+   "status": "OPEN_OWNER_DECISION",
+   "tbd": [
+    {
+     "value": "TBD",
+     "what": "ignition_p_min and ignition_attempts",
+     "requires": "owner/system requirement (start-cycle budget)",
+     "blocked_by": [
+      "owner"
+     ]
+    }
+   ],
+   "options": [
+    {
+     "id": "D-13-A",
+     "label": "exclude (lane-25 minimum): ignition stays unmeasured",
+     "consequences": {
+      "evidence": "HS-A6 and G6.ignition stay UNDETERMINED from this experiment"
+     }
+    },
+    {
+     "id": "D-13-B",
+     "label": "add an ignition-attempt module per arm (xenon-assisted and, if the cathode lane admits it, air-only), non-score-bearing for R",
+     "consequences": {
+      "attempts_for_zero_failure_demonstration": [
+       {
+        "target": {
+         "value": 0.9,
+         "unit": "probability",
+         "evidence_class": "assumed",
+         "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/statistics/ignition_decision_aid/rows/0/target"
+        },
+        "attempts": {
+         "value": 29,
+         "unit": "attempts",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/statistics/ignition_decision_aid/rows/0/n_min_zero_failures"
+        }
+       },
+       {
+        "target": {
+         "value": 0.95,
+         "unit": "probability",
+         "evidence_class": "assumed",
+         "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/statistics/ignition_decision_aid/rows/1/target"
+        },
+        "attempts": {
+         "value": 59,
+         "unit": "attempts",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/statistics/ignition_decision_aid/rows/1/n_min_zero_failures"
+        }
+       },
+       {
+        "target": {
+         "value": 0.99,
+         "unit": "probability",
+         "evidence_class": "assumed",
+         "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/statistics/ignition_decision_aid/rows/2/target"
+        },
+        "attempts": {
+         "value": 299,
+         "unit": "attempts",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/statistics/ignition_decision_aid/rows/2/n_min_zero_failures"
+        }
+       }
+      ],
+      "confidence": {
+       "value": 0.95,
+       "unit": "-",
+       "evidence_class": "assumed",
+       "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/statistics/ignition_decision_aid/confidence"
+      },
+      "note": "illustrative targets from lane 06 (one-sided zero-failure bound); attempts are per arm and propellant"
+     }
+    }
+   ],
+   "recommendation": {
+    "status": "PROPOSED",
+    "option": "D-13-B",
+    "rationale": "Start is a binding gate criterion (G6.ignition) and a Bundle-1 condition (HS-A6) that the minimum otherwise leaves open; the owner sets the target."
+   }
+  },
+  {
+   "id": "D-14",
+   "title": "Whether the physics track pre-registers any result as Hall-closure evidence",
+   "source": {
+    "lane_25_open_decision": [],
+    "input": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/preregistration/locks/0/contents/8"
+   },
+   "status": "OPEN_OWNER_DECISION",
+   "options": [
+    {
+     "id": "D-14-A",
+     "label": "no physics-track use (architecture comparison only)",
+     "consequences": {
+      "milestone_B": "B(z), I_d traces, species and divergence are published but are not promotion evidence"
+     }
+    },
+    {
+     "id": "D-14-B",
+     "label": "physics track files its own pre-registration before S1",
+     "consequences": {
+      "milestone_B": "the same readings could become genuinely new predictive evidence (Question A disposition rule 2) only if pre-registered before measurement"
+     }
+    }
+   ],
+   "recommendation": {
+    "status": "PROPOSED",
+    "option": "D-14-B",
+    "rationale": "Costs no readings; the decision belongs to the physics track."
+   }
+  },
+  {
+   "id": "D-15",
+   "title": "Scope extensions outside the minimum: Xe anode operation, second V_d on source arms, Xe health check",
+   "source": {
+    "lane_25_open_decision": [
+     "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/open_owner_decisions/8"
+    ],
+    "lane_06_item": "controls XE_HEALTH_CHECK, F-PROP Xe reference",
+    "input": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/controls/3"
+   },
+   "status": "OPEN_OWNER_DECISION",
+   "options": [
+    {
+     "id": "D-15-A",
+     "label": "none (minimum)",
+     "consequences": {
+      "evidence": "G7 (air + Xe) and the Xe mode stay unmeasured"
+     }
+    },
+    {
+     "id": "D-15-B",
+     "label": "add the lane-06 XE_HEALTH_CHECK (hall_only on Xe, start and end of each test day)",
+     "consequences": {
+      "readings": "one reading at the start and one at the end of each test day; test-day count TBD - requires the facility schedule",
+      "hardware": "Xe anode feed line in addition to the cathode Xe line"
+     }
+    }
+   ],
+   "recommendation": {
+    "status": "PROPOSED",
+    "option": "D-15-B",
+    "rationale": "A drift reference independent of the N2 grid; the Xe mode as a comparison arm stays outside the minimum."
+   }
+  }
+ ],
+ "traceability": {
+  "rows": [
+   {
+    "id": "TR-01",
+    "measurement": {
+     "lane25": [
+      "M5"
+     ],
+     "quantities": [
+      "Q1"
+     ],
+     "stages": [
+      "S3"
+     ]
+    },
+    "what": "delivered ion current I_del across the Hall channel exit plane (Hall discharge off, magnet on)",
+    "breakeven_placement": {
+     "rf_hall": {
+      "common": {
+       "C_del_above_which_CLEARLY_ABOVE": {
+        "value": 2208.19,
+        "unit": "W/A",
+        "evidence_class": "model-derived",
+        "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/decisive_measurement_common/C_del_above_which_CLEARLY_ABOVE_W_per_A"
+       },
+       "C_del_at_or_below_which_CLEARLY_BELOW_add_only": {
+        "value": 182.149,
+        "unit": "W/A",
+        "evidence_class": "model-derived",
+        "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/decisive_measurement_common/C_del_at_or_below_which_CLEARLY_BELOW_add_only_W_per_A",
+        "note": "small delivered shares only; in between, the Hall reference (milestone B) decides"
+       }
+      },
+      "role": "denominator of C_del = P_bus[rf_source]/I_del"
+     },
+     "ecr_hall": {
+      "per_entry": [
+       {
+        "entry": "ECR-D018",
+        "mode": "xe",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.0905719,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/0/to_definite_placement/0/if_below"
+        },
+        "C_del_bus_above_which_CLEARLY_ABOVE": {
+         "value": 2208.19,
+         "unit": "W/A",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/0/to_definite_placement/3/thresholds_W_per_A/Y_max_any_case"
+        },
+        "C_del_bus_at_or_below_which_CLEARLY_BELOW_add_only": {
+         "value": 182.149,
+         "unit": "W/A",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/0/to_definite_placement/3/thresholds_W_per_A/Y_min_by_case/add_only",
+         "note": "small delivered shares only"
+        }
+       },
+       {
+        "entry": "ECR-D019",
+        "mode": "xe",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.0789787,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/1/to_definite_placement/0/if_below"
+        },
+        "C_del_bus_above_which_CLEARLY_ABOVE": {
+         "value": 2208.19,
+         "unit": "W/A",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/1/to_definite_placement/3/thresholds_W_per_A/Y_max_any_case"
+        },
+        "C_del_bus_at_or_below_which_CLEARLY_BELOW_add_only": {
+         "value": 182.149,
+         "unit": "W/A",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/1/to_definite_placement/3/thresholds_W_per_A/Y_min_by_case/add_only",
+         "note": "small delivered shares only"
+        }
+       },
+       {
+        "entry": "ECR-D023",
+        "mode": "xe",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.00549311,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/2/to_definite_placement/0/if_below"
+        },
+        "C_del_bus_above_which_CLEARLY_ABOVE": {
+         "value": 2208.19,
+         "unit": "W/A",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/2/to_definite_placement/3/thresholds_W_per_A/Y_max_any_case"
+        },
+        "C_del_bus_at_or_below_which_CLEARLY_BELOW_add_only": {
+         "value": 182.149,
+         "unit": "W/A",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/2/to_definite_placement/3/thresholds_W_per_A/Y_min_by_case/add_only",
+         "note": "small delivered shares only"
+        }
+       },
+       {
+        "entry": "ECR-D020",
+        "mode": "air_N2",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.0965496,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/3/to_definite_placement/0/if_below"
+        },
+        "C_del_bus_above_which_CLEARLY_ABOVE": {
+         "value": 2208.19,
+         "unit": "W/A",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/3/to_definite_placement/3/thresholds_W_per_A/Y_max_any_case"
+        },
+        "C_del_bus_at_or_below_which_CLEARLY_BELOW_add_only": {
+         "value": 182.149,
+         "unit": "W/A",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/3/to_definite_placement/3/thresholds_W_per_A/Y_min_by_case/add_only",
+         "note": "small delivered shares only"
+        }
+       },
+       {
+        "entry": "ECR-E081",
+        "mode": "air_N2",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.269995,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/4/to_definite_placement/0/if_below"
+        },
+        "C_del_bus_above_which_CLEARLY_ABOVE": {
+         "value": 2208.19,
+         "unit": "W/A",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/4/to_definite_placement/3/thresholds_W_per_A/Y_max_any_case"
+        },
+        "C_del_bus_at_or_below_which_CLEARLY_BELOW_add_only": {
+         "value": 182.149,
+         "unit": "W/A",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/4/to_definite_placement/3/thresholds_W_per_A/Y_min_by_case/add_only",
+         "note": "small delivered shares only"
+        }
+       },
+       {
+        "entry": "ECR-E083",
+        "mode": "air_N2",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.201024,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/5/to_definite_placement/0/if_below"
+        },
+        "C_del_bus_above_which_CLEARLY_ABOVE": {
+         "value": 2208.19,
+         "unit": "W/A",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/5/to_definite_placement/3/thresholds_W_per_A/Y_max_any_case"
+        },
+        "C_del_bus_at_or_below_which_CLEARLY_BELOW_add_only": {
+         "value": 182.149,
+         "unit": "W/A",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/5/to_definite_placement/3/thresholds_W_per_A/Y_min_by_case/add_only",
+         "note": "small delivered shares only"
+        }
+       },
+       {
+        "entry": "ECR-D021",
+        "mode": "xe",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.00549311,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/6/to_definite_placement/0/if_below"
+        },
+        "C_del_bus_above_which_CLEARLY_ABOVE": {
+         "value": 2208.19,
+         "unit": "W/A",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/6/to_definite_placement/3/thresholds_W_per_A/Y_max_any_case"
+        },
+        "C_del_bus_at_or_below_which_CLEARLY_BELOW_add_only": {
+         "value": 182.149,
+         "unit": "W/A",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/6/to_definite_placement/3/thresholds_W_per_A/Y_min_by_case/add_only",
+         "note": "small delivered shares only"
+        }
+       }
+      ],
+      "role": "denominator of C_del,bus (subsumes phi, k, eta_chain, eta_t)"
+     }
+    },
+    "bundle1_conditions": [
+     {
+      "architecture_or_overlay": "rf_hall",
+      "condition": "C1",
+      "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/milestone_A_statement/conditions_for_rf_hall_as_baseline/0",
+      "coverage": "direct",
+      "note": "with TR-03: C_del at the tested point"
+     },
+     {
+      "architecture_or_overlay": "ecr_hall",
+      "condition": "ECR-A",
+      "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/milestone_A_statement/condition_set_for_milestone_A (A)",
+      "coverage": "partial",
+      "note": "N2 and N2+O2 surrogate only; no atomic O"
+     }
+    ],
+    "hard_gates": [],
+    "failure_tree": [
+     {
+      "node": "N-ISL-RF",
+      "title": "Ions made in the RF stage are lost before the Hall acceleration zone",
+      "architectures": [
+       "rf_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     },
+     {
+      "node": "N-ISL-ECR",
+      "title": "Ions made in the ECR stage are trapped or lost before the Hall acceleration zone",
+      "architectures": [
+       "ecr_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     }
+    ],
+    "limits": [
+     "cold transport (Hall off) may differ from Hall-on transport (lane 25 Sec. 3.4)"
+    ]
+   },
+   {
+    "id": "TR-02",
+    "measurement": {
+     "lane25": [
+      "M5"
+     ],
+     "quantities": [
+      "Q3"
+     ],
+     "stages": [
+      "S3"
+     ]
+    },
+    "what": "interstage transport efficiency eta_ts = I_del / I_src",
+    "breakeven_placement": {
+     "rf_hall": {
+      "per_unit": [
+       {
+        "unit_id": "U-RF-NO25-air-gridded",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": "none",
+         "reason": "no eta_t <= 1 moves this unit to CLEARLY_ABOVE (overlay)"
+        }
+       },
+       {
+        "unit_id": "U-RF-ZHOU24-N2-1500W",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.130653,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/evidence_placements/1/decisive_measurements/eta_t_below_which_CLEARLY_ABOVE"
+        }
+       },
+       {
+        "unit_id": "U-RF-ZHOU24-N2-2000W",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.147265,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/evidence_placements/2/decisive_measurements/eta_t_below_which_CLEARLY_ABOVE"
+        }
+       },
+       {
+        "unit_id": "U-RF-ZHOU24-N2-1400W-eta_u75",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.133324,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/evidence_placements/3/decisive_measurements/eta_t_below_which_CLEARLY_ABOVE"
+        }
+       },
+       {
+        "unit_id": "U-RF-ZHOU24-O-1500W",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.126227,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/evidence_placements/4/decisive_measurements/eta_t_below_which_CLEARLY_ABOVE"
+        }
+       },
+       {
+        "unit_id": "U-RF-ZHOU24-O-700W-eta_u75",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.0761854,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/evidence_placements/5/decisive_measurements/eta_t_below_which_CLEARLY_ABOVE"
+        }
+       },
+       {
+        "unit_id": "U-RF-ZHOU24-O2-1500W",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.126227,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/evidence_placements/6/decisive_measurements/eta_t_below_which_CLEARLY_ABOVE"
+        }
+       }
+      ],
+      "role": "eta_t below the unit threshold -> CLEARLY_ABOVE_BREAKEVEN with any chain"
+     },
+     "ecr_hall": {
+      "per_entry": [
+       {
+        "entry": "ECR-D018",
+        "mode": "xe",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.0905719,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/0/to_definite_placement/0/if_below"
+        }
+       },
+       {
+        "entry": "ECR-D019",
+        "mode": "xe",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.0789787,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/1/to_definite_placement/0/if_below"
+        }
+       },
+       {
+        "entry": "ECR-D023",
+        "mode": "xe",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.00549311,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/2/to_definite_placement/0/if_below"
+        }
+       },
+       {
+        "entry": "ECR-D020",
+        "mode": "air_N2",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.0965496,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/3/to_definite_placement/0/if_below"
+        }
+       },
+       {
+        "entry": "ECR-E081",
+        "mode": "air_N2",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.269995,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/4/to_definite_placement/0/if_below"
+        }
+       },
+       {
+        "entry": "ECR-E083",
+        "mode": "air_N2",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.201024,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/5/to_definite_placement/0/if_below"
+        }
+       },
+       {
+        "entry": "ECR-D021",
+        "mode": "xe",
+        "placement": "STRADDLES",
+        "eta_t_below_which_CLEARLY_ABOVE": {
+         "value": 0.00549311,
+         "unit": "-",
+         "evidence_class": "model-derived",
+         "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/evidence_placements/6/to_definite_placement/0/if_below"
+        }
+       }
+      ],
+      "role": "eta_t below the entry threshold -> CLEARLY_ABOVE_BREAKEVEN"
+     }
+    },
+    "bundle1_conditions": [
+     {
+      "architecture_or_overlay": "rf_hall",
+      "condition": "C2",
+      "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/milestone_A_statement/conditions_for_rf_hall_as_baseline/1",
+      "coverage": "direct",
+      "note": "same charge-current basis required"
+     },
+     {
+      "architecture_or_overlay": "ecr_hall",
+      "condition": "ECR-B",
+      "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/milestone_A_statement/condition_set_for_milestone_A (B)",
+      "coverage": "direct",
+      "note": "same charge-current basis required"
+     }
+    ],
+    "hard_gates": [],
+    "failure_tree": [
+     {
+      "node": "N-ISL-RF",
+      "title": "Ions made in the RF stage are lost before the Hall acceleration zone",
+      "architectures": [
+       "rf_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     },
+     {
+      "node": "N-ISL-ECR",
+      "title": "Ions made in the ECR stage are trapped or lost before the Hall acceleration zone",
+      "architectures": [
+       "ecr_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     }
+    ],
+    "limits": [
+     "species/charge basis from M7 (E x B) is explanatory only in the minimum"
+    ]
+   },
+   {
+    "id": "TR-03",
+    "measurement": {
+     "lane25": [
+      "M3",
+      "M2"
+     ],
+     "quantities": [
+      "Q2"
+     ],
+     "stages": [
+      "S3",
+      "S4"
+     ]
+    },
+    "what": "source load-plane power (net RF / microwave at the coupling terminals; ecr_magnet coil power) and its bus draw through the pre-registered ledger efficiency",
+    "breakeven_placement": {
+     "rf_hall": {
+      "role": "numerator of C_del; also resolves the antenna/matching loss named in the RF units' single measurements"
+     },
+     "ecr_hall": {
+      "role": "numerator of C_del,bus; power plane phi (forward/reflected at the coupling input; ECR overlay G9 item 4)"
+     }
+    },
+    "bundle1_conditions": [
+     {
+      "architecture_or_overlay": "rf_hall",
+      "condition": "C5",
+      "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/milestone_A_statement/conditions_for_rf_hall_as_baseline/4",
+      "coverage": "partial",
+      "note": "complete ledger needs the compressor draw (TBD, lane 33) and flight chain efficiencies"
+     },
+     {
+      "architecture_or_overlay": "rf_hall",
+      "condition": "C1",
+      "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/milestone_A_statement/conditions_for_rf_hall_as_baseline/0",
+      "coverage": "direct",
+      "note": "with TR-01"
+     }
+    ],
+    "hard_gates": [
+     {
+      "criterion": "G2.bus_power_max",
+      "gate": "G2_bus_power",
+      "gate_status": "RFP",
+      "binding": true,
+      "counts_for_fail": true,
+      "envelope_propellants": [
+       "atmospheric",
+       "atmospheric_xenon_mixed"
+      ],
+      "experiment_propellants_cover_envelope": false,
+      "measurement_vyovrinda_pass_basis": true,
+      "measurement_vyovrinda_fail_basis": true,
+      "measurement_similar_hardware_verdict_bearing": false,
+      "issuable_at": {
+       "FAIL": "A",
+       "PASS": "A"
+      },
+      "can_pass_from_minimum_experiment": false,
+      "can_eliminate_from_minimum_experiment": false,
+      "why_not_eliminating": "one tested unit is point_design scope; only architecture-scope FAIL evidence makes an architecture FAIL (matrix evidence_policy.scopes); the tested feed does not cover the criterion's envelope propellants"
+     }
+    ],
+    "failure_tree": [
+     {
+      "node": "N-PWR-02",
+      "title": "RF source power plus generator loss pushes the bus above 1.5 kW at 12 mN",
+      "architectures": [
+       "rf_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     },
+     {
+      "node": "N-PWR-03",
+      "title": "Microwave source power plus conversion loss (and electromagnet power) pushes the bus above 1.5 kW at 12 mN",
+      "architectures": [
+       "ecr_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     },
+     {
+      "node": "N-PWR-04",
+      "title": "Non-thruster loads consume the bus margin",
+      "architectures": [
+       "hall_only",
+       "rf_hall",
+       "ecr_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": false
+     }
+    ],
+    "limits": [
+     "bus draw = load / ledger efficiency: evidence class reconstructed while the flight chain is unmeasured"
+    ]
+   },
+   {
+    "id": "TR-04",
+    "measurement": {
+     "lane25": [
+      "M2",
+      "M3"
+     ],
+     "quantities": [],
+     "stages": [
+      "S3"
+     ]
+    },
+    "what": "lab generator DC input vs load-plane power: eta_lab (efficiency evidence only, never in R_arch)",
+    "breakeven_placement": {
+     "ecr_hall": {
+      "role": "eta_chain threshold per entry equals the eta_t threshold (TR-02); a LAB generator value is not the flight chain"
+     }
+    },
+    "bundle1_conditions": [],
+    "hard_gates": [],
+    "failure_tree": [
+     {
+      "node": "N-ECR-03",
+      "title": "Microwave power chain (generator, transmission, coupler) efficiency or life insufficient",
+      "architectures": [
+       "ecr_hall"
+      ],
+      "action": "M-MWCHAIN",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "C",
+      "analysis_requires_admitted_hall_closure": false
+     }
+    ],
+    "limits": [
+     "flight microwave / RF chain efficiency: TBD - requires M-MWCHAIN on the candidate flight chain"
+    ]
+   },
+   {
+    "id": "TR-05",
+    "measurement": {
+     "lane25": [
+      "M1",
+      "M2",
+      "M3"
+     ],
+     "quantities": [
+      "Q5",
+      "Q6"
+     ],
+     "stages": [
+      "S2",
+      "S4"
+     ]
+    },
+    "what": "R_arch = (T/P_bus)_X / (T/P_bus)_hall_only at the same point, bus_power_ledger basis",
+    "breakeven_placement": {
+     "both": {
+      "role": "R_arch > 1 <=> C_del < C* (identity, lane 25 Sec. 3.2): the measured form of the overlays' break-even inequality at the tested Hall point"
+     }
+    },
+    "bundle1_conditions": [
+     {
+      "architecture_or_overlay": "rf_hall",
+      "condition": "C1",
+      "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/milestone_A_statement/conditions_for_rf_hall_as_baseline/0",
+      "coverage": "direct",
+      "note": "at the tested hardware point only"
+     },
+     {
+      "architecture_or_overlay": "ecr_hall",
+      "condition": "ECR-A",
+      "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/milestone_A_statement/condition_set_for_milestone_A (A)",
+      "coverage": "partial",
+      "note": "tested hardware point; no atomic O"
+     }
+    ],
+    "hard_gates": [
+     {
+      "criterion": "G1.thrust_floor",
+      "gate": "G1_thrust",
+      "gate_status": "RFP",
+      "binding": true,
+      "counts_for_fail": true,
+      "envelope_propellants": [
+       "atmospheric"
+      ],
+      "experiment_propellants_cover_envelope": false,
+      "measurement_vyovrinda_pass_basis": true,
+      "measurement_vyovrinda_fail_basis": true,
+      "measurement_similar_hardware_verdict_bearing": false,
+      "issuable_at": {
+       "FAIL": "A",
+       "PASS": "A"
+      },
+      "can_pass_from_minimum_experiment": false,
+      "can_eliminate_from_minimum_experiment": false,
+      "why_not_eliminating": "one tested unit is point_design scope; only architecture-scope FAIL evidence makes an architecture FAIL (matrix evidence_policy.scopes); the tested feed does not cover the criterion's envelope propellants"
+     }
+    ],
+    "failure_tree": [
+     {
+      "node": "N-UTL-02",
+      "title": "RF pre-ionization gains less utilization than its power costs (thrust-to-power falls)",
+      "architectures": [
+       "rf_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     },
+     {
+      "node": "N-UTL-03",
+      "title": "ECR pre-ionization gains less utilization on air than its power costs",
+      "architectures": [
+       "ecr_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     },
+     {
+      "node": "N-UTL-01",
+      "title": "Low ion utilization of N2/O2 in the Hall stage prevents 12 mN within the bus power",
+      "architectures": [
+       "hall_only",
+       "rf_hall",
+       "ecr_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     },
+     {
+      "node": "N-PWR-01",
+      "title": "Hall-stage discharge power per unit thrust on air leaves no room in the 1.5 kW bus",
+      "architectures": [
+       "hall_only",
+       "rf_hall",
+       "ecr_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     }
+    ],
+    "limits": [
+     "PARTIAL_BOUNDARY until the compressor draw exists (D-11)",
+     "thrust at lab feed, not the delivered feed (lane 16 TBD)"
+    ]
+   },
+   {
+    "id": "TR-06",
+    "measurement": {
+     "lane25": [
+      "M1",
+      "M4",
+      "M5"
+     ],
+     "quantities": [
+      "Q4",
+      "Q5"
+     ],
+     "stages": [
+      "S4"
+     ]
+    },
+    "what": "response: y = dT/I_del and kappa = dI_d/I_del (thrust and discharge current bought per delivered ampere)",
+    "breakeven_placement": {
+     "both": {
+      "role": "collapses the overlays' response case (alpha, chi, eta_v,S) at the tested point; the overlays list the response case as a straddle reason"
+     }
+    },
+    "bundle1_conditions": [
+     {
+      "architecture_or_overlay": "rf_hall",
+      "condition": "C4",
+      "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/milestone_A_statement/conditions_for_rf_hall_as_baseline/3",
+      "coverage": "direct",
+      "note": "coupled RF + Hall test"
+     },
+     {
+      "architecture_or_overlay": "rf_hall",
+      "condition": "C3",
+      "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/milestone_A_statement/conditions_for_rf_hall_as_baseline/2",
+      "coverage": "partial",
+      "note": "utilization gain needs beam current / species (TR-10)"
+     },
+     {
+      "architecture_or_overlay": "ecr_hall",
+      "condition": "ECR-C",
+      "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/milestone_A_statement/condition_set_for_milestone_A (C)",
+      "coverage": "partial",
+      "note": "utilization gain X needs TR-10"
+     }
+    ],
+    "hard_gates": [],
+    "failure_tree": [
+     {
+      "node": "N-SUS-03",
+      "title": "Two-stage coupling: excess acceleration-stage current or unstable interaction limits the Hall stage",
+      "architectures": [
+       "rf_hall",
+       "ecr_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     }
+    ],
+    "limits": [
+     "y may exceed y_max and kappa may be negative (lane 25 Sec. 3.4)"
+    ]
+   },
+   {
+    "id": "TR-07",
+    "measurement": {
+     "lane25": [],
+     "quantities": [],
+     "stages": [
+      "S4"
+     ],
+     "derived": [
+      "C_star",
+      "eta_src_be"
+     ]
+    },
+    "what": "measured break-even cost C* and break-even source-chain efficiency eta_src,be at every compared condition",
+    "breakeven_placement": {
+     "both": {
+      "role": "replaces the PROPOSED Hall box by a measured Y at the tested hardware point; eta_src,be is the milestone-A condition on the flight source chain"
+     }
+    },
+    "bundle1_conditions": [
+     {
+      "architecture_or_overlay": "rf_hall",
+      "condition": "C1",
+      "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/milestone_A_statement/conditions_for_rf_hall_as_baseline/0",
+      "coverage": "direct",
+      "note": "Y at the tested point"
+     },
+     {
+      "architecture_or_overlay": "ecr_hall",
+      "condition": "ECR-A",
+      "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/milestone_A_statement/condition_set_for_milestone_A (A)",
+      "coverage": "partial",
+      "note": "no atomic O"
+     }
+    ],
+    "hard_gates": [],
+    "failure_tree": [
+     {
+      "node": "N-UTL-02",
+      "title": "RF pre-ionization gains less utilization than its power costs (thrust-to-power falls)",
+      "architectures": [
+       "rf_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     },
+     {
+      "node": "N-UTL-03",
+      "title": "ECR pre-ionization gains less utilization on air than its power costs",
+      "architectures": [
+       "ecr_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     }
+    ],
+    "limits": [
+     "tested hardware only; transfer to other designs needs an admitted closure (milestone B)"
+    ]
+   },
+   {
+    "id": "TR-08",
+    "measurement": {
+     "lane25": [
+      "M4",
+      "M9",
+      "M10"
+     ],
+     "quantities": [],
+     "stages": [
+      "S2",
+      "S4"
+     ]
+    },
+    "what": "sustainment: S2 knee scan (flow-down and up) and per-condition ENABLES / DISABLES / NEITHER_SUSTAINED classes",
+    "breakeven_placement": {},
+    "bundle1_conditions": [
+     {
+      "architecture_or_overlay": "hall_sustainment",
+      "condition": "HS-A2",
+      "source": "docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json#/milestone_A_conditions/1 [state: UNDETERMINED at 9 of 9 cases]",
+      "coverage": "partial",
+      "note": "DM-2 flow-down extinction scan at the tested V_d/B on N2 (and one air-surrogate point); the composition transfer stays stated"
+     },
+     {
+      "architecture_or_overlay": "hall_sustainment",
+      "condition": "HS-A5",
+      "source": "docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json#/milestone_A_conditions/4 [state: UNDETERMINED (free-stream mass-flux span x10.4 over all case]",
+      "coverage": "partial",
+      "note": "knee scan spans mdot_min..mdot_nom only"
+     }
+    ],
+    "hard_gates": [
+     {
+      "criterion": "G6.sustainment",
+      "gate": "G6_ignition_sustainment",
+      "gate_status": "RFP",
+      "binding": true,
+      "counts_for_fail": true,
+      "envelope_propellants": [
+       "atmospheric"
+      ],
+      "experiment_propellants_cover_envelope": false,
+      "measurement_vyovrinda_pass_basis": true,
+      "measurement_vyovrinda_fail_basis": true,
+      "measurement_similar_hardware_verdict_bearing": false,
+      "issuable_at": {
+       "FAIL": "A",
+       "PASS": "A"
+      },
+      "can_pass_from_minimum_experiment": false,
+      "can_eliminate_from_minimum_experiment": false,
+      "why_not_eliminating": "one tested unit is point_design scope; only architecture-scope FAIL evidence makes an architecture FAIL (matrix evidence_policy.scopes); the tested feed does not cover the criterion's envelope propellants"
+     }
+    ],
+    "failure_tree": [
+     {
+      "node": "N-SUS-01",
+      "title": "Hall stage extinguishes or runs unstably on N2/O2 within the needed window",
+      "architectures": [
+       "hall_only",
+       "rf_hall",
+       "ecr_hall"
+      ],
+      "action": "M-SUSWIN",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     },
+     {
+      "node": "N-SUS-02",
+      "title": "Delivered-flow range over altitude and solar activity exceeds the sustainment range",
+      "architectures": [
+       "hall_only",
+       "rf_hall",
+       "ecr_hall"
+      ],
+      "action": "M-SUSWIN",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     },
+     {
+      "node": "N-IGN-04",
+      "title": "Pre-ionizer seed plasma does not lower the Hall-stage start requirement",
+      "architectures": [
+       "rf_hall",
+       "ecr_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "C",
+      "analysis_requires_admitted_hall_closure": false
+     }
+    ],
+    "limits": [
+     "one V_d and one magnet setting (M-SUSWIN asks for a window map)"
+    ]
+   },
+   {
+    "id": "TR-09",
+    "measurement": {
+     "lane25": [
+      "M11"
+     ],
+     "quantities": [],
+     "stages": [
+      "S1"
+     ]
+    },
+    "what": "B(z) per configuration with coil currents (source magnet on/off)",
+    "breakeven_placement": {},
+    "bundle1_conditions": [
+     {
+      "architecture_or_overlay": "hall_sustainment",
+      "condition": "HS-A4",
+      "source": "docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json#/milestone_A_conditions/3 [state: UNDETERMINED at 9 of 9 cases]",
+      "coverage": "partial",
+      "note": "design B stated and measured; DI-2 still needs the design point"
+     }
+    ],
+    "hard_gates": [],
+    "failure_tree": [
+     {
+      "node": "N-RF-03",
+      "title": "Magnetized RF (helicon) source field interacts with the Hall magnetic circuit",
+      "architectures": [
+       "rf_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "informs",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": false
+     },
+     {
+      "node": "N-ECR-02",
+      "title": "ECR resonance field interacts with the Hall magnetic circuit",
+      "architectures": [
+       "ecr_hall"
+      ],
+      "action": "M-ECRSRC",
+      "effect_in_tree": "informs",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": false
+     }
+    ],
+    "limits": [
+     "milestone-B Hall-map input (docs/hallmap/) for the tested hardware"
+    ]
+   },
+   {
+    "id": "TR-10",
+    "measurement": {
+     "lane25": [
+      "M6",
+      "M7",
+      "M8"
+     ],
+     "quantities": [],
+     "stages": [
+      "S3",
+      "S4"
+     ]
+    },
+    "what": "ion energy distribution, species fractions and far-field beam current / divergence",
+    "breakeven_placement": {
+     "rf_hall": {
+      "role": "beam species/charge split named in the RF units' single measurements"
+     },
+     "ecr_hall": {
+      "role": "ion basis k of the ECR entries (G9 item 5)"
+     }
+    },
+    "bundle1_conditions": [
+     {
+      "architecture_or_overlay": "rf_hall",
+      "condition": "C3",
+      "source": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json#/milestone_A_statement/conditions_for_rf_hall_as_baseline/2",
+      "coverage": "partial",
+      "note": "utilization gain x"
+     },
+     {
+      "architecture_or_overlay": "ecr_hall",
+      "condition": "ECR-C",
+      "source": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json#/milestone_A_statement/condition_set_for_milestone_A (C)",
+      "coverage": "partial",
+      "note": "utilization gain X"
+     }
+    ],
+    "hard_gates": [],
+    "failure_tree": [
+     {
+      "node": "N-UTL-01",
+      "title": "Low ion utilization of N2/O2 in the Hall stage prevents 12 mN within the bus power",
+      "architectures": [
+       "hall_only",
+       "rf_hall",
+       "ecr_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     }
+    ],
+    "limits": [
+     "E x B probe optional in the minimum; low-energy species need an accelerating bias (REF-ROVEY2025 via lane 25)"
+    ]
+   },
+   {
+    "id": "TR-11",
+    "measurement": {
+     "lane25": [
+      "M9"
+     ],
+     "quantities": [],
+     "stages": [
+      "S5"
+     ]
+    },
+    "what": "background pressure and the S5 elevated-p_b facility check",
+    "breakeven_placement": {},
+    "bundle1_conditions": [],
+    "hard_gates": [],
+    "failure_tree": [],
+    "limits": [
+     "facility qualifier only; no ingestion correction (P5-N2 lesson)"
+    ]
+   },
+   {
+    "id": "TR-12",
+    "measurement": {
+     "lane25": [
+      "M14"
+     ],
+     "quantities": [],
+     "stages": [
+      "S1",
+      "S4"
+     ],
+     "lane06": [
+      "DUMMY_LOAD_PICKUP"
+     ]
+    },
+    "what": "electrical environment and generator pickup on common diagnostics",
+    "breakeven_placement": {},
+    "bundle1_conditions": [],
+    "hard_gates": [],
+    "failure_tree": [
+     {
+      "node": "N-RF-04",
+      "title": "RF interference coupling into the Hall discharge circuit, cathode or PPU sensing",
+      "architectures": [
+       "rf_hall"
+      ],
+      "action": "M-PREION",
+      "effect_in_tree": "decides",
+      "resolve_by_milestone": "C",
+      "analysis_requires_admitted_hall_closure": false
+     }
+    ],
+    "limits": []
+   },
+   {
+    "id": "TR-13",
+    "measurement": {
+     "lane25": [
+      "M12"
+     ],
+     "quantities": [],
+     "stages": [
+      "S1",
+      "S4"
+     ]
+    },
+    "what": "temperatures (thermal settling; source waste heat)",
+    "breakeven_placement": {},
+    "bundle1_conditions": [],
+    "hard_gates": [],
+    "failure_tree": [
+     {
+      "node": "N-THM-02",
+      "title": "RF coil/antenna, matching network or discharge tube overheats",
+      "architectures": [
+       "rf_hall"
+      ],
+      "action": "M-THERMAL",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "C",
+      "analysis_requires_admitted_hall_closure": false
+     },
+     {
+      "node": "N-THM-03",
+      "title": "ECR magnets lose remanence or the resonator/coupler overheats",
+      "architectures": [
+       "ecr_hall"
+      ],
+      "action": "M-THERMAL",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "C",
+      "analysis_requires_admitted_hall_closure": false
+     }
+    ],
+    "limits": [
+     "not a thermal-vacuum balance test; milestone-C input only"
+    ]
+   },
+   {
+    "id": "TR-14",
+    "measurement": {
+     "lane25": [
+      "M3",
+      "M5"
+     ],
+     "quantities": [],
+     "stages": [
+      "S3"
+     ],
+     "gates": [
+      "G-SRC"
+     ]
+    },
+    "what": "source bench: plasma sustained at each grid flow within P_hi (lane-25 G-SRC)",
+    "breakeven_placement": {},
+    "bundle1_conditions": [],
+    "hard_gates": [],
+    "failure_tree": [
+     {
+      "node": "N-IGN-02",
+      "title": "RF pre-ionizer does not break down on N2/O2 at the delivered pressure",
+      "architectures": [
+       "rf_hall"
+      ],
+      "action": "M-RFSRC",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "C",
+      "analysis_requires_admitted_hall_closure": false
+     },
+     {
+      "node": "N-IGN-03",
+      "title": "ECR pre-ionizer does not break down on air at the delivered pressure",
+      "architectures": [
+       "ecr_hall"
+      ],
+      "action": "M-ECRSRC",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "C",
+      "analysis_requires_admitted_hall_closure": false
+     },
+     {
+      "node": "N-ECR-01",
+      "title": "Cutoff (overdense) limit: ECR-stage density saturates below the Hall-stage feed need",
+      "architectures": [
+       "ecr_hall"
+      ],
+      "action": "M-ECRSRC",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": true
+     },
+     {
+      "node": "N-RF-01",
+      "title": "E-H (or helicon) mode transition with hysteresis drops the RF stage to a low-density mode",
+      "architectures": [
+       "rf_hall"
+      ],
+      "action": "M-RFSRC",
+      "effect_in_tree": "contributes",
+      "resolve_by_milestone": "B",
+      "analysis_requires_admitted_hall_closure": false
+     }
+    ],
+    "limits": [
+     "G-SRC stops an arm inside this experiment; it is NOT a lane-24 elimination (Sec. 2)",
+     "no E-H hysteresis scan in the minimum (N-RF-01 needs M-RFSRC in full)"
+    ]
+   },
+   {
+    "id": "TR-15",
+    "measurement": {
+     "lane25": [
+      "M10",
+      "M13"
+     ],
+     "quantities": [],
+     "stages": [
+      "S4"
+     ],
+     "operating_points": [
+      "OP5"
+     ]
+    },
+    "what": "air-surrogate point (N2 + O2, no atomic O) at the knee flow",
+    "breakeven_placement": {
+     "ecr_hall": {
+      "role": "the overlay's air arm stays NOT_PLACEABLE for its O content (no atomic O in a bottled surrogate)"
+     }
+    },
+    "bundle1_conditions": [
+     {
+      "architecture_or_overlay": "hall_sustainment",
+      "condition": "HS-A3",
+      "source": "docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json#/milestone_A_conditions/2 [state: UNDETERMINED at 9 of 9 cases]",
+      "coverage": "partial",
+      "note": "O2 fraction tested; atomic O not"
+     }
+    ],
+    "hard_gates": [],
+    "failure_tree": [],
+    "limits": [
+     "composition at IF-A5: TBD - requires lane 16 design inputs"
+    ]
+   }
+  ],
+  "failure_tree_nodes_naming_M_PREION": [
+   "N-ECR-01",
+   "N-IGN-04",
+   "N-ISL-ECR",
+   "N-ISL-RF",
+   "N-PWR-01",
+   "N-PWR-02",
+   "N-PWR-03",
+   "N-PWR-04",
+   "N-RF-03",
+   "N-RF-04",
+   "N-SUS-03",
+   "N-UTL-01",
+   "N-UTL-02",
+   "N-UTL-03"
+  ],
+  "M_PREION_nodes_not_traced": [],
+  "experiment_propellants_matrix_vocabulary": [
+   "n2_surrogate"
+  ]
+ },
+ "hard_gate_context": {
+  "current_status": {
+   "source": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+   "eliminated": [],
+   "not_eliminated": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "admitted_members": [],
+   "register_items": {
+    "value": 0,
+    "unit": "evidence items",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/hard_gates/evidence_register_v1.json#/items (count)"
+   }
+  },
+  "outcome_templates": {
+   "evaluator": "abep_sim/hard_gates.py evaluate() (lane 24), matrix docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+   "templates": [
+    {
+     "template": "T1",
+     "architecture": "hall_only",
+     "meaning": "most adverse sustainment outcome on the N2 grid (not sustained at every tested flow), labelled as the lab feed actually is",
+     "evaluator_eliminated": false,
+     "gate_verdict": "UNDETERMINED",
+     "criterion_verdict": "UNDETERMINED",
+     "design_failures": [],
+     "not_verdict_bearing_reasons": [
+      [
+       "conditions.propellants ['n2_surrogate'] do not intersect ['atmospheric']"
+      ]
+     ]
+    },
+    {
+     "template": "T2",
+     "architecture": "hall_only",
+     "meaning": "the same outcome with a hypothetically accepted feed equivalence to the delivered atmospheric feed",
+     "evaluator_eliminated": false,
+     "gate_verdict": "UNDETERMINED",
+     "criterion_verdict": "UNDETERMINED",
+     "design_failures": [
+      "H-1 (tested unit)"
+     ],
+     "not_verdict_bearing_reasons": []
+    },
+    {
+     "template": "T1",
+     "architecture": "rf_hall",
+     "meaning": "most adverse sustainment outcome on the N2 grid (not sustained at every tested flow), labelled as the lab feed actually is",
+     "evaluator_eliminated": false,
+     "gate_verdict": "UNDETERMINED",
+     "criterion_verdict": "UNDETERMINED",
+     "design_failures": [],
+     "not_verdict_bearing_reasons": [
+      [
+       "conditions.propellants ['n2_surrogate'] do not intersect ['atmospheric']"
+      ]
+     ]
+    },
+    {
+     "template": "T2",
+     "architecture": "rf_hall",
+     "meaning": "the same outcome with a hypothetically accepted feed equivalence to the delivered atmospheric feed",
+     "evaluator_eliminated": false,
+     "gate_verdict": "UNDETERMINED",
+     "criterion_verdict": "UNDETERMINED",
+     "design_failures": [
+      "H-1 (tested unit)"
+     ],
+     "not_verdict_bearing_reasons": []
+    },
+    {
+     "template": "T1",
+     "architecture": "ecr_hall",
+     "meaning": "most adverse sustainment outcome on the N2 grid (not sustained at every tested flow), labelled as the lab feed actually is",
+     "evaluator_eliminated": false,
+     "gate_verdict": "UNDETERMINED",
+     "criterion_verdict": "UNDETERMINED",
+     "design_failures": [],
+     "not_verdict_bearing_reasons": [
+      [
+       "conditions.propellants ['n2_surrogate'] do not intersect ['atmospheric']"
+      ]
+     ]
+    },
+    {
+     "template": "T2",
+     "architecture": "ecr_hall",
+     "meaning": "the same outcome with a hypothetically accepted feed equivalence to the delivered atmospheric feed",
+     "evaluator_eliminated": false,
+     "gate_verdict": "UNDETERMINED",
+     "criterion_verdict": "UNDETERMINED",
+     "design_failures": [
+      "H-1 (tested unit)"
+     ],
+     "not_verdict_bearing_reasons": []
+    }
+   ],
+   "reading": "Even the most adverse sustainment outcome the minimum experiment can produce eliminates no architecture through lane 24: a single tested unit is point_design scope (recorded as a design failure at most), and the lab N2 feed does not cover 'atmospheric'. The lane-25 G-SRC and D3 stops end an arm's runs inside the experiment only."
+  }
+ },
+ "reconciliation": {
+  "differences_listed_by_lane25": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/related_lanes/0",
+  "mapping_check": {
+   "lane06_covers_contract_exactly_once": true,
+   "lane25_covers_contract_exactly_once": true,
+   "contract_version": "bus_power_boundary_v1",
+   "lane06_to_contract": {
+    "hall_ppu_input": [
+     "hall_discharge"
+    ],
+    "magnet_supplies": [
+     "hall_magnet",
+     "ecr_magnet"
+    ],
+    "rf_generator_input": [
+     "rf_source"
+    ],
+    "microwave_source_input": [
+     "ecr_source"
+    ],
+    "cathode_heater": [
+     "cathode_heater"
+    ],
+    "cathode_keeper": [
+     "cathode_keeper"
+    ],
+    "valves_flow_control": [
+     "flow_control"
+    ],
+    "compressor": [
+     "compressor"
+    ],
+    "thermal_control": [
+     "thermal_control"
+    ],
+    "housekeeping": [
+     "housekeeping"
+    ]
+   }
+  },
+  "dimensions": [
+   {
+    "dimension": "boundary basis",
+    "lane25": "load-plane power per contract component / pre-registered ledger efficiency (abep_sim/arch_boundary.py bus_power_ledger); lab DC input only as efficiency evidence",
+    "lane06": "DC input of each consumer from a common lab bus; P_out/eta_conv reconstruction where a lab supply replaces a bus-fed converter; PARTIAL (no compressor) vs V1 labels",
+    "proposed_single_basis": "decisive P_bus on the contract basis (load plane / ledger efficiency, lane 25), with lane-06 DC-input metering kept as measured efficiency evidence and lane-06 PARTIAL_BOUNDARY / V1 labels adopted; V1 only when the ICD compressor draw exists (D-11)",
+    "why": "the contract is the shared definition every lane uses; lab converters are not flight hardware; the labels prevent a partial-boundary ratio from being read as a bus_power_boundary_v1 result"
+   },
+   {
+    "dimension": "component ids",
+    "lane25": "contract ids directly",
+    "lane06": "own ids mapped name-by-name to the contract",
+    "proposed_single_basis": "contract ids in all records; lane-06 ids as instrument-channel labels",
+    "why": "both map onto the contract exactly once (checked: mapping_check)"
+   },
+   {
+    "dimension": "decisive metric and classes",
+    "lane25": "ln R_arch; EQUIVALENT / SOURCE_BETTER / SOURCE_WORSE / UNRESOLVED against delta, plus ENABLES / DISABLES / NEITHER_SUSTAINED / SUSTAINMENT_MIXED / INFEASIBLE_AT_POINT / NOT_SCOREABLE_FACILITY / NOT_TESTED",
+    "lane06": "M1 ratio classes HIGHER / LOWER / NOT_DISTINGUISHED against delta_m1 (TBD); M2-M6 secondary",
+    "proposed_single_basis": "lane-25 classes for M1 (thrust per bus power); lane-06 M2-M6 reported as secondary metrics without entering the primary family",
+    "why": "lane-25 classes are defined for the break-even identity and have a proven no-gap property at h < delta/2; lane-06 delta_m1 is TBD"
+   },
+   {
+    "dimension": "interval and multiplicity",
+    "lane25": "Bonferroni simultaneous Student-t at Welch-Satterthwaite dof (GUM G.4), Type B components explicit",
+    "lane06": "t-interval on replicate-level paired log-ratios, bootstrap cross-check, Holm step-down",
+    "proposed_single_basis": "lane-25 intervals (classification needs simultaneous intervals, which Holm does not give directly); lane-06 bootstrap kept as a cross-check",
+    "why": "the installation term and the Type B scale terms do not appear in a paired replicate t-interval"
+   },
+   {
+    "dimension": "replication",
+    "lane25": "blocks (even n between T-N-MIN and T-N-MAX, fixed by readiness_n at LOCK-2); S1b re-mount series",
+    "lane06": "replicates_min per (arm, point), each separated by shutdown and restart",
+    "proposed_single_basis": "lane-25 blocks, with the lane-06 definition that consecutive visits of a point are separated by a shutdown and restart",
+    "why": "keeps drift cancellation over block pairs and makes each block an independent start"
+   },
+   {
+    "dimension": "hardware configuration",
+    "lane25": "HW-0 / HW-RF / HW-ECR (+ OPTION-DIVERTER)",
+    "lane06": "CFG-A integrated (preferred) / CFG-B separate builds with shams",
+    "proposed_single_basis": "D-06 (PROPOSED D-06-A); lane-06 sham = lane-25 installed-off state",
+    "why": "a CFG-A reference with both applicators installed is not bare hall_only"
+   },
+   {
+    "dimension": "extinction / sustainment",
+    "lane25": "T-SUSTAIN: no extinction or restart during the dwell (dwell TBD)",
+    "lane06": "THR-EXTINCTION: quantitative I_d rule of the same form as P5-N2 rule O1",
+    "proposed_single_basis": "lane-06 quantitative extinction rule as the operational definition inside T-SUSTAIN; dwell from S1",
+    "why": "one objective definition shared with the simulation rule"
+   },
+   {
+    "dimension": "propellant ordering",
+    "lane25": "operating-point order a seeded permutation per block (OP5 air surrogate included)",
+    "lane06": "fixed order Xe -> N2 -> O2/N2 within a day; oxygen points never interleaved",
+    "proposed_single_basis": "N2 points randomised; OP5 (oxygen-bearing) last in every block",
+    "why": "oxygen may change cathode and wall surfaces irreversibly (lane 06 Sec. 8); the bracketing off readings still control drift at OP5"
+   },
+   {
+    "dimension": "controls",
+    "lane25": "installed-off, S6 re-installation check",
+    "lane06": "SHAM_RF / SHAM_ECR, DUMMY_LOAD_PICKUP, XE_HEALTH_CHECK",
+    "proposed_single_basis": "add DUMMY_LOAD_PICKUP to S1a (no plasma); XE_HEALTH_CHECK as D-15",
+    "why": "pickup on common diagnostics would bias R without being visible in the variance model"
+   },
+   {
+    "dimension": "facility-effect controls",
+    "lane25": "one elevated level (T-PB-ELEV-FACTOR x base), classified facility family",
+    "lane06": "pbg_elevated_levels_min elevated levels, regression, FACILITY_SENSITIVE label",
+    "proposed_single_basis": "D-12 (PROPOSED one classified level)",
+    "why": "cost computed in D-12"
+   },
+   {
+    "dimension": "ignition",
+    "lane25": "not in the minimum",
+    "lane06": "M5 with zero-failure decision aid",
+    "proposed_single_basis": "D-13",
+    "why": "binding gate criterion G6.ignition and Bundle-1 condition HS-A6"
+   },
+   {
+    "dimension": "pre-registration",
+    "lane25": "LOCK-1 before S1, LOCK-2 after D0 (S1 values, n)",
+    "lane06": "PR-1..PR-6: owner decisions, disclosed Hall-only pilot, freeze, merge, addenda, frozen raw data",
+    "proposed_single_basis": "two locks (lane 25) with the lane-06 PR-5 addendum rule and PR-6 coded labels; location D-05",
+    "why": "S1 values fix n without discretion; the addendum rule covers later changes"
+   }
+  ],
+  "status": "PROPOSED"
+ },
+ "requirements": [
+  {
+   "id": "REQ-FAC-01",
+   "requirement": "The facility shall hold base p_b <= T-PB-MAX at every grid flow during Hall-on stages (S1b, S2, S4, S5); the effective pumping speed shall be at least Q/p_b,max for the total (anode + cathode) flow.",
+   "values": {
+    "S_eff_per_mg_per_s_planning_scenarios": {
+     "N2": {
+      "1.0e-05 Torr": {
+       "value": 66818.141,
+       "unit": "L s^-1 per (mg s^-1)",
+       "evidence_class": "model-derived",
+       "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/S_eff_required_per_mgps/N2/1.0e-05 Torr"
+      },
+      "1.3e-05 Torr": {
+       "value": 51398.57,
+       "unit": "L s^-1 per (mg s^-1)",
+       "evidence_class": "model-derived",
+       "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/S_eff_required_per_mgps/N2/1.3e-05 Torr"
+      },
+      "5.0e-05 Torr": {
+       "value": 13363.628,
+       "unit": "L s^-1 per (mg s^-1)",
+       "evidence_class": "model-derived",
+       "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/S_eff_required_per_mgps/N2/5.0e-05 Torr"
+      }
+     },
+     "O2": {
+      "1.0e-05 Torr": {
+       "value": 58465.873,
+       "unit": "L s^-1 per (mg s^-1)",
+       "evidence_class": "model-derived",
+       "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/S_eff_required_per_mgps/O2/1.0e-05 Torr"
+      },
+      "1.3e-05 Torr": {
+       "value": 44973.749,
+       "unit": "L s^-1 per (mg s^-1)",
+       "evidence_class": "model-derived",
+       "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/S_eff_required_per_mgps/O2/1.3e-05 Torr"
+      },
+      "5.0e-05 Torr": {
+       "value": 11693.175,
+       "unit": "L s^-1 per (mg s^-1)",
+       "evidence_class": "model-derived",
+       "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/S_eff_required_per_mgps/O2/5.0e-05 Torr"
+      }
+     }
+    }
+   },
+   "tbd": [
+    {
+     "value": "TBD",
+     "what": "T-PB-MAX",
+     "requires": "facility specification and owner decision at LOCK-1",
+     "blocked_by": [
+      "owner",
+      "facility data"
+     ]
+    },
+    {
+     "value": "TBD",
+     "what": "total grid flow (sets S_eff = Q/p_b)",
+     "requires": "IF-A5 feed envelope",
+     "blocked_by": [
+      "lane_16_feed_envelope"
+     ]
+    }
+   ],
+   "reference": "REF-DANKANICH2017 via lane 25 (p_b scenarios are SPT-100/xenon planning values only)"
+  },
+  {
+   "id": "REQ-FAC-02",
+   "requirement": "The facility shall be able to raise p_b to T-PB-ELEV-FACTOR x base by injecting the working gas downstream, with a pumping surface between injection and gauge.",
+   "values": {
+    "T-PB-ELEV-FACTOR": {
+     "value": 2,
+     "unit": "x base p_b",
+     "evidence_class": "assumed",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds (id T-PB-ELEV-FACTOR)"
+    },
+    "injection_distance_min": {
+     "value": 2,
+     "unit": "m downstream of the thruster exit plane (minimum)",
+     "evidence_class": "assumed",
+     "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/facility_effect_controls/injection_distance_min"
+    }
+   },
+   "tbd": [],
+   "reference": "REF-DANKANICH2017 Sec. IV.B via lanes 25 and 06"
+  },
+  {
+   "id": "REQ-FAC-03",
+   "requirement": "Background-pressure gauges shall be placed and operated per the recommended practice and calibrated on the working gases.",
+   "values": {
+    "gauge_offset_chamber_radii_min": {
+     "value": 0.6,
+     "unit": "chamber radii from the centreline (minimum)",
+     "evidence_class": "assumed",
+     "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/diagnostics/common/5/gauge_radial_offset_min"
+    },
+    "gauge_distance_thruster_min": {
+     "value": 1,
+     "unit": "m from the thruster outer diameter (minimum)",
+     "evidence_class": "assumed",
+     "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/diagnostics/common/5/gauge_distance_from_thruster_min"
+    },
+    "pressure_sampling_min": {
+     "value": 10,
+     "unit": "Hz (minimum)",
+     "evidence_class": "assumed",
+     "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/diagnostics/common/5/sampling_rate_min"
+    },
+    "pressure_average_window": {
+     "value": 3,
+     "unit": "s",
+     "evidence_class": "assumed",
+     "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/diagnostics/common/5/averaging_window"
+    },
+    "pressure_settle_min": {
+     "value": 2,
+     "unit": "min (minimum) after a commanded flow change greater than the fraction below",
+     "evidence_class": "assumed",
+     "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/diagnostics/common/5/settling_after_flow_change"
+    },
+    "gauge_calibration_interval": {
+     "value": 12,
+     "unit": "months (maximum; or the operating-hour limit below, whichever is less)",
+     "evidence_class": "assumed",
+     "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/diagnostics/common/5/gauge_calibration_interval"
+    },
+    "pressure_asym_max": {
+     "value": 0.2,
+     "unit": "fraction",
+     "evidence_class": "assumed",
+     "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/diagnostics/common/5/radial_asymmetry/parameters/0"
+    }
+   },
+   "tbd": [
+    {
+     "value": "TBD",
+     "what": "gas correction for O2/N2 mixtures",
+     "requires": "gauge calibration on each mixture",
+     "blocked_by": [
+      "facility data"
+     ]
+    }
+   ],
+   "reference": "REF-DANKANICH2017 Secs. III, IV.A via lane 06 (values in protocol_draft.json)"
+  },
+  {
+   "id": "REQ-FAC-04",
+   "requirement": "The facility shall be compatible with O2 flow (pumps, safety case) for the air-surrogate point.",
+   "values": {},
+   "tbd": [
+    {
+     "value": "TBD",
+     "what": "O2 compatibility",
+     "requires": "facility data",
+     "blocked_by": [
+      "facility data"
+     ]
+    }
+   ],
+   "reference": "lane 25 Sec. 8"
+  },
+  {
+   "id": "REQ-FAC-05",
+   "requirement": "S1b, S2, S4 and S5 shall use one facility, stand and mount procedure (S1b measures that facility's installation reproducibility).",
+   "values": {},
+   "tbd": [],
+   "reference": "lane 25 Sec. 12"
+  },
+  {
+   "id": "REQ-HW-01",
+   "requirement": "The thrust stand shall have end-to-end in-situ calibration under vacuum and a per-reading repeatability no worse than u_T,max at the n fixed at LOCK-2.",
+   "values": {
+    "u_T_max_at_n_min": {
+     "value": 0.0049836144,
+     "unit": "relative (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/plan_by_n/4/u_T_max"
+    },
+    "calibrations_before_min": {
+     "value": 10,
+     "unit": "calibrations (minimum)",
+     "evidence_class": "assumed",
+     "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/diagnostics/common/0/calibrations_before"
+    },
+    "calibrations_after_min": {
+     "value": 10,
+     "unit": "calibrations (minimum)",
+     "evidence_class": "assumed",
+     "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/diagnostics/common/0/calibrations_after"
+    }
+   },
+   "tbd": [
+    {
+     "value": "TBD",
+     "what": "thrust range",
+     "requires": "Hall design",
+     "blocked_by": [
+      "DI-2 Vyovrinda Hall design point"
+     ]
+    }
+   ],
+   "reference": "REF-POLK2017 via lanes 25 and 06 (>= 10 calibrations before and after: lane-06 thrust_cal_before_min / thrust_cal_after_min)"
+  },
+  {
+   "id": "REQ-HW-02",
+   "requirement": "Load-plane DC power shall be measured simultaneously on every present DC consumer with per-reading repeatability no worse than u_P,max; each DC-fed lab generator's DC input shall also be metered.",
+   "values": {
+    "u_P_max_at_n_min": {
+     "value": 0.0049836144,
+     "unit": "relative (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/plan_by_n/4/u_P_max"
+    },
+    "ledger_residual_max": {
+     "value": 0.02,
+     "unit": "fraction",
+     "evidence_class": "assumed",
+     "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/bus_power_boundary/ledger_check/threshold/parameters/0"
+    }
+   },
+   "tbd": [
+    {
+     "value": "TBD",
+     "what": "traceable calibration class",
+     "requires": "owner",
+     "blocked_by": [
+      "owner"
+     ]
+    }
+   ],
+   "reference": "lane 25 M2; lane 06 DIAG-BUS"
+  },
+  {
+   "id": "REQ-HW-03",
+   "requirement": "Net RF / microwave power shall be measured at the source load plane (forward minus reflected) or reconstructed from an S1a-characterised loss, with a scale uncertainty no worse than u_src,max(f_src).",
+   "values": {
+    "u_src_max_at_f_src_0.1": {
+     "value": 0.035239475,
+     "unit": "relative (1 sigma)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/u_source_scale_max_by_f_src/0.1"
+    },
+    "u_src_max_at_f_src_0.2": {
+     "value": 0.017619738,
+     "unit": "relative (1 sigma)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/u_source_scale_max_by_f_src/0.2"
+    },
+    "u_src_max_at_f_src_0.3": {
+     "value": 0.011746492,
+     "unit": "relative (1 sigma)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/u_source_scale_max_by_f_src/0.3"
+    },
+    "u_src_max_at_f_src_0.4": {
+     "value": 0.0088098688,
+     "unit": "relative (1 sigma)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/u_source_scale_max_by_f_src/0.4"
+    }
+   },
+   "tbd": [
+    {
+     "value": "TBD",
+     "what": "f_src allocation",
+     "requires": "bus_power_boundary_v1 source allocation at LOCK-1",
+     "blocked_by": [
+      "owner",
+      "lane_11_bus_boundary"
+     ]
+    },
+    {
+     "value": "TBD",
+     "what": "load-plane characterisation method",
+     "requires": "RF / microwave design",
+     "blocked_by": [
+      "RF and ECR source designs"
+     ]
+    }
+   ],
+   "reference": "lane 25 M3 (f_src values are hypothetical planning values)"
+  },
+  {
+   "id": "REQ-HW-04",
+   "requirement": "The installation (re-mount) reproducibility of ln(T/P_bus) shall be no worse than u_inst,max, or a no-vent arm switch shall be used (D-06).",
+   "values": {
+    "u_inst_max_at_n_min": {
+     "value": 0.0024918072,
+     "unit": "ln-ratio (1 sigma, per installation)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/derived_numbers/plan_by_n/4/u_inst_max"
+    }
+   },
+   "tbd": [
+    {
+     "value": "TBD",
+     "what": "achievability",
+     "requires": "S1b re-mount series",
+     "blocked_by": [
+      "S1b measurement"
+     ]
+    }
+   ],
+   "reference": "lane 25 Sec. 6.4"
+  },
+  {
+   "id": "REQ-HW-05",
+   "requirement": "Ion current shall be measured at the source exit (guarded Faraday collector/array) and across the Hall channel exit with the Hall discharge off, with the recommended-practice corrections.",
+   "values": {},
+   "tbd": [
+    {
+     "value": "TBD",
+     "what": "CEX attenuation bound on the collector path",
+     "requires": "cited N2+ on N2 charge-exchange cross section",
+     "blocked_by": [
+      "literature (cited source)"
+     ]
+    }
+   ],
+   "reference": "REF-BROWN2017 via lane 25 M5"
+  },
+  {
+   "id": "REQ-HW-06",
+   "requirement": "B(z) shall be mapped with a Hall probe on a positioning stage for every configuration at the operating coil currents, before and after.",
+   "values": {},
+   "tbd": [
+    {
+     "value": "TBD",
+     "what": "range",
+     "requires": "Hall design",
+     "blocked_by": [
+      "DI-2 Vyovrinda Hall design point"
+     ]
+    }
+   ],
+   "reference": "lane 25 M11"
+  },
+  {
+   "id": "REQ-HW-07",
+   "requirement": "Mass-flow controllers shall be calibrated on N2, O2 and Xe in the final configuration; identical setpoints across arms.",
+   "values": {
+    "mfc_calibration_interval": {
+     "value": 12,
+     "unit": "months (maximum)",
+     "evidence_class": "assumed",
+     "source": "docs/architecture_comparison/experiment_protocol/protocol_draft.json#/flow_accounting/mfc_calibration_interval"
+    }
+   },
+   "tbd": [],
+   "reference": "REF-SNYDER2017 via lanes 25 and 06"
+  },
+  {
+   "id": "REQ-HW-08",
+   "requirement": "Hardware set: Hall unit H-1 (D-09), cathode C-1, RF source + interstage + DC-fed generator + matching, ECR source + interstage + DC-fed microwave generator + isolator + coupler + ECR magnet, flow-equivalent spacer (HW-0) or diverter (D-06), matched dummy loads.",
+   "values": {},
+   "tbd": [
+    {
+     "value": "TBD",
+     "what": "cathode type",
+     "requires": "cathode lanes",
+     "blocked_by": [
+      "lane_10_cathode_dossier",
+      "lane_19_cathode_integration"
+     ]
+    },
+    {
+     "value": "TBD",
+     "what": "source frequencies and powers P_hi",
+     "requires": "RF / ECR designs and bus allocation",
+     "blocked_by": [
+      "owner",
+      "lane_11_bus_boundary"
+     ]
+    }
+   ],
+   "reference": "lane 25 Sec. 11"
+  }
+ ],
+ "tbd_register": [
+  {
+   "path": "$.decisions[10].tbd[0]",
+   "what": "compressor bus draw per operating point",
+   "requires": "upstream ICD compressor bus power",
+   "blocked_by": [
+    "lane_33_upstream_icd (not verified)"
+   ]
+  },
+  {
+   "path": "$.decisions[10].tbd[1]",
+   "what": "valve-outlet feed state (mdot_min, mdot_nom, composition, p_feed, T_feed; IF-A5)",
+   "requires": "feed design inputs with provenance (feed envelope status DESIGN_INPUTS_MISSING)",
+   "blocked_by": [
+    "lane_16_feed_envelope (design inputs)"
+   ]
+  },
+  {
+   "path": "$.decisions[11].tbd[0]",
+   "what": "T-PB-MAX",
+   "requires": "facility specification and owner decision at LOCK-1",
+   "blocked_by": [
+    "owner",
+    "facility data"
+   ]
+  },
+  {
+   "path": "$.decisions[11].tbd[1]",
+   "what": "total grid flow (sets S_eff = Q/p_b)",
+   "requires": "IF-A5 feed envelope",
+   "blocked_by": [
+    "lane_16_feed_envelope"
+   ]
+  },
+  {
+   "path": "$.decisions[12].tbd[0]",
+   "what": "ignition_p_min and ignition_attempts",
+   "requires": "owner/system requirement (start-cycle budget)",
+   "blocked_by": [
+    "owner"
+   ]
+  },
+  {
+   "path": "$.requirements[0].tbd[0]",
+   "what": "T-PB-MAX",
+   "requires": "facility specification and owner decision at LOCK-1",
+   "blocked_by": [
+    "owner",
+    "facility data"
+   ]
+  },
+  {
+   "path": "$.requirements[0].tbd[1]",
+   "what": "total grid flow (sets S_eff = Q/p_b)",
+   "requires": "IF-A5 feed envelope",
+   "blocked_by": [
+    "lane_16_feed_envelope"
+   ]
+  },
+  {
+   "path": "$.requirements[2].tbd[0]",
+   "what": "gas correction for O2/N2 mixtures",
+   "requires": "gauge calibration on each mixture",
+   "blocked_by": [
+    "facility data"
+   ]
+  },
+  {
+   "path": "$.requirements[3].tbd[0]",
+   "what": "O2 compatibility",
+   "requires": "facility data",
+   "blocked_by": [
+    "facility data"
+   ]
+  },
+  {
+   "path": "$.requirements[5].tbd[0]",
+   "what": "thrust range",
+   "requires": "Hall design",
+   "blocked_by": [
+    "DI-2 Vyovrinda Hall design point"
+   ]
+  },
+  {
+   "path": "$.requirements[6].tbd[0]",
+   "what": "traceable calibration class",
+   "requires": "owner",
+   "blocked_by": [
+    "owner"
+   ]
+  },
+  {
+   "path": "$.requirements[7].tbd[0]",
+   "what": "f_src allocation",
+   "requires": "bus_power_boundary_v1 source allocation at LOCK-1",
+   "blocked_by": [
+    "owner",
+    "lane_11_bus_boundary"
+   ]
+  },
+  {
+   "path": "$.requirements[7].tbd[1]",
+   "what": "load-plane characterisation method",
+   "requires": "RF / microwave design",
+   "blocked_by": [
+    "RF and ECR source designs"
+   ]
+  },
+  {
+   "path": "$.requirements[8].tbd[0]",
+   "what": "achievability",
+   "requires": "S1b re-mount series",
+   "blocked_by": [
+    "S1b measurement"
+   ]
+  },
+  {
+   "path": "$.requirements[9].tbd[0]",
+   "what": "CEX attenuation bound on the collector path",
+   "requires": "cited N2+ on N2 charge-exchange cross section",
+   "blocked_by": [
+    "literature (cited source)"
+   ]
+  },
+  {
+   "path": "$.requirements[10].tbd[0]",
+   "what": "range",
+   "requires": "Hall design",
+   "blocked_by": [
+    "DI-2 Vyovrinda Hall design point"
+   ]
+  },
+  {
+   "path": "$.requirements[12].tbd[0]",
+   "what": "cathode type",
+   "requires": "cathode lanes",
+   "blocked_by": [
+    "lane_10_cathode_dossier",
+    "lane_19_cathode_integration"
+   ]
+  },
+  {
+   "path": "$.requirements[12].tbd[1]",
+   "what": "source frequencies and powers P_hi",
+   "requires": "RF / ECR designs and bus allocation",
+   "blocked_by": [
+    "owner",
+    "lane_11_bus_boundary"
+   ]
+  }
+ ]
+}

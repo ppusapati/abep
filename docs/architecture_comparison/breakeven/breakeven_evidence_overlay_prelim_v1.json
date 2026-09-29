@@ -1,0 +1,2372 @@
+{
+ "status": "PRELIMINARY - evidence matrices read READ-ONLY from other lanes' worktrees before they merged; regenerate after merge. Indicative only: no elimination and no architecture conclusion is drawn from this file.",
+ "breakeven_version": "breakeven_v1",
+ "matrices": [
+  {
+   "path": "docs/evidence/rf_source/rf_evidence_matrix.json",
+   "read_from": "unmerged worktree wf_2bcadd98-5ff-1",
+   "matrix_id": "rf_source_evidence_matrix",
+   "version": "v1",
+   "sha256": "5f6d4e0ede8b2e21e45b740c28ac9320e7ddd6cfd70ef05012f85712ae0ac8e8"
+  },
+  {
+   "path": "docs/evidence/ecr_source/ecr_evidence_matrix.json",
+   "read_from": "unmerged worktree wf_2bcadd98-5ff-2",
+   "matrix_id": "ecr_evidence_matrix_v1",
+   "version": null,
+   "sha256": "4a65dbeec34f16f048fa515ced3bb959c02a981113e25da89e8bb844337fec88"
+  }
+ ],
+ "selection_rules": [
+  "units == 'W/A'",
+  "quantity mentions an ion or beam current and not an electron current",
+  "a gas/device condition is stated",
+  "numeric value, range or list"
+ ],
+ "excluded": [
+  {
+   "id": "RF-NO25-D2",
+   "reason": "electron current (cathode), not an ion production cost"
+  }
+ ],
+ "placement_rule": "Reported values are placed as published: on the source's own power reference (generator input, incident or transmitted microwave power, ...) and ion basis (grid-extracted beam or plume current). Two conversions are missing (TBD): (a) referring the power to the bus can only RAISE the cost (chain efficiency <= 1); (b) changing the ion basis to ions leaving a gridless pre-ionizer can LOWER it (no grid interception, e.g. division by the grid transparency). With both unknown, 'eta_t_needed_as_reported' = reported / sup C_del* is neither an upper nor a lower bound, and 'reported_value_above_sup' is indicative only. Gas, device and regime transfer are further limits (regime_match; noble-gas points do not describe the air arm).",
+ "reference_points": {
+  "species_mix": "N2+ (C_del* is per ampere and does not depend on the species when delivered and Hall ions share the mix)",
+  "eta_u0": 0.6,
+  "eta_v": 0.9,
+  "eta_ppu_discharge": 0.9,
+  "fixed_overhead_W": 0.0
+ },
+ "points": [
+  {
+   "id": "RF-NO25-D1",
+   "matrix_id": "rf_source_evidence_matrix",
+   "quantity": "RFG input power per ampere of extracted beam current on 50:50 N2/O2 - loose bound from the reported power and current ranges",
+   "value_W_per_A": [206.7, 1600.0],
+   "evidence_class": "inferred",
+   "evidence_level": 3,
+   "access": "open",
+   "gas": "50:50 N2/O2 by volume",
+   "uncertainty": "corner bound (min power / max current to max power / min current); the true per-setpoint values lie inside and need the source's Fig. 14 or data",
+   "regime_match": "partial",
+   "citation": "Schwertheim A., Gondol N., Rakhimov R., Arteaga J., Singh P., Noal D., Eagland T., Sheppard P., Papulov A., 'Air-Breathing Electric Propulsion Developments at NewOrbit Space', 39th International Electric Propulsion Conference, London, 14-19 Sept 2025, IEPC-2025-378; Research Square preprint posted 26 March 2026 (CC BY 4.0).",
+   "doi_or_url": "https://doi.org/10.21203/rs.3.rs-9039885/v1",
+   "gas_group": "air_species",
+   "placement": [
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 333.333,
+     "eta_t_needed_as_reported": [0.6201, 4.8],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 500.0,
+     "eta_t_needed_as_reported": [0.4134, 3.2],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 536.062,
+     "eta_t_needed_as_reported": [0.38559, 2.98473],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 238.095,
+     "eta_t_needed_as_reported": [0.86814, 6.72],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 309.524,
+     "eta_t_needed_as_reported": [0.6678, 5.16923],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 335.282,
+     "eta_t_needed_as_reported": [0.616496, 4.7721],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 185.185,
+     "eta_t_needed_as_reported": [1.11618, 8.64],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 203.704,
+     "eta_t_needed_as_reported": [1.01471, 7.85455],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 223.738,
+     "eta_t_needed_as_reported": [0.923849, 7.15122],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 666.667,
+     "eta_t_needed_as_reported": [0.31005, 2.4],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.2067, 1.6],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1072.12,
+     "eta_t_needed_as_reported": [0.192795, 1.49237],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 476.19,
+     "eta_t_needed_as_reported": [0.43407, 3.36],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 619.048,
+     "eta_t_needed_as_reported": [0.3339, 2.58462],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 670.564,
+     "eta_t_needed_as_reported": [0.308248, 2.38605],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 370.37,
+     "eta_t_needed_as_reported": [0.55809, 4.32],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 407.407,
+     "eta_t_needed_as_reported": [0.507355, 3.92727],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 447.476,
+     "eta_t_needed_as_reported": [0.461924, 3.57561],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.2067, 1.6],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1500.0,
+     "eta_t_needed_as_reported": [0.1378, 1.06667],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1608.19,
+     "eta_t_needed_as_reported": [0.12853, 0.99491],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 714.286,
+     "eta_t_needed_as_reported": [0.28938, 2.24],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 928.571,
+     "eta_t_needed_as_reported": [0.2226, 1.72308],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1005.85,
+     "eta_t_needed_as_reported": [0.205499, 1.5907],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 555.556,
+     "eta_t_needed_as_reported": [0.37206, 2.88],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 611.111,
+     "eta_t_needed_as_reported": [0.338236, 2.61818],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 671.214,
+     "eta_t_needed_as_reported": [0.30795, 2.38374],
+     "reported_value_above_sup": false
+    }
+   ]
+  },
+  {
+   "id": "ECR-E075",
+   "matrix_id": "ecr_evidence_matrix_v1",
+   "quantity": "Ion beam production cost, 10 cm microwave (ECR) ion thruster on argon",
+   "value_W_per_A": [440.0, 440.0],
+   "evidence_class": "inferred",
+   "evidence_level": null,
+   "access": "open",
+   "gas": "Ar, 2.28 sccm",
+   "uncertainty": "source-computed as (Pi - Pr)/Ib from measured incident/reflected power and beam current",
+   "regime_match": "no",
+   "citation": "M. Miyoshi, N. Yamamoto, H. Nakashima, \"Microwave Discharge Ion Thruster using Argon as a Propellant\", IEPC-2007-205, 30th IEPC, Florence, 2007",
+   "doi_or_url": "https://electricrocket.org/IEPC/IEPC-2007-205.pdf",
+   "gas_group": "noble_gas",
+   "placement": [
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 333.333,
+     "eta_t_needed_as_reported": [1.32, 1.32],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 500.0,
+     "eta_t_needed_as_reported": [0.88, 0.88],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 536.062,
+     "eta_t_needed_as_reported": [0.820801, 0.820801],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 238.095,
+     "eta_t_needed_as_reported": [1.848, 1.848],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 309.524,
+     "eta_t_needed_as_reported": [1.42154, 1.42154],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 335.282,
+     "eta_t_needed_as_reported": [1.31233, 1.31233],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 185.185,
+     "eta_t_needed_as_reported": [2.376, 2.376],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 203.704,
+     "eta_t_needed_as_reported": [2.16, 2.16],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 223.738,
+     "eta_t_needed_as_reported": [1.96659, 1.96659],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 666.667,
+     "eta_t_needed_as_reported": [0.66, 0.66],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.44, 0.44],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1072.12,
+     "eta_t_needed_as_reported": [0.410401, 0.410401],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 476.19,
+     "eta_t_needed_as_reported": [0.924, 0.924],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 619.048,
+     "eta_t_needed_as_reported": [0.710769, 0.710769],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 670.564,
+     "eta_t_needed_as_reported": [0.656164, 0.656164],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 370.37,
+     "eta_t_needed_as_reported": [1.188, 1.188],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 407.407,
+     "eta_t_needed_as_reported": [1.08, 1.08],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 447.476,
+     "eta_t_needed_as_reported": [0.983293, 0.983293],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.44, 0.44],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1500.0,
+     "eta_t_needed_as_reported": [0.293333, 0.293333],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1608.19,
+     "eta_t_needed_as_reported": [0.2736, 0.2736],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 714.286,
+     "eta_t_needed_as_reported": [0.616, 0.616],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 928.571,
+     "eta_t_needed_as_reported": [0.473846, 0.473846],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1005.85,
+     "eta_t_needed_as_reported": [0.437442, 0.437442],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 555.556,
+     "eta_t_needed_as_reported": [0.792, 0.792],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 611.111,
+     "eta_t_needed_as_reported": [0.72, 0.72],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 671.214,
+     "eta_t_needed_as_reported": [0.655529, 0.655529],
+     "reported_value_above_sup": false
+    }
+   ]
+  },
+  {
+   "id": "ECR-E081",
+   "matrix_id": "ecr_evidence_matrix_v1",
+   "quantity": "Ion energy loss (ion production cost), 2 cm ECR ion source on N2, experiment",
+   "value_W_per_A": [596.2, 596.2],
+   "evidence_class": "inferred",
+   "evidence_level": null,
+   "access": "abstract_only",
+   "gas": "N2, 0.8 ml/min (as reported)",
+   "uncertainty": "source-computed; power basis ('input power') not specified in the abstract",
+   "regime_match": "partial",
+   "citation": "R. Tan, J. Yang, H. Mou, X. Wu, \"Computational and experimental research on the performance of ECRIT ion source with nitrogen propellant\", J. Northwestern Polytechnical Univ. 41(2) (2023) 274-281 (CC BY 4.0). Abstract read from Crossref metadata; publisher page returned HTTP 403 to our fetch",
+   "doi_or_url": "https://doi.org/10.1051/jnwpu/20234120274",
+   "gas_group": "air_species",
+   "placement": [
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 333.333,
+     "eta_t_needed_as_reported": [1.7886, 1.7886],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 500.0,
+     "eta_t_needed_as_reported": [1.1924, 1.1924],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 536.062,
+     "eta_t_needed_as_reported": [1.11219, 1.11219],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 238.095,
+     "eta_t_needed_as_reported": [2.50404, 2.50404],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 309.524,
+     "eta_t_needed_as_reported": [1.92618, 1.92618],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 335.282,
+     "eta_t_needed_as_reported": [1.7782, 1.7782],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 185.185,
+     "eta_t_needed_as_reported": [3.21948, 3.21948],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 203.704,
+     "eta_t_needed_as_reported": [2.9268, 2.9268],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 223.738,
+     "eta_t_needed_as_reported": [2.66472, 2.66472],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 666.667,
+     "eta_t_needed_as_reported": [0.8943, 0.8943],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.5962, 0.5962],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1072.12,
+     "eta_t_needed_as_reported": [0.556093, 0.556093],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 476.19,
+     "eta_t_needed_as_reported": [1.25202, 1.25202],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 619.048,
+     "eta_t_needed_as_reported": [0.963092, 0.963092],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 670.564,
+     "eta_t_needed_as_reported": [0.889102, 0.889102],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 370.37,
+     "eta_t_needed_as_reported": [1.60974, 1.60974],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 407.407,
+     "eta_t_needed_as_reported": [1.4634, 1.4634],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 447.476,
+     "eta_t_needed_as_reported": [1.33236, 1.33236],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.5962, 0.5962],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1500.0,
+     "eta_t_needed_as_reported": [0.397467, 0.397467],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1608.19,
+     "eta_t_needed_as_reported": [0.370728, 0.370728],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 714.286,
+     "eta_t_needed_as_reported": [0.83468, 0.83468],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 928.571,
+     "eta_t_needed_as_reported": [0.642062, 0.642062],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1005.85,
+     "eta_t_needed_as_reported": [0.592735, 0.592735],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 555.556,
+     "eta_t_needed_as_reported": [1.07316, 1.07316],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 611.111,
+     "eta_t_needed_as_reported": [0.9756, 0.9756],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 671.214,
+     "eta_t_needed_as_reported": [0.888241, 0.888241],
+     "reported_value_above_sup": false
+    }
+   ]
+  },
+  {
+   "id": "ECR-E083",
+   "matrix_id": "ecr_evidence_matrix_v1",
+   "quantity": "Ion energy loss, 2 cm ECR ion source on N2, source's global model",
+   "value_W_per_A": [443.9, 443.9],
+   "evidence_class": "model-derived",
+   "evidence_level": null,
+   "access": "abstract_only",
+   "gas": "N2, 1 ml/min (model)",
+   "uncertainty": "model; model-experiment relative errors 2-32 % on beam current, thrust and Isp (ECR-E087)",
+   "regime_match": "partial",
+   "citation": "R. Tan, J. Yang, H. Mou, X. Wu, \"Computational and experimental research on the performance of ECRIT ion source with nitrogen propellant\", J. Northwestern Polytechnical Univ. 41(2) (2023) 274-281 (CC BY 4.0). Abstract read from Crossref metadata; publisher page returned HTTP 403 to our fetch",
+   "doi_or_url": "https://doi.org/10.1051/jnwpu/20234120274",
+   "gas_group": "air_species",
+   "placement": [
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 333.333,
+     "eta_t_needed_as_reported": [1.3317, 1.3317],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 500.0,
+     "eta_t_needed_as_reported": [0.8878, 0.8878],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 536.062,
+     "eta_t_needed_as_reported": [0.828076, 0.828076],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 238.095,
+     "eta_t_needed_as_reported": [1.86438, 1.86438],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 309.524,
+     "eta_t_needed_as_reported": [1.43414, 1.43414],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 335.282,
+     "eta_t_needed_as_reported": [1.32396, 1.32396],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 185.185,
+     "eta_t_needed_as_reported": [2.39706, 2.39706],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 203.704,
+     "eta_t_needed_as_reported": [2.17915, 2.17915],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 223.738,
+     "eta_t_needed_as_reported": [1.98402, 1.98402],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 666.667,
+     "eta_t_needed_as_reported": [0.66585, 0.66585],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.4439, 0.4439],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1072.12,
+     "eta_t_needed_as_reported": [0.414038, 0.414038],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 476.19,
+     "eta_t_needed_as_reported": [0.93219, 0.93219],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 619.048,
+     "eta_t_needed_as_reported": [0.717069, 0.717069],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 670.564,
+     "eta_t_needed_as_reported": [0.66198, 0.66198],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 370.37,
+     "eta_t_needed_as_reported": [1.19853, 1.19853],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 407.407,
+     "eta_t_needed_as_reported": [1.08957, 1.08957],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 447.476,
+     "eta_t_needed_as_reported": [0.992009, 0.992009],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.4439, 0.4439],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1500.0,
+     "eta_t_needed_as_reported": [0.295933, 0.295933],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1608.19,
+     "eta_t_needed_as_reported": [0.276025, 0.276025],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 714.286,
+     "eta_t_needed_as_reported": [0.62146, 0.62146],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 928.571,
+     "eta_t_needed_as_reported": [0.478046, 0.478046],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1005.85,
+     "eta_t_needed_as_reported": [0.44132, 0.44132],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 555.556,
+     "eta_t_needed_as_reported": [0.79902, 0.79902],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 611.111,
+     "eta_t_needed_as_reported": [0.726382, 0.726382],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 671.214,
+     "eta_t_needed_as_reported": [0.661339, 0.661339],
+     "reported_value_above_sup": false
+    }
+   ]
+  },
+  {
+   "id": "ECR-D018",
+   "matrix_id": "ecr_evidence_matrix_v1",
+   "quantity": "Ion production cost of the mu20 at its nominal point (100 W / 0.5 A)",
+   "value_W_per_A": [200.0, 200.0],
+   "evidence_class": "inferred",
+   "evidence_level": null,
+   "access": "open",
+   "gas": "Xe, 10 sccm",
+   "uncertainty": "microwave power basis (forward vs absorbed not stated)",
+   "regime_match": "partial",
+   "citation": "S. Hosoda, K. Nishiyama, Y. Toyoda, H. Kuninaka, \"Intermediate report of MU-20 microwave discharge ion thruster development\", IEPC-2009-155, 31st IEPC, Ann Arbor, 2009",
+   "doi_or_url": "https://electricrocket.org/IEPC/IEPC-2009-155.pdf",
+   "gas_group": "noble_gas",
+   "placement": [
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 333.333,
+     "eta_t_needed_as_reported": [0.6, 0.6],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 500.0,
+     "eta_t_needed_as_reported": [0.4, 0.4],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 536.062,
+     "eta_t_needed_as_reported": [0.373091, 0.373091],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 238.095,
+     "eta_t_needed_as_reported": [0.84, 0.84],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 309.524,
+     "eta_t_needed_as_reported": [0.646154, 0.646154],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 335.282,
+     "eta_t_needed_as_reported": [0.596512, 0.596512],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 185.185,
+     "eta_t_needed_as_reported": [1.08, 1.08],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 203.704,
+     "eta_t_needed_as_reported": [0.981818, 0.981818],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 223.738,
+     "eta_t_needed_as_reported": [0.893903, 0.893903],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 666.667,
+     "eta_t_needed_as_reported": [0.3, 0.3],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.2, 0.2],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1072.12,
+     "eta_t_needed_as_reported": [0.186546, 0.186546],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 476.19,
+     "eta_t_needed_as_reported": [0.42, 0.42],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 619.048,
+     "eta_t_needed_as_reported": [0.323077, 0.323077],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 670.564,
+     "eta_t_needed_as_reported": [0.298256, 0.298256],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 370.37,
+     "eta_t_needed_as_reported": [0.54, 0.54],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 407.407,
+     "eta_t_needed_as_reported": [0.490909, 0.490909],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 447.476,
+     "eta_t_needed_as_reported": [0.446951, 0.446951],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.2, 0.2],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1500.0,
+     "eta_t_needed_as_reported": [0.133333, 0.133333],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1608.19,
+     "eta_t_needed_as_reported": [0.124364, 0.124364],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 714.286,
+     "eta_t_needed_as_reported": [0.28, 0.28],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 928.571,
+     "eta_t_needed_as_reported": [0.215385, 0.215385],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1005.85,
+     "eta_t_needed_as_reported": [0.198837, 0.198837],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 555.556,
+     "eta_t_needed_as_reported": [0.36, 0.36],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 611.111,
+     "eta_t_needed_as_reported": [0.327273, 0.327273],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 671.214,
+     "eta_t_needed_as_reported": [0.297968, 0.297968],
+     "reported_value_above_sup": false
+    }
+   ]
+  },
+  {
+   "id": "ECR-D019",
+   "matrix_id": "ecr_evidence_matrix_v1",
+   "quantity": "Ion production cost of the improved mu10 (34 W / [191, 194, 195] mA)",
+   "value_W_per_A": [174.4, 178.0],
+   "evidence_class": "inferred",
+   "evidence_level": null,
+   "access": "open",
+   "gas": "Xe, 3.3 sccm",
+   "uncertainty": "spread reflects the source's inconsistent beam-current values; power basis not stated",
+   "regime_match": "partial",
+   "citation": "R. Tsukizaki, I. Nishiyama, Y. Yamamoto, S. Hosoda, K. Nishiyama, H. Kuninaka, \"Improvement of the Thrust Force of the mu10 Microwave Ion Thruster by Optimizing the Potential of the Conductive Wall\", IEPC-2015-332/ISTS-2015-b-332, Kobe, 2015",
+   "doi_or_url": "https://electricrocket.org/IEPC/IEPC-2015-332_ISTS-2015-b-332.pdf",
+   "gas_group": "noble_gas",
+   "placement": [
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 333.333,
+     "eta_t_needed_as_reported": [0.5232, 0.534],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 500.0,
+     "eta_t_needed_as_reported": [0.3488, 0.356],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 536.062,
+     "eta_t_needed_as_reported": [0.325336, 0.332051],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 238.095,
+     "eta_t_needed_as_reported": [0.73248, 0.7476],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 309.524,
+     "eta_t_needed_as_reported": [0.563446, 0.575077],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 335.282,
+     "eta_t_needed_as_reported": [0.520159, 0.530896],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 185.185,
+     "eta_t_needed_as_reported": [0.94176, 0.9612],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 203.704,
+     "eta_t_needed_as_reported": [0.856145, 0.873818],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 223.738,
+     "eta_t_needed_as_reported": [0.779483, 0.795573],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 666.667,
+     "eta_t_needed_as_reported": [0.2616, 0.267],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.1744, 0.178],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1072.12,
+     "eta_t_needed_as_reported": [0.162668, 0.166026],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 476.19,
+     "eta_t_needed_as_reported": [0.36624, 0.3738],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 619.048,
+     "eta_t_needed_as_reported": [0.281723, 0.287538],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 670.564,
+     "eta_t_needed_as_reported": [0.260079, 0.265448],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 370.37,
+     "eta_t_needed_as_reported": [0.47088, 0.4806],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 407.407,
+     "eta_t_needed_as_reported": [0.428073, 0.436909],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 447.476,
+     "eta_t_needed_as_reported": [0.389742, 0.397787],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.1744, 0.178],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1500.0,
+     "eta_t_needed_as_reported": [0.116267, 0.118667],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1608.19,
+     "eta_t_needed_as_reported": [0.108445, 0.110684],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 714.286,
+     "eta_t_needed_as_reported": [0.24416, 0.2492],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 928.571,
+     "eta_t_needed_as_reported": [0.187815, 0.191692],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1005.85,
+     "eta_t_needed_as_reported": [0.173386, 0.176965],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 555.556,
+     "eta_t_needed_as_reported": [0.31392, 0.3204],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 611.111,
+     "eta_t_needed_as_reported": [0.285382, 0.291273],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 671.214,
+     "eta_t_needed_as_reported": [0.259828, 0.265191],
+     "reported_value_above_sup": false
+    }
+   ]
+  },
+  {
+   "id": "ECR-D020",
+   "matrix_id": "ecr_evidence_matrix_v1",
+   "quantity": "Ion production cost of the 10 cm N2 ECR gridded source (55 W / 0.258 A)",
+   "value_W_per_A": [213.2, 213.2],
+   "evidence_class": "inferred",
+   "evidence_level": null,
+   "access": "abstract_only",
+   "gas": "N2, 10 sccm",
+   "uncertainty": "'input microwave power' basis (forward vs absorbed not stated)",
+   "regime_match": "partial",
+   "citation": "R. Tan, J. Yang, H. Mou, Y. Huo, X. Ma, \"Experimental study on nitrogen-fed 10 cm ECR gridded ion source for ABEP\", SSRN preprint (DOI 10.2139/ssrn.6438826); published version Aerospace Science and Technology 178 (2026) 113204, DOI 10.1016/j.ast.2026.113204 (full text not accessed). Abstract read from the Crossref metadata of the preprint (same title and authors)",
+   "doi_or_url": "https://doi.org/10.2139/ssrn.6438826",
+   "gas_group": "air_species",
+   "placement": [
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 333.333,
+     "eta_t_needed_as_reported": [0.6396, 0.6396],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 500.0,
+     "eta_t_needed_as_reported": [0.4264, 0.4264],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 536.062,
+     "eta_t_needed_as_reported": [0.397715, 0.397715],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 238.095,
+     "eta_t_needed_as_reported": [0.89544, 0.89544],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 309.524,
+     "eta_t_needed_as_reported": [0.6888, 0.6888],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 335.282,
+     "eta_t_needed_as_reported": [0.635882, 0.635882],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 185.185,
+     "eta_t_needed_as_reported": [1.15128, 1.15128],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 203.704,
+     "eta_t_needed_as_reported": [1.04662, 1.04662],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 223.738,
+     "eta_t_needed_as_reported": [0.9529, 0.9529],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 666.667,
+     "eta_t_needed_as_reported": [0.3198, 0.3198],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.2132, 0.2132],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1072.12,
+     "eta_t_needed_as_reported": [0.198858, 0.198858],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 476.19,
+     "eta_t_needed_as_reported": [0.44772, 0.44772],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 619.048,
+     "eta_t_needed_as_reported": [0.3444, 0.3444],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 670.564,
+     "eta_t_needed_as_reported": [0.317941, 0.317941],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 370.37,
+     "eta_t_needed_as_reported": [0.57564, 0.57564],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 407.407,
+     "eta_t_needed_as_reported": [0.523309, 0.523309],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 447.476,
+     "eta_t_needed_as_reported": [0.47645, 0.47645],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.2132, 0.2132],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1500.0,
+     "eta_t_needed_as_reported": [0.142133, 0.142133],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1608.19,
+     "eta_t_needed_as_reported": [0.132572, 0.132572],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 714.286,
+     "eta_t_needed_as_reported": [0.29848, 0.29848],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 928.571,
+     "eta_t_needed_as_reported": [0.2296, 0.2296],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1005.85,
+     "eta_t_needed_as_reported": [0.211961, 0.211961],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 555.556,
+     "eta_t_needed_as_reported": [0.38376, 0.38376],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 611.111,
+     "eta_t_needed_as_reported": [0.348873, 0.348873],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 671.214,
+     "eta_t_needed_as_reported": [0.317633, 0.317633],
+     "reported_value_above_sup": false
+    }
+   ]
+  },
+  {
+   "id": "ECR-D021",
+   "matrix_id": "ecr_evidence_matrix_v1",
+   "quantity": "Power per ion current, ONERA ECR thruster, Xe (51 W / 65.4 mA)",
+   "value_W_per_A": [779.8, 779.8],
+   "evidence_class": "inferred",
+   "evidence_level": null,
+   "access": "open",
+   "gas": "Xe, 0.2 mg/s",
+   "uncertainty": "transmitted power includes >= 2 dB line loss; ion current probe-reconstructed",
+   "regime_match": "partial",
+   "citation": "J. Jarrige, P.-Q. Elias, F. Cannat, D. Packan, \"Performance Comparison of an ECR Plasma Thruster using Argon and Xenon as Propellant Gas\", IEPC-2013-420, 33rd IEPC, Washington DC, 2013",
+   "doi_or_url": "https://electricrocket.org/IEPC/ck35023e.pdf",
+   "gas_group": "noble_gas",
+   "placement": [
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 333.333,
+     "eta_t_needed_as_reported": [2.3394, 2.3394],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 500.0,
+     "eta_t_needed_as_reported": [1.5596, 1.5596],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 536.062,
+     "eta_t_needed_as_reported": [1.45468, 1.45468],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 238.095,
+     "eta_t_needed_as_reported": [3.27516, 3.27516],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 309.524,
+     "eta_t_needed_as_reported": [2.51935, 2.51935],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 335.282,
+     "eta_t_needed_as_reported": [2.3258, 2.3258],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 185.185,
+     "eta_t_needed_as_reported": [4.21092, 4.21092],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 203.704,
+     "eta_t_needed_as_reported": [3.82811, 3.82811],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 223.738,
+     "eta_t_needed_as_reported": [3.48533, 3.48533],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 666.667,
+     "eta_t_needed_as_reported": [1.1697, 1.1697],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.7798, 0.7798],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1072.12,
+     "eta_t_needed_as_reported": [0.727342, 0.727342],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 476.19,
+     "eta_t_needed_as_reported": [1.63758, 1.63758],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 619.048,
+     "eta_t_needed_as_reported": [1.25968, 1.25968],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 670.564,
+     "eta_t_needed_as_reported": [1.1629, 1.1629],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 370.37,
+     "eta_t_needed_as_reported": [2.10546, 2.10546],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 407.407,
+     "eta_t_needed_as_reported": [1.91405, 1.91405],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 447.476,
+     "eta_t_needed_as_reported": [1.74266, 1.74266],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.7798, 0.7798],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1500.0,
+     "eta_t_needed_as_reported": [0.519867, 0.519867],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1608.19,
+     "eta_t_needed_as_reported": [0.484894, 0.484894],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 714.286,
+     "eta_t_needed_as_reported": [1.09172, 1.09172],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 928.571,
+     "eta_t_needed_as_reported": [0.839785, 0.839785],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1005.85,
+     "eta_t_needed_as_reported": [0.775267, 0.775267],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 555.556,
+     "eta_t_needed_as_reported": [1.40364, 1.40364],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 611.111,
+     "eta_t_needed_as_reported": [1.27604, 1.27604],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 671.214,
+     "eta_t_needed_as_reported": [1.16178, 1.16178],
+     "reported_value_above_sup": true
+    }
+   ]
+  },
+  {
+   "id": "ECR-D022",
+   "matrix_id": "ecr_evidence_matrix_v1",
+   "quantity": "Power per ion current, ONERA ECR thruster, Ar (47 W / 66.7 mA)",
+   "value_W_per_A": [704.6, 704.6],
+   "evidence_class": "inferred",
+   "evidence_level": null,
+   "access": "open",
+   "gas": "Ar, 0.2 mg/s",
+   "uncertainty": "as ECR-D021",
+   "regime_match": "no",
+   "citation": "J. Jarrige, P.-Q. Elias, F. Cannat, D. Packan, \"Performance Comparison of an ECR Plasma Thruster using Argon and Xenon as Propellant Gas\", IEPC-2013-420, 33rd IEPC, Washington DC, 2013",
+   "doi_or_url": "https://electricrocket.org/IEPC/ck35023e.pdf",
+   "gas_group": "noble_gas",
+   "placement": [
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 333.333,
+     "eta_t_needed_as_reported": [2.1138, 2.1138],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 500.0,
+     "eta_t_needed_as_reported": [1.4092, 1.4092],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 536.062,
+     "eta_t_needed_as_reported": [1.3144, 1.3144],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 238.095,
+     "eta_t_needed_as_reported": [2.95932, 2.95932],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 309.524,
+     "eta_t_needed_as_reported": [2.2764, 2.2764],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 335.282,
+     "eta_t_needed_as_reported": [2.10151, 2.10151],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 185.185,
+     "eta_t_needed_as_reported": [3.80484, 3.80484],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 203.704,
+     "eta_t_needed_as_reported": [3.45895, 3.45895],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 223.738,
+     "eta_t_needed_as_reported": [3.14922, 3.14922],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 666.667,
+     "eta_t_needed_as_reported": [1.0569, 1.0569],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.7046, 0.7046],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1072.12,
+     "eta_t_needed_as_reported": [0.6572, 0.6572],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 476.19,
+     "eta_t_needed_as_reported": [1.47966, 1.47966],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 619.048,
+     "eta_t_needed_as_reported": [1.1382, 1.1382],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 670.564,
+     "eta_t_needed_as_reported": [1.05076, 1.05076],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 370.37,
+     "eta_t_needed_as_reported": [1.90242, 1.90242],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 407.407,
+     "eta_t_needed_as_reported": [1.72947, 1.72947],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 447.476,
+     "eta_t_needed_as_reported": [1.57461, 1.57461],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.7046, 0.7046],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1500.0,
+     "eta_t_needed_as_reported": [0.469733, 0.469733],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1608.19,
+     "eta_t_needed_as_reported": [0.438134, 0.438134],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 714.286,
+     "eta_t_needed_as_reported": [0.98644, 0.98644],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 928.571,
+     "eta_t_needed_as_reported": [0.7588, 0.7588],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1005.85,
+     "eta_t_needed_as_reported": [0.700504, 0.700504],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 555.556,
+     "eta_t_needed_as_reported": [1.26828, 1.26828],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 611.111,
+     "eta_t_needed_as_reported": [1.15298, 1.15298],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 671.214,
+     "eta_t_needed_as_reported": [1.04974, 1.04974],
+     "reported_value_above_sup": true
+    }
+   ]
+  },
+  {
+   "id": "ECR-D023",
+   "matrix_id": "ecr_evidence_matrix_v1",
+   "quantity": "Incident-power cost, 10 cm microwave ion thruster, Xe (32 W / 85 mA)",
+   "value_W_per_A": [376.5, 376.5],
+   "evidence_class": "inferred",
+   "evidence_level": null,
+   "access": "open",
+   "gas": "Xe, 2.28 sccm",
+   "uncertainty": "upper bound on the net-power cost because reflected power is not subtracted",
+   "regime_match": "partial",
+   "citation": "M. Miyoshi, N. Yamamoto, H. Nakashima, \"Microwave Discharge Ion Thruster using Argon as a Propellant\", IEPC-2007-205, 30th IEPC, Florence, 2007",
+   "doi_or_url": "https://electricrocket.org/IEPC/IEPC-2007-205.pdf",
+   "gas_group": "noble_gas",
+   "placement": [
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 333.333,
+     "eta_t_needed_as_reported": [1.1295, 1.1295],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 500.0,
+     "eta_t_needed_as_reported": [0.753, 0.753],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 536.062,
+     "eta_t_needed_as_reported": [0.702345, 0.702345],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 238.095,
+     "eta_t_needed_as_reported": [1.5813, 1.5813],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 309.524,
+     "eta_t_needed_as_reported": [1.21638, 1.21638],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 335.282,
+     "eta_t_needed_as_reported": [1.12293, 1.12293],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 185.185,
+     "eta_t_needed_as_reported": [2.0331, 2.0331],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 203.704,
+     "eta_t_needed_as_reported": [1.84827, 1.84827],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 150.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 223.738,
+     "eta_t_needed_as_reported": [1.68277, 1.68277],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 666.667,
+     "eta_t_needed_as_reported": [0.56475, 0.56475],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.3765, 0.3765],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1072.12,
+     "eta_t_needed_as_reported": [0.351172, 0.351172],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 476.19,
+     "eta_t_needed_as_reported": [0.79065, 0.79065],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 619.048,
+     "eta_t_needed_as_reported": [0.608192, 0.608192],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 670.564,
+     "eta_t_needed_as_reported": [0.561467, 0.561467],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 370.37,
+     "eta_t_needed_as_reported": [1.01655, 1.01655],
+     "reported_value_above_sup": true
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 407.407,
+     "eta_t_needed_as_reported": [0.924136, 0.924136],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 300.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 447.476,
+     "eta_t_needed_as_reported": [0.841386, 0.841386],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 1000.0,
+     "eta_t_needed_as_reported": [0.3765, 0.3765],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 1500.0,
+     "eta_t_needed_as_reported": [0.251, 0.251],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.5,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1608.19,
+     "eta_t_needed_as_reported": [0.234115, 0.234115],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 714.286,
+     "eta_t_needed_as_reported": [0.5271, 0.5271],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 928.571,
+     "eta_t_needed_as_reported": [0.405462, 0.405462],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.7,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 1005.85,
+     "eta_t_needed_as_reported": [0.374312, 0.374312],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "add_only",
+     "sup_C_del_star_W_per_A": 555.556,
+     "eta_t_needed_as_reported": [0.6777, 0.6777],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "cost_offset",
+     "sup_C_del_star_W_per_A": 611.111,
+     "eta_t_needed_as_reported": [0.616091, 0.616091],
+     "reported_value_above_sup": false
+    },
+    {
+     "V_d_V": 450.0,
+     "eta_b": 0.9,
+     "case": "optimistic_bound",
+     "sup_C_del_star_W_per_A": 671.214,
+     "eta_t_needed_as_reported": [0.560924, 0.560924],
+     "reported_value_above_sup": false
+    }
+   ]
+  }
+ ]
+}

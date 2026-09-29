@@ -1,0 +1,60 @@
+{
+ "dataset": "validation/p5_n2_campaign_v1_escalation_n2_n_rot_off_di_lower_nel_wang_raw.jsonl.gz",
+ "mode": "vacuum",
+ "n_records": 270,
+ "sha256_canonical_jsonl": "2da2831190e94f14549300a54d108afbdd2e7cfbcde91d520bdd5877fbc6c83d",
+ "sha256_gz": "f090bf9e10c575332820eb6f5e5ca86687f02692e0e7d3c5676b4382304d550e",
+ "canonical_form": "untouched raw record lines, one per line, sorted by key (byte order of the key string)",
+ "launch_manifest": "campaign/manifests/escalation_n2_n_rot_off_di_lower_nel_wang.json",
+ "launch_manifest_sha256": "000c806a380599b743887f5eba15f928ffb2b33440e82dd6c0f22d16e7c539df",
+ "o4": {
+  "role": "O4 escalation of n2_n_rot_off.toml: launch only if its trigger fires",
+  "chemistry": {
+   "n2_n_rot_off_di_lower_nel_wang.toml": "022caef866c283c6965c5bda6ea1fac7ecc3e2b4e349ce5067af481d6f70adee"
+  },
+  "compare_with": "n2_n_di_lower_nel_wang.toml",
+  "sensitivity": "n2_n_rot_off.toml"
+ },
+ "prereg_lock_sha256": "71ecd39fa25ea60e2e4aff9474bdd700ec8cd718e819dfdae774594709e805be",
+ "structural_gate": {
+  "PASS": true,
+  "n_records": 270,
+  "n_expected": 270,
+  "retcode_counts": {
+   "success": 269,
+   "non-success": 1
+  }
+ },
+ "record_identity_check": {
+  "PASS": true,
+  "rule": "identity fields == key fields == pinned case metadata"
+ },
+ "frozen_utc": "2026-09-26T19:37:05+00:00",
+ "driver_commit": "79d4e128bfb9ad672dc8e6e81a6e88445bc5b62a",
+ "integrity_gate_commit": "fcd6720ce8de6f33c0348e9f46144c8e27330a8b",
+ "scorer_commit": "10842ce1fca42c260f902ebd038b8379db9fe0ac",
+ "preregistration": "PR #27 (17a99cd), prereg/p5_n2_validation_criteria_v1.json",
+ "code_as_run": {
+  "integrity_gate": {
+   "file": "scripts/audit_p5_n2_campaign_records.py",
+   "sha256": "c7eaf3ca726417d97f114b6395387d9c56e86c51253e477adc2775738d4b0493",
+   "expected_commit": "fcd6720ce8de6f33c0348e9f46144c8e27330a8b",
+   "expected_sha256": "c7eaf3ca726417d97f114b6395387d9c56e86c51253e477adc2775738d4b0493",
+   "last_commit": "fcd6720ce8de6f33c0348e9f46144c8e27330a8b",
+   "identical": true
+  },
+  "scorer": {
+   "file": "scripts/score_p5_n2_campaign.py",
+   "sha256": "907ca7b5ef8e802ed97129ca9e3fd09b7493bc688088425b150ed02352a39fe3",
+   "expected_commit": "10842ce1fca42c260f902ebd038b8379db9fe0ac",
+   "expected_sha256": "907ca7b5ef8e802ed97129ca9e3fd09b7493bc688088425b150ed02352a39fe3",
+   "last_commit": "a36e2037da56ab618a2b97c996195430f85ca2d5",
+   "identical": true
+  },
+  "staged": {
+   "file": "scripts/score_p5_n2_staged.py",
+   "sha256": "a43d5453a1d21a56ffbe8c5edf9249c10a191b2e81ebb085dfccbd3584aaa1ff"
+  }
+ },
+ "chain_consistent": true
+}

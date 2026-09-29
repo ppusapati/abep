@@ -1,0 +1,130 @@
+# O4 disposition matrix — builder and procedure (S12 machinery)
+
+**Status: official matrix built, dispositions pending owner.** All 5 first stages and all 13 escalations are scored
+(the last attempt-3 datasets were scored at `bca98651b3`). `--status` reports no missing or undetermined dataset. The
+official matrix `o4_disposition_matrix_v1.json` is committed, and `--check` reproduces it byte for byte. The owner review
+is in `O4_DISPOSITION_MATRIX_REVIEW.md`: evidence per family × baseline, cross-family patterns, and the owner decisions
+with the schema definitions quoted. No disposition is recommended or recorded. The `o4_dispositions_feed` leaves every
+owner field and every `*decision_sha256` EMPTY. No `o4_dispositions_v1` file exists yet; only the owner writes one. The
+ledger records for `T_O4_DISPOSITION_MATRIX` (CLAIMED / LAUNCHED / VERIFIED) are the orchestrator's; this lane does not
+write the ledger.
+
+## What the matrix is
+
+It is an evidence table for the owner. It has one row per pre-registered O4 staged-sensitivity family × the baseline it is
+compared against (`prereg/p5_n2_validation_criteria_v1.json` → `staged_sensitivities`):
+
+| family | first stage vs | escalation combinations |
+|---|---|---|
+| `n2_n_exc_johnsonlow.toml` | `n2_n.toml` | `di_lower`, `nel_wang`, `di_lower_nel_wang` |
+| `n2_n_rot_off.toml` | `n2_n.toml` | `di_lower`, `nel_wang`, `di_lower_nel_wang` |
+| `n2_n_ndd_hmslow.toml` | `n2_n.toml` | `di_lower`, `nel_wang`, `di_lower_nel_wang` |
+| `n2_n_ndd_hmshigh.toml` | `n2_n.toml` | `di_lower`, `nel_wang`, `di_lower_nel_wang` |
+| `n2_n_n2dication.toml` | `n2_n_di_lower.toml` | `di_lower_nel_wang` |
+
+Each row is read only from the frozen scored dataset. It gives:
+
+- `trigger_fired`;
+- run-level trigger counts: by kind (status / ΔI_d / ΔT), by point N1–N5 and by reading A/B;
+- status transitions;
+- member and candidate verdict changes (the last O4 clause);
+- an **evidence-only** column (`evidence_only_for_owner`). The Johnson-low rows add the result of the verified Johnson-low
+  assessment.
+
+Every `owner_disposition` is `null`. **The builder decides no disposition.** Dispositions are owner decisions, recorded in
+an `o4_dispositions_v1` file (`hallthruster_bridge/ensemble/o4_dispositions_schema_v1.json`) and checked offline by
+`abep_sim/hall_ensemble._check_o4`.
+
+The official matrix also carries `o4_dispositions_feed`, a skeleton that conforms to `o4_dispositions_v1`:
+- baselines, first-stage and escalation `scores_provenance_file`/`sha256` (paths relative to `hallthruster_bridge/`) and
+  the scored `trigger_fired`;
+- every owner field left empty (`disposition: null`, `cleared_for_admission: []`, `decided_by`/`decided_utc: null`);
+- `mandatory_decision_sha256` left **EMPTY** (`null`), together with any other decision hash (owner decision 2026-09-27,
+  follow-on `fo_repo_decisions_batch`). The builder never pre-fills it: binding the feed to a decision is part of making the
+  dispositions, so an unfilled template must never look bound. `mandatory_decision_file` only names the mandatory-vacuum
+  decision file (repository-relative) the owner is expected to bind; it carries no hash. The decision file's sha256 does
+  not appear anywhere in the builder output. `assert_feed_unbound` raises `ProvenanceError` if any `*decision_sha256`,
+  disposition, clearance or `decided_by`/`decided_utc` is non-empty in the feed the builder is about to emit.
+
+`_check_o4` rejects the feed as emitted (first because it is not bound to the citing admission's decision). It passes
+only once the owner has filled the owner fields and set `mandatory_decision_sha256` to the `decision_sha256` of the
+admission record that cites the dispositions file.
+
+## Milestone
+
+Supports **Milestone B** (physics-backed selection): admission of a Hall transport closure, and therefore design Hall maps
+and absolute Hall performance in the architecture comparison, is gated on the O4 dispositions (`hall_ensemble._check_o4`;
+CLAUDE.md *admission/Hall maps stay gated until the O4 dispositions are complete*). It is **not** needed for
+**Milestone A** (conditional selection), which does not require Physics Baseline 1.0, and it never delays hardware
+preparation (`docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json`, W6). Indirectly it feeds Milestone C only through B.
+To contribute to B it still needs: the owner's dispositions recorded (with the decision hash bound then); the ledger
+records of `T_O4_DISPOSITION_MATRIX`; and, separately, a transport closure that passes genuinely new predictive evidence. The credible set is empty today, so the matrix alone admits nothing.
+
+The layout of the matrix is in `o4_disposition_matrix_schema_v1.json`.
+
+## Procedure
+
+1. **Status.** `python docs/o4/disposition_matrix/build_o4_disposition_matrix.py --status` prints the required, scored,
+   missing and undetermined dataset ids. "Required" means the 5 first stages, plus every escalation of a first stage whose
+   scored trigger fired. An escalation is "undetermined" while its first stage is unscored.
+2. **Wait.** Wait until `missing` and `undetermined` are both empty, which means each required escalation has been scored
+   once through the standard `scripts/score_p5_n2_staged.py freeze|score` pipeline. Until then the official build exits
+   with code 2 and lists the missing ids (`MatrixRefused`).
+3. **Build.** `T_O4_DISPOSITION_MATRIX` must then be claimed through the ledger under the operating model. After that,
+   `python docs/o4/disposition_matrix/build_o4_disposition_matrix.py` writes `o4_disposition_matrix_v1.json`.
+   `--check` confirms that the file reproduces byte for byte.
+4. **Owner.** The owner reads the matrix, writes the dispositions into a separate `o4_dispositions_v1` file based on the
+   feed, and records who decided and when. The matrix itself is never edited by hand.
+
+For testing only, `--preview --out PATH` writes a **PREVIEW** over whatever is scored (schema
+`o4_evidence_matrix_preview_v1`, `"PREVIEW": true`, no dispositions feed). A preview is never committed as the matrix. The
+builder refuses a preview filename that contains "disposition", and it refuses the official path.
+
+## Verification performed on every scored dataset (any failure raises; there is no fallback)
+
+- The raw `.jsonl.gz` sha256 and its canonical sha256 match the freeze manifest.
+- The provenance input and output name these exact files, and the scores sha256 equals `output_sha256`.
+- Mode is vacuum. `mandatory_reproduced` is true, and the mandatory statistics in the O4 scores equal the official v1
+  scores.
+- The dataset is bound to the v1 mandatory raw dataset and scores, the frozen scorer sha256 and the pre-registration lock.
+- The baseline and family are the pre-registered ones. The chemistry config sha256 equals the propellant file.
+- `o4_trigger_fired` equals the scored block.
+- The frozen scorer (imported only after its sha256 matches) **recomputes `run_level_triggers` and `verdict_changes`
+  exactly**.
+- The registry cross-checks hold: the lane-registry O4 datasets equal the pre-registered configurations (5 + 13), and the
+  `T_O4_DISPOSITION_MATRIX` prerequisites equal the 5 first stages.
+- The Johnson-low assessment has a VERIFIED ledger event, its own checks all passed, and its four dataset hashes are
+  identical to the ones verified here.
+
+**Interrupted outputs are never read.** Every file access goes through a guard. The guard refuses
+`hallthruster_bridge/validation/interrupted/**`, including through symlinks. The builder never lists a directory; each path
+is constructed from the registry. Facility results are not read (O4: facility-only differences never trigger escalation).
+
+**Identity binds immutable evidence only (repair 2026-09-27).** The first official build hashed the whole
+`docs/orchestration/lane_registry_v1.json` and `trigger_registry_v1.json` in `provenance.inputs_sha256`. Those are mutable
+governance files (the orchestrator records repairs, `followon_dir`, `attempt_history` there), so the matrix stopped
+reproducing although no evidence had changed. The builder now:
+- binds in `inputs_sha256` only immutable inputs: the pre-registration criteria and lock, the dispositions schema, the frozen
+  scorer and the verified Johnson-low assessment (each dataset's raw / scores / provenance hashes are bound per row in
+  `provenance.datasets`);
+- uses the registries only to enumerate the dataset ids, and binds their identity as canonical projections in
+  `provenance.registry_identity` (O4 datasets `{id, manifest, role, escalations}`; the `T_O4_DISPOSITION_MATRIX`
+  `{id, prerequisites, plus}`);
+- takes the Johnson-low `ledger_verified_commit` from the FIRST VERIFIED ledger record (the ledger is append-only);
+- never reads an owner `hallthruster_bridge/ensemble/o4_dispositions*.json` record (the guard refuses it; only the schema
+  is read), so the feed stays an unbound skeleton.
+
+The regenerated `o4_disposition_matrix_v1.json` differs from the first build only in `provenance.inputs_sha256` (two
+registry hashes replaced by the lock and Johnson-low assessment hashes) and the new `provenance.registry_identity`; every
+row, family, check and the feed are unchanged. A test edits a copy of the registries' non-dataset fields (and appends a
+ledger record) and confirms the matrix still reproduces byte for byte.
+
+## Scope
+
+This is evidence for the O4 gate on admission of the ionization/discharge → acceleration/thrust block. It does not:
+- change any criterion, tolerance, chemistry, transport parameter, pre-registration or campaign record;
+- rewrite the v1 outcome (INCONCLUSIVE for all nine screening candidates, credible set ∅);
+- put any screening candidate into the credible set.
+
+Tests: `tests/test_o4_disposition_matrix.py`. They check that the official matrix reproduces, the feed is unbound, the review tables
+regenerate from the matrix (`python tests/test_o4_disposition_matrix.py --print-review-tables`), and no forbidden wording appears.

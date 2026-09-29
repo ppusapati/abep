@@ -161,10 +161,58 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    scores, provenance, report, decision, `VALIDATION_RELEASE_v1.json`, all links verified). Result: no candidate PROMOTABLE; all nine
    INCONCLUSIVE / NOT ELIGIBLE; credible set ∅; no admission, no design Hall maps. Next (owner plan): O4 staged-sensitivity first stage
    (5 × 270 vacuum) and the 1080 facility runs as pre-registered; non-gating failure/OOD forensics; no retuning, no criteria change.
+   **Critical path after v1 (owner decision 2026-09-26):** identify the OOD reactions → independent published evidence for a wider
+   validity domain → pre-register an N₂ validation **v2** only if that evidence justifies it → rerun only what v2 requires → admit
+   closure(s). In parallel: prepare the Hall-only vs RF+Hall vs ECR+Hall comparison on one common bus-power boundary. **Never extend a
+   rate-table validity limit merely because the solver reached a higher T_e**; an extension needs independent published evidence
+   and a new v2 pre-registration. **The v1 outcome stays INCONCLUSIVE permanently and is never rewritten.** The E×B diagnostic
+   (V_a(N⁺) far below measured; ordering inverted in 0/648 runs) stays non-gating: it gets a physics-forensics lane (possible missing
+   species-dependent acceleration / birth-location physics), never tuning. v1 OOD is driven by the 45 eV-capped family (dissociation,
+   8 electronic, 2 rotational, 10 vibrational) firing together; 45 eV is the project's pre-registered completeness domain.
    Admission/Hall maps stay gated until the O4 dispositions are complete even if a later campaign yields PROMOTABLE: enforced by
    `hall_ensemble._check_o4` (admission records need `o4_dispositions_file`, `ensemble/o4_dispositions_schema_v1.json`; triggers are
    read from the scored O4 files). O4 datasets: `scripts/score_p5_n2_staged.py freeze|score` (pinned launch manifest gate, score once
    on mandatory + staged, mandatory scores reproduced exactly). Facility: the standard freeze/score pipeline in mode `facility`.
+   **Decision milestones (owner decision 2026-09-26):** A = *conditional selection* ("architecture X is baseline provided conditions
+   … are demonstrated"; does not need Physics Baseline 1.0); B = *physics-backed selection* (credible envelopes from validated Hall
+   transport, chemistry and common-boundary performance); C = *proposal/PDR freeze* (mass, power, thermal, life, startup, cathode,
+   mission closure integrated). Two tracks run in parallel and meet only when an admitted closure is needed for absolute performance:
+   physics validation (v1 → OOD attribution → higher-energy evidence → v2 if justified → admission) and architecture comparison (common
+   feed envelope → common Hall accelerator → RF/ECR interstage → common bus boundary → mass/thermal/life → same-condition comparison,
+   break-even surfaces, hard-gate eliminations). **Fan-out rule:** whenever a lane finishes, immediately ask whether its result lets
+   another lane start, removes a dependency, or creates a new parallel branch; never fall back to a sequential queue.
+   **O4 first stage:** Johnson-low trigger FIRED (scored 2026-09-26) → its three pre-registered escalations are running.
+   **Execution baseline (pinned until merged):** branch `claude/nifty-ramanujan-w68f9z` at `debce16` — `main` (daa0e75) does not
+   contain the orchestration governance; nobody works from `main` for execution until the merge (`runtime_state.json`).
+   **Operating model (binding; owner decisions 2026-09-26): `docs/orchestration/OPERATING_MODEL.md`.** Machine ids in
+   `lane_registry_v1.json` (lane_NN_*, ds_*, fo_*; break-even = lane_28_break_even); follow-on work launches ONLY from
+   `trigger_registry_v1.json` (incl. T_O4_SCORE / T_O4_ESCALATE / T_O4_DISPOSITION_MATRIX / T_JOHNSONLOW_ESCALATION_ASSESSMENT /
+   T_V2_QUESTION_A / T_V2_QUESTION_B / T_FACILITY_SCORE); every firing goes to the ledger `fired_triggers.jsonl`. A lane satisfies a
+   trigger only when `verified` (final round passed under its protocol AND deps verified). **Trigger execution is transactional
+   and idempotent** (READY → CLAIMED → LAUNCHED → VERIFIED | FAILED; deterministic execution key; claim persisted before launch;
+   launch needs checkable evidence; `trigger_ledger_v2.jsonl`, record_origin live | retroactive_reconstruction). single-lens-v1 lanes
+   need the second lens before they become decisive evidence for Milestone B or C. **Bundle 1 prerequisites include
+   lane_24_hard_gates as a hard prerequisite.** Bundle 1 outcomes: CONDITIONAL_BASELINE(X) with explicit conditions / NO_BASELINE_YET
+   with blocking fields and lanes / per architecture ELIMINATED_WITHIN_TESTED_ENVELOPE only via a demonstrated hard gate. No new broad
+   lanes; each lane answers (i) conditional selection now, (ii) what blocks physics-backed selection, (iii) what could overturn it;
+   results come in milestone bundles. **Admissibility:** a comparison is admissible only when all architectures are normalized to
+   `bus_power_boundary_v1` and every mandatory field {ṁ_s, P_feed, T_feed, x_s, V_d, T, P_bus, m, Q_reject, life, startup, η_u,
+   stability} is populated or explicitly unavailable, each with units, operating point, evidence/source, uncertainty/status and
+   derivation (P_feed, T_feed = feed-state pressure and temperature). P_bus = all electrical power crossing the spacecraft-side DC
+   boundary (discharge + pre-ionizer + cathode + magnets + PPU losses + gas path incl. compressor/flow control + controls/thermal);
+   never absorbed RF, ECR source or Hall discharge-only power. **v2 chemistry:** Question A (is a wider domain source-supported?)
+   and Question B (conditional on A, which excitation representation is supportable?) stay separate; Johnson-low remains a
+   sensitivity until B supports it. **Execution provenance:** running jobs never altered; future campaigns record thread/BLAS
+   environment, Julia version and HallThruster commit per run; orchestration runtime (daemon PID, Monitor, restart semantics,
+   the 2026-09-26 silent watcher-death incident) in `docs/orchestration/runtime_state.json`.
+   **v2 Question A — OWNER DISPOSITION A-NO (2026-09-26, `docs/v2/question_a/QUESTION_A_DISPOSITION.json`):** the active N₂ domain stays
+   at 45 eV; no P5-N₂ v2 now. Dissociation→60 eV is preserved only as candidate evidence for a future revision (two reconstructed
+   Winters points). Binding: (1) a validity-limit-only change is a controlled model-domain change (version, HISTORY, separate
+   pre-registration, rerun); (2) a v2 scored on the same P5-N₂ measurements is NOT new evidence for promotion — promotion needs genuinely
+   new predictive evidence not used in selection; (3) Question B is BLOCKED_BY_QUESTION_A_DISPOSITION (T_V2_QUESTION_B requires the
+   domain path open); Johnson-low continues only via the pre-registered O4 path. D-X5 = YES, bounded: rotational > 10 eV first, then
+   electronic > 100 eV (a¹Πg > 200 eV), non-resonant vibrational, then dissociation > ~300 eV (published/open only). Reopen A only when new
+   published evidence materially closes the rotational/electronic/vibrational gaps. O4 and Bundle 1 continue unchanged.
    **P5-N₂ measurement audit: done** (`identification/p5_n2_measurement_audit_findings_v1.json`; values in
    `brabston_p5_n2_measurement_audit_v1.json` from `scripts/audit_p5_n2_measurements.py`). Targets: I_d and thrust at N1–N5,
    E×B species V_a at N1–N3, sustainment; Φ_m,n/η_SP,n/ξ_N are model-derived, not targets. Pre-registration decisions D1–D6 are
@@ -209,3 +257,13 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 `archengine.py` (modular architecture engine, nested constrained search, energy ledger, mission envelope),
 `mission_env.py`/`mission5.py` (J2 propagator, eclipse, arrays), `uq_modular.py` (paired UQ, Sobol), `golden.py`,
 `convergence.py`, `validation.py`, `hall_map.py`, `rate_tables.py`, `hall1d.py` (sanity model only).
+
+## Hardware-experiment pivot (owner decision 2026-09-27, `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json`)
+The decisive-thrust question moves from literature/simulation to a controlled common-hardware experiment (HW-0 Hall-only /
+HW-RF / HW-ECR on one Hall accelerator H-1 and cathode C-1; R_arch plus an absolute thrust gate T_measured on the delivered
+feed: >= 12 mN sustained, 25 mN capability, P_bus < 1.5 kW). Sequence: Phase 1 Hall-only sustainment knee (N2 first) ->
+Phase 2 common-condition comparison -> Phase 3 absolute demonstration. D-01..D-15 -> LOCK-1 -> S1 -> LOCK-2 -> score-bearing
+runs; the paired design is not simplified. Part of the new data is pre-registered, before any data, as held-out Hall-transport
+validation evidence (P5-N2 v1 unchanged). Parallel workstreams (`T_PIVOT_*`): feed-state closure, LOCK-1 brief, hardware,
+instrumentation, validation prereg, O/O2 chemistry v0, D-X5 closed-access acquisition (legitimate access only; P4 deferred).
+Modelling, O4/S12 and repository hardening continue in parallel and never gate hardware preparation.

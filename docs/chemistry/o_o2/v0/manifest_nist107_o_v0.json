@@ -1,0 +1,146 @@
+{
+ "id": "o_o2_tables_nist107_o_v0",
+ "lane": "fo_o_o2_chemistry_v0 (trigger T_PIVOT_O_O2_CHEMISTRY_V0, owner disposition od_hardware_pivot, W7)",
+ "status": "DRAFT_FOR_OWNER_REVIEW",
+ "builder": "docs/chemistry/o_o2/v0/build_tables_nist107_o.py",
+ "integrator": "abep_sim/rate_tables.py (unchanged; read-only import)",
+ "format": "HallThruster.jl rate table as hallthruster_bridge/propellants/*.dat: header '<label> (eV): <E>', column header, then mean energy 0-300 eV step 1 and rate coefficient (m^3/s)",
+ "tables": [
+  {
+   "file": "tables/ionization_O_beb_kd2002.dat",
+   "sha256": "1e3a377ede12d2fb20a9f4384c001b04e0d4ec260c4723cea5e1e261103e134e",
+   "source_file": "tables/ionization_O_beb_kd2002.dat.source",
+   "source_file_sha256": "a92c2f9ded0f494909c83cb4b7c690e7d6faba7e82caf642b47220f897532c89",
+   "header": "Ionization energy (eV): 13.618",
+   "cross_section_points": 130,
+   "cross_section_energy_range_eV": [
+    13.618,
+    5000.0
+   ],
+   "tail_beyond_last_point": "hold",
+   "tail_share_hold_vs_zero": {
+    "3": 0.0,
+    "15": 0.0,
+    "45": 0.0,
+    "100": 0.0,
+    "255": 0.0
+   },
+   "source_support_limit_mean_energy_eV": 255.0,
+   "source_support_rule": "highest mean energy with held-tail rate share < 1 % (rate_validity.toml convention), capped at 255 eV",
+   "proposed_domain_cap_mean_energy_eV": 45.0,
+   "draft_validity_limit_mean_energy_eV": 45.0,
+   "draft_validity_basis": "min(source-support limit, PROPOSED 45 eV mean-energy domain cap = N2 pre-registered convention, owner decision OD-1 pending)",
+   "status": "DRAFT_UNUSED",
+   "status_meaning": "Provenance-backed DRAFT table for owner review. Not in any propellant configuration, campaign, HallMap or architecture trade. Promotion is a later owner-approved model change.",
+   "id": "OO2-01",
+   "reaction": "e + O(3P) -> O+ + 2e",
+   "solver_reaction_type": "ionization (electron_impact)",
+   "evidence_level": 4,
+   "header_basis": "13.618 eV O ionization energy (II1990 Table 2.1; NIST SRD 107 atom page 13.6181 eV; SONG2026 13.62 eV)",
+   "extraction_method": "machine-parsed from the NIST SRD 107 ASCII table (raw sha256 pinned; raw not committed)",
+   "raw_source": {
+    "url_accessed": "https://physics.nist.gov/cgi-bin/Ionization/merge.php?file=OI--&mode=ASCII",
+    "accessed": "2026-09-27",
+    "raw_sha256": "76df7f7a223a803ab5902eeae0b557ffb2d3317ba692a37676851781a1d225d8",
+    "committed": false,
+    "reason": "NIST SRD terms; same precedent as scripts/build_n_ionization_table.py"
+   },
+   "applicability": "ground-state O(3P) target; Brook et al. 1978 saw signal from 12.9 eV possibly from O(1D) in the beam (SONG2026 Sec. III.D); metastable O(1D) ionization not included",
+   "milestones_supported": [
+    "A (conditional: shows the O/O2 chemistry path is source-backed, not a gate)"
+   ],
+   "rfp_thresholds_used": "none",
+   "nominal_choice": "OWNER DECISION (BEB vs Thompson 1995; lane 13 row OO2-01)",
+   "role": "alternative A (theory)",
+   "sources": [
+    {
+     "key": "KD2002",
+     "citation": "Y.-K. Kim and J.-P. Desclaux, Phys. Rev. A 66, 012708 (2002)",
+     "doi": "10.1103/PhysRevA.66.012708",
+     "access": "paper paywalled, not accessed; values via NIST SRD 107"
+    }
+   ],
+   "source_location": "NIST SRD 107 O table, column Total{kim02}",
+   "stated_uncertainty": "none stated in the NIST table; SONG2026 Sec. IV: recommended O cross sections expected accurate to at least 20 % where they matter",
+   "quantity_type": "model-derived (BEB + excitation-autoionization)",
+   "transformation_chain": "KD2002 BEB -> NIST SRD 107 tabulation -> parsed -> Maxwellian integration",
+   "cross_check_thompson1995": {
+    "method": "Thompson 1995 point / BEB total linearly interpolated at the same energy",
+    "energy_window_eV": [
+     20.0,
+     200.0
+    ],
+    "n_points": 19,
+    "ratio_min": 0.8677,
+    "ratio_max": 1.0643
+   }
+  },
+  {
+   "file": "tables/ionization_O_thompson1995.dat",
+   "sha256": "a1fe0dcdf786ee84a5de58ac996bac8130318298103575b383450fcd1e40e6b4",
+   "source_file": "tables/ionization_O_thompson1995.dat.source",
+   "source_file_sha256": "9d844006aa7df990e6ebb1b938430b23adf0ce4806dc2f9cd192dd19193eb484",
+   "header": "Ionization energy (eV): 13.618",
+   "cross_section_points": 48,
+   "cross_section_energy_range_eV": [
+    13.618,
+    2000.0
+   ],
+   "tail_beyond_last_point": "hold",
+   "tail_share_hold_vs_zero": {
+    "3": 0.0,
+    "15": 0.0,
+    "45": 0.0,
+    "100": 0.0,
+    "255": 2.8e-05
+   },
+   "source_support_limit_mean_energy_eV": 255.0,
+   "source_support_rule": "highest mean energy with held-tail rate share < 1 % (rate_validity.toml convention), capped at 255 eV",
+   "proposed_domain_cap_mean_energy_eV": 45.0,
+   "draft_validity_limit_mean_energy_eV": 45.0,
+   "draft_validity_basis": "min(source-support limit, PROPOSED 45 eV mean-energy domain cap = N2 pre-registered convention, owner decision OD-1 pending)",
+   "status": "DRAFT_UNUSED",
+   "status_meaning": "Provenance-backed DRAFT table for owner review. Not in any propellant configuration, campaign, HallMap or architecture trade. Promotion is a later owner-approved model change.",
+   "id": "OO2-01",
+   "reaction": "e + O(3P) -> O+ + 2e",
+   "solver_reaction_type": "ionization (electron_impact)",
+   "evidence_level": 4,
+   "header_basis": "13.618 eV O ionization energy (II1990 Table 2.1; NIST SRD 107 atom page 13.6181 eV; SONG2026 13.62 eV)",
+   "extraction_method": "machine-parsed from the NIST SRD 107 ASCII table (raw sha256 pinned; raw not committed)",
+   "raw_source": {
+    "url_accessed": "https://physics.nist.gov/cgi-bin/Ionization/merge.php?file=OI--&mode=ASCII",
+    "accessed": "2026-09-27",
+    "raw_sha256": "76df7f7a223a803ab5902eeae0b557ffb2d3317ba692a37676851781a1d225d8",
+    "committed": false,
+    "reason": "NIST SRD terms; same precedent as scripts/build_n_ionization_table.py"
+   },
+   "applicability": "ground-state O(3P) target; Brook et al. 1978 saw signal from 12.9 eV possibly from O(1D) in the beam (SONG2026 Sec. III.D); metastable O(1D) ionization not included",
+   "milestones_supported": [
+    "A (conditional: shows the O/O2 chemistry path is source-backed, not a gate)"
+   ],
+   "rfp_thresholds_used": "none",
+   "nominal_choice": "OWNER DECISION (BEB vs Thompson 1995; lane 13 row OO2-01)",
+   "role": "alternative B (measurement recommended by SONG2026)",
+   "sources": [
+    {
+     "key": "THOMPSON1995",
+     "citation": "W. R. Thompson, M. B. Shah and H. B. Gilbody, J. Phys. B 28, 1321 (1995)",
+     "doi": "10.1088/0953-4075/28/7/023",
+     "access": "paper paywalled, not accessed; points via NIST SRD 107"
+    },
+    {
+     "key": "SONG2026",
+     "doi": "10.1063/5.0287254",
+     "role": "recommendation (Sec. III.D)"
+    }
+   ],
+   "source_location": "NIST SRD 107 O table, column {thomp95}",
+   "stated_uncertainty": "not read (paper paywalled); SONG2026 Sec. IV overall 'at least 20 %' statement",
+   "quantity_type": "measured (as tabulated by NIST); threshold segment 13.618-14.1 eV assumed (linear ramp)",
+   "transformation_chain": "Thompson 1995 measurement -> NIST SRD 107 tabulation -> parsed -> ramp -> Maxwellian integration",
+   "verify": [
+    "whether the {thomp95} column is sigma(O+) single ionization or the counting total"
+   ]
+  }
+ ]
+}

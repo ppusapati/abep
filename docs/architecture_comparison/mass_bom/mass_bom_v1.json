@@ -1,0 +1,1940 @@
+{
+ "schema": "schemas/architecture_comparison/mass_bom_v1.schema.json",
+ "bom_version": "mass_bom_v1",
+ "created": "2026-09-26",
+ "generator": "python -m abep_sim.mass_bom build (abep_sim/mass_bom.py, section 'Architecture mass BOM skeleton')",
+ "purpose": "Same mass accounting (CBE / MGA / MEV) for hall_only, rf_hall and ecr_hall; plausibility screen from sourced lower bounds for the hard-gate G3 mass gate. Never an architecture ranking.",
+ "architecture_ids": [
+  "hall_only",
+  "rf_hall",
+  "ecr_hall"
+ ],
+ "milestones": {
+  "supports": [
+   "A"
+  ],
+  "A": "Supported: one mass accounting (same items, same margin policy) for the three architectures; a sourced-lower-bound plausibility screen feeding the hard-gate G3 mass FAIL side; refusal of any roll-up with TBD items. Current result: lower bounds are unavailable for every item, so no architecture is excluded on mass.",
+  "B": "Needs: CBEs from closure-independent design models or supplier data for every item (Vyovrinda intake, compressor, Hall head and magnetic circuit, cathode, PPU, pre-ionizer hardware), a declared Xe allocation, owner decisions OD-M1..OD-M7, and physics lower bounds where they exist.",
+  "C": "Needs: PDR-level design masses (measured or supplier-measured where possible), harness and structure from the configuration and launch loads, thermal hardware from the integrated thermal design, and the integrated mass / power / thermal / life / mission closure."
+ },
+ "mev_definition": "MEV = sum_dry CBE x (1 + MGA) + system margin + propellant; system margin = fraction x nominal dry mass (nominal dry = sum_dry CBE x (1 + MGA)); propellant carries no MGA and no system margin (ESA R-M1-3)",
+ "sources": {
+  "ESA_MARGIN_2012": {
+   "citation": "ESA SRE-PA & D-TEC staff, 'Margin philosophy for science assessment studies', SRE-PA/2011.097/, Issue 1, Revision 3, 15/06/2012 (technical note, marked 'ESA UNCLASSIFIED - For Official Use', publicly posted on sci.esa.int)",
+   "url": "https://sci.esa.int/documents/34375/36249/1567260131067-Margin_philosophy_for_science_assessment_studies_1.3.pdf",
+   "accessed": "2026-09-26",
+   "access": "open, full text (PDF, 11 pages)",
+   "sha256_as_fetched": "0ddc1b0116f96b2a4f26732dfe67ca682b7df397156c0ed6809c3c0392cc9501",
+   "sections_used": "2.1.1 Margin on total dry mass (R-M1-1 ... R-M1-10), pages 5-6",
+   "kind": "margin policy (a convention, not physical evidence)",
+   "applicability": "written for ESA science-mission assessment studies at spacecraft level; applying it to a propulsion subsystem is this BOM's choice (PROPOSED to the owner)"
+  },
+  "RFP_MASS_AS_RECORDED": {
+   "citation": "abep_sim/constants.py RFPConstraints.mass_max_kg (docstring 'Hard limits from Part III Para 2 of the RFP'); CLAUDE.md '< 40 kg'; docs/HISTORY.md v0.1 table '< 40 kg total incl. intake, compressor, PSE, Xe + tank, structure, 10 % margin'",
+   "kind": "requirement as recorded in this repository",
+   "verify": "verify against the RFP document (DTDF/06/13516/DSP/ABEP/X/L/M/01)"
+  },
+  "THIN_WALL_SPHERE": {
+   "citation": "membrane equilibrium of a thin-walled pressurised sphere, sigma = p r / (2 t); derivation in docs/architecture_comparison/mass_bom/MASS_BOM.md (section 'Tank lower-bound relation')",
+   "kind": "model-derived (first-principles relation, no fitted constant)"
+  },
+  "HARD_GATE_MATRIX": {
+   "citation": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json, gate G3_mass (hard-gate lane; referenced by path only, not present in this worktree at creation, never imported)",
+   "kind": "shared contract (read-only reference)"
+  },
+  "POWER_BOUNDARY": {
+   "citation": "abep_sim/arch_boundary.py, BOUNDARY_VERSION 'bus_power_boundary_v1' (power-boundary lane; resolved lazily by check_power_boundary_coverage(), never imported at module load)",
+   "kind": "shared contract (read-only reference)"
+  }
+ },
+ "margin_policy": {
+  "id": "esa_sre_pa_2011_097_i1r3",
+  "source": "ESA_MARGIN_2012",
+  "maturity_categories": {
+   "ecss_ab_off_the_shelf": {
+    "mga": 0.05,
+    "ecss_category": "A/B",
+    "requirement": "R-M1-41 (also R-M2-41)",
+    "source": "ESA_MARGIN_2012",
+    "text": "≥ 5 % for “Off-The-Shelf” items (ECSS Category: A / B, see ECSS-E-ST-10-02C)",
+    "evidence_class": "assumed",
+    "note": "policy minimum ('≥'); applied at the minimum"
+   },
+   "ecss_c_minor_modification": {
+    "mga": 0.1,
+    "ecss_category": "C",
+    "requirement": "R-M2-42 (label as printed under R-M1-4)",
+    "source": "ESA_MARGIN_2012",
+    "text": "≥ 10 % for “Off-The-Shelf” items requiring minor modifications (ECSS Category: C, see ECSS-E-ST-10-02C)",
+    "evidence_class": "assumed",
+    "note": "policy minimum ('≥'); applied at the minimum"
+   },
+   "ecss_d_new_or_major_modification": {
+    "mga": 0.2,
+    "ecss_category": "D",
+    "requirement": "R-M1-43 (also R-M2-43)",
+    "source": "ESA_MARGIN_2012",
+    "text": "≥ 20 % for new designed / developed items, or items requiring major modifications or re-design (ECSS Category: D, see ECSS-E-ST-10-02C)",
+    "evidence_class": "assumed",
+    "note": "policy minimum ('≥'); applied at the minimum"
+   },
+   "propellant_not_equipment": {
+    "mga": 0.0,
+    "ecss_category": null,
+    "requirement": "R-M1-3, R-M1-4, R-M1-6",
+    "source": "ESA_MARGIN_2012",
+    "text": "maturity margins are applied 'at equipment level' (R-M1-4); the system margin shall 'not include any propellant residuals or unused propellant' (R-M1-3); residuals are a separate 2 % allocation (R-M1-6)",
+    "evidence_class": "inferred",
+    "note": "the document states no maturity margin for propellant; MGA 0 is this BOM's reading of its structure"
+   },
+   "policy_allocation_nominal": {
+    "mga": 0.0,
+    "ecss_category": null,
+    "requirement": "R-M1-7, R-M1-2",
+    "source": "ESA_MARGIN_2012",
+    "text": "'Harness mass shall be considered to be at least 5 % of nominal dry mass' (R-M1-7); the nominal dry mass includes the design maturity margins (R-M1-2)",
+    "evidence_class": "inferred",
+    "note": "the allocation is already defined on the nominal (margin-including) dry mass, so no further MGA is added (this BOM's reading)"
+   }
+  },
+  "aiaa_s120a": "not used: TBD (no openly accessible reproduction of AIAA S-120A was consulted)",
+  "legacy_repository_mga": "abep_sim/mass_bom.py MGA dict (v1.7, uncited) is not used; OD-M3"
+ },
+ "system_margin": {
+  "proposed_fraction": 0.2,
+  "status": "PROPOSED",
+  "basis": "ESA R-M1-1: 'The total dry mass at launch of the spacecraft shall include an ESA system level mass margin of 20 % of the nominal dry mass at launch (this shall include the equipment level margin as specified in R-M1-4).' Spacecraft-level requirement; applying it to the propulsion subsystem is a proposal to the owner.",
+  "source": "ESA_MARGIN_2012",
+  "base": "nominal dry mass = sum over dry items of CBE x (1 + MGA); propellant excluded (R-M1-3)",
+  "alternatives": [
+   {
+    "id": "rfp_r3_10pct",
+    "fraction": 0.1,
+    "status": "RFP_AS_RECORDED",
+    "text": "'10 % margin' in the recorded RFP constraint (docs/HISTORY.md v0.1, hard-gate R3); whether it is a system margin, a growth allowance or both is unresolved (hard-gate OD7). Verify against RFP document."
+   }
+  ]
+ },
+ "hall_closure_policy": "Mass is closure-independent (hard-gate G3). No Hall mass comes from any transport closure; closure-derived inputs are rejected by check_item(). The credible set is empty (CLAUDE.md), so no Hall map feeds this BOM.",
+ "items": [
+  {
+   "id": "intake",
+   "name": "Intake (atmospheric collector)",
+   "scope": "common",
+   "rfp_block": "atmospheric path: intake",
+   "gate_element": "intake",
+   "power_boundary_components": [],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "Vyovrinda intake geometry (owner: frontal area, L/d, collimator) and sourced material densities, or a measured mass; abep_sim/intake_tpmc.py gives collection performance, not mass"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available; a bound needs a minimum frontal area (from drag/flow requirements) and a minimum areal mass, both sourced"
+   },
+   "notes": ""
+  },
+  {
+   "id": "filter",
+   "name": "Filter (atmospheric path)",
+   "scope": "common",
+   "rfp_block": "atmospheric path: filter",
+   "gate_element": "filter",
+   "power_boundary_components": [],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "filter concept and geometry (not defined in this repository) or a measured mass"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": ""
+  },
+  {
+   "id": "compressor",
+   "name": "Compressor",
+   "scope": "common",
+   "rfp_block": "atmospheric path: compressor",
+   "gate_element": "compressor",
+   "power_boundary_components": [
+    "compressor"
+   ],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "compressor design (geometry, materials, motor) or a measured breadboard mass"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": ""
+  },
+  {
+   "id": "atmospheric_gas_chamber",
+   "name": "Atmospheric gas chamber",
+   "scope": "common",
+   "rfp_block": "atmospheric path: atmospheric gas chamber",
+   "gate_element": "atmospheric_gas_chamber",
+   "power_boundary_components": [],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "chamber volume and operating pressure (design inputs) and wall material (sourced), or a measured mass"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": ""
+  },
+  {
+   "id": "atmospheric_valve",
+   "name": "Atmospheric-path valve(s) and flow control",
+   "scope": "common",
+   "rfp_block": "atmospheric path: valve",
+   "gate_element": "valves_and_flow_control",
+   "power_boundary_components": [
+    "flow_control"
+   ],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "selected valve / flow-controller parts (supplier measured mass) and redundancy scheme"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": ""
+  },
+  {
+   "id": "xe_valve_and_flow_control",
+   "name": "Xe-path valve(s), regulator and flow control",
+   "scope": "common",
+   "rfp_block": "Xe path: valve",
+   "gate_element": "valves_and_flow_control",
+   "power_boundary_components": [
+    "flow_control"
+   ],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "selected Xe valve / regulator / flow-controller parts (supplier measured mass) and redundancy scheme"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": ""
+  },
+  {
+   "id": "xe_tank",
+   "name": "Xe tank (Xe chamber)",
+   "scope": "common",
+   "rfp_block": "Xe path: Xe chamber",
+   "gate_element": "xenon_chamber_and_xenon_load",
+   "power_boundary_components": [],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "declared Xe load, storage pressure and temperature (design inputs), Xe density at storage conditions (sourced), tank concept and material, or a supplier tank mass"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "a lower bound becomes available once its inputs are declared: thin_wall_sphere_membrane (THIN_WALL_SPHERE) with MEOP, burst factor, wall strength and density, and internal volume (ESA R-M1-10: sized for the propellant plus at least 10 %), each sourced; monolithic isotropic metal shell only"
+   },
+   "notes": ""
+  },
+  {
+   "id": "xe_load",
+   "name": "Xe propellant load (declared allocation)",
+   "scope": "common",
+   "rfp_block": "Xe path: Xe chamber",
+   "gate_element": "xenon_chamber_and_xenon_load",
+   "power_boundary_components": [],
+   "mass_class": "propellant",
+   "hall_related": false,
+   "maturity": {
+    "category": "propellant_not_equipment",
+    "status": "PROPOSED",
+    "rationale": "propellant, not equipment"
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "the declared mission Xe allocation (owner design input; hard gate G3: a declared allocation, never sized from Hall-closure Xe-mode performance)"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available; a physics bound would be a sourced minimum Xe flow (e.g. cathode) x the Xe-fed hours required by the RFP (interpretation open)"
+   },
+   "notes": ""
+  },
+  {
+   "id": "xe_residual",
+   "name": "Xe residuals (2 % of the Xe load)",
+   "scope": "common",
+   "rfp_block": "Xe path: Xe chamber",
+   "gate_element": "xenon_chamber_and_xenon_load",
+   "power_boundary_components": [],
+   "mass_class": "propellant",
+   "hall_related": false,
+   "maturity": {
+    "category": "propellant_not_equipment",
+    "status": "PROPOSED",
+    "rationale": "propellant, not equipment"
+   },
+   "cbe": {
+    "basis": "scaling_relation",
+    "relation": "fraction_of_item",
+    "of_item": "xe_load",
+    "fraction": {
+     "value": 0.02,
+     "unit": "1",
+     "source": "ESA_MARGIN_2012",
+     "evidence_class": "assumed",
+     "note": "R-M1-6 'A 2% of propellant residuals shall be added to the propellant calculated'"
+    }
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "policy allocation, not a physical bound"
+   },
+   "notes": ""
+  },
+  {
+   "id": "hall_thruster_head",
+   "name": "Hall thruster head (channel, anode / gas distributor, body)",
+   "scope": "common",
+   "rfp_block": "ionization/discharge -> acceleration/thrust",
+   "gate_element": "hall_thruster",
+   "power_boundary_components": [
+    "hall_discharge"
+   ],
+   "mass_class": "dry",
+   "hall_related": true,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "Vyovrinda Hall head geometry and material selection (own design), or a measured mass"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": "Hall-related: the mass of a given head design is closure-independent. No unadmitted closure (the nine sgb-screen candidates or any other) may size or scale it; the credible set is empty (CLAUDE.md). The legacy hall_channel_mass()/hall_magnetic_circuit() defaults above are unsourced and not used."
+  },
+  {
+   "id": "hall_magnets",
+   "name": "Hall magnetic circuit (magnets / coils, pole pieces, yoke)",
+   "scope": "common",
+   "rfp_block": "ionization/discharge -> acceleration/thrust",
+   "gate_element": "hall_thruster",
+   "power_boundary_components": [
+    "hall_magnet"
+   ],
+   "mass_class": "dry",
+   "hall_related": true,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "Vyovrinda magnetic-circuit design for its own B(z) (not P5 calibration nuisance), or a measured mass"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": "Hall-related: the mass of a given head design is closure-independent. No unadmitted closure (the nine sgb-screen candidates or any other) may size or scale it; the credible set is empty (CLAUDE.md). The legacy hall_channel_mass()/hall_magnetic_circuit() defaults above are unsourced and not used."
+  },
+  {
+   "id": "cathode",
+   "name": "Cathode (neutraliser) with heater and keeper",
+   "scope": "common",
+   "rfp_block": "ionization/discharge -> acceleration/thrust",
+   "gate_element": "cathode",
+   "power_boundary_components": [
+    "cathode_keeper",
+    "cathode_heater"
+   ],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "selected cathode (supplier measured mass) or Vyovrinda cathode design; redundancy scheme"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": ""
+  },
+  {
+   "id": "ppu",
+   "name": "Power processing unit (PSE) incl. control / housekeeping electronics",
+   "scope": "common",
+   "rfp_block": "power supply electronics (RFP inclusion list, R3)",
+   "gate_element": "power_processing",
+   "power_boundary_components": [
+    "hall_discharge",
+    "hall_magnet",
+    "cathode_keeper",
+    "cathode_heater",
+    "flow_control",
+    "compressor",
+    "housekeeping"
+   ],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "PPU design or supplier unit, sized on the bus_power_boundary_v1 loads of the common components; redundancy per the recorded 'no single-point failure in electronics' (hard-gate R7, verify)"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": "Pre-ionizer supplies (RF generator, microwave source) are booked to the architecture-specific items so that this item's definition is identical in every architecture (PROPOSED accounting convention)."
+  },
+  {
+   "id": "harness",
+   "name": "Harness",
+   "scope": "common",
+   "rfp_block": "harness (RFP inclusion list: structure / PSE, R3)",
+   "gate_element": "harness_and_structure",
+   "power_boundary_components": [],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "policy_allocation_nominal",
+    "status": "PROPOSED",
+    "rationale": "ESA R-M1-7 harness allocation on nominal dry mass until a harness design exists"
+   },
+   "cbe": {
+    "basis": "scaling_relation",
+    "relation": "fraction_of_nominal_dry",
+    "fraction": {
+     "value": 0.05,
+     "unit": "1",
+     "source": "ESA_MARGIN_2012",
+     "evidence_class": "assumed",
+     "note": "R-M1-7 floor ('at least 5 % of nominal dry mass'), policy allocation"
+    }
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "policy allocation, not a physical bound"
+   },
+   "notes": "Until a harness design exists: harness = f/(1-f) x (nominal dry mass of all other dry items), so that harness = f x total nominal dry mass (ESA R-M1-7, f = 0.05 floor)."
+  },
+  {
+   "id": "thermal_hardware",
+   "name": "Thermal-control hardware (radiators, heaters, MLI, heat paths)",
+   "scope": "common",
+   "rfp_block": "thermal control",
+   "gate_element": "thermal_control",
+   "power_boundary_components": [
+    "thermal_control"
+   ],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "thermal design (abep_sim/thermal_life.py, other lane, or a thermal network with sourced inputs) and materials"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": ""
+  },
+  {
+   "id": "structure",
+   "name": "Propulsion-module structure (frames, brackets, interfaces)",
+   "scope": "common",
+   "rfp_block": "structure (RFP inclusion list, R3)",
+   "gate_element": "harness_and_structure",
+   "power_boundary_components": [],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "configuration and launch-load environment (not defined in this repository) and structural design"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": ""
+  },
+  {
+   "id": "rf_source",
+   "name": "RF pre-ionization source (discharge vessel, antenna / coil)",
+   "scope": "rf_hall",
+   "rfp_block": "ionization/discharge (pre-ionization stage)",
+   "gate_element": "rf_source",
+   "power_boundary_components": [
+    "rf_source"
+   ],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "Vyovrinda RF source design or a measured mass (docs/evidence/rf_source/, other lane)"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": "Includes its own mounting, harness and thermal-control increments (PROPOSED accounting convention, so that common items keep identical definitions)."
+  },
+  {
+   "id": "rf_generator",
+   "name": "RF generator (power amplifier / supply)",
+   "scope": "rf_hall",
+   "rfp_block": "power supply electronics",
+   "gate_element": "rf_source",
+   "power_boundary_components": [
+    "rf_source"
+   ],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "RF power level (bus_power_boundary_v1 rf_source load) and a supplier unit or design"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": ""
+  },
+  {
+   "id": "rf_matching_network",
+   "name": "RF matching network",
+   "scope": "rf_hall",
+   "rfp_block": "power supply electronics",
+   "gate_element": "rf_source",
+   "power_boundary_components": [
+    "rf_source"
+   ],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "matching-network design or supplier unit"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": ""
+  },
+  {
+   "id": "ecr_source",
+   "name": "ECR pre-ionization source (cavity / antenna, coupling)",
+   "scope": "ecr_hall",
+   "rfp_block": "ionization/discharge (pre-ionization stage)",
+   "gate_element": "ecr_source",
+   "power_boundary_components": [
+    "ecr_source"
+   ],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "Vyovrinda ECR source design or a measured mass (docs/evidence/ecr_source/, other lane)"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": "Includes its own mounting, harness and thermal-control increments (PROPOSED accounting convention, so that common items keep identical definitions)."
+  },
+  {
+   "id": "microwave_source",
+   "name": "Microwave source (generator / supply)",
+   "scope": "ecr_hall",
+   "rfp_block": "power supply electronics",
+   "gate_element": "ecr_source",
+   "power_boundary_components": [
+    "ecr_source"
+   ],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "microwave power and frequency (design inputs) and a supplier unit or design"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": ""
+  },
+  {
+   "id": "waveguide",
+   "name": "Waveguide / transmission line",
+   "scope": "ecr_hall",
+   "rfp_block": "ionization/discharge (pre-ionization stage)",
+   "gate_element": "ecr_source",
+   "power_boundary_components": [
+    "ecr_source"
+   ],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "frequency band, routing length and waveguide or coax selection"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": ""
+  },
+  {
+   "id": "ecr_magnets",
+   "name": "ECR magnets (resonance-field magnetic circuit)",
+   "scope": "ecr_hall",
+   "rfp_block": "ionization/discharge (pre-ionization stage)",
+   "gate_element": "ecr_magnet",
+   "power_boundary_components": [
+    "ecr_magnet"
+   ],
+   "mass_class": "dry",
+   "hall_related": false,
+   "maturity": {
+    "category": "ecss_d_new_or_major_modification",
+    "status": "PROPOSED",
+    "rationale": "no Vyovrinda design and no selected part exist; placed in the highest ESA category (D, 20 %) until a design or heritage part is identified. Conservative on the PASS side; the FAIL-side screen is margin-free and does not depend on it."
+   },
+   "cbe": {
+    "basis": "TBD",
+    "requires": "ECR magnetic-circuit design for the chosen frequency (resonance field) and geometry, or a measured mass"
+   },
+   "lower_bound": {
+    "basis": "none",
+    "requires": "no closure-independent lower bound with architecture scope is available"
+   },
+   "notes": ""
+  }
+ ],
+ "architectures": {
+  "hall_only": {
+   "item_ids": [
+    "intake",
+    "filter",
+    "compressor",
+    "atmospheric_gas_chamber",
+    "atmospheric_valve",
+    "xe_valve_and_flow_control",
+    "xe_tank",
+    "xe_load",
+    "xe_residual",
+    "hall_thruster_head",
+    "hall_magnets",
+    "cathode",
+    "ppu",
+    "harness",
+    "thermal_hardware",
+    "structure"
+   ],
+   "common_item_ids": [
+    "intake",
+    "filter",
+    "compressor",
+    "atmospheric_gas_chamber",
+    "atmospheric_valve",
+    "xe_valve_and_flow_control",
+    "xe_tank",
+    "xe_load",
+    "xe_residual",
+    "hall_thruster_head",
+    "hall_magnets",
+    "cathode",
+    "ppu",
+    "harness",
+    "thermal_hardware",
+    "structure"
+   ],
+   "specific_item_ids": []
+  },
+  "rf_hall": {
+   "item_ids": [
+    "intake",
+    "filter",
+    "compressor",
+    "atmospheric_gas_chamber",
+    "atmospheric_valve",
+    "xe_valve_and_flow_control",
+    "xe_tank",
+    "xe_load",
+    "xe_residual",
+    "hall_thruster_head",
+    "hall_magnets",
+    "cathode",
+    "ppu",
+    "harness",
+    "thermal_hardware",
+    "structure",
+    "rf_source",
+    "rf_generator",
+    "rf_matching_network"
+   ],
+   "common_item_ids": [
+    "intake",
+    "filter",
+    "compressor",
+    "atmospheric_gas_chamber",
+    "atmospheric_valve",
+    "xe_valve_and_flow_control",
+    "xe_tank",
+    "xe_load",
+    "xe_residual",
+    "hall_thruster_head",
+    "hall_magnets",
+    "cathode",
+    "ppu",
+    "harness",
+    "thermal_hardware",
+    "structure"
+   ],
+   "specific_item_ids": [
+    "rf_source",
+    "rf_generator",
+    "rf_matching_network"
+   ]
+  },
+  "ecr_hall": {
+   "item_ids": [
+    "intake",
+    "filter",
+    "compressor",
+    "atmospheric_gas_chamber",
+    "atmospheric_valve",
+    "xe_valve_and_flow_control",
+    "xe_tank",
+    "xe_load",
+    "xe_residual",
+    "hall_thruster_head",
+    "hall_magnets",
+    "cathode",
+    "ppu",
+    "harness",
+    "thermal_hardware",
+    "structure",
+    "ecr_source",
+    "microwave_source",
+    "waveguide",
+    "ecr_magnets"
+   ],
+   "common_item_ids": [
+    "intake",
+    "filter",
+    "compressor",
+    "atmospheric_gas_chamber",
+    "atmospheric_valve",
+    "xe_valve_and_flow_control",
+    "xe_tank",
+    "xe_load",
+    "xe_residual",
+    "hall_thruster_head",
+    "hall_magnets",
+    "cathode",
+    "ppu",
+    "harness",
+    "thermal_hardware",
+    "structure"
+   ],
+   "specific_item_ids": [
+    "ecr_source",
+    "microwave_source",
+    "waveguide",
+    "ecr_magnets"
+   ]
+  }
+ },
+ "rollups": {
+  "hall_only": {
+   "strict": {
+    "status": "REFUSED",
+    "message": "mass roll-up refused: 16 item(s) TBD or unresolved: intake (CBE TBD: requires Vyovrinda intake geometry (owner: frontal area, L/d, collimator) and sourced material densities, or a measured mass; abep_sim/intake_tpmc.py gives collection performance, not mass); filter (CBE TBD: requires filter concept and geometry (not defined in this repository) or a measured mass); compressor (CBE TBD: requires compressor design (geometry, materials, motor) or a measured breadboard mass); atmospheric_gas_chamber (CBE TBD: requires chamber volume and operating pressure (design inputs) and wall material (sourced), or a measured mass); atmospheric_valve (CBE TBD: requires selected valve / flow-controller parts (supplier measured mass) and redundancy scheme); xe_valve_and_flow_control (CBE TBD: requires selected Xe valve / regulator / flow-controller parts (supplier measured mass) and redundancy scheme); xe_tank (CBE TBD: requires declared Xe load, storage pressure and temperature (design inputs), Xe density at storage conditions (sourced), tank concept and material, or a supplier tank mass); xe_load (CBE TBD: requires the declared mission Xe allocation (owner design input; hard gate G3: a declared allocation, never sized from Hall-closure Xe-mode performance)); xe_residual (depends on missing item 'xe_load'); hall_thruster_head (CBE TBD: requires Vyovrinda Hall head geometry and material selection (own design), or a measured mass); hall_magnets (CBE TBD: requires Vyovrinda magnetic-circuit design for its own B(z) (not P5 calibration nuisance), or a measured mass); cathode (CBE TBD: requires selected cathode (supplier measured mass) or Vyovrinda cathode design; redundancy scheme); ppu (CBE TBD: requires PPU design or supplier unit, sized on the bus_power_boundary_v1 loads of the common components; redundancy per the recorded 'no single-point failure in electronics' (hard-gate R7, verify)); harness (depends on the nominal dry mass of missing items ['intake', 'filter', 'compressor', 'atmospheric_gas_chamber', 'atmospheric_valve', 'xe_valve_and_flow_control', 'xe_tank', 'hall_thruster_head', 'hall_magnets', 'cathode', 'ppu', 'thermal_hardware', 'structure']); thermal_hardware (CBE TBD: requires thermal design (abep_sim/thermal_life.py, other lane, or a thermal network with sourced inputs) and materials); structure (CBE TBD: requires configuration and launch-load environment (not defined in this repository) and structural design). Pass allow_partial=True for a partial roll-up that lists the missing items (it is not an MEV)."
+   },
+   "partial": {
+    "bom_version": "mass_bom_v1",
+    "complete": false,
+    "n_items": 16,
+    "n_missing": 16,
+    "missing_items": [
+     {
+      "id": "intake",
+      "reason": "CBE TBD: requires Vyovrinda intake geometry (owner: frontal area, L/d, collimator) and sourced material densities, or a measured mass; abep_sim/intake_tpmc.py gives collection performance, not mass"
+     },
+     {
+      "id": "filter",
+      "reason": "CBE TBD: requires filter concept and geometry (not defined in this repository) or a measured mass"
+     },
+     {
+      "id": "compressor",
+      "reason": "CBE TBD: requires compressor design (geometry, materials, motor) or a measured breadboard mass"
+     },
+     {
+      "id": "atmospheric_gas_chamber",
+      "reason": "CBE TBD: requires chamber volume and operating pressure (design inputs) and wall material (sourced), or a measured mass"
+     },
+     {
+      "id": "atmospheric_valve",
+      "reason": "CBE TBD: requires selected valve / flow-controller parts (supplier measured mass) and redundancy scheme"
+     },
+     {
+      "id": "xe_valve_and_flow_control",
+      "reason": "CBE TBD: requires selected Xe valve / regulator / flow-controller parts (supplier measured mass) and redundancy scheme"
+     },
+     {
+      "id": "xe_tank",
+      "reason": "CBE TBD: requires declared Xe load, storage pressure and temperature (design inputs), Xe density at storage conditions (sourced), tank concept and material, or a supplier tank mass"
+     },
+     {
+      "id": "xe_load",
+      "reason": "CBE TBD: requires the declared mission Xe allocation (owner design input; hard gate G3: a declared allocation, never sized from Hall-closure Xe-mode performance)"
+     },
+     {
+      "id": "xe_residual",
+      "reason": "depends on missing item 'xe_load'"
+     },
+     {
+      "id": "hall_thruster_head",
+      "reason": "CBE TBD: requires Vyovrinda Hall head geometry and material selection (own design), or a measured mass"
+     },
+     {
+      "id": "hall_magnets",
+      "reason": "CBE TBD: requires Vyovrinda magnetic-circuit design for its own B(z) (not P5 calibration nuisance), or a measured mass"
+     },
+     {
+      "id": "cathode",
+      "reason": "CBE TBD: requires selected cathode (supplier measured mass) or Vyovrinda cathode design; redundancy scheme"
+     },
+     {
+      "id": "ppu",
+      "reason": "CBE TBD: requires PPU design or supplier unit, sized on the bus_power_boundary_v1 loads of the common components; redundancy per the recorded 'no single-point failure in electronics' (hard-gate R7, verify)"
+     },
+     {
+      "id": "harness",
+      "reason": "depends on the nominal dry mass of missing items ['intake', 'filter', 'compressor', 'atmospheric_gas_chamber', 'atmospheric_valve', 'xe_valve_and_flow_control', 'xe_tank', 'hall_thruster_head', 'hall_magnets', 'cathode', 'ppu', 'thermal_hardware', 'structure']"
+     },
+     {
+      "id": "thermal_hardware",
+      "reason": "CBE TBD: requires thermal design (abep_sim/thermal_life.py, other lane, or a thermal network with sourced inputs) and materials"
+     },
+     {
+      "id": "structure",
+      "reason": "CBE TBD: requires configuration and launch-load environment (not defined in this repository) and structural design"
+     }
+    ],
+    "lines": [
+     {
+      "id": "intake",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires Vyovrinda intake geometry (owner: frontal area, L/d, collimator) and sourced material densities, or a measured mass; abep_sim/intake_tpmc.py gives collection performance, not mass"
+     },
+     {
+      "id": "filter",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires filter concept and geometry (not defined in this repository) or a measured mass"
+     },
+     {
+      "id": "compressor",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires compressor design (geometry, materials, motor) or a measured breadboard mass"
+     },
+     {
+      "id": "atmospheric_gas_chamber",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires chamber volume and operating pressure (design inputs) and wall material (sourced), or a measured mass"
+     },
+     {
+      "id": "atmospheric_valve",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires selected valve / flow-controller parts (supplier measured mass) and redundancy scheme"
+     },
+     {
+      "id": "xe_valve_and_flow_control",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires selected Xe valve / regulator / flow-controller parts (supplier measured mass) and redundancy scheme"
+     },
+     {
+      "id": "xe_tank",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires declared Xe load, storage pressure and temperature (design inputs), Xe density at storage conditions (sourced), tank concept and material, or a supplier tank mass"
+     },
+     {
+      "id": "xe_load",
+      "mass_class": "propellant",
+      "basis": "TBD",
+      "maturity_category": "propellant_not_equipment",
+      "mga": 0.0,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires the declared mission Xe allocation (owner design input; hard gate G3: a declared allocation, never sized from Hall-closure Xe-mode performance)"
+     },
+     {
+      "id": "xe_residual",
+      "mass_class": "propellant",
+      "basis": "scaling_relation",
+      "maturity_category": "propellant_not_equipment",
+      "mga": 0.0,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "depends on missing item 'xe_load'"
+     },
+     {
+      "id": "hall_thruster_head",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires Vyovrinda Hall head geometry and material selection (own design), or a measured mass"
+     },
+     {
+      "id": "hall_magnets",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires Vyovrinda magnetic-circuit design for its own B(z) (not P5 calibration nuisance), or a measured mass"
+     },
+     {
+      "id": "cathode",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires selected cathode (supplier measured mass) or Vyovrinda cathode design; redundancy scheme"
+     },
+     {
+      "id": "ppu",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires PPU design or supplier unit, sized on the bus_power_boundary_v1 loads of the common components; redundancy per the recorded 'no single-point failure in electronics' (hard-gate R7, verify)"
+     },
+     {
+      "id": "harness",
+      "mass_class": "dry",
+      "basis": "scaling_relation",
+      "maturity_category": "policy_allocation_nominal",
+      "mga": 0.0,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "depends on the nominal dry mass of missing items ['intake', 'filter', 'compressor', 'atmospheric_gas_chamber', 'atmospheric_valve', 'xe_valve_and_flow_control', 'xe_tank', 'hall_thruster_head', 'hall_magnets', 'cathode', 'ppu', 'thermal_hardware', 'structure']"
+     },
+     {
+      "id": "thermal_hardware",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires thermal design (abep_sim/thermal_life.py, other lane, or a thermal network with sourced inputs) and materials"
+     },
+     {
+      "id": "structure",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires configuration and launch-load environment (not defined in this repository) and structural design"
+     }
+    ],
+    "mev_kg": null,
+    "partial_known_items_only": {
+     "cbe_dry_kg": 0,
+     "mga_kg": 0,
+     "nominal_dry_kg": 0,
+     "system_margin_fraction": 0.2,
+     "system_margin_kg": 0.0,
+     "propellant_kg": 0,
+     "cbe_total_kg": 0,
+     "mev_kg": 0.0
+    },
+    "partial_note": "sums over resolved items only; NOT an MEV of the architecture"
+   }
+  },
+  "rf_hall": {
+   "strict": {
+    "status": "REFUSED",
+    "message": "mass roll-up refused: 19 item(s) TBD or unresolved: intake (CBE TBD: requires Vyovrinda intake geometry (owner: frontal area, L/d, collimator) and sourced material densities, or a measured mass; abep_sim/intake_tpmc.py gives collection performance, not mass); filter (CBE TBD: requires filter concept and geometry (not defined in this repository) or a measured mass); compressor (CBE TBD: requires compressor design (geometry, materials, motor) or a measured breadboard mass); atmospheric_gas_chamber (CBE TBD: requires chamber volume and operating pressure (design inputs) and wall material (sourced), or a measured mass); atmospheric_valve (CBE TBD: requires selected valve / flow-controller parts (supplier measured mass) and redundancy scheme); xe_valve_and_flow_control (CBE TBD: requires selected Xe valve / regulator / flow-controller parts (supplier measured mass) and redundancy scheme); xe_tank (CBE TBD: requires declared Xe load, storage pressure and temperature (design inputs), Xe density at storage conditions (sourced), tank concept and material, or a supplier tank mass); xe_load (CBE TBD: requires the declared mission Xe allocation (owner design input; hard gate G3: a declared allocation, never sized from Hall-closure Xe-mode performance)); xe_residual (depends on missing item 'xe_load'); hall_thruster_head (CBE TBD: requires Vyovrinda Hall head geometry and material selection (own design), or a measured mass); hall_magnets (CBE TBD: requires Vyovrinda magnetic-circuit design for its own B(z) (not P5 calibration nuisance), or a measured mass); cathode (CBE TBD: requires selected cathode (supplier measured mass) or Vyovrinda cathode design; redundancy scheme); ppu (CBE TBD: requires PPU design or supplier unit, sized on the bus_power_boundary_v1 loads of the common components; redundancy per the recorded 'no single-point failure in electronics' (hard-gate R7, verify)); harness (depends on the nominal dry mass of missing items ['intake', 'filter', 'compressor', 'atmospheric_gas_chamber', 'atmospheric_valve', 'xe_valve_and_flow_control', 'xe_tank', 'hall_thruster_head', 'hall_magnets', 'cathode', 'ppu', 'thermal_hardware', 'structure', 'rf_source', 'rf_generator', 'rf_matching_network']); thermal_hardware (CBE TBD: requires thermal design (abep_sim/thermal_life.py, other lane, or a thermal network with sourced inputs) and materials); structure (CBE TBD: requires configuration and launch-load environment (not defined in this repository) and structural design); rf_source (CBE TBD: requires Vyovrinda RF source design or a measured mass (docs/evidence/rf_source/, other lane)); rf_generator (CBE TBD: requires RF power level (bus_power_boundary_v1 rf_source load) and a supplier unit or design); rf_matching_network (CBE TBD: requires matching-network design or supplier unit). Pass allow_partial=True for a partial roll-up that lists the missing items (it is not an MEV)."
+   },
+   "partial": {
+    "bom_version": "mass_bom_v1",
+    "complete": false,
+    "n_items": 19,
+    "n_missing": 19,
+    "missing_items": [
+     {
+      "id": "intake",
+      "reason": "CBE TBD: requires Vyovrinda intake geometry (owner: frontal area, L/d, collimator) and sourced material densities, or a measured mass; abep_sim/intake_tpmc.py gives collection performance, not mass"
+     },
+     {
+      "id": "filter",
+      "reason": "CBE TBD: requires filter concept and geometry (not defined in this repository) or a measured mass"
+     },
+     {
+      "id": "compressor",
+      "reason": "CBE TBD: requires compressor design (geometry, materials, motor) or a measured breadboard mass"
+     },
+     {
+      "id": "atmospheric_gas_chamber",
+      "reason": "CBE TBD: requires chamber volume and operating pressure (design inputs) and wall material (sourced), or a measured mass"
+     },
+     {
+      "id": "atmospheric_valve",
+      "reason": "CBE TBD: requires selected valve / flow-controller parts (supplier measured mass) and redundancy scheme"
+     },
+     {
+      "id": "xe_valve_and_flow_control",
+      "reason": "CBE TBD: requires selected Xe valve / regulator / flow-controller parts (supplier measured mass) and redundancy scheme"
+     },
+     {
+      "id": "xe_tank",
+      "reason": "CBE TBD: requires declared Xe load, storage pressure and temperature (design inputs), Xe density at storage conditions (sourced), tank concept and material, or a supplier tank mass"
+     },
+     {
+      "id": "xe_load",
+      "reason": "CBE TBD: requires the declared mission Xe allocation (owner design input; hard gate G3: a declared allocation, never sized from Hall-closure Xe-mode performance)"
+     },
+     {
+      "id": "xe_residual",
+      "reason": "depends on missing item 'xe_load'"
+     },
+     {
+      "id": "hall_thruster_head",
+      "reason": "CBE TBD: requires Vyovrinda Hall head geometry and material selection (own design), or a measured mass"
+     },
+     {
+      "id": "hall_magnets",
+      "reason": "CBE TBD: requires Vyovrinda magnetic-circuit design for its own B(z) (not P5 calibration nuisance), or a measured mass"
+     },
+     {
+      "id": "cathode",
+      "reason": "CBE TBD: requires selected cathode (supplier measured mass) or Vyovrinda cathode design; redundancy scheme"
+     },
+     {
+      "id": "ppu",
+      "reason": "CBE TBD: requires PPU design or supplier unit, sized on the bus_power_boundary_v1 loads of the common components; redundancy per the recorded 'no single-point failure in electronics' (hard-gate R7, verify)"
+     },
+     {
+      "id": "harness",
+      "reason": "depends on the nominal dry mass of missing items ['intake', 'filter', 'compressor', 'atmospheric_gas_chamber', 'atmospheric_valve', 'xe_valve_and_flow_control', 'xe_tank', 'hall_thruster_head', 'hall_magnets', 'cathode', 'ppu', 'thermal_hardware', 'structure', 'rf_source', 'rf_generator', 'rf_matching_network']"
+     },
+     {
+      "id": "thermal_hardware",
+      "reason": "CBE TBD: requires thermal design (abep_sim/thermal_life.py, other lane, or a thermal network with sourced inputs) and materials"
+     },
+     {
+      "id": "structure",
+      "reason": "CBE TBD: requires configuration and launch-load environment (not defined in this repository) and structural design"
+     },
+     {
+      "id": "rf_source",
+      "reason": "CBE TBD: requires Vyovrinda RF source design or a measured mass (docs/evidence/rf_source/, other lane)"
+     },
+     {
+      "id": "rf_generator",
+      "reason": "CBE TBD: requires RF power level (bus_power_boundary_v1 rf_source load) and a supplier unit or design"
+     },
+     {
+      "id": "rf_matching_network",
+      "reason": "CBE TBD: requires matching-network design or supplier unit"
+     }
+    ],
+    "lines": [
+     {
+      "id": "intake",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires Vyovrinda intake geometry (owner: frontal area, L/d, collimator) and sourced material densities, or a measured mass; abep_sim/intake_tpmc.py gives collection performance, not mass"
+     },
+     {
+      "id": "filter",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires filter concept and geometry (not defined in this repository) or a measured mass"
+     },
+     {
+      "id": "compressor",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires compressor design (geometry, materials, motor) or a measured breadboard mass"
+     },
+     {
+      "id": "atmospheric_gas_chamber",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires chamber volume and operating pressure (design inputs) and wall material (sourced), or a measured mass"
+     },
+     {
+      "id": "atmospheric_valve",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires selected valve / flow-controller parts (supplier measured mass) and redundancy scheme"
+     },
+     {
+      "id": "xe_valve_and_flow_control",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires selected Xe valve / regulator / flow-controller parts (supplier measured mass) and redundancy scheme"
+     },
+     {
+      "id": "xe_tank",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires declared Xe load, storage pressure and temperature (design inputs), Xe density at storage conditions (sourced), tank concept and material, or a supplier tank mass"
+     },
+     {
+      "id": "xe_load",
+      "mass_class": "propellant",
+      "basis": "TBD",
+      "maturity_category": "propellant_not_equipment",
+      "mga": 0.0,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires the declared mission Xe allocation (owner design input; hard gate G3: a declared allocation, never sized from Hall-closure Xe-mode performance)"
+     },
+     {
+      "id": "xe_residual",
+      "mass_class": "propellant",
+      "basis": "scaling_relation",
+      "maturity_category": "propellant_not_equipment",
+      "mga": 0.0,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "depends on missing item 'xe_load'"
+     },
+     {
+      "id": "hall_thruster_head",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires Vyovrinda Hall head geometry and material selection (own design), or a measured mass"
+     },
+     {
+      "id": "hall_magnets",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires Vyovrinda magnetic-circuit design for its own B(z) (not P5 calibration nuisance), or a measured mass"
+     },
+     {
+      "id": "cathode",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires selected cathode (supplier measured mass) or Vyovrinda cathode design; redundancy scheme"
+     },
+     {
+      "id": "ppu",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires PPU design or supplier unit, sized on the bus_power_boundary_v1 loads of the common components; redundancy per the recorded 'no single-point failure in electronics' (hard-gate R7, verify)"
+     },
+     {
+      "id": "harness",
+      "mass_class": "dry",
+      "basis": "scaling_relation",
+      "maturity_category": "policy_allocation_nominal",
+      "mga": 0.0,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "depends on the nominal dry mass of missing items ['intake', 'filter', 'compressor', 'atmospheric_gas_chamber', 'atmospheric_valve', 'xe_valve_and_flow_control', 'xe_tank', 'hall_thruster_head', 'hall_magnets', 'cathode', 'ppu', 'thermal_hardware', 'structure', 'rf_source', 'rf_generator', 'rf_matching_network']"
+     },
+     {
+      "id": "thermal_hardware",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires thermal design (abep_sim/thermal_life.py, other lane, or a thermal network with sourced inputs) and materials"
+     },
+     {
+      "id": "structure",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires configuration and launch-load environment (not defined in this repository) and structural design"
+     },
+     {
+      "id": "rf_source",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires Vyovrinda RF source design or a measured mass (docs/evidence/rf_source/, other lane)"
+     },
+     {
+      "id": "rf_generator",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires RF power level (bus_power_boundary_v1 rf_source load) and a supplier unit or design"
+     },
+     {
+      "id": "rf_matching_network",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires matching-network design or supplier unit"
+     }
+    ],
+    "mev_kg": null,
+    "partial_known_items_only": {
+     "cbe_dry_kg": 0,
+     "mga_kg": 0,
+     "nominal_dry_kg": 0,
+     "system_margin_fraction": 0.2,
+     "system_margin_kg": 0.0,
+     "propellant_kg": 0,
+     "cbe_total_kg": 0,
+     "mev_kg": 0.0
+    },
+    "partial_note": "sums over resolved items only; NOT an MEV of the architecture"
+   }
+  },
+  "ecr_hall": {
+   "strict": {
+    "status": "REFUSED",
+    "message": "mass roll-up refused: 20 item(s) TBD or unresolved: intake (CBE TBD: requires Vyovrinda intake geometry (owner: frontal area, L/d, collimator) and sourced material densities, or a measured mass; abep_sim/intake_tpmc.py gives collection performance, not mass); filter (CBE TBD: requires filter concept and geometry (not defined in this repository) or a measured mass); compressor (CBE TBD: requires compressor design (geometry, materials, motor) or a measured breadboard mass); atmospheric_gas_chamber (CBE TBD: requires chamber volume and operating pressure (design inputs) and wall material (sourced), or a measured mass); atmospheric_valve (CBE TBD: requires selected valve / flow-controller parts (supplier measured mass) and redundancy scheme); xe_valve_and_flow_control (CBE TBD: requires selected Xe valve / regulator / flow-controller parts (supplier measured mass) and redundancy scheme); xe_tank (CBE TBD: requires declared Xe load, storage pressure and temperature (design inputs), Xe density at storage conditions (sourced), tank concept and material, or a supplier tank mass); xe_load (CBE TBD: requires the declared mission Xe allocation (owner design input; hard gate G3: a declared allocation, never sized from Hall-closure Xe-mode performance)); xe_residual (depends on missing item 'xe_load'); hall_thruster_head (CBE TBD: requires Vyovrinda Hall head geometry and material selection (own design), or a measured mass); hall_magnets (CBE TBD: requires Vyovrinda magnetic-circuit design for its own B(z) (not P5 calibration nuisance), or a measured mass); cathode (CBE TBD: requires selected cathode (supplier measured mass) or Vyovrinda cathode design; redundancy scheme); ppu (CBE TBD: requires PPU design or supplier unit, sized on the bus_power_boundary_v1 loads of the common components; redundancy per the recorded 'no single-point failure in electronics' (hard-gate R7, verify)); harness (depends on the nominal dry mass of missing items ['intake', 'filter', 'compressor', 'atmospheric_gas_chamber', 'atmospheric_valve', 'xe_valve_and_flow_control', 'xe_tank', 'hall_thruster_head', 'hall_magnets', 'cathode', 'ppu', 'thermal_hardware', 'structure', 'ecr_source', 'microwave_source', 'waveguide', 'ecr_magnets']); thermal_hardware (CBE TBD: requires thermal design (abep_sim/thermal_life.py, other lane, or a thermal network with sourced inputs) and materials); structure (CBE TBD: requires configuration and launch-load environment (not defined in this repository) and structural design); ecr_source (CBE TBD: requires Vyovrinda ECR source design or a measured mass (docs/evidence/ecr_source/, other lane)); microwave_source (CBE TBD: requires microwave power and frequency (design inputs) and a supplier unit or design); waveguide (CBE TBD: requires frequency band, routing length and waveguide or coax selection); ecr_magnets (CBE TBD: requires ECR magnetic-circuit design for the chosen frequency (resonance field) and geometry, or a measured mass). Pass allow_partial=True for a partial roll-up that lists the missing items (it is not an MEV)."
+   },
+   "partial": {
+    "bom_version": "mass_bom_v1",
+    "complete": false,
+    "n_items": 20,
+    "n_missing": 20,
+    "missing_items": [
+     {
+      "id": "intake",
+      "reason": "CBE TBD: requires Vyovrinda intake geometry (owner: frontal area, L/d, collimator) and sourced material densities, or a measured mass; abep_sim/intake_tpmc.py gives collection performance, not mass"
+     },
+     {
+      "id": "filter",
+      "reason": "CBE TBD: requires filter concept and geometry (not defined in this repository) or a measured mass"
+     },
+     {
+      "id": "compressor",
+      "reason": "CBE TBD: requires compressor design (geometry, materials, motor) or a measured breadboard mass"
+     },
+     {
+      "id": "atmospheric_gas_chamber",
+      "reason": "CBE TBD: requires chamber volume and operating pressure (design inputs) and wall material (sourced), or a measured mass"
+     },
+     {
+      "id": "atmospheric_valve",
+      "reason": "CBE TBD: requires selected valve / flow-controller parts (supplier measured mass) and redundancy scheme"
+     },
+     {
+      "id": "xe_valve_and_flow_control",
+      "reason": "CBE TBD: requires selected Xe valve / regulator / flow-controller parts (supplier measured mass) and redundancy scheme"
+     },
+     {
+      "id": "xe_tank",
+      "reason": "CBE TBD: requires declared Xe load, storage pressure and temperature (design inputs), Xe density at storage conditions (sourced), tank concept and material, or a supplier tank mass"
+     },
+     {
+      "id": "xe_load",
+      "reason": "CBE TBD: requires the declared mission Xe allocation (owner design input; hard gate G3: a declared allocation, never sized from Hall-closure Xe-mode performance)"
+     },
+     {
+      "id": "xe_residual",
+      "reason": "depends on missing item 'xe_load'"
+     },
+     {
+      "id": "hall_thruster_head",
+      "reason": "CBE TBD: requires Vyovrinda Hall head geometry and material selection (own design), or a measured mass"
+     },
+     {
+      "id": "hall_magnets",
+      "reason": "CBE TBD: requires Vyovrinda magnetic-circuit design for its own B(z) (not P5 calibration nuisance), or a measured mass"
+     },
+     {
+      "id": "cathode",
+      "reason": "CBE TBD: requires selected cathode (supplier measured mass) or Vyovrinda cathode design; redundancy scheme"
+     },
+     {
+      "id": "ppu",
+      "reason": "CBE TBD: requires PPU design or supplier unit, sized on the bus_power_boundary_v1 loads of the common components; redundancy per the recorded 'no single-point failure in electronics' (hard-gate R7, verify)"
+     },
+     {
+      "id": "harness",
+      "reason": "depends on the nominal dry mass of missing items ['intake', 'filter', 'compressor', 'atmospheric_gas_chamber', 'atmospheric_valve', 'xe_valve_and_flow_control', 'xe_tank', 'hall_thruster_head', 'hall_magnets', 'cathode', 'ppu', 'thermal_hardware', 'structure', 'ecr_source', 'microwave_source', 'waveguide', 'ecr_magnets']"
+     },
+     {
+      "id": "thermal_hardware",
+      "reason": "CBE TBD: requires thermal design (abep_sim/thermal_life.py, other lane, or a thermal network with sourced inputs) and materials"
+     },
+     {
+      "id": "structure",
+      "reason": "CBE TBD: requires configuration and launch-load environment (not defined in this repository) and structural design"
+     },
+     {
+      "id": "ecr_source",
+      "reason": "CBE TBD: requires Vyovrinda ECR source design or a measured mass (docs/evidence/ecr_source/, other lane)"
+     },
+     {
+      "id": "microwave_source",
+      "reason": "CBE TBD: requires microwave power and frequency (design inputs) and a supplier unit or design"
+     },
+     {
+      "id": "waveguide",
+      "reason": "CBE TBD: requires frequency band, routing length and waveguide or coax selection"
+     },
+     {
+      "id": "ecr_magnets",
+      "reason": "CBE TBD: requires ECR magnetic-circuit design for the chosen frequency (resonance field) and geometry, or a measured mass"
+     }
+    ],
+    "lines": [
+     {
+      "id": "intake",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires Vyovrinda intake geometry (owner: frontal area, L/d, collimator) and sourced material densities, or a measured mass; abep_sim/intake_tpmc.py gives collection performance, not mass"
+     },
+     {
+      "id": "filter",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires filter concept and geometry (not defined in this repository) or a measured mass"
+     },
+     {
+      "id": "compressor",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires compressor design (geometry, materials, motor) or a measured breadboard mass"
+     },
+     {
+      "id": "atmospheric_gas_chamber",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires chamber volume and operating pressure (design inputs) and wall material (sourced), or a measured mass"
+     },
+     {
+      "id": "atmospheric_valve",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires selected valve / flow-controller parts (supplier measured mass) and redundancy scheme"
+     },
+     {
+      "id": "xe_valve_and_flow_control",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires selected Xe valve / regulator / flow-controller parts (supplier measured mass) and redundancy scheme"
+     },
+     {
+      "id": "xe_tank",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires declared Xe load, storage pressure and temperature (design inputs), Xe density at storage conditions (sourced), tank concept and material, or a supplier tank mass"
+     },
+     {
+      "id": "xe_load",
+      "mass_class": "propellant",
+      "basis": "TBD",
+      "maturity_category": "propellant_not_equipment",
+      "mga": 0.0,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires the declared mission Xe allocation (owner design input; hard gate G3: a declared allocation, never sized from Hall-closure Xe-mode performance)"
+     },
+     {
+      "id": "xe_residual",
+      "mass_class": "propellant",
+      "basis": "scaling_relation",
+      "maturity_category": "propellant_not_equipment",
+      "mga": 0.0,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "depends on missing item 'xe_load'"
+     },
+     {
+      "id": "hall_thruster_head",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires Vyovrinda Hall head geometry and material selection (own design), or a measured mass"
+     },
+     {
+      "id": "hall_magnets",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires Vyovrinda magnetic-circuit design for its own B(z) (not P5 calibration nuisance), or a measured mass"
+     },
+     {
+      "id": "cathode",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires selected cathode (supplier measured mass) or Vyovrinda cathode design; redundancy scheme"
+     },
+     {
+      "id": "ppu",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires PPU design or supplier unit, sized on the bus_power_boundary_v1 loads of the common components; redundancy per the recorded 'no single-point failure in electronics' (hard-gate R7, verify)"
+     },
+     {
+      "id": "harness",
+      "mass_class": "dry",
+      "basis": "scaling_relation",
+      "maturity_category": "policy_allocation_nominal",
+      "mga": 0.0,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "depends on the nominal dry mass of missing items ['intake', 'filter', 'compressor', 'atmospheric_gas_chamber', 'atmospheric_valve', 'xe_valve_and_flow_control', 'xe_tank', 'hall_thruster_head', 'hall_magnets', 'cathode', 'ppu', 'thermal_hardware', 'structure', 'ecr_source', 'microwave_source', 'waveguide', 'ecr_magnets']"
+     },
+     {
+      "id": "thermal_hardware",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires thermal design (abep_sim/thermal_life.py, other lane, or a thermal network with sourced inputs) and materials"
+     },
+     {
+      "id": "structure",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires configuration and launch-load environment (not defined in this repository) and structural design"
+     },
+     {
+      "id": "ecr_source",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires Vyovrinda ECR source design or a measured mass (docs/evidence/ecr_source/, other lane)"
+     },
+     {
+      "id": "microwave_source",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires microwave power and frequency (design inputs) and a supplier unit or design"
+     },
+     {
+      "id": "waveguide",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires frequency band, routing length and waveguide or coax selection"
+     },
+     {
+      "id": "ecr_magnets",
+      "mass_class": "dry",
+      "basis": "TBD",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "mga": 0.2,
+      "cbe_kg": null,
+      "nominal_kg": null,
+      "status": "missing",
+      "missing_reason": "CBE TBD: requires ECR magnetic-circuit design for the chosen frequency (resonance field) and geometry, or a measured mass"
+     }
+    ],
+    "mev_kg": null,
+    "partial_known_items_only": {
+     "cbe_dry_kg": 0,
+     "mga_kg": 0,
+     "nominal_dry_kg": 0,
+     "system_margin_fraction": 0.2,
+     "system_margin_kg": 0.0,
+     "propellant_kg": 0,
+     "cbe_total_kg": 0,
+     "mev_kg": 0.0
+    },
+    "partial_note": "sums over resolved items only; NOT an MEV of the architecture"
+   }
+  }
+ },
+ "plausibility_screen": {
+  "threshold_kg": 40.0,
+  "comparator": "> (strict; equality decides nothing)",
+  "system_margin_fraction": 0.2,
+  "architectures": {
+   "hall_only": {
+    "verdict": "LOWER_BOUNDS_UNAVAILABLE",
+    "cbe_margin_free_lower_bound_kg": 0.0,
+    "mev_lower_bound_kg": 0.0,
+    "common_items_lower_bound_kg": 0.0,
+    "architecture_specific_lower_bound_kg": 0.0,
+    "n_items": 16,
+    "items_with_lower_bound": [],
+    "items_without_lower_bound": [
+     "intake",
+     "filter",
+     "compressor",
+     "atmospheric_gas_chamber",
+     "atmospheric_valve",
+     "xe_valve_and_flow_control",
+     "xe_tank",
+     "xe_load",
+     "xe_residual",
+     "hall_thruster_head",
+     "hall_magnets",
+     "cathode",
+     "ppu",
+     "harness",
+     "thermal_hardware",
+     "structure"
+    ],
+    "g3_fail_evidence": false,
+    "g3_flags": []
+   },
+   "rf_hall": {
+    "verdict": "LOWER_BOUNDS_UNAVAILABLE",
+    "cbe_margin_free_lower_bound_kg": 0.0,
+    "mev_lower_bound_kg": 0.0,
+    "common_items_lower_bound_kg": 0.0,
+    "architecture_specific_lower_bound_kg": 0.0,
+    "n_items": 19,
+    "items_with_lower_bound": [],
+    "items_without_lower_bound": [
+     "intake",
+     "filter",
+     "compressor",
+     "atmospheric_gas_chamber",
+     "atmospheric_valve",
+     "xe_valve_and_flow_control",
+     "xe_tank",
+     "xe_load",
+     "xe_residual",
+     "hall_thruster_head",
+     "hall_magnets",
+     "cathode",
+     "ppu",
+     "harness",
+     "thermal_hardware",
+     "structure",
+     "rf_source",
+     "rf_generator",
+     "rf_matching_network"
+    ],
+    "g3_fail_evidence": false,
+    "g3_flags": []
+   },
+   "ecr_hall": {
+    "verdict": "LOWER_BOUNDS_UNAVAILABLE",
+    "cbe_margin_free_lower_bound_kg": 0.0,
+    "mev_lower_bound_kg": 0.0,
+    "common_items_lower_bound_kg": 0.0,
+    "architecture_specific_lower_bound_kg": 0.0,
+    "n_items": 20,
+    "items_with_lower_bound": [],
+    "items_without_lower_bound": [
+     "intake",
+     "filter",
+     "compressor",
+     "atmospheric_gas_chamber",
+     "atmospheric_valve",
+     "xe_valve_and_flow_control",
+     "xe_tank",
+     "xe_load",
+     "xe_residual",
+     "hall_thruster_head",
+     "hall_magnets",
+     "cathode",
+     "ppu",
+     "harness",
+     "thermal_hardware",
+     "structure",
+     "ecr_source",
+     "microwave_source",
+     "waveguide",
+     "ecr_magnets"
+    ],
+    "g3_fail_evidence": false,
+    "g3_flags": []
+   }
+  },
+  "any_architecture_excluded": false,
+  "threshold_source": "RFP_MASS_AS_RECORDED (abep_sim/constants.py RFP.mass_max_kg; verify against RFP)",
+  "statement": "Sourced lower bounds are unavailable for every item in every architecture (no Vyovrinda design, no selected parts, no declared Xe load). The only valid lower bound today is the trivial 0 kg, so the screen cannot show that any architecture's minimum plausible MEV exceeds the limit: no architecture is excluded on mass."
+ },
+ "open_owner_decisions": [
+  {
+   "id": "OD-M1",
+   "topic": "system margin",
+   "options": [
+    "20 % of nominal dry mass (ESA R-M1-1 by analogy, PROPOSED)",
+    "10 % per recorded RFP R3 (verify)"
+   ],
+   "current_handling": "PROPOSED 20 %; hard-gate G3 PASS uses max(MGA, 10 %) and FAIL the margin-free CBE, so no G3 verdict depends on this choice"
+  },
+  {
+   "id": "OD-M2",
+   "topic": "maturity categories",
+   "options": [
+    "accept PROPOSED ECSS D (20 %) for every dry equipment item",
+    "assign per selected part"
+   ],
+   "current_handling": "PROPOSED D for every dry equipment item"
+  },
+  {
+   "id": "OD-M3",
+   "topic": "legacy MGA dict in abep_sim/mass_bom.py (new 30 %, modified 15 %, existing 5 %, calculated 10 %; no citation in the file), referenced by hard-gate OD7",
+   "options": [
+    "retire it in favour of the ESA table (model change for archengine: goldens, HISTORY)",
+    "keep it and cite a source"
+   ],
+   "current_handling": "left unchanged (archengine and system import it); not used by mass_bom_v1"
+  },
+  {
+   "id": "OD-M4",
+   "topic": "Xe allocation",
+   "options": [
+    "declare a mission Xe load (design input)"
+   ],
+   "current_handling": "TBD; xe_load, xe_residual and the xe_tank bound stay unresolved"
+  },
+  {
+   "id": "OD-M5",
+   "topic": "item list (PROPOSED, cf. hard-gate OD10)",
+   "options": [
+    "accept",
+    "amend (new BOM version)"
+   ],
+   "current_handling": "PROPOSED list used"
+  },
+  {
+   "id": "OD-M6",
+   "topic": "harness allocation on a propulsion subsystem",
+   "options": [
+    "ESA R-M1-7 5 % of nominal dry mass (PROPOSED)",
+    "designed harness"
+   ],
+   "current_handling": "5 % allocation (scaling relation)"
+  },
+  {
+   "id": "OD-M7",
+   "topic": "whether the RFP 40 kg includes the Xe load",
+   "options": [
+    "includes Xe + tank (recorded R3, verify)",
+    "dry mass only"
+   ],
+   "current_handling": "Xe load and residuals are included in MEV as propellant (R3 as recorded)"
+  }
+ ],
+ "not_used": "Repository mass figures from earlier versions (docs/HISTORY.md v0.5 and Phase 4 tables; the withdrawn 110-120 kg) are not CBE sources: they rest on the superseded 0-D Hall closure and on uncited defaults. Do not quote them."
+}
