@@ -49,7 +49,7 @@ SCRIPT_REL = f"{OUT_DIR_REL}/build_h2_3_gas_path_plenum.py"
 JSON_NAME = "h2_3_gas_path_plenum_v1.json"
 MD_NAME = "H2_3_GAS_PATH_PLENUM.md"
 SCHEMA_ID = "h2_3_gas_path_plenum_v1"
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 BASE_COMMIT = "8ea7e4bc882d39bb0bce61308e7a1f5b8c0ecd2e"
 ARCHS = ["hall_only", "rf_hall", "ecr_hall"]
 
@@ -222,6 +222,25 @@ REFERENCES = {
         "used_for": "gas- and temperature-specific dynamic viscosity mu(T) = mu0 (T/T0)^1.5 (T0 + S)/(T + S) in the "
                     "viscous (Poiseuille) conductance term; the air entry cross-checks the viscosity implied by "
                     "REF-LEYBOLD2016 Eq. 1.28a (135 l/s: mu_air(20 degC) = 1.818e-5 Pa s)",
+    },
+    "REF-MUSA-PASCHEN": {
+        "citation": "G. P. Musa, 'Paschen's Breakdown Voltage in Air and Pure Gases', Department of Physics, Kaduna "
+                    "State University (journal: Nigerian Association of Mathematical Physics publications, vol. 36 per "
+                    "the download URL path; full bibliographic data not printed in the accessed PDF: verify)",
+        "url": "https://www.nampjournals.org/publications-download/vol36/63.%20Paschen%E2%80%99s%20Breakdown%20Voltage%20in%20Air%20and%20Pure%20Gases.pdf",
+        "access": "full text read 2026-09-29 (8-page PDF)",
+        "used_for": "abstract and Sec. 3 text: minimum breakdown voltages from the analytical Paschen law (Eqs. 6-9), "
+                    "stated to agree strongly with experimental values: air 222.2 V, N2 215.6 V, Xe 111.6 V; pd at the "
+                    "minimum air 0.6, N2 0.65, Xe 0.325 Torr cm. Evidence class model-derived (analytical Paschen law "
+                    "with gas constants; no O2 or atomic-O value given)",
+    },
+    "REF-WIKI-PASCHEN": {
+        "citation": "Wikipedia, 'Paschen's law' (tertiary source; primary not identified in the accessed text: verify)",
+        "url": "https://en.wikipedia.org/wiki/Paschen%27s_law",
+        "access": "page read 2026-09-29",
+        "used_for": "air: minimal arc voltage 327 V at pd = 7.5e-6 m atm (7.5 um at 1 atm); air A = 112.50 "
+                    "(kPa cm)^-1, B = 2737.50 V/(kPa cm) for E/p 450-7500 V/(kPa cm). Recorded next to REF-MUSA-PASCHEN "
+                    "(air minimum 222.2 V): the two disagree by ~1.5x, so the lower value is used as the bound",
     },
     "REF-SI2019": {
         "citation": "SI defining constants (9th SI Brochure, BIPM 2019): Avogadro constant N_A = 6.02214076e23 "
@@ -561,6 +580,8 @@ def flow_points(w1f: dict) -> dict:
 
 SEGMENT_NAMES = (("H-1 stub IP-DN -> manifold", "stub"), ("PIM slot IP-UP -> IP-DN (blank, illustrative)", "pim"),
                  ("gas isolator", "iso"), ("line tee/IF-A5 -> isolator", "line"))
+GAMMA_DIATOMIC = 1.4  # ratio of specific heats, N2/O2 (textbook, verify)
+CRIT_RATIO_DIATOMIC = (2.0 / (GAMMA_DIATOMIC + 1.0)) ** (GAMMA_DIATOMIC / (GAMMA_DIATOMIC - 1.0))  # 0.5283
 DQ_REL = 1e-4  # relative throughput step for the incremental (small-signal) conductance dQ/dp
 
 
@@ -596,7 +617,8 @@ def downstream_chain(Q: float, T: float, M: float, cb: float, mu: float, g: dict
         p_f = p + eb
         p_up = solve_upstream(p_f, Q, lambda pm, D=D, L=L, p_f=p_f: c_tube(D, L, pm, T, cb, mu), cm)
         segs.append({"segment": name, "D_m": D, "L_m": L, "p_down": p, "p_up": p_up, "C_mol": cm, "entrance": eb,
-                     "C_friction": Q / (p_up - p_f), "Z": knudsen_z(D, 0.5 * (p_f + p_up), T)})
+                     "C_friction": Q / (p_up - p_f), "p_mean_eval": 0.5 * (p_f + p_up),
+                     "Z": knudsen_z(D, 0.5 * (p_f + p_up), T)})
         p = p_up
     return {"p_z0": p_z0, "c_ch_mol": c_ch_mol, "p_man": p_man, "c_h": c_h, "c_ring": cring(p_man), "segs": segs,
             "p_a5": p}
@@ -647,7 +669,10 @@ def pressure_budget(comps: dict, flows: dict) -> dict:
                             if eb is not None:
                                 ent_frac.append(eb / dp)
                             segs.append({"segment": s["segment"], "D_m": s["D_m"], "L_m": s["L_m"],
-                                         "C_mol_m3_s": sig(s["C_mol"]), "C_friction_m3_s": sig(s["C_friction"]),
+                                         "C_mol_m3_s": sig(s["C_mol"]),
+                                         "C_friction_secant_m3_s": sig(s["C_friction"]),
+                                         "C_friction_eval_p_mean_Pa": sig(s["p_mean_eval"]),
+                                         "p_down_Pa": sig(s["p_down"]), "p_up_Pa": sig(s["p_up"]),
                                          "knudsen_Z": sig(s["Z"], 4),
                                          "Kn_at_upstream_end": sig(kn_up, 4), "regime": regime(kn_up),
                                          "dp_Pa": sig(dp),
@@ -663,7 +688,9 @@ def pressure_budget(comps: dict, flows: dict) -> dict:
                                                  "C_valve_open_m3_s": sig(c_v),
                                                  "C_total_plenum_to_vacuum_m3_s": sig(Q / (p_a5 + dp_v)),
                                                  "C_incremental_plenum_m3_s": sig(c_inc),
-                                                 "incremental_over_secant": sig(c_inc * (p_a5 + dp_v) / Q, 4)}
+                                                 "incremental_over_secant": sig(c_inc * (p_a5 + dp_v) / Q, 4),
+                                                 "p_IF_A5_over_p_plenum": sig(p_a5 / (p_a5 + dp_v), 4),
+                                                 "choked_if_continuum_valve": p_a5 / (p_a5 + dp_v) < CRIT_RATIO_DIATOMIC}
                         row["geometries"][gk] = {"segments": segs, "p_IF_A5_Pa": sig(p_a5),
                                                  "dp_IP_UP_to_IP_DN_blank_Pa": segs[1]["dp_Pa"],
                                                  "C_down_incremental_m3_s": sig(1.0 / dpa5_dq), "valve": per_r}
@@ -689,6 +716,20 @@ def pressure_budget(comps: dict, flows: dict) -> dict:
             "channel_is_analog_illustration": ANALOG_CHANNEL["use"],
             "distributor_options": {k: {"ring_bore_m": v[0], "feed_points": v[1]} for k, v in DIST_OPTIONS.items()},
             "distributor_rule_used": "holes sized to the largest conductance the uniformity limit allows (smallest drop)",
+            "segment_fields": "C_friction_secant_m3_s = Q / (p_up - p_down - entrance bound) is informational: it is the "
+                              "segment conductance C(p_mean) at p_mean = (p_down + entrance bound + p_up)/2 "
+                              "(C_friction_eval_p_mean_Pa), the mean over the friction part the solver actually uses, "
+                              "not the arithmetic mean of p_down and p_up; the dp values are the solver's",
+            "valve_choking": "the valve is a fixed conductance, ASSUMED unchoked. With a continuum (viscous-regime) "
+                             "valve orifice the flow chokes when p_IF-A5/p_plenum < (2/(gamma+1))^(gamma/(gamma-1)) = "
+                             f"{CRIT_RATIO_DIATOMIC:.4g} (diatomic gamma = 1.4, isentropic "
+                              "critical ratio; textbook relation quoted from memory: verify). r = 1 gives 0.5 < "
+                              f"{CRIT_RATIO_DIATOMIC:.4g}, so r = 1 rows are FLAGGED choked_if_continuum_valve: a choked "
+                              "valve makes the plenum flow insensitive to downstream pressure and C_inc collapses towards "
+                              "C_tot (ratio -> 1 instead of up to the tabulated value), so the r = 1 V_min values from "
+                              "C_inc are conservative (upper); the r = 1 plenum pressure then depends on the choked-orifice "
+                              "relation, not on this fixed-conductance model (TBD with the valve class). r = 3 (ratio 0.75) is unchoked. The valve orifice regime is TBD - requires "
+                              "the valve class (H3)",
             "incremental_conductance": "C_inc = dQ/dp_plenum = 1 / (1/C_valve + dp_IF_A5/dQ), dp_IF_A5/dQ by a "
                                        f"{DQ_REL:g} relative finite difference with the hole array and valve held "
                                        "fixed; in the viscous/transitional segments C_inc exceeds the secant Q/p"}
@@ -735,6 +776,13 @@ def uniformity_table(comps: dict, pb: dict) -> dict:
                              "C_holes_max_m3_s": sig(c_h), "A_holes_equiv_thin_max_m2": sig(a_h),
                              "holes_for_max_C": holes})
     return {"rule": "delta_p2p = C_h / (8 N_f^2 C_ring) <= 0.075 (from +-5 %)", "composition": "COMP-REC-LO",
+            "criterion_mapping": "STAND-IN, stated explicitly: the cited criterion (REF-ROBERTS2024) is a pressure "
+                                 "deviation from the mean at the axial midpoint between the anode and the channel exit; "
+                                 "this rule instead limits the hole-exit flow non-uniformity along the manifold ring, "
+                                 "i.e. at the anode face. It is conservative on the stated premise that near-anode "
+                                 "non-uniformities are reduced along the channel (REF-REID2007 p. 8, as reviewed there: "
+                                 "reduced within the first 50 % of the channel length); the midpoint criterion itself "
+                                 "is closed only by the S1a cold-flow probe sweep (h4), not by this rule",
             "ring_mean_diameter_m": RING["mean_diameter_m"], "rows": rows,
             "note": "N_holes_max_molecular is the largest count of that hole size compatible with the limit if the "
                     "holes are free-molecular; where Kn_hole <= 0.5 a hole passes more than its molecular conductance, "
@@ -753,9 +801,11 @@ def plenum_sizing(pb: dict, w1f: dict, atmf: dict) -> dict:
     the secant would understate it. Fill/drain times from 4.6 tau are first-order indications only (the chain is
     nonlinear)."""
     # representative C_tot range over the budget rows (F-DES-LO..F-MAX, GEO-S..GEO-L, r=1 and r=3)
-    ctots, cincs, ratios = [], [], []
+    ctots, cincs, ratios, ctots_fmin = [], [], [], []
     for row in pb["rows"]:
         if row["flow"] == "F-MIN":
+            ctots_fmin.extend(v["C_total_plenum_to_vacuum_m3_s"] for g in row["geometries"].values()
+                              for v in g["valve"].values())
             continue
         for g in row["geometries"].values():
             for v in g["valve"].values():
@@ -763,6 +813,7 @@ def plenum_sizing(pb: dict, w1f: dict, atmf: dict) -> dict:
                 cincs.append(v["C_incremental_plenum_m3_s"])
                 ratios.append(v["incremental_over_secant"])
     c_lo, c_hi = min(ctots), max(ctots)
+    c_lo_fmin = min(ctots_fmin)
     ci_lo, ci_hi = min(cincs), max(cincs)
     f_rot = sorted({sig(w1f["rpm_min"] / 60.0, 5), sig(w1f["rpm_max"] / 60.0, 5), 1000.0})
     ripple = []
@@ -794,7 +845,9 @@ def plenum_sizing(pb: dict, w1f: dict, atmf: dict) -> dict:
     for V in PLENUM_VOLUMES_M3:
         fill.append({"V_m3": V, "tau_small_signal_at_C_inc_hi_s": sig(V / ci_hi, 4),
                      "tau_secant_at_C_tot_lo_s": sig(V / c_lo, 4),
-                     "t99_fill_or_drain_indicative_at_C_tot_lo_s": sig(4.605 * V / c_lo, 4)})
+                     "t99_fill_or_drain_indicative_at_C_tot_lo_s": sig(4.605 * V / c_lo, 4),
+                     "tau_secant_at_F_MIN_C_tot_lo_s": sig(V / c_lo_fmin, 4),
+                     "t99_indicative_at_F_MIN_C_tot_lo_s": sig(4.605 * V / c_lo_fmin, 4)})
     ram = []
     for c in atmf["cases"]:
         for dh in ALT_EXCURSION_KM:
@@ -804,11 +857,15 @@ def plenum_sizing(pb: dict, w1f: dict, atmf: dict) -> dict:
     tau_req_max = max(max(r["tau_min_s"] for r in ripple), max(r["tau_min_s"] for r in bw))
     return {
         "C_tot_range_m3_s": [c_lo, c_hi],
+        "C_tot_lo_at_F_MIN_m3_s": c_lo_fmin,
         "C_inc_range_m3_s": [ci_lo, ci_hi],
         "C_inc_over_C_tot_range": [min(ratios), max(ratios)],
         "C_tot_basis": "secant Q / p_plenum and incremental dQ/dp_plenum over the cold-flow budget rows F-DES-LO..F-MAX, "
                        "all compositions, 300/500 K, DIST-A/B, GEO-S/M/L, r = 1 and 3 (analog channel illustration; "
-                       "PENDING H2-1)",
+                       "PENDING H2-1). F-MIN is EXCLUDED from these ranges (it is the backflow-inclusive MFC "
+                       "floor, not an operating design point); its lowest secant C_tot is reported separately "
+                       "(C_tot_lo_at_F_MIN_m3_s) and the fill/drain table carries F-MIN columns, where the secant tau is "
+                       "several times longer than the F-DES-LO..F-MAX 'longest'",
         "compressor_ripple": {"rows": ripple, "frequency_basis": "once-per-revolution frequency of the W1 chain-sized "
                               "machines (code-default rpm, assumed) and ~1 kHz DN100 turbomolecular pump rotation "
                               "(compressor_downselect EV-04, REF-CHIGGIATO2013 as cited there); blade-passing "
@@ -825,7 +882,8 @@ def plenum_sizing(pb: dict, w1f: dict, atmf: dict) -> dict:
                              f"{max(w1f['setpoint_ladder']):g} Pa) 1 s needs "
                              f"{sig(min(r['V_required_m3'] for r in rl if r['t_ride_s'] == 1.0), 3)}-"
                              f"{sig(max(r['V_required_m3'] for r in rl if r['t_ride_s'] == 1.0), 3)} m^3; at the cold-flow "
-                             f"budget pressures 1 s needs {sig(min(r['V_required_m3'] for r in rb if r['t_ride_s'] == 1.0), 3)}-"
+                             f"budget pressures (subset: GEO-M, r = 1, COMP-REC-LO, 300 K, F-DES-HI and F-MAX only, "
+                             "DIST-A/B; not the whole conductance grid) 1 s needs {sig(min(r['V_required_m3'] for r in rb if r['t_ride_s'] == 1.0), 3)}-"
                              f"{sig(max(r['V_required_m3'] for r in rb if r['t_ride_s'] == 1.0), 3)} m^3 and 10 s "
                              f"{sig(min(r['V_required_m3'] for r in rb if r['t_ride_s'] == 10.0), 3)}-"
                              f"{sig(max(r['V_required_m3'] for r in rb if r['t_ride_s'] == 10.0), 3)} m^3. A plenum can "
@@ -846,7 +904,8 @@ def plenum_sizing(pb: dict, w1f: dict, atmf: dict) -> dict:
                               "(turndown), not the plenum volume; only plenums far above the minimum (tau of hundreds "
                               "of seconds, see fill_drain) approach orbital time scales")},
         "fill_drain": {"rows": fill, "formula": "small-signal tau = V / C_inc (shortest, at the highest C_inc); secant "
-                       "tau = V / C_tot (longest, at the lowest C_tot); t99 = 4.6 V / C_tot is a first-order RC "
+                       "tau = V / C_tot (longest over F-DES-LO..F-MAX at the lowest C_tot there; the F-MIN columns use "
+                       "the lowest F-MIN C_tot and are longer still); t99 = 4.6 V / C_tot is a first-order RC "
                        "indication only (the viscous/transitional chain is nonlinear: large fill/drain transients are "
                        "not first-order)"},
         "volume_range": {
@@ -906,15 +965,26 @@ def o_recombination(pb: dict, atmf: dict, flows: dict, w1f: dict) -> dict:
                          "Kn_plenum": sig(lam / Dm, 3), "t_res_s": sig(t_res, 4), "nu_diffusion_per_s": sig(nu_d, 4),
                          "O_survival_kinetic_limit": surv_k, "O_survival_effective": surv_e})
     heat = []
+    w_o_case = max(atmf["cases"], key=lambda c: c["w_O_free_stream"])["case"]
     for fk in ("F-DES-LO", "F-DES-HI", "F-MAX"):
         mdot = flows[fk]["mdot_kgps"]
         P = mdot * atmf["w_O_free_stream_max"] / MOLAR["O"] * DH_REC_J_PER_MOL_O2 / 2.0
         heat.append({"flow": fk, "mdot_mg_s": sig(mdot * 1e6, 5), "w_O_upper": atmf["w_O_free_stream_max"],
-                     "P_recombination_full_W": sig(P, 4)})
+                     "w_O_upper_case": w_o_case, "P_recombination_full_W": sig(P, 4),
+                     "kind": "upper bound for this flow (no lower bound: 0 W if the O is already recombined upstream)"})
     budget = [r for r in rows if "budget" in r["case"]]
     best_budget = max(max(r["O_survival_effective"].values()) for r in budget)
     ladder = [r for r in rows if "W1 setpoint" in r["case"]]
     return {"method": "see o_recombination docstring (kinetic and diffusion limits; ASSUMED forms, verify)",
+            "diffusion_coefficient_note": "D = lambda <v_O> / 3 with the N2 sigma bound (shortest lambda) is a LOW-SIDE "
+                                          "estimate: a Chapman-Enskog-type O-N2 binary diffusion coefficient is about 2x "
+                                          "larger at the budget pressures (adversarial-review estimate, not computed "
+                                          "here: verify). A low D lowers nu_D and RAISES the computed survival, so the "
+                                          "'survival ~ 0 at budget pressures' conclusion is conservative on this account",
+            "heat_bound_note": f"cases deliberately mixed for a bound: the maximum free-stream w_O over the 9 frozen "
+                               f"cases ({w_o_case}) is combined with flows whose basis is alt200_mean (F-DES-LO/HI) or "
+                               "the MFC range (F-MAX); each entry is an UPPER bound for that flow, not a range with a "
+                               "lower bound",
             "survival": rows, "heat": heat,
             "max_effective_survival_at_budget_pressures": best_budget,
             "effective_survival_at_W1_setpoint_gamma_0p001": [r["O_survival_effective"]["gamma=0.001"] for r in ladder],
@@ -926,6 +996,81 @@ def o_recombination(pb: dict, atmf: dict, flows: dict, w1f: dict) -> dict:
                 "construction. Only at the W1 chain convention (plenum ~0.1 Pa, short residence) can an inert lining "
                 "keep a material O fraction. Recombination releases up to the tabulated heat in the compressor / "
                 "plenum / line walls (demand to H2-5)")}
+
+
+TORR_PA = 101325.0 / 760.0
+# Paschen minima (REF-MUSA-PASCHEN abstract / Sec. 3; REF-WIKI-PASCHEN for the second air value). Model-derived / tertiary.
+PASCHEN_MINIMA = [
+    {"gas": "Xe", "V_min_V": 111.6, "pd_min_Torr_cm": 0.325, "source": "REF-MUSA-PASCHEN", "evidence_class": "model-derived"},
+    {"gas": "N2", "V_min_V": 215.6, "pd_min_Torr_cm": 0.65, "source": "REF-MUSA-PASCHEN", "evidence_class": "model-derived"},
+    {"gas": "air", "V_min_V": 222.2, "pd_min_Torr_cm": 0.6, "source": "REF-MUSA-PASCHEN", "evidence_class": "model-derived"},
+    {"gas": "air", "V_min_V": 327.0, "pd_min_Torr_cm": 7.5e-6 * 101325.0 * 100.0 / TORR_PA,
+     "source": "REF-WIKI-PASCHEN", "evidence_class": "inferred (tertiary source)"},
+]
+
+
+def isolator_paschen(pb: dict, hw: dict) -> dict:
+    """Gas-isolator Paschen screen (repair v1.2.0). The isolator (I1) holds the anode-potential line against the
+    grounded upstream line; its gas column is exposed to up to the discharge-voltage rating. From the cold-flow budget
+    the isolator pressure range (p_down .. p_up of the isolator segment, every row, flow, composition, geometry) is
+    turned into pd along the isolator length (p L_iso: the axial electrode-to-electrode path for a single-gap break) and
+    across the bore (p D_iso), and compared with the Paschen minima of the gases that transit it. Screen only: a
+    long narrow tube is not a parallel-plate gap, O2 / atomic O minima are not in the accessed sources, and the Xe
+    pressure in the isolator during ignition is not in this budget (TBD)."""
+    env = next(r for r in hw["requirements"] if r["id"] == "HW-ENV-01")["values"]
+    v_rating = env["V_d_rating_upper_V"]["value"]
+    v_set = env["V_d_proposed_set_V"]["value"]
+    per_geo = {}
+    for r in pb["rows"]:
+        for gk, g in r["geometries"].items():
+            seg = next(x for x in g["segments"] if x["segment"] == "gas isolator")
+            d = per_geo.setdefault(gk, {"D_m": seg["D_m"], "L_m": seg["L_m"], "p": []})
+            d["p"] += [seg["p_down_Pa"], seg["p_up_Pa"]]
+    rows = []
+    for gk, d in per_geo.items():
+        plo, phi = min(d["p"]), max(d["p"])
+        rows.append({"geometry": gk, "iso_D_m": d["D_m"], "iso_L_m": d["L_m"], "p_iso_min_Pa": sig(plo, 4),
+                     "p_iso_max_Pa": sig(phi, 4),
+                     "pL_Torr_cm": [sig(plo * d["L_m"] * 100.0 / TORR_PA, 3), sig(phi * d["L_m"] * 100.0 / TORR_PA, 3)],
+                     "pD_Torr_cm": [sig(plo * d["D_m"] * 100.0 / TORR_PA, 3), sig(phi * d["D_m"] * 100.0 / TORR_PA, 3)]})
+    pl_lo = min(r["pL_Torr_cm"][0] for r in rows)
+    pl_hi = max(r["pL_Torr_cm"][1] for r in rows)
+    pd_mins = [m["pd_min_Torr_cm"] for m in PASCHEN_MINIMA]
+    v_min_lowest = min(m["V_min_V"] for m in PASCHEN_MINIMA)
+    v_min_highest = max(m["V_min_V"] for m in PASCHEN_MINIMA)
+    v_nair_lo = min(m["V_min_V"] for m in PASCHEN_MINIMA if m["gas"] in ("N2", "air"))
+    spans = pl_lo <= min(pd_mins) and pl_hi >= max(pd_mins)
+    return {
+        "paschen_minima": [dict(m, pd_min_Torr_cm=sig(m["pd_min_Torr_cm"], 4)) for m in PASCHEN_MINIMA],
+        "V_d_rating_upper_V": v_rating, "V_d_proposed_set_V": v_set,
+        "V_d_source": f"{HW_REL} HW-ENV-01 values.V_d_rating_upper_V / V_d_proposed_set_V (PROPOSED, assumed)",
+        "rows": rows, "pL_range_Torr_cm": [pl_lo, pl_hi], "pL_spans_all_listed_minima": spans,
+        "V_min_lowest_listed_V": v_min_lowest,
+        "finding": (
+            f"cold-flow isolator pressures give p L_iso {pl_lo:g}-{pl_hi:g} Torr cm over the budget grid, which "
+            f"{'spans' if spans else 'reaches'} the listed Paschen minima ({min(pd_mins):.3g}-{max(pd_mins):.3g} Torr cm); "
+            f"every listed minimum breakdown voltage ({v_min_lowest:g}-{v_min_highest:g} V; lowest Xe) is BELOW the "
+            f"PROPOSED discharge-voltage rating ({v_rating:g} V), and the N2/air minima ({v_nair_lo:g}-{v_min_highest:g} V) "
+            f"overlap the proposed V_d set span ({min(v_set):g}-{max(v_set):g} V). A single-gap open-bore isolator would therefore sit at or near "
+            "the Paschen minimum somewhere in the operating range"),
+        "requirement": (
+            "PROPOSED design requirement for I1: every gas-filled gap between conductors at different potential inside "
+            "the isolator (and the isolator as a whole) shall withstand V_d_rating_upper plus margin (margin TBD, "
+            "HW-FS-06) with the gas column at ANY pressure of the isolator range (tabulated here for cold flow; plus "
+            "the Xe ignition range, TBD) and for every gas that transits it (Xe, N2, O2, N2/O2 mixtures, atomic-O-"
+            "bearing feed). Since the range crosses the Paschen minimum, compliance cannot rely on operating on one "
+            "branch of the curve: the design must divide the potential over gaps whose (V_gap, p d_gap) stays below "
+            "breakdown for the most breakdown-prone gas (Xe listed lowest), e.g. segmented / multi-channel / porous "
+            "construction (design approach not sourced in this lane: verify against published isolator practice), "
+            "and be verified by a gas-filled withstand test across the pressure range (h4), not only by a vacuum or "
+            "air hipot"),
+        "caveats": "parallel-plate Paschen minima used as a screen for a tube geometry; O2 and atomic-O minima not in "
+                   "the accessed sources (TBD); the Musa values are model-derived and the two air values disagree "
+                   "(222.2 vs 327 V), the lower is used; plasma-on conditions (charged particles backstreaming from "
+                   "the discharge into the line) are outside this cold-flow screen",
+        "status": "PRELIMINARY (screen); TBD - requires the H2-4 isolator rating incl. margin, the Xe ignition "
+                  "pressure in the line and a gas-filled withstand test",
+    }
 
 
 def xe_tie_in(comps: dict) -> dict:
@@ -980,6 +1125,8 @@ def build() -> dict:
     ps = plenum_sizing(pb, w1f, atmf)
     orc = o_recombination(pb, atmf, flows, w1f)
     xe = xe_tie_in(comps)
+    hw = load(HW_REL)
+    pas = isolator_paschen(pb, hw)
 
     # summary numbers used in the tables
     def rows_where(**kw):
@@ -989,6 +1136,11 @@ def build() -> dict:
     p_pl_all = [v["p_plenum_min_Pa"] for r in pb["rows"] for g in r["geometries"].values() for v in g["valve"].values()]
     p_pl_des = [v["p_plenum_min_Pa"] for r in pb["rows"] if r["flow"] in ("F-DES-LO", "F-DES-HI")
                 for g in r["geometries"].values() for v in g["valve"].values()]
+    p_pl_by_flow = {fk: [min(v["p_plenum_min_Pa"] for r in pb["rows"] if r["flow"] == fk
+                             for g in r["geometries"].values() for v in g["valve"].values()),
+                         max(v["p_plenum_min_Pa"] for r in pb["rows"] if r["flow"] == fk
+                             for g in r["geometries"].values() for v in g["valve"].values())] for fk in FLOW_POINTS}
+    heat_by_flow = {h["flow"]: h["P_recombination_full_W"] for h in orc["heat"]}
     dp_pim = [g["dp_IP_UP_to_IP_DN_blank_Pa"] for r in pb["rows"] for g in r["geometries"].values()]
     # W1 reference pressures, both read from the W1 file (no literal): the full design-axis setpoint ladder
     # (design_axes.setpoint_ladder_Pa) and the p_feed values actually used by the closed candidates (valve_outlet).
@@ -1076,8 +1228,9 @@ def build() -> dict:
           "TBD", PEND("H2-7"), FR),
         P("H23-16", "plenum time constant tau = V / C_tot (evaluation grid)",
           [min(r["tau_small_signal_at_C_inc_hi_s"] for r in ps["fill_drain"]["rows"]),
-           max(r["tau_secant_at_C_tot_lo_s"] for r in ps["fill_drain"]["rows"])], "s", "derived",
-          "this script plenum_sizing (small-signal V/C_inc to secant V/C_tot)",
+           max(r["tau_secant_at_F_MIN_C_tot_lo_s"] for r in ps["fill_drain"]["rows"])], "s", "derived",
+          "this script plenum_sizing (small-signal V/C_inc at the highest C_inc to secant V/C_tot at the lowest "
+          "C_tot incl. F-MIN)",
           "model-derived", "PRELIMINARY", FR),
         P("H23-17", "compressor ripple frequency / amplitude", None, "Hz / -", "pending",
           f"{CMP_REL} (C1 LEADING_CANDIDATE_PENDING_PRIMARY_EVIDENCE, A4)", "TBD",
@@ -1093,9 +1246,11 @@ def build() -> dict:
         P("H23-20", "plenum ride-through capability", "seconds at most (see plenum_sizing.ride_through)", "-",
           "derived", "this script plenum_sizing.ride_through", "model-derived", "PRELIMINARY", FR,
           "compressor interruptions handled by XE_FALLBACK (time-limited) or shutdown"),
-        P("H23-21", "O recombination heat release in compressor / plenum / line (full recombination)",
-          [min(heat_des), heat_max], "W", "derived", "REF-JANAF-O; this script o_recombination", "model-derived",
-          PEND("H2-5"), FR, "location split depends on wall gamma (compressor vs plenum vs line)"),
+        P("H23-21", "O recombination heat release in compressor / plenum / line (full recombination), per-flow UPPER "
+          "bound (no lower bound; 0 W if already recombined upstream)",
+          {f"<= at {k}": v for k, v in heat_by_flow.items()}, "W", "derived", "REF-JANAF-O; this script o_recombination", "model-derived",
+          PEND("H2-5"), FR, "location split depends on wall gamma (compressor vs plenum vs line); maximum "
+          "free-stream w_O case combined with each flow (cases mixed deliberately for a bound)"),
         P("H23-22", "plenum / line wetted-wall O recombination coefficient class", None, "-", "pending",
           "REF-PAUL2023 (classes); owner decision GP-D03", "TBD", "TBD - requires the owner decision GP-D03 and "
           "coupon evidence at the flight wall temperature", FR),
@@ -1116,19 +1271,32 @@ def build() -> dict:
           "W1 0.05 Pa setpoints) sit where the gauge uncertainty rises; flight sensor class TBD (proposal gap)"),
         P("H23-27", "gas isolator (voltage break) position and rating", "upstream of IP-UP, downstream of the Xe tee",
           "-", "requirement", f"{HW_REL} HW-FS-06", "assumed", "TBD - requires the H2-4 discharge-voltage rating plus "
-          "margin", FR),
+          "margin", FR, f"withstand >= HW-ENV-01 V_d_rating_upper_V ({pas['V_d_rating_upper_V']:g} V, PROPOSED) + margin "
+          "(TBD) under the Paschen requirement H23-29"),
         P("H23-28", "wetted-material set (O2 / O service)", "see materials table", "-", "analog",
           "REF-PAUL2023; REF-CIFALI2011 as recorded; HW-FS-07; HW-H1-05", "inferred", "PRELIMINARY", FR),
+        P("H23-29", "gas-isolator Paschen (p d) design requirement: pressure range of the isolator gas column to be "
+          "withstood (cold flow, all budget rows) and the resulting p L_iso range",
+          {"p_iso_Pa": [min(r["p_iso_min_Pa"] for r in pas["rows"]), max(r["p_iso_max_Pa"] for r in pas["rows"])],
+           "pL_Torr_cm": pas["pL_range_Torr_cm"]}, "Pa / Torr cm", "derived",
+          "this script isolator_paschen; REF-MUSA-PASCHEN; REF-WIKI-PASCHEN; HW-ENV-01; HW-FS-06", "model-derived",
+          "PRELIMINARY (PROPOSED requirement; screen)", FR, pas["requirement"]),
+        P("H23-30", "minimum plenum (compressor-outlet) pressure over the full flow range F-MIN..F-MAX, valve authority "
+          "r = 1..3", [min(p_pl_all), max(p_pl_all)], "Pa", "derived", "this script pressure_budget", "model-derived",
+          PEND("H2-1"), FR, "F-MAX alone: " + fmt(p_pl_by_flow["F-MAX"]) + " Pa (drives the metering-valve sizing and "
+          "the compressor evidence gap HI-01); H23-07 is the design-flow subset"),
     ]
 
     topology = {
         "flight_nodes": [
             {"id": "N0", "name": "compressor outlet (C1 turbomolecular-type first stage + optional drag stage)",
-             "plane": "IF-A3", "owner": "compressor lane (docs/architecture_comparison/compressor_downselect/)",
+             "plane": "IF-A3 (compressor outlet flange, compressor side of V0; ICD amendment demand)",
+             "owner": "compressor lane (docs/architecture_comparison/compressor_downselect/)",
              "representativeness": FR},
             {"id": "V0", "name": "compressor-outlet isolation valve (stopped-rotor back-streaming protection)",
-             "plane": None, "owner": "H2-3", "representativeness": FR},
-            {"id": "N1", "name": "buffer/plenum (atmospheric gas chamber)", "plane": "IF-A3 -> IF-A4",
+             "plane": "between IF-A3 and the plenum (chamber side; not in the upstream ICD yet)", "owner": "H2-3",
+             "representativeness": FR},
+            {"id": "N1", "name": "buffer/plenum (atmospheric gas chamber)", "plane": "(IF-A3 + V0) -> IF-A4",
              "owner": "H2-3", "representativeness": FR},
             {"id": "V1", "name": "atmospheric metering valve (variable conductance)", "plane": "IF-A4 -> IF-A5",
              "owner": "H2-3", "representativeness": FR},
@@ -1221,8 +1389,11 @@ def build() -> dict:
 
     interface_demands = [
         {"from": "H2-3", "to": "compressor lane (C1; docs/architecture_comparison/compressor_downselect/)",
-         "quantity": "compressor outlet (plenum) pressure at design flows, cold-flow analog illustration",
-         "value": [min(p_pl_des), max(p_pl_des)], "units": "Pa", "status": f"{PEND('H2-1')} (channel conductance)"},
+         "quantity": "compressor outlet (plenum) pressure over the full delivered-flow range F-MIN..F-MAX (valve "
+         "authority r = 1..3), cold-flow analog illustration; per flow point: " + "; ".join(
+             f"{k} {fmt(v)} Pa" for k, v in p_pl_by_flow.items()) + " (F-MAX sets the upper end; design flows "
+         "F-DES-LO..F-DES-HI " + fmt([min(p_pl_des), max(p_pl_des)]) + " Pa)",
+         "value": [min(p_pl_all), max(p_pl_all)], "units": "Pa", "status": f"{PEND('H2-1')} (channel conductance)"},
         {"from": "H2-3", "to": "compressor lane", "quantity": "cited outlet (exhaust) pressure capability of the C1 "
          "stack incl. the optional drag back stage at the plenum pressures above, and the compressor shaft/bus power "
          "at that outlet pressure (evidence gap: EV-03 gives only a compression-ratio gain)", "value": None,
@@ -1245,10 +1416,20 @@ def build() -> dict:
         {"from": "H2-3", "to": "H2-4 (PPU/bus; bus_power_boundary_v1 flow_control, thermal_control)", "quantity":
          "metering-valve drive power, isolation-valve power, plenum/line heater power (T_feed conditioning)",
          "value": None, "units": "W", "status": "TBD - requires the valve class and the H2-5 thermal network"},
-        {"from": "H2-3", "to": "H2-4", "quantity": "gas-isolator voltage rating", "value": None, "units": "V",
-         "status": "TBD - requires the discharge-voltage rating plus margin (HW-FS-06)"},
+        {"from": "H2-3", "to": "H2-4", "quantity": "gas-isolator voltage rating: withstand >= HW-ENV-01 "
+         "V_d_rating_upper_V + margin (margin TBD) with the isolator gas column at any pressure of the isolator "
+         "range (H23-29; cold flow " + fmt([min(r["p_iso_min_Pa"] for r in pas["rows"]),
+                                            max(r["p_iso_max_Pa"] for r in pas["rows"])]) + " Pa, p L_iso "
+         + fmt(pas["pL_range_Torr_cm"]) + " Torr cm, spanning the Paschen minimum) for Xe, N2, O2 and mixtures",
+         "value": pas["V_d_rating_upper_V"], "units": "V (lower bound before margin)",
+         "status": "PRELIMINARY (PROPOSED; margin TBD - requires the facility electrical safety case and the supply "
+                   "design, HW-FS-06)"},
+        {"from": "H2-4", "to": "H2-3", "quantity": "isolator transient voltage (ignition, extinction, arcs) and margin",
+         "value": None, "units": "V", "status": PEND("H2-4")},
         {"from": "H2-3", "to": "H2-5 (thermal network)", "quantity": "O recombination heat in compressor / plenum / "
-         "line walls (full recombination, upper bound)", "value": [min(heat_des), heat_max], "units": "W",
+         "line walls (full recombination): per-flow UPPER bounds at the maximum free-stream w_O, no lower bound "
+         "(0 W if the O recombines upstream of the gas path)", "value": {f"<= at {k}": v for k, v in heat_by_flow.items()},
+         "units": "W",
          "status": "PRELIMINARY"},
         {"from": "H2-5", "to": "H2-3", "quantity": "plenum / line wall temperature range (sets T_feed)", "value": None,
          "units": "K", "status": PEND("H2-5")},
@@ -1270,6 +1451,12 @@ def build() -> dict:
         {"from": "H2-3", "to": "lane-14 dual-feed state machine (schemas/controls/dual_feed_state_machine_v1.json)",
          "quantity": "plenum fill time (4.6 tau) before ATMOSPHERE_ADMISSION; compressor-interruption handling via "
          "XE_FALLBACK", "value": None, "units": "s", "status": "TBD - requires V and the H-1 conductance"},
+        {"from": "H2-3", "to": "upstream ICD (docs/interfaces/UPSTREAM_ICD.md, schemas/interfaces/upstream_icd_v1.json)",
+         "quantity": "ICD amendment: IF-A3 is defined as compressor -> atmospheric gas chamber directly; this lane "
+         "inserts the isolation valve V0 between them. Proposed placement: IF-A3 stays at the compressor outlet "
+         "flange (compressor side of V0); V0 belongs to the atmospheric-gas-chamber assembly (H2-3), so IF-A3 state "
+         "variables are those upstream of V0 and the V0 pressure drop is booked on the chamber side",
+         "value": "IF-A3 upstream of V0", "units": "-", "status": "PROPOSED ICD amendment (owner / ICD owner)"},
         {"from": "H2-3", "to": "intake / filter (docs/interfaces/UPSTREAM_ICD.md IF-A1/IF-A2)", "quantity":
          "no direct demand: the gas path starts at the compressor outlet; the filter contaminant flow (IF-A2 gap) "
          "is a plenum/valve contamination input", "value": None, "units": "kg s^-1", "status": "TBD - requires the "
@@ -1284,7 +1471,8 @@ def build() -> dict:
              "required compression ratio rises by the same factor and the outlet sits far above the 0.1 Pa TMP "
              "molecular-regime limit (EV-03). A drag (Gaede/Holweck) back stage is an option in C1, but EV-03 gives "
              "only its compression-ratio gain (up to 1e6), NOT an outlet (exhaust) pressure capability or the "
-             "compressor power at an outlet of hundreds to thousands of Pa: no accessed source closes that. This "
+             "compressor power at an outlet of hundreds to thousands of Pa (over the full flow range up to "
+             f"{sig(max(p_pl_all), 4)} Pa at F-MAX, H23-30): no accessed source closes that. This "
              "evidence gap is stated as an explicit C1 demand (interface_demands), not assumed away", "evidence_class": "model-derived (analog geometry)", "veto": False,
              "why_not": "not evidenced for H-1: the channel/distributor conductance is PENDING H2-1 and the plasma-on "
                         "neutral pressure is not predicted; measured cold-flow manifold pressure (S1a) closes it"},
@@ -1307,6 +1495,13 @@ def build() -> dict:
                 "dominates the cold-flow budget; larger ring bore and more feed points (or multi-stage baffles) "
                 "reduce it"), "evidence_class": "model-derived", "veto": False,
              "why_not": "geometric options exist; the distributor is an H2-1 design choice"},
+            {"id": "HI-06", "what": "gas-isolator electrical breakdown (Paschen) at the isolator pressures",
+             "finding": pas["finding"], "evidence_class": "model-derived (cold-flow budget, analog geometry; Paschen "
+             "minima model-derived / tertiary)", "veto": False,
+             "why_not": "it is a withstand requirement on the isolator design (H23-29), not a physical impossibility: "
+                        "no evidence was found that an isolator meeting it cannot be built (published isolator designs "
+                        "not accessed in this lane: verify); closes with the H2-4 rating and a gas-filled withstand "
+                        "test"},
         ],
     }
 
@@ -1360,8 +1555,11 @@ def build() -> dict:
          "status": "PRELIMINARY"},
         {"item": "MFCs (ground)", "long_lead": True, "spec_level_needed": "A4: 0.030-3.14 mg/s, >= 3 overlapping "
          "ranges per gas path, calibrated on each gas (HW-FS-01, INS-05)", "status": "PRELIMINARY (A4)"},
-        {"item": "gas isolator", "long_lead": True, "spec_level_needed": "bore >= line bore option; voltage rating "
-         "TBD (H2-4); O2-compatible", "status": "TBD"},
+        {"item": "gas isolator", "long_lead": True, "spec_level_needed": "bore >= line bore option; withstand >= "
+         f"{pas['V_d_rating_upper_V']:g} V + margin (TBD, H2-4) with the gas column at every pressure of the isolator "
+         "range (H23-29, crosses the Paschen minimum) for Xe, N2, O2 and mixtures, i.e. a segmented / multi-channel / "
+         "porous voltage break rather than an open single gap; O2-compatible; gas-filled withstand test data "
+         "required from the datasheet or qualification", "status": "TBD"},
         {"item": "plenum vessel (+ optional inert liner)", "long_lead": False, "spec_level_needed": "volume within "
          "the minimum-volume range; wall material per GP-D03", "status": "PRELIMINARY"},
     ]
@@ -1375,6 +1573,9 @@ def build() -> dict:
          "closes": ["H23-16", "H23-23"]},
         {"stage": "S1a", "measure": "T_feed thermocouple vs line heater state; gauge temperature", "closes":
          ["H23-04"]},
+        {"stage": "S1a", "measure": "gas isolator withstand (hipot, HW-FS-06) with the isolator FILLED with Xe, N2 and "
+         "the O2 mixture at pressures stepped across the H23-29 range (incl. the Paschen-minimum region and the Xe "
+         "ignition line pressure), not only in vacuum or air", "closes": ["H23-27", "H23-29"]},
         {"stage": "S1", "measure": "repeatability of manifold pressure at every grid flow after remount", "closes":
          ["H23-09"]},
         {"stage": "S1b", "measure": "manifold / module pressure with the discharge on (recorded, never matched)",
@@ -1414,6 +1615,43 @@ def build() -> dict:
          "flow) in the compressor / plenum / line walls", "evidence_class": "model-derived", "handling": "H2-5 demand"},
     ]
 
+    findings.append({"id": "GP-F07", "finding": pas["finding"] + ". " + pas["requirement"], "evidence_class":
+                     "model-derived (screen)", "handling": "requirement H23-29, H2-4 demand, H3 isolator spec, S1a "
+                     "gas-filled withstand test (HI-06)"})
+
+    approximations = [
+        {"id": "AP-01", "what": "annulus molecular conductance: Santeler circular-tube transmission at hydraulic "
+         "radius R_h = w (hydraulic diameter 2w), not a parallel-plate or annulus transmission probability",
+         "status": "ASSUMED, verify", "effect": "analog-channel illustration only (p_Z0), never an H-1 value"},
+        {"id": "AP-02", "what": "Knudsen transition factor Z(d/lambda) generalised from Leybold Eq. 1.26 (air, 20 degC) "
+         "with the air c* = lambda p", "status": "INFERRED, verify", "effect": "transitional segments only; Z is bounded "
+         f"in [{Z_MIN:.3g}, 1]"},
+        {"id": "AP-03", "what": f"entrance / kinetic-energy loss coefficient K = {ENTRANCE_K:g}", "status":
+         "ASSUMED bound, verify", "effect": "added to the drop (conservative); largest share "
+         + fmt(pb["entrance_loss"]["max_fraction_of_segment_dp"]) + " of a segment drop"},
+        {"id": "AP-04", "what": "O diffusion coefficient D = lambda <v_O>/3 (N2 sigma bound)", "status":
+         "ASSUMED, low-side (~2x below a Chapman-Enskog-type estimate, verify)", "effect": "raises survival: "
+         "conservative for the 'survival ~ 0' conclusion"},
+        {"id": "AP-05", "what": "valve as a fixed, unchoked conductance", "status": "ASSUMED; r = 1 rows flagged "
+         "choked_if_continuum_valve", "effect": "r = 1 V_min from C_inc is an upper value"},
+        {"id": "AP-06", "what": "distributor rule on hole-exit non-uniformity as a stand-in for the midpoint "
+         "pressure criterion", "status": "model-derived stand-in", "effect": "conservative on the REF-REID2007 p. 8 "
+         "premise; closed by the S1a sweep"},
+        {"id": "AP-07", "what": "parallel-plate Paschen minima applied to the isolator tube", "status": "screen",
+         "effect": "requirement H23-29 stated for any pressure in the range, so the screen does not relax it"},
+    ]
+    sources_to_verify = [
+        {"ref": "REF-CIFALI2011", "gap": "quoted as recorded in the repository, not re-read in this lane"},
+        {"ref": "REF-ROBERTS2024", "gap": "abstract only; primary NASA source of the +-5 % / 10 % criterion not named"},
+        {"ref": "porous distributor option", "gap": "no accessed source"},
+        {"ref": "REF-SUTHERLAND-COMSOL", "gap": "COMSOL's primary reference for the viscosity table not identified"},
+        {"ref": "REF-MUSA-PASCHEN / REF-WIKI-PASCHEN", "gap": "model-derived / tertiary Paschen minima; air values "
+         "disagree; no O2 value; replace with a primary measured source"},
+        {"ref": "isolator construction practice", "gap": "segmented / multi-channel / porous isolators not sourced"},
+        {"ref": "critical pressure ratio / gamma", "gap": "textbook relation quoted from memory"},
+        {"ref": "REF-SI2019", "gap": "defining constants quoted from memory"},
+    ]
+
     owner_decisions = [
         {"id": "GP-D01", "question": "metering-valve control strategy", "options": ["fixed plenum setpoint (valve "
          "conductance turndown larger than the flow turndown)", "floating plenum pressure with a fixed restrictor "
@@ -1447,7 +1685,17 @@ def build() -> dict:
              "conductance dQ/dp (secant kept for inventory quantities), fill/drain labelled indicative; (4) O-survival "
              "cases use the atomic-O-bearing COMP-W1-ORICH rows; (5) Santeler pages confirmed via Crossref; Leybold "
              "Eq. 1.27 coefficient discrepancy recorded; (6) uniformity hole-count wording corrected; (7) drag-stage "
-             "outlet-pressure evidence gap stated as an explicit C1 demand"}],
+             "outlet-pressure evidence gap stated as an explicit C1 demand"},
+            {"version": "1.2.0", "note": "adversarial-review repair 2: (1) gas-isolator Paschen screen and PROPOSED "
+             "p d withstand requirement (H23-29, HI-06, GP-F07, H2-4 demand with the lane's own isolator pressure "
+             "range, H3 spec, S1a gas-filled withstand test); (2) compressor-outlet demand now covers F-MIN..F-MAX with "
+             "F-MAX stated separately (H23-30), HI-01 cites the F-MAX pressure; (3) fill/drain F-MIN exclusion stated "
+             "and F-MIN columns added, H23-16 upper end includes F-MIN; (4) r = 1 valve rows flagged "
+             "choked_if_continuum_valve; (5) C_friction field renamed C_friction_secant_m3_s with its evaluation "
+             "pressure; (6) recombination heat labelled per-flow upper bounds with the w_O case named; (7) O "
+             "diffusion coefficient flagged low-side; (8) uniformity stand-in mapping stated; (9) ride-through subset "
+             "labelled; (10) IF-A3 placement relative to V0 and ICD amendment demand; (11) approximations and "
+             "sources-to-verify lists"}],
         "lane": "fo_h2_3_gas_path_plenum",
         "trigger": "T_H2_3_GAS_PATH_PLENUM",
         "owner_authorization": "A7 (waves H2; h2_scope design/preliminary-sizing lane)",
@@ -1480,6 +1728,9 @@ def build() -> dict:
         "plenum_sizing": ps,
         "o_recombination": orc,
         "xe_tie_in": xe,
+        "isolator_paschen": pas,
+        "approximations": approximations,
+        "sources_to_verify_before_milestone_B": sources_to_verify,
         "materials": materials,
         "interface_demands": interface_demands,
         "hard_incompatibility_check": hard,
@@ -1497,7 +1748,9 @@ def build() -> dict:
                  "outlet capability at the measured H-1 conductance; cold-flow distributor uniformity within the "
                  "PROPOSED criterion; P_feed / T_feed / x_s recorded at IF-A5 (ground analog upstream of IP-UP)",
             "B": "needs the H-1 geometry (H2-1), measured S1a cold-flow manifold pressures and uniformity, the C1 "
-                 "outlet characteristic, a selected valve class, measured wall recombination on the chosen material",
+                 "outlet characteristic, a selected valve class, measured wall recombination on the chosen material, "
+                 "a gas-filled isolator withstand result, and verification of every entry in "
+                 "sources_to_verify_before_milestone_B",
             "C": "needs flight plenum / valve / isolator designs with mass (H2-7), heater and valve power in the "
                  "bus_power_boundary_v1 ledger (H2-4), thermal closure incl. recombination heat (H2-5), and "
                  "component qualification",
@@ -1649,7 +1902,7 @@ def render_md(d: dict) -> str:
     a("## 7. Anode manifold / distributor")
     a("")
     u = d["distributor_uniformity"]
-    a(f"Rule (model-derived): {u['rule']}. {u['note']}. Practice: the anode usually doubles as gas distributor with an "
+    a(f"Rule (model-derived): {u['rule']}. Criterion mapping: {u['criterion_mapping']}. {u['note']}. Practice: the anode usually doubles as gas distributor with an "
       "annular array of small orifices whose spacing/location set azimuthal uniformity (REF-REID2007 p. 2); an "
       "azimuthal neutral-density non-uniformity from a manufacturing error reduced efficiency, symmetry and stability "
       "(p. 8); cold-flow probe sweeps are used to verify a new anode (p. 7). Criterion PROPOSED: ±5 % / 10 % "
@@ -1710,11 +1963,13 @@ def render_md(d: dict) -> str:
     a("")
     a(f"**Fill / drain** — {ps['fill_drain']['formula']}.")
     a("")
-    a("| V [m³] | small-signal τ at C_inc hi [s] | secant τ at C_tot lo [s] | t99 indicative at C_tot lo [s] |")
-    a("|---|---|---|---|")
+    a("| V [m³] | small-signal τ at C_inc hi [s] | secant τ at C_tot lo, F-DES-LO..F-MAX [s] | t99 indicative [s] | "
+      "secant τ at F-MIN C_tot lo [s] | t99 indicative F-MIN [s] |")
+    a("|---|---|---|---|---|---|")
     for r in ps["fill_drain"]["rows"]:
         a(f"| {r['V_m3']:g} | {r['tau_small_signal_at_C_inc_hi_s']:.3g} | {r['tau_secant_at_C_tot_lo_s']:.3g} | "
-          f"{r['t99_fill_or_drain_indicative_at_C_tot_lo_s']:.3g} |")
+          f"{r['t99_fill_or_drain_indicative_at_C_tot_lo_s']:.3g} | {r['tau_secant_at_F_MIN_C_tot_lo_s']:.3g} | "
+          f"{r['t99_indicative_at_F_MIN_C_tot_lo_s']:.3g} |")
     vr = ps["volume_range"]
     a("")
     a(f"**Volume range (PRELIMINARY):** minimum-volume requirement {vr['V_min_m3']:.3g} m³ ({vr['V_min_basis']}) up to "
@@ -1723,7 +1978,7 @@ def render_md(d: dict) -> str:
     a("## 9. Composition, atomic-O recombination and materials")
     a("")
     orc = d["o_recombination"]
-    a(orc["method"] + ".")
+    a(orc["method"] + ". " + orc["diffusion_coefficient_note"] + ".")
     a("")
     a("| case | T [K] | p [Pa] | V [m³] | Kn | t_res [s] | O survival, kinetic limit (γ 0.001/0.01/0.07/0.14) | "
       "O survival, effective |")
@@ -1733,9 +1988,9 @@ def render_md(d: dict) -> str:
           f"{r['t_res_s']:.3g} | " + " / ".join(f"{v:.3g}" for v in r["O_survival_kinetic_limit"].values()) + " | "
           + " / ".join(f"{v:.3g}" for v in r["O_survival_effective"].values()) + " |")
     a("")
-    a("Recombination heat (full recombination of the free-stream O, upper bound): " + "; ".join(
-        f"{h['flow']} ({h['mdot_mg_s']} mg/s) {h['P_recombination_full_W']:.3g} W" for h in orc["heat"]) +
-      f". {orc['conclusion']}.")
+    a("Recombination heat (full recombination of the free-stream O; per-flow upper bounds): " + "; ".join(
+        f"{h['flow']} ({h['mdot_mg_s']} mg/s) ≤ {h['P_recombination_full_W']:.3g} W" for h in orc["heat"]) +
+      f". {orc['heat_bound_note']}. {orc['conclusion']}.")
     a("")
     a("| part | option | O / O₂ behaviour | consequence | status |")
     a("|---|---|---|---|---|")
@@ -1755,6 +2010,24 @@ def render_md(d: dict) -> str:
           f"{r['tau_line_Xe_s']:.3g} |")
     a("")
     a(d["xe_tie_in"]["conclusion"] + ".")
+    a("")
+    a("## 10a. Gas isolator — Paschen (p d) screen and requirement")
+    a("")
+    ip = d["isolator_paschen"]
+    a(f"{ip['finding']}. Discharge voltage: {ip['V_d_source']}.")
+    a("")
+    a("| gas | V_min [V] | p d at minimum [Torr cm] | source | evidence |")
+    a("|---|---|---|---|---|")
+    for m in ip["paschen_minima"]:
+        a(f"| {m['gas']} | {m['V_min_V']:g} | {m['pd_min_Torr_cm']:.3g} | {m['source']} | {m['evidence_class']} |")
+    a("")
+    a("| geometry | isolator bore × length [mm × m] | p range [Pa] | p·L_iso [Torr cm] | p·D_iso [Torr cm] |")
+    a("|---|---|---|---|---|")
+    for r in ip["rows"]:
+        a(f"| {r['geometry']} | {r['iso_D_m'] * 1e3:g} × {r['iso_L_m']:g} | {r['p_iso_min_Pa']:.3g} – "
+          f"{r['p_iso_max_Pa']:.3g} | {fmt(r['pL_Torr_cm'])} | {fmt(r['pD_Torr_cm'])} |")
+    a("")
+    a(f"**Requirement (PROPOSED):** {ip['requirement']}. Caveats: {ip['caveats']}. Status: {ip['status']}.")
     a("")
     a("## 11. Interface demands")
     a("")
@@ -1810,6 +2083,16 @@ def render_md(d: dict) -> str:
     a("|---|---|---|---|")
     for o in d["owner_decisions"]:
         a(f"| {o['id']} | {o['question']} | {'; '.join(o['options'])} | {o['recommendation']} |")
+    a("")
+    a("Approximations carried (each limited in effect as stated):")
+    a("")
+    a("| id | approximation | status | effect |")
+    a("|---|---|---|---|")
+    for x in d["approximations"]:
+        a(f"| {x['id']} | {x['what']} | {x['status']} | {x['effect']} |")
+    a("")
+    a("Sources to verify before Milestone B: " + "; ".join(
+        f"{x['ref']} ({x['gap']})" for x in d["sources_to_verify_before_milestone_B"]) + ".")
     a("")
     a("Proposal gaps: " + "; ".join(f"{g['id']} {g['gap']} ({g['rollup']})" for g in d["proposal_gaps"]) + ".")
     a("")

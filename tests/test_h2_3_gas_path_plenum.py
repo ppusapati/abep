@@ -321,3 +321,55 @@ def test_plenum_numbers_are_consistent(doc):
     vr = ps["volume_range"]
     assert 0 < vr["V_min_m3"] < vr["V_upper_of_minimum_m3"]
     assert vr["V_max_status"].startswith("TBD - requires")
+
+
+def test_isolator_paschen_requirement_uses_own_pressure_range(doc):
+    ip = doc["isolator_paschen"]
+    ps = []
+    for r in doc["pressure_budget"]["rows"]:
+        for g in r["geometries"].values():
+            seg = [s for s in g["segments"] if s["segment"] == "gas isolator"][0]
+            ps += [seg["p_down_Pa"], seg["p_up_Pa"]]
+    p_lo, p_hi = min(ps), max(ps)
+    assert abs(min(x["p_iso_min_Pa"] for x in ip["rows"]) - p_lo) / p_lo < 1e-3
+    assert abs(max(x["p_iso_max_Pa"] for x in ip["rows"]) - p_hi) / p_hi < 1e-3
+    torr = 101325.0 / 760.0
+    for x in ip["rows"]:
+        assert abs(x["pL_Torr_cm"][1] - x["p_iso_max_Pa"] * x["iso_L_m"] * 100 / torr) / x["pL_Torr_cm"][1] < 1e-2
+    assert ip["pL_spans_all_listed_minima"] is True
+    assert ip["V_d_rating_upper_V"] > max(m["V_min_V"] for m in ip["paschen_minima"])
+    params = {p["id"]: p for p in doc["design_parameters"]}
+    assert "H23-29" in params and "Paschen" in params["H23-29"]["name"]
+    assert any(h["id"] == "HI-06" and h["veto"] is False for h in doc["hard_incompatibility_check"]["checked"])
+    iso_dem = [d for d in doc["interface_demands"] if d["to"] == "H2-4" and "isolator" in d["quantity"]]
+    assert iso_dem and iso_dem[0]["value"] == ip["V_d_rating_upper_V"] and "Torr cm" in iso_dem[0]["quantity"]
+    assert any("H23-29" in h["closes"] for h in doc["h4_test_inputs"])
+
+
+def test_compressor_demand_covers_full_flow_range(doc):
+    p_all = [v["p_plenum_min_Pa"] for r in doc["pressure_budget"]["rows"] for g in r["geometries"].values()
+             for v in g["valve"].values()]
+    p_fmax = [v["p_plenum_min_Pa"] for r in doc["pressure_budget"]["rows"] if r["flow"] == "F-MAX"
+              for g in r["geometries"].values() for v in g["valve"].values()]
+    dem = doc["interface_demands"][0]
+    assert dem["value"] == [min(p_all), max(p_all)] and max(p_all) == max(p_fmax)
+    assert "F-MIN..F-MAX" in dem["quantity"] and "F-MAX" in dem["quantity"]
+    assert {p["id"]: p for p in doc["design_parameters"]}["H23-30"]["value"] == [min(p_all), max(p_all)]
+
+
+def test_fmin_tau_and_valve_choke_flags(doc):
+    ps = doc["plenum_sizing"]
+    assert ps["C_tot_lo_at_F_MIN_m3_s"] < ps["C_tot_range_m3_s"][0]
+    h16 = {p["id"]: p for p in doc["design_parameters"]}["H23-16"]["value"]
+    assert h16[1] == max(r["tau_secant_at_F_MIN_C_tot_lo_s"] for r in ps["fill_drain"]["rows"])
+    for r in doc["pressure_budget"]["rows"]:
+        for g in r["geometries"].values():
+            assert g["valve"]["r=1"]["choked_if_continuum_valve"] is True
+            assert g["valve"]["r=3"]["choked_if_continuum_valve"] is False
+
+
+def test_recombination_heat_is_labelled_upper_bound(doc):
+    for h in doc["o_recombination"]["heat"]:
+        assert h["kind"].startswith("upper bound")
+    dem = [d for d in doc["interface_demands"] if d["to"].startswith("H2-5")][0]
+    assert "UPPER" in dem["quantity"] and isinstance(dem["value"], dict)
