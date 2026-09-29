@@ -1157,10 +1157,10 @@
    "id": "ICP-23",
    "group": "electrical",
    "title": "Isolation from the Hall anode and the cathode-common",
-   "requirement": "DC discharge-circuit isolation: the ICP body and the collector/bias circuit are isolated from the Hall anode, the C1 cathode-common and facility ground, rated to the relaxed 350 V V_d end plus transient/qualification margin (row 81, a DC discharge-circuit rating). The margin and test voltage are owner/LOCK-1 items (H2-6 H26-45 carries 350 V with the margin TBD). The RF antenna circuit is NOT covered by this DC item: its RF voltage, creepage/clearance and Paschen rating, and the combined DC+RF stress between antenna and collector/body, are ICP-44. Any gas line to the ICP crossing a potential difference uses an isolator qualified per row 105 practice.",
+   "requirement": "DC discharge-circuit isolation: the ICP body and the collector/bias circuit are isolated from the Hall anode, the C1 cathode-common and facility ground, rated to the relaxed 350 V V_d end plus transient/qualification margin (row 81, a DC discharge-circuit rating). The margin and test voltage are owner/LOCK-1 items (H2-6 H26-45 carries 350 V with the margin TBD). The RF antenna circuit is NOT covered by this DC item: its RF voltage, creepage/clearance and Paschen rating, and the combined DC+RF stress between antenna and collector/body, are ICP-44. The C1 module's pulsed keeper-ignition circuit (300-600 V class, row 89) is NOT covered by this DC item or its margin either: it is ICP-46. Any gas line to the ICP crossing a potential difference uses an isolator qualified per row 105 practice. Governing source: owner row 81 (350 V); the copied H2-6 H26-45 entry (classed 'assumed' there) is context only.",
    "value": 350.0,
    "units": "V",
-   "basis": "row 81; H2-6 H26-45 (margin TBD)",
+   "basis": "row 81 (governing); H2-6 H26-45 context only (margin TBD)",
    "sources": [
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -1216,7 +1216,7 @@
    "id": "ICP-24",
    "group": "electrical",
    "title": "Bus-power slots for the ICP loads",
-   "requirement": "Every active ICP load has a bus slot: RF source/matching, collector/bias supply if required, and any active cooling; no assist magnet in v1 (row 69). P_bus is taken at the spacecraft-DC propulsion boundary incl. start-up transients (row 108) on the new A9 boundary, never on bus_power_boundary_v1; discharge-only or RF-generator-only power is never sufficient (A9 requirement discipline).",
+   "requirement": "Every active ICP load has a bus slot: RF source/matching, collector/bias supply if required, and any active cooling; no assist magnet in v1 (row 69). P_bus is taken at the spacecraft-DC propulsion boundary incl. start-up transients (row 108) on the new A9 boundary, never on bus_power_boundary_v1; discharge-only or RF-generator-only power is never sufficient (A9 requirement discipline). The RF generator's and matching network's own conversion loss (DC in minus RF forward power out) is a separate bus-power term booked in the RF-source slot, and a separate heat term wherever that hardware sits (platform, stand or flight unit; see ICP-43). The RF power drawn at the electron current of ICP-45 must fit inside the ~1.35 kW internal allocation (row 109); this is decided by measurement only.",
    "value": null,
    "units": "W",
    "basis": "rows 66, 108, 109, 110",
@@ -1273,7 +1273,7 @@
    "id": "ICP-25",
    "group": "electrical",
    "title": "C1 reference supplies on the C1 module",
-   "requirement": "hall_c1_reference keeps the heated Xe-fed LaB6 C1 with heater and keeper supplies, current-limited pulsed keeper ignition in the 300-600 V class with interlocks and recorded pulse energy (row 89), and a selectable cathode-common/bleeder topology with V/I measurement (row 91, no resistor value frozen).",
+   "requirement": "hall_c1_reference keeps the heated Xe-fed LaB6 C1 with heater and keeper supplies, current-limited pulsed keeper ignition in the 300-600 V class with interlocks and recorded pulse energy (row 89), and a selectable cathode-common/bleeder topology with V/I measurement (row 91, no resistor value frozen). The keeper-pulse isolation rating of lead, feedthrough and harness is ICP-46.",
    "value": [
     300.0,
     600.0
@@ -1786,10 +1786,10 @@
    "id": "ICP-36",
    "group": "thermal",
    "title": "ICP dissipation path and RF-path heat contribution (RF only, partial term)",
-   "requirement": "All RF power not absorbed by the plasma, and part of the absorbed power, ends as heat in the antenna, collector, dielectric, matching network and cabling (analog: only ~10 % absorbed by the plasma, visible collector heating, annex TAK-12/13). The RF-path contribution to the module heat load is bounded by the full laboratory forward power (row 72) x the 20 % heat-load design margin (row 86). This value is the RF-ONLY PARTIAL TERM; it is NOT a bound on the total module heat load. In hall_icp_neutralizer the Hall discharge loop closes through the ICP collector (ICP-22), so the collector collects an ion current matching the extracted electron current and receives particle heating of order I_coll x sheath voltage (analog ion impact energies, annex TAK-10), plus Hall-plume interception and plasma heat flux on the module (ICP-29). Those terms scale with the discharge current, not with the RF power, and are carried in the total module heat-load item ICP-43. Heat into H-1 + mount stays inside the H2-6 stand bound (copied).",
+   "requirement": "All RF power not absorbed by the plasma, and part of the absorbed power, ends as heat in the antenna, collector, dielectric, matching network and cabling (analog: only ~10 % absorbed by the plasma, visible collector heating, annex TAK-12/13). The RF-path heat allocation term for the module is the full laboratory forward power (row 72) x the 20 % heat-load design margin (row 86). This value is a margin-inflated RF-ONLY PARTIAL ALLOCATION TERM (an allocation, not a physical bound); it is NOT a bound on the total module heat load. It covers RF power delivered past the directional coupler only; the RF generator's own conversion loss is a separate term (ICP-24, ICP-43). In hall_icp_neutralizer the Hall discharge loop closes through the ICP collector (ICP-22), so the collector collects an ion current matching the extracted electron current and receives particle heating of order I_coll x sheath voltage (analog ion impact energies, annex TAK-10), plus Hall-plume interception and plasma heat flux on the module (ICP-29). Those terms scale with the discharge current, not with the RF power, and are carried in the total module heat-load item ICP-43. Heat into H-1 + mount stays inside the H2-6 stand bound (copied).",
    "value": 600.0,
    "units": "W",
-   "basis": "RF-only partial-term bound: 500 W (row 72) x 1.20 (row 86)",
+   "basis": "RF-only partial allocation term: 500 W (row 72) x 1.20 (row 86)",
    "sources": [
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -2089,7 +2089,7 @@
    "id": "ICP-43",
    "group": "thermal",
    "title": "Total ICP module heat load (RF + discharge-path + plume terms)",
-   "requirement": "The module thermal path (antenna, collector, dielectric, matching network, carrier interface) is sized to the TOTAL module heat load Q_mod = Q_RF + Q_coll + Q_plume, where Q_RF is bounded by ICP-36, Q_coll is the collector particle heating from the Hall discharge current closing through the collector (ICP-22; of order I_d x the collector sheath/impact voltage, analog TAK-10) and Q_plume is Hall-plume interception and plasma heat flux on the module (ICP-29). Q_coll and Q_plume scale with the discharge current, not the RF power. PROPOSED bounding rule (frozen at LOCK-1): Q_mod,bound = 1.20 (row 86) x (P_fwd,max (row 72) + P_d,max), where P_d,max = I_d,max x V_d,max is the maximum discharge-supply power permitted at the stand (A9-02 discharge slot / H2-4 supply limit); the true split is measured in S1a by thermocouple map and energy balance. No value is set until P_d,max exists (see ICPQ-10 for an alternative envelope).",
+   "requirement": "The module thermal path (antenna, collector, dielectric, matching network, carrier interface) is sized to the TOTAL module heat load Q_mod = Q_RF + Q_coll + Q_plume, where Q_RF is bounded by ICP-36, Q_coll is the collector particle heating from the Hall discharge current closing through the collector (ICP-22; of order I_d x the collector sheath/impact voltage, analog TAK-10) and Q_plume is Hall-plume interception and plasma heat flux on the module (ICP-29). Q_coll and Q_plume scale with the discharge current, not the RF power. PROPOSED bounding rule (frozen at LOCK-1): Q_mod,bound = 1.20 (row 86) x (P_fwd,max (row 72) + P_d,max), where P_d,max = I_d,max x V_d,max is the maximum discharge-supply power permitted at the stand (A9-02 discharge slot / H2-4 supply limit); the true split is measured in S1a by thermocouple map and energy balance. No value is set until P_d,max exists (see ICPQ-10 for an alternative envelope). The RF generator and matching-network conversion loss Q_gen is a further, separate heat term (and bus-power term, ICP-24) wherever that hardware is mounted: it enters Q_mod if the generator/matching network sits on the moving platform or in the module, and the platform/flight thermal budget otherwise; it is never dropped (value TBD - requires the selected generator's published efficiency or a measured DC-in/RF-out balance).",
    "value": null,
    "units": "W",
    "basis": "rows 72, 86, 108; ICP-22 topology (discharge closes on the collector)",
@@ -2187,6 +2187,87 @@
     "hall_icp_neutralizer"
    ],
    "tbd": "TBD - requires the antenna/matching-network selection (ICP-13, ICP-15), the measured R_total and the owner factor k_RF"
+  },
+  {
+   "id": "ICP-45",
+   "group": "electrical",
+   "title": "Electron-extraction (collector) current capability",
+   "requirement": "In hall_icp_neutralizer the whole Hall discharge current closes through the ICP (ICP-22): the extracted electron current equals the collector ion current equals I_d. The ICP module, its collector/bias circuit and its RF drive shall sustain a steady extracted electron current >= I_d,max, the maximum discharge current of the stand discharge slot (A9-02), with the RF forward power and collector bias at that current recorded. Electron-current capacity is the first quantity the A9 decision names before C1 stops being the control/fallback (A9 decision, field 'control_fallback'). No capacity is predicted here; the published analog is context only (annex TAK-04, TAK-13: reported ~1 A at 200 W forward power, limit attributed by its authors to the RF power; not scaled to H-1).",
+   "value": null,
+   "units": "A (extracted electron current), W (RF forward power at that current)",
+   "basis": "A9 decision control_fallback; ICP-22 topology; rows 72, 109",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "row": 72,
+     "covers_ids": [
+      "R4-Q7"
+     ],
+     "answer_sha256": "636a6486bc06cfc72140256b657391be623d75bd638fa246d666e015c900009f"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "row": 109,
+     "covers_ids": [
+      "OQ-H24-02"
+     ],
+     "answer_sha256": "8506c9cf6790404a1df181baa3d5f85dc1d47b2c3d14f2e6a825d76d3306c3d5"
+    },
+    {
+     "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "pointer": "/control_fallback",
+     "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f"
+    },
+    {
+     "ref": "SRC-TAKAHASHI2024",
+     "page": 3
+    },
+    {
+     "ref": "SRC-TAKAHASHI2024",
+     "page": 8
+    }
+   ],
+   "evidence_class": null,
+   "status": "PENDING docs/architecture_comparison/power_boundary_a9/ (I_d,max of the stand discharge slot)",
+   "freeze_point": "LOCK-1",
+   "verification": "collector-current step/ramp to I_d,max on Ar (ENGINEERING_ONLY) in S1a, with a resistive/load stand-in or with H-1, recording P_fwd, P_refl, collector V/I and module temperatures at each step; repeated on N2 before score-bearing use",
+   "owner_rows": [
+    72,
+    109
+   ],
+   "applies_to": [
+    "hall_icp_neutralizer"
+   ],
+   "note": "value = I_d,max from A9-02; capacity/power tension vs row 109 is listed in the hard-incompatibility check as not assessable"
+  },
+  {
+   "id": "ICP-46",
+   "group": "electrical",
+   "title": "C1 keeper-ignition pulse isolation rating (keeper lead, feedthrough, harness)",
+   "requirement": "On the C1 reference module the keeper lead, its vacuum feedthrough, connectors and harness, and their isolation to the C1 cathode-common, module body and facility ground, are rated for the upper end of the pulsed keeper-ignition class (row 89) plus a transient margin; this is separate from the 350 V DC discharge-circuit item ICP-23, whose margin does not cover it. The margin and pulse hipot level are owner/LOCK-1 items.",
+   "value": 600.0,
+   "units": "V (pulse class upper end; margin TBD)",
+   "basis": "row 89 (300-600 V class); margin owner/LOCK-1",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "row": 89,
+     "covers_ids": [
+      "H22-OQ-02"
+     ],
+     "answer_sha256": "c8c397e6069eaa7994c7e37e79ff9ad826d727232e054ae11741e0fd386c02f7"
+    }
+   ],
+   "evidence_class": "owner-allocation (margin TBD)",
+   "status": "PROPOSED (margin TBD)",
+   "freeze_point": "LOCK-1",
+   "verification": "pulse hipot of keeper lead/feedthrough/harness per exchange (ICP-39 d); inspection",
+   "owner_rows": [
+    89
+   ],
+   "applies_to": [
+    "hall_c1_reference"
+   ]
   }
  ],
  "interface_demands": [
@@ -2195,7 +2276,7 @@
    "from": "A9-03",
    "to": "A9-01",
    "quantity": "configuration ids and per-configuration hardware identity (which ICD items may differ between hall_c1_reference and hall_icp_neutralizer)",
-   "value": "ICP-01..ICP-44 applies_to",
+   "value": "ICP-01..ICP-46 applies_to",
    "units": "-",
    "status": "PROPOSED"
   },
@@ -2411,6 +2492,15 @@
    "status": "PENDING docs/hardware/h2/h2_7_mechanical_bom/ (H2-7: A9 amendment (A9-06))"
   },
   {
+   "id": "ID-24",
+   "from": "A9-03",
+   "to": "Xe ledger",
+   "quantity": "ICP gas feed booking if mode G-XE (PHASE_TOTAL_FLOW, row 42); ICP lifetime/cycle requirement replaces the continuous C1 cathode term (row 46)",
+   "value": null,
+   "units": "kg",
+   "status": "TBD - requires the owner choice of the ICP gas mode (ICPQ-02); ledger at docs/budgets/xe_ledger/"
+  },
+  {
    "id": "ID-25",
    "from": "A9-02",
    "to": "A9-03",
@@ -2429,13 +2519,31 @@
    "status": "PENDING docs/architecture_comparison/power_boundary_a9/ (P_d,max; ICP-43)"
   },
   {
-   "id": "ID-24",
-   "from": "A9-03",
-   "to": "Xe ledger",
-   "quantity": "ICP gas feed booking if mode G-XE (PHASE_TOTAL_FLOW, row 42); ICP lifetime/cycle requirement replaces the continuous C1 cathode term (row 46)",
+   "id": "ID-27",
+   "from": "A9-02",
+   "to": "A9-03",
+   "quantity": "maximum discharge current of the stand discharge slot I_d,max as the SIZING input for the ICP electron-extraction capability (ICP-45), not only as a heat input",
    "value": null,
-   "units": "kg",
-   "status": "TBD - requires the owner choice of the ICP gas mode (ICPQ-02); ledger at docs/budgets/xe_ledger/"
+   "units": "A",
+   "status": "PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02: discharge slot I_d,max)"
+  },
+  {
+   "id": "ID-28",
+   "from": "A9-03",
+   "to": "A9-01",
+   "quantity": "electron-current capacity demonstration (collector-current step/ramp to I_d,max on Ar ENGINEERING_ONLY, ICP-45) as a stage entry condition before any score-bearing hall_icp_neutralizer point",
+   "value": "required",
+   "units": "-",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "ID-29",
+   "from": "A9-05",
+   "to": "A9-03",
+   "quantity": "published analog evidence on extracted electron current vs RF power for RF/ICP plasma cathodes (context for ICP-45; never a Vyovrinda prediction)",
+   "value": null,
+   "units": "A, W",
+   "status": "PENDING docs/evidence/icp_neutralizer/ (A9-05: electron-current vs RF power evidence)"
   }
  ],
  "owner_answers_applied": [
@@ -2741,7 +2849,7 @@
     "H22-OQ-02"
    ],
    "answer_sha256": "c8c397e6069eaa7994c7e37e79ff9ad826d727232e054ae11741e0fd386c02f7",
-   "how_applied": "pulsed keeper ignition 300-600 V class on the C1 module (ICP-25)"
+   "how_applied": "pulsed keeper ignition 300-600 V class on the C1 module (ICP-25); keeper-pulse isolation rating (ICP-46)"
   },
   {
    "row": 91,
@@ -2807,7 +2915,7 @@
     "OQ-H24-02"
    ],
    "answer_sha256": "8506c9cf6790404a1df181baa3d5f85dc1d47b2c3d14f2e6a825d76d3306c3d5",
-   "how_applied": "ICP power inside the ~1.35 kW internal allocation (ICP-12, ICP-24)"
+   "how_applied": "ICP power inside the ~1.35 kW internal allocation (ICP-12, ICP-24, ICP-45)"
   },
   {
    "row": 110,
@@ -3167,6 +3275,10 @@
     "finding": "not assessable: bus slots PENDING A9-02 and no performance is predicted here; decided only by measurement against the full-system gate"
    },
    {
+    "item": "ICP electron-current capacity at I_d,max vs RF power inside the ~1.35 kW internal allocation (row 109) (ICP-45)",
+    "finding": "not assessable, PENDING docs/architecture_comparison/power_boundary_a9/ (I_d,max) and docs/evidence/icp_neutralizer/ (analog electron-current vs RF power evidence). A real tension to watch: the only analog in the annex reported ~1 A at 200 W forward power with the limit attributed to the RF power (TAK-04, TAK-13); no scaling to H-1 is made and no veto is claimed; decided only by the ICP-45 capacity demonstration"
+   },
+   {
     "item": "stand payload (>= 25 kg design, row 116) vs module mass on the carrier",
     "finding": "module masses PENDING H2-7 / module design; no evidence of exceedance"
    },
@@ -3423,7 +3535,8 @@
  },
  "compliance": {
   "no_hall_performance_source": "no Hall transport closure, screening candidate, abep_sim/plasma_devices.py or withdrawn v1.2-v1.6 number is read",
-  "analog_use": "Takahashi 2024 values appear only in the annex, with page provenance and label 'published analog, reported'",
+  "analog_use": "Takahashi 2024 values appear only in the annex, with page provenance and label 'published analog, reported'; body items reference annex ids (TAK-xx) for context only and never use an analog value as a design value",
+  "lane_paths": "A9-01 is referenced at the path where that lane landed (docs/experiments/hall_icp/prereg_framework/); the A9 decision text names the same lane as docs/experiments/hall_icp/prereg/ - same lane, different name",
   "no_contact": "no supplier, lab or author contact; open-access sources only",
   "pure": "standard-library builder; not wired into archengine; no frozen data, goldens or existing modules touched",
   "thresholds": "no numeric threshold beyond the RFP and cited owner rows; tolerances are LOCK-1 rules / LOCK-2 values or after-evidence"

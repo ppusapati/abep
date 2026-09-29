@@ -137,7 +137,7 @@ def test_rf_only_term_is_arithmetic_and_not_a_module_bound(doc):
     by = {x["id"]: x for x in doc["items"]}
     x = by["ICP-36"]
     assert x["status"] == "DERIVED_BOUND" and x["value"] == pytest.approx(500.0 * 1.2)
-    assert "RF-only partial-term bound" in x["basis"] and 72 in x["owner_rows"] and 86 in x["owner_rows"]
+    assert "RF-only partial allocation term" in x["basis"] and 72 in x["owner_rows"] and 86 in x["owner_rows"]
     assert "NOT a bound on the total module heat load" in x["requirement"]
     dem = {d["id"]: d for d in doc["interface_demands"]}
     assert dem["ID-16"]["value"] == x["value"] and "RF-only" in dem["ID-16"]["status"]
@@ -297,3 +297,31 @@ def test_builder_source_hygiene():
     assert "archengine" not in src.replace("not wired into archengine", "")
     for bad in ("hall_map", "hall_ensemble", "import plasma", "sgb-screen"):
         assert bad not in src, bad
+
+
+def test_electron_current_capacity_item(doc):
+    by = {x["id"]: x for x in doc["items"]}
+    x = by["ICP-45"]
+    assert x["value"] is None and x["status"].startswith("PENDING") and "I_d,max" in x["status"]
+    assert "I_d,max" in x["requirement"] and "Ar (ENGINEERING_ONLY)" in x["verification"]
+    assert 109 in x["owner_rows"]
+    dem = {d["id"]: d for d in doc["interface_demands"]}
+    assert dem["ID-27"]["from"] == "A9-02" and dem["ID-27"]["value"] is None and "SIZING" in dem["ID-27"]["quantity"]
+    checked = [c["item"] for c in doc["hard_incompatibility_check"]["checked"]]
+    assert any("electron-current capacity" in c for c in checked)
+    assert doc["hard_incompatibility_check"]["veto_claimed"] is False
+
+
+def test_keeper_pulse_rating_separate_from_dc_isolation(doc):
+    by = {x["id"]: x for x in doc["items"]}
+    k = by["ICP-46"]
+    assert k["value"] == 600.0 and 89 in k["owner_rows"] and k["applies_to"] == ["hall_c1_reference"]
+    assert "ICP-46" in by["ICP-23"]["requirement"] and "governing" in by["ICP-23"]["basis"]
+
+
+def test_generator_loss_named_and_demand_order(doc):
+    by = {x["id"]: x for x in doc["items"]}
+    assert "conversion loss" in by["ICP-43"]["requirement"] and "conversion loss" in by["ICP-24"]["requirement"]
+    ids = [d["id"] for d in doc["interface_demands"]]
+    assert ids == sorted(ids, key=lambda s: int(s.split("-")[1]))
+    assert "body items reference annex ids" in doc["compliance"]["analog_use"]

@@ -14,7 +14,7 @@ Rules implemented here
   * every numeric value is either an owner-given value (cited by row), a value COPIED from a verified repository
     deliverable (path + RFC 6901 JSON pointer + sha256), a published-analog value from the open-access Takahashi et al.
     2024 article with page/figure provenance (annex only, never a Vyovrinda value), a deterministic arithmetic bound on
-    owner-given values (ICP-36: RF-only partial-term bound, not a module heat-load bound), or ``null`` with "TBD - requires <what>";
+    owner-given values (ICP-36: RF-only partial allocation term, not a module heat-load bound), or ``null`` with "TBD - requires <what>";
   * values owned by the parallel A9 lanes (A9-01, A9-02, A9-04, A9-05) are written "PENDING <lane path>" and never filled;
   * no Hall transport closure, screening candidate, superseded 0-D Hall model or withdrawn number is read; nothing here
     predicts thrust, efficiency, discharge current, neutralizer electron current or plasma state;
@@ -320,7 +320,7 @@ def require_text(row: int, text: str) -> None:
 
 
 def rf_heat_bound_W() -> tuple:
-    """RF-only partial-term bound (not a module heat-load bound): full lab forward power x the owner heat-load margin."""
+    """RF-only partial allocation term (not a module heat-load bound): full lab forward power x the owner heat-load margin."""
     ans = answers_by_row()
     if "0\u2013500 W" not in ans[72]["owner_answer_verbatim"] or "20% heat-load" not in ans[86]["owner_answer_verbatim"]:
         raise RuntimeError("owner rows 72/86 no longer carry the values this builder cites")
@@ -558,9 +558,11 @@ def items() -> list:
                "transient/qualification margin (row 81, a DC discharge-circuit rating). The margin and test voltage are "
                "owner/LOCK-1 items (H2-6 H26-45 carries 350 V with the margin TBD). The RF antenna circuit is NOT covered "
                "by this DC item: its RF voltage, creepage/clearance and Paschen rating, and the combined DC+RF stress "
-               "between antenna and collector/body, are ICP-44. Any gas line to the ICP crossing a potential difference "
-               "uses an isolator qualified per row 105 practice.",
-               value=iso["value"], units=iso["units"], basis="row 81; H2-6 H26-45 (margin TBD)",
+               "between antenna and collector/body, are ICP-44. The C1 module's pulsed keeper-ignition circuit (300-600 V "
+               "class, row 89) is NOT covered by this DC item or its margin either: it is ICP-46. Any gas line to the "
+               "ICP crossing a potential difference uses an isolator qualified per row 105 practice. Governing source: "
+               "owner row 81 (350 V); the copied H2-6 H26-45 entry (classed 'assumed' there) is context only.",
+               value=iso["value"], units=iso["units"], basis="row 81 (governing); H2-6 H26-45 context only (margin TBD)",
                sources=row_src(81, 105) + [iso["source"]], evidence_class="owner-allocation (margin TBD)",
                status="PROPOSED (margin TBD)", freeze_point="LOCK-1",
                verification="insulation resistance + hipot per exchange (ICP-39)", rows=(81, 105),
@@ -569,7 +571,11 @@ def items() -> list:
                "Every active ICP load has a bus slot: RF source/matching, collector/bias supply if required, and any "
                "active cooling; no assist magnet in v1 (row 69). P_bus is taken at the spacecraft-DC propulsion "
                "boundary incl. start-up transients (row 108) on the new A9 boundary, never on bus_power_boundary_v1; "
-               "discharge-only or RF-generator-only power is never sufficient (A9 requirement discipline).",
+               "discharge-only or RF-generator-only power is never sufficient (A9 requirement discipline). The RF "
+               "generator's and matching network's own conversion loss (DC in minus RF forward power out) is a separate "
+               "bus-power term booked in the RF-source slot, and a separate heat term wherever that hardware sits "
+               "(platform, stand or flight unit; see ICP-43). The RF power drawn at the electron current of ICP-45 "
+               "must fit inside the ~1.35 kW internal allocation (row 109); this is decided by measurement only.",
                units="W", basis="rows 66, 108, 109, 110", sources=row_src(66, 108, 109, 110),
                status="PENDING " + A9_LANES["A9-02"] + " + " + A9_02_MODULE + " (slot ids and ledger efficiencies)",
                freeze_point="LOCK-1", verification="per-slot DC metering at the bus-boundary-equivalent point",
@@ -577,7 +583,8 @@ def items() -> list:
     X.append(I("ICP-25", "electrical", "C1 reference supplies on the C1 module",
                "hall_c1_reference keeps the heated Xe-fed LaB6 C1 with heater and keeper supplies, current-limited "
                "pulsed keeper ignition in the 300-600 V class with interlocks and recorded pulse energy (row 89), and a "
-               "selectable cathode-common/bleeder topology with V/I measurement (row 91, no resistor value frozen).",
+               "selectable cathode-common/bleeder topology with V/I measurement (row 91, no resistor value frozen). The "
+               "keeper-pulse isolation rating of lead, feedthrough and harness is ICP-46.",
                value=[300.0, 600.0], units="V (pulsed keeper ignition class)", basis="owner answers",
                sources=row_src(49, 89, 91), evidence_class="owner-allocation", status="OWNER_GIVEN",
                freeze_point="NOW", verification="supply acceptance test", rows=(49, 89, 91),
@@ -682,16 +689,18 @@ def items() -> list:
     X.append(I("ICP-36", "thermal", "ICP dissipation path and RF-path heat contribution (RF only, partial term)",
                "All RF power not absorbed by the plasma, and part of the absorbed power, ends as heat in the antenna, "
                "collector, dielectric, matching network and cabling (analog: only ~10 % absorbed by the plasma, visible "
-               "collector heating, annex TAK-12/13). The RF-path contribution to the module heat load is bounded by the "
-               "full laboratory forward power (row 72) x the 20 % heat-load design margin (row 86). This value is the "
-               "RF-ONLY PARTIAL TERM; it is NOT a bound on the total module heat load. In hall_icp_neutralizer the Hall "
+               "collector heating, annex TAK-12/13). The RF-path heat allocation term for the module is the full "
+               "laboratory forward power (row 72) x the 20 % heat-load design margin (row 86). This value is a "
+               "margin-inflated RF-ONLY PARTIAL ALLOCATION TERM (an allocation, not a physical bound); it is NOT a bound "
+               "on the total module heat load. It covers RF power delivered past the directional coupler only; the RF "
+               "generator's own conversion loss is a separate term (ICP-24, ICP-43). In hall_icp_neutralizer the Hall "
                "discharge loop closes through the ICP collector (ICP-22), so the collector collects an ion current "
                "matching the extracted electron current and receives particle heating of order I_coll x sheath voltage "
                "(analog ion impact energies, annex TAK-10), plus Hall-plume interception and plasma heat flux on the "
                "module (ICP-29). Those terms scale with the discharge current, not with the RF power, and are carried "
                "in the total module heat-load item ICP-43. Heat into H-1 + mount stays inside the H2-6 stand bound "
                "(copied).",
-               value=rf_heat_bound, units="W", basis="RF-only partial-term bound: 500 W (row 72) x 1.20 (row 86)",
+               value=rf_heat_bound, units="W", basis="RF-only partial allocation term: 500 W (row 72) x 1.20 (row 86)",
                sources=row_src(72, 86) + [heat_bound["source"]], evidence_class="model-derived (bound on owner values)",
                status="DERIVED_BOUND", freeze_point="LOCK-1", verification="thermocouple map + energy balance in S1a",
                rows=(72, 86), applies=("hall_icp_neutralizer",), copied_from=heat_bound))
@@ -749,7 +758,12 @@ def items() -> list:
                "RF power. PROPOSED bounding rule (frozen at LOCK-1): Q_mod,bound = 1.20 (row 86) x (P_fwd,max (row 72) + "
                "P_d,max), where P_d,max = I_d,max x V_d,max is the maximum discharge-supply power permitted at the stand "
                "(A9-02 discharge slot / H2-4 supply limit); the true split is measured in S1a by thermocouple map and "
-               "energy balance. No value is set until P_d,max exists (see ICPQ-10 for an alternative envelope).",
+               "energy balance. No value is set until P_d,max exists (see ICPQ-10 for an alternative envelope). The RF "
+               "generator and matching-network conversion loss Q_gen is a further, separate heat term (and bus-power "
+               "term, ICP-24) wherever that hardware is mounted: it enters Q_mod if the generator/matching network sits "
+               "on the moving platform or in the module, and the platform/flight thermal budget otherwise; it is never "
+               "dropped (value TBD - requires the selected generator's published efficiency or a measured DC-in/RF-out "
+               "balance).",
                units="W", basis="rows 72, 86, 108; ICP-22 topology (discharge closes on the collector)",
                sources=row_src(72, 86, 108) + [heat_bound["source"], {"ref": tak, "page": 6}],
                status="PENDING " + A9_LANES["A9-02"] + " (maximum discharge-supply power P_d,max at the stand)",
@@ -774,6 +788,38 @@ def items() -> list:
                verification="RF hipot at full forward power (500 W) on a dummy load and with plasma; RF probe of "
                             "V_ant,peak; inspection of clearance/creepage", rows=(72, 81),
                applies=("hall_icp_neutralizer",)))
+    X.append(I("ICP-45", "electrical", "Electron-extraction (collector) current capability",
+               "In hall_icp_neutralizer the whole Hall discharge current closes through the ICP (ICP-22): the "
+               "extracted electron current equals the collector ion current equals I_d. The ICP module, its collector/"
+               "bias circuit and its RF drive shall sustain a steady extracted electron current >= I_d,max, the maximum "
+               "discharge current of the stand discharge slot (A9-02), with the RF forward power and collector bias at "
+               "that current recorded. Electron-current capacity is the first quantity the A9 decision names before C1 "
+               "stops being the control/fallback (A9 decision, field 'control_fallback'). No capacity is predicted "
+               "here; the published analog is context only (annex TAK-04, TAK-13: reported ~1 A at 200 W forward "
+               "power, limit attributed by its authors to the RF power; not scaled to H-1).",
+               units="A (extracted electron current), W (RF forward power at that current)",
+               basis="A9 decision control_fallback; ICP-22 topology; rows 72, 109",
+               sources=row_src(72, 109) + [{"path": DECISIONS["A9"][0], "pointer": "/control_fallback",
+                                            "sha256": DECISIONS["A9"][1]}, {"ref": tak, "page": 3}, {"ref": tak, "page": 8}],
+               status="PENDING " + A9_LANES["A9-02"] + " (I_d,max of the stand discharge slot)",
+               freeze_point="LOCK-1",
+               verification="collector-current step/ramp to I_d,max on Ar (ENGINEERING_ONLY) in S1a, with a "
+                            "resistive/load stand-in or with H-1, recording P_fwd, P_refl, collector V/I and module "
+                            "temperatures at each step; repeated on N2 before score-bearing use",
+               rows=(72, 109), applies=("hall_icp_neutralizer",),
+               note="value = I_d,max from A9-02; capacity/power tension vs row 109 is listed in the hard-incompatibility "
+                    "check as not assessable"))
+    X.append(I("ICP-46", "electrical", "C1 keeper-ignition pulse isolation rating (keeper lead, feedthrough, harness)",
+               "On the C1 reference module the keeper lead, its vacuum feedthrough, connectors and harness, and their "
+               "isolation to the C1 cathode-common, module body and facility ground, are rated for the upper end of the "
+               "pulsed keeper-ignition class (row 89) plus a transient margin; this is separate from the 350 V DC "
+               "discharge-circuit item ICP-23, whose margin does not cover it. The margin and pulse hipot level are "
+               "owner/LOCK-1 items.",
+               value=600.0, units="V (pulse class upper end; margin TBD)",
+               basis="row 89 (300-600 V class); margin owner/LOCK-1", sources=row_src(89),
+               evidence_class="owner-allocation (margin TBD)", status="PROPOSED (margin TBD)", freeze_point="LOCK-1",
+               verification="pulse hipot of keeper lead/feedthrough/harness per exchange (ICP-39 d); inspection",
+               rows=(89,), applies=("hall_c1_reference",)))
     return X
 
 
@@ -845,7 +891,7 @@ def interface_demands() -> list:
     me = "A9-03"
     # A9-01 prereg framework
     d("ID-01", me, "A9-01", "configuration ids and per-configuration hardware identity (which ICD items may differ "
-      "between hall_c1_reference and hall_icp_neutralizer)", "ICP-01..ICP-44 applies_to", "-", "PROPOSED")
+      "between hall_c1_reference and hall_icp_neutralizer)", "ICP-01..ICP-46 applies_to", "-", "PROPOSED")
     d("ID-02", "A9-01", me, "definition of the V_d setting held equal across configurations", None, "V",
       pending("A9-01", "V_d definition"))
     d("ID-03", "A9-01", me, "ICP ignition dwell/retry bound; start/restart classification; start-up/thermal-state rule",
@@ -906,14 +952,23 @@ def interface_demands() -> list:
       "(row 59); C1 kept as reference/fallback", "required", "kg", "PROPOSED")
     d("ID-23", "H2-7", me, "module masses and CG per serial; flight dry allocations vs CBE (row 54 flags)", None, "kg",
       pending("H2-7", "A9 amendment (A9-06)"))
-    d("ID-25", "A9-02", me, "maximum discharge-supply power at the stand P_d,max = I_d,max x V_d,max (for the total "
-      "module heat-load bound ICP-43)", None, "W", pending("A9-02", "discharge slot limit"))
-    d("ID-26", me, "H2-5", "total ICP module heat load for the thermal path (ICP-43: RF + discharge-path + plume terms)",
-      None, "W", "PENDING " + A9_LANES["A9-02"] + " (P_d,max; ICP-43)")
     # Xe ledger
     d("ID-24", me, "Xe ledger", "ICP gas feed booking if mode G-XE (PHASE_TOTAL_FLOW, row 42); ICP lifetime/cycle "
       "requirement replaces the continuous C1 cathode term (row 46)", None, "kg",
       "TBD - requires the owner choice of the ICP gas mode (ICPQ-02); ledger at " + xe_budget_dir())
+    d("ID-25", "A9-02", me, "maximum discharge-supply power at the stand P_d,max = I_d,max x V_d,max (for the total "
+      "module heat-load bound ICP-43)", None, "W", pending("A9-02", "discharge slot limit"))
+    d("ID-26", me, "H2-5", "total ICP module heat load for the thermal path (ICP-43: RF + discharge-path + plume terms)",
+      None, "W", "PENDING " + A9_LANES["A9-02"] + " (P_d,max; ICP-43)")
+    d("ID-27", "A9-02", me, "maximum discharge current of the stand discharge slot I_d,max as the SIZING input for the "
+      "ICP electron-extraction capability (ICP-45), not only as a heat input", None, "A",
+      pending("A9-02", "discharge slot I_d,max"))
+    d("ID-28", me, "A9-01", "electron-current capacity demonstration (collector-current step/ramp to I_d,max on Ar "
+      "ENGINEERING_ONLY, ICP-45) as a stage entry condition before any score-bearing hall_icp_neutralizer point",
+      "required", "-", "PROPOSED")
+    d("ID-29", "A9-05", me, "published analog evidence on extracted electron current vs RF power for RF/ICP plasma "
+      "cathodes (context for ICP-45; never a Vyovrinda prediction)", None, "A, W",
+      pending("A9-05", "electron-current vs RF power evidence"))
     return D
 
 
@@ -957,7 +1012,7 @@ def owner_answers_applied() -> list:
             "(ICP-44)",
         83: "repaired/replaced module = new serial + new reference sequence (ICP-40)",
         86: ">= 50 K margin and 20 % heat-load margin (ICP-36 RF-only term, ICP-43 total, ICP-37)",
-        89: "pulsed keeper ignition 300-600 V class on the C1 module (ICP-25)",
+        89: "pulsed keeper ignition 300-600 V class on the C1 module (ICP-25); keeper-pulse isolation rating (ICP-46)",
         91: "selectable cathode-common bleeder, no value frozen (ICP-22, ICP-25)",
         93: "120 s x 2 applies to C1 only; ICP bound pre-registered by A9-01 (ICP-35)",
         99: "passive/low-perturbation witnesses near the electron sources (ICP-29)",
@@ -965,7 +1020,7 @@ def owner_answers_applied() -> list:
         105: "gas-line isolator practice applied to any ICP gas line crossing a potential difference (ICP-23)",
         107: "ASTM G93 Level C for O2-service ICP parts (ICP-30)",
         108: "P_bus < 1.5 kW at the spacecraft-DC boundary incl. start-up transients on the A9 boundary (ICP-12, ICP-24)",
-        109: "ICP power inside the ~1.35 kW internal allocation (ICP-12, ICP-24)",
+        109: "ICP power inside the ~1.35 kW internal allocation (ICP-12, ICP-24, ICP-45)",
         110: "supply partition incl. ICP RF source/matching and collector/bias (ICP-24)",
         116: "stand designed for >= 25 kg moving payload (ICP-08)",
         117: "flexible RF coax with matched sham routing (ICP-18)",
@@ -1041,6 +1096,13 @@ def hard_incompatibility_check() -> dict:
             {"item": "ICP power vs the ~1.35 kW internal allocation (row 109) and P_bus < 1.5 kW (row 108)",
              "finding": "not assessable: bus slots PENDING A9-02 and no performance is predicted here; decided only by "
                         "measurement against the full-system gate"},
+            {"item": "ICP electron-current capacity at I_d,max vs RF power inside the ~1.35 kW internal allocation "
+                     "(row 109) (ICP-45)",
+             "finding": "not assessable, PENDING " + A9_LANES["A9-02"] + " (I_d,max) and " + A9_LANES["A9-05"]
+                        + " (analog electron-current vs RF power evidence). A real tension to watch: the only analog "
+                          "in the annex reported ~1 A at 200 W forward power with the limit attributed to the RF power "
+                          "(TAK-04, TAK-13); no scaling to H-1 is made and no veto is claimed; decided only by the "
+                          "ICP-45 capacity demonstration"},
             {"item": "stand payload (>= 25 kg design, row 116) vs module mass on the carrier",
              "finding": "module masses PENDING H2-7 / module design; no evidence of exceedance"},
             {"item": "antenna-circuit RF voltage vs the 350 V DC isolation item",
@@ -1218,7 +1280,11 @@ def build() -> dict:
             "no_hall_performance_source": "no Hall transport closure, screening candidate, abep_sim/plasma_devices.py "
                                           "or withdrawn v1.2-v1.6 number is read",
             "analog_use": "Takahashi 2024 values appear only in the annex, with page provenance and label 'published "
-                          "analog, reported'",
+                          "analog, reported'; body items reference annex ids (TAK-xx) for context only and never use "
+                          "an analog value as a design value",
+            "lane_paths": "A9-01 is referenced at the path where that lane landed (" + A9_LANES["A9-01"] + "); the A9 "
+                          "decision text names the same lane as docs/experiments/hall_icp/prereg/ - same lane, "
+                          "different name",
             "no_contact": "no supplier, lab or author contact; open-access sources only",
             "pure": "standard-library builder; not wired into archengine; no frozen data, goldens or existing modules "
                     "touched",
