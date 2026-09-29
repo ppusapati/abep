@@ -1,0 +1,11 @@
+{
+  "phase": "P0 baseline protection",
+  "recorded_utc": "2026-09-29",
+  "starting_branch": "claude/nifty-ramanujan-w68f9z",
+  "starting_sha": "677b95f1a94ded41328d213a4806917358be553a",
+  "implementation_branch": "feature/rf-hall-parallel-v2 (isolated worktree)",
+  "pytest": {"command": "python -m pytest -q tests", "result": "1703 passed, 6 skipped, 1 xfailed", "rc": 0},
+  "golden": {"command": "python -m abep_sim.golden check", "result": "OK"},
+  "integrity": {"command": "python scripts/ci_checks.py", "result": "10/10 passed"},
+  "note": "Baseline green. The skip count is 6 (CLAUDE.md lists 5 superseded 0-D Hall calibration skips; the sixth is the M16 v1 builder staleness test, which skips when parallel-lane deliverables are present). No physics change in P0; no existing golden or v1 artifact is modified by v2."
+}

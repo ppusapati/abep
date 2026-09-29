@@ -1,0 +1,85 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "operating_mode_v1",
+ "title": "Operating mode v1 (parallel RF||Hall v2)",
+ "description": "One entry of the v2 mode table (abep_sim.propulsion_modes.MODE_TABLE). Exactly seven initial modes; no automatic hybrid modes.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "mode",
+  "rf_enabled",
+  "hall_enabled",
+  "rf_atm_allowed",
+  "rf_xe_allowed",
+  "hall_atm_allowed",
+  "hall_xe_allowed",
+  "hall_cathode_required",
+  "feed_sources",
+  "branches",
+  "allowed_streams"
+ ],
+ "properties": {
+  "mode": {
+   "enum": [
+    "OFF",
+    "RF_ATM",
+    "RF_XE",
+    "HALL_ATM",
+    "HALL_XE",
+    "RF_ATM_HALL_ATM",
+    "RF_ATM_HALL_XE"
+   ]
+  },
+  "rf_enabled": {
+   "type": "boolean"
+  },
+  "hall_enabled": {
+   "type": "boolean"
+  },
+  "rf_atm_allowed": {
+   "type": "boolean"
+  },
+  "rf_xe_allowed": {
+   "type": "boolean"
+  },
+  "hall_atm_allowed": {
+   "type": "boolean"
+  },
+  "hall_xe_allowed": {
+   "type": "boolean"
+  },
+  "hall_cathode_required": {
+   "type": "boolean"
+  },
+  "feed_sources": {
+   "type": "array",
+   "items": {
+    "enum": [
+     "atmosphere",
+     "xe_tank"
+    ]
+   }
+  },
+  "branches": {
+   "type": "array",
+   "items": {
+    "enum": [
+     "rf",
+     "hall"
+    ]
+   }
+  },
+  "allowed_streams": {
+   "type": "array",
+   "items": {
+    "enum": [
+     "rf_atm",
+     "rf_xe",
+     "hall_atm",
+     "hall_xe",
+     "cathode_xe"
+    ]
+   }
+  }
+ }
+}

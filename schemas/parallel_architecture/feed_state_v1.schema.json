@@ -1,0 +1,92 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "feed_state_v1",
+ "title": "FeedState v1 (parallel RF||Hall v2)",
+ "description": "A propellant stream. Every species fraction is explicit (no hidden default composition); fractions >= 0 and sum to 1 within 1e-9 (sum checked in code, abep_sim.parallel_contracts.FeedState).",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "mdot_total_kg_s",
+  "pressure_Pa",
+  "temperature_K",
+  "mass_fractions",
+  "source",
+  "evidence_class",
+  "uncertainty",
+  "applicability_domain",
+  "validation_status"
+ ],
+ "properties": {
+  "mdot_total_kg_s": {
+   "type": "number",
+   "minimum": 0
+  },
+  "pressure_Pa": {
+   "type": "number",
+   "minimum": 0
+  },
+  "temperature_K": {
+   "type": "number",
+   "minimum": 0
+  },
+  "mass_fractions": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "O",
+    "O2",
+    "N2",
+    "N",
+    "Xe"
+   ],
+   "properties": {
+    "O": {
+     "type": "number",
+     "minimum": 0
+    },
+    "O2": {
+     "type": "number",
+     "minimum": 0
+    },
+    "N2": {
+     "type": "number",
+     "minimum": 0
+    },
+    "N": {
+     "type": "number",
+     "minimum": 0
+    },
+    "Xe": {
+     "type": "number",
+     "minimum": 0
+    }
+   }
+  },
+  "source": {
+   "type": "string",
+   "minLength": 1
+  },
+  "evidence_class": {
+   "enum": [
+    "measured",
+    "digitized",
+    "inferred",
+    "reconstructed",
+    "model-derived",
+    "assumed"
+   ]
+  },
+  "uncertainty": {
+   "type": "string",
+   "minLength": 1
+  },
+  "applicability_domain": {
+   "type": "string",
+   "minLength": 1
+  },
+  "validation_status": {
+   "type": "string",
+   "minLength": 1
+  }
+ }
+}

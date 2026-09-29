@@ -1,0 +1,48 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "architecture_v2",
+ "title": "Installed architecture v2 (parallel RF||Hall)",
+ "description": "Installed hardware, separate from operating mode. v2 ids are distinct from v1 ('rf_hall' in bus_power_boundary_v1 = RF->Hall pre-ionization, A5); v2 never reuses 'rf_hall'.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "kind",
+  "xe_system_installed",
+  "has_rf",
+  "has_hall",
+  "allowed_modes"
+ ],
+ "properties": {
+  "kind": {
+   "enum": [
+    "rf_only",
+    "hall_only",
+    "rf_hall_parallel"
+   ]
+  },
+  "xe_system_installed": {
+   "type": "boolean"
+  },
+  "has_rf": {
+   "type": "boolean"
+  },
+  "has_hall": {
+   "type": "boolean"
+  },
+  "allowed_modes": {
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "enum": [
+     "OFF",
+     "RF_ATM",
+     "RF_XE",
+     "HALL_ATM",
+     "HALL_XE",
+     "RF_ATM_HALL_ATM",
+     "RF_ATM_HALL_XE"
+    ]
+   }
+  }
+ }
+}
