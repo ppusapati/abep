@@ -726,6 +726,66 @@
    "produces": "fo_a6_integration_refresh",
    "kind": "follow_on_launch",
    "note": "owner addendum A7: integration pass + M16 scheduler refresh, then the checkpoint merge"
+  },
+  {
+   "id": "T_A9_01_PREREG_FRAMEWORK",
+   "prerequisites": [
+    {
+     "id": "od_a9_hall_icp",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_01_hall_icp_prereg_framework",
+   "kind": "follow_on_launch",
+   "note": "owner A9 2026-09-29 (decision pack; backlog A9-01..A9-05 launched on owner instruction 'launch the A9 backlog, start with A9-01 to A9-05')"
+  },
+  {
+   "id": "T_A9_02_BUS_BOUNDARY",
+   "prerequisites": [
+    {
+     "id": "od_a9_hall_icp",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_02_bus_boundary_a9",
+   "kind": "follow_on_launch",
+   "note": "owner A9 2026-09-29 (decision pack; backlog A9-01..A9-05 launched on owner instruction 'launch the A9 backlog, start with A9-01 to A9-05')"
+  },
+  {
+   "id": "T_A9_03_ICP_ICD",
+   "prerequisites": [
+    {
+     "id": "od_a9_hall_icp",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_03_icp_neutralizer_icd",
+   "kind": "follow_on_launch",
+   "note": "owner A9 2026-09-29 (decision pack; backlog A9-01..A9-05 launched on owner instruction 'launch the A9 backlog, start with A9-01 to A9-05')"
+  },
+  {
+   "id": "T_A9_04_UNCERTAINTY_BUDGET",
+   "prerequisites": [
+    {
+     "id": "od_a9_hall_icp",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_04_hall_icp_uncertainty_budget",
+   "kind": "follow_on_launch",
+   "note": "owner A9 2026-09-29 (decision pack; backlog A9-01..A9-05 launched on owner instruction 'launch the A9 backlog, start with A9-01 to A9-05')"
+  },
+  {
+   "id": "T_A9_05_VALIDATION_INPUTS",
+   "prerequisites": [
+    {
+     "id": "od_a9_hall_icp",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_05_hall_icp_validation_inputs",
+   "kind": "follow_on_launch",
+   "note": "owner A9 2026-09-29 (decision pack; backlog A9-01..A9-05 launched on owner instruction 'launch the A9 backlog, start with A9-01 to A9-05')"
   }
  ]
 }

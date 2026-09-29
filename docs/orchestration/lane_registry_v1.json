@@ -1156,6 +1156,31 @@
    "id": "fo_a6_integration_refresh",
    "kind": "follow_on",
    "title": "integration pass after the four A6 lanes: fill pending cells, M16 -> scheduler (READY/RUNNING/BLOCKED/VERIFIED, one blocker per BLOCKED row, 5 rollup categories), map H2 lanes"
+  },
+  {
+   "id": "fo_a9_01_hall_icp_prereg_framework",
+   "kind": "follow_on",
+   "title": "A9-01 Hall->ICP preregistration framework + campaign stage map"
+  },
+  {
+   "id": "fo_a9_02_bus_boundary_a9",
+   "kind": "follow_on",
+   "title": "A9-02 bus-power boundary for A9 (v1 untouched)"
+  },
+  {
+   "id": "fo_a9_03_icp_neutralizer_icd",
+   "kind": "follow_on",
+   "title": "A9-03 downstream ICP-neutralizer ICD"
+  },
+  {
+   "id": "fo_a9_04_hall_icp_uncertainty_budget",
+   "kind": "follow_on",
+   "title": "A9-04 C1-vs-ICP uncertainty budget, stop rules, decision quantities"
+  },
+  {
+   "id": "fo_a9_05_hall_icp_validation_inputs",
+   "kind": "follow_on",
+   "title": "A9-05 Hall->ICP validation-input list + Takahashi 2024 evidence extraction"
   }
  ],
  "owner_dispositions": [
@@ -1188,6 +1213,19 @@
     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A7_execution_model.json"
    ],
    "immutability": "the disposition file and each addendum are never edited after commit (consumers pin them by sha256); later owner amendments are new addendum files"
+  },
+  {
+   "id": "od_a9_hall_icp",
+   "file": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+   "states": {
+    "pending": "no disposition file",
+    "approved": "status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE (an authorized investigation hypothesis, not a flight baseline)"
+   },
+   "decision_key": "status",
+   "decision_states": {
+    "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE": "approved"
+   },
+   "immutability": "never edited after commit; later owner amendments are new addendum files"
   }
  ],
  "owner_records": [

@@ -252,7 +252,7 @@ def status(journals_dir, followon_dir):
         if not os.path.isfile(f):
             st[O["id"]] = "pending"
         else:
-            dec = json.load(open(f)).get("decision")
+            dec = json.load(open(f)).get(O.get("decision_key", "decision"))   # e.g. A9 records its decision under "status"
             if O.get("decision_states"):                            # explicit decision -> state map (registry)
                 st[O["id"]] = O["decision_states"].get(dec, f"error: unknown decision {dec!r}")
             else:                                                   # od_v2_question_a (original mapping)
