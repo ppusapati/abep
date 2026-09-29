@@ -1,0 +1,2062 @@
+{
+ "schema": "a9_lane_deliverable_v1",
+ "id": "bus_power_boundary_a9_v1",
+ "lane": "A9-02",
+ "follow_on": "fo_a9_02_bus_boundary_a9",
+ "trigger": "T_A9_02_BUS_BOUNDARY",
+ "status": "PRELIMINARY_DRAFT_FOR_OWNER",
+ "base_commit": "0a430bb5588a438f7c8485c6d16f40ed0d402c4c",
+ "date": "2026-09-29",
+ "generated_by": "docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py",
+ "regenerate": "python docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py  (check: --check)",
+ "boundary_version": "bus_power_boundary_a9_v1",
+ "historical_boundary_untouched": {
+  "path": "abep_sim/arch_boundary.py",
+  "sha256": "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae",
+  "boundary_version": "bus_power_boundary_v1"
+ },
+ "module": "abep_sim/bus_boundary_a9.py",
+ "schema_file": "schemas/interfaces/bus_power_boundary_a9_v1.json",
+ "configurations": [
+  "hall_c1_reference",
+  "hall_icp_neutralizer"
+ ],
+ "variant_options": {
+  "hall_c1_reference": [
+   "active_cooling"
+  ],
+  "hall_icp_neutralizer": [
+   "icp_assist_magnet",
+   "active_cooling"
+  ]
+ },
+ "what_this_is_not": [
+  "not a performance prediction: no thrust, discharge current, neutralizer electron current or plasma state",
+  "not an architecture selection: no winner between hall_c1_reference and hall_icp_neutralizer",
+  "not a use of any Hall transport closure (credible set empty), of abep_sim/plasma_devices.py or of the withdrawn v1.2-v1.6 numbers",
+  "not wired into archengine; goldens unaffected; bus_power_boundary_v1 unchanged",
+  "allocation checks are owner allocations, never gates or measured loads"
+ ],
+ "decision_pins": [
+  {
+   "key": "A9",
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+   "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+   "role": "governing owner decision A9"
+  },
+  {
+   "key": "ANS",
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
+   "role": "owner answers (machine-readable)"
+  },
+  {
+   "key": "PACK",
+   "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+   "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976",
+   "role": "owner decision pack (verbatim)"
+  },
+  {
+   "key": "A5",
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+   "sha256": "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
+   "role": "A5 bus-power design allocation <= 1.30-1.35 kW (immutable, context)"
+  }
+ ],
+ "pinned_inputs": [
+  {
+   "key": "V1MOD",
+   "path": "abep_sim/arch_boundary.py",
+   "sha256": "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae",
+   "role": "historical bus_power_boundary_v1 module (read only; must stay byte-identical)"
+  },
+  {
+   "key": "V1DOC",
+   "path": "docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md",
+   "sha256": "2432edb7e9095fd630585768a62a811140b5230ba035afa3f0fc168636d11ca9",
+   "role": "historical bus_power_boundary_v1 document"
+  },
+  {
+   "key": "H21",
+   "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+   "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d",
+   "role": "H2-1 verified deliverable"
+  },
+  {
+   "key": "H22",
+   "path": "docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json",
+   "sha256": "8436008ac458d4e7467a9c7c9592d5312b3912b918d584ceaf3ac8cb2745a971",
+   "role": "H2-2 verified deliverable"
+  },
+  {
+   "key": "H24",
+   "path": "docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json",
+   "sha256": "5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef",
+   "role": "H2-4 verified deliverable"
+  },
+  {
+   "key": "H27",
+   "path": "docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json",
+   "sha256": "d1813e153af37ebd45cb2ead964ead6c53c756d1a82f93ea89346a83168d0630",
+   "role": "H2-7 verified deliverable"
+  },
+  {
+   "key": "M16",
+   "path": "docs/budgets/subsystem_maturity/subsystem_maturity_v2.json",
+   "sha256": "a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c",
+   "role": "M16 v2 subsystem maturity matrix"
+  },
+  {
+   "key": "INS",
+   "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+   "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
+   "role": "instrumentation v1 (INS-02 DC metering, INS-03 RF power principle)"
+  }
+ ],
+ "items": [
+  {
+   "id": "A902-01",
+   "name": "RFP bus-power requirement (strict '<')",
+   "value": 1500.0,
+   "units": "W",
+   "basis": "requirement",
+   "source": "A9 decision requirement_discipline; docs/decisions/OD_2026_09_29_owner_answers_147.json row 108; RFP '< 1.5 kW' as recorded (official RFP not yet obtained, rows 1-3: verify)",
+   "evidence_class": "requirement-as-recorded",
+   "status": "REQUIREMENT_AS_RECORDED",
+   "freeze_point": "NOW",
+   "note": "gate at the spacecraft-DC propulsion boundary; no discharge-only or RF-generator-only claim is sufficient"
+  },
+  {
+   "id": "A902-02",
+   "name": "gate scope: steady state AND start-up transients",
+   "value": "applies to both",
+   "units": "-",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 108",
+   "evidence_class": "n/a (rule)",
+   "status": "ADOPTED",
+   "freeze_point": "NOW",
+   "note": "unless the official RFP explicitly permits a transient exception"
+  },
+  {
+   "id": "A902-03",
+   "name": "averaging window / bandwidth defining 'start-up transient' power for the gate",
+   "value": "TBD",
+   "units": "s",
+   "basis": "pending",
+   "source": "TBD - requires owner decision OQ-A902-01 (H2-4 H24-37 left it TBD)",
+   "evidence_class": "TBD",
+   "status": "OPEN",
+   "freeze_point": "LOCK-1",
+   "note": "until frozen, rfp_power_gate gives a start-up step PASS only when its ledger is declared power_basis='peak_sampled' (otherwise NOT_EVALUABLE) and always reports transient_window_frozen=False"
+  },
+  {
+   "id": "A902-04",
+   "name": "internal design allocation (ICP must fit inside it)",
+   "value": 1350.0,
+   "units": "W",
+   "basis": "allocation",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 109 ('~1.35 kW'; do not plan to consume the 1.35 -> 1.5 kW margin nominally)",
+   "evidence_class": "owner-allocation",
+   "status": "ALLOCATION (not a prediction, not a gate)",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "A902-05",
+   "name": "A5 bus-power design allocation range (context)",
+   "value": [
+    1300.0,
+    1350.0
+   ],
+   "units": "W",
+   "basis": "allocation",
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json :: allocations_and_requirements '<= 1.30-1.35 kW'",
+   "evidence_class": "owner-allocation",
+   "status": "CONTEXT (immutable A5)",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "A902-06",
+   "name": "allocation-to-requirement margin (not consumed nominally)",
+   "value": 150.0,
+   "units": "W",
+   "basis": "derived",
+   "source": "docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py :: build(): A902-01 - A902-04",
+   "evidence_class": "model-derived",
+   "status": "DERIVED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "A902-07",
+   "name": "common allocation (upper design allocation, incl. controls/thermal)",
+   "value": 300.0,
+   "units": "W",
+   "basis": "allocation",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 114",
+   "evidence_class": "owner-allocation",
+   "status": "ALLOCATION (not a measured load)",
+   "freeze_point": "NOW",
+   "note": "composition of the common group in A9 is PROPOSED (OQ-A902-02)"
+  },
+  {
+   "id": "A902-08",
+   "name": "controls/thermal allowance inside the common allocation",
+   "value": 50.0,
+   "units": "W",
+   "basis": "allocation",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 114",
+   "evidence_class": "owner-allocation",
+   "status": "ALLOCATION",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "A902-09",
+   "name": "common allocation left for the feed-side common slots",
+   "value": 250.0,
+   "units": "W",
+   "basis": "derived",
+   "source": "docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py :: build(): A902-07 - A902-08",
+   "evidence_class": "model-derived",
+   "status": "DERIVED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "A902-10",
+   "name": "design allocation left for Hall + electron-source + reserved-port slots if the common group uses its full allocation",
+   "value": 1050.0,
+   "units": "W",
+   "basis": "derived",
+   "source": "docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py :: build(): A902-04 - A902-07",
+   "evidence_class": "model-derived",
+   "status": "DERIVED (allocation arithmetic, not a prediction)",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "A902-11",
+   "name": "regulated internal propulsion bus (breadboard / PPU architecture)",
+   "value": 100.0,
+   "units": "V",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 111 (not an RFP spacecraft interface requirement)",
+   "evidence_class": "owner-allocation",
+   "status": "ADOPTED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "A902-12",
+   "name": "spacecraft input voltage at the front end",
+   "value": "TBD",
+   "units": "V",
+   "basis": "pending",
+   "source": "TBD - requires the actual spacecraft bus specification (front end configurable, row 111)",
+   "evidence_class": "TBD",
+   "status": "OPEN",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "A902-13",
+   "name": "front-end efficiency (spacecraft input -> 100 V internal bus)",
+   "value": "TBD",
+   "units": "-",
+   "basis": "pending",
+   "source": "TBD - requires a measured breadboard front end or converter data at the selected input and 100 V output",
+   "evidence_class": "TBD",
+   "status": "OPEN",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "A902-14",
+   "name": "upper bound of internal-bus current at the design allocation (eta_front_end <= 1)",
+   "value": 13.5,
+   "units": "A",
+   "basis": "derived",
+   "source": "docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py :: build(): A902-04 / A902-11",
+   "evidence_class": "model-derived",
+   "status": "DERIVED (harness sizing input)",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "A902-15",
+   "name": "upper bound of internal-bus current at the requirement (eta_front_end <= 1)",
+   "value": 15.0,
+   "units": "A",
+   "basis": "derived",
+   "source": "docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py :: build(): A902-01 / A902-11",
+   "evidence_class": "model-derived",
+   "status": "DERIVED (protection sizing input)",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "A902-16",
+   "name": "ICP RF frequency",
+   "value": 13560000.0,
+   "units": "Hz",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 72; A9 decision primary_hypothesis",
+   "evidence_class": "owner-allocation",
+   "status": "ADOPTED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "A902-17",
+   "name": "laboratory RF source / inline chain forward-power range (GROUND/FACILITY-ONLY)",
+   "value": [
+    0.0,
+    500.0
+   ],
+   "units": "W",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 72",
+   "evidence_class": "owner-allocation",
+   "status": "ADOPTED (lab sizing; not a flight allocation, not a prediction)",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "A902-18",
+   "name": "RF power measurement method",
+   "value": "directional coupler forward/reflected primary; calorimetry independent cross-check",
+   "units": "-",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 72",
+   "evidence_class": "n/a (rule)",
+   "status": "ADOPTED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "A902-19",
+   "name": "RF quantity crossing the bus boundary",
+   "value": "generator DC input only",
+   "units": "-",
+   "basis": "definition",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 66; docs/decisions/OD_2026_09_29_owner_answers_147.json row 72; A9 requirement_discipline",
+   "evidence_class": "n/a (rule)",
+   "status": "ADOPTED",
+   "freeze_point": "NOW",
+   "note": "forward/reflected/delivered RF power are measurement quantities (rf_power_planes)"
+  },
+  {
+   "id": "A902-20",
+   "name": "ICP electron-source sub-allocation inside A902-10",
+   "value": "TBD",
+   "units": "W",
+   "basis": "pending",
+   "source": "TBD - owner call OQ-A902-03 (A8/v2 'rf <= 700 W' is a parallel-branch number and is not carried)",
+   "evidence_class": "TBD",
+   "status": "OPEN",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "A902-21",
+   "name": "RF generator DC-input -> forward-power efficiency",
+   "value": "TBD",
+   "units": "-",
+   "basis": "pending",
+   "source": "TBD - requires S1a measurement (generator DC input metered + coupler forward power); H2-4 H24-14 was a pre-ionizer chain analog and is not reused",
+   "evidence_class": "TBD",
+   "status": "OPEN",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "A902-22",
+   "name": "matching-network DC draw (tuning actuators / controller)",
+   "value": "TBD",
+   "units": "W",
+   "basis": "pending",
+   "source": "PENDING docs/interfaces/icp_neutralizer/ (fixed vs auto-tuned match)",
+   "evidence_class": "TBD",
+   "status": "OPEN",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "A902-23",
+   "name": "collector/bias supply V and I range",
+   "value": "TBD",
+   "units": "V / A",
+   "basis": "pending",
+   "source": "PENDING docs/interfaces/icp_neutralizer/ (electron-extraction collector bias, floating body row 70)",
+   "evidence_class": "TBD",
+   "status": "OPEN",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "A902-24",
+   "name": "ICP gas-feed valve/controller power and feed species",
+   "value": "TBD",
+   "units": "W",
+   "basis": "pending",
+   "source": "TBD - A9 recorder flag row 46 (ICP gas feed not yet booked); PENDING docs/interfaces/icp_neutralizer/",
+   "evidence_class": "TBD",
+   "status": "OPEN",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "A902-25",
+   "name": "C1 keeper pulsed ignition capability (current-limited; interlocks; pulse energy recorded)",
+   "value": [
+    300.0,
+    600.0
+   ],
+   "units": "V",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 89; H2-2 H22-22 [300.0, 600.0] V (measured)",
+   "evidence_class": "owner-allocation",
+   "status": "ADOPTED (capability, not a load)",
+   "freeze_point": "NOW",
+   "note": "its bus power is a start-up transient of slot c1_keeper, value TBD - requires measured peak draw (covered only by a peak_sampled step) and recorded pulse energy (a measurement record, PENDING A9-04; the ledger has no pulse-energy field); H2-4 H24-19 (DC ignition 10-30 W bracket) does not cover it"
+  },
+  {
+   "id": "A902-26",
+   "name": "C1 heater power during preheat",
+   "value": "TBD",
+   "units": "W",
+   "basis": "pending",
+   "source": "TBD - requires the C1 unit selection; analog envelope only: H2-2 H22-16 [45.0, 400.0] W (measured analog, not a C1 value)",
+   "evidence_class": "TBD",
+   "status": "OPEN",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "A902-27",
+   "name": "C1 heater power in steady state",
+   "value": "TBD",
+   "units": "W",
+   "basis": "pending",
+   "source": "TBD - H2-2 H22-17: '0 W if C-1 self-heats at the lowest H-1 operating I_d; otherwise the maintained ...' (conditional on self-heating)",
+   "evidence_class": "TBD",
+   "status": "OPEN",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "A902-28",
+   "name": "C1 cathode-common / bleeder tie",
+   "value": "TBD",
+   "units": "ohm / W",
+   "basis": "pending",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 91: isolated selectable topology with V/I measurement; value chosen after EMC/stability bench tests",
+   "evidence_class": "TBD",
+   "status": "OPEN",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "A902-29",
+   "name": "filter/getter load (C1/Xe branch only)",
+   "value": "TBD",
+   "units": "W",
+   "basis": "pending",
+   "source": "TBD - requires vendor/spec verification (docs/decisions/OD_2026_09_29_owner_answers_147.json row 51: '<= 17 W-class' only after verification)",
+   "evidence_class": "TBD",
+   "status": "OPEN",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "A902-30",
+   "name": "compressor bus draw",
+   "value": "TBD",
+   "units": "W",
+   "basis": "pending",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 22: PARTIAL_BOUNDARY until measured / supplied by ICD; PENDING docs/hardware/h2/h2_3_gas_path_plenum/",
+   "evidence_class": "TBD",
+   "status": "PARTIAL_BOUNDARY",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "A902-31",
+   "name": "Hall magnet supplies: one slot per coil (inner, outer, trim)",
+   "value": "inner, outer, trim (3), current-controlled, current recorded per reading",
+   "units": "-",
+   "basis": "H2-1",
+   "source": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json :: H21-27 (assumed (requirement))",
+   "evidence_class": "n/a (rule)",
+   "status": "ADOPTED",
+   "freeze_point": "NOW",
+   "note": "H2-1 H21-18 coil power (inner + outer, trim excluded) [1.289, 86.24] W (model-derived) is cited, never used as a default; revision pending (rows 77, 78; A9-07)"
+  },
+  {
+   "id": "A902-32",
+   "name": "Hall discharge load",
+   "value": "TBD",
+   "units": "W",
+   "basis": "pending",
+   "source": "TBD - requires measured V_d x I_d on H-1 (no Hall transport closure is admitted; no prediction)",
+   "evidence_class": "TBD",
+   "status": "OPEN",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "A902-33",
+   "name": "ICP assist magnet",
+   "value": "not installed in the first build",
+   "units": "W",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 69: unmagnetized first build; a magnetic variant is a new controlled variant with booked power/mass",
+   "evidence_class": "n/a (rule)",
+   "status": "ADOPTED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "A902-34",
+   "name": "active cooling load",
+   "value": "TBD",
+   "units": "W",
+   "basis": "pending",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 66: slot present only in a declared variant; context docs/decisions/OD_2026_09_29_owner_answers_147.json row 86 (>= 50 K margin, +20 % heat load); PENDING docs/hardware/h2/h2_5_thermal_network/",
+   "evidence_class": "TBD",
+   "status": "OPEN",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "A902-35",
+   "name": "supply efficiencies (internal bus -> load plane), one per slot",
+   "value": "TBD",
+   "units": "-",
+   "basis": "pending",
+   "source": "explicit ledger inputs with evidence class. H2-4 candidate evidence: H24-05 is digitized at 25-34 V input (needs re-basing to the 100 V internal bus); H24-06..H24-11 are S-OSUGA05 (IEPC-2005-114) analogs on a regulated 100 V +/- 3 V bus (bus voltage matches) but for a 200 mN / 3 kW-class PPU and mostly minimum-efficiency specifications, so transfer to A9 load levels is not established (see h2_4_revision_flags)",
+   "evidence_class": "TBD",
+   "status": "OPEN",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "A902-36",
+   "name": "P_bus measurement-chain uncertainty (DC channels + RF planes)",
+   "value": "TBD",
+   "units": "relative",
+   "basis": "pending",
+   "source": "PENDING docs/experiments/hall_icp/uncertainty_budget/; historical INS-02 numbers are not carried (row 18)",
+   "evidence_class": "TBD",
+   "status": "OPEN",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "A902-37",
+   "name": "C1 ignition-flow dwell cap in the start-up sequence",
+   "value": "120 s per attempt, at most two retries",
+   "units": "s",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 93 (preliminary; final bound frozen before score-bearing C1 testing)",
+   "evidence_class": "owner-allocation",
+   "status": "ADOPTED (preliminary)",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "A902-38",
+   "name": "reserved DC port",
+   "value": "stated explicitly per step (0 W when unused)",
+   "units": "W",
+   "basis": "definition",
+   "source": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 110; PROPOSED: any use must fit inside A902-10",
+   "evidence_class": "n/a (rule)",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  }
+ ],
+ "slots": [
+  {
+   "slot": "hall_discharge",
+   "group": "hall",
+   "load_plane": "anode-cathode(-common) terminals at H-1, V_d x I_d time-averaged; discharge supply fed from the internal bus",
+   "rows": [
+    110
+   ],
+   "common_allocation": false,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "INSTALLED",
+    "hall_icp_neutralizer": "INSTALLED"
+   }
+  },
+  {
+   "slot": "hall_magnet_inner",
+   "group": "hall",
+   "load_plane": "inner-coil terminals (I^2 R), current-controlled supply per coil (H2-1 H21-27)",
+   "rows": [
+    110
+   ],
+   "common_allocation": false,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "INSTALLED",
+    "hall_icp_neutralizer": "INSTALLED"
+   }
+  },
+  {
+   "slot": "hall_magnet_outer",
+   "group": "hall",
+   "load_plane": "outer-coil terminals (I^2 R), current-controlled supply per coil (H2-1 H21-27)",
+   "rows": [
+    110
+   ],
+   "common_allocation": false,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "INSTALLED",
+    "hall_icp_neutralizer": "INSTALLED"
+   }
+  },
+  {
+   "slot": "hall_magnet_trim",
+   "group": "hall",
+   "load_plane": "trim-coil terminals (I^2 R), current-controlled supply per coil (H2-1 H21-27); passed as 0 W explicitly when the trim coil is unpowered",
+   "rows": [
+    110
+   ],
+   "common_allocation": false,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "INSTALLED",
+    "hall_icp_neutralizer": "INSTALLED"
+   }
+  },
+  {
+   "slot": "c1_heater",
+   "group": "c1",
+   "load_plane": "C1 heater terminals in the evaluated step; reduced/disabled only after keeper/discharge are stable per cathode procedure (row 112)",
+   "rows": [
+    110,
+    112
+   ],
+   "common_allocation": false,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "INSTALLED",
+    "hall_icp_neutralizer": "NOT_INSTALLED"
+   }
+  },
+  {
+   "slot": "c1_keeper",
+   "group": "c1",
+   "load_plane": "C1 keeper terminals; includes the current-limited pulsed ignition (300-600 V class, row 89) as a start-up transient: its instantaneous peak is only covered by a step declared peak_sampled; the pulse energy (row 89 'recorded pulse energy') is a measurement record of the power measurement chain (PENDING A9-04), not a ledger field",
+   "rows": [
+    89,
+    110
+   ],
+   "common_allocation": false,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "INSTALLED",
+    "hall_icp_neutralizer": "NOT_INSTALLED"
+   }
+  },
+  {
+   "slot": "c1_common_tie",
+   "group": "c1",
+   "load_plane": "DC bus draw of the isolated, selectable cathode-common/bleeder network (selector, active bias if selected, V/I measurement); the passively dissipated V x I across the tie is a measured diagnostic supplied by the discharge circuit and is NOT added again (value TBD, row 91)",
+   "rows": [
+    91
+   ],
+   "common_allocation": false,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "INSTALLED",
+    "hall_icp_neutralizer": "NOT_INSTALLED"
+   }
+  },
+  {
+   "slot": "filter_getter",
+   "group": "c1",
+   "load_plane": "Xe cathode-line filter/getter heater terminals (<= 17 W class only after vendor/spec verification, row 51); C1/Xe branch only",
+   "rows": [
+    51
+   ],
+   "common_allocation": true,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "INSTALLED",
+    "hall_icp_neutralizer": "NOT_INSTALLED"
+   }
+  },
+  {
+   "slot": "icp_rf_source",
+   "group": "icp",
+   "load_plane": "13.56 MHz RF generator DC input terminals (the only RF-chain quantity crossing the bus boundary); forward/reflected/delivered RF power are measurement quantities",
+   "rows": [
+    66,
+    72,
+    110
+   ],
+   "common_allocation": false,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "NOT_INSTALLED",
+    "hall_icp_neutralizer": "INSTALLED"
+   }
+  },
+  {
+   "slot": "icp_matching_network",
+   "group": "icp",
+   "load_plane": "DC input of the matching network's tuning actuators/controller (0 W explicit for a fixed passive match); RF loss inside the network is an RF-plane measurement quantity",
+   "rows": [
+    66,
+    110
+   ],
+   "common_allocation": false,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "NOT_INSTALLED",
+    "hall_icp_neutralizer": "INSTALLED"
+   }
+  },
+  {
+   "slot": "icp_collector_bias",
+   "group": "icp",
+   "load_plane": "electron-extraction collector/bias supply output (V_bias x I_collector); ICP body floating unless the validated circuit requires otherwise (row 70)",
+   "rows": [
+    70,
+    110
+   ],
+   "common_allocation": false,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "NOT_INSTALLED",
+    "hall_icp_neutralizer": "INSTALLED"
+   }
+  },
+  {
+   "slot": "icp_assist_magnet",
+   "group": "variant",
+   "load_plane": "ICP assist-magnet coil terminals; present only in a declared variant (first build is unmagnetized, row 69)",
+   "rows": [
+    66,
+    69
+   ],
+   "common_allocation": false,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "NOT_INSTALLED",
+    "hall_icp_neutralizer": "VARIANT_ONLY"
+   }
+  },
+  {
+   "slot": "active_cooling",
+   "group": "variant",
+   "load_plane": "active cooling hardware (pump/fan/TEC) terminals; present only in a declared variant",
+   "rows": [
+    66
+   ],
+   "common_allocation": false,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "VARIANT_ONLY",
+    "hall_icp_neutralizer": "VARIANT_ONLY"
+   }
+  },
+  {
+   "slot": "flow_control_atmospheric",
+   "group": "common",
+   "load_plane": "atmospheric-path metering/isolation valve driver outputs",
+   "rows": [
+    110
+   ],
+   "common_allocation": true,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "INSTALLED",
+    "hall_icp_neutralizer": "INSTALLED"
+   }
+  },
+  {
+   "slot": "flow_control_xe",
+   "group": "common",
+   "load_plane": "Xe-path valve/flow-controller driver outputs (incl. the two series isolation valves, row 90)",
+   "rows": [
+    90,
+    110
+   ],
+   "common_allocation": true,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "INSTALLED",
+    "hall_icp_neutralizer": "INSTALLED"
+   }
+  },
+  {
+   "slot": "flow_control_icp_feed",
+   "group": "icp",
+   "load_plane": "ICP gas-feed valve/flow-controller driver outputs (gas species and source not yet booked, A9 recorder flag row 46)",
+   "rows": [
+    46
+   ],
+   "common_allocation": true,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "NOT_INSTALLED",
+    "hall_icp_neutralizer": "INSTALLED"
+   }
+  },
+  {
+   "slot": "compressor",
+   "group": "common",
+   "load_plane": "compressor motor-drive electrical input; TBD gives PARTIAL_BOUNDARY until the ICD supplies it (row 22)",
+   "rows": [
+    22
+   ],
+   "common_allocation": true,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "INSTALLED",
+    "hall_icp_neutralizer": "INSTALLED"
+   }
+  },
+  {
+   "slot": "thermal_control",
+   "group": "common",
+   "load_plane": "propulsion-subsystem heaters / active thermal control terminals in the evaluated step",
+   "rows": [
+    114
+   ],
+   "common_allocation": true,
+   "controls_thermal": true,
+   "configurations": {
+    "hall_c1_reference": "INSTALLED",
+    "hall_icp_neutralizer": "INSTALLED"
+   }
+  },
+  {
+   "slot": "housekeeping_controls",
+   "group": "common",
+   "load_plane": "propulsion controller, PPU control electronics, sensors, telemetry/command interface, AND the explicitly booked no-load/quiescent draw of energised-but-idle supplies and of the front end (the per-slot P/eta model gives 0 W for a 0 W output)",
+   "rows": [
+    114
+   ],
+   "common_allocation": true,
+   "controls_thermal": true,
+   "configurations": {
+    "hall_c1_reference": "INSTALLED",
+    "hall_icp_neutralizer": "INSTALLED"
+   }
+  },
+  {
+   "slot": "reserved_dc_port",
+   "group": "reserved",
+   "load_plane": "reserved DC port output; stated explicitly (0 W when unused)",
+   "rows": [
+    110
+   ],
+   "common_allocation": false,
+   "controls_thermal": false,
+   "configurations": {
+    "hall_c1_reference": "INSTALLED",
+    "hall_icp_neutralizer": "INSTALLED"
+   }
+  }
+ ],
+ "rf_power_planes": [
+  {
+   "plane": "generator_dc_input",
+   "crosses_bus_boundary": true,
+   "role": "ledger load of slot icp_rf_source",
+   "measured_by": "DC channel (4-wire V + shunt / zero-flux CT) at the generator input",
+   "row": 72
+  },
+  {
+   "plane": "forward",
+   "crosses_bus_boundary": false,
+   "role": "measurement quantity",
+   "measured_by": "directional coupler forward sensor (primary)",
+   "row": 72
+  },
+  {
+   "plane": "reflected",
+   "crosses_bus_boundary": false,
+   "role": "measurement quantity",
+   "measured_by": "directional coupler reflected sensor (primary)",
+   "row": 72
+  },
+  {
+   "plane": "delivered_to_load",
+   "crosses_bus_boundary": false,
+   "role": "measurement quantity (<= forward - reflected)",
+   "measured_by": "calorimetry independent cross-check (not the sole primary measurement)",
+   "row": 72
+  }
+ ],
+ "bus_architecture": {
+  "spacecraft_input": "configurable front end (voltage TBD, A902-12); P_bus is measured/booked here",
+  "internal_bus": "regulated 100 V propulsion bus (breadboard/PPU, row 111)",
+  "ledger_rule": "P_bus = sum over installed slots of P_W / (eta_slot x eta_front_end) (internal_bus path) or P_W / eta_slot (direct path); every value explicit with evidence class",
+  "statuses": [
+   "COMPLETE",
+   "PARTIAL_BOUNDARY",
+   "INCOMPLETE_EVIDENCE"
+  ],
+  "status_taxonomy": "PARTIAL_BOUNDARY whenever the compressor LOAD is TBD (row 22; takes precedence); INCOMPLETE_EVIDENCE for any other TBD, including a known compressor load with a TBD efficiency or a TBD front-end efficiency; COMPLETE otherwise",
+  "power_basis": "each ledger declares what its step values represent: steady_state, step_average, peak_sampled or unstated (None)",
+  "no_load_losses": "excluded from the per-slot P_W/eta model (a 0 W output draws exactly 0 W); the no-load/quiescent draw of energised-but-idle supplies and of the front end must be booked explicitly in housekeeping_controls",
+  "residual_check": "bookkeeping identity sum(P_W + P_loss) - sum(P_bus); catches floating-point error only; an independent closure needs measured spacecraft-side bus V and I",
+  "not_installed_rule": "a slot not installed in the configuration/variant is omitted or exactly 0 W at efficiency 1, as full records (evidence_class + source, schema parity); anything else raises (matched shams carry no power)"
+ },
+ "gates_and_allocations": {
+  "rfp_gate": {
+   "limit_W": 1500.0,
+   "strict": true,
+   "applies_to": [
+    "steady",
+    "startup"
+   ],
+   "verdicts": [
+    "PASS",
+    "FAIL",
+    "NOT_EVALUABLE"
+   ],
+   "row": 108,
+   "transient_window": {
+    "status": "TBD",
+    "item": "A902-03",
+    "owner_question": "OQ-A902-01",
+    "freeze_point": "LOCK-1",
+    "rule": "a start-up step PASSes only if declared peak_sampled; the sampling bandwidth that makes 'peak_sampled' meaningful is frozen at LOCK-2 (PROPOSED, OQ-A902-01)"
+   },
+   "startup_pass_requires_power_basis": "peak_sampled"
+  },
+  "design_allocation": {
+   "limit_W": 1350.0,
+   "row": 109,
+   "kind": "owner allocation"
+  },
+  "common_allocation": {
+   "limit_W": 300.0,
+   "controls_thermal_allowance_W": 50.0,
+   "row": 114,
+   "kind": "owner allocation (upper design allocation)"
+  }
+ },
+ "sequencing": {
+  "rule_source": "row 112 (revised SEQ-1) and row 108 (transient gate)",
+  "peak_events": {
+   "compressor_spinup": "compressor",
+   "c1_heater_preheat": "c1_heater",
+   "c1_keeper_ignition": "c1_keeper",
+   "magnet_ramp": "hall_magnet_inner",
+   "icp_rf_ignition": "icp_rf_source",
+   "icp_collector_bias_on": "icp_collector_bias",
+   "hall_discharge_ignition": "hall_discharge",
+   "active_cooling_start": "active_cooling"
+  },
+  "enforced_order": {
+   "hall_c1_reference": [
+    [
+     "c1_heater_preheat",
+     "c1_keeper_ignition"
+    ],
+    [
+     "c1_keeper_ignition",
+     "hall_discharge_ignition"
+    ],
+    [
+     "magnet_ramp",
+     "hall_discharge_ignition"
+    ]
+   ],
+   "hall_icp_neutralizer": [
+    [
+     "icp_rf_ignition",
+     "icp_collector_bias_on"
+    ],
+    [
+     "icp_rf_ignition",
+     "hall_discharge_ignition"
+    ],
+    [
+     "magnet_ramp",
+     "hall_discharge_ignition"
+    ]
+   ]
+  },
+  "rules": [
+   "at most one peak-class event per step (PROPOSED reading of 'avoid simultaneous peaks')",
+   "at most one peak-class slot (active_cooling, c1_heater, c1_keeper, compressor, hall_discharge, hall_magnet_inner, icp_collector_bias, icp_rf_source) whose load rises in a step, checked on the step loads independently of event labels (PROPOSED; a TBD transition that may rise gives RULES_NOT_EVALUABLE)",
+   "C1 heater reduced/disabled only in a step flagged keeper_stable and discharge_stable; a TBD heater counts as ON with unknown power (OFF = exactly 0 W); the last known value is kept across TBD steps; an unclassifiable change gives RULES_NOT_EVALUABLE",
+   "sequence_status: SEQUENCE_RULE_VIOLATION > RULES_NOT_EVALUABLE > RULES_SATISFIED",
+   "a start-up step PASSes the transient gate only when declared power_basis='peak_sampled' (averaging window TBD, A902-03)",
+   "hall_icp_neutralizer has no c1_heater slot (no thermionic heater)",
+   "the last step is the steady step; the gate is applied to it and to every earlier step"
+  ],
+  "templates_PROPOSED": {
+   "hall_c1_reference": [
+    {
+     "step_id": "C-S0",
+     "name": "standby",
+     "event": null,
+     "on": [
+      "housekeeping_controls",
+      "thermal_control"
+     ]
+    },
+    {
+     "step_id": "C-S1",
+     "name": "compressor spin-up / plenum fill",
+     "event": "compressor_spinup",
+     "on": [
+      "compressor",
+      "flow_control_atmospheric"
+     ]
+    },
+    {
+     "step_id": "C-S2",
+     "name": "C1 Xe purge + heater preheat (Xe booked, row 42; dwell cap row 93)",
+     "event": "c1_heater_preheat",
+     "on": [
+      "flow_control_xe",
+      "filter_getter",
+      "c1_heater"
+     ]
+    },
+    {
+     "step_id": "C-S3",
+     "name": "magnet ramp to setpoint",
+     "event": "magnet_ramp",
+     "on": [
+      "hall_magnet_inner",
+      "hall_magnet_outer",
+      "hall_magnet_trim"
+     ]
+    },
+    {
+     "step_id": "C-S4",
+     "name": "keeper ignition (pulsed 300-600 V class, <= 120 s x 2 retries dwell, row 93)",
+     "event": "c1_keeper_ignition",
+     "on": [
+      "c1_keeper",
+      "c1_common_tie"
+     ]
+    },
+    {
+     "step_id": "C-S5",
+     "name": "Hall discharge ignition (heater still on)",
+     "event": "hall_discharge_ignition",
+     "on": [
+      "hall_discharge"
+     ]
+    },
+    {
+     "step_id": "C-S6",
+     "name": "keeper/discharge stable -> heater reduced/disabled per cathode procedure",
+     "event": null,
+     "on": [],
+     "requires_flags": [
+      "keeper_stable",
+      "discharge_stable"
+     ]
+    },
+    {
+     "step_id": "C-S7",
+     "name": "steady",
+     "event": null,
+     "on": [],
+     "phase": "steady"
+    }
+   ],
+   "hall_icp_neutralizer": [
+    {
+     "step_id": "I-S0",
+     "name": "standby",
+     "event": null,
+     "on": [
+      "housekeeping_controls",
+      "thermal_control"
+     ]
+    },
+    {
+     "step_id": "I-S1",
+     "name": "compressor spin-up / plenum fill",
+     "event": "compressor_spinup",
+     "on": [
+      "compressor",
+      "flow_control_atmospheric"
+     ]
+    },
+    {
+     "step_id": "I-S2",
+     "name": "magnet ramp to setpoint",
+     "event": "magnet_ramp",
+     "on": [
+      "hall_magnet_inner",
+      "hall_magnet_outer",
+      "hall_magnet_trim"
+     ]
+    },
+    {
+     "step_id": "I-S3",
+     "name": "ICP gas feed + RF ignition (no thermionic heater)",
+     "event": "icp_rf_ignition",
+     "on": [
+      "flow_control_icp_feed",
+      "icp_matching_network",
+      "icp_rf_source"
+     ]
+    },
+    {
+     "step_id": "I-S4",
+     "name": "collector/bias on (electron extraction)",
+     "event": "icp_collector_bias_on",
+     "on": [
+      "icp_collector_bias"
+     ]
+    },
+    {
+     "step_id": "I-S5",
+     "name": "Hall discharge ignition with ICP electrons (row 24)",
+     "event": "hall_discharge_ignition",
+     "on": [
+      "hall_discharge"
+     ]
+    },
+    {
+     "step_id": "I-S6",
+     "name": "steady",
+     "event": null,
+     "on": [],
+     "phase": "steady"
+    }
+   ]
+  },
+  "note": "templates carry no power numbers; all step loads are caller inputs (TBD until measured)"
+ },
+ "interface_demands": [
+  {
+   "from": "A9-02",
+   "to": "A9-01",
+   "quantity": "P_bus decision quantity per configuration and the gate rule (steady + start-up, strict < 1500 W); allocation checks labelled owner allocations",
+   "value": "rfp_power_gate / allocation_checks",
+   "units": "W",
+   "status": "PRELIMINARY"
+  },
+  {
+   "from": "A9-01",
+   "to": "A9-02",
+   "quantity": "stage map: which stages evaluate the full-boundary gate; LOCK-1 freeze of the transient averaging window",
+   "value": null,
+   "units": "-",
+   "status": "PENDING docs/experiments/hall_icp/prereg_framework/"
+  },
+  {
+   "from": "A9-02",
+   "to": "A9-03",
+   "quantity": "ICP supply interface: generator DC input plane, RF feed plane, matching-network DC port, collector/bias supply port (floating body), separate RF return, ICP feed valve driver",
+   "value": "slots icp_rf_source / icp_matching_network / icp_collector_bias / flow_control_icp_feed",
+   "units": "W / V / A",
+   "status": "PRELIMINARY"
+  },
+  {
+   "from": "A9-03",
+   "to": "A9-02",
+   "quantity": "generator DC input vs forward power, matching type (fixed/auto) and its DC draw, collector bias V/I range, assist magnet (none in first build), cooling (passive/active)",
+   "value": null,
+   "units": "W / V / A",
+   "status": "PENDING docs/interfaces/icp_neutralizer/"
+  },
+  {
+   "from": "A9-02",
+   "to": "A9-04",
+   "quantity": "measurement chains to budget: one DC channel per installed slot + spacecraft-side front-end input; RF planes (coupler forward/reflected primary, calorimetry cross-check)",
+   "value": "rf_planes; slot list",
+   "units": "W",
+   "status": "PRELIMINARY"
+  },
+  {
+   "from": "A9-04",
+   "to": "A9-02",
+   "quantity": "u(P_bus) per slot and total; stop rules touching power",
+   "value": null,
+   "units": "relative",
+   "status": "PENDING docs/experiments/hall_icp/uncertainty_budget/"
+  },
+  {
+   "from": "A9-02",
+   "to": "A9-05",
+   "quantity": "plane definitions for forward/reflected/absorbed power and collector potential (row 145)",
+   "value": "rf_planes",
+   "units": "W / V",
+   "status": "PRELIMINARY"
+  },
+  {
+   "from": "A9-05",
+   "to": "A9-02",
+   "quantity": "published analog RF power/generator arrangement (Takahashi 2024) with page/figure provenance (published analog only)",
+   "value": null,
+   "units": "W",
+   "status": "PENDING docs/experiments/hall_icp/validation_inputs/ (+ docs/evidence/icp_neutralizer/)"
+  },
+  {
+   "from": "A9-02",
+   "to": "H2-4",
+   "quantity": "supply partition revision (per-coil magnets, ICP RF source/matching, collector/bias, C1 heater/keeper reference supplies, flow/valve/housekeeping, reserved DC); 100 V internal bus; revision flags",
+   "value": "h2_4_revision_flags",
+   "units": "-",
+   "status": "PRELIMINARY"
+  },
+  {
+   "from": "H2-4",
+   "to": "A9-02",
+   "quantity": "revised converter efficiencies on the 100 V internal bus; front-end topology",
+   "value": null,
+   "units": "-",
+   "status": "PENDING docs/hardware/h2/h2_4_ppu_bus/ (revision under A9-07)"
+  },
+  {
+   "from": "A9-02",
+   "to": "H2-7",
+   "quantity": "PPU/RF electronics mass lines: Hall PPU (v0 allocation 2.5 kg), RF generator/matching (1.5 kg), controls/harness (1.0 kg) [row 54 allocations, not CBEs]; new lines: collector/bias supply, front-end converter, C1 reference supplies, filter/getter",
+   "value": {
+    "hall_ppu_kg": 2.5,
+    "rf_generator_matching_kg": 1.5,
+    "controls_harness_kg": 1.0
+   },
+   "units": "kg",
+   "status": "OWNER_ALLOCATION (row 54; recorder flag on PPU vs 6.1 kg analog)"
+  },
+  {
+   "from": "A9-02",
+   "to": "H2-7",
+   "quantity": "ICP neutralizer SOURCE-HEAD hardware allocation (not electronics; context for the same wet-mass ledger, row 5): ICP neutralizer 2.0 kg [row 54 allocation, not a CBE]",
+   "value": {
+    "icp_neutralizer_kg": 2.0
+   },
+   "units": "kg",
+   "status": "OWNER_ALLOCATION (row 54)"
+  },
+  {
+   "from": "H2-7",
+   "to": "A9-02",
+   "quantity": "electronics CBE masses",
+   "value": null,
+   "units": "kg",
+   "status": "PENDING docs/hardware/h2/h2_7_mechanical_bom/; PENDING A9-06 mass BOM amendment (path not yet assigned)"
+  },
+  {
+   "from": "H2-1",
+   "to": "A9-02",
+   "quantity": "coil V/I/P per coil at setpoint (hot), trim use",
+   "value": null,
+   "units": "V / A / W",
+   "status": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (revision under A9-07)"
+  },
+  {
+   "from": "H2-2",
+   "to": "A9-02",
+   "quantity": "C1 heater V/I/P and preheat duration; keeper ignition pulse energy; steady keeper policy; common-tie topology",
+   "value": null,
+   "units": "V / A / W / J",
+   "status": "PENDING docs/hardware/h2/h2_2_cathode_integration/"
+  },
+  {
+   "from": "A9-02",
+   "to": "H2-3",
+   "quantity": "compressor slot is PARTIAL_BOUNDARY until its bus draw is supplied; valve slots incl. two series Xe isolation valves and the ICP feed valve; discharge-supply isolation vs the 350 V / ~1 kV gas isolator (row 105)",
+   "value": null,
+   "units": "W / V",
+   "status": "PRELIMINARY"
+  },
+  {
+   "from": "H2-3",
+   "to": "A9-02",
+   "quantity": "compressor motor-drive input power (steady, spin-up); valve coil powers",
+   "value": null,
+   "units": "W",
+   "status": "PENDING docs/hardware/h2/h2_3_gas_path_plenum/"
+  },
+  {
+   "from": "A9-02",
+   "to": "H2-5",
+   "quantity": "PPU + RF generator dissipation = sum of per-slot P_loss (from the ledger when complete)",
+   "value": null,
+   "units": "W",
+   "status": "PRELIMINARY"
+  },
+  {
+   "from": "H2-5",
+   "to": "A9-02",
+   "quantity": "thermal_control load per step; need for active cooling (>= 50 K rule, row 86)",
+   "value": null,
+   "units": "W",
+   "status": "PENDING docs/hardware/h2/h2_5_thermal_network/"
+  },
+  {
+   "from": "A9-02",
+   "to": "H2-6",
+   "quantity": "metering channel per slot; ICP telemetry (row 130)",
+   "value": null,
+   "units": "-",
+   "status": "PRELIMINARY"
+  },
+  {
+   "from": "A9-02",
+   "to": "Xe ledger",
+   "quantity": "start-up steps with Xe flow (purge, preheat, ignition <= 120 s x 2) for PHASE_TOTAL_FLOW booking",
+   "value": null,
+   "units": "s",
+   "status": "PENDING docs/budgets/xe_ledger/ (A9-08 update)"
+  },
+  {
+   "from": "A9-02",
+   "to": "M16",
+   "quantity": "row impacts (m16_impact)",
+   "value": null,
+   "units": "-",
+   "status": "PENDING docs/budgets/subsystem_maturity/; PENDING A9-10 governance (path not yet assigned)"
+  }
+ ],
+ "h2_4_revision_flags": [
+  {
+   "h2_4_id": "H24-02",
+   "name": "A5 bus-power design allocation",
+   "disposition": "RETAINED",
+   "why": "row 109: ~1.35 kW design allocation; the ICP must fit inside it"
+  },
+  {
+   "h2_4_id": "H24-04",
+   "name": "spacecraft DC bus voltage at the propulsion input",
+   "disposition": "NEEDS_REVISION",
+   "why": "row 111: regulated 100 V internal bus; spacecraft input configurable"
+  },
+  {
+   "h2_4_id": "H24-05",
+   "name": "discharge-supply efficiency eta_d (bus -> supply output), nominal P_out >= 500 W, 25-34 V in",
+   "disposition": "NEEDS_REVISION",
+   "why": "discharge-supply analog on a 25-34 V input; input is now the 100 V internal bus; row 113 breadboard measures eta_d before LOCK-2"
+  },
+  {
+   "h2_4_id": "H24-06",
+   "name": "discharge-supply efficiency, 3 kW class, 100 V bus (analog, not transferable)",
+   "disposition": "RETAINED",
+   "why": "closest analog class (100 V bus) but 3 kW-class, not transferable"
+  },
+  {
+   "h2_4_id": "H24-07",
+   "name": "keeper-supply efficiency lower bound (analog)",
+   "disposition": "RETAINED_AS_CANDIDATE",
+   "why": "S-OSUGA05 keeper conditioner on a 100 V +/- 3 V bus (same bus voltage); steady keeper only at 25 W / 0.9-1.0 A; does not cover the row-89 pulsed 300-600 V ignition mode; transfer to C1 levels needs breadboard data (A902-35)"
+  },
+  {
+   "h2_4_id": "H24-08",
+   "name": "heater-supply efficiency (analog minimum-efficiency specification)",
+   "disposition": "RETAINED_AS_CANDIDATE",
+   "why": "S-OSUGA05 heater specification on a 100 V bus; applies to hall_c1_reference only (no ICP heater, row 112); specification, not a measurement"
+  },
+  {
+   "h2_4_id": "H24-09",
+   "name": "magnet-supply efficiency (analog minimum-efficiency specification)",
+   "disposition": "NEEDS_REVISION",
+   "why": "per-coil magnet slots (inner/outer/trim)"
+  },
+  {
+   "h2_4_id": "H24-10",
+   "name": "valve-driver (mass-flow PC) efficiency (analog minimum-efficiency specification)",
+   "disposition": "RETAINED_AS_CANDIDATE",
+   "why": "S-OSUGA05 valve-driver specification on a 100 V bus; now also covers the ICP feed valve slot flow_control_icp_feed"
+  },
+  {
+   "h2_4_id": "H24-11",
+   "name": "auxiliary / housekeeping supply efficiency (analog minimum-efficiency specification)",
+   "disposition": "RETAINED_AS_CANDIDATE",
+   "why": "S-OSUGA05 auxiliary-supply specification on a 100 V bus; housekeeping_controls must also book the no-load/quiescent draw of idle supplies explicitly"
+  },
+  {
+   "h2_4_id": "H24-14",
+   "name": "rf_source chain efficiency (reserved slot; not baseline flight hardware)",
+   "disposition": "SUPERSEDED_FOR_A9",
+   "why": "pre-ionizer RF chain; A9 icp_rf_source books the generator DC input"
+  },
+  {
+   "h2_4_id": "H24-15",
+   "name": "ecr_source chain efficiency (alternate slot; not baseline flight hardware)",
+   "disposition": "SUPERSEDED_FOR_A9",
+   "why": "ECR slot (row 68)"
+  },
+  {
+   "h2_4_id": "H24-16",
+   "name": "hall_magnet load envelope (steady)",
+   "disposition": "NEEDS_REVISION",
+   "why": "single magnet slot with a permanent-magnet 0 W option; H-1 is EM-only (row 78) and has one slot per coil"
+  },
+  {
+   "h2_4_id": "H24-17",
+   "name": "cathode_keeper load envelope (steady)",
+   "disposition": "RETAINED",
+   "why": "applies to hall_c1_reference only"
+  },
+  {
+   "h2_4_id": "H24-19",
+   "name": "cathode_keeper ignition load bracket (start-up)",
+   "disposition": "NEEDS_REVISION",
+   "why": "DC-ignition bracket (JPL 2 A x 5-15 V, inferred) does not describe the row-89 current-limited pulsed 300-600 V class ignition; its peak draw and pulse energy are TBD (A902-25) and the start-up step must be peak_sampled to PASS the transient gate"
+  },
+  {
+   "h2_4_id": "H24-21",
+   "name": "compressor bus-draw screening ceiling",
+   "disposition": "NEEDS_REVISION",
+   "why": "300 W compressor ceiling alone vs row 114: 300 W is the whole common allocation incl. 50 W controls/thermal"
+  },
+  {
+   "h2_4_id": "H24-22",
+   "name": "housekeeping bus-draw screening envelope",
+   "disposition": "NEEDS_REVISION",
+   "why": "housekeeping envelope must fit the 50 W controls/thermal allowance together with thermal_control (row 114)"
+  },
+  {
+   "h2_4_id": "H24-23",
+   "name": "screening envelope of the common auxiliaries A_common (steady, excl. thermal_control and the atmospheric metering valve)",
+   "disposition": "NEEDS_REVISION",
+   "why": "A_common envelope replaced by the row-114 common allocation"
+  },
+  {
+   "h2_4_id": "H24-24",
+   "name": "hall_discharge ALLOCATION (load side), hall_only baseline, reserved slot empty",
+   "disposition": "NEEDS_REVISION",
+   "why": "discharge allocation depended on the v1 A_common; with the ICP sub-allocation open (OQ-A902-03) no discharge allocation is derived here"
+  },
+  {
+   "h2_4_id": "H24-26",
+   "name": "flight discharge-supply output current at the allocation",
+   "disposition": "NEEDS_REVISION",
+   "why": "derived directly from H24-24 (P_d,alloc / V_d); inherits its revision, not re-derived here"
+  },
+  {
+   "h2_4_id": "H24-28",
+   "name": "keeper supply ignition capability",
+   "disposition": "ANSWERED",
+   "why": "row 89: pulsed 300-600 V class ignition required"
+  },
+  {
+   "h2_4_id": "H24-35",
+   "name": "no single-point failure in electronics",
+   "disposition": "CONSTRAINED_BY_OWNER_ANSWER",
+   "why": "row 55: LIMITED redundancy - critical sensing/FDIR redundancy, do not duplicate the full PPU or the ICP neutralizer at this stage; the RFP text itself is still to be verified"
+  },
+  {
+   "h2_4_id": "H24-33",
+   "name": "bus input current at P_bus (harness / protection sizing)",
+   "disposition": "NEEDS_REVISION",
+   "why": "bus current at 24-34 V; spacecraft input configurable; internal-bus bounds A902-14/15"
+  },
+  {
+   "h2_4_id": "H24-36",
+   "name": "PROPOSED start-up sequencing constraint SEQ-1 (heater off before compressor spin-up and before any reserved-slot seed)",
+   "disposition": "SUPERSEDED_FOR_A9",
+   "why": "row 112 revised SEQ-1"
+  },
+  {
+   "h2_4_id": "H24-37",
+   "name": "PROPOSED start-up peak rule",
+   "disposition": "ANSWERED",
+   "why": "row 108; averaging window still TBD (A902-03)"
+  },
+  {
+   "h2_4_id": "H24-38",
+   "name": "H-1 P_bus metering channels (INS-02)",
+   "disposition": "NEEDS_REVISION",
+   "why": "one metering channel per A9 slot incl. RF generator DC input"
+  },
+  {
+   "h2_4_id": "H24-40",
+   "name": "discharge / keeper / heater / magnet outputs floating from the primary bus",
+   "disposition": "RETAINED",
+   "why": "floating outputs; add floating ICP body and separately metered collector bias (row 70)"
+  },
+  {
+   "h2_4_id": "OQ-H24-01",
+   "name": "Does the RFP '< 1.5 kW' apply at bus_power_boundary_v1 and to start-up transients (H24-37)?",
+   "disposition": "ANSWERED",
+   "why": "row 108"
+  },
+  {
+   "h2_4_id": "OQ-H24-02",
+   "name": "Must a contingency pre-ionizer module fit inside the A5 allocation (reading R-a) or may it use the allocation-to-requirement margin (reading R-b)?",
+   "disposition": "SUPERSEDED_FOR_A9",
+   "why": "row 109"
+  },
+  {
+   "h2_4_id": "OQ-H24-03",
+   "name": "Adopt the PROPOSED supply partition (separate discharge, per-coil magnet, cathode CS-A/CS-B after C-1, auxiliary valve/housekeeping, reserved DC port)?",
+   "disposition": "ANSWERED",
+   "why": "row 110 (partition adopted with revision)"
+  },
+  {
+   "h2_4_id": "OQ-H24-04",
+   "name": "Spacecraft bus voltage (28 V class vs regulated 100 V) and redundancy policy (H24-04, H24-35).",
+   "disposition": "ANSWERED",
+   "why": "row 111"
+  },
+  {
+   "h2_4_id": "OQ-H24-05",
+   "name": "Adopt sequencing constraint SEQ-1 (heater off before compressor spin-up and before any pre-ionizer seed)?",
+   "disposition": "SUPERSEDED_FOR_A9",
+   "why": "row 112 revised SEQ-1"
+  },
+  {
+   "h2_4_id": "OQ-H24-06",
+   "name": "Procure a flight-representative breadboard discharge supply (H3-PPU-05) so that eta_d at the Phase-1 load points is measured before LOCK-2?",
+   "disposition": "ANSWERED",
+   "why": "row 113"
+  },
+  {
+   "h2_4_id": "H3-PPU-03",
+   "name": "H-1 keeper supply (>= 150 V open circuit ignition; current-regulated 0.5-2 A class; steady compliance >= 35 V, >= 60 W output per H24-41) and heater supply (current-regulated; up to ~305 W, current per C-1)",
+   "disposition": "NEEDS_REVISION",
+   "why": "add pulsed ignition 300-600 V, interlocks, pulse-energy record (row 89)"
+  },
+  {
+   "h2_4_id": "H3-PPU-05",
+   "name": "flight-representative breadboard discharge supply (28 V class, <= 1 kW, 180-350 V) for measured eta_d at Phase-1 load points (PROPOSED)",
+   "disposition": "NEEDS_REVISION",
+   "why": "breadboard discharge supply fed from the 100 V internal bus (rows 111, 113)"
+  }
+ ],
+ "owner_answers_applied": [
+  {
+   "row": 5,
+   "covers_ids": [
+    "OD-XE-8",
+    "OD-M7",
+    "H27-Q3"
+   ],
+   "owner_answer_verbatim": "INCLUDES Xe + tank — use the conservative wet-system interpretation unless the official RFP explicitly defines the 40 kg as dry mass.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "40 kg is wet: H2-7 mass demands for PPU/RF electronics are booked against the wet-system limit"
+  },
+  {
+   "row": 18,
+   "covers_ids": [
+    "D-07",
+    "R-08"
+   ],
+   "owner_answer_verbatim": "SUPERSEDED numeric delta — do not carry 0.05/0.1 into the new architecture automatically. Define the new decision quantities first, then freeze any effect-size margin before score-bearing data.",
+   "classification_by_recorder": "SUPERSEDED",
+   "how_applied": "no numeric decision margin is carried; allocation checks are owner allocations, not effect sizes"
+  },
+  {
+   "row": 22,
+   "covers_ids": [
+    "D-11"
+   ],
+   "owner_answer_verbatim": "D-11-A — report `PARTIAL_BOUNDARY` until compressor bus draw and valve-outlet feed state are measured/provided by ICD. Do not insert guessed fixed loads.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "compressor TBD -> ledger status PARTIAL_BOUNDARY; no guessed fixed load"
+  },
+  {
+   "row": 37,
+   "covers_ids": [
+    "R-11"
+   ],
+   "owner_answer_verbatim": "NEW `NET_BENEFIT` form — hard gates + Pareto, not a weighted score. ICP must meet electron-current/neutralization, thrust, full P_bus, stability and safety gates; then report ΔXe, ΔP_bus, Δmass, T/P_bus, restart and life burden relative to C1. No single scalar winner unless preregistered.",
+   "classification_by_recorder": "AMENDED_FOR_A9",
+   "how_applied": "the ledger reports per-slot P_bus for Delta P_bus in NET_BENEFIT; no weighted scalar is formed"
+  },
+  {
+   "row": 38,
+   "covers_ids": [
+    "R-12",
+    "P1F-OOD-05"
+   ],
+   "owner_answer_verbatim": "`OPEN` is a status, not an outcome. If evidence cannot decide, report unresolved and identify the next discriminating test.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "NOT_EVALUABLE / OPEN are statuses, not outcomes"
+  },
+  {
+   "row": 42,
+   "covers_ids": [
+    "OD-XE-1",
+    "R6-Q2"
+   ],
+   "owner_answer_verbatim": "`PHASE_TOTAL_FLOW` — book all Xe during purge, preheat, ignition, keeper/cathode operation, transition and fallback. No unbooked preheat flow.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "sequence steps with Xe flow (purge, preheat, ignition) are flagged for PHASE_TOTAL_FLOW booking"
+  },
+  {
+   "row": 46,
+   "covers_ids": [
+    "OD-XE-5"
+   ],
+   "owner_answer_verbatim": "15,000 h for the conventional C1 reference/fallback term. The ICP-neutralizer architecture has no continuous C1-Xe cathode term, but must carry its own RF-neutralizer lifetime/cycle requirement.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "hall_icp_neutralizer has no C1 slots; its gas feed has its own flow_control_icp_feed slot"
+  },
+  {
+   "row": 51,
+   "covers_ids": [
+    "R6-Q4"
+   ],
+   "owner_answer_verbatim": "YES if the C1/Xe branch remains in scope — include the filter/getter with explicit ≤17 W-class load only after vendor/spec verification; account its mass and pressure drop. It is not required for an ICP-only flight branch.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "filter_getter slot exists only in hall_c1_reference; value TBD until vendor/spec verification"
+  },
+  {
+   "row": 54,
+   "covers_ids": [
+    "H27-Q7"
+   ],
+   "owner_answer_verbatim": "YES — use a v0 dry-mass budget against a 28 kg dry target: intake/filter/duct 3.5 kg; compressor+drive 5.5; plenum/feed 1.0; Hall head+magnet 3.0; ICP neutralizer 2.0; RF generator/matching 1.5; Hall PPU 2.5; Xe hardware 1.5; controls/harness 1.0; structure/thermal 2.5. Sum 24 kg, leaving 4 kg dry development reserve. These are allocations, not CBEs.",
+   "classification_by_recorder": "ENGINEERING_ALLOCATION_OR_BASIS",
+   "how_applied": "v0 dry allocations passed to H2-7 as allocations, not CBEs: electronics lines (RF generator/matching 1.5 kg, Hall PPU 2.5 kg, controls/harness 1.0 kg) and, separately, the ICP neutralizer source head (2.0 kg, not electronics)"
+  },
+  {
+   "row": 55,
+   "covers_ids": [
+    "H27-Q4"
+   ],
+   "owner_answer_verbatim": "LIMITED redundancy — dual series isolation on the high-pressure Xe path plus critical sensing/FDIR redundancy; do not duplicate the thruster, ICP neutralizer or full PPU at this stage. Revisit after failure-tree evidence.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "H2-4 H24-35 (no single-point failure) flagged CONSTRAINED_BY_OWNER_ANSWER: limited redundancy, no full-PPU duplication; redundancy affects PPU mass, not the per-slot P_bus rule"
+  },
+  {
+   "row": 56,
+   "covers_ids": [
+    "H27-Q5"
+   ],
+   "owner_answer_verbatim": "NO as a CBE — NASA SBIR 2 kg PPU may remain an aspirational/screening low end only. It cannot be used as demonstrated mass evidence.",
+   "classification_by_recorder": "NO_OR_NOT_YET",
+   "how_applied": "SBIR 2 kg PPU is not used as mass evidence"
+  },
+  {
+   "row": 59,
+   "covers_ids": [
+    "OD-M5"
+   ],
+   "owner_answer_verbatim": "ACCEPT with A9 amendment — add downstream ICP neutralizer, RF generator/matching/feedthrough and collector/bias hardware; retain C1 as reference/fallback. Remove pre-ionizer-only items from the new architecture BOM, not from historical v1.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "new electronics lines (RF generator/matching, collector/bias supply) requested from H2-7"
+  },
+  {
+   "row": 66,
+   "covers_ids": [
+    "PMQ-06"
+   ],
+   "owner_answer_verbatim": "NEW BUS-BOUNDARY VERSION — do not prohibit legitimate loads. Add explicit components for RF source/matching, collector/bias supply, any assist magnet and active cooling if used.",
+   "classification_by_recorder": "AMENDED_FOR_A9",
+   "how_applied": "new boundary version with explicit RF source/matching, collector/bias, assist-magnet and active-cooling slots; v1 untouched"
+  },
+  {
+   "row": 69,
+   "covers_ids": [
+    "HWQ-06"
+   ],
+   "owner_answer_verbatim": "UNMAGNETIZED 13.56 MHz ICP for v1/A9 first build. If magnetic assistance is later justified, treat it as a new controlled variant and book its power/mass explicitly.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "icp_assist_magnet is a variant-only slot; not installed in the first build"
+  },
+  {
+   "row": 70,
+   "covers_ids": [
+    "HWQ-07"
+   ],
+   "owner_answer_verbatim": "OLD options are not adequate. Keep the ICP dielectric/body floating unless the validated circuit requires otherwise; control and measure the electron-extraction collector bias separately. Do not hard-ground the plasma body by default.",
+   "classification_by_recorder": "AMENDED_FOR_A9",
+   "how_applied": "icp_collector_bias is a separate metered slot; ICP body floating"
+  },
+  {
+   "row": 72,
+   "covers_ids": [
+    "R4-Q7"
+   ],
+   "owner_answer_verbatim": "13.56 MHz. Size laboratory RF source and inline measurement chain for 0–500 W forward power initially, with directional-coupler forward/reflected measurements. Calorimetry is an independent cross-check, not the sole primary power measurement.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "13.56 MHz; lab 0-500 W forward; coupler primary, calorimetry cross-check; only generator DC input crosses the boundary"
+  },
+  {
+   "row": 79,
+   "covers_ids": [
+    "H2-1 Q6",
+    "H22-OQ-01"
+   ],
+   "owner_answer_verbatim": "EXTERNAL C1 reference. Do not constrain the H-1 mean diameter around a central C1. Provide a downstream/coaxial interface for the ICP neutralizer and keep the Hall head neutralizer-agnostic.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "external C1: C1 slots belong to the swappable downstream module, the Hall slots are neutralizer-agnostic"
+  },
+  {
+   "row": 86,
+   "covers_ids": [
+    "H25-Q4",
+    "H25-Q6"
+   ],
+   "owner_answer_verbatim": "Require ≥50 K margin below each validated continuous-use material/insulation temperature limit plus 20% heat-load design margin. The current ~11.2 K BN-wall margin is not acceptable as a design closure.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "active_cooling variant slot provided for the >= 50 K margin rule if needed"
+  },
+  {
+   "row": 89,
+   "covers_ids": [
+    "H22-OQ-02"
+   ],
+   "owner_answer_verbatim": "YES — provide current-limited pulsed keeper ignition capability in the 300–600 V class for C1 development/reference testing, with interlocks and recorded pulse energy.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "c1_keeper includes current-limited pulsed ignition 300-600 V class as a start-up transient; its peak is gate-covered only by a peak_sampled step; pulse energy is a measurement record (PENDING A9-04); H2-4 H24-19 flagged NEEDS_REVISION"
+  },
+  {
+   "row": 90,
+   "covers_ids": [
+    "H22-OQ-03"
+   ],
+   "owner_answer_verbatim": "YES — two independent isolation valves in series on the flight high-pressure Xe/cathode branch.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "flow_control_xe covers the two series isolation valves"
+  },
+  {
+   "row": 91,
+   "covers_ids": [
+    "H22-OQ-04"
+   ],
+   "owner_answer_verbatim": "DO NOT freeze a resistor value yet. Use an isolated, selectable cathode-common/bleeder topology with voltage/current measurement; choose the final value/switching after EMC and discharge-stability bench tests.",
+   "classification_by_recorder": "NO_OR_NOT_YET",
+   "how_applied": "c1_common_tie slot, value TBD, selectable and measured"
+  },
+  {
+   "row": 93,
+   "covers_ids": [
+    "H22-OQ-06"
+   ],
+   "owner_answer_verbatim": "Use the selected cathode vendor/design-qualified purge and ignition flow; cap each ignition dwell at 120 s and allow at most two retries in the preliminary protocol, then freeze the final bound before score-bearing C1 testing. Book all Xe.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "C1 ignition dwell cap 120 s x 2 retries recorded as a sequence constraint"
+  },
+  {
+   "row": 105,
+   "covers_ids": [
+    "H23-Q2"
+   ],
+   "owner_answer_verbatim": "Design the gas isolator for 350 V continuous operation and perform ~1 kV DC representative-pressure/gas withstand qualification with segmented/porous geometry as appropriate. Do not rely on simple vacuum creepage assumptions across the Paschen region.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "discharge-supply output isolation is coordinated with the 350 V continuous / ~1 kV withstand gas isolator (interface demand to H2-3)"
+  },
+  {
+   "row": 108,
+   "covers_ids": [
+    "OQ-H24-01"
+   ],
+   "owner_answer_verbatim": "YES — apply <1.5 kW at the spacecraft-DC propulsion-system boundary. Conservatively require startup transients also to remain below 1.5 kW unless the official RFP explicitly permits a transient exception. Use a new A9/v2 boundary without modifying v1.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "rfp_power_gate applies < 1500 W to steady state and every start-up step; empty start-up refused; a start-up step PASSes only if peak_sampled while the averaging window is TBD (A902-03)"
+  },
+  {
+   "row": 109,
+   "covers_ids": [
+    "OQ-H24-02"
+   ],
+   "owner_answer_verbatim": "SUPERSEDED — the downstream ICP is a primary neutralizer candidate, not a contingency pre-ionizer. Its power must fit inside the internal ~1.35 kW design allocation; do not plan to consume the 1.35→1.5 kW margin nominally.",
+   "classification_by_recorder": "SUPERSEDED",
+   "how_applied": "design allocation 1350 W check; ICP must fit inside; 150 W margin not planned nominally"
+  },
+  {
+   "row": 110,
+   "covers_ids": [
+    "OQ-H24-03"
+   ],
+   "owner_answer_verbatim": "ADOPT with revision — partition supplies into Hall discharge, per-coil magnet, ICP RF source/matching, ICP collector/bias if required, C1 heater/keeper reference supplies, flow/valve/housekeeping and reserved DC. Every active load gets a bus slot.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "every active load has a slot (per-coil magnet, RF source/matching, collector/bias, C1 heater/keeper, flow/valve, housekeeping, reserved DC)"
+  },
+  {
+   "row": 111,
+   "covers_ids": [
+    "OQ-H24-04"
+   ],
+   "owner_answer_verbatim": "REGULATED 100 V internal propulsion bus for the breadboard/PPU architecture; keep the spacecraft-input front end configurable until the actual spacecraft bus is specified. Do not claim 100 V is an RFP spacecraft interface requirement.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "100 V regulated internal bus; configurable spacecraft-input front end with explicit efficiency"
+  },
+  {
+   "row": 112,
+   "covers_ids": [
+    "OQ-H24-05"
+   ],
+   "owner_answer_verbatim": "REVISE SEQ-1 — sequence to avoid simultaneous peaks, but do not force the C1 heater off before it is safe. For C1, reduce/disable heater only after keeper/discharge is stable per cathode procedure; ICP has no thermionic heater.",
+   "classification_by_recorder": "AMENDED_FOR_A9",
+   "how_applied": "revised SEQ-1 templates: one peak event per step and at most one peak-class slot load rising per step; C1 heater reduced only after keeper/discharge stable (a TBD heater counts as ON; last known value kept across TBD steps); no ICP heater"
+  },
+  {
+   "row": 113,
+   "covers_ids": [
+    "OQ-H24-06"
+   ],
+   "owner_answer_verbatim": "YES — procure/build a flight-representative breadboard Hall discharge supply so eta_d and transient behavior are measured before LOCK-2.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "breadboard discharge supply demand (eta_d and transients before LOCK-2) passed to H3"
+  },
+  {
+   "row": 114,
+   "covers_ids": [
+    "V2-Q1"
+   ],
+   "owner_answer_verbatim": "YES — the proposed 300 W common allocation includes the 50 W controls/thermal allowance. Treat 300 W as an upper design allocation, not a measured load.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "300 W common allocation incl. 50 W controls/thermal: allocation checks, not measured loads"
+  },
+  {
+   "row": 117,
+   "covers_ids": [
+    "OD-TS-3"
+   ],
+   "owner_answer_verbatim": "Use low-stiffness symmetric harp/slack-loop routing for gas/electrical services and flexible RF coax with matched sham routing. Avoid an uncompensated hard RF line across the moving stage; characterize residual parasitic force.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "RF coax across the stand is a measurement-side item; the bus boundary is unaffected"
+  },
+  {
+   "row": 122,
+   "covers_ids": [
+    "H26Q-03"
+   ],
+   "owner_answer_verbatim": "ADOPT, adapted to the new architecture — H-1 remains bolted; the kinematic carrier exchanges C1 reference and ICP-neutralizer modules with repeatable datum control.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "configurations differ only by the swappable downstream module's slots; H-1 slots identical"
+  },
+  {
+   "row": 130,
+   "covers_ids": [
+    "H26Q-06"
+   ],
+   "owner_answer_verbatim": "ACCEPT H2-6 flight telemetry subset and add ICP-specific telemetry: forward/reflected RF power, collector/bias V/I, RF source temperature and neutralizer health/interlock state.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "ICP telemetry (forward/reflected, collector V/I, RF source temperature, interlock) demanded from H2-6"
+  },
+  {
+   "row": 133,
+   "covers_ids": [
+    "HWQ-12"
+   ],
+   "owner_answer_verbatim": "YES — matched sham service lines in every compared configuration.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "matched sham service lines carry no power: sham/not-installed slots are exactly 0 W"
+  },
+  {
+   "row": 145,
+   "covers_ids": [
+    "V2-Q2"
+   ],
+   "owner_answer_verbatim": "DO NOT supply or invent the old parallel RF∥Hall v2 inputs. Freeze that branch. Create a new Hall→downstream-ICP validation-input list instead: RF coupling, forward/reflected/absorbed power, electron extraction current, collector potential, neutralization margin, Hall current demand, ICP pressure/flow, startup, erosion and lifetime.",
+   "classification_by_recorder": "NO_OR_NOT_YET",
+   "how_applied": "RF coupling, forward/reflected/absorbed power and collector potential planes defined for A9-05"
+  }
+ ],
+ "open_owner_questions": [
+  {
+   "id": "OQ-A902-01",
+   "question": "Averaging window / bandwidth that defines start-up transient power for the < 1.5 kW gate (row 108)?",
+   "proposed_answer": "PROPOSED: the maximum of the spacecraft-side bus power reconstructed from simultaneously sampled DC channels at the metering bandwidth, no averaging beyond it; window frozen as a LOCK-1 rule, bandwidth value at LOCK-2",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "OQ-A902-02",
+   "question": "Which slots make up the 300 W common allocation in A9 (row 114)?",
+   "proposed_answer": "PROPOSED: compressor, all flow_control slots, filter_getter, thermal_control, housekeeping_controls (the latter two = the 50 W controls/thermal allowance); reserved DC port and active_cooling outside",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "OQ-A902-03",
+   "question": "Sub-allocation of the 1350 W design allocation between Hall discharge, magnets and the electron source (C1 reference supplies vs ICP RF/matching/collector)?",
+   "proposed_answer": "owner call",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "OQ-A902-04",
+   "question": "Is a combined 'ICP + C1 backup' flight variant (both electron sources installed) in scope? Row 55 excludes duplicating the ICP, and says nothing on a C1 backup.",
+   "proposed_answer": "owner call (not declared in bus_power_boundary_a9_v1; would be a new declared variant)",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "OQ-A902-05",
+   "question": "Which gas and source feed the ICP (Xe ledger or atmospheric feed), and does its valve sit in the common allocation (row 46 recorder flag)?",
+   "proposed_answer": "PROPOSED: book the valve under flow_control_icp_feed inside the common allocation; species owner call",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "OQ-A902-06",
+   "question": "Are housekeeping/controls and thermal loads fed through the 100 V internal bus or directly from the spacecraft input?",
+   "proposed_answer": "PROPOSED: through the internal bus unless the PPU design states otherwise; the path is an explicit ledger input either way",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "OQ-A902-07",
+   "question": "Should the design-allocation check also be reported at the A5 lower end (1300 W)?",
+   "proposed_answer": "PROPOSED: yes, as context only; row 109's ~1.35 kW is the check limit",
+   "freeze_point": "NOW"
+  }
+ ],
+ "historical_reuse": [
+  {
+   "artifact": "abep_sim/arch_boundary.py",
+   "sha256": "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae",
+   "reused": "load-plane / efficiency convention, no-default key checking, finite-real validation, conservation (bookkeeping) residual gate",
+   "not_reused": "component set and architecture ids (hall_only / rf_hall / ecr_hall); the module is not imported and stays byte-identical"
+  },
+  {
+   "artifact": "docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md",
+   "sha256": "2432edb7e9095fd630585768a62a811140b5230ba035afa3f0fc168636d11ca9",
+   "reused": "definition of P_bus at the spacecraft DC input",
+   "not_reused": "pre-ionizer slots"
+  },
+  {
+   "artifact": "docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json",
+   "sha256": "5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef",
+   "reused": "supply-partition skeleton, start-up phase structure, per-component metering principle, analog efficiency parameter ids as candidate evidence (not defaults)",
+   "not_reused": "SEQ-1 (superseded, row 112), rf/ecr slot efficiencies, A_common envelope and the derived discharge allocation"
+  },
+  {
+   "artifact": "docs/parallel_architecture/POWER_BOUNDARY_V2.md @ 7335dcd8bd1f64d2967b96134a0a37e00abfb770 (feature/rf-hall-parallel-v2; read via git show, not in the base tree)",
+   "sha256": "7b696a0bc977ef558ce6faa973f7a874dbaa5b5845942eeb9057ee953d6957e8",
+   "reused": "TBD -> incomplete status with only a known lower bound; not-installed components exactly 0 W; OFF-mode loads caller-stated; residual labelled a bookkeeping identity",
+   "not_reused": "rf_only / rf_hall_parallel modes and the rf <= 700 W / hall <= 300 W allocations (branch frozen, rows 11, 145, 147)"
+  },
+  {
+   "artifact": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+   "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
+   "reused": "INS-02 DC channel principle; INS-03 coupler forward/reflected principle",
+   "not_reused": "the lane-25 uncertainty numbers (row 18; A9-04 owns the new budget); INS-03 treated the RF net power as the load plane, A9 books the generator DC input"
+  },
+  {
+   "artifact": "docs/interfaces/preionizer_module/ and docs/experiments/phase1_prereg_framework/",
+   "sha256": null,
+   "reused": "nothing",
+   "not_reused": "historical pre-ionizer ICD and A5 Phase-1 framework (rows 28, 61-65)"
+  }
+ ],
+ "m16_impact": [
+  {
+   "m16_row": 12,
+   "key": "ppu",
+   "name": "PPU/power distribution",
+   "how_touched": "revised supply partition, 100 V internal bus, A9 ledger; proposed state RUNNING"
+  },
+  {
+   "m16_row": 14,
+   "key": "control_fdir",
+   "name": "control/FDIR",
+   "how_touched": "revised SEQ-1 templates and sequence rules; stays BLOCKED on C1 selection and ICP ignition data"
+  },
+  {
+   "m16_row": 11,
+   "key": "cathode",
+   "name": "shielded Xe-fed LaB6 hollow cathode",
+   "how_touched": "C1 reference supplies (heater, keeper incl. pulsed ignition, common tie, filter/getter) as hall_c1_reference slots"
+  },
+  {
+   "m16_row": 13,
+   "key": "thermal_control",
+   "name": "thermal control",
+   "how_touched": "thermal_control slot inside the 50 W allowance; active_cooling variant slot"
+  },
+  {
+   "m16_row": 3,
+   "key": "compressor",
+   "name": "compressor",
+   "how_touched": "PARTIAL_BOUNDARY until the compressor bus draw is supplied (row 22)"
+  },
+  {
+   "m16_row": 5,
+   "key": "atm_metering_valve",
+   "name": "atmospheric metering valve",
+   "how_touched": "flow_control_atmospheric slot"
+  },
+  {
+   "m16_row": 8,
+   "key": "xe_metering",
+   "name": "Xe metering (splits to ignition/transition feed and cathode feed)",
+   "how_touched": "flow_control_xe slot (two series isolation valves)"
+  },
+  {
+   "m16_row": 15,
+   "key": "sensors_diagnostics",
+   "name": "sensors/diagnostics",
+   "how_touched": "one DC channel per slot + RF planes + ICP telemetry"
+  },
+  {
+   "m16_row": 17,
+   "key": "preionizer_interface",
+   "name": "RF pre-ionization module interface",
+   "how_touched": "not used for the primary line (historical); an ICP-neutralizer row is needed (A9-10), not created here"
+  }
+ ],
+ "h3_inputs": [
+  {
+   "id": "H3-A902-01",
+   "item": "13.56 MHz laboratory RF generator, 0-500 W forward, DC input metered",
+   "basis": "row 72",
+   "note": "quotations only (row 8); no supplier contact by the lane"
+  },
+  {
+   "id": "H3-A902-02",
+   "item": "directional coupler + forward/reflected sensors; calorimetric cross-check load",
+   "basis": "row 72"
+  },
+  {
+   "id": "H3-A902-03",
+   "item": "matching network (fixed or auto-tuned; DC draw metered)",
+   "basis": "PENDING docs/interfaces/icp_neutralizer/"
+  },
+  {
+   "id": "H3-A902-04",
+   "item": "collector/bias supply (floating, V/I metered)",
+   "basis": "row 70; PENDING docs/interfaces/icp_neutralizer/"
+  },
+  {
+   "id": "H3-A902-05",
+   "item": "C1 keeper supply with current-limited pulsed ignition 300-600 V class, interlocks, pulse-energy recording",
+   "basis": "row 89"
+  },
+  {
+   "id": "H3-A902-06",
+   "item": "selectable cathode-common/bleeder network with V/I measurement",
+   "basis": "row 91"
+  },
+  {
+   "id": "H3-A902-07",
+   "item": "regulated 100 V internal-bus breadboard supply + configurable front end",
+   "basis": "row 111"
+  },
+  {
+   "id": "H3-A902-08",
+   "item": "flight-representative breadboard Hall discharge supply on the 100 V bus",
+   "basis": "row 113"
+  }
+ ],
+ "h4_inputs": [
+  {
+   "id": "H4-A902-01",
+   "stage": "S1a",
+   "measure": "RF generator DC input vs coupler forward/reflected into a dummy load over 0-500 W; calorimetric cross-check",
+   "closes": "A902-21"
+  },
+  {
+   "id": "H4-A902-02",
+   "stage": "S1a",
+   "measure": "DUMMY_LOAD_PICKUP of the RF generator on every DC channel",
+   "closes": "A902-36 (with A9-04)"
+  },
+  {
+   "id": "H4-A902-03",
+   "stage": "S1",
+   "measure": "time-resolved spacecraft-side bus power through both start-up sequences (transient gate)",
+   "closes": "A902-03 (once frozen)"
+  },
+  {
+   "id": "H4-A902-04",
+   "stage": "S1",
+   "measure": "C1 heater reduction timing vs keeper/discharge stability; keeper pulse energy",
+   "closes": "A902-25..27"
+  },
+  {
+   "id": "H4-A902-05",
+   "stage": "S1",
+   "measure": "common-tie / bleeder V and I per selectable setting",
+   "closes": "A902-28"
+  },
+  {
+   "id": "H4-A902-06",
+   "stage": "S1",
+   "measure": "front-end and per-supply efficiencies on the 100 V bus",
+   "closes": "A902-13, A902-35"
+  }
+ ],
+ "compliance": {
+  "allowed_paths": [
+   "abep_sim/bus_boundary_a9.py",
+   "docs/architecture_comparison/power_boundary_a9/**",
+   "schemas/interfaces/bus_power_boundary_a9_v1.json",
+   "tests/test_bus_boundary_a9.py"
+  ],
+  "no_hall_closure": true,
+  "no_screening_candidate": true,
+  "no_winner": true,
+  "no_archengine_wiring": true,
+  "pins_mutable_governance": false,
+  "v1_module_byte_identical": true,
+  "parallel_a9_lanes_read_at_build_time": false
+ }
+}
