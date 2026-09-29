@@ -1108,21 +1108,23 @@
     }
    },
    "scheduler": {
-    "execution_state": "RUNNING",
+    "execution_state": "BLOCKED",
     "blocking_item": {
      "ref": "BOM:atmospheric_gas_chamber",
      "state": "CBE basis: TBD",
      "text": "chamber volume and operating pressure not set (mass_bom atmospheric_gas_chamber CBE requires them)"
     },
-    "worked_by": {
-     "lane": "fo_h2_3_gas_path_plenum",
-     "a7_title": "H2-3 atmospheric gas path/plenum",
-     "scope_quote": "(3) plenum volume RANGE derived from explicit requirements",
-     "scope_source": "docs/orchestration/workflow_scripts/h2-3-gas-path-plenum.js (ARGS_EMBEDDED prompt; read, not pinned)"
+    "worked_by": null,
+    "not_worked_reason": "the blocking item requires 'chamber volume and operating pressure (design inputs) and wall material (sourced), or a measured mass' (mass_bom_v1 cbe.requires); H2-3 produces a plenum volume RANGE but names no operating pressure as a deliverable and sources no chamber wall material, so it cannot produce every missing input the item names (scheduler rule partial_scope)",
+    "partial_scope": {
+     "lanes": [
+      "fo_h2_3_gas_path_plenum"
+     ],
+     "requires_quote": "chamber volume and operating pressure (design inputs) and wall material (sourced)",
+     "covered": "plenum volume RANGE derived from explicit requirements (H2-3 scope item (3))",
+     "uncovered": "a plenum operating pressure named as a design input, and a SOURCED chamber wall material (H2-3 covers O2 compatibility of anode-manifold/distributor materials only), or a measured chamber mass"
     },
-    "not_worked_reason": null,
-    "partial_scope": null,
-    "waits_on": null,
+    "waits_on": "design work outside every registered scope",
     "a7_category": "proposal-only documentation gap",
     "technical_category": "unresolved interface",
     "on_phase1_gate_path": false,
@@ -5443,17 +5445,16 @@
      "rows": []
     },
     "RUNNING": {
-     "count": 1,
-     "rows": [
-      "buffer/plenum"
-     ]
+     "count": 0,
+     "rows": []
     },
     "BLOCKED": {
-     "count": 16,
+     "count": 17,
      "rows": [
       "intake",
       "protective/filter stage",
       "compressor",
+      "buffer/plenum",
       "atmospheric metering valve",
       "Xe tank",
       "Xe regulator",
@@ -5505,8 +5506,9 @@
     ]
    },
    "design work outside every registered scope": {
-    "count": 2,
+    "count": 3,
     "rows": [
+     "buffer/plenum",
      "Xe regulator",
      "RF pre-ionization module interface"
     ]
@@ -5841,9 +5843,7 @@
      "buffer/plenum",
      "atmospheric metering valve"
     ],
-    "works_blocking_item_of": [
-     "buffer/plenum"
-    ],
+    "works_blocking_item_of": [],
     "contributes_rows": [
      "intake",
      "protective/filter stage",
@@ -6001,7 +6001,7 @@
   "answer": {
    "architecture_decision": "prevented by 2 architecture-blocker rows (Xe tank, extended-channel Hall discharge chamber/accelerator): A7 blocker 1 (rows: extended-channel Hall discharge chamber/accelerator) is resolvable only by H-1 Phase 1 (credible Hall set EMPTY; framework current outcome NOT_EVALUATED); A7 blocker 3 (rows: Xe tank) is the refused Xe ledger (14 missing inputs). A7 blocker 2 is the current single blocker of no row: every row on its evidence path (7 rows) is first blocked by a path item, and blocker 2 is decided by Phase-1 readings on the common H-1.",
    "path_to_h1": "the earliest blocked gate is S1a (5 rows); rows blocking a gate on the Phase-1 path by A7 category: hardware-definition blocker 3, procurement blocker 2, test-readiness blocker 3. S1a is S1A_NOT_READY (0/6), S1 is S1_NOT_READY (0/8), LOCK-1 has 15 open owner decisions.",
-   "scheduler": "1 rows RUNNING (a registered H2 lane works the blocking item), 16 BLOCKED, 0 READY, 0 VERIFIED. BLOCKED rows wait on: owner decision 6; H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED) 3; procurement (wave H3, PLANNED_NOT_REGISTERED) 4; design work outside every registered scope 2; first-hand source verification 1. The H3 procurement and H4 test waves are PLANNED_NOT_REGISTERED (A7), so no registered lane can unblock the procurement- and measurement-bound rows.",
+   "scheduler": "0 rows RUNNING (a registered H2 lane works the blocking item), 17 BLOCKED, 0 READY, 0 VERIFIED. BLOCKED rows wait on: owner decision 6; H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED) 3; procurement (wave H3, PLANNED_NOT_REGISTERED) 4; design work outside every registered scope 3; first-hand source verification 1. The H3 procurement and H4 test waves are PLANNED_NOT_REGISTERED (A7), so no registered lane can unblock the procurement- and measurement-bound rows.",
    "proposal_only": "7 rows are proposal-only documentation gaps (intake, protective/filter stage, compressor, buffer/plenum, Xe regulator, PPU/power distribution, thermal control): they gate neither H-1 nor the branch decision and veto only via an evidenced hard incompatibility. That is NOT evidence that they close: the strict mass roll-up is REFUSED and A5 risk 4 remains open.",
    "status": "PROPOSED reading for the owner (the counts are mechanical; the blocking-item selection and the category assignment are this lane's reading)"
   }

@@ -17,7 +17,7 @@
 - `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` - `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28`
 - `schemas/interfaces/preionizer_module_icd_v1.json` - `2470718e1decbde874d2362a997d1e2aaae54eb855d1ed179b930c3be6e7130e`
 - `docs/experiments/hardware/hardware_requirements_v1.json` - `0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0`
-- `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` - `b1dd589a01337c63866df245a36ec2dac0731011ec6b0205655fa201170856ca` (recorded at build; produced by this lane)
+- `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` - `a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c` (recorded at build; produced by this lane)
 
 ## Milestone statement
 
@@ -519,7 +519,7 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 
 ### M16-Q-01 (subsystem maturity matrix v2 (M16) open questions)
 
-- source: `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` pointer `/open_owner_questions/0` sha256 `b1dd589a01337c63866df245a36ec2dac0731011ec6b0205655fa201170856ca` (lane `fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)`)
+- source: `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` pointer `/open_owner_questions/0` sha256 `a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c` (lane `fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)`)
 - verbatim: `{"id": "M16-Q-01", "question": "Assign an accountable owner to each of the 17 rows (every owner cell reads OWNER_TO_ASSIGN; no accountable party is recorded in the base)."}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
 - needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
@@ -529,7 +529,7 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 
 ### M16-Q-02 (subsystem maturity matrix v2 (M16) open questions)
 
-- source: `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` pointer `/open_owner_questions/1` sha256 `b1dd589a01337c63866df245a36ec2dac0731011ec6b0205655fa201170856ca` (lane `fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)`)
+- source: `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` pointer `/open_owner_questions/1` sha256 `a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c` (lane `fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)`)
 - verbatim: `{"id": "M16-Q-02", "question": "Accept, or amend, the PROPOSED scheduler rule (execution_state READY / RUNNING / BLOCKED / VERIFIED with one blocking item per row), the per-row blocking-item selection and the per-row A7 rollup category."}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
 - needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
@@ -539,7 +539,7 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 
 ### M16-Q-03 (subsystem maturity matrix v2 (M16) open questions)
 
-- source: `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` pointer `/open_owner_questions/2` sha256 `b1dd589a01337c63866df245a36ec2dac0731011ec6b0205655fa201170856ca` (lane `fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)`)
+- source: `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` pointer `/open_owner_questions/2` sha256 `a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c` (lane `fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)`)
 - verbatim: `{"id": "M16-Q-03", "question": "Accept, or amend, the H2-lane-to-row mapping (which registered H2 lane matures which row, and which H2 lane is scoped to work a row's blocking item)."}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
 - needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
@@ -549,7 +549,7 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 
 ### M16-Q-04 (subsystem maturity matrix v2 (M16) open questions)
 
-- source: `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` pointer `/open_owner_questions/3` sha256 `b1dd589a01337c63866df245a36ec2dac0731011ec6b0205655fa201170856ca` (lane `fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)`)
+- source: `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` pointer `/open_owner_questions/3` sha256 `a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c` (lane `fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)`)
 - verbatim: `{"id": "M16-Q-04", "question": "Direct the owning lanes to resolve the reconciliation items RC-01..RC-10 (and the framework items R-xx that name another lane), or record that a divergence is accepted."}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
 - needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]

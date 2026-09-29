@@ -48,7 +48,7 @@ What this is not: not a performance prediction: every A5 number is an allocation
 
 - **architecture decision**: prevented by 2 architecture-blocker rows (Xe tank, extended-channel Hall discharge chamber/accelerator): A7 blocker 1 (rows: extended-channel Hall discharge chamber/accelerator) is resolvable only by H-1 Phase 1 (credible Hall set EMPTY; framework current outcome NOT_EVALUATED); A7 blocker 3 (rows: Xe tank) is the refused Xe ledger (14 missing inputs). A7 blocker 2 is the current single blocker of no row: every row on its evidence path (7 rows) is first blocked by a path item, and blocker 2 is decided by Phase-1 readings on the common H-1.
 - **path to h1**: the earliest blocked gate is S1a (5 rows); rows blocking a gate on the Phase-1 path by A7 category: hardware-definition blocker 3, procurement blocker 2, test-readiness blocker 3. S1a is S1A_NOT_READY (0/6), S1 is S1_NOT_READY (0/8), LOCK-1 has 15 open owner decisions.
-- **scheduler**: 1 rows RUNNING (a registered H2 lane works the blocking item), 16 BLOCKED, 0 READY, 0 VERIFIED. BLOCKED rows wait on: owner decision 6; H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED) 3; procurement (wave H3, PLANNED_NOT_REGISTERED) 4; design work outside every registered scope 2; first-hand source verification 1. The H3 procurement and H4 test waves are PLANNED_NOT_REGISTERED (A7), so no registered lane can unblock the procurement- and measurement-bound rows.
+- **scheduler**: 0 rows RUNNING (a registered H2 lane works the blocking item), 17 BLOCKED, 0 READY, 0 VERIFIED. BLOCKED rows wait on: owner decision 6; H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED) 3; procurement (wave H3, PLANNED_NOT_REGISTERED) 4; design work outside every registered scope 3; first-hand source verification 1. The H3 procurement and H4 test waves are PLANNED_NOT_REGISTERED (A7), so no registered lane can unblock the procurement- and measurement-bound rows.
 - **proposal only**: 7 rows are proposal-only documentation gaps (intake, protective/filter stage, compressor, buffer/plenum, Xe regulator, PPU/power distribution, thermal control): they gate neither H-1 nor the branch decision and veto only via an evidenced hard incompatibility. That is NOT evidence that they close: the strict mass roll-up is REFUSED and A5 risk 4 remains open.
 - *PROPOSED reading for the owner (the counts are mechanical; the blocking-item selection and the category assignment are this lane's reading)*
 
@@ -57,7 +57,7 @@ What this is not: not a performance prediction: every A5 number is an allocation
 | 1 | intake | **BLOCKED** | `FSCOD:DI-1.1` | - (waits on: owner decision) | proposal-only documentation gap | veto only; feeds 1 | - |
 | 2 | protective/filter stage | **BLOCKED** | `ICDGAP:G-01` | - (waits on: owner decision) | proposal-only documentation gap | veto only | - |
 | 3 | compressor | **BLOCKED** | `CMPEV:EV-08` | - (waits on: first-hand source verification) | proposal-only documentation gap | veto only; feeds 1,2 | - |
-| 4 | buffer/plenum | **RUNNING** | `BOM:atmospheric_gas_chamber` | `fo_h2_3_gas_path_plenum` | proposal-only documentation gap | veto only | `fo_h2_3_gas_path_plenum` |
+| 4 | buffer/plenum | **BLOCKED** | `BOM:atmospheric_gas_chamber` | - (waits on: design work outside every registered scope) | proposal-only documentation gap | veto only | `fo_h2_3_gas_path_plenum` |
 | 5 | atmospheric metering valve | **BLOCKED** | `S1A:S1A-C3` | - (waits on: owner decision) | test-readiness blocker | veto only; feeds 1 | `fo_h2_3_gas_path_plenum` |
 | 6 | Xe tank | **BLOCKED** | `XELEDGER:refused` | - (waits on: H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)) | architecture blocker | **YES - blocker 3** | `fo_h2_7_mechanical_bom` |
 | 7 | Xe regulator | **BLOCKED** | `ICDGAP:G-12` | - (waits on: design work outside every registered scope) | proposal-only documentation gap | veto only; feeds 3 | - |
@@ -102,8 +102,8 @@ Rule: architecture blocker if the blocking item is flagged as one of the A7 arch
 | execution_state | rows |
 |---|---|
 | READY | 0: - |
-| RUNNING | 1: buffer/plenum |
-| BLOCKED | 16: intake, protective/filter stage, compressor, atmospheric metering valve, Xe tank, Xe regulator, Xe metering (splits to ignition/transition feed and cathode feed), extended-channel Hall discharge chamber/accelerator, magnetic circuit, shielded Xe-fed LaB6 hollow cathode, PPU/power distribution, thermal control, control/FDIR, sensors/diagnostics, mechanical/structural interfaces, RF pre-ionization module interface |
+| RUNNING | 0: - |
+| BLOCKED | 17: intake, protective/filter stage, compressor, buffer/plenum, atmospheric metering valve, Xe tank, Xe regulator, Xe metering (splits to ignition/transition feed and cathode feed), extended-channel Hall discharge chamber/accelerator, magnetic circuit, shielded Xe-fed LaB6 hollow cathode, PPU/power distribution, thermal control, control/FDIR, sensors/diagnostics, mechanical/structural interfaces, RF pre-ionization module interface |
 | VERIFIED | 0: - |
 
 | BLOCKED rows wait on | rows |
@@ -111,7 +111,7 @@ Rule: architecture blocker if the blocking item is flagged as one of the A7 arch
 | owner decision | 6: intake, protective/filter stage, atmospheric metering valve, magnetic circuit, PPU/power distribution, mechanical/structural interfaces |
 | H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED) | 3: Xe tank, extended-channel Hall discharge chamber/accelerator, thermal control |
 | procurement (wave H3, PLANNED_NOT_REGISTERED) | 4: Xe metering (splits to ignition/transition feed and cathode feed), shielded Xe-fed LaB6 hollow cathode, control/FDIR, sensors/diagnostics |
-| design work outside every registered scope | 2: Xe regulator, RF pre-ionization module interface |
+| design work outside every registered scope | 3: buffer/plenum, Xe regulator, RF pre-ionization module interface |
 | first-hand source verification | 1: compressor |
 
 ### A7 architecture-changing blockers
@@ -156,7 +156,7 @@ Every other row: not one of the A7 architecture-changing blockers: it can veto t
 |---|---|---|---|---|---|
 | `fo_h2_1_hall_chamber_magnet` | H2-1 Hall chamber + magnetic circuit | extended-channel Hall discharge chamber/accelerator, magnetic circuit | - | shielded Xe-fed LaB6 hollow cathode, PPU/power distribution, thermal control, RF pre-ionization module interface | `docs/orchestration/workflow_scripts/h2-1-hall-chamber-magnet.js (ARGS_EMBEDDED prompt; read, not pinned)` |
 | `fo_h2_2_cathode_integration` | H2-2 cathode integration | shielded Xe-fed LaB6 hollow cathode, Xe metering (splits to ignition/transition feed and cathode feed) | - | Xe tank, PPU/power distribution, thermal control | `docs/orchestration/workflow_scripts/h2-2-cathode-integration.js (ARGS_EMBEDDED prompt; read, not pinned)` |
-| `fo_h2_3_gas_path_plenum` | H2-3 atmospheric gas path/plenum | buffer/plenum, atmospheric metering valve | buffer/plenum | intake, protective/filter stage, compressor, RF pre-ionization module interface | `docs/orchestration/workflow_scripts/h2-3-gas-path-plenum.js (ARGS_EMBEDDED prompt; read, not pinned)` |
+| `fo_h2_3_gas_path_plenum` | H2-3 atmospheric gas path/plenum | buffer/plenum, atmospheric metering valve | - | intake, protective/filter stage, compressor, RF pre-ionization module interface | `docs/orchestration/workflow_scripts/h2-3-gas-path-plenum.js (ARGS_EMBEDDED prompt; read, not pinned)` |
 | `fo_h2_4_ppu_bus` | H2-4 PPU and bus allocation | PPU/power distribution | - | control/FDIR, RF pre-ionization module interface | `docs/orchestration/workflow_scripts/h2-4-ppu-bus.js (ARGS_EMBEDDED prompt; read, not pinned)` |
 | `fo_h2_5_thermal_network` | H2-5 thermal network | thermal control | - | extended-channel Hall discharge chamber/accelerator, magnetic circuit, shielded Xe-fed LaB6 hollow cathode, PPU/power distribution, compressor, buffer/plenum, RF pre-ionization module interface | `docs/orchestration/workflow_scripts/h2-5-thermal-network.js (ARGS_EMBEDDED prompt; read, not pinned)` |
 | `fo_h2_6_diagnostics_fixture` | H2-6 diagnostics + H-1 fixture | sensors/diagnostics, mechanical/structural interfaces | - | RF pre-ionization module interface, atmospheric metering valve, Xe metering (splits to ignition/transition feed and cathode feed) | `docs/orchestration/workflow_scripts/h2-6-diagnostics-fixture.js (ARGS_EMBEDDED prompt; read, not pinned)` |
@@ -385,7 +385,8 @@ Name source: `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_
 
 Name source: `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json#architecture.atmospheric_branch[3]`.
 
-- **execution_state**: **RUNNING**; blocking item `BOM:atmospheric_gas_chamber` (CBE basis: TBD); worked by `fo_h2_3_gas_path_plenum` - scope: "(3) plenum volume RANGE derived from explicit requirements"
+- **execution_state**: **BLOCKED**; blocking item `BOM:atmospheric_gas_chamber` (CBE basis: TBD); not worked: the blocking item requires 'chamber volume and operating pressure (design inputs) and wall material (sourced), or a measured mass' (mass_bom_v1 cbe.requires); H2-3 produces a plenum volume RANGE but names no operating pressure as a deliverable and sources no chamber wall material, so it cannot produce every missing input the item names (scheduler rule partial_scope) (waits on: design work outside every registered scope)
+- **partial scope (stays BLOCKED)**: item requires "chamber volume and operating pressure (design inputs) and wall material (sourced)"; covered by `fo_h2_3_gas_path_plenum`: plenum volume RANGE derived from explicit requirements (H2-3 scope item (3)); uncovered: a plenum operating pressure named as a design input, and a SOURCED chamber wall material (H2-3 covers O2 compatibility of anode-manifold/distributor materials only), or a measured chamber mass
 - **A7**: proposal-only documentation gap (technical: unresolved interface); veto only; none recorded
 - **requirement**: derived: hold the atmospheric-chamber feed state at IF-A3/IF-A4 for the metering valve; no numeric requirement recorded (TBD)
   - buffer/plenum between compressor and metering valve - *A5 decision (architecture element)* - `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json#architecture.atmospheric_branch`

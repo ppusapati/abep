@@ -338,3 +338,25 @@ def test_non_lane_input_guard_refuses_running():
                 b.build(ROOT)
         finally:
             b.SCHED[row] = saved
+
+
+def test_buffer_plenum_partial_scope_and_running_needs_full_requires(doc):
+    """A row is RUNNING only when its lane produces EVERY input the blocking item requires (scheduler rule
+    partial_scope). H2-3 gives a plenum volume range but no operating pressure and no sourced wall material, so
+    buffer_plenum stays BLOCKED; re-enabling worked_by without a full produces_all_quote must refuse the build."""
+    by = {r["key"]: r for r in doc["rows"]}
+    bp = by["buffer_plenum"]["scheduler"]
+    assert bp["execution_state"] == "BLOCKED" and bp["worked_by"] is None
+    assert bp["partial_scope"]["lanes"] == ["fo_h2_3_gas_path_plenum"]
+    bom = {i["id"]: i for i in _load("docs/architecture_comparison/mass_bom/mass_bom_v1.json")["items"]}
+    assert bp["partial_scope"]["requires_quote"] in bom["atmospheric_gas_chamber"]["cbe"]["requires"]
+    b = _builder()
+    sp = b.SCHED["buffer_plenum"]
+    saved = dict(sp)
+    sp["worked_by"] = "fo_h2_3_gas_path_plenum"
+    sp.pop("partial_scope", None)
+    try:
+        with pytest.raises(ValueError, match="produces_all_quote"):
+            b.build(ROOT)
+    finally:
+        b.SCHED["buffer_plenum"] = saved

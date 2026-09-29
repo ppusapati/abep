@@ -309,7 +309,13 @@ SCHED = {
         not_worked_reason="first-hand verification of a published source (A4: DI-1.4 not frozen until verified); A7 lists compressor refinement under everything_else_rule; no registered lane",
         a7={"is": None, "feeds": [1, 2], "relation": "compression sets delivered flow and O2 fraction (blocker-1 feed state) and the compressor bus term is part of the full P_bus against which RF/ECR increments are judged (blocker 2); common to all three branches"}),
     "buffer_plenum": dict(
-        blocking_item="BOM:atmospheric_gas_chamber", worked_by="fo_h2_3_gas_path_plenum",
+        blocking_item="BOM:atmospheric_gas_chamber", worked_by=None, nature="hardware-definition blocker",
+        partial_scope=dict(
+            lanes=["fo_h2_3_gas_path_plenum"],
+            requires_quote="chamber volume and operating pressure (design inputs) and wall material (sourced)",
+            covered="plenum volume RANGE derived from explicit requirements (H2-3 scope item (3))",
+            uncovered="a plenum operating pressure named as a design input, and a SOURCED chamber wall material (H2-3 covers O2 compatibility of anode-manifold/distributor materials only), or a measured chamber mass"),
+        not_worked_reason="the blocking item requires 'chamber volume and operating pressure (design inputs) and wall material (sourced), or a measured mass' (mass_bom_v1 cbe.requires); H2-3 produces a plenum volume RANGE but names no operating pressure as a deliverable and sources no chamber wall material, so it cannot produce every missing input the item names (scheduler rule partial_scope)",
         a7={"is": None, "feeds": [], "relation": "none recorded"}),
     "atm_metering_valve": dict(
         blocking_item="S1A:S1A-C3", worked_by=None, nature="test-readiness blocker",
@@ -1437,6 +1443,7 @@ WAITS_ON = {
     "preionizer_interface": "design work outside every registered scope",
     "mechanical_structural": "owner decision",
     "magnetic_circuit": "owner decision",
+    "buffer_plenum": "design work outside every registered scope",
     "thermal_control": "H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)",
 }
 _KIND_TO_LANE = {"PMI": "fo_preionizer_module_icd", "PMQ": "fo_preionizer_module_icd", "PMQTY": "fo_preionizer_module_icd",
@@ -1649,6 +1656,10 @@ def build(root: str = ROOT_DEFAULT) -> dict:
                     raise ValueError(f"row {name}: partial_scope lane {pl} is not an H2 lane of this row")
             partial = dict(ps)
         if lane is not None:
+            full_req = str(reg.requires_text(sp["blocking_item"]) or "").strip()
+            if full_req and sp.get("produces_all_quote") != full_req:
+                raise ValueError(f"row {name}: RUNNING (worked_by {lane}) needs produces_all_quote equal to the blocking "
+                                 f"item's full requires text; otherwise declare partial_scope and stay BLOCKED")
             if lane not in h2 or spec["key"] not in h2[lane]["matures"]:
                 raise ValueError(f"row {name}: worked_by lane {lane} does not mature this row")
             worked = {"lane": lane, "a7_title": h2[lane]["a7_title"], "scope_quote": h2[lane]["matures"][spec["key"]]["scope_quote"],
