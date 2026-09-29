@@ -73,3 +73,12 @@ def test_off_mode_routes_nothing():
     r = route(air(3e-6), XE, Mode.OFF, req(), PAR)
     assert r.rf_feed is None and r.hall_feed is None
     assert r.unallocated_atm_kg_s == 3e-6 and r.unallocated_xe_kg_s == 2e-6
+
+
+def test_knudsen_regimes():
+    from abep_sim.propellant_router import flow_regime, knudsen
+    assert flow_regime(knudsen(1.0, 0.05))["regime"] == "FREE_MOLECULAR"
+    assert flow_regime(0.5)["regime"] == "TRANSITIONAL"
+    assert flow_regime(0.001)["regime"] == "CONTINUUM_APPROX"
+    with pytest.raises(ContractError):
+        knudsen(0.0, 1.0)

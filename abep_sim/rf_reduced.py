@@ -229,3 +229,44 @@ def run(feed: FeedState, P_dc_W: float, chamber: RFChamberSpec, coupling: RFCoup
     out.update(model_status=Status.PASS.value, thrust_N=T, Isp_s=Isp, P_jet_W=P_jet,
                T_per_Pabsorbed_N_W=T / P_abs)
     return out
+
+
+# ------------------------------------------------------------------ high-fidelity RF coupling interface (sec. 12)
+
+@dataclass(frozen=True)
+class RFCouplingRecord:
+    """Interface for future high-fidelity RF electromagnetic data (EM solver or measurement), NOT a solver.
+    Such records enter v2 only through the immutable-export -> sha256 -> schema -> registry -> admission pattern
+    (see rf_registry). Unknown quantities stay TBD; nothing is defaulted."""
+    frequency_Hz: float
+    antenna_geometry_id: str
+    magnetic_geometry_id: str
+    P_dc_W: float
+    P_forward_W: object
+    P_reflected_W: object
+    S11: object                        # complex reflection coefficient magnitude/phase record, or TBD
+    P_absorbed_W: object
+    antenna_loss_W: object
+    matching_loss_W: object
+    plasma_impedance_ohm: object       # (R, X) or TBD
+    source: str
+    evidence_class: str
+
+    def __post_init__(self):
+        from .parallel_contracts import evidence_class as _ev, nonempty as _ne
+        real(self.frequency_Hz, "frequency_Hz")
+        real(self.P_dc_W, "P_dc_W")
+        _ne(self.antenna_geometry_id, "antenna_geometry_id")
+        _ne(self.magnetic_geometry_id, "magnetic_geometry_id")
+        _ne(self.source, "source")
+        _ev(self.evidence_class, "evidence_class")
+        known = [getattr(self, k) for k in ("P_forward_W", "P_reflected_W", "P_absorbed_W", "antenna_loss_W",
+                                            "matching_loss_W")]
+        for v in known:
+            if not isinstance(v, TBD):
+                if real(v, "power") < 0:
+                    raise ContractError("coupling powers must be >= 0")
+        if not any(isinstance(getattr(self, k), TBD) for k in ("P_forward_W", "P_reflected_W", "P_absorbed_W",
+                                                               "antenna_loss_W")):
+            if self.P_forward_W - self.P_reflected_W < self.P_absorbed_W + self.antenna_loss_W - 1e-9:
+                raise ContractError("P_forward - P_reflected < P_absorbed + antenna loss: record violates energy")

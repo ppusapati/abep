@@ -164,7 +164,7 @@ def run(architecture: InstalledArchitecture, inputs: MissionInputs, *, xe_supply
     hall_t = sum(h["dt_s"] for h in history if mode_spec(h["mode"]).hall_enabled)
     return {"architecture": architecture.kind.value, "completed": stop is None, "stop": stop,
             "mission_time_s": mission_t, "history": history, "component_hours": hours, "starts": starts,
-            "unbooked_start_events": unbooked_starts, "xe_ledger": xe,
+            "unbooked_start_events": unbooked_starts, "xe_mission": xe,
             "hall_duty_fraction": (hall_t / mission_t) if mission_t > 0 else None,
             "propulsion_energy_J": sum(h["P_total_bus_W"] * h["dt_s"] for h in history),
             "score_bearing": bool(history) and all(h["verdict"] == "FEASIBLE" for h in history),

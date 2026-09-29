@@ -58,3 +58,12 @@ def test_no_hidden_coefficients():
                                                    TBD("r", "x"), "t"), nozzle(), q(0.0, "W"))
     with pytest.raises(ContractError):
         R.run(air(), 700.0, CHAMBER, COUPLING, nozzle(), 0.0)          # a bare float is not evidence
+
+
+def test_coupling_record_interface():
+    rec = R.RFCouplingRecord(13.56e6, "ant", "mag", 700.0, 650.0, 30.0, TBD("S11", "x"), 500.0, 60.0, 50.0,
+                             TBD("Z", "x"), "external EM export (test)", "model-derived")
+    assert rec.P_absorbed_W == 500.0
+    with pytest.raises(ContractError, match="energy"):
+        R.RFCouplingRecord(13.56e6, "ant", "mag", 700.0, 650.0, 30.0, TBD("S11", "x"), 600.0, 60.0, 50.0,
+                           TBD("Z", "x"), "t", "model-derived")

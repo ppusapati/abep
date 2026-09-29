@@ -48,7 +48,7 @@ def test_history_hours_starts_and_xe_monotone():
     assert r["hall_duty_fraction"] == pytest.approx(0.5)
     assert r["component_hours"]["rf_source"] == pytest.approx(1.0)
     assert r["component_hours"]["hall_discharge"] == pytest.approx(0.5)
-    s = r["xe_ledger"].summary(reserve=F.q(0.0, "1"), residual=F.q(0.0, "1"))
+    s = r["xe_mission"].summary(reserve=F.q(0.0, "1"), residual=F.q(0.0, "1"))
     assert s["mode_time_sum_s"] == pytest.approx(3600.0) and s["hall_starts"] == 3
     assert r["score_bearing"] is False and "hypothesis" in r["note"]
     for k in ("time", "alt_km", "rho_kg_m3", "composition", "drag_N", "available_atm_mdot_kg_s", "mode",

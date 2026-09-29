@@ -1,0 +1,75 @@
+{
+ "generator": "abep_sim/golden_parallel.py",
+ "golden": "golden_parallel_v1",
+ "purpose": "software reproducibility / conservation / schema-stability vectors from TEST FIXTURES; NOT physical validation evidence",
+ "rel_tol": 1e-09,
+ "vectors": {
+  "bus_power_boundary": "bus_power_boundary_v2",
+  "mass_bom": {
+   "cbe_dry_kg": 27.0,
+   "mev_kg": 39.63999999999999,
+   "nominal_dry_kg": 32.199999999999996,
+   "propellant_kg": 1.0,
+   "system_margin_kg": 6.4399999999999995
+  },
+  "rf_reduced_Rm1.5": {
+   "Isp_s": 65.1086427367594,
+   "P_kinetic_W": 16.245423506581133,
+   "P_kinetic_max_W": 33.58739029280326,
+   "Te_eV": 6.600748613480467,
+   "energy_balance_residual": -1.1273148614412346e-13,
+   "mass_balance_residual": -2.6822709996386176e-15,
+   "model_status": "PASS",
+   "ne_m3": 9.382378446343196e+17,
+   "thrust_N": 0.0009577465069416625,
+   "utilization": 0.3605066096258325
+  },
+  "rf_reduced_Rm10_status": "MODEL_ERROR",
+  "rf_reduced_Rm2.0": {
+   "Isp_s": 103.21571159192447,
+   "P_kinetic_W": 21.440453834504897,
+   "P_kinetic_max_W": 33.58739029280326,
+   "Te_eV": 6.600748613480467,
+   "energy_balance_residual": -1.1273148614412346e-13,
+   "mass_balance_residual": -2.6822709996386176e-15,
+   "model_status": "PASS",
+   "ne_m3": 9.382378446343196e+17,
+   "thrust_N": 0.0015183005371244191,
+   "utilization": 0.3605066096258325
+  },
+  "rf_reduced_Rm3.0": {
+   "Isp_s": 158.37459660420234,
+   "P_kinetic_W": 28.273036034369856,
+   "P_kinetic_max_W": 33.58739029280326,
+   "Te_eV": 6.600748613480467,
+   "energy_balance_residual": -1.1273148614412346e-13,
+   "mass_balance_residual": -2.6822709996386176e-15,
+   "model_status": "PASS",
+   "ne_m3": 9.382378446343196e+17,
+   "thrust_N": 0.002329686356682901,
+   "utilization": 0.3605066096258325
+  },
+  "router": {
+   "unallocated_atm_kg_s": 3.000000000000001e-07,
+   "unallocated_xe_kg_s": 9.9e-07
+  },
+  "system_rf_atm_hall_xe": {
+   "P_H_bus_W": 306.31720430107526,
+   "P_RF_bus_W": 700.0,
+   "P_common_bus_W": 227.77777777777777,
+   "P_total_bus_W": 1234.094982078853,
+   "T_H_N": 0.015,
+   "T_RF_N": 0.0015183005371244191,
+   "T_total_axial_N": 0.016518300537124418,
+   "mdot_xe_total_kg_s": 1.0099999999999999e-06,
+   "power_balance_residual_W": 0.0,
+   "status": "PASS",
+   "verdict": "UNRESOLVED"
+  },
+  "xe_mission": {
+   "hall_time_fraction": 0.14285714285714285,
+   "xe_consumed_kg": 0.0006959999999999999,
+   "xe_total_required_kg": 0.0007795199999999999
+  }
+ }
+}

@@ -1,0 +1,19 @@
+{
+  "schema": "architecture_hypothesis_draft_v1",
+  "id": "A8_parallel_rf_hall_investigation",
+  "status": "DRAFT_ARCHITECTURE_HYPOTHESIS_NOT_OWNER_FROZEN",
+  "decided_by": null,
+  "note": "This is NOT an owner decision. It records the architecture hypothesis the v2 simulator was built to investigate. It does not amend A1-A7; A5 remains the historical record of the RF -> Hall pre-ionization proposal reference.",
+  "hypothesis": "RF atmospheric propulsion as the nominal branch, with an independent Hall branch (Xe boost / special conditions) installed in parallel (RF || Hall), to be compared against rf_only and hall_only on the same atmosphere, mass-flow accounting, power boundary (bus_power_boundary_v2), mass boundary (mass_bom_v2) and mission environment.",
+  "questions": [
+    "Can RF atmospheric propulsion independently cover the normal VLEO mission?",
+    "If yes, what additional mission coverage does Hall provide?",
+    "Is that incremental Hall benefit worth its mass, power, Xe and life cost?"
+  ],
+  "allowed_outcomes": ["RF-only", "Hall-only", "RF-normal + Hall-boost", "NO_VIABLE_CASE"],
+  "no_winner_rule": "the simulator returns FEASIBLE / INFEASIBLE / UNRESOLVED / OUT_OF_DOMAIN / INCOMPLETE_EVIDENCE and Pareto metrics; no BEST_ARCHITECTURE without an owner-approved preregistered rule",
+  "evidence_rule": "absolute RF thrust in a score-bearing evaluation only from measured Vyovrinda hardware or an ADMITTED RF map; the reduced RF model is never score-bearing; Hall transport closures stay subject to the credible-set admission (currently empty)",
+  "proposed_allocations_status": "PROPOSED_ENGINEERING_ALLOCATION (1350/300/700/300/50 W; dry 28 kg / wet 35 kg); RFP hard limits separate",
+  "implementation": "feature/rf-hall-parallel-v2; docs/parallel_architecture/",
+  "created": "2026-09-29"
+}

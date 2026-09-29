@@ -11,7 +11,7 @@ This module defines immutable, validated value objects shared by every v2 module
 * ``Limit`` / ``SystemConstraints``: requirements and internal design allocations, kept distinguishable.
 
 Scientific status: architecture-investigation infrastructure, not a flight-baseline update. The historical A5
-decision (RF -> Hall pre-ionization) and every v1 artifact (bus_power_boundary_v1, mass_bom_v1, xe_ledger_v1) are
+decision (RF -> Hall pre-ionization) and every v1 artifact (bus_power_boundary_v1, mass_bom_v1, the v1 Xe ledger) are
 untouched; v2 represents the separate RF || Hall hypothesis.
 """
 from __future__ import annotations

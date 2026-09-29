@@ -175,3 +175,29 @@ def route(atm_feed: FeedState | None, xe_supply: XeSupply | None, mode, request:
             hall_feed = xe_feed(req["hall_xe"], "Hall anode")
     return RouterResult(spec.mode.value, rf_feed, hall_feed, req["cathode_xe"], atm_in, xe_avail,
                         unalloc_atm, unalloc_xe, atm_res, xe_res)
+
+
+# ------------------------------------------------------------------ rarefied-flow regime classification (sec. 33)
+
+REGIME_THRESHOLDS = {"free_molecular_min_Kn": 10.0, "continuum_max_Kn": 0.01,
+                     "source": ("conventional Knudsen-number regime boundaries of rarefied gas dynamics (e.g. Bird, "
+                                "Molecular Gas Dynamics and the Direct Simulation of Gas Flows, 1994) - verify"),
+                     "note": "the slip band 0.01-0.1 is grouped with TRANSITIONAL (flagged for DSMC validation)"}
+
+
+def knudsen(mean_free_path_m: float, length_m: float) -> float:
+    """Kn = lambda / L with both inputs explicit (no default molecular diameter or pressure)."""
+    return positive(mean_free_path_m, "mean free path [m]") / positive(length_m, "characteristic length [m]")
+
+
+def flow_regime(Kn: float) -> dict:
+    """FREE_MOLECULAR (TPMC applicable) / TRANSITIONAL (flag for DSMC validation) / CONTINUUM_APPROX. No correction
+    is applied: DSMC-derived corrections enter only as external, sha-pinned data."""
+    k = positive(Kn, "Kn")
+    if k >= REGIME_THRESHOLDS["free_molecular_min_Kn"]:
+        r, action = "FREE_MOLECULAR", "TPMC applicable"
+    elif k > REGIME_THRESHOLDS["continuum_max_Kn"]:
+        r, action = "TRANSITIONAL", "flag for DSMC validation; no automatic correction"
+    else:
+        r, action = "CONTINUUM_APPROX", "continuum/viscous treatment; outside TPMC applicability"
+    return {"Kn": k, "regime": r, "action": action, "thresholds": REGIME_THRESHOLDS}

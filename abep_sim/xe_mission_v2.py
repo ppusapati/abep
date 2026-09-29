@@ -1,6 +1,6 @@
 """Mission Xe ledger v2 (parallel RF || Hall investigation).
 
-``xe_ledger_v1`` (abep_sim/xe_ledger.py, the A6 parametric ledger) is untouched. v2 books Xe by CAUSE from the
+The A6 parametric Xe ledger (v1 module) is untouched. v2 books Xe by CAUSE from the
 actual mode history of a mission:
 
     m_Xe = sum_i mdot_Xe,i t_i  +  sum_events m_event  +  m_reserve  (+ m_residual)

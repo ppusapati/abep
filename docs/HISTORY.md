@@ -2299,3 +2299,24 @@ H-1 Phase 1 picks the branch: A (Hall-only), B (RF+Hall), C (ECR+Hall) or NO_VIA
 and runs Hall-only, then RF, then ECR at each point under common conditions. The discriminators are T/P_bus, sustainment, eta_u
 and envelope width. Thrust, power, mass and life figures are allocations or requirements, never predictions. Hall validation
 status is unchanged: the credible set remains empty.
+
+## 2026-09-29 — Parallel RF ∥ Hall simulation v2 (architecture investigation; branch feature/rf-hall-parallel-v2)
+This adds a separate v2 capability for the RF ∥ Hall hypothesis: RF atmospheric propulsion as the nominal branch,
+with an independent Hall branch for Xe boost. It is investigated against rf_only and hall_only. It is not a
+flight-baseline update. A5 and every v1 artifact are unchanged: bus_power_boundary_v1, mass_bom_v1, xe_ledger_v1,
+the goldens, the Hall ensemble and P5-N₂.
+
+- **Draft hypothesis record:** `docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A8_parallel_rf_hall_investigation.json`
+  (DRAFT, not owner-frozen).
+- **New modules:** parallel_contracts, propulsion_modes, propellant_router, bus_power_v2, rf_reduced, rf_branch,
+  rf_map, rf_registry, hall_branch_adapter, parallel_system, xe_mission_v2, mass_bom_v2, mode_controller,
+  mission_parallel and golden_parallel. Nine schemas are in `schemas/parallel_architecture/`; the docs are in
+  `docs/parallel_architecture/`.
+- **New golden:** `abep_sim/data/golden_parallel_v1.json`. It holds software-regression vectors from test
+  fixtures and is not physical validation.
+- **Reduced-RF finding:** the enforced energy bound
+  P_kin ≤ P_abs − P_iz − P_diss − P_wall
+  shows that the global model's exit budget (2 T_e per exiting electron) cannot supply the polytropic nozzle ion
+  energy beyond R_m ≈ 3–5 (γ = 1.2). Such points are MODEL_ERROR, and their thrust is withheld, never clipped.
+- **Deferred:** the §45 surfaces need evidence inputs that do not yet exist (RF coupling, nozzle, Hall-Xe points,
+  compressor power, start-up Xe). v2 stops rather than invent them.
