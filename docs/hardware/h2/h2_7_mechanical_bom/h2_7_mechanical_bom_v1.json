@@ -1,0 +1,3671 @@
+{
+ "schema": "h2_7_mechanical_bom_v1",
+ "id": "fo_h2_7_mechanical_bom_v1",
+ "lane": "fo_h2_7_mechanical_bom",
+ "trigger": "T_H2_7_MECHANICAL_BOM",
+ "owner_addendum": "A7",
+ "title": "H2-7 mechanical envelope / evolving mass model (A5 proposal reference architecture)",
+ "status": "DRAFT_PENDING_OWNER",
+ "date": "2026-09-29",
+ "base_commit": "8ea7e4bc882d39bb0bce61308e7a1f5b8c0ecd2e",
+ "generated_by": "docs/hardware/h2/h2_7_mechanical_bom/build_h2_7_mechanical_bom.py",
+ "companion_document": "docs/hardware/h2/h2_7_mechanical_bom/H2_7_MECHANICAL_BOM.md",
+ "test": "tests/test_h2_7_mechanical_bom.py",
+ "architectures": [
+  "hall_only",
+  "rf_hall",
+  "ecr_hall"
+ ],
+ "lane_scope": "design/preliminary-sizing lanes, NOT architecture-selection lanes; they never predict thrust or efficiency from unadmitted Hall transport closures and never select hall_only / rf_hall / ecr_hall",
+ "what_this_is_not": [
+  "not a performance prediction (no thrust, efficiency, discharge current or plasma state)",
+  "not an architecture selection or ranking; no winner among hall_only, rf_hall, ecr_hall",
+  "not a frozen Xe mass (A6 not_authorized); Bundle 1 stays NO_BASELINE_YET",
+  "analog masses are published values of OTHER hardware, never predictions of Vyovrinda hardware; A5 numbers are allocations or requirements"
+ ],
+ "decision_pins": [
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+   "sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+   "why": "hardware-pivot owner disposition that A5-A7 amend"
+  },
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+   "sha256": "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
+   "why": "16 baseline subsystem names, reserved RF interface, Xe allocation terms, mass allocation <= 34-36 kg"
+  },
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A6_a5_followon_authorization.json",
+   "sha256": "aaeb7c503c3791f81d4c589e8e25289befa6fcb3b16ce6f962b153715c883180",
+   "why": "m_Xe_subsystem decomposition; not_authorized list"
+  },
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A7_execution_model.json",
+   "sha256": "dae69983d9aeeb4838d9ff973a5f824c973219f8cc528adfb12717c4bb92c925",
+   "why": "H2 scope, architecture-changing blockers 1-3, M16 execution states and rollup categories"
+  },
+  {
+   "path": "docs/decisions/verification/A5_BASELINE_VERIFICATION.json",
+   "sha256": "4bd0fb4312fba97b18bba92ca0726133947ea6d86327f5e1360ea6af2b163523",
+   "why": "G0 verdict CLEAN: downstream artifacts may pin A5"
+  }
+ ],
+ "input_pins": [
+  {
+   "path": "docs/architecture_comparison/mass_bom/mass_bom_v1.json",
+   "sha256": "8ab97ff93f507899508374d4ce8116e7066c31e3fbe2c79300f5b55372ba7313",
+   "why": "margin policy (MGA categories, system margin, harness and residual fractions) and item ids reused"
+  },
+  {
+   "path": "docs/experiments/hardware/hardware_requirements_v1.json",
+   "sha256": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0",
+   "why": "H-1 configuration items and interface planes; RFP basis"
+  },
+  {
+   "path": "docs/budgets/xe_ledger/xe_ledger_v1.json",
+   "sha256": "965fdafa60ae9c3ee1e36189f22ef00198ae3f8a906696213bec13bdcbfb09ad",
+   "why": "verified parametric Xe ledger (T_A5_XE_LEDGER VERIFIED, merged 732bbde): cathode term, missing terms"
+  },
+  {
+   "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+   "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
+   "why": "H-1 ground instrument list INS-01..INS-24 (excluded from the flight mass model)"
+  },
+  {
+   "path": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json",
+   "sha256": "79f6b28f65243b54894dc78172b708693f96c639089f472d91d070012a0e4a52",
+   "why": "compressor concept status (mass TBD for every surveyed concept)"
+  }
+ ],
+ "never_pinned": [
+  "docs/orchestration/lane_registry_v1.json",
+  "docs/orchestration/trigger_registry_v1.json",
+  "docs/orchestration/fired_triggers.jsonl",
+  "docs/orchestration/trigger_ledger_v2.jsonl",
+  "docs/orchestration/runtime_state.json",
+  "CLAUDE.md (referenced by path for the ECHT geometry only)",
+  "docs/EVIDENCE.md (referenced by path only)",
+  "docs/interfaces/UPSTREAM_ICD.md (referenced by path only)"
+ ],
+ "sources": {
+  "SRC-BUSEK-BHT600": {
+   "citation": "Busek Co. Inc., 'BHT-600 Hall Effect Thruster' datasheet, Version 1.0, released August 2021",
+   "url": "https://satcatalog.s3.amazonaws.com/components/940/SatCatalog_-_Busek_-_BHT-600_-_Datasheet.pdf?lastmod=20211014052402",
+   "also": "identical bytes inside https://www.busek.com/s/Busek-Hall-Thrusters-Datasheets-v10.zip (BHT_600_v1.0.pdf)",
+   "sha256_as_fetched": "a8fa215f7ae59fe0f9931a2fa57f9604028b200dfb387c497da65c2484880e7d",
+   "access": "open PDF, text extracted with pdftotext",
+   "kind": "manufacturer datasheet"
+  },
+  "SRC-BUSEK-BHT1500": {
+   "citation": "Busek Co. Inc., 'BHT-1500 Hall Effect Thruster' datasheet, Version 1.0 (2021)",
+   "url": "https://www.busek.com/s/Busek-Hall-Thrusters-Datasheets-v10.zip",
+   "member": "BHT_1500_v1.0.pdf (zip sha256 2f3808f8bc993f15f33a991535e8c8f79a9d3c7469ecbe25824361b4c710d7a5)",
+   "sha256_as_fetched": "99b65f415ad225b2711d2442155b73d0016a8c77cc96a1dabf328e479471361e",
+   "access": "open zip of PDFs from the manufacturer site, text extracted with pdftotext",
+   "kind": "manufacturer datasheet"
+  },
+  "SRC-SAFRAN-PPS1350": {
+   "citation": "Safran Aircraft Engines, 'PPS(R)1350 [Stationary plasma thruster]' datasheet (2 pages, code '205-17')",
+   "url": "https://www.safran-group.com/sites/default/files/2022-09/PPS1350%20-%20Safran%20Spacecraft%20Propulsion%20-%20Datasheet.pdf",
+   "sha256_as_fetched": "b8167eff385d042b04507e786e19235ae5b1363e6f361b7f4f34a322e5fe223d",
+   "access": "open PDF, text extracted with pdftotext; drawing labels read from the text layer (axis assignment: verify)",
+   "kind": "manufacturer datasheet"
+  },
+  "SRC-NASA-LOWMASS-HALL": {
+   "citation": "NASA, 'Low-Mass, Low-Power Hall Thruster System - For radioisotope electric propulsion (REP)', SBIR fact sheet (Busek Company, Inc.), in NASA/TM-2015-218829, p. 3 (NTRS 20160005342)",
+   "url": "https://ntrs.nasa.gov/api/citations/20160005342/downloads/20160005342.pdf",
+   "sha256_as_fetched": "fb3ae447a19abe82e19b48b3ce96c2a1eb4aa61c2830ae866fab796fadb0fc0e",
+   "access": "open PDF, text extracted with pdftotext",
+   "kind": "agency fact sheet (development TARGETS only)"
+  },
+  "SRC-TAS-PPU-2019": {
+   "citation": "E. Bourguignon and S. Fraselle, 'Power Processing Unit Activities at Thales Alenia Space in Belgium', IEPC-2019-584, 36th International Electric Propulsion Conference, Vienna, 15-20 September 2019",
+   "url": "https://electricrocket.org/2019/584.pdf",
+   "sha256_as_fetched": "c47f3c83427665811263823e65123ec8352d40e2d646a9a4dbbdca6f65363d6f",
+   "access": "open PDF, text extracted with pdftotext",
+   "kind": "developer conference paper"
+  },
+  "SRC-SATSEARCH-SETS-PPU": {
+   "citation": "satsearch listing 'Power Processing Unit (PPU)' by SETS (Space Electric Thruster Systems)",
+   "url": "https://satsearch.co/products/sets-space-power-processing-unit-ppu",
+   "sha256_as_fetched": null,
+   "access": "open HTML read through the fetch tool; third-party marketplace listing (verify on the page)",
+   "kind": "secondary product listing"
+  },
+  "SRC-MOOG-PFCV": {
+   "citation": "Moog Inc., 'Electric Propulsion Proportional Flow Control Valve (PFCV)' 51E339 datasheet, Form 500-1119 0620",
+   "url": "https://www.moog.com/content/dam/moog/literature/sdg/space/propulsion/moog-proportional-flow-control-valve-datasheet.pdf",
+   "sha256_as_fetched": "f9124de96f217ac8153cbcd2d94e751a9662b2978abaed6e9a520ae0a6062a2b",
+   "access": "open PDF, text extracted with pdftotext",
+   "kind": "manufacturer datasheet"
+  },
+  "SRC-MOOG-ISO": {
+   "citation": "Moog Inc., 'Electric Propulsion Isolation Valves' datasheet",
+   "url": "https://www.moog.com/content/dam/moog/literature/sdg/space/propulsion/moog-electric-propulsion-isolation-valve-datasheet.pdf",
+   "sha256_as_fetched": "b501398e7d95800299ebdb00e3750a08ed516f6d67c171d4682094124de3655c",
+   "access": "open PDF, text extracted with pdftotext",
+   "kind": "manufacturer datasheet"
+  },
+  "SRC-MOOG-XFC": {
+   "citation": "Moog Inc., 'Xenon Flow Controller (XFC)' product page",
+   "url": "https://www.moog.com/products/propulsion/space-propulsion/spacecraft-propulsion/systems-and-subsystems/xenon-flow-controller.html",
+   "sha256_as_fetched": null,
+   "access": "open HTML read through the fetch tool (quoted strings; verify on the page)",
+   "kind": "manufacturer product page"
+  },
+  "SRC-ARIANE-XRFS": {
+   "citation": "ArianeGroup, 'Xenon Regulator and Feed System (XRFS)', page 'Pressure Regulator for Ion Space Propulsion Systems'",
+   "url": "https://www.space-propulsion.com/spacecraft-propulsion/valves/pressure-regulator.html",
+   "sha256_as_fetched": null,
+   "access": "open HTML read through the fetch tool (quoted strings; verify on the page)",
+   "kind": "manufacturer product page"
+  },
+  "SRC-MT-TANKS": {
+   "citation": "MT Aerospace AG, 'Spacecraft Propellant Tanks' catalogue (15 pages; PDF created 2019-04-30)",
+   "url": "https://www.mt-aerospace.de/files/mta/tankkatalog/MT-Tankkatalog.pdf",
+   "sha256_as_fetched": "076144193c73875b719890252da74fd66f8edbc4004956cd22577f4bf0cedb30",
+   "access": "open PDF, text extracted with pdftotext",
+   "kind": "manufacturer catalogue"
+  },
+  "SRC-NIST-XE": {
+   "citation": "NIST Chemistry WebBook, SRD 69, Thermophysical Properties of Fluid Systems: xenon, isothermal properties at 293.15 K",
+   "url": "https://webbook.nist.gov/cgi/fluid.cgi?Action=Load&ID=C7440633&Type=IsoTherm&Digits=5&PLow=50&PHigh=150&PInc=25&T=293.15&RefState=DEF&TUnit=K&PUnit=bar&DUnit=kg%2Fm3&HUnit=kJ%2Fkg&WUnit=m%2Fs&VisUnit=uPa*s&STUnit=N%2Fm",
+   "sha256_as_fetched": null,
+   "access": "open HTML table read through the fetch tool (verify)",
+   "kind": "evaluated reference data"
+  },
+  "SRC-ECHT-REPO": {
+   "citation": "ECHT geometry as recorded in the repository: CLAUDE.md 'Superseded / withdrawn' ('true ECHT: 86 mm long, 10 mm wide, 100 mm OD') and docs/EVIDENCE.md register row 'ECHT geometry (thesis Sec. 4.1.1, p. 63)' (F. Marchioni, MSc thesis, 2020)",
+   "url": null,
+   "sha256_as_fetched": null,
+   "access": "repository documents referenced by path (mutable, never pinned); thesis not re-accessed by this lane",
+   "kind": "published analog geometry (evidence level 3 per docs/EVIDENCE.md)"
+  }
+ },
+ "unit_identities": {
+  "KG_PER_G": 0.001,
+  "KG_PER_LBM": 0.453592,
+  "M3_PER_L": 0.001,
+  "S_PER_H": 3600.0,
+  "KG_PER_MG": 1e-06
+ },
+ "unit_notes": {
+  "KG_PER_LBM": "international avoirdupois pound, exact by definition (from memory: verify against NIST SP 811 Appendix B)"
+ },
+ "analog_data": {
+  "AN-BHT600-THR": {
+   "device": "Busek BHT-600 (Xe Hall thruster, 600 W discharge, 300-800 W throttle)",
+   "quantity": "thruster mass",
+   "value": 2.6,
+   "unit": "kg",
+   "evidence_class": "measured",
+   "stated_as": "manufacturer specification",
+   "source": "SRC-BUSEK-BHT600",
+   "locator": "p. 1 'Table: Standard Specifications': 'Thruster Mass: 2.6 kg'",
+   "includes": "thruster incl. its magnetic circuit; cathode listed separately"
+  },
+  "AN-BHT600-CATH": {
+   "device": "Busek BHT-600 cathode",
+   "quantity": "cathode mass",
+   "value": 0.2,
+   "unit": "kg",
+   "evidence_class": "measured",
+   "stated_as": "manufacturer specification",
+   "source": "SRC-BUSEK-BHT600",
+   "locator": "p. 1 'Cathode Mass: 0.2 kg'",
+   "includes": "cathode; emitter type and mount not stated"
+  },
+  "AN-BHT1500-THR": {
+   "device": "Busek BHT-1500 (Xe Hall thruster, 1500 W discharge, 1000-2700 W throttle, centre-mounted cathode)",
+   "quantity": "thruster mass",
+   "value": 6.3,
+   "unit": "kg",
+   "evidence_class": "measured",
+   "stated_as": "manufacturer specification",
+   "source": "SRC-BUSEK-BHT1500",
+   "locator": "p. 1 'Table: Standard Specifications': 'Thruster Mass: 6.3 kg'",
+   "includes": "thruster incl. its magnetic circuit; cathode listed separately"
+  },
+  "AN-BHT1500-CATH": {
+   "device": "Busek BHT-1500 cathode",
+   "quantity": "cathode mass",
+   "value": 0.3,
+   "unit": "kg",
+   "evidence_class": "measured",
+   "stated_as": "manufacturer specification",
+   "source": "SRC-BUSEK-BHT1500",
+   "locator": "p. 1 'Cathode Mass: 0.3 kg'",
+   "includes": "cathode; emitter type and mount not stated"
+  },
+  "AN-PPS1350-MASS": {
+   "device": "Safran PPS1350-S / -E (Xe Hall thruster, 1500 / 2500 W)",
+   "quantity": "weight including xenon flow control system",
+   "value": 4.8,
+   "unit": "kg",
+   "evidence_class": "measured",
+   "stated_as": "manufacturer specification",
+   "source": "SRC-SAFRAN-PPS1350",
+   "locator": "p. 2 SPECIFICATIONS: 'Weight (including xenon flow control system) (kg) 4.8'",
+   "includes": "thruster, two cathodes (drawing labels 'Cathode 1', 'Cathode 2') and xenon flow control system; context only (inside the Hall row range)"
+  },
+  "AN-PPS1350-DIMS": {
+   "device": "Safran PPS1350",
+   "quantity": "drawing dimension labels",
+   "value": [
+    104.0,
+    135.0,
+    210.0
+   ],
+   "unit": "mm",
+   "evidence_class": "measured",
+   "stated_as": "manufacturer drawing ('max' labels)",
+   "source": "SRC-SAFRAN-PPS1350",
+   "locator": "p. 2 drawing labels '104 mm max', '135 mm max', '210 mm max' (which label is axial vs transverse is read from the drawing: verify)",
+   "includes": "envelope analog only"
+  },
+  "AN-NASA-LM-PPU-TARGET": {
+   "device": "low-mass PPU development for a 1 kW-class Hall system (NASA SBIR, Busek)",
+   "quantity": "PPU target mass",
+   "value": 2.0,
+   "unit": "kg",
+   "evidence_class": "assumed",
+   "stated_as": "development TARGET (not a demonstrated mass)",
+   "source": "SRC-NASA-LOWMASS-HALL",
+   "locator": "p. 3: 'the target mass of 1 kg for the thruster and 2 kg for the power processing unit (PPU)'; system 'input power up to 1,000 W'",
+   "includes": "PPU; undemonstrated target (owner question H27-Q5)"
+  },
+  "AN-TAS-PPUMK1-MASS": {
+   "device": "Thales Alenia Space Belgium PPU Mk1 (for 1.5 kW Hall thrusters PPS1350-G and SPT-100; flight heritage)",
+   "quantity": "mass including the Thruster Selection Unit",
+   "value": 10.9,
+   "unit": "kg",
+   "evidence_class": "measured",
+   "stated_as": "developer statement",
+   "source": "SRC-TAS-PPU-2019",
+   "locator": "Sec. I 'PPU Mk1': 'Mass of PPU Mk1 including TSU: 10.9 kg.'",
+   "includes": "discharge, magnet, heater, ignitor supplies, valve driver, thermothrottle, sequencer, TC/TM interface, TSU for one of two thrusters"
+  },
+  "AN-TAS-PPUMK1-DIMS": {
+   "device": "Thales Alenia Space Belgium PPU Mk1",
+   "quantity": "dimensions",
+   "value": [
+    390.0,
+    190.0,
+    186.0
+   ],
+   "unit": "mm",
+   "evidence_class": "measured",
+   "stated_as": "developer statement",
+   "source": "SRC-TAS-PPU-2019",
+   "locator": "Sec. I 'PPU Mk1': 'Dimensions: 390 mm x 190 mm x 186 mm.'",
+   "includes": "envelope analog only"
+  },
+  "AN-SETS-PPU": {
+   "device": "SETS PPU (Hall thruster 100-500 W)",
+   "quantity": "mass",
+   "value": 5.0,
+   "unit": "kg",
+   "evidence_class": "measured",
+   "stated_as": "secondary listing of a product specification",
+   "source": "SRC-SATSEARCH-SETS-PPU",
+   "locator": "listing: 'Mass: 5 kg'; 'Width 321 mm, Length 255 mm, Height 94 mm'; '100W to 500W'",
+   "includes": "context only (500 W class; secondary source); not a range end"
+  },
+  "AN-MOOG-PFCV": {
+   "device": "Moog 51E339 proportional flow control valve (Xe)",
+   "quantity": "mass",
+   "value": 115.0,
+   "unit": "g",
+   "evidence_class": "measured",
+   "stated_as": "manufacturer maximum ('115 g (0.25 lbm) max')",
+   "source": "SRC-MOOG-PFCV",
+   "locator": "SPECIFICATIONS table, row 'Mass'",
+   "includes": "flow range '0 - 30 mg/s Xe typical'; MEOP 186 bar"
+  },
+  "AN-MOOG-LATCH-18": {
+   "device": "Moog 1/8 inch latching solenoid isolation valve",
+   "quantity": "weight",
+   "value": 170.0,
+   "unit": "g",
+   "evidence_class": "measured",
+   "stated_as": "manufacturer upper limit ('< 0.375 (170) lbm (g)')",
+   "source": "SRC-MOOG-ISO",
+   "locator": "table row 'Weight', first column; row 'Cycle Life' 18,000 cycles; MEOP 186 bar",
+   "includes": "isolation valve (column assignment 1/8 inch latching: verify on the PDF)"
+  },
+  "AN-MOOG-XFC": {
+   "device": "Moog Xenon Flow Controller (XFC)",
+   "quantity": "mass",
+   "value": 974.0,
+   "unit": "g",
+   "evidence_class": "measured",
+   "stated_as": "manufacturer upper limit ('< 2.2 lbm (<974 g)')",
+   "source": "SRC-MOOG-XFC",
+   "locator": "product page, 'Mass'",
+   "includes": "complete single-thruster Xe flow controller (regulation + flow control), flow '3- 23 mg/sec GXe', '186 bar (2700 psia) capable'; 2.2 lbm = 0.998 kg, so the two unit statements differ by 2.4 %; the gram statement is used for this LOW range end"
+  },
+  "AN-XRFS": {
+   "device": "ArianeGroup Xenon Regulator and Feed System (XRFS)",
+   "quantity": "mass",
+   "value": 5.9,
+   "unit": "kg",
+   "evidence_class": "measured",
+   "stated_as": "manufacturer upper limit ('< 5.9 kg')",
+   "source": "SRC-ARIANE-XRFS",
+   "locator": "product page, 'Mass'",
+   "includes": "bang-bang regulator + feed system; inlet '3 to 120 bar', outlet '2.65 bar +- 0.2 bar', flow '> 6 mg/s gaseous xenon'"
+  },
+  "AN-MT-XSXTA": {
+   "device": "MT Aerospace XS-XTA 1-7 l xenon tank family (Ti-6Al-4V shell; UNDER DEVELOPMENT)",
+   "quantity": "tank dry mass",
+   "value": 3.5,
+   "unit": "kg",
+   "evidence_class": "assumed",
+   "stated_as": "catalogue upper limit of a family under development ('<=3,5 kg')",
+   "source": "SRC-MT-TANKS",
+   "locator": "catalogue p. 11 'XS-XTA / 1 - 7l Family': TOTAL VOLUME 1-7 l, TANK DRY MASS '<=3,5 kg', DIAMETER 242 mm, LENGTH '<=386 mm'; MEOP field blank; 'UNDER DELELOPMENT' [sic]",
+   "includes": "tank only; MEOP not stated (capacity is derived below from a PROPOSED minimum MEOP)"
+  },
+  "AN-MT-XSXTA-ENV": {
+   "device": "MT Aerospace XS-XTA 1-7 l",
+   "quantity": "diameter / max length",
+   "value": [
+    242.0,
+    386.0
+   ],
+   "unit": "mm",
+   "evidence_class": "assumed",
+   "stated_as": "catalogue values (family under development)",
+   "source": "SRC-MT-TANKS",
+   "locator": "catalogue p. 11",
+   "includes": "envelope analog"
+  },
+  "AN-MT-SXTA40": {
+   "device": "MT Aerospace S-XTA 40 l xenon tank (COPV, Ti-6Al-4V liner, CFRP T800; MEOP 187 bar)",
+   "quantity": "predicted structural mass",
+   "value": 6.3,
+   "unit": "kg",
+   "evidence_class": "model-derived",
+   "stated_as": "supplier prediction ('mStruct_pred=6.3 kg')",
+   "source": "SRC-MT-TANKS",
+   "locator": "catalogue p. 12 'S-XTA / 40-120l Family' size table: V=40 l, L=446 mm, mStruct_pred=6.3 kg, MXe_max=73 kg; diameter 440 mm",
+   "includes": "oversized for the present Xe term (73 kg capacity): conservative high end only"
+  },
+  "AN-MT-SXTA40-CAP": {
+   "device": "MT Aerospace S-XTA 40 l",
+   "quantity": "maximum Xe load",
+   "value": 73.0,
+   "unit": "kg",
+   "evidence_class": "model-derived",
+   "stated_as": "supplier table ('MXe_max=73 kg')",
+   "source": "SRC-MT-TANKS",
+   "locator": "catalogue p. 12 size table",
+   "includes": "context"
+  },
+  "AN-NIST-XE-RHO": {
+   "device": "xenon (fluid property)",
+   "quantity": "density at 293.15 K and 75 / 100 / 125 / 150 bar",
+   "value": [
+    1675.7,
+    1867.9,
+    1971.2,
+    2045.5
+   ],
+   "unit": "kg m^-3",
+   "evidence_class": "model-derived",
+   "stated_as": "evaluated equation-of-state values (supercritical)",
+   "source": "SRC-NIST-XE",
+   "locator": "isotherm table rows 293.15 K at 75.000 / 100.00 / 125.00 / 150.00 bar",
+   "includes": "storage-volume parameter sweep"
+  },
+  "AN-ECHT-GEOM": {
+   "device": "ECHT extended-channel Hall thruster (laboratory device on N2)",
+   "quantity": "BN chamber length / channel width / outer diameter",
+   "value": [
+    86.0,
+    10.0,
+    100.0
+   ],
+   "unit": "mm",
+   "evidence_class": "measured",
+   "stated_as": "design dimensions as recorded in the repo",
+   "source": "SRC-ECHT-REPO",
+   "locator": "CLAUDE.md 'Superseded / withdrawn'; docs/EVIDENCE.md row 'ECHT geometry'",
+   "includes": "published analog of an extended channel; no ECHT mass is published; never a Vyovrinda design value"
+  }
+ },
+ "margin_policy_reused": {
+  "from": "docs/architecture_comparison/mass_bom/mass_bom_v1.json",
+  "mev_definition": "MEV = sum_dry CBE x (1 + MGA) + system margin + propellant; system margin = fraction x nominal dry mass (nominal dry = sum_dry CBE x (1 + MGA)); propellant carries no MGA and no system margin (ESA R-M1-3)",
+  "standard": "ESA SRE-PA & D-TEC staff, 'Margin philosophy for science assessment studies', SRE-PA/2011.097/, Issue 1, Revision 3, 15/06/2012 (technical note, marked 'ESA UNCLASSIFIED - For Official Use', publicly posted on sci.esa.int)",
+  "standard_url": "https://sci.esa.int/documents/34375/36249/1567260131067-Margin_philosophy_for_science_assessment_studies_1.3.pdf",
+  "mga_dry_equipment_ecss_d": 0.2,
+  "mga_propellant": 0.0,
+  "system_margin_proposed": 0.2,
+  "system_margin_alternatives": [
+   0.1
+  ],
+  "harness_fraction": 0.05,
+  "xe_residual_fraction": 0.02,
+  "note": "mass_bom_v1 margin policy reused unchanged (not re-accessed by this lane)"
+ },
+ "h1_configuration_items": [
+  {
+   "id": "H-1",
+   "name": "Hall accelerator (one serial unit)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "MC-1",
+   "name": "common magnetic circuit",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "C-1",
+   "name": "cathode (one serial unit)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "FS-C",
+   "name": "common feed system",
+   "flight_status": "GROUND/FACILITY-ONLY"
+  },
+  {
+   "id": "PS-C",
+   "name": "common electrical supplies",
+   "flight_status": "GROUND/FACILITY-ONLY"
+  },
+  {
+   "id": "SVC-1",
+   "name": "service-line bundle across the thrust stand",
+   "flight_status": "GROUND/FACILITY-ONLY"
+  },
+  {
+   "id": "PIM-0",
+   "name": "HW-0 flow-equivalent spacer",
+   "flight_status": "H-1 TEST-ARTICLE-ONLY"
+  },
+  {
+   "id": "PIM-RF",
+   "name": "removable RF pre-ionizer module",
+   "flight_status": "H-1 TEST-ARTICLE-ONLY"
+  },
+  {
+   "id": "PIM-ECR",
+   "name": "removable ECR pre-ionizer module",
+   "flight_status": "H-1 TEST-ARTICLE-ONLY"
+  },
+  {
+   "id": "DIV-1",
+   "name": "OPTION-DIVERTER (only if D-06-B)",
+   "flight_status": "H-1 TEST-ARTICLE-ONLY"
+  }
+ ],
+ "interface_planes": [
+  {
+   "id": "IP-UP",
+   "definition": "module inlet plane: end of the common feed line (after the mixing point and the gas isolator). Fixed in the thrust-stand frame; the feed line upstream of it never moves or changes between configurations."
+  },
+  {
+   "id": "IP-DN",
+   "definition": "module outlet plane = H-1 rear inlet flange, immediately upstream of the anode/gas-distributor plane HALL_INLET_Z0 (lane 17 section 8). Everything downstream of IP-DN is H-1 and identical in every configuration."
+  },
+  {
+   "id": "HALL_INLET_Z0",
+   "definition": "lane 17 anode/gas-distributor plane at z = 0 (docs/architecture_comparison/hall_reference/hall_reference_v1.json injection_interface). The inlet state here is the only allowed physical difference between arms; it is a result, not a setting."
+  }
+ ],
+ "design_parameters": [
+  {
+   "id": "H27-01",
+   "line_item": "R01.m_intake",
+   "name": "intake structure (collector / collimator)",
+   "value": null,
+   "units": "kg",
+   "basis": "TBD",
+   "source": [
+    "none (TBD)"
+   ],
+   "evidence_class": null,
+   "status": "TBD - requires Vyovrinda intake geometry (feed_state_closure owner decisions DI-1.1 area sizing rule, DI-1.2 intake geometry) and a sourced material density, or a measured mass",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-02",
+   "line_item": "R02.m_filter",
+   "name": "protective / filter stage",
+   "value": null,
+   "units": "kg",
+   "basis": "TBD",
+   "source": [
+    "none (TBD)"
+   ],
+   "evidence_class": null,
+   "status": "TBD - requires a filter concept and geometry (the code lumps the filter into the intake; docs/interfaces/UPSTREAM_ICD.md IF-A1) or a measured mass",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-03",
+   "line_item": "R03.m_compressor",
+   "name": "compressor incl. motor and isolation valve",
+   "value": null,
+   "units": "kg",
+   "basis": "TBD",
+   "source": [
+    "none (TBD)"
+   ],
+   "evidence_class": null,
+   "status": "TBD - requires DI-1.4 compressor concept freeze and an ABEP-scale design or breadboard mass (compressor_downselect_v1: mass TBD for every surveyed concept; primary PROPOSED concept C1)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-04",
+   "line_item": "R04.m_plenum",
+   "name": "buffer / plenum vessel",
+   "value": null,
+   "units": "kg",
+   "basis": "pending",
+   "source": [
+    "none (TBD)"
+   ],
+   "evidence_class": null,
+   "status": "TBD - requires plenum volume, pressure and wall material (DI-1.5) (PENDING docs/hardware/h2/h2_3_gas_path_plenum/)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-05",
+   "line_item": "R05.m_atm_valve",
+   "name": "atmospheric metering + isolation valves",
+   "value": null,
+   "units": "kg",
+   "basis": "pending",
+   "source": [
+    "none (TBD)"
+   ],
+   "evidence_class": null,
+   "status": "TBD - requires low-pressure atmospheric metering valve concept (the accessed Xe valves are specified for 2.8-186 bar inlet and are not a transferable analog) (PENDING docs/hardware/h2/h2_3_gas_path_plenum/)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-06",
+   "line_item": "R06.m_Xe_cathode",
+   "name": "Xe load: cathode design term (A5 / A6)",
+   "value": 5.4,
+   "units": "kg",
+   "basis": "allocation",
+   "source": [
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json xe_mass_allocation; docs/budgets/xe_ledger/xe_ledger_v1.json cathode_term.design_term"
+   ],
+   "evidence_class": "assumed",
+   "status": "FIXED_DESIGN_TERM (A5 allocation; not a demonstrated flow)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-07",
+   "line_item": "R06.m_Xe_other",
+   "name": "Xe load: m_startup + m_transition + m_fallback + m_reserve",
+   "value": null,
+   "units": "kg",
+   "basis": "TBD",
+   "source": [
+    "none (TBD)"
+   ],
+   "evidence_class": null,
+   "status": "TBD - requires xe_ledger_v1 terms N_starts, t_startup, mdot_startup, N_transitions, t_transition, mdot_transition, t_fallback_max, mdot_fallback, reserve_policy (A6: not freezable without H-1/C-1 evidence)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-08",
+   "line_item": "R06.m_Xe_residual",
+   "name": "Xe residuals (policy fraction of the Xe load; known part only)",
+   "value": 0.108,
+   "units": "kg",
+   "basis": "derived",
+   "source": [
+    "docs/architecture_comparison/mass_bom/mass_bom_v1.json items[xe_residual].cbe.fraction"
+   ],
+   "evidence_class": "assumed",
+   "status": "PRELIMINARY (policy fraction on the known Xe load only; a floor)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-09",
+   "line_item": "R06.m_tank",
+   "name": "Xe tank",
+   "value": [
+    3.5,
+    6.3
+   ],
+   "units": "kg",
+   "basis": "analog",
+   "source": [
+    "AN-MT-XSXTA: SRC-MT-TANKS catalogue p. 11 'XS-XTA / 1 - 7l Family': TOTAL VOLUME 1-7 l, TANK DRY MASS '<=3,5 kg', DIAMETER 242 mm, LENGTH '<=386 mm'; MEOP field blank; 'UNDER DELELOPMENT' [sic]",
+    "AN-MT-SXTA40: SRC-MT-TANKS catalogue p. 12 'S-XTA / 40-120l Family' size table: V=40 l, L=446 mm, mStruct_pred=6.3 kg, MXe_max=73 kg; diameter 440 mm"
+   ],
+   "evidence_class": "inferred",
+   "status": "PRELIMINARY (analog planning range)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-10",
+   "line_item": "R06.m_mounting_thermal",
+   "name": "Xe tank mounting and thermal hardware",
+   "value": null,
+   "units": "kg",
+   "basis": "pending",
+   "source": [
+    "none (TBD)"
+   ],
+   "evidence_class": null,
+   "status": "TBD - requires tank selection, launch loads and the tank thermal-control design (PENDING docs/hardware/h2/h2_5_thermal_network/)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-11",
+   "line_item": "R07.m_regulator",
+   "name": "Xe pressure regulator",
+   "value": [
+    0.974,
+    5.9
+   ],
+   "units": "kg",
+   "basis": "analog",
+   "source": [
+    "AN-MOOG-XFC: SRC-MOOG-XFC product page, 'Mass'",
+    "AN-XRFS: SRC-ARIANE-XRFS product page, 'Mass'"
+   ],
+   "evidence_class": "inferred",
+   "status": "PRELIMINARY (analog planning range)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-12",
+   "line_item": "R08.m_valves",
+   "name": "Xe metering: isolation latch valve + proportional flow control valve per branch",
+   "value": 0.57,
+   "units": "kg",
+   "basis": "derived",
+   "source": [
+    "AN-MOOG-LATCH-18: SRC-MOOG-ISO table row 'Weight', first column; row 'Cycle Life' 18,000 cycles; MEOP 186 bar",
+    "AN-MOOG-PFCV: SRC-MOOG-PFCV SPECIFICATIONS table, row 'Mass'"
+   ],
+   "evidence_class": "inferred",
+   "status": "PRELIMINARY (PROPOSED minimal single-string set; PENDING docs/hardware/h2/h2_3_gas_path_plenum/)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-13",
+   "line_item": "R08.m_plumbing",
+   "name": "Xe plumbing, filters, fittings, pressure transducers",
+   "value": null,
+   "units": "kg",
+   "basis": "pending",
+   "source": [
+    "none (TBD)"
+   ],
+   "evidence_class": null,
+   "status": "TBD - requires Xe line routing, lengths and component selection (PENDING docs/hardware/h2/h2_3_gas_path_plenum/)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-14",
+   "line_item": "R09.m_hall_head_incl_mc",
+   "name": "Hall discharge chamber/accelerator INCLUDING magnetic circuit (analog thrusters are quoted with their magnetic circuit)",
+   "value": [
+    2.6,
+    6.3
+   ],
+   "units": "kg",
+   "basis": "analog",
+   "source": [
+    "AN-BHT600-THR: SRC-BUSEK-BHT600 p. 1 'Table: Standard Specifications': 'Thruster Mass: 2.6 kg'",
+    "AN-BHT1500-THR: SRC-BUSEK-BHT1500 p. 1 'Table: Standard Specifications': 'Thruster Mass: 6.3 kg'"
+   ],
+   "evidence_class": "inferred",
+   "status": "PRELIMINARY (analog planning range; PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-15",
+   "line_item": "R10.m_magnetic_circuit",
+   "name": "magnetic circuit (coils / magnets, pole pieces, yoke)",
+   "value": 0.0,
+   "units": "kg",
+   "basis": "analog",
+   "source": [
+    "included in R09.m_hall_head_incl_mc"
+   ],
+   "evidence_class": "inferred",
+   "status": "PRELIMINARY (0 kg additional: included in R09.m_hall_head_incl_mc analog; PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ for the split)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-16",
+   "line_item": "R11.m_cathode_unit",
+   "name": "hollow cathode unit (with heater and keeper)",
+   "value": [
+    0.2,
+    0.3
+   ],
+   "units": "kg",
+   "basis": "analog",
+   "source": [
+    "AN-BHT600-CATH: SRC-BUSEK-BHT600 p. 1 'Cathode Mass: 0.2 kg'",
+    "AN-BHT1500-CATH: SRC-BUSEK-BHT1500 p. 1 'Cathode Mass: 0.3 kg'"
+   ],
+   "evidence_class": "inferred",
+   "status": "PRELIMINARY (analog planning range; PENDING docs/hardware/h2/h2_2_cathode_integration/)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-17",
+   "line_item": "R11.m_cathode_shield_mount",
+   "name": "cathode shield / O-isolation / mount",
+   "value": null,
+   "units": "kg",
+   "basis": "pending",
+   "source": [
+    "none (TBD)"
+   ],
+   "evidence_class": null,
+   "status": "TBD - requires cathode location, shielding and isolation design (PENDING docs/hardware/h2/h2_2_cathode_integration/)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-18",
+   "line_item": "R12.m_ppu",
+   "name": "PPU / power distribution",
+   "value": [
+    2.0,
+    10.9
+   ],
+   "units": "kg",
+   "basis": "analog",
+   "source": [
+    "AN-NASA-LM-PPU-TARGET: SRC-NASA-LOWMASS-HALL p. 3: 'the target mass of 1 kg for the thruster and 2 kg for the power processing unit (PPU)'; system 'input power up to 1,000 W'",
+    "AN-TAS-PPUMK1-MASS: SRC-TAS-PPU-2019 Sec. I 'PPU Mk1': 'Mass of PPU Mk1 including TSU: 10.9 kg.'"
+   ],
+   "evidence_class": "inferred",
+   "status": "PRELIMINARY (analog planning range; PENDING docs/hardware/h2/h2_4_ppu_bus/)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-19",
+   "line_item": "R13.m_thermal",
+   "name": "thermal-control hardware (radiators, heaters, MLI, heat paths)",
+   "value": null,
+   "units": "kg",
+   "basis": "pending",
+   "source": [
+    "none (TBD)"
+   ],
+   "evidence_class": null,
+   "status": "TBD - requires thermal network, rejection area and materials (PENDING docs/hardware/h2/h2_5_thermal_network/)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-20",
+   "line_item": "R14.m_control_fdir",
+   "name": "control / FDIR electronics",
+   "value": 0.0,
+   "units": "kg",
+   "basis": "analog",
+   "source": [
+    "included in R12.m_ppu"
+   ],
+   "evidence_class": "inferred",
+   "status": "PRELIMINARY (0 kg additional: included in R12.m_ppu analog; PENDING docs/hardware/h2/h2_4_ppu_bus/ for the split)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-21",
+   "line_item": "R15.m_flight_sensors",
+   "name": "flight telemetry sensors (flight subset only)",
+   "value": null,
+   "units": "kg",
+   "basis": "pending",
+   "source": [
+    "none (TBD)"
+   ],
+   "evidence_class": null,
+   "status": "TBD - requires flight sensor selection for the telemetry subset TM-01..TM-10 (PENDING docs/hardware/h2/h2_6_diagnostics_fixture/)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-22",
+   "line_item": "R16.m_structure",
+   "name": "propulsion-module structure, brackets, spacecraft interface",
+   "value": null,
+   "units": "kg",
+   "basis": "TBD",
+   "source": [
+    "none (TBD)"
+   ],
+   "evidence_class": null,
+   "status": "TBD - requires spacecraft configuration and launch-load environment (not defined in the repository) and a structural design",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-23",
+   "line_item": "R17.m_interface_provision",
+   "name": "flight interface provision (flange / spacer length, connector and gas-port provisions); NO module hardware",
+   "value": null,
+   "units": "kg",
+   "basis": "pending",
+   "source": [
+    "none (TBD)"
+   ],
+   "evidence_class": null,
+   "status": "TBD - requires pre-ionizer module ICD mechanical envelope and flight interface definition (PENDING docs/interfaces/preionizer_module/)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-24",
+   "line_item": "SYS-H.m_harness",
+   "name": "harness (policy allocation on the nominal dry mass)",
+   "value": [
+    0.621726,
+    1.911789
+   ],
+   "units": "kg",
+   "basis": "derived",
+   "source": [
+    "docs/architecture_comparison/mass_bom/mass_bom_v1.json items[harness].cbe.fraction"
+   ],
+   "evidence_class": "assumed",
+   "status": "PRELIMINARY (policy allocation; computed on the known dry lines only)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-25",
+   "line_item": null,
+   "name": "A5 system mass design allocation",
+   "value": [
+    34.0,
+    36.0
+   ],
+   "units": "kg",
+   "basis": "allocation",
+   "source": [
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json allocations_and_requirements 'system mass design allocation'"
+   ],
+   "evidence_class": "assumed",
+   "status": "ALLOCATION (not a prediction)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-26",
+   "line_item": null,
+   "name": "RFP system mass limit",
+   "value": 40.0,
+   "units": "kg",
+   "basis": "requirement",
+   "source": [
+    "docs/experiments/hardware/hardware_requirements_v1.json rfp_basis.mass_max_kg (verify against the RFP)"
+   ],
+   "evidence_class": "assumed",
+   "status": "REQUIREMENT",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-27",
+   "line_item": null,
+   "name": "maturity growth allowance (dry equipment, ECSS D)",
+   "value": 0.2,
+   "units": "1",
+   "basis": "assumed",
+   "source": [
+    "docs/architecture_comparison/mass_bom/mass_bom_v1.json margin_policy.maturity_categories.ecss_d_new_or_major_modification"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED (mass_bom OD-M2)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-28",
+   "line_item": null,
+   "name": "system margin",
+   "value": 0.2,
+   "units": "1",
+   "basis": "assumed",
+   "source": [
+    "docs/architecture_comparison/mass_bom/mass_bom_v1.json system_margin.proposed_fraction"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED (mass_bom OD-M1; 10 % alternative also reported)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-29",
+   "line_item": null,
+   "name": "harness fraction of nominal dry mass",
+   "value": 0.05,
+   "units": "1",
+   "basis": "assumed",
+   "source": [
+    "docs/architecture_comparison/mass_bom/mass_bom_v1.json items[harness]"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED (mass_bom OD-M6)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-30",
+   "line_item": null,
+   "name": "Xe residual fraction",
+   "value": 0.02,
+   "units": "1",
+   "basis": "assumed",
+   "source": [
+    "docs/architecture_comparison/mass_bom/mass_bom_v1.json items[xe_residual]"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED (mass_bom policy)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-31",
+   "line_item": null,
+   "name": "number of metered Xe branches",
+   "value": 2,
+   "units": "1",
+   "basis": "allocation",
+   "source": [
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json architecture.xe_branch 'Xe metering (splits to ignition/transition feed and cathode feed)'"
+   ],
+   "evidence_class": "assumed",
+   "status": "PRELIMINARY (PENDING docs/hardware/h2/h2_3_gas_path_plenum/)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-32",
+   "line_item": null,
+   "name": "valves per metered branch (latch + PFCV), single string",
+   "value": 2,
+   "units": "1",
+   "basis": "assumed",
+   "source": [
+    "this lane (PROPOSED minimal set; redundancy owner question H27-Q4)"
+   ],
+   "evidence_class": "assumed",
+   "status": "PRELIMINARY (PENDING docs/hardware/h2/h2_3_gas_path_plenum/)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-33",
+   "line_item": null,
+   "name": "Xe storage temperature for the volume sweep",
+   "value": 293.15,
+   "units": "K",
+   "basis": "assumed",
+   "source": [
+    "this lane (parameter; NIST isotherm read at this temperature)"
+   ],
+   "evidence_class": "assumed",
+   "status": "PRELIMINARY (PENDING docs/hardware/h2/h2_5_thermal_network/)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-34",
+   "line_item": null,
+   "name": "PROPOSED minimum Xe tank MEOP for the 7 l capacity check",
+   "value": 75.0,
+   "units": "bar",
+   "basis": "assumed",
+   "source": [
+    "this lane (lowest tabulated supercritical pressure in AN-NIST-XE-RHO)"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED (H3-01 procurement requirement)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-35",
+   "line_item": null,
+   "name": "overall module length / volume",
+   "value": null,
+   "units": "mm / l",
+   "basis": "pending",
+   "source": [
+    "none"
+   ],
+   "evidence_class": null,
+   "status": "TBD - requires H2-1..H2-5 geometry and the intake / compressor designs",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  {
+   "id": "H27-36",
+   "line_item": null,
+   "name": "CG location",
+   "value": null,
+   "units": "mm",
+   "basis": "pending",
+   "source": [
+    "none"
+   ],
+   "evidence_class": null,
+   "status": "TBD - requires line-item positions (NOT_COMPUTABLE)",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  }
+ ],
+ "rows": [
+  {
+   "row_id": "R01",
+   "a5_subsystem": "intake",
+   "mass_bom_items": [
+    "intake"
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "h1_counterpart": {
+    "items": [
+     "FS-C"
+    ],
+    "status": "GROUND/FACILITY-ONLY",
+    "note": "no intake on H-1: FS-C bottles and MFCs emulate the delivered feed at the valve outlet (IF-A5)"
+   },
+   "line_items": [
+    {
+     "id": "R01.m_intake",
+     "param_id": "H27-01",
+     "name": "intake structure (collector / collimator)",
+     "mass_class": "dry",
+     "cbe": {
+      "kind": "tbd",
+      "requires": "Vyovrinda intake geometry (feed_state_closure owner decisions DI-1.1 area sizing rule, DI-1.2 intake geometry) and a sourced material density, or a measured mass",
+      "pending_lane": null
+     },
+     "resolved": {
+      "low": null,
+      "high": null,
+      "basis": "TBD",
+      "evidence_class": null,
+      "status": "TBD - requires Vyovrinda intake geometry (feed_state_closure owner decisions DI-1.1 area sizing rule, DI-1.2 intake geometry) and a sourced material density, or a measured mass",
+      "requires": "Vyovrinda intake geometry (feed_state_closure owner decisions DI-1.1 area sizing rule, DI-1.2 intake geometry) and a sourced material density, or a measured mass",
+      "pending_lane": null,
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": null,
+      "mev_high_kg": null
+     }
+    }
+   ],
+   "a5_group": "atmospheric_branch"
+  },
+  {
+   "row_id": "R02",
+   "a5_subsystem": "protective/filter stage",
+   "mass_bom_items": [
+    "filter"
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "h1_counterpart": {
+    "items": [
+     "FS-C"
+    ],
+    "status": "GROUND/FACILITY-ONLY",
+    "note": "no filter on H-1"
+   },
+   "line_items": [
+    {
+     "id": "R02.m_filter",
+     "param_id": "H27-02",
+     "name": "protective / filter stage",
+     "mass_class": "dry",
+     "cbe": {
+      "kind": "tbd",
+      "requires": "a filter concept and geometry (the code lumps the filter into the intake; docs/interfaces/UPSTREAM_ICD.md IF-A1) or a measured mass",
+      "pending_lane": null
+     },
+     "resolved": {
+      "low": null,
+      "high": null,
+      "basis": "TBD",
+      "evidence_class": null,
+      "status": "TBD - requires a filter concept and geometry (the code lumps the filter into the intake; docs/interfaces/UPSTREAM_ICD.md IF-A1) or a measured mass",
+      "requires": "a filter concept and geometry (the code lumps the filter into the intake; docs/interfaces/UPSTREAM_ICD.md IF-A1) or a measured mass",
+      "pending_lane": null,
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": null,
+      "mev_high_kg": null
+     }
+    }
+   ],
+   "a5_group": "atmospheric_branch"
+  },
+  {
+   "row_id": "R03",
+   "a5_subsystem": "compressor",
+   "mass_bom_items": [
+    "compressor"
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "h1_counterpart": {
+    "items": [
+     "FS-C"
+    ],
+    "status": "GROUND/FACILITY-ONLY",
+    "note": "no compressor on H-1"
+   },
+   "line_items": [
+    {
+     "id": "R03.m_compressor",
+     "param_id": "H27-03",
+     "name": "compressor incl. motor and isolation valve",
+     "mass_class": "dry",
+     "cbe": {
+      "kind": "tbd",
+      "requires": "DI-1.4 compressor concept freeze and an ABEP-scale design or breadboard mass (compressor_downselect_v1: mass TBD for every surveyed concept; primary PROPOSED concept C1)",
+      "pending_lane": null
+     },
+     "resolved": {
+      "low": null,
+      "high": null,
+      "basis": "TBD",
+      "evidence_class": null,
+      "status": "TBD - requires DI-1.4 compressor concept freeze and an ABEP-scale design or breadboard mass (compressor_downselect_v1: mass TBD for every surveyed concept; primary PROPOSED concept C1)",
+      "requires": "DI-1.4 compressor concept freeze and an ABEP-scale design or breadboard mass (compressor_downselect_v1: mass TBD for every surveyed concept; primary PROPOSED concept C1)",
+      "pending_lane": null,
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": null,
+      "mev_high_kg": null
+     }
+    }
+   ],
+   "a5_group": "atmospheric_branch"
+  },
+  {
+   "row_id": "R04",
+   "a5_subsystem": "buffer/plenum",
+   "mass_bom_items": [
+    "atmospheric_gas_chamber"
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "h1_counterpart": {
+    "items": [
+     "FS-C"
+    ],
+    "status": "GROUND/FACILITY-ONLY",
+    "note": "FS-C manifold stands in for the plenum"
+   },
+   "line_items": [
+    {
+     "id": "R04.m_plenum",
+     "param_id": "H27-04",
+     "name": "buffer / plenum vessel",
+     "mass_class": "dry",
+     "cbe": {
+      "kind": "tbd",
+      "requires": "plenum volume, pressure and wall material (DI-1.5)",
+      "pending_lane": "H2-3"
+     },
+     "resolved": {
+      "low": null,
+      "high": null,
+      "basis": "pending",
+      "evidence_class": null,
+      "status": "TBD - requires plenum volume, pressure and wall material (DI-1.5) (PENDING docs/hardware/h2/h2_3_gas_path_plenum/)",
+      "requires": "plenum volume, pressure and wall material (DI-1.5)",
+      "pending_lane": "docs/hardware/h2/h2_3_gas_path_plenum/",
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": null,
+      "mev_high_kg": null
+     }
+    }
+   ],
+   "a5_group": "atmospheric_branch"
+  },
+  {
+   "row_id": "R05",
+   "a5_subsystem": "atmospheric metering valve",
+   "mass_bom_items": [
+    "atmospheric_valve"
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "h1_counterpart": {
+    "items": [
+     "FS-C"
+    ],
+    "status": "GROUND/FACILITY-ONLY",
+    "note": "FS-C MFCs meter the anode gas on the ground"
+   },
+   "line_items": [
+    {
+     "id": "R05.m_atm_valve",
+     "param_id": "H27-05",
+     "name": "atmospheric metering + isolation valves",
+     "mass_class": "dry",
+     "cbe": {
+      "kind": "tbd",
+      "requires": "low-pressure atmospheric metering valve concept (the accessed Xe valves are specified for 2.8-186 bar inlet and are not a transferable analog)",
+      "pending_lane": "H2-3"
+     },
+     "resolved": {
+      "low": null,
+      "high": null,
+      "basis": "pending",
+      "evidence_class": null,
+      "status": "TBD - requires low-pressure atmospheric metering valve concept (the accessed Xe valves are specified for 2.8-186 bar inlet and are not a transferable analog) (PENDING docs/hardware/h2/h2_3_gas_path_plenum/)",
+      "requires": "low-pressure atmospheric metering valve concept (the accessed Xe valves are specified for 2.8-186 bar inlet and are not a transferable analog)",
+      "pending_lane": "docs/hardware/h2/h2_3_gas_path_plenum/",
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": null,
+      "mev_high_kg": null
+     }
+    }
+   ],
+   "a5_group": "atmospheric_branch"
+  },
+  {
+   "row_id": "R06",
+   "a5_subsystem": "Xe tank",
+   "mass_bom_items": [
+    "xe_tank",
+    "xe_load",
+    "xe_residual"
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "h1_counterpart": {
+    "items": [
+     "FS-C"
+    ],
+    "status": "GROUND/FACILITY-ONLY",
+    "note": "Xe bottles and MFCs on the ground"
+   },
+   "line_items": [
+    {
+     "id": "R06.m_Xe_cathode",
+     "param_id": "H27-06",
+     "name": "Xe load: cathode design term (A5 / A6)",
+     "mass_class": "propellant",
+     "xe_term": "m_cathode",
+     "cbe": {
+      "kind": "fixed_design_term"
+     },
+     "resolved": {
+      "low": 5.4,
+      "high": 5.4,
+      "basis": "allocation",
+      "evidence_class": "assumed",
+      "formula": "0.1 mg/s x 1e-6 kg/mg x 15000 h x 3600 s/h = 5.4 kg",
+      "status": "FIXED_DESIGN_TERM (A5 allocation; not a demonstrated flow)",
+      "note": "the only fixed Xe design term (A5 xe_mass_allocation; xe_ledger_v1 cathode_term.design_term)",
+      "mass_class": "propellant",
+      "maturity_category": "propellant_not_equipment",
+      "maturity_status": "per mass_bom_v1 margin policy",
+      "mga": 0.0,
+      "mev_low_kg": 5.4,
+      "mev_high_kg": 5.4
+     }
+    },
+    {
+     "id": "R06.m_Xe_other",
+     "param_id": "H27-07",
+     "name": "Xe load: m_startup + m_transition + m_fallback + m_reserve",
+     "mass_class": "propellant",
+     "xe_term": "m_startup + m_transition + m_fallback + m_reserve",
+     "cbe": {
+      "kind": "tbd",
+      "requires": "xe_ledger_v1 terms N_starts, t_startup, mdot_startup, N_transitions, t_transition, mdot_transition, t_fallback_max, mdot_fallback, reserve_policy (A6: not freezable without H-1/C-1 evidence)",
+      "pending_lane": null
+     },
+     "resolved": {
+      "low": null,
+      "high": null,
+      "basis": "TBD",
+      "evidence_class": null,
+      "status": "TBD - requires xe_ledger_v1 terms N_starts, t_startup, mdot_startup, N_transitions, t_transition, mdot_transition, t_fallback_max, mdot_fallback, reserve_policy (A6: not freezable without H-1/C-1 evidence)",
+      "requires": "xe_ledger_v1 terms N_starts, t_startup, mdot_startup, N_transitions, t_transition, mdot_transition, t_fallback_max, mdot_fallback, reserve_policy (A6: not freezable without H-1/C-1 evidence)",
+      "pending_lane": null,
+      "mass_class": "propellant",
+      "maturity_category": "propellant_not_equipment",
+      "maturity_status": "per mass_bom_v1 margin policy",
+      "mga": 0.0,
+      "mev_low_kg": null,
+      "mev_high_kg": null
+     }
+    },
+    {
+     "id": "R06.m_Xe_residual",
+     "param_id": "H27-08",
+     "name": "Xe residuals (policy fraction of the Xe load; known part only)",
+     "mass_class": "propellant",
+     "xe_term": "(outside the five-term ledger; mass_bom xe_residual)",
+     "cbe": {
+      "kind": "fraction_of_item",
+      "of": [
+       "R06.m_Xe_cathode",
+       "R06.m_Xe_other"
+      ]
+     },
+     "resolved": {
+      "low": 0.108,
+      "high": 0.108,
+      "basis": "derived",
+      "evidence_class": "assumed",
+      "mass_class": "propellant",
+      "formula": "0.02 x (known Xe load 5.4 kg); grows with m_Xe_other",
+      "status": "PRELIMINARY (policy fraction on the known Xe load only; a floor)",
+      "note": "mass_bom_v1 xe_residual: ESA R-M1-6 2 % of propellant (as cited there); outside the five-term xe_ledger (owner question H27-Q6)",
+      "maturity_category": "propellant_not_equipment",
+      "maturity_status": "per mass_bom_v1 margin policy",
+      "mga": 0.0,
+      "mev_low_kg": 0.108,
+      "mev_high_kg": 0.108
+     }
+    },
+    {
+     "id": "R06.m_tank",
+     "param_id": "H27-09",
+     "name": "Xe tank",
+     "mass_class": "dry",
+     "xe_term": "m_tank",
+     "cbe": {
+      "kind": "analog_range",
+      "low": "AN-MT-XSXTA",
+      "high": "AN-MT-SXTA40"
+     },
+     "resolved": {
+      "low": 3.5,
+      "high": 6.3,
+      "basis": "analog",
+      "evidence_class": "inferred",
+      "analogs": [
+       "AN-MT-XSXTA",
+       "AN-MT-SXTA40"
+      ],
+      "status": "PRELIMINARY (analog planning range)",
+      "note": "published masses of other hardware transferred as a planning range (evidence class of the transfer: inferred); never a prediction of Vyovrinda hardware",
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": 4.2,
+      "mev_high_kg": 7.56
+     }
+    },
+    {
+     "id": "R06.m_mounting_thermal",
+     "param_id": "H27-10",
+     "name": "Xe tank mounting and thermal hardware",
+     "mass_class": "dry",
+     "xe_term": "m_mounting/thermal",
+     "cbe": {
+      "kind": "tbd",
+      "requires": "tank selection, launch loads and the tank thermal-control design",
+      "pending_lane": "H2-5"
+     },
+     "resolved": {
+      "low": null,
+      "high": null,
+      "basis": "pending",
+      "evidence_class": null,
+      "status": "TBD - requires tank selection, launch loads and the tank thermal-control design (PENDING docs/hardware/h2/h2_5_thermal_network/)",
+      "requires": "tank selection, launch loads and the tank thermal-control design",
+      "pending_lane": "docs/hardware/h2/h2_5_thermal_network/",
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": null,
+      "mev_high_kg": null
+     }
+    }
+   ],
+   "a5_group": "xe_branch"
+  },
+  {
+   "row_id": "R07",
+   "a5_subsystem": "Xe regulator",
+   "mass_bom_items": [
+    "xe_valve_and_flow_control"
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "h1_counterpart": {
+    "items": [
+     "FS-C"
+    ],
+    "status": "GROUND/FACILITY-ONLY",
+    "note": "bottle regulators are facility hardware"
+   },
+   "line_items": [
+    {
+     "id": "R07.m_regulator",
+     "param_id": "H27-11",
+     "name": "Xe pressure regulator",
+     "mass_class": "dry",
+     "xe_term": "m_regulator",
+     "cbe": {
+      "kind": "analog_range",
+      "low": "AN-MOOG-XFC",
+      "high": "AN-XRFS"
+     },
+     "resolved": {
+      "low": 0.974,
+      "high": 5.9,
+      "basis": "analog",
+      "evidence_class": "inferred",
+      "analogs": [
+       "AN-MOOG-XFC",
+       "AN-XRFS"
+      ],
+      "status": "PRELIMINARY (analog planning range)",
+      "note": "published masses of other hardware transferred as a planning range (evidence class of the transfer: inferred); never a prediction of Vyovrinda hardware",
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": 1.1688,
+      "mev_high_kg": 7.08
+     }
+    }
+   ],
+   "a5_group": "xe_branch"
+  },
+  {
+   "row_id": "R08",
+   "a5_subsystem": "Xe metering (splits to ignition/transition feed and cathode feed)",
+   "mass_bom_items": [
+    "xe_valve_and_flow_control"
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "h1_counterpart": {
+    "items": [
+     "FS-C"
+    ],
+    "status": "GROUND/FACILITY-ONLY",
+    "note": "Xe anode and Xe cathode MFCs on the ground"
+   },
+   "line_items": [
+    {
+     "id": "R08.m_valves",
+     "param_id": "H27-12",
+     "name": "Xe metering: isolation latch valve + proportional flow control valve per branch",
+     "mass_class": "dry",
+     "xe_term": "m_valves",
+     "cbe": {
+      "kind": "derived_valves"
+     },
+     "resolved": {
+      "low": 0.57,
+      "high": 0.57,
+      "basis": "derived",
+      "evidence_class": "inferred",
+      "analogs": [
+       "AN-MOOG-LATCH-18",
+       "AN-MOOG-PFCV"
+      ],
+      "formula": "N_branches (2) x sum(count x manufacturer max mass) = 2 x (1 x 0.170 + 1 x 0.115) kg",
+      "status": "PRELIMINARY (PROPOSED minimal single-string set; PENDING docs/hardware/h2/h2_3_gas_path_plenum/)",
+      "note": "applicability gap: the published PFCV range '0 - 30 mg/s Xe typical' does not show control at the 0.10 mg/s cathode design flow (H3 specification gap)",
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": 0.684,
+      "mev_high_kg": 0.684
+     }
+    },
+    {
+     "id": "R08.m_plumbing",
+     "param_id": "H27-13",
+     "name": "Xe plumbing, filters, fittings, pressure transducers",
+     "mass_class": "dry",
+     "xe_term": "m_plumbing",
+     "cbe": {
+      "kind": "tbd",
+      "requires": "Xe line routing, lengths and component selection",
+      "pending_lane": "H2-3"
+     },
+     "resolved": {
+      "low": null,
+      "high": null,
+      "basis": "pending",
+      "evidence_class": null,
+      "status": "TBD - requires Xe line routing, lengths and component selection (PENDING docs/hardware/h2/h2_3_gas_path_plenum/)",
+      "requires": "Xe line routing, lengths and component selection",
+      "pending_lane": "docs/hardware/h2/h2_3_gas_path_plenum/",
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": null,
+      "mev_high_kg": null
+     }
+    }
+   ],
+   "a5_group": "xe_branch"
+  },
+  {
+   "row_id": "R09",
+   "a5_subsystem": "extended-channel Hall discharge chamber/accelerator",
+   "mass_bom_items": [
+    "hall_thruster_head"
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "h1_counterpart": {
+    "items": [
+     "H-1"
+    ],
+    "status": "FLIGHT-REPRESENTATIVE",
+    "note": "H-1 is the flight-representative test article; test-article-only provisions (thermocouple points, diagnostic ports) are excluded from the flight row"
+   },
+   "line_items": [
+    {
+     "id": "R09.m_hall_head_incl_mc",
+     "param_id": "H27-14",
+     "name": "Hall discharge chamber/accelerator INCLUDING magnetic circuit (analog thrusters are quoted with their magnetic circuit)",
+     "mass_class": "dry",
+     "cbe": {
+      "kind": "analog_range",
+      "low": "AN-BHT600-THR",
+      "high": "AN-BHT1500-THR"
+     },
+     "pending_lane": "H2-1",
+     "resolved": {
+      "low": 2.6,
+      "high": 6.3,
+      "basis": "analog",
+      "evidence_class": "inferred",
+      "analogs": [
+       "AN-BHT600-THR",
+       "AN-BHT1500-THR"
+      ],
+      "status": "PRELIMINARY (analog planning range; PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/)",
+      "note": "published masses of other hardware transferred as a planning range (evidence class of the transfer: inferred); never a prediction of Vyovrinda hardware",
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": 3.12,
+      "mev_high_kg": 7.56
+     }
+    }
+   ],
+   "a5_group": "propulsion"
+  },
+  {
+   "row_id": "R10",
+   "a5_subsystem": "magnetic circuit",
+   "mass_bom_items": [
+    "hall_magnets"
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "h1_counterpart": {
+    "items": [
+     "MC-1"
+    ],
+    "status": "FLIGHT-REPRESENTATIVE",
+    "note": "coil supplies are PS-C (ground)"
+   },
+   "line_items": [
+    {
+     "id": "R10.m_magnetic_circuit",
+     "param_id": "H27-15",
+     "name": "magnetic circuit (coils / magnets, pole pieces, yoke)",
+     "mass_class": "dry",
+     "cbe": {
+      "kind": "included_in",
+      "item": "R09.m_hall_head_incl_mc"
+     },
+     "pending_lane": "H2-1",
+     "resolved": {
+      "low": 0.0,
+      "high": 0.0,
+      "basis": "analog",
+      "evidence_class": "inferred",
+      "included_in": "R09.m_hall_head_incl_mc",
+      "status": "PRELIMINARY (0 kg additional: included in R09.m_hall_head_incl_mc analog; PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ for the split)",
+      "note": "booked inside the parent analog to avoid double counting; the split is an H2 deliverable",
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": 0.0,
+      "mev_high_kg": 0.0
+     }
+    }
+   ],
+   "a5_group": "propulsion"
+  },
+  {
+   "row_id": "R11",
+   "a5_subsystem": "shielded Xe-fed LaB6 hollow cathode",
+   "mass_bom_items": [
+    "cathode"
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "h1_counterpart": {
+    "items": [
+     "C-1"
+    ],
+    "status": "FLIGHT-REPRESENTATIVE",
+    "note": "C-1 supplies are PS-C (ground)"
+   },
+   "line_items": [
+    {
+     "id": "R11.m_cathode_unit",
+     "param_id": "H27-16",
+     "name": "hollow cathode unit (with heater and keeper)",
+     "mass_class": "dry",
+     "cbe": {
+      "kind": "analog_range",
+      "low": "AN-BHT600-CATH",
+      "high": "AN-BHT1500-CATH"
+     },
+     "pending_lane": "H2-2",
+     "resolved": {
+      "low": 0.2,
+      "high": 0.3,
+      "basis": "analog",
+      "evidence_class": "inferred",
+      "analogs": [
+       "AN-BHT600-CATH",
+       "AN-BHT1500-CATH"
+      ],
+      "status": "PRELIMINARY (analog planning range; PENDING docs/hardware/h2/h2_2_cathode_integration/)",
+      "note": "published masses of other hardware transferred as a planning range (evidence class of the transfer: inferred); never a prediction of Vyovrinda hardware",
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": 0.24,
+      "mev_high_kg": 0.36
+     }
+    },
+    {
+     "id": "R11.m_cathode_shield_mount",
+     "param_id": "H27-17",
+     "name": "cathode shield / O-isolation / mount",
+     "mass_class": "dry",
+     "cbe": {
+      "kind": "tbd",
+      "requires": "cathode location, shielding and isolation design",
+      "pending_lane": "H2-2"
+     },
+     "resolved": {
+      "low": null,
+      "high": null,
+      "basis": "pending",
+      "evidence_class": null,
+      "status": "TBD - requires cathode location, shielding and isolation design (PENDING docs/hardware/h2/h2_2_cathode_integration/)",
+      "requires": "cathode location, shielding and isolation design",
+      "pending_lane": "docs/hardware/h2/h2_2_cathode_integration/",
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": null,
+      "mev_high_kg": null
+     }
+    }
+   ],
+   "a5_group": "propulsion"
+  },
+  {
+   "row_id": "R12",
+   "a5_subsystem": "PPU/power distribution",
+   "mass_bom_items": [
+    "ppu"
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "h1_counterpart": {
+    "items": [
+     "PS-C"
+    ],
+    "status": "GROUND/FACILITY-ONLY",
+    "note": "laboratory supplies on the ground"
+   },
+   "line_items": [
+    {
+     "id": "R12.m_ppu",
+     "param_id": "H27-18",
+     "name": "PPU / power distribution",
+     "mass_class": "dry",
+     "cbe": {
+      "kind": "analog_range",
+      "low": "AN-NASA-LM-PPU-TARGET",
+      "high": "AN-TAS-PPUMK1-MASS"
+     },
+     "pending_lane": "H2-4",
+     "resolved": {
+      "low": 2.0,
+      "high": 10.9,
+      "basis": "analog",
+      "evidence_class": "inferred",
+      "analogs": [
+       "AN-NASA-LM-PPU-TARGET",
+       "AN-TAS-PPUMK1-MASS"
+      ],
+      "status": "PRELIMINARY (analog planning range; PENDING docs/hardware/h2/h2_4_ppu_bus/)",
+      "note": "published masses of other hardware transferred as a planning range (evidence class of the transfer: inferred); never a prediction of Vyovrinda hardware",
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": 2.4,
+      "mev_high_kg": 13.08
+     }
+    }
+   ],
+   "a5_group": "support"
+  },
+  {
+   "row_id": "R13",
+   "a5_subsystem": "thermal control",
+   "mass_bom_items": [
+    "thermal_hardware"
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "h1_counterpart": {
+    "items": [
+     "H-1"
+    ],
+    "status": "H-1 TEST-ARTICLE-ONLY",
+    "note": "facility thermal environment differs"
+   },
+   "line_items": [
+    {
+     "id": "R13.m_thermal",
+     "param_id": "H27-19",
+     "name": "thermal-control hardware (radiators, heaters, MLI, heat paths)",
+     "mass_class": "dry",
+     "cbe": {
+      "kind": "tbd",
+      "requires": "thermal network, rejection area and materials",
+      "pending_lane": "H2-5"
+     },
+     "resolved": {
+      "low": null,
+      "high": null,
+      "basis": "pending",
+      "evidence_class": null,
+      "status": "TBD - requires thermal network, rejection area and materials (PENDING docs/hardware/h2/h2_5_thermal_network/)",
+      "requires": "thermal network, rejection area and materials",
+      "pending_lane": "docs/hardware/h2/h2_5_thermal_network/",
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": null,
+      "mev_high_kg": null
+     }
+    }
+   ],
+   "a5_group": "support"
+  },
+  {
+   "row_id": "R14",
+   "a5_subsystem": "control/FDIR",
+   "mass_bom_items": [
+    "ppu"
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "h1_counterpart": {
+    "items": [
+     "PS-C"
+    ],
+    "status": "GROUND/FACILITY-ONLY",
+    "note": "laboratory sequencing and interlocks"
+   },
+   "line_items": [
+    {
+     "id": "R14.m_control_fdir",
+     "param_id": "H27-20",
+     "name": "control / FDIR electronics",
+     "mass_class": "dry",
+     "cbe": {
+      "kind": "included_in",
+      "item": "R12.m_ppu"
+     },
+     "pending_lane": "H2-4",
+     "resolved": {
+      "low": 0.0,
+      "high": 0.0,
+      "basis": "analog",
+      "evidence_class": "inferred",
+      "included_in": "R12.m_ppu",
+      "status": "PRELIMINARY (0 kg additional: included in R12.m_ppu analog; PENDING docs/hardware/h2/h2_4_ppu_bus/ for the split)",
+      "note": "booked inside the parent analog to avoid double counting; the split is an H2 deliverable",
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": 0.0,
+      "mev_high_kg": 0.0
+     }
+    }
+   ],
+   "a5_group": "support"
+  },
+  {
+   "row_id": "R15",
+   "a5_subsystem": "sensors/diagnostics",
+   "mass_bom_items": [],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "h1_counterpart": {
+    "items": [
+     "INS-01..INS-24"
+    ],
+    "status": "GROUND/FACILITY-ONLY",
+    "note": "H-1 ground diagnostics are EXCLUDED from the flight mass model (listed below)"
+   },
+   "line_items": [
+    {
+     "id": "R15.m_flight_sensors",
+     "param_id": "H27-21",
+     "name": "flight telemetry sensors (flight subset only)",
+     "mass_class": "dry",
+     "cbe": {
+      "kind": "tbd",
+      "requires": "flight sensor selection for the telemetry subset TM-01..TM-10",
+      "pending_lane": "H2-6"
+     },
+     "resolved": {
+      "low": null,
+      "high": null,
+      "basis": "pending",
+      "evidence_class": null,
+      "status": "TBD - requires flight sensor selection for the telemetry subset TM-01..TM-10 (PENDING docs/hardware/h2/h2_6_diagnostics_fixture/)",
+      "requires": "flight sensor selection for the telemetry subset TM-01..TM-10",
+      "pending_lane": "docs/hardware/h2/h2_6_diagnostics_fixture/",
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": null,
+      "mev_high_kg": null
+     }
+    }
+   ],
+   "a5_group": "support"
+  },
+  {
+   "row_id": "R16",
+   "a5_subsystem": "mechanical/structural interfaces",
+   "mass_bom_items": [
+    "structure"
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "h1_counterpart": {
+    "items": [
+     "H-1"
+    ],
+    "status": "H-1 TEST-ARTICLE-ONLY",
+    "note": "thrust-stand mount is facility hardware"
+   },
+   "line_items": [
+    {
+     "id": "R16.m_structure",
+     "param_id": "H27-22",
+     "name": "propulsion-module structure, brackets, spacecraft interface",
+     "mass_class": "dry",
+     "cbe": {
+      "kind": "tbd",
+      "requires": "spacecraft configuration and launch-load environment (not defined in the repository) and a structural design",
+      "pending_lane": null
+     },
+     "resolved": {
+      "low": null,
+      "high": null,
+      "basis": "TBD",
+      "evidence_class": null,
+      "status": "TBD - requires spacecraft configuration and launch-load environment (not defined in the repository) and a structural design",
+      "requires": "spacecraft configuration and launch-load environment (not defined in the repository) and a structural design",
+      "pending_lane": null,
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": null,
+      "mev_high_kg": null
+     }
+    }
+   ],
+   "a5_group": "support"
+  },
+  {
+   "row_id": "R17",
+   "a5_subsystem": "RF pre-ionization module interface (A5 reserved_interface)",
+   "mass_bom_items": [],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "reserved_interface": true,
+   "h1_counterpart": {
+    "items": [
+     "IP-UP",
+     "IP-DN",
+     "PIM-0"
+    ],
+    "status": "H-1 TEST-ARTICLE-ONLY",
+    "note": "PIM-0 spacer is H-1 test-article-only; the interface geometry is reserved in the flight design, the module is not baseline flight hardware"
+   },
+   "line_items": [
+    {
+     "id": "R17.m_interface_provision",
+     "param_id": "H27-23",
+     "name": "flight interface provision (flange / spacer length, connector and gas-port provisions); NO module hardware",
+     "mass_class": "dry",
+     "cbe": {
+      "kind": "tbd",
+      "requires": "pre-ionizer module ICD mechanical envelope and flight interface definition",
+      "pending_lane": "PIM-ICD"
+     },
+     "resolved": {
+      "low": null,
+      "high": null,
+      "basis": "pending",
+      "evidence_class": null,
+      "status": "TBD - requires pre-ionizer module ICD mechanical envelope and flight interface definition (PENDING docs/interfaces/preionizer_module/)",
+      "requires": "pre-ionizer module ICD mechanical envelope and flight interface definition",
+      "pending_lane": "docs/interfaces/preionizer_module/",
+      "mass_class": "dry",
+      "maturity_category": "ecss_d_new_or_major_modification",
+      "maturity_status": "PROPOSED (mass_bom_v1 OD-M2: ECSS D for every dry equipment item until a part is selected)",
+      "mga": 0.2,
+      "mev_low_kg": null,
+      "mev_high_kg": null
+     }
+    }
+   ],
+   "a5_group": "reserved_interface"
+  },
+  {
+   "row_id": "SYS-H",
+   "a5_subsystem": "(system-level) harness",
+   "mass_bom_items": [
+    "harness"
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE",
+   "system_level": true,
+   "h1_counterpart": {
+    "items": [
+     "SVC-1"
+    ],
+    "status": "GROUND/FACILITY-ONLY",
+    "note": "stand service lines"
+   },
+   "line_items": [
+    {
+     "id": "SYS-H.m_harness",
+     "param_id": "H27-24",
+     "name": "harness (policy allocation on the nominal dry mass)",
+     "mass_class": "dry",
+     "cbe": {
+      "kind": "fraction_of_nominal_dry"
+     },
+     "resolved": {
+      "low": 0.621726,
+      "high": 1.911789,
+      "basis": "derived",
+      "evidence_class": "assumed",
+      "mass_class": "dry",
+      "formula": "0.05 of the total nominal dry mass (mass_bom_v1 harness, ESA R-M1-7 as cited there); computed per case in the roll-up",
+      "status": "PRELIMINARY (policy allocation; computed on the known dry lines only)",
+      "maturity_category": "policy_allocation_nominal",
+      "maturity_status": "per mass_bom_v1 margin policy",
+      "mga": 0.0,
+      "mev_low_kg": 0.621726,
+      "mev_high_kg": 1.911789
+     }
+    }
+   ],
+   "a5_group": "system"
+  }
+ ],
+ "xe_subsystem": {
+  "a6_text": "parametric Xe ledger m_Xe_total = m_cathode + m_startup + m_transition + m_fallback + m_reserve. Cathode design term 0.10 mg/s -> 5.4 kg over 15,000 firing hours. m_startup = N_starts * t_startup * mdot_startup; m_transition = N_transitions * t_transition * mdot_transition; m_fallback = t_fallback_max * mdot_fallback; reserve is an explicit policy term, never folded into another category. The system decision is made on the complete stored-Xe subsystem m_Xe_subsystem = m_Xe + m_tank + m_regulator + m_valves + m_plumbing + m_mounting/thermal, not on propellant mass alone, against the 40 kg requirement. Startup, transition and fallback stay symbolic or scenario-based until H-1/C-1 measure them.",
+  "m_Xe_subsystem_definition": "m_Xe + m_tank + m_regulator + m_valves + m_plumbing + m_mounting/thermal (A6)",
+  "linked_ledger": {
+   "path": "docs/budgets/xe_ledger/xe_ledger_v1.json",
+   "sha256": "965fdafa60ae9c3ee1e36189f22ef00198ae3f8a906696213bec13bdcbfb09ad",
+   "state": "PARAMETRIC_LEDGER — total Xe mass and stored-Xe subsystem mass REFUSED (TBD inputs); nothing frozen",
+   "ledger_missing_terms": [
+    "N_starts",
+    "t_startup",
+    "mdot_startup",
+    "N_transitions",
+    "t_transition",
+    "mdot_transition",
+    "t_fallback_max",
+    "mdot_fallback",
+    "reserve_policy",
+    "tank_model",
+    "m_regulator",
+    "m_valves",
+    "m_plumbing",
+    "m_mounting_thermal"
+   ],
+   "m_Xe_total_value_A5": "PENDING_OWNER: set from the system mass ledger; the startup, transition, fallback and reserve terms are to be allocated"
+  },
+  "fixed_design_term": {
+   "mdot_mg_s": 0.1,
+   "t_firing_h": 15000.0,
+   "m_cathode_kg": 5.4,
+   "arithmetic": "0.1 mg/s x 1e-6 kg/mg x 15000 h x 3600 s/h = 5.4 kg",
+   "status": "the ONLY fixed Xe design term (A5 allocation, not a demonstrated flow)"
+  },
+  "terms": [
+   {
+    "term": "m_Xe (cathode, fixed)",
+    "line_item": "R06.m_Xe_cathode",
+    "cbe_low_kg": 5.4,
+    "cbe_high_kg": 5.4,
+    "status": "FIXED_DESIGN_TERM (A5 allocation; not a demonstrated flow)"
+   },
+   {
+    "term": "m_Xe (startup+transition+fallback+reserve)",
+    "line_item": "R06.m_Xe_other",
+    "cbe_low_kg": null,
+    "cbe_high_kg": null,
+    "status": "TBD - requires xe_ledger_v1 terms N_starts, t_startup, mdot_startup, N_transitions, t_transition, mdot_transition, t_fallback_max, mdot_fallback, reserve_policy (A6: not freezable without H-1/C-1 evidence)"
+   },
+   {
+    "term": "m_Xe residual (policy, outside ledger)",
+    "line_item": "R06.m_Xe_residual",
+    "cbe_low_kg": 0.108,
+    "cbe_high_kg": 0.108,
+    "status": "PRELIMINARY (policy fraction on the known Xe load only; a floor)"
+   },
+   {
+    "term": "m_tank",
+    "line_item": "R06.m_tank",
+    "cbe_low_kg": 3.5,
+    "cbe_high_kg": 6.3,
+    "status": "PRELIMINARY (analog planning range)"
+   },
+   {
+    "term": "m_regulator",
+    "line_item": "R07.m_regulator",
+    "cbe_low_kg": 0.974,
+    "cbe_high_kg": 5.9,
+    "status": "PRELIMINARY (analog planning range)"
+   },
+   {
+    "term": "m_valves",
+    "line_item": "R08.m_valves",
+    "cbe_low_kg": 0.57,
+    "cbe_high_kg": 0.57,
+    "status": "PRELIMINARY (PROPOSED minimal single-string set; PENDING docs/hardware/h2/h2_3_gas_path_plenum/)"
+   },
+   {
+    "term": "m_plumbing",
+    "line_item": "R08.m_plumbing",
+    "cbe_low_kg": null,
+    "cbe_high_kg": null,
+    "status": "TBD - requires Xe line routing, lengths and component selection (PENDING docs/hardware/h2/h2_3_gas_path_plenum/)"
+   },
+   {
+    "term": "m_mounting/thermal",
+    "line_item": "R06.m_mounting_thermal",
+    "cbe_low_kg": null,
+    "cbe_high_kg": null,
+    "status": "TBD - requires tank selection, launch loads and the tank thermal-control design (PENDING docs/hardware/h2/h2_5_thermal_network/)"
+   }
+  ],
+  "known_lines_cbe_kg": {
+   "low": 10.552,
+   "high": 18.278,
+   "note": "Sum of the known lines only; NOT m_Xe_subsystem (xe_ledger refuses it while TBD terms exist; A6 not_authorized: freezing total Xe mass)"
+  },
+  "sensitivities": {
+   "upper_test_point_0p15": {
+    "m_cathode_kg": 8.1,
+    "delta_kg": 2.7,
+    "status": "A5 test point only; never the allocation"
+   },
+   "design_life_target": {
+    "t_h": 18000.0,
+    "m_cathode_kg": 6.48,
+    "delta_kg": 1.08,
+    "status": "sensitivity only; A5 books the term over the RFP 15,000 h (xe_ledger OD-XE-5)"
+   }
+  },
+  "storage_volume_for_known_load": {
+   "load_kg": 5.508,
+   "basis": "cathode term + policy residual at 293.15 K (storage temperature is a parameter: PENDING docs/hardware/h2/h2_5_thermal_network/)",
+   "rows": [
+    {
+     "p_bar": 75.0,
+     "rho_kg_m3": 1675.7,
+     "V_l": 3.286985
+    },
+    {
+     "p_bar": 100.0,
+     "rho_kg_m3": 1867.9,
+     "V_l": 2.948766
+    },
+    {
+     "p_bar": 125.0,
+     "rho_kg_m3": 1971.2,
+     "V_l": 2.794237
+    },
+    {
+     "p_bar": 150.0,
+     "rho_kg_m3": 2045.5,
+     "V_l": 2.69274
+    }
+   ]
+  },
+  "xs_xta_capacity_check": {
+   "volume_l": 7.0,
+   "rows": [
+    {
+     "p_bar": 75.0,
+     "capacity_kg_7l": 11.7299
+    },
+    {
+     "p_bar": 100.0,
+     "capacity_kg_7l": 13.0753
+    },
+    {
+     "p_bar": 125.0,
+     "capacity_kg_7l": 13.7984
+    },
+    {
+     "p_bar": 150.0,
+     "capacity_kg_7l": 14.3185
+    }
+   ],
+   "statement": "A 7 l tank holds the known load at every tabulated pressure >= 75 bar; the XS-XTA MEOP is blank in the catalogue, so a MEOP >= 75 bar at the maximum storage temperature is a PROPOSED procurement requirement (H3-01), and the total load stays PENDING the ledger"
+  }
+ },
+ "contingency_modules": [
+  {
+   "id": "CM-RF",
+   "architecture": "rf_hall",
+   "h1_item": "PIM-RF",
+   "name": "RF pre-ionizer module + off-module chain (primary contingency; A5 reserved interface)",
+   "mass_bom_items": [
+    "rf_source",
+    "rf_generator",
+    "rf_matching_network"
+   ],
+   "flight_status": "H-1 TEST-ARTICLE-ONLY (flight hardware only if Phase-1 outcome B)",
+   "cbe": null,
+   "status": "TBD - requires RF source, generator and matching-network design or supplier data (mass_bom_v1 items TBD); PENDING docs/interfaces/preionizer_module/",
+   "in_baseline_total": false
+  },
+  {
+   "id": "CM-ECR",
+   "architecture": "ecr_hall",
+   "h1_item": "PIM-ECR",
+   "name": "ECR pre-ionizer module + off-module chain (alternate test module only; A5)",
+   "mass_bom_items": [
+    "ecr_source",
+    "microwave_source",
+    "waveguide",
+    "ecr_magnets"
+   ],
+   "flight_status": "H-1 TEST-ARTICLE-ONLY (flight hardware only if Phase-1 outcome C)",
+   "cbe": null,
+   "status": "TBD - requires ECR source, microwave generator, transmission line and ECR magnet design or supplier data (mass_bom_v1 items TBD); PENDING docs/interfaces/preionizer_module/",
+   "in_baseline_total": false
+  }
+ ],
+ "diagnostics": {
+  "flight_telemetry_subset_IN": [
+   {
+    "id": "TM-01",
+    "quantity": "discharge voltage and current",
+    "carrier_row": "R12 (inside PPU)",
+    "ground_counterpart": "INS-04",
+    "status": "PROPOSED",
+    "flight_status": "FLIGHT-REPRESENTATIVE"
+   },
+   {
+    "id": "TM-02",
+    "quantity": "magnet coil current(s) (none if permanent magnets)",
+    "carrier_row": "R12 (inside PPU)",
+    "ground_counterpart": "INS-24",
+    "status": "PROPOSED",
+    "flight_status": "FLIGHT-REPRESENTATIVE"
+   },
+   {
+    "id": "TM-03",
+    "quantity": "cathode keeper and heater voltage / current",
+    "carrier_row": "R12 (inside PPU)",
+    "ground_counterpart": null,
+    "status": "PROPOSED",
+    "flight_status": "FLIGHT-REPRESENTATIVE"
+   },
+   {
+    "id": "TM-04",
+    "quantity": "Xe tank pressure",
+    "carrier_row": "R15",
+    "ground_counterpart": null,
+    "status": "PROPOSED",
+    "flight_status": "FLIGHT-REPRESENTATIVE"
+   },
+   {
+    "id": "TM-05",
+    "quantity": "Xe tank temperature (Xe density near the critical region is temperature-sensitive)",
+    "carrier_row": "R15",
+    "ground_counterpart": null,
+    "status": "PROPOSED",
+    "flight_status": "FLIGHT-REPRESENTATIVE"
+   },
+   {
+    "id": "TM-06",
+    "quantity": "regulated Xe pressure (regulator outlet)",
+    "carrier_row": "R15",
+    "ground_counterpart": null,
+    "status": "PROPOSED",
+    "flight_status": "FLIGHT-REPRESENTATIVE"
+   },
+   {
+    "id": "TM-07",
+    "quantity": "plenum / feed pressure P_feed (flight low-pressure sensing is a specification gap)",
+    "carrier_row": "R15",
+    "ground_counterpart": "INS-06",
+    "status": "PROPOSED",
+    "flight_status": "FLIGHT-REPRESENTATIVE"
+   },
+   {
+    "id": "TM-08",
+    "quantity": "feed temperature T_feed",
+    "carrier_row": "R15",
+    "ground_counterpart": "INS-07",
+    "status": "PROPOSED",
+    "flight_status": "FLIGHT-REPRESENTATIVE"
+   },
+   {
+    "id": "TM-09",
+    "quantity": "thruster body / magnet / PPU baseplate temperatures",
+    "carrier_row": "R15",
+    "ground_counterpart": "INS-17",
+    "status": "PROPOSED",
+    "flight_status": "FLIGHT-REPRESENTATIVE"
+   },
+   {
+    "id": "TM-10",
+    "quantity": "compressor speed and motor current",
+    "carrier_row": "R15",
+    "ground_counterpart": null,
+    "status": "PROPOSED",
+    "flight_status": "FLIGHT-REPRESENTATIVE"
+   }
+  ],
+  "h1_ground_diagnostics_EXCLUDED": [
+   {
+    "id": "INS-01",
+    "name": "thrust stand (inverted-pendulum or torsional, null-type preferred)",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-02",
+    "name": "bus-power metering: one DC channel per bus_power_boundary_v1 component present in the lab",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-03",
+    "name": "net RF / microwave power at the source load plane",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-04",
+    "name": "discharge voltage and current, DC and time-resolved",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-05",
+    "name": "propellant mass flow (anode N2, O2; cathode Xe)",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-06",
+    "name": "feed pressure at the valve outlet (IF-A5 P_feed)",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-07",
+    "name": "feed temperature at the valve outlet (IF-A5 T_feed)",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-08",
+    "name": "facility background pressure and ingestion scale",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-09",
+    "name": "B(z) mapping at actual coil currents",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-10",
+    "name": "stability / extinction / ignition detection",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-11",
+    "name": "residual gas analyser (RGA)",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-12",
+    "name": "optical emission spectroscopy (OES)",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-13",
+    "name": "ExB probe (ion species / charge-state current fractions)",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-14",
+    "name": "retarding potential analyzer (RPA)",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-15",
+    "name": "Faraday probes: source-exit collector, cold-transport I_del, far-field array",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-16",
+    "name": "Langmuir probes (T_e, n_e), where feasible",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-17",
+    "name": "temperatures (stand, thruster, magnet circuit, sources, generators, cathode mount)",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-18",
+    "name": "common time base and DAQ",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-19",
+    "name": "witness-coupon and part mass metrology (dehydrated protocol)",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-20",
+    "name": "surface, profile and post-test inspection metrology",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-21",
+    "name": "anode resistance (4-wire) and insulation resistance",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-22",
+    "name": "near-cathode gas sampling point to the RGA (extends INS-11)",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-23",
+    "name": "life-mechanism and C-1 emitter / cathode-tube temperatures (extends INS-17)",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   },
+   {
+    "id": "INS-24",
+    "name": "coil winding temperature and coil electrical record",
+    "flight_status": "GROUND/FACILITY-ONLY",
+    "in_flight_mass_model": false
+   }
+  ],
+  "rule": "only the flight telemetry subset is carried (R15, or inside the PPU); every H-1 ground instrument INS-01..INS-24 (docs/experiments/instrumentation/instrumentation_definition_v1.json) is excluded from the flight mass model; their stand mass is an H2-6 fixture input (ID-09)"
+ },
+ "rollup": {
+  "policy": "partial roll-up over resolved lines per case; low case = low analog ends, high case = high analog ends; TBD lines excluded and listed; never an MEV of the system while TBD lines exist",
+  "cases": {
+   "proposed_20pct": {
+    "low": {
+     "case": "low",
+     "complete": false,
+     "n_tbd_lines": 13,
+     "tbd_lines": [
+      "R01.m_intake",
+      "R02.m_filter",
+      "R03.m_compressor",
+      "R04.m_plenum",
+      "R05.m_atm_valve",
+      "R06.m_Xe_other",
+      "R06.m_mounting_thermal",
+      "R08.m_plumbing",
+      "R11.m_cathode_shield_mount",
+      "R13.m_thermal",
+      "R15.m_flight_sensors",
+      "R16.m_structure",
+      "R17.m_interface_provision"
+     ],
+     "cbe_dry_kg": 10.465726,
+     "cbe_dry_excl_harness_kg": 9.844,
+     "mga_kg": 1.9688,
+     "harness_kg": 0.621726,
+     "nominal_dry_kg": 12.434526,
+     "system_margin_fraction": 0.2,
+     "system_margin_kg": 2.486905,
+     "propellant_kg": 5.508,
+     "cbe_total_kg": 15.973726,
+     "mev_known_lines_kg": 20.429432,
+     "note": "sums over resolved lines only; NOT an MEV of the system while TBD lines exist"
+    },
+    "high": {
+     "case": "high",
+     "complete": false,
+     "n_tbd_lines": 13,
+     "tbd_lines": [
+      "R01.m_intake",
+      "R02.m_filter",
+      "R03.m_compressor",
+      "R04.m_plenum",
+      "R05.m_atm_valve",
+      "R06.m_Xe_other",
+      "R06.m_mounting_thermal",
+      "R08.m_plumbing",
+      "R11.m_cathode_shield_mount",
+      "R13.m_thermal",
+      "R15.m_flight_sensors",
+      "R16.m_structure",
+      "R17.m_interface_provision"
+     ],
+     "cbe_dry_kg": 32.181789,
+     "cbe_dry_excl_harness_kg": 30.27,
+     "mga_kg": 6.054,
+     "harness_kg": 1.911789,
+     "nominal_dry_kg": 38.235789,
+     "system_margin_fraction": 0.2,
+     "system_margin_kg": 7.647158,
+     "propellant_kg": 5.508,
+     "cbe_total_kg": 37.689789,
+     "mev_known_lines_kg": 51.390947,
+     "note": "sums over resolved lines only; NOT an MEV of the system while TBD lines exist"
+    }
+   },
+   "alt_10pct": {
+    "low": {
+     "case": "low",
+     "complete": false,
+     "n_tbd_lines": 13,
+     "tbd_lines": [
+      "R01.m_intake",
+      "R02.m_filter",
+      "R03.m_compressor",
+      "R04.m_plenum",
+      "R05.m_atm_valve",
+      "R06.m_Xe_other",
+      "R06.m_mounting_thermal",
+      "R08.m_plumbing",
+      "R11.m_cathode_shield_mount",
+      "R13.m_thermal",
+      "R15.m_flight_sensors",
+      "R16.m_structure",
+      "R17.m_interface_provision"
+     ],
+     "cbe_dry_kg": 10.465726,
+     "cbe_dry_excl_harness_kg": 9.844,
+     "mga_kg": 1.9688,
+     "harness_kg": 0.621726,
+     "nominal_dry_kg": 12.434526,
+     "system_margin_fraction": 0.1,
+     "system_margin_kg": 1.243453,
+     "propellant_kg": 5.508,
+     "cbe_total_kg": 15.973726,
+     "mev_known_lines_kg": 19.185979,
+     "note": "sums over resolved lines only; NOT an MEV of the system while TBD lines exist"
+    },
+    "high": {
+     "case": "high",
+     "complete": false,
+     "n_tbd_lines": 13,
+     "tbd_lines": [
+      "R01.m_intake",
+      "R02.m_filter",
+      "R03.m_compressor",
+      "R04.m_plenum",
+      "R05.m_atm_valve",
+      "R06.m_Xe_other",
+      "R06.m_mounting_thermal",
+      "R08.m_plumbing",
+      "R11.m_cathode_shield_mount",
+      "R13.m_thermal",
+      "R15.m_flight_sensors",
+      "R16.m_structure",
+      "R17.m_interface_provision"
+     ],
+     "cbe_dry_kg": 32.181789,
+     "cbe_dry_excl_harness_kg": 30.27,
+     "mga_kg": 6.054,
+     "harness_kg": 1.911789,
+     "nominal_dry_kg": 38.235789,
+     "system_margin_fraction": 0.1,
+     "system_margin_kg": 3.823579,
+     "propellant_kg": 5.508,
+     "cbe_total_kg": 37.689789,
+     "mev_known_lines_kg": 47.567368,
+     "note": "sums over resolved lines only; NOT an MEV of the system while TBD lines exist"
+    }
+   }
+  },
+  "allocation_checks": [
+   {
+    "reference": "A5_alloc_34kg",
+    "reference_kg": 34.0,
+    "kind": "allocation (A5 lower end)",
+    "case": "low",
+    "mev_known_lines_kg": 20.429432,
+    "remaining_kg": 13.570568,
+    "remaining_share": 0.399134,
+    "cbe_available_to_tbd_dry_lines_kg": 8.952806,
+    "state": "OPEN_PARTIAL (known lines inside the reference; 13 TBD lines remain)"
+   },
+   {
+    "reference": "A5_alloc_34kg",
+    "reference_kg": 34.0,
+    "kind": "allocation (A5 lower end)",
+    "case": "high",
+    "mev_known_lines_kg": 51.390947,
+    "remaining_kg": -17.390947,
+    "remaining_share": -0.511498,
+    "cbe_available_to_tbd_dry_lines_kg": 0.0,
+    "state": "KNOWN_LINES_EXCEED_REFERENCE (planning case, not a lower bound: no veto)"
+   },
+   {
+    "reference": "A5_alloc_36kg",
+    "reference_kg": 36.0,
+    "kind": "allocation (A5 upper end)",
+    "case": "low",
+    "mev_known_lines_kg": 20.429432,
+    "remaining_kg": 15.570568,
+    "remaining_share": 0.432516,
+    "cbe_available_to_tbd_dry_lines_kg": 10.27225,
+    "state": "OPEN_PARTIAL (known lines inside the reference; 13 TBD lines remain)"
+   },
+   {
+    "reference": "A5_alloc_36kg",
+    "reference_kg": 36.0,
+    "kind": "allocation (A5 upper end)",
+    "case": "high",
+    "mev_known_lines_kg": 51.390947,
+    "remaining_kg": -15.390947,
+    "remaining_share": -0.427526,
+    "cbe_available_to_tbd_dry_lines_kg": 0.0,
+    "state": "KNOWN_LINES_EXCEED_REFERENCE (planning case, not a lower bound: no veto)"
+   },
+   {
+    "reference": "RFP_40kg",
+    "reference_kg": 40.0,
+    "kind": "requirement (RFP as recorded; verify)",
+    "case": "low",
+    "mev_known_lines_kg": 20.429432,
+    "remaining_kg": 19.570568,
+    "remaining_share": 0.489264,
+    "cbe_available_to_tbd_dry_lines_kg": 12.911139,
+    "state": "OPEN_PARTIAL (known lines inside the reference; 13 TBD lines remain)"
+   },
+   {
+    "reference": "RFP_40kg",
+    "reference_kg": 40.0,
+    "kind": "requirement (RFP as recorded; verify)",
+    "case": "high",
+    "mev_known_lines_kg": 51.390947,
+    "remaining_kg": -11.390947,
+    "remaining_share": -0.284774,
+    "cbe_available_to_tbd_dry_lines_kg": 0.0,
+    "state": "KNOWN_LINES_EXCEED_REFERENCE (planning case, not a lower bound: no veto)"
+   }
+  ],
+  "cbe_to_mev_factor_dry": 1.515789,
+  "largest_uncertainty_contributors": [
+   {
+    "line_item": "R01.m_intake",
+    "spread_mev_kg": null,
+    "kind": "UNBOUNDED (TBD)",
+    "status": "TBD - requires Vyovrinda intake geometry (feed_state_closure owner decisions DI-1.1 area sizing rule, DI-1.2 intake geometry) and a sourced material density, or a measured mass"
+   },
+   {
+    "line_item": "R02.m_filter",
+    "spread_mev_kg": null,
+    "kind": "UNBOUNDED (TBD)",
+    "status": "TBD - requires a filter concept and geometry (the code lumps the filter into the intake; docs/interfaces/UPSTREAM_ICD.md IF-A1) or a measured mass"
+   },
+   {
+    "line_item": "R03.m_compressor",
+    "spread_mev_kg": null,
+    "kind": "UNBOUNDED (TBD)",
+    "status": "TBD - requires DI-1.4 compressor concept freeze and an ABEP-scale design or breadboard mass (compressor_downselect_v1: mass TBD for every surveyed concept; primary PROPOSED concept C1)"
+   },
+   {
+    "line_item": "R04.m_plenum",
+    "spread_mev_kg": null,
+    "kind": "UNBOUNDED (TBD)",
+    "status": "TBD - requires plenum volume, pressure and wall material (DI-1.5) (PENDING docs/hardware/h2/h2_3_gas_path_plenum/)"
+   },
+   {
+    "line_item": "R05.m_atm_valve",
+    "spread_mev_kg": null,
+    "kind": "UNBOUNDED (TBD)",
+    "status": "TBD - requires low-pressure atmospheric metering valve concept (the accessed Xe valves are specified for 2.8-186 bar inlet and are not a transferable analog) (PENDING docs/hardware/h2/h2_3_gas_path_plenum/)"
+   },
+   {
+    "line_item": "R06.m_Xe_other",
+    "spread_mev_kg": null,
+    "kind": "UNBOUNDED (TBD)",
+    "status": "TBD - requires xe_ledger_v1 terms N_starts, t_startup, mdot_startup, N_transitions, t_transition, mdot_transition, t_fallback_max, mdot_fallback, reserve_policy (A6: not freezable without H-1/C-1 evidence)"
+   },
+   {
+    "line_item": "R06.m_mounting_thermal",
+    "spread_mev_kg": null,
+    "kind": "UNBOUNDED (TBD)",
+    "status": "TBD - requires tank selection, launch loads and the tank thermal-control design (PENDING docs/hardware/h2/h2_5_thermal_network/)"
+   },
+   {
+    "line_item": "R08.m_plumbing",
+    "spread_mev_kg": null,
+    "kind": "UNBOUNDED (TBD)",
+    "status": "TBD - requires Xe line routing, lengths and component selection (PENDING docs/hardware/h2/h2_3_gas_path_plenum/)"
+   },
+   {
+    "line_item": "R11.m_cathode_shield_mount",
+    "spread_mev_kg": null,
+    "kind": "UNBOUNDED (TBD)",
+    "status": "TBD - requires cathode location, shielding and isolation design (PENDING docs/hardware/h2/h2_2_cathode_integration/)"
+   },
+   {
+    "line_item": "R13.m_thermal",
+    "spread_mev_kg": null,
+    "kind": "UNBOUNDED (TBD)",
+    "status": "TBD - requires thermal network, rejection area and materials (PENDING docs/hardware/h2/h2_5_thermal_network/)"
+   },
+   {
+    "line_item": "R15.m_flight_sensors",
+    "spread_mev_kg": null,
+    "kind": "UNBOUNDED (TBD)",
+    "status": "TBD - requires flight sensor selection for the telemetry subset TM-01..TM-10 (PENDING docs/hardware/h2/h2_6_diagnostics_fixture/)"
+   },
+   {
+    "line_item": "R16.m_structure",
+    "spread_mev_kg": null,
+    "kind": "UNBOUNDED (TBD)",
+    "status": "TBD - requires spacecraft configuration and launch-load environment (not defined in the repository) and a structural design"
+   },
+   {
+    "line_item": "R17.m_interface_provision",
+    "spread_mev_kg": null,
+    "kind": "UNBOUNDED (TBD)",
+    "status": "TBD - requires pre-ionizer module ICD mechanical envelope and flight interface definition (PENDING docs/interfaces/preionizer_module/)"
+   },
+   {
+    "line_item": "R12.m_ppu",
+    "spread_mev_kg": 13.490526,
+    "kind": "analog planning spread x (1+MGA)(1+system margin)/(1-harness fraction)",
+    "cbe_low_kg": 2.0,
+    "cbe_high_kg": 10.9
+   },
+   {
+    "line_item": "R07.m_regulator",
+    "spread_mev_kg": 7.466779,
+    "kind": "analog planning spread x (1+MGA)(1+system margin)/(1-harness fraction)",
+    "cbe_low_kg": 0.974,
+    "cbe_high_kg": 5.9
+   },
+   {
+    "line_item": "R09.m_hall_head_incl_mc",
+    "spread_mev_kg": 5.608421,
+    "kind": "analog planning spread x (1+MGA)(1+system margin)/(1-harness fraction)",
+    "cbe_low_kg": 2.6,
+    "cbe_high_kg": 6.3
+   },
+   {
+    "line_item": "R06.m_tank",
+    "spread_mev_kg": 4.244211,
+    "kind": "analog planning spread x (1+MGA)(1+system margin)/(1-harness fraction)",
+    "cbe_low_kg": 3.5,
+    "cbe_high_kg": 6.3
+   },
+   {
+    "line_item": "SYS-H.m_harness",
+    "spread_mev_kg": 1.955464,
+    "kind": "analog planning spread x (1+MGA)(1+system margin)/(1-harness fraction)",
+    "cbe_low_kg": 0.621726,
+    "cbe_high_kg": 1.911789
+   },
+   {
+    "line_item": "R11.m_cathode_unit",
+    "spread_mev_kg": 0.151579,
+    "kind": "analog planning spread x (1+MGA)(1+system margin)/(1-harness fraction)",
+    "cbe_low_kg": 0.2,
+    "cbe_high_kg": 0.3
+   }
+  ],
+  "largest_bounded_contributors_top3": [
+   "R12.m_ppu",
+   "R07.m_regulator",
+   "R09.m_hall_head_incl_mc"
+  ],
+  "sourced_floor_kg": 5.508,
+  "module_room": [
+   {
+    "reference": "A5_alloc_34kg",
+    "case": "low",
+    "mev_room_for_module_and_TBD_rows_kg": 13.570568
+   },
+   {
+    "reference": "A5_alloc_34kg",
+    "case": "high",
+    "mev_room_for_module_and_TBD_rows_kg": -17.390947
+   },
+   {
+    "reference": "A5_alloc_36kg",
+    "case": "low",
+    "mev_room_for_module_and_TBD_rows_kg": 15.570568
+   },
+   {
+    "reference": "A5_alloc_36kg",
+    "case": "high",
+    "mev_room_for_module_and_TBD_rows_kg": -15.390947
+   },
+   {
+    "reference": "RFP_40kg",
+    "case": "low",
+    "mev_room_for_module_and_TBD_rows_kg": 19.570568
+   },
+   {
+    "reference": "RFP_40kg",
+    "case": "high",
+    "mev_room_for_module_and_TBD_rows_kg": -11.390947
+   }
+  ],
+  "compressor_downselect_status": "DRAFT for owner review; every value not in the RFP or a cited source is PROPOSED or TBD"
+ },
+ "mechanical_envelope": {
+  "overall_volume_and_length": {
+   "status": "TBD - requires preliminary geometry from H2-1..H2-5, the intake design (DI-1.1 / DI-1.2) and the compressor concept (DI-1.4); the intake frontal area and the axial stack intake -> compressor -> plenum -> valve -> [pre-ionizer interface] -> H-1 set the length",
+   "analog_envelopes": [
+    {
+     "item": "Hall head (analog)",
+     "analog": "AN-PPS1350-DIMS",
+     "value_mm": [
+      104.0,
+      135.0,
+      210.0
+     ],
+     "note": "PPS1350 drawing 'max' labels; axis assignment: verify"
+    },
+    {
+     "item": "extended channel (analog)",
+     "analog": "AN-ECHT-GEOM",
+     "value_mm": [
+      86.0,
+      10.0,
+      100.0
+     ],
+     "note": "ECHT BN chamber length / channel width / OD; published analog only"
+    },
+    {
+     "item": "PPU (analog)",
+     "analog": "AN-TAS-PPUMK1-DIMS",
+     "value_mm": [
+      390.0,
+      190.0,
+      186.0
+     ],
+     "box_volume_l": 13.7826
+    },
+    {
+     "item": "Xe tank (analog, small family)",
+     "analog": "AN-MT-XSXTA-ENV",
+     "value_mm": [
+      242.0,
+      386.0
+     ],
+     "cylinder_envelope_volume_l": 17.754478
+    }
+   ],
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  "thruster_axis_alignment": {
+   "status": "PROPOSED",
+   "statement": "thrust axis parallel to the anti-ram direction, collinear with the intake drag axis and passing through the spacecraft centre of mass; lateral-offset and angular tolerances TBD - require the spacecraft AOCS disturbance-torque budget. The flight mount carries a surveyable alignment reference (datum surfaces or optical cube).",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  "cg_estimate": {
+   "status": "NOT_COMPUTABLE",
+   "statement": "no line item has a layout position yet (no preliminary geometry, no spacecraft configuration). CG = sum(m_i r_i) / sum(m_i) once every mass-bearing line carries a position. Xe depletion moves the system CG by dr = m_Xe_used x (r_CG - r_tank) / (M - m_Xe_used); with the fixed cathode term the consumed mass is 5.4 kg, so a tank centroid offset d from the CG gives |dr| = 5.4 kg x d / (M - 5.4 kg). PROPOSED rule: Xe tank centroid on the thrust axis and as close to the spacecraft CG as the layout allows.",
+   "flight_status": "FLIGHT-REPRESENTATIVE"
+  },
+  "spacecraft_mounting_interface": [
+   {
+    "id": "MI-01",
+    "item": "propulsion-module mounting plane to the spacecraft structure (bolt pattern, fastener size, preload TBD - spacecraft)",
+    "status": "PROPOSED"
+   },
+   {
+    "id": "MI-02",
+    "item": "thruster mount with alignment reference and shimming; electrically isolating if the thruster body floats (HWDEF grounding requirements; H2-4)",
+    "status": "PROPOSED"
+   },
+   {
+    "id": "MI-03",
+    "item": "thermal interface of the thruster mount (conductive / isolating) per the thermal network (PENDING docs/hardware/h2/h2_5_thermal_network/)",
+    "status": "PENDING"
+   },
+   {
+    "id": "MI-04",
+    "item": "Xe tank mount on the module structure near the CG (launch loads TBD)",
+    "status": "PROPOSED"
+   },
+   {
+    "id": "MI-05",
+    "item": "PPU baseplate on a radiating or spacecraft-conductive surface (PENDING H2-4 / H2-5)",
+    "status": "PENDING"
+   }
+  ],
+  "intake_to_thruster_layout_constraints": [
+   {
+    "id": "LC-01",
+    "constraint": "intake faces ram; thruster exhausts anti-ram; one common axis",
+    "status": "PROPOSED"
+   },
+   {
+    "id": "LC-02",
+    "constraint": "series order intake -> filter -> compressor -> plenum -> atmospheric metering valve -> IP-UP -> [reserved pre-ionizer interface] -> IP-DN -> H-1 (HALL_INLET_Z0), as in A5 and HWDEF",
+    "status": "PROPOSED"
+   },
+   {
+    "id": "LC-03",
+    "constraint": "axial length between IP-UP and IP-DN reserved in the flight layout for the pre-ionizer interface (baseline carries only the interface provision)",
+    "status": "PENDING docs/interfaces/preionizer_module/"
+   },
+   {
+    "id": "LC-04",
+    "constraint": "plenum close to the thruster inlet to limit line volume and pressure drop",
+    "status": "PENDING docs/hardware/h2/h2_3_gas_path_plenum/"
+   },
+   {
+    "id": "LC-05",
+    "constraint": "cathode location shielded from the ram flow and from direct atmospheric plume / O exposure (A5 risk 3)",
+    "status": "PENDING docs/hardware/h2/h2_2_cathode_integration/"
+   },
+   {
+    "id": "LC-06",
+    "constraint": "no exposed structure in the intake field of view or in the plume cone (divergence envelope TBD - requires H-1 plume measurement)",
+    "status": "TBD"
+   },
+   {
+    "id": "LC-07",
+    "constraint": "PPU close to the thruster to shorten the discharge harness (PENDING H2-4)",
+    "status": "PENDING docs/hardware/h2/h2_4_ppu_bus/"
+   },
+   {
+    "id": "LC-08",
+    "constraint": "radiators with a clear view to space, away from the ram face (PENDING H2-5)",
+    "status": "PENDING docs/hardware/h2/h2_5_thermal_network/"
+   }
+  ]
+ },
+ "lane_consumption": {
+  "lane_root": "repository checkout",
+  "contract": "A demand is ADOPTED only if: (1) its 'to' names H2-7 (H2-7, H2_7, fo_h2_7_mechanical_bom, h2_7_mechanical_bom); (2) 'h2_7_line_item' names an existing line item id; (3) 'units' == 'kg'; (4) numeric 'value' >= 0 or 'range' [lo, hi] with 0 <= lo <= hi; (5) 'status' does not start with PENDING or TBD; (6) 'evidence_class' is one of the six docs/EVIDENCE.md classes and 'basis' is non-empty. It then replaces that line item's CBE (basis 'preliminary geometry from <lane>'); the analog range is kept as 'superseded_analog'. Other demands to H2-7 are listed unadopted for the integration pass.",
+  "lanes": {
+   "H2-1": {
+    "lane": "fo_h2_1_hall_chamber_magnet",
+    "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/",
+    "state": "PRESENT",
+    "files": [
+     {
+      "name": "h2_1_hall_chamber_magnet_v1.json",
+      "sha256_observed": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+     }
+    ],
+    "n_demands_to_h2_7": 1
+   },
+   "H2-2": {
+    "lane": "fo_h2_2_cathode_integration",
+    "path": "docs/hardware/h2/h2_2_cathode_integration/",
+    "state": "PRESENT",
+    "files": [
+     {
+      "name": "h2_2_cathode_integration_v1.json",
+      "sha256_observed": "8436008ac458d4e7467a9c7c9592d5312b3912b918d584ceaf3ac8cb2745a971"
+     }
+    ],
+    "n_demands_to_h2_7": 1
+   },
+   "H2-3": {
+    "lane": "fo_h2_3_gas_path_plenum",
+    "path": "docs/hardware/h2/h2_3_gas_path_plenum/",
+    "state": "PRESENT",
+    "files": [
+     {
+      "name": "h2_3_gas_path_plenum_v1.json",
+      "sha256_observed": "f32b05bd03aad2a09a1d9b90ee5f9423e733e6ea4cb94814c92b500590d43a7b"
+     }
+    ],
+    "n_demands_to_h2_7": 1
+   },
+   "H2-4": {
+    "lane": "fo_h2_4_ppu_bus",
+    "path": "docs/hardware/h2/h2_4_ppu_bus/",
+    "state": "PRESENT",
+    "files": [
+     {
+      "name": "h2_4_ppu_bus_v1.json",
+      "sha256_observed": "5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef"
+     }
+    ],
+    "n_demands_to_h2_7": 1
+   },
+   "H2-5": {
+    "lane": "fo_h2_5_thermal_network",
+    "path": "docs/hardware/h2/h2_5_thermal_network/",
+    "state": "PRESENT",
+    "files": [
+     {
+      "name": "h2_5_thermal_network_v1.json",
+      "sha256_observed": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083"
+     }
+    ],
+    "n_demands_to_h2_7": 1
+   },
+   "H2-6": {
+    "lane": "fo_h2_6_diagnostics_fixture",
+    "path": "docs/hardware/h2/h2_6_diagnostics_fixture/",
+    "state": "PRESENT",
+    "files": [
+     {
+      "name": "h2_6_diagnostics_fixture_v1.json",
+      "sha256_observed": "bc7d6b049067c6fbd5489bda32ee9c8c1af36508576db4619b08d2c4ec196a56"
+     }
+    ],
+    "n_demands_to_h2_7": 1
+   },
+   "PIM-ICD": {
+    "lane": "fo_preionizer_module_icd",
+    "path": "docs/interfaces/preionizer_module/",
+    "state": "PRESENT",
+    "files": [],
+    "n_demands_to_h2_7": 0
+   },
+   "M16": {
+    "lane": "fo_subsystem_maturity_matrix",
+    "path": "docs/budgets/subsystem_maturity/",
+    "state": "PRESENT",
+    "files": [
+     {
+      "name": "subsystem_maturity_v1.json",
+      "sha256_observed": "20114a8074f9d616c0358b7dd5f874abfb569ce2f6ae4354a0d49b15aa646770"
+     },
+     {
+      "name": "subsystem_maturity_v2.json",
+      "sha256_observed": "a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c"
+     }
+    ],
+    "n_demands_to_h2_7": 0
+   },
+   "P1-PREG": {
+    "lane": "fo_phase1_prereg_framework",
+    "path": "docs/experiments/phase1_prereg_framework/",
+    "state": "PRESENT",
+    "files": [
+     {
+      "name": "phase1_prereg_framework_v1.json",
+      "sha256_observed": "84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28"
+     }
+    ],
+    "n_demands_to_h2_7": 0
+   }
+  },
+  "demands": [
+   {
+    "lane": "H2-1",
+    "file": "h2_1_hall_chamber_magnet_v1.json",
+    "demand": {
+     "from": "H2-1",
+     "to": "docs/hardware/h2/h2_7_mechanical_bom/",
+     "quantity": "H-1/MC-1 envelope and mass (RP-1, f_NI 2)",
+     "value": {
+      "body_OD_mm": 122.0,
+      "length_mm": 108.2,
+      "iron_kg": 1.925,
+      "copper_kg": 1.579
+     },
+     "units": "mm, kg",
+     "status": "PRELIMINARY (magnetic parts only)"
+    },
+    "adopted": false,
+    "reason": "no 'h2_7_line_item' naming an existing line item"
+   },
+   {
+    "lane": "H2-2",
+    "file": "h2_2_cathode_integration_v1.json",
+    "demand": {
+     "id": "IFD-13",
+     "from": "H2-2",
+     "to": "H2-7 (docs/hardware/h2/h2_7_mechanical_bom/)",
+     "quantity": "C-1 mass, envelope and mount",
+     "value": {
+      "analog_mass_g_without_cables": {
+       "SITAEL HC1": 30.0,
+       "SITAEL HC3": 50.0
+      },
+      "mount": "cantilever from the back pole (L-CENTRAL) - vibration check",
+      "disassembly": "HW-C1-08"
+     },
+     "units": "g",
+     "status": "PENDING C-1 selection (IEPC2017_365 pp. 5, 8 analog masses)"
+    },
+    "adopted": false,
+    "reason": "no 'h2_7_line_item' naming an existing line item"
+   },
+   {
+    "lane": "H2-3",
+    "file": "h2_3_gas_path_plenum_v1.json",
+    "demand": {
+     "from": "H2-3",
+     "to": "H2-7 (mechanical/BOM; mass_bom atmospheric_gas_chamber, atmospheric_valve)",
+     "quantity": "plenum volume range (minimum-volume range) and line routing lengths",
+     "value": [
+      0.0,
+      0.006165
+     ],
+     "units": "m^3",
+     "status": "PRELIMINARY"
+    },
+    "adopted": false,
+    "reason": "no 'h2_7_line_item' naming an existing line item"
+   },
+   {
+    "lane": "H2-4",
+    "file": "h2_4_ppu_bus_v1.json",
+    "demand": {
+     "from": "H2-4",
+     "to": "H2-7",
+     "quantity": "PPU mass (analog only) and bus harness current",
+     "value": {
+      "analog_ppu_mass_kg": 6.1,
+      "I_bus_A": [
+       38.2353,
+       62.5
+      ]
+     },
+     "units": "kg / A",
+     "status": "PRELIMINARY"
+    },
+    "adopted": false,
+    "reason": "no 'h2_7_line_item' naming an existing line item"
+   },
+   {
+    "lane": "H2-5",
+    "file": "h2_5_thermal_network_v1.json",
+    "demand": {
+     "from": "H2-5",
+     "to": "H2-7 (docs/hardware/h2/h2_7_mechanical_bom/)",
+     "quantity": "body envelope D_body, L_body and mount heat into the stand/spacecraft",
+     "value": "H25-18/19; mount_heat_W",
+     "units": "m, W",
+     "status": "PENDING"
+    },
+    "adopted": false,
+    "reason": "no 'h2_7_line_item' naming an existing line item"
+   },
+   {
+    "lane": "H2-6",
+    "file": "h2_6_diagnostics_fixture_v1.json",
+    "demand": {
+     "from": "fo_h2_6_diagnostics_fixture",
+     "to": "fo_h2_7_mechanical_bom",
+     "quantity": "fixture items are test-article/ground-only and excluded from the flight mass model (FX-01..FX-10)",
+     "value": "excluded",
+     "units": "-",
+     "status": "PRELIMINARY"
+    },
+    "adopted": false,
+    "reason": "no 'h2_7_line_item' naming an existing line item"
+   }
+  ],
+  "adopted_line_items": []
+ },
+ "interface_demands": [
+  {
+   "id": "ID-01",
+   "from": "H2-7",
+   "to": "H2-1 docs/hardware/h2/h2_1_hall_chamber_magnet/",
+   "quantity": "mass of the discharge chamber/accelerator and of the magnetic circuit, separately, with basis and evidence class (h2_7_line_item R09.m_hall_head_incl_mc / R10.m_magnetic_circuit)",
+   "value": null,
+   "range": [
+    2.6,
+    6.3
+   ],
+   "units": "kg",
+   "status": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/"
+  },
+  {
+   "id": "ID-02",
+   "from": "H2-7",
+   "to": "H2-1 docs/hardware/h2/h2_1_hall_chamber_magnet/",
+   "quantity": "thruster envelope (max OD, axial length incl. cathode), CG and mounting interface",
+   "value": null,
+   "range": null,
+   "units": "mm",
+   "analog": "PPS1350 drawing labels 104 / 135 / 210 mm (axis: verify); ECHT channel 86 mm long, 100 mm OD",
+   "status": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/"
+  },
+  {
+   "id": "ID-03",
+   "from": "H2-7",
+   "to": "H2-2 docs/hardware/h2/h2_2_cathode_integration/",
+   "quantity": "cathode unit mass and shield / isolation / mount mass; cathode position envelope",
+   "value": null,
+   "range": [
+    0.2,
+    0.3
+   ],
+   "units": "kg",
+   "status": "PENDING docs/hardware/h2/h2_2_cathode_integration/"
+  },
+  {
+   "id": "ID-04",
+   "from": "H2-7",
+   "to": "H2-3 docs/hardware/h2/h2_3_gas_path_plenum/",
+   "quantity": "masses of plenum, atmospheric metering/isolation valves, Xe regulator, Xe valves and plumbing; line lengths and routing; valve redundancy scheme",
+   "value": null,
+   "range": null,
+   "units": "kg / mm",
+   "analog": "Xe regulator 0.974-5.9 kg (Moog XFC / ArianeGroup XRFS); Xe metering 0.57 kg (PROPOSED set)",
+   "status": "PENDING docs/hardware/h2/h2_3_gas_path_plenum/"
+  },
+  {
+   "id": "ID-05",
+   "from": "H2-3",
+   "to": "H2-7",
+   "quantity": "plenum envelope / mass allocation (sets the plenum maximum volume)",
+   "value": null,
+   "range": null,
+   "units": "kg / m^3",
+   "status": "TBD - requires an owner split of the residual allocation; H2-7 can state only the collective room for all TBD rows (rollup.allocation_checks)"
+  },
+  {
+   "id": "ID-06",
+   "from": "H2-7",
+   "to": "H2-4 docs/hardware/h2/h2_4_ppu_bus/",
+   "quantity": "PPU mass incl. control/FDIR electronics and redundancy; PPU envelope; harness lengths and currents (to replace the 5 % policy harness)",
+   "value": null,
+   "range": [
+    2.0,
+    10.9
+   ],
+   "units": "kg",
+   "status": "PENDING docs/hardware/h2/h2_4_ppu_bus/"
+  },
+  {
+   "id": "ID-07",
+   "from": "H2-7",
+   "to": "H2-5 docs/hardware/h2/h2_5_thermal_network/",
+   "quantity": "thermal-control hardware mass (radiator area x areal mass, heaters, MLI); Xe tank thermal control and storage-temperature range",
+   "value": null,
+   "range": null,
+   "units": "kg / K",
+   "status": "PENDING docs/hardware/h2/h2_5_thermal_network/"
+  },
+  {
+   "id": "ID-08",
+   "from": "H2-7",
+   "to": "H2-6 docs/hardware/h2/h2_6_diagnostics_fixture/",
+   "quantity": "flight telemetry sensor list and masses (TM-01..TM-10); confirmation that H-1 ground diagnostics stay out of the flight model",
+   "value": null,
+   "range": null,
+   "units": "kg",
+   "status": "PENDING docs/hardware/h2/h2_6_diagnostics_fixture/"
+  },
+  {
+   "id": "ID-09",
+   "from": "H2-7",
+   "to": "H2-6 docs/hardware/h2/h2_6_diagnostics_fixture/",
+   "quantity": "installed stand payload mass and CG (H-1 + MC-1 + C-1 + module + diagnostics) for the thrust-stand load rating",
+   "value": null,
+   "range": null,
+   "units": "kg / mm",
+   "status": "TBD - requires H-1 as-built mass (S1a, HW-ENV-08 inspection)"
+  },
+  {
+   "id": "ID-10",
+   "from": "H2-7",
+   "to": "PIM-ICD docs/interfaces/preionizer_module/",
+   "quantity": "flight interface-provision mass/envelope at IP-UP/IP-DN; RF and ECR module masses (contingency block only)",
+   "value": null,
+   "range": null,
+   "units": "kg / mm",
+   "status": "PENDING docs/interfaces/preionizer_module/"
+  },
+  {
+   "id": "ID-11",
+   "from": "H2-7",
+   "to": "fo_xe_system_ledger docs/budgets/xe_ledger/",
+   "quantity": "analog planning ranges for m_tank, m_regulator, m_valves (for information; the ledger keeps them TBD until a selection)",
+   "value": null,
+   "range": [
+    5.044,
+    12.77
+   ],
+   "units": "kg",
+   "status": "PRELIMINARY (analog)"
+  },
+  {
+   "id": "ID-12",
+   "from": "fo_xe_system_ledger",
+   "to": "H2-7",
+   "quantity": "m_Xe_total (startup, transition, fallback, reserve terms)",
+   "value": null,
+   "range": null,
+   "units": "kg",
+   "status": "TBD - requires H-1/C-1 measurements and an owner decision (A6 not_authorized: freezing total Xe mass)"
+  },
+  {
+   "id": "ID-13",
+   "from": "H2-7",
+   "to": "H-1 / MC-1 / C-1 (hardware_requirements_v1)",
+   "quantity": "as-built masses of H-1, MC-1, C-1 and each module at the S1a inspection, with test-article-only provisions weighed separately",
+   "value": null,
+   "range": null,
+   "units": "kg",
+   "status": "TBD - requires S1a (HW-ENV-08)"
+  },
+  {
+   "id": "ID-14",
+   "from": "H2-7",
+   "to": "M16 docs/budgets/subsystem_maturity/",
+   "quantity": "mass / envelope attribute state of the 16 A5 subsystems + reserved interface (m16_rows)",
+   "value": null,
+   "range": null,
+   "units": "-",
+   "status": "PRELIMINARY (proposed states in m16_rows)"
+  }
+ ],
+ "hard_incompatibility_check": {
+  "result": "NONE_FOUND",
+  "checked": [
+   {
+    "id": "HI-01",
+    "check": "sourced floor of the system mass vs the 40 kg requirement and the 34-36 kg allocation",
+    "evidence": "floor = fixed cathode Xe term 5.4 kg + policy residual 0.108 kg = 5.508 kg; analog masses are NOT lower bounds (Vyovrinda hardware can be lighter or heavier)",
+    "evidence_class": "assumed",
+    "finding": "no veto: floor < 34 kg"
+   },
+   {
+    "id": "HI-02",
+    "check": "high-end analog planning case vs the references",
+    "evidence": "known-line MEV (high case) 51.39 kg vs 40 kg; planning spread only",
+    "evidence_class": "inferred",
+    "finding": "not a hard incompatibility (analogs are not bounds); recorded as a mass-closure risk on A5 architecture-closing risk 4"
+   },
+   {
+    "id": "HI-03",
+    "check": "cathode Xe term at the A5 upper test point 0.15 mg/s",
+    "evidence": "8.1 kg (+2.7 kg)",
+    "evidence_class": "assumed",
+    "finding": "no veto; affordability stays with the Xe ledger (A5: test point only)"
+   },
+   {
+    "id": "HI-04",
+    "check": "Xe storage volume for the known load vs the smallest accessed tank family",
+    "evidence": "2.69-3.29 l at 75-150 bar (293.15 K) vs XS-XTA 1-7 l",
+    "evidence_class": "model-derived",
+    "finding": "compatible for the known load; total load PENDING the ledger"
+   },
+   {
+    "id": "HI-05",
+    "check": "overall envelope vs a launcher / spacecraft envelope",
+    "evidence": "no launcher or spacecraft envelope is defined in the repository",
+    "evidence_class": null,
+    "finding": "not checkable (TBD)"
+   }
+  ],
+  "architecture_veto": false
+ },
+ "architecture_changing_blockers_touched": [
+  {
+   "blocker": 1,
+   "text": "1 Hall-only sustainment at the actual atmospheric feed state, especially low flow and high O2 fraction",
+   "touched": false,
+   "how": "none: the mass model never estimates sustainment; the feed state and the Hall-only knee are H-1 Phase-1 results"
+  },
+  {
+   "blocker": 2,
+   "text": "2 incremental benefit of RF/ECR after full bus-power accounting (not source efficiency in isolation)",
+   "touched": true,
+   "how": "mass side only: RF and ECR module masses sit in a separate contingency block (never in the baseline total) and rollup.module_room shows the MEV room left for any module plus the TBD rows; the power side is bus_power_boundary_v1's"
+  },
+  {
+   "blocker": 3,
+   "text": "3 Xe/cathode closure: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation",
+   "touched": true,
+   "how": "the fixed cathode Xe term is booked explicitly, the complete stored-Xe subsystem is assembled per A6 (known lines + TBD terms), and the 0.15 mg/s and 18,000 h sensitivities are reported; continuous Xe augmentation is not a nominal mode and has no mass line"
+  }
+ ],
+ "m16_rows": [
+  {
+   "row_id": "R01",
+   "a5_subsystem": "intake",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "BLOCKED",
+   "note": "",
+   "blocking_item": "owner decisions DI-1.1 / DI-1.2 (intake area sizing rule and geometry)",
+   "rollup_category": "hardware-definition blocker"
+  },
+  {
+   "row_id": "R02",
+   "a5_subsystem": "protective/filter stage",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "BLOCKED",
+   "note": "",
+   "blocking_item": "filter concept definition (no filter model or geometry in the repository)",
+   "rollup_category": "hardware-definition blocker"
+  },
+  {
+   "row_id": "R03",
+   "a5_subsystem": "compressor",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "BLOCKED",
+   "note": "",
+   "blocking_item": "owner decision DI-1.4 (compressor concept and parameters)",
+   "rollup_category": "hardware-definition blocker"
+  },
+  {
+   "row_id": "R04",
+   "a5_subsystem": "buffer/plenum",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "RUNNING",
+   "note": "plenum sizing in docs/hardware/h2/h2_3_gas_path_plenum/"
+  },
+  {
+   "row_id": "R05",
+   "a5_subsystem": "atmospheric metering valve",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "RUNNING",
+   "note": "valve concept in docs/hardware/h2/h2_3_gas_path_plenum/"
+  },
+  {
+   "row_id": "R06",
+   "a5_subsystem": "Xe tank",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "BLOCKED",
+   "note": "A7 blocker 3; tank analog range carried meanwhile",
+   "blocking_item": "m_Xe_total (startup/transition/fallback/reserve need H-1/C-1 evidence; A6 not_authorized to freeze)",
+   "rollup_category": "architecture blocker"
+  },
+  {
+   "row_id": "R07",
+   "a5_subsystem": "Xe regulator",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "READY",
+   "note": "analog range in hand; ready for H3 regulator specification once MEOP is set"
+  },
+  {
+   "row_id": "R08",
+   "a5_subsystem": "Xe metering (splits to ignition/transition feed and cathode feed)",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "BLOCKED",
+   "note": "",
+   "blocking_item": "a low-flow Xe flow control part demonstrated at 0.10 mg/s (specification gap)",
+   "rollup_category": "procurement blocker"
+  },
+  {
+   "row_id": "R09",
+   "a5_subsystem": "extended-channel Hall discharge chamber/accelerator",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "RUNNING",
+   "note": "H-1 geometry in docs/hardware/h2/h2_1_hall_chamber_magnet/"
+  },
+  {
+   "row_id": "R10",
+   "a5_subsystem": "magnetic circuit",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "RUNNING",
+   "note": "MC-1 sizing in docs/hardware/h2/h2_1_hall_chamber_magnet/"
+  },
+  {
+   "row_id": "R11",
+   "a5_subsystem": "shielded Xe-fed LaB6 hollow cathode",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "RUNNING",
+   "note": "C-1 integration in docs/hardware/h2/h2_2_cathode_integration/"
+  },
+  {
+   "row_id": "R12",
+   "a5_subsystem": "PPU/power distribution",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "RUNNING",
+   "note": "PPU / bus allocation in docs/hardware/h2/h2_4_ppu_bus/"
+  },
+  {
+   "row_id": "R13",
+   "a5_subsystem": "thermal control",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "RUNNING",
+   "note": "thermal network in docs/hardware/h2/h2_5_thermal_network/"
+  },
+  {
+   "row_id": "R14",
+   "a5_subsystem": "control/FDIR",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "RUNNING",
+   "note": "booked inside the PPU analog; split in docs/hardware/h2/h2_4_ppu_bus/"
+  },
+  {
+   "row_id": "R15",
+   "a5_subsystem": "sensors/diagnostics",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "RUNNING",
+   "note": "flight telemetry subset PROPOSED here; sensor list with docs/hardware/h2/h2_6_diagnostics_fixture/"
+  },
+  {
+   "row_id": "R16",
+   "a5_subsystem": "mechanical/structural interfaces",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "BLOCKED",
+   "note": "",
+   "blocking_item": "spacecraft configuration and launch-load environment (not defined)",
+   "rollup_category": "proposal-only documentation gap"
+  },
+  {
+   "row_id": "R17",
+   "a5_subsystem": "RF pre-ionization module interface (A5 reserved_interface)",
+   "attribute": "mass / envelope (H2-7)",
+   "proposed_state": "RUNNING",
+   "note": "interface definition in docs/interfaces/preionizer_module/"
+  }
+ ],
+ "h3_procurement_inputs": [
+  {
+   "id": "H3-01",
+   "item": "Xe storage tank",
+   "long_lead": true,
+   "spec_level_needed": "usable capacity >= m_Xe_total (PENDING ledger) x (1 + residual fraction); internal volume from rho(T_storage,max, MEOP); MEOP >= 75 bar PROPOSED; temperature range; envelope; mounting (polar or skirt)",
+   "reference_data": "MT Aerospace XS-XTA 1-7 l (<= 3.5 kg, 242 mm dia, <= 386 mm, under development); S-XTA 40 l (6.3 kg predicted, 73 kg Xe, MEOP 187 bar) - catalogue reference only",
+   "status": "TBD - requires m_Xe_total and MEOP"
+  },
+  {
+   "id": "H3-02",
+   "item": "Xe pressure regulator",
+   "long_lead": true,
+   "spec_level_needed": "inlet range up to MEOP; outlet pressure for the metering valves; flow range covering 0.10 mg/s cathode + ignition/transition flows; leakage; redundancy",
+   "reference_data": "Moog XFC < 974 g (3-23 mg/s); ArianeGroup XRFS < 5.9 kg (3-120 bar in, 2.65 bar out, > 6 mg/s)",
+   "status": "PRELIMINARY"
+  },
+  {
+   "id": "H3-03",
+   "item": "low-flow Xe proportional flow control for the cathode branch",
+   "long_lead": true,
+   "spec_level_needed": "controllable flow at and around 0.10 mg/s and the 0.15 mg/s test point with the accuracy the Xe ledger needs",
+   "reference_data": "Moog PFCV 115 g max ('0 - 30 mg/s Xe typical'): control at 0.10 mg/s not shown",
+   "status": "TBD - specification gap"
+  },
+  {
+   "id": "H3-04",
+   "item": "Xe isolation latch valves",
+   "long_lead": false,
+   "spec_level_needed": "line size, MEOP, cycle life >= N_starts (PENDING ledger)",
+   "reference_data": "Moog 1/8 inch latching < 170 g, 18,000 cycles, MEOP 186 bar",
+   "status": "PRELIMINARY"
+  },
+  {
+   "id": "H3-05",
+   "item": "LaB6 hollow cathode (C-1 and flight)",
+   "long_lead": true,
+   "spec_level_needed": "emission current, Xe flow <= 0.10 mg/s design target, O-exposure tolerance, start cycles; mass and envelope",
+   "reference_data": "Busek cathodes 0.2 / 0.3 kg (Xe)",
+   "status": "PENDING docs/hardware/h2/h2_2_cathode_integration/"
+  },
+  {
+   "id": "H3-06",
+   "item": "magnet materials / coil wire for MC-1",
+   "long_lead": true,
+   "spec_level_needed": "from the H2-1 magnetic design",
+   "reference_data": "none accessed by this lane",
+   "status": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/"
+  },
+  {
+   "id": "H3-07",
+   "item": "flight low-pressure sensing for the plenum (TM-07)",
+   "long_lead": true,
+   "spec_level_needed": "range at the plenum pressure (PENDING H2-3), mass, power, radiation tolerance",
+   "reference_data": "none accessed (gap)",
+   "status": "TBD - specification gap"
+  }
+ ],
+ "h4_test_inputs": [
+  {
+   "id": "H4-01",
+   "stage": "S1a",
+   "measure": "as-built masses of H-1, MC-1, C-1 and each module (HW-ENV-08 inspection), test-article-only provisions weighed separately",
+   "closes": [
+    "R09.m_hall_head_incl_mc",
+    "R10.m_magnetic_circuit",
+    "R11.m_cathode_unit"
+   ]
+  },
+  {
+   "id": "H4-02",
+   "stage": "S1a",
+   "measure": "installed stand payload mass and CG",
+   "closes": [
+    "ID-09"
+   ]
+  },
+  {
+   "id": "H4-03",
+   "stage": "S1 / S1b",
+   "measure": "cathode Xe flow in spot mode at 0.10 mg/s and at the 0.15 mg/s test point at the required emission current (A5 risk 3)",
+   "closes": [
+    "R06.m_Xe_cathode (confirmation of the design term)"
+   ]
+  },
+  {
+   "id": "H4-04",
+   "stage": "S1 / Phase 1",
+   "measure": "Xe per ignition / startup and per transition",
+   "closes": [
+    "R06.m_Xe_other"
+   ]
+  },
+  {
+   "id": "H4-05",
+   "stage": "S1a",
+   "measure": "coil currents and temperatures at the design B(z) (magnet_coil qualification)",
+   "closes": [
+    "R10.m_magnetic_circuit"
+   ]
+  },
+  {
+   "id": "H4-06",
+   "stage": "S1 / Phase 1",
+   "measure": "per-component bus power and component temperatures (INS-02, INS-17, INS-23, INS-24): PPU and thermal sizing",
+   "closes": [
+    "R12.m_ppu",
+    "R13.m_thermal"
+   ]
+  },
+  {
+   "id": "H4-07",
+   "stage": "Phase 1",
+   "measure": "plume divergence envelope (for LC-06 layout keep-out)",
+   "closes": [
+    "LC-06"
+   ]
+  }
+ ],
+ "milestones": {
+  "supports": [
+   "A"
+  ],
+  "A": "Supported: one evolving mass model and mechanical envelope for the A5 proposal reference, with the fixed Xe design term, analog planning ranges, the room left under 34/36/40 kg for TBD rows and the RF/ECR modules as a separate contingency. It needs no Hall performance number and selects no architecture.",
+  "B": "Needs: preliminary-geometry CBEs from H2-1..H2-6 for every row, m_Xe_total from the Xe ledger, a selected tank and MEOP, intake and compressor designs (DI-1.1/1.2/1.4), mass BOM owner decisions OD-M1..OD-M7, and the RF module mass if Phase-1 outcome B.",
+  "C": "Needs: PDR design masses (H-1/C-1 as-built masses as the first measured points), structure from the spacecraft configuration and launch loads, a designed harness, integrated thermal hardware, a layout with positions (CG, alignment) and the integrated mass/power/thermal/life closure."
+ },
+ "owner_questions": [
+  {
+   "id": "H27-Q1",
+   "question": "Evaluate the allocation at both ends of '<= 34-36 kg' (done here) or fix one?"
+  },
+  {
+   "id": "H27-Q2",
+   "question": "System margin 20 % (PROPOSED in mass_bom_v1) or 10 % (recorded RFP R3, verify)? Both are reported."
+  },
+  {
+   "id": "H27-Q3",
+   "question": "Does the 40 kg include the Xe load and tank (mass_bom OD-M7)? Included here."
+  },
+  {
+   "id": "H27-Q4",
+   "question": "Redundancy policy for valves, cathode and PPU (single string here)."
+  },
+  {
+   "id": "H27-Q5",
+   "question": "Accept the PPU low end as the NASA SBIR 2 kg development TARGET (undemonstrated, labelled 'assumed') until H2-4 delivers a CBE?"
+  },
+  {
+   "id": "H27-Q6",
+   "question": "Keep the 2 % Xe residual (mass_bom policy) as a separate line outside the five-term Xe ledger, or fold it into m_reserve?"
+  }
+ ],
+ "not_used": [
+  "withdrawn repository masses (docs/HISTORY.md v0.5 / Phase-4 tables; 110-120 kg) and every v1.2-v1.6 absolute Hall result (CLAUDE.md 'Superseded / withdrawn')",
+  "abep_sim/mass_bom.py legacy sizing defaults and legacy MGA dict (uncited; mass_bom OD-M3)",
+  "abep_sim/archengine.py Ionizer mass defaults (unsourced)",
+  "any Hall transport closure, screening candidate or abep_sim/plasma_devices.py output",
+  "P5 calibration-nuisance items (never a design variable)",
+  "in-progress drafts of parallel lanes in other worktrees (never consumed for the committed output; --lane-root is a preview only)"
+ ]
+}

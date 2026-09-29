@@ -1,0 +1,1235 @@
+=== UNTRACKED scripts/architecture/build_decision_dossier.py
+#!/usr/bin/env python3
+"""Architecture decision dossier generator (Lane 27): the current status of hall_only / rf_hall / ecr_hall.
+
+It assembles, from repository files only, the architecture-decision dossier and writes
+
+    docs/architecture_comparison/dossier/dossier.json         (machine-readable; schema architecture_decision_dossier_v1)
+    docs/architecture_comparison/dossier/DECISION_DOSSIER.md  (a pure rendering of dossier.json)
+
+The dossier is a STATUS, NOT A DECISION. It ranks, scores and selects nothing. An architecture is reported as eliminated
+only when the hard-gate evaluator (abep_sim/hard_gates.py, via its committed status file) eliminates it on a binding gate,
+and the dossier re-checks that claim against the per-gate verdicts. A selection is presented only if the gate logic
+eliminates all but one architecture AND the owner has recorded a decision for that one
+(docs/architecture_comparison/dossier/owner_decision_record.json). Neither holds today.
+
+Rules the generator enforces (CLAUDE.md rules 3, 6, 10; docs/EVIDENCE.md):
+- Every expected input is looked up at its repository-relative path. A missing input is listed as UNRESOLVED with what it
+  would provide; nothing is filled in for it. There are no default physical or efficiency values in this file.
+- A malformed input of a known contract (wrong schema id, inconsistent elimination claim, malformed owner record) raises;
+  it is never skipped silently.
+- Every file read is hashed (sha256 of its bytes) in the provenance section, with the generation time and git commit.
+- The output is deterministic apart from provenance.generated_at (and the git state recorded next to it).
+- Screening candidates (sgb-screen-*) and unadmitted Hall closures are never performance sources: quantity records that
+  mention a screening candidate are excluded from the quantity census and counted as excluded.
+
+Preview mode (--preview-overlay DIR, repeatable) resolves inputs that are missing from --root in other checkouts (for
+example unmerged lane worktrees), READ-ONLY. A preview must be written outside the repository (--out-dir); it can never
+overwrite the committed dossier. The hard-gate evaluator is re-run (python -B -m abep_sim.hard_gates status, without
+writing bytecode) in the checkout it was resolved from, to confirm that the committed status file is current.
+
+Usage:
+    python scripts/architecture/build_decision_dossier.py                  # regenerate the committed dossier
+    python scripts/architecture/build_decision_dossier.py --check          # exit 1 if the committed dossier is stale
+    python scripts/architecture/build_decision_dossier.py --out-dir /tmp/x --preview-overlay ../other-worktree
+"""
+from __future__ import annotations
+
+import argparse
+import datetime as _dt
+import hashlib
+import json
+import os
+import re
+import subprocess
+import sys
+from typing import Any
+
+DOSSIER_SCHEMA = "architecture_decision_dossier_v1"
+GENERATOR_VERSION = "1.0.0"
+ARCHITECTURES = ("hall_only", "rf_hall", "ecr_hall")
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+OUT_REL = "docs/architecture_comparison/dossier"
+SCRIPT_REL = "scripts/architecture/build_decision_dossier.py"
+JSON_NAME = "dossier.json"
+MD_NAME = "DECISION_DOSSIER.md"
+
+NOT_A_DECISION = ("This dossier is a status, not a decision. It ranks, scores and selects nothing; no architecture is "
+                  "presented as the choice. An architecture can be shown as eliminated only by the hard-gate logic, and a "
+                  "selection can be shown only if that logic eliminates all but one architecture AND the owner records "
+                  "a decision.")
+
+MILESTONES = {
+    "A": "conditional selection: 'architecture X is baseline provided conditions A/B/C are demonstrated'; does not "
+         "require Physics Baseline 1.0",
+    "B": "physics-backed selection: credible envelopes from validated Hall transport, chemistry and common-boundary "
+         "performance",
+    "C": "proposal/PDR freeze: mass, power, thermal, life, startup, cathode and mission closure integrated",
+}
+
+SCREENING_MARK = "sgb-screen"
+HARD_GATE_STATUS_SCHEMA = "hard_gate_evaluation_set_v1"
+HARD_GATE_MATRIX_SCHEMA = "hard_gate_matrix_v1"
+FAILURE_TREE_SCHEMA = "failure_tree_v1"
+OWNER_RECORD_SCHEMA = "architecture_owner_decision_v1"
+OWNER_RECORD_KEYS = ("schema", "architecture", "milestone", "decided_by", "date", "statement",
+                     "hard_gate_status_sha256")
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Expected inputs. 'needed_for' is this dossier's PROPOSED mapping of an input to the milestones it feeds (owner may
+# amend). 'pending_merge_from' names the prerequisite lane branch where the input existed when this generator was
+# written; it is informational only and never used for resolution.
+# ---------------------------------------------------------------------------------------------------------------------
+_GATES = "prerequisite lane GATES (branch worktree-wf_e3c01fb8-eed-1, commit 08b9f9b)"
+_FTREE = "prerequisite lane FTREE (branch worktree-wf_e3c01fb8-eed-2, commit 30be95c)"
+
+INPUTS: tuple[dict, ...] = (
+    # --- hard gates and failure trees (prerequisite lanes)
+    {"id": "gates.matrix", "kind": "file", "path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+     "group": "hard_gates", "needed_for": ["A", "B", "C"], "pending_merge_from": _GATES,
+     "provides": "hard-gate matrix: gates, criteria, RFP thresholds, open owner decisions"},
+    {"id": "gates.register", "kind": "file",
+     "path": "docs/architecture_comparison/hard_gates/evidence_register_v1.json",
+     "group": "hard_gates", "needed_for": ["A", "B", "C"], "pending_merge_from": _GATES,
+     "provides": "registered hard-gate evidence items"},
+    {"id": "gates.status", "kind": "file", "path": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+     "group": "hard_gates", "needed_for": ["A", "B", "C"], "pending_merge_from": _GATES,
+     "provides": "evaluator output: per-architecture verdicts, eliminations, milestone A conditions, B/C missing lists"},
+    {"id": "gates.evaluator", "kind": "file", "path": "abep_sim/hard_gates.py",
+     "group": "hard_gates", "needed_for": ["A", "B", "C"], "pending_merge_from": _GATES,
+     "provides": "pure hard-gate evaluator; re-run to confirm the status file is current"},
+    {"id": "gates.doc", "kind": "file", "path": "docs/architecture_comparison/hard_gates/HARD_GATES.md",
+     "group": "hard_gates", "needed_for": ["A"], "pending_merge_from": _GATES,
+     "provides": "verdict logic and open readings (human-readable)"},
+    {"id": "ftree.trees", "kind": "file", "path": "docs/architecture_comparison/failure_tree/failure_trees_v1.json",
+     "group": "failure_trees", "needed_for": ["A", "B", "C"], "pending_merge_from": _FTREE,
+     "provides": "architecture failure trees: open nodes, milestone A condition per node, ranked next evidence"},
+    {"id": "ftree.doc", "kind": "file", "path": "docs/architecture_comparison/failure_tree/FAILURE_TREES.md",
+     "group": "failure_trees", "needed_for": ["A"], "pending_merge_from": _FTREE,
+     "provides": "failure trees (human-readable)"},
+    # --- evidence matrices
+    {"id": "evidence.rf_source", "kind": "dir", "path": "docs/evidence/rf_source", "group": "evidence",
+     "needed_for": ["A", "B"], "arch_default": ["rf_hall"],
+     "provides": "RF pre-ionization source evidence matrix"},
+    {"id": "evidence.ecr_source", "kind": "dir", "path": "docs/evidence/ecr_source", "group": "evidence",
+     "needed_for": ["A", "B"], "arch_default": ["ecr_hall"],
+     "provides": "ECR pre-ionization source evidence matrix"},
+    {"id": "evidence.hall_sustainment", "kind": "dir", "path": "docs/evidence/hall_sustainment", "group": "evidence",
+     "needed_for": ["A", "B"], "provides": "Hall discharge sustainment on atmospheric species, evidence matrix"},
+    {"id": "evidence.cathode", "kind": "dir", "path": "docs/evidence/cathode", "group": "evidence",
+     "needed_for": ["A", "C"], "provides": "cathode evidence matrix"},
+    {"id": "evidence.wall_life", "kind": "dir", "path": "docs/evidence/wall_life", "group": "evidence",
+     "needed_for": ["B", "C"], "provides": "wall erosion / sputter-yield evidence"},
+    # --- architecture-comparison preparation
+    {"id": "feed_envelope", "kind": "dir", "path": "docs/architecture_comparison/feed_envelope",
+     "group": "comparison", "needed_for": ["A", "B"], "provides": "common feed envelope at the thruster boundary"},
+    {"id": "hall_reference", "kind": "dir", "path": "docs/architecture_comparison/hall_reference",
+     "group": "comparison", "needed_for": ["A", "B"], "provides": "common Hall accelerator reference"},
+    {"id": "comparison_grid", "kind": "dir", "path": "docs/architecture_comparison/comparison_grid",
+     "group": "comparison", "needed_for": ["A", "B"], "provides": "common comparison grid (point set, fairness rules)"},
+    {"id": "breakeven", "kind": "dir", "path": "docs/architecture_comparison/breakeven",
+     "group": "comparison", "needed_for": ["A", "B"], "provides": "pre-ionizer break-even surfaces"},
+    {"id": "interstage", "kind": "dir", "path": "docs/architecture_comparison/interstage",
+     "group": "comparison", "needed_for": ["B"], "provides": "interstage (pre-ionizer to Hall) model documentation"},
+    {"id": "electrical_closure", "kind": "dir", "path": "docs/architecture_comparison/electrical_closure",
+     "group": "comparison", "needed_for": ["A", "B", "C"], "provides": "electrical closure data (supply efficiencies)"},
+    {"id": "boundary.module", "kind": "file", "path": "abep_sim/arch_boundary.py", "group": "comparison",
+     "needed_for": ["B", "C"], "provides": "bus-power boundary module (BOUNDARY_VERSION bus_power_boundary_v1)"},
+    {"id": "boundary.doc", "kind": "dir", "path": "docs/architecture_comparison/power_boundary", "group": "comparison",
+     "needed_for": ["B", "C"], "provides": "bus-power boundary documentation and evidence"},
+    {"id": "boundary.schema", "kind": "file", "path": "schemas/architecture_comparison/bus_power_boundary_v1.json",
+     "group": "comparison", "needed_for": ["B", "C"], "provides": "bus-power boundary schema"},
+    {"id": "harness.module", "kind": "file", "path": "abep_sim/arch_compare.py", "group": "comparison",
+     "needed_for": ["B"], "provides": "comparison harness"},
+    {"id": "mass_bom", "kind": "dir", "path": "docs/architecture_comparison/mass_bom", "group": "comparison",
+     "needed_for": ["A", "C"], "provides": "mass bill of materials"},
+    {"id": "thermal_life.module", "kind": "file", "path": "abep_sim/thermal_life.py", "group": "comparison",
+     "needed_for": ["C"], "provides": "thermal/life framework"},
+    {"id": "thermal_life.schemas", "kind": "dir", "path": "schemas/thermal_life", "group": "comparison",
+     "needed_for": ["C"], "provides": "thermal/life input and limit records"},
+    {"id": "scaling_audit", "kind": "dir", "path": "docs/architecture_comparison/scaling_audit", "group": "comparison",
+     "needed_for": ["B"], "path_status": "PROPOSED (no naming contract records this path)",
+     "provides": "scaling audit (transfer of literature devices to the Vyovrinda scale)"},
+    {"id": "minimum_decisive_experiment", "kind": "dir",
+     "path": "docs/architecture_comparison/minimum_decisive_experiment", "group": "comparison",
+     "needed_for": ["A", "B"], "provides": "minimum decisive experiment"},
+    {"id": "cathode_integration", "kind": "dir", "path": "docs/architecture_comparison/cathode_integration",
+     "group": "comparison", "needed_for": ["A", "C"], "provides": "cathode integration"},
+    {"id": "experiment_protocol", "kind": "dir", "path": "docs/architecture_comparison/experiment_protocol",
+     "group": "comparison", "needed_for": ["A", "B"], "provides": "experiment protocol"},
+    {"id": "contracts.upstream_icd", "kind": "dir", "path": "schemas/interfaces", "group": "contracts",
+     "needed_for": ["B"], "provides": "upstream interface control (feed state at the thruster inlet)"},
+    {"id": "contracts.ledgers", "kind": "dir", "path": "schemas/ledgers", "group": "contracts",
+     "needed_for": ["C"], "provides": "subsystem ledgers"},
+    {"id": "contracts.hallmap", "kind": "dir", "path": "docs/hallmap", "group": "contracts",
+     "needed_for": ["B"], "provides": "Hall-map production specification"},
+    # --- physics-validation track (read for status only; never a performance source)
+    {"id": "claude_md", "kind": "file", "path": "CLAUDE.md", "group": "physics",
+     "needed_for": ["A", "B", "C"], "provides": "RFP envelope and physics-baseline gate status table"},
+    {"id": "p5n2.decision", "kind": "file",
+     "path": "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores_decision.json", "group": "physics",
+     "needed_for": ["B"], "provides": "P5-N2 v1 vacuum campaign decision (per screening candidate)"},
+    {"id": "p5n2.release", "kind": "file", "path": "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json",
+     "group": "physics", "needed_for": ["B"], "provides": "P5-N2 v1 validation release (link checks)"},
+    {"id": "transport_ensemble", "kind": "file", "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
+     "group": "physics", "needed_for": ["B"], "provides": "admitted Hall transport members (credible set)"},
+    {"id": "forensics.p5_n2_v1", "kind": "dir", "path": "docs/forensics/p5_n2_v1", "group": "physics",
+     "needed_for": ["B"], "provides": "non-gating P5-N2 v1 failure / out-of-domain forensics"},
+    # --- owner decision (absent until the owner records one)
+    {"id": "owner_decision", "kind": "file", "path": f"{OUT_REL}/owner_decision_record.json", "group": "owner",
+     "needed_for": ["A", "B", "C"],
+     "provides": f"owner-recorded architecture decision (schema {OWNER_RECORD_SCHEMA}; written only by the owner)"},
+)
+
+_DIR_EXTS = (".json", ".md", ".py", ".csv", ".png", ".txt", ".toml", ".tsv", ".svg")
+_QUANTITY_GROUPS = ("evidence", "comparison", "contracts", "failure_trees")
+_CLASS_ORDER = ("measured", "digitized", "reconstructed", "inferred", "model-derived", "assumed", "TBD", "unclassified")
+_CLASS_FAMILY = {"measured": "measured", "digitized": "measured", "reconstructed": "measured",
+                 "inferred": "modelled", "model-derived": "modelled", "assumed": "assumed", "TBD": "TBD",
+                 "unclassified": "unclassified"}
+_VALUE_KEYS = ("value", "values", "lower", "upper", "lower_bound", "upper_bound", "min", "max", "value_min",
+               "value_max")
+_LABEL_KEYS = ("id", "name", "quantity", "parameter", "label", "key", "title", "symbol")
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# helpers
+# ---------------------------------------------------------------------------------------------------------------------
+def sha256_file(path: str) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _rel(path: str, base: str) -> str:
+    return os.path.relpath(path, base).replace(os.sep, "/")
+
+
+def _dir_files(d: str) -> list[str]:
+    out = []
+    for dirpath, dirnames, filenames in os.walk(d):
+        dirnames[:] = sorted(x for x in dirnames if x != "__pycache__" and not x.startswith("."))
+        for fn in sorted(filenames):
+            if fn.lower().endswith(_DIR_EXTS):
+                out.append(os.path.join(dirpath, fn))
+    return sorted(out)
+
+
+def _short(text: Any, n: int = 240) -> str:
+    s = text if isinstance(text, str) else json.dumps(text, ensure_ascii=False, sort_keys=True)
+    s = " ".join(s.split())
+    return s if len(s) <= n else s[: n - 1].rstrip() + "…"
+
+
+def _md_cell(text: Any, n: int = 240) -> str:
+    return _short(text, n).replace("|", "\\|")
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# input resolution
+# ---------------------------------------------------------------------------------------------------------------------
+def resolve_inputs(root: str, overlays: list[str]) -> dict[str, dict]:
+    """Look up every expected input at its repository-relative path: first in root, then (preview only) in each overlay.
+    A directory input resolves from the first checkout that has at least one readable file in it; checkouts are never
+    mixed within one input."""
+    bases = [("repository", root)] + [(f"preview_overlay:{os.path.abspath(o)}", o) for o in overlays]
+    out: dict[str, dict] = {}
+    for spec in INPUTS:
+        rec = {k: v for k, v in spec.items() if k not in ("arch_default",)}
+        rec["state"] = "UNRESOLVED"
+        rec["files"] = []
+        for label, base in bases:
+            p = os.path.join(base, spec["path"])
+            if spec["kind"] == "file" and os.path.isfile(p):
+                files = [p]
+            elif spec["kind"] == "dir" and os.path.isdir(p):
+                files = _dir_files(p)
+            else:
+                continue
+            if not files:
+                continue
+            rec["state"] = "RESOLVED"
+            rec["resolved_from"] = label
+            rec["_base"] = base
+            rec["files"] = [{"path": _rel(f, base), "sha256": sha256_file(f), "bytes": os.path.getsize(f),
+                             "_abs": f} for f in files]
+            break
+        if rec["state"] == "UNRESOLVED":
+            rec["unresolved_reason"] = (f"not present at {spec['path']} in this checkout"
+                                        + (" or in any preview overlay" if overlays else "")
+                                        + (f"; expected from {spec['pending_merge_from']}, pending merge"
+                                           if spec.get("pending_merge_from") else ""))
+        out[spec["id"]] = rec
+    return out
+
+
+def _load_json(file_rec: dict) -> Any:
+    with open(file_rec["_abs"], encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _single_json(inputs: dict, iid: str) -> Any | None:
+    rec = inputs[iid]
+    if rec["state"] != "RESOLVED":
+        return None
+    return _load_json(rec["files"][0])
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# hard gates
+# ---------------------------------------------------------------------------------------------------------------------
+def _run_evaluator(base: str, timeout: int = 60) -> tuple[str, str | None]:
+    env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
+    env.pop("PYTHONPATH", None)
+    try:
+        cp = subprocess.run([sys.executable, "-B", "-m", "abep_sim.hard_gates", "status"], cwd=base, env=env,
+                            capture_output=True, text=True, timeout=timeout)
+    except (OSError, subprocess.TimeoutExpired) as e:
+        return "ERROR", f"{type(e).__name__}: {e}"
+    if cp.returncode != 0:
+        return "ERROR", f"exit {cp.returncode}: {_short(cp.stderr, 400)}"
+    return "OK", cp.stdout
+
+
+def _check_elimination_consistency(status: dict) -> None:
+    """An elimination claim must be backed by a FAIL verdict on a binding gate. Raise otherwise (never report an
+    elimination the gate verdicts do not support, and never drop one silently)."""
+    listed = set(status.get("eliminated", []))
+    for arch in ARCHITECTURES:
+        a = status["architectures"][arch]
+        basis = a.get("elimination_basis", [])
+        if bool(a["eliminated"]) != bool(basis):
+            raise ValueError(f"hard-gate status: {arch} eliminated={a['eliminated']} but elimination_basis={basis}")
+        if bool(a["eliminated"]) != (arch in listed):
+            raise ValueError(f"hard-gate status: {arch} eliminated flag disagrees with the top-level eliminated list")
+        for b in basis:
+            g = a["gates"].get(b["gate"])
+            if g is None or b["gate"] not in a["binding_gates"] or not g.get("binding") or g["verdict"] != "FAIL":
+                raise ValueError(f"hard-gate status: {arch} elimination on {b['gate']} is not a FAIL on a binding gate")
+            if not b.get("criteria"):
+                raise ValueError(f"hard-gate status: {arch} elimination on {b['gate']} names no failing criterion")
+    if set(status.get("eliminated", [])) | set(status.get("not_eliminated", [])) != set(ARCHITECTURES):
+        raise ValueError("hard-gate status: eliminated + not_eliminated must cover hall_only, rf_hall and ecr_hall")
+
+
+def hard_gate_section(inputs: dict, reevaluate: bool) -> dict:
+    need = ("gates.matrix", "gates.register", "gates.status")
+    missing = [i for i in need if inputs[i]["state"] != "RESOLVED"]
+    sec: dict[str, Any] = {"state": "UNRESOLVED", "reasons": [], "evaluator_check": {"state": "NOT_RUN"},
+                           "matrix_version": None, "matrix_status": None, "open_owner_decisions": [],
+                           "admitted_members": None}
+    if missing:
+        sec["reasons"].append(f"hard-gate inputs unresolved: {missing}")
+        return sec
+    bases = {inputs[i]["_base"] for i in need}
+    matrix = _single_json(inputs, "gates.matrix")
+    status = _single_json(inputs, "gates.status")
+    if matrix.get("schema") != HARD_GATE_MATRIX_SCHEMA:
+        raise ValueError(f"{inputs['gates.matrix']['path']}: schema {matrix.get('schema')!r}, "
+                         f"expected {HARD_GATE_MATRIX_SCHEMA!r}")
+    if status.get("schema") != HARD_GATE_STATUS_SCHEMA:
+        raise ValueError(f"{inputs['gates.status']['path']}: schema {status.get('schema')!r}, "
+                         f"expected {HARD_GATE_STATUS_SCHEMA!r}")
+    if set(status.get("architectures", {})) != set(ARCHITECTURES):
+        raise ValueError("hard-gate status must cover exactly hall_only, rf_hall and ecr_hall")
+    sec["matrix_version"] = status.get("matrix_version")
+    sec["matrix_status"] = status.get("matrix_status")
+    sec["admitted_members"] = status.get("admitted_members")
+    sec["open_owner_decisions"] = [{"id": d.get("id"), "topic": d.get("topic")}
+                                   for d in matrix.get("open_owner_decisions", [])]
+    stale = []
+    if len(bases) != 1:
+        stale.append("matrix, register and status were resolved from different checkouts")
+    prov = status.get("provenance", {})
+    msha = inputs["gates.matrix"]["files"][0]["sha256"]
+    rsha = inputs["gates.register"]["files"][0]["sha256"]
+    if prov.get("matrix_sha256") != msha:
+        stale.append(f"status provenance matrix_sha256 {prov.get('matrix_sha256')} != current matrix {msha}")
+    if prov.get("register_sha256") != rsha:
+        stale.append(f"status provenance register_sha256 {prov.get('register_sha256')} != current register {rsha}")
+    if matrix.get("matrix_version") != status.get("matrix_version"):
+        stale.append("status matrix_version differs from the matrix file")
+    ev = inputs["gates.evaluator"]
+    if not reevaluate:
+        sec["evaluator_check"] = {"state": "NOT_RUN", "detail": "re-evaluation disabled (--no-reevaluate)"}
+    elif ev["state"] != "RESOLVED":
+        sec["evaluator_check"] = {"state": "NOT_RUN", "detail": "abep_sim/hard_gates.py unresolved; status file "
+                                                                "checked by input hashes only"}
+    elif ev["_base"] not in bases:
+        sec["evaluator_check"] = {"state": "NOT_RUN", "detail": "evaluator resolved from a different checkout than "
+                                                                "the status file"}
+        stale.append("evaluator and status file come from different checkouts")
+    else:
+        ok, out = _run_evaluator(ev["_base"])
+        with open(inputs["gates.status"]["files"][0]["_abs"], encoding="utf-8") as f:
+            committed = f.read()
+        if ok != "OK":
+            sec["evaluator_check"] = {"state": "ERROR", "detail": out}
+            stale.append("evaluator re-run failed")
+        elif out != committed:
+            sec["evaluator_check"] = {"state": "MISMATCH",
+                                      "detail": "python -m abep_sim.hard_gates status differs from the committed "
+                                                "status file"}
+            stale.append("committed status file differs from a fresh evaluator run")
+        else:
+            sec["evaluator_check"] = {"state": "MATCH",
+                                      "detail": "python -B -m abep_sim.hard_gates status reproduces the committed "
+                                                "status file byte for byte"}
+    if stale:
+        sec["state"] = "STALE"
+        sec["reasons"] = stale + ["verdicts from a stale status file are not used: every gate is reported "
+                                  "UNDETERMINED and nothing is eliminated until the status file is regenerated "
+                                  "(python -m abep_sim.hard_gates status --out "
+                                  "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json)"]
+        return sec
+    _check_elimination_consistency(status)
+    sec["state"] = "RESOLVED"
+    sec["_status"] = status
+    return sec
+
+
+def _arch_gate_block(sec: dict, arch: str) -> dict:
+    if sec["state"] != "RESOLVED":
+        return {"elimination_state": "NOT_EVALUABLE", "eliminated": False, "elimination_basis": [],
+                "verdicts": [], "verdict_summary": "UNDETERMINED for every gate: " + "; ".join(sec["reasons"]),
+                "conflicts": [], "proposed_gate_failures": []}
+    a = sec["_status"]["architectures"][arch]
+    verdicts = []
+    for gid in list(a["binding_gates"]) + [g for g in a["proposed_gates"] if g not in a["binding_gates"]]:
+        g = a["gates"][gid]
+        crits = []
+        for cid in sorted(g["criteria"]):
+            c = g["criteria"][cid]
+            crits.append({"criterion": cid, "verdict": c["verdict"], "status": c.get("status"),
+                          "counts_toward_gate": c.get("counts_toward_gate"),
+                          "counts_for_fail": c.get("counts_for_fail"),
+                          "evidence_items": list(c.get("evidence_used", [])),
+                          "missing_for_pass": list(c.get("missing_for_pass", [])),
+                          "missing_for_fail": list(c.get("missing_for_fail", []))})
+        verdicts.append({"gate": gid, "title": g.get("title"), "binding": g["binding"], "gate_status": g["status"],
+                         "verdict": g["verdict"], "milestone": g.get("milestone"),
+                         "evidence_items": list(g.get("evidence_used", [])), "reasons": list(g.get("reasons", [])),
+                         "criteria": crits})
+    return {"elimination_state": "ELIMINATED" if a["eliminated"] else "NOT_ELIMINATED",
+            "eliminated": bool(a["eliminated"]), "elimination_basis": a["elimination_basis"],
+            "verdicts": verdicts,
+            "verdict_summary": ", ".join(f"{v['gate']} {v['verdict']}" for v in verdicts),
+            "conflicts": a.get("conflicts", []), "proposed_gate_failures": a.get("proposed_gate_failures", [])}
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# failure trees
+# ---------------------------------------------------------------------------------------------------------------------
+NODE_ORDER_RULE = {
+    "id": "dossier_node_order_v1",
+    "status": "PROPOSED",
+    "text": "Open, non-sub-cause failure-tree nodes of the architecture, ordered by: (1) evidence_status 'supported' "
+            "(open literature shows the mechanism operates) before 'unknown' before 'contradicted'; (2) number of "
+            "hard gates the node's decision quantity links, descending; (3) resolve_by_milestone B before C; "
+            "(4) node id. A listing order for attention only: no weights, probabilities or scores, and it orders "
+            "failure modes, never architectures.",
+    "top_n": 5,
+}
+_EV_RANK = {"supported": 0, "unknown": 1, "contradicted": 2}
+_MS_RANK = {"A": 0, "B": 1, "C": 2}
+
+
+def failure_tree_section(inputs: dict) -> dict:
+    ft = _single_json(inputs, "ftree.trees")
+    if ft is None:
+        return {"state": "UNRESOLVED", "reason": inputs["ftree.trees"]["unresolved_reason"]}
+    if ft.get("schema") != FAILURE_TREE_SCHEMA:
+        raise ValueError(f"{inputs['ftree.trees']['path']}: schema {ft.get('schema')!r}, "
+                         f"expected {FAILURE_TREE_SCHEMA!r}")
+    gate_map = {g["id"]: g.get("matrix_gate_id", g["id"]) for g in ft.get("hard_gates", [])}
+    per: dict[str, Any] = {}
+    for arch in ARCHITECTURES:
+        nodes = [n for n in ft["nodes"] if arch in n["architectures"]]
+        open_nodes = [n for n in nodes if n.get("decision_state") != "resolved_pass"]
+        counted = [n for n in open_nodes if not n.get("sub_cause_of")]
+
+        def key(n):
+            gates = n.get("decision_quantity", {}).get("gates", [])
+            return (_EV_RANK.get(n.get("evidence_status"), 3), -len(gates),
+                    _MS_RANK.get(n.get("resolve_by_milestone"), 3), n["id"])
+
+        ordered = sorted(counted, key=key)
+        top = [{"id": n["id"], "title": n["title"], "evidence_status": n.get("evidence_status"),
+                "decision_state": n.get("decision_state"),
+                "hard_gates": [gate_map.get(g, g) for g in n.get("decision_quantity", {}).get("gates", [])],
+                "resolve_by_milestone": n.get("resolve_by_milestone"),
+                "threshold_status": n.get("decision_quantity", {}).get("threshold_status"),
+                "cheapest_resolution": n.get("cheapest_resolution", []),
+                "analysis_requires_admitted_hall_closure": n.get("analysis_requires_admitted_hall_closure"),
+                "milestone_A_condition": n.get("milestone_A_condition")}
+               for n in ordered[: NODE_ORDER_RULE["top_n"]]]
+        by_status: dict[str, int] = {}
+        for n in counted:
+            by_status[n.get("evidence_status", "?")] = by_status.get(n.get("evidence_status", "?"), 0) + 1
+        by_ms: dict[str, list[str]] = {}
+        for n in counted:
+            by_ms.setdefault(n.get("resolve_by_milestone", "?"), []).append(n["id"])
+        ranked = ft.get("ranked_next_evidence", {}).get("per_architecture", {}).get(arch, {})
+        per[arch] = {
+            "n_nodes": len(nodes), "n_open": len(open_nodes), "n_open_counted": len(counted),
+            "n_sub_causes_not_counted": len(open_nodes) - len(counted),
+            "open_by_evidence_status": dict(sorted(by_status.items())),
+            "open_by_resolve_milestone": {k: sorted(v) for k, v in sorted(by_ms.items())},
+            "top_unresolved_nodes": top,
+            "milestone_A_conditions": [{"node": n["id"], "condition": n.get("milestone_A_condition")}
+                                       for n in sorted(counted, key=lambda n: n["id"])],
+            "next_decisive_evidence": [
+                {k: r.get(k) for k in ("rank", "action", "kind", "n_decides", "gates_decided", "nodes_decided",
+                                       "nodes_contributed")}
+                for r in ranked.get("ranked", [])[:3]],
+            "blocked_actions": ranked.get("blocked", []),
+        }
+    actions = {a["id"]: {"title": a.get("title"), "lane": a.get("lane"), "deliverable": a.get("deliverable")}
+               for a in ft.get("actions", [])}
+    for arch in ARCHITECTURES:
+        for r in per[arch]["next_decisive_evidence"]:
+            r.update({"title": actions.get(r["action"], {}).get("title"),
+                      "lane": actions.get(r["action"], {}).get("lane")})
+    return {"state": "RESOLVED", "id": ft.get("id"), "version": ft.get("version"), "status": ft.get("status"),
+            "ranking_rule_id": ft.get("ranking_rule", {}).get("id"),
+            "failure_tree_eliminations": ft.get("eliminations", []),
+            "failure_tree_eliminations_note": "reported only; eliminations in this dossier come from the hard-gate "
+                                              "evaluator alone",
+            "to_reach_B": ft.get("milestones", {}).get("to_reach_B", []),
+            "to_reach_C": ft.get("milestones", {}).get("to_reach_C", []),
+            "per_architecture": per}
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# physics-validation track (status only)
+# ---------------------------------------------------------------------------------------------------------------------
+def parse_claude_gate_table(text: str) -> list[dict]:
+    m = re.search(r"^## Gate status.*?$(.*?)^## ", text, flags=re.M | re.S)
+    if not m:
+        raise ValueError("CLAUDE.md: '## Gate status' section not found")
+    rows = []
+    for line in m.group(1).splitlines():
+        line = line.strip()
+        if not line.startswith("|") or re.match(r"^\|\s*-", line):
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if len(cells) < 2 or cells[0].lower() == "gate":
+            continue
+        rows.append({"gate": cells[0], "status": " | ".join(cells[1:])})
+    if not rows:
+        raise ValueError("CLAUDE.md: gate status table is empty")
+    return rows
+
+
+def physics_section(inputs: dict) -> dict:
+    sec: dict[str, Any] = {"note": "Physics-validation track, read for status only. Nothing here is a performance "
+                                   "source for any architecture; screening candidates never are."}
+    cm = inputs["claude_md"]
+    if cm["state"] == "RESOLVED":
+        with open(cm["files"][0]["_abs"], encoding="utf-8") as f:
+            text = f.read()
+        sec["baseline_gates"] = parse_claude_gate_table(text)
+        env = re.search(r"RFP envelope:\s*(.+?)\.\s*Python owns", text, flags=re.S)
+        sec["rfp_envelope_as_recorded"] = " ".join(env.group(1).split()) if env else None
+    else:
+        sec["baseline_gates"] = None
+        sec["rfp_envelope_as_recorded"] = None
+    dec = _single_json(inputs, "p5n2.decision")
+    if dec is not None:
+        sec["p5_n2_v1"] = {"admission_mode": dec.get("admission_mode"), "candidates": dec.get("candidates"),
+                           "promotable": dec.get("promotable"), "inconclusive": dec.get("inconclusive"),
+                           "failed_validation": dec.get("failed_validation")}
+    rel = _single_json(inputs, "p5n2.release")
+    if rel is not None:
+        checks = rel.get("link_checks", {})
+        dsha = rel.get("decision", {}).get("sha256")
+        cur = inputs["p5n2.decision"]["files"][0]["sha256"] if inputs["p5n2.decision"]["state"] == "RESOLVED" else None
+        sec["validation_release"] = {
+            "campaign": rel.get("campaign"), "mode": rel.get("mode"),
+            "link_checks_all_true": bool(checks) and all(v is True for v in checks.values()),
+            "admission_records": rel.get("admission_records"),
+            "decision_sha256_in_release": dsha,
+            "decision_file_matches_release": (dsha == cur) if cur else None}
+    ens = _single_json(inputs, "transport_ensemble")
+    if ens is not None:
+        members = sorted(m.get("ensemble_member_id") for m in ens.get("members", []))
+        sec["transport_ensemble"] = {
+            "schema": ens.get("schema"), "admitted_members": members,
+            "credible_set_empty": not members,
+            "n_screening_candidates": len(ens.get("screening_candidates", [])),
+            "screening_candidates_note": "screening candidates never produce design Hall maps and never enter the "
+                                         "architecture comparison (CLAUDE.md)",
+            "admission_rule_status": ens.get("admission_rule_status")}
+    fr = inputs["forensics.p5_n2_v1"]
+    if fr["state"] == "RESOLVED":
+        items = []
+        for fi in fr["files"]:
+            if fi["path"].endswith(".json"):
+                d = _load_json(fi)
+                if isinstance(d, dict):
+                    items.append({"file": fi["path"], "id": d.get("id"),
+                                  "official_outcome_unchanged": d.get("official_outcome_unchanged"),
+                                  "non_gating": d.get("non_gating", d.get("descriptive_non_gating"))})
+        sec["forensics"] = {"state": "RESOLVED", "files": items,
+                            "note": "non-gating; the v1 outcome stays INCONCLUSIVE and is never rewritten (CLAUDE.md)"}
+    else:
+        sec["forensics"] = {"state": "UNRESOLVED", "reason": fr["unresolved_reason"]}
+    te = sec.get("transport_ensemble")
+    sec["hall_closure_available"] = bool(te and not te["credible_set_empty"])
+    return sec
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# lane summaries and the quantity census
+# ---------------------------------------------------------------------------------------------------------------------
+def normalize_class(raw: Any) -> str:
+    if not isinstance(raw, str):
+        return "unclassified"
+    s = raw.strip().lower()
+    for pat, cls in ((r"^(paper-)?reconstructed", "reconstructed"), (r"^measured", "measured"),
+                     (r"^digiti[sz]ed", "digitized"), (r"^inferred", "inferred"), (r"^model-derived", "model-derived"),
+                     (r"^assumed", "assumed"), (r"^tbd", "TBD")):
+        if re.match(pat, s):
+            return cls
+    return "unclassified"
+
+
+def _arch_context(d: dict) -> tuple[str, ...] | None:
+    for k in ("architectures", "architecture", "applies_to"):
+        v = d.get(k)
+        vals = [v] if isinstance(v, str) else (v if isinstance(v, list) else [])
+        ids = tuple(a for a in ARCHITECTURES if a in [x for x in vals if isinstance(x, str)])
+        if ids:
+            return ids
+    return None
+
+
+def _has_uncertainty(u: Any) -> bool:
+    if u is None or u == "" or u == [] or u == {}:
+        return False
+    if isinstance(u, str) and re.match(r"^\s*(tbd|none|not (stated|given|reported))", u.strip().lower()):
+        return False
+    return True
+
+
+def scan_quantities(doc: Any, input_id: str, file_path: str, default_arch: tuple[str, ...]) -> tuple[list, int]:
+    """Collect every dict that carries an evidence class (evidence_class / quantity_type) AND a value-like key."""
+    out: list[dict] = []
+    excluded = 0
+
+    def walk(o: Any, ptr: str, ctx: tuple[str, ...]):
+        nonlocal excluded
+        if isinstance(o, dict):
+            c = _arch_context(o) or ctx
+            raw = o.get("evidence_class", o.get("quantity_type"))
+            vkey = next((k for k in _VALUE_KEYS if k in o), None)
+            if raw is not None and vkey is not None and isinstance(raw, str):
+                if SCREENING_MARK in json.dumps(o, ensure_ascii=False):
+                    excluded += 1
+                else:
+                    label = next((str(o[k]) for k in _LABEL_KEYS if isinstance(o.get(k), (str, int, float))),
+                                 ptr.rsplit("/", 1)[-1])
+                    val = {k: o[k] for k in _VALUE_KEYS if k in o}
+                    vtxt = json.dumps(val, ensure_ascii=False, sort_keys=True)
+                    u = o.get("uncertainty")
+                    utxt = json.dumps(u, ensure_ascii=False, sort_keys=True) if u is not None else None
+                    arch = "common" if set(c) == set(ARCHITECTURES) else sorted(c)
+                    out.append({"input": input_id, "file": file_path, "pointer": ptr or "/", "label": _short(label, 120),
+                                "value": val if len(vtxt) <= 200 else "(structured; see pointer)",
+                                "unit": o.get("unit") if isinstance(o.get("unit"), str) else None,
+                                "uncertainty": (u if utxt is None or len(utxt) <= 300 else "(structured; see pointer)"),
+                                "uncertainty_stated": _has_uncertainty(u),
+                                "class_raw": _short(raw, 160), "class": normalize_class(raw),
+                                "architectures": arch})
+            for k in sorted(o):
+                walk(o[k], f"{ptr}/{k}", c)
+        elif isinstance(o, list):
+            for i, x in enumerate(o):
+                walk(x, f"{ptr}/{i}", ctx)
+
+    walk(doc, "", default_arch)
+    return out, excluded
+
+
+def lane_summaries(inputs: dict) -> tuple[list[dict], list[dict], int]:
+    summaries, records, excluded_total = [], [], 0
+    defaults = {s["id"]: tuple(s.get("arch_default", ARCHITECTURES)) for s in INPUTS}
+    for spec in INPUTS:
+        rec = inputs[spec["id"]]
+        if rec["state"] != "RESOLVED" or spec["group"] in ("physics", "owner"):
+            continue
+        docs = []
+        for fi in rec["files"]:
+            if not fi["path"].endswith(".json") or fi["path"].endswith(".schema.json"):
+                continue
+            try:
+                d = _load_json(fi)
+            except json.JSONDecodeError as e:
+                raise ValueError(f"{fi['path']}: invalid JSON ({e})") from e
+            if not isinstance(d, dict):
+                continue
+            if d.get("$schema"):          # JSON Schema documents are contracts, not data
+                docs.append({"file": fi["path"], "kind": "json_schema", "title": d.get("title")})
+                continue
+            ms = d.get("milestones")
+            supports = ms.get("supports") if isinstance(ms, dict) else (d.get("supports_milestones"))
+            docs.append({"file": fi["path"], "kind": "data",
+                         "id": d.get("id") or d.get("matrix_id") or d.get("grid_id") or d.get("reference_id"),
+                         "schema": d.get("schema") if isinstance(d.get("schema"), str) else None,
+                         "version": next((str(d[k]) for k in ("version", "schema_version", "matrix_version",
+                                                              "protocol_version", "module_version") if k in d), None),
+                         "status": d.get("status") if isinstance(d.get("status"), str) else None,
+                         "milestones_supported": supports if isinstance(supports, list) else None})
+            if spec["group"] in _QUANTITY_GROUPS and spec["id"] not in ("gates.status",):
+                q, ex = scan_quantities(d, spec["id"], fi["path"], defaults[spec["id"]])
+                records.extend(q)
+                excluded_total += ex
+        summaries.append({"input": spec["id"], "documents": docs})
+    records.sort(key=lambda r: (r["input"], r["file"], r["pointer"]))
+    return summaries, records, excluded_total
+
+
+def census(records: list[dict], arch: str) -> dict:
+    rows: dict[str, dict] = {}
+    for r in records:
+        scope = "common" if r["architectures"] == "common" else ("specific" if arch in r["architectures"] else None)
+        if scope is None:
+            continue
+        key = f"{r['input']}|{scope}"
+        row = rows.setdefault(key, {"input": r["input"], "scope": scope, **{c: 0 for c in _CLASS_ORDER},
+                                    "total": 0, "uncertainty_stated": 0})
+        row[r["class"]] += 1
+        row["total"] += 1
+        row["uncertainty_stated"] += int(r["uncertainty_stated"])
+    table = [rows[k] for k in sorted(rows)]
+    fam: dict[str, int] = {f: 0 for f in ("measured", "modelled", "assumed", "TBD", "unclassified")}
+    for row in table:
+        for c in _CLASS_ORDER:
+            fam[_CLASS_FAMILY[c]] += row[c]
+    return {"by_input": table, "by_family": fam, "total": sum(r["total"] for r in table),
+            "uncertainty_stated": sum(r["uncertainty_stated"] for r in table)}
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# milestones and the decision status
+# ---------------------------------------------------------------------------------------------------------------------
+def _unresolved_for(inputs: dict, ms: str) -> list[str]:
+    return [f"{i} ({r['path']})" for i, r in inputs.items() if r["state"] != "RESOLVED" and ms in r["needed_for"]
+            and i != "owner_decision"]
+
+
+def milestone_block(arch: str, gsec: dict, gblock: dict, ftsec: dict, phys: dict, inputs: dict) -> dict:
+    ft = ftsec.get("per_architecture", {}).get(arch) if ftsec["state"] == "RESOLVED" else None
+    closure_note = ("credible Hall-transport set is empty (CLAUDE.md gate 3 FAIL; P5-N2 v1 all INCONCLUSIVE / NOT "
+                    "ELIGIBLE): Hall-dependent conditions can be discharged only by Vyovrinda or same-hardware "
+                    "measurement") if not phys.get("hall_closure_available") else None
+    if gsec["state"] != "RESOLVED":
+        return {"reachable": "NONE_DETERMINABLE",
+                "reason": "the hard-gate evaluation is " + gsec["state"] + ": " + "; ".join(gsec["reasons"]),
+                "A": {"available": None, "gate_conditions": [],
+                      "failure_tree_conditions": ft["milestone_A_conditions"] if ft else [],
+                      "statement": None},
+                "next": "A",
+                "missing_for_next": [f"hard-gate evaluation: {r}" for r in gsec["reasons"]]
+                                    + ([] if ft else [f"failure trees: {ftsec.get('reason')}"])
+                                    + [f"unresolved input: {u}" for u in _unresolved_for(inputs, "A")]
+                                    + ["owner record of a conditional selection (none recorded)"]}
+    a = gsec["_status"]["architectures"][arch]
+    mA, mB, mC = a["milestones"]["A"], a["milestones"]["B"], a["milestones"]["C"]
+    open_B = (ft["open_by_resolve_milestone"].get("B", []) if ft else None)
+    open_C = (ft["open_by_resolve_milestone"].get("C", []) if ft else None)
+    A = {"available": bool(mA["conditional_selection_available"]),
+         "statement": mA.get("statement"),
+         "gate_conditions": [{"criterion": c["criterion"], "gate": c["gate"], "requirement": c["requirement"],
+                              "current_verdict": c["current_verdict"], "can_eliminate": c["can_eliminate"],
+                              "discharged_by_at_A": c.get("discharged_by", {}).get("A", []),
+                              "blockers": c.get("blockers", [])} for c in mA["conditions"]],
+         "failure_tree_conditions": ft["milestone_A_conditions"] if ft else [],
+         "open_owner_items": [o["criterion"] for o in mA.get("open_owner_items", [])],
+         "proposed_gates_pending": mA.get("proposed_gates_pending", [])}
+    b_ready = bool(mB["ready"]) and ft is not None and not open_B
+    c_ready = bool(mC["ready"]) and ft is not None and not open_B and not open_C
+    if gblock["eliminated"]:
+        reachable, nxt = "NONE_ELIMINATED", None
+    elif c_ready:
+        reachable, nxt = "C", None
+    elif b_ready:
+        reachable, nxt = "B", "C"
+    elif A["available"]:
+        reachable, nxt = "A", "B"
+    else:
+        reachable, nxt = "NONE_CONFLICT", "A"
+    missing: list[str] = []
+    if nxt == "B":
+        missing += list(mB["missing"])
+        if ft is None:
+            missing.append(f"failure trees unresolved: {ftsec.get('reason')}")
+        elif open_B:
+            missing.append(f"{len(open_B)} open failure-tree node(s) to resolve by milestone B: {', '.join(open_B)}")
+        if closure_note:
+            missing.append(closure_note)
+        missing += [f"unresolved input: {u}" for u in _unresolved_for(inputs, "B")]
+    elif nxt == "C":
+        missing += list(mC["missing"])
+        if open_C:
+            missing.append(f"{len(open_C)} open failure-tree node(s) to resolve by milestone C: {', '.join(open_C)}")
+        missing += [f"unresolved input: {u}" for u in _unresolved_for(inputs, "C")]
+    elif nxt == "A":
+        missing += [f"binding-gate evidence conflict: {c}" for c in gblock["conflicts"]]
+    return {"reachable": reachable,
+            "reason": {"A": "not eliminated by any binding gate and no binding-gate conflict; a conditional selection "
+                            "is available for the owner to record, subject to every condition listed",
+                       "B": "every binding gate passes, the matrix is owner-approved and no B-node is open",
+                       "C": "one integrated design passes every binding gate and no owner item or tree node is open",
+                       "NONE_ELIMINATED": "eliminated by the hard-gate logic",
+                       "NONE_CONFLICT": "sufficient evidence conflicts on a binding gate; the owner resolves it"}
+                      [reachable],
+            "A": A, "next": nxt, "missing_for_next": missing}
+
+
+def owner_decision(inputs: dict, gsec: dict) -> dict:
+    rec = _single_json(inputs, "owner_decision")
+    not_elim = (list(gsec["_status"]["not_eliminated"]) if gsec["state"] == "RESOLVED" else None)
+    out = {"statement": NOT_A_DECISION, "selection": None,
+           "selection_rule": "A selection is presented only if (1) the hard-gate evaluation is RESOLVED and "
+                             "eliminates all but one architecture, and (2) the owner decision record names that "
+                             "architecture and the sha256 of the hard-gate status file it was made on.",
+           "not_eliminated_by_gate_logic": not_elim,
+           "owner_decision_record": None}
+    if rec is None:
+        out["owner_decision_record"] = {"state": "NONE_RECORDED"}
+        return out
+    missing = [k for k in OWNER_RECORD_KEYS if k not in rec]
+    if missing or rec.get("schema") != OWNER_RECORD_SCHEMA:
+        raise ValueError(f"{inputs['owner_decision']['path']}: malformed owner decision record (schema must be "
+                         f"{OWNER_RECORD_SCHEMA!r}; missing keys {missing})")
+    if rec["architecture"] not in ARCHITECTURES or rec["milestone"] not in MILESTONES:
+        raise ValueError("owner decision record: unknown architecture or milestone")
+    cur_sha = inputs["gates.status"]["files"][0]["sha256"] if inputs["gates.status"]["state"] == "RESOLVED" else None
+    reasons = []
+    if gsec["state"] != "RESOLVED":
+        reasons.append(f"hard-gate evaluation is {gsec['state']}")
+    elif len(not_elim) != 1:
+        reasons.append(f"gate logic leaves {len(not_elim)} architectures not eliminated ({', '.join(not_elim)})")
+    elif not_elim[0] != rec["architecture"]:
+        reasons.append(f"owner record names {rec['architecture']}, gate logic leaves {not_elim[0]}")
+    if rec["hard_gate_status_sha256"] != cur_sha:
+        reasons.append("owner record was made on a different hard-gate status file")
+    out["owner_decision_record"] = {"state": "RECORDED", "record": {k: rec[k] for k in OWNER_RECORD_KEYS},
+                                    "presented_as_selection": not reasons, "not_presented_because": reasons}
+    if not reasons:
+        out["selection"] = {"architecture": rec["architecture"], "milestone": rec["milestone"],
+                            "decided_by": rec["decided_by"], "date": rec["date"],
+                            "basis": "owner decision record + hard-gate eliminations of every other architecture"}
+        out["statement"] = ("Owner-recorded decision (see owner_decision_record); the dossier reproduces it and adds "
+                            "no judgement of its own.")
+    return out
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# git + provenance
+# ---------------------------------------------------------------------------------------------------------------------
+def _git(root: str, *args: str) -> str | None:
+    try:
+        cp = subprocess.run(["git", "-C", root, *args], capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    return cp.stdout.strip() if cp.returncode == 0 else None
+
+
+def git_state(root: str) -> dict:
+    head = _git(root, "rev-parse", "HEAD")
+    if head is None:
+        return {"commit": "UNAVAILABLE (not a git checkout or git missing)", "worktree_clean_excluding_dossier": None}
+    st = _git(root, "status", "--porcelain", "--", ".", f":(exclude){OUT_REL}")
+    return {"commit": head, "worktree_clean_excluding_dossier": (st == "") if st is not None else None}
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# build
+# ---------------------------------------------------------------------------------------------------------------------
+def build(root: str = REPO_ROOT, overlays: list[str] | None = None, generated_at: str | None = None,
+          reevaluate: bool = True) -> dict:
+    overlays = list(overlays or [])
+    root = os.path.abspath(root)
+    inputs = resolve_inputs(root, overlays)
+    gsec = hard_gate_section(inputs, reevaluate)
+    ftsec = failure_tree_section(inputs)
+    phys = physics_section(inputs)
+    summaries, records, excluded = lane_summaries(inputs)
+    arch_out = {}
+    for arch in ARCHITECTURES:
+        gb = _arch_gate_block(gsec, arch)
+        arch_out[arch] = {
+            "hard_gates": gb,
+            "milestones": milestone_block(arch, gsec, gb, ftsec, phys, inputs),
+            "quantities": census(records, arch),
+            "failure_tree": (ftsec["per_architecture"][arch] if ftsec["state"] == "RESOLVED"
+                             else {"state": "UNRESOLVED", "reason": ftsec["reason"]}),
+        }
+    decision = owner_decision(inputs, gsec)
+    gsec_out = {k: v for k, v in gsec.items() if not k.startswith("_")}
+    files_read = []
+    for iid, rec in inputs.items():
+        for fi in rec["files"]:
+            files_read.append({"input": iid, "path": fi["path"], "sha256": fi["sha256"], "bytes": fi["bytes"],
+                               "resolved_from": rec["resolved_from"]})
+    input_status = [{k: v for k, v in rec.items() if k not in ("files", "_base")}
+                    | {"n_files": len(rec["files"])} for rec in inputs.values()]
+    unresolved = [r["id"] for r in input_status if r["state"] != "RESOLVED"]
+    gen_path = os.path.join(root, SCRIPT_REL)
+    dossier = {
+        "schema": DOSSIER_SCHEMA,
+        "generator_version": GENERATOR_VERSION,
+        "kind": "STATUS_NOT_DECISION",
+        "statement": decision["statement"],
+        "architectures_order": list(ARCHITECTURES),
+        "milestone_definitions": MILESTONES,
+        "dossier_supports_milestones": {
+            "supports": ["A"],
+            "A": "status of every hard gate and failure-tree condition that a conditional selection must carry",
+            "to_reach_B": "the same generator reports B when the evaluator's B.ready holds and no B failure-tree node "
+                          "is open; it needs the unresolved inputs merged, an admitted Hall closure or hardware "
+                          "measurements, and an owner-approved matrix",
+            "to_reach_C": "reports C when an integrated design passes every binding gate and no owner item is open"},
+        "mode": "preview" if overlays else "repository",
+        "inputs": {"n_expected": len(INPUTS), "n_resolved": len(INPUTS) - len(unresolved),
+                   "unresolved": unresolved, "status": input_status},
+        "hard_gate_evaluation": gsec_out,
+        "failure_trees": {k: v for k, v in ftsec.items() if k != "per_architecture"},
+        "node_order_rule": NODE_ORDER_RULE,
+        "physics_track": phys,
+        "decision_status": decision,
+        "architectures": arch_out,
+        "lane_documents": summaries,
+        "quantity_census_rule": {
+            "status": "PROPOSED",
+            "text": "A quantity is any JSON object in an architecture-comparison, evidence, contract or failure-tree "
+                    "input that carries evidence_class (or quantity_type) and a value-like key "
+                    f"({', '.join(_VALUE_KEYS)}). Its class is the leading docs/EVIDENCE.md term of that field "
+                    "(anything else: unclassified). Families for reporting only: measured = measured + digitized + "
+                    "reconstructed; modelled = inferred + model-derived; assumed. An object is architecture-specific "
+                    "if it (or an enclosing object) names one or two architecture ids, or its input is "
+                    "architecture-specific (rf_source: rf_hall; ecr_source: ecr_hall); otherwise it is common to all "
+                    "three. 'uncertainty_stated' means a non-empty uncertainty field that does not start with TBD / "
+                    "none / not stated. Objects that mention a screening candidate (sgb-screen-*) are excluded.",
+            "excluded_screening_candidate_records": excluded,
+            "n_records": len(records)},
+        "quantity_records": records,
+        "provenance": {
+            "generated_at": generated_at or _dt.datetime.now(_dt.timezone.utc).replace(microsecond=0).isoformat(),
+            "generated_by": f"python {SCRIPT_REL}" + (" (preview with overlays)" if overlays else ""),
+            "generator_sha256": sha256_file(gen_path) if os.path.isfile(gen_path) else None,
+            "git": git_state(root),
+            "preview_overlays": [os.path.abspath(o) for o in overlays],
+            "files_read": sorted(files_read, key=lambda x: (x["path"], x["input"])),
+            "deterministic_except": ["provenance.generated_at", "provenance.git"]},
+    }
+    return dossier
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Markdown rendering (pure function of the dossier dict)
+# ---------------------------------------------------------------------------------------------------------------------
+def render_markdown(d: dict) -> str:
+    L: list[str] = []
+    w = L.append
+    prov = d["provenance"]
+    w("# Architecture decision dossier (hall_only / rf_hall / ecr_hall)")
+    w("")
+    w(f"**{d['statement']}**")
+    w("")
+    w(f"Generated {prov['generated_at']} by `{prov['generated_by']}` at git commit `{prov['git']['commit']}` "
+      f"(mode: {d['mode']}; schema `{d['schema']}`, generator {d['generator_version']}). Regenerate with "
+      f"`python {SCRIPT_REL}`; `--check` reports whether this file is current.")
+    w("")
+    s = d["dossier_supports_milestones"]
+    w(f"**Milestones supported:** {', '.join(s['supports'])}: {s['A']}. **To reach B:** {s['to_reach_B']}. "
+      f"**To reach C:** {s['to_reach_C']}.")
+    w("")
+    w("## Decision status")
+    ds = d["decision_status"]
+    w(f"- Selection: **{'none' if ds['selection'] is None else ds['selection']['architecture'] + ' (owner-recorded)'}**. "
+      f"{ds['selection_rule']}")
+    ne = ds["not_eliminated_by_gate_logic"]
+    if ne is None:
+        w(f"- Not eliminated by the gate logic: not evaluable (hard-gate evaluation "
+          f"{d['hard_gate_evaluation']['state']}), so no architecture is eliminated and none can be selected.")
+    else:
+        w(f"- Not eliminated by the gate logic: {', '.join(ne)}.")
+    od = ds["owner_decision_record"]
+    if od["state"] == "NONE_RECORDED":
+        w("- Owner decision record: none recorded "
+          f"(`{OUT_REL}/owner_decision_record.json`, schema `{OWNER_RECORD_SCHEMA}`, is written only by the owner).")
+    else:
+        w(f"- Owner decision record: recorded ({_md_cell(od['record'], 300)}); presented as a selection: "
+          f"{od['presented_as_selection']}" + (f" — not presented because: {'; '.join(od['not_presented_because'])}"
+                                               if od["not_presented_because"] else "") + ".")
+    w("")
+    w("| architecture | eliminated (gate logic) | milestone reachable now | next | hard-gate verdicts |")
+    w("|---|---|---|---|---|")
+    for arch in d["architectures_order"]:
+        a = d["architectures"][arch]
+        w(f"| {arch} | {a['hard_gates']['elimination_state']} | {a['milestones']['reachable']} | "
+          f"{a['milestones']['next'] or '–'} | {_md_cell(a['hard_gates']['verdict_summary'], 400)} |")
+    w("")
+    w("Architectures are listed in fixed id order. No ranking, no score.")
+    w("")
+    # --- hard gate evaluation
+    g = d["hard_gate_evaluation"]
+    w("## Hard-gate evaluation")
+    w(f"- State: **{g['state']}**; matrix version {g['matrix_version']} ({g['matrix_status']}); evaluator re-run: "
+      f"{g['evaluator_check']['state']}" + (f" ({g['evaluator_check'].get('detail')})"
+                                           if g['evaluator_check'].get('detail') else "") + ".")
+    for r in g["reasons"]:
+        w(f"- {r}")
+    if g["open_owner_decisions"]:
+        w("- Open owner decisions in the matrix: " + "; ".join(f"{o['id']} {o['topic']}" for o in
+                                                               g["open_owner_decisions"]) + ".")
+    w("")
+    # --- physics track
+    p = d["physics_track"]
+    w("## Physics-validation track (status only)")
+    w(p["note"])
+    w("")
+    if p.get("rfp_envelope_as_recorded"):
+        w(f"RFP envelope as recorded in CLAUDE.md: {p['rfp_envelope_as_recorded']}.")
+        w("")
+    if p.get("baseline_gates"):
+        w("| physics-baseline gate (CLAUDE.md) | status |")
+        w("|---|---|")
+        for r in p["baseline_gates"]:
+            w(f"| {_md_cell(r['gate'], 80)} | {_md_cell(r['status'], 400)} |")
+        w("")
+    if p.get("p5_n2_v1"):
+        v = p["p5_n2_v1"]
+        w(f"- P5-N₂ v1 ({v['admission_mode']}): promotable {v['promotable']}; failed validation "
+          f"{v['failed_validation']}; inconclusive {len(v['inconclusive'] or [])} of {len(v['candidates'] or {})} "
+          "screening candidates.")
+    if p.get("validation_release"):
+        v = p["validation_release"]
+        w(f"- Validation release {v['campaign']}: all link checks true = {v['link_checks_all_true']}; decision file "
+          f"matches the release hash = {v['decision_file_matches_release']}; admission records {v['admission_records']}.")
+    if p.get("transport_ensemble"):
+        v = p["transport_ensemble"]
+        w(f"- Transport ensemble: admitted members {v['admitted_members'] or '∅'} (credible set empty = "
+          f"{v['credible_set_empty']}); {v['n_screening_candidates']} screening candidates "
+          f"({v['screening_candidates_note']}).")
+    f = p["forensics"]
+    w(f"- P5-N₂ v1 forensics (`docs/forensics/p5_n2_v1/`): {f['state']}" +
+      (f" — {len(f['files'])} JSON file(s); {f['note']}." if f["state"] == "RESOLVED" else f" ({f['reason']})."))
+    w(f"- Admitted Hall closure available for absolute performance: **{p['hall_closure_available']}**.")
+    w("")
+    # --- per architecture
+    for arch in d["architectures_order"]:
+        a = d["architectures"][arch]
+        hg, ms, q, ft = a["hard_gates"], a["milestones"], a["quantities"], a["failure_tree"]
+        w(f"## {arch}")
+        w(f"**Eliminated:** {hg['elimination_state']}. **Milestone reachable now:** {ms['reachable']} — "
+          f"{ms['reason']}.")
+        w("")
+        w("### Hard-gate verdicts")
+        if hg["verdicts"]:
+            w("| gate | binding | verdict | evidence items | reasons |")
+            w("|---|---|---|---|---|")
+            for v in hg["verdicts"]:
+                w(f"| {v['gate']} {_md_cell(v['title'] or '', 80)} | {'yes' if v['binding'] else 'no (' + v['gate_status'] + ')'} | "
+                  f"{v['verdict']} | {', '.join(v['evidence_items']) or 'none'} | {_md_cell('; '.join(v['reasons']), 200)} |")
+            if hg["elimination_basis"]:
+                w("")
+                w(f"Elimination basis: {_md_cell(hg['elimination_basis'], 600)}")
+        else:
+            w(f"{hg['verdict_summary']}")
+        w("")
+        w("### Milestone A (conditional selection)")
+        A = ms["A"]
+        if A.get("statement"):
+            w(A["statement"])
+            w("")
+        if A["gate_conditions"]:
+            w("Hard-gate conditions (each must be demonstrated; 'A:' lists the evidence bases that discharge it at "
+              "milestone A):")
+            w("")
+            for i, c in enumerate(A["gate_conditions"], 1):
+                w(f"{i}. `{c['criterion']}` — {c['requirement']} (now {c['current_verdict']}; can eliminate: "
+                  f"{c['can_eliminate']}; A: {', '.join(c['discharged_by_at_A']) or 'none'})"
+                  + (f". Blockers: {_md_cell('; '.join(c['blockers']), 400)}" if c["blockers"] else ""))
+            w("")
+        if A["failure_tree_conditions"]:
+            w(f"Failure-tree conditions ({len(A['failure_tree_conditions'])} open, non-sub-cause nodes):")
+            w("")
+            for c in A["failure_tree_conditions"]:
+                w(f"- `{c['node']}`: {c['condition']}")
+            w("")
+        if not A["gate_conditions"] and not A["failure_tree_conditions"]:
+            w("No condition list can be formed: the hard-gate evaluation and the failure trees are not both resolved.")
+            w("")
+        w(f"### Missing for the next milestone ({ms['next'] or 'none'})")
+        for m in ms["missing_for_next"] or ["nothing listed"]:
+            w(f"- {m}")
+        w("")
+        w("### Measured / modelled / assumed quantities")
+        fam = q["by_family"]
+        if q["total"]:
+            w(f"{q['total']} quantity record(s) apply to {arch} (architecture-specific or common); uncertainty stated "
+              f"on {q['uncertainty_stated']}. Families: measured {fam['measured']}, modelled {fam['modelled']}, "
+              f"assumed {fam['assumed']}, TBD {fam['TBD']}, unclassified {fam['unclassified']}. Records with values, "
+              "units and uncertainties: `quantity_records` in dossier.json.")
+            w("")
+            w("| input | scope | measured | digitized | reconstructed | inferred | model-derived | assumed | TBD | "
+              "unclassified | uncertainty stated / total |")
+            w("|---|---|---|---|---|---|---|---|---|---|---|")
+            for r in q["by_input"]:
+                w(f"| {r['input']} | {r['scope']} | " + " | ".join(str(r[c]) for c in _CLASS_ORDER)
+                  + f" | {r['uncertainty_stated']} / {r['total']} |")
+        else:
+            w("No quantity carrying an evidence class is available in the resolved inputs (the architecture-comparison "
+              "and evidence inputs are unresolved). Nothing is filled in.")
+        w("")
+        w("### Top unresolved failure-tree nodes and next decisive evidence")
+        if ft.get("state") == "UNRESOLVED":
+            w(f"UNRESOLVED: {ft['reason']}.")
+        else:
+            w(f"{ft['n_open_counted']} open node(s) counted ({ft['n_sub_causes_not_counted']} sub-cause(s) not "
+              f"counted); by evidence status {ft['open_by_evidence_status']}. Order: `{d['node_order_rule']['id']}` "
+              "(PROPOSED; see dossier.json).")
+            w("")
+            w("| node | title | evidence status | hard gates | resolve by | cheapest resolution |")
+            w("|---|---|---|---|---|---|")
+            for n in ft["top_unresolved_nodes"]:
+                w(f"| {n['id']} | {_md_cell(n['title'], 120)} | {n['evidence_status']} | {', '.join(n['hard_gates'])} "
+                  f"| {n['resolve_by_milestone']} | {', '.join(n['cheapest_resolution'])} |")
+            w("")
+            w("Next decisive evidence (failure-tree ranking `decisiveness_lexicographic_v1`, top 3):")
+            w("")
+            for r in ft["next_decisive_evidence"]:
+                w(f"{r['rank']}. `{r['action']}` ({r['kind']}; {r['title']}; lane {r['lane']}) — decides "
+                  f"{r['n_decides']} node(s) {r['nodes_decided']}, gates {r['gates_decided']}")
+            for b in ft["blocked_actions"]:
+                w(f"- Blocked: `{b['action']}` — {'; '.join(b['blocked_by'])} (touches {', '.join(b['nodes_touched'])})")
+        w("")
+    # --- inputs
+    inp = d["inputs"]
+    w("## Inputs")
+    w(f"{inp['n_resolved']} of {inp['n_expected']} expected inputs resolved. An UNRESOLVED input is listed, never "
+      "filled in. 'needed for' is this dossier's PROPOSED mapping to milestones.")
+    w("")
+    w("| input | path | state | needed for | provides / reason |")
+    w("|---|---|---|---|---|")
+    for r in inp["status"]:
+        note = r["provides"] if r["state"] == "RESOLVED" else r["unresolved_reason"]
+        extra = f" [{r['path_status']}]" if r.get("path_status") else ""
+        w(f"| {r['id']} | `{r['path']}`{extra} | {r['state']}"
+          + (f" ({r['resolved_from']})" if r["state"] == "RESOLVED" and r["resolved_from"] != "repository" else "")
+          + f" | {', '.join(r['needed_for'])} | {_md_cell(note, 220)} |")
+    w("")
+    if d["lane_documents"]:
+        w("### Lane documents read")
+        w("")
+        w("| input | file | id / version | status | milestones supported |")
+        w("|---|---|---|---|---|")
+        for s_ in d["lane_documents"]:
+            for doc in s_["documents"]:
+                if doc["kind"] == "json_schema":
+                    w(f"| {s_['input']} | `{doc['file']}` | JSON Schema: {_md_cell(doc.get('title') or '', 80)} | – | – |")
+                else:
+                    w(f"| {s_['input']} | `{doc['file']}` | {doc.get('id') or doc.get('schema') or '–'} / "
+                      f"{doc.get('version') or '–'} | {_md_cell(doc.get('status') or '–', 160)} | "
+                      f"{', '.join(doc['milestones_supported']) if doc.get('milestones_supported') else '–'} |")
+        w("")
+    # --- provenance
+    w("## Provenance")
+    w(f"- Generated at: {prov['generated_at']}")
+    w(f"- Git commit: `{prov['git']['commit']}`; worktree clean (excluding `{OUT_REL}`): "
+      f"{prov['git']['worktree_clean_excluding_dossier']}")
+    w(f"- Generator: `{SCRIPT_REL}` sha256 `{prov['generator_sha256']}`")
+    if prov["preview_overlays"]:
+        w(f"- Preview overlays (read-only): {', '.join(prov['preview_overlays'])}")
+    w(f"- Deterministic except: {', '.join(prov['deterministic_except'])}")
+    w("")
+    w("| file | input | sha256 | bytes |")
+    w("|---|---|---|---|")
+    for fr in prov["files_read"]:
+        w(f"| `{fr['path']}` | {fr['input']} | `{fr['sha256']}` | {fr['bytes']} |")
+    w("")
+    return "\n".join(L)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------------------------------------------------
+def dumps(d: dict) -> str:
+    return json.dumps(d, indent=1, ensure_ascii=False, sort_keys=True) + "\n"
+
+
+def strip_volatile(d: dict) -> dict:
+    x = json.loads(json.dumps(d))
+    for k in d["provenance"]["deterministic_except"]:
+        _, key = k.split(".", 1)
+        x["provenance"].pop(key, None)
+    return x
+
+
+def write(d: dict, out_dir: str) -> tuple[str, str]:
+    os.makedirs(out_dir, exist_ok=True)
+    jp, mp = os.path.join(out_dir, JSON_NAME), os.path.join(out_dir, MD_NAME)
+    with open(jp, "w", encoding="utf-8") as f:
+        f.write(dumps(d))
+    with open(mp, "w", encoding="utf-8") as f:
+        f.write(render_markdown(d))
+    return jp, mp
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    ap.add_argument("--root", default=REPO_ROOT, help="repository checkout to read (default: this repository)")
+    ap.add_argument("--out-dir", default=None, help=f"output directory (default: <root>/{OUT_REL})")
+    ap.add_argument("--preview-overlay", action="append", default=[],
+                    help="PREVIEW ONLY: another checkout to resolve missing inputs from (read-only); requires --out-dir "
+                         "outside the repository")
+    ap.add_argument("--generated-at", default=None, help="fixed ISO timestamp (tests)")
+    ap.add_argument("--no-reevaluate", action="store_true", help="do not re-run the hard-gate evaluator")
+    ap.add_argument("--check", action="store_true",
+                    help="exit 1 if the committed dossier differs from a fresh build (ignoring generated_at and git)")
+    a = ap.parse_args(argv)
+    root = os.path.abspath(a.root)
+    default_out = os.path.join(root, OUT_REL)
+    out_dir = os.path.abspath(a.out_dir or default_out)
+    if a.preview_overlay:
+        if a.check:
+            ap.error("--check compares against the committed dossier; it cannot use preview overlays")
+        if os.path.commonpath([out_dir, root]) == root:
+            ap.error("a preview (with --preview-overlay) must be written outside the repository (--out-dir)")
+    d = build(root, a.preview_overlay, a.generated_at, reevaluate=not a.no_reevaluate)
+    if a.check:
+        jp = os.path.join(default_out, JSON_NAME)
+        mp = os.path.join(default_out, MD_NAME)
+        if not (os.path.isfile(jp) and os.path.isfile(mp)):
+            print(f"STALE: committed dossier missing at {OUT_REL}")
+            return 1
+        with open(jp, encoding="utf-8") as f:
+            committed = json.load(f)
+        with open(mp, encoding="utf-8") as f:
+            md = f.read()
+        if strip_volatile(committed) != strip_volatile(d):
+            print("STALE: dossier.json differs from a fresh build; regenerate with "
+                  f"python {SCRIPT_REL}")
+            return 1
+        if md != render_markdown(committed):
+            print(f"STALE: {MD_NAME} is not the rendering of dossier.json")
+            return 1
+        print("OK: committed dossier is current")
+        return 0
+    jp, mp = write(d, out_dir)
+    sel = d["decision_status"]["selection"]
+    print(f"wrote {jp}\nwrote {mp}")
+    print(f"inputs resolved {d['inputs']['n_resolved']}/{d['inputs']['n_expected']}; hard gates "
+          f"{d['hard_gate_evaluation']['state']}; selection: "
+          + ("none (status, not a decision)" if sel is None else f"owner-recorded {sel['architecture']}"))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

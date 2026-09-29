@@ -1,0 +1,1808 @@
+=== UNTRACKED docs/hardware/h2/h2_2_cathode_integration/build_h2_2_cathode_integration.py
+#!/usr/bin/env python3
+"""H2-2 cathode integration for C-1 (fo_h2_2_cathode_integration): deterministic builder.
+
+Writes ``h2_2_cathode_integration_v1.json`` next to this file from the explicit, sourced inputs in ``INPUTS`` and the
+evaluation grids in ``GRIDS``. Standard library only; nothing is imported from ``abep_sim`` (the test cross-checks the
+relations shared with ``abep_sim/cathode_integration.py`` and the constants in ``abep_sim/constants.py``).
+
+Rules this script follows (CLAUDE.md rules 3, 6, 10; docs/EVIDENCE.md):
+  * every number used in a computation lives in ``INPUTS`` (with source, locator and evidence class) or in ``GRIDS``
+    (explicit evaluation grids, labelled as such, never a design value or a device claim);
+  * every relation takes its inputs as arguments; a missing, non-finite or out-of-range input raises
+    ``H22InputError``; nothing falls back to a default;
+  * no Hall transport closure, no screening candidate, no superseded 0-D Hall number and no withdrawn v1.2-v1.6 number
+    is used; no thrust, efficiency, discharge current or plasma state is predicted;
+  * PENDING values name the parallel lane path that owns them; nothing here imports or reads those lanes.
+
+Usage::
+
+    python docs/hardware/h2/h2_2_cathode_integration/build_h2_2_cathode_integration.py            # write the JSON
+    python docs/hardware/h2/h2_2_cathode_integration/build_h2_2_cathode_integration.py --check    # byte-compare
+    python docs/hardware/h2/h2_2_cathode_integration/build_h2_2_cathode_integration.py --verify-pins
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import math
+import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(HERE))))
+OUT_NAME = "h2_2_cathode_integration_v1.json"
+OUT_PATH = os.path.join(HERE, OUT_NAME)
+REL_DIR = "docs/hardware/h2/h2_2_cathode_integration"
+
+LANE_ID = "fo_h2_2_cathode_integration"
+TRIGGER_ID = "T_H2_2_CATHODE_INTEGRATION"
+BASE_COMMIT = "f0bdeaca5c18a6057195151653c56e2a47472def"
+DATE = "2026-09-27"
+ARCHITECTURES = ["hall_only", "rf_hall", "ecr_hall"]
+
+EVIDENCE_CLASSES = ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"]
+BASES = ["requirement", "allocation", "analog", "derived", "assumed", "pending"]
+REPRESENTATIVENESS = ["FLIGHT-REPRESENTATIVE", "H-1 TEST-ARTICLE-ONLY", "GROUND/FACILITY-ONLY"]
+M16_STATES = ["READY", "RUNNING", "BLOCKED", "VERIFIED"]
+ROLLUP_CATEGORIES = ["architecture blocker", "hardware-definition blocker", "procurement blocker",
+                     "test-readiness blocker", "proposal-only documentation gap"]
+A5_SUBSYSTEMS = [
+    "intake", "protective/filter stage", "compressor", "buffer/plenum", "atmospheric metering valve",
+    "Xe tank", "Xe regulator", "Xe metering (splits to ignition/transition feed and cathode feed)",
+    "extended-channel Hall discharge chamber/accelerator", "magnetic circuit", "shielded Xe-fed LaB6 hollow cathode",
+    "PPU/power distribution", "thermal control", "control/FDIR", "sensors/diagnostics",
+    "mechanical/structural interfaces",
+]
+H1_CONFIGURATION_ITEMS = ["H-1", "MC-1", "C-1", "FS-C", "PS-C", "SVC-1", "PIM-0", "PIM-RF", "PIM-ECR", "DIV-1"]
+H1_INTERFACE_PLANES = ["IP-UP", "IP-DN", "HALL_INLET_Z0"]
+BOUNDARY_VERSION = "bus_power_boundary_v1"
+CATHODE_BOUNDARY_COMPONENTS = ["cathode_keeper", "cathode_heater"]
+
+# Parallel lanes (not in this base). Referenced by path only; never imported or read here.
+PENDING_LANES = {
+    "H2-1": "docs/hardware/h2/h2_1_hall_chamber_magnet/",
+    "H2-3": "docs/hardware/h2/h2_3_gas_path_plenum/",
+    "H2-4": "docs/hardware/h2/h2_4_ppu_bus/",
+    "H2-5": "docs/hardware/h2/h2_5_thermal_network/",
+    "H2-6": "docs/hardware/h2/h2_6_diagnostics_fixture/",
+    "H2-7": "docs/hardware/h2/h2_7_mechanical_bom/",
+    "PMI": "docs/interfaces/preionizer_module/",
+    "PMI-SCHEMA": "schemas/interfaces/preionizer_module_icd_v1.json",
+    "XE": "docs/budgets/xe_ledger/",
+    "XE-MODULE": "abep_sim/xe_ledger.py",
+    "P1-PREG": "docs/experiments/phase1_prereg_framework/",
+    "M16": "docs/budgets/subsystem_maturity/",
+}
+
+# Immutable inputs pinned by sha256 (decision files, the G0 verification, merged and verified deliverables).
+PINNED_INPUTS = [
+    ("docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+     "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac", "owner disposition (hardware pivot)", "decision"),
+    ("docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+     "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
+     "A5 proposal reference architecture (C-1 = shielded Xe-fed LaB6 hollow cathode; Xe cathode flow 0.10 / 0.15 mg/s; "
+     "allocations; risk 3)", "decision"),
+    ("docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A6_a5_followon_authorization.json",
+     "aaeb7c503c3791f81d4c589e8e25289befa6fcb3b16ce6f962b153715c883180",
+     "A6 follow-on authorization (Xe ledger terms; not_authorized list; execution-order clarification)", "decision"),
+    ("docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A7_execution_model.json",
+     "dae69983d9aeeb4838d9ff973a5f824c973219f8cc528adfb12717c4bb92c925",
+     "A7 execution model (H2 = design / preliminary-sizing lane; architecture-changing blockers 1-3; M16 scheduler)",
+     "decision"),
+    ("docs/decisions/verification/A5_BASELINE_VERIFICATION.json",
+     "4bd0fb4312fba97b18bba92ca0726133947ea6d86327f5e1360ea6af2b163523", "G0 baseline verification (CLEAN)",
+     "verification"),
+    ("docs/experiments/hardware/hardware_requirements_v1.json",
+     "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0",
+     "W3 hardware definition (C-1, FS-C, PS-C, MC-1, SVC-1, H-1 ids; HW-C1-01..09; I_d bound)", "deliverable"),
+    ("docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json",
+     "df020bfe3ef87b0fc6f49c56db7e38dc585c4640b5c89dd167d1f18e928dbd6f",
+     "lane 19 cathode-integration data (analog heater / keeper / flow values, LaB6 constants)", "deliverable"),
+    ("docs/evidence/cathode/cathode_evidence_v1.json",
+     "050060204e443d5583c307becadaab55a9f213d406ff4454be856bca21249110", "lane 10 cathode evidence dossier",
+     "deliverable"),
+    ("docs/experiments/lifetime_ao/ao_lifetime_register_v5.json",
+     "fea8aa05bd561d5ea559b934803d472f1fb1ed1013bfa925a5afb6c68a33e637",
+     "AO / lifetime register v5 (AOL-M04, AOL-M05, AOL-CX-01..06, AOL-WC-03, AOL-PM-05, AOL-EX-03)", "deliverable"),
+    ("docs/experiments/instrumentation/instrumentation_definition_v1.json",
+     "a3b0b6f1a4b0f8f40e3c6b6a2c1c6ed9f7a4d1f86c1ad8d5e8d4ab3cf1e2d0a1",
+     "W4 instrumentation definition (INS-05, INS-22, INS-23, INS-P-08)", "deliverable"),
+    ("schemas/controls/dual_feed_state_machine_v1.json",
+     "bc68ac0f7a35ced1c3bdcfcb1fb44880f63d57adf0e0bb22dae94d5dd07585ba",
+     "lane 14 dual-feed state machine (cathode start / shutdown states and TBD parameters)", "deliverable"),
+    ("schemas/interfaces/upstream_icd_v1.json",
+     "2437d125060f2f24da06ac33b22220483f70b411033c91682cdffb5f01310850",
+     "upstream ICD (IF-X2 mdot_xe_cathode_kgps)", "deliverable"),
+    ("docs/architecture_comparison/veto_layer/veto_layer_v1.json",
+     "1371e4354a3152c5a001f54b6865063e170af0b7348c1d42db1ef4a4923759a6",
+     "veto layer (RI-MASS-CATHODE-XE)", "deliverable"),
+    ("docs/architecture_comparison/hall_reference/hall_reference_v1.json",
+     None, "lane 17 Hall reference (EV-C1..C6, INV-C1, CR-4)", "deliverable"),
+]
+# Mutable governance files: named, never pinned (task rule).
+NOT_PINNED_MUTABLE = [
+    "docs/orchestration/lane_registry_v1.json",
+    "docs/orchestration/trigger_registry_v1.json",
+    "docs/orchestration/trigger_ledger_v2.jsonl",
+    "docs/orchestration/fired_triggers.jsonl",
+    "docs/orchestration/runtime_state.json",
+]
+
+
+class H22InputError(ValueError):
+    """A required input is missing, non-finite or outside its physical range (no silent fallback)."""
+
+
+# ------------------------------------------------------------------------------------------------------ sources
+SOURCES = {
+    "SRC-A5": {"citation": "Owner addendum A5 (proposal reference architecture)",
+               "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+               "access": "repo_pinned"},
+    "SRC-A6": {"citation": "Owner addendum A6 (A5 follow-on authorization)",
+               "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A6_a5_followon_authorization.json",
+               "access": "repo_pinned"},
+    "SRC-A7": {"citation": "Owner addendum A7 (execution model)",
+               "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A7_execution_model.json",
+               "access": "repo_pinned"},
+    "SRC-RFP": {"citation": "DRDO TDF RFP DTDF/06/13516/DSP/ABEP/X/L/M/01 as recorded in abep_sim/constants.py "
+                            "RFPConstraints ('Part III Para 2') and CLAUDE.md",
+                "path": "abep_sim/constants.py", "access": "repo_frozen"},
+    "SRC-SI": {"citation": "SI defining constants (exact since 2019): k_B = 1.380649e-23 J/K, h = 6.62607015e-34 J s, "
+                           "c = 299792458 m/s, N_A = 6.02214076e23 /mol (SI Brochure, 9th ed.; k_B identical to "
+                           "abep_sim/constants.py K_B). Values quoted from memory of the exact definitions: verify "
+                           "against the SI Brochure.",
+               "access": "exact_by_definition"},
+    "SRC-HWDEF": {"citation": "W3 hardware definition (fo_hardware_definition), DRAFT_PENDING_OWNER",
+                  "path": "docs/experiments/hardware/hardware_requirements_v1.json", "access": "repo_pinned"},
+    "SRC-LANE19": {"citation": "Lane 19 cathode integration (CATHINT) data file; values there are read from the "
+                               "open sources it lists (Goebel & Katz 2008, IEPC-2017-276, IEPC-2015-43, "
+                               "IEPC-2017-365, IEPC-2017-377)",
+                   "path": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json",
+                   "access": "repo_pinned"},
+    "SRC-DOSSIER": {"citation": "Lane 10 cathode evidence dossier (values read from the open sources it lists)",
+                    "path": "docs/evidence/cathode/cathode_evidence_v1.json", "access": "repo_pinned"},
+    "SRC-AOL5": {"citation": "AO / lifetime register v5", "path": "docs/experiments/lifetime_ao/ao_lifetime_register_v5.json",
+                 "access": "repo_pinned"},
+    "SRC-W4": {"citation": "W4 instrumentation definition v1-r2",
+               "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json", "access": "repo_pinned"},
+    "SRC-LANE14": {"citation": "Lane 14 dual-feed state machine", "path": "schemas/controls/dual_feed_state_machine_v1.json",
+                   "access": "repo_pinned"},
+    "SRC-LANE17": {"citation": "Lane 17 Hall accelerator reference (EV-C1..C6 read from Goebel & Katz 2008 and "
+                               "Andreussi et al. 2022 by that lane)",
+                   "path": "docs/architecture_comparison/hall_reference/hall_reference_v1.json", "access": "repo_pinned"},
+    "SRC-ICD": {"citation": "Upstream ICD v1 (IF-X2)", "path": "schemas/interfaces/upstream_icd_v1.json",
+                "access": "repo_pinned"},
+    "SRC-VETO": {"citation": "Veto layer v1 (RI-MASS-CATHODE-XE)",
+                 "path": "docs/architecture_comparison/veto_layer/veto_layer_v1.json", "access": "repo_pinned"},
+    "SRC-GK2008": {
+        "citation": "D. M. Goebel and I. Katz, Fundamentals of Electric Propulsion: Ion and Hall Thrusters, JPL "
+                    "Space Science and Technology Series, JPL / Wiley, 2008 (open JPL DESCANSO PDF)",
+        "url": "https://descanso.jpl.nasa.gov/SciTechBook/series1/Goebel__cmprsd_opt.pdf",
+        "sha256": "a373c8a26137b7c7cd989880c303c4f6c1f84f20a11a02770047f6ba4c249e4e",
+        "access": "open_full_text", "accessed": "2026-09-27",
+        "pages_read_by_this_lane": "printed pp. 244-247, 252-255, 305-306, 313, 337-339",
+        "note": "same file (same sha256) as read by lane 19; textbook statements of the authors' measurements are "
+                "level 5 (secondary) when the primary was not read"},
+    "SRC-IEPC2007-278": {
+        "citation": "K. K. Jameson, D. M. Goebel, R. R. Hofer and R. M. Watkins, 'Cathode Coupling in Hall "
+                    "Thrusters', IEPC-2007-278, 30th International Electric Propulsion Conference, Florence, 2007",
+        "url": "http://richard.hofer.com/pdf/iepc-2007-278.pdf",
+        "sha256": "996ca6cc41cd5de819f0856dbb0003084e813d7413b00e83ccce8567d7f73d72",
+        "access": "open_full_text (author web page copy of the conference paper)", "accessed": "2026-09-27",
+        "pages_read_by_this_lane": "pp. 1-5, 14-16",
+        "device": "JPL 6 kW laboratory Hall thruster with two JPL LaB6 hollow cathodes (internal on-axis and external), "
+                  "xenon; 3 kW and 6 kW points"},
+    "SRC-IEPC2013-410": {
+        "citation": "A. Loyan, M. Titov, O. Rybalov and T. Maksymenko, 'Middle power Hall Effect Thrusters with "
+                    "centrally located cathode', IEPC-2013-410, 33rd International Electric Propulsion Conference, "
+                    "Washington D.C., 2013",
+        "url": "https://electricrocket.org/IEPC/oi1pcpmn.pdf",
+        "sha256": "5a93fdacf6dd864fdfe09dbba3c501082643ac9743f10a6302a2d763b73f7570",
+        "access": "open_full_text (ERPS archive)", "accessed": "2026-09-27", "pages_read_by_this_lane": "pp. 1-7",
+        "device": "KhAI SPT-M70.CHC (600 W nominal, 300 V, 1.9 A; xenon) with a KhAI SHC-2A.10 self-heated cathode "
+                  "mounted centrally or externally",
+        "note": "p. 3/p. 4 give the critical inner-core hole diameters of 'M100 and M70 types' as '13 mm and 18 mm' "
+                "while the M70 core outer diameter is 18 mm: the order appears reversed or inconsistent in the "
+                "source (verify); only the qualitative saturation relation and the stated maximum cathode sizes are "
+                "used here"},
+    "SRC-IEPC2019-303": {
+        "citation": "G. Lenguito, K. Neff, J. Barbarits, J. S. Snyder and V. Chaplin, 'Versatile Xenon Flow "
+                    "Controller for Extended Hall-Effect Thruster Power Range', IEPC-2019-303, 36th International "
+                    "Electric Propulsion Conference, Vienna, 2019",
+        "url": "https://electricrocket.org/2019/303.pdf",
+        "sha256": "9c6fe4e8076f9b99bf4a7b6053abbe466142daaa37d5c7e152ef0489b6af7322",
+        "access": "open_full_text (ERPS archive)", "accessed": "2026-09-27", "pages_read_by_this_lane": "pp. 1-8",
+        "device": "flight xenon flow controller (SIV + PFCV + cathode latch valve + fixed orifices) for the SPT-140 "
+                  "system of the Psyche mission (0.9-4.5 kW)"},
+    "SRC-IEPC2009-061": {
+        "citation": "Y. Kim, S. Kang, Y. Jeong, J. Seon, J. Wee, H. Yoon, J. Lee, M. Seo and W. Choi, 'Development of "
+                    "Xenon feed system for a 300-W Hall-Thruster', IEPC-2009-061, 31st International Electric "
+                    "Propulsion Conference, Ann Arbor, 2009",
+        "url": "https://electricrocket.org/IEPC/IEPC-2009-061.pdf",
+        "sha256": "55c109b8380830451867541e1b9a2a2bd82a2c27f14ad4e13671cde1f2ec2a80",
+        "access": "open_full_text (ERPS archive)", "accessed": "2026-09-27", "pages_read_by_this_lane": "pp. 1-5",
+        "device": "xenon feed system of a 300 W Hall thruster: independent anode and cathode channels, accumulator "
+                  "pressure regulation, choked micro-orifices"},
+    "SRC-SNYDER2017": {
+        "citation": "J. S. Snyder, J. Baldwin, J. D. Frieman, M. L. R. Walker, N. S. Hicks, K. A. Polzin and "
+                    "J. T. Singleton, 'Recommended Practice for Flow Control and Measurement in Electric Propulsion "
+                    "Testing', J. Propulsion and Power 33(3), 556-565 (2017), doi:10.2514/1.B35644",
+        "url": "https://hpepl.ae.gatech.edu/sites/default/files/Journal_Articles/JPP%20V33%20No3%20MayJune2017_MassFlowMeasurement.pdf",
+        "sha256": "d3f06c2b60c597341c32de91a7a9ae5d0cf256976d4623190c83b7e7f25c1adf",
+        "access": "open_full_text (authors' laboratory copy; also REF-SNYDER2017 of W4)", "accessed": "2026-09-27",
+        "pages_read_by_this_lane": "pp. 556-564"},
+    "SRC-SOMMERVILLE2009": {
+        "citation": "J. D. Sommerville, 'Hall-effect thruster-cathode coupling: the effect of cathode position and "
+                    "magnetic field topology', PhD dissertation, Michigan Technological University, 2009",
+        "url": "https://digitalcommons.mtu.edu/etds/411/",
+        "access": "abstract_only: the repository landing page (abstract) was read; the PDF link returned a bot-challenge "
+                  "page, which was not bypassed", "accessed": "2026-09-27",
+        "used_for_values": False},
+    "SRC-LANE-DERIVATION": {"citation": "H2-2 lane derivation in this builder (engineering physics on sourced inputs "
+                                        "or explicit evaluation grids; not a literature value)",
+                            "path": REL_DIR + "/build_h2_2_cathode_integration.py", "access": "lane_derivation"},
+}
+
+# Leads identified but not used for any value (abstract not available or body not read).
+LEADS_NOT_ENTERED = [
+    {"citation": "J. D. Frieman, T. M. Liu, M. L. R. Walker, et al., 'Electrical Facility Effects on Hall Thruster "
+                 "Cathode Coupling: Performance and Plume Properties', J. Propuls. Power 32(1), 251-264 (2016), "
+                 "doi:10.2514/1.B35683 (bibliographic data from the Crossref record; author list as returned there "
+                 "begins Frieman, Walker - verify)",
+     "why_not_entered": "Crossref record carries no abstract; the publisher page was not read"},
+    {"citation": "I. Kinefuchi et al., 'Keeper Ignition and Discharge Characteristics of Hollow Cathode Center-Mounted "
+                 "on Hall Thruster', J. Propuls. Power 37(2), 223-230 (2021), doi:10.2514/1.B37814",
+     "why_not_entered": "Crossref record carries no abstract; the publisher page was not read"},
+    {"citation": "M. S. McDonald and A. D. Gallimore, 'Cathode Position and Orientation Effects on Cathode Coupling in "
+                 "a 6-kW Hall Thruster', IEPC-2009-113 (as cited in IEPC-2013-410 ref. 4)",
+     "why_not_entered": "not retrieved in this lane"},
+    {"citation": "J. D. Sommerville and L. B. King, 'Hall-Effect Thruster - Cathode Coupling part I', J. Propuls. "
+                 "Power 27(4), 744-753 (2011) (as cited in IEPC-2013-410 ref. 10)",
+     "why_not_entered": "not retrieved in this lane"},
+]
+
+
+def _inp(value, unit, source, locator, evidence_class, **extra):
+    d = {"value": value, "unit": unit, "source": source, "locator": locator, "evidence_class": evidence_class}
+    d.update(extra)
+    return d
+
+
+# ------------------------------------------------------------------------------------------------------ inputs
+# Every number used by a relation below. Units in the key suffix where helpful.
+INPUTS = {
+    # RFP requirements
+    "rfp_power_max_W": _inp(1500.0, "W", "SRC-RFP", "RFPConstraints.power_max_W", "assumed", status="RFP"),
+    "rfp_mass_max_kg": _inp(40.0, "kg", "SRC-RFP", "RFPConstraints.mass_max_kg", "assumed", status="RFP"),
+    "rfp_firing_h": _inp(15000.0, "h", "SRC-RFP", "RFPConstraints.ignition_hours ('>15,000 h')", "assumed",
+                         status="RFP"),
+    "rfp_mission_h": _inp(26000.0, "h", "SRC-RFP", "RFPConstraints.mission_hours", "assumed", status="RFP"),
+    # A5 allocations / requirements
+    "a5_cathode_flow_design_target_mg_s": _inp(0.10, "mg/s", "SRC-A5", "xe_mass_allocation.cathode_flow_design_target_mg_s",
+                                               "assumed", status="A5 design target (allocation, not a measurement)"),
+    "a5_cathode_flow_upper_test_point_mg_s": _inp(0.15, "mg/s", "SRC-A5",
+                                                  "xe_mass_allocation.cathode_flow_experimental_upper_test_point_mg_s",
+                                                  "assumed", status="A5 experimental upper test point"),
+    "a5_mass_allocation_kg": _inp([34.0, 36.0], "kg", "SRC-A5", "allocations_and_requirements['system mass design "
+                                  "allocation'] '<= 34-36 kg'", "assumed", status="A5 allocation"),
+    "a5_bus_allocation_W": _inp([1300.0, 1350.0], "W", "SRC-A5", "allocations_and_requirements['bus-power design "
+                                "allocation'] '<= 1.30-1.35 kW'", "assumed", status="A5 allocation"),
+    "a5_design_life_target_h": _inp(18000.0, "h", "SRC-A5", "allocations_and_requirements['internal design life "
+                                    "target'] '>= 18,000 h'", "assumed", status="A5 design margin target, not evidenced"),
+    # W3 hardware definition
+    "hw_V_d_min_V": _inp(180.0, "V", "SRC-HWDEF", "derived_numbers.inputs.V_d_proposed_set_V (min of the PROPOSED "
+                         "set, lane 17)", "assumed", status="PROPOSED there"),
+    # Unit conversion, constants
+    "xe_mg_s_per_sccm": _inp(0.0983009, "mg/s per sccm", "SRC-LANE19", "parameters.xe_mg_s_per_sccm (Goebel & Katz "
+                             "2008 App. B, Eq. B-5, p. 464)", "model-derived"),
+    "xe_molar_mass_g_mol": _inp(131.293, "g/mol", "SRC-LANE19", "parameters.xe_mg_s_per_sccm locator 'M_a = 131.293' "
+                                "(Goebel & Katz 2008 App. B, p. 464)", "measured"),
+    "xe_gamma": _inp(5.0 / 3.0, "1", "SRC-LANE-DERIVATION", "ideal monatomic gas c_p/c_v = 5/3 (kinetic theory); "
+                     "real-gas departure of Xe at a few bar not included (verify for the flight orifice design)",
+                     "assumed"),
+    "k_B_J_K": _inp(1.380649e-23, "J/K", "SRC-SI", "k_B (exact); equals abep_sim/constants.py K_B", "assumed"),
+    "h_J_s": _inp(6.62607015e-34, "J s", "SRC-SI", "h (exact)", "assumed"),
+    "c_m_s": _inp(299792458.0, "m/s", "SRC-SI", "c (exact)", "assumed"),
+    "N_A_per_mol": _inp(6.02214076e23, "1/mol", "SRC-SI", "N_A (exact)", "assumed"),
+    "e_C": _inp(1.602176634e-19, "C", "SRC-SI", "e (exact); equals abep_sim/constants.py E_CHARGE", "assumed"),
+    # LaB6 emission / evaporation (lane 19 values, dossier refs)
+    "lab6_A_lafferty_A_cm2K2": _inp(29.0, "A/cm2/K2", "SRC-LANE19", "parameters.lab6_richardson_A_lafferty "
+                                    "(IEPC-2017-276 p. 5; dossier lab6.D.lafferty)", "measured", evidence_level=5),
+    "lab6_phi_lafferty_eV": _inp(2.67, "eV", "SRC-LANE19", "parameters.lab6_work_function_lafferty_iepc2017 "
+                                 "(IEPC-2017-276 p. 5)", "measured", evidence_level=5),
+    "lab6_A_gk_A_cm2K2": _inp(120.0, "A/cm2/K2", "SRC-LANE19", "parameters.lab6_richardson_A_universal_gk (Goebel & "
+                              "Katz Table 6-1, p. 252)", "measured", evidence_level=5),
+    "lab6_phi0_gk_eV": _inp(2.66, "eV", "SRC-LANE19", "parameters.lab6_work_function_T_linear_phi0_gk", "measured",
+                            evidence_level=5),
+    "lab6_alpha_gk_eV_K": _inp(1.23e-4, "eV/K", "SRC-LANE19", "parameters.lab6_work_function_T_linear_alpha_gk",
+                               "measured", evidence_level=5),
+    "lab6_evap_B_K": _inp(36850.0, "K", "SRC-LANE19", "parameters.lab6_evaporation_B_lafferty (IEPC-2017-276 Eq. 2, "
+                          "p. 5)", "measured", evidence_level=5),
+    "lab6_evap_C": _inp(13.0, "1", "SRC-LANE19", "parameters.lab6_evaporation_C_lafferty", "measured",
+                        evidence_level=5),
+    # LaB6 oxygen evidence (read by this lane in Goebel & Katz; same as dossier ids)
+    "lab6_o2_degrade_Torr": _inp(1.0e-5, "Torr", "SRC-GK2008", "Sec. 6.8.5, pp. 305-306 ('oxygen in the 1e-5-torr "
+                                 "range are required to degrade the emission of LaB6 at temperatures below 1440 C'); "
+                                 "dossier lab6.env.o2_degrade_1e-5", "measured", evidence_level=5),
+    "lab6_o2_degrade_below_C": _inp(1440.0, "degC", "SRC-GK2008", "Sec. 6.8.5, p. 306", "measured", evidence_level=5),
+    "lab6_o2_withstand_Torr": _inp(1.0e-4, "Torr", "SRC-GK2008", "Sec. 6.8.5, p. 306 ('LaB6 at 1570 C ... can "
+                                   "withstand oxygen partial pressures up to 1e-4 torr'); dossier "
+                                   "lab6.env.o2_withstand_1570C", "measured", evidence_level=5),
+    "lab6_o2_withstand_at_C": _inp(1570.0, "degC", "SRC-GK2008", "Sec. 6.8.5, p. 306; dossier "
+                                   "lab6.env.o2_withstand_temperature", "measured", evidence_level=5),
+    "lab6_o2_plasma_run_Torr": _inp(1.0e-3, "Torr", "SRC-GK2008", "Sec. 6.8.5, p. 306 (pure O2 plasma in 1e-3 torr "
+                                    "O2 background, emitter raised to 'just over 1600 C'); dossier "
+                                    "lab6.env.o2_plasma_background", "measured", evidence_level=5),
+    "lab6_10Acm2_temperature_C": _inp(1650.0, "degC", "SRC-GK2008", "p. 254 ('will emit over 10 A/cm2 at a temperature "
+                                      "of 1650 C'); dossier lab6.t.goebel_10Acm2", "measured", evidence_level=5),
+    "lab6_crudest_xe_purity_pct": _inp(99.99, "%", "SRC-GK2008", "p. 306 ('LaB6 cathodes can tolerate the crudest grade "
+                                       "of xenon available (99.99% purity)'); dossier lab6.purity.crudest_grade",
+                                       "measured", evidence_level=5),
+    "celsius_offset_K": _inp(273.15, "K", "SRC-SI", "definition of the degree Celsius", "assumed"),
+    # Analog heater / keeper / flow data
+    "hc1_heater_W": _inp([45.0, 60.0], "W", "SRC-LANE19", "parameters.hc1_heater_power_W (IEPC-2017-365 Sec. IV.A, "
+                         "p. 5)", "measured", device="SITAEL HC1 LaB6, 0.3-1 A", evidence_level=3),
+    "hc1_heating_time_s": _inp([600.0, 200.0], "s", "SRC-LANE19", "parameters.hc1_heating_time_s (paired with "
+                               "hc1_heater_W)", "measured", device="SITAEL HC1", evidence_level=3),
+    "hc3_heater_W": _inp(60.0, "W", "SRC-LANE19", "parameters.hc3_ignition_heater_power_W (IEPC-2017-365 Sec. V, p. 8)",
+                         "measured", device="SITAEL HC3 LaB6, 1-3 A", evidence_level=3),
+    "jpl_h6_heater_W": _inp(120.0, "W", "SRC-LANE19", "parameters.jpl_h6_lab6_heater_W (IEPC-2015-43 p. 3)",
+                            "measured", device="JPL 0.63-cm LaB6 cathode, ~6 kW Hall thruster", evidence_level=3),
+    "jpl_1p5cm_heater_max_W": _inp(300.0, "W", "SRC-LANE19", "parameters.jpl_1p5cm_heater_max_W (IEPC-2017-276 p. 3; "
+                                   "capability, not the used value)", "measured", device="JPL 1.5-cm LaB6",
+                                   evidence_level=3),
+    "jpl_1p5cm_preheat_min": _inp([18.0, 20.0], "min", "SRC-LANE19", "parameters.jpl_1p5cm_preheat_min (IEPC-2017-276 "
+                                  "p. 3)", "measured", device="JPL 1.5-cm LaB6", evidence_level=3),
+    "joussot_heater_W": _inp(184.5, "W", "SRC-DOSSIER", "lab6.start.joussot_heater_ignition (Joussot et al. 2017, "
+                             "Sec. 3, pdf p. 7)", "measured", device="5 A-class LaB6 flat-disk cathode, 2-19 A",
+                             evidence_level=3),
+    "zsch_heater_max_W": _inp(400.0, "W", "SRC-DOSSIER", "lab6.start.zsch_heater_max (IEPC-2022-102 Sec. V.A; "
+                              "non-optimized design)", "measured", device="Giessen LaB6 insert platform",
+                              evidence_level=3),
+    "jpl_keeper_ignition_V": _inp(150.0, "V", "SRC-LANE19", "parameters.jpl_ignition_keeper_voltage_V (IEPC-2015-43 "
+                                  "Sec. 5, p. 4)", "measured", device="JPL 1.5-cm LaB6", evidence_level=3),
+    "jpl_keeper_ignition_A": _inp(2.0, "A", "SRC-LANE19", "parameters.jpl_ignition_keeper_current_A", "measured",
+                                  device="JPL 1.5-cm LaB6", evidence_level=3),
+    "jpl_keeper_running_V": _inp([5.0, 15.0], "V", "SRC-LANE19", "parameters.jpl_keeper_voltage_after_ignition_V "
+                                 "(IEPC-2015-43 p. 4; floating keeper 5-20 V in IEPC-2017-276 p. 4)", "measured",
+                                 device="JPL 1.5-cm LaB6", evidence_level=3),
+    "hc1_keeper_ignition_V": _inp([45.0, 50.0], "V", "SRC-LANE19", "parameters.hc1_ignition_keeper_voltage_V (with "
+                                  "the ~45 W heater)", "measured", device="SITAEL HC1", evidence_level=3),
+    "hc1_heaterless_ignition_V": _inp(800.0, "V", "SRC-LANE19", "parameters.hc1_ignition_keeper_voltage_V (heaterless, "
+                                      "with 1 mg/s)", "measured", device="SITAEL HC1 heaterless", evidence_level=3),
+    "hc3_heated_ignition_V_max": _inp(300.0, "V", "SRC-LANE19", "parameters.hc3_ignition_heater_power_W locator "
+                                      "('ignitions below 300 V keeper at 0.4-0.8 mg/s')", "measured",
+                                      device="SITAEL HC3", evidence_level=3),
+    "hc3_heaterless_ignition_V": _inp(700.0, "V", "SRC-LANE19", "parameters.hc3_ignition_heater_power_W locator "
+                                      "('heaterless needed up to 700 V and 1-2 mg/s')", "measured",
+                                      device="SITAEL HC3 heaterless", evidence_level=3),
+    "gk_keeper_practice_V": _inp([50.0, 150.0, 300.0, 600.0], "V", "SRC-LANE19", "parameters.gk_keeper_ignition_"
+                                 "voltages_V (Goebel & Katz Sec. 6.10, pp. 310-311: DC 50-150 V plus pulsed 300-600 V)",
+                                 "measured", evidence_level=5),
+    "hc1_keeper_only_V": _inp([15.0, 30.0], "V", "SRC-LANE19", "parameters.hc1_keeper_only_power_W locator (keeper-only "
+                              "operation, 0.3-1.5 A at 30 to 15 V)", "measured", device="SITAEL HC1 keeper-only",
+                              evidence_level=3),
+    "hc1_msht100_keeper_A": _inp(0.5, "A", "SRC-LANE19", "parameters.hc1_msht100_keeper_current_A (350 h with a 100 W "
+                                 "Hall thruster, keeper 0.5 A)", "measured", device="SITAEL HC1 + MSHT100",
+                                 evidence_level=3),
+    "next_keeper_A": _inp(3.0, "A", "SRC-DOSSIER", "baow.i.next_keeper (Herman et al. 2009 pdf p. 10)", "measured",
+                          device="NEXT neutralizer (BaO-W)", evidence_level=3),
+    "zsch_keeper_min_A": _inp(3.0, "A", "SRC-DOSSIER", "lab6.start.zsch_keeper_min (IEPC-2022-102 Sec. V.A)",
+                              "measured", device="Giessen LaB6 insert platform", evidence_level=3),
+    "lab6_lab_current_range_A": _inp([2.0, 19.0], "A", "SRC-DOSSIER", "lab6.i.joussot_range (Joussot et al. 2017, "
+                                     "abstract)", "measured", device="5 A-class LaB6 flat-disk cathode, diode, Xe",
+                                     evidence_level=3),
+    "hc3_heated_ignition_flow_mg_s": _inp([0.4, 0.8], "mg/s", "SRC-LANE19", "parameters.hc3_ignition_heater_power_W "
+                                          "locator", "measured", device="SITAEL HC3", evidence_level=3),
+    "heaterless_ignition_flow_mg_s": _inp([1.0, 2.0], "mg/s", "SRC-LANE19", "parameters.hc1_ignition_keeper_voltage_V "
+                                          "(HC1 heaterless 1 mg/s) and hc3_ignition_heater_power_W locator (HC3 "
+                                          "heaterless 1-2 mg/s)", "measured", device="SITAEL HC1 / HC3 heaterless",
+                                          evidence_level=3),
+    "hc_design_flow_low_mg_s": _inp(0.08, "mg/s", "SRC-LANE19", "parameters.hc1_design_flow_range_mg_s / "
+                                    "hc3_design_flow_range_mg_s (low end, developer statement)", "measured",
+                                    device="SITAEL HC1 / HC3", evidence_level=3),
+    "hc3_diode_min_spot_flow_mg_s": _inp(0.6, "mg/s", "SRC-LANE19", "parameters.hc3_diode_spot_mode_min_flow_mg_s "
+                                         "(IEPC-2017-365 p. 9; 2.5-4 A diode, no thruster field)", "measured",
+                                         device="SITAEL HC3 diode", evidence_level=3),
+    "hc1_diode_flow_mg_s": _inp(0.8, "mg/s", "SRC-LANE19", "parameters.hc1_diode_flow_mg_s (1.25-1.5 A diode, above "
+                                "its 0.3-1 A design current)", "measured", device="SITAEL HC1 diode", evidence_level=3),
+    "p5_cathode_flow_mg_s": _inp(0.44, "mg/s", "SRC-LANE19", "parameters.p5_cathode_xe_flow_mg_s (setpoint, not a "
+                                 "minimum-flow measurement)", "measured", device="P5 (3-5 kW class) external cathode",
+                                 evidence_level=3),
+    "joussot_flow_range_mg_s": _inp([0.2, 0.6], "mg/s", "SRC-DOSSIER", "lab6.flow.joussot_range (2-19 A diode)",
+                                    "measured", device="5 A-class LaB6 flat-disk cathode", evidence_level=3),
+    # IEPC-2007-278 (read by this lane)
+    "jpl6kw_Vc_internal_external_6kW_V": _inp([19.6, 28.9], "V", "SRC-IEPC2007-278", "Table 1, p. 15 (V_c, 6 kW)",
+                                              "measured", evidence_level=3),
+    "jpl6kw_Vc_internal_external_3kW_V": _inp([35.6, 46.8], "V", "SRC-IEPC2007-278", "Table 1, p. 15 (V_c, 3 kW)",
+                                              "measured", evidence_level=3),
+    "jpl6kw_Vcg_decrease_internal_V": _inp([6.0, 10.0], "V", "SRC-IEPC2007-278", "abstract, p. 1 ('decreased "
+                                           "significantly (approximately 6-10 V) when using the internally mounted "
+                                           "cathode')", "measured", evidence_level=3),
+    "jpl6kw_cathode_flow_mg_s": _inp([0.81, 1.48], "mg/s", "SRC-IEPC2007-278", "Table 1, p. 15 (m_c at 3 kW / 6 kW; "
+                                     "7 % of anode flow)", "measured", evidence_level=3),
+    # IEPC-2013-410 (read by this lane)
+    "khai_Ucg_decrease_central_V": _inp([6.0, 8.0], "V", "SRC-IEPC2013-410", "p. 6 ('At all operating points U_CG is "
+                                        "6-8 V lower for central cathode')", "measured", evidence_level=3),
+    "khai_cathode_flow_mg_s": _inp(0.13, "mg/s", "SRC-IEPC2013-410", "p. 5 ('At all tests cathode flow rate was "
+                                   "0.13 mg/s'; test condition, not a minimum)", "measured", evidence_level=3,
+                                   device="KhAI SHC-2A.10 (1-3 A class) on SPT-M70.CHC, 600 W nominal at 1.9 A"),
+    "khai_axial_scan_mm": _inp([-7.0, 7.0], "mm", "SRC-IEPC2013-410", "p. 5 (cathode moved +/- 7 mm about the plane "
+                               "of the inner-pole-tip outer surface)", "measured", evidence_level=3),
+    "khai_cathode_od_mm": _inp([10.0, 16.0], "mm", "SRC-IEPC2013-410", "Table 1, p. 4 (SHC-2A.10 / SHC-5A 10 x 48 mm; "
+                               "SHC-20A 16 x 50 mm; developer table)", "measured", evidence_level=3,
+                               device="KhAI self-heated cathodes 1-30 A"),
+    "khai_cathode_length_mm": _inp([48.0, 50.0], "mm", "SRC-IEPC2013-410", "Table 1, p. 4", "measured",
+                                   evidence_level=3, device="KhAI self-heated cathodes 1-30 A"),
+    "khai_cathode_mass_g": _inp([30.0, 41.0], "g", "SRC-IEPC2013-410", "Table 1, p. 4 (SHC-5A 2-7 A: 30 g; SHC-20A "
+                                "10-30 A: 41 g)", "measured", evidence_level=3, device="KhAI self-heated cathodes"),
+    "khai_max_central_cathode_od_mm": _inp([11.0, 18.0], "mm", "SRC-IEPC2013-410", "p. 4 (maximum cathode dimensions "
+                                           "with gaps: 11 mm for SPT M70 type, 18 mm for SPT M100 type; inner-core "
+                                           "outer diameters 18 mm and 26 mm, p. 3)", "model-derived", evidence_level=3),
+    "khai_core_bsat_T": _inp(2.35, "T", "SRC-IEPC2013-410", "p. 3 (permendur core, B_SAT = 2.35 T, in the source's "
+                             "saturation analysis)", "measured", evidence_level=3),
+    "khai_ignition_supply": _inp([1000.0, 0.2], "V, A", "SRC-IEPC2013-410", "p. 5 ('For cathode ignition it was used "
+                                 "the power supply 1kV200mA')", "measured", evidence_level=3),
+    "khai_flow_accuracy_pct": _inp(3.0, "%", "SRC-IEPC2013-410", "p. 5 (two-channel gas supply 'provides flow rates "
+                                   "with 3% accuracy')", "measured", evidence_level=3),
+    # IEPC-2019-303 (read by this lane)
+    "psyche_split_fraction": _inp([0.05, 0.09], "1", "SRC-IEPC2019-303", "abstract p. 1; p. 3 (cathode-to-anode "
+                                  "split 5 % high power, 9 % below 1.5 kW)", "measured", evidence_level=3),
+    "psyche_Vcg_limit_V": _inp(-30.0, "V", "SRC-IEPC2019-303", "p. 2 (keeper mode + higher split keep the "
+                               "cathode-to-ground voltage 'always higher than -30V')", "measured", evidence_level=3),
+    "psyche_cathode_meter_fs_sccm": _inp(50.0, "sccm", "SRC-IEPC2019-303", "p. 6 (cathode-line flow meter range "
+                                         "0-50 sccm, calibrated on xenon, in the integrated test)", "measured",
+                                         evidence_level=3),
+    "psyche_cathode_line_choked_psia": _inp([1.0, 2.0], "psia", "SRC-IEPC2019-303", "p. 8 (cathode line 'always "
+                                            "within 1-2psia when the latch valve is closed, operating in a choked "
+                                            "configuration')", "measured", evidence_level=3),
+    # IEPC-2009-061 (read by this lane)
+    "kaist_cathode_flow_req_sccm": _inp([0.0, 2.0], "sccm", "SRC-IEPC2009-061", "p. 2 (requirement 'Cathode: 0 ~ 2 "
+                                        "sccm +/- 1 %')", "measured", evidence_level=3),
+    "kaist_cathode_orifice_um": _inp(9.0, "um", "SRC-IEPC2009-061", "p. 5 (orifices '15 micron and 9 micron for anode "
+                                     "and cathode')", "measured", evidence_level=3),
+    "kaist_accumulator_bar": _inp(3.0, "bar", "SRC-IEPC2009-061", "p. 2 ('Accumulator tank pressure range: ~ 3 bar "
+                                  "+/- 1 %'); p. 5 ('3 bar +/-1 %')", "measured", evidence_level=3),
+    "kaist_orifice_cd": _inp(0.97, "1", "SRC-IEPC2009-061", "p. 5 ('On the assumption that orifice coefficient ... "
+                             "0.97')", "assumed", evidence_level=3),
+    "kaist_pressure_tolerance_frac": _inp(0.01, "1", "SRC-IEPC2009-061", "p. 2 / p. 5 (accumulator +/- 1 %)",
+                                          "measured", evidence_level=3),
+    # Snyder 2017 (read by this lane)
+    "snyder_typical_fs_frac": _inp([0.01, 0.05], "1 (fraction of full scale)", "SRC-SNYDER2017", "p. 557 ('typical "
+                                   "uncertainties associated with mass flow measurement are 1-5% of full scale (FS)')",
+                                   "measured", evidence_level=4),
+    "snyder_mfr_accuracy_fs_frac": _inp(0.01, "1 (fraction of full scale)", "SRC-SNYDER2017", "p. 560 ('manufacturer-"
+                                        "specified accuracy range (typically 1% full scale)')", "measured",
+                                        evidence_level=4),
+    "snyder_orientation_zero_fs_frac": _inp(0.004, "1 (fraction of full scale)", "SRC-SNYDER2017", "p. 560 "
+                                            "(orientation changes the zero 'by up to 0.4% of full scale')",
+                                            "measured", evidence_level=4),
+    "snyder_zero_tempco_fs_frac_per_K": _inp(0.0012, "1/K (fraction of full scale)", "SRC-SNYDER2017", "p. 560 (zero "
+                                             "shift 'approximately 0.12% per degree above the calibration "
+                                             "temperature')", "measured", evidence_level=4),
+    "snyder_nist_systematic_frac": _inp([-0.10, 0.085], "1", "SRC-SNYDER2017", "p. 560 (two of the NIST-tested TMFCs "
+                                        "showed systematic differences of -10 to 8.5 % against the NIST measurement)",
+                                        "measured", evidence_level=4),
+}
+
+# Explicit evaluation grids (never design values, never device claims).
+GRIDS = {
+    "mfc_full_scale_sccm": {"values": [2.0, 5.0, 10.0, 20.0, 50.0], "unit": "sccm Xe",
+                            "note": "candidate full-scale ranges; 50 sccm is the cathode-line meter range of the "
+                                    "IEPC-2019-303 integrated test (p. 6), the others are grid points"},
+    "mfc_accuracy_fs_frac": {"values": [0.0025, 0.005, 0.01], "unit": "fraction of full scale",
+                             "note": "0.01 = typical manufacturer accuracy (Snyder p. 560); 0.005 and 0.0025 are grid "
+                                     "points for a better device, not a claim that such a device exists"},
+    "mfc_accuracy_reading_frac": {"values": [0.0, 0.005, 0.01], "unit": "fraction of reading",
+                                  "note": "a %-of-reading term, if the selected device specifies one; grid only"},
+    "uncertainty_target_frac": {"values": [0.01, 0.02, 0.05], "unit": "fraction of reading",
+                                "note": "targets for the cathode-flow measurement; 0.02 is PROPOSED to the owner "
+                                        "(H22Q-02), not an RFP value"},
+    "temperature_offset_K": {"values": [1.0, 5.0, 10.0], "unit": "K",
+                             "note": "MFC temperature departure from its calibration temperature"},
+    "balance_u_g": {"values": [0.001, 0.01, 0.1, 1.0], "unit": "g (standard uncertainty per weighing)",
+                    "note": "gravimetric-calibration balance; the capacity/readability pair comes from the "
+                            "datasheet of the balance selected in H3"},
+    "rate_of_rise_volume_L": {"values": [0.25, 1.0, 4.0], "unit": "L", "note": "calibration volume"},
+    "gas_temperature_K": {"values": [293.15], "unit": "K", "note": "calibration / plenum gas temperature (20 C)"},
+    "plenum_pressure_bar": {"values": [1.0, 2.0, 3.0], "unit": "bar (absolute)",
+                            "note": "regulated Xe plenum pressure upstream of the cathode orifice; 3 bar is the "
+                                    "IEPC-2009-061 accumulator (p. 2); PENDING H2-3 for the Vyovrinda value"},
+    "plenum_temperature_excursion_K": {"values": [5.0, 10.0, 20.0], "unit": "K",
+                                       "note": "plenum-gas temperature excursion about 293.15 K"},
+    "emission_turndown_ratio": {"values": [1.5, 2.0, 3.0, 4.0], "unit": "1",
+                                "note": "I_emit,max / I_emit,min over a test envelope (unknown; H4 output)"},
+    "per_start_conditioning_s": {"values": [200.0, 600.0, 1200.0], "unit": "s",
+                                 "note": "analog preheat durations (HC1 200-600 s, JPL 1.5-cm 18-20 min)"},
+    "startup_count": {"values": [], "unit": "1", "note": "number of starts: TBD - requires the mission operations "
+                                                           "concept (dossier U15); no value is assumed here"},
+}
+
+
+# ------------------------------------------------------------------------------------------------------ helpers
+def _num(name, x, *, lo=None, hi=None, lo_open=False):
+    if x is None or isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(float(x)):
+        raise H22InputError(f"{name}: expected a finite number, got {x!r} (no default is substituted)")
+    x = float(x)
+    if lo is not None and (x < lo or (lo_open and x == lo)):
+        raise H22InputError(f"{name} = {x} below its physical range ({'>' if lo_open else '>='} {lo})")
+    if hi is not None and x > hi:
+        raise H22InputError(f"{name} = {x} above its physical range (<= {hi})")
+    return x
+
+
+def inp(key):
+    """Value of a sourced input. A missing key raises; there is no fallback."""
+    if key not in INPUTS:
+        raise H22InputError(f"missing input {key!r}")
+    return INPUTS[key]["value"]
+
+
+def grid(key):
+    if key not in GRIDS:
+        raise H22InputError(f"missing evaluation grid {key!r}")
+    return list(GRIDS[key]["values"])
+
+
+def sig(x, n=6):
+    """Round to n significant digits for a stable JSON text (the full-precision value is recomputed by --check)."""
+    if isinstance(x, (list, tuple)):
+        return [sig(v, n) for v in x]
+    if x == 0 or not math.isfinite(x):
+        return x
+    return float(f"{x:.{n}g}")
+
+
+# ------------------------------------------------------------------------------------------------------ relations
+def stefan_boltzmann(k_B, h, c):
+    """sigma = 2 pi^5 k_B^4 / (15 h^3 c^2)  [W m^-2 K^-4]  (exact SI constants)."""
+    k = _num("k_B", k_B, lo=0.0, lo_open=True)
+    hh = _num("h", h, lo=0.0, lo_open=True)
+    cc = _num("c", c, lo=0.0, lo_open=True)
+    return 2.0 * math.pi ** 5 * k ** 4 / (15.0 * hh ** 3 * cc ** 2)
+
+
+def mg_s_to_sccm(mdot_mg_s, mg_s_per_sccm):
+    return _num("mdot_mg_s", mdot_mg_s, lo=0.0) / _num("mg_s_per_sccm", mg_s_per_sccm, lo=0.0, lo_open=True)
+
+
+def sccm_to_mg_s(q_sccm, mg_s_per_sccm):
+    return _num("q_sccm", q_sccm, lo=0.0) * _num("mg_s_per_sccm", mg_s_per_sccm, lo=0.0, lo_open=True)
+
+
+def xe_mass_kg(mdot_mg_s, hours):
+    """m = mdot * t  [kg]; mdot in mg/s, t in h."""
+    return _num("mdot_mg_s", mdot_mg_s, lo=0.0) * _num("hours", hours, lo=0.0) * 3600.0 / 1.0e6
+
+
+def flow_for_mass_mg_s(mass_kg, hours):
+    """Constant flow that consumes mass_kg over hours (same relation as lane 19 max_cathode_flow_for_mass_mg_s)."""
+    return _num("mass_kg", mass_kg, lo=0.0) * 1.0e6 / (_num("hours", hours, lo=0.0, lo_open=True) * 3600.0)
+
+
+def richardson_J_A_cm2(T_K, A, phi0_eV, alpha_eV_K, e_C, k_B):
+    """J = A T^2 exp(-e (phi0 + alpha T) / (k T))  [A/cm2] (Richardson-Dushman, no field enhancement)."""
+    T = _num("T_K", T_K, lo=0.0, lo_open=True)
+    return (_num("A", A, lo=0.0, lo_open=True) * T * T
+            * math.exp(-_num("e_C", e_C, lo=0.0, lo_open=True) * (_num("phi0", phi0_eV, lo=0.0, lo_open=True)
+                                                                   + _num("alpha", alpha_eV_K) * T)
+                       / (_num("k_B", k_B, lo=0.0, lo_open=True) * T)))
+
+
+def lafferty_evaporation_g_cm2_s(T_K, B_K, C):
+    """W = 10^(C - B/T) / sqrt(T)  [g cm^-2 s^-1] (Lafferty fit as used by lane 19)."""
+    T = _num("T_K", T_K, lo=0.0, lo_open=True)
+    return 10.0 ** (_num("C", C) - _num("B_K", B_K, lo=0.0, lo_open=True) / T) / math.sqrt(T)
+
+
+def required_keeper_fraction(r, R):
+    """Smallest fixed keeper current, as a fraction of I_emit,min without keeper, that keeps
+    (I_max + I_k) / (I_min + I_k) <= R when I_max / I_min = r:  I_k / I_min >= max(0, (r - R) / (R - 1))."""
+    rr = _num("r", r, lo=1.0)
+    RR = _num("R", R, lo=1.0, lo_open=True)
+    return max(0.0, (rr - RR) / (RR - 1.0))
+
+
+def mfc_relative_uncertainty(mdot_sccm, fs_sccm, a_fs, a_rd, zero_tempco_fs_per_K, dT_K, orientation_fs):
+    """u/mdot = sqrt(a_rd^2 + (a_fs FS/q)^2 + (c_T dT FS/q)^2 + (o FS/q)^2)  (independent terms, root-sum-square)."""
+    q = _num("mdot_sccm", mdot_sccm, lo=0.0, lo_open=True)
+    fs = _num("fs_sccm", fs_sccm, lo=0.0, lo_open=True)
+    if q > fs:
+        raise H22InputError(f"flow {q} sccm exceeds the full scale {fs} sccm")
+    terms = [_num("a_rd", a_rd, lo=0.0),
+             _num("a_fs", a_fs, lo=0.0) * fs / q,
+             _num("zero_tempco", zero_tempco_fs_per_K, lo=0.0) * _num("dT_K", dT_K, lo=0.0) * fs / q,
+             _num("orientation_fs", orientation_fs, lo=0.0) * fs / q]
+    return math.sqrt(sum(t * t for t in terms))
+
+
+def max_full_scale_for_target(mdot_sccm, target, a_fs, a_rd):
+    """Largest FS keeping sqrt(a_rd^2 + (a_fs FS/q)^2) <= target."""
+    q = _num("mdot_sccm", mdot_sccm, lo=0.0, lo_open=True)
+    t = _num("target", target, lo=0.0, lo_open=True)
+    ard = _num("a_rd", a_rd, lo=0.0)
+    if ard >= t:
+        raise H22InputError(f"reading term {ard} alone exceeds the target {t}")
+    return q * math.sqrt(t * t - ard * ard) / _num("a_fs", a_fs, lo=0.0, lo_open=True)
+
+
+def gravimetric_duration_h(mdot_mg_s, target, u_balance_g):
+    """Collection time so that two weighings (sqrt(2) u_bal) give relative uncertainty `target` on the mean flow."""
+    rate_g_h = _num("mdot_mg_s", mdot_mg_s, lo=0.0, lo_open=True) * 3600.0 / 1000.0
+    return math.sqrt(2.0) * _num("u_balance_g", u_balance_g, lo=0.0, lo_open=True) / (
+        _num("target", target, lo=0.0, lo_open=True) * rate_g_h)
+
+
+def rate_of_rise_Pa_s(mdot_mg_s, T_K, volume_L, molar_mass_g_mol, N_A, k_B):
+    """Constant-volume (rate-of-rise) calibration: dP/dt = mdot R T / (M V), ideal gas, R = N_A k_B."""
+    mdot = _num("mdot_mg_s", mdot_mg_s, lo=0.0, lo_open=True) * 1.0e-6
+    R = _num("N_A", N_A, lo=0.0, lo_open=True) * _num("k_B", k_B, lo=0.0, lo_open=True)
+    M = _num("molar_mass_g_mol", molar_mass_g_mol, lo=0.0, lo_open=True) * 1.0e-3
+    V = _num("volume_L", volume_L, lo=0.0, lo_open=True) * 1.0e-3
+    return mdot * R * _num("T_K", T_K, lo=0.0, lo_open=True) / (M * V)
+
+
+def choked_orifice_diameter_um(mdot_mg_s, P0_bar, T0_K, cd, gamma, molar_mass_g_mol, N_A, k_B):
+    """Ideal-gas choked orifice: mdot = Cd A P0 sqrt(gamma/(R_s T0)) (2/(gamma+1))^((gamma+1)/(2(gamma-1)))."""
+    mdot = _num("mdot_mg_s", mdot_mg_s, lo=0.0, lo_open=True) * 1.0e-6
+    P0 = _num("P0_bar", P0_bar, lo=0.0, lo_open=True) * 1.0e5
+    T0 = _num("T0_K", T0_K, lo=0.0, lo_open=True)
+    g = _num("gamma", gamma, lo=1.0, lo_open=True)
+    R_s = _num("N_A", N_A, lo=0.0, lo_open=True) * _num("k_B", k_B, lo=0.0, lo_open=True) / (
+        _num("molar_mass_g_mol", molar_mass_g_mol, lo=0.0, lo_open=True) * 1.0e-3)
+    flux = (_num("cd", cd, lo=0.0, lo_open=True, hi=1.0) * P0 * math.sqrt(g / (R_s * T0))
+            * (2.0 / (g + 1.0)) ** ((g + 1.0) / (2.0 * (g - 1.0))))
+    area = mdot / flux
+    return math.sqrt(4.0 * area / math.pi) * 1.0e6
+
+
+def choked_flow_relative_change(dP_frac, dT_K, T0_K):
+    """Choked flow: mdot ~ P0 / sqrt(T0)  =>  d(mdot)/mdot = dP0/P0 - dT0/(2 T0) (worst-case magnitude reported)."""
+    return abs(_num("dP_frac", dP_frac)) + abs(_num("dT_K", dT_K)) / (2.0 * _num("T0_K", T0_K, lo=0.0, lo_open=True))
+
+
+# ------------------------------------------------------------------------------------------------------ derived
+def build_derived():
+    d = {}
+    conv = inp("xe_mg_s_per_sccm")
+    q10 = inp("a5_cathode_flow_design_target_mg_s")
+    q15 = inp("a5_cathode_flow_upper_test_point_mg_s")
+    firing = inp("rfp_firing_h")
+    mission = inp("rfp_mission_h")
+    life18 = inp("a5_design_life_target_h")
+    e_C, k_B = inp("e_C"), inp("k_B_J_K")
+    C0 = inp("celsius_offset_K")
+
+    def put(key, value, unit, relation, inputs, note=None, evidence_class="model-derived"):
+        entry = {"value": sig(value), "unit": unit, "relation": relation, "inputs": inputs,
+                 "evidence_class": evidence_class, "source": "SRC-LANE-DERIVATION"}
+        if note:
+            entry["note"] = note
+        d[key] = entry
+
+    # --- flows and Xe mass (topic 6, 8, 9)
+    put("cathode_flow_design_target_sccm", mg_s_to_sccm(q10, conv), "sccm Xe", "q = mdot / 0.0983009",
+        ["a5_cathode_flow_design_target_mg_s", "xe_mg_s_per_sccm"])
+    put("cathode_flow_upper_test_point_sccm", mg_s_to_sccm(q15, conv), "sccm Xe", "q = mdot / 0.0983009",
+        ["a5_cathode_flow_upper_test_point_mg_s", "xe_mg_s_per_sccm"])
+    masses = {}
+    for label, q in (("0.10", q10), ("0.15", q15)):
+        for hl, h in (("15000h", firing), ("18000h", life18), ("26000h", mission)):
+            masses[f"{label}_mg_s_{hl}"] = sig(xe_mass_kg(q, h))
+    put("cathode_xe_mass_reference_kg", masses, "kg", "m = mdot * t (15,000 h RFP firing; 18,000 h A5 design target; "
+        "26,000 h RFP mission if the cathode flowed continuously)",
+        ["a5_cathode_flow_design_target_mg_s", "a5_cathode_flow_upper_test_point_mg_s", "rfp_firing_h",
+         "a5_design_life_target_h", "rfp_mission_h"],
+        note="A5 reference arithmetic 5.4 kg / 8.1 kg reproduced; these are allocation arithmetic, not predictions")
+    put("idle_flow_factor", mission / firing, "1", "t_mission / t_firing (applies only if Xe must flow while idle)",
+        ["rfp_mission_h", "rfp_firing_h"])
+    veto = {}
+    for m in inp("a5_mass_allocation_kg") + [inp("rfp_mass_max_kg")]:
+        veto[f"{m:g}_kg_over_15000h_firing"] = sig(flow_for_mass_mg_s(m, firing))
+        veto[f"{m:g}_kg_over_26000h_continuous"] = sig(flow_for_mass_mg_s(m, mission))
+    put("cathode_flow_consuming_whole_mass_mg_s", veto, "mg/s", "mdot = m / t: the constant cathode flow whose Xe "
+        "alone equals the whole A5 system-mass allocation (34 / 36 kg) or the RFP limit (40 kg)",
+        ["a5_mass_allocation_kg", "rfp_mass_max_kg", "rfp_firing_h", "rfp_mission_h"],
+        note="hard physical bound of the veto check HI-01: a measured spot-mode flow at or above these values makes "
+             "the architecture unable to close on mass regardless of every other term (tank, thruster, PPU all >= 0)")
+    per_start = {f"{t:g}_s": sig(q10 * t) for t in grid("per_start_conditioning_s")}
+    put("per_start_cathode_xe_mg_at_design_flow", per_start, "mg per start", "m = mdot_c * t_conditioning at the A5 "
+        "design flow (scenario grid; the purge and ignition flows are additional and TBD)",
+        ["a5_cathode_flow_design_target_mg_s", "GRIDS.per_start_conditioning_s"],
+        note="scenario values for the Xe ledger m_startup term; the number of starts is TBD (ops concept)")
+
+    # --- electrical bounds (topic 5, 7)
+    Vmin = inp("hw_V_d_min_V")
+    Id_rfp = inp("rfp_power_max_W") / Vmin
+    put("I_d_bound_rfp_A", Id_rfp, "A", "I_d <= P_bus,max / V_d,min (eta <= 1, other loads >= 0; W3 HW-ENV-02)",
+        ["rfp_power_max_W", "hw_V_d_min_V"])
+    put("I_d_bound_a5_allocation_A", [a / Vmin for a in inp("a5_bus_allocation_W")], "A",
+        "I_d <= P_bus allocation / V_d,min", ["a5_bus_allocation_W", "hw_V_d_min_V"],
+        note="context only; the C-1 rating uses the RFP bound (larger)")
+    Ik_max = max(inp("next_keeper_A"), inp("zsch_keeper_min_A"))
+    put("keeper_current_upper_analog_A", Ik_max, "A", "max of the analog steady/self-heating keeper currents",
+        ["next_keeper_A", "zsch_keeper_min_A"], evidence_class="measured",
+        note="analog (NEXT neutralizer fixed keeper 3 A; Giessen LaB6 >= 3 A for self-heating)")
+    put("C1_emission_rating_min_A", Id_rfp + Ik_max, "A", "I_emit,rating >= I_d bound + I_k,max + I_x,max "
+        "(I_x,max PENDING the pre-ionizer ICD; value shown excludes it)",
+        ["rfp_power_max_W", "hw_V_d_min_V", "next_keeper_A", "zsch_keeper_min_A"])
+    Vk_run_max = max(inp("hc1_keeper_only_V"))
+    Pk_max = Ik_max * Vk_run_max
+    put("steady_keeper_power_bound_W", Pk_max, "W", "P_k <= I_k,max * V_k,run,max over the analog ranges",
+        ["next_keeper_A", "zsch_keeper_min_A", "hc1_keeper_only_V"],
+        note="worst case of the analog ranges if a steady keeper is adopted (H22-33); 0 W if the keeper is off")
+    put("steady_keeper_power_share_of_a5_allocation", [Pk_max / a for a in inp("a5_bus_allocation_W")], "1",
+        "P_k,bound / P_bus allocation", ["a5_bus_allocation_W"])
+    hc1_pairs = [p * t / 3600.0 for p, t in zip(inp("hc1_heater_W"), inp("hc1_heating_time_s"))]
+    jpl_bound = inp("jpl_1p5cm_heater_max_W") * max(inp("jpl_1p5cm_preheat_min")) * 60.0 / 3600.0
+    put("heater_energy_per_start_Wh", {"SITAEL_HC1_45W_600s": sig(hc1_pairs[0]), "SITAEL_HC1_60W_200s": sig(hc1_pairs[1]),
+                                        "bound_300W_capability_x_20min": sig(jpl_bound)}, "Wh",
+        "E = P_heater * t_preheat (the bound multiplies a capability by the longest preheat; not a used value)",
+        ["hc1_heater_W", "hc1_heating_time_s", "jpl_1p5cm_heater_max_W", "jpl_1p5cm_preheat_min"])
+
+    # --- emitter temperature window (topic 4)
+    T_lo = inp("lab6_o2_withstand_at_C") + C0
+    T_hi = inp("lab6_10Acm2_temperature_C") + C0
+    put("emitter_window_K", [T_lo, T_hi], "K", "[T(O2 withstand statement), T(>10 A/cm2 statement)] + 273.15",
+        ["lab6_o2_withstand_at_C", "lab6_10Acm2_temperature_C", "celsius_offset_K"])
+    J = {}
+    for tag, A, phi, alpha in (("lafferty", inp("lab6_A_lafferty_A_cm2K2"), inp("lab6_phi_lafferty_eV"), 0.0),
+                               ("gk_T_linear", inp("lab6_A_gk_A_cm2K2"), inp("lab6_phi0_gk_eV"),
+                                inp("lab6_alpha_gk_eV_K"))):
+        jlo = richardson_J_A_cm2(T_lo, A, phi, alpha, e_C, k_B)
+        jhi = richardson_J_A_cm2(T_hi, A, phi, alpha, e_C, k_B)
+        J[tag] = {"J_at_window_low_A_cm2": sig(jlo), "J_at_window_high_A_cm2": sig(jhi),
+                  "area_per_ampere_cm2_A": [sig(1.0 / jhi), sig(1.0 / jlo)],
+                  "turndown_ratio_R": sig(jhi / jlo)}
+    put("emission_window", J, "A/cm2; cm2/A; 1", "Richardson-Dushman J(T) at the window edges; A_emit/I_emit in "
+        "[1/J_high, 1/J_low]; R = J_high/J_low is the emission-current range a fixed emitter can span inside the window",
+        ["lab6_A_lafferty_A_cm2K2", "lab6_phi_lafferty_eV", "lab6_A_gk_A_cm2K2", "lab6_phi0_gk_eV",
+         "lab6_alpha_gk_eV_K", "e_C", "k_B_J_K"],
+        note="first order: thermionic emission only (no Schottky enhancement, no ion current share), uniform emitter "
+             "temperature; consistent with lane 19's 1839-1915 K for 5-10 A/cm2")
+    R_min = min(J["lafferty"]["turndown_ratio_R"], J["gk_T_linear"]["turndown_ratio_R"])
+    put("fixed_keeper_fraction_for_turndown", {f"r={r:g}": sig(required_keeper_fraction(r, R_min))
+                                               for r in grid("emission_turndown_ratio")}, "I_k / I_emit,min",
+        "I_k / I_min >= max(0, (r - R) / (R - 1)) with R the smaller turndown ratio of the two fits",
+        ["emission_window", "GRIDS.emission_turndown_ratio"],
+        note="a FIXED keeper current (identical in every arm, INV-C1) that keeps the emitter inside the window over a "
+             "test envelope with I_max/I_min = r; r is an H4 output")
+    evap = {}
+    for tag, T in (("window_low", T_lo), ("window_high", T_hi)):
+        W = lafferty_evaporation_g_cm2_s(T, inp("lab6_evap_B_K"), inp("lab6_evap_C"))
+        evap[tag] = {"W_g_cm2_s": sig(W), "areal_mass_15000h_g_cm2": sig(W * firing * 3600.0),
+                     "areal_mass_18000h_g_cm2": sig(W * life18 * 3600.0)}
+    put("evaporated_areal_mass", evap, "g/cm2", "W(T) * t, no redeposition credit (conservative, as lane 19)",
+        ["lab6_evap_B_K", "lab6_evap_C", "rfp_firing_h", "a5_design_life_target_h", "emitter_window_K"],
+        note="uniform temperature; axial peaking raises the local rate (lane 19 Delta T_peak input): the C-1 "
+             "specification states the usable insert areal mass against W(T_max + Delta T_peak)")
+    sigma = stefan_boltzmann(inp("k_B_J_K"), inp("h_J_s"), inp("c_m_s"))
+    put("stefan_boltzmann_W_m2K4", sigma, "W m^-2 K^-4", "2 pi^5 k^4 / (15 h^3 c^2)", ["k_B_J_K", "h_J_s", "c_m_s"])
+    put("radiative_flux_per_emissivity_area_W_cm2", [sigma * T_lo ** 4 * 1e-4, sigma * T_hi ** 4 * 1e-4], "W/cm2",
+        "q / (epsilon A) = sigma T^4 at the window edges (surroundings at 0 K)",
+        ["stefan_boltzmann_W_m2K4", "emitter_window_K"],
+        note="why the insert must be heat-shielded (Goebel & Katz p. 246); emissivity and area are C-1 design data")
+
+    # --- flow measurement (topic 8)
+    q10s, q15s = mg_s_to_sccm(q10, conv), mg_s_to_sccm(q15, conv)
+    table = []
+    for fs in grid("mfc_full_scale_sccm"):
+        for afs in grid("mfc_accuracy_fs_frac"):
+            row = {"FS_sccm": fs, "a_FS": afs}
+            for tag, q, qmg in (("0.10", q10s, q10), ("0.15", q15s, q15)):
+                u = mfc_relative_uncertainty(q, fs, afs, 0.0, 0.0, 0.0, 0.0)
+                row[f"u_rel_at_{tag}_mg_s"] = sig(u)
+                row[f"u_mass_15000h_kg_at_{tag}_mg_s"] = sig(u * xe_mass_kg(qmg, firing))
+            table.append(row)
+    put("flow_uncertainty_calibration_term", table, "fraction of reading; kg",
+        "u/mdot = a_FS * FS / q (calibration-accuracy term only, a_RD = 0, in-situ calibrated orientation); "
+        "u_m = (u/mdot) * mdot * 15,000 h",
+        ["GRIDS.mfc_full_scale_sccm", "GRIDS.mfc_accuracy_fs_frac", "a5_cathode_flow_design_target_mg_s",
+         "a5_cathode_flow_upper_test_point_mg_s", "xe_mg_s_per_sccm", "rfp_firing_h"],
+        note="evaluation grid: it shows how the full-scale choice drives the Xe-mass uncertainty; it is not a "
+             "statement about any device")
+    drift = []
+    for fs in (2.0, 5.0):
+        for dT in grid("temperature_offset_K"):
+            drift.append({"FS_sccm": fs, "dT_K": dT,
+                          "u_rel_zero_drift_at_0.10_mg_s": sig(inp("snyder_zero_tempco_fs_frac_per_K") * dT * fs / q10s),
+                          "u_rel_orientation_if_not_calibrated_in_place_at_0.10_mg_s":
+                              sig(inp("snyder_orientation_zero_fs_frac") * fs / q10s)})
+    put("flow_uncertainty_environment_terms", drift, "fraction of reading",
+        "zero drift c_T * dT * FS / q; orientation zero o * FS / q (removed by calibrating in the installed orientation)",
+        ["snyder_zero_tempco_fs_frac_per_K", "snyder_orientation_zero_fs_frac", "GRIDS.temperature_offset_K"])
+    fsmax = {}
+    for t in grid("uncertainty_target_frac"):
+        for ard in grid("mfc_accuracy_reading_frac"):
+            if ard >= t:
+                continue
+            fsmax[f"target={t:g},a_RD={ard:g}"] = {
+                "FS_max_sccm_at_0.10_mg_s": sig(max_full_scale_for_target(q10s, t, inp("snyder_mfr_accuracy_fs_frac"), ard)),
+                "FS_max_sccm_at_0.15_mg_s": sig(max_full_scale_for_target(q15s, t, inp("snyder_mfr_accuracy_fs_frac"), ard))}
+    put("full_scale_max_for_target", fsmax, "sccm Xe", "FS <= q sqrt(t^2 - a_RD^2) / a_FS with a_FS = 1 % FS "
+        "(typical manufacturer accuracy, Snyder p. 560)",
+        ["snyder_mfr_accuracy_fs_frac", "GRIDS.uncertainty_target_frac", "GRIDS.mfc_accuracy_reading_frac",
+         "cathode_flow_design_target_sccm", "cathode_flow_upper_test_point_sccm"])
+    grav = {}
+    for ub in grid("balance_u_g"):
+        grav[f"u_bal={ub:g}g"] = {f"t_h_target={t:g}_at_0.10_mg_s": sig(gravimetric_duration_h(q10, t, ub))
+                                  for t in grid("uncertainty_target_frac")}
+    put("gravimetric_collection_time_h", grav, "h", "t = sqrt(2) u_bal / (target * mdot)",
+        ["a5_cathode_flow_design_target_mg_s", "GRIDS.balance_u_g", "GRIDS.uncertainty_target_frac"],
+        note="balance term only; buoyancy, line-volume and regulator-inventory changes are additional")
+    ror = {}
+    for V in grid("rate_of_rise_volume_L"):
+        for T in grid("gas_temperature_K"):
+            ror[f"V={V:g}L"] = {"dPdt_Pa_s_at_0.10_mg_s": sig(rate_of_rise_Pa_s(q10, T, V, inp("xe_molar_mass_g_mol"),
+                                                                                inp("N_A_per_mol"), k_B)),
+                                "dPdt_Pa_s_at_0.15_mg_s": sig(rate_of_rise_Pa_s(q15, T, V, inp("xe_molar_mass_g_mol"),
+                                                                                inp("N_A_per_mol"), k_B))}
+    put("rate_of_rise_dPdt_Pa_s", ror, "Pa/s", "dP/dt = mdot R T / (M V), ideal gas, T = 293.15 K",
+        ["a5_cathode_flow_design_target_mg_s", "a5_cathode_flow_upper_test_point_mg_s", "xe_molar_mass_g_mol",
+         "N_A_per_mol", "k_B_J_K", "GRIDS.rate_of_rise_volume_L", "GRIDS.gas_temperature_K"])
+    put("high_range_full_scale_min_sccm", {"heated_analog_max_ignition_1.0_mg_s": sig(mg_s_to_sccm(max(inp("hc3_heated_ignition_flow_mg_s") + [1.0]), conv)),
+                                           "heaterless_analog_max_2.0_mg_s": sig(mg_s_to_sccm(max(inp("heaterless_ignition_flow_mg_s")), conv))},
+        "sccm Xe", "FS >= analog maximum ignition / purge flow",
+        ["hc3_heated_ignition_flow_mg_s", "heaterless_ignition_flow_mg_s", "xe_mg_s_per_sccm"],
+        note="1.0 mg/s is the upper end of the heated analogs used here (HC3 0.4-0.8 mg/s; HC1 heaterless 1 mg/s as "
+             "the lower heaterless point); final after C-1 selection")
+
+    # --- flight cathode branch (topic 6)
+    orif = {}
+    for P0 in grid("plenum_pressure_bar"):
+        for T in grid("gas_temperature_K"):
+            orif[f"P0={P0:g}bar"] = {
+                "d_um_at_0.10_mg_s": sig(choked_orifice_diameter_um(q10, P0, T, inp("kaist_orifice_cd"), inp("xe_gamma"),
+                                                                    inp("xe_molar_mass_g_mol"), inp("N_A_per_mol"), k_B)),
+                "d_um_at_0.15_mg_s": sig(choked_orifice_diameter_um(q15, P0, T, inp("kaist_orifice_cd"), inp("xe_gamma"),
+                                                                    inp("xe_molar_mass_g_mol"), inp("N_A_per_mol"), k_B))}
+    put("choked_orifice_diameter_um", orif, "um", "mdot = Cd A P0 sqrt(gamma/(R_s T0)) (2/(gamma+1))^((gamma+1)/"
+        "(2(gamma-1))), ideal gas, gamma = 5/3, Cd = 0.97 (IEPC-2009-061 assumption), T0 = 293.15 K",
+        ["a5_cathode_flow_design_target_mg_s", "a5_cathode_flow_upper_test_point_mg_s", "kaist_orifice_cd", "xe_gamma",
+         "xe_molar_mass_g_mol", "N_A_per_mol", "k_B_J_K", "GRIDS.plenum_pressure_bar"],
+        note="cross-check: the IEPC-2009-061 cathode channel used a 9 um choked orifice at ~3 bar for a 0-2 sccm "
+             "requirement; sizing is final only after H4 measures the flow and H2-3 fixes the plenum pressure")
+    sens = {f"dT={dT:g}K": sig(choked_flow_relative_change(inp("kaist_pressure_tolerance_frac"), dT, 293.15))
+            for dT in grid("plenum_temperature_excursion_K")}
+    put("flight_flow_tolerance_frac", sens, "fraction of flow", "|dP0/P0| + |dT0|/(2 T0) with dP0/P0 = +/- 1 % "
+        "(IEPC-2009-061 accumulator tolerance) and T0 = 293.15 K", ["kaist_pressure_tolerance_frac",
+                                                                    "GRIDS.plenum_temperature_excursion_K"],
+        note="worst-case linear sum of the plenum terms only; orifice Cd calibration and erosion/clogging are "
+             "additional and TBD")
+    return d
+
+
+# ------------------------------------------------------------------------------------------------------ content
+def _p(pid, topic, name, value, units, basis, source, evidence_class, status, representativeness, ci, note=None):
+    if basis not in BASES:
+        raise H22InputError(f"{pid}: unknown basis {basis!r}")
+    if representativeness not in REPRESENTATIVENESS:
+        raise H22InputError(f"{pid}: unknown representativeness {representativeness!r}")
+    if evidence_class is not None and evidence_class not in EVIDENCE_CLASSES:
+        raise H22InputError(f"{pid}: unknown evidence class {evidence_class!r}")
+    e = {"id": pid, "topic": topic, "name": name, "value": value, "units": units, "basis": basis, "source": source,
+         "evidence_class": evidence_class, "status": status, "representativeness": representativeness, "ci": ci}
+    if note:
+        e["note"] = note
+    return e
+
+
+def pend(key, extra=""):
+    return f"PENDING {PENDING_LANES[key]}" + (f" ({extra})" if extra else "")
+
+
+def build_location_options():
+    return [
+        {"id": "L-C", "name": "central: on the thruster axis, inside a bore through the inner magnetic core, keeper "
+                              "orifice near the plane of the inner-pole outer face",
+         "preliminary_choice": True,
+         "analog_practice": [
+             {"device": "JPL 6 kW laboratory Hall thruster, internal on-axis LaB6 cathode vs external LaB6 cathode, "
+                        "xenon (published analog only)", "source": "SRC-IEPC2007-278", "evidence_class": "measured",
+              "finding": "total coupling voltage 19.6 V internal vs 28.9 V external at 6 kW and 35.6 V vs 46.8 V at "
+                         "3 kW (Table 1, p. 15); cathode-to-ground voltage lower by about 6-10 V (abstract, p. 1)"},
+             {"device": "KhAI SPT-M70.CHC, 600 W nominal, central vs external self-heated cathode, xenon, cathode "
+                        "flow 0.13 mg/s (published analog only)", "source": "SRC-IEPC2013-410",
+              "evidence_class": "measured",
+              "finding": "U_CG 6-8 V lower for the central cathode at all points (p. 6); moving the central cathode "
+                         "downstream along the axis lowers U_CG (p. 6, Fig. 9)"},
+             {"device": "BHT-8000, PPS-20k, SPT-140, SPT-290 (central cathode at > 5 kW) and a BHT-1500 test with "
+                        "efficiency lower by up to 7 % with a central cathode at an off-nominal 0.7 kW",
+              "source": "SRC-IEPC2013-410", "evidence_class": "measured",
+              "finding": "secondary statements by the source authors (pp. 2-3); the BHT-1500 datum is a counter-"
+                         "example in the < 1.5 kW class and is recorded, not explained"},
+             {"device": "magnetically shielded HT5k with a centrally mounted HC20 hollow cathode",
+              "source": "SRC-LANE17", "evidence_class": "measured",
+              "finding": "EV-C6: the central HC20 cathode was transitioned from xenon to pure N2 (Andreussi et al. "
+                         "2022 p. 25, as recorded by lane 17)"}],
+         "consequences": {
+             "coupling_voltage": "lower in both analog classes (6-10 V at 3-6 kW, 6-8 V at 0.6 kW); common to all "
+                                 "three arms, so not an architecture discriminator; not transferred to H-1 as a value",
+             "plume_exposure": "cathode body, heater and insulators are enclosed by the inner-core bore; only the "
+                               "keeper face sees the plume (inferred, geometric). A flush orifice has no direct line of "
+                               "sight into the annular exit; protruding it (lower U_CG, IEPC-2013-410 p. 6) opens that "
+                               "view (inferred): coupling voltage and exposure trade against each other and are "
+                               "measured together in S1a (H22-T04)",
+             "magnetic_field_at_orifice": "on the axis of an axisymmetric circuit the radial field component vanishes "
+                                          "by symmetry, so the field at the orifice is axial (magnetostatics, derived); "
+                                          "its magnitude is PENDING H2-1. The bore removes inner-core cross-section "
+                                          "and can saturate the core (IEPC-2013-410 p. 3)",
+             "thermal": "cathode heat (preheat and steady) flows into the inner core next to MC-1; the mount must "
+                        "isolate it (PENDING H2-5)",
+             "integration": "the cathode service lines (Xe, heater, keeper, cathode common, tube thermocouple) leave "
+                            "through the rear of H-1, where IP-DN and the pre-ionizer module slot are (PENDING the "
+                            "pre-ionizer ICD and H2-7)"},
+         "gate_G_LOC": ["H2-1 confirms the inner-core bore diameter needed by C-1 keeps the core below saturation at the "
+                        "maximum coil current and reports B at the orifice (PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/)",
+                        "H2-5 confirms the inner-core / inner-coil temperature stays within the MC-1 limit with the "
+                        "cathode preheat and steady loads (PENDING docs/hardware/h2/h2_5_thermal_network/)",
+                        "the pre-ionizer ICD and H2-7 route the cathode lines past IP-DN identically for PIM-0, PIM-RF "
+                        "and PIM-ECR (PENDING docs/interfaces/preionizer_module/, docs/hardware/h2/h2_7_mechanical_bom/)"],
+         "if_gate_fails": "L-E"},
+        {"id": "L-E", "name": "external: beside the outer pole, axis parallel to the thruster axis, keeper orifice near "
+                              "the exit plane where the field lines close between the pole tips",
+         "preliminary_choice": False,
+         "analog_practice": [
+             {"device": "all flight SPTs as of 2013 (source statement)", "source": "SRC-IEPC2013-410",
+              "evidence_class": "measured", "finding": "'In all space applications of SPT exactly this scheme is "
+                                                       "implemented' (p. 2); external is the heritage scheme at "
+                                                       "< 1.5 kW"},
+             {"device": "JPL 6 kW laboratory thruster external LaB6 cathode", "source": "SRC-IEPC2007-278",
+              "evidence_class": "measured", "finding": "axially aligned, as close to the outer front pole piece as "
+                                                       "possible, keeper orifice flush with the exit plane (p. 5); "
+                                                       "external-cathode electrons follow field lines that return "
+                                                       "radially away from the thruster (p. 16)"},
+             {"device": "P5 (external EPL HCPEE 500 on Xe, 0.44 mg/s)", "source": "SRC-DOSSIER",
+              "evidence_class": "measured", "finding": "sys.p5.cathode_xe_flow"}],
+         "consequences": {
+             "coupling_voltage": "higher (the same analogs); rises with radial distance and when the orifice sits in "
+                                 "the magnetic leakage region instead of where field lines close between the pole tips "
+                                 "(IEPC-2013-410 p. 3; IEPC-2007-278 p. 5); the separatrix impedes coupling "
+                                 "(Sommerville 2009, abstract only)",
+             "plume_exposure": "the cathode body sits beside the plume; high-angle ions erode it and the thrust vector "
+                               "deviates toward the cathode (IEPC-2013-410 p. 2, stated advantages of the central "
+                               "scheme, secondary); an extra shroud would be needed to enclose tube and insulators",
+             "magnetic_field_at_orifice": "set by the outer-pole fringe field; orientation depends on position "
+                                          "(PENDING H2-1)",
+             "thermal": "decoupled from the inner core; heat goes into a bracket (PENDING H2-5)",
+             "integration": "no bore; larger radial envelope and bracket; easier pyrometer view, witness-coupon space "
+                            "and removal for inspection (HW-C1-08, HW-C1-09)"}},
+    ]
+
+
+def build_design_parameters(dv):
+    D = dv
+    q = D["cathode_flow_design_target_sccm"]["value"], D["cathode_flow_upper_test_point_sccm"]["value"]
+    ew = D["emission_window"]["value"]
+    P = []
+    # ---- topic 1: location
+    P.append(_p("H22-01", 1, "C-1 mounting location", "L-C central (on axis, inner-core bore); fallback L-E external",
+                "-", "analog", ["SRC-IEPC2007-278 p. 1, Table 1 p. 15", "SRC-IEPC2013-410 pp. 2-6",
+                                "SRC-GK2008 p. 337 ('Hall thrusters have been built with the cathode positioned on-axis')",
+                                "SRC-LANE17 EV-C6"], "measured",
+                "PRELIMINARY (gate G-LOC: " + ", ".join(PENDING_LANES[k] for k in ("H2-1", "H2-5", "PMI", "H2-7")) + ")",
+                "FLIGHT-REPRESENTATIVE", ["C-1", "H-1", "MC-1"],
+                note="common to hall_only, rf_hall and ecr_hall (INV-C1); location_options gives the consequences"))
+    P.append(_p("H22-02", 1, "C-1 axis orientation", "coaxial with the thruster axis (L-C); parallel to it (L-E)", "-",
+                "analog", ["SRC-IEPC2007-278 p. 5 (external cathode axially aligned)"], "measured", "PRELIMINARY",
+                "FLIGHT-REPRESENTATIVE", ["C-1", "H-1"]))
+    P.append(_p("H22-03", 1, "keeper-orifice axial position relative to the inner-pole outer face",
+                inp("khai_axial_scan_mm"), "mm", "analog",
+                ["SRC-IEPC2013-410 p. 5 (+/- 7 mm scan about the inner-pole-tip plane)",
+                 "SRC-IEPC2007-278 p. 5 (keeper orifice flush with the exit plane)"], "measured",
+                "TBD — requires the S1a coupling-voltage and near-cathode RGA scan (H22-T04); start flush (0 mm); the "
+                "chosen position is frozen before LOCK-1 (HW-C1-01)", "H-1 TEST-ARTICLE-ONLY", ["C-1", "H-1"],
+                note="the shim set that realises the scan is test-article-only; the frozen position is "
+                     "flight-representative"))
+    P.append(_p("H22-04", 1, "C-1 envelope class (outer diameter x length)",
+                {"OD_mm": inp("khai_cathode_od_mm"), "L_mm": inp("khai_cathode_length_mm")}, "mm", "analog",
+                ["SRC-IEPC2013-410 Table 1 p. 4 (KhAI SHC-2A.10 / SHC-5A / SHC-20A, 1-30 A, developer table)"],
+                "measured", pend("H2-7", "and C-1 selection, owner question HWQ-09"), "FLIGHT-REPRESENTATIVE", ["C-1"],
+                note="self-heated (heaterless) analog cathodes; no dimension of a heated LaB6 cathode of this current "
+                     "class was located in the accessed sources"))
+    P.append(_p("H22-05", 1, "inner-core bore diameter and core saturation margin (L-C)", None, "mm", "pending",
+                ["SRC-IEPC2013-410 p. 3 (bore reduces the magnetic-conductor cross-section and can saturate the core; "
+                 "permendur B_sat 2.35 T in that analysis); p. 4 (maximum cathode sizes 11 mm / 18 mm in 18 mm / 26 mm "
+                 "cores)"], None, pend("H2-1", "bore must pass C-1 OD + gap; saturation check at maximum coil current"),
+                "FLIGHT-REPRESENTATIVE", ["MC-1", "H-1"]))
+    P.append(_p("H22-06", 1, "routing of the C-1 service lines (Xe, heater, keeper, cathode common, tube thermocouple)",
+                "out of the rear of H-1 without crossing HALL_INLET_Z0; identical past IP-DN for PIM-0 / PIM-RF / PIM-ECR",
+                "-", "requirement", ["SRC-HWDEF HW-C1-04, HW-SVC-01, HW-PIM-01, HW-PIM-02"], "assumed",
+                pend("PMI", "a pass-through or radial routing reserved identically in every module; also "
+                     + PENDING_LANES["H2-7"]), "FLIGHT-REPRESENTATIVE", ["C-1", "H-1", "SVC-1", "PIM-0", "PIM-RF",
+                                                                          "PIM-ECR"]))
+    P.append(_p("H22-07", 1, "C-1 and mount magnetic material", "non-ferromagnetic throughout", "-", "requirement",
+                ["SRC-HWDEF HW-MC-12, HW-PIM-03"], "assumed", "PRELIMINARY", "FLIGHT-REPRESENTATIVE", ["C-1", "MC-1"]))
+    # ---- topic 2: plume / oxygen exposure
+    P.append(_p("H22-08", 2, "shielding / isolation concept of the LaB6 emitter, orifice and keeper",
+                ["S1 Xe flows through C-1 whenever the emitter is hot and O2-bearing gas is present; purge before "
+                 "every heat-up (HW-C1-03; lane 14 XE_PURGE)",
+                 "S2 enclosed keeper protects orifice plate and heater from ion bombardment (Goebel & Katz p. 246, "
+                 "p. 306)",
+                 "S3 L-C: tube, heater and insulators recessed in the inner-core bore; only the keeper face exposed "
+                 "(inferred, geometric)",
+                 "S4 emitter at or above 1570 C during O-bearing operation (H22-17, PROPOSED H22Q-03)",
+                 "S5 Xe kept flowing through the cool-down until T_emitter_cool_max (lane 14 CONTROLLED_SHUTDOWN)"],
+                "-", "analog", ["SRC-HWDEF HW-C1-03", "SRC-GK2008 pp. 246, 305-306", "SRC-LANE14 states XE_PURGE, "
+                                "CONTROLLED_SHUTDOWN"], "measured", "PRELIMINARY", "FLIGHT-REPRESENTATIVE", ["C-1"],
+                note="A5 risk 3 response; what must be demonstrated is in h4_test_inputs (H22-T01, T04, T11, T13, T14)"))
+    P.append(_p("H22-09", 2, "LaB6 O2 evidence points (reference, not design values)",
+                {"degrades_below_1440C_at_Torr": inp("lab6_o2_degrade_Torr"),
+                 "withstands_at_1570C_up_to_Torr": inp("lab6_o2_withstand_Torr"),
+                 "ran_in_O2_background_Torr_at_just_over_1600C": inp("lab6_o2_plasma_run_Torr")}, "Torr", "analog",
+                ["SRC-GK2008 Sec. 6.8.5 pp. 305-306", "SRC-DOSSIER lab6.env.*"], "measured", "PRELIMINARY",
+                "FLIGHT-REPRESENTATIVE", ["C-1"], note="diode and plasma-source statements (level 5); O2 only"))
+    P.append(_p("H22-10", 2, "atomic-O and N2 / N tolerance of the LaB6 emitter", None, "Pa", "pending",
+                ["SRC-DOSSIER U04, U05, G02, G03", "SRC-AOL5 AOL-M04, AOL-EX-03"], None,
+                "TBD — requires the AOL-EX-03 heated-emitter exposure (owner facility) and dossier gaps G02/G03",
+                "GROUND/FACILITY-ONLY", ["C-1"], note="no accessed source gives a threshold (lane 19: NO_QUANTITATIVE_EVIDENCE)"))
+    P.append(_p("H22-11", 2, "emitter-region O partial pressure and required attenuation", None, "Pa", "pending",
+                ["SRC-HWDEF HW-C1-03 (not measurable directly)", "SRC-W4 INS-22 (near-cathode RGA proxy)"], None,
+                "TBD — requires the calibrated near-cathode RGA (INS-22, AOL-CX-03) and the H22-10 threshold",
+                "H-1 TEST-ARTICLE-ONLY", ["C-1", "SVC-1"]))
+    P.append(_p("H22-12", 2, "cathode Xe while not firing", "no flow while cold and idle; purge before heating; flow "
+                "during cool-down only", "-", "assumed", ["SRC-LANE14 XE_PURGE, CONTROLLED_SHUTDOWN, t_exposure_max"],
+                "assumed", "PRELIMINARY", "FLIGHT-REPRESENTATIVE", ["C-1", "FS-C"],
+                note=f"if a test shows Xe must flow while idle, cathode Xe scales by "
+                     f"{D['idle_flow_factor']['value']} (26,000 / 15,000 h): Xe-ledger scenario, owner question H22Q-06"))
+    P.append(_p("H22-13", 2, "exposure geometry in flight", "exit plane faces the wake (thrust along the velocity for "
+                "drag compensation): the ram-directed ambient O flux does not reach an aft-facing orifice directly; "
+                "the exposure is the thruster's own un-ionized O / O2 back-flow and the wake environment", "-",
+                "derived", ["SRC-LANE19 section 6 (ram-facing flux-equivalent pressures are context only)"],
+                "inferred", "TBD — requires INS-22 back-flow measurement and a flight plume / back-flow model "
+                "(dossier G09)", "FLIGHT-REPRESENTATIVE", ["C-1"]))
+    # ---- topic 3: magnetic
+    P.append(_p("H22-14", 3, "|B| and direction at the keeper-orifice plane and along the cathode axis", None, "T",
+                "pending", ["SRC-GK2008 p. 313 (an axial field in the cathode plume region modifies the ionization "
+                            "instabilities, i.e. the spot/plume boundary)",
+                            "SRC-IEPC2013-410 p. 3 (orifice where field lines close between pole tips vs leakage region)",
+                            "SRC-SOMMERVILLE2009 abstract (separatrix impedes coupling)"], None,
+                pend("H2-1", "value for every coil setting; recorded with each B(z) map, extends HW-MC-03"),
+                "FLIGHT-REPRESENTATIVE", ["MC-1", "C-1"]))
+    P.append(_p("H22-15", 3, "allowed field magnitude at emitter and keeper", None, "T", "pending",
+                ["no accessed source states an allowed maximum"], None,
+                "TBD — requires the S1a C-1 characterization with MC-1 energized vs de-energized (spot/plume boundary "
+                "vs flow, H22-T01)", "H-1 TEST-ARTICLE-ONLY", ["C-1", "MC-1"]))
+    P.append(_p("H22-16", 3, "field orientation at the orifice (L-C)", "axial (B_r = 0 on the symmetry axis)", "-",
+                "derived", ["SRC-LANE-DERIVATION (axisymmetric magnetostatics: div B = 0 and symmetry give B_r(r=0) = 0)"],
+                "model-derived", "PRELIMINARY", "FLIGHT-REPRESENTATIVE", ["MC-1", "C-1"],
+                note="holds only for an axisymmetric MC-1 and a coaxial cathode; L-E orientation is position-dependent"))
+    # ---- topic 4: thermal
+    P.append(_p("H22-17", 4, "LaB6 emitter operating-temperature design window", D["emitter_window_K"]["value"], "K",
+                "analog", ["SRC-GK2008 p. 306 (1570 C withstands 1e-4 Torr O2)", "SRC-GK2008 p. 254 (>10 A/cm2 at "
+                           "1650 C)", "SRC-DOSSIER lab6.t.joussot_19A (about 1600 C at 19 A)"], "measured", "PRELIMINARY",
+                "FLIGHT-REPRESENTATIVE", ["C-1"],
+                note="1570-1650 C; the lower edge is the O2-tolerance statement (proposed floor H22Q-03), the upper "
+                     "edge the 10 A/cm2 statement; ignition happens colder (Joussot ignition above about 1300 C, "
+                     "dossier lab6.start.joussot_ignition_temperature)"))
+    P.append(_p("H22-18", 4, "emission current density at the window edges", ew, "A/cm2", "derived",
+                ["SRC-LANE-DERIVATION emission_window"], "model-derived", "PRELIMINARY", "FLIGHT-REPRESENTATIVE",
+                ["C-1"]))
+    P.append(_p("H22-19", 4, "emitting area per ampere of emission (insert sizing)",
+                {k: v["area_per_ampere_cm2_A"] for k, v in ew.items()}, "cm2/A", "derived",
+                ["SRC-LANE-DERIVATION emission_window"], "model-derived",
+                "TBD — requires the Phase-1 emission range (H4 output) to fix A_emit", "FLIGHT-REPRESENTATIVE", ["C-1"]))
+    P.append(_p("H22-20", 4, "emission turn-down a fixed emitter spans inside the window, and the fixed keeper current "
+                "that extends it", {"R": {k: v["turndown_ratio_R"] for k, v in ew.items()},
+                                    "I_k_over_I_min": D["fixed_keeper_fraction_for_turndown"]["value"]}, "1", "derived",
+                ["SRC-LANE-DERIVATION emission_window, fixed_keeper_fraction_for_turndown"], "model-derived",
+                "PRELIMINARY", "FLIGHT-REPRESENTATIVE", ["C-1", "PS-C"],
+                note="if the Phase-1 envelope spans more than about 2.2x in I_emit, the low-current points leave the "
+                     "window unless a fixed keeper current is run (identical in every arm, INV-C1)"))
+    P.append(_p("H22-21", 4, "evaporated LaB6 areal mass at the window edges (usable-insert specification input)",
+                D["evaporated_areal_mass"]["value"], "g/cm2", "derived", ["SRC-LANE-DERIVATION evaporated_areal_mass"],
+                "model-derived", "PRELIMINARY", "FLIGHT-REPRESENTATIVE", ["C-1"],
+                note="no redeposition credit; axial temperature peaking (lane 19 Delta T_peak) is added by the C-1 "
+                     "specification"))
+    P.append(_p("H22-22", 4, "heater supply power capability", [inp("joussot_heater_W"), inp("jpl_1p5cm_heater_max_W")],
+                "W", "analog", ["SRC-DOSSIER lab6.start.joussot_heater_ignition (184.5 W, 2-19 A class)",
+                                "SRC-LANE19 jpl_1p5cm_heater_max_W (300 W capability)",
+                                "SRC-LANE19 hc3_ignition_heater_power_W (60 W, 1-3 A)", "SRC-LANE19 jpl_h6_lab6_heater_W "
+                                "(120 W)", "SRC-DOSSIER lab6.start.zsch_heater_max (400 W, non-optimized)"], "measured",
+                "PRELIMINARY (final = C-1 datasheet; TBD — requires C-1 selection, owner question HWQ-09)",
+                "FLIGHT-REPRESENTATIVE", ["PS-C", "C-1"],
+                note="transient load on cathode_heater; the heater is off in steady operation (Goebel & Katz p. 337)"))
+    P.append(_p("H22-23", 4, "preheat duration", [inp("hc1_heating_time_s")[1], max(inp("jpl_1p5cm_preheat_min")) * 60.0],
+                "s", "analog", ["SRC-LANE19 hc1_heating_time_s (200-600 s)", "SRC-LANE19 jpl_1p5cm_preheat_min (18-20 min)"],
+                "measured", "TBD — requires C-1 selection and the S1a start characterization (H22-T02)",
+                "FLIGHT-REPRESENTATIVE", ["C-1", "PS-C"]))
+    P.append(_p("H22-24", 4, "heater energy per start", D["heater_energy_per_start_Wh"]["value"], "Wh", "derived",
+                ["SRC-LANE-DERIVATION heater_energy_per_start_Wh"], "model-derived", pend("H2-4", "energy and start-up "
+                "peak booking on cathode_heater"), "FLIGHT-REPRESENTATIVE", ["PS-C"]))
+    P.append(_p("H22-25", 4, "radiated flux per unit emissivity-area at the window",
+                D["radiative_flux_per_emissivity_area_W_cm2"]["value"], "W/cm2", "derived",
+                ["SRC-LANE-DERIVATION radiative_flux_per_emissivity_area_W_cm2", "SRC-GK2008 p. 246 (insert heat-shielded)"],
+                "model-derived", "PRELIMINARY", "FLIGHT-REPRESENTATIVE", ["C-1"]))
+    P.append(_p("H22-26", 4, "conduction / radiation path from C-1 to H-1 and mount-interface temperature limit",
+                "thin-wall refractory cathode tube, multi-layer radiation shield inside the bore, low-conductance "
+                "non-ferromagnetic standoffs; interface temperature at the inner core <= the MC-1 limit (HW-MC-08)",
+                "-", "pending", ["SRC-GK2008 pp. 244, 246 (heater on a refractory tube; insert heat-shielded)",
+                                 "SRC-HWDEF HW-MC-07, HW-MC-08"], None, pend("H2-5", "interface node and allowable "
+                                                                              "temperature"), "FLIGHT-REPRESENTATIVE",
+                ["C-1", "H-1", "MC-1"]))
+    P.append(_p("H22-27", 4, "steady cathode heat load into H-1", None, "W", "pending", ["no Vyovrinda measurement"],
+                None, "TBD — requires the S1a heater-off steady measurement (tube + mount thermocouples, H22-T07); "
+                      + pend("H2-5"), "H-1 TEST-ARTICLE-ONLY", ["C-1", "H-1"]))
+    P.append(_p("H22-28", 4, "LaB6 support and contact materials", "materials that inhibit boron diffusion at the "
+                "operating temperature", "-", "analog", ["SRC-GK2008 p. 254", "SRC-DOSSIER lab6.life.joussot_required "
+                                                        "(a lab cathode without a boron-diffusion barrier, required life "
+                                                        "< 200 h)"], "measured", "PRELIMINARY", "FLIGHT-REPRESENTATIVE",
+                ["C-1"]))
+    # ---- topic 5: keeper / igniter
+    P.append(_p("H22-29", 5, "keeper ignition voltage capability",
+                {"DC_open_circuit_min_V": inp("jpl_keeper_ignition_V"), "pulse_igniter_V": inp("gk_keeper_practice_V")[2:]},
+                "V", "analog", ["SRC-LANE19 jpl_ignition_keeper_voltage_V (150 V)", "SRC-LANE19 gk_keeper_ignition_"
+                                "voltages_V (DC 50-150 V + pulse 300-600 V)", "SRC-LANE19 hc3 (< 300 V heated)",
+                                "SRC-LANE19 hc1 (45-50 V with heater)"], "measured",
+                pend("H2-4", "PS-C keeper supply; final after C-1 selection"), "FLIGHT-REPRESENTATIVE", ["PS-C"]))
+    P.append(_p("H22-30", 5, "keeper current regulation range", [inp("hc1_msht100_keeper_A"), D["keeper_current_upper_analog_A"]["value"]],
+                "A", "analog", ["SRC-LANE19 hc1_msht100_keeper_current_A (0.5 A steady)", "SRC-LANE19 "
+                                "jpl_ignition_keeper_current_A (2 A at ignition)", "SRC-DOSSIER baow.i.next_keeper (3 A)",
+                                "SRC-DOSSIER lab6.start.zsch_keeper_min (>= 3 A self-heating)"], "measured",
+                pend("H2-4"), "FLIGHT-REPRESENTATIVE", ["PS-C"]))
+    P.append(_p("H22-31", 5, "keeper running voltage", [min(inp("jpl_keeper_running_V")), max(inp("hc1_keeper_only_V"))],
+                "V", "analog", ["SRC-LANE19 jpl_keeper_voltage_after_ignition_V (5-15 V)", "SRC-LANE19 "
+                                "hc1_keeper_only_power_W (15-30 V keeper-only)"], "measured", pend("H2-4"),
+                "FLIGHT-REPRESENTATIVE", ["PS-C"]))
+    P.append(_p("H22-32", 5, "steady keeper power bound and share of the A5 bus allocation",
+                {"P_k_bound_W": D["steady_keeper_power_bound_W"]["value"],
+                 "share_of_1300_1350_W": D["steady_keeper_power_share_of_a5_allocation"]["value"]}, "W; 1", "derived",
+                ["SRC-LANE-DERIVATION steady_keeper_power_bound_W"], "model-derived",
+                pend("H2-4", "cathode_keeper line of the " + BOUNDARY_VERSION + " ledger"), "FLIGHT-REPRESENTATIVE",
+                ["PS-C"]))
+    P.append(_p("H22-33", 5, "steady keeper policy", "off / floating after discharge ignition; a FIXED keeper current, "
+                "frozen at LOCK-1 and identical in every arm, only if S1a shows the self-heating limit or the H22-17 "
+                "window is not met over the Phase-1 envelope", "-", "analog",
+                ["SRC-GK2008 p. 337 (keeper normally used only during start-up)", "SRC-IEPC2019-303 pp. 1-2 (LaB6 "
+                 "emitter at < 1.5 kW performed better with added keeper current and cathode flow; keeper mode kept "
+                 "V_cg above -30 V)", "SRC-LANE17 INV-C1"], "measured",
+                "TBD — requires S1a (H22-T01, T08) and the owner decision H22Q-04", "FLIGHT-REPRESENTATIVE",
+                ["C-1", "PS-C"]))
+    P.append(_p("H22-34", 5, "ignition and shutdown sequence (lane 14 states)",
+                ["OFF", "XE_PURGE (cathode Xe at mdot_Xe_purge_set for t_purge_min)",
+                 "CATHODE_CONDITIONING (heater on, <= P_heater_max, until T_emitter_ignite_min on the tube proxy within "
+                 "t_heater_max)", "CATHODE_IGNITION (keeper open-circuit voltage, current-limited, optional pulse; "
+                 "I_keeper >= I_keeper_min; n_keeper_retry_max)", "XE_DISCHARGE_IGNITION (heater off once the "
+                 "discharge is established)", "... AIR_ONLY_ANODE_XE_CATHODE (keeper per H22-33)",
+                 "CONTROLLED_SHUTDOWN (keeper off, heater off, cathode Xe held for t_cathode_cooldown_min / until "
+                 "T_emitter_cool_max)"], "-", "requirement",
+                ["SRC-LANE14 states and parameters", "SRC-GK2008 p. 337", "SRC-HWDEF HW-FS-03"], "assumed",
+                "PRELIMINARY (numeric parameters TBD — requires S1a, H22-T02/T03/T16/T17)", "FLIGHT-REPRESENTATIVE",
+                ["C-1", "PS-C", "FS-C"]))
+    P.append(_p("H22-35", 5, "supply reference", "heater, keeper and discharge supplies referenced to cathode common",
+                "-", "analog", ["SRC-GK2008 p. 337, Fig. 7-7"], "measured", "PRELIMINARY", "FLIGHT-REPRESENTATIVE",
+                ["PS-C"]))
+    P.append(_p("H22-36", 5, "heaterless option (noted alternative only, not baseline)",
+                {"ignition_V": [inp("hc3_heaterless_ignition_V"), inp("khai_ignition_supply")[0]],
+                 "ignition_flow_mg_s": inp("heaterless_ignition_flow_mg_s")}, "V; mg/s", "analog",
+                ["SRC-LANE19 hc1/hc3 heaterless (700-800 V, 1-2 mg/s)", "SRC-IEPC2013-410 p. 5 (1 kV / 200 mA "
+                 "ignition supply for the self-heated cathode)"], "measured", "PRELIMINARY", "FLIGHT-REPRESENTATIVE",
+                ["C-1", "PS-C"], note="removes the heater and its supply; raises igniter voltage and ignition Xe "
+                                      "(m_startup); owner question H22Q-07"))
+    # ---- topic 6: Xe plumbing
+    P.append(_p("H22-37", 6, "flight cathode-branch topology",
+                ["Xe regulator / plenum (A5 Xe branch; " + pend("H2-3") + ")",
+                 "cathode isolation: normally-closed solenoid valves, two in series (analog IEPC-2009-061 p. 3)",
+                 "filter upstream of the restrictors (analog: integral inlet filter in each valve, IEPC-2019-303 p. 4)",
+                 "steady restrictor: choked micro-orifice (analog: 9 um at ~3 bar for 0-2 sccm, IEPC-2009-061 p. 5; "
+                 "choked cathode line, IEPC-2019-303 p. 8)",
+                 "parallel ignition / purge restrictor behind a latch or solenoid valve (analog: two parallel cathode "
+                 "orifices switched by a latch valve, IEPC-2019-303 pp. 3-4)",
+                 "own line to C-1, never crossing HALL_INLET_Z0 (HW-C1-04, lane 17 CR-4)"], "-", "analog",
+                ["SRC-IEPC2009-061", "SRC-IEPC2019-303", "SRC-HWDEF HW-C1-04"], "measured", "PRELIMINARY",
+                "FLIGHT-REPRESENTATIVE", ["FS-C", "C-1"],
+                note="heritage flow controllers split the cathode flow as a fixed fraction of the anode Xe "
+                     "(IEPC-2019-303); here the anode is atmospheric in nominal mode, so the cathode branch needs its "
+                     "own metering (as in the independent channels of IEPC-2009-061)"))
+    P.append(_p("H22-38", 6, "steady cathode flow design range (A5)", {"mg_s": [inp("a5_cathode_flow_design_target_mg_s"),
+                                                                                 inp("a5_cathode_flow_upper_test_point_mg_s")],
+                                                                        "sccm_Xe": list(q)}, "mg/s; sccm", "allocation",
+                ["SRC-A5 xe_mass_allocation", "SRC-LANE-DERIVATION cathode_flow_*_sccm"], "assumed", "PRELIMINARY",
+                "FLIGHT-REPRESENTATIVE", ["FS-C", "C-1"],
+                note="allocation and test point, not a measured flow; the spot-mode flow of C-1 is an H4 output (H22-T01, T11)"))
+    P.append(_p("H22-39", 6, "ignition / purge flow", {"heated_analog_mg_s": inp("hc3_heated_ignition_flow_mg_s"),
+                                                        "heaterless_analog_mg_s": inp("heaterless_ignition_flow_mg_s")},
+                "mg/s", "analog", ["SRC-LANE19 hc3 (0.4-0.8 mg/s heated)", "SRC-LANE19 hc1/hc3 heaterless (1-2 mg/s)"],
+                "measured", "TBD — requires C-1 selection and S1a (H22-T02, T16); lane 14 mdot_Xe_purge_set",
+                "FLIGHT-REPRESENTATIVE", ["FS-C", "C-1"]))
+    P.append(_p("H22-40", 6, "steady choked-orifice diameter (ideal gas, Cd 0.97)", D["choked_orifice_diameter_um"]["value"],
+                "um", "derived", ["SRC-LANE-DERIVATION choked_orifice_diameter_um"], "model-derived",
+                pend("H2-3", "plenum pressure") + "; TBD — requires the H4 measured flow", "FLIGHT-REPRESENTATIVE",
+                ["FS-C"], note="micron orifices need upstream filtration (clogging) and a calibrated Cd "
+                               "(IEPC-2009-061 p. 5: Cd from calibration, hole checked by SEM)"))
+    P.append(_p("H22-41", 6, "flight cathode-flow tolerance from the plenum (choked orifice)",
+                D["flight_flow_tolerance_frac"]["value"], "fraction", "derived",
+                ["SRC-LANE-DERIVATION flight_flow_tolerance_frac"], "model-derived", pend("XE", "flight term of the "
+                                                                                          "m_cathode uncertainty"),
+                "FLIGHT-REPRESENTATIVE", ["FS-C"]))
+    P.append(_p("H22-42", 6, "cathode Xe purity", ">= 99.99 % tolerated by LaB6; no getter purifier required on the "
+                "cathode branch for a LaB6 emitter", "%", "analog", ["SRC-GK2008 p. 306"], "measured", "PRELIMINARY",
+                "FLIGHT-REPRESENTATIVE", ["FS-C"], note="the FS-C supply grade is the owner's; a BaO-W alternative "
+                                                        "would need a purifier (dossier)"))
+    P.append(_p("H22-43", 6, "ground cathode feed on the H-1 stand",
+                ["two cathode Xe MFC channels in parallel (low range H22-48, high range H22-54) with isolation valves",
+                 "pressure transducer at the C-1 inlet (analog IEPC-2019-303 p. 6)",
+                 "gas isolator (voltage break) and particulate filter on the cathode line (analog IEPC-2019-303 p. 6: "
+                 "'Gas isolators are required to provide electrical isolation'; filters against back-flow particulates)",
+                 "purge / vent valve for XE_PURGE", "in-situ rate-of-rise calibration volume (H22-51)"], "-", "analog",
+                ["SRC-IEPC2019-303 p. 6", "SRC-HWDEF HW-FS-01, HW-FS-06"], "measured", pend("H2-6"),
+                "GROUND/FACILITY-ONLY", ["FS-C", "SVC-1"]))
+    # ---- topic 7: electrical return
+    P.append(_p("H22-44", 7, "cathode-common topology", "E1 (PRELIMINARY): all PS-C returns to cathode common, cathode "
+                "common tied to the H-1 body / magnetic circuit, thruster floating from facility ground; alternatives "
+                "E2 hard-grounded cathode common (not adopted: changes coupling and is facility-specific) and E3 "
+                "floating with a defined bleed / clamp impedance (flight question for H2-4)", "-", "analog",
+                ["SRC-GK2008 p. 337 ('cathode common (typically also connected to the thruster body or magnetic "
+                 "circuit)')", "SRC-HWDEF HW-ELEC-01"], "measured", "PRELIMINARY", "FLIGHT-REPRESENTATIVE",
+                ["PS-C", "H-1", "C-1"]))
+    P.append(_p("H22-45", 7, "cathode-to-ground voltage record and monitoring limit", {"flight_analog_limit_V":
+                inp("psyche_Vcg_limit_V")}, "V", "analog", ["SRC-IEPC2019-303 p. 2 (V_cg kept above -30 V)",
+                                                            "SRC-HWDEF HW-C1-05", "SRC-GK2008 p. 338 (Eq. 7.2-22; beam "
+                                                            "to ground typically 10-20 V)"], "measured",
+                "TBD — requires the S1 day-to-day scatter (LOCK-2) for any limit; V_cg recorded at every reading now",
+                "FLIGHT-REPRESENTATIVE", ["PS-C", "C-1"]))
+    P.append(_p("H22-46", 7, "thrust-stand coupling of the cathode lines", "all C-1 lines cross the stand inside SVC-1, "
+                "identical in every arm; cathode common isolated from the stand frame with its insulation resistance "
+                "measured (HW-ELEC-05); the Xe line loop is part of the in-situ calibration (HW-SVC-02)", "-",
+                "requirement", ["SRC-HWDEF HW-SVC-01, HW-SVC-02, HW-ELEC-05"], "assumed", pend("H2-6"),
+                "H-1 TEST-ARTICLE-ONLY", ["SVC-1", "C-1"]))
+    # ---- topic 8: flow measurement
+    P.append(_p("H22-47", 8, "flow-measurement accuracy specification form (datasheet fields required at H3)",
+                ["a_RD (% of reading)", "a_FS (% of full scale)", "zero temperature coefficient (% FS per K)",
+                 "orientation zero shift (% FS)", "calibration gas = Xe, calibration temperature and inlet pressure",
+                 "traceability"], "-", "analog", ["SRC-SNYDER2017 pp. 557, 560, 562"], "measured", "PRELIMINARY",
+                "GROUND/FACILITY-ONLY", ["FS-C"],
+                note="Snyder: typical 1-5 % FS, manufacturer accuracy typically 1 % FS, orientation zero up to 0.4 % "
+                     "FS, zero about 0.12 % per degree; two NIST-tested TMFCs were off by -10 to +8.5 % (p. 560)"))
+    P.append(_p("H22-48", 8, "low-range cathode MFC full scale", {"FS_max_sccm_PROPOSED": 2.0,
+                "basis_FS_max_for_2pct_at_0.10_mg_s": D["full_scale_max_for_target"]["value"]["target=0.02,a_RD=0"]},
+                "sccm Xe", "derived", ["SRC-LANE-DERIVATION full_scale_max_for_target", "SRC-SNYDER2017 p. 560"],
+                "model-derived", "PROPOSED (owner: H22Q-02 sets the 2 % target; not an RFP value)",
+                "GROUND/FACILITY-ONLY", ["FS-C"],
+                note="2.0 sccm (0.197 mg/s) holds 0.10 mg/s at 51 % FS and 0.15 mg/s at 76 % FS and reaches down to "
+                     "the 0.08 mg/s analog low end; the value 2.0 is the rounded-down FS_max, a planning choice"))
+    P.append(_p("H22-49", 8, "relative flow uncertainty vs full scale (calibration term)",
+                D["flow_uncertainty_calibration_term"]["value"], "fraction; kg", "derived",
+                ["SRC-LANE-DERIVATION flow_uncertainty_calibration_term"], "model-derived", "PRELIMINARY",
+                "GROUND/FACILITY-ONLY", ["FS-C"]))
+    P.append(_p("H22-50", 8, "environment terms of the flow uncertainty", D["flow_uncertainty_environment_terms"]["value"],
+                "fraction of reading", "derived", ["SRC-LANE-DERIVATION flow_uncertainty_environment_terms"],
+                "model-derived", "PRELIMINARY", "GROUND/FACILITY-ONLY", ["FS-C"]))
+    P.append(_p("H22-51", 8, "calibration method", ["working: in-situ constant-volume rate-of-rise on Xe, MFC installed "
+                "in its final orientation at its operating temperature and inlet pressure (Snyder pp. 560, 562)",
+                "reference: gravimetric (Snyder p. 561: 'generally regarded as the most accurate way to measure the "
+                "actual mass flow rate') on the cathode Xe bottle", "traceable calibration at least every 12 months "
+                "(Snyder p. 564; HW-FS-01)"], "-", "analog", ["SRC-SNYDER2017 pp. 560-564", "SRC-HWDEF HW-FS-01"],
+                "measured", "PRELIMINARY", "GROUND/FACILITY-ONLY", ["FS-C"]))
+    P.append(_p("H22-52", 8, "gravimetric collection time at 0.10 mg/s", D["gravimetric_collection_time_h"]["value"], "h",
+                "derived", ["SRC-LANE-DERIVATION gravimetric_collection_time_h"], "model-derived",
+                "TBD — requires the balance capacity / readability of the H3 selection", "GROUND/FACILITY-ONLY", ["FS-C"]))
+    P.append(_p("H22-53", 8, "rate-of-rise pressure slope", D["rate_of_rise_dPdt_Pa_s"]["value"], "Pa/s", "derived",
+                ["SRC-LANE-DERIVATION rate_of_rise_dPdt_Pa_s"], "model-derived", pend("H2-6", "calibration volume and "
+                                                                                     "manometer range"),
+                "GROUND/FACILITY-ONLY", ["FS-C"]))
+    P.append(_p("H22-54", 8, "high-range cathode MFC full scale (ignition / purge / minimum-flow scan top)",
+                D["high_range_full_scale_min_sccm"]["value"], "sccm Xe", "derived",
+                ["SRC-LANE-DERIVATION high_range_full_scale_min_sccm"], "model-derived",
+                "TBD — requires C-1 selection (ignition flow)", "GROUND/FACILITY-ONLY", ["FS-C"]))
+    P.append(_p("H22-55", 8, "cathode-flow scan grid below the design target (spot/plume boundary)", None, "mg/s",
+                "pending", ["SRC-DOSSIER G06", "SRC-LANE14 mdot_Xe_cathode_min"], None,
+                "TBD — requires the S1a pre-registration of the scan levels (H22-T01); lower end at or below the "
+                "0.08 mg/s analog low end", "H-1 TEST-ARTICLE-ONLY", ["FS-C", "C-1"]))
+    # ---- topic 9 + emission rating
+    P.append(_p("H22-56", 9, "cathode Xe mass reference arithmetic", D["cathode_xe_mass_reference_kg"]["value"], "kg",
+                "derived", ["SRC-LANE-DERIVATION cathode_xe_mass_reference_kg", "SRC-A5 reference_arithmetic_15000h"],
+                "model-derived", pend("XE", "m_cathode term"), "FLIGHT-REPRESENTATIVE", ["FS-C"]))
+    P.append(_p("H22-57", 9, "cathode flow at which cathode Xe alone equals the whole mass allocation",
+                D["cathode_flow_consuming_whole_mass_mg_s"]["value"], "mg/s", "derived",
+                ["SRC-LANE-DERIVATION cathode_flow_consuming_whole_mass_mg_s", "SRC-VETO RI-MASS-CATHODE-XE"],
+                "model-derived", "PRELIMINARY", "FLIGHT-REPRESENTATIVE", ["FS-C", "C-1"]))
+    P.append(_p("H22-58", 5, "C-1 emission rating (lower bound)", {"I_emit_min_A": D["C1_emission_rating_min_A"]["value"],
+                                                                   "plus": "I_x,max (" + pend("PMI") + ")"}, "A",
+                "derived", ["SRC-LANE-DERIVATION C1_emission_rating_min_A", "SRC-HWDEF HW-C1-02, HW-ENV-02"],
+                "model-derived", "PRELIMINARY", "FLIGHT-REPRESENTATIVE", ["C-1"],
+                note="inside the 2-19 A laboratory LaB6 range (dossier lab6.i.joussot_range; context, not a rating)"))
+    return P
+
+
+def build_interface_demands(dv):
+    D = dv
+    L = PENDING_LANES
+    rows = [
+        ("H2-2", L["H2-1"], "inner-core bore for C-1 (L-C)", "C-1 OD + radial gap; analog OD 10-16 mm", "mm",
+         pend("H2-1", "saturation check at the maximum coil current; gate G-LOC")),
+        ("H2-2", L["H2-1"], "|B| and direction at the keeper-orifice plane and along the cathode axis, every coil "
+                            "setting", "TBD", "T", pend("H2-1")),
+        ("H2-2", L["H2-1"], "separatrix position relative to the orifice (L-E fallback only)", "TBD", "mm",
+         pend("H2-1")),
+        ("H2-2", L["H2-1"], "C-1 and mount are non-ferromagnetic (no cathode term in the MC-1 model)", "mu_r ~ 1", "-",
+         "PRELIMINARY"),
+        (L["H2-1"], "H2-2", "inner-core / inner-coil temperature limit at the C-1 mount interface", "TBD", "K",
+         pend("H2-1", "with HW-MC-08")),
+        ("H2-2", L["H2-4"], "heater supply capability (cathode_heater)", [inp("joussot_heater_W"),
+                                                                          inp("jpl_1p5cm_heater_max_W")], "W",
+         pend("H2-4")),
+        ("H2-2", L["H2-4"], "keeper supply: DC open-circuit voltage / pulse igniter", {"DC_min_V": 150.0,
+                                                                                         "pulse_V": [300.0, 600.0]}, "V",
+         pend("H2-4")),
+        ("H2-2", L["H2-4"], "keeper supply current regulation range (cathode_keeper)", [0.5, 3.0], "A", pend("H2-4")),
+        ("H2-2", L["H2-4"], "steady keeper power bound (0 W if keeper off)", D["steady_keeper_power_bound_W"]["value"],
+         "W", pend("H2-4")),
+        ("H2-2", L["H2-4"], "heater energy per start and start-up peak on cathode_heater",
+         D["heater_energy_per_start_Wh"]["value"], "Wh", pend("H2-4")),
+        ("H2-2", L["H2-4"], "cathode-common topology E1 and V_cg telemetry; bleed / clamp impedance (E3) for flight",
+         "E1", "-", pend("H2-4")),
+        ("H2-2", L["H2-4"], "C-1 emission rating lower bound (discharge-supply current + keeper)",
+         D["C1_emission_rating_min_A"]["value"], "A", "PRELIMINARY"),
+        ("H2-2", L["H2-5"], "cathode preheat load into the mount (transient)", [inp("joussot_heater_W"),
+                                                                               inp("jpl_1p5cm_heater_max_W")], "W",
+         pend("H2-5")),
+        ("H2-2", L["H2-5"], "emitter temperature window", D["emitter_window_K"]["value"], "K", "PRELIMINARY"),
+        ("H2-2", L["H2-5"], "radiated flux per unit emissivity-area at the window",
+         D["radiative_flux_per_emissivity_area_W_cm2"]["value"], "W/cm2", "PRELIMINARY"),
+        ("H2-2", L["H2-5"], "steady cathode heat load into H-1", "TBD", "W",
+         "TBD — requires the S1a heater-off measurement (H22-T07)"),
+        ("H2-2", L["H2-3"], "regulated Xe plenum pressure and temperature upstream of the cathode orifice",
+         "grid 1-3 bar", "bar", pend("H2-3")),
+        ("H2-2", L["H2-3"], "cathode branch steady flow range", [inp("a5_cathode_flow_design_target_mg_s"),
+                                                                  inp("a5_cathode_flow_upper_test_point_mg_s")],
+         "mg/s", "PRELIMINARY"),
+        ("H2-2", L["H2-3"], "cathode ignition / purge flow (heated analog; heaterless higher)",
+         inp("hc3_heated_ignition_flow_mg_s"), "mg/s", "TBD — requires C-1 selection"),
+        ("H2-2", L["H2-3"], "cathode line never crosses HALL_INLET_Z0; own isolation valves and filter", "-", "-",
+         "PRELIMINARY"),
+        ("H2-2", L["H2-6"], "low-range cathode MFC", {"FS_max_sccm": 2.0}, "sccm Xe", "PROPOSED"),
+        ("H2-2", L["H2-6"], "high-range cathode MFC", D["high_range_full_scale_min_sccm"]["value"], "sccm Xe",
+         "TBD — requires C-1 selection"),
+        ("H2-2", L["H2-6"], "rate-of-rise calibration volume and manometer", D["rate_of_rise_dPdt_Pa_s"]["value"],
+         "Pa/s", pend("H2-6")),
+        ("H2-2", L["H2-6"], "C-1 tube thermocouple (mandatory), pyrometer view where possible, near-cathode RGA port, "
+                            "C-1 inlet pressure transducer, V_cg / keeper / heater metering, Hall-probe access to the "
+                            "orifice plane, axial shim set", "-", "-", pend("H2-6", "HW-C1-05/07/09, INS-22, INS-23")),
+        ("H2-2", L["H2-7"], "C-1 envelope and mass class", {"OD_mm": inp("khai_cathode_od_mm"),
+                                                           "L_mm": inp("khai_cathode_length_mm"),
+                                                           "mass_g": inp("khai_cathode_mass_g")}, "mm; g",
+         pend("H2-7", "analog, self-heated cathodes; heated LaB6 cathodes of this class TBD")),
+        ("H2-2", L["H2-7"], "C-1 service-line routing out of the rear of H-1", "-", "-", pend("H2-7")),
+        ("H2-2", L["PMI"], "pass-through or radial routing of the C-1 lines past IP-DN, identical for PIM-0, PIM-RF, "
+                           "PIM-ECR", "-", "-", pend("PMI")),
+        (L["PMI"], "H2-2", "I_x,max: net interstage electrode current returning to cathode common", "TBD", "A",
+         pend("PMI")),
+        ("H2-2", L["PMI"], "no module field or ferromagnetic part changes B at the C-1 orifice beyond the INV-B3 "
+                           "tolerance", "TBD", "T", pend("PMI", "with HW-PIM-06")),
+        ("H2-2", L["XE"], "m_cathode = mdot_c * t_fire (mdot_c = H4 measured spot-mode flow); reference arithmetic",
+         D["cathode_xe_mass_reference_kg"]["value"], "kg", pend("XE")),
+        ("H2-2", L["XE"], "per-start cathode Xe (purge + conditioning + ignition) for m_startup; conditioning part at "
+                          "the design flow", D["per_start_cathode_xe_mg_at_design_flow"]["value"], "mg per start",
+         pend("XE", "starts TBD")),
+        ("H2-2", L["XE"], "shutdown cool-down Xe per stop: mdot_c * t_cathode_cooldown_min", "TBD", "mg per stop",
+         "TBD — requires S1 (H22-T17)"),
+        ("H2-2", L["XE"], "idle-flow scenario factor (only if Xe must flow while idle)",
+         D["idle_flow_factor"]["value"], "1", pend("XE")),
+        ("H2-2", L["XE"], "measurement uncertainty of m_cathode (H4 flow measurement)",
+         "flow_uncertainty_calibration_term", "kg", pend("XE")),
+        ("H2-2", L["XE"], "flight flow tolerance of the choked orifice (plenum terms)",
+         D["flight_flow_tolerance_frac"]["value"], "fraction", pend("XE")),
+        ("H2-2", L["XE"], "flow at which cathode Xe alone equals the whole mass allocation (veto bound)",
+         D["cathode_flow_consuming_whole_mass_mg_s"]["value"], "mg/s", "PRELIMINARY"),
+        ("H2-2", L["P1-PREG"], "cathode flow setpoint, keeper mode / current and heater state frozen at LOCK-1, "
+                               "identical in every arm; raising cathode flow to sustain the discharge counts as Xe "
+                               "assistance (A5 rule)", "-", "-", "PROPOSED (owner: H22Q-05)"),
+        ("H2-2", L["P1-PREG"], "cathode quantities recorded at every Phase-1 point: mdot_c, P_keeper, P_heater (0 W "
+                               "explicit), V_cg, near-cathode RGA, hot-emitter O-exposure log", "-", "-",
+         pend("P1-PREG")),
+        ("H2-2", L["M16"], "m16_rows of this lane", "see m16_rows", "-", pend("M16")),
+        ("H2-2", "C-1", "HW-C1-01 cathode_position filled by H22-01 / H22-03 when G-LOC and S1a close", "TBD", "m",
+         "TBD — requires G-LOC and H22-T04"),
+        ("H2-2", "FS-C", "Xe (cathode) MFC channels per H22-48 / H22-54 (HW-FS-01)", "-", "-", "PRELIMINARY"),
+        ("H2-2", "PS-C", "keeper and heater supplies per H22-29 .. H22-32 metered at their load planes (HW-C1-05)",
+         "-", "-", "PRELIMINARY"),
+        ("H2-2", "MC-1", "B at the C-1 orifice in every B(z) record (extends HW-MC-03)", "-", "-", "PRELIMINARY"),
+        ("H2-2", "SVC-1", "C-1 lines present and routed identically in every arm (HW-SVC-01)", "-", "-", "PRELIMINARY"),
+        ("H2-2", "HALL_INLET_Z0", "cathode Xe never crosses the plane (HW-C1-04, CR-4)", "-", "-", "PRELIMINARY"),
+        ("H2-2", "IP-DN", "C-1 lines pass IP-DN without changing the module interface (HW-PIM-01)", "-", "-",
+         pend("PMI")),
+    ]
+    out = []
+    for i, (frm, to, qty, val, units, status) in enumerate(rows, start=1):
+        out.append({"id": f"H22-IF-{i:02d}", "from": frm, "to": to, "quantity": qty, "value": val, "units": units,
+                    "status": status})
+    return out
+
+
+def build_hard_incompatibility_check(dv):
+    D = dv
+    v = D["cathode_flow_consuming_whole_mass_mg_s"]["value"]
+    return {
+        "summary": "none found: no finding vetoes the A5 architecture. One watch item carries an explicit, "
+                   "closure-independent veto bound (HI-01) that only an H4 measurement can trigger.",
+        "checks": [
+            {"id": "HI-01", "question": "Does the C-1 Xe flow make the architecture unable to close on mass?",
+             "veto_bound": {"relation": "cathode Xe alone >= whole mass allocation", "flows_mg_s": v,
+                            "evidence_class": "model-derived", "basis": "hard physical bound (mass balance) on A5 / "
+                                                                        "RFP numbers"},
+             "evidence": [
+                 {"statement": "no Vyovrinda C-1 flow has been measured", "evidence_class": None},
+                 {"statement": "in-thruster analog: 0.13 mg/s cathode flow on a 600 W SPT at 1.9 A nominal (test "
+                               "condition, not a minimum)", "source": "SRC-IEPC2013-410 p. 5", "evidence_class": "measured"},
+                 {"statement": "diode analogs: minimum spot-mode flow 0.6 mg/s at 2.5-4 A (HC3) and plume mode below "
+                               "0.8 mg/s at 1.25-1.5 A (HC1, above its design current); 0.2-0.6 mg/s at 2-19 A (Joussot)",
+                  "source": "SRC-LANE19; SRC-DOSSIER lab6.flow.joussot_range", "evidence_class": "measured"},
+                 {"statement": "0.44 mg/s P5 setpoint and 0.81-1.48 mg/s (7 % of anode) on the JPL 6 kW thruster are "
+                               "setpoints of larger thrusters, not minima", "source": "SRC-LANE19; SRC-IEPC2007-278 "
+                                                                                   "Table 1 p. 15",
+                  "evidence_class": "measured"}],
+             "status": "NOT_ESTABLISHED (watch): the analogs lie on both sides of the bound and none is a minimum "
+                       "flow at the Vyovrinda emission current in the MC-1 field; the H4 measurement (H22-T01, T11) "
+                       "decides. Relevant to A7 blocker 3."},
+            {"id": "HI-02", "question": "Can a central bore make the inner core saturate?",
+             "evidence": [{"statement": "a bore reduces the magnetic-conductor cross-section and can saturate the "
+                                        "core (analysis in the source)", "source": "SRC-IEPC2013-410 p. 3",
+                           "evidence_class": "model-derived"}],
+             "status": "PENDING H2-1; not an architecture veto: the external location L-E exists and changes nothing "
+                       "else in the architecture"},
+            {"id": "HI-03", "question": "Is a Xe-fed LaB6 cathode incompatible with an N2 / O2 anode plume?",
+             "evidence": [{"statement": "PPS1350 ran 10 h on N2 and 10 h on N2/O2 at the anode with the cathode on Xe, "
+                                        "stably", "source": "SRC-DOSSIER sys.pps1350.claim", "evidence_class": "measured"},
+                          {"statement": "the adverse cathode data are for cathodes FED with the atmospheric mixture "
+                                        "(HC20h; up to 12 % air in the Xe feed) or not attributed to poisoning "
+                                        "(RAM-HET)", "source": "SRC-AOL5 AOL-M04; SRC-DOSSIER",
+                           "evidence_class": "measured"}],
+             "status": "none found; durations are short (10 h), so life in this environment is open (A5 risk 3, "
+                       "AOL-M04 / M05)"},
+            {"id": "HI-04", "question": "Is the required emission beyond the LaB6 class?",
+             "evidence": [{"statement": f"rating lower bound {D['C1_emission_rating_min_A']['value']} A + I_x,max vs "
+                                        "2-19 A laboratory LaB6 range", "source": "SRC-DOSSIER lab6.i.joussot_range",
+                           "evidence_class": "measured"}],
+             "status": "none found"},
+            {"id": "HI-05", "question": "Do heater / keeper loads break the bus allocation?",
+             "evidence": [{"statement": f"steady keeper bound {D['steady_keeper_power_bound_W']['value']} W is "
+                                        f"{D['steady_keeper_power_share_of_a5_allocation']['value']} of 1.30 / 1.35 kW; "
+                                        "the heater (<= 300 W analog capability) is a start-up load, off in steady "
+                                        "operation", "source": "SRC-LANE-DERIVATION; SRC-GK2008 p. 337",
+                           "evidence_class": "model-derived"}],
+             "status": "none found; start-up peak interpretation stays an owner question (lane 19)"},
+            {"id": "HI-06", "question": "Can a 1843-1923 K emitter be thermally isolated next to MC-1?",
+             "evidence": [{"statement": "central LaB6 cathodes run on 3-6 kW laboratory thrusters and central cathodes "
+                                        "on a 600 W SPT", "source": "SRC-IEPC2007-278; SRC-IEPC2013-410",
+                           "evidence_class": "measured"}],
+             "status": "none found; PENDING H2-5 for the Vyovrinda interface temperature"},
+        ],
+        "checked_and_not_used_as_evidence": ["abep_sim/plasma_devices.py (superseded 0-D Hall; its cathode constants "
+                                             "are unsourced per the dossier)", "any Hall transport closure or "
+                                             "screening candidate", "withdrawn v1.2-v1.6 numbers"],
+    }
+
+
+def build_blockers():
+    return [
+        {"blocker": 1, "text": "Hall-only sustainment at the actual atmospheric feed state",
+         "how_this_lane_informs": "C-1 position, flow, keeper mode and heater state are frozen before LOCK-1 and "
+                                  "identical in every arm, so a sustainment result is attributable to the feed and the "
+                                  "accelerator, not to the cathode; the cathode flow is never a sustainment knob (the "
+                                  "ECHT precedent raised cathode flow ad hoc: dossier sys.echt.claim); a fixed keeper "
+                                  "current may be needed for low-I_d knee points (H22-20)",
+         "effect": "enabling / protocol input; no architecture statement"},
+        {"blocker": 2, "text": "incremental RF / ECR benefit after full bus-power accounting",
+         "how_this_lane_informs": "cathode_keeper and cathode_heater are common bus components metered per arm "
+                                  "(HW-C1-05); keeper setting frozen identical in every arm, so a keeper need is "
+                                  "common-mode; a pre-ionizer started while the heater is on raises the start-up peak "
+                                  "(lane 19 V2); per-arm O back-flow differences are measured by the near-cathode RGA",
+         "effect": "bookkeeping inputs; no ranking"},
+        {"blocker": 3, "text": "Xe / cathode closure (no continuous Xe assistance; cathode Xe fits the mass allocation)",
+         "how_this_lane_informs": "defines the flow-measurement capability that turns the H4 spot-mode flow into a "
+                                  "mass with a stated uncertainty (H22-48 .. H22-55), the closure-independent veto "
+                                  "bound (HI-01, H22-57), the Xe-ledger terms (H22-IF-30 .. 36) and the flight "
+                                  "branch that meters it (H22-37 .. H22-41)",
+         "effect": "direct; decided by H4 measurement, not by this lane"},
+    ]
+
+
+def build_m16_rows():
+    return [
+        {"subsystem": "shielded Xe-fed LaB6 hollow cathode", "matured_by_this_lane": "location options and preliminary "
+         "choice, shielding concept, thermal window, keeper / heater ranges, emission rating, C-1 procurement "
+         "specification inputs", "proposed_state": "BLOCKED",
+         "blocking_item": "gate G-LOC: inner-core bore saturation check and B at the orifice from "
+                          "docs/hardware/h2/h2_1_hall_chamber_magnet/",
+         "rollup_category": "hardware-definition blocker",
+         "note": "architecture closure of this row (A7 blocker 3) is decided later by the H4 spot-mode flow; that is "
+                 "not the current blocker"},
+        {"subsystem": "Xe metering (splits to ignition/transition feed and cathode feed)",
+         "matured_by_this_lane": "cathode-branch topology, orifice sizing relation, flow ranges, ground MFC channels "
+                                 "and calibration", "proposed_state": "BLOCKED",
+         "blocking_item": "measured C-1 spot-mode Xe flow over the Phase-1 emission range (H4 output) that sizes the "
+                          "flight cathode orifice",
+         "rollup_category": "architecture blocker"},
+        {"subsystem": "PPU/power distribution", "matured_by_this_lane": "heater and keeper supply ranges, igniter, "
+         "cathode-common topology (inputs to H2-4)", "proposed_state": "RUNNING",
+         "note": "row owned by H2-4; this lane's inputs are delivered"},
+        {"subsystem": "thermal control", "matured_by_this_lane": "emitter window, radiated flux, preheat load, mount "
+         "concept (inputs to H2-5)", "proposed_state": "RUNNING", "note": "row owned by H2-5"},
+        {"subsystem": "sensors/diagnostics", "matured_by_this_lane": "cathode MFC specification and calibration, tube "
+         "thermocouple, RGA port, V_cg, Hall-probe access (inputs to H2-6 / W4)", "proposed_state": "READY",
+         "note": "the ground cathode-flow measurement specification is ready for H3"},
+        {"subsystem": "control/FDIR", "matured_by_this_lane": "cathode start / shutdown sequence mapped to lane 14 "
+         "states and the TBD parameters each S1a test closes", "proposed_state": "RUNNING"},
+        {"subsystem": "mechanical/structural interfaces", "matured_by_this_lane": "C-1 mount, envelope class, "
+         "service-line routing demand (inputs to H2-7 and the pre-ionizer ICD)", "proposed_state": "RUNNING"},
+        {"subsystem": "magnetic circuit", "matured_by_this_lane": "bore and field-at-orifice demands only",
+         "proposed_state": "RUNNING", "note": "row owned by H2-1"},
+    ]
+
+
+def build_h3():
+    return [
+        {"id": "H22-P01", "item": "C-1 Xe-fed LaB6 hollow cathode (one serial unit; spares per HWQ-14)", "ci": "C-1",
+         "representativeness": "FLIGHT-REPRESENTATIVE",
+         "spec_level_needed_to_order": ["emission rating >= H22-58 (+ I_x,max)",
+                                        "spot-mode operation data vs Xe flow and emission current down to <= 0.10-"
+                                        "0.15 mg/s, or acceptance that S1a measures it",
+                                        "envelope within H22-04 / the bore of H22-05", "non-ferromagnetic (H22-07)",
+                                        "heater power / voltage / current and preheat time (H22-22, H22-23)",
+                                        "keeper ignition voltage and current (H22-29, H22-30)",
+                                        "boron-diffusion-inhibiting support (H22-28)",
+                                        "usable insert areal mass vs H22-21 incl. axial peaking",
+                                        "tube thermocouple point and pyrometer view (HW-C1-09)",
+                                        "disassemblable for inspection (HW-C1-08)", "ignition-cycle rating (TBD: ops)"],
+         "reference_data_only": "SITAEL HC1 / HC3 (IEPC-2017-365 via lane 19), JPL LaB6 cathodes (IEPC-2015-43, "
+                                "IEPC-2017-276 via lane 19), KhAI SHC series (IEPC-2013-410 Table 1), Joussot "
+                                "laboratory cathode (dossier); no supplier contacted",
+         "long_lead_basis": "assumed (custom unit; no lead time sourced)",
+         "status": pend("H2-1", "envelope") + "; owner question HWQ-09"},
+        {"id": "H22-P02", "item": "LaB6 witness and emitter coupons from the C-1 insert lot (AOL-WC-03, AOL-EX-03)",
+         "ci": "C-1", "representativeness": "GROUND/FACILITY-ONLY",
+         "spec_level_needed_to_order": ["same lot as the C-1 insert", "count per AO register"],
+         "reference_data_only": "AO register v5", "long_lead_basis": "tied to P01", "status": "PRELIMINARY"},
+        {"id": "H22-P03", "item": "cathode Xe MFC, low range", "ci": "FS-C", "representativeness": "GROUND/FACILITY-ONLY",
+         "spec_level_needed_to_order": ["FS <= 2.0 sccm Xe (H22-48)", "datasheet fields of H22-47",
+                                        "calibrated on Xe, traceable"],
+         "reference_data_only": "Snyder 2017; IEPC-2009-061 cathode channel 0-2 sccm +/- 1 %",
+         "long_lead_basis": "assumed", "status": "PROPOSED (H22Q-02)"},
+        {"id": "H22-P04", "item": "cathode Xe MFC, high range", "ci": "FS-C", "representativeness": "GROUND/FACILITY-ONLY",
+         "spec_level_needed_to_order": ["FS >= H22-54", "datasheet fields of H22-47"],
+         "reference_data_only": "lane 19 ignition flows", "long_lead_basis": "assumed",
+         "status": "TBD — requires C-1 selection"},
+        {"id": "H22-P05", "item": "in-situ rate-of-rise calibrator (known volume, capacitance manometer, gas "
+                                  "thermometer)", "ci": "FS-C", "representativeness": "GROUND/FACILITY-ONLY",
+         "spec_level_needed_to_order": ["volume and its uncertainty", "manometer range for H22-53"],
+         "reference_data_only": "Snyder 2017 p. 562", "long_lead_basis": "assumed", "status": pend("H2-6")},
+        {"id": "H22-P06", "item": "gravimetric reference (balance for the cathode Xe bottle assembly)", "ci": "FS-C",
+         "representativeness": "GROUND/FACILITY-ONLY",
+         "spec_level_needed_to_order": ["capacity >= bottle + regulator assembly", "readability for H22-52"],
+         "reference_data_only": "Snyder 2017 p. 561", "long_lead_basis": "assumed",
+         "status": "TBD — requires the bottle assembly mass"},
+        {"id": "H22-P07", "item": "laboratory heater supply, keeper supply, optional pulse igniter", "ci": "PS-C",
+         "representativeness": "GROUND/FACILITY-ONLY",
+         "spec_level_needed_to_order": ["H22-22", "H22-29", "H22-30", "H22-31", "referenced to cathode common, "
+                                                                                  "load-plane metering (HW-C1-05)"],
+         "reference_data_only": "lane 19 analog values", "long_lead_basis": "assumed", "status": pend("H2-4")},
+        {"id": "H22-P08", "item": "flight-like cathode branch (2 NC solenoid valves, latch valve, filter, micro-"
+                                  "orifices)", "ci": "FS-C", "representativeness": "H-1 TEST-ARTICLE-ONLY",
+         "spec_level_needed_to_order": ["orifice diameters after H4 flow and H2-3 plenum pressure (H22-40)"],
+         "reference_data_only": "IEPC-2009-061; IEPC-2019-303", "long_lead_basis": "not long-lead now: sized after H4",
+         "status": "TBD — requires the H4 measured flow; owner decides whether H-1 carries it"},
+        {"id": "H22-P09", "item": "cathode-line gas isolator and particulate filter", "ci": "FS-C",
+         "representativeness": "GROUND/FACILITY-ONLY", "spec_level_needed_to_order": ["voltage rating per HW-FS-06",
+                                                                                      "Xe service"],
+         "reference_data_only": "IEPC-2019-303 p. 6", "long_lead_basis": "assumed", "status": "PRELIMINARY"},
+        {"id": "H22-P10", "item": "non-ferromagnetic axial shim set for the S1a position scan", "ci": "C-1",
+         "representativeness": "H-1 TEST-ARTICLE-ONLY", "spec_level_needed_to_order": ["positions over H22-03"],
+         "reference_data_only": "IEPC-2013-410 p. 5", "long_lead_basis": "no", "status": pend("H2-1")},
+    ]
+
+
+def build_h4():
+    return [
+        ("H22-T01", "S1a", "C-1 spot/plume boundary vs Xe flow over an emission-current grid, MC-1 de-energized and "
+                           "energized; mdot_c,min(I_emit)", ["H22-15", "H22-33", "H22-38", "H22-55", "HI-01"],
+         ["INS-05", "INS-04"], ["mdot_Xe_cathode_min"]),
+        ("H22-T02", "S1a", "heater power, time to ignition and tube temperature at every start", ["H22-22", "H22-23",
+                                                                                                    "H22-24", "H22-39"],
+         ["INS-02", "INS-23", "INS-P-08"], ["P_heater_max", "t_heater_max", "t_heater_soak_min", "T_emitter_ignite_min"]),
+        ("H22-T03", "S1a", "keeper ignition voltage distribution, current, retries", ["H22-29", "H22-30", "H22-31"],
+         ["INS-02", "INS-P-08"], ["V_keeper_max", "I_keeper_min", "I_keeper_max", "n_keeper_retry_max",
+                                  "t_keeper_ignite_max"]),
+        ("H22-T04", "S1a", "axial position scan: V_cg, beam plasma potential (coupling voltage), near-cathode RGA at "
+                           "each shim position; then freeze the position", ["H22-01", "H22-03", "H22-11"],
+         ["INS-02", "INS-22"], []),
+        ("H22-T05", "S1a", "B at the orifice plane with the Hall probe at the operating coil currents",
+         ["H22-14", "H22-16"], ["INS-09"], []),
+        ("H22-T06", "S1a", "in-situ rate-of-rise calibration of both cathode MFCs on Xe; gravimetric cross-check",
+         ["H22-47", "H22-48", "H22-49", "H22-50", "H22-51", "H22-52", "H22-53", "H22-54"], ["INS-05"], []),
+        ("H22-T07", "S1a", "heater-off steady heat load: tube and mount / inner-core thermocouples at several I_emit",
+         ["H22-26", "H22-27"], ["INS-17", "INS-23"], []),
+        ("H22-T08", "S1a", "emitter temperature vs I_emit (pyrometer if HW-C1-09 (b) gives a view; otherwise "
+                           "'unmeasured')", ["H22-17", "H22-18", "H22-19", "H22-20"], ["INS-23"], []),
+        ("H22-T09", "S1", "daily Xe reference condition (keeper and coupling voltage) for the AOL-PT-03 scatter",
+         ["H22-45"], ["INS-P-08"], []),
+        ("H22-T10", "S1b", "cathode position and V_cg reproducibility across the adopted configuration-change "
+                           "procedure", ["H22-03", "H22-46"], ["INS-02"], []),
+        ("H22-T11", "Phase 1", "at every point: mdot_c at the frozen setpoint, P_keeper, P_heater (0 W explicit), V_cg, "
+                               "near-cathode RGA, hot-emitter O-exposure log", ["H22-12", "H22-38", "H22-56", "HI-01"],
+         ["INS-05", "INS-02", "INS-22", "INS-P-08"], ["mdot_Xe_cathode_set"]),
+        ("H22-T12", "Phase 1 / 2", "cathode_keeper and cathode_heater metered per arm under identical settings",
+         ["H22-32", "H22-33"], ["INS-02"], []),
+        ("H22-T13", "campaign end", "C-1 inspection: orifice, keeper face, insert XPS / EDS, insert mass vs H22-21",
+         ["H22-08", "H22-21"], ["INS-20", "INS-P-05"], []),
+        ("H22-T14", "parallel (owner facility)", "heated LaB6 coupons in O2 / atomic O / N2 (AOL-EX-03)", ["H22-10"],
+         [], ["p_O_cathode_max"]),
+        ("H22-T15", "S1a", "insulation resistance of cathode common to the stand (HW-ELEC-05)", ["H22-44", "H22-46"],
+         ["INS-02"], []),
+        ("H22-T16", "S1a", "purge effectiveness: near-cathode RGA during XE_PURGE", ["H22-08", "H22-39"], ["INS-22"],
+         ["mdot_Xe_purge_set", "t_purge_min", "t_purge_validity", "t_exposure_max"]),
+        ("H22-T17", "S1", "shutdown cool-down with Xe flowing: tube temperature vs time", ["H22-08", "H22-34"],
+         ["INS-23"], ["t_cathode_cooldown_min", "T_emitter_cool_max"]),
+    ]
+
+
+def build_document(dv):
+    h4 = [{"id": i, "stage": s, "measure": m, "closes": c, "instruments": ins, "lane14_parameters": p,
+           "acceptance": "TBD at LOCK-1 / LOCK-2 (not frozen here; A6 not_authorized: Phase-1 numeric thresholds)"}
+          for (i, s, m, c, ins, p) in build_h4()]
+    pinned = [{"path": p, "sha256": h, "role": r, "kind": k} for (p, h, r, k) in PINNED_INPUTS if h is not None]
+    referenced_unpinned = [{"path": p, "role": r, "reason": "referenced by id only; read-only"}
+                           for (p, h, r, k) in PINNED_INPUTS if h is None]
+    return {
+        "schema": "h2_hardware_lane_v1",
+        "id": "h2_2_cathode_integration_v1",
+        "title": "H2-2 cathode integration: C-1 shielded Xe-fed LaB6 hollow cathode on H-1",
+        "lane": {"id": LANE_ID, "trigger": TRIGGER_ID, "wave": "H2 hardware (owner addendum A7)",
+                 "kind": "design / preliminary-sizing lane, NOT an architecture-selection lane (A7 h2_scope)"},
+        "status": "PRELIMINARY_DRAFT_FOR_INTEGRATION",
+        "status_note": "Preliminary sizing inside the A5 proposal reference architecture. Nothing is approved, "
+                       "pre-registered or ordered. A5 numbers are allocations or requirements, never predictions. "
+                       "Bundle 1 stays NO_BASELINE_YET; the credible Hall set is empty.",
+        "date": DATE,
+        "base_commit": BASE_COMMIT,
+        "builder": REL_DIR + "/build_h2_2_cathode_integration.py",
+        "companion_document": REL_DIR + "/H2_2_CATHODE_INTEGRATION.md",
+        "test": "tests/test_h2_2_cathode_integration.py",
+        "configuration_items_used": {"primary": "C-1", "related": ["H-1", "MC-1", "FS-C", "PS-C", "SVC-1", "PIM-0",
+                                                                   "PIM-RF", "PIM-ECR"],
+                                     "interface_planes": H1_INTERFACE_PLANES,
+                                     "source": "docs/experiments/hardware/hardware_requirements_v1.json (ids reused, "
+                                               "never renamed)"},
+        "architectures": ARCHITECTURES,
+        "architecture_note": "C-1 is common and identical in hall_only, rf_hall and ecr_hall (lane 17 INV-C1). This "
+                             "lane ranks, selects and eliminates nothing.",
+        "representativeness_classes": {
+            "FLIGHT-REPRESENTATIVE": "the flight design carries it (or its frozen value)",
+            "H-1 TEST-ARTICLE-ONLY": "on H-1 for the experiment only (shims, witness, probes, flight-like branch "
+                                     "verification)",
+            "GROUND/FACILITY-ONLY": "facility equipment (MFCs, calibrators, lab supplies, isolators)"},
+        "vocabulary": {"basis": BASES, "evidence_class": EVIDENCE_CLASSES,
+                       "status": ["PRELIMINARY", "PROPOSED (owner ...)", "PENDING <lane path> (...)",
+                                  "TBD — requires <what>"],
+                       "m16_state": M16_STATES, "rollup_category": ROLLUP_CATEGORIES},
+        "pinned_inputs": pinned,
+        "referenced_not_pinned": referenced_unpinned,
+        "not_pinned_mutable_governance": NOT_PINNED_MUTABLE,
+        "pending_lanes": [{"key": k, "path": p, "state_at_build": "not in this base; drafts not read; nothing here "
+                                                                  "depends on them"} for k, p in PENDING_LANES.items()],
+        "sources": SOURCES,
+        "leads_not_entered": LEADS_NOT_ENTERED,
+        "inputs": INPUTS,
+        "evaluation_grids": GRIDS,
+        "derived": dv,
+        "location_options": build_location_options(),
+        "design_parameters": build_design_parameters(dv),
+        "interface_demands": build_interface_demands(dv),
+        "hard_incompatibility_check": build_hard_incompatibility_check(dv),
+        "architecture_changing_blockers_touched": build_blockers(),
+        "m16_rows": build_m16_rows(),
+        "h3_procurement_inputs": build_h3(),
+        "h4_test_inputs": h4,
+        "owner_questions": [
+            {"id": "H22Q-01", "question": "Adopt the central location L-C as the PRELIMINARY C-1 position, subject to "
+                                          "gate G-LOC, with L-E as the fallback?"},
+            {"id": "H22Q-02", "question": "Set the cathode-flow measurement target to 2 % of reading at 0.10 mg/s "
+                                          "(PROPOSED), which bounds the low-range MFC full scale to about 2 sccm Xe at "
+                                          "a 1 % FS accuracy class?"},
+            {"id": "H22Q-03", "question": "Adopt 1570 C (the O2-tolerance statement of Goebel & Katz p. 306) as the "
+                                          "emitter-temperature floor during O-bearing operation (PROPOSED design rule)?"},
+            {"id": "H22Q-04", "question": "Keeper off after ignition unless S1a shows a need; if needed, one fixed "
+                                          "keeper current frozen at LOCK-1 and identical in every arm?"},
+            {"id": "H22Q-05", "question": "Freeze the cathode flow setpoint at LOCK-1 and count any increase used to "
+                                          "keep the discharge lit as Xe assistance (A5 no-continuous-Xe rule)? "
+                                          "(for the Phase-1 pre-registration framework)"},
+            {"id": "H22Q-06", "question": "No cathode Xe while idle (purge before each heat-up) as the baseline; "
+                                          "carry the 1.73x idle-flow case as a Xe-ledger scenario only?"},
+            {"id": "H22Q-07", "question": "Keep the heaterless cathode as a noted alternative only?"},
+            {"id": "H22Q-08", "question": "Cathode-common topology E1 (thruster floating, cathode common on the H-1 "
+                                          "body) for H-1; E3 impedance for flight to H2-4?"},
+        ],
+        "milestones": {
+            "A": {"support": "YES, as a precondition",
+                  "statement": "Supports a conditional statement of the form 'the A5 architecture is the proposal "
+                               "baseline provided C-1 holds spot mode at the Phase-1 emission range at a measured flow "
+                               "below the HI-01 bound and within the owner's cathode Xe share, keeps its emitter in the "
+                               "O2 no-degradation range, and re-ignites after O-bearing operation'. It gives the "
+                               "hardware and measurement capability to test those conditions."},
+            "B": {"support": "PARTIAL (inputs only)",
+                  "needs": ["measured mdot_c,min(I_emit) and coupling voltage on H-1 (H22-T01, T04, T11)",
+                            "B at the orifice (H2-1, H22-T05)", "atomic-O / N2 threshold (H22-T14)",
+                            "an admitted Hall transport closure or hardware I_d for physics-backed envelopes "
+                            "(credible set empty)"]},
+            "C": {"support": "NO (inputs only)",
+                  "needs": ["C-1 qualification: life / wear in a mixed-gas background, ignition cycles (dossier G04, "
+                            "G05)", "flight cathode-branch sizing and qualification (H22-40, H22-41)",
+                            "thermal integration (H2-5)", "mission Xe closure with the tank (Xe ledger)"]},
+        },
+        "compliance": [
+            "No Hall transport closure, screening candidate (sgb-screen-*), superseded 0-D Hall model "
+            "(abep_sim/plasma_devices.py) or withdrawn v1.2-v1.6 number is used; no thrust, efficiency, discharge "
+            "current or plasma state is predicted.",
+            "Analog devices are labelled (device, source, evidence class) and never presented as Vyovrinda predictions.",
+            "P5 calibration nuisance (registration, coil shape, beam-efficiency reading, facility interpretation) is "
+            "not a design variable or grid axis here; the P5 cathode flow appears only as a labelled analog setpoint.",
+            "Hall-closure uncertainty does not enter the cathode feed, the Xe branch or the valves.",
+            "The valve-outlet (atmospheric) feed state is not filled here; the cathode plenum state is PENDING H2-3.",
+            "No architecture is ranked, selected or eliminated; the three ids are used exactly.",
+            "Sources are open; one bot-challenge page was not bypassed (SRC-SOMMERVILLE2009); no person or lab was "
+            "contacted; LXCat was not used.",
+            "New files only under " + REL_DIR + "/ and tests/test_h2_2_cathode_integration.py; nothing is wired into "
+            "archengine; goldens do not move.",
+        ],
+    }
+
+
+# ------------------------------------------------------------------------------------------------------ I/O
+def render():
+    return json.dumps(build_document(build_derived()), indent=1, ensure_ascii=False) + "\n"
+
+
+def sha256_file(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 16), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def verify_pins(repo_root=REPO_ROOT):
+    """Return {path: (expected, actual or None)} for every pinned input (None when the file is absent)."""
+    out = {}
+    for path, expected, _role, _kind in PINNED_INPUTS:
+        if expected is None:
+            continue
+        full = os.path.join(repo_root, path)
+        out[path] = (expected, sha256_file(full) if os.path.exists(full) else None)
+    return out
+
+
+def pending_lane_status(repo_root=REPO_ROOT):
+    """Lazy, read-only presence check of the parallel lanes (never imported or parsed; not written to the JSON)."""
+    return {k: ("present (not read by this lane)" if os.path.exists(os.path.join(repo_root, p)) else "absent")
+            for k, p in PENDING_LANES.items()}
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--check", action="store_true", help="fail if the committed JSON differs from a fresh build")
+    ap.add_argument("--verify-pins", action="store_true", help="check the sha256 of every pinned input")
+    args = ap.parse_args(argv)
+    text = render()
+    if args.verify_pins:
+        bad = {p: v for p, v in verify_pins().items() if v[0] != v[1]}
+        for p, (e, a) in sorted(bad.items()):
+            print(f"PIN MISMATCH {p}: expected {e}, found {a}")
+        print("pins OK" if not bad else f"{len(bad)} pin(s) differ")
+        if bad:
+            return 1
+    if args.check:
+        with open(OUT_PATH, encoding="utf-8") as f:
+            same = f.read() == text
+        print("check OK" if same else "check FAILED: the committed JSON differs from a fresh build")
+        return 0 if same else 1
+    if not args.verify_pins:
+        with open(OUT_PATH, "w", encoding="utf-8") as f:
+            f.write(text)
+        print(f"wrote {OUT_PATH}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
