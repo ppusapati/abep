@@ -133,12 +133,46 @@ def test_owner_given_values_trace_to_rows(doc, answers):
     assert set(by["ICP-39"]["value"]) == EXCHANGE_CHECKS
 
 
-def test_derived_bound_is_arithmetic_on_owner_values(doc):
-    x = {x["id"]: x for x in doc["items"]}["ICP-36"]
+def test_rf_only_term_is_arithmetic_and_not_a_module_bound(doc):
+    by = {x["id"]: x for x in doc["items"]}
+    x = by["ICP-36"]
     assert x["status"] == "DERIVED_BOUND" and x["value"] == pytest.approx(500.0 * 1.2)
-    assert "bound" in x["basis"] and 72 in x["owner_rows"] and 86 in x["owner_rows"]
-    d = {d["id"]: d for d in doc["interface_demands"]}["ID-16"]
-    assert d["value"] == x["value"]
+    assert "RF-only partial-term bound" in x["basis"] and 72 in x["owner_rows"] and 86 in x["owner_rows"]
+    assert "NOT a bound on the total module heat load" in x["requirement"]
+    dem = {d["id"]: d for d in doc["interface_demands"]}
+    assert dem["ID-16"]["value"] == x["value"] and "RF-only" in dem["ID-16"]["status"]
+    assert "NOT a bound on the total" in dem["ID-16"]["quantity"]
+    # the total module heat load (discharge-path + plume terms) has no value until P_d,max exists
+    t = by["ICP-43"]
+    assert t["value"] is None and t["status"].startswith("PENDING ") and "Q_coll" in t["requirement"]
+    assert dem["ID-26"]["value"] is None and dem["ID-25"]["value"] is None
+    assert "ICP-43" in by["ICP-37"]["requirement"]
+
+
+def test_rf_voltage_rating_separate_from_dc_isolation(doc):
+    by = {x["id"]: x for x in doc["items"]}
+    dc = by["ICP-23"]
+    assert dc["value"] == 350.0 and dc["evidence_class"] == "owner-allocation (margin TBD)"
+    assert "antenna circuit is NOT covered" in dc["requirement"]
+    rf = by["ICP-44"]
+    assert rf["value"] is None and rf["tbd"].startswith("TBD - requires")
+    assert "RF hipot at full forward power" in rf["verification"] and "combined stress" in rf["requirement"]
+
+
+def test_freeze_points_defined_and_incompatibility_checked(doc):
+    fp = doc["freeze_point_definitions"]
+    assert set(fp) == set(doc["freeze_points"])
+    assert "before LOCK-2" in fp["after-evidence"] and "row 71" in fp["after-evidence"]
+    h = doc["hard_incompatibility_check"]
+    assert h["verdict"] == "none identified" and h["veto_claimed"] is False and h["checked"]
+
+
+def test_c1_external_source_pointer_supports_value(doc, builder):
+    x = {x["id"]: x for x in doc["items"]}["ICP-05"]
+    ext = [s for s in x["sources"] if s.get("id") == "L-EXTERNAL"]
+    assert len(ext) == 1
+    target = json.loads((REPO / ext[0]["path"]).read_text(encoding="utf-8"))
+    assert "outside the outer pole" in builder.resolve(target, ext[0]["pointer"])
 
 
 def test_cited_rows_exist_and_fingerprints_match(doc, answers):

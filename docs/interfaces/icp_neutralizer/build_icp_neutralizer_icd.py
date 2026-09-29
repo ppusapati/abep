@@ -14,7 +14,7 @@ Rules implemented here
   * every numeric value is either an owner-given value (cited by row), a value COPIED from a verified repository
     deliverable (path + RFC 6901 JSON pointer + sha256), a published-analog value from the open-access Takahashi et al.
     2024 article with page/figure provenance (annex only, never a Vyovrinda value), a deterministic arithmetic bound on
-    owner-given values (labelled a bound, not an estimate), or ``null`` with "TBD - requires <what>";
+    owner-given values (ICP-36: RF-only partial-term bound, not a module heat-load bound), or ``null`` with "TBD - requires <what>";
   * values owned by the parallel A9 lanes (A9-01, A9-02, A9-04, A9-05) are written "PENDING <lane path>" and never filled;
   * no Hall transport closure, screening candidate, superseded 0-D Hall model or withdrawn number is read; nothing here
     predicts thrust, efficiency, discharge current, neutralizer electron current or plasma state;
@@ -320,7 +320,7 @@ def require_text(row: int, text: str) -> None:
 
 
 def rf_heat_bound_W() -> tuple:
-    """Bound (not estimate) for the ICP thermal path: full lab forward power x the owner heat-load margin."""
+    """RF-only partial-term bound (not a module heat-load bound): full lab forward power x the owner heat-load margin."""
     ans = answers_by_row()
     if "0\u2013500 W" not in ans[72]["owner_answer_verbatim"] or "20% heat-load" not in ans[86]["owner_answer_verbatim"]:
         raise RuntimeError("owner rows 72/86 no longer carry the values this builder cites")
@@ -339,6 +339,12 @@ def items() -> list:
     bz_maps = copied("H26", "design_parameters", "H26-36")
     c1_flow = copied("H22", "design_parameters", "H22-42")
     c1_loc = copied("H22", "design_parameters", "H22-01")
+    ext_ptr = dp_pointer("H22", "location_options", "L-EXTERNAL")
+    c1_ext_src = {"path": DELIVERABLES["H22"], "pointer": f"{ext_ptr}/description",
+                  "sha256": sha256_of(DELIVERABLES["H22"]), "id": "L-EXTERNAL",
+                  "role": "definition of the external location adopted here (row 79)"}
+    c1_prelim_src = dict(c1_loc["source"], role="H2-2 PRELIMINARY L-CENTRAL choice that row 79 reverses (context, "
+                                                "not the basis of this item)")
     p_fwd_max, rf_heat_bound = rf_heat_bound_W()
     for r, t in ((72, "13.56 MHz"), (89, "300\u2013600 V"), (23, "two elevated background-pressure levels"),
                  (86, "\u226550 K margin"), (116, "at least 25 kg")):
@@ -389,7 +395,7 @@ def items() -> list:
                "around a central C1. The H2-2 PRELIMINARY choice L-CENTRAL (H22-01) is reversed by row 79 and needs the "
                "H2-1/H2-2 revision (A9-07). The C1 orifice position relative to IP-EXIT is recorded per installation.",
                units="mm (orifice position r, z relative to IP-EXIT)", basis="row 79; H2-2 location_options[L-EXTERNAL]",
-               sources=row_src(79) + [c1_loc["source"]], status="TBD", freeze_point="LOCK-1",
+               sources=row_src(79) + [c1_ext_src, c1_prelim_src], status="TBD", freeze_point="LOCK-1",
                tbd=f"{TBD} the H2-1/H2-2 revision for the external C1 (A9-07) and the C1 reference module design",
                verification="inspection + position record per installation", rows=(79,),
                applies=("hall_c1_reference",)))
@@ -547,12 +553,15 @@ def items() -> list:
                freeze_point="LOCK-1", verification="circuit inspection; per-reading voltage record", rows=(81, 91),
                note="see open question ICPQ-04"))
     X.append(I("ICP-23", "electrical", "Isolation from the Hall anode and the cathode-common",
-               "ICP body, antenna circuit and collector are isolated from the Hall anode, the C1 cathode-common and "
-               "facility ground, rated to the relaxed 350 V V_d end plus transient/qualification margin (row 81). The "
-               "margin and test voltage are owner/LOCK-1 items (H2-6 H26-45 carries 350 V with the margin TBD). Any "
-               "gas line to the ICP crossing a potential difference uses an isolator qualified per row 105 practice.",
+               "DC discharge-circuit isolation: the ICP body and the collector/bias circuit are isolated from the Hall "
+               "anode, the C1 cathode-common and facility ground, rated to the relaxed 350 V V_d end plus "
+               "transient/qualification margin (row 81, a DC discharge-circuit rating). The margin and test voltage are "
+               "owner/LOCK-1 items (H2-6 H26-45 carries 350 V with the margin TBD). The RF antenna circuit is NOT covered "
+               "by this DC item: its RF voltage, creepage/clearance and Paschen rating, and the combined DC+RF stress "
+               "between antenna and collector/body, are ICP-44. Any gas line to the ICP crossing a potential difference "
+               "uses an isolator qualified per row 105 practice.",
                value=iso["value"], units=iso["units"], basis="row 81; H2-6 H26-45 (margin TBD)",
-               sources=row_src(81, 105) + [iso["source"]], evidence_class=iso["evidence_class"],
+               sources=row_src(81, 105) + [iso["source"]], evidence_class="owner-allocation (margin TBD)",
                status="PROPOSED (margin TBD)", freeze_point="LOCK-1",
                verification="insulation resistance + hipot per exchange (ICP-39)", rows=(81, 105),
                copied_from=iso))
@@ -591,7 +600,8 @@ def items() -> list:
                "The downstream Hall-exhaust-to-ICP interface is defined and measured (row 63): a pressure port in the "
                "ICP source volume (capacitance manometer) and a matched port at the equivalent position on the C1 "
                "reference module; cold-flow conductance IP-EXIT -> ICP volume -> chamber is measured at the anode flow "
-               "grid in S1a for each module.", units="Pa; m^3/s (conductance)", basis="row 63",
+               "grid in S1a for each module; the values are recorded before LOCK-2 and before any score-bearing run "
+               "(row 71).", units="Pa; m^3/s (conductance)", basis="row 63",
                sources=row_src(63), status="TBD", freeze_point="after-evidence",
                tbd=f"{TBD} S1a cold-flow measurements with each module installed (values measured, not set)",
                verification="cold-flow pressure map per module and per anode flow", rows=(63,)))
@@ -669,14 +679,19 @@ def items() -> list:
                status="PENDING " + A9_LANES["A9-01"] + " (ICP ignition dwell/retry bound and start classification)",
                freeze_point="LOCK-1", verification="sequence log audit", rows=(24, 93)))
     # ------------------------------------------------------------------ (7) thermal
-    X.append(I("ICP-36", "thermal", "ICP dissipation path and bounding heat load",
+    X.append(I("ICP-36", "thermal", "ICP dissipation path and RF-path heat contribution (RF only, partial term)",
                "All RF power not absorbed by the plasma, and part of the absorbed power, ends as heat in the antenna, "
                "collector, dielectric, matching network and cabling (analog: only ~10 % absorbed by the plasma, visible "
-               "collector heating, annex TAK-12/13). The module thermal path is sized to a BOUND = full laboratory "
-               "forward power (row 72) x the 20 % heat-load design margin (row 86); this is a bound, not an estimate. "
-               "Collector particle heating (I_coll x sheath voltage) is added when measured. Heat into H-1 + mount "
-               "stays inside the H2-6 stand bound (copied).",
-               value=rf_heat_bound, units="W", basis="arithmetic bound: 500 W (row 72) x 1.20 (row 86)",
+               "collector heating, annex TAK-12/13). The RF-path contribution to the module heat load is bounded by the "
+               "full laboratory forward power (row 72) x the 20 % heat-load design margin (row 86). This value is the "
+               "RF-ONLY PARTIAL TERM; it is NOT a bound on the total module heat load. In hall_icp_neutralizer the Hall "
+               "discharge loop closes through the ICP collector (ICP-22), so the collector collects an ion current "
+               "matching the extracted electron current and receives particle heating of order I_coll x sheath voltage "
+               "(analog ion impact energies, annex TAK-10), plus Hall-plume interception and plasma heat flux on the "
+               "module (ICP-29). Those terms scale with the discharge current, not with the RF power, and are carried "
+               "in the total module heat-load item ICP-43. Heat into H-1 + mount stays inside the H2-6 stand bound "
+               "(copied).",
+               value=rf_heat_bound, units="W", basis="RF-only partial-term bound: 500 W (row 72) x 1.20 (row 86)",
                sources=row_src(72, 86) + [heat_bound["source"]], evidence_class="model-derived (bound on owner values)",
                status="DERIVED_BOUND", freeze_point="LOCK-1", verification="thermocouple map + energy balance in S1a",
                rows=(72, 86), applies=("hall_icp_neutralizer",), copied_from=heat_bound))
@@ -684,7 +699,8 @@ def items() -> list:
                "Every ICP-module material/insulation (dielectric, antenna insulation, collector, feedthrough, matching "
                "components, carrier interface) holds >= 50 K below its validated continuous-use limit plus the 20 % "
                "heat-load margin (row 86). Limits come from sourced material data after selection; the facility "
-               "radiative sink is measured per run (row 131).", value=50.0, units="K (minimum margin)",
+               "radiative sink is measured per run (row 131). The margin check closes only against the total module heat "
+               "load ICP-43 (not against the RF-only term ICP-36).", value=50.0, units="K (minimum margin)",
                basis="owner answer", sources=row_src(86, 131), evidence_class="owner-allocation",
                status="OWNER_GIVEN", freeze_point="NOW",
                verification="thermocouples per node vs sourced limits; per-run sink measurement", rows=(86, 131)))
@@ -724,6 +740,40 @@ def items() -> list:
                "framework.", units="-", basis="rows 29, 39, 40", sources=row_src(29, 39, 40),
                status="PENDING " + A9_LANES["A9-01"] + " (stage map and schedule)", freeze_point="LOCK-1",
                verification="schedule audit", rows=(29, 39, 40)))
+    X.append(I("ICP-43", "thermal", "Total ICP module heat load (RF + discharge-path + plume terms)",
+               "The module thermal path (antenna, collector, dielectric, matching network, carrier interface) is sized "
+               "to the TOTAL module heat load Q_mod = Q_RF + Q_coll + Q_plume, where Q_RF is bounded by ICP-36, Q_coll is "
+               "the collector particle heating from the Hall discharge current closing through the collector (ICP-22; of "
+               "order I_d x the collector sheath/impact voltage, analog TAK-10) and Q_plume is Hall-plume interception "
+               "and plasma heat flux on the module (ICP-29). Q_coll and Q_plume scale with the discharge current, not the "
+               "RF power. PROPOSED bounding rule (frozen at LOCK-1): Q_mod,bound = 1.20 (row 86) x (P_fwd,max (row 72) + "
+               "P_d,max), where P_d,max = I_d,max x V_d,max is the maximum discharge-supply power permitted at the stand "
+               "(A9-02 discharge slot / H2-4 supply limit); the true split is measured in S1a by thermocouple map and "
+               "energy balance. No value is set until P_d,max exists (see ICPQ-10 for an alternative envelope).",
+               units="W", basis="rows 72, 86, 108; ICP-22 topology (discharge closes on the collector)",
+               sources=row_src(72, 86, 108) + [heat_bound["source"], {"ref": tak, "page": 6}],
+               status="PENDING " + A9_LANES["A9-02"] + " (maximum discharge-supply power P_d,max at the stand)",
+               freeze_point="LOCK-1", verification="thermocouple map + energy balance with RF on/off and discharge "
+                                                    "current steps in S1a; hot-spot check against ICP-37",
+               rows=(72, 86, 108), applies=("hall_icp_neutralizer",),
+               note="ICP-37 (>= 50 K margin) cannot be closed until this item has a value"))
+    X.append(I("ICP-44", "rf", "Antenna-circuit RF voltage, creepage/clearance and Paschen rating",
+               "The antenna circuit (antenna, matching-network output, RF feedthrough and in-vacuum leads) is rated "
+               "separately from the 350 V DC discharge-circuit item (ICP-23). At the full laboratory forward power "
+               "(row 72) a 13.56 MHz ICP antenna can run at an RF voltage far above the DC discharge rating. The rating "
+               "is k_RF x V_ant,peak, where V_ant,peak is computed at P_fwd,max = 500 W from the selected antenna/"
+               "matching design and the MEASURED total circuit resistance R_total (antenna + plasma load; the analog "
+               "infers its power-transfer efficiency from such measured resistances, annex TAK-12); the factor k_RF (> 1) is an owner/LOCK-1 "
+               "value. Clearance/creepage and in-vacuum Paschen margins are set for the combined stress between antenna "
+               "and collector/body: the collector/body DC potential relative to the antenna circuit reference (up to the "
+               "ICP-23 DC rating) plus V_ant,peak.", units="V (peak RF), mm (clearance/creepage)",
+               basis="row 72 (power); row 81 limited to the DC discharge circuit; analog R_total method (TAK-12)",
+               sources=row_src(72, 81) + [{"ref": tak, "page": 8}], status="TBD", freeze_point="LOCK-1",
+               tbd=f"{TBD} the antenna/matching-network selection (ICP-13, ICP-15), the measured R_total and the owner "
+                   "factor k_RF",
+               verification="RF hipot at full forward power (500 W) on a dummy load and with plasma; RF probe of "
+                            "V_ant,peak; inspection of clearance/creepage", rows=(72, 81),
+               applies=("hall_icp_neutralizer",)))
     return X
 
 
@@ -763,16 +813,16 @@ def analog_annex() -> list:
                                                          "axial_length_mm": 100.0}, "mm", 3, "p. 3; Fig. 1b",
           "measured (reported hardware dimension)", "installed on the inner wall of the source tube"),
         A("TAK-08", "annular discharge onset", {"V_D_gt_V": 140.0, "no_rf": "no annular discharge for any V_D"}, "V",
-          3, "p. 3 (visual observation); p. 6 (Fig. 4a)", "measured (reported observation)",
+          3, "p. 3 (visual observation); p. 6 text; Fig. 4a on p. 7", "measured (reported observation)",
           "analog only; not a Vyovrinda threshold"),
         A("TAK-09", "HET magnetic field (calculated)", {"B_r_peak_T": [0.1, 0.15], "z_mm": -10.0}, "T, mm", 4,
           "p. 4; Fig. 2 (SmCo permanent magnets)", "model-derived (authors' calculation)",
           "permanent-magnet HET; z = 0 at the HET exit"),
         A("TAK-10", "collector potential and ion impact energy", {"V_K_V": -100.0, "E_ion_ICP_eV": 140.0,
                                                                    "E_ion_HET_eV": 220.0}, "V, eV", 6,
-          "p. 6; Fig. 4a", "measured (V_K) / inferred (ion energies)", "V_K decreases to -100 V with increasing V_D"),
+          "p. 6 text; Fig. 4a on p. 7", "measured (V_K) / inferred (ion energies)", "V_K decreases to -100 V with increasing V_D"),
         A("TAK-11", "sputtering and deposition", "sputtered stainless steel deposited on the glass wall and on insulators "
-                                                 "at the front of the HET", "-", 6, "p. 6; Fig. 5 (illustration)",
+                                                 "at the front of the HET", "-", 6, "p. 6 text; Fig. 5 (illustration) on p. 8",
           "measured (reported post-test observation)", "authors: negative collector potential to be minimized"),
         A("TAK-12", "RF power transfer efficiency", {"R_ant_ohm": 0.36, "R_total_ohm": 0.4, "eta_p": 0.1,
                                                      "P_absorbed_W": 20.0}, "ohm, -, W", 8, "p. 8, Eq. (1)",
@@ -795,7 +845,7 @@ def interface_demands() -> list:
     me = "A9-03"
     # A9-01 prereg framework
     d("ID-01", me, "A9-01", "configuration ids and per-configuration hardware identity (which ICD items may differ "
-      "between hall_c1_reference and hall_icp_neutralizer)", "ICP-01..ICP-42 applies_to", "-", "PROPOSED")
+      "between hall_c1_reference and hall_icp_neutralizer)", "ICP-01..ICP-44 applies_to", "-", "PROPOSED")
     d("ID-02", "A9-01", me, "definition of the V_d setting held equal across configurations", None, "V",
       pending("A9-01", "V_d definition"))
     d("ID-03", "A9-01", me, "ICP ignition dwell/retry bound; start/restart classification; start-up/thermal-state rule",
@@ -835,9 +885,10 @@ def interface_demands() -> list:
     d("ID-15", me, "H2-4", "ICP PPU channels: 13.56 MHz RF source, collector/bias supply; floating secondaries",
       "required", "-", "PROPOSED")
     # H2-5
-    d("ID-16", me, "H2-5", "ICP module heat-load bound for the thermal path (bound, not estimate)",
+    d("ID-16", me, "H2-5", "RF-path heat contribution only (ICP-36 partial term; NOT a bound on the total module heat "
+      "load, which adds collector particle heating from the Hall discharge current and plume interception, ICP-43)",
       rf_heat_bound_W()[1], "W",
-      "DERIVED_BOUND (ICP-36)")
+      "DERIVED_BOUND (ICP-36, RF-only partial term)")
     d("ID-17", "H2-5", me, "sink / interface temperature cases and the >= 50 K margin revision", None, "K",
       pending("H2-5", ">= 50 K revision (row 86)"))
     # H2-6
@@ -855,6 +906,10 @@ def interface_demands() -> list:
       "(row 59); C1 kept as reference/fallback", "required", "kg", "PROPOSED")
     d("ID-23", "H2-7", me, "module masses and CG per serial; flight dry allocations vs CBE (row 54 flags)", None, "kg",
       pending("H2-7", "A9 amendment (A9-06)"))
+    d("ID-25", "A9-02", me, "maximum discharge-supply power at the stand P_d,max = I_d,max x V_d,max (for the total "
+      "module heat-load bound ICP-43)", None, "W", pending("A9-02", "discharge slot limit"))
+    d("ID-26", me, "H2-5", "total ICP module heat load for the thermal path (ICP-43: RF + discharge-path + plume terms)",
+      None, "W", "PENDING " + A9_LANES["A9-02"] + " (P_d,max; ICP-43)")
     # Xe ledger
     d("ID-24", me, "Xe ledger", "ICP gas feed booking if mode G-XE (PHASE_TOTAL_FLOW, row 42); ICP lifetime/cycle "
       "requirement replaces the continuous C1 cathode term (row 46)", None, "kg",
@@ -898,9 +953,10 @@ def owner_answers_applied() -> list:
         72: "13.56 MHz; 0-500 W lab forward power; directional coupler; calorimetry as cross-check (ICP-11..ICP-15)",
         77: "Ni-clad/nickel perturbation measured (ICP-32)",
         79: "external C1 reference; downstream/coaxial ICP interface; H-1 neutralizer-agnostic (ICP-02, ICP-05)",
-        81: "isolation rated to 350 V + margin (ICP-23)",
+        81: "DC discharge-circuit isolation rated to 350 V + margin (ICP-23); RF antenna circuit rated separately "
+            "(ICP-44)",
         83: "repaired/replaced module = new serial + new reference sequence (ICP-40)",
-        86: ">= 50 K margin and 20 % heat-load margin (ICP-36, ICP-37)",
+        86: ">= 50 K margin and 20 % heat-load margin (ICP-36 RF-only term, ICP-43 total, ICP-37)",
         89: "pulsed keeper ignition 300-600 V class on the C1 module (ICP-25)",
         91: "selectable cathode-common bleeder, no value frozen (ICP-22, ICP-25)",
         93: "120 s x 2 applies to C1 only; ICP bound pre-registered by A9-01 (ICP-35)",
@@ -961,7 +1017,37 @@ def open_owner_questions() -> list:
          "proposed_answer": "YES"},
         {"id": "ICPQ-09", "question": "Plume interception by a Takahashi-type enclosing source is a real architecture "
          "consequence; report it inside the system boundary without correction (ICP-29)?", "proposed_answer": "YES"},
+        {"id": "ICPQ-10", "question": "Total ICP module heat-load bound (ICP-43): use 1.20 x (P_fwd,max + P_d,max) with "
+         "P_d,max from the A9-02 discharge slot, or, if every score-bearing stand point is held inside the P_bus < 1.5 kW "
+         "ceiling (row 108), the envelope 1.20 x 1.5 kW used for the stand by H2-6 H26-44?", "proposed_answer": "owner "
+         "call; proposal: 1.20 x (P_fwd,max + P_d,max), because laboratory RF forward power (0-500 W) is a capability "
+         "that is not itself held inside the P_bus ceiling"},
+        {"id": "ICPQ-11", "question": "Factor k_RF between the rated antenna-circuit RF voltage and the computed "
+         "V_ant,peak at 500 W (ICP-44)?", "proposed_answer": "owner call (LOCK-1); no value proposed here"},
     ]
+
+
+def hard_incompatibility_check() -> dict:
+    return {
+        "verdict": "none identified",
+        "veto_claimed": False,
+        "checked": [
+            {"item": "ICP module aperture vs the H-1 channel OD window (ICP-04)",
+             "finding": "not assessable yet: H-1 channel OD is PRELIMINARY (H2-1) and the ICP module is not designed; "
+                        "left TBD at LOCK-1, not a veto"},
+            {"item": "external C1 (row 79) vs the H2-2 PRELIMINARY L-CENTRAL choice",
+             "finding": "a location revision (A9-07), not an architecture incompatibility; H2-2 carries L-EXTERNAL as "
+                        "its alternative"},
+            {"item": "ICP power vs the ~1.35 kW internal allocation (row 109) and P_bus < 1.5 kW (row 108)",
+             "finding": "not assessable: bus slots PENDING A9-02 and no performance is predicted here; decided only by "
+                        "measurement against the full-system gate"},
+            {"item": "stand payload (>= 25 kg design, row 116) vs module mass on the carrier",
+             "finding": "module masses PENDING H2-7 / module design; no evidence of exceedance"},
+            {"item": "antenna-circuit RF voltage vs the 350 V DC isolation item",
+             "finding": "resolved by separating the RF rating (ICP-44) from the DC discharge-circuit rating (ICP-23); "
+                        "no incompatibility, a design item"},
+        ],
+    }
 
 
 def historical_reuse() -> dict:
@@ -1002,8 +1088,9 @@ def m16_impact() -> list:
                              "ICP volume", "BLOCKED", "FEMM of the preliminary circuit (H2-1)"),
         ("ppu", "new ICP RF source/matching and collector/bias channels", "BLOCKED",
          "PENDING A9-02 bus slots"),
-        ("thermal_control", f"ICP dissipation path, {rf_heat_bound_W()[1]:g} W bound, >= 50 K margin", "BLOCKED",
-         "ICP module design + H2-5 revision for row 86"),
+        ("thermal_control", f"ICP dissipation path: RF-only partial term {rf_heat_bound_W()[1]:g} W (ICP-36), total module heat load "
+                            "TBD (ICP-43, adds discharge-path and plume terms), >= 50 K margin", "BLOCKED",
+         "ICP module design + P_d,max (A9-02) for ICP-43 + H2-5 revision for row 86"),
         ("control_fdir", "RF interlock, neutralizer health state, ICP command set", "BLOCKED",
          "generator interlock interface (quotation)"),
         ("sensors_diagnostics", "directional coupler, collector V/I, RF pickup checks, ICP pressure port",
@@ -1053,7 +1140,7 @@ def h3_h4_inputs() -> dict:
              "closes": "ICP-39"},
             {"stage": "Ar ENGINEERING_ONLY", "measure": "topology reproduction: ICP ignition, Hall ignition with ICP "
                                                          "electrons, collector V/I, thermal map, deposition witnesses",
-             "closes": "ICP-21, ICP-29, ICP-36 (engineering evidence only)"},
+             "closes": "ICP-21, ICP-29, ICP-36, ICP-43 (engineering evidence only)"},
             {"stage": "facility-effect series", "measure": "base + two elevated p_b levels per configuration",
              "closes": "ICP-28"},
         ],
@@ -1108,6 +1195,14 @@ def build() -> dict:
         "status_not_outcome": list(STATUS_VOCABULARY_NOT_OUTCOME),
         "evidence_classes": list(EVIDENCE_CLASSES),
         "freeze_points": list(FREEZE_POINTS),
+        "freeze_point_definitions": {
+            "NOW": "fixed by an owner answer or a verified deliverable at this revision",
+            "LOCK-1": "rule/value frozen at LOCK-1 (interfaces frozen before score-bearing Phase 1, row 71)",
+            "LOCK-2": "value frozen at LOCK-2 from S1 evidence, before any score-bearing run",
+            "after-evidence": "value frozen from S1a engineering measurements (e.g. cold-flow conductance, measured "
+                              "B(z) sensitivity) and recorded before LOCK-2; like every interface item it is frozen "
+                              "before any score-bearing Phase 1 run (row 71) and never adjusted after score-bearing data",
+        },
         "interface_planes": interface_planes(),
         "items": X,
         "interface_demands": interface_demands(),
@@ -1116,6 +1211,7 @@ def build() -> dict:
         "historical_reuse": historical_reuse(),
         "m16_impact": m16_impact(),
         "h3_h4_inputs": h3_h4_inputs(),
+        "hard_incompatibility_check": hard_incompatibility_check(),
         "published_analog_annex": {"source": TAKAHASHI, "entries": analog_annex()},
         "pending_lanes": {k: v for k, v in A9_LANES.items()},
         "compliance": {
@@ -1190,6 +1286,10 @@ def render_md(doc: dict) -> str:
     a(f"Configurations: {', '.join('`' + c + '`' for c in doc['configurations'])}; control item: `sham_module` "
       "(stand parasitics only). Outcome vocabulary: " + ", ".join('`' + o + '`' for o in doc['outcome_vocabulary']) +
       "; `OPEN` is a status, not an outcome (row 38).")
+    a("")
+    a("Freeze points:")
+    for k, v in doc["freeze_point_definitions"].items():
+        a(f"* **{k}**: {v}")
     a("")
     a("## 1. Interface planes")
     a("")
@@ -1280,6 +1380,12 @@ def render_md(doc: dict) -> str:
     a("")
     for h in doc["h3_h4_inputs"]["h4_tests"]:
         a(f"* {h['stage']}: {h['measure']} -> closes {h['closes']}")
+    a("")
+    h = doc["hard_incompatibility_check"]
+    a(f"## 9. Hard-incompatibility check: {h['verdict']} (veto claimed: {h['veto_claimed']})")
+    a("")
+    for c in h["checked"]:
+        a(f"* {c['item']}: {c['finding']}")
     a("")
     s = doc["published_analog_annex"]["source"]
     a("## Annex A. Published analog (Takahashi et al. 2024) - interface context only")

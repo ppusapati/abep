@@ -165,6 +165,12 @@
   "LOCK-2",
   "after-evidence"
  ],
+ "freeze_point_definitions": {
+  "NOW": "fixed by an owner answer or a verified deliverable at this revision",
+  "LOCK-1": "rule/value frozen at LOCK-1 (interfaces frozen before score-bearing Phase 1, row 71)",
+  "LOCK-2": "value frozen at LOCK-2 from S1 evidence, before any score-bearing run",
+  "after-evidence": "value frozen from S1a engineering measurements (e.g. cold-flow conductance, measured B(z) sensitivity) and recorded before LOCK-2; like every interface item it is frozen before any score-bearing Phase 1 run (row 71) and never adjusted after score-bearing data"
+ },
  "interface_planes": [
   {
    "id": "IP-EXIT",
@@ -429,10 +435,18 @@
     },
     {
      "path": "docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json",
+     "pointer": "/location_options/1/description",
+     "sha256": "8436008ac458d4e7467a9c7c9592d5312b3912b918d584ceaf3ac8cb2745a971",
+     "id": "L-EXTERNAL",
+     "role": "definition of the external location adopted here (row 79)"
+    },
+    {
+     "path": "docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json",
      "pointer": "/design_parameters/0/value",
      "sha256": "8436008ac458d4e7467a9c7c9592d5312b3912b918d584ceaf3ac8cb2745a971",
      "id": "H22-01",
-     "name": "C-1 mounting location"
+     "name": "C-1 mounting location",
+     "role": "H2-2 PRELIMINARY L-CENTRAL choice that row 79 reverses (context, not the basis of this item)"
     }
    ],
    "evidence_class": null,
@@ -1143,7 +1157,7 @@
    "id": "ICP-23",
    "group": "electrical",
    "title": "Isolation from the Hall anode and the cathode-common",
-   "requirement": "ICP body, antenna circuit and collector are isolated from the Hall anode, the C1 cathode-common and facility ground, rated to the relaxed 350 V V_d end plus transient/qualification margin (row 81). The margin and test voltage are owner/LOCK-1 items (H2-6 H26-45 carries 350 V with the margin TBD). Any gas line to the ICP crossing a potential difference uses an isolator qualified per row 105 practice.",
+   "requirement": "DC discharge-circuit isolation: the ICP body and the collector/bias circuit are isolated from the Hall anode, the C1 cathode-common and facility ground, rated to the relaxed 350 V V_d end plus transient/qualification margin (row 81, a DC discharge-circuit rating). The margin and test voltage are owner/LOCK-1 items (H2-6 H26-45 carries 350 V with the margin TBD). The RF antenna circuit is NOT covered by this DC item: its RF voltage, creepage/clearance and Paschen rating, and the combined DC+RF stress between antenna and collector/body, are ICP-44. Any gas line to the ICP crossing a potential difference uses an isolator qualified per row 105 practice.",
    "value": 350.0,
    "units": "V",
    "basis": "row 81; H2-6 H26-45 (margin TBD)",
@@ -1172,7 +1186,7 @@
      "name": "electrical isolation of H-1 from the stand and facility ground (rating)"
     }
    ],
-   "evidence_class": "assumed",
+   "evidence_class": "owner-allocation (margin TBD)",
    "status": "PROPOSED (margin TBD)",
    "freeze_point": "LOCK-1",
    "verification": "insulation resistance + hipot per exchange (ICP-39)",
@@ -1377,7 +1391,7 @@
    "id": "ICP-27",
    "group": "gas_plume",
    "title": "Hall-exhaust-to-ICP pressure / conductance interface",
-   "requirement": "The downstream Hall-exhaust-to-ICP interface is defined and measured (row 63): a pressure port in the ICP source volume (capacitance manometer) and a matched port at the equivalent position on the C1 reference module; cold-flow conductance IP-EXIT -> ICP volume -> chamber is measured at the anode flow grid in S1a for each module.",
+   "requirement": "The downstream Hall-exhaust-to-ICP interface is defined and measured (row 63): a pressure port in the ICP source volume (capacitance manometer) and a matched port at the equivalent position on the C1 reference module; cold-flow conductance IP-EXIT -> ICP volume -> chamber is measured at the anode flow grid in S1a for each module; the values are recorded before LOCK-2 and before any score-bearing run (row 71).",
    "value": null,
    "units": "Pa; m^3/s (conductance)",
    "basis": "row 63",
@@ -1771,11 +1785,11 @@
   {
    "id": "ICP-36",
    "group": "thermal",
-   "title": "ICP dissipation path and bounding heat load",
-   "requirement": "All RF power not absorbed by the plasma, and part of the absorbed power, ends as heat in the antenna, collector, dielectric, matching network and cabling (analog: only ~10 % absorbed by the plasma, visible collector heating, annex TAK-12/13). The module thermal path is sized to a BOUND = full laboratory forward power (row 72) x the 20 % heat-load design margin (row 86); this is a bound, not an estimate. Collector particle heating (I_coll x sheath voltage) is added when measured. Heat into H-1 + mount stays inside the H2-6 stand bound (copied).",
+   "title": "ICP dissipation path and RF-path heat contribution (RF only, partial term)",
+   "requirement": "All RF power not absorbed by the plasma, and part of the absorbed power, ends as heat in the antenna, collector, dielectric, matching network and cabling (analog: only ~10 % absorbed by the plasma, visible collector heating, annex TAK-12/13). The RF-path contribution to the module heat load is bounded by the full laboratory forward power (row 72) x the 20 % heat-load design margin (row 86). This value is the RF-ONLY PARTIAL TERM; it is NOT a bound on the total module heat load. In hall_icp_neutralizer the Hall discharge loop closes through the ICP collector (ICP-22), so the collector collects an ion current matching the extracted electron current and receives particle heating of order I_coll x sheath voltage (analog ion impact energies, annex TAK-10), plus Hall-plume interception and plasma heat flux on the module (ICP-29). Those terms scale with the discharge current, not with the RF power, and are carried in the total module heat-load item ICP-43. Heat into H-1 + mount stays inside the H2-6 stand bound (copied).",
    "value": 600.0,
    "units": "W",
-   "basis": "arithmetic bound: 500 W (row 72) x 1.20 (row 86)",
+   "basis": "RF-only partial-term bound: 500 W (row 72) x 1.20 (row 86)",
    "sources": [
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -1831,7 +1845,7 @@
    "id": "ICP-37",
    "group": "thermal",
    "title": "Interface temperatures and >= 50 K margin",
-   "requirement": "Every ICP-module material/insulation (dielectric, antenna insulation, collector, feedthrough, matching components, carrier interface) holds >= 50 K below its validated continuous-use limit plus the 20 % heat-load margin (row 86). Limits come from sourced material data after selection; the facility radiative sink is measured per run (row 131).",
+   "requirement": "Every ICP-module material/insulation (dielectric, antenna insulation, collector, feedthrough, matching components, carrier interface) holds >= 50 K below its validated continuous-use limit plus the 20 % heat-load margin (row 86). Limits come from sourced material data after selection; the facility radiative sink is measured per run (row 131). The margin check closes only against the total module heat load ICP-43 (not against the RF-only term ICP-36).",
    "value": 50.0,
    "units": "K (minimum margin)",
    "basis": "owner answer",
@@ -2070,6 +2084,109 @@
     "hall_c1_reference",
     "hall_icp_neutralizer"
    ]
+  },
+  {
+   "id": "ICP-43",
+   "group": "thermal",
+   "title": "Total ICP module heat load (RF + discharge-path + plume terms)",
+   "requirement": "The module thermal path (antenna, collector, dielectric, matching network, carrier interface) is sized to the TOTAL module heat load Q_mod = Q_RF + Q_coll + Q_plume, where Q_RF is bounded by ICP-36, Q_coll is the collector particle heating from the Hall discharge current closing through the collector (ICP-22; of order I_d x the collector sheath/impact voltage, analog TAK-10) and Q_plume is Hall-plume interception and plasma heat flux on the module (ICP-29). Q_coll and Q_plume scale with the discharge current, not the RF power. PROPOSED bounding rule (frozen at LOCK-1): Q_mod,bound = 1.20 (row 86) x (P_fwd,max (row 72) + P_d,max), where P_d,max = I_d,max x V_d,max is the maximum discharge-supply power permitted at the stand (A9-02 discharge slot / H2-4 supply limit); the true split is measured in S1a by thermocouple map and energy balance. No value is set until P_d,max exists (see ICPQ-10 for an alternative envelope).",
+   "value": null,
+   "units": "W",
+   "basis": "rows 72, 86, 108; ICP-22 topology (discharge closes on the collector)",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "row": 72,
+     "covers_ids": [
+      "R4-Q7"
+     ],
+     "answer_sha256": "636a6486bc06cfc72140256b657391be623d75bd638fa246d666e015c900009f"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "row": 86,
+     "covers_ids": [
+      "H25-Q4",
+      "H25-Q6"
+     ],
+     "answer_sha256": "e9d2eb1f07e6887e485220d86becc6d142197cc7f59cf8d1f7ecdbd5f6668427"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "row": 108,
+     "covers_ids": [
+      "OQ-H24-01"
+     ],
+     "answer_sha256": "caedb1162f6ed6d8b661f7d41cd722d213bfaf262916ca3983cb0aba6594a0e0"
+    },
+    {
+     "path": "docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json",
+     "pointer": "/design_parameters/43/value",
+     "sha256": "bc7d6b049067c6fbd5489bda32ee9c8c1af36508576db4619b08d2c4ec196a56",
+     "id": "H26-44",
+     "name": "heat load into H-1 + mount (upper bound for stand thermal design)"
+    },
+    {
+     "ref": "SRC-TAKAHASHI2024",
+     "page": 6
+    }
+   ],
+   "evidence_class": null,
+   "status": "PENDING docs/architecture_comparison/power_boundary_a9/ (maximum discharge-supply power P_d,max at the stand)",
+   "freeze_point": "LOCK-1",
+   "verification": "thermocouple map + energy balance with RF on/off and discharge current steps in S1a; hot-spot check against ICP-37",
+   "owner_rows": [
+    72,
+    86,
+    108
+   ],
+   "applies_to": [
+    "hall_icp_neutralizer"
+   ],
+   "note": "ICP-37 (>= 50 K margin) cannot be closed until this item has a value"
+  },
+  {
+   "id": "ICP-44",
+   "group": "rf",
+   "title": "Antenna-circuit RF voltage, creepage/clearance and Paschen rating",
+   "requirement": "The antenna circuit (antenna, matching-network output, RF feedthrough and in-vacuum leads) is rated separately from the 350 V DC discharge-circuit item (ICP-23). At the full laboratory forward power (row 72) a 13.56 MHz ICP antenna can run at an RF voltage far above the DC discharge rating. The rating is k_RF x V_ant,peak, where V_ant,peak is computed at P_fwd,max = 500 W from the selected antenna/matching design and the MEASURED total circuit resistance R_total (antenna + plasma load; the analog infers its power-transfer efficiency from such measured resistances, annex TAK-12); the factor k_RF (> 1) is an owner/LOCK-1 value. Clearance/creepage and in-vacuum Paschen margins are set for the combined stress between antenna and collector/body: the collector/body DC potential relative to the antenna circuit reference (up to the ICP-23 DC rating) plus V_ant,peak.",
+   "value": null,
+   "units": "V (peak RF), mm (clearance/creepage)",
+   "basis": "row 72 (power); row 81 limited to the DC discharge circuit; analog R_total method (TAK-12)",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "row": 72,
+     "covers_ids": [
+      "R4-Q7"
+     ],
+     "answer_sha256": "636a6486bc06cfc72140256b657391be623d75bd638fa246d666e015c900009f"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "row": 81,
+     "covers_ids": [
+      "HWQ-03"
+     ],
+     "answer_sha256": "fef317551e932312426b78696088bf646a7d279f2d1cfaeafe1e34ca60c13376"
+    },
+    {
+     "ref": "SRC-TAKAHASHI2024",
+     "page": 8
+    }
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "verification": "RF hipot at full forward power (500 W) on a dummy load and with plasma; RF probe of V_ant,peak; inspection of clearance/creepage",
+   "owner_rows": [
+    72,
+    81
+   ],
+   "applies_to": [
+    "hall_icp_neutralizer"
+   ],
+   "tbd": "TBD - requires the antenna/matching-network selection (ICP-13, ICP-15), the measured R_total and the owner factor k_RF"
   }
  ],
  "interface_demands": [
@@ -2078,7 +2195,7 @@
    "from": "A9-03",
    "to": "A9-01",
    "quantity": "configuration ids and per-configuration hardware identity (which ICD items may differ between hall_c1_reference and hall_icp_neutralizer)",
-   "value": "ICP-01..ICP-42 applies_to",
+   "value": "ICP-01..ICP-44 applies_to",
    "units": "-",
    "status": "PROPOSED"
   },
@@ -2225,10 +2342,10 @@
    "id": "ID-16",
    "from": "A9-03",
    "to": "H2-5",
-   "quantity": "ICP module heat-load bound for the thermal path (bound, not estimate)",
+   "quantity": "RF-path heat contribution only (ICP-36 partial term; NOT a bound on the total module heat load, which adds collector particle heating from the Hall discharge current and plume interception, ICP-43)",
    "value": 600.0,
    "units": "W",
-   "status": "DERIVED_BOUND (ICP-36)"
+   "status": "DERIVED_BOUND (ICP-36, RF-only partial term)"
   },
   {
    "id": "ID-17",
@@ -2292,6 +2409,24 @@
    "value": null,
    "units": "kg",
    "status": "PENDING docs/hardware/h2/h2_7_mechanical_bom/ (H2-7: A9 amendment (A9-06))"
+  },
+  {
+   "id": "ID-25",
+   "from": "A9-02",
+   "to": "A9-03",
+   "quantity": "maximum discharge-supply power at the stand P_d,max = I_d,max x V_d,max (for the total module heat-load bound ICP-43)",
+   "value": null,
+   "units": "W",
+   "status": "PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02: discharge slot limit)"
+  },
+  {
+   "id": "ID-26",
+   "from": "A9-03",
+   "to": "H2-5",
+   "quantity": "total ICP module heat load for the thermal path (ICP-43: RF + discharge-path + plume terms)",
+   "value": null,
+   "units": "W",
+   "status": "PENDING docs/architecture_comparison/power_boundary_a9/ (P_d,max; ICP-43)"
   },
   {
    "id": "ID-24",
@@ -2581,7 +2716,7 @@
     "HWQ-03"
    ],
    "answer_sha256": "fef317551e932312426b78696088bf646a7d279f2d1cfaeafe1e34ca60c13376",
-   "how_applied": "isolation rated to 350 V + margin (ICP-23)"
+   "how_applied": "DC discharge-circuit isolation rated to 350 V + margin (ICP-23); RF antenna circuit rated separately (ICP-44)"
   },
   {
    "row": 83,
@@ -2598,7 +2733,7 @@
     "H25-Q6"
    ],
    "answer_sha256": "e9d2eb1f07e6887e485220d86becc6d142197cc7f59cf8d1f7ecdbd5f6668427",
-   "how_applied": ">= 50 K margin and 20 % heat-load margin (ICP-36, ICP-37)"
+   "how_applied": ">= 50 K margin and 20 % heat-load margin (ICP-36 RF-only term, ICP-43 total, ICP-37)"
   },
   {
    "row": 89,
@@ -2816,6 +2951,16 @@
    "id": "ICPQ-09",
    "question": "Plume interception by a Takahashi-type enclosing source is a real architecture consequence; report it inside the system boundary without correction (ICP-29)?",
    "proposed_answer": "YES"
+  },
+  {
+   "id": "ICPQ-10",
+   "question": "Total ICP module heat-load bound (ICP-43): use 1.20 x (P_fwd,max + P_d,max) with P_d,max from the A9-02 discharge slot, or, if every score-bearing stand point is held inside the P_bus < 1.5 kW ceiling (row 108), the envelope 1.20 x 1.5 kW used for the stand by H2-6 H26-44?",
+   "proposed_answer": "owner call; proposal: 1.20 x (P_fwd,max + P_d,max), because laboratory RF forward power (0-500 W) is a capability that is not itself held inside the P_bus ceiling"
+  },
+  {
+   "id": "ICPQ-11",
+   "question": "Factor k_RF between the rated antenna-circuit RF voltage and the computed V_ant,peak at 500 W (ICP-44)?",
+   "proposed_answer": "owner call (LOCK-1); no value proposed here"
   }
  ],
  "historical_reuse": {
@@ -2892,9 +3037,9 @@
    "m16_row": 13,
    "key": "thermal_control",
    "name": "thermal control",
-   "how_touched": "ICP dissipation path, 600 W bound, >= 50 K margin",
+   "how_touched": "ICP dissipation path: RF-only partial term 600 W (ICP-36), total module heat load TBD (ICP-43, adds discharge-path and plume terms), >= 50 K margin",
    "proposed_state": "BLOCKED",
-   "blocking_item": "ICP module design + H2-5 revision for row 86"
+   "blocking_item": "ICP module design + P_d,max (A9-02) for ICP-43 + H2-5 revision for row 86"
   },
   {
    "m16_row": 14,
@@ -2996,12 +3141,38 @@
    {
     "stage": "Ar ENGINEERING_ONLY",
     "measure": "topology reproduction: ICP ignition, Hall ignition with ICP electrons, collector V/I, thermal map, deposition witnesses",
-    "closes": "ICP-21, ICP-29, ICP-36 (engineering evidence only)"
+    "closes": "ICP-21, ICP-29, ICP-36, ICP-43 (engineering evidence only)"
    },
    {
     "stage": "facility-effect series",
     "measure": "base + two elevated p_b levels per configuration",
     "closes": "ICP-28"
+   }
+  ]
+ },
+ "hard_incompatibility_check": {
+  "verdict": "none identified",
+  "veto_claimed": false,
+  "checked": [
+   {
+    "item": "ICP module aperture vs the H-1 channel OD window (ICP-04)",
+    "finding": "not assessable yet: H-1 channel OD is PRELIMINARY (H2-1) and the ICP module is not designed; left TBD at LOCK-1, not a veto"
+   },
+   {
+    "item": "external C1 (row 79) vs the H2-2 PRELIMINARY L-CENTRAL choice",
+    "finding": "a location revision (A9-07), not an architecture incompatibility; H2-2 carries L-EXTERNAL as its alternative"
+   },
+   {
+    "item": "ICP power vs the ~1.35 kW internal allocation (row 109) and P_bus < 1.5 kW (row 108)",
+    "finding": "not assessable: bus slots PENDING A9-02 and no performance is predicted here; decided only by measurement against the full-system gate"
+   },
+   {
+    "item": "stand payload (>= 25 kg design, row 116) vs module mass on the carrier",
+    "finding": "module masses PENDING H2-7 / module design; no evidence of exceedance"
+   },
+   {
+    "item": "antenna-circuit RF voltage vs the 350 V DC isolation item",
+    "finding": "resolved by separating the RF rating (ICP-44) from the DC discharge-circuit rating (ICP-23); no incompatibility, a design item"
    }
   ]
  },
@@ -3139,7 +3310,7 @@
     "units": "V",
     "source": "SRC-TAKAHASHI2024",
     "page": 3,
-    "locator": "p. 3 (visual observation); p. 6 (Fig. 4a)",
+    "locator": "p. 3 (visual observation); p. 6 text; Fig. 4a on p. 7",
     "evidence_class": "measured (reported observation)",
     "label": "published analog, reported",
     "use": "interface context only; never a Vyovrinda performance or design value",
@@ -3175,7 +3346,7 @@
     "units": "V, eV",
     "source": "SRC-TAKAHASHI2024",
     "page": 6,
-    "locator": "p. 6; Fig. 4a",
+    "locator": "p. 6 text; Fig. 4a on p. 7",
     "evidence_class": "measured (V_K) / inferred (ion energies)",
     "label": "published analog, reported",
     "use": "interface context only; never a Vyovrinda performance or design value",
@@ -3188,7 +3359,7 @@
     "units": "-",
     "source": "SRC-TAKAHASHI2024",
     "page": 6,
-    "locator": "p. 6; Fig. 5 (illustration)",
+    "locator": "p. 6 text; Fig. 5 (illustration) on p. 8",
     "evidence_class": "measured (reported post-test observation)",
     "label": "published analog, reported",
     "use": "interface context only; never a Vyovrinda performance or design value",
