@@ -1,0 +1,1541 @@
+{
+ "schema": "icp_neutralizer_evidence_v1",
+ "title": "Downstream RF-ICP neutralizer - published-analog evidence extraction (A9-05 part 1)",
+ "lane": "fo_a9_05_hall_icp_validation_inputs",
+ "trigger": "T_A9_05_VALIDATION_INPUTS",
+ "status": "DRAFT_FOR_OWNER_REVIEW",
+ "base_commit": "0a430bb5588a438f7c8485c6d16f40ed0d402c4c",
+ "generated_by": "docs/evidence/icp_neutralizer/build_icp_neutralizer_evidence.py (--check reproduces JSON and MD exactly)",
+ "authority_pins": [
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+   "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+   "role": "governing owner decision A9 (status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
+   "role": "owner's 147 answers, machine-readable (cited by row)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+   "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976",
+   "role": "owner decision pack, verbatim"
+  }
+ ],
+ "deliverable_pins": [
+  {
+   "path": "docs/evidence/cathode/cathode_evidence_v1.json",
+   "sha256": "050060204e443d5583c307becadaab55a9f213d406ff4454be856bca21249110",
+   "role": "cathode / neutralizer dossier: rf_plasma_cathode entries (watanabe_2015, schwertheim_2025) cross-referenced"
+  },
+  {
+   "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+   "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
+   "role": "measurement-chain ids (INS-xx) that analog quantities map onto"
+  }
+ ],
+ "governance_read_never_pinned": [
+  "docs/orchestration/lane_registry_v1.json",
+  "docs/orchestration/trigger_registry_v1.json",
+  "docs/orchestration/trigger_ledger_v2.jsonl",
+  "docs/orchestration/fired_triggers.jsonl",
+  "docs/orchestration/runtime_state.json"
+ ],
+ "configuration_ids": [
+  "hall_c1_reference",
+  "hall_icp_neutralizer"
+ ],
+ "what_this_is_not": [
+  "not a performance prediction for Vyovrinda hardware (H-1, C1 or the A9 ICP module): every value is a published analog on different geometry, gas and facility",
+  "not a use of any Hall transport closure (credible set EMPTY), of abep_sim/plasma_devices.py or of the withdrawn v1.2-v1.6 numbers",
+  "not a winner declaration between hall_c1_reference and hall_icp_neutralizer; not a change of Bundle 1 (NO_BASELINE_YET) or of P5-N2 v1 (INCONCLUSIVE)",
+  "not a numeric threshold: no margin, effect size or stop-rule number is set here"
+ ],
+ "anchor": {
+  "id": "takahashi_2024",
+  "citation": "K. Takahashi, H. Watanabe, Y. Nakahama, K. Kikuchi, 'Hall thruster ion acceleration neutralized by a radiofrequency inductively coupled plasma', Journal of Electric Propulsion 3, 18 (2024). Brief Communication; received 21 March 2024, accepted 3 September 2024, published 2024-09-27.",
+  "doi": "10.1007/s44205-024-00081-2",
+  "license": "CC BY-NC-ND 4.0 (stated on PDF p. 1)",
+  "access": "open access, publisher PDF",
+  "retrieval": {
+   "url": "https://link.springer.com/content/pdf/10.1007/s44205-024-00081-2.pdf",
+   "method": "curl via the session proxy (no bypass, no login)",
+   "http_status": 200,
+   "content_type": "application/pdf",
+   "retrieved_on": "2026-09-29",
+   "bytes": 2457280,
+   "pages": 10,
+   "sha256": "1e4778559d61509d520fac91798f7ed9ebb92d18a31a2e9b9f2598a8894d6e1f",
+   "crossref_metadata": "https://api.crossref.org/works/10.1007/s44205-024-00081-2 (title, authors, volume 3, article 18, licence CC BY-NC-ND 4.0) checked 2026-09-29"
+  },
+  "redistribution": "the PDF is NOT committed (NC-ND licence; the repository stores only locators, reported values, a pixel record of Figs. 2 and 4 and this lane's derived numbers, each attributed)",
+  "evidence_class": "published analog (topology precedent), not validation of Vyovrinda hardware",
+  "data_availability_statement": "'available from the corresponding author upon reasonable request' (PDF p. 9). Not requested: the standing rules forbid contact with authors or labs (owner answer row 7: no author-contact shortcuts unless separately authorized)."
+ },
+ "pixel_record": {
+  "path": "docs/evidence/icp_neutralizer/takahashi2024_fig_pixels_v1.json",
+  "sha256": "4647b33b7b86ef07a22660311dbc10f472e4fd7c4dd2d9e47b23fe199eff5fd7",
+  "regenerate": "python docs/evidence/icp_neutralizer/digitize_takahashi2024.py --pdf <anchor PDF> --write",
+  "reading_uncertainty_px": {
+   "unoccluded": 2.0,
+   "occluded": 8.0
+  }
+ },
+ "extraction": [
+  {
+   "id": "TK-01",
+   "group": "HET",
+   "quantity": "Hall thruster type and magnetic circuit",
+   "value": "annular-cavity HET; cylindrical SmCo permanent magnet at the radial centre and annular SmCo magnet at the periphery, iron (labelled SC45C) behind the magnets forming the circuit; no electromagnet coil",
+   "unit": null,
+   "locator": "p. 4 text; Fig. 2 labels",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "Permanent-magnet circuit: no coil-current B(z) control (contrast owner answer row 78, H-1 EM only)."
+  },
+  {
+   "id": "TK-02",
+   "group": "HET",
+   "quantity": "discharge-cavity walls and anode material",
+   "value": "stainless-steel (SUS304) cavity, inner wall coated with an insulator (silicone resin) against short circuit; SUS304 anode located behind the peak-field region; Al2O3 parts at the exit face (Fig. 2)",
+   "unit": null,
+   "locator": "p. 4 text; Fig. 2 labels",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": ""
+  },
+  {
+   "id": "TK-03",
+   "group": "HET",
+   "quantity": "peak radial magnetic field in the cavity (calculated)",
+   "value": "0.1-0.15 at z ~ -10 mm",
+   "unit": "T",
+   "locator": "Abstract p. 1; p. 4 text; Fig. 2",
+   "value_basis": "reported",
+   "epistemic": "model-derived",
+   "evidence_class": "published analog",
+   "note": "Authors' magnetostatic calculation, not a measured map."
+  },
+  {
+   "id": "TK-04",
+   "group": "HET",
+   "quantity": "propellant injection",
+   "value": "four small holes on the anode electrode",
+   "unit": null,
+   "locator": "p. 2-3 text",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": ""
+  },
+  {
+   "id": "TK-05",
+   "group": "HET",
+   "quantity": "thrust-class / power-class designation",
+   "value": null,
+   "unit": null,
+   "locator": "whole paper",
+   "value_basis": "not_reported",
+   "epistemic": null,
+   "evidence_class": "not reported",
+   "note": "No thrust, mass, power class or name of the HET is given."
+  },
+  {
+   "id": "TK-10",
+   "group": "ICP",
+   "quantity": "ICP source tube",
+   "value": "pyrex tube, 6.5 cm inner diameter (65 mm, p. 6)",
+   "unit": "cm",
+   "locator": "p. 2 text; p. 6 text",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": ""
+  },
+  {
+   "id": "TK-11",
+   "group": "ICP",
+   "quantity": "antenna",
+   "value": "double-turn loop antenna wound on the tube; antenna covered by insulator and grounded metallic structures to minimize parasitic discharge outside the source (ref. [21])",
+   "unit": null,
+   "locator": "p. 2 text; Fig. 1b",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "Antenna axial position along the tube is shown only schematically (Fig. 1a/1b)."
+  },
+  {
+   "id": "TK-12",
+   "group": "ICP",
+   "quantity": "position relative to the thruster exit",
+   "value": "the upstream side of the source tube is terminated by the HET structure; z = 0 is the HET exit and the tube / ion collector extends to z = 10 cm (Fig. 1a annotations)",
+   "unit": "cm",
+   "locator": "p. 2 text; p. 3 text (z = 0 definition); Fig. 1a",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "Coaxial downstream topology: the Hall exhaust passes through the ICP tube."
+  },
+  {
+   "id": "TK-13",
+   "group": "ICP",
+   "quantity": "ion collector ('cathode electrode')",
+   "value": "C-type stainless-steel electrode, 10 cm axial length, on the inner wall of the source tube, with an axial slit so that the RF fields can penetrate; collects ions to keep charge neutrality while electrons are extracted",
+   "unit": "cm",
+   "locator": "p. 3 text; Fig. 1b",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "The discharge voltage V_D is applied between the HET anode and this electrode."
+  },
+  {
+   "id": "TK-14",
+   "group": "ICP",
+   "quantity": "applied magnetic field of the ICP source",
+   "value": null,
+   "unit": null,
+   "locator": "p. 2-4",
+   "value_basis": "not_reported",
+   "epistemic": null,
+   "evidence_class": "not reported",
+   "note": "No ICP magnet is described (unmagnetized ICP); the HET permanent-magnet fringe field in the tube is shown only up to z ~ +10 mm in Fig. 2."
+  },
+  {
+   "id": "TK-20",
+   "group": "RF",
+   "quantity": "RF frequency",
+   "value": 13.56,
+   "unit": "MHz",
+   "locator": "Abstract p. 1; p. 3 text",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": ""
+  },
+  {
+   "id": "TK-21",
+   "group": "RF",
+   "quantity": "RF generator rating and forward power used",
+   "value": 200,
+   "unit": "W",
+   "locator": "Abstract p. 1; p. 3 text",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "Forward power 200 W; 'no power reflection is detected; the input power P_rf to the load is equal to the forward power of 200 W' (p. 3)."
+  },
+  {
+   "id": "TK-22",
+   "group": "RF",
+   "quantity": "reflected power",
+   "value": 0,
+   "unit": "W",
+   "locator": "p. 3 text",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "Reported as 'not detected' by the generator power meters (resolution not stated)."
+  },
+  {
+   "id": "TK-23",
+   "group": "RF",
+   "quantity": "matching network",
+   "value": "two variable capacitors tuned to minimize reflection; forward/reflected power from the generator's power meters; vacuum feedthrough to the antenna",
+   "unit": null,
+   "locator": "p. 3 text",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": ""
+  },
+  {
+   "id": "TK-24",
+   "group": "RF",
+   "quantity": "antenna resistance without plasma R_ant",
+   "value": 0.36,
+   "unit": "ohm",
+   "locator": "p. 8 text",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "From the RF antenna current measured with a high-frequency current sensor (p. 3)."
+  },
+  {
+   "id": "TK-25",
+   "group": "RF",
+   "quantity": "total resistance during discharge R_total at P_rf = 200 W",
+   "value": 0.4,
+   "unit": "ohm",
+   "locator": "p. 8 text ('about')",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": ""
+  },
+  {
+   "id": "TK-26",
+   "group": "RF",
+   "quantity": "RF power transfer efficiency eta_p = R_p / (R_p + R_ant)",
+   "value": 0.1,
+   "unit": "-",
+   "locator": "p. 7-8 text, Eq. (1)",
+   "value_basis": "reported",
+   "epistemic": "inferred",
+   "evidence_class": "published analog",
+   "note": "Authors' evaluation of Eq. (1) with R_p = R_total - R_ant."
+  },
+  {
+   "id": "TK-27",
+   "group": "RF",
+   "quantity": "RF power absorbed by the plasma",
+   "value": 20,
+   "unit": "W",
+   "locator": "p. 8 text",
+   "value_basis": "authors_estimate",
+   "epistemic": "inferred",
+   "evidence_class": "published analog",
+   "note": "= eta_p x 200 W; 'most of the rf power is considered to be consumed for heating the electrode' (eddy currents in the ion-collecting electrode; heating visible even without plasma)."
+  },
+  {
+   "id": "TK-28",
+   "group": "RF",
+   "quantity": "authors' projection: RF power needed at eta_p = 80 %",
+   "value": "25-30",
+   "unit": "W",
+   "locator": "p. 8 text",
+   "value_basis": "authors_estimate",
+   "epistemic": "assumed",
+   "evidence_class": "published analog",
+   "note": "A projection, not a measurement; not usable as a Vyovrinda power value."
+  },
+  {
+   "id": "TK-30",
+   "group": "gas",
+   "quantity": "propellant",
+   "value": "argon only (proof of principle)",
+   "unit": null,
+   "locator": "Abstract; p. 2 text",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "Single gas feed through the HET anode; the ICP re-uses the gas ejected from the HET (no separate ICP feed)."
+  },
+  {
+   "id": "TK-31",
+   "group": "gas",
+   "quantity": "total gas flow rate",
+   "value": "70 sccm (2.1 mg/s)",
+   "unit": "sccm",
+   "locator": "p. 3 text",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "Shared by HET and ICP; the ICP share is not separable."
+  },
+  {
+   "id": "TK-32",
+   "group": "facility",
+   "quantity": "vacuum chamber",
+   "value": "1 m diameter x 2 m long, three turbomolecular pumping systems",
+   "unit": null,
+   "locator": "p. 2 text; Fig. 1a",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": ""
+  },
+  {
+   "id": "TK-33",
+   "group": "facility",
+   "quantity": "base pressure",
+   "value": 0.0001,
+   "unit": "Pa",
+   "locator": "p. 2 text",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": ""
+  },
+  {
+   "id": "TK-34",
+   "group": "facility",
+   "quantity": "chamber pressure at 70 sccm Ar",
+   "value": 0.028,
+   "unit": "Pa",
+   "locator": "p. 3 text ('about 28 mPa')",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "Gauge type / location not stated."
+  },
+  {
+   "id": "TK-35",
+   "group": "gas",
+   "quantity": "neutral density estimate in the 65 mm tube",
+   "value": 2e+19,
+   "unit": "m^-3",
+   "locator": "p. 6 text",
+   "value_basis": "authors_estimate",
+   "epistemic": "inferred",
+   "evidence_class": "published analog",
+   "note": "From mdot = M n v S with an assumed v_n ~ 400 m/s."
+  },
+  {
+   "id": "TK-36",
+   "group": "gas",
+   "quantity": "CEX mean free path estimate in the tube",
+   "value": 4,
+   "unit": "cm",
+   "locator": "p. 6 text",
+   "value_basis": "authors_estimate",
+   "epistemic": "inferred",
+   "evidence_class": "published analog",
+   "note": "Assumed CEX cross-section 1e-18 m^2; shorter than the 10 cm source length."
+  },
+  {
+   "id": "TK-40",
+   "group": "circuit",
+   "quantity": "discharge circuit",
+   "value": "DC supply V_D between HET anode and the ICP ion-collecting electrode; isolation transformer isolates the supply from the grounded chamber ('ensuring the zero net current to the chamber'); 50 ohm series resistor (arc limiting) and a 13.56 MHz L-C resonance circuit (RF interference) in series",
+   "unit": null,
+   "locator": "p. 3 text; Fig. 1a",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "There is no separate collector-bias supply: the collector sits at the negative end of V_D and floats relative to ground (V_K in Fig. 4a)."
+  },
+  {
+   "id": "TK-41",
+   "group": "circuit",
+   "quantity": "effective anode-cathode voltage reduced by the 50 ohm resistor drop",
+   "value": "qualitative: 'the effectively applied voltage between the cathode and anode is reduced by the voltage drop at the 50 ohm resistor'",
+   "unit": null,
+   "locator": "p. 6 text",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "Stated qualitatively; see derived ID-R drop in the digitized table."
+  },
+  {
+   "id": "TK-50",
+   "group": "discharge",
+   "quantity": "annular discharge onset (visual)",
+   "value": "V_D > 140",
+   "unit": "V",
+   "locator": "p. 3 text; p. 6 text",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": ""
+  },
+  {
+   "id": "TK-51",
+   "group": "discharge",
+   "quantity": "annular discharge without RF power",
+   "value": "not induced for any V_D",
+   "unit": null,
+   "locator": "p. 3 text",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "Authors: implies the electrons extracted from the ICP sustain the HET discharge."
+  },
+  {
+   "id": "TK-52",
+   "group": "discharge",
+   "quantity": "discharge current I_D (order)",
+   "value": "about 1",
+   "unit": "A",
+   "locator": "p. 8 text; Fig. 4b",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "Digitized series: see digitized_fig4."
+  },
+  {
+   "id": "TK-53",
+   "group": "discharge",
+   "quantity": "I_D and I_c60 trend",
+   "value": "both increase with V_D and are fairly constant for V_D > ~200 V; the current limit 'seems to be decided by the rf power of the ICP neutralizer'",
+   "unit": null,
+   "locator": "p. 7 text; Fig. 4b",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "The RF-power attribution is the authors' interpretation (no RF-power scan shown)."
+  },
+  {
+   "id": "TK-54",
+   "group": "discharge",
+   "quantity": "anode potential V_A and V_max",
+   "value": "V_max saturates at about 120-130 V and agrees with V_A",
+   "unit": "V",
+   "locator": "p. 6 text; Fig. 4a",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "V_A squares are largely hidden behind the V_max circles in Fig. 4a and are not digitized here."
+  },
+  {
+   "id": "TK-55",
+   "group": "discharge",
+   "quantity": "ion-collector potential V_K",
+   "value": "decreases to about -100 V with increasing V_D",
+   "unit": "V",
+   "locator": "p. 6 text; Fig. 4a",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "Digitized series: see digitized_fig4."
+  },
+  {
+   "id": "TK-56",
+   "group": "neutralization",
+   "quantity": "evidence of beam neutralization",
+   "value": "qualitative: RFEA IEDF at z = 25 cm shows ions with maximum energy close to the anode potential with the supply isolated from ground (zero net current to the chamber); no electron-current or beam-current balance is reported",
+   "unit": null,
+   "locator": "Abstract; p. 6 text; Summary p. 9",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "No separate measurement of the electron current emitted into the beam versus drawn to the anode."
+  },
+  {
+   "id": "TK-57",
+   "group": "diagnostics",
+   "quantity": "RFEA",
+   "value": "four grids + collector at z = 25 cm on axis; 10 mm entrance orifice in a grounded cover (G1); G2 and G4 at -80 V; G3 swept 0 to ~400 V; collector to ground through a resistor, isolation amplifier gain 100, 1 kHz low-pass; 14-bit DAQ",
+   "unit": null,
+   "locator": "p. 3-4 text; Fig. 1c",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": ""
+  },
+  {
+   "id": "TK-58",
+   "group": "diagnostics",
+   "quantity": "IEDF features",
+   "value": "V_D = 0: peaks at V_G3 ~ 20 V (local plasma potential) and ~ 40 V (ions from the source, plasma potential inside the tube ~40 V); V_D on: broadened component ~50-120 V",
+   "unit": "V",
+   "locator": "p. 5-6 text; Fig. 3",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": ""
+  },
+  {
+   "id": "TK-59",
+   "group": "diagnostics",
+   "quantity": "I_c60 metric",
+   "value": "RFEA collector current at V_G3 = 60 V (zero at V_D = 0), a qualitative local flux of ions accelerated from the HET",
+   "unit": "arb. units",
+   "locator": "p. 6-7 text; Fig. 4b",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": ""
+  },
+  {
+   "id": "TK-60",
+   "group": "neutralization",
+   "quantity": "thrust measurement",
+   "value": null,
+   "unit": null,
+   "locator": "whole paper",
+   "value_basis": "not_reported",
+   "epistemic": null,
+   "evidence_class": "not reported",
+   "note": "No thrust stand, no thrust, no Faraday-probe beam current, no divergence, no efficiency."
+  },
+  {
+   "id": "TK-61",
+   "group": "discharge",
+   "quantity": "Hall discharge power",
+   "value": null,
+   "unit": null,
+   "locator": "whole paper",
+   "value_basis": "not_reported",
+   "epistemic": null,
+   "evidence_class": "not reported",
+   "note": "Only V_D and I_D are shown; the products computed in digitized_fig4 are this lane's arithmetic."
+  },
+  {
+   "id": "TK-62",
+   "group": "discharge",
+   "quantity": "repeatability",
+   "value": "error bars from several repeated shots, attributed to thermal issues of the HET and the ICP neutralizer",
+   "unit": null,
+   "locator": "p. 7 text; Fig. 4 caption",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": ""
+  },
+  {
+   "id": "TK-70",
+   "group": "erosion",
+   "quantity": "ion energy at the ion-collecting electrode",
+   "value": "V_ICP - V_K ~ 140 (ICP ions); V_A - V_K ~ 220 (HET ions lost to the electrode)",
+   "unit": "V",
+   "locator": "p. 6 text",
+   "value_basis": "reported",
+   "epistemic": "inferred",
+   "evidence_class": "published analog",
+   "note": "Authors' sheath-energy estimates at the largest V_D."
+  },
+  {
+   "id": "TK-71",
+   "group": "erosion",
+   "quantity": "sputtering / deposition observed",
+   "value": "the stainless-steel electrode is sputtered; metallic films found after the experiment on part of the glass tube (at the electrode slit) and on the insulators at the HET front",
+   "unit": null,
+   "locator": "p. 6 text; Fig. 5",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "Authors: the negative cathode potential 'has to be minimized in future research and development'."
+  },
+  {
+   "id": "TK-72",
+   "group": "life",
+   "quantity": "operating duration, lifetime or erosion rate",
+   "value": null,
+   "unit": null,
+   "locator": "whole paper",
+   "value_basis": "not_reported",
+   "epistemic": null,
+   "evidence_class": "not reported",
+   "note": "No run duration, no mass-loss, no life test."
+  },
+  {
+   "id": "TK-73",
+   "group": "startup",
+   "quantity": "ignition sequence",
+   "value": "RF plasma turned on first, then V_D applied",
+   "unit": null,
+   "locator": "Abstract; p. 3 text",
+   "value_basis": "reported",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "note": "No ignition statistics, restart count or cycle data reported."
+  },
+  {
+   "id": "TK-74",
+   "group": "chemistry",
+   "quantity": "operation with reactive gases",
+   "value": "authors state the ICP neutralizer 'is operational for various gas species including chemically active gases such as water, carbon dioxide, and iodine'",
+   "unit": null,
+   "locator": "Summary p. 9",
+   "value_basis": "reported",
+   "epistemic": "assumed",
+   "evidence_class": "published analog",
+   "note": "A claim in the summary, not demonstrated in this paper (argon only); no N2/O2 data."
+  }
+ ],
+ "geometry_fig2": [
+  {
+   "id": "TK-G1",
+   "quantity": "channel outer radius (insulator-coated wall line)",
+   "value": 18.4,
+   "unit": "mm",
+   "reading_u": 0.08,
+   "locator": "Fig. 2 (PDF p. 4), calculation cross-section",
+   "value_basis": "digitized",
+   "epistemic": "digitized",
+   "evidence_class": "published analog",
+   "note": "read from the magnetostatic-calculation cross-section; its fidelity to the built hardware is not stated; schematic-level geometry"
+  },
+  {
+   "id": "TK-G2",
+   "quantity": "channel inner radius (insulator-coated wall line)",
+   "value": 9.4,
+   "unit": "mm",
+   "reading_u": 0.08,
+   "locator": "Fig. 2 (PDF p. 4), calculation cross-section",
+   "value_basis": "digitized",
+   "epistemic": "digitized",
+   "evidence_class": "published analog",
+   "note": "read from the magnetostatic-calculation cross-section; its fidelity to the built hardware is not stated; schematic-level geometry"
+  },
+  {
+   "id": "TK-G3",
+   "quantity": "channel back wall axial position",
+   "value": -28.1,
+   "unit": "mm",
+   "reading_u": 0.08,
+   "locator": "Fig. 2 (PDF p. 4), calculation cross-section",
+   "value_basis": "digitized",
+   "epistemic": "digitized",
+   "evidence_class": "published analog",
+   "note": "read from the magnetostatic-calculation cross-section; its fidelity to the built hardware is not stated; schematic-level geometry"
+  },
+  {
+   "id": "TK-G4",
+   "quantity": "exit-face Al2O3 parts, upstream face axial position",
+   "value": -5.0,
+   "unit": "mm",
+   "reading_u": 0.08,
+   "locator": "Fig. 2 (PDF p. 4), calculation cross-section",
+   "value_basis": "digitized",
+   "epistemic": "digitized",
+   "evidence_class": "published analog",
+   "note": "read from the magnetostatic-calculation cross-section; its fidelity to the built hardware is not stated; schematic-level geometry"
+  },
+  {
+   "id": "TK-G5",
+   "quantity": "exit-face Al2O3 parts, downstream face axial position",
+   "value": -0.2,
+   "unit": "mm",
+   "reading_u": 0.08,
+   "locator": "Fig. 2 (PDF p. 4), calculation cross-section",
+   "value_basis": "digitized",
+   "epistemic": "digitized",
+   "evidence_class": "published analog",
+   "note": "read from the magnetostatic-calculation cross-section; its fidelity to the built hardware is not stated; schematic-level geometry"
+  },
+  {
+   "id": "TK-G6",
+   "quantity": "anode block axial start",
+   "value": -25.1,
+   "unit": "mm",
+   "reading_u": 0.08,
+   "locator": "Fig. 2 (PDF p. 4), calculation cross-section",
+   "value_basis": "digitized",
+   "epistemic": "digitized",
+   "evidence_class": "published analog",
+   "note": "read from the magnetostatic-calculation cross-section; its fidelity to the built hardware is not stated; schematic-level geometry"
+  },
+  {
+   "id": "TK-G7",
+   "quantity": "anode block axial end",
+   "value": -20.2,
+   "unit": "mm",
+   "reading_u": 0.08,
+   "locator": "Fig. 2 (PDF p. 4), calculation cross-section",
+   "value_basis": "digitized",
+   "epistemic": "digitized",
+   "evidence_class": "published analog",
+   "note": "read from the magnetostatic-calculation cross-section; its fidelity to the built hardware is not stated; schematic-level geometry"
+  },
+  {
+   "id": "TK-G8",
+   "quantity": "anode block outer radius",
+   "value": 17.5,
+   "unit": "mm",
+   "reading_u": 0.08,
+   "locator": "Fig. 2 (PDF p. 4), calculation cross-section",
+   "value_basis": "digitized",
+   "epistemic": "digitized",
+   "evidence_class": "published analog",
+   "note": "read from the magnetostatic-calculation cross-section; its fidelity to the built hardware is not stated; schematic-level geometry"
+  },
+  {
+   "id": "TK-G9",
+   "quantity": "anode block inner radius",
+   "value": 10.7,
+   "unit": "mm",
+   "reading_u": 0.08,
+   "locator": "Fig. 2 (PDF p. 4), calculation cross-section",
+   "value_basis": "digitized",
+   "epistemic": "digitized",
+   "evidence_class": "published analog",
+   "note": "read from the magnetostatic-calculation cross-section; its fidelity to the built hardware is not stated; schematic-level geometry"
+  },
+  {
+   "id": "TK-G10",
+   "quantity": "channel width (TK-G1 - TK-G2)",
+   "value": 9.0,
+   "unit": "mm",
+   "reading_u": 0.16,
+   "locator": "derived from TK-G1, TK-G2",
+   "value_basis": "derived",
+   "epistemic": "inferred",
+   "evidence_class": "published analog",
+   "note": "this lane's arithmetic"
+  }
+ ],
+ "digitized_fig4": {
+  "locator": "Fig. 4a/4b (PDF p. 7)",
+  "value_basis": "digitized",
+  "epistemic": "digitized",
+  "evidence_class": "published analog",
+  "columns": {
+   "VD_nominal_V": "printed V_D grid",
+   "ID_A": "discharge current (Fig. 4b, right axis)",
+   "VK_V": "ion-collector potential (Fig. 4a)",
+   "Vmax_V": "max ion potential from RFEA (Fig. 4a)",
+   "Ic60_arb": "RFEA collector current at V_G3 = 60 V (Fig. 4b, left axis, arb. units)",
+   "*_errbar_half": "half-length of the printed error bar (several repeated shots)",
+   "VD_x_ID_W": "this lane's product V_D x I_D (supply-side power incl. the 50 ohm resistor; NOT a Hall discharge power reported by the authors)",
+   "ID2_x_50ohm_W": "this lane's I_D^2 x 50 ohm (series-resistor dissipation)",
+   "VD_minus_ID_x_50ohm_V": "this lane's V_D - I_D x 50 ohm (voltage left across anode-collector)"
+  },
+  "rows": [
+   {
+    "VD_nominal_V": 0,
+    "VD_digitized_V": -0.2,
+    "ID_A": null,
+    "ID_note": "square hidden behind the circle on the zero line; not digitized",
+    "VK_V": null,
+    "VK_note": "V_A square and V_K triangle overlap at V_D = 0 (both ~0 V); not digitized",
+    "Vmax_V": 49.1,
+    "Vmax_V_errbar_half": null,
+    "Ic60_arb": 0.002,
+    "Ic60_arb_errbar_half": null
+   },
+   {
+    "VD_nominal_V": 140,
+    "VD_digitized_V": 140.1,
+    "ID_A": 0.38,
+    "ID_reading_u_A": 0.005,
+    "ID_occluded": false,
+    "VK_V": -2.7,
+    "VK_reading_u_V": 0.8,
+    "Vmax_V": 103.8,
+    "Vmax_V_errbar_half": 10.4,
+    "Ic60_arb": 0.107,
+    "Ic60_arb_errbar_half": null,
+    "VD_x_ID_W": 53.2,
+    "ID2_x_50ohm_W": 7.2,
+    "VD_minus_ID_x_50ohm_V": 121.0
+   },
+   {
+    "VD_nominal_V": 160,
+    "VD_digitized_V": 160.0,
+    "ID_A": 0.58,
+    "ID_reading_u_A": 0.005,
+    "ID_occluded": false,
+    "VK_V": -10.6,
+    "VK_reading_u_V": 0.8,
+    "Vmax_V": 115.6,
+    "Vmax_V_errbar_half": 11.5,
+    "Ic60_arb": 0.233,
+    "Ic60_arb_errbar_half": 0.046,
+    "VD_x_ID_W": 92.8,
+    "ID2_x_50ohm_W": 16.8,
+    "VD_minus_ID_x_50ohm_V": 131.0
+   },
+   {
+    "VD_nominal_V": 180,
+    "VD_digitized_V": 179.9,
+    "ID_A": 0.75,
+    "ID_reading_u_A": 0.005,
+    "ID_occluded": false,
+    "VK_V": -21.8,
+    "VK_reading_u_V": 0.8,
+    "Vmax_V": 122.5,
+    "Vmax_V_errbar_half": 12.3,
+    "Ic60_arb": 0.367,
+    "Ic60_arb_errbar_half": 0.074,
+    "VD_x_ID_W": 135.0,
+    "ID2_x_50ohm_W": 28.1,
+    "VD_minus_ID_x_50ohm_V": 142.5
+   },
+   {
+    "VD_nominal_V": 200,
+    "VD_digitized_V": 200.2,
+    "ID_A": 1.089,
+    "ID_reading_u_A": 0.005,
+    "ID_occluded": false,
+    "VK_V": -24.6,
+    "VK_reading_u_V": 0.8,
+    "Vmax_V": 121.7,
+    "Vmax_V_errbar_half": 12.2,
+    "Ic60_arb": 0.623,
+    "Ic60_arb_errbar_half": null,
+    "VD_x_ID_W": 217.8,
+    "ID2_x_50ohm_W": 59.3,
+    "VD_minus_ID_x_50ohm_V": 145.6
+   },
+   {
+    "VD_nominal_V": 220,
+    "VD_digitized_V": 220.1,
+    "ID_A": 1.008,
+    "ID_reading_u_A": 0.021,
+    "ID_occluded": true,
+    "VK_V": -42.9,
+    "VK_reading_u_V": 0.8,
+    "Vmax_V": 126.5,
+    "Vmax_V_errbar_half": 12.7,
+    "Ic60_arb": 0.686,
+    "Ic60_arb_errbar_half": 0.137,
+    "VD_x_ID_W": 221.8,
+    "ID2_x_50ohm_W": 50.8,
+    "VD_minus_ID_x_50ohm_V": 169.6
+   },
+   {
+    "VD_nominal_V": 240,
+    "VD_digitized_V": 240.0,
+    "ID_A": 0.979,
+    "ID_reading_u_A": 0.005,
+    "ID_occluded": false,
+    "VK_V": -69.7,
+    "VK_reading_u_V": 0.8,
+    "Vmax_V": 122.9,
+    "Vmax_V_errbar_half": 12.2,
+    "Ic60_arb": 0.585,
+    "Ic60_arb_errbar_half": 0.117,
+    "VD_x_ID_W": 235.0,
+    "ID2_x_50ohm_W": 47.9,
+    "VD_minus_ID_x_50ohm_V": 191.1
+   },
+   {
+    "VD_nominal_V": 260,
+    "VD_digitized_V": 259.9,
+    "ID_A": 0.919,
+    "ID_reading_u_A": 0.005,
+    "ID_occluded": false,
+    "VK_V": -93.8,
+    "VK_reading_u_V": 0.8,
+    "Vmax_V": 126.1,
+    "Vmax_V_errbar_half": 12.7,
+    "Ic60_arb": 0.541,
+    "Ic60_arb_errbar_half": 0.108,
+    "VD_x_ID_W": 238.9,
+    "ID2_x_50ohm_W": 42.2,
+    "VD_minus_ID_x_50ohm_V": 214.1
+   }
+  ]
+ },
+ "derived_ratios": [
+  {
+   "id": "TK-R1",
+   "quantity": "largest digitized I_D per forward RF watt (Takahashi, Ar, coupled HET)",
+   "value": 0.0054,
+   "unit": "A/W",
+   "formula": "max(digitized I_D) / 200 W forward (TK-21)",
+   "value_basis": "derived",
+   "epistemic": "inferred"
+  },
+  {
+   "id": "TK-R2",
+   "quantity": "largest digitized I_D per absorbed RF watt using the authors' ~20 W estimate",
+   "value": 0.054,
+   "unit": "A/W",
+   "formula": "max(digitized I_D) / 20 W (TK-27, authors' estimate)",
+   "value_basis": "derived",
+   "epistemic": "inferred"
+  }
+ ],
+ "stated_limitations": [
+  {
+   "id": "LIM-01",
+   "text": "argon only; proof of principle of ion acceleration (p. 2)",
+   "locator": "p. 2 text"
+  },
+  {
+   "id": "LIM-02",
+   "text": "poor RF power transfer efficiency (~10 %) caused by eddy-current heating of the ion-collecting electrode; proper electrode design required (p. 8)",
+   "locator": "p. 8 text"
+  },
+  {
+   "id": "LIM-03",
+   "text": "enhanced cathodic sheath voltage at large V_D: significant energy loss to ions accelerated by the cathodic sheath; sputtering of the electrode and metallic coating of glass and HET insulators (p. 6, p. 9)",
+   "locator": "p. 6 text; Summary p. 9"
+  },
+  {
+   "id": "LIM-04",
+   "text": "the physics of the broadened IEDF (CEX vs ionization in the potential gradient) is not resolved; 'more detailed measurements will be required' (p. 6)",
+   "locator": "p. 6 text"
+  },
+  {
+   "id": "LIM-05",
+   "text": "'more detailed physical studies and development are required to optimize the thruster design and performance' (p. 9)",
+   "locator": "Summary p. 9"
+  },
+  {
+   "id": "LIM-06",
+   "text": "thermal issues of the HET and ICP neutralizer cause shot-to-shot scatter (p. 7)",
+   "locator": "p. 7 text"
+  }
+ ],
+ "survey": {
+  "bound": "max ~8 primary sources (task scope); 8 used",
+  "sources": [
+   {
+    "id": "S-01",
+    "source_id": "watanabe_2016_tastj",
+    "citation": "H. Watanabe, T. Deguchi, S. Takeda, Y. Miura, M. Ichimura, H. Takegahara, 'Performance Evaluation of Radio Frequency Plasma Cathodes for Hall Thrusters', Trans. JSASS Aerospace Tech. Japan 14 (ists30), Pb_77-Pb_82 (2016)",
+    "doi": "10.2322/tastj.14.Pb_77",
+    "url": "https://www.jstage.jst.go.jp/article/tastj/14/ists30/14_Pb_77/_pdf",
+    "access": "full text (J-STAGE publisher PDF, openly served)",
+    "retrieved_on": "2026-09-29",
+    "sha256": "3165e5eec05681a63624ba6446bac78fc57956d9c6e0e231efa810064925a092",
+    "device": "stand-alone RF (ICP) plasma cathodes, outer-coil (alumina vessel 40 mm ID x 80 mm, Cu coil, graphite orifice plate with 2 mm orifice, graphite ion collector) and inner-coil (Mo vessel 58 x 67 mm, W coil); diode test to a plate anode 50 mm downstream; Xe; 13.56 MHz; 1.6 m x 3.2 m chamber, ~6.3e-4 Pa at 0.4 mg/s Xe",
+    "establishes": [
+     {
+      "q": "saturation anode (electron) current, outer-coil",
+      "value": 3.3,
+      "unit": "A",
+      "conditions": "RF 140 W (net, no reflection), Xe 0.3 mg/s, anode voltage 58 V",
+      "locator": "Abstract p. Pb_77; Sec. 3.2 p. Pb_79",
+      "value_basis": "reported"
+     },
+     {
+      "q": "saturation current proportional to RF power; weak flow dependence",
+      "value": null,
+      "unit": null,
+      "conditions": "outer-coil, Fig. 5",
+      "locator": "Sec. 3.2 p. Pb_79",
+      "value_basis": "reported"
+     },
+     {
+      "q": "inner-coil transition from < 1 A to > 12 A with anode voltage, unstable",
+      "value": null,
+      "unit": null,
+      "conditions": "RF 200 W, Xe 2.0 mg/s",
+      "locator": "Sec. 4 (3) p. Pb_81; Fig. 9",
+      "value_basis": "reported"
+     },
+     {
+      "q": "gas utilization comparable to a dispenser hollow cathode; electron production cost four times higher",
+      "value": null,
+      "unit": null,
+      "conditions": "vs HCN-252 hollow cathode data (2-10 A)",
+      "locator": "Abstract; Sec. 3.4 p. Pb_81, Eqs. (1)-(3), Fig. 10",
+      "value_basis": "reported"
+     }
+    ],
+    "derived": [
+     {
+      "q": "gas utilization factor U_e = I_a / (0.073 A per mg/s x mdot) at the 3.3 A point",
+      "formula": "3.3 / (0.073 * 0.3)",
+      "unit": "-",
+      "locator": "Eq. (1) p. Pb_81 applied to the reported point",
+      "value": 150.7,
+      "value_basis": "derived",
+      "epistemic": "inferred"
+     },
+     {
+      "q": "electron production cost C_e = (I_a V_a + P_rf) / I_a at the 3.3 A point",
+      "formula": "(3.3 * 58 + 140) / 3.3",
+      "unit": "W/A",
+      "locator": "Eq. (2) p. Pb_81 applied to the reported point",
+      "value": 100.4,
+      "value_basis": "derived",
+      "epistemic": "inferred"
+     },
+     {
+      "q": "RF power per ampere at the 3.3 A point",
+      "formula": "140 / 3.3",
+      "unit": "W/A",
+      "locator": "reported point",
+      "value": 42.4,
+      "value_basis": "derived",
+      "epistemic": "inferred"
+     }
+    ],
+    "limits": "diode test, not coupled to a Hall thruster; Xe only; no life or restart data; orifice-type cathode (not the open-tube downstream topology of A9)",
+    "relation": "same group as watanabe_2015 (IEPC-2015-194) in docs/evidence/cathode/cathode_evidence_v1.json; same 3.3 A / 140 W / 0.3 mg/s point (likely the journal version of the conference paper - verify)",
+    "evidence_class": "published analog (not Vyovrinda hardware)"
+   },
+   {
+    "id": "S-02",
+    "source_id": "xu_2022_pst",
+    "citation": "Z. Xu, P. Wang, Z. Hua, S. Cong, S. Yu, 'Numerical simulation and experimental research on an inductively coupled RF plasma cathode', Plasma Sci. Technol. 24, 015404 (2022)",
+    "doi": "10.1088/2058-6272/ac337a",
+    "url": "http://pst.hfcas.ac.cn/cn/article/pdf/preview/10.1088/2058-6272/ac337a.pdf",
+    "access": "full text served publicly by the journal's own website (copyright IOP/HIPS, not an open licence)",
+    "retrieved_on": "2026-09-29",
+    "sha256": "084b1b175e23d2b5366700a6615c5daceccb8476db8ef9ccdb5310e0934d20e2",
+    "device": "stand-alone ICP cathode: alumina chamber 40 mm ID x 76 mm, graphite orifice plate with 2 mm orifice, 5 mm Cu-tube coil, graphite axial ion collector; anode target 10 mm downstream; Xe; 13.56 MHz; 0.6 m x 1.2 m chamber, ~1.0e-4 Pa base",
+    "establishes": [
+     {
+      "q": "extracted electron current",
+      "value": 1.03,
+      "unit": "A",
+      "conditions": "Xe 2.766 sccm (MFC reading 2.0 sccm), RF input 270 W at 13.56 MHz, 50 V target bias",
+      "locator": "Sec. 4.3 p. 8; Fig. 11",
+      "value_basis": "reported"
+     },
+     {
+      "q": "extracted electron current at 50 W RF",
+      "value": 0.18,
+      "unit": "A",
+      "conditions": "50 V bias, same flow",
+      "locator": "Sec. 4.3 p. 8",
+      "value_basis": "reported"
+     },
+     {
+      "q": "stability: constant electron current for over one hour after initial automatic matching adjustment",
+      "value": null,
+      "unit": null,
+      "conditions": "Fig. 11 conditions",
+      "locator": "Sec. 4.3 p. 8",
+      "value_basis": "reported"
+     },
+     {
+      "q": "RF input power mainly determines the extracted current; current approaches a limit",
+      "value": null,
+      "unit": null,
+      "conditions": "50-300 W, 2.0-4.0 sccm reading",
+      "locator": "Abstract; p. 8",
+      "value_basis": "reported"
+     }
+    ],
+    "derived": [
+     {
+      "q": "RF input power per ampere at the 1.03 A point",
+      "formula": "270 / 1.03",
+      "unit": "W/A",
+      "locator": "reported point",
+      "value": 262.1,
+      "value_basis": "derived",
+      "epistemic": "inferred"
+     }
+    ],
+    "limits": "diode test, not coupled to a Hall thruster; Xe only; one-hour stability only, no life, no restart statistics; the paper's secondary citations (Scholze 1.6 A at 0.2 sccm / 300 W; Watanabe 2.1 A at 100 W / 2 sccm) are NOT used here as primary values (verify against the primary sources)",
+    "evidence_class": "published analog (not Vyovrinda hardware)"
+   },
+   {
+    "id": "S-03",
+    "source_id": "scholze_2008_rsi",
+    "citation": "F. Scholze, M. Tartz, H. Neumann, 'Inductive coupled radio frequency plasma bridge neutralizer', Rev. Sci. Instrum. 79, 02B724 (2008)",
+    "doi": "10.1063/1.2802587",
+    "url": "https://api.crossref.org/works/10.1063/1.2802587",
+    "access": "ABSTRACT-ONLY (Crossref abstract; publisher PDF returned HTTP 403 to this agent - not bypassed)",
+    "retrieved_on": "2026-09-29",
+    "sha256": null,
+    "device": "13.56 MHz inductively coupled RF plasma bridge neutralizer for ion thrusters / ion-beam processing",
+    "establishes": [
+     {
+      "q": "maximum extracted electron current",
+      "value": 1.6,
+      "unit": "A",
+      "conditions": "not given in the abstract",
+      "locator": "Abstract",
+      "value_basis": "reported"
+     },
+     {
+      "q": "no components inside the plasma, so lifetime 'expected to be very long'; electron current controllable over a wide range by RF power",
+      "value": null,
+      "unit": null,
+      "conditions": "",
+      "locator": "Abstract",
+      "value_basis": "reported"
+     }
+    ],
+    "derived": [],
+    "limits": "abstract only; the lifetime statement is an expectation, not a life test",
+    "evidence_class": "published analog (not Vyovrinda hardware)"
+   },
+   {
+    "id": "S-04",
+    "source_id": "longmier_2008_rsi",
+    "citation": "B. Longmier, N. Hershkowitz, 'Improved operation of the nonambipolar electron source', Rev. Sci. Instrum. 79, 093506 (2008)",
+    "doi": "10.1063/1.2979012",
+    "url": "https://api.crossref.org/works/10.1063/1.2979012",
+    "access": "ABSTRACT-ONLY (Crossref abstract)",
+    "retrieved_on": "2026-09-29",
+    "sha256": null,
+    "device": "nonambipolar electron source (NES), RF plasma electron source without cathode-surface emission",
+    "establishes": [
+     {
+      "q": "continuous electron current",
+      "value": 30,
+      "unit": "A",
+      "conditions": "2 sccm Xe, 1300 W RF at 13.56 MHz",
+      "locator": "Abstract",
+      "value_basis": "reported"
+     },
+     {
+      "q": "gas utilization factor",
+      "value": 180,
+      "unit": "-",
+      "conditions": "same point",
+      "locator": "Abstract",
+      "value_basis": "reported"
+     },
+     {
+      "q": "helicon mode transition",
+      "value": null,
+      "unit": null,
+      "conditions": "15 sccm Ar, 1000 W RF, 100 G magnetic field",
+      "locator": "Abstract",
+      "value_basis": "reported"
+     }
+    ],
+    "derived": [
+     {
+      "q": "RF power per ampere at the 30 A point",
+      "formula": "1300 / 30",
+      "unit": "W/A",
+      "locator": "reported point",
+      "value": 43.3,
+      "value_basis": "derived",
+      "epistemic": "inferred"
+     }
+    ],
+    "limits": "abstract only; high-power class; the device may use an applied magnetic field (100 G stated for the helicon transition) - owner answer row 69 fixes an UNMAGNETIZED first build, so magnetized data are context only",
+    "evidence_class": "published analog (not Vyovrinda hardware)"
+   },
+   {
+    "id": "S-05",
+    "source_id": "dietz_2020_epjap",
+    "citation": "P. Dietz, F. Becker, K. Keil, K. Holste, P. J. Klar, 'Performance of a rf neutralizer operating with noble gases and iodine', Eur. Phys. J. Appl. Phys. 91, 10901 (2020)",
+    "doi": "10.1051/epjap/2020190213",
+    "url": "https://api.crossref.org/works/10.1051/epjap/2020190213",
+    "access": "ABSTRACT-ONLY (Crossref abstract; publisher PDF https://www.epjap.org/10.1051/epjap/2020190213/pdf returned HTTP 403 - not bypassed)",
+    "retrieved_on": "2026-09-29",
+    "sha256": null,
+    "device": "inductively coupled RF neutralizer, prototypical, operated on iodine, xenon and krypton; compared with global modelling",
+    "establishes": [
+     {
+      "q": "an ICP RF neutralizer has been operated on a chemically reactive propellant (iodine) as well as Xe/Kr",
+      "value": null,
+      "unit": null,
+      "conditions": "",
+      "locator": "Abstract",
+      "value_basis": "reported"
+     },
+     {
+      "q": "stated requirement context: neutralizer lifetimes of the order of ten thousand hours",
+      "value": null,
+      "unit": null,
+      "conditions": "",
+      "locator": "Abstract",
+      "value_basis": "reported"
+     }
+    ],
+    "derived": [],
+    "limits": "abstract only: no current, power, flow or life numbers available to this lane",
+    "evidence_class": "published analog (not Vyovrinda hardware)"
+   },
+   {
+    "id": "S-06",
+    "source_id": "watanabe_2016_aiaa",
+    "citation": "H. Watanabe, M. Ichimura, H. Takegahara, 'Performance of a Hall Thruster Operating with a Radio Frequency Plasma Cathode', 52nd AIAA/SAE/ASEE Joint Propulsion Conference, AIAA 2016-4947",
+    "doi": "10.2514/6.2016-4947",
+    "url": "https://api.crossref.org/works/10.2514/6.2016-4947",
+    "access": "METADATA-ONLY (Crossref; no abstract; AIAA full text not open)",
+    "retrieved_on": "2026-09-29",
+    "sha256": null,
+    "device": "Hall thruster operated with an RF plasma cathode (title)",
+    "establishes": [
+     {
+      "q": "a coupled Hall thruster + RF plasma cathode test exists in the literature (title only)",
+      "value": null,
+      "unit": null,
+      "conditions": "",
+      "locator": "Crossref record",
+      "value_basis": "reported"
+     }
+    ],
+    "derived": [],
+    "limits": "no values used: numbers seen only in a search-engine snippet are NOT transcribed (verify on the full text); on the lawful-acquisition list",
+    "evidence_class": "published analog (not Vyovrinda hardware)"
+   },
+   {
+    "id": "S-07",
+    "source_id": "georgin_2023_aiaa",
+    "citation": "M. P. Georgin, M. S. McDonald, J. W. Brooks, 'Theory of RF Plasma Cathodes and Supporting Experiments for Electric Propulsion Applications', AIAA SciTech 2023 Forum, AIAA 2023-0844",
+    "doi": "10.2514/6.2023-0844",
+    "url": "https://api.crossref.org/works/10.2514/6.2023-0844",
+    "access": "METADATA-ONLY (Crossref; no abstract; AIAA full text not open)",
+    "retrieved_on": "2026-09-29",
+    "sha256": null,
+    "device": "RF plasma cathode theory + experiments (title); cited by Takahashi 2024 as ref. [17]",
+    "establishes": [
+     {
+      "q": "a theory of RF plasma cathodes for EP exists (title only)",
+      "value": null,
+      "unit": null,
+      "conditions": "",
+      "locator": "Crossref record",
+      "value_basis": "reported"
+     }
+    ],
+    "derived": [],
+    "limits": "no values; on the lawful-acquisition list",
+    "evidence_class": "published analog (not Vyovrinda hardware)"
+   },
+   {
+    "id": "S-08",
+    "source_id": "scholze_2017_proeng",
+    "citation": "F. Scholze, C. Eichhorn, C. Bundesmann, M. Spemann, H. Neumann, M. Bulit, D. Feili, J. G. del Amo, 'Modelling of a radio frequency plasma bridge neutralizer (RFPBN)', Procedia Engineering 185, 9-16 (2017)",
+    "doi": "10.1016/j.proeng.2017.03.284",
+    "url": "https://api.crossref.org/works/10.1016/j.proeng.2017.03.284",
+    "access": "METADATA-ONLY (Crossref lists a CC BY-NC-ND 4.0 version-of-record licence, but the ScienceDirect page returned HTTP 403 to this agent - not bypassed)",
+    "retrieved_on": "2026-09-29",
+    "sha256": null,
+    "device": "RF plasma bridge neutralizer performance model (title)",
+    "establishes": [
+     {
+      "q": "a published performance model for an RF plasma bridge neutralizer exists (title only)",
+      "value": null,
+      "unit": null,
+      "conditions": "",
+      "locator": "Crossref record",
+      "value_basis": "reported"
+     }
+    ],
+    "derived": [],
+    "limits": "no values; open licence, so the owner can obtain the full text lawfully",
+    "evidence_class": "published analog (not Vyovrinda hardware)"
+   }
+  ],
+  "reused_from_repository": [
+   {
+    "id": "D-01",
+    "path": "docs/evidence/cathode/cathode_evidence_v1.json",
+    "entry": "rf.i.neworbit_max / rf.p.neworbit_air / rf.flow.neworbit_air (source schwertheim_2025, IEPC-2025-378 preprint, CC BY 4.0)",
+    "values": "up to 0.45 A; 90 W RF on 0.8 sccm 50:50 N2/O2 (0.018 mg/s); 25 W on 0.15 sccm Xe",
+    "use": "the only atmospheric-gas (N2/O2) RF-cathode operating point in the repository; reused by reference, not re-fetched; non-peer-reviewed preprint; gridded-ion context"
+   },
+   {
+    "id": "D-02",
+    "path": "docs/evidence/cathode/cathode_evidence_v1.json",
+    "entry": "rf.life.none_demonstrated, rf.recovery.none",
+    "values": "no demonstrated life of an air-fed RF cathode; planned 300 h / 100 cycles (future work, schwertheim_2025 pdf p. 22)",
+    "use": "confirms the life/restart gap is not closed by open literature"
+   }
+  ],
+  "by_topic": {
+   "electron_current_per_rf_watt": {
+    "analog_points": [
+     "TK-21/TK-52 (Takahashi: ~1 A discharge current with 200 W forward, ~20 W absorbed (authors' estimate), Ar, coupled to a HET)",
+     "S-01 (3.3 A at 140 W, Xe, diode)",
+     "S-02 (1.03 A at 270 W, Xe, diode)",
+     "S-04 (30 A at 1300 W, Xe, abstract)",
+     "D-01 (0.45 A at 90 W, N2/O2, preprint)"
+    ],
+    "reading": "spread of roughly an order of magnitude in W/A across devices, gases and power transfer efficiencies; forward/net RF power is not absorbed power (Takahashi eta_p ~0.1). Context only; no Vyovrinda value can be taken from it."
+   },
+   "gas_flow_per_ampere": {
+    "analog_points": [
+     "S-01 (0.3 mg/s Xe for 3.3 A; U_e ~150)",
+     "S-04 (2 sccm Xe for 30 A; U_e 180)",
+     "S-02 (2.766 sccm Xe for 1.03 A)",
+     "D-01 (0.018 mg/s N2/O2 for up to 0.45 A)",
+     "TK-31 (Takahashi: no separate ICP feed; 2.1 mg/s Ar shared with the HET)"
+    ],
+    "reading": "orifice-type RF cathodes run on a dedicated low flow; the Takahashi topology re-uses Hall exhaust, so its ICP gas share is not separable. The ICP gas feed of A9 is UNBOOKED (A9 row-46 flag) and must be measured."
+   },
+   "lifetime_erosion": {
+    "analog_points": [
+     "TK-70/TK-71 (sputtering of the ion-collecting electrode at 140-220 eV, metallic films on the glass tube and HET insulators)",
+     "S-03 (lifetime 'expected' long, no test)",
+     "D-02 (no demonstrated life of an air-fed RF cathode)"
+    ],
+    "reading": "no open life test of an RF/ICP neutralizer was found; the only erosion evidence for the A9 topology is a qualitative deposition observation. Life can only come from H-1 / ICP hardware and the separate atomic-O materials/life programme (owner answer row 132)."
+   },
+   "restart": {
+    "analog_points": [
+     "TK-73 (RF first, then V_D; no statistics)",
+     "S-02 (one-hour stability after matching settles)",
+     "D-02 (100 on/off cycles planned, not reported)"
+    ],
+    "reading": "no restart/cycle statistics in the open sources read; hardware only (owner answer row 24)."
+   }
+  }
+ },
+ "lawful_acquisition_list": {
+  "owner_answer_row": 7,
+  "items": [
+   {
+    "id": "LA-01",
+    "item": "Watanabe, Ichimura, Takegahara, AIAA 2016-4947 (DOI 10.2514/6.2016-4947)",
+    "why": "only located coupled Hall thruster + RF plasma cathode performance paper besides Takahashi 2024",
+    "access_seen": "metadata only (AIAA)",
+    "priority": "P1 (PROPOSED)"
+   },
+   {
+    "id": "LA-02",
+    "item": "Georgin & McDonald, IEPC-2022-100, 'Inductively Coupled Plasma Cathodes Enabling In-situ Resource Utilization for Hall Thrusters' (Takahashi ref. [24])",
+    "why": "ICP cathode for Hall thrusters on ISRU (reactive) gases",
+    "access_seen": "not located at an open URL (electricrocket.org guess returned 404)",
+    "priority": "P1 (PROPOSED)"
+   },
+   {
+    "id": "LA-03",
+    "item": "Georgin, McDonald, Brooks, AIAA 2023-0844 (DOI 10.2514/6.2023-0844)",
+    "why": "RF plasma cathode theory + experiments (Takahashi ref. [17])",
+    "access_seen": "metadata only (AIAA)",
+    "priority": "P1 (PROPOSED)"
+   },
+   {
+    "id": "LA-04",
+    "item": "Scholze, Tartz, Neumann, Rev. Sci. Instrum. 79, 02B724 (2008) (DOI 10.1063/1.2802587)",
+    "why": "ICP plasma bridge neutralizer operating conditions behind the 1.6 A abstract figure",
+    "access_seen": "abstract only (publisher PDF HTTP 403)",
+    "priority": "P2 (PROPOSED)"
+   },
+   {
+    "id": "LA-05",
+    "item": "Longmier & Hershkowitz, Rev. Sci. Instrum. 79, 093506 (2008) (DOI 10.1063/1.2979012)",
+    "why": "magnetized/unmagnetized operating conditions of the NES 30 A point",
+    "access_seen": "abstract only",
+    "priority": "P3 (PROPOSED)"
+   },
+   {
+    "id": "LA-06",
+    "item": "Dietz et al., Eur. Phys. J. Appl. Phys. 91, 10901 (2020) (DOI 10.1051/epjap/2020190213)",
+    "why": "ICP neutralizer on a reactive propellant (iodine): current, power, flow values",
+    "access_seen": "abstract only (publisher PDF HTTP 403)",
+    "priority": "P2 (PROPOSED)"
+   },
+   {
+    "id": "LA-07",
+    "item": "Scholze et al., Procedia Engineering 185, 9-16 (2017) (DOI 10.1016/j.proeng.2017.03.284)",
+    "why": "RF plasma bridge neutralizer performance model",
+    "access_seen": "metadata only; Crossref lists CC BY-NC-ND 4.0 (ScienceDirect HTTP 403 to this agent)",
+    "priority": "P2 (PROPOSED)"
+   },
+   {
+    "id": "LA-08",
+    "item": "H. Watanabe, Vacuum 167, 514-519 (2019) (DOI 10.1016/j.vacuum.2018.06.030), 'Effect of vessel diameter on ignition and electron emission characteristics in radio frequency plasma cathodes'",
+    "why": "ignition vs vessel diameter (startup/restart input)",
+    "access_seen": "metadata only (Crossref)",
+    "priority": "P2 (PROPOSED)"
+   },
+   {
+    "id": "LA-09",
+    "item": "K. Takahashi, Rev. Sci. Instrum. 83, 083508 (2012) (DOI as cited in Takahashi 2024 ref. [21]: 10.1063/1.4748271), antenna for suppression of parasitic discharges",
+    "why": "antenna shielding design used in the A9 anchor topology",
+    "access_seen": "not accessed (DOI from the reference list of the anchor - verify)",
+    "priority": "P3 (PROPOSED)"
+   }
+  ],
+  "note": "priorities are PROPOSED; acquisition is an owner action outside the repository (A9 owner_actions_outside_the_repository)"
+ },
+ "analog_can_bound_vs_hardware_only": {
+  "analog_can_bound": [
+   "existence of the topology (Hall discharge sustained by electrons from a downstream ICP, Ar)",
+   "order of magnitude of RF watts per extracted ampere across RF cathodes",
+   "presence of a cathodic-sheath sputtering / deposition mechanism",
+   "measurement methods (R_ant / R_total eta_p method, RFEA, directional coupler)"
+  ],
+  "hardware_only": [
+   "electron-current capacity and neutralization margin of the Vyovrinda ICP module with H-1",
+   "Hall current demand of H-1",
+   "absorbed RF power and eta_p of the A9 module",
+   "N2 and O2-bearing operation (no analog data for the A9 topology)",
+   "thrust, P_bus, restart statistics, erosion rates and life"
+  ]
+ },
+ "owner_answers_applied": [
+  {
+   "row": 7,
+   "how": "Takahashi 2024 full text read (open access) and pinned by sha256; primary RF-cathode papers surveyed; lawful-acquisition list LA-01..LA-09 produced; no bypass, no author contact (data-availability request NOT made)"
+  },
+  {
+   "row": 36,
+   "how": "Takahashi Ar data are labelled engineering-topology precedent; they never count toward DRDO atmospheric requirements"
+  },
+  {
+   "row": 69,
+   "how": "magnetized-source analog data (S-04 helicon mode) marked context-only against the UNMAGNETIZED first build"
+  },
+  {
+   "row": 70,
+   "how": "TK-40 records that the anchor's ion collector floats at the negative end of V_D with no separate bias; A9 requires a floating body and separately controlled collector bias - the analog circuit is NOT the A9 circuit"
+  },
+  {
+   "row": 72,
+   "how": "analog RF chains (13.56 MHz, forward/reflected via generator meters, R_ant method) recorded as measurement-method precedent for the 0-500 W lab chain"
+  },
+  {
+   "row": 132,
+   "how": "no analog life data exist; life/erosion routed to hardware and the separate atomic-O programme"
+  },
+  {
+   "row": 145,
+   "how": "this extraction feeds the new Hall->ICP validation-input list (docs/experiments/hall_icp/validation_inputs/)"
+  },
+  {
+   "row": 146,
+   "how": "no screening or hypothesis values are manufactured from the analog"
+  }
+ ],
+ "interface_demands": [
+  {
+   "id": "EV-IF-01",
+   "direction": "to",
+   "to": "A9-05 part 2 docs/experiments/hall_icp/validation_inputs/",
+   "what": "analog bounds per validation input (extraction ids)",
+   "units": "per item",
+   "status": "DELIVERED (this lane)"
+  },
+  {
+   "id": "EV-IF-02",
+   "direction": "to",
+   "to": "A9-03 docs/interfaces/icp_neutralizer/",
+   "what": "anchor geometry (TK-10..TK-14, TK-G1..TK-G10) and circuit (TK-40) as topology precedent; the anchor circuit differs from the A9 floating-body + separately biased collector (row 70)",
+   "units": "mm, cm, ohm",
+   "status": "OFFERED (read-only; A9-03 decides use)"
+  },
+  {
+   "id": "EV-IF-03",
+   "direction": "to",
+   "to": "A9-04 docs/experiments/hall_icp/uncertainty_budget/",
+   "what": "measurement-method precedent: eta_p from R_ant/R_total (Eq. 1), directional-coupler forward/reflected, RFEA I_c60 metric",
+   "units": "ohm, W, A",
+   "status": "OFFERED"
+  },
+  {
+   "id": "EV-IF-04",
+   "direction": "from",
+   "to": "owner",
+   "what": "lawful acquisition of LA-01..LA-09 (row 7)",
+   "units": "-",
+   "status": "OPEN (owner action)"
+  }
+ ],
+ "open_owner_questions": [
+  {
+   "id": "OQ-EV-01",
+   "question": "Authorize a formal data request to the Takahashi 2024 corresponding author (the paper offers data 'upon reasonable request')?",
+   "proposed_answer": "NO - standing rule: no contact with authors/labs; digitized values suffice for a topology precedent",
+   "status": "owner call"
+  },
+  {
+   "id": "OQ-EV-02",
+   "question": "Acquisition priority for LA-01..LA-09",
+   "proposed_answer": "P1: LA-01, LA-02, LA-03 (coupled Hall + RF-cathode data); P2: LA-04, LA-06, LA-07, LA-08; P3: LA-05, LA-09",
+   "status": "owner call"
+  }
+ ],
+ "historical_reuse": [
+  {
+   "path": "docs/evidence/cathode/cathode_evidence_v1.json",
+   "sha256": "050060204e443d5583c307becadaab55a9f213d406ff4454be856bca21249110",
+   "reused": "rf_plasma_cathode entries (watanabe_2015, schwertheim_2025) by reference (D-01, D-02)",
+   "not_reused": "the dossier's 'not baseline' status statement (A9 changes the role of the ICP; the dossier stays byte-identical)"
+  },
+  {
+   "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+   "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
+   "reused": "INS-03 (net RF at the load plane), INS-14 (RPA) as the method names the analog maps onto",
+   "not_reused": "DQ-RARCH (rf_hall / hall_only ratio; superseded for the primary line, row 28)"
+  }
+ ],
+ "m16_impact": [
+  {
+   "m16_row": 11,
+   "subsystem": "shielded Xe-fed LaB6 hollow cathode",
+   "how": "evidence only: the RF-cathode analog set now sits beside the C1 dossier; C1 stays reference/fallback (row 88); no change to the M16 file"
+  },
+  {
+   "m16_row": 17,
+   "subsystem": "RF pre-ionization module interface",
+   "how": "the anchor topology supports re-scoping this row to the downstream ICP neutralizer (A9); re-scoping is for the M16 owner lane (A9-10), not done here"
+  }
+ ],
+ "h3_h4_inputs": {
+  "h3_procurement_rfq": [
+   "13.56 MHz generator with forward/reflected metering (anchor: 200 W class; owner row 72: size 0-500 W)",
+   "two-variable-capacitor matching network (anchor TK-23)",
+   "high-frequency antenna current sensor (anchor R_ant method, TK-24)",
+   "isolation transformer / isolated supply and series protection (anchor TK-40)",
+   "RFEA (anchor TK-57)"
+  ],
+  "h4_measurement": [
+   "reproduce 'no Hall discharge without ICP electrons' on Ar as an engineering-only topology check (TK-51) - criterion PENDING A9-01 preregistration",
+   "witness coupons for sputter deposition on the ICP tube and H-1 exit insulators (TK-71)"
+  ]
+ }
+}
