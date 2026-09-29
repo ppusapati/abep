@@ -178,6 +178,14 @@
   "decision": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
   "answers": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
   "merge_to_main_policy_row_9": "owner: create a checkpoint PR from the execution branch, freeze new merges briefly, run full pytest + golden + integrity + GitHub CI, review the diff, then merge if green (no direct merge)",
-  "v2_branch": "feature/rf-hall-parallel-v2 frozen as historical alternative (row 11, 145-147)"
+  "v2_branch": "feature/rf-hall-parallel-v2 frozen as historical alternative (row 11, 145-147)",
+  "checkpoint_2_executed": {
+   "pr": "https://github.com/ppusapati/abep/pull/32",
+   "pr_head": "0a430bb5588a438f7c8485c6d16f40ed0d402c4c",
+   "merge_commit_on_main": "7caaf1301d004bf4e32d35607ed7f0b8b09606c0",
+   "utc": "2026-09-29",
+   "ci": "6/6 green",
+   "diff_review": "48 files, additive, no protected paths"
+  }
  }
 }
