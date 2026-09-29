@@ -1,0 +1,92 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "xe_mission_v2",
+ "title": "Mission Xe ledger v2 summary",
+ "description": "Output of abep_sim.xe_mission_v2.XeMissionLedger.summary. Xe by cause from the mode history; reserve/residual explicit (TBD -> INCOMPLETE_EVIDENCE); xe_ledger_v1 untouched.",
+ "type": "object",
+ "required": [
+  "ledger_version",
+  "status",
+  "mission_time_s",
+  "time_by_mode_s",
+  "mode_time_sum_s",
+  "xe_by_cause_kg",
+  "xe_consumed_kg",
+  "xe_total_required_kg",
+  "xe_total_known_lower_bound_kg",
+  "hall_time_fraction",
+  "hall_starts",
+  "answers"
+ ],
+ "properties": {
+  "ledger_version": {
+   "const": "xe_mission_v2"
+  },
+  "status": {
+   "enum": [
+    "PASS",
+    "INCOMPLETE_EVIDENCE",
+    "INFEASIBLE_FLOW"
+   ]
+  },
+  "mission_time_s": {
+   "type": "number",
+   "minimum": 0
+  },
+  "time_by_mode_s": {
+   "type": "object"
+  },
+  "mode_time_sum_s": {
+   "type": "number",
+   "minimum": 0
+  },
+  "xe_by_cause_kg": {
+   "type": "object",
+   "required": [
+    "rf_xe_operation",
+    "hall_xe_anode",
+    "hall_cathode",
+    "hall_startup",
+    "rf_startup",
+    "transition",
+    "fallback",
+    "reserve",
+    "residual"
+   ]
+  },
+  "xe_consumed_kg": {
+   "type": "number",
+   "minimum": 0
+  },
+  "xe_total_required_kg": {
+   "type": [
+    "number",
+    "null"
+   ]
+  },
+  "xe_total_known_lower_bound_kg": {
+   "type": "number",
+   "minimum": 0
+  },
+  "hall_time_fraction": {
+   "type": [
+    "number",
+    "null"
+   ]
+  },
+  "hall_starts": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "answers": {
+   "type": "object",
+   "required": [
+    "fraction_of_mission_time_using_hall",
+    "hall_starts",
+    "xe_to_hall_anode_kg",
+    "xe_to_cathode_kg",
+    "xe_consumed_by_fallback_kg"
+   ]
+  }
+ }
+}
