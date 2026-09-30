@@ -1,0 +1,4202 @@
+{
+ "schema": "p2_impedance_prep_v1",
+ "id": "p2_impedance_prep_v1",
+ "lane": "fo_a9_p2_impedance_prep",
+ "trigger": "T_A9_P2_IMPEDANCE_PREP",
+ "title": "P2 ICP impedance-map instrument preparation",
+ "date": "2026-09-30",
+ "base_commit": "ee9dc7db7d11e0b5f1d8b514258778ac1b6030d3",
+ "status": "PREPARATION_ONLY_NOT_RUN (plasma impedance map waits for the P1 stable region; A9.3)",
+ "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+ "a9_2_statuses_carried": {
+  "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
+  "ICP electron-current capacity": "PENDING_ICP45",
+  "ICP RF power closure": "PENDING_HARDWARE",
+  "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
+  "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP",
+  "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
+  "final anode material": "OPEN",
+  "anode thermal closure": "UNRESOLVED",
+  "coupled H-1/ICP thermal closure": "UNRESOLVED",
+  "C1 conventional reference": "CONTROL_FALLBACK"
+ },
+ "generated_by": "docs/experiments/hall_icp/p2_impedance_map/build_p2_impedance_prep.py",
+ "companion_document": "docs/experiments/hall_icp/p2_impedance_map/P2_IMPEDANCE_PREP.md",
+ "test": "tests/test_p2_impedance_prep.py",
+ "what_this_is_not": [
+  "the plasma impedance map (not run, not predicted)",
+  "a prediction of impedance, thrust, efficiency, discharge or electron current or plasma state (no Hall closure is admitted; the credible Hall set is empty)",
+  "an RF component rating or trip threshold (TBD_AFTER_IMPEDANCE_MAP / after-evidence)",
+  "a procurement, a supplier contact, an architecture ranking or a winner",
+  "an answer to any open owner question"
+ ],
+ "decision_pins": [
+  {
+   "key": "A4",
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A4_owner_decisions.json",
+   "sha256": "beec91f9eca3ca0257c5ee88dcd193c87481660b9368b65c6d10b3b3bdae23b4",
+   "what": "A4 owner decisions (force/DC/RF traceability)"
+  },
+  {
+   "key": "A5",
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+   "sha256": "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
+   "what": "A5 (binding; historical upstream topology)"
+  },
+  {
+   "key": "A6",
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A6_a5_followon_authorization.json",
+   "sha256": "aaeb7c503c3791f81d4c589e8e25289befa6fcb3b16ce6f962b153715c883180",
+   "what": "A6 (binding)"
+  },
+  {
+   "key": "A7",
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A7_execution_model.json",
+   "sha256": "dae69983d9aeeb4838d9ff973a5f824c973219f8cc528adfb12717c4bb92c925",
+   "what": "A7 execution model (binding)"
+  },
+  {
+   "key": "A9",
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+   "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+   "what": "governing owner decision A9"
+  },
+  {
+   "key": "ANS",
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
+   "what": "147 owner answers (machine-readable)"
+  },
+  {
+   "key": "PACK",
+   "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+   "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976",
+   "what": "147 owner answers (verbatim pack)"
+  },
+  {
+   "key": "A91",
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "what": "A9.1 follow-up owner decisions"
+  },
+  {
+   "key": "A91MD",
+   "path": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+   "sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e",
+   "what": "A9.1 (verbatim)"
+  },
+  {
+   "key": "A92",
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "what": "A9.2 A9-07 follow-up owner decisions"
+  },
+  {
+   "key": "A92MD",
+   "path": "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
+   "what": "A9.2 (verbatim)"
+  },
+  {
+   "key": "A93",
+   "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+   "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+   "what": "A9.3 post-A9 tier-1 owner decisions"
+  },
+  {
+   "key": "A93MD",
+   "path": "docs/decisions/OD_2026_09_30_A9_3_POST_A9_TIER1_OWNER_DECISIONS.md",
+   "sha256": "55a1fd84558a9590705bb82aa11db5e2b9136dd1d83a957d26614c435c707411",
+   "what": "A9.3 (verbatim; binds this lane)"
+  }
+ ],
+ "deliverable_pins": [
+  {
+   "key": "UB",
+   "path": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
+   "sha256": "c6567e6d0bbc008bedd5b9c14a9716f117144ab6952b9c498f7b0c75e02a624d",
+   "what": "A9-04 uncertainty budget"
+  },
+  {
+   "key": "ICD",
+   "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+   "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c",
+   "what": "A9-03 ICP neutralizer ICD"
+  },
+  {
+   "key": "H2A9",
+   "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+   "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa",
+   "what": "A9-07 H2 revisions (RF reference plane)"
+  },
+  {
+   "key": "RFQ",
+   "path": "docs/procurement/rfq_a9/rfq_a9_v1.json",
+   "sha256": "d2e654cf49d89b8f84a65e5bf7626517a37c02d0a4a0de97f128c3155ef4a84b",
+   "what": "A9-09 RFQ v1 (predates A9.2/A9.3)"
+  },
+  {
+   "key": "RFQ04",
+   "path": "docs/procurement/rfq_a9/packages/RFQ-04_rf_chain.md",
+   "sha256": "0ea196f72e8da254e50787c4f58bdb665939f770028a0013a9f9bc57b0b0e9a4",
+   "what": "RFQ v1 package RFQ-04 (RF chain)"
+  },
+  {
+   "key": "M16",
+   "path": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
+   "sha256": "636cbd3318831f6f56e9833813c4d8c259aef7db3de1c6e503cccce14dade7e2",
+   "what": "M16 v3 subsystem maturity"
+  },
+  {
+   "key": "EVI",
+   "path": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
+   "sha256": "092e4ca8e1827dd2e9558058a204f46510f2633316ce188e7126b697ec6d0b53",
+   "what": "A9-05 Takahashi 2024 extraction"
+  },
+  {
+   "key": "RFM",
+   "path": "docs/evidence/rf_source/rf_evidence_matrix.json",
+   "sha256": "5f6d4e0ede8b2e21e45b740c28ac9320e7ddd6cfd70ef05012f85712ae0ac8e8",
+   "what": "RF-source evidence matrix (historical)"
+  },
+  {
+   "key": "VI",
+   "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
+   "sha256": "fac472e370b54875df5dea90c3c7740403da5ac1edd1af29b43ed09ee679d450",
+   "what": "A9-05vi validation-input list"
+  },
+  {
+   "key": "OQ3",
+   "path": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
+   "sha256": "1c2e74340852dfe8c58b1804c3cfda2bfbfb3bfb5d631aaebd715cf716b76af2",
+   "what": "owner-question state v3 (snapshot)"
+  },
+  {
+   "key": "INS",
+   "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+   "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
+   "what": "W4 instrumentation definition"
+  },
+  {
+   "key": "MS",
+   "path": "docs/experiments/instrumentation/metrology_spec/metrology_measurement_spec_v1.json",
+   "sha256": "55c11dc2d22fd92d95b498f72d60f2cdc0c62a45940da2446514049bd5130865",
+   "what": "metrology measurement spec"
+  },
+  {
+   "key": "BUS",
+   "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+   "sha256": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
+   "what": "A9-02 bus power boundary"
+  },
+  {
+   "key": "EVID",
+   "path": "docs/EVIDENCE.md",
+   "sha256": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61",
+   "what": "evidence rules (CLAUDE.md rule 10)"
+  }
+ ],
+ "never_pinned": [
+  "docs/orchestration/lane_registry_v1.json",
+  "docs/orchestration/trigger_registry_v1.json",
+  "docs/orchestration/fired_triggers.jsonl",
+  "docs/orchestration/trigger_ledger_v2.jsonl",
+  "docs/orchestration/runtime_state.json"
+ ],
+ "pending_lanes": [
+  {
+   "path": "docs/experiments/hall_icp/p1_icp_bench/",
+   "lane": "P1 ICP electron-source bench (A9.3 authorizations.P1)",
+   "needed_for": "the stable ICP operating region (factor levels of the hot map), the selected laboratory generator, the adjustable local match hardware and its tuning range, the antenna / module geometry and the registered procedure's provisional limits",
+   "status": "PENDING (built in parallel; not read, not imported, content never assumed)"
+  },
+  {
+   "path": "docs/procurement/rfq_a9_v2/",
+   "lane": "RFQ v2 split by supplier speciality (A9.3 OQ-RFQ-07)",
+   "needed_for": "the RF-package line ids to which the P2 instrument list maps",
+   "status": "PENDING (built in parallel; not read, not imported, content never assumed)"
+  }
+ ],
+ "chain_parameters": [
+  {
+   "id": "P2-F-01",
+   "name": "RF drive frequency",
+   "value": 13.56,
+   "units": "MHz",
+   "basis": "owner answer",
+   "source": [
+    {
+     "kind": "owner_row",
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "row": 72,
+     "covers_ids": [
+      "R4-Q7"
+     ],
+     "answer_sha256": "636a6486bc06cfc72140256b657391be623d75bd638fa246d666e015c900009f"
+    },
+    "UB-RF-00",
+    "ICD ICP-11"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "P2-F-02",
+   "name": "reference (system) impedance Z0 of the 50-ohm segment and of all S-parameters",
+   "value": 50.0,
+   "units": "ohm",
+   "basis": "nominal coax/coupler system impedance (assumed; quotation, row 8)",
+   "source": [
+    "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json recomputations.rf_reference_plane.Z0_ohm"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "note": "the actual line / coupler impedance is verified by CAL-P2-01/02; the reducer refuses a record whose Z0 differs from its calibration set"
+  },
+  {
+   "id": "P2-F-03",
+   "name": "laboratory delivered/operating RF investigation capability (not a component rating)",
+   "value": [
+    0.0,
+    500.0
+   ],
+   "units": "W",
+   "basis": "row 72 as interpreted by A9.2 rf_500W",
+   "source": [
+    {
+     "kind": "owner_row",
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "row": 72,
+     "covers_ids": [
+      "R4-Q7"
+     ],
+     "answer_sha256": "636a6486bc06cfc72140256b657391be623d75bd638fa246d666e015c900009f"
+    },
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "rf_500W"
+    },
+    "UB-RF-01"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW",
+   "rating": "TBD_AFTER_IMPEDANCE_MAP (A9.2 a9_10_statuses 'RF component ratings')"
+  }
+ ],
+ "reference_planes": [
+  {
+   "id": "RP-GEN",
+   "name": "generator output connector",
+   "value": "RF generator output; generator-internal forward/reflected meters are not a measurement plane (ICD ICP-14: generator-internal meters alone are not sufficient; analog TK-22/TK-23 relied on them)",
+   "units": "-",
+   "basis": "definition",
+   "source": [
+    "ICD ICP-14"
+   ],
+   "evidence_class": "assumed",
+   "status": "DEFINED",
+   "freeze_point": "NOW",
+   "measured_here": [
+    "P_mains,in of the mains-powered laboratory generator (A9.3 OQ-RFQ-06; engineering quantity, GROUND/FACILITY_ONLY, never P_bus evidence)"
+   ]
+  },
+  {
+   "id": "RP-CPL",
+   "name": "directional-coupler plane on the generator / 50-ohm side of the LOCAL matching network",
+   "value": "forward/reflected power measured on the generator/50-ohm side of the local match; retain P_forward, P_reflected, |Gamma|, VSWR and where possible P_delivered = P_forward - P_reflected - P_line/match,loss; never assume P_forward = P_plasma",
+   "units": "-",
+   "basis": "owner decision A9.2",
+   "source": [
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "OQ-A907-11"
+    },
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "rf_measurement_reference"
+    },
+    "UB-RF-09",
+    "ICD ICP-14"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW",
+   "measured_here": [
+    "P_forward, P_reflected (primary power measurement, row 72)",
+    "|Gamma|, VSWR",
+    "complex reflection Gamma_in (vector reflectometer / VNA receiver, method B)"
+   ]
+  },
+  {
+   "id": "RP-MIN",
+   "name": "input connector of the local matching network",
+   "value": "end of the 50-ohm line on the ICP module (after the flexible stand-crossing coax and the vacuum RF feedthrough); the residual mismatch after the local match is the |Gamma| seen here, transformed to RP-CPL by the characterized line two-port",
+   "units": "-",
+   "basis": "definition from the A9.2 chain generator -> coupler -> 50-ohm line -> local match -> antenna",
+   "source": [
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "OQ-A907-11"
+    },
+    "H2-A9 recomputations.rf_reference_plane.a9_2_segments.retained_50_ohm_segment"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "physical_location": "TBD - requires the ICP module drawings (ICD ICP-02/04/07) and PENDING docs/experiments/hall_icp/p1_icp_bench/"
+  },
+  {
+   "id": "RP-ANT",
+   "name": "antenna terminals (output side of the local matching network) - plane of Z_antenna = R + jX",
+   "value": "the pair of antenna feed terminals at which Z_antenna is reported; it excludes the matching elements and includes the antenna, its in-vacuum leads up to the terminal pair and, when lit, the plasma loading",
+   "units": "-",
+   "basis": "A9.2 icp_matching_strategy (Z_antenna = R + jX measured vs mdot, P_RF, p, gas composition, Hall operating point)",
+   "source": [
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "icp_matching_strategy"
+    },
+    "H2-A9 recomputations.rf_reference_plane.a9_2_segments.short_match_to_antenna_segment"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "physical_location": "TBD - requires the antenna/terminal drawing (PENDING docs/experiments/hall_icp/p1_icp_bench/; ICD ICP-07)"
+  },
+  {
+   "id": "RP-VI",
+   "name": "V/I probe sensing plane",
+   "value": "the plane at which the V/I probe senses voltage and current; joined to RP-ANT by a characterized fixture two-port (the identity only when declared and verified)",
+   "units": "-",
+   "basis": "method A",
+   "source": [
+    "this package CAL-P2-06"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "physical_location": "TBD - requires the probe selection (INS-P2-01) and the module drawings"
+  }
+ ],
+ "z_antenna_methods": [
+  {
+   "id": "ZM-A",
+   "name": "V/I probe at the antenna terminals (RP-VI -> RP-ANT by fixture de-embedding)",
+   "principle": "calibrated complex voltage and current at RP-VI; Z_ant = V_ant / I_ant after the fixture inverse ABCD; reducer method 'vi_probe'",
+   "pros": [
+    "direct at the reporting plane: independent of the matching network model and of its tuning state",
+    "insensitive to line / feedthrough / match loss and to coupler directivity",
+    "gives antenna-terminal V and I directly (the stresses ICP-44 / ICPQ-11 need)",
+    "precedent: phase-resolved V/I sensing near the coil (RF-VOLK18-01)"
+   ],
+   "cons": [
+    "for a strongly reactive antenna R = |Z| cos(phi) is dominated by the phase error: |dR| ~ |X| u(phi) when R << |X| (standard relation; verify) - phase calibration is the critical term",
+    "probe at RF voltage near the plasma, in vacuum on the module: vacuum/thermal compatibility, pickup, and (on the thrust stand) an extra service line and mass",
+    "probe ratings TBD - require the cold antenna impedance and the generator selection"
+   ],
+   "status": "PROPOSED",
+   "role": "PRIMARY on the P1/P2 bench"
+  },
+  {
+   "id": "ZM-B",
+   "name": "de-embedding from the calibrated complex reflection at RP-CPL",
+   "principle": "Gamma_in at RP-CPL from the vector-corrected coupler/reflectometer (three-term one-port error model); Z_in = Z0 (1 + Gamma_in) / (1 - Gamma_in); Z_ant = (D Z_in - B) / (A - C Z_in) with ABCD of line (RP-CPL -> RP-MIN) cascaded with the local match at the logged tuning state (RP-MIN -> RP-ANT); reducer method 'deembed'",
+   "pros": [
+    "uses the 50-ohm-side chain that is present anyway (A9.2 RP-CPL measurement)",
+    "no hardware at the antenna: usable on the thrust stand without an extra service line",
+    "the same two-port data give P_line/match,loss (the A9-07 load-power relation)"
+   ],
+   "cons": [
+    "needs the two-port of the match at EVERY tuning state used (grid + declared interpolation rule, CAL-P2-04) and phase-calibrated reflection; scalar |Gamma| alone cannot de-embed",
+    "near a good match Gamma_in ~ 0 and Z_ant is set almost entirely by the network model: errors of the S-parameters propagate strongly into a sub-ohm-class R (UB-P2-Z-03)",
+    "the network is characterized cold at VNA power; element heating at operating power shifts it (UB-P2-Z-05; checked on the antenna-simulator load at power, CAL-P2-10)",
+    "coupler directivity limits the reflection accuracy (UB-RF-04, A9-07 IDA7-21)"
+   ],
+   "status": "PROPOSED",
+   "role": "CROSS-CHECK at every bench point; candidate primary on the thrust stand only after bench agreement (P2Q-01, P2Q-06)"
+  },
+  {
+   "id": "ZM-C",
+   "name": "antenna RF current probe + delivered power (resistance only)",
+   "principle": "R_total = P_delivered / I_rms^2 at RP-ANT; with P_net instead of P_delivered the line/match loss is lumped into the resistance (R_vac convention, RF-TAKA22-03); resistance split R_p = R_hot - R_cold (anchor Eq. (1) method, VI-RF-05..07)",
+   "pros": [
+    "simple, robust magnitude-only measurement (Rogowski / current transformer)",
+    "the published analog and RF precedents use it (TK-24/TK-25; RF-TAKA22-01)"
+   ],
+   "cons": [
+    "gives R only, not X",
+    "needs P_delivered (hence the loss characterization) or accepts lumped loss",
+    "R_cold must be taken at a comparable antenna temperature (UB-P2-Z-07)"
+   ],
+   "status": "PROPOSED",
+   "role": "INDEPENDENT R CROSS-CHECK and resistance split"
+  }
+ ],
+ "z_antenna_recommendation": {
+  "primary": "ZM-A (V/I probe at the antenna terminals) on the P1/P2 bench",
+  "cross_check": "ZM-B (de-embedding from the 50-ohm-side complex reflection) at every bench point; ZM-C for R",
+  "transfer_rule": "on the thrust stand ZM-B may become the primary method only if, on the bench, its Z_ant agrees with ZM-A over the P1 stable region under the agreement rule (form LOCK-1, value LOCK-2; P2Q-03); otherwise the stand needs the V/I probe with matched sham routing (rows 117, 133)",
+  "status": "PROPOSED",
+  "freeze_point": "LOCK-1",
+  "owner_question": "P2Q-01",
+  "sensitivity_relations": {
+   "phase": "R = |Z| cos(phi), X = |Z| sin(phi); dR = -|Z| sin(phi) dphi = -X dphi (first order)",
+   "evidence_class": "model-derived (standard relation; verify)",
+   "analog_context": "the published analog reports antenna resistances of order 0.4 ohm without / with plasma (TK-24, TK-25; published analog, never Vyovrinda values): IF a Vyovrinda antenna is of that class, the plasma-induced R change is small against |X|, which is why phase calibration, not magnitude, sets the uncertainty of R - the required u(phi) is TBD - requires the cold antenna impedance (CAL-P2-08) and the u(R) target (LOCK-2)"
+  }
+ },
+ "calibration_plan": [
+  {
+   "id": "CAL-P2-01",
+   "name": "VNA calibration (one-port SOL at each measurement plane; two-port SOLT for two-port characterization) at 13.56 MHz and over the cold-antenna sweep span",
+   "value": "TBD - requires the VNA and kit certificates (residual directivity / source match / tracking)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-08"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "planes": [
+    "RP-CPL",
+    "RP-MIN",
+    "RP-ANT"
+   ],
+   "standards": [
+    "coaxial SOL/SOLT kit with data-based standard definitions (INS-P2-05)",
+    "antenna-terminal fixture standards (short / open / known load) for RP-ANT"
+   ],
+   "when": "S-01, before every two-port or cold-antenna set; verified by a check standard",
+   "uncertainty_links": [
+    "UB-P2-Z-08"
+   ],
+   "metrology_links": [
+    "MS-G-01",
+    "MS-G-02",
+    "MS-G-03",
+    "MS-P2-02"
+   ],
+   "closes": [
+    "UB-P2-Z-08"
+   ],
+   "note": ""
+  },
+  {
+   "id": "CAL-P2-02",
+   "name": "two-port S-parameters of the 50-ohm line segment RP-CPL -> RP-MIN (coupler output cable, flexible stand-crossing coax, vacuum feedthrough)",
+   "value": "TBD - requires the installed line (PENDING docs/experiments/hall_icp/p1_icp_bench/)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-RF-05",
+    "UB-P2-Z-03"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "planes": [
+    "RP-CPL",
+    "RP-MIN"
+   ],
+   "standards": [
+    "CAL-P2-01 two-port calibration"
+   ],
+   "when": "S-02; repeated after any re-routing and pre/post each block (phase with stand motion: CAL-P2-12)",
+   "uncertainty_links": [
+    "UB-RF-05",
+    "UB-P2-Z-03"
+   ],
+   "metrology_links": [
+    "MS-P2-02"
+   ],
+   "closes": [
+    "UB-RF-05 (line part)"
+   ],
+   "note": "the live and sham coax pair is characterized as a pair (rows 117, 133)"
+  },
+  {
+   "id": "CAL-P2-03",
+   "name": "two-port S-parameters of the adjustable local match RP-MIN -> RP-ANT at each tuning state of a declared grid over its tuning range (or a fitted equivalent-circuit model of the measured data, evidence class 'reconstructed')",
+   "value": "TBD - requires the selected matching network and its tuning range (PENDING docs/experiments/hall_icp/p1_icp_bench/; RFQ-04-R07)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-RF-05",
+    "UB-P2-Z-03",
+    "UB-P2-Z-04"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "planes": [
+    "RP-MIN",
+    "RP-ANT"
+   ],
+   "standards": [
+    "CAL-P2-01 two-port calibration",
+    "antenna-terminal fixture adapter"
+   ],
+   "when": "S-03; grid spacing TBD from the P1 tuning range",
+   "uncertainty_links": [
+    "UB-RF-05",
+    "UB-P2-Z-03",
+    "UB-P2-Z-04"
+   ],
+   "metrology_links": [
+    "MS-P2-02"
+   ],
+   "closes": [
+    "UB-RF-05 (match part)",
+    "A9H-INS-03"
+   ],
+   "note": ""
+  },
+  {
+   "id": "CAL-P2-04",
+   "name": "tuning-state interpolation rule and its verification at off-grid states",
+   "value": "TBD - requires CAL-P2-03 data; the reducer refuses an uncharacterized tuning state (no silent interpolation)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-04"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "planes": [
+    "RP-MIN",
+    "RP-ANT"
+   ],
+   "standards": [
+    "CAL-P2-03 grid",
+    "verification states not used to build the rule"
+   ],
+   "when": "S-03",
+   "uncertainty_links": [
+    "UB-P2-Z-04"
+   ],
+   "metrology_links": [
+    "MS-P2-02"
+   ],
+   "closes": [
+    "UB-P2-Z-04"
+   ],
+   "note": ""
+  },
+  {
+   "id": "CAL-P2-05",
+   "name": "V/I probe calibration: complex gains k_V, k_I (magnitude AND relative phase) at 13.56 MHz",
+   "value": "TBD - requires the probe selection (INS-P2-01) and the calibration data",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-01",
+    "UB-P2-Z-02"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "planes": [
+    "RP-VI"
+   ],
+   "standards": [
+    "short (current only)",
+    "open (voltage only)",
+    "precision 50-ohm termination",
+    "reactive standard of VNA-measured impedance (phase check near +/-90 degrees)",
+    "at power: 50-ohm calorimetric dummy load and the antenna-simulator load (INS-P2-07)"
+   ],
+   "when": "S-04; pre/post each block",
+   "uncertainty_links": [
+    "UB-P2-Z-01",
+    "UB-P2-Z-02"
+   ],
+   "metrology_links": [
+    "MS-P2-03"
+   ],
+   "closes": [
+    "UB-P2-Z-01",
+    "UB-P2-Z-02"
+   ],
+   "note": ""
+  },
+  {
+   "id": "CAL-P2-06",
+   "name": "V/I probe fixture (RP-VI -> RP-ANT) ABCD, or a verified declaration that RP-VI = RP-ANT",
+   "value": "TBD - requires the module drawings and the probe mount",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-06"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "planes": [
+    "RP-VI",
+    "RP-ANT"
+   ],
+   "standards": [
+    "CAL-P2-01 at the antenna terminals",
+    "known loads at RP-ANT"
+   ],
+   "when": "S-04",
+   "uncertainty_links": [
+    "UB-P2-Z-06"
+   ],
+   "metrology_links": [
+    "MS-P2-03"
+   ],
+   "closes": [
+    "UB-P2-Z-06"
+   ],
+   "note": ""
+  },
+  {
+   "id": "CAL-P2-07",
+   "name": "directional coupler + forward/reflected sensors: coupling factors (incl. cable), directivity and sensor calibration factor / linearity at 13.56 MHz; in-situ checks into a matched load (directivity floor) and into short/open (full reflection); calorimetric cross-check at power with k_x = 2",
+   "value": "TBD - requires coupler and sensor certificates; D_min at LOCK-2 (UB-RF-04, A9H-INS-16)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-RF-02",
+    "UB-RF-03",
+    "UB-RF-04",
+    "UB-RF-08"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "planes": [
+    "RP-CPL"
+   ],
+   "standards": [
+    "traceable certificates (A9H-CAL-02; A4 force_DC_RF_traceability)",
+    "50-ohm calorimetric dummy load (RFQ-04-R10)"
+   ],
+   "when": "S-00 (certificates), S-05 (in situ)",
+   "uncertainty_links": [
+    "UB-RF-02",
+    "UB-RF-03",
+    "UB-RF-04",
+    "UB-RF-08"
+   ],
+   "metrology_links": [
+    "MS-G-01",
+    "MS-G-02",
+    "MS-G-03",
+    "MS-P2-01"
+   ],
+   "closes": [
+    "UB-RF-02",
+    "UB-RF-03",
+    "UB-RF-04",
+    "UB-RF-08 (check)"
+   ],
+   "note": "bare +/-a bounds enter as a/sqrt(3) unless the certificate states otherwise (A9.1 UBQ-03)"
+  },
+  {
+   "id": "CAL-P2-08",
+   "name": "cold antenna impedance vs frequency around 13.56 MHz (installed on the module; no plasma: gas off, and gas on unlit), VNA at RP-ANT and via RP-MIN",
+   "value": "TBD - requires the antenna (PENDING docs/experiments/hall_icp/p1_icp_bench/); sweep span TBD - requires the antenna design (self-resonance must be located, not assumed)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-07"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "planes": [
+    "RP-ANT",
+    "RP-MIN"
+   ],
+   "standards": [
+    "CAL-P2-01"
+   ],
+   "when": "S-07; repeated at more than one antenna temperature for the R_cold reference",
+   "uncertainty_links": [
+    "UB-P2-Z-07"
+   ],
+   "metrology_links": [
+    "MS-P2-02"
+   ],
+   "closes": [
+    "VI-RF-06 (cold part)",
+    "sizing input of INS-P2-01 ranges"
+   ],
+   "note": ""
+  },
+  {
+   "id": "CAL-P2-09",
+   "name": "dummy-load checks of the complete chain at power: 50-ohm calorimetric load (P_net vs calorimetry, k_x = 2) and the harmonic spectrum into the matched load",
+   "value": "TBD - requires the generator (PENDING docs/experiments/hall_icp/p1_icp_bench/)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-RF-06",
+    "UB-RF-07",
+    "UB-RF-08"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "planes": [
+    "RP-CPL",
+    "RP-MIN"
+   ],
+   "standards": [
+    "50-ohm calorimetric dummy load",
+    "spectrum measurement (INS-P2-04 receiver mode or analyser)"
+   ],
+   "when": "S-05",
+   "uncertainty_links": [
+    "UB-RF-06",
+    "UB-RF-07",
+    "UB-RF-08"
+   ],
+   "metrology_links": [
+    "MS-P2-01"
+   ],
+   "closes": [
+    "UB-RF-06",
+    "UB-RF-07 (bench part)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "CAL-P2-10",
+   "name": "end-to-end method validation on an antenna-simulator load of VNA-known Z (low-R, high-X network in place of the antenna): Z by ZM-A, ZM-B and ZM-C vs the VNA value, cold and at power",
+   "value": "TBD - requires the simulator design (from CAL-P2-08 cold impedance) and data",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-01",
+    "UB-P2-Z-02",
+    "UB-P2-Z-03",
+    "UB-P2-Z-05"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "planes": [
+    "RP-ANT",
+    "RP-VI",
+    "RP-CPL"
+   ],
+   "standards": [
+    "antenna-simulator load (INS-P2-07b)",
+    "CAL-P2-01..07"
+   ],
+   "when": "S-06",
+   "uncertainty_links": [
+    "UB-P2-Z-01",
+    "UB-P2-Z-02",
+    "UB-P2-Z-03",
+    "UB-P2-Z-05"
+   ],
+   "metrology_links": [
+    "MS-P2-02",
+    "MS-P2-03"
+   ],
+   "closes": [
+    "method agreement evidence for the P2Q-01 transfer rule"
+   ],
+   "note": ""
+  },
+  {
+   "id": "CAL-P2-11",
+   "name": "phase drift and temperature: reference-load re-measurement before / during / after each block; temperatures of probe, match elements and cables logged; pre/post shift in the budget and as a block exclusion rule",
+   "value": "TBD - requires metrology-only drift evidence; rule form LOCK-1, number LOCK-2 (A9.1 UBQ-05; A9H-CAL-05)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-05"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "planes": [
+    "RP-VI",
+    "RP-CPL",
+    "RP-ANT"
+   ],
+   "standards": [
+    "reference load of CAL-P2-05/10"
+   ],
+   "when": "every block (S-10)",
+   "uncertainty_links": [
+    "UB-P2-Z-05"
+   ],
+   "metrology_links": [
+    "MS-P2-03"
+   ],
+   "closes": [
+    "UB-P2-Z-05",
+    "A9H-CAL-05 (P2 part)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "CAL-P2-12",
+   "name": "phase-stable cable characterization: phase of the VNA test cables and of the flexible stand-crossing coax vs flexure / stand position and temperature",
+   "value": "TBD - requires the cables (INS-P2-08) and the stand routing (ICP-18)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-05",
+    "UB-P2-Z-03"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "planes": [
+    "RP-CPL",
+    "RP-MIN"
+   ],
+   "standards": [
+    "CAL-P2-01"
+   ],
+   "when": "S-01, S-02",
+   "uncertainty_links": [
+    "UB-P2-Z-05",
+    "UB-P2-Z-03"
+   ],
+   "metrology_links": [
+    "MS-P2-02"
+   ],
+   "closes": [
+    "UB-P2-Z-05 (cable part)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "CAL-P2-13",
+   "name": "RF pickup on the V/I, current-probe and optical channels (generator into dummy load; ICP energized, H-1 off) - part of the ICP-17 / row-64 pickup check",
+   "value": "TBD - requires the S1a pickup test (ICD ICP-17)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-01",
+    "UB-P2-Z-02"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "planes": [
+    "RP-VI"
+   ],
+   "standards": [
+    "dummy load; ICP on/H-1 off"
+   ],
+   "when": "S-08",
+   "uncertainty_links": [
+    "UB-P2-Z-01",
+    "UB-P2-Z-02"
+   ],
+   "metrology_links": [
+    "MS-P2-03"
+   ],
+   "closes": [
+    "ICP-17 (P2 channels)",
+    "VI-RF-11"
+   ],
+   "note": ""
+  },
+  {
+   "id": "CAL-P2-14",
+   "name": "time-base alignment of RF, V/I, optical, Hall, collector, pressure and flow channels (INS-18)",
+   "value": "TBD - requires the skew allowance from the P1 stability band",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-05"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "planes": [
+    "-"
+   ],
+   "standards": [
+    "common trigger"
+   ],
+   "when": "S-01",
+   "uncertainty_links": [
+    "UB-P2-Z-05"
+   ],
+   "metrology_links": [
+    "-"
+   ],
+   "closes": [
+    "INS-18 (P2 channels)"
+   ],
+   "note": ""
+  }
+ ],
+ "uncertainty_items_new": [
+  {
+   "id": "UB-P2-Z-01",
+   "name": "V/I probe magnitude calibration (k_V, k_I) at 13.56 MHz",
+   "value": "TBD - requires CAL-P2-05 data",
+   "units": "relative",
+   "basis": "calibration",
+   "source": [
+    "REF-GUM2008 4.3.3 (via A9-04 references)"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "proposed_addition_to": "A9-04 UB-DQ-RF chain (interface demand IDP2-06)"
+  },
+  {
+   "id": "UB-P2-Z-02",
+   "name": "V/I probe relative phase calibration",
+   "value": "TBD - requires CAL-P2-05 data; u(phi) target from u(R) target / |X| (LOCK-2)",
+   "units": "rad",
+   "basis": "calibration",
+   "source": [
+    "REF-GUM2008 4.3.3"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "proposed_addition_to": "A9-04 UB-DQ-RF chain"
+  },
+  {
+   "id": "UB-P2-Z-03",
+   "name": "de-embedding: propagated S-parameter uncertainty of line + match into Z_ant",
+   "value": "TBD - requires CAL-P2-02/03 uncertainties; propagation by the law of propagation applied to the real and imaginary parts through the reducer (numerical Jacobian; REF-GUM2008 5.1.2 / 5.2.2 as read by A9-04)",
+   "units": "ohm",
+   "basis": "calibration + propagation",
+   "source": [
+    "REF-GUM2008 5.1.2, 5.2.2"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "proposed_addition_to": "A9-04 UB-DQ-RF chain"
+  },
+  {
+   "id": "UB-P2-Z-04",
+   "name": "tuning-state interpolation error",
+   "value": "TBD - requires CAL-P2-04 verification states",
+   "units": "ohm",
+   "basis": "calibration",
+   "source": [
+    "this package CAL-P2-04"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "proposed_addition_to": "A9-04 UB-DQ-RF"
+  },
+  {
+   "id": "UB-P2-Z-05",
+   "name": "phase drift / temperature / cable flexure between calibration and reading",
+   "value": "TBD - requires CAL-P2-11/12 data",
+   "units": "rad",
+   "basis": "calibration",
+   "source": [
+    "this package CAL-P2-11/12"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "proposed_addition_to": "A9-04 UB-DQ-RF"
+  },
+  {
+   "id": "UB-P2-Z-06",
+   "name": "V/I fixture correction RP-VI -> RP-ANT",
+   "value": "TBD - requires CAL-P2-06",
+   "units": "ohm",
+   "basis": "calibration",
+   "source": [
+    "this package CAL-P2-06"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "proposed_addition_to": "A9-04 UB-DQ-RF"
+  },
+  {
+   "id": "UB-P2-Z-07",
+   "name": "cold-reference resistance change with antenna temperature (resistance split)",
+   "value": "TBD - requires CAL-P2-08 at more than one antenna temperature",
+   "units": "ohm",
+   "basis": "calibration",
+   "source": [
+    "this package CAL-P2-08"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "proposed_addition_to": "A9-04 UB-DQ-RF"
+  },
+  {
+   "id": "UB-P2-Z-08",
+   "name": "VNA calibration residuals (directivity, source match, tracking) at each plane",
+   "value": "TBD - requires VNA / kit certificates and check-standard data",
+   "units": "-",
+   "basis": "certificate",
+   "source": [
+    "REF-GUM2008 4.3.3"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2",
+   "proposed_addition_to": "A9-04 UB-DQ-RF"
+  }
+ ],
+ "metrology_items_new": [
+  {
+   "id": "MS-P2-01",
+   "name": "RF power at 13.56 MHz (sensors + coupler incl. cable) - calibration-lab scope requirement",
+   "value": "ISO/IEC 17025 (NABL in India) scope covering 13.56 MHz and the power range of the selected sensors; GUM budget with k; raw data (general requirements MS-G-01..03 extended, as A9-04 IF-16 requests)",
+   "units": "-",
+   "basis": "A4 force_DC_RF_traceability; A9-04 IF-16",
+   "source": [
+    "A4 force_DC_RF_traceability",
+    "MS-G-01",
+    "MS-G-02",
+    "MS-G-03"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "MS-P2-02",
+   "name": "VNA and coaxial calibration-kit verification (standard definitions, check standard)",
+   "value": "traceable kit data and a verification standard; same MS-G requirements",
+   "units": "-",
+   "basis": "A4; A9-04 IF-16",
+   "source": [
+    "MS-G-01",
+    "MS-G-02",
+    "MS-G-03"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "MS-P2-03",
+   "name": "V/I probe magnitude and phase calibration at 13.56 MHz",
+   "value": "calibration against known loads (CAL-P2-05) with a stated uncertainty budget; accredited scope where one exists, otherwise an in-house procedure traceable through the VNA (MS-P2-02) - owner call P2Q-07",
+   "units": "-",
+   "basis": "A4 force_DC_RF_traceability (no invented class where the standard defines none)",
+   "source": [
+    "A4 force_DC_RF_traceability"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "MS-P2-04",
+   "name": "antenna RF current probe (magnitude) at 13.56 MHz",
+   "value": "calibration against the V/I probe or a known current in a reference load; stated uncertainty",
+   "units": "-",
+   "basis": "A4",
+   "source": [
+    "A4 force_DC_RF_traceability"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  }
+ ],
+ "hot_map_methodology": {
+  "factors": [
+   {
+    "id": "HM-F01",
+    "name": "RF power (setpoint; recorded as P_forward, P_reflected, P_delivered)",
+    "value": "levels TBD - PENDING docs/experiments/hall_icp/p1_icp_bench/ (stable region); bounded by the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating) and the P1 registered limits",
+    "units": "W",
+    "basis": "row 72; A9.2 rf_500W",
+    "source": [
+     {
+      "kind": "owner_row",
+      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+      "row": 72,
+      "covers_ids": [
+       "R4-Q7"
+      ],
+      "answer_sha256": "636a6486bc06cfc72140256b657391be623d75bd638fa246d666e015c900009f"
+     },
+     {
+      "kind": "A9.2",
+      "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+      "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+      "decision": "rf_500W"
+     }
+    ],
+    "evidence_class": null,
+    "status": "PENDING",
+    "freeze_point": "after-evidence",
+    "owner_bound": [
+     0.0,
+     500.0
+    ],
+    "owner_bound_evidence_class": "owner-allocation"
+   },
+   {
+    "id": "HM-F02",
+    "name": "mass flow through the ICP (G-REUSE: Hall anode flow; dedicated ICP flow)",
+    "value": "Hall anode flow levels TBD - PENDING docs/experiments/hall_icp/p1_icp_bench/; dedicated ICP flow = 0 in the primary mode (G-REUSE); a dedicated feed is a diagnostic variable only (quote option, never silently the baseline; booked in the corresponding ledger if activated)",
+    "units": "mg/s",
+    "basis": "A9.3 OQ-RFQ-10; A9.1 HIQ-06",
+    "source": [
+     {
+      "kind": "A9.3",
+      "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+      "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+      "decision": "OQ-RFQ-10"
+     }
+    ],
+    "evidence_class": "owner-allocation",
+    "status": "PENDING",
+    "freeze_point": "after-evidence",
+    "owner_value_dedicated": 0.0
+   },
+   {
+    "id": "HM-F03",
+    "name": "pressure (ICP source volume via the ICP-34 port; chamber background)",
+    "value": "levels TBD - PENDING docs/experiments/hall_icp/p1_icp_bench/",
+    "units": "Pa",
+    "basis": "ICD ICP-34",
+    "source": [
+     "ICD ICP-34"
+    ],
+    "evidence_class": null,
+    "status": "PENDING",
+    "freeze_point": "after-evidence"
+   },
+   {
+    "id": "HM-F04",
+    "name": "gas composition",
+    "value": "evidence order Ar (engineering-only) -> N2 -> O2-bearing (NO_ATOMIC_O); levels inside each stage TBD - PENDING docs/experiments/hall_icp/p1_icp_bench/",
+    "units": "-",
+    "basis": "A9 evidence order",
+    "source": [
+     "A9"
+    ],
+    "evidence_class": "owner-allocation",
+    "status": "PENDING",
+    "freeze_point": "after-evidence",
+    "note": "Ar data stay ENGINEERING_ONLY_NON_SCORING (A9.3 OQ-RFQ-02)"
+   },
+   {
+    "id": "HM-F05",
+    "name": "plasma state / mode (UNLIT, E, H, UNCERTAIN)",
+    "value": "observed response, not a set factor; classified per record by rule HM-R06",
+    "units": "-",
+    "basis": "VI-RF-10",
+    "source": [
+     "VI-RF-10",
+     "RF-DALT08-01"
+    ],
+    "evidence_class": "assumed",
+    "status": "PROPOSED",
+    "freeze_point": "LOCK-1"
+   },
+   {
+    "id": "HM-F06",
+    "name": "Hall operating point (off / on; V_d, I_d, coil currents)",
+    "value": "levels TBD - inside the registered H-1 operating envelope (PENDING docs/experiments/hall_icp/p1_icp_bench/); current-sensor range uses the 8.33 A stand ceiling, which is a rating ceiling and not a level (A9.3 OQ-A907-02)",
+    "units": "V; A",
+    "basis": "A9.3 OQ-A907-02; A9.2 icp_matching_strategy",
+    "source": [
+     {
+      "kind": "A9.3",
+      "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+      "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+      "decision": "OQ-A907-02"
+     },
+     {
+      "kind": "A9.2",
+      "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+      "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+      "decision": "icp_matching_strategy"
+     }
+    ],
+    "evidence_class": null,
+    "status": "PENDING",
+    "freeze_point": "after-evidence"
+   },
+   {
+    "id": "HM-F07",
+    "name": "collector bias (V_collector, I_collector)",
+    "value": "levels TBD - requires the collector / bias V-I range (ICD ICP-21) and PENDING docs/experiments/hall_icp/p1_icp_bench/",
+    "units": "V; A",
+    "basis": "row 70; ICD ICP-21",
+    "source": [
+     {
+      "kind": "owner_row",
+      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+      "row": 70,
+      "covers_ids": [
+       "HWQ-07"
+      ],
+      "answer_sha256": "c3a16e9cb4b6eeb9fffaa608de106d35bd5d280cd133fbdbb22f64b5c72d9ef6"
+     },
+     "ICD ICP-21"
+    ],
+    "evidence_class": null,
+    "status": "PENDING",
+    "freeze_point": "after-evidence"
+   },
+   {
+    "id": "HM-F08",
+    "name": "local-match tuning state (logged state variable)",
+    "value": "policy: re-tuned for minimum reflected power at every point, plus fixed-tune sub-sweeps around representative points (P2Q-04); positions logged per record and linked to a characterized tuning state (CAL-P2-03/04)",
+    "units": "-",
+    "basis": "A9.2 icp_matching_strategy (flight implementation only after Z_antenna is measured)",
+    "source": [
+     {
+      "kind": "A9.2",
+      "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+      "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+      "decision": "icp_matching_strategy"
+     }
+    ],
+    "evidence_class": "assumed",
+    "status": "PROPOSED",
+    "freeze_point": "LOCK-1"
+   },
+   {
+    "id": "HM-F09",
+    "name": "thermal state (antenna, dielectric, collector, match, cables)",
+    "value": "covariate logged per record; no level",
+    "units": "K",
+    "basis": "ICD ICP-34",
+    "source": [
+     "ICD ICP-34"
+    ],
+    "evidence_class": "assumed",
+    "status": "PROPOSED",
+    "freeze_point": "LOCK-1"
+   }
+  ],
+  "rules": [
+   {
+    "id": "HM-R01",
+    "name": "map only inside the P1 stable region",
+    "value": "no HOT_MAP record without a P1 stable-region reference (the reducer raises SequenceError)",
+    "units": "-",
+    "basis": "A9.3 authorizations.P2",
+    "source": [
+     {
+      "kind": "A9.3",
+      "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+      "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+      "decision": "P2"
+     }
+    ],
+    "evidence_class": "owner-allocation",
+    "status": "OWNER_GIVEN",
+    "freeze_point": "NOW"
+   },
+   {
+    "id": "HM-R02",
+    "name": "dwell and settling criterion",
+    "value": "form: a point is recorded when rolling-window statistics of P_forward, P_reflected, Z_ant, antenna current, pressure and temperatures lie inside declared bands; the time to settle is logged; unsettled points are kept and flagged, never deleted. Window length and bands TBD - require P1 stability data (UB-RF-07)",
+    "units": "s",
+    "basis": "rule",
+    "source": [
+     "UB-RF-07"
+    ],
+    "evidence_class": null,
+    "status": "TBD",
+    "freeze_point": "LOCK-2",
+    "form_freeze_point": "LOCK-1"
+   },
+   {
+    "id": "HM-R03",
+    "name": "repeats and drift bracketing",
+    "value": "N_repeat TBD - requires UB-RF-07 repeatability (LOCK-2); a reference point is repeated at the start, middle and end of every block",
+    "units": "-",
+    "basis": "rule",
+    "source": [
+     "UB-RF-07"
+    ],
+    "evidence_class": null,
+    "status": "TBD",
+    "freeze_point": "LOCK-2",
+    "form_freeze_point": "LOCK-1"
+   },
+   {
+    "id": "HM-R04",
+    "name": "sweep order",
+    "value": "one-factor monotonic up-then-down sweeps at fixed other factors, plus a randomized replicate subset for drift detection; sweep id, direction and index logged per record",
+    "units": "-",
+    "basis": "rule",
+    "source": [
+     "this package"
+    ],
+    "evidence_class": "assumed",
+    "status": "PROPOSED",
+    "freeze_point": "LOCK-1"
+   },
+   {
+    "id": "HM-R05",
+    "name": "hysteresis",
+    "value": "every 1-D sweep is run up and down; the map and any hysteresis are reported against P_forward AND P_delivered (RF-DALT08-01: hysteresis vs applied power may vanish vs plasma power corrected for matching losses); up/down agreement rule: form LOCK-1, value LOCK-2 (P2Q-03)",
+    "units": "-",
+    "basis": "rule",
+    "source": [
+     "RF-DALT08-01"
+    ],
+    "evidence_class": "assumed",
+    "status": "PROPOSED",
+    "freeze_point": "LOCK-1"
+   },
+   {
+    "id": "HM-R06",
+    "name": "mode-jump (E/H) detection",
+    "value": "indicators per record: step in R_ant and X_ant, step in |Gamma| at fixed tuning, antenna current step, optical emission step (INS-P2-10, P2Q-05); a jump is declared when adjacent-point changes exceed the declared multiple of the combined uncertainty (form LOCK-1, value LOCK-2); step size is refined around a detected jump (refinement rule LOCK-1)",
+    "units": "-",
+    "basis": "rule",
+    "source": [
+     "VI-RF-10",
+     "RF-DALT08-01",
+     "RF-SCHU24-05"
+    ],
+    "evidence_class": "assumed",
+    "status": "PROPOSED",
+    "freeze_point": "LOCK-1"
+   },
+   {
+    "id": "HM-R07",
+    "name": "matching-state logging",
+    "value": "per record: tuning-state id, element positions/encoder counts, auto-tune on/off, tune time, loss-bound id if used",
+    "units": "-",
+    "basis": "A9.2 icp_matching_strategy",
+    "source": [
+     {
+      "kind": "A9.2",
+      "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+      "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+      "decision": "icp_matching_strategy"
+     }
+    ],
+    "evidence_class": "owner-allocation",
+    "status": "PROPOSED",
+    "freeze_point": "LOCK-1"
+   },
+   {
+    "id": "HM-R08",
+    "name": "P_line/match,loss",
+    "value": "measured from the two-port characterization at the logged tuning state (transfer efficiency from ABCD, identical to the A9-07 S-parameter load-power relation); coax/feedthrough loss from CAL-P2-02; bounded by a declared loss fraction when a two-port is missing; cross-checked by match/cable temperature rise and calorimetry; P_delivered is 'TBD' when neither exists (never P_net)",
+    "units": "W",
+    "basis": "A9.2 rf_measurement_reference",
+    "source": [
+     {
+      "kind": "A9.2",
+      "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+      "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+      "decision": "rf_measurement_reference"
+     },
+     "UB-RF-05",
+     "A9H-INS-03"
+    ],
+    "evidence_class": "owner-allocation",
+    "status": "PROPOSED",
+    "freeze_point": "LOCK-1"
+   },
+   {
+    "id": "HM-R09",
+    "name": "never P_forward = P_plasma",
+    "value": "the reducer refuses any plasma-power input or label; plasma-absorbed power only from the resistance split (reconstructed, UB-P2-Z-07)",
+    "units": "-",
+    "basis": "A9.2 rf_measurement_reference",
+    "source": [
+     {
+      "kind": "A9.2",
+      "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+      "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+      "decision": "rf_measurement_reference"
+     }
+    ],
+    "evidence_class": "owner-allocation",
+    "status": "OWNER_GIVEN",
+    "freeze_point": "NOW"
+   },
+   {
+    "id": "HM-R10",
+    "name": "generator input power",
+    "value": "P_mains,in of the mains-powered laboratory generator is logged as an engineering quantity labelled GROUND/FACILITY_ONLY; never P_bus evidence; the flight question needs a FLIGHT_REPRESENTATIVE_DC_RF_SOURCE",
+    "units": "W",
+    "basis": "A9.3 OQ-RFQ-06",
+    "source": [
+     {
+      "kind": "A9.3",
+      "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+      "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+      "decision": "OQ-RFQ-06"
+     }
+    ],
+    "evidence_class": "owner-allocation",
+    "status": "OWNER_GIVEN",
+    "freeze_point": "NOW"
+   },
+   {
+    "id": "HM-R11",
+    "name": "protection during the map",
+    "value": "only the provisional limits of the P1 registered procedure apply (PENDING docs/experiments/hall_icp/p1_icp_bench/); reflected-power / VSWR trip thresholds are an OUTPUT of this characterization (A9.2 rf_protection), never invented here; a trip is logged as an observation (RF-IPG6S-06)",
+    "units": "-",
+    "basis": "A9.2 rf_protection",
+    "source": [
+     {
+      "kind": "A9.2",
+      "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+      "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+      "decision": "rf_protection"
+     },
+     "A9H-RF-PROT-01"
+    ],
+    "evidence_class": "owner-allocation",
+    "status": "OWNER_GIVEN",
+    "freeze_point": "NOW"
+   },
+   {
+    "id": "HM-R12",
+    "name": "analysis frozen before data",
+    "value": "reducer version, calibration-set ids and the rules above are frozen (sha256) before the first HOT_MAP record; no re-analysis choice after seeing data",
+    "units": "-",
+    "basis": "CLAUDE.md rule 10 (no tuning to force agreement)",
+    "source": [
+     "docs/EVIDENCE.md"
+    ],
+    "evidence_class": "assumed",
+    "status": "PROPOSED",
+    "freeze_point": "LOCK-1"
+   }
+  ],
+  "sequence": [
+   {
+    "step": "S-00",
+    "what": "instrument receipt; certificates checked (CAL-P2-07 certificates)",
+    "gate": "H3 procurement gate (row 8: quotations only now)"
+   },
+   {
+    "step": "S-01",
+    "what": "VNA calibration, cable phase characterization, time base (CAL-P2-01, -12, -14)"
+   },
+   {
+    "step": "S-02",
+    "what": "line + feedthrough two-port (CAL-P2-02)"
+   },
+   {
+    "step": "S-03",
+    "what": "local-match two-port over the tuning grid + interpolation verification (CAL-P2-03/04)"
+   },
+   {
+    "step": "S-04",
+    "what": "V/I probe and fixture calibration on known loads (CAL-P2-05/06)"
+   },
+   {
+    "step": "S-05",
+    "what": "coupler / sensors in situ + calorimetric cross-check at power + harmonics (CAL-P2-07/09)"
+   },
+   {
+    "step": "S-06",
+    "what": "antenna-simulator end-to-end validation of ZM-A/B/C (CAL-P2-10)"
+   },
+   {
+    "step": "S-07",
+    "what": "cold antenna impedance vs frequency, gas off and gas on unlit; low-power powered-unlit records (CAL-P2-08; phase COLD_ANTENNA_POWERED_UNLIT)"
+   },
+   {
+    "step": "S-08",
+    "what": "RF pickup on P2 channels (CAL-P2-13; ICP-17)"
+   },
+   {
+    "step": "S-09",
+    "what": "GATE: P1 hands over a stable ICP operating region (PENDING docs/experiments/hall_icp/p1_icp_bench/)"
+   },
+   {
+    "step": "S-10",
+    "what": "hot map (phase HOT_MAP) under HM-R01..R12 with CAL-P2-11 bracketing"
+   }
+  ]
+ },
+ "data_model": {
+  "schema_file": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_record_schema_v1.json",
+  "reducer": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_reducer.py",
+  "record_schema_id": "p2_impedance_record_v1",
+  "calibration_schema_id": "p2_calibration_set_v1",
+  "required_record_fields": [
+   "schema",
+   "record_id",
+   "data_class",
+   "phase",
+   "calibration_set_id",
+   "f_Hz",
+   "Z0_ohm",
+   "reference_planes",
+   "methods",
+   "loss_method",
+   "coupler",
+   "vi_probe",
+   "match_state",
+   "factors",
+   "plasma_state",
+   "sweep",
+   "settling",
+   "temperatures_K",
+   "cold_reference_id",
+   "p1_stable_region_ref",
+   "antenna_current"
+  ],
+  "required_factor_fields": [
+   "P_RF_setpoint_W",
+   "mdot_hall_anode_mg_s",
+   "mdot_icp_dedicated_mg_s",
+   "gas_mode",
+   "gas",
+   "p_icp_source_Pa",
+   "p_chamber_Pa",
+   "hall_state",
+   "V_collector_V",
+   "I_collector_A",
+   "P_mains_in_W"
+  ],
+  "required_calibration_fields": [
+   "schema",
+   "calibration_set_id",
+   "data_class",
+   "f_Hz",
+   "Z0_ohm",
+   "power_sensors",
+   "coupler",
+   "two_ports",
+   "vi_probe",
+   "loss_bounds",
+   "cold_references",
+   "antenna_current_probe"
+  ],
+  "planes": [
+   "RP-GEN",
+   "RP-CPL",
+   "RP-MIN",
+   "RP-ANT",
+   "RP-VI"
+  ],
+  "record_phases": [
+   "DUMMY_LOAD",
+   "COLD_ANTENNA_POWERED_UNLIT",
+   "HOT_MAP"
+  ],
+  "methods": [
+   "vi_probe",
+   "deembed"
+  ],
+  "loss_methods": [
+   "two_port",
+   "declared_bound",
+   "not_available"
+  ],
+  "refusals": {
+   "MissingCalibrationError": "calibration set / sensor / coupler error model / two-port / tuning state / V/I / loss bound / cold reference / current probe absent, or frequency / Z0 mismatch",
+   "ReferencePlaneError": "record without reference_planes, undeclared or unknown plane, powers not at RP-CPL, two-port or fixture planes not as declared",
+   "UncalibratedPhaseError": "de-embedding with scalar-only data or a non-phase-calibrated coupler / two-port; V/I probe without phase calibration",
+   "ForwardAsPlasmaError": "any P_plasma* / P_absorbed_plasma* input key or a power label naming plasma power",
+   "SequenceError": "HOT_MAP record without a P1 stable-region reference (or one that is PENDING/TBD)",
+   "RecordError": "malformed or non-finite values, P_reflected > P_forward, singular transforms"
+  },
+  "outputs": [
+   "at_RP_CPL: P_forward, P_reflected, P_net, |Gamma| (powers and complex), VSWR",
+   "Z_antenna per method at RP-ANT (R, X), primary method, method difference",
+   "P_line/match,loss, P_delivered, match/line efficiency (or TBD / declared-bound interval)",
+   "antenna-current cross-check, resistance split (reconstructed)",
+   "mismatch_envelope(): ranges and line/antenna peak stresses; rating_status TBD_AFTER_IMPEDANCE_MAP; synthetic data labelled SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
+  ],
+  "complex_encoding": "[re, im]",
+  "two_port_convention": "ABCD, port 1 toward the generator, port 2 toward the antenna; S referenced to Z0"
+ },
+ "instrument_list": [
+  {
+   "id": "INS-P2-01",
+   "name": "V/I probe (complex V and I, phase-resolved) for RP-VI",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "a9_3_rf_package_line": "not in the A9.3 RF package list -> proposed addition (P2Q-02)",
+   "rfq_v2_line": "PENDING docs/procurement/rfq_a9_v2/",
+   "rfq_v1_line": null,
+   "required_specs": [
+    {
+     "quantity": "frequency coverage",
+     "value": "must include 13.56 MHz",
+     "units": "MHz",
+     "source": "row 72; UB-RF-00",
+     "evidence_class": "owner-allocation"
+    },
+    {
+     "quantity": "voltage / current range",
+     "value": "TBD - requires the cold antenna impedance (CAL-P2-08) and the generator selection (PENDING docs/experiments/hall_icp/p1_icp_bench/); sizing relations I_ant,pk <= sqrt(2 P_del,max / R_ant,cold) if the plasma adds non-negative resistance (verify at hot conditions) and V_ant,pk = I_ant,pk |Z_ant|",
+     "units": "V; A",
+     "source": "this package",
+     "evidence_class": null
+    },
+    {
+     "quantity": "relative phase uncertainty",
+     "value": "TBD - u(phi) <= u(R)_target / |X| (LOCK-2)",
+     "units": "rad",
+     "source": "ZM-A sensitivity relation",
+     "evidence_class": null
+    },
+    {
+     "quantity": "vacuum / thermal compatibility and mounting",
+     "value": "TBD - requires the module drawings",
+     "units": "-",
+     "source": "ICD ICP-07",
+     "evidence_class": null
+    }
+   ],
+   "purchase": "quotation only; no purchase order (row 8; H3 gate); dispatch by the owner / procurement, never by this lane (A9.3 OQ-RFQ-07)"
+  },
+  {
+   "id": "INS-P2-02",
+   "name": "dual directional coupler (RP-CPL)",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "a9_3_rf_package_line": "directional coupler (A9.3 RF package)",
+   "rfq_v2_line": "PENDING docs/procurement/rfq_a9_v2/",
+   "rfq_v1_line": "RFQ-04 'dual directional coupler + forward/reflected sensors' (RFQ-04-R08/R09)",
+   "required_specs": [
+    {
+     "quantity": "frequency coverage",
+     "value": "must include 13.56 MHz",
+     "units": "MHz",
+     "source": "row 72; UB-RF-00",
+     "evidence_class": "owner-allocation"
+    },
+    {
+     "quantity": "directivity",
+     "value": "TBD - D >= D_min, D_min frozen at LOCK-2 (UB-RF-04, A9H-INS-16)",
+     "units": "dB",
+     "source": "A9-07 IDA7-21",
+     "evidence_class": null
+    },
+    {
+     "quantity": "power rating",
+     "value": "TBD_AFTER_IMPEDANCE_MAP (A9.2 rf_500W; must cover the selected generator's forward power at the residual |Gamma|)",
+     "units": "W",
+     "source": "A9.2 rf_500W",
+     "evidence_class": null
+    },
+    {
+     "quantity": "vector (phase) output for method ZM-B",
+     "value": "required if ZM-B is to run from the coupler; otherwise a VNA-receiver or vector reflectometer at RP-CPL",
+     "units": "-",
+     "source": "this package ZM-B",
+     "evidence_class": "assumed"
+    }
+   ],
+   "purchase": "quotation only; no purchase order (row 8; H3 gate); dispatch by the owner / procurement, never by this lane (A9.3 OQ-RFQ-07)"
+  },
+  {
+   "id": "INS-P2-03",
+   "name": "forward / reflected power sensors",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "a9_3_rf_package_line": "forward/reflected sensors (A9.3 RF package)",
+   "rfq_v2_line": "PENDING docs/procurement/rfq_a9_v2/",
+   "rfq_v1_line": "RFQ-04 (RFQ-04-R08/R09)",
+   "required_specs": [
+    {
+     "quantity": "frequency coverage",
+     "value": "must include 13.56 MHz",
+     "units": "MHz",
+     "source": "row 72; UB-RF-00",
+     "evidence_class": "owner-allocation"
+    },
+    {
+     "quantity": "range / linearity",
+     "value": "TBD - requires the coupler coupling factor and the generator selection; covering the 0-500 W delivered/operating investigation capability plus the characterized mismatch (UB-RF-03)",
+     "units": "W",
+     "source": "row 72; UB-RF-03",
+     "evidence_class": null
+    },
+    {
+     "quantity": "calibration",
+     "value": "traceable certificate at 13.56 MHz (A9H-CAL-02; MS-P2-01)",
+     "units": "-",
+     "source": "A4; A9H-CAL-02",
+     "evidence_class": "owner-allocation"
+    }
+   ],
+   "purchase": "quotation only; no purchase order (row 8; H3 gate); dispatch by the owner / procurement, never by this lane (A9.3 OQ-RFQ-07)"
+  },
+  {
+   "id": "INS-P2-04",
+   "name": "vector network analyser (one-port and two-port; receiver/spectrum mode if available)",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "a9_3_rf_package_line": "not in the A9.3 RF package list -> proposed addition (P2Q-02)",
+   "rfq_v2_line": "PENDING docs/procurement/rfq_a9_v2/",
+   "rfq_v1_line": null,
+   "required_specs": [
+    {
+     "quantity": "frequency coverage",
+     "value": "must include 13.56 MHz and the cold-antenna sweep span (TBD - requires the antenna design) and, for harmonics, N_h x 13.56 MHz with N_h TBD (UB-RF-06, LOCK-2)",
+     "units": "MHz",
+     "source": "row 72; UB-RF-06",
+     "evidence_class": null
+    },
+    {
+     "quantity": "port power / input protection",
+     "value": "TBD - the VNA never sees generator power; attenuators and a switching procedure isolate it (INS-P2-06)",
+     "units": "dBm",
+     "source": "this package",
+     "evidence_class": null
+    }
+   ],
+   "purchase": "quotation only; no purchase order (row 8; H3 gate); dispatch by the owner / procurement, never by this lane (A9.3 OQ-RFQ-07)"
+  },
+  {
+   "id": "INS-P2-05",
+   "name": "calibration kits: coaxial SOL/SOLT with standard data + antenna-terminal fixture standards",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "a9_3_rf_package_line": "not in the A9.3 RF package list -> proposed addition (P2Q-02)",
+   "rfq_v2_line": "PENDING docs/procurement/rfq_a9_v2/",
+   "rfq_v1_line": null,
+   "required_specs": [
+    {
+     "quantity": "connector family",
+     "value": "TBD - requires the selected coax / feedthrough (ICD ICP-15)",
+     "units": "-",
+     "source": "ICD ICP-15",
+     "evidence_class": null
+    },
+    {
+     "quantity": "fixture standards",
+     "value": "TBD - requires the antenna-terminal drawing",
+     "units": "-",
+     "source": "this package CAL-P2-01",
+     "evidence_class": null
+    }
+   ],
+   "purchase": "quotation only; no purchase order (row 8; H3 gate); dispatch by the owner / procurement, never by this lane (A9.3 OQ-RFQ-07)"
+  },
+  {
+   "id": "INS-P2-06",
+   "name": "fixed attenuators (sensor / VNA protection, coupling-arm padding)",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "a9_3_rf_package_line": "not in the A9.3 RF package list -> proposed addition (P2Q-02)",
+   "rfq_v2_line": "PENDING docs/procurement/rfq_a9_v2/",
+   "rfq_v1_line": null,
+   "required_specs": [
+    {
+     "quantity": "frequency coverage",
+     "value": "must include 13.56 MHz",
+     "units": "MHz",
+     "source": "row 72; UB-RF-00",
+     "evidence_class": "owner-allocation"
+    },
+    {
+     "quantity": "attenuation and power rating",
+     "value": "TBD - requires the coupler coupling factor and the generator selection",
+     "units": "dB; W",
+     "source": "this package",
+     "evidence_class": null
+    }
+   ],
+   "purchase": "quotation only; no purchase order (row 8; H3 gate); dispatch by the owner / procurement, never by this lane (A9.3 OQ-RFQ-07)"
+  },
+  {
+   "id": "INS-P2-07",
+   "name": "dummy loads: (a) 50-ohm calorimetric load; (b) antenna-simulator load of VNA-known low-R / high-X impedance",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "a9_3_rf_package_line": "dummy load (A9.3 RF package) for (a); (b) proposed addition (P2Q-02)",
+   "rfq_v2_line": "PENDING docs/procurement/rfq_a9_v2/",
+   "rfq_v1_line": "RFQ-04 'calorimetric cross-check load' (RFQ-04-R10) for (a)",
+   "required_specs": [
+    {
+     "quantity": "frequency coverage",
+     "value": "must include 13.56 MHz",
+     "units": "MHz",
+     "source": "row 72; UB-RF-00",
+     "evidence_class": "owner-allocation"
+    },
+    {
+     "quantity": "power rating",
+     "value": "TBD - requires the generator selection (PENDING docs/experiments/hall_icp/p1_icp_bench/)",
+     "units": "W",
+     "source": "this package",
+     "evidence_class": null
+    },
+    {
+     "quantity": "simulator impedance",
+     "value": "TBD - requires the cold antenna impedance (CAL-P2-08); never taken from the analog",
+     "units": "ohm",
+     "source": "this package CAL-P2-10",
+     "evidence_class": null
+    }
+   ],
+   "purchase": "quotation only; no purchase order (row 8; H3 gate); dispatch by the owner / procurement, never by this lane (A9.3 OQ-RFQ-07)"
+  },
+  {
+   "id": "INS-P2-08",
+   "name": "phase-stable test cables (VNA) + characterized flexible stand-crossing coax pair",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "a9_3_rf_package_line": "RF coax (A9.3 RF package)",
+   "rfq_v2_line": "PENDING docs/procurement/rfq_a9_v2/",
+   "rfq_v1_line": "RFQ-04 'flexible RF coax, identical live + sham pair' (RFQ-04-R11)",
+   "required_specs": [
+    {
+     "quantity": "frequency coverage",
+     "value": "must include 13.56 MHz",
+     "units": "MHz",
+     "source": "row 72; UB-RF-00",
+     "evidence_class": "owner-allocation"
+    },
+    {
+     "quantity": "phase stability vs flexure / temperature",
+     "value": "TBD - requires the UB-P2-Z-05 allocation (LOCK-2)",
+     "units": "deg",
+     "source": "this package CAL-P2-12",
+     "evidence_class": null
+    }
+   ],
+   "purchase": "quotation only; no purchase order (row 8; H3 gate); dispatch by the owner / procurement, never by this lane (A9.3 OQ-RFQ-07)"
+  },
+  {
+   "id": "INS-P2-09",
+   "name": "antenna RF current probe (Rogowski / current transformer)",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "a9_3_rf_package_line": "not in the A9.3 RF package list -> proposed addition (P2Q-02)",
+   "rfq_v2_line": "PENDING docs/procurement/rfq_a9_v2/",
+   "rfq_v1_line": null,
+   "required_specs": [
+    {
+     "quantity": "frequency coverage",
+     "value": "must include 13.56 MHz",
+     "units": "MHz",
+     "source": "row 72; UB-RF-00",
+     "evidence_class": "owner-allocation"
+    },
+    {
+     "quantity": "current range",
+     "value": "TBD - same sizing relation as INS-P2-01",
+     "units": "A",
+     "source": "this package",
+     "evidence_class": null
+    }
+   ],
+   "purchase": "quotation only; no purchase order (row 8; H3 gate); dispatch by the owner / procurement, never by this lane (A9.3 OQ-RFQ-07)"
+  },
+  {
+   "id": "INS-P2-10",
+   "name": "optical emission photodiode (mode-jump indicator)",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "a9_3_rf_package_line": "not in the A9.3 RF package list -> proposed addition (P2Q-05)",
+   "rfq_v2_line": "PENDING docs/procurement/rfq_a9_v2/",
+   "rfq_v1_line": null,
+   "required_specs": [
+    {
+     "quantity": "spectral band / view",
+     "value": "TBD - requires the module optical access",
+     "units": "-",
+     "source": "this package HM-R06",
+     "evidence_class": null
+    }
+   ],
+   "purchase": "quotation only; no purchase order (row 8; H3 gate); dispatch by the owner / procurement, never by this lane (A9.3 OQ-RFQ-07)"
+  },
+  {
+   "id": "INS-P2-11",
+   "name": "input power analyser for P_mains,in of the laboratory generator",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "a9_3_rf_package_line": "13.56 MHz generator line (A9.3 OQ-RFQ-06 measurement requirement)",
+   "rfq_v2_line": "PENDING docs/procurement/rfq_a9_v2/",
+   "rfq_v1_line": "RFQ-04-R04",
+   "required_specs": [
+    {
+     "quantity": "range",
+     "value": "TBD - requires the generator selection",
+     "units": "W",
+     "source": "A9.3 OQ-RFQ-06",
+     "evidence_class": null
+    }
+   ],
+   "purchase": "quotation only; no purchase order (row 8; H3 gate); dispatch by the owner / procurement, never by this lane (A9.3 OQ-RFQ-07)"
+  },
+  {
+   "id": "INS-P2-12",
+   "name": "match element position read-out / encoders",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1",
+   "a9_3_rf_package_line": "local matching network components (A9.3 RF package)",
+   "rfq_v2_line": "PENDING docs/procurement/rfq_a9_v2/",
+   "rfq_v1_line": "RFQ-04-R07 / R17",
+   "required_specs": [
+    {
+     "quantity": "resolution",
+     "value": "TBD - requires the CAL-P2-03 grid and CAL-P2-04 interpolation error",
+     "units": "-",
+     "source": "this package",
+     "evidence_class": null
+    }
+   ],
+   "purchase": "quotation only; no purchase order (row 8; H3 gate); dispatch by the owner / procurement, never by this lane (A9.3 OQ-RFQ-07)"
+  }
+ ],
+ "p2_outputs_later": [
+  {
+   "id": "ICPQ-10",
+   "what": "total ICP module heat-load bound (ICP-43)",
+   "p2_supplies": "P_forward, P_delivered and P_line/match,loss envelope over the P1 stable region (mismatch_envelope)",
+   "status": "OPEN (owner call; not answered here)",
+   "source": "docs/budgets/owner_decisions/owner_questions_state_v3.json"
+  },
+  {
+   "id": "ICPQ-11",
+   "what": "k_RF between rated antenna-circuit RF voltage and V_ant,peak (ICP-44)",
+   "p2_supplies": "measured antenna-terminal V_peak / I_peak envelope (ZM-A) at the maximum operating point",
+   "status": "OPEN (owner call; no value proposed)",
+   "source": "docs/budgets/owner_decisions/owner_questions_state_v3.json"
+  },
+  {
+   "id": "OQ-A910-06",
+   "what": "interim 600 W RF-path heat-allocation basis of ICP-36",
+   "p2_supplies": "P_delivered and P_line/match,loss envelope to re-derive ICP-36",
+   "status": "OPEN (owner call)",
+   "source": "docs/budgets/owner_decisions/owner_questions_state_v3.json"
+  },
+  {
+   "id": "RF_COMPONENT_RATINGS",
+   "what": "generator, coupler, coax, connectors, local-match elements (voltage / current), feedthroughs (UB-RF-01 rating, ICP-15, A9H-INS-15/16, A9H-RF-LM-01, RFQ-04-R07/R11/R12/R17)",
+   "p2_supplies": "mismatch envelope (rating_status TBD_AFTER_IMPEDANCE_MAP until real data exist)",
+   "status": "TBD_AFTER_IMPEDANCE_MAP",
+   "source": "A9.2 a9_10_statuses"
+  },
+  {
+   "id": "LOCAL_MATCH_FLIGHT_IMPLEMENTATION",
+   "what": "fixed / switched / electronically tuned / other (ICP-13)",
+   "p2_supplies": "Z_antenna = R + jX vs mdot, P_RF, p, gas, Hall operating point; fixed-tune sub-sweeps (HM-F08)",
+   "status": "DEFERRED by A9.2 icp_matching_strategy",
+   "source": "A9.2"
+  },
+  {
+   "id": "RF_INTERLOCK_TRIP_THRESHOLDS",
+   "what": "reflected-power / VSWR trips (ICP-16, A9H-RF-PROT-01, RFQ-04-R16, A9-04 LA-03)",
+   "p2_supplies": "characterized reflected-power / VSWR envelope incl. mode jumps and tuning transients",
+   "status": "after-evidence (A9.2 rf_protection)",
+   "source": "A9.2"
+  },
+  {
+   "id": "VALIDATION_INPUTS",
+   "what": "VI-RF-02..07, VI-RF-10",
+   "p2_supplies": "reduced records",
+   "status": "HARDWARE_ONLY (unchanged)",
+   "source": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json"
+  }
+ ],
+ "items": [
+  {
+   "id": "P2-F-01",
+   "name": "RF drive frequency",
+   "value": 13.56,
+   "units": "MHz",
+   "basis": "owner answer",
+   "source": [
+    {
+     "kind": "owner_row",
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "row": 72,
+     "covers_ids": [
+      "R4-Q7"
+     ],
+     "answer_sha256": "636a6486bc06cfc72140256b657391be623d75bd638fa246d666e015c900009f"
+    },
+    "UB-RF-00",
+    "ICD ICP-11"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "P2-F-02",
+   "name": "reference (system) impedance Z0 of the 50-ohm segment and of all S-parameters",
+   "value": 50.0,
+   "units": "ohm",
+   "basis": "nominal coax/coupler system impedance (assumed; quotation, row 8)",
+   "source": [
+    "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json recomputations.rf_reference_plane.Z0_ohm"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "P2-F-03",
+   "name": "laboratory delivered/operating RF investigation capability (not a component rating)",
+   "value": [
+    0.0,
+    500.0
+   ],
+   "units": "W",
+   "basis": "row 72 as interpreted by A9.2 rf_500W",
+   "source": [
+    {
+     "kind": "owner_row",
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "row": 72,
+     "covers_ids": [
+      "R4-Q7"
+     ],
+     "answer_sha256": "636a6486bc06cfc72140256b657391be623d75bd638fa246d666e015c900009f"
+    },
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "rf_500W"
+    },
+    "UB-RF-01"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "RP-GEN",
+   "name": "generator output connector",
+   "value": "RF generator output; generator-internal forward/reflected meters are not a measurement plane (ICD ICP-14: generator-internal meters alone are not sufficient; analog TK-22/TK-23 relied on them)",
+   "units": "-",
+   "basis": "definition",
+   "source": [
+    "ICD ICP-14"
+   ],
+   "evidence_class": "assumed",
+   "status": "DEFINED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "RP-CPL",
+   "name": "directional-coupler plane on the generator / 50-ohm side of the LOCAL matching network",
+   "value": "forward/reflected power measured on the generator/50-ohm side of the local match; retain P_forward, P_reflected, |Gamma|, VSWR and where possible P_delivered = P_forward - P_reflected - P_line/match,loss; never assume P_forward = P_plasma",
+   "units": "-",
+   "basis": "owner decision A9.2",
+   "source": [
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "OQ-A907-11"
+    },
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "rf_measurement_reference"
+    },
+    "UB-RF-09",
+    "ICD ICP-14"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "RP-MIN",
+   "name": "input connector of the local matching network",
+   "value": "end of the 50-ohm line on the ICP module (after the flexible stand-crossing coax and the vacuum RF feedthrough); the residual mismatch after the local match is the |Gamma| seen here, transformed to RP-CPL by the characterized line two-port",
+   "units": "-",
+   "basis": "definition from the A9.2 chain generator -> coupler -> 50-ohm line -> local match -> antenna",
+   "source": [
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "OQ-A907-11"
+    },
+    "H2-A9 recomputations.rf_reference_plane.a9_2_segments.retained_50_ohm_segment"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "RP-ANT",
+   "name": "antenna terminals (output side of the local matching network) - plane of Z_antenna = R + jX",
+   "value": "the pair of antenna feed terminals at which Z_antenna is reported; it excludes the matching elements and includes the antenna, its in-vacuum leads up to the terminal pair and, when lit, the plasma loading",
+   "units": "-",
+   "basis": "A9.2 icp_matching_strategy (Z_antenna = R + jX measured vs mdot, P_RF, p, gas composition, Hall operating point)",
+   "source": [
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "icp_matching_strategy"
+    },
+    "H2-A9 recomputations.rf_reference_plane.a9_2_segments.short_match_to_antenna_segment"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "RP-VI",
+   "name": "V/I probe sensing plane",
+   "value": "the plane at which the V/I probe senses voltage and current; joined to RP-ANT by a characterized fixture two-port (the identity only when declared and verified)",
+   "units": "-",
+   "basis": "method A",
+   "source": [
+    "this package CAL-P2-06"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "UB-P2-Z-01",
+   "name": "V/I probe magnitude calibration (k_V, k_I) at 13.56 MHz",
+   "value": "TBD - requires CAL-P2-05 data",
+   "units": "relative",
+   "basis": "calibration",
+   "source": [
+    "REF-GUM2008 4.3.3 (via A9-04 references)"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "UB-P2-Z-02",
+   "name": "V/I probe relative phase calibration",
+   "value": "TBD - requires CAL-P2-05 data; u(phi) target from u(R) target / |X| (LOCK-2)",
+   "units": "rad",
+   "basis": "calibration",
+   "source": [
+    "REF-GUM2008 4.3.3"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "UB-P2-Z-03",
+   "name": "de-embedding: propagated S-parameter uncertainty of line + match into Z_ant",
+   "value": "TBD - requires CAL-P2-02/03 uncertainties; propagation by the law of propagation applied to the real and imaginary parts through the reducer (numerical Jacobian; REF-GUM2008 5.1.2 / 5.2.2 as read by A9-04)",
+   "units": "ohm",
+   "basis": "calibration + propagation",
+   "source": [
+    "REF-GUM2008 5.1.2, 5.2.2"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "UB-P2-Z-04",
+   "name": "tuning-state interpolation error",
+   "value": "TBD - requires CAL-P2-04 verification states",
+   "units": "ohm",
+   "basis": "calibration",
+   "source": [
+    "this package CAL-P2-04"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "UB-P2-Z-05",
+   "name": "phase drift / temperature / cable flexure between calibration and reading",
+   "value": "TBD - requires CAL-P2-11/12 data",
+   "units": "rad",
+   "basis": "calibration",
+   "source": [
+    "this package CAL-P2-11/12"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "UB-P2-Z-06",
+   "name": "V/I fixture correction RP-VI -> RP-ANT",
+   "value": "TBD - requires CAL-P2-06",
+   "units": "ohm",
+   "basis": "calibration",
+   "source": [
+    "this package CAL-P2-06"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "UB-P2-Z-07",
+   "name": "cold-reference resistance change with antenna temperature (resistance split)",
+   "value": "TBD - requires CAL-P2-08 at more than one antenna temperature",
+   "units": "ohm",
+   "basis": "calibration",
+   "source": [
+    "this package CAL-P2-08"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "UB-P2-Z-08",
+   "name": "VNA calibration residuals (directivity, source match, tracking) at each plane",
+   "value": "TBD - requires VNA / kit certificates and check-standard data",
+   "units": "-",
+   "basis": "certificate",
+   "source": [
+    "REF-GUM2008 4.3.3"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "MS-P2-01",
+   "name": "RF power at 13.56 MHz (sensors + coupler incl. cable) - calibration-lab scope requirement",
+   "value": "ISO/IEC 17025 (NABL in India) scope covering 13.56 MHz and the power range of the selected sensors; GUM budget with k; raw data (general requirements MS-G-01..03 extended, as A9-04 IF-16 requests)",
+   "units": "-",
+   "basis": "A4 force_DC_RF_traceability; A9-04 IF-16",
+   "source": [
+    "A4 force_DC_RF_traceability",
+    "MS-G-01",
+    "MS-G-02",
+    "MS-G-03"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "MS-P2-02",
+   "name": "VNA and coaxial calibration-kit verification (standard definitions, check standard)",
+   "value": "traceable kit data and a verification standard; same MS-G requirements",
+   "units": "-",
+   "basis": "A4; A9-04 IF-16",
+   "source": [
+    "MS-G-01",
+    "MS-G-02",
+    "MS-G-03"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "MS-P2-03",
+   "name": "V/I probe magnitude and phase calibration at 13.56 MHz",
+   "value": "calibration against known loads (CAL-P2-05) with a stated uncertainty budget; accredited scope where one exists, otherwise an in-house procedure traceable through the VNA (MS-P2-02) - owner call P2Q-07",
+   "units": "-",
+   "basis": "A4 force_DC_RF_traceability (no invented class where the standard defines none)",
+   "source": [
+    "A4 force_DC_RF_traceability"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "MS-P2-04",
+   "name": "antenna RF current probe (magnitude) at 13.56 MHz",
+   "value": "calibration against the V/I probe or a known current in a reference load; stated uncertainty",
+   "units": "-",
+   "basis": "A4",
+   "source": [
+    "A4 force_DC_RF_traceability"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "CAL-P2-01",
+   "name": "VNA calibration (one-port SOL at each measurement plane; two-port SOLT for two-port characterization) at 13.56 MHz and over the cold-antenna sweep span",
+   "value": "TBD - requires the VNA and kit certificates (residual directivity / source match / tracking)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-08"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "CAL-P2-02",
+   "name": "two-port S-parameters of the 50-ohm line segment RP-CPL -> RP-MIN (coupler output cable, flexible stand-crossing coax, vacuum feedthrough)",
+   "value": "TBD - requires the installed line (PENDING docs/experiments/hall_icp/p1_icp_bench/)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-RF-05",
+    "UB-P2-Z-03"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "CAL-P2-03",
+   "name": "two-port S-parameters of the adjustable local match RP-MIN -> RP-ANT at each tuning state of a declared grid over its tuning range (or a fitted equivalent-circuit model of the measured data, evidence class 'reconstructed')",
+   "value": "TBD - requires the selected matching network and its tuning range (PENDING docs/experiments/hall_icp/p1_icp_bench/; RFQ-04-R07)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-RF-05",
+    "UB-P2-Z-03",
+    "UB-P2-Z-04"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "CAL-P2-04",
+   "name": "tuning-state interpolation rule and its verification at off-grid states",
+   "value": "TBD - requires CAL-P2-03 data; the reducer refuses an uncharacterized tuning state (no silent interpolation)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-04"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "CAL-P2-05",
+   "name": "V/I probe calibration: complex gains k_V, k_I (magnitude AND relative phase) at 13.56 MHz",
+   "value": "TBD - requires the probe selection (INS-P2-01) and the calibration data",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-01",
+    "UB-P2-Z-02"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "CAL-P2-06",
+   "name": "V/I probe fixture (RP-VI -> RP-ANT) ABCD, or a verified declaration that RP-VI = RP-ANT",
+   "value": "TBD - requires the module drawings and the probe mount",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-06"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "CAL-P2-07",
+   "name": "directional coupler + forward/reflected sensors: coupling factors (incl. cable), directivity and sensor calibration factor / linearity at 13.56 MHz; in-situ checks into a matched load (directivity floor) and into short/open (full reflection); calorimetric cross-check at power with k_x = 2",
+   "value": "TBD - requires coupler and sensor certificates; D_min at LOCK-2 (UB-RF-04, A9H-INS-16)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-RF-02",
+    "UB-RF-03",
+    "UB-RF-04",
+    "UB-RF-08"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "CAL-P2-08",
+   "name": "cold antenna impedance vs frequency around 13.56 MHz (installed on the module; no plasma: gas off, and gas on unlit), VNA at RP-ANT and via RP-MIN",
+   "value": "TBD - requires the antenna (PENDING docs/experiments/hall_icp/p1_icp_bench/); sweep span TBD - requires the antenna design (self-resonance must be located, not assumed)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-07"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "CAL-P2-09",
+   "name": "dummy-load checks of the complete chain at power: 50-ohm calorimetric load (P_net vs calorimetry, k_x = 2) and the harmonic spectrum into the matched load",
+   "value": "TBD - requires the generator (PENDING docs/experiments/hall_icp/p1_icp_bench/)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-RF-06",
+    "UB-RF-07",
+    "UB-RF-08"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "CAL-P2-10",
+   "name": "end-to-end method validation on an antenna-simulator load of VNA-known Z (low-R, high-X network in place of the antenna): Z by ZM-A, ZM-B and ZM-C vs the VNA value, cold and at power",
+   "value": "TBD - requires the simulator design (from CAL-P2-08 cold impedance) and data",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-01",
+    "UB-P2-Z-02",
+    "UB-P2-Z-03",
+    "UB-P2-Z-05"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "CAL-P2-11",
+   "name": "phase drift and temperature: reference-load re-measurement before / during / after each block; temperatures of probe, match elements and cables logged; pre/post shift in the budget and as a block exclusion rule",
+   "value": "TBD - requires metrology-only drift evidence; rule form LOCK-1, number LOCK-2 (A9.1 UBQ-05; A9H-CAL-05)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-05"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "CAL-P2-12",
+   "name": "phase-stable cable characterization: phase of the VNA test cables and of the flexible stand-crossing coax vs flexure / stand position and temperature",
+   "value": "TBD - requires the cables (INS-P2-08) and the stand routing (ICP-18)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-05",
+    "UB-P2-Z-03"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "CAL-P2-13",
+   "name": "RF pickup on the V/I, current-probe and optical channels (generator into dummy load; ICP energized, H-1 off) - part of the ICP-17 / row-64 pickup check",
+   "value": "TBD - requires the S1a pickup test (ICD ICP-17)",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-01",
+    "UB-P2-Z-02"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "CAL-P2-14",
+   "name": "time-base alignment of RF, V/I, optical, Hall, collector, pressure and flow channels (INS-18)",
+   "value": "TBD - requires the skew allowance from the P1 stability band",
+   "units": "-",
+   "basis": "calibration step",
+   "source": [
+    "this package",
+    "UB-P2-Z-05"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "HM-F01",
+   "name": "RF power (setpoint; recorded as P_forward, P_reflected, P_delivered)",
+   "value": "levels TBD - PENDING docs/experiments/hall_icp/p1_icp_bench/ (stable region); bounded by the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating) and the P1 registered limits",
+   "units": "W",
+   "basis": "row 72; A9.2 rf_500W",
+   "source": [
+    {
+     "kind": "owner_row",
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "row": 72,
+     "covers_ids": [
+      "R4-Q7"
+     ],
+     "answer_sha256": "636a6486bc06cfc72140256b657391be623d75bd638fa246d666e015c900009f"
+    },
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "rf_500W"
+    }
+   ],
+   "evidence_class": null,
+   "status": "PENDING",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "HM-F02",
+   "name": "mass flow through the ICP (G-REUSE: Hall anode flow; dedicated ICP flow)",
+   "value": "Hall anode flow levels TBD - PENDING docs/experiments/hall_icp/p1_icp_bench/; dedicated ICP flow = 0 in the primary mode (G-REUSE); a dedicated feed is a diagnostic variable only (quote option, never silently the baseline; booked in the corresponding ledger if activated)",
+   "units": "mg/s",
+   "basis": "A9.3 OQ-RFQ-10; A9.1 HIQ-06",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-10"
+    }
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "PENDING",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "HM-F03",
+   "name": "pressure (ICP source volume via the ICP-34 port; chamber background)",
+   "value": "levels TBD - PENDING docs/experiments/hall_icp/p1_icp_bench/",
+   "units": "Pa",
+   "basis": "ICD ICP-34",
+   "source": [
+    "ICD ICP-34"
+   ],
+   "evidence_class": null,
+   "status": "PENDING",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "HM-F04",
+   "name": "gas composition",
+   "value": "evidence order Ar (engineering-only) -> N2 -> O2-bearing (NO_ATOMIC_O); levels inside each stage TBD - PENDING docs/experiments/hall_icp/p1_icp_bench/",
+   "units": "-",
+   "basis": "A9 evidence order",
+   "source": [
+    "A9"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "PENDING",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "HM-F05",
+   "name": "plasma state / mode (UNLIT, E, H, UNCERTAIN)",
+   "value": "observed response, not a set factor; classified per record by rule HM-R06",
+   "units": "-",
+   "basis": "VI-RF-10",
+   "source": [
+    "VI-RF-10",
+    "RF-DALT08-01"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "HM-F06",
+   "name": "Hall operating point (off / on; V_d, I_d, coil currents)",
+   "value": "levels TBD - inside the registered H-1 operating envelope (PENDING docs/experiments/hall_icp/p1_icp_bench/); current-sensor range uses the 8.33 A stand ceiling, which is a rating ceiling and not a level (A9.3 OQ-A907-02)",
+   "units": "V; A",
+   "basis": "A9.3 OQ-A907-02; A9.2 icp_matching_strategy",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-A907-02"
+    },
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "icp_matching_strategy"
+    }
+   ],
+   "evidence_class": null,
+   "status": "PENDING",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "HM-F07",
+   "name": "collector bias (V_collector, I_collector)",
+   "value": "levels TBD - requires the collector / bias V-I range (ICD ICP-21) and PENDING docs/experiments/hall_icp/p1_icp_bench/",
+   "units": "V; A",
+   "basis": "row 70; ICD ICP-21",
+   "source": [
+    {
+     "kind": "owner_row",
+     "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "row": 70,
+     "covers_ids": [
+      "HWQ-07"
+     ],
+     "answer_sha256": "c3a16e9cb4b6eeb9fffaa608de106d35bd5d280cd133fbdbb22f64b5c72d9ef6"
+    },
+    "ICD ICP-21"
+   ],
+   "evidence_class": null,
+   "status": "PENDING",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "HM-F08",
+   "name": "local-match tuning state (logged state variable)",
+   "value": "policy: re-tuned for minimum reflected power at every point, plus fixed-tune sub-sweeps around representative points (P2Q-04); positions logged per record and linked to a characterized tuning state (CAL-P2-03/04)",
+   "units": "-",
+   "basis": "A9.2 icp_matching_strategy (flight implementation only after Z_antenna is measured)",
+   "source": [
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "icp_matching_strategy"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "HM-F09",
+   "name": "thermal state (antenna, dielectric, collector, match, cables)",
+   "value": "covariate logged per record; no level",
+   "units": "K",
+   "basis": "ICD ICP-34",
+   "source": [
+    "ICD ICP-34"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "HM-R01",
+   "name": "map only inside the P1 stable region",
+   "value": "no HOT_MAP record without a P1 stable-region reference (the reducer raises SequenceError)",
+   "units": "-",
+   "basis": "A9.3 authorizations.P2",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    }
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "HM-R02",
+   "name": "dwell and settling criterion",
+   "value": "form: a point is recorded when rolling-window statistics of P_forward, P_reflected, Z_ant, antenna current, pressure and temperatures lie inside declared bands; the time to settle is logged; unsettled points are kept and flagged, never deleted. Window length and bands TBD - require P1 stability data (UB-RF-07)",
+   "units": "s",
+   "basis": "rule",
+   "source": [
+    "UB-RF-07"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "HM-R03",
+   "name": "repeats and drift bracketing",
+   "value": "N_repeat TBD - requires UB-RF-07 repeatability (LOCK-2); a reference point is repeated at the start, middle and end of every block",
+   "units": "-",
+   "basis": "rule",
+   "source": [
+    "UB-RF-07"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "HM-R04",
+   "name": "sweep order",
+   "value": "one-factor monotonic up-then-down sweeps at fixed other factors, plus a randomized replicate subset for drift detection; sweep id, direction and index logged per record",
+   "units": "-",
+   "basis": "rule",
+   "source": [
+    "this package"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "HM-R05",
+   "name": "hysteresis",
+   "value": "every 1-D sweep is run up and down; the map and any hysteresis are reported against P_forward AND P_delivered (RF-DALT08-01: hysteresis vs applied power may vanish vs plasma power corrected for matching losses); up/down agreement rule: form LOCK-1, value LOCK-2 (P2Q-03)",
+   "units": "-",
+   "basis": "rule",
+   "source": [
+    "RF-DALT08-01"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "HM-R06",
+   "name": "mode-jump (E/H) detection",
+   "value": "indicators per record: step in R_ant and X_ant, step in |Gamma| at fixed tuning, antenna current step, optical emission step (INS-P2-10, P2Q-05); a jump is declared when adjacent-point changes exceed the declared multiple of the combined uncertainty (form LOCK-1, value LOCK-2); step size is refined around a detected jump (refinement rule LOCK-1)",
+   "units": "-",
+   "basis": "rule",
+   "source": [
+    "VI-RF-10",
+    "RF-DALT08-01",
+    "RF-SCHU24-05"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "HM-R07",
+   "name": "matching-state logging",
+   "value": "per record: tuning-state id, element positions/encoder counts, auto-tune on/off, tune time, loss-bound id if used",
+   "units": "-",
+   "basis": "A9.2 icp_matching_strategy",
+   "source": [
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "icp_matching_strategy"
+    }
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "HM-R08",
+   "name": "P_line/match,loss",
+   "value": "measured from the two-port characterization at the logged tuning state (transfer efficiency from ABCD, identical to the A9-07 S-parameter load-power relation); coax/feedthrough loss from CAL-P2-02; bounded by a declared loss fraction when a two-port is missing; cross-checked by match/cable temperature rise and calorimetry; P_delivered is 'TBD' when neither exists (never P_net)",
+   "units": "W",
+   "basis": "A9.2 rf_measurement_reference",
+   "source": [
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "rf_measurement_reference"
+    },
+    "UB-RF-05",
+    "A9H-INS-03"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "HM-R09",
+   "name": "never P_forward = P_plasma",
+   "value": "the reducer refuses any plasma-power input or label; plasma-absorbed power only from the resistance split (reconstructed, UB-P2-Z-07)",
+   "units": "-",
+   "basis": "A9.2 rf_measurement_reference",
+   "source": [
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "rf_measurement_reference"
+    }
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "HM-R10",
+   "name": "generator input power",
+   "value": "P_mains,in of the mains-powered laboratory generator is logged as an engineering quantity labelled GROUND/FACILITY_ONLY; never P_bus evidence; the flight question needs a FLIGHT_REPRESENTATIVE_DC_RF_SOURCE",
+   "units": "W",
+   "basis": "A9.3 OQ-RFQ-06",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-06"
+    }
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "HM-R11",
+   "name": "protection during the map",
+   "value": "only the provisional limits of the P1 registered procedure apply (PENDING docs/experiments/hall_icp/p1_icp_bench/); reflected-power / VSWR trip thresholds are an OUTPUT of this characterization (A9.2 rf_protection), never invented here; a trip is logged as an observation (RF-IPG6S-06)",
+   "units": "-",
+   "basis": "A9.2 rf_protection",
+   "source": [
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "rf_protection"
+    },
+    "A9H-RF-PROT-01"
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "HM-R12",
+   "name": "analysis frozen before data",
+   "value": "reducer version, calibration-set ids and the rules above are frozen (sha256) before the first HOT_MAP record; no re-analysis choice after seeing data",
+   "units": "-",
+   "basis": "CLAUDE.md rule 10 (no tuning to force agreement)",
+   "source": [
+    "docs/EVIDENCE.md"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "INS-P2-01",
+   "name": "V/I probe (complex V and I, phase-resolved) for RP-VI",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "INS-P2-02",
+   "name": "dual directional coupler (RP-CPL)",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "INS-P2-03",
+   "name": "forward / reflected power sensors",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "INS-P2-04",
+   "name": "vector network analyser (one-port and two-port; receiver/spectrum mode if available)",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "INS-P2-05",
+   "name": "calibration kits: coaxial SOL/SOLT with standard data + antenna-terminal fixture standards",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "INS-P2-06",
+   "name": "fixed attenuators (sensor / VNA protection, coupling-arm padding)",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "INS-P2-07",
+   "name": "dummy loads: (a) 50-ohm calorimetric load; (b) antenna-simulator load of VNA-known low-R / high-X impedance",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "INS-P2-08",
+   "name": "phase-stable test cables (VNA) + characterized flexible stand-crossing coax pair",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "INS-P2-09",
+   "name": "antenna RF current probe (Rogowski / current transformer)",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "INS-P2-10",
+   "name": "optical emission photodiode (mode-jump indicator)",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "INS-P2-11",
+   "name": "input power analyser for P_mains,in of the laboratory generator",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "INS-P2-12",
+   "name": "match element position read-out / encoders",
+   "value": "see required_specs",
+   "units": "-",
+   "basis": "P2 preparation (A9.3 authorizations.P2)",
+   "source": [
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "P2"
+    },
+    {
+     "kind": "A9.3",
+     "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+     "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+     "decision": "OQ-RFQ-07"
+    }
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  }
+ ],
+ "interface_demands": [
+  {
+   "id": "IDP2-01",
+   "direction": "P1 -> P2",
+   "quantity": "stable ICP operating region (factor ranges of P_RF, mdot, p, gas, Hall point, collector bias) and its hand-over record",
+   "units": "W; mg/s; Pa; -; V, A",
+   "status": "PENDING docs/experiments/hall_icp/p1_icp_bench/"
+  },
+  {
+   "id": "IDP2-02",
+   "direction": "P1 -> P2",
+   "quantity": "selected laboratory generator, adjustable local match (tuning range, element read-out), antenna / terminal geometry, provisional protection limits",
+   "units": "-",
+   "status": "PENDING docs/experiments/hall_icp/p1_icp_bench/"
+  },
+  {
+   "id": "IDP2-03",
+   "direction": "P2 -> P1",
+   "quantity": "calibrated RF chain and reducer usable by P1 for P_delivered (C_e = P_RF,delivered / I_e, A9.3 OQ-RFQ-06) and for the OQ-VI-05 time series P_RF,fwd(t), P_RF,refl(t)",
+   "units": "W",
+   "status": "OFFERED"
+  },
+  {
+   "id": "IDP2-04",
+   "direction": "P2 -> RFQ v2",
+   "quantity": "instrument list INS-P2-01..12 with required specs as quantities or TBD",
+   "units": "-",
+   "status": "OFFERED; mapping PENDING docs/procurement/rfq_a9_v2/"
+  },
+  {
+   "id": "IDP2-05",
+   "direction": "RFQ v2 -> P2",
+   "quantity": "RF-package line ids for the instruments",
+   "units": "-",
+   "status": "PENDING docs/procurement/rfq_a9_v2/"
+  },
+  {
+   "id": "IDP2-06",
+   "direction": "P2 -> A9-04 uncertainty budget",
+   "quantity": "new PROPOSED components UB-P2-Z-01..08 for the UB-DQ-RF chain; closes UB-RF-02..07 via CAL-P2-02/03/07/09",
+   "units": "relative; ohm; rad",
+   "status": "OFFERED (adoption is an A9-04 successor / owner item; the merged budget is not edited)"
+  },
+  {
+   "id": "IDP2-07",
+   "direction": "A9-04 -> P2",
+   "quantity": "k_x = 2 coupler-vs-calorimetry rule (UB-RF-08), D_min (UB-RF-04), u(P_net) allocation",
+   "units": "-",
+   "status": "OWNER_GIVEN (k_x) / TBD LOCK-2 (D_min)"
+  },
+  {
+   "id": "IDP2-08",
+   "direction": "ICD (A9-03) -> P2",
+   "quantity": "ICP-13 chain, ICP-14 plane, ICP-17 pickup test, ICP-18 coax, ICP-21 collector, ICP-34 telemetry/pressure port",
+   "units": "-",
+   "status": "read (merged)"
+  },
+  {
+   "id": "IDP2-09",
+   "direction": "P2 -> ICD / H2 (A9-07)",
+   "quantity": "antenna-terminal V/I envelope for ICP-44 / ICPQ-11; P_delivered and loss envelope for ICP-36 / ICP-43; ratings for ICP-15 / A9H-INS-15/16 / A9H-RF-LM-01",
+   "units": "V; A; W",
+   "status": "LATER (after the hot map)"
+  },
+  {
+   "id": "IDP2-10",
+   "direction": "H2 / H-1 -> P2",
+   "quantity": "Hall operating-point channels (V_d, I_d, coil currents) and registered envelope; I_d sensor range to the 8.33 A stand ceiling",
+   "units": "V; A",
+   "status": "PENDING (H-1 registration; A9.3 OQ-A907-02)"
+  },
+  {
+   "id": "IDP2-11",
+   "direction": "A9-02 bus boundary -> P2",
+   "quantity": "A902-21 generator DC-input -> forward-power efficiency and A902-22 match DC draw stay TBD; P2 logs P_mains,in only as a GROUND/FACILITY_ONLY engineering quantity",
+   "units": "W",
+   "status": "TBD LOCK-2 / LOCK-1 (unchanged)"
+  },
+  {
+   "id": "IDP2-12",
+   "direction": "P2 -> thermal (P3)",
+   "quantity": "P_line/match,loss on the module (heat source for the coupled thermal model); coupled H-1/ICP thermal closure stays UNRESOLVED",
+   "units": "W",
+   "status": "LATER"
+  },
+  {
+   "id": "IDP2-13",
+   "direction": "P2 -> INS-18 time base",
+   "quantity": "P2 channels on the common time base",
+   "units": "s",
+   "status": "PROPOSED"
+  }
+ ],
+ "owner_answers_applied": [
+  {
+   "ref": {
+    "kind": "owner_row",
+    "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+    "row": 72,
+    "covers_ids": [
+     "R4-Q7"
+    ],
+    "answer_sha256": "636a6486bc06cfc72140256b657391be623d75bd638fa246d666e015c900009f"
+   },
+   "how": "13.56 MHz; directional-coupler forward/reflected is the primary power measurement; calorimetry independent cross-check (CAL-P2-07/09); 0-500 W delivered/operating capability as the HM-F01 bound, not a rating"
+  },
+  {
+   "ref": {
+    "kind": "owner_row",
+    "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+    "row": 8,
+    "covers_ids": [
+     "WEB-SUP-1",
+     "R6-Q5"
+    ],
+    "answer_sha256": "e68149db165896264789c70c412f21a33c4b8356d0184f625a674f7f53e8ea36"
+   },
+   "how": "instrument list is quotation-only (no purchase order before H3)"
+  },
+  {
+   "ref": {
+    "kind": "owner_row",
+    "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+    "row": 62,
+    "covers_ids": [
+     "PMQ-02"
+    ],
+    "answer_sha256": "1c578b588a4d3ee96b2a4119bc4db8c26fec33ae69c68cfa300a7962da8fd32b"
+   },
+   "how": "RF forward/reflected, interlock and temperatures in the record model"
+  },
+  {
+   "ref": {
+    "kind": "owner_row",
+    "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+    "row": 64,
+    "covers_ids": [
+     "PMQ-04"
+    ],
+    "answer_sha256": "1967e5ed1f2fa39d281ae7deeba26d831da613634fcea86fd9da874e0a8a1ec7"
+   },
+   "how": "RF pickup of the P2 channels (CAL-P2-13)"
+  },
+  {
+   "ref": {
+    "kind": "owner_row",
+    "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+    "row": 70,
+    "covers_ids": [
+     "HWQ-07"
+    ],
+    "answer_sha256": "c3a16e9cb4b6eeb9fffaa608de106d35bd5d280cd133fbdbb22f64b5c72d9ef6"
+   },
+   "how": "collector bias as a separate factor HM-F07 (never hard-grounded by default)"
+  },
+  {
+   "ref": {
+    "kind": "owner_row",
+    "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+    "row": 86,
+    "covers_ids": [
+     "H25-Q4",
+     "H25-Q6"
+    ],
+    "answer_sha256": "e9d2eb1f07e6887e485220d86becc6d142197cc7f59cf8d1f7ecdbd5f6668427"
+   },
+   "how": "not applied to any value here; thermal items stay UNRESOLVED (no PASS)"
+  },
+  {
+   "ref": {
+    "kind": "owner_row",
+    "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+    "row": 108,
+    "covers_ids": [
+     "OQ-H24-01"
+    ],
+    "answer_sha256": "caedb1162f6ed6d8b661f7d41cd722d213bfaf262916ca3983cb0aba6594a0e0"
+   },
+   "how": "P_mains,in is never P_bus evidence (HM-R10)"
+  },
+  {
+   "ref": {
+    "kind": "owner_row",
+    "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+    "row": 117,
+    "covers_ids": [
+     "OD-TS-3"
+    ],
+    "answer_sha256": "67b735db3c1e4e897a81ed53d103d6e535a4249ec6c4f33df4a112194312c481"
+   },
+   "how": "flexible coax characterized as a live/sham pair (CAL-P2-02/12)"
+  },
+  {
+   "ref": {
+    "kind": "owner_row",
+    "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+    "row": 130,
+    "covers_ids": [
+     "H26Q-06"
+    ],
+    "answer_sha256": "04851f464f1c2a813de613cad710da90d564223ee6c8f9b5a533a38cb9a1e662"
+   },
+   "how": "telemetry channels in the record model"
+  },
+  {
+   "ref": {
+    "kind": "owner_row",
+    "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+    "row": 133,
+    "covers_ids": [
+     "HWQ-12"
+    ],
+    "answer_sha256": "fb201bf6d359338130a261c50108b2541ad86de600e4b49c33c9a1140842c475"
+   },
+   "how": "sham routing kept if a V/I probe line is used on the stand (ZM-B transfer rule)"
+  },
+  {
+   "ref": {
+    "kind": "owner_row",
+    "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+    "row": 144,
+    "covers_ids": [
+     "REFRESH-Q3"
+    ],
+    "answer_sha256": "306a9036a188de337538a07711a38d4ae31204fe9862899a988c2cd720c03232"
+   },
+   "how": "every TBD carries LOCK-1 / LOCK-2 / after-evidence"
+  },
+  {
+   "ref": {
+    "kind": "owner_row",
+    "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+    "row": 145,
+    "covers_ids": [
+     "V2-Q2"
+    ],
+    "answer_sha256": "c9bfd4027d68ffee14376da6aff86b2a615d28873f041f727d69a87cbe6bf05b"
+   },
+   "how": "outputs feed the Hall->ICP validation inputs VI-RF-02..07/10"
+  },
+  {
+   "ref": {
+    "kind": "A9.1",
+    "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+    "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+    "decision": "UBQ-03"
+   },
+   "how": "bare +/-a certificate bounds rectangular (CAL-P2-07)"
+  },
+  {
+   "ref": {
+    "kind": "A9.1",
+    "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+    "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+    "decision": "UBQ-04"
+   },
+   "how": "k_x = 2 coupler-vs-calorimetry rule reused, not changed"
+  },
+  {
+   "ref": {
+    "kind": "A9.1",
+    "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+    "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+    "decision": "UBQ-05"
+   },
+   "how": "pre/post calibration shift rule for CAL-P2-11"
+  },
+  {
+   "ref": {
+    "kind": "A9.1",
+    "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+    "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+    "decision": "A9-03-matching"
+   },
+   "how": "superseded for the baseline by A9.2 OQ-A907-11 (history only)"
+  },
+  {
+   "ref": {
+    "kind": "A9.2",
+    "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+    "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+    "decision": "OQ-A907-11"
+   },
+   "how": "reference-plane chain RP-CPL -> RP-MIN -> RP-ANT"
+  },
+  {
+   "ref": {
+    "kind": "A9.2",
+    "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+    "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+    "decision": "rf_measurement_reference"
+   },
+   "how": "retained quantities; P_delivered definition; reducer refuses P_forward = P_plasma"
+  },
+  {
+   "ref": {
+    "kind": "A9.2",
+    "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+    "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+    "decision": "rf_500W"
+   },
+   "how": "no rating from 500 W; all 50-ohm chain ratings TBD_AFTER_IMPEDANCE_MAP"
+  },
+  {
+   "ref": {
+    "kind": "A9.2",
+    "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+    "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+    "decision": "rf_protection"
+   },
+   "how": "trip thresholds are an output (HM-R11)"
+  },
+  {
+   "ref": {
+    "kind": "A9.2",
+    "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+    "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+    "decision": "icp_matching_strategy"
+   },
+   "how": "adjustable local match for development; Z_antenna vs mdot, P_RF, p, gas, Hall point is the map definition"
+  },
+  {
+   "ref": {
+    "kind": "A9.2",
+    "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+    "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+    "decision": "a9_10_statuses"
+   },
+   "how": "statuses carried unchanged; no open item converted to PASS"
+  },
+  {
+   "ref": {
+    "kind": "A9.2",
+    "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+    "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+    "decision": "post_a9_priorities"
+   },
+   "how": "this lane prepares P2"
+  },
+  {
+   "ref": {
+    "kind": "A9.2",
+    "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+    "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+    "decision": "icp_coupled_thermal"
+   },
+   "how": "P2 supplies Q_RF/match inputs later; thermal stays UNRESOLVED"
+  },
+  {
+   "ref": {
+    "kind": "A9.3",
+    "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+    "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+    "decision": "P2"
+   },
+   "how": "V/I sensing, coupler chain, calibration, S-parameter/impedance methodology, data model prepared; the plasma map waits for P1 (HM-R01, S-09 gate)"
+  },
+  {
+   "ref": {
+    "kind": "A9.3",
+    "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+    "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+    "decision": "OQ-VI-03"
+   },
+   "how": "the antenna of the open-tube coaxial first build is the map object; orificed variants not addressed"
+  },
+  {
+   "ref": {
+    "kind": "A9.3",
+    "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+    "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+    "decision": "OQ-VI-05"
+   },
+   "how": "record model carries P_RF,fwd(t), P_RF,refl(t) on the common time base"
+  },
+  {
+   "ref": {
+    "kind": "A9.3",
+    "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+    "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+    "decision": "OQ-A907-02"
+   },
+   "how": "8.33 A only as a sensor-range ceiling (HM-F06)"
+  },
+  {
+   "ref": {
+    "kind": "A9.3",
+    "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+    "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+    "decision": "OQ-RFQ-06"
+   },
+   "how": "mains generator, P_mains,in logged GROUND/FACILITY_ONLY (HM-R10, INS-P2-11)"
+  },
+  {
+   "ref": {
+    "kind": "A9.3",
+    "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+    "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+    "decision": "OQ-RFQ-07"
+   },
+   "how": "instrument list mapped to the RF package; no supplier contact"
+  },
+  {
+   "ref": {
+    "kind": "A9.3",
+    "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+    "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+    "decision": "OQ-RFQ-10"
+   },
+   "how": "dedicated ICP flow = 0 in the primary mode; diagnostic only (HM-F02)"
+  }
+ ],
+ "open_owner_questions": [
+  {
+   "id": "P2Q-01",
+   "question": "Adopt ZM-A (V/I probe at the antenna terminals) as the primary Z_antenna method on the P1/P2 bench, with ZM-B (de-embedding) as the per-point cross-check and ZM-C (antenna current) for R?",
+   "proposed_answer": "yes (PROPOSED)",
+   "needed_by": "LOCK-1"
+  },
+  {
+   "id": "P2Q-02",
+   "question": "The owner's A9.3 RF package list does not name the V/I probe, VNA, calibration kits, attenuators, antenna-simulator load, antenna current probe or phase-stable test cables. Add them to the RF package, or to a separate RF-metrology package under the common interface document?",
+   "proposed_answer": "owner call; proposal: a separate RF-metrology package (different supplier speciality)",
+   "needed_by": "RFQ v2 dispatch"
+  },
+  {
+   "id": "P2Q-03",
+   "question": "Agreement rules for ZM-A vs ZM-B and for up/down sweeps (hysteresis): same normalized-statistic form as UB-RF-08 with a k frozen at LOCK-1?",
+   "proposed_answer": "owner call on the form; no value proposed",
+   "needed_by": "LOCK-1"
+  },
+  {
+   "id": "P2Q-04",
+   "question": "Hot-map tuning policy: re-tune for minimum reflected power at every point, plus fixed-tune sub-sweeps around representative points to inform the flight match implementation?",
+   "proposed_answer": "yes (PROPOSED)",
+   "needed_by": "LOCK-1"
+  },
+  {
+   "id": "P2Q-05",
+   "question": "Add an optical-emission photodiode as a mode-jump (E/H) indicator?",
+   "proposed_answer": "yes (PROPOSED; low-cost, independent of the RF chain)",
+   "needed_by": "LOCK-1"
+  },
+  {
+   "id": "P2Q-06",
+   "question": "On the thrust stand, rely on ZM-B (no V/I probe line across the stage) once the bench shows agreement, rather than routing a V/I probe line with a matched sham?",
+   "proposed_answer": "yes, conditional on the P2Q-03 bench agreement (PROPOSED)",
+   "needed_by": "LOCK-1"
+  },
+  {
+   "id": "P2Q-07",
+   "question": "Where no accredited scope exists for V/I-probe phase calibration at 13.56 MHz, accept an in-house procedure traceable through the VNA and its kit (MS-P2-03)?",
+   "proposed_answer": "owner call",
+   "needed_by": "LOCK-1"
+  }
+ ],
+ "historical_reuse": [
+  {
+   "path": "docs/evidence/rf_source/rf_evidence_matrix.json",
+   "sha256": "5f6d4e0ede8b2e21e45b740c28ac9320e7ddd6cfd70ef05012f85712ae0ac8e8",
+   "reused": "method precedents only (entries listed in published_method_precedents)",
+   "not_reused": "no value is used as a Vyovrinda impedance, power, efficiency or rating"
+  },
+  {
+   "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+   "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
+   "reused": "INS-03 principle (coupler at / upstream of the load plane with S1a loss characterization) and INS-18 common time base",
+   "not_reused": "INS-03 required-uncertainty numbers (pre-A9 lane-25 model-derived allocation for the upstream RF source)"
+  },
+  {
+   "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+   "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa",
+   "reused": "RF reference-plane relations (gamma, peaks, load-power) and the 20 + j50 review case as a closed-form check",
+   "not_reused": "sensitivity loads as antenna data or ratings"
+  },
+  {
+   "path": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
+   "sha256": "092e4ca8e1827dd2e9558058a204f46510f2633316ce188e7126b697ec6d0b53",
+   "reused": "TK-20..26 as method context",
+   "not_reused": "any analog number as Vyovrinda performance"
+  },
+  {
+   "path": "docs/procurement/rfq_a9/packages/RFQ-04_rf_chain.md",
+   "sha256": "0ea196f72e8da254e50787c4f58bdb665939f770028a0013a9f9bc57b0b0e9a4",
+   "reused": "v1 line mapping (coupler/sensors, calorimetric load, live/sham coax)",
+   "not_reused": "v1 predates A9.2/A9.3; v2 mapping PENDING"
+  }
+ ],
+ "m16_impact": [
+  {
+   "row": 15,
+   "key": "sensors_diagnostics",
+   "how": "supplies PROPOSED RF calibration procedures CAL-P2-01..14 and the P2 channel list toward the row's S1A-C4 blocker; state unchanged (BLOCKED; procedures not frozen, instruments not procured)"
+  },
+  {
+   "row": 18,
+   "key": "icp_neutralizer_head",
+   "how": "defines how Z_antenna and the antenna-terminal V/I envelope (ICP-44 input) will be measured; state unchanged (BLOCKED on ICP module design)"
+  },
+  {
+   "row": 19,
+   "key": "flight_rf_chain",
+   "how": "methodology and data model for the analysis_test_needed 'ICP impedance map'; ratings stay TBD_AFTER_IMPEDANCE_MAP; state unchanged"
+  },
+  {
+   "row": 17,
+   "key": "preionizer_interface",
+   "how": "not touched (historical)"
+  }
+ ],
+ "h3_h4_inputs": {
+  "h3_procurement_inputs": [
+   "INS-P2-01 V/I probe (complex V and I, phase-resolved) for RP-VI",
+   "INS-P2-02 dual directional coupler (RP-CPL)",
+   "INS-P2-03 forward / reflected power sensors",
+   "INS-P2-04 vector network analyser (one-port and two-port; receiver/spectrum mode if available)",
+   "INS-P2-05 calibration kits: coaxial SOL/SOLT with standard data + antenna-terminal fixture standards",
+   "INS-P2-06 fixed attenuators (sensor / VNA protection, coupling-arm padding)",
+   "INS-P2-07 dummy loads: (a) 50-ohm calorimetric load; (b) antenna-simulator load of VNA-known low-R / high-X impedance",
+   "INS-P2-08 phase-stable test cables (VNA) + characterized flexible stand-crossing coax pair",
+   "INS-P2-09 antenna RF current probe (Rogowski / current transformer)",
+   "INS-P2-10 optical emission photodiode (mode-jump indicator)",
+   "INS-P2-11 input power analyser for P_mains,in of the laboratory generator",
+   "INS-P2-12 match element position read-out / encoders"
+  ],
+  "h4_test_inputs": [
+   "S-00: instrument receipt; certificates checked (CAL-P2-07 certificates)",
+   "S-01: VNA calibration, cable phase characterization, time base (CAL-P2-01, -12, -14)",
+   "S-02: line + feedthrough two-port (CAL-P2-02)",
+   "S-03: local-match two-port over the tuning grid + interpolation verification (CAL-P2-03/04)",
+   "S-04: V/I probe and fixture calibration on known loads (CAL-P2-05/06)",
+   "S-05: coupler / sensors in situ + calorimetric cross-check at power + harmonics (CAL-P2-07/09)",
+   "S-06: antenna-simulator end-to-end validation of ZM-A/B/C (CAL-P2-10)",
+   "S-07: cold antenna impedance vs frequency, gas off and gas on unlit; low-power powered-unlit records (CAL-P2-08; phase COLD_ANTENNA_POWERED_UNLIT)",
+   "S-08: RF pickup on P2 channels (CAL-P2-13; ICP-17)",
+   "S-09: GATE: P1 hands over a stable ICP operating region (PENDING docs/experiments/hall_icp/p1_icp_bench/)",
+   "S-10: hot map (phase HOT_MAP) under HM-R01..R12 with CAL-P2-11 bracketing"
+  ]
+ },
+ "published_analog_context": [
+  {
+   "id": "TK-20",
+   "quantity": "RF frequency",
+   "value": 13.56,
+   "unit": "MHz",
+   "locator": "Abstract p. 1; p. 3 text",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "source": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
+   "use_here": "method context only (what the analog measured and how); never a Vyovrinda impedance, power or rating"
+  },
+  {
+   "id": "TK-21",
+   "quantity": "RF generator rating and forward power used",
+   "value": 200,
+   "unit": "W",
+   "locator": "Abstract p. 1; p. 3 text",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "source": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
+   "use_here": "method context only (what the analog measured and how); never a Vyovrinda impedance, power or rating"
+  },
+  {
+   "id": "TK-22",
+   "quantity": "reflected power",
+   "value": 0,
+   "unit": "W",
+   "locator": "p. 3 text",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "source": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
+   "use_here": "method context only (what the analog measured and how); never a Vyovrinda impedance, power or rating"
+  },
+  {
+   "id": "TK-23",
+   "quantity": "matching network",
+   "value": "two variable capacitors tuned to minimize reflection; forward/reflected power from the generator's power meters; vacuum feedthrough to the antenna",
+   "unit": null,
+   "locator": "p. 3 text",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "source": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
+   "use_here": "method context only (what the analog measured and how); never a Vyovrinda impedance, power or rating"
+  },
+  {
+   "id": "TK-24",
+   "quantity": "antenna resistance without plasma R_ant",
+   "value": 0.36,
+   "unit": "ohm",
+   "locator": "p. 8 text",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "source": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
+   "use_here": "method context only (what the analog measured and how); never a Vyovrinda impedance, power or rating"
+  },
+  {
+   "id": "TK-25",
+   "quantity": "total resistance during discharge R_total at P_rf = 200 W",
+   "value": 0.4,
+   "unit": "ohm",
+   "locator": "p. 8 text ('about')",
+   "epistemic": "measured",
+   "evidence_class": "published analog",
+   "source": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
+   "use_here": "method context only (what the analog measured and how); never a Vyovrinda impedance, power or rating"
+  },
+  {
+   "id": "TK-26",
+   "quantity": "RF power transfer efficiency eta_p = R_p / (R_p + R_ant)",
+   "value": 0.1,
+   "unit": "-",
+   "locator": "p. 7-8 text, Eq. (1)",
+   "epistemic": "inferred",
+   "evidence_class": "published analog",
+   "source": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
+   "use_here": "method context only (what the analog measured and how); never a Vyovrinda impedance, power or rating"
+  }
+ ],
+ "published_method_precedents": [
+  {
+   "id": "RF-TAKA22-01",
+   "citation": "Takahashi K., 'Thirty percent conversion efficiency from radiofrequency power to thrust energy in a magnetic nozzle plasma thruster', Scientific Reports 12 (2022) 18618 (CC BY 4.0). Read as Europe PMC full text PMC9649674.",
+   "doi_or_url": "https://doi.org/10.1038/s41598-022-22789-7",
+   "access": "open",
+   "quantity": "RF power transfer efficiency eta_p = R_p / R_total (antenna-current / equivalent-circuit method), all data of Fig. 2",
+   "locator": "Results; Methods 'RF power transfer efficiency'",
+   "evidence_class": "inferred",
+   "use_here": "antenna-current / resistance-split method (method C, VI-RF-05..07)",
+   "source": "docs/evidence/rf_source/rf_evidence_matrix.json"
+  },
+  {
+   "id": "RF-TAKA22-03",
+   "citation": "Takahashi K., 'Thirty percent conversion efficiency from radiofrequency power to thrust energy in a magnetic nozzle plasma thruster', Scientific Reports 12 (2022) 18618 (CC BY 4.0). Read as Europe PMC full text PMC9649674.",
+   "doi_or_url": "https://doi.org/10.1038/s41598-022-22789-7",
+   "access": "open",
+   "quantity": "Antenna-circuit resistance without plasma R_vac (antenna, feedthrough and matching-box components)",
+   "locator": "Methods",
+   "evidence_class": "measured",
+   "use_here": "R_vac convention: the no-plasma resistance measured through the net power includes feedthrough and matching-box losses (method C note)",
+   "source": "docs/evidence/rf_source/rf_evidence_matrix.json"
+  },
+  {
+   "id": "RF-VOLK18-01",
+   "citation": "Volkmar C., Geile C., Hannemann K., 'Radio-Frequency Ion Thrusters - Power Measurement and Power Distribution Modeling', Journal of Propulsion and Power 34(4) (2018) 1061-1069. Read as the authors' preprint at DLR elib.",
+   "doi_or_url": "https://doi.org/10.2514/1.B36868",
+   "access": "open",
+   "quantity": "Power lost between RFG DC input and forwarded RF power at the coil (generator + feed cable), especially at low mass flow",
+   "locator": "Sec. IV-V, Fig. 11",
+   "evidence_class": "measured",
+   "use_here": "phase-resolved V/I sensing near the coil as a precedent for method A",
+   "source": "docs/evidence/rf_source/rf_evidence_matrix.json"
+  },
+  {
+   "id": "RF-VOLK18-02",
+   "citation": "Volkmar C., Geile C., Hannemann K., 'Radio-Frequency Ion Thrusters - Power Measurement and Power Distribution Modeling', Journal of Propulsion and Power 34(4) (2018) 1061-1069. Read as the authors' preprint at DLR elib.",
+   "doi_or_url": "https://doi.org/10.2514/1.B36868",
+   "access": "open",
+   "quantity": "Load-resistance trend with mass flow and its consequence",
+   "locator": "Sec. IV-V",
+   "evidence_class": "measured",
+   "use_here": "load resistance changes with flow: report mismatch effects separately from plasma physics",
+   "source": "docs/evidence/rf_source/rf_evidence_matrix.json"
+  },
+  {
+   "id": "RF-IPT20-07",
+   "citation": "Romano F., Chan Y.-A., Herdrich G., Traub C., Fasoulas S., Roberts P.C.E., et al., 'RF Helicon-based Inductive Plasma Thruster (IPT) Design for an Atmosphere-Breathing Electric Propulsion system (ABEP)', Acta Astronautica 176 (2020) 476-483. Read as arXiv:2007.06397v2 (manuscript footer: CC BY-NC-ND 4.0).",
+   "doi_or_url": "https://doi.org/10.1016/j.actaastro.2020.07.008",
+   "access": "open",
+   "quantity": "Forward/reflected power accounting in the RF chain (generator, lambda/4 and lambda/2 RG393/U cables, matching network, antenna)",
+   "locator": "Sec. 3.1, Fig. 5",
+   "evidence_class": "inferred",
+   "use_here": "forward/reflected accounting must separate matching-network and antenna losses",
+   "source": "docs/evidence/rf_source/rf_evidence_matrix.json"
+  },
+  {
+   "id": "RF-IPT20-D1",
+   "citation": "Romano F., Chan Y.-A., Herdrich G., Traub C., Fasoulas S., Roberts P.C.E., et al., 'RF Helicon-based Inductive Plasma Thruster (IPT) Design for an Atmosphere-Breathing Electric Propulsion system (ABEP)', Acta Astronautica 176 (2020) 476-483. Read as arXiv:2007.06397v2 (manuscript footer: CC BY-NC-ND 4.0).",
+   "doi_or_url": "https://doi.org/10.1016/j.actaastro.2020.07.008",
+   "access": "open",
+   "quantity": "Reflected power fraction |Gamma|^2 implied by the measured no-plasma S11 at resonance (before any matching network)",
+   "locator": "derived from RF-IPT20-06",
+   "evidence_class": "inferred",
+   "use_here": "cold (no-plasma) antenna S11 measured with a VNA before matching (CAL-P2-08 precedent)",
+   "source": "docs/evidence/rf_source/rf_evidence_matrix.json"
+  },
+  {
+   "id": "RF-SCHU24-05",
+   "citation": "Schuecke L., Torres Segura A.N., Korolov I., Awakowicz P., Gibson A.R., 'Decoupling NO production and UV emission intensity over the E-H mode transition in a low-pressure inductively coupled plasma device', arXiv:2407.04441v1 (5 July 2024).",
+   "doi_or_url": "https://doi.org/10.48550/arXiv.2407.04441",
+   "access": "open",
+   "quantity": "Reflected power in steady state with automatic matching (fraction of generator power)",
+   "locator": "Sec. 2 (experimental set-up, rf power supply and matching)",
+   "evidence_class": "measured",
+   "use_here": "low reflected power with automatic matching does not separate matchbox/coil dissipation",
+   "source": "docs/evidence/rf_source/rf_evidence_matrix.json"
+  },
+  {
+   "id": "RF-DALT08-01",
+   "citation": "Daltrini A.M., Moshkalev S.A., Morgan T.J., Piejak R.B., Graham W.G., 'Plasma power measurement and hysteresis in the E-H transition of a rf inductively coupled plasma system', Applied Physics Letters 92(6) (2008) 061504. Only the abstract was read (OSTI ETDEWEB record 21016327).",
+   "doi_or_url": "https://doi.org/10.1063/1.2844885",
+   "access": "abstract_only",
+   "quantity": "E-H hysteresis versus plasma power corrected for coil and hardware losses (argon, GEC reference cell)",
+   "locator": "abstract",
+   "evidence_class": "measured",
+   "use_here": "E-H hysteresis vs applied power vs plasma power corrected for matching losses: plot the map against P_forward AND P_delivered (hysteresis rule HM-R05)",
+   "source": "docs/evidence/rf_source/rf_evidence_matrix.json"
+  },
+  {
+   "id": "RF-IPG6S-06",
+   "citation": "Romano F., Massuti-Ballester B., Binder T., Herdrich G., Fasoulas S., Schoenherr T., 'System analysis and test-bed for an atmosphere-breathing electric propulsion system using an inductive plasma thruster', Acta Astronautica 147 (2018) 114-126. Read as the author manuscript arXiv:2103.02328v2 (CC BY-NC-ND 4.0).",
+   "doi_or_url": "https://doi.org/10.1016/j.actaastro.2018.03.031",
+   "access": "open",
+   "quantity": "Operating-map gaps caused by reflected power",
+   "locator": "Sec. 4.1",
+   "evidence_class": "measured",
+   "use_here": "operating points lost to reflected-power trips of an unmatched supply: log trips as observations, never drop them",
+   "source": "docs/evidence/rf_source/rf_evidence_matrix.json"
+  }
+ ],
+ "reducer_selfcheck": [
+  {
+   "id": "SC-01",
+   "what": "|Gamma| and VSWR of 20 + j50 ohm on 50 ohm (closed form)",
+   "reducer": {
+    "gamma_mag": 0.677834,
+    "VSWR": 5.20799
+   },
+   "a9_07_review_case": {
+    "gamma_mag": 0.6778,
+    "VSWR": 5.208,
+    "source": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json recomputations.rf_reference_plane.sensitivity_loads.review_case_20+j50"
+   },
+   "agrees_to_4_significant_digits": true,
+   "evidence_status": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+   "evidence_class": "model-derived"
+  },
+  {
+   "id": "SC-02",
+   "what": "round trip: synthetic Z_antenna = 2 + j80 ohm through a synthetic 30-degree lossless 50-ohm line, a synthetic lossy series/shunt network and synthetic coupler error terms; recovered by both methods",
+   "input_Z_ohm": [
+    2.0,
+    80.0
+   ],
+   "recovered_vi_probe": [
+    2.0,
+    80.0
+   ],
+   "recovered_deembed": [
+    2.0,
+    80.0
+   ],
+   "match_line_efficiency_abcd": 0.609307,
+   "match_line_efficiency_s_formula": 0.609307,
+   "s_formula_source": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json recomputations.rf_reference_plane.relations.load_power",
+   "evidence_status": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+   "evidence_class": "model-derived"
+  },
+  {
+   "id": "SC-03",
+   "what": "P_delivered = P_forward - P_reflected - P_line/match,loss for SC-02",
+   "P_forward_W": 100.0,
+   "P_reflected_W": 89.5129965,
+   "P_line_match_loss_W": 4.09719598,
+   "P_delivered_W": 6.38980755,
+   "closes": true,
+   "evidence_status": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+   "evidence_class": "model-derived"
+  }
+ ],
+ "compliance": {
+  "no_prediction": true,
+  "no_rating": true,
+  "no_trip_threshold": true,
+  "no_supplier_contact": true,
+  "not_wired_into_archengine": true,
+  "julia_run": false,
+  "open_items_never_pass": "RF component ratings TBD_AFTER_IMPEDANCE_MAP; ICP / coupled thermal UNRESOLVED; anode OPEN / UNRESOLVED - carried unchanged",
+  "pending_lanes_not_read": [
+   "docs/experiments/hall_icp/p1_icp_bench/",
+   "docs/procurement/rfq_a9_v2/"
+  ]
+ }
+}
