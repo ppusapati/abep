@@ -230,6 +230,29 @@
    "circular P1/P2 -> RFQ v2 sha pins replaced by id checks (RFQ v2 reads P1/P2 text)",
    "hygiene: full suite 2541/5/1 after waves 1-2; all repo builders --check OK (the v1 consolidated-questions builder ignores --check and rewrites its xlsx: never run it; restored byte-identical)"
   ],
-  "phase": "IMPLEMENTATION COMPLETE; consolidated verification (A9.6 sec. 18) launched"
+  "phase": "IMPLEMENTATION COMPLETE; CONSOLIDATED VERIFICATION PASSED (awaiting owner merge approval; no merge authorized)",
+  "consolidated_verification": {
+   "workflow": "wf_c77d6edf-6d5",
+   "dimensions": [
+    "structural",
+    "physics",
+    "electrical",
+    "thermal",
+    "metrology",
+    "software"
+   ],
+   "initial_findings": {
+    "major": 23,
+    "minor": 9,
+    "blocker": 0
+   },
+   "repair_rounds": 3,
+   "follow_up": "MET-07-R1..R5 (P2 line/match-loss check) fixed by the operator with regression tests; independent re-review FIXED at 83cd246",
+   "residuals_for_owner": [
+    "at-power loss-check evidence (calorimeter readings) and the calibration set (incl. the loss-check protocol registry) are trusted inputs: they must be frozen and sha256-registered at LOCK-2 (process control; the reducer cannot detect a fabricated measurement)",
+    "an INCONSISTENT two-port loss check for a tuning state does not block or flag later use of an independently verified declared bound for that state"
+   ],
+   "repo_checks": "full suite 2657 passed / 5 skipped / 1 xfailed; golden OK; ci_checks 10/10; protected historical artifacts unchanged vs main eef8b85"
+  }
  }
 }
