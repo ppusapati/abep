@@ -613,7 +613,7 @@ def reduce_record(rec, calibrations):
         lv, why = select_loss_verification(cal["loss_verification"], ms["tuning_state_id"])
         ok = False
         if lv is not None:
-            ok, why = loss_verification_status(lv, cal, tuning_state_id=ms["tuning_state_id"])
+            ok, why = loss_verification_status(lv, cal, tuning_state_id=ms["tuning_state_id"], record_P_net_W=p_net)
         if ok:
             eta = transfer_efficiency(net, zp)
             out["P_line_match_loss_W"] = _r(p_net * (1 - eta))
@@ -637,7 +637,7 @@ def reduce_record(rec, calibrations):
         fmax = _finite(b["loss_fraction_max"], "loss_fraction_max")
         if not 0 <= fmax < 1:
             raise MissingCalibrationError("loss_fraction_max must lie in [0, 1)")
-        ok, why = loss_verification_status(b["verification"], cal, loss_bound_id=bid)
+        ok, why = loss_verification_status(b["verification"], cal, loss_bound_id=bid, record_P_net_W=p_net)
         if ok:
             out["P_line_match_loss_W"] = {"min": 0.0, "max": _r(p_net * fmax)}
             out["P_delivered_W"] = {"min": _r(p_net * (1 - fmax)), "max": _r(p_net)}
@@ -725,10 +725,17 @@ def loss_check_protocol(cal, protocol_id, method, model_key):
         raise RecordError(f"k registration {protocol_id!r} is not the registered protocol {same[0]!r} for "
                           f"({method!r}, {model_key!r}) (MET-07-R3)")
     p = prots[protocol_id]
-    vals = {f: _num_or_none(p.get(f)) for f in ("k", "u_eta_pred", "u_P_net_W", "u_P_ref_load_W")}
-    if any(v is None for v in vals.values()) or vals["k"] <= 0 or min(vals.values()) < 0 or not _ref_ok(p.get("source")):
-        raise RecordError(f"protocol {protocol_id!r} needs finite k > 0, u_eta_pred / u_P_net_W / u_P_ref_load_W >= 0 "
-                          f"and a source (MET-07-R3)")
+    vals = {f: _num_or_none(p.get(f)) for f in ("k", "u_eta_pred", "u_P_net_W", "u_P_ref_load_W", "P_check_W",
+                                                 "P_check_rel_tol")}
+    rng = p.get("apply_P_net_range_W")
+    lo = _num_or_none(rng[0]) if isinstance(rng, (list, tuple)) and len(rng) == 2 else None
+    hi = _num_or_none(rng[1]) if isinstance(rng, (list, tuple)) and len(rng) == 2 else None
+    if any(v is None for v in vals.values()) or vals["k"] <= 0 or min(vals.values()) < 0 or vals["P_check_W"] <= 0 \
+            or lo is None or hi is None or not 0 < lo <= hi or not _ref_ok(p.get("source")):
+        raise RecordError(f"protocol {protocol_id!r} needs finite k > 0, u_eta_pred / u_P_net_W / u_P_ref_load_W >= 0, "
+                          f"the check operating point P_check_W > 0 with P_check_rel_tol >= 0, an application range "
+                          f"apply_P_net_range_W [lo, hi] with 0 < lo <= hi, and a source (MET-07-R3/R4)")
+    vals["apply_P_net_range_W"] = (lo, hi)
     return vals
 
 
@@ -818,7 +825,7 @@ def _num_or_none(x):
         return None
 
 
-def loss_verification_status(v, cal, *, tuning_state_id=None, loss_bound_id=None):
+def loss_verification_status(v, cal, *, tuning_state_id=None, loss_bound_id=None, record_P_net_W=None):
     """(True, '') when ``v`` is a LOSS_VERIFIED record of an admissible at-power method, of the same data class as the
     calibration set ``cal``, with a registered k and a recomputed statistic within k, tied to the loss model used:
     for a two-port loss (``tuning_state_id``) the model_ref names that tuning state, this calibration set and the
@@ -895,6 +902,15 @@ def loss_verification_status(v, cal, *, tuning_state_id=None, loss_bound_id=None
     pr, upr = _num_or_none(v["P_ref_load_W"]), _num_or_none(v["u_P_ref_load_W"])
     if None in (pn, upn, pr, upr) or pn <= 0 or pr < 0 or upn < 0 or upr < 0:
         return False, f"loss verification {vid!r}: at-power evidence P_net / P_ref_load and uncertainties required"
+    if abs(pn - prot["P_check_W"]) > prot["P_check_rel_tol"] * prot["P_check_W"] + 1e-12:
+        return False, (f"loss verification {vid!r}: P_net {pn!r} W is not the protocol's registered check operating "
+                       f"point {prot['P_check_W']!r} W (rel tol {prot['P_check_rel_tol']!r}; the check power is fixed "
+                       f"before the data; MET-07-R4)")
+    if record_P_net_W is not None:
+        lo_, hi_ = prot["apply_P_net_range_W"]
+        if not lo_ <= record_P_net_W <= hi_:
+            return False, (f"loss verification {vid!r}: record P_net {record_P_net_W!r} W outside the protocol's "
+                           f"verified application range [{lo_!r}, {hi_!r}] W (MET-07-R4)")
     for fld, reg in (("u_P_net_W", "u_P_net_W"), ("u_P_ref_load_W", "u_P_ref_load_W")):
         if abs(_num_or_none(v[fld]) - prot[reg]) > 1e-12 * max(1.0, prot[reg]):
             return False, (f"loss verification {vid!r}: {fld} {v[fld]!r} != the protocol's registered "

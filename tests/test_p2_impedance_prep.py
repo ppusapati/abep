@@ -121,10 +121,12 @@ def _cal(red, line, match, e00=0j, e11=0j, e10e01=1 + 0j, fix=(1 + 0j, 0j, 0j, 1
             "loss_check_registrations": {"protocols": {
                 "SYN-K-REG-01": {"method": "CAL-P2-09_calorimetric_at_power", "model_key": "TS1", "k": 2.0,
                                  "u_eta_pred": 0.01, "u_P_net_W": 0.0, "u_P_ref_load_W": 1.0,
-                                 "source": "SYNTHETIC test protocol"},
+                                 "P_check_W": 100.0, "P_check_rel_tol": 0.02, "apply_P_net_range_W": [1e-3, 1e4],
+                     "source": "SYNTHETIC test protocol"},
                 "SYN-K-REG-LB": {"method": "CAL-P2-09_calorimetric_at_power", "model_key": "LB1", "k": 2.0,
                                  "u_eta_pred": 0.0, "u_P_net_W": 0.0, "u_P_ref_load_W": 1.0,
-                                 "source": "SYNTHETIC test protocol"}}}}
+                                 "P_check_W": 100.0, "P_check_rel_tol": 0.02, "apply_P_net_range_W": [1e-3, 1e4],
+                     "source": "SYNTHETIC test protocol"}}}}
     cal["loss_verification"] = _lv(red, cal, {"kind": "two_port", "tuning_state_id": "TS1", "Z_load_ohm": [Z0, 0.0],
                                               "Z_load_basis": "SYNTHETIC reference load"}, "SYN-LV-01")
     cal["loss_bounds"]["LB1"]["verification"] = _lv(red, cal, {"kind": "declared_bound", "loss_bound_id": "LB1"},

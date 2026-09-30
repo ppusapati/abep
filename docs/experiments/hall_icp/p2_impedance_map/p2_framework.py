@@ -666,6 +666,9 @@ def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pre
     pn, pr = _fin(P_net_W, "P_net_W"), _fin(P_ref_load_W, "P_ref_load_W")
     if pn <= 0 or pr < 0:
         raise FrameworkError("P_net > 0 and P_ref_load >= 0 required")
+    if abs(pn - prot["P_check_W"]) > prot["P_check_rel_tol"] * prot["P_check_W"] + 1e-12:
+        raise CriteriaMissingError(f"P_net {pn!r} W is not the protocol's registered check operating point "
+                                   f"{prot['P_check_W']!r} W (the check power is fixed before the data; MET-07-R4)")
     eta_m = pr / pn
     u_m = eta_m * math.hypot(_fin(u_P_ref_load_W, "u") / pr if pr else 0.0, _fin(u_P_net_W, "u") / pn)
     if math.hypot(u_m, u_p) == 0:

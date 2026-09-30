@@ -65,9 +65,11 @@ LB_MODEL = {"kind": "declared_bound", "loss_bound_id": "LB1"}
 _M09 = "CAL-P2-09_calorimetric_at_power"
 SYN_LOSS_REGS = {"protocols": {
     "SYN-PROT-TS1": {"method": _M09, "model_key": "TS1", "k": 2.0, "u_eta_pred": 0.01, "u_P_net_W": 1.0,
-                     "u_P_ref_load_W": 1.0, "source": "SYNTHETIC test protocol"},
+                     "u_P_ref_load_W": 1.0, "P_check_W": 100.0, "P_check_rel_tol": 0.02, "apply_P_net_range_W": [1e-3, 1e4],
+                     "source": "SYNTHETIC test protocol"},
     "SYN-PROT-LB1": {"method": _M09, "model_key": "LB1", "k": 2.0, "u_eta_pred": 0.0, "u_P_net_W": 1.0,
-                     "u_P_ref_load_W": 1.0, "source": "SYNTHETIC test protocol"}}}
+                     "u_P_ref_load_W": 1.0, "P_check_W": 100.0, "P_check_rel_tol": 0.02, "apply_P_net_range_W": [1e-3, 1e4],
+                     "source": "SYNTHETIC test protocol"}}}
 
 
 def _proto(cal, pid="SYN-PROT-TS1", **vals):
@@ -1147,3 +1149,26 @@ def test_met07_r2_r3_protocol_fixes_k_and_uncertainties(fw, red):
     del c2["loss_check_registrations"]
     ok, why = red.loss_verification_status(c2["loss_verification"], c2, tuning_state_id="TS1")
     assert not ok and "loss_check_registrations" in why
+
+
+def test_met07_r4_check_power_and_application_range_fixed(fw, red, case):
+    """Consolidated verification MET-07-R4: the protocol fixes the check operating point (P_check_W +- rel tol) and
+    the P_net range the verified model may be applied to; re-running / re-declaring the check at another power, or
+    applying the verified loss outside its range, never reconstructs P_delivered."""
+    cal0, rec = case
+    cal = _proto(cal0, k=1.0, u_eta_pred=0.06)
+    bad = _verify(fw, red, cal, TS_MODEL, "VP0", eta_meas=0.9, u_eta_pred=0.06, k=1.0)
+    assert bad["status"] == fw.LOSS_INCONSISTENT
+    with pytest.raises(fw.CriteriaMissingError):                        # power shopping in the framework
+        _verify(fw, red, cal, TS_MODEL, "VP1", eta_meas=0.9, u_eta_pred=0.06, k=1.0, P_net_W=10.0, P_ref_load_W=9.0)
+    pn, pr = 10.0, 9.0                                                  # forged record rescaled to 10 W / 9 W
+    um = 0.9 * math.hypot(bad["u_P_ref_load_W"] / pr, bad["u_P_net_W"] / pn)
+    f = dict(bad, status=red.LOSS_VERIFIED, P_net_W=pn, P_ref_load_W=pr, eta_measured=0.9, u_eta_measured=um,
+             normalized_statistic=red.loss_statistic("two_sided", 0.9, um, bad["eta_predicted"], 0.06))
+    ok, why = red.loss_verification_status(f, cal, tuning_state_id="TS1")
+    assert not ok and "check operating point" in why
+    good = cal0["loss_verification"]                                    # genuine check at the registered point
+    assert red.loss_verification_status(good, cal0, tuning_state_id="TS1", record_P_net_W=50.0)[0]
+    narrow = _proto(cal0, apply_P_net_range_W=[80.0, 120.0])
+    ok, why = red.loss_verification_status(good, narrow, tuning_state_id="TS1", record_P_net_W=10.0)
+    assert not ok and "application range" in why
