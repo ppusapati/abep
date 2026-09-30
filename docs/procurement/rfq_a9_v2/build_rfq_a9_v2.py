@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Deterministic builder of the A9 RFQ packages v2 (fo_a9_rfq_v2_split, trigger T_A9_RFQ_V2_SPLIT; owner A9.4
-incorporated mechanically by fo_a9_4_incorporation, trigger T_A9_4_INCORPORATION).
+incorporated mechanically by fo_a9_4_incorporation, trigger T_A9_4_INCORPORATION; completed for sending by
+fo_a9_6_rfq_completion under the owner A9.6 implementation-first directive, sec. 13).
 
 A REVISION of the immutable v1 packages docs/procurement/rfq_a9/ (A9-09). v1 is never edited: every v1 file is pinned by
 sha256 below and read as data. v2 splits the quotation specification by supplier speciality into exactly the six owner
@@ -13,14 +14,21 @@ Writes
   docs/procurement/rfq_a9_v2/packages/RFQ2-0N_<slug>.md              one sendable package per supplier speciality
 
 Authority (all pinned by sha256; the build refuses to run if any pinned file changed)
-  A9, the 147 owner answers (+ verbatim pack), A9.1, A9.2, A9.3 (+ verbatim .md files), A4-A7; cited by row / decision id.
+  A9, the 147 owner answers (+ verbatim pack), A9.1 .. A9.6 (+ verbatim .md files), A4-A7; cited by row / decision id.
   Owner quotes are checked verbatim against the decision text at build time.
+  The MERGED P1 bench and P2 prep packages are read (ids, statuses, P2 instrument specifications) but not pinned: the
+  A9.5 / A9.6 lanes refine them concurrently, and the instrument-coverage cross-check raises on any id drift.
 
 Rules implemented here
   * every v1 requirement is carried exactly once into one v2 package with a per-line change record (what changed, why);
   * new lines cite an owner row / A9.1 / A9.2 / A9.3 id or a verified deliverable item located by id at build time;
-  * values of the parallel lanes P1 (docs/experiments/hall_icp/p1_icp_bench/) and P2 prep
-    (docs/experiments/hall_icp/p2_impedance_map/) are written 'PENDING <path>' and never filled; nothing is read from them;
+  * P1 / P2 values are referenced by their merged ids (e.g. P1-M-26, F2, INS-P2-04) and stay TBD with freeze gate P1-G0
+    (or the P2 gate) until registered there; nothing is filled here. The A9.6 parallel lanes not in this base (P3, P4,
+    mass/power v2, Xe accounting v2) are written 'PENDING <path>' and nothing is read from them;
+  * A9.6 sec. 13: every owner item maps to lines; every P1_NEEDED line carries a quote sheet (specification rows with
+    value / TBD and freeze gate, acceptance, calibration / traceability, documentation); every merged P1 measurement,
+    P1 hardware item and P2 instrument maps to an RFQ line or an explicit not-procured disposition (fail-closed);
+  * genuinely open owner questions stay TBD_OWNER with their admissible alternatives side by side;
   * no price, supplier ranking, supplier contact, winner, performance prediction or Hall-closure source; RF component
     ratings stay TBD_AFTER_IMPEDANCE_MAP; ICP thermal and anode items are never PASS;
   * computed values are deterministic arithmetic on cited inputs (evidence class model-derived);
@@ -52,8 +60,22 @@ TEST = "tests/test_rfq_a9_v2.py"
 BASE_COMMIT = "ee9dc7db7d11e0b5f1d8b514258778ac1b6030d3"
 A94_INC_BASE = "875ed6d0a87202bc92706b28551b0e22eda2014d"   # base of the A9.4 incorporation (fo_a9_4_incorporation)
 
-P1_LANE = "docs/experiments/hall_icp/p1_icp_bench/"
-P2_LANE = "docs/experiments/hall_icp/p2_impedance_map/"
+A96_BASE = "c33b22c78b14cd4d6a51ed9bd5de4e046bc98cae"   # base of the A9.6 RFQ completion (fo_a9_6_rfq_completion)
+
+# Merged, verified P1 / P2 packages. They are READ (ids, statuses, P2 instrument specifications) but NOT pinned: the A9.5 /
+# A9.6 P1 and P2 lanes refine them concurrently; any id added, removed or renamed there makes this build raise (coverage
+# cross-check), and the consolidated integration pass reconciles both sides.
+P1_JSON = "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json"
+P2_JSON = "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json"
+CURRENT = {"P1": P1_JSON, "P2": P2_JSON}
+
+# Parallel lanes of A9.6 not in this base: referenced as 'PENDING <path>' only; nothing is read from them.
+PARALLEL_LANES = {
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/",
+    "P4": "docs/experiments/hall_icp/p4_anode_materials/",
+    "MASS_POWER": "docs/budgets/mass_power_a9_v2/",
+    "XE_ACCOUNTING": "docs/budgets/xe_accounting_a9_v2/",
+}
 
 # ------------------------------------------------------------------------------------------------------------- pins
 DECISIONS = {
@@ -79,6 +101,14 @@ DECISIONS = {
             "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d"),
     "A94_MD": ("docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
                "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"),
+    "A95": ("docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json",
+            "c9e101f2c409c2d28ad256818c22f13ee801bc532d7e4ef470f375d7bb1fe1d3"),
+    "A95_MD": ("docs/decisions/OD_2026_09_30_A9_5_P1_CLOSURE_OWNER_DECISIONS.md",
+               "9e49e923328441c1fc82afd3eb64c13d85fc818e8fe534576ada61a16fa525f3"),
+    "A96": ("docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json",
+            "d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327"),
+    "A96_MD": ("docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md",
+               "c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634"),
     "A4": ("docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A4_owner_decisions.json",
            "beec91f9eca3ca0257c5ee88dcd193c87481660b9368b65c6d10b3b3bdae23b4"),
     "A5": ("docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
@@ -309,8 +339,76 @@ def V1R(rid: str) -> dict:
 
 
 def PEND(path: str, what: str) -> dict:
+    if path not in PARALLEL_LANES.values():
+        raise ValueError(f"PENDING reference to a path that is not a registered parallel lane: {path}")
     return {"type": "pending_lane", "path": path, "what": what,
             "note": "parallel lane not in this base; nothing is read from it"}
+
+
+def A95(did: str, quote: str) -> dict:
+    """A9.5 owner decision with a quote that must occur verbatim in the A9.5 verbatim record."""
+    if did not in load("A95")["decisions"]:
+        raise KeyError(f"A9.5 decision {did} not found")
+    if quote not in load("A95_MD"):
+        raise ValueError(f"quote not verbatim in the A9.5 record: {quote!r}")
+    return {"type": "a9_5", "key": "A9.5", "id": did, "quote": quote, "path": DECISIONS["A95_MD"][0],
+            "pointer": "/decisions/" + did, "json_path": DECISIONS["A95"][0], "sha256": DECISIONS["A95_MD"][1]}
+
+
+def A96(section: str, quote: str) -> dict:
+    """A9.6 owner directive section with a quote that must occur verbatim in the A9.6 verbatim record."""
+    md = load("A96_MD")
+    if quote not in md:
+        raise ValueError(f"quote not verbatim in the A9.6 record: {quote!r}")
+    return {"type": "a9_6", "key": "A9.6", "id": section, "quote": quote, "path": DECISIONS["A96_MD"][0],
+            "json_path": DECISIONS["A96"][0], "sha256": DECISIONS["A96_MD"][1]}
+
+
+def current(key: str):
+    """Merged P1 / P2 package (read, not pinned; see CURRENT)."""
+    ck = "CUR:" + key
+    if ck not in _CACHE:
+        rel = CURRENT[key]
+        if not os.path.isfile(_abs(rel)):
+            raise FileNotFoundError(f"merged {key} package missing: {rel}")
+        with open(_abs(rel), encoding="utf-8") as fh:
+            _CACHE[ck] = json.load(fh)
+    return _CACHE[ck]
+
+
+def _find_all_ids(doc, target: str, ptr: str = "", out=None) -> list:
+    out = [] if out is None else out
+    if isinstance(doc, dict):
+        if doc.get("id") == target:
+            out.append(ptr)
+        for k, v in doc.items():
+            _find_all_ids(v, target, ptr + "/" + str(k).replace("~", "~0").replace("/", "~1"), out)
+    elif isinstance(doc, list):
+        for i, v in enumerate(doc):
+            _find_all_ids(v, target, ptr + "/" + str(i), out)
+    return out
+
+
+CUR_SCOPES = [  # (package key, id prefix regex, JSON pointer of the list the id is looked up in)
+    ("P1", r"^P1-M-\d+$", "/measurements"), ("P1", r"^P1-HW-\d+$", "/hardware_readiness"),
+    ("P1", r"^P1-IT-\d+$", "/items"), ("P1", r"^F\d+$", "/run_matrix/factors"),
+    ("P2", r"^INS-P2-\d+$", "/instrument_list"),
+]
+
+
+def CUR(key: str, iid: str) -> dict:
+    """Item of the merged P1 / P2 package located by a UNIQUE id inside its registered list (CUR_SCOPES); raises if
+    absent or ambiguous."""
+    scope = [ptr for k, rx, ptr in CUR_SCOPES if k == key and re.match(rx, iid)]
+    if len(scope) != 1:
+        raise KeyError(f"no registered lookup scope for {key}:{iid}")
+    ptrs = [scope[0] + p_ for p_ in _find_all_ids(_resolve(current(key), scope[0]), iid)]
+    if len(ptrs) != 1:
+        raise KeyError(f"{iid} found {len(ptrs)} times in {CURRENT[key]} (need exactly one)")
+    item = _resolve(current(key), ptrs[0])
+    return {"type": "current_deliverable", "key": key, "path": CURRENT[key], "id": iid, "pointer": ptrs[0],
+            "item_status": item.get("status"), "pinned": False,
+            "note": "merged package read at build time; refined concurrently by the A9.5 / A9.6 lanes"}
 
 
 def label(s: dict) -> str:
@@ -335,6 +433,12 @@ def label(s: dict) -> str:
         return f"v1 {s['id']}"
     if t == "pending_lane":
         return f"PENDING {s['path']}"
+    if t == "a9_5":
+        return f"A9.5 {s['id']}"
+    if t == "a9_6":
+        return f"A9.6 {s['id']}"
+    if t == "current_deliverable":
+        return f"{s['key']}:{s['id']}"
     raise ValueError(t)
 
 
@@ -343,7 +447,7 @@ CONFIGS = ["hall_c1_reference", "hall_icp_neutralizer"]
 OUTCOMES = ["hall_c1_reference", "hall_icp_neutralizer", "NO_VIABLE_CASE"]
 EVIDENCE_CLASSES = ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed",
                     "owner-allocation", "owner-stated"]
-FREEZE_POINTS = ["NOW", "LOCK-1", "LOCK-2", "after-evidence"]
+FREEZE_POINTS = ["NOW", "P1-G0", "LOCK-1", "LOCK-2", "after-evidence"]   # P1-G0: P1 bench registration gate
 STATUSES = ["OWNER_GIVEN", "COPIED_VERIFIED", "DERIVED", "PROPOSED", "TBD", "PENDING", "REFERENCE_ONLY",
             "SUPERSEDED_NOT_QUOTED"]
 DISPATCH = ["P1_NEEDED", "LATER"]
@@ -403,6 +507,8 @@ def banner_lines() -> list:
         "P1_NEEDED to suppliers for quotation - requests for quotation, technical clarification, indicative lead time, "
         "commercial quotation, datasheets/certificates. NOT authorized: purchase orders, advance payments, binding "
         "commitments. Claude / the technical team still never contacts suppliers.",
+        "A9.6 (owner, 2026-09-30, sec. 13): RFQ only - no purchase order authorization. Packages completed so that the "
+        "P1_NEEDED lines are ready to send; the owner / procurement sends them; Claude never contacts suppliers.",
     ]
 
 
@@ -462,11 +568,11 @@ def new_requirements() -> list:
         "an engineering quantity, synchronized with P_RF,fwd and P_RF,refl. Supplier states measurement uncertainty, "
         "phase/wiring configurations and the generator's mains input interface it must accept. P_mains,in is GROUND/"
         "FACILITY_ONLY and is never evidence for P_bus < 1.5 kW.",
-        "TBD - requires the generator's mains input interface (supplier data) and the P1 uncertainty target (PENDING "
-        + P1_LANE + ")", "W", "A9.3 OQ-RFQ-06",
+        "TBD - requires the generator's mains input interface (supplier data) and the P1 uncertainty target of P1-M-05 "
+        "(frozen at P1-G0)", "W", "A9.3 OQ-RFQ-06",
         [A93("OQ-RFQ-06", "Measure the laboratory source with a proper input power analyzer and record:"),
          A93("OQ-RFQ-06", "as evidence that the flight propulsion system satisfies:"),
-         PEND(P1_LANE, "P1 uncertainty target for P_mains,in")],
+         CUR("P1", "P1-M-05"), CUR("P1", "P1-HW-08"), CUR("P2", "INS-P2-11")],
         None, "TBD", "NOW", "P1_NEEDED",
         note="line item required by A9.3 OQ-RFQ-06; its accuracy class freezes with the P1 bench plan",
         change_why="new line required by A9.3 OQ-RFQ-06 (v1 R04 only asked the supplier to allow input metering)"))
@@ -497,23 +603,24 @@ def new_requirements() -> list:
         "Controlled 50-ohm coax from the generator through the directional coupler to the local matching network on / "
         "immediately adjacent to the ICP module; forward/reflected measured on this 50-ohm side. Length, connector "
         "family and ratings: TBD_AFTER_IMPEDANCE_MAP and the P1 bench layout.",
-        "TBD - requires the P1 bench layout (PENDING " + P1_LANE + ") and the impedance map (ratings "
+        "TBD - requires the P1 bench layout (P1-HW-04; cable run set at P1-G0) and the impedance map (ratings "
         + TBD_RF + ")", "m; W; V", "A9.2 OQ-A907-11 / rf_measurement_reference",
         [A92Q("OQ-A907-11", "The local matching network shall be positioned on, or immediately adjacent to, the ICP "
                             "module"),
-         A92("rf_measurement_reference"), PEND(P1_LANE, "P1 bench layout (cable run)")],
-        None, "PENDING", "NOW", "P1_NEEDED",
+         A92("rf_measurement_reference"), CUR("P1", "P1-HW-04")],
+        None, "TBD", "P1-G0", "P1_NEEDED",
         change_why="new P1 line: v1 quoted only the live/sham flexible pair for the thrust-stand crossing (LATER)"))
     out.append(R(
         "RFQ2-RF-N06", "RFQ2-RF", "compatibility with the P2 impedance-map instrument preparation",
         "Supplier states whether the coupler/sensor chain and the local match support calibrated complex reflection "
         "measurement (|Gamma| and phase, VSWR) and V/I sensing at the 50-ohm reference plane, and the calibration / "
         "de-embedding data it can supply; P2 instrument preparation uses the same RF hardware.",
-        "TBD - requires the P2 instrument-preparation method (PENDING " + P2_LANE + ")", "-",
-        "A9.3 authorizations P2; A9.2 rf_measurement_reference",
+        "supplier statement against the merged P2 preparation method (P2 instrument list INS-P2-01..12, "
+        "calibration plan, Z_antenna methods); the P2 instrument specifications are quoted in RFQ2-RF-N07..N16", "-",
+        "A9.3 authorizations P2; A9.2 rf_measurement_reference; P2 prep package",
         [A93J("/authorizations/P2"), A92("rf_measurement_reference"),
-         PEND(P2_LANE, "V/I sensing, coupler chain, calibration and S-parameter methodology")],
-        None, "PENDING", "NOW", "P1_NEEDED",
+         CUR("P2", "INS-P2-01"), CUR("P2", "INS-P2-02"), CUR("P2", "INS-P2-03"), CUR("P2", "INS-P2-12")],
+        None, "COPIED_VERIFIED", "NOW", "P1_NEEDED",
         change_why="new: A9.3 authorizes P2 preparation on the same RF hardware"))
     # ---------------------------------------------------------------- GAS
     out.append(R(
@@ -523,12 +630,13 @@ def new_requirements() -> list:
         "uncertainty inside that window. The sweep bounds are set by the P1 bench plan. Ar data are "
         "ENGINEERING_ONLY_NON_SCORING regardless of metrology quality.",
         {"anchor_sccm": 70.0, "anchor_mgps_owner_stated": 2.1, "anchor_mgps_recorder_check": ar["value_mgps"],
-         "sweep_bounds": "PENDING " + P1_LANE},
+         "sweep_bounds": "TBD - levels above and below the anchor frozen at P1-G0 from the MFC range and refined from "
+                         "the P1-S3 ignition map (P1 run_matrix F2)"},
         "sccm (Ar); mg/s", "A9.3 OQ-RFQ-02; published analog anchor EVI TK-31 (Takahashi 2024 p. 3 text)",
         [A93("OQ-RFQ-02", "reproduce the neighborhood of the Takahashi anchor:"),
          A93("OQ-RFQ-02", "sweep sufficiently above/below that point to establish ignition/current trends;"),
-         DI("EVI", "TK-31"), PEND(P1_LANE, "Ar sweep bounds")],
-        "owner-stated", "PENDING", "NOW", "P1_NEEDED",
+         DI("EVI", "TK-31"), CUR("P1", "F2"), CUR("P1", "P1-IT-09"), CUR("P1", "P1-IT-10")],
+        "owner-stated", "TBD", "P1-G0", "P1_NEEDED",
         note="70 sccm is a published-analog operating point (evidence class of TK-31: published analog, measured by the "
              "authors) used only as a flow-range anchor, never as Vyovrinda performance; the shared HET+ICP flow is "
              "not separable (TK-31 note)",
@@ -561,14 +669,15 @@ def new_requirements() -> list:
         "condition, checking flashover, leakage, breakdown, surface tracking and repeated exposure where appropriate. "
         "No isolator is inserted in a gas line whose two ends are intentionally held at essentially the same floating "
         "potential. In G-REUSE the ICP port is capped (no ICP gas line); the count follows the P1 potential map.",
-        {"qualification_V_DC": 1000.0, "count": "PENDING " + P1_LANE}, "V (DC); units",
+        {"qualification_V_DC": 1000.0, "count": "TBD - requires the P1 gas schematic and potential map (P1-HW-12, "
+                                                 "P1-IT-20; registered at P1-G0)"}, "V (DC); units",
         "A9.3 ICPQ-06; row 105 practice",
         [A93("ICPQ-06", "Any ICP gas line crossing a meaningful potential difference shall receive the same "
                         "representative-pressure/gas isolation philosophy already adopted for the Hall gas isolator."),
          A93("ICPQ-06", "The requirement applies when the gas plumbing creates an electrical bridge across isolated "
                         "potentials."),
          OW(105, "perform ~1 kV DC representative-pressure/gas withstand qualification"),
-         PEND(P1_LANE, "P1 gas schematic and potential map")],
+         CUR("P1", "P1-HW-12"), CUR("P1", "P1-IT-20")],
         "owner-stated", "OWNER_GIVEN", "NOW", "P1_NEEDED",
         note="'~1 kV' is the owner's approximate class; the exact test voltage and margin freeze with the H-1 isolation "
              "margin (owner item, row 81 'appropriate transient/qualification margin')",
@@ -592,22 +701,24 @@ def new_requirements() -> list:
         "module pressure port (ICP-34) and (iii) chamber background pressure p_b with the placement/reading rule of "
         "H26-30 (INS-08); Ar-specific calibration for P1. Ranges and gauge types follow the P1 bench plan and the "
         "facility.",
-        "TBD - requires the P1 bench plan (PENDING " + P1_LANE + ") and facility identification (row 139)", "Pa",
+        "TBD - requires the P1 gauge ranges (P1-M-16, P1-M-17; frozen at P1-G0) and facility identification (row 139)",
+        "Pa",
         "A9.3 OQ-RFQ-07 gas/metrology family; ICD ICP-34; H2-6 H26-25, H26-30; INS-06, INS-08",
         [A93("OQ-RFQ-07", "pressure instrumentation"), DI("ICD", "ICP-34"), DI("H26", "H26-25"), DI("H26", "H26-30"),
          DI("INS", "INS-06"), DI("INS", "INS-08"),
          A91("UBQ-08", "Ar-specific gauge/MFC/RGA calibration is required for HI-AR engineering interpretation."),
-         PEND(P1_LANE, "pressure ranges")],
-        None, "PENDING", "NOW", "P1_NEEDED", applies_to=CONFIGS,
+         CUR("P1", "P1-M-16"), CUR("P1", "P1-M-17"), CUR("P1", "P1-HW-11")],
+        None, "TBD", "P1-G0", "P1_NEEDED", applies_to=CONFIGS,
         change_why="new line: owner gas/metrology family names pressure instrumentation (v1 had only a pressure port)"))
     out.append(R(
         "RFQ2-GAS-N07", "RFQ2-GAS", "P1 Ar feed valves",
         "Shut-off/isolation valves of the P1 Ar feed (bottle -> regulator -> MFC -> H-1 anode feed); type and count per "
         "the P1 gas schematic. The two-series-valve rule of row 90 applies to the high-pressure Xe/cathode branch "
         "(carried RFQ-07-R05, LATER).",
-        "TBD - requires the P1 gas schematic (PENDING " + P1_LANE + ")", "units", "A9.3 OQ-RFQ-07 gas/metrology family",
-        [A93("OQ-RFQ-07", "valves"), PEND(P1_LANE, "P1 gas schematic")],
-        None, "PENDING", "NOW", "P1_NEEDED", applies_to=CONFIGS,
+        "TBD - requires the P1 gas schematic (Ar feed to the H-1 gas path, P1-HW-15; registered at P1-G0)", "units",
+        "A9.3 OQ-RFQ-07 gas/metrology family",
+        [A93("OQ-RFQ-07", "valves"), CUR("P1", "P1-HW-15")],
+        None, "TBD", "P1-G0", "P1_NEEDED", applies_to=CONFIGS,
         change_why="new line: owner gas/metrology family names valves"))
     # ---------------------------------------------------------------- VAC
     out.append(R(
@@ -626,11 +737,11 @@ def new_requirements() -> list:
         "Pumping capability for the P1 Ar bench and later campaigns, quoted only where the identified facility lacks "
         "it; the required throughput/base pressure follow the facility identification and the P1 plan (the published "
         "analog's facility is context only, EVI TK-32..TK-34).",
-        "TBD - requires facility identification (row 139) and the P1 bench plan (PENDING " + P1_LANE + ")",
+        "TBD - requires facility identification (row 139) and the P1 pumping need for the Ar anchor flow (P1-HW-17)",
         "Pa; L/s", "A9.3 OQ-RFQ-07 vacuum/facility family; row 139; row 23",
         [A93("OQ-RFQ-07", "pumping"), OW(139, "use a smaller domestic chamber for engineering-only S1a"),
          OW(23, "use two elevated background-pressure levels for facility-effect characterization"),
-         DI("EVI", "TK-34"), PEND(P1_LANE, "P1 flow/pressure plan")],
+         DI("EVI", "TK-34"), CUR("P1", "P1-HW-17")],
         None, "TBD", "after-evidence", "P1_NEEDED", applies_to=CONFIGS,
         change_why="new line: owner vacuum/facility family names pumping"))
     out.append(R(
@@ -649,11 +760,11 @@ def new_requirements() -> list:
         "RFQ2-VAC-N04", "RFQ2-VAC", "gas feedthroughs",
         "Vacuum gas feedthroughs for the P1 Ar feed and later N2/O2/Xe feeds; O2 service per row 107 where O2-bearing "
         "gas passes (LATER use). Count per the P1 gas schematic.",
-        "TBD - requires the P1 gas schematic (PENDING " + P1_LANE + ")", "units",
+        "TBD - requires the P1 gas schematic (P1-HW-18; registered at P1-G0)", "units",
         "A9.3 OQ-RFQ-07 vacuum/facility family",
         [A93("OQ-RFQ-07", "feedthroughs"), OW(107, "ADOPT ASTM G93 Level C cleaning for O2 service"),
-         PEND(P1_LANE, "P1 gas schematic")],
-        None, "PENDING", "NOW", "P1_NEEDED", applies_to=CONFIGS,
+         CUR("P1", "P1-HW-18")],
+        None, "TBD", "P1-G0", "P1_NEEDED", applies_to=CONFIGS,
         change_why="new line: owner vacuum/facility family names feedthroughs"))
     out.append(R(
         "RFQ2-VAC-N05", "RFQ2-VAC", "RGA / diagnostic interface provisions on the chamber",
@@ -685,9 +796,10 @@ def new_requirements() -> list:
         "RFQ2-HALLEL-N02", "RFQ2-HALLEL", "H-1 magnet supplies (per coil)",
         "One current-controlled magnet supply per MC-1 coil with 4-wire remote voltage sense and its own bus slot; "
         "floating output. Current/voltage ratings follow the MC-1 coil design.",
-        "TBD - requires the MC-1 coil design currents and resistances (H2-1) and the P1 magnet setpoints (PENDING "
-        + P1_LANE + ")", "A; V", "row 110; H2-4 H24-32, H3-PPU-02",
-        [OW(110, "per-coil magnet"), DI("H24", "H24-32"), DI("H24", "H3-PPU-02"),
+        "TBD - requires the MC-1 coil design currents and resistances (H2-1) and the P1 magnet states (P1 run_matrix "
+        "F6, PROPOSED {OFF, registered H-1 setting(s)}, P1Q-06)", "A; V", "row 110; H2-4 H24-32, H3-PPU-02",
+        [OW(110, "per-coil magnet"), DI("H24", "H24-32"), DI("H24", "H3-PPU-02"), CUR("P1", "F6"),
+         CUR("P1", "P1-M-24"), CUR("P1", "P1-HW-25"),
          A93("OQ-RFQ-07", "magnet supply"), A93("OQ-VI-05", "H-1 gas/magnet conditions established.")],
         None, "TBD", "LOCK-1", "P1_NEEDED", applies_to=CONFIGS,
         change_why="new line: owner Hall electrical family names magnet supply; the P1 OQ-VI-05 sequence needs H-1 magnet "
@@ -698,12 +810,13 @@ def new_requirements() -> list:
         "the Ar topology-control sequence (C1 disconnected, ICP RF off -> Hall start attempt -> ICP on); current ranges "
         "to the 8.33 A stand ceiling. Bandwidth and sample rate follow the P1 plan. The test is a REQUIRED ENGINEERING "
         "CONTROL, NON-SCORING; 'Hall must not run without ICP' is not a requirement.",
-        {"current_range_A_min": ic, "bandwidth": "PENDING " + P1_LANE}, "A; V; Hz",
+        {"current_range_A_min": ic, "bandwidth": "TBD - frozen at P1-G0 (P1-M-14 time-resolved channel; P1-M-26)"},
+        "A; V; Hz",
         "A9.3 OQ-VI-05; A9.3 OQ-A907-02",
         [A93("OQ-VI-05", "and collector/reference potentials."),
          A93("OQ-VI-05", "classify it as an engineering topology-control test, not a hard architecture PASS/FAIL gate."),
-         A93("OQ-A907-02", "current sensor range;"), PEND(P1_LANE, "P1 bandwidth/sample-rate plan")],
-        "owner-stated", "PENDING", "NOW", "P1_NEEDED",
+         A93("OQ-A907-02", "current sensor range;"), CUR("P1", "P1-M-14"), CUR("P1", "P1-M-26")],
+        "owner-stated", "TBD", "P1-G0", "P1_NEEDED",
         change_why="new: A9.3 OQ-VI-05 recorded quantities"))
     # ---------------------------------------------------------------- MECH
     out.append(R(
@@ -754,25 +867,27 @@ def new_requirements() -> list:
         "and flow channels, and the optical-emission photodiode channel (RFQ2-THRUST-N03, A9.4 P2Q-05); current "
         "channels ranged to the 8.33 A stand ceiling. Channel count, sample rate and bandwidth follow the P1 plan.",
         {"channels_min": "OQ-VI-05 list + ICP-34 list", "current_range_A_min": ic,
-         "sample_rate": "PENDING " + P1_LANE}, "-; A; Sa/s",
+         "sample_rate": "TBD - frozen at P1-G0 (P1-M-26: PROPOSED continuous logging on the common time base INS-18)"},
+        "-; A; Sa/s",
         "A9.3 OQ-VI-05, OQ-RFQ-07, OQ-A907-02; ICD ICP-34; INS-18",
         [A93("OQ-VI-05", "Record:"), A93("OQ-RFQ-07", "DAQ"), A93("OQ-A907-02", "DAQ range;"), DI("ICD", "ICP-34"),
-         DI("INS", "INS-18"), PEND(P1_LANE, "DAQ channel count, sample rate, bandwidth"),
+         DI("INS", "INS-18"), CUR("P1", "P1-M-26"), CUR("P1", "P1-HW-39"),
          A94("P2Q-05", "Add the photodiode, appropriate optical access/window, amplifier and DAQ channel to the "
                        "P1_NEEDED/P2 preparation instrumentation quote.")],
-        "owner-stated", "PENDING", "NOW", "P1_NEEDED", applies_to=CONFIGS,
+        "owner-stated", "TBD", "P1-G0", "P1_NEEDED", applies_to=CONFIGS,
         change_why="new line: owner thrust/metrology family names DAQ; v1 had only the P_bus chain (RFQ-06, LATER)"))
     out.append(R(
         "RFQ2-THRUST-N02", "RFQ2-THRUST", "traceability hardware",
         "Calibration references and certificates for the DAQ V/I/T channels, RF power sensors and power analyzer, "
         "with the uncertainty budget and coverage factor stated; ISO/IEC 17025 / NABL scope where the measurand is "
         "score-bearing (RFQ-09-R01 carried).",
-        "TBD - requires the channel list (RFQ2-THRUST-N01) and the P1 uncertainty targets (PENDING " + P1_LANE + ")",
+        "TBD - requires the channel list (RFQ2-THRUST-N01); certificate rule per P1 measurement: MS-G-01..03 (accredited "
+        "scope, SI-traceable chain, GUM uncertainty; P1 measurements metrology_spec)",
         "-", "A9.3 OQ-RFQ-07 thrust/metrology family; row 126",
         [A93("OQ-RFQ-07", "traceability hardware"),
          OW(126, "NABL/ISO-17025 calibration is the primary score-bearing reference."),
-         PEND(P1_LANE, "P1 uncertainty targets")],
-        None, "PENDING", "NOW", "P1_NEEDED", applies_to=CONFIGS,
+         CUR("P1", "P1-HW-41"), CUR("P1", "P1-M-01")],
+        None, "TBD", "P1-G0", "P1_NEEDED", applies_to=CONFIGS,
         change_why="new line: owner thrust/metrology family names traceability hardware"))
     # ---------------------------------------------------------------- A9.4 (fo_a9_4_incorporation)
     pd_quote = ("Add the photodiode, appropriate optical access/window, amplifier and DAQ channel to the P1_NEEDED/P2 "
@@ -796,7 +911,7 @@ def new_requirements() -> list:
          A94("P2Q-05", "The photodiode is the required independent optical indicator, while RF/electrical signals "
                        "provide corroboration."),
          A94("P2Q-05", "Do not assign an arbitrary photodiode voltage threshold now."),
-         A93("OQ-RFQ-07", "DAQ"), DI("INS", "INS-18"), PEND(P2_LANE, "INS-P2-10 photodiode specification")],
+         A93("OQ-RFQ-07", "DAQ"), DI("INS", "INS-18"), CUR("P2", "INS-P2-10"), CUR("P1", "P1-M-28")],
         "owner-stated", "OWNER_GIVEN", "NOW", "P1_NEEDED",
         note="placed in the thrust/metrology package (owner family 'DAQ'): it is an optical, non-RF diagnostic channel "
              "on the P1 DAQ and must stay independent of the RF impedance chain, so it is not quoted in RFQ2-RF",
@@ -869,6 +984,282 @@ def new_requirements() -> list:
     return out
 
 
+# ------------------------------------------------------------------ A9.6 RFQ completion (fo_a9_6_rfq_completion)
+# P2 preparation instruments quoted from the merged P2 package: P2 id -> (v2 requirement id, RFQ line ids)
+P2_REQ_MAP = [
+    ("INS-P2-01", "RFQ2-RF-N07", ["RF-L12"]),
+    ("INS-P2-02", "RFQ2-RF-N08", ["RF-L02"]),
+    ("INS-P2-03", "RFQ2-RF-N09", ["RF-L03"]),
+    ("INS-P2-04", "RFQ2-RF-N10", ["RF-L13"]),
+    ("INS-P2-05", "RFQ2-RF-N11", ["RF-L14"]),
+    ("INS-P2-06", "RFQ2-RF-N12", ["RF-L15"]),
+    ("INS-P2-07", "RFQ2-RF-N13", ["RF-L09", "RF-L16"]),
+    ("INS-P2-08", "RFQ2-RF-N14", ["RF-L17", "RF-L06"]),
+    ("INS-P2-09", "RFQ2-RF-N15", ["RF-L18"]),
+    ("INS-P2-12", "RFQ2-RF-N16", ["RF-L19"]),
+]
+
+P2Q02_PLACEMENT = {
+    "package": "RFQ2-RF", "status": "TBD_OWNER",
+    "question": "P2Q-02 (open question of the P2 preparation package: RF package or a separate RF-metrology package)",
+    "alternatives": ["RFQ2-RF (owner RF family of A9.3 OQ-RFQ-07; current placement)",
+                     "separate RF-metrology package under RFQ2-CIF (P2 lane proposal; different supplier speciality)"],
+    "rule": "the line is self-contained (own requirement, quote sheet and CIF interfaces), so it moves verbatim to a "
+            "separate package if the owner so decides; no placement is selected here",
+}
+
+
+def p2_spec_requirements() -> list:
+    """One requirement per P2 preparation instrument that has no dedicated v2 requirement yet. The specification rows are
+    COPIED verbatim from the merged P2 package (read, not pinned; see CURRENT); nothing is filled or narrowed here."""
+    p2 = {x["id"]: x for x in current("P2")["instrument_list"]}
+    out = []
+    for iid, rid, lines in P2_REQ_MAP:
+        if iid not in p2:
+            raise KeyError(f"P2 instrument {iid} not found in {P2_JSON}")
+        x = p2[iid]
+        if not x.get("required_specs"):
+            raise ValueError(f"P2 instrument {iid} carries no required_specs")
+        out.append(R(
+            rid, "RFQ2-RF", "P2 preparation instrument " + iid + ": " + x["name"],
+            "Quote " + x["name"] + " to the P2 instrument-preparation specification rows below (copied verbatim from "
+            "the merged P2 package, " + iid + "). The supplier states the offered value of every row with its "
+            "calibration basis and uncertainty. Any power-, voltage- or current-bearing rating is quoted as a "
+            "capability range or scalable option (" + TBD_RF + "; A9.2 rf_500W). Rows marked TBD are frozen at the gate "
+            "named in the row and are not fixed by this RFQ. Quoted for lines " + ", ".join(lines) + ".",
+            {"p2_required_specs_copied": copy.deepcopy(x["required_specs"])},
+            x["units"], "P2 prep " + iid + " (A9.3 authorizations P2: instrument preparation starts immediately)",
+            [CUR("P2", iid), A93J("/authorizations/P2"),
+             A92Q("rf_500W", "It is not a sufficient component rating by itself.")],
+            x["evidence_class"], x["status"], x["freeze_point"], "P1_NEEDED",
+            note="dispatch-first because A9.3 starts P2 instrument preparation immediately in parallel with P1; package "
+                 "placement TBD_OWNER (P2Q-02)",
+            change_why="A9.6 RFQ completion: P2 instrument " + iid + " mapped to an RFQ line"))
+    return out
+
+
+def a96_requirements() -> list:
+    ic = stand_ceiling_A()
+    q14 = [A94("P1Q-14", "corresponding to a 1.5× design margin."), A94("P1Q-14", "1.05~kV~DC"),
+           A94("P1Q-14", "60~s"), A94("P1Q-14", "where component ratings permit."),
+           A96("5", "350 V operating class;"), A96("5", "≥525 V design-withstand basis;"),
+           A96("5", "initial 1.05 kV DC / 60 s passive-insulation DWV where applicable.")]
+    closure_quotes = [A95("P1Q-15", "calibration uncertainty;"), A95("P1Q-15", "zero/offset uncertainty;"),
+                      A95("P1Q-15", "resolution;"), A95("P1Q-15", "repeatability where applicable;"),
+                      A95("P1Q-15", "any registered RF-pickup contribution."),
+                      A95("P1Q-15", "is a small registered denominator floor based on instrument capability"),
+                      A95("P1Q-15", "Do not silently set an unavailable current channel to zero.")]
+    out = []
+    # ---------------------------------------------------------------- RF
+    out.append(R(
+        "RFQ2-RF-N17", "RFQ2-RF", "RF frequency and harmonic content (P1-M-06)",
+        "Measurement of the generator frequency and harmonic content into the matched load during the P1-S1 cold "
+        "checkout (P1-M-06). Quote a frequency counter / spectrum analyzer ONLY if the VNA of RF-L13 does not offer a "
+        "receiver/spectrum mode covering N_h x 13.56 MHz (the supplier of RF-L13 states whether it does). Harmonic "
+        "order N_h is TBD (UB-RF-06, LOCK-2).",
+        {"frequency_MHz": 13.56, "harmonic_order_N_h": "TBD - requires the UB-RF-06 allocation (LOCK-2)",
+         "item": "0 or 1 (option; not needed if RF-L13 offers a receiver/spectrum mode)"},
+        "MHz; dBc", "P1-M-06; P2 INS-P2-04 (receiver/spectrum mode if available); row 72",
+        [CUR("P1", "P1-M-06"), CUR("P2", "INS-P2-04"), DI("UB", "UB-RF-06"),
+         OW(72, "13.56 MHz")],
+        "owner-allocation", "OWNER_GIVEN", "LOCK-2", "P1_NEEDED",
+        note="13.56 MHz is the owner frequency (row 72); the item is an option line because the VNA may cover it",
+        change_why="A9.6 RFQ completion: P1-M-06 had no RFQ line"))
+    # ---------------------------------------------------------------- GAS
+    out.append(R(
+        "RFQ2-GAS-N08", "RFQ2-GAS", "rate-of-rise / transfer calibration volume for the Ar controller",
+        "Calibration volume with a reference pressure transducer (and temperature sensing) for the rate-of-rise / "
+        "transfer verification of the Ar MFC (A9.3 OQ-RFQ-02; P1-HW-10). Volume, transducer range and uncertainty follow "
+        "the UB-F-07 allocation; the supplier states the volume uncertainty and the transducer calibration basis. The "
+        "facility may already hold such a volume; dispatch is the owner's call.",
+        "TBD - requires the UB-F-07 allocation (volume, transducer range and uncertainty)", "m^3; Pa; K",
+        "A9.3 OQ-RFQ-02; UB-F-07; P1-HW-10",
+        [A93("OQ-RFQ-02", "Use the rate-of-rise/transfer calibration path to verify the Ar controller."),
+         DI("UB", "UB-F-07"), CUR("P1", "P1-HW-10")],
+        None, "TBD", "P1-G0", "P1_NEEDED", applies_to=CONFIGS,
+        change_why="A9.6 RFQ completion: P1-HW-10 had no dedicated RFQ line"))
+    # ---------------------------------------------------------------- HALL ELECTRICAL
+    out.append(R(
+        "RFQ2-HALLEL-N05", "RFQ2-HALLEL", "ICP collector / bias supply: isolation class, current capability, metering",
+        "The floating ICP collector / bias supply (HE-L03) has output isolation for the 350 V operating class with a "
+        "design withstand >= 525 V and permits the 1.05 kV DC / 60 s initial DWV of the passive insulation where its "
+        "ratings permit (A9.4 P1Q-14; supplier states); its current path (supply, leads, sensing, protection) is sized "
+        "to the 8.33 A stand ceiling (A9.3 OQ-A907-02). Bias-voltage range TBD (A902-23; P1-IT-18). V/I readback: "
+        "signed bipolar current reading with the uncertainty components of RFQ2-HALLEL-N08 stated. The supply rating is "
+        "never the ICP-45 requirement (I_e,required = I_d,max,H1, registered).",
+        {"V_operating_class_V": 350.0, "V_design_withstand_min_V": 525.0,
+         "initial_DWV": {"V_DC": 1050.0, "duration_s": 60.0, "applies": "where component ratings permit"},
+         "current_capability_A_min": ic, "bias_voltage_range": "TBD - requires A902-23 / P1-IT-18",
+         "readback_uncertainty": "TBD - supplier states per RFQ2-HALLEL-N08"},
+        "V; s; A", "A9.4 P1Q-14; A9.3 OQ-A907-02; A9.6 sec. 5; P1-IT-18, P1-IT-21, P1-IT-43",
+        q14 + [A93("OQ-A907-02", "collector circuit rating;"), CUR("P1", "P1-IT-18"), CUR("P1", "P1-IT-21"),
+               CUR("P1", "P1-IT-43"), CUR("P1", "P1-HW-26")],
+        "owner-stated", "OWNER_GIVEN", "P1-G0", "P1_NEEDED",
+        note="bias range and readback uncertainty stay TBD; only the isolation class and the current sizing rule are "
+             "owner-given",
+        change_why="A9.6 RFQ completion: collector/bias supply line carries the A9.4 P1Q-14 isolation class explicitly"))
+    out.append(R(
+        "RFQ2-HALLEL-N06", "RFQ2-HALLEL", "H-1 body single-point metered ground-current monitor (A9.4 P1Q-13)",
+        "A ground-current monitor in the ONLY deliberate H-1 body / magnetic-circuit connection to facility ground "
+        "(H-1 body -> monitor -> facility ground), logged continuously during ICP capacity measurements on the common "
+        "time base; plus chamber / facility return-current monitoring where measurable (P1-M-13). The bench must have no "
+        "second unintended chassis / stand / coax / shield grounding path (a wiring requirement of the bench, stated so "
+        "that the supplier offers an isolated readout that does not create one). The current-carrying path of the monitor "
+        "(conductor, shunt or sensor) is sized to the 8.33 A stand ceiling (A9.3 OQ-A907-02 rule for current-carrying "
+        "bench items); the measuring range and resolution may be narrower and are chosen so that the registered "
+        "I_scale,min and u_R of RFQ2-HALLEL-N08 can be met (supplier states over-range survivability). Signed "
+        "bipolar reading.",
+        {"monitored_path": "H-1 body / magnetic circuit -> monitor -> facility ground (single deliberate path)",
+         "logging": "continuous during ICP capacity measurements (common time base INS-18)",
+         "current_path_rating_A_min": ic,
+         "range_resolution": "TBD - requires the registered I_scale,min and channel uncertainty (A9.5 P1Q-15; frozen "
+                             "before the first ICP45_CAPACITY record)",
+         "facility_return_monitors": "TBD - count per the P1 return-path map (P1-M-13; where measurable)"},
+        "A", "A9.4 P1Q-13; A9.6 sec. 5; A9.5 P1Q-15; P1-M-29, P1-M-13, P1-HW-28",
+        [A94("P1Q-13", "one deliberate facility-ground connection only, through an instrumented/metered return."),
+         A94("P1Q-13", "No second unintended chassis/stand/coax/shield grounding path is permitted."),
+         A94("P1Q-13", "continuously during ICP capacity measurements."),
+         A94("P1Q-13", "chamber/facility return current where measurable."),
+         A96("5", "H-1 body single-point metered ground;"), A96("5", "all intentional current paths instrumented."),
+         A93("OQ-A907-02", "current sensor range;"),
+         CUR("P1", "P1-M-29"), CUR("P1", "P1-M-13"), CUR("P1", "P1-HW-28"), DI("UB", "UB-N-04")] + closure_quotes[5:],
+        "owner-stated", "OWNER_GIVEN", "P1-G0", "P1_NEEDED", applies_to=CONFIGS,
+        note="closes OQ-RFQV2-07 (explicit line) as a mechanical RFQ-line propagation of A9.4 P1Q-13 (A9.6 sec. 6); "
+             "whether an existing laboratory instrument meeting this line is used instead remains the owner's dispatch "
+             "choice",
+        change_why="A9.6 RFQ completion: A9.4 P1Q-13 ground-current monitor made an explicit P1_NEEDED line"))
+    out.append(R(
+        "RFQ2-HALLEL-N07", "RFQ2-HALLEL", "H-1 anode physical disconnect means and high-impedance isolated V_anode channel",
+        "(i) A means to PHYSICALLY disconnect the discharge-supply output from the H-1 anode (switch / contactor / "
+        "removable link; supplier proposes) so that in every ICP45_CAPACITY record the anode is open-circuit by "
+        "construction and floating - commanding the supply to zero while its output stays attached is not acceptable; "
+        "the disconnect state is recorded on the DAQ (hall_discharge_state, P1-IT-40). Current path sized to the 8.33 A "
+        "stand ceiling; voltage class 350 V (row 81) with the transient/qualification margin TBD_OWNER (OQ-RFQV2-06). "
+        "(ii) A high-impedance, isolated V_anode measurement channel (and the V_ref channel for V_d, P1-HW-31), usable "
+        "with the anode floating; the supplier states the input impedance and isolation so that the channel's own "
+        "leakage can be bounded inside u_R (A9.5 P1Q-15). No input-impedance number is set here.",
+        {"disconnect": "physical disconnection of the discharge-supply output from the anode (supplier proposes the "
+                       "means)",
+         "disconnect_current_rating_A_min": ic,
+         "voltage_class": {"V_upper_before_margin": 350.0, "margin": "TBD_OWNER (row 81; OQ-RFQV2-06)"},
+         "V_anode_channel": "high-impedance, isolated; input impedance TBD - supplier states (leakage bounded in u_R)",
+         "anode_terminal_class": "OPEN_CIRCUIT_BY_CONSTRUCTION in ICP45_CAPACITY records (A9.4 P1Q-13)"},
+        "A; V; ohm", "A9.4 P1Q-13; A9.6 sec. 5; row 81; P1-IT-39, P1-M-15, P1-HW-24, P1-HW-31",
+        [A94("P1Q-13", "physically disconnected from the discharge supply and left floating"),
+         A94("P1Q-13", "Do not merely command the power supply to zero while leaving its output electrically attached."),
+         A94("P1Q-13", "with a high-impedance isolated measurement channel."),
+         A94("P1Q-13", "`OPEN_CIRCUIT_BY_CONSTRUCTION`"),
+         A96("5", "anode physically disconnected;"), A96("5", "anode floating;"),
+         A96("5", "high-impedance (V_{\\rm anode}) measurement;"),
+         OW(81, "rate H-1, C1 reference, discharge supply, isolation and diagnostics to the relaxed 350 V end plus "
+                "appropriate transient/qualification margin"),
+         CUR("P1", "P1-IT-39"), CUR("P1", "P1-IT-40"), CUR("P1", "P1-M-15"), CUR("P1", "P1-HW-24"),
+         CUR("P1", "P1-HW-31"), DI("UB", "UB-N-02")],
+        "owner-stated", "OWNER_GIVEN", "LOCK-1", "P1_NEEDED", applies_to=CONFIGS,
+        note="closes OQ-RFQV2-07 for the V_anode channel (mechanical propagation of A9.4 P1Q-13, A9.6 sec. 6); the "
+             "voltage margin stays with OQ-RFQV2-06",
+        change_why="A9.6 RFQ completion: A9.4 P1Q-13 anode disconnect + V_anode channel made explicit P1_NEEDED lines"))
+    out.append(R(
+        "RFQ2-HALLEL-N08", "RFQ2-HALLEL", "current-closure metrology of every current channel of the ICP-45 network "
+        "(A9.5 P1Q-15)",
+        "Every current channel that crosses the registered isolated-network boundary in an ICP45_CAPACITY record "
+        "(dedicated electron collector, H-1 body return, anode (floating; potential recorded), facility / chamber "
+        "return, ICP body, and any other intentional terminal) is quoted with, per channel: calibration uncertainty; "
+        "zero/offset uncertainty; resolution; repeatability where applicable; susceptibility to 13.56 MHz RF pickup (so "
+        "that a registered RF-pickup contribution can be assigned). Readings are signed (bipolar) and the polarity is "
+        "documented so that each channel can be transformed into the registered convention (conventional current INTO "
+        "the defined isolated network positive). These values let the owner register I_scale,min from the "
+        "instrumentation capability and form u_R; the closure limits (|R_I| <= 3 u_R and |R_I| / max(|I_e,collector|, "
+        "I_scale,min) <= 0.02) are applied by the P1 reducer to measured records, not as supplier acceptance criteria. "
+        "If the quoted instruments give 3 u_R > 0.02 |I_e,collector| the point is NOT_EVALUATED_INSTRUMENT (the "
+        "tolerance is never widened); no channel may be silently set to zero.",
+        {"per_channel_supplier_states": ["calibration uncertainty", "zero/offset uncertainty", "resolution",
+                                         "repeatability where applicable", "13.56 MHz RF-pickup susceptibility"],
+         "polarity": "signed bipolar; documented polarity (transform to the registered convention)",
+         "I_scale_min": "TBD - registered from the instrumentation capability (A9.5 P1Q-15; no default)",
+         "closure_rule_context": {"statistical": "|R_I| <= 3 u_R", "fractional": 0.02,
+                                  "inadequate_instrument": "NOT_EVALUATED_INSTRUMENT"}},
+        "A", "A9.5 P1Q-15; A9.6 sec. 2; A9.4 P1Q-13; P1-IT-42, P1-IT-47",
+        closure_quotes + [
+            A95("P1Q-15", "conventional current INTO the defined isolated electrical network is positive"),
+            A95("P1Q-15", "`NOT_EVALUATED_INSTRUMENT`"), A95("P1Q-15", "an intentional return path is unmeasured;"),
+            A96("2", "`I_scale,min` must be registered from the instrumentation capability; no default."),
+            CUR("P1", "P1-IT-42"), CUR("P1", "P1-IT-47"), DI("UB", "UB-N-03")],
+        "owner-stated", "OWNER_GIVEN", "P1-G0", "P1_NEEDED", applies_to=CONFIGS,
+        note="the 0.02 fraction and the 3 u_R statistic are owner-stated (A9.5) and quoted only to explain why the "
+             "uncertainty components are required; I_scale,min itself is not set here",
+        change_why="A9.6 RFQ completion: A9.5 P1Q-15 requires per-channel uncertainty components the quotations must "
+                   "state"))
+    out.append(R(
+        "RFQ2-HALLEL-N09", "RFQ2-HALLEL", "OPTION: current-limited DC dielectric-withstand tester (>= 1.05 kV)",
+        "Current-limited DC dielectric-withstand tester able to apply at least 1.05 kV DC for 60 s with leakage-current "
+        "read-out, for the initial in-house DWV of the assembled ICP body / collector insulation configuration (A9.4 "
+        "P1Q-14; P1-HW-30). OPTION LINE: needed only if the owner's answer to OQ-RFQV2-08 includes an in-house bench "
+        "DWV (TBD_OWNER); leakage read-out resolution TBD - requires the item ratings.",
+        {"V_DC_min": 1050.0, "duration_s": 60.0, "current_limited": True, "leakage_readout": "required",
+         "leakage_resolution": "TBD - requires the item ratings (not owner-given)", "need": "TBD_OWNER (OQ-RFQV2-08)"},
+        "V; s; A", "A9.4 P1Q-14; P1-HW-30",
+        [A94("P1Q-14", "1.05~kV~DC"), A94("P1Q-14", "60~s"), CUR("P1", "P1-HW-30"), CUR("P1", "P1-IT-44")],
+        "owner-stated", "OWNER_GIVEN", "NOW", "P1_NEEDED", applies_to=CONFIGS,
+        note="option line: the two admissible DWV routes of OQ-RFQV2-08 (supplier certificate / in-house bench) are both "
+             "kept; nothing is selected",
+        change_why="A9.6 RFQ completion: P1-HW-30 had no RFQ line"))
+    # ---------------------------------------------------------------- MECH
+    out.append(R(
+        "RFQ2-MECH-N05", "RFQ2-MECH", "OPTION: P1-S4 dedicated electron-collecting target (topology A)",
+        "If topology A is registered at P1-G0 (P1-IT-36; P1Q-09), a dedicated, isolated, instrumented "
+        "electron-collecting electrode: isolated plate, support, position datum and feedthrough lead, isolated to the "
+        "ICP body / collector class of CIF-G07 (350 V operating, >= 525 V design withstand, 1.05 kV DC / 60 s DWV where "
+        "ratings permit). Geometry and material TBD at P1-G0; the flight collector material is not frozen.",
+        {"geometry": "TBD - requires registration at P1-G0 (P1-IT-36)",
+         "isolation": "CIF-G07 class (A9.4 P1Q-14)",
+         "material": "TBD - requires P1-IT-36 registration (flight collector material not frozen)",
+         "need": "only if topology A is registered (option line)"},
+        "mm; V", "A9.4 P1Q-10, P1Q-14; P1-IT-36, P1-HW-36, P1-M-27",
+        [A94("P1Q-10", "electrons extracted to a dedicated, isolated, instrumented electron-collecting electrode;"),
+         A94("P1Q-14", "1.05~kV~DC"), CUR("P1", "P1-IT-36"), CUR("P1", "P1-HW-36"), CUR("P1", "P1-M-27"),
+         PEND(PARALLEL_LANES["P4"], "collector / anode candidate-material framework")],
+        None, "TBD", "P1-G0", "P1_NEEDED",
+        change_why="A9.6 RFQ completion: P1-HW-36 had no RFQ line"))
+    # ---------------------------------------------------------------- THRUST / METROLOGY
+    out.append(R(
+        "RFQ2-THRUST-N04", "RFQ2-THRUST", "calibration services and certificates for the P1 instruments",
+        "Calibration of every P1 instrument with a calibrated measurand (P1 measurement list, metrology_spec) that is "
+        "not delivered with a valid certificate by its supplier: certificate per MS-G-01..03 (accredited scope, "
+        "SI-traceable chain, GUM uncertainty with coverage factor), stating for current channels the A9.5 components "
+        "(calibration, zero/offset, resolution, repeatability); 13.56 MHz calibration of RF power sensors and coupler "
+        "(coupling factor, directivity); gauges calibrated for Ar. Whether the Ar MFC needs an accredited certificate or "
+        "the maker's Ar certificate plus the rate-of-rise/transfer verification is TBD_OWNER (OQ-RFQV2-01).",
+        {"certificate_rule": "MS-G-01..03 per P1 measurement metrology_spec",
+         "current_channel_components": ["calibration uncertainty", "zero/offset uncertainty", "resolution",
+                                        "repeatability where applicable"],
+         "Ar_MFC_certificate": "TBD_OWNER (OQ-RFQV2-01)",
+         "instrument_list": "every P1_NEEDED line with a calibrated measurand (instrument_coverage)"},
+        "-", "P1 measurements metrology_spec (MS-G-01..03); row 126; A9.5 P1Q-15; A9.3 OQ-RFQ-02",
+        [CUR("P1", "P1-M-01"), CUR("P1", "P1-HW-41"),
+         OW(126, "NABL/ISO-17025 calibration is the primary score-bearing reference."),
+         A95("P1Q-15", "calibration uncertainty;"), A95("P1Q-15", "zero/offset uncertainty;"),
+         A93("OQ-RFQ-07", "traceability hardware")],
+        "owner-stated", "OWNER_GIVEN", "NOW", "P1_NEEDED", applies_to=CONFIGS,
+        note="calibration SERVICES line; certificates delivered with an instrument satisfy it for that instrument",
+        change_why="A9.6 RFQ completion: owner sec. 13 names calibration items"))
+    out.append(R(
+        "RFQ2-THRUST-N05", "RFQ2-THRUST", "event and state channels on the common time base",
+        "Digital event / state inputs on the common time base (INS-18) for: ignition / extinction events (P1-M-23; "
+        "INS-10), interlock state and trip events (P1-M-25), hall_discharge_state and the anode-disconnect state "
+        "(P1-IT-40; RFQ2-HALLEL-N07), and the local-match setting id (P1-M-09). Channel count and time resolution are "
+        "frozen at P1-G0.",
+        {"channels": ["ignition/extinction events", "interlock state/trips", "hall_discharge_state",
+                      "anode disconnect state", "match_setting_id"],
+         "count_and_time_resolution": "TBD - frozen at P1-G0 (P1-M-26)"},
+        "-; s", "P1-M-09, P1-M-23, P1-M-25, P1-M-26, P1-IT-40; INS-10, INS-18",
+        [CUR("P1", "P1-M-23"), CUR("P1", "P1-M-25"), CUR("P1", "P1-M-09"), CUR("P1", "P1-M-26"),
+         CUR("P1", "P1-IT-40"), DI("INS", "INS-10"), DI("INS", "INS-18"), A93("OQ-RFQ-07", "DAQ")],
+        None, "TBD", "P1-G0", "P1_NEEDED", applies_to=CONFIGS,
+        change_why="A9.6 RFQ completion: P1 event / state records mapped to DAQ inputs"))
+    return out + p2_spec_requirements()
+
+
 # ---------------------------------------------------------------------------------- v1 -> v2 requirement mapping
 # v1 id -> (v2 package, dispatch, change type, why, overrides)
 C_U, C_M, C_S = "CARRIED_UNCHANGED", "CARRIED_MODIFIED", "SUPERSEDED_NOT_QUOTED"
@@ -900,9 +1291,10 @@ def v1_mapping() -> dict:
                                           "RFQ2-GAS-N02 (one suitable Ar MFC; second overlapping range only as option "
                                           "line) and RFQ2-GAS-N03 (Ar-specific calibration, rate-of-rise/transfer "
                                           "verification).",
-                           "value": "PENDING " + P1_LANE + " (sweep bounds); anchor 70 sccm ~ 2.1 mg/s owner-stated",
-                           "status": "PENDING", "freeze_point": "NOW", "evidence_class": "owner-stated",
-                           "add_sources": [A93("OQ-RFQ-02", "Start with:"), PEND(P1_LANE, "Ar sweep bounds")]})
+                           "value": "TBD - sweep bounds frozen at P1-G0 (P1 run_matrix F2); anchor 70 sccm ~ 2.1 mg/s "
+                                    "owner-stated",
+                           "status": "TBD", "freeze_point": "P1-G0", "evidence_class": "owner-stated",
+                           "add_sources": [A93("OQ-RFQ-02", "Start with:"), CUR("P1", "F2")]})
     m["RFQ-02-R14"] = ("RFQ2-GAS", "P1_NEEDED", C_U, SPLIT + "; applies to the P1 Ar MFC too", None)
     m["RFQ-02-R16"] = ("RFQ2-GAS", "LATER", C_M, "A9.3 OQ-RFQ-10: quotation OPTION LINE only (G-ATM, G-XE, diagnostic "
                        "injection); primary mode G-REUSE; capped port retained; booked in the ledger if activated", {
@@ -929,7 +1321,9 @@ def v1_mapping() -> dict:
                            "add_sources": [A93("OQ-RFQ-02", "regardless of metrology quality.")]})
     # --------------------------------------------------------------- RFQ-03 RGA
     for i in range(1, 8):
-        m[f"RFQ-03-R{i:02d}"] = ("RFQ2-VAC", "LATER", C_U, SPLIT + "; RGA is not in the P1 minimum list", None)
+        m[f"RFQ-03-R{i:02d}"] = ("RFQ2-VAC", "P1_NEEDED", C_U, SPLIT + "; A9.6 RFQ completion: dispatch LATER -> "
+                                 "P1_NEEDED because the merged P1 bench lists the RGA as REQUIRED in P1-S2..S7 (P1-M-20, "
+                                 "P1-HW-19); text unchanged", None)
     # --------------------------------------------------------------- RFQ-04 RF chain
     for rid in ("RFQ-04-R01", "RFQ-04-R03", "RFQ-04-R05", "RFQ-04-R06", "RFQ-04-R08", "RFQ-04-R09", "RFQ-04-R10",
                 "RFQ-04-R13"):
@@ -1099,14 +1493,18 @@ def carried_requirements() -> list:
 
 
 # ------------------------------------------------------------------------------------------------------ line items
-def L(lid, item, qty, basis, dispatch, covers=(), reqs=(), option=False, v1_ref=None, change="NEW", why=None):
-    return {"id": lid, "item": item, "qty": qty, "basis": basis, "dispatch": dispatch, "option_line": option,
-            "covers_owner_items": list(covers), "requirements": list(reqs), "v1_ref": v1_ref,
-            "change": {"type": change, "why": why}}
+def L(lid, item, qty, basis, dispatch, covers=(), reqs=(), option=False, v1_ref=None, change="NEW", why=None,
+      placement=None):
+    out = {"id": lid, "item": item, "qty": qty, "basis": basis, "dispatch": dispatch, "option_line": option,
+           "covers_owner_items": list(covers), "requirements": list(reqs), "v1_ref": v1_ref,
+           "change": {"type": change, "why": why}}
+    if placement is not None:
+        out["placement"] = copy.deepcopy(placement)
+    return out
 
 
 def line_items() -> dict:
-    p1 = "TBD - requires the P1 bench plan (PENDING " + P1_LANE + ")"
+    p1 = "TBD - quantity per the P1 bench plan (registered at P1-G0)"
     rf = {
         "RFQ2-RF": [
             L("RF-L01", "13.56 MHz laboratory RF generator, mains-powered, GROUND/FACILITY_ONLY; forward-power options "
@@ -1116,10 +1514,12 @@ def line_items() -> dict:
               v1_ref="RFQ-04 quantities[0]", change="CARRIED_MODIFIED",
               why="ground-only classification and capability-range quoting (A9.3 OQ-RFQ-06, A9.2 rf_500W)"),
             L("RF-L02", "dual directional coupler on the generator / 50-ohm side of the local match", 1, "row 72; A9.2",
-              "P1_NEEDED", ["directional coupler"], ["RFQ-04-R08", "RFQ-04-R09"], v1_ref="RFQ-04 quantities[2]",
+              "P1_NEEDED", ["directional coupler"], ["RFQ-04-R08", "RFQ-04-R09", "RFQ2-RF-N08"],
+              v1_ref="RFQ-04 quantities[2]",
               change="CARRIED_MODIFIED", why="v1 quoted coupler + sensors as one line; split to match the owner list"),
             L("RF-L03", "forward/reflected power sensors calibrated at 13.56 MHz", "1 set", "row 72", "P1_NEEDED",
-              ["forward/reflected sensors"], ["RFQ-04-R08", "RFQ-04-R09", "RFQ2-RF-N06"], v1_ref="RFQ-04 quantities[2]",
+              ["forward/reflected sensors"], ["RFQ-04-R08", "RFQ-04-R09", "RFQ2-RF-N06", "RFQ2-RF-N09"],
+              v1_ref="RFQ-04 quantities[2]",
               change="CARRIED_MODIFIED", why="split from the v1 coupler line"),
             L("RF-L04", "adjustable local matching network components for on-module mounting (development article)", 1,
               "row 8; A9.2 OQ-A907-11 / icp_matching_strategy", "P1_NEEDED", ["local matching network components"],
@@ -1127,7 +1527,7 @@ def line_items() -> dict:
             L("RF-L05", "50-ohm RF coax generator -> coupler -> local match (P1 bench)", p1, "A9.2 OQ-A907-11",
               "P1_NEEDED", ["RF coax"], ["RFQ2-RF-N05"], why="new P1 line"),
             L("RF-L06", "flexible RF coax, identical live + sham pair for the thrust-stand crossing", 2,
-              "rows 117, 133", "LATER", ["RF coax"], ["RFQ-04-R11"], v1_ref="RFQ-04 quantities[5]",
+              "rows 117, 133", "LATER", ["RF coax"], ["RFQ-04-R11", "RFQ2-RF-N14"], v1_ref="RFQ-04 quantities[5]",
               change="CARRIED_UNCHANGED"),
             L("RF-L07", "vacuum RF feedthrough (ratings as capability ranges, " + TBD_RF + ")",
               "TBD - requires module drawings (ICD ICP-15) + spare (OQ-RFQ-01, OPEN)", "row 8", "P1_NEEDED",
@@ -1135,7 +1535,8 @@ def line_items() -> dict:
               why="capability-range quoting (A9.2 rf_500W)"),
             L("RF-L08", "50-ohm RF dummy load (rating >= selected generator option; " + TBD_RF + ")", 1,
               "ICD ICP-14 / ICP-17", "P1_NEEDED", ["dummy load"], ["RFQ2-RF-N04"], why="new explicit line"),
-            L("RF-L09", "calorimetric cross-check load", 1, "row 72; A9.1 UBQ-04", "P1_NEEDED", [], ["RFQ-04-R10"],
+            L("RF-L09", "calorimetric cross-check load (P2 INS-P2-07 (a) 50-ohm calorimetric load)", 1,
+              "row 72; A9.1 UBQ-04", "P1_NEEDED", [], ["RFQ-04-R10", "RFQ2-RF-N13"],
               v1_ref="RFQ-04 quantities[3]", change="CARRIED_UNCHANGED"),
             L("RF-L10", "RF protection / interlock functions: reflected-power monitoring, mismatch interlock, arc "
                         "detection where feasible, thermal monitoring, automatic reduction/shutdown (thresholds after "
@@ -1144,6 +1545,39 @@ def line_items() -> dict:
               "P1_NEEDED", ["RF protection/interlocks"], ["RFQ-04-R03", "RFQ-04-R16"], why="made an explicit line"),
             L("RF-L11", "input power analyzer on the laboratory generator mains input (P_mains,in)", 1,
               "A9.3 OQ-RFQ-06", "P1_NEEDED", [], ["RFQ2-RF-N02", "RFQ2-RF-N03"], why="required by A9.3 OQ-RFQ-06"),
+            # ---- A9.6: P2 preparation / P1 RF metrology (placement TBD_OWNER, P2Q-02)
+            L("RF-L12", "V/I probe (complex V and I, phase-resolved) at the antenna-terminal reference plane RP-VI "
+                        "(P2 INS-P2-01)", 1, "P2 INS-P2-01; A9.3 authorizations P2", "P1_NEEDED", [],
+              ["RFQ2-RF-N07", "RFQ2-RF-N06"], why="A9.6 RFQ completion: P2 instrument INS-P2-01", placement=P2Q02_PLACEMENT),
+            L("RF-L13", "vector network analyser, one-port and two-port, receiver/spectrum mode if available "
+                        "(P2 INS-P2-04; P1 two-port / cold-antenna characterization)", 1,
+              "P2 INS-P2-04; P1-HW-07", "P1_NEEDED", [], ["RFQ2-RF-N10"],
+              why="A9.6 RFQ completion: P2 instrument INS-P2-04", placement=P2Q02_PLACEMENT),
+            L("RF-L14", "calibration kits: coaxial SOL/SOLT with standard data + antenna-terminal fixture standards "
+                        "(P2 INS-P2-05)", "1 set (connector family TBD - requires the selected coax / feedthrough, "
+                                         "ICD ICP-15)", "P2 INS-P2-05", "P1_NEEDED", [], ["RFQ2-RF-N11"],
+              why="A9.6 RFQ completion: P2 instrument INS-P2-05 (calibration item)", placement=P2Q02_PLACEMENT),
+            L("RF-L15", "fixed attenuators for sensor / VNA protection and coupling-arm padding (P2 INS-P2-06)",
+              "1 set (values TBD - requires the coupler coupling factor and the generator selection)", "P2 INS-P2-06",
+              "P1_NEEDED", [], ["RFQ2-RF-N12"], why="A9.6 RFQ completion: P2 instrument INS-P2-06",
+              placement=P2Q02_PLACEMENT),
+            L("RF-L16", "antenna-simulator dummy load of VNA-known low-R / high-X impedance (P2 INS-P2-07 (b))", 1,
+              "P2 INS-P2-07", "P1_NEEDED", [], ["RFQ2-RF-N13"],
+              why="A9.6 RFQ completion: P2 instrument INS-P2-07 (b) (dummy load)", placement=P2Q02_PLACEMENT),
+            L("RF-L17", "phase-stable VNA test cables (P2 INS-P2-08; the stand-crossing pair is RF-L06)", "1 set",
+              "P2 INS-P2-08", "P1_NEEDED", [], ["RFQ2-RF-N14"],
+              why="A9.6 RFQ completion: P2 instrument INS-P2-08", placement=P2Q02_PLACEMENT),
+            L("RF-L18", "antenna RF current probe (Rogowski / current transformer) (P2 INS-P2-09; P1-M-07)", 1,
+              "P2 INS-P2-09; P1-M-07", "P1_NEEDED", [], ["RFQ2-RF-N15"],
+              why="A9.6 RFQ completion: P2 instrument INS-P2-09", placement=P2Q02_PLACEMENT),
+            L("RF-L19", "match-element position read-out / encoders on the local match (P2 INS-P2-12; P1-M-09)",
+              "1 per adjustable match element (count TBD - requires the local-match design, RF-L04)",
+              "P2 INS-P2-12; P1-M-09", "P1_NEEDED", ["local matching network components"],
+              ["RFQ2-RF-N16", "RFQ-04-R07"], why="A9.6 RFQ completion: P2 instrument INS-P2-12",
+              placement=P2Q02_PLACEMENT),
+            L("RF-O01", "OPTION: frequency counter / spectrum analyzer for f_RF and harmonics (P1-M-06) - only if RF-L13 "
+                        "has no receiver/spectrum mode", "0 or 1 (option line)", "P1-M-06; row 72", "P1_NEEDED", [],
+              ["RFQ2-RF-N17"], option=True, why="A9.6 RFQ completion: P1-M-06", placement=P2Q02_PLACEMENT),
         ],
         "RFQ2-GAS": [
             L("GAS-L01", "Ar MFC (thermal, Ar-calibrated) covering the P1 window around 70 sccm", 1,
@@ -1190,10 +1624,10 @@ def line_items() -> dict:
                          "(Ar-calibrated for P1)", p1, "A9.3 OQ-RFQ-07; ICD ICP-34; H2-6", "P1_NEEDED",
               ["pressure instrumentation"], ["RFQ2-GAS-N06"], why="owner family item"),
             L("GAS-L13", "Hall anode gas isolator (350 V continuous; ~1 kV DC representative-gas qualification)",
-              "TBD - requires the P1 gas schematic (PENDING " + P1_LANE + ")", "row 105; H2-3 H23-27", "P1_NEEDED",
+              "TBD - requires the P1 gas schematic (P1-HW-12; P1-G0)", "row 105; H2-3 H23-27", "P1_NEEDED",
               ["gas isolators"], ["RFQ2-GAS-N05"], why="owner family item; P1 runs H-1 on Ar"),
             L("GAS-L14", "ICP gas-line isolator - only where a line bridges isolated potentials (none for the capped "
-                         "G-REUSE port)", "TBD - requires the P1 potential map (PENDING " + P1_LANE + ")",
+                         "G-REUSE port)", "TBD - requires the P1 potential map (P1-HW-12, P1-IT-20; P1-G0)",
               "A9.3 ICPQ-06", "P1_NEEDED", ["gas isolators"], ["RFQ2-GAS-N04"], why="A9.3 ICPQ-06"),
             L("GAS-L15", "Xe-line dielectric break (C1 branch)", "TBD - requires the C1 circuit potentials",
               "H2-2 H3-C1-04", "LATER", ["gas isolators"], ["RFQ-08-R12"], change="CARRIED_UNCHANGED",
@@ -1202,6 +1636,10 @@ def line_items() -> dict:
                          "verification; NABL/ISO-17025 for score-bearing N2/O2/Xe", "per device",
               "rows 124, 126; A9.3 OQ-RFQ-02", "P1_NEEDED", ["calibration"],
               ["RFQ-02-R18", "RFQ2-GAS-N03"], why="owner family item made explicit"),
+            L("GAS-L17", "rate-of-rise / transfer calibration volume with reference pressure transducer (Ar controller "
+                         "verification; P1-HW-10)", "1 (TBD - requires the UB-F-07 allocation; the facility may hold one)",
+              "A9.3 OQ-RFQ-02; UB-F-07", "P1_NEEDED", ["calibration"], ["RFQ2-GAS-N08", "RFQ2-GAS-N03"],
+              why="A9.6 RFQ completion: P1-HW-10 (calibration item)"),
         ],
         "RFQ2-VAC": [
             L("VAC-L01", "chamber interface flanges / adapter plates / internal mounting", "TBD - requires facility "
@@ -1217,9 +1655,11 @@ def line_items() -> dict:
               ["RFQ2-VAC-N03", "RFQ2-VAC-N07"], why="owner family item; A9.4 P1Q-14 DWV / design withstand added"),
             L("VAC-L04", "gas feedthroughs", p1, "A9.3 OQ-RFQ-07", "P1_NEEDED", ["feedthroughs"], ["RFQ2-VAC-N04"],
               why="owner family item"),
-            L("VAC-L05", "RGA head + electronics + differentially pumped sampling system (~200 amu)", 1, "row 127",
-              "LATER", ["RGA/diagnostic interfaces"], [f"RFQ-03-R0{i}" for i in range(1, 8)],
-              v1_ref="RFQ-03 quantities[0]", change="CARRIED_UNCHANGED"),
+            L("VAC-L05", "RGA head + electronics + differentially pumped sampling system (~200 amu)", 1, "row 127; P1-M-20",
+              "P1_NEEDED", ["RGA/diagnostic interfaces"], [f"RFQ-03-R0{i}" for i in range(1, 8)],
+              v1_ref="RFQ-03 quantities[0]", change="CARRIED_MODIFIED",
+              why="A9.6 RFQ completion: dispatch LATER -> P1_NEEDED because the merged P1 bench lists the RGA as "
+                  "REQUIRED in P1-S2..S7 (P1-M-20, P1-HW-19); item text and requirements unchanged"),
             L("VAC-L06", "RGA / diagnostic port provisions", "TBD - requires facility layout (ICD ICP-07)",
               "A9.3 OQ-RFQ-07; INS-22", "LATER", ["RGA/diagnostic interfaces"], ["RFQ2-VAC-N05"],
               why="owner family item"),
@@ -1237,17 +1677,22 @@ def line_items() -> dict:
             L("HE-L02", "H-1 magnet supplies, one per coil, current control, 4-wire remote sense",
               "TBD - one per MC-1 coil (H2-1)", "row 110; H2-4 H3-PPU-02", "P1_NEEDED", ["magnet supply"],
               ["RFQ2-HALLEL-N02"], why="owner family item"),
-            L("HE-L03", "floating ICP collector/bias supply with V/I readback (current capability to the 8.33 A stand "
-                        "ceiling)", 1, "row 70; ICD ICP-21; A9.3 OQ-A907-02", "P1_NEEDED", [],
-              ["RFQ-05-R07", "RFQ2-HALLEL-N01"], v1_ref="RFQ-05 quantities[4]", change="CARRIED_MODIFIED",
-              why="moved from v1 RFQ-05; stand-ceiling sizing"),
+            L("HE-L03", "floating ICP collector/bias supply with signed V/I readback: output isolation 350 V class, "
+                        ">= 525 V design withstand, 1.05 kV DC / 60 s DWV where ratings permit (A9.4 P1Q-14); current "
+                        "capability to the 8.33 A stand ceiling; bias range TBD (A902-23)", 1,
+              "row 70; ICD ICP-21; A9.3 OQ-A907-02; A9.4 P1Q-14", "P1_NEEDED", [],
+              ["RFQ-05-R07", "RFQ2-HALLEL-N01", "RFQ2-HALLEL-N04", "RFQ2-HALLEL-N05", "RFQ2-HALLEL-N08"],
+              v1_ref="RFQ-05 quantities[4]", change="CARRIED_MODIFIED",
+              why="moved from v1 RFQ-05; stand-ceiling sizing; A9.6: A9.4 P1Q-14 isolation class and A9.5 readback "
+                  "metrology made explicit on the line"),
             L("HE-L04", "isolation hardware for the discharge and collector/bias circuits (350 V class, incl. the ICP "
                         "body / collector circuits per A9.4 P1Q-14: >= 525 V design withstand; 1.05 kV DC / 60 s initial "
                         "DWV of passive insulation paths where ratings permit)", p1,
               "row 81; ICD ICP-23; A9.4 P1Q-14", "P1_NEEDED", ["isolation"], ["RFQ-05-R08", "RFQ2-HALLEL-N04"],
               why="owner family item; A9.4 P1Q-14 DWV / design withstand added"),
             L("HE-L05", "discharge and collector V/I sensing (current ranges >= 8.33 A)", p1,
-              "A9.3 OQ-VI-05, OQ-A907-02", "P1_NEEDED", ["sensing"], ["RFQ2-HALLEL-N03"], why="owner family item"),
+              "A9.3 OQ-VI-05, OQ-A907-02", "P1_NEEDED", ["sensing"], ["RFQ2-HALLEL-N03", "RFQ2-HALLEL-N08"],
+              why="owner family item; A9.6: A9.5 closure metrology"),
             L("HE-L06", "flight-representative breadboard Hall discharge supply", 1, "row 113", "LATER",
               ["discharge supply"], ["RFQ-06-R01", "RFQ-06-R02", "RFQ-06-R04"], v1_ref="RFQ-06 quantities[0]",
               change="CARRIED_UNCHANGED"),
@@ -1274,6 +1719,30 @@ def line_items() -> dict:
               v1_ref="RFQ-08 quantities[4]", change="CARRIED_UNCHANGED"),
             L("HE-L14", "selectable cathode-common/bleeder network", 1, "row 91", "LATER", [], ["RFQ-08-R11"],
               v1_ref="RFQ-08 quantities[5]", change="CARRIED_UNCHANGED"),
+            # ---- A9.6: A9.4 P1Q-13 / A9.5 P1Q-15 bench electrical lines
+            L("HE-L15", "H-1 body single-point metered ground-current monitor (continuous I_body->ground) + chamber / "
+                        "facility return-current monitor(s) where measurable (A9.4 P1Q-13)",
+              "1 H-1 body monitor + facility / chamber return monitor(s) (count TBD - requires the P1 return-path map, "
+              "P1-M-13; P1-G0)", "A9.4 P1Q-13; P1-M-29, P1-M-13", "P1_NEEDED", ["sensing"],
+              ["RFQ2-HALLEL-N06", "RFQ2-HALLEL-N08", "RFQ2-HALLEL-N01"],
+              why="A9.6 RFQ completion: A9.4 P1Q-13 (closes OQ-RFQV2-07 by mechanical propagation)"),
+            L("HE-L16", "high-impedance isolated V_anode channel + V_ref channel for V_d (A9.4 P1Q-13; P1-M-15)",
+              "1 V_anode + 1 V_ref", "A9.4 P1Q-13; P1-M-15, P1-HW-31", "P1_NEEDED", ["sensing"],
+              ["RFQ2-HALLEL-N07", "RFQ2-HALLEL-N08"],
+              why="A9.6 RFQ completion: A9.4 P1Q-13 (closes OQ-RFQV2-07 by mechanical propagation)"),
+            L("HE-L17", "H-1 anode physical disconnect means (discharge-supply output physically disconnected; state "
+                        "recorded on the DAQ) (A9.4 P1Q-13; P1-HW-24)", 1, "A9.4 P1Q-13; P1-IT-39, P1-HW-24",
+              "P1_NEEDED", ["isolation"], ["RFQ2-HALLEL-N07"],
+              why="A9.6 RFQ completion: A9.4 P1Q-13 anode OPEN_CIRCUIT_BY_CONSTRUCTION"),
+            L("HE-L18", "floating-rated V/I channels for the ICP body (V_body, I_body) and the P1-S4 electron-collecting "
+                        "electrode (current + divider) (P1-M-12, P1-M-27)",
+              "TBD - per the registered P1-S4 topology (P1-IT-36; P1-G0)", "A9.4 P1Q-10, P1Q-13; P1-M-12, P1-M-27",
+              "P1_NEEDED", ["sensing"], ["RFQ2-HALLEL-N08", "RFQ2-HALLEL-N04"],
+              why="A9.6 RFQ completion: P1-M-12 / P1-M-27 channels"),
+            L("HE-O02", "OPTION: current-limited DC dielectric-withstand tester >= 1.05 kV with leakage read-out "
+                        "(P1-HW-30)", "0 or 1 (option line; TBD_OWNER OQ-RFQV2-08)", "A9.4 P1Q-14; P1-HW-30",
+              "P1_NEEDED", ["isolation"], ["RFQ2-HALLEL-N09"], option=True,
+              why="A9.6 RFQ completion: P1-HW-30 (both DWV routes of OQ-RFQV2-08 kept)"),
         ],
         "RFQ2-MECH": [
             L("ME-L01", "dielectric source tube/chamber (open-tube coaxial)", "TBD - requires module drawings + spare "
@@ -1299,6 +1768,10 @@ def line_items() -> dict:
               ["RFQ-05-R01", "RFQ-05-R02", "RFQ-05-R09", "RFQ-05-R10"], why="made an explicit line"),
             L("ME-L08", "on-module mounting provision for the local matching network", 1, "A9.2 OQ-A907-11",
               "P1_NEEDED", [], ["RFQ-05-R13"], why="made an explicit line"),
+            L("ME-O01", "OPTION: P1-S4 dedicated electron-collecting target (isolated plate, support, position datum, "
+                        "feedthrough lead) - only if topology A is registered (P1-IT-36)",
+              "0 or 1 (option line; geometry TBD at P1-G0)", "A9.4 P1Q-10; P1-HW-36", "P1_NEEDED", ["collector"],
+              ["RFQ2-MECH-N05"], option=True, why="A9.6 RFQ completion: P1-HW-36"),
         ],
         "RFQ2-THRUST": [
             L("TH-L01", "critical-part set for one in-house torsional stand (Option A)", 1, "row 118", "LATER",
@@ -1313,7 +1786,8 @@ def line_items() -> dict:
             L("TH-L03", "spare flexure pivots", "TBD - requires owner call (OQ-RFQ-01, OPEN)", "-", "LATER", ["stand"],
               [], v1_ref="RFQ-01 quantities[3]", change="CARRIED_UNCHANGED"),
             L("TH-L04", "P1 DAQ: synchronized acquisition of the OQ-VI-05 / ICP-34 channel list on a common time base",
-              1, "A9.3 OQ-VI-05, OQ-RFQ-07", "P1_NEEDED", ["DAQ"], ["RFQ2-THRUST-N01"], why="owner family item"),
+              1, "A9.3 OQ-VI-05, OQ-RFQ-07", "P1_NEEDED", ["DAQ"], ["RFQ2-THRUST-N01", "RFQ2-THRUST-N05"],
+              why="owner family item; A9.6: event / state channels"),
             L("TH-L05", "temperature sensors for the ICP-34 temperature channels", p1, "ICD ICP-34", "P1_NEEDED",
               ["DAQ"], ["RFQ2-THRUST-N01"], why="P1 temperature channels (A9.3 P1 authorization lists temperature)"),
             L("TH-L06", "traceability hardware: calibration references / certificates for DAQ V/I/T channels, RF "
@@ -1327,6 +1801,11 @@ def line_items() -> dict:
                         "current, collector / current-path and pressure channels (A9.4 P2Q-05)", 1, "A9.4 P2Q-05; INS-18",
               "P1_NEEDED", ["DAQ"], ["RFQ2-THRUST-N03", "RFQ2-THRUST-N01"],
               why="A9.4 P2Q-05 procurement: DAQ channel"),
+            L("TH-L09", "calibration services / certificates for the P1 instruments not delivered with a valid "
+                        "certificate (MS-G-01..03; A9.5 current-channel components)",
+              "per instrument (TBD - requires the dispatched P1 line set)", "P1 metrology_spec; row 126; A9.5 P1Q-15",
+              "P1_NEEDED", ["traceability hardware"], ["RFQ2-THRUST-N04", "RFQ-09-R01"],
+              why="A9.6 RFQ completion: owner sec. 13 'calibration items'"),
         ],
     }
     return rf
@@ -1349,7 +1828,362 @@ NOT_IN_THIS_REVISION = [
      "why": "owner question OQ-A907-07 is OPEN (state v3); not answered here", "source": "owner_questions_state_v3"},
     {"id": "NIR-05", "item": "atomic-O source / AO life programme hardware", "package_when_issued": "separate programme",
      "why": "A9 evidence order: separate atomic-O life programme; RFQ-09-R06 stays TBD", "source": "A9; row 132"},
+    {"id": "NIR-06", "item": "H-1 fabrication (H2-1 CI H-1 with MC-1; H2-3 gas path / anode plenum), needed from P1-S3",
+     "package_when_issued": "TBD_OWNER (OQ-RFQV2-10: separate fabrication RFQ, RFQ2-MECH extension, or in-house)",
+     "why": "outside the six owner RFQ families (A9.3 OQ-RFQ-07 lists ICP fabrication only); no route is selected here",
+     "source": "A9.3 OQ-RFQ-07; P1-HW-15, P1-HW-22 (merged P1 package)"},
 ]
+
+
+
+# ------------------------------------------------------------------------ per-line quote sheets (A9.6 RFQ completion)
+NA_CAL = "n/a - no calibrated measurand (dimensional / material / functional item)"
+P2_ACC = "supplier states the offered value of every copied P2 specification row; incoming verification with RF-L13 / " \
+         "RF-L14 where the P2 calibration plan applies"
+LINE_QA = {
+    # ---- RF
+    "RF-L01": (["factory test report: forward power over the quoted capability range into 50 ohm at 13.56 MHz",
+                "each protection feature demonstrated (RF-L10); trip thresholds set after characterization"],
+               ["internal meters indicative only; P_RF is measured by RF-L02 / RF-L03 at RP-RF-50"],
+               ["capability-range / scalable-option table (A9.2 rf_500W)",
+                "mains input interface (phases, voltage, frequency) for RF-L11",
+                "remote-control, interlock and data interfaces"]),
+    "RF-L02": (["coupling factor and directivity at 13.56 MHz verified on delivery (certificate or RF-L13 / RF-L14 check)"],
+               ["13.56 MHz coupling-factor and directivity certificate with uncertainty (RFQ2-THRUST-N04)"],
+               ["power capability range; connector family (CIF-C01); vector (phase) output yes/no (P2 INS-P2-02)"]),
+    "RF-L03": (["zero and linearity check against the certificate"],
+               ["traceable 13.56 MHz certificate with uncertainty and coverage factor (P2 INS-P2-03)"],
+               ["range / linearity, zeroing procedure, DAQ interface on the common time base (CIF-T01)"]),
+    "RF-L04": (["tuning range demonstrated on the antenna-simulator load (RF-L16) and the dummy load; no rating is "
+                "accepted before the impedance map"],
+               ["n/a - element positions are read by RF-L19"],
+               ["matching-element V / I capability ranges (A9.2 rf_500W)", "mounting interface to ME-L08"]),
+    "RF-L05": (["insertion and return loss at 13.56 MHz measured with RF-L13 before first use"],
+               ["two-port data recorded as the line-loss characterization (P1-M-03; validity rule P1-IT-41)"],
+               ["cable type, length, connector family (CIF-C01), power capability range"]),
+    "RF-L07": (["vacuum leak check; two-port S-parameters at 13.56 MHz with RF-L13"],
+               ["enters the P1-M-03 line / match-loss characterization"],
+               ["voltage / current capability ranges; flange family (CIF-C02); RF insulation data (ICD ICP-44 OPEN)"]),
+    "RF-L08": (["return loss at 13.56 MHz; power capability not less than the selected generator option (rule)"],
+               ["13.56 MHz impedance record (certificate or RF-L13 measurement)"],
+               ["power capability range; cooling needs"]),
+    "RF-L09": (["calorimetric cross-check against RF-L02 / RF-L03 at the labelled boundaries (H4-RFQ2-06; agreement "
+                "factor per P1-IT-24)"],
+               ["calorimeter flow and temperature channels traceable (RFQ2-THRUST-N04)"],
+               ["calorimetric method and uncertainty budget; 50-ohm return loss"]),
+    "RF-L10": (["functional test of each feature (A9.2 rf_protection); thresholds set after characterization"],
+               ["reflected-power trip reading checked against RF-L03"],
+               ["adjustable range of each threshold; interlock I/O list (ICD ICP-16)"]),
+    "RF-L11": (["accuracy verification against its certificate on delivery"],
+               ["certificate with uncertainty and coverage factor (MS-G-01..03)"],
+               ["wiring configurations for the generator mains input; data interface (CIF-T01)"]),
+    "RF-L12": ([P2_ACC, "phase verification traceable through RF-L13 / RF-L14 (P2 calibration plan)"],
+               ["13.56 MHz V, I and phase calibration; accredited scope or in-house VNA-traceable procedure TBD_OWNER "
+                "(P2Q-07)"],
+               ["V / I / phase uncertainty, mounting and vacuum / thermal compatibility (P2 INS-P2-01)"]),
+    "RF-L13": ([P2_ACC], ["calibration certificate of the analyser (MS-G-01..03)"],
+               ["frequency span, port power / input protection, receiver / spectrum mode yes/no (P2 INS-P2-04)"]),
+    "RF-L14": ([P2_ACC], ["standard-definition data of every standard; fixture-standard characterization"],
+               ["connector family; fixture standards for the antenna terminal (P2 INS-P2-05)"]),
+    "RF-L15": ([P2_ACC], ["13.56 MHz S-parameter data per attenuator"],
+               ["attenuation values and power capability (P2 INS-P2-06)"]),
+    "RF-L16": ([P2_ACC], ["VNA-measured impedance record at 13.56 MHz (never taken from the analog)"],
+               ["impedance and power capability (P2 INS-P2-07 (b))"]),
+    "RF-L17": ([P2_ACC], ["phase stability versus flexure / temperature data"],
+               ["cable type, length, connector family (P2 INS-P2-08)"]),
+    "RF-L18": ([P2_ACC], ["13.56 MHz transfer-impedance / sensitivity certificate"],
+               ["current range and mounting (P2 INS-P2-09)"]),
+    "RF-L19": (["position repeatability demonstrated over the element travel"],
+               ["n/a - position read-out; resolution stated (P2 INS-P2-12)"],
+               ["resolution and interface to the DAQ (match_setting_id, P1-M-09)"]),
+    "RF-O01": (["frequency and harmonic readings verified against RF-L13 where both exist"],
+               ["calibration certificate (MS-G-01..03)"], ["frequency span and dynamic range"]),
+    # ---- GAS
+    "GAS-L01": (["rate-of-rise / transfer verification with GAS-L17 (A9.3 OQ-RFQ-02)"],
+                ["maker's Ar-specific certificate; accredited certificate TBD_OWNER (OQ-RFQV2-01)"],
+                ["full-scale range, accuracy, sccm reference conditions (CIF-U02), Ar calibration basis"]),
+    "GAS-O01": (["as GAS-L01 (only if the second range is taken)"], ["as GAS-L01"],
+                ["overlap with GAS-L01 range stated"]),
+    "GAS-L07": (["helium leak test record; open / close function"], [NA_CAL],
+                ["valve type, seat material, leak rate, fitting family (CIF-C03)"]),
+    "GAS-L12": (["gauges cross-checked at a common pressure"],
+                ["Ar calibration or gas-correction basis with uncertainty (A9.1 UBQ-08)"],
+                ["range, gauge type, placement per H26-30"]),
+    "GAS-L13": (["~1 kV DC representative-pressure / gas withstand record (Ar for P1): flashover, leakage, breakdown, "
+                 "surface tracking (row 105)"],
+                ["test-voltage and leakage instruments traceable"],
+                ["350 V continuous rating; geometry; p d range (H23-27, H23-29)"]),
+    "GAS-L14": (["~1 kV DC representative-gas withstand record, only for a line that bridges isolated potentials "
+                 "(A9.3 ICPQ-06); none for the capped G-REUSE port"],
+                ["test-voltage and leakage instruments traceable"], ["geometry and rating per bridged potential"]),
+    "GAS-L16": (["certificate per device and gas present before the first P1 run"],
+                ["own-gas certificates; NABL / ISO-17025 for score-bearing N2 / O2 / Xe (row 126); Ar via rate-of-rise / "
+                 "transfer (A9.3 OQ-RFQ-02)"],
+                ["certificate list per device"]),
+    "GAS-L17": (["volume determination record with uncertainty"],
+                ["reference-transducer certificate (MS-G-01..03)"],
+                ["volume, transducer range, temperature sensing; UB-F-07 contribution"]),
+    # ---- VAC
+    "VAC-L01": (["fit check against the facility port drawings"], [NA_CAL], ["flange family per port (CIF-C02); drawings"]),
+    "VAC-L02": (["base pressure and Ar throughput at the P1 flow recorded (no acceptance number set here)"],
+                ["pressure read by Ar-calibrated gauges (GAS-L12)"], ["Ar pumping speed, base pressure, interface flange"]),
+    "VAC-L03": (["vacuum leak check; DWV 1.05 kV DC / 60 s record for ICP body / collector assemblies where ratings "
+                 "permit (A9.4 P1Q-14)"],
+                ["DWV and leakage instruments traceable"],
+                ["current (>= 8.33 A) and voltage rating per pin; rated withstand per assembly"]),
+    "VAC-L04": (["helium leak check"], [NA_CAL], ["fitting family (CIF-C03); O2 cleaning where O2 later passes (row 107)"]),
+    "VAC-L05": (["mass-scale and Ar sensitivity check"], ["Ar-specific sensitivity calibration (A9.1 UBQ-08)"],
+                ["mass range ~200 amu, differential pumping, data interface (CIF-T01)"]),
+    "VAC-L07": (["line of sight to the ICP source volume verified at installation (A9.4 P2Q-05)"],
+                ["transmission-band data"], ["transmission band, flange family, coating protection / replacement"]),
+    # ---- HALLEL
+    "HE-L01": (["output V / I verified over 0-350 V and to the 8.33 A stand ceiling into a load; floating isolation"],
+               ["V / I readback certificate"], ["ratings, isolation, remote-control and interlock I/O"]),
+    "HE-L02": (["current regulation verified per coil with 4-wire remote sense"],
+               ["current readback certificate (P1-M-24)"], ["current / voltage ratings against MC-1 (TBD); floating output"]),
+    "HE-L03": (["rated withstand >= 525 V stated; 1.05 kV DC / 60 s DWV where ratings permit (A9.4 P1Q-14)",
+                "signed readback polarity demonstrated"],
+               ["V / I readback certificate with calibration, zero/offset, resolution, repeatability (A9.5 P1Q-15)"],
+               ["offered bias range (A902-23 TBD); current capability >= 8.33 A"]),
+    "HE-L04": (["initial DWV 1.05 kV DC / 60 s of passive insulation paths where ratings permit, leakage recorded "
+                "(A9.4 P1Q-14)"],
+               ["leakage measurement traceable"], ["rated withstand per item (>= 525 V)"]),
+    "HE-L05": (["channel audit (H4-RFQ2-05); RF pickup check RF-on / plasma-off (P1-M-22)"],
+               ["certificate with the A9.5 current-channel components"], ["range, bandwidth, isolation"]),
+    "HE-L15": (["installation check that the monitor is the only deliberate H-1 body ground path (A9.4 P1Q-13)",
+                "signed polarity demonstrated"],
+               ["certificate with the A9.5 current-channel components"],
+               ["range, resolution, over-range survivability, isolated readout"]),
+    "HE-L16": (["input impedance and isolation verified; reading taken with the anode floating"],
+               ["divider-ratio certificate"], ["input impedance, isolation voltage, leakage bound"]),
+    "HE-L17": (["open-state insulation resistance across the open disconnect recorded; state indication on the DAQ"],
+               ["n/a - state device (state input verified in the DAQ channel audit)"],
+               ["voltage / current ratings; whether rated for switching under load (supplier states)"]),
+    "HE-L18": (["channel audit; RF pickup check"], ["certificate with the A9.5 current-channel components"],
+               ["isolation class (CIF-G07); ranges"]),
+    "HE-O02": (["output voltage and current limit verified"], ["voltage and leakage-current certificate"],
+               ["maximum voltage, current limit, leakage resolution"]),
+    # ---- MECH
+    "ME-L01": (["dimensional inspection against the LOCK-1 drawings; material certificate"], [NA_CAL],
+               ["material and continuous-use temperature with basis (RFQ2-MECH-N04; ICP_COUPLED_THERMAL UNRESOLVED)"]),
+    "ME-L02": (["dimensional inspection; cold antenna impedance recorded with RF-L13 after installation (record only)"],
+               [NA_CAL], ["conductor material; RF insulation data (ICD ICP-44 OPEN)"]),
+    "ME-L03": (["dimensional inspection; material certificate (316L for Ar engineering only)"], [NA_CAL],
+               ["material certificate; flight collector material not frozen"]),
+    "ME-L05": (["fit check on KC-1 / H-1 mount; modular exchange provision demonstrated"], [NA_CAL],
+               ["interface drawing with the ICP_ORIFICED_VARIANT exchange provision"]),
+    "ME-L06": (["dimensional inspection; non-ferromagnetic certificate inside the MC-1 exclusion zone (ICD ICP-32)"],
+               [NA_CAL], ["surface finish / emittance data where offered (radiative-view objective)"]),
+    "ME-L07": (["capped dedicated gas port leak-tight; pressure port present"], [NA_CAL],
+               ["MODULE_ID provision; port drawings"]),
+    "ME-L08": (["fit check with RF-L04"], [NA_CAL], ["mounting drawing"]),
+    "ME-O01": (["dimensional inspection; isolation per CIF-G07 where ratings permit"], [NA_CAL],
+               ["material certificate; position-datum drawing"]),
+    # ---- THRUST / METROLOGY
+    "TH-L04": (["channel audit against RFQ2-THRUST-N01 / N05 and ICD ICP-34 (H4-RFQ2-05)"],
+               ["per-channel certificate (MS-G-01..03)"],
+               ["channel count, sample rate, isolation, common time-base synchronization (INS-18)"]),
+    "TH-L05": (["continuity and room-temperature check"], ["sensor certificates (INS-17)"],
+               ["type, range, vacuum compatibility; recorded only (ICP_COUPLED_THERMAL UNRESOLVED)"]),
+    "TH-L06": (["certificate validity of each reference"], ["reference-standard certificates"], ["reference list"]),
+    "TH-L07": (["dark offset recorded; saturation / over-range indication demonstrated (A9.4 P2Q-05); no threshold set"],
+               ["maker's spectral-response / responsivity data (no threshold)"],
+               ["spectral response, dark current / noise, linear range, saturation level, gain / bandwidth"]),
+    "TH-L08": (["channel on the common time base; saturation flag recorded"], ["channel certificate"],
+               ["input range and sample rate"]),
+    "TH-L09": (["certificates delivered before the first P1 run"], ["MS-G-01..03 per instrument"],
+               ["certificate list per instrument with the A9.5 components for current channels"]),
+}
+
+
+def attach_quote_sheets(items: dict, reqs: list) -> None:
+    """Per-line quote sheet: specification rows derived from the line's requirements (value / TBD + freeze gate),
+    acceptance, calibration/traceability and documentation. P1_NEEDED lines must carry explicit entries."""
+    by = {r["id"]: r for r in reqs}
+    by.update({r["v1_id"]: r for r in reqs if r["v1_id"]})
+    order = {f: i for i, f in enumerate(FREEZE_POINTS)}
+    known = set()
+    for pk, lits in items.items():
+        for li in lits:
+            known.add(li["id"])
+            spec = []
+            for rid in li["requirements"]:
+                r = by[rid]
+                spec.append({"requirement": r["id"], "v1_id": r["v1_id"], "title": r["title"], "value": r["value"],
+                             "units": r["units"], "freeze_point": r["freeze_point"], "status": r["status"]})
+            gate = max((s_["freeze_point"] for s_ in spec), key=lambda f: order[f]) if spec else None
+            qa = LINE_QA.get(li["id"])
+            if li["dispatch"] == "P1_NEEDED":
+                if qa is None or not all(qa):
+                    raise ValueError(f"P1_NEEDED line {li['id']} lacks acceptance / calibration / documentation")
+                if not spec:
+                    raise ValueError(f"P1_NEEDED line {li['id']} has no specification requirement")
+            li["quote_sheet"] = {
+                "spec": spec, "freeze_gate": gate,
+                "acceptance": list(qa[0]) if qa else ["package-level acceptance list (carried v1)"],
+                "calibration_traceability": list(qa[1]) if qa else ["package-level calibration list (carried v1)"],
+                "documentation": list(qa[2]) if qa else ["package-level documentation list (carried v1)"],
+                "send_state": ("READY_TO_SEND_FOR_QUOTATION (owner / procurement; A9.4); purchase order NOT authorized"
+                               if li["dispatch"] == "P1_NEEDED" else
+                               "LATER (sent with the later campaign set); purchase order NOT authorized"),
+            }
+    stale = set(LINE_QA) - known
+    if stale:
+        raise KeyError(f"quote sheets for unknown lines: {sorted(stale)}")
+
+
+# ------------------------------------------------------------------ instrument coverage cross-check (A9.6 sec. 13)
+NOT_PROCURED = {
+    "NP-FACILITY": {"disposition": "FACILITY_PROVIDED_NOT_PROCURED",
+                    "why": "the P1 chamber is the identified domestic engineering chamber (row 139); its interfaces and "
+                           "any missing pumping are RFQ lines VAC-L01 / VAC-L02 (OQ-RFQV2-02 open)"},
+    "NP-H1-BUILD": {"disposition": "NOT_PROCURED_IN_THIS_RFQ_REVISION",
+                    "why": "H-1 (H2-1 CI H-1, MC-1) and its Ar gas path / anode plenum (H2-3) are H-1 design / build "
+                           "items outside the six owner RFQ families; procurement route TBD_OWNER (OQ-RFQV2-10; NIR-06)"},
+}
+
+# P1 measurement id -> RFQ lines (or a NOT_PROCURED key)
+P1_MEAS_COVERAGE = {
+    "P1-M-01": ["RF-L02", "RF-L03"], "P1-M-02": ["RF-L02", "RF-L03"],
+    "P1-M-03": ["RF-L13", "RF-L14", "RF-L17", "RF-L08", "RF-L09"], "P1-M-04": ["RF-L09"], "P1-M-05": ["RF-L11"],
+    "P1-M-06": ["RF-O01", "RF-L13"], "P1-M-07": ["RF-L18"], "P1-M-08": ["RF-L13", "RF-L12", "RF-L14"],
+    "P1-M-09": ["RF-L19", "RF-L04", "TH-L04"], "P1-M-10": ["HE-L03", "HE-L05"], "P1-M-11": ["HE-L05", "HE-L03"],
+    "P1-M-12": ["HE-L18"], "P1-M-13": ["HE-L15"], "P1-M-14": ["HE-L05", "HE-L01"], "P1-M-15": ["HE-L16"],
+    "P1-M-16": ["GAS-L12"], "P1-M-17": ["GAS-L12", "ME-L07"], "P1-M-18": ["GAS-L01", "GAS-O01"],
+    "P1-M-19": ["GAS-O02"], "P1-M-20": ["VAC-L05"], "P1-M-21": ["TH-L05"], "P1-M-22": ["TH-L04", "HE-L05"],
+    "P1-M-23": ["TH-L04"], "P1-M-24": ["HE-L02", "TH-L04"], "P1-M-25": ["RF-L10", "TH-L04"], "P1-M-26": ["TH-L04"],
+    "P1-M-27": ["HE-L18", "ME-O01"], "P1-M-28": ["TH-L07", "TH-L08", "VAC-L07"], "P1-M-29": ["HE-L15"],
+}
+P1_HW_COVERAGE = {
+    "P1-HW-01": ["RF-L01"], "P1-HW-02": ["RF-L02", "RF-L03"], "P1-HW-03": ["RF-L04", "ME-L08", "RF-L19"],
+    "P1-HW-04": ["RF-L05", "RF-L07"], "P1-HW-05": ["RF-L08", "RF-L09"], "P1-HW-06": ["RF-L10"],
+    "P1-HW-07": ["RF-L13", "RF-L14", "RF-L15", "RF-L17"], "P1-HW-08": ["RF-L11"], "P1-HW-09": ["GAS-L01", "GAS-O01"],
+    "P1-HW-10": ["GAS-L17"], "P1-HW-11": ["GAS-L12"], "P1-HW-12": ["GAS-L13", "GAS-L14"], "P1-HW-13": ["GAS-O02"],
+    "P1-HW-14": ["ME-L07"], "P1-HW-15": "NP-H1-BUILD", "P1-HW-16": "NP-FACILITY", "P1-HW-17": ["VAC-L02"],
+    "P1-HW-18": ["VAC-L03", "VAC-L04", "RF-L07"], "P1-HW-19": ["VAC-L05"], "P1-HW-20": ["VAC-L07"],
+    "P1-HW-21": ["ME-L07", "GAS-L12"], "P1-HW-22": "NP-H1-BUILD", "P1-HW-23": ["HE-L01", "HE-L05"],
+    "P1-HW-24": ["HE-L16", "HE-L17"], "P1-HW-25": ["HE-L02"], "P1-HW-26": ["HE-L03"], "P1-HW-27": ["HE-L18", "ME-O01"],
+    "P1-HW-28": ["HE-L15"], "P1-HW-29": ["HE-L04"], "P1-HW-30": ["HE-O02"], "P1-HW-31": ["HE-L16"],
+    "P1-HW-32": ["HE-L10", "HE-L11", "HE-L12"], "P1-HW-33": ["ME-L01"], "P1-HW-34": ["ME-L02"], "P1-HW-35": ["ME-L03"],
+    "P1-HW-36": ["ME-O01"], "P1-HW-37": ["ME-L05"], "P1-HW-38": ["ME-L06"], "P1-HW-39": ["TH-L04"],
+    "P1-HW-40": ["TH-L07", "TH-L08"], "P1-HW-41": ["TH-L06", "TH-L09"], "P1-HW-42": ["TH-L01"],
+}
+P1_HW_NOTES = {
+    "P1-HW-32": "C1 stays CONTROL_FALLBACK and LATER; whether C1 hardware must be physically present (disconnected) in "
+                "P1-S6 is TBD_OWNER (OQ-RFQV2-09)",
+    "P1-HW-42": "thrust stand LATER: not required for P1-S0..S6 (only if P1-S7 is run on the stand)",
+}
+P2_INS_COVERAGE = {
+    "INS-P2-01": ["RF-L12"], "INS-P2-02": ["RF-L02"], "INS-P2-03": ["RF-L03"], "INS-P2-04": ["RF-L13"],
+    "INS-P2-05": ["RF-L14"], "INS-P2-06": ["RF-L15"], "INS-P2-07": ["RF-L09", "RF-L16", "RF-L08"],
+    "INS-P2-08": ["RF-L17", "RF-L06"], "INS-P2-09": ["RF-L18"], "INS-P2-10": ["TH-L07", "TH-L08", "VAC-L07"],
+    "INS-P2-11": ["RF-L11"], "INS-P2-12": ["RF-L19"],
+}
+
+
+def instrument_coverage(pkgs: list) -> dict:
+    """Every P1 measurement, P1 hardware item and P2 instrument id of the MERGED P1 / P2 packages maps to RFQ lines or to
+    an explicit not-procured disposition; raises on any unmapped, stale or unknown id (fail-closed)."""
+    lines = {li["id"]: (p["id"], li) for p in pkgs for li in p["line_items"]}
+    p1 = current("P1")
+    p2 = current("P2")
+    specs = [("p1_measurements", "P1", {m["id"]: m for m in p1["measurements"]}, P1_MEAS_COVERAGE,
+              lambda m: m["quantity"], lambda m: m["status"]),
+             ("p1_hardware", "P1", {m["id"]: m for m in p1["hardware_readiness"]}, P1_HW_COVERAGE,
+              lambda m: m["item"], lambda m: None),
+             ("p2_instruments", "P2", {m["id"]: m for m in p2["instrument_list"]}, P2_INS_COVERAGE,
+              lambda m: m["name"], lambda m: m["status"])]
+    out = {"rule": "every id of the merged P1 measurement list, P1 hardware-readiness list and P2 instrument list maps "
+                   "to at least one RFQ v2 line or to an explicit not-procured disposition; a REQUIRED P1 measurement "
+                   "maps to at least one P1_NEEDED line (or a not-procured disposition); every P2 preparation "
+                   "instrument maps to at least one P1_NEEDED line (A9.3: P2 preparation starts immediately)",
+           "inputs": [{"key": k, "path": CURRENT[k], "pinned": False,
+                       "note": "read at build time; refined concurrently by the A9.5 / A9.6 P1 and P2 lanes; any id "
+                               "change makes this build raise until the map is reconciled"} for k in ("P1", "P2")],
+           "not_procured_dispositions": NOT_PROCURED}
+    for name, key, src, cov, qf, sf in specs:
+        missing = sorted(set(src) - set(cov))
+        stale = sorted(set(cov) - set(src))
+        if missing or stale:
+            raise KeyError(f"{name}: unmapped ids {missing}; mapped ids absent from {CURRENT[key]}: {stale}")
+        rows = []
+        for iid in sorted(src):
+            target = cov[iid]
+            row = {"id": iid, "what": qf(src[iid]), "status_in_source": sf(src[iid])}
+            if isinstance(target, str):
+                if target not in NOT_PROCURED:
+                    raise KeyError(f"{iid}: unknown disposition {target}")
+                row.update({"rfq_lines": [], "disposition": target})
+            else:
+                if not target:
+                    raise ValueError(f"{iid}: empty line list")
+                ls = []
+                for lid in target:
+                    if lid not in lines:
+                        raise KeyError(f"{iid}: unknown RFQ line {lid}")
+                    ls.append({"line": lid, "package": lines[lid][0], "dispatch": lines[lid][1]["dispatch"]})
+                row.update({"rfq_lines": ls, "disposition": "RFQ_LINE"})
+                p1n = any(x["dispatch"] == "P1_NEEDED" for x in ls)
+                if name == "p1_measurements" and str(row["status_in_source"]).startswith("REQUIRED") and not p1n:
+                    raise ValueError(f"REQUIRED P1 measurement {iid} maps to no P1_NEEDED line")
+                if name == "p2_instruments" and not p1n:
+                    raise ValueError(f"P2 preparation instrument {iid} maps to no P1_NEEDED line")
+            if iid in P1_HW_NOTES:
+                row["note"] = P1_HW_NOTES[iid]
+            rows.append(row)
+        out[name] = rows
+    return out
+
+
+def a96_sec13_items() -> list:
+    """Owner item list of A9.6 sec. 13, parsed verbatim ('* <item>;' bullets between 'Include:' and 'Keep:')."""
+    lines = load("A96_MD").splitlines()
+    start = lines.index("13. Complete RFQ packages")
+    inc = lines.index("Include:", start)
+    items = []
+    for ln in lines[inc + 1:]:
+        if ln.startswith("Keep:"):
+            break
+        if ln.startswith("* "):
+            items.append(ln[2:].rstrip().rstrip(";").rstrip("."))
+    if not items:
+        raise ValueError("A9.6 sec. 13 item list not found")
+    return items
+
+
+A96_SEC13_COVERAGE = {
+    "RF generator": ["RF-L01", "RF-L11"],
+    "directional coupler": ["RF-L02"],
+    "power sensors": ["RF-L03"],
+    "local matching components": ["RF-L04", "RF-L19", "ME-L08"],
+    "coax/feedthroughs": ["RF-L05", "RF-L06", "RF-L07", "RF-L17", "VAC-L03", "VAC-L04"],
+    "photodiode/amplifier": ["TH-L07", "TH-L08", "VAC-L07"],
+    "gas MFCs": ["GAS-L01", "GAS-O01", "GAS-L02", "GAS-L03", "GAS-L04", "GAS-L05", "GAS-L06", "GAS-O02"],
+    "diagnostics": ["RF-L12", "RF-L13", "RF-L18", "RF-O01", "HE-L05", "HE-L15", "HE-L16", "HE-L18", "GAS-L12",
+                    "VAC-L05", "TH-L04", "TH-L05"],
+    "collector/bias supply": ["HE-L03"],
+    "isolation hardware": ["HE-L04", "HE-L17", "HE-O02", "GAS-L13", "GAS-L14", "GAS-L15", "HE-L13"],
+    "mechanical ICP fabrication": ["ME-L01", "ME-L02", "ME-L03", "ME-L05", "ME-L06", "ME-L07", "ME-L08", "ME-O01"],
+    "dummy loads": ["RF-L08", "RF-L09", "RF-L16"],
+    "calibration items": ["RF-L14", "RF-L15", "GAS-L16", "GAS-L17", "TH-L02", "TH-L06", "TH-L09"],
+}
+
+
+def a96_sec13_coverage(pkgs: list) -> list:
+    lines = {li["id"]: (p["id"], li) for p in pkgs for li in p["line_items"]}
+    owner = a96_sec13_items()
+    if sorted(owner) != sorted(A96_SEC13_COVERAGE):
+        raise KeyError(f"A9.6 sec. 13 items {owner} != coverage keys {sorted(A96_SEC13_COVERAGE)}")
+    out = []
+    for it in owner:
+        ls = A96_SEC13_COVERAGE[it]
+        for lid in ls:
+            if lid not in lines:
+                raise KeyError(f"A9.6 sec. 13 '{it}': unknown line {lid}")
+        out.append({"owner_item": it, "lines": [{"line": lid, "package": lines[lid][0],
+                                                 "dispatch": lines[lid][1]["dispatch"]} for lid in ls],
+                    "p1_needed_present": any(lines[lid][1]["dispatch"] == "P1_NEEDED" for lid in ls)})
+    return out
 
 
 # --------------------------------------------------------------------------------------------- common interface
@@ -1400,8 +2234,8 @@ def common_interface() -> dict:
                   "the single selected family per port is recorded here before any purchase",
          "status": "TBD", "freeze_point": "after-evidence", "source": "row 139", "evidence_class": None},
         {"id": "CIF-C03", "group": "connectors_flanges", "title": "gas fittings",
-         "value": "TBD - requires the P1 gas schematic (PENDING " + P1_LANE + "); O2-wetted fittings ASTM G93 Level C, "
-                  "no silver (rows 107, 103)", "status": "PENDING", "freeze_point": "NOW",
+         "value": "TBD - requires the P1 gas schematic (P1-HW-15, P1-HW-18; registered at P1-G0); O2-wetted fittings "
+                  "ASTM G93 Level C, no silver (rows 107, 103)", "status": "TBD", "freeze_point": "P1-G0",
          "source": "rows 107, 103; P1 lane", "evidence_class": None},
         {"id": "CIF-C04", "group": "connectors_flanges", "title": "DC power / signal connectors",
          "value": "TBD - requires the harness definition (ICD ICP-34, ICP-35); current-carrying contacts rated to the "
@@ -1468,6 +2302,12 @@ def common_interface() -> dict:
                   "injection only as declared variants, booked in the corresponding atmospheric/Xe ledger if activated",
          "status": "OWNER_GIVEN", "freeze_point": "NOW", "source": "A9.1 HIQ-06; A9.3 OQ-RFQ-10; ICD ICP-26",
          "evidence_class": "owner-stated"},
+        {"id": "CIF-E03", "group": "electrical", "title": "current sign convention of the ICP-45 network (A9.5 P1Q-15)",
+         "value": "conventional current INTO the defined isolated electrical network is positive; every current channel "
+                  "is delivered as a signed reading with documented polarity so it can be transformed into this "
+                  "convention; no channel is silently set to zero",
+         "status": "OWNER_GIVEN", "freeze_point": "NOW", "source": "A9.5 P1Q-15; A9.6 sec. 2",
+         "evidence_class": "owner-stated"},
         {"id": "CIF-T01", "group": "time_data", "title": "common time base",
          "value": "every package's data interface time-stamps against the DAQ common time base (INS-18)",
          "status": "COPIED_VERIFIED", "freeze_point": "LOCK-1", "source": "INS-18", "evidence_class": None},
@@ -1481,20 +2321,20 @@ def common_interface() -> dict:
         ("X-03", "RFQ2-RF", "RFQ2-THRUST", "flexible live + sham coax crossing the stand", "KC-1", "-",
          "OWNER_GIVEN (rows 117, 133)", "RFQ-04-R11", "LATER"),
         ("X-04", "RFQ2-RF", "RFQ2-THRUST", "P_fwd, P_refl, |Gamma|, interlock state, P_mains,in into the DAQ",
-         "RP-RF-50; RP-MAINS", "W; -", "OWNER_GIVEN (quantities); rates PENDING P1", "A9.3 OQ-RFQ-06; ICD ICP-34",
+         "RP-RF-50; RP-MAINS", "W; -", "OWNER_GIVEN (quantities); rates TBD at P1-G0 (P1-M-26)", "A9.3 OQ-RFQ-06; ICD ICP-34",
          "P1_NEEDED"),
         ("X-05", "RFQ2-RF", "RFQ2-HALLEL", "RF interlock permissives incl. collector/bias supply state and discharge "
          "supply state", "-", "-", "TBD (trip values from measured S1a behaviour)", "ICD ICP-16; A9.2 rf_protection",
          "P1_NEEDED"),
         ("X-06", "RFQ2-GAS", "RFQ2-VAC", "gas feedthroughs and gauge ports on the chamber", "CIF-C02; CIF-C03",
-         "Pa; -", "PENDING P1 gas schematic", "RFQ2-VAC-N04; RFQ2-GAS-N06", "P1_NEEDED"),
+         "Pa; -", "TBD - P1 gas schematic (P1-HW-18; P1-G0)", "RFQ2-VAC-N04; RFQ2-GAS-N06", "P1_NEEDED"),
         ("X-07", "RFQ2-GAS", "RFQ2-MECH", "capped ICP dedicated gas port and pressure port; isolator only if a line "
-         "bridges isolated potentials", "N-BODY; N-FG", "V; Pa", "OWNER_GIVEN (capped port); count PENDING P1",
+         "bridges isolated potentials", "N-BODY; N-FG", "V; Pa", "OWNER_GIVEN (capped port); count TBD at P1-G0 (P1-HW-12)",
          "RFQ-05-R09; A9.3 ICPQ-06, OQ-RFQ-10", "P1_NEEDED"),
         ("X-08", "RFQ2-GAS", "RFQ2-HALLEL", "Hall anode gas isolator between N-FG and N-ANODE", "N-ANODE; N-FG", "V",
          "OWNER_GIVEN (350 V continuous; ~1 kV DC qualification)", "row 105; RFQ2-GAS-N05", "P1_NEEDED"),
         ("X-09", "RFQ2-GAS", "RFQ2-THRUST", "MFC setpoint/readback and gauge signals into the DAQ; harp crossing on "
-         "the stand (LATER)", "CIF-T01", "mg/s; Pa", "PENDING P1 (rates)", "RFQ2-THRUST-N01; row 117", "P1_NEEDED"),
+         "the stand (LATER)", "CIF-T01", "mg/s; Pa", "TBD at P1-G0 (rates; P1-M-26)", "RFQ2-THRUST-N01; row 117", "P1_NEEDED"),
         ("X-10", "RFQ2-HALLEL", "RFQ2-VAC", "electrical feedthroughs for discharge, collector/bias, magnet and sensing",
          "N-ANODE; N-ICPREF; N-FG", "A; V", "OWNER_GIVEN (8.33 A ceiling; 350 V + margin TBD)",
          "A9.3 OQ-A907-02; row 81; RFQ2-VAC-N03", "P1_NEEDED"),
@@ -1503,7 +2343,7 @@ def common_interface() -> dict:
          ">= 525 V design withstand, 1.05 kV DC / 60 s initial DWV; A9.4 P1Q-14)", "ICD ICP-20, ICP-21; A9.4 P1Q-14",
          "P1_NEEDED"),
         ("X-12", "RFQ2-HALLEL", "RFQ2-THRUST", "V_d(t), I_d(t), I_e,ICP(t), potentials into the DAQ; P_bus 1 ms chain "
-         "synchronization (LATER)", "CIF-G02; CIF-T01", "V; A", "OWNER_GIVEN (quantities); rates PENDING P1",
+         "synchronization (LATER)", "CIF-G02; CIF-T01", "V; A", "OWNER_GIVEN (quantities); rates TBD at P1-G0 (P1-M-26)",
          "A9.3 OQ-VI-05; A9.1 OQ-A902-01", "P1_NEEDED"),
         ("X-13", "RFQ2-MECH", "RFQ2-THRUST", "ICP module carrier on KC-1 of the stand; module mass/CG", "KC-1; IP-NEU",
          "kg; mm", "TBD (ICD ICP-06, ICP-08; LOCK-1)", "RFQ-01-R04, R13", "LATER"),
@@ -1517,6 +2357,17 @@ def common_interface() -> dict:
         ("X-17", "RFQ2-VAC", "RFQ2-THRUST", "photodiode viewport / window line of sight -> photodiode + amplifier -> "
          "DAQ channel (A9.4 P2Q-05)", "CIF-C02; CIF-T01", "V; nm", "OWNER_GIVEN (items); band / gain TBD",
          "A9.4 P2Q-05; RFQ2-VAC-N06; RFQ2-THRUST-N03", "P1_NEEDED"),
+        ("X-18", "RFQ2-HALLEL", "RFQ2-VAC", "H-1 body single-point return lead through an electrical feedthrough to the "
+         "ground-current monitor; no second grounding path via stand / coax shields / chassis", "N-FG; H-1 body",
+         "A", "OWNER_GIVEN (single metered path); ranges TBD (I_scale,min)", "A9.4 P1Q-13; RFQ2-HALLEL-N06",
+         "P1_NEEDED"),
+        ("X-19", "RFQ2-RF", "RFQ2-THRUST", "V/I probe, antenna current probe, match-position read-out and RF "
+         "metrology signals into the DAQ on the common time base", "RP-VI; CIF-T01", "V; A; -",
+         "TBD at P1-G0 (rates; P1-M-26)", "P2 INS-P2-01, INS-P2-09, INS-P2-12; RFQ2-THRUST-N05", "P1_NEEDED"),
+        ("X-20", "RFQ2-HALLEL", "RFQ2-THRUST", "signed current channels (collector, H-1 body return, ICP body, "
+         "facility return), V_anode / V_ref and the anode-disconnect state into the DAQ", "CIF-E03; CIF-T01", "A; V; -",
+         "OWNER_GIVEN (sign convention, channels); ranges TBD (I_scale,min)", "A9.5 P1Q-15; A9.4 P1Q-13",
+         "P1_NEEDED"),
     ]
     mat = [{"id": a, "between": [b, c], "what": d, "reference": e, "units": f, "status": g, "source": h,
             "dispatch": i} for a, b, c, d, e, f, g, h, i in matrix]
@@ -1748,6 +2599,40 @@ def change_log(reqs: list, pkgs: list) -> dict:
                                   "/ certificates); no purchase orders, advance payments or binding commitments; no "
                                   "supplier contact by Claude / the team (banner, dispatch_authority, H3 gate)",
          "source": "A9.4 execution_decisions.p1_needed_rfqs"},
+        {"id": "CL-15", "change": "A9.6 RFQ completion: RF metrology lines RF-L12..RF-L19 and option RF-O01 (V/I probe, "
+                                  "VNA, calibration kits, attenuators, antenna-simulator load, phase-stable cables, "
+                                  "antenna current probe, match-position read-out, frequency / harmonic option), each "
+                                  "with the P2 specification rows copied (RFQ2-RF-N07..N17); placement TBD_OWNER (P2Q-02)",
+         "source": "A9.6 sec. 13; A9.3 authorizations P2"},
+        {"id": "CL-16", "change": "A9.6 RFQ completion: A9.4 P1Q-13 lines HE-L15 (H-1 body single-point metered "
+                                  "ground-current monitor + facility return), HE-L16 (high-impedance isolated V_anode / "
+                                  "V_ref), HE-L17 (anode physical disconnect), HE-L18 (ICP body and electrode channels); "
+                                  "A9.5 closure metrology RFQ2-HALLEL-N08; CIF-E03, X-18..X-20; OQ-RFQV2-07 closed",
+         "source": "A9.6 sec. 5, 6, 13; A9.4 P1Q-13; A9.5 P1Q-15"},
+        {"id": "CL-17", "change": "A9.6 RFQ completion: collector / bias supply HE-L03 carries the 350 V class, >= 525 V "
+                                  "design withstand and 1.05 kV / 60 s DWV (RFQ2-HALLEL-N05); DWV tester option HE-O02 "
+                                  "(OQ-RFQV2-08 kept open); electron-collecting target option ME-O01 (RFQ2-MECH-N05)",
+         "source": "A9.6 sec. 5, 13; A9.4 P1Q-10, P1Q-14"},
+        {"id": "CL-18", "change": "A9.6 RFQ completion: calibration items - rate-of-rise / transfer calibration volume "
+                                  "GAS-L17 (RFQ2-GAS-N08) and calibration services TH-L09 (RFQ2-THRUST-N04); event / "
+                                  "state DAQ inputs RFQ2-THRUST-N05",
+         "source": "A9.6 sec. 13"},
+        {"id": "CL-19", "change": "A9.6 RFQ completion: RGA line VAC-L05 and RFQ-03 requirements re-tagged LATER -> "
+                                  "P1_NEEDED because the merged P1 bench lists the RGA as REQUIRED in P1-S2..S7 "
+                                  "(P1-M-20, P1-HW-19); text unchanged",
+         "source": "A9.6 sec. 13 (keep P1_NEEDED vs LATER); merged P1 bench"},
+        {"id": "CL-20", "change": "A9.6 RFQ completion: per-line quote sheets (specification rows from the line's "
+                                  "requirements with value / TBD and freeze gate, acceptance, calibration / traceability, "
+                                  "documentation, send state); every P1_NEEDED line carries explicit entries",
+         "source": "A9.6 sec. 13 ('ready to send')"},
+        {"id": "CL-21", "change": "A9.6 RFQ completion: instrument coverage cross-check - every merged P1 measurement, P1 "
+                                  "hardware item and P2 instrument id maps to an RFQ line or an explicit not-procured "
+                                  "disposition (facility-provided chamber; H-1 build items NIR-06 / OQ-RFQV2-10)",
+         "source": "A9.6 sec. 13; fo_a9_6_rfq_completion"},
+        {"id": "CL-22", "change": "A9.6 sec. 3 cleanup: stale 'PENDING <P1 / P2 lane>' references replaced by the merged "
+                                  "P1 / P2 ids (values stay TBD, freeze gate P1-G0 where P1 registers them); PENDING is "
+                                  "now used only for the A9.6 parallel lanes not in this base (P3, P4, mass/power, Xe)",
+         "source": "A9.6 sec. 3"},
     ]
     counts = {}
     for r in reqs:
@@ -1765,7 +2650,7 @@ def traceability(reqs: list) -> list:
 
 def owner_answers_applied(reqs: list) -> dict:
     rows: dict = {}
-    ids: dict = {"a9_1": {}, "a9_2": {}, "a9_3": {}, "a9_4": {}}
+    ids: dict = {"a9_1": {}, "a9_2": {}, "a9_3": {}, "a9_4": {}, "a9_5": {}, "a9_6": {}}
     for r in reqs:
         for s in r["sources"]:
             if s["type"] == "owner_row":
@@ -1799,6 +2684,11 @@ def owner_answers_applied(reqs: list) -> dict:
         "p1_needed_rfqs": "P1_NEEDED packages may be sent for quotation by the owner / procurement (banner, "
                           "dispatch_authority.a9_4_quotation_dispatch, H3 gate); no PO / advance payment / binding "
                           "commitment; no supplier contact by Claude / the team",
+        "P1Q-13": "A9.6 RFQ completion: H-1 body single-point metered ground-current monitor (HE-L15, "
+                  "RFQ2-HALLEL-N06), high-impedance isolated V_anode / V_ref channel (HE-L16) and anode physical "
+                  "disconnect means (HE-L17, RFQ2-HALLEL-N07); CIF X-18; closes OQ-RFQV2-07",
+        "P1Q-10": "A9.6 RFQ completion: dedicated, isolated, instrumented electron-collecting electrode as option line "
+                  "ME-O01 (RFQ2-MECH-N05) and its channels HE-L18",
     }
     structural_94 = {"p1_needed_rfqs": set(PKG_IDS) | {"RFQ2-CIF"}}
     a94 = []
@@ -1807,13 +2697,28 @@ def owner_answers_applied(reqs: list) -> dict:
         a94.append({"id": k, "status": src.get("status", "AUTHORIZED (execution decision)"), "how_applied": how,
                     "applied_in": sorted(ids["a9_4"].get(k, set()) | structural_94.get(k, set())),
                     "path": DECISIONS["A94"][0], "sha256": DECISIONS["A94"][1]})
-    a94.append({"id": "P1Q-10 / P1Q-13", "status": "; ".join(a94_doc["decisions"][q]["status"]
-                                                             for q in ("P1Q-10", "P1Q-13")),
-                "how_applied": "no RFQ line changed in this incorporation (bench measurement rules; applied in the P1 "
-                               "lane); whether the H-1 body metered ground-current monitor and the high-impedance V_anode "
-                               "channel become explicit lines is asked in OQ-RFQV2-07",
-                "applied_in": [], "path": DECISIONS["A94"][0], "sha256": DECISIONS["A94"][1]})
+    a95 = [{"id": k, "status": load("A95")["decisions"][k].get("status", "OWNER_DECIDED"),
+            "how_applied": how, "applied_in": sorted(ids["a9_5"].get(k, set())),
+            "path": DECISIONS["A95"][0], "sha256": DECISIONS["A95"][1]} for k, how in (
+        ("P1Q-15", "per-channel uncertainty components, signed readings, I_scale,min registration input and the "
+                   "sign convention requested from suppliers (RFQ2-HALLEL-N08, CIF-E03, X-20); certificates with the "
+                   "components (RFQ2-THRUST-N04)"),
+        ("P1Q-16", "no RFQ line: the signed capacity formula is applied by the P1 reducer; the RFQ requests signed "
+                   "bipolar current readings so that no absolute value or clipping is needed (RFQ2-HALLEL-N08)"))]
+    a96 = [{"id": "sec. " + k, "how_applied": how, "applied_in": sorted(ids["a9_6"].get(k, set())),
+            "path": DECISIONS["A96_MD"][0], "sha256": DECISIONS["A96_MD"][1]} for k, how in (
+        ("13", "packages completed for sending: every owner sec. 13 item mapped to lines (a9_6_sec13_coverage); "
+               "P1_NEEDED / LATER kept; per-line quote sheets; P1 / P2 instrument coverage cross-check; RFQ only - no "
+               "purchase order authorization"),
+        ("5", "isolation class, anode disconnect / floating / high-impedance V_anode, single-point metered ground, all "
+              "intentional current paths instrumented (RFQ2-HALLEL-N05..N07)"),
+        ("2", "I_scale,min registered from the instrumentation capability; no default (RFQ2-HALLEL-N08)"),
+        ("3", "stale 'PENDING <P1 / P2 lane>' references of this package replaced by references to the merged P1 / "
+              "P2 ids"),
+        ("6", "RFQ line propagation implemented without a new owner question (OQ-RFQV2-07 closed)"))]
     return {"owner_rows": row_list,
+            "a9_6": a96,
+            "a9_5": a95,
             "a9_4": a94,
             "a9_1": [{"id": k, "applied_in": sorted(v)} for k, v in sorted(ids["a9_1"].items())],
             "a9_2": [{"id": k, "applied_in": sorted(v)} for k, v in sorted(ids["a9_2"].items())],
@@ -1860,36 +2765,79 @@ def open_owner_questions() -> dict:
                                           "anode / discharge-supply isolation and feedthroughs?",
          "proposed_answer": "owner call; PROPOSED: yes (same 350 V class, same 1.5 x design / ~3 x initial DWV "
                             "basis)", "needed_by": "P1 RFQ dispatch of RFQ2-HALLEL / RFQ2-VAC"},
-        {"id": "OQ-RFQV2-07", "question": "A9.4 P1Q-13 requires a metered single-point H-1 body ground-current monitor "
-                                          "(continuous I_body->ground) and a high-impedance isolated V_anode channel. "
-                                          "Add them as explicit P1_NEEDED sensing lines in RFQ2-HALLEL, or use existing "
-                                          "laboratory instruments?",
-         "proposed_answer": "owner call; PROPOSED: explicit P1_NEEDED option lines in RFQ2-HALLEL (sensing)",
-         "needed_by": "P1 RFQ dispatch of RFQ2-HALLEL"},
         {"id": "OQ-RFQV2-08", "question": "Who performs the 1.05 kV DC / 60 s initial DWV (A9.4 P1Q-14): supplier "
                                           "factory test with certificate, the in-house bench with a current-limited "
                                           "tester (not quoted in v2), or both?",
          "proposed_answer": "owner call; PROPOSED: supplier certificate where the item rating permits plus the in-house "
                             "bench DWV of the assembled insulation configuration before first HV/RF operation",
          "needed_by": "P1 RFQ dispatch of RFQ2-HALLEL / RFQ2-VAC"},
+        {"id": "OQ-RFQV2-09", "question": "The merged P1 bench (P1-HW-32) has C1 present on its own module but "
+                                          "DISCONNECTED in P1-S6. Must C1 hardware (HE-L10 cathode, HE-L11 heater supply, "
+                                          "HE-L12 keeper supply; LATER) be advanced to P1_NEEDED for that, or may P1-S6 "
+                                          "run with C1 absent (trivially supplying no electrons)?",
+         "proposed_answer": "owner call; both admissible outcomes kept (C1 lines stay LATER until answered)",
+         "needed_by": "P1-S6 preparation (dispatch of RFQ2-HALLEL C1 lines)"},
+        {"id": "OQ-RFQV2-10", "question": "H-1 (H2-1 CI H-1 with MC-1) and its Ar gas path / anode plenum (H2-3) are "
+                                          "needed from P1-S3 (P1-HW-15, P1-HW-22) but belong to none of the six owner RFQ "
+                                          "families. Issue a separate H-1 fabrication RFQ, extend RFQ2-MECH, or "
+                                          "fabricate in-house?",
+         "proposed_answer": "owner call; no route selected (NIR-06)",
+         "needed_by": "before P1-S3"},
     ]
-    return {"new": new, "carried_open_from_v1": carried, "v1_questions_answered_since": answered,
+    closed = [
+        {"id": "OQ-RFQV2-07", "state": "CLOSED_BY_A9_6_MECHANICAL_PROPAGATION",
+         "how": "A9.6 sec. 6 lists RFQ line propagation as automatic; the A9.4 P1Q-13 monitor and V_anode channel are "
+                "explicit P1_NEEDED lines HE-L15 / HE-L16 / HE-L17 (RFQ2-HALLEL-N06, N07). Using existing laboratory "
+                "instruments that meet these lines instead of sending them remains the owner's dispatch choice.",
+         "source": "A9.6 sec. 6 and sec. 13; A9.4 P1Q-13"},
+    ]
+    carried_from_lanes = [
+        {"id": "P2Q-02", "lane_file": P2_JSON, "state": "OPEN (P2 preparation package)",
+         "handling": "RF-metrology lines RF-L12..RF-L19 and RF-O01 carry placement TBD_OWNER with both alternatives "
+                     "(RFQ2-RF / separate RF-metrology package); not answered here"},
+        {"id": "P2Q-07", "lane_file": P2_JSON, "state": "OPEN (P2 preparation package)",
+         "handling": "RF-L12 calibration route: accredited scope or in-house VNA-traceable procedure TBD_OWNER; not "
+                     "answered here"},
+    ]
+    return {"new": new, "closed_since_previous_revision": closed, "carried_open_from_lanes": carried_from_lanes,
+            "carried_open_from_v1": carried, "v1_questions_answered_since": answered,
             "state_file": DELIVERABLES["OQS3"][0], "state_sha256": DELIVERABLES["OQS3"][1],
             "rule": "no OPEN owner question of state v3 is answered by this lane"}
 
 
 def interface_demands() -> list:
     return [
-        {"id": "IFD-01", "from": "P1 lane " + P1_LANE, "to": "RFQ2-GAS, RFQ2-VAC, RFQ2-HALLEL, RFQ2-THRUST",
-         "quantity": "Ar sweep bounds; gas schematic (valves, isolators, feedthroughs); pressure ranges; DAQ channel "
-                     "count/sample rate/bandwidth; magnet setpoints; uncertainty targets", "units": "sccm; Pa; Sa/s; A",
-         "status": "PENDING " + P1_LANE},
-        {"id": "IFD-02", "from": "RFQ2-RF, RFQ2-GAS, RFQ2-HALLEL, RFQ2-THRUST (quotations)", "to": "P1 lane " + P1_LANE,
-         "quantity": "offered capability ranges, calibration uncertainties, interfaces", "units": "W; mg/s; A; -",
-         "status": "OPEN (after quotations)"},
-        {"id": "IFD-03", "from": "P2 prep lane " + P2_LANE, "to": "RFQ2-RF",
-         "quantity": "V/I sensing, coupler chain, calibration/de-embedding and S-parameter method requirements",
-         "units": "-", "status": "PENDING " + P2_LANE},
+        {"id": "IFD-01", "from": "P1 bench " + P1_JSON + " (merged)", "to": "RFQ2-GAS, RFQ2-VAC, RFQ2-HALLEL, "
+                                                                          "RFQ2-THRUST",
+         "quantity": "Ar sweep bounds (F2); gas schematic (P1-HW-12, P1-HW-15, P1-HW-18); gauge ranges (P1-M-16/17); DAQ "
+                     "sample rate / bandwidth (P1-M-26); magnet states (F6); P1-S4 topology (P1-IT-36); I_scale,min "
+                     "(A9.5)", "units": "sccm; Pa; Sa/s; A",
+         "status": "OPEN - values TBD at P1-G0 (ids referenced; nothing filled)"},
+        {"id": "IFD-02", "from": "RFQ2-RF, RFQ2-GAS, RFQ2-HALLEL, RFQ2-THRUST (quotations)", "to": "P1 bench " + P1_JSON,
+         "quantity": "offered capability ranges, calibration uncertainties (A9.5 components), interfaces",
+         "units": "W; mg/s; A; -", "status": "OPEN (after quotations)"},
+        {"id": "IFD-03", "from": "P2 prep " + P2_JSON + " (merged)", "to": "RFQ2-RF",
+         "quantity": "instrument specifications INS-P2-01..12 (copied into RFQ2-RF-N07..N16); package placement P2Q-02",
+         "units": "-", "status": "COPIED (P2 lane refines concurrently; placement TBD_OWNER P2Q-02)"},
+        {"id": "IFD-13", "from": "RFQ v2 instrument_coverage", "to": "P1 bench and P2 prep packages (their "
+                                                                   "rfq_v2_package / rfq_v2_line fields)",
+         "quantity": "RFQ v2 line id per P1 measurement, P1 hardware item and P2 instrument (replaces their stale pending "
+                     "reference to this package)", "units": "-",
+         "status": "OFFERED (reconciled by the A9.5 / A9.6 P1 and P2 lanes and the consolidated integration pass)"},
+        {"id": "IFD-14", "from": "RFQ2-* (supplier datasheets: masses, input powers)",
+         "to": "PENDING " + PARALLEL_LANES["MASS_POWER"], "quantity": "quoted masses and input powers of "
+                                                                     "flight-representative options",
+         "units": "kg; W", "status": "OPEN (after quotations; nothing read from the lane)"},
+        {"id": "IFD-15", "from": "RFQ2-GAS GAS-O02 (if ever activated) and the C1 Xe lines (LATER)",
+         "to": "PENDING " + PARALLEL_LANES["XE_ACCOUNTING"], "quantity": "mdot_ICP,dedicated (0 in G-REUSE); C1 Xe "
+                                                                        "controller ranges", "units": "mg/s",
+         "status": "RULE (G-REUSE books 0; nothing read from the lane)"},
+        {"id": "IFD-16", "from": "RFQ2-MECH (ICP material continuous-use temperature data, RFQ2-MECH-N04)",
+         "to": "PENDING " + PARALLEL_LANES["P3"], "quantity": "material limits for the coupled thermal framework",
+         "units": "K", "status": "OPEN (ICP_COUPLED_THERMAL UNRESOLVED; never PASS)"},
+        {"id": "IFD-17", "from": "PENDING " + PARALLEL_LANES["P4"], "to": "RFQ2-MECH (ME-L03, ME-L04, ME-O01)",
+         "quantity": "collector / electrode candidate materials (no anode RFQ: FINAL_ANODE_MATERIAL OPEN)", "units": "-",
+         "status": "PENDING (nothing read from the lane)"},
         {"id": "IFD-04", "from": "P2 impedance map (after P1 stable plasma)", "to": "RFQ2-RF, RFQ2-VAC, CIF-C01",
          "quantity": "Z_antenna = R + jX envelope -> component ratings (generator, coupler, coax, connectors, matching "
                      "elements, feedthroughs, dummy load)", "units": "ohm; W; V; A",
@@ -1925,18 +2873,24 @@ def m16_impact() -> list:
         (6, "RFQ2-GAS", "Xe tank quote lines (LATER)"), (7, "RFQ2-GAS", "low-flow PMU (LATER)"),
         (8, "RFQ2-GAS", "C1 controllers, FCU, Xe reference MFC (LATER)"),
         (11, "RFQ2-HALLEL", "C1 cathode + keeper/heater supplies (LATER)"),
-        (12, "RFQ2-HALLEL, RFQ2-RF", "laboratory discharge/magnet/collector supplies (P1), breadboard supplies (LATER), "
-                                     "laboratory RF generator (P1, ground only)"),
-        (13, "RFQ2-MECH", "ICP material temperature data; ICP_COUPLED_THERMAL stays UNRESOLVED (no PASS)"),
-        (15, "RFQ2-GAS, RFQ2-THRUST, RFQ2-VAC, RFQ2-RF", "P1 DAQ, gauges, Ar MFC, RF metrology, power analyzer, "
+        (12, "RFQ2-HALLEL, RFQ2-RF", "laboratory discharge/magnet/collector supplies (P1), H-1 body ground-current "
+                                     "monitor, V_anode channel and anode disconnect (A9.4 P1Q-13; P1), breadboard "
+                                     "supplies (LATER), laboratory RF generator (P1, ground only)"),
+        (13, "RFQ2-MECH", "ICP material temperature data; ICP_COUPLED_THERMAL stays UNRESOLVED (no PASS); coupled "
+                          "thermal framework PENDING docs/experiments/hall_icp/p3_coupled_thermal/"),
+        (15, "RFQ2-GAS, RFQ2-THRUST, RFQ2-VAC, RFQ2-RF", "P1 DAQ incl. event / state inputs, gauges, Ar MFC and "
+                                                         "calibration volume, RF metrology (V/I probe, VNA, kits, "
+                                                         "current probe; placement P2Q-02), power analyzer, "
                                                          "photodiode + amplifier + DAQ channel and its optical access "
-                                                         "(A9.4 P2Q-05) (P1); stand, RGA (LATER)"),
+                                                         "(A9.4 P2Q-05), RGA, calibration services (P1); stand "
+                                                         "(LATER)"),
         (16, "RFQ2-MECH, RFQ2-THRUST", "modular ICP carrier and supports (P1); stand/KC-1 (LATER)"),
         (18, "RFQ2-MECH, RFQ2-HALLEL, RFQ2-GAS", "open-tube coaxial ICP head parts, collector/bias supply, capped port "
                                                 "(P1)"),
         (19, "RFQ2-RF", "development RF chain with local match (P1, ground only); the flight DC-input RF source is not "
                         "in this revision (NIR-01); ratings TBD_AFTER_IMPEDANCE_MAP"),
-        (20, "none", "no anode RFQ (A9.2 ANODE_BASELINE OPEN; NIR-03)"),
+        (20, "none", "no anode RFQ (A9.2 ANODE_BASELINE OPEN; NIR-03); materials framework PENDING "
+                     "docs/experiments/hall_icp/p4_anode_materials/"),
         (21, "none", "no anode heat-path RFQ (design blocker)"),
     ]
     out = []
@@ -1981,6 +2935,16 @@ def h3_h4_inputs(pkgs: list) -> dict:
              "source": "A9.4 P1Q-14"},
             {"id": "H4-RFQ2-08", "test": "photodiode dark offset, line of sight and saturation indication on the DAQ",
              "source": "A9.4 P2Q-05"},
+            {"id": "H4-RFQ2-09", "test": "single-path check of the H-1 body ground (monitor is the only deliberate path) "
+                                         "and anode open-state / V_anode channel verification before the first "
+                                         "ICP45_CAPACITY block", "source": "A9.4 P1Q-13"},
+            {"id": "H4-RFQ2-10", "test": "per-channel uncertainty components (calibration, zero/offset, resolution, "
+                                         "repeatability, RF pickup) of every ICP-45 current channel on file, so that "
+                                         "I_scale,min can be registered; no tolerance is widened",
+             "source": "A9.5 P1Q-15"},
+            {"id": "H4-RFQ2-11", "test": "RF metrology incoming verification: VNA with kit, attenuators, V/I probe phase, "
+                                         "antenna-simulator load impedance record (P2 calibration plan)",
+             "source": "A9.3 authorizations P2; P2 prep package"},
         ],
     }
 
@@ -1998,6 +2962,8 @@ def historical_reuse() -> dict:
             "URL and access date only, for carried reference entries whose v1 record holds '-' (basis per entry in "
             "provenance_display); no datum is taken from it",
             "v1 do-not-purchase banner wording (extended by the A9.3 dispatch statement)",
+            "the verified RFQ v2 (fo_a9_rfq_v2_split + fo_a9_4_incorporation) as the base of the A9.6 completion: every "
+            "earlier id kept; additions and re-tags recorded in change_log CL-15..CL-22",
         ],
         "not_reused": [
             "the nine-family package split (replaced by the six owner families + RFQ2-CIF, A9.3 OQ-RFQ-07)",
@@ -2016,7 +2982,7 @@ def historical_reuse() -> dict:
 
 def build() -> dict:
     verify_pins()
-    reqs = carried_requirements() + new_requirements()
+    reqs = carried_requirements() + new_requirements() + a96_requirements()
     ids = [r["id"] for r in reqs]
     if len(ids) != len(set(ids)):
         raise ValueError("duplicate requirement ids")
@@ -2030,6 +2996,7 @@ def build() -> dict:
         if r["evidence_class"] is not None and r["evidence_class"] not in EVIDENCE_CLASSES:
             raise ValueError(f"{r['id']} evidence class {r['evidence_class']}")
     items = line_items()
+    attach_quote_sheets(items, reqs)
     pkgs = assemble_packages(reqs, items)
     cif = common_interface()
     p1_first = [{"package": p["id"], "line_item": li["id"], "item": li["item"], "qty": li["qty"],
@@ -2045,7 +3012,7 @@ def build() -> dict:
         "lane": "A9_RFQV2",
         "follow_on": "fo_a9_rfq_v2_split",
         "trigger": "T_A9_RFQ_V2_SPLIT",
-        "status": "DRAFT_FOR_OWNER_DISPATCH_QUOTATION_ONLY",
+        "status": "COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.6 sec. 13; consolidated verification pending)",
         "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
         "base_commit": BASE_COMMIT,
         "generated_by": THIS_SCRIPT,
@@ -2069,6 +3036,17 @@ def build() -> dict:
                             A94("p1_needed_rfqs", "Supplier packages may remain split by speciality as already "
                                                   "decided.")]},
         },
+        "a9_6_completion": {
+            "follow_on": "fo_a9_6_rfq_completion", "lane": "A9_6_RFQ", "base_commit": A96_BASE,
+            "directive": {"path": DECISIONS["A96_MD"][0], "sha256": DECISIONS["A96_MD"][1],
+                          "json": DECISIONS["A96"][0], "json_sha256": DECISIONS["A96"][1]},
+            "a9_5": {"path": DECISIONS["A95_MD"][0], "sha256": DECISIONS["A95_MD"][1]},
+            "rule": "implementation-first (A9.6): packages completed for sending; verification deferred to the "
+                    "consolidated campaign; earlier ids kept, additions and re-tags in change_log CL-15..CL-22",
+            "rfq_only_quote": A96("13", "RFQ only — no purchase order authorization"),
+            "ready_to_send_quote": A96("13", "Finish all quotation packages so they are ready to send."),
+            "p1_later_quote": A96("13", "`P1_NEEDED`"),
+        },
         "decision_pins": [{"key": k, "path": v[0], "sha256": v[1], "immutable": True} for k, v in DECISIONS.items()],
         "deliverable_pins": [{"key": k, "path": v[0], "sha256": v[1]} for k, v in DELIVERABLES.items()],
         "never_pinned": NEVER_PINNED,
@@ -2084,8 +3062,13 @@ def build() -> dict:
             "placement": "photodiode + amplifier + DAQ channel -> RFQ2-THRUST (owner family 'DAQ'; an optical, non-RF "
                          "diagnostic that must stay independent of the RF impedance chain); optical access / window -> "
                          "RFQ2-VAC (owner family 'RGA/diagnostic interfaces': a chamber port item)"},
-        "pending_parallel_lanes": {"P1": P1_LANE, "P2_prep": P2_LANE,
-                                   "rule": "PENDING values are never filled; nothing is read from these paths"},
+        "pending_parallel_lanes": {**PARALLEL_LANES,
+                                   "rule": "A9.6 parallel lanes not in this base: referenced as PENDING <path> only; "
+                                           "nothing is read from them"},
+        "merged_lanes_read": {"P1": P1_JSON, "P2": P2_JSON,
+                              "rule": "read (ids, statuses, P2 instrument specifications) but not pinned: refined "
+                                      "concurrently by the A9.5 / A9.6 lanes; the instrument-coverage cross-check raises "
+                                      "on any id drift"},
         "standing_facts": {
             "credible_hall_set": "EMPTY (no admitted Hall closure)",
             "p5_n2_v1": "INCONCLUSIVE (permanent)",
@@ -2111,6 +3094,8 @@ def build() -> dict:
         "common_interface": cif,
         "packages": pkgs,
         "p1_dispatch_first": p1_first,
+        "a9_6_sec13_coverage": a96_sec13_coverage(pkgs),
+        "instrument_coverage": instrument_coverage(pkgs),
         "not_in_this_revision": NOT_IN_THIS_REVISION,
         "change_log": change_log(reqs, pkgs),
         "traceability_matrix": traceability(reqs),
@@ -2122,6 +3107,8 @@ def build() -> dict:
         "h3_h4_inputs": h3_h4_inputs(pkgs),
         "compliance": {
             "lane_paths": ["docs/procurement/rfq_a9_v2/**", "tests/test_rfq_a9_v2.py"],
+            "no_open_owner_question_answered": "genuinely open questions (OQ-RFQV2-01..06, 08..10; P2Q-02, P2Q-07; "
+                                               "v1 carried) stay TBD_OWNER with their admissible alternatives",
             "no_purchase_order": True, "no_supplier_contact": True, "no_supplier_ranking": True, "no_prices": True,
             "v1_untouched": "all v1 files pinned by sha256 and verified at every build",
             "pure": "standard library; not wired into archengine; goldens unaffected",
@@ -2162,8 +3149,35 @@ REQ_COLS = [("id", lambda r: r["id"]), ("v1 id", lambda r: r["v1_id"]), ("title"
 ITEM_COLS = [("id", lambda x: x["id"]), ("item", lambda x: x["item"]), ("qty", lambda x: x["qty"]),
              ("basis", lambda x: x["basis"]), ("dispatch", lambda x: x["dispatch"]),
              ("option", lambda x: "OPTION" if x["option_line"] else ""),
-             ("requirements", lambda x: ", ".join(x["requirements"])), ("v1", lambda x: x["v1_ref"]),
+             ("requirements", lambda x: ", ".join(x["requirements"])),
+             ("freeze gate", lambda x: x["quote_sheet"]["freeze_gate"]), ("v1", lambda x: x["v1_ref"]),
              ("change", lambda x: x["change"]["type"])]
+
+
+def render_quote_sheets(p: dict) -> list:
+    out = ["", "## Line quote sheets (A9.6 sec. 13: ready to send; RFQ only - no purchase order authorization)", ""]
+    for li in p["line_items"]:
+        qs = li["quote_sheet"]
+        out.append(f"### {li['id']} - {li['item']}")
+        out.append("")
+        out.append(f"- dispatch: {li['dispatch']}" + (" (OPTION LINE)" if li["option_line"] else "") +
+                   f"; quantity: {_fmt(li['qty'])}; freeze gate: {_fmt(qs['freeze_gate'])}; {qs['send_state']}")
+        if li.get("placement"):
+            pl = li["placement"]
+            out.append(f"- package placement {pl['status']} ({pl['question']}): alternatives "
+                       f"{' | '.join(pl['alternatives'])}; {pl['rule']}")
+        out.append("- specification (from the line's requirements; values, TBD and freeze gates as recorded):")
+        for sp in qs["spec"]:
+            out.append(f"  - {sp['requirement']}" + (f" ({sp['v1_id']})" if sp["v1_id"] else "") +
+                       f" {sp['title']}: {_fmt(sp['value'])} [{_fmt(sp['units'])}]; freeze {sp['freeze_point']}; "
+                       f"status {sp['status']}")
+        if not qs["spec"]:
+            out.append("  - (no requirement attached; LATER line carried from v1)")
+        for fld, head in (("acceptance", "acceptance"), ("calibration_traceability", "calibration / traceability"),
+                          ("documentation", "documentation")):
+            out.append(f"- {head}: " + "; ".join(qs[fld]))
+        out.append("")
+    return out
 
 
 def _fmt_datum(v) -> str:
@@ -2182,6 +3196,7 @@ def render_package(p: dict) -> str:
                  [("owner item", lambda x: x["k"]), ("line items", lambda x: ", ".join(x["v"]))])
     L_ += ["", "## Line items (P1_NEEDED lines can be dispatched first)", ""]
     L_ += _table(p["line_items"], ITEM_COLS)
+    L_ += render_quote_sheets(p)
     L_ += ["", "## Requirements (a)", ""]
     L_ += _table(p["requirements"], REQ_COLS)
     L_ += ["", "### Requirement text", ""]
@@ -2251,6 +3266,9 @@ def render_main(d: dict) -> str:
     qd = d["dispatch_authority"]["a9_4_quotation_dispatch"]
     L_ += ["", f"A9.4 quotation dispatch: authorized - {', '.join(qd['authorized'])}; NOT authorized - "
                f"{', '.join(qd['not_authorized'])}; scope {qd['scope']}; sent by {qd['sent_by']}."]
+    c6 = d["a9_6_completion"]
+    L_ += ["", f"A9.6 completion ({c6['follow_on']}, base `{c6['base_commit']}`; directive `{c6['directive']['path']}` "
+               f"sha256 `{c6['directive']['sha256']}`): {c6['rule']}. Owner: \"{c6['rfq_only_quote']['quote']}\"."]
     L_ += ["", f"Lane {d['lane']} ({d['follow_on']}, trigger {d['trigger']}); status {d['status']}; A9 status "
                f"{d['a9_status']}; base commit `{d['base_commit']}`. Generated by `{d['generated_by']}` "
                f"(`--check` reproduces it); test `{d['test']}`.", "",
@@ -2268,6 +3286,25 @@ def render_main(d: dict) -> str:
     L_ += _table(d["p1_dispatch_first"], [("package", lambda x: x["package"]), ("line", lambda x: x["line_item"]),
                                           ("item", lambda x: x["item"]), ("qty", lambda x: x["qty"]),
                                           ("option", lambda x: "OPTION" if x["option_line"] else "")])
+    L_ += ["", "## A9.6 sec. 13 owner items -> lines", ""]
+    L_ += _table(d["a9_6_sec13_coverage"], [("owner item (verbatim)", lambda x: x["owner_item"]),
+                                           ("lines", lambda x: ", ".join(f"{y['line']} ({y['dispatch']})"
+                                                                         for y in x["lines"]))])
+    ic_ = d["instrument_coverage"]
+    L_ += ["", "## P1 / P2 instrument coverage cross-check", "", ic_["rule"] + ".", ""]
+    for inp in ic_["inputs"]:
+        L_.append(f"- input {inp['key']}: `{inp['path']}` (pinned: {inp['pinned']}; {inp['note']})")
+    for k, v in ic_["not_procured_dispositions"].items():
+        L_.append(f"- {k}: {v['disposition']} - {v['why']}")
+    for sec, head in (("p1_measurements", "P1 measurements"), ("p1_hardware", "P1 hardware readiness"),
+                      ("p2_instruments", "P2 instruments")):
+        L_ += ["", f"### {head}", ""]
+        L_ += _table(ic_[sec], [("id", lambda x: x["id"]), ("what", lambda x: x["what"]),
+                                ("status in source", lambda x: x["status_in_source"]),
+                                ("RFQ lines / disposition",
+                                 lambda x: ", ".join(f"{y['line']} ({y['package']}, {y['dispatch']})"
+                                                     for y in x["rfq_lines"]) or x["disposition"]),
+                                ("note", lambda x: x.get("note", ""))])
     L_ += ["", "## Not in this revision", ""]
     for x in d["not_in_this_revision"]:
         L_.append(f"- **{x['id']}** {x['item']} - {x['why']}")
@@ -2294,7 +3331,14 @@ def render_main(d: dict) -> str:
                                           ("to", lambda x: x["to"]), ("quantity", lambda x: x["quantity"]),
                                           ("units", lambda x: x["units"]), ("status", lambda x: x["status"])])
     oa = d["owner_answers_applied"]
-    L_ += ["", "## (c) Owner answers applied", "", "### A9.4 (" + d["a9_4_incorporation"]["decision"]["path"] +
+    L_ += ["", "## (c) Owner answers applied", "", "### A9.6 (" + d["a9_6_completion"]["directive"]["path"] + ")", ""]
+    L_ += _table(oa["a9_6"], [("id", lambda x: x["id"]), ("how applied", lambda x: x["how_applied"]),
+                              ("applied in", lambda x: ", ".join(x["applied_in"]))])
+    L_ += ["", "### A9.5 (" + d["a9_6_completion"]["a9_5"]["path"] + ")", ""]
+    L_ += _table(oa["a9_5"], [("id", lambda x: x["id"]), ("status", lambda x: x["status"]),
+                              ("how applied", lambda x: x["how_applied"]),
+                              ("applied in", lambda x: ", ".join(x["applied_in"]))])
+    L_ += ["", "### A9.4 (" + d["a9_4_incorporation"]["decision"]["path"] +
            ", sha256 `" + d["a9_4_incorporation"]["decision"]["sha256"] + "`)", ""]
     L_ += _table(oa["a9_4"], [("id", lambda x: x["id"]), ("status", lambda x: x["status"]),
                               ("how applied", lambda x: x["how_applied"]),
@@ -2313,6 +3357,10 @@ def render_main(d: dict) -> str:
     L_ += ["", "## (d) Open owner questions (new)", ""]
     L_ += _table(oq["new"], [("id", lambda x: x["id"]), ("question", lambda x: x["question"]),
                              ("proposed", lambda x: x["proposed_answer"]), ("needed by", lambda x: x["needed_by"])])
+    L_ += ["", "Closed since the previous revision:"]
+    L_ += [f"- {x['id']}: {x['state']} - {x['how']}" for x in oq["closed_since_previous_revision"]]
+    L_ += ["", "Carried OPEN from the P1 / P2 lanes (TBD_OWNER; not answered here):"]
+    L_ += [f"- {x['id']} ({x['state']}): {x['handling']}" for x in oq["carried_open_from_lanes"]]
     L_ += ["", "Carried OPEN from v1 (not answered here): " + ", ".join(x["id"] for x in oq["carried_open_from_v1"]),
            "", "Answered since v1: " + ", ".join(f"{x['id']} ({x['state_v3_status']})"
                                                 for x in oq["v1_questions_answered_since"]),
