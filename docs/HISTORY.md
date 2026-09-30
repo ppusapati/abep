@@ -2336,3 +2336,22 @@ Owner-question triage (recorder proposal, not a decision): `docs/budgets/owner_d
 puts each of the 54 OPEN state-v2 questions in exactly one tier: 8 gate the P1 bench, 2 wait for P2 data, 8 set the
 P3/P4 thermal rules, 20 are mass/Xe closure, 12 are comparison-campaign design and 4 are governance. There are two
 duplicate groups (Xe design-case content; ignition dwells).
+
+## 2026-09-30 — A9.3 post-A9 tier-1 owner decisions; P1 authorized, P2 preparation in parallel
+
+The owner answered the eight tier-1 questions (verbatim `docs/decisions/OD_2026_09_30_A9_3_POST_A9_TIER1_OWNER_DECISIONS.md`,
+machine-readable `OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json`):
+- **First build:** open-tube coaxial ICP only, on a modular carrier that leaves room for a later orificed variant.
+- **Ar check:** the "no Hall discharge without ICP" check is an engineering control, never scored.
+- **Discharge current:** 8.33 A is the stand design ceiling. The ICP-45 requirement is the registered H-1 maximum
+  discharge current, and until it is known P1 reports the I_e capability surface.
+- **Isolation:** ~1 kV representative-gas isolation, only where a gas line crosses a potential difference.
+- **RF source:** a mains-fed laboratory RF generator for ground use only. P_mains,in is never P_bus evidence; C_e and
+  C_e,DC are reported with labelled boundaries.
+- **RFQs:** split by supplier speciality. The team prepares them and the owner/procurement dispatches them.
+- **Ar flow:** 1–2 Ar flow ranges, not 4; Ar data stay engineering-only.
+- **Dedicated ICP feed:** its controller is a quotation option only; G-REUSE stays primary.
+
+Owner-question state v3 records these answers; 46 questions remain OPEN, and v2 is unchanged. Triggers registered:
+T_A9_P1_ICP_BENCH, T_A9_P2_IMPEDANCE_PREP (the plasma map needs stable P1 plasma first) and T_A9_RFQ_V2_SPLIT. No model,
+frozen data or golden changed.

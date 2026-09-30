@@ -1,0 +1,98 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_09_30_A9_3_post_a9_tier1_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-09-30",
+ "decision": "A9_3_POST_A9_TIER1_DECISIONS_RECORDED",
+ "baseline": "main 20f14d8 (post-A9 checkpoint 3)",
+ "parents": [
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+  "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+  "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json"
+ ],
+ "answers_questions_of": {
+  "path": "docs/budgets/owner_decisions/owner_questions_state_v2.json",
+  "triage": "docs/budgets/owner_decisions/owner_questions_triage_post_a9_v1.json (tier T1_P1_ICP_BENCH)"
+ },
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_09_30_A9_3_POST_A9_TIER1_OWNER_DECISIONS.md",
+  "sha256": "55a1fd84558a9590705bb82aa11db5e2b9136dd1d83a957d26614c435c707411"
+ },
+ "decisions": {
+  "OQ-VI-03": {
+   "status": "OWNER_DECIDED = OPEN_TUBE_COAXIAL_FIRST_BUILD",
+   "summary": "P1 first build uses the open-tube coaxial downstream ICP topology only; orificed RF plasma cathodes (Watanabe/Xu type) stay literature comparators / evidence / possible later branches and are not built in P1",
+   "provision": "the P1 carrier/interface stays modular so a future ICP_ORIFICED_VARIANT can be installed as an A9.x follow-on without redesigning H-1"
+  },
+  "OQ-VI-05": {
+   "status": "REQUIRED_ENGINEERING_CONTROL_NON_SCORING",
+   "summary": "perform the Ar 'no Hall discharge without ICP electrons' sequence (7 steps: H-1 gas/magnet set; C1 disconnected; ICP RF off; preregistered Hall start attempt inside registered limits; record sustained discharge or not; ICP on by registered procedure; observe sustainability); record V_d(t), I_d(t), I_e,ICP(t), P_RF,fwd(t), P_RF,refl(t), collector/reference potentials",
+   "interpretation": "not a PASS/FAIL gate; 'Hall must not run without ICP' is NOT preregistered as a physics requirement; an unexpected sustained discharge (facility electrons, SEE, residual plasma, other current path) is a finding requiring current-path diagnosis and does not by itself invalidate the ICP architecture; what must be demonstrated is that the ICP supplies the required electron current and neutralization function"
+  },
+  "OQ-A907-02": {
+   "status": [
+    "8.33_A_STAND_CEILING",
+    "ICP45_REQUIRED_CURRENT = H1_REGISTERED_MAX"
+   ],
+   "stand_ceiling": "I_d,stand ceiling = 8.33 A (1500 W / 180 V), the laboratory supply/rating ceiling, for conductor sizing, current-sensor range, collector-circuit rating, feedthrough rating, protection, DAQ range, optional stress test; not evidence that H-1 requires 8.33 A",
+   "icp45_requirement": "I_e,required = I_d,max,H1 = maximum H-1 discharge current within the registered operating envelope relevant to the architecture, from measured/registered H-1 operation (not the supply rating); ICP-45 requires I_e,cap >= I_d,max,H1 with the preregistered one-sided uncertainty margin",
+   "p1_before_freeze": "progressive electron-current capability sweep; never PASS because 1 A, 2 A, ... is reached; report the surface I_e = f(P_RF, p, mdot, Z_ICP, V_collector) until the H-1 requirement is known",
+   "flight_7p5A": "7.5 A (1350/180) may remain a power-envelope mathematical bound; not automatically the flight discharge-current requirement",
+   "clarifies": "the A9.1 ICP-45 reading 'from the registered H-1/discharge-supply envelope': the requirement is the registered H-1 maximum, the supply rating is only the stand ceiling"
+  },
+  "ICPQ-06": {
+   "status": "ACCEPT_1KV_CLASS_REPRESENTATIVE_GAS_QUALIFICATION",
+   "summary": "any ICP gas line crossing a meaningful potential difference gets the Hall gas-isolator philosophy: ~1 kV DC development qualification at representative pressure, gas, geometry and feedthrough/isolator condition; check flashover, leakage, breakdown, surface tracking, repeated exposure where appropriate",
+   "qualification": "no isolator in a gas line whose two ends are intentionally held at essentially the same floating potential; the requirement applies only where the plumbing bridges isolated potentials"
+  },
+  "OQ-RFQ-06": {
+   "status": "YES_GROUND_ONLY",
+   "summary": "mains-powered laboratory 13.56 MHz generator for P1, classified GROUND/FACILITY_ONLY; measure P_mains,in with a power analyzer (engineering quantity), P_RF,fwd, P_RF,refl and determine/cross-check delivered RF power",
+   "boundary_rule": "P_mains,in is never evidence for P_bus < 1.5 kW; the flight/system power question needs a later FLIGHT_REPRESENTATIVE_DC_RF_SOURCE with measured P_DC,in -> P_RF -> I_e",
+   "p1_outputs": "C_e = P_RF,delivered / I_e and preferably C_e,DC = P_generator,input / I_e, each with its exact boundary labelled"
+  },
+  "OQ-RFQ-07": {
+   "status": "TECHNICAL_TEAM_PREPARES / OWNER_OR_PROCUREMENT_DISPATCHES",
+   "summary": "RFQ packages split by supplier speciality; the technical team/Claude prepares; commercial dispatch authority stays with P9E/Vyovrinda under Praveen's authorization; no automatic supplier contact",
+   "packages": {
+    "RF": "13.56 MHz generator; directional coupler; forward/reflected sensors; local matching network components; RF coax; feedthroughs; dummy load; RF protection/interlocks",
+    "gas_metrology": "Ar/N2/O2/Xe MFCs; valves; pressure instrumentation; gas isolators; calibration",
+    "vacuum_facility": "chamber interfaces; pumping; feedthroughs; RGA/diagnostic interfaces",
+    "hall_electrical": "discharge supply; magnet supply; isolation; sensing",
+    "mechanical_icp_fabrication": "dielectric tube/chamber; RF antenna/coil; collector; carrier; machined supports",
+    "thrust_metrology": "stand; force calibration; DAQ; traceability hardware"
+   },
+   "common_interface": "a common top-level interface document keeps the separate packages compatible"
+  },
+  "OQ-RFQ-02": {
+   "status": "AR_MFC_RANGES = 1_OR_2_AS_NEEDED, NOT_4_MANDATORY",
+   "summary": "the row-123 four-overlapping-range rule is not applied literally to Ar (engineering-only topology-reproduction gas); provide calibrated Ar flow to reproduce the neighbourhood of the Takahashi anchor (70 sccm ~ 2.1 mg/s, owner-stated), sweep above/below for ignition/current trends, with useful flow uncertainty in that window; one suitable Ar MFC if it covers the sweep, two overlapping ranges only if one cannot",
+   "traceability": "verify the Ar controller by the rate-of-rise/transfer calibration path; Ar data remain ENGINEERING_ONLY_NON_SCORING regardless of metrology quality; a later quantitative Ar programme needs a new metrology requirement",
+   "amends": "scope of owner row 123 for the Ar path only; atmospheric score-bearing paths keep four overlapping ranges"
+  },
+  "OQ-RFQ-10": {
+   "status": "QUOTE_OPTION_ONLY",
+   "summary": "include the optional ICP dedicated-feed controller as an RFQ option line (G-ATM, G-XE, diagnostic gas injection); never bought/installed as part of the primary architecture merely because quoted; primary P1/A9 mode stays G-REUSE (Hall exhaust -> ICP, mdot_ICP,dedicated = 0); the physical capped ICP gas port remains",
+   "booking": "if G-XE/G-ATM is activated, mdot_ICP,dedicated is explicitly booked in the corresponding atmospheric/Xe ledger; a dedicated feed is a diagnostic variable and must not silently become the baseline"
+  }
+ },
+ "authorizations": {
+  "P1": "AUTHORIZED TO LAUNCH after this addendum is recorded: open-tube coaxial 13.56 MHz ICP; Ar engineering reproduction; G-REUSE; electron-current extraction characterization; RF forward/reflected power; collector bias/current; pressure/flow; temperature; stability; current-path verification; subject to existing safety/interlock/metrology requirements",
+  "P2": "instrument PREPARATION starts immediately in parallel (V/I sensing, directional-coupler chain, calibration, S-parameter/impedance methodology, data model); the plasma impedance map itself only after P1 establishes a stable ICP operating region",
+  "sequence": "P1 physics || P2 instrument preparation; then P1 stable plasma -> P2 plasma impedance map",
+  "not_waiting_for": "the tier-4/5 mass, Xe and comparison-campaign questions do not gate P1"
+ },
+ "unchanged": [
+  "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+  "the ten A9.2 statuses",
+  "no purchase orders (RFQs are quotations only)",
+  "no supplier contact by Claude",
+  "P5-N2 v1 INCONCLUSIVE; credible Hall set empty"
+ ],
+ "recorder_flags": [
+  "The name 'Professor Umesh' appears in the owner's text for the first time in the repository records; recorded verbatim, not interpreted. The A9 topology precedent on file remains Takahashi et al., J. Electr. Propuls. 3:18 (2024).",
+  "70 sccm Ar ~ 2.1 mg/s is owner-stated; recorder arithmetic check: 70 sccm x 7.436e-7 mol/s/sccm x 39.948 g/mol = 2.08 mg/s (consistent). Its attribution to the Takahashi experiment is to be confirmed against the A9-05 extraction (page/figure provenance) by the P1 lane.",
+  "A9-09 v1 RFQ packages (docs/procurement/rfq_a9/, 9 families, off-platform match, 4 ranges per pure-gas path) predate A9.2 and this addendum; they stay immutable and a revision is produced under a new path."
+ ],
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

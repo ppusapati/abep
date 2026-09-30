@@ -1211,6 +1211,21 @@
    "id": "fo_a9_10_integration",
    "kind": "follow_on",
    "title": "A9-10 reconciliation of all A9 outputs, A9.1 decisions applied, M16 refresh, owner-question state"
+  },
+  {
+   "id": "fo_a9_p1_icp_bench",
+   "kind": "follow_on",
+   "title": "P1 ICP electron-source bench: open-tube coaxial 13.56 MHz ICP, Ar engineering reproduction, G-REUSE, I_e capability surface, topology control, current-path verification (A9.3)"
+  },
+  {
+   "id": "fo_a9_p2_impedance_prep",
+   "kind": "follow_on",
+   "title": "P2 ICP impedance-map instrument preparation: V/I sensing, coupler chain, calibration/de-embedding, S-parameter/impedance methodology, data model (A9.3; plasma map only after P1 stable plasma)"
+  },
+  {
+   "id": "fo_a9_rfq_v2_split",
+   "kind": "follow_on",
+   "title": "RFQ packages v2: split by supplier speciality with a common top-level interface document; A9.2 local match, A9.3 Ar 1-2 ranges, dedicated-feed option line, mains RF ground-only (quotations only)"
   }
  ],
  "owner_dispositions": [
@@ -1278,6 +1293,18 @@
    },
    "decision_states": {
     "A9_2_A907_FOLLOWUP_DECISIONS_RECORDED": "approved"
+   },
+   "immutability": "never edited after commit; later owner amendments are new addendum files"
+  },
+  {
+   "id": "od_a9_3_post_a9_tier1",
+   "file": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+   "states": {
+    "pending": "no disposition file",
+    "approved": "decision A9_3_POST_A9_TIER1_DECISIONS_RECORDED"
+   },
+   "decision_states": {
+    "A9_3_POST_A9_TIER1_DECISIONS_RECORDED": "approved"
    },
    "immutability": "never edited after commit; later owner amendments are new addendum files"
   }
