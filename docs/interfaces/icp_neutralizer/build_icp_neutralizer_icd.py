@@ -182,9 +182,11 @@ def resolve(doc, pointer: str):
 
 
 def xe_budget_dir() -> str:
-    """Directory of the verified Xe ledger lane under docs/budgets/ (exactly one match or raise)."""
+    """Directory of the verified (A6) Xe ledger lane under docs/budgets/ (exactly one match or raise). The A9 ledger
+    update ('_a9'-suffixed directory, fo_a9_08) is excluded here; retargeting this reference is an A9-10 decision."""
     hits = sorted(os.path.relpath(p, ROOT).replace(os.sep, "/") + "/"
-                  for p in glob.glob(os.path.join(ROOT, "docs", "budgets", "xe_*")) if os.path.isdir(p))
+                  for p in glob.glob(os.path.join(ROOT, "docs", "budgets", "xe_*"))
+                  if os.path.isdir(p) and not os.path.basename(p).endswith("_a9"))
     if len(hits) != 1:
         raise FileNotFoundError(f"expected exactly one Xe ledger directory under docs/budgets/, found {hits}")
     return hits[0]

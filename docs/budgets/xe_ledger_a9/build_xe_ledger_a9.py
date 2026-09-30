@@ -107,7 +107,7 @@ DELIVERABLES = {
     "VI": ("docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
            "1de411c5f09d96698e87ec22bdba796b5c2010ad4f0362afb5a4fd2eec9b9527", "A9-05 validation inputs (verified)"),
     "INT": ("docs/experiments/hall_icp/integration/a9_core_integration_v1.json",
-            "0f452718b973a5e370f3bcca492dd4552e15eb3c9cabc1c83acb3afa3189cf00", "A9 core integration (verified)"),
+            "20c222d9b8a65930789c767ed45127041c7b1cd06e21a715101761036bb5f2ca", "A9 core integration (verified)"),
     "M16": ("docs/budgets/subsystem_maturity/subsystem_maturity_v2.json",
             "a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c", "M16 v2 subsystem maturity (verified)"),
     "R6": ("docs/procurement/web_track_v1/threads/R6_xe_inputs.json",

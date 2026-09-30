@@ -32,7 +32,7 @@ Configurations: `hall_c1_reference`, `hall_icp_neutralizer`. Outcome vocabulary:
 | PRE | `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` | `f3e6069a4c78c49822f9248d9b9bc34a157a349bf601f7065e5e182645fbd245` |
 | EVI | `docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json` | `541f6568043f129b5bfaec9afc73e4838816b5183701fbf68be02388dd7dadeb` |
 | VIN | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `1de411c5f09d96698e87ec22bdba796b5c2010ad4f0362afb5a4fd2eec9b9527` |
-| INT | `docs/experiments/hall_icp/integration/a9_core_integration_v1.json` | `0f452718b973a5e370f3bcca492dd4552e15eb3c9cabc1c83acb3afa3189cf00` |
+| INT | `docs/experiments/hall_icp/integration/a9_core_integration_v1.json` | `20c222d9b8a65930789c767ed45127041c7b1cd06e21a715101761036bb5f2ca` |
 | H22 | `docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json` | `8436008ac458d4e7467a9c7c9592d5312b3912b918d584ceaf3ac8cb2745a971` |
 | H23 | `docs/hardware/h2/h2_3_gas_path_plenum/h2_3_gas_path_plenum_v1.json` | `f32b05bd03aad2a09a1d9b90ee5f9423e733e6ea4cb94814c92b500590d43a7b` |
 | H24 | `docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json` | `5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef` |

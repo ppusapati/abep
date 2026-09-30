@@ -38,7 +38,7 @@ Binding context: p5_n2_v1 = INCONCLUSIVE (permanent); credible_hall_set = EMPTY;
 | docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json | f3e6069a4c78c49822f9248d9b9bc34a157a349bf601f7065e5e182645fbd245 | A9-01 prereg framework (verified) |
 | docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json | d1cf5aba0a813c676d48c3ac8741ddb3c00c31700428fbff1c0217a5ee2d92d1 | A9-04 uncertainty budget (verified) |
 | docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json | 1de411c5f09d96698e87ec22bdba796b5c2010ad4f0362afb5a4fd2eec9b9527 | A9-05 validation inputs (verified) |
-| docs/experiments/hall_icp/integration/a9_core_integration_v1.json | 0f452718b973a5e370f3bcca492dd4552e15eb3c9cabc1c83acb3afa3189cf00 | A9 core integration (verified) |
+| docs/experiments/hall_icp/integration/a9_core_integration_v1.json | 20c222d9b8a65930789c767ed45127041c7b1cd06e21a715101761036bb5f2ca | A9 core integration (verified) |
 | docs/budgets/subsystem_maturity/subsystem_maturity_v2.json | a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c | M16 v2 subsystem maturity (verified) |
 | docs/procurement/web_track_v1/threads/R6_xe_inputs.json | f8eda3db0419d56497a9e35b11e643d87549a1942e2d4677f53446a7c7c228cd | web track R6 Xe inputs (verified) |
 | docs/architecture_comparison/mass_bom/mass_bom_v1.json | 8ab97ff93f507899508374d4ce8116e7066c31e3fbe2c79300f5b55372ba7313 | mass BOM v1 (residual policy 0.02 x xe_load, ESA R-M1-6) |
