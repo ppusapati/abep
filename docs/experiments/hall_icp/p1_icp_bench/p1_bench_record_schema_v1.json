@@ -26,6 +26,8 @@
     "gas",
     "gas_mode",
     "hall_discharge_state",
+    "hall_discharge_sustained",
+    "h1_electrical",
     "rf",
     "generator",
     "collector",
@@ -83,7 +85,56 @@
      "enum": [
       "OFF",
       "ON"
-     ]
+     ],
+     "description": "discharge-supply OUTPUT state (P1-IT-40): ON = V_d applied; OFF = output disabled and anode disconnected"
+    },
+    "hall_discharge_sustained": {
+     "type": "boolean",
+     "description": "sustained discharge per the registered definition (P1-IT-32); must be false when the supply is OFF"
+    },
+    "h1_electrical": {
+     "type": "object",
+     "required": [
+      "config_id",
+      "anode_state",
+      "V_anode_V",
+      "h1_body_state"
+     ],
+     "description": "registered H-1 electrical configuration (P1-IT-39)",
+     "properties": {
+      "config_id": {
+       "type": "string",
+       "minLength": 1
+      },
+      "anode_state": {
+       "enum": [
+        "DISCONNECTED_FLOATING",
+        "METERED_RETURN",
+        "CONNECTED_TO_DISCHARGE_SUPPLY"
+       ]
+      },
+      "V_anode_V": {
+       "type": "number"
+      },
+      "h1_body_state": {
+       "type": "string",
+       "minLength": 1
+      }
+     },
+     "x-anode-states-by-hall-state": {
+      "OFF": [
+       "DISCONNECTED_FLOATING",
+       "METERED_RETURN"
+      ],
+      "ON": [
+       "CONNECTED_TO_DISCHARGE_SUPPLY"
+      ]
+     },
+     "x-hall-anode-terminal-basis-by-anode-state": {
+      "DISCONNECTED_FLOATING": "OPEN_CIRCUIT_BY_CONSTRUCTION",
+      "METERED_RETURN": "MEASURED",
+      "CONNECTED_TO_DISCHARGE_SUPPLY": "MEASURED"
+     }
     },
     "rf": {
      "type": "object",
@@ -124,8 +175,20 @@
         },
         "source": {
          "type": "string"
+        },
+        "match_setting_id": {
+         "type": "string"
+        },
+        "valid_max_gamma_abs": {
+         "type": "number"
         }
-       }
+       },
+       "x-required-when-measured": [
+        "value_W",
+        "source",
+        "match_setting_id",
+        "valid_max_gamma_abs"
+       ]
       }
      }
     },
@@ -139,7 +202,7 @@
      ],
      "propertyNames": {
       "not": {
-       "pattern": "[Pp][^A-Za-z0-9]*[Bb][^A-Za-z0-9]*[Uu][^A-Za-z0-9]*[Ss]"
+       "pattern": "[Bb][^A-Za-z0-9]*[Uu][^A-Za-z0-9]*[Ss]"
       }
      },
      "properties": {
@@ -152,7 +215,10 @@
        "type": "number"
       },
       "input_boundary": {
-       "type": "string"
+       "type": "string",
+       "not": {
+        "pattern": "[Bb][^A-Za-z0-9]*[Uu][^A-Za-z0-9]*[Ss]"
+       }
       },
       "instrument": {
        "type": "string"
@@ -163,13 +229,22 @@
      "type": "object",
      "required": [
       "I_e_A",
+      "I_e_sign_convention",
+      "I_e_resolution_A",
       "V_collector_V",
       "reference_potential"
      ],
-     "description": "the ICP ion-collecting electrode (TK-13; ICD ICP-21); I_e is its supply-lead current; V_collector is its potential w.r.t. reference_potential",
+     "description": "the ICP ion-collecting electrode (TK-13; ICD ICP-21); I_e is its supply-lead current (I_e > 0 = electrons extracted from the ICP; equals terminals.collector_supply.I_A within I_e_resolution_A); V_collector is its potential w.r.t. reference_potential",
      "properties": {
       "I_e_A": {
        "type": "number"
+      },
+      "I_e_sign_convention": {
+       "const": "POSITIVE_ELECTRONS_EXTRACTED_FROM_ICP_EQUALS_COLLECTOR_SUPPLY_TERMINAL_INTO_NETWORK"
+      },
+      "I_e_resolution_A": {
+       "type": "number",
+       "exclusiveMinimum": 0
       },
       "V_collector_V": {
        "type": "number"
@@ -216,7 +291,7 @@
     "h1_point_id": {
      "type": "string",
      "minLength": 1,
-     "description": "registered H-1 point id (required for ICP-45A candidacy, P1-S7)"
+     "description": "registered H-1 point id (gas/magnet conditions; required for ICP-45A capacity candidacy, P1-IT-38)"
     },
     "pressures": {
      "type": "object",
@@ -295,12 +370,14 @@
        "collector_supply",
        "icp_body",
        "facility_ground",
-       "electron_collector"
+       "electron_collector",
+       "hall_anode"
       ],
       "OFF/CHAMBER_WALL_FACILITY_GROUND": [
        "collector_supply",
        "icp_body",
-       "facility_ground"
+       "facility_ground",
+       "hall_anode"
       ],
       "ON/H1_ANODE": [
        "collector_supply",
@@ -335,10 +412,10 @@
    },
    "propertyNames": {
     "not": {
-     "pattern": "[Pp][^A-Za-z0-9]*[Bb][^A-Za-z0-9]*[Uu][^A-Za-z0-9]*[Ss]"
+     "pattern": "[Bb][^A-Za-z0-9]*[Uu][^A-Za-z0-9]*[Ss]"
     }
    },
-   "x-p-bus-screen": "the reducer refuses, at any nesting depth, every field name that normalises (lower-case, alphanumerics only) to contain 'pbus' (A9.3 OQ-RFQ-06)"
+   "x-p-bus-screen": "the reducer refuses, at any nesting depth, every field name that normalises (lower-case, alphanumerics only) to contain 'bus', and a generator.input_boundary text naming a bus (A9.3 OQ-RFQ-06)"
   },
   "topology_control_sequence": {
    "type": "object",
@@ -423,38 +500,38 @@
        }
       }
      }
+    }
+   },
+   "x-step-texts-verbatim": [
+    {
+     "step": 1,
+     "text": "H-1 gas/magnet conditions established."
     },
-    "x-step-texts-verbatim": [
-     {
-      "step": 1,
-      "text": "H-1 gas/magnet conditions established."
-     },
-     {
-      "step": 2,
-      "text": "C1 disconnected/not supplying electrons."
-     },
-     {
-      "step": 3,
-      "text": "ICP RF OFF."
-     },
-     {
-      "step": 4,
-      "text": "Apply the preregistered Hall start attempt inside registered limits."
-     },
-     {
-      "step": 5,
-      "text": "Record whether a sustained Hall discharge exists."
-     },
-     {
-      "step": 6,
-      "text": "Turn ICP ON using the registered procedure."
-     },
-     {
-      "step": 7,
-      "text": "Observe whether Hall discharge becomes sustainable."
-     }
-    ]
-   }
+    {
+     "step": 2,
+     "text": "C1 disconnected/not supplying electrons."
+    },
+    {
+     "step": 3,
+     "text": "ICP RF OFF."
+    },
+    {
+     "step": 4,
+     "text": "Apply the preregistered Hall start attempt inside registered limits."
+    },
+    {
+     "step": 5,
+     "text": "Record whether a sustained Hall discharge exists."
+    },
+    {
+     "step": 6,
+     "text": "Turn ICP ON using the registered procedure."
+    },
+    {
+     "step": 7,
+     "text": "Observe whether Hall discharge becomes sustainable."
+    }
+   ]
   }
  }
 }

@@ -285,9 +285,11 @@ def items(ar):
            A93 + " ICPQ-06; " + ANS + " row 105", "owner-allocation",
            "OWNER_GIVEN (ACCEPT_1KV_CLASS_REPRESENTATIVE_GAS_QUALIFICATION)", "NOW", "P1-G0"),
         it("P1-IT-21", "ICP / collector isolation from the Hall anode and cathode-common", 350.0, "V",
-           "owner answer (row 81: rate isolation to the relaxed 350 V end plus transient/qualification margin); "
-           "ICD ICP-23 carries it as PROPOSED", "ICD ICP-23; " + ANS + " rows 81, 105", "owner-allocation",
-           "PROPOSED (margin TBD)", "LOCK-1"),
+           "PROPOSED EXTENSION of owner row 81 (row 81 rates H-1, the C1 reference, the discharge supply, isolation "
+           "and diagnostics to the relaxed 350 V end plus transient/qualification margin; it does NOT name the ICP): "
+           "the same class is PROPOSED for the ICP body / collector circuits (ICD ICP-23 carries it as PROPOSED; "
+           "owner question P1Q-14)", "ICD ICP-23; " + ANS + " rows 81, 105", "owner-allocation",
+           "PROPOSED EXTENSION (margin TBD; P1Q-14)", "LOCK-1"),
         it("P1-IT-22", "local matching network", "adjustable, on / immediately adjacent to the ICP module", "-",
            "owner decision", A92 + " OQ-A907-11, icp_matching_strategy", "owner-allocation",
            "OWNER_GIVEN (LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT)", "NOW"),
@@ -350,14 +352,48 @@ def items(ar):
         it("P1-IT-37", "facility-electron pair pressure-match tolerance (P1-D-07)", tbd + "registration at P1-G0 "
            "(owner question P1Q-11); the reducer takes it as an explicit input and has no default", "- (relative)",
            "this lane (form)", "this lane", None, "TBD", "after-evidence", "P1-G0"),
-        it("P1-IT-38", "I_e,cap definition for the ICP-45A engineering evaluation", "PROPOSED: maximum over "
-           "eligible records of the facility-corrected ICP-supplied current I_e(RF ON) - I_e(RF OFF); eligible = "
-           "P1-S7, Hall ON, G-REUSE, RF ON, RF pickup check DONE, registered H-1 point, matched RF-OFF pair. No "
-           "owner answer or cited source defines I_e,cap; owner question P1Q-10", "A", "this lane (PROPOSED form)",
+        it("P1-IT-38", "I_e,cap definition for the ICP-45A engineering evaluation", "PROPOSED: a CAPACITY "
+           "(extraction) measurement, as A9.1 ICP-45A reads ('demonstrate electron extraction up to I_e,cap >= "
+           "I_d,max'): maximum over eligible records of the facility-corrected extracted current I_e(RF ON) - "
+           "I_e(RF OFF); eligible = stage P1-S4 or P1-S7, Hall discharge supply OFF, electrons sunk by the "
+           "registered electron-collecting electrode (P1-IT-36, not the H-1 anode), G-REUSE, RF ON, RF pickup check "
+           "DONE, gas/magnet conditions of a registered H-1 point, matched RF-OFF pair. Hall-ON P1-S7 records (H-1 "
+           "anode sink) are a descriptive neutralization-consistency check only (P1-D-12): by current continuity the "
+           "ICP-supplied current there equals I_d <= I_d,max,H1, so they can never show the margin and would falsely "
+           "reject a viable ICP (the A9.3 OQ-A907-02 concern). No owner answer or cited source defines I_e,cap; "
+           "owner question P1Q-10", "A", "this lane (PROPOSED form)",
            A91 + " ICP-45, UBQ-02; " + A93 + " OQ-A907-02, OQ-VI-05 ('the ICP supplies the required electron "
            "current')", "assumed", "PROPOSED (owner call P1Q-10)", "after-evidence", "P1-S7 entry",
            "synthetic records only ever yield SYNTHETIC_TEST_ONLY_NOT_EVIDENCE; excluded records are listed with "
-           "reasons"),
+           "reasons; without an eligible capacity record the status is NOT_EVALUATED, never a FAIL"),
+        it("P1-IT-39", "H-1 electrical configuration in every stage (anode, discharge-supply output, H-1 body / "
+           "magnetic circuit)", tbd + "registration at P1-G0 (owner question P1Q-13). PROPOSED: with the discharge "
+           "supply OFF (P1-S3..S5 and P1-S7 capacity blocks) the H-1 anode is DISCONNECTED from the supply output "
+           "and left floating with V_anode recorded (terminal hall_anode OPEN_CIRCUIT_BY_CONSTRUCTION), or tied to "
+           "the registered reference through a METERED return (terminal hall_anode MEASURED); an OFF supply output "
+           "left connected is refused (possible low-impedance path); the H-1 body / magnetic-circuit state is "
+           "recorded per record", "-, V", "this lane (form)", "this lane; " + A93 + " authorizations.P1 "
+           "('current-path verification')", None, "TBD (PROPOSED form)", "after-evidence", "P1-G0",
+           "the reducer requires h1_electrical {config_id, anode_state, V_anode_V, h1_body_state} on every record "
+           "and the hall_anode terminal in every Kirchhoff closure (Hall OFF included)"),
+        it("P1-IT-40", "meaning of hall_discharge_state", "state of the discharge-supply OUTPUT: ON = V_d applied "
+           "(output enabled, anode connected); OFF = output disabled and anode disconnected. Whether a discharge "
+           "is sustained is recorded separately (hall_discharge_sustained, against P1-IT-32)", "-",
+           "this lane (definition)", "this lane; " + A93 + " OQ-VI-05 (steps 4-5 separate the start attempt from "
+           "the sustainment observation)", "assumed", "PROPOSED (definition)", "NOW", "P1-G0",
+           "the P1-S7 RF-OFF facility pair is taken with V_d applied (state ON) inside the registered start-attempt "
+           "limits P1-IT-31, whether or not a discharge is sustained"),
+        it("P1-IT-41", "validity of a MEASURED line/match loss", tbd + "the P1-S1/S2 two-port data for the "
+           "residual-|Gamma| validity limit valid_max_gamma_abs (frozen at P1-G1). Form: each MEASURED "
+           "P_line/match,loss is de-embedded from the two-port S-parameter data at the recorded match_setting_id; "
+           "it is valid only at that setting and up to that limit; outside it the loss must be FLAGGED_NOT_MEASURED",
+           "W, -", "this lane (form)", A92 + " OQ-A907-11 (P_delivered with the loss term); " + UB + " UB-RF-05",
+           None, "TBD (form fixed; limit value from S1/S2)", "after-evidence", "P1-G1"),
+        it("P1-IT-42", "I_e sign convention and channel resolution", "I_e > 0 = net electrons extracted from the "
+           "ICP; the collector_supply terminal carries I_A = +I_e (conventional current into the isolated network); "
+           "the two readings must agree within the I_e channel resolution (TBD - requires the channel "
+           "certificate)", "A", "this lane (convention)", "this lane", "assumed", "PROPOSED (convention)", "NOW",
+           "P1-G0", "negative I_e is flagged (net ion collection or sensor orientation), not silently accepted"),
     ]
 
 
@@ -376,7 +412,15 @@ def stages():
                   "certificates or their TBD status, collector bias range and Ar MFC range(s) recorded",
                   "P1-S4 electron-extraction topology registered with an id (P1-IT-36: electron-collecting "
                   "electrode, geometry and axial/radial position, bias polarity, V_collector reference, "
-                  "instrumented terminals)", "facility-pair pressure-match tolerance registered (P1-IT-37)"],
+                  "instrumented terminals)", "facility-pair pressure-match tolerance registered (P1-IT-37)",
+                  "H-1 electrical configuration registered with an id (P1-IT-39: anode disconnected-floating or "
+                  "metered return while the discharge supply is OFF; discharge-supply output state; H-1 body / "
+                  "magnetic-circuit state)",
+                  "electrical isolation verification of every floating circuit (collector / ICP ion-collecting "
+                  "electrode, ICP body, electron-collecting target, H-1 anode and discharge-supply output) by "
+                  "insulation-resistance / hipot test BEFORE the first collector bias (P1-S4) and the first V_d "
+                  "(P1-S6); test voltage and acceptance TBD - frozen at P1-G0 (PROPOSED basis: the 350 V class of "
+                  "row 81 plus margin, extended to the ICP circuits only as PROPOSED, P1-IT-21 / P1Q-14)"],
          "produces": ["ENGINEERING_ONLY_NON_SCORING"], "hall_discharge": "not installed / OFF"},
         {"id": "P1-S1", "name": "RF cold checkout into the dummy load", "prereg_stage": "HI-S1A (module bench check)",
          "entry": ["P1-G0 signed"],
@@ -402,8 +446,10 @@ def stages():
                   "(TBD_AFTER_IMPEDANCE_MAP)"],
          "produces": ["ENGINEERING_ONLY_NON_SCORING"], "hall_discharge": "OFF"},
         {"id": "P1-S3", "name": "ICP ignition map under G-REUSE", "prereg_stage": "HI-S1A (module bench check)",
-         "entry": ["P1-G2 passed", "Ar flowing through the H-1 gas path (G-REUSE), Hall discharge OFF, C1 not "
-                   "installed or disconnected", "ICP ignition procedure registered (id)"],
+         "entry": ["P1-G2 passed", "Ar flowing through the H-1 gas path (G-REUSE), Hall discharge supply OFF, C1 "
+                   "not installed or disconnected", "H-1 anode in the registered configuration (P1-IT-39: "
+                   "disconnected-floating with V_anode recorded, or metered return)", "ICP ignition procedure "
+                   "registered (id)"],
          "work": ["ascending P_fwd ladder at each Ar flow level (run matrix F1 x F2, F6)",
                   "record per attempt: ignition yes/no, P_fwd and P_refl at ignition, match setting, delay, "
                   "extinction, any discontinuity of P_refl / antenna current / emission (owner row 24)"],
@@ -422,13 +468,15 @@ def stages():
                   "registered reference",
                   "collector bias sweep at each (P_RF, mdot) point, ascending current limit with hold points",
                   "report the SURFACE I_e = f(P_RF, p, mdot, Z_ICP, V_collector) (A9.3 OQ-A907-02)",
-                  "Kirchhoff current-path closure per point (collector, ICP body, facility/chamber ground, and the "
-                  "electron_collector terminal when the dedicated target is used)",
+                  "Kirchhoff current-path closure per point (collector, ICP body, facility/chamber ground, H-1 anode "
+                  "(MEASURED metered return or OPEN_CIRCUIT_BY_CONSTRUCTION, P1-IT-39), and the electron_collector "
+                  "terminal when the dedicated target is used)", "V_anode recorded (P1-M-15)",
                   "facility-electron contribution check: RF OFF at the same bias and reference, flow, gas mode, "
                   "Hall state, extraction topology and pressure (within P1-IT-37)",
                   "C_e and C_e,DC with boundary labels per point"],
-         "exit": ["surface table filed; ICP-45A NOT_EVALUATED until I_d,max,H1 is registered; never PASS because "
-                  "1 A, 2 A, ... is reached"],
+         "exit": ["surface table filed; these capacity-extraction records are the P1-IT-38 (PROPOSED) I_e,cap "
+                  "candidates once I_d,max,H1 and its registered points exist; ICP-45A NOT_EVALUATED until then; "
+                  "never PASS because 1 A, 2 A, ... is reached"],
          "produces": ["ENGINEERING_ONLY_NON_SCORING"], "hall_discharge": "OFF"},
         {"id": "P1-S5", "name": "stability dwells and stable-region handoff to P2",
          "prereg_stage": "HI-S1A (module bench check)", "entry": ["surface from P1-S4"],
@@ -460,18 +508,30 @@ def stages():
          "exit": ["current-path attribution record (descriptive); the ICP architecture is not invalidated by the "
                   "finding itself (A9.3 OQ-VI-05)"],
          "produces": ["ENGINEERING_ONLY_NON_SCORING"], "hall_discharge": "ON / OFF as diagnosed"},
-        {"id": "P1-S7", "name": "Hall-on with ICP electrons; ICP-45A engineering evaluation (conditional)",
+        {"id": "P1-S7", "name": "ICP-45A capacity confirmation at registered H-1 conditions + Hall-on "
+                                "neutralization consistency (conditional)",
          "prereg_stage": "HI-AR",
          "entry": ["I_d,max,H1 registered from measured H-1 operation (P1-IT-07)", "one-sided margin rule and "
-                   "uncertainties supplied (P1-IT-29)"],
-         "work": ["ICP-supplied electron current at registered H-1 points (h1_point_id), electrons sunk by the "
-                  "H-1 anode; closure incl. hall_anode", "RF-OFF facility pair at every candidate point (P1-D-07)",
-                  "ICP-45A condition I_e,cap >= I_d,max,H1 with the one-sided lower bound of M_n; I_e,cap per the "
-                  "PROPOSED definition P1-IT-38 (P1Q-10): never the largest current in the bundle, never an RF-OFF, "
-                  "dedicated-feed, Hall-OFF or uncorrected record"],
-         "exit": ["ICP-45A engineering-only evaluation record (A9.1 ICP-45A); ICP-45N on N2 still required before "
-                  "any score-bearing hall_icp_neutralizer point; BLOCKED (surface only) while the entry is unmet"],
-         "produces": ["ENGINEERING_ONLY_NON_SCORING"], "hall_discharge": "ON"},
+                   "uncertainties supplied (P1-IT-29)", "registered Hall start-attempt limits (P1-IT-31) and "
+                   "sustainment definition (P1-IT-32): the Hall-on RF-OFF facility pair (V_d applied, C1 "
+                   "disconnected, ICP RF OFF) is the OQ-VI-05 step-4 situation and stays inside them",
+                   "H-1 electrical configuration per block registered (P1-IT-39)"],
+         "work": ["(a) CAPACITY block (ICP-45A): electron extraction in the registered extraction topology (P1-IT-36; "
+                  "discharge supply OFF, H-1 anode disconnected-floating or metered return) at the gas/magnet "
+                  "conditions of each registered H-1 point (h1_point_id), ascending to and beyond I_d,max,H1 inside "
+                  "the stand-ceiling ratings; RF-OFF facility pair at every candidate point (P1-D-07); I_e,cap per the "
+                  "PROPOSED definition P1-IT-38 (P1Q-10); ICP-45A condition I_e,cap >= I_d,max,H1 with the one-sided "
+                  "lower bound of M_n",
+                  "(b) NEUTRALIZATION-CONSISTENCY block: Hall discharge supply ON at registered H-1 points, electrons "
+                  "sunk by the H-1 anode, C1 disconnected; ICP-supplied current vs I_d reported descriptively "
+                  "(P1-D-12); closure incl. hall_anode; never I_e,cap (current continuity bounds it by I_d)",
+                  "never the largest current in the bundle, never an RF-OFF, dedicated-feed, Hall-ON or uncorrected "
+                  "record as I_e,cap"],
+         "exit": ["ICP-45A engineering-only evaluation record (A9.1 ICP-45A) or NOT_EVALUATED (never a FAIL without "
+                  "an eligible capacity record); ICP-45N on N2 still required before any score-bearing "
+                  "hall_icp_neutralizer point; BLOCKED (surface only) while the entry is unmet"],
+         "produces": ["ENGINEERING_ONLY_NON_SCORING"], "hall_discharge": "OFF (capacity block) / ON (consistency "
+                                                                          "block)"},
         {"id": "P1-S8", "name": "close-out and handoffs", "prereg_stage": "-",
          "entry": ["P1-S5 done (P1-S6/S7 as far as their entries allow)"],
          "work": ["P2 handoff (stable region, match settings, cold Z)", "ICP recipe inputs for LOCK-1 (A9.1 HIQ-08)",
@@ -531,13 +591,15 @@ def _measurements():
         m("P1-M-03", "line + local-match loss", "P_line/match,loss", "W", "two-port S-parameter characterization "
           "(A9H-INS-03) + dummy-load/calorimeter (A9H-INS-02)", "coupler plane -> antenna feed",
           "per configuration change and per block (TBD - frozen at P1-G1)", ["UB-RF-05"], "S1, S2", "REQUIRED",
-          "if not measured: FLAGGED_NOT_MEASURED; P_delivered then reported as an upper bound only"),
+          "each MEASURED value is de-embedded from the two-port data AT the recorded match_setting_id and is valid "
+          "only up to the residual |Gamma| limit of that characterization (P1-IT-41); otherwise FLAGGED_NOT_MEASURED "
+          "and P_delivered is reported as an upper bound only"),
         m("P1-M-04", "calorimetric RF cross-check", "P_cal", "W", "calorimetric load (A9H-INS-02)", "load plane",
           "per S1 block", ["UB-RF-08"], "S1", "REQUIRED"),
         m("P1-M-05", "laboratory generator mains input power (ENGINEERING)", "P_mains,in", "W",
           "power analyzer at the generator mains input", "AC mains input of the laboratory generator "
-          "(GROUND/FACILITY_ONLY)", SAMP, ["TBD - requires the power-analyzer certificate (A9H-CAL-03 class)",
-                                           "UB-P-06 (non-flight lab source)"], "S1-S8", "REQUIRED",
+          "(GROUND/FACILITY_ONLY)", SAMP, ["TBD - requires the power-analyzer calibration certificate"],
+          "S1-S8", "REQUIRED",
           "never P_bus, never evidence for P_bus < 1.5 kW (A9.3 OQ-RFQ-06)"),
         m("P1-M-06", "RF frequency and harmonic content", "f_RF, harmonics", "MHz, dBc", "frequency counter / "
           "spectrum analyzer", "generator output into the matched load", "per S1 block", ["UB-RF-00", "UB-RF-06"],
@@ -568,8 +630,10 @@ def _measurements():
           "(A9.1 A9-03-Vd); supply terminals and loop drops secondary", "TBD - frozen before P1-S6 (UB-I-01 "
           "exploratory band as reference)", ["UB-I-02", "UB-I-03", "UB-I-04"], "S6, S6D, S7", "REQUIRED"),
         m("P1-M-15", "anode and electron-source-reference potentials to ground", "V_anode, V_ref", "V",
-          "floating-rated dividers (A9H-INS-10)", "to facility ground", "as P1-M-14", ["UB-N-02"], "S6, S6D, S7",
-          "REQUIRED"),
+          "floating-rated dividers (A9H-INS-10)", "to facility ground", "as P1-M-14 in S6/S6D/S7; " + SAMP +
+          " in S3-S5", ["UB-N-02"], "S3-S7", "REQUIRED",
+          "V_anode recorded also with the discharge supply OFF (anode disconnected-floating or metered return, "
+          "P1-IT-39); V_ref from P1-S6 on"),
         m("P1-M-16", "chamber pressure", "p_chamber", "Pa", "ion gauge, Ar-calibrated (UBQ-08)",
           "H2-6 H26-30 placement rule (UB-B-05)", "UB-B-05 rule", ["UB-B-03", "UB-B-04", "UB-B-05"], "S2-S7",
           "REQUIRED"),
@@ -622,20 +686,25 @@ def derived():
         {"id": "P1-D-05", "quantity": "C_e,DC", "formula": "P_generator,input / I_e", "boundary_label": "P_mains,in "
          "of the laboratory generator (GROUND/FACILITY_ONLY; not P_bus)", "source": A93 + " OQ-RFQ-06"},
         {"id": "P1-D-06", "quantity": "current-path closure residual", "formula": "sum of signed terminal currents / "
-         "max |terminal current| over {collector_supply, icp_body, facility_ground (, hall_anode)}",
+         "max |terminal current| over {collector_supply, icp_body, facility_ground, hall_anode (, "
+         "electron_collector)}; hall_anode is in every closure (metered or OPEN_CIRCUIT_BY_CONSTRUCTION, P1-IT-39)",
          "source": "this lane (form); " + UB + " UB-N-07 (PROPOSED diagnostic)"},
         {"id": "P1-D-07", "quantity": "facility-electron fraction and corrected ICP current", "formula": "I_e(RF OFF) "
          "/ I_e(RF ON) and I_e(RF ON) - I_e(RF OFF) at the same V_collector and reference, mdot_Ar,H1, "
-         "mdot_ICP,dedicated, gas mode, Hall state, stage, extraction topology and H-1 point, with p_chamber "
-         "within the P1-IT-37 tolerance", "source": "this lane (A9.3 authorization: current-path verification)"},
+         "mdot_ICP,dedicated, gas mode, Hall discharge-supply state, stage, extraction topology, H-1 point and "
+         "H-1 electrical configuration, with p_chamber within the P1-IT-37 tolerance", "source": "this lane (A9.3 authorization: current-path verification)"},
         {"id": "P1-D-08", "quantity": "dwell drift and mode-jump indicators", "formula": "linear-fit drift over the "
          "dwell / mean; max consecutive step / sample std", "source": "this lane (P1Q-01 form)"},
         {"id": "P1-D-09", "quantity": "ignition success fraction", "formula": "successes / attempts",
          "source": ANS + " row 24"},
         {"id": "P1-D-10", "quantity": "M_n lower bound (ICP-45A, only after registration)",
          "formula": "M_n = I_e,cap / I_d,max,H1 - 1; lower = M_n - k_one_sided u(M_n); I_e,cap per P1-IT-38 "
-                    "(PROPOSED, P1Q-10)",
+                    "(PROPOSED, P1Q-10): capacity-extraction records only, never Hall-ON records",
          "source": A91 + " UBQ-02, UBQ-07, ICP-45; " + A93 + " OQ-A907-02"},
+        {"id": "P1-D-12", "quantity": "Hall-on neutralization consistency (descriptive)", "formula": "ICP-supplied "
+         "current (facility-corrected where an RF-OFF pair exists) vs |I_hall_anode| at the same P1-S7 Hall-ON "
+         "record; ratio reported; never a gate and never I_e,cap", "source": "this lane (A9.1 ICP-45A reading: "
+         "capacity is an extraction demonstration)"},
         {"id": "P1-D-11", "quantity": "I_e surface", "formula": "table of I_e against (P_RF, p, mdot, Z_ICP, "
          "V_collector)", "source": A93 + " OQ-A907-02"},
     ]
@@ -658,8 +727,12 @@ def safety():
          "enclosure, leakage survey before first power", "threshold": "TBD - requires the applicable RF-exposure "
          "rule of the facility (verify)", "source": "facility safety owner", "status": "TBD"},
         {"id": "P1-SI-05", "hazard": "HV between floating circuits and ground (collector, ICP body, Hall anode)",
-         "function": "isolation per ICD ICP-23 / owner row 81 (350 V, margin TBD), current-limited supplies, discharge-supply "
-         "protection sized to the 8.33 A stand ceiling", "threshold": "350 V (row 81); transient/qualification margin TBD",
+         "function": "isolation per ICD ICP-23 (350 V class of owner row 81 for H-1 / discharge supply / isolation / "
+         "diagnostics; PROPOSED EXTENSION to the ICP body and collector circuits, which row 81 does not name, "
+         "P1-IT-21 / P1Q-14), insulation-resistance / hipot verification at P1-G0 before first bias, current-limited "
+         "supplies, discharge-supply protection sized to the 8.33 A stand ceiling",
+         "threshold": "350 V (row 81) for the row-81 items; 350 V for the ICP body / collector circuits is a PROPOSED "
+                      "EXTENSION (P1Q-14); transient/qualification margin TBD",
          "source": "ICD ICP-23; " + ANS + " row 81; " + A93 + " OQ-A907-02", "status": "PROPOSED"},
         {"id": "P1-SI-06", "hazard": "gas line bridging isolated potentials", "function": "~1 kV DC representative "
          "gas/pressure qualification (flashover, leakage, breakdown, surface tracking, repeated exposure where "
@@ -702,8 +775,9 @@ def run_matrix(ar):
              "registered H-1 setting(s)} (P1Q-06)"},
             {"id": "F7", "name": "ICP gas mode", "units": "-", "levels": "G-REUSE (baseline); "
              "DIAGNOSTIC_DEDICATED_FEED only as a declared diagnostic branch, booked (A9.3 OQ-RFQ-10)"},
-            {"id": "F8", "name": "Hall discharge state", "units": "-", "levels": "OFF in P1-S3..S5; ON only in P1-S6, "
-             "P1-S6D, P1-S7"},
+            {"id": "F8", "name": "Hall discharge-supply state (P1-IT-40)", "units": "-", "levels": "OFF in "
+             "P1-S3..S5 and the P1-S7 capacity block; ON only in P1-S6, P1-S6D and the P1-S7 neutralization-"
+             "consistency block; sustainment recorded separately"},
         ],
         "ordering_rule": ["first exposure: monotone ascending ramps in P_RF and in collector-current limit with hold "
                           "points (safety-ordered; never randomized)",
@@ -753,6 +827,10 @@ def readiness():
                              "the 8.33 A stand ceiling", "RFQ-06 part (b) laboratory discharge supply (ground only); "
                              "NOT part (a) flight-representative breadboard supply", "H2-4 H24-27, H3-PPU-01; "
                              "A9.3 OQ-A907-02"),
+                            ("H-1 anode disconnect means (discharge-supply output isolated in Hall-OFF stages) and "
+                             "metered anode return / floating-potential divider per the registered configuration "
+                             "(P1-IT-39)", "none explicit in RFQ v1 (closest: RFQ-06 part (d) synchronized V/I "
+                             "channel pairs)", "P1-IT-39; P1-M-15; A9H-INS-10"),
                             ("magnet supplies (per coil)", "none as a v1 quotation line (A9-02 bus slots "
                              "hall_magnet_inner/outer/trim only)", "A9-02 A902-31; H2-1 MC-1"),
                             ("floating collector / bias supply with V/I metering", "RFQ-05", "A9H-INS-04; A902-23"),
@@ -914,9 +992,10 @@ def owner_answers_applied():
         ("A9.1 HIQ-04", "decision", "HI-HOLDOUT-A before P1-S6 (first Hall-on reading)"),
         ("A9.1 HIQ-06 / HIQ-06_accounting", "decision", "G-REUSE, mdot_ICP,dedicated = 0; no double counting"),
         ("A9.1 HIQ-08", "decision", "Ar findings may refine the LOCK-1 ICP recipe; never LOCK-2 numbers"),
-        ("A9.1 ICP-45", "decision", "ICP-45A on Ar (engineering) in P1-S7, conditional on registration; ICP-45N "
-         "remains"),
-        ("A9.1 UBQ-02 / UBQ-07", "decision", "M_n form and one-sided alpha for P1-S7 only"),
+        ("A9.1 ICP-45", "decision", "ICP-45A on Ar (engineering) read as a capacity (extraction) demonstration: "
+         "I_e,cap from registered-extraction-topology records (P1-S4 / P1-S7 capacity block) at registered H-1 "
+         "conditions, conditional on registration; Hall-ON records only a consistency check; ICP-45N remains"),
+        ("A9.1 UBQ-02 / UBQ-07", "decision", "M_n form and one-sided alpha for the ICP-45A evaluation only"),
         ("A9.1 UBQ-04", "decision", "k_x = 2 calorimetric cross-check; EXCLUDED_INSTRUMENT on failure"),
         ("A9.1 UBQ-06", "decision", "abort rule form; application to P1 asked (P1Q-04)"),
         ("A9.1 UBQ-08", "decision", "Ar-specific gauge/MFC/RGA calibration for P1"),
@@ -943,7 +1022,9 @@ def owner_answers_applied():
         ("row 72", "147 answers", "13.56 MHz; coupler primary, calorimetry cross-check"),
         ("row 83", "147 answers", "orificed variant = new serialized module"),
         ("row 86", "147 answers", "50 K margin rule (abort form)"),
-        ("row 81", "147 answers", "350 V isolation class (+ margin TBD) for the floating collector / ICP body circuits"),
+        ("row 81", "147 answers", "350 V isolation class (+ margin TBD) for H-1, the C1 reference, the discharge "
+         "supply, isolation and diagnostics; its application to the ICP body / collector circuits is a PROPOSED "
+         "EXTENSION (row 81 does not name the ICP; P1Q-14)"),
         ("row 105", "147 answers", "gas-isolator practice (~1 kV DC representative qualification) behind ICPQ-06"),
         ("row 123", "147 answers", "four ranges NOT applied to Ar (amended by A9.3 OQ-RFQ-02)"),
         ("rows 124 / 126", "147 answers", "thermal own-gas MFC; rate-of-rise as transfer standard"),
@@ -993,15 +1074,31 @@ def open_questions():
          "and all four terminals (collector_supply, icp_body, facility_ground, electron_collector) metered; geometry "
          "and position owner call at P1-G0", "needed_by": "P1-G0"},
         {"id": "P1Q-10", "question": "Adopt the PROPOSED I_e,cap definition for the ICP-45A engineering evaluation "
-         "(P1-IT-38: maximum facility-corrected ICP-supplied current over eligible P1-S7 records)?",
-         "proposed_answer": "owner call; until adopted any EVALUATED_ENGINEERING_ONLY output carries the label "
-         "'I_e,cap definition PROPOSED'", "needed_by": "P1-S7 entry"},
+         "(P1-IT-38): I_e,cap as a CAPACITY measurement = maximum facility-corrected extracted current in the "
+         "registered extraction topology (discharge supply OFF, electrons to the registered electron-collecting "
+         "electrode) at the gas/magnet conditions of registered H-1 points, with Hall-ON P1-S7 records used only "
+         "as a descriptive neutralization-consistency check? (Alternative: a Hall-ON-based definition, which by "
+         "current continuity can never exceed I_d and would need a different acceptance form.)",
+         "proposed_answer": "owner call; PROPOSED: adopt the capacity-extraction form. Until adopted any "
+         "EVALUATED_ENGINEERING_ONLY output carries the label 'I_e,cap definition PROPOSED'; with no eligible "
+         "capacity record the reducer returns NOT_EVALUATED, never a FAIL", "needed_by": "P1-S7 entry"},
         {"id": "P1Q-11", "question": "Pressure-match tolerance for RF-ON / RF-OFF facility-electron pairs "
          "(P1-IT-37)?", "proposed_answer": "owner call; value set from the S2/S3 gauge repeatability before the "
          "first P1-S4 pair", "needed_by": "P1-G0"},
         {"id": "P1Q-12", "question": "Define the ICP module connector / harness interface at IP-NEU in an ICD "
          "revision so an ICP_ORIFICED_VARIANT can reuse it (not an ICD v1 item)?", "proposed_answer": "YES, in the "
          "LOCK-1 module drawings; P1 builds to a documented interim harness", "needed_by": "LOCK-1"},
+        {"id": "P1Q-13", "question": "Register the H-1 electrical configuration for the Hall-OFF stages (P1-S3..S5, "
+         "P1-S7 capacity block): H-1 anode disconnected from the discharge-supply output and floating (V_anode "
+         "recorded) or tied to the reference through a metered return; H-1 body / magnetic-circuit grounding "
+         "(P1-IT-39)?", "proposed_answer": "owner call; PROPOSED: anode disconnected and floating with V_anode "
+         "recorded (terminal OPEN_CIRCUIT_BY_CONSTRUCTION), metered return only as a registered diagnostic; an OFF "
+         "supply output left connected is not used", "needed_by": "P1-G0"},
+        {"id": "P1Q-14", "question": "Extend the row-81 350 V isolation class (plus transient/qualification margin) "
+         "to the ICP body and collector circuits, which row 81 does not name, and set the P1-G0 insulation-"
+         "resistance / hipot test voltage for the floating circuits?", "proposed_answer": "owner call; PROPOSED: "
+         "yes, same class as the H-1 anode circuit they face; test voltage and margin owner call at P1-G0",
+         "needed_by": "P1-G0"},
     ]
 
 
@@ -1134,7 +1231,7 @@ def build_doc():
 def build_schema():
     red = _reducer()
     num = {"type": "number"}
-    no_pbus = {"not": {"pattern": "[Pp][^A-Za-z0-9]*[Bb][^A-Za-z0-9]*[Uu][^A-Za-z0-9]*[Ss]"}}
+    no_pbus = {"not": {"pattern": "[Bb][^A-Za-z0-9]*[Uu][^A-Za-z0-9]*[Ss]"}}
     term = {"type": "object", "required": ["I_A", "basis"],
             "properties": {"I_A": num, "basis": {"enum": list(red.TERMINAL_BASES)}}}
     op = {
@@ -1146,20 +1243,40 @@ def build_schema():
             "timestamp_utc": {"type": "string"}, "synthetic": {"type": "boolean"},
             "labels": {"type": "array", "items": {"type": "string"}, "contains": {"const": red.REQUIRED_LABEL}},
             "gas": {"enum": list(red.P1_GASES)}, "gas_mode": {"enum": list(red.GAS_MODES)},
-            "hall_discharge_state": {"enum": list(red.HALL_STATES)},
+            "hall_discharge_state": {"enum": list(red.HALL_STATES),
+                                     "description": "discharge-supply OUTPUT state (P1-IT-40): ON = V_d applied; "
+                                                    "OFF = output disabled and anode disconnected"},
+            "hall_discharge_sustained": {"type": "boolean",
+                                         "description": "sustained discharge per the registered definition "
+                                                        "(P1-IT-32); must be false when the supply is OFF"},
+            "h1_electrical": {"type": "object", "required": list(red.H1_ELECTRICAL_REQUIRED),
+                              "description": "registered H-1 electrical configuration (P1-IT-39)",
+                              "properties": {"config_id": {"type": "string", "minLength": 1},
+                                             "anode_state": {"enum": list(red.ANODE_STATES)},
+                                             "V_anode_V": num, "h1_body_state": {"type": "string", "minLength": 1}},
+                              "x-anode-states-by-hall-state": {k: list(v) for k, v in
+                                                               red.ANODE_STATES_BY_HALL_STATE.items()},
+                              "x-hall-anode-terminal-basis-by-anode-state": dict(red.ANODE_TERMINAL_BASIS)},
             "rf": {"type": "object", "required": list(red.RF_REQUIRED), "properties": {
                 "reference_plane": {"const": red.RF_REFERENCE_PLANE}, "P_fwd_W": num, "P_refl_W": num,
                 "match_setting_id": {"type": "string"},
                 "line_match_loss": {"type": "object", "required": ["status"], "properties": {
-                    "status": {"enum": list(red.LOSS_STATUSES)}, "value_W": num, "source": {"type": "string"}}}}},
+                    "status": {"enum": list(red.LOSS_STATUSES)}, "value_W": num, "source": {"type": "string"},
+                    "match_setting_id": {"type": "string"}, "valid_max_gamma_abs": num},
+                    "x-required-when-measured": list(red.LOSS_MEASURED_REQUIRED)}}},
             "generator": {"type": "object", "required": list(red.GENERATOR_REQUIRED), "propertyNames": no_pbus,
                           "properties": {
                 "generator_class": {"enum": list(red.GENERATOR_CLASSES)}, "P_generator_input_W": num,
-                "input_boundary": {"type": "string"}, "instrument": {"type": "string"}}},
+                "input_boundary": {"type": "string", "not": {"pattern": "[Bb][^A-Za-z0-9]*[Uu][^A-Za-z0-9]*[Ss]"}},
+                "instrument": {"type": "string"}}},
             "collector": {"type": "object", "required": list(red.COLLECTOR_REQUIRED),
                           "description": "the ICP ion-collecting electrode (TK-13; ICD ICP-21); I_e is its supply-"
-                                         "lead current; V_collector is its potential w.r.t. reference_potential",
-                          "properties": {"I_e_A": num, "V_collector_V": num,
+                                         "lead current (I_e > 0 = electrons extracted from the ICP; equals "
+                                         "terminals.collector_supply.I_A within I_e_resolution_A); V_collector is "
+                                         "its potential w.r.t. reference_potential",
+                          "properties": {"I_e_A": num, "I_e_sign_convention": {"const": red.I_E_SIGN_CONVENTION},
+                                         "I_e_resolution_A": {"type": "number", "exclusiveMinimum": 0},
+                                         "V_collector_V": num,
                                          "reference_potential": {"enum": list(red.REFERENCE_POTENTIALS)}}},
             "extraction": {"type": "object", "required": list(red.EXTRACTION_REQUIRED),
                            "description": "electron-extraction topology registered at P1-G0 (P1-IT-36): the "
@@ -1169,7 +1286,8 @@ def build_schema():
                            "x-allowed-by-hall-state": {k: list(v) for k, v in
                                                        red.EXTRACTION_ELECTRODES_BY_HALL_STATE.items()}},
             "h1_point_id": {"type": "string", "minLength": 1,
-                            "description": "registered H-1 point id (required for ICP-45A candidacy, P1-S7)"},
+                            "description": "registered H-1 point id (gas/magnet conditions; required for ICP-45A "
+                                           "capacity candidacy, P1-IT-38)"},
             "pressures": {"type": "object", "required": list(red.PRESSURE_FIELDS),
                           "properties": {"p_chamber_Pa": num, "p_icp_Pa": num}},
             "flows": {"type": "object", "required": list(red.FLOWS_REQUIRED), "properties": {
@@ -1185,7 +1303,8 @@ def build_schema():
         },
         "propertyNames": no_pbus,
         "x-p-bus-screen": "the reducer refuses, at any nesting depth, every field name that normalises "
-                          "(lower-case, alphanumerics only) to contain 'pbus' (A9.3 OQ-RFQ-06)",
+                          "(lower-case, alphanumerics only) to contain 'bus', and a generator.input_boundary text "
+                          "naming a bus (A9.3 OQ-RFQ-06)",
     }
     seq = {
         "type": "object", "required": list(red.SEQUENCE_REQUIRED),
@@ -1200,8 +1319,8 @@ def build_schema():
                                "sustained_discharge_observed": {"type": "boolean"},
                                "sustainment_definition_id": {"type": "string"},
                                "signals": {"type": "object", "required": list(red.SEQUENCE_SIGNALS)}}}},
-            "x-step-texts-verbatim": [{"step": n, "text": t} for n, t in red.SEQUENCE_STEPS],
         },
+        "x-step-texts-verbatim": [{"step": n, "text": t} for n, t in red.SEQUENCE_STEPS],
     }
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
