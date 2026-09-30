@@ -2365,3 +2365,21 @@ A9.3 lanes verified and merged on the execution branch:
 Post-merge: 2321 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10. New owner questions: P1Q-10 (I_e,cap as
 a Hall-OFF capacity-extraction measurement), P1Q-13 (H-1 anode/body configuration in Hall-OFF stages), P1Q-14 (ICP
 isolation class and hipot voltage), P2Q-05 (optical unlit-verification indicator).
+
+## 2026-09-30 — A9.4 P1/P2 owner decisions applied; checkpoint 4 prepared
+
+The owner answered P1Q-10, P1Q-13, P1Q-14 and P2Q-05 (A9.4, `docs/decisions/OD_2026_09_30_A9_4_*`):
+- **P1Q-10:** ICP-45 capacity is measured as discharge-OFF extraction to a dedicated collector, minus a matched RF-OFF
+  record. Hall-ON runs count only as NEUTRALIZATION_CONSISTENCY.
+- **P1Q-13:** the anode is floating (open circuit by construction), and the H-1 body has a single-point metered ground.
+- **P1Q-14:** the ICP circuits join the 350 V class, with a ≥ 525 V design withstand and an initial DWV of 1.05 kV DC for
+  60 s. ICP-44 RF insulation stays open.
+- **P2Q-05:** a photodiode is required, and plasma states are UNLIT / E_MODE / H_MODE / UNCERTAIN.
+
+The owner also authorized sending the P1_NEEDED RFQs for quotation (no POs) and one merge to main.
+fo_a9_4_incorporation applied these to P1, P2 prep and RFQ v2; it was verified in round 1 with three lenses.
+ICP-45 stays NOT_EVALUATED until I_d,max,H1 is registered.
+
+Post-merge: 2340 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10. Protected artifacts are unchanged; the diff
+vs main is additive. Minors carried: stale PENDING RFQ references in P2, one leftover PROPOSED wording in P1-S4, and the
+INS-P2-10 source list, which cites A9.3 but not A9.4.
