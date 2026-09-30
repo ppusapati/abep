@@ -544,7 +544,9 @@ def plume_directions(cdf_table, n_u, n_phi):
 def plume_interception(bodies, source_body, source_zone, cdf_table, res):
     """Fraction of the ion current leaving a source zone (e.g. the H-1 channel-exit aperture, a +z 'down' face)
     that first hits each surface (open-frame bodies pass tau). Every source point emits the same axisymmetric
-    distribution about +z (a model assumption, stated; the real distribution is measured)."""
+    distribution about +z (a model assumption, stated; the real distribution is measured). Returns the bare
+    geometric fractions; q_plume() accepts only an interception RECORD (plume_interception_record) that carries the
+    provenance of the angular distribution."""
     check_geometry(bodies)
     zl = {z[0]: z for z in source_body.zones()["down"]}
     if source_zone not in zl:
@@ -553,6 +555,56 @@ def plume_interception(bodies, source_body, source_zone, cdf_table, res):
     dirs = plume_directions(cdf_table, res[1], res[2])
     o, d, w = emit_zone(source_body, "down", a, c, res, directions=dirs)
     return trace(o, d, w, bodies, 1e-9 * _scale(bodies))
+
+
+PLUME_CDF_UNITS = "deg; -"
+PLUME_TEST_LABEL = "GEOMETRIC_TEST_DISTRIBUTION_NOT_A_PLUME_PREDICTION"
+INTERCEPTION_SUM_TOL = 1e-9
+
+
+def plume_interception_record(bodies, source_body, source_zone, cdf_record, res):
+    """Interception with provenance (consolidated verification TH-02): cdf_record is a quantity record
+    {'value': [(theta_deg, C)...], 'units': 'deg; -', 'evidence_class', 'source'} (a measured Faraday-probe CDF is
+    'measured'; a geometric test cone is 'assumed' and gives a CONDITIONAL result). Returns
+    {'fractions', 'evidence_class', 'source', 'units'} for q_plume()."""
+    if not isinstance(cdf_record, dict):
+        raise InputError("plume angular distribution must be a quantity record {value, units, evidence_class, source} "
+                         "(a bare table has no provenance)")
+    v, _ = take({"angular_distribution": cdf_record}, {"angular_distribution": PLUME_CDF_UNITS}, "plume CDF")
+    table = [tuple(p) for p in v["angular_distribution"]]
+    f = plume_interception(bodies, source_body, source_zone, table, res)
+    return {"fractions": f, "evidence_class": cdf_record["evidence_class"], "source": cdf_record["source"],
+            "units": "-"}
+
+
+def _check_interception(interception):
+    """(fractions, provenance) of an interception record: every fraction finite in [0, 1], 'SPACE' present, the sum
+    1 within INTERCEPTION_SUM_TOL (energy conservation: Q_plume never exceeds the beam power; SW-07). An empty /
+    missing record is missing evidence (MissingInputError -> INCOMPLETE_EVIDENCE); a bare fraction map without
+    provenance is refused."""
+    if interception is None or (isinstance(interception, dict) and not interception):
+        raise MissingInputError(["plume_interception"], "Q_plume")
+    if not isinstance(interception, dict) or "fractions" not in interception:
+        raise InputError("Q_plume: interception must be a record {fractions, evidence_class, source} "
+                         "(plume_interception_record); a bare fraction map carries no provenance (TH-02)")
+    fr = interception["fractions"]
+    if not isinstance(fr, dict) or not fr:
+        raise MissingInputError(["plume_interception"], "Q_plume")
+    ec = interception.get("evidence_class")
+    if ec not in EVIDENCE_CLASSES:
+        raise InputError(f"Q_plume: interception evidence_class {ec!r} not in {EVIDENCE_CLASSES}")
+    if not interception.get("source"):
+        raise InputError("Q_plume: interception has no source")
+    if "SPACE" not in fr:
+        raise InputError("Q_plume: interception map must include the escaping fraction 'SPACE'")
+    for k, x in fr.items():
+        if isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(float(x)):
+            raise InputError(f"Q_plume: interception fraction {k} = {x!r} is not a finite number")
+        _fraction(f"interception fraction {k}", float(x))
+    tot = sum(float(x) for x in fr.values())
+    if abs(tot - 1.0) > INTERCEPTION_SUM_TOL:
+        raise DomainError(f"Q_plume: interception fractions sum to {tot!r}, not 1 (energy not conserved)")
+    return fr, ec
 
 
 # ============================================================================================ radiosity enclosure
@@ -652,10 +704,10 @@ def _net_flows(net, T):
     for n, epsA, absW, Te in net.env_rad:
         if n not in r:
             raise InputError(f"environment radiation must attach to a solved node, not {n}")
-        Q = epsA * SIGMA_SB * (T[n] ** 4 - Te ** 4) - absW
-        add(n, -Q)
-        out += Q
-        absorbed += absW
+        gross = epsA * SIGMA_SB * (T[n] ** 4 - Te ** 4)       # emission to the environment (net of its back-radiation)
+        add(n, -(gross - absW))                               # node balance: absorbed environmental load enters
+        out += gross                                          # consolidated verification TH-01: 'out' is the gross
+        absorbed += absW                                      # emission; absorbed load is booked once, as an input
     for enc in net.enclosures:
         Ts = {}
         for s in enc.ids:
@@ -688,7 +740,8 @@ def _net_flows(net, T):
 
 def solve_network(net, T0=400.0, tol=1e-7, max_iter=200):
     """Newton solve of the steady network; raises NumericalFailure unless converged AND the energy balance closes
-    (loads + absorbed environment = heat to boundaries + SPACE, relative 1e-6)."""
+    (loads + absorbed environment = heat to boundaries + SPACE + gross environmental emission, relative 1e-6; each
+    absorbed environmental load is counted once, TH-01)."""
     names = list(net.unknown)
     for n in names:
         if n in net.fixed:
@@ -801,6 +854,10 @@ def q_collector(inputs):
     terms = {"electron_kinetic_W": Ie * eps_e, "ion_kinetic_W": Ii * eps_i}
     if sw == "INCLUDED":
         vs, ps = take(inputs, {"phi_wf_eV": "eV", "E_iz_eV": "eV"}, "Q_collector surface terms")
+        _numbers(vs, "Q_collector surface terms")
+        for k in ("phi_wf_eV", "E_iz_eV"):             # SW-07: a work function / ionization energy is positive
+            if vs[k] <= 0:
+                raise DomainError(f"Q_collector: {k} must be > 0 eV (got {vs[k]})")
         terms["electron_work_function_W"] = Ie * vs["phi_wf_eV"]
         terms["ion_neutralization_W"] = Ii * (vs["E_iz_eV"] - vs["phi_wf_eV"])
         prov = merge_provenance(prov, ps)
@@ -811,29 +868,49 @@ def q_collector(inputs):
 
 
 Q_PLUME_SPEC = {"I_beam_A": "A", "E_ion_mean_eV": "eV", "alpha_energy_accommodation": "-"}
+E_ION_MEAN_DEFINITION = ("E_ion_mean_eV = beam-current-weighted mean ion energy PER UNIT CHARGE, sum_i I_i (E_i / Z_i e) / "
+                         "I_beam (eV per elementary charge = V); then I_beam x E_ion_mean is the beam power for any "
+                         "charge-state mix (a per-ion energy would overstate the power of multiply charged ions by Z; "
+                         "PHYS-03)")
 
 
 def q_plume(inputs, interception):
     """Q_plume: plume power intercepted by the ICP assembly (A9.2; ICD ICP-29).
-    Q_plume,s = alpha_E * f_int,s * I_beam * E_ion,mean with f_int,s from plume_interception() of the MEASURED angular
-    distribution (Faraday-probe CDF). I_beam and E_ion,mean are measured Hall-plume quantities (never a Hall-closure
+    Q_plume,s = alpha_E * f_int,s * I_beam * E_ion,mean with f_int,s from an interception RECORD
+    (plume_interception_record) whose angular distribution carries its provenance: only a measured (Faraday-probe)
+    distribution with measured I_beam, E_ion,mean and alpha gives MEASURED_INPUTS_ONLY; a geometric / assumed
+    distribution makes the result CONDITIONAL. E_ion,mean is the current-weighted energy per unit charge
+    (E_ION_MEAN_DEFINITION). I_beam and E_ion,mean are measured Hall-plume quantities (never a Hall-closure
     prediction). alpha_E: energy accommodation (1 = bound). Charge-exchange / neutral / electron plume terms are
-    not included and are listed as omitted."""
+    not included and are listed as omitted. The fractions are checked (finite, in [0, 1], summing to 1)."""
     v, prov = take(inputs, Q_PLUME_SPEC, "Q_plume")
     _numbers(v, "Q_plume")
     Ib, E = _nonneg("I_beam", v["I_beam_A"]), _nonneg("E_ion_mean", v["E_ion_mean_eV"])
     al = _fraction("alpha_E", v["alpha_energy_accommodation"])
+    fr, ec = _check_interception(interception)
+    prov = merge_provenance(prov, provenance({"plume_angular_distribution": ec}))
     P = Ib * E
-    per = {s: al * f * P for s, f in interception.items() if s != "SPACE"}
+    per = {s: al * float(f) * P for s, f in fr.items() if s != "SPACE"}
     return {"P_ion_beam_W": P, "Q_plume_W_per_surface": per, "Q_plume_W": sum(per.values()),
-            "f_escape": interception.get("SPACE"), "omitted_terms": ["charge-exchange ions", "fast neutrals",
-                                                                  "plume electrons", "sputtered-atom deposition"],
+            "f_escape": float(fr["SPACE"]), "E_ion_mean_definition": E_ION_MEAN_DEFINITION,
+            "angular_distribution_source": interception["source"],
+            "omitted_terms": ["charge-exchange ions", "fast neutrals", "plume electrons", "sputtered-atom deposition"],
             "provenance": prov, "status": "COMPUTED_CONDITIONAL"}
 
 
 def q_hall_to_icp(q_rad_H1_to_icp_W, q_cond_carrier_W, q_plume_W, prov):
     """Q_Hall->ICP = net radiation from H-1 surfaces absorbed by ICP surfaces + carrier conduction into the ICP
-    module + intercepted plume power (A9.2 terms; positive = into the ICP assembly)."""
+    module + intercepted plume power (A9.2 terms; positive = into the ICP assembly; the radiative and conductive terms
+    may be negative when the ICP is the hotter side, the plume term cannot). Every term must be a finite number and
+    prov a provenance record (provenance() / merge_provenance()); SW-07."""
+    terms = {"q_rad_H1_to_icp_W": q_rad_H1_to_icp_W, "q_cond_carrier_W": q_cond_carrier_W, "q_plume_W": q_plume_W}
+    for k, x in terms.items():
+        if isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(float(x)):
+            raise InputError(f"Q_Hall->ICP: {k} = {x!r} is not a finite number")
+    _nonneg("q_plume_W", q_plume_W)
+    if not isinstance(prov, dict) or prov.get("basis") not in ("MEASURED_INPUTS_ONLY",
+                                                               "CONDITIONAL_ON_NON_MEASURED_INPUTS", SYN):
+        raise InputError("Q_Hall->ICP: prov must be a provenance record (provenance() / merge_provenance())")
     total = q_rad_H1_to_icp_W + q_cond_carrier_W + q_plume_W
     return {"Q_rad_W": q_rad_H1_to_icp_W, "Q_cond_carrier_W": q_cond_carrier_W, "Q_plume_W": q_plume_W,
             "Q_Hall_to_ICP_W": total, "provenance": prov, "status": "COMPUTED_CONDITIONAL"}

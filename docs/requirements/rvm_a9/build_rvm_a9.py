@@ -26,6 +26,11 @@ withdrawn number is used), an architecture selection or winner, a thermal / RF-r
 an answer to any open owner question, or a freeze of any RFP interpretation (the official RFP is not in the repository;
 owner rows 1-3). Not wired into archengine (goldens do not move).
 
+Build order (data dependency; consolidated verification S-03): P4, XE, P1, P2, P3, MP, RFQ, RVM, owner-question
+state v4, M16 v4. State v4 reads rvm_a9_v1.json (ids of RVM-ID-10 / RVM-ID-11, RVMQ-01, the lane-24 rows), the RVM
+reads only the immutable state v3 snapshot, and M16 v4 reads both - so after any RVM change rebuild state v4 and
+then M16 v4 (--check on each catches a stale downstream output).
+
     python docs/requirements/rvm_a9/build_rvm_a9.py          # (re)write outputs
     python docs/requirements/rvm_a9/build_rvm_a9.py --check  # exit 1 unless the outputs are reproduced byte-for-byte
 """
@@ -514,7 +519,11 @@ def probe_p3(ctx, cfg):
     for t in terms:
         if fce[t]["status"] not in ("INCOMPLETE_EVIDENCE", "NOT_EVALUATED", "OUT_OF_DOMAIN", "NUMERICAL_FAILURE"):
             raise BuildError(f"P3 evaluation {t} status {fce[t]['status']}: review the RVM thermal rules")
-    n = sum(1 for it in p3["items"] if it.get("evidence_class") in P3_EVIDENCED_CLASSES)
+    # consolidated verification TH-05: evidenced_terms counts heat terms / the network actually EVALUATED on evidenced
+    # inputs, never framework inputs (the analog / model-derived registry items are listed separately)
+    n_inputs = sum(1 for it in p3["items"] if it.get("evidence_class") in P3_EVIDENCED_CLASSES)
+    evaluated_terms = [t for t in terms if fce[t]["status"] not in ("INCOMPLETE_EVIDENCE", "NOT_EVALUATED")]
+    n = len(evaluated_terms)
     numerical = any(fce[t]["status"] == "NUMERICAL_FAILURE" for t in terms)
     if cfg == "hall_icp_neutralizer":
         scope = ("ICP_COUPLED_THERMAL UNRESOLVED and ANODE_THERMAL_CLOSURE UNRESOLVED; heat terms " +
@@ -523,8 +532,9 @@ def probe_p3(ctx, cfg):
         scope = ("ANODE_THERMAL_CLOSURE UNRESOLVED (shared H-1 anode; A9.2 anode_approach); the ICP heat terms do "
                  "not apply to this configuration; the H-1 network is only method-checked against H2-5 (no "
                  "temperatures reported)")
-    state = (f"FRAMEWORK EVALUATED - {scope}; {n} analog / model-derived input(s) in the framework; never a "
-             f"thermal PASS (A9.2, A9.6)")
+    state = (f"FRAMEWORK RUN, FAIL-CLOSED - {scope}; {n} heat term(s) / network evaluated on evidenced inputs "
+             f"(every one refused as INCOMPLETE_EVIDENCE when 0); {n_inputs} analog / model-derived framework "
+             f"input(s) exist but are not evaluated terms; never a thermal PASS (A9.2, A9.6)")
     return _art(REFS["P3"][0], f"{p3['id']}:fail_closed_evaluations", "DETERMINING", "FRAMEWORK_EVALUATION", state,
                 evaluated=True, in_domain=True, evidenced_terms=n, numerical_failure=numerical)
 
@@ -537,23 +547,55 @@ def m16_state(ctx, row):
 
 
 # ------------------------------------------------------------------------------------------------ open readings
+DOWNSTREAM = "downstream consumer (merged; built later in the A9.6 order, not pinned to avoid a cycle): "
+# The RVM is built BEFORE owner-question state v4 (A9.6 order: ... RFQ, RVM, state v4, M16 v4 - v4 reads the RVM ids,
+# so a v4 pin here would be circular; consolidated verification S-01 / S-03 / TH-04). The RVM therefore pins the
+# immutable v3 snapshot as the source of the question text and carries every open reading with the status the owner
+# register gives it (TBD_OWNER; OD13 SUPERSEDED by owner row 3). Agreement with the CURRENT register (state v4) is
+# checked downstream, after v4 is built, by M16 v4 (rvm_register_reconciliation) and tests/test_m16_v4.py.
+CURRENT_REGISTER = "docs/budgets/owner_decisions/owner_questions_state_v4.json"
+REGISTER_NOTE = ("question text from the pinned immutable v3 snapshot; current register " + CURRENT_REGISTER +
+                 " (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation)")
+# lane-24 decisions that an owner answer supersedes (same question answered; S-01): id -> (owner row, what it settles)
+LANE24_SUPERSEDED_BY_OWNER = {
+    "OD13": (3, "owner row 3 retains > 15,000 h firing as a provisional hard requirement until the official RFP "
+                "confirms it; the remaining verification of the wording is the owner action of row 1 (RVM-ID-12), "
+                "not an open question"),
+}
+
+
 def oq(ctx, ident):
     for r in ctx.p["OQ3"]["rows"]:
         if r["id"] == ident:
             if r["status"] != "OPEN":
                 raise BuildError(f"owner question {ident} is {r['status']} in v3, not OPEN")
-            return {"id": ident, "register": PINS["OQ3"][0], "status": r["status"], "question": r["question"],
-                    "handling": "carried side by side as TBD_OWNER; never answered here"}
+            return {"id": ident, "register": PINS["OQ3"][0], "v3_status": r["status"], "status": "TBD_OWNER",
+                    "current_register": CURRENT_REGISTER, "question": r["question"],
+                    "handling": "carried side by side as TBD_OWNER; never answered here (" + REGISTER_NOTE + ")"}
     raise BuildError(f"owner question {ident} not in owner_questions_state_v3")
 
 
 def hgm_od(ctx, ident):
     for o in ctx.p["HGM"]["open_owner_decisions"]:
         if o["id"] == ident:
-            return {"id": ident, "register": PINS["HGM"][0],
-                    "status": "OPEN in the historical lane-24 matrix; not carried in owner_questions_state_v3 "
-                              "(TBD_OWNER; interface demand RVM-ID-11)",
-                    "question": o["topic"], "handling": "carried side by side as TBD_OWNER; never answered here"}
+            base = {"id": ident, "register": PINS["HGM"][0], "current_register": CURRENT_REGISTER,
+                    "question": o["topic"]}
+            if ident in LANE24_SUPERSEDED_BY_OWNER:
+                row, how = LANE24_SUPERSEDED_BY_OWNER[ident]
+                ans = [a for a in ctx.p["ANS"]["answers"] if a["row"] == row]
+                if len(ans) != 1:
+                    raise BuildError(f"owner answer row {row} missing")
+                base.update(status="SUPERSEDED", status_detail=f"SUPERSEDED (owner row {row}; register completion)",
+                            superseded_by={"owner_row": row, "path": PINS["ANS"][0],
+                                           "owner_answer_verbatim": ans[0]["owner_answer_verbatim"]},
+                            handling="superseded by an owner answer to the same question: " + how + "; not an open "
+                                     "question (" + REGISTER_NOTE + ")")
+                return base
+            base.update(status="TBD_OWNER",
+                        status_detail="TBD_OWNER - open in the historical lane-24 matrix, not in "
+                                      "owner_questions_state_v3; registered in the current register via RVM-ID-11",
+                        handling="carried side by side as TBD_OWNER; never answered here (" + REGISTER_NOTE + ")")
+            return base
     raise BuildError(f"lane-24 open owner decision {ident} missing")
 
 
@@ -703,19 +745,20 @@ def build_interface_demands(ctx):
         idd("RVM-ID-07", "RVM <- Hall transport ensemble", f"{REFS['ENS'][0]}",
             "an admitted member would enable VALIDATED_ANALYSIS artifacts (the builder refuses to run when the credible "
             "set becomes non-empty until the rules are reviewed)", "BLOCKED (credible set empty)"),
-        idd("RVM-ID-08", "RVM -> M16 refresh", "PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) "
-                                               "(fo_a9_6_m16_refresh)",
-            "requirement-status column per M16 row (m16_impact); no row READY / VERIFIED from this lane", "OFFERED"),
-        idd("RVM-ID-09", "RVM -> consolidated verification", "PENDING fo_a9_6_consolidated_verification (A9.6 sec. 18)",
+        idd("RVM-ID-08", "RVM -> M16 refresh", DOWNSTREAM + "docs/experiments/hall_icp/integration/m16_v4/ "
+                                               "(fo_a9_6_m16_refresh; A9.6 sec. 16)",
+            "requirement-status column per M16 row (m16_impact); no row READY / VERIFIED from this lane", "CONSUMED"),
+        idd("RVM-ID-09", "RVM -> consolidated verification", "fo_a9_6_consolidated_verification (A9.6 sec. 18; the "
+                                                             "campaign that reviews this package)",
             "rules R0-R7, probes and per-row artifacts for the structural / evidence review", "OFFERED"),
-        idd("RVM-ID-10", "RVM -> owner-question state v4", "PENDING fo_a9_6_decision_propagation (owner-question "
-                                                           "state v4)",
-            "new question RVMQ-01", "OFFERED"),
-        idd("RVM-ID-11", "RVM -> owner-question state v4", "PENDING fo_a9_6_decision_propagation (owner-question "
-                                                           "state v4)",
+        idd("RVM-ID-10", "RVM -> owner-question state v4", DOWNSTREAM + CURRENT_REGISTER +
+            " (fo_a9_6_decision_propagation)",
+            "new question RVMQ-01", "CONSUMED"),
+        idd("RVM-ID-11", "RVM -> owner-question state v4", DOWNSTREAM + CURRENT_REGISTER +
+            " (fo_a9_6_decision_propagation)",
             "lane-24 open decisions carried by RVM rows but absent from owner_questions_state_v3: OD2, OD3, OD5, OD6, "
-            "OD12, OD13, OD14 (register or declare superseded for the A9 configurations; bookkeeping, no answer "
-            "implied)", "OFFERED"),
+            "OD12, OD13, OD14 (registered in state v4: OD13 SUPERSEDED by owner row 3, the others TBD_OWNER; "
+            "bookkeeping, no answer implied)", "CONSUMED"),
         idd("RVM-ID-12", "RVM <- official RFP", "owner rows 1-2 (legitimate owner / portal route)",
             "the canonical RFP PDF with sha256: every RVM row with requirement_frozen = false re-derives its basis",
             "AWAITING_OWNER_ACTION"),
@@ -848,7 +891,8 @@ def build_m16_impact(ctx, rows):
     out = []
     for k in sorted(touched):
         t = touched[k]
-        t["state_change"] = "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+        t["state_change"] = ("none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream "
+                             "consumer; no row READY/VERIFIED)")
         out.append(t)
     return out
 

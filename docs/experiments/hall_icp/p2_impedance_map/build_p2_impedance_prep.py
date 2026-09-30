@@ -566,7 +566,8 @@ def synthetic_record(cal, z_ant, p_fwd, phase="DUMMY_LOAD"):
         "plasma_state": {"lit": False, "mode": "UNLIT", "optical_signal_V": None, "unlit_threshold_V": None,
                          "unlit_threshold_source": None, "threshold_basis": None,
                          "photodiode_line_of_sight_ok": None, "photodiode_saturated": None,
-                         "electrical_ignition_or_mode_transition": None, "electrical_indicator_basis": None},
+                         "electrical_ignition_or_mode_transition": None, "electrical_indicator_basis": None,
+                         "mode_indicator_basis": None},
         "sweep": {"sweep_id": "SYN", "direction": "single", "index": 0},
         "settling": {"dwell_s": None, "settled": None},
         "temperatures_K": {}, "cold_reference_id": None, "p1_stable_region_ref": None, "antenna_current": None,
@@ -2170,7 +2171,8 @@ FIELD_DOCS = {
                      "is false; UNCERTAIN is never reduced), optical_signal_V (INS-P2-10 photodiode), unlit_threshold_V "
                      "and unlit_threshold_source (from the P1 registered procedure), threshold_basis {" +
                      ", ".join(RED.THRESHOLD_BASIS_FIELDS) + "}, photodiode_line_of_sight_ok, photodiode_saturated, "
-                     "electrical_ignition_or_mode_transition and electrical_indicator_basis (A9.4 P2Q-05; required for "
+                     "electrical_ignition_or_mode_transition and electrical_indicator_basis, mode_indicator_basis (the "
+                     "registered HM-R06 E/H indicators; required with an E_MODE / H_MODE assignment) (A9.4 P2Q-05; required for "
                      + " and ".join(RED.CLASSIFIED_PHASES) + ", with antenna_current, factors.I_collector_A and "
                      "factors.p_chamber_Pa recorded simultaneously). Phases " + ", ".join(RED.UNLIT_PHASES) +
                      " must be unlit"),
@@ -2208,7 +2210,7 @@ SUBFIELD_TYPES = {
                      "photodiode_line_of_sight_ok": {"type": ["boolean", "null"]},
                      "photodiode_saturated": {"type": ["boolean", "null"]},
                      "electrical_ignition_or_mode_transition": {"type": ["boolean", "null"]},
-                     "electrical_indicator_basis": _STRN},
+                     "electrical_indicator_basis": _STRN, "mode_indicator_basis": _STRN},
     "sweep": {"sweep_id": _STR, "direction": {"enum": list(RED.SWEEP_DIRECTIONS)}, "index": {"type": "integer"}},
     "settling": {"dwell_s": dict(_NUMN, **{"x-units": "s"}), "settled": {"type": ["boolean", "null"]}},
     "antenna_current": {"I_rms_A": dict(_NUM, **{"x-units": "A"}), "probe_cal_id": _STR},

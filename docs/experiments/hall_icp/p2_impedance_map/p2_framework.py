@@ -645,24 +645,33 @@ def _cholesky(u):
 
 
 def _check_cov(x, u):
+    """Inputs finite, covariance square / symmetric / finite with a non-negative diagonal and positive semidefinite
+    (Cholesky, the same test propagate_mc applies): consolidated verification SW-04 - an invalid covariance is never
+    propagated into a number."""
     n = len(x)
+    for i, v in enumerate(x):
+        if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(float(v)):
+            raise FrameworkError(f"input x[{i}] = {v!r} is not a finite number")
     if u is None:
         raise UncertaintyMissingError("covariance of the inputs not supplied -> NOT_EVALUATED")
     if len(u) != n or any(len(r) != n for r in u):
         raise UncertaintyMissingError("covariance matrix shape does not match the inputs")
     for i in range(n):
         for j in range(n):
-            if u[i][j] is None or not math.isfinite(u[i][j]):
+            if u[i][j] is None or isinstance(u[i][j], bool) or not math.isfinite(u[i][j]):
                 raise UncertaintyMissingError(f"covariance element ({i},{j}) missing -> NOT_EVALUATED")
             if abs(u[i][j] - u[j][i]) > 1e-12 * max(1.0, abs(u[i][j])):
                 raise UncertaintyMissingError("covariance matrix not symmetric")
+        if u[i][i] < 0:
+            raise UncertaintyMissingError(f"negative variance u[{i}][{i}] = {u[i][i]!r}")
+    _cholesky(u)                     # raises UncertaintyMissingError when not positive semidefinite
 
 
 def propagate_linear(f, x, u):
     """Law of propagation of uncertainty U_y = C U_x C^T (REF-JCGM102 6.2.1.3 Eq. (3); scalar form REF-GUM2008 5.2.2
     Eq. (13)), C by central differences with step 1e-3 u(x_i) (inputs with u = 0 contribute nothing)."""
-    x = [float(v) for v in x]
     _check_cov(x, u)
+    x = [float(v) for v in x]
     y0 = [float(v) for v in f(x)]
     m, n = len(y0), len(x)
     c = [[0.0] * n for _ in range(m)]
@@ -689,10 +698,10 @@ def propagate_mc(f, x, u, *, n_trials, seed):
     random.Random(seed).random()."""
     if not isinstance(n_trials, int) or n_trials < 1000:
         raise FrameworkError("n_trials must be an integer >= 1000 (declared by the caller; see JCGM 101 7.2)")
-    if not isinstance(seed, int):
-        raise FrameworkError("an integer seed is required (deterministic Monte Carlo)")
-    x = [float(v) for v in x]
+    if isinstance(seed, bool) or not isinstance(seed, int):
+        raise FrameworkError("an integer seed is required (deterministic Monte Carlo; a bool is not a seed)")
     _check_cov(x, u)
+    x = [float(v) for v in x]
     lo = _cholesky(u)
     rng = random.Random(seed)
     n = len(x)
@@ -736,6 +745,8 @@ def gamma_vswr_pnet_uncertainty(P_fwd_W, u_P_fwd_W, P_ref_W, u_P_ref_W, r_fwd_re
                                       "NOT_EVALUATED")
     pf, pr = _fin(P_fwd_W, "P_fwd"), _fin(P_ref_W, "P_ref")
     uf, ur, rr = _fin(u_P_fwd_W, "u_P_fwd"), _fin(u_P_ref_W, "u_P_ref"), _fin(r_fwd_ref, "r")
+    if uf < 0 or ur < 0:
+        raise UncertaintyMissingError("standard uncertainties must be >= 0 (a negative u flips the correlation term)")
     if not -1 <= rr <= 1:
         raise UncertaintyMissingError("correlation coefficient outside [-1, 1]")
     if pf <= 0 or pr <= 0 or pr >= pf:
@@ -755,6 +766,8 @@ def z_from_gamma_uncertainty(gamma, U_gamma, z0):
     real and imaginary parts)."""
     g = complex(gamma)
     _check_cov([g.real, g.imag], U_gamma)
+    if abs(g) > 1:
+        raise FrameworkError(f"|Gamma| = {abs(g):.6g} > 1 is not a passive antenna load (R < 0); refused (SW-04)")
     if g == 1:
         raise FrameworkError("Gamma = 1")
     d = 2 * z0 / (1 - g) ** 2
@@ -770,7 +783,12 @@ def p_delivered_uncertainty(P_net_W, u_P_net_W, eta, u_eta):
     if u_P_net_W is None or u_eta is None:
         raise UncertaintyMissingError("u(P_net) and u(eta) required -> NOT_EVALUATED")
     pn, e = _fin(P_net_W, "P_net"), _fin(eta, "eta")
-    return {"P_delivered_W": e * pn, "u_P_delivered_W": math.hypot(e * _fin(u_P_net_W, "u"), pn * _fin(u_eta, "u"))}
+    upn, ue = _fin(u_P_net_W, "u"), _fin(u_eta, "u")
+    if pn < 0 or not 0.0 <= e <= 1.0:
+        raise FrameworkError("P_net >= 0 and 0 <= eta <= 1 required (a passive line / match delivers at most P_net)")
+    if upn < 0 or ue < 0:
+        raise UncertaintyMissingError("standard uncertainties must be >= 0")
+    return {"P_delivered_W": e * pn, "u_P_delivered_W": math.hypot(e * upn, pn * ue)}
 
 
 DEEMBED_INPUTS = ("m_raw", "e00", "e11", "e10e01", "L11", "L12", "L21", "L22", "M11", "M12", "M21", "M22")
@@ -841,6 +859,8 @@ def detect_eh_transitions(points, criteria):
     if len(dirs) != 1 or dirs.pop() not in ("up", "down"):
         raise FrameworkError("one sweep = one direction ('up' or 'down'); split up/down sweeps")
     idx = [p.get("index") for p in points]
+    if any(isinstance(i, bool) or not isinstance(i, int) for i in idx):
+        raise FrameworkError("every sweep point needs an integer index (SW-09)")
     if idx != sorted(idx) or len(set(idx)) != len(idx):
         raise FrameworkError("points must be ordered by strictly increasing sweep index")
     events = []

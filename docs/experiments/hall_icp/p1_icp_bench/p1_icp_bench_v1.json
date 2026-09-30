@@ -302,7 +302,8 @@
     "sign_convention_id",
     "I_scale_min_A",
     "I_scale_min_basis",
-    "covariance"
+    "covariance",
+    "open_by_construction_terminals"
    ],
    "channel_uncertainty_components": [
     "u_calibration_A",
@@ -518,7 +519,7 @@
     ],
     "exit": [
      "calorimetric cross-check |z_x| <= k_x = 2 on every dummy-load record (CROSS_CHECK_AGREES; A9.1 UBQ-04, UB-RF-08) - otherwise RF-dependent quantities EXCLUDED_INSTRUMENT",
-     "line/match-loss characterizations verified only under CROSS_CHECK_AGREES (else P_delivered stays an upper bound)",
+     "line/match-loss characterizations verified only under CROSS_CHECK_AGREES AND an at-power loss-model verification (CAL-P2-09 / -10 form, k registered, P1Q-24); a record's loss must agree with its cited characterization (else P_delivered stays an upper bound)",
      "installed-antenna records carry the photodiode state (A9.4 P2Q-05): threshold inputs for P2 (IDP2-17)"
     ],
     "record_template": {
@@ -1069,7 +1070,7 @@
    {
     "id": "P1Q-22",
     "disposition": "DERIVED",
-    "answer": "DERIVED (P1Q-22): A9.5 exclusions independent of the closure test first (EXCLUDED) -> missing u(I_k) (NOT_EVALUATED_UNCERTAINTY, A9.6 sec. 14) -> statistical failure |R_I| > 3 u_R (EXCLUDED; normalised to u_R, so not explainable by instrument inadequacy) -> 3 u_R > 0.02 |I_e,collector| (NOT_EVALUATED_INSTRUMENT; fractional-only failures not decisive) -> fractional failure (EXCLUDED)",
+    "answer": "DERIVED (P1Q-22): A9.5 exclusions independent of the closure test first (EXCLUDED) -> missing u(I_k) (NOT_EVALUATED_UNCERTAINTY, A9.6 sec. 14) -> statistical failure |R_I| > 3 u_R (EXCLUDED; normalised to u_R, so not explainable by instrument inadequacy) -> 3 u_R > 0.02 |I_e,collector| at the RF-ON point, or 3 u_R > 0.02 max(|I_e,collector|, I_scale,min) at the matched RF-OFF record (NOT_EVALUATED_INSTRUMENT; fractional-only failures not decisive) -> fractional failure (EXCLUDED)",
     "follows_from": "A9.5 P1Q-15 exclusions '|R_I| > 3 u_R' and 'fractional closure exceeds 2 %' plus the adequacy rule: the statistical test is normalised to the instrument's own u_R, so a statistically significant residual is resolved by the instrument and stays an exclusion; only the 2 % test is unresolvable when 3 u_R > 0.02 |I_e,collector| (A9.6 sec. 2: NOT_EVALUATED_INSTRUMENT 'rather than widening the tolerance'); A9.6 sec. 14 missing uncertainty -> NOT_EVALUATED",
     "implemented_in": "p1_reducer.icp45a_candidates",
     "tests": [
@@ -2354,7 +2355,7 @@
   {
    "id": "P1-IT-29",
    "name": "neutralization-margin form (used only once I_d,max,H1 is registered)",
-   "value": "M_n = I_e,cap / I_d,dem - 1; one-sided lower confidence bound > 0; one-sided alpha 0.05 per absolute gate",
+   "value": "M_n = I_e,cap / I_d,dem - 1; one-sided lower confidence bound > 0; one-sided alpha 0.05 per absolute gate (the registered margin_rule carries alpha_one_sided = 0.05 and k_basis; k_one_sided below the normal one-sided quantile 1.6449 is refused - consolidated verification MET-04)",
    "units": "-",
    "basis": "owner decision",
    "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-02, UBQ-07",
@@ -4800,7 +4801,7 @@
   },
   {
    "id": "P1Q-18",
-   "question": "A9.5 P1Q-15 applies the instrument-adequacy rule (3 u_R > 0.02 |I_e,collector| -> NOT_EVALUATED_INSTRUMENT) 'at a candidate qualification point'. Recorder reading implemented: it is tested on the RF-ON ICP45_CAPACITY record (the candidate point); the matched RF-OFF record, whose collector current is the facility/background term and may be near zero, is tested only with the statistical and fractional closure using the I_scale,min floor. Confirm?",
+   "question": "A9.5 P1Q-15 applies the instrument-adequacy rule (3 u_R > 0.02 |I_e,collector| -> NOT_EVALUATED_INSTRUMENT) 'at a candidate qualification point'. Recorder reading implemented: it is tested on the RF-ON ICP45_CAPACITY record (the candidate point); the matched RF-OFF record, whose collector current is the facility/background term and may be near zero, is tested only with the statistical and fractional closure using the I_scale,min floor; a fractional-only failure of the RF-OFF record that its instrument cannot resolve (3 u_R > 0.02 max(|I_e,collector|, I_scale,min)) is NOT_EVALUATED_INSTRUMENT, not an exclusion (consolidated verification MET-03). Confirm?",
    "proposed_answer": "YES (otherwise every RF-OFF record with I_e,collector ~ 0 would be NOT_EVALUATED_INSTRUMENT by construction, which the I_scale,min floor exists to avoid)",
    "needed_by": "before the first ICP45_CAPACITY record (P1-G0)"
   },
@@ -4817,6 +4818,13 @@
    "question": "A9.5 states I_anode ~ 0 'by construction'. The reducer gives every OPEN_CIRCUIT_BY_CONSTRUCTION terminal (floating anode, open ICP body) I = 0 and u = 0. Should the insulation leakage recorded in the P1-S0 isolation / DWV test (P1-IT-44) be entered as a registered u(I_anode) instead of 0?",
    "proposed_answer": "owner call; PROPOSED: YES when the recorded leakage at the operating potential is not negligible against u_R; register it as a u_zero_offset_A of the anode terminal",
    "needed_by": "before the first ICP45_CAPACITY record (P1-G0)"
+  },
+  {
+   "id": "P1Q-24",
+   "status": "TBD_OWNER",
+   "question": "A two-port (small-signal S-parameter) line/match-loss characterization is now counted as verified in P1 only after an at-power loss-model verification in the P2 form (CAL-P2-09 calorimetric / CAL-P2-10 antenna simulator: |eta_meas - eta_pred| / u_c <= k), because the P1-S1 dummy-load coupler-vs-calorimeter cross-check tests the coupler, not the loss model (consolidated verification MET-02); without it P_delivered and C_e stay upper bounds. Register the coverage factor k of that check (never defaulted; the same k as the P2 loss verification, TBD_OWNER / LOCK-2), and confirm the fail-closed reading?",
+   "proposed_answer": "owner call on k; PROPOSED: one k for P1 and P2 frozen together (no value proposed here)",
+   "needed_by": "before the first P_RF_DELIVERED / C_e is reported from P1-S4"
   }
  ],
  "historical_reuse": [

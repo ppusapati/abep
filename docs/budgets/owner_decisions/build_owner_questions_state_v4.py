@@ -17,6 +17,11 @@ Every TBD_OWNER row carries the dependency that makes it a genuine owner questio
 Nothing is answered here: DERIVED rows name the owner decision / standard rule they follow from and the artifact that
 implements them; when in doubt a row stays TBD_OWNER. Missing or unexpected ids raise; there are no defaults.
 
+Build order (data dependency; consolidated verification S-03): P4, XE, P1, P2, P3, MP, RFQ, RVM, owner-question
+state v4, M16 v4. State v4 reads rvm_a9_v1.json (ids of RVM-ID-10 / RVM-ID-11, RVMQ-01, the lane-24 rows), the RVM
+reads only the immutable state v3 snapshot, and M16 v4 reads both - so after any RVM change rebuild state v4 and
+then M16 v4 (--check on each catches a stale downstream output).
+
 stdlib only.
 
     python docs/budgets/owner_decisions/build_owner_questions_state_v4.py          # write JSON + MD + CSV
@@ -309,6 +314,9 @@ TBD = {
     "P1Q-18": ([OJ], [P1S], None, "confirms the recorder reading of the A9.5 'candidate qualification point' scope; not settled by the lane"),
     "P1Q-19": ([OJ], [P1L], "P1-S7", "remaining preregistration choice REQUIRE_REGISTERED_GE_CHANNEL vs USE_LARGER_OF_REGISTERED_AND_CHANNEL (both computed)"),
     "P1Q-20": ([P1D, OJ], [P1S], None, "leakage recorded in the P1-S0 DWV test (P1-IT-44) vs u = 0 by construction"),
+    "P1Q-24": ([OJ], [P1L], "P1-S4", "coverage factor k of the at-power line/match-loss verification (P2 CAL-P2-09 / "
+               "-10 form; never defaulted) before any P1 P_RF_DELIVERED / C_e; raised by the consolidated verification "
+               "(MET-02); P_delivered stays an upper bound until registered"),
     "P1-IT-52": ([VQ, OJ], [P1S], None, "per-stage operating domains from procured ratings and the P1 run matrix; no default domain"),
     "P1-IT-55": ([VQ, OJ], [P1S], None, "leakage acceptance needs the insulation-path / feedthrough ratings; G0_NOT_EVALUATED_TBD until registered"),
     # --- P2 ---

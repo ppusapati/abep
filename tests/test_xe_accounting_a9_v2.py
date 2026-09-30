@@ -494,3 +494,36 @@ def test_xlane_references_checked_not_pinned_not_stale():
             break
     assert b.xlane_check(bad)
 
+
+
+def test_sw08_xe_lines_and_split_refuse_impossible_values(mod, d):
+    """SW-08: negative / NaN Xe line inputs and case-split inputs are refused (BookingError), never booked."""
+    items = copy.deepcopy(_items(d))
+    items["XV2-14"]["value"] = 1.0
+    ln = next(x for x in d["ledger_lines"] if x["id"] == "C1-FL-IGN")
+    for bad in (-2.0, float("nan"), float("inf")):
+        it2 = copy.deepcopy(items)
+        it2["XV2-14"]["value"] = bad
+        with pytest.raises(mod.BookingError):
+            mod.eval_line(ln, it2, {"RA-DWELL": "ATTEMPTS_3"}, {})
+    for args in ((float("nan"), "LOADED", 0.1, 0.05), (10.0, "LOADED", -0.5, -0.5), (-1.0, "LOADED", 0.1, 0.05),
+                 (10.0, "USABLE_RESIDUAL_ON_TOP", float("nan"), 0.05), (10.0, "LOADED", 0.1, True)):
+        with pytest.raises(mod.BookingError):
+            mod.case_split(*args)
+    frac = next(x for x in d["ledger_lines"] if x["kind"] == "fraction_of_lines")
+    done = {x: {"kg": 1.0} for x in frac["of_lines"]}
+    fit = copy.deepcopy(items)
+    fid = frac["fields"][0]["item"]
+    for bad in (-0.1, float("nan")):
+        fit[fid]["value"] = bad
+        fit[fid].pop("value_by_reading", None)
+        with pytest.raises(mod.BookingError):
+            mod.eval_line(frac, fit, {}, done)
+
+
+def test_s02_downstream_lanes_not_pending(d):
+    """S-02 / PHYS-01: state v4, RVM and M16 are merged downstream consumers; never 'PENDING / not merged'."""
+    txt = json.dumps(d)
+    assert "PENDING fo_a9_6_" not in txt and "parallel_lanes" not in d
+    assert set(d["downstream_consumer_lanes"]) == {"DECPROP", "RVM", "M16"}
+    assert all(v.startswith("downstream consumer") for v in d["downstream_consumer_lanes"].values())

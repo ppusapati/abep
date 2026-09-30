@@ -136,7 +136,8 @@ def _rec(fw, red, cal, z_ant, p_fwd=100.0, rid="SYN-1"):
             "plasma_state": {"lit": False, "mode": "UNLIT", "optical_signal_V": None, "unlit_threshold_V": None,
                              "unlit_threshold_source": None, "threshold_basis": None,
                              "photodiode_line_of_sight_ok": None, "photodiode_saturated": None,
-                             "electrical_ignition_or_mode_transition": None, "electrical_indicator_basis": None},
+                             "electrical_ignition_or_mode_transition": None, "electrical_indicator_basis": None,
+                             "mode_indicator_basis": None},
             "sweep": {"sweep_id": "S", "direction": "single", "index": 0}, "settling": {"dwell_s": None, "settled": None},
             "temperatures_K": {}, "cold_reference_id": None, "p1_stable_region_ref": None, "antenna_current": None}
 
@@ -666,7 +667,9 @@ def _hot(rec, mode="H_MODE", sig=2.0, gas="Ar", rid="SYN-H"):
     r["plasma_state"].update({"lit": mode != "UNLIT", "mode": mode, "optical_signal_V": sig, "unlit_threshold_V": 0.5,
                               "unlit_threshold_source": "SYNTHETIC P1 procedure id", "threshold_basis": dict(TB),
                               "photodiode_line_of_sight_ok": True, "photodiode_saturated": False,
-                              "electrical_ignition_or_mode_transition": False, "electrical_indicator_basis": None})
+                              "electrical_ignition_or_mode_transition": False, "electrical_indicator_basis": None,
+                              "mode_indicator_basis": ("SYNTH HM-R06 indicators" if mode in ("E_MODE", "H_MODE")
+                                                       else None)})
     r["antenna_current"] = {"I_rms_A": 2.0, "probe_cal_id": "ACP"}
     return r
 
@@ -899,3 +902,57 @@ def test_p1_handoff_admissibility_fail_closed():
     ins, outs, nev = fw.split_by_domain(pts, region)
     assert [p["record_id"] for p in ins] == ["A"] and [p["record_id"] for p in nev] == ["B"] and not outs
 
+
+
+# ------------------------------------------------------------------ A9.6 sec. 18 consolidated verification, repair round 1
+def test_sw04_uncertainty_helpers_refuse_invalid_inputs(fw):
+    """SW-04: non-PSD / negative / non-finite covariances and inputs, negative u, eta > 1, |Gamma| > 1 are refused."""
+    f = lambda x: [x[0] + x[1]]
+    for bad in ([[0.01, 0.5], [0.5, 0.01]], [[-0.01, 0.0], [0.0, 0.01]]):
+        with pytest.raises(fw.UncertaintyMissingError):
+            fw.propagate_linear(f, [1.0, 1.0], bad)
+        with pytest.raises(fw.UncertaintyMissingError):
+            fw.propagate_mc(f, [1.0, 1.0], bad, n_trials=1000, seed=1)
+    for x in ([float("nan"), 1.0], [float("inf"), 1.0]):
+        with pytest.raises(fw.FrameworkError):
+            fw.propagate_linear(f, x, [[0.01, 0.0], [0.0, 0.01]])
+    with pytest.raises(fw.UncertaintyMissingError):
+        fw.gamma_vswr_pnet_uncertainty(100.0, -1.0, 4.0, -1.0, 0.0)
+    for args in ((100.0, 1.0, 1.5, 0.1), (100.0, 1.0, 0.9, -0.1), (-5.0, 1.0, 0.9, 0.01)):
+        with pytest.raises(fw.FrameworkError):
+            fw.p_delivered_uncertainty(*args)
+    with pytest.raises(fw.FrameworkError):
+        fw.z_from_gamma_uncertainty(2 + 0j, [[1e-4, 0.0], [0.0, 1e-4]], 50.0)
+    assert fw.p_delivered_uncertainty(100.0, 1.0, 0.9, 0.01)["P_delivered_W"] == pytest.approx(90.0)
+
+
+def test_sw09_mc_coverage_order_statistic_and_type_checks(fw):
+    """SW-09: the JCGM 101 7.7.2 order statistics [y_(r), y_(r+q)] are exact for a deterministic identity case;
+    a bool seed and a None sweep index are refused with framework errors."""
+    import random as _random
+    n = 1000
+    out = fw.propagate_mc(lambda x: [x[0]], [0.0], [[1.0]], n_trials=n, seed=7)
+    rng = _random.Random(7)
+    zs, spare = [], None
+    for _ in range(n):                       # replay the documented Box-Muller stream (one input: spare unused)
+        if spare is not None:
+            zs.append(spare)
+            spare = None
+            continue
+        u1 = 1.0 - rng.random()
+        u2 = rng.random()
+        rad = math.sqrt(-2.0 * math.log(u1))
+        zs.append(rad * math.cos(2 * math.pi * u2))
+        spare = rad * math.sin(2 * math.pi * u2)
+    col = sorted(zs)
+    q, r = 950, 25                           # q = int(0.95 * 1000) (integer pM), r = (M - q) / 2 (JCGM 101 7.7.2)
+    assert out["coverage_interval_95"][0] == [col[r - 1], col[r + q - 1]]
+    with pytest.raises(fw.FrameworkError):
+        fw.propagate_mc(lambda x: [x[0]], [0.0], [[1.0]], n_trials=1000, seed=True)
+
+
+def test_sw09_sweep_index_type_checked(fw):
+    pts = _sweep("up", UP)
+    pts[0]["index"] = None
+    with pytest.raises(fw.FrameworkError):
+        fw.detect_eh_transitions(pts, CRIT)

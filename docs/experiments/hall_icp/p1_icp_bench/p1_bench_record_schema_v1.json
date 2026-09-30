@@ -132,7 +132,53 @@
        "bridges_isolated_potentials",
        "isolator_installed",
        "qualification"
-      ]
+      ],
+      "properties": {
+       "service_gas": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "description": "representative service gas; required (null = not registered) on a line that bridges isolated potentials"
+       },
+       "qualification": {
+        "anyOf": [
+         {
+          "type": "null"
+         },
+         {
+          "type": "object",
+          "required": [
+           "qualification_id",
+           "level_id",
+           "level_V",
+           "V_test_V",
+           "gas",
+           "p_Pa",
+           "breakdown_or_flashover"
+          ],
+          "properties": {
+           "level_V": {
+            "type": [
+             "number",
+             "null"
+            ]
+           },
+           "V_test_V": {
+            "type": "number"
+           },
+           "p_Pa": {
+            "type": "number"
+           },
+           "gas": {
+            "type": "string",
+            "minLength": 1
+           }
+          }
+         }
+        ]
+       }
+      }
      }
     },
     "ar_mfcs": {
@@ -229,7 +275,8 @@
      "P1-SI-10",
      "P1-SI-11"
     ],
-    "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14"
+    "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14",
+    "icpq06_class_V": 1000.0
    }
   },
   "rf_cold_checkout": {
@@ -361,6 +408,44 @@
         "u_value_W": {
          "type": "number",
          "exclusiveMinimum": 0
+        },
+        "at_power_verification": {
+         "anyOf": [
+          {
+           "type": "null"
+          },
+          {
+           "type": "object",
+           "required": [
+            "verification_id",
+            "method",
+            "eta_pred",
+            "u_eta_pred",
+            "P_net_W",
+            "u_P_net_W",
+            "P_ref_load_W",
+            "u_P_ref_load_W",
+            "k",
+            "k_registration_id",
+            "evidence_record_ids",
+            "tuning_states"
+           ],
+           "properties": {
+            "method": {
+             "enum": [
+              "CAL-P2-09_calorimetric_at_power",
+              "CAL-P2-10_antenna_simulator_at_power"
+             ]
+            },
+            "k": {
+             "type": [
+              "number",
+              "null"
+             ]
+            }
+           }
+          }
+         ]
         }
        }
       }
@@ -406,7 +491,8 @@
          "type": "object",
          "required": [
           "threshold_id",
-          "threshold_V"
+          "threshold_V",
+          "basis"
          ],
          "properties": {
           "threshold_id": {
@@ -414,6 +500,21 @@
           },
           "threshold_V": {
            "type": "number"
+          },
+          "basis": {
+           "type": "object",
+           "required": [
+            "dark_background_record_id",
+            "rf_powered_known_unlit_record_id",
+            "known_lit_p1_record_id",
+            "frozen_before_p2_map"
+           ],
+           "properties": {
+            "frozen_before_p2_map": {
+             "const": true
+            }
+           },
+           "description": "A9.4 P2Q-05 basis, identical to the P2 reducer (consolidated verification MET-05)"
           }
          }
         }
@@ -608,7 +709,8 @@
          "type": "object",
          "required": [
           "threshold_id",
-          "threshold_V"
+          "threshold_V",
+          "basis"
          ],
          "properties": {
           "threshold_id": {
@@ -616,6 +718,21 @@
           },
           "threshold_V": {
            "type": "number"
+          },
+          "basis": {
+           "type": "object",
+           "required": [
+            "dark_background_record_id",
+            "rf_powered_known_unlit_record_id",
+            "known_lit_p1_record_id",
+            "frozen_before_p2_map"
+           ],
+           "properties": {
+            "frozen_before_p2_map": {
+             "const": true
+            }
+           },
+           "description": "A9.4 P2Q-05 basis, identical to the P2 reducer (consolidated verification MET-05)"
           }
          }
         }
@@ -1281,7 +1398,8 @@
          "type": "object",
          "required": [
           "threshold_id",
-          "threshold_V"
+          "threshold_V",
+          "basis"
          ],
          "properties": {
           "threshold_id": {
@@ -1289,6 +1407,21 @@
           },
           "threshold_V": {
            "type": "number"
+          },
+          "basis": {
+           "type": "object",
+           "required": [
+            "dark_background_record_id",
+            "rf_powered_known_unlit_record_id",
+            "known_lit_p1_record_id",
+            "frozen_before_p2_map"
+           ],
+           "properties": {
+            "frozen_before_p2_map": {
+             "const": true
+            }
+           },
+           "description": "A9.4 P2Q-05 basis, identical to the P2 reducer (consolidated verification MET-05)"
           }
          }
         }
@@ -1445,12 +1578,29 @@
    "sign_convention_id",
    "I_scale_min_A",
    "I_scale_min_basis",
-   "covariance"
+   "covariance",
+   "open_by_construction_terminals"
   ],
   "sign_convention": "CONVENTIONAL_CURRENT_INTO_THE_DEFINED_ISOLATED_ELECTRICAL_NETWORK_IS_POSITIVE",
   "owner_constants": {
    "k_sigma": 3.0,
    "fraction_max": 0.02
+  },
+  "open_by_construction_terminals": {
+   "items_required": [
+    "terminal",
+    "basis"
+   ],
+   "implicit": [
+    "hall_anode"
+   ],
+   "never_registrable": [
+    "collector_supply",
+    "electron_collector",
+    "h1_body",
+    "facility_ground"
+   ],
+   "description": "terminals other than the floating H-1 anode that are open by construction, each with its basis (P1-G0); any other OPEN_CIRCUIT_BY_CONSTRUCTION declaration excludes the capacity point (consolidated verification E2)"
   },
   "covariance": {
    "required": [

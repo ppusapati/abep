@@ -111,7 +111,7 @@ NESTED_REQUIRED = {
     "factors": REQUIRED_FACTOR_FIELDS,
     "plasma_state": ("lit", "mode", "optical_signal_V", "unlit_threshold_V", "unlit_threshold_source",
                      "threshold_basis", "photodiode_line_of_sight_ok", "photodiode_saturated",
-                     "electrical_ignition_or_mode_transition", "electrical_indicator_basis"),
+                     "electrical_ignition_or_mode_transition", "electrical_indicator_basis", "mode_indicator_basis"),
     "sweep": ("sweep_id", "direction", "index"),
     "settling": ("dwell_s", "settled"),
     "antenna_current": ("I_rms_A", "probe_cal_id"),
@@ -759,6 +759,10 @@ def classify_plasma_state(obs):
     mode = obs.get("lit_mode_assignment")
     if mode is not None and mode not in LIT_MODES:
         raise PlasmaStateError(f"lit_mode_assignment {mode!r} not in (E_MODE, H_MODE, None)")
+    # same rule as p1_reducer.classify_plasma_state (consolidated verification MET-05): an E/H assignment needs the
+    # registered indicators it was made from (HM-R06), never a bare label
+    if mode is not None and not _ref_ok(obs.get("mode_indicator_basis")):
+        raise PlasmaStateError("lit_mode_assignment needs mode_indicator_basis (the registered E/H indicators, HM-R06)")
     if obs["photodiode_line_of_sight_ok"] is not True:
         return "UNCERTAIN", "photodiode line of sight lost: the optical record is not valid evidence"
     if obs["photodiode_saturated"] is not False:

@@ -191,10 +191,10 @@
   "docs/orchestration/fired_triggers.jsonl",
   "docs/orchestration/runtime_state.json"
  ],
- "parallel_lanes": {
-  "DECPROP": "PENDING fo_a9_6_decision_propagation (owner-question state v4)",
-  "RVM": "PENDING fo_a9_6_rvm (system requirement-verification matrix)",
-  "M16": "PENDING fo_a9_6_m16_refresh"
+ "downstream_consumer_lanes": {
+  "DECPROP": "downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_decision_propagation (owner-question state v4)",
+  "RVM": "downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_rvm (system requirement-verification matrix)",
+  "M16": "downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_m16_refresh"
  },
  "merged_cross_lane": {
   "rule": "values flow only P4 -> MP (candidate densities) and XE -> MP (Xe residual and headroom, both readings), and P1 / P2 -> RFQ (ids, item text and statuses of the instrument coverage); every other cross-lane reference is an id checked at build time. Rebuild in the order P4, XE, P1, P2, P3, MP, RFQ; a second pass of any package is a no-op",
@@ -7375,7 +7375,7 @@
    "id": "XV2-IF-08",
    "direction": "OUT",
    "from": "xe_accounting_a9_v2",
-   "to": "PENDING fo_a9_6_decision_propagation (owner-question state v4)",
+   "to": "downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_decision_propagation (owner-question state v4)",
    "quantity": "open questions carried (XA9Q-01/02/03/07, MQ-09, OQ-A907-01, OQ-A910-01) and new XV2Q-01; no answers",
    "units": "-",
    "status": "OFFERED",
@@ -7385,7 +7385,7 @@
    "id": "XV2-IF-09",
    "direction": "OUT",
    "from": "xe_accounting_a9_v2",
-   "to": "PENDING fo_a9_6_rvm (system requirement-verification matrix)",
+   "to": "downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_rvm (system requirement-verification matrix)",
    "quantity": "Xe capability / Xe accounting evidence state: every total with a TBD input is REFUSED; the RVM Xe rows can only be NOT_EVALUATED / INCOMPLETE_EVIDENCE from this accounting (never PASS)",
    "units": "-",
    "status": "OFFERED",
@@ -7395,7 +7395,7 @@
    "id": "XV2-IF-10",
    "direction": "OUT",
    "from": "xe_accounting_a9_v2",
-   "to": "PENDING fo_a9_6_m16_refresh",
+   "to": "downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_m16_refresh",
    "quantity": "m16_impact rows (no readiness change: framework only)",
    "units": "-",
    "status": "OFFERED",
@@ -7723,25 +7723,25 @@
    "m16_row": 6,
    "key": "xe_tank",
    "impact": "tank volume per design case at 323 K under both RA-CASE readings (USABLE reading adds the residual: loaded x 1.02); totals REFUSED; no readiness change",
-   "cell_edit": "none; PENDING fo_a9_6_m16_refresh"
+   "cell_edit": "none; downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_m16_refresh"
   },
   {
    "m16_row": 7,
    "key": "xe_regulator",
    "impact": "inlet = MEOP (TBD, XV2-28); no change",
-   "cell_edit": "none; PENDING fo_a9_6_m16_refresh"
+   "cell_edit": "none; downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_m16_refresh"
   },
   {
    "m16_row": 8,
    "key": "xe_metering",
    "impact": "C1 FCUs only in hall_c1_reference; ICP feed metering only as a CASE-3 optional entry (G-XE/G-ATM/diagnostic); Hall-side Xe metering under RA-FUNC APPLIES only for the ICP configuration",
-   "cell_edit": "none; PENDING fo_a9_6_m16_refresh"
+   "cell_edit": "none; downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_m16_refresh"
   },
   {
    "m16_row": 11,
    "key": "cathode",
    "impact": "C1 remains CONTROL_FALLBACK: every C1 Xe phase a separate line; not present in the ICP configuration",
-   "cell_edit": "none; PENDING fo_a9_6_m16_refresh"
+   "cell_edit": "none; downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_m16_refresh"
   }
  ]
 }

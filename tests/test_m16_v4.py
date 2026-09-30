@@ -223,3 +223,24 @@ def test_no_forbidden_substring_in_code():
     needle = "xe_" + "ledger"
     for p in list(HERE.glob("*.py")) + [Path(__file__)]:
         assert needle not in p.read_text(encoding="utf-8"), p.name
+
+
+def test_s01_rvm_open_readings_agree_with_state_v4():
+    """S-01 (consolidated verification): every RVM open reading carries the status of its row in owner-question state
+    v4 (the current register); OD13 is SUPERSEDED in both; no RVM interface demand towards v4 reads PENDING."""
+    rvm = json.loads((ROOT / "docs/requirements/rvm_a9/rvm_a9_v1.json").read_text(encoding="utf-8"))
+    v4 = {r["id"]: r for r in json.loads((ROOT / "docs/budgets/owner_decisions/owner_questions_state_v4.json")
+                                        .read_text(encoding="utf-8"))["rows"]}
+    n = 0
+    for row in rvm["rows"]:
+        for o in row.get("open_readings", []):
+            assert o["id"] in v4 and v4[o["id"]]["status"] == o["status"], (row["id"], o["id"])
+            n += 1
+    assert n > 0
+    od13 = [o for r in rvm["rows"] if r["id"] == "RVM-12" for o in r["open_readings"] if o["id"] == "OD13"]
+    assert od13 and od13[0]["status"] == "SUPERSEDED" == v4["OD13"]["status"]
+    out = HERE / "subsystem_maturity_v4.json"
+    doc = json.loads(out.read_text(encoding="utf-8"))
+    rec = doc["rvm_register_reconciliation"]
+    assert rec["all_agree"] is True and rec["n_readings"] == n
+    assert "PENDING fo_a9_6_" not in out.read_text(encoding="utf-8")

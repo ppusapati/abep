@@ -128,7 +128,8 @@ def _rec(red, cal, z_ant, p_fwd=100.0, phase="DUMMY_LOAD"):
             "plasma_state": {"lit": False, "mode": "UNLIT", "optical_signal_V": None, "unlit_threshold_V": None,
                              "unlit_threshold_source": None, "threshold_basis": None,
                              "photodiode_line_of_sight_ok": None, "photodiode_saturated": None,
-                             "electrical_ignition_or_mode_transition": None, "electrical_indicator_basis": None},
+                             "electrical_ignition_or_mode_transition": None, "electrical_indicator_basis": None,
+                             "mode_indicator_basis": None},
             "sweep": {"sweep_id": "S", "direction": "single", "index": 0}, "settling": {"dwell_s": None, "settled": None},
             "temperatures_K": {}, "cold_reference_id": None, "p1_stable_region_ref": None, "antenna_current": None}
 
@@ -720,7 +721,9 @@ def _hot(rec, sig=2.0, thr=0.5, mode="H_MODE", gas="Ar"):
     r["phase"], r["p1_stable_region_ref"] = "HOT_MAP", "P1-REGION-SYN"
     r["factors"].update({"gas": gas, "p_chamber_Pa": 0.01})
     _optical(r, sig, thr)
-    r["plasma_state"].update({"lit": mode != "UNLIT", "mode": mode})
+    r["plasma_state"].update({"lit": mode != "UNLIT", "mode": mode,
+                              "mode_indicator_basis": "SYNTH HM-R06 indicators" if mode in ("E_MODE", "H_MODE")
+                              else None})
     return r
 
 
@@ -878,9 +881,13 @@ def test_a94_classify_plasma_state(red):
     assert red.classify_plasma_state(dict(base, photodiode_line_of_sight_ok=False))[0] == "UNCERTAIN"
     assert red.classify_plasma_state(dict(base, photodiode_saturated=True))[0] == "UNCERTAIN"
     lit = dict(base, optical_signal_V=2.0)
-    assert red.classify_plasma_state(dict(lit, lit_mode_assignment="E_MODE"))[0] == "E_MODE"
-    assert red.classify_plasma_state(dict(lit, lit_mode_assignment="H_MODE"))[0] == "H_MODE"
+    mb = {"mode_indicator_basis": "SYNTH HM-R06 indicators"}
+    assert red.classify_plasma_state(dict(lit, lit_mode_assignment="E_MODE", **mb))[0] == "E_MODE"
+    assert red.classify_plasma_state(dict(lit, lit_mode_assignment="H_MODE", **mb))[0] == "H_MODE"
     assert red.classify_plasma_state(lit)[0] == "UNCERTAIN"
+    for bad in (None, "", "PENDING indicators"):                     # an E/H label needs its registered basis (MET-05)
+        with pytest.raises(red.PlasmaStateError):
+            red.classify_plasma_state(dict(lit, lit_mode_assignment="H_MODE", mode_indicator_basis=bad))
     with pytest.raises(red.PlasmaStateError):                         # threshold without its A9.4 basis
         red.classify_plasma_state(dict(base, threshold_basis=None))
     with pytest.raises(red.PlasmaStateError):

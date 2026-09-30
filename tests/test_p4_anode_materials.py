@@ -205,10 +205,66 @@ def test_thermal_gate_unresolved_forces_incomplete():
     with pytest.raises(S.ScreeningError):
         S.evaluate_gate(r, p)                      # no default thermal status
     # margin rule T_op <= T_valid - 50 K (synthetic)
-    assert S.evaluate_gate(r, p, thermal_closure_status="CLOSED_BY_EVIDENCE", operating_temperature=1950.0)[0] == \
-        "GATE_SATISFIED_WITHIN_EVIDENCE_DOMAIN"
-    assert S.evaluate_gate(r, p, thermal_closure_status="CLOSED_BY_EVIDENCE", operating_temperature=1950.1)[0] == \
-        "GATE_VIOLATED_BY_EVIDENCE"
+    assert S.evaluate_gate(r, p, thermal_closure_status="CLOSED_BY_EVIDENCE", operating_temperature=_top(1950.0))[0] \
+        == "GATE_SATISFIED_WITHIN_EVIDENCE_DOMAIN"
+    assert S.evaluate_gate(r, p, thermal_closure_status="CLOSED_BY_EVIDENCE", operating_temperature=_top(1950.1))[0] \
+        == "GATE_VIOLATED_BY_EVIDENCE"
+
+
+def _top(v, **over):
+    t = {"value_si": v, "unit_si": "K", "evidence_class": "measured", "source": "SYNTHETIC fixture (not data)"}
+    t.update(over)
+    return t
+
+
+def test_th03_thermal_gate_fails_closed_on_any_unlisted_status():
+    """TH-03: only an allow-listed resolved thermal status applies the gate; T_operating must be a K quantity record."""
+    r = _req(criterion="CR-01", property="T_validated_continuous", kind="min_with_margin", value=50.0, unit="K",
+             status="OWNER_GIVEN")
+    p = _prop(property="T_validated_continuous", value_si=1000.0, unit_si="K")
+    for st in ("unresolved", "OPEN", "UNRESOLVED ", "PENDING", "TBD", "PENDING_ICP45", ""):
+        assert S.evaluate_gate(r, p, thermal_closure_status=st, operating_temperature=_top(900.0))[0] == \
+            "INCOMPLETE_EVIDENCE", st
+    for t in (900.0, _top(900.0, unit_si="degC"), _top(float("nan")), _top(-5.0), _top(900.0, evidence_class="assumed"),
+              _top(900.0, source=None), {"value_si": 900.0}):
+        assert S.evaluate_gate(r, p, thermal_closure_status="CLOSED_BY_EVIDENCE", operating_temperature=t)[0] == \
+            "INCOMPLETE_EVIDENCE", t
+
+
+def test_sw05_non_finite_and_malformed_domains():
+    """SW-05: NaN / inf are never evidence; domains must be non-empty lists of strings."""
+    r = _req(kind="max", value=10.0)
+    for v in (float("nan"), float("inf"), float("-inf")):
+        assert S.evaluate_gate(r, _prop(value_si=v))[0] == "INCOMPLETE_EVIDENCE"
+        assert S.evaluate_gate(_req(kind="max", value=v), _prop(value_si=5.0))[0] == "INCOMPLETE_EVIDENCE"
+    for dom in ("vac", [], [""], None):
+        with pytest.raises(S.ScreeningError):
+            S.evaluate_gate(_req(kind="max", value=10.0, domain=dom), _prop(value_si=5.0))
+        with pytest.raises(S.ScreeningError):
+            S.evaluate_gate(_req(kind="max", value=10.0), _prop(value_si=5.0, domain=dom))
+
+
+def test_sw06_min_gate_direction():
+    """SW-06: kind 'min' is property >= requirement (satisfied at and above, violated below)."""
+    r = _req(kind="min", value=10.0)
+    assert S.evaluate_gate(r, _prop(value_si=10.0))[0] == "GATE_SATISFIED_WITHIN_EVIDENCE_DOMAIN"
+    assert S.evaluate_gate(r, _prop(value_si=12.0))[0] == "GATE_SATISFIED_WITHIN_EVIDENCE_DOMAIN"
+    assert S.evaluate_gate(r, _prop(value_si=9.9))[0] == "GATE_VIOLATED_BY_EVIDENCE"
+
+
+def test_sw05_ambiguous_duplicate_property_records(monkeypatch):
+    """SW-05: two admissible records for one (candidate, property) are ambiguous -> INCOMPLETE_EVIDENCE."""
+    reqs = [dict(_req(kind="max", value=10.0, status="OWNER_GIVEN"), application=app, tbd="-")
+            for app in B.APPLICATIONS]
+    cid = B.CANDIDATES[0][0]
+    props = [_prop(id="PR-A", candidate=cid, value_si=5.0, synthetic=False),
+             _prop(id="PR-B", candidate=cid, value_si=50.0, synthetic=False)]
+    fixed = {ad["thermal_status_key"]: {"status": "UNRESOLVED"} for ad in B.APPLICATIONS.values()}
+    matrix, _ = B.run_screening(reqs, props, fixed)
+    cell = [m for m in matrix if m["candidate"] == cid][0]
+    assert cell["outcome"] == "INCOMPLETE_EVIDENCE" and "ambiguous" in cell["reason"]
+    matrix, _ = B.run_screening(reqs, props[:1], fixed)
+    assert [m for m in matrix if m["candidate"] == cid][0]["outcome"] == "GATE_SATISFIED_WITHIN_EVIDENCE_DOMAIN"
 
 
 def test_synthetic_refused_and_never_mixed():

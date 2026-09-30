@@ -1126,8 +1126,8 @@
   },
   {
    "id": "P3-H-02",
-   "name": "mean ion energy of the intercepted plume",
-   "value": "TBD_AFTER_EVIDENCE - requires Phase-1 RPA / E x B data",
+   "name": "mean ion energy per unit charge of the intercepted plume (beam-current-weighted, sum_i I_i E_i / (Z_i e) / I_beam; p3_thermal_lib.E_ION_MEAN_DEFINITION)",
+   "value": "TBD_AFTER_EVIDENCE - requires Phase-1 RPA / E x B data (charge-state resolved where multiply charged ions are present)",
    "units": "eV",
    "basis": "pending",
    "source": "A9 evidence_sequence",
@@ -4301,6 +4301,199 @@
     }
    }
   ],
+  "quadrature_error_estimate": {
+   "method": "corner rows of the grid re-run at the verification resolution [16, 32, 64]; abs_diff = |F(parametric) - F(verification)| of F_to_ICP per H-1 zone (PHYS-02)",
+   "resolution_parametric": [
+    8,
+    16,
+    32
+   ],
+   "resolution_verification": [
+    16,
+    32,
+    64
+   ],
+   "max_abs_diff": 0.009,
+   "rows": [
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PI_face",
+     "F_to_ICP_parametric": 0.7339,
+     "F_to_ICP_verification": 0.7323,
+     "abs_diff": 0.0016
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.aperture",
+     "F_to_ICP_parametric": 0.5767,
+     "F_to_ICP_verification": 0.5787,
+     "abs_diff": 0.0021
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_face",
+     "F_to_ICP_parametric": 0.3198,
+     "F_to_ICP_verification": 0.3261,
+     "abs_diff": 0.0063
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_lateral",
+     "F_to_ICP_parametric": 0.0,
+     "F_to_ICP_verification": 0.0,
+     "abs_diff": 0.0
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PI_face",
+     "F_to_ICP_parametric": 0.7563,
+     "F_to_ICP_verification": 0.7559,
+     "abs_diff": 0.00043
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.aperture",
+     "F_to_ICP_parametric": 0.7163,
+     "F_to_ICP_verification": 0.7253,
+     "abs_diff": 0.009
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_face",
+     "F_to_ICP_parametric": 0.5718,
+     "F_to_ICP_verification": 0.5723,
+     "abs_diff": 0.00055
+    },
+    {
+     "L_over_Ro": 0.5,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_lateral",
+     "F_to_ICP_parametric": 0.0,
+     "F_to_ICP_verification": 0.0003662,
+     "abs_diff": 0.00037
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PI_face",
+     "F_to_ICP_parametric": 0.06641,
+     "F_to_ICP_verification": 0.06287,
+     "abs_diff": 0.0035
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.aperture",
+     "F_to_ICP_parametric": 0.05371,
+     "F_to_ICP_verification": 0.05463,
+     "abs_diff": 0.00092
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_face",
+     "F_to_ICP_parametric": 0.05176,
+     "F_to_ICP_verification": 0.05231,
+     "abs_diff": 0.00055
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.0,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_lateral",
+     "F_to_ICP_parametric": 0.0,
+     "F_to_ICP_verification": 0.0,
+     "abs_diff": 0.0
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PI_face",
+     "F_to_ICP_parametric": 0.1074,
+     "F_to_ICP_verification": 0.1044,
+     "abs_diff": 0.0031
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.aperture",
+     "F_to_ICP_parametric": 0.1089,
+     "F_to_ICP_verification": 0.1018,
+     "abs_diff": 0.0071
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_face",
+     "F_to_ICP_parametric": 0.08936,
+     "F_to_ICP_verification": 0.08954,
+     "abs_diff": 0.00018
+    },
+    {
+     "L_over_Ro": 4.0,
+     "rap_over_Ro": 1.5,
+     "wall_over_Ro": 0.2,
+     "H_over_Ro": 3.0,
+     "tau": 0.0,
+     "zone": "H1.PO_lateral",
+     "F_to_ICP_parametric": 0.0,
+     "F_to_ICP_verification": 0.0,
+     "abs_diff": 0.0
+    }
+   ],
+   "reading": "F values in 'rows' are printed to 4 significant figures but are indicative only to about +/- 0.009 absolute (quadrature); the consolidated-verification Monte Carlo check (PHYS-02) found errors up to ~0.005 absolute at this resolution - use the verification resolution for any design number"
+  },
   "plume_geometric_interception": {
    "label": "GEOMETRIC_TEST_DISTRIBUTION_NOT_A_PLUME_PREDICTION",
    "distribution": "uniform current per solid angle inside a cone of the given half-angle, emitted identically from every point of the channel-exit annulus",
@@ -4694,9 +4887,32 @@
    }
   },
   "evidence_class": "model-derived (uncoupled sensitivity; 0 W ICP heat, v1 exterior views)",
-  "comparison_rule": "P3 equivalent heat into H-1 (equivalent_heat_into_h1 + carrier conduction + plume back-flow) at PO / BP is reported beside these allowances as a ratio; a ratio > 1 is a design-driving warning; a ratio <= 1 is NOT a closure (the allowances assume v1 exterior views, which the ICP changes) - status stays COMPUTED_CONDITIONAL / UNRESOLVED",
+  "comparison_rule": "P3 equivalent heat into H-1 (equivalent_heat_into_h1 + carrier conduction + plume back-flow) at PO / BP is to be reported beside these allowances, per node, as the ratio Q_equivalent / allowance; a ratio > 1 is a design-driving warning; a ratio <= 1 is NOT a closure (the allowances assume v1 exterior views, which the ICP changes); against a 0 W allowance the ratio is undefined and ANY positive equivalent heat is a design-driving warning (ZERO_ALLOWANCE_ALWAYS_WARNING) - status stays COMPUTED_CONDITIONAL / UNRESOLVED. No ratio is computed in this lane (heat terms TBD)",
+  "zero_allowance_nodes": {
+   "nodes_by_injection": {
+    "CI": [
+     "BP",
+     "PO"
+    ],
+    "WI": [
+     "BP",
+     "PO"
+    ]
+   },
+   "headroom_to_ceiling_K_with_0_W_icp_heat": {
+    "CI": {
+     "ground": -485.5,
+     "orbit_hot@T_mount=60C": -493.7
+    },
+    "WI": {
+     "ground": -16.6,
+     "orbit_hot@T_mount=60C": -21.6
+    }
+   },
+   "reading": "these nodes do not close even without ICP heat at LV-BASE (negative headroom in at least one case); they are the binding constraint, not the 13 W CO pole allowance"
+  },
   "status": "NOT_EVALUATED (ICP temperatures and heat terms TBD)",
-  "a9_2_warning": "A9.2 13W_pole_allowance: the outer coil CO tolerates only about 13 W of ICP heat injected at PO at LV-BASE; design-driving warning, not grounds to reject A9"
+  "a9_2_warning": "A9.2 13W_pole_allowance: the outer coil CO tolerates only about 13 W of ICP heat injected at PO at LV-BASE; design-driving warning, not grounds to reject A9. Binding constraint (TH-06): CI, WI have a 0 W allowance at LV-BASE - their headroom is already negative with 0 W of ICP heat (CI ground -485.5 K, orbit_hot@T_mount=60C -493.7 K; WI ground -16.6 K, orbit_hot@T_mount=60C -21.6 K), so any ICP heat reaching them is a design-driving warning"
  },
  "inputs_by_supplier": {
   "P1": [

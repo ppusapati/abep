@@ -236,7 +236,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 * A9.2 statuses: coupled H-1/ICP thermal closure = UNRESOLVED
 * blocking item RE-POINTED (P3-G-01, P3-G-02, P3-G-03, P3-G-04, P3-G-05, P3-G-06, P3-G-07, P3-K-01, P3-K-02, P3-K-03, P3-K-04, P3-K-05, P3-K-06, P3-R-01, P3-R-02, P3-R-03, P3-R-04, P3-M-04); v3 item: coupled H-1 / ICP thermal model (A9H-TH-01: Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume, ICP view factors; A9.2 ICP_COUPLED_THERMAL = UNRESOLVED)
 * contributing blockers: OWNER_QUESTION P3Q-02 (TBD_OWNER); OWNER_QUESTION OQ-A907-03 (TBD_OWNER); OWNER_QUESTION OQ-A907-09 (TBD_OWNER); OWNER_QUESTION OQ-A907-10 (TBD_OWNER); OWNER_QUESTION ICPQ-10 (TBD_OWNER); OWNER_QUESTION OQ-A910-06 (TBD_OWNER); P3_INPUT P3-P2-03 (TBD_AFTER_IMPEDANCE_MAP); P3_INPUT P3-P1-07 (TBD_AFTER_EVIDENCE); P1_MEASUREMENT P1-M-21 (NOT_RUN (plan only; nothing measured))
-* RVM: RVM-17 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "INCOMPLETE_EVIDENCE"}
+* RVM: RVM-17 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}
 * lane fo_a9_6_p1_workflow_completion: temperatures recorded for the P3 coupled model; ICP_COUPLED_THERMAL stays UNRESOLVED
 * lane fo_a9_6_p3_coupled_thermal: coupled H-1 / ICP thermal framework exists (software); thermal closure UNRESOLVED; blocking inputs P3-G/K/R (hardware), P1/P2 data
 * lane fo_a9_6_mass_power_integration: UNRESOLVED (anode, coupled ICP); active cooling variant-only
@@ -341,7 +341,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 * evidence: none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware
 * A9.2 statuses: 316L flight anode = REJECTED_AS_CURRENT_BASELINE, final anode material = OPEN
 * contributing blockers: P4_EVIDENCE TP-01 (NOT_RUN (coupon test plan)); OWNER_QUESTION P4-OQ-01 (TBD_OWNER); OWNER_QUESTION P4-OQ-02 (TBD_OWNER); OWNER_QUESTION P4-OQ-03 (TBD_OWNER); OWNER_QUESTION P4-OQ-04 (TBD_OWNER); OWNER_QUESTION OQ-A907-05 (TBD_OWNER); OWNER_QUESTION OQ-A907-08 (TBD_OWNER)
-* RVM: RVM-12 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-16 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "INCOMPLETE_EVIDENCE"}; RVM-17 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "INCOMPLETE_EVIDENCE"}
+* RVM: RVM-12 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}; RVM-16 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "INCOMPLETE_EVIDENCE"}; RVM-17 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}
 * lane fo_a9_6_p4_anode_materials: candidate-material comparison framework, gate matrix and coupon test plan now exist (software / documentation only); A9H-ANODE-01 stays a design blocker
 * lane fo_a9_6_rfq_completion: no anode RFQ (A9.2 ANODE_BASELINE OPEN; NIR-03); materials framework merged (docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json; FINAL_ANODE_MATERIAL OPEN)
 * lane fo_a9_6_rvm: requirement rows RVM-12, RVM-16, RVM-17 (status per configuration in rvm_requirement_status)
@@ -355,7 +355,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 * evidence: none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware
 * A9.2 statuses: anode thermal closure = UNRESOLVED
 * contributing blockers: OWNER_QUESTION P3Q-02 (TBD_OWNER); OWNER_QUESTION OQ-A907-06 (TBD_OWNER)
-* RVM: RVM-17 {"hall_icp_neutralizer": "INCOMPLETE_EVIDENCE", "hall_c1_reference": "INCOMPLETE_EVIDENCE"}
+* RVM: RVM-17 {"hall_icp_neutralizer": "NOT_EVALUATED", "hall_c1_reference": "NOT_EVALUATED"}
 * lane fo_a9_6_p3_coupled_thermal: anode heat path is a network input; ANODE_THERMAL_CLOSURE UNRESOLVED (P4 merged: FINAL_ANODE_MATERIAL OPEN, no validated limit)
 * lane fo_a9_6_p4_anode_materials: interface ID-01 / ID-02 to the P3 framework defined; A9H-ANODE-02 stays a design blocker
 * lane fo_a9_6_rfq_completion: no anode heat-path RFQ (design blocker)

@@ -800,12 +800,20 @@ def run_screening(reqs, props, fixed):
             outs = []
             for r in [r for r in reqs if r["application"] == app]:
                 recs = by.get((cid, r["property"]), [])
-                prop = recs[0] if recs else None
+                # several records for one (candidate, property) at different conditions: no condition-matching rule
+                # is registered, so a gate is applied only to a single admissible record; two or more admissible
+                # records are ambiguous -> INCOMPLETE_EVIDENCE (never an implicit first-record choice; SW-05)
+                adm = [x for x in recs if x["admissible_for_gate"] is True]
+                ambiguous = len(adm) > 1
+                prop = adm[0] if len(adm) == 1 else (recs[0] if recs else None)
                 kw = {}
                 if r["kind"] == "min_with_margin":
                     kw = {"thermal_closure_status": tstat, "operating_temperature": None}
                 o, why = SCR.evaluate_gate(r, prop, **kw)
-                if prop is not None and not SCR.requirement_evidenced(r):
+                if ambiguous:
+                    o, why = "INCOMPLETE_EVIDENCE", (f"{len(adm)} admissible property records at different conditions; "
+                                                     "no registered condition-matching rule: ambiguous")
+                elif prop is not None and not SCR.requirement_evidenced(r):
                     why = f"requirement {r['id']} not evidenced ({r['tbd']})"
                 elif prop is None:
                     why = f"no property record; requirement: {r['tbd']}"
