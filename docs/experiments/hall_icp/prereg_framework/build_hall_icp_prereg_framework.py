@@ -60,6 +60,36 @@ PENDING_A9_06 = "PENDING A9-06 mass BOM A9 amendment (backlog item in the A9 dec
 PENDING_A9_07 = "PENDING A9-07 H2 revisions (backlog item in the A9 decision; no path yet)"
 PENDING_A9_08 = "PENDING A9-08 Xe ledger updates (backlog item in the A9 decision; no path yet)"
 PENDING_A9_10 = "PENDING A9-10 governance (backlog item in the A9 decision; no path yet)"
+# A9_INT (fo_a9_int_core_integration): A9-02..A9-05 are merged in the base 88e4d47. Cross-references whose target the
+# merged deliverable defines cite the concrete file (+ item ids); the others keep the PENDING_* forms above. The files
+# are cited, never read or imported here and never pinned here (the five A9 deliverables reference each other, so an
+# in-file sha256 has no fixed point); their post-integration sha256 is pinned in INTEGRATION_JSON.
+A9_02_JSON = "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+A9_02_MODULE = "abep_sim/bus_boundary_a9.py"
+A9_03_JSON = "schemas/interfaces/icp_neutralizer_icd_v1.json"
+A9_04_JSON = "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json"
+A9_05_EV_JSON = "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json"
+A9_05_VI_JSON = "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json"
+INTEGRATION_JSON = "docs/experiments/hall_icp/integration/a9_core_integration_v1.json"
+REF_A9_02 = A9_02_JSON + " (A9-02)"
+REF_A9_02_SLOTS = A9_02_JSON + " slots (A9-02)"
+REF_A9_03 = A9_03_JSON + " (A9-03)"
+REF_A9_04 = A9_04_JSON + " (A9-04)"
+REF_A9_05 = A9_05_EV_JSON + " and " + A9_05_VI_JSON + " (A9-05)"
+
+
+def ref_a9_03(*item_ids):
+    """Resolved A9-03 ICD reference with item ids (A9_INT)."""
+    return A9_03_JSON + " " + ", ".join(item_ids) + " (A9-03)"
+
+
+def ref_a9_04(what):
+    """Resolved A9-04 reference with item / section ids (A9_INT)."""
+    return A9_04_JSON + " " + what + " (A9-04)"
+
+
+#: A9-04 measurement chains keyed by a final DQ-HI id (A9_INT id mapping); every other DQ keeps PENDING_A9_04
+A9_04_CHAIN_FOR_DQ = {"DQ-HI-TABS", "DQ-HI-PBUS", "DQ-HI-ETAU"}
 
 EVIDENCE_CLASSES = ("measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed",
                     "owner-allocation", "none (TBD)")
@@ -155,12 +185,12 @@ REFERENCED_NOT_PINNED = [
     {"path": "docs/orchestration/trigger_ledger_v2.jsonl", "why": "mutable governance: never pinned"},
     {"path": "docs/orchestration/runtime_state.json", "why": "mutable governance: never pinned"},
     {"path": "docs/validation/hall_transport_v2_prereg/", "why": "W5 held-out Hall-transport draft (DRAFT, mutable); referenced by path only"},
-    {"path": "docs/architecture_comparison/power_boundary_a9/", "why": "parallel lane A9-02, not in the base; PENDING"},
-    {"path": "abep_sim/bus_boundary_a9.py", "why": "parallel lane A9-02, not in the base; PENDING; never imported here"},
-    {"path": "docs/interfaces/icp_neutralizer/", "why": "parallel lane A9-03, not in the base; PENDING"},
-    {"path": "docs/experiments/hall_icp/uncertainty_budget/", "why": "parallel lane A9-04, not in the base; PENDING"},
-    {"path": "docs/evidence/icp_neutralizer/", "why": "parallel lane A9-05, not in the base; PENDING"},
-    {"path": "docs/experiments/hall_icp/validation_inputs/", "why": "parallel lane A9-05, not in the base; PENDING"},
+    {"path": "docs/architecture_comparison/power_boundary_a9/", "why": "A9-02 deliverable merged in the base (" + A9_02_JSON + "); cited by path, not pinned here (post-integration sha256 in " + INTEGRATION_JSON + ")"},
+    {"path": "abep_sim/bus_boundary_a9.py", "why": "A9-02 module merged in the base; cited by path, not pinned here (post-integration sha256 in " + INTEGRATION_JSON + "); never imported here"},
+    {"path": "docs/interfaces/icp_neutralizer/", "why": "A9-03 deliverable merged in the base (" + A9_03_JSON + "); cited by path, not pinned here (post-integration sha256 in " + INTEGRATION_JSON + ")"},
+    {"path": "docs/experiments/hall_icp/uncertainty_budget/", "why": "A9-04 deliverable merged in the base (" + A9_04_JSON + "); cited by path, not pinned here (post-integration sha256 in " + INTEGRATION_JSON + ")"},
+    {"path": "docs/evidence/icp_neutralizer/", "why": "A9-05 deliverable merged in the base (" + A9_05_EV_JSON + "); cited by path, not pinned here (post-integration sha256 in " + INTEGRATION_JSON + ")"},
+    {"path": "docs/experiments/hall_icp/validation_inputs/", "why": "A9-05 deliverable merged in the base (" + A9_05_VI_JSON + "); cited by path, not pinned here (post-integration sha256 in " + INTEGRATION_JSON + ")"},
     {"path": "docs/experiments/hall_icp/prereg/", "why": "future signed LOCK-1 / LOCK-2 location (row 16); not created here"},
 ]
 
@@ -309,7 +339,7 @@ def stage_map() -> list:
          "score_bearing": False},
         {"id": "HI-S1A", "order": 2, "name": "S1a analog - no-plasma metrology and module-exchange qualification",
          "what": "no Hall-on reading. Thrust-stand in-situ calibration (SI-traceable, pre/post block, drift and hysteresis, row 119) and the preregistered u_T acceptance test at 12 mN with maximum representative moving payload and all service lines installed (row 120) against the 1 % target (row 121); power channels per A9 bus slot; RF chain 13.56 MHz, 0-500 W forward, directional-coupler forward/reflected into a dummy load with calorimetric cross-check (row 72); MFC calibration (rows 96, 97, 98, 124, 126); cold-flow uniformity (row 101); RGA (row 127); C1<->ICP exchange checks: cold/tare, service-line parasitic, B(z) perturbation, electrical isolation and RF pickup (row 64); RR-HI-07 no-plasma leg (row 33); C1 standalone conditioning and ICP standalone (no Hall) ignition / forward-reflected / collector current may be run here as module bench checks, non-scoring",
-         "entry": ["HI-ENG procedures available", "instrument set per docs/experiments/instrumentation/ plus ICP channels (" + PENDING_A9_03 + ")"],
+         "entry": ["HI-ENG procedures available", "instrument set per docs/experiments/instrumentation/ plus ICP channels (" + ref_a9_03("ICP-34") + ")"],
          "exit": ["S1a-analog capability record: Type B uncertainties, noise floors, RF pickup bound, installation reproducibility per module, B(z) sensitivity with each module installed and energized (row 67)",
                   "u_T acceptance result at 12 mN filed; if 1 % is shown unattainable by metrology-only evidence, the target is revised before LOCK-2 (row 121)"],
          "gases": ["none (cold flow: N2, O2 after row 107 readiness, Xe, Ar)"], "configurations": list(CONFIGS),
@@ -323,16 +353,16 @@ def stage_map() -> list:
          "gases": [], "configurations": [], "hardware": "-",
          "can_produce": [], "cannot_produce": ["any reading"], "score_bearing": False},
         {"id": "HI-AR", "order": 4, "name": "Ar topology reproduction (engineering-only)",
-         "what": "reproduce the Takahashi/Watanabe-type Hall + downstream ICP topology on Ar on the actual H-1 with both modules (row 36; A9 evidence_sequence item 1); reproduction targets and any published analog operating points " + PENDING_A9_05 + "; label AR_ENGINEERING_ONLY",
-         "entry": ["HI-HOLDOUT-A signed", "ICP module interfaces for this build available (" + PENDING_A9_03 + ")"],
+         "what": "reproduce the Takahashi/Watanabe-type Hall + downstream ICP topology on Ar on the actual H-1 with both modules (row 36; A9 evidence_sequence item 1); reproduction targets and any published analog operating points " + REF_A9_05 + "; label AR_ENGINEERING_ONLY",
+         "entry": ["HI-HOLDOUT-A signed", "ICP module interfaces for this build available (" + REF_A9_03 + ")"],
          "exit": ["topology reproduced or not reproduced, recorded descriptively; Ar data never satisfy DRDO atmospheric requirements (row 36)"],
          "gases": ["Ar"], "configurations": list(CONFIGS), "hardware": "actual H-1 (D-09-A, row 20)",
          "can_produce": ["ENGINEERING_ONLY_NON_SCORING"],
          "cannot_produce": ["SCORE_BEARING_MEASURED", "ABSOLUTE_DEMONSTRATION", "HELD_OUT_VALIDATION_EVIDENCE"],
          "score_bearing": False},
         {"id": "HI-LOCK1", "order": 5, "name": "LOCK-1 (Hall->ICP)",
-         "what": "owner signature of this framework's forms: decision-quantity definitions, hard-gate and Pareto forms, outcome rules, same-condition list, sequence set and assignment algorithm, seed-generation procedure (row 30), condition grid from W1 plus the anticipated knee (row 31), REF-COND, missing-data and data-quality rule forms, remount procedure, stop-rule forms (" + PENDING_A9_04 + ", row 13), the rules that compute every LOCK-2 number, frozen analysis/schedule scripts (sha256); filed under docs/experiments/hall_icp/prereg/ (row 16)",
-         "entry": ["HI-S1A exit", "A9 bus boundary slots defined (" + PENDING_A9_02 + ")", "uncertainty budget forms (" + PENDING_A9_04 + ")"],
+         "what": "owner signature of this framework's forms: decision-quantity definitions, hard-gate and Pareto forms, outcome rules, same-condition list, sequence set and assignment algorithm, seed-generation procedure (row 30), condition grid from W1 plus the anticipated knee (row 31), REF-COND, missing-data and data-quality rule forms, remount procedure, stop-rule forms (" + ref_a9_04("stop_rules") + ", row 13), the rules that compute every LOCK-2 number, frozen analysis/schedule scripts (sha256); filed under docs/experiments/hall_icp/prereg/ (row 16)",
+         "entry": ["HI-S1A exit", "A9 bus boundary slots defined (" + REF_A9_02_SLOTS + ")", "uncertainty budget forms (" + REF_A9_04 + ")"],
          "exit": ["LOCK-1 signed; any later change to a LOCK-1 item voids it"],
          "gases": [], "configurations": [], "hardware": "-",
          "can_produce": [], "cannot_produce": ["any data-derived number"], "score_bearing": False},
@@ -343,7 +373,7 @@ def stage_map() -> list:
          "can_produce": [], "cannot_produce": ["any reading"], "score_bearing": False},
         {"id": "HI-S1", "order": 7, "name": "S1 analog - module and Hall-on qualification on N2",
          "what": "first N2 Hall-on operation of the actual H-1 with each module: start sequences (C1 heater/keeper with pulsed keeper ignition 300-600 V class, row 89; ignition dwell cap and retries per row 93; ICP ignition; Hall ignition with ICP electrons, row 24), thermal time constants, I_d(t) oscillation band with the declared bandwidth (row 129), noise, stand drift, p_b behaviour; C1 spot-mode minimum-flow search at 0.005 mg/s steps with preregistered stopping criteria (row 92); breadboard discharge supply eta_d and transients measured before LOCK-2 (row 113); anode geometry and wall configuration already frozen (rows 75, 135)",
-         "entry": ["HI-HOLDOUT-B frozen", "HI-LOCK1 signed", "downstream ICP interfaces frozen before score-bearing work (row 71; " + PENDING_A9_03 + ")"],
+         "entry": ["HI-HOLDOUT-B frozen", "HI-LOCK1 signed", "downstream ICP interfaces frozen before score-bearing work (row 71; " + REF_A9_03 + ")"],
          "exit": ["S1-analog capability record released as dispersion statistics only (custody rule)"],
          "gases": ["N2", "Xe (C1 cathode flow, booked PHASE_TOTAL_FLOW, row 42)"], "configurations": list(CONFIGS),
          "hardware": "actual H-1 (D-09-A)",
@@ -378,7 +408,7 @@ def stage_map() -> list:
          "score_bearing": False},
         {"id": "HI-ABS", "order": 12, "name": "absolute demonstration",
          "what": ">= 12 mN sustained atmospheric operation and demonstrated 25 mN system capability (row 4), both inside the same full spacecraft-DC propulsion boundary with P_bus < 1.5 kW (rows 27, 108), start-up transients included unless the official RFP permits otherwise (row 108); the ICP power inside the internal ~1.35 kW design allocation without nominally consuming the 1.35->1.5 kW margin (row 109); 25 mN need not use Xe, and any Xe use is booked (row 4); PARTIAL_BOUNDARY reported while compressor draw and valve-outlet feed state are unmeasured (row 22)",
-         "entry": ["HI-LOCK2 filed", "A9 boundary with every active load in a bus slot (row 110; " + PENDING_A9_02 + ")"],
+         "entry": ["HI-LOCK2 filed", "A9 boundary with every active load in a bus slot (row 110; " + REF_A9_02_SLOTS + ")"],
          "exit": ["gate demonstrations recorded per configuration with their boundary basis"],
          "gases": ["N2", "N2 + O2 (NO_ATOMIC_O)", "Xe only if booked and permitted"], "configurations": list(CONFIGS),
          "hardware": "actual H-1 (D-09-A)",
@@ -397,22 +427,22 @@ def stage_map() -> list:
 def gate_deadlines() -> list:
     """Row 144: every blocker that can invalidate score-bearing work gets a stated latest decision point."""
     return [
-        {"id": "GD-01", "blocker": "downstream ICP mechanical, RF, electrical, gas/plume and diagnostic interfaces frozen", "latest": "before HI-S1 (score-bearing Phase-1 analog work)", "source": "row 71", "owner_lane": PENDING_A9_03},
+        {"id": "GD-01", "blocker": "downstream ICP mechanical, RF, electrical, gas/plume and diagnostic interfaces frozen", "latest": "before HI-S1 (score-bearing Phase-1 analog work)", "source": "row 71", "owner_lane": REF_A9_03},
         {"id": "GD-02", "blocker": "anode position / geometry frozen", "latest": "before HI-S1", "source": "row 75", "owner_lane": "H-1 (H2-1)"},
         {"id": "GD-03", "blocker": "one design-representative wall configuration frozen", "latest": "before HI-S1", "source": "row 135", "owner_lane": "H-1 (H2-1)"},
         {"id": "GD-04", "blocker": "held-out Hall-transport validation subset preregistered", "latest": "HI-HOLDOUT-A before any Hall-on H-1 reading; HI-HOLDOUT-B before HI-S1", "source": "row 25", "owner_lane": "W5 (docs/validation/hall_transport_v2_prereg/)"},
         {"id": "GD-05", "blocker": "seed-generation procedure frozen", "latest": "LOCK-1", "source": "row 30", "owner_lane": "this framework"},
         {"id": "GD-06", "blocker": "condition grid frozen from W1 plus the anticipated knee", "latest": "LOCK-1", "source": "row 31", "owner_lane": "this framework"},
-        {"id": "GD-07", "blocker": "stop rules defined", "latest": "LOCK-1 (forms); numbers at LOCK-2; always before any Hall->ICP score-bearing data", "source": "row 13", "owner_lane": PENDING_A9_04},
-        {"id": "GD-08", "blocker": "effect-size / decision margins frozen", "latest": "LOCK-2 (value), LOCK-1 (form)", "source": "row 18", "owner_lane": PENDING_A9_04},
-        {"id": "GD-09", "blocker": "block count n", "latest": "LOCK-2 from measured uncertainty", "source": "row 19", "owner_lane": PENDING_A9_04},
+        {"id": "GD-07", "blocker": "stop rules defined", "latest": "LOCK-1 (forms); numbers at LOCK-2; always before any Hall->ICP score-bearing data", "source": "row 13", "owner_lane": ref_a9_04("stop_rules")},
+        {"id": "GD-08", "blocker": "effect-size / decision margins frozen", "latest": "LOCK-2 (value), LOCK-1 (form)", "source": "row 18", "owner_lane": ref_a9_04("UB-C-01")},
+        {"id": "GD-09", "blocker": "block count n", "latest": "LOCK-2 from measured uncertainty", "source": "row 19", "owner_lane": ref_a9_04("UB-C-06, readiness_n")},
         {"id": "GD-10", "blocker": "1 % thrust-uncertainty target confirmed or revised on metrology-only evidence", "latest": "before LOCK-2 and before any score-bearing physics data", "source": "row 121", "owner_lane": "instrumentation / thrust stand"},
         {"id": "GD-11", "blocker": "allowable B(z) field-change tolerance from measured H-1 sensitivity with the ICP module installed/energized", "latest": "before score-bearing comparison (HI-LOCK2)", "source": "row 67", "owner_lane": "H-1 / MC-1"},
         {"id": "GD-12", "blocker": "T-PB-MAX", "latest": "after the low-flow knee and facility capability are known; at the latest HI-LOCK2", "source": "row 23", "owner_lane": "facility"},
         {"id": "GD-13", "blocker": "C1 ignition-dwell bound final value", "latest": "before score-bearing C1 testing (HI-LOCK2)", "source": "row 93", "owner_lane": "C1 (H2-2)"},
         {"id": "GD-14", "blocker": "breadboard discharge supply eta_d and transients measured", "latest": "before HI-LOCK2", "source": "row 113", "owner_lane": "PPU (H2-4)"},
         {"id": "GD-15", "blocker": "oxygen-safety owner named and ASTM G93 Level C cleaning", "latest": "before any O2 gas operation (S1a-analog cold flow included)", "source": "row 107", "owner_lane": "owner"},
-        {"id": "GD-16", "blocker": "interpolation uncertainty (if any interpolation is used instead of measured midpoint / iso-power points)", "latest": "LOCK-1", "source": "row 15", "owner_lane": PENDING_A9_04},
+        {"id": "GD-16", "blocker": "interpolation uncertainty (if any interpolation is used instead of measured midpoint / iso-power points)", "latest": "LOCK-1", "source": "row 15", "owner_lane": ref_a9_04("UB-C-08, interpolation")},
         {"id": "GD-17", "blocker": "equivalent startup-state and thermal-state handling for C1 vs ICP", "latest": "LOCK-1", "source": "row 65", "owner_lane": "this framework"},
     ]
 
@@ -427,7 +457,7 @@ def configurations() -> dict:
             "settings": "same V_d and B settings (A9 governing decision 6)",
             "stand_and_metrology": "same torsional stand (row 115) and metrology in both configurations",
             "service_lines": "matched sham service lines in every compared configuration (row 133): the lines of the absent module are present as shams with matched routing; flexible RF coax with matched sham routing, no uncompensated hard RF line across the moving stage (row 117)",
-            "carrier": "kinematic module carrier with repeatable datum control; H-1 is never unbolted (row 122); carrier datum and envelope " + PENDING_A9_03,
+            "carrier": "kinematic module carrier with repeatable datum control; H-1 is never unbolted (row 122); carrier datum and envelope " + ref_a9_03("ICP-06", "ICP-07"),
             "serialization": "a repaired or replaced H-1, C1 or ICP score-bearing module is a new serialized unit and needs a new reference / reinstallation sequence before score-bearing use (row 83)",
             "witness_items": "witness coupons / holders are non-functional exchangeable items while B(z), geometry and the reference stay inside the frozen tolerances (row 134)",
         },
@@ -435,12 +465,12 @@ def configurations() -> dict:
             {"id": C1, "role": "reference / control and fallback (A9 control_fallback)",
              "module": "MOD-C1: conventional heated Xe-fed LaB6 hollow cathode C1 (rows 49, 88), external location (row 79), on the kinematic carrier",
              "configuration_defining_settings": ["heater power and heater-off transition per the cathode procedure (row 112)", "keeper current; pulsed keeper ignition 300-600 V class with recorded pulse energy (row 89)", "cathode Xe flow, all phases booked PHASE_TOTAL_FLOW (row 42)", "cathode-common / bleeder topology selectable and measured (row 91)"],
-             "shams_present": ["RF coax (sham)", "ICP gas line (sham)", "collector / bias leads (sham)", "ICP telemetry harness (sham or terminated) - " + PENDING_A9_03],
+             "shams_present": ["RF coax (sham)", "ICP gas line (sham)", "collector / bias leads (sham)", "ICP telemetry harness (sham or terminated) - " + ref_a9_03("ICP-09", "ICP-34")],
              "not_a_flight_claim": "C1 is not automatically the final flight neutralizer (rows 49, 88)"},
             {"id": ICP, "role": "primary investigation hypothesis (A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE)",
              "module": "MOD-ICP: downstream 13.56 MHz unmagnetized RF inductively coupled plasma electron source / neutralizer (rows 69, 72), dielectric/body floating unless the validated circuit requires otherwise, electron-extraction collector biased and measured separately (row 70), on the kinematic carrier",
              "configuration_defining_settings": ["RF forward power (laboratory 0-500 W range, row 72) and matching state", "collector bias V / I (row 70)", "ICP gas species and flow - owner question HIQ-06 (A9 recorder flag row 46: unbooked)", "RF interlock state (row 62)"],
-             "shams_present": ["C1 heater / keeper leads (sham)", "C1 Xe line (sham)", "C1 telemetry (sham or terminated) - " + PENDING_A9_03],
+             "shams_present": ["C1 heater / keeper leads (sham)", "C1 Xe line (sham)", "C1 telemetry (sham or terminated) - " + ref_a9_03("ICP-09")],
              "not_a_flight_claim": "an investigation hypothesis, not a flight baseline or a validated architecture (A9)"},
         ],
         "controlled_difference": "the downstream electron-source module on the kinematic carrier (and its configuration-defining settings) is the only controlled difference; everything in the same-condition list is matched or recorded",
@@ -449,7 +479,7 @@ def configurations() -> dict:
             "doi": "10.1007/s44205-024-00081-2",
             "license": "CC BY-NC-ND 4.0",
             "evidence_class": "published analog (topology precedent only); no operating point is used here",
-            "extraction": PENDING_A9_05,
+            "extraction": REF_A9_05,
         },
     }
 
@@ -461,7 +491,7 @@ def module_exchange() -> list:
         {"id": "RR-HI-02", "what": "installation procedure (identical for MOD-C1 and MOD-ICP)", "reuses": "RR-02 (adapted: downstream module, no upstream IP-UP/IP-DN insertion)",
          "rule": "vent; exchange the module on the kinematic carrier at its datum; reconnect the live service lines and the matched shams along the registered routing (row 133); leak check; pump down; identical conditioning; startup-state and thermal-state handling per the LOCK-1 equivalence rule (row 65); settle; in-situ thrust calibration and tare pre-block (row 119); power-channel check per A9 bus slot; B(z) check with the module installed and energized (row 67); electrical isolation and RF pickup checks (row 64)",
          "interface_items": ["carrier datum and envelope", "downstream Hall-exhaust-to-ICP pressure / conductance interface (row 63)", "RF feedthrough and coax routing", "collector / bias leads", "module ID and telemetry harness (row 62)"],
-         "interface_reference": PENDING_A9_03},
+         "interface_reference": ref_a9_03("ICP-06", "ICP-07", "ICP-15", "ICP-18", "ICP-21", "ICP-27", "ICP-33", "ICP-34", "ICP-39")},
         {"id": "RR-HI-03", "what": "post-installation acceptance checks", "reuses": "RR-03",
          "rule": "each RR-HI-02 check compared with its acceptance limit before the first reading; a failed check means re-installation, logged; never a reading on a failed installation",
          "limit": MARGIN_NOT_SET, "limit_depends_on": "HI-S1A module-exchange reproducibility and HI-S1B u_inst per configuration"},
@@ -502,7 +532,7 @@ def same_condition() -> dict:
             {"id": "SC-HI-SINK", "variable": "facility wall / cryopanel radiative sink temperature, measured per run", "role": "MEASURED_COVARIATE", "instruments": ["INS-17"], "tolerance": tol, "note": "300 K only as a planning case (row 131)"},
             {"id": "SC-HI-THERM", "variable": "thermal settling before the reading", "role": "MEASURED_COVARIATE", "instruments": ["INS-17"], "tolerance": tol},
             {"id": "SC-HI-SRC-C1", "variable": "C1 heater / keeper / cathode Xe flow recipe", "role": "CONFIGURATION_DEFINING", "instruments": ["INS-02", "INS-05", "INS-23"], "tolerance": "recipe frozen at LOCK-1"},
-            {"id": "SC-HI-SRC-ICP", "variable": "ICP RF forward power, matching state, collector bias, ICP gas species / flow", "role": "CONFIGURATION_DEFINING", "instruments": ["INS-03", "INS-05", "ICP channels " + PENDING_A9_03], "tolerance": "recipe frozen at LOCK-1"},
+            {"id": "SC-HI-SRC-ICP", "variable": "ICP RF forward power, matching state, collector bias, ICP gas species / flow", "role": "CONFIGURATION_DEFINING", "instruments": ["INS-03", "INS-05", "ICP channels " + ref_a9_03("ICP-34")], "tolerance": "recipe frozen at LOCK-1"},
             {"id": "SC-HI-OUT", "variable": "I_d, T, P_bus, electron current, coupling potential, oscillation band", "role": "OUTCOME_NOT_MATCHED", "instruments": ["INS-01", "INS-02", "INS-04", "INS-10"], "tolerance": "not applicable"},
         ],
     }
@@ -512,7 +542,8 @@ def _dq(id_, name, role, definition, units, chain, per_config=True, extra=None):
     d = {"id": id_, "name": name, "role": role, "operational_definition": definition, "units": units,
          "per_configuration": "measured for both configurations at the same conditions" if per_config else "external input (not a comparison measurement)",
          "measurement_chain": chain,
-         "measurement_chain_uncertainty_owner": PENDING_A9_04,
+         "measurement_chain_uncertainty_owner": (ref_a9_04("measurement_chains[dq=" + id_ + "]")
+                                                 if id_ in A9_04_CHAIN_FOR_DQ else PENDING_A9_04),
          "margin": MARGIN_NOT_SET,
          "freeze_points": {"definition_form": "LOCK-1", "margin_value": "LOCK-2"}}
     if extra:
@@ -527,15 +558,15 @@ def decision_quantities() -> list:
             "class; I_d in A; dwell in s", ["INS-04", "INS-10", "INS-18", "INS-05", "INS-08", "INS-17"]),
         _dq("DQ-HI-ECAP", "electron-current capacity / neutralization current", "HARD_GATE",
             "Electron current delivered by the configuration's electron source to the discharge / beam at the reading, compared with the Hall current demand at the same condition (row 145: electron extraction current, Hall current demand, neutralization margin); for the ICP including the separately measured collector current and bias (row 70). The gate form (e.g. delivered current covers the demand with a registered margin) is frozen at LOCK-1; no margin value now.",
-            "A (electron current, Hall current demand); dimensionless ratio", ["INS-04", "INS-02", "ICP collector V/I channel " + PENDING_A9_03, "C1 keeper / emission channels (HW-C1-05)"]),
+            "A (electron current, Hall current demand); dimensionless ratio", ["INS-04", "INS-02", "ICP collector V/I channel " + ref_a9_03("ICP-21"), "C1 keeper / emission channels (HW-C1-05)"]),
         _dq("DQ-HI-VCPL", "coupling / neutralizer potential and beam neutralization", "HARD_GATE",
             "Potential of the electron source (C1 cathode common or ICP body / collector) relative to facility ground and spacecraft common during the reading, with plume neutralization evidence (row 145: collector potential, neutralization margin); floating ICP body potential recorded (row 70).",
-            "V", ["INS-04", "ICP body / collector potential channels " + PENDING_A9_03, "INS-15", "INS-16 (where feasible)"]),
+            "V", ["INS-04", "ICP body / collector potential channels " + ref_a9_03("ICP-20", "ICP-21"), "INS-15", "INS-16 (where feasible)"]),
         _dq("DQ-HI-TABS", "absolute thrust compatibility", "HARD_GATE",
             ">= 12 mN sustained atmospheric operation and demonstrated 25 mN system capability (row 4) inside the same full-system boundary (row 27); measured axial thrust from the calibrated stand; the uncertainty allowance of the gate is a LOCK-2 number.",
             "mN", ["INS-01", "INS-05", "INS-06", "INS-07", "INS-08"]),
         _dq("DQ-HI-PBUS", "full bus-power compatibility", "HARD_GATE",
-            "P_bus = all electrical power crossing the spacecraft-DC propulsion-system boundary for the configuration, every active load in its own bus slot (Hall discharge, per-coil magnet, ICP RF source/matching, ICP collector/bias, C1 heater/keeper, flow/valve/housekeeping, reserved DC; row 110) on the A9 boundary (" + PENDING_A9_02 + "; bus_power_boundary_v1 untouched, row 108); < 1.5 kW including start-up transients unless the official RFP explicitly permits a transient exception (row 108); PARTIAL_BOUNDARY basis reported until compressor draw and valve-outlet feed state are provided (row 22). No discharge-only or RF-generator-only power claim is sufficient (A9 governing decision 8).",
+            "P_bus = all electrical power crossing the spacecraft-DC propulsion-system boundary for the configuration, every active load in its own bus slot (Hall discharge, per-coil magnet, ICP RF source/matching, ICP collector/bias, C1 heater/keeper, flow/valve/housekeeping, reserved DC; row 110) on the A9 boundary (" + A9_02_MODULE + " + " + REF_A9_02 + "; bus_power_boundary_v1 untouched, row 108); < 1.5 kW including start-up transients unless the official RFP explicitly permits a transient exception (row 108); PARTIAL_BOUNDARY basis reported until compressor draw and valve-outlet feed state are provided (row 22). No discharge-only or RF-generator-only power claim is sufficient (A9 governing decision 8).",
             "W (steady and transient peak)", ["INS-02", "INS-03", "INS-18"]),
         _dq("DQ-HI-PALLOC", "ICP power inside the internal design allocation", "HARD_GATE",
             "Full-system P_bus of " + ICP + " inside the internal ~1.35 kW design allocation without nominally consuming the 1.35->1.5 kW margin (row 109).",
@@ -545,7 +576,7 @@ def decision_quantities() -> list:
             "A (band), Hz, class", ["INS-04", "INS-10", "INS-18"]),
         _dq("DQ-HI-SAFE", "safety / operating-limit gate", "HARD_GATE",
             "No registered safety limit exceeded during the reading: RF interlock and reflected power (row 62), temperatures with >= 50 K margin below validated continuous-use limits (row 86), isolation / arcing, collector bias limits, C1 poisoning protection (HW-C1-03); any limit hit is recorded with the exact limit and state (row 41).",
-            "class; W; K; V", ["INS-03", "INS-17", "INS-21", "INS-23", "INS-24", "RF interlock channel " + PENDING_A9_03]),
+            "class; W; K; V", ["INS-03", "INS-17", "INS-21", "INS-23", "INS-24", "RF interlock channel " + ref_a9_03("ICP-16")]),
         _dq("DQ-HI-IGN", "ignition / start / restart", "HARD_GATE",
             "Per start: attempts and outcome for C1 ignition (dwell cap and retries of row 93), ICP ignition, Hall ignition with ICP electrons, restart success and cycle count (row 24); each classified per the preregistration, never hidden as a setup event.",
             "count; s; class", ["INS-10", "INS-04", "INS-03", "INS-05", "INS-18"]),
@@ -599,7 +630,7 @@ def decision_topology() -> dict:
         "status_rule": "if any classification needed by the rules is UNRESOLVED, SUSTAINMENT_MIXED, NOT_SCOREABLE_FACILITY, NOT_TESTED or missing, the decision status is OPEN (never NO_VIABLE_CASE by default) and the next discriminating test is named (row 38)",
         "no_winner": "the framework never declares a winner and never ranks configurations; outcomes are pre-registered classifications handed to the owner",
         "current_status": "NOT_EVALUATED - no Hall->ICP data exist; this framework evaluates nothing and prefers no configuration",
-        "external_inputs": {"mass": "A9 mass BOM (" + PENDING_A9_06 + ")", "life": "HI-AO programme and life evidence (INS-P-10, INS-P-11)", "boundary": PENDING_A9_02},
+        "external_inputs": {"mass": "A9 mass BOM (" + PENDING_A9_06 + ")", "life": "HI-AO programme and life evidence (INS-P-10, INS-P-11)", "boundary": A9_02_MODULE + " + " + REF_A9_02},
     }
 
 
@@ -622,7 +653,7 @@ def execution_design(seqs, bal, refc, min_blocks) -> dict:
         ],
         "condition_grid": "frozen at LOCK-1 from W1 plus the anticipated knee; the knee is an output per configuration (row 31); flow range covers ~0.38 to ~3.2 mg/s characterization with nominal sizing near ~1.3 mg/s (row 73)",
         "interpolation": "measured midpoint / iso-power points preferred over interpolation; any interpolation uncertainty preregistered (row 15)",
-        "stopped_arm": "if an arm / configuration stops (stop rules " + PENDING_A9_04 + "), its scheduled slots become NOT_TESTED, all remaining order is kept, and the balance loss is reported (row 39)",
+        "stopped_arm": "if an arm / configuration stops (stop rules " + ref_a9_04("stop_rules") + "), its scheduled slots become NOT_TESTED, all remaining order is kept, and the balance loss is reported (row 39)",
         "reference_checks": "reference checks remain reference checks, not a substitute for balancing (row 29)",
         "protocol_basis": "one reconciled protocol basis; no competing protocol definitions against the same score-bearing campaign (row 21)",
         "block_template": [
@@ -689,7 +720,7 @@ def data_quality() -> list:
         {"id": "DQR-HI-06", "reuses": "DQR-06", "check": "paired background-pressure match between configurations"},
         {"id": "DQR-HI-07", "reuses": "DQR-07", "check": "thermal settling and measured facility sink temperature (row 131)"},
         {"id": "DQR-HI-08", "reuses": "DQR-08 (adapted)", "check": "RF pickup on common diagnostics with the ICP energized and with the matched sham, within the S1a-analog bound (row 64)"},
-        {"id": "DQR-HI-09", "reuses": "DQR-09 (adapted)", "check": "bus-power completeness: every A9 bus slot of the configuration present (row 110; " + PENDING_A9_02 + ")"},
+        {"id": "DQR-HI-09", "reuses": "DQR-09 (adapted)", "check": "bus-power completeness: every A9 bus slot of the configuration present (row 110; " + REF_A9_02_SLOTS + ")"},
         {"id": "DQR-HI-10", "reuses": "DQR-10", "check": "common time base: channel skew within the synchronization limit"},
         {"id": "DQR-HI-11", "reuses": "DQR-11 (adapted)", "check": "B(z) with the downstream module installed and energized within the tolerance frozen from measured H-1 sensitivity (row 67)"},
         {"id": "DQR-HI-12", "reuses": "DQR-12", "check": "raw-data integrity: files hashed at acquisition, dataset frozen by sha256 before scoring, coded configuration labels"},
@@ -749,32 +780,32 @@ def items(floor: Fraction) -> list:
         {"id": "ITM-27", "name": "delivered-flow characterization range and nominal sizing point", "value": "~0.38 to ~3.2 (nominal ~1.3)", "units": "mg/s", "basis": "owner answer; not flight-qualified until measured", "source": "row 73", "evidence_class": "owner-allocation", "status": "OWNER_DECIDED", "freeze_point": "NOW"},
         {"id": "ITM-28", "name": "gas isolator continuous rating / withstand qualification", "value": "350 continuous / ~1000 DC withstand", "units": "V", "basis": "owner answer", "source": "row 105", "evidence_class": "owner-allocation", "status": "OWNER_DECIDED", "freeze_point": "NOW"},
         {"id": "ITM-29", "name": "cold-flow uniformity S1a criterion", "value": "+-5 mean / 10 peak-to-peak", "units": "%", "basis": "owner answer", "source": "row 101", "evidence_class": "owner-allocation", "status": "OWNER_DECIDED", "freeze_point": "NOW"},
-        {"id": "ITM-30", "name": "decision margins / effect sizes of every DQ-HI-*", "value": "TBD - requires S1a/S1/S1b measured uncertainty and the A9-04 budget", "units": "per DQ", "basis": "row 18", "source": PENDING_A9_04, "evidence_class": T, "status": "NOT SET", "freeze_point": "LOCK-2"},
-        {"id": "ITM-31", "name": "block count n", "value": "TBD - requires measured uncertainty (S1b u_inst, u_T, u_P)", "units": "blocks", "basis": "row 19", "source": PENDING_A9_04, "evidence_class": T, "status": "NOT SET", "freeze_point": "LOCK-2"},
+        {"id": "ITM-30", "name": "decision margins / effect sizes of every DQ-HI-*", "value": "TBD - requires S1a/S1/S1b measured uncertainty and the A9-04 budget", "units": "per DQ", "basis": "row 18", "source": ref_a9_04("UB-C-01"), "evidence_class": T, "status": "NOT SET", "freeze_point": "LOCK-2"},
+        {"id": "ITM-31", "name": "block count n", "value": "TBD - requires measured uncertainty (S1b u_inst, u_T, u_P)", "units": "blocks", "basis": "row 19", "source": ref_a9_04("UB-C-06, readiness_n"), "evidence_class": T, "status": "NOT SET", "freeze_point": "LOCK-2"},
         {"id": "ITM-32", "name": "randomization seed", "value": "TBD - requires n fixed at LOCK-2", "units": "256-bit hex", "basis": "row 30", "source": "this framework (procedure)", "evidence_class": T, "status": "NOT SET", "freeze_point": "LOCK-2"},
-        {"id": "ITM-33", "name": "stop-rule numbers", "value": "TBD - requires the A9-04 stop-rule forms and S1b capability", "units": "per rule", "basis": "row 13", "source": PENDING_A9_04, "evidence_class": T, "status": "NOT SET", "freeze_point": "LOCK-2"},
+        {"id": "ITM-33", "name": "stop-rule numbers", "value": "TBD - requires the A9-04 stop-rule forms and S1b capability", "units": "per rule", "basis": "row 13", "source": ref_a9_04("stop_rules"), "evidence_class": T, "status": "NOT SET", "freeze_point": "LOCK-2"},
         {"id": "ITM-34", "name": "T-PB-MAX", "value": "TBD - requires the low-flow knee and facility capability", "units": "Torr", "basis": "row 23", "source": "facility (R5)", "evidence_class": T, "status": "NOT SET", "freeze_point": "LOCK-2"},
         {"id": "ITM-35", "name": "the two elevated p_b level values", "value": "TBD - requires facility capability", "units": "Torr", "basis": "row 23", "source": "facility (R5)", "evidence_class": T, "status": "NOT SET", "freeze_point": "LOCK-2"},
         {"id": "ITM-36", "name": "allowable B(z) field change with the ICP module installed / energized", "value": "TBD - requires measured H-1 sensitivity (HI-S1A / HI-S1)", "units": "G or %", "basis": "row 67", "source": "H-1 / MC-1", "evidence_class": T, "status": "NOT SET", "freeze_point": "LOCK-2"},
         {"id": "ITM-37", "name": "REF-COND (flow, V_d, B, gas)", "value": "TBD - requires W1 grid and the anticipated knee", "units": "mg/s; V; A", "basis": "row 40", "source": "this framework", "evidence_class": T, "status": "NOT SET", "freeze_point": "LOCK-1"},
         {"id": "ITM-38", "name": "condition grid", "value": "TBD - requires W1 plus the anticipated knee", "units": "mg/s; V; composition", "basis": "row 31", "source": "this framework", "evidence_class": T, "status": "NOT SET", "freeze_point": "LOCK-1"},
         {"id": "ITM-39", "name": "re-mount series K and readings per cycle r", "value": "TBD - requires the A9-04 budget", "units": "count", "basis": "RR-HI-06", "source": PENDING_A9_04, "evidence_class": T, "status": "NOT SET", "freeze_point": "LOCK-1"},
-        {"id": "ITM-40", "name": "ICP gas feed species and flow", "value": "TBD - requires owner decision HIQ-06 and ICP ICD", "units": "species; mg/s", "basis": "A9 recorder flag (row 46)", "source": PENDING_A9_03, "evidence_class": T, "status": "OPEN (unbooked)", "freeze_point": "LOCK-1"},
-        {"id": "ITM-41", "name": "published analog operating points for the Ar topology reproduction", "value": "TBD - requires the Takahashi 2024 full-text extraction with page / figure / table provenance", "units": "various", "basis": "row 7", "source": PENDING_A9_05, "evidence_class": T, "status": "PENDING", "freeze_point": "after-evidence"},
+        {"id": "ITM-40", "name": "ICP gas feed species and flow", "value": "TBD - requires owner decision HIQ-06 and ICP ICD", "units": "species; mg/s", "basis": "A9 recorder flag (row 46)", "source": ref_a9_03("ICP-26"), "evidence_class": T, "status": "OPEN (unbooked)", "freeze_point": "LOCK-1"},
+        {"id": "ITM-41", "name": "published analog operating points for the Ar topology reproduction", "value": "TBD - requires the Takahashi 2024 full-text extraction with page / figure / table provenance", "units": "various", "basis": "row 7", "source": REF_A9_05, "evidence_class": T, "status": "PENDING", "freeze_point": "after-evidence"},
         {"id": "ITM-42", "name": "extinction window, dwell, sampling rate, oscillation class threshold", "value": "TBD - requires HI-S1 I_d band and thermal time constants", "units": "s; Hz; A", "basis": "historical lock2_converts", "source": "this framework", "evidence_class": T, "status": "NOT SET", "freeze_point": "LOCK-2"},
     ]
 
 
 def interface_demands(ledger_path: str) -> list:
     return [
-        {"id": "IF-HI-01", "direction": "from this lane to A9-02", "counterpart": PENDING_A9_02, "demand": "one bus slot per active load of each configuration: Hall discharge, per-coil magnet, ICP RF source/matching, ICP collector/bias, C1 heater and keeper (reference supplies), flow/valve/housekeeping, reserved DC; start-up transient metering; PARTIAL_BOUNDARY flag (rows 22, 108, 110)", "units": "W per slot (steady, transient peak)", "status": "PENDING"},
-        {"id": "IF-HI-02", "direction": "from A9-02 to this lane", "counterpart": PENDING_A9_02, "demand": "slot ids used by DQ-HI-PBUS / DQ-HI-DPBUS / DQR-HI-09", "units": "-", "status": "PENDING"},
-        {"id": "IF-HI-03", "direction": "from this lane to A9-03", "counterpart": PENDING_A9_03, "demand": "kinematic-carrier datum and repeatability item for downstream module exchange (row 122); module ID; matched-sham definitions (row 133); RF forward/reflected, RF interlock, collector/bias V/I, temperatures and telemetry channels (rows 62, 130); floating body with separately biased collector (row 70); Hall-exhaust-to-ICP pressure/conductance interface (row 63); ICP gas feed port", "units": "mm; W; V; A; K; Pa", "status": "PENDING"},
-        {"id": "IF-HI-04", "direction": "from A9-03 to this lane", "counterpart": PENDING_A9_03, "demand": "frozen interface ids for RR-HI-02 and SC-HI-SRC-ICP; interfaces frozen before HI-S1 (row 71)", "units": "-", "status": "PENDING"},
-        {"id": "IF-HI-05", "direction": "from this lane to A9-04", "counterpart": PENDING_A9_04, "demand": "decision-quantity list DQ-HI-* with measurement chains, for the uncertainty budget, stop-rule forms and the n computation (rows 12, 13, 18, 19)", "units": "per DQ", "status": "SUPPLIED (this deliverable)"},
-        {"id": "IF-HI-06", "direction": "from A9-04 to this lane", "counterpart": PENDING_A9_04, "demand": "uncertainty per DQ-HI-*, stop-rule forms, the LOCK-2 computation rules for margins and n", "units": "per DQ", "status": "PENDING"},
-        {"id": "IF-HI-07", "direction": "from A9-05 to this lane", "counterpart": PENDING_A9_05, "demand": "Takahashi 2024 extraction (topology precedent, Ar operating points with provenance) for HI-AR; validation-input list (row 145) mapped to DQ-HI-ECAP / DQ-HI-VCPL / DQ-HI-IGN", "units": "various", "status": "PENDING"},
-        {"id": "IF-HI-08", "direction": "from this lane to A9-05", "counterpart": PENDING_A9_05, "demand": "which validation inputs become decision quantities and which stay descriptive", "units": "-", "status": "SUPPLIED (decision_quantities)"},
+        {"id": "IF-HI-01", "direction": "from this lane to A9-02", "counterpart": A9_02_MODULE + " + " + REF_A9_02, "demand": "one bus slot per active load of each configuration: Hall discharge, per-coil magnet, ICP RF source/matching, ICP collector/bias, C1 heater and keeper (reference supplies), flow/valve/housekeeping, reserved DC; start-up transient metering; PARTIAL_BOUNDARY flag (rows 22, 108, 110)", "units": "W per slot (steady, transient peak)", "status": "PENDING"},
+        {"id": "IF-HI-02", "direction": "from A9-02 to this lane", "counterpart": A9_02_MODULE + " + " + REF_A9_02, "demand": "slot ids used by DQ-HI-PBUS / DQ-HI-DPBUS / DQR-HI-09", "units": "-", "status": "PENDING"},
+        {"id": "IF-HI-03", "direction": "from this lane to A9-03", "counterpart": REF_A9_03, "demand": "kinematic-carrier datum and repeatability item for downstream module exchange (row 122); module ID; matched-sham definitions (row 133); RF forward/reflected, RF interlock, collector/bias V/I, temperatures and telemetry channels (rows 62, 130); floating body with separately biased collector (row 70); Hall-exhaust-to-ICP pressure/conductance interface (row 63); ICP gas feed port", "units": "mm; W; V; A; K; Pa", "status": "PENDING"},
+        {"id": "IF-HI-04", "direction": "from A9-03 to this lane", "counterpart": REF_A9_03, "demand": "frozen interface ids for RR-HI-02 and SC-HI-SRC-ICP; interfaces frozen before HI-S1 (row 71)", "units": "-", "status": "PENDING"},
+        {"id": "IF-HI-05", "direction": "from this lane to A9-04", "counterpart": REF_A9_04, "demand": "decision-quantity list DQ-HI-* with measurement chains, for the uncertainty budget, stop-rule forms and the n computation (rows 12, 13, 18, 19)", "units": "per DQ", "status": "SUPPLIED (this deliverable)"},
+        {"id": "IF-HI-06", "direction": "from A9-04 to this lane", "counterpart": REF_A9_04, "demand": "uncertainty per DQ-HI-*, stop-rule forms, the LOCK-2 computation rules for margins and n", "units": "per DQ", "status": "PENDING"},
+        {"id": "IF-HI-07", "direction": "from A9-05 to this lane", "counterpart": REF_A9_05, "demand": "Takahashi 2024 extraction (topology precedent, Ar operating points with provenance) for HI-AR; validation-input list (row 145) mapped to DQ-HI-ECAP / DQ-HI-VCPL / DQ-HI-IGN", "units": "various", "status": "PENDING"},
+        {"id": "IF-HI-08", "direction": "from this lane to A9-05", "counterpart": REF_A9_05, "demand": "which validation inputs become decision quantities and which stay descriptive", "units": "-", "status": "SUPPLIED (decision_quantities)"},
         {"id": "IF-HI-09", "direction": "from this lane to H2-6 / fixture", "counterpart": "docs/hardware/h2/h2_6_diagnostics_fixture/ (H26-40..H26-42 upstream-module concept) and " + PENDING_A9_07, "demand": "carrier re-derived for a DOWNSTREAM module (H2-6 concept was between IP-UP and IP-DN upstream); harp / slack-loop service routing with matched sham RF coax (row 117); >= 25 kg moving payload (row 116)", "units": "kg; N", "status": "OPEN (revision needed)"},
         {"id": "IF-HI-10", "direction": "from this lane to H2-1 / H2-2", "counterpart": "docs/hardware/h2/h2_1_hall_chamber_magnet/, docs/hardware/h2/h2_2_cathode_integration/ and " + PENDING_A9_07, "demand": "external C1 (row 79) replaces the preliminary L-CENTRAL choice; H-1 neutralizer-agnostic with a downstream / coaxial ICP interface", "units": "-", "status": "OPEN (revision needed)"},
         {"id": "IF-HI-11", "direction": "from this lane to H2-4", "counterpart": "docs/hardware/h2/h2_4_ppu_bus/ and " + PENDING_A9_07, "demand": "flight-representative breadboard discharge supply with eta_d and transients measured before LOCK-2 (row 113); 100 V internal bus (row 111)", "units": "W; V", "status": "OPEN"},
@@ -793,7 +824,7 @@ APPLIED = [
     (5, "ITM-09 wet mass gate; DQ-HI-DMASS"), (6, "bounded functional Xe mode: XE_REFERENCE / XE_AUGMENTED_PEAK labels (DR-14)"),
     (7, "ITM-41 analog points only after lawful acquisition and A9-05 extraction"),
     (8, "H3 inputs are quotation specifications only"),
-    (12, "old D-01 budget not reused; new budget PENDING A9-04 (IF-HI-05/06)"),
+    (12, "old D-01 budget not reused; new budget " + A9_04_JSON + " (A9-04; IF-HI-05/06)"),
     (14, "historical D-03-B not carried; no new work"), (13, "stop rules defined before score-bearing data (GD-07, ITM-33)"), (15, "interpolation rule (GD-16)"),
     (16, "not a lock; LOCK files later under docs/experiments/hall_icp/prereg/"),
     (17, "module-only swap on the carrier; H-1 fixed"), (18, "no numeric margins; MARGIN_NOT_SET literal"),
@@ -896,7 +927,7 @@ def h3_h4_inputs() -> dict:
     return {
         "h3_procurement_inputs_quotations_only": [
             "13.56 MHz RF generator sized for 0-500 W forward, matching network, directional coupler, RF feedthroughs, ICP chamber components (rows 8, 72)",
-            "kinematic module carrier for a downstream module with repeatable datum (row 122; " + PENDING_A9_03 + ")",
+            "kinematic module carrier for a downstream module with repeatable datum (row 122; " + ref_a9_03("ICP-06") + ")",
             "matched sham service lines incl. flexible RF coax (rows 117, 133)",
             "torsional stand for >= 25 kg moving payload (rows 115, 116)",
             "collector / bias supply and ICP telemetry channels (rows 62, 110)",

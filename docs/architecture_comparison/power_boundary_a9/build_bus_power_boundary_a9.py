@@ -103,6 +103,22 @@ def pend(lane: str, what: str = "") -> str:
     return f"PENDING {LANES[lane]}" + (f" ({what})" if what else "")
 
 
+# A9_INT (fo_a9_int_core_integration): the A9-01/03/04/05 deliverables are merged in the base 88e4d47. A cross-reference
+# whose target item the merged deliverable defines cites the concrete file + item id (never read here, never pinned
+# here: the five A9 deliverables reference each other, so an in-file sha256 has no fixed point; the post-integration
+# sha256 of every target is pinned in docs/experiments/hall_icp/integration/a9_core_integration_v1.json). References
+# the target does not define keep pend().
+RESOLVED = {
+    "A9-03": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+    "A9-04": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
+}
+
+
+def ref(lane: str, item: str, what: str = "") -> str:
+    """Resolved cross-reference (A9_INT): concrete file + item id(s)."""
+    return f"{RESOLVED[lane]} {item}" + (f" ({what})" if what else "")
+
+
 class A902InputError(RuntimeError):
     """A pinned input is missing, changed, or lacks an entry this build needs (no fallback)."""
 
@@ -254,9 +270,9 @@ def build(inp: dict) -> dict:
         I("A902-22", "matching-network DC draw (tuning actuators / controller)", "TBD", "W", "pending",
           pend("A9-03", "fixed vs auto-tuned match"), "TBD", "OPEN", "LOCK-1"),
         I("A902-23", "collector/bias supply V and I range", "TBD", "V / A", "pending",
-          pend("A9-03", "electron-extraction collector bias, floating body row 70"), "TBD", "OPEN", "LOCK-1"),
+          ref("A9-03", "ICP-20, ICP-21", "electron-extraction collector bias, floating body row 70"), "TBD", "OPEN", "LOCK-1"),
         I("A902-24", "ICP gas-feed valve/controller power and feed species", "TBD", "W", "pending",
-          "TBD - A9 recorder flag row 46 (ICP gas feed not yet booked); " + pend("A9-03"), "TBD", "OPEN", "LOCK-1"),
+          "TBD - A9 recorder flag row 46 (ICP gas feed not yet booked); " + ref("A9-03", "ICP-26"), "TBD", "OPEN", "LOCK-1"),
         I("A902-25", "C1 keeper pulsed ignition capability (current-limited; interlocks; pulse energy recorded)",
           list(B.C1_KEEPER_PULSE_IGNITION_CLASS_V), "V", "owner decision",
           f"{R(89)}; H2-2 H22-22 {h22_22['value']} {h22_22['units']} ({h22_22['evidence_class']})",
@@ -299,7 +315,7 @@ def build(inp: dict) -> dict:
           "minimum-efficiency specifications, so transfer to A9 load levels is not established (see "
           "h2_4_revision_flags)", "TBD", "OPEN", "LOCK-2"),
         I("A902-36", "P_bus measurement-chain uncertainty (DC channels + RF planes)", "TBD", "relative",
-          "pending", pend("A9-04") + "; historical INS-02 numbers are not carried (row 18)", "TBD", "OPEN", "LOCK-1"),
+          "pending", ref("A9-04", "measurement_chains[dq=DQ-HI-PBUS]") + "; historical INS-02 numbers are not carried (row 18)", "TBD", "OPEN", "LOCK-1"),
         I("A902-37", "C1 ignition-flow dwell cap in the start-up sequence", "120 s per attempt, at most two retries",
           "s", "owner decision", f"{R(93)} (preliminary; final bound frozen before score-bearing C1 testing)",
           "owner-allocation", "ADOPTED (preliminary)", "LOCK-2"),
@@ -589,7 +605,7 @@ def build(inp: dict) -> dict:
         {"id": "H3-A902-03", "item": "matching network (fixed or auto-tuned; DC draw metered)",
          "basis": pend("A9-03")},
         {"id": "H3-A902-04", "item": "collector/bias supply (floating, V/I metered)", "basis": "row 70; "
-         + pend("A9-03")},
+         + ref("A9-03", "ICP-21")},
         {"id": "H3-A902-05", "item": "C1 keeper supply with current-limited pulsed ignition 300-600 V class, "
          "interlocks, pulse-energy recording", "basis": "row 89"},
         {"id": "H3-A902-06", "item": "selectable cathode-common/bleeder network with V/I measurement",

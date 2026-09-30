@@ -129,8 +129,8 @@
  ],
  "decision_quantities": [
   {
-   "id": "UB-DQ-T",
-   "a9_01_dq_id": "PENDING docs/experiments/hall_icp/prereg_framework/ (decision-quantity id and role)",
+   "id": "DQ-HI-TABS",
+   "a9_01_dq_id": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json DQ-HI-TABS (role HARD_GATE)",
    "name": "thrust",
    "symbol": "T",
    "units": "mN",
@@ -138,11 +138,11 @@
     "hall_c1_reference",
     "hall_icp_neutralizer"
    ],
-   "role": "absolute gates (12 mN sustained, 25 mN capability) and the paired C1-vs-ICP contrast; role in the decision PENDING docs/experiments/hall_icp/prereg_framework/ (decision-quantity id and role)"
+   "role": "absolute gates (12 mN sustained, 25 mN capability) and the paired C1-vs-ICP contrast; role in the decision docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json DQ-HI-TABS (role HARD_GATE)"
   },
   {
-   "id": "UB-DQ-PBUS",
-   "a9_01_dq_id": "PENDING docs/experiments/hall_icp/prereg_framework/ (decision-quantity id and role)",
+   "id": "DQ-HI-PBUS",
+   "a9_01_dq_id": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json DQ-HI-PBUS (role HARD_GATE)",
    "name": "full P_bus at the spacecraft-DC propulsion boundary",
    "symbol": "P_bus",
    "units": "W",
@@ -161,7 +161,7 @@
    "configurations": [
     "hall_icp_neutralizer"
    ],
-   "role": "ICP power accounting inside P_bus (RF source/matching slot PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/); ICP power allocation check against the internal ~1.35 kW design allocation (row 109)"
+   "role": "ICP power accounting inside P_bus (RF source/matching slot abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slots icp_rf_source / icp_matching_network); ICP power allocation check against the internal ~1.35 kW design allocation (row 109)"
   },
   {
    "id": "UB-DQ-NEUT",
@@ -236,8 +236,8 @@
    "role": "thermal-state matching (row 65), limit aborts, T_sink per run (row 131)"
   },
   {
-   "id": "UB-DQ-ETAU",
-   "a9_01_dq_id": "PENDING docs/experiments/hall_icp/prereg_framework/ (decision-quantity id and role)",
+   "id": "DQ-HI-ETAU",
+   "a9_01_dq_id": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json DQ-HI-ETAU (role CONDITIONAL)",
    "name": "mass utilization from Faraday / ExB",
    "symbol": "eta_u",
    "units": "-",
@@ -248,10 +248,130 @@
    "role": "descriptive unless A9-01 uses it in a decision quantity; then S1b Faraday/ExB repeatability is mandatory (row 32)"
   }
  ],
+ "dq_id_mapping": {
+  "by": "A9_INT fo_a9_int_core_integration (mechanical integration; no value, threshold, gate, allocation, requirement meaning, evidence class or owner-answer interpretation changed)",
+  "rule": "UB-DQ-x maps to DQ-HI-y only if exactly one A9-01 decision quantity measures the same physical quantity, in the same units, for the same configurations, with the UB-DQ chain's primary instrument in its A9-01 measurement chain; differences, ratios, allocation checks and multi-limit classes built from it are consumers, not counterparts; otherwise the UB-DQ id is kept and marked 'UNMAPPED - owner/A9-10'",
+  "a9_01_source": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json decision_quantities",
+  "integration_record": "docs/experiments/hall_icp/integration/a9_core_integration_v1.json",
+  "rows": [
+   {
+    "ub_dq_id": "UB-DQ-T",
+    "dq_hi_id": "DQ-HI-TABS",
+    "status": "MAPPED",
+    "ub_definition": "thrust; T; mN; both configurations; primary instrument INS-01",
+    "a9_01_definition": "DQ-HI-TABS absolute thrust compatibility; mN; HARD_GATE; both configurations; chain INS-01, INS-05, INS-06, INS-07, INS-08",
+    "basis": "same quantity (measured axial thrust), same units (mN), same configurations, INS-01 in both chains; the only A9-01 quantity in mN",
+    "a9_01_consumers_not_counterparts": [
+     "DQ-HI-TPBUS (mN/kW ratio)"
+    ]
+   },
+   {
+    "ub_dq_id": "UB-DQ-PBUS",
+    "dq_hi_id": "DQ-HI-PBUS",
+    "status": "MAPPED",
+    "ub_definition": "full P_bus at the spacecraft-DC propulsion boundary; P_bus; W; both configurations; primary instrument INS-02",
+    "a9_01_definition": "DQ-HI-PBUS full bus-power compatibility; W (steady and transient peak); HARD_GATE; both configurations; chain INS-02, INS-03, INS-18",
+    "basis": "same quantity (full P_bus on the A9 boundary), same units (W), same configurations, INS-02 in both chains",
+    "a9_01_consumers_not_counterparts": [
+     "DQ-HI-PALLOC (allocation check, hall_icp_neutralizer only)",
+     "DQ-HI-DPBUS (paired difference)",
+     "DQ-HI-TPBUS (ratio)"
+    ]
+   },
+   {
+    "ub_dq_id": "UB-DQ-RF",
+    "dq_hi_id": null,
+    "status": "UNMAPPED - owner/A9-10",
+    "ub_definition": "RF forward / reflected / delivered power; P_fwd, P_ref, P_net, P_coil; W; hall_icp_neutralizer only",
+    "a9_01_definition": "no A9-01 decision quantity with this name",
+    "basis": "no counterpart: RF power enters A9-01 only through the RF-source DC slot of P_bus and as the reflected-power interlock limit inside a multi-limit class",
+    "a9_01_consumers_not_counterparts": [
+     "DQ-HI-PBUS / DQ-HI-PALLOC (via the RF-source DC input slot)",
+     "DQ-HI-SAFE (RF interlock and reflected power, row 62)"
+    ]
+   },
+   {
+    "ub_dq_id": "UB-DQ-NEUT",
+    "dq_hi_id": null,
+    "status": "UNMAPPED - owner/A9-10",
+    "ub_definition": "electron-source current, collector current / bias and neutralization margin; I_e,src, I_coll, V_coll, V_cg, M_n; A / V / -; both configurations",
+    "a9_01_definition": "split over DQ-HI-ECAP (A; dimensionless ratio) and DQ-HI-VCPL (V)",
+    "basis": "maps to several A9-01 quantities (current/margin part vs potential part)",
+    "a9_01_consumers_not_counterparts": [
+     "DQ-HI-ECAP",
+     "DQ-HI-VCPL"
+    ]
+   },
+   {
+    "ub_dq_id": "UB-DQ-ID",
+    "dq_hi_id": null,
+    "status": "UNMAPPED - owner/A9-10",
+    "ub_definition": "Hall discharge current and oscillations; I_d, I_d(t), A_osc, S_Id(f); A / - / A^2 Hz^-1; both configurations",
+    "a9_01_definition": "used by DQ-HI-SUST (class), DQ-HI-STAB (A band, Hz, class) and DQ-HI-ECAP (Hall current demand)",
+    "basis": "maps to several A9-01 quantities",
+    "a9_01_consumers_not_counterparts": [
+     "DQ-HI-SUST",
+     "DQ-HI-STAB",
+     "DQ-HI-ECAP"
+    ]
+   },
+   {
+    "ub_dq_id": "UB-DQ-FLOW",
+    "dq_hi_id": null,
+    "status": "UNMAPPED - owner/A9-10",
+    "ub_definition": "mass flows; mdot_N2, mdot_O2, mdot_Ar, mdot_Xe,C1, mdot_ICP; mg s^-1; both configurations",
+    "a9_01_definition": "used by DQ-HI-DXE (Xe only), DQ-HI-KNEE (flow scan output) and DQ-HI-RESTART (gas per restart)",
+    "basis": "maps to several A9-01 quantities; none is the set of all flows",
+    "a9_01_consumers_not_counterparts": [
+     "DQ-HI-DXE",
+     "DQ-HI-KNEE",
+     "DQ-HI-RESTART"
+    ]
+   },
+   {
+    "ub_dq_id": "UB-DQ-PB",
+    "dq_hi_id": null,
+    "status": "UNMAPPED - owner/A9-10",
+    "ub_definition": "background pressure and residual gas composition; p_b, x_i; Pa / mole fraction; both configurations",
+    "a9_01_definition": "no A9-01 decision quantity (a condition variable of the same-condition list and stage HI-PB)",
+    "basis": "no counterpart",
+    "a9_01_consumers_not_counterparts": []
+   },
+   {
+    "ub_dq_id": "UB-DQ-BZ",
+    "dq_hi_id": null,
+    "status": "UNMAPPED - owner/A9-10",
+    "ub_definition": "magnetic field B(z) and ICP-induced perturbation; B(z), Delta B_icp(z); T; both configurations",
+    "a9_01_definition": "no A9-01 decision quantity (a same-condition variable; tolerance at gate deadline GD-11)",
+    "basis": "no counterpart",
+    "a9_01_consumers_not_counterparts": []
+   },
+   {
+    "ub_dq_id": "UB-DQ-TEMP",
+    "dq_hi_id": null,
+    "status": "UNMAPPED - owner/A9-10",
+    "ub_definition": "temperatures incl. measured radiative sink temperature; T_k, T_sink; K; both configurations",
+    "a9_01_definition": "temperatures enter DQ-HI-SAFE only as one limit of a multi-limit class (class; W; K; V)",
+    "basis": "no counterpart with the same name and units",
+    "a9_01_consumers_not_counterparts": [
+     "DQ-HI-SAFE"
+    ]
+   },
+   {
+    "ub_dq_id": "UB-DQ-ETAU",
+    "dq_hi_id": "DQ-HI-ETAU",
+    "status": "MAPPED",
+    "ub_definition": "mass utilization from Faraday / ExB; eta_u; -; both configurations; primary instrument INS-15",
+    "a9_01_definition": "DQ-HI-ETAU utilization / beam current (conditional); dimensionless; A; CONDITIONAL; both configurations; chain INS-13, INS-15",
+    "basis": "same quantity (utilization), dimensionless in both, same configurations, INS-13/INS-15 in both chains; A9-01 additionally lists the beam current (A) it is built from",
+    "a9_01_consumers_not_counterparts": []
+   }
+  ]
+ },
  "items": [
   {
    "id": "UB-T-00",
-   "dq": "UB-DQ-T",
+   "dq": "DQ-HI-TABS",
    "name": "thrust-stand principle",
    "symbol": "",
    "type": "rule",
@@ -274,7 +394,7 @@
   },
   {
    "id": "UB-T-01",
-   "dq": "UB-DQ-T",
+   "dq": "DQ-HI-TABS",
    "name": "absolute thrust uncertainty design/acceptance target",
    "symbol": "u_r,abs(T)",
    "type": "requirement",
@@ -297,7 +417,7 @@
   },
   {
    "id": "UB-T-02",
-   "dq": "UB-DQ-T",
+   "dq": "DQ-HI-TABS",
    "name": "S1a thrust-uncertainty acceptance test point",
    "symbol": "T_acc",
    "type": "requirement",
@@ -320,7 +440,7 @@
   },
   {
    "id": "UB-T-03",
-   "dq": "UB-DQ-T",
+   "dq": "DQ-HI-TABS",
    "name": "moving payload design minimum for the stand",
    "symbol": "m_pay,min",
    "type": "requirement",
@@ -339,11 +459,11 @@
     "hall_c1_reference",
     "hall_icp_neutralizer"
    ],
-   "note": "the actual configuration spread (C1 module vs ICP module on the carrier) is characterized, not assumed (row 116); module masses PENDING docs/interfaces/icp_neutralizer/"
+   "note": "the actual configuration spread (C1 module vs ICP module on the carrier) is characterized, not assumed (row 116); module masses schemas/interfaces/icp_neutralizer_icd_v1.json ICP-08"
   },
   {
    "id": "UB-T-04",
-   "dq": "UB-DQ-T",
+   "dq": "DQ-HI-TABS",
    "name": "in-situ calibration force / mass standard",
    "symbol": "u_r(F_cal)",
    "type": "B",
@@ -366,7 +486,7 @@
   },
   {
    "id": "UB-T-05",
-   "dq": "UB-DQ-T",
+   "dq": "DQ-HI-TABS",
    "name": "calibration lever-arm ratio L_cal / L_T",
    "symbol": "u_r(L_cal/L_T)",
    "type": "B",
@@ -387,7 +507,7 @@
   },
   {
    "id": "UB-T-06",
-   "dq": "UB-DQ-T",
+   "dq": "DQ-HI-TABS",
    "name": "calibration-fit residual (Type A over the calibration steps)",
    "symbol": "u_r(fit)",
    "type": "A",
@@ -410,7 +530,7 @@
   },
   {
    "id": "UB-T-07",
-   "dq": "UB-DQ-T",
+   "dq": "DQ-HI-TABS",
    "name": "pre/post-block calibration shift and hysteresis",
    "symbol": "u_r(cal drift)",
    "type": "A/B",
@@ -433,7 +553,7 @@
   },
   {
    "id": "UB-T-08",
-   "dq": "UB-DQ-T",
+   "dq": "DQ-HI-TABS",
    "name": "zero drift over a dwell",
    "symbol": "u(y_0)",
    "type": "A",
@@ -454,7 +574,7 @@
   },
   {
    "id": "UB-T-09",
-   "dq": "UB-DQ-T",
+   "dq": "DQ-HI-TABS",
    "name": "service-line parasitic force incl. matched shams and flexible RF coax",
    "symbol": "u(F_par)",
    "type": "A",
@@ -480,7 +600,7 @@
   },
   {
    "id": "UB-T-10",
-   "dq": "UB-DQ-T",
+   "dq": "DQ-HI-TABS",
    "name": "thermal drift of the stand from the heat load",
    "symbol": "u(F_th)",
    "type": "A",
@@ -501,7 +621,7 @@
   },
   {
    "id": "UB-T-11",
-   "dq": "UB-DQ-T",
+   "dq": "DQ-HI-TABS",
    "name": "RF / electrostatic pickup on the displacement sensor with the ICP energized",
    "symbol": "u(y_RF)",
    "type": "A",
@@ -523,7 +643,7 @@
   },
   {
    "id": "UB-T-12",
-   "dq": "UB-DQ-T",
+   "dq": "DQ-HI-TABS",
    "name": "thrust-axis alignment (cosine error) per carrier exchange",
    "symbol": "u_r(align)",
    "type": "B",
@@ -546,7 +666,7 @@
   },
   {
    "id": "UB-T-13",
-   "dq": "UB-DQ-T",
+   "dq": "DQ-HI-TABS",
    "name": "readout resolution / noise",
    "symbol": "u(y)",
    "type": "A",
@@ -567,7 +687,7 @@
   },
   {
    "id": "UB-P-00",
-   "dq": "UB-DQ-PBUS",
+   "dq": "DQ-HI-PBUS",
    "name": "P_bus gate",
    "symbol": "P_bus",
    "type": "requirement",
@@ -590,7 +710,7 @@
   },
   {
    "id": "UB-P-01",
-   "dq": "UB-DQ-PBUS",
+   "dq": "DQ-HI-PBUS",
    "name": "bus-slot list of the A9 boundary",
    "symbol": "S_A9",
    "type": "rule",
@@ -614,7 +734,7 @@
   },
   {
    "id": "UB-P-02",
-   "dq": "UB-DQ-PBUS",
+   "dq": "DQ-HI-PBUS",
    "name": "voltage-channel calibration per slot",
    "symbol": "u_r(V_s)",
    "type": "B",
@@ -635,7 +755,7 @@
   },
   {
    "id": "UB-P-03",
-   "dq": "UB-DQ-PBUS",
+   "dq": "DQ-HI-PBUS",
    "name": "current-channel calibration per slot (shunt / zero-flux transducer)",
    "symbol": "u_r(I_s)",
    "type": "B",
@@ -656,7 +776,7 @@
   },
   {
    "id": "UB-P-04",
-   "dq": "UB-DQ-PBUS",
+   "dq": "DQ-HI-PBUS",
    "name": "ripple / time-alignment error of p_s(t) = v_s(t) i_s(t)",
    "symbol": "u_r(vi)",
    "type": "B",
@@ -679,7 +799,7 @@
   },
   {
    "id": "UB-P-05",
-   "dq": "UB-DQ-PBUS",
+   "dq": "DQ-HI-PBUS",
    "name": "per-reading repeatability per slot",
    "symbol": "u_A(P_s)",
    "type": "A",
@@ -700,7 +820,7 @@
   },
   {
    "id": "UB-P-06",
-   "dq": "UB-DQ-PBUS",
+   "dq": "DQ-HI-PBUS",
    "name": "conversion efficiency for slots supplied by non-flight-representative lab sources",
    "symbol": "eta_s",
    "type": "conditioning",
@@ -725,7 +845,7 @@
   },
   {
    "id": "UB-P-07",
-   "dq": "UB-DQ-PBUS",
+   "dq": "DQ-HI-PBUS",
    "name": "start-up transient window and channel bandwidth for P_bus,peak",
    "symbol": "tau_start, f_bw,P",
    "type": "rule",
@@ -749,7 +869,7 @@
   },
   {
    "id": "UB-P-08",
-   "dq": "UB-DQ-PBUS",
+   "dq": "DQ-HI-PBUS",
    "name": "internal ICP design power allocation",
    "symbol": "P_alloc,int",
    "type": "requirement",
@@ -2071,7 +2191,7 @@
   },
   {
    "id": "UB-E-00",
-   "dq": "UB-DQ-ETAU",
+   "dq": "DQ-HI-ETAU",
    "name": "use of eta_u in a decision quantity",
    "symbol": "",
    "type": "rule",
@@ -2094,7 +2214,7 @@
   },
   {
    "id": "UB-E-01",
-   "dq": "UB-DQ-ETAU",
+   "dq": "DQ-HI-ETAU",
    "name": "Faraday beam-current integration (area, bias, SEE, gap, CEX)",
    "symbol": "u_r(I_b)",
    "type": "A/B",
@@ -2117,7 +2237,7 @@
   },
   {
    "id": "UB-E-02",
-   "dq": "UB-DQ-ETAU",
+   "dq": "DQ-HI-ETAU",
    "name": "ExB species current fractions",
    "symbol": "u(Omega_j)",
    "type": "A/B",
@@ -2391,7 +2511,7 @@
  ],
  "measurement_chains": [
   {
-   "dq": "UB-DQ-T",
+   "dq": "DQ-HI-TABS",
    "instruments": [
     "INS-01 (torsional, row 115)",
     "INS-17",
@@ -2424,7 +2544,7 @@
    "not_a_component": "background-pressure effect: reported as the measured sensitivity at two elevated p_b levels (row 23), never applied as a correction"
   },
   {
-   "dq": "UB-DQ-PBUS",
+   "dq": "DQ-HI-PBUS",
    "instruments": [
     "INS-02 (one DC channel per A9 bus slot)",
     "INS-03",
@@ -2432,7 +2552,7 @@
     "H26-MEAS-02"
    ],
    "equations": [
-    "P_bus = sum_{s in S_A9} P_s,   S_A9 PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/",
+    "P_bus = sum_{s in S_A9} P_s,   S_A9 abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slots",
     "P_s = (1/tau) * integral_tau v_s(t) i_s(t) dt at the spacecraft-DC-boundary-equivalent point; where the lab source is not flight-representative: P_s = P_s,load / eta_s with eta_s a LOCK-1 conditioning input (not a variance term); an unmeasured slot makes the reading PARTIAL_BOUNDARY (row 22)",
     "u^2(P_bus) = sum_s u^2(P_s) + 2 sum_{s<t} r_st u(P_s) u(P_t)   [GUM 5.2.2 Eq. (13); r_st from shared references, else 0]",
     "u_r^2(P_s) = u_r^2(V_s) + u_r^2(I_s) + u_r^2(vi) + (u_A(P_s)/P_s)^2",
@@ -2466,7 +2586,7 @@
     "P_coil = P_net - P_loss,mn - P_loss,cable   [reconstructed from the S1a dummy-load characterization]",
     "u^2(P_net) = u^2(P_fwd) + u^2(P_ref) - 2 r u(P_fwd) u(P_ref)   [GUM 5.2.2 Eq. (13); r from a shared sensor/coupler calibration]",
     "cross-check: z_x = (P_coupler - P_cal) / sqrt(u^2(P_coupler) + u^2(P_cal)); PROPOSED rule |z_x| <= k_x (UBQ-04); P_cal = sum_j mdot_j c_p,j Delta T_j + C dT/dt (steady-state coolant or dummy-load calorimetry; method PENDING docs/interfaces/icp_neutralizer/)",
-    "the RF-source DC input is a P_bus slot (UB-DQ-PBUS); P_net / P_coil are accounting and diagnostic quantities, never a substitute for P_bus"
+    "the RF-source DC input is a P_bus slot (DQ-HI-PBUS); P_net / P_coil are accounting and diagnostic quantities, never a substitute for P_bus"
    ],
    "components": [
     "UB-RF-02",
@@ -2482,7 +2602,7 @@
     "UB-RF-08",
     "UB-RF-09"
    ],
-   "not_a_component": "no Takahashi 2024 operating value is used (PENDING docs/evidence/icp_neutralizer/ + docs/experiments/hall_icp/validation_inputs/)"
+   "not_a_component": "no Takahashi 2024 operating value is used (docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json + docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json)"
   },
   {
    "dq": "UB-DQ-NEUT",
@@ -2560,7 +2680,7 @@
     "u_r^2(mdot) = u_r^2(ref) + u_r^2(RoR) + (a_FS * FS / mdot)^2 / 3 + (u(zero)/mdot)^2 + u_r^2(T_body) + (u_A/mdot)^2   [the '/3' applies a stated +/- bound as rectangular, GUM 4.3.7 Eq. (7), unless the certificate states a multiplier, GUM 4.3.3; UBQ-03]",
     "rate-of-rise: mdot = (V M / (Z R T)) dp/dt   [Z: compressibility from a verified EOS for Xe (row 50); Z = 1 only where justified]",
     "mixture fraction: w_O2 = mdot_O2 / (mdot_N2 + mdot_O2);  u^2(w_O2) = [w_N2 u(mdot_O2)]^2/M^2 + [w_O2 u(mdot_N2)]^2/M^2 with M = mdot_N2 + mdot_O2",
-    "Delta Xe (row 37): Delta mdot_Xe = mdot_Xe,icp_config - mdot_Xe,c1_config with PHASE_TOTAL_FLOW booking (row 42) and the ICP gas feed PENDING docs/interfaces/icp_neutralizer/"
+    "Delta Xe (row 37): Delta mdot_Xe = mdot_Xe,icp_config - mdot_Xe,c1_config with PHASE_TOTAL_FLOW booking (row 42) and the ICP gas feed schemas/interfaces/icp_neutralizer_icd_v1.json ICP-26"
    ],
    "components": [
     "UB-F-05",
@@ -2660,7 +2780,7 @@
    "not_a_component": "no unmeasured 300 K sink in any score-bearing use (row 131)"
   },
   {
-   "dq": "UB-DQ-ETAU",
+   "dq": "DQ-HI-ETAU",
    "instruments": [
     "INS-15 (far-field Faraday)",
     "INS-13 (ExB)",
@@ -2800,7 +2920,7 @@
   "gate_stop": {
    "id": "SR-G",
    "rule": "if hall_icp_neutralizer cannot sustain the Hall discharge within registered limits because I_e,cap < I_d,dem (M_n,ub < 0 at the registered bias/RF limits), the reading is an observation 'not sustained within registered limits' (row 41) with the limit and state recorded; comparison slots needing a sustained discharge in that configuration become NOT_TESTED",
-   "gate_definition": "PENDING docs/experiments/hall_icp/prereg_framework/"
+   "gate_definition": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json DQ-HI-ECAP"
   },
   "precision_futility": {
    "id": "SR-P",
@@ -2919,7 +3039,7 @@
    "status_vocabulary": [
     "OPEN"
    ],
-   "vocabulary_owner": "PENDING docs/experiments/hall_icp/prereg_framework/"
+   "vocabulary_owner": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json decision_topology (outcomes, statuses)"
   },
   "net_benefit": "NET_BENEFIT = hard gates + Pareto over Delta Xe, Delta P_bus, Delta mass, T/P_bus, restart and life burden relative to C1; no weighted scalar and no single winner unless preregistered (row 37); every Pareto component carries its own interval from this budget"
  },
@@ -3805,7 +3925,7 @@
   },
   {
    "item": "floating-rated collector/bias supply with V/I channels",
-   "spec_form": "PENDING docs/interfaces/icp_neutralizer/",
+   "spec_form": "schemas/interfaces/icp_neutralizer_icd_v1.json ICP-21",
    "rows": [
     70
    ]
@@ -3836,7 +3956,7 @@
   },
   {
    "item": "DC V/I channels per A9 bus slot",
-   "spec_form": "PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/",
+   "spec_form": "abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slots",
    "rows": [
     110
    ]
@@ -3954,7 +4074,7 @@
   {
    "id": "REF-TAKAHASHI2024",
    "citation": "K. Takahashi, H. Watanabe, Y. Nakahama, K. Kikuchi, 'Hall thruster ion acceleration neutralized by a radiofrequency inductively coupled plasma', J. Electr. Propuls. 3, 18 (2024), doi:10.1007/s44205-024-00081-2, CC BY-NC-ND 4.0",
-   "access": "metadata as recorded in the A9 decision (Crossref 2026-09-29); topology precedent only; full-text extraction is PENDING docs/evidence/icp_neutralizer/ + docs/experiments/hall_icp/validation_inputs/; no operating point or performance value is quoted by this lane"
+   "access": "metadata as recorded in the A9 decision (Crossref 2026-09-29); topology precedent only; full-text extraction is in docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json (A9-05); no operating point or performance value is quoted by this lane"
   },
   {
    "id": "REF-TIGHE2015",
@@ -3964,7 +4084,7 @@
  ],
  "compliance": [
   "no thrust, efficiency, discharge-current, neutralizer-current or plasma-state prediction; no Hall closure, screening candidate, abep_sim/plasma_devices.py or withdrawn v1.2-v1.6 number used",
-  "no Takahashi 2024 operating value quoted (PENDING A9-05)",
+  "no Takahashi 2024 operating value quoted (A9-05: docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json)",
   "no frozen numeric threshold beyond owner answers (cited by row) and verified H2-6 inputs",
   "historical artifacts read and cited, never edited; mutable governance files not pinned",
   "no winner declared; NET_BENEFIT is hard gates + Pareto (row 37)",

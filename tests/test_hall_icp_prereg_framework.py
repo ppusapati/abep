@@ -167,7 +167,12 @@ def test_decision_quantities():
     assert roles["DQ-HI-KNEE"] == "DESCRIPTIVE_OUTPUT" and roles["DQ-HI-ETAU"] == "CONDITIONAL"
     for q in dqs:
         assert q["margin"] == B.MARGIN_NOT_SET
-        assert q["measurement_chain_uncertainty_owner"].startswith("PENDING docs/experiments/hall_icp/uncertainty_budget/")
+        if q["id"] in ("DQ-HI-TABS", "DQ-HI-PBUS", "DQ-HI-ETAU"):  # A9_INT: A9-04 chain keyed by this DQ-HI id
+            assert q["measurement_chain_uncertainty_owner"] == (
+                "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json "
+                f"measurement_chains[dq={q['id']}] (A9-04)")
+        else:
+            assert q["measurement_chain_uncertainty_owner"].startswith("PENDING docs/experiments/hall_icp/uncertainty_budget/")
         assert q["freeze_points"] == {"definition_form": "LOCK-1", "margin_value": "LOCK-2"}
         assert q["units"] and q["operational_definition"]
         for c in q["measurement_chain"]:
@@ -277,9 +282,15 @@ def test_required_sections_and_pending_lanes():
     for q in d["open_owner_questions"]:
         assert q["proposed_answer"]
     txt = json.dumps(d)
-    for p in ("PENDING docs/architecture_comparison/power_boundary_a9/", "PENDING docs/interfaces/icp_neutralizer/",
-              "PENDING docs/experiments/hall_icp/uncertainty_budget/", "PENDING docs/evidence/icp_neutralizer/"):
-        assert p in txt
+    # A9_INT: every A9-02..A9-05 lane is referenced, either still PENDING or resolved to its merged deliverable file
+    for pend, resolved in (
+            ("PENDING docs/architecture_comparison/power_boundary_a9/",
+             "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"),
+            ("PENDING docs/interfaces/icp_neutralizer/", "schemas/interfaces/icp_neutralizer_icd_v1.json"),
+            ("PENDING docs/experiments/hall_icp/uncertainty_budget/",
+             "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json"),
+            ("PENDING docs/evidence/icp_neutralizer/", "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json")):
+        assert pend in txt or resolved in txt, pend
     for s in ("## (a)", "## (b)", "## (c)", "## (d)", "## (e)", "## (f)", "## (g)"):
         assert s in _md()
 

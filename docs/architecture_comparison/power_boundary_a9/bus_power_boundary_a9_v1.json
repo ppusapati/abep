@@ -373,7 +373,7 @@
    "value": "TBD",
    "units": "V / A",
    "basis": "pending",
-   "source": "PENDING docs/interfaces/icp_neutralizer/ (electron-extraction collector bias, floating body row 70)",
+   "source": "schemas/interfaces/icp_neutralizer_icd_v1.json ICP-20, ICP-21 (electron-extraction collector bias, floating body row 70)",
    "evidence_class": "TBD",
    "status": "OPEN",
    "freeze_point": "LOCK-1"
@@ -384,7 +384,7 @@
    "value": "TBD",
    "units": "W",
    "basis": "pending",
-   "source": "TBD - A9 recorder flag row 46 (ICP gas feed not yet booked); PENDING docs/interfaces/icp_neutralizer/",
+   "source": "TBD - A9 recorder flag row 46 (ICP gas feed not yet booked); schemas/interfaces/icp_neutralizer_icd_v1.json ICP-26",
    "evidence_class": "TBD",
    "status": "OPEN",
    "freeze_point": "LOCK-1"
@@ -521,7 +521,7 @@
    "value": "TBD",
    "units": "relative",
    "basis": "pending",
-   "source": "PENDING docs/experiments/hall_icp/uncertainty_budget/; historical INS-02 numbers are not carried (row 18)",
+   "source": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=DQ-HI-PBUS]; historical INS-02 numbers are not carried (row 18)",
    "evidence_class": "TBD",
    "status": "OPEN",
    "freeze_point": "LOCK-1"
@@ -1983,7 +1983,7 @@
   {
    "id": "H3-A902-04",
    "item": "collector/bias supply (floating, V/I metered)",
-   "basis": "row 70; PENDING docs/interfaces/icp_neutralizer/"
+   "basis": "row 70; schemas/interfaces/icp_neutralizer_icd_v1.json ICP-21"
   },
   {
    "id": "H3-A902-05",
