@@ -24,7 +24,8 @@
   "Prepared by the technical team (A9.3 OQ-RFQ-07). Commercial dispatch authority remains with P9E/Vyovrinda under Praveen's authorization. No automatic supplier contact: neither this repository nor Claude contacts any supplier; dispatch, if any, is an owner/procurement act.",
   "Compatibility: this is one of six supplier-speciality packages kept compatible by the common top-level interface document RFQ2-CIF (packages/RFQ2-00_common_interface.md). Shared interface ids, reference planes, connectors/flanges, potentials/grounding, gas species and units are defined there and govern over local wording.",
   "No prices are recorded; no supplier is ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
-  "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted."
+  "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted.",
+  "A9.4 (owner, 2026-09-30, execution_decisions.p1_needed_rfqs): the owner / procurement may SEND the lines tagged P1_NEEDED to suppliers for quotation - requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates. NOT authorized: purchase orders, advance payments, binding commitments. Claude / the technical team still never contacts suppliers."
  ],
  "dispatch_authority": {
   "prepares": "technical team (repository lane)",
@@ -39,6 +40,54 @@
    "pointer": "/decisions/OQ-RFQ-07",
    "json_path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
    "sha256": "55a1fd84558a9590705bb82aa11db5e2b9136dd1d83a957d26614c435c707411"
+  },
+  "a9_4_quotation_dispatch": {
+   "authorized": [
+    "requests for quotation",
+    "technical clarification",
+    "indicative lead time",
+    "commercial quotation",
+    "datasheets/certificates"
+   ],
+   "not_authorized": [
+    "purchase orders",
+    "advance payments",
+    "binding commitments"
+   ],
+   "scope": "packages / lines tagged P1_NEEDED; packages stay split by speciality",
+   "sent_by": "owner / procurement (P9E/Vyovrinda); Claude / the technical team never contacts suppliers",
+   "sources": [
+    {
+     "type": "a9_4",
+     "key": "A9.4",
+     "id": "p1_needed_rfqs",
+     "quote": "The P1-needed RFQ packages may now be sent to suppliers for quotation.",
+     "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+     "pointer": "/execution_decisions/p1_needed_rfqs",
+     "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+     "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+    },
+    {
+     "type": "a9_4",
+     "key": "A9.4",
+     "id": "p1_needed_rfqs",
+     "quote": "It does not authorize:",
+     "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+     "pointer": "/execution_decisions/p1_needed_rfqs",
+     "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+     "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+    },
+    {
+     "type": "a9_4",
+     "key": "A9.4",
+     "id": "p1_needed_rfqs",
+     "quote": "Supplier packages may remain split by speciality as already decided.",
+     "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+     "pointer": "/execution_decisions/p1_needed_rfqs",
+     "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+     "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+    }
+   ]
   }
  },
  "decision_pins": [
@@ -94,6 +143,18 @@
    "key": "A93_MD",
    "path": "docs/decisions/OD_2026_09_30_A9_3_POST_A9_TIER1_OWNER_DECISIONS.md",
    "sha256": "55a1fd84558a9590705bb82aa11db5e2b9136dd1d83a957d26614c435c707411",
+   "immutable": true
+  },
+  {
+   "key": "A94",
+   "path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+   "sha256": "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d",
+   "immutable": true
+  },
+  {
+   "key": "A94_MD",
+   "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+   "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c",
    "immutable": true
   },
   {
@@ -189,6 +250,26 @@
   "docs/orchestration/trigger_ledger_v2.jsonl (and fired_triggers.jsonl)",
   "docs/orchestration/runtime_state.json"
  ],
+ "a9_4_incorporation": {
+  "follow_on": "fo_a9_4_incorporation",
+  "trigger": "T_A9_4_INCORPORATION",
+  "base_commit": "875ed6d0a87202bc92706b28551b0e22eda2014d",
+  "decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+   "sha256": "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d"
+  },
+  "verbatim": {
+   "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+   "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+  },
+  "rule": "applied mechanically (owner step 2): only what A9.4 decides changed; ids and verified content otherwise kept",
+  "applied": [
+   "P2Q-05 (photodiode, optical access / window, amplifier, DAQ channel)",
+   "P1Q-14 (>= 525 V design withstand; 1.05 kV DC / 60 s initial DWV on isolation / feedthrough lines)",
+   "execution_decisions.p1_needed_rfqs (P1_NEEDED quotation dispatch)"
+  ],
+  "placement": "photodiode + amplifier + DAQ channel -> RFQ2-THRUST (owner family 'DAQ'; an optical, non-RF diagnostic that must stay independent of the RF impedance chain); optical access / window -> RFQ2-VAC (owner family 'RGA/diagnostic interfaces': a chamber port item)"
+ },
  "pending_parallel_lanes": {
   "P1": "docs/experiments/hall_icp/p1_icp_bench/",
   "P2_prep": "docs/experiments/hall_icp/p2_impedance_map/",
@@ -295,7 +376,8 @@
    "Prepared by the technical team (A9.3 OQ-RFQ-07). Commercial dispatch authority remains with P9E/Vyovrinda under Praveen's authorization. No automatic supplier contact: neither this repository nor Claude contacts any supplier; dispatch, if any, is an owner/procurement act.",
    "Compatibility: this is one of six supplier-speciality packages kept compatible by the common top-level interface document RFQ2-CIF (packages/RFQ2-00_common_interface.md). Shared interface ids, reference planes, connectors/flanges, potentials/grounding, gas species and units are defined there and govern over local wording.",
    "No prices are recorded; no supplier is ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
-   "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted."
+   "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted.",
+   "A9.4 (owner, 2026-09-30, execution_decisions.p1_needed_rfqs): the owner / procurement may SEND the lines tagged P1_NEEDED to suppliers for quotation - requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates. NOT authorized: purchase orders, advance payments, binding commitments. Claude / the technical team still never contacts suppliers."
   ],
   "items": [
    {
@@ -478,6 +560,24 @@
     "freeze_point": "NOW",
     "source": "A9.1 ICP-46 (carried RFQ-08-R05/R06)",
     "evidence_class": "owner-allocation"
+   },
+   {
+    "id": "CIF-G07",
+    "group": "potentials_grounding",
+    "title": "ICP body / collector isolation class (A9.4 P1Q-14)",
+    "value": {
+     "V_operating_max_V": 350.0,
+     "V_design_withstand_min_V": 525.0,
+     "initial_DWV_V_DC": 1050.0,
+     "initial_DWV_duration_s": 60.0,
+     "applies_to": "ICP body / collector circuits vs Hall anode, H-1 body/common, facility ground and other isolated circuits, where those potential differences can physically occur",
+     "rf_insulation_ICP_44": "OPEN (not covered)"
+    },
+    "status": "OWNER_GIVEN",
+    "freeze_point": "NOW",
+    "source": "A9.4 P1Q-14; row 81; ICD ICP-23",
+    "evidence_class": "owner-stated",
+    "note": "the ECSS high-voltage reference is owner-stated without standard / clause (verify); leakage acceptance and later reverification level TBD; distinct from CIF-G05 (gas lines, A9.3 ICPQ-06)"
    },
    {
     "id": "CIF-E01",
@@ -684,8 +784,8 @@
     "what": "collector lead and body-potential sense on the ICP module",
     "reference": "N-ICPREF; N-BODY",
     "units": "A; V",
-    "status": "TBD (collector V/I range A902-23)",
-    "source": "ICD ICP-20, ICP-21",
+    "status": "TBD (collector V/I range A902-23); isolation OWNER_GIVEN (CIF-G07: 350 V class, >= 525 V design withstand, 1.05 kV DC / 60 s initial DWV; A9.4 P1Q-14)",
+    "source": "ICD ICP-20, ICP-21; A9.4 P1Q-14",
     "dispatch": "P1_NEEDED"
    },
    {
@@ -752,6 +852,19 @@
     "status": "TBD (ICD ICP-44)",
     "source": "ICD ICP-44",
     "dispatch": "P1_NEEDED"
+   },
+   {
+    "id": "X-17",
+    "between": [
+     "RFQ2-VAC",
+     "RFQ2-THRUST"
+    ],
+    "what": "photodiode viewport / window line of sight -> photodiode + amplifier -> DAQ channel (A9.4 P2Q-05)",
+    "reference": "CIF-C02; CIF-T01",
+    "units": "V; nm",
+    "status": "OWNER_GIVEN (items); band / gain TBD",
+    "source": "A9.4 P2Q-05; RFQ2-VAC-N06; RFQ2-THRUST-N03",
+    "dispatch": "P1_NEEDED"
    }
   ],
   "package_file": "docs/procurement/rfq_a9_v2/packages/RFQ2-00_common_interface.md"
@@ -807,7 +920,8 @@
     "Prepared by the technical team (A9.3 OQ-RFQ-07). Commercial dispatch authority remains with P9E/Vyovrinda under Praveen's authorization. No automatic supplier contact: neither this repository nor Claude contacts any supplier; dispatch, if any, is an owner/procurement act.",
     "Compatibility: this is one of six supplier-speciality packages kept compatible by the common top-level interface document RFQ2-CIF (packages/RFQ2-00_common_interface.md). Shared interface ids, reference planes, connectors/flanges, potentials/grounding, gas species and units are defined there and govern over local wording.",
     "No prices are recorded; no supplier is ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
-    "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted."
+    "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted.",
+    "A9.4 (owner, 2026-09-30, execution_decisions.p1_needed_rfqs): the owner / procurement may SEND the lines tagged P1_NEEDED to suppliers for quotation - requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates. NOT authorized: purchase orders, advance payments, binding commitments. Claude / the technical team still never contacts suppliers."
    ],
    "line_items": [
     {
@@ -2748,7 +2862,8 @@
     "Prepared by the technical team (A9.3 OQ-RFQ-07). Commercial dispatch authority remains with P9E/Vyovrinda under Praveen's authorization. No automatic supplier contact: neither this repository nor Claude contacts any supplier; dispatch, if any, is an owner/procurement act.",
     "Compatibility: this is one of six supplier-speciality packages kept compatible by the common top-level interface document RFQ2-CIF (packages/RFQ2-00_common_interface.md). Shared interface ids, reference planes, connectors/flanges, potentials/grounding, gas species and units are defined there and govern over local wording.",
     "No prices are recorded; no supplier is ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
-    "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted."
+    "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted.",
+    "A9.4 (owner, 2026-09-30, execution_decisions.p1_needed_rfqs): the owner / procurement may SEND the lines tagged P1_NEEDED to suppliers for quotation - requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates. NOT authorized: purchase orders, advance payments, binding commitments. Claude / the technical team still never contacts suppliers."
    ],
    "line_items": [
     {
@@ -5739,7 +5854,8 @@
     ],
     "RGA/diagnostic interfaces": [
      "VAC-L05",
-     "VAC-L06"
+     "VAC-L06",
+     "VAC-L07"
     ]
    },
    "v1_packages_folded_in": [
@@ -5751,7 +5867,8 @@
     "Prepared by the technical team (A9.3 OQ-RFQ-07). Commercial dispatch authority remains with P9E/Vyovrinda under Praveen's authorization. No automatic supplier contact: neither this repository nor Claude contacts any supplier; dispatch, if any, is an owner/procurement act.",
     "Compatibility: this is one of six supplier-speciality packages kept compatible by the common top-level interface document RFQ2-CIF (packages/RFQ2-00_common_interface.md). Shared interface ids, reference planes, connectors/flanges, potentials/grounding, gas species and units are defined there and govern over local wording.",
     "No prices are recorded; no supplier is ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
-    "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted."
+    "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted.",
+    "A9.4 (owner, 2026-09-30, execution_decisions.p1_needed_rfqs): the owner / procurement may SEND the lines tagged P1_NEEDED to suppliers for quotation - requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates. NOT authorized: purchase orders, advance payments, binding commitments. Claude / the technical team still never contacts suppliers."
    ],
    "line_items": [
     {
@@ -5794,21 +5911,22 @@
     },
     {
      "id": "VAC-L03",
-     "item": "electrical vacuum feedthroughs (discharge, collector/bias, magnet, sensing) rated >= 8.33 A",
+     "item": "electrical vacuum feedthroughs (discharge, collector/bias, magnet, sensing) rated >= 8.33 A; ICP body / collector assemblies >= 525 V design withstand, 1.05 kV DC / 60 s DWV where ratings permit (A9.4 P1Q-14)",
      "qty": "TBD - requires the P1 bench plan (PENDING docs/experiments/hall_icp/p1_icp_bench/)",
-     "basis": "A9.3 OQ-A907-02; row 81",
+     "basis": "A9.3 OQ-A907-02; row 81; A9.4 P1Q-14",
      "dispatch": "P1_NEEDED",
      "option_line": false,
      "covers_owner_items": [
       "feedthroughs"
      ],
      "requirements": [
-      "RFQ2-VAC-N03"
+      "RFQ2-VAC-N03",
+      "RFQ2-VAC-N07"
      ],
      "v1_ref": null,
      "change": {
       "type": "NEW",
-      "why": "owner family item"
+      "why": "owner family item; A9.4 P1Q-14 DWV / design withstand added"
      }
     },
     {
@@ -5872,6 +5990,25 @@
      "change": {
       "type": "NEW",
       "why": "owner family item"
+     }
+    },
+    {
+     "id": "VAC-L07",
+     "item": "optical access / viewport or window with line of sight to the ICP source volume for the photodiode (A9.4 P2Q-05)",
+     "qty": 1,
+     "basis": "A9.4 P2Q-05",
+     "dispatch": "P1_NEEDED",
+     "option_line": false,
+     "covers_owner_items": [
+      "RGA/diagnostic interfaces"
+     ],
+     "requirements": [
+      "RFQ2-VAC-N06"
+     ],
+     "v1_ref": null,
+     "change": {
+      "type": "NEW",
+      "why": "A9.4 P2Q-05 procurement: optical access / window (a chamber / diagnostic interface item, hence the vacuum/facility package)"
      }
     }
    ],
@@ -6757,13 +6894,188 @@
       "v1_package": null,
       "why": "new line: owner vacuum/facility family names RGA/diagnostic interfaces"
      }
+    },
+    {
+     "id": "RFQ2-VAC-N06",
+     "package": "RFQ2-VAC",
+     "v1_id": null,
+     "title": "optical access / window for the photodiode (A9.4 P2Q-05)",
+     "requirement": "Chamber viewport (or in-vacuum window) with a line of sight to the ICP source volume for the photodiode of RFQ2-THRUST-N03; transmission band matched to the photodiode response; the line of sight is preserved by the module envelope (ICD ICP-07); supplier states the transmission band, flange family (CIF-C02) and the protection / replacement provision against window coating. Loss of line of sight makes a photodiode record invalid as unlit evidence (P2 reducer), so the view must be verifiable.",
+     "value": "TBD - requires the facility port layout (row 139), the module envelope (ICD ICP-07) and the photodiode selection (RFQ2-THRUST-N03)",
+     "units": "-; nm; mm",
+     "basis": "A9.4 P2Q-05; A9.3 OQ-RFQ-07 vacuum/facility family",
+     "sources": [
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P2Q-05",
+       "quote": "Add the photodiode, appropriate optical access/window, amplifier and DAQ channel to the P1_NEEDED/P2 preparation instrumentation quote.",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P2Q-05",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P2Q-05",
+       "quote": "Likewise, if the photodiode loses line-of-sight or saturates, the record is not automatically valid.",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P2Q-05",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_3",
+       "key": "A9.3",
+       "id": "OQ-RFQ-07",
+       "quote": "RGA/diagnostic interfaces",
+       "path": "docs/decisions/OD_2026_09_30_A9_3_POST_A9_TIER1_OWNER_DECISIONS.md",
+       "pointer": "/decisions/OQ-RFQ-07",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+       "sha256": "55a1fd84558a9590705bb82aa11db5e2b9136dd1d83a957d26614c435c707411"
+      },
+      {
+       "type": "deliverable_item",
+       "key": "ICD",
+       "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+       "id": "ICP-07",
+       "pointer": "/items/6",
+       "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c"
+      }
+     ],
+     "evidence_class": null,
+     "status": "OWNER_GIVEN",
+     "freeze_point": "NOW",
+     "dispatch": "P1_NEEDED",
+     "applies_to": [
+      "hall_icp_neutralizer"
+     ],
+     "note": "item OWNER_GIVEN (A9.4); dimensions / band TBD",
+     "change": {
+      "type": "NEW",
+      "v1_package": null,
+      "why": "new line: A9.4 P2Q-05 procurement (optical access / window)"
+     }
+    },
+    {
+     "id": "RFQ2-VAC-N07",
+     "package": "RFQ2-VAC",
+     "v1_id": null,
+     "title": "electrical feedthrough assemblies on ICP body / collector circuits: >= 525 V design withstand, 1.05 kV DC / 60 s DWV where ratings permit (A9.4 P1Q-14)",
+     "requirement": "Electrical feedthrough assemblies that carry ICP body / collector circuits (or isolate them from the H-1 anode, H-1 body/common or facility ground) have a design withstand >= 525 V and are DWV-tested at 1.05 kV DC for 60 s where their ratings permit (current-limited, leakage recorded); the supplier states the rated withstand per pin / assembly and supplies the test record or certificate where performed. RF feedthroughs stay under ICD ICP-44 (OPEN) and RFQ2-RF.",
+     "value": {
+      "V_design_withstand_min_V": 525.0,
+      "DWV_V_DC": 1050.0,
+      "DWV_duration_s": 60.0,
+      "leakage_acceptance": "TBD - requires the feedthrough ratings (not owner-given)"
+     },
+     "units": "V; s",
+     "basis": "A9.4 P1Q-14",
+     "sources": [
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P1Q-14",
+       "quote": "Extend the existing:",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P1Q-14",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P1Q-14",
+       "quote": "corresponding to a 1.5× design margin.",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P1Q-14",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P1Q-14",
+       "quote": "This is a minimum design basis, not the qualification-test voltage.",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P1Q-14",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P1Q-14",
+       "quote": "1.05~kV~DC",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P1Q-14",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P1Q-14",
+       "quote": "60~s",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P1Q-14",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P1Q-14",
+       "quote": "where component ratings permit.",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P1Q-14",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P1Q-14",
+       "quote": "passive insulation paths and feedthrough assemblies",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P1Q-14",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_3",
+       "key": "A9.3",
+       "id": "OQ-RFQ-07",
+       "quote": "feedthroughs",
+       "path": "docs/decisions/OD_2026_09_30_A9_3_POST_A9_TIER1_OWNER_DECISIONS.md",
+       "pointer": "/decisions/OQ-RFQ-07",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+       "sha256": "55a1fd84558a9590705bb82aa11db5e2b9136dd1d83a957d26614c435c707411"
+      }
+     ],
+     "evidence_class": "owner-stated",
+     "status": "OWNER_GIVEN",
+     "freeze_point": "NOW",
+     "dispatch": "P1_NEEDED",
+     "applies_to": [
+      "hall_c1_reference",
+      "hall_icp_neutralizer"
+     ],
+     "note": null,
+     "change": {
+      "type": "NEW",
+      "v1_package": null,
+      "why": "new: A9.4 P1Q-14 applied to the feedthrough lines"
+     }
     }
    ],
    "p1_needed_line_items": [
     "VAC-L01",
     "VAC-L02",
     "VAC-L03",
-    "VAC-L04"
+    "VAC-L04",
+    "VAC-L07"
    ],
    "later_line_items": [
     "VAC-L05",
@@ -6808,6 +7120,14 @@
     },
     {
      "text": "feedthrough current (>= 8.33 A stand ceiling) and voltage ratings per pin",
+     "carried_from": null
+    },
+    {
+     "text": "rated withstand per ICP body / collector feedthrough assembly (>= 525 V) and whether it permits the 1.05 kV DC / 60 s DWV; DWV record or certificate where performed (A9.4 P1Q-14)",
+     "carried_from": null
+    },
+    {
+     "text": "viewport / window transmission band and flange family (A9.4 P2Q-05)",
      "carried_from": null
     }
    ],
@@ -6977,7 +7297,8 @@
     "X-06",
     "X-10",
     "X-14",
-    "X-15"
+    "X-15",
+    "X-17"
    ],
    "package_file": "docs/procurement/rfq_a9_v2/packages/RFQ2-03_vacuum_facility.md",
    "facilities_recorded_R5": {
@@ -7141,7 +7462,8 @@
     "Prepared by the technical team (A9.3 OQ-RFQ-07). Commercial dispatch authority remains with P9E/Vyovrinda under Praveen's authorization. No automatic supplier contact: neither this repository nor Claude contacts any supplier; dispatch, if any, is an owner/procurement act.",
     "Compatibility: this is one of six supplier-speciality packages kept compatible by the common top-level interface document RFQ2-CIF (packages/RFQ2-00_common_interface.md). Shared interface ids, reference planes, connectors/flanges, potentials/grounding, gas species and units are defined there and govern over local wording.",
     "No prices are recorded; no supplier is ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
-    "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted."
+    "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted.",
+    "A9.4 (owner, 2026-09-30, execution_decisions.p1_needed_rfqs): the owner / procurement may SEND the lines tagged P1_NEEDED to suppliers for quotation - requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates. NOT authorized: purchase orders, advance payments, binding commitments. Claude / the technical team still never contacts suppliers."
    ],
    "line_items": [
     {
@@ -7205,21 +7527,22 @@
     },
     {
      "id": "HE-L04",
-     "item": "isolation hardware for the discharge and collector/bias circuits (350 V + margin)",
+     "item": "isolation hardware for the discharge and collector/bias circuits (350 V class, incl. the ICP body / collector circuits per A9.4 P1Q-14: >= 525 V design withstand; 1.05 kV DC / 60 s initial DWV of passive insulation paths where ratings permit)",
      "qty": "TBD - requires the P1 bench plan (PENDING docs/experiments/hall_icp/p1_icp_bench/)",
-     "basis": "row 81; ICD ICP-23",
+     "basis": "row 81; ICD ICP-23; A9.4 P1Q-14",
      "dispatch": "P1_NEEDED",
      "option_line": false,
      "covers_owner_items": [
       "isolation"
      ],
      "requirements": [
-      "RFQ-05-R08"
+      "RFQ-05-R08",
+      "RFQ2-HALLEL-N04"
      ],
      "v1_ref": null,
      "change": {
       "type": "NEW",
-      "why": "owner family item"
+      "why": "owner family item; A9.4 P1Q-14 DWV / design withstand added"
      }
     },
     {
@@ -9283,6 +9606,136 @@
       "v1_package": null,
       "why": "new: A9.3 OQ-VI-05 recorded quantities"
      }
+    },
+    {
+     "id": "RFQ2-HALLEL-N04",
+     "package": "RFQ2-HALLEL",
+     "v1_id": null,
+     "title": "ICP body / collector isolation: 350 V class, >= 525 V design withstand, 1.05 kV / 60 s initial DWV (A9.4 P1Q-14)",
+     "requirement": "Isolation of the ICP body / collector circuits relative to the Hall anode, the H-1 body/common, facility ground and other isolated circuits (where those potential differences can physically occur) is designed to the 350 V operating class with V_design,withstand >= 525 V (1.5 x; a minimum design basis, not the test voltage). Passive insulation paths and feedthrough assemblies are qualified at 1.05 kV DC for 60 s where component ratings permit (current-limited, sensitive electronics disconnected where necessary, leakage recorded, in the relevant insulation configuration, before first HV/RF operation), plus representative-pressure/gas testing of Paschen-risk paths; the supplier states each item's rated withstand and whether it permits the 1.05 kV / 60 s test, and supplies the DWV record or certificate where performed. The test is not repeated before each campaign (later reverification at a lower controlled level, TBD). The owner cites ECSS high-voltage practice without a standard / clause id (owner-stated; verify). RF insulation of the antenna / matching network (ICD ICP-44: RF peak voltage, RF current, RF creepage/clearance, combined RF + DC stress, vacuum/gas breakdown) is NOT covered and stays OPEN; the ~1 kV representative-gas qualification of ICP gas lines (A9.3 ICPQ-06, RFQ2-GAS-N04) is a separate requirement.",
+     "value": {
+      "V_operating_max_V": 350.0,
+      "V_design_withstand_min_V": 525.0,
+      "initial_DWV_V_DC": 1050.0,
+      "initial_DWV_duration_s": 60.0,
+      "leakage_acceptance": "TBD - requires the item ratings (not owner-given)",
+      "later_reverification": "TBD - owner-registered lower controlled level / procedure",
+      "ICP_44_rf_insulation": "OPEN"
+     },
+     "units": "V; s",
+     "basis": "A9.4 P1Q-14; row 81; ICD ICP-23",
+     "sources": [
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P1Q-14",
+       "quote": "Extend the existing:",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P1Q-14",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P1Q-14",
+       "quote": "corresponding to a 1.5× design margin.",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P1Q-14",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P1Q-14",
+       "quote": "This is a minimum design basis, not the qualification-test voltage.",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P1Q-14",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P1Q-14",
+       "quote": "1.05~kV~DC",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P1Q-14",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P1Q-14",
+       "quote": "60~s",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P1Q-14",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P1Q-14",
+       "quote": "where component ratings permit.",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P1Q-14",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P1Q-14",
+       "quote": "This decision does not close ICP-44.",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P1Q-14",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "owner_row",
+       "row": 81,
+       "covers_ids": [
+        "HWQ-03"
+       ],
+       "quote": "rate H-1, C1 reference, discharge supply, isolation and diagnostics to the relaxed 350 V end plus appropriate transient/qualification margin",
+       "answer_sha256": "fef317551e932312426b78696088bf646a7d279f2d1cfaeafe1e34ca60c13376",
+       "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json"
+      },
+      {
+       "type": "deliverable_item",
+       "key": "ICD",
+       "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+       "id": "ICP-23",
+       "pointer": "/items/22",
+       "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c"
+      },
+      {
+       "type": "deliverable_item",
+       "key": "ICD",
+       "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+       "id": "ICP-44",
+       "pointer": "/items/43",
+       "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c"
+      }
+     ],
+     "evidence_class": "owner-stated",
+     "status": "OWNER_GIVEN",
+     "freeze_point": "NOW",
+     "dispatch": "P1_NEEDED",
+     "applies_to": [
+      "hall_c1_reference",
+      "hall_icp_neutralizer"
+     ],
+     "note": "the ECSS reference is owner-stated (A9.4 recorder_flags[1]: standard and clause not identified - verify)",
+     "change": {
+      "type": "NEW",
+      "v1_package": null,
+      "why": "new: A9.4 P1Q-14 (ICP_350V_CLASS / 1.05kV_INITIAL_DWV)"
+     }
     }
    ],
    "p1_needed_line_items": [
@@ -9332,6 +9785,10 @@
     {
      "text": "pulse energy recording verified (row 89)",
      "carried_from": "v1 RFQ-08 acceptance[2]"
+    },
+    {
+     "text": "initial DWV record of the ICP body / collector passive insulation paths: 1.05 kV DC, 60 s, current-limited, leakage recorded, before first HV/RF operation, where component ratings permit; not repeated before each campaign (A9.4 P1Q-14)",
+     "carried_from": null
     }
    ],
    "calibration_traceability": [
@@ -9383,6 +9840,10 @@
     },
     {
      "text": "current capability of every supply/sensor relative to the 8.33 A stand ceiling (A9.3 OQ-A907-02)",
+     "carried_from": null
+    },
+    {
+     "text": "rated design withstand (>= 525 V) of each ICP body / collector isolation item (A9.4 P1Q-14)",
      "carried_from": null
     }
    ],
@@ -9601,7 +10062,8 @@
     "Prepared by the technical team (A9.3 OQ-RFQ-07). Commercial dispatch authority remains with P9E/Vyovrinda under Praveen's authorization. No automatic supplier contact: neither this repository nor Claude contacts any supplier; dispatch, if any, is an owner/procurement act.",
     "Compatibility: this is one of six supplier-speciality packages kept compatible by the common top-level interface document RFQ2-CIF (packages/RFQ2-00_common_interface.md). Shared interface ids, reference planes, connectors/flanges, potentials/grounding, gas species and units are defined there and govern over local wording.",
     "No prices are recorded; no supplier is ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
-    "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted."
+    "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted.",
+    "A9.4 (owner, 2026-09-30, execution_decisions.p1_needed_rfqs): the owner / procurement may SEND the lines tagged P1_NEEDED to suppliers for quotation - requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates. NOT authorized: purchase orders, advance payments, binding commitments. Claude / the technical team still never contacts suppliers."
    ],
    "line_items": [
     {
@@ -10729,7 +11191,9 @@
     ],
     "DAQ": [
      "TH-L04",
-     "TH-L05"
+     "TH-L05",
+     "TH-L07",
+     "TH-L08"
     ],
     "traceability hardware": [
      "TH-L06"
@@ -10744,7 +11208,8 @@
     "Prepared by the technical team (A9.3 OQ-RFQ-07). Commercial dispatch authority remains with P9E/Vyovrinda under Praveen's authorization. No automatic supplier contact: neither this repository nor Claude contacts any supplier; dispatch, if any, is an owner/procurement act.",
     "Compatibility: this is one of six supplier-speciality packages kept compatible by the common top-level interface document RFQ2-CIF (packages/RFQ2-00_common_interface.md). Shared interface ids, reference planes, connectors/flanges, potentials/grounding, gas species and units are defined there and govern over local wording.",
     "No prices are recorded; no supplier is ranked or selected; catalogue data appear only as REFERENCE with the citation/URL and access record of the web track.",
-    "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted."
+    "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted.",
+    "A9.4 (owner, 2026-09-30, execution_decisions.p1_needed_rfqs): the owner / procurement may SEND the lines tagged P1_NEEDED to suppliers for quotation - requests for quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates. NOT authorized: purchase orders, advance payments, binding commitments. Claude / the technical team still never contacts suppliers."
    ],
    "line_items": [
     {
@@ -10895,6 +11360,45 @@
      "change": {
       "type": "NEW",
       "why": "owner family item"
+     }
+    },
+    {
+     "id": "TH-L07",
+     "item": "optical-emission photodiode + amplifier (REQUIRED ignition / unlit and E/H indicator, INS-P2-10; A9.4 P2Q-05)",
+     "qty": "1 set",
+     "basis": "A9.4 P2Q-05",
+     "dispatch": "P1_NEEDED",
+     "option_line": false,
+     "covers_owner_items": [
+      "DAQ"
+     ],
+     "requirements": [
+      "RFQ2-THRUST-N03"
+     ],
+     "v1_ref": null,
+     "change": {
+      "type": "NEW",
+      "why": "A9.4 P2Q-05 procurement: photodiode + amplifier on the P1 DAQ (optical, non-RF diagnostic kept independent of the RF chain, hence not RFQ2-RF)"
+     }
+    },
+    {
+     "id": "TH-L08",
+     "item": "DAQ channel for the photodiode on the common time base, simultaneous with P_refl, antenna current, collector / current-path and pressure channels (A9.4 P2Q-05)",
+     "qty": 1,
+     "basis": "A9.4 P2Q-05; INS-18",
+     "dispatch": "P1_NEEDED",
+     "option_line": false,
+     "covers_owner_items": [
+      "DAQ"
+     ],
+     "requirements": [
+      "RFQ2-THRUST-N03",
+      "RFQ2-THRUST-N01"
+     ],
+     "v1_ref": null,
+     "change": {
+      "type": "NEW",
+      "why": "A9.4 P2Q-05 procurement: DAQ channel"
      }
     }
    ],
@@ -11882,7 +12386,7 @@
      "package": "RFQ2-THRUST",
      "v1_id": null,
      "title": "P1 DAQ channel list and time base",
-     "requirement": "Synchronized acquisition on one common time base of at least: V_d(t), I_d(t), I_e,ICP(t), P_RF,fwd(t), P_RF,refl(t), collector/reference potentials (A9.3 OQ-VI-05), the ICD ICP-34 list (P_fwd, P_refl, RF interlock state, V_coll, I_coll, V_body, ICP temperatures, p_icp, flow), P_mains,in (RFQ2-RF-N02), pressure and flow channels; current channels ranged to the 8.33 A stand ceiling. Channel count, sample rate and bandwidth follow the P1 plan.",
+     "requirement": "Synchronized acquisition on one common time base of at least: V_d(t), I_d(t), I_e,ICP(t), P_RF,fwd(t), P_RF,refl(t), collector/reference potentials (A9.3 OQ-VI-05), the ICD ICP-34 list (P_fwd, P_refl, RF interlock state, V_coll, I_coll, V_body, ICP temperatures, p_icp, flow), P_mains,in (RFQ2-RF-N02), pressure and flow channels, and the optical-emission photodiode channel (RFQ2-THRUST-N03, A9.4 P2Q-05); current channels ranged to the 8.33 A stand ceiling. Channel count, sample rate and bandwidth follow the P1 plan.",
      "value": {
       "channels_min": "OQ-VI-05 list + ICP-34 list",
       "current_range_A_min": 8.333333,
@@ -11942,6 +12446,16 @@
        "path": "docs/experiments/hall_icp/p1_icp_bench/",
        "what": "DAQ channel count, sample rate, bandwidth",
        "note": "parallel lane not in this base; nothing is read from it"
+      },
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P2Q-05",
+       "quote": "Add the photodiode, appropriate optical access/window, amplifier and DAQ channel to the P1_NEEDED/P2 preparation instrumentation quote.",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P2Q-05",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
       }
      ],
      "evidence_class": "owner-stated",
@@ -12010,12 +12524,98 @@
       "v1_package": null,
       "why": "new line: owner thrust/metrology family names traceability hardware"
      }
+    },
+    {
+     "id": "RFQ2-THRUST-N03",
+     "package": "RFQ2-THRUST",
+     "v1_id": null,
+     "title": "optical-emission photodiode + amplifier + DAQ channel (A9.4 P2Q-05)",
+     "requirement": "Quote an optical-emission photodiode with its amplifier and one DAQ channel on the common time base (INS-18), viewing the ICP source volume through the optical access / window of RFQ2-VAC-N06. It is the REQUIRED independent plasma ignition / unlit and E-mode / H-mode transition indicator (INS-P2-10), physically independent of the RF impedance measurement chain; it is logged simultaneously with reflected RF power, antenna current, collector / current-path response and pressure. Supplier states spectral response, dark current / noise, linear range and saturation (over-range) level and its indication, amplifier gain settings and bandwidth. No photodiode threshold is requested or set: the threshold is established from dark / background, RF-powered known-unlit and known-lit P1 plasma measurements and frozen before the P2 map.",
+     "value": {
+      "item": "photodiode + amplifier + 1 DAQ channel (REQUIRED, A9.4 P2Q-05)",
+      "spectral_band": "TBD - requires the module optical access and the P1 emission records",
+      "gain_bandwidth_saturation": "TBD - requires the P1 dark / unlit / lit emission levels",
+      "threshold": "none requested (frozen from P1 records before the P2 map)"
+     },
+     "units": "-; V/A; Hz",
+     "basis": "A9.4 P2Q-05",
+     "sources": [
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P2Q-05",
+       "quote": "Add the photodiode, appropriate optical access/window, amplifier and DAQ channel to the P1_NEEDED/P2 preparation instrumentation quote.",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P2Q-05",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P2Q-05",
+       "quote": "The photodiode is the required independent optical indicator, while RF/electrical signals provide corroboration.",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P2Q-05",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_4",
+       "key": "A9.4",
+       "id": "P2Q-05",
+       "quote": "Do not assign an arbitrary photodiode voltage threshold now.",
+       "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+       "pointer": "/decisions/P2Q-05",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+       "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+      },
+      {
+       "type": "a9_3",
+       "key": "A9.3",
+       "id": "OQ-RFQ-07",
+       "quote": "DAQ",
+       "path": "docs/decisions/OD_2026_09_30_A9_3_POST_A9_TIER1_OWNER_DECISIONS.md",
+       "pointer": "/decisions/OQ-RFQ-07",
+       "json_path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+       "sha256": "55a1fd84558a9590705bb82aa11db5e2b9136dd1d83a957d26614c435c707411"
+      },
+      {
+       "type": "deliverable_item",
+       "key": "INS",
+       "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+       "id": "INS-18",
+       "pointer": "/instruments/17",
+       "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96"
+      },
+      {
+       "type": "pending_lane",
+       "path": "docs/experiments/hall_icp/p2_impedance_map/",
+       "what": "INS-P2-10 photodiode specification",
+       "note": "parallel lane not in this base; nothing is read from it"
+      }
+     ],
+     "evidence_class": "owner-stated",
+     "status": "OWNER_GIVEN",
+     "freeze_point": "NOW",
+     "dispatch": "P1_NEEDED",
+     "applies_to": [
+      "hall_icp_neutralizer"
+     ],
+     "note": "placed in the thrust/metrology package (owner family 'DAQ'): it is an optical, non-RF diagnostic channel on the P1 DAQ and must stay independent of the RF impedance chain, so it is not quoted in RFQ2-RF",
+     "change": {
+      "type": "NEW",
+      "v1_package": null,
+      "why": "new line: A9.4 P2Q-05 procurement (photodiode, amplifier, DAQ channel)"
+     }
     }
    ],
    "p1_needed_line_items": [
     "TH-L04",
     "TH-L05",
-    "TH-L06"
+    "TH-L06",
+    "TH-L07",
+    "TH-L08"
    ],
    "later_line_items": [
     "TH-L01",
@@ -12042,6 +12642,10 @@
     },
     {
      "text": "DAQ channel audit against RFQ2-THRUST-N01 / ICD ICP-34 before first P1 run",
+     "carried_from": null
+    },
+    {
+     "text": "photodiode channel check: dark offset recorded and the saturation / over-range indication demonstrated on the DAQ (A9.4 P2Q-05); no threshold set at acceptance",
      "carried_from": null
     }
    ],
@@ -12335,7 +12939,8 @@
     "X-09",
     "X-12",
     "X-13",
-    "X-15"
+    "X-15",
+    "X-17"
    ],
    "package_file": "docs/procurement/rfq_a9_v2/packages/RFQ2-06_thrust_metrology.md"
   }
@@ -12477,7 +13082,7 @@
   {
    "package": "RFQ2-VAC",
    "line_item": "VAC-L03",
-   "item": "electrical vacuum feedthroughs (discharge, collector/bias, magnet, sensing) rated >= 8.33 A",
+   "item": "electrical vacuum feedthroughs (discharge, collector/bias, magnet, sensing) rated >= 8.33 A; ICP body / collector assemblies >= 525 V design withstand, 1.05 kV DC / 60 s DWV where ratings permit (A9.4 P1Q-14)",
    "qty": "TBD - requires the P1 bench plan (PENDING docs/experiments/hall_icp/p1_icp_bench/)",
    "option_line": false
   },
@@ -12486,6 +13091,13 @@
    "line_item": "VAC-L04",
    "item": "gas feedthroughs",
    "qty": "TBD - requires the P1 bench plan (PENDING docs/experiments/hall_icp/p1_icp_bench/)",
+   "option_line": false
+  },
+  {
+   "package": "RFQ2-VAC",
+   "line_item": "VAC-L07",
+   "item": "optical access / viewport or window with line of sight to the ICP source volume for the photodiode (A9.4 P2Q-05)",
+   "qty": 1,
    "option_line": false
   },
   {
@@ -12512,7 +13124,7 @@
   {
    "package": "RFQ2-HALLEL",
    "line_item": "HE-L04",
-   "item": "isolation hardware for the discharge and collector/bias circuits (350 V + margin)",
+   "item": "isolation hardware for the discharge and collector/bias circuits (350 V class, incl. the ICP body / collector circuits per A9.4 P1Q-14: >= 525 V design withstand; 1.05 kV DC / 60 s initial DWV of passive insulation paths where ratings permit)",
    "qty": "TBD - requires the P1 bench plan (PENDING docs/experiments/hall_icp/p1_icp_bench/)",
    "option_line": false
   },
@@ -12591,6 +13203,20 @@
    "line_item": "TH-L06",
    "item": "traceability hardware: calibration references / certificates for DAQ V/I/T channels, RF power sensors and the power analyzer",
    "qty": "TBD - requires the P1 bench plan (PENDING docs/experiments/hall_icp/p1_icp_bench/)",
+   "option_line": false
+  },
+  {
+   "package": "RFQ2-THRUST",
+   "line_item": "TH-L07",
+   "item": "optical-emission photodiode + amplifier (REQUIRED ignition / unlit and E/H indicator, INS-P2-10; A9.4 P2Q-05)",
+   "qty": "1 set",
+   "option_line": false
+  },
+  {
+   "package": "RFQ2-THRUST",
+   "line_item": "TH-L08",
+   "item": "DAQ channel for the photodiode on the common time base, simultaneous with P_refl, antenna current, collector / current-path and pressure channels (A9.4 P2Q-05)",
+   "qty": 1,
    "option_line": false
   }
  ],
@@ -12687,6 +13313,21 @@
     "id": "CL-11",
     "change": "P1 DAQ / sensing lines for the OQ-VI-05 topology-control records (non-scoring)",
     "source": "A9.3 OQ-VI-05"
+   },
+   {
+    "id": "CL-12",
+    "change": "A9.4 incorporation: photodiode + amplifier (TH-L07) and DAQ channel (TH-L08) in the thrust/metrology package, optical access / window (VAC-L07) in the vacuum/facility package, all P1_NEEDED; requirements RFQ2-THRUST-N03, RFQ2-VAC-N06; interface X-17",
+    "source": "A9.4 P2Q-05"
+   },
+   {
+    "id": "CL-13",
+    "change": "A9.4 incorporation: ICP body / collector isolation 350 V class, >= 525 V design withstand, 1.05 kV DC / 60 s initial DWV added to the isolation (HE-L04, RFQ2-HALLEL-N04) and feedthrough (VAC-L03, RFQ2-VAC-N07) lines; CIF-G07; ICP-44 RF insulation stays OPEN",
+    "source": "A9.4 P1Q-14"
+   },
+   {
+    "id": "CL-14",
+    "change": "A9.4 incorporation: owner / procurement authorized to SEND the P1_NEEDED packages for quotation (RFQ, clarification, indicative lead time, commercial quotation, datasheets / certificates); no purchase orders, advance payments or binding commitments; no supplier contact by Claude / the team (banner, dispatch_authority, H3 gate)",
+    "source": "A9.4 execution_decisions.p1_needed_rfqs"
    }
   ],
   "per_requirement": [
@@ -13994,6 +14635,42 @@
     "change": "NEW",
     "why": "new line: owner thrust/metrology family names traceability hardware",
     "dispatch": "P1_NEEDED"
+   },
+   {
+    "v2_id": "RFQ2-THRUST-N03",
+    "v1_id": null,
+    "v1_package": null,
+    "v2_package": "RFQ2-THRUST",
+    "change": "NEW",
+    "why": "new line: A9.4 P2Q-05 procurement (photodiode, amplifier, DAQ channel)",
+    "dispatch": "P1_NEEDED"
+   },
+   {
+    "v2_id": "RFQ2-VAC-N06",
+    "v1_id": null,
+    "v1_package": null,
+    "v2_package": "RFQ2-VAC",
+    "change": "NEW",
+    "why": "new line: A9.4 P2Q-05 procurement (optical access / window)",
+    "dispatch": "P1_NEEDED"
+   },
+   {
+    "v2_id": "RFQ2-HALLEL-N04",
+    "v1_id": null,
+    "v1_package": null,
+    "v2_package": "RFQ2-HALLEL",
+    "change": "NEW",
+    "why": "new: A9.4 P1Q-14 (ICP_350V_CLASS / 1.05kV_INITIAL_DWV)",
+    "dispatch": "P1_NEEDED"
+   },
+   {
+    "v2_id": "RFQ2-VAC-N07",
+    "v1_id": null,
+    "v1_package": null,
+    "v2_package": "RFQ2-VAC",
+    "change": "NEW",
+    "why": "new: A9.4 P1Q-14 applied to the feedthrough lines",
+    "dispatch": "P1_NEEDED"
    }
   ],
   "per_line_item": [
@@ -14290,7 +14967,7 @@
     "v2_package": "RFQ2-VAC",
     "v1_ref": null,
     "change": "NEW",
-    "why": "owner family item",
+    "why": "owner family item; A9.4 P1Q-14 DWV / design withstand added",
     "dispatch": "P1_NEEDED",
     "option_line": false
    },
@@ -14319,6 +14996,15 @@
     "change": "NEW",
     "why": "owner family item",
     "dispatch": "LATER",
+    "option_line": false
+   },
+   {
+    "v2_id": "VAC-L07",
+    "v2_package": "RFQ2-VAC",
+    "v1_ref": null,
+    "change": "NEW",
+    "why": "A9.4 P2Q-05 procurement: optical access / window (a chamber / diagnostic interface item, hence the vacuum/facility package)",
+    "dispatch": "P1_NEEDED",
     "option_line": false
    },
    {
@@ -14353,7 +15039,7 @@
     "v2_package": "RFQ2-HALLEL",
     "v1_ref": null,
     "change": "NEW",
-    "why": "owner family item",
+    "why": "owner family item; A9.4 P1Q-14 DWV / design withstand added",
     "dispatch": "P1_NEEDED",
     "option_line": false
    },
@@ -14590,12 +15276,30 @@
     "why": "owner family item",
     "dispatch": "P1_NEEDED",
     "option_line": false
+   },
+   {
+    "v2_id": "TH-L07",
+    "v2_package": "RFQ2-THRUST",
+    "v1_ref": null,
+    "change": "NEW",
+    "why": "A9.4 P2Q-05 procurement: photodiode + amplifier on the P1 DAQ (optical, non-RF diagnostic kept independent of the RF chain, hence not RFQ2-RF)",
+    "dispatch": "P1_NEEDED",
+    "option_line": false
+   },
+   {
+    "v2_id": "TH-L08",
+    "v2_package": "RFQ2-THRUST",
+    "v1_ref": null,
+    "change": "NEW",
+    "why": "A9.4 P2Q-05 procurement: DAQ channel",
+    "dispatch": "P1_NEEDED",
+    "option_line": false
    }
   ],
   "counts": {
    "CARRIED_MODIFIED": 13,
    "CARRIED_UNCHANGED": 104,
-   "NEW": 27,
+   "NEW": 31,
    "SUPERSEDED_NOT_QUOTED": 1
   }
  },
@@ -16787,6 +17491,7 @@
     "A9.3 OQ-A907-02",
     "A9.3 OQ-RFQ-07",
     "A9.3 OQ-VI-05",
+    "A9.4 P2Q-05",
     "ICD:ICP-34",
     "INS:INS-18",
     "PENDING docs/experiments/hall_icp/p1_icp_bench/"
@@ -16807,6 +17512,67 @@
     "row 126"
    ],
    "status": "PENDING",
+   "freeze_point": "NOW",
+   "dispatch": "P1_NEEDED",
+   "change": "NEW"
+  },
+  {
+   "requirement": "RFQ2-THRUST-N03",
+   "v1_id": null,
+   "package": "RFQ2-THRUST",
+   "title": "optical-emission photodiode + amplifier + DAQ channel (A9.4 P2Q-05)",
+   "sources": [
+    "A9.3 OQ-RFQ-07",
+    "A9.4 P2Q-05",
+    "INS:INS-18",
+    "PENDING docs/experiments/hall_icp/p2_impedance_map/"
+   ],
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW",
+   "dispatch": "P1_NEEDED",
+   "change": "NEW"
+  },
+  {
+   "requirement": "RFQ2-VAC-N06",
+   "v1_id": null,
+   "package": "RFQ2-VAC",
+   "title": "optical access / window for the photodiode (A9.4 P2Q-05)",
+   "sources": [
+    "A9.3 OQ-RFQ-07",
+    "A9.4 P2Q-05",
+    "ICD:ICP-07"
+   ],
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW",
+   "dispatch": "P1_NEEDED",
+   "change": "NEW"
+  },
+  {
+   "requirement": "RFQ2-HALLEL-N04",
+   "v1_id": null,
+   "package": "RFQ2-HALLEL",
+   "title": "ICP body / collector isolation: 350 V class, >= 525 V design withstand, 1.05 kV / 60 s initial DWV (A9.4 P1Q-14)",
+   "sources": [
+    "A9.4 P1Q-14",
+    "ICD:ICP-23",
+    "ICD:ICP-44",
+    "row 81"
+   ],
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW",
+   "dispatch": "P1_NEEDED",
+   "change": "NEW"
+  },
+  {
+   "requirement": "RFQ2-VAC-N07",
+   "v1_id": null,
+   "package": "RFQ2-VAC",
+   "title": "electrical feedthrough assemblies on ICP body / collector circuits: >= 525 V design withstand, 1.05 kV DC / 60 s DWV where ratings permit (A9.4 P1Q-14)",
+   "sources": [
+    "A9.3 OQ-RFQ-07",
+    "A9.4 P1Q-14"
+   ],
+   "status": "OWNER_GIVEN",
    "freeze_point": "NOW",
    "dispatch": "P1_NEEDED",
    "change": "NEW"
@@ -17119,7 +17885,7 @@
      "HWQ-03"
     ],
     "answer_sha256": "fef317551e932312426b78696088bf646a7d279f2d1cfaeafe1e34ca60c13376",
-    "how_applied": "applied in RFQ2-HALLEL-R02, RFQ2-HALLEL-R05, RFQ2-VAC-N03"
+    "how_applied": "applied in RFQ2-HALLEL-N04, RFQ2-HALLEL-R02, RFQ2-HALLEL-R05, RFQ2-VAC-N03"
    },
    {
     "row": 83,
@@ -17482,6 +18248,55 @@
     "how_applied": "applied in RFQ2-THRUST-R18, RFQ2-VAC-N01, RFQ2-VAC-N02, RFQ2-VAC-R08"
    }
   ],
+  "a9_4": [
+   {
+    "id": "P2Q-05",
+    "status": "OWNER_DECIDED — PHOTODIODE_REQUIRED",
+    "how_applied": "photodiode + amplifier + DAQ channel (TH-L07, TH-L08; RFQ2-THRUST-N03) and optical access / window (VAC-L07; RFQ2-VAC-N06) added as P1_NEEDED lines; RFQ2-THRUST-N01 channel list extended; X-17",
+    "applied_in": [
+     "RFQ2-THRUST-N01",
+     "RFQ2-THRUST-N03",
+     "RFQ2-VAC-N06"
+    ],
+    "path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+    "sha256": "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d"
+   },
+   {
+    "id": "P1Q-14",
+    "status": "OWNER_DECIDED — ICP_350V_CLASS / 1.05kV_INITIAL_DWV",
+    "how_applied": "RFQ2-HALLEL-N04, RFQ2-VAC-N07, CIF-G07; HE-L04 and VAC-L03 carry the >= 525 V design withstand and the 1.05 kV DC / 60 s initial DWV; ICP-44 RF insulation OPEN",
+    "applied_in": [
+     "RFQ2-HALLEL-N04",
+     "RFQ2-VAC-N07"
+    ],
+    "path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+    "sha256": "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d"
+   },
+   {
+    "id": "p1_needed_rfqs",
+    "status": "AUTHORIZED (execution decision)",
+    "how_applied": "P1_NEEDED packages may be sent for quotation by the owner / procurement (banner, dispatch_authority.a9_4_quotation_dispatch, H3 gate); no PO / advance payment / binding commitment; no supplier contact by Claude / the team",
+    "applied_in": [
+     "RFQ2-CIF",
+     "RFQ2-GAS",
+     "RFQ2-HALLEL",
+     "RFQ2-MECH",
+     "RFQ2-RF",
+     "RFQ2-THRUST",
+     "RFQ2-VAC"
+    ],
+    "path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+    "sha256": "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d"
+   },
+   {
+    "id": "P1Q-10 / P1Q-13",
+    "status": "OWNER_DECIDED — CAPACITY_EXTRACTION_FORM; OWNER_DECIDED — ANODE_FLOATING / BODY_SINGLE_POINT_METERED_GROUND",
+    "how_applied": "no RFQ line changed in this incorporation (bench measurement rules; applied in the P1 lane); whether the H-1 body metered ground-current monitor and the high-impedance V_anode channel become explicit lines is asked in OQ-RFQV2-07",
+    "applied_in": [],
+    "path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+    "sha256": "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d"
+   }
+  ],
   "a9_1": [
    {
     "id": "A9-03-Vd",
@@ -17682,11 +18497,14 @@
      "RFQ2-THRUST",
      "RFQ2-THRUST-N01",
      "RFQ2-THRUST-N02",
+     "RFQ2-THRUST-N03",
      "RFQ2-VAC",
      "RFQ2-VAC-N01",
      "RFQ2-VAC-N02",
      "RFQ2-VAC-N04",
-     "RFQ2-VAC-N05"
+     "RFQ2-VAC-N05",
+     "RFQ2-VAC-N06",
+     "RFQ2-VAC-N07"
     ]
    },
    {
@@ -17797,6 +18615,24 @@
     "question": "Is an existing laboratory magnet supply available for the P1 H-1 runs, or is HE-L02 dispatched with the P1 set?",
     "proposed_answer": "owner call",
     "needed_by": "P1 RFQ dispatch"
+   },
+   {
+    "id": "OQ-RFQV2-06",
+    "question": "A9.4 P1Q-14 sets >= 525 V design withstand and a 1.05 kV DC / 60 s initial DWV for the ICP body / collector circuits. Does the same basis also close the row-81 'transient/qualification margin' (CIF-G04, still TBD) for the H-1 anode / discharge-supply isolation and feedthroughs?",
+    "proposed_answer": "owner call; PROPOSED: yes (same 350 V class, same 1.5 x design / ~3 x initial DWV basis)",
+    "needed_by": "P1 RFQ dispatch of RFQ2-HALLEL / RFQ2-VAC"
+   },
+   {
+    "id": "OQ-RFQV2-07",
+    "question": "A9.4 P1Q-13 requires a metered single-point H-1 body ground-current monitor (continuous I_body->ground) and a high-impedance isolated V_anode channel. Add them as explicit P1_NEEDED sensing lines in RFQ2-HALLEL, or use existing laboratory instruments?",
+    "proposed_answer": "owner call; PROPOSED: explicit P1_NEEDED option lines in RFQ2-HALLEL (sensing)",
+    "needed_by": "P1 RFQ dispatch of RFQ2-HALLEL"
+   },
+   {
+    "id": "OQ-RFQV2-08",
+    "question": "Who performs the 1.05 kV DC / 60 s initial DWV (A9.4 P1Q-14): supplier factory test with certificate, the in-house bench with a current-limited tester (not quoted in v2), or both?",
+    "proposed_answer": "owner call; PROPOSED: supplier certificate where the item rating permits plus the in-house bench DWV of the assembled insulation configuration before first HV/RF operation",
+    "needed_by": "P1 RFQ dispatch of RFQ2-HALLEL / RFQ2-VAC"
    }
   ],
   "carried_open_from_v1": [
@@ -17957,7 +18793,7 @@
    "name": "Xe tank",
    "packages": "RFQ2-GAS",
    "how_touched": "Xe tank quote lines (LATER)",
-   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1 subset dispatchable first by the owner; no purchase order; H3 gate)",
+   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1_NEEDED subset authorized by A9.4 to be sent for quotation by the owner / procurement; no purchase order, advance payment or binding commitment; H3 gate)",
    "note": "proposal only; M16 v3 is not edited by this lane"
   },
   {
@@ -17966,7 +18802,7 @@
    "name": "Xe regulator",
    "packages": "RFQ2-GAS",
    "how_touched": "low-flow PMU (LATER)",
-   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1 subset dispatchable first by the owner; no purchase order; H3 gate)",
+   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1_NEEDED subset authorized by A9.4 to be sent for quotation by the owner / procurement; no purchase order, advance payment or binding commitment; H3 gate)",
    "note": "proposal only; M16 v3 is not edited by this lane"
   },
   {
@@ -17975,7 +18811,7 @@
    "name": "Xe metering (splits to ignition/transition feed and cathode feed)",
    "packages": "RFQ2-GAS",
    "how_touched": "C1 controllers, FCU, Xe reference MFC (LATER)",
-   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1 subset dispatchable first by the owner; no purchase order; H3 gate)",
+   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1_NEEDED subset authorized by A9.4 to be sent for quotation by the owner / procurement; no purchase order, advance payment or binding commitment; H3 gate)",
    "note": "proposal only; M16 v3 is not edited by this lane"
   },
   {
@@ -17984,7 +18820,7 @@
    "name": "shielded Xe-fed LaB6 hollow cathode",
    "packages": "RFQ2-HALLEL",
    "how_touched": "C1 cathode + keeper/heater supplies (LATER)",
-   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1 subset dispatchable first by the owner; no purchase order; H3 gate)",
+   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1_NEEDED subset authorized by A9.4 to be sent for quotation by the owner / procurement; no purchase order, advance payment or binding commitment; H3 gate)",
    "note": "proposal only; M16 v3 is not edited by this lane"
   },
   {
@@ -17993,7 +18829,7 @@
    "name": "PPU/power distribution",
    "packages": "RFQ2-HALLEL, RFQ2-RF",
    "how_touched": "laboratory discharge/magnet/collector supplies (P1), breadboard supplies (LATER), laboratory RF generator (P1, ground only)",
-   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1 subset dispatchable first by the owner; no purchase order; H3 gate)",
+   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1_NEEDED subset authorized by A9.4 to be sent for quotation by the owner / procurement; no purchase order, advance payment or binding commitment; H3 gate)",
    "note": "proposal only; M16 v3 is not edited by this lane"
   },
   {
@@ -18002,7 +18838,7 @@
    "name": "thermal control",
    "packages": "RFQ2-MECH",
    "how_touched": "ICP material temperature data; ICP_COUPLED_THERMAL stays UNRESOLVED (no PASS)",
-   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1 subset dispatchable first by the owner; no purchase order; H3 gate)",
+   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1_NEEDED subset authorized by A9.4 to be sent for quotation by the owner / procurement; no purchase order, advance payment or binding commitment; H3 gate)",
    "note": "proposal only; M16 v3 is not edited by this lane"
   },
   {
@@ -18010,8 +18846,8 @@
    "key": "sensors_diagnostics",
    "name": "sensors/diagnostics",
    "packages": "RFQ2-GAS, RFQ2-THRUST, RFQ2-VAC, RFQ2-RF",
-   "how_touched": "P1 DAQ, gauges, Ar MFC, RF metrology, power analyzer (P1); stand, RGA (LATER)",
-   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1 subset dispatchable first by the owner; no purchase order; H3 gate)",
+   "how_touched": "P1 DAQ, gauges, Ar MFC, RF metrology, power analyzer, photodiode + amplifier + DAQ channel and its optical access (A9.4 P2Q-05) (P1); stand, RGA (LATER)",
+   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1_NEEDED subset authorized by A9.4 to be sent for quotation by the owner / procurement; no purchase order, advance payment or binding commitment; H3 gate)",
    "note": "proposal only; M16 v3 is not edited by this lane"
   },
   {
@@ -18020,7 +18856,7 @@
    "name": "mechanical/structural interfaces",
    "packages": "RFQ2-MECH, RFQ2-THRUST",
    "how_touched": "modular ICP carrier and supports (P1); stand/KC-1 (LATER)",
-   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1 subset dispatchable first by the owner; no purchase order; H3 gate)",
+   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1_NEEDED subset authorized by A9.4 to be sent for quotation by the owner / procurement; no purchase order, advance payment or binding commitment; H3 gate)",
    "note": "proposal only; M16 v3 is not edited by this lane"
   },
   {
@@ -18029,7 +18865,7 @@
    "name": "downstream 13.56 MHz RF ICP electron source / neutralizer head (antenna, dielectric, collector/bias electrode, capped dedicated gas port)",
    "packages": "RFQ2-MECH, RFQ2-HALLEL, RFQ2-GAS",
    "how_touched": "open-tube coaxial ICP head parts, collector/bias supply, capped port (P1)",
-   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1 subset dispatchable first by the owner; no purchase order; H3 gate)",
+   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1_NEEDED subset authorized by A9.4 to be sent for quotation by the owner / procurement; no purchase order, advance payment or binding commitment; H3 gate)",
    "note": "proposal only; M16 v3 is not edited by this lane"
   },
   {
@@ -18038,7 +18874,7 @@
    "name": "flight RF chain: 13.56 MHz RF source (spacecraft-DC input), directional coupler, 50-ohm line, LOCAL matching network on / immediately adjacent to the ICP module (adjustable for development, A9.2), RF feedthrough",
    "packages": "RFQ2-RF",
    "how_touched": "development RF chain with local match (P1, ground only); the flight DC-input RF source is not in this revision (NIR-01); ratings TBD_AFTER_IMPEDANCE_MAP",
-   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1 subset dispatchable first by the owner; no purchase order; H3 gate)",
+   "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1_NEEDED subset authorized by A9.4 to be sent for quotation by the owner / procurement; no purchase order, advance payment or binding commitment; H3 gate)",
    "note": "proposal only; M16 v3 is not edited by this lane"
   },
   {
@@ -18062,7 +18898,7 @@
  ],
  "h3_h4_inputs": {
   "h3_procurement_gate": {
-   "state": "QUOTATION PACKAGES v2 READY FOR OWNER DISPATCH (P1 subset first); PURCHASE ORDERS NOT AUTHORIZED",
+   "state": "QUOTATION PACKAGES v2 READY FOR OWNER DISPATCH (P1 subset first); P1_NEEDED PACKAGES AUTHORIZED FOR QUOTATION DISPATCH BY THE OWNER / PROCUREMENT (A9.4); PURCHASE ORDERS, ADVANCE PAYMENTS AND BINDING COMMITMENTS NOT AUTHORIZED",
    "purchase_gate": "H3 procurement gate + frozen A9 interfaces (owner row 8; A9.1 A9-09 procurement restriction)",
    "packages": [
     {
@@ -18125,7 +18961,8 @@
       "VAC-L01",
       "VAC-L02",
       "VAC-L03",
-      "VAC-L04"
+      "VAC-L04",
+      "VAC-L07"
      ],
      "open_items_blocking_po": [
       "RFQ2-VAC-R03",
@@ -18189,7 +19026,9 @@
      "p1_needed_line_items": [
       "TH-L04",
       "TH-L05",
-      "TH-L06"
+      "TH-L06",
+      "TH-L07",
+      "TH-L08"
      ],
      "open_items_blocking_po": [
       "RFQ2-THRUST-R04",
@@ -18235,6 +19074,16 @@
     "id": "H4-RFQ2-06",
     "test": "power-analyzer / coupler / calorimetric cross-check at the labelled boundaries RP-MAINS and RP-RF-50",
     "source": "A9.3 OQ-RFQ-06; row 72"
+   },
+   {
+    "id": "H4-RFQ2-07",
+    "test": "initial DWV 1.05 kV DC / 60 s of ICP body / collector passive insulation paths and feedthrough assemblies before first HV/RF operation (where ratings permit)",
+    "source": "A9.4 P1Q-14"
+   },
+   {
+    "id": "H4-RFQ2-08",
+    "test": "photodiode dark offset, line of sight and saturation indication on the DAQ",
+    "source": "A9.4 P2Q-05"
    }
   ]
  },

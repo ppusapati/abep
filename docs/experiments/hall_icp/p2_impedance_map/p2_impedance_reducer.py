@@ -14,6 +14,17 @@ A lit plasma state in a non-HOT_MAP phase, a powered-unlit record without gas of
 (ignition -> abort and flag), and a cold reference not taken from a verified-unlit source also raise, so the A9.3
 'P1 stable plasma -> P2 map' gate cannot be bypassed by relabelling the phase.
 
+Plasma-state classification (owner A9.4 P2Q-05, PHOTODIODE_REQUIRED; docs/decisions/
+OD_2026_09_30_A9_4_p1_p2_owner_decisions.json; incorporated by fo_a9_4_incorporation): the optical-emission photodiode
+(INS-P2-10) is the required independent ignition / unlit and E/H-mode indicator; reflected RF power, antenna current,
+collector / current-path response and pressure are recorded simultaneously as corroboration. Classes are exactly
+UNLIT / E_MODE / H_MODE / UNCERTAIN (classify_plasma_state). Optical UNLIT with electrical evidence of ignition or a mode
+transition -> UNCERTAIN (never forced to UNLIT); a lost line of sight or a saturated photodiode is never unlit evidence.
+A COLD_ANTENNA_POWERED_UNLIT record is valid only with that optical proof of no ignition; UNCERTAIN records never serve
+as cold references or map points without re-classification. The photodiode threshold is established from dark /
+background, RF-powered known-unlit and known-lit P1 plasma measurements and frozen before the P2 map; no numeric
+threshold exists in this code (it is carried by each record with its basis).
+
 Reference planes (docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json reference_planes):
   RP-GEN  generator output connector (generator-internal meters are not a measurement plane, ICD ICP-14)
   RP-CPL  directional-coupler plane on the generator / 50-ohm side of the LOCAL matching network (A9.2)
@@ -40,7 +51,15 @@ RECORD_PHASES = ("DUMMY_LOAD", "COLD_ANTENNA_POWERED_UNLIT", "HOT_MAP")
 METHODS = ("vi_probe", "deembed")
 LOSS_METHODS = ("two_port", "declared_bound", "not_available")
 SWEEP_DIRECTIONS = ("up", "down", "reference", "single")
-MODE_LABELS = ("UNLIT", "E", "H", "UNCERTAIN")
+MODE_LABELS = ("UNLIT", "E_MODE", "H_MODE", "UNCERTAIN")       # A9.4 P2Q-05 state classes, exactly
+LIT_MODES = ("E_MODE", "H_MODE")
+# phases whose plasma state must be optically classified (A9.4 P2Q-05); DUMMY_LOAD has no antenna and no plasma
+CLASSIFIED_PHASES = ("COLD_ANTENNA_POWERED_UNLIT", "HOT_MAP")
+# basis of the frozen photodiode threshold (A9.4 P2Q-05): three P1 data sets + frozen before the P2 map
+THRESHOLD_BASIS_FIELDS = ("dark_background_record_id", "rf_powered_known_unlit_record_id", "known_lit_p1_record_id",
+                          "frozen_before_p2_map")
+# simultaneous corroboration signals recorded with the photodiode (A9.4 P2Q-05); P_reflected is the coupler reading
+CORROBORATION_FACTOR_FIELDS = ("I_collector_A", "p_chamber_Pa")
 RATING_STATUS = "TBD_AFTER_IMPEDANCE_MAP"
 # Phases in which no plasma may exist (the plasma impedance map is HOT_MAP only, after the P1 hand-over, A9.3).
 UNLIT_PHASES = ("DUMMY_LOAD", "COLD_ANTENNA_POWERED_UNLIT")
@@ -70,7 +89,9 @@ NESTED_REQUIRED = {
     "vi_probe": ("V_raw", "I_raw", "vi_cal_id"),
     "match_state": ("tuning_state_id", "positions", "auto_tune", "loss_bound_id"),
     "factors": REQUIRED_FACTOR_FIELDS,
-    "plasma_state": ("lit", "mode", "optical_signal_V", "unlit_threshold_V", "unlit_threshold_source"),
+    "plasma_state": ("lit", "mode", "optical_signal_V", "unlit_threshold_V", "unlit_threshold_source",
+                     "threshold_basis", "photodiode_line_of_sight_ok", "photodiode_saturated",
+                     "electrical_ignition_or_mode_transition", "electrical_indicator_basis"),
     "sweep": ("sweep_id", "direction", "index"),
     "settling": ("dwell_s", "settled"),
     "antenna_current": ("I_rms_A", "probe_cal_id"),
@@ -125,6 +146,12 @@ class PlasmaStateError(SequenceError):
 class IgnitionDetectedError(PlasmaStateError):
     """Powered-unlit record whose optical signal reached the unlit threshold of the P1 registered procedure: the
     source ignited. Abort-and-flag (S-08): the record is not reduced and never becomes a cold reference."""
+
+
+class UncertainPlasmaStateError(PlasmaStateError):
+    """Plasma state UNCERTAIN (optical UNLIT with electrical evidence of ignition / mode transition, a lost line of
+    sight, a saturated photodiode, or a lit record without an E/H assignment): never a cold reference and never a map
+    point without re-classification (A9.4 P2Q-05)."""
 
 
 # ------------------------------------------------------------------------------------------------ basic relations
@@ -438,7 +465,8 @@ def reduce_record(rec, calibrations):
         "sweep": rec["sweep"], "settling": rec["settling"],
     }
     if unlit_verification is not None:
-        out["unlit_verification"] = unlit_verification
+        key = "unlit_verification" if rec["phase"] == "COLD_ANTENNA_POWERED_UNLIT" else "plasma_state_classification"
+        out[key] = unlit_verification
 
     net = None
     z_ant = {}
@@ -597,9 +625,58 @@ def _ref_ok(x):
     return isinstance(x, str) and bool(x.strip()) and not x.strip().upper().startswith(("PENDING", "TBD"))
 
 
+def _threshold_basis_ok(tb):
+    if not isinstance(tb, dict):
+        return False
+    for k in THRESHOLD_BASIS_FIELDS[:3]:
+        if not _ref_ok(tb.get(k)):
+            return False
+    return tb.get("frozen_before_p2_map") is True
+
+
+def classify_plasma_state(obs):
+    """A9.4 P2Q-05 plasma-state class from the recorded indicators; returns (class, reason). No threshold is chosen
+    here: obs carries optical_signal_V, unlit_threshold_V (frozen before the P2 map from dark / background, RF-powered
+    known-unlit and known-lit P1 data; basis in threshold_basis), photodiode_line_of_sight_ok, photodiode_saturated,
+    electrical_ignition_or_mode_transition (the RF / electrical corroboration verdict, with electrical_indicator_basis)
+    and, for an optically lit state, lit_mode_assignment (E_MODE / H_MODE from the HM-R06 indicators, or None)."""
+    need = ("optical_signal_V", "unlit_threshold_V", "photodiode_line_of_sight_ok", "photodiode_saturated",
+            "electrical_ignition_or_mode_transition")
+    miss = [k for k in need if obs.get(k) is None]
+    if miss:
+        raise PlasmaStateError(f"plasma-state classification needs {miss} (INS-P2-10 photodiode and the "
+                               "simultaneous electrical corroboration; A9.4 P2Q-05)")
+    if not _threshold_basis_ok(obs.get("threshold_basis")):
+        raise PlasmaStateError("photodiode threshold without its A9.4 P2Q-05 basis (dark / background, RF-powered "
+                               "known-unlit and known-lit P1 record ids, frozen_before_p2_map = true)")
+    for k in ("photodiode_line_of_sight_ok", "photodiode_saturated", "electrical_ignition_or_mode_transition"):
+        if not isinstance(obs[k], bool):
+            raise PlasmaStateError(f"{k} must be true or false")
+    if obs["electrical_ignition_or_mode_transition"] and not _ref_ok(obs.get("electrical_indicator_basis")):
+        raise PlasmaStateError("electrical evidence of ignition / mode transition needs electrical_indicator_basis "
+                               "(which of reflected power, antenna current, collector / current-path response, "
+                               "pressure)")
+    if obs["photodiode_line_of_sight_ok"] is not True:
+        return "UNCERTAIN", "photodiode line of sight lost: the optical record is not valid evidence"
+    if obs["photodiode_saturated"] is not False:
+        return "UNCERTAIN", "photodiode saturated: the optical record is not valid evidence"
+    sig = _finite(obs["optical_signal_V"], "optical_signal_V")
+    thr = _finite(obs["unlit_threshold_V"], "unlit_threshold_V")
+    if sig < thr:
+        if obs["electrical_ignition_or_mode_transition"]:
+            return "UNCERTAIN", ("optical UNLIT but electrical evidence of ignition / mode transition ("
+                                 f"{obs['electrical_indicator_basis']}); never forced to UNLIT")
+        return "UNLIT", "optical signal below the frozen threshold; no electrical evidence of ignition"
+    mode = obs.get("lit_mode_assignment")
+    if mode in LIT_MODES:
+        return mode, "optically lit; E/H assignment from the HM-R06 indicators"
+    return "UNCERTAIN", "optically lit but no E_MODE / H_MODE assignment"
+
+
 def _unlit_optical(ps, what):
-    """Optical unlit verification: signal below the threshold of the P1 registered procedure (value and source are
-    carried by the record; no threshold is set here). Returns the verification object; raises on ignition."""
+    """Optical unlit verification (A9.4 P2Q-05): photodiode signal below the frozen threshold with its basis, line of
+    sight kept, no saturation and no electrical evidence of ignition / mode transition. Returns the verification
+    object; raises on ignition (IgnitionDetectedError) or an UNCERTAIN / invalid optical record."""
     sig = ps.get("optical_signal_V")
     thr = ps.get("unlit_threshold_V")
     src = ps.get("unlit_threshold_source")
@@ -608,29 +685,54 @@ def _unlit_optical(ps, what):
                                "non-PENDING unlit_threshold_source (P1 registered procedure) are all required")
     sig = _finite(sig, what + ".optical_signal_V")
     thr = _finite(thr, what + ".unlit_threshold_V")
-    if sig >= thr:
+    if ps.get("photodiode_line_of_sight_ok") is True and ps.get("photodiode_saturated") is False and sig >= thr:
         raise IgnitionDetectedError(f"{what}: optical signal {sig} V >= unlit threshold {thr} V ({src}): ignition "
                                     "detected - abort and flag (S-08); the record is not reduced and is never a cold "
                                     "reference")
-    return {"indicator": "INS-P2-10 optical", "optical_signal_V": sig, "unlit_threshold_V": thr,
-            "unlit_threshold_source": src.strip(), "verified_unlit": True}
+    cls, why = classify_plasma_state(ps)
+    if cls != "UNLIT":
+        raise UncertainPlasmaStateError(f"{what}: plasma state {cls} ({why}); a powered-unlit record is valid only "
+                                        "with optical proof that the plasma did not ignite (A9.4 P2Q-05); never a cold "
+                                        "reference without re-classification")
+    return {"indicator": "INS-P2-10 optical (photodiode)", "optical_signal_V": sig, "unlit_threshold_V": thr,
+            "unlit_threshold_source": src.strip(), "threshold_basis": dict(ps["threshold_basis"]),
+            "photodiode_line_of_sight_ok": True, "photodiode_saturated": False,
+            "electrical_ignition_or_mode_transition": False,
+            "electrical_indicator_basis": ps.get("electrical_indicator_basis"), "state_class": "UNLIT",
+            "verified_unlit": True}
 
 
 def _check_plasma_state(rec):
-    """Phase <-> plasma-state consistency. Returns the unlit verification of a powered-unlit record, else None."""
+    """Phase <-> plasma-state consistency and A9.4 P2Q-05 classification. Returns the unlit verification of a powered-
+    unlit record (or the state classification of a HOT_MAP record), else None."""
     ps, ph, rid = rec["plasma_state"], rec["phase"], rec.get("record_id")
     lit, mode = ps["lit"], ps["mode"]
     if not isinstance(lit, bool):
         raise PlasmaStateError(f"record {rid!r}: plasma_state.lit must be true or false (an unknown state is not "
                                "reducible)")
+    if mode == "UNCERTAIN":
+        raise UncertainPlasmaStateError(f"record {rid!r}: plasma state UNCERTAIN - never a cold reference or map point "
+                                        "without re-classification (A9.4 P2Q-05)")
     if (lit is False) != (mode == "UNLIT"):
         raise PlasmaStateError(f"record {rid!r}: plasma_state lit={lit} inconsistent with mode {mode!r}")
     if ph in UNLIT_PHASES and lit:
         raise PlasmaStateError(f"record {rid!r}: phase {ph} with a lit plasma ({mode}); a lit point is a plasma "
                                "impedance record and exists only as HOT_MAP after the P1 hand-over (A9.3 "
                                "authorizations.P2)")
-    if ph != "COLD_ANTENNA_POWERED_UNLIT":
+    if ph not in CLASSIFIED_PHASES:
         return None
+    _check_corroboration(rec, rid)
+    if ph == "HOT_MAP":
+        obs = dict(ps, lit_mode_assignment=mode if mode in LIT_MODES else None)
+        cls, why = classify_plasma_state(obs)
+        if cls == "UNCERTAIN":
+            raise UncertainPlasmaStateError(f"record {rid!r}: classified UNCERTAIN ({why}); never a map point without "
+                                            "re-classification (A9.4 P2Q-05)")
+        if cls != mode:
+            raise PlasmaStateError(f"record {rid!r}: declared mode {mode!r} but the photodiode classification is "
+                                   f"{cls!r} ({why}); re-classify the record")
+        return {"state_class": cls, "basis": why, "indicator": "INS-P2-10 optical (photodiode) + RF / electrical "
+                                                               "corroboration"}
     fac = rec["factors"]
     if fac.get("gas") is not None:
         raise PlasmaStateError(f"record {rid!r}: powered-unlit records are gas off at base pressure (S-08); "
@@ -639,10 +741,22 @@ def _check_plasma_state(rec):
         if fac.get(k) is None or _finite(fac[k], "factors." + k) != 0.0:
             raise PlasmaStateError(f"record {rid!r}: powered-unlit records need factors.{k} = 0 declared explicitly "
                                    "(gas off, S-08)")
-    if fac.get("p_chamber_Pa") is None:
-        raise PlasmaStateError(f"record {rid!r}: powered-unlit records log the chamber base pressure p_chamber_Pa")
-    _finite(fac["p_chamber_Pa"], "factors.p_chamber_Pa")
     return _unlit_optical(ps, f"record {rid!r}")
+
+
+def _check_corroboration(rec, rid):
+    """Simultaneous RF / electrical corroboration of the photodiode (A9.4 P2Q-05): reflected RF power (coupler
+    reading), antenna current, collector / current-path response and pressure must be recorded."""
+    if not isinstance(rec.get("coupler"), dict) or rec["coupler"].get("P_sens_ref_W") is None:
+        raise PlasmaStateError(f"record {rid!r}: reflected RF power must be recorded with the photodiode (A9.4 P2Q-05)")
+    if not isinstance(rec.get("antenna_current"), dict):
+        raise PlasmaStateError(f"record {rid!r}: antenna current must be recorded with the photodiode (A9.4 P2Q-05)")
+    fac = rec["factors"]
+    for k in CORROBORATION_FACTOR_FIELDS:
+        if fac.get(k) is None:
+            raise PlasmaStateError(f"record {rid!r}: factors.{k} must be recorded with the photodiode (collector / "
+                                   "current-path response and pressure; A9.4 P2Q-05)")
+        _finite(fac[k], "factors." + k)
 
 
 def _check_cold_reference(cr, crid):
@@ -659,8 +773,9 @@ def _check_cold_reference(cr, crid):
     if not isinstance(uv, dict):
         raise PlasmaStateError(f"cold reference {crid!r}: unlit_verification must be an object")
     if cr["source_phase"] == "COLD_ANTENNA_POWERED_UNLIT":
-        if uv.get("verified_unlit") is not True:
-            raise PlasmaStateError(f"cold reference {crid!r}: source record not verified unlit")
+        if uv.get("verified_unlit") is not True or uv.get("state_class") != "UNLIT":
+            raise PlasmaStateError(f"cold reference {crid!r}: source record not verified unlit (state_class UNLIT, "
+                                   "A9.4 P2Q-05)")
         _unlit_optical(uv, f"cold reference {crid!r}")
     elif not _ref_ok(uv.get("basis")):
         raise PlasmaStateError(f"cold reference {crid!r}: unpowered VNA reference needs unlit_verification.basis "
@@ -674,8 +789,9 @@ def cold_reference_from_reduced(reduced, antenna_temperature_K):
         raise PlasmaStateError("cold references come only from reduced COLD_ANTENNA_POWERED_UNLIT records (or the "
                                "unpowered CAL-P2-08 VNA measurement)")
     uv = reduced.get("unlit_verification")
-    if not isinstance(uv, dict) or uv.get("verified_unlit") is not True:
-        raise PlasmaStateError(f"reduced record {reduced.get('record_id')!r} carries no unlit verification")
+    if not isinstance(uv, dict) or uv.get("verified_unlit") is not True or uv.get("state_class") != "UNLIT":
+        raise PlasmaStateError(f"reduced record {reduced.get('record_id')!r} carries no unlit verification "
+                               "(UNCERTAIN records are never cold references, A9.4 P2Q-05)")
     z = reduced["Z_antenna"][reduced["Z_antenna_primary_method"]]
     return {"R_cold_ohm": z["R_ohm"], "source_record_id": reduced["record_id"],
             "source_phase": "COLD_ANTENNA_POWERED_UNLIT", "unlit_verification": dict(uv),

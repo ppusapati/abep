@@ -64,6 +64,16 @@
    "role": "owner A9.3 verbatim (binds P1)"
   },
   {
+   "path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+   "sha256": "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d",
+   "role": "owner A9.4 P1/P2 decisions (machine-readable)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+   "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c",
+   "role": "owner A9.4 verbatim (P1Q-10/13/14, P2Q-05)"
+  },
+  {
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
    "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c",
    "role": "A9-03 ICP-neutralizer ICD (JSON)"
@@ -191,6 +201,37 @@
   "docs/orchestration/fired_triggers.jsonl",
   "docs/orchestration/runtime_state.json"
  ],
+ "a9_4_incorporation": {
+  "follow_on": "fo_a9_4_incorporation",
+  "trigger": "T_A9_4_INCORPORATION",
+  "base_commit": "875ed6d0a87202bc92706b28551b0e22eda2014d",
+  "decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+   "sha256": "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d"
+  },
+  "verbatim": {
+   "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+   "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+  },
+  "rule": "applied mechanically (owner step 2): only what A9.4 decides changed; ids and verified behaviour otherwise kept",
+  "answered": {
+   "P1Q-10": "OWNER_DECIDED — CAPACITY_EXTRACTION_FORM",
+   "P1Q-13": "OWNER_DECIDED — ANODE_FLOATING / BODY_SINGLE_POINT_METERED_GROUND",
+   "P1Q-14": "OWNER_DECIDED — ICP_350V_CLASS / 1.05kV_INITIAL_DWV"
+  },
+  "p1_part_of": {
+   "P2Q-05": "OWNER_DECIDED — PHOTODIODE_REQUIRED"
+  },
+  "execution_decisions_applied": [
+   "i_d_max_h1",
+   "p1_needed_rfqs"
+  ],
+  "recorder_flags_carried": [
+   "P1Q-10 'Define:' formula is incomplete in the verbatim text; recorder reading given in decisions.P1Q-10.definition_recorder_reading.",
+   "The ECSS high-voltage guidance (Level-2-style ~3x nominal qualification, ~2x lower-level) is owner-stated; the specific ECSS standard and clause are not identified in the record (verify before citing as a source)."
+  ],
+  "m16_impact_change": "none: A9.4 changes no M16 v3 row state (ICP electron-current capacity stays PENDING_ICP45)"
+ },
  "pending_parallel_lanes": [
   {
    "lane": "fo_a9_p2_impedance_prep",
@@ -422,8 +463,9 @@
     "P1-G0 readiness record signed: interlock functional-test log, isolation results, instrument certificates or their TBD status, collector bias range and Ar MFC range(s) recorded",
     "P1-S4 electron-extraction topology registered with an id (P1-IT-36: electron-collecting electrode, geometry and axial/radial position, bias polarity, V_collector reference, instrumented terminals)",
     "facility-pair pressure-match tolerance registered (P1-IT-37)",
-    "H-1 electrical configuration registered with an id (P1-IT-39: anode disconnected-floating or metered return while the discharge supply is OFF; discharge-supply output state; H-1 body / magnetic-circuit state)",
-    "electrical isolation verification of every floating circuit (collector / ICP ion-collecting electrode, ICP body, electron-collecting target, H-1 anode and discharge-supply output) by insulation-resistance / hipot test BEFORE the first collector bias (P1-S4) and the first V_d (P1-S6); test voltage and acceptance TBD - frozen at P1-G0 (PROPOSED basis: the 350 V class of row 81 plus margin, extended to the ICP circuits only as PROPOSED, P1-IT-21 / P1Q-14)"
+    "H-1 electrical configuration registered with an id (P1-IT-39, A9.4 P1Q-13: anode physically disconnected and floating while the discharge supply is OFF, metered return only as a registered DIAGNOSTIC_VARIANT; discharge-supply output state; H-1 body / magnetic-circuit single-point metered ground)",
+    "electrical isolation verification of every floating circuit (collector / ICP ion-collecting electrode, ICP body, electron-collecting target, H-1 anode and discharge-supply output) by insulation-resistance / hipot test BEFORE the first HV/RF operation (first collector bias P1-S4, first V_d P1-S6): initial DWV 1.05 kV DC for 60 s on passive insulation paths and feedthrough assemblies where component ratings permit, current-limited, sensitive electronics disconnected where necessary, leakage recorded, in the relevant insulation configuration, plus representative-pressure/gas testing of Paschen-risk paths (A9.4 P1Q-14; P1-IT-21 / P1-IT-43 / P1-IT-44); leakage acceptance TBD; the ICPQ-06 ~1 kV gas-line qualification (P1-IT-20) stays a separate test",
+    "H-1 body / magnetic circuit single-point metered facility-ground return installed and verified (no second chassis / stand / coax / shield path) and the high-impedance isolated V_anode channel installed (A9.4 P1Q-13; P1-IT-39)"
    ],
    "produces": [
     "ENGINEERING_ONLY_NON_SCORING"
@@ -465,7 +507,8 @@
     "match tuning range and residual |Gamma| at the coupler plane at low power",
     "antenna and collector heating without plasma (anchor TK-27 reports electrode eddy heating)",
     "RF pickup on H-1 and diagnostic channels (ICD ICP-17; owner row 64)",
-    "RF protection functional test (reflected power, mismatch, arc where feasible, thermal)"
+    "RF protection functional test (reflected power, mismatch, arc where feasible, thermal)",
+    "optical-emission photodiode (INS-P2-10, P1-M-28) dark/background and RF-powered known-unlit records, logged simultaneously with P_refl, antenna current, collector/current-path response and pressure: inputs of the P2 unlit threshold (A9.4 P2Q-05; no numeric threshold set here)"
    ],
    "exit": [
     "P1-G2: reflected-power and VSWR trip thresholds FROZEN from this characterization and recorded with an id (A9.2); the P1 RF envelope is restricted to the procured ratings (TBD_AFTER_IMPEDANCE_MAP)"
@@ -482,12 +525,13 @@
    "entry": [
     "P1-G2 passed",
     "Ar flowing through the H-1 gas path (G-REUSE), Hall discharge supply OFF, C1 not installed or disconnected",
-    "H-1 anode in the registered configuration (P1-IT-39: disconnected-floating with V_anode recorded, or metered return)",
+    "H-1 anode in the registered configuration (P1-IT-39: physically disconnected and floating with V_anode recorded; metered return only as a registered DIAGNOSTIC_VARIANT, A9.4 P1Q-13)",
     "ICP ignition procedure registered (id)"
    ],
    "work": [
     "ascending P_fwd ladder at each Ar flow level (run matrix F1 x F2, F6)",
-    "record per attempt: ignition yes/no, P_fwd and P_refl at ignition, match setting, delay, extinction, any discontinuity of P_refl / antenna current / emission (owner row 24)"
+    "record per attempt: ignition yes/no, P_fwd and P_refl at ignition, match setting, delay, extinction, any discontinuity of P_refl / antenna current / emission (owner row 24)",
+    "photodiode (P1-M-28) known-lit records at established plasma points (A9.4 P2Q-05 threshold input; loss of line of sight or saturation recorded, such samples are never unlit evidence)"
    ],
    "exit": [
     "ignition map (descriptive) incl. non-ignition regions; no verdict"
@@ -513,10 +557,11 @@
     "Kirchhoff current-path closure per point (collector, ICP body, facility/chamber ground, H-1 anode (MEASURED metered return or OPEN_CIRCUIT_BY_CONSTRUCTION, P1-IT-39), and the electron_collector terminal when the dedicated target is used)",
     "V_anode recorded (P1-M-15)",
     "facility-electron contribution check: RF OFF at the same bias and reference, flow, gas mode, Hall state, extraction topology and pressure (within P1-IT-37)",
-    "C_e and C_e,DC with boundary labels per point"
+    "C_e and C_e,DC with boundary labels per point",
+    "records intended as ICP-45 capacity candidates are registered as record_class ICP45_CAPACITY in the A9.4 P1Q-13 configuration (anode floating, supply physically disconnected, continuous h1_body ground current, dedicated collector); other records are ENGINEERING_SURFACE"
    ],
    "exit": [
-    "surface table filed; these capacity-extraction records are the P1-IT-38 (PROPOSED) I_e,cap candidates once I_d,max,H1 and its registered points exist; ICP-45A NOT_EVALUATED until then; never PASS because 1 A, 2 A, ... is reached"
+    "surface table filed; the ICP45_CAPACITY records are the P1-IT-38 (OWNER_DECIDED, A9.4 P1Q-10) I_e,cap candidates once I_d,max,H1 and its registered points exist; ICP-45A exactly NOT_EVALUATED until then; never PASS because 1 A, 2 A, ... is reached"
    ],
    "produces": [
     "ENGINEERING_ONLY_NON_SCORING"
@@ -586,33 +631,53 @@
   },
   {
    "id": "P1-S7",
-   "name": "ICP-45A capacity confirmation at registered H-1 conditions + Hall-on neutralization consistency (conditional)",
+   "name": "ICP-45A discharge-OFF capacity at registered H-1 conditions (conditional)",
    "prereg_stage": "HI-AR",
    "entry": [
-    "I_d,max,H1 registered from measured H-1 operation (P1-IT-07)",
+    "I_d,max,H1 registered from the registered H-1 operating envelope and measured H-1 behaviour, never from the 8.33 A supply rating (P1-IT-07; A9.4 execution_decisions.i_d_max_h1)",
     "one-sided margin rule and uncertainties supplied (P1-IT-29)",
-    "registered Hall start-attempt limits (P1-IT-31) and sustainment definition (P1-IT-32): the Hall-on RF-OFF facility pair (V_d applied, C1 disconnected, ICP RF OFF) is the OQ-VI-05 step-4 situation and stays inside them",
-    "H-1 electrical configuration per block registered (P1-IT-39)"
+    "Kirchhoff closure tolerance and sign convention registered (P1-IT-47)",
+    "H-1 electrical configuration per A9.4 P1Q-13 registered (P1-IT-39)"
    ],
    "work": [
-    "(a) CAPACITY block (ICP-45A): electron extraction in the registered extraction topology (P1-IT-36; discharge supply OFF, H-1 anode disconnected-floating or metered return) at the gas/magnet conditions of each registered H-1 point (h1_point_id), ascending to and beyond I_d,max,H1 inside the stand-ceiling ratings; RF-OFF facility pair at every candidate point (P1-D-07); I_e,cap per the PROPOSED definition P1-IT-38 (P1Q-10); ICP-45A condition I_e,cap >= I_d,max,H1 with the one-sided lower bound of M_n",
-    "(b) NEUTRALIZATION-CONSISTENCY block: Hall discharge supply ON at registered H-1 points, electrons sunk by the H-1 anode, C1 disconnected; ICP-supplied current vs I_d reported descriptively (P1-D-12); closure incl. hall_anode; never I_e,cap (current continuity bounds it by I_d)",
-    "never the largest current in the bundle, never an RF-OFF, dedicated-feed, Hall-ON or uncorrected record as I_e,cap"
+    "CAPACITY block (ICP-45A, record_class ICP45_CAPACITY): Hall discharge supply OFF and physically disconnected from the H-1 anode (anode floating, V_anode on a high-impedance isolated channel, OPEN_CIRCUIT_BY_CONSTRUCTION); ICP operating; electrons extracted to the dedicated, isolated, instrumented electron-collecting electrode (P1-IT-36); gas / magnetic field / pressure / geometry of each registered H-1 point (h1_point_id); ascending to and beyond I_d,max,H1 inside the stand-ceiling ratings; matched RF-OFF ICP45_CAPACITY record at every candidate point (P1-D-07); H-1 body single-point metered return with I_body->ground logged continuously; ICP body, anode and collector potentials and chamber / facility return current (where measurable) monitored; Kirchhoff residual per point against P1-IT-47 (P1-D-13)",
+    "I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (P1-IT-38, OWNER_DECIDED A9.4 P1Q-10); ICP-45A condition I_e,cap >= I_d,max,H1 with the one-sided lower bound of M_n above zero",
+    "never the largest current in the bundle, never an RF-OFF, dedicated-feed, Hall-ON, metered-return (DIAGNOSTIC_VARIANT), closure-invalid or uncorrected record as I_e,cap"
    ],
    "exit": [
-    "ICP-45A engineering-only evaluation record (A9.1 ICP-45A) or NOT_EVALUATED (never a FAIL without an eligible capacity record); ICP-45N on N2 still required before any score-bearing hall_icp_neutralizer point; BLOCKED (surface only) while the entry is unmet"
+    "ICP-45A engineering-only evaluation record (A9.1 ICP-45A) or exactly NOT_EVALUATED (never PASS / FAIL without registration and an eligible capacity record); ICP-45N on N2 still required before any score-bearing hall_icp_neutralizer point; BLOCKED (surface only) while the entry is unmet"
    ],
    "produces": [
     "ENGINEERING_ONLY_NON_SCORING"
    ],
-   "hall_discharge": "OFF (capacity block) / ON (consistency block)"
+   "hall_discharge": "OFF (supply physically disconnected)"
+  },
+  {
+   "id": "P1-S7H",
+   "name": "Hall-ON follow-up at the corresponding point (NEUTRALIZATION_CONSISTENCY)",
+   "prereg_stage": "HI-AR",
+   "entry": [
+    "discharge-OFF capacity shown at the corresponding registered H-1 point (P1-S7 evaluation record; A9.4 P1Q-10 'After discharge-OFF capacity has been shown')",
+    "registered Hall start-attempt limits (P1-IT-31) and sustainment definition (P1-IT-32): the Hall-on RF-OFF facility pair (V_d applied, C1 disconnected, ICP RF OFF) is the OQ-VI-05 step-4 situation and stays inside them"
+   ],
+   "work": [
+    "repeat the corresponding Hall-ON point (record_class NEUTRALIZATION_CONSISTENCY; discharge supply ON and connected, electrons sunk by the H-1 anode, C1 disconnected) and verify: Hall discharge sustainment; current closure (incl. hall_anode); neutralization behaviour (ICP-supplied current vs I_d, P1-D-12); stability (dwell metrics, P1-D-08); collector / reference potentials; RF power (P_fwd, P_refl)",
+    "descriptive only: never ICP45_CAPACITY and never I_e,cap (current continuity bounds it by I_d)"
+   ],
+   "exit": [
+    "NEUTRALIZATION_CONSISTENCY record showing whether the separately demonstrated capacity operates in the real Hall loop; no PASS / FAIL"
+   ],
+   "produces": [
+    "ENGINEERING_ONLY_NON_SCORING"
+   ],
+   "hall_discharge": "ON (consistency follow-up)"
   },
   {
    "id": "P1-S8",
    "name": "close-out and handoffs",
    "prereg_stage": "-",
    "entry": [
-    "P1-S5 done (P1-S6/S7 as far as their entries allow)"
+    "P1-S5 done (P1-S6/S7/S7H as far as their entries allow)"
    ],
    "work": [
     "P2 handoff (stable region, match settings, cold Z)",
@@ -765,7 +830,7 @@
    "status": "OWNER_GIVEN (8.33_A_STAND_CEILING)",
    "freeze_point": "NOW",
    "p1_gate": null,
-   "note": "conductor sizing, current-sensor range, collector-circuit rating, feedthrough rating, protection, DAQ range, optional stress test; NOT evidence that H-1 requires 8.33 A; NOT the ICP-45 requirement"
+   "note": "conductor sizing, current-sensor range, collector-circuit rating, feedthrough rating, protection, DAQ range, optional stress test; NOT evidence that H-1 requires 8.33 A; NOT the ICP-45 requirement; A9.4 execution_decisions.i_d_max_h1: retained only as the bench electrical-design ceiling, never I_d,max,H1"
   },
   {
    "id": "P1-IT-07",
@@ -773,12 +838,12 @@
    "value": "TBD - requires the maximum H-1 discharge current within the registered operating envelope, from measured/registered H-1 operation (owner question P1Q-07 on who registers it and when)",
    "units": "A",
    "basis": "owner decision",
-   "source": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02 (ICP45_REQUIRED_CURRENT = H1_REGISTERED_MAX)",
+   "source": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02 (ICP45_REQUIRED_CURRENT = H1_REGISTERED_MAX); docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json execution_decisions.i_d_max_h1",
    "evidence_class": null,
    "status": "TBD",
    "freeze_point": "after-evidence",
    "p1_gate": "P1-S7 entry",
-   "note": ""
+   "note": "A9.4: never assigned from the 8.33 A supply rating; until registered from the H-1 envelope and measured H-1 behaviour, ICP45 = NOT_EVALUATED (not PASS or FAIL); the P1 current-capability surface may be generated before it is frozen"
   },
   {
    "id": "P1-IT-08",
@@ -951,16 +1016,16 @@
   },
   {
    "id": "P1-IT-21",
-   "name": "ICP / collector isolation from the Hall anode and cathode-common",
+   "name": "ICP body / collector operating isolation class (V_operating,max) relative to the Hall anode, H-1 body/common, facility ground and other isolated circuits, where those potential differences can physically occur",
    "value": 350.0,
    "units": "V",
-   "basis": "PROPOSED EXTENSION of owner row 81 (row 81 rates H-1, the C1 reference, the discharge supply, isolation and diagnostics to the relaxed 350 V end plus transient/qualification margin; it does NOT name the ICP): the same class is PROPOSED for the ICP body / collector circuits (ICD ICP-23 carries it as PROPOSED; owner question P1Q-14)",
-   "source": "ICD ICP-23; docs/decisions/OD_2026_09_29_owner_answers_147.json rows 81, 105",
-   "evidence_class": "owner-allocation",
-   "status": "PROPOSED EXTENSION (margin TBD; P1Q-14)",
-   "freeze_point": "LOCK-1",
-   "p1_gate": null,
-   "note": ""
+   "basis": "OWNER_DECIDED (A9.4 P1Q-14, ICP_350V_CLASS): deliberate A9 extension of the row-81 350 V operating class to the ICP body / collector circuits (ICD ICP-23 carried it as PROPOSED)",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14.class; docs/decisions/OD_2026_09_29_owner_answers_147.json row 81; ICD ICP-23",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_DECIDED (A9.4 P1Q-14 ICP_350V_CLASS)",
+   "freeze_point": "NOW",
+   "p1_gate": "P1-G0",
+   "note": "design withstand P1-IT-43, initial DWV P1-IT-44, later reverification P1-IT-45; RF insulation (ICP-44) stays OPEN (P1-IT-46)"
   },
   {
    "id": "P1-IT-22",
@@ -1147,7 +1212,7 @@
   {
    "id": "P1-IT-36",
    "name": "P1-S4 electron-extraction topology (Hall discharge OFF): electron-collecting electrode, its geometry and position, bias polarity and reference, instrumented terminals",
-   "value": "TBD - requires registration at P1-G0 (owner question P1Q-09). Fixed by physics / sources: the extracted electrons must be sunk by an electrode positive w.r.t. the ICP ion-collecting electrode (in the anchor the ion collector is the negative end of V_D and the HET anode sinks the electrons, TK-13 / TK-40); with the Hall discharge OFF the H-1 anode is NOT used as the sink (a positively biased H-1 anode with Ar flowing is a Hall discharge, contradicting P1-S4). Candidates: (A) a dedicated isolated downstream electron-collecting target, instrumented as terminal 'electron_collector'; (B) the grounded chamber wall (sink = facility_ground terminal). PROPOSED: (A), because with (B) ICP emission cannot be separated from wall / facility current paths in the Kirchhoff closure",
+   "value": "TBD - requires registration at P1-G0 (owner question P1Q-09, narrowed by A9.4 P1Q-10: ICP45_CAPACITY records use the dedicated, isolated, instrumented electron-collecting electrode, i.e. option (A); geometry, position and V_collector reference stay open). Fixed by physics / sources: the extracted electrons must be sunk by an electrode positive w.r.t. the ICP ion-collecting electrode (in the anchor the ion collector is the negative end of V_D and the HET anode sinks the electrons, TK-13 / TK-40); with the Hall discharge OFF the H-1 anode is NOT used as the sink (a positively biased H-1 anode with Ar flowing is a Hall discharge, contradicting P1-S4). Candidates: (A) a dedicated isolated downstream electron-collecting target, instrumented as terminal 'electron_collector'; (B) the grounded chamber wall (sink = facility_ground terminal). PROPOSED: (A), because with (B) ICP emission cannot be separated from wall / facility current paths in the Kirchhoff closure",
    "units": "-, mm, V",
    "basis": "this lane (form) + published anchor",
    "source": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json TK-13, TK-40; ICD ICP-21; docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json VI-EX-03",
@@ -1155,7 +1220,7 @@
    "status": "TBD (PROPOSED option A)",
    "freeze_point": "after-evidence",
    "p1_gate": "P1-G0",
-   "note": "the reducer requires extraction.topology_id and electron_collecting_electrode on every record and refuses H1_ANODE with the Hall discharge OFF and anything but H1_ANODE with it ON"
+   "note": "the reducer requires extraction.topology_id and electron_collecting_electrode on every record and refuses H1_ANODE with the Hall discharge OFF and anything but H1_ANODE with it ON; it refuses an ICP45_CAPACITY record whose sink is not DEDICATED_ELECTRON_COLLECTOR_TARGET (A9.4 P1Q-10)"
   },
   {
    "id": "P1-IT-37",
@@ -1173,28 +1238,28 @@
   {
    "id": "P1-IT-38",
    "name": "I_e,cap definition for the ICP-45A engineering evaluation",
-   "value": "PROPOSED: a CAPACITY (extraction) measurement, as A9.1 ICP-45A reads ('demonstrate electron extraction up to I_e,cap >= I_d,max'): maximum over eligible records of the facility-corrected extracted current I_e(RF ON) - I_e(RF OFF); eligible = stage P1-S4 or P1-S7, Hall discharge supply OFF, electrons sunk by the registered electron-collecting electrode (P1-IT-36, not the H-1 anode), G-REUSE, RF ON, RF pickup check DONE, gas/magnet conditions of a registered H-1 point, matched RF-OFF pair. Hall-ON P1-S7 records (H-1 anode sink) are a descriptive neutralization-consistency check only (P1-D-12): by current continuity the ICP-supplied current there equals I_d <= I_d,max,H1, so they can never show the margin and would falsely reject a viable ICP (the A9.3 OQ-A907-02 concern). No owner answer or cited source defines I_e,cap; owner question P1Q-10",
+   "value": "OWNER_DECIDED (A9.4 P1Q-10, CAPACITY_EXTRACTION_FORM): discharge-OFF extraction measurement - Hall discharge supply OFF and electrically (physically) disconnected from the H-1 anode; ICP operating; electrons extracted to a dedicated, isolated, instrumented electron-collecting electrode; gas, magnetic field, pressure and geometry of the registered H-1 operating condition; matched RF-OFF record quantifying facility/background electron current. I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (A9.4 recorder reading of the incomplete verbatim 'Define:' formula, decisions.P1Q-10.definition_recorder_reading; owner may correct - P1Q-16), subject to current-path closure (P1-IT-47) and the registered uncertainty treatment. Qualification I_e,cap >= I_d,max,H1 with the preregistered one-sided lower confidence bound on M_n = I_e,cap / I_d,max,H1 - 1 above zero. Hall-ON records are retained only as NEUTRALIZATION_CONSISTENCY, never ICP45_CAPACITY (with Hall ON I_e,ICP ~ I_d because the anode closes the discharge circuit). Only the dedicated electron-collector current is the capacity measurand",
    "units": "A",
-   "basis": "this lane (PROPOSED form)",
-   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json ICP-45, UBQ-02; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02, OQ-VI-05 ('the ICP supplies the required electron current')",
-   "evidence_class": "assumed",
-   "status": "PROPOSED (owner call P1Q-10)",
-   "freeze_point": "after-evidence",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-10; docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md P1Q-10; docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json ICP-45, UBQ-02; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_DECIDED (A9.4 P1Q-10 CAPACITY_EXTRACTION_FORM)",
+   "freeze_point": "NOW",
    "p1_gate": "P1-S7 entry",
-   "note": "synthetic records only ever yield SYNTHETIC_TEST_ONLY_NOT_EVIDENCE; excluded records are listed with reasons; without an eligible capacity record the status is NOT_EVALUATED, never a FAIL"
+   "note": "synthetic records only ever yield SYNTHETIC_TEST_ONLY_NOT_EVIDENCE; excluded records are listed with reasons; until I_d,max,H1 is registered, or without an eligible closure-valid ICP45_CAPACITY record, the status is exactly NOT_EVALUATED, never PASS or FAIL"
   },
   {
    "id": "P1-IT-39",
-   "name": "H-1 electrical configuration in every stage (anode, discharge-supply output, H-1 body / magnetic circuit)",
-   "value": "TBD - requires registration at P1-G0 (owner question P1Q-13). PROPOSED: with the discharge supply OFF (P1-S3..S5 and P1-S7 capacity blocks) the H-1 anode is DISCONNECTED from the supply output and left floating with V_anode recorded (terminal hall_anode OPEN_CIRCUIT_BY_CONSTRUCTION), or tied to the registered reference through a METERED return (terminal hall_anode MEASURED); an OFF supply output left connected is refused (possible low-impedance path); the H-1 body / magnetic-circuit state is recorded per record",
-   "units": "-, V",
-   "basis": "this lane (form)",
-   "source": "this lane; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json authorizations.P1 ('current-path verification')",
-   "evidence_class": null,
-   "status": "TBD (PROPOSED form)",
-   "freeze_point": "after-evidence",
+   "name": "H-1 electrical configuration during ICP-45 discharge-OFF capacity records (anode, discharge-supply output, H-1 body / magnetic circuit)",
+   "value": "OWNER_DECIDED (A9.4 P1Q-13, ANODE_FLOATING / BODY_SINGLE_POINT_METERED_GROUND): the H-1 anode is physically disconnected from the discharge supply and left floating (never a commanded-zero supply left attached); V_anode on a high-impedance isolated channel; anode terminal OPEN_CIRCUIT_BY_CONSTRUCTION. The H-1 body / magnetic circuit has exactly one deliberate facility-ground connection through an instrumented / metered return (no second chassis / stand / coax / shield path); I_body->ground measured continuously during capacity records; ICP body potential, anode potential, dedicated collector potential / current and chamber / facility return current (where measurable) monitored. A metered-return anode exists only as a separately registered DIAGNOSTIC_VARIANT that never replaces the floating-anode baseline and never feeds I_e,cap",
+   "units": "-, V, A",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-13; docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md P1Q-13",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_DECIDED (A9.4 P1Q-13 ANODE_FLOATING / BODY_SINGLE_POINT_METERED_GROUND)",
+   "freeze_point": "NOW",
    "p1_gate": "P1-G0",
-   "note": "the reducer requires h1_electrical {config_id, anode_state, V_anode_V, h1_body_state} on every record and the hall_anode terminal in every Kirchhoff closure (Hall OFF included)"
+   "note": "the configuration id is registered at P1-G0; the reducer requires h1_electrical {config_id, anode_state, V_anode_V, h1_body_state, discharge_supply_connection} on every record and REFUSES an ICP45_CAPACITY record with a METERED_RETURN anode, a connected supply, no high-impedance V_anode channel or no continuous h1_body terminal (capacity_monitoring)"
   },
   {
    "id": "P1-IT-40",
@@ -1207,7 +1272,7 @@
    "status": "PROPOSED (definition)",
    "freeze_point": "NOW",
    "p1_gate": "P1-G0",
-   "note": "the P1-S7 RF-OFF facility pair is taken with V_d applied (state ON) inside the registered start-attempt limits P1-IT-31, whether or not a discharge is sustained"
+   "note": "the P1-S7H (Hall-ON follow-up) RF-OFF facility pair is taken with V_d applied (state ON) inside the registered start-attempt limits P1-IT-31, whether or not a discharge is sustained; OFF also requires discharge_supply_connection = PHYSICALLY_DISCONNECTED (A9.4 P1Q-13)"
   },
   {
    "id": "P1-IT-41",
@@ -1233,7 +1298,75 @@
    "status": "PROPOSED (convention)",
    "freeze_point": "NOW",
    "p1_gate": "P1-G0",
-   "note": "negative I_e is flagged (net ion collection or sensor orientation), not silently accepted"
+   "note": "negative I_e is flagged (net ion collection or sensor orientation), not silently accepted; the capacity measurand I_e,collector = -I_A(electron_collector) under the same convention (A9.4 P1Q-10)"
+  },
+  {
+   "id": "P1-IT-43",
+   "name": "ICP body / collector minimum design withstand V_design,withstand",
+   "value": 525.0,
+   "units": "V",
+   "basis": "owner decision: >= 1.5 x V_operating,max = 350 V; a minimum design basis, NOT the qualification-test voltage",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14.design_margin",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_DECIDED (A9.4 P1Q-14; minimum, >=)",
+   "freeze_point": "NOW",
+   "p1_gate": "P1-G0",
+   "note": ""
+  },
+  {
+   "id": "P1-IT-44",
+   "name": "initial bench dielectric-withstand (DWV) qualification of passive insulation paths and feedthrough assemblies",
+   "value": {
+    "V_test_V_DC": 1050.0,
+    "duration_s": 60.0
+   },
+   "units": "V (DC), s",
+   "basis": "owner decision: ~3 x the 350 V nominal class, 'Level-2-style' per the owner-stated ECSS high-voltage guidance (standard and clause not identified in the record - verify, A9.4 recorder_flags[1]); where component ratings permit; current-limited; sensitive electronics disconnected where necessary; leakage recorded; in the relevant insulation configuration; before first HV/RF operation; plus representative-pressure/gas testing for paths exposed to the Paschen-risk region",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14.initial_dwv; docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md P1Q-14",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_DECIDED (A9.4 P1Q-14 1.05kV_INITIAL_DWV)",
+   "freeze_point": "NOW",
+   "p1_gate": "P1-G0",
+   "note": "leakage acceptance value: TBD - requires the insulation-path / feedthrough ratings (not given by the owner); distinct from the A9.3 ICPQ-06 ~1 kV representative-gas qualification of ICP gas lines (P1-IT-20); not repeated before each campaign (P1-IT-45)"
+  },
+  {
+   "id": "P1-IT-45",
+   "name": "later acceptance / reverification of the ICP body / collector insulation",
+   "value": "TBD - requires an owner-registered lower controlled level / procedure (A9.4 P1Q-14: the 1.05 kV test is qualification-style and is not repeated before every campaign; requalification only after a fault or hardware modification; owner question P1Q-17)",
+   "units": "V (DC), s",
+   "basis": "owner decision (rule)",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14.no_repeated_hipot",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "after-evidence",
+   "p1_gate": "before any reverification",
+   "note": ""
+  },
+  {
+   "id": "P1-IT-46",
+   "name": "ICP antenna / matching-network RF insulation (ICD ICP-44): RF peak voltage, RF current, RF creepage/clearance, combined RF + DC stress, vacuum/gas breakdown",
+   "value": "TBD - requires separate RF qualification (A9.4 P1Q-14: this decision does not close ICP-44); ratings TBD_AFTER_IMPEDANCE_MAP",
+   "units": "V (RF peak), A, mm",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14.rf_insulation; ICD ICP-44",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "after-evidence",
+   "p1_gate": "P1-G2",
+   "note": "ICP-44 stays OPEN; never PASS"
+  },
+  {
+   "id": "P1-IT-47",
+   "name": "Kirchhoff closure tolerance for ICP-45 capacity points (registered sign convention)",
+   "value": "TBD - requires registration before the first ICP45_CAPACITY record from the channel resolutions of the collector, body, anode, facility and ICP-body terms (owner question P1Q-15); the reducer takes it as an explicit input (closure_rule) and has no default",
+   "units": "- (relative)",
+   "basis": "owner decision (rule: a large unexplained residual invalidates the capacity point)",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-13.closure",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "after-evidence",
+   "p1_gate": "P1-G0",
+   "note": "terms: I_collector + I_body + I_anode + I_facility + I_ICP,body ~ 0 (A9.4 P1Q-13); without a registered tolerance no capacity point is admitted (NOT_EVALUATED)"
   }
  ],
  "measurements": [
@@ -1440,7 +1573,7 @@
    ],
    "stages": "S3-S7",
    "status": "REQUIRED",
-   "note": "I_body is 0 by construction when the body is open-circuit (declared per record)",
+   "note": "I_body is 0 by construction when the body is open-circuit (declared per record); V_icp_body is monitored in every ICP45_CAPACITY record (A9.4 P1Q-13)",
    "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
@@ -1456,7 +1589,7 @@
    ],
    "stages": "S3-S7",
    "status": "REQUIRED",
-   "note": "",
+   "note": "chamber / facility return current where measurable (A9.4 P1Q-13); distinct from the H-1 body return P1-M-29",
    "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
@@ -1490,7 +1623,7 @@
    ],
    "stages": "S3-S7",
    "status": "REQUIRED",
-   "note": "V_anode recorded also with the discharge supply OFF (anode disconnected-floating or metered return, P1-IT-39); V_ref from P1-S6 on",
+   "note": "V_anode recorded also with the discharge supply OFF on a high-impedance isolated channel (anode physically disconnected and floating; metered return only in a registered DIAGNOSTIC_VARIANT; A9.4 P1Q-13, P1-IT-39); V_ref from P1-S6 on",
    "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
@@ -1690,9 +1823,41 @@
     "UB-N-02",
     "UB-N-03"
    ],
-   "stages": "S4, S5",
-   "status": "CONDITIONAL",
-   "note": "required when the registered P1-S4 topology is the dedicated target (P1-IT-36); with the chamber-wall topology the sink current is P1-M-13",
+   "stages": "S4, S5, S7",
+   "status": "REQUIRED (ICP45_CAPACITY records; A9.4 P1Q-10)",
+   "note": "the dedicated electron-collector current is the capacity measurand (I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF, A9.4 P1Q-10); required in every ICP45_CAPACITY record; for non-capacity surface records with the chamber-wall topology the sink current is P1-M-13",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
+  },
+  {
+   "id": "P1-M-28",
+   "quantity": "optical-emission photodiode intensity (ignition / unlit indicator)",
+   "symbol": "S_PD",
+   "units": "V",
+   "instrument_class": "photodiode + amplifier on a DAQ channel (INS-P2-10; A9.4 P2Q-05), line of sight to the ICP source volume through the optical access",
+   "reference_plane": "photodiode output at the DAQ input (gain setting recorded)",
+   "sampling": "TBD - frozen at P1-G0 (PROPOSED: continuous logging on the common time base INS-18)",
+   "uncertainty_sources": [
+    "TBD - requires the photodiode / amplifier datasheets (dark offset, linear range, saturation)"
+   ],
+   "stages": "S2-S7H",
+   "status": "REQUIRED (A9.4 P2Q-05)",
+   "note": "records dark/background (S2), RF-powered known-unlit (S2) and known-lit (S3-S5) data from which the P2 threshold is frozen before the P2 map; loss of line of sight or saturation flagged per sample and never used as unlit evidence; recorded simultaneously with P_refl, antenna current, collector/current-path response and pressure; no numeric threshold is set in P1",
+   "metrology_spec": "none as an absolute measurand: relative optical-intensity indicator; its unlit threshold comes from the P1 dark/background, RF-powered known-unlit and known-lit records and is frozen before the P2 map (A9.4 P2Q-05); amplifier gain setting and dark offset recorded per block"
+  },
+  {
+   "id": "P1-M-29",
+   "quantity": "H-1 body / magnetic-circuit to facility-ground current (single metered return)",
+   "symbol": "I_body->ground",
+   "units": "A",
+   "instrument_class": "ground-current monitor in the only deliberate H-1 body ground path (A9H-INS-05 class)",
+   "reference_plane": "H-1 body -> ground-current monitor -> facility ground (terminal h1_body)",
+   "sampling": "continuous during every ICP45_CAPACITY record (A9.4 P1Q-13); TBD - frozen at P1-G0 (PROPOSED: continuous logging on the common time base INS-18)",
+   "uncertainty_sources": [
+    "UB-N-04"
+   ],
+   "stages": "S3-S7H",
+   "status": "REQUIRED (A9.4 P1Q-13)",
+   "note": "missing in a capacity record -> the reducer refuses the record; enters the Kirchhoff closure P1-D-13",
    "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   }
  ],
@@ -1735,7 +1900,7 @@
   {
    "id": "P1-D-06",
    "quantity": "current-path closure residual",
-   "formula": "sum of signed terminal currents / max |terminal current| over {collector_supply, icp_body, facility_ground, hall_anode (, electron_collector)}; hall_anode is in every closure (metered or OPEN_CIRCUIT_BY_CONSTRUCTION, P1-IT-39)",
+   "formula": "sum of signed terminal currents / max |terminal current| over {collector_supply, icp_body, facility_ground, hall_anode (, electron_collector, h1_body)}; hall_anode is in every closure (metered or OPEN_CIRCUIT_BY_CONSTRUCTION, P1-IT-39); h1_body (I_body->ground) in every ICP45_CAPACITY record (A9.4 P1Q-13)",
    "source": "this lane (form); docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json UB-N-07 (PROPOSED diagnostic)"
   },
   {
@@ -1759,14 +1924,20 @@
   {
    "id": "P1-D-10",
    "quantity": "M_n lower bound (ICP-45A, only after registration)",
-   "formula": "M_n = I_e,cap / I_d,max,H1 - 1; lower = M_n - k_one_sided u(M_n); I_e,cap per P1-IT-38 (PROPOSED, P1Q-10): capacity-extraction records only, never Hall-ON records",
-   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-02, UBQ-07, ICP-45; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02"
+   "formula": "M_n = I_e,cap / I_d,max,H1 - 1; lower = M_n - k_one_sided u(M_n); I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF per P1-IT-38 (OWNER_DECIDED, A9.4 P1Q-10): ICP45_CAPACITY records only, never NEUTRALIZATION_CONSISTENCY (Hall-ON) records; status exactly NOT_EVALUATED until I_d,max,H1 is registered",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-02, UBQ-07, ICP-45; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02; docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-10, execution_decisions.i_d_max_h1"
   },
   {
    "id": "P1-D-12",
-   "quantity": "Hall-on neutralization consistency (descriptive)",
-   "formula": "ICP-supplied current (facility-corrected where an RF-OFF pair exists) vs |I_hall_anode| at the same P1-S7 Hall-ON record; ratio reported; never a gate and never I_e,cap",
-   "source": "this lane (A9.1 ICP-45A reading: capacity is an extraction demonstration)"
+   "quantity": "Hall-on neutralization consistency (descriptive; label NEUTRALIZATION_CONSISTENCY)",
+   "formula": "ICP-supplied current (facility-corrected where an RF-OFF pair exists) vs |I_hall_anode| at the same P1-S7H Hall-ON record; ratio, sustainment, closure residual, collector / reference potentials and RF power reported; never a gate, never ICP45_CAPACITY and never I_e,cap",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-10.hall_on, hall_on_follow_up"
+  },
+  {
+   "id": "P1-D-13",
+   "quantity": "capacity-point closure validity",
+   "formula": "|P1-D-06 residual| of the RF-ON ICP45_CAPACITY record and of its matched RF-OFF record <= the registered tolerance P1-IT-47 (terms collector, body, anode, facility where measurable, ICP body under the registered sign convention); otherwise the capacity point is invalid; no tolerance registered -> no capacity point admitted",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-13.closure"
   },
   {
    "id": "P1-D-11",
@@ -1811,10 +1982,10 @@
   {
    "id": "P1-SI-05",
    "hazard": "HV between floating circuits and ground (collector, ICP body, Hall anode)",
-   "function": "isolation per ICD ICP-23 (350 V class of owner row 81 for H-1 / discharge supply / isolation / diagnostics; PROPOSED EXTENSION to the ICP body and collector circuits, which row 81 does not name, P1-IT-21 / P1Q-14), insulation-resistance / hipot verification at P1-G0 before first bias, current-limited supplies, discharge-supply protection sized to the 8.33 A stand ceiling",
-   "threshold": "350 V (row 81) for the row-81 items; 350 V for the ICP body / collector circuits is a PROPOSED EXTENSION (P1Q-14); transient/qualification margin TBD",
-   "source": "ICD ICP-23; docs/decisions/OD_2026_09_29_owner_answers_147.json row 81; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02",
-   "status": "PROPOSED"
+   "function": "isolation per ICD ICP-23: 350 V operating class of owner row 81 for H-1 / discharge supply / isolation / diagnostics, extended by A9.4 P1Q-14 to the ICP body / collector circuits (vs Hall anode, H-1 body/common, facility ground, other isolated circuits); V_design,withstand >= 525 V; initial DWV 1.05 kV DC for 60 s on passive insulation paths and feedthrough assemblies where ratings permit, current-limited, sensitive electronics disconnected where necessary, leakage recorded, before first HV/RF operation, plus representative-pressure/gas testing for Paschen-risk paths; current-limited supplies; discharge-supply protection sized to the 8.33 A stand ceiling",
+   "threshold": "350 V operating; >= 525 V design withstand; 1.05 kV DC / 60 s initial DWV (A9.4 P1Q-14); leakage acceptance TBD; later reverification level TBD (P1-IT-45)",
+   "source": "ICD ICP-23; docs/decisions/OD_2026_09_29_owner_answers_147.json row 81; docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02",
+   "status": "OWNER_DECIDED (A9.4 P1Q-14); ICP-44 RF insulation OPEN"
   },
   {
    "id": "P1-SI-06",
@@ -1855,6 +2026,14 @@
    "threshold": "TBD (P1-IT-31)",
    "source": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-VI-05",
    "status": "TBD"
+  },
+  {
+   "id": "P1-SI-11",
+   "hazard": "dielectric-withstand (hipot) testing itself: personnel HV exposure and insulation ageing by repeated proof stress",
+   "function": "current-limited tester; sensitive electronics disconnected where necessary; the 1.05 kV DC / 60 s test is qualification-style and not repeated before each campaign; later reverification at a lower controlled level / procedure unless a fault or hardware modification requires requalification",
+   "threshold": "1.05 kV DC / 60 s initial (A9.4 P1Q-14); reverification level TBD (P1-IT-45)",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14.initial_dwv, no_repeated_hipot",
+   "status": "OWNER_DECIDED (rule) / TBD (reverification level)"
   }
  ],
  "run_matrix": {
@@ -1905,7 +2084,7 @@
     "id": "F8",
     "name": "Hall discharge-supply state (P1-IT-40)",
     "units": "-",
-    "levels": "OFF in P1-S3..S5 and the P1-S7 capacity block; ON only in P1-S6, P1-S6D and the P1-S7 neutralization-consistency block; sustainment recorded separately"
+    "levels": "OFF in P1-S3..S5 and the P1-S7 capacity block (supply physically disconnected, A9.4 P1Q-13); ON only in P1-S6, P1-S6D and the P1-S7H Hall-ON follow-up (NEUTRALIZATION_CONSISTENCY); sustainment recorded separately"
    }
   ],
   "ordering_rule": [
@@ -1924,7 +2103,7 @@
    "rfq_v1_package": "RFQ-04 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9H-INS-01; H3-A902-01",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-02",
@@ -1933,7 +2112,7 @@
    "rfq_v1_package": "RFQ-04 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9H-INS-01, A9H-INS-16",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-03",
@@ -1942,7 +2121,7 @@
    "rfq_v1_package": "RFQ-04 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9H-RF-LM-01; ICD ICP-13",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-04",
@@ -1951,7 +2130,7 @@
    "rfq_v1_package": "RFQ-04 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9H-INS-15; ICD ICP-15",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-05",
@@ -1960,7 +2139,7 @@
    "rfq_v1_package": "RFQ-04 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9H-INS-02",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-06",
@@ -1969,7 +2148,7 @@
    "rfq_v1_package": "RFQ-04 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9H-RF-PROT-01; ICD ICP-16",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-07",
@@ -1978,7 +2157,7 @@
    "rfq_v1_package": "RFQ-04 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9H-INS-03; PENDING docs/experiments/hall_icp/p2_impedance_map/",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-08",
@@ -1987,7 +2166,7 @@
    "rfq_v1_package": "RFQ-04 (RFQ-04-R04 asks the supplier to allow input-power metering; the analyzer itself is not a v1 line) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9.3 OQ-RFQ-06",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-09",
@@ -1996,7 +2175,7 @@
    "rfq_v1_package": "RFQ-02 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9H-CAL-04; H2-3 gas path",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-10",
@@ -2005,7 +2184,7 @@
    "rfq_v1_package": "RFQ-02 / RFQ-09 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "UB-F-07",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-11",
@@ -2014,7 +2193,7 @@
    "rfq_v1_package": "RFQ-03 / RFQ-09 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "UB-B-03; H26-30 placement",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-12",
@@ -2023,7 +2202,7 @@
    "rfq_v1_package": "RFQ-02 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "ICPQ-06; H2-3 REV-64",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-13",
@@ -2032,7 +2211,7 @@
    "rfq_v1_package": "RFQ-02 option line (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9.3 OQ-RFQ-10",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-14",
@@ -2041,7 +2220,7 @@
    "rfq_v1_package": "RFQ-05 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "ICD ICP-26",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-15",
@@ -2050,7 +2229,7 @@
    "rfq_v1_package": "none (H2-3 / H2-1 design item; the MFC itself is RFQ-02) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "H2-3 gas path / plenum; H2-1 CI H-1; IF-P1-14",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-16",
@@ -2059,7 +2238,7 @@
    "rfq_v1_package": "RFQ-09 (information) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "owner row 139",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-17",
@@ -2068,7 +2247,7 @@
    "rfq_v1_package": "RFQ-09 (information) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "TK-31/TK-34 context",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-18",
@@ -2077,7 +2256,7 @@
    "rfq_v1_package": "RFQ-04 / RFQ-09 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "ICD ICP-15",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-19",
@@ -2086,187 +2265,214 @@
    "rfq_v1_package": "RFQ-03 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9H-INS-07",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-20",
+   "family": "vacuum_facility",
+   "item": "optical access / window with line of sight to the ICP source volume for the photodiode (A9.4 P2Q-05)",
+   "rfq_v1_package": "none in RFQ v1 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
+   "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
+   "h2_or_h1_items": "INS-P2-10; P1-M-28",
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
+  },
+  {
+   "id": "P1-HW-21",
    "family": "vacuum_facility",
    "item": "ICP pressure port (if provided)",
    "rfq_v1_package": "RFQ-05 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "ICD ICP-27",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
-   "id": "P1-HW-21",
+   "id": "P1-HW-22",
    "family": "hall_electrical",
    "item": "H-1 Hall thruster with its magnet circuit (needed from P1-S3 as the G-REUSE gas path and for magnet factor F6; Hall-on in P1-S6/S6D/S7)",
    "rfq_v1_package": "none (H-1 is the H2-1 design item, not an RFQ v1 package) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "H2-1 CI H-1, MC-1; IF-P1-14",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
-   "id": "P1-HW-22",
+   "id": "P1-HW-23",
    "family": "hall_electrical",
    "item": "laboratory discharge supply (ground only), conductors, sensors and protection sized to the 8.33 A stand ceiling",
    "rfq_v1_package": "RFQ-06 part (b) laboratory discharge supply (ground only); NOT part (a) flight-representative breadboard supply (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "H2-4 H24-27, H3-PPU-01; A9.3 OQ-A907-02",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
-  },
-  {
-   "id": "P1-HW-23",
-   "family": "hall_electrical",
-   "item": "H-1 anode disconnect means (discharge-supply output isolated in Hall-OFF stages) and metered anode return / floating-potential divider per the registered configuration (P1-IT-39)",
-   "rfq_v1_package": "none explicit in RFQ v1 (closest: RFQ-06 part (d) synchronized V/I channel pairs) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
-   "h2_or_h1_items": "P1-IT-39; P1-M-15; A9H-INS-10",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-24",
+   "family": "hall_electrical",
+   "item": "H-1 anode physical disconnect means (discharge-supply output disconnected in Hall-OFF stages) and high-impedance isolated V_anode channel; metered anode return only for a registered DIAGNOSTIC_VARIANT (A9.4 P1Q-13; P1-IT-39)",
+   "rfq_v1_package": "none explicit in RFQ v1 (closest: RFQ-06 part (d) synchronized V/I channel pairs) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
+   "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
+   "h2_or_h1_items": "P1-IT-39; P1-M-15; A9H-INS-10",
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
+  },
+  {
+   "id": "P1-HW-25",
    "family": "hall_electrical",
    "item": "magnet supplies (per coil)",
    "rfq_v1_package": "none as a v1 quotation line (A9-02 bus slots hall_magnet_inner/outer/trim only) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9-02 A902-31; H2-1 MC-1",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
-   "id": "P1-HW-25",
+   "id": "P1-HW-26",
    "family": "hall_electrical",
    "item": "floating collector / bias supply with V/I metering",
    "rfq_v1_package": "RFQ-05 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9H-INS-04; A902-23",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
-   "id": "P1-HW-26",
+   "id": "P1-HW-27",
    "family": "hall_electrical",
    "item": "P1-S4 electron-collecting electrode circuit: return lead, current channel and bias reference per the registered topology (P1-IT-36)",
    "rfq_v1_package": "none explicit in RFQ v1 (RFQ-05 covers the ICP collector/bias supply only) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "P1-IT-36; P1-M-27; ICD ICP-21",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
-  },
-  {
-   "id": "P1-HW-27",
-   "family": "hall_electrical",
-   "item": "ground-return current monitor",
-   "rfq_v1_package": "none explicit in RFQ v1 (closest: RFQ-06 part (d) synchronized V/I channel pairs) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
-   "h2_or_h1_items": "A9H-INS-05",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-28",
    "family": "hall_electrical",
-   "item": "isolation of floating circuits (350 V, row 81; margin TBD)",
-   "rfq_v1_package": "RFQ-05 / RFQ-06 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
+   "item": "ground-return current monitors: H-1 body single-point metered facility-ground return (I_body->ground, continuous) and chamber / facility return where measurable (A9.4 P1Q-13)",
+   "rfq_v1_package": "none explicit in RFQ v1 (closest: RFQ-06 part (d) synchronized V/I channel pairs) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
-   "h2_or_h1_items": "ICD ICP-23; H2-6 REV-36",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "h2_or_h1_items": "A9H-INS-05; P1-M-13; P1-M-29",
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
    "id": "P1-HW-29",
+   "family": "hall_electrical",
+   "item": "isolation of floating circuits (350 V class, row 81, extended to the ICP body / collector by A9.4 P1Q-14; V_design,withstand >= 525 V; initial DWV 1.05 kV DC / 60 s)",
+   "rfq_v1_package": "RFQ-05 / RFQ-06 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
+   "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
+   "h2_or_h1_items": "ICD ICP-23; H2-6 REV-36; P1-IT-43 / P1-IT-44",
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
+  },
+  {
+   "id": "P1-HW-30",
+   "family": "hall_electrical",
+   "item": "current-limited DC dielectric-withstand tester >= 1.05 kV with leakage read-out (initial DWV, A9.4 P1Q-14)",
+   "rfq_v1_package": "none in RFQ v1 (owner question P1Q-17 covers the reverification level only) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
+   "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
+   "h2_or_h1_items": "P1-IT-44; P1-SI-11",
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
+  },
+  {
+   "id": "P1-HW-31",
    "family": "hall_electrical",
    "item": "V_d reference-potential channels",
    "rfq_v1_package": "closest: RFQ-06 part (d) synchronized V/I channel pairs (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9H-INS-10",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
-   "id": "P1-HW-30",
+   "id": "P1-HW-32",
    "family": "hall_electrical",
    "item": "C1 (hall_c1_reference) with heater / keeper supplies: present on its own module but DISCONNECTED and verified not supplying electrons in P1-S6 (OQ-VI-05 step 2); disconnect means and its verification record",
    "rfq_v1_package": "RFQ-08 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "H2-2 C-1; ICD ICP-25, ICP-46; A9.1 ICP-46 (keeper isolation basis)",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
-   "id": "P1-HW-31",
+   "id": "P1-HW-33",
    "family": "mechanical_icp_fabrication",
    "item": "open-tube coaxial dielectric tube",
    "rfq_v1_package": "RFQ-05 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "ICD ICP-04, ICP-07; TK-10",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
-   "id": "P1-HW-32",
+   "id": "P1-HW-34",
    "family": "mechanical_icp_fabrication",
    "item": "RF antenna / coil (unmagnetized)",
    "rfq_v1_package": "RFQ-05 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "ICD ICP-19, ICP-32",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
-   "id": "P1-HW-33",
+   "id": "P1-HW-35",
    "family": "mechanical_icp_fabrication",
    "item": "collector (316L allowed for Ar)",
    "rfq_v1_package": "RFQ-05 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "ICD ICP-21; A9-03-collector",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
-   "id": "P1-HW-34",
+   "id": "P1-HW-36",
    "family": "mechanical_icp_fabrication",
    "item": "P1-S4 dedicated electron-collecting target (if topology A is registered): isolated plate, support, position datum and feedthrough",
    "rfq_v1_package": "none (not in RFQ v1; geometry TBD at P1-G0, P1-IT-36) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "P1-IT-36; P1Q-09",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
-   "id": "P1-HW-35",
+   "id": "P1-HW-37",
    "family": "mechanical_icp_fabrication",
    "item": "carrier on KC-1 with orificed-variant provisions",
    "rfq_v1_package": "RFQ-01 / RFQ-05 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "H2-6 REV-30; ICD ICP-06",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
-   "id": "P1-HW-36",
+   "id": "P1-HW-38",
    "family": "mechanical_icp_fabrication",
    "item": "machined supports / open-frame mounting (view-factor objective)",
    "rfq_v1_package": "RFQ-05 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "ICD ICP-47; A9H-TH-01",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
-   "id": "P1-HW-37",
+   "id": "P1-HW-39",
    "family": "thrust_metrology",
    "item": "DAQ with common time base",
    "rfq_v1_package": "RFQ-06 / RFQ-01 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "INS-18",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
-   "id": "P1-HW-38",
+   "id": "P1-HW-40",
+   "family": "thrust_metrology",
+   "item": "optical-emission photodiode + amplifier + DAQ channel (A9.4 P2Q-05)",
+   "rfq_v1_package": "none in RFQ v1 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
+   "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
+   "h2_or_h1_items": "INS-P2-10; P1-M-28",
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
+  },
+  {
+   "id": "P1-HW-41",
    "family": "thrust_metrology",
    "item": "traceability hardware (certificates for V, I, RF, T, flow)",
    "rfq_v1_package": "RFQ-09 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9H-CAL-02..04",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
   {
-   "id": "P1-HW-39",
+   "id": "P1-HW-42",
    "family": "thrust_metrology",
    "item": "thrust stand: not required for P1-S0..S6 (no thrust claim); only if P1-S7 is run on the stand",
    "rfq_v1_package": "RFQ-01 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9H-FIX-01",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   }
  ],
  "interface_demands": [
@@ -2445,6 +2651,30 @@
    "what": "P1-S4 extraction topology (P1-IT-36) and the interim connector/harness record as inputs to the ICD revision (P1Q-12)",
    "units": "mm, V, A",
    "status": "OFFERED (after P1-G0)"
+  },
+  {
+   "id": "IF-P1-23",
+   "direction": "to",
+   "counterpart": "P2 PENDING docs/experiments/hall_icp/p2_impedance_map/",
+   "what": "photodiode (INS-P2-10) dark/background, RF-powered known-unlit and known-lit P1 records with simultaneous P_refl, antenna current, collector/current-path response and pressure, from which the P2 unlit threshold is frozen before the P2 map (A9.4 P2Q-05)",
+   "units": "V, W, A, Pa",
+   "status": "OFFERED (P1-S2, P1-S3..S5)"
+  },
+  {
+   "id": "IF-P1-24",
+   "direction": "to",
+   "counterpart": "RFQ v2 PENDING docs/procurement/rfq_a9_v2/",
+   "what": "A9.4 procurement items: photodiode, optical access / window, amplifier, DAQ channel (P2Q-05); >= 525 V design withstand and 1.05 kV DC / 60 s initial DWV on the ICP body / collector isolation and feedthrough lines (P1Q-14)",
+   "units": "V, s",
+   "status": "OFFERED (A9.4)"
+  },
+  {
+   "id": "IF-P1-25",
+   "direction": "from",
+   "counterpart": "H-1 registration (A9-01 docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json)",
+   "what": "I_d,max,H1 from the registered H-1 operating envelope and measured H-1 behaviour (never the 8.33 A supply rating); ICP45 = NOT_EVALUATED until it exists (A9.4 execution_decisions.i_d_max_h1)",
+   "units": "A",
+   "status": "PENDING (owner / prereg lane; P1Q-07)"
   }
  ],
  "owner_answers_applied": [
@@ -2541,7 +2771,7 @@
   {
    "id": "A9.1 ICP-45",
    "kind": "decision",
-   "how_applied": "ICP-45A on Ar (engineering) read as a capacity (extraction) demonstration: I_e,cap from registered-extraction-topology records (P1-S4 / P1-S7 capacity block) at registered H-1 conditions, conditional on registration; Hall-ON records only a consistency check; ICP-45N remains"
+   "how_applied": "ICP-45A on Ar (engineering) as a capacity (extraction) demonstration, now in the owner-decided form of A9.4 P1Q-10 (ICP45_CAPACITY records, P1-S4 / P1-S7) at registered H-1 conditions, conditional on registration; Hall-ON records NEUTRALIZATION_CONSISTENCY only (P1-S7H); ICP-45N remains"
   },
   {
    "id": "A9.1 UBQ-02 / UBQ-07",
@@ -2656,7 +2886,7 @@
   {
    "id": "row 81",
    "kind": "147 answers",
-   "how_applied": "350 V isolation class (+ margin TBD) for H-1, the C1 reference, the discharge supply, isolation and diagnostics; its application to the ICP body / collector circuits is a PROPOSED EXTENSION (row 81 does not name the ICP; P1Q-14)"
+   "how_applied": "350 V isolation class for H-1, the C1 reference, the discharge supply, isolation and diagnostics; extended to the ICP body / collector circuits by A9.4 P1Q-14 (OWNER_DECIDED; P1-IT-21)"
   },
   {
    "id": "row 105",
@@ -2697,6 +2927,36 @@
    "id": "row 146",
    "kind": "147 answers",
    "how_applied": "no manufactured screening values: run-matrix levels are TBD/PROPOSED"
+  },
+  {
+   "id": "A9.4 P1Q-10",
+   "kind": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-10 (OWNER_DECIDED - CAPACITY_EXTRACTION_FORM); verbatim docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+   "how_applied": "ANSWERED: P1-IT-38 OWNER_DECIDED; I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (recorder reading of the incomplete verbatim formula, stated in P1-IT-38; confirmation asked in P1Q-16); qualification with the one-sided lower bound of M_n; reducer record_class ICP45_CAPACITY / NEUTRALIZATION_CONSISTENCY labels; Hall-ON follow-up stage P1-S7H; P1Q-10 removed from the open list"
+  },
+  {
+   "id": "A9.4 P1Q-13",
+   "kind": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-13 (OWNER_DECIDED - ANODE_FLOATING / BODY_SINGLE_POINT_METERED_GROUND)",
+   "how_applied": "ANSWERED: P1-IT-39 OWNER_DECIDED; the reducer REFUSES capacity records with a METERED_RETURN anode, a connected supply, no high-impedance V_anode channel or no continuous h1_body ground current; METERED_RETURN only as DIAGNOSTIC_VARIANT; Kirchhoff closure incl. h1_body with a registered tolerance (P1-IT-47, P1-D-13); P1-M-29; P1Q-13 removed from the open list"
+  },
+  {
+   "id": "A9.4 P1Q-14",
+   "kind": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14 (OWNER_DECIDED - ICP_350V_CLASS / 1.05kV_INITIAL_DWV)",
+   "how_applied": "ANSWERED: P1-IT-21 no longer PROPOSED EXTENSION; P1-IT-43 (>= 525 V design withstand), P1-IT-44 (1.05 kV DC / 60 s initial DWV), P1-IT-45 (later reverification TBD), P1-IT-46 (ICP-44 RF insulation OPEN); P1-SI-05, P1-SI-11, P1-S0 exit; the ECSS reference is owner-stated without standard / clause id (verify); ICPQ-06 gas-line rule P1-IT-20 kept distinct; P1Q-14 removed from the open list"
+  },
+  {
+   "id": "A9.4 P2Q-05",
+   "kind": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P2Q-05 (OWNER_DECIDED - PHOTODIODE_REQUIRED)",
+   "how_applied": "P1 part: photodiode measurement P1-M-28 (dark/background and RF-powered known-unlit in P1-S2, known-lit in P1-S3..S5) handed to P2 (IF-P1-23) for the threshold frozen before the P2 map; no numeric threshold set; readiness rows for the photodiode + amplifier + DAQ channel and the optical access / window"
+  },
+  {
+   "id": "A9.4 execution_decisions.i_d_max_h1",
+   "kind": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+   "how_applied": "I_d,max,H1 never from 8.33 A (bench design ceiling only, P1-IT-06); P1-IT-07 / IF-P1-25; the reducer returns exactly NOT_EVALUATED until it is registered; the P1 capability surface is generated before it is frozen"
+  },
+  {
+   "id": "A9.4 execution_decisions.p1_needed_rfqs",
+   "kind": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+   "how_applied": "readiness rows: the owner / procurement may send the P1_NEEDED RFQ packages for quotation (RFQ, clarification, indicative lead time, commercial quotation, datasheets / certificates); no purchase order, advance payment or binding commitment; no supplier contact by this lane"
   }
  ],
  "open_owner_questions": [
@@ -2750,15 +3010,9 @@
   },
   {
    "id": "P1Q-09",
-   "question": "Which electron-extraction topology does P1-S4 (Hall discharge OFF) use: (A) a dedicated isolated downstream electron-collecting target, or (B) the grounded chamber wall; with which geometry/position, V_collector reference and instrumented terminals (P1-IT-36)?",
-   "proposed_answer": "(A), with the ICP ion collector biased negative w.r.t. the target, V_collector referenced to the target and all four terminals (collector_supply, icp_body, facility_ground, electron_collector) metered; geometry and position owner call at P1-G0",
+   "question": "A9.4 P1Q-10 fixes the dedicated, isolated, instrumented electron-collecting electrode (option A) for ICP45_CAPACITY records. Still open: its geometry / position, the V_collector reference and instrumented terminals (P1-IT-36), and whether option (B), the grounded chamber wall, may still be used for non-capacity ENGINEERING_SURFACE records in P1-S4?",
+   "proposed_answer": "ICP ion collector biased negative w.r.t. the target, V_collector referenced to the target, all terminals (collector_supply, icp_body, facility_ground, electron_collector, h1_body, hall_anode) metered or declared; (B) not used (one topology for surface and capacity keeps the records comparable); geometry and position owner call at P1-G0",
    "needed_by": "P1-G0"
-  },
-  {
-   "id": "P1Q-10",
-   "question": "Adopt the PROPOSED I_e,cap definition for the ICP-45A engineering evaluation (P1-IT-38): I_e,cap as a CAPACITY measurement = maximum facility-corrected extracted current in the registered extraction topology (discharge supply OFF, electrons to the registered electron-collecting electrode) at the gas/magnet conditions of registered H-1 points, with Hall-ON P1-S7 records used only as a descriptive neutralization-consistency check? (Alternative: a Hall-ON-based definition, which by current continuity can never exceed I_d and would need a different acceptance form.)",
-   "proposed_answer": "owner call; PROPOSED: adopt the capacity-extraction form. Until adopted any EVALUATED_ENGINEERING_ONLY output carries the label 'I_e,cap definition PROPOSED'; with no eligible capacity record the reducer returns NOT_EVALUATED, never a FAIL",
-   "needed_by": "P1-S7 entry"
   },
   {
    "id": "P1Q-11",
@@ -2773,16 +3027,22 @@
    "needed_by": "LOCK-1"
   },
   {
-   "id": "P1Q-13",
-   "question": "Register the H-1 electrical configuration for the Hall-OFF stages (P1-S3..S5, P1-S7 capacity block): H-1 anode disconnected from the discharge-supply output and floating (V_anode recorded) or tied to the reference through a metered return; H-1 body / magnetic-circuit grounding (P1-IT-39)?",
-   "proposed_answer": "owner call; PROPOSED: anode disconnected and floating with V_anode recorded (terminal OPEN_CIRCUIT_BY_CONSTRUCTION), metered return only as a registered diagnostic; an OFF supply output left connected is not used",
-   "needed_by": "P1-G0"
+   "id": "P1Q-15",
+   "question": "Register the Kirchhoff closure tolerance for ICP-45 capacity points (A9.4 P1Q-13: 'a large unexplained residual invalidates that capacity point') and the sign convention of the collector, body, anode, facility and ICP-body terms (P1-IT-47)?",
+   "proposed_answer": "owner call on the value; PROPOSED: set from the combined channel resolutions measured in P1-S2/S3 before the first ICP45_CAPACITY record; sign convention = P1-IT-42 (conventional current into the isolated network positive)",
+   "needed_by": "before the first ICP45_CAPACITY record (P1-G0)"
   },
   {
-   "id": "P1Q-14",
-   "question": "Extend the row-81 350 V isolation class (plus transient/qualification margin) to the ICP body and collector circuits, which row 81 does not name, and set the P1-G0 insulation-resistance / hipot test voltage for the floating circuits?",
-   "proposed_answer": "owner call; PROPOSED: yes, same class as the H-1 anode circuit they face; test voltage and margin owner call at P1-G0",
-   "needed_by": "P1-G0"
+   "id": "P1Q-16",
+   "question": "Confirm the recorder reading of the incomplete A9.4 P1Q-10 'Define:' formula: I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (the verbatim text lacks 'I_e,cap =' and the minus sign)?",
+   "proposed_answer": "YES (consistent with the owner's 'matched RF-OFF measurements used to quantify facility/background electron current'; implemented as such)",
+   "needed_by": "P1-S7 entry"
+  },
+  {
+   "id": "P1Q-17",
+   "question": "Register the later acceptance / reverification level and procedure for the ICP body / collector insulation (A9.4 P1Q-14: 'an appropriately lower controlled level/procedure'; P1-IT-45)?",
+   "proposed_answer": "owner call; PROPOSED: a controlled DC level of about 2 x the 350 V nominal class, per the owner-stated ECSS guidance quoted in A9.4 (standard and clause not identified - verify), with the procedure frozen before any reverification",
+   "needed_by": "before any reverification after the initial DWV"
   }
  ],
  "historical_reuse": [
@@ -2927,15 +3187,17 @@
    "pumping for the Ar anchor flow [vacuum_facility]",
    "electrical, RF and gas feedthroughs [vacuum_facility]",
    "RGA ~200 amu with differential pumping [vacuum_facility]",
+   "optical access / window with line of sight to the ICP source volume for the photodiode (A9.4 P2Q-05) [vacuum_facility]",
    "ICP pressure port (if provided) [vacuum_facility]",
    "H-1 Hall thruster with its magnet circuit (needed from P1-S3 as the G-REUSE gas path and for magnet factor F6; Hall-on in P1-S6/S6D/S7) [hall_electrical]",
    "laboratory discharge supply (ground only), conductors, sensors and protection sized to the 8.33 A stand ceiling [hall_electrical]",
-   "H-1 anode disconnect means (discharge-supply output isolated in Hall-OFF stages) and metered anode return / floating-potential divider per the registered configuration (P1-IT-39) [hall_electrical]",
+   "H-1 anode physical disconnect means (discharge-supply output disconnected in Hall-OFF stages) and high-impedance isolated V_anode channel; metered anode return only for a registered DIAGNOSTIC_VARIANT (A9.4 P1Q-13; P1-IT-39) [hall_electrical]",
    "magnet supplies (per coil) [hall_electrical]",
    "floating collector / bias supply with V/I metering [hall_electrical]",
    "P1-S4 electron-collecting electrode circuit: return lead, current channel and bias reference per the registered topology (P1-IT-36) [hall_electrical]",
-   "ground-return current monitor [hall_electrical]",
-   "isolation of floating circuits (350 V, row 81; margin TBD) [hall_electrical]",
+   "ground-return current monitors: H-1 body single-point metered facility-ground return (I_body->ground, continuous) and chamber / facility return where measurable (A9.4 P1Q-13) [hall_electrical]",
+   "isolation of floating circuits (350 V class, row 81, extended to the ICP body / collector by A9.4 P1Q-14; V_design,withstand >= 525 V; initial DWV 1.05 kV DC / 60 s) [hall_electrical]",
+   "current-limited DC dielectric-withstand tester >= 1.05 kV with leakage read-out (initial DWV, A9.4 P1Q-14) [hall_electrical]",
    "V_d reference-potential channels [hall_electrical]",
    "C1 (hall_c1_reference) with heater / keeper supplies: present on its own module but DISCONNECTED and verified not supplying electrons in P1-S6 (OQ-VI-05 step 2); disconnect means and its verification record [hall_electrical]",
    "open-tube coaxial dielectric tube [mechanical_icp_fabrication]",
@@ -2945,11 +3207,14 @@
    "carrier on KC-1 with orificed-variant provisions [mechanical_icp_fabrication]",
    "machined supports / open-frame mounting (view-factor objective) [mechanical_icp_fabrication]",
    "DAQ with common time base [thrust_metrology]",
+   "optical-emission photodiode + amplifier + DAQ channel (A9.4 P2Q-05) [thrust_metrology]",
    "traceability hardware (certificates for V, I, RF, T, flow) [thrust_metrology]",
    "thrust stand: not required for P1-S0..S6 (no thrust claim); only if P1-S7 is run on the stand [thrust_metrology]"
   ],
   "h4_test_inputs": [
-   "stage map P1-S0..S8 with gates P1-G0, P1-G1, P1-G2, P1-G5",
+   "stage map P1-S0..S8 (incl. P1-S7H Hall-ON follow-up) with gates P1-G0, P1-G1, P1-G2, P1-G5",
+   "initial DWV 1.05 kV DC / 60 s of passive insulation paths and feedthrough assemblies before first HV/RF operation (A9.4 P1Q-14, P1-IT-44)",
+   "photodiode dark/background, RF-powered known-unlit and known-lit records (A9.4 P2Q-05, P1-M-28)",
    "run-matrix structure F1..F8",
    "record schema docs/experiments/hall_icp/p1_icp_bench/p1_bench_record_schema_v1.json",
    "reducer docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py"

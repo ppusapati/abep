@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """P2 ICP impedance-map INSTRUMENT PREPARATION package (follow-on fo_a9_p2_impedance_prep, trigger
-T_A9_P2_IMPEDANCE_PREP; owner decision A9.3 authorizations.P2).
+T_A9_P2_IMPEDANCE_PREP; owner decision A9.3 authorizations.P2; owner A9.4 P2Q-05 incorporated mechanically by
+fo_a9_4_incorporation, trigger T_A9_4_INCORPORATION).
 
 Deterministic, standard library only, no Julia, well under a second.
 
@@ -44,6 +45,7 @@ MD_NAME = "P2_IMPEDANCE_PREP.md"
 SCHEMA_NAME = "p2_impedance_record_schema_v1.json"
 TEST_REL = "tests/test_p2_impedance_prep.py"
 BASE_COMMIT = "ee9dc7db7d11e0b5f1d8b514258778ac1b6030d3"
+A94_INC_BASE = "875ed6d0a87202bc92706b28551b0e22eda2014d"   # base of the A9.4 incorporation (fo_a9_4_incorporation)
 DATE = "2026-09-30"
 LANE = "fo_a9_p2_impedance_prep"
 TRIGGER = "T_A9_P2_IMPEDANCE_PREP"
@@ -87,6 +89,10 @@ DECISIONS = {
             "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b", "A9.3 post-A9 tier-1 owner decisions"),
     "A93MD": ("docs/decisions/OD_2026_09_30_A9_3_POST_A9_TIER1_OWNER_DECISIONS.md",
               "55a1fd84558a9590705bb82aa11db5e2b9136dd1d83a957d26614c435c707411", "A9.3 (verbatim; binds this lane)"),
+    "A94": ("docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+            "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d", "A9.4 P1/P2 owner decisions"),
+    "A94MD": ("docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+              "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c", "A9.4 (verbatim; P2Q-05)"),
 }
 DELIVERABLES = {
     "UB": ("docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
@@ -179,9 +185,9 @@ def row(ans, n):
 def dec(key, did):
     doc = _load(key)
     decs = doc["decisions"]
-    if did not in decs and did not in doc.get("authorizations", {}):
+    if did not in decs and did not in doc.get("authorizations", {}) and did not in doc.get("execution_decisions", {}):
         raise SystemExit(f"decision {did} not in {key}")
-    return {"kind": {"A91": "A9.1", "A92": "A9.2", "A93": "A9.3"}[key],
+    return {"kind": {"A91": "A9.1", "A92": "A9.2", "A93": "A9.3", "A94": "A9.4"}[key],
             "path": DECISIONS[key][0], "sha256": DECISIONS[key][1], "decision": did}
 
 
@@ -251,7 +257,9 @@ def synthetic_record(cal, z_ant, p_fwd, phase="DUMMY_LOAD"):
                         "auto_tune": False, "loss_bound_id": None},
         "factors": {k: None for k in RED.REQUIRED_FACTOR_FIELDS},
         "plasma_state": {"lit": False, "mode": "UNLIT", "optical_signal_V": None, "unlit_threshold_V": None,
-                         "unlit_threshold_source": None},
+                         "unlit_threshold_source": None, "threshold_basis": None,
+                         "photodiode_line_of_sight_ok": None, "photodiode_saturated": None,
+                         "electrical_ignition_or_mode_transition": None, "electrical_indicator_basis": None},
         "sweep": {"sweep_id": "SYN", "direction": "single", "index": 0},
         "settling": {"dwell_s": None, "settled": None},
         "temperatures_K": {}, "cold_reference_id": None, "p1_stable_region_ref": None, "antenna_current": None,
@@ -406,6 +414,10 @@ def build():
                                              "icp_matching_strategy", "a9_10_statuses", "post_a9_priorities",
                                              "icp_coupled_thermal")}
     A93_REF = {k: dec("A93", k) for k in A93_DECISION_IDS + ("P1", "P2")}
+    A94_REF = {k: dec("A94", k) for k in ("P2Q-05", "P1Q-14", "p1_needed_rfqs")}
+    a94 = _load("A94")
+    if a94["decisions"]["P2Q-05"]["state_classes"] != list(RED.MODE_LABELS):
+        raise SystemExit("A9.4 P2Q-05 state classes differ from the reducer's MODE_LABELS")
     A91_REF = {k: dec("A91", k) for k in ("UBQ-03", "UBQ-04", "UBQ-05", "A9-03-matching")}
 
     # ================================================================ (1) reference planes
@@ -698,9 +710,12 @@ def build():
              "levels inside each stage TBD - " + P1_PENDING, "-", "A9 evidence order", ["A9"], "owner-allocation",
              "PENDING", "after-evidence", note="Ar data stay ENGINEERING_ONLY_NON_SCORING (A9.3 OQ-RFQ-02); the reducer "
              "derives an evidence_tag from factors.gas and the mismatch envelope never mixes tags"),
-        item("HM-F05", "plasma state / mode (UNLIT, E, H, UNCERTAIN)", "observed response, not a set factor; classified "
-             "per record by rule HM-R06", "-", "VI-RF-10", ["VI-RF-10", "RF-DALT08-01"], "assumed", "PROPOSED",
-             "LOCK-1"),
+        item("HM-F05", "plasma state / mode (UNLIT, E_MODE, H_MODE, UNCERTAIN)", "observed response, not a set factor; "
+             "classified per record by rule HM-R14 (A9.4 P2Q-05: the photodiode INS-P2-10 is the required independent "
+             "optical indicator, RF / electrical signals corroborate; optical UNLIT with electrical evidence of "
+             "ignition / mode transition -> UNCERTAIN) with the E/H indicators of HM-R06", "-",
+             "A9.4 P2Q-05; VI-RF-10", [A94_REF["P2Q-05"], "VI-RF-10", "RF-DALT08-01"], "owner-stated", "OWNER_GIVEN",
+             "NOW"),
         item("HM-F06", "Hall operating point (off / on; V_d, I_d, coil currents)",
              "levels TBD - inside the registered H-1 operating envelope (" + P1_PENDING + "); current-sensor range uses "
              "the 8.33 A stand ceiling, which is a rating ceiling and not a level (A9.3 OQ-A907-02). The map must reach "
@@ -712,8 +727,11 @@ def build():
         item("HM-F07", "collector bias (V_collector, I_collector)", "levels TBD - requires the collector / bias V-I "
              "range (ICD ICP-21) and " + P1_PENDING + "; a bias level that puts a potential difference across an ICP "
              "gas line (or the floating ICP body against grounded plumbing) is applied only after that line's ~1 kV-"
-             "class representative-gas isolator qualification (A9.3 ICPQ-06, ICD ICP-23; IDP2-15)", "V; A",
-             "row 70; ICD ICP-21; A9.3 ICPQ-06", [r70, "ICD ICP-21", A93_REF["ICPQ-06"], "ICD ICP-23"], None,
+             "class representative-gas isolator qualification (A9.3 ICPQ-06, ICD ICP-23; IDP2-15); ICP body / "
+             "collector circuits stay inside the 350 V operating class with >= 525 V design withstand and the initial "
+             "1.05 kV DC / 60 s DWV done before first HV/RF operation (A9.4 P1Q-14)", "V; A",
+             "row 70; ICD ICP-21; A9.3 ICPQ-06; A9.4 P1Q-14",
+             [r70, "ICD ICP-21", A93_REF["ICPQ-06"], "ICD ICP-23", A94_REF["P1Q-14"]], None,
              "PENDING", "after-evidence"),
         item("HM-F08", "local-match tuning state (logged state variable)", "policy: re-tuned for minimum reflected "
              "power at every point, plus fixed-tune sub-sweeps around representative points (P2Q-04); positions logged "
@@ -743,7 +761,8 @@ def build():
              "corrected for matching losses); up/down agreement rule: form LOCK-1, value LOCK-2 (P2Q-03)", "-",
              "rule", ["RF-DALT08-01"], "assumed", "PROPOSED", "LOCK-1"),
         item("HM-R06", "mode-jump (E/H) detection", "indicators per record: step in R_ant and X_ant, step in |Gamma| at "
-             "fixed tuning, antenna current step, optical emission step (INS-P2-10, P2Q-05); a jump is declared when "
+             "fixed tuning, antenna current step, optical emission step (INS-P2-10, the required independent optical "
+             "indicator, A9.4 P2Q-05); a jump is declared when "
              "adjacent-point changes exceed the declared multiple of the combined uncertainty (form LOCK-1, value "
              "LOCK-2); step size is refined around a detected jump (refinement rule LOCK-1)", "-", "rule",
              ["VI-RF-10", "RF-DALT08-01", "RF-SCHU24-05"], "assumed", "PROPOSED", "LOCK-1"),
@@ -789,6 +808,21 @@ def build():
              "ICD ICP-16, ICP-44; A9.2 rf_protection; A9.3 authorizations.P1 ('subject to existing safety/interlock/"
              "metrology requirements')", ["ICD ICP-16", "ICD ICP-44", A92_REF["rf_protection"], A93_REF["P1"]],
              "assumed", "PROPOSED", "LOCK-1"),
+        item("HM-R14", "plasma-state classification with the photodiode (A9.4 P2Q-05)", "classes exactly UNLIT / "
+             "E_MODE / H_MODE / UNCERTAIN (reducer classify_plasma_state). The photodiode (INS-P2-10) is the required "
+             "independent ignition / unlit and E/H-transition indicator; record simultaneously photodiode intensity, "
+             "reflected RF power, antenna current, collector / current-path response and pressure. A "
+             "COLD_ANTENNA_POWERED_UNLIT record is valid only when the optical channel demonstrates that the plasma did "
+             "not ignite; optical UNLIT with electrical evidence of an ignition / mode transition -> UNCERTAIN (never "
+             "forced to UNLIT); a lost line of sight or a saturated photodiode is not automatically valid (refused as "
+             "UNLIT evidence); UNCERTAIN records never serve as cold references or map points without "
+             "re-classification", "-", "owner decision A9.4 P2Q-05", [A94_REF["P2Q-05"]], "owner-stated",
+             "OWNER_GIVEN", "NOW"),
+        item("HM-R15", "photodiode unlit threshold", "TBD - requires the dark / background, RF-powered known-unlit and "
+             "known-lit P1 plasma photodiode records (" + P1_PENDING + "); frozen before the P2 map; no arbitrary "
+             "photodiode voltage threshold is assigned now (A9.4 P2Q-05); each record carries the value, its source and "
+             "threshold_basis (the three record ids, frozen_before_p2_map = true)", "V",
+             "owner decision A9.4 P2Q-05 (rule)", [A94_REF["P2Q-05"]], None, "TBD", "after-evidence"),
     ]
     R13 = POWERED_STEP_RULE
     sequence = [
@@ -810,22 +844,26 @@ def build():
          "impedance and VNA-measured; end-to-end validation of ZM-A/B/C first at VNA level, then at power with the "
          "local match pre-tuned on the VNA (CAL-P2-10); V/I probe at-power verification on the calorimetric load "
          "and the simulator (CAL-P2-15)"},
-        {"step": "S-08", "powered": True, "prerequisites": [R13, "P1 registered procedure (" + P1_PENDING + ")"],
+        {"step": "S-08", "powered": True, "prerequisites": [R13, "P1 registered procedure (" + P1_PENDING + ")",
+                                                            "HM-R15 photodiode threshold frozen (A9.4 P2Q-05)"],
          "what": "powered-unlit records into the installed antenna, local match pre-tuned on the VNA into the cold "
          "antenna (phase COLD_ANTENNA_POWERED_UNLIT; CAL-P2-08 follow-on), energized only under the P1 registered "
          "procedure. Vacuum/gas state: gas off at chamber base pressure (factors.gas null, both mdot = 0, p_chamber "
          "logged; 'gas on unlit' stays a VNA-only, unpowered CAL-P2-08 condition). RF power level: TBD - requires the "
          "P1 registered procedure (no ceiling is set here). Unlit verification per record: INS-P2-10 optical signal "
-         "below the unlit threshold of the P1 procedure (value and source carried in the record). Ignition or "
+         "below the unlit threshold of the P1 procedure (value, source and threshold basis carried in the record), "
+         "line of sight kept, no saturation, and no electrical evidence of ignition / mode transition in the "
+         "simultaneous reflected-power, antenna-current, collector / current-path and pressure records; otherwise "
+         "the record is UNCERTAIN and never a cold reference (A9.4 P2Q-05, HM-R14). Ignition or "
          "breakdown (e.g. at the antenna terminals or feedthrough in residual gas): RF off (abort), record flagged, "
          "never reduced and never a cold reference (reducer IgnitionDetectedError / PlasmaStateError); the local-match "
          "tuning state is re-checked on the VNA before RF is re-applied"},
         {"step": "S-09", "powered": True, "prerequisites": [R13, "P1 registered procedure (" + P1_PENDING + ")"],
          "what": "RF pickup on P2 channels (CAL-P2-13; ICP-17)"},
         {"step": "S-10", "powered": False, "what": "GATE: P1 hands over a stable ICP operating region (" + P1_PENDING
-         + ")"},
+         + "); photodiode threshold frozen before the P2 map (HM-R15, A9.4 P2Q-05)"},
         {"step": "S-11", "powered": True, "prerequisites": [R13, "HM-R01", "HM-R11"],
-         "what": "hot map (phase HOT_MAP) under HM-R01..R13 with CAL-P2-11 bracketing"},
+         "what": "hot map (phase HOT_MAP) under HM-R01..R15 with CAL-P2-11 bracketing"},
     ]
 
     # ================================================================ (4) data model
@@ -848,8 +886,16 @@ def build():
             "PlasmaStateError (SequenceError)": "lit plasma in a DUMMY_LOAD / COLD_ANTENNA_POWERED_UNLIT record, lit/"
                                                 "mode inconsistent or lit not boolean, powered-unlit record without "
                                                 "gas off (gas null, both mdot = 0, p_chamber logged) or without the "
-                                                "optical unlit verification, cold reference not from a verified-unlit "
-                                                "source",
+                                                "optical unlit verification, a COLD_ANTENNA_POWERED_UNLIT / HOT_MAP "
+                                                "record without the simultaneous photodiode, reflected-power, antenna-"
+                                                "current, collector-response and pressure records or without the "
+                                                "threshold basis, a HOT_MAP mode that differs from the photodiode "
+                                                "classification, cold reference not from a verified-unlit source",
+            "UncertainPlasmaStateError (PlasmaStateError)": "plasma state UNCERTAIN (A9.4 P2Q-05): optical UNLIT with "
+                                                            "electrical evidence of ignition / mode transition, lost "
+                                                            "line of sight, saturated photodiode, or lit without an "
+                                                            "E/H assignment; never a cold reference or map point "
+                                                            "without re-classification",
             "IgnitionDetectedError (PlasmaStateError)": "powered-unlit record whose optical signal reached the unlit "
                                                         "threshold of the P1 registered procedure (abort and flag, "
                                                         "S-08)",
@@ -857,12 +903,15 @@ def build():
                            "nested sub-fields, HOT_MAP without factors.gas; mismatch envelope mixing data classes / "
                            "evidence statuses or evidence tags"},
         "evidence_tags": list(RED.EVIDENCE_TAGS),
+        "plasma_state_classes": list(RED.MODE_LABELS),
         "outputs": ["at_RP_CPL: P_forward, P_reflected, P_net, |Gamma| (powers and complex), VSWR",
                     "Z_antenna per method at RP-ANT (R, X), primary method, method difference",
                     "P_line/match,loss, P_delivered, match/line efficiency (or TBD / declared-bound interval)",
                     "antenna-current cross-check, resistance split (reconstructed; its P_delivered_x_Rsplit_fraction_W"
                     " is a diagnostic, never P_plasma evidence for any gate)",
-                    "unlit_verification of powered-unlit records; cold_reference_from_reduced() for R_cold entries",
+                    "unlit_verification of powered-unlit records (state_class UNLIT, A9.4 P2Q-05); "
+                    "plasma_state_classification of HOT_MAP records (UNLIT / E_MODE / H_MODE; UNCERTAIN refused); "
+                    "classify_plasma_state(); cold_reference_from_reduced() for R_cold entries",
                     "evidence_tag per record (from factors.gas / engineering_control; Ar and OQ-VI-05 records are "
                     "non-scoring)",
                     "mismatch_envelope(): ranges, line peak stresses referred to RP-CPL, antenna peaks split into "
@@ -879,7 +928,10 @@ def build():
                     [A93_REF["P2"], A93_REF["OQ-RFQ-07"]], "assumed", status, "LOCK-1",
                     a9_3_rf_package_line=a93_line, rfq_v2_line=RFQV2_PENDING, rfq_v1_line=rfq_v1,
                     required_specs=specs, purchase="quotation only; no purchase order (row 8; H3 gate); dispatch by "
-                    "the owner / procurement, never by this lane (A9.3 OQ-RFQ-07)")
+                    "the owner / procurement, never by this lane (A9.3 OQ-RFQ-07); A9.4 authorizes the owner / "
+                    "procurement to send the P1_NEEDED packages for quotation (RFQ, technical clarification, indicative "
+                    "lead time, commercial quotation, datasheets / certificates), not purchase orders, advance payments "
+                    "or binding commitments")
     f_spec = {"quantity": "frequency coverage", "value": "must include 13.56 MHz", "units": "MHz",
               "source": "row 72; UB-RF-00", "evidence_class": "owner-allocation"}
     instruments = [
@@ -948,10 +1000,22 @@ def build():
              "not in the A9.3 RF package list -> proposed addition (P2Q-02)", None,
              [f_spec, {"quantity": "current range", "value": "TBD - same sizing relation as INS-P2-01",
                        "units": "A", "source": "this package", "evidence_class": None}]),
-        ins_("INS-P2-10", "optical emission photodiode (mode-jump indicator; S-08 unlit verification)",
-             "not in the A9.3 RF package list -> proposed addition (P2Q-05)", None,
+        ins_("INS-P2-10", "optical-emission photodiode + amplifier + DAQ channel, with optical access / window (REQUIRED "
+             "independent ignition / unlit and E/H-mode indicator; S-08 unlit verification; A9.4 P2Q-05)",
+             "not in the A9.3 RF package list -> added by A9.4 P2Q-05 to the P1_NEEDED / P2 preparation instrumentation "
+             "quote (photodiode, optical access / window, amplifier, DAQ channel)", None,
              [{"quantity": "spectral band / view", "value": "TBD - requires the module optical access", "units": "-",
-               "source": "this package HM-R06", "evidence_class": None}]),
+               "source": "this package HM-R06", "evidence_class": None},
+              {"quantity": "line of sight to the ICP source volume and its loss detection", "value": "TBD - requires "
+               "the module / chamber optical access geometry", "units": "-", "source": "A9.4 P2Q-05",
+               "evidence_class": None},
+              {"quantity": "amplifier gain / bandwidth and saturation (over-range) indication", "value": "TBD - requires "
+               "the P1 dark / unlit / lit emission levels (no threshold set now)", "units": "V/A; Hz",
+               "source": "A9.4 P2Q-05", "evidence_class": None},
+              {"quantity": "DAQ channel on the common time base, simultaneous with P_reflected, antenna current, "
+               "collector / current-path and pressure channels", "value": "1 channel (sample rate TBD - requires the "
+               "P1 plan)", "units": "-", "source": "A9.4 P2Q-05; INS-18", "evidence_class": "owner-stated"}],
+             status="OWNER_GIVEN"),
         ins_("INS-P2-11", "input power analyser for P_mains,in of the laboratory generator",
              "13.56 MHz generator line (A9.3 OQ-RFQ-06 measurement requirement)", "RFQ-04-R04",
              [{"quantity": "range", "value": "TBD - requires the generator selection", "units": "W",
@@ -1029,6 +1093,11 @@ def build():
         ("IDP2-16", "P2 -> P1", "powered-step prerequisites HM-R13 (match pre-tuned on the VNA, calibrated coupler "
          "monitoring, P1 provisional limits / foldback, ICP-16 interlocks, facility RF safety) offered for the P1 "
          "bench RF-on sequence", "-", "OFFERED"),
+        ("IDP2-17", "P1 -> P2", "photodiode dark / background, RF-powered known-unlit and known-lit P1 plasma records "
+         "(with simultaneous P_reflected, antenna current, collector / current-path response, pressure) for the HM-R15 "
+         "threshold, frozen before the P2 map (A9.4 P2Q-05)", "V; W; A; Pa", P1_PENDING),
+        ("IDP2-18", "P2 -> RFQ v2", "INS-P2-10 photodiode, optical access / window, amplifier and DAQ channel for the "
+         "P1_NEEDED / P2 preparation instrumentation quote (A9.4 P2Q-05)", "-", "OFFERED; mapping " + RFQV2_PENDING),
     ]
     interface_demands = [{"id": i, "direction": d, "quantity": q, "units": u, "status": s} for i, d, q, u, s in idem]
 
@@ -1094,6 +1163,23 @@ def build():
                                              "INS-P2-11)"},
         {"ref": A93_REF["OQ-RFQ-07"], "how": "instrument list mapped to the RF package; no supplier contact"},
         {"ref": A93_REF["OQ-RFQ-10"], "how": "dedicated ICP flow = 0 in the primary mode; diagnostic only (HM-F02)"},
+        {"ref": A94_REF["P2Q-05"], "how": "ANSWERED (OWNER_DECIDED - PHOTODIODE_REQUIRED): INS-P2-10 is the required "
+                                          "independent ignition / unlit and E/H indicator (OWNER_GIVEN); state classes "
+                                          "UNLIT / E_MODE / H_MODE / UNCERTAIN (reducer MODE_LABELS, "
+                                          "classify_plasma_state; HM-F05, HM-R14); COLD_ANTENNA_POWERED_UNLIT valid only "
+                                          "with optical proof; optical UNLIT + electrical evidence -> UNCERTAIN; lost "
+                                          "line of sight / saturation refused as UNLIT evidence; UNCERTAIN never a cold "
+                                          "reference or map point; threshold HM-R15 TBD from P1 dark / unlit / lit "
+                                          "records, frozen before the map (S-10); procurement IDP2-18; P2Q-05 removed "
+                                          "from the open list"},
+        {"ref": A94_REF["P1Q-14"], "how": "HM-F07: ICP body / collector bias levels stay inside the 350 V class with "
+                                          ">= 525 V design withstand and the initial 1.05 kV DC / 60 s DWV before first "
+                                          "HV/RF operation (P1 bench item); ICP-44 RF insulation stays OPEN"},
+        {"ref": A94_REF["p1_needed_rfqs"], "how": "instrument list: the owner / procurement may send the P1_NEEDED "
+                                                  "packages for quotation (RFQ, clarification, indicative lead time, "
+                                                  "commercial quotation, datasheets / certificates); no purchase order, "
+                                                  "advance payment or binding commitment; this lane contacts no "
+                                                  "supplier"},
     ]
 
     # ================================================================ (d) new open owner questions
@@ -1112,10 +1198,6 @@ def build():
         {"id": "P2Q-04", "question": "Hot-map tuning policy: re-tune for minimum reflected power at every point, plus "
          "fixed-tune sub-sweeps around representative points to inform the flight match implementation?",
          "proposed_answer": "yes (PROPOSED)", "needed_by": "LOCK-1"},
-        {"id": "P2Q-05", "question": "Add an optical-emission photodiode as a mode-jump (E/H) indicator and as the unlit-verification "
-         "indicator of the S-08 powered-unlit records?",
-         "proposed_answer": "yes (PROPOSED; low-cost, independent of the RF chain; without it (or an equivalent "
-         "independent indicator named by the owner) S-08 powered-unlit records cannot be reduced)", "needed_by": "LOCK-1"},
         {"id": "P2Q-06", "question": "On the thrust stand, rely on ZM-B (no V/I probe line across the stage) once the "
          "bench shows agreement, rather than routing a V/I probe line with a matched sham?",
          "proposed_answer": "yes, conditional on the P2Q-03 bench agreement (PROPOSED)", "needed_by": "LOCK-1"},
@@ -1126,6 +1208,12 @@ def build():
          "isolated potentials') also cover the ICP-34 pressure-sensing line when the ICP body floats or the collector "
          "is biased during P2?", "proposed_answer": "yes where that line bridges isolated potentials (PROPOSED; same "
          "plumbing logic)", "needed_by": "before the first biased / floating P2 point (S-11)"},
+        {"id": "P2Q-09", "question": "Which recorded signals and step criteria constitute the 'electrical evidence of "
+         "an ignition / mode transition' that turns an optically UNLIT record into UNCERTAIN (A9.4 P2Q-05): the HM-R06 "
+         "indicators (step in reflected power / |Gamma| at fixed tuning, antenna-current step, collector / current-"
+         "path response step, pressure step) with the same declared multiple of the combined uncertainty?",
+         "proposed_answer": "yes (PROPOSED): reuse the HM-R06 indicator set; form frozen at LOCK-1, multiple at LOCK-2, "
+         "before the P2 map; each record states the basis (electrical_indicator_basis)", "needed_by": "LOCK-1"},
     ]
     dispositioned = {o["ref"].get("decision") for o in oaa if isinstance(o["ref"], dict)}
     miss = [i for i in A93_DECISION_IDS if i not in dispositioned]
@@ -1193,6 +1281,16 @@ def build():
         "decision_pins": [{"key": k, "path": p, "sha256": h, "what": w} for k, (p, h, w) in DECISIONS.items()],
         "deliverable_pins": [{"key": k, "path": p, "sha256": h, "what": w} for k, (p, h, w) in DELIVERABLES.items()],
         "never_pinned": NEVER_PINNED, "pending_lanes": PENDING_LANES,
+        "a9_4_incorporation": {
+            "follow_on": "fo_a9_4_incorporation", "trigger": "T_A9_4_INCORPORATION", "base_commit": A94_INC_BASE,
+            "decision": {"path": DECISIONS["A94"][0], "sha256": DECISIONS["A94"][1]},
+            "verbatim": {"path": DECISIONS["A94MD"][0], "sha256": DECISIONS["A94MD"][1]},
+            "rule": "applied mechanically (owner step 2): only what A9.4 decides changed; ids and verified behaviour "
+                    "otherwise kept",
+            "answered": {"P2Q-05": a94["decisions"]["P2Q-05"]["status"]},
+            "also_applied": ["P1Q-14 (HM-F07 note)", "execution_decisions.p1_needed_rfqs (instrument purchase note)"],
+            "state_classes": a94["decisions"]["P2Q-05"]["state_classes"],
+            "m16_impact_change": "none: A9.4 changes no M16 v3 row state"},
         "chain_parameters": chain, "reference_planes": planes, "z_antenna_methods": methods, "z_antenna_recommendation": recommendation,
         "calibration_plan": calplan, "uncertainty_items_new": ub_new, "metrology_items_new": ms_new,
         "hot_map_methodology": {"factors": factors, "rules": rules, "sequence": sequence},
@@ -1232,9 +1330,13 @@ FIELD_DOCS = {
     "factors": ("object", "W; mg/s; Pa; V; A", None, "fields: " + ", ".join(RED.REQUIRED_FACTOR_FIELDS) +
                 " (explicit null where not applicable; P_mains_in_W is GROUND/FACILITY_ONLY)"),
     "plasma_state": ("object", "-; V", None, "lit (boolean), mode (" + ", ".join(RED.MODE_LABELS) + "; UNLIT iff lit "
-                     "is false), optical_signal_V (INS-P2-10), unlit_threshold_V and unlit_threshold_source (from the P1 "
-                     "registered procedure; required for COLD_ANTENNA_POWERED_UNLIT, where the signal must lie below "
-                     "the threshold). Phases " + ", ".join(RED.UNLIT_PHASES) + " must be unlit"),
+                     "is false; UNCERTAIN is never reduced), optical_signal_V (INS-P2-10 photodiode), unlit_threshold_V "
+                     "and unlit_threshold_source (from the P1 registered procedure), threshold_basis {" +
+                     ", ".join(RED.THRESHOLD_BASIS_FIELDS) + "}, photodiode_line_of_sight_ok, photodiode_saturated, "
+                     "electrical_ignition_or_mode_transition and electrical_indicator_basis (A9.4 P2Q-05; required for "
+                     + " and ".join(RED.CLASSIFIED_PHASES) + ", with antenna_current, factors.I_collector_A and "
+                     "factors.p_chamber_Pa recorded simultaneously). Phases " + ", ".join(RED.UNLIT_PHASES) +
+                     " must be unlit"),
     "sweep": ("object", "-", None, "sweep_id, direction (" + ", ".join(RED.SWEEP_DIRECTIONS) + "), index"),
     "settling": ("object", "s", None, "dwell_s, settled"),
     "temperatures_K": ("object", "K", None, "antenna, dielectric, collector, match, cables, probe"),
@@ -1260,7 +1362,16 @@ SUBFIELD_TYPES = {
                     "loss_bound_id": _STRN},
     "plasma_state": {"lit": {"type": "boolean"}, "mode": {"enum": list(RED.MODE_LABELS)},
                      "optical_signal_V": dict(_NUMN, **{"x-units": "V"}),
-                     "unlit_threshold_V": dict(_NUMN, **{"x-units": "V"}), "unlit_threshold_source": _STRN},
+                     "unlit_threshold_V": dict(_NUMN, **{"x-units": "V"}), "unlit_threshold_source": _STRN,
+                     "threshold_basis": {"type": ["object", "null"], "required": list(RED.THRESHOLD_BASIS_FIELDS),
+                                         "properties": {"dark_background_record_id": _STR,
+                                                        "rf_powered_known_unlit_record_id": _STR,
+                                                        "known_lit_p1_record_id": _STR,
+                                                        "frozen_before_p2_map": {"const": True}}},
+                     "photodiode_line_of_sight_ok": {"type": ["boolean", "null"]},
+                     "photodiode_saturated": {"type": ["boolean", "null"]},
+                     "electrical_ignition_or_mode_transition": {"type": ["boolean", "null"]},
+                     "electrical_indicator_basis": _STRN},
     "sweep": {"sweep_id": _STR, "direction": {"enum": list(RED.SWEEP_DIRECTIONS)}, "index": {"type": "integer"}},
     "settling": {"dwell_s": dict(_NUMN, **{"x-units": "s"}), "settled": {"type": ["boolean", "null"]}},
     "antenna_current": {"I_rms_A": dict(_NUM, **{"x-units": "A"}), "probe_cal_id": _STR},
@@ -1341,6 +1452,16 @@ def render_md(doc):
          f"Generated by `{doc['generated_by']}` from `{LANE_REL}/{JSON_NAME}` - do not edit by hand. Lane `{LANE}`, "
          f"trigger `{TRIGGER}`, base `{BASE_COMMIT}`.", "",
          f"**Status:** {doc['status']}. A9 status: `{doc['a9_status']}`.", "",
+         "**A9.4 incorporation** (`{f}`, trigger `{t}`, base `{b}`): {r}. Decision `{dp}` (sha256 `{ds}`); verbatim "
+         "`{vp}` (sha256 `{vs}`). Answered: {a}. Also applied: {o}. Plasma-state classes: {c}. M16: {m}.".format(
+             f=doc["a9_4_incorporation"]["follow_on"], t=doc["a9_4_incorporation"]["trigger"],
+             b=doc["a9_4_incorporation"]["base_commit"], r=doc["a9_4_incorporation"]["rule"],
+             dp=doc["a9_4_incorporation"]["decision"]["path"], ds=doc["a9_4_incorporation"]["decision"]["sha256"],
+             vp=doc["a9_4_incorporation"]["verbatim"]["path"], vs=doc["a9_4_incorporation"]["verbatim"]["sha256"],
+             a="; ".join(f"{k} = {v}" for k, v in doc["a9_4_incorporation"]["answered"].items()),
+             o="; ".join(doc["a9_4_incorporation"]["also_applied"]),
+             c=", ".join(doc["a9_4_incorporation"]["state_classes"]),
+             m=doc["a9_4_incorporation"]["m16_impact_change"]), "",
          "**What this is not:** " + "; ".join(doc["what_this_is_not"]) + ".", "",
          "A9.2 statuses carried unchanged: " + "; ".join(f"{k} = `{v}`" for k, v in doc["a9_2_statuses_carried"].items())
          + ".", "", "## 1. Reference planes", "", "| id | name | definition | status | freeze |", "|---|---|---|---|---|"]

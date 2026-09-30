@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Deterministic builder of the A9 RFQ packages v2 (fo_a9_rfq_v2_split, trigger T_A9_RFQ_V2_SPLIT).
+"""Deterministic builder of the A9 RFQ packages v2 (fo_a9_rfq_v2_split, trigger T_A9_RFQ_V2_SPLIT; owner A9.4
+incorporated mechanically by fo_a9_4_incorporation, trigger T_A9_4_INCORPORATION).
 
 A REVISION of the immutable v1 packages docs/procurement/rfq_a9/ (A9-09). v1 is never edited: every v1 file is pinned by
 sha256 below and read as data. v2 splits the quotation specification by supplier speciality into exactly the six owner
@@ -49,6 +50,7 @@ PKG_DIR = LANE_DIR + "/packages"
 THIS_SCRIPT = LANE_DIR + "/build_rfq_a9_v2.py"
 TEST = "tests/test_rfq_a9_v2.py"
 BASE_COMMIT = "ee9dc7db7d11e0b5f1d8b514258778ac1b6030d3"
+A94_INC_BASE = "875ed6d0a87202bc92706b28551b0e22eda2014d"   # base of the A9.4 incorporation (fo_a9_4_incorporation)
 
 P1_LANE = "docs/experiments/hall_icp/p1_icp_bench/"
 P2_LANE = "docs/experiments/hall_icp/p2_impedance_map/"
@@ -73,6 +75,10 @@ DECISIONS = {
             "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b"),
     "A93_MD": ("docs/decisions/OD_2026_09_30_A9_3_POST_A9_TIER1_OWNER_DECISIONS.md",
                "55a1fd84558a9590705bb82aa11db5e2b9136dd1d83a957d26614c435c707411"),
+    "A94": ("docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+            "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d"),
+    "A94_MD": ("docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+               "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"),
     "A4": ("docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A4_owner_decisions.json",
            "beec91f9eca3ca0257c5ee88dcd193c87481660b9368b65c6d10b3b3bdae23b4"),
     "A5": ("docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
@@ -233,6 +239,22 @@ def A93(did: str, quote: str) -> dict:
             "pointer": "/decisions/" + did, "json_path": DECISIONS["A93"][0], "sha256": DECISIONS["A93_MD"][1]}
 
 
+def A94(did: str, quote: str) -> dict:
+    """A9.4 owner decision (decisions or execution_decisions) with a quote that must occur verbatim in the A9.4
+    verbatim record."""
+    doc = load("A94")
+    if did in doc["decisions"]:
+        ptr = "/decisions/" + did
+    elif did in doc["execution_decisions"]:
+        ptr = "/execution_decisions/" + did
+    else:
+        raise KeyError(f"A9.4 decision {did} not found")
+    if quote not in load("A94_MD"):
+        raise ValueError(f"quote not verbatim in the A9.4 record: {quote!r}")
+    return {"type": "a9_4", "key": "A9.4", "id": did, "quote": quote, "path": DECISIONS["A94_MD"][0],
+            "pointer": ptr, "json_path": DECISIONS["A94"][0], "sha256": DECISIONS["A94_MD"][1]}
+
+
 def A93J(pointer: str) -> dict:
     """A9.3 machine-readable field (recorder text), resolved by JSON pointer."""
     val = _resolve(load("A93"), pointer)
@@ -301,6 +323,8 @@ def label(s: dict) -> str:
         return f"A9.2 {s['id']}"
     if t == "a9_3":
         return f"A9.3 {s['id']}"
+    if t == "a9_4":
+        return f"A9.4 {s['id']}"
     if t == "a9_3_record":
         return f"A9.3 record {s['pointer']}"
     if t == "deliverable_item":
@@ -375,6 +399,10 @@ def banner_lines() -> list:
         "citation/URL and access record of the web track.",
         "A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE: no configuration is a winner; no "
         "thrust, efficiency, discharge current, ICP electron current, impedance or plasma state is predicted.",
+        "A9.4 (owner, 2026-09-30, execution_decisions.p1_needed_rfqs): the owner / procurement may SEND the lines tagged "
+        "P1_NEEDED to suppliers for quotation - requests for quotation, technical clarification, indicative lead time, "
+        "commercial quotation, datasheets/certificates. NOT authorized: purchase orders, advance payments, binding "
+        "commitments. Claude / the technical team still never contacts suppliers.",
     ]
 
 
@@ -723,13 +751,15 @@ def new_requirements() -> list:
         "Synchronized acquisition on one common time base of at least: V_d(t), I_d(t), I_e,ICP(t), P_RF,fwd(t), "
         "P_RF,refl(t), collector/reference potentials (A9.3 OQ-VI-05), the ICD ICP-34 list (P_fwd, P_refl, RF "
         "interlock state, V_coll, I_coll, V_body, ICP temperatures, p_icp, flow), P_mains,in (RFQ2-RF-N02), pressure "
-        "and flow channels; current channels ranged to the 8.33 A stand ceiling. Channel count, sample rate and "
-        "bandwidth follow the P1 plan.",
+        "and flow channels, and the optical-emission photodiode channel (RFQ2-THRUST-N03, A9.4 P2Q-05); current "
+        "channels ranged to the 8.33 A stand ceiling. Channel count, sample rate and bandwidth follow the P1 plan.",
         {"channels_min": "OQ-VI-05 list + ICP-34 list", "current_range_A_min": ic,
          "sample_rate": "PENDING " + P1_LANE}, "-; A; Sa/s",
         "A9.3 OQ-VI-05, OQ-RFQ-07, OQ-A907-02; ICD ICP-34; INS-18",
         [A93("OQ-VI-05", "Record:"), A93("OQ-RFQ-07", "DAQ"), A93("OQ-A907-02", "DAQ range;"), DI("ICD", "ICP-34"),
-         DI("INS", "INS-18"), PEND(P1_LANE, "DAQ channel count, sample rate, bandwidth")],
+         DI("INS", "INS-18"), PEND(P1_LANE, "DAQ channel count, sample rate, bandwidth"),
+         A94("P2Q-05", "Add the photodiode, appropriate optical access/window, amplifier and DAQ channel to the "
+                       "P1_NEEDED/P2 preparation instrumentation quote.")],
         "owner-stated", "PENDING", "NOW", "P1_NEEDED", applies_to=CONFIGS,
         change_why="new line: owner thrust/metrology family names DAQ; v1 had only the P_bus chain (RFQ-06, LATER)"))
     out.append(R(
@@ -744,6 +774,98 @@ def new_requirements() -> list:
          PEND(P1_LANE, "P1 uncertainty targets")],
         None, "PENDING", "NOW", "P1_NEEDED", applies_to=CONFIGS,
         change_why="new line: owner thrust/metrology family names traceability hardware"))
+    # ---------------------------------------------------------------- A9.4 (fo_a9_4_incorporation)
+    pd_quote = ("Add the photodiode, appropriate optical access/window, amplifier and DAQ channel to the P1_NEEDED/P2 "
+                "preparation instrumentation quote.")
+    out.append(R(
+        "RFQ2-THRUST-N03", "RFQ2-THRUST", "optical-emission photodiode + amplifier + DAQ channel (A9.4 P2Q-05)",
+        "Quote an optical-emission photodiode with its amplifier and one DAQ channel on the common time base (INS-18), "
+        "viewing the ICP source volume through the optical access / window of RFQ2-VAC-N06. It is the REQUIRED "
+        "independent plasma ignition / unlit and E-mode / H-mode transition indicator (INS-P2-10), physically "
+        "independent of the RF impedance measurement chain; it is logged simultaneously with reflected RF power, antenna "
+        "current, collector / current-path response and pressure. Supplier states spectral response, dark current / "
+        "noise, linear range and saturation (over-range) level and its indication, amplifier gain settings and "
+        "bandwidth. No photodiode threshold is requested or set: the threshold is established from dark / background, "
+        "RF-powered known-unlit and known-lit P1 plasma measurements and frozen before the P2 map.",
+        {"item": "photodiode + amplifier + 1 DAQ channel (REQUIRED, A9.4 P2Q-05)",
+         "spectral_band": "TBD - requires the module optical access and the P1 emission records",
+         "gain_bandwidth_saturation": "TBD - requires the P1 dark / unlit / lit emission levels",
+         "threshold": "none requested (frozen from P1 records before the P2 map)"},
+        "-; V/A; Hz", "A9.4 P2Q-05",
+        [A94("P2Q-05", pd_quote),
+         A94("P2Q-05", "The photodiode is the required independent optical indicator, while RF/electrical signals "
+                       "provide corroboration."),
+         A94("P2Q-05", "Do not assign an arbitrary photodiode voltage threshold now."),
+         A93("OQ-RFQ-07", "DAQ"), DI("INS", "INS-18"), PEND(P2_LANE, "INS-P2-10 photodiode specification")],
+        "owner-stated", "OWNER_GIVEN", "NOW", "P1_NEEDED",
+        note="placed in the thrust/metrology package (owner family 'DAQ'): it is an optical, non-RF diagnostic channel "
+             "on the P1 DAQ and must stay independent of the RF impedance chain, so it is not quoted in RFQ2-RF",
+        change_why="new line: A9.4 P2Q-05 procurement (photodiode, amplifier, DAQ channel)"))
+    out.append(R(
+        "RFQ2-VAC-N06", "RFQ2-VAC", "optical access / window for the photodiode (A9.4 P2Q-05)",
+        "Chamber viewport (or in-vacuum window) with a line of sight to the ICP source volume for the photodiode of "
+        "RFQ2-THRUST-N03; transmission band matched to the photodiode response; the line of sight is preserved by the "
+        "module envelope (ICD ICP-07); supplier states the transmission band, flange family (CIF-C02) and the "
+        "protection / replacement provision against window coating. Loss of line of sight makes a photodiode record "
+        "invalid as unlit evidence (P2 reducer), so the view must be verifiable.",
+        "TBD - requires the facility port layout (row 139), the module envelope (ICD ICP-07) and the photodiode "
+        "selection (RFQ2-THRUST-N03)", "-; nm; mm", "A9.4 P2Q-05; A9.3 OQ-RFQ-07 vacuum/facility family",
+        [A94("P2Q-05", pd_quote), A94("P2Q-05", "Likewise, if the photodiode loses line-of-sight or saturates, the record "
+                                                "is not automatically valid."),
+         A93("OQ-RFQ-07", "RGA/diagnostic interfaces"), DI("ICD", "ICP-07")],
+        None, "OWNER_GIVEN", "NOW", "P1_NEEDED",
+        note="item OWNER_GIVEN (A9.4); dimensions / band TBD",
+        change_why="new line: A9.4 P2Q-05 procurement (optical access / window)"))
+    dwv_sources = [
+        A94("P1Q-14", "Extend the existing:"),
+        A94("P1Q-14", "corresponding to a 1.5× design margin."),
+        A94("P1Q-14", "This is a minimum design basis, not the qualification-test voltage."),
+        A94("P1Q-14", "1.05~kV~DC"), A94("P1Q-14", "60~s"),
+        A94("P1Q-14", "where component ratings permit."),
+        A94("P1Q-14", "This decision does not close ICP-44."),
+    ]
+    out.append(R(
+        "RFQ2-HALLEL-N04", "RFQ2-HALLEL", "ICP body / collector isolation: 350 V class, >= 525 V design withstand, "
+        "1.05 kV / 60 s initial DWV (A9.4 P1Q-14)",
+        "Isolation of the ICP body / collector circuits relative to the Hall anode, the H-1 body/common, facility ground "
+        "and other isolated circuits (where those potential differences can physically occur) is designed to the 350 V "
+        "operating class with V_design,withstand >= 525 V (1.5 x; a minimum design basis, not the test voltage). Passive "
+        "insulation paths and feedthrough assemblies are qualified at 1.05 kV DC for 60 s where component ratings "
+        "permit (current-limited, sensitive electronics disconnected where necessary, leakage recorded, in the relevant "
+        "insulation configuration, before first HV/RF operation), plus representative-pressure/gas testing of "
+        "Paschen-risk paths; the supplier states each item's rated withstand and whether it permits the 1.05 kV / 60 s "
+        "test, and supplies the DWV record or certificate where performed. The test is not repeated before each "
+        "campaign (later reverification at a lower controlled level, TBD). The owner cites ECSS high-voltage practice "
+        "without a standard / clause id (owner-stated; verify). RF insulation of the antenna / matching network "
+        "(ICD ICP-44: RF peak voltage, RF current, RF creepage/clearance, combined RF + DC stress, vacuum/gas breakdown) "
+        "is NOT covered and stays OPEN; the ~1 kV representative-gas qualification of ICP gas lines (A9.3 ICPQ-06, "
+        "RFQ2-GAS-N04) is a separate requirement.",
+        {"V_operating_max_V": 350.0, "V_design_withstand_min_V": 525.0, "initial_DWV_V_DC": 1050.0,
+         "initial_DWV_duration_s": 60.0, "leakage_acceptance": "TBD - requires the item ratings (not owner-given)",
+         "later_reverification": "TBD - owner-registered lower controlled level / procedure",
+         "ICP_44_rf_insulation": "OPEN"},
+        "V; s", "A9.4 P1Q-14; row 81; ICD ICP-23",
+        dwv_sources + [OW(81, "rate H-1, C1 reference, discharge supply, isolation and diagnostics to the relaxed 350 V "
+                              "end plus appropriate transient/qualification margin"),
+                       DI("ICD", "ICP-23"), DI("ICD", "ICP-44")],
+        "owner-stated", "OWNER_GIVEN", "NOW", "P1_NEEDED", applies_to=CONFIGS,
+        note="the ECSS reference is owner-stated (A9.4 recorder_flags[1]: standard and clause not identified - verify)",
+        change_why="new: A9.4 P1Q-14 (ICP_350V_CLASS / 1.05kV_INITIAL_DWV)"))
+    out.append(R(
+        "RFQ2-VAC-N07", "RFQ2-VAC", "electrical feedthrough assemblies on ICP body / collector circuits: >= 525 V design "
+        "withstand, 1.05 kV DC / 60 s DWV where ratings permit (A9.4 P1Q-14)",
+        "Electrical feedthrough assemblies that carry ICP body / collector circuits (or isolate them from the H-1 anode, "
+        "H-1 body/common or facility ground) have a design withstand >= 525 V and are DWV-tested at 1.05 kV DC for 60 s "
+        "where their ratings permit (current-limited, leakage recorded); the supplier states the rated withstand per "
+        "pin / assembly and supplies the test record or certificate where performed. RF feedthroughs stay under ICD "
+        "ICP-44 (OPEN) and RFQ2-RF.",
+        {"V_design_withstand_min_V": 525.0, "DWV_V_DC": 1050.0, "DWV_duration_s": 60.0,
+         "leakage_acceptance": "TBD - requires the feedthrough ratings (not owner-given)"},
+        "V; s", "A9.4 P1Q-14",
+        dwv_sources[:6] + [A94("P1Q-14", "passive insulation paths and feedthrough assemblies"),
+                           A93("OQ-RFQ-07", "feedthroughs")],
+        "owner-stated", "OWNER_GIVEN", "NOW", "P1_NEEDED", applies_to=CONFIGS,
+        change_why="new: A9.4 P1Q-14 applied to the feedthrough lines"))
     return out
 
 
@@ -1088,8 +1210,11 @@ def line_items() -> dict:
             L("VAC-L02", "pumping (only where the identified facility lacks it)", "TBD - requires facility "
               "identification (row 139)", "A9.3 OQ-RFQ-07", "P1_NEEDED", ["pumping"], ["RFQ2-VAC-N02"],
               why="owner family item"),
-            L("VAC-L03", "electrical vacuum feedthroughs (discharge, collector/bias, magnet, sensing) rated >= 8.33 A",
-              p1, "A9.3 OQ-A907-02; row 81", "P1_NEEDED", ["feedthroughs"], ["RFQ2-VAC-N03"], why="owner family item"),
+            L("VAC-L03", "electrical vacuum feedthroughs (discharge, collector/bias, magnet, sensing) rated >= 8.33 A; "
+                         "ICP body / collector assemblies >= 525 V design withstand, 1.05 kV DC / 60 s DWV where "
+                         "ratings permit (A9.4 P1Q-14)",
+              p1, "A9.3 OQ-A907-02; row 81; A9.4 P1Q-14", "P1_NEEDED", ["feedthroughs"],
+              ["RFQ2-VAC-N03", "RFQ2-VAC-N07"], why="owner family item; A9.4 P1Q-14 DWV / design withstand added"),
             L("VAC-L04", "gas feedthroughs", p1, "A9.3 OQ-RFQ-07", "P1_NEEDED", ["feedthroughs"], ["RFQ2-VAC-N04"],
               why="owner family item"),
             L("VAC-L05", "RGA head + electronics + differentially pumped sampling system (~200 amu)", 1, "row 127",
@@ -1098,6 +1223,10 @@ def line_items() -> dict:
             L("VAC-L06", "RGA / diagnostic port provisions", "TBD - requires facility layout (ICD ICP-07)",
               "A9.3 OQ-RFQ-07; INS-22", "LATER", ["RGA/diagnostic interfaces"], ["RFQ2-VAC-N05"],
               why="owner family item"),
+            L("VAC-L07", "optical access / viewport or window with line of sight to the ICP source volume for the "
+                         "photodiode (A9.4 P2Q-05)", 1, "A9.4 P2Q-05", "P1_NEEDED", ["RGA/diagnostic interfaces"],
+              ["RFQ2-VAC-N06"], why="A9.4 P2Q-05 procurement: optical access / window (a chamber / diagnostic "
+                                    "interface item, hence the vacuum/facility package)"),
         ],
         "RFQ2-HALLEL": [
             L("HE-L01", "H-1 laboratory discharge supply (ground only), floating, 0-350 V, current rating >= 8.33 A "
@@ -1112,8 +1241,11 @@ def line_items() -> dict:
                         "ceiling)", 1, "row 70; ICD ICP-21; A9.3 OQ-A907-02", "P1_NEEDED", [],
               ["RFQ-05-R07", "RFQ2-HALLEL-N01"], v1_ref="RFQ-05 quantities[4]", change="CARRIED_MODIFIED",
               why="moved from v1 RFQ-05; stand-ceiling sizing"),
-            L("HE-L04", "isolation hardware for the discharge and collector/bias circuits (350 V + margin)", p1,
-              "row 81; ICD ICP-23", "P1_NEEDED", ["isolation"], ["RFQ-05-R08"], why="owner family item"),
+            L("HE-L04", "isolation hardware for the discharge and collector/bias circuits (350 V class, incl. the ICP "
+                        "body / collector circuits per A9.4 P1Q-14: >= 525 V design withstand; 1.05 kV DC / 60 s initial "
+                        "DWV of passive insulation paths where ratings permit)", p1,
+              "row 81; ICD ICP-23; A9.4 P1Q-14", "P1_NEEDED", ["isolation"], ["RFQ-05-R08", "RFQ2-HALLEL-N04"],
+              why="owner family item; A9.4 P1Q-14 DWV / design withstand added"),
             L("HE-L05", "discharge and collector V/I sensing (current ranges >= 8.33 A)", p1,
               "A9.3 OQ-VI-05, OQ-A907-02", "P1_NEEDED", ["sensing"], ["RFQ2-HALLEL-N03"], why="owner family item"),
             L("HE-L06", "flight-representative breadboard Hall discharge supply", 1, "row 113", "LATER",
@@ -1187,6 +1319,14 @@ def line_items() -> dict:
             L("TH-L06", "traceability hardware: calibration references / certificates for DAQ V/I/T channels, RF "
                         "power sensors and the power analyzer", p1, "A9.3 OQ-RFQ-07; row 126", "P1_NEEDED",
               ["traceability hardware"], ["RFQ2-THRUST-N02", "RFQ-09-R01"], why="owner family item"),
+            L("TH-L07", "optical-emission photodiode + amplifier (REQUIRED ignition / unlit and E/H indicator, INS-P2-10; "
+                        "A9.4 P2Q-05)", "1 set", "A9.4 P2Q-05", "P1_NEEDED", ["DAQ"], ["RFQ2-THRUST-N03"],
+              why="A9.4 P2Q-05 procurement: photodiode + amplifier on the P1 DAQ (optical, non-RF diagnostic kept "
+                  "independent of the RF chain, hence not RFQ2-RF)"),
+            L("TH-L08", "DAQ channel for the photodiode on the common time base, simultaneous with P_refl, antenna "
+                        "current, collector / current-path and pressure channels (A9.4 P2Q-05)", 1, "A9.4 P2Q-05; INS-18",
+              "P1_NEEDED", ["DAQ"], ["RFQ2-THRUST-N03", "RFQ2-THRUST-N01"],
+              why="A9.4 P2Q-05 procurement: DAQ channel"),
         ],
     }
     return rf
@@ -1298,6 +1438,16 @@ def common_interface() -> dict:
          "value": {"upper_operating_pulse_V": 600.0, "design_isolation_basis_V": 900.0, "hipot_kV_DC": 1.0},
          "status": "OWNER_GIVEN", "freeze_point": "NOW", "source": "A9.1 ICP-46 (carried RFQ-08-R05/R06)",
          "evidence_class": "owner-allocation"},
+        {"id": "CIF-G07", "group": "potentials_grounding", "title": "ICP body / collector isolation class (A9.4 P1Q-14)",
+         "value": {"V_operating_max_V": 350.0, "V_design_withstand_min_V": 525.0, "initial_DWV_V_DC": 1050.0,
+                   "initial_DWV_duration_s": 60.0,
+                   "applies_to": "ICP body / collector circuits vs Hall anode, H-1 body/common, facility ground and "
+                                 "other isolated circuits, where those potential differences can physically occur",
+                   "rf_insulation_ICP_44": "OPEN (not covered)"},
+         "status": "OWNER_GIVEN", "freeze_point": "NOW", "source": "A9.4 P1Q-14; row 81; ICD ICP-23",
+         "evidence_class": "owner-stated",
+         "note": "the ECSS high-voltage reference is owner-stated without standard / clause (verify); leakage acceptance "
+                 "and later reverification level TBD; distinct from CIF-G05 (gas lines, A9.3 ICPQ-06)"},
         {"id": "CIF-E01", "group": "electrical", "title": "stand current ceiling",
          "value": ic, "units": "A", "status": "OWNER_GIVEN", "freeze_point": "NOW",
          "source": "A9.3 OQ-A907-02 (1500 W / 180 V; bench ceiling, not an H-1 requirement)",
@@ -1349,7 +1499,9 @@ def common_interface() -> dict:
          "N-ANODE; N-ICPREF; N-FG", "A; V", "OWNER_GIVEN (8.33 A ceiling; 350 V + margin TBD)",
          "A9.3 OQ-A907-02; row 81; RFQ2-VAC-N03", "P1_NEEDED"),
         ("X-11", "RFQ2-HALLEL", "RFQ2-MECH", "collector lead and body-potential sense on the ICP module",
-         "N-ICPREF; N-BODY", "A; V", "TBD (collector V/I range A902-23)", "ICD ICP-20, ICP-21", "P1_NEEDED"),
+         "N-ICPREF; N-BODY", "A; V", "TBD (collector V/I range A902-23); isolation OWNER_GIVEN (CIF-G07: 350 V class, "
+         ">= 525 V design withstand, 1.05 kV DC / 60 s initial DWV; A9.4 P1Q-14)", "ICD ICP-20, ICP-21; A9.4 P1Q-14",
+         "P1_NEEDED"),
         ("X-12", "RFQ2-HALLEL", "RFQ2-THRUST", "V_d(t), I_d(t), I_e,ICP(t), potentials into the DAQ; P_bus 1 ms chain "
          "synchronization (LATER)", "CIF-G02; CIF-T01", "V; A", "OWNER_GIVEN (quantities); rates PENDING P1",
          "A9.3 OQ-VI-05; A9.1 OQ-A902-01", "P1_NEEDED"),
@@ -1362,6 +1514,9 @@ def common_interface() -> dict:
         ("X-16", "RFQ2-MECH", "RFQ2-RF", "antenna/coil drawing <-> local-match output and RF feedthrough in-vacuum "
          "leads (combined DC+RF stress)", "N-RF; N-BODY", "V (RF peak); mm (creepage)", "TBD (ICD ICP-44)",
          "ICD ICP-44", "P1_NEEDED"),
+        ("X-17", "RFQ2-VAC", "RFQ2-THRUST", "photodiode viewport / window line of sight -> photodiode + amplifier -> "
+         "DAQ channel (A9.4 P2Q-05)", "CIF-C02; CIF-T01", "V; nm", "OWNER_GIVEN (items); band / gain TBD",
+         "A9.4 P2Q-05; RFQ2-VAC-N06; RFQ2-THRUST-N03", "P1_NEEDED"),
     ]
     mat = [{"id": a, "between": [b, c], "what": d, "reference": e, "units": f, "status": g, "source": h,
             "dispatch": i} for a, b, c, d, e, f, g, h, i in matrix]
@@ -1406,12 +1561,23 @@ V2_ADDITIONS = {
         "documentation": ["statement whether one Ar unit covers the P1 sweep, or the second overlapping range option "
                           "is needed (A9.3 OQ-RFQ-02)"],
     },
-    "RFQ2-VAC": {"documentation": ["feedthrough current (>= 8.33 A stand ceiling) and voltage ratings per pin"]},
-    "RFQ2-HALLEL": {"documentation": ["current capability of every supply/sensor relative to the 8.33 A stand ceiling "
-                                      "(A9.3 OQ-A907-02)"]},
+    "RFQ2-VAC": {"documentation": ["feedthrough current (>= 8.33 A stand ceiling) and voltage ratings per pin",
+                                   "rated withstand per ICP body / collector feedthrough assembly (>= 525 V) and whether "
+                                   "it permits the 1.05 kV DC / 60 s DWV; DWV record or certificate where performed "
+                                   "(A9.4 P1Q-14)",
+                                   "viewport / window transmission band and flange family (A9.4 P2Q-05)"]},
+    "RFQ2-HALLEL": {"acceptance": ["initial DWV record of the ICP body / collector passive insulation paths: 1.05 kV DC, "
+                                   "60 s, current-limited, leakage recorded, before first HV/RF operation, where "
+                                   "component ratings permit; not repeated before each campaign (A9.4 P1Q-14)"],
+                    "documentation": ["current capability of every supply/sensor relative to the 8.33 A stand ceiling "
+                                      "(A9.3 OQ-A907-02)",
+                                      "rated design withstand (>= 525 V) of each ICP body / collector isolation item "
+                                      "(A9.4 P1Q-14)"]},
     "RFQ2-MECH": {"acceptance": ["open-tube coaxial geometry per the LOCK-1 drawings (A9.3 OQ-VI-03)"],
                   "documentation": ["carrier interface drawing showing the modular exchange provision (A9.3 OQ-VI-03)"]},
-    "RFQ2-THRUST": {"acceptance": ["DAQ channel audit against RFQ2-THRUST-N01 / ICD ICP-34 before first P1 run"]},
+    "RFQ2-THRUST": {"acceptance": ["DAQ channel audit against RFQ2-THRUST-N01 / ICD ICP-34 before first P1 run",
+                                   "photodiode channel check: dark offset recorded and the saturation / over-range "
+                                   "indication demonstrated on the DAQ (A9.4 P2Q-05); no threshold set at acceptance"]},
 }
 
 COMMON_SUPPLIER_MUST_STATE_V2 = [
@@ -1569,6 +1735,19 @@ def change_log(reqs: list, pkgs: list) -> dict:
          "source": "A9.3 OQ-VI-03"},
         {"id": "CL-11", "change": "P1 DAQ / sensing lines for the OQ-VI-05 topology-control records (non-scoring)",
          "source": "A9.3 OQ-VI-05"},
+        {"id": "CL-12", "change": "A9.4 incorporation: photodiode + amplifier (TH-L07) and DAQ channel (TH-L08) in the "
+                                  "thrust/metrology package, optical access / window (VAC-L07) in the vacuum/facility "
+                                  "package, all P1_NEEDED; requirements RFQ2-THRUST-N03, RFQ2-VAC-N06; interface X-17",
+         "source": "A9.4 P2Q-05"},
+        {"id": "CL-13", "change": "A9.4 incorporation: ICP body / collector isolation 350 V class, >= 525 V design "
+                                  "withstand, 1.05 kV DC / 60 s initial DWV added to the isolation (HE-L04, "
+                                  "RFQ2-HALLEL-N04) and feedthrough (VAC-L03, RFQ2-VAC-N07) lines; CIF-G07; ICP-44 RF "
+                                  "insulation stays OPEN", "source": "A9.4 P1Q-14"},
+        {"id": "CL-14", "change": "A9.4 incorporation: owner / procurement authorized to SEND the P1_NEEDED packages for "
+                                  "quotation (RFQ, clarification, indicative lead time, commercial quotation, datasheets "
+                                  "/ certificates); no purchase orders, advance payments or binding commitments; no "
+                                  "supplier contact by Claude / the team (banner, dispatch_authority, H3 gate)",
+         "source": "A9.4 execution_decisions.p1_needed_rfqs"},
     ]
     counts = {}
     for r in reqs:
@@ -1586,7 +1765,7 @@ def traceability(reqs: list) -> list:
 
 def owner_answers_applied(reqs: list) -> dict:
     rows: dict = {}
-    ids: dict = {"a9_1": {}, "a9_2": {}, "a9_3": {}}
+    ids: dict = {"a9_1": {}, "a9_2": {}, "a9_3": {}, "a9_4": {}}
     for r in reqs:
         for s in r["sources"]:
             if s["type"] == "owner_row":
@@ -1611,7 +1790,31 @@ def owner_answers_applied(reqs: list) -> dict:
     structural = {"OQ-RFQ-07": set(PKG_IDS) | {"RFQ2-CIF"}}
     a93 = [{"id": k, "status": load("A93")["decisions"][k]["status"], "how_applied": a93_how[k],
             "applied_in": sorted(ids["a9_3"].get(k, set()) | structural.get(k, set()))} for k in a93_how]
+    a94_doc = load("A94")
+    a94_how = {
+        "P2Q-05": "photodiode + amplifier + DAQ channel (TH-L07, TH-L08; RFQ2-THRUST-N03) and optical access / window "
+                  "(VAC-L07; RFQ2-VAC-N06) added as P1_NEEDED lines; RFQ2-THRUST-N01 channel list extended; X-17",
+        "P1Q-14": "RFQ2-HALLEL-N04, RFQ2-VAC-N07, CIF-G07; HE-L04 and VAC-L03 carry the >= 525 V design withstand and "
+                  "the 1.05 kV DC / 60 s initial DWV; ICP-44 RF insulation OPEN",
+        "p1_needed_rfqs": "P1_NEEDED packages may be sent for quotation by the owner / procurement (banner, "
+                          "dispatch_authority.a9_4_quotation_dispatch, H3 gate); no PO / advance payment / binding "
+                          "commitment; no supplier contact by Claude / the team",
+    }
+    structural_94 = {"p1_needed_rfqs": set(PKG_IDS) | {"RFQ2-CIF"}}
+    a94 = []
+    for k, how in a94_how.items():
+        src = a94_doc["decisions"].get(k) or {"status": "AUTHORIZED (execution decision)"}
+        a94.append({"id": k, "status": src.get("status", "AUTHORIZED (execution decision)"), "how_applied": how,
+                    "applied_in": sorted(ids["a9_4"].get(k, set()) | structural_94.get(k, set())),
+                    "path": DECISIONS["A94"][0], "sha256": DECISIONS["A94"][1]})
+    a94.append({"id": "P1Q-10 / P1Q-13", "status": "; ".join(a94_doc["decisions"][q]["status"]
+                                                             for q in ("P1Q-10", "P1Q-13")),
+                "how_applied": "no RFQ line changed in this incorporation (bench measurement rules; applied in the P1 "
+                               "lane); whether the H-1 body metered ground-current monitor and the high-impedance V_anode "
+                               "channel become explicit lines is asked in OQ-RFQV2-07",
+                "applied_in": [], "path": DECISIONS["A94"][0], "sha256": DECISIONS["A94"][1]})
     return {"owner_rows": row_list,
+            "a9_4": a94,
             "a9_1": [{"id": k, "applied_in": sorted(v)} for k, v in sorted(ids["a9_1"].items())],
             "a9_2": [{"id": k, "applied_in": sorted(v)} for k, v in sorted(ids["a9_2"].items())],
             "a9_3": a93}
@@ -1651,6 +1854,24 @@ def open_owner_questions() -> dict:
         {"id": "OQ-RFQV2-05", "question": "Is an existing laboratory magnet supply available for the P1 H-1 runs, "
                                           "or is HE-L02 dispatched with the P1 set?",
          "proposed_answer": "owner call", "needed_by": "P1 RFQ dispatch"},
+        {"id": "OQ-RFQV2-06", "question": "A9.4 P1Q-14 sets >= 525 V design withstand and a 1.05 kV DC / 60 s initial "
+                                          "DWV for the ICP body / collector circuits. Does the same basis also close the "
+                                          "row-81 'transient/qualification margin' (CIF-G04, still TBD) for the H-1 "
+                                          "anode / discharge-supply isolation and feedthroughs?",
+         "proposed_answer": "owner call; PROPOSED: yes (same 350 V class, same 1.5 x design / ~3 x initial DWV "
+                            "basis)", "needed_by": "P1 RFQ dispatch of RFQ2-HALLEL / RFQ2-VAC"},
+        {"id": "OQ-RFQV2-07", "question": "A9.4 P1Q-13 requires a metered single-point H-1 body ground-current monitor "
+                                          "(continuous I_body->ground) and a high-impedance isolated V_anode channel. "
+                                          "Add them as explicit P1_NEEDED sensing lines in RFQ2-HALLEL, or use existing "
+                                          "laboratory instruments?",
+         "proposed_answer": "owner call; PROPOSED: explicit P1_NEEDED option lines in RFQ2-HALLEL (sensing)",
+         "needed_by": "P1 RFQ dispatch of RFQ2-HALLEL"},
+        {"id": "OQ-RFQV2-08", "question": "Who performs the 1.05 kV DC / 60 s initial DWV (A9.4 P1Q-14): supplier "
+                                          "factory test with certificate, the in-house bench with a current-limited "
+                                          "tester (not quoted in v2), or both?",
+         "proposed_answer": "owner call; PROPOSED: supplier certificate where the item rating permits plus the in-house "
+                            "bench DWV of the assembled insulation configuration before first HV/RF operation",
+         "needed_by": "P1 RFQ dispatch of RFQ2-HALLEL / RFQ2-VAC"},
     ]
     return {"new": new, "carried_open_from_v1": carried, "v1_questions_answered_since": answered,
             "state_file": DELIVERABLES["OQS3"][0], "state_sha256": DELIVERABLES["OQS3"][1],
@@ -1707,8 +1928,9 @@ def m16_impact() -> list:
         (12, "RFQ2-HALLEL, RFQ2-RF", "laboratory discharge/magnet/collector supplies (P1), breadboard supplies (LATER), "
                                      "laboratory RF generator (P1, ground only)"),
         (13, "RFQ2-MECH", "ICP material temperature data; ICP_COUPLED_THERMAL stays UNRESOLVED (no PASS)"),
-        (15, "RFQ2-GAS, RFQ2-THRUST, RFQ2-VAC, RFQ2-RF", "P1 DAQ, gauges, Ar MFC, RF metrology, power analyzer (P1); "
-                                                         "stand, RGA (LATER)"),
+        (15, "RFQ2-GAS, RFQ2-THRUST, RFQ2-VAC, RFQ2-RF", "P1 DAQ, gauges, Ar MFC, RF metrology, power analyzer, "
+                                                         "photodiode + amplifier + DAQ channel and its optical access "
+                                                         "(A9.4 P2Q-05) (P1); stand, RGA (LATER)"),
         (16, "RFQ2-MECH, RFQ2-THRUST", "modular ICP carrier and supports (P1); stand/KC-1 (LATER)"),
         (18, "RFQ2-MECH, RFQ2-HALLEL, RFQ2-GAS", "open-tube coaxial ICP head parts, collector/bias supply, capped port "
                                                 "(P1)"),
@@ -1721,8 +1943,8 @@ def m16_impact() -> list:
     for row, pk, how in spec:
         r = rows[row]
         status = ("NO_RFQ (design blocker; A9.2)" if pk == "none" else
-                  "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1 subset dispatchable first by the owner; no purchase order; "
-                  "H3 gate)")
+                  "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1_NEEDED subset authorized by A9.4 to be sent for quotation by "
+                  "the owner / procurement; no purchase order, advance payment or binding commitment; H3 gate)")
         out.append({"m16_row": row, "key": r["key"], "name": r["name"], "packages": pk, "how_touched": how,
                     "proposed_procurement_status": status,
                     "note": "proposal only; M16 v3 is not edited by this lane"})
@@ -1736,8 +1958,9 @@ def h3_h4_inputs(pkgs: list) -> dict:
                      "p1_needed_line_items": p["p1_needed_line_items"],
                      "open_items_blocking_po": [o["id"] for o in p["open_specification_items"]]})
     return {
-        "h3_procurement_gate": {"state": "QUOTATION PACKAGES v2 READY FOR OWNER DISPATCH (P1 subset first); PURCHASE "
-                                         "ORDERS NOT AUTHORIZED",
+        "h3_procurement_gate": {"state": "QUOTATION PACKAGES v2 READY FOR OWNER DISPATCH (P1 subset first); P1_NEEDED "
+                                         "PACKAGES AUTHORIZED FOR QUOTATION DISPATCH BY THE OWNER / PROCUREMENT (A9.4); "
+                                         "PURCHASE ORDERS, ADVANCE PAYMENTS AND BINDING COMMITMENTS NOT AUTHORIZED",
                                 "purchase_gate": "H3 procurement gate + frozen A9 interfaces (owner row 8; A9.1 A9-09 "
                                                  "procurement restriction)",
                                 "packages": gate},
@@ -1753,6 +1976,11 @@ def h3_h4_inputs(pkgs: list) -> dict:
              "source": "A9.3 OQ-VI-05; ICD ICP-34"},
             {"id": "H4-RFQ2-06", "test": "power-analyzer / coupler / calorimetric cross-check at the labelled "
                                          "boundaries RP-MAINS and RP-RF-50", "source": "A9.3 OQ-RFQ-06; row 72"},
+            {"id": "H4-RFQ2-07", "test": "initial DWV 1.05 kV DC / 60 s of ICP body / collector passive insulation paths "
+                                         "and feedthrough assemblies before first HV/RF operation (where ratings permit)",
+             "source": "A9.4 P1Q-14"},
+            {"id": "H4-RFQ2-08", "test": "photodiode dark offset, line of sight and saturation indication on the DAQ",
+             "source": "A9.4 P2Q-05"},
         ],
     }
 
@@ -1829,10 +2057,33 @@ def build() -> dict:
             "dispatches": "P9E/Vyovrinda under Praveen's authorization (commercial dispatch authority)",
             "supplier_contact": "none by the repository or Claude; no automatic supplier contact",
             "source": A93("OQ-RFQ-07", "Claude/team shall **not contact suppliers automatically**."),
+            "a9_4_quotation_dispatch": {
+                "authorized": ["requests for quotation", "technical clarification", "indicative lead time",
+                               "commercial quotation", "datasheets/certificates"],
+                "not_authorized": ["purchase orders", "advance payments", "binding commitments"],
+                "scope": "packages / lines tagged P1_NEEDED; packages stay split by speciality",
+                "sent_by": "owner / procurement (P9E/Vyovrinda); Claude / the technical team never contacts suppliers",
+                "sources": [A94("p1_needed_rfqs", "The P1-needed RFQ packages may now be sent to suppliers for "
+                                                  "quotation."),
+                            A94("p1_needed_rfqs", "It does not authorize:"),
+                            A94("p1_needed_rfqs", "Supplier packages may remain split by speciality as already "
+                                                  "decided.")]},
         },
         "decision_pins": [{"key": k, "path": v[0], "sha256": v[1], "immutable": True} for k, v in DECISIONS.items()],
         "deliverable_pins": [{"key": k, "path": v[0], "sha256": v[1]} for k, v in DELIVERABLES.items()],
         "never_pinned": NEVER_PINNED,
+        "a9_4_incorporation": {
+            "follow_on": "fo_a9_4_incorporation", "trigger": "T_A9_4_INCORPORATION", "base_commit": A94_INC_BASE,
+            "decision": {"path": DECISIONS["A94"][0], "sha256": DECISIONS["A94"][1]},
+            "verbatim": {"path": DECISIONS["A94_MD"][0], "sha256": DECISIONS["A94_MD"][1]},
+            "rule": "applied mechanically (owner step 2): only what A9.4 decides changed; ids and verified content "
+                    "otherwise kept",
+            "applied": ["P2Q-05 (photodiode, optical access / window, amplifier, DAQ channel)",
+                        "P1Q-14 (>= 525 V design withstand; 1.05 kV DC / 60 s initial DWV on isolation / feedthrough "
+                        "lines)", "execution_decisions.p1_needed_rfqs (P1_NEEDED quotation dispatch)"],
+            "placement": "photodiode + amplifier + DAQ channel -> RFQ2-THRUST (owner family 'DAQ'; an optical, non-RF "
+                         "diagnostic that must stay independent of the RF impedance chain); optical access / window -> "
+                         "RFQ2-VAC (owner family 'RGA/diagnostic interfaces': a chamber port item)"},
         "pending_parallel_lanes": {"P1": P1_LANE, "P2_prep": P2_LANE,
                                    "rule": "PENDING values are never filled; nothing is read from these paths"},
         "standing_facts": {
@@ -1994,6 +2245,12 @@ def render_cif(c: dict) -> str:
 def render_main(d: dict) -> str:
     L_ = [f"# {d['title']}", "", "> **" + d["banner"][0] + "**", ">"]
     L_ += ["> " + b for b in d["banner"][1:]]
+    inc = d["a9_4_incorporation"]
+    L_ += ["", f"A9.4 incorporation ({inc['follow_on']}, trigger {inc['trigger']}, base `{inc['base_commit']}`): "
+               f"{inc['rule']}. Applied: {'; '.join(inc['applied'])}. Placement: {inc['placement']}."]
+    qd = d["dispatch_authority"]["a9_4_quotation_dispatch"]
+    L_ += ["", f"A9.4 quotation dispatch: authorized - {', '.join(qd['authorized'])}; NOT authorized - "
+               f"{', '.join(qd['not_authorized'])}; scope {qd['scope']}; sent by {qd['sent_by']}."]
     L_ += ["", f"Lane {d['lane']} ({d['follow_on']}, trigger {d['trigger']}); status {d['status']}; A9 status "
                f"{d['a9_status']}; base commit `{d['base_commit']}`. Generated by `{d['generated_by']}` "
                f"(`--check` reproduces it); test `{d['test']}`.", "",
@@ -2037,7 +2294,12 @@ def render_main(d: dict) -> str:
                                           ("to", lambda x: x["to"]), ("quantity", lambda x: x["quantity"]),
                                           ("units", lambda x: x["units"]), ("status", lambda x: x["status"])])
     oa = d["owner_answers_applied"]
-    L_ += ["", "## (c) Owner answers applied", "", "### A9.3", ""]
+    L_ += ["", "## (c) Owner answers applied", "", "### A9.4 (" + d["a9_4_incorporation"]["decision"]["path"] +
+           ", sha256 `" + d["a9_4_incorporation"]["decision"]["sha256"] + "`)", ""]
+    L_ += _table(oa["a9_4"], [("id", lambda x: x["id"]), ("status", lambda x: x["status"]),
+                              ("how applied", lambda x: x["how_applied"]),
+                              ("applied in", lambda x: ", ".join(x["applied_in"]))])
+    L_ += ["", "### A9.3", ""]
     L_ += _table(oa["a9_3"], [("id", lambda x: x["id"]), ("status", lambda x: x["status"]),
                               ("how applied", lambda x: x["how_applied"])])
     L_ += ["", "### A9.2", ""]
