@@ -2324,3 +2324,62 @@ allocations are below verified evidence floors for three lines; the C1 reference
 the H-1 anode worst case (1190-1292 degC) is incompatible with 316L. No model, frozen data or golden changed; historical
 A4-A8 artefacts are byte-identical. Next (owner priorities): P1 ICP electron-source bench (ICP-45), P2 ICP impedance map,
 P3 coupled thermal redesign, P4 anode design.
+
+## 2026-09-30 — Checkpoint 3 merged to main (A9)
+
+With the owner's approval, PR #33 (head 4555c78) was merged into main as 20f14d8, after CI passed 6/6 and the A9.2 §11
+post-merge checks passed. The merged main reproduces: 2204 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10.
+This is the clean post-A9 baseline. Owner sequence: triage the 54 open owner questions, then P1 ICP bench (ICP-45) → P2
+impedance map → P3 coupled thermal redesign → P4 anode design. P3/P4 are not closed before P1/P2 data exist, because the
+measured ICP/RF electrical behaviour sets the real thermal load. No model, frozen data or golden changed.
+Owner-question triage (recorder proposal, not a decision): `docs/budgets/owner_decisions/OWNER_QUESTIONS_TRIAGE_POST_A9.md`
+puts each of the 54 OPEN state-v2 questions in exactly one tier: 8 gate the P1 bench, 2 wait for P2 data, 8 set the
+P3/P4 thermal rules, 20 are mass/Xe closure, 12 are comparison-campaign design and 4 are governance. There are two
+duplicate groups (Xe design-case content; ignition dwells).
+
+## 2026-09-30 — A9.3 post-A9 tier-1 owner decisions; P1 authorized, P2 preparation in parallel
+
+The owner answered the eight tier-1 questions (verbatim `docs/decisions/OD_2026_09_30_A9_3_POST_A9_TIER1_OWNER_DECISIONS.md`,
+machine-readable `OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json`):
+- **First build:** open-tube coaxial ICP only, on a modular carrier that leaves room for a later orificed variant.
+- **Ar check:** the "no Hall discharge without ICP" check is an engineering control, never scored.
+- **Discharge current:** 8.33 A is the stand design ceiling. The ICP-45 requirement is the registered H-1 maximum
+  discharge current, and until it is known P1 reports the I_e capability surface.
+- **Isolation:** ~1 kV representative-gas isolation, only where a gas line crosses a potential difference.
+- **RF source:** a mains-fed laboratory RF generator for ground use only. P_mains,in is never P_bus evidence; C_e and
+  C_e,DC are reported with labelled boundaries.
+- **RFQs:** split by supplier speciality. The team prepares them and the owner/procurement dispatches them.
+- **Ar flow:** 1–2 Ar flow ranges, not 4; Ar data stay engineering-only.
+- **Dedicated ICP feed:** its controller is a quotation option only; G-REUSE stays primary.
+
+Owner-question state v3 records these answers; 46 questions remain OPEN, and v2 is unchanged. Triggers registered:
+T_A9_P1_ICP_BENCH, T_A9_P2_IMPEDANCE_PREP (the plasma map needs stable P1 plasma first) and T_A9_RFQ_V2_SPLIT. No model,
+frozen data or golden changed.
+A9.3 lanes verified and merged on the execution branch:
+- **P1 ICP bench** `docs/experiments/hall_icp/p1_icp_bench/`: stages, capability surface, OQ-VI-05 control,
+  current-path closure, analysis script, record format.
+- **P2 impedance preparation** `docs/experiments/hall_icp/p2_impedance_map/`: reference planes, calibration,
+  analysis script; the plasma map needs P1 stable plasma first.
+- **RFQ v2** `docs/procurement/rfq_a9_v2/`: six supplier-type packages plus a common interface document; v1 unchanged.
+
+Post-merge: 2321 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10. New owner questions: P1Q-10 (I_e,cap as
+a Hall-OFF capacity-extraction measurement), P1Q-13 (H-1 anode/body configuration in Hall-OFF stages), P1Q-14 (ICP
+isolation class and hipot voltage), P2Q-05 (optical unlit-verification indicator).
+
+## 2026-09-30 — A9.4 P1/P2 owner decisions applied; checkpoint 4 prepared
+
+The owner answered P1Q-10, P1Q-13, P1Q-14 and P2Q-05 (A9.4, `docs/decisions/OD_2026_09_30_A9_4_*`):
+- **P1Q-10:** ICP-45 capacity is measured as discharge-OFF extraction to a dedicated collector, minus a matched RF-OFF
+  record. Hall-ON runs count only as NEUTRALIZATION_CONSISTENCY.
+- **P1Q-13:** the anode is floating (open circuit by construction), and the H-1 body has a single-point metered ground.
+- **P1Q-14:** the ICP circuits join the 350 V class, with a ≥ 525 V design withstand and an initial DWV of 1.05 kV DC for
+  60 s. ICP-44 RF insulation stays open.
+- **P2Q-05:** a photodiode is required, and plasma states are UNLIT / E_MODE / H_MODE / UNCERTAIN.
+
+The owner also authorized sending the P1_NEEDED RFQs for quotation (no POs) and one merge to main.
+fo_a9_4_incorporation applied these to P1, P2 prep and RFQ v2; it was verified in round 1 with three lenses.
+ICP-45 stays NOT_EVALUATED until I_d,max,H1 is registered.
+
+Post-merge: 2340 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10. Protected artifacts are unchanged; the diff
+vs main is additive. Minors carried: stale PENDING RFQ references in P2, one leftover PROPOSED wording in P1-S4, and the
+INS-P2-10 source list, which cites A9.3 but not A9.4.
