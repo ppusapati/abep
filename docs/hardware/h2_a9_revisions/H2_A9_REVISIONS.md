@@ -48,11 +48,11 @@ Configurations: `hall_c1_reference`, `hall_icp_neutralizer` (never ranked; no wi
 | H27 | `docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json` | `d1813e153af37ebd...` |
 | H21_PY | `docs/hardware/h2/h2_1_hall_chamber_magnet/build_h2_1_hall_chamber_magnet.py` | `5df465d564640db4...` |
 | H25_PY | `docs/hardware/h2/h2_5_thermal_network/build_h2_5_thermal_network.py` | `4e937fa97b104d10...` |
-| BPB_A9 | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `dd888719d36e5de2...` |
-| ICD | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `0a2ec6666530e846...` |
-| UB | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `4c9f57fa28bf4465...` |
+| BPB_A9 | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `a16496b06df5876e...` |
+| ICD | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `81b073e6545d9bff...` |
+| UB | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `4d087e993410a795...` |
 | PREREG | `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` | `1310a84fa9840792...` |
-| VI | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `e26c38ef0af4f56d...` |
+| VI | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `4924f31b9b0a9315...` |
 | INT | `docs/experiments/hall_icp/integration/a9_core_integration_v1.json` | `86146f986e35e4d9...` |
 | MCQ | `docs/experiments/magnet_coil/magnet_coil_qualification_v1.json` | `53e92f4536f7b300...` |
 | LIMITS | `schemas/thermal_life/limits_v1.json` | `0df363f76dcb6efc...` |

@@ -852,7 +852,7 @@ def _a909() -> list:
 def records() -> dict:
     out = {"A9-01": _a901(), "A9-02": _a902(), "A9-03": _a903(), "A9-04": _a904(), "A9-05ev": _a905ev(),
            "A9-05vi": _a905vi(), "A9-06": _a906(), "A9-07": _a907(), "A9-08": _a908(), "A9-09": _a909()}
-    for extra in (_repair_code(), _repair(), _repair2(), _repair3(), _repair4()):
+    for extra in (_repair_code(), _repair(), _repair2(), _repair3(), _repair4(), _repair5()):
         for k, recs in extra.items():
             out[k] = out[k] + [dict(r) for r in recs]
     return out
@@ -1911,6 +1911,69 @@ def _repair4() -> dict:
                        'summary': 'LA-04 precise reason'}]}
 
 
+# ------------------------------------------------------------------------------------------------------ repair 5
+# Second review repair: stale wording left after the A9.1 decisions were applied (UBQ-02 / UBQ-04 / UBQ-06 /
+# OQ-A902-01 / ICP-46) and the A9-05 per-input assignment fields re-stated next to the field (OQ-INT-03 /
+# OQ-A910-02). Text only; no number changes.
+VI_STAGE_OLD = "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)"
+VI_STAGE_NEW = ("TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no "
+                "per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)")
+VI_DQ_OLD = "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)"
+VI_DQ_NEW = ("TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no "
+             "per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call "
+             "OQ-A910-02 (LOCK-1)")
+
+
+def _repair5() -> dict:
+    return {
+        "A9-04": [
+            R("A910-R04-28", "A9.1 UBQ-06 (review repair 2)", "set", "/items[id=UB-K-00]/note",
+              "a design margin (plus 20 % heat-load margin), not an abort limit; whether limit aborts fire at the "
+              "validated limit or at limit - margin is open question UBQ-06",
+              "a design margin (plus 20 % heat-load margin); A9.1 UBQ-06 sets the score-bearing temperature abort at "
+              "the validated continuous-use limit minus 50 K (stop_rules LA-05)",
+              "UB-K-00 note restated from the applied A9.1 UBQ-06"),
+            R("A910-R04-29", "A9.1 UBQ-02 (review repair 2)", "replace",
+              "/measurement_chains[dq=UB-DQ-NEUT]/equations[4]", "PROPOSED margin form (UBQ-02):",
+              "OWNER_GIVEN margin form (A9.1 UBQ-02):", "M_n form is owner-given (A9.1 UBQ-02)"),
+            R("A910-R04-30", "A9.1 UBQ-02 (review repair 2)", "replace",
+              "/measurement_chains[dq=UB-DQ-NEUT]/equations[4]",
+              "(margin value PENDING docs/experiments/hall_icp/prereg_framework/)",
+              "(any extra design margin is frozen at LOCK-2 per the LOCK-1 rule, A9.1 UBQ-02)",
+              "M_n extra margin freeze point from A9.1 UBQ-02 (no stale A9-01 pointer)"),
+            R("A910-R04-31", "A9.1 UBQ-04 (review repair 2)", "replace",
+              "/measurement_chains[dq=UB-DQ-RF]/equations[4]", "PROPOSED rule |z_x| <= k_x (UBQ-04)",
+              "rule |z_x| <= k_x with k_x = 2 frozen at LOCK-1 (A9.1 UBQ-04; failure -> RF-dependent quantities "
+              "EXCLUDED_INSTRUMENT; UB-RF-08)", "cross-check rule restated from the applied A9.1 UBQ-04"),
+            R("A910-R04-32", "A9-07 IDA7-21 (review repair 2)", "set", "/items[id=UB-RF-04]/units", "W",
+              "1 (relative error of P_net; the absolute term in W is this value x P_net)",
+              "UB-RF-04 units match the imported IDA7-21 relative-error relation"),
+            R("A910-R04-33", "A9.1 OQ-A902-01 (review repair 2)", "gsub", "", "for P_bus,peak",
+              "for P_bus,1ms,max (A9.1 OQ-A902-01)",
+              "gate quantity renamed P_bus,peak -> P_bus,1ms,max (UB-P-07 name, IF demand, row-112 application)"),
+        ],
+        "A9-03": [
+            R("A910-R03-25", "A9.1 ICP-46 (review repair 2)", "replace", "/items[id=ICP-46]/requirement",
+              "The margin and pulse hipot level are owner/LOCK-1 items.",
+              "Isolation basis per A9.1 ICP-46: design isolation basis 900 V (1.5 x 600 V); development hipot 1.0 kV "
+              "DC at representative pressure/gas (no flashover or breakdown, leakage recorded); a separate 600 V "
+              "pulse-waveform test; the flight level may only be revised upward without a controlled justification.",
+              "ICP-46 requirement text aligned with the applied A9.1 isolation basis"),
+            R("A910-R03-26", "A9.1 ICP-46 (review repair 2)", "set", "/items[id=ICP-46]/verification",
+              "pulse hipot of keeper lead/feedthrough/harness per exchange (ICP-39 d); inspection",
+              "1.0 kV DC hipot at representative pressure/gas with leakage recorded AND a separate 600 V "
+              "pulse-waveform test of keeper lead / feedthrough / connectors / harness per exchange (ICP-39 d) "
+              "(A9.1 ICP-46); inspection", "ICP-46 verification aligned with A9.1"),
+        ],
+        "A9-05vi": [
+            R("A910-R05-01", "OQ-INT-03 / OQ-A910-02 (review repair 2)", "gsub", "", VI_STAGE_OLD, VI_STAGE_NEW,
+              "per-input producing stage: precise remaining reason next to the field"),
+            R("A910-R05-02", "OQ-INT-03 / OQ-A910-02 (review repair 2)", "gsub", "", VI_DQ_OLD, VI_DQ_NEW,
+              "per-input decision quantity: precise remaining reason next to the field"),
+        ],
+    }
+
+
 def _repair_code() -> dict:
     """Source-code changes of the review repair (recorded as 'code' records with a marker and a scope)."""
     return {"A9-02": [
@@ -1928,6 +1991,20 @@ def _repair_code() -> dict:
           "A9-04 DQ-HI-PBUS chain (LOCK-1 item) instead of 'PENDING A9-04'; schema gains the gate_measurement record",
           file="docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py",
           marker="defines no pulse-energy record yet", scope=["/items", "/owner_answers_applied"], numeric=False),
+        R("A910-R02-C3", "A9.1 SEQ-peaks (review repair 2; ICD ICP-22 / ICP-45)", "code", None,
+          summary="check_startup_sequence counts peak-class loads COMMANDED to rise (A9.1 SEQ-peaks wording): the "
+          "icp_collector_bias rise at the hall_discharge_ignition step is a declared dependent rise (the Hall "
+          "discharge current closes through the collector), reported in 'dependent_rises', kept in every power "
+          "ledger and the 1500 W gate, not counted as a second commanded peak; the same rise at any other step "
+          "still violates",
+          file="abep_sim/bus_boundary_a9.py", marker="DEPENDENT_RISES",
+          scope=["/sequencing", "/items", "/gates_and_allocations"], numeric=False),
+        R("A910-R02-C4", "A9.1 OQ-A902-01 (review repair 2)", "code", None,
+          summary="FAIL on a p_bus_1ms_max ledger carries P1MS_SUM_RULE: the per-slot sum is a lower bound only for "
+          "simultaneous slot values; summed non-simultaneous per-slot 1 ms maxima are an upper bound (PASS-"
+          "conservative), so a FAIL on them must be confirmed on the system-level bus-channel 1 ms maximum",
+          file="abep_sim/bus_boundary_a9.py", marker="P1MS_SUM_RULE",
+          scope=["/gates_and_allocations", "/items"], numeric=False),
     ]}
 
 

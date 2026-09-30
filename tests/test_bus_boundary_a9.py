@@ -542,11 +542,43 @@ def test_undeclared_simultaneous_peak_loads_detected_by_magnitude():
     steps[2]["loads"]["compressor"] = L(200.0)                  # compressor jumps in the RF-ignition step, no label
     steps[2]["loads"]["icp_rf_source"] = {**L(300.0), "plane": "generator_dc_input"}
     r = B.check_startup_sequence("hall_icp_neutralizer", steps, FE1)
-    assert any("load rises" in v["rule"] for v in r["violations"]), r["violations"]
+    assert any("commanded to rise" in v["rule"] for v in r["violations"]), r["violations"]
     steps[2]["loads"]["compressor"] = {"P_W": "TBD", "tbd_requires": "compressor ICD"}
     r2 = B.check_startup_sequence("hall_icp_neutralizer", steps, FE1)
-    assert any("load rises" in v["rule"] for v in r2["not_evaluable"]) or \
-        any("load rises" in v["rule"] for v in r2["violations"])
+    assert any("commanded to rise" in v["rule"] for v in r2["not_evaluable"]) or \
+        any("commanded to rise" in v["rule"] for v in r2["violations"])
+
+
+def test_dependent_collector_rise_at_hall_ignition_is_not_a_second_commanded_peak():
+    """A9-10 review repair: A9.1 SEQ-peaks limits COMMANDED rises; the collector-bias load rises with I_d at Hall
+    ignition because the discharge current closes through the collector (ICD ICP-22 / ICP-45)."""
+    evs = [None, "magnet_ramp", "icp_rf_ignition", "icp_collector_bias_on", "hall_discharge_ignition", None]
+    steps = _seq("hall_icp_neutralizer", evs)
+    for k in (4, 5):
+        steps[k] = copy.deepcopy(steps[k])
+        steps[k]["loads"]["hall_discharge"] = L(900.0)
+        steps[k]["loads"]["icp_collector_bias"] = L(90.0)      # V_bias x I_d closes through the collector
+    r = B.check_startup_sequence("hall_icp_neutralizer", steps, FE1)
+    assert r["sequence_status"] == "RULES_SATISFIED", r["violations"]
+    assert r["dependent_rises"] and r["dependent_rises"][0]["step_id"] == "s4"
+    assert r["dependent_rises"][0]["dependent_slots"] == ["icp_collector_bias"]
+    # the same coupled rise in a step whose event is NOT Hall ignition is still a second commanded peak
+    steps2 = _seq("hall_icp_neutralizer", evs)
+    steps2[2] = copy.deepcopy(steps2[2])
+    steps2[2]["loads"]["icp_rf_source"] = {**L(300.0), "plane": "generator_dc_input"}
+    steps2[2]["loads"]["icp_collector_bias"] = L(90.0)
+    r2 = B.check_startup_sequence("hall_icp_neutralizer", steps2, FE1)
+    assert r2["sequence_status"] == "SEQUENCE_RULE_VIOLATION"
+    # the dependent load still counts in the power ledger
+    assert r["steps"][4]["P_bus_W"] > r["steps"][3]["P_bus_W"]
+
+
+def test_p1ms_fail_carries_sum_rule():
+    loads, effs = full("hall_icp_neutralizer", p=200.0, eta=1.0)
+    loads["icp_rf_source"]["plane"] = "generator_dc_input"
+    led = B.ledger("hall_icp_neutralizer", loads, effs, FE1, power_basis="p_bus_1ms_max", gate_measurement=GM_OK)
+    g = B.rfp_power_gate(led, [led])
+    assert g["verdict"] == "FAIL" and all(r["note"] == B.P1MS_SUM_RULE for r in g["rows"])
 
 
 def test_record_shape_refusals_schema_parity():

@@ -626,14 +626,14 @@ Freeze points:
 
 ### ICP-46 C1 keeper-ignition pulse isolation rating (keeper lead, feedthrough, harness)
 
-**Requirement.** On the C1 reference module the keeper lead, its vacuum feedthrough, connectors and harness, and their isolation to the C1 cathode-common, module body and facility ground, are rated for the upper end of the pulsed keeper-ignition class (row 89) plus a transient margin; this is separate from the 350 V DC discharge-circuit item ICP-23, whose margin does not cover it. The margin and pulse hipot level are owner/LOCK-1 items.
+**Requirement.** On the C1 reference module the keeper lead, its vacuum feedthrough, connectors and harness, and their isolation to the C1 cathode-common, module body and facility ground, are rated for the upper end of the pulsed keeper-ignition class (row 89) plus a transient margin; this is separate from the 350 V DC discharge-circuit item ICP-23, whose margin does not cover it. Isolation basis per A9.1 ICP-46: design isolation basis 900 V (1.5 x 600 V); development hipot 1.0 kV DC at representative pressure/gas (no flashover or breakdown, leakage recorded); a separate 600 V pulse-waveform test; the flight level may only be revised upward without a controlled justification.
 
 * value: 600.0 [V (upper operating pulse; the A9.1 isolation basis is in a9_1_isolation_basis)]
 * basis: row 89 (300-600 V class); A9.1 ICP-46: design isolation basis 900 V (1.5 x 600 V); qualification/hipot 1.0 kV DC at representative pressure/gas on the initial H-1/C1 development hardware (no flashover or breakdown, leakage recorded) plus a separate 600 V pulse-waveform test; applies to keeper lead, feedthrough, connectors, harness and isolation to cathode common / module body / facility ground; does not replace ICP-44; the flight level may only be revised upward without a controlled justification
 * sources: row 89
 * evidence class: owner-allocation; status: OWNER_GIVEN (A9.1 ICP-46); freeze point: LOCK-1
 * applies to: hall_c1_reference
-* verification: pulse hipot of keeper lead/feedthrough/harness per exchange (ICP-39 d); inspection
+* verification: 1.0 kV DC hipot at representative pressure/gas with leakage recorded AND a separate 600 V pulse-waveform test of keeper lead / feedthrough / connectors / harness per exchange (ICP-39 d) (A9.1 ICP-46); inspection
 
 ## 3. Interface demands (b)
 
@@ -935,3 +935,5 @@ Changes applied by A9-10 after this lane's verified build (record `docs/experime
 | A910-R03-22 | A9.1 OQ-A902-03 + OQ-INT-03 | merge | `/hard_incompatibility_check/checked[2]` | 1 | hard-incompatibility finding re-evaluated |
 | A910-R03-23 | A9.1 OQ-A902-03 | replace | `/items[id=ICP-24]/requirement` | 1 | ICP-24 cross-references the OQ-A902-03 residual form |
 | A910-R03-24 | OQ-INT-03 (A9-02; A9-05 TK-21/52) | replace | `/hard_incompatibility_check/checked[3]/finding` | 1 | hard-incompatibility finding re-evaluated against A9-02 / A9-05 |
+| A910-R03-25 | A9.1 ICP-46 (review repair 2) | replace | `/items[id=ICP-46]/requirement` | 1 | ICP-46 requirement text aligned with the applied A9.1 isolation basis |
+| A910-R03-26 | A9.1 ICP-46 (review repair 2) | set | `/items[id=ICP-46]/verification` | 1 | ICP-46 verification aligned with A9.1 |

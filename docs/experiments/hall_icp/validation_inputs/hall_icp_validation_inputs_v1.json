@@ -158,7 +158,7 @@
    "status": "FIXED_BY_OWNER",
    "freeze_point": "NOW",
    "consumers": [],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "same frequency as the anchor (TK-20)",
    "supply": "owner"
   },
@@ -180,7 +180,7 @@
      "TK-23"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -197,7 +197,7 @@
     "P-DPBUS",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "analog operated at 200 W forward (TK-21) on its own geometry - context only",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -218,7 +218,7 @@
      "TK-22"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -234,7 +234,7 @@
     "G-SAFE",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "analog reports 'no reflection detected' with generator meters (TK-22); resolution not stated",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -255,7 +255,7 @@
      "TK-21"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -270,7 +270,7 @@
    "consumers": [
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "H-1 hardware only"
   },
@@ -286,7 +286,7 @@
    ],
    "how_obtained": {
     "route": "derived",
-    "chain": "antenna RF current probe + VI-RF-06/07 + calorimetric cross-check (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "antenna RF current probe + VI-RF-06/07 + calorimetric cross-check (TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1))",
     "analog_refs": [
      "TK-24",
      "TK-25",
@@ -294,7 +294,7 @@
      "TK-27"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -310,7 +310,7 @@
     "MODEL",
     "G-NEUT"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "method precedent only; anchor eta_p ~0.1 (TK-26) is geometry-specific (electrode eddy-current loss) and is NOT transferable",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -326,12 +326,12 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "RF current probe on the antenna lead + VI-RF-04 (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "RF current probe on the antenna lead + VI-RF-04 (TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1))",
     "analog_refs": [
      "TK-24"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "XCHK",
     "AR"
@@ -345,7 +345,7 @@
    "consumers": [
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor value 0.36 ohm (TK-24) is its own antenna/electrode - context only",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -361,12 +361,12 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "RF current probe (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "RF current probe (TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1))",
     "analog_refs": [
      "TK-25"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -381,7 +381,7 @@
    "consumers": [
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "H-1 hardware only"
   },
@@ -400,7 +400,7 @@
     "chain": "DC V/I channel per bus slot (INS-02 adapted; bus slot abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slot icp_rf_source (A9-02))",
     "analog_refs": []
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -417,7 +417,7 @@
     "G-ALLOC",
     "P-DPBUS"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "H-1 hardware only"
   },
@@ -436,7 +436,7 @@
     "chain": "VI-RF-04 / VI-RF-08",
     "analog_refs": []
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -452,7 +452,7 @@
     "P-DPBUS",
     "G-ALLOC"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "H-1 hardware only"
   },
@@ -468,12 +468,12 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "I_ant / R_total step + optical emission (INS-12 adapted; PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "I_ant / R_total step + optical emission (INS-12 adapted; TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1))",
     "analog_refs": [
      "TK-26"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -489,7 +489,7 @@
     "G-STAB",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "the anchor does not report a mode; S-04 reports a helicon transition in a magnetized source (context only, row 69 fixes an unmagnetized first build)",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -505,12 +505,12 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "module-exchange checks (row 64; PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "module-exchange checks (row 64; TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1))",
     "analog_refs": [
      "TK-40"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "XCHK",
     "AR"
@@ -524,7 +524,7 @@
    "consumers": [
     "C-EQUIV"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "the anchor needed a 13.56 MHz L-C trap in the discharge line (TK-40): pickup is a real mechanism",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -546,7 +546,7 @@
      "TK-56"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -562,7 +562,7 @@
     "G-NEUT",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor: I_D about 1 A with 200 W forward on Ar (TK-52, digitized_fig4); diode RF cathodes 1-3.3 A at 140-270 W on Xe (S-01, S-02) - order of magnitude only",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -583,7 +583,7 @@
      "TK-53"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -599,7 +599,7 @@
     "G-NEUT",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor authors attribute the I_D limit to RF power (TK-53) without a power scan; S-01/S-02 show current rising with RF power in diode tests",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -620,7 +620,7 @@
      "TK-55"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -637,7 +637,7 @@
     "P-LIFE",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor V_K fell to about -100 V at V_D 260 V (TK-55, digitized_fig4) with no separate bias supply",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -659,7 +659,7 @@
      "TK-40"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -676,7 +676,7 @@
     "P-DPBUS",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "the anchor has no separate bias supply (TK-40)",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -695,7 +695,7 @@
     "chain": "high-impedance isolated voltage channel (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-NEUT] (A9-04))",
     "analog_refs": []
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -711,7 +711,7 @@
     "G-SAFE",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "H-1 hardware only"
   },
@@ -734,7 +734,7 @@
      "TK-55"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -751,7 +751,7 @@
     "C-EQUIV",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor: anode potential ~120-130 V vs ground with the supply floating (TK-54); context only",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -774,7 +774,7 @@
      "TK-56"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -789,7 +789,7 @@
    "consumers": [
     "G-NEUT"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "H-1 hardware only"
   },
@@ -806,14 +806,14 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "Faraday probes + RPA/RFEA (INS-15, INS-14 adapted; repeatability at S1b if gating, row 32; PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "Faraday probes + RPA/RFEA (INS-15, INS-14 adapted; repeatability at S1b if gating, row 32; TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1))",
     "analog_refs": [
      "TK-56",
      "TK-57",
      "TK-58"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -829,7 +829,7 @@
     "G-NEUT",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor evidence is qualitative only (TK-56): IEDF maximum ~ anode potential, zero net current to chamber",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -853,7 +853,7 @@
      "S-04"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -869,7 +869,7 @@
     "P-DPBUS",
     "G-ALLOC"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "open RF cathodes span ~40-260 W/A of RF input per ampere on Xe (survey derived values) - context, not a bound for the A9 module",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -890,7 +890,7 @@
      "TK-70"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -906,7 +906,7 @@
     "P-LIFE",
     "R-LIFE"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor estimates ~140 eV and ~220 eV at its largest V_D (TK-70)",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -928,7 +928,7 @@
      "TK-52"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -946,7 +946,7 @@
     "G-PBUS",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "sizing envelope only (not a prediction): I_d <= 8.33 A at 180 V (RFP bound) and <= 7.5 A at 180 V under the 1.35 kW allocation (H2-2 IFD-08, PRELIMINARY)",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -963,13 +963,13 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "INS-04 adapted (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "INS-04 adapted (TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1))",
     "analog_refs": [
      "TK-41",
      "TK-54"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -985,7 +985,7 @@
     "G-PBUS",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor shows a large share of V_D lost to the 50 ohm resistor and the collector sheath (digitized_fig4: V_D - I_D x 50 ohm)",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -1005,7 +1005,7 @@
     "chain": "INS-01 adapted; 1 % absolute uncertainty target (row 121); docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=DQ-HI-TABS] (A9-04)",
     "analog_refs": []
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "N2",
     "O2",
@@ -1021,7 +1021,7 @@
     "G-THRUST",
     "P-TP"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none: the anchor measured no thrust (TK-60)",
    "supply": "H-1 hardware only"
   },
@@ -1038,14 +1038,14 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "INS-14, INS-15 adapted (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "INS-14, INS-15 adapted (TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1))",
     "analog_refs": [
      "TK-57",
      "TK-58",
      "TK-59"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1061,7 +1061,7 @@
     "G-NEUT",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor on-axis RFEA at z = 25 cm only (TK-57)",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -1081,7 +1081,7 @@
     "chain": "INS-09 adapted (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-BZ] (A9-04))",
     "analog_refs": []
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "XCHK"
    ],
@@ -1094,7 +1094,7 @@
    "consumers": [
     "C-EQUIV"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "H-1 hardware only"
   },
@@ -1116,7 +1116,7 @@
      "TK-14"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "XCHK"
    ],
@@ -1130,7 +1130,7 @@
     "MODEL",
     "C-EQUIV"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor shows fringe field extending past its exit only to z ~ +10 mm (Fig. 2)",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -1150,7 +1150,7 @@
     "chain": "INS-04 time-resolved (row 129)",
     "analog_refs": []
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1166,7 +1166,7 @@
     "G-STAB",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "H-1 hardware only"
   },
@@ -1205,7 +1205,7 @@
     "G-MASS",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "the anchor uses Hall-exhaust re-use with no separate feed (TK-30); orifice RF cathodes use a dedicated feed (S-01, S-02, D-01)",
    "supply": "owner"
   },
@@ -1228,7 +1228,7 @@
      "D-01"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1244,7 +1244,7 @@
     "P-DXE",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "open RF cathodes: 0.3 mg/s Xe for 3.3 A (S-01); 0.018 mg/s N2/O2 for up to 0.45 A (D-01) - context only",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -1266,7 +1266,7 @@
      "TK-35"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "XCHK",
     "AR",
@@ -1283,7 +1283,7 @@
     "MODEL",
     "G-NEUT"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor gives chamber pressure 28 mPa and an estimated tube density ~2e19 m^-3 (TK-34, TK-35); no in-tube measurement",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -1304,7 +1304,7 @@
      "TK-12"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "XCHK",
     "AR"
@@ -1319,7 +1319,7 @@
     "MODEL",
     "C-EQUIV"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "H-1 hardware only"
   },
@@ -1342,7 +1342,7 @@
      "TK-34"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1358,7 +1358,7 @@
     "C-EQUIV",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor ran at ~28 mPa (TK-34) - high background; facility coupling unresolved",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -1381,7 +1381,7 @@
      "S-04"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1396,7 +1396,7 @@
    "consumers": [
     "P-DXE"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "survey: U_e ~15 (derived, orifice-type RF cathode, S-01) and 180 (reported, abstract, S-04) on Xe - an order of magnitude apart; context only",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -1416,7 +1416,7 @@
     "chain": "INS-05, INS-06, INS-07, INS-11 (existing)",
     "analog_refs": []
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1432,7 +1432,7 @@
     "C-EQUIV",
     "G-THRUST"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "H-1 hardware only"
   },
@@ -1455,7 +1455,7 @@
      "TK-28"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1472,7 +1472,7 @@
     "G-ALLOC",
     "P-DPBUS"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor power figures are RF-generator forward/absorbed only (TK-21, TK-27); a generator-only figure is not sufficient (A9 requirement discipline)",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -1491,7 +1491,7 @@
     "chain": "INS-02 adapted per bus slot (abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slots (A9-02))",
     "analog_refs": []
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1508,7 +1508,7 @@
     "G-PBUS",
     "P-DPBUS"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "H-1 hardware only"
   },
@@ -1528,7 +1528,7 @@
     "chain": "INS-02 time-resolved; averaging window docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json UB-P-07 (A9-04)",
     "analog_refs": []
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1543,7 +1543,7 @@
    "consumers": [
     "G-PBUS"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "H-1 hardware only"
   },
@@ -1573,7 +1573,7 @@
    "consumers": [
     "G-ALLOC"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "owner"
   },
@@ -1594,7 +1594,7 @@
      "TK-73"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1611,7 +1611,7 @@
     "G-STAB",
     "MODEL"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor: RF plasma turned on first, no statistics (TK-73); Paschen-type ignition of orifice RF cathodes discussed in S-01/S-02",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -1627,13 +1627,13 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "INS-10 adapted (row 24; criterion PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map))",
+    "chain": "INS-10 adapted (row 24; criterion TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1))",
     "analog_refs": [
      "TK-50",
      "TK-51"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1649,7 +1649,7 @@
     "P-RESTART",
     "G-NEUT"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor: onset V_D > 140 V and no discharge without RF on Ar (TK-50, TK-51) - context only",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -1669,7 +1669,7 @@
     "chain": "INS-10 adapted (row 24)",
     "analog_refs": []
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1685,7 +1685,7 @@
     "P-RESTART",
     "R-LIFE"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none in open sources read (survey by_topic.restart)",
    "supply": "H-1 hardware only"
   },
@@ -1704,7 +1704,7 @@
     "chain": "INS-05 cathode Xe line (rows 42, 93)",
     "analog_refs": []
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1721,7 +1721,7 @@
     "P-DXE",
     "P-RESTART"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "H-1 hardware only"
   },
@@ -1740,7 +1740,7 @@
     "chain": "INS-05 cathode MFC (resolution <= 0.0005 mg/s, row 98)",
     "analog_refs": []
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1756,7 +1756,7 @@
    "consumers": [
     "P-DXE"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "H-1 hardware only"
   },
@@ -1778,7 +1778,7 @@
      "TK-71"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1795,7 +1795,7 @@
     "P-LIFE",
     "R-LIFE"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor: sputtering at ~140-220 eV observed, no rate (TK-70, TK-71)",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -1816,7 +1816,7 @@
      "TK-71"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1832,7 +1832,7 @@
     "P-LIFE",
     "C-EQUIV"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor: metallic films on glass and HET front insulators after the experiment (TK-71)",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -1853,7 +1853,7 @@
      "TK-26"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1869,7 +1869,7 @@
     "P-LIFE",
     "R-LIFE"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "H-1 hardware only"
   },
@@ -1891,7 +1891,7 @@
      "TK-62"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "AR",
     "N2",
@@ -1907,7 +1907,7 @@
     "G-SAFE",
     "P-LIFE"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor: most RF power heats the electrode (TK-27); shot scatter attributed to thermal issues (TK-62)",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -1937,7 +1937,7 @@
    "consumers": [
     "R-LIFE"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "owner"
   },
@@ -1958,7 +1958,7 @@
      "TK-74"
     ]
    },
-   "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
    "evidence_steps": [
     "O2",
     "AO"
@@ -1973,7 +1973,7 @@
     "P-LIFE",
     "R-LIFE"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "anchor claim of reactive-gas operability is not demonstrated there (TK-74)",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
@@ -2004,7 +2004,7 @@
     "G-MASS",
     "P-DMASS"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "owner"
   },
@@ -2035,7 +2035,7 @@
     "G-MASS",
     "P-DMASS"
    ],
-   "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
    "supply": "owner"
   }
@@ -2779,6 +2779,22 @@
     "ptr": "/items[id=VI-GAS-01]",
     "count": 1,
     "summary": "VI-GAS-01 source: A9.1 HIQ-06"
+   },
+   {
+    "cid": "A910-R05-01",
+    "driver": "OQ-INT-03 / OQ-A910-02 (review repair 2)",
+    "op": "gsub",
+    "ptr": "",
+    "count": 47,
+    "summary": "per-input producing stage: precise remaining reason next to the field"
+   },
+   {
+    "cid": "A910-R05-02",
+    "driver": "OQ-INT-03 / OQ-A910-02 (review repair 2)",
+    "op": "gsub",
+    "ptr": "",
+    "count": 60,
+    "summary": "per-input decision quantity: precise remaining reason next to the field"
    }
   ]
  }

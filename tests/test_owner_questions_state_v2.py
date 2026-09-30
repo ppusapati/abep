@@ -62,7 +62,7 @@ def test_counts_and_open_rows(doc):
 
 def test_a91_answers_point_to_the_decision_file(doc):
     for r in doc["rows"]:
-        if r["status"] in ("ANSWERED_BY_A9_1", "ANSWERED (A9.1)"):
+        if r["status"] == "ANSWERED_BY_A9_1" or r["status_detail"] == "ANSWERED (A9.1)":
             assert "OD_2026_09_30_A9_1_followup_owner_decisions" in r["answer_pointer"], r["id"]
 
 
@@ -87,3 +87,32 @@ def test_csv_and_xlsx_match_json(doc):
 def test_no_winner(doc):
     txt = json.dumps(doc).lower()
     assert "winner:" not in txt and "recommended architecture" not in txt
+
+
+def test_status_is_canonical(doc):
+    vocab = set(doc["status_vocabulary"])
+    assert {r["status"] for r in doc["rows"]} <= vocab
+    for k, v in doc["counts"].items():
+        assert v == sum(r["status"] == k for r in doc["rows"]), k
+    assert sum(doc["counts"].values()) == len(doc["rows"])
+
+
+def test_every_lane_open_question_is_listed(doc):
+    """Review repair: every open_owner_questions id of every A9 deliverable, incl. the M16 v3 refresh, is a row."""
+    ids = {r["id"] for r in doc["rows"]}
+    srcs = ["docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
+            "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+            "schemas/interfaces/icp_neutralizer_icd_v1.json",
+            "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
+            "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
+            "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
+            "docs/budgets/mass_a9/mass_a9_v1.json", "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+            "docs/budgets/" + "xe" + "_ledger_a9/" + "xe" + "_ledger_a9_v1.json",
+            "docs/procurement/rfq_a9/rfq_a9_v1.json",
+            "docs/experiments/hall_icp/integration/a9_core_integration_v1.json",
+            "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+            "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"]
+    for rel in srcs:
+        for q in json.loads((ROOT / rel).read_text(encoding="utf-8")).get("open_owner_questions", []):
+            assert q["id"] in ids, (rel, q["id"])
+    assert any(r["id"] == "M16-V3-Q-01" and r["status"] == "OPEN" for r in doc["rows"])

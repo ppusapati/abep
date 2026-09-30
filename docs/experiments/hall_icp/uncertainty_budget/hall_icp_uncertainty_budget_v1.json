@@ -846,7 +846,7 @@
   {
    "id": "UB-P-07",
    "dq": "DQ-HI-PBUS",
-   "name": "start-up transient window and channel bandwidth for P_bus,peak",
+   "name": "start-up transient window and channel bandwidth for P_bus,1ms,max (A9.1 OQ-A902-01)",
    "symbol": "tau_start, f_bw,P",
    "type": "rule",
    "value": {
@@ -991,7 +991,7 @@
    "symbol": "u(P_ref)_dir",
    "type": "B",
    "value": "TBD - requires the coupler directivity D from its certificate, the operating |Gamma| at the coupler plane and D_min frozen at LOCK-2; first-order relation from A9-07 IDA7-21: worst-case relative error of P_net = max((|G|+d)^2 - |G|^2, |G|^2 - (|G|-d)^2) / (1 - |G|^2), d = 10^(-D/20) (verify against the coupler documentation); plus the two-port + Gamma_L load-power correction term (A9H-INS-03)",
-   "units": "W",
+   "units": "1 (relative error of P_net; the absolute term in W is this value x P_net)",
    "basis": "certificate",
    "source": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json interface_demands IDA7-21 and recomputations.rf_reference_plane (sensitivity at residual VSWR 1.2-2.0, D 20/30/40 dB)",
    "evidence_class": null,
@@ -2107,7 +2107,7 @@
     "hall_c1_reference",
     "hall_icp_neutralizer"
    ],
-   "note": "a design margin (plus 20 % heat-load margin), not an abort limit; whether limit aborts fire at the validated limit or at limit - margin is open question UBQ-06"
+   "note": "a design margin (plus 20 % heat-load margin); A9.1 UBQ-06 sets the score-bearing temperature abort at the validated continuous-use limit minus 50 K (stop_rules LA-05)"
   },
   {
    "id": "UB-K-01",
@@ -2620,7 +2620,7 @@
     "P_net = P_fwd - P_ref at the coupler plane;  |Gamma|^2 = P_ref / P_fwd",
     "P_coil = P_net - P_loss,mn - P_loss,cable   [reconstructed from the S1a dummy-load characterization]",
     "u^2(P_net) = u^2(P_fwd) + u^2(P_ref) - 2 r u(P_fwd) u(P_ref)   [GUM 5.2.2 Eq. (13); r from a shared sensor/coupler calibration]",
-    "cross-check: z_x = (P_coupler - P_cal) / sqrt(u^2(P_coupler) + u^2(P_cal)); PROPOSED rule |z_x| <= k_x (UBQ-04); P_cal = sum_j mdot_j c_p,j Delta T_j + C dT/dt (steady-state coolant or dummy-load calorimetry; method TBD - not defined in the merged A9-03 ICD, whose ICP-14 names calorimetry only as the independent cross-check; LOCK-1 item)",
+    "cross-check: z_x = (P_coupler - P_cal) / sqrt(u^2(P_coupler) + u^2(P_cal)); rule |z_x| <= k_x with k_x = 2 frozen at LOCK-1 (A9.1 UBQ-04; failure -> RF-dependent quantities EXCLUDED_INSTRUMENT; UB-RF-08); P_cal = sum_j mdot_j c_p,j Delta T_j + C dT/dt (steady-state coolant or dummy-load calorimetry; method TBD - not defined in the merged A9-03 ICD, whose ICP-14 names calorimetry only as the independent cross-check; LOCK-1 item)",
     "the RF-source DC input is a P_bus slot (DQ-HI-PBUS); P_net / P_coil are accounting and diagnostic quantities, never a substitute for P_bus"
    ],
    "components": [
@@ -2653,7 +2653,7 @@
     "closure residual: r_I = (I_d - I_e,src - I_gnd) / I_d   [diagnostic; both configurations]",
     "ICP: I_e,src = I_coll (collector/bias-supply current, sign convention TBD - not defined in the merged A9-03 ICD, whose ICP-21 defines the separately metered collector only; LOCK-1 item)",
     "capacity: I_e,cap = max I_e,src over the preregistered bias sweep within V_coll <= V_coll,max and P_RF <= P_RF,max (limits from real ratings, A4)",
-    "PROPOSED margin form (UBQ-02): M_n = I_e,cap / I_d,dem - 1 with I_d,dem = I_d measured at the same condition; gate M_n,lb = M_n,hat - k_1 u_c(M_n) > 0 (margin value PENDING docs/experiments/hall_icp/prereg_framework/)",
+    "OWNER_GIVEN margin form (A9.1 UBQ-02): M_n = I_e,cap / I_d,dem - 1 with I_d,dem = I_d measured at the same condition; gate M_n,lb = M_n,hat - k_1 u_c(M_n) > 0 (any extra design margin is frozen at LOCK-2 per the LOCK-1 rule, A9.1 UBQ-02)",
     "u_r^2(M_n + 1) = u_r^2(I_e,cap) + u_r^2(I_d,dem)",
     "coupling voltage V_cg (source common to facility ground) recorded in both configurations"
    ],
@@ -3192,7 +3192,7 @@
    "id": "IF-06",
    "direction": "from_this_lane_to_A9-02",
    "counterpart": "A9-02 abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/",
-   "quantity": "per-slot V and I channel requirement (4-wire, time-synchronized, declared bandwidth for P_bus,peak); correlation declaration for shared references",
+   "quantity": "per-slot V and I channel requirement (4-wire, time-synchronized, declared bandwidth for P_bus,1ms,max (A9.1 OQ-A902-01)); correlation declaration for shared references",
    "units": "relative / Hz",
    "status": "PROPOSED",
    "value": "TBD - requires values at LOCK-2 from the budget allocation"
@@ -3614,7 +3614,7 @@
    "row": 112,
    "question": "Sequencing SEQ-1: heater off before compressor spin-up and before any pre-ionizer seed?",
    "answer_verbatim": "REVISE SEQ-1 — sequence to avoid simultaneous peaks, but do not force the C1 heater off before it is safe. For C1, reduce/disable heater only after keeper/discharge is stable per cathode procedure; ICP has no thermionic heater.",
-   "how_applied": "revised SEQ-1 defines the start-up window for P_bus,peak"
+   "how_applied": "revised SEQ-1 defines the start-up window for P_bus,1ms,max (A9.1 OQ-A902-01)"
   },
   {
    "row": 113,
@@ -4748,6 +4748,54 @@
     "ptr": "/stop_rules/limit_aborts/limits[id=LA-04]",
     "count": 1,
     "summary": "LA-04 precise reason"
+   },
+   {
+    "cid": "A910-R04-28",
+    "driver": "A9.1 UBQ-06 (review repair 2)",
+    "op": "set",
+    "ptr": "/items[id=UB-K-00]/note",
+    "count": 1,
+    "summary": "UB-K-00 note restated from the applied A9.1 UBQ-06"
+   },
+   {
+    "cid": "A910-R04-29",
+    "driver": "A9.1 UBQ-02 (review repair 2)",
+    "op": "replace",
+    "ptr": "/measurement_chains[dq=UB-DQ-NEUT]/equations[4]",
+    "count": 1,
+    "summary": "M_n form is owner-given (A9.1 UBQ-02)"
+   },
+   {
+    "cid": "A910-R04-30",
+    "driver": "A9.1 UBQ-02 (review repair 2)",
+    "op": "replace",
+    "ptr": "/measurement_chains[dq=UB-DQ-NEUT]/equations[4]",
+    "count": 1,
+    "summary": "M_n extra margin freeze point from A9.1 UBQ-02 (no stale A9-01 pointer)"
+   },
+   {
+    "cid": "A910-R04-31",
+    "driver": "A9.1 UBQ-04 (review repair 2)",
+    "op": "replace",
+    "ptr": "/measurement_chains[dq=UB-DQ-RF]/equations[4]",
+    "count": 1,
+    "summary": "cross-check rule restated from the applied A9.1 UBQ-04"
+   },
+   {
+    "cid": "A910-R04-32",
+    "driver": "A9-07 IDA7-21 (review repair 2)",
+    "op": "set",
+    "ptr": "/items[id=UB-RF-04]/units",
+    "count": 1,
+    "summary": "UB-RF-04 units match the imported IDA7-21 relative-error relation"
+   },
+   {
+    "cid": "A910-R04-33",
+    "driver": "A9.1 OQ-A902-01 (review repair 2)",
+    "op": "gsub",
+    "ptr": "",
+    "count": 3,
+    "summary": "gate quantity renamed P_bus,peak -> P_bus,1ms,max (UB-P-07 name, IF demand, row-112 application)"
    }
   ]
  }

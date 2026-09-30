@@ -767,7 +767,7 @@ def build(inp: dict) -> dict:
                          "pass_requires_power_basis": list(B.PASS_BASES),
                          "pass_requires_gate_measurement": dict(B.TRANSIENT_WINDOW["pass_requires_gate_measurement"]),
                          "fail_bases": list(B.FAIL_BASES), "fail_basis_assumption": B.FAIL_BASIS_ASSUMPTION,
-                         "peak_sampled_rule": B.PEAK_SAMPLED_RULE},
+                         "peak_sampled_rule": B.PEAK_SAMPLED_RULE, "p1ms_sum_rule": B.P1MS_SUM_RULE},
             "icp_available_power": {"relation": "P_ICP,available = 1350 - P_common - P_Hall - P_other,active",
                                     "per": "every registered operating condition", "decision": "A9.1 OQ-A902-03",
                                     "function": "icp_power_allocation_check",
@@ -785,9 +785,11 @@ def build(inp: dict) -> dict:
             "enforced_order": {c: [list(p) for p in B.ENFORCED_ORDER[c]] for c in B.CONFIGURATIONS},
             "rules": ["at most one peak-class event per step (baseline rule ACCEPTED, A9.1 SEQ-peaks)",
                       "at most one peak-class slot (" + ", ".join(sorted(set(B.PEAK_EVENTS.values())))
-                      + ") whose load rises in a step, checked on the step loads independently of event labels "
-                      "(A9.1 SEQ-peaks baseline; an overlap is a registered variant needing measured transient "
-                      "evidence; a TBD transition that may rise gives RULES_NOT_EVALUABLE)",
+                      + ") whose load is commanded to rise in a step, checked on the step loads independently of "
+                      "event labels (A9.1 SEQ-peaks baseline; an overlap is a registered variant needing measured "
+                      "transient evidence; a TBD transition that may rise gives RULES_NOT_EVALUABLE)",
+                      "dependent rises (A9-10 review repair): " + B.DEPENDENT_RISE_RULE + "; declared pairs "
+                      + json.dumps({k: list(v) for k, v in B.DEPENDENT_RISES.items()}),
                       "C1 heater reduced/disabled only in a step flagged keeper_stable and discharge_stable; a TBD "
                       "heater counts as ON (OFF = exactly 0 W) and is booked at conservative/worst-case power in the "
                       "bus ledger when booked_W is given (A9.1 SEQ-heater); the last known value is kept across TBD "

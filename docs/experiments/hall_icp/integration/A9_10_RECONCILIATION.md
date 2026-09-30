@@ -13,10 +13,10 @@ Status **RECONCILIATION_RECORD_NOT_A_SCIENTIFIC_RESULT**; A9 stays **OWNER_AUTHO
 
 | id | name | value | units | basis | source | evidence class | status | freeze point |
 |---|---|---|---|---|---|---|---|---|
-| REC-01 | declared A9-10 changes to the A9 deliverables | 288 | count | a9_10_overlay.py records | computed by this builder | inferred | APPLIED | NOW |
+| REC-01 | declared A9-10 changes to the A9 deliverables | 300 | count | a9_10_overlay.py records | computed by this builder | inferred | APPLIED | NOW |
 | REC-02 | changed leaves not explained by a declared change | 0 | count | leaf diff vs the A9-10 base ecdad06e30bc5d2f172e862e4bd4843e86332d42 | computed by this builder | inferred | VERIFIED (must be 0) | NOW |
 | REC-03 | A9.1 decisions applied to at least one deliverable | 36 | count | A9.1 decisions | docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json | inferred | APPLIED | NOW |
-| REC-04 | PENDING occurrences at the A9-10 base / now | [634, 177] | count | OQ-INT-03 | computed by this builder | inferred | RE-EVALUATED (every remaining one carries a reason code) | NOW |
+| REC-04 | PENDING occurrences at the A9-10 base / now | [634, 69] | count | OQ-INT-03 | computed by this builder | inferred | RE-EVALUATED (every remaining one carries a reason code) | NOW |
 | REC-05 | gate quantity P_bus,1ms,max < 1500 W (start-up and steady state) | {"window_s": 0.001, "limit_W": 1500.0, "min_bandwidth_Hz": 20000.0, "min_sample_rate_Sa_s": 100000.0} | s, W, Hz, Sa/s | owner decision | docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json OQ-A902-01 | owner-allocation | APPLIED (A9-02) | NOW |
 | REC-06 | statistical rule constants | {"alpha_family_wise": 0.05, "alpha_one_sided_gate": 0.05, "k_x": 2.0, "thrust_u_k": 1} | - | owner decision | docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-01, UBQ-04, UBQ-07 | owner-allocation | APPLIED (A9-01, A9-04) | LOCK-1 |
 | REC-07 | keeper-pulse isolation basis / development hipot / pulse test | [900.0, 1000.0, 600.0] | V | owner decision | docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json ICP-46 | owner-allocation | APPLIED (A9-03 ICP-46) | NOW |
@@ -83,7 +83,7 @@ Changed leaves vs base: 402 (explained: {"op": 73, "gsub": 26, "code": 0, "pin":
 
 ### A9-02 - `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json`
 
-Changed leaves vs base: 385 (explained: {"op": 35, "gsub": 0, "code": 191, "pin": 0, "section": 159}; unexplained 0; numeric changed 35, unexplained numeric 0).
+Changed leaves vs base: 403 (explained: {"op": 35, "gsub": 0, "code": 197, "pin": 0, "section": 171}; unexplained 0; numeric changed 37, unexplained numeric 0).
 
 | change | driver | op | pointer / file | count | summary |
 |---|---|---|---|---|---|
@@ -99,6 +99,8 @@ Changed leaves vs base: 385 (explained: {"op": 35, "gsub": 0, "code": 191, "pin"
 | A910-A902-03 | A9-10 self-reference | set | `/interface_demands[21]/status` | 1 | M16 demand satisfied by the v3 refresh |
 | A910-R02-C1 | A9.1 OQ-A902-01 (review repair; OQ-A910-03 not pre-empted) | code | `abep_sim/bus_boundary_a9.py` | 0 | rfp_power_gate: PASS only on p_bus_1ms_max WITH a conformant gate_measurement record (>= 100 kSa/s, >= 20 kHz, anti-alias documented, synchronized); peak_sampled is NOT_EVALUABLE both ways (protection record; the reading 'a conformant peak below 1500 W bounds the 1 ms maximum' is the OPEN owner question OQ-A910-03); an unstated basis is NOT_EVALUABLE; step_average / steady_state FAIL only under the stated duration assumption; c1_keeper load plane no longer cites peak_sampled |
 | A910-R02-C2 | OQ-INT-03 (A9-04 DQ-HI-PBUS chain) | code | `docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py` | 0 | A902-25 note and the row-89 application: the pulse-energy record is not defined by the merged A9-04 DQ-HI-PBUS chain (LOCK-1 item) instead of 'PENDING A9-04'; schema gains the gate_measurement record |
+| A910-R02-C3 | A9.1 SEQ-peaks (review repair 2; ICD ICP-22 / ICP-45) | code | `abep_sim/bus_boundary_a9.py` | 0 | check_startup_sequence counts peak-class loads COMMANDED to rise (A9.1 SEQ-peaks wording): the icp_collector_bias rise at the hall_discharge_ignition step is a declared dependent rise (the Hall discharge current closes through the collector), reported in 'dependent_rises', kept in every power ledger and the 1500 W gate, not counted as a second commanded peak; the same rise at any other step still violates |
+| A910-R02-C4 | A9.1 OQ-A902-01 (review repair 2) | code | `abep_sim/bus_boundary_a9.py` | 0 | FAIL on a p_bus_1ms_max ledger carries P1MS_SUM_RULE: the per-slot sum is a lower bound only for simultaneous slot values; summed non-simultaneous per-slot 1 ms maxima are an upper bound (PASS-conservative), so a FAIL on them must be confirmed on the system-level bus-channel 1 ms maximum |
 | A910-R02-01 | OQ-INT-03 (A9-03 ICP-13) | merge | `/items[id=A902-22]` | 1 | A902-22 precise remaining reason |
 | A910-R02-02 | A9.1 OQ-A902-01 + OQ-INT-03 (A9-01 stage_map) | merge | `/interface_demands[1]` | 1 | A9-01 -> A9-02 demand satisfied |
 | A910-R02-03 | OQ-INT-03 (A9-03 items) | merge | `/interface_demands[3]` | 1 | A9-03 -> A9-02 demand partial |
@@ -115,7 +117,7 @@ Changed leaves vs base: 385 (explained: {"op": 35, "gsub": 0, "code": 191, "pin"
 
 ### A9-03 - `schemas/interfaces/icp_neutralizer_icd_v1.json`
 
-Changed leaves vs base: 456 (explained: {"op": 81, "gsub": 0, "code": 0, "pin": 0, "section": 375}; unexplained 0; numeric changed 65, unexplained numeric 0).
+Changed leaves vs base: 470 (explained: {"op": 83, "gsub": 0, "code": 0, "pin": 0, "section": 387}; unexplained 0; numeric changed 67, unexplained numeric 0).
 
 | change | driver | op | pointer / file | count | summary |
 |---|---|---|---|---|---|
@@ -180,10 +182,12 @@ Changed leaves vs base: 456 (explained: {"op": 81, "gsub": 0, "code": 0, "pin": 
 | A910-R03-22 | A9.1 OQ-A902-03 + OQ-INT-03 | merge | `/hard_incompatibility_check/checked[2]` | 1 | hard-incompatibility finding re-evaluated |
 | A910-R03-23 | A9.1 OQ-A902-03 | replace | `/items[id=ICP-24]/requirement` | 1 | ICP-24 cross-references the OQ-A902-03 residual form |
 | A910-R03-24 | OQ-INT-03 (A9-02; A9-05 TK-21/52) | replace | `/hard_incompatibility_check/checked[3]/finding` | 1 | hard-incompatibility finding re-evaluated against A9-02 / A9-05 |
+| A910-R03-25 | A9.1 ICP-46 (review repair 2) | replace | `/items[id=ICP-46]/requirement` | 1 | ICP-46 requirement text aligned with the applied A9.1 isolation basis |
+| A910-R03-26 | A9.1 ICP-46 (review repair 2) | set | `/items[id=ICP-46]/verification` | 1 | ICP-46 verification aligned with A9.1 |
 
 ### A9-04 - `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json`
 
-Changed leaves vs base: 602 (explained: {"op": 138, "gsub": 17, "code": 0, "pin": 0, "section": 447}; unexplained 0; numeric changed 80, unexplained numeric 0).
+Changed leaves vs base: 644 (explained: {"op": 142, "gsub": 19, "code": 0, "pin": 0, "section": 483}; unexplained 0; numeric changed 86, unexplained numeric 0).
 
 | change | driver | op | pointer / file | count | summary |
 |---|---|---|---|---|---|
@@ -260,6 +264,12 @@ Changed leaves vs base: 602 (explained: {"op": 138, "gsub": 17, "code": 0, "pin"
 | A910-R04-25 | OQ-INT-03 (A9-01 DQ-HI-ETAU) | merge | `/items[id=UB-E-00]` | 1 | UB-E-00 re-stated from A9-01 DQ-HI-ETAU |
 | A910-R04-26 | OQ-INT-03 (A9-01 DQ-HI-ETAU) | replace | `/measurement_chains[dq=DQ-HI-ETAU]/equations[0]` | 1 | mdot_prop basis precise reason |
 | A910-R04-27 | OQ-INT-03 (A9-03 ICP-21) | merge | `/stop_rules/limit_aborts/limits[id=LA-04]` | 1 | LA-04 precise reason |
+| A910-R04-28 | A9.1 UBQ-06 (review repair 2) | set | `/items[id=UB-K-00]/note` | 1 | UB-K-00 note restated from the applied A9.1 UBQ-06 |
+| A910-R04-29 | A9.1 UBQ-02 (review repair 2) | replace | `/measurement_chains[dq=UB-DQ-NEUT]/equations[4]` | 1 | M_n form is owner-given (A9.1 UBQ-02) |
+| A910-R04-30 | A9.1 UBQ-02 (review repair 2) | replace | `/measurement_chains[dq=UB-DQ-NEUT]/equations[4]` | 1 | M_n extra margin freeze point from A9.1 UBQ-02 (no stale A9-01 pointer) |
+| A910-R04-31 | A9.1 UBQ-04 (review repair 2) | replace | `/measurement_chains[dq=UB-DQ-RF]/equations[4]` | 1 | cross-check rule restated from the applied A9.1 UBQ-04 |
+| A910-R04-32 | A9-07 IDA7-21 (review repair 2) | set | `/items[id=UB-RF-04]/units` | 1 | UB-RF-04 units match the imported IDA7-21 relative-error relation |
+| A910-R04-33 | A9.1 OQ-A902-01 (review repair 2) | gsub | `` | 3 | gate quantity renamed P_bus,peak -> P_bus,1ms,max (UB-P-07 name, IF demand, row-112 application) |
 
 ### A9-05ev - `docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json`
 
@@ -276,7 +286,7 @@ Changed leaves vs base: 73 (explained: {"op": 19, "gsub": 9, "code": 0, "pin": 0
 
 ### A9-05vi - `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json`
 
-Changed leaves vs base: 160 (explained: {"op": 24, "gsub": 0, "code": 0, "pin": 1, "section": 135}; unexplained 0; numeric changed 21, unexplained numeric 0).
+Changed leaves vs base: 279 (explained: {"op": 27, "gsub": 104, "code": 0, "pin": 1, "section": 147}; unexplained 0; numeric changed 23, unexplained numeric 0).
 
 | change | driver | op | pointer / file | count | summary |
 |---|---|---|---|---|---|
@@ -301,6 +311,8 @@ Changed leaves vs base: 160 (explained: {"op": 24, "gsub": 0, "code": 0, "pin": 
 | A910-R05vi-11 | A9.1 HIQ-06 | replace | `/items[id=VI-GAS-01]/definition` | 1 | VI-GAS-01 definition consistent with G-REUSE |
 | A910-R05vi-12 | A9.1 HIQ-06 | merge | `/items[id=VI-GAS-01]/how_obtained` | 1 | VI-GAS-01 chain: OQ-VI-01 answered by HIQ-06 |
 | A910-R05vi-13 | A9.1 HIQ-06 | merge | `/items[id=VI-GAS-01]` | 1 | VI-GAS-01 source: A9.1 HIQ-06 |
+| A910-R05-01 | OQ-INT-03 / OQ-A910-02 (review repair 2) | gsub | `` | 47 | per-input producing stage: precise remaining reason next to the field |
+| A910-R05-02 | OQ-INT-03 / OQ-A910-02 (review repair 2) | gsub | `` | 60 | per-input decision quantity: precise remaining reason next to the field |
 
 ### A9-06 - `docs/budgets/mass_a9/mass_a9_v1.json`
 
@@ -397,15 +409,15 @@ Changed leaves vs base: 747 (explained: {"op": 87, "gsub": 0, "code": 428, "pin"
 | HIQ-07 | A910-A901-18, A910-A901-Q07 | APPLIED |
 | HIQ-08 | A910-A901-08, A910-A901-Q08 | APPLIED |
 | UBQ-01 | A910-A904-01, A910-A904-Q01 | APPLIED |
-| UBQ-02 | A910-A901-11, A910-A904-02, A910-A904-03, A910-A904-04, A910-A904-05, A910-A904-35, A910-A904-Q02, A910-A905VI-04, A910-A905VI-05, A910-A905VI-Q02 | APPLIED |
+| UBQ-02 | A910-A901-11, A910-A904-02, A910-A904-03, A910-A904-04, A910-A904-05, A910-A904-35, A910-A904-Q02, A910-A905VI-04, A910-A905VI-05, A910-A905VI-Q02, A910-R04-29, A910-R04-30 | APPLIED |
 | UBQ-03 | A910-A904-06, A910-A904-Q03 | APPLIED |
-| UBQ-04 | A910-A904-07, A910-A904-08, A910-A904-09, A910-A904-10, A910-A904-32, A910-A904-37, A910-A904-Q04 | APPLIED |
+| UBQ-04 | A910-A904-07, A910-A904-08, A910-A904-09, A910-A904-10, A910-A904-32, A910-A904-37, A910-A904-Q04, A910-R04-31 | APPLIED |
 | UBQ-05 | A910-A904-11, A910-A904-Q05 | APPLIED |
-| UBQ-06 | A910-A904-12, A910-A904-Q06 | APPLIED |
+| UBQ-06 | A910-A904-12, A910-A904-Q06, A910-R04-28 | APPLIED |
 | UBQ-07 | A910-A901-19, A910-A904-13, A910-A904-14, A910-A904-15, A910-A904-16, A910-A904-17, A910-A904-18, A910-A904-19, A910-A904-20, A910-A904-21, A910-A904-33, A910-A904-34, A910-A904-Q07 | APPLIED |
 | UBQ-08 | A910-A904-22, A910-A904-Q08 | APPLIED |
 | UBQ-09 | A910-A901-19, A910-A904-23, A910-A904-Q09 | APPLIED |
-| OQ-A902-01 | A910-A902-01, A910-A902-Q01, A910-R02-02, A910-R02-C1, A910-R04-03 | APPLIED |
+| OQ-A902-01 | A910-A902-01, A910-A902-Q01, A910-R02-02, A910-R02-C1, A910-R02-C4, A910-R04-03, A910-R04-33 | APPLIED |
 | OQ-A902-02 | A910-A902-02, A910-A902-Q02 | APPLIED |
 | OQ-A902-03 | A910-A902-Q03, A910-R03-22, A910-R03-23 | APPLIED |
 | OQ-A902-04 | A910-A902-Q04 | APPLIED |
@@ -413,9 +425,9 @@ Changed leaves vs base: 747 (explained: {"op": 87, "gsub": 0, "code": 428, "pin"
 | OQ-A902-06 | A910-A902-Q06 | APPLIED |
 | OQ-A902-07 | A910-A902-Q07 | APPLIED |
 | SEQ-heater | A910-A902-02 | APPLIED |
-| SEQ-peaks | A910-A902-02 | APPLIED |
-| ICP-45 | A910-A901-08, A910-A901-09, A910-A901-10, A910-A903-11, A910-A903-12, A910-A903-28, A910-R03-19 | APPLIED |
-| ICP-46 | A910-A903-13, A910-A903-14, A910-A903-15, A910-A903-16, A910-A903-17, A910-A909-24 | APPLIED |
+| SEQ-peaks | A910-A902-02, A910-R02-C3 | APPLIED |
+| ICP-45 | A910-A901-08, A910-A901-09, A910-A901-10, A910-A903-11, A910-A903-12, A910-A903-28, A910-R02-C3, A910-R03-19 | APPLIED |
+| ICP-46 | A910-A903-13, A910-A903-14, A910-A903-15, A910-A903-16, A910-A903-17, A910-A909-24, A910-R03-25, A910-R03-26 | APPLIED |
 | A9-03-planes | A910-A903-01, A910-A903-02, A910-A903-Q01, A910-R05vi-08 | APPLIED |
 | A9-03-Vd | A910-A903-03, A910-A903-04, A910-A903-26, A910-A903-30, A910-A903-Q03, A910-R03-07 | APPLIED |
 | A9-03-matching | A910-A903-05, A910-A903-06, A910-A903-25, A910-A903-29, A910-A903-Q04, A910-R04-04, A910-R04-11 | APPLIED |
@@ -445,9 +457,9 @@ every 'PENDING' still present is re-evaluated against the now-merged lanes: fill
 | A9-01 | 45 | 3 | 42 |
 | A9-02 | 21 | 2 | 17 |
 | A9-03 | 33 | 6 | 26 |
-| A9-04 | 68 | 14 | 54 |
+| A9-04 | 68 | 13 | 55 |
 | A9-05ev | 1 | 1 | 0 |
-| A9-05vi | 116 | 108 | 8 |
+| A9-05vi | 116 | 1 | 115 |
 | A9-06 | 156 | 3 | 153 |
 | A9-07 | 39 | 28 | 10 |
 | A9-08 | 113 | 6 | 99 |
@@ -459,9 +471,9 @@ every 'PENDING' still present is re-evaluated against the now-merged lanes: fill
 | HISTORICAL_COPY | 26 | verbatim copy of an H2 v1 status inside the A9-07 revision register ('old' side); historical text is never rewritten; the revision is the REV entry's 'new' side |
 | H2_V1_REVISED_IN_A9_07 | 7 | the H2 v1 deliverable is immutable; its A9 revision is recorded in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07), which revises the requirement but gives no measured or design value for this item |
 | HISTORICAL_PREIONIZER | 1 | historical pre-ionizer module ICD item (byte-identical, not used for the primary line) |
-| ASSIGNMENT_NOT_DEFINED_BY_TARGET | 107 | A9-01 and A9-04 are merged, but neither defines the per-input producing stage / decision-quantity assignment; proposed for LOCK-1 as OQ-A910-02 (owner call) |
+| ASSIGNMENT_NOT_DEFINED_BY_TARGET | 0 | A9-01 and A9-04 are merged, but neither defines the per-input producing stage / decision-quantity assignment; proposed for LOCK-1 as OQ-A910-02 (owner call) |
 | UNMAPPED_DQ_ID | 7 | UNMAPPED A9-04 id: kept as a measurement-chain id; its DQ-HI consumers are listed in dq_consumer_table (OQ-INT-01 PROPOSED, owner call) |
-| DEPENDS_ON_LOCK_OR_OWNER | 5 | frozen only at LOCK-1 / LOCK-2 or by an owner decision; the target lane defines the form only |
+| DEPENDS_ON_LOCK_OR_OWNER | 4 | frozen only at LOCK-1 / LOCK-2 or by an owner decision; the target lane defines the form only |
 | DEPENDS_ON_HARDWARE_OR_EVIDENCE | 3 | needs hardware, a registered stand envelope, a selected device or a measurement; no lane can supply it |
 | TARGET_CHECKED_NOT_DEFINED | 0 | checked against the merged target: it does not define this value (the precise detail is given per occurrence in 'detail') |
 | A9_08_OPEN_AFTER_A9_07 | 5 | the A9 Xe ledger item waits on vendor/design-qualified C1 values; A9-07 (merged) revises requirements and gives none |
@@ -684,11 +696,11 @@ every interface demand of every A9 lane (and of the step-1 integration record) i
 ## (d) New open owner questions (owner calls; not answered here)
 
 * **OQ-A910-01** Which content do the row-48 Xe design cases have for BOTH the A9 Xe ledger and the A9 mass BOM: LOADED Xe incl. reserve and residual (A9-08 XA9Q-01) or usable Xe incl. reserve with the residual on top (A9-06 MQ-09)? The two lanes propose different readings. Proposed: owner call; A9-10 carries both readings (A9-06 wet_closure cells vs cells_case_is_loaded; the difference is the residual, <= 0.2 kg at 10 kg); one reading should govern both lanes. Needed by LOCK-1 (tank RFQ ranges RFQ-07-R04, wet closure).
-* **OQ-A910-02** Assign the producing stage and the decision quantity of each A9-05 validation input (98 entries still read 'PENDING A9-01 stage map' / 'PENDING A9-04 measurement chain / decision quantity')? Proposed: assign at LOCK-1 from the A9-01 stage map and the A9-10 chain -> DQ-HI consumer table (dq_consumer_table); no assignment is invented here; owner call. Needed by LOCK-1.
+* **OQ-A910-02** Assign the producing stage and the decision quantity of each A9-05 validation input (98 producing_stage / decision_quantity_ids fields, now reading 'TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET ... owner call OQ-A910-02', overlay A910-R05-01/02)? Proposed: assign at LOCK-1 from the A9-01 stage map and the A9-10 chain -> DQ-HI consumer table (dq_consumer_table); no assignment is invented here; owner call. Needed by LOCK-1.
 * **OQ-A910-03** May a ledger declared 'peak_sampled' (the unaveraged sampled peak) PASS the 1.5 kW gate when the peak is below 1500 W and the record meets the A9.1 OQ-A902-01 measurement requirements (the maximum 1 ms mean cannot exceed the maximum sample)? A9.1 OQ-A902-01 calls the unaveraged peak 'protection analysis only; not the 1.5 kW gate', so A9-02 does NOT implement this reading: today only a declared p_bus_1ms_max ledger with a conformant gate_measurement record can PASS, and a peak_sampled ledger is NOT_EVALUABLE in both directions. Proposed: PROPOSED yes, limited to records meeting >= 100 kSa/s, >= 20 kHz, documented anti-alias filtering and synchronized channels (it is conservative and never substitutes a step average); owner call - not implemented until answered. Needed by LOCK-1.
 * **OQ-A910-04** Accept the location of the M16 v3 JSON at docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json instead of the brief-named docs/budgets/subsystem_maturity/subsystem_maturity_v3.json? The immutable H2-7 v1 mechanical BOM builder scans docs/budgets/subsystem_maturity/*.json non-recursively and pins every file it finds, so any new JSON there makes the H2-7 v1 --check stale (verified). The builder and the Markdown keep the brief-named paths (docs/budgets/subsystem_maturity/build_subsystem_maturity_v3.py, SUBSYSTEM_MATURITY_v3.md). Proposed: PROPOSED accept (the alternative is to change the immutable H2-7 v1 builder, which is not allowed); orchestrator / owner call. Needed by merge of this lane.
 
-Remaining open items: {"owner_questions_state": "docs/budgets/owner_decisions/owner_questions_state_v2.json (OPEN rows with a yellow 'Your answer' column in the xlsx)", "integration": ["OQ-INT-01 (consumer table PROPOSED)", "OQ-INT-02"], "pending_by_reason": {"NOT_A_CROSS_REFERENCE": 13, "HISTORICAL_COPY": 26, "H2_V1_REVISED_IN_A9_07": 7, "HISTORICAL_PREIONIZER": 1, "ASSIGNMENT_NOT_DEFINED_BY_TARGET": 107, "UNMAPPED_DQ_ID": 7, "DEPENDS_ON_LOCK_OR_OWNER": 5, "DEPENDS_ON_HARDWARE_OR_EVIDENCE": 3, "TARGET_CHECKED_NOT_DEFINED": 0, "A9_08_OPEN_AFTER_A9_07": 5, "A9_08_OPEN_AFTER_A9_09": 1, "H2_4_SELECTION": 2}, "interface_demands_open": 72, "m16": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json (every row BLOCKED or READY per the accepted scheduler rule; named owners missing)"}
+Remaining open items: {"owner_questions_state": "docs/budgets/owner_decisions/owner_questions_state_v2.json (OPEN rows with a yellow 'Your answer' column in the xlsx)", "integration": ["OQ-INT-01 (consumer table PROPOSED)", "OQ-INT-02"], "pending_by_reason": {"NOT_A_CROSS_REFERENCE": 13, "HISTORICAL_COPY": 26, "H2_V1_REVISED_IN_A9_07": 7, "HISTORICAL_PREIONIZER": 1, "ASSIGNMENT_NOT_DEFINED_BY_TARGET": 0, "UNMAPPED_DQ_ID": 7, "DEPENDS_ON_LOCK_OR_OWNER": 4, "DEPENDS_ON_HARDWARE_OR_EVIDENCE": 3, "TARGET_CHECKED_NOT_DEFINED": 0, "A9_08_OPEN_AFTER_A9_07": 5, "A9_08_OPEN_AFTER_A9_09": 1, "H2_4_SELECTION": 2}, "interface_demands_open": 72, "m16": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json (every row BLOCKED or READY per the accepted scheduler rule; named owners missing)"}
 
 ## Scope deviations (declared)
 
@@ -790,39 +802,39 @@ docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json: v1 and 
 | A9-01 | `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` | `1310a84fa9840792ab7ae9617c55fd1a041653064ccaa6eb364785214f45a4ee` | True |
 | A9-01 | `docs/experiments/hall_icp/prereg_framework/HALL_ICP_PREREG_FRAMEWORK.md` | `f90c08e2c1262bc81689e0105a41ae1966d217cf0d24cf6e36ee9a1fb1ab4127` | True |
 | A9-01 | `docs/experiments/hall_icp/prereg_framework/build_hall_icp_prereg_framework.py` | `6500c9953087158f9911b60e245faf30c9d4d69c97dac1828910eed821110188` | True |
-| A9-02 | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `dd888719d36e5de2fc9e622451ff2ea7b88522d12aacf32919be130dc225bcb3` | True |
-| A9-02 | `docs/architecture_comparison/power_boundary_a9/BUS_POWER_BOUNDARY_A9.md` | `c805c4bf2b94b1cd402e3a059e9ff96838d6f99a912713da35d91c26b9a90bbd` | True |
-| A9-02 | `docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py` | `92a269f660828e0c95510da938d3d4c4dd842a1a9ab71adf5a72dddb6ca58590` | True |
-| A9-02 | `abep_sim/bus_boundary_a9.py` | `08d8d6e730aabb30203944613fba1fe73ce738cdbe93c2bb9b161d6511d57819` | True |
+| A9-02 | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `a16496b06df5876efb8764ec183bf65888c372e2719983b07cf2c946112704af` | True |
+| A9-02 | `docs/architecture_comparison/power_boundary_a9/BUS_POWER_BOUNDARY_A9.md` | `4806cd454344c8cf384e68f645eced9c9dc37e3ae248bb64878a5e2e6ffe7294` | True |
+| A9-02 | `docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py` | `901ceea5ae68e8522d985253b353ab344b81a22172a2369be27932ad6f50d707` | True |
+| A9-02 | `abep_sim/bus_boundary_a9.py` | `78014f51bec31c8c05129e6fe7d7e3db528e30e3e78237c693342b9568c66a27` | True |
 | A9-02 | `schemas/interfaces/bus_power_boundary_a9_v1.json` | `64238d1526d8ce6bf3ca6b45f385f8948e6dcf916e4f2140cbcb6c46d2c7aa09` | True |
-| A9-03 | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `0a2ec6666530e8464f63a9517eaff8b2eece61aac9c7b73b4e2de897f5387d75` | True |
-| A9-03 | `docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md` | `258c6c95e21f1374ac03beb3a7aa6ffaf0b8bcb42e0a20138096a2c0d32ef8d4` | True |
+| A9-03 | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `81b073e6545d9bffb12b655058ca3bc6dec8827fd9f4b8779132e30678741997` | True |
+| A9-03 | `docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md` | `6c2b9dce4962864e56be75ef71efff52401dee1c4825727017a8de1d65bbc5e6` | True |
 | A9-03 | `docs/interfaces/icp_neutralizer/build_icp_neutralizer_icd.py` | `20b7481b91c97f05b09ee50a720972bc21fe5943a16d5ec335c45971e3967ec3` | True |
-| A9-04 | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `4c9f57fa28bf4465a80966a12661eddcd77dd37d487fd63fb111d60937426de6` | True |
-| A9-04 | `docs/experiments/hall_icp/uncertainty_budget/HALL_ICP_UNCERTAINTY_BUDGET.md` | `309f9a586897243b17ffc3ed6e430c29a3fb3e156e27229e78471744812041b9` | True |
+| A9-04 | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `4d087e993410a795cd6bc25c3fd5af19f481a9692ff13cc6fe8a56b7e4bb4b44` | True |
+| A9-04 | `docs/experiments/hall_icp/uncertainty_budget/HALL_ICP_UNCERTAINTY_BUDGET.md` | `ef819bb397b7b19fbf54cbd94034a84211e75aa6b5c8e36445540e431d6b28ea` | True |
 | A9-04 | `docs/experiments/hall_icp/uncertainty_budget/build_hall_icp_uncertainty_budget.py` | `6078d48a6bb0957ff471783f9989d6e541d76ad442c494c8cc2e4399b49e0979` | True |
 | A9-05ev | `docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json` | `1c511db53b5874168c361683bae3d121bc0883a99868e72906bb5cf9234cc8fc` | True |
 | A9-05ev | `docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md` | `d2fa7957e1daa1b60d555c91ef9bc08ad9015c9bb9c24d84ddc89c313547aef6` | True |
 | A9-05ev | `docs/evidence/icp_neutralizer/build_icp_neutralizer_evidence.py` | `a207a500522a469642c50e6103578589f0c758373c416297e52f80d089cbce71` | True |
-| A9-05vi | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `e26c38ef0af4f56d8d7b21e024867e7c6ad0378841d2f9992ac8f0d904a9a2ed` | True |
-| A9-05vi | `docs/experiments/hall_icp/validation_inputs/HALL_ICP_VALIDATION_INPUTS.md` | `391c523a1fe732abb9dc6fdae1d974c8db1fad651732c1bb85f7c372cd1cdf72` | True |
+| A9-05vi | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `4924f31b9b0a9315b96ecc121ece07ca3ef47d4e86515b17e76144fcb212da61` | True |
+| A9-05vi | `docs/experiments/hall_icp/validation_inputs/HALL_ICP_VALIDATION_INPUTS.md` | `3eb1fe24a462ab05f491582068fd289e895a1ee1889d2d79c9d82d57b93a03cb` | True |
 | A9-05vi | `docs/experiments/hall_icp/validation_inputs/build_hall_icp_validation_inputs.py` | `484025b961b9d96392f896e2dbc77783b3f2f962d11b3b16a6445a76921c0483` | True |
-| A9-06 | `docs/budgets/mass_a9/mass_a9_v1.json` | `bc3a4d7095cb4650db866baf6d8c5e86d45d87821a4ea82a25fdda698dfec309` | True |
-| A9-06 | `docs/budgets/mass_a9/MASS_A9.md` | `d1a7c0576ef01e7766b2cb9ba29ce4eb8bc54639aeb55ff8853bd2ac7d54c10c` | True |
+| A9-06 | `docs/budgets/mass_a9/mass_a9_v1.json` | `fa32662a3450df04bb14cf36adaf59c6a55847e3e30b28b1062bdfe95e624a4e` | True |
+| A9-06 | `docs/budgets/mass_a9/MASS_A9.md` | `d11799113d70a61152bdc74e3daec54914b60a0c1bd062a052aa5cef939efd4d` | True |
 | A9-06 | `docs/budgets/mass_a9/build_mass_a9.py` | `9d719214b0e9d93e1a690a24473c5d42f1150b66295e2cdd720e1c60cfec36de` | True |
-| A9-07 | `docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json` | `c50986bafc004b4f82fbcd408830c286a2d30d1bb045d0f6f250d3e91a117c1c` | True |
-| A9-07 | `docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md` | `d06aebff1aa71eb0e16bd79ed689a3a2056b26ce33992b0505caf30082624252` | True |
+| A9-07 | `docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json` | `c8d575cb70e0472305cf632f1d9b9b24ae1108bc1cc1ddc32ff1a6b7699bd5c4` | True |
+| A9-07 | `docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md` | `8b06fc316ff82e4a22a7c2028dee3e7c3eda17638d3eb9b562f7b7fab61a6bd2` | True |
 | A9-07 | `docs/hardware/h2_a9_revisions/build_h2_a9_revisions.py` | `42d364b025182c8d753f9fdbb8cc60b4614f12a335de4ebf6e956482db9f7c3d` | True |
-| A9-08 | `docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json` | `52d77cd06d4615f368fa3a4da5b729c253a0bb4708c30cf96ba03c0f88a6e0db` | True |
-| A9-08 | `docs/budgets/xe_ledger_a9/XE_LEDGER_A9.md` | `af93c24e90401d4f6592ba5f287841d8fd29c2703dbfcc514e81de1f3ee9aff5` | True |
-| A9-08 | `docs/budgets/xe_ledger_a9/build_xe_ledger_a9.py` | `b72d68ce6fe6c917067dc1ab871ce764ac871054fc10a8473cf363fce82ed6a4` | True |
-| A9-09 | `docs/procurement/rfq_a9/rfq_a9_v1.json` | `b92ad25e698589e75b8a426d613f97288a021d8b512f90fc976e15e3db96d530` | True |
-| A9-09 | `docs/procurement/rfq_a9/RFQ_A9.md` | `b281bfb09569991792d77cc974891ea894ec864605760f5efa7492cedad3be5a` | True |
+| A9-08 | `docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json` | `c2540246cc1e9bf394f94f51b1f0628fab4545d5112c1b558e6c35b761e302d1` | True |
+| A9-08 | `docs/budgets/xe_ledger_a9/XE_LEDGER_A9.md` | `c703ed97a4074bf222764fcb82c08c7557e379564a4d302187765e0cc4b4acc3` | True |
+| A9-08 | `docs/budgets/xe_ledger_a9/build_xe_ledger_a9.py` | `a97be213cda30be7cde6563cd10d2236a71c12ceae7f4f3e9685a8b692bf36c1` | True |
+| A9-09 | `docs/procurement/rfq_a9/rfq_a9_v1.json` | `6b13fb03320edda1ea3455df7dff396b1f9e933d0a4abebc56ae00dddf17afb7` | True |
+| A9-09 | `docs/procurement/rfq_a9/RFQ_A9.md` | `5064521247418e3d3b2015e338ce96bf641cba9845243aa3b30ff52231a20de9` | True |
 | A9-09 | `docs/procurement/rfq_a9/build_rfq_a9.py` | `955862af1381dacabc0b1f22b5a51c182383c9b38ed6bb12359a9f93fed62bef` | True |
 | A9-INT | `docs/experiments/hall_icp/integration/a9_core_integration_v1.json` | `86146f986e35e4d9e507c739aac9f8dd11b483be45fd7691bdccc585c734a09f` | True |
 | A9-INT | `docs/experiments/hall_icp/integration/A9_CORE_INTEGRATION.md` | `a64e4ad5d309afb218aaaf130239691f2e3d524c02997f2c0b42220afcd6803f` | True |
 | A9-INT | `docs/experiments/hall_icp/integration/build_a9_core_integration.py` | `5438fbe0a88c3fb216c59711a7cfeb1d29855659d241494a71bda0558b9c7c76` | True |
-| A9-10 | `docs/experiments/hall_icp/integration/a9_10_overlay.py` | `a941354fa1016bd35280f936e761748bd99e75f3a3eccf41dd92ed6b70d79ea1` | True |
+| A9-10 | `docs/experiments/hall_icp/integration/a9_10_overlay.py` | `5fbdbbb55281c83eaf66f0e31936e82393c7ea9a174513924154f6d6288a9404` | True |
 
 ## Authority pins
 

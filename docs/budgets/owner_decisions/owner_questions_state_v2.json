@@ -51,22 +51,27 @@
   }
  ],
  "status_vocabulary": {
-  "ANSWERED": "v1 row answered by the owner (row pointer into the 147 answers)",
+  "ANSWERED": "answered by the owner: a v1 row (row pointer into the 147 answers), an A9.1 decision row, or a lane question answered by an existing owner row (see status_detail)",
   "SUPERSEDED": "v1 row whose owner answer supersedes the question for the primary campaign",
-  "ANSWERED (A9.1)": "A9.1 follow-up decision (binding)",
   "ANSWERED_BY_A9_1": "lane question answered by an A9.1 decision",
-  "ANSWERED (owner row N)": "lane question answered by an existing owner row",
-  "ADDRESSED_IN_A9_10": "integration work item performed by A9-10 (not an owner decision)",
+  "ADDRESSED_IN_A9_10": "integration work item performed by A9-10 as directed by the brief (not an owner decision; lane-assigned, the owner may reopen it)",
   "OPEN": "owner call; the lane's proposed answer is a proposal only"
  },
+ "status_detail_vocabulary": {
+  "ANSWERED": "v1 row answered by the owner (row pointer into the 147 answers)",
+  "ANSWERED (A9.1)": "A9.1 follow-up decision (binding); status ANSWERED",
+  "ANSWERED (owner row N)": "lane question answered by an existing owner row; status ANSWERED",
+  "SUPERSEDED / ANSWERED_BY_A9_1 / ADDRESSED_IN_A9_10 / OPEN": "detail equals the status"
+ },
+ "status_rule": "'status' is the canonical value (filter on it; 'counts' counts it); 'status_detail' keeps the provenance form. ADDRESSED_IN_A9_10 is assigned by the lane for integration work the brief directed A9-10 to perform (OQ-INT-03 / OQ-INT-04); it is not an owner decision and the owner may reopen it.",
  "counts": {
   "ADDRESSED_IN_A9_10": 2,
   "ANSWERED": 175,
   "ANSWERED_BY_A9_1": 34,
-  "OPEN": 52,
+  "OPEN": 53,
   "SUPERSEDED": 13
  },
- "open_count": 52,
+ "open_count": 53,
  "rows": [
   {
    "no": 1,
@@ -80,7 +85,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "you obtain it",
    "needed_by": "ASAP (bid close)",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 2,
@@ -94,7 +100,8 @@
    "classification_by_recorder": "VERIFY-FIRST",
    "proposed": "none - owner call",
    "needed_by": "ASAP",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 3,
@@ -108,7 +115,8 @@
    "classification_by_recorder": "ENGINEERING_ALLOCATION_OR_BASIS",
    "proposed": "none - owner call",
    "needed_by": "ASAP",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 4,
@@ -122,7 +130,8 @@
    "classification_by_recorder": "AMENDED_FOR_A9",
    "proposed": "none - owner call",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 5,
@@ -136,7 +145,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "includes (verify against RFP)",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 6,
@@ -150,7 +160,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 7,
@@ -164,7 +175,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "before Milestone B",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 8,
@@ -178,7 +190,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "H3 wave",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 9,
@@ -192,7 +205,8 @@
    "classification_by_recorder": "NO_OR_NOT_YET",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 10,
@@ -206,7 +220,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "delete",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 11,
@@ -220,7 +235,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 12,
@@ -234,7 +250,8 @@
    "classification_by_recorder": "SUPERSEDED",
    "proposed": "D-01-A",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "SUPERSEDED"
   },
   {
    "no": 13,
@@ -248,7 +265,8 @@
    "classification_by_recorder": "SUPERSEDED",
    "proposed": "D-02-A",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "SUPERSEDED"
   },
   {
    "no": 14,
@@ -262,7 +280,8 @@
    "classification_by_recorder": "SUPERSEDED",
    "proposed": "D-03-B",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "SUPERSEDED"
   },
   {
    "no": 15,
@@ -276,7 +295,8 @@
    "classification_by_recorder": "AMENDED_FOR_A9",
    "proposed": "D-04-B",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 16,
@@ -290,7 +310,8 @@
    "classification_by_recorder": "AMENDED_FOR_A9",
    "proposed": "D-05-A",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 17,
@@ -304,7 +325,8 @@
    "classification_by_recorder": "AMENDED_FOR_A9",
    "proposed": "D-06-A; module-only swap (HW-SVC-04)",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 18,
@@ -318,7 +340,8 @@
    "classification_by_recorder": "SUPERSEDED",
    "proposed": "D-07-A (lane-25 T-DELTA)",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "SUPERSEDED"
   },
   {
    "no": 19,
@@ -332,7 +355,8 @@
    "classification_by_recorder": "AMENDED_FOR_A9",
    "proposed": "D-08-A; whole replicates or a registered incomplete-design rule",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 20,
@@ -346,7 +370,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "D-09-A",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 21,
@@ -360,7 +385,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "D-10-A",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 22,
@@ -374,7 +400,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "D-11-A",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 23,
@@ -388,7 +415,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "D-12-A; T-PB-MAX: owner call (set with the low-flow knee in view)",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 24,
@@ -402,7 +430,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "D-13-B",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 25,
@@ -416,7 +445,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "D-14-B",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 26,
@@ -430,7 +460,8 @@
    "classification_by_recorder": "AMENDED_FOR_A9",
    "proposed": "D-15-C",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 27,
@@ -444,7 +475,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 28,
@@ -458,7 +490,8 @@
    "classification_by_recorder": "SUPERSEDED",
    "proposed": "accept",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "SUPERSEDED"
   },
   {
    "no": 29,
@@ -472,7 +505,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "accept",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 30,
@@ -486,7 +520,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "draw at LOCK-2 after n fixed; optional sha256 commitment at LOCK-1",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 31,
@@ -500,7 +535,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "accept",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 32,
@@ -514,7 +550,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 33,
@@ -528,7 +565,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "yes",
    "needed_by": "LOCK-2",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 34,
@@ -542,7 +580,8 @@
    "classification_by_recorder": "SUPERSEDED",
    "proposed": "you confirm",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "SUPERSEDED"
   },
   {
    "no": 35,
@@ -556,7 +595,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "held-out custody until W5 decides",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 36,
@@ -570,7 +610,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "pure N2 first, O2-bearing last; Xe reference per D-15",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 37,
@@ -584,7 +625,8 @@
    "classification_by_recorder": "AMENDED_FOR_A9",
    "proposed": "you fix NET_BENEFIT form at LOCK-1",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 38,
@@ -598,7 +640,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "decision status OPEN (not an outcome)",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 39,
@@ -612,7 +655,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "skip stopped arm's slots (NOT_TESTED), keep others' order, report balance loss",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 40,
@@ -626,7 +670,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "own installation (default)",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 41,
@@ -640,7 +685,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "yes",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 42,
@@ -654,7 +700,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "PHASE_TOTAL_FLOW (conservative)",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 43,
@@ -668,7 +715,8 @@
    "classification_by_recorder": "ENGINEERING_ALLOCATION_OR_BASIS",
    "proposed": "own term; value: owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 44,
@@ -682,7 +730,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "0.25 screening",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 45,
@@ -696,7 +745,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call (never booked twice)",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 46,
@@ -710,7 +760,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "15,000 h (A5)",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 47,
@@ -724,7 +775,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "accept",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 48,
@@ -738,7 +790,8 @@
    "classification_by_recorder": "NO_OR_NOT_YET",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 49,
@@ -752,7 +805,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 50,
@@ -766,7 +820,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 51,
@@ -780,7 +835,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 52,
@@ -794,7 +850,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "20 %",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 53,
@@ -808,7 +865,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "both (as done)",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 54,
@@ -822,7 +880,8 @@
    "classification_by_recorder": "ENGINEERING_ALLOCATION_OR_BASIS",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 55,
@@ -836,7 +895,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "single string (assumed)",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 56,
@@ -850,7 +910,8 @@
    "classification_by_recorder": "NO_OR_NOT_YET",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 57,
@@ -864,7 +925,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "D for all",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 58,
@@ -878,7 +940,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 59,
@@ -892,7 +955,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "accept",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 60,
@@ -906,7 +970,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "5 %",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 61,
@@ -920,7 +985,8 @@
    "classification_by_recorder": "SUPERSEDED",
    "proposed": "approve",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "SUPERSEDED"
   },
   {
    "no": 62,
@@ -934,7 +1000,8 @@
    "classification_by_recorder": "SUPERSEDED",
    "proposed": "approve",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "SUPERSEDED"
   },
   {
    "no": 63,
@@ -948,7 +1015,8 @@
    "classification_by_recorder": "SUPERSEDED",
    "proposed": "approve",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "SUPERSEDED"
   },
   {
    "no": 64,
@@ -962,7 +1030,8 @@
    "classification_by_recorder": "SUPERSEDED",
    "proposed": "approve",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "SUPERSEDED"
   },
   {
    "no": 65,
@@ -976,7 +1045,8 @@
    "classification_by_recorder": "SUPERSEDED",
    "proposed": "approve",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "SUPERSEDED"
   },
   {
    "no": 66,
@@ -990,7 +1060,8 @@
    "classification_by_recorder": "AMENDED_FOR_A9",
    "proposed": "none - owner call",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 67,
@@ -1004,7 +1075,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 68,
@@ -1018,7 +1090,8 @@
    "classification_by_recorder": "SUPERSEDED",
    "proposed": "none - owner call (must match flight intent)",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "SUPERSEDED"
   },
   {
    "no": 69,
@@ -1032,7 +1105,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "unmagnetized ICP",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 70,
@@ -1046,7 +1120,8 @@
    "classification_by_recorder": "AMENDED_FOR_A9",
    "proposed": "none - owner call",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 71,
@@ -1060,7 +1135,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "yes",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 72,
@@ -1074,7 +1150,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 73,
@@ -1088,7 +1165,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "H2 freeze",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 74,
@@ -1102,7 +1180,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "yes",
    "needed_by": "H2 freeze",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 75,
@@ -1116,7 +1195,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "12; owner call on insert",
    "needed_by": "H2 freeze",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 76,
@@ -1130,7 +1210,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "FeCo-2V inner + pure iron outer; temperature limit adopted",
    "needed_by": "S1a",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 77,
@@ -1144,7 +1225,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "S1a (MCQ-S1-01)",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 78,
@@ -1158,7 +1240,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 79,
@@ -1172,7 +1255,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "central (preliminary)",
    "needed_by": "H2 freeze",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 80,
@@ -1186,7 +1270,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "accept",
    "needed_by": "H2 freeze",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 81,
@@ -1200,7 +1285,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "yes",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 82,
@@ -1214,7 +1300,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "yes",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 83,
@@ -1228,7 +1315,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "yes",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 84,
@@ -1242,7 +1330,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "yes",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 85,
@@ -1256,7 +1345,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 86,
@@ -1270,7 +1360,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "PDR",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 87,
@@ -1284,7 +1375,8 @@
    "classification_by_recorder": "NO_OR_NOT_YET",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 88,
@@ -1298,7 +1390,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "confirm",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 89,
@@ -1312,7 +1405,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 90,
@@ -1326,7 +1420,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 91,
@@ -1340,7 +1435,8 @@
    "classification_by_recorder": "NO_OR_NOT_YET",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 92,
@@ -1354,7 +1450,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "0.005 mg/s step",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 93,
@@ -1368,7 +1465,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call (bound required)",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 94,
@@ -1382,7 +1480,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 95,
@@ -1396,7 +1495,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "adopt",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 96,
@@ -1410,7 +1510,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "accept",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 97,
@@ -1424,7 +1525,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "adopt",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 98,
@@ -1438,7 +1540,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "adopt",
    "needed_by": "H3",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 99,
@@ -1452,7 +1555,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 100,
@@ -1466,7 +1570,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "decide after compressor outlet characteristic known; carry both",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 101,
@@ -1480,7 +1585,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "adopt for S1a",
    "needed_by": "S1a",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 102,
@@ -1494,7 +1600,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 103,
@@ -1508,7 +1615,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "yes",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 104,
@@ -1522,7 +1630,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "yes",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 105,
@@ -1536,7 +1645,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "S1a",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 106,
@@ -1550,7 +1660,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "316L baseline; biased coupons",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 107,
@@ -1564,7 +1675,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "ASTM G93 Level C",
    "needed_by": "S1a",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 108,
@@ -1578,7 +1690,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 109,
@@ -1592,7 +1705,8 @@
    "classification_by_recorder": "SUPERSEDED",
    "proposed": "none - owner call",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "SUPERSEDED"
   },
   {
    "no": 110,
@@ -1606,7 +1720,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "adopt",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 111,
@@ -1620,7 +1735,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 112,
@@ -1634,7 +1750,8 @@
    "classification_by_recorder": "AMENDED_FOR_A9",
    "proposed": "adopt",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 113,
@@ -1648,7 +1765,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "LOCK-2",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 114,
@@ -1662,7 +1780,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 115,
@@ -1676,7 +1795,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 116,
@@ -1690,7 +1810,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 117,
@@ -1704,7 +1825,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 118,
@@ -1718,7 +1840,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "H3",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 119,
@@ -1732,7 +1855,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "S1a",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 120,
@@ -1746,7 +1870,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "yes",
    "needed_by": "S1a",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 121,
@@ -1760,7 +1885,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "LOCK-2",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 122,
@@ -1774,7 +1900,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "adopt",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 123,
@@ -1788,7 +1915,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "4 ranges; quotations only until H3",
    "needed_by": "H3",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 124,
@@ -1802,7 +1930,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "H3",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 125,
@@ -1816,7 +1945,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "H3",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 126,
@@ -1830,7 +1960,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "S1a",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 127,
@@ -1844,7 +1975,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "S1a",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 128,
@@ -1858,7 +1990,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 129,
@@ -1872,7 +2005,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "S1b",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 130,
@@ -1886,7 +2020,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "accept H2-6 list",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 131,
@@ -1900,7 +2035,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 132,
@@ -1914,7 +2050,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 133,
@@ -1928,7 +2065,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "yes",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 134,
@@ -1942,7 +2080,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "yes",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 135,
@@ -1956,7 +2095,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 136,
@@ -1970,7 +2110,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 137,
@@ -1984,7 +2125,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "LOCK-1",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 138,
@@ -1998,7 +2140,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 139,
@@ -2012,7 +2155,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "S1a",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 140,
@@ -2026,7 +2170,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 141,
@@ -2040,7 +2185,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "accept",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 142,
@@ -2054,7 +2200,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "accept",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 143,
@@ -2068,7 +2215,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "direct",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 144,
@@ -2082,7 +2230,8 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 145,
@@ -2096,7 +2245,8 @@
    "classification_by_recorder": "NO_OR_NOT_YET",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 146,
@@ -2110,7 +2260,8 @@
    "classification_by_recorder": "NO_OR_NOT_YET",
    "proposed": "no until inputs exist",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "no": 147,
@@ -2124,13 +2275,14 @@
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
    "proposed": "none - owner call",
    "needed_by": "—",
-   "kind": "v1_row"
+   "kind": "v1_row",
+   "status_detail": "ANSWERED"
   },
   {
    "id": "HIQ-01",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision HIQ-01",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-01",
    "answer_excerpt": "REF-COND reference installation = hall_c1_reference in every block; predecessor asymmetry preserved and reported",
    "answers_lane_questions": [
@@ -2140,13 +2292,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 148
+   "no": 148,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "HIQ-02",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision HIQ-02",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-02",
    "answer_excerpt": "three complete balanced replicate sets, >= 6 blocks before any larger LOCK-2 n",
    "answers_lane_questions": [
@@ -2158,13 +2311,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 149
+   "no": 149,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "HIQ-03",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision HIQ-03",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-03",
    "answer_excerpt": "bounded Xe reference/health check at the start of the installation, before N2 and any O2-bearing exposure",
    "answers_lane_questions": [
@@ -2176,13 +2330,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 150
+   "no": 150,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "HIQ-04",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision HIQ-04",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-04",
    "answer_excerpt": "HI-HOLDOUT-A frozen before the first Hall-on H-1 reading (incl. Ar); held-out enumeration after LOCK-1, before HI-S1",
    "answers_lane_questions": [
@@ -2192,13 +2347,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 151
+   "no": 151,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "HIQ-05",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision HIQ-05",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-05",
    "answer_excerpt": "no mandatory Pareto relation; hard gates decide feasibility; Pareto reported unless a condition is preregistered at LOCK-1",
    "answers_lane_questions": [
@@ -2208,13 +2364,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 152
+   "no": 152,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "HIQ-06",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision HIQ-06",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-06",
    "answer_excerpt": "primary ICP gas mode G-REUSE (Hall exhaust/residual); dedicated ICP port installed and capped; G-ATM / G-XE are declared contingency variants; score-bearing N2/N2+O2 uses G-REUSE unless it fails the preregistered ICP-capacity gate; no de...",
    "answers_lane_questions": [
@@ -2226,13 +2383,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 153
+   "no": 153,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "HIQ-06_accounting",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision HIQ-06_accounting",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-06_accounting",
    "answer_excerpt": "{\"G-REUSE\": \"mdot_ICP,dedicated = 0 (no double counting of Hall feed)\", \"G-ATM\": \"mdot_atm,total = mdot_Hall + mdot_ICP,dedicated (actual routing)\", \"G-XE\": \"mdot_ICP,Xe booked explicitly in the Xe ledger under PHASE_TOTAL_FLOW\"}",
    "answers_lane_questions": [
@@ -2244,13 +2402,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 154
+   "no": 154,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "HIQ-07",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision HIQ-07",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-07",
    "answer_excerpt": "pure-N2 hall_icp_neutralizer readings sequestered for a future Hall-transport preregistration",
    "answers_lane_questions": [
@@ -2260,13 +2419,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 155
+   "no": 155,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "HIQ-08",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision HIQ-08",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-08",
    "answer_excerpt": "HI-AR before LOCK-1, after HI-HOLDOUT-A; Ar never enters LOCK-2 numbers, decision quantities or DRDO compliance claims",
    "answers_lane_questions": [
@@ -2276,13 +2436,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 156
+   "no": 156,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "UBQ-01",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision UBQ-01",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-01",
    "answer_excerpt": "1 % thrust target = standard relative uncertainty (k = 1), sustained reading; gates use preregistered one-sided treatment",
    "answers_lane_questions": [
@@ -2294,13 +2455,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 157
+   "no": 157,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "UBQ-02",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision UBQ-02",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-02",
    "answer_excerpt": "M_n = I_e,cap / I_d,dem - 1; gate on one-sided lower confidence bound > 0; any extra design margin frozen at LOCK-2 per LOCK-1 rule",
    "answers_lane_questions": [
@@ -2311,13 +2473,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 158
+   "no": 158,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "UBQ-03",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision UBQ-03",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-03",
    "answer_excerpt": "manufacturer +-x bound rectangular (u = a/sqrt(3)) unless the certificate states otherwise",
    "answers_lane_questions": [
@@ -2327,13 +2490,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 159
+   "no": 159,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "UBQ-04",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision UBQ-04",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-04",
    "answer_excerpt": "normalized agreement statistic with k_x = 2 frozen at LOCK-1; failure -> RF-dependent quantities EXCLUDED_INSTRUMENT",
    "answers_lane_questions": [
@@ -2343,13 +2507,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 160
+   "no": 160,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "UBQ-05",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision UBQ-05",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-05",
    "answer_excerpt": "calibration shift both in the budget and as a block-exclusion rule; rule form at LOCK-1, number at LOCK-2 from metrology-only evidence",
    "answers_lane_questions": [
@@ -2359,13 +2524,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 161
+   "no": 161,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "UBQ-06",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision UBQ-06",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-06",
    "answer_excerpt": "score-bearing temperature aborts at validated continuous-use limit minus 50 K",
    "answers_lane_questions": [
@@ -2377,13 +2543,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 162
+   "no": 162,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "UBQ-07",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision UBQ-07",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-07",
    "answer_excerpt": "family-wise alpha 0.05 for simultaneous contrasts (preregistered multiplicity control, e.g. Holm); one-sided alpha 0.05 per absolute gate; frozen at LOCK-1",
    "answers_lane_questions": [
@@ -2393,13 +2560,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 163
+   "no": 163,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "UBQ-08",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision UBQ-08",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-08",
    "answer_excerpt": "Ar-specific gauge/MFC/RGA calibration required for HI-AR; Ar stays engineering-only",
    "answers_lane_questions": [
@@ -2411,13 +2579,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 164
+   "no": 164,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "UBQ-09",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision UBQ-09",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-09",
    "answer_excerpt": "SR-C-MARGIN stopping (not sign-only); margin rule at LOCK-1, numerical value at LOCK-2",
    "answers_lane_questions": [
@@ -2427,13 +2596,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 165
+   "no": 165,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "OQ-A902-01",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision OQ-A902-01",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-01",
    "answer_excerpt": "{\"gate_quantity\": \"P_bus,1ms,max = max_t (1/1 ms) integral_t^{t+1 ms} P_bus dt\", \"requirement\": \"P_bus,1ms,max < 1500 W, startup and steady state, unless the official RFP provides a transient exception\", \"measurement\": [\"spacecraft-DC pr...",
    "answers_lane_questions": [
@@ -2445,13 +2615,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 166
+   "no": 166,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "OQ-A902-02",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision OQ-A902-02",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-02",
    "answer_excerpt": "300 W common allocation = compressor + atm/Xe/ICP flow-control + filter/getter if active + thermal control + housekeeping/controls; 50 W controls/thermal inside it; extra active cooling and reserved ports outside unless reallocated",
    "answers_lane_questions": [
@@ -2463,13 +2634,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 167
+   "no": 167,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "OQ-A902-03",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision OQ-A902-03",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-03",
    "answer_excerpt": "no fixed Hall/ICP split; P_ICP,available = 1350 - P_common - P_Hall - P_other_active at every registered condition; ICP-45 demonstrated within it; 0-500 W lab RF is a test capability only",
    "answers_lane_questions": [
@@ -2479,13 +2651,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 168
+   "no": 168,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "OQ-A902-04",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision OQ-A902-04",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-04",
    "answer_excerpt": "no combined flight C1 + ICP installation in primary A9 (would be a new variant with its own closures)",
    "answers_lane_questions": [
@@ -2495,13 +2668,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 169
+   "no": 169,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "OQ-A902-05",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision OQ-A902-05",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-05",
    "answer_excerpt": "primary G-REUSE; flow_control_icp_feed booked only when G-ATM or G-XE is installed/used; capped port stays in the ICD",
    "answers_lane_questions": [
@@ -2513,13 +2687,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 170
+   "no": 170,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "OQ-A902-06",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision OQ-A902-06",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-06",
    "answer_excerpt": "housekeeping and thermal routed through the internal propulsion bus by default; any direct spacecraft-input path represented explicitly",
    "answers_lane_questions": [
@@ -2529,13 +2704,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 171
+   "no": 171,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "OQ-A902-07",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision OQ-A902-07",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-07",
    "answer_excerpt": "report 1300 W as context/sensitivity; active internal check 1350 W; hard requirement 1500 W",
    "answers_lane_questions": [
@@ -2545,13 +2721,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 172
+   "no": 172,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "SEQ-heater",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision SEQ-heater",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.SEQ-heater",
    "answer_excerpt": "C1 procedure states heater command/power at every step; until then TBD heater = ON at conservative booked power; never PASS by assuming off",
    "answers_lane_questions": [],
@@ -2559,13 +2736,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 173
+   "no": 173,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "SEQ-peaks",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision SEQ-peaks",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.SEQ-peaks",
    "answer_excerpt": "baseline: at most one peak-class load commanded to rise per startup step; overlap = registered variant needing measured transient evidence",
    "answers_lane_questions": [],
@@ -2573,13 +2751,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 174
+   "no": 174,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "ICP-45",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision ICP-45",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.ICP-45",
    "answer_excerpt": "formal entry condition: ICP-45A (Ar, engineering-only) and ICP-45N (N2) demonstrate I_e,cap >= I_d,max before any score-bearing hall_icp_neutralizer point; record I_e, RF fwd/refl, DC input, collector V/I, pressure, gas state, thermal st...",
    "answers_lane_questions": [],
@@ -2587,13 +2766,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 175
+   "no": 175,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "ICP-46",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision ICP-46",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.ICP-46",
    "answer_excerpt": "C1 keeper pulse 300-600 V: design isolation basis 900 V; development hipot 1.0 kV DC at representative pressure/gas, no breakdown, leakage recorded; separate 600 V pulse-waveform test; applies to lead, feedthrough, connectors, harness, i...",
    "answers_lane_questions": [],
@@ -2601,13 +2781,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 176
+   "no": 176,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "A9-03-planes",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision A9-03-planes",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.A9-03-planes",
    "answer_excerpt": "IP-EXIT = H-1 exit; IP-NEU = downstream neutralizer datum; historical IP-DN unchanged",
    "answers_lane_questions": [
@@ -2617,13 +2798,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 177
+   "no": 177,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "A9-03-Vd",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision A9-03-Vd",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.A9-03-Vd",
    "answer_excerpt": "primary controlled quantity V_d = V_anode - V_electron-source-reference; supply-terminal voltage and loop drops secondary",
    "answers_lane_questions": [
@@ -2633,13 +2815,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 178
+   "no": 178,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "A9-03-matching",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision A9-03-matching",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.A9-03-matching",
    "answer_excerpt": "matching network off the moving stand platform (matched flexible coax, cable-loss/S-parameter correction, coupler reference plane after the matching network, matched sham routing in C1); on-platform only if S1a proves necessary",
    "answers_lane_questions": [
@@ -2649,13 +2832,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 179
+   "no": 179,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "A9-03-collector",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision A9-03-collector",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.A9-03-collector",
    "answer_excerpt": "flight collector material not frozen; 316L allowed for Ar engineering reproduction; candidates go through the O/AO coupon programme before N2/O2 life claims",
    "answers_lane_questions": [
@@ -2665,13 +2849,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 180
+   "no": 180,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "OQ-EV-01",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision OQ-EV-01",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-EV-01",
    "answer_excerpt": "no author/laboratory data request",
    "answers_lane_questions": [
@@ -2681,13 +2866,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 181
+   "no": 181,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "OQ-EV-02",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision OQ-EV-02",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-EV-02",
    "answer_excerpt": "acquisition order P1 LA-01..03; P2 LA-04, LA-06..08; P3 LA-05, LA-09",
    "answers_lane_questions": [
@@ -2697,13 +2883,14 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 182
+   "no": 182,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "OQ-EV-03",
    "source": "A9.1 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
    "question": "A9.1 decision OQ-EV-03",
-   "status": "ANSWERED (A9.1)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-EV-03",
    "answer_excerpt": "YES: values may be extracted from lawfully accessed publisher-served full text with URL, DOI, locator, access date, evidence class; no redistribution of non-redistributable PDFs",
    "answers_lane_questions": [
@@ -2713,7 +2900,8 @@
    "proposed": "",
    "needed_by": "",
    "kind": "a9_1",
-   "no": 183
+   "no": 183,
+   "status_detail": "ANSWERED (A9.1)"
   },
   {
    "id": "HIQ-01",
@@ -2726,7 +2914,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-01",
    "answer_excerpt": "HIQ-01: REF-COND reference installation = hall_c1_reference in every block; predecessor asymmetry preserved and reported",
-   "no": 184
+   "no": 184,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "HIQ-02",
@@ -2739,7 +2928,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-02",
    "answer_excerpt": "HIQ-02: three complete balanced replicate sets, >= 6 blocks before any larger LOCK-2 n",
-   "no": 185
+   "no": 185,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "HIQ-03",
@@ -2752,7 +2942,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-03",
    "answer_excerpt": "HIQ-03: bounded Xe reference/health check at the start of the installation, before N2 and any O2-bearing exposure",
-   "no": 186
+   "no": 186,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "HIQ-04",
@@ -2765,7 +2956,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-04",
    "answer_excerpt": "HIQ-04: HI-HOLDOUT-A frozen before the first Hall-on H-1 reading (incl. Ar); held-out enumeration after LOCK-1, before HI-S1",
-   "no": 187
+   "no": 187,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "HIQ-05",
@@ -2778,7 +2970,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-05",
    "answer_excerpt": "HIQ-05: no mandatory Pareto relation; hard gates decide feasibility; Pareto reported unless a condition is preregistered at LOCK-1",
-   "no": 188
+   "no": 188,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "HIQ-06",
@@ -2791,7 +2984,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-06",
    "answer_excerpt": "HIQ-06: primary ICP gas mode G-REUSE (Hall exhaust/residual); dedicated ICP port installed and capped; G-ATM / G-XE are declared contingency variants; score-bearing N2/N2+O2 uses G-REUSE unless it fails the preregistered ICP-capacity gat...",
-   "no": 189
+   "no": 189,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "HIQ-07",
@@ -2804,7 +2998,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-07",
    "answer_excerpt": "HIQ-07: pure-N2 hall_icp_neutralizer readings sequestered for a future Hall-transport preregistration",
-   "no": 190
+   "no": 190,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "HIQ-08",
@@ -2817,7 +3012,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-08",
    "answer_excerpt": "HIQ-08: HI-AR before LOCK-1, after HI-HOLDOUT-A; Ar never enters LOCK-2 numbers, decision quantities or DRDO compliance claims",
-   "no": 191
+   "no": 191,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "OQ-A902-01",
@@ -2830,7 +3026,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-01",
    "answer_excerpt": "OQ-A902-01: P_bus,1ms,max = max_t (1/1 ms) integral_t^{t+1 ms} P_bus dt; requirement: P_bus,1ms,max < 1500 W, startup and steady state, unless the official RFP provides a transient exception; status: A9 engineering definition pending aut...",
-   "no": 192
+   "no": 192,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "OQ-A902-02",
@@ -2843,7 +3040,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-02",
    "answer_excerpt": "OQ-A902-02: 300 W common allocation = compressor + atm/Xe/ICP flow-control + filter/getter if active + thermal control + housekeeping/controls; 50 W controls/thermal inside it; extra active cooling and reserved ports outside unless reall...",
-   "no": 193
+   "no": 193,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "OQ-A902-03",
@@ -2856,7 +3054,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-03",
    "answer_excerpt": "OQ-A902-03: no fixed Hall/ICP split; P_ICP,available = 1350 - P_common - P_Hall - P_other_active at every registered condition; ICP-45 demonstrated within it; 0-500 W lab RF is a test capability only",
-   "no": 194
+   "no": 194,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "OQ-A902-04",
@@ -2869,7 +3068,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-04",
    "answer_excerpt": "OQ-A902-04: no combined flight C1 + ICP installation in primary A9 (would be a new variant with its own closures)",
-   "no": 195
+   "no": 195,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "OQ-A902-05",
@@ -2882,7 +3082,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-05",
    "answer_excerpt": "OQ-A902-05: primary G-REUSE; flow_control_icp_feed booked only when G-ATM or G-XE is installed/used; capped port stays in the ICD",
-   "no": 196
+   "no": 196,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "OQ-A902-06",
@@ -2895,7 +3096,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-06",
    "answer_excerpt": "OQ-A902-06: housekeeping and thermal routed through the internal propulsion bus by default; any direct spacecraft-input path represented explicitly",
-   "no": 197
+   "no": 197,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "OQ-A902-07",
@@ -2908,7 +3110,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-07",
    "answer_excerpt": "OQ-A902-07: report 1300 W as context/sensitivity; active internal check 1350 W; hard requirement 1500 W",
-   "no": 198
+   "no": 198,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "ICPQ-01",
@@ -2921,7 +3124,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.A9-03-planes",
    "answer_excerpt": "A9-03-planes: IP-EXIT = H-1 exit; IP-NEU = downstream neutralizer datum; historical IP-DN unchanged",
-   "no": 199
+   "no": 199,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "ICPQ-02",
@@ -2934,7 +3138,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-06",
    "answer_excerpt": "HIQ-06: primary ICP gas mode G-REUSE (Hall exhaust/residual); dedicated ICP port installed and capped; G-ATM / G-XE are declared contingency variants; score-bearing N2/N2+O2 uses G-REUSE unless it fails the preregistered ICP-capacity gat...",
-   "no": 200
+   "no": 200,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "ICPQ-03",
@@ -2947,7 +3152,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 201
+   "no": 201,
+   "status_detail": "OPEN"
   },
   {
    "id": "ICPQ-04",
@@ -2960,7 +3166,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.A9-03-Vd",
    "answer_excerpt": "A9-03-Vd: primary controlled quantity V_d = V_anode - V_electron-source-reference; supply-terminal voltage and loop drops secondary",
-   "no": 202
+   "no": 202,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "ICPQ-05",
@@ -2973,7 +3180,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.A9-03-matching",
    "answer_excerpt": "A9-03-matching: matching network off the moving stand platform (matched flexible coax, cable-loss/S-parameter correction, coupler reference plane after the matching network, matched sham routing in C1); on-platform only if S1a proves nec...",
-   "no": 203
+   "no": 203,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "ICPQ-06",
@@ -2986,7 +3194,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 204
+   "no": 204,
+   "status_detail": "OPEN"
   },
   {
    "id": "ICPQ-07",
@@ -2999,7 +3208,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.A9-03-collector",
    "answer_excerpt": "A9-03-collector: flight collector material not frozen; 316L allowed for Ar engineering reproduction; candidates go through the O/AO coupon programme before N2/O2 life claims",
-   "no": 205
+   "no": 205,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "ICPQ-08",
@@ -3012,7 +3222,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 206
+   "no": 206,
+   "status_detail": "OPEN"
   },
   {
    "id": "ICPQ-09",
@@ -3025,7 +3236,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 207
+   "no": 207,
+   "status_detail": "OPEN"
   },
   {
    "id": "ICPQ-10",
@@ -3038,7 +3250,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 208
+   "no": 208,
+   "status_detail": "OPEN"
   },
   {
    "id": "ICPQ-11",
@@ -3051,7 +3264,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 209
+   "no": 209,
+   "status_detail": "OPEN"
   },
   {
    "id": "UBQ-01",
@@ -3064,7 +3278,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-01",
    "answer_excerpt": "UBQ-01: 1 % thrust target = standard relative uncertainty (k = 1), sustained reading; gates use preregistered one-sided treatment",
-   "no": 210
+   "no": 210,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "UBQ-02",
@@ -3077,7 +3292,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-02",
    "answer_excerpt": "UBQ-02: M_n = I_e,cap / I_d,dem - 1; gate on one-sided lower confidence bound > 0; any extra design margin frozen at LOCK-2 per LOCK-1 rule",
-   "no": 211
+   "no": 211,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "UBQ-03",
@@ -3090,7 +3306,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-03",
    "answer_excerpt": "UBQ-03: manufacturer +-x bound rectangular (u = a/sqrt(3)) unless the certificate states otherwise",
-   "no": 212
+   "no": 212,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "UBQ-04",
@@ -3103,7 +3320,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-04",
    "answer_excerpt": "UBQ-04: normalized agreement statistic with k_x = 2 frozen at LOCK-1; failure -> RF-dependent quantities EXCLUDED_INSTRUMENT",
-   "no": 213
+   "no": 213,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "UBQ-05",
@@ -3116,7 +3334,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-05",
    "answer_excerpt": "UBQ-05: calibration shift both in the budget and as a block-exclusion rule; rule form at LOCK-1, number at LOCK-2 from metrology-only evidence",
-   "no": 214
+   "no": 214,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "UBQ-06",
@@ -3129,7 +3348,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-06",
    "answer_excerpt": "UBQ-06: score-bearing temperature aborts at validated continuous-use limit minus 50 K",
-   "no": 215
+   "no": 215,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "UBQ-07",
@@ -3142,7 +3362,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-07",
    "answer_excerpt": "UBQ-07: family-wise alpha 0.05 for simultaneous contrasts (preregistered multiplicity control, e.g. Holm); one-sided alpha 0.05 per absolute gate; frozen at LOCK-1",
-   "no": 216
+   "no": 216,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "UBQ-08",
@@ -3155,7 +3376,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-08",
    "answer_excerpt": "UBQ-08: Ar-specific gauge/MFC/RGA calibration required for HI-AR; Ar stays engineering-only",
-   "no": 217
+   "no": 217,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "UBQ-09",
@@ -3168,7 +3390,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-09",
    "answer_excerpt": "UBQ-09: SR-C-MARGIN stopping (not sign-only); margin rule at LOCK-1, numerical value at LOCK-2",
-   "no": 218
+   "no": 218,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "OQ-EV-01",
@@ -3181,7 +3404,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-EV-01",
    "answer_excerpt": "OQ-EV-01: no author/laboratory data request",
-   "no": 219
+   "no": 219,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "OQ-EV-02",
@@ -3194,7 +3418,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-EV-02",
    "answer_excerpt": "OQ-EV-02: acquisition order P1 LA-01..03; P2 LA-04, LA-06..08; P3 LA-05, LA-09",
-   "no": 220
+   "no": 220,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "OQ-EV-03",
@@ -3207,7 +3432,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-EV-03",
    "answer_excerpt": "OQ-EV-03: YES: values may be extracted from lawfully accessed publisher-served full text with URL, DOI, locator, access date, evidence class; no redistribution of non-redistributable PDFs",
-   "no": 221
+   "no": 221,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "OQ-VI-01",
@@ -3220,7 +3446,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-06",
    "answer_excerpt": "HIQ-06: primary ICP gas mode G-REUSE (Hall exhaust/residual); dedicated ICP port installed and capped; G-ATM / G-XE are declared contingency variants; score-bearing N2/N2+O2 uses G-REUSE unless it fails the preregistered ICP-capacity gat...",
-   "no": 222
+   "no": 222,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "OQ-VI-02",
@@ -3233,7 +3460,8 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-02",
    "answer_excerpt": "UBQ-02: M_n = I_e,cap / I_d,dem - 1; gate on one-sided lower confidence bound > 0; any extra design margin frozen at LOCK-2 per LOCK-1 rule",
-   "no": 223
+   "no": 223,
+   "status_detail": "ANSWERED_BY_A9_1"
   },
   {
    "id": "OQ-VI-03",
@@ -3246,7 +3474,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 224
+   "no": 224,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-VI-04",
@@ -3259,7 +3488,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 225
+   "no": 225,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-VI-05",
@@ -3272,7 +3502,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 226
+   "no": 226,
+   "status_detail": "OPEN"
   },
   {
    "id": "MQ-01",
@@ -3285,7 +3516,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 227
+   "no": 227,
+   "status_detail": "OPEN"
   },
   {
    "id": "MQ-02",
@@ -3298,7 +3530,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 228
+   "no": 228,
+   "status_detail": "OPEN"
   },
   {
    "id": "MQ-03",
@@ -3311,7 +3544,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 229
+   "no": 229,
+   "status_detail": "OPEN"
   },
   {
    "id": "MQ-04",
@@ -3324,7 +3558,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 230
+   "no": 230,
+   "status_detail": "OPEN"
   },
   {
    "id": "MQ-05",
@@ -3337,7 +3572,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 231
+   "no": 231,
+   "status_detail": "OPEN"
   },
   {
    "id": "MQ-06",
@@ -3350,7 +3586,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 232
+   "no": 232,
+   "status_detail": "OPEN"
   },
   {
    "id": "MQ-07",
@@ -3363,7 +3600,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 233
+   "no": 233,
+   "status_detail": "OPEN"
   },
   {
    "id": "MQ-08",
@@ -3376,7 +3614,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 234
+   "no": 234,
+   "status_detail": "OPEN"
   },
   {
    "id": "MQ-09",
@@ -3389,7 +3628,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 235
+   "no": 235,
+   "status_detail": "OPEN"
   },
   {
    "id": "MQ-10",
@@ -3402,7 +3642,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 236
+   "no": 236,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-A907-01",
@@ -3415,7 +3656,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 237
+   "no": 237,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-A907-02",
@@ -3428,7 +3670,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 238
+   "no": 238,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-A907-03",
@@ -3441,7 +3684,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 239
+   "no": 239,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-A907-04",
@@ -3454,7 +3698,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 240
+   "no": 240,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-A907-05",
@@ -3467,7 +3712,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 241
+   "no": 241,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-A907-06",
@@ -3480,7 +3726,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 242
+   "no": 242,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-A907-08",
@@ -3493,7 +3740,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 243
+   "no": 243,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-A907-09",
@@ -3506,7 +3754,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 244
+   "no": 244,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-A907-10",
@@ -3519,7 +3768,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 245
+   "no": 245,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-A907-11",
@@ -3532,7 +3782,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 246
+   "no": 246,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-A907-07",
@@ -3545,7 +3796,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 247
+   "no": 247,
+   "status_detail": "OPEN"
   },
   {
    "id": "XA9Q-01",
@@ -3558,7 +3810,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 248
+   "no": 248,
+   "status_detail": "OPEN"
   },
   {
    "id": "XA9Q-02",
@@ -3571,7 +3824,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 249
+   "no": 249,
+   "status_detail": "OPEN"
   },
   {
    "id": "XA9Q-03",
@@ -3584,7 +3838,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 250
+   "no": 250,
+   "status_detail": "OPEN"
   },
   {
    "id": "XA9Q-04",
@@ -3597,7 +3852,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 251
+   "no": 251,
+   "status_detail": "OPEN"
   },
   {
    "id": "XA9Q-05",
@@ -3610,7 +3866,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 252
+   "no": 252,
+   "status_detail": "OPEN"
   },
   {
    "id": "XA9Q-06",
@@ -3623,7 +3880,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 253
+   "no": 253,
+   "status_detail": "OPEN"
   },
   {
    "id": "XA9Q-07",
@@ -3636,7 +3894,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 254
+   "no": 254,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-RFQ-01",
@@ -3649,7 +3908,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 255
+   "no": 255,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-RFQ-02",
@@ -3662,7 +3922,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 256
+   "no": 256,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-RFQ-03",
@@ -3675,7 +3936,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 257
+   "no": 257,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-RFQ-04",
@@ -3688,7 +3950,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 258
+   "no": 258,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-RFQ-05",
@@ -3698,10 +3961,11 @@
    "needed_by": "LOCK-1 (PROPOSED by A9-10 per row 144; the lane stated no gate)",
    "kind": "lane",
    "lane": "A9-09",
-   "status": "ANSWERED (owner row 111)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 111",
    "answer_excerpt": "REGULATED 100 V internal propulsion bus for the breadboard/PPU architecture; keep the spacecraft-input front end configurable until the actual spacecraft bus is specified. Do not claim 100 V is an RFP spacecraft interface requirement.",
-   "no": 259
+   "no": 259,
+   "status_detail": "ANSWERED (owner row 111)"
   },
   {
    "id": "OQ-RFQ-06",
@@ -3714,7 +3978,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 260
+   "no": 260,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-RFQ-07",
@@ -3727,7 +3992,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 261
+   "no": 261,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-RFQ-08",
@@ -3740,7 +4006,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 262
+   "no": 262,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-RFQ-09",
@@ -3753,7 +4020,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 263
+   "no": 263,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-RFQ-10",
@@ -3766,7 +4034,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 264
+   "no": 264,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-INT-01",
@@ -3779,7 +4048,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 265
+   "no": 265,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-INT-02",
@@ -3792,7 +4062,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 266
+   "no": 266,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-INT-03",
@@ -3805,7 +4076,8 @@
    "status": "ADDRESSED_IN_A9_10",
    "answer_pointer": "ADDRESSED_IN_A9_10 (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json pending_reevaluation: a PENDING field whose merged target or an A9.1 decision gives the value is filled or re-stated by an A910-R* overlay record; every remaining one carries a reason code checked against its t...",
    "answer_excerpt": "",
-   "no": 267
+   "no": 267,
+   "status_detail": "ADDRESSED_IN_A9_10"
   },
   {
    "id": "OQ-INT-04",
@@ -3818,7 +4090,8 @@
    "status": "ADDRESSED_IN_A9_10",
    "answer_pointer": "ADDRESSED_IN_A9_10 (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json annex_reconciliation; A9-05 governs where they differ)",
    "answer_excerpt": "",
-   "no": 268
+   "no": 268,
+   "status_detail": "ADDRESSED_IN_A9_10"
   },
   {
    "id": "OQ-A910-01",
@@ -3831,12 +4104,13 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 269
+   "no": 269,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-A910-02",
    "source": "A9-10 (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json)",
-   "question": "Assign the producing stage and the decision quantity of each A9-05 validation input (98 entries still read 'PENDING A9-01 stage map' / 'PENDING A9-04 measurement chain / decision quantity')?",
+   "question": "Assign the producing stage and the decision quantity of each A9-05 validation input (98 producing_stage / decision_quantity_ids fields, now reading 'TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET ... owner call OQ-A910-02', overlay A910-R05-01/02)?",
    "proposed": "assign at LOCK-1 from the A9-01 stage map and the A9-10 chain -> DQ-HI consumer table (dq_consumer_table); no assignment is invented here; owner call",
    "needed_by": "LOCK-1",
    "kind": "lane",
@@ -3844,7 +4118,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 270
+   "no": 270,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-A910-03",
@@ -3857,7 +4132,8 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 271
+   "no": 271,
+   "status_detail": "OPEN"
   },
   {
    "id": "OQ-A910-04",
@@ -3870,59 +4146,78 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 272
+   "no": 272,
+   "status_detail": "OPEN"
+  },
+  {
+   "id": "M16-V3-Q-01",
+   "source": "M16 v3 (A9-10) (docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)",
+   "question": "Accept the PROPOSED A9 blocking item, functional-role owner and latest decision point of each row (rows 1-16, 18, 19), and name the responsible engineers (row 140)?",
+   "proposed": "owner call",
+   "needed_by": "before any row can become READY (row 140)",
+   "kind": "lane",
+   "lane": "M16 v3 (A9-10)",
+   "status": "OPEN",
+   "answer_pointer": "",
+   "answer_excerpt": "",
+   "no": 273,
+   "status_detail": "OPEN"
   },
   {
    "id": "M16-Q-01",
    "source": "M16 v2 (docs/budgets/subsystem_maturity/subsystem_maturity_v2.json)",
    "question": "Assign an accountable owner to each of the 17 rows (every owner cell reads OWNER_TO_ASSIGN; no accountable party is recorded in the base).",
-   "status": "ANSWERED (owner row 140)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 140",
    "answer_excerpt": "YES — Praveen remains accountable system owner. Assign one named responsible engineer to each M16 subsystem row before that row can become READY; until names are available use explicit functional roles, but no row may remain unowned.",
    "proposed": "",
    "needed_by": "",
    "kind": "lane",
    "lane": "M16 v2",
-   "no": 273
+   "no": 274,
+   "status_detail": "ANSWERED (owner row 140)"
   },
   {
    "id": "M16-Q-02",
    "source": "M16 v2 (docs/budgets/subsystem_maturity/subsystem_maturity_v2.json)",
    "question": "Accept, or amend, the PROPOSED scheduler rule (execution_state READY / RUNNING / BLOCKED / VERIFIED with one blocking item per row), the per-row blocking-item selection and the per-row A7 rollup category.",
-   "status": "ANSWERED (owner row 141)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 141",
    "answer_excerpt": "ACCEPT the scheduler rule, one-blocker rule, non-lane-input guard, per-row blockers and A7 roll-up categories.",
    "proposed": "",
    "needed_by": "",
    "kind": "lane",
    "lane": "M16 v2",
-   "no": 274
+   "no": 275,
+   "status_detail": "ANSWERED (owner row 141)"
   },
   {
    "id": "M16-Q-03",
    "source": "M16 v2 (docs/budgets/subsystem_maturity/subsystem_maturity_v2.json)",
    "question": "Accept, or amend, the H2-lane-to-row mapping (which registered H2 lane matures which row, and which H2 lane is scoped to work a row's blocking item).",
-   "status": "ANSWERED (owner row 142)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 142",
    "answer_excerpt": "ACCEPT the H2-lane-to-row mapping, then add the new Hall→ICP/A9 lanes without rewriting historical H2 provenance.",
    "proposed": "",
    "needed_by": "",
    "kind": "lane",
    "lane": "M16 v2",
-   "no": 275
+   "no": 276,
+   "status_detail": "ANSWERED (owner row 142)"
   },
   {
    "id": "M16-Q-04",
    "source": "M16 v2 (docs/budgets/subsystem_maturity/subsystem_maturity_v2.json)",
    "question": "Direct the owning lanes to resolve the reconciliation items RC-01..RC-10 (and the framework items R-xx that name another lane), or record that a divergence is accepted.",
-   "status": "ANSWERED (owner row 143)",
+   "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 143",
    "answer_excerpt": "DIRECT owning lanes to resolve RC-01..RC-10. Any accepted divergence must be explicit, justified and versioned rather than left as silent inconsistency.",
    "proposed": "",
    "needed_by": "",
    "kind": "lane",
    "lane": "M16 v2",
-   "no": 276
+   "no": 277,
+   "status_detail": "ANSWERED (owner row 143)"
   }
  ],
  "compliance": [

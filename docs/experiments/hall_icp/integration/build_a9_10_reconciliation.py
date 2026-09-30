@@ -680,8 +680,8 @@ NEW_QUESTIONS = [
      "difference is the residual, <= 0.2 kg at 10 kg); one reading should govern both lanes",
      "needed_by": "LOCK-1 (tank RFQ ranges RFQ-07-R04, wet closure)", "raised_by": "A9-10"},
     {"id": "OQ-A910-02", "question": "Assign the producing stage and the decision quantity of each A9-05 validation "
-     "input (98 entries still read 'PENDING A9-01 stage map' / 'PENDING A9-04 measurement chain / decision "
-     "quantity')?", "proposed_answer": "assign at LOCK-1 from the A9-01 stage map and the A9-10 chain -> DQ-HI "
+     "input (98 producing_stage / decision_quantity_ids fields, now reading 'TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET "
+     "... owner call OQ-A910-02', overlay A910-R05-01/02)?", "proposed_answer": "assign at LOCK-1 from the A9-01 stage map and the A9-10 chain -> DQ-HI "
      "consumer table (dq_consumer_table); no assignment is invented here; owner call",
      "needed_by": "LOCK-1", "raised_by": "A9-10"},
     {"id": "OQ-A910-03", "question": "May a ledger declared 'peak_sampled' (the unaveraged sampled peak) PASS the "

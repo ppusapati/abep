@@ -203,7 +203,10 @@ def test_item_fields_complete(vi, ev):
         for r in it["how_obtained"]["analog_refs"]:
             assert r in ev_ids
         if it["how_obtained"]["route"] != "owner_allocation":
-            assert "PENDING docs/experiments/hall_icp/prereg_framework/" in it["producing_stage"]
+            # A9-10 review repair 2 (OQ-INT-03 / OQ-A910-02): the precise remaining reason sits next to the field
+            assert ("PENDING docs/experiments/hall_icp/prereg_framework/" in it["producing_stage"]
+                    or ("ASSIGNMENT_NOT_DEFINED_BY_TARGET" in it["producing_stage"]
+                        and "OQ-A910-02" in it["producing_stage"])), it["id"]
 
 
 def test_no_prediction_only_owner_values(vi):
@@ -248,7 +251,9 @@ def test_pending_lanes_referenced_not_fabricated(vi):
         # A9-10 review repair: a reference may be resolved to the merged lane (named with its file) instead
         assert ("PENDING " + lane in txt or ("PENDING abep_sim/bus_boundary_a9.py + " + lane) in txt
                 or "abep_sim/bus_boundary_a9.py SLOTS" in txt or "schemas/interfaces/icp_neutralizer_icd_v1.json" in txt
-                or re.search(re.escape(lane) + r"[a-z0-9_]+\.json", txt)), lane
+                or re.search(re.escape(lane) + r"[a-z0-9_]+\.json", txt)
+                or ("merged A9-01 prereg framework" in txt and lane.endswith("prereg_framework/"))
+                or ("merged A9-04 budget" in txt and lane.endswith("uncertainty_budget/"))), lane
 
 
 def test_vocabulary(vi):

@@ -72,8 +72,17 @@ LANE_SOURCES = [
     ("A9-09", "docs/procurement/rfq_a9/rfq_a9_v1.json"),
     ("A9-INT (step-1 integration)", "docs/experiments/hall_icp/integration/a9_core_integration_v1.json"),
     ("A9-10", "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json"),
+    ("M16 v3 (A9-10)", "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"),
 ]
 M16_ANSWERS = {"M16-Q-01": 140, "M16-Q-02": 141, "M16-Q-03": 142, "M16-Q-04": 143}
+STATUSES = {
+    "ANSWERED": "answered by the owner: a v1 row (row pointer into the 147 answers), an A9.1 decision row, or a lane "
+                "question answered by an existing owner row (see status_detail)",
+    "SUPERSEDED": "v1 row whose owner answer supersedes the question for the primary campaign",
+    "ANSWERED_BY_A9_1": "lane question answered by an A9.1 decision",
+    "ADDRESSED_IN_A9_10": "integration work item performed by A9-10 as directed by the brief (not an owner decision; "
+                          "lane-assigned, the owner may reopen it)",
+    "OPEN": "owner call; the lane's proposed answer is a proposal only"}
 HEAD = ["No", "Id", "Source", "Question", "Status", "Answer / pointer", "Proposed (lane)", "Needed by", "Your answer"]
 
 
@@ -191,12 +200,17 @@ def build() -> dict:
     for i, r in enumerate(rows, 1):
         r["no"] = i
         r.pop("_answered_by", None)
+        detail = r["status"]
+        r["status"] = detail.split(" (")[0]        # canonical, machine-filterable status (review repair)
+        r["status_detail"] = detail                 # e.g. 'ANSWERED (A9.1)', 'ANSWERED (owner row 111)'
+        if r["status"] not in STATUSES:
+            raise RuntimeError(f"{r['id']}: status {detail!r} outside the vocabulary")
     ids = [(r["id"], r["source"]) for r in rows]
     if len(ids) != len(set(ids)):
         raise RuntimeError("duplicate question row")
     counts = {}
     for r in rows:
-        counts[r["status"].split(" (")[0]] = counts.get(r["status"].split(" (")[0], 0) + 1
+        counts[r["status"]] = counts.get(r["status"], 0) + 1
     open_rows = [r for r in rows if r["status"] == "OPEN"]
     return {
         "schema": "owner_questions_state_v2", "id": "owner_questions_state_v2", "lane": "fo_a9_10_integration",
@@ -206,14 +220,16 @@ def build() -> dict:
         "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
         "supersedes_for_use": {"path": V1_CSV, "note": "v1 consolidated list (and its .md / .xlsx) kept byte-identical"},
         "pins": pins,
-        "status_vocabulary": {
+        "status_vocabulary": {k: v for k, v in STATUSES.items()},
+        "status_detail_vocabulary": {
             "ANSWERED": "v1 row answered by the owner (row pointer into the 147 answers)",
-            "SUPERSEDED": "v1 row whose owner answer supersedes the question for the primary campaign",
-            "ANSWERED (A9.1)": "A9.1 follow-up decision (binding)",
-            "ANSWERED_BY_A9_1": "lane question answered by an A9.1 decision",
-            "ANSWERED (owner row N)": "lane question answered by an existing owner row",
-            "ADDRESSED_IN_A9_10": "integration work item performed by A9-10 (not an owner decision)",
-            "OPEN": "owner call; the lane's proposed answer is a proposal only"},
+            "ANSWERED (A9.1)": "A9.1 follow-up decision (binding); status ANSWERED",
+            "ANSWERED (owner row N)": "lane question answered by an existing owner row; status ANSWERED",
+            "SUPERSEDED / ANSWERED_BY_A9_1 / ADDRESSED_IN_A9_10 / OPEN": "detail equals the status"},
+        "status_rule": "'status' is the canonical value (filter on it; 'counts' counts it); 'status_detail' keeps the "
+                       "provenance form. ADDRESSED_IN_A9_10 is assigned by the lane for integration work the brief "
+                       "directed A9-10 to perform (OQ-INT-03 / OQ-INT-04); it is not an owner decision and the owner "
+                       "may reopen it.",
         "counts": dict(sorted(counts.items())), "open_count": len(open_rows),
         "rows": rows,
         "compliance": ["no OPEN question is answered here", "immutable inputs pinned by sha256; the v1 list is never "

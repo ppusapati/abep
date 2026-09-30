@@ -93,7 +93,15 @@ PASS_BASES = ("p_bus_1ms_max",)      # + a conformant gate_measurement record (A
 FAIL_BASES = ("p_bus_1ms_max", "step_average", "steady_state")   # averages: duration a multiple of / >> 1 ms
 FAIL_BASIS_ASSUMPTION = ("step_average / steady_state bound P_bus,1ms,max from below only when the averaging duration "
                          "is a whole multiple of 1 ms (exact) or much longer than 1 ms (approximate); an unstated "
-                         "basis gives NOT_EVALUABLE")
+                         "basis gives NOT_EVALUABLE. A ledger is a SUM of per-slot values: on the p_bus_1ms_max basis "
+                         "that sum is a rigorous bound for FAIL only when the slot values are simultaneous (taken in "
+                         "the same 1 ms window, e.g. one system-level bus channel split by slot); a sum of per-slot "
+                         "1 ms maxima taken at different times is an UPPER bound (conservative for PASS) but not a "
+                         "lower bound, so a FAIL on it must be confirmed by the system-level (bus-channel) 1 ms "
+                         "maximum (P1MS_SUM_RULE)")
+P1MS_SUM_RULE = ("p_bus_1ms_max ledger: FAIL requires slot values from one common 1 ms window (system-level bus-channel "
+                 "maximum); summed non-simultaneous per-slot maxima support PASS (upper bound) but a FAIL on them is "
+                 "only an indication until the system-level 1 ms maximum confirms it")
 PEAK_SAMPLED_RULE = ("an unaveraged sampled peak is a protection-analysis record, not the 1.5 kW gate (A9.1 "
                      "OQ-A902-01): NOT_EVALUABLE in both directions; whether a conformant sampled peak below 1500 W "
                      "may bound P_bus,1ms,max is the OPEN owner question OQ-A910-03 (not implemented before the "
@@ -119,6 +127,7 @@ TRANSIENT_WINDOW = {
                                        "rule": "sample_rate_Sa_s >= 100e3, bandwidth_Hz >= 20e3, "
                                                "anti_alias_documented and synchronized True, non-empty source"},
     "fail_bases": list(FAIL_BASES), "fail_basis_assumption": FAIL_BASIS_ASSUMPTION,
+    "p1ms_sum_rule": P1MS_SUM_RULE,
     "peak_sampled_rule": PEAK_SAMPLED_RULE,
     "note": "an A9 engineering definition pending authoritative RFP wording; the 1 ms window is not an ECSS "
             "requirement (A9.1 preamble); replaces the interim 'PASS only if peak_sampled' rule (a peak_sampled "
@@ -251,6 +260,18 @@ PEAK_EVENTS = {  # start-up peak-class events and their slots (row 112; A9.1 SEQ
     "hall_discharge_ignition": "hall_discharge",
     "active_cooling_start": "active_cooling",
 }
+# A9.1 SEQ-peaks limits the peak-class loads COMMANDED to rise per step. A load that rises only as the physical
+# consequence of the step's declared commanded event is a DEPENDENT rise, not a commanded one (A9-10 review repair):
+# in hall_icp_neutralizer the whole Hall discharge current closes through the ICP collector (ICD ICP-22 / ICP-45), so
+# at the Hall-ignition step the collector-bias load V_bias x I_collector rises with I_d without a new command. Such a
+# rise is excluded from the one-rise count ONLY at a step whose declared event is the key below, is listed in the
+# result ('dependent_rises') and still counts in every power ledger and in the 1500 W gate. The C1 reference has no
+# peak-class slot coupled this way (its discharge current returns through the cathode common tie, not a peak slot).
+DEPENDENT_RISE_RULE = ("A9.1 SEQ-peaks counts loads COMMANDED to rise; a peak-class load whose rise is the physical "
+                       "consequence of the step's declared event (icp_collector_bias at hall_discharge_ignition: the "
+                       "Hall discharge current closes through the collector, ICD ICP-22 / ICP-45) is a dependent rise, "
+                       "reported and kept in the power gate but not counted as a second commanded peak")
+DEPENDENT_RISES = {"hall_discharge_ignition": ("icp_collector_bias",)}
 # Enforced orderings (physically necessary or owner rule); every other ordering in the templates is PROPOSED.
 ENFORCED_ORDER = {
     "hall_c1_reference": (("c1_heater_preheat", "c1_keeper_ignition"), ("c1_keeper_ignition", "hall_discharge_ignition"),
@@ -580,7 +601,9 @@ def rfp_power_gate(steady: dict, startup_steps: Sequence) -> dict:
     PASS only if every ledger is COMPLETE, below the limit, declared ``p_bus_1ms_max`` (``PASS_BASES``) AND carries a
     conformant ``gate_measurement`` record (>= 100 kSa/s, >= 20 kHz, anti-alias documented, synchronized); no step
     average is substituted for the gate. FAIL if a known total or a lower bound reaches the limit on a basis in
-    ``FAIL_BASES`` (``FAIL_BASIS_ASSUMPTION``). An unaveraged ``peak_sampled`` value is a protection-analysis record,
+    ``FAIL_BASES`` (``FAIL_BASIS_ASSUMPTION``; on ``p_bus_1ms_max`` the ledger sum is a lower bound only for
+    simultaneous slot values, so such a FAIL carries ``P1MS_SUM_RULE``: confirm it on the system-level bus-channel
+    1 ms maximum, not on summed per-slot maxima). An unaveraged ``peak_sampled`` value is a protection-analysis record,
     not the system-power gate: NOT_EVALUABLE either way (``PEAK_SAMPLED_RULE``; OPEN owner question OQ-A910-03). An
     unstated basis gives NOT_EVALUABLE. Otherwise NOT_EVALUABLE. An empty start-up list is
     refused (the gate covers transients). The result carries the frozen gate definition (``GATE_DEFINITION``).
@@ -604,6 +627,8 @@ def rfp_power_gate(steady: dict, startup_steps: Sequence) -> dict:
             v, note = "NOT_EVALUABLE", ("declared p_bus_1ms_max without a conformant gate_measurement record "
                                         "(>= 100 kSa/s, >= 20 kHz, anti-alias documented, synchronized channels; "
                                         "A9.1 OQ-A902-01)")
+        elif v == "FAIL" and basis == "p_bus_1ms_max":
+            note = P1MS_SUM_RULE   # the FAIL stands; confirm it on the system-level 1 ms maximum
         elif v == "FAIL" and basis not in FAIL_BASES:
             v, note = "NOT_EVALUABLE", ("unstated power basis: the value is not shown to bound P_bus,1ms,max from "
                                         "below (it could be an unaveraged peak, A9.1 OQ-A902-01)")
@@ -849,6 +874,7 @@ def check_startup_sequence(config: str, steps: Sequence, front_end: Mapping, var
         raise BoundaryA9Error("a start-up sequence needs at least one start-up step and a final steady step")
     peak_slots = tuple(s for s in ALL_SLOTS if s in set(PEAK_EVENTS.values()) and s in inst)
     ledgers, violations, not_evaluable, seen_events, ids = [], [], [], {}, set()
+    dependent_rises = []
     heater = {"last_known": None, "prev_tbd": False, "on": False}
     prev_p = None
     for i, st in enumerate(steps):
@@ -880,8 +906,16 @@ def check_startup_sequence(config: str, steps: Sequence, front_end: Mapping, var
         cur_p = {it["slot"]: (None if it.get("booked_conservative") else it["P_W"]) for it in led["items"]}
         if prev_p is not None:
             sure, maybe = _peak_rises(prev_p, cur_p, peak_slots)
-            rule = ("at most one peak-class slot load rises per step (row 112; A9.1 SEQ-peaks baseline rule; by load, "
-                    "independent of event labels)")
+            dep_ok = {d for e in events for d in DEPENDENT_RISES.get(e, ())}
+            dep = [x for x in sure + maybe if x in dep_ok]
+            if dep:
+                dependent_rises.append({"step_id": sid, "events": events, "dependent_slots": dep,
+                                        "rule": DEPENDENT_RISE_RULE})
+            sure = [x for x in sure if x not in dep_ok]
+            maybe = [x for x in maybe if x not in dep_ok]
+            rule = ("at most one peak-class slot load commanded to rise per step (row 112; A9.1 SEQ-peaks baseline "
+                    "rule; checked by load, independent of event labels, except a declared dependent rise "
+                    "(DEPENDENT_RISES) of the step's own event)")
             if len(sure) > 1:
                 violations.append({"step_id": sid, "rule": rule, "detail": sure})
             elif len(sure) + len(maybe) > 1:
@@ -904,7 +938,7 @@ def check_startup_sequence(config: str, steps: Sequence, front_end: Mapping, var
               ("RULES_NOT_EVALUABLE" if not_evaluable else "RULES_SATISFIED"))
     return {"boundary_version": BOUNDARY_VERSION, "configuration": config, "variant": list(variant),
             "sequence_status": status, "violations": violations, "not_evaluable": not_evaluable,
-            "transient_gate": gate,
+            "dependent_rises": dependent_rises, "transient_gate": gate,
             "steady_allocation_checks": allocation_checks(ledgers[-1]),
             "steady_icp_power_allocation": (icp_power_allocation_check(ledgers[-1])
                                             if config == "hall_icp_neutralizer" else None),

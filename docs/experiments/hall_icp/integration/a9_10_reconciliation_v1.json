@@ -87,7 +87,7 @@
   {
    "id": "REC-01",
    "name": "declared A9-10 changes to the A9 deliverables",
-   "value": 288,
+   "value": 300,
    "units": "count",
    "basis": "a9_10_overlay.py records",
    "source": "computed by this builder",
@@ -122,7 +122,7 @@
    "name": "PENDING occurrences at the A9-10 base / now",
    "value": [
     634,
-    177
+    69
    ],
    "units": "count",
    "basis": "OQ-INT-03",
@@ -663,17 +663,17 @@
   {
    "deliverable": "A9-02",
    "file": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "changed_leaves": 385,
+   "changed_leaves": 403,
    "explained_by": {
     "op": 35,
     "gsub": 0,
-    "code": 191,
+    "code": 197,
     "pin": 0,
-    "section": 159
+    "section": 171
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 35,
+   "numeric_leaves_changed": 37,
    "changes": [
     {
      "cid": "A910-A902-Q01",
@@ -817,6 +817,33 @@
      ]
     },
     {
+     "cid": "A910-R02-C3",
+     "driver": "A9.1 SEQ-peaks (review repair 2; ICD ICP-22 / ICP-45)",
+     "op": "code",
+     "ptr": "abep_sim/bus_boundary_a9.py",
+     "count": 0,
+     "numeric": false,
+     "summary": "check_startup_sequence counts peak-class loads COMMANDED to rise (A9.1 SEQ-peaks wording): the icp_collector_bias rise at the hall_discharge_ignition step is a declared dependent rise (the Hall discharge current closes through the collector), reported in 'dependent_rises', kept in every power ledger and the 1500 W gate, not counted as a second commanded peak; the same rise at any other step still violates",
+     "scope": [
+      "/sequencing",
+      "/items",
+      "/gates_and_allocations"
+     ]
+    },
+    {
+     "cid": "A910-R02-C4",
+     "driver": "A9.1 OQ-A902-01 (review repair 2)",
+     "op": "code",
+     "ptr": "abep_sim/bus_boundary_a9.py",
+     "count": 0,
+     "numeric": false,
+     "summary": "FAIL on a p_bus_1ms_max ledger carries P1MS_SUM_RULE: the per-slot sum is a lower bound only for simultaneous slot values; summed non-simultaneous per-slot 1 ms maxima are an upper bound (PASS-conservative), so a FAIL on them must be confirmed on the system-level bus-channel 1 ms maximum",
+     "scope": [
+      "/gates_and_allocations",
+      "/items"
+     ]
+    },
+    {
      "cid": "A910-R02-01",
      "driver": "OQ-INT-03 (A9-03 ICP-13)",
      "op": "merge",
@@ -938,17 +965,17 @@
   {
    "deliverable": "A9-03",
    "file": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "changed_leaves": 456,
+   "changed_leaves": 470,
    "explained_by": {
-    "op": 81,
+    "op": 83,
     "gsub": 0,
     "code": 0,
     "pin": 0,
-    "section": 375
+    "section": 387
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 65,
+   "numeric_leaves_changed": 67,
    "changes": [
     {
      "cid": "A910-A903-Q01",
@@ -1514,23 +1541,41 @@
      "count": 1,
      "numeric": false,
      "summary": "hard-incompatibility finding re-evaluated against A9-02 / A9-05"
+    },
+    {
+     "cid": "A910-R03-25",
+     "driver": "A9.1 ICP-46 (review repair 2)",
+     "op": "replace",
+     "ptr": "/items[id=ICP-46]/requirement",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-46 requirement text aligned with the applied A9.1 isolation basis"
+    },
+    {
+     "cid": "A910-R03-26",
+     "driver": "A9.1 ICP-46 (review repair 2)",
+     "op": "set",
+     "ptr": "/items[id=ICP-46]/verification",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-46 verification aligned with A9.1"
     }
    ]
   },
   {
    "deliverable": "A9-04",
    "file": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "changed_leaves": 602,
+   "changed_leaves": 644,
    "explained_by": {
-    "op": 138,
-    "gsub": 17,
+    "op": 142,
+    "gsub": 19,
     "code": 0,
     "pin": 0,
-    "section": 447
+    "section": 483
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 80,
+   "numeric_leaves_changed": 86,
    "changes": [
     {
      "cid": "A910-A904-Q01",
@@ -2188,6 +2233,60 @@
      "count": 1,
      "numeric": false,
      "summary": "LA-04 precise reason"
+    },
+    {
+     "cid": "A910-R04-28",
+     "driver": "A9.1 UBQ-06 (review repair 2)",
+     "op": "set",
+     "ptr": "/items[id=UB-K-00]/note",
+     "count": 1,
+     "numeric": false,
+     "summary": "UB-K-00 note restated from the applied A9.1 UBQ-06"
+    },
+    {
+     "cid": "A910-R04-29",
+     "driver": "A9.1 UBQ-02 (review repair 2)",
+     "op": "replace",
+     "ptr": "/measurement_chains[dq=UB-DQ-NEUT]/equations[4]",
+     "count": 1,
+     "numeric": false,
+     "summary": "M_n form is owner-given (A9.1 UBQ-02)"
+    },
+    {
+     "cid": "A910-R04-30",
+     "driver": "A9.1 UBQ-02 (review repair 2)",
+     "op": "replace",
+     "ptr": "/measurement_chains[dq=UB-DQ-NEUT]/equations[4]",
+     "count": 1,
+     "numeric": false,
+     "summary": "M_n extra margin freeze point from A9.1 UBQ-02 (no stale A9-01 pointer)"
+    },
+    {
+     "cid": "A910-R04-31",
+     "driver": "A9.1 UBQ-04 (review repair 2)",
+     "op": "replace",
+     "ptr": "/measurement_chains[dq=UB-DQ-RF]/equations[4]",
+     "count": 1,
+     "numeric": false,
+     "summary": "cross-check rule restated from the applied A9.1 UBQ-04"
+    },
+    {
+     "cid": "A910-R04-32",
+     "driver": "A9-07 IDA7-21 (review repair 2)",
+     "op": "set",
+     "ptr": "/items[id=UB-RF-04]/units",
+     "count": 1,
+     "numeric": false,
+     "summary": "UB-RF-04 units match the imported IDA7-21 relative-error relation"
+    },
+    {
+     "cid": "A910-R04-33",
+     "driver": "A9.1 OQ-A902-01 (review repair 2)",
+     "op": "gsub",
+     "ptr": "",
+     "count": 3,
+     "numeric": false,
+     "summary": "gate quantity renamed P_bus,peak -> P_bus,1ms,max (UB-P-07 name, IF demand, row-112 application)"
     }
    ]
   },
@@ -2265,17 +2364,17 @@
   {
    "deliverable": "A9-05vi",
    "file": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-   "changed_leaves": 160,
+   "changed_leaves": 279,
    "explained_by": {
-    "op": 24,
-    "gsub": 0,
+    "op": 27,
+    "gsub": 104,
     "code": 0,
     "pin": 1,
-    "section": 135
+    "section": 147
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 21,
+   "numeric_leaves_changed": 23,
    "changes": [
     {
      "cid": "A910-A905VI-Q01",
@@ -2465,6 +2564,24 @@
      "count": 1,
      "numeric": false,
      "summary": "VI-GAS-01 source: A9.1 HIQ-06"
+    },
+    {
+     "cid": "A910-R05-01",
+     "driver": "OQ-INT-03 / OQ-A910-02 (review repair 2)",
+     "op": "gsub",
+     "ptr": "",
+     "count": 47,
+     "numeric": false,
+     "summary": "per-input producing stage: precise remaining reason next to the field"
+    },
+    {
+     "cid": "A910-R05-02",
+     "driver": "OQ-INT-03 / OQ-A910-02 (review repair 2)",
+     "op": "gsub",
+     "ptr": "",
+     "count": 60,
+     "numeric": false,
+     "summary": "per-input decision quantity: precise remaining reason next to the field"
     }
    ]
   },
@@ -3238,7 +3355,9 @@
     "A910-A904-Q02",
     "A910-A905VI-04",
     "A910-A905VI-05",
-    "A910-A905VI-Q02"
+    "A910-A905VI-Q02",
+    "A910-R04-29",
+    "A910-R04-30"
    ],
    "status": "APPLIED"
   },
@@ -3259,7 +3378,8 @@
     "A910-A904-10",
     "A910-A904-32",
     "A910-A904-37",
-    "A910-A904-Q04"
+    "A910-A904-Q04",
+    "A910-R04-31"
    ],
    "status": "APPLIED"
   },
@@ -3275,7 +3395,8 @@
    "decision": "UBQ-06",
    "applied_by": [
     "A910-A904-12",
-    "A910-A904-Q06"
+    "A910-A904-Q06",
+    "A910-R04-28"
    ],
    "status": "APPLIED"
   },
@@ -3322,7 +3443,9 @@
     "A910-A902-Q01",
     "A910-R02-02",
     "A910-R02-C1",
-    "A910-R04-03"
+    "A910-R02-C4",
+    "A910-R04-03",
+    "A910-R04-33"
    ],
    "status": "APPLIED"
   },
@@ -3383,7 +3506,8 @@
   {
    "decision": "SEQ-peaks",
    "applied_by": [
-    "A910-A902-02"
+    "A910-A902-02",
+    "A910-R02-C3"
    ],
    "status": "APPLIED"
   },
@@ -3396,6 +3520,7 @@
     "A910-A903-11",
     "A910-A903-12",
     "A910-A903-28",
+    "A910-R02-C3",
     "A910-R03-19"
    ],
    "status": "APPLIED"
@@ -3408,7 +3533,9 @@
     "A910-A903-15",
     "A910-A903-16",
     "A910-A903-17",
-    "A910-A909-24"
+    "A910-A909-24",
+    "A910-R03-25",
+    "A910-R03-26"
    ],
    "status": "APPLIED"
   },
@@ -3660,8 +3787,8 @@
     "deliverable": "A9-04",
     "file": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
     "pending_at_base": 68,
-    "pending_now": 14,
-    "leaves_no_longer_pending": 54,
+    "pending_now": 13,
+    "leaves_no_longer_pending": 55,
     "leaves_pending_at_base": 68
    },
    {
@@ -3676,8 +3803,8 @@
     "deliverable": "A9-05vi",
     "file": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
     "pending_at_base": 116,
-    "pending_now": 108,
-    "leaves_no_longer_pending": 8,
+    "pending_now": 1,
+    "leaves_no_longer_pending": 115,
     "leaves_pending_at_base": 116
    },
    {
@@ -3718,9 +3845,9 @@
    "HISTORICAL_COPY": 26,
    "H2_V1_REVISED_IN_A9_07": 7,
    "HISTORICAL_PREIONIZER": 1,
-   "ASSIGNMENT_NOT_DEFINED_BY_TARGET": 107,
+   "ASSIGNMENT_NOT_DEFINED_BY_TARGET": 0,
    "UNMAPPED_DQ_ID": 7,
-   "DEPENDS_ON_LOCK_OR_OWNER": 5,
+   "DEPENDS_ON_LOCK_OR_OWNER": 4,
    "DEPENDS_ON_HARDWARE_OR_EVIDENCE": 3,
    "TARGET_CHECKED_NOT_DEFINED": 0,
    "A9_08_OPEN_AFTER_A9_07": 5,
@@ -3862,12 +3989,6 @@
    },
    {
     "deliverable": "A9-04",
-    "pointer": "/measurement_chains[3]/equations[4]",
-    "text": ") > 0 (margin value PENDING docs/experiments/hall_icp/prereg_framework/)",
-    "reason": "DEPENDS_ON_LOCK_OR_OWNER"
-   },
-   {
-    "deliverable": "A9-04",
     "pointer": "/variance_groups/estimand",
     "text": "ed contrast k (list PENDING docs/experiments/hall_icp/prereg_framework/): Delta_k = ln Y_icp - ln Y_c1 at a matched condition (Y in {T, T/P_bus, P_bus, ...}); d",
     "reason": "DEPENDS_ON_LOCK_OR_OWNER"
@@ -3886,651 +4007,9 @@
    },
    {
     "deliverable": "A9-05vi",
-    "pointer": "/items[0]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[1]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[1]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[2]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[2]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[3]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[3]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[4]/how_obtained/chain",
-    "text": "metric cross-check (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[4]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[4]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[5]/how_obtained/chain",
-    "text": "na lead + VI-RF-04 (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[5]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[5]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[6]/how_obtained/chain",
-    "text": "RF current probe (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[6]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[6]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[7]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[7]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
     "pointer": "/items[8]/definition",
     "text": "ative; flight value PENDING)",
     "reason": "DEPENDS_ON_HARDWARE_OR_EVIDENCE"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[8]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[8]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[9]/how_obtained/chain",
-    "text": "on (INS-12 adapted; PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[9]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[9]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[10]/how_obtained/chain",
-    "text": "nge checks (row 64; PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[10]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[10]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[11]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[11]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[12]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[12]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[13]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[13]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[14]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[14]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[15]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[15]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[16]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[16]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[17]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[17]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[18]/how_obtained/chain",
-    "text": " if gating, row 32; PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[18]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[18]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[19]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[19]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[20]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[20]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[21]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[21]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[22]/how_obtained/chain",
-    "text": "INS-04 adapted (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[22]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[22]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[23]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[23]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[24]/how_obtained/chain",
-    "text": "14, INS-15 adapted (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[24]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[24]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[25]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[25]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[26]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[26]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[27]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[27]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[28]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[29]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[29]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[30]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[30]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[31]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[31]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[32]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[32]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[33]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[33]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[34]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[34]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[35]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[35]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[36]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[36]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[37]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[37]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[38]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[39]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[39]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[40]/how_obtained/chain",
-    "text": " (row 24; criterion PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map))",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[40]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[40]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[41]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[41]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[42]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[42]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[43]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[43]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[44]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[44]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[45]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[45]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[46]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[46]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[47]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[47]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[48]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[49]/producing_stage",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[49]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[50]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[51]/decision_quantity_ids",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
    },
    {
     "deliverable": "A9-06",
@@ -7020,7 +6499,7 @@
     "lanes_named": [
      "A9-02"
     ],
-    "quantity": "per-slot V and I channel requirement (4-wire, time-synchronized, declared bandwidth for P_bus,peak); correlation declaration for shared references",
+    "quantity": "per-slot V and I channel requirement (4-wire, time-synchronized, declared bandwidth for P_bus,1ms,max (A9.1 OQ-A902-01)); correlation declaration for shared references",
     "status": "PROPOSED",
     "class": "OFFERED",
     "open_reason": null
@@ -8720,25 +8199,25 @@
   {
    "deliverable": "A9-02",
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "sha256": "dd888719d36e5de2fc9e622451ff2ea7b88522d12aacf32919be130dc225bcb3",
+   "sha256": "a16496b06df5876efb8764ec183bf65888c372e2719983b07cf2c946112704af",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-02",
    "path": "docs/architecture_comparison/power_boundary_a9/BUS_POWER_BOUNDARY_A9.md",
-   "sha256": "c805c4bf2b94b1cd402e3a059e9ff96838d6f99a912713da35d91c26b9a90bbd",
+   "sha256": "4806cd454344c8cf384e68f645eced9c9dc37e3ae248bb64878a5e2e6ffe7294",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-02",
    "path": "docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py",
-   "sha256": "92a269f660828e0c95510da938d3d4c4dd842a1a9ab71adf5a72dddb6ca58590",
+   "sha256": "901ceea5ae68e8522d985253b353ab344b81a22172a2369be27932ad6f50d707",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-02",
    "path": "abep_sim/bus_boundary_a9.py",
-   "sha256": "08d8d6e730aabb30203944613fba1fe73ce738cdbe93c2bb9b161d6511d57819",
+   "sha256": "78014f51bec31c8c05129e6fe7d7e3db528e30e3e78237c693342b9568c66a27",
    "changed_since_base": true
   },
   {
@@ -8750,13 +8229,13 @@
   {
    "deliverable": "A9-03",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "0a2ec6666530e8464f63a9517eaff8b2eece61aac9c7b73b4e2de897f5387d75",
+   "sha256": "81b073e6545d9bffb12b655058ca3bc6dec8827fd9f4b8779132e30678741997",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-03",
    "path": "docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md",
-   "sha256": "258c6c95e21f1374ac03beb3a7aa6ffaf0b8bcb42e0a20138096a2c0d32ef8d4",
+   "sha256": "6c2b9dce4962864e56be75ef71efff52401dee1c4825727017a8de1d65bbc5e6",
    "changed_since_base": true
   },
   {
@@ -8768,13 +8247,13 @@
   {
    "deliverable": "A9-04",
    "path": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "sha256": "4c9f57fa28bf4465a80966a12661eddcd77dd37d487fd63fb111d60937426de6",
+   "sha256": "4d087e993410a795cd6bc25c3fd5af19f481a9692ff13cc6fe8a56b7e4bb4b44",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-04",
    "path": "docs/experiments/hall_icp/uncertainty_budget/HALL_ICP_UNCERTAINTY_BUDGET.md",
-   "sha256": "309f9a586897243b17ffc3ed6e430c29a3fb3e156e27229e78471744812041b9",
+   "sha256": "ef819bb397b7b19fbf54cbd94034a84211e75aa6b5c8e36445540e431d6b28ea",
    "changed_since_base": true
   },
   {
@@ -8804,13 +8283,13 @@
   {
    "deliverable": "A9-05vi",
    "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-   "sha256": "e26c38ef0af4f56d8d7b21e024867e7c6ad0378841d2f9992ac8f0d904a9a2ed",
+   "sha256": "4924f31b9b0a9315b96ecc121ece07ca3ef47d4e86515b17e76144fcb212da61",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-05vi",
    "path": "docs/experiments/hall_icp/validation_inputs/HALL_ICP_VALIDATION_INPUTS.md",
-   "sha256": "391c523a1fe732abb9dc6fdae1d974c8db1fad651732c1bb85f7c372cd1cdf72",
+   "sha256": "3eb1fe24a462ab05f491582068fd289e895a1ee1889d2d79c9d82d57b93a03cb",
    "changed_since_base": true
   },
   {
@@ -8822,13 +8301,13 @@
   {
    "deliverable": "A9-06",
    "path": "docs/budgets/mass_a9/mass_a9_v1.json",
-   "sha256": "bc3a4d7095cb4650db866baf6d8c5e86d45d87821a4ea82a25fdda698dfec309",
+   "sha256": "fa32662a3450df04bb14cf36adaf59c6a55847e3e30b28b1062bdfe95e624a4e",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-06",
    "path": "docs/budgets/mass_a9/MASS_A9.md",
-   "sha256": "d1a7c0576ef01e7766b2cb9ba29ce4eb8bc54639aeb55ff8853bd2ac7d54c10c",
+   "sha256": "d11799113d70a61152bdc74e3daec54914b60a0c1bd062a052aa5cef939efd4d",
    "changed_since_base": true
   },
   {
@@ -8840,13 +8319,13 @@
   {
    "deliverable": "A9-07",
    "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
-   "sha256": "c50986bafc004b4f82fbcd408830c286a2d30d1bb045d0f6f250d3e91a117c1c",
+   "sha256": "c8d575cb70e0472305cf632f1d9b9b24ae1108bc1cc1ddc32ff1a6b7699bd5c4",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-07",
    "path": "docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md",
-   "sha256": "d06aebff1aa71eb0e16bd79ed689a3a2056b26ce33992b0505caf30082624252",
+   "sha256": "8b06fc316ff82e4a22a7c2028dee3e7c3eda17638d3eb9b562f7b7fab61a6bd2",
    "changed_since_base": true
   },
   {
@@ -8858,31 +8337,31 @@
   {
    "deliverable": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
-   "sha256": "52d77cd06d4615f368fa3a4da5b729c253a0bb4708c30cf96ba03c0f88a6e0db",
+   "sha256": "c2540246cc1e9bf394f94f51b1f0628fab4545d5112c1b558e6c35b761e302d1",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/XE_LEDGER_A9.md",
-   "sha256": "af93c24e90401d4f6592ba5f287841d8fd29c2703dbfcc514e81de1f3ee9aff5",
+   "sha256": "c703ed97a4074bf222764fcb82c08c7557e379564a4d302187765e0cc4b4acc3",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/build_xe_ledger_a9.py",
-   "sha256": "b72d68ce6fe6c917067dc1ab871ce764ac871054fc10a8473cf363fce82ed6a4",
+   "sha256": "a97be213cda30be7cde6563cd10d2236a71c12ceae7f4f3e9685a8b692bf36c1",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-09",
    "path": "docs/procurement/rfq_a9/rfq_a9_v1.json",
-   "sha256": "b92ad25e698589e75b8a426d613f97288a021d8b512f90fc976e15e3db96d530",
+   "sha256": "6b13fb03320edda1ea3455df7dff396b1f9e933d0a4abebc56ae00dddf17afb7",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-09",
    "path": "docs/procurement/rfq_a9/RFQ_A9.md",
-   "sha256": "b281bfb09569991792d77cc974891ea894ec864605760f5efa7492cedad3be5a",
+   "sha256": "5064521247418e3d3b2015e338ce96bf641cba9845243aa3b30ff52231a20de9",
    "changed_since_base": true
   },
   {
@@ -8912,7 +8391,7 @@
   {
    "deliverable": "A9-10",
    "path": "docs/experiments/hall_icp/integration/a9_10_overlay.py",
-   "sha256": "a941354fa1016bd35280f936e761748bd99e75f3a3eccf41dd92ed6b70d79ea1",
+   "sha256": "5fbdbbb55281c83eaf66f0e31936e82393c7ea9a174513924154f6d6288a9404",
    "changed_since_base": true
   }
  ],
@@ -9374,7 +8853,7 @@
   },
   {
    "id": "OQ-A910-02",
-   "question": "Assign the producing stage and the decision quantity of each A9-05 validation input (98 entries still read 'PENDING A9-01 stage map' / 'PENDING A9-04 measurement chain / decision quantity')?",
+   "question": "Assign the producing stage and the decision quantity of each A9-05 validation input (98 producing_stage / decision_quantity_ids fields, now reading 'TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET ... owner call OQ-A910-02', overlay A910-R05-01/02)?",
    "proposed_answer": "assign at LOCK-1 from the A9-01 stage map and the A9-10 chain -> DQ-HI consumer table (dq_consumer_table); no assignment is invented here; owner call",
    "needed_by": "LOCK-1",
    "raised_by": "A9-10"
@@ -9404,7 +8883,7 @@
   },
   {
    "id": "OQ-A910-02",
-   "question": "Assign the producing stage and the decision quantity of each A9-05 validation input (98 entries still read 'PENDING A9-01 stage map' / 'PENDING A9-04 measurement chain / decision quantity')?",
+   "question": "Assign the producing stage and the decision quantity of each A9-05 validation input (98 producing_stage / decision_quantity_ids fields, now reading 'TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET ... owner call OQ-A910-02', overlay A910-R05-01/02)?",
    "proposed_answer": "assign at LOCK-1 from the A9-01 stage map and the A9-10 chain -> DQ-HI consumer table (dq_consumer_table); no assignment is invented here; owner call",
    "needed_by": "LOCK-1",
    "raised_by": "A9-10"
@@ -9435,9 +8914,9 @@
    "HISTORICAL_COPY": 26,
    "H2_V1_REVISED_IN_A9_07": 7,
    "HISTORICAL_PREIONIZER": 1,
-   "ASSIGNMENT_NOT_DEFINED_BY_TARGET": 107,
+   "ASSIGNMENT_NOT_DEFINED_BY_TARGET": 0,
    "UNMAPPED_DQ_ID": 7,
-   "DEPENDS_ON_LOCK_OR_OWNER": 5,
+   "DEPENDS_ON_LOCK_OR_OWNER": 4,
    "DEPENDS_ON_HARDWARE_OR_EVIDENCE": 3,
    "TARGET_CHECKED_NOT_DEFINED": 0,
    "A9_08_OPEN_AFTER_A9_07": 5,
