@@ -1302,6 +1302,12 @@
    "kind": "follow_on",
    "title": "A9.6 implementation-first: one consolidated verification campaign (sec. 18)",
    "verification": "deferred to fo_a9_6_consolidated_verification (A9.6 sec. 17-18)"
+  },
+  {
+   "id": "fo_a9_6_cross_lane_integration",
+   "kind": "follow_on",
+   "title": "A9.6 implementation-first: cross-lane integration (replace PENDING references between P1/P2/P3/P4/mass-power/Xe/RFQ with real ids; interface-demand reconciliation)",
+   "verification": "deferred to fo_a9_6_consolidated_verification (A9.6 sec. 17-18)"
   }
  ],
  "owner_dispositions": [

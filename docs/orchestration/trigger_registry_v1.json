@@ -1138,6 +1138,18 @@
    "produces": "fo_a9_6_consolidated_verification",
    "kind": "follow_on_launch",
    "note": "owner A9.6 implementation-first directive 2026-09-30; per-lane verification deferred to the consolidated campaign; launched only when all implementation lanes are implemented and integrated (sec. 18)"
+  },
+  {
+   "id": "T_A9_6_CROSS_LANE_INTEGRATION",
+   "prerequisites": [
+    {
+     "id": "od_a9_6_implementation_first",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_6_cross_lane_integration",
+   "kind": "follow_on_launch",
+   "note": "owner A9.6 implementation-first; wave 3 integration"
   }
  ]
 }

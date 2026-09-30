@@ -215,7 +215,16 @@
   "lanes": {
    "fo_a9_5_closure_rule": "VERIFIED (three lenses) and merged",
    "fo_a9_6_p1_workflow_completion": "IMPLEMENTED (4ce0be3, wf_a4924b07-89f), merged; verification deferred",
-   "fo_a9_6_p2_framework_completion": "IMPLEMENTED (78ca691, wf_a4924b07-89f), merged; verification deferred"
-  }
+   "fo_a9_6_p2_framework_completion": "IMPLEMENTED (78ca691, wf_a4924b07-89f), merged; verification deferred",
+   "fo_a9_6_p3_coupled_thermal": "IMPLEMENTED (88f6969, wf_2715cb88-d09), merged; verification deferred",
+   "fo_a9_6_p4_anode_materials": "IMPLEMENTED (ba22927, wf_2715cb88-d09), merged; verification deferred",
+   "fo_a9_6_mass_power_integration": "IMPLEMENTED (263b2d2, wf_2715cb88-d09), merged; verification deferred",
+   "fo_a9_6_xe_accounting": "IMPLEMENTED (d192ae9, wf_2715cb88-d09), merged; verification deferred",
+   "fo_a9_6_rfq_completion": "IMPLEMENTED (d9ade4f, wf_2715cb88-d09), merged; verification deferred"
+  },
+  "integration_notes": [
+   "circular P1/P2 -> RFQ v2 sha pins replaced by id checks (RFQ v2 reads P1/P2 text)",
+   "hygiene: full suite 2541/5/1 after waves 1-2; all repo builders --check OK (the v1 consolidated-questions builder ignores --check and rewrites its xlsx: never run it; restored byte-identical)"
+  ]
  }
 }
