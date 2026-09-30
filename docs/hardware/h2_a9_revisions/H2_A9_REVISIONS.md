@@ -7,15 +7,17 @@ Configurations: `hall_c1_reference`, `hall_icp_neutralizer` (never ranked; no wi
 ## Key findings
 
 - K1 external C1 (row 79) removes the H21-22 central-cathode floor (v1, 18 mm bore: h 9.333 mm: d_mean 58.04-59.5 mm excluded; h 10.91 mm: d_mean 49.66-61 mm excluded; h 12 mm: d_mean 45.6-62 mm excluded; h 12.48 mm: d_mean 47.43-62.5 mm excluded; h 14.06 mm: d_mean 53.42-64.5 mm excluded; h 15.63 mm: d_mean 59.4-66 mm excluded; h 17.21 mm: d_mean 65.38-65.38 mm excluded). The remaining inner-coil build floor with a solid core: nominal assumptions -> not binding anywhere in the H21-01/H21-02 window; worst-case assumptions -> h 10.91 mm: d_mean 49.66-51.5 mm excluded; h 12 mm: d_mean 45.6-53 mm excluded; h 12.48 mm: d_mean 47.43-53.5 mm excluded; h 14.06 mm: d_mean 53.42-55 mm excluded. The preliminary d_mean window H21-04 is therefore available again except where stated; FEMM (H21-16/H21-23) remains the closing check.
-- K2 thermal, owner rules (>= 50 K below the recorded limits, 1.2 x heat loads, Z-93 finish, ceramic coil, EM-only), worst case = OAT corner + coordinate ascent (search allowance 1.49 K added to every verdict): overall status OPEN. Baseline worst (searched) T_max vs the v1-method OAT corner: BN inner wall 870.1 (OAT 867.8; ceiling 850), outer wall 837.7 (OAT 836), inner coil 980 (OAT 969.6; ceiling 487.778), outer coil 481.4 (OAT 370.1) degC: the OAT corner alone under-estimates the maximum (outer coil by 111.3 K). Brief verdicts at baseline: WI DO_NOT_CLOSE, WO CLOSES, CI DO_NOT_CLOSE, CO CLOSES. Every hall_icp_neutralizer CLOSES is CONDITIONAL: it is evaluated with 0 W of ICP module heat into H-1 (ICP-43 TBD) and holds only while 1.2 x Q_ICP->H-1 <= the allowable ICP heat at baseline: WO 139.3 W at PO / 83.6 W at BP, CO 13 W at PO / 31.6 W at BP (module sized for 0-500 W forward RF, row 72). Search-sensitive baseline closures: CO.
-- K3 the v1 11.2 K BN-wall case is RESOLVED_WITH_LEVERS (with the SAME v1 inputs the search finds 891.2 degC vs the v1 888.8). Single levers that close it in every case: LV-OPEN, LV-COIL, LV-COND, LV-MOUNT; minimal closing sets that also keep the corner mount heat within 100 W: LV-OPEN+ISO (NOT_CHECKED), LV-COIL+ISO (NOT_DEMONSTRATED). no closing lever set is demonstrated buildable; resolution is conditional on the lever's buildability check and on validation of the 900 degC supplier value.
+- K2 thermal, owner rules (>= 50 K below the recorded limits, 1.2 x heat loads, Z-93 finish, ceramic coil, EM-only), worst case = OAT corner + coordinate ascent (search allowance 1.49 K added to every verdict): overall status OPEN. Baseline worst (searched) T_max vs the v1-method OAT corner: BN inner wall 870.1 (OAT 867.8; ceiling 850), outer wall 837.7 (OAT 836), inner coil 980 (OAT 969.6; ceiling 487.778), outer coil 481.4 (OAT 370.1) degC: the OAT corner alone under-estimates the maximum (outer coil by 111.3 K). Brief verdicts at baseline: WI DO_NOT_CLOSE, WO CLOSES, CI DO_NOT_CLOSE, CO CLOSES. Every hall_icp_neutralizer CLOSES is CONDITIONAL on (1) the unmodelled blocking of the H-1 exit-face radiative view by the downstream ICP module (ICP-05 view factors) and (2) the ICP module heat: it is evaluated with 0 W of ICP module heat into H-1 (ICP-43 TBD) and holds only while 1.2 x Q_ICP->H-1 <= the allowable ICP heat at baseline: WO 139.3 W at PO / 83.6 W at BP, CO 13 W at PO / 31.6 W at BP (module sized for 0-500 W forward RF, row 72). Search-sensitive baseline closures: CO.
+- K3 the v1 11.2 K BN-wall case is CONDITIONALLY_RESOLVED (with the SAME v1 inputs the search finds 891.2 degC vs the v1 888.8). Single levers that close it in every case: LV-OPEN, LV-COIL, LV-COND, LV-MOUNT; minimal closing sets that also keep the corner mount heat within 100 W: LV-OPEN+ISO (NOT_CHECKED), LV-COIL+ISO (NOT_DEMONSTRATED). no closing lever set is demonstrated buildable; resolution is conditional on the lever's buildability check and on validation of the 900 degC supplier value.
 - K4 inner coil CI is the design-driving node: it closes in every case only with LV-ALL (none of which keeps the mount heat within 100 W); the best mount-heat-compatible set (LV-ALL-ISO) leaves a margin to the design ceiling of -12.3 K, so the coil closure stays OPEN (evidence levers: measured deposition fractions, validated coil rating, FEMM-sized winding window).
 - K5 heat into the spacecraft mount at the searched corners stays within the largest row-85 case (100 W) only for LV-ALL-ISO, LV-COIL+ISO, LV-OPEN+ISO, LV-RAD+ISO; minimal such closing sets per node: WI LV-OPEN+ISO (NOT_CHECKED), LV-COIL+ISO (NOT_DEMONSTRATED); WO LV-OPEN+ISO (NOT_CHECKED), LV-RAD+ISO (NOT_CHECKED), LV-COIL+ISO (NOT_DEMONSTRATED); CO LV-OPEN+ISO (NOT_CHECKED), LV-RAD+ISO (NOT_CHECKED), LV-COIL+ISO (NOT_DEMONSTRATED); CI none. Each of these is also conditional on the ICP-43 heat into H-1 (allowable heat per set in closure_summary_hall_icp_neutralizer.*.icp_heat_allowable_W_per_closing_lever_set). LV-ALL-ISO is not the only route; it also carries the largest buildability risk: it contains LV-COIL (NOT_DEMONSTRATED) together with LV-COND (D_core 50 mm), a pair without a buildability check. See OQ-A907-06.
-- K6 pole/core, anode and exterior-coating limits are TBD (B_sat(T), anode material, coating datasheet); necessary Curie checks: PI FAIL, PO PASS, BP PASS; the coated PO/BP surfaces must withstand up to PO 442, BP 588 degC at baseline (OQ-A907-08). Anode: no lever set evaluated brings the searched/bounded anode worst case below 1190 degC (lowest, LV-ALL); the verdict stays OPEN_LIMIT_TBD because row 87 forbids an unsourced anode target, but the anode material (316L is only the H-1 engineering baseline, row 106) and its thermal path are a DESIGN DRIVER: a sourced continuous-use limit of the selected material must exceed the anode worst case + 50 K, or the anode heat path must change (row 87 derivation from the selected material's oxidation/electrical/creep data).
+- K6 pole/core, anode and exterior-coating limits are TBD (B_sat(T), anode material, coating datasheet); necessary Curie checks: PI FAIL, PO PASS, BP PASS; the coated PO/BP surfaces must withstand up to PO 442, BP 588 degC at baseline (OQ-A907-08). Anode: no lever set evaluated brings the searched/bounded anode worst case below 1190 degC (lowest, LV-ALL); the verdict stays OPEN_LIMIT_TBD because row 87 forbids an unsourced anode target, but the anode material (316L is only the H-1 engineering baseline, row 106) and its thermal path are a DESIGN DRIVER: a sourced continuous-use limit of the selected material must exceed the anode worst case + 50 K, or the anode heat path must change (row 87 derivation from the selected material's oxidation/electrical/creep data). Buildability statement (not a target): the H-1 engineering baseline 316L (row 106) cannot credibly meet this worst case - with the +50 K margin it would need a continuous-use limit of at least 1241.5 degC (lowest lever set) to 1343.4 degC (worst; searched T_max + search allowance + 50 K), i.e. within about 32-134 K of the lower end of the typical published 316/316L melting (solidus-liquidus) range of about 1375-1400 degC (from memory - verify against a 316L datasheet). A continuous-use limit of an austenitic stainless steel in an oxidizing, electrically loaded service lies far below its melting range, so 316L cannot credibly meet this anode heat path; either a different anode material with a sourced limit (row 87) or a changed heat path is needed.
 - K7 ICP-46 keeper isolation basis 900 V (1.5 x 600 V), 1.0 kV DC development hipot, separate 600 V pulse test; flight discharge-supply output current bounded by 7.5 A (1350 W / 180 V); stand I_d,max registration is an owner/LOCK-1 item (OQ-A907-02).
 - K8 downstream fixture: H-1 bolted; KC-1 carries the C1 module, the ICP module and the sham downstream of IP-EXIT; matching network off-platform with the coupler plane after the match; matched shams both ways; >= 25 kg stand.
 - K9 hall_c1_reference: NO thermal verdict. The only C1 case run couples C1 heat through the v1 CENTRAL-cathode path, a geometry abandoned under row 79; kept as a sensitivity only (LV-BASE: WI 877.3 degC, PI 941.8 degC, CI 991.3 degC, CO 492.5 degC; LV-ALL-NO-MOUNT: CI 527.4 degC). The external KC-1 module coupling is TBD - requires the module drawing and view factors (ICP-05); the zero-coupling bound equals the hall_icp_neutralizer ground rows.
 - K10 every A9-02 H2-4 revision flag that is not retained maps to a REV entry (h2_4_flag_coverage), incl. H24-33 re-derived on the 100 V internal bus (REV-67).
+- K11 RF chain: the row-72 0-500 W range is the GENERATOR forward power; at the A9.1 coupler plane (after the match) the forward power is P_net / (1 - |Gamma|^2) and depends on the antenna impedance, which is TBD. Coupler/sensor/coax ratings and the directivity requirement are therefore TBD until either an on-module pre-match fixes Gamma_max (option a, proposed) or the antenna impedance range is known (option b). At the review's illustrative loads (not antenna data) and 500 W net: 20+j50 ohm VSWR 5.208, P_fwd 925 W, V_pk 510.3 V, 5+j100 ohm VSWR 50.08, P_fwd 6513 W, V_pk 1582 V, 1+j100 ohm VSWR 250, P_fwd 31500 W, V_pk 3536 V. Proposed: a fixed on-module pre-match (OQ-A907-11); demands to A9-03 (IDA7-20), A9-04 (IDA7-21), A9-09 (IDA7-22).
+- K12 LV-COIL copper mass (one consistent coil definition, P x m_cu invariant at fixed NI and mean turn, H2-1 RP-1 f_NI 2): delta 0.136 kg at a 60 W basis, 1.58 kg at a 5.164 W basis; fixed-mean-turn estimates, not bounds; the mass to book is TBD until the H-1 coil is frozen (IDA7-01).
 
 ## What this is not
 
@@ -79,7 +81,7 @@ Finding: external C1 (row 79) removes the H21-22 central-cathode floor (v1, 18 m
 
 ## Recomputation 2 - H2-5 thermal network under the owner margin rules
 
-H2-5 builder imported read-only (build_parameters, ranges_for, assemble/solve: 9-node steady network, Newton solve, energy-balance closure check). Worst case per output = the H2-5 envelope method (one-at-a-time signs at the midpoints, adverse corner) FOLLOWED by a coordinate ascent from that corner (3 trial points per input: both ends and the midpoint; passes until no input improves the output) for WI, WO, CI, CO, PI, PO, BP, Q_mount_W; the OAT corner alone is not a bound (interior optima, e.g. eps_anode). The ascent is a local search, so every verdict adds the search allowance from a search-gap check (finer grid + seeded random starts on the hottest baseline combination). Owner rules: dissipated loads (anode/wall/pole fractions of P_d, coil I^2R, cathode) x 1.2 (row 86), coil I^2R upper bound also x the ceramic-conductor factor, exterior finish = the high-emittance Z-93 option (row 84), EM-only magnetic circuit (row 78: the permanent-magnet rows of v1 are dropped), mounting interface at 20/40/60 degC (row 85; the 60 degC case lies ABOVE the H2-5 v1 H25-36 range 273.15-323.15 K - an owner-given extension, not a lever). Environmental solar/albedo/OLR inputs are the v1 hot/cold bounds, NOT scaled by the 20 % margin (an interpretation of row 86; owner question OQ-A907-09). P_d = the whole 1350 W internal allocation (H25-02 bound, conservative under OQ-A902-03). Geometry stays the v1 ECHT-analog set (H25-12..14) - the H-1 geometry is not frozen (H2-1 window), a stated limitation. Evaluation is split over fork worker processes; each combination is a pure function of its inputs and results are re-assembled in task order, so the output does not depend on the process layout
+H2-5 builder imported read-only (build_parameters, ranges_for, assemble/solve: 9-node steady network, Newton solve, energy-balance closure check). Worst case per output = the H2-5 envelope method (one-at-a-time signs at the midpoints, adverse corner) FOLLOWED by a coordinate ascent from that corner (3 trial points per input: both ends and the midpoint; passes until no input improves the output) for WI, WO, CI, CO, PI, PO, BP, Q_mount_W; the OAT corner alone is not a bound (interior optima, e.g. eps_anode). The ascent is a local search, so every verdict adds the search allowance from a search-gap check (finer grid + seeded random starts on the hottest baseline combination). Owner rules: dissipated loads (anode/wall/pole fractions of P_d, coil I^2R, cathode) x 1.2 (row 86), coil I^2R upper bound also x the ceramic-conductor factor, exterior finish = the high-emittance Z-93 option (row 84), EM-only magnetic circuit (row 78: the permanent-magnet rows of v1 are dropped, and the v1 0 W P_mag lower end, which stood for a permanent-magnet MC-1, is replaced by the H21-18 lower end 1.289 W: RP-1, f_NI 1, copper at 20 degC, the smallest EM coil dissipation in H2-1, a different geometry from the ECHT-analog network - it only sets T_min / nominal, never a T_max verdict), mounting interface at 20/40/60 degC (row 85; the 60 degC case lies ABOVE the H2-5 v1 H25-36 range 273.15-323.15 K - an owner-given extension, not a lever). Environmental solar/albedo/OLR inputs are the v1 hot/cold bounds, NOT scaled by the 20 % margin (an interpretation of row 86; owner question OQ-A907-09). P_d = the whole 1350 W internal allocation (H25-02 bound, conservative under OQ-A902-03). Geometry stays the v1 ECHT-analog set (H25-12..14) - the H-1 geometry is not frozen (H2-1 window), a stated limitation. Evaluation is split over fork worker processes; each combination is a pure function of its inputs and results are re-assembled in task order, so the output does not depend on the process layout
 
 Rule: CLOSES when the searched worst-case T_max + the search allowance <= validated limit - 50 K in every evaluated case; limits are the recorded supplier values (NOT_VALIDATED), so a CLOSES verdict is conditional on their validation; never relaxed. Coil conductor factor (Ni-clad vs Cu): 1.3263. Reproduction check: v1 orbit_hot / bare_machined_stainless / WI (v1 rules) T_max 888.8 degC reproduced as 888.7 degC (v1 OAT method); the search with the same v1 inputs gives 891.2 degC.
 
@@ -101,18 +103,18 @@ Mount-temperature range: row 85 T_mount 60 degC (333.15 K) extends the H2-5 v1 H
 
 ### Closure summary (hall_icp_neutralizer, flight-representative cases, all levers evaluated)
 
-Verdict vocabulary: `brief_verdict_at_baseline` is CLOSES / DO_NOT_CLOSE (live limit) or OPEN_LIMIT_TBD (no validated limit); `status` refines it: CLOSES_WITH_SINGLE_LEVER / CLOSES_ONLY_WITH_COMBINED_LEVERS mean DO_NOT_CLOSE at baseline but CLOSES with the named lever sets. **Every hall_icp_neutralizer CLOSES is conditional**: evaluated with 0 W of ICP module heat entering H-1 (ICP-43 TBD): the verdict holds only if 1.2 x Q_ICP->H-1 (row 86 heat-load margin) <= the allowable ICP heat of this node and lever set at its injection point (recomputations.h25_thermal_rerun.icp_heat_into_h1) (allowances per closing set below).
+Verdict vocabulary: `brief_verdict_at_baseline` is CLOSES / DO_NOT_CLOSE (live limit) or OPEN_LIMIT_TBD (no validated limit); `status` refines it: CLOSES_WITH_SINGLE_LEVER / CLOSES_ONLY_WITH_COMBINED_LEVERS mean DO_NOT_CLOSE at baseline but CLOSES with the named lever sets. **Every hall_icp_neutralizer CLOSES is conditional**: (1) evaluated with 0 W of ICP module heat entering H-1 (ICP-43 TBD): the verdict holds only if 1.2 x Q_ICP->H-1 (row 86 heat-load margin) <= the allowable ICP heat of this node and lever set at its injection point (recomputations.h25_thermal_rerun.icp_heat_into_h1) (allowances per closing set below); (2) the network keeps the v1 exterior radiative views of H-1 (exit face / outer front pole PO to the sink); a downstream coaxial ICP module (a source tube around the plume axis, Takahashi-type topology) placed at IP-NEU blocks part of that view and re-radiates to H-1 - this is NOT modelled (view factors TBD - requires the KC-1 module drawing and view factors, ICP-05); the verdict holds only if a re-solve with the real module view factors still closes.
 
 | node | brief verdict at baseline | status | baseline worst T_max searched / OAT (degC) | worst margin to limit (K) | baseline nominal (degC) | levers closing every case | minimal closing sets within 100 W (buildability) | necessary check |
 |---|---|---|---|---|---|---|---|---|
-| AN | OPEN_LIMIT_TBD | OPEN_LIMIT_TBD | 1291.9 / 1291.9 | None | [444.0, 468.0] | - | none | - |
-| WI | DO_NOT_CLOSE | CLOSES_WITH_SINGLE_LEVER | 870.1 / 867.8 | 29.9 | [314.3, 334.5] | LV-OPEN, LV-COIL, LV-COND, LV-MOUNT, LV-ALL-NO-MOUNT, LV-ALL, LV-ALL-ISO, LV-OPEN+ISO, LV-COIL+ISO, LV-COND+ISO | LV-OPEN+ISO (NOT_CHECKED), LV-COIL+ISO (NOT_DEMONSTRATED) | - |
-| WO | CLOSES | CLOSES | 837.7 / 836.0 | 62.3 | [289.3, 306.9] | LV-OPEN, LV-RAD, LV-COIL, LV-COND, LV-BN, LV-MOUNT, LV-ALL-NO-MOUNT, LV-ALL, LV-ISO, LV-ALL-ISO, LV-OPEN+ISO, LV-RAD+ISO, LV-COIL+ISO, LV-COND+ISO, LV-BN+ISO | LV-OPEN+ISO (NOT_CHECKED), LV-RAD+ISO (NOT_CHECKED), LV-COIL+ISO (NOT_DEMONSTRATED) | - |
-| PI | OPEN_LIMIT_TBD | OPEN_LIMIT_TBD | 930.8 / 876.9 | None | [292.1, 324.0] | - | none | FAIL |
-| PO | OPEN_LIMIT_TBD | OPEN_LIMIT_TBD | 390.5 / 366.9 | None | [145.1, 160.6] | - | none | PASS |
-| BP | OPEN_LIMIT_TBD | OPEN_LIMIT_TBD | 536.5 / 536.1 | None | [197.9, 222.6] | - | none | PASS |
-| CI | DO_NOT_CLOSE | CLOSES_ONLY_WITH_COMBINED_LEVERS | 980.0 / 969.6 | -442.2 | [295.1, 327.0] | LV-ALL | none | - |
-| CO | CLOSES | CLOSES | 481.4 / 370.1 | 56.4 | [146.0, 161.5] | LV-OPEN, LV-RAD, LV-COIL, LV-COND, LV-BN, LV-MOUNT, LV-ALL-NO-MOUNT, LV-ALL, LV-ISO, LV-ALL-ISO, LV-OPEN+ISO, LV-RAD+ISO, LV-COIL+ISO, LV-COND+ISO, LV-BN+ISO | LV-OPEN+ISO (NOT_CHECKED), LV-RAD+ISO (NOT_CHECKED), LV-COIL+ISO (NOT_DEMONSTRATED) | - |
+| AN | OPEN_LIMIT_TBD | OPEN_LIMIT_TBD | 1291.9 / 1291.9 | None | [444.3, 468.3] | - | none | - |
+| WI | DO_NOT_CLOSE | CLOSES_WITH_SINGLE_LEVER | 870.1 / 867.8 | 29.9 | [314.8, 335.0] | LV-OPEN, LV-COIL, LV-COND, LV-MOUNT, LV-ALL-NO-MOUNT, LV-ALL, LV-ALL-ISO, LV-OPEN+ISO, LV-COIL+ISO, LV-COND+ISO | LV-OPEN+ISO (NOT_CHECKED), LV-COIL+ISO (NOT_DEMONSTRATED) | - |
+| WO | CLOSES | CLOSES | 837.7 / 836.0 | 62.3 | [289.7, 307.3] | LV-OPEN, LV-RAD, LV-COIL, LV-COND, LV-BN, LV-MOUNT, LV-ALL-NO-MOUNT, LV-ALL, LV-ISO, LV-ALL-ISO, LV-OPEN+ISO, LV-RAD+ISO, LV-COIL+ISO, LV-COND+ISO, LV-BN+ISO | LV-OPEN+ISO (NOT_CHECKED), LV-RAD+ISO (NOT_CHECKED), LV-COIL+ISO (NOT_DEMONSTRATED) | - |
+| PI | OPEN_LIMIT_TBD | OPEN_LIMIT_TBD | 930.8 / 876.9 | None | [293.5, 325.4] | - | none | FAIL |
+| PO | OPEN_LIMIT_TBD | OPEN_LIMIT_TBD | 390.5 / 366.9 | None | [145.6, 161.0] | - | none | PASS |
+| BP | OPEN_LIMIT_TBD | OPEN_LIMIT_TBD | 536.5 / 536.1 | None | [198.4, 223.0] | - | none | PASS |
+| CI | DO_NOT_CLOSE | CLOSES_ONLY_WITH_COMBINED_LEVERS | 980.0 / 969.6 | -442.2 | [296.5, 328.5] | LV-ALL | none | - |
+| CO | CLOSES | CLOSES | 481.4 / 370.1 | 56.4 | [146.5, 162.0] | LV-OPEN, LV-RAD, LV-COIL, LV-COND, LV-BN, LV-MOUNT, LV-ALL-NO-MOUNT, LV-ALL, LV-ISO, LV-ALL-ISO, LV-OPEN+ISO, LV-RAD+ISO, LV-COIL+ISO, LV-COND+ISO, LV-BN+ISO | LV-OPEN+ISO (NOT_CHECKED), LV-RAD+ISO (NOT_CHECKED), LV-COIL+ISO (NOT_DEMONSTRATED) | - |
 
 Conditions per closing lever set (allowable ICP heat into H-1 with the 1.2 margin, W at PO / BP; search-sensitive sets; sets whose worst-case state uses a model-derived continuation):
 
@@ -120,9 +122,9 @@ Conditions per closing lever set (allowable ICP heat into H-1 with the 1.2 margi
 - **WO**: ICP heat allowable: LV-BASE 139.3 / 83.6; LV-OPEN 7414.2 / 1405; LV-RAD 721.7 / 279.8; LV-COIL 836.9 / 465.6; LV-COND 1023.4 / 447; LV-BN 320.2 / 175.1; LV-MOUNT 567.7 / 518.8; LV-ALL-NO-MOUNT 5797.9 / 1890.9; LV-ALL 7223.3 / 3064.5; LV-ISO 139.3 / 83.6; LV-ALL-ISO 5797.9 / 1890.9; LV-OPEN+ISO 7414.2 / 1405; LV-RAD+ISO 721.7 / 279.8; LV-COIL+ISO 836.9 / 465.6; LV-COND+ISO 1023.4 / 447; LV-BN+ISO 320.2 / 175.1; search-sensitive: none; model-domain continuation: LV-BASE: coil_R_T_beyond_500C; LV-BN+ISO: coil_R_T_beyond_500C; LV-BN: coil_R_T_beyond_500C; LV-COIL+ISO: coil_R_T_beyond_500C; LV-COIL: coil_R_T_beyond_500C; LV-COND+ISO: coil_R_T_beyond_500C; LV-COND: coil_R_T_beyond_500C; LV-ISO: coil_R_T_beyond_500C; LV-MOUNT: coil_R_T_beyond_500C; LV-OPEN+ISO: coil_R_T_beyond_500C; LV-OPEN: coil_R_T_beyond_500C; LV-RAD+ISO: coil_R_T_beyond_500C; LV-RAD: coil_R_T_beyond_500C
 - **CI**: ICP heat allowable: LV-ALL 1056.1 / 366.7; search-sensitive: none; model-domain continuation: none
 - **CO**: ICP heat allowable: LV-BASE 13 / 31.6; LV-OPEN 402.4 / 1009.3; LV-RAD 356.8 / 913.6; LV-COIL 163.2 / 402.1; LV-COND 290.8 / 571.8; LV-BN 27 / 63.7; LV-MOUNT 93.5 / 472.6; LV-ALL-NO-MOUNT 677.5 / 1662.4; LV-ALL 669.3 / 1970.9; LV-ISO 13 / 31.6; LV-ALL-ISO 677.5 / 1662.4; LV-OPEN+ISO 402.4 / 1009.3; LV-RAD+ISO 356.8 / 913.6; LV-COIL+ISO 163.2 / 402.1; LV-COND+ISO 290.8 / 571.8; LV-BN+ISO 27 / 63.7; search-sensitive: LV-BASE, LV-ISO; model-domain continuation: LV-BASE: coil_R_T_beyond_500C; LV-BN+ISO: coil_R_T_beyond_500C; LV-BN: coil_R_T_beyond_500C; LV-COIL+ISO: coil_R_T_beyond_500C; LV-COIL: coil_R_T_beyond_500C; LV-COND+ISO: coil_R_T_beyond_500C; LV-COND: coil_R_T_beyond_500C; LV-ISO: coil_R_T_beyond_500C; LV-MOUNT: coil_R_T_beyond_500C; LV-OPEN+ISO: coil_R_T_beyond_500C; LV-OPEN: coil_R_T_beyond_500C; LV-RAD+ISO: coil_R_T_beyond_500C; LV-RAD: coil_R_T_beyond_500C
-- **AN** (design driver): no lever set evaluated brings the searched/bounded anode worst case below 1190 degC (lowest, LV-ALL); the verdict stays OPEN_LIMIT_TBD because row 87 forbids an unsourced anode target, but the anode material (316L is only the H-1 engineering baseline, row 106) and its thermal path are a DESIGN DRIVER: a sourced continuous-use limit of the selected material must exceed the anode worst case + 50 K, or the anode heat path must change (row 87 derivation from the selected material's oxidation/electrical/creep data)
+- **AN** (design driver): no lever set evaluated brings the searched/bounded anode worst case below 1190 degC (lowest, LV-ALL); the verdict stays OPEN_LIMIT_TBD because row 87 forbids an unsourced anode target, but the anode material (316L is only the H-1 engineering baseline, row 106) and its thermal path are a DESIGN DRIVER: a sourced continuous-use limit of the selected material must exceed the anode worst case + 50 K, or the anode heat path must change (row 87 derivation from the selected material's oxidation/electrical/creep data). Buildability statement (not a target): the H-1 engineering baseline 316L (row 106) cannot credibly meet this worst case - with the +50 K margin it would need a continuous-use limit of at least 1241.5 degC (lowest lever set) to 1343.4 degC (worst; searched T_max + search allowance + 50 K), i.e. within about 32-134 K of the lower end of the typical published 316/316L melting (solidus-liquidus) range of about 1375-1400 degC (from memory - verify against a 316L datasheet). A continuous-use limit of an austenitic stainless steel in an oxidizing, electrically loaded service lies far below its melting range, so 316L cannot credibly meet this anode heat path; either a different anode material with a sourced limit (row 87) or a changed heat path is needed
 
-Overall: **OPEN** (conditional on the ICP-43 heat allowance); minimal lever sets closing every live node within 100 W: none. Open: ICP module heat into H-1 TBD (ICP-43): every hall_icp_neutralizer CLOSES is evaluated with 0 W of ICP heat and holds only while 1.2 x Q_ICP->H-1 <= the allowable ICP heat of that node and lever set (icp_heat_into_h1); pole/core, anode and exterior-coating use limits TBD (OPEN_LIMIT_TBD); anode is a design driver: no lever set evaluated brings the searched/bounded anode worst case below 1190 degC (lowest, LV-ALL); the verdict stays OPEN_LIMIT_TBD because row 87 forbids an unsourced anode target, but the anode material (316L is only the H-1 engineering baseline, row 106) and its thermal path are a DESIGN DRIVER: a sourced continuous-use limit of the selected material must exceed the anode worst case + 50 K, or the anode heat path must change (row 87 derivation from the selected material's oxidation/electrical/creep data); supplier limits not validated (every CLOSES is conditional); no closing lever set has a demonstrated buildability (LV-COIL NOT_DEMONSTRATED; the others NOT_CHECKED); H-1 geometry not frozen (v1 ECHT-analog geometry used); worst case found by a local search with a search allowance, not a proven global maximum.
+Overall: **OPEN** (conditional on the ICP-43 heat allowance); minimal lever sets closing every live node within 100 W: none. Open: exit-face radiative view blocked by the downstream ICP module not modelled (ICP-05 view factors): a condition on every hall_icp_neutralizer CLOSES; ICP module heat into H-1 TBD (ICP-43): every hall_icp_neutralizer CLOSES is evaluated with 0 W of ICP heat and holds only while 1.2 x Q_ICP->H-1 <= the allowable ICP heat of that node and lever set (icp_heat_into_h1); pole/core, anode and exterior-coating use limits TBD (OPEN_LIMIT_TBD); anode is a design driver: no lever set evaluated brings the searched/bounded anode worst case below 1190 degC (lowest, LV-ALL); the verdict stays OPEN_LIMIT_TBD because row 87 forbids an unsourced anode target, but the anode material (316L is only the H-1 engineering baseline, row 106) and its thermal path are a DESIGN DRIVER: a sourced continuous-use limit of the selected material must exceed the anode worst case + 50 K, or the anode heat path must change (row 87 derivation from the selected material's oxidation/electrical/creep data). Buildability statement (not a target): the H-1 engineering baseline 316L (row 106) cannot credibly meet this worst case - with the +50 K margin it would need a continuous-use limit of at least 1241.5 degC (lowest lever set) to 1343.4 degC (worst; searched T_max + search allowance + 50 K), i.e. within about 32-134 K of the lower end of the typical published 316/316L melting (solidus-liquidus) range of about 1375-1400 degC (from memory - verify against a 316L datasheet). A continuous-use limit of an austenitic stainless steel in an oxidizing, electrically loaded service lies far below its melting range, so 316L cannot credibly meet this anode heat path; either a different anode material with a sourced limit (row 87) or a changed heat path is needed; supplier limits not validated (every CLOSES is conditional); no closing lever set has a demonstrated buildability (LV-COIL NOT_DEMONSTRATED; the others NOT_CHECKED); H-1 geometry not frozen (v1 ECHT-analog geometry used); worst case found by a local search with a search allowance, not a proven global maximum.
 
 
 ### Worst-case T_max per lever (degC, max over cases; hall_icp_neutralizer)
@@ -132,7 +134,7 @@ Overall: **OPEN** (conditional on the ICP-43 heat allowance); minimal lever sets
 | LV-BASE | 1291.9 | 870.1 | 837.7 | 930.8 | 390.5 | 536.5 | 980.0 | 481.4 |
 | LV-OPEN | 1242.2 | 665.5 | 577.7 | 806.1 | 310.0 | 484.6 | 842.2 | 311.3 |
 | LV-RAD | 1275.6 | 849.7 | 816.1 | 904.0 | 301.4 | 462.1 | 955.1 | 369.3 |
-| LV-COIL | 1272.3 | 804.3 | 780.7 | 781.7 | 347.0 | 500.9 | 821.3 | 415.6 |
+| LV-COIL | 1273.1 | 804.3 | 780.7 | 781.7 | 347.0 | 500.9 | 821.3 | 415.6 |
 | LV-COND | 1265.3 | 789.7 | 768.0 | 784.3 | 374.6 | 536.5 | 788.6 | 378.5 |
 | LV-BN | 1291.9 | 855.7 | 823.0 | 896.7 | 387.1 | 536.5 | 974.6 | 476.1 |
 | LV-MOUNT | 1243.2 | 832.8 | 803.1 | 857.2 | 366.8 | 315.3 | 914.6 | 446.7 |
@@ -170,108 +172,108 @@ Coated-surface temperature requirement (searched T_max + allowance + 50 K), base
 
 ### The v1 11.2 K BN-wall case
 
-v1: orbit_hot / bare_machined_stainless / WI (v1 rules) margin 11.2 K. New rule: searched T_max + search allowance <= 900 - 50 = 850 degC in every case with 1.2 x heat loads. Status **RESOLVED_WITH_LEVERS** (baseline worst T_max 870.1 degC; levers closing: LV-OPEN, LV-COIL, LV-COND, LV-MOUNT, LV-ALL-NO-MOUNT, LV-ALL, LV-ALL-ISO, LV-OPEN+ISO, LV-COIL+ISO, LV-COND+ISO; outer wall CLOSES).
+v1: orbit_hot / bare_machined_stainless / WI (v1 rules) margin 11.2 K. New rule: searched T_max + search allowance <= 900 - 50 = 850 degC in every case with 1.2 x heat loads. Status **CONDITIONALLY_RESOLVED** (baseline worst T_max 870.1 degC; levers closing: LV-OPEN, LV-COIL, LV-COND, LV-MOUNT, LV-ALL-NO-MOUNT, LV-ALL, LV-ALL-ISO, LV-OPEN+ISO, LV-COIL+ISO, LV-COND+ISO; outer wall CLOSES). CONDITIONALLY_RESOLVED = the searched worst case meets the rule for at least one evaluated lever set, but NOT resolved: every closing set is NOT_CHECKED or NOT_DEMONSTRATED for buildability, the 900 degC limit is a supplier guide value (NOT_VALIDATED), the ICP-43 heat into H-1 is TBD and the ICP module's blocking of the H-1 exit-face radiative view is not modelled; OPEN = no evaluated lever set closes. no closing lever set is demonstrated buildable; resolution is conditional on the lever's buildability check and on validation of the 900 degC supplier value.
 
 ### Heat into the spacecraft mount vs row 85 (25/50/100 W)
 
 | lever | case | Q_mount min / nominal / max (W) | 25 W | 50 W | 100 W |
 |---|---|---|---|---|---|
-| LV-BASE | orbit_hot@T_mount=20C | 11.7 / 199.6 / 537.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-BASE | orbit_hot@T_mount=40C | 9.4 / 189.3 / 524.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-BASE | orbit_hot@T_mount=60C | 7.2 / 178.9 / 510.6 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-BASE | orbit_cold@T_mount=20C | 12.0 / 195.7 / 528.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-BASE | orbit_cold@T_mount=40C | 9.5 / 185.5 / 515.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-BASE | orbit_cold@T_mount=60C | 7.2 / 175.3 / 502.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-OPEN | orbit_hot@T_mount=20C | 11.7 / 189.3 / 486.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-OPEN | orbit_hot@T_mount=40C | 9.4 / 178.8 / 470.8 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-OPEN | orbit_hot@T_mount=60C | 7.2 / 168.3 / 454.8 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-OPEN | orbit_cold@T_mount=20C | 12.0 / 185.5 / 478.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-OPEN | orbit_cold@T_mount=40C | 9.4 / 175.1 / 463.0 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-OPEN | orbit_cold@T_mount=60C | 7.2 / 164.7 / 447.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-RAD | orbit_hot@T_mount=20C | 12.0 / 187.5 / 491.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-RAD | orbit_hot@T_mount=40C | 9.5 / 176.9 / 476.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-RAD | orbit_hot@T_mount=60C | 7.2 / 166.3 / 461.2 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-RAD | orbit_cold@T_mount=20C | 12.0 / 183.5 / 482.1 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-RAD | orbit_cold@T_mount=40C | 9.8 / 173.0 / 467.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-RAD | orbit_cold@T_mount=60C | 3.6 / 162.6 / 452.6 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-COIL | orbit_hot@T_mount=20C | 11.6 / 183.9 / 470.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-COIL | orbit_hot@T_mount=40C | 9.4 / 173.8 / 458.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-COIL | orbit_hot@T_mount=60C | 7.2 / 163.6 / 445.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-COIL | orbit_cold@T_mount=20C | 11.6 / 180.0 / 460.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-COIL | orbit_cold@T_mount=40C | 9.4 / 170.0 / 449.2 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-COIL | orbit_cold@T_mount=60C | 7.2 / 159.9 / 437.1 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-COND | orbit_hot@T_mount=20C | 8.8 / 200.2 / 524.1 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-COND | orbit_hot@T_mount=40C | 6.2 / 189.8 / 512.2 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-COND | orbit_hot@T_mount=60C | 3.8 / 179.3 / 499.8 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-COND | orbit_cold@T_mount=20C | 8.8 / 196.3 / 514.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-COND | orbit_cold@T_mount=40C | 6.2 / 186.0 / 502.8 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-COND | orbit_cold@T_mount=60C | 3.8 / 175.6 / 490.8 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-BN | orbit_hot@T_mount=20C | 13.2 / 203.9 / 537.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-BN | orbit_hot@T_mount=40C | 10.9 / 193.4 / 524.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-BN | orbit_hot@T_mount=60C | 8.7 / 183.0 / 510.6 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-BN | orbit_cold@T_mount=20C | 13.2 / 200.0 / 528.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-BN | orbit_cold@T_mount=40C | 10.9 / 189.7 / 515.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-BN | orbit_cold@T_mount=60C | 8.7 / 179.3 / 502.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-MOUNT | orbit_hot@T_mount=20C | 34.2 / 255.8 / 537.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-MOUNT | orbit_hot@T_mount=40C | 28.8 / 244.4 / 524.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-MOUNT | orbit_hot@T_mount=60C | 23.3 / 232.8 / 510.6 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-MOUNT | orbit_cold@T_mount=20C | 34.2 / 249.9 / 528.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-MOUNT | orbit_cold@T_mount=40C | 28.8 / 238.8 / 515.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-MOUNT | orbit_cold@T_mount=60C | 23.3 / 227.4 / 502.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-ALL-NO-MOUNT | orbit_hot@T_mount=20C | 12.4 / 169.9 / 393.0 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-ALL-NO-MOUNT | orbit_hot@T_mount=40C | 9.7 / 159.1 / 377.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-ALL-NO-MOUNT | orbit_hot@T_mount=60C | 7.0 / 148.3 / 362.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-ALL-NO-MOUNT | orbit_cold@T_mount=20C | 12.4 / 165.7 / 383.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-ALL-NO-MOUNT | orbit_cold@T_mount=40C | 9.7 / 155.0 / 368.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-ALL-NO-MOUNT | orbit_cold@T_mount=60C | 7.0 / 144.4 / 353.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-ALL | orbit_hot@T_mount=20C | 44.2 / 222.2 / 393.0 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-ALL | orbit_hot@T_mount=40C | 35.6 / 209.7 / 377.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-ALL | orbit_hot@T_mount=60C | 26.6 / 196.9 / 362.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-ALL | orbit_cold@T_mount=20C | 44.2 / 215.9 / 383.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-ALL | orbit_cold@T_mount=40C | 35.6 / 203.7 / 368.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-ALL | orbit_cold@T_mount=60C | 26.6 / 191.1 / 353.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-ISO | orbit_hot@T_mount=20C | 8.6 / 56.3 / 102.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-ISO | orbit_hot@T_mount=40C | 6.0 / 53.0 / 98.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-ISO | orbit_hot@T_mount=60C | 3.5 / 49.7 / 95.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-ISO | orbit_cold@T_mount=20C | 8.6 / 55.6 / 101.6 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-ISO | orbit_cold@T_mount=40C | 6.0 / 52.2 / 98.0 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-ISO | orbit_cold@T_mount=60C | 3.5 / 49.0 / 93.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-ALL-ISO | orbit_hot@T_mount=20C | 12.4 / 46.7 / 71.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-ALL-ISO | orbit_hot@T_mount=40C | 9.7 / 43.4 / 68.2 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-ALL-ISO | orbit_hot@T_mount=60C | 7.0 / 40.1 / 64.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-ALL-ISO | orbit_cold@T_mount=20C | 12.4 / 45.9 / 70.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-ALL-ISO | orbit_cold@T_mount=40C | 9.7 / 42.6 / 67.2 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-ALL-ISO | orbit_cold@T_mount=60C | 7.0 / 39.3 / 63.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-OPEN+ISO | orbit_hot@T_mount=20C | 8.6 / 53.3 / 91.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-OPEN+ISO | orbit_hot@T_mount=40C | 6.0 / 50.0 / 88.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-OPEN+ISO | orbit_hot@T_mount=60C | 3.5 / 46.7 / 84.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-OPEN+ISO | orbit_cold@T_mount=20C | 8.6 / 52.5 / 91.0 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-OPEN+ISO | orbit_cold@T_mount=40C | 6.0 / 49.2 / 87.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-OPEN+ISO | orbit_cold@T_mount=60C | 3.5 / 45.9 / 84.1 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-RAD+ISO | orbit_hot@T_mount=20C | 8.6 / 51.8 / 86.2 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-RAD+ISO | orbit_hot@T_mount=40C | 6.0 / 48.5 / 82.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-RAD+ISO | orbit_hot@T_mount=60C | 3.5 / 45.2 / 79.2 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-RAD+ISO | orbit_cold@T_mount=20C | 8.6 / 51.0 / 85.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-RAD+ISO | orbit_cold@T_mount=40C | 6.0 / 47.7 / 81.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-RAD+ISO | orbit_cold@T_mount=60C | 3.5 / 44.5 / 78.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-COIL+ISO | orbit_hot@T_mount=20C | 8.6 / 52.7 / 94.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-COIL+ISO | orbit_hot@T_mount=40C | 6.0 / 49.4 / 91.0 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-COIL+ISO | orbit_hot@T_mount=60C | 3.5 / 46.1 / 87.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-COIL+ISO | orbit_cold@T_mount=20C | 8.6 / 51.9 / 93.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-COIL+ISO | orbit_cold@T_mount=40C | 6.0 / 48.6 / 90.1 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-COIL+ISO | orbit_cold@T_mount=60C | 3.5 / 45.4 / 86.6 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-COND+ISO | orbit_hot@T_mount=20C | 8.8 / 56.3 / 102.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-COND+ISO | orbit_hot@T_mount=40C | 6.2 / 52.9 / 98.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-COND+ISO | orbit_hot@T_mount=60C | 3.7 / 49.6 / 95.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-COND+ISO | orbit_cold@T_mount=20C | 8.8 / 55.5 / 101.6 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-COND+ISO | orbit_cold@T_mount=40C | 6.2 / 52.2 / 98.0 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-COND+ISO | orbit_cold@T_mount=60C | 3.7 / 48.9 / 94.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-BN+ISO | orbit_hot@T_mount=20C | 12.2 / 57.2 / 102.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-BN+ISO | orbit_hot@T_mount=40C | 9.4 / 53.8 / 98.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-BN+ISO | orbit_hot@T_mount=60C | 6.8 / 50.5 / 95.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-BN+ISO | orbit_cold@T_mount=20C | 12.2 / 56.4 / 101.6 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
-| LV-BN+ISO | orbit_cold@T_mount=40C | 9.4 / 53.1 / 98.0 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
-| LV-BN+ISO | orbit_cold@T_mount=60C | 6.8 / 49.8 / 93.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-BASE | orbit_hot@T_mount=20C | 12.0 / 200.1 / 537.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-BASE | orbit_hot@T_mount=40C | 9.6 / 189.7 / 524.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-BASE | orbit_hot@T_mount=60C | 7.5 / 179.3 / 510.6 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-BASE | orbit_cold@T_mount=20C | 12.3 / 196.2 / 528.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-BASE | orbit_cold@T_mount=40C | 9.7 / 186.0 / 515.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-BASE | orbit_cold@T_mount=60C | 7.5 / 175.7 / 502.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-OPEN | orbit_hot@T_mount=20C | 12.0 / 189.8 / 486.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-OPEN | orbit_hot@T_mount=40C | 9.6 / 179.3 / 470.8 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-OPEN | orbit_hot@T_mount=60C | 7.5 / 168.7 / 454.8 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-OPEN | orbit_cold@T_mount=20C | 12.3 / 185.9 / 478.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-OPEN | orbit_cold@T_mount=40C | 9.7 / 175.5 / 463.0 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-OPEN | orbit_cold@T_mount=60C | 7.5 / 165.2 / 447.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-RAD | orbit_hot@T_mount=20C | 12.3 / 187.9 / 491.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-RAD | orbit_hot@T_mount=40C | 9.7 / 177.3 / 476.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-RAD | orbit_hot@T_mount=60C | 7.5 / 166.7 / 461.2 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-RAD | orbit_cold@T_mount=20C | 12.3 / 183.9 / 482.1 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-RAD | orbit_cold@T_mount=40C | 10.0 / 173.4 / 467.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-RAD | orbit_cold@T_mount=60C | 3.8 / 163.0 / 452.6 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-COIL | orbit_hot@T_mount=20C | 11.9 / 184.3 / 470.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-COIL | orbit_hot@T_mount=40C | 9.6 / 174.2 / 458.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-COIL | orbit_hot@T_mount=60C | 7.5 / 164.0 / 445.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-COIL | orbit_cold@T_mount=20C | 11.9 / 180.4 / 460.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-COIL | orbit_cold@T_mount=40C | 9.6 / 170.4 / 449.2 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-COIL | orbit_cold@T_mount=60C | 7.5 / 160.3 / 437.1 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-COND | orbit_hot@T_mount=20C | 9.1 / 200.6 / 524.1 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-COND | orbit_hot@T_mount=40C | 6.5 / 190.2 / 512.2 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-COND | orbit_hot@T_mount=60C | 4.0 / 179.7 / 499.8 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-COND | orbit_cold@T_mount=20C | 9.1 / 196.7 / 514.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-COND | orbit_cold@T_mount=40C | 6.5 / 186.4 / 502.8 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-COND | orbit_cold@T_mount=60C | 4.0 / 176.0 / 490.8 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-BN | orbit_hot@T_mount=20C | 13.5 / 204.3 / 537.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-BN | orbit_hot@T_mount=40C | 11.2 / 193.9 / 524.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-BN | orbit_hot@T_mount=60C | 8.9 / 183.4 / 510.6 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-BN | orbit_cold@T_mount=20C | 13.5 / 200.4 / 528.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-BN | orbit_cold@T_mount=40C | 11.2 / 190.1 / 515.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-BN | orbit_cold@T_mount=60C | 8.9 / 179.8 / 502.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-MOUNT | orbit_hot@T_mount=20C | 35.0 / 256.4 / 537.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-MOUNT | orbit_hot@T_mount=40C | 29.7 / 245.0 / 524.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-MOUNT | orbit_hot@T_mount=60C | 24.1 / 233.3 / 510.6 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-MOUNT | orbit_cold@T_mount=20C | 35.0 / 250.5 / 528.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-MOUNT | orbit_cold@T_mount=40C | 29.7 / 239.4 / 515.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-MOUNT | orbit_cold@T_mount=60C | 24.1 / 228.0 / 502.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-ALL-NO-MOUNT | orbit_hot@T_mount=20C | 12.6 / 170.3 / 393.0 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-ALL-NO-MOUNT | orbit_hot@T_mount=40C | 9.9 / 159.4 / 377.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-ALL-NO-MOUNT | orbit_hot@T_mount=60C | 7.2 / 148.6 / 362.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-ALL-NO-MOUNT | orbit_cold@T_mount=20C | 12.6 / 166.1 / 383.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-ALL-NO-MOUNT | orbit_cold@T_mount=40C | 9.9 / 155.4 / 368.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-ALL-NO-MOUNT | orbit_cold@T_mount=60C | 7.2 / 144.7 / 353.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-ALL | orbit_hot@T_mount=20C | 45.1 / 222.7 / 393.0 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-ALL | orbit_hot@T_mount=40C | 36.5 / 210.2 / 377.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-ALL | orbit_hot@T_mount=60C | 27.5 / 197.4 / 362.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-ALL | orbit_cold@T_mount=20C | 45.1 / 216.4 / 383.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-ALL | orbit_cold@T_mount=40C | 36.5 / 204.1 / 368.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-ALL | orbit_cold@T_mount=60C | 27.5 / 191.6 / 353.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-ISO | orbit_hot@T_mount=20C | 8.8 / 56.4 / 102.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-ISO | orbit_hot@T_mount=40C | 6.3 / 53.1 / 98.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-ISO | orbit_hot@T_mount=60C | 3.8 / 49.8 / 95.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-ISO | orbit_cold@T_mount=20C | 8.8 / 55.7 / 101.6 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-ISO | orbit_cold@T_mount=40C | 6.3 / 52.3 / 98.0 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-ISO | orbit_cold@T_mount=60C | 3.8 / 49.1 / 93.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-ALL-ISO | orbit_hot@T_mount=20C | 12.6 / 46.8 / 71.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-ALL-ISO | orbit_hot@T_mount=40C | 9.9 / 43.5 / 68.2 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-ALL-ISO | orbit_hot@T_mount=60C | 7.2 / 40.2 / 64.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-ALL-ISO | orbit_cold@T_mount=20C | 12.6 / 45.9 / 70.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-ALL-ISO | orbit_cold@T_mount=40C | 9.9 / 42.6 / 67.2 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-ALL-ISO | orbit_cold@T_mount=60C | 7.2 / 39.4 / 63.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-OPEN+ISO | orbit_hot@T_mount=20C | 8.8 / 53.4 / 91.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-OPEN+ISO | orbit_hot@T_mount=40C | 6.3 / 50.1 / 88.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-OPEN+ISO | orbit_hot@T_mount=60C | 3.8 / 46.8 / 84.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-OPEN+ISO | orbit_cold@T_mount=20C | 8.8 / 52.6 / 91.0 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-OPEN+ISO | orbit_cold@T_mount=40C | 6.3 / 49.3 / 87.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-OPEN+ISO | orbit_cold@T_mount=60C | 3.8 / 46.0 / 84.1 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-RAD+ISO | orbit_hot@T_mount=20C | 8.8 / 51.9 / 86.2 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-RAD+ISO | orbit_hot@T_mount=40C | 6.3 / 48.6 / 82.7 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-RAD+ISO | orbit_hot@T_mount=60C | 3.8 / 45.3 / 79.2 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-RAD+ISO | orbit_cold@T_mount=20C | 8.8 / 51.1 / 85.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-RAD+ISO | orbit_cold@T_mount=40C | 6.3 / 47.8 / 81.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-RAD+ISO | orbit_cold@T_mount=60C | 3.8 / 44.6 / 78.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-COIL+ISO | orbit_hot@T_mount=20C | 8.8 / 52.8 / 94.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-COIL+ISO | orbit_hot@T_mount=40C | 6.3 / 49.5 / 91.0 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-COIL+ISO | orbit_hot@T_mount=60C | 3.8 / 46.2 / 87.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-COIL+ISO | orbit_cold@T_mount=20C | 8.8 / 52.0 / 93.5 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-COIL+ISO | orbit_cold@T_mount=40C | 6.3 / 48.7 / 90.1 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-COIL+ISO | orbit_cold@T_mount=60C | 3.8 / 45.5 / 86.6 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-COND+ISO | orbit_hot@T_mount=20C | 9.0 / 56.4 / 102.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-COND+ISO | orbit_hot@T_mount=40C | 6.5 / 53.0 / 98.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-COND+ISO | orbit_hot@T_mount=60C | 4.0 / 49.7 / 95.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-COND+ISO | orbit_cold@T_mount=20C | 9.0 / 55.6 / 101.6 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-COND+ISO | orbit_cold@T_mount=40C | 6.5 / 52.3 / 98.0 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-COND+ISO | orbit_cold@T_mount=60C | 4.0 / 49.0 / 94.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-BN+ISO | orbit_hot@T_mount=20C | 12.4 / 57.3 / 102.4 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-BN+ISO | orbit_hot@T_mount=40C | 9.7 / 53.9 / 98.9 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-BN+ISO | orbit_hot@T_mount=60C | 7.0 / 50.6 / 95.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-BN+ISO | orbit_cold@T_mount=20C | 12.4 / 56.5 / 101.6 | DO_NOT_CLOSE | DO_NOT_CLOSE | DO_NOT_CLOSE |
+| LV-BN+ISO | orbit_cold@T_mount=40C | 9.7 / 53.2 / 98.0 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
+| LV-BN+ISO | orbit_cold@T_mount=60C | 7.0 / 49.9 / 93.3 | DO_NOT_CLOSE | DO_NOT_CLOSE | CLOSES |
 
 ### ICP heat into H-1 (allowable Q_ICP->H-1 with the row-86 1.2 margin, W; min over the governing cases)
 
@@ -316,7 +318,7 @@ ICP module heat entering H-1 is TBD (ICP-43 total module heat load, PENDING P_d,
 
 NOT a verdict on hall_c1_reference: the ground case couples C1 heat through the v1 CENTRAL-cathode path (G_cath_mount to the back pole, A_cath_ext), a geometry this lane abandons (row 79, external C1 on KC-1). It is kept only as a sensitivity showing what a central C1 would cost thermally. The external-module coupling of C1 into H-1 is TBD - requires the KC-1 module drawing and view factors (ICP-05); the zero-coupling case equals the hall_icp_neutralizer ground rows.
 
-| lever | node | T_max (degC) | verdict |
+| lever | node | T_max (degC) | sensitivity outcome (not a verdict) |
 |---|---|---|---|
 | LV-BASE | AN | 1296.4 | OPEN_LIMIT_TBD |
 | LV-BASE | WI | 877.3 | DO_NOT_CLOSE |
@@ -337,12 +339,55 @@ NOT a verdict on hall_c1_reference: the ground case couples C1 heat through the 
 | LV-ALL-NO-MOUNT | CO | 233.6 | CLOSES |
 | LV-ALL-NO-MOUNT | CB | 1081.1 | OPEN_LIMIT_TBD |
 
+## Recomputation 3 - RF measurement chain at the A9.1 reference plane
+
+A9.1 A9-03-matching: tunable matching network OFF the moving platform, flexible coax across the stand, directional-coupler reference plane AFTER the matching network. The segment coupler -> flexible coax -> antenna therefore carries the ANTENNA's reflection unless an impedance transformation sits at the module.
+
+- gamma: Gamma = (Z_L - Z0) / (Z_L + Z0); VSWR = (1 + |Gamma|) / (1 - |Gamma|)
+- powers: P_fwd = P_net / (1 - |Gamma|^2); P_refl = |Gamma|^2 P_fwd; P_net = P_fwd - P_refl
+- peaks: V_pk,max = sqrt(2 P_fwd Z0) (1 + |Gamma|); I_pk,max = sqrt(2 P_fwd / Z0) (1 + |Gamma|)
+- line_loss: low-loss line: dissipated loss grows by about (1 + |Gamma|^2) / (1 - |Gamma|^2) over the matched-line loss (approximation; verify against the cable data at 13.56 MHz)
+- directivity: first-order model: reflected-arm error amplitude d = 10^(-D/20) of the forward wave, phase unknown; worst-case relative error of P_net = max((|G|+d)^2 - |G|^2, |G|^2 - (|G|-d)^2) / (1 - |G|^2) (standard directivity-limited reflection error; verify against the coupler documentation, A9-04 UB-RF-04)
+- load_power: P_load / P_net,coupler = |S21|^2 (1 - |Gamma_L|^2) / (|1 - S22 Gamma_L|^2 (1 - |Gamma_in|^2)), Gamma_in = S11 + S12 S21 Gamma_L / (1 - S22 Gamma_L): the correction from the coupler plane to the antenna feed needs the full two-port S-parameters AND Gamma_L; a cable-loss-only (|S21|) correction is insufficient when |Gamma_L| is not small
+- evidence_class: model-derived (standard transmission-line relations; stated here, verify)
+
+Z0 = 50 ohm (nominal coax/coupler system impedance (assumed; quotation, row 8)); P_net,max = 500 W (row 72 lab forward power 0-500 W: with a lossless match the power delivered past the match cannot exceed the generator forward power). illustrative load impedances from the independent review, used ONLY to show the size of the effect; the antenna impedance is TBD - requires the A9-03 antenna design and a cold / plasma-loaded VNA measurement at 13.56 MHz (S1a). No rating below is taken from them.
+
+| case | Z_load (ohm) | abs(Gamma) | VSWR | P_fwd (W) | P_refl (W) | V_pk (V) | I_pk (A) | line-loss x | P_net error at D 20/30/40 dB |
+|---|---|---|---|---|---|---|---|---|---|
+| matched_reference | 50+j0 | 0 | 1 | 500 | 0 | 223.6 | 4.472 | 1 | 0.01 / 0.001 / 0.0001 |
+| review_case_20+j50 | 20+j50 | 0.6778 | 5.208 | 925 | 425 | 510.3 | 10.21 | 2.7 | 0.269 / 0.0812 / 0.0253 |
+| review_case_5+j100 | 5+j100 | 0.9608 | 50.08 | 6513 | 6013 | 1582 | 31.65 | 25.05 | 2.63 / 0.805 / 0.252 |
+| review_case_1+j100 | 1+j100 | 0.992 | 250 | 31500 | 31000 | 3536 | 70.71 | 125 | 13.1 / 4.02 / 1.26 |
+| VSWR 1.2 | - | 0.09091 | 1.2 | 504.2 | 4.167 | 244.9 | 4.899 | 1.017 | 0.0284 / 0.00681 / 0.00193 |
+| VSWR 1.5 | - | 0.2 | 1.5 | 520.8 | 20.83 | 273.9 | 5.477 | 1.083 | 0.0521 / 0.0142 / 0.00427 |
+| VSWR 2 | - | 0.3333 | 2 | 562.5 | 62.5 | 316.2 | 6.325 | 1.25 | 0.0863 / 0.0248 / 0.00761 |
+
+option (a) cases: the flexible segment sees only a residual mismatch after an on-module pre-match; VSWR 1.2/1.5/2.0 are sensitivity values, the limit VSWR_max is TBD (LOCK-1, OQ-A907-11). 20/30/40 dB are sensitivity values; the coupler directivity is TBD - requires its certificate (A9H-CAL-02) and enters A9-04 UB-RF-04.
+
+- **a_on_module_pre_match** (PROPOSED (owner call, OQ-A907-11)): a FIXED (non-tuned) impedance transformation on the ICP module (e.g. a fixed L-network or transformer at the antenna feed) so that the flexible segment and the coupler plane see a near-50 ohm load with |Gamma| <= Gamma_max; the TUNABLE match stays off-platform as A9.1 requires. Then coupler, sensors and coax are rated for P_fwd,max = P_net,max / (1 - Gamma_max^2) and V_pk,max = sqrt(2 P_fwd,max Z0)(1 + Gamma_max). Ratings: {"Gamma_max": "TBD - requires owner/LOCK-1 residual-VSWR limit (OQ-A907-11)", "P_fwd_max_W": "TBD - requires Gamma_max (formula above; e.g. VSWR 2.0 -> 562.5 W, sensitivity only)", "V_pk_max_V": "TBD - requires Gamma_max"}. adds mass/heat on the moving platform (payload >= 25 kg check, A9-06; ICP-43 heat); needs the antenna impedance range to design (A9-03); the matched sham must carry an equivalent fixed network (row 133)
+- **b_rate_the_mismatched_segment** (FALLBACK (if option a is declined)): no transformation at the module: coupler, sensors, flexible coax, feedthrough and connectors are rated for the antenna's own mismatch at P_net,max. Ratings: {"P_fwd_max_W": "TBD - requires the antenna impedance range (A9-03, cold and plasma-loaded)", "V_pk_max_V": "TBD - requires the antenna impedance range (A9-03)", "I_pk_max_A": "TBD - requires the antenna impedance range (A9-03)", "coax_loss_at_mismatch_W": "TBD - requires cable data at 13.56 MHz + the antenna impedance", "directivity_min_dB": "TBD - requires the u(P_net) allocation of A9-04 (UB-RF-04) at the measured /Gamma/"}. at the review sensitivity loads the forward power at the coupler plane would be review_case_20+j50 925 W (VSWR 5.208), review_case_5+j100 6513 W (VSWR 50.08), review_case_1+j100 31500 W (VSWR 250) for 500 W net: a 0-500 W forward-rated sensor would be over-ranged
+
+Finding: the row-72 0-500 W range is the GENERATOR forward power; at the A9.1 coupler plane (after the match) the forward power is P_net / (1 - |Gamma|^2) and depends on the antenna impedance, which is TBD. Coupler/sensor/coax ratings and the directivity requirement are therefore TBD until either an on-module pre-match fixes Gamma_max (option a, proposed) or the antenna impedance range is known (option b).
+
+## Recomputation 4 - LV-COIL copper mass from one consistent coil definition
+
+P x m_cu = rho_e rho_m (NI l_mt)^2 per coil (fixed NI, fixed l_mt); both coils scaled by one factor s = P_RP1 / P_basis, so m_cu(P_basis) = m_RP1 x P_RP1 / P_basis; doubling A_cu adds m_cu(P_basis) and halves P_basis. Coil: H2-1 case `RP-1 f_NI=2`, P_RP1 = 5.164 W at 20 degC, m_RP1 = 1.5799 kg (invariant checked per coil against rho_e rho_m (NI l_mt)^2).
+
+| P_mag basis | P_mag at 20 degC (W) | P removed by LV-COIL (W) | copper delta (kg) | basis |
+|---|---|---|---|---|
+| P_mag_basis_60W_H25-08_upper | 60 | 30 | 0.136 | the H2-5 H25-08 upper end (assumed evaluation range, 20 degC copper) - the bound LV-COIL halves in the thermal rerun (before the conductor factor and the 1.2 margin) |
+| P_mag_basis_RP1_as_sized | 5.164 | 2.582 | 1.58 | the RP-1 f_NI 2 coil set as sized by H2-1 (sum of the chosen inner + outer P20_W; H21-18 note) |
+
+fixed-l_mt estimate: a larger winding window lengthens the mean turn, which raises the copper needed for the same P (P x m grows with l_mt^2); the size of that effect is TBD - requires the H2-1 window geometry / FEMM. Not a bound in either direction on the final coil. the thermal rerun (ECHT-analog geometry, H25-08 assumed 0-60 W range) and the RP-1 coil (about 5.2 W at 20 degC) are different coil bases; which one H-1 has is TBD - requires the frozen H-1 coil (NI, l_mt, window). A 60 W coil with RP-1 NI and l_mt is a much thinner winding (about 0.14 kg copper); the RP-1 coil as sized gains only about 2.6 W at 20 degC from LV-COIL at a cost of about 1.6 kg. Status: model-derived per basis; the mass to book is TBD - requires the frozen H-1 coil definition.
+
+
 ## Small derivations
 
 - **icp46_isolation_basis_V**: 900.0 V - 1.5 x upper keeper pulse 600 V
 - **flight_discharge_output_current_bound_A**: 7.5 A - internal design allocation 1350 W (row 109, OQ-A902-07) / V_d,min 180 V (H24-25): an upper bound of the discharge-supply output current (supply efficiency <= 1, every other load >= 0); not a predicted discharge current
 - **rfp_bound_current_A**: 8.3333 A - 1500 W (H24-01) / 180 V (H24-25); equals the verified H24-27 lab rating
-- **c1_ignition_dwell_xe_bound_g**: {"attempts_3_literal": 0.36, "attempts_2_shorthand": 0.24} g per start - start-flow controller full scale (H22-44, 1.0 mg/s Xe, an upper bound of any commanded start flow) x 120 s dwell cap (row 93) x attempts (1 + two retries = 3 literal; 2 per the '120 s x 2' shorthand; owner question OQ-A907-01)
+- **c1_ignition_dwell_xe_bound_g**: {"attempts_3_literal": 0.36, "attempts_2_shorthand": 0.24} g per start (ignition dwell only; purge/preheat excluded) - start-flow controller full scale (H22-44, 1.0 mg/s Xe, an upper bound of any commanded start flow) x 120 s dwell cap (row 93) x attempts (1 + two retries = 3 literal; 2 per the '120 s x 2' shorthand; owner question OQ-A907-01)
 
 ## (a) Revision register
 
@@ -385,14 +430,14 @@ NOT a verdict on hall_c1_reference: the ground case couples C1 heat through the 
 | REV-35 | H2-6 H26-44 | heat load into H-1 + mount + module (stand thermal design bound) | 1500.0 | score-bearing configurations stay bounded by the 1500 W P_bus gate (row 108); engineering characterization with laboratory supplies is bounded by 1.2 x (P_d,max,stand + P_RF,fwd,max 500 W + coil and bias power) (ICP-43 form, row 86 margin) [TBD - requires P... | W | row 108, row 72, row 86, A9-03 ICP-43 | None | TBD | LOCK-1 |
 | REV-36 | H2-6 H26-45 | electrical isolation of H-1 and modules from stand/facility ground | 350.0 | H-1 isolation rated to 350 V + transient/qualification margin (row 81); ICP body floating by default with the collector bias isolated and separately metered (row 70, ICP-20/23); C1 keeper circuit to the ICP-46 levels (900 V basis, 1.0 kV DC hipot, 600 V pul... | V | row 81, row 70, A9.1 ICP-46 | owner-allocation | REVISED_PROPOSED | LOCK-1 |
 | REV-37 | H2-6 H26-09 | bus-power channel set | hall_discharge, hall_magnet, cathode_keeper, cathode_heater, flow_control, compressor, thermal_control, hou... | one metering channel per bus_power_boundary_a9_v1 slot installed in the configuration (incl. 13.56 MHz generator DC input, matching controller, collector/bias, per-coil magnets, C1 heater/keeper/common-tie, valves, compressor, thermal, housekeeping) plus th... | - | A9.1 OQ-A902-01, row 110 | assumed | REVISED_PROPOSED | LOCK-1 |
-| REV-38 | H2-6 H26-05 | absolute thrust uncertainty target | 120.0 | 1 % standard relative uncertainty (k = 1) for a sustained reading, tested at 12 mN with maximum representative moving payload and all service lines installed (S1a); gates use the pre-registered one-sided treatment; revise only before LOCK-2 from metrology-o... | - | row 121, row 120, A9.1 UBQ-01 | owner-allocation | OWNER_GIVEN | NOW |
+| REV-38 | H2-6 H26-05 | absolute thrust uncertainty target | 120.0 | 1 % standard relative uncertainty (k = 1) for a sustained reading, tested at 12 mN with maximum representative moving payload and all service lines installed (S1a); gates use the pre-registered one-sided treatment; revise only before LOCK-2 from metrology-o... | old: uN (absolute uncertainty); new: - (relative standard uncertainty, k = 1); test point mN | row 121, row 120, A9.1 UBQ-01 | owner-allocation | OWNER_GIVEN | NOW |
 | REV-39 | H2-6 H26-16 | exploratory I_d(t) chain | {"band_Hz": [1000.0, 60000000.0], "sampling_min_Sps": 120000000.0} | exploratory I_d(t) to ~60 MHz if feasible, else declare the measured bandwidth and its anti-alias/transfer function; in hall_icp_neutralizer the 13.56 MHz drive and harmonics lie inside this band: RF pickup check (ICP-39) and a declared pickup floor precede... | Hz | row 129, row 64 | owner-allocation | REVISED_PROPOSED | LOCK-1 |
 | REV-40 | H2-5 limits (all live nodes) | thermal design margin rule and aborts | [{"node": "WI/WO", "quantity": "BN wall maximum use temperature, oxidizing atmosphere", "value_C": 900.0, "... | >= 50 K below each validated continuous-use limit plus 20 % heat-load margin; score-bearing temperature aborts at validated limit - 50 K [{"margin_K": 50.0, "heat_load_factor": 1.2}] | K; - | row 86, A9.1 UBQ-06 | owner-allocation | OWNER_GIVEN | NOW |
 | REV-41 | H2-5 H25-29 | exterior finish | {"bare_machined_stainless": {"alpha_s": 0.47, "eps": 0.14}, "sandblasted_stainless": {"alpha_s": 0.58, "eps... | high-emittance temperature-capable exterior coating on MC-1 as the baseline (Z-93 option evaluated); conditional on vacuum/AO/electrical compatibility qualification; the coated PO/BP surfaces must withstand searched T_max + search allowance + 50 K; the coat... | -; degC | row 84 | model-derived | OPEN | LOCK-1 |
 | REV-42 | H2-5 coil limits (IEC 60085 classes / Sm2Co17) | coil node limit | {"node": "CI/CO", "quantity": "coil insulation thermal class candidates (IEC 60085 Table 1)", "value_C": [1... | ceramic-insulated copper coil: supplier continuous rating (not validated) with the >= 50 K margin; the permanent-magnet (Sm2Co17) rows are dropped (EM-only MC-1) [{"limit_C": 537.778, "design_ceiling_C": 487.778, "closure_CI": "CLOSES_ONLY_WITH_COMBI...] | degC | row 77, row 78, row 86 | model-derived | OPEN | after-evidence |
-| REV-43 | H2-5 H25-08 | coil I^2R bound with a ceramic (possibly Ni-clad) conductor | [0.0, 60.0] | upper bound x conductor factor (Ni-clad vs Cu) x 1.2 heat-load margin [{"factor": 1.3263, "P_mag_20C_upper_W_used": 95.49}] | W | row 77, row 86 | model-derived | REVISED_RECOMPUTED | LOCK-1 |
+| REV-43 | H2-5 H25-08 | coil I^2R bound with a ceramic (possibly Ni-clad) conductor | [0.0, 60.0] | upper bound x conductor factor (Ni-clad vs Cu) x 1.2 heat-load margin; lower end = H21-18 lower end (EM-only, row 78: the v1 0 W permanent-magnet lower end is dropped) [{"factor": 1.3263, "P_mag_20C_lower_W_used": 1.289, "P_mag_20C_upper_W_used": 95.49}] | W | row 77, row 86, row 78 | model-derived | REVISED_RECOMPUTED | LOCK-1 |
 | REV-44 | H2-5 PI/PO/BP limits | pole / core use limit | {"node": "PI/PO/BP", "quantity": "soft-magnetic pole/core maximum USE temperature (B_sat(T) / permeability ... | FeCo-2V inner / pure-iron outer; use limit from sourced B_sat(T) with >= 50 K margin; until sourced only the necessary Curie-ceiling check is reported [{"PI": ["FAIL"], "PO": ["PASS"], "BP": ["PASS"]}] | degC | row 76, row 86 | model-derived | OPEN | LOCK-1 |
-| REV-45 | H2-5 WI/WO (BN wall) | BN wall closure incl. the v1 11.2 K case | F2 BN walls pass the 900 degC oxidizing guide value over the whole bounding envelope in every case (smalles... | worst-corner T_max <= 850 degC (900 - 50) with 1.2 x heat loads [{"status": "RESOLVED_WITH_LEVERS", "baseline_worst_T_max_C": 870.1, "levers_that_close"...] | degC | row 86 | model-derived | REVISED_RECOMPUTED | after-evidence |
+| REV-45 | H2-5 WI/WO (BN wall) | BN wall closure incl. the v1 11.2 K case | F2 BN walls pass the 900 degC oxidizing guide value over the whole bounding envelope in every case (smalles... | worst-corner T_max <= 850 degC (900 - 50) with 1.2 x heat loads [{"status": "CONDITIONALLY_RESOLVED", "baseline_worst_T_max_C": 870.1, "levers_that_clos...] | degC | row 86 | model-derived | REVISED_RECOMPUTED | after-evidence |
 | REV-46 | H2-5 H25-10 | C1 heat into the H-1 environment | [9.0, 101.0] | hall_icp_neutralizer: 0 W (no C1, OQ-A902-04; ICP heat via influence coefficients); hall_c1_reference ground article: v1 range x 1.2 through the v1 central coupling as a SENSITIVITY only (not a verdict; not shown to be conservative for an external module do... | W | A9.1 OQ-A902-04, row 79, row 86 | model-derived | REVISED_RECOMPUTED | LOCK-1 |
 | REV-47 | H2-5 H25-11 | heat entering H-1 from a module slot | 0.0 | no upstream pre-ionizer slot (IP-DN passive); the downstream ICP module heat into H-1 is TBD (ICP-43); every hall_icp_neutralizer thermal CLOSES is evaluated with 0 W of it and holds only while 1.2 x Q_ICP->H-1 (row 86) <= the allowable ICP heat given here ... | W | row 61, A9-03 ICP-43, A9-03 ID-26 | model-derived | REVISED_RECOMPUTED | LOCK-1 |
 | REV-48 | H2-5 H25-36 | spacecraft mounting-interface temperature and allowable heat | [273.15, 323.15] | carry 20/40/60 degC mounting-interface cases and 25/50/100 W allowable conducted-heat cases; freeze at the spacecraft/PDR interface. The 60 degC case (333.15 K) EXTENDS the v1 H25-36 range (273.15-323.15 K): owner-given, used as given [{"T_mount_C": [20.0, ... | degC; W | row 85 | owner-allocation | OWNER_GIVEN | after-evidence |
@@ -467,9 +512,9 @@ Each entry's old value carries `path + pointer + sha256` in the JSON (`revision_
 
 | id | name | value | units | basis | evidence | status | freeze |
 |---|---|---|---|---|---|---|---|
-| A9H-INS-01 | 13.56 MHz directional coupler + forward/reflected power sensors, 0-500 W forward, reference plane after the matching network | {"f_MHz": 13.56, "P_fwd_W": [0.0, 500.0]} | MHz; W | row 72; A9.1 A9-03-matching | owner-allocation | OWNER_GIVEN | NOW |
+| A9H-INS-01 | 13.56 MHz directional coupler + forward/reflected power sensors, reference plane after the matching network (A9.1); generator/chain sized... | {"f_MHz": 13.56, "generator_P_fwd_W": [0.0, 500.0], "coupler_plane_P_fwd_max_W": "TBD -... | MHz; W; dB | row 72; A9.1 A9-03-matching | owner-allocation | REVISED_PROPOSED | LOCK-1 |
 | A9H-INS-02 | calorimetric RF cross-check at the load plane (independent, not the sole primary) | normalized agreement statistic with k_x = 2 (frozen at LOCK-1); failure => RF-dependent... | - | row 72; UBQ-04 | owner-allocation | OWNER_GIVEN | LOCK-1 |
-| A9H-INS-03 | cable-loss / S-parameter characterization of the flexible coax (coupler plane -> antenna feed) | TBD - requires S1a VNA characterization of the installed coax at 13.56 MHz | dB | A9.1 A9-03-matching | None | TBD | LOCK-2 |
+| A9H-INS-03 | full two-port S-parameter characterization of the coupler-plane -> antenna-feed path (flexible coax + feedthrough + any on-module pre-mat... | TBD - requires S1a VNA characterization of the installed path and Gamma_L at 13.56 MHz | dB; - | A9.1 A9-03-matching; review finding (cable-only correction insufficient at high VSWR) | None | TBD | LOCK-2 |
 | A9H-INS-04 | floating-rated collector/bias V and I channels | TBD - requires collector bias range (ICP-21) | V; A | row 70; ICP-21 | None | TBD | LOCK-1 |
 | A9H-INS-05 | ground-return (facility-ground) current monitor | required | A | A9-04 IF-14 instrument request | assumed | PROPOSED | LOCK-1 |
 | A9H-INS-06 | ICP telemetry subset (forward/reflected RF, collector/bias V/I, RF source temperature, neutralizer health/interlock state) | required | - | row 130 | owner-allocation | OWNER_GIVEN | NOW |
@@ -485,6 +530,9 @@ Each entry's old value carries `path + pointer + sha256` in the JSON (`revision_
 | A9H-CAL-03 | DC V/I channel calibration (discharge, collector, keeper, magnet, bus) | TBD - requires certificates | V; A | A9-04 IF-16 | None | TBD | LOCK-2 |
 | A9H-CAL-04 | MFC own-gas calibration: NABL/ISO 17025 primary; in-house rate-of-rise as transfer standard; Ar-specific calibration for HI-AR | required | mg/s | rows 124, 126; UBQ-08 | owner-allocation | OWNER_GIVEN | NOW |
 | A9H-CAL-05 | pre/post calibration shift: in the budget and as a block-exclusion rule (form LOCK-1, number LOCK-2) | TBD - requires metrology-only calibration evidence (LOCK-2) | - | UBQ-05 | None | TBD | LOCK-2 |
+| A9H-INS-14 | RF impedance treatment of the flexible segment: on-module FIXED pre-match / impedance transformation to a residual Gamma_max (option a, P... | TBD - requires owner choice and Gamma_max (OQ-A907-11, LOCK-1) | - | A9.1 A9-03-matching; review finding | None | TBD | LOCK-1 |
+| A9H-INS-15 | flexible RF coax, vacuum feedthrough and connector ratings on the coupler -> antenna segment: forward power, peak voltage, peak current a... | {"P_fwd_max_W": "TBD - requires Gamma_max or the antenna impedance range", "V_pk_max_V"... | W; V; A | review finding; A9-03 ICP-15 | None | TBD | LOCK-1 |
+| A9H-INS-16 | coupler directivity requirement at the coupler-plane /Gamma/ | TBD - requires the A9-04 u(P_net) allocation (UB-RF-04) and the coupler certificate | dB | review finding; A9-04 UB-RF-04 | None | TBD | LOCK-2 |
 | A9H-FIX-01 | torsional thrust stand baseline (in-house engineering stand + qualified partner for score-bearing) | torsional | - | rows 115, 118 | owner-allocation | OWNER_GIVEN | NOW |
 | A9H-FIX-02 | exchange checks per C1<->ICP swap: cold/tare, service-line parasitic, B(z) perturbation, electrical isolation, RF pickup | ["cold_tare", "service_line_parasitic", "Bz_perturbation", "electrical_isolation", "rf_... | - | row 64; ICP-39 | owner-allocation | OWNER_GIVEN | LOCK-2 |
 
@@ -492,9 +540,9 @@ Each entry's old value carries `path + pointer + sha256` in the JSON (`revision_
 
 | id | from | to | quantity | value | units | status |
 |---|---|---|---|---|---|---|
-| IDA7-01 | A9-07 | A9-06 docs/budgets/mass_a9/ | mass consequences: (a) coil-current-density lever LV-COIL doubles the copper cross-section: copper delta >= the H21-24 copper mass (1.579 kg, RP-1 geometry, f_NI 2) - a LOWER BOUND, because the doubled winding window also raises the mean turn length (the true delta needs the H2-1 window geometry; note the thermal re... | {"LV-COIL_copper_delta_kg_lower_bound": 1.579, "LV-COIL_copper_delta_basis": "H21-24 co... | kg; m | OFFERED (lever adoption is an owner/LOCK-1 call) |
+| IDA7-01 | A9-07 | A9-06 docs/budgets/mass_a9/ | mass consequences: (a) coil-current-density lever LV-COIL doubles the copper cross-section at fixed NI and mean turn; with P x m_cu invariant (one consistent coil definition: H2-1 RP-1 f_NI 2 NI and mean turns) the copper delta equals the copper mass of the coil set at the P_mag basis being halved: about 0.14 kg at ... | {"LV-COIL_copper_delta_kg": {"P_mag_basis_60W_H25-08_upper": {"P_mag_20C_W": 60.0, "LV-... | kg; m | OFFERED (lever adoption is an owner/LOCK-1 call) |
 | IDA7-02 | A9-06 docs/budgets/mass_a9/ | A9-07 | per-configuration mass and CG on the stand (C1 module, ICP module, sham, on-platform services) for the >= 25 kg payload check | None | kg | PENDING docs/budgets/mass_a9/ (A9-06: module masses and CG) |
-| IDA7-03 | A9-07 | A9-08 docs/budgets/xe_ledger_a9/ | Xe consequences: C1 ignition dwell cap 120 s with at most two retries (bound per start from the 1.0 mg/s start-controller full scale; attempts 3 literal / 2 shorthand, OQ-A907-01); G-REUSE gives zero dedicated ICP Xe; C1 Xe only in hall_c1_reference (ground) and any flight fallback; +/-2 % FS flow class term (row 96) | {"attempts_3_literal": 0.36, "attempts_2_shorthand": 0.24} | g per start | OFFERED |
+| IDA7-03 | A9-07 | A9-08 docs/budgets/xe_ledger_a9/ | Xe consequences - IGNITION-DWELL-ONLY bound (not the total Xe per start; purge/preheat Xe PENDING A9-08, IDA7-04): C1 ignition dwell cap 120 s with at most two retries (bound per start from the 1.0 mg/s start-controller full scale; attempts 3 literal / 2 shorthand, OQ-A907-01); G-REUSE gives zero dedicated ICP Xe; C... | {"attempts_3_literal": 0.36, "attempts_2_shorthand": 0.24, "scope": "IGNITION_DWELL_ONLY"} | g per start (ignition dwell only; purge/preheat excluded) | OFFERED |
 | IDA7-04 | A9-08 docs/budgets/xe_ledger_a9/ | A9-07 | booked C1 purge/preheat/ignition Xe per start and the G-XE contingency term (if ever installed) | None | g | PENDING docs/budgets/xe_ledger_a9/ (A9-08: Xe per start terms) |
 | IDA7-05 | A9-07 | A9-09 docs/procurement/rfq_a9/ | RFQ items (quotation only): see h3_inputs | h3_inputs | - | OFFERED |
 | IDA7-06 | A9-09 docs/procurement/rfq_a9/ | A9-07 | quoted data-sheet values (coating temperature capability, ceramic wire rating at representative gas, coupler/sensor calibration scope, isolator withstand) | None | - | PENDING docs/procurement/rfq_a9/ (A9-09: quotations) |
@@ -511,6 +559,9 @@ Each entry's old value carries `path + pointer + sha256` in the JSON (`revision_
 | IDA7-17 | H2-1 docs/hardware/h2/h2_1_hall_chamber_magnet/ | A9-07 | FEMM B(z) incl. fringe field at IP-C1 and in the ICP volume; frozen channel geometry | None | G; mm | TBD - requires FEMM of the preliminary MC-1 (H2-1 follow-up; not in this lane) |
 | IDA7-18 | A9-07 | H-1 CI (docs/experiments/hardware/) | H-1 exit face = IP-EXIT; no C1 on H-1; hot-state B sensor; EM-only MC-1 | REV-03, REV-07, REV-11 | - | OFFERED |
 | IDA7-19 | A9-05 docs/evidence/icp_neutralizer/ + docs/experiments/hall_icp/validation_inputs/ | A9-07 | validation-input list items touching H2 (IF-12..IF-18 of hall_icp_validation_inputs_v1) | consumed as requirements, no numbers taken | - | CONSUMED |
+| IDA7-20 | A9-03 docs/interfaces/icp_neutralizer/ (+ schemas/interfaces/icp_neutralizer_icd_v1.json) | A9-07 | ICP antenna impedance Z_ant at 13.56 MHz (cold and plasma-loaded range) and the decision on an on-module fixed pre-match / impedance transformation; ICP-15 coax/feedthrough/connector ratings to be restated at the coupler-plane /Gamma/ (P_fwd, V_pk, I_pk, loss), not at the generator forward power | None | ohm; W; V; A | TBD - requires the A9-03 antenna design + S1a VNA measurement; owner call OQ-A907-11 |
+| IDA7-21 | A9-07 | A9-04 docs/experiments/hall_icp/uncertainty_budget/ | u(P_net) term for coupler directivity at high VSWR (UB-RF-04): worst-case relative error max((/G/+d)^2 - /G/^2, /G/^2 - (/G/-d)^2) / (1 - /G/^2), d = 10^(-D/20); sensitivity table at /G/ of the review loads / residual VSWR 1.2-2.0 and D 20/30/40 dB (recomputations.rf_reference_plane); plus the two-port + Gamma_L loa... | {"formula": "first-order model: reflected-arm error amplitude d = 10^(-D/20) of the for... | - | OFFERED (demand: an explicit directivity term and D_min at LOCK-2) |
+| IDA7-22 | A9-07 | A9-09 docs/procurement/rfq_a9/ | RFQ ratings for the 13.56 MHz coupler/sensors and the flexible coax: rated for the coupler-plane forward power, peak voltage/current and loss at Gamma_max (option a) or at the antenna mismatch (option b); directivity stated at the operating /Gamma/; optional on-module fixed pre-match | A9H-INS-01, A9H-INS-14..16 (values TBD) | W; V; A; dB | OFFERED (quotation only) |
 
 IDA7-16 abort list (abort_C = limit_C - 50 K, UBQ-06; limit_C for traceability only):
 
@@ -539,7 +590,7 @@ IDA7-16 abort list (abort_C = limit_C - 50 K, UBQ-06; limit_C for traceability o
 | 64 | PMQ-04 | C1<->ICP exchange checks incl. RF pickup (A9H-FIX-02, REV-39) |
 | 67 | HWQ-04 | B(z) perturbation scan with the ICP installed/energized (A9H-INS-11) |
 | 70 | HWQ-07 | ICP body floating, collector separately biased and metered (REV-36, REV-61, A9H-INS-04) |
-| 72 | R4-Q7 | 13.56 MHz, 0-500 W coupler chain; calorimetry cross-check (A9H-INS-01/02) |
+| 72 | R4-Q7 | 13.56 MHz, 0-500 W generator/chain; coupler-plane forward power vs mismatch (rf_reference_plane, OQ-A907-11); calorimetry cross-check (A9H-INS-01/02) |
 | 73 | H2-1 Q1 | ~1.3 mg/s nominal channel neutral-density sizing (REV-12) |
 | 74 | H2-1 Q2 | T2 shielded baseline, unshielded set engineering-only (REV-07) |
 | 75 | H2-1 Q3 | L/h <= 12; adjustable anode only pre-S1 (REV-08, REV-09) |
@@ -633,6 +684,7 @@ A9.1 decisions applied:
 - **OQ-A907-08**: Exterior coating temperature limit (row 84): the Z-93-class coating's temperature capability on the Hall body is not established (H2-5 v1 TBD). The coated PO/BP surfaces must withstand up to PO 442, BP 588 degC at baseline (searched T_max + allowance + 50 K). Carry the coating limit as a node limit with the same >= 50 K rule once sourced? Proposed: yes; until a datasheet/coupon value exists the coating stays OPEN and every thermal CLOSES that relies on the Z-93 finish is conditional on it (row 84 qualification)
 - **OQ-A907-09**: Row 86 '20% heat-load design margin': this lane scales only the DISSIPATED loads (discharge fractions, coil I^2R, cathode) by 1.2 and keeps the environmental solar/albedo/OLR inputs at their v1 hot/cold bounds. Should the 20 % also apply to environmental loads? Proposed: owner call; this lane's reading (dissipated only) is an interpretation, recorded as such
 - **OQ-A907-10**: The thermal worst case is found by a local search plus a heuristic search allowance (not an upper bound). CLOSES verdicts whose margin to the design ceiling after the allowance is below 10 K are flagged search_sensitive. Accept this PROPOSED reporting threshold, and require a global-optimisation or interval-bound check of every search-sensitive verdict before LOCK-1? Proposed: owner call; the flag never changes a verdict, only marks it for an independent check
+- **OQ-A907-11**: RF chain at the A9.1 reference plane (coupler after the off-platform match): the coupler, sensors and flexible coax then carry the ICP antenna's reflection. Row 72 sizes the inline chain for 0-500 W FORWARD power; at the coupler plane P_fwd = P_net / (1 - |Gamma|^2), so a 0-500 W chain limits the net power to 500 (1 - |Gamma|^2) W unless the segment is near 50 ohm. Add a FIXED on-module pre-match / impedance transformation holding the segment at |Gamma| <= Gamma_max (option a; tunable match stays off-platform), or rate coupler, sensors, coax and feedthrough for the antenna's own mismatch (option b)? Which Gamma_max (residual VSWR) at LOCK-1? Proposed: option a (keeps the row-72 0-500 W chain meaningful, keeps V_pk on the flexible coax low, makes the directivity term small); Gamma_max is an owner call at LOCK-1 after the A9-03 antenna impedance is known; the sham carries an equivalent fixed network (row 133)
 - **OQ-A907-07**: Develop a flight C1 integration (external mount on the flight article, two series valves, keeper supply) now for the fallback architecture hall_c1_reference, or defer until C1 is chosen for flight? Proposed: defer (OQ-A902-04: C1 is not an automatic flight backup; a flight C1 variant needs its own closures)
 
 ## (e) Historical reuse
@@ -656,15 +708,16 @@ A9.1 decisions applied:
 | 11 | cathode | C1 external reference module on KC-1, ground article only (REV-13..28) | BLOCKED | C1 module drawing + ICP-46 hipot |
 | 12 | ppu | 100 V bus, per-coil slots, pulsed keeper transient, 1 ms gate channel (REV-51..63) | BLOCKED | breadboard discharge supply (row 113) |
 | 13 | thermal_control | thermal rerun with the owner rules; BN wall CLOSES_WITH_SINGLE_LEVER (REV-40..50) | BLOCKED | measured deposition fractions / sourced BN k(T) |
-| 15 | sensors_diagnostics | instrument additions A9H-INS-01..13, calibrations A9H-CAL-01..05 | BLOCKED | quotations (A9-09) |
+| 15 | sensors_diagnostics | instrument additions A9H-INS-01..16, calibrations A9H-CAL-01..05; RF chain ratings at the coupler-plane |Gamma| (rf_reference_plane) | BLOCKED | quotations (A9-09) + antenna impedance / pre-match decision (OQ-A907-11) |
 | 16 | mechanical_structural | KC-1 downstream carrier, >= 25 kg payload, matched shams (REV-29..36) | BLOCKED | module drawings (ICP-02/04/07) |
 
 ## (g) H3 inputs (quotation only) and H4 inputs
 
 - H3-A907-01: breadboard Hall discharge supply, 100 V input, 180-350 V output (row 113) - QUOTATION ONLY (A9.1: RFQs authorized, purchase orders not; H3 gate controls purchases)
 - H3-A907-02: 13.56 MHz RF generator 0-500 W + matching network for off-platform mounting (row 72) - QUOTATION ONLY (A9.1: RFQs authorized, purchase orders not; H3 gate controls purchases)
-- H3-A907-03: 13.56 MHz directional coupler + forward/reflected power sensors with calibration (A9H-INS-01) - QUOTATION ONLY (A9.1: RFQs authorized, purchase orders not; H3 gate controls purchases)
-- H3-A907-04: matched flexible RF coax pair (live + sham) for the stand crossing (REV-33) - QUOTATION ONLY (A9.1: RFQs authorized, purchase orders not; H3 gate controls purchases)
+- H3-A907-03: 13.56 MHz directional coupler + forward/reflected power sensors with calibration, rated for the coupler-plane forward power at Gamma_max and with directivity stated at that |Gamma| (A9H-INS-01, A9H-INS-16; ratings TBD per OQ-A907-11) - QUOTATION ONLY (A9.1: RFQs authorized, purchase orders not; H3 gate controls purchases)
+- H3-A907-04: matched flexible RF coax pair (live + sham) for the stand crossing, rated for forward power, peak voltage/current and loss at the coupler-plane |Gamma| (REV-33, A9H-INS-15; ratings TBD) - QUOTATION ONLY (A9.1: RFQs authorized, purchase orders not; H3 gate controls purchases)
+- H3-A907-15: optional on-module fixed pre-match / impedance transformation network for 13.56 MHz (+ sham equivalent), if OQ-A907-11 option a is adopted (A9H-INS-14) - QUOTATION ONLY (A9.1: RFQs authorized, purchase orders not; H3 gate controls purchases)
 - H3-A907-05: floating collector/bias supply with V/I read-back (A9H-INS-04) - QUOTATION ONLY (A9.1: RFQs authorized, purchase orders not; H3 gate controls purchases)
 - H3-A907-06: P_bus DAQ: >= 20 kHz effective bandwidth, >= 100 kSa/s per channel, synchronized (A9H-INS-09) - QUOTATION ONLY (A9.1: RFQs authorized, purchase orders not; H3 gate controls purchases)
 - H3-A907-07: C1 keeper supply with 300-600 V current-limited pulse ignition + 1 kV DC hipot tester (REV-21) - QUOTATION ONLY (A9.1: RFQs authorized, purchase orders not; H3 gate controls purchases)

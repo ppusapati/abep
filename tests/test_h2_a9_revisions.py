@@ -253,13 +253,18 @@ def test_ceramic_conductor_factor_independent(doc):
         for a, b in zip(ks, ks[1:]):
             if a <= T <= b:
                 return roeser[a] + (roeser[b] - roeser[a]) * (T - a) / (b - a)
+        if T > 500.0:   # end-chord continuation (H2-5 cu_factor_vs_20C)
+            return roeser[400.0] + (roeser[500.0] - roeser[400.0]) * (T - 400.0) / 100.0
         raise ValueError(T)
     T5, T10 = (500 - 32) * 5 / 9, (1000 - 32) * 5 / 9
-    ratios = []
-    for T in (T5, 500.0):
-        rk = (26.9 + (42.3 - 26.9) * (T - T5) / (T10 - T5)) * cmil_ft
-        ratios.append(rk / (rho_cu20 * cu(T) / cu(20.0)))
-    assert math.isclose(kf["factor"], max(ratios), rel_tol=1e-3)
+    ratios = {}
+    for T, r in ((T5, 26.9), (T10, 42.3)):   # the two SOURCED Kulgrid points only (review finding)
+        ratios[f"{T:.2f}"] = r * cmil_ft / (rho_cu20 * cu(T) / cu(20.0))
+    assert set(kf["points_degC"]) == {"260.00", "537.78"}
+    for k, v in ratios.items():
+        assert math.isclose(kf["points_degC"][k]["ratio"], v, rel_tol=1e-3), k
+    assert math.isclose(ratios["537.78"], 1.3088, rel_tol=1e-3)
+    assert math.isclose(kf["factor"], max(ratios.values()), rel_tol=1e-3) and kf["factor_at"] == "260.00 degC"
 
 
 def test_thermal_rules_and_verdicts(doc):
@@ -280,14 +285,16 @@ def test_thermal_rules_and_verdicts(doc):
                     assert e["T_min_C"] <= e["T_nominal_C"] + 1e-6 <= e["T_max_C"] + 2e-6, (cfg, lv, c, n)
                     # the searched / bounded maximum is never below the OAT adverse corner
                     assert e["T_max_C"] >= e["oat_corner_T_max_C"] - 1e-9, (cfg, lv, c, n)
+                    key = "sensitivity_outcome" if cfg == "hall_c1_reference" else "verdict"
+                    assert ("verdict" in e) == (cfg != "hall_c1_reference"), (cfg, lv, c, n)
                     if e.get("limit_C") is not None:
                         ceil = e["limit_C"] - 50.0
                         if rec["domain_exits"]:
-                            assert e["verdict"] == "DO_NOT_CLOSE_MODEL_DOMAIN_EXCEEDED"
+                            assert e[key] == "DO_NOT_CLOSE_MODEL_DOMAIN_EXCEEDED"
                         else:
-                            assert (e["verdict"] == "CLOSES") == (e["T_max_C"] + alw <= ceil + 1e-9), (cfg, lv, c, n)
+                            assert (e[key] == "CLOSES") == (e["T_max_C"] + alw <= ceil + 1e-9), (cfg, lv, c, n)
                     else:
-                        assert e["verdict"] == "OPEN_LIMIT_TBD"
+                        assert e[key] == "OPEN_LIMIT_TBD"
     # dominated orbit cases carry the searched orbit_hot @ 60 degC maximum of the same lever as their bound
     icp = th["results"]["hall_icp_neutralizer"]
     for lv, cases in icp.items():
@@ -302,7 +309,7 @@ def test_thermal_rules_and_verdicts(doc):
     # the v1 11.2 K case is reproduced with the imported solver
     rep = th["reproduction_check"]
     assert rep["v1_margin_worst_K"] == 11.2 and abs(rep["reproduced_T_max_C"] - rep["v1_T_max_C"]) <= 0.15
-    assert th["bn_wall_11_2K_case"]["status"] in ("RESOLVED_BY_BASELINE", "RESOLVED_WITH_LEVERS", "OPEN")
+    assert th["bn_wall_11_2K_case"]["status"] in ("CONDITIONALLY_RESOLVED", "OPEN")
     assert th["overall"]["status"] in ("CLOSES", "CLOSES_WITH_LEVERS", "OPEN")
     # EM-only: no permanent-magnet rows; coating baseline is the high-emittance option
     assert "Sm2Co17" not in json.dumps(th["results"])
@@ -458,7 +465,8 @@ def test_review_fixes_documented(doc):
     assert "EXTENDS" in [r for r in doc["revision_register"] if r["h2_item"] == "H25-36"][0]["new"]["requirement"]
     assert "NOT a verdict" in th["hall_c1_reference_note"]
     d1 = [x for x in doc["interface_demands"] if x["id"] == "IDA7-01"][0]
-    assert "LV-COIL_copper_delta_kg_lower_bound" in d1["value"]
+    assert "LV-COIL_copper_delta_kg" in d1["value"] and "lower_bound" not in json.dumps(d1["value"])
+    assert d1["value"]["LV-COIL_mass_to_book_kg"].startswith("TBD - requires")
     assert d1["value"]["LV-RAD_mass_delta_kg"].startswith("TBD - requires")
 
 
@@ -533,3 +541,86 @@ def test_h21_worst_corner_uses_window_capability(doc):
         f = r["external_c1_magnetic_floor_mm"]
         assert f["nominal_assumptions"] <= f["upper_assumptions_own_width_capability_f_NI_1"] <= f["worst_case_assumptions"]
     assert h1["inputs"]["window_wide_capability_G"] > 0
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# review repair 3
+# ---------------------------------------------------------------------------------------------------------------------
+def test_rf_reference_plane_relations_independent(doc):
+    """Review finding (major): forward/reflected/net power, VSWR and peak voltage at the coupler plane after the match."""
+    rf = doc["recomputations"]["rf_reference_plane"]
+    z0 = 50.0
+    for name, v in rf["sensitivity_loads"].items():
+        z = complex(*v["Z_load_ohm"])
+        g = abs((z - z0) / (z + z0))
+        assert math.isclose(v["gamma_mag"], g, rel_tol=1e-3, abs_tol=1e-9), name
+        pf = 500.0 / (1 - g * g)
+        assert math.isclose(v["P_fwd_W"], pf, rel_tol=1e-3), name
+        assert math.isclose(v["V_pk_max_V"], math.sqrt(2 * pf * z0) * (1 + g), rel_tol=1e-3), name
+        if g > 0:
+            assert math.isclose(v["VSWR"], (1 + g) / (1 - g), rel_tol=1e-3), name
+        assert v["evidence_class"].startswith("assumed (sensitivity case")
+    r = rf["sensitivity_loads"]["review_case_20+j50"]
+    assert math.isclose(r["VSWR"], 5.2, rel_tol=0.01) and 900 < r["P_fwd_W"] < 950 and 490 < r["V_pk_max_V"] < 530
+    # no rating is taken from the sensitivity loads
+    for opt in rf["options"].values():
+        for k, val in opt["ratings"].items():
+            assert str(val).startswith("TBD - requires"), k
+    items = {i["id"]: i for i in doc["new_items"]}
+    assert {"A9H-INS-14", "A9H-INS-15", "A9H-INS-16"} <= set(items)
+    assert items["A9H-INS-01"]["value"]["coupler_plane_P_fwd_max_W"].startswith("TBD - requires")
+    ids = {x["id"]: x for x in doc["interface_demands"]}
+    assert ids["IDA7-20"]["from"].startswith("A9-03") and ids["IDA7-21"]["to"].startswith("A9-04")
+    assert "OQ-A907-11" in {q["id"] for q in doc["open_owner_questions"]}
+
+
+def test_two_port_and_directivity_helpers(builder):
+    # lossless matched line: all net power reaches the load
+    assert math.isclose(builder.two_port_load_power_ratio(0, 1, 1, 0, 0.5 + 0.3j), 1.0, rel_tol=1e-12)
+    # 1 dB lossy line into a mismatched load: part of the net power is dissipated in the line
+    s21 = 10 ** (-1 / 20)
+    r = builder.two_port_load_power_ratio(0, s21, s21, 0, 0.9)
+    assert 0 < r < 1
+    assert builder.directivity_error_rel(0.0, 20.0) == pytest.approx(0.01)
+    with pytest.raises(ValueError):
+        builder.rf_mismatch(500.0, 1.0)
+
+
+def test_lv_coil_copper_delta_consistent_geometry(doc):
+    """Review finding (major): P x m_cu is invariant at fixed NI and mean turn; no lower-bound claim."""
+    lc = doc["recomputations"]["lv_coil_copper_delta"]
+    cd = lc["coil_definition"]
+    P, m = cd["P_RP1_20C_W"], cd["m_RP1_kg"]
+    for c in cd["coils"].values():
+        k = 1.7241e-8 * 8890.0 * (c["NI_A"] * c["mean_turn_m"]) ** 2
+        assert math.isclose(c["P20_W"] * c["Cu_mass_kg"], k, rel_tol=0.01)
+    b60 = lc["bases"]["P_mag_basis_60W_H25-08_upper"]
+    assert b60["P_mag_20C_W"] == 60.0
+    assert math.isclose(b60["LV-COIL_copper_delta_kg"], m * P / 60.0, rel_tol=2e-3)
+    assert 0.13 < b60["LV-COIL_copper_delta_kg"] < 0.145
+    assert "lower bound" not in json.dumps(lc).replace("not a bound", "")
+
+
+def test_em_only_pmag_floor_and_labels(doc, builder):
+    th = doc["recomputations"]["h25_thermal_rerun"]
+    M5 = builder.h25()
+    pm = M5.param_map(M5.build_parameters())
+    rg = builder._ranges(pm, "orbit_hot", "hall_icp_neutralizer", 60.0, "LV-BASE", th["coil_conductor_factor"]["factor"])
+    assert rg["P_mag_W"][0] == builder.em_only_pmag_floor_W() > 0.0
+    # IDA7-03 is an ignition-dwell-only bound
+    d3 = [x for x in doc["interface_demands"] if x["id"] == "IDA7-03"][0]
+    assert d3["value"]["scope"] == "IGNITION_DWELL_ONLY" and "ignition dwell only" in d3["units"]
+    # REV-38 states old and new units
+    r38 = [r for r in doc["revision_register"] if r["id"] == "REV-38"][0]
+    assert "old: uN" in r38["units"] and "k = 1" in r38["units"]
+    # every hall_icp_neutralizer CLOSES carries the radiative-view condition
+    for lv, cases in th["results"]["hall_icp_neutralizer"].items():
+        for c, rec in cases.items():
+            for n, e in rec["nodes"].items():
+                if e["verdict"] == "CLOSES":
+                    assert "view" in e["closes_conditional_on_view"], (lv, c, n)
+    assert "ICP-05" in th["overall"]["status_conditional_on_view"]
+    an = th["closure_summary_hall_icp_neutralizer"]["AN"]["design_driver"]
+    assert "316L" in an["statement"] and "verify" in an["anode_316L_note"]["316L_melting_range_C_approx"]
+    md = MD_PATH.read_text(encoding="utf-8")
+    assert "sensitivity outcome (not a verdict)" in md and "Recomputation 3" in md and "Recomputation 4" in md

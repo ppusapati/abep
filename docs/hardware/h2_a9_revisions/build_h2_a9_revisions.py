@@ -544,12 +544,18 @@ def kulgrid_factor() -> dict:
         raise RuntimeError("copper reference temperature changed")
     T5, T10 = C_OF_F(500.0), C_OF_F(1000.0)
     pts = {}
-    for Tc in (T5, 500.0):   # both inside the Kulgrid [500 F, 1000 F] span and the copper table (<= 500 degC)
-        r_k = (r500 + (r1000 - r500) * (Tc - T5) / (T10 - T5)) * to_ohm_m
+    # the two SOURCED Kulgrid points only (500 F = 260.0 degC, 1000 F = 537.8 degC; no interpolated Kulgrid point)
+    for Tc, r_src, lbl in ((T5, r500, "500 F"), (T10, r1000, "1000 F")):
+        r_k = r_src * to_ohm_m
         r_cu = rho_cu20 * M5.cu_factor_vs_20C(Tc + T0C)
-        pts[f"{Tc:.2f}"] = {"rho_kulgrid_ohm_m": sig(r_k, 5), "rho_cu_ohm_m": sig(r_cu, 5), "ratio": sig(r_k / r_cu, 5)}
+        pts[f"{Tc:.2f}"] = {"source_point": f"MCQ-EM-03 resistance_{lbl.replace(' ', '')}", "T_F": float(lbl.split()[0]),
+                            "rho_kulgrid_ohm_m": sig(r_k, 5), "rho_cu_ohm_m": sig(r_cu, 5), "ratio": sig(r_k / r_cu, 5),
+                            "copper_basis": ("NBS table (inside -100..500 degC)" if Tc <= 500.0 else
+                                             "H2-5 cu_factor_vs_20C end-chord (400-500 degC) continuation beyond the "
+                                             "500 degC NBS table (model-derived, flagged)")}
     k = max(v["ratio"] for v in pts.values())
     return {"factor": k, "points_degC": pts,
+            "factor_at": max(pts, key=lambda t: pts[t]["ratio"]) + " degC",
             "sources": {"kulgrid": {"path": DELIVERABLES["MCQ"], "id": "MCQ-EM-03",
                                     "values": ["resistance_500F", "resistance_1000F"], "sha256": sha256_of(DELIVERABLES["MCQ"])},
                         "copper": "abep_sim/magnet_power.py ANNEALED_COPPER_IACS (NBS HB100) x H2-5 cu_factor_vs_20C "
@@ -606,6 +612,14 @@ def thermal_limits() -> dict:
     }
 
 
+def em_only_pmag_floor_W() -> float:
+    """EM-only (row 78) lower end of the coil I^2R range at the 20 degC copper basis: H21-18 lower end."""
+    v = old("H21", "H21-18")
+    if v.get("units") != "W":
+        raise RuntimeError("H21-18 units changed")
+    return float(v["value"][0])
+
+
 def _ranges(pm, case, config, t_mount_C, lever, kfac):
     M5 = h25()
     rg = dict(M5.ranges_for(case, pm))
@@ -613,7 +627,13 @@ def _ranges(pm, case, config, t_mount_C, lever, kfac):
         lo, hi = rg[k]
         rg[k] = (lo * HEAT_LOAD_MARGIN, hi * HEAT_LOAD_MARGIN)
     lo, hi = rg["P_mag_W"]
-    rg["P_mag_W"] = (lo, hi * kfac * HEAT_LOAD_MARGIN)
+    # row 78 (EM-only MC-1): the v1 0 W lower end ('0 W for a permanent-magnet MC-1', H25-08) is dropped; the lower
+    # end becomes the smallest EM coil dissipation of H2-1 (H21-18 lower end: RP-1, f_NI 1, copper at 20 degC - the
+    # same 20 degC basis as H25-08). The upper end is unchanged (H25-08 60 W) x conductor factor x 1.2.
+    lo_em = em_only_pmag_floor_W()
+    if not (lo <= lo_em < hi):
+        raise ValueError(f"EM-only P_mag floor {lo_em} W outside the H25-08 range {rg['P_mag_W']}")
+    rg["P_mag_W"] = (lo_em, hi * kfac * HEAT_LOAD_MARGIN)
     if config == "hall_icp_neutralizer":
         # no C1 in the primary A9 architecture (OQ-A902-04); ICP heat into H-1 is reported as influence coefficients
         rg["Q_cath_W"] = (0.0, 0.0)
@@ -952,7 +972,10 @@ def _overall(summary, row85_ok, an_driver) -> dict:
             "minimal_lever_sets_closing_all_live_nodes_and_row85_100W": mn,
             "status": ("CLOSES" if base_ok else "CLOSES_WITH_LEVERS" if joint else "OPEN"),
             "status_conditional_on": ICP_HEAT_CONDITION,
-            "open_items": ["ICP module heat into H-1 TBD (ICP-43): every hall_icp_neutralizer CLOSES is evaluated with "
+            "status_conditional_on_view": ICP_VIEW_CONDITION,
+            "open_items": ["exit-face radiative view blocked by the downstream ICP module not modelled (ICP-05 view "
+                           "factors): a condition on every hall_icp_neutralizer CLOSES",
+                           "ICP module heat into H-1 TBD (ICP-43): every hall_icp_neutralizer CLOSES is evaluated with "
                            "0 W of ICP heat and holds only while 1.2 x Q_ICP->H-1 <= the allowable ICP heat of that "
                            "node and lever set (icp_heat_into_h1)",
                            "pole/core, anode and exterior-coating use limits TBD (OPEN_LIMIT_TBD)",
@@ -964,6 +987,11 @@ def _overall(summary, row85_ok, an_driver) -> dict:
                            "worst case found by a local search with a search allowance, not a proven global maximum"]}
 
 
+ICP_VIEW_CONDITION = ("the network keeps the v1 exterior radiative views of H-1 (exit face / outer front pole PO to the "
+                      "sink); a downstream coaxial ICP module (a source tube around the plume axis, Takahashi-type "
+                      "topology) placed at IP-NEU blocks part of that view and re-radiates to H-1 - this is NOT "
+                      "modelled (view factors TBD - requires the KC-1 module drawing and view factors, ICP-05); the "
+                      "verdict holds only if a re-solve with the real module view factors still closes")
 INFLUENCE_LEVERS = tuple(LEVERS)   # every lever set (review finding: each closing set needs its own ICP-heat allowance)
 ICP_HEAT_CONDITION = ("evaluated with 0 W of ICP module heat entering H-1 (ICP-43 TBD): the verdict holds only if "
                       "1.2 x Q_ICP->H-1 (row 86 heat-load margin) <= the allowable ICP heat of this node and lever set "
@@ -1159,6 +1187,11 @@ def recompute_thermal() -> dict:
             if cfg == "hall_icp_neutralizer" and d["verdict"] == "CLOSES":
                 # review finding: the network carries 0 W of ICP module heat into H-1 (ICP-43 TBD)
                 d["closes_conditional_on"] = ICP_HEAT_CONDITION
+                # review finding: the downstream module also blocks part of the H-1 exit-face view to the sink
+                d["closes_conditional_on_view"] = ICP_VIEW_CONDITION
+            if cfg == "hall_c1_reference":
+                # sensitivity only (v1 central-cathode coupling): never a verdict on hall_c1_reference
+                d["sensitivity_outcome"] = d.pop("verdict")
             ct = _coating(n, env[n], limits)
             if ct:
                 d["exterior_coating"] = ct
@@ -1226,8 +1259,13 @@ def recompute_thermal() -> dict:
     bn_case = {"v1": repro, "rule": ("searched T_max + search allowance <= 900 - 50 = 850 degC in every case with "
                                      "1.2 x heat loads"),
                "baseline_worst_T_max_C": wi["baseline_worst_T_max_C"], "baseline_worst_margin_K": wi["baseline_worst_margin_K"],
-               "status": ("RESOLVED_BY_BASELINE" if wi["status"] == "CLOSES" else
-                          "RESOLVED_WITH_LEVERS" if wi["status"].startswith("CLOSES") else "OPEN"),
+               "status": ("CONDITIONALLY_RESOLVED" if wi["status"].startswith("CLOSES") else "OPEN"),
+               "status_meaning": ("CONDITIONALLY_RESOLVED = the searched worst case meets the rule for at least one "
+                                  "evaluated lever set, but NOT resolved: every closing set is NOT_CHECKED or "
+                                  "NOT_DEMONSTRATED for buildability, the 900 degC limit is a supplier guide value "
+                                  "(NOT_VALIDATED), the ICP-43 heat into H-1 is TBD and the ICP module's blocking of the "
+                                  "H-1 exit-face radiative view is not modelled; OPEN = no evaluated lever set closes"),
+               "closes_at_baseline": wi["status"] == "CLOSES",
                "levers_that_close": wi["levers_that_close_every_case"],
                "closing_levers_within_row85_100W": wi["closing_levers_within_row85_100W"],
                "minimal_closing_within_row85_100W": wi["minimal_closing_within_row85_100W"],
@@ -1245,6 +1283,7 @@ def recompute_thermal() -> dict:
         sm["brief_verdict_at_baseline"] = ("CLOSES" if sm["status"] == "CLOSES" else "DO_NOT_CLOSE")
         closers = (["LV-BASE"] if sm["status"] == "CLOSES" else []) + sm["levers_that_close_every_case"]
         sm["closes_conditional_on"] = ICP_HEAT_CONDITION
+        sm["closes_conditional_on_view"] = ICP_VIEW_CONDITION
         sm["icp_heat_allowable_W_per_closing_lever_set"] = {
             lv: {inj: allow_all[lv][inj][n] for inj in ("PO", "BP")} for lv in closers}
         sm["search_sensitive_closing_sets"] = sorted(
@@ -1266,7 +1305,25 @@ def recompute_thermal() -> dict:
                       "forbids an unsourced anode target, but the anode material (316L is only the H-1 engineering "
                       "baseline, row 106) and its thermal path are a DESIGN DRIVER: a sourced continuous-use limit of "
                       "the selected material must exceed the anode worst case + 50 K, or the anode heat path must "
-                      "change (row 87 derivation from the selected material's oxidation/electrical/creep data)"),
+                      "change (row 87 derivation from the selected material's oxidation/electrical/creep data). "
+                      "Buildability statement (not a target): the H-1 engineering baseline 316L (row 106) cannot "
+                      "credibly meet this worst case - with the +50 K margin it would need a continuous-use limit of at "
+                      f"least {an_best[0] + SEARCH['allowance_K'] + MARGIN_K:.1f} degC (lowest lever set) to "
+                      f"{max(an) + SEARCH['allowance_K'] + MARGIN_K:.1f} degC (worst; searched T_max + search allowance "
+                      "+ 50 K), "
+                      f"i.e. within about {1375.0 - (max(an) + SEARCH['allowance_K'] + MARGIN_K):.0f}-"
+                      f"{1375.0 - (an_best[0] + SEARCH['allowance_K'] + MARGIN_K):.0f} K of the lower end of the "
+                      "typical published 316/316L melting (solidus-liquidus) range of about 1375-1400 degC (from "
+                      "memory - verify against a 316L datasheet). A continuous-use limit of an austenitic stainless "
+                      "steel in an oxidizing, electrically loaded service lies far below its melting range, so 316L "
+                      "cannot credibly meet this anode heat path; either a different anode material with a sourced "
+                      "limit (row 87) or a changed heat path is needed"),
+        "anode_316L_note": {"required_limit_with_margin_C": [sig(an_best[0] + SEARCH["allowance_K"] + MARGIN_K, 6),
+                                                         sig(max(an) + SEARCH["allowance_K"] + MARGIN_K, 6)],
+                            "316L_melting_range_C_approx": "1375-1400 (from memory - verify; no sourced value in the "
+                                                           "repository)",
+                            "evidence_class": "assumed (melting range from memory - verify)",
+                            "not_a_target": "row 87: no unsourced anode target is set here"},
         "evidence_class": "model-derived"}
     return {
         "method": ("H2-5 builder imported read-only (build_parameters, ranges_for, assemble/solve: 9-node steady "
@@ -1279,7 +1336,10 @@ def recompute_thermal() -> dict:
                    "baseline combination). Owner rules: dissipated loads (anode/wall/pole fractions of P_d, coil "
                    "I^2R, cathode) x 1.2 (row 86), coil I^2R upper bound also x the ceramic-conductor factor, exterior "
                    "finish = the high-emittance Z-93 option (row 84), EM-only magnetic circuit (row 78: the "
-                   "permanent-magnet rows of v1 are dropped), mounting interface at 20/40/60 degC (row 85; the 60 degC "
+                   "permanent-magnet rows of v1 are dropped, and the v1 0 W P_mag lower end, which stood for a permanent-magnet "
+                   f"MC-1, is replaced by the H21-18 lower end {em_only_pmag_floor_W():g} W: RP-1, f_NI 1, copper at 20 "
+                   "degC, the smallest EM coil dissipation in H2-1, a different geometry from the ECHT-analog network "
+                   "- it only sets T_min / nominal, never a T_max verdict), mounting interface at 20/40/60 degC (row 85; the 60 degC "
                    "case lies ABOVE the H2-5 v1 H25-36 range 273.15-323.15 K - an owner-given extension, not a lever). "
                    "Environmental solar/albedo/OLR inputs are the v1 hot/cold bounds, NOT scaled by the 20 % margin "
                    "(an interpretation of row 86; owner question OQ-A907-09). P_d = the whole 1350 W internal "
@@ -1361,6 +1421,223 @@ def recompute_thermal() -> dict:
 # ----------------------------------------------------------------------------------------------------------------------
 # small deterministic derivations
 # ----------------------------------------------------------------------------------------------------------------------
+def lv_coil_copper_delta() -> dict:
+    """LV-COIL mass consequence from ONE consistent coil definition (review finding: the H21-24 copper mass is not a
+    lower bound). At fixed NI and mean-turn length l_mt, P = rho_e (NI)^2 l_mt / A_cu and m_cu = rho_m l_mt A_cu, so
+    P x m_cu = rho_e rho_m (NI l_mt)^2 is invariant per coil. Doubling A_cu (LV-COIL) adds the copper mass of the coil
+    set that dissipates the P_mag basis being halved. NI and l_mt: H2-1 case 'RP-1 f_NI=2' (inner + outer); both
+    coils scaled by the same factor."""
+    M1 = h21()
+    MP = M1.MP
+    cu = MP.ANNEALED_COPPER_IACS
+    if cu.T_ref_C != 20.0:
+        raise RuntimeError("copper reference temperature changed")
+    cases = load(DELIVERABLES["H21"])["coil_design"]["cases"]
+    idx = [i for i, c in enumerate(cases) if c["name"] == "RP-1 f_NI=2"]
+    if len(idx) != 1:
+        raise KeyError("H2-1 coil case 'RP-1 f_NI=2' not unique")
+    ptr = f"/coil_design/cases/{idx[0]}"
+    coils = cases[idx[0]]["coils"]
+    per, P_sum, m_sum = {}, 0.0, 0.0
+    for k in ("inner", "outer"):
+        c = coils[k]
+        ch = c["chosen"]
+        K_rec = ch["P20_W"] * ch["Cu_mass_kg"]
+        K_phys = cu.rho_ref_ohm_m * cu.density_kg_m3 * (c["NI_A"] * c["mean_turn_m"]) ** 2
+        if abs(K_rec / K_phys - 1.0) > 0.01:
+            raise RuntimeError(f"P x m invariant check failed for the {k} coil: {K_rec} vs {K_phys}")
+        per[k] = {"NI_A": c["NI_A"], "mean_turn_m": c["mean_turn_m"], "P20_W": ch["P20_W"],
+                  "Cu_mass_kg": ch["Cu_mass_kg"], "P_x_m_W_kg_recorded": sig(K_rec, 5),
+                  "P_x_m_W_kg_rho_e_rho_m_NI2_l2": sig(K_phys, 5)}
+        P_sum += ch["P20_W"]
+        m_sum += ch["Cu_mass_kg"]
+    h25_08 = old("H25", "H25-08")
+    bases = {
+        "P_mag_basis_60W_H25-08_upper": {
+            "P_mag_20C_W": h25_08["value"][1],
+            "basis": "the H2-5 H25-08 upper end (assumed evaluation range, 20 degC copper) - the bound LV-COIL halves "
+                     "in the thermal rerun (before the conductor factor and the 1.2 margin)"},
+        "P_mag_basis_RP1_as_sized": {
+            "P_mag_20C_W": sig(P_sum, 5),
+            "basis": "the RP-1 f_NI 2 coil set as sized by H2-1 (sum of the chosen inner + outer P20_W; H21-18 note)"},
+    }
+    for b in bases.values():
+        scale = P_sum / b["P_mag_20C_W"]
+        b["copper_mass_of_coil_set_at_this_basis_kg"] = sig(m_sum * scale, 4)
+        b["LV-COIL_copper_delta_kg"] = sig(m_sum * scale, 4)
+        b["P_mag_20C_removed_by_LV-COIL_W"] = sig(b["P_mag_20C_W"] / 2.0, 4)
+    return {
+        "value": {k: {"P_mag_20C_W": v["P_mag_20C_W"], "LV-COIL_copper_delta_kg": v["LV-COIL_copper_delta_kg"],
+                      "P_mag_20C_removed_W": v["P_mag_20C_removed_by_LV-COIL_W"]} for k, v in bases.items()},
+        "units": "kg; W",
+        "formula": ("P x m_cu = rho_e rho_m (NI l_mt)^2 per coil (fixed NI, fixed l_mt); both coils scaled by one "
+                    "factor s = P_RP1 / P_basis, so m_cu(P_basis) = m_RP1 x P_RP1 / P_basis; doubling A_cu adds "
+                    "m_cu(P_basis) and halves P_basis"),
+        "coil_definition": {"h2_1_case": "RP-1 f_NI=2", "coils": per, "P_RP1_20C_W": sig(P_sum, 5),
+                            "m_RP1_kg": sig(m_sum, 5), "H21-24_copper_kg": old("H21", "H21-24")["value"]["copper_kg"],
+                            "rho_e_ohm_m": cu.rho_ref_ohm_m, "rho_m_kg_m3": cu.density_kg_m3,
+                            "source": [src("H21", ptr), "abep_sim/magnet_power.py ANNEALED_COPPER_IACS"]},
+        "bases": bases,
+        "fixed_mean_turn_note": ("fixed-l_mt estimate: a larger winding window lengthens the mean turn, which raises "
+                                 "the copper needed for the same P (P x m grows with l_mt^2); the size of that effect "
+                                 "is TBD - requires the H2-1 window geometry / FEMM. Not a bound in either direction "
+                                 "on the final coil"),
+        "not_reconciled": ("the thermal rerun (ECHT-analog geometry, H25-08 assumed 0-60 W range) and the RP-1 coil "
+                           "(about 5.2 W at 20 degC) are different coil bases; which one H-1 has is TBD - requires the "
+                           "frozen H-1 coil (NI, l_mt, window). A 60 W coil with RP-1 NI and l_mt is a much thinner "
+                           "winding (about 0.14 kg copper); the RP-1 coil as sized gains only about 2.6 W at 20 degC "
+                           "from LV-COIL at a cost of about 1.6 kg"),
+        "status": "model-derived per basis; the mass to book is TBD - requires the frozen H-1 coil definition",
+        "evidence_class": "model-derived",
+    }
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# recomputation 3: RF measurement chain at the A9.1 reference plane (coupler AFTER the matching network)
+# ----------------------------------------------------------------------------------------------------------------------
+RF_Z0_OHM = 50.0          # nominal coax / coupler characteristic impedance (a system choice, stated, not antenna data)
+# Illustrative load impedances supplied by the independent review as SENSITIVITY cases only. They are NOT antenna data:
+# the ICP antenna impedance (cold and plasma-loaded) is TBD - requires A9-03 / S1a measurement.
+RF_SENSITIVITY_LOADS_OHM = (("matched_reference", complex(50.0, 0.0)),
+                            ("review_case_20+j50", complex(20.0, 50.0)),
+                            ("review_case_5+j100", complex(5.0, 100.0)),
+                            ("review_case_1+j100", complex(1.0, 100.0)))
+RF_SENSITIVITY_VSWR = (1.2, 1.5, 2.0)          # residual-VSWR sensitivity cases for option (a); no value chosen here
+RF_SENSITIVITY_DIRECTIVITY_DB = (20.0, 30.0, 40.0)   # directivity sensitivity cases; the coupler value is TBD
+
+
+def rf_mismatch(P_net_W: float, gamma_mag: float, Z0: float = RF_Z0_OHM) -> dict:
+    """Forward / reflected / net power, VSWR, standing-wave peak voltage and current on a line of impedance Z0 that
+    delivers P_net_W into a load with |Gamma| = gamma_mag (lossless-line relations at the reference plane)."""
+    if not (0.0 <= gamma_mag < 1.0):
+        raise ValueError("|Gamma| must be in [0, 1)")
+    if P_net_W < 0.0 or Z0 <= 0.0:
+        raise ValueError("P_net >= 0 and Z0 > 0 required")
+    g2 = gamma_mag * gamma_mag
+    P_fwd = P_net_W / (1.0 - g2)
+    return {"gamma_mag": gamma_mag, "VSWR": (1.0 + gamma_mag) / (1.0 - gamma_mag), "P_fwd_W": P_fwd,
+            "P_refl_W": g2 * P_fwd, "P_net_W": P_net_W,
+            "V_pk_max_V": math.sqrt(2.0 * P_fwd * Z0) * (1.0 + gamma_mag),
+            "I_pk_max_A": math.sqrt(2.0 * P_fwd / Z0) * (1.0 + gamma_mag),
+            "line_loss_multiplier_low_loss": (1.0 + g2) / (1.0 - g2)}
+
+
+def directivity_error_rel(gamma_mag: float, D_dB: float) -> float:
+    """Worst-case relative error of P_net = P_fwd (1 - |Gamma|^2) when the reflected-arm reading carries a forward
+    leakage of amplitude d = 10^(-D/20) relative to the forward wave (first-order directivity model, phase unknown:
+    |Gamma_meas| in [|Gamma| - d, |Gamma| + d])."""
+    d = 10.0 ** (-D_dB / 20.0)
+    g2 = gamma_mag * gamma_mag
+    hi = (gamma_mag + d) ** 2 - g2
+    lo = g2 - max(gamma_mag - d, 0.0) ** 2
+    return max(hi, lo) / (1.0 - g2)
+
+
+def two_port_load_power_ratio(S11: complex, S12: complex, S21: complex, S22: complex, gamma_L: complex) -> float:
+    """P_load / P_net,in for a two-port (coax + any pre-match) between the coupler plane and the antenna feed:
+    |S21|^2 (1 - |Gamma_L|^2) / (|1 - S22 Gamma_L|^2 (1 - |Gamma_in|^2)), Gamma_in = S11 + S12 S21 Gamma_L /
+    (1 - S22 Gamma_L). Needs BOTH the two-port S-parameters and the load reflection coefficient."""
+    den = 1.0 - S22 * gamma_L
+    g_in = S11 + S12 * S21 * gamma_L / den
+    if abs(g_in) >= 1.0:
+        raise ValueError("|Gamma_in| >= 1: no net power into the two-port")
+    return abs(S21) ** 2 * (1.0 - abs(gamma_L) ** 2) / (abs(den) ** 2 * (1.0 - abs(g_in) ** 2))
+
+
+def rf_reference_plane() -> dict:
+    """Consequences of the A9.1 layout (match off the moving platform, flexible coax, coupler plane AFTER the match)
+    for the coupler, sensors and coax ratings. No antenna impedance is asserted; loads are labelled sensitivity cases."""
+    a91("A9-03-matching", ("coupler reference plane after the matching network",))
+    r72 = row(72, ("0–500 W",))
+    P_net_max = 500.0   # row 72 lab forward power upper end; with a lossless match this bounds the power past the match
+    loads = {}
+    for name, Z in RF_SENSITIVITY_LOADS_OHM:
+        G = (Z - RF_Z0_OHM) / (Z + RF_Z0_OHM)
+        m = rf_mismatch(P_net_max, abs(G))
+        loads[name] = {"Z_load_ohm": [Z.real, Z.imag], "evidence_class": "assumed (sensitivity case, not antenna data)",
+                       **{k: sig(v, 4) for k, v in m.items()},
+                       "directivity_error_rel_P_net": {f"{D:g} dB": sig(directivity_error_rel(abs(G), D), 3)
+                                                       for D in RF_SENSITIVITY_DIRECTIVITY_DB}}
+    vswr_cases = {}
+    for v in RF_SENSITIVITY_VSWR:
+        g = (v - 1.0) / (v + 1.0)
+        m = rf_mismatch(P_net_max, g)
+        vswr_cases[f"VSWR {v:g}"] = {**{k: sig(x, 4) for k, x in m.items()},
+                                     "directivity_error_rel_P_net": {f"{D:g} dB": sig(directivity_error_rel(g, D), 3)
+                                                                     for D in RF_SENSITIVITY_DIRECTIVITY_DB}}
+    return {
+        "reference_plane": ("A9.1 A9-03-matching: tunable matching network OFF the moving platform, flexible coax "
+                            "across the stand, directional-coupler reference plane AFTER the matching network. The "
+                            "segment coupler -> flexible coax -> antenna therefore carries the ANTENNA's reflection "
+                            "unless an impedance transformation sits at the module"),
+        "relations": {
+            "gamma": "Gamma = (Z_L - Z0) / (Z_L + Z0); VSWR = (1 + |Gamma|) / (1 - |Gamma|)",
+            "powers": "P_fwd = P_net / (1 - |Gamma|^2); P_refl = |Gamma|^2 P_fwd; P_net = P_fwd - P_refl",
+            "peaks": "V_pk,max = sqrt(2 P_fwd Z0) (1 + |Gamma|); I_pk,max = sqrt(2 P_fwd / Z0) (1 + |Gamma|)",
+            "line_loss": ("low-loss line: dissipated loss grows by about (1 + |Gamma|^2) / (1 - |Gamma|^2) over the "
+                          "matched-line loss (approximation; verify against the cable data at 13.56 MHz)"),
+            "directivity": ("first-order model: reflected-arm error amplitude d = 10^(-D/20) of the forward wave, phase "
+                            "unknown; worst-case relative error of P_net = max((|G|+d)^2 - |G|^2, |G|^2 - (|G|-d)^2) / "
+                            "(1 - |G|^2) (standard directivity-limited reflection error; verify against the coupler "
+                            "documentation, A9-04 UB-RF-04)"),
+            "load_power": ("P_load / P_net,coupler = |S21|^2 (1 - |Gamma_L|^2) / (|1 - S22 Gamma_L|^2 (1 - "
+                           "|Gamma_in|^2)), Gamma_in = S11 + S12 S21 Gamma_L / (1 - S22 Gamma_L): the correction from "
+                           "the coupler plane to the antenna feed needs the full two-port S-parameters AND Gamma_L; a "
+                           "cable-loss-only (|S21|) correction is insufficient when |Gamma_L| is not small"),
+            "evidence_class": "model-derived (standard transmission-line relations; stated here, verify)"},
+        "Z0_ohm": {"value": RF_Z0_OHM, "basis": "nominal coax/coupler system impedance (assumed; quotation, row 8)"},
+        "P_net_max_W": {"value": P_net_max, "source": r72,
+                        "basis": ("row 72 lab forward power 0-500 W: with a lossless match the power delivered past "
+                                  "the match cannot exceed the generator forward power")},
+        "sensitivity_loads": loads,
+        "sensitivity_loads_note": ("illustrative load impedances from the independent review, used ONLY to show the "
+                                   "size of the effect; the antenna impedance is TBD - requires the A9-03 antenna "
+                                   "design and a cold / plasma-loaded VNA measurement at 13.56 MHz (S1a). No rating "
+                                   "below is taken from them"),
+        "residual_vswr_sensitivity": vswr_cases,
+        "residual_vswr_note": ("option (a) cases: the flexible segment sees only a residual mismatch after an on-module "
+                               "pre-match; VSWR 1.2/1.5/2.0 are sensitivity values, the limit VSWR_max is TBD (LOCK-1, "
+                               "OQ-A907-11)"),
+        "directivity_note": ("20/30/40 dB are sensitivity values; the coupler directivity is TBD - requires its "
+                             "certificate (A9H-CAL-02) and enters A9-04 UB-RF-04"),
+        "options": {
+            "a_on_module_pre_match": {
+                "status": "PROPOSED (owner call, OQ-A907-11)",
+                "what": ("a FIXED (non-tuned) impedance transformation on the ICP module (e.g. a fixed L-network or "
+                         "transformer at the antenna feed) so that the flexible segment and the coupler plane see a "
+                         "near-50 ohm load with |Gamma| <= Gamma_max; the TUNABLE match stays off-platform as A9.1 "
+                         "requires. Then coupler, sensors and coax are rated for P_fwd,max = P_net,max / (1 - "
+                         "Gamma_max^2) and V_pk,max = sqrt(2 P_fwd,max Z0)(1 + Gamma_max)"),
+                "consequences": ("adds mass/heat on the moving platform (payload >= 25 kg check, A9-06; ICP-43 heat); "
+                                 "needs the antenna impedance range to design (A9-03); the matched sham must carry an "
+                                 "equivalent fixed network (row 133)"),
+                "ratings": {"Gamma_max": f"{TBD} owner/LOCK-1 residual-VSWR limit (OQ-A907-11)",
+                            "P_fwd_max_W": f"{TBD} Gamma_max (formula above; e.g. VSWR 2.0 -> "
+                                           f"{sig(vswr_cases['VSWR 2']['P_fwd_W'], 4)} W, sensitivity only)",
+                            "V_pk_max_V": f"{TBD} Gamma_max"}},
+            "b_rate_the_mismatched_segment": {
+                "status": "FALLBACK (if option a is declined)",
+                "what": ("no transformation at the module: coupler, sensors, flexible coax, feedthrough and connectors "
+                         "are rated for the antenna's own mismatch at P_net,max"),
+                "ratings": {"P_fwd_max_W": f"{TBD} the antenna impedance range (A9-03, cold and plasma-loaded)",
+                            "V_pk_max_V": f"{TBD} the antenna impedance range (A9-03)",
+                            "I_pk_max_A": f"{TBD} the antenna impedance range (A9-03)",
+                            "coax_loss_at_mismatch_W": f"{TBD} cable data at 13.56 MHz + the antenna impedance",
+                            "directivity_min_dB": f"{TBD} the u(P_net) allocation of A9-04 (UB-RF-04) at the "
+                                                  "measured |Gamma|"},
+                "note": ("at the review sensitivity loads the forward power at the coupler plane would be "
+                         + ", ".join(f"{k} {v['P_fwd_W']:g} W (VSWR {v['VSWR']:g})" for k, v in loads.items()
+                                     if k != "matched_reference")
+                         + " for 500 W net: a 0-500 W forward-rated sensor would be over-ranged")}},
+        "finding": ("the row-72 0-500 W range is the GENERATOR forward power; at the A9.1 coupler plane (after the "
+                    "match) the forward power is P_net / (1 - |Gamma|^2) and depends on the antenna impedance, which is "
+                    "TBD. Coupler/sensor/coax ratings and the directivity requirement are therefore TBD until either "
+                    "an on-module pre-match fixes Gamma_max (option a, proposed) or the antenna impedance range is "
+                    "known (option b)"),
+        "evidence_class": "model-derived",
+    }
+
+
 def derived_small() -> dict:
     kp = old("H22", "H22-22")          # keeper pulse class [300, 600] V
     v_hi = kp["value"][1]
@@ -1390,7 +1667,8 @@ def derived_small() -> dict:
                                 "source": [h24_01["source"], h24_25["source"], h24_27["source"]],
                                 "evidence_class": "model-derived"},
         "c1_ignition_dwell_xe_bound_g": {
-            "value": {"attempts_3_literal": sig(xe_n3, 4), "attempts_2_shorthand": sig(xe_n2, 4)}, "units": "g per start",
+            "value": {"attempts_3_literal": sig(xe_n3, 4), "attempts_2_shorthand": sig(xe_n2, 4)},
+            "units": "g per start (ignition dwell only; purge/preheat excluded)",
             "formula": "start-flow controller full scale (H22-44, 1.0 mg/s Xe, an upper bound of any commanded start "
                        "flow) x 120 s dwell cap (row 93) x attempts (1 + two retries = 3 literal; 2 per the '120 s x 2' "
                        "shorthand; owner question OQ-A907-01)",
@@ -1670,7 +1948,8 @@ def revision_register(rc: dict) -> list:
                                "most two retries (preliminary protocol); final bound frozen before score-bearing C1 "
                                "testing; all Xe booked (PHASE_TOTAL_FLOW)",
                 "value": {"dwell_cap_s": 120.0, "max_retries": 2,
-                          "xe_bound_g_per_start": ds["c1_ignition_dwell_xe_bound_g"]["value"]}},
+                          "xe_bound_g_per_start_ignition_dwell_only": ds["c1_ignition_dwell_xe_bound_g"]["value"],
+                          "purge_preheat_xe": pending("A9-08", "purge/preheat Xe per start (IDA7-04)")}},
                "s; g", [row(93, ("120 s", "two retries")), row(42, ("PHASE_TOTAL_FLOW",))],
                "rows 42, 93; Xe bound derived (recomputations.small)", "model-derived", "OWNER_GIVEN", "LOCK-1",
                recomputation="recomputations/small/c1_ignition_dwell_xe_bound_g", applies_to=C1o))
@@ -1748,8 +2027,15 @@ def revision_register(rc: dict) -> list:
                                "directional coupler / reference plane AFTER the matching network; calibrated cable-loss "
                                "/ S-parameter correction from the coupler plane to the antenna feed; matched sham coax in "
                                "hall_c1_reference; move the match onto the platform only if S1a shows the off-platform "
-                               "chain cannot meet the RF-power uncertainty requirement",
-                "value": "off-platform match; coupler after match"}, "-",
+                               "chain cannot meet the RF-power uncertainty requirement. Review finding: after the match "
+                               "the coupler and the flexible coax carry the antenna's reflection (P_fwd = P_net / (1 - "
+                               "|Gamma|^2), V_pk = sqrt(2 P_fwd Z0)(1 + |Gamma|)); either a FIXED on-module pre-match "
+                               "holds the segment at |Gamma| <= Gamma_max (option a, PROPOSED; the tunable match stays "
+                               "off-platform) or coupler, sensors and coax are rated for the antenna mismatch (option "
+                               "b); the correction to the antenna feed needs the two-port S-parameters AND Gamma_L "
+                               "(A9H-INS-03, -14..-16; OQ-A907-11)",
+                "value": {"layout": "off-platform tunable match; coupler after match",
+                          "flexible_segment_treatment": f"{TBD} OQ-A907-11 (option a proposed)"}}, "-",
                [a91("A9-03-matching", ("off the moving stand platform",)), row(72, ("13.56 MHz",))],
                "A9.1 A9-03 clarification", "owner-allocation", "OWNER_GIVEN", "NOW"))
     L.append(R("REV-35", "H2-6", "H26-44", "heat load into H-1 + mount + module (stand thermal design bound)",
@@ -1781,7 +2067,8 @@ def revision_register(rc: dict) -> list:
                {"requirement": "1 % standard relative uncertainty (k = 1) for a sustained reading, tested at 12 mN with "
                                "maximum representative moving payload and all service lines installed (S1a); gates use "
                                "the pre-registered one-sided treatment; revise only before LOCK-2 from metrology-only "
-                               "evidence", "value": {"u_rel_k1": 0.01, "test_point_mN": 12.0}}, "-",
+                               "evidence", "value": {"u_rel_k1": 0.01, "test_point_mN": 12.0}},
+               "old: uN (absolute uncertainty); new: - (relative standard uncertainty, k = 1); test point mN",
                [row(121, ("1%",)), row(120, ("12 mN",)), a91("UBQ-01", ("k = 1",))], "rows 120-121; UBQ-01",
                "owner-allocation", "OWNER_GIVEN", "NOW"))
     L.append(R("REV-39", "H2-6", "H26-16", "exploratory I_d(t) chain",
@@ -1827,11 +2114,14 @@ def revision_register(rc: dict) -> list:
                "after-evidence", recomputation="recomputations/h25_thermal_rerun"))
     L.append(R("REV-43", "H2-5", "H25-08", "coil I^2R bound with a ceramic (possibly Ni-clad) conductor",
                old("H25", "H25-08"),
-               {"requirement": "upper bound x conductor factor (Ni-clad vs Cu) x 1.2 heat-load margin",
+               {"requirement": "upper bound x conductor factor (Ni-clad vs Cu) x 1.2 heat-load margin; lower end = "
+                               "H21-18 lower end (EM-only, row 78: the v1 0 W permanent-magnet lower end is dropped)",
                 "value": {"factor": th["coil_conductor_factor"]["factor"],
+                          "P_mag_20C_lower_W_used": em_only_pmag_floor_W(),
                           "P_mag_20C_upper_W_used": sig(old("H25", "H25-08")["value"][1] * th["coil_conductor_factor"]["factor"]
                                                         * HEAT_LOAD_MARGIN, 4)}},
-               "W", [row(77, ("Ni-clad",)), row(86, ("20%",))], "MCQ-EM-03 resistance points vs NBS copper",
+               "W", [row(77, ("Ni-clad",)), row(86, ("20%",)), row(78, ("EM ONLY",))],
+               "MCQ-EM-03 resistance points vs NBS copper; H21-18",
                "model-derived", "REVISED_RECOMPUTED", "LOCK-1", recomputation="recomputations/h25_thermal_rerun/coil_conductor_factor"))
     L.append(R("REV-44", "H2-5", "PI/PO/BP limits", "pole / core use limit",
                old_at("H25", "/limits/5", "limits[soft-magnetic use limit]"),
@@ -2133,17 +2423,30 @@ def new_items() -> list:
     ICPo = ("hall_icp_neutralizer",)
     C1o = ("hall_c1_reference",)
     return [
-        I("A9H-INS-01", "13.56 MHz directional coupler + forward/reflected power sensors, 0-500 W forward, reference "
-                        "plane after the matching network", {"f_MHz": 13.56, "P_fwd_W": [0.0, 500.0]}, "MHz; W",
-          "row 72; A9.1 A9-03-matching", [row(72, ("0–500 W",)), a91("A9-03-matching", ("coupler",))],
-          "owner-allocation", "OWNER_GIVEN", "NOW", ICPo, "uncertainty u(P_fwd), u(P_refl) PENDING A9-04 (ICP-14)"),
+        I("A9H-INS-01", "13.56 MHz directional coupler + forward/reflected power sensors, reference plane after the "
+                        "matching network (A9.1); generator/chain sized 0-500 W forward (row 72)",
+          {"f_MHz": 13.56, "generator_P_fwd_W": [0.0, 500.0],
+           "coupler_plane_P_fwd_max_W": (f"{TBD} Gamma_max at the coupler plane (on-module pre-match, OQ-A907-11) or "
+                                         "the antenna impedance range (A9-03): P_fwd = P_net / (1 - |Gamma|^2) "
+                                         "(recomputations.rf_reference_plane)"),
+           "directivity_min_dB": f"{TBD} the A9-04 u(P_net) allocation at the coupler-plane |Gamma| (UB-RF-04)"},
+          "MHz; W; dB", "row 72; A9.1 A9-03-matching", [row(72, ("0–500 W",)), a91("A9-03-matching", ("coupler",))],
+          "owner-allocation", "REVISED_PROPOSED", "LOCK-1", ICPo,
+          "0-500 W is the generator forward power; after the match the coupler sees the antenna reflection, so a "
+          "0-500 W forward rating is sufficient only if the coupler plane is near 50 ohm (option a) - otherwise it is "
+          "over-ranged (review finding; rf_reference_plane). u(P_fwd), u(P_refl) PENDING A9-04 (ICP-14, UB-RF-04)"),
         I("A9H-INS-02", "calorimetric RF cross-check at the load plane (independent, not the sole primary)",
           "normalized agreement statistic with k_x = 2 (frozen at LOCK-1); failure => RF-dependent quantities "
           "EXCLUDED_INSTRUMENT", "-", "row 72; UBQ-04", [row(72, ("Calorimetry",)), a91("UBQ-04", ("k_x = 2",))],
           "owner-allocation", "OWNER_GIVEN", "LOCK-1", ICPo),
-        I("A9H-INS-03", "cable-loss / S-parameter characterization of the flexible coax (coupler plane -> antenna feed)",
-          f"{TBD} S1a VNA characterization of the installed coax at 13.56 MHz", "dB", "A9.1 A9-03-matching",
-          [a91("A9-03-matching", ("S-parameter",))], None, "TBD", "LOCK-2", ICPo),
+        I("A9H-INS-03", "full two-port S-parameter characterization of the coupler-plane -> antenna-feed path (flexible "
+                        "coax + feedthrough + any on-module pre-match) AND the antenna load reflection coefficient "
+                        "Gamma_L (cold VNA; plasma-loaded from the calibrated coupler)",
+          f"{TBD} S1a VNA characterization of the installed path and Gamma_L at 13.56 MHz", "dB; -",
+          "A9.1 A9-03-matching; review finding (cable-only correction insufficient at high VSWR)",
+          [a91("A9-03-matching", ("S-parameter",)), lane_item("A9-03", "ICP-15")], None, "TBD", "LOCK-2", ICPo,
+          "correction P_load / P_net = |S21|^2 (1 - |Gamma_L|^2) / (|1 - S22 Gamma_L|^2 (1 - |Gamma_in|^2)) "
+          "(recomputations.rf_reference_plane.relations.load_power)"),
         I("A9H-INS-04", "floating-rated collector/bias V and I channels", f"{TBD} collector bias range (ICP-21)",
           "V; A", "row 70; ICP-21", [row(70, ("collector bias separately",)), lane_item("A9-03", "ICP-21")], None,
           "TBD", "LOCK-1", ICPo, "isolation to the ICP-23 350 V rating + margin"),
@@ -2189,6 +2492,27 @@ def new_items() -> list:
         I("A9H-CAL-05", "pre/post calibration shift: in the budget and as a block-exclusion rule (form LOCK-1, number "
                         "LOCK-2)", f"{TBD} metrology-only calibration evidence (LOCK-2)", "-", "UBQ-05",
           [a91("UBQ-05", ("block-exclusion",))], None, "TBD", "LOCK-2"),
+        I("A9H-INS-14", "RF impedance treatment of the flexible segment: on-module FIXED pre-match / impedance "
+                        "transformation to a residual Gamma_max (option a, PROPOSED) or ratings for the antenna's own "
+                        "mismatch (option b, fallback)",
+          f"{TBD} owner choice and Gamma_max (OQ-A907-11, LOCK-1)", "-",
+          "A9.1 A9-03-matching; review finding", [a91("A9-03-matching", ("off the moving stand platform",)),
+                                                  row(72, ("0–500 W",)), row(133, ("matched sham",))],
+          None, "TBD", "LOCK-1", ICPo, "the tunable match stays off-platform (A9.1); the sham carries an equivalent "
+          "fixed network (row 133)"),
+        I("A9H-INS-15", "flexible RF coax, vacuum feedthrough and connector ratings on the coupler -> antenna segment: "
+                        "forward power, peak voltage, peak current and dissipated loss at the coupler-plane |Gamma|",
+          {"P_fwd_max_W": f"{TBD} Gamma_max or the antenna impedance range",
+           "V_pk_max_V": f"{TBD} Gamma_max or the antenna impedance range",
+           "I_pk_max_A": f"{TBD} Gamma_max or the antenna impedance range",
+           "loss_at_mismatch_W": f"{TBD} cable data at 13.56 MHz + |Gamma|"}, "W; V; A",
+          "review finding; A9-03 ICP-15", [lane_item("A9-03", "ICP-15"), row(72, ("0–500 W",))], None, "TBD",
+          "LOCK-1", ICPo, "formulas in recomputations.rf_reference_plane.relations; sensitivity values there are NOT "
+          "ratings"),
+        I("A9H-INS-16", "coupler directivity requirement at the coupler-plane |Gamma|",
+          f"{TBD} the A9-04 u(P_net) allocation (UB-RF-04) and the coupler certificate", "dB",
+          "review finding; A9-04 UB-RF-04", [lane_item("A9-04", "UB-RF-04")], None, "TBD", "LOCK-2", ICPo,
+          "worst-case relative P_net error = max((|G|+d)^2 - |G|^2, |G|^2 - (|G|-d)^2) / (1 - |G|^2), d = 10^(-D/20)"),
         I("A9H-FIX-01", "torsional thrust stand baseline (in-house engineering stand + qualified partner for score-bearing)",
           "torsional", "-", "rows 115, 118", [row(115, ("TORSIONAL",)), row(118, ("DUAL PATH",))], "owner-allocation",
           "OWNER_GIVEN", "NOW"),
@@ -2236,26 +2560,34 @@ def interface_demands(rc) -> list:
         Dm.append({"id": did, "from": frm, "to": to, "quantity": quantity, "value": value, "units": units,
                    "status": status})
     D("IDA7-01", "A9-07", "A9-06 " + PARALLEL["A9-06"], "mass consequences: (a) coil-current-density lever LV-COIL doubles "
-      "the copper cross-section: copper delta >= the H21-24 copper mass (1.579 kg, RP-1 geometry, f_NI 2) - a LOWER "
-      "BOUND, because the doubled winding window also raises the mean turn length (the true delta needs the H2-1 "
-      "window geometry; note the thermal rerun itself uses the H2-5 ECHT-analog geometry, not RP-1); (b) radiator "
+      "the copper cross-section at fixed NI and mean turn; with P x m_cu invariant (one consistent coil definition: "
+      "H2-1 RP-1 f_NI 2 NI and mean turns) the copper delta equals the copper mass of the coil set at the P_mag basis "
+      "being halved: about 0.14 kg at the H25-08 60 W basis, about 1.58 kg if H-1 keeps the RP-1 coil as sized "
+      "(about 5.2 W at 20 degC). These are fixed-mean-turn estimates, not bounds, and the mass to book is TBD - "
+      "requires the frozen H-1 coil (recomputations.lv_coil_copper_delta); (b) radiator "
       "lever LV-RAD enlarges the MC-1 body from the H2-5 lower ends D 0.14 m / L 0.10 m to D 0.18 m / L 0.13 m: "
       "mass delta TBD - requires the MC-1 body drawing (shell thickness, open fraction) - not quantified here; "
       "(c) C1 hardware (module, keeper supply, the C1 cathode-branch valves of H22-30, filter/getter) leaves the "
       "primary A9 flight BOM (ground article only); the dual series isolation on the high-pressure Xe path that "
-      "feeds the Hall anode STAYS in the flight BOM (rows 55, 90) - A9-06 must not subtract it; (d) ICP module, RF generator/matching/feedthrough, collector/bias hardware added "
-      "(row 59); (e) stand payload >= 25 kg is a ground item",
-      {"LV-COIL_copper_delta_kg_lower_bound": old("H21", "H21-24")["value"]["copper_kg"],
-       "LV-COIL_copper_delta_basis": "H21-24 copper_kg (RP-1 geometry); lower bound (mean turn length grows)",
+      "feeds the Hall anode STAYS in the flight BOM (rows 55, 90) - A9-06 must not subtract it; (d) ICP module, RF "
+      "generator/matching/feedthrough, collector/bias hardware added (row 59), plus any on-module fixed pre-match "
+      "(OQ-A907-11); (e) stand payload >= 25 kg is a ground item",
+      {"LV-COIL_copper_delta_kg": rc["lv_coil_copper_delta"]["value"],
+       "LV-COIL_copper_delta_basis": ("consistent-geometry P x m_cu invariant, fixed NI and mean turn (H2-1 RP-1 "
+                                      "f_NI 2); per P_mag basis; not a bound"),
+       "LV-COIL_mass_to_book_kg": f"{TBD} the frozen H-1 coil (NI, mean turn, window; H2-1 FEMM)",
        "LV-RAD_set": lv["LV-RAD"]["set"],
        "LV-RAD_mass_delta_kg": f"{TBD} the MC-1 body drawing (H2-1/H2-7)"}, "kg; m",
       "OFFERED (lever adoption is an owner/LOCK-1 call)")
     D("IDA7-02", "A9-06 " + PARALLEL["A9-06"], "A9-07", "per-configuration mass and CG on the stand (C1 module, ICP module, "
       "sham, on-platform services) for the >= 25 kg payload check", None, "kg", pending("A9-06", "module masses and CG"))
-    D("IDA7-03", "A9-07", "A9-08 " + PARALLEL["A9-08"], "Xe consequences: C1 ignition dwell cap 120 s with at most two "
-      "retries (bound per start from the 1.0 mg/s start-controller full scale; attempts 3 literal / 2 shorthand, "
+    D("IDA7-03", "A9-07", "A9-08 " + PARALLEL["A9-08"], "Xe consequences - IGNITION-DWELL-ONLY bound (not the total Xe per "
+      "start; purge/preheat Xe PENDING A9-08, IDA7-04): C1 ignition dwell cap 120 s with at most two retries (bound per start from the 1.0 mg/s start-controller full scale; attempts 3 literal / 2 shorthand, "
       "OQ-A907-01); G-REUSE gives zero dedicated ICP Xe; C1 Xe only in hall_c1_reference (ground) and any flight "
-      "fallback; +/-2 % FS flow class term (row 96)", ds["c1_ignition_dwell_xe_bound_g"]["value"], "g per start",
+      "fallback; +/-2 % FS flow class term (row 96). The value is an IGNITION-DWELL-ONLY bound: purge and preheat Xe "
+      "are NOT in it (PENDING A9-08, IDA7-04), so it is not the total Xe per start",
+      dict(ds["c1_ignition_dwell_xe_bound_g"]["value"], scope="IGNITION_DWELL_ONLY"),
+      "g per start (ignition dwell only; purge/preheat excluded)",
       "OFFERED")
     D("IDA7-04", "A9-08 " + PARALLEL["A9-08"], "A9-07", "booked C1 purge/preheat/ignition Xe per start and the G-XE "
       "contingency term (if ever installed)", None, "g", pending("A9-08", "Xe per start terms"))
@@ -2299,6 +2631,23 @@ def interface_demands(rc) -> list:
       "sensor; EM-only MC-1", "REV-03, REV-07, REV-11", "-", "OFFERED")
     D("IDA7-19", "A9-05 " + A9_LANES["A9-05"], "A9-07", "validation-input list items touching H2 (IF-12..IF-18 of "
       "hall_icp_validation_inputs_v1)", "consumed as requirements, no numbers taken", "-", "CONSUMED")
+    rf = rc["rf_reference_plane"]
+    D("IDA7-20", "A9-03 " + A9_LANES["A9-03"], "A9-07", "ICP antenna impedance Z_ant at 13.56 MHz (cold and "
+      "plasma-loaded range) and the decision on an on-module fixed pre-match / impedance transformation; ICP-15 "
+      "coax/feedthrough/connector ratings to be restated at the coupler-plane |Gamma| (P_fwd, V_pk, I_pk, loss), not "
+      "at the generator forward power", None, "ohm; W; V; A",
+      "TBD - requires the A9-03 antenna design + S1a VNA measurement; owner call OQ-A907-11")
+    D("IDA7-21", "A9-07", "A9-04 " + A9_LANES["A9-04"], "u(P_net) term for coupler directivity at high VSWR "
+      "(UB-RF-04): worst-case relative error max((|G|+d)^2 - |G|^2, |G|^2 - (|G|-d)^2) / (1 - |G|^2), d = 10^(-D/20); "
+      "sensitivity table at |G| of the review loads / residual VSWR 1.2-2.0 and D 20/30/40 dB "
+      "(recomputations.rf_reference_plane); plus the two-port + Gamma_L load-power correction term (A9H-INS-03)",
+      {"formula": rf["relations"]["directivity"], "sensitivity_residual_vswr": {
+          k: v["directivity_error_rel_P_net"] for k, v in rf["residual_vswr_sensitivity"].items()}},
+      "-", "OFFERED (demand: an explicit directivity term and D_min at LOCK-2)")
+    D("IDA7-22", "A9-07", "A9-09 " + PARALLEL["A9-09"], "RFQ ratings for the 13.56 MHz coupler/sensors and the flexible "
+      "coax: rated for the coupler-plane forward power, peak voltage/current and loss at Gamma_max (option a) or at the "
+      "antenna mismatch (option b); directivity stated at the operating |Gamma|; optional on-module fixed pre-match",
+      "A9H-INS-01, A9H-INS-14..16 (values TBD)", "W; V; A; dB", "OFFERED (quotation only)")
     return Dm
 
 
@@ -2314,7 +2663,8 @@ OWNER_ROWS_APPLIED = {
     64: "C1<->ICP exchange checks incl. RF pickup (A9H-FIX-02, REV-39)",
     67: "B(z) perturbation scan with the ICP installed/energized (A9H-INS-11)",
     70: "ICP body floating, collector separately biased and metered (REV-36, REV-61, A9H-INS-04)",
-    72: "13.56 MHz, 0-500 W coupler chain; calorimetry cross-check (A9H-INS-01/02)",
+    72: "13.56 MHz, 0-500 W generator/chain; coupler-plane forward power vs mismatch (rf_reference_plane, OQ-A907-11); "
+        "calorimetry cross-check (A9H-INS-01/02)",
     73: "~1.3 mg/s nominal channel neutral-density sizing (REV-12)",
     74: "T2 shielded baseline, unshielded set engineering-only (REV-07)",
     75: "L/h <= 12; adjustable anode only pre-S1 (REV-08, REV-09)",
@@ -2424,7 +2774,8 @@ def open_owner_questions(rc) -> list:
                                          "3 attempts (1 + 2 retries, literal) or 2 (the '120 s x 2' shorthand used in "
                                          "the A9 backlog) per start in the Xe ledger?",
          "proposed_answer": "3 attempts (literal reading, conservative for Xe booking)",
-         "values": rc["small"]["c1_ignition_dwell_xe_bound_g"]["value"]},
+         "values": dict(rc["small"]["c1_ignition_dwell_xe_bound_g"]["value"], scope="IGNITION_DWELL_ONLY (g per "
+                        "start; purge/preheat Xe excluded, PENDING A9-08)")},
         {"id": "OQ-A907-02", "question": "Register the stand discharge-supply envelope I_d,max for ICP-45 (A9.1: from the "
                                          "registered H-1/discharge-supply envelope, not invented)?",
          "proposed_answer": "register the H24-27 laboratory rating 8.33 A (1500 W / 180 V) unless the owner registers a "
@@ -2464,6 +2815,21 @@ def open_owner_questions(rc) -> list:
                                          "global-optimisation or interval-bound check of every search-sensitive "
                                          "verdict before LOCK-1?",
          "proposed_answer": "owner call; the flag never changes a verdict, only marks it for an independent check"},
+        {"id": "OQ-A907-11", "question": ("RF chain at the A9.1 reference plane (coupler after the off-platform "
+                                          "match): the coupler, sensors and flexible coax then carry the ICP antenna's "
+                                          "reflection. Row 72 sizes the inline chain for 0-500 W FORWARD power; at the "
+                                          "coupler plane P_fwd = P_net / (1 - |Gamma|^2), so a 0-500 W chain limits the "
+                                          "net power to 500 (1 - |Gamma|^2) W unless the segment is near 50 ohm. Add a "
+                                          "FIXED on-module pre-match / impedance transformation holding the segment at "
+                                          "|Gamma| <= Gamma_max (option a; tunable match stays off-platform), or rate "
+                                          "coupler, sensors, coax and feedthrough for the antenna's own mismatch "
+                                          "(option b)? Which Gamma_max (residual VSWR) at LOCK-1?"),
+         "proposed_answer": ("option a (keeps the row-72 0-500 W chain meaningful, keeps V_pk on the flexible coax "
+                             "low, makes the directivity term small); Gamma_max is an owner call at LOCK-1 after the "
+                             "A9-03 antenna impedance is known; the sham carries an equivalent fixed network (row 133)"),
+         "values": {k: {"VSWR": v["VSWR"], "P_fwd_W": v["P_fwd_W"], "V_pk_max_V": v["V_pk_max_V"]}
+                    for k, v in rc["rf_reference_plane"]["sensitivity_loads"].items()},
+         "values_note": "sensitivity loads from the independent review, not antenna data"},
         {"id": "OQ-A907-07", "question": "Develop a flight C1 integration (external mount on the flight article, two "
                                          "series valves, keeper supply) now for the fallback architecture "
                                          "hall_c1_reference, or defer until C1 is chosen for flight?",
@@ -2520,7 +2886,8 @@ def m16_impact(rc) -> list:
           "breadboard discharge supply (row 113)"),
         M(13, "thermal rerun with the owner rules; BN wall " + sm["WI"]["status"] + " (REV-40..50)",
           "measured deposition fractions / sourced BN k(T)"),
-        M(15, "instrument additions A9H-INS-01..13, calibrations A9H-CAL-01..05", "quotations (A9-09)"),
+        M(15, "instrument additions A9H-INS-01..16, calibrations A9H-CAL-01..05; RF chain ratings at the coupler-plane "
+              "|Gamma| (rf_reference_plane)", "quotations (A9-09) + antenna impedance / pre-match decision (OQ-A907-11)"),
         M(16, "KC-1 downstream carrier, >= 25 kg payload, matched shams (REV-29..36)", "module drawings (ICP-02/04/07)"),
     ]
 
@@ -2530,8 +2897,13 @@ def h3_inputs() -> list:
     items = [
         ("H3-A907-01", "breadboard Hall discharge supply, 100 V input, 180-350 V output (row 113)"),
         ("H3-A907-02", "13.56 MHz RF generator 0-500 W + matching network for off-platform mounting (row 72)"),
-        ("H3-A907-03", "13.56 MHz directional coupler + forward/reflected power sensors with calibration (A9H-INS-01)"),
-        ("H3-A907-04", "matched flexible RF coax pair (live + sham) for the stand crossing (REV-33)"),
+        ("H3-A907-03", "13.56 MHz directional coupler + forward/reflected power sensors with calibration, rated for the "
+                       "coupler-plane forward power at Gamma_max and with directivity stated at that |Gamma| "
+                       "(A9H-INS-01, A9H-INS-16; ratings TBD per OQ-A907-11)"),
+        ("H3-A907-04", "matched flexible RF coax pair (live + sham) for the stand crossing, rated for forward power, "
+                       "peak voltage/current and loss at the coupler-plane |Gamma| (REV-33, A9H-INS-15; ratings TBD)"),
+        ("H3-A907-15", "optional on-module fixed pre-match / impedance transformation network for 13.56 MHz (+ sham "
+                       "equivalent), if OQ-A907-11 option a is adopted (A9H-INS-14)"),
         ("H3-A907-05", "floating collector/bias supply with V/I read-back (A9H-INS-04)"),
         ("H3-A907-06", "P_bus DAQ: >= 20 kHz effective bandwidth, >= 100 kSa/s per channel, synchronized (A9H-INS-09)"),
         ("H3-A907-07", "C1 keeper supply with 300-600 V current-limited pulse ignition + 1 kV DC hipot tester (REV-21)"),
@@ -2575,7 +2947,8 @@ def _k9(th) -> str:
     parts = []
     for lv, rec in c1.items():
         nd = rec["ground"]["nodes"]
-        bad = [n for n, e in nd.items() if e["verdict"].startswith("DO_NOT_CLOSE") or e.get("necessary_check") == "FAIL"]
+        bad = [n for n, e in nd.items() if e["sensitivity_outcome"].startswith("DO_NOT_CLOSE")
+               or e.get("necessary_check") == "FAIL"]
         parts.append(f"{lv}: " + (", ".join(f"{n} {nd[n]['T_max_C']:g} degC" for n in bad) or "all live nodes close"))
     return ("K9 hall_c1_reference: NO thermal verdict. The only C1 case run couples C1 heat through the v1 CENTRAL-"
             "cathode path, a geometry abandoned under row 79; kept as a sensitivity only (" + "; ".join(parts) +
@@ -2611,8 +2984,9 @@ def key_findings(rc) -> list:
         f"(outer coil by {sm['CO']['baseline_worst_T_max_C'] - sm['CO']['baseline_worst_oat_corner_T_max_C']:.1f} K). "
         f"Brief verdicts at baseline: " + ", ".join(f"{n} {sm[n]['brief_verdict_at_baseline']}" for n in
                                                     ("WI", "WO", "CI", "CO")) +
-        ". Every hall_icp_neutralizer CLOSES is CONDITIONAL: it is evaluated with 0 W of ICP module heat into H-1 "
-        "(ICP-43 TBD) and holds only while 1.2 x Q_ICP->H-1 <= the allowable ICP heat at baseline: " +
+        ". Every hall_icp_neutralizer CLOSES is CONDITIONAL on (1) the unmodelled blocking of the H-1 exit-face "
+        "radiative view by the downstream ICP module (ICP-05 view factors) and (2) the ICP module heat: it is evaluated "
+        "with 0 W of ICP module heat into H-1 (ICP-43 TBD) and holds only while 1.2 x Q_ICP->H-1 <= the allowable ICP heat at baseline: " +
         ", ".join(f"{n} {sm[n]['icp_heat_allowable_W_per_closing_lever_set']['LV-BASE']['PO']:g} W at PO / "
                   f"{sm[n]['icp_heat_allowable_W_per_closing_lever_set']['LV-BASE']['BP']:g} W at BP"
                   for n in ("WI", "WO", "CI", "CO")
@@ -2652,6 +3026,17 @@ def key_findings(rc) -> list:
         _k9(th),
         "K10 every A9-02 H2-4 revision flag that is not retained maps to a REV entry (h2_4_flag_coverage), incl. H24-33 "
         "re-derived on the 100 V internal bus (REV-67).",
+        "K11 RF chain: " + rc["rf_reference_plane"]["finding"] + ". At the review's illustrative loads (not antenna "
+        "data) and 500 W net: " + ", ".join(
+            f"{k.replace('review_case_', '')} ohm VSWR {v['VSWR']:g}, P_fwd {v['P_fwd_W']:g} W, V_pk {v['V_pk_max_V']:g} V"
+            for k, v in rc["rf_reference_plane"]["sensitivity_loads"].items() if k != "matched_reference")
+        + ". Proposed: a fixed on-module pre-match (OQ-A907-11); demands to A9-03 (IDA7-20), A9-04 (IDA7-21), "
+        "A9-09 (IDA7-22).",
+        "K12 LV-COIL copper mass (one consistent coil definition, P x m_cu invariant at fixed NI and mean turn, H2-1 "
+        "RP-1 f_NI 2): delta " + ", ".join(
+            f"{v['LV-COIL_copper_delta_kg']:g} kg at a {v['P_mag_20C_W']:g} W basis"
+            for v in rc["lv_coil_copper_delta"]["value"].values())
+        + "; fixed-mean-turn estimates, not bounds; the mass to book is TBD until the H-1 coil is frozen (IDA7-01).",
     ]
 
 
@@ -2678,7 +3063,8 @@ def build() -> dict:
     a9 = load(DECISIONS["A9"][0])
     if a9["status"] != "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE":
         raise RuntimeError("A9 status changed")
-    rc = {"h21_central_bore": recompute_h21(), "h25_thermal_rerun": recompute_thermal(), "small": derived_small()}
+    rc = {"h21_central_bore": recompute_h21(), "h25_thermal_rerun": recompute_thermal(), "small": derived_small(),
+          "lv_coil_copper_delta": lv_coil_copper_delta(), "rf_reference_plane": rf_reference_plane()}
     reg = revision_register(rc)
     ids = [r["id"] for r in reg]
     if len(ids) != len(set(ids)):
@@ -2839,7 +3225,8 @@ def render_md(doc) -> str:
     L.append("Verdict vocabulary: `brief_verdict_at_baseline` is CLOSES / DO_NOT_CLOSE (live limit) or OPEN_LIMIT_TBD "
              "(no validated limit); `status` refines it: CLOSES_WITH_SINGLE_LEVER / CLOSES_ONLY_WITH_COMBINED_LEVERS "
              "mean DO_NOT_CLOSE at baseline but CLOSES with the named lever sets. **Every hall_icp_neutralizer CLOSES "
-             "is conditional**: " + ICP_HEAT_CONDITION + " (allowances per closing set below).\n")
+             "is conditional**: (1) " + ICP_HEAT_CONDITION + " (allowances per closing set below); (2) " + ICP_VIEW_CONDITION
+             + ".\n")
     L.append("| node | brief verdict at baseline | status | baseline worst T_max searched / OAT (degC) | worst margin "
              "to limit (K) | baseline nominal (degC) | levers closing every case | minimal closing sets within 100 W "
              "(buildability) | necessary check |\n|---|---|---|---|---|---|---|---|---|")
@@ -2877,7 +3264,8 @@ def render_md(doc) -> str:
     b = th["bn_wall_11_2K_case"]
     L.append(f"\n### The v1 11.2 K BN-wall case\n\nv1: {b['v1']['case']} margin {b['v1']['v1_margin_worst_K']} K. "
              f"New rule: {b['rule']}. Status **{b['status']}** (baseline worst T_max {b['baseline_worst_T_max_C']} degC; "
-             f"levers closing: {', '.join(b['levers_that_close']) or 'none'}; outer wall {b['outer_wall']['status']}).\n")
+             f"levers closing: {', '.join(b['levers_that_close']) or 'none'}; outer wall {b['outer_wall']['status']}). "
+             f"{b['status_meaning']}. {b['buildability']}.\n")
     L.append("### Heat into the spacecraft mount vs row 85 (25/50/100 W)\n")
     L.append("| lever | case | Q_mount min / nominal / max (W) | 25 W | 50 W | 100 W |\n|---|---|---|---|---|---|")
     for lv, cases in th["mount_heat_vs_row85"].items():
@@ -2897,10 +3285,40 @@ def render_md(doc) -> str:
              f"re-solved / linearised rise ratio {lc['ratio_resolved_over_linearised_range']}.\n")
     L.append("### hall_c1_reference ground article - sensitivity only (v1 central-cathode coupling)\n")
     L.append(th["hall_c1_reference_note"] + ".\n")
-    L.append("| lever | node | T_max (degC) | verdict |\n|---|---|---|---|")
+    L.append("| lever | node | T_max (degC) | sensitivity outcome (not a verdict) |\n|---|---|---|---|")
     for lv, cases in th["results"]["hall_c1_reference"].items():
         for n, e in cases["ground"]["nodes"].items():
-            L.append(f"| {lv} | {n} | {e['T_max_C']} | {e['verdict']} |")
+            L.append(f"| {lv} | {n} | {e['T_max_C']} | {e['sensitivity_outcome']} |")
+    rf = doc["recomputations"]["rf_reference_plane"]
+    L.append("\n## Recomputation 3 - RF measurement chain at the A9.1 reference plane\n")
+    L.append(rf["reference_plane"] + ".\n")
+    for k, v in rf["relations"].items():
+        L.append(f"- {k}: {v}")
+    L.append(f"\nZ0 = {rf['Z0_ohm']['value']:g} ohm ({rf['Z0_ohm']['basis']}); P_net,max = {rf['P_net_max_W']['value']:g} W "
+             f"({rf['P_net_max_W']['basis']}). {rf['sensitivity_loads_note']}.\n")
+    L.append("| case | Z_load (ohm) | abs(Gamma) | VSWR | P_fwd (W) | P_refl (W) | V_pk (V) | I_pk (A) | line-loss x | "
+             "P_net error at D 20/30/40 dB |\n|---|---|---|---|---|---|---|---|---|---|")
+    for k, v in list(rf["sensitivity_loads"].items()) + list(rf["residual_vswr_sensitivity"].items()):
+        z = v.get("Z_load_ohm")
+        zs = f"{z[0]:g}{'+' if z[1] >= 0 else '-'}j{abs(z[1]):g}" if z else "-"
+        de = " / ".join(f"{x:g}" for x in v["directivity_error_rel_P_net"].values())
+        L.append(f"| {k} | {zs} | {v['gamma_mag']:g} | {v['VSWR']:g} | {v['P_fwd_W']:g} | {v['P_refl_W']:g} | "
+                 f"{v['V_pk_max_V']:g} | {v['I_pk_max_A']:g} | {v['line_loss_multiplier_low_loss']:g} | {de} |")
+    L.append(f"\n{rf['residual_vswr_note']}. {rf['directivity_note']}.\n")
+    for k, v in rf["options"].items():
+        L.append(f"- **{k}** ({v['status']}): {v['what']}. Ratings: {_fmt(v['ratings'], 600)}"
+                 + (f". {v['consequences']}" if v.get("consequences") else "") + (f". {v['note']}" if v.get("note") else ""))
+    L.append(f"\nFinding: {rf['finding']}.\n")
+    lc_ = doc["recomputations"]["lv_coil_copper_delta"]
+    L.append("## Recomputation 4 - LV-COIL copper mass from one consistent coil definition\n")
+    L.append(f"{lc_['formula']}. Coil: H2-1 case `{lc_['coil_definition']['h2_1_case']}`, P_RP1 = "
+             f"{lc_['coil_definition']['P_RP1_20C_W']:g} W at 20 degC, m_RP1 = {lc_['coil_definition']['m_RP1_kg']:g} kg "
+             "(invariant checked per coil against rho_e rho_m (NI l_mt)^2).\n")
+    L.append("| P_mag basis | P_mag at 20 degC (W) | P removed by LV-COIL (W) | copper delta (kg) | basis |\n|---|---|---|---|---|")
+    for k, v in lc_["bases"].items():
+        L.append(f"| {k} | {v['P_mag_20C_W']:g} | {v['P_mag_20C_removed_by_LV-COIL_W']:g} | "
+                 f"{v['LV-COIL_copper_delta_kg']:g} | {v['basis']} |")
+    L.append(f"\n{lc_['fixed_mean_turn_note']}. {lc_['not_reconciled']}. Status: {lc_['status']}.\n")
     sm = doc["recomputations"]["small"]
     L.append("\n## Small derivations\n")
     for k, v in sm.items():
