@@ -1181,6 +1181,36 @@
    "id": "fo_a9_05_hall_icp_validation_inputs",
    "kind": "follow_on",
    "title": "A9-05 Hall->ICP validation-input list + Takahashi 2024 evidence extraction"
+  },
+  {
+   "id": "fo_a9_int_core_integration",
+   "kind": "follow_on",
+   "title": "A9 core integration repair (A9-01..05 ids and cross-references; no physics or threshold change)"
+  },
+  {
+   "id": "fo_a9_06_mass_reconciliation",
+   "kind": "follow_on",
+   "title": "A9-06 mass reconciliation (v0 dry allocations vs verified H2 analogs; A9 BOM amendment)"
+  },
+  {
+   "id": "fo_a9_07_h2_revisions",
+   "kind": "follow_on",
+   "title": "A9-07 H2 revisions (external C1, downstream ICP fixture, 50 K thermal protection, revised interfaces)"
+  },
+  {
+   "id": "fo_a9_08_xe_ledger_update",
+   "kind": "follow_on",
+   "title": "A9-08 Xe ledger update (G-REUSE, reserve, residual, 323 K tank, 2/5/10 kg cases, ignition dwell)"
+  },
+  {
+   "id": "fo_a9_09_rfq_packages",
+   "kind": "follow_on",
+   "title": "A9-09 RFQ / quotation specification packages (no purchase orders)"
+  },
+  {
+   "id": "fo_a9_10_integration",
+   "kind": "follow_on",
+   "title": "A9-10 reconciliation of all A9 outputs, A9.1 decisions applied, M16 refresh, owner-question state"
   }
  ],
  "owner_dispositions": [
@@ -1224,6 +1254,18 @@
    "decision_key": "status",
    "decision_states": {
     "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE": "approved"
+   },
+   "immutability": "never edited after commit; later owner amendments are new addendum files"
+  },
+  {
+   "id": "od_a9_1_followup",
+   "file": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "states": {
+    "pending": "no disposition file",
+    "approved": "decision A9_1_FOLLOWUP_DECISIONS_RECORDED"
+   },
+   "decision_states": {
+    "A9_1_FOLLOWUP_DECISIONS_RECORDED": "approved"
    },
    "immutability": "never edited after commit; later owner amendments are new addendum files"
   }

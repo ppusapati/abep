@@ -1,0 +1,93 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_09_30_A9_1_followup_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-09-30",
+ "decision": "A9_1_FOLLOWUP_DECISIONS_RECORDED",
+ "parent": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+  "sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
+ },
+ "a9_status_unchanged": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+ "decisions": {
+  "HIQ-01": "REF-COND reference installation = hall_c1_reference in every block; predecessor asymmetry preserved and reported",
+  "HIQ-02": "three complete balanced replicate sets, >= 6 blocks before any larger LOCK-2 n",
+  "HIQ-03": "bounded Xe reference/health check at the start of the installation, before N2 and any O2-bearing exposure",
+  "HIQ-04": "HI-HOLDOUT-A frozen before the first Hall-on H-1 reading (incl. Ar); held-out enumeration after LOCK-1, before HI-S1",
+  "HIQ-05": "no mandatory Pareto relation; hard gates decide feasibility; Pareto reported unless a condition is preregistered at LOCK-1",
+  "HIQ-06": "primary ICP gas mode G-REUSE (Hall exhaust/residual); dedicated ICP port installed and capped; G-ATM / G-XE are declared contingency variants; score-bearing N2/N2+O2 uses G-REUSE unless it fails the preregistered ICP-capacity gate; no dedicated Xe to make the ICP work",
+  "HIQ-06_accounting": {
+   "G-REUSE": "mdot_ICP,dedicated = 0 (no double counting of Hall feed)",
+   "G-ATM": "mdot_atm,total = mdot_Hall + mdot_ICP,dedicated (actual routing)",
+   "G-XE": "mdot_ICP,Xe booked explicitly in the Xe ledger under PHASE_TOTAL_FLOW"
+  },
+  "HIQ-07": "pure-N2 hall_icp_neutralizer readings sequestered for a future Hall-transport preregistration",
+  "HIQ-08": "HI-AR before LOCK-1, after HI-HOLDOUT-A; Ar never enters LOCK-2 numbers, decision quantities or DRDO compliance claims",
+  "UBQ-01": "1 % thrust target = standard relative uncertainty (k = 1), sustained reading; gates use preregistered one-sided treatment",
+  "UBQ-02": "M_n = I_e,cap / I_d,dem - 1; gate on one-sided lower confidence bound > 0; any extra design margin frozen at LOCK-2 per LOCK-1 rule",
+  "UBQ-03": "manufacturer +-x bound rectangular (u = a/sqrt(3)) unless the certificate states otherwise",
+  "UBQ-04": "normalized agreement statistic with k_x = 2 frozen at LOCK-1; failure -> RF-dependent quantities EXCLUDED_INSTRUMENT",
+  "UBQ-05": "calibration shift both in the budget and as a block-exclusion rule; rule form at LOCK-1, number at LOCK-2 from metrology-only evidence",
+  "UBQ-06": "score-bearing temperature aborts at validated continuous-use limit minus 50 K",
+  "UBQ-07": "family-wise alpha 0.05 for simultaneous contrasts (preregistered multiplicity control, e.g. Holm); one-sided alpha 0.05 per absolute gate; frozen at LOCK-1",
+  "UBQ-08": "Ar-specific gauge/MFC/RGA calibration required for HI-AR; Ar stays engineering-only",
+  "UBQ-09": "SR-C-MARGIN stopping (not sign-only); margin rule at LOCK-1, numerical value at LOCK-2",
+  "OQ-A902-01": {
+   "gate_quantity": "P_bus,1ms,max = max_t (1/1 ms) integral_t^{t+1 ms} P_bus dt",
+   "requirement": "P_bus,1ms,max < 1500 W, startup and steady state, unless the official RFP provides a transient exception",
+   "measurement": [
+    "spacecraft-DC propulsion boundary",
+    "synchronized channels",
+    "effective bandwidth >= 20 kHz",
+    "sample rate >= 100 kSa/s per relevant channel or equivalent direct bus-power channel",
+    "anti-alias filtering documented",
+    "no step-average substitution"
+   ],
+   "also_record": "unaveraged sampled peak (protection analysis only; not the 1.5 kW gate); 100 ms and 1 s averages as diagnostics",
+   "status": "A9 engineering definition pending authoritative RFP wording (not an ECSS requirement)"
+  },
+  "OQ-A902-02": "300 W common allocation = compressor + atm/Xe/ICP flow-control + filter/getter if active + thermal control + housekeeping/controls; 50 W controls/thermal inside it; extra active cooling and reserved ports outside unless reallocated",
+  "OQ-A902-03": "no fixed Hall/ICP split; P_ICP,available = 1350 - P_common - P_Hall - P_other_active at every registered condition; ICP-45 demonstrated within it; 0-500 W lab RF is a test capability only",
+  "OQ-A902-04": "no combined flight C1 + ICP installation in primary A9 (would be a new variant with its own closures)",
+  "OQ-A902-05": "primary G-REUSE; flow_control_icp_feed booked only when G-ATM or G-XE is installed/used; capped port stays in the ICD",
+  "OQ-A902-06": "housekeeping and thermal routed through the internal propulsion bus by default; any direct spacecraft-input path represented explicitly",
+  "OQ-A902-07": "report 1300 W as context/sensitivity; active internal check 1350 W; hard requirement 1500 W",
+  "SEQ-heater": "C1 procedure states heater command/power at every step; until then TBD heater = ON at conservative booked power; never PASS by assuming off",
+  "SEQ-peaks": "baseline: at most one peak-class load commanded to rise per startup step; overlap = registered variant needing measured transient evidence",
+  "ICP-45": "formal entry condition: ICP-45A (Ar, engineering-only) and ICP-45N (N2) demonstrate I_e,cap >= I_d,max before any score-bearing hall_icp_neutralizer point; record I_e, RF fwd/refl, DC input, collector V/I, pressure, gas state, thermal state, stability; Takahashi ~1 A/200 W context only, not scaled; I_d,max from the registered H-1/discharge-supply envelope",
+  "ICP-46": "C1 keeper pulse 300-600 V: design isolation basis 900 V; development hipot 1.0 kV DC at representative pressure/gas, no breakdown, leakage recorded; separate 600 V pulse-waveform test; applies to lead, feedthrough, connectors, harness, isolation to cathode common/module body/facility ground; does not replace ICP-44; flight level may only be revised upward without controlled justification",
+  "A9-03-planes": "IP-EXIT = H-1 exit; IP-NEU = downstream neutralizer datum; historical IP-DN unchanged",
+  "A9-03-Vd": "primary controlled quantity V_d = V_anode - V_electron-source-reference; supply-terminal voltage and loop drops secondary",
+  "A9-03-matching": "matching network off the moving stand platform (matched flexible coax, cable-loss/S-parameter correction, coupler reference plane after the matching network, matched sham routing in C1); on-platform only if S1a proves necessary",
+  "A9-03-collector": "flight collector material not frozen; 316L allowed for Ar engineering reproduction; candidates go through the O/AO coupon programme before N2/O2 life claims",
+  "OQ-EV-01": "no author/laboratory data request",
+  "OQ-EV-02": "acquisition order P1 LA-01..03; P2 LA-04, LA-06..08; P3 LA-05, LA-09",
+  "OQ-EV-03": "YES: values may be extracted from lawfully accessed publisher-served full text with URL, DOI, locator, access date, evidence class; no redistribution of non-redistributable PDFs"
+ },
+ "execution": {
+  "merge_to_main": "NOT YET; merge only after core integration repair -> A9-06..09 -> A9-10 -> full green CI -> final PR review",
+  "draft_pr": "open a draft checkpoint PR now; do not merge",
+  "step_1_integration_repair": [
+   "rename A9-04 decision quantities to A9-01 ids",
+   "replace resolved PENDING A9-01..05 cross-references with paths/hashes",
+   "no physics values changed",
+   "no thresholds changed",
+   "rerun A9 tests + full suite + golden + integrity"
+  ],
+  "step_2_parallel": {
+   "A9-06": "mass reconciliation",
+   "A9-07": "H2 revisions: external C1, downstream ICP fixture, 50 K thermal protection, revised interfaces",
+   "A9-08": "Xe ledger update (G-REUSE: m_Xe,ICP = 0, no dedicated atmospheric feed; C1 Xe, XE_REFERENCE, XE_AUGMENTED_PEAK, G-XE separate terms)",
+   "A9-09": "RFQ/quotation packages (no purchase orders)"
+  },
+  "step_3_A9-10": [
+   "reconcile all A9 outputs",
+   "refresh M16",
+   "resolve remaining cross-references",
+   "regenerate consolidated owner-question state",
+   "full test/golden/integrity",
+   "verify no immutable historical file changed"
+  ]
+ }
+}
