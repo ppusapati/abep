@@ -3918,7 +3918,7 @@
    "id": "IF-P1-01",
    "direction": "to",
    "counterpart": "P2 docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json IDP2-01 (gate S-10, HM-R01)",
-   "what": "stable ICP operating region handoff: p1_reducer.stable_region_handoff output (status, criteria_id, points within the owner criteria with match settings, gas, H-1 point and Z_ICP when MEASURED, dwell verdicts, envelope of tested points over P_fwd, mdot, p, V_collector)",
+   "what": "stable ICP operating region handoff: p1_reducer.stable_region_handoff output (evidence_kind, status, criteria_id, points within the owner criteria with match settings, gas, H-1 point and Z_ICP when MEASURED, dwell verdicts, envelope of tested points over P_fwd, mdot, p, V_collector)",
    "units": "W; mg/s; Pa; V; ohm",
    "status": "TBD_AFTER_EVIDENCE (owning stage P1-S5, gate P1-G5; stability criteria TBD_OWNER P1Q-01; no record yet)",
    "xref": [

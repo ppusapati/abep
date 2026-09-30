@@ -2441,7 +2441,8 @@ def test_stable_region_handoff_fields_match_p2_consumer(red):
     assert h["status"] == "REGION_OF_TESTED_POINTS_WITHIN_OWNER_CRITERIA"
     assert tuple(h) == fw.P1_HANDOFF_FIELDS
     assert tuple(h["points_within_criteria"][0]) == fw.P1_HANDOFF_POINT_FIELDS
-    ref, region = fw.p1_handoff_admissible(h)
+    assert h["evidence_kind"] == "SYNTHETIC_TEST_ONLY"
+    ref, region = fw.p1_handoff_admissible(h, "synthetic_test")
     assert "SYNTH-CRIT" in ref and region["factor_ranges"]["P_RF_setpoint_W"] == [100.0, 100.0]
     assert region["categorical_sets"] == {"gas": ["Ar"], "gas_mode": ["G-REUSE"]}
     inside = {"record_id": "SYN-IN", "factors": {"P_RF_setpoint_W": 100.0, "mdot_hall_anode_mg_s": 1.0,
@@ -2453,7 +2454,7 @@ def test_stable_region_handoff_fields_match_p2_consumer(red):
     for bad in (red.stable_region_handoff([dw], {op["record_id"]: op}, ign, None),     # no owner criteria: NOT_EVALUATED
                 dict(h, criteria_id=None), {k: v for k, v in h.items() if k != "envelope_of_tested_points"}):
         with pytest.raises(fw.RED.SequenceError):
-            fw.p1_handoff_admissible(bad)
+            fw.p1_handoff_admissible(bad, "synthetic_test")
 
 
 def test_rfq_v2_coverage_equals_readiness_lines(doc, bld):
@@ -2686,3 +2687,59 @@ def test_sw03_synthetic_label_in_measured_campaign_refused(red, camp):
     rec["labels"] = ["ENGINEERING_ONLY_NON_SCORING", "SYNTHETIC_TEST_FIXTURE"]
     with pytest.raises(red.LabelError):
         red.validate_operating_point(rec)
+
+
+def test_sw_r2_01_synthetic_handoff_never_opens_measured_p2_map(red, camp):
+    """SW-R2-01: the P1 handoff carries its evidence kind (from the record flags); a handoff from a SYNTHETIC_TEST_ONLY
+    campaign is refused for a measured P2 map, and build_map refuses a measured HOT_MAP whose P1 ref is not a MEASURED
+    admission; mixing synthetic and measured records inside one handoff is refused."""
+    _, fw = _p2_mods()
+    rep = camp.run_campaign(synth_bundle(red))
+    h = rep["stable_region"]
+    assert rep["evidence_kind"] == "SYNTHETIC_TEST_ONLY" and h["evidence_kind"] == "SYNTHETIC_TEST_ONLY"
+    assert h["status"] == "REGION_OF_TESTED_POINTS_WITHIN_OWNER_CRITERIA"
+    with pytest.raises(fw.RED.MixedEvidenceError):
+        fw.p1_handoff_admissible(h)
+    with pytest.raises(fw.RED.MixedEvidenceError):
+        fw.p1_handoff_admissible(h, "measured")
+    ref, _ = fw.p1_handoff_admissible(h, "synthetic_test")
+    pt = {"data_class": "measured", "evidence_tag": fw.RED.EVIDENCE_TAGS[0], "phase": "HOT_MAP"}
+    for bad_ref in (ref, "P1 stable region X (1 tested points; IF-P1-01)"):
+        with pytest.raises(fw.RED.MixedEvidenceError):
+            fw.build_map("M-MEAS", [pt], [], bad_ref, ["CAL"])
+    mref, _ = fw.p1_handoff_admissible(dict(h, evidence_kind="MEASURED"), "measured")
+    assert fw.build_map("M-MEAS", [pt], [], mref, ["CAL"])["data_class"] == "measured"
+    op = synth_op()
+    dw = synth_dwell("SYNTH-DW-1", op["record_id"])
+    op_meas = dict(op, synthetic=False)
+    with pytest.raises(red.P1RecordError):
+        red.stable_region_handoff([dw], {op["record_id"]: op_meas}, {"SYNTH-IGN-PT-1": {"attempts": 3, "successes": 3}},
+                                  CRIT)
+
+
+def test_met06_at_power_check_tied_to_characterization_and_registered_k(red, camp):
+    """MET-06: the at-power check verifies the cited characterization only when its predicted loss
+    (1 - eta_pred) * P_net agrees with value_W within u_value_W and its evidence ids are cold-checkout records of the
+    bundle; a supplied k with a PENDING / TBD registration or PENDING / TBD evidence ids is refused."""
+    r = synth_cold("DUMMY_LOAD", "SYNTH-S1-1")
+    r["loss_characterization"]["value_W"] = 30.0
+    out = red.reduce_rf_cold_checkout([r])
+    assert out["verified_loss_ids"] == [] and out["characterizations"] == {}
+    assert any("contradicts characterization" in x for x in out["loss_characterizations"][0]["reasons"])
+    r = synth_cold("DUMMY_LOAD", "SYNTH-S1-1")
+    r["loss_characterization"]["at_power_verification"]["evidence_record_ids"] = ["SYNTH-S1-OTHER"]
+    out = red.reduce_rf_cold_checkout([r])
+    assert out["verified_loss_ids"] == []
+    assert any("not P1-S1 / P1-S2" in x for x in out["loss_characterizations"][0]["reasons"])
+    for bad in (dict(AT_POWER, k=50.0, k_registration_id="TBD_OWNER"), dict(AT_POWER, k_registration_id="PENDING"),
+                dict(AT_POWER, k_registration_id=""), dict(AT_POWER, evidence_record_ids=["PENDING"]),
+                dict(AT_POWER, evidence_record_ids=["SYNTH-S1-1", "TBD"])):
+        r = synth_cold("DUMMY_LOAD", "SYNTH-S1-1")
+        r["loss_characterization"]["at_power_verification"] = bad
+        with pytest.raises(red.MissingInputError):
+            red.validate_cold_checkout(r)
+    # k not registered (null) with a TBD_OWNER registration id stays NOT_EVALUATED, never verified
+    r = synth_cold("DUMMY_LOAD", "SYNTH-S1-1")
+    r["loss_characterization"]["at_power_verification"] = dict(AT_POWER, k=None, k_registration_id="TBD_OWNER")
+    assert red.reduce_rf_cold_checkout([r])["verified_loss_ids"] == []
+    assert red.reduce_rf_cold_checkout([synth_cold("DUMMY_LOAD", "SYNTH-S1-1")])["verified_loss_ids"] == ["SYNTH-LOSS-A"]

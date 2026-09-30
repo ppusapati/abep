@@ -884,17 +884,29 @@ def test_p1_handoff_admissibility_fail_closed():
            "V_collector_V": [-50.0, -30.0]}
     pt = {"operating_point_record_id": "SYN-OP", "match_setting_id": "SYN-M", "h1_point_id": None, "gas": "Ar",
           "gas_mode": "G-REUSE", "Z_ICP": None, "factors": {}}
-    h = {"handoff": "IF-P1-01 -> P2 IDP2-01", "status": fw.P1_HANDOFF_ADMISSIBLE, "criteria_id": "SYN-CRIT",
-         "points_within_criteria": [pt], "envelope_of_tested_points": env, "envelope_note": "x", "dwells": [],
-         "note": "synthetic"}
-    ref, region = fw.p1_handoff_admissible(h)
+    h = {"handoff": "IF-P1-01 -> P2 IDP2-01", "evidence_kind": "SYNTHETIC_TEST_ONLY", "status": fw.P1_HANDOFF_ADMISSIBLE,
+         "criteria_id": "SYN-CRIT", "points_within_criteria": [pt], "envelope_of_tested_points": env,
+         "envelope_note": "x", "dwells": [], "note": "synthetic"}
+    ref, region = fw.p1_handoff_admissible(h, "synthetic_test")
     assert region["factor_ranges"]["mdot_hall_anode_mg_s"] == [0.9, 1.1] and "SYN-CRIT" in ref
+    assert region["p1_evidence_kind"] == "SYNTHETIC_TEST_ONLY"
+    # SW-R2-01: a synthetic P1 handoff never opens a measured P2 map (default target), nor a measured one a synthetic
+    with pytest.raises(fw.RED.MixedEvidenceError):
+        fw.p1_handoff_admissible(h)
+    with pytest.raises(fw.RED.MixedEvidenceError):
+        fw.p1_handoff_admissible(dict(h, evidence_kind="MEASURED"), "synthetic_test")
+    for kind in ("NO_RECORDS", None, "measured"):
+        with pytest.raises(fw.RED.SequenceError):
+            fw.p1_handoff_admissible(dict(h, evidence_kind=kind), "synthetic_test")
+    mref, _ = fw.p1_handoff_admissible(dict(h, evidence_kind="MEASURED"), "measured")
+    assert "evidence MEASURED" in mref
     for bad in (dict(h, status="NOT_EVALUATED"), dict(h, status="NO_TESTED_POINT_WITHIN_CRITERIA"),
                 dict(h, status="SOMETHING"), dict(h, criteria_id="TBD"), dict(h, points_within_criteria=[]),
                 dict(h, envelope_of_tested_points={k: v for k, v in env.items() if k != "P_fwd_W"}),
-                dict(h, envelope_of_tested_points=dict(env, P_fwd_W=[120.0, 80.0])), None):
+                dict(h, envelope_of_tested_points=dict(env, P_fwd_W=[120.0, 80.0])), None,
+                {k: v for k, v in h.items() if k != "evidence_kind"}):
         with pytest.raises(fw.RED.SequenceError):
-            fw.p1_handoff_admissible(bad)
+            fw.p1_handoff_admissible(bad, "synthetic_test")
     pts = [{"record_id": "A", "factors": {"P_RF_setpoint_W": 100.0, "mdot_hall_anode_mg_s": 1.0, "p_chamber_Pa": 0.015,
                                           "V_collector_V": -40.0, "gas": "Ar", "gas_mode": "G-REUSE"}},
            {"record_id": "B", "factors": {"P_RF_setpoint_W": 100.0, "mdot_hall_anode_mg_s": 1.0, "p_chamber_Pa": 0.015,

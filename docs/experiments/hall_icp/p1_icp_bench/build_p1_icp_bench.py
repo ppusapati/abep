@@ -1634,7 +1634,7 @@ def _pair(i, direction, counterpart, what, pair):
 def interface_demands():
     return [
         _pair("IF-P1-01", "to", "P2 " + P2_JSON + " IDP2-01 (gate S-10, HM-R01)", "stable ICP operating region "
-              "handoff: p1_reducer.stable_region_handoff output (status, criteria_id, points within the owner "
+              "handoff: p1_reducer.stable_region_handoff output (evidence_kind, status, criteria_id, points within the owner "
               "criteria with match settings, gas, H-1 point and Z_ICP when MEASURED, dwell verdicts, envelope of "
               "tested points over P_fwd, mdot, p, V_collector)", "XL-01"),
         _pair("IF-P1-02", "from", "P2 " + P2_JSON + " IDP2-03 (ZM-A/B/C, CAL-P2-01..15)", "V/I sensing, coupler "

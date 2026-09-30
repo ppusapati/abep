@@ -1022,7 +1022,7 @@ def split_by_domain(points, region):
 P1_HANDOFF_STATUSES = ("NOT_EVALUATED", "REGION_OF_TESTED_POINTS_WITHIN_OWNER_CRITERIA",
                        "NO_TESTED_POINT_WITHIN_CRITERIA")
 P1_HANDOFF_ADMISSIBLE = "REGION_OF_TESTED_POINTS_WITHIN_OWNER_CRITERIA"
-P1_HANDOFF_FIELDS = ("handoff", "status", "criteria_id", "points_within_criteria", "envelope_of_tested_points",
+P1_HANDOFF_FIELDS = ("handoff", "evidence_kind", "status", "criteria_id", "points_within_criteria", "envelope_of_tested_points",
                      "envelope_note", "dwells", "note")
 P1_HANDOFF_POINT_FIELDS = ("operating_point_record_id", "match_setting_id", "h1_point_id", "gas", "gas_mode", "Z_ICP",
                            "factors")
@@ -1032,13 +1032,18 @@ P1_HANDOFF_POINT_FIELDS = ("operating_point_record_id", "match_setting_id", "h1_
 P1_TO_P2_FACTORS = {"P_fwd_W": "P_RF_setpoint_W", "mdot_Ar_H1_mg_s": "mdot_hall_anode_mg_s",
                     "p_chamber_Pa": "p_chamber_Pa", "V_collector_V": "V_collector_V"}
 P1_TO_P2_CATEGORICAL = {"gas": "gas", "gas_mode": "gas_mode"}
+# SW-R2-01: the P1 handoff evidence kind (p1_reducer.HANDOFF_EVIDENCE_KINDS, derived from the P1 records' synthetic
+# flags) must match the P2 map data class; synthetic and measured evidence never mix across the P1 -> P2 lanes.
+P1_EVIDENCE_TO_DATA_CLASS = {"MEASURED": "measured", "SYNTHETIC_TEST_ONLY": "synthetic_test"}
+P1_REF_EVIDENCE_TOKEN = "evidence %s"
 
 
-def p1_handoff_admissible(handoff):
+def p1_handoff_admissible(handoff, for_data_class="measured"):
     """Admit a P1 stable-region handoff record for the P2 hot map. Returns (p1_stable_region_ref, region) where region
     is the split_by_domain input (numeric factor envelope of the tested points within the owner criteria, mapped to the
     P2 factor names, plus the tested gas / gas-mode sets). Raises SequenceError when the handoff is not admissible
-    (missing fields, NOT_EVALUATED / NO_TESTED_POINT_WITHIN_CRITERIA, no criteria id, empty or inconsistent envelope)."""
+    (missing fields, NOT_EVALUATED / NO_TESTED_POINT_WITHIN_CRITERIA, no criteria id, empty or inconsistent envelope)
+    and MixedEvidenceError when the handoff evidence_kind does not match the target map data class (SW-R2-01)."""
     if not isinstance(handoff, dict):
         raise RED.SequenceError("P1 handoff must be the stable_region_handoff record (IF-P1-01)")
     miss = [k for k in P1_HANDOFF_FIELDS if k not in handoff]
@@ -1051,6 +1056,14 @@ def p1_handoff_admissible(handoff):
                                 "P1Q-01 absent or no tested point within them); the hot map stays closed")
     if not RED._ref_ok(handoff["criteria_id"]):
         raise RED.SequenceError("P1 handoff without an owner criteria id (P1Q-01)")
+    if for_data_class not in RED.DATA_CLASSES:
+        raise RED.SequenceError(f"target map data class {for_data_class!r} not in {RED.DATA_CLASSES}")
+    kind = handoff["evidence_kind"]
+    if kind not in P1_EVIDENCE_TO_DATA_CLASS:
+        raise RED.SequenceError(f"P1 handoff evidence_kind {kind!r} not in {tuple(P1_EVIDENCE_TO_DATA_CLASS)}")
+    if P1_EVIDENCE_TO_DATA_CLASS[kind] != for_data_class:
+        raise RED.MixedEvidenceError(f"P1 handoff evidence_kind {kind} cannot open a {for_data_class} P2 map "
+                                     "(synthetic and measured evidence never mix; SW-R2-01)")
     pts, env = handoff["points_within_criteria"], handoff["envelope_of_tested_points"]
     if not isinstance(pts, list) or not pts or not isinstance(env, dict):
         raise RED.SequenceError("P1 handoff without points within criteria / envelope of tested points")
@@ -1072,8 +1085,9 @@ def p1_handoff_admissible(handoff):
             cats.setdefault(f2, [])
             if p[f1] not in cats[f2]:
                 cats[f2].append(p[f1])
-    ref = f"P1 stable region {handoff['criteria_id']} ({len(pts)} tested points; IF-P1-01)"
-    return ref, {"region_id": ref, "factor_ranges": ranges,
+    ref = (f"P1 stable region {handoff['criteria_id']} ({len(pts)} tested points; "
+           f"{P1_REF_EVIDENCE_TOKEN % kind}; IF-P1-01)")
+    return ref, {"region_id": ref, "p1_evidence_kind": kind, "factor_ranges": ranges,
                  "categorical_sets": {k: sorted(v) for k, v in cats.items()},
                  "note": "envelope of tested points within the owner criteria, not a stability claim between them"}
 
@@ -1089,9 +1103,17 @@ def build_map(map_id, points, excluded, p1_stable_region_ref, calibration_set_id
         raise RED.MixedEvidenceError(f"map mixes data classes {sorted(classes)}")
     if len(tags) != 1:
         raise MapFormatError(f"map mixes evidence tags {sorted(tags)}")
-    if any(p["phase"] == "HOT_MAP" for p in points) and not RED._ref_ok(p1_stable_region_ref):
+    hot = any(p["phase"] == "HOT_MAP" for p in points)
+    if hot and not RED._ref_ok(p1_stable_region_ref):
         raise RED.SequenceError("HOT_MAP points without a P1 stable-region reference")
     dc = classes.pop()
+    if hot and dc == "measured":
+        # SW-R2-01: a measured hot map needs the ref p1_handoff_admissible(..., 'measured') issued for a MEASURED P1
+        # handoff; a synthetic (or unmarked) P1 region never opens a measured map
+        if (P1_REF_EVIDENCE_TOKEN % "MEASURED") not in p1_stable_region_ref or "SYNTHETIC" in p1_stable_region_ref.upper():
+            raise RED.MixedEvidenceError("measured HOT_MAP needs a P1 stable-region ref admitted from a MEASURED P1 "
+                                         "handoff (p1_handoff_admissible(handoff, 'measured')); got "
+                                         f"{p1_stable_region_ref!r} (SW-R2-01)")
     body = {"schema": MAP_SCHEMA_ID, "map_id": map_id, "data_class": dc,
             "evidence_status": RED.SYNTHETIC_LABEL if dc == "synthetic_test" else "measured (P2 impedance map)",
             "evidence_tag": tags.pop(), "p1_stable_region_ref": p1_stable_region_ref,

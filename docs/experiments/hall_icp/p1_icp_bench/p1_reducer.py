@@ -2071,6 +2071,9 @@ IGNITION_REQUIRED = COMMON_REQUIRED + ("gas", "gas_mode", "hall_discharge_state"
 # stability dwell (P1-S5)
 DWELL_REQUIRED = COMMON_REQUIRED + ("operating_point_record_id", "ignition_point_id", "dwell")
 HANDOFF_STATUSES = ("NOT_EVALUATED", "REGION_OF_TESTED_POINTS_WITHIN_OWNER_CRITERIA", "NO_TESTED_POINT_WITHIN_CRITERIA")
+# evidence kind of the handoff (SW-R2-01): derived from the synthetic flags of the dwell and operating-point records it
+# is built from (same values as p1_campaign.EVIDENCE_KINDS); P2 admits a handoff only into a map of the same kind
+HANDOFF_EVIDENCE_KINDS = ("SYNTHETIC_TEST_ONLY", "MEASURED", "NO_RECORDS")
 HANDOFF_FACTORS = (("P_fwd_W", ("rf", "P_fwd_W")), ("mdot_Ar_H1_mg_s", ("flows", "mdot_Ar_H1_mg_s")),
                    ("p_chamber_Pa", ("pressures", "p_chamber_Pa")), ("V_collector_V", ("collector", "V_collector_V")))
 
@@ -2380,8 +2383,9 @@ def at_power_loss_check(v, where="at_power_verification"):
     if v["method"] not in AT_POWER_METHODS:
         raise P1RecordError("%s: method %r not in %s" % (where, v["method"], AT_POWER_METHODS))
     ids = v["evidence_record_ids"]
-    if not isinstance(ids, list) or not ids or not all(isinstance(i, str) and i.strip() for i in ids):
-        raise MissingInputError("%s: evidence_record_ids must be a non-empty list of record ids" % where)
+    if not isinstance(ids, list) or not ids or not all(_ref_ok(i) for i in ids):
+        raise MissingInputError("%s: evidence_record_ids must be a non-empty list of registered record ids (no "
+                                "PENDING / TBD placeholder; MET-06)" % where)
     ts = v["tuning_states"]
     if not isinstance(ts, list) or not ts or not all(isinstance(t, str) and t.strip() for t in ts):
         raise MissingInputError("%s: tuning_states must list the match setting ids it covers" % where)
@@ -2402,8 +2406,9 @@ def at_power_loss_check(v, where="at_power_verification"):
                                                          "never defaulted)"})
         return out
     k = _pos(v["k"], where + ".k")
-    if not isinstance(v["k_registration_id"], str) or not v["k_registration_id"].strip():
-        raise MissingInputError("%s: a supplied k needs its k_registration_id" % where)
+    if not _ref_ok(v["k_registration_id"]):
+        raise MissingInputError("%s: a supplied k needs its registered k_registration_id (not empty / PENDING / TBD; k "
+                                "stays TBD_OWNER P1Q-24 until registered, never defaulted - MET-06)" % where)
     eta_m = pr / pn
     u_m = eta_m * math.hypot(u_pr / pr if pr else 0.0, u_pn / pn)
     stat = abs(eta_m - eta_p) / math.hypot(u_m, u_p)
@@ -2421,8 +2426,10 @@ def reduce_rf_cold_checkout(records):
     records (a powered 'unlit' record is valid only when optically UNLIT, A9.4 P2Q-05; in P1 without a frozen threshold
     the state is UNCERTAIN and the record is a threshold INPUT, IDP2-17)."""
     checks, chars, antenna = [], {}, []
+    cold_ids = set()
     for rec in records:
         pf, pr = validate_cold_checkout(rec)
+        cold_ids.add(rec["record_id"])
         lc = rec["loss_characterization"]
         if lc is not None:
             prev = chars.get(lc["characterization_id"])
@@ -2467,6 +2474,19 @@ def reduce_rf_cold_checkout(records):
         elif c["match_setting_id"] not in ap["tuning_states"]:
             why.append("at-power loss verification %r does not cover match setting %r" % (ap["verification_id"],
                                                                                            c["match_setting_id"]))
+        if ap is not None and ap["status"] == AT_POWER_VERIFIED:
+            # MET-06: the at-power check must verify THIS characterization - its predicted loss (1 - eta_pred) * P_net
+            # must agree with the characterization's value_W within the registered u_value_W (the same tolerance
+            # derive_rf applies to a record's loss), and its evidence must be P1-S1 / P1-S2 records of this bundle
+            loss_pred = (1.0 - ap["eta_predicted"]) * float(apv["P_net_W"])
+            if abs(loss_pred - float(c["value_W"])) > float(c["u_value_W"]):
+                why.append("at-power loss verification %r predicts a loss (1 - eta_pred) * P_net = %.6g W that "
+                           "contradicts characterization %r value_W %r W beyond u_value_W %r W (MET-06)"
+                           % (ap["verification_id"], loss_pred, cid, c["value_W"], c["u_value_W"]))
+            missing = [i for i in ap["evidence_record_ids"] if i not in cold_ids]
+            if missing:
+                why.append("at-power loss verification %r cites evidence records %s that are not P1-S1 / P1-S2 "
+                           "cold-checkout records of this bundle (MET-06)" % (ap["verification_id"], missing))
         loss_rows.append({"characterization_id": cid, "record_id": c["record_id"],
                           "match_setting_id": c["match_setting_id"], "value_W": float(c["value_W"]),
                           "u_value_W": float(c["u_value_W"]), "valid_max_gamma_abs": float(c["valid_max_gamma_abs"]),
@@ -2588,6 +2608,15 @@ def stable_region_handoff(dwell_records, operating_points_by_id, ignition_points
             entry["verdict"] = classify_stable_region(m, criteria, ign)
         per.append(entry)
     within = [e for e in per if e["verdict"].get("verdict") == "WITHIN_OWNER_CRITERIA"]
+    srcs = list(dwell_records) + [operating_points_by_id[rec["operating_point_record_id"]] for rec in dwell_records
+                                  if rec["operating_point_record_id"] in operating_points_by_id]
+    flags = {bool(r["synthetic"]) for r in srcs}
+    if len(flags) > 1:
+        raise P1RecordError("stable-region handoff mixes synthetic fixtures %s with measured records %s: refused "
+                            "(SW-R2-01; synthetic data never mixes with measured data)"
+                            % (sorted({r["record_id"] for r in srcs if r["synthetic"]}),
+                               sorted({r["record_id"] for r in srcs if not r["synthetic"]})))
+    evidence_kind = "NO_RECORDS" if not flags else ("SYNTHETIC_TEST_ONLY" if flags.pop() else "MEASURED")
     if criteria is None:
         status = "NOT_EVALUATED"
     elif within:
@@ -2607,7 +2636,7 @@ def stable_region_handoff(dwell_records, operating_points_by_id, ignition_points
         for name, _ in HANDOFF_FACTORS:
             vals = [p["factors"][name] for p in pts]
             env[name] = [min(vals), max(vals)]
-    return {"handoff": "IF-P1-01 -> P2 IDP2-01 (gate S-10, HM-R01)", "status": status,
+    return {"handoff": "IF-P1-01 -> P2 IDP2-01 (gate S-10, HM-R01)", "evidence_kind": evidence_kind, "status": status,
             "criteria_id": criteria["criteria_id"] if criteria is not None else None,
             "points_within_criteria": pts, "envelope_of_tested_points": env,
             "envelope_note": "ENVELOPE_OF_TESTED_POINTS_NOT_A_STABILITY_CLAIM_BETWEEN_POINTS",
