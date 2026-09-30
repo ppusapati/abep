@@ -541,7 +541,8 @@ def synthetic_cal(z0, line_abcd, match_abcd, e00, e11, e10e01, fixture_abcd, k_v
         model_ref={"kind": "two_port", "tuning_state_id": "TS-SYN-1", "Z_load_ohm": [z0, 0.0],
                    "Z_load_basis": "SYNTHETIC reference load"},
         u_eta_pred=0.01, P_net_W=100.0, u_P_net_W=1.0, P_ref_load_W=100.0 * eta, u_P_ref_load_W=1.0, k=2.0,
-        k_registration_id="SYN-K-REG-01", evidence_record_ids=["SYN-CALORIMETRY-01"], data_class="synthetic_test")
+        k_registration_id="SYN-K-REG-01", evidence_record_ids=["SYN-CALORIMETRY-01"], data_class="synthetic_test",
+        u_eta_pred_basis_id="SYN-SPARAM-UNC-01")
     return cal
 
 

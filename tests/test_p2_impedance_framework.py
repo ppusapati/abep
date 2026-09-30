@@ -69,7 +69,8 @@ def _verify(fw, red, cal, model_ref, vid, *, eta_meas=None, u_eta_pred=0.01, k=2
     args = dict(verification_id=vid, method="CAL-P2-09_calorimetric_at_power", cal=cal, model_ref=model_ref,
                 u_eta_pred=u_eta_pred if model_ref["kind"] == "two_port" else 0.0, P_net_W=100.0, u_P_net_W=1.0,
                 P_ref_load_W=100.0 * eta, u_P_ref_load_W=1.0, k=k, k_registration_id=k_reg,
-                evidence_record_ids=["SYN-CALORIMETRY-01"], data_class=cal["data_class"])
+                evidence_record_ids=["SYN-CALORIMETRY-01"], data_class=cal["data_class"],
+                u_eta_pred_basis_id="SYN-SPARAM-UNC-01")
     args.update(kw)
     return fw.verify_line_match_loss(**args)
 
@@ -1061,3 +1062,26 @@ def test_sw09_sweep_index_type_checked(fw):
     pts[0]["index"] = None
     with pytest.raises(fw.FrameworkError):
         fw.detect_eh_transitions(pts, CRIT)
+
+
+def test_met07_r1_shifted_eta_pred_cannot_flip_inconsistent_to_verified(fw, red):
+    """Consolidated verification MET-07-R1: u_eta_pred is used once (in u_c); a caller-shifted eta_pred is refused
+    and a record carrying one is rejected by the reducer, so an INCONSISTENT check never becomes VERIFIED."""
+    cal = _cal_from_touchstone(fw, red, _line(30.0), fw.ladder_abcd(ELEMENTS))
+    eta_model = red.loss_model_prediction(cal, TS_MODEL)[0]
+    bad = _verify(fw, red, cal, TS_MODEL, "VX1", eta_meas=0.9, u_eta_pred=0.06, k=1.0)
+    assert bad["status"] != red.LOSS_VERIFIED
+    with pytest.raises(fw.FrameworkError):
+        _verify(fw, red, cal, TS_MODEL, "VX2", eta_meas=0.9, u_eta_pred=0.06, k=1.0, eta_pred=eta_model - 0.06)
+    forged = dict(_verify(fw, red, cal, TS_MODEL, "VX3", u_eta_pred=0.06, k=1.0))
+    forged.update(eta_measured=0.9, eta_predicted=eta_model - 0.06)
+    forged["normalized_statistic"] = red.loss_statistic(forged["comparison"], 0.9, forged["u_eta_measured"],
+                                                        eta_model - 0.06, 0.06)
+    ok, why = red.loss_verification_status(forged, cal, tuning_state_id="TS1")
+    assert not ok and "MET-07-R1" in why
+    with pytest.raises(fw.CriteriaMissingError):
+        _verify(fw, red, cal, TS_MODEL, "VX4", u_eta_pred=0.06, u_eta_pred_basis_id=None)
+    nobasis = dict(_verify(fw, red, cal, TS_MODEL, "VX5", u_eta_pred=0.06))
+    nobasis["u_eta_predicted_basis_id"] = None
+    ok, why = red.loss_verification_status(nobasis, cal, tuning_state_id="TS1")
+    assert not ok and "basis" in why

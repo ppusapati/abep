@@ -91,6 +91,7 @@ def _lv(red, cal, model_ref, vid):
     return dict(LV_BASE, verification_id=vid, model_ref=ref, comparison=comp,
                 tuning_states=[ref["tuning_state_id"]] if kind == "two_port" else [], eta_measured=eta,
                 u_eta_measured=0.01, eta_predicted=eta, u_eta_predicted=u_p,
+                u_eta_predicted_basis_id="SYN-SPARAM-UNC-01" if u_p > 0 else None,
                 normalized_statistic=red.loss_statistic(comp, eta, 0.01, eta, u_p))
 
 

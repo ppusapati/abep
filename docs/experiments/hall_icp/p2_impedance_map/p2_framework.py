@@ -591,7 +591,8 @@ def dissipated_fraction_matched(s11, s21):
 
 
 def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pred, P_net_W, u_P_net_W, P_ref_load_W,
-                           u_P_ref_load_W, k, k_registration_id, evidence_record_ids, data_class, eta_pred=None):
+                           u_P_ref_load_W, k, k_registration_id, evidence_record_ids, data_class, eta_pred=None,
+                           u_eta_pred_basis_id=None):
     """At-power verification of the line / match loss model of calibration set ``cal``: eta_meas = P_ref_load / P_net
     (the known power absorbed in the reference load, e.g. calorimetry, over the net power at RP-CPL) against the
     prediction of the loss model named in ``model_ref`` (MET-07):
@@ -599,8 +600,10 @@ def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pre
                       Z_load of the check); two-sided statistic |eta_meas - eta_pred| / u_c <= k;
       declared_bound  {kind, loss_bound_id}: eta_pred = 1 - loss_fraction_max (u_eta_pred = 0: a declared limit);
                       one-sided statistic (eta_pred - eta_meas) / u_c <= k.
-    ``eta_pred`` may be omitted (computed from the model); if supplied it must equal the model's prediction within
-    u_eta_pred. k is supplied, never defaulted, and needs a registered k_registration_id (k stays TBD_OWNER / LOCK-2
+    ``eta_pred`` may be omitted (computed from the model); if supplied it must equal the model's prediction to numerical
+    precision (consolidated verification MET-07-R1: u_eta_pred is used once, in u_c, never also to shift the
+    prediction). A u_eta_pred > 0 needs a registered ``u_eta_pred_basis_id`` (e.g. the S-parameter set uncertainty
+    record); it is never a free input. k is supplied, never defaulted, and needs a registered k_registration_id (k stays TBD_OWNER / LOCK-2
     until registered). Any missing uncertainty -> NOT_EVALUATED (never verified). Returns the reducer's
     loss_verification record (model_ref filled with calibration_set_id and network / loss_fraction_max)."""
     if method not in RED.LOSS_VERIFICATION_METHODS:
@@ -639,10 +642,14 @@ def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pre
     u_p = _fin(u_eta_pred, "u_eta_pred")
     if u_p < 0:
         raise FrameworkError("u_eta_pred must be >= 0")
+    if u_p > 0 and not RED._ref_ok(u_eta_pred_basis_id):
+        raise CriteriaMissingError("u_eta_pred > 0 needs a registered u_eta_pred_basis_id (S-parameter / calibration "
+                                   "uncertainty record); never a free input (MET-07-R1)")
     eta_p = eta_model if eta_pred is None else _fin(eta_pred, "eta_pred")
-    if abs(eta_p - eta_model) > u_p + 1e-9:
-        raise FrameworkError(f"eta_pred {eta_p!r} is not the {kind} model's prediction {eta_model:.9g} within "
-                             f"u_eta_pred {u_p!r} (the check must verify the loss model that is used; MET-07)")
+    if abs(eta_p - eta_model) > 1e-9 * max(1.0, abs(eta_model)):
+        raise FrameworkError(f"eta_pred {eta_p!r} is not the {kind} model's prediction {eta_model:.9g} (the check "
+                             f"verifies the loss model that is used; u_eta_pred enters u_c only; MET-07-R1)")
+    eta_p = eta_model
     pn, pr = _fin(P_net_W, "P_net_W"), _fin(P_ref_load_W, "P_ref_load_W")
     if pn <= 0 or pr < 0:
         raise FrameworkError("P_net > 0 and P_ref_load >= 0 required")
@@ -654,6 +661,7 @@ def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pre
     stat = RED.loss_statistic(comparison, eta_m, u_m, eta_p, u_p)
     rec.update({"status": RED.LOSS_VERIFIED if stat <= kk else LOSS_INCONSISTENT, "eta_measured": eta_m,
                 "u_eta_measured": u_m, "eta_predicted": eta_p, "u_eta_predicted": u_p,
+                "u_eta_predicted_basis_id": u_eta_pred_basis_id if u_p > 0 else None,
                 "normalized_statistic": stat})
     return rec
 

@@ -857,12 +857,14 @@ def loss_verification_status(v, cal, *, tuning_state_id=None, loss_bound_id=None
     stat_rec = _num_or_none(v["normalized_statistic"])
     if None in (eta_m, u_m, eta_p, u_p, stat_rec) or u_m < 0 or u_p < 0:
         return False, f"loss verification {vid!r}: eta / uncertainty / statistic must be finite (u >= 0)"
-    tol = u_p if kind == "two_port" else 0.0
-    if abs(eta_p - eta_model) > tol + 1e-9:
+    if abs(eta_p - eta_model) > 1e-9 * max(1.0, abs(eta_model)):
         return False, (f"loss verification {vid!r}: eta_predicted {eta_p!r} is not the loss model's prediction "
-                       f"{eta_model:.9g} within u_eta_predicted {tol!r} (MET-07)")
+                       f"{eta_model:.9g} (u_eta_predicted enters u_c only, never shifts the prediction; MET-07-R1)")
+    if u_p > 0 and not _ref_ok(v.get("u_eta_predicted_basis_id")):
+        return False, (f"loss verification {vid!r}: u_eta_predicted > 0 without a registered "
+                       f"u_eta_predicted_basis_id (MET-07-R1)")
     try:
-        stat = loss_statistic(v["comparison"], eta_m, u_m, eta_p, u_p)
+        stat = loss_statistic(v["comparison"], eta_m, u_m, eta_model, u_p)
     except RecordError as e:
         return False, f"loss verification {vid!r}: {e}"
     if abs(stat - stat_rec) > 1e-6 * max(1.0, abs(stat)):
