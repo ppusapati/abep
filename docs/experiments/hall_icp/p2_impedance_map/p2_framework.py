@@ -630,6 +630,13 @@ def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pre
         raise CriteriaMissingError(f"{e}; k stays TBD_OWNER / LOCK-2 until registered, never defaulted") from e
     if abs(kk - prot["k"]) > 1e-12 * max(1.0, prot["k"]):
         raise CriteriaMissingError(f"k {kk!r} != the protocol's registered k {prot['k']!r} (MET-07-R3)")
+    if (model_ref or {}).get("kind") == "two_port":
+        zr = (model_ref or {}).get("Z_load_ohm")
+        if prot["Z_load_ohm"] is None or not (isinstance(zr, (list, tuple)) and len(zr) == 2) or \
+                any(abs(_fin(a, "Z_load_ohm") - b) > 1e-9 * max(1.0, abs(b)) for a, b in zip(zr, prot["Z_load_ohm"])):
+            raise CriteriaMissingError(f"check load Z_load_ohm {zr!r} is not the protocol's registered reference load "
+                                       f"{prot['Z_load_ohm']!r} (its uncertainty is part of the registered u_eta_pred; "
+                                       f"MET-07-R5)")
     if u_eta_pred_basis_id not in (None, k_registration_id):
         raise CriteriaMissingError("u_eta_pred comes from the same registered protocol (u_eta_pred_basis_id must be "
                                    "omitted or equal k_registration_id; MET-07-R3)")

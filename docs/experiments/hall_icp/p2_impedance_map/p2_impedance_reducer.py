@@ -736,6 +736,12 @@ def loss_check_protocol(cal, protocol_id, method, model_key):
                           f"the check operating point P_check_W > 0 with P_check_rel_tol >= 0, an application range "
                           f"apply_P_net_range_W [lo, hi] with 0 < lo <= hi, and a source (MET-07-R3/R4)")
     vals["apply_P_net_range_W"] = (lo, hi)
+    zl = p.get("Z_load_ohm")                     # two_port checks: the characterized reference load (MET-07-R5)
+    vals["Z_load_ohm"] = None
+    if zl is not None:
+        if not (isinstance(zl, (list, tuple)) and len(zl) == 2 and all(_num_or_none(x) is not None for x in zl)):
+            raise RecordError(f"protocol {protocol_id!r}: Z_load_ohm must be [R, X] (MET-07-R5)")
+        vals["Z_load_ohm"] = (float(zl[0]), float(zl[1]))
     return vals
 
 
@@ -928,6 +934,12 @@ def loss_verification_status(v, cal, *, tuning_state_id=None, loss_bound_id=None
     if abs(eta_p - eta_model) > 1e-9 * max(1.0, abs(eta_model)):
         return False, (f"loss verification {vid!r}: eta_predicted {eta_p!r} is not the loss model's prediction "
                        f"{eta_model:.9g} (u_eta_predicted enters u_c only, never shifts the prediction; MET-07-R1)")
+    if kind == "two_port":
+        zr = mr.get("Z_load_ohm")
+        if prot["Z_load_ohm"] is None or not (isinstance(zr, (list, tuple)) and len(zr) == 2) or \
+                any(abs(float(a) - b) > 1e-9 * max(1.0, abs(b)) for a, b in zip(zr, prot["Z_load_ohm"])):
+            return False, (f"loss verification {vid!r}: check load Z_load_ohm {zr!r} is not the protocol's registered "
+                           f"reference load {prot['Z_load_ohm']!r} (never chosen after the data; MET-07-R5)")
     if kind == "declared_bound" and (u_p != 0 or prot["u_eta_pred"] != 0):
         return False, f"loss verification {vid!r}: a declared bound is a limit, u_eta_predicted must be 0 (MET-07-R2)"
     if abs(u_p - prot["u_eta_pred"]) > 1e-12 * max(1.0, prot["u_eta_pred"]):

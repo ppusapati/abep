@@ -64,7 +64,7 @@ LB_MODEL = {"kind": "declared_bound", "loss_bound_id": "LB1"}
 
 _M09 = "CAL-P2-09_calorimetric_at_power"
 SYN_LOSS_REGS = {"protocols": {
-    "SYN-PROT-TS1": {"method": _M09, "model_key": "TS1", "k": 2.0, "u_eta_pred": 0.01, "u_P_net_W": 1.0,
+    "SYN-PROT-TS1": {"method": _M09, "model_key": "TS1", "Z_load_ohm": [Z0, 0.0], "k": 2.0, "u_eta_pred": 0.01, "u_P_net_W": 1.0,
                      "u_P_ref_load_W": 1.0, "P_check_W": 100.0, "P_check_rel_tol": 0.02, "apply_P_net_range_W": [1e-3, 1e4],
                      "source": "SYNTHETIC test protocol"},
     "SYN-PROT-LB1": {"method": _M09, "model_key": "LB1", "k": 2.0, "u_eta_pred": 0.0, "u_P_net_W": 1.0,
@@ -1172,3 +1172,19 @@ def test_met07_r4_check_power_and_application_range_fixed(fw, red, case):
     narrow = _proto(cal0, apply_P_net_range_W=[80.0, 120.0])
     ok, why = red.loss_verification_status(good, narrow, tuning_state_id="TS1", record_P_net_W=10.0)
     assert not ok and "application range" in why
+
+
+def test_met07_r5_check_load_registered(fw, red):
+    """Consolidated verification MET-07-R5: the two-port check's reference load is registered in the protocol; a
+    load chosen after the data (for which the model happens to predict the measurement) is refused."""
+    cal = _proto(_cal_from_touchstone(fw, red, _line(30.0), fw.ladder_abcd(ELEMENTS)), k=1.0, u_eta_pred=0.06)
+    bad = _verify(fw, red, cal, TS_MODEL, "VZ0", eta_meas=0.9, u_eta_pred=0.06, k=1.0)
+    assert bad["status"] == fw.LOSS_INCONSISTENT
+    other = dict(TS_MODEL, Z_load_ohm=[161.5, -174.0])
+    with pytest.raises(fw.CriteriaMissingError):
+        _verify(fw, red, cal, other, "VZ1", eta_meas=0.9, u_eta_pred=0.06, k=1.0)
+    eta_o, ref_o = red.loss_model_prediction(cal, other)
+    f = dict(bad, status=red.LOSS_VERIFIED, model_ref=ref_o, eta_predicted=eta_o,
+             normalized_statistic=red.loss_statistic("two_sided", 0.9, bad["u_eta_measured"], eta_o, 0.06))
+    ok, why = red.loss_verification_status(f, cal, tuning_state_id="TS1")
+    assert not ok and "reference load" in why
