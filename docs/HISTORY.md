@@ -2383,3 +2383,6 @@ ICP-45 stays NOT_EVALUATED until I_d,max,H1 is registered.
 Post-merge: 2340 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10. Protected artifacts are unchanged; the diff
 vs main is additive. Minors carried: stale PENDING RFQ references in P2, one leftover PROPOSED wording in P1-S4, and the
 INS-P2-10 source list, which cites A9.3 but not A9.4.
+Checkpoint 4 merged to main as eef8b85 (PR #34), using the A9.4 one-merge authorization. Codex raised two findings on the
+P1 reducer; both were fixed in ca36c9e before the merge. Paired capacity records must now match the closure rule's sign
+convention, and mixed synthetic/measured candidates are refused. Main reproduces 2342 / 5 / 1, golden OK and 10/10.

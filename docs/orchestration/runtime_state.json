@@ -196,6 +196,17 @@
    "ci": "6/6 green on 4555c78",
    "post_merge_baseline_on_main": "full suite 2204 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10 at 20f14d8; tree identical to the execution branch head",
    "after": "clean post-A9 baseline. Next (owner sequence 2026-09-30): triage the 54 open owner questions -> P1 ICP bench (ICP-45) -> P2 impedance map -> P3 coupled thermal redesign -> P4 anode design; P1/P2 data precede any P3/P4 closure. Launch only on owner instruction. Any further merge to main needs a new owner approval."
+  },
+  "checkpoint_4_executed": {
+   "pr": "https://github.com/ppusapati/abep/pull/34",
+   "pr_head": "ca36c9ecb1608c9382218cb8409eaaa34473599d",
+   "merge_commit_on_main": "eef8b851fdf99d023eaea57951deddc5fca55778",
+   "utc": "2026-09-30",
+   "approval": "owner A9.4 merge_authorization (docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json): one merge of the A9.3 execution branch; consumed by this merge",
+   "review": "two Codex findings on the P1 reducer (closure sign convention; mixed synthetic/measured candidates) confirmed, fixed in ca36c9e with regression tests, threads replied and resolved",
+   "ci": "6/6 green on ca36c9e",
+   "post_merge_baseline_on_main": "full suite 2342 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10 at eef8b85",
+   "after": "any further merge to main needs a new owner approval"
   }
  }
 }
