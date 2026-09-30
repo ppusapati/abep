@@ -2324,3 +2324,11 @@ allocations are below verified evidence floors for three lines; the C1 reference
 the H-1 anode worst case (1190-1292 degC) is incompatible with 316L. No model, frozen data or golden changed; historical
 A4-A8 artefacts are byte-identical. Next (owner priorities): P1 ICP electron-source bench (ICP-45), P2 ICP impedance map,
 P3 coupled thermal redesign, P4 anode design.
+
+## 2026-09-30 — Checkpoint 3 merged to main (A9)
+
+With the owner's approval, PR #33 (head 4555c78) was merged into main as 20f14d8, after CI passed 6/6 and the A9.2 §11
+post-merge checks passed. The merged main reproduces: 2204 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10.
+This is the clean post-A9 baseline. Owner sequence: triage the 54 open owner questions, then P1 ICP bench (ICP-45) → P2
+impedance map → P3 coupled thermal redesign → P4 anode design. P3/P4 are not closed before P1/P2 data exist, because the
+measured ICP/RF electrical behaviour sets the real thermal load. No model, frozen data or golden changed.
