@@ -2309,3 +2309,18 @@ discharge with a downstream 13.56 MHz RF ICP neutralizer, with Hall + heated Xe-
 pre-ionizer campaign and the parallel RF||Hall v2 / A8 become historical (preserved, not rewritten). No model, frozen data or
 golden changed. Eight leftover worktrees were archived (`docs/orchestration/archive/leftover_worktrees_2026_09_29/`) and removed
 (row 10). The Takahashi et al. 2024 citation was verified against Crossref (CC BY-NC-ND); its data are not yet extracted.
+
+## 2026-09-30 — A9 integration complete on the execution branch (A9.1, A9.2 incorporated)
+
+A9-01..A9-10 verified and merged on claude/nifty-ramanujan-w68f9z: Hall->ICP prereg framework, A9 bus boundary
+(bus_power_boundary_a9_v1, 1 ms-window P_bus gate per A9.1), ICP-neutralizer ICD, C1-vs-ICP uncertainty budget,
+Takahashi 2024 extraction + validation inputs, core integration record, A9 mass reconciliation, H2 revisions, A9 Xe
+ledger, RFQ packages (quotations only), A9-10 reconciliation (M16 v3, owner-question state v2). Owner A9.1 and A9.2
+decisions are recorded as immutable addenda and applied. A9.2 statuses: Hall->ICP INVESTIGATION_HYPOTHESIS; ICP
+electron-current capacity PENDING_ICP45; RF power closure PENDING_HARDWARE; local match selected for development; RF
+component ratings TBD_AFTER_IMPEDANCE_MAP; 316L REJECTED_AS_CURRENT_BASELINE; final anode material OPEN; anode thermal
+closure and coupled H-1/ICP thermal closure UNRESOLVED; C1 CONTROL_FALLBACK. Findings carried to the owner: the v0 mass
+allocations are below verified evidence floors for three lines; the C1 reference needs >= 6.87 kg loaded Xe in flight;
+the H-1 anode worst case (1190-1292 degC) is incompatible with 316L. No model, frozen data or golden changed; historical
+A4-A8 artefacts are byte-identical. Next (owner priorities): P1 ICP electron-source bench (ICP-45), P2 ICP impedance map,
+P3 coupled thermal redesign, P4 anode design.
