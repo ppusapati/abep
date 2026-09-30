@@ -1116,7 +1116,9 @@ def _ic(red, on, off, rule=None, reg=None, margin=None):
 
 
 def _reasons(ic, rid):
-    return " ".join([" ".join(e["reasons"]) for e in ic["excluded_records"] if e["record_id"] == rid])
+    lists = ic["excluded_records"] + ic.get("not_evaluated_uncertainty_records", []) + \
+        ic.get("not_evaluated_instrument_records", [])
+    return " ".join([" ".join(e["reasons"]) for e in lists if e["record_id"] == rid])
 
 
 def test_a95_pinned_and_recorded(doc):
@@ -1152,9 +1154,11 @@ def test_a95_pinned_and_recorded(doc):
     assert "PROPOSED: (A)" not in items["P1-IT-36"]["value"] and "PROPOSED" not in items["P1-IT-36"]["value"]
     assert "Two cases are REFUSED" not in json.dumps(items["P1-IT-51"]) and "P1Q-21" in json.dumps(items["P1-IT-51"])
     qs = {q["id"] for q in doc["open_owner_questions"]}
-    assert {"P1Q-21", "P1Q-22", "P1Q-23"} <= qs and "P1Q-15" not in qs and "P1Q-16" not in qs
+    # A9.6 sec. 6: P1Q-21..P1Q-23 settled as DERIVED (fo_a9_6_p1_workflow_completion), no longer open
+    assert not ({"P1Q-21", "P1Q-22", "P1Q-23"} & qs) and "P1Q-15" not in qs and "P1Q-16" not in qs
     dq = {d["id"]: d for d in doc["derived_quantities"]}
-    assert "LANE CHOICE" in dq["P1-D-14"]["basis"] and "LANE CHOICE" in dq["P1-D-15"]["basis"]
+    assert "DERIVED" in dq["P1-D-14"]["basis"] and "DERIVED" in dq["P1-D-15"]["basis"]
+    assert "LANE CHOICE" not in dq["P1-D-14"]["basis"] + dq["P1-D-15"]["basis"]
     d13 = {d["id"]: d for d in doc["derived_quantities"]}
     assert "3 u_R" in d13["P1-D-13"]["formula"] and "P1-D-14" in d13 and "P1-D-15" in d13
 
@@ -1228,8 +1232,11 @@ def test_a95_missing_uncertainty_component_not_evaluable(red):
         ic = _ic(red, on, off)
         assert ic["status"] == "NOT_EVALUATED", comp
         assert "u(I_k) unavailable for terminal 'h1_body'" in _reasons(ic, "SYNTH-M-ON"), comp
-        ex = [e for e in ic["excluded_records"] if e["record_id"] == "SYNTH-M-ON"][0]
+        # A9.6 sec. 14: missing uncertainty -> NOT_EVALUATED (point outcome NOT_EVALUATED_UNCERTAINTY, not EXCLUDED)
+        ex = [e for e in ic["not_evaluated_uncertainty_records"] if e["record_id"] == "SYNTH-M-ON"][0]
+        assert ex["outcome"] == "NOT_EVALUATED_UNCERTAINTY"
         assert ex["eligibility"]["3_required_channel_uncertainties_available"] is False
+        assert not any(e["record_id"] == "SYNTH-M-ON" for e in ic["excluded_records"])
     on, off = _pair(tag="M2")
     del on["terminals"]["electron_collector"]["uncertainty"]
     assert "no uncertainty object" in _reasons(_ic(red, on, off), "SYNTH-M2-ON")
@@ -1385,11 +1392,13 @@ def test_a95_eligibility_conditions(red):
     ic4 = red.reduce_operating_points([on, off], None, None, [["SYNTH-E-ON", "SYNTH-E-OFF"]], MATCH,
                                       CLOSE)["summary"]["icp45a"]
     assert ic4["status"] == "NOT_EVALUATED" and ic4["eligibility"] == {"4_I_d_max_H1_registered": False}
-    # a registered u_I_e_A below the channel propagation is flagged, never silently replaced
+    # a registered u_I_e_A below the channel propagation is flagged and never used as it stands (DERIVED P1Q-19);
+    # the two admissible treatments disagree -> NOT_EVALUATED (TBD_OWNER P1Q-19)
     small = dict(RULE, u_I_e_A=1e-4)
     ic5 = _ic(red, on, off, margin=small)
     assert any(f.startswith("REGISTERED_u_I_e_BELOW_CHANNEL_PROPAGATION") for f in ic5["flags"])
-    assert ic5["u_I_e_cap_used_A"] == 1e-4
+    assert ic5["status"] == "NOT_EVALUATED" and ic5["condition_met"] is None and "u_I_e_cap_used_A" not in ic5
+    assert ic5["u_I_e_cap_registered_A"] == 1e-4 and ic5["p1q19_alternatives"]["agree"] is False
 
 
 def test_a95_exclusions_ground_path_sign_and_mixed(red):
@@ -1529,19 +1538,28 @@ def test_a95_unmeasured_return_paths_excluded_uniformly(red):
 
 
 def test_a95_instrument_inadequacy_precedence(red):
-    """3 u_R > 0.02 I_e,collector and a closure-test failure -> NOT_EVALUATED_INSTRUMENT (failure kept, not decisive);
-    a structural exclusion keeps precedence over inadequacy."""
+    """DERIVED precedence (P1Q-22, A9.6 sec. 6): a fractional-only failure at an instrument-inadequate point ->
+    NOT_EVALUATED_INSTRUMENT (not decisive); a STATISTICAL failure |R_I| > 3 u_R stays EXCLUDED even when the
+    instrument is inadequate (normalised to u_R); a structural exclusion keeps precedence over inadequacy."""
     on, off = _pair(on_ie=0.2, off_ie=0.0, tag="IP")
-    on["terminals"]["h1_body"]["I_A"] = -0.01                          # |R_I| = 0.01 A > 3 u_R and > 2 % of 0.2 A
+    on["terminals"]["h1_body"]["I_A"] = -0.005                         # |R_I| 5 mA <= 3 u_R (6.7 mA), > 2 % of 0.2 A
     ev = red.kirchhoff_closure(on, CLOSE)
-    assert ev["closure_valid"] is False and ev["instrument_adequate"] is False
+    assert ev["statistical_ok"] is True and ev["fractional_ok"] is False and ev["instrument_adequate"] is False
     ic = _ic(red, on, off)
     assert ic["status"] == "NOT_EVALUATED"
     ni = ic["not_evaluated_instrument_records"]
     assert [x["record_id"] for x in ni] == ["SYNTH-IP-ON"]
-    assert any("statistical closure fails" in x for x in ni[0]["closure_test_results_not_decisive"])
+    assert any("fractional closure" in x for x in ni[0]["closure_test_results_not_decisive"])
     assert "P1Q-22" in ni[0]["precedence"]
     assert not any(e["record_id"] == "SYNTH-IP-ON" for e in ic["excluded_records"])
+    on, off = _pair(on_ie=0.2, off_ie=0.0, tag="IS")
+    on["terminals"]["h1_body"]["I_A"] = -0.01                          # |R_I| 10 mA > 3 u_R: statistically significant
+    ev = red.kirchhoff_closure(on, CLOSE)
+    assert ev["statistical_ok"] is False and ev["instrument_adequate"] is False
+    ic = _ic(red, on, off)
+    assert {"record_id": "SYNTH-IS-ON", "outcome": "EXCLUDED"} in ic["capacity_point_outcomes"]
+    r = _reasons(ic, "SYNTH-IS-ON")
+    assert "statistical closure fails" in r and "also instrument adequacy" in r
     on, off = _pair(on_ie=0.2, off_ie=0.0, tag="IQ")
     on["capacity_monitoring"]["unintended_ground_path_found"] = True     # structural: excluded
     ic = _ic(red, on, off)
@@ -1561,3 +1579,614 @@ def test_a95_schema_and_hall_on(red):
     assert x["owner_constants"] == {"k_sigma": 3.0, "fraction_max": 0.02}
     assert "residual_rel_tol" not in x["allowed"] and "I_scale_min_A" in x["required"]
     assert "never define I_e,cap" in red.I_E_CAP_DEFINITION and "OWNER_CONFIRMED by A9.5" in red.I_E_CAP_DEFINITION
+
+
+# ------------------------------------------------------------------ A9.6 P1 workflow completion (fo_a9_6_p1_workflow_completion)
+CAMPAIGN = os.path.join(DIR, "p1_campaign.py")
+CLI = os.path.join(DIR, "p1_campaign_cli.py")
+REPORT_SCHEMA_PATH = os.path.join(DIR, "p1_campaign_report_schema_v1.json")
+A96 = os.path.join(ROOT, "docs", "decisions", "OD_2026_09_30_A9_6_implementation_first_directive.json")
+T0 = "1999-12-31T00:00:00Z"          # synthetic fixture time stamps (not data)
+T1 = "2000-01-01T00:00:00Z"
+CRIT = {"criteria_id": "SYNTH-CRIT", "max_abs_drift_rel_I_e": 0.1, "max_abs_drift_rel_P_refl": 0.1,
+        "max_step_over_std": 10.0, "min_duration_s": 10.0, "min_ignition_success_fraction": 0.5}
+DOMAIN = {"domain_id": "SYNTH-DOM", "P_fwd_W": [0.0, 500.0], "p_chamber_Pa": [0.0, 1.0],
+          "mdot_Ar_H1_mg_s": [0.0, 5.0], "V_collector_V": [-100.0, 100.0]}
+
+
+@pytest.fixture(scope="module")
+def camp():
+    return _load_mod(CAMPAIGN, "p1_campaign_under_test")
+
+
+def _optical(signal=1.0, threshold=0.1, mode="H_MODE", los=True, sat=False, elec=False):
+    o = {"photodiode_channel_id": "SYNTH-PD-1", "optical_signal_V": signal, "photodiode_line_of_sight_ok": los,
+         "photodiode_saturated": sat, "electrical_ignition_or_mode_transition": elec,
+         "unlit_threshold": None if threshold is None else {"threshold_id": "SYNTH-THR", "threshold_V": threshold},
+         "lit_mode_assignment": mode}
+    if mode is not None:
+        o["mode_indicator_basis"] = "SYNTH E/H indicators"
+    if elec:
+        o["electrical_indicator_basis"] = "SYNTH reflected power step"
+    return o
+
+
+def _hdr(kind, rid, stage, synthetic=True, ts=T1):
+    return {"schema": "p1_bench_record_v1", "record_kind": kind, "record_id": rid, "run_id": "SYNTH-RUN-C",
+            "stage_id": stage, "timestamp_utc": ts, "synthetic": synthetic,
+            "labels": ["ENGINEERING_ONLY_NON_SCORING", "SYNTHETIC_TEST_FIXTURE"]}
+
+
+def synth_readiness(red, synthetic=True):
+    rec = _hdr("p1_g0_readiness", "SYNTH-G0", "P1-S0", synthetic, T0)
+    rec.update({
+        "interlocks": [{"interlock_id": i, "functional_test_done": True, "functional": True, "log_id": "SYNTH-LOG"}
+                       for i in red.READINESS_INTERLOCK_IDS],
+        "isolation_class": {"V_operating_max_V": 350.0, "V_design_withstand_V": 525.0},
+        "dwv_tests": [{"path_id": "SYNTH-PATH-1", "applicable": True, "V_test_V": 1050.0, "duration_s": 60.0,
+                       "current_limited": True, "leakage_A": 1e-8, "breakdown_or_flashover": False,
+                       "leakage_acceptance": {"criterion_id": "SYNTH-LEAK", "max_leakage_A": 1e-6}},
+                      {"path_id": "SYNTH-PATH-2", "applicable": False,
+                       "not_applicable_reason": "SYNTH component rating below 1.05 kV"}],
+        "gas_lines": [{"line_id": "SYNTH-GL-BRIDGE", "bridges_isolated_potentials": True, "isolator_installed": True,
+                       "qualification": {"qualification_id": "SYNTH-Q", "level_id": "SYNTH-LEVEL", "V_test_V": 1000.0,
+                                         "gas": "Ar", "p_Pa": 10.0, "breakdown_or_flashover": False}},
+                      {"line_id": "SYNTH-GL-SAME", "bridges_isolated_potentials": False, "isolator_installed": False,
+                       "qualification": None}],
+        "ar_mfcs": [{"mfc_id": "SYNTH-MFC-1", "range_min_mg_s": 0.0, "range_max_mg_s": 5.0}],
+        "ar_sweep_bounds_mg_s": [0.5, 3.0], "second_mfc_necessity": None,
+        "generator_class": "GROUND_FACILITY_ONLY_MAINS",
+        "registrations": {k: "SYNTH-" + k for k in red.READINESS_REGISTRATIONS}})
+    return rec
+
+
+def synth_cold(kind, rid, synthetic=True, p_cal=98.0):
+    stage = "P1-S1" if kind == "DUMMY_LOAD" else "P1-S2"
+    rec = _hdr("rf_cold_checkout", rid, stage, synthetic)
+    rec.update({"checkout_kind": kind, "rf_pickup_check": "DONE",
+                "rf": {"reference_plane": "GENERATOR_50OHM_SIDE_OF_LOCAL_MATCH", "P_fwd_W": 100.0, "P_refl_W": 1.0,
+                       "match_setting_id": "SYNTH-MATCH-A"},
+                "generator": {"generator_class": "GROUND_FACILITY_ONLY_MAINS", "P_generator_input_W": 200.0,
+                              "input_boundary": "mains AC input of the lab generator", "instrument": "SYNTH-PA"},
+                "loss_characterization": None})
+    if kind == "DUMMY_LOAD":
+        rec["calorimetric_cross_check"] = {"method_id": "SYNTH-CAL", "P_cal_W": p_cal, "u_P_cal_W": 1.0,
+                                           "u_P_coupler_W": 1.0}
+        rec["loss_characterization"] = {"characterization_id": "SYNTH-LOSS-A", "method": "TWO_PORT_S_PARAMETER",
+                                        "match_setting_id": "SYNTH-MATCH-A", "value_W": 6.0, "u_value_W": 0.5,
+                                        "valid_max_gamma_abs": 0.3}
+    else:
+        rec["rf"]["P_fwd_W"], rec["rf"]["P_refl_W"] = 10.0, 1.0
+        rec.update({"optical": _optical(signal=0.01, threshold=None, mode=None), "gas_flow_state": "OFF",
+                    "unlit_procedure_id": "SYNTH-UNLIT-PROC"})
+    return rec
+
+
+def synth_ign(rid, synthetic=True, ignited=True, optical=None):
+    rec = _hdr("ignition_attempt", rid, "P1-S3", synthetic)
+    rec.update({"gas": "Ar", "gas_mode": "G-REUSE", "hall_discharge_state": "OFF",
+                "ignition_procedure_id": "SYNTH-IGN-PROC", "point_id": "SYNTH-IGN-PT-1",
+                "rf": {"reference_plane": "GENERATOR_50OHM_SIDE_OF_LOCAL_MATCH", "P_fwd_W": 100.0, "P_refl_W": 4.0,
+                       "match_setting_id": "SYNTH-MATCH-A"},
+                "flows": {"mdot_Ar_H1_mg_s": 1.0, "mdot_icp_dedicated_mg_s": 0.0},
+                "pressures": {"p_chamber_Pa": 0.01}, "ignited": ignited,
+                "ignition_delay_s": 0.5 if ignited else None, "extinguished": False,
+                "optical": optical if optical is not None else _optical(), "h1_magnet_state": "SYNTH-MAG-OFF"})
+    return rec
+
+
+def synth_dwell(rid, op_id, synthetic=True):
+    rec = _hdr("stability_dwell", rid, "P1-S5", synthetic)
+    rec.update({"operating_point_record_id": op_id, "ignition_point_id": "SYNTH-IGN-PT-1",
+                "dwell": {"t_s": [0.0, 10.0, 20.0, 30.0], "I_e_A": [0.50, 0.51, 0.50, 0.51],
+                          "P_refl_W": [4.0, 4.1, 4.0, 4.1]}})
+    return rec
+
+
+def synth_bundle(red, synthetic=True, **reg_over):
+    """A complete SYNTHETIC campaign (fixture numbers, never data): G0, S1/S2, 3 ignitions, a surface record, one
+    ICP45_CAPACITY RF-ON / RF-OFF pair, a Hall-ON consistency record at the same registered point, a dwell and the
+    topology-control sequence."""
+    surf = synth_op(synthetic=synthetic, timestamp_utc=T1)
+    surf["rf"]["line_match_loss"]["source"] = "SYNTH-LOSS-A"
+    on = synth_cap("SYNTH-CAP-ON", 3.0, synthetic=synthetic, stage="P1-S4")
+    off = synth_cap("SYNTH-CAP-OFF", 0.2, rf_on=False, synthetic=synthetic, stage="P1-S4")
+    for r in (on, off):
+        r["rf"]["line_match_loss"]["source"] = "SYNTH-LOSS-A"
+    s7 = synth_s7(red, "SYNTH-S7H-1", 1.5)
+    s7["synthetic"] = synthetic
+    seq = synth_seq(red)
+    seq["synthetic"] = synthetic
+    seq["timestamp_utc"] = T1
+    recs = [synth_readiness(red, synthetic), synth_cold("DUMMY_LOAD", "SYNTH-S1-1", synthetic),
+            synth_cold("INSTALLED_UNLIT_ANTENNA_VIA_LOCAL_MATCH", "SYNTH-S2-1", synthetic)]
+    recs += [synth_ign("SYNTH-IGN-%d" % i, synthetic) for i in range(3)]
+    recs += [surf, on, off, s7, synth_dwell("SYNTH-DWELL-1", surf["record_id"], synthetic), seq]
+    reg = {"registration_set_id": "SYNTH-REGSET", "operating_domains": {
+        st: dict(DOMAIN) for st in ("P1-S1", "P1-S2", "P1-S3", "P1-S4", "P1-S5", "P1-S6", "P1-S7", "P1-S7H")},
+        "facility_pairs": [["SYNTH-CAP-ON", "SYNTH-CAP-OFF"]], "facility_match": dict(MATCH),
+        "closure_rule": dict(CLOSE), "i_d_max_registration": dict(REG, I_d_max_H1_A=2.0), "margin_rule": dict(RULE),
+        "stable_criteria": dict(CRIT)}
+    reg.update(reg_over)
+    return {"schema": "p1_campaign_bundle_v1",
+            "manifest": {"campaign_id": "SYNTH-CAMPAIGN", "description": "synthetic fixture, not data",
+                         "evidence_kind": "SYNTHETIC_TEST_ONLY" if synthetic else "MEASURED"},
+            "registrations": reg, "records": recs}
+
+
+def _measured_bundle(red, **reg_over):
+    b = synth_bundle(red, synthetic=False, **reg_over)
+    for r in b["records"]:
+        r["synthetic"] = False
+    return b
+
+
+def _idx(rep):
+    return {x["record_id"]: x for x in rep["raw_record_index"]}
+
+
+def _outcome(rep, rid):
+    return {o["record_id"]: o for o in rep["capacity"]["point_outcomes"]}[rid]
+
+
+def _check_every_raw_record_kept(rep, bundle):
+    assert rep["raw_records"] == bundle["records"]
+    assert [x["record_id"] for x in rep["raw_record_index"]] == [r["record_id"] for r in bundle["records"]]
+    for x in rep["raw_record_index"]:
+        assert x["disposition"] in ("REDUCED", "OUT_OF_DOMAIN", "REFUSED_INVALID_RECORD")
+        if x["disposition"] != "REDUCED":
+            assert x["reasons"] and any(e["record_id"] == x["record_id"] and e["reasons"] == x["reasons"]
+                                        for e in rep["excluded_records"])
+
+
+def _no_pass_anywhere(obj):
+    if isinstance(obj, dict):
+        return all(_no_pass_anywhere(v) for v in obj.values())
+    if isinstance(obj, list):
+        return all(_no_pass_anywhere(v) for v in obj)
+    return not (isinstance(obj, str) and obj.strip().upper() == "PASS")
+
+
+def test_a96_pinned_and_recorded(doc):
+    pins = {p["path"]: p["sha256"] for p in doc["authority_pins"]}
+    assert pins["docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json"] == \
+        "d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327"
+    assert pins["docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md"] == \
+        "c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634"
+    inc = doc["a9_6_incorporation"]
+    assert inc["follow_on"] == "fo_a9_6_p1_workflow_completion"
+    assert inc["base_commit"] == "1d67f99f88007982eff77670b64c6eb7c595bccd"
+    with open(A96, encoding="utf-8") as f:
+        a96 = json.load(f)
+    assert inc["fixed_statuses"] == a96["summary"]["fixed_statuses"]
+    assert inc["lane_scope"] == a96["implementation_lanes"]["fo_a9_6_p1_workflow_completion"]
+    assert all(g["state"].startswith("CLOSED_IN_IMPLEMENTATION") for g in inc["gap_audit"])
+    assert "PASS" not in json.dumps(inc["fixed_statuses"])
+    applied = {a["id"] for a in doc["owner_answers_applied"]}
+    assert {"A9.6 sec. 2", "A9.6 sec. 5-7", "A9.6 sec. 8", "A9.6 sec. 14"} <= applied
+    assert "PENDING docs/experiments/hall_icp/p3_coupled_thermal/" in " ".join(inc["not_done_here"])
+
+
+def test_a96_workflow_stages_complete(doc, camp, red):
+    """A9.6 sec. 8: every stage represented with entry / exit criteria, record template, required channels and a
+    reducer that exists."""
+    wf = doc["a9_6_incorporation"]["workflow"]
+    assert [w["id"] for w in wf] == ["P1-W%02d" % i for i in range(1, 11)]
+    names = " ".join(w["name"] for w in wf)
+    for must in ("P1-G0", "RF cold checkout", "dummy load", "unlit antenna", "ignition", "electron-current surface",
+                 "ICP-45 discharge-OFF capacity", "RF-OFF paired correction", "Kirchhoff", "stable-region",
+                 "topology control", "NEUTRALIZATION_CONSISTENCY"):
+        assert must in names, must
+    meas = {m["id"] for m in doc["measurements"]}
+    for w in wf:
+        assert w["entry"] and w["exit"] and w["required_channels"] and w["record_template"]["required_fields"]
+        assert set(w["required_channels"]) <= meas, w["id"]
+        for fn in w["reducer"].replace(";", " ").split():
+            if fn.startswith("p1_reducer."):
+                assert callable(getattr(red, fn.split(".", 1)[1])), fn
+    assert "never a gate" in " ".join(wf[8]["exit"]) and "after capacity" in wf[9]["name"]
+    assert "1.05 kV DC / 60 s" in " ".join(wf[0]["exit"]) and "ICPQ-06" in " ".join(wf[0]["exit"])
+    assert camp.WORKFLOW == wf
+
+
+def test_a96_fail_closed_audit_has_one_test_per_bullet(doc):
+    audit = doc["a9_6_incorporation"]["fail_closed_audit"]
+    assert len(audit) == 10
+    src = open(os.path.abspath(__file__), encoding="utf-8").read()
+    for a in audit:
+        name = a["test"].split("::")[1]
+        assert re.search(r"^def %s\(" % name, src, re.M), name
+    bullets = " | ".join(a["a9_6_sec14_bullet"] for a in audit)
+    for must in ("no PASS", "sign convention", "current path", "synthetic/measured", "RF-ON/RF-OFF",
+                 "I_d,max,H1", "uncertainty", "UNCERTAIN", "line loss", "OUT_OF_DOMAIN"):
+        assert must in bullets, must
+
+
+def test_a96_derived_resolutions_and_open_questions(doc):
+    inc = doc["a9_6_incorporation"]
+    res = {r["id"]: r for r in inc["derived_resolutions"]}
+    for k in ("P1Q-19 (ext)", "P1Q-19 (below propagation)", "P1Q-21", "P1Q-22", "P1Q-23 (a)", "P1Q-23 (b)"):
+        assert res[k]["disposition"] == "DERIVED" and res[k]["follows_from"], k
+    assert res["P1Q-19 (require vs use larger)"]["disposition"] == "TBD_OWNER"
+    assert "JCGM 100:2008 5.1.2" in res["P1Q-23 (a)"]["follows_from"]
+    assert "5.2.2" in res["P1Q-23 (b)"]["follows_from"] and "F.2.2.1" in res["P1Q-19 (ext)"]["follows_from"]
+    assert "A9_5_p1_closure_owner_decisions.json" in res["P1Q-21"]["follows_from"]
+    g = inc["external_reference"]
+    assert g["url"].startswith("https://www.bipm.org/") and len(g["fetched_pdf_sha256"]) == 64
+    qs = {q["id"]: q for q in doc["open_owner_questions"]}
+    assert "P1Q-19" in qs and qs["P1Q-19"]["status"] == "TBD_OWNER"
+    assert not ({"P1Q-21", "P1Q-22", "P1Q-23"} & set(qs))
+    items = {i["id"]: i for i in doc["items"]}
+    assert items["P1-IT-57"]["value"].startswith("TBD_OWNER") and items["P1-IT-52"]["value"].startswith("TBD")
+
+
+def test_a96_schemas_cover_all_kinds_and_report(red, camp):
+    with open(SCHEMA_PATH, encoding="utf-8") as f:
+        sc = json.load(f)
+    assert [x["$ref"].split("/")[-1] for x in sc["oneOf"]] == list(red.RECORD_KINDS)
+    for k in red.RECORD_KINDS:
+        assert k in sc["$defs"], k
+    assert sc["$defs"]["p1_g0_readiness"]["x-owner-values"]["dwv_V_test_V_min"] == 1050.0
+    with open(REPORT_SCHEMA_PATH, encoding="utf-8") as f:
+        rs = json.load(f)
+    assert rs["$schema"] == "https://json-schema.org/draft/2020-12/schema"
+    assert _structural_metaschema_errors(rs) == [] and _structural_metaschema_errors(sc) == []
+    assert rs["required"] == list(camp.REPORT_REQUIRED)
+    assert rs["properties"]["capacity"]["properties"]["point_outcomes"]["items"]["properties"]["outcome"]["enum"] == \
+        list(red.POINT_OUTCOMES)
+    assert "PASS" not in json.dumps(rs["properties"]["icp45_status"])
+    try:
+        import jsonschema
+    except ImportError:
+        return
+    jsonschema.Draft202012Validator.check_schema(rs)
+    jsonschema.Draft202012Validator.check_schema(sc)
+
+
+def test_a96_campaign_complete_synthetic(red, camp):
+    b = synth_bundle(red)
+    rep = camp.run_campaign(b)
+    _check_every_raw_record_kept(rep, b)
+    assert all(x["disposition"] == "REDUCED" for x in rep["raw_record_index"]), rep["raw_record_index"]
+    assert rep["readiness"]["g0_status"] == "G0_ENTRY_CONDITIONS_RECORDED"
+    assert rep["rf_cold_checkout"]["rf_chain_status"] == "CROSS_CHECK_AGREES"
+    assert rep["rf_cold_checkout"]["verified_loss_ids"] == ["SYNTH-LOSS-A"]
+    assert rep["rf_cold_checkout"]["cross_checks"][0]["z_x"] == pytest.approx(1.0 / math.sqrt(2.0))
+    assert rep["rf_cold_checkout"]["antenna_records"][0]["plasma_state"] == "UNCERTAIN"
+    assert rep["ignition_map"]["points"][0]["ignition_success_fraction"] == 1.0
+    assert _outcome(rep, "SYNTH-CAP-ON")["outcome"] == "CLOSURE_VALID_CANDIDATE"
+    assert rep["icp45_status"]["status"] == "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE"
+    assert rep["capacity"]["icp45a"]["I_e_cap_A"] == pytest.approx(2.8)
+    assert rep["neutralization_consistency"][0]["row_status"] == "DESCRIPTIVE_CONSISTENCY_CHECK_NOT_A_GATE"
+    assert rep["stable_region"]["status"] == "REGION_OF_TESTED_POINTS_WITHIN_OWNER_CRITERIA"
+    assert rep["stable_region"]["envelope_of_tested_points"]["P_fwd_W"] == [100.0, 100.0]
+    assert rep["topology_control"][0]["gate"] is False and rep["topology_control"][0]["scoring"] is False
+    row = {r["record_id"]: r for r in rep["surface"]}["SYNTH-OP-001"]
+    assert row["factors"]["P_delivered_kind"] == "P_RF_DELIVERED" and row["plasma_state"] == "OPTICAL_NOT_RECORDED"
+    assert _no_pass_anywhere({k: v for k, v in rep.items() if k != "raw_records"})
+    assert rep["evidence_class"] == "ENGINEERING_ONLY_NON_SCORING"
+    assert json.dumps(camp.run_campaign(copy.deepcopy(b)), sort_keys=True) == json.dumps(rep, sort_keys=True)
+    try:
+        import jsonschema
+    except ImportError:
+        return
+    with open(REPORT_SCHEMA_PATH, encoding="utf-8") as f:
+        jsonschema.Draft202012Validator(json.load(f)).validate(rep)
+
+
+def test_a96_campaign_measured_evaluates_engineering_only(red, camp):
+    rep = camp.run_campaign(_measured_bundle(red))
+    assert rep["icp45_status"]["status"] == "EVALUATED_ENGINEERING_ONLY"
+    assert rep["icp45_status"]["condition_met"] is True
+    assert rep["icp45_status"]["m16_state"].startswith("PENDING_ICP45")
+    assert rep["any_synthetic"] is False
+
+
+def test_a96_cli_directory_and_bundle(red, tmp_path):
+    cli = _load_mod(CLI, "p1_campaign_cli_under_test")
+    b = synth_bundle(red)
+    bf = tmp_path / "bundle.json"
+    bf.write_text(json.dumps(b), encoding="utf-8")
+    out1 = tmp_path / "r1.json"
+    assert cli.main([str(bf), "--out", str(out1)]) == 0
+    d = tmp_path / "camp"
+    (d / "records").mkdir(parents=True)
+    (d / "manifest.json").write_text(json.dumps(b["manifest"]), encoding="utf-8")
+    (d / "registrations.json").write_text(json.dumps(b["registrations"]), encoding="utf-8")
+    for i, r in enumerate(b["records"]):
+        (d / "records" / ("%03d.json" % i)).write_text(json.dumps(r), encoding="utf-8")
+    out2 = tmp_path / "r2.json"
+    assert cli.main([str(d), "--out", str(out2)]) == 0
+    assert json.loads(out1.read_text()) == json.loads(out2.read_text())
+    bad = copy.deepcopy(b)
+    bad["records"][5]["synthetic"] = False
+    bf.write_text(json.dumps(bad), encoding="utf-8")
+    assert cli.main([str(bf), "--out", str(tmp_path / "r3.json")]) == 2
+    assert not (tmp_path / "r3.json").exists()
+
+
+# --- A9.6 sec. 14, one explicit test per bullet (names cited in a9_6_incorporation.fail_closed_audit)
+def test_a96_sec14_missing_required_data_no_pass(red, camp):
+    b = synth_bundle(red)
+    del b["records"][7]["capacity_monitoring"]["V_icp_body_V"]               # SYNTH-CAP-ON loses a required field
+    del b["records"][3]["optical"]                                           # an ignition record without its optics
+    rep = camp.run_campaign(b)
+    _check_every_raw_record_kept(rep, b)
+    ix = _idx(rep)
+    assert ix["SYNTH-CAP-ON"]["disposition"] == "REFUSED_INVALID_RECORD"
+    assert "capacity_monitoring.V_icp_body_V missing" in ix["SYNTH-CAP-ON"]["reasons"][0]
+    assert ix["SYNTH-IGN-0"]["disposition"] == "REFUSED_INVALID_RECORD"
+    assert rep["icp45_status"]["status"] == "NOT_EVALUATED"
+    assert _no_pass_anywhere({k: v for k, v in rep.items() if k != "raw_records"})
+    # missing registrations -> NOT_EVALUATED, never a default
+    rep = camp.run_campaign(synth_bundle(red, stable_criteria=None, closure_rule=None))
+    assert rep["stable_region"]["status"] == "NOT_EVALUATED"
+    assert _outcome(rep, "SYNTH-CAP-ON")["outcome"] == "EXCLUDED"
+    assert "Kirchhoff closure rule not registered" in " ".join(_outcome(rep, "SYNTH-CAP-ON")["reasons"])
+    bb = synth_bundle(red)
+    del bb["registrations"]["margin_rule"]
+    with pytest.raises(camp.CampaignInputError):
+        camp.run_campaign(bb)
+    # the self-check refuses a PASS anywhere in a report
+    with pytest.raises(camp.red.P1RecordError):
+        camp._walk_no_pass({"x": [{"y": "PASS"}]})
+
+
+def test_a96_sec14_sign_convention_mismatch_excluded(red, camp):
+    b = synth_bundle(red)
+    b["records"][8]["terminals"]["h1_body"]["sign_convention_id"] = "SYNTH-OTHER"   # RF-OFF partner channel
+    rep = camp.run_campaign(b)
+    o = _outcome(rep, "SYNTH-CAP-ON")
+    assert o["outcome"] == "EXCLUDED" and "sign conventions differ" in " ".join(o["reasons"])
+    assert any(e["record_id"] == "SYNTH-CAP-ON" and e["outcome"] == "EXCLUDED" for e in rep["excluded_records"])
+    b = synth_bundle(red)
+    b["records"][7]["collector"]["I_e_sign_convention"] = "ELECTRON_FLOW_POSITIVE"
+    rep = camp.run_campaign(b)
+    assert _idx(rep)["SYNTH-CAP-ON"]["disposition"] == "REFUSED_INVALID_RECORD"
+    assert "I_e_sign_convention" in _idx(rep)["SYNTH-CAP-ON"]["reasons"][0]
+
+
+def test_a96_sec14_missing_current_path_excluded(red, camp):
+    b = synth_bundle(red)
+    b["records"][7]["terminals"]["facility_ground"] = {"I_A": None, "basis": "NOT_MEASURED"}
+    rep = camp.run_campaign(b)
+    o = _outcome(rep, "SYNTH-CAP-ON")
+    assert o["outcome"] == "EXCLUDED" and "intentional return path unmeasured" in " ".join(o["reasons"])
+    b = synth_bundle(red)
+    del b["records"][7]["terminals"]["h1_body"]                             # absent, not even declared
+    rep = camp.run_campaign(b)
+    assert _idx(rep)["SYNTH-CAP-ON"]["disposition"] == "REFUSED_INVALID_RECORD"
+    assert rep["icp45_status"]["status"] == "NOT_EVALUATED"
+
+
+def test_a96_sec14_mixed_evidence_refused(red, camp):
+    b = synth_bundle(red)
+    b["records"][9]["synthetic"] = False
+    with pytest.raises(camp.MixedEvidenceError):
+        camp.run_campaign(b)
+    b = _measured_bundle(red)
+    b["records"][0]["synthetic"] = True
+    with pytest.raises(camp.MixedEvidenceError):
+        camp.run_campaign(b)
+
+
+def test_a96_sec14_invalid_pair_excluded(red, camp):
+    b = synth_bundle(red)
+    b["records"][8]["collector"]["V_collector_V"] = -35.0                    # RF-OFF not at the same bias
+    rep = camp.run_campaign(b)
+    o = _outcome(rep, "SYNTH-CAP-ON")
+    assert o["outcome"] == "EXCLUDED" and "pairing not matched" in " ".join(o["reasons"])
+    assert "collector.V_collector_V differs" in " ".join(o["reasons"])
+    rep = camp.run_campaign(synth_bundle(red, facility_match=None))
+    o = _outcome(rep, "SYNTH-CAP-ON")
+    assert o["outcome"] == "EXCLUDED" and "pressure-match rule not registered" in " ".join(o["reasons"])
+    b = synth_bundle(red)
+    b["records"][8]["rf"]["P_refl_W"] = 1.0                                 # RF-OFF record physically impossible
+    rep = camp.run_campaign(b)
+    assert _idx(rep)["SYNTH-CAP-OFF"]["disposition"] == "REFUSED_INVALID_RECORD"
+    o = _outcome(rep, "SYNTH-CAP-ON")
+    assert o["outcome"] == "EXCLUDED" and "paired RF-OFF record 'SYNTH-CAP-OFF' is REFUSED_INVALID_RECORD" in \
+        " ".join(o["reasons"])
+    b = synth_bundle(red)
+    b["registrations"]["facility_pairs"] = [["SYNTH-CAP-ON", "SYNTH-NOT-THERE"]]
+    with pytest.raises(camp.CampaignInputError):
+        camp.run_campaign(b)
+
+
+def test_a96_sec14_unknown_i_d_max_not_evaluated(red, camp):
+    rep = camp.run_campaign(synth_bundle(red, i_d_max_registration=None))
+    assert rep["icp45_status"]["status"] == "NOT_EVALUATED" and rep["icp45_status"]["condition_met"] is None
+    o = _outcome(rep, "SYNTH-CAP-ON")
+    assert o["outcome"] == "NOT_EVALUATED_REGISTRATION" and o["closure"]["closure_valid"] is True
+    assert rep["neutralization_consistency"][0]["row_status"] == "OUT_OF_DOMAIN"
+    rep = camp.run_campaign(synth_bundle(red, margin_rule=None))
+    assert rep["icp45_status"]["status"] == "NOT_EVALUATED" and "margin rule not registered" in \
+        rep["icp45_status"]["reason"]
+    assert _outcome(rep, "SYNTH-CAP-ON")["outcome"] == "CLOSURE_VALID_CANDIDATE"
+    reg = dict(REG, I_d_max_H1_A=8.33, basis="STAND_CEILING")               # the bench ceiling is never I_d,max,H1
+    with pytest.raises(camp.red.RegistrationError):
+        camp.run_campaign(synth_bundle(red, i_d_max_registration=reg))
+
+
+def test_a96_sec14_missing_uncertainty_not_evaluated(red, camp):
+    b = synth_bundle(red)
+    del b["records"][7]["terminals"]["electron_collector"]["uncertainty"]["u_zero_offset_A"]
+    rep = camp.run_campaign(b)
+    o = _outcome(rep, "SYNTH-CAP-ON")
+    assert o["outcome"] == "NOT_EVALUATED_UNCERTAINTY" and "u(I_k) unavailable" in " ".join(o["reasons"])
+    assert rep["icp45_status"]["status"] == "NOT_EVALUATED"
+    for k in ("u_I_e_A", "u_I_d_max_A"):
+        rep = camp.run_campaign(synth_bundle(red, margin_rule=dict(RULE, **{k: 0.0})))
+        assert rep["icp45_status"]["status"] == "NOT_EVALUATED" and "F.2.2.1" in rep["icp45_status"]["reason"]
+    b = synth_bundle(red)
+    b["records"][1]["calorimetric_cross_check"]["u_P_cal_W"] = 0.0         # zero is not an uncertainty
+    rep = camp.run_campaign(b)
+    assert _idx(rep)["SYNTH-S1-1"]["disposition"] == "REFUSED_INVALID_RECORD"
+    assert rep["rf_cold_checkout"]["rf_chain_status"] == "NOT_EVALUATED"
+
+
+def test_a96_sec14_unresolved_plasma_state_uncertain(red, camp):
+    for kw, why in (({"los": False}, "line of sight"), ({"sat": True}, "saturated"),
+                    ({"threshold": None}, "no registered unlit threshold"),
+                    ({"signal": 0.01, "elec": True, "mode": None}, "electrical evidence"),
+                    ({"mode": None}, "no registered E_MODE / H_MODE")):
+        st, reason = red.classify_plasma_state(_optical(**kw))
+        assert st == "UNCERTAIN" and why in reason, kw
+    assert red.classify_plasma_state(_optical(signal=0.01, mode=None))[0] == "UNLIT"
+    assert red.classify_plasma_state(_optical())[0] == "H_MODE"
+    bad = _optical()
+    del bad["unlit_threshold"]
+    with pytest.raises(red.MissingInputError):
+        red.classify_plasma_state(bad)
+    b = synth_bundle(red)
+    b["records"][6]["optical"] = _optical(threshold=None)                   # surface record with an optical record
+    b["records"][4]["optical"] = _optical(sat=True)
+    rep = camp.run_campaign(b)
+    row = {r["record_id"]: r for r in rep["surface"]}["SYNTH-OP-001"]
+    assert row["plasma_state"] == "UNCERTAIN"
+    att = {a["record_id"]: a for a in rep["ignition_map"]["attempts"]}
+    assert att["SYNTH-IGN-1"]["plasma_state"] == "UNCERTAIN" and att["SYNTH-IGN-1"]["ignited"] is True
+    b = synth_bundle(red)
+    b["records"][4]["optical"] = _optical(signal=0.01, mode=None)          # recorded ignition, optically unlit
+    rep = camp.run_campaign(b)
+    att = {a["record_id"]: a for a in rep["ignition_map"]["attempts"]}
+    assert att["SYNTH-IGN-1"]["flag"].startswith("IGNITION_INDICATORS_DISAGREE")
+
+
+def test_a96_sec14_unverified_loss_no_reconstructed_power(red, camp):
+    b = synth_bundle(red)
+    b["records"][6]["rf"]["line_match_loss"]["source"] = "SYNTH-UNKNOWN-CHAR"
+    rep = camp.run_campaign(b)
+    row = {r["record_id"]: r for r in rep["surface"]}["SYNTH-OP-001"]
+    assert row["factors"]["P_delivered_kind"] == "P_RF_DELIVERED_UPPER_BOUND_LOSS_UNVERIFIED"
+    assert row["factors"]["P_delivered_W"] == pytest.approx(100.0 - 4.0) and row["C_e_kind"] == "C_e_UPPER_BOUND"
+    assert any(f.startswith("LINE_MATCH_LOSS_UNVERIFIED") for f in row["flags"])
+    b = synth_bundle(red)
+    b["records"][1]["calorimetric_cross_check"]["P_cal_W"] = 90.0          # |z_x| = 9 / sqrt(2) > 2
+    rep = camp.run_campaign(b)
+    assert rep["rf_cold_checkout"]["rf_chain_status"] == "EXCLUDED_INSTRUMENT"
+    assert rep["rf_cold_checkout"]["verified_loss_ids"] == []
+    row = {r["record_id"]: r for r in rep["surface"]}["SYNTH-OP-001"]
+    assert row["factors"]["P_delivered_W"] is None and row["C_e_W_per_A"] is None
+    assert row["factors"]["P_delivered_kind"] == "EXCLUDED_INSTRUMENT_RF_CROSS_CHECK"
+    b = synth_bundle(red)
+    b["records"] = [r for r in b["records"] if r["record_id"] != "SYNTH-S1-1"]   # no cross-check at all
+    rep = camp.run_campaign(b)
+    assert rep["rf_cold_checkout"]["rf_chain_status"] == "NOT_EVALUATED"
+    row = {r["record_id"]: r for r in rep["surface"]}["SYNTH-OP-001"]
+    assert row["factors"]["P_delivered_kind"] == "P_RF_DELIVERED_UPPER_BOUND_LOSS_UNVERIFIED"
+    assert "P_plasma" not in json.dumps(rep["surface"]).replace("never P_plasma", "")
+
+
+def test_a96_sec14_out_of_domain_not_fail(red, camp):
+    b = synth_bundle(red)
+    b["registrations"]["operating_domains"]["P1-S4"]["P_fwd_W"] = [0.0, 50.0]   # capacity RF-ON at 100 W outside
+    rep = camp.run_campaign(b)
+    ix = _idx(rep)
+    assert ix["SYNTH-CAP-ON"]["disposition"] == "OUT_OF_DOMAIN" and ix["SYNTH-CAP-OFF"]["disposition"] == "REDUCED"
+    o = _outcome(rep, "SYNTH-CAP-ON")
+    assert o["outcome"] == "OUT_OF_DOMAIN" and "outside registered operating domain" in " ".join(o["reasons"])
+    assert rep["icp45_status"]["status"] == "NOT_EVALUATED" and rep["icp45_status"]["condition_met"] is None
+    vals = re.findall(r'": "([A-Z_]+)"', json.dumps({k: v for k, v in rep.items() if k != "raw_records"}))
+    assert vals and not [v for v in vals if v == "FAIL" or v.startswith("FAIL_")]     # no FAIL-valued field
+    b = synth_bundle(red)
+    b["registrations"]["operating_domains"]["P1-S4"]["P_fwd_W"] = [0.0, 50.0]
+    b["registrations"]["operating_domains"]["P1-S4"]["V_collector_V"] = [0.0, 100.0]  # RF-OFF partner outside too
+    rep = camp.run_campaign(b)
+    assert _idx(rep)["SYNTH-CAP-OFF"]["disposition"] == "OUT_OF_DOMAIN"
+    b = synth_bundle(red)
+    del b["registrations"]["operating_domains"]["P1-S3"]                     # unregistered stage
+    rep = camp.run_campaign(b)
+    assert all(_idx(rep)["SYNTH-IGN-%d" % i]["disposition"] == "OUT_OF_DOMAIN" for i in range(3))
+    b = synth_bundle(red)
+    b["records"][0]["dwv_tests"][0]["leakage_acceptance"] = None             # G0 TBD -> later stages out of domain
+    rep = camp.run_campaign(b)
+    assert rep["readiness"]["g0_status"] == "G0_NOT_EVALUATED_TBD"
+    assert all(x["disposition"] == "OUT_OF_DOMAIN" for x in rep["raw_record_index"] if x["stage_id"] != "P1-S0")
+    _check_every_raw_record_kept(rep, b)
+    b = synth_bundle(red)
+    b["records"][6]["timestamp_utc"] = "1998-01-01T00:00:00Z"                 # taken before P1-G0
+    rep = camp.run_campaign(b)
+    assert "before the governing P1-G0" in " ".join(_idx(rep)["SYNTH-OP-001"]["reasons"])
+
+
+def test_a96_readiness_rules(red):
+    ok = red.reduce_readiness(synth_readiness(red))
+    assert ok["g0_status"] == "G0_ENTRY_CONDITIONS_RECORDED" and not ok["deficiencies"] and not ok["tbd"]
+    gl = {g["line_id"]: g for g in ok["rows"]["gas_lines"]}
+    assert gl["SYNTH-GL-SAME"]["isolator_required"] is False and gl["SYNTH-GL-BRIDGE"]["isolator_required"] is True
+    for mut, frag in ((lambda r: r["dwv_tests"][0].update(V_test_V=1000.0), "V_test 1000.0 V < 1.05 kV"),
+                      (lambda r: r["dwv_tests"][0].update(duration_s=30.0), "< 60 s"),
+                      (lambda r: r["dwv_tests"][0].update(current_limited=False), "not current-limited"),
+                      (lambda r: r["gas_lines"][0].update(qualification=None), "no ~1 kV representative-gas"),
+                      (lambda r: r["gas_lines"][0].update(isolator_installed=False), "without a gas isolator"),
+                      (lambda r: r["interlocks"].pop(), "P1-SI-11"),
+                      (lambda r: r["isolation_class"].update(V_design_withstand_V=500.0), ">= 525 V"),
+                      (lambda r: r.update(ar_mfcs=[{"mfc_id": "A", "range_min_mg_s": 0.0, "range_max_mg_s": 1.0},
+                                                   {"mfc_id": "B", "range_min_mg_s": 2.0, "range_max_mg_s": 5.0}]),
+                       "do not overlap"),
+                      (lambda r: r.update(ar_mfcs=[{"mfc_id": x, "range_min_mg_s": 0.0, "range_max_mg_s": 5.0}
+                                                   for x in "ABCD"]), "no four-range set"),
+                      (lambda r: r.update(generator_class="FLIGHT_REPRESENTATIVE_DC_RF_SOURCE"), "GROUND/FACILITY")):
+        rec = synth_readiness(red)
+        mut(rec)
+        out = red.reduce_readiness(rec)
+        assert out["g0_status"] == "G0_NOT_MET" and frag in " ".join(out["deficiencies"]), frag
+    rec = synth_readiness(red)
+    rec["ar_sweep_bounds_mg_s"] = None
+    assert red.reduce_readiness(rec)["g0_status"] == "G0_NOT_EVALUATED_TBD"
+    rec = synth_readiness(red)
+    rec["dwv_tests"][1].pop("not_applicable_reason")
+    with pytest.raises(red.MissingInputError):
+        red.reduce_readiness(rec)
+    rec = synth_readiness(red)
+    rec["P_bus_W"] = 1.0
+    with pytest.raises(red.PMainsNotPBusError):
+        red.reduce_readiness(rec)
+
+
+def test_a96_magnitude_form_of_denominator(red):
+    """A9.6 sec. 2: max(|I_e,collector|, I_scale,min) and 3 u_R <= 0.02 |I_e,collector| (signed collector current)."""
+    on, off = _pair(on_ie=-0.5, off_ie=0.0, tag="NEG")                    # I_e,collector = -0.5 A (net ion collection)
+    ev = red.kirchhoff_closure(on, CLOSE)
+    assert ev["I_e_collector_A"] == pytest.approx(-0.5) and ev["denominator_A"] == pytest.approx(0.5)
+    assert ev["instrument_adequate"] is True and "|I_e,collector|" in ev["denominator_form"]
+
+
+def test_a96_p1q19_alternatives_side_by_side(red):
+    on, off = _pair(tag="Q19")
+    ic = _ic(red, on, off)
+    alts = ic["p1q19_alternatives"]
+    assert alts["agree"] is True and ic["status"] == "EVALUATED_ENGINEERING_ONLY"
+    assert alts["REQUIRE_REGISTERED_GE_CHANNEL"] == alts["USE_LARGER_OF_REGISTERED_AND_CHANNEL"]
+    ic = _ic(red, on, off, margin=dict(RULE, u_I_e_A=1e-4))
+    alts = ic["p1q19_alternatives"]
+    assert alts["agree"] is False and ic["status"] == "NOT_EVALUATED" and "TBD_OWNER P1Q-19" in ic["reason"]
+    assert alts["REQUIRE_REGISTERED_GE_CHANNEL"]["status"] == "NOT_EVALUATED"
+    assert alts["USE_LARGER_OF_REGISTERED_AND_CHANNEL"]["u_I_e_cap_A"] == pytest.approx(math.sqrt(2.0) * U1)
+    assert "M_n" not in ic
+
+
+def test_a96_p1q23_correlated_form(red):
+    u, basis = red.u_i_e_cap_channels(3e-3, 4e-3)
+    assert u == pytest.approx(5e-3) and basis.startswith("ASSUMPTION_INDEPENDENT")
+    u, basis = red.u_i_e_cap_channels(3e-3, 4e-3, {"correlation_id": "SYNTH-R", "r": 0.5})
+    assert u == pytest.approx(math.sqrt(9e-6 + 16e-6 - 12e-6)) and "REGISTERED_CORRELATION SYNTH-R" in basis
+    on, off = _pair(tag="Q23")
+    ic = _ic(red, on, off, margin=dict(RULE, rf_on_off_collector_correlation={"correlation_id": "SYNTH-R", "r": 1.0}))
+    assert ic["u_I_e_cap_from_channels_A"] == pytest.approx(0.0, abs=1e-12)
+    assert "REGISTERED_CORRELATION" in ic["u_I_e_cap_from_channels_basis"]
+    with pytest.raises(red.RegistrationError):
+        _ic(red, on, off, margin=dict(RULE, rf_on_off_collector_correlation={"correlation_id": "X", "r": 1.5}))
+
+
+def test_a96_campaign_code_hygiene():
+    for path in (CAMPAIGN, CLI):
+        src = open(path, encoding="utf-8").read()
+        assert ("xe" + "_ledger") not in src
+        for banned in ("archengine", "plasma_devices", "hall_map", "requests", "urllib"):
+            assert banned not in src, (path, banned)
+    src = open(CAMPAIGN, encoding="utf-8").read()
+    imports = set(re.findall(r"^(?:import|from) (\S+)", src, re.M))
+    assert imports <= {"copy", "hashlib", "importlib.util", "json", "os"}, imports
+    assert "open(" not in src

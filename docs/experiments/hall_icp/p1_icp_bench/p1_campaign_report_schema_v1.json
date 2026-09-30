@@ -1,0 +1,403 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "docs/experiments/hall_icp/p1_icp_bench/p1_campaign_report_schema_v1.json",
+ "title": "P1 ICP bench campaign report (p1_campaign_report_v1)",
+ "description": "Output of docs/experiments/hall_icp/p1_icp_bench/p1_campaign.py run_campaign (generated from its constants by build_p1_icp_bench.py). Engineering-only; never PASS; raw records never dropped.",
+ "type": "object",
+ "required": [
+  "schema",
+  "campaign_id",
+  "evidence_kind",
+  "any_synthetic",
+  "evidence_class",
+  "input_sha256",
+  "registration_set_id",
+  "workflow",
+  "readiness",
+  "rf_cold_checkout",
+  "ignition_map",
+  "surface",
+  "facility_corrections",
+  "kirchhoff_closures",
+  "capacity",
+  "icp45_status",
+  "stable_region",
+  "topology_control",
+  "neutralization_consistency",
+  "excluded_records",
+  "raw_record_index",
+  "raw_records",
+  "statements"
+ ],
+ "properties": {
+  "schema": {
+   "const": "p1_campaign_report_v1"
+  },
+  "campaign_id": {
+   "type": "string"
+  },
+  "evidence_kind": {
+   "enum": [
+    "SYNTHETIC_TEST_ONLY",
+    "MEASURED"
+   ]
+  },
+  "any_synthetic": {
+   "type": "boolean"
+  },
+  "evidence_class": {
+   "const": "ENGINEERING_ONLY_NON_SCORING"
+  },
+  "input_sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "registration_set_id": {
+   "type": "string"
+  },
+  "workflow": {
+   "type": "array"
+  },
+  "readiness": {
+   "type": "object",
+   "required": [
+    "g0_status",
+    "records"
+   ],
+   "properties": {
+    "g0_status": {
+     "enum": [
+      "G0_ENTRY_CONDITIONS_RECORDED",
+      "G0_NOT_MET",
+      "G0_NOT_EVALUATED_TBD",
+      "NO_READINESS_RECORD"
+     ]
+    }
+   }
+  },
+  "rf_cold_checkout": {
+   "type": "object",
+   "required": [
+    "rf_chain_status",
+    "verified_loss_ids"
+   ],
+   "properties": {
+    "rf_chain_status": {
+     "enum": [
+      "CROSS_CHECK_AGREES",
+      "EXCLUDED_INSTRUMENT",
+      "NOT_EVALUATED"
+     ]
+    }
+   }
+  },
+  "ignition_map": {
+   "type": "object"
+  },
+  "surface": {
+   "type": "array"
+  },
+  "facility_corrections": {
+   "type": "array"
+  },
+  "kirchhoff_closures": {
+   "type": "array"
+  },
+  "capacity": {
+   "type": "object",
+   "required": [
+    "point_outcomes",
+    "icp45a"
+   ],
+   "properties": {
+    "point_outcomes": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "record_id",
+       "outcome",
+       "reasons"
+      ],
+      "properties": {
+       "record_id": {
+        "type": "string"
+       },
+       "outcome": {
+        "enum": [
+         "CLOSURE_VALID_CANDIDATE",
+         "NOT_EVALUATED_INSTRUMENT",
+         "NOT_EVALUATED_UNCERTAINTY",
+         "NOT_EVALUATED_REGISTRATION",
+         "EXCLUDED",
+         "OUT_OF_DOMAIN"
+        ]
+       },
+       "reasons": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "icp45_status": {
+   "type": "object",
+   "required": [
+    "status"
+   ],
+   "properties": {
+    "status": {
+     "enum": [
+      "NOT_EVALUATED",
+      "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE",
+      "EVALUATED_ENGINEERING_ONLY"
+     ]
+    }
+   }
+  },
+  "stable_region": {
+   "type": "object",
+   "required": [
+    "status"
+   ],
+   "properties": {
+    "status": {
+     "enum": [
+      "NOT_EVALUATED",
+      "REGION_OF_TESTED_POINTS_WITHIN_OWNER_CRITERIA",
+      "NO_TESTED_POINT_WITHIN_CRITERIA"
+     ]
+    }
+   }
+  },
+  "topology_control": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "gate",
+     "scoring"
+    ],
+    "properties": {
+     "gate": {
+      "const": false
+     },
+     "scoring": {
+      "const": false
+     }
+    }
+   }
+  },
+  "neutralization_consistency": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "row_status"
+    ],
+    "properties": {
+     "row_status": {
+      "enum": [
+       "DESCRIPTIVE_CONSISTENCY_CHECK_NOT_A_GATE",
+       "OUT_OF_DOMAIN"
+      ]
+     }
+    }
+   }
+  },
+  "excluded_records": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "record_id",
+     "source",
+     "outcome",
+     "reasons"
+    ],
+    "properties": {
+     "record_id": {
+      "type": "string"
+     },
+     "source": {
+      "enum": [
+       "OUT_OF_DOMAIN",
+       "REFUSED_INVALID_RECORD",
+       "CAPACITY_POINT",
+       "NEUTRALIZATION_CONSISTENCY_ROW"
+      ]
+     },
+     "outcome": {
+      "enum": [
+       "OUT_OF_DOMAIN",
+       "REFUSED_INVALID_RECORD",
+       "CLOSURE_VALID_CANDIDATE",
+       "NOT_EVALUATED_INSTRUMENT",
+       "NOT_EVALUATED_UNCERTAINTY",
+       "NOT_EVALUATED_REGISTRATION",
+       "EXCLUDED",
+       "OUT_OF_DOMAIN"
+      ]
+     },
+     "reasons": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "error_class": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    }
+   }
+  },
+  "raw_record_index": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "record_id",
+     "record_kind",
+     "stage_id",
+     "disposition",
+     "reasons"
+    ],
+    "properties": {
+     "record_id": {
+      "type": "string"
+     },
+     "record_kind": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "stage_id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "disposition": {
+      "enum": [
+       "REDUCED",
+       "OUT_OF_DOMAIN",
+       "REFUSED_INVALID_RECORD"
+      ]
+     },
+     "reasons": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "error_class": {
+      "type": "string"
+     },
+     "capacity_point_outcome": {
+      "enum": [
+       "CLOSURE_VALID_CANDIDATE",
+       "NOT_EVALUATED_INSTRUMENT",
+       "NOT_EVALUATED_UNCERTAINTY",
+       "NOT_EVALUATED_REGISTRATION",
+       "EXCLUDED",
+       "OUT_OF_DOMAIN"
+      ]
+     }
+    }
+   }
+  },
+  "raw_records": {
+   "type": "array",
+   "description": "every raw record of the bundle, verbatim"
+  },
+  "statements": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ },
+ "$defs": {
+  "campaign_bundle": {
+   "type": "object",
+   "required": [
+    "schema",
+    "manifest",
+    "registrations",
+    "records"
+   ],
+   "properties": {
+    "schema": {
+     "const": "p1_campaign_bundle_v1"
+    },
+    "manifest": {
+     "type": "object",
+     "required": [
+      "campaign_id",
+      "evidence_kind",
+      "description"
+     ],
+     "properties": {
+      "evidence_kind": {
+       "enum": [
+        "SYNTHETIC_TEST_ONLY",
+        "MEASURED"
+       ]
+      }
+     }
+    },
+    "registrations": {
+     "type": "object",
+     "required": [
+      "registration_set_id",
+      "operating_domains",
+      "facility_pairs",
+      "facility_match",
+      "closure_rule",
+      "i_d_max_registration",
+      "margin_rule",
+      "stable_criteria"
+     ],
+     "additionalProperties": false,
+     "x-nullable": [
+      "facility_match",
+      "closure_rule",
+      "i_d_max_registration",
+      "margin_rule",
+      "stable_criteria"
+     ],
+     "properties": {
+      "registration_set_id": {},
+      "operating_domains": {},
+      "facility_pairs": {},
+      "facility_match": {},
+      "closure_rule": {},
+      "i_d_max_registration": {},
+      "margin_rule": {},
+      "stable_criteria": {}
+     }
+    },
+    "records": {
+     "type": "array",
+     "items": {
+      "$ref": "p1_bench_record_schema_v1.json"
+     }
+    }
+   },
+   "x-operating-domain-factors": [
+    "P_fwd_W",
+    "V_collector_V",
+    "mdot_Ar_H1_mg_s",
+    "p_chamber_Pa"
+   ]
+  }
+ }
+}
