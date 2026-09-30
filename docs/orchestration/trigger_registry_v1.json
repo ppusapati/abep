@@ -982,6 +982,22 @@
    "produces": "fo_a9_4_incorporation",
    "kind": "follow_on_launch",
    "note": "owner A9.4 2026-09-30 merge sequence step 2: update the P1/P2 generated artifacts mechanically"
+  },
+  {
+   "id": "T_A9_5_CLOSURE_RULE",
+   "prerequisites": [
+    {
+     "id": "fo_a9_4_incorporation",
+     "state": "verified"
+    },
+    {
+     "id": "od_a9_5_p1_closure",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_5_closure_rule",
+   "kind": "follow_on_launch",
+   "note": "owner A9.5 2026-09-30 'fix all the issues'"
   }
  ]
 }

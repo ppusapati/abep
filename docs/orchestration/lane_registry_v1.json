@@ -1231,6 +1231,11 @@
    "id": "fo_a9_4_incorporation",
    "kind": "follow_on",
    "title": "Apply A9.4 (P1Q-10, P1Q-13, P1Q-14, P2Q-05) mechanically to the P1 bench, P2 impedance prep and RFQ v2 packages"
+  },
+  {
+   "id": "fo_a9_5_closure_rule",
+   "kind": "follow_on",
+   "title": "Apply A9.5 (P1Q-15 Kirchhoff closure rule, P1Q-16 capacity formula) to the P1 bench; fix the carried A9.4 minors in P1/P2"
   }
  ],
  "owner_dispositions": [
@@ -1322,6 +1327,18 @@
    },
    "decision_states": {
     "A9_4_P1_P2_DECISIONS_RECORDED": "approved"
+   },
+   "immutability": "never edited after commit; later owner amendments are new addendum files"
+  },
+  {
+   "id": "od_a9_5_p1_closure",
+   "file": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json",
+   "states": {
+    "pending": "no disposition file",
+    "approved": "decision A9_5_P1_CLOSURE_DECISIONS_RECORDED"
+   },
+   "decision_states": {
+    "A9_5_P1_CLOSURE_DECISIONS_RECORDED": "approved"
    },
    "immutability": "never edited after commit; later owner amendments are new addendum files"
   }
