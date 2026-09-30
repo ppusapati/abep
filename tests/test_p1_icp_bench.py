@@ -1032,3 +1032,30 @@ def test_a94_diagnostic_metered_return_never_feeds_cap(red):
     assert ic["status"] == "NOT_EVALUATED"
     reasons = {e["record_id"]: " ".join(e["reasons"]) for e in ic["excluded_records"]}
     assert "DIAGNOSTIC_VARIANT" in reasons["SYNTH-D-ON"] and "ICP45_CAPACITY" in reasons["SYNTH-D-ON"]
+
+
+def test_a94_closure_requires_registered_sign_convention(red):
+    """PR #34 review: a paired record under another sign convention is never closure-validated against the rule."""
+    reg = dict(REG, I_d_max_H1_A=2.0)
+    pair = [["SYNTH-SC-ON", "SYNTH-SC-OFF"]]
+    for which in ("on", "off"):
+        on = synth_cap("SYNTH-SC-ON", 3.0, synthetic=False, stage="P1-S4")
+        off = synth_cap("SYNTH-SC-OFF", 0.2, rf_on=False, synthetic=False, stage="P1-S4")
+        (on if which == "on" else off)["capacity_monitoring"]["sign_convention_id"] = "SYNTH-OTHER-SIGN"
+        ic = red.reduce_operating_points([on, off], reg, RULE, pair, MATCH, CLOSE)["summary"]["icp45a"]
+        assert ic["status"] == "NOT_EVALUATED" and ic["condition_met"] is None
+        assert any("differs from the closure rule" in " ".join(e["reasons"]) for e in ic["excluded_records"])
+
+
+def test_a94_mixed_synthetic_and_measured_candidates_refused(red):
+    """PR #34 review: a synthetic candidate must never suppress or substitute a measured evaluation."""
+    reg = dict(REG, I_d_max_H1_A=2.0)
+    recs = [synth_cap("SYNTH-MX-ON", 3.0, synthetic=False, stage="P1-S4"),
+            synth_cap("SYNTH-MX-OFF", 0.2, rf_on=False, synthetic=False, stage="P1-S4"),
+            synth_cap("SYNTH-MY-ON", 9.0, synthetic=True, stage="P1-S4"),
+            synth_cap("SYNTH-MY-OFF", 0.0, rf_on=False, synthetic=True, stage="P1-S4")]
+    pairs = [["SYNTH-MX-ON", "SYNTH-MX-OFF"], ["SYNTH-MY-ON", "SYNTH-MY-OFF"]]
+    with pytest.raises(red.P1RecordError, match="mix synthetic"):
+        red.reduce_operating_points(recs, reg, RULE, pairs, MATCH, CLOSE)
+    ic = red.reduce_operating_points(recs[:2], reg, RULE, pairs[:1], MATCH, CLOSE)["summary"]["icp45a"]
+    assert ic["status"] == "EVALUATED_ENGINEERING_ONLY" and ic["I_e_cap_A"] == pytest.approx(2.8)

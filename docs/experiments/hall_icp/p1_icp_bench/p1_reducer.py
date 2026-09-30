@@ -808,6 +808,15 @@ def icp45a_candidates(records, registration, facility_checks, closure_rule=None)
                 why.append("Kirchhoff closure tolerance not registered (P1-IT-47): the capacity point cannot be "
                            "validated (A9.4 P1Q-13)")
             else:
+                # residuals are only comparable with the registered tolerance under the rule's own sign convention
+                conv = {rid_: (by_id[rid_].get("capacity_monitoring") or {}).get("sign_convention_id")
+                        for rid_ in closure}
+                off_conv = {k_: v_ for k_, v_ in conv.items() if v_ != closure_rule["sign_convention_id"]}
+                if off_conv:
+                    why.append("sign convention %s differs from the closure rule's registered convention %r (rule "
+                               "%r): residuals not comparable, capacity point invalid (A9.4 P1Q-13)"
+                               % (off_conv, closure_rule["sign_convention_id"], closure_rule["rule_id"]))
+            if tol is not None and not why:
                 # residual None = every terminal current is zero (the sum is then exactly zero: closed)
                 bad = {k_: v_ for k_, v_ in closure.items() if v_ is not None and abs(v_) > tol}
                 if bad:
@@ -889,6 +898,11 @@ def icp45a_evaluate(records, registration=None, margin_rule=None, facility_check
                                "collector, discharge supply OFF and disconnected, floating anode, registered H-1 "
                                "point, registered closure tolerance; see excluded_records); never a FAIL"})
         return base
+    if len({bool(c["synthetic"]) for c in cands}) > 1:
+        raise P1RecordError("ICP45_CAPACITY candidates mix synthetic fixtures %s with measured records %s: refused "
+                            "(a synthetic record must never suppress or substitute a measured evaluation)"
+                            % (sorted(c["record_id"] for c in cands if c["synthetic"]),
+                               sorted(c["record_id"] for c in cands if not c["synthetic"])))
     best = max(cands, key=lambda c: (c["I_e_collector_corrected_A"], c["record_id"]))
     i_cap = best["I_e_collector_corrected_A"]
     base.update(icp45a_margin(i_cap, idm, k, ue, ud))
