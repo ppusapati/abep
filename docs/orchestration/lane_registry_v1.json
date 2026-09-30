@@ -1268,6 +1268,18 @@
     "A9_1_FOLLOWUP_DECISIONS_RECORDED": "approved"
    },
    "immutability": "never edited after commit; later owner amendments are new addendum files"
+  },
+  {
+   "id": "od_a9_2_a907_followup",
+   "file": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "states": {
+    "pending": "no disposition file",
+    "approved": "decision A9_2_A907_FOLLOWUP_DECISIONS_RECORDED"
+   },
+   "decision_states": {
+    "A9_2_A907_FOLLOWUP_DECISIONS_RECORDED": "approved"
+   },
+   "immutability": "never edited after commit; later owner amendments are new addendum files"
   }
  ],
  "owner_records": [
