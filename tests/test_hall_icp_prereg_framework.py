@@ -171,8 +171,10 @@ def test_decision_quantities():
             assert q["measurement_chain_uncertainty_owner"] == (
                 "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json "
                 f"measurement_chains[dq={q['id']}] (A9-04)")
-        else:
-            assert q["measurement_chain_uncertainty_owner"].startswith("PENDING docs/experiments/hall_icp/uncertainty_budget/")
+        else:  # A9-10 (OQ-INT-01): points at the PROPOSED chain -> DQ-HI consumer table of the reconciliation record
+            assert q["measurement_chain_uncertainty_owner"].startswith(
+                "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains")
+            assert "dq_consumer_table" in q["measurement_chain_uncertainty_owner"]
         assert q["freeze_points"] == {"definition_form": "LOCK-1", "margin_value": "LOCK-2"}
         assert q["units"] and q["operational_definition"]
         for c in q["measurement_chain"]:

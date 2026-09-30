@@ -48,12 +48,12 @@ Configurations: `hall_c1_reference`, `hall_icp_neutralizer` (never ranked; no wi
 | H27 | `docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json` | `d1813e153af37ebd...` |
 | H21_PY | `docs/hardware/h2/h2_1_hall_chamber_magnet/build_h2_1_hall_chamber_magnet.py` | `5df465d564640db4...` |
 | H25_PY | `docs/hardware/h2/h2_5_thermal_network/build_h2_5_thermal_network.py` | `4e937fa97b104d10...` |
-| BPB_A9 | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `1a3c8d29404d4648...` |
-| ICD | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `1cdab3d71377443d...` |
-| UB | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `d1cf5aba0a813c67...` |
-| PREREG | `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` | `f3e6069a4c78c498...` |
-| VI | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `1de411c5f09d9669...` |
-| INT | `docs/experiments/hall_icp/integration/a9_core_integration_v1.json` | `20c222d9b8a65930...` |
+| BPB_A9 | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `7ca8ed23652c4f3a...` |
+| ICD | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `4d16ee4d0e342584...` |
+| UB | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `650aa32b4b388aeb...` |
+| PREREG | `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` | `f22e12e73a664df2...` |
+| VI | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `54ae028df1ea940d...` |
+| INT | `docs/experiments/hall_icp/integration/a9_core_integration_v1.json` | `425218cf84c6bb86...` |
 | MCQ | `docs/experiments/magnet_coil/magnet_coil_qualification_v1.json` | `53e92f4536f7b300...` |
 | LIMITS | `schemas/thermal_life/limits_v1.json` | `0df363f76dcb6efc...` |
 | INS | `docs/experiments/instrumentation/instrumentation_definition_v1.json` | `7c6d37b00f38a44c...` |
@@ -541,13 +541,13 @@ Each entry's old value carries `path + pointer + sha256` in the JSON (`revision_
 | id | from | to | quantity | value | units | status |
 |---|---|---|---|---|---|---|
 | IDA7-01 | A9-07 | A9-06 docs/budgets/mass_a9/ | mass consequences: (a) coil-current-density lever LV-COIL doubles the copper cross-section at fixed NI and mean turn; with P x m_cu invariant (one consistent coil definition: H2-1 RP-1 f_NI 2 NI and mean turns) the copper delta equals the copper mass of the coil set at the P_mag basis being halved: about 0.14 kg at ... | {"LV-COIL_copper_delta_kg": {"P_mag_basis_60W_H25-08_upper": {"P_mag_20C_W": 60.0, "LV-... | kg; m | OFFERED (lever adoption is an owner/LOCK-1 call) |
-| IDA7-02 | A9-06 docs/budgets/mass_a9/ | A9-07 | per-configuration mass and CG on the stand (C1 module, ICP module, sham, on-platform services) for the >= 25 kg payload check | None | kg | PENDING docs/budgets/mass_a9/ (A9-06: module masses and CG) |
-| IDA7-03 | A9-07 | A9-08 docs/budgets/xe_ledger_a9/ | Xe consequences - IGNITION-DWELL-ONLY bound (not the total Xe per start; purge/preheat Xe PENDING A9-08, IDA7-04): C1 ignition dwell cap 120 s with at most two retries (bound per start from the 1.0 mg/s start-controller full scale; attempts 3 literal / 2 shorthand, OQ-A907-01); G-REUSE gives zero dedicated ICP Xe; C... | {"attempts_3_literal": 0.36, "attempts_2_shorthand": 0.24, "scope": "IGNITION_DWELL_ONLY"} | g per start (ignition dwell only; purge/preheat excluded) | OFFERED |
-| IDA7-04 | A9-08 docs/budgets/xe_ledger_a9/ | A9-07 | booked C1 purge/preheat/ignition Xe per start and the G-XE contingency term (if ever installed) | None | g | PENDING docs/budgets/xe_ledger_a9/ (A9-08: Xe per start terms) |
+| IDA7-02 | A9-06 docs/budgets/mass_a9/ | A9-07 | per-configuration mass and CG on the stand (C1 module, ICP module, sham, on-platform services) for the >= 25 kg payload check | None | kg | OPEN - A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged) books flight-BOM allocations and evidence floors, not ground module masses/CG; TBD - requires the C1 / ICP / sham module drawings (ICD ICP-08) |
+| IDA7-03 | A9-07 | A9-08 docs/budgets/xe_ledger_a9/ | Xe consequences - IGNITION-DWELL-ONLY bound (not the total Xe per start; purge/preheat Xe booked by A9-08 in docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json as C1 start terms F-C1-* / G-C1-* with values TBD, IDA7-04): C1 ignition dwell cap 120 s with at most two retries (bound per start from the 1.0 mg/s start-contro... | {"attempts_3_literal": 0.36, "attempts_2_shorthand": 0.24, "scope": "IGNITION_DWELL_ONLY"} | g per start (ignition dwell only; purge/preheat excluded) | OFFERED |
+| IDA7-04 | A9-08 docs/budgets/xe_ledger_a9/ | A9-07 | booked C1 purge/preheat/ignition Xe per start and the G-XE contingency term (if ever installed) | None | g | SUPPLIED as booking structure by A9-08 (docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json F-C1-* / G-C1-* purge, preheat and ignition terms, G-XE contingency term); values REFUSED while the vendor/design-qualified flows and durations are TBD (XA9-09..11) |
 | IDA7-05 | A9-07 | A9-09 docs/procurement/rfq_a9/ | RFQ items (quotation only): see h3_inputs | h3_inputs | - | OFFERED |
-| IDA7-06 | A9-09 docs/procurement/rfq_a9/ | A9-07 | quoted data-sheet values (coating temperature capability, ceramic wire rating at representative gas, coupler/sensor calibration scope, isolator withstand) | None | - | PENDING docs/procurement/rfq_a9/ (A9-09: quotations) |
+| IDA7-06 | A9-09 docs/procurement/rfq_a9/ | A9-07 | quoted data-sheet values (coating temperature capability, ceramic wire rating at representative gas, coupler/sensor calibration scope, isolator withstand) | None | - | OPEN - A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged) issued RFQ specifications only; no quotation received (no supplier contact by any lane) |
 | IDA7-07 | A9-07 | A9-03 docs/interfaces/icp_neutralizer/ (+ schemas/interfaces/icp_neutralizer_icd_v1.json) | H-1 thermal allowance for ICP module heat entering H-1 (allowable Q_ICP->H-1 with the row-86 1.2 heat-load margin applied: 1.2 x Q <= headroom; linearised at each node's searched hot point in the governing cases ground and orbit_hot @ 60 degC and checked by re-solving; min over cases, per lever set and node; headroo... | {"LV-BASE": {"PO": {"min_over_nodes": 0.0, "WI": 0.0, "WO": 139.3, "CI": 0.0, "CO": 13.... | W | PRELIMINARY (model-derived; closes ID-17 in part) |
-| IDA7-08 | A9-03 docs/interfaces/icp_neutralizer/ (+ schemas/interfaces/icp_neutralizer_icd_v1.json) | A9-07 | total ICP module heat load Q_mod and its split into H-1 (ICP-43) | None | W | PENDING docs/architecture_comparison/power_boundary_a9/ (P_d,max; ICP-43) |
+| IDA7-08 | A9-03 docs/interfaces/icp_neutralizer/ (+ schemas/interfaces/icp_neutralizer_icd_v1.json) | A9-07 | total ICP module heat load Q_mod and its split into H-1 (ICP-43) | None | W | OPEN - TBD - requires the owner registration of the stand I_d,max / P_d,max (OQ-A907-02); A9-02 registers no stand value; ICD ICP-43 now carries the A9-07 IDA7-07 H-1 allowance |
 | IDA7-09 | A9-07 | A9-03 docs/interfaces/icp_neutralizer/ (+ schemas/interfaces/icp_neutralizer_icd_v1.json) | external C1 removes the central bore (ID-12/ID-14 answered); IP-EXIT / IP-NEU / IP-C1 / KC-1 adopted in the H2 items | REV-01, REV-03, REV-13, REV-29..31 | - | ANSWERED |
 | IDA7-10 | A9-03 docs/interfaces/icp_neutralizer/ (+ schemas/interfaces/icp_neutralizer_icd_v1.json) | A9-07 | standoff z_NEU (ICP-02), module envelope and seat dimensions (ICP-04/07) | None | mm | TBD (LOCK-1) |
 | IDA7-11 | A9-07 | A9-02 docs/architecture_comparison/power_boundary_a9/ | H2-4 revisions adopted: per-coil magnet slots, pulsed keeper transient measured on the 1 ms channel, flight discharge current bound, 100 V bus | {"flight_discharge_current_bound_A": 7.5} | A | OFFERED |
@@ -742,3 +742,19 @@ A9.1 decisions applied:
 
 Verdict `NONE` (nodes []); veto claimed: False. a node would be a candidate only if even its best corner exceeds the design ceiling in every lever set and case; limits are unvalidated supplier values, so no veto is claimed.
 
+## A9-10 reconciliation (fo_a9_10_integration)
+
+Changes applied by A9-10 after this lane's verified build (record `docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json`, overlay `docs/experiments/hall_icp/integration/a9_10_overlay.py`). A9.1 decision `docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json` (sha256 `7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4`). A9 stays OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; no winner; no prediction.
+
+| change | driver | op | pointer | count | summary |
+|---|---|---|---|---|---|
+| A910-A907-01 | A9-08 merged | gsub | `` | 1 | Xe-ledger reference resolved |
+| A910-A907-02 | A9-08 merged | replace | `/open_owner_questions[id=OQ-A907-01]/values/scope` | 1 | scope text re-evaluated |
+| A910-A907-03 | A9-08 XA9-IF-06 | set | `/interface_demands[id=IDA7-04]/status` | 1 | IDA7-04 re-evaluated |
+| A910-A907-04 | A9-08 XA9-IF-06 | set | `/revision_register[24]/new/value/purge_preheat_xe` | 1 | purge/preheat booking re-evaluated |
+| A910-A907-05 | A9-06 merged (no ground module masses) | set | `/interface_demands[id=IDA7-02]/status` | 1 | IDA7-02 re-evaluated |
+| A910-A907-06 | A9-06 merged (no ground module masses) | set | `/revision_register[31]/new/value/per_configuration_mass_kg` | 1 | per-configuration stand mass re-evaluated |
+| A910-A907-07 | A9-09 merged (quotations only) | set | `/interface_demands[id=IDA7-06]/status` | 1 | IDA7-06 re-evaluated |
+| A910-A907-09 | A9-10 self-reference | set | `/parallel_lanes_pending/A9-10` | 1 | A9-10 path resolved |
+| A910-A907-10 | OQ-INT-03 re-evaluation | set | `/parallel_lanes_status_a9_10` | 1 | parallel lanes merged |
+| A910-A907-08 | A9-02 merged (no stand registration) | set | `/interface_demands[id=IDA7-08]/status` | 1 | IDA7-08 re-evaluated |

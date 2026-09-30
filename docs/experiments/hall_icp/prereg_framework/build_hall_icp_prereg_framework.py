@@ -36,6 +36,14 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[3]
 
+# ---- A9-10 reconciliation overlay (fo_a9_10_integration): declared, machine-checked changes applied after the build
+import importlib.util as _a910_ilu  # noqa: E402
+_A910_SPEC = _a910_ilu.spec_from_file_location(
+    "a9_10_overlay", str(ROOT) + "/docs/experiments/hall_icp/integration/a9_10_overlay.py")
+A910 = _a910_ilu.module_from_spec(_A910_SPEC)
+_A910_SPEC.loader.exec_module(A910)
+
+
 LANE_DIR = "docs/experiments/hall_icp/prereg_framework"
 SCRIPT_REL = f"{LANE_DIR}/build_hall_icp_prereg_framework.py"
 JSON_REL = f"{LANE_DIR}/hall_icp_prereg_framework_v1.json"
@@ -1140,6 +1148,23 @@ def main(argv: list) -> int:
     mp.write_text(md, encoding="utf-8")
     print(f"wrote {JSON_REL} and {MD_REL}")
     return 0
+
+
+# ---- A9-10 reconciliation overlay hooks (fo_a9_10_integration) ------------------------------------------------------
+_a910_build_core = build_doc
+
+
+def build_doc(*args, **kwargs):
+    """Verified lane build followed by the declared A9-10 changes (docs/experiments/hall_icp/integration/a9_10_overlay.py)."""
+    return A910.apply("A9-01", _a910_build_core(*args, **kwargs))
+
+
+_a910_md_core = render_md
+
+
+def render_md(doc):
+    """Lane Markdown followed by the A9-10 reconciliation section generated from the same JSON."""
+    return _a910_md_core(doc).rstrip("\n") + "\n" + "\n".join(A910.md_section(doc)) + "\n"
 
 
 if __name__ == "__main__":

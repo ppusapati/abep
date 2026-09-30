@@ -168,7 +168,7 @@ def test_lawful_acquisition_list(ev):
     la = ev["lawful_acquisition_list"]
     assert la["owner_answer_row"] == 7
     assert len(la["items"]) >= 5
-    assert all("PROPOSED" in x["priority"] for x in la["items"])
+    assert all("owner-accepted order, A9.1 OQ-EV-02" in x["priority"] for x in la["items"])   # A9-10
 
 
 def test_analog_vs_hardware_split(ev):
@@ -226,9 +226,11 @@ def test_owner_given_values(vi):
 
 def test_unbooked_icp_gas_feed_flagged(vi):
     g = {i["id"]: i for i in vi["items"]}["VI-GAS-01"]
-    assert "UNBOOKED" in g["value"] and "row 46" in g["value"]
-    assert g["status"].startswith("OPEN")
-    assert any(q["id"] == "OQ-VI-01" for q in vi["open_owner_questions"])
+    # A9-10: the row-46 flag is resolved by A9.1 HIQ-06 (G-REUSE primary, no dedicated ICP flow)
+    assert g["value"].startswith("G-REUSE (A9.1 HIQ-06)") and "mdot_ICP,dedicated = 0" in g["value"]
+    assert g["status"] == "OWNER_GIVEN (A9.1 HIQ-06)"
+    q = {q["id"]: q for q in vi["open_owner_questions"]}["OQ-VI-01"]
+    assert q["status"].startswith("ANSWERED_BY_A9_1 (HIQ-06)")
 
 
 def test_analog_vs_hardware_marked(vi):

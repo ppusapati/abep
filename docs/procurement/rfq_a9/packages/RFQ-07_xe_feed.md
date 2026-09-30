@@ -25,18 +25,18 @@ Xe storage tank quoted per 2/5/10 kg design case sized at 323 K; low-flow pressu
 | RFQ-07-R01 | tank sizing temperature and EOS | 323.0 | K | OWNER_GIVEN | NOW | owner-allocation | row 50 |
 | RFQ-07-R02 | Xe load design cases | `[2.0, 5.0, 10.0]` | kg | OWNER_GIVEN | after-evidence | owner-allocation | row 48 |
 | RFQ-07-R03 | indicative propellant volume per case at 323.15 K | `{"10 kg": {"120bar": 6.9363, "150bar": 5.9755, "180bar": 5.5325, "190bar": 5.4277}, "2 kg": {"120bar": 1.3873, "150bar": 1.1951, "180bar": 1.1065, "190bar": 1.0855}, "5 kg": {"120bar": 3.4681, "150bar": 2.9878, "180bar": 2.7663, "190bar": 2.7139}}` | L | DERIVED | after-evidence | model-derived | docs/procurement/web_track_v1/threads/R6_xe_inputs.json#/hardware_mass_data; row 48; row 50 |
-| RFQ-07-R04 | tank volume class, MEOP and final ranges | PENDING docs/budgets/xe_ledger_a9/ (A9-08: final tank ranges incl. residual (row 45) and reserve (row 43)) | L, bar | PENDING | after-evidence | - | row 45; row 43; row 8 |
+| RFQ-07-R04 | tank volume class, MEOP and final ranges | `{"MEOP": "TBD - requires quotations (XA9-28); the pressures are a sensitivity axis, not a MEOP choice", "V_min_323K_l_by_case_and_MEOP_axis": {"10 kg": {"100bar": 8.89326, "150bar": 5.98748, "187bar": 5.46856, "75bar": 16.2837}, "2 kg": {"100bar": 1.77865, "150bar": 1.1975, "187bar": 1.09371, "75bar": 3.25675}, "5 kg": {"100bar": 4.44663, "150bar": 2.99374, "187bar": 2.73428, "75bar": 8.14187}}, "reserve_kg_inside_case": {"10 kg": 1.63399, "2 kg": 0.326797, "5 kg": 0.816993}, "residual_kg_inside_case": {"10 kg": 0.196078, "2 kg": 0.0392157, "5 kg": 0.0980392}, "source": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json design_cases.tank_volume / reserve_residual_split (case = LOADED Xe, XA9Q-01 PROPOSED reading)"}` | L (V_min at 323.15 K incl. EOS density uncertainty), kg | COPIED_VERIFIED | after-evidence | model-derived | row 45; row 43; row 8 |
 | RFQ-07-R05 | two isolation valves in series | 2 | valves in series | OWNER_GIVEN | NOW | owner-allocation | row 90; row 55 |
 | RFQ-07-R06 | low-flow PMU/FCU flow range | TBD - requires the C1 operating point (LOCK-1) and the Xe reference point | mg/s | TBD | LOCK-1 | - | row 125; row 42; H3-03 (docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json); H3-02 (docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json) |
 | RFQ-07-R07 | no ICP Xe term in the primary mode | 0.0 | mg/s (ICP Xe, G-REUSE) | OWNER_GIVEN | NOW | owner-allocation | A9.1 HIQ-06; A9.1 A9-09 |
 | RFQ-07-R08 | filter/getter (C1/Xe branch only) | TBD - requires vendor/spec verification (A902-29) | W | TBD | after-evidence | - | row 51; A902-29 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json) |
 | RFQ-07-R09 | C1 not co-installed as a flight backup | no combined C1 + ICP flight installation | - | OWNER_GIVEN | NOW | owner-allocation | A9.1 OQ-A902-04 |
-| RFQ-07-R10 | mass context | PENDING docs/budgets/mass_a9/ (A9-06: Xe hardware mass reconciliation) | kg | PENDING | after-evidence | - | row 54; row 5 |
+| RFQ-07-R10 | mass context | `{"AL-08_evidence_floor_kg": 5.044, "AL-08_owner_allocation_kg": 1.5, "note": "owner v0 allocation (row 54) below the H2-7 analog floor (CBE); re-allocation is owner question MQ-05; supplier states mass per case", "source": "docs/budgets/mass_a9/mass_a9_v1.json line_checks[line=AL-08]", "state": "ALLOCATION_BELOW_EVIDENCE_FLOOR"}` | kg | COPIED_VERIFIED | after-evidence | owner-allocation | row 54; row 5 |
 | RFQ-07-R11 | cleanliness and materials | TBD - requires H2-3 / A9-07 cleanliness class | - | TBD | LOCK-1 | - | H3-C1-04 (docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json) |
 
 Notes:
 
-- RFQ-07-R03: propellant volume only: excludes the 2 % residual (row 45), the 20 % reserve (row 43), ullage, MEOP and safety factors (row 50) - final tank ranges PENDING docs/budgets/xe_ledger_a9/ (A9-08)
+- RFQ-07-R03: propellant volume only: excludes the 2 % residual (row 45), the 20 % reserve (row 43), ullage, MEOP and safety factors (row 50) - final tank ranges: RFQ-07-R04 (A9-08 design_cases, imported in A9-10; A9-08 reads each case as LOADED Xe incl. reserve and residual, XA9Q-01 PROPOSED, and adds the EOS density uncertainty, so its V_min governs)
 - RFQ-07-R04: the 5-20 L class is the wording of the row 8 question (not an owner value); the indicative propellant volumes of R03 fall partly below 5 L (2 kg case); the final range follows A9-08
 - RFQ-07-R06: the recorded published flow-control analogs (R6) sit at 3-23 mg/s, far above the C1 range: specification gap
 
@@ -72,10 +72,8 @@ Requirement text:
 
 ## Open specification items (TBD / PENDING with the gate that freezes them)
 
-- RFQ-07-R04 tank volume class, MEOP and final ranges: PENDING docs/budgets/xe_ledger_a9/ (A9-08: final tank ranges incl. residual (row 45) and reserve (row 43)) - freezes at **after-evidence**
 - RFQ-07-R06 low-flow PMU/FCU flow range: TBD - requires the C1 operating point (LOCK-1) and the Xe reference point - freezes at **LOCK-1**
 - RFQ-07-R08 filter/getter (C1/Xe branch only): TBD - requires vendor/spec verification (A902-29) - freezes at **after-evidence**
-- RFQ-07-R10 mass context: PENDING docs/budgets/mass_a9/ (A9-06: Xe hardware mass reconciliation) - freezes at **after-evidence**
 - RFQ-07-R11 cleanliness and materials: TBD - requires H2-3 / A9-07 cleanliness class - freezes at **LOCK-1**
 
 ## The supplier's response must state

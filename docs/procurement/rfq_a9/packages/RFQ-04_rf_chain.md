@@ -36,7 +36,12 @@ Laboratory 13.56 MHz RF generator (0-500 W forward test capability), off-platfor
 | RFQ-04-R11 | flexible matched coax (live + sham) | flexible, matched pair | - | OWNER_GIVEN | NOW | owner-allocation | row 117; row 133; ICP-18 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
 | RFQ-04-R12 | vacuum RF feedthroughs | TBD - requires ICD ICP-15 and ICP-44 ratings (LOCK-1) | V (peak RF), W | TBD | LOCK-1 | - | ICP-15 (schemas/interfaces/icp_neutralizer_icd_v1.json); ICP-44 (schemas/interfaces/icp_neutralizer_icd_v1.json); A9.1 ICP-46 |
 | RFQ-04-R13 | RF pickup / EMC | TBD - requires S1a pickup test (ICD ICP-17) | V, A, dB | TBD | LOCK-2 | - | ICP-17 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
-| RFQ-04-R14 | flight allocation context | PENDING docs/budgets/mass_a9/ (A9-06: RF generator/matching mass reconciliation) | kg | PENDING | after-evidence | - | row 54 |
+| RFQ-04-R14 | flight allocation context | TBD - requires supplier mass data; A9-06 records the owner v0 allocation (row 54, 1.5 kg) as ALLOCATION_UNVERIFIABLE_TBD (no evidence floor): docs/budgets/mass_a9/mass_a9_v1.json line_checks[line=AL-06] | kg | TBD | after-evidence | - | row 54 |
+| RFQ-04-R15 | optional on-module fixed pre-match (option line) | TBD - requires the owner answer to OQ-A907-11 (option a/b, Gamma_max at LOCK-1) and the A9-03 antenna impedance | - | TBD | LOCK-1 | - | H3-A907-15 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json); A9.1 A9-03-matching |
+
+Notes:
+
+- RFQ-04-R15: added in A9-10 (quotation only; no purchase order)
 
 Requirement text:
 
@@ -47,13 +52,14 @@ Requirement text:
 - **RFQ-04-R05** Supplier states harmonic content into a matched load and frequency stability.
 - **RFQ-04-R06** Baseline OFF the moving thrust-stand platform, with matched flexible RF coax across the stage, calibrated cable-loss/S-parameter correction and matched sham routing in the C1 configuration; on-platform only if S1a proves the off-platform chain cannot meet the RF-power uncertainty.
 - **RFQ-04-R07** Rated for the full laboratory forward power at 13.56 MHz under the measured reflected-power condition; manual or auto-tuned; any DC draw (tuning actuators/controller) metered as its own bus slot.
-- **RFQ-04-R08** Directional coupler with forward and reflected sensors at a declared reference plane AFTER the matching network; calibrated at 13.56 MHz over 0-500 W forward; coupling factor, directivity and sensor linearity certified.
-- **RFQ-04-R09** Supplier states coupling-factor, directivity and sensor-calibration uncertainty at 13.56 MHz with coverage factor.
+- **RFQ-04-R08** Directional coupler with forward and reflected sensors at a declared reference plane AFTER the matching network; calibrated at 13.56 MHz over 0-500 W forward; coupling factor, directivity and sensor linearity certified. Rating basis (A9-07 IDA7-22, H3-A907-03): the coupler and sensors carry the antenna-side reflection, so they are rated for the coupler-plane forward power P_fwd = P_net / (1 - |Gamma|^2), peak voltage/current and loss at Gamma_max (option a, on-module fixed pre-match) or at the antenna mismatch (option b), with directivity stated at the operating |Gamma|; Gamma_max and the option are owner questions (OQ-A907-11, LOCK-1).
+- **RFQ-04-R09** Supplier states coupling-factor, directivity and sensor-calibration uncertainty at 13.56 MHz with coverage factor, and the directivity D at the operating |Gamma|; the P_net directivity/mismatch term (A9-07 IDA7-21; A9-04 UB-RF-04) needs D >= D_min, D_min frozen at LOCK-2.
 - **RFQ-04-R10** An independent calorimetric load/method cross-checks the coupler chain; agreement statistic with k_x = 2 frozen at LOCK-1; on failure RF-dependent quantities are EXCLUDED_INSTRUMENT. Calorimetry is never the sole primary RF power measurement.
-- **RFQ-04-R11** Flexible, low-stiffness RF coax for the stand crossing, supplied as an identical live/sham pair with S-parameters; no uncompensated hard line across the moving stage.
+- **RFQ-04-R11** Flexible, low-stiffness RF coax for the stand crossing, supplied as an identical live/sham pair with S-parameters; no uncompensated hard line across the moving stage; rated for forward power, peak voltage/current and loss at the coupler-plane |Gamma| (A9-07 H3-A907-04, REV-33, A9H-INS-15).
 - **RFQ-04-R12** Rated for the full laboratory forward power at 13.56 MHz under the measured reflected condition, with RF-voltage, creepage/clearance and Paschen rating and combined RF + DC stress qualification (ICP-44; not replaced by the C1 keeper hipot).
 - **RFQ-04-R13** Supplier states conducted/radiated emission data of generator and matching network; S1a measures pickup on all channels with a dummy load and with the ICP energized.
 - **RFQ-04-R14** Not a lab requirement: the flight-representative RF generator/matching is allocated mass in the owner's v0 dry budget (allocation, not a CBE); the supplier states mass for any flight-representative option.
+- **RFQ-04-R15** Optional quotation line: a fixed on-module 13.56 MHz pre-match / impedance transformation network (plus a sham-equivalent network) holding the coax/coupler segment at |Gamma| <= Gamma_max, quoted only for the case that OQ-A907-11 option a is adopted; the tunable match stays off-platform (A9.1 A9-03-matching).
 
 ## Acceptance
 
@@ -84,7 +90,8 @@ Requirement text:
 - RFQ-04-R09 coupler/sensor uncertainty: TBD - requires coupler and sensor certificates (UB-RF-02..04) - freezes at **LOCK-2**
 - RFQ-04-R12 vacuum RF feedthroughs: TBD - requires ICD ICP-15 and ICP-44 ratings (LOCK-1) - freezes at **LOCK-1**
 - RFQ-04-R13 RF pickup / EMC: TBD - requires S1a pickup test (ICD ICP-17) - freezes at **LOCK-2**
-- RFQ-04-R14 flight allocation context: PENDING docs/budgets/mass_a9/ (A9-06: RF generator/matching mass reconciliation) - freezes at **after-evidence**
+- RFQ-04-R14 flight allocation context: TBD - requires supplier mass data; A9-06 records the owner v0 allocation (row 54, 1.5 kg) as ALLOCATION_UNVERIFIABLE_TBD (no evidence floor): docs/budgets/mass_a9/mass_a9_v1.json line_checks[line=AL-06] - freezes at **after-evidence**
+- RFQ-04-R15 optional on-module fixed pre-match (option line): TBD - requires the owner answer to OQ-A907-11 (option a/b, Gamma_max at LOCK-1) and the A9-03 antenna impedance - freezes at **LOCK-1**
 
 ## The supplier's response must state
 

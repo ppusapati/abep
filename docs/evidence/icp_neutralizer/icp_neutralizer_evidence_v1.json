@@ -1342,66 +1342,66 @@
     "item": "Watanabe, Ichimura, Takegahara, AIAA 2016-4947 (DOI 10.2514/6.2016-4947)",
     "why": "only located coupled Hall thruster + RF plasma cathode performance paper besides Takahashi 2024",
     "access_seen": "metadata only (AIAA)",
-    "priority": "P1 (PROPOSED)"
+    "priority": "P1 (owner-accepted order, A9.1 OQ-EV-02)"
    },
    {
     "id": "LA-02",
     "item": "Georgin & McDonald, IEPC-2022-100, 'Inductively Coupled Plasma Cathodes Enabling In-situ Resource Utilization for Hall Thrusters' (Takahashi ref. [24])",
     "why": "ICP cathode for Hall thrusters on ISRU (reactive) gases",
     "access_seen": "not located at an open URL (electricrocket.org guess returned 404)",
-    "priority": "P1 (PROPOSED)"
+    "priority": "P1 (owner-accepted order, A9.1 OQ-EV-02)"
    },
    {
     "id": "LA-03",
     "item": "Georgin, McDonald, Brooks, AIAA 2023-0844 (DOI 10.2514/6.2023-0844)",
     "why": "RF plasma cathode theory + experiments (Takahashi ref. [17])",
     "access_seen": "metadata only (AIAA)",
-    "priority": "P1 (PROPOSED)"
+    "priority": "P1 (owner-accepted order, A9.1 OQ-EV-02)"
    },
    {
     "id": "LA-04",
     "item": "Scholze, Tartz, Neumann, Rev. Sci. Instrum. 79, 02B724 (2008) (DOI 10.1063/1.2802587)",
     "why": "ICP plasma bridge neutralizer operating conditions behind the 1.6 A abstract figure",
     "access_seen": "abstract only (publisher PDF HTTP 403)",
-    "priority": "P2 (PROPOSED)"
+    "priority": "P2 (owner-accepted order, A9.1 OQ-EV-02)"
    },
    {
     "id": "LA-05",
     "item": "Longmier & Hershkowitz, Rev. Sci. Instrum. 79, 093506 (2008) (DOI 10.1063/1.2979012)",
     "why": "magnetized/unmagnetized operating conditions of the NES 30 A point",
     "access_seen": "abstract only",
-    "priority": "P3 (PROPOSED)"
+    "priority": "P3 (owner-accepted order, A9.1 OQ-EV-02)"
    },
    {
     "id": "LA-06",
     "item": "Dietz et al., Eur. Phys. J. Appl. Phys. 91, 10901 (2020) (DOI 10.1051/epjap/2020190213)",
     "why": "ICP neutralizer on a reactive propellant (iodine): current, power, flow values",
     "access_seen": "abstract only (publisher PDF HTTP 403)",
-    "priority": "P2 (PROPOSED)"
+    "priority": "P2 (owner-accepted order, A9.1 OQ-EV-02)"
    },
    {
     "id": "LA-07",
     "item": "Scholze et al., Procedia Engineering 185, 9-16 (2017) (DOI 10.1016/j.proeng.2017.03.284)",
     "why": "RF plasma bridge neutralizer performance model",
     "access_seen": "metadata only; Crossref lists CC BY-NC-ND 4.0 (ScienceDirect HTTP 403 to this agent)",
-    "priority": "P2 (PROPOSED)"
+    "priority": "P2 (owner-accepted order, A9.1 OQ-EV-02)"
    },
    {
     "id": "LA-08",
     "item": "H. Watanabe, Vacuum 167, 514-519 (2019) (DOI 10.1016/j.vacuum.2018.06.030), 'Effect of vessel diameter on ignition and electron emission characteristics in radio frequency plasma cathodes'",
     "why": "ignition vs vessel diameter (startup/restart input)",
     "access_seen": "metadata only (Crossref)",
-    "priority": "P2 (PROPOSED)"
+    "priority": "P2 (owner-accepted order, A9.1 OQ-EV-02)"
    },
    {
     "id": "LA-09",
     "item": "K. Takahashi, Rev. Sci. Instrum. 83, 083508 (2012) (DOI as cited in Takahashi 2024 ref. [21]: 10.1063/1.4748271), antenna for suppression of parasitic discharges",
     "why": "antenna shielding design used in the A9 anchor topology",
     "access_seen": "not accessed (DOI from the reference list of the anchor - verify)",
-    "priority": "P3 (PROPOSED)"
+    "priority": "P3 (owner-accepted order, A9.1 OQ-EV-02)"
    }
   ],
-  "note": "priorities are PROPOSED; acquisition is an owner action outside the repository (A9 owner_actions_outside_the_repository)"
+  "note": "priorities accepted by the owner (A9.1 OQ-EV-02: P1 LA-01..03; P2 LA-04, LA-06..08; P3 LA-05, LA-09); acquisition is an owner action outside the repository; no author or laboratory data request (A9.1 OQ-EV-01)"
  },
  "analog_can_bound_vs_hardware_only": {
   "analog_can_bound": [
@@ -1491,19 +1491,25 @@
    "id": "OQ-EV-01",
    "question": "Authorize a formal data request to the Takahashi 2024 corresponding author (the paper offers data 'upon reasonable request')?",
    "proposed_answer": "NO - standing rule: no contact with authors/labs; digitized values suffice for a topology precedent",
-   "status": "owner call"
+   "status": "ANSWERED_BY_A9_1 (OQ-EV-01)",
+   "a9_1_decision": "OQ-EV-01: no author/laboratory data request",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "OQ-EV-02",
    "question": "Acquisition priority for LA-01..LA-09",
    "proposed_answer": "P1: LA-01, LA-02, LA-03 (coupled Hall + RF-cathode data); P2: LA-04, LA-06, LA-07, LA-08; P3: LA-05, LA-09",
-   "status": "owner call"
+   "status": "ANSWERED_BY_A9_1 (OQ-EV-02)",
+   "a9_1_decision": "OQ-EV-02: acquisition order P1 LA-01..03; P2 LA-04, LA-06..08; P3 LA-05, LA-09",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "OQ-EV-03",
    "question": "S-02 (Xu 2022) values were read from the full text that the journal's own website serves publicly (IOP/HIPS copyright, not an open licence). Is citing values from it acceptable under the row-7 lawful-access rule?",
    "proposed_answer": "YES for citation of reported values with locators (publisher-served, no bypass); the PDF itself is not redistributed",
-   "status": "owner call"
+   "status": "ANSWERED_BY_A9_1 (OQ-EV-03)",
+   "a9_1_decision": "OQ-EV-03: YES: values may be extracted from lawfully accessed publisher-served full text with URL, DOI, locator, access date, evidence class; no redistribution of non-redistributable PDFs",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   }
  ],
  "historical_reuse": [
@@ -1543,6 +1549,82 @@
   "h4_measurement": [
    "reproduce 'no Hall discharge without ICP electrons' on Ar as an engineering-only topology check (TK-51) - criterion PENDING A9-01 preregistration",
    "witness coupons for sputter deposition on the ICP tube and H-1 exit insulators (TK-71)"
+  ]
+ },
+ "acquisition_policy_a9_1": {
+  "author_or_lab_requests": "NO (A9.1 OQ-EV-01): standing published/lawful-source-only policy",
+  "publisher_served_full_text": "YES (A9.1 OQ-EV-03): values may be cited/extracted from publisher-served full text accessed lawfully without bypass",
+  "record_for_every_value": [
+   "publisher URL",
+   "DOI",
+   "page/figure/table locator",
+   "access date",
+   "evidence class"
+  ],
+  "redistribution": "the copyrighted PDF is not committed or redistributed where the licence does not permit it",
+  "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json"
+ },
+ "a9_10_reconciliation": {
+  "lane": "fo_a9_10_integration",
+  "record": "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+  "overlay": "docs/experiments/hall_icp/integration/a9_10_overlay.py",
+  "a9_1_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
+  },
+  "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+  "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
+  "changes": [
+   {
+    "cid": "A910-A905EV-Q01",
+    "driver": "A9.1 OQ-EV-01",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=OQ-EV-01]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 OQ-EV-01"
+   },
+   {
+    "cid": "A910-A905EV-Q02",
+    "driver": "A9.1 OQ-EV-02",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=OQ-EV-02]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 OQ-EV-02"
+   },
+   {
+    "cid": "A910-A905EV-Q03",
+    "driver": "A9.1 OQ-EV-03",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=OQ-EV-03]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 OQ-EV-03"
+   },
+   {
+    "cid": "A910-A905EV-01",
+    "driver": "A9.1 OQ-EV-02",
+    "op": "gsub",
+    "ptr": "/lawful_acquisition_list/items",
+    "count": 9,
+    "summary": "acquisition order accepted"
+   },
+   {
+    "cid": "A910-A905EV-02",
+    "driver": "A9.1 OQ-EV-02",
+    "op": "set",
+    "ptr": "/lawful_acquisition_list/note",
+    "count": 1,
+    "summary": "acquisition note"
+   },
+   {
+    "cid": "A910-A905EV-03",
+    "driver": "A9.1 OQ-EV-01 + OQ-EV-03",
+    "op": "set",
+    "ptr": "/acquisition_policy_a9_1",
+    "count": 1,
+    "summary": "acquisition policy recorded"
+   }
   ]
  }
 }

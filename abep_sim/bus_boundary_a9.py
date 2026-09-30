@@ -18,11 +18,17 @@ with what it requires, and the ledger then reports an incomplete status with onl
 
 Conventions (per slot, see ``SLOTS``):
   * ``P_W`` of a load record: power at the slot's load-side reference plane in the evaluated step. What the step
-    value represents is declared per ledger as ``power_basis`` (``POWER_BASES``): ``steady_state``, ``step_average``
-    or ``peak_sampled``. The averaging window / bandwidth that defines start-up transient power is still TBD (item
-    A902-03, OQ-A902-01, LOCK-1 rule), so a start-up step can only PASS the transient gate when it is declared
-    ``peak_sampled`` (a step average can hide a keeper-ignition pulse or a discharge-ignition inrush), and every gate
-    result carries ``transient_window_frozen = False`` until that rule is frozen.
+    value represents is declared per ledger as ``power_basis`` (``POWER_BASES``): ``steady_state``, ``step_average``,
+    ``peak_sampled`` (unaveraged sampled peak) or ``p_bus_1ms_max``. The gate quantity is FROZEN by the owner
+    (A9.1 OQ-A902-01; an A9 engineering definition pending authoritative RFP wording, not an ECSS requirement):
+    P_bus,1ms,max = max_t (1/1 ms) integral_t^{t+1 ms} P_bus dtau < 1500 W for start-up AND steady state, measured at
+    the spacecraft-DC propulsion boundary with synchronized channels, effective bandwidth >= 20 kHz, >= 100 kSa/s per
+    relevant channel (or an equivalent direct bus-power channel) and documented anti-alias filtering
+    (``GATE_DEFINITION``; ``p_bus_1ms_max()`` evaluates it from a sampled record). A ledger PASSes the gate only when
+    declared ``p_bus_1ms_max`` or ``peak_sampled`` (the maximum 1 ms mean never exceeds the maximum sample, so an
+    unaveraged peak below the limit bounds it); no step average may be substituted (A9.1). A FAIL needs a basis that
+    bounds the 1 ms maximum from below (``p_bus_1ms_max``, ``step_average``, ``steady_state`` or unstated): an
+    unaveraged peak at/above the limit is a protection-analysis record, not the 1.5 kW system-power gate (A9.1).
     For ``icp_rf_source`` the load plane is the RF generator's DC input: only that DC input crosses the bus boundary.
     Forward, reflected and delivered RF power are MEASUREMENT quantities (``rf_power_planes``; row 72: directional
     coupler primary, calorimetry cross-check) and are refused as a bus load.
@@ -37,11 +43,19 @@ Conventions (per slot, see ``SLOTS``):
     exactly 0 W (``P_W / eta``), even if its supply is energised. The standby draw of energised-but-idle supplies and
     of the front end must be booked explicitly in ``housekeeping_controls`` (as its measured or cited DC draw); it is
     otherwise excluded from the ledger. This is a stated limitation, not a hidden default.
+  * C1 heater TBD (A9.1 SEQ-heater): a TBD c1_heater load may carry a conservative booked power (``booked_W`` with
+    evidence class and source); the ledger then counts it ON at that booked power (never OFF). A TBD heater without a
+    booked power keeps the ledger incomplete, so no PASS can come from assuming a TBD heater is off.
+  * ICP gas (A9.1 HIQ-06 / OQ-A902-05): the primary ICP gas mode is G-REUSE (Hall exhaust / residual propellant, no
+    dedicated feed), so ``flow_control_icp_feed`` is installed only in a declared G-ATM / G-XE contingency variant.
   * Status taxonomy: ``PARTIAL_BOUNDARY`` whenever the compressor LOAD is TBD (row 22: the compressor ICD has not
     supplied it; takes precedence); ``INCOMPLETE_EVIDENCE`` for any other TBD, including a known compressor load whose
     supply efficiency is TBD (the boundary is then defined, only its evidence is missing); ``COMPLETE`` otherwise.
 Allocations used by the checks (1350 W design allocation row 109; 300 W common allocation incl. the 50 W
-controls/thermal allowance row 114) are OWNER ALLOCATIONS, never predictions and never gates.
+controls/thermal allowance row 114, composition accepted in A9.1 OQ-A902-02) are OWNER ALLOCATIONS, never predictions
+and never gates. The ICP has no fixed sub-allocation: at every registered condition
+P_ICP,available = 1350 - P_common - P_Hall - P_other,active (A9.1 OQ-A902-03, ``icp_power_allocation_check``); the
+laboratory 0-500 W RF source is a test capability, not a flight allowance.
 """
 from __future__ import annotations
 
@@ -64,10 +78,34 @@ RF_FREQUENCY_HZ = 13.56e6             # row 72 / A9 decision
 LAB_RF_FORWARD_W_RANGE = (0.0, 500.0) # laboratory source + inline chain sizing (row 72); not a flight allocation
 C1_KEEPER_PULSE_IGNITION_CLASS_V = (300.0, 600.0)  # current-limited pulsed keeper ignition capability (row 89)
 
-POWER_BASES = ("steady_state", "step_average", "peak_sampled")
-TRANSIENT_WINDOW = {"status": "TBD", "item": "A902-03", "owner_question": "OQ-A902-01", "freeze_point": "LOCK-1",
-                    "rule": "a start-up step PASSes only if declared peak_sampled; the sampling bandwidth that makes "
-                            "'peak_sampled' meaningful is frozen at LOCK-2 (PROPOSED, OQ-A902-01)"}
+POWER_BASES = ("steady_state", "step_average", "peak_sampled", "p_bus_1ms_max")
+GATE_WINDOW_S = 1.0e-3                # A9.1 OQ-A902-01: 1 ms moving-average window of the gate quantity
+GATE_MIN_BANDWIDTH_HZ = 20.0e3        # A9.1 OQ-A902-01: effective measurement bandwidth >= 20 kHz
+GATE_MIN_SAMPLE_RATE_SA_S = 100.0e3   # A9.1 OQ-A902-01: >= 100 kSa/s per relevant channel
+DIAGNOSTIC_WINDOWS_S = (0.1, 1.0)     # A9.1 OQ-A902-01: 100 ms and 1 s averages, diagnostic/energy metrics only
+PASS_BASES = ("p_bus_1ms_max", "peak_sampled")
+FAIL_BASES = ("p_bus_1ms_max", "step_average", "steady_state", None)
+TRANSIENT_WINDOW = {
+    "status": "FROZEN_A9_ENGINEERING_DEFINITION",
+    "decision": "A9.1 OQ-A902-01 (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
+    "quantity": "P_bus,1ms,max = max_t (1/1 ms) integral_t^{t+1 ms} P_bus(tau) dtau",
+    "requirement": "P_bus,1ms,max < 1500 W for start-up as well as steady state, unless the official RFP later "
+                   "explicitly provides a different transient exception",
+    "window_s": GATE_WINDOW_S,
+    "measurement": ["spacecraft-DC propulsion boundary", "all required channels synchronized",
+                    "effective measurement bandwidth >= 20 kHz",
+                    "sample rate >= 100 kSa/s per relevant channel or an equivalent direct spacecraft-bus power "
+                    "channel", "anti-alias filtering documented", "no step-average may be substituted for this gate"],
+    "min_bandwidth_Hz": GATE_MIN_BANDWIDTH_HZ,
+    "min_sample_rate_Sa_s": GATE_MIN_SAMPLE_RATE_SA_S,
+    "diagnostics_only": ["unaveraged sampled peak (hardware/current/voltage protection analysis; not the 1.5 kW "
+                         "system-power gate)", "100 ms and 1 s averages (diagnostic/energy metrics, not substitutes)"],
+    "pass_requires_power_basis": list(PASS_BASES),
+    "note": "an A9 engineering definition pending authoritative RFP wording; the 1 ms window is not an ECSS "
+            "requirement (A9.1 preamble); replaces the interim 'PASS only if peak_sampled' rule",
+    "item": "A902-03", "owner_question": "OQ-A902-01 (ANSWERED_BY_A9_1)", "freeze_point": "NOW",
+}
+GATE_DEFINITION = TRANSIENT_WINDOW
 EVIDENCE_CLASSES = ("measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed",
                     "owner-allocation")
 PATHS = ("internal_bus", "direct")
@@ -136,9 +174,10 @@ SLOTS = {
         "group": "common", "rows": [90, 110], "common_allocation": True,
         "load_plane": "Xe-path valve/flow-controller driver outputs (incl. the two series isolation valves, row 90)"},
     "flow_control_icp_feed": {
-        "group": "icp", "rows": [46], "common_allocation": True,
-        "load_plane": "ICP gas-feed valve/flow-controller driver outputs (gas species and source not yet booked, "
-                      "A9 recorder flag row 46)"},
+        "group": "variant", "rows": [46], "common_allocation": True,
+        "load_plane": "dedicated ICP gas-feed valve/flow-controller driver outputs; installed only in a declared "
+                      "G-ATM or G-XE contingency variant (A9.1 HIQ-06, OQ-A902-05: primary G-REUSE has no dedicated "
+                      "feed and books 0; the capped test port stays in the ICD)"},
     "compressor": {
         "group": "common", "rows": [22], "common_allocation": True,
         "load_plane": "compressor motor-drive electrical input; TBD gives PARTIAL_BOUNDARY until the ICD supplies it "
@@ -162,14 +201,26 @@ _COMMON = ("flow_control_atmospheric", "flow_control_xe", "compressor", "thermal
 BASE_SLOTS = {
     "hall_c1_reference": _HALL + ("c1_heater", "c1_keeper", "c1_common_tie", "filter_getter") + _COMMON
                          + ("reserved_dc_port",),
-    "hall_icp_neutralizer": _HALL + ("icp_rf_source", "icp_matching_network", "icp_collector_bias",
-                                     "flow_control_icp_feed") + _COMMON + ("reserved_dc_port",),
+    "hall_icp_neutralizer": _HALL + ("icp_rf_source", "icp_matching_network", "icp_collector_bias") + _COMMON
+                            + ("reserved_dc_port",),
 }
 VARIANT_OPTIONS = {
     "hall_c1_reference": ("active_cooling",),
-    "hall_icp_neutralizer": ("icp_assist_magnet", "active_cooling"),
+    "hall_icp_neutralizer": ("icp_assist_magnet", "active_cooling", "flow_control_icp_feed"),
 }
-PEAK_EVENTS = {  # start-up peak-class events and the slot each belongs to (row 112: avoid simultaneous peaks)
+# A9.1 HIQ-06 / OQ-A902-05: ICP gas modes; only G-ATM / G-XE install the dedicated feed slot.
+ICP_GAS_MODES = {
+    "G-REUSE": {"primary": True, "variant_slot": None,
+                "dedicated_flow": "mdot_ICP,dedicated = 0 (the ICP reuses Hall exhaust / residual propellant)"},
+    "G-ATM": {"primary": False, "variant_slot": "flow_control_icp_feed",
+              "dedicated_flow": "mdot_atm,total = mdot_Hall + mdot_ICP,dedicated (actual routing)"},
+    "G-XE": {"primary": False, "variant_slot": "flow_control_icp_feed",
+             "dedicated_flow": "mdot_ICP,Xe booked explicitly in the Xe ledger under PHASE_TOTAL_FLOW"},
+}
+# A9.1 OQ-A902-04: no combined flight C1 + ICP installation in the primary A9 architecture (a new variant would need
+# its own mass, power, Xe, reliability, thermal and failure-tree closure); no such variant is declared here.
+COMBINED_C1_ICP_FLIGHT_VARIANT = None
+PEAK_EVENTS = {  # start-up peak-class events and their slots (row 112; A9.1 SEQ-peaks: at most one rises per step)
     "compressor_spinup": "compressor",
     "c1_heater_preheat": "c1_heater",
     "c1_keeper_ignition": "c1_keeper",
@@ -210,8 +261,9 @@ SEQUENCE_TEMPLATES = {
          "on": ["compressor", "flow_control_atmospheric"]},
         {"step_id": "I-S2", "name": "magnet ramp to setpoint", "event": "magnet_ramp",
          "on": ["hall_magnet_inner", "hall_magnet_outer", "hall_magnet_trim"]},
-        {"step_id": "I-S3", "name": "ICP gas feed + RF ignition (no thermionic heater)", "event": "icp_rf_ignition",
-         "on": ["flow_control_icp_feed", "icp_matching_network", "icp_rf_source"]},
+        {"step_id": "I-S3", "name": "ICP RF ignition on the Hall-feed gas (G-REUSE, no dedicated feed, A9.1 HIQ-06; "
+                                   "no thermionic heater)", "event": "icp_rf_ignition",
+         "on": ["icp_matching_network", "icp_rf_source"]},
         {"step_id": "I-S4", "name": "collector/bias on (electron extraction)", "event": "icp_collector_bias_on",
          "on": ["icp_collector_bias"]},
         {"step_id": "I-S5", "name": "Hall discharge ignition with ICP electrons (row 24)",
@@ -287,6 +339,19 @@ def _load_record(slot: str, rec) -> dict:
     if isinstance(p, str):
         if p != TBD:
             raise BoundaryA9Error(f"{what}: string value must be exactly {TBD!r}, got {p!r}")
+        if "booked_W" in rec:
+            # A9.1 SEQ-heater: a TBD C1 heater is ON at its conservative / worst-case booked power (never OFF)
+            if slot != "c1_heater":
+                raise BoundaryA9Error(f"{what}: 'booked_W' is defined only for c1_heater (A9.1 SEQ-heater)")
+            _keys(rec, {"P_W", "tbd_requires", "booked_W", "evidence_class", "source"}, what)
+            b = _real(rec["booked_W"], f"{what} booked_W")
+            if b <= 0.0:
+                raise BoundaryA9Error(f"{what}: booked_W must be > 0 W (a TBD heater is ON, A9.1 SEQ-heater)")
+            ec = rec.get("evidence_class")
+            if ec not in EVIDENCE_CLASSES:
+                raise BoundaryA9Error(f"{what}: evidence_class must be one of {list(EVIDENCE_CLASSES)}, got {ec!r}")
+            return {"P_W": b, "tbd_requires": _nonempty(rec, "tbd_requires", what), "evidence_class": ec,
+                    "source": _nonempty(rec, "source", what), "booked": True}
         _keys(rec, {"P_W", "tbd_requires"} | plane_key, what)
         return {"P_W": None, "tbd_requires": _nonempty(rec, "tbd_requires", what), "evidence_class": None,
                 "source": None}
@@ -357,8 +422,10 @@ def ledger(config: str, loads: Mapping, efficiencies: Mapping, front_end: Mappin
     Status: ``COMPLETE`` (P_bus known), ``PARTIAL_BOUNDARY`` (compressor draw TBD, row 22) or
     ``INCOMPLETE_EVIDENCE`` (another load or an efficiency TBD). When not complete, ``P_bus_W`` is None and
     ``P_bus_lower_bound_W`` is the rigorous lower bound (TBD loads count 0 W; a TBD efficiency counts 1).
-    ``power_basis``: what the step values represent (one of ``POWER_BASES``) or None = unstated; a start-up step
-    with a basis other than ``peak_sampled`` cannot PASS the transient gate (``rfp_power_gate``).
+    ``power_basis``: what the step values represent (one of ``POWER_BASES``) or None = unstated; a ledger whose basis
+    is not in ``PASS_BASES`` cannot PASS the gate (``rfp_power_gate``, A9.1 OQ-A902-01).
+    A TBD ``c1_heater`` carrying ``booked_W`` is counted ON at that conservative booked power (A9.1 SEQ-heater) and
+    listed in ``booked_tbd_slots``; its actual power stays TBD.
     """
     if power_basis is not None and power_basis not in POWER_BASES:
         raise BoundaryA9Error(f"power_basis must be one of {list(POWER_BASES)} or None, got {power_basis!r}")
@@ -404,11 +471,15 @@ def ledger(config: str, loads: Mapping, efficiencies: Mapping, front_end: Mappin
             p_bus = None if (E["value"] is None or eta_fe is None) else L["P_W"] / E["value"] / eta_fe
             if not math.isfinite(lb):
                 raise BoundaryA9Error(f"bus draw of {slot!r} overflows")
+        if L.get("booked") and state == "ON":
+            state = "ON_BOOKED_TBD"      # A9.1 SEQ-heater: counted ON at the conservative booked power
         items.append({"slot": slot, "group": SLOTS[slot]["group"], "state": state, "P_W": L["P_W"],
                       "efficiency": E["value"], "path": E["path"], "P_bus_W": p_bus,
                       "P_loss_W": None if p_bus is None else p_bus - L["P_W"], "lower_bound_W": lb,
                       "evidence_class": L["evidence_class"], "source": L["source"],
-                      "efficiency_evidence_class": E["evidence_class"], "efficiency_source": E["source"]})
+                      "efficiency_evidence_class": E["evidence_class"], "efficiency_source": E["source"],
+                      "booked_conservative": bool(L.get("booked")),
+                      "booked_tbd_requires": L["tbd_requires"] if L.get("booked") else None})
 
     lower = math.fsum(it.get("lower_bound_W", 0.0) for it in items)
     if not math.isfinite(lower):
@@ -431,6 +502,7 @@ def ledger(config: str, loads: Mapping, efficiencies: Mapping, front_end: Mappin
     return {"boundary_version": BOUNDARY_VERSION, "configuration": config, "variant": list(variant),
             "label": label, "power_basis": power_basis, "status": status, "P_bus_W": p_total, "P_bus_lower_bound_W": lower,
             "residual_W": residual, "tbd": tbd, "load_evidence_classes": classes,
+            "booked_tbd_slots": [it["slot"] for it in items if it.get("booked_conservative")],
             "measured_only": classes == ["measured"],
             "front_end": {"efficiency": fe["value"], "evidence_class": fe["evidence_class"], "source": fe["source"],
                           "internal_bus_V": INTERNAL_BUS_V},
@@ -454,13 +526,14 @@ def _verdict_below(value, lower, limit, strict: bool, ok: str, bad: str) -> str:
 
 
 def rfp_power_gate(steady: dict, startup_steps: Sequence) -> dict:
-    """RFP gate P_bus < 1500 W applied to the steady ledger AND every start-up step (row 108).
+    """RFP gate P_bus,1ms,max < 1500 W applied to the steady ledger AND every start-up step (row 108; A9.1 OQ-A902-01).
 
-    PASS only if every ledger is COMPLETE and below the limit; FAIL if any known total or any lower bound reaches
-    the limit; otherwise NOT_EVALUABLE. An empty start-up list is refused (the gate covers transients).
-    Transient basis: the averaging window is not frozen (``TRANSIENT_WINDOW``); a start-up step whose ledger is not
-    declared ``peak_sampled`` can FAIL (an average at/above the limit implies a peak at/above it) but never PASS -
-    it is NOT_EVALUABLE. The result always carries ``transient_window_frozen = False`` and the caveat.
+    PASS only if every ledger is COMPLETE, below the limit AND declared in ``PASS_BASES`` (``p_bus_1ms_max``, or
+    ``peak_sampled``, whose maximum bounds the maximum 1 ms mean); no step average is substituted for the gate.
+    FAIL if a known total or a lower bound reaches the limit on a basis in ``FAIL_BASES`` (every such value bounds
+    P_bus,1ms,max from below); an unaveraged ``peak_sampled`` value at/above the limit is a protection-analysis
+    record, not the system-power gate, and gives NOT_EVALUABLE. Otherwise NOT_EVALUABLE. An empty start-up list is
+    refused (the gate covers transients). The result carries the frozen gate definition (``GATE_DEFINITION``).
     """
     if isinstance(startup_steps, (str, Mapping)) or not isinstance(startup_steps, Sequence) or not startup_steps:
         raise BoundaryA9Error("rfp_power_gate needs a non-empty sequence of start-up step ledgers (row 108: start-up "
@@ -472,20 +545,125 @@ def rfp_power_gate(steady: dict, startup_steps: Sequence) -> dict:
         v = _verdict_below(led["P_bus_W"], led["P_bus_lower_bound_W"], P_BUS_REQUIREMENT_W, True, "PASS", "FAIL")
         basis = led.get("power_basis")
         note = None
-        if role == "startup" and v == "PASS" and basis != "peak_sampled":
-            v, note = "NOT_EVALUABLE", (f"start-up step value basis {basis!r} is not 'peak_sampled': a step value "
-                                        f"below the limit cannot exclude an instantaneous peak (window TBD, A902-03)")
+        if v == "PASS" and basis not in PASS_BASES:
+            v, note = "NOT_EVALUABLE", (f"value basis {basis!r} is not P_bus,1ms,max (or an unaveraged peak bounding "
+                                        f"it): no step average is substituted for the gate (A9.1 OQ-A902-01)")
+        elif v == "FAIL" and basis not in FAIL_BASES:
+            v, note = "NOT_EVALUABLE", ("an unaveraged sampled peak at/above the limit is a protection-analysis "
+                                        "record, not the 1.5 kW system-power gate (A9.1 OQ-A902-01); the 1 ms "
+                                        "maximum is needed")
         rows.append({"role": role, "label": led["label"], "status": led["status"], "power_basis": basis,
                      "P_bus_W": led["P_bus_W"], "P_bus_lower_bound_W": led["P_bus_lower_bound_W"], "verdict": v,
-                     "note": note, "measured_only": led["measured_only"]})
+                     "note": note, "measured_only": led["measured_only"],
+                     "booked_tbd_slots": list(led.get("booked_tbd_slots", []))})
     vs = {r["verdict"] for r in rows}
     overall = "FAIL" if "FAIL" in vs else ("PASS" if vs == {"PASS"} else "NOT_EVALUABLE")
-    return {"gate": "RFP P_bus < 1500 W (steady and start-up)", "limit_W": P_BUS_REQUIREMENT_W, "strict": True,
+    return {"gate": "RFP P_bus,1ms,max < 1500 W (steady and start-up; A9.1 OQ-A902-01)",
+            "limit_W": P_BUS_REQUIREMENT_W, "strict": True,
             "verdict": overall, "evidence_basis": "measured" if all(r["measured_only"] for r in rows)
             else "includes non-measured loads (not a demonstration)",
-            "transient_window_frozen": False, "transient_window": dict(TRANSIENT_WINDOW),
-            "caveat": "start-up verdict conditional on the averaging window / sampling bandwidth, TBD until LOCK-1 "
-                      "(rule) / LOCK-2 (value); a PASS is not a demonstration", "rows": rows}
+            "transient_window_frozen": True, "transient_window": dict(TRANSIENT_WINDOW),
+            "caveat": "gate definition frozen as an A9 engineering definition pending authoritative RFP wording "
+                      "(A9.1 OQ-A902-01); a PASS on non-measured loads is not a demonstration", "rows": rows}
+
+
+def p_bus_1ms_max(samples_W: Sequence, sample_rate_Sa_s, bandwidth_Hz, anti_alias_documented: bool,
+                  synchronized: bool) -> dict:
+    """Evaluate the A9.1 gate quantity from a sampled spacecraft-side bus-power record (W per sample).
+
+    Refuses a record that does not meet the frozen measurement requirements (sample rate >= 100 kSa/s, effective
+    bandwidth >= 20 kHz, anti-alias filtering documented, synchronized channels) or whose sample rate does not give
+    an integer number of samples per 1 ms window, or that is shorter than 1 ms. Returns P_bus,1ms,max (maximum of the
+    1 ms moving mean) and, as diagnostics only, the unaveraged sampled peak and the maximum 100 ms / 1 s means (None
+    when the record is shorter than that window). Pure arithmetic on the caller's record; no model, no default.
+    """
+    fs = _real(sample_rate_Sa_s, "sample_rate_Sa_s")
+    bw = _real(bandwidth_Hz, "bandwidth_Hz")
+    if fs < GATE_MIN_SAMPLE_RATE_SA_S:
+        raise BoundaryA9Error(f"sample rate {fs!r} Sa/s < {GATE_MIN_SAMPLE_RATE_SA_S!r} (A9.1 OQ-A902-01)")
+    if bw < GATE_MIN_BANDWIDTH_HZ:
+        raise BoundaryA9Error(f"effective bandwidth {bw!r} Hz < {GATE_MIN_BANDWIDTH_HZ!r} (A9.1 OQ-A902-01)")
+    if anti_alias_documented is not True or synchronized is not True:
+        raise BoundaryA9Error("anti-alias filtering must be documented and all channels synchronized (A9.1 OQ-A902-01)")
+    if isinstance(samples_W, (str, Mapping)) or not isinstance(samples_W, Sequence):
+        raise BoundaryA9Error("samples_W must be a sequence of bus-power samples in W")
+    xs = [_real(x, "bus-power sample") for x in samples_W]
+
+    def _n(window_s: float) -> int:
+        n = window_s * fs
+        k = int(round(n))
+        if abs(n - k) > 1e-9 * max(1.0, n):
+            raise BoundaryA9Error(f"sample rate {fs!r} Sa/s gives a non-integer number of samples per {window_s} s")
+        return k
+
+    def _max_mean(k: int):
+        if k < 1 or len(xs) < k:
+            return None
+        csum = [0.0]
+        for x in xs:
+            csum.append(csum[-1] + x)
+        return max((csum[i + k] - csum[i]) / k for i in range(len(xs) - k + 1))
+
+    n1 = _n(GATE_WINDOW_S)
+    if len(xs) < n1:
+        raise BoundaryA9Error(f"record shorter than the 1 ms gate window ({len(xs)} < {n1} samples)")
+    return {"P_bus_1ms_max_W": _max_mean(n1), "window_samples": n1, "record_duration_s": len(xs) / fs,
+            "diagnostics_only": {"unaveraged_sampled_peak_W": max(xs),
+                                 "max_mean_100ms_W": _max_mean(_n(DIAGNOSTIC_WINDOWS_S[0])),
+                                 "max_mean_1s_W": _max_mean(_n(DIAGNOSTIC_WINDOWS_S[1]))},
+            "power_basis": "p_bus_1ms_max", "definition": TRANSIENT_WINDOW["quantity"]}
+
+
+def icp_power_allocation_check(led: dict) -> dict:
+    """A9.1 OQ-A902-03: P_ICP,available = 1350 W - P_common - P_Hall - P_other,active at this registered condition.
+
+    Evaluated on a ``hall_icp_neutralizer`` ledger: P_common = installed common-allocation slots, P_Hall = the Hall
+    group, P_other,active = every other installed non-ICP slot (variants, reserved port). The ICP group (RF source DC
+    input, matching network, collector/bias) must fit inside it (ICP-45 is demonstrated within this residual budget).
+    TBD loads make the result NOT_EVALUABLE unless the known lower bounds already exceed the available power.
+    Owner-allocation arithmetic only: not a gate, not a prediction; the 0-500 W laboratory RF source is a test
+    capability, not a flight allowance.
+    """
+    if not isinstance(led, Mapping) or led.get("boundary_version") != BOUNDARY_VERSION:
+        raise BoundaryA9Error("icp_power_allocation_check needs a bus_power_boundary_a9_v1 ledger")
+    if led.get("configuration") != "hall_icp_neutralizer":
+        raise BoundaryA9Error("icp_power_allocation_check applies to hall_icp_neutralizer ledgers only")
+    parts = {"common": [], "hall": [], "icp": [], "other": []}
+    for it in led["items"]:
+        if it["state"] == "NOT_INSTALLED":
+            continue
+        s = it["slot"]
+        if SLOTS[s].get("common_allocation"):
+            parts["common"].append(it)
+        elif SLOTS[s]["group"] == "hall":
+            parts["hall"].append(it)
+        elif SLOTS[s]["group"] == "icp":
+            parts["icp"].append(it)
+        else:
+            parts["other"].append(it)
+
+    def _sum(its):
+        known = all(i["P_bus_W"] is not None for i in its)
+        return (math.fsum(i["P_bus_W"] for i in its) if known else None,
+                math.fsum(i.get("lower_bound_W", 0.0) for i in its))
+    s = {k: _sum(v) for k, v in parts.items()}
+    others_known = all(s[k][0] is not None for k in ("common", "hall", "other"))
+    avail = (DESIGN_ALLOCATION_W - s["common"][0] - s["hall"][0] - s["other"][0]) if others_known else None
+    avail_ub = DESIGN_ALLOCATION_W - s["common"][1] - s["hall"][1] - s["other"][1]
+    icp_val, icp_lb = s["icp"]
+    if avail is not None and icp_val is not None:
+        verdict = "WITHIN_AVAILABLE" if icp_val <= avail else "EXCEEDS_AVAILABLE"
+    elif icp_lb > avail_ub:
+        verdict = "EXCEEDS_AVAILABLE"
+    else:
+        verdict = "NOT_EVALUABLE"
+    return {"kind": "OWNER_ALLOCATION_CHECK (A9.1 OQ-A902-03; not a gate, not a prediction)",
+            "relation": "P_ICP,available = 1350 - P_common - P_Hall - P_other,active",
+            "design_allocation_W": DESIGN_ALLOCATION_W,
+            "P_common_W": s["common"][0], "P_Hall_W": s["hall"][0], "P_other_active_W": s["other"][0],
+            "P_ICP_available_W": avail, "P_ICP_available_upper_bound_W": avail_ub,
+            "P_ICP_W": icp_val, "P_ICP_lower_bound_W": icp_lb, "verdict": verdict,
+            "label": led.get("label", "")}
 
 
 def allocation_checks(led: dict) -> dict:
@@ -634,15 +812,17 @@ def check_startup_sequence(config: str, steps: Sequence, front_end: Mapping, var
                                       f"{config!r}")
             seen_events.setdefault(e, i)
         if len(events) > 1:
-            violations.append({"step_id": sid, "rule": "one peak-class event per step (row 112)",
+            violations.append({"step_id": sid, "rule": "one peak-class event per step (row 112; A9.1 SEQ-peaks)",
                                "detail": events})
         led = ledger(config, st.get("loads"), st.get("efficiencies"), front_end, variant, label=sid,
                      power_basis=st.get("power_basis"))
         ledgers.append(led)
-        cur_p = {it["slot"]: it["P_W"] for it in led["items"]}
+        # a booked TBD heater (A9.1 SEQ-heater) is ON at a conservative booking; its actual power stays TBD here
+        cur_p = {it["slot"]: (None if it.get("booked_conservative") else it["P_W"]) for it in led["items"]}
         if prev_p is not None:
             sure, maybe = _peak_rises(prev_p, cur_p, peak_slots)
-            rule = "at most one peak-class slot load rises per step (row 112, by load, independent of event labels)"
+            rule = ("at most one peak-class slot load rises per step (row 112; A9.1 SEQ-peaks baseline rule; by load, "
+                    "independent of event labels)")
             if len(sure) > 1:
                 violations.append({"step_id": sid, "rule": rule, "detail": sure})
             elif len(sure) + len(maybe) > 1:
@@ -667,6 +847,8 @@ def check_startup_sequence(config: str, steps: Sequence, front_end: Mapping, var
             "sequence_status": status, "violations": violations, "not_evaluable": not_evaluable,
             "transient_gate": gate,
             "steady_allocation_checks": allocation_checks(ledgers[-1]),
+            "steady_icp_power_allocation": (icp_power_allocation_check(ledgers[-1])
+                                            if config == "hall_icp_neutralizer" else None),
             "steps": [{"step_id": led["label"], "status": led["status"], "power_basis": led["power_basis"],
                        "P_bus_W": led["P_bus_W"], "P_bus_lower_bound_W": led["P_bus_lower_bound_W"]}
                       for led in ledgers]}

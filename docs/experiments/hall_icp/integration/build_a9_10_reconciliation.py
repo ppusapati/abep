@@ -1,0 +1,1025 @@
+#!/usr/bin/env python3
+"""A9-10 reconciliation record (fo_a9_10_integration, trigger T_A9_10_INTEGRATION; owner step A9.1 section 9 step 3).
+
+Deterministic builder of docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json and its companion
+A9_10_RECONCILIATION.md. It does not change any deliverable itself: the A9-10 changes are declared in
+a9_10_overlay.py (applied by each lane builder) and in the listed builder/module code changes. This builder
+
+  1. lists every change by deliverable with its driver (A9.1 decision id / verified lane item / integration open item);
+  2. machine-checks, leaf by leaf against the A9-10 base (``git show BASE``), that every changed leaf of every A9 JSON
+     deliverable is explained by a declared change, a declared code scope or a sha256 pin cascade, and that every
+     changed NUMBER is explained by a record flagged numeric (A9.1 decision or verified upstream value);
+  3. verifies every copied value (``source``) against the upstream JSON;
+  4. re-evaluates every remaining 'PENDING' (OQ-INT-03) with a precise reason code, builds the chain -> DQ-HI consumer
+     table for the unmapped A9-04 ids (OQ-INT-01, PROPOSED), reconciles the A9-03 published-analog annex with the A9-05
+     extraction (OQ-INT-04; A9-05 governs), classifies every interface demand between the A9 lanes (both directions);
+  5. verifies that every immutable / historical file is byte-identical to the A9-10 base.
+
+Usage:
+    python docs/experiments/hall_icp/integration/build_a9_10_reconciliation.py          # write JSON + MD
+    python docs/experiments/hall_icp/integration/build_a9_10_reconciliation.py --check  # exit 1 on drift / failure
+
+Pure standard library; reads files and ``git show`` only; no network; not wired into archengine. No value here is a
+prediction; no winner is declared; A9 stays OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import importlib.util
+import json
+import os
+import re
+import subprocess
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(HERE))))
+LANE_DIR = "docs/experiments/hall_icp/integration"
+JSON_REL = LANE_DIR + "/a9_10_reconciliation_v1.json"
+MD_REL = LANE_DIR + "/A9_10_RECONCILIATION.md"
+SCRIPT_REL = LANE_DIR + "/build_a9_10_reconciliation.py"
+TEST_REL = "tests/test_a9_10_reconciliation.py"
+BASE = "ecdad06e30bc5d2f172e862e4bd4843e86332d42"
+CONFIGURATIONS = ("hall_c1_reference", "hall_icp_neutralizer")
+A9_STATUS = "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE"
+XE_DIR = "docs/budgets/" + "xe" + "_ledger_a9/"
+M16_V3 = "docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json"
+OQ_V2 = "docs/budgets/owner_decisions/owner_questions_state_v2.json"
+
+_spec = importlib.util.spec_from_file_location("a9_10_overlay", os.path.join(HERE, "a9_10_overlay.py"))
+OV = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(OV)
+
+AUTHORITY_PINS = [
+    ("docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+     "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f", "A9 governing owner decision"),
+    ("docs/decisions/OD_2026_09_29_owner_answers_147.json",
+     "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1", "owner answers 1-147 (cited by row)"),
+    ("docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+     "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976", "owner decision pack 147 (verbatim)"),
+    ("docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+     "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+     "A9.1 follow-up owner decisions (binding for A9-10; cited by decision id)"),
+    ("docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+     "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e", "A9.1 verbatim"),
+    ("docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A4_owner_decisions.json",
+     "beec91f9eca3ca0257c5ee88dcd193c87481660b9368b65c6d10b3b3bdae23b4", "A4 (immutable, binding)"),
+    ("docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+     "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621", "A5 (immutable, binding)"),
+    ("docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A6_a5_followon_authorization.json",
+     "aaeb7c503c3791f81d4c589e8e25289befa6fcb3b16ce6f962b153715c883180", "A6 (immutable, binding)"),
+    ("docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A7_execution_model.json",
+     "dae69983d9aeeb4838d9ff973a5f824c973219f8cc528adfb12717c4bb92c925", "A7 execution model (immutable)"),
+]
+GOVERNANCE_NOT_PINNED = ["docs/orchestration/lane_registry_v1.json", "docs/orchestration/trigger_registry_v1.json",
+                         "docs/orchestration/trigger_ledger_v2.jsonl", "docs/orchestration/fired_triggers.jsonl",
+                         "docs/orchestration/runtime_state.json"]
+
+DELIVERABLES = [
+    {"key": "A9-01", "lane": "fo_a9_01_hall_icp_prereg_framework", "json": OV.PRE,
+     "md": "docs/experiments/hall_icp/prereg_framework/HALL_ICP_PREREG_FRAMEWORK.md",
+     "builder": "docs/experiments/hall_icp/prereg_framework/build_hall_icp_prereg_framework.py", "check": ["--check"],
+     "test": "tests/test_hall_icp_prereg_framework.py"},
+    {"key": "A9-02", "lane": "fo_a9_02_bus_boundary_a9", "json": OV.DELIVERABLE_FILES["A9-02"],
+     "md": "docs/architecture_comparison/power_boundary_a9/BUS_POWER_BOUNDARY_A9.md",
+     "builder": "docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py", "check": ["--check"],
+     "test": "tests/test_bus_boundary_a9.py",
+     "extra": ["abep_sim/bus_boundary_a9.py", "schemas/interfaces/bus_power_boundary_a9_v1.json"]},
+    {"key": "A9-03", "lane": "fo_a9_03_icp_neutralizer_icd", "json": OV.ICD,
+     "md": "docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md",
+     "builder": "docs/interfaces/icp_neutralizer/build_icp_neutralizer_icd.py", "check": ["--check"],
+     "test": "tests/test_icp_neutralizer_icd.py"},
+    {"key": "A9-04", "lane": "fo_a9_04_hall_icp_uncertainty_budget", "json": OV.UB,
+     "md": "docs/experiments/hall_icp/uncertainty_budget/HALL_ICP_UNCERTAINTY_BUDGET.md",
+     "builder": "docs/experiments/hall_icp/uncertainty_budget/build_hall_icp_uncertainty_budget.py",
+     "check": ["--check"], "test": "tests/test_hall_icp_uncertainty_budget.py"},
+    {"key": "A9-05ev", "lane": "fo_a9_05_hall_icp_validation_inputs (part 1)", "json": OV.EV,
+     "md": "docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md",
+     "builder": "docs/evidence/icp_neutralizer/build_icp_neutralizer_evidence.py", "check": ["--check"],
+     "test": "tests/test_hall_icp_validation_inputs.py"},
+    {"key": "A9-05vi", "lane": "fo_a9_05_hall_icp_validation_inputs (part 2)",
+     "json": OV.DELIVERABLE_FILES["A9-05vi"],
+     "md": "docs/experiments/hall_icp/validation_inputs/HALL_ICP_VALIDATION_INPUTS.md",
+     "builder": "docs/experiments/hall_icp/validation_inputs/build_hall_icp_validation_inputs.py", "check": ["--check"],
+     "test": "tests/test_hall_icp_validation_inputs.py"},
+    {"key": "A9-06", "lane": "fo_a9_06_mass_reconciliation", "json": OV.MASS_A9, "md": "docs/budgets/mass_a9/MASS_A9.md",
+     "builder": "docs/budgets/mass_a9/build_mass_a9.py", "check": ["--check"], "test": "tests/test_mass_a9.py"},
+    {"key": "A9-07", "lane": "fo_a9_07_h2_revisions", "json": OV.H2A9,
+     "md": "docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md",
+     "builder": "docs/hardware/h2_a9_revisions/build_h2_a9_revisions.py", "check": ["--check"],
+     "test": "tests/test_h2_a9_revisions.py"},
+    {"key": "A9-08", "lane": "fo_a9_08_" + "xe" + "_ledger_update", "json": OV.XE_A9_JSON, "md": XE_DIR + "XE_LEDGER_A9.md",
+     "builder": XE_DIR + "build_" + "xe" + "_ledger_a9.py", "check": ["--check"],
+     "test": "tests/test_" + "xe" + "_ledger_a9.py"},
+    {"key": "A9-09", "lane": "fo_a9_09_rfq_packages", "json": OV.RFQ_A9, "md": "docs/procurement/rfq_a9/RFQ_A9.md",
+     "builder": "docs/procurement/rfq_a9/build_rfq_a9.py", "check": ["--check"], "test": "tests/test_rfq_a9.py"},
+]
+INTEGRATION = {"json": LANE_DIR + "/a9_core_integration_v1.json", "md": LANE_DIR + "/A9_CORE_INTEGRATION.md",
+               "builder": LANE_DIR + "/build_a9_core_integration.py", "test": "tests/test_a9_core_integration.py"}
+
+# Immutable / historical files that must stay byte-identical to BASE (directories are expanded with git ls-tree).
+IMMUTABLE_ROOTS = [
+    ("docs/decisions", "owner decisions (A4..A9, A9.1, 147 answers)"),
+    ("docs/hardware/h2", "H2 v1 deliverables (H2-1..H2-7)"),
+    ("docs/budgets/" + "xe" + "_ledger", "Xe ledger v1"),
+    ("docs/architecture_comparison/mass_bom", "mass BOM v1"),
+    ("abep_sim/mass_bom.py", "mass BOM v1 module"),
+    ("docs/budgets/subsystem_maturity/subsystem_maturity_v1.json", "M16 v1"),
+    ("docs/budgets/subsystem_maturity/SUBSYSTEM_MATURITY.md", "M16 v1 document"),
+    ("docs/budgets/subsystem_maturity/subsystem_maturity_v2.json", "M16 v2"),
+    ("docs/budgets/subsystem_maturity/SUBSYSTEM_MATURITY_v2.md", "M16 v2 document"),
+    ("docs/budgets/subsystem_maturity/build_subsystem_maturity.py", "M16 v2 builder"),
+    ("docs/budgets/owner_decisions/OWNER_QUESTIONS_CONSOLIDATED.md", "v1 consolidated owner list"),
+    ("docs/budgets/owner_decisions/owner_questions_consolidated.csv", "v1 consolidated owner list (csv)"),
+    ("docs/budgets/owner_decisions/owner_questions_consolidated.xlsx", "v1 consolidated owner list (xlsx)"),
+    ("docs/budgets/owner_decisions/build_owner_questions_consolidated.py", "v1 consolidated owner list builder"),
+    ("docs/budgets/owner_decisions/owner_decision_register_v1.json", "owner decision register v1"),
+    ("docs/budgets/owner_decisions/OWNER_DECISION_REGISTER.md", "owner decision register v1 document"),
+    ("docs/interfaces/preionizer_module", "historical pre-ionizer module ICD"),
+    ("schemas/interfaces/preionizer_module_icd_v1.json", "historical pre-ionizer module ICD schema"),
+    ("docs/experiments/phase1_prereg_framework", "historical A5 Phase-1 prereg framework"),
+    ("docs/architecture_comparison/lock1", "historical LOCK-1 drafts"),
+    ("abep_sim/arch_boundary.py", "historical bus_power_boundary_v1 module"),
+]
+
+# ------------------------------------------------------------------------------------------------------------------
+# helpers
+# ------------------------------------------------------------------------------------------------------------------
+def sha256_bytes(b: bytes) -> str:
+    return hashlib.sha256(b).hexdigest()
+
+
+def sha256_file(rel: str) -> str:
+    with open(os.path.join(ROOT, rel), "rb") as f:
+        return sha256_bytes(f.read())
+
+
+def git_show(rel: str, commit: str = BASE) -> bytes:
+    r = subprocess.run(["git", "show", f"{commit}:{rel}"], cwd=ROOT, capture_output=True)
+    if r.returncode != 0:
+        raise RuntimeError(f"git show {commit}:{rel} failed: {r.stderr.decode(errors='replace').strip()}")
+    return r.stdout
+
+
+def git_ls(rel: str, commit: str = BASE) -> list:
+    r = subprocess.run(["git", "ls-tree", "-r", "--name-only", commit, "--", rel], cwd=ROOT, capture_output=True,
+                       text=True)
+    if r.returncode != 0:
+        raise RuntimeError(f"git ls-tree {commit} {rel} failed: {r.stderr.strip()}")
+    return [x for x in r.stdout.splitlines() if x]
+
+
+def load(rel: str):
+    with open(os.path.join(ROOT, rel), encoding="utf-8") as f:
+        return json.load(f)
+
+
+def load_base(rel: str):
+    return json.loads(git_show(rel).decode("utf-8"))
+
+
+def leaves(o, p=""):
+    if isinstance(o, dict):
+        for k, v in o.items():
+            yield from leaves(v, p + "/" + str(k))
+    elif isinstance(o, list):
+        for i, v in enumerate(o):
+            yield from leaves(v, p + f"[{i}]")
+    else:
+        yield p, o
+
+
+def is_num(v) -> bool:
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def under(path: str, prefix: str) -> bool:
+    return path == prefix or path.startswith(prefix + "/") or path.startswith(prefix + "[")
+
+
+def get_ptr(doc, ptr: str):
+    locs = OV.resolve(doc, ptr)
+    if len(locs) != 1:
+        raise RuntimeError(f"pointer {ptr} resolves to {len(locs)} locations")
+    _p, par, k = locs[0]
+    return par[k]
+
+
+# ------------------------------------------------------------------------------------------------------------------
+# (1)+(2) changes and leaf-level verification
+# ------------------------------------------------------------------------------------------------------------------
+PIN_LEAF = re.compile(r"(sha256|_sha|pins|pinned_inputs|read_deliverables|deliverable_pins|decision_pins)")
+
+
+def verify_deliverable(d: dict, recs: list, errors: list) -> dict:
+    rel = d["json"]
+    before, after = load_base(rel), load(rel)
+    lb, la = dict(leaves(before)), dict(leaves(after))
+    sec = after.get("a9_10_reconciliation")
+    if not sec:
+        errors.append(f"{rel}: no a9_10_reconciliation section")
+        sec = {"changes": []}
+    declared = [r["cid"] for r in recs]
+    in_file = [c["cid"] for c in sec["changes"]]
+    if sorted(declared) != sorted(in_file):
+        errors.append(f"{rel}: changes in the file {sorted(in_file)} != declared {sorted(declared)}")
+    counts = {c["cid"]: c["count"] for c in sec["changes"]}
+    # concrete coverage from pointer ops (resolved on the current document)
+    covered_exact, covered_prefix, gsubs, codes = set(), [], [], []
+    for r in recs:
+        if r["op"] == "code":
+            codes.append(r)
+            covered_prefix += [(s, r) for s in r["scope"]]
+            continue
+        if r["op"] == "gsub":
+            gsubs.append(r)
+            continue
+        for path, _par, _k in OV.resolve(after, r["ptr"]):
+            covered_prefix.append((path, r))
+    covered_prefix.append(("/a9_10_reconciliation", {"cid": "A9-10 section", "numeric": True}))
+    changed = []
+    for p in sorted(set(lb) | set(la)):
+        vb, va = lb.get(p, "<absent>"), la.get(p, "<absent>")
+        if vb == va and type(vb) is type(va):
+            continue
+        changed.append((p, vb, va))
+    unexplained, numeric_unexplained, by_kind = [], [], {"op": 0, "gsub": 0, "code": 0, "pin": 0, "section": 0}
+    for p, vb, va in changed:
+        numeric = is_num(vb) or is_num(va)
+        hits = [(len(pre), r) for pre, r in covered_prefix if under(p, pre)]
+        rec = max(hits, key=lambda t: t[0])[1] if hits else None       # most specific declared change wins
+        kind = None
+        if rec is not None:
+            kind = "section" if rec["cid"] == "A9-10 section" else ("code" if rec.get("op") == "code" else "op")
+        elif isinstance(vb, str) and isinstance(va, str):
+            for g in gsubs:
+                if (not g["ptr"] or under(p, g["ptr"])) and g["old"] in vb and g["new"] in va:
+                    rec, kind = g, "gsub"
+                    break
+        if rec is None and PIN_LEAF.search(p) and (isinstance(va, str) or va == "<absent>"):
+            rec, kind = {"cid": "pin cascade", "numeric": False}, "pin"
+        if rec is None:
+            unexplained.append(p)
+            continue
+        by_kind[kind] += 1
+        if numeric and not rec.get("numeric") and kind != "section":
+            numeric_unexplained.append(p)
+    for p in unexplained[:20]:
+        errors.append(f"{rel}{p}: changed leaf not explained by a declared A9-10 change")
+    for p in numeric_unexplained[:20]:
+        errors.append(f"{rel}{p}: changed NUMBER not explained by a numeric A9.1 / verified-upstream record")
+    for r in recs:
+        if r["op"] == "code":
+            with open(os.path.join(ROOT, r["file"]), encoding="utf-8") as f:
+                if r["marker"] not in f.read():
+                    errors.append(f"{r['cid']}: code marker missing in {r['file']}")
+        src = r.get("source")
+        if src:
+            got = get_ptr(load(src["file"]), src["ptr"])
+            if got != src["value"]:
+                errors.append(f"{r['cid']}: copied value {src['value']!r} != {src['file']}{src['ptr']} = {got!r}")
+    return {"deliverable": d["key"], "file": rel, "changed_leaves": len(changed),
+            "explained_by": by_kind, "unexplained": len(unexplained), "numeric_unexplained": len(numeric_unexplained),
+            "numeric_leaves_changed": sum(1 for _p, vb, va in changed if is_num(vb) or is_num(va)),
+            "changes": [dict(cid=r["cid"], driver=r["driver"], op=r["op"],
+                             ptr=r["ptr"] if r["op"] != "code" else r["file"], count=counts.get(r["cid"]),
+                             numeric=bool(r.get("numeric")), summary=r["summary"],
+                             **({"scope": r["scope"]} if r["op"] == "code" else {}),
+                             **({"source": r["source"]} if r.get("source") else {}))
+                        for r in recs]}
+
+
+# ------------------------------------------------------------------------------------------------------------------
+# (4a) PENDING re-evaluation (OQ-INT-03)
+# ------------------------------------------------------------------------------------------------------------------
+REASONS = {
+    "NOT_A_CROSS_REFERENCE": "status vocabulary / document status literal / form definition; not a reference to "
+                             "another lane",
+    "HISTORICAL_COPY": "verbatim copy of an H2 v1 status inside the A9-07 revision register ('old' side); historical "
+                       "text is never rewritten; the revision is the REV entry's 'new' side",
+    "H2_V1_REVISED_IN_A9_07": "the H2 v1 deliverable is immutable; its A9 revision is recorded in "
+                              "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07), which revises the "
+                              "requirement but gives no measured or design value for this item",
+    "HISTORICAL_PREIONIZER": "historical pre-ionizer module ICD item (byte-identical, not used for the primary line)",
+    "ASSIGNMENT_NOT_DEFINED_BY_TARGET": "A9-01 and A9-04 are merged, but neither defines the per-input producing "
+                                        "stage / decision-quantity assignment; proposed for LOCK-1 as OQ-A910-02 "
+                                        "(owner call)",
+    "UNMAPPED_DQ_ID": "UNMAPPED A9-04 id: kept as a measurement-chain id; its DQ-HI consumers are listed in "
+                      "dq_consumer_table (OQ-INT-01 PROPOSED, owner call)",
+    "DEPENDS_ON_LOCK_OR_OWNER": "frozen only at LOCK-1 / LOCK-2 or by an owner decision; the target lane defines the "
+                                "form only",
+    "DEPENDS_ON_HARDWARE_OR_EVIDENCE": "needs hardware, a registered stand envelope, a selected device or a "
+                                      "measurement; no lane can supply it",
+    "TARGET_MERGED_DOES_NOT_DEFINE": "the target A9 lane is merged and verified but does not define this value "
+                                     "(interface item to be closed at LOCK-1 / with the module design)",
+    "A9_08_OPEN_AFTER_A9_07": "the A9 Xe ledger item waits on vendor/design-qualified C1 values; A9-07 (merged) "
+                              "revises requirements and gives none",
+    "A9_08_OPEN_AFTER_A9_09": "the A9 Xe ledger item waits on quotations; A9-09 (merged) issued specifications only",
+    "H2_4_SELECTION": "waits on the H2-4 PPU/supply selection (quotation stage, A9-09)",
+}
+PENDING_RULES = [
+    # (deliverable regex, pointer regex, text regex, reason)
+    (r".*", r".*", r"^(DRAFT_)?PENDING_OWNER|PENDING_OWNER_NOT_PREREGISTERED|PENDING <lane path>|^PENDING$|"
+                   r"PENDING/PROPOSED|TBD/PENDING|TBD or PENDING", "NOT_A_CROSS_REFERENCE"),
+    (r"A9-07", r"^/revision_register\[\d+\]/old/", r".*", "HISTORICAL_COPY"),
+    (r".*", r".*", r"PENDING docs/interfaces/preionizer_module/", "HISTORICAL_PREIONIZER"),
+    (r"A9-05vi", r".*", r"\(A9-01 stage map|\(A9-04 measurement chain / decision", "ASSIGNMENT_NOT_DEFINED_BY_TARGET"),
+    (r"A9-04", r".*", r"decision-quantity id and role", "UNMAPPED_DQ_ID"),
+    (r".*", r".*", r"PENDING docs/hardware/h2/", "H2_V1_REVISED_IN_A9_07"),
+    (r".*", r".*", r"LOCK-2 numbers|margin value|gate definition|contrast|if used, S1b|list PENDING|"
+                   r"PENDING A9-01 preregistration|criteria PENDING|basis PENDING", "DEPENDS_ON_LOCK_OR_OWNER"),
+    (r".*", r".*", r"hardware not built|P_d,max|I_d,max|HW-MC-13|supply rating|device selection|"
+                   r"discharge slot limit", "DEPENDS_ON_HARDWARE_OR_EVIDENCE"),
+    (r".*", r".*", r"PENDING H2-4", "H2_4_SELECTION"),
+    (r".*", r".*", r"module masses PENDING H2-7 / module design|flight value PENDING",
+     "DEPENDS_ON_HARDWARE_OR_EVIDENCE"),
+    (r"A9-01", r"/interface_demands", r"ICP channels PENDING", "TARGET_MERGED_DOES_NOT_DEFINE"),
+    (r"A9-08", r".*", r"PENDING A9-07", "A9_08_OPEN_AFTER_A9_07"),
+    (r"A9-08", r".*", r"PENDING A9-09", "A9_08_OPEN_AFTER_A9_09"),
+    (r".*", r".*", r"PENDING (docs/(experiments/hall_icp|architecture_comparison/power_boundary_a9|interfaces/"
+                   r"icp_neutralizer|evidence/icp_neutralizer|budgets/mass_a9|budgets/" + "xe" + r"_ledger_a9)|"
+                   r"abep_sim/bus_boundary_a9|A9-0[1-9])", "TARGET_MERGED_DOES_NOT_DEFINE"),
+    (r".*", r"/status$|/value$|/a9_status$", r"^PENDING", "TARGET_MERGED_DOES_NOT_DEFINE"),
+]
+
+
+def classify_pending(key: str, ptr: str, frag: str, full: str):
+    for dk, pk, tk, reason in PENDING_RULES:
+        if re.fullmatch(dk, key) and re.search(pk, ptr) and (re.search(tk, frag) or re.search(tk, full)):
+            return reason
+    return None
+
+
+def pending_occurrences(doc) -> list:
+    out = []
+    for p, v in leaves(doc):
+        if isinstance(v, str) and "PENDING" in v:
+            for m in re.finditer("PENDING", v):
+                out.append((p, v[max(0, m.start() - 20):m.start() + 140], v))
+    return out
+
+
+def pending_reevaluation(errors: list) -> dict:
+    per, remaining = [], []
+    for d in DELIVERABLES:
+        doc = load(d["json"])
+        doc = {k: v for k, v in doc.items() if k != "a9_10_reconciliation"}
+        base = load_base(d["json"])
+        occ_b, occ_a = pending_occurrences(base), pending_occurrences(doc)
+        for p, frag, full in occ_a:
+            reason = classify_pending(d["key"], p, frag, full)
+            if reason is None:
+                errors.append(f"unclassified remaining PENDING {d['json']}{p}: {frag[:80]}")
+                continue
+            remaining.append({"deliverable": d["key"], "pointer": p, "text": frag, "reason": reason})
+        pb = {p for p, _f, _v in occ_b}
+        pa = {p for p, _f, _v in occ_a}
+        per.append({"deliverable": d["key"], "file": d["json"], "pending_at_base": len(occ_b),
+                    "pending_now": len(occ_a), "leaves_no_longer_pending": len(pb - pa),
+                    "leaves_pending_at_base": len(pb)})
+    return {"rule": "every 'PENDING' still present is re-evaluated against the now-merged lanes: filled where the "
+                    "target gives the value (see changes_by_deliverable), otherwise kept with a precise reason code "
+                    "(reason_codes); an unclassified occurrence fails the build",
+            "reason_codes": REASONS, "per_deliverable": per,
+            "remaining_by_reason": {k: sum(1 for x in remaining if x["reason"] == k) for k in REASONS},
+            "remaining": remaining}
+
+
+# ------------------------------------------------------------------------------------------------------------------
+# (4b) chain -> DQ-HI consumer table (OQ-INT-01, PROPOSED)
+# ------------------------------------------------------------------------------------------------------------------
+def dq_consumer_table(errors: list) -> dict:
+    ub, pre = load(OV.UB), load(OV.PRE)
+    integ = load(INTEGRATION["json"])
+    decl = {r["ub_dq_id"]: r for r in integ["dq_id_mapping"]["rows"]}
+    dqs = {q["id"]: q for q in pre["decision_quantities"]}
+    chains = {c["dq"]: c for c in ub["measurement_chains"]}
+    rows = []
+    for r in ub["dq_id_mapping"]["rows"]:
+        if r["dq_hi_id"]:
+            continue
+        uid = r["ub_dq_id"]
+        ch = chains.get(uid)
+        if ch is None:
+            errors.append(f"no A9-04 measurement chain for {uid}")
+            continue
+        declared = sorted({m for c in decl[uid]["a9_01_consumers_not_counterparts"]
+                           for m in re.findall(r"DQ-HI-[A-Z]+", c)})
+        for q in declared:
+            if q not in dqs:
+                errors.append(f"consumer {q} of {uid} is not an A9-01 decision quantity")
+        ins = [m.group(0) for i in ch["instruments"] for m in [re.search(r"INS-\d\d", i)] if m]
+        primary = ins[0] if ins else None
+        overlap = sorted(q for q, v in dqs.items()
+                         if primary and any(c.split()[0] == primary for c in v["measurement_chain"]))
+        rows.append({"ub_dq_id": uid, "symbols": r["ub_definition"], "chain_instruments": ch["instruments"],
+                     "primary_ins": primary, "dq_hi_consumers_declared": declared,
+                     "dq_hi_sharing_primary_instrument": overlap,
+                     "proposed_resolution": "keep " + uid + " as a measurement-chain id (no DQ-HI id invented); its "
+                                            "uncertainty feeds the listed DQ-HI consumers; owner call (OQ-INT-01)",
+                     "status": "PROPOSED"})
+    feeds = {}
+    for row in rows:
+        for q in row["dq_hi_consumers_declared"]:
+            feeds.setdefault(q, []).append(row["ub_dq_id"])
+    return {"question": "OQ-INT-01", "status": "PROPOSED (owner call; ids kept)",
+            "rule": "declared consumers = the A9-01 quantities named in the step-1 mapping rows "
+                    "(a9_01_consumers_not_counterparts); instrument overlap = A9-01 quantities whose measurement chain "
+                    "contains the chain's primary INS id (informational)",
+            "rows": rows, "dq_hi_fed_by": {k: sorted(v) for k, v in sorted(feeds.items())}}
+
+
+# ------------------------------------------------------------------------------------------------------------------
+# (4c) A9-03 annex vs A9-05 extraction (OQ-INT-04; A9-05 governs)
+# ------------------------------------------------------------------------------------------------------------------
+ANNEX_MAP = [
+    ("TAK-01", ["TK-32", "TK-33"], "consistent (1 m x 2 m chamber, three TMP systems, base 1e-4 Pa); A9-03 keeps them "
+     "as numbers, A9-05 as reported text + Pa value"),
+    ("TAK-02", ["TK-10"], "consistent (65 mm pyrex tube); A9-05 locator adds p. 6 text"),
+    ("TAK-03", ["TK-11"], "consistent (insulated, grounded antenna shield); A9-05 adds the double-turn loop antenna"),
+    ("TAK-04", ["TK-20", "TK-21", "TK-22", "TK-23"], "consistent (13.56 MHz, 200 W, no reflection); A9-03 'none "
+     "detected' vs A9-05 value 0 W"),
+    ("TAK-05", ["TK-30", "TK-31", "TK-34"], "consistent (Ar only, 70 sccm = 2.1 mg/s, about 28 mPa)"),
+    ("TAK-06", ["TK-40"], "consistent (isolation transformer, 50 ohm series resistor, 13.56 MHz L-C circuit)"),
+    ("TAK-07", ["TK-13"], "consistent (C-type stainless electrode, 10 cm)"),
+    ("TAK-08", ["TK-50", "TK-51"], "value consistent (V_D > 140 V; none without RF); LOCATOR differs: A9-03 cites "
+     "Fig. 4a on p. 7, A9-05 p. 3 / p. 6 text -> A9-05 governs"),
+    ("TAK-09", ["TK-03"], "consistent (0.1-0.15 T at z ~ -10 mm, authors' calculation = model-derived)"),
+    ("TAK-10", ["TK-55", "TK-70"], "consistent (V_K to about -100 V; ~140 / ~220 V ion energies); A9-05 classes the "
+     "ion energies 'inferred'"),
+    ("TAK-11", ["TK-71"], "A9-05 is more complete: films on the glass tube at the electrode slit and on the HET-front "
+     "insulators; A9-03 locator 'Fig. 5 (illustration) on p. 8' vs A9-05 'Fig. 5' -> A9-05 governs"),
+    ("TAK-12", ["TK-24", "TK-25", "TK-26", "TK-27"], "values consistent (0.36 / 0.4 ohm, 0.1, 20 W); EVIDENCE CLASS "
+     "differs: A9-03 'inferred (from measured resistances)' for the whole entry, A9-05 measured for R_ant / R_total, "
+     "inferred for eta_p and value_basis authors_estimate for the 20 W; locator p. 8 vs p. 7-8 -> A9-05 governs"),
+    ("TAK-13", ["TK-52", "TK-53"], "consistent (I_D about 1 A; limit attributed by the authors to the RF power); "
+     "A9-03 locator 'p. 7 Fig. 4b' vs A9-05 'Fig. 4b' -> A9-05 governs"),
+    ("TAK-14", ["TK-57"], "consistent (RFEA at z = 25 cm, 10 mm orifice)"),
+]
+
+
+def annex_reconciliation(errors: list) -> dict:
+    icd, ev = load(OV.ICD), load(OV.EV)
+    tak = {e["id"]: e for e in icd["published_analog_annex"]["entries"]}
+    tk = {e["id"]: e for e in ev["extraction"]}
+    if sorted(tak) != sorted(t for t, _k, _n in ANNEX_MAP):
+        errors.append(f"annex entries {sorted(tak)} not all reconciled")
+    rows = []
+    for t, ks, note in ANNEX_MAP:
+        a = tak[t]
+        for k in ks:
+            if k not in tk:
+                errors.append(f"A9-05 extraction id {k} missing")
+        rows.append({"a9_03_id": t, "a9_03_quantity": a["quantity"], "a9_03_value": a["value"],
+                     "a9_03_locator": a["locator"], "a9_03_evidence_class": a["evidence_class"],
+                     "a9_05_ids": ks,
+                     "a9_05": [{"id": k, "quantity": tk[k]["quantity"], "value": tk[k].get("value"),
+                                "unit": tk[k].get("unit"), "locator": tk[k].get("locator"),
+                                "epistemic": tk[k].get("epistemic"), "evidence_class": tk[k].get("evidence_class")}
+                               for k in ks if k in tk],
+                     "difference": note, "governs": "A9-05"})
+    return {"question": "OQ-INT-04", "rule": "A9-05 (" + OV.EV + ") owns the authoritative extraction; where the A9-03 "
+            "annex differs in value, locator or evidence class, A9-05 governs; both are 'published analog, reported' "
+            "context only, never Vyovrinda performance", "source": "Takahashi, Watanabe, Nakahama, Kikuchi, J. Electr. "
+            "Propuls. 3:18 (2024), DOI 10.1007/s44205-024-00081-2 (CC BY-NC-ND 4.0)", "rows": rows,
+            "differences_found": sum(1 for r in rows if "->" in r["difference"])}
+
+
+# ------------------------------------------------------------------------------------------------------------------
+# (4d) interface demands between the A9 lanes, both directions
+# ------------------------------------------------------------------------------------------------------------------
+SAT = ("CONSUMED", "VERIFIED", "ANSWERED", "SUPPLIED", "RESOLVED", "SATISFIED", "DELIVERED", "SOURCED")
+OFFER = ("OFFERED", "PRELIMINARY", "PROPOSED", "OWNER_GIVEN", "OWNER_ALLOCATION", "ADOPTED")
+LANE_TOKENS = [("A9-01", r"A9-01|prereg_framework"), ("A9-02", r"A9-02|power_boundary_a9|bus_boundary_a9"),
+               ("A9-03", r"A9-03|icp_neutralizer_icd|interfaces/icp_neutralizer"),
+               ("A9-04", r"A9-04|uncertainty_budget"), ("A9-05", r"A9-05|validation_inputs|evidence/icp_neutralizer"),
+               ("A9-06", r"A9-06|mass_a9"), ("A9-07", r"A9-07|h2_a9_revisions"),
+               ("A9-08", r"A9-08|" + "xe" + r"_ledger_a9"), ("A9-09", r"A9-09|rfq_a9|RFQ-\d\d"),
+               ("A9-10", r"A9-10|a9_10_reconciliation|subsystem_maturity_v3"), ("H2/H-1", r"H2-\d|H-1|docs/hardware/h2/")]
+
+
+def _lanes_in(txt: str) -> list:
+    return [k for k, pat in LANE_TOKENS if re.search(pat, txt or "")]
+
+
+def interface_matrix() -> dict:
+    rows = []
+    srcs = [(d["key"], d["json"]) for d in DELIVERABLES] + [("A9-INT", INTEGRATION["json"])]
+    for key, rel in srcs:
+        doc = load(rel)
+        for x in doc.get("interface_demands", []):
+            frm = " ".join(str(x.get(k) or "") for k in ("from", "direction"))
+            to = " ".join(str(x.get(k) or "") for k in ("to", "counterpart"))
+            qty = x.get("quantity") or x.get("demand") or x.get("what") or ""
+            st = str(x.get("status", ""))
+            up = st.upper()
+            if up.startswith("NOT APPLICABLE"):
+                cls = "NOT_APPLICABLE"
+            elif up.startswith("PARTIAL"):
+                cls = "PARTIAL"
+            elif up.startswith(SAT):
+                cls = "SATISFIED"
+            elif up.startswith(OFFER) and "PENDING" not in up:
+                cls = "OFFERED"
+            else:
+                cls = "OPEN"
+            reason = None
+            if cls in ("OPEN", "PARTIAL"):
+                r = classify_pending(key if key != "A9-INT" else "A9-01", "/interface_demands/status", st, st)
+                reason = (REASONS[r] if r else None) or st
+                if st.strip() in ("PENDING", ""):
+                    v = str(x.get("value") or "")
+                    r2 = classify_pending(key, "/interface_demands/value", v, v)
+                    reason = REASONS.get(r2, "target lane named in the demand is merged; the value is not supplied "
+                                             "there (LOCK / hardware / owner item)") if r2 else (
+                        "target lane named in the demand is merged; the value is not supplied there (LOCK / hardware "
+                        "/ owner item)")
+            rows.append({"lane": key, "id": x.get("id"), "from": frm.strip(), "to": to.strip(),
+                         "lanes_named": sorted(set(_lanes_in(frm + " " + to)) - {key}), "quantity": str(qty)[:220],
+                         "status": st[:300], "class": cls, "open_reason": reason})
+    pairs = {}
+    for r in rows:
+        for other in r["lanes_named"]:
+            k = f"{r['lane']} <-> {other}"
+            pairs.setdefault(k, {"SATISFIED": 0, "OFFERED": 0, "PARTIAL": 0, "OPEN": 0, "NOT_APPLICABLE": 0})
+            pairs[k][r["class"]] += 1
+    return {"rule": "every interface demand of every A9 lane (and of the step-1 integration record) is classified "
+                    "SATISFIED / OFFERED (content supplied, possibly preliminary) / PARTIAL / OPEN (with the precise "
+                    "reason) / NOT_APPLICABLE; both directions are covered because each lane lists its demands to "
+                    "and from the others",
+            "counts": {c: sum(1 for r in rows if r["class"] == c)
+                       for c in ("SATISFIED", "OFFERED", "PARTIAL", "OPEN", "NOT_APPLICABLE")},
+            "pairs": dict(sorted(pairs.items())), "rows": rows}
+
+
+# ------------------------------------------------------------------------------------------------------------------
+# (5) immutability
+# ------------------------------------------------------------------------------------------------------------------
+def immutability(errors: list) -> list:
+    out = []
+    for root, what in IMMUTABLE_ROOTS:
+        files = git_ls(root)
+        if not files:
+            errors.append(f"immutable root {root} has no file at {BASE}")
+        for rel in files:
+            b = sha256_bytes(git_show(rel))
+            p = os.path.join(ROOT, rel)
+            n = sha256_file(rel) if os.path.isfile(p) else None
+            if b != n:
+                errors.append(f"immutable file changed: {rel}")
+            out.append({"path": rel, "what": what, "sha256": n, "byte_identical_to_base": b == n})
+    return out
+
+
+# ------------------------------------------------------------------------------------------------------------------
+# cross-lane items and new questions
+# ------------------------------------------------------------------------------------------------------------------
+def cross_lane(errors: list) -> list:
+    mass, xe, rfq, icd = load(OV.MASS_A9), load(OV.XE_A9_JSON), load(OV.RFQ_A9), load(OV.ICD)
+    clo = mass["wet_closure"]
+    r2e = [c for c in clo["cells"] if c["reading"] == "R2E" and c["reference"] == "HARD_40_WET"]
+    r0 = [c for c in clo["cells"] if c["reading"] == "R0" and c["reference"] == "HARD_40_WET"]
+    split = {r["case_kg"]: r["residual_kg"] for r in xe["design_cases"]["reserve_residual_split"]["rows"]}
+    if clo["residual"]["by_case_kg"]["inside_case_XA9Q-01"] != {str(k): v for k, v in split.items()}:
+        errors.append("A9-06 residual import differs from the A9-08 reserve_residual_split")
+    rq = {q["id"]: q for p in rfq["packages"] for q in p["requirements"]}
+    v323 = {r["case_kg"]: r for r in xe["design_cases"]["tank_volume"]["rows"] if r["p_bar"] == 150.0}
+    r04 = rq["RFQ-07-R04"]["value"]["V_min_323K_l_by_case_and_MEOP_axis"]
+    for c, row in v323.items():
+        if r04[f"{c:g} kg"]["150bar"] != row["V_min_323K_l"]:
+            errors.append("RFQ-07-R04 tank volume differs from A9-08")
+    by = {x["id"]: x for x in icd["items"]}
+    return [
+        {"id": "XL-01", "item": "A9-06 wet closure re-run with the A9-08 residual imported once",
+         "result": {"residual_by_case_kg": clo["residual"]["by_case_kg"],
+                    "R2E_vs_40kg_wet_MQ09": {f"{c['xe_case_kg']:g} kg": [c["wet_known_kg"], c["state"]] for c in r2e},
+                    "R0_vs_40kg_wet_MQ09": {f"{c['xe_case_kg']:g} kg": [c["wet_known_kg"], c["state"]] for c in r0}},
+         "driver": "A9-08 XA9-IF-01 (single booking; XA9-24 f_residual 0.02)", "change": "A910-A906-01",
+         "status": "APPLIED; no cell reaches CLOSES (every dry line is still an allocation or evidence floor)"},
+        {"id": "XL-02", "item": "A9-06 LV-COIL copper-mass sensitivity on the corrected A9-07 basis (IDA7-01)",
+         "result": {"bases": sorted({r["basis"] for r in mass["lv_coil_sensitivity"]["rows"]}),
+                    "copper_delta_kg": sorted({r["copper_delta_kg"] for r in mass["lv_coil_sensitivity"]["rows"]})},
+         "driver": "A9-07 IDA7-01", "change": "A910-A906-01", "status": "APPLIED (sensitivity only, not booked)"},
+        {"id": "XL-03", "item": "A9-09 RFQ ratings from A9-07 (coupler-plane |Gamma|, H3-A907-03/04/15, IDA7-21/22) "
+         "and A9-08 (tank ranges at 323 K)", "result": {"RFQ-07-R04_150bar_V_min_l": {k: v["150bar"]
+                                                                                      for k, v in r04.items()}},
+         "driver": "A9-07 IDA7-21/22, H3-A907-15; A9-08 design_cases", "change": "A910-A909-01..08",
+         "status": "APPLIED (quotation only; no purchase order)"},
+        {"id": "XL-04", "item": "A9-07 ICP heat allowance (IDA7-07) and exit-face view condition propagated to ICD "
+         "ICP-43 / ICP-05", "result": {"ICP-43": by["ICP-43"]["h1_heat_allowance_a9_07"][:160],
+                                       "ICP-05": by["ICP-05"]["view_condition_a9_07"][:160]},
+         "driver": "A9-07 IDA7-07, K9", "change": "A910-A903-18..21", "status": "APPLIED"},
+        {"id": "XL-05", "item": "H2-4 28 V (H3-PPU-05) vs row-111 regulated 100 V internal bus",
+         "result": "resolved by owner row 111 for A9 (OQ-RFQ-05 ANSWERED_BY_OWNER_ROW_111)",
+         "driver": "row 111", "change": "A910-A909-14", "status": "RECORDED"},
+        {"id": "XL-06", "item": "ICD Xe-ledger reference retargeted to the A9 ledger", "result": XE_DIR,
+         "driver": "A9.1 HIQ-06 / A9-08", "change": "A910-A903-10", "status": "APPLIED"},
+        {"id": "XL-07", "item": "design-case content: A9-08 XA9Q-01 (LOADED Xe incl. reserve + residual) vs A9-06 "
+         "MQ-09 (residual on top)", "result": "both readings carried in A9-06 (cells / cells_case_is_loaded); new "
+         "owner question OQ-A910-01", "driver": "A9-08 XA9Q-01, A9-06 MQ-09", "change": "A910-A906-01",
+         "status": "OPEN (owner call)"},
+        {"id": "XL-08", "item": "combined Xe analog range 4.54-12.77 kg (A9 recorder flag) vs H2-7 ID-11 5.044-12.77 kg",
+         "result": "not decided here: MQ-08 stays OPEN (owner call); A9-06 uses the verified H2-7 floor 5.044 kg for "
+         "AL-08", "driver": "A9-06 MQ-08", "change": None, "status": "OPEN (owner call)"},
+        {"id": "XL-09", "item": "RFQ-07-R03 propellant volumes (R6 densities, propellant only) vs A9-08 V_min (loaded "
+         "case, EOS uncertainty)", "result": "A9-08 governs the tank ranges (RFQ-07-R04 now carries them; R03 note "
+         "re-evaluated)", "driver": "A9-08 design_cases", "change": "A910-A909-22", "status": "APPLIED"},
+    ]
+
+
+NEW_QUESTIONS = [
+    {"id": "OQ-A910-01", "question": "Which content do the row-48 Xe design cases have for BOTH the A9 Xe ledger and "
+     "the A9 mass BOM: LOADED Xe incl. reserve and residual (A9-08 XA9Q-01) or usable Xe incl. reserve with the "
+     "residual on top (A9-06 MQ-09)? The two lanes propose different readings.",
+     "proposed_answer": "owner call; A9-10 carries both readings (A9-06 wet_closure cells vs cells_case_is_loaded; the "
+     "difference is the residual, <= 0.2 kg at 10 kg); one reading should govern both lanes",
+     "needed_by": "LOCK-1 (tank RFQ ranges RFQ-07-R04, wet closure)", "raised_by": "A9-10"},
+    {"id": "OQ-A910-02", "question": "Assign the producing stage and the decision quantity of each A9-05 validation "
+     "input (98 entries still read 'PENDING A9-01 stage map' / 'PENDING A9-04 measurement chain / decision "
+     "quantity')?", "proposed_answer": "assign at LOCK-1 from the A9-01 stage map and the A9-10 chain -> DQ-HI "
+     "consumer table (dq_consumer_table); no assignment is invented here; owner call",
+     "needed_by": "LOCK-1", "raised_by": "A9-10"},
+    {"id": "OQ-A910-03", "question": "A9-02 now PASSes a ledger declared 'peak_sampled' (the unaveraged sampled peak) "
+     "when it is below 1500 W, because the maximum 1 ms mean cannot exceed the maximum sample; an unaveraged peak at "
+     "or above 1500 W gives NOT_EVALUABLE (not FAIL). Accept this reading of A9.1 OQ-A902-01?",
+     "proposed_answer": "PROPOSED yes (it never substitutes a step average; the peak record must meet the same "
+                        ">= 20 kHz / >= 100 kSa/s requirements); owner call", "needed_by": "LOCK-1",
+     "raised_by": "A9-10"},
+]
+
+
+# ------------------------------------------------------------------------------------------------------------------
+# build
+# ------------------------------------------------------------------------------------------------------------------
+def build():
+    errors = []
+    pins = []
+    for rel, sha, what in AUTHORITY_PINS:
+        got = sha256_file(rel)
+        if got != sha:
+            errors.append(f"authority pin mismatch {rel}")
+        pins.append({"path": rel, "sha256": got, "what": what})
+    recs = OV.records()
+    by_deliv = []
+    for d in DELIVERABLES:
+        by_deliv.append(verify_deliverable(d, recs[d["key"]], errors))
+    # A9.1 decision coverage
+    a91 = load(OV.A91_REL)["decisions"]
+    applied = {}
+    for rs in recs.values():
+        for r in rs:
+            for did in re.findall(r"(HIQ-0\d|UBQ-0\d|OQ-A902-0\d|OQ-EV-0\d|ICP-4[56]|A9-03-[a-zA-Z]+|SEQ-[a-z]+)",
+                                  r["driver"] + " " + str(r.get("summary"))):
+                applied.setdefault(did, []).append(r["cid"])
+    coverage = []
+    for did in a91:
+        base_id = did.replace("_accounting", "")
+        cids = sorted(set(applied.get(base_id, [])))
+        coverage.append({"decision": did, "applied_by": cids,
+                         "status": "APPLIED" if cids else "RECORDED (no deliverable field to change)"})
+    missing = [c["decision"] for c in coverage if not c["applied_by"] and not c["decision"].endswith("_accounting")]
+    if missing:
+        errors.append(f"A9.1 decisions not applied anywhere: {missing}")
+    pend = pending_reevaluation(errors)
+    cons = dq_consumer_table(errors)
+    annex = annex_reconciliation(errors)
+    ifm = interface_matrix()
+    imm = immutability(errors)
+    xl = cross_lane(errors)
+    pins_now = []
+    for d in DELIVERABLES + [dict(INTEGRATION, key="A9-INT")]:
+        for rel in [d["json"], d["md"], d["builder"]] + d.get("extra", []):
+            pins_now.append({"deliverable": d["key"], "path": rel, "sha256": sha256_file(rel),
+                             "changed_since_base": sha256_file(rel) != sha256_bytes(git_show(rel))})
+    pins_now.append({"deliverable": "A9-10", "path": OV.OVERLAY_REL, "sha256": sha256_file(OV.OVERLAY_REL),
+                     "changed_since_base": True})
+    n_changes = sum(len(x["changes"]) for x in by_deliv)
+    items = [
+        {"id": "REC-01", "name": "declared A9-10 changes to the A9 deliverables", "value": n_changes, "units": "count",
+         "basis": "a9_10_overlay.py records", "source": "computed by this builder", "evidence_class": "inferred",
+         "status": "APPLIED", "freeze_point": "NOW"},
+        {"id": "REC-02", "name": "changed leaves not explained by a declared change",
+         "value": sum(x["unexplained"] + x["numeric_unexplained"] for x in by_deliv), "units": "count",
+         "basis": "leaf diff vs the A9-10 base " + BASE, "source": "computed by this builder",
+         "evidence_class": "inferred", "status": "VERIFIED (must be 0)", "freeze_point": "NOW"},
+        {"id": "REC-03", "name": "A9.1 decisions applied to at least one deliverable",
+         "value": sum(1 for c in coverage if c["applied_by"]), "units": "count", "basis": "A9.1 decisions",
+         "source": OV.A91_REL, "evidence_class": "inferred", "status": "APPLIED", "freeze_point": "NOW"},
+        {"id": "REC-04", "name": "PENDING occurrences at the A9-10 base / now",
+         "value": [sum(x["pending_at_base"] for x in pend["per_deliverable"]),
+                   sum(x["pending_now"] for x in pend["per_deliverable"])], "units": "count",
+         "basis": "OQ-INT-03", "source": "computed by this builder", "evidence_class": "inferred",
+         "status": "RE-EVALUATED (every remaining one carries a reason code)", "freeze_point": "NOW"},
+        {"id": "REC-05", "name": "gate quantity P_bus,1ms,max < 1500 W (start-up and steady state)",
+         "value": {"window_s": 0.001, "limit_W": 1500.0, "min_bandwidth_Hz": 20000.0, "min_sample_rate_Sa_s": 100000.0},
+         "units": "s, W, Hz, Sa/s", "basis": "owner decision", "source": OV.A91_REL + " OQ-A902-01",
+         "evidence_class": "owner-allocation", "status": "APPLIED (A9-02)", "freeze_point": "NOW"},
+        {"id": "REC-06", "name": "statistical rule constants", "value": {"alpha_family_wise": 0.05,
+                                                                        "alpha_one_sided_gate": 0.05, "k_x": 2.0,
+                                                                        "thrust_u_k": 1},
+         "units": "-", "basis": "owner decision", "source": OV.A91_REL + " UBQ-01, UBQ-04, UBQ-07",
+         "evidence_class": "owner-allocation", "status": "APPLIED (A9-01, A9-04)", "freeze_point": "LOCK-1"},
+        {"id": "REC-07", "name": "keeper-pulse isolation basis / development hipot / pulse test",
+         "value": [900.0, 1000.0, 600.0], "units": "V", "basis": "owner decision", "source": OV.A91_REL + " ICP-46",
+         "evidence_class": "owner-allocation", "status": "APPLIED (A9-03 ICP-46)", "freeze_point": "NOW"},
+        {"id": "REC-08", "name": "immutable / historical files byte-identical to the A9-10 base",
+         "value": sum(1 for x in imm if x["byte_identical_to_base"]), "units": "count", "basis": "A9 supersession rule",
+         "source": "computed by this builder", "evidence_class": "inferred", "status": "VERIFIED",
+         "freeze_point": "NOW"},
+        {"id": "REC-09", "name": "interface demands classified (A9 lanes + step-1 record)",
+         "value": len(ifm["rows"]), "units": "count", "basis": "task scope (2)", "source": "computed by this builder",
+         "evidence_class": "inferred", "status": "CLASSIFIED", "freeze_point": "NOW"},
+    ]
+    doc = {
+        "schema": "a9_10_reconciliation_v1", "id": "a9_10_reconciliation_v1", "lane": "fo_a9_10_integration",
+        "trigger": "T_A9_10_INTEGRATION", "owner_step": "A9.1 section 9 step 3 (A9-10)",
+        "status": "RECONCILIATION_RECORD_NOT_A_SCIENTIFIC_RESULT", "a9_status": A9_STATUS, "base_commit": BASE,
+        "generated_by": SCRIPT_REL + " (--check reproduces JSON and MD exactly and re-runs every check)",
+        "companion_document": MD_REL, "test": TEST_REL, "overlay": OV.OVERLAY_REL,
+        "configurations": list(CONFIGURATIONS), "outcome_vocabulary": list(CONFIGURATIONS) + ["NO_VIABLE_CASE"],
+        "status_not_outcome": ["OPEN"],
+        "what_this_is_not": [
+            "not a performance prediction (no thrust, efficiency, discharge current, electron current or plasma state)",
+            "not an architecture selection: no winner; A9 stays " + A9_STATUS + "; Bundle 1 NO_BASELINE_YET; credible "
+            "Hall set EMPTY; P5-N2 v1 INCONCLUSIVE",
+            "not an answer to any OPEN owner question (answers come only from the owner; A9.1 decisions are applied "
+            "as given)",
+            "not a change to any immutable / historical file (immutability section)"],
+        "authority_pins": pins, "governance_files_not_pinned": GOVERNANCE_NOT_PINNED,
+        "items": items,
+        "changes_by_deliverable": by_deliv,
+        "a9_1_decision_coverage": coverage,
+        "cross_lane_reconciliation": xl,
+        "pending_reevaluation": pend,
+        "dq_consumer_table": cons,
+        "annex_reconciliation": annex,
+        "interface_demand_matrix": ifm,
+        "integration_record": {"path": INTEGRATION["json"], "status": "frozen step-1 snapshot (compared at "
+                               + BASE + "); OQ-INT-01 OPEN (owner call; consumer table PROPOSED here), OQ-INT-02 "
+                               "OPEN, OQ-INT-03 / OQ-INT-04 addressed here"},
+        "current_pins": pins_now,
+        "immutability": imm,
+        "interface_demands": [
+            {"id": "IF-A910-01", "direction": "from every A9 lane to A9-10", "counterpart": "A9-01..A9-09",
+             "quantity": "open owner questions, m16_impact, interface demands, PENDING references", "units": "-",
+             "status": "CONSUMED"},
+            {"id": "IF-A910-02", "direction": "from A9-10 to M16", "counterpart": M16_V3,
+             "quantity": "row refresh (rows 1-17), row 17 superseded, new rows 18-19", "units": "-",
+             "status": "SUPPLIED"},
+            {"id": "IF-A910-03", "direction": "from A9-10 to the owner", "counterpart": OQ_V2,
+             "quantity": "owner-question state v2 (147 rows + A9.1 + every new lane question)", "units": "-",
+             "status": "SUPPLIED"},
+            {"id": "IF-A910-04", "direction": "from A9-10 to H3 / H4", "counterpart": "A9-09 RFQ packages; A9-02 H4",
+             "quantity": "RFQ rating updates (RFQ-04 coupler/coax/pre-match, RFQ-07 tank ranges); 1 ms P_bus "
+                         "metering channel", "units": "-", "status": "SUPPLIED (quotation only)"}],
+        "owner_answers_applied": [
+            {"row": 111, "how_applied": "H2-4 28 V vs regulated 100 V internal bus recorded as resolved by row 111 for "
+                                        "A9 (OQ-RFQ-05)"},
+            {"row": 140, "how_applied": "M16 v3: every row carries a functional-role owner until a named engineer is "
+                                        "assigned; Praveen remains accountable system owner"},
+            {"row": 141, "how_applied": "M16 v3 keeps the accepted scheduler rule, one-blocker rule and non-lane-input "
+                                        "guard"},
+            {"row": 142, "how_applied": "A9 lanes added to the lane-to-row mapping without rewriting H2 provenance"},
+            {"row": 143, "how_applied": "every divergence found here is explicit (cross_lane_reconciliation, "
+                                        "new_open_questions), none left silent"},
+            {"row": 144, "how_applied": "every M16 v3 blocker states its latest decision point (LOCK-1 / LOCK-2)"},
+            {"row": 38, "how_applied": "OPEN is a status, not an outcome"},
+            {"row": 37, "how_applied": "no weighted scalar; no winner"}],
+        "new_open_questions": NEW_QUESTIONS,
+        "open_owner_questions": NEW_QUESTIONS,
+        "remaining_open_items": {
+            "owner_questions_state": OQ_V2 + " (OPEN rows with a yellow 'Your answer' column in the xlsx)",
+            "integration": ["OQ-INT-01 (consumer table PROPOSED)", "OQ-INT-02"],
+            "pending_by_reason": pend["remaining_by_reason"],
+            "interface_demands_open": ifm["counts"]["OPEN"] + ifm["counts"]["PARTIAL"],
+            "m16": M16_V3 + " (every row BLOCKED or READY per the accepted scheduler rule; named owners missing)"},
+        "historical_reuse": {
+            "reused": ["docs/experiments/hall_icp/integration/build_a9_core_integration.py: leaf-by-leaf comparison "
+                       "and immutability pattern (git show at a pinned commit)",
+                       "docs/budgets/subsystem_maturity/build_subsystem_maturity.py (M16 v2): scheduler rule and "
+                       "waits_on vocabulary, re-used by the v3 builder"],
+            "not_reused": ["A5 Phase-1 prereg framework, pre-ionizer module ICD, LOCK-1 drafts, bus_power_boundary_v1, "
+                           "A8 / RF||Hall v2: nothing reused; byte-identity verified (immutability)"]},
+        "m16_impact": {"file": M16_V3, "rows_touched": list(range(1, 20)),
+                       "note": "v1 and v2 unchanged; v3 adds rows 18 (ICP neutralizer head) and 19 (flight RF chain) "
+                               "and marks row 17 superseded for the primary line"},
+        "h3_h4_inputs": {"h3": ["RFQ-04-R08/R09/R11 re-rated at the coupler-plane |Gamma| (A9-07)",
+                                "RFQ-04-R15 optional on-module fixed pre-match (OQ-A907-11)",
+                                "RFQ-07-R04 tank V_min per case at 323 K (A9-08)"],
+                         "h4": ["P_bus,1ms,max channel: >= 20 kHz, >= 100 kSa/s, synchronized, anti-alias "
+                                "documented (A9-02 H4-A902-03)",
+                                "ICP-45A (Ar) / ICP-45N (N2) electron-current capacity records (A9-03 ICP-45)",
+                                "ICP-46 1.0 kV DC hipot + 600 V pulse test (A9-03)"]},
+        "compliance": [
+            "every change has a driver; every changed number is explained by an A9.1 decision or a verified upstream "
+            "value (machine-checked)", "immutable inputs pinned by sha256; mutable governance never pinned",
+            "no screening candidate or unadmitted Hall closure used; no winner declared; no prediction",
+            "no source contacted; no network used"],
+        "errors": errors,
+    }
+    return doc, errors
+
+
+# ------------------------------------------------------------------------------------------------------------------
+# markdown
+# ------------------------------------------------------------------------------------------------------------------
+def _c(v) -> str:
+    if v is None:
+        return "-"
+    if isinstance(v, (list, dict)):
+        v = json.dumps(v, ensure_ascii=False)
+    return str(v).replace("|", "\\|").replace("\n", " ")
+
+
+def render_md(d) -> str:
+    L = []
+    a = L.append
+    a("# A9-10 reconciliation (fo_a9_10_integration)")
+    a("")
+    a(f"<!-- GENERATED by {SCRIPT_REL} from a9_10_reconciliation_v1.json; do not edit by hand -->")
+    a("")
+    a(f"Status **{d['status']}**; A9 stays **{d['a9_status']}**. Base `{d['base_commit']}`. Overlay `{d['overlay']}`. "
+      "No winner, no prediction; no OPEN owner question is answered here.")
+    a("")
+    for w in d["what_this_is_not"]:
+        a(f"* {w}")
+    a("")
+    a("## (a) Items")
+    a("")
+    a("| id | name | value | units | basis | source | evidence class | status | freeze point |")
+    a("|---|---|---|---|---|---|---|---|---|")
+    for it in d["items"]:
+        a(f"| {it['id']} | {_c(it['name'])} | {_c(it['value'])} | {it['units']} | {_c(it['basis'])} | "
+          f"{_c(it['source'])} | {it['evidence_class']} | {_c(it['status'])} | {it['freeze_point']} |")
+    a("")
+    a("## Changes by deliverable (every change with its driver)")
+    a("")
+    for x in d["changes_by_deliverable"]:
+        a(f"### {x['deliverable']} - `{x['file']}`")
+        a("")
+        a(f"Changed leaves vs base: {x['changed_leaves']} (explained: {_c(x['explained_by'])}; unexplained "
+          f"{x['unexplained']}; numeric changed {x['numeric_leaves_changed']}, unexplained numeric "
+          f"{x['numeric_unexplained']}).")
+        a("")
+        a("| change | driver | op | pointer / file | count | summary |")
+        a("|---|---|---|---|---|---|")
+        for c in x["changes"]:
+            a(f"| {c['cid']} | {_c(c['driver'])} | {c['op']} | `{_c(c['ptr'])}` | {_c(c['count'])} | "
+              f"{_c(c['summary'])} |")
+        a("")
+    a("## A9.1 decision coverage")
+    a("")
+    a("| decision | applied by | status |")
+    a("|---|---|---|")
+    for c in d["a9_1_decision_coverage"]:
+        a(f"| {c['decision']} | {', '.join(c['applied_by']) or '-'} | {c['status']} |")
+    a("")
+    a("## Cross-lane reconciliation")
+    a("")
+    for x in d["cross_lane_reconciliation"]:
+        a(f"* **{x['id']}** {x['item']}: {_c(x['result'])} (driver {x['driver']}; change {_c(x['change'])}; "
+          f"{x['status']})")
+    a("")
+    p = d["pending_reevaluation"]
+    a("## PENDING re-evaluation (OQ-INT-03)")
+    a("")
+    a(p["rule"] + ".")
+    a("")
+    a("| deliverable | PENDING at base | PENDING now | leaves no longer PENDING |")
+    a("|---|---|---|---|")
+    for x in p["per_deliverable"]:
+        a(f"| {x['deliverable']} | {x['pending_at_base']} | {x['pending_now']} | {x['leaves_no_longer_pending']} |")
+    a("")
+    a("| reason code | remaining | meaning |")
+    a("|---|---|---|")
+    for k, n in p["remaining_by_reason"].items():
+        a(f"| {k} | {n} | {_c(p['reason_codes'][k])} |")
+    a("")
+    cons = d["dq_consumer_table"]
+    a("## Chain -> DQ-HI consumer table (OQ-INT-01, PROPOSED; ids kept)")
+    a("")
+    a("| UB-DQ id | primary INS | declared DQ-HI consumers | DQ-HI sharing the primary instrument | status |")
+    a("|---|---|---|---|---|")
+    for r in cons["rows"]:
+        a(f"| {r['ub_dq_id']} | {_c(r['primary_ins'])} | {', '.join(r['dq_hi_consumers_declared']) or '-'} | "
+          f"{', '.join(r['dq_hi_sharing_primary_instrument']) or '-'} | {r['status']} |")
+    a("")
+    an = d["annex_reconciliation"]
+    a("## A9-03 annex vs A9-05 extraction (OQ-INT-04; A9-05 governs)")
+    a("")
+    a(an["rule"] + ". Source: " + an["source"] + ".")
+    a("")
+    a("| A9-03 | A9-05 | difference |")
+    a("|---|---|---|")
+    for r in an["rows"]:
+        a(f"| {r['a9_03_id']} | {', '.join(r['a9_05_ids'])} | {_c(r['difference'])} |")
+    a("")
+    ifm = d["interface_demand_matrix"]
+    a("## (b) Interface demands between the A9 lanes (both directions)")
+    a("")
+    a(ifm["rule"] + f". Counts: {_c(ifm['counts'])}.")
+    a("")
+    a("| lane pair | satisfied | offered | partial | open | n/a |")
+    a("|---|---|---|---|---|---|")
+    for k, v in ifm["pairs"].items():
+        a(f"| {k} | {v['SATISFIED']} | {v['OFFERED']} | {v['PARTIAL']} | {v['OPEN']} | {v['NOT_APPLICABLE']} |")
+    a("")
+    a("| lane | id | class | status / open reason |")
+    a("|---|---|---|---|")
+    for r in ifm["rows"]:
+        if r["class"] in ("OPEN", "PARTIAL"):
+            a(f"| {r['lane']} | {r['id']} | {r['class']} | {_c(r['open_reason'])[:260]} |")
+    a("")
+    for x in d["interface_demands"]:
+        a(f"* **{x['id']}** {x['direction']} ({x['counterpart']}): {x['quantity']} - {x['status']}")
+    a("")
+    a("## (c) Owner answers applied")
+    a("")
+    for x in d["owner_answers_applied"]:
+        a(f"* row {x['row']}: {x['how_applied']}")
+    a("")
+    a("## (d) New open owner questions (owner calls; not answered here)")
+    a("")
+    for q in d["new_open_questions"]:
+        a(f"* **{q['id']}** {q['question']} Proposed: {q['proposed_answer']}. Needed by {q['needed_by']}.")
+    a("")
+    a("Remaining open items: " + _c(d["remaining_open_items"]))
+    a("")
+    a("## (e) Historical reuse")
+    a("")
+    for x in d["historical_reuse"]["reused"]:
+        a(f"* reused: {x}")
+    for x in d["historical_reuse"]["not_reused"]:
+        a(f"* not reused: {x}")
+    a("")
+    a("## (f) M16 impact")
+    a("")
+    a(f"{d['m16_impact']['file']}: {d['m16_impact']['note']}.")
+    a("")
+    a("## (g) H3 / H4 inputs")
+    a("")
+    for k, v in d["h3_h4_inputs"].items():
+        for x in v:
+            a(f"* {k.upper()}: {x}")
+    a("")
+    a("## Immutability")
+    a("")
+    a(f"{sum(1 for x in d['immutability'] if x['byte_identical_to_base'])} of {len(d['immutability'])} immutable / "
+      f"historical files byte-identical to `{d['base_commit']}`.")
+    a("")
+    a("| path | what | sha256 | identical |")
+    a("|---|---|---|---|")
+    for x in d["immutability"]:
+        a(f"| `{x['path']}` | {x['what']} | `{x['sha256']}` | {x['byte_identical_to_base']} |")
+    a("")
+    a("## Current pins (A9 deliverables after A9-10)")
+    a("")
+    a("| deliverable | path | sha256 | changed since base |")
+    a("|---|---|---|---|")
+    for x in d["current_pins"]:
+        a(f"| {x['deliverable']} | `{x['path']}` | `{x['sha256']}` | {x['changed_since_base']} |")
+    a("")
+    a("## Authority pins")
+    a("")
+    for p_ in d["authority_pins"]:
+        a(f"* `{p_['path']}` sha256 `{p_['sha256']}` - {p_['what']}")
+    a("")
+    a("Governance files are referenced, never pinned: " + ", ".join(f"`{g}`" for g in d["governance_files_not_pinned"]))
+    a("")
+    a("## Compliance")
+    a("")
+    for x in d["compliance"]:
+        a(f"* {x}")
+    return "\n".join(L) + "\n"
+
+
+def dumps(doc) -> str:
+    return json.dumps(doc, indent=1, ensure_ascii=False) + "\n"
+
+
+def main(argv=None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--check", action="store_true", help="verify the outputs reproduce and every check passes")
+    args = ap.parse_args(argv)
+    doc, errors = build()
+    js, md = dumps(doc), render_md(doc)
+    jp, mp = os.path.join(ROOT, JSON_REL), os.path.join(ROOT, MD_REL)
+    if errors:
+        for e in errors[:60]:
+            print("ERROR:", e)
+    if args.check:
+        ok = (not errors and os.path.isfile(jp) and open(jp, encoding="utf-8").read() == js
+              and os.path.isfile(mp) and open(mp, encoding="utf-8").read() == md)
+        print("OK" if ok else "DRIFT or FAILED CHECKS")
+        return 0 if ok else 1
+    with open(jp, "w", encoding="utf-8") as f:
+        f.write(js)
+    with open(mp, "w", encoding="utf-8") as f:
+        f.write(md)
+    print(f"wrote {JSON_REL} and {MD_REL}" + (f" ({len(errors)} errors)" if errors else ""))
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

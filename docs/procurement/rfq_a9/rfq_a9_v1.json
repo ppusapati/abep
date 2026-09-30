@@ -73,37 +73,37 @@
   {
    "key": "ICD",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "1cdab3d71377443d41f128398159ba5ac0203d9daaca8c77840cea6fcd9a353c"
+   "sha256": "4d16ee4d0e3425843f24c78b3dea038e46ca44360bf44a1451c36dcbad500fb8"
   },
   {
    "key": "BUS",
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "sha256": "1a3c8d29404d464816f0e306e2883993a52f3094a26656937203a816dd6701df"
+   "sha256": "7ca8ed23652c4f3a1054461c7d14919c7e169d2ae97e20b318acba397ddeb3af"
   },
   {
    "key": "UB",
    "path": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "sha256": "d1cf5aba0a813c676d48c3ac8741ddb3c00c31700428fbff1c0217a5ee2d92d1"
+   "sha256": "650aa32b4b388aebba4c20a54ca35f762b09f7d04403f4f0b440d6fd8fda0983"
   },
   {
    "key": "PRE",
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "sha256": "f3e6069a4c78c49822f9248d9b9bc34a157a349bf601f7065e5e182645fbd245"
+   "sha256": "f22e12e73a664df26349642aa64e850ffd8e6581e7239effd8230410bb97264f"
   },
   {
    "key": "EVI",
    "path": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
-   "sha256": "541f6568043f129b5bfaec9afc73e4838816b5183701fbf68be02388dd7dadeb"
+   "sha256": "1c511db53b5874168c361683bae3d121bc0883a99868e72906bb5cf9234cc8fc"
   },
   {
    "key": "VIN",
    "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-   "sha256": "1de411c5f09d96698e87ec22bdba796b5c2010ad4f0362afb5a4fd2eec9b9527"
+   "sha256": "54ae028df1ea940d624e7caa074eed47fe8576ef1a0d631391601ddf855e6158"
   },
   {
    "key": "INT",
    "path": "docs/experiments/hall_icp/integration/a9_core_integration_v1.json",
-   "sha256": "20c222d9b8a65930789c767ed45127041c7b1cd06e21a715101761036bb5f2ca"
+   "sha256": "425218cf84c6bb862924f3a3c125186b0ee00fc403c752f1e3c2ddb4f658386d"
   },
   {
    "key": "H22",
@@ -339,7 +339,7 @@
    "units": "L (= kg / (g cm^-3))",
    "formula": "V = m_case / rho(323.15 K, p); rho from R6 /hardware_mass_data[0] (NIST WebBook SRD 69)",
    "evidence_class": "model-derived",
-   "note": "propellant volume only: excludes the 2 % residual (row 45), the 20 % reserve (row 43), ullage, MEOP and safety factors (row 50) - final tank ranges PENDING docs/budgets/xe_ledger_a9/ (A9-08)"
+   "note": "propellant volume only: excludes the 2 % residual (row 45), the 20 % reserve (row 43), ullage, MEOP and safety factors (row 50) - final tank ranges: RFQ-07-R04 (A9-08 design_cases, imported in A9-10)"
   },
   "p_bus_channel_slots": {
    "value": {
@@ -369,7 +369,6 @@
      "INSTALLED": [
       "compressor",
       "flow_control_atmospheric",
-      "flow_control_icp_feed",
       "flow_control_xe",
       "hall_discharge",
       "hall_magnet_inner",
@@ -384,9 +383,10 @@
      ],
      "VARIANT_ONLY": [
       "active_cooling",
+      "flow_control_icp_feed",
       "icp_assist_magnet"
      ],
-     "n_installed": 14
+     "n_installed": 13
     }
    },
    "units": "bus slots (one synchronized V and I channel pair each)",
@@ -545,7 +545,7 @@
      "id": "RFQ-01-R04",
      "title": "mass per configuration on the platform",
      "requirement": "Supplier designs to R03; the per-configuration mass and CG enter at LOCK-1 (ICD ICP-08).",
-     "value": "PENDING docs/budgets/mass_a9/ (A9-06: module masses and CG per configuration)",
+     "value": "TBD - requires the C1 / ICP / sham module drawings (ICD ICP-08); A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged) books flight allocations only, no ground module masses/CG",
      "units": "kg",
      "basis": "pending lane",
      "sources": [
@@ -558,7 +558,7 @@
       }
      ],
      "evidence_class": null,
-     "status": "PENDING",
+     "status": "TBD",
      "freeze_point": "LOCK-1",
      "applies_to": [
       "hall_c1_reference",
@@ -879,7 +879,7 @@
      "id": "RFQ-01-R13",
      "title": "module-exchange interface",
      "requirement": "H-1 stays bolted to the platform; the kinematic carrier KC-1 exchanges the C1 reference module, the ICP module and the mechanical sham with repeatable datum control; supplier provides the platform mounting interface for KC-1.",
-     "value": "PENDING docs/hardware/h2_a9_revisions/ (A9-07: KC-1 / downstream ICP fixture drawings)",
+     "value": "TBD - requires the KC-1 / downstream ICP fixture drawings; A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged) gives the requirements (REV-29..36: H-1 bolted, KC-1 carries C1 module / ICP module / sham, >= 25 kg stand), not drawings",
      "units": "-",
      "basis": "owner answer; pending fixture revision",
      "sources": [
@@ -902,7 +902,7 @@
       }
      ],
      "evidence_class": null,
-     "status": "PENDING",
+     "status": "TBD",
      "freeze_point": "LOCK-1",
      "applies_to": [
       "hall_c1_reference",
@@ -1192,7 +1192,7 @@
     {
      "id": "RFQ-01-R04",
      "title": "mass per configuration on the platform",
-     "value": "PENDING docs/budgets/mass_a9/ (A9-06: module masses and CG per configuration)",
+     "value": "TBD - requires the C1 / ICP / sham module drawings (ICD ICP-08); A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged) books flight allocations only, no ground module masses/CG",
      "freeze_point": "LOCK-1"
     },
     {
@@ -1204,7 +1204,7 @@
     {
      "id": "RFQ-01-R13",
      "title": "module-exchange interface",
-     "value": "PENDING docs/hardware/h2_a9_revisions/ (A9-07: KC-1 / downstream ICP fixture drawings)",
+     "value": "TBD - requires the KC-1 / downstream ICP fixture drawings; A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged) gives the requirements (REV-29..36: H-1 bolted, KC-1 carries C1 module / ICP module / sham, >= 25 kg stand), not drawings",
      "freeze_point": "LOCK-1"
     },
     {
@@ -1542,7 +1542,7 @@
      "id": "RFQ-02-R07",
      "title": "Xe anode path for the bounded Xe reference/health check",
      "requirement": "Xe reference/health check at the start of each installation (before N2 and any O2-bearing exposure); range TBD.",
-     "value": "TBD - requires the registered Xe reference/health-check point (A9-01) and PENDING docs/budgets/xe_ledger_a9/ (A9-08: XE_REFERENCE term)",
+     "value": "TBD - requires the registered Xe reference/health-check point (A9-01) and the XE_REFERENCE term booked by A9-08 (docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json; structure booked, flow TBD)",
      "units": "mg/s",
      "basis": "A9.1 / owner answer",
      "sources": [
@@ -2089,7 +2089,7 @@
     {
      "id": "RFQ-02-R07",
      "title": "Xe anode path for the bounded Xe reference/health check",
-     "value": "TBD - requires the registered Xe reference/health-check point (A9-01) and PENDING docs/budgets/xe_ledger_a9/ (A9-08: XE_REFERENCE term)",
+     "value": "TBD - requires the registered Xe reference/health-check point (A9-01) and the XE_REFERENCE term booked by A9-08 (docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json; structure booked, flow TBD)",
      "freeze_point": "LOCK-1"
     },
     {
@@ -2798,7 +2798,7 @@
     {
      "id": "RFQ-04-R08",
      "title": "directional coupler reference plane",
-     "requirement": "Directional coupler with forward and reflected sensors at a declared reference plane AFTER the matching network; calibrated at 13.56 MHz over 0-500 W forward; coupling factor, directivity and sensor linearity certified.",
+     "requirement": "Directional coupler with forward and reflected sensors at a declared reference plane AFTER the matching network; calibrated at 13.56 MHz over 0-500 W forward; coupling factor, directivity and sensor linearity certified. Rating basis (A9-07 IDA7-22, H3-A907-03): the coupler and sensors carry the antenna-side reflection, so they are rated for the coupler-plane forward power P_fwd = P_net / (1 - |Gamma|^2), peak voltage/current and loss at Gamma_max (option a, on-module fixed pre-match) or at the antenna mismatch (option b), with directivity stated at the operating |Gamma|; Gamma_max and the option are owner questions (OQ-A907-11, LOCK-1).",
      "value": "after the matching network",
      "units": "-",
      "basis": "owner answer / A9.1",
@@ -2852,7 +2852,7 @@
     {
      "id": "RFQ-04-R09",
      "title": "coupler/sensor uncertainty",
-     "requirement": "Supplier states coupling-factor, directivity and sensor-calibration uncertainty at 13.56 MHz with coverage factor.",
+     "requirement": "Supplier states coupling-factor, directivity and sensor-calibration uncertainty at 13.56 MHz with coverage factor, and the directivity D at the operating |Gamma|; the P_net directivity/mismatch term (A9-07 IDA7-21; A9-04 UB-RF-04) needs D >= D_min, D_min frozen at LOCK-2.",
      "value": "TBD - requires coupler and sensor certificates (UB-RF-02..04)",
      "units": "relative",
      "basis": "A9-04",
@@ -2930,7 +2930,7 @@
     {
      "id": "RFQ-04-R11",
      "title": "flexible matched coax (live + sham)",
-     "requirement": "Flexible, low-stiffness RF coax for the stand crossing, supplied as an identical live/sham pair with S-parameters; no uncompensated hard line across the moving stage.",
+     "requirement": "Flexible, low-stiffness RF coax for the stand crossing, supplied as an identical live/sham pair with S-parameters; no uncompensated hard line across the moving stage; rated for forward power, peak voltage/current and loss at the coupler-plane |Gamma| (A9-07 H3-A907-04, REV-33, A9H-INS-15).",
      "value": "flexible, matched pair",
      "units": "-",
      "basis": "owner answers",
@@ -3038,7 +3038,7 @@
      "id": "RFQ-04-R14",
      "title": "flight allocation context",
      "requirement": "Not a lab requirement: the flight-representative RF generator/matching is allocated mass in the owner's v0 dry budget (allocation, not a CBE); the supplier states mass for any flight-representative option.",
-     "value": "PENDING docs/budgets/mass_a9/ (A9-06: RF generator/matching mass reconciliation)",
+     "value": "TBD - requires supplier mass data; A9-06 records the owner v0 allocation (row 54, 1.5 kg) as ALLOCATION_UNVERIFIABLE_TBD (no evidence floor): docs/budgets/mass_a9/mass_a9_v1.json line_checks[line=AL-06]",
      "units": "kg",
      "basis": "owner answer (allocation context)",
      "sources": [
@@ -3054,12 +3054,42 @@
       }
      ],
      "evidence_class": null,
-     "status": "PENDING",
+     "status": "TBD",
      "freeze_point": "after-evidence",
      "applies_to": [
       "hall_icp_neutralizer"
      ],
      "note": null
+    },
+    {
+     "id": "RFQ-04-R15",
+     "title": "optional on-module fixed pre-match (option line)",
+     "requirement": "Optional quotation line: a fixed on-module 13.56 MHz pre-match / impedance transformation network (plus a sham-equivalent network) holding the coax/coupler segment at |Gamma| <= Gamma_max, quoted only for the case that OQ-A907-11 option a is adopted; the tunable match stays off-platform (A9.1 A9-03-matching).",
+     "value": "TBD - requires the owner answer to OQ-A907-11 (option a/b, Gamma_max at LOCK-1) and the A9-03 antenna impedance",
+     "units": "-",
+     "basis": "A9-07 H3-A907-15",
+     "sources": [
+      {
+       "type": "deliverable_item",
+       "key": "H2A9",
+       "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+       "id": "H3-A907-15",
+       "pointer": "/h3_inputs/4"
+      },
+      {
+       "type": "a9_1",
+       "id": "A9-03-matching",
+       "quote": "Baseline: off the moving thrust-stand platform.",
+       "path": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
+      }
+     ],
+     "evidence_class": null,
+     "status": "TBD",
+     "freeze_point": "LOCK-1",
+     "applies_to": [
+      "hall_icp_neutralizer"
+     ],
+     "note": "added in A9-10 (quotation only; no purchase order)"
     }
    ],
    "acceptance": [
@@ -3163,8 +3193,14 @@
     {
      "id": "RFQ-04-R14",
      "title": "flight allocation context",
-     "value": "PENDING docs/budgets/mass_a9/ (A9-06: RF generator/matching mass reconciliation)",
+     "value": "TBD - requires supplier mass data; A9-06 records the owner v0 allocation (row 54, 1.5 kg) as ALLOCATION_UNVERIFIABLE_TBD (no evidence floor): docs/budgets/mass_a9/mass_a9_v1.json line_checks[line=AL-06]",
      "freeze_point": "after-evidence"
+    },
+    {
+     "id": "RFQ-04-R15",
+     "title": "optional on-module fixed pre-match (option line)",
+     "value": "TBD - requires the owner answer to OQ-A907-11 (option a/b, Gamma_max at LOCK-1) and the A9-03 antenna impedance",
+     "freeze_point": "LOCK-1"
     }
    ],
    "supplier_must_state": [
@@ -3673,7 +3709,7 @@
      "id": "RFQ-05-R12",
      "title": "flight allocation context",
      "requirement": "Owner v0 dry allocation for the ICP neutralizer (allocation, not a CBE); supplier states the mass of the quoted parts.",
-     "value": "PENDING docs/budgets/mass_a9/ (A9-06: ICP neutralizer mass reconciliation)",
+     "value": "TBD - requires supplier mass data; A9-06 records the owner v0 ICP-neutralizer allocation (row 54, 2.0 kg) as ALLOCATION_UNVERIFIABLE_TBD (no evidence floor): docs/budgets/mass_a9/mass_a9_v1.json line_checks[line=AL-05]",
      "units": "kg",
      "basis": "owner answer (allocation context)",
      "sources": [
@@ -3689,7 +3725,7 @@
       }
      ],
      "evidence_class": null,
-     "status": "PENDING",
+     "status": "TBD",
      "freeze_point": "after-evidence",
      "applies_to": [
       "hall_icp_neutralizer"
@@ -3743,7 +3779,7 @@
     {
      "id": "RFQ-05-R12",
      "title": "flight allocation context",
-     "value": "PENDING docs/budgets/mass_a9/ (A9-06: ICP neutralizer mass reconciliation)",
+     "value": "TBD - requires supplier mass data; A9-06 records the owner v0 ICP-neutralizer allocation (row 54, 2.0 kg) as ALLOCATION_UNVERIFIABLE_TBD (no evidence floor): docs/budgets/mass_a9/mass_a9_v1.json line_checks[line=AL-05]",
      "freeze_point": "after-evidence"
     }
    ],
@@ -4216,7 +4252,6 @@
        "INSTALLED": [
         "compressor",
         "flow_control_atmospheric",
-        "flow_control_icp_feed",
         "flow_control_xe",
         "hall_discharge",
         "hall_magnet_inner",
@@ -4231,9 +4266,10 @@
        ],
        "VARIANT_ONLY": [
         "active_cooling",
+        "flow_control_icp_feed",
         "icp_assist_magnet"
        ],
-       "n_installed": 14
+       "n_installed": 13
       }
      },
      "units": "slots",
@@ -4665,14 +4701,47 @@
       "hall_c1_reference",
       "hall_icp_neutralizer"
      ],
-     "note": "propellant volume only: excludes the 2 % residual (row 45), the 20 % reserve (row 43), ullage, MEOP and safety factors (row 50) - final tank ranges PENDING docs/budgets/xe_ledger_a9/ (A9-08)"
+     "note": "propellant volume only: excludes the 2 % residual (row 45), the 20 % reserve (row 43), ullage, MEOP and safety factors (row 50) - final tank ranges: RFQ-07-R04 (A9-08 design_cases, imported in A9-10; A9-08 reads each case as LOADED Xe incl. reserve and residual, XA9Q-01 PROPOSED, and adds the EOS density uncertainty, so its V_min governs)"
     },
     {
      "id": "RFQ-07-R04",
      "title": "tank volume class, MEOP and final ranges",
      "requirement": "Tank internal volume, MEOP and safety factors per case.",
-     "value": "PENDING docs/budgets/xe_ledger_a9/ (A9-08: final tank ranges incl. residual (row 45) and reserve (row 43))",
-     "units": "L, bar",
+     "value": {
+      "V_min_323K_l_by_case_and_MEOP_axis": {
+       "2 kg": {
+        "75bar": 3.25675,
+        "100bar": 1.77865,
+        "150bar": 1.1975,
+        "187bar": 1.09371
+       },
+       "5 kg": {
+        "75bar": 8.14187,
+        "100bar": 4.44663,
+        "150bar": 2.99374,
+        "187bar": 2.73428
+       },
+       "10 kg": {
+        "75bar": 16.2837,
+        "100bar": 8.89326,
+        "150bar": 5.98748,
+        "187bar": 5.46856
+       }
+      },
+      "residual_kg_inside_case": {
+       "2 kg": 0.0392157,
+       "5 kg": 0.0980392,
+       "10 kg": 0.196078
+      },
+      "reserve_kg_inside_case": {
+       "2 kg": 0.326797,
+       "5 kg": 0.816993,
+       "10 kg": 1.63399
+      },
+      "MEOP": "TBD - requires quotations (XA9-28); the pressures are a sensitivity axis, not a MEOP choice",
+      "source": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json design_cases.tank_volume / reserve_residual_split (case = LOADED Xe, XA9Q-01 PROPOSED reading)"
+     },
+     "units": "L (V_min at 323.15 K incl. EOS density uncertainty), kg",
      "basis": "pending lane",
      "sources": [
       {
@@ -4708,8 +4777,8 @@
        "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json"
       }
      ],
-     "evidence_class": null,
-     "status": "PENDING",
+     "evidence_class": "model-derived",
+     "status": "COPIED_VERIFIED",
      "freeze_point": "after-evidence",
      "applies_to": [
       "hall_c1_reference",
@@ -4899,7 +4968,13 @@
      "id": "RFQ-07-R10",
      "title": "mass context",
      "requirement": "Owner v0 dry allocation for Xe hardware (allocation, not a CBE; A9 recorder flag: below the H2-7 analog range); the 40 kg gate is wet (Xe + tank included).",
-     "value": "PENDING docs/budgets/mass_a9/ (A9-06: Xe hardware mass reconciliation)",
+     "value": {
+      "AL-08_owner_allocation_kg": 1.5,
+      "AL-08_evidence_floor_kg": 5.044,
+      "state": "ALLOCATION_BELOW_EVIDENCE_FLOOR",
+      "note": "owner v0 allocation (row 54) below the H2-7 analog floor (CBE); re-allocation is owner question MQ-05; supplier states mass per case",
+      "source": "docs/budgets/mass_a9/mass_a9_v1.json line_checks[line=AL-08]"
+     },
      "units": "kg",
      "basis": "owner answers (allocation context)",
      "sources": [
@@ -4926,8 +5001,8 @@
        "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json"
       }
      ],
-     "evidence_class": null,
-     "status": "PENDING",
+     "evidence_class": "owner-allocation",
+     "status": "COPIED_VERIFIED",
      "freeze_point": "after-evidence",
      "applies_to": [
       "hall_c1_reference",
@@ -5052,12 +5127,6 @@
    "purchase_gate": "H3 procurement gate + frozen A9 interfaces (owner row 8; A9.1 'A9-09 procurement restriction')",
    "open_specification_items": [
     {
-     "id": "RFQ-07-R04",
-     "title": "tank volume class, MEOP and final ranges",
-     "value": "PENDING docs/budgets/xe_ledger_a9/ (A9-08: final tank ranges incl. residual (row 45) and reserve (row 43))",
-     "freeze_point": "after-evidence"
-    },
-    {
      "id": "RFQ-07-R06",
      "title": "low-flow PMU/FCU flow range",
      "value": "TBD - requires the C1 operating point (LOCK-1) and the Xe reference point",
@@ -5067,12 +5136,6 @@
      "id": "RFQ-07-R08",
      "title": "filter/getter (C1/Xe branch only)",
      "value": "TBD - requires vendor/spec verification (A902-29)",
-     "freeze_point": "after-evidence"
-    },
-    {
-     "id": "RFQ-07-R10",
-     "title": "mass context",
-     "value": "PENDING docs/budgets/mass_a9/ (A9-06: Xe hardware mass reconciliation)",
      "freeze_point": "after-evidence"
     },
     {
@@ -5556,7 +5619,7 @@
      "id": "RFQ-08-R12",
      "title": "Xe-line dielectric break",
      "requirement": "Voltage rating of the cathode-branch dielectric break.",
-     "value": "TBD - requires the C1 circuit potentials (H2-2 H3-C1-04: 'break voltage PENDING H2-4') and PENDING docs/hardware/h2_a9_revisions/ (A9-07: H2-2/H2-4 revision)",
+     "value": "TBD - requires the C1 circuit potentials (H2-2 H3-C1-04: 'break voltage PENDING H2-4') and the H2-2 / H2-4 revision in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (merged: keeper isolation basis 900 V, 1.0 kV DC development hipot, separate 600 V pulse test per A9.1 ICP-46; the break voltage itself is not given)",
      "units": "V",
      "basis": "H2-2",
      "sources": [
@@ -5616,7 +5679,7 @@
     {
      "id": "RFQ-08-R12",
      "title": "Xe-line dielectric break",
-     "value": "TBD - requires the C1 circuit potentials (H2-2 H3-C1-04: 'break voltage PENDING H2-4') and PENDING docs/hardware/h2_a9_revisions/ (A9-07: H2-2/H2-4 revision)",
+     "value": "TBD - requires the C1 circuit potentials (H2-2 H3-C1-04: 'break voltage PENDING H2-4') and the H2-2 / H2-4 revision in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (merged: keeper isolation basis 900 V, 1.0 kV DC development hipot, separate 600 V pulse test per A9.1 ICP-46; the break voltage itself is not given)",
      "freeze_point": "LOCK-1"
     }
    ],
@@ -6041,7 +6104,7 @@
     "sources": [
      "ICD:ICP-08"
     ],
-    "status": "PENDING",
+    "status": "TBD",
     "freeze_point": "LOCK-1"
    },
    {
@@ -6145,7 +6208,7 @@
      "row 122",
      "ICD:ICP-06"
     ],
-    "status": "PENDING",
+    "status": "TBD",
     "freeze_point": "LOCK-1"
    },
    {
@@ -6644,8 +6707,19 @@
     "sources": [
      "row 54"
     ],
-    "status": "PENDING",
+    "status": "TBD",
     "freeze_point": "after-evidence"
+   },
+   {
+    "requirement": "RFQ-04-R15",
+    "package": "RFQ-04",
+    "title": "optional on-module fixed pre-match (option line)",
+    "sources": [
+     "H2A9:H3-A907-15",
+     "A9.1 A9-03-matching"
+    ],
+    "status": "TBD",
+    "freeze_point": "LOCK-1"
    },
    {
     "requirement": "RFQ-05-R01",
@@ -6786,7 +6860,7 @@
     "sources": [
      "row 54"
     ],
-    "status": "PENDING",
+    "status": "TBD",
     "freeze_point": "after-evidence"
    },
    {
@@ -7012,7 +7086,7 @@
      "row 43",
      "row 8"
     ],
-    "status": "PENDING",
+    "status": "COPIED_VERIFIED",
     "freeze_point": "after-evidence"
    },
    {
@@ -7079,7 +7153,7 @@
      "row 54",
      "row 5"
     ],
-    "status": "PENDING",
+    "status": "COPIED_VERIFIED",
     "freeze_point": "after-evidence"
    },
    {
@@ -7304,7 +7378,8 @@
    "A9.1 A9-03-matching": [
     "RFQ-01-R12",
     "RFQ-04-R06",
-    "RFQ-04-R08"
+    "RFQ-04-R08",
+    "RFQ-04-R15"
    ],
    "A9.1 A9-03-planes": [
     "RFQ-05-R06"
@@ -7465,6 +7540,9 @@
    ],
    "H27:H3-03": [
     "RFQ-07-R06"
+   ],
+   "H2A9:H3-A907-15": [
+    "RFQ-04-R15"
    ],
    "ICD:ICP-02": [
     "RFQ-05-R06"
@@ -7938,7 +8016,7 @@
    "to": "RFQ-01",
    "quantity": "module masses and CG per configuration on the stand",
    "units": "kg",
-   "status": "PENDING"
+   "status": "OPEN - A9-06 (merged) books flight allocations only; ground module masses/CG TBD - requires the module drawings (ICP-08)"
   },
   {
    "id": "IF-RFQ-02",
@@ -7954,7 +8032,7 @@
    "to": "RFQ-01, RFQ-05, RFQ-08",
    "quantity": "KC-1 / downstream ICP fixture drawings, external C1 mount, >= 50 K thermal protection",
    "units": "mm, K",
-   "status": "PENDING"
+   "status": "PARTIAL - A9-07 (merged) supplies the fixture / external-C1 / >= 50 K thermal requirements (REV-13..50) consumed here; drawings TBD"
   },
   {
    "id": "IF-RFQ-04",
@@ -7970,7 +8048,7 @@
    "to": "RFQ-07",
    "quantity": "final tank ranges per 2/5/10 kg case incl. residual/reserve, MEOP; XE_REFERENCE flow; G-XE contingency term",
    "units": "L, bar, mg/s",
-   "status": "PENDING"
+   "status": "PARTIAL - A9-08 design-case volumes at 323 K and the residual/reserve split imported into RFQ-07-R04 (A9-10); MEOP and XE_REFERENCE flow TBD (XA9-28; A9-01 reference point)"
   },
   {
    "id": "IF-RFQ-06",
@@ -8775,7 +8853,9 @@
   {
    "id": "OQ-RFQ-05",
    "question": "Confirm the breadboard discharge supply input = regulated 100 V internal bus (row 111), superseding H2-4 H3-PPU-05 '28 V class' for A9?",
-   "proposed_answer": "proposed: YES; A9-07 records the H2-4 revision"
+   "proposed_answer": "proposed: YES; A9-07 records the H2-4 revision",
+   "status": "ANSWERED_BY_OWNER_ROW_111",
+   "resolved_by": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 111 (REGULATED 100 V internal propulsion bus for the breadboard/PPU architecture): the H2-4 H3-PPU-05 '28 V class' input is superseded for A9 (A9-02 h2_4_revision_flags H3-PPU-05 NEEDS_REVISION; A9-07 REV entries); recorded as resolved by row 111 in A9-10"
   },
   {
    "id": "OQ-RFQ-06",
@@ -8795,7 +8875,7 @@
   {
    "id": "OQ-RFQ-09",
    "question": "State a MEOP basis in the tank RFQ or let suppliers propose?",
-   "proposed_answer": "proposed: suppliers propose MEOP/safety factors per case; final basis PENDING A9-08"
+   "proposed_answer": "proposed: suppliers propose MEOP/safety factors per case; final basis after the quotations (A9-08 design-case volumes at 323 K now in RFQ-07-R04; MEOP XA9-28 TBD)"
   },
   {
    "id": "OQ-RFQ-10",
@@ -8859,7 +8939,7 @@
    "packages": "RFQ-07",
    "how_touched": "tank quotations per 2/5/10 kg case at 323 K",
    "proposed_procurement_status": "RFQ_SPEC_READY_QUOTATION_ONLY (no purchase order; H3 gate)",
-   "blocking_item": "PENDING A9-08 final ranges"
+   "blocking_item": "MEOP / tank selection from quotations (XA9-28); the A9-08 design-case volumes are in RFQ-07-R04"
   },
   {
    "m16_row": 7,
@@ -8929,7 +9009,7 @@
    "packages": "RFQ-01, RFQ-05",
    "how_touched": "stand platform / KC-1 interface; ICP module parts",
    "proposed_procurement_status": "RFQ_SPEC_READY_QUOTATION_ONLY (no purchase order; H3 gate)",
-   "blocking_item": "PENDING A9-07 fixture drawings"
+   "blocking_item": "KC-1 / module interface drawings (A9-07 REV-29..36 give the requirements, not drawings)"
   },
   {
    "m16_row": 17,
@@ -8989,7 +9069,8 @@
       "RFQ-04-R09",
       "RFQ-04-R12",
       "RFQ-04-R13",
-      "RFQ-04-R14"
+      "RFQ-04-R14",
+      "RFQ-04-R15"
      ]
     },
     {
@@ -9016,10 +9097,8 @@
      "id": "RFQ-07",
      "family": "Xe tank (5-20 L class), low-flow PMU/FCU, two series isolation valves",
      "open_items_blocking_po": [
-      "RFQ-07-R04",
       "RFQ-07-R06",
       "RFQ-07-R08",
-      "RFQ-07-R10",
       "RFQ-07-R11"
      ]
     },
@@ -9130,5 +9209,285 @@
   "no_hall_performance_source": "no Hall closure, screening candidate, plasma_devices model or withdrawn number read",
   "pure": "standard library; not wired into archengine; goldens unaffected",
   "thresholds": "only owner-given (row / A9.1) values or verified-deliverable copies; anything else TBD/PENDING/PROPOSED"
+ },
+ "pending_lanes_status_a9_10": "A9-06, A9-07 and A9-08 are merged and verified; every reference to them in this deliverable was re-evaluated in A9-10 (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json pending_reevaluation / interface_demand_matrix)",
+ "a9_10_reconciliation": {
+  "lane": "fo_a9_10_integration",
+  "record": "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+  "overlay": "docs/experiments/hall_icp/integration/a9_10_overlay.py",
+  "a9_1_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
+  },
+  "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+  "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
+  "changes": [
+   {
+    "cid": "A910-A909-32",
+    "driver": "A9.1 OQ-A902-05 via the A9-02 module (G-REUSE)",
+    "op": "code",
+    "ptr": null,
+    "count": 0,
+    "summary": "derived.p_bus_channel_slots is re-derived from abep_sim/bus_boundary_a9.py: flow_control_icp_feed is now a G-ATM / G-XE variant slot of hall_icp_neutralizer (one installed P_bus channel fewer)"
+   },
+   {
+    "cid": "A910-A909-00",
+    "driver": "A9-10 package changes (derived lists)",
+    "op": "code",
+    "ptr": null,
+    "count": 0,
+    "summary": "after the package-level A9-10 changes the derived lists (open_specification_items, traceability_matrix, h3_h4_inputs) are rebuilt from the changed packages and the lane validation is re-run"
+   },
+   {
+    "cid": "A910-A909-01",
+    "driver": "A9-07 IDA7-22, H3-A907-03, OQ-A907-11",
+    "op": "replace",
+    "ptr": "/packages[id=RFQ-04]/requirements[id=RFQ-04-R08]/requirement",
+    "count": 1,
+    "summary": "coupler rated at the coupler-plane |Gamma|"
+   },
+   {
+    "cid": "A910-A909-02",
+    "driver": "A9-07 IDA7-21",
+    "op": "replace",
+    "ptr": "/packages[id=RFQ-04]/requirements[id=RFQ-04-R09]/requirement",
+    "count": 1,
+    "summary": "directivity term demanded"
+   },
+   {
+    "cid": "A910-A909-03",
+    "driver": "A9-07 H3-A907-04",
+    "op": "replace",
+    "ptr": "/packages[id=RFQ-04]/requirements[id=RFQ-04-R11]/requirement",
+    "count": 1,
+    "summary": "coax rated at coupler-plane |Gamma|"
+   },
+   {
+    "cid": "A910-A909-04",
+    "driver": "A9-07 H3-A907-15, OQ-A907-11",
+    "op": "append",
+    "ptr": "/packages[id=RFQ-04]/requirements",
+    "count": 1,
+    "summary": "optional pre-match line"
+   },
+   {
+    "cid": "A910-A909-05",
+    "driver": "A9-08 design_cases.tank_volume (323 K)",
+    "op": "set",
+    "ptr": "/packages[id=RFQ-07]/requirements[id=RFQ-07-R04]/value",
+    "count": 1,
+    "summary": "tank ranges at 323 K from A9-08"
+   },
+   {
+    "cid": "A910-A909-06",
+    "driver": "A9-08 design_cases.tank_volume (323 K)",
+    "op": "set",
+    "ptr": "/packages[id=RFQ-07]/requirements[id=RFQ-07-R04]/status",
+    "count": 1,
+    "summary": "RFQ-07-R04 status"
+   },
+   {
+    "cid": "A910-A909-07",
+    "driver": "A9-08 design_cases.tank_volume (323 K)",
+    "op": "set",
+    "ptr": "/packages[id=RFQ-07]/requirements[id=RFQ-07-R04]/evidence_class",
+    "count": 1,
+    "summary": "RFQ-07-R04 evidence class"
+   },
+   {
+    "cid": "A910-A909-08",
+    "driver": "A9-08 design_cases.tank_volume (323 K)",
+    "op": "set",
+    "ptr": "/packages[id=RFQ-07]/requirements[id=RFQ-07-R04]/units",
+    "count": 1,
+    "summary": "RFQ-07-R04 units"
+   },
+   {
+    "cid": "A910-A909-09",
+    "driver": "A9-06 line_checks AL-08",
+    "op": "set",
+    "ptr": "/packages[id=RFQ-07]/requirements[id=RFQ-07-R10]/value",
+    "count": 1,
+    "summary": "Xe hardware mass context from A9-06"
+   },
+   {
+    "cid": "A910-A909-10",
+    "driver": "A9-06 line_checks AL-08",
+    "op": "set",
+    "ptr": "/packages[id=RFQ-07]/requirements[id=RFQ-07-R10]/status",
+    "count": 1,
+    "summary": "RFQ-07-R10 status"
+   },
+   {
+    "cid": "A910-A909-11",
+    "driver": "A9-06 line_checks AL-08",
+    "op": "set",
+    "ptr": "/packages[id=RFQ-07]/requirements[id=RFQ-07-R10]/evidence_class",
+    "count": 1,
+    "summary": "RFQ-07-R10 evidence class"
+   },
+   {
+    "cid": "A910-A909-12",
+    "driver": "A9-06 line_checks AL-06",
+    "op": "set",
+    "ptr": "/packages[id=RFQ-04]/requirements[id=RFQ-04-R14]/value",
+    "count": 1,
+    "summary": "RF generator mass context re-evaluated"
+   },
+   {
+    "cid": "A910-A909-13",
+    "driver": "A9-06 line_checks AL-06",
+    "op": "set",
+    "ptr": "/packages[id=RFQ-04]/requirements[id=RFQ-04-R14]/status",
+    "count": 1,
+    "summary": "RFQ-04-R14 status"
+   },
+   {
+    "cid": "A910-A909-15",
+    "driver": "A9-06 merged (no ground module masses)",
+    "op": "set",
+    "ptr": "/packages[id=RFQ-01]/requirements[id=RFQ-01-R04]/value",
+    "count": 1,
+    "summary": "RFQ-01-R04 re-evaluated"
+   },
+   {
+    "cid": "A910-A909-16",
+    "driver": "A9-06 merged",
+    "op": "set",
+    "ptr": "/packages[id=RFQ-01]/requirements[id=RFQ-01-R04]/status",
+    "count": 1,
+    "summary": "RFQ-01-R04 status"
+   },
+   {
+    "cid": "A910-A909-17",
+    "driver": "A9-07 merged (requirements, no drawings)",
+    "op": "set",
+    "ptr": "/packages[id=RFQ-01]/requirements[id=RFQ-01-R13]/value",
+    "count": 1,
+    "summary": "RFQ-01-R13 re-evaluated"
+   },
+   {
+    "cid": "A910-A909-18",
+    "driver": "A9-07 merged",
+    "op": "set",
+    "ptr": "/packages[id=RFQ-01]/requirements[id=RFQ-01-R13]/status",
+    "count": 1,
+    "summary": "RFQ-01-R13 status"
+   },
+   {
+    "cid": "A910-A909-19",
+    "driver": "A9-08 merged (XE_REFERENCE term)",
+    "op": "replace",
+    "ptr": "/packages[id=RFQ-02]/requirements[id=RFQ-02-R07]/value",
+    "count": 1,
+    "summary": "RFQ-02-R07 re-evaluated"
+   },
+   {
+    "cid": "A910-A909-20",
+    "driver": "A9-06 line_checks AL-05",
+    "op": "set",
+    "ptr": "/packages[id=RFQ-05]/requirements[id=RFQ-05-R12]/value",
+    "count": 1,
+    "summary": "RFQ-05-R12 re-evaluated"
+   },
+   {
+    "cid": "A910-A909-21",
+    "driver": "A9-06 line_checks AL-05",
+    "op": "set",
+    "ptr": "/packages[id=RFQ-05]/requirements[id=RFQ-05-R12]/status",
+    "count": 1,
+    "summary": "RFQ-05-R12 status"
+   },
+   {
+    "cid": "A910-A909-22",
+    "driver": "A9-08 design_cases (case content)",
+    "op": "replace",
+    "ptr": "/packages[id=RFQ-07]/requirements[id=RFQ-07-R03]/note",
+    "count": 1,
+    "summary": "RFQ-07-R03 note re-evaluated"
+   },
+   {
+    "cid": "A910-A909-23",
+    "driver": "A9-08 design_cases (case content)",
+    "op": "replace",
+    "ptr": "/derived/xe_tank_indicative_volume_L/note",
+    "count": 1,
+    "summary": "derived note re-evaluated"
+   },
+   {
+    "cid": "A910-A909-24",
+    "driver": "A9.1 ICP-46 (A9-07 K7)",
+    "op": "replace",
+    "ptr": "/packages[id=RFQ-08]/requirements[id=RFQ-08-R12]/value",
+    "count": 1,
+    "summary": "RFQ-08-R12 re-evaluated"
+   },
+   {
+    "cid": "A910-A909-25",
+    "driver": "A9-08 merged",
+    "op": "set",
+    "ptr": "/m16_impact[0]/blocking_item",
+    "count": 1,
+    "summary": "M16 blocking item re-evaluated"
+   },
+   {
+    "cid": "A910-A909-26",
+    "driver": "A9-07 merged",
+    "op": "set",
+    "ptr": "/m16_impact[7]/blocking_item",
+    "count": 1,
+    "summary": "M16 blocking item re-evaluated"
+   },
+   {
+    "cid": "A910-A909-27",
+    "driver": "A9-06 merged (no ground module masses)",
+    "op": "set",
+    "ptr": "/interface_demands[id=IF-RFQ-01]/status",
+    "count": 1,
+    "summary": "IF-RFQ-01 re-evaluated"
+   },
+   {
+    "cid": "A910-A909-28",
+    "driver": "A9-07 merged (requirements, no drawings)",
+    "op": "set",
+    "ptr": "/interface_demands[id=IF-RFQ-03]/status",
+    "count": 1,
+    "summary": "IF-RFQ-03 re-evaluated"
+   },
+   {
+    "cid": "A910-A909-29",
+    "driver": "A9-08 design_cases",
+    "op": "set",
+    "ptr": "/interface_demands[id=IF-RFQ-05]/status",
+    "count": 1,
+    "summary": "IF-RFQ-05 re-evaluated"
+   },
+   {
+    "cid": "A910-A909-30",
+    "driver": "OQ-INT-03 re-evaluation",
+    "op": "set",
+    "ptr": "/pending_lanes_status_a9_10",
+    "count": 1,
+    "summary": "parallel lanes merged"
+   },
+   {
+    "cid": "A910-A909-31",
+    "driver": "A9-08 merged",
+    "op": "replace",
+    "ptr": "/open_owner_questions[id=OQ-RFQ-09]/proposed_answer",
+    "count": 1,
+    "summary": "OQ-RFQ-09 proposed answer re-evaluated (question stays OPEN)"
+   },
+   {
+    "cid": "A910-A909-14",
+    "driver": "row 111 (H2-4 28 V vs 100 V)",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=OQ-RFQ-05]",
+    "count": 1,
+    "summary": "H2-4 28 V vs row-111 100 V conflict recorded as resolved by row 111"
+   }
+  ]
  }
 }

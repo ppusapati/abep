@@ -24,7 +24,7 @@ Torsional thrust balance for the H-1 + downstream electron-source test article (
 | RFQ-01-R01 | measurement principle | torsional baseline | - | OWNER_GIVEN | NOW | owner-allocation | row 115; UB-T-00 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-01-R02 | procurement path | dual path | - | OWNER_GIVEN | NOW | owner-allocation | row 118; row 118 |
 | RFQ-01-R03 | moving payload capacity (minimum) | 25.0 | kg | OWNER_GIVEN | NOW | owner-allocation | row 116; UB-T-03 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
-| RFQ-01-R04 | mass per configuration on the platform | PENDING docs/budgets/mass_a9/ (A9-06: module masses and CG per configuration) | kg | PENDING | LOCK-1 | - | ICP-08 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
+| RFQ-01-R04 | mass per configuration on the platform | TBD - requires the C1 / ICP / sham module drawings (ICD ICP-08); A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged) books flight allocations only, no ground module masses/CG | kg | TBD | LOCK-1 | - | ICP-08 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
 | RFQ-01-R05 | thrust uncertainty design/acceptance target | 1.0 | % of reading (k = 1) | OWNER_GIVEN | LOCK-2 | owner-allocation | row 121; A9.1 UBQ-01; UB-T-01 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-01-R06 | acceptance test point | 12.0 | mN | OWNER_GIVEN | LOCK-1 | owner-allocation | row 120; UB-T-02 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-01-R07 | standard uncertainty at the acceptance point | 0.12 | mN (k = 1) | DERIVED | LOCK-2 | model-derived | UB-T-01 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); UB-T-02 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
@@ -33,7 +33,7 @@ Torsional thrust balance for the H-1 + downstream electron-source test article (
 | RFQ-01-R10 | calibration-shift treatment | TBD - requires LOCK-2 metrology-only calibration evidence (UBQ-05) | relative | TBD | LOCK-2 | - | A9.1 UBQ-05; UB-T-07 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-01-R11 | service-line crossing | harp/slack loops + flexible RF coax + matched shams | - | OWNER_GIVEN | NOW | owner-allocation | row 117; row 133; ICP-18 (schemas/interfaces/icp_neutralizer_icd_v1.json); UB-T-09 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-01-R12 | matching network off the platform | off-platform | - | OWNER_GIVEN | NOW | owner-allocation | A9.1 A9-03-matching; ICP-13 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
-| RFQ-01-R13 | module-exchange interface | PENDING docs/hardware/h2_a9_revisions/ (A9-07: KC-1 / downstream ICP fixture drawings) | - | PENDING | LOCK-1 | - | row 122; ICP-06 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
+| RFQ-01-R13 | module-exchange interface | TBD - requires the KC-1 / downstream ICP fixture drawings; A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged) gives the requirements (REV-29..36: H-1 bolted, KC-1 carries C1 module / ICP module / sham, >= 25 kg stand), not drawings | - | TBD | LOCK-1 | - | row 122; ICP-06 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
 | RFQ-01-R14 | RF / electrostatic pickup immunity | TBD - requires the S1a RF-pickup check (UB-T-11) | mN | TBD | LOCK-2 | - | UB-T-11 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); row 72 |
 | RFQ-01-R15 | thermal drift | TBD - requires S1b thermal time constants and the total ICP module heat load (ICD ICP-43) | mN | TBD | LOCK-2 | - | UB-T-10 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); ICP-43 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
 | RFQ-01-R16 | non-ferromagnetic construction near H-1 | non-ferromagnetic in the MC-1 exclusion zone | - | COPIED_VERIFIED | NOW | owner-allocation | ICP-32 (schemas/interfaces/icp_neutralizer_icd_v1.json); docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json#/h3_procurement_inputs/0 |
@@ -90,9 +90,9 @@ Requirement text:
 
 ## Open specification items (TBD / PENDING with the gate that freezes them)
 
-- RFQ-01-R04 mass per configuration on the platform: PENDING docs/budgets/mass_a9/ (A9-06: module masses and CG per configuration) - freezes at **LOCK-1**
+- RFQ-01-R04 mass per configuration on the platform: TBD - requires the C1 / ICP / sham module drawings (ICD ICP-08); A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged) books flight allocations only, no ground module masses/CG - freezes at **LOCK-1**
 - RFQ-01-R10 calibration-shift treatment: TBD - requires LOCK-2 metrology-only calibration evidence (UBQ-05) - freezes at **LOCK-2**
-- RFQ-01-R13 module-exchange interface: PENDING docs/hardware/h2_a9_revisions/ (A9-07: KC-1 / downstream ICP fixture drawings) - freezes at **LOCK-1**
+- RFQ-01-R13 module-exchange interface: TBD - requires the KC-1 / downstream ICP fixture drawings; A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged) gives the requirements (REV-29..36: H-1 bolted, KC-1 carries C1 module / ICP module / sham, >= 25 kg stand), not drawings - freezes at **LOCK-1**
 - RFQ-01-R14 RF / electrostatic pickup immunity: TBD - requires the S1a RF-pickup check (UB-T-11) - freezes at **LOCK-2**
 - RFQ-01-R15 thermal drift: TBD - requires S1b thermal time constants and the total ICP module heat load (ICD ICP-43) - freezes at **LOCK-2**
 - RFQ-01-R17 read-out resolution and noise floor: TBD - requires S1a noise floor at the dwell averaging time (UB-T-13) - freezes at **LOCK-2**

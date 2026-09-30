@@ -6,6 +6,8 @@
  "owner_decision": "A9 (+ A9.1 execution step_1_integration_repair)",
  "status": "MECHANICAL_INTEGRATION_NOT_A_SCIENTIFIC_RESULT",
  "base_commit": "88e4d478b81b25f0b4fd7de32aa5f76f0726c361",
+ "snapshot_commit": "ecdad06e30bc5d2f172e862e4bd4843e86332d42",
+ "a9_10_note": "frozen step-1 record: compared, counted and pinned at the snapshot commit (A9-10 base); the A9-10 changes to the deliverables (A9.1 decisions applied, references re-evaluated, M16 v3, owner-question state v2) are listed with their drivers in docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
  "generated_by": "docs/experiments/hall_icp/integration/build_a9_core_integration.py (--check reproduces JSON and MD exactly and re-runs every check)",
  "companion_document": "docs/experiments/hall_icp/integration/A9_CORE_INTEGRATION.md",
  "test": "tests/test_a9_core_integration.py",
@@ -5245,7 +5247,7 @@
   {
    "id": "IF-INT-04",
    "direction": "from this lane to A9-10",
-   "counterpart": "A9-10 governance (no path yet)",
+   "counterpart": "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (A9-10)",
    "quantity": "resolve the UNMAPPED UB-DQ ids UB-DQ-RF, UB-DQ-NEUT, UB-DQ-ID, UB-DQ-FLOW, UB-DQ-PB, UB-DQ-BZ, UB-DQ-TEMP",
    "units": "-",
    "status": "OPEN - owner/A9-10"
@@ -5253,7 +5255,7 @@
   {
    "id": "IF-INT-05",
    "direction": "from this lane to A9-10",
-   "counterpart": "A9-10 governance (no path yet)",
+   "counterpart": "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (A9-10)",
    "quantity": "re-evaluate status / value / assessment fields whose target is now in the base",
    "units": "count",
    "value": 80,
@@ -5262,7 +5264,7 @@
   {
    "id": "IF-INT-06",
    "direction": "from this lane to A9-10",
-   "counterpart": "A9-10 governance (no path yet)",
+   "counterpart": "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (A9-10)",
    "quantity": "per-input producing stage and decision-quantity assignment in the A9-05 validation inputs",
    "units": "count",
    "value": 98,
@@ -5331,7 +5333,7 @@
    "id": "OQ-INT-01",
    "question": "How should the UNMAPPED A9-04 ids (UB-DQ-RF, UB-DQ-NEUT, UB-DQ-ID, UB-DQ-FLOW, UB-DQ-PB, UB-DQ-BZ, UB-DQ-TEMP) relate to the A9-01 DQ-HI ids?",
    "proposed_answer": "keep them as measurement-chain ids (they are measured quantities feeding several or no decision quantities) and add in A9-10 an explicit chain -> DQ-HI consumer table; owner call",
-   "status": "OPEN - owner/A9-10"
+   "status": "OPEN - owner call (A9-10 added the PROPOSED chain -> DQ-HI consumer table, ids kept: docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table)"
   },
   {
    "id": "OQ-INT-02",
@@ -5343,13 +5345,13 @@
    "id": "OQ-INT-03",
    "question": "Status / value / assessment fields that still read 'PENDING <lane>' although the lane is now in the base: re-evaluate in A9-10?",
    "proposed_answer": "yes, in A9-10 with the consolidated owner-question state (not a mechanical change)",
-   "status": "OPEN"
+   "status": "ADDRESSED_IN_A9_10 (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json pending_reevaluation: every remaining PENDING filled from its target or given its precise reason)"
   },
   {
    "id": "OQ-INT-04",
    "question": "A9-03 published-analog annex says it 'must be reconciled with A9-05 when it merges'; the pointer is resolved here, the reconciliation is not",
    "proposed_answer": "A9-10 reconciles the annex against docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json (content, not mechanical)",
-   "status": "OPEN"
+   "status": "ADDRESSED_IN_A9_10 (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json annex_reconciliation; A9-05 governs where they differ)"
   }
  ],
  "historical_reuse": {

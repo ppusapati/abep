@@ -74,7 +74,7 @@
  ],
  "evidence_input": {
   "path": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
-  "sha256": "541f6568043f129b5bfaec9afc73e4838816b5183701fbf68be02388dd7dadeb",
+  "sha256": "1c511db53b5874168c361683bae3d121bc0883a99868e72906bb5cf9234cc8fc",
   "note": "same lane (part 1); regenerated first"
  },
  "replaces": "the frozen parallel RF||Hall v2 input list for the primary line (row 145); v2 inputs are never supplied or invented (row 146)",
@@ -760,7 +760,7 @@
    "group": "extraction",
    "name": "neutralization margin",
    "symbol": "M_neut",
-   "definition": "PROPOSED form (OQ-VI-02): electron-current capacity of the electron source at the registered coupling-voltage limit (VI-EX-02) relative to the measured Hall current demand at the same point (VI-HD-01); the numeric margin is frozen only at LOCK-2 (rows 18, 19)",
+   "definition": "owner form (A9.1 UBQ-02): M_n = I_e,cap / I_d,dem - 1 with I_e,cap at the registered coupling-voltage limit (VI-EX-02) and I_d,dem the measured Hall current demand at the same point (VI-HD-01); gate on the one-sided lower confidence bound > 0; any extra design margin frozen at LOCK-2 by the LOCK-1 rule (rows 18, 19)",
    "units": "-",
    "configurations": [
     "hall_c1_reference",
@@ -780,7 +780,7 @@
     "N2",
     "O2"
    ],
-   "value": "TBD - requires VI-EX-02 and VI-HD-01; form: owner call (OQ-VI-02)",
+   "value": "TBD - requires VI-EX-02 and VI-HD-01 (hardware); form decided (A9.1 UBQ-02)",
    "evidence_class": "measured (future)",
    "basis": "derived",
    "source": "owner answers rows 18, 19, 37, 145",
@@ -1175,7 +1175,7 @@
    "group": "gas",
    "name": "ICP gas species and booking",
    "symbol": "gas_ICP",
-   "definition": "the gas that sustains the ICP: (a) Hall exhaust re-use only (anchor topology), (b) a dedicated Xe feed (booked in the Xe ledger, docs/budgets/xe_ledger/), or (c) a dedicated atmospheric feed; UNBOOKED today (A9 recorder flag row 46)",
+   "definition": "the gas that sustains the ICP: (a) Hall exhaust re-use only (anchor topology), (b) a dedicated Xe feed (booked in the A9 Xe ledger docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json as F-ICP-XE / G-ICP-XE), or (c) a dedicated atmospheric feed; UNBOOKED today (A9 recorder flag row 46)",
    "units": "-",
    "configurations": [
     "hall_icp_neutralizer"
@@ -1194,11 +1194,11 @@
     "N2",
     "O2"
    ],
-   "value": "TBD - requires owner decision OQ-VI-01; flagged UNBOOKED (A9 recorder_consistency_flags row 46)",
+   "value": "G-REUSE (A9.1 HIQ-06): Hall exhaust / residual propellant, mdot_ICP,dedicated = 0; dedicated port capped; G-ATM / G-XE only as declared contingency variants (G-XE booked in docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json under PHASE_TOTAL_FLOW)",
    "evidence_class": "owner-allocation",
-   "basis": "owner allocation (pending)",
+   "basis": "owner decision (A9.1 HIQ-06)",
    "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json recorder_consistency_flags_for_owner (row 46)",
-   "status": "OPEN_UNBOOKED_FLAG",
+   "status": "OWNER_GIVEN (A9.1 HIQ-06)",
    "freeze_point": "LOCK-1",
    "consumers": [
     "P-DXE",
@@ -2397,7 +2397,10 @@
     42,
     46
    ],
-   "freeze_point": "LOCK-1"
+   "freeze_point": "LOCK-1",
+   "status": "ANSWERED_BY_A9_1 (HIQ-06)",
+   "a9_1_decision": "HIQ-06: primary ICP gas mode G-REUSE (Hall exhaust/residual); dedicated ICP port installed and capped; G-ATM / G-XE are declared contingency variants; score-bearing N2/N2+O2 uses G-REUSE unless it fails the preregistered ICP-capacity gate; no dedicated Xe to make the ICP work",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "OQ-VI-02",
@@ -2408,7 +2411,10 @@
     19,
     37
    ],
-   "freeze_point": "LOCK-1 / LOCK-2"
+   "freeze_point": "LOCK-1 / LOCK-2",
+   "status": "ANSWERED_BY_A9_1 (UBQ-02)",
+   "a9_1_decision": "UBQ-02: M_n = I_e,cap / I_d,dem - 1; gate on one-sided lower confidence bound > 0; any extra design margin frozen at LOCK-2 per LOCK-1 rule",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "OQ-VI-03",
@@ -2592,5 +2598,84 @@
   "analog_can_bound_context": 31,
   "owner_given_value": 4,
   "tbd": 48
+ },
+ "a9_10_reconciliation": {
+  "lane": "fo_a9_10_integration",
+  "record": "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+  "overlay": "docs/experiments/hall_icp/integration/a9_10_overlay.py",
+  "a9_1_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
+  },
+  "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+  "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
+  "changes": [
+   {
+    "cid": "A910-A905VI-Q01",
+    "driver": "A9.1 HIQ-06",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=OQ-VI-01]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-06"
+   },
+   {
+    "cid": "A910-A905VI-Q02",
+    "driver": "A9.1 UBQ-02",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=OQ-VI-02]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 UBQ-02"
+   },
+   {
+    "cid": "A910-A905VI-01",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=VI-GAS-01]/value",
+    "count": 1,
+    "summary": "ICP gas booked G-REUSE"
+   },
+   {
+    "cid": "A910-A905VI-02",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=VI-GAS-01]/status",
+    "count": 1,
+    "summary": "VI-GAS-01 status"
+   },
+   {
+    "cid": "A910-A905VI-03",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=VI-GAS-01]/basis",
+    "count": 1,
+    "summary": "VI-GAS-01 basis"
+   },
+   {
+    "cid": "A910-A905VI-04",
+    "driver": "A9.1 UBQ-02",
+    "op": "set",
+    "ptr": "/items[id=VI-EX-07]/definition",
+    "count": 1,
+    "summary": "M_n form"
+   },
+   {
+    "cid": "A910-A905VI-05",
+    "driver": "A9.1 UBQ-02",
+    "op": "set",
+    "ptr": "/items[id=VI-EX-07]/value",
+    "count": 1,
+    "summary": "VI-EX-07 value text"
+   },
+   {
+    "cid": "A910-A905VI-06",
+    "driver": "A9-08 merged (Xe-ledger retarget)",
+    "op": "replace",
+    "ptr": "/items[id=VI-GAS-01]/definition",
+    "count": 1,
+    "summary": "Xe-ledger reference retargeted"
+   }
+  ]
  }
 }

@@ -33,7 +33,7 @@ Components for the downstream 13.56 MHz ICP electron-source module (engineering 
 | RFQ-05-R09 | capped dedicated gas port and pressure port | capped port + pressure port | - | OWNER_GIVEN | NOW | owner-allocation | A9.1 HIQ-06; row 63; ICP-27 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
 | RFQ-05-R10 | MODULE_ID and serialization | MODULE_ID + serial | - | OWNER_GIVEN | NOW | owner-allocation | row 62; row 83; ICP-33 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
 | RFQ-05-R11 | O2 service and materials | ASTM G93 Level C; no silver | - | OWNER_GIVEN | NOW | owner-allocation | row 107; row 103; row 132 |
-| RFQ-05-R12 | flight allocation context | PENDING docs/budgets/mass_a9/ (A9-06: ICP neutralizer mass reconciliation) | kg | PENDING | after-evidence | - | row 54 |
+| RFQ-05-R12 | flight allocation context | TBD - requires supplier mass data; A9-06 records the owner v0 ICP-neutralizer allocation (row 54, 2.0 kg) as ALLOCATION_UNVERIFIABLE_TBD (no evidence floor): docs/budgets/mass_a9/mass_a9_v1.json line_checks[line=AL-05] | kg | TBD | after-evidence | - | row 54 |
 
 Notes:
 
@@ -77,7 +77,7 @@ Requirement text:
 - RFQ-05-R05 antenna and shielding: TBD - requires ICD ICP-19 and ICP-38 design - freezes at **LOCK-1**
 - RFQ-05-R06 geometry (standoff, aperture, envelope): TBD - requires ICD ICP-02, ICP-04, ICP-07 (LOCK-1) - freezes at **LOCK-1**
 - RFQ-05-R07 collector/bias supply (floating): TBD - requires A902-23 collector/bias V and I range and the registered I_d,max (ICD ICP-45) - freezes at **LOCK-1**
-- RFQ-05-R12 flight allocation context: PENDING docs/budgets/mass_a9/ (A9-06: ICP neutralizer mass reconciliation) - freezes at **after-evidence**
+- RFQ-05-R12 flight allocation context: TBD - requires supplier mass data; A9-06 records the owner v0 ICP-neutralizer allocation (row 54, 2.0 kg) as ALLOCATION_UNVERIFIABLE_TBD (no evidence floor): docs/budgets/mass_a9/mass_a9_v1.json line_checks[line=AL-05] - freezes at **after-evidence**
 
 ## The supplier's response must state
 

@@ -144,7 +144,9 @@ def test_rf_only_term_is_arithmetic_and_not_a_module_bound(doc):
     assert "NOT a bound on the total" in dem["ID-16"]["quantity"]
     # the total module heat load (discharge-path + plume terms) has no value until P_d,max exists
     t = by["ICP-43"]
-    assert t["value"] is None and t["status"].startswith("PENDING ") and "Q_coll" in t["requirement"]
+    # A9-10 re-evaluation: still no value; the precise remaining reason is the registered stand P_d,max
+    assert t["value"] is None and t["status"] == "TBD" and "P_d,max" in t["tbd"] and "Q_coll" in t["requirement"]
+    assert "IDA7-07" in t["h1_heat_allowance_a9_07"]
     assert dem["ID-26"]["value"] is None and dem["ID-25"]["value"] is None
     assert "ICP-43" in by["ICP-37"]["requirement"]
 
@@ -302,7 +304,9 @@ def test_builder_source_hygiene():
 def test_electron_current_capacity_item(doc):
     by = {x["id"]: x for x in doc["items"]}
     x = by["ICP-45"]
-    assert x["value"] is None and x["status"].startswith("PENDING") and "I_d,max" in x["status"]
+    # A9-10: form owner-given (A9.1 ICP-45, ICP-45A / ICP-45N entry condition), value TBD until I_d,max is registered
+    assert x["value"] is None and x["status"].startswith("TBD") and "I_d,max" in x["tbd"]
+    assert "ICP-45A" in x["entry_condition_a9_1"] and "ICP-45N" in x["entry_condition_a9_1"]
     assert "I_d,max" in x["requirement"] and "Ar (ENGINEERING_ONLY)" in x["verification"]
     assert 109 in x["owner_rows"]
     dem = {d["id"]: d for d in doc["interface_demands"]}
@@ -316,6 +320,9 @@ def test_keeper_pulse_rating_separate_from_dc_isolation(doc):
     by = {x["id"]: x for x in doc["items"]}
     k = by["ICP-46"]
     assert k["value"] == 600.0 and 89 in k["owner_rows"] and k["applies_to"] == ["hall_c1_reference"]
+    iso = k["a9_1_isolation_basis"]                                    # A9.1 ICP-46 (owner-given)
+    assert (iso["design_isolation_basis_V"], iso["development_hipot_V_DC"], iso["pulse_waveform_test_V"]) == (
+        900.0, 1000.0, 600.0)
     assert "ICP-46" in by["ICP-23"]["requirement"] and "governing" in by["ICP-23"]["basis"]
 
 

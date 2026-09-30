@@ -58,13 +58,13 @@ Rule: UB-DQ-x maps to DQ-HI-y only if exactly one A9-01 decision quantity measur
 |---|---|---|---|---|---|---|
 | UB-DQ-T | DQ-HI-TABS | MAPPED | thrust; T; mN; both configurations; primary instrument INS-01 | DQ-HI-TABS absolute thrust compatibility; mN; HARD_GATE; both configurations; chain INS-01, INS-05, INS-06, INS-07, INS-08 | same quantity (measured axial thrust), same units (mN), same configurations, INS-01 in both chains; the only A9-01 quantity in mN | DQ-HI-TPBUS (mN/kW ratio) |
 | UB-DQ-PBUS | DQ-HI-PBUS | MAPPED | full P_bus at the spacecraft-DC propulsion boundary; P_bus; W; both configurations; primary instrument INS-02 | DQ-HI-PBUS full bus-power compatibility; W (steady and transient peak); HARD_GATE; both configurations; chain INS-02, INS-03, INS-18 | same quantity (full P_bus on the A9 boundary), same units (W), same configurations, INS-02 in both chains | DQ-HI-PALLOC (allocation check, hall_icp_neutralizer only), DQ-HI-DPBUS (paired difference), DQ-HI-TPBUS (ratio) |
-| UB-DQ-RF | - | UNMAPPED - owner/A9-10 | RF forward / reflected / delivered power; P_fwd, P_ref, P_net, P_coil; W; hall_icp_neutralizer only | no A9-01 decision quantity with this name | no counterpart: RF power enters A9-01 only through the RF-source DC slot of P_bus and as the reflected-power interlock limit inside a multi-limit class | DQ-HI-PBUS / DQ-HI-PALLOC (via the RF-source DC input slot), DQ-HI-SAFE (RF interlock and reflected power, row 62) |
-| UB-DQ-NEUT | - | UNMAPPED - owner/A9-10 | electron-source current, collector current / bias and neutralization margin; I_e,src, I_coll, V_coll, V_cg, M_n; A / V / -; both configurations | split over DQ-HI-ECAP (A; dimensionless ratio) and DQ-HI-VCPL (V) | maps to several A9-01 quantities (current/margin part vs potential part) | DQ-HI-ECAP, DQ-HI-VCPL |
-| UB-DQ-ID | - | UNMAPPED - owner/A9-10 | Hall discharge current and oscillations; I_d, I_d(t), A_osc, S_Id(f); A / - / A^2 Hz^-1; both configurations | used by DQ-HI-SUST (class), DQ-HI-STAB (A band, Hz, class) and DQ-HI-ECAP (Hall current demand) | maps to several A9-01 quantities | DQ-HI-SUST, DQ-HI-STAB, DQ-HI-ECAP |
-| UB-DQ-FLOW | - | UNMAPPED - owner/A9-10 | mass flows; mdot_N2, mdot_O2, mdot_Ar, mdot_Xe,C1, mdot_ICP; mg s^-1; both configurations | used by DQ-HI-DXE (Xe only), DQ-HI-KNEE (flow scan output) and DQ-HI-RESTART (gas per restart) | maps to several A9-01 quantities; none is the set of all flows | DQ-HI-DXE, DQ-HI-KNEE, DQ-HI-RESTART |
-| UB-DQ-PB | - | UNMAPPED - owner/A9-10 | background pressure and residual gas composition; p_b, x_i; Pa / mole fraction; both configurations | no A9-01 decision quantity (a condition variable of the same-condition list and stage HI-PB) | no counterpart | - |
-| UB-DQ-BZ | - | UNMAPPED - owner/A9-10 | magnetic field B(z) and ICP-induced perturbation; B(z), Delta B_icp(z); T; both configurations | no A9-01 decision quantity (a same-condition variable; tolerance at gate deadline GD-11) | no counterpart | - |
-| UB-DQ-TEMP | - | UNMAPPED - owner/A9-10 | temperatures incl. measured radiative sink temperature; T_k, T_sink; K; both configurations | temperatures enter DQ-HI-SAFE only as one limit of a multi-limit class (class; W; K; V) | no counterpart with the same name and units | DQ-HI-SAFE |
+| UB-DQ-RF | - | UNMAPPED - kept as a measurement-chain id; chain -> DQ-HI consumer table in docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (OQ-INT-01 PROPOSED, owner call) | RF forward / reflected / delivered power; P_fwd, P_ref, P_net, P_coil; W; hall_icp_neutralizer only | no A9-01 decision quantity with this name | no counterpart: RF power enters A9-01 only through the RF-source DC slot of P_bus and as the reflected-power interlock limit inside a multi-limit class | DQ-HI-PBUS / DQ-HI-PALLOC (via the RF-source DC input slot), DQ-HI-SAFE (RF interlock and reflected power, row 62) |
+| UB-DQ-NEUT | - | UNMAPPED - kept as a measurement-chain id; chain -> DQ-HI consumer table in docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (OQ-INT-01 PROPOSED, owner call) | electron-source current, collector current / bias and neutralization margin; I_e,src, I_coll, V_coll, V_cg, M_n; A / V / -; both configurations | split over DQ-HI-ECAP (A; dimensionless ratio) and DQ-HI-VCPL (V) | maps to several A9-01 quantities (current/margin part vs potential part) | DQ-HI-ECAP, DQ-HI-VCPL |
+| UB-DQ-ID | - | UNMAPPED - kept as a measurement-chain id; chain -> DQ-HI consumer table in docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (OQ-INT-01 PROPOSED, owner call) | Hall discharge current and oscillations; I_d, I_d(t), A_osc, S_Id(f); A / - / A^2 Hz^-1; both configurations | used by DQ-HI-SUST (class), DQ-HI-STAB (A band, Hz, class) and DQ-HI-ECAP (Hall current demand) | maps to several A9-01 quantities | DQ-HI-SUST, DQ-HI-STAB, DQ-HI-ECAP |
+| UB-DQ-FLOW | - | UNMAPPED - kept as a measurement-chain id; chain -> DQ-HI consumer table in docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (OQ-INT-01 PROPOSED, owner call) | mass flows; mdot_N2, mdot_O2, mdot_Ar, mdot_Xe,C1, mdot_ICP; mg s^-1; both configurations | used by DQ-HI-DXE (Xe only), DQ-HI-KNEE (flow scan output) and DQ-HI-RESTART (gas per restart) | maps to several A9-01 quantities; none is the set of all flows | DQ-HI-DXE, DQ-HI-KNEE, DQ-HI-RESTART |
+| UB-DQ-PB | - | UNMAPPED - kept as a measurement-chain id; chain -> DQ-HI consumer table in docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (OQ-INT-01 PROPOSED, owner call) | background pressure and residual gas composition; p_b, x_i; Pa / mole fraction; both configurations | no A9-01 decision quantity (a condition variable of the same-condition list and stage HI-PB) | no counterpart | - |
+| UB-DQ-BZ | - | UNMAPPED - kept as a measurement-chain id; chain -> DQ-HI consumer table in docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (OQ-INT-01 PROPOSED, owner call) | magnetic field B(z) and ICP-induced perturbation; B(z), Delta B_icp(z); T; both configurations | no A9-01 decision quantity (a same-condition variable; tolerance at gate deadline GD-11) | no counterpart | - |
+| UB-DQ-TEMP | - | UNMAPPED - kept as a measurement-chain id; chain -> DQ-HI consumer table in docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (OQ-INT-01 PROPOSED, owner call) | temperatures incl. measured radiative sink temperature; T_k, T_sink; K; both configurations | temperatures enter DQ-HI-SAFE only as one limit of a multi-limit class (class; W; K; V) | no counterpart with the same name and units | DQ-HI-SAFE |
 | UB-DQ-ETAU | DQ-HI-ETAU | MAPPED | mass utilization from Faraday / ExB; eta_u; -; both configurations; primary instrument INS-15 | DQ-HI-ETAU utilization / beam current (conditional); dimensionless; A; CONDITIONAL; both configurations; chain INS-13, INS-15 | same quantity (utilization), dimensionless in both, same configurations, INS-13/INS-15 in both chains; A9-01 additionally lists the beam current (A) it is built from | - |
 
 ## (a) Items and parameters
@@ -97,11 +97,11 @@ Rule: UB-DQ-x maps to DQ-HI-y only if exactly one A9-01 decision quantity measur
 | UB-RF-01 | UB-DQ-RF | laboratory forward-power range of the RF source and inline chain | requirement | [0.0, 500.0] | W | owner answer | owner answer row 72 | owner-allocation | OWNER_GIVEN | NOW |
 | UB-RF-02 | UB-DQ-RF | coupler coupling-factor calibration at 13.56 MHz (incl. cable) | B | TBD - requires coupler and cable calibration certificates at 13.56 MHz (A4 force_DC_RF_traceability) | relative | certificate | REF-GUM2008 4.3.3 | - | TBD | LOCK-2 |
 | UB-RF-03 | UB-DQ-RF | power-sensor calibration factor and linearity over 0-500 W | B | TBD - requires sensor certificates | relative | certificate | REF-GUM2008 4.3.3; owner answer row 72 | - | TBD | LOCK-2 |
-| UB-RF-04 | UB-DQ-RF | coupler finite directivity and mismatch error on P_ref and P_net | B | TBD - requires coupler directivity from its certificate and the measured load reflection; the evaluation formula is taken from the coupler/sensor documentation (from memory: a directivity-limited reflection error - verify) | W | certificate | - | - | TBD | LOCK-2 |
+| UB-RF-04 | UB-DQ-RF | coupler finite directivity and mismatch error on P_ref and P_net | B | TBD - requires the coupler directivity D from its certificate, the operating \|Gamma\| at the coupler plane and D_min frozen at LOCK-2; first-order relation from A9-07 IDA7-21: worst-case relative error of P_net = max((\|G\|+d)^2 - \|G\|^2, \|G\|^2 - (\|G\|-d)^2) / (1 - \|G\|^2), d = 10^(-D/20) (verify against the coupler documentation); plus the two-port + Gamma_L load-power correction term (A9H-INS-03) | W | certificate | docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json interface_demands IDA7-21 and recomputations.rf_reference_plane (sensitivity at residual VSWR 1.2-2.0, D 20/30/40 dB) | - | TBD | LOCK-2 |
 | UB-RF-05 | UB-DQ-RF | matching-network and cable loss between the coupler plane and the coil | B | TBD - requires S1a dummy-load characterization of the matching network and cable (evidence class 'reconstructed' once measured) | W | S1a | - | - | TBD | LOCK-2 |
 | UB-RF-06 | UB-DQ-RF | harmonic content of the source output | B | TBD - requires S1a spectrum of the source output into the matched load | relative | S1a | - | - | TBD | LOCK-2 |
 | UB-RF-07 | UB-DQ-RF | per-reading repeatability of P_fwd and P_ref | A | TBD - requires S1b readings | W | S1b | - | - | TBD | LOCK-2 |
-| UB-RF-08 | UB-DQ-RF | calorimetric cross-check agreement rule | rule | TBD - requires owner acceptance of the rule form (UBQ-04) at LOCK-1; k_x value at LOCK-2 from S1a | - | owner answer row 72 (cross-check role) | owner answer row 72 | - | PROPOSED | LOCK-1 |
+| UB-RF-08 | UB-DQ-RF | calorimetric cross-check agreement rule | rule | 2.0 | - | owner answer row 72 (cross-check role) | owner answer row 72; docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-04 | owner-allocation | OWNER_GIVEN | LOCK-1 |
 | UB-RF-09 | UB-DQ-RF | RF reference plane for the delivered-power quantity | rule | PENDING docs/interfaces/icp_neutralizer/ (coupler location relative to the matching network and coil) | - | A9-03 | owner answers rows 62, 71 | - | PENDING | LOCK-1 |
 | UB-N-00 | UB-DQ-NEUT | electrical topology: floating ICP body, separately biased collector | rule | PENDING docs/interfaces/icp_neutralizer/ (floating body + separately biased collector circuit, row 70) | - | A9-03 | owner answer row 70 | - | PENDING | LOCK-1 |
 | UB-N-01 | UB-DQ-NEUT | collector / bias supply current channel calibration | B | TBD - requires certificate of the channel operated at the floating/bias potential | relative | certificate | REF-GUM2008 4.3.3; owner answer row 62 (collector/bias V/I in the harness) | - | TBD | LOCK-2 |
@@ -109,7 +109,7 @@ Rule: UB-DQ-x maps to DQ-HI-y only if exactly one A9-01 decision quantity measur
 | UB-N-03 | UB-DQ-NEUT | common-mode / RF-induced error on floating current and voltage channels | A | TBD - requires the S1a RF-pickup and electrical-isolation checks (row 64) | A | S1a | owner answer row 64 | - | TBD | LOCK-2 |
 | UB-N-04 | UB-DQ-NEUT | ground-return (cathode-common / bleeder) current channel | B | TBD - requires the selectable cathode-common/bleeder topology with V/I measurement (row 91) and its certificate | A | certificate | owner answer row 91 | - | TBD | LOCK-2 |
 | UB-N-05 | UB-DQ-NEUT | bias-sweep step and settling for the electron-current capacity I_e,cap | rule | TBD - requires the A9-03 bias range and the A9-01 capacity definition | V | A9-01/A9-03 | - | - | TBD | LOCK-1 |
-| UB-N-06 | UB-DQ-NEUT | neutralization-margin definition | rule | PENDING docs/experiments/hall_icp/prereg_framework/ (gate definition; this lane proposes the ratio form M_n = I_e,cap/I_d,dem - 1, UBQ-02) | - | A9-01 | owner answers rows 37, 145 | - | PENDING | LOCK-1 |
+| UB-N-06 | UB-DQ-NEUT | neutralization-margin definition | rule | M_n = I_e,cap / I_d,dem - 1; gate on the one-sided lower confidence bound > 0 (A9.1 UBQ-02); any additional design margin computed/frozen at LOCK-2 by the LOCK-1 uncertainty rule | - | A9-01 | owner answers rows 37, 145; docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-02 | owner-allocation | OWNER_GIVEN | LOCK-1 |
 | UB-N-07 | UB-DQ-NEUT | current-closure residual r_I = (I_d - I_e,src - I_gnd)/I_d | A | TBD - requires S1b readings in both configurations | - | S1b | this lane (PROPOSED diagnostic check) | - | PROPOSED | LOCK-2 |
 | UB-N-08 | UB-DQ-NEUT | C1 reference: emission, keeper and heater records | B | TBD - requires C1 supply channel certificates (H2-2 / A9-02 C1 reference slots) | A / V / W | certificate | owner answers rows 88, 89, 112 | - | TBD | LOCK-2 |
 | UB-N-09 | UB-DQ-NEUT | C1 pulsed keeper ignition class (supply capability) | requirement | [300.0, 600.0] | V | owner answer | owner answer row 89 | owner-allocation | OWNER_GIVEN | NOW |
@@ -132,14 +132,14 @@ Rule: UB-DQ-x maps to DQ-HI-y only if exactly one A9-01 decision quantity measur
 | UB-F-09 | UB-DQ-FLOW | declared MFC body-temperature band | rule | TBD - requires MFC documentation and S1a body-temperature sensitivity (rule adopted, row 97) | K | owner answer | owner answer row 97 | - | TBD | LOCK-1 |
 | UB-F-10 | UB-DQ-FLOW | C1 spot-mode minimum-flow search step | rule | 0.005 | mg s^-1 | owner answer | owner answer row 92 | owner-allocation | OWNER_GIVEN | LOCK-1 |
 | UB-F-11 | UB-DQ-FLOW | C1 ignition dwell cap and retries (preliminary protocol) | rule | {"t_ign_max_s": 120.0, "retries_max": 2} | s / - | owner answer | owner answer row 93 | owner-allocation | OWNER_GIVEN | LOCK-2 |
-| UB-F-12 | UB-DQ-FLOW | ICP gas feed: species and flow measurement chain | rule | PENDING docs/interfaces/icp_neutralizer/ (ICP gas species and flow; A9 recorder flag row 46: not yet booked) | - | A9-03 | A9 recorder_consistency_flags_for_owner (row 46) | - | PENDING | LOCK-1 |
+| UB-F-12 | UB-DQ-FLOW | ICP gas feed: species and flow measurement chain | rule | G-REUSE (A9.1 HIQ-06; schemas/interfaces/icp_neutralizer_icd_v1.json ICP-26): no dedicated ICP feed and no ICP MFC in the primary mode; the Hall-feed chains (INS-05) already carry the gas; a dedicated-flow chain with own-gas calibration exists only for a declared G-ATM / G-XE contingency variant | - | A9-03 | A9 recorder_consistency_flags_for_owner (row 46) | owner-allocation | OWNER_GIVEN | LOCK-1 |
 | UB-B-00 | UB-DQ-PB | elevated background-pressure levels for facility-effect characterization | requirement | 2 | levels | owner answer | owner answer row 23 | owner-allocation | OWNER_GIVEN | LOCK-1 |
 | UB-B-01 | UB-DQ-PB | maximum base background pressure for a scoreable reading | rule | TBD - requires the low-flow knee and the facility capability (row 23; ISRO/LPSC specifications requested, row 137) | Pa | owner answer | owner answers rows 23, 137 | - | TBD | after-evidence |
 | UB-B-02 | UB-DQ-PB | RGA mass range | requirement | 200 | amu | owner answer | owner answer row 127 | owner-allocation | OWNER_GIVEN | NOW |
 | UB-B-03 | UB-DQ-PB | ion-gauge calibration on the working gas / mixture | B | TBD - requires gauge calibration certificates per gas (Ar, N2, O2 mixtures, Xe) | relative | certificate | REF-DANKANICH2017 via H2-6 | - | TBD | LOCK-2 |
 | UB-B-04 | UB-DQ-PB | gas sensitivity factors S_i | B | TBD - requires gauge documentation or own calibration per species | relative | certificate | - | - | TBD | LOCK-2 |
 | UB-B-05 | UB-DQ-PB | gauge placement and reading rule (verified input, consumed) | rule | {"offset_min_chamber_radii": 0.6, "distance_from_thruster_OD_min_m": 1.0, "sampling_min_Hz": 10, "average_s": 3, "settle_after_flow_change_min": 2, "flow_change_threshold": 0.1} | - | verified input | docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json#H26-30 (REF-DANKANICH2017 pp. 672-673 (accessed by this lane 2026-09-29: placement p. 672; >= 10 Hz, 3 s averages, no reading within 2 min of a > 10 % flow change pp. 672-673); experiment package REQ-FAC-03) | assumed | VERIFIED_INPUT | LOCK-1 |
-| UB-B-06 | UB-DQ-PB | paired p_b mismatch between configurations (ICP gas load) | A | TBD - requires S1b p_b in both configurations; the ICP gas flow is PENDING docs/interfaces/icp_neutralizer/ | Pa | S1b | this lane (facility variance group VG-4) | - | TBD | LOCK-2 |
+| UB-B-06 | UB-DQ-PB | paired p_b mismatch between configurations (ICP gas load) | A | TBD - requires S1b p_b in both configurations; the ICP gas load is the Hall exhaust reused in G-REUSE (no dedicated flow, A9.1 HIQ-06; schemas/interfaces/icp_neutralizer_icd_v1.json ICP-26); a declared G-ATM / G-XE variant adds its dedicated flow | Pa | S1b | this lane (facility variance group VG-4) | - | TBD | LOCK-2 |
 | UB-Z-00 | UB-DQ-BZ | B(z) perturbation tolerance with the ICP installed / energized | rule | TBD - requires measured H-1 sensitivity scan (row 67); no tolerance invented now | T | owner answer | owner answer row 67 | - | TBD | LOCK-2 |
 | UB-Z-01 | UB-DQ-BZ | Hall-probe sensitivity calibration and temperature coefficient | B | TBD - requires probe certificate and reference-field calibration | relative | certificate | REF-GUM2008 4.3.3 | - | TBD | LOCK-2 |
 | UB-Z-02 | UB-DQ-BZ | probe positioning | B | TBD - requires stage calibration; map extent PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | m | certificate | H2-6 H26-33 | - | TBD | LOCK-2 |
@@ -155,8 +155,8 @@ Rule: UB-DQ-x maps to DQ-HI-y only if exactly one A9-01 decision quantity measur
 | UB-E-01 | DQ-HI-ETAU | Faraday beam-current integration (area, bias, SEE, gap, CEX) | A/B | TBD - requires S1b Faraday repeatability and probe corrections (REF-BROWN2017 via W4) | relative | S1b | owner answer row 32 | - | TBD | LOCK-2 |
 | UB-E-02 | DQ-HI-ETAU | ExB species current fractions | A/B | TBD - requires S1b ExB repeatability (REF-ROVEY2025 via W4) | - | S1b | owner answer row 32 | - | TBD | LOCK-2 |
 | UB-C-01 | comparison | effect-size / decision margin on each paired contrast | rule | TBD - requires the A9-01 decision-quantity list first, then a margin frozen before score-bearing data (row 18); the historical 0.05/0.1 is not carried | per contrast | owner answer | owner answer row 18 | - | TBD | LOCK-1 |
-| UB-C-02 | comparison | family-wise error rate for simultaneous contrast intervals | rule | TBD - requires owner decision at LOCK-1 (UBQ-07) | - | owner | - | - | TBD | LOCK-1 |
-| UB-C-03 | comparison | one-sided error rate of the absolute gates | rule | TBD - requires owner decision at LOCK-1 (UBQ-07) | - | owner | - | - | TBD | LOCK-1 |
+| UB-C-02 | comparison | family-wise error rate for simultaneous contrast intervals | rule | 0.05 | - | owner | docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-07 | owner-allocation | OWNER_GIVEN | LOCK-1 |
+| UB-C-03 | comparison | one-sided error rate of the absolute gates | rule | 0.05 | - | owner | docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-07 | owner-allocation | OWNER_GIVEN | LOCK-1 |
 | UB-C-04 | comparison | variance-group budget shares | rule | TBD - requires owner allocation rule at LOCK-1; values recorded at LOCK-2 (historical D-01-A equal shares not carried, row 12) | fraction of sigma_max^2 | owner answer | owner answer row 12 | - | TBD | LOCK-1 |
 | UB-C-05 | comparison | minimum complete engineering replicates | requirement | 3 | complete balanced replicate sets | owner answer | owner answer row 19 | owner-allocation | OWNER_GIVEN | NOW |
 | UB-C-06 | comparison | admissible n candidates and n_max | rule | TBD - requires owner at LOCK-1 (whole balanced replicate sets, each >= 3) | replicate sets | owner answer | owner answer row 19 | - | TBD | LOCK-1 |
@@ -165,15 +165,18 @@ Rule: UB-DQ-x maps to DQ-HI-y only if exactly one A9-01 decision quantity measur
 | UB-C-09 | comparison | absolute full-system T/P_bus floor at the 25 mN point | requirement | 16.67 | mN kW^-1 | owner answer | owner answer row 27 | owner-allocation | OWNER_GIVEN | NOW |
 | UB-C-10 | comparison | absolute capability thrust inside P_bus < 1.5 kW | requirement | 25.0 | mN | owner answer | owner answers rows 4, 27 | owner-allocation | OWNER_GIVEN | NOW |
 | UB-C-11 | comparison | sustained atmospheric thrust | requirement | 12.0 | mN | owner answer | owner answer row 4 | owner-allocation | OWNER_GIVEN | NOW |
+| UB-AR-01 | engineering-only (HI-AR) | Ar-specific gauge / MFC / RGA calibrations | requirement | required for HI-AR engineering interpretation | - | owner decision | docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-08 | owner-allocation | OWNER_GIVEN | NOW |
 
 Item notes:
 - **UB-T-00**: an alternate stand only if it meets the same uncertainty, payload, thermal/RF service-line and reinstallation requirements (row 115)
-- **UB-T-01**: kept for now; revised only before LOCK-2 and before any score-bearing physics data on metrology-only calibration evidence; never relaxed after propulsion results (row 121). Whether 1 % is a standard (k=1) or expanded uncertainty is open question UBQ-01
+- **UB-T-01**: kept for now; revised only before LOCK-2 and before any score-bearing physics data on metrology-only calibration evidence; never relaxed after propulsion results (row 121). A9.1 UBQ-01: 1 % is the standard relative uncertainty (k = 1) of a sustained reading; absolute PASS/FAIL gates use the preregistered one-sided confidence treatment; never reinterpreted as k = 2
 - **UB-T-02**: pre-registered with maximum representative moving payload and all service lines installed (row 120); acceptance criterion value = UB-T-01 unless revised per row 121
 - **UB-T-03**: the actual configuration spread (C1 module vs ICP module on the carrier) is characterized, not assumed (row 116); module masses schemas/interfaces/icp_neutralizer_icd_v1.json ICP-08
+- **UB-T-07**: A9.1 UBQ-05: both - the pre/post shift enters the budget AND a block-exclusion rule applies; rule form frozen at LOCK-1, numerical limit inserted at LOCK-2 from metrology-only calibration evidence
 - **UB-P-00**: spacecraft-DC propulsion-system boundary; start-up transients included unless the official RFP permits a transient exception (row 108); official RFP not yet obtained (rows 1-3)
 - **UB-P-08**: a design allocation the whole system (ICP power included) must fit inside; the 1.35 -> 1.5 kW margin is not consumed nominally (row 109); a design check, not a scoring threshold
 - **UB-RF-01**: directional-coupler forward/reflected measurement is primary; calorimetry is an independent cross-check, not the sole primary measurement (row 72)
+- **UB-RF-08**: |z_x| <= k_x with k_x = 2 frozen at LOCK-1 (A9.1 UBQ-04); S1a determines the uncertainties in the denominator, not the threshold; a failed coupler-vs-calorimetry check makes RF-dependent quantities EXCLUDED_INSTRUMENT until resolved; no instrument is ever re-weighted
 - **UB-N-09**: current-limited, interlocked, pulse energy recorded (row 89)
 - **UB-I-00**: 'if feasible'; otherwise the measured bandwidth and its anti-alias/transfer function are declared (row 129); score-bearing band fixed at LOCK-2
 - **UB-I-01**: H2-6 status: TBD - requires the S1b I_d spectrum on HW-0 (score-bearing band and rate fixed at LOCK-2; W4 INS-04)
@@ -188,7 +191,9 @@ Item notes:
 - **UB-B-05**: H2-6 status: PRELIMINARY
 - **UB-K-00**: a design margin (plus 20 % heat-load margin), not an abort limit; whether limit aborts fire at the validated limit or at limit - margin is open question UBQ-06
 - **UB-K-01**: ~300 K walls only as a planning case, never an unmeasured score-bearing input (row 131)
+- **UB-C-02**: simultaneous architecture contrasts with a preregistered multiplicity-control procedure such as Holm (the Bonferroni quantile in variance_groups is a PROPOSED form, frozen at LOCK-1)
 - **UB-C-05**: final n at LOCK-2 from measured uncertainty by readiness_n (row 19)
+- **UB-AR-01**: Ar remains engineering-only regardless of calibration quality; Ar readings never enter LOCK-2 numbers, decision quantities or DRDO compliance claims (A9.1 HIQ-08)
 
 ## (1) Measurement chains and propagation
 ### DQ-HI-TABS
@@ -268,7 +273,7 @@ Instruments: INS-05 (thermal MFCs, own gas, 4 ranges per pure-gas path); two C1 
 
 ```
 mdot_s = mdot_ind,s * (1 + c_cal,s)   [own-gas calibration correction from the NABL/ISO 17025 certificate]
-u_r^2(mdot) = u_r^2(ref) + u_r^2(RoR) + (a_FS * FS / mdot)^2 / 3 + (u(zero)/mdot)^2 + u_r^2(T_body) + (u_A/mdot)^2   [the '/3' applies a stated +/- bound as rectangular, GUM 4.3.7 Eq. (7), unless the certificate states a multiplier, GUM 4.3.3; UBQ-03]
+u_r^2(mdot) = u_r^2(ref) + u_r^2(RoR) + (a_FS * FS / mdot)^2 / 3 + (u(zero)/mdot)^2 + u_r^2(T_body) + (u_A/mdot)^2   [the '/3' applies a stated +/- bound as rectangular, GUM 4.3.7 Eq. (7), unless the certificate states a multiplier, GUM 4.3.3; accepted, A9.1 UBQ-03]
 rate-of-rise: mdot = (V M / (Z R T)) dp/dt   [Z: compressibility from a verified EOS for Xe (row 50); Z = 1 only where justified]
 mixture fraction: w_O2 = mdot_O2 / (mdot_N2 + mdot_O2);  u^2(w_O2) = [w_N2 u(mdot_O2)]^2/M^2 + [w_O2 u(mdot_N2)]^2/M^2 with M = mdot_N2 + mdot_O2
 Delta Xe (row 37): Delta mdot_Xe = mdot_Xe,icp_config - mdot_Xe,c1_config with PHASE_TOTAL_FLOW booking (row 42) and the ICP gas feed schemas/interfaces/icp_neutralizer_icd_v1.json ICP-26
@@ -359,7 +364,7 @@ Status: PROPOSED rules with symbols; no number frozen (row 13); defined before a
 - `delta_stop` = stop margin (margin form only)
 - **SR-C-SIGN**: stop if U_k < 0 at every qualifying condition of the confirmation subset
 - **SR-C-MARGIN**: stop if U_k < -delta_stop at every qualifying condition of the confirmation subset
-- Owner choice: OPEN - explicit owner choice between SR-C-SIGN and SR-C-MARGIN (UBQ-09)
+- Owner choice: SR-C-MARGIN (A9.1 UBQ-09): a configuration is stopped for inferiority only when its confidence bound crosses the preregistered negative decision margin; margin rule frozen at LOCK-1, uncertainty-derived value at LOCK-2; SR-C-SIGN is not used
 - Historical citation only: `docs/architecture_comparison/lock1/lock1_decision_brief_v1.json#decisions[D-02].options[D-02-A]` (sha256 `7ce17e1f9101d0832a164e453fd757a813f5e1e77f689cfb661bdc920f453920`), option 'sign form (lane-25 proposal)': "equals 'C_del > C* with simultaneous confidence' (break-even identity, lane 25 Sec. 3.2); matches the overlays' break-even inequality, which has no margin" (superseded for the primary campaign (row 13); cited, not carried)
 - Consequence: a stop ends that configuration's remaining comparison slots (NOT_TESTED); it is not an elimination and does not by itself produce an outcome; unresolved evidence is reported with the status OPEN and the next discriminating test (row 38)
 
@@ -375,7 +380,7 @@ Limit aborts: limits come from real hardware/facility ratings, not invented thre
 | LA-02 | RF forward power | P_fwd,max | TBD - requires generator / matching / coil ratings inside the 0-500 W laboratory chain (row 72) | hall_icp_neutralizer |
 | LA-03 | RF reflected power | P_ref,max | TBD - requires generator reflected-power rating | hall_icp_neutralizer |
 | LA-04 | collector / bias voltage and current | V_coll,max, I_coll,max | TBD - requires PENDING docs/interfaces/icp_neutralizer/ and supply rating | hall_icp_neutralizer |
-| LA-05 | component temperatures | T_k,max | TBD - requires validated continuous-use limits (rows 86, 87); abort at the limit or at limit - margin is UBQ-06 | hall_c1_reference, hall_icp_neutralizer |
+| LA-05 | component temperatures | T_k,max | abort_C = validated continuous-use limit - 50 K for score-bearing operation (A9.1 UBQ-06; row 86); per-node abort list in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json IDA7-16 (BN wall and ceramic coil provisional on supplier limits, OQ-A907-05; other groups TBD - requires a validated limit) | hall_c1_reference, hall_icp_neutralizer |
 | LA-06 | C1 heater / keeper current and temperature | I_h,max, I_k,max | TBD - requires C1 vendor/design qualification (row 93) | hall_c1_reference |
 | LA-07 | magnet coil current / temperature | I_coil,max, T_coil,max | TBD - requires MC-1 coil rating (ceramic-insulated, row 77) | hall_c1_reference, hall_icp_neutralizer |
 | LA-08 | C1 ignition dwell and retries | t_ign,max, N_retry | 120 s per dwell, at most two retries (row 93, preliminary; final bound before score-bearing C1 testing) | hall_c1_reference |
@@ -547,15 +552,15 @@ Status: PROPOSED LOCK-1 rule; n computed at LOCK-2 (row 19); implementation `doc
 ## (f) M16 impact
 | row | key | name | how | proposed state change |
 |---|---|---|---|---|
-| 15 | sensors_diagnostics | sensors/diagnostics | primary: decision-quantity measurement chains and uncertainty budget for the C1-vs-ICP comparison | none by this lane (contribution only; row owners and states PENDING A9-10 governance) |
-| 12 | ppu | PPU/power distribution | P_bus measurement chain at the spacecraft-DC boundary; breadboard discharge supply (row 113) | none by this lane (contribution only; row owners and states PENDING A9-10 governance) |
-| 11 | cathode | shielded Xe-fed LaB6 hollow cathode | C1 reference: flow, keeper/heater, ignition dwell records (reference/fallback only) | none by this lane (contribution only; row owners and states PENDING A9-10 governance) |
-| 8 | xe_metering | Xe metering (splits to ignition/transition feed and cathode feed) | C1 Xe metering: two controllers, ±2 % FS class, resolution (rows 96, 98, 125) | none by this lane (contribution only; row owners and states PENDING A9-10 governance) |
-| 14 | control_fdir | control/FDIR | limit aborts and safety interlocks; ICP telemetry subset (row 130) | none by this lane (contribution only; row owners and states PENDING A9-10 governance) |
-| 16 | mechanical_structural | mechanical/structural interfaces | stand, kinematic carrier and sham lines (VG-1) | none by this lane (contribution only; row owners and states PENDING A9-10 governance) |
-| 10 | magnetic_circuit | magnetic circuit | B(z) perturbation and hot-state reference (rows 67, 82) | none by this lane (contribution only; row owners and states PENDING A9-10 governance) |
-| 13 | thermal_control | thermal control | measured sink temperature per run (row 131) | none by this lane (contribution only; row owners and states PENDING A9-10 governance) |
-| 17 | preionizer_interface | RF pre-ionization module interface | reserved interface row: ICP-neutralizer chains (RF, collector) belong here once A9-10 governance repurposes it (row 142: add A9 lanes without rewriting H2 provenance) | none by this lane (contribution only; row owners and states PENDING A9-10 governance) |
+| 15 | sensors_diagnostics | sensors/diagnostics | primary: decision-quantity measurement chains and uncertainty budget for the C1-vs-ICP comparison | none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json) |
+| 12 | ppu | PPU/power distribution | P_bus measurement chain at the spacecraft-DC boundary; breadboard discharge supply (row 113) | none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json) |
+| 11 | cathode | shielded Xe-fed LaB6 hollow cathode | C1 reference: flow, keeper/heater, ignition dwell records (reference/fallback only) | none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json) |
+| 8 | xe_metering | Xe metering (splits to ignition/transition feed and cathode feed) | C1 Xe metering: two controllers, ±2 % FS class, resolution (rows 96, 98, 125) | none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json) |
+| 14 | control_fdir | control/FDIR | limit aborts and safety interlocks; ICP telemetry subset (row 130) | none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json) |
+| 16 | mechanical_structural | mechanical/structural interfaces | stand, kinematic carrier and sham lines (VG-1) | none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json) |
+| 10 | magnetic_circuit | magnetic circuit | B(z) perturbation and hot-state reference (rows 67, 82) | none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json) |
+| 13 | thermal_control | thermal control | measured sink temperature per run (row 131) | none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json) |
+| 17 | preionizer_interface | RF pre-ionization module interface | reserved interface row: ICP-neutralizer chains (RF, collector) belong here once A9-10 governance repurposes it (row 142: add A9 lanes without rewriting H2 provenance) | none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json) |
 
 ## (g) H3 procurement inputs and H4 test inputs
 | H3 item | specification form | rows |
@@ -597,3 +602,56 @@ Status: PROPOSED LOCK-1 rule; n computed at LOCK-2 (row 19); implementation `doc
 - historical artifacts read and cited, never edited; mutable governance files not pinned
 - no winner declared; NET_BENEFIT is hard gates + Pareto (row 37)
 - pure document lane: no abep_sim module, archengine or golden touched
+
+## A9-10 reconciliation (fo_a9_10_integration)
+
+Changes applied by A9-10 after this lane's verified build (record `docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json`, overlay `docs/experiments/hall_icp/integration/a9_10_overlay.py`). A9.1 decision `docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json` (sha256 `7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4`). A9 stays OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; no winner; no prediction.
+
+| change | driver | op | pointer | count | summary |
+|---|---|---|---|---|---|
+| A910-A904-Q01 | A9.1 UBQ-01 | merge | `/open_owner_questions[id=UBQ-01]` | 1 | owner question answered by A9.1 UBQ-01 |
+| A910-A904-Q02 | A9.1 UBQ-02 | merge | `/open_owner_questions[id=UBQ-02]` | 1 | owner question answered by A9.1 UBQ-02 |
+| A910-A904-Q03 | A9.1 UBQ-03 | merge | `/open_owner_questions[id=UBQ-03]` | 1 | owner question answered by A9.1 UBQ-03 |
+| A910-A904-Q04 | A9.1 UBQ-04 | merge | `/open_owner_questions[id=UBQ-04]` | 1 | owner question answered by A9.1 UBQ-04 |
+| A910-A904-Q05 | A9.1 UBQ-05 | merge | `/open_owner_questions[id=UBQ-05]` | 1 | owner question answered by A9.1 UBQ-05 |
+| A910-A904-Q06 | A9.1 UBQ-06 | merge | `/open_owner_questions[id=UBQ-06]` | 1 | owner question answered by A9.1 UBQ-06 |
+| A910-A904-Q07 | A9.1 UBQ-07 | merge | `/open_owner_questions[id=UBQ-07]` | 1 | owner question answered by A9.1 UBQ-07 |
+| A910-A904-Q08 | A9.1 UBQ-08 | merge | `/open_owner_questions[id=UBQ-08]` | 1 | owner question answered by A9.1 UBQ-08 |
+| A910-A904-Q09 | A9.1 UBQ-09 | merge | `/open_owner_questions[id=UBQ-09]` | 1 | owner question answered by A9.1 UBQ-09 |
+| A910-A904-01 | A9.1 UBQ-01 | replace | `/items[id=UB-T-01]/note` | 1 | k = 1 |
+| A910-A904-02 | A9.1 UBQ-02 | set | `/items[id=UB-N-06]/value` | 1 | M_n form |
+| A910-A904-03 | A9.1 UBQ-02 | set | `/items[id=UB-N-06]/status` | 1 | M_n status |
+| A910-A904-04 | A9.1 UBQ-02 | set | `/items[id=UB-N-06]/evidence_class` | 1 | M_n evidence class |
+| A910-A904-05 | A9.1 UBQ-02 | set | `/items[id=UB-N-06]/source` | 1 | M_n source |
+| A910-A904-06 | A9.1 UBQ-03 | gsub | `/measurement_chains` | 1 | rectangular conversion accepted |
+| A910-A904-07 | A9.1 UBQ-04 | set | `/items[id=UB-RF-08]/value` | 1 | k_x = 2 frozen at LOCK-1 |
+| A910-A904-08 | A9.1 UBQ-04 | set | `/items[id=UB-RF-08]/status` | 1 | k_x status |
+| A910-A904-09 | A9.1 UBQ-04 | set | `/items[id=UB-RF-08]/evidence_class` | 1 | k_x evidence class |
+| A910-A904-10 | A9.1 UBQ-04 | set | `/items[id=UB-RF-08]/note` | 1 | agreement rule |
+| A910-A904-11 | A9.1 UBQ-05 | set | `/items[id=UB-T-07]/note` | 1 | calibration-shift rule |
+| A910-A904-12 | A9.1 UBQ-06 + A9-07 IDA7-16 | set | `/stop_rules/limit_aborts/limits[id=LA-05]/value` | 1 | aborts at limit - 50 K |
+| A910-A904-13 | A9.1 UBQ-07 | set | `/items[id=UB-C-02]/value` | 1 | alpha_FW = 0.05 |
+| A910-A904-14 | A9.1 UBQ-07 | set | `/items[id=UB-C-02]/status` | 1 | alpha_FW status (frozen at LOCK-1) |
+| A910-A904-15 | A9.1 UBQ-07 | set | `/items[id=UB-C-02]/evidence_class` | 1 | alpha_FW class |
+| A910-A904-16 | A9.1 UBQ-07 | set | `/items[id=UB-C-02]/source` | 1 | alpha_FW source |
+| A910-A904-17 | A9.1 UBQ-07 | set | `/items[id=UB-C-02]/note` | 1 | multiplicity |
+| A910-A904-18 | A9.1 UBQ-07 | set | `/items[id=UB-C-03]/value` | 1 | alpha_abs = 0.05 one-sided |
+| A910-A904-19 | A9.1 UBQ-07 | set | `/items[id=UB-C-03]/status` | 1 | alpha_abs status (frozen at LOCK-1) |
+| A910-A904-20 | A9.1 UBQ-07 | set | `/items[id=UB-C-03]/evidence_class` | 1 | alpha_abs class |
+| A910-A904-21 | A9.1 UBQ-07 | set | `/items[id=UB-C-03]/source` | 1 | alpha_abs source |
+| A910-A904-37 | A9.1 UBQ-04 | set | `/items[id=UB-RF-08]/source` | 1 | k_x source |
+| A910-A904-32 | A9.1 UBQ-04 | set | `/items[id=UB-RF-08]/a9_1_decision` | 1 | A9.1 decision id attached (owner-given value source) |
+| A910-A904-33 | A9.1 UBQ-07 | set | `/items[id=UB-C-02]/a9_1_decision` | 1 | A9.1 decision id attached (owner-given value source) |
+| A910-A904-34 | A9.1 UBQ-07 | set | `/items[id=UB-C-03]/a9_1_decision` | 1 | A9.1 decision id attached (owner-given value source) |
+| A910-A904-35 | A9.1 UBQ-02 | set | `/items[id=UB-N-06]/a9_1_decision` | 1 | A9.1 decision id attached |
+| A910-A904-36 | A9.1 HIQ-06 | set | `/items[id=UB-F-12]/a9_1_decision` | 1 | A9.1 decision id attached |
+| A910-A904-22 | A9.1 UBQ-08 | append | `/items` | 1 | Ar calibrations required (new item; owner row 36 cited) |
+| A910-A904-23 | A9.1 UBQ-09 | set | `/stop_rules/contrast_stop/owner_choice` | 1 | SR-C-MARGIN |
+| A910-A904-24 | A9-07 IDA7-21 | set | `/items[id=UB-RF-04]/value` | 1 | UB-RF-04 directivity/mismatch term from IDA7-21 |
+| A910-A904-25 | A9-07 IDA7-21 | set | `/items[id=UB-RF-04]/source` | 1 | UB-RF-04 source |
+| A910-A904-28 | A9.1 HIQ-06 (A9-03 ICP-26) | set | `/items[id=UB-F-12]/value` | 1 | ICP gas chain under G-REUSE |
+| A910-A904-29 | A9.1 HIQ-06 | set | `/items[id=UB-F-12]/status` | 1 | UB-F-12 status |
+| A910-A904-30 | A9.1 HIQ-06 | set | `/items[id=UB-F-12]/evidence_class` | 1 | UB-F-12 evidence class |
+| A910-A904-31 | A9.1 HIQ-06 | replace | `/items[69]/value` | 1 | p_b mismatch item re-evaluated |
+| A910-A904-26 | A9-10 self-reference | gsub | `/m16_impact` | 9 | M16 routing resolved |
+| A910-A904-27 | OQ-INT-01 (proposed consumer table) | gsub | `/dq_id_mapping/rows` | 7 | unmapped ids kept; consumer table referenced |

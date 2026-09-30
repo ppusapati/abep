@@ -27,7 +27,8 @@
   ],
   "hall_icp_neutralizer": [
    "icp_assist_magnet",
-   "active_cooling"
+   "active_cooling",
+   "flow_control_icp_feed"
   ]
  },
  "what_this_is_not": [
@@ -61,6 +62,18 @@
    "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
    "sha256": "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
    "role": "A5 bus-power design allocation <= 1.30-1.35 kW (immutable, context)"
+  },
+  {
+   "key": "A91",
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "role": "A9.1 follow-up owner decisions (OQ-A902-01..07, SEQ-heater, SEQ-peaks, HIQ-06; applied in A9-10)"
+  },
+  {
+   "key": "A91MD",
+   "path": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+   "sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e",
+   "role": "A9.1 follow-up (verbatim)"
   }
  ],
  "pinned_inputs": [
@@ -140,15 +153,15 @@
   },
   {
    "id": "A902-03",
-   "name": "averaging window / bandwidth defining 'start-up transient' power for the gate",
-   "value": "TBD",
+   "name": "averaging window defining the gate quantity P_bus,1ms,max (start-up AND steady state)",
+   "value": 0.001,
    "units": "s",
-   "basis": "pending",
-   "source": "TBD - requires owner decision OQ-A902-01 (H2-4 H24-37 left it TBD)",
-   "evidence_class": "TBD",
-   "status": "OPEN",
-   "freeze_point": "LOCK-1",
-   "note": "until frozen, rfp_power_gate gives a start-up step PASS only when its ledger is declared power_basis='peak_sampled' (otherwise NOT_EVALUABLE) and always reports transient_window_frozen=False"
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json OQ-A902-01 (H2-4 H24-37 had left it TBD)",
+   "evidence_class": "owner-allocation",
+   "status": "ADOPTED (A9.1; A9 engineering definition pending authoritative RFP wording)",
+   "freeze_point": "NOW",
+   "note": "P_bus,1ms,max = max_t (1/1 ms) integral_t^{t+1 ms} P_bus dtau < 1500 W; rfp_power_gate PASSes a ledger only when declared p_bus_1ms_max (or peak_sampled, which bounds it); the interim 'PASS only if peak_sampled' rule is replaced; the 1 ms window is not an ECSS requirement"
   },
   {
    "id": "A902-04",
@@ -196,7 +209,7 @@
    "evidence_class": "owner-allocation",
    "status": "ALLOCATION (not a measured load)",
    "freeze_point": "NOW",
-   "note": "composition of the common group in A9 is PROPOSED (OQ-A902-02)"
+   "note": "composition ACCEPTED (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json OQ-A902-02): compressor; atmospheric/Xe/ICP flow-control loads; filter/getter if active; thermal control; housekeeping/controls (the 50 W controls/thermal allowance is inside); active cooling beyond the frozen thermal-control allocation and reserved future ports are outside unless explicitly reallocated"
   },
   {
    "id": "A902-08",
@@ -337,13 +350,14 @@
   {
    "id": "A902-20",
    "name": "ICP electron-source sub-allocation inside A902-10",
-   "value": "TBD",
+   "value": "no fixed split: P_ICP,available = 1350 W - P_common - P_Hall - P_other,active at every registered condition",
    "units": "W",
-   "basis": "pending",
-   "source": "TBD - owner call OQ-A902-03 (A8/v2 'rf <= 700 W' is a parallel-branch number and is not carried)",
-   "evidence_class": "TBD",
-   "status": "OPEN",
-   "freeze_point": "LOCK-1"
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json OQ-A902-03 (A8/v2 'rf <= 700 W' is a parallel-branch number and is not carried)",
+   "evidence_class": "n/a (rule)",
+   "status": "ADOPTED (A9.1)",
+   "freeze_point": "NOW",
+   "note": "ICP-45 must be demonstrated within this residual budget (icp_power_allocation_check); the laboratory 0-500 W RF source is a test capability, not permission for the flight architecture to consume 500 W"
   },
   {
    "id": "A902-21",
@@ -381,13 +395,14 @@
   {
    "id": "A902-24",
    "name": "ICP gas-feed valve/controller power and feed species",
-   "value": "TBD",
+   "value": "G-REUSE (primary): no dedicated feed, flow_control_icp_feed not installed (0 W); TBD only for a declared G-ATM / G-XE contingency variant",
    "units": "W",
-   "basis": "pending",
-   "source": "TBD - A9 recorder flag row 46 (ICP gas feed not yet booked); schemas/interfaces/icp_neutralizer_icd_v1.json ICP-26",
-   "evidence_class": "TBD",
-   "status": "OPEN",
-   "freeze_point": "LOCK-1"
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json HIQ-06; docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json OQ-A902-05; A9 recorder flag row 46; schemas/interfaces/icp_neutralizer_icd_v1.json ICP-26",
+   "evidence_class": "n/a (rule)",
+   "status": "ADOPTED (A9.1)",
+   "freeze_point": "LOCK-1",
+   "note": "the capped dedicated ICP gas port stays in the ICD; the slot is booked only when G-ATM or G-XE is actually installed/used"
   },
   {
    "id": "A902-25",
@@ -402,7 +417,7 @@
    "evidence_class": "owner-allocation",
    "status": "ADOPTED (capability, not a load)",
    "freeze_point": "NOW",
-   "note": "its bus power is a start-up transient of slot c1_keeper, value TBD - requires measured peak draw (covered only by a peak_sampled step) and recorded pulse energy (a measurement record, PENDING A9-04; the ledger has no pulse-energy field); H2-4 H24-19 (DC ignition 10-30 W bracket) does not cover it"
+   "note": "its bus power is a start-up transient of slot c1_keeper, value TBD - requires the measured P_bus,1ms,max through the pulse (the unaveraged peak is recorded for protection analysis only, A9.1 OQ-A902-01) and recorded pulse energy (a measurement record, PENDING A9-04; the ledger has no pulse-energy field); H2-4 H24-19 (DC ignition 10-30 W bracket) does not cover it"
   },
   {
    "id": "A902-26",
@@ -413,7 +428,8 @@
    "source": "TBD - requires the C1 unit selection; analog envelope only: H2-2 H22-16 [45.0, 400.0] W (measured analog, not a C1 value)",
    "evidence_class": "TBD",
    "status": "OPEN",
-   "freeze_point": "after-evidence"
+   "freeze_point": "after-evidence",
+   "note": "until the stepwise C1 procedure and measured power exist, the bus ledger books a TBD heater ON at its conservative/worst-case booked power (ledger field booked_W; docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json SEQ-heater); never PASS by assuming a TBD heater is off"
   },
   {
    "id": "A902-27",
@@ -547,6 +563,106 @@
    "evidence_class": "n/a (rule)",
    "status": "PROPOSED",
    "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "A902-39",
+   "name": "gate measurement: effective bandwidth",
+   "value": 20000.0,
+   "units": "Hz",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json OQ-A902-01",
+   "evidence_class": "owner-allocation",
+   "status": "ADOPTED (A9.1)",
+   "freeze_point": "NOW",
+   "note": ">= 20 kHz on every channel entering P_bus,1ms,max; channels synchronized; anti-alias filtering documented"
+  },
+  {
+   "id": "A902-40",
+   "name": "gate measurement: sample rate per relevant channel (or an equivalent direct bus-power channel)",
+   "value": 100000.0,
+   "units": "Sa/s",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json OQ-A902-01",
+   "evidence_class": "owner-allocation",
+   "status": "ADOPTED (A9.1)",
+   "freeze_point": "NOW",
+   "note": "p_bus_1ms_max() refuses records below it; no step average is substituted"
+  },
+  {
+   "id": "A902-41",
+   "name": "diagnostic-only power metrics",
+   "value": "unaveraged sampled peak (protection analysis); 100 ms and 1 s averages (diagnostic/energy metrics)",
+   "units": "W",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json OQ-A902-01",
+   "evidence_class": "n/a (rule)",
+   "status": "ADOPTED (A9.1)",
+   "freeze_point": "NOW",
+   "note": "never substitutes for the 1 ms gate; reported by p_bus_1ms_max() diagnostics_only"
+  },
+  {
+   "id": "A902-42",
+   "name": "start-up sequencing baseline rule",
+   "value": "at most one peak-class load commanded to rise per start-up step; steady loads may stay on",
+   "units": "-",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json SEQ-peaks; docs/decisions/OD_2026_09_29_owner_answers_147.json row 112",
+   "evidence_class": "n/a (rule)",
+   "status": "ADOPTED (A9.1)",
+   "freeze_point": "NOW",
+   "note": "an overlap of two peak-class loads is a registered sequence variant that needs measured transient-power evidence before it can replace the baseline"
+  },
+  {
+   "id": "A902-43",
+   "name": "C1 heater TBD booking rule",
+   "value": "TBD heater = ON at conservative/worst-case booked power",
+   "units": "W",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json SEQ-heater",
+   "evidence_class": "n/a (rule)",
+   "status": "ADOPTED (A9.1)",
+   "freeze_point": "NOW",
+   "note": "the C1 procedure states heater command/power at every start-up step; the booked value itself is TBD - requires the C1 unit selection and procedure (A902-26)"
+  },
+  {
+   "id": "A902-44",
+   "name": "combined flight C1 + ICP installation",
+   "value": "not in the primary A9 flight architecture",
+   "units": "-",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json OQ-A902-04",
+   "evidence_class": "n/a (rule)",
+   "status": "ADOPTED (A9.1)",
+   "freeze_point": "NOW",
+   "note": "C1 is the ground comparison/control/fallback; a flight variant carrying both electron sources would be a new architecture variant with its own mass, power, Xe, reliability, thermal and failure-tree closure"
+  },
+  {
+   "id": "A902-45",
+   "name": "housekeeping / thermal power path",
+   "value": "through the internal propulsion bus by default; any load fed directly from the spacecraft input is represented explicitly (path='direct')",
+   "units": "-",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json OQ-A902-06",
+   "evidence_class": "n/a (rule)",
+   "status": "ADOPTED (A9.1)",
+   "freeze_point": "NOW",
+   "note": "no power disappears because it bypasses the 100 V internal rail"
+  },
+  {
+   "id": "A902-46",
+   "name": "allocation levels reported",
+   "value": [
+    1300.0,
+    1350.0,
+    1500.0
+   ],
+   "units": "W",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json OQ-A902-07",
+   "evidence_class": "owner-allocation",
+   "status": "ADOPTED (A9.1)",
+   "freeze_point": "NOW",
+   "note": "1300 W = A5 lower end, context/sensitivity only; 1350 W = active internal design check; 1500 W = hard requirement"
   }
  ],
  "slots": [
@@ -770,8 +886,8 @@
   },
   {
    "slot": "flow_control_icp_feed",
-   "group": "icp",
-   "load_plane": "ICP gas-feed valve/flow-controller driver outputs (gas species and source not yet booked, A9 recorder flag row 46)",
+   "group": "variant",
+   "load_plane": "dedicated ICP gas-feed valve/flow-controller driver outputs; installed only in a declared G-ATM or G-XE contingency variant (A9.1 HIQ-06, OQ-A902-05: primary G-REUSE has no dedicated feed and books 0; the capped test port stays in the ICD)",
    "rows": [
     46
    ],
@@ -779,7 +895,7 @@
    "controls_thermal": false,
    "configurations": {
     "hall_c1_reference": "NOT_INSTALLED",
-    "hall_icp_neutralizer": "INSTALLED"
+    "hall_icp_neutralizer": "VARIANT_ONLY"
    }
   },
   {
@@ -879,7 +995,7 @@
    "INCOMPLETE_EVIDENCE"
   ],
   "status_taxonomy": "PARTIAL_BOUNDARY whenever the compressor LOAD is TBD (row 22; takes precedence); INCOMPLETE_EVIDENCE for any other TBD, including a known compressor load with a TBD efficiency or a TBD front-end efficiency; COMPLETE otherwise",
-  "power_basis": "each ledger declares what its step values represent: steady_state, step_average, peak_sampled or unstated (None)",
+  "power_basis": "each ledger declares what its step values represent: steady_state, step_average, peak_sampled, p_bus_1ms_max or unstated (None)",
   "no_load_losses": "excluded from the per-slot P_W/eta model (a 0 W output draws exactly 0 W); the no-load/quiescent draw of energised-but-idle supplies and of the front end must be booked explicitly in housekeeping_controls",
   "residual_check": "bookkeeping identity sum(P_W + P_loss) - sum(P_bus); catches floating-point error only; an independent closure needs measured spacecraft-side bus V and I",
   "not_installed_rule": "a slot not installed in the configuration/variant is omitted or exactly 0 W at efficiency 1, as full records (evidence_class + source, schema parity); anything else raises (matched shams carry no power)"
@@ -898,14 +1014,57 @@
     "NOT_EVALUABLE"
    ],
    "row": 108,
+   "quantity": "P_bus,1ms,max (A9.1 OQ-A902-01)",
    "transient_window": {
-    "status": "TBD",
+    "status": "FROZEN_A9_ENGINEERING_DEFINITION",
+    "decision": "A9.1 OQ-A902-01 (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
+    "quantity": "P_bus,1ms,max = max_t (1/1 ms) integral_t^{t+1 ms} P_bus(tau) dtau",
+    "requirement": "P_bus,1ms,max < 1500 W for start-up as well as steady state, unless the official RFP later explicitly provides a different transient exception",
+    "window_s": 0.001,
+    "measurement": [
+     "spacecraft-DC propulsion boundary",
+     "all required channels synchronized",
+     "effective measurement bandwidth >= 20 kHz",
+     "sample rate >= 100 kSa/s per relevant channel or an equivalent direct spacecraft-bus power channel",
+     "anti-alias filtering documented",
+     "no step-average may be substituted for this gate"
+    ],
+    "min_bandwidth_Hz": 20000.0,
+    "min_sample_rate_Sa_s": 100000.0,
+    "diagnostics_only": [
+     "unaveraged sampled peak (hardware/current/voltage protection analysis; not the 1.5 kW system-power gate)",
+     "100 ms and 1 s averages (diagnostic/energy metrics, not substitutes)"
+    ],
+    "pass_requires_power_basis": [
+     "p_bus_1ms_max",
+     "peak_sampled"
+    ],
+    "note": "an A9 engineering definition pending authoritative RFP wording; the 1 ms window is not an ECSS requirement (A9.1 preamble); replaces the interim 'PASS only if peak_sampled' rule",
     "item": "A902-03",
-    "owner_question": "OQ-A902-01",
-    "freeze_point": "LOCK-1",
-    "rule": "a start-up step PASSes only if declared peak_sampled; the sampling bandwidth that makes 'peak_sampled' meaningful is frozen at LOCK-2 (PROPOSED, OQ-A902-01)"
+    "owner_question": "OQ-A902-01 (ANSWERED_BY_A9_1)",
+    "freeze_point": "NOW"
    },
-   "startup_pass_requires_power_basis": "peak_sampled"
+   "pass_requires_power_basis": [
+    "p_bus_1ms_max",
+    "peak_sampled"
+   ],
+   "fail_bases": [
+    "p_bus_1ms_max",
+    "step_average",
+    "steady_state",
+    "unstated"
+   ]
+  },
+  "icp_available_power": {
+   "relation": "P_ICP,available = 1350 - P_common - P_Hall - P_other,active",
+   "per": "every registered operating condition",
+   "decision": "A9.1 OQ-A902-03",
+   "function": "icp_power_allocation_check",
+   "lab_rf_range_is_test_capability_only": true
+  },
+  "context_levels": {
+   "a5_lower_end_W": 1300.0,
+   "role": "context/sensitivity only (A9.1 OQ-A902-07); active internal check 1350 W; hard requirement 1500 W"
   },
   "design_allocation": {
    "limit_W": 1350.0,
@@ -962,11 +1121,11 @@
    ]
   },
   "rules": [
-   "at most one peak-class event per step (PROPOSED reading of 'avoid simultaneous peaks')",
-   "at most one peak-class slot (active_cooling, c1_heater, c1_keeper, compressor, hall_discharge, hall_magnet_inner, icp_collector_bias, icp_rf_source) whose load rises in a step, checked on the step loads independently of event labels (PROPOSED; a TBD transition that may rise gives RULES_NOT_EVALUABLE)",
-   "C1 heater reduced/disabled only in a step flagged keeper_stable and discharge_stable; a TBD heater counts as ON with unknown power (OFF = exactly 0 W); the last known value is kept across TBD steps; an unclassifiable change gives RULES_NOT_EVALUABLE",
+   "at most one peak-class event per step (baseline rule ACCEPTED, A9.1 SEQ-peaks)",
+   "at most one peak-class slot (active_cooling, c1_heater, c1_keeper, compressor, hall_discharge, hall_magnet_inner, icp_collector_bias, icp_rf_source) whose load rises in a step, checked on the step loads independently of event labels (A9.1 SEQ-peaks baseline; an overlap is a registered variant needing measured transient evidence; a TBD transition that may rise gives RULES_NOT_EVALUABLE)",
+   "C1 heater reduced/disabled only in a step flagged keeper_stable and discharge_stable; a TBD heater counts as ON (OFF = exactly 0 W) and is booked at conservative/worst-case power in the bus ledger when booked_W is given (A9.1 SEQ-heater); the last known value is kept across TBD steps; an unclassifiable change gives RULES_NOT_EVALUABLE",
    "sequence_status: SEQUENCE_RULE_VIOLATION > RULES_NOT_EVALUABLE > RULES_SATISFIED",
-   "a start-up step PASSes the transient gate only when declared power_basis='peak_sampled' (averaging window TBD, A902-03)",
+   "every step (start-up and steady) PASSes the gate only when declared power_basis 'p_bus_1ms_max' (or 'peak_sampled', which bounds it); no step average is substituted (A9.1 OQ-A902-01, A902-03)",
    "hall_icp_neutralizer has no c1_heater slot (no thermionic heater)",
    "the last step is the steady step; the gate is applied to it and to every earlier step"
   ],
@@ -1076,10 +1235,9 @@
     },
     {
      "step_id": "I-S3",
-     "name": "ICP gas feed + RF ignition (no thermionic heater)",
+     "name": "ICP RF ignition on the Hall-feed gas (G-REUSE, no dedicated feed, A9.1 HIQ-06; no thermionic heater)",
      "event": "icp_rf_ignition",
      "on": [
-      "flow_control_icp_feed",
       "icp_matching_network",
       "icp_rf_source"
      ]
@@ -1132,7 +1290,7 @@
    "from": "A9-02",
    "to": "A9-03",
    "quantity": "ICP supply interface: generator DC input plane, RF feed plane, matching-network DC port, collector/bias supply port (floating body), separate RF return, ICP feed valve driver",
-   "value": "slots icp_rf_source / icp_matching_network / icp_collector_bias / flow_control_icp_feed",
+   "value": "slots icp_rf_source / icp_matching_network / icp_collector_bias (+ flow_control_icp_feed only in a declared G-ATM / G-XE variant)",
    "units": "W / V / A",
    "status": "PRELIMINARY"
   },
@@ -1220,7 +1378,7 @@
    "quantity": "electronics CBE masses",
    "value": null,
    "units": "kg",
-   "status": "PENDING docs/hardware/h2/h2_7_mechanical_bom/; PENDING A9-06 mass BOM amendment (path not yet assigned)"
+   "status": "PENDING docs/hardware/h2/h2_7_mechanical_bom/; PENDING docs/budgets/mass_a9/mass_a9_v1.json (A9-06, merged)"
   },
   {
    "from": "H2-1",
@@ -1284,7 +1442,7 @@
    "quantity": "start-up steps with Xe flow (purge, preheat, ignition <= 120 s x 2) for PHASE_TOTAL_FLOW booking",
    "value": null,
    "units": "s",
-   "status": "PENDING docs/budgets/xe_ledger/ (A9-08 update)"
+   "status": "PENDING docs/budgets/xe_ledger_a9/ (A9-08, merged)"
   },
   {
    "from": "A9-02",
@@ -1292,7 +1450,7 @@
    "quantity": "row impacts (m16_impact)",
    "value": null,
    "units": "-",
-   "status": "PENDING docs/budgets/subsystem_maturity/; PENDING A9-10 governance (path not yet assigned)"
+   "status": "SUPPLIED to docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json (A9-10 M16 refresh; rows 3, 5, 8, 11-15, 17 and new rows 18-19)"
   }
  ],
  "h2_4_revision_flags": [
@@ -1342,7 +1500,7 @@
    "h2_4_id": "H24-10",
    "name": "valve-driver (mass-flow PC) efficiency (analog minimum-efficiency specification)",
    "disposition": "RETAINED_AS_CANDIDATE",
-   "why": "S-OSUGA05 valve-driver specification on a 100 V bus; now also covers the ICP feed valve slot flow_control_icp_feed"
+   "why": "S-OSUGA05 valve-driver specification on a 100 V bus; also covers the ICP feed valve slot flow_control_icp_feed of a declared G-ATM / G-XE variant"
   },
   {
    "h2_4_id": "H24-11",
@@ -1378,7 +1536,7 @@
    "h2_4_id": "H24-19",
    "name": "cathode_keeper ignition load bracket (start-up)",
    "disposition": "NEEDS_REVISION",
-   "why": "DC-ignition bracket (JPL 2 A x 5-15 V, inferred) does not describe the row-89 current-limited pulsed 300-600 V class ignition; its peak draw and pulse energy are TBD (A902-25) and the start-up step must be peak_sampled to PASS the transient gate"
+   "why": "DC-ignition bracket (JPL 2 A x 5-15 V, inferred) does not describe the row-89 current-limited pulsed 300-600 V class ignition; its peak draw and pulse energy are TBD (A902-25) and enter the P_bus,1ms,max gate (A9.1 OQ-A902-01)"
   },
   {
    "h2_4_id": "H24-21",
@@ -1438,7 +1596,7 @@
    "h2_4_id": "H24-37",
    "name": "PROPOSED start-up peak rule",
    "disposition": "ANSWERED",
-   "why": "row 108; averaging window still TBD (A902-03)"
+   "why": "row 108; gate window frozen at 1 ms by A9.1 OQ-A902-01 (A902-03)"
   },
   {
    "h2_4_id": "H24-38",
@@ -1568,7 +1726,7 @@
    ],
    "owner_answer_verbatim": "15,000 h for the conventional C1 reference/fallback term. The ICP-neutralizer architecture has no continuous C1-Xe cathode term, but must carry its own RF-neutralizer lifetime/cycle requirement.",
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
-   "how_applied": "hall_icp_neutralizer has no C1 slots; its gas feed has its own flow_control_icp_feed slot"
+   "how_applied": "hall_icp_neutralizer has no C1 slots; its dedicated gas feed slot flow_control_icp_feed is installed only in a declared G-ATM / G-XE variant (A9.1 HIQ-06: G-REUSE primary, no dedicated feed)"
   },
   {
    "row": 51,
@@ -1678,7 +1836,7 @@
    ],
    "owner_answer_verbatim": "YES — provide current-limited pulsed keeper ignition capability in the 300–600 V class for C1 development/reference testing, with interlocks and recorded pulse energy.",
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
-   "how_applied": "c1_keeper includes current-limited pulsed ignition 300-600 V class as a start-up transient; its peak is gate-covered only by a peak_sampled step; pulse energy is a measurement record (PENDING A9-04); H2-4 H24-19 flagged NEEDS_REVISION"
+   "how_applied": "c1_keeper includes current-limited pulsed ignition 300-600 V class as a start-up transient; its peak enters the P_bus,1ms,max gate (A9.1 OQ-A902-01); pulse energy is a measurement record (PENDING A9-04); H2-4 H24-19 flagged NEEDS_REVISION"
   },
   {
    "row": 90,
@@ -1723,7 +1881,7 @@
    ],
    "owner_answer_verbatim": "YES — apply <1.5 kW at the spacecraft-DC propulsion-system boundary. Conservatively require startup transients also to remain below 1.5 kW unless the official RFP explicitly permits a transient exception. Use a new A9/v2 boundary without modifying v1.",
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
-   "how_applied": "rfp_power_gate applies < 1500 W to steady state and every start-up step; empty start-up refused; a start-up step PASSes only if peak_sampled while the averaging window is TBD (A902-03)"
+   "how_applied": "rfp_power_gate applies P_bus,1ms,max < 1500 W to steady state and every start-up step; empty start-up refused; the 1 ms window and measurement requirements are frozen by A9.1 OQ-A902-01 (A902-03)"
   },
   {
    "row": 109,
@@ -1759,7 +1917,7 @@
    ],
    "owner_answer_verbatim": "REVISE SEQ-1 — sequence to avoid simultaneous peaks, but do not force the C1 heater off before it is safe. For C1, reduce/disable heater only after keeper/discharge is stable per cathode procedure; ICP has no thermionic heater.",
    "classification_by_recorder": "AMENDED_FOR_A9",
-   "how_applied": "revised SEQ-1 templates: one peak event per step and at most one peak-class slot load rising per step; C1 heater reduced only after keeper/discharge stable (a TBD heater counts as ON; last known value kept across TBD steps); no ICP heater"
+   "how_applied": "revised SEQ-1 templates: one peak event per step and at most one peak-class slot load rising per step (A9.1 SEQ-peaks baseline); C1 heater reduced only after keeper/discharge stable (a TBD heater counts as ON, booked at conservative power per A9.1 SEQ-heater; last known value kept across TBD steps); no ICP heater"
   },
   {
    "row": 113,
@@ -1830,43 +1988,64 @@
    "id": "OQ-A902-01",
    "question": "Averaging window / bandwidth that defines start-up transient power for the < 1.5 kW gate (row 108)?",
    "proposed_answer": "PROPOSED: the maximum of the spacecraft-side bus power reconstructed from simultaneously sampled DC channels at the metering bandwidth, no averaging beyond it; window frozen as a LOCK-1 rule, bandwidth value at LOCK-2",
-   "freeze_point": "LOCK-1"
+   "freeze_point": "LOCK-1",
+   "status": "ANSWERED_BY_A9_1 (OQ-A902-01)",
+   "a9_1_decision": "OQ-A902-01: P_bus,1ms,max = max_t (1/1 ms) integral_t^{t+1 ms} P_bus dt; requirement: P_bus,1ms,max < 1500 W, startup and steady state, unless the official RFP provides a transient exception; status: A9 engineering definition pending authoritative RFP wording (not an ECSS requirement)",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "OQ-A902-02",
    "question": "Which slots make up the 300 W common allocation in A9 (row 114)?",
    "proposed_answer": "PROPOSED: compressor, all flow_control slots, filter_getter, thermal_control, housekeeping_controls (the latter two = the 50 W controls/thermal allowance); reserved DC port and active_cooling outside",
-   "freeze_point": "LOCK-1"
+   "freeze_point": "LOCK-1",
+   "status": "ANSWERED_BY_A9_1 (OQ-A902-02)",
+   "a9_1_decision": "OQ-A902-02: 300 W common allocation = compressor + atm/Xe/ICP flow-control + filter/getter if active + thermal control + housekeeping/controls; 50 W controls/thermal inside it; extra active cooling and reserved ports outside unless reallocated",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "OQ-A902-03",
    "question": "Sub-allocation of the 1350 W design allocation between Hall discharge, magnets and the electron source (C1 reference supplies vs ICP RF/matching/collector)?",
    "proposed_answer": "owner call",
-   "freeze_point": "LOCK-1"
+   "freeze_point": "LOCK-1",
+   "status": "ANSWERED_BY_A9_1 (OQ-A902-03)",
+   "a9_1_decision": "OQ-A902-03: no fixed Hall/ICP split; P_ICP,available = 1350 - P_common - P_Hall - P_other_active at every registered condition; ICP-45 demonstrated within it; 0-500 W lab RF is a test capability only",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "OQ-A902-04",
    "question": "Is a combined 'ICP + C1 backup' flight variant (both electron sources installed) in scope? Row 55 excludes duplicating the ICP, and says nothing on a C1 backup.",
    "proposed_answer": "owner call (not declared in bus_power_boundary_a9_v1; would be a new declared variant)",
-   "freeze_point": "LOCK-1"
+   "freeze_point": "LOCK-1",
+   "status": "ANSWERED_BY_A9_1 (OQ-A902-04)",
+   "a9_1_decision": "OQ-A902-04: no combined flight C1 + ICP installation in primary A9 (would be a new variant with its own closures)",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "OQ-A902-05",
    "question": "Which gas and source feed the ICP (Xe ledger or atmospheric feed), and does its valve sit in the common allocation (row 46 recorder flag)?",
    "proposed_answer": "PROPOSED: book the valve under flow_control_icp_feed inside the common allocation; species owner call",
-   "freeze_point": "LOCK-1"
+   "freeze_point": "LOCK-1",
+   "status": "ANSWERED_BY_A9_1 (OQ-A902-05)",
+   "a9_1_decision": "OQ-A902-05: primary G-REUSE; flow_control_icp_feed booked only when G-ATM or G-XE is installed/used; capped port stays in the ICD",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "OQ-A902-06",
    "question": "Are housekeeping/controls and thermal loads fed through the 100 V internal bus or directly from the spacecraft input?",
    "proposed_answer": "PROPOSED: through the internal bus unless the PPU design states otherwise; the path is an explicit ledger input either way",
-   "freeze_point": "LOCK-1"
+   "freeze_point": "LOCK-1",
+   "status": "ANSWERED_BY_A9_1 (OQ-A902-06)",
+   "a9_1_decision": "OQ-A902-06: housekeeping and thermal routed through the internal propulsion bus by default; any direct spacecraft-input path represented explicitly",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "OQ-A902-07",
    "question": "Should the design-allocation check also be reported at the A5 lower end (1300 W)?",
    "proposed_answer": "PROPOSED: yes, as context only; row 109's ~1.35 kW is the check limit",
-   "freeze_point": "NOW"
+   "freeze_point": "NOW",
+   "status": "ANSWERED_BY_A9_1 (OQ-A902-07)",
+   "a9_1_decision": "OQ-A902-07: report 1300 W as context/sensitivity; active internal check 1350 W; hard requirement 1500 W",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   }
  ],
  "historical_reuse": [
@@ -1960,7 +2139,7 @@
    "m16_row": 17,
    "key": "preionizer_interface",
    "name": "RF pre-ionization module interface",
-   "how_touched": "not used for the primary line (historical); an ICP-neutralizer row is needed (A9-10), not created here"
+   "how_touched": "superseded for the primary line (historical); ICP-neutralizer head and flight RF chain rows are added in the A9-10 M16 refresh (docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json)"
   }
  ],
  "h3_inputs": [
@@ -2022,8 +2201,8 @@
   {
    "id": "H4-A902-03",
    "stage": "S1",
-   "measure": "time-resolved spacecraft-side bus power through both start-up sequences (transient gate)",
-   "closes": "A902-03 (once frozen)"
+   "measure": "time-resolved spacecraft-side bus power through both start-up sequences and in steady state: P_bus,1ms,max with >= 20 kHz bandwidth, >= 100 kSa/s, synchronized channels, documented anti-alias filtering; unaveraged peak and 100 ms / 1 s means as diagnostics",
+   "closes": "the P_bus,1ms,max gate per A902-03 / A902-39..41 (frozen, A9.1 OQ-A902-01)"
   },
   {
    "id": "H4-A902-04",
@@ -2058,5 +2237,100 @@
   "pins_mutable_governance": false,
   "v1_module_byte_identical": true,
   "parallel_a9_lanes_read_at_build_time": false
+ },
+ "a9_10_reconciliation": {
+  "lane": "fo_a9_10_integration",
+  "record": "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+  "overlay": "docs/experiments/hall_icp/integration/a9_10_overlay.py",
+  "a9_1_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
+  },
+  "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+  "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
+  "changes": [
+   {
+    "cid": "A910-A902-Q01",
+    "driver": "A9.1 OQ-A902-01",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=OQ-A902-01]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 OQ-A902-01"
+   },
+   {
+    "cid": "A910-A902-Q02",
+    "driver": "A9.1 OQ-A902-02",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=OQ-A902-02]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 OQ-A902-02"
+   },
+   {
+    "cid": "A910-A902-Q03",
+    "driver": "A9.1 OQ-A902-03",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=OQ-A902-03]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 OQ-A902-03"
+   },
+   {
+    "cid": "A910-A902-Q04",
+    "driver": "A9.1 OQ-A902-04",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=OQ-A902-04]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 OQ-A902-04"
+   },
+   {
+    "cid": "A910-A902-Q05",
+    "driver": "A9.1 OQ-A902-05",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=OQ-A902-05]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 OQ-A902-05"
+   },
+   {
+    "cid": "A910-A902-Q06",
+    "driver": "A9.1 OQ-A902-06",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=OQ-A902-06]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 OQ-A902-06"
+   },
+   {
+    "cid": "A910-A902-Q07",
+    "driver": "A9.1 OQ-A902-07",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=OQ-A902-07]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 OQ-A902-07"
+   },
+   {
+    "cid": "A910-A902-01",
+    "driver": "A9.1 OQ-A902-01",
+    "op": "code",
+    "ptr": null,
+    "count": 0,
+    "summary": "1 ms gate quantity P_bus,1ms,max < 1500 W for start-up and steady state; measurement requirements; unaveraged peak and 100 ms / 1 s means diagnostic only; interim 'PASS only if peak_sampled' rule replaced (p_bus_1ms_max(), rfp_power_gate)"
+   },
+   {
+    "cid": "A910-A902-02",
+    "driver": "A9.1 OQ-A902-02..07, SEQ-heater, SEQ-peaks, HIQ-06",
+    "op": "code",
+    "ptr": null,
+    "count": 0,
+    "summary": "300 W composition accepted; P_ICP,available relation (icp_power_allocation_check); no combined flight C1 + ICP; flow_control_icp_feed only in a G-ATM / G-XE variant; internal-bus default path; 1300 W context; TBD heater ON at booked power (booked_W); at most one peak-class load rising per step (items A902-39..46)"
+   },
+   {
+    "cid": "A910-A902-03",
+    "driver": "A9-10 self-reference",
+    "op": "set",
+    "ptr": "/interface_demands[21]/status",
+    "count": 1,
+    "summary": "M16 demand satisfied by the v3 refresh"
+   }
+  ]
  }
 }

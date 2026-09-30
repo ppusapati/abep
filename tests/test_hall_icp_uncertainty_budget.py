@@ -105,7 +105,10 @@ def test_dq_id_mapping_table(doc):
     for ub, dq in EXPECTED_MAPPING.items():
         r = rows[ub]
         assert r["dq_hi_id"] == dq
-        assert r["status"] == ("MAPPED" if dq else "UNMAPPED - owner/A9-10")
+        if dq:
+            assert r["status"] == "MAPPED"
+        else:  # A9-10 (OQ-INT-01): id kept, consumer table in the reconciliation record, owner call
+            assert r["status"].startswith("UNMAPPED - kept as a measurement-chain id") and "OQ-INT-01" in r["status"]
         assert r["basis"] and r["ub_definition"] and r["a9_01_definition"]
     targets = [r["dq_hi_id"] for r in m["rows"] if r["dq_hi_id"]]
     assert len(targets) == len(set(targets))
@@ -136,7 +139,10 @@ def test_numbers_only_from_owner_answers_or_verified_inputs(doc, answers):
         if not numeric:
             continue
         assert it["status"] in {"OWNER_GIVEN", "VERIFIED_INPUT"}, it["id"]
-        if it["status"] == "OWNER_GIVEN":
+        if it["status"] == "OWNER_GIVEN" and it.get("a9_1_decision"):   # A9-10: value given by an A9.1 decision
+            a91 = json.load(open(os.path.join(ROOT, "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json")))
+            assert it["a9_1_decision"] in a91["decisions"] and "A9_1" in it["source"], it["id"]
+        elif it["status"] == "OWNER_GIVEN":
             assert it["owner_rows"], it["id"]
             assert it["owner_text"], it["id"]
             assert any(it["owner_text"] in answers[r]["owner_answer_verbatim"] for r in it["owner_rows"]), it["id"]
@@ -160,8 +166,11 @@ def test_owner_given_values(doc):
 
 def test_no_frozen_decision_thresholds(doc):
     by = {it["id"]: it for it in doc["items"]}
-    for iid in ("UB-C-01", "UB-C-02", "UB-C-03", "UB-C-04", "UB-C-06", "UB-C-08", "UB-Z-00", "UB-B-01", "UB-RF-08"):
+    for iid in ("UB-C-01", "UB-C-04", "UB-C-06", "UB-C-08", "UB-Z-00", "UB-B-01"):
         assert isinstance(by[iid]["value"], str) and by[iid]["value"].startswith(("TBD - requires", "PENDING")), iid
+    # A9-10: the owner fixed these in A9.1 (UBQ-04 k_x = 2, UBQ-07 alphas 0.05); frozen at LOCK-1, not invented here
+    assert (by["UB-RF-08"]["value"], by["UB-C-02"]["value"], by["UB-C-03"]["value"]) == (2.0, 0.05, 0.05)
+    assert {by[i]["a9_1_decision"] for i in ("UB-RF-08", "UB-C-02", "UB-C-03")} == {"UBQ-04", "UBQ-07"}
     for g in doc["variance_groups"]["groups"]:
         assert g["share"].startswith("TBD - requires"), g["id"]
     assert [g["id"] for g in doc["variance_groups"]["groups"]] == ["VG-1", "VG-2", "VG-3", "VG-4", "VG-5"]
@@ -170,7 +179,7 @@ def test_no_frozen_decision_thresholds(doc):
     assert not re.search(r"delta_stop\"?\s*[:=]\s*[0-9]", txt)
     cs = doc["stop_rules"]["contrast_stop"]
     assert {f["id"] for f in cs["forms"]} == {"SR-C-SIGN", "SR-C-MARGIN"}
-    assert cs["owner_choice"].startswith("OPEN")
+    assert cs["owner_choice"].startswith("SR-C-MARGIN (A9.1 UBQ-09)")      # A9-10: owner decision applied
     assert cs["historical_citation_only"]["rationale_quoted"]
     assert "superseded" in cs["historical_citation_only"]["status"]
 

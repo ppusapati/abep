@@ -167,32 +167,32 @@
   {
    "key": "BPB_A9",
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "sha256": "1a3c8d29404d464816f0e306e2883993a52f3094a26656937203a816dd6701df"
+   "sha256": "7ca8ed23652c4f3a1054461c7d14919c7e169d2ae97e20b318acba397ddeb3af"
   },
   {
    "key": "ICD",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "1cdab3d71377443d41f128398159ba5ac0203d9daaca8c77840cea6fcd9a353c"
+   "sha256": "4d16ee4d0e3425843f24c78b3dea038e46ca44360bf44a1451c36dcbad500fb8"
   },
   {
    "key": "UB",
    "path": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "sha256": "d1cf5aba0a813c676d48c3ac8741ddb3c00c31700428fbff1c0217a5ee2d92d1"
+   "sha256": "650aa32b4b388aebba4c20a54ca35f762b09f7d04403f4f0b440d6fd8fda0983"
   },
   {
    "key": "PREREG",
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "sha256": "f3e6069a4c78c49822f9248d9b9bc34a157a349bf601f7065e5e182645fbd245"
+   "sha256": "f22e12e73a664df26349642aa64e850ffd8e6581e7239effd8230410bb97264f"
   },
   {
    "key": "VI",
    "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-   "sha256": "1de411c5f09d96698e87ec22bdba796b5c2010ad4f0362afb5a4fd2eec9b9527"
+   "sha256": "54ae028df1ea940d624e7caa074eed47fe8576ef1a0d631391601ddf855e6158"
   },
   {
    "key": "INT",
    "path": "docs/experiments/hall_icp/integration/a9_core_integration_v1.json",
-   "sha256": "20c222d9b8a65930789c767ed45127041c7b1cd06e21a715101761036bb5f2ca"
+   "sha256": "425218cf84c6bb862924f3a3c125186b0ee00fc403c752f1e3c2ddb4f658386d"
   },
   {
    "key": "MCQ",
@@ -253,7 +253,7 @@
   "A9-06": "docs/budgets/mass_a9/",
   "A9-08": "docs/budgets/xe_ledger_a9/",
   "A9-09": "docs/procurement/rfq_a9/",
-  "A9-10": "fo_a9_10_integration (reconciliation lane; no path yet)"
+  "A9-10": "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (fo_a9_10_integration)"
  },
  "recomputations": {
   "h21_central_bore": {
@@ -33401,7 +33401,7 @@
       "attempts_3_literal": 0.36,
       "attempts_2_shorthand": 0.24
      },
-     "purge_preheat_xe": "PENDING docs/budgets/xe_ledger_a9/ (A9-08: purge/preheat Xe per start (IDA7-04))"
+     "purge_preheat_xe": "booked by A9-08 as F-C1-* terms (docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json); value TBD - requires vendor/design-qualified purge/preheat flows and durations (XA9-09..11)"
     }
    },
    "units": "s; g",
@@ -33802,7 +33802,7 @@
     "requirement": "stand designed for >= 25 kg moving payload; the actual configuration spread (H-1 + MC-1 + module + on-platform services) measured per serial and configuration; uprate/requalify rather than trim hardware",
     "value": {
      "design_payload_min_kg": 25.0,
-     "per_configuration_mass_kg": "PENDING docs/budgets/mass_a9/ (A9-06: module masses and CG)"
+     "per_configuration_mass_kg": "TBD - requires the C1 / ICP / sham module drawings (ICD ICP-08); A9-06 (merged) gives no ground module masses"
     }
    },
    "units": "kg",
@@ -37704,13 +37704,13 @@
    "quantity": "per-configuration mass and CG on the stand (C1 module, ICP module, sham, on-platform services) for the >= 25 kg payload check",
    "value": null,
    "units": "kg",
-   "status": "PENDING docs/budgets/mass_a9/ (A9-06: module masses and CG)"
+   "status": "OPEN - A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged) books flight-BOM allocations and evidence floors, not ground module masses/CG; TBD - requires the C1 / ICP / sham module drawings (ICD ICP-08)"
   },
   {
    "id": "IDA7-03",
    "from": "A9-07",
    "to": "A9-08 docs/budgets/xe_ledger_a9/",
-   "quantity": "Xe consequences - IGNITION-DWELL-ONLY bound (not the total Xe per start; purge/preheat Xe PENDING A9-08, IDA7-04): C1 ignition dwell cap 120 s with at most two retries (bound per start from the 1.0 mg/s start-controller full scale; attempts 3 literal / 2 shorthand, OQ-A907-01); G-REUSE gives zero dedicated ICP Xe; C1 Xe only in hall_c1_reference (ground) and any flight fallback; +/-2 % FS flow class term (row 96). The value is an IGNITION-DWELL-ONLY bound: purge and preheat Xe are NOT in it (PENDING A9-08, IDA7-04), so it is not the total Xe per start",
+   "quantity": "Xe consequences - IGNITION-DWELL-ONLY bound (not the total Xe per start; purge/preheat Xe booked by A9-08 in docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json as C1 start terms F-C1-* / G-C1-* with values TBD, IDA7-04): C1 ignition dwell cap 120 s with at most two retries (bound per start from the 1.0 mg/s start-controller full scale; attempts 3 literal / 2 shorthand, OQ-A907-01); G-REUSE gives zero dedicated ICP Xe; C1 Xe only in hall_c1_reference (ground) and any flight fallback; +/-2 % FS flow class term (row 96). The value is an IGNITION-DWELL-ONLY bound: purge and preheat Xe are NOT in it (booked by A9-08 in docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json as C1 start terms F-C1-* / G-C1-* with values TBD, IDA7-04), so it is not the total Xe per start",
    "value": {
     "attempts_3_literal": 0.36,
     "attempts_2_shorthand": 0.24,
@@ -37726,7 +37726,7 @@
    "quantity": "booked C1 purge/preheat/ignition Xe per start and the G-XE contingency term (if ever installed)",
    "value": null,
    "units": "g",
-   "status": "PENDING docs/budgets/xe_ledger_a9/ (A9-08: Xe per start terms)"
+   "status": "SUPPLIED as booking structure by A9-08 (docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json F-C1-* / G-C1-* purge, preheat and ignition terms, G-XE contingency term); values REFUSED while the vendor/design-qualified flows and durations are TBD (XA9-09..11)"
   },
   {
    "id": "IDA7-05",
@@ -37744,7 +37744,7 @@
    "quantity": "quoted data-sheet values (coating temperature capability, ceramic wire rating at representative gas, coupler/sensor calibration scope, isolator withstand)",
    "value": null,
    "units": "-",
-   "status": "PENDING docs/procurement/rfq_a9/ (A9-09: quotations)"
+   "status": "OPEN - A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged) issued RFQ specifications only; no quotation received (no supplier contact by any lane)"
   },
   {
    "id": "IDA7-07",
@@ -38019,7 +38019,7 @@
    "quantity": "total ICP module heat load Q_mod and its split into H-1 (ICP-43)",
    "value": null,
    "units": "W",
-   "status": "PENDING docs/architecture_comparison/power_boundary_a9/ (P_d,max; ICP-43)"
+   "status": "OPEN - TBD - requires the owner registration of the stand I_d,max / P_d,max (OQ-A907-02); A9-02 registers no stand value; ICD ICP-43 now carries the A9-07 IDA7-07 H-1 allowance"
   },
   {
    "id": "IDA7-09",
@@ -39074,7 +39074,7 @@
    "values": {
     "attempts_3_literal": 0.36,
     "attempts_2_shorthand": 0.24,
-    "scope": "IGNITION_DWELL_ONLY (g per start; purge/preheat Xe excluded, PENDING A9-08)"
+    "scope": "IGNITION_DWELL_ONLY (g per start; purge/preheat Xe excluded; booked by A9-08 as F-C1-* terms with values TBD)"
    }
   },
   {
@@ -39432,5 +39432,101 @@
   "no_contact": "no persons, labs or suppliers contacted; no web source newly cited",
   "thresholds": "only owner-given (rows / A9.1) or recorded supplier values; levers are PROPOSED; no limit relaxed",
   "no_winner": true
+ },
+ "parallel_lanes_status_a9_10": "A9-06, A9-08 and A9-09 are merged and verified; every reference to them in this deliverable was re-evaluated in A9-10 (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json pending_reevaluation / interface_demand_matrix)",
+ "a9_10_reconciliation": {
+  "lane": "fo_a9_10_integration",
+  "record": "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+  "overlay": "docs/experiments/hall_icp/integration/a9_10_overlay.py",
+  "a9_1_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
+  },
+  "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+  "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
+  "changes": [
+   {
+    "cid": "A910-A907-01",
+    "driver": "A9-08 merged",
+    "op": "gsub",
+    "ptr": "",
+    "count": 1,
+    "summary": "Xe-ledger reference resolved"
+   },
+   {
+    "cid": "A910-A907-02",
+    "driver": "A9-08 merged",
+    "op": "replace",
+    "ptr": "/open_owner_questions[id=OQ-A907-01]/values/scope",
+    "count": 1,
+    "summary": "scope text re-evaluated"
+   },
+   {
+    "cid": "A910-A907-03",
+    "driver": "A9-08 XA9-IF-06",
+    "op": "set",
+    "ptr": "/interface_demands[id=IDA7-04]/status",
+    "count": 1,
+    "summary": "IDA7-04 re-evaluated"
+   },
+   {
+    "cid": "A910-A907-04",
+    "driver": "A9-08 XA9-IF-06",
+    "op": "set",
+    "ptr": "/revision_register[24]/new/value/purge_preheat_xe",
+    "count": 1,
+    "summary": "purge/preheat booking re-evaluated"
+   },
+   {
+    "cid": "A910-A907-05",
+    "driver": "A9-06 merged (no ground module masses)",
+    "op": "set",
+    "ptr": "/interface_demands[id=IDA7-02]/status",
+    "count": 1,
+    "summary": "IDA7-02 re-evaluated"
+   },
+   {
+    "cid": "A910-A907-06",
+    "driver": "A9-06 merged (no ground module masses)",
+    "op": "set",
+    "ptr": "/revision_register[31]/new/value/per_configuration_mass_kg",
+    "count": 1,
+    "summary": "per-configuration stand mass re-evaluated"
+   },
+   {
+    "cid": "A910-A907-07",
+    "driver": "A9-09 merged (quotations only)",
+    "op": "set",
+    "ptr": "/interface_demands[id=IDA7-06]/status",
+    "count": 1,
+    "summary": "IDA7-06 re-evaluated"
+   },
+   {
+    "cid": "A910-A907-09",
+    "driver": "A9-10 self-reference",
+    "op": "set",
+    "ptr": "/parallel_lanes_pending/A9-10",
+    "count": 1,
+    "summary": "A9-10 path resolved"
+   },
+   {
+    "cid": "A910-A907-10",
+    "driver": "OQ-INT-03 re-evaluation",
+    "op": "set",
+    "ptr": "/parallel_lanes_status_a9_10",
+    "count": 1,
+    "summary": "parallel lanes merged"
+   },
+   {
+    "cid": "A910-A907-08",
+    "driver": "A9-02 merged (no stand registration)",
+    "op": "set",
+    "ptr": "/interface_demands[id=IDA7-08]/status",
+    "count": 1,
+    "summary": "IDA7-08 re-evaluated"
+   }
+  ]
  }
 }

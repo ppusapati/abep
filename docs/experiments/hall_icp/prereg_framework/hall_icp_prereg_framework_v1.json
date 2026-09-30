@@ -334,7 +334,7 @@
    "id": "HI-HOLDOUT-A",
    "order": 3,
    "name": "held-out partition rule frozen (validation custody, part A)",
-   "what": "before ANY Hall-on reading on the actual H-1 (any gas), freeze which reading families are held out as Hall-transport validation evidence and the custody plan (rows 25, 35); see held_out_validation",
+   "what": "before ANY Hall-on reading on the actual H-1 (any gas, including the Ar engineering reproduction; A9.1 HIQ-04), freeze which reading families are held out as Hall-transport validation evidence and the custody plan (rows 25, 35); see held_out_validation",
    "entry": [
     "HI-S1A exit"
    ],
@@ -378,7 +378,8 @@
     "ABSOLUTE_DEMONSTRATION",
     "HELD_OUT_VALIDATION_EVIDENCE"
    ],
-   "score_bearing": false
+   "score_bearing": false,
+   "a9_1": "A9.1 HIQ-08: HI-AR runs before LOCK-1 and after HI-HOLDOUT-A; engineering findings may refine hardware settings and the ICP recipe frozen at LOCK-1; Ar readings never enter LOCK-2 uncertainty numbers, architecture decision quantities or DRDO atmospheric compliance claims. A9.1 ICP-45: ICP-45A (Ar engineering qualification, I_e,cap >= I_d,max, engineering-only evidence) is demonstrated here. A9.1 UBQ-08: Ar-specific gauge/MFC/RGA calibrations are required for HI-AR interpretation"
   },
   {
    "id": "HI-LOCK1",
@@ -406,7 +407,7 @@
    "id": "HI-HOLDOUT-B",
    "order": 6,
    "name": "held-out condition enumeration frozen (validation custody, part B)",
-   "what": "enumerate the held-out conditions from the LOCK-1 grid before S1 (row 25), so every held-out condition is predicted before it is measured",
+   "what": "enumerate the held-out conditions from the LOCK-1 grid after LOCK-1 but before HI-S1 (row 25; A9.1 HIQ-04), so every held-out condition is predicted before it is measured",
    "entry": [
     "HI-LOCK1 signed"
    ],
@@ -507,7 +508,8 @@
    "what": "order-balanced blocks of complete replicate sets; each block = REF installation at REF-COND (own installation, row 40) plus one installation of each configuration; inside every installation pure N2 slices first and O2-bearing slices last (row 36), O2-bearing labelled NO_ATOMIC_O (row 132); bounded XE_REFERENCE checks and, only if the RFP permits, bounded XE_AUGMENTED_PEAK points, labelled and booked (rows 6, 26); raw dataset frozen by sha256 and scored once by the frozen script",
    "entry": [
     "HI-LOCK2 filed",
-    "the realized schedule published with seed and hash (row 30)"
+    "the realized schedule published with seed and hash (row 30)",
+    "ICP-45 formal entry condition met (A9.1 ICP-45): ICP-45A (Ar, engineering-only) and ICP-45N (N2) each demonstrated I_e,cap >= I_d,max, with I_d,max from the registered H-1 / discharge-supply envelope (never invented), recording at each current the extracted electron current, RF forward/reflected power, DC input power, collector voltage/current, pressure, gas state, thermal state and plasma stability; no hall_icp_neutralizer score-bearing point before it; the Takahashi ~1 A / 200 W point is context only"
    ],
    "exit": [
     "scored dataset and mechanical outcome record (or OPEN status with the next discriminating test, row 38) to the owner"
@@ -782,7 +784,7 @@
     "configuration_defining_settings": [
      "RF forward power (laboratory 0-500 W range, row 72) and matching state",
      "collector bias V / I (row 70)",
-     "ICP gas species and flow - owner question HIQ-06 (A9 recorder flag row 46: unbooked)",
+     "ICP gas mode G-REUSE (Hall exhaust / residual propellant; mdot_ICP,dedicated = 0; A9.1 HIQ-06); the dedicated ICP port is installed and capped; G-ATM / G-XE are separately declared contingency variants, booked when used; score-bearing N2 / N2+O2 comparison uses G-REUSE unless it fails the preregistered ICP-capacity gate",
      "RF interlock state (row 62)"
     ],
     "shams_present": [
@@ -835,7 +837,7 @@
    "id": "RR-HI-04",
    "what": "within-installation gas order and repeats",
    "reuses": "RR-04 (gas order replaced)",
-   "rule": "inside every installation: pure N2 slices first, O2-bearing slices (NO_ATOMIC_O) last (row 36); bounded Xe reference per the bounded Xe plan (position: HIQ-03); the first N2 condition of the installation is repeated at the end of its N2 slices (PROPOSED)"
+   "rule": "inside every installation: pure N2 slices first, O2-bearing slices (NO_ATOMIC_O) last (row 36); bounded Xe reference per the bounded Xe plan (position: at the beginning of the installation, before the N2 slices and therefore before any O2-bearing exposure, A9.1 HIQ-03); the first N2 condition of the installation is repeated at the end of its N2 slices (PROPOSED)"
   },
   {
    "id": "RR-HI-05",
@@ -1058,7 +1060,7 @@
    "DQ-HI-RESTART",
    "DQ-HI-LIFE"
   ],
-  "net_benefit_form": "NET_BENEFIT = hard gates first, then a Pareto report of dXe, dP_bus, dmass, T/P_bus, restart and life burden relative to C1; no weighted scalar and no single-scalar selection unless preregistered at LOCK-1 (row 37)",
+  "net_benefit_form": "NET_BENEFIT = hard gates first, then a Pareto report of dXe, dP_bus, dmass, T/P_bus, restart and life burden relative to C1; no weighted scalar and no single-scalar selection unless preregistered at LOCK-1 (row 37); A9.1 HIQ-05: no mandatory Pareto relation - hard gates alone determine feasibility and Pareto quantities are reported for engineering comparison only unless a particular Pareto condition is explicitly preregistered at LOCK-1",
   "definitions": {
    "PASS_GATES(X)": "configuration X meets every hard gate (DQ-HI-SUST, DQ-HI-ECAP, DQ-HI-VCPL, DQ-HI-TABS, DQ-HI-PBUS, DQ-HI-PALLOC, DQ-HI-STAB, DQ-HI-SAFE, DQ-HI-IGN) at every required-envelope condition, each classification RESOLVED (DQ-HI-PALLOC applies to hall_icp_neutralizer only)",
    "FAILS_GATES(X)": "at least one hard gate of X is RESOLVED as failed at a required condition",
@@ -1088,7 +1090,7 @@
   "no_winner": "the framework never declares a winner and never ranks configurations; outcomes are pre-registered classifications handed to the owner",
   "current_status": "NOT_EVALUATED - no Hall->ICP data exist; this framework evaluates nothing and prefers no configuration",
   "external_inputs": {
-   "mass": "A9 mass BOM (PENDING A9-06 mass BOM A9 amendment (backlog item in the A9 decision; no path yet))",
+   "mass": "A9 mass BOM (docs/budgets/mass_a9/mass_a9_v1.json (A9-06; allocations and evidence floors, no design CBE; re-evaluated in A9-10))",
    "life": "HI-AO programme and life evidence (INS-P-10, INS-P-11)",
    "boundary": "abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json (A9-02)"
   }
@@ -1109,7 +1111,7 @@
     "INS-08",
     "INS-17"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
@@ -1129,12 +1131,14 @@
     "ICP collector V/I channel schemas/interfaces/icp_neutralizer_icd_v1.json ICP-21 (A9-03)",
     "C1 keeper / emission channels (HW-C1-05)"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
     "margin_value": "LOCK-2"
-   }
+   },
+   "entry_condition_a9_1": "ICP-45A (Ar, engineering-only) then ICP-45N (N2): I_e,cap >= I_d,max demonstrated before any hall_icp_neutralizer score-bearing point (A9.1 ICP-45); passing ICP-45 alone does not retire C1",
+   "margin_form_a9_1": "M_n = I_e,cap / I_d,dem - 1; gate on the one-sided lower confidence bound > 0 (A9.1 UBQ-02); any additional design margin is computed/frozen at LOCK-2 by the LOCK-1 uncertainty rule, none invented now"
   },
   {
    "id": "DQ-HI-VCPL",
@@ -1149,7 +1153,7 @@
     "INS-15",
     "INS-16 (where feasible)"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
@@ -1207,7 +1211,7 @@
     "INS-02",
     "INS-03"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
@@ -1229,7 +1233,7 @@
     "INS-10",
     "INS-18"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
@@ -1251,7 +1255,7 @@
     "INS-24",
     "RF interlock channel schemas/interfaces/icp_neutralizer_icd_v1.json ICP-16 (A9-03)"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
@@ -1272,7 +1276,7 @@
     "INS-05",
     "INS-18"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
@@ -1283,14 +1287,14 @@
    "id": "DQ-HI-DXE",
    "name": "Xe burden relative to C1 (dXe)",
    "role": "PARETO_REPORTED",
-   "operational_definition": "Xe mass per operating hour and per start of each configuration at the same condition, booked PHASE_TOTAL_FLOW (row 42) including purge, preheat, ignition, keeper, transition and fallback; ICP gas feed booked by species (HIQ-06, A9 recorder flag row 46); dXe = ICP minus C1.",
+   "operational_definition": "Xe mass per operating hour and per start of each configuration at the same condition, booked PHASE_TOTAL_FLOW (row 42) including purge, preheat, ignition, keeper, transition and fallback; ICP gas: G-REUSE books no dedicated ICP gas (A9.1 HIQ-06, no double counting of the Hall feed); a declared G-XE variant books mdot_ICP,Xe under PHASE_TOTAL_FLOW; a G-ATM variant adds mdot_ICP,dedicated to the atmospheric total; dXe = ICP minus C1.",
    "units": "mg/s; mg per start; kg per mission case",
    "per_configuration": "measured for both configurations at the same conditions",
    "measurement_chain": [
     "INS-05",
     "INS-18"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
@@ -1308,7 +1312,7 @@
     "INS-02",
     "INS-03"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
@@ -1327,7 +1331,7 @@
     "INS-02",
     "INS-03"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
@@ -1342,9 +1346,9 @@
    "units": "kg",
    "per_configuration": "external input (not a comparison measurement)",
    "measurement_chain": [
-    "mass BOM PENDING A9-06 mass BOM A9 amendment (backlog item in the A9 decision; no path yet)"
+    "mass BOM docs/budgets/mass_a9/mass_a9_v1.json (A9-06; allocations and evidence floors, no design CBE; re-evaluated in A9-10)"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
@@ -1364,7 +1368,7 @@
     "INS-10",
     "INS-18"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
@@ -1384,7 +1388,7 @@
     "INS-23",
     "HI-AO programme"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
@@ -1403,7 +1407,7 @@
     "INS-04",
     "INS-10"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
@@ -1592,17 +1596,18 @@
     }
    }
   },
-  "reference_asymmetry_note": "per installation the predecessors are balanced, but counted by the module on the carrier the configuration that does not carry the reference is always preceded by the reference module while the reference configuration is preceded by itself once and by the other module once per replicate set (by_module_on_carrier); reported, not hidden (HIQ-01)",
+  "reference_asymmetry_note": "per installation the predecessors are balanced, but counted by the module on the carrier the configuration that does not carry the reference is always preceded by the reference module while the reference configuration is preceded by itself once and by the other module once per replicate set (by_module_on_carrier); A9.1 HIQ-01: hall_c1_reference stays the REF-COND drift/reference anchor in every block and this predecessor asymmetry is preserved and reported, never hidden or statistically erased",
   "min_complete_replicate_sets": {
    "value": 3,
    "source": "row 19",
    "evidence_class": "owner-allocation",
-   "interpretation": "PROPOSED: one 'complete engineering replicate' = one complete balanced replicate set (HIQ-02)"
+   "interpretation": "OWNER (A9.1 HIQ-02): three complete balanced replicate sets = both sequences in each replicate set, i.e. at least six blocks before any larger n required by the LOCK-2 uncertainty"
   },
   "min_blocks_if_interpretation_accepted": {
    "value": 6,
    "derivation": "3 complete replicate sets x 2 sequences (computed by minimum_blocks())",
-   "evidence_class": "model-derived"
+   "evidence_class": "model-derived",
+   "owner_status": "interpretation accepted by the owner (A9.1 HIQ-02): at least 6 blocks; final n at LOCK-2"
   },
   "final_n": "LOCK-2 from measured uncertainty; whole multiple of the sequence-set size (row 19); assign_sequences() raises otherwise",
   "seed_procedure_frozen_at_lock1": [
@@ -1619,7 +1624,7 @@
   "block_template": [
    {
     "slot": "REF-OPEN",
-    "configuration": "REF-COND reference installation (module: HIQ-01)",
+    "configuration": "REF-COND reference installation (module: hall_c1_reference in every block, A9.1 HIQ-01)",
     "scored_for_decision": false
    },
    {
@@ -1815,7 +1820,7 @@
    {
     "family": "HF-2",
     "data": "hall_icp_neutralizer pure-N2 readings",
-    "role": "SEQUESTERED_FOR_FUTURE_PREREG (PROPOSED): the downstream ICP electron source changes the cathode boundary condition of any transport model; owner / W5 call (HIQ-07)"
+    "role": "SEQUESTERED_FOR_FUTURE_PREREG (owner, A9.1 HIQ-07): the downstream ICP electron source changes the cathode/electron boundary condition and cannot silently validate the existing transport model; kept for a future Hall-transport preregistration, not inserted into the current validation set"
    },
    {
     "family": "HF-3",
@@ -2278,12 +2283,12 @@
   {
    "id": "ITM-40",
    "name": "ICP gas feed species and flow",
-   "value": "TBD - requires owner decision HIQ-06 and ICP ICD",
+   "value": "G-REUSE: 0 mg/s dedicated ICP flow (A9.1 HIQ-06); a G-ATM / G-XE contingency flow is TBD - requires the declared variant",
    "units": "species; mg/s",
    "basis": "A9 recorder flag (row 46)",
-   "source": "schemas/interfaces/icp_neutralizer_icd_v1.json ICP-26 (A9-03)",
-   "evidence_class": "none (TBD)",
-   "status": "OPEN (unbooked)",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json HIQ-06 (A9 recorder flag row 46 resolved); schemas/interfaces/icp_neutralizer_icd_v1.json ICP-26 (A9-03)",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN (A9.1 HIQ-06; contingency variants open)",
    "freeze_point": "LOCK-1"
   },
   {
@@ -2377,7 +2382,7 @@
   {
    "id": "IF-HI-09",
    "direction": "from this lane to H2-6 / fixture",
-   "counterpart": "docs/hardware/h2/h2_6_diagnostics_fixture/ (H26-40..H26-42 upstream-module concept) and PENDING A9-07 H2 revisions (backlog item in the A9 decision; no path yet)",
+   "counterpart": "docs/hardware/h2/h2_6_diagnostics_fixture/ (H26-40..H26-42 upstream-module concept) and docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07; revision register REV-*, interface demands IDA7-*)",
    "demand": "carrier re-derived for a DOWNSTREAM module (H2-6 concept was between IP-UP and IP-DN upstream); harp / slack-loop service routing with matched sham RF coax (row 117); >= 25 kg moving payload (row 116)",
    "units": "kg; N",
    "status": "OPEN (revision needed)"
@@ -2385,7 +2390,7 @@
   {
    "id": "IF-HI-10",
    "direction": "from this lane to H2-1 / H2-2",
-   "counterpart": "docs/hardware/h2/h2_1_hall_chamber_magnet/, docs/hardware/h2/h2_2_cathode_integration/ and PENDING A9-07 H2 revisions (backlog item in the A9 decision; no path yet)",
+   "counterpart": "docs/hardware/h2/h2_1_hall_chamber_magnet/, docs/hardware/h2/h2_2_cathode_integration/ and docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07; revision register REV-*, interface demands IDA7-*)",
    "demand": "external C1 (row 79) replaces the preliminary L-CENTRAL choice; H-1 neutralizer-agnostic with a downstream / coaxial ICP interface",
    "units": "-",
    "status": "OPEN (revision needed)"
@@ -2393,7 +2398,7 @@
   {
    "id": "IF-HI-11",
    "direction": "from this lane to H2-4",
-   "counterpart": "docs/hardware/h2/h2_4_ppu_bus/ and PENDING A9-07 H2 revisions (backlog item in the A9 decision; no path yet)",
+   "counterpart": "docs/hardware/h2/h2_4_ppu_bus/ and docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07; revision register REV-*, interface demands IDA7-*)",
    "demand": "flight-representative breadboard discharge supply with eta_d and transients measured before LOCK-2 (row 113); 100 V internal bus (row 111)",
    "units": "W; V",
    "status": "OPEN"
@@ -2401,7 +2406,7 @@
   {
    "id": "IF-HI-12",
    "direction": "from this lane to H2-5",
-   "counterpart": "docs/hardware/h2/h2_5_thermal_network/ and PENDING A9-07 H2 revisions (backlog item in the A9 decision; no path yet)",
+   "counterpart": "docs/hardware/h2/h2_5_thermal_network/ and docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07; revision register REV-*, interface demands IDA7-*)",
    "demand": ">= 50 K margin rule (row 86) as a DQ-HI-SAFE limit source; current 11.2 K BN wall margin not acceptable",
    "units": "K",
    "status": "OPEN (revision needed)"
@@ -2417,8 +2422,8 @@
   {
    "id": "IF-HI-14",
    "direction": "from this lane to the Xe ledger",
-   "counterpart": "docs/budgets/xe_ledger/xe_ledger_v1.json and PENDING A9-08 Xe ledger updates (backlog item in the A9 decision; no path yet)",
-   "demand": "bookings: C1 PHASE_TOTAL_FLOW (row 42), XE_REFERENCE and XE_AUGMENTED_PEAK points (row 26), ICP gas if Xe (HIQ-06), 120 s x 2 ignition dwell bound (row 93)",
+   "counterpart": "docs/budgets/xe_ledger/xe_ledger_v1.json and docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json (A9-08)",
+   "demand": "bookings: C1 PHASE_TOTAL_FLOW (row 42), XE_REFERENCE and XE_AUGMENTED_PEAK points (row 26), ICP Xe only for a declared G-XE contingency variant (A9.1 HIQ-06; G-REUSE books 0), 120 s x 2 ignition dwell bound (row 93)",
    "units": "mg/s; kg",
    "status": "OPEN"
   },
@@ -2441,7 +2446,7 @@
   {
    "id": "IF-HI-17",
    "direction": "from this lane to A9-06",
-   "counterpart": "PENDING A9-06 mass BOM A9 amendment (backlog item in the A9 decision; no path yet)",
+   "counterpart": "docs/budgets/mass_a9/mass_a9_v1.json (A9-06; allocations and evidence floors, no design CBE; re-evaluated in A9-10)",
    "demand": "mass differences for DQ-HI-DMASS (ICP module, RF generator/matching/feedthrough, collector/bias hardware vs C1 and Xe hardware; row 59)",
    "units": "kg",
    "status": "PENDING"
@@ -3317,49 +3322,65 @@
    "id": "HIQ-01",
    "question": "Which module occupies the REF-COND reference installation of each block?",
    "proposed_answer": "hall_c1_reference (the control, analog of the historical HW-0 reference); the resulting predecessor asymmetry is computed and reported (execution_design); alternative: alternate the reference module between blocks",
-   "status": "OPEN - owner call"
+   "status": "ANSWERED_BY_A9_1 (HIQ-01)",
+   "a9_1_decision": "HIQ-01: REF-COND reference installation = hall_c1_reference in every block; predecessor asymmetry preserved and reported",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "HIQ-02",
    "question": "Does 'minimum three complete engineering replicates' (row 19) mean three complete balanced replicate sets (both sequences each, i.e. at least six blocks)?",
    "proposed_answer": "yes",
-   "status": "OPEN"
+   "status": "ANSWERED_BY_A9_1 (HIQ-02)",
+   "a9_1_decision": "HIQ-02: three complete balanced replicate sets, >= 6 blocks before any larger LOCK-2 n",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "HIQ-03",
    "question": "Where inside an installation does the bounded Xe reference check sit relative to the pure-N2-first / O2-last order (row 36)?",
    "proposed_answer": "owner call; PROPOSED: at the start of the installation, before the N2 slices, so O2 exposure within the installation cannot bias the health reading",
-   "status": "OPEN - owner call"
+   "status": "ANSWERED_BY_A9_1 (HIQ-03)",
+   "a9_1_decision": "HIQ-03: bounded Xe reference/health check at the start of the installation, before N2 and any O2-bearing exposure",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "HIQ-04",
    "question": "Must the held-out partition rule be frozen before the Ar topology reproduction (the first Hall-on reading on the actual H-1), with the condition enumeration completed after LOCK-1 but before S1?",
    "proposed_answer": "yes (two-part freeze HI-HOLDOUT-A / HI-HOLDOUT-B)",
-   "status": "OPEN"
+   "status": "ANSWERED_BY_A9_1 (HIQ-04)",
+   "a9_1_decision": "HIQ-04: HI-HOLDOUT-A frozen before the first Hall-on H-1 reading (incl. Ar); held-out enumeration after LOCK-1, before HI-S1",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "HIQ-05",
    "question": "Should any Pareto relation be a necessary condition of the hall_icp_neutralizer outcome?",
    "proposed_answer": "no; Pareto report only, unless a condition is preregistered at LOCK-1 (row 37)",
-   "status": "OPEN"
+   "status": "ANSWERED_BY_A9_1 (HIQ-05)",
+   "a9_1_decision": "HIQ-05: no mandatory Pareto relation; hard gates decide feasibility; Pareto reported unless a condition is preregistered at LOCK-1",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "HIQ-06",
    "question": "ICP neutralizer gas species and feed (Xe from the Xe ledger, Ar, or atmospheric surrogate) for the comparison?",
    "proposed_answer": "owner call; whatever is chosen is CONFIGURATION_DEFINING, frozen at LOCK-1 and fully booked (A9 recorder flag row 46)",
-   "status": "OPEN - owner call"
+   "status": "ANSWERED_BY_A9_1 (HIQ-06)",
+   "a9_1_decision": "HIQ-06: primary ICP gas mode G-REUSE (Hall exhaust/residual); dedicated ICP port installed and capped; G-ATM / G-XE are declared contingency variants; score-bearing N2/N2+O2 uses G-REUSE unless it fails the preregistered ICP-capacity gate; no dedicated Xe to make the ICP work",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "HIQ-07",
    "question": "Are hall_icp_neutralizer pure-N2 readings held out as Hall-transport validation evidence or sequestered for a future pre-registration?",
    "proposed_answer": "sequestered (the downstream ICP changes the electron-source boundary condition); W5 owner call",
-   "status": "OPEN - owner call"
+   "status": "ANSWERED_BY_A9_1 (HIQ-07)",
+   "a9_1_decision": "HIQ-07: pure-N2 hall_icp_neutralizer readings sequestered for a future Hall-transport preregistration",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "HIQ-08",
    "question": "Is the Ar topology reproduction (HI-AR) run before LOCK-1 so its engineering findings can shape the ICP recipe frozen at LOCK-1?",
    "proposed_answer": "yes, after HI-HOLDOUT-A; Ar data never feed a LOCK-2 number or a decision quantity",
-   "status": "OPEN"
+   "status": "ANSWERED_BY_A9_1 (HIQ-08)",
+   "a9_1_decision": "HIQ-08: HI-AR before LOCK-1, after HI-HOLDOUT-A; Ar never enters LOCK-2 numbers, decision quantities or DRDO compliance claims",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   }
  ],
  "historical_reuse": {
@@ -3492,61 +3513,61 @@
    "row": 9,
    "key": "hall_chamber",
    "how": "H-1 stays bolted as the common scored article (D-09-A); anode / wall frozen before HI-S1 (GD-02, GD-03)",
-   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes route through PENDING A9-10 governance (backlog item in the A9 decision; no path yet)"
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json"
   },
   {
    "row": 10,
    "key": "magnetic_circuit",
    "how": "B(z) perturbation scan with the downstream module installed/energized; tolerance from measured sensitivity (GD-11)",
-   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes route through PENDING A9-10 governance (backlog item in the A9 decision; no path yet)"
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json"
   },
   {
    "row": 11,
    "key": "cathode",
    "how": "C1 becomes the reference/control module hall_c1_reference on the carrier, external location (row 79)",
-   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes route through PENDING A9-10 governance (backlog item in the A9 decision; no path yet)"
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json"
   },
   {
    "row": 8,
    "key": "xe_metering",
    "how": "C1 steady and start flows, XE_REFERENCE / XE_AUGMENTED_PEAK bookings, ICP gas if Xe",
-   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes route through PENDING A9-10 governance (backlog item in the A9 decision; no path yet)"
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json"
   },
   {
    "row": 12,
    "key": "ppu",
    "how": "bus slots for ICP RF/matching and collector/bias; breadboard discharge supply before LOCK-2 (GD-14)",
-   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes route through PENDING A9-10 governance (backlog item in the A9 decision; no path yet)"
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json"
   },
   {
    "row": 13,
    "key": "thermal_control",
    "how": ">= 50 K margin enters DQ-HI-SAFE; sink temperature measured per run",
-   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes route through PENDING A9-10 governance (backlog item in the A9 decision; no path yet)"
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json"
   },
   {
    "row": 14,
    "key": "control_fdir",
    "how": "RF interlock, restart and cycle counting (DQ-HI-IGN, DQ-HI-RESTART)",
-   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes route through PENDING A9-10 governance (backlog item in the A9 decision; no path yet)"
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json"
   },
   {
    "row": 15,
    "key": "sensors_diagnostics",
    "how": "ICP channels (forward/reflected, collector V/I, body potential) join the measurement chains",
-   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes route through PENDING A9-10 governance (backlog item in the A9 decision; no path yet)"
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json"
   },
   {
    "row": 16,
    "key": "mechanical_structural",
    "how": "kinematic carrier for a downstream module; matched shams; >= 25 kg payload",
-   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes route through PENDING A9-10 governance (backlog item in the A9 decision; no path yet)"
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json"
   },
   {
    "row": 17,
    "key": "preionizer_interface",
    "how": "superseded for the primary line; an ICP-neutralizer row is needed (owner / A9-10 decision); historical row untouched",
-   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes route through PENDING A9-10 governance (backlog item in the A9 decision; no path yet)"
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json"
   }
  ],
  "h3_h4_inputs": {
@@ -3580,5 +3601,301 @@
   "historical artifacts read-only, pinned by sha256",
   "mutable governance never pinned",
   "no winner declared; outcomes are pre-registered classifications"
- ]
+ ],
+ "statistics_a9_1": {
+  "alpha_family_wise": 0.05,
+  "alpha_family_wise_scope": "simultaneous architecture contrasts, preregistered multiplicity-control procedure such as Holm",
+  "alpha_one_sided_absolute_gate": 0.05,
+  "freeze_point": "LOCK-1",
+  "stop_rule_form": "SR-C-MARGIN (not sign-only): stop for inferiority only when the confidence bound crosses the preregistered negative decision margin; rule at LOCK-1, uncertainty-derived value at LOCK-2",
+  "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-07, UBQ-09",
+  "evidence_class": "owner-allocation"
+ },
+ "a9_10_reconciliation": {
+  "lane": "fo_a9_10_integration",
+  "record": "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+  "overlay": "docs/experiments/hall_icp/integration/a9_10_overlay.py",
+  "a9_1_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
+  },
+  "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+  "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
+  "changes": [
+   {
+    "cid": "A910-A901-Q01",
+    "driver": "A9.1 HIQ-01",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=HIQ-01]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-01"
+   },
+   {
+    "cid": "A910-A901-Q02",
+    "driver": "A9.1 HIQ-02",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=HIQ-02]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-02"
+   },
+   {
+    "cid": "A910-A901-Q03",
+    "driver": "A9.1 HIQ-03",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=HIQ-03]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-03"
+   },
+   {
+    "cid": "A910-A901-Q04",
+    "driver": "A9.1 HIQ-04",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=HIQ-04]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-04"
+   },
+   {
+    "cid": "A910-A901-Q05",
+    "driver": "A9.1 HIQ-05",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=HIQ-05]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-05"
+   },
+   {
+    "cid": "A910-A901-Q06",
+    "driver": "A9.1 HIQ-06",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=HIQ-06]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-06"
+   },
+   {
+    "cid": "A910-A901-Q07",
+    "driver": "A9.1 HIQ-07",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=HIQ-07]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-07"
+   },
+   {
+    "cid": "A910-A901-Q08",
+    "driver": "A9.1 HIQ-08",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=HIQ-08]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-08"
+   },
+   {
+    "cid": "A910-A901-01",
+    "driver": "A9.1 HIQ-01",
+    "op": "replace",
+    "ptr": "/execution_design/block_template[0]/configuration",
+    "count": 1,
+    "summary": "REF-COND module = hall_c1_reference"
+   },
+   {
+    "cid": "A910-A901-02",
+    "driver": "A9.1 HIQ-01",
+    "op": "replace",
+    "ptr": "/execution_design/reference_asymmetry_note",
+    "count": 1,
+    "summary": "predecessor asymmetry preserved and reported"
+   },
+   {
+    "cid": "A910-A901-03",
+    "driver": "A9.1 HIQ-02",
+    "op": "set",
+    "ptr": "/execution_design/min_complete_replicate_sets/interpretation",
+    "count": 1,
+    "summary": ">= 6 blocks (three complete balanced replicate sets)"
+   },
+   {
+    "cid": "A910-A901-04",
+    "driver": "A9.1 HIQ-02",
+    "op": "set",
+    "ptr": "/execution_design/min_blocks_if_interpretation_accepted/owner_status",
+    "count": 1,
+    "summary": "minimum 6 blocks recorded as owner-accepted"
+   },
+   {
+    "cid": "A910-A901-05",
+    "driver": "A9.1 HIQ-03",
+    "op": "replace",
+    "ptr": "/module_exchange[3]/rule",
+    "count": 1,
+    "summary": "Xe reference/health check first in each installation"
+   },
+   {
+    "cid": "A910-A901-06",
+    "driver": "A9.1 HIQ-04",
+    "op": "replace",
+    "ptr": "/stage_map[id=HI-HOLDOUT-A]/what",
+    "count": 1,
+    "summary": "HI-HOLDOUT-A before the first Hall-on H-1 reading incl. Ar"
+   },
+   {
+    "cid": "A910-A901-07",
+    "driver": "A9.1 HIQ-04",
+    "op": "replace",
+    "ptr": "/stage_map[id=HI-HOLDOUT-B]/what",
+    "count": 1,
+    "summary": "held-out enumeration after LOCK-1, before HI-S1"
+   },
+   {
+    "cid": "A910-A901-08",
+    "driver": "A9.1 HIQ-08 + ICP-45",
+    "op": "set",
+    "ptr": "/stage_map[id=HI-AR]/a9_1",
+    "count": 1,
+    "summary": "HI-AR before LOCK-1; ICP-45A on Ar; Ar calibrations"
+   },
+   {
+    "cid": "A910-A901-09",
+    "driver": "A9.1 ICP-45",
+    "op": "append",
+    "ptr": "/stage_map[id=HI-CMP]/entry",
+    "count": 1,
+    "summary": "ICP-45A/ICP-45N as formal entry condition of score-bearing ICP points"
+   },
+   {
+    "cid": "A910-A901-10",
+    "driver": "A9.1 ICP-45",
+    "op": "set",
+    "ptr": "/decision_quantities[id=DQ-HI-ECAP]/entry_condition_a9_1",
+    "count": 1,
+    "summary": "ICP-45 entry condition attached to DQ-HI-ECAP"
+   },
+   {
+    "cid": "A910-A901-11",
+    "driver": "A9.1 UBQ-02",
+    "op": "set",
+    "ptr": "/decision_quantities[id=DQ-HI-ECAP]/margin_form_a9_1",
+    "count": 1,
+    "summary": "neutralization-margin form"
+   },
+   {
+    "cid": "A910-A901-12",
+    "driver": "A9.1 HIQ-05",
+    "op": "replace",
+    "ptr": "/decision_topology/net_benefit_form",
+    "count": 1,
+    "summary": "no mandatory Pareto relation"
+   },
+   {
+    "cid": "A910-A901-13",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/configurations/configurations[1]/configuration_defining_settings[2]",
+    "count": 1,
+    "summary": "ICP gas mode G-REUSE"
+   },
+   {
+    "cid": "A910-A901-14",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=ITM-40]/value",
+    "count": 1,
+    "summary": "ICP gas feed booked as G-REUSE"
+   },
+   {
+    "cid": "A910-A901-15",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=ITM-40]/status",
+    "count": 1,
+    "summary": "ICP gas feed status"
+   },
+   {
+    "cid": "A910-A901-25",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=ITM-40]/evidence_class",
+    "count": 1,
+    "summary": "ICP gas feed evidence class"
+   },
+   {
+    "cid": "A910-A901-26",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=ITM-40]/source",
+    "count": 1,
+    "summary": "ICP gas feed source"
+   },
+   {
+    "cid": "A910-A901-16",
+    "driver": "A9.1 HIQ-06",
+    "op": "replace",
+    "ptr": "/decision_quantities[id=DQ-HI-DXE]/operational_definition",
+    "count": 1,
+    "summary": "dXe booking under G-REUSE"
+   },
+   {
+    "cid": "A910-A901-17",
+    "driver": "A9.1 HIQ-06",
+    "op": "replace",
+    "ptr": "/interface_demands[13]/demand",
+    "count": 1,
+    "summary": "Xe-ledger demand under G-REUSE"
+   },
+   {
+    "cid": "A910-A901-18",
+    "driver": "A9.1 HIQ-07",
+    "op": "set",
+    "ptr": "/held_out_validation/proposed_families[1]/role",
+    "count": 1,
+    "summary": "pure-N2 ICP readings sequestered"
+   },
+   {
+    "cid": "A910-A901-19",
+    "driver": "A9.1 UBQ-07 + UBQ-09",
+    "op": "set",
+    "ptr": "/statistics_a9_1",
+    "count": 1,
+    "summary": "alpha values and stop-rule form (owner-given)"
+   },
+   {
+    "cid": "A910-A901-20",
+    "driver": "A9-06 merged",
+    "op": "gsub",
+    "ptr": "",
+    "count": 3,
+    "summary": "mass BOM reference resolved to A9-06"
+   },
+   {
+    "cid": "A910-A901-21",
+    "driver": "A9-07 merged",
+    "op": "gsub",
+    "ptr": "",
+    "count": 4,
+    "summary": "H2 revision reference resolved"
+   },
+   {
+    "cid": "A910-A901-22",
+    "driver": "A9-08 merged",
+    "op": "gsub",
+    "ptr": "",
+    "count": 1,
+    "summary": "Xe ledger reference resolved to the A9 ledger"
+   },
+   {
+    "cid": "A910-A901-23",
+    "driver": "A9-10 self-reference",
+    "op": "gsub",
+    "ptr": "/m16_impact",
+    "count": 10,
+    "summary": "M16 routing resolved"
+   },
+   {
+    "cid": "A910-A901-24",
+    "driver": "OQ-INT-01 (proposed consumer table)",
+    "op": "gsub",
+    "ptr": "/decision_quantities",
+    "count": 14,
+    "summary": "uncertainty owner of the unmapped DQ-HI quantities points at the consumer table"
+   }
+  ]
+ }
 }

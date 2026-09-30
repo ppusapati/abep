@@ -46,6 +46,14 @@ import os
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+# ---- A9-10 reconciliation overlay (fo_a9_10_integration): declared, machine-checked changes applied after the build
+import importlib.util as _a910_ilu  # noqa: E402
+_A910_SPEC = _a910_ilu.spec_from_file_location(
+    "a9_10_overlay", str(ROOT) + "/docs/experiments/hall_icp/integration/a9_10_overlay.py")
+A910 = _a910_ilu.module_from_spec(_A910_SPEC)
+_A910_SPEC.loader.exec_module(A910)
+
 LANE_DIR = "docs/budgets/mass_a9"
 OUT_JSON = f"{LANE_DIR}/mass_a9_v1.json"
 OUT_MD = f"{LANE_DIR}/MASS_A9.md"
@@ -111,6 +119,10 @@ READ_DELIVERABLES = {
     "ICD_A9": "schemas/interfaces/icp_neutralizer_icd_v1.json",
     "PREREG_A9": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
     "INT_A9": "docs/experiments/hall_icp/integration/a9_core_integration_v1.json",
+    # A9-10 re-run (fo_a9_10_integration): residual imported once from the A9 Xe ledger (XA9-IF-01) and the corrected
+    # LV-COIL copper-mass basis from A9-07 (IDA7-01); read for values, sha256 recorded at build time.
+    "XE_A9": "docs/budgets/" + "xe" + "_ledger_a9/" + "xe" + "_ledger_a9_v1.json",
+    "H2_A9": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
 }
 # Historical artifacts: read for reuse decisions only, never edited.
 HISTORICAL = {
@@ -128,19 +140,28 @@ NEVER_PINNED = [
     "docs/orchestration/trigger_ledger_v2.jsonl",
     "docs/orchestration/runtime_state.json",
 ]
-# Parallel A9 lanes (not in the base commit): PENDING only, nothing is read from them.
+# The parallel A9 lanes were merged after this lane's build; A9-10 (fo_a9_10_integration) re-evaluated every
+# reference to them: values they supply are imported (residual, design-case volumes, LV-COIL basis), the rest carry
+# the precise reason they are still open.
 XE_A9 = "docs/budgets/" + "xe" + "_ledger_a9/"
 A9_LANES = {
-    "A9-07": "docs/hardware/h2_a9_revisions/",
-    "A9-08": XE_A9,
-    "A9-09": "docs/procurement/rfq_a9/",
-    "A9-10": "A9-10 reconciliation lane (no path yet)",
+    "A9-07": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+    "A9-08": XE_A9 + "xe" + "_ledger_a9_v1.json",
+    "A9-09": "docs/procurement/rfq_a9/rfq_a9_v1.json",
+    "A9-10": "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+}
+A9_10_REASON = {
+    "A9-07": "revises the H2 requirements; gives no design mass or drawing for this item",
+    "A9-08": "parametric ledger: design-case volumes and the single residual line only; no hardware mass",
+    "A9-09": "RFQ specifications only; no quotation received (no supplier contact)",
+    "A9-10": "reconciliation record",
 }
 XE_V1_DIR = "docs/budgets/" + "xe" + "_ledger/"
 
 
 def pending(lane: str) -> str:
-    return f"PENDING {A9_LANES[lane]} ({lane})"
+    """Re-evaluated (A9-10) reference to a merged lane that does not supply the value."""
+    return f"not supplied by {lane} ({A9_LANES[lane]}, merged: {A9_10_REASON[lane]}; A9-10 re-evaluation)"
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -437,7 +458,9 @@ def bom_items(ev: dict) -> dict:
           flight_status=FR, value=ev["h27_tank"]["value"], evidence_class="inferred",
           basis="analog planning range copied from H2-7 H27-09 (MT Aerospace XS-XTA '<= 3.5 kg' catalogue value, "
           "evidence class assumed, under development; S-XTA 40 l predicted 6.3 kg); not a Vyovrinda CBE",
-          status=f"PRELIMINARY (analog); tank sizing per Xe case at 323 K (row 50) {pending('A9-08')}",
+          status="PRELIMINARY (analog); tank sizing per Xe case at 323 K (row 50): volume V_min per case over the "
+          f"MEOP axis in {A9_LANES['A9-08']} design_cases.tank_volume (A9-08); tank MASS TBD - requires quotations "
+          "(RFQ-07, MEOP XA9-28)",
           freeze_point="after-evidence", owner_rows=[6, 48, 50, 54],
           note="the flight Xe system stays because row 6 requires a demonstrated bounded Xe-capable mode"),
         B("A9B-08", "Xe tank mounting and thermal hardware", "xe", "RETAINED",
@@ -474,14 +497,18 @@ def bom_items(ev: dict) -> dict:
           allocation_mapping="WET_TERM (outside the 28 kg dry target)", m16_row=6, flight_status=FR,
           value=list(XE_CASES_KG), evidence_class="owner-allocation",
           basis="row 48: explicit 2 / 5 / 10 kg design cases; no single mission load is frozen",
-          status=f"OWNER_GIVEN (cases); booked terms and reserve content {pending('A9-08')}", freeze_point="after-evidence",
+          status="OWNER_GIVEN (cases); A9-08 reads each case as LOADED Xe incl. reserve and residual (XA9Q-01, "
+          "PROPOSED) while MQ-09 proposes residual on top: both readings are carried in wet_closure (owner call)",
+          freeze_point="after-evidence",
           owner_rows=[43, 48], note="the H2-7 fixed C1 cathode term R06.m_Xe_cathode (5.4 kg) is NOT carried in "
           "the primary A9 flight BOM (row 46, OQ-A902-04); it belongs to the C1 fallback variant only"),
         B("A9B-14", "Xe residual (unusable) - imported once from the A9 Xe ledger", "xe_propellant", "IMPORTED",
           predecessor_mbom="xe_residual", predecessor_h27=["R06.m_Xe_residual"], allocation_line=None,
           allocation_mapping="WET_TERM (imported total; never computed here)", m16_row=6, flight_status=FR,
+          value={str(c): v for c, v in residual_import()["case_is_loaded"].items()}, evidence_class="model-derived",
           basis="row 45: booked once in the Xe ledger and imported into the mass BOM; never a second residual here",
-          status=pending("A9-08"), freeze_point="after-evidence", owner_rows=[45]),
+          status=f"IMPORTED in A9-10 from {A9_LANES['A9-08']} (F-RESIDUAL, XA9-24; per design case, "
+          "wet_closure.residual); booked once", freeze_point="after-evidence", owner_rows=[45]),
         B("A9B-15", "Hall head: channel walls, anode / gas distributor, body, fasteners", "hall", "RETAINED",
           predecessor_mbom="hall_thruster_head", predecessor_h27=["R09.m_hall_head_incl_mc"], allocation_line="AL-04",
           power_slots=["hall_discharge"], m16_row=9, flight_status=FR, basis="TBD",
@@ -628,7 +655,9 @@ def bom_items(ev: dict) -> dict:
           predecessor_h27=["R06.m_Xe_cathode"], m16_row=6, flight_status=GR, value=ev["h27_xe_cath_term"]["value"],
           evidence_class="assumed", basis="H2-7 H27-06 (A5 allocation, not a demonstrated flow)",
           status="C1 fallback/reference term only (row 46: the ICP architecture has no continuous C1-Xe term); "
-          f"booking {pending('A9-08')}", freeze_point="NOW", owner_rows=[46], a91_ids=["OQ-A902-04"]),
+          f"booking: {A9_LANES['A9-08']} books the F-C1-* terms only in hall_c1_reference (scenario FL-C1); absent "
+          "in the hall_icp_neutralizer flight scenarios", freeze_point="NOW", owner_rows=[46],
+          a91_ids=["OQ-A902-04"]),
         B("A9B-C07", "C1 keeper/heater flight telemetry (H2-7 TM-03)", "c1", "DROPPED_FROM_FLIGHT_A9",
           predecessor_h27=["R15.m_flight_sensors"], m16_row=15, flight_status=GR, basis="OQ-A902-04",
           status="dropped from the flight telemetry list; the ground C1 module keeps its own instrumentation",
@@ -840,15 +869,41 @@ def reading_dry(reading: str, floors: dict) -> dict:
             "system_margin_kg": r6(sysm), "dry_kg": r6(nominal + sysm), "reserve_kg": 0.0}
 
 
-def closure(line_recs: list) -> dict:
+def residual_import() -> dict:
+    """A9-10: the single A9 Xe-ledger residual line (F-RESIDUAL = f_residual x usable, XA9-24) per design case.
+
+    case_is_loaded: A9-08's PROPOSED reading XA9Q-01 (case = LOADED Xe = usable + residual) -> the residual is INSIDE
+    the case, copied from design_cases.reserve_residual_split. residual_on_top: A9-06's PROPOSED reading MQ-09 (case =
+    usable Xe incl. reserve) -> the same line evaluated with usable = case, added on top. Booked once either way."""
+    xe = load(READ_DELIVERABLES["XE_A9"])
+    items = {x["id"]: x for x in xe["items"]}
+    f_res = items["XA9-24"]["value"]
+    if f_res != 0.02 or items["XA9-24"]["unit"] != "1":
+        raise RuntimeError("A9-08 XA9-24 residual fraction changed (verified input)")
+    term = next(t for t in xe["terms"] if t["id"] == "F-RESIDUAL")
+    if term["formula"] != "f_residual x (non-reserve + reserve)":
+        raise RuntimeError("A9-08 F-RESIDUAL formula changed (verified input)")
+    rows = {r["case_kg"]: r["residual_kg"] for r in xe["design_cases"]["reserve_residual_split"]["rows"]}
+    if sorted(rows) != sorted(XE_CASES_KG):
+        raise RuntimeError("A9-08 design cases differ from row 48")
+    return {"f_residual": f_res, "f_residual_source": f"{A9_LANES['A9-08']} items XA9-24",
+            "case_is_loaded": {c: rows[c] for c in XE_CASES_KG},
+            "residual_on_top": {c: r6(f_res * c) for c in XE_CASES_KG}}
+
+
+def closure_a9_10(line_recs: list) -> dict:
+    """Wet closure re-run in A9-10 with the A9-08 residual imported once (XA9-IF-01) under both case readings."""
     floors = {r["line"]: r["evidence_floor_kg"] for r in line_recs
               if r["state"] == "ALLOCATION_BELOW_EVIDENCE_FLOOR"}
+    res = residual_import()
     tbd_lines = [r["line"] for r in line_recs if r["state"] != "ALLOCATION_BELOW_EVIDENCE_FLOOR"]
     refs = [("INTERNAL_34", INTERNAL_ALLOCS_KG[0], "<=", [53]), ("INTERNAL_36", INTERNAL_ALLOCS_KG[1], "<=", [53]),
             ("HARD_40_WET", WET_LIMIT_KG, "<", [5, 52])]
-    residual_status = pending("A9-08")
+    residual_status = (f"IMPORTED once from {A9_LANES['A9-08']} (F-RESIDUAL = f_residual x usable, f_residual "
+                       f"{res['f_residual']}, XA9-24); A9-10 re-run")
     readings = {}
     cells = []
+    cells_loaded = []
     for rid, text in READINGS.items():
         d = reading_dry(rid, floors)
         readings[rid] = {"definition": text, **d}
@@ -861,34 +916,75 @@ def closure(line_recs: list) -> dict:
         else:
             unresolved = [f"{l} at owner allocation (no evidence)" for l in tbd_lines] + [
                 "AL-04 channel/anode/body TBD", "AL-08 plumbing/mounting TBD"]
-        unresolved.append(f"Xe residual (row 45) {residual_status}")
         for xe in XE_CASES_KG:
-            wet_known = r6(d["dry_kg"] + xe)
-            for ref_id, ref_kg, cmp, rows in refs:
-                exceeded = wet_known > ref_kg if cmp == "<=" else wet_known >= ref_kg
-                if exceeded:
-                    state = "DOES_NOT_CLOSE"
-                    why = (f"known part {wet_known} kg {'>' if cmp == '<=' else '>='} {ref_kg} kg; the pending terms "
-                           "are non-negative, so no pending value can restore closure")
-                else:
-                    state = "NOT_EVALUABLE"
-                    why = (f"known part {wet_known} kg leaves {r6(ref_kg - wet_known)} kg; closure needs the imported "
-                           "residual and the unresolved lines")
-                cells.append({"reading": rid, "xe_case_kg": xe, "reference": ref_id, "reference_kg": ref_kg,
-                              "comparator": f"wet {cmp} {ref_kg} kg", "owner_rows": rows, "dry_kg": d["dry_kg"],
-                              "wet_known_kg": wet_known, "residual_kg": None, "residual_status": residual_status,
-                              "headroom_for_pending_kg": None if exceeded else r6(ref_kg - wet_known),
-                              "state": state, "why": why, "unresolved": unresolved})
+            for target, reading, residual, added in (
+                    (cells, "MQ-09 (residual on top of the case)", res["residual_on_top"][xe], True),
+                    (cells_loaded, "XA9Q-01 (case = LOADED Xe incl. residual)", res["case_is_loaded"][xe], False)):
+                wet_known = r6(d["dry_kg"] + xe + (residual if added else 0.0))
+                for ref_id, ref_kg, cmp, rows in refs:
+                    exceeded = wet_known > ref_kg if cmp == "<=" else wet_known >= ref_kg
+                    if exceeded:
+                        state = "DOES_NOT_CLOSE"
+                        why = (f"known part {wet_known} kg {'>' if cmp == '<=' else '>='} {ref_kg} kg; the pending "
+                               "terms are non-negative, so no pending value can restore closure")
+                    else:
+                        state = "NOT_EVALUABLE"
+                        why = (f"known part {wet_known} kg (residual imported) leaves {r6(ref_kg - wet_known)} kg; "
+                               "closure needs the unresolved dry lines")
+                    target.append({"reading": rid, "xe_case_kg": xe, "reference": ref_id, "reference_kg": ref_kg,
+                                   "comparator": f"wet {cmp} {ref_kg} kg", "owner_rows": rows, "dry_kg": d["dry_kg"],
+                                   "case_content_reading": reading, "residual_kg": residual,
+                                   "residual_added_on_top": added, "wet_known_kg": wet_known,
+                                   "residual_status": residual_status,
+                                   "headroom_for_pending_kg": None if exceeded else r6(ref_kg - wet_known),
+                                   "state": state, "why": why, "unresolved": unresolved})
     return {"readings": readings, "primary_reading": PRIMARY_READING, "cells": cells,
+            "cells_case_is_loaded": cells_loaded,
             "floors_substituted_kg": floors,
             "residual": {"value_kg": None, "status": residual_status,
-                         "rule": "row 45: booked once in the A9 Xe ledger, imported here; never computed or added "
-                                 "a second time in this BOM"},
-            "xe_case_content": f"treated as the loaded Xe excluding the residual; whether the row-43 20 % reserve is "
-                               f"inside the case value is {pending('A9-08')} (MQ-09)",
+                         "by_case_kg": {"residual_on_top_MQ-09": {str(c): v for c, v in res["residual_on_top"].items()},
+                                        "inside_case_XA9Q-01": {str(c): v for c, v in res["case_is_loaded"].items()}},
+                         "f_residual": res["f_residual"], "source": res["f_residual_source"],
+                         "rule": "row 45: booked once in the A9 Xe ledger (F-RESIDUAL), imported here; never computed "
+                                 "or added a second time in this BOM (single booking in both case readings)"},
+            "xe_case_content": "two PROPOSED readings are carried (owner call): 'cells' = MQ-09 (case = usable Xe incl. "
+                               "the row-43 reserve, residual imported ON TOP; the heavier reading); "
+                               "'cells_case_is_loaded' = A9-08 XA9Q-01 (case = LOADED Xe incl. reserve and residual, "
+                               "residual shown inside the case, not added)",
             "comparator_note": "34/36 kg are internal allocations (<=, row 53); 40 kg wet is strict (<, row 5). "
-                               "CLOSES requires every term resolved; no cell can reach CLOSES while the residual "
-                               "import is pending"}
+                               "CLOSES requires every term resolved; the residual is imported (A9-10), but every dry "
+                               "line is still an allocation or an evidence floor, so no cell reaches CLOSES"}
+
+
+def lv_coil_sensitivity(line_recs: list) -> dict:
+    """A9-10: mass consequence of adopting the A9-07 coil-current-density lever LV-COIL (corrected basis IDA7-01).
+
+    Not booked: lever adoption is an owner/LOCK-1 call and the mass to book is TBD until the H-1 coil is frozen. The
+    delta is added to the AL-04 evidence floor (CBE level) and the E readings are recomputed with the same rules;
+    Xe case + residual on top (MQ-09 reading) vs the strict 40 kg wet gate."""
+    h2a9 = load(READ_DELIVERABLES["H2_A9"])
+    ida = next(x for x in h2a9["interface_demands"] if x["id"] == "IDA7-01")
+    deltas = ida["value"]["LV-COIL_copper_delta_kg"]
+    floors = {r["line"]: r["evidence_floor_kg"] for r in line_recs
+              if r["state"] == "ALLOCATION_BELOW_EVIDENCE_FLOOR"}
+    res = residual_import()["residual_on_top"]
+    rows = []
+    for basis, v in deltas.items():
+        dm = v["LV-COIL_copper_delta_kg"]
+        fl = dict(floors)
+        fl["AL-04"] = r6(fl["AL-04"] + dm)
+        for rid in ("R0E", "R1E", "R2E"):
+            dry = reading_dry(rid, fl)["dry_kg"]
+            for xe in XE_CASES_KG:
+                wet = r6(dry + xe + res[xe])
+                rows.append({"basis": basis, "P_mag_20C_W": v["P_mag_20C_W"], "copper_delta_kg": dm, "reading": rid,
+                             "xe_case_kg": xe, "dry_kg": dry, "dry_without_lever_kg": reading_dry(rid, floors)["dry_kg"],
+                             "wet_known_kg": wet,
+                             "vs_40_kg_wet": "DOES_NOT_CLOSE" if wet >= WET_LIMIT_KG else "NOT_EVALUABLE"})
+    return {"label": "sensitivity only (not booked): LV-COIL adoption is an owner/LOCK-1 call; mass to book TBD - "
+                     "requires the frozen H-1 coil (A9-07 IDA7-01)",
+            "source": f"{A9_LANES['A9-07']} interface_demands IDA7-01 (recomputations.lv_coil_copper_delta)",
+            "basis_note": ida["value"]["LV-COIL_copper_delta_basis"], "rows": rows}
 
 
 def required_reduction(floors: dict) -> list:
@@ -941,8 +1037,9 @@ def required_reduction(floors: dict) -> list:
                             "other_lines_allocated_kg": base_other,
                             "reduction_needed_kg": None if need is None else r6(need),
                             "feasible_by_reducing_other_lines": feasible,
-                            "note": "known part only (the pending residual adds to the need); an owner option, "
-                                    "not a change"})
+                            "note": "known part with the Xe case read as LOADED Xe (residual inside, A9-08 XA9Q-01); "
+                                    "under MQ-09 the imported residual (wet_closure.residual) adds to the need; an owner "
+                                    "option, not a change"})
     return out
 
 
@@ -995,7 +1092,7 @@ def xe_screen(line_recs: list) -> list:
                 out.append({"reference": ref_id, "cap_kg": cap, "xe_case_kg": xe, "hardware_basis": basis,
                             "hardware_kg": hw, "stored_xe_known_kg": v,
                             "screen": "SCREEN_FLAG" if v > cap else "SCREEN_OK_KNOWN_PART",
-                            "note": "row 44: screening cap only, not an entitlement and not a gate; residual pending"})
+                            "note": "row 44: screening cap only, not an entitlement and not a gate; Xe case read as LOADED Xe incl. residual (A9-08 XA9Q-01); under MQ-09 add wet_closure.residual"})
     return out
 
 
@@ -1076,7 +1173,9 @@ def interface_demands() -> list:
           "and hot-state B sensor provision (row 82) revisions; H-1 channel/anode/body masses (closes AL-04)", None,
           "kg", pending("A9-07")),
         d("MA9-ID-02", ME, A7, "confirmation that flight H-1 carries no central C1 bore/mount (external C1 on the "
-          "ground article only, row 79) and the resulting mass change", None, "kg", pending("A9-07")),
+          "ground article only, row 79) and the resulting mass change", None, "kg",
+          "PARTIAL: confirmed by A9-07 (IDA7-09 ANSWERED, key finding K1: the external C1 removes the H21-22 "
+          "central-cathode floor); the mass change is not quantified (TBD - requires the H-1 drawing)"),
         d("MA9-ID-03", ME, A7, "mass effect of any anode/collector coating or O-resistant material choice (rows 106, "
           "132; A9-03 collector clarification)", None, "kg", f"{TBD} coupon programme results"),
         d("MA9-ID-04", ME, A7, "A9 Xe valve set: one Hall-anode branch + dual series HP isolation (row 55), cathode "
@@ -1088,11 +1187,16 @@ def interface_demands() -> list:
         d("MA9-ID-07", A7, ME, "revised H2-1/H2-4/H2-5/H2-3 masses with basis and evidence class", None, "kg",
           pending("A9-07")),
         d("MA9-ID-08", ME, A8, "Xe residual total (row 45) for import into the mass BOM (booked once there)", None,
-          "kg", pending("A9-08")),
+          "kg", "SATISFIED in A9-10: imported from A9-08 F-RESIDUAL (XA9-IF-01) per design case under both "
+          "case-content readings (wet_closure.residual); booked once"),
         d("MA9-ID-09", ME, A8, "content of the 2 / 5 / 10 kg design cases: loaded Xe incl. or excl. the row-43 20 % "
-          "reserve; C1 cathode term outside the flight cases (row 46)", None, "kg", pending("A9-08")),
+          "reserve; C1 cathode term outside the flight cases (row 46)", None, "kg",
+          "ANSWERED by A9-08 as a PROPOSED reading (XA9Q-01: case = LOADED Xe incl. reserve and residual; C1 term "
+          "only in hall_c1_reference); conflicts with MQ-09 (residual on top) - owner call, both carried"),
         d("MA9-ID-10", ME, A8, "tank volume and mass per Xe case sized at 323 K with verified EOS and MEOP/safety "
-          "factors (row 50) (closes A9B-07)", None, "kg / l", pending("A9-08")),
+          "factors (row 50) (closes A9B-07)", None, "kg / l",
+          "PARTIAL: A9-08 design_cases.tank_volume gives V_min per case at 323.15 K over the MEOP axis (volume "
+          "only); tank mass, MEOP and proof/burst factors TBD - requires quotations (RFQ-07; XA9-28, XA9-29)"),
         d("MA9-ID-11", ME, A8, "G-XE variant Xe (HIQ-06) booked separately; primary G-REUSE m_Xe,ICP = 0", 0.0, "kg",
           "OWNER_GIVEN (A9.1 HIQ-06_accounting)"),
         d("MA9-ID-12", ME, A8, "Xe hardware allocation conflict (AL-08 1.5 kg vs 5.044 kg analog floor) and row-44 "
@@ -1135,7 +1239,7 @@ APPLIED = {
     6: "flight Xe system retained (tank, regulator, isolation, anode-feed control) for the bounded Xe-capable mode",
     43: "20 % Xe reserve belongs to the Xe ledger; case content asked of A9-08 (MA9-ID-09)",
     44: "stored-Xe screening at 0.25 x reference reported as SCREEN_FLAG / SCREEN_OK_KNOWN_PART, never a gate",
-    45: "residual imported once from A9-08 (PENDING); never computed here",
+    45: "residual imported once from A9-08 F-RESIDUAL (A9-10 re-run, both case readings); never computed here",
     46: "C1 cathode Xe term (5.4 kg) not carried in the primary A9 flight BOM; C1 fallback variant only",
     47: "ICP / RF electronics are separate new items (A9B-17..22), not mapped into the old cathode line",
     48: "closure evaluated for 2 / 5 / 10 kg Xe design cases; no single load frozen",
@@ -1335,8 +1439,11 @@ def items_table(ev: dict, line_recs: list) -> list:
       "OWNER_GIVEN (no single load frozen)", "after-evidence")
     I("MP-07", "stored-Xe screening share of the mass reference", XE_SCREEN_SHARE, "-", "row 44", row_src(44), None,
       "OWNER_GIVEN (screening cap, not an entitlement)", "NOW")
-    I("MP-08", "Xe residual (unusable) total", None, "kg", "row 45: imported once", row_src(45), None,
-      pending("A9-08"), "after-evidence")
+    I("MP-08", "Xe residual (unusable) per design case, imported once (A9-08 F-RESIDUAL; case = LOADED Xe, "
+      "XA9Q-01 reading)", {str(c): v for c, v in residual_import()["case_is_loaded"].items()}, "kg",
+      "row 45: imported once (A9-10 re-run)", row_src(45) + [{"path": A9_LANES["A9-08"],
+                                                             "pointer": "/design_cases/reserve_residual_split"}],
+      "model-derived", "IMPORTED (A9-10)", "after-evidence")
     I("ME-01", "MC-1 iron + copper mass (RP-1, f_NI 2)", r6(ev["mc1_iron"]["value"] + ev["mc1_copper"]["value"]), "kg",
       "copied H2-1 H21-24 (sum)", [ev["mc1_iron"], ev["mc1_copper"]], "model-derived", "PRELIMINARY", "after-evidence")
     I("ME-02", "PPU analog mass (NG 1 kW EM1)", ev["ppu_h24"]["value"], "kg", "copied H2-4 H24-34",
@@ -1366,7 +1473,7 @@ def build() -> dict:
     ev = evidence()
     bom = bom_items(ev)
     lines = line_checks(ev, bom)
-    clo = closure(lines)
+    clo = closure_a9_10(lines)
     reds = required_reduction(clo["floors_substituted_kg"])
     opts = reallocation_options(lines)
     read_pins = [{"key": k, "path": p, "sha256": sha256_of(p)} for k, p in READ_DELIVERABLES.items()]
@@ -1420,6 +1527,7 @@ def build() -> dict:
         "policy_checks": policy_checks(),
         "reallocation_options": opts,
         "wet_closure": clo,
+        "lv_coil_sensitivity": lv_coil_sensitivity(lines),
         "required_reduction_of_evidence_free_lines": reds,
         "xe_screen_row44": xe_screen(lines),
         "h2_7_demands_reevaluated": h27_demands_reevaluated(),
@@ -1569,6 +1677,26 @@ def render_md(doc: dict) -> str:
                                      if x["headroom_for_pending_kg"] is not None else "")
             a(f"| {rid} | {xe:g} | {row[0]['wet_known_kg']:g} | {st(row[0])} | {st(row[1])} | {st(row[2])} |")
     a("")
+    a("Residual imported once from the A9 Xe ledger (A9-10 re-run): "
+      + "; ".join(f"{k}: {_fmt(v)}" for k, v in clo["residual"]["by_case_kg"].items())
+      + ". The table above is the MQ-09 reading (residual on top); the XA9Q-01 reading (case = loaded Xe incl. "
+      "residual) gives:")
+    a("")
+    a("| reading | Xe case (kg) | wet known (kg) | vs 40 (strict) |")
+    a("|---|---|---|---|")
+    for x in clo["cells_case_is_loaded"]:
+        if x["reference"] == "HARD_40_WET":
+            a(f"| {x['reading']} | {x['xe_case_kg']:g} | {x['wet_known_kg']:g} | {x['state']} |")
+    a("")
+    lvs = doc["lv_coil_sensitivity"]
+    a(f"LV-COIL copper-mass sensitivity ({lvs['label']}; {lvs['source']}):")
+    a("")
+    a("| basis | copper delta (kg) | reading | Xe case (kg) | dry (kg) | wet known (kg) | vs 40 |")
+    a("|---|---|---|---|---|---|---|")
+    for x in lvs["rows"]:
+        a(f"| {x['basis']} | {x['copper_delta_kg']:g} | {x['reading']} | {x['xe_case_kg']:g} | {x['dry_kg']:g} | "
+          f"{x['wet_known_kg']:g} | {x['vs_40_kg_wet']} |")
+    a("")
     a("Unresolved per reading: " + "; ".join(
         f"{rid}: " + ", ".join(cells[(rid, 2.0, 'HARD_40_WET')]["unresolved"]) for rid in clo["readings"]) + ".")
     a("")
@@ -1693,6 +1821,23 @@ def main(argv=None) -> int:
             f.write(txt)
     print("wrote " + ", ".join(outs))
     return 0
+
+
+# ---- A9-10 reconciliation overlay hooks (fo_a9_10_integration) ------------------------------------------------------
+_a910_build_core = build
+
+
+def build(*args, **kwargs):
+    """Verified lane build followed by the declared A9-10 changes (docs/experiments/hall_icp/integration/a9_10_overlay.py)."""
+    return A910.apply("A9-06", _a910_build_core(*args, **kwargs))
+
+
+_a910_md_core = render_md
+
+
+def render_md(doc):
+    """Lane Markdown followed by the A9-10 reconciliation section generated from the same JSON."""
+    return _a910_md_core(doc).rstrip("\n") + "\n" + "\n".join(A910.md_section(doc)) + "\n"
 
 
 if __name__ == "__main__":

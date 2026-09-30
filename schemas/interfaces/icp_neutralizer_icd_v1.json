@@ -209,7 +209,7 @@
   {
    "id": "IP-NEU",
    "definition": "upstream mechanical datum face of the downstream electron-source module (hall_icp_neutralizer: ICP module) located on the shared kinematic carrier KC-1 at axial standoff z_NEU = z - L >= 0 downstream of IP-EXIT, coaxial with the thrust axis",
-   "status": "PROPOSED (value of the standoff is ICP-02, TBD)"
+   "status": "ADOPTED (name, A9.1 A9-03-planes); value of the standoff is ICP-02, TBD"
   },
   {
    "id": "IP-C1",
@@ -260,7 +260,7 @@
     }
    ],
    "evidence_class": "assumed (convention)",
-   "status": "PROPOSED",
+   "status": "OWNER_GIVEN (plane names, A9.1 A9-03-planes; dimensions stay LOCK-1 items)",
    "freeze_point": "LOCK-1",
    "verification": "inspection of the interface control drawing",
    "owner_rows": [
@@ -459,7 +459,8 @@
    "applies_to": [
     "hall_c1_reference"
    ],
-   "tbd": "TBD - requires the H2-1/H2-2 revision for the external C1 (A9-07) and the C1 reference module design"
+   "tbd": "TBD - requires the C1 reference module design (orifice position, view factors); the H2-1/H2-2 revision for the external C1 is done in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (REV-13..28)",
+   "view_condition_a9_07": "A9-07: the external KC-1 C1 module coupling to H-1 is TBD - requires the C1 module drawing and view factors (ICP-05); the hall_c1_reference thermal case run by A9-07 is a sensitivity only (v1 central path), no thermal verdict; the downstream module's view of the H-1 exit face enters the ICP-43 heat split"
   },
   {
    "id": "ICP-06",
@@ -784,7 +785,7 @@
    "group": "rf",
    "title": "Matching-network location",
    "requirement": "The matching network location (on the moving platform next to the antenna, or off the platform with a flexible coax across the stand) is declared on the interface drawing; the RF load plane (ICP-14) and the sham routing (ICP-18) follow from it.",
-   "value": null,
+   "value": "off the moving thrust-stand platform: matched flexible RF coax, calibrated cable-loss / S-parameter correction, directional coupler reference plane AFTER the matching network, matched sham routing in the C1 configuration; on-platform only if S1a proves the off-platform chain cannot meet the RF-power uncertainty; at the coupler plane P_fwd = P_net / (1 - |Gamma|^2) with Gamma the antenna-side reflection (A9-07 recomputations.rf_reference_plane); an on-module fixed pre-match holding |Gamma| <= Gamma_max is owner question OQ-A907-11 (Gamma_max at LOCK-1)",
    "units": "-",
    "basis": "row 117 (flexible coax with matched sham)",
    "sources": [
@@ -805,8 +806,8 @@
      "answer_sha256": "67b735db3c1e4e897a81ed53d103d6e535a4249ec6c4f33df4a112194312c481"
     }
    ],
-   "evidence_class": null,
-   "status": "TBD",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN (location, A9.1); pre-match OPEN (OQ-A907-11)",
    "freeze_point": "LOCK-1",
    "verification": "inspection",
    "owner_rows": [
@@ -816,7 +817,7 @@
    "applies_to": [
     "hall_icp_neutralizer"
    ],
-   "tbd": "TBD - requires the owner decision ICPQ-05 and the dummy-load cable-loss characterisation (S1a)"
+   "tbd": "TBD - requires the S1a dummy-load cable-loss / S-parameter characterisation (location decided off-platform, A9.1) and the pre-match decision OQ-A907-11"
   },
   {
    "id": "ICP-14",
@@ -1107,14 +1108,15 @@
    "applies_to": [
     "hall_icp_neutralizer"
    ],
-   "tbd": "TBD - requires the ICP module design, the A9-02 collector/bias bus slot and S1a Ar engineering data"
+   "tbd": "TBD - requires the ICP module design, the A9-02 collector/bias bus slot and S1a Ar engineering data",
+   "material_a9_1": "flight collector material NOT frozen (A9.1 A9-03-collector); 316L may be used for the Ar engineering reproduction only; candidates pass the oxygen/AO coupon programme before any N2/O2 life claim; the Takahashi stainless-steel sputtering result is a warning, not a material qualification"
   },
   {
    "id": "ICP-22",
    "group": "electrical",
    "title": "Hall discharge circuit topology and V_d definition per configuration",
    "requirement": "hall_c1_reference: discharge supply between anode and C1 cathode common (H2-2/H2-4). hall_icp_neutralizer: discharge supply between anode and the ICP electron-source reference (collector or declared node). Any series resistor or RF filter in the discharge loop is declared and its dissipation booked (analog: 50 ohm series resistor and a 13.56 MHz L-C resonance circuit, isolation transformer, annex TAK-06). 'Same V_d setting' across configurations needs one declared definition (supply terminal vs anode-to-electron-source potential); anode-to-ground, cathode/collector-to-ground and supply-terminal voltages are all recorded.",
-   "value": null,
+   "value": "V_d = V_anode - V_electron-source-reference (primary controlled quantity); supply-terminal voltage and all loop drops recorded as secondary quantities",
    "units": "V",
    "basis": "A9 first decisive comparison ('same V_d/B settings')",
    "sources": [
@@ -1139,8 +1141,8 @@
      "page": 3
     }
    ],
-   "evidence_class": null,
-   "status": "PENDING docs/experiments/hall_icp/prereg_framework/ (definition of the V_d setting used as the controlled variable)",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN (A9.1 A9-03-Vd)",
    "freeze_point": "LOCK-1",
    "verification": "circuit inspection; per-reading voltage record",
    "owner_rows": [
@@ -1151,7 +1153,7 @@
     "hall_c1_reference",
     "hall_icp_neutralizer"
    ],
-   "note": "see open question ICPQ-04"
+   "note": "ICPQ-04 answered by A9.1 A9-03-Vd (V_d = V_anode - V_electron-source-reference)"
   },
   {
    "id": "ICP-23",
@@ -1324,7 +1326,7 @@
    "group": "gas_plume",
    "title": "ICP source gas species and flow (booked item)",
    "requirement": "The ICP gas feed is an explicit ICD item and must be booked (A9 recorder flag on row 46). Declared modes: G-REUSE (no dedicated feed; the ICP operates on Hall exhaust/residual gas, as in the analog, annex TAK-05), G-XE (dedicated Xe feed, booked in the Xe ledger as PHASE_TOTAL_FLOW, row 42), G-ATM (dedicated feed from the atmospheric gas path, booked against the delivered atmospheric flow). The module provides a dedicated gas port (capped in G-REUSE). The C1 reference uses its Xe cathode flow (H2-2 H22-42, copied for context).",
-   "value": null,
+   "value": "G-REUSE (primary): the ICP operates on Hall exhaust / residual propellant, dedicated ICP flow 0 mg/s (no double counting of the Hall atmospheric feed); the dedicated port stays installed and capped; G-ATM and G-XE are separately declared contingency variants (G-ATM: mdot_atm,total = mdot_Hall + mdot_ICP,dedicated; G-XE: mdot_ICP,Xe booked in docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json under PHASE_TOTAL_FLOW)",
    "units": "mg/s (per species)",
    "basis": "row 46 flag; row 42 Xe booking convention",
    "sources": [
@@ -1357,8 +1359,8 @@
      "page": 3
     }
    ],
-   "evidence_class": null,
-   "status": "TBD",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN (G-REUSE primary, A9.1 HIQ-06); contingency flows TBD",
    "freeze_point": "LOCK-1",
    "verification": "dedicated MFC (if any) with own-gas calibration; totalised flow per mode",
    "owner_rows": [
@@ -1369,7 +1371,7 @@
     "hall_c1_reference",
     "hall_icp_neutralizer"
    ],
-   "tbd": "TBD - requires the owner choice of the primary ICP gas mode (ICPQ-02) and the ICP module design",
+   "tbd": "TBD - requires the ICP module design and, only for a declared G-ATM / G-XE contingency variant, its dedicated flow (primary mode G-REUSE decided, A9.1 HIQ-06)",
    "copied_from": {
     "value": [
      0.1,
@@ -1493,7 +1495,7 @@
     "hall_c1_reference",
     "hall_icp_neutralizer"
    ],
-   "tbd": "TBD - requires witness positions on the module interface drawing and the collector material (ICPQ-07)"
+   "tbd": "TBD - requires witness positions on the module interface drawing and the collector material (not frozen; 316L for Ar engineering only; O/AO coupon programme first, A9.1 A9-03-collector)"
   },
   {
    "id": "ICP-30",
@@ -2132,7 +2134,7 @@
     }
    ],
    "evidence_class": null,
-   "status": "PENDING docs/architecture_comparison/power_boundary_a9/ (maximum discharge-supply power P_d,max at the stand)",
+   "status": "TBD",
    "freeze_point": "LOCK-1",
    "verification": "thermocouple map + energy balance with RF on/off and discharge current steps in S1a; hot-spot check against ICP-37",
    "owner_rows": [
@@ -2143,7 +2145,9 @@
    "applies_to": [
     "hall_icp_neutralizer"
    ],
-   "note": "ICP-37 (>= 50 K margin) cannot be closed until this item has a value"
+   "note": "ICP-37 (>= 50 K margin) cannot be closed until this item has a value",
+   "h1_heat_allowance_a9_07": "A9-07 IDA7-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json interface_demands IDA7-07): the allowable ICP-module heat entering H-1 (1.2 x Q <= headroom, injection at PO / BP) is 0 W at LV-BASE (min over nodes, the inner coil CI and wall WI have no headroom) and stays 0 W min-over-nodes for every single lever; every hall_icp_neutralizer thermal CLOSES is conditional on the actual ICP-43 heat meeting this allowance",
+   "tbd": "TBD - requires P_d,max = I_d,max x V_d,max of the registered stand envelope (owner registration OQ-A907-02; A9-02 registers no stand value) and the ICPQ-10 bounding choice; the H-1 side is limited by the A9-07 IDA7-07 allowance"
   },
   {
    "id": "ICP-44",
@@ -2228,7 +2232,7 @@
     }
    ],
    "evidence_class": null,
-   "status": "PENDING docs/architecture_comparison/power_boundary_a9/ (I_d,max of the stand discharge slot)",
+   "status": "TBD (value); form OWNER_GIVEN (A9.1 ICP-45)",
    "freeze_point": "LOCK-1",
    "verification": "collector-current step/ramp to I_d,max on Ar (ENGINEERING_ONLY) in S1a, with a resistive/load stand-in or with H-1, recording P_fwd, P_refl, collector V/I and module temperatures at each step; repeated on N2 before score-bearing use",
    "owner_rows": [
@@ -2238,7 +2242,9 @@
    "applies_to": [
     "hall_icp_neutralizer"
    ],
-   "note": "value = I_d,max from A9-02; capacity/power tension vs row 109 is listed in the hard-incompatibility check as not assessable"
+   "note": "value = I_d,max from A9-02; capacity/power tension vs row 109 is listed in the hard-incompatibility check as not assessable",
+   "entry_condition_a9_1": "formal entry condition (A9.1 ICP-45): ICP-45A on Ar (engineering-only) and ICP-45N on N2 each demonstrate I_e,cap >= I_d,max before any hall_icp_neutralizer score-bearing point; record at each current the extracted electron current, RF forward/reflected power, DC input power, collector V/I, pressure, gas state, thermal state and plasma stability; I_d,max from the registered H-1 / discharge-supply envelope (owner registration OQ-A907-02, not invented); the Takahashi ~1 A / 200 W point is context only, not scaled",
+   "tbd": "TBD - requires the owner registration of the stand I_d,max (A9-07 OQ-A907-02; A9-02 registers no stand value); never invented to unblock ICP sizing (A9.1 ICP-45)"
   },
   {
    "id": "ICP-46",
@@ -2246,8 +2252,8 @@
    "title": "C1 keeper-ignition pulse isolation rating (keeper lead, feedthrough, harness)",
    "requirement": "On the C1 reference module the keeper lead, its vacuum feedthrough, connectors and harness, and their isolation to the C1 cathode-common, module body and facility ground, are rated for the upper end of the pulsed keeper-ignition class (row 89) plus a transient margin; this is separate from the 350 V DC discharge-circuit item ICP-23, whose margin does not cover it. The margin and pulse hipot level are owner/LOCK-1 items.",
    "value": 600.0,
-   "units": "V (pulse class upper end; margin TBD)",
-   "basis": "row 89 (300-600 V class); margin owner/LOCK-1",
+   "units": "V (upper operating pulse; the A9.1 isolation basis is in a9_1_isolation_basis)",
+   "basis": "row 89 (300-600 V class); A9.1 ICP-46: design isolation basis 900 V (1.5 x 600 V); qualification/hipot 1.0 kV DC at representative pressure/gas on the initial H-1/C1 development hardware (no flashover or breakdown, leakage recorded) plus a separate 600 V pulse-waveform test; applies to keeper lead, feedthrough, connectors, harness and isolation to cathode common / module body / facility ground; does not replace ICP-44; the flight level may only be revised upward without a controlled justification",
    "sources": [
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -2258,8 +2264,8 @@
      "answer_sha256": "c8c397e6069eaa7994c7e37e79ff9ad826d727232e054ae11741e0fd386c02f7"
     }
    ],
-   "evidence_class": "owner-allocation (margin TBD)",
-   "status": "PROPOSED (margin TBD)",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN (A9.1 ICP-46)",
    "freeze_point": "LOCK-1",
    "verification": "pulse hipot of keeper lead/feedthrough/harness per exchange (ICP-39 d); inspection",
    "owner_rows": [
@@ -2267,7 +2273,15 @@
    ],
    "applies_to": [
     "hall_c1_reference"
-   ]
+   ],
+   "a9_1_isolation_basis": {
+    "upper_operating_pulse_V": 600.0,
+    "design_isolation_basis_V": 900.0,
+    "development_hipot_V_DC": 1000.0,
+    "pulse_waveform_test_V": 600.0,
+    "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json ICP-46",
+    "evidence_class": "owner-allocation"
+   }
   }
  ],
  "interface_demands": [
@@ -2498,7 +2512,7 @@
    "quantity": "ICP gas feed booking if mode G-XE (PHASE_TOTAL_FLOW, row 42); ICP lifetime/cycle requirement replaces the continuous C1 cathode term (row 46)",
    "value": null,
    "units": "kg",
-   "status": "TBD - requires the owner choice of the ICP gas mode (ICPQ-02); ledger at docs/budgets/xe_ledger/"
+   "status": "RESOLVED by A9.1 HIQ-06 (G-REUSE books 0 Xe; a G-XE contingency is booked as F-ICP-XE / G-ICP-XE in docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json, A9-08 XA9-IF-16)"
   },
   {
    "id": "ID-25",
@@ -3018,12 +3032,18 @@
   {
    "id": "ICPQ-01",
    "question": "The lane brief calls the downstream position 'IP-DN', but IP-DN already names the H-1 rear inlet flange (H2-1, historical pre-ionizer ICD). Adopt IP-EXIT (H-1 exit plane) and IP-NEU (downstream module datum) for A9 and keep IP-DN historical?",
-   "proposed_answer": "YES - avoids a silent redefinition of an existing plane"
+   "proposed_answer": "YES - avoids a silent redefinition of an existing plane",
+   "status": "ANSWERED_BY_A9_1 (A9-03-planes)",
+   "a9_1_decision": "A9-03-planes: IP-EXIT = H-1 exit; IP-NEU = downstream neutralizer datum; historical IP-DN unchanged",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "ICPQ-02",
    "question": "Primary ICP gas mode: G-REUSE (Hall exhaust, analog practice), G-XE (dedicated Xe, Xe ledger) or G-ATM (dedicated atmospheric feed)?",
-   "proposed_answer": "owner call; proposal: the module carries a capped dedicated port so all modes remain testable as declared variants; Ar engineering reproduction starts in G-REUSE; the mode used for N2/O2 score-bearing data is fixed at LOCK-1 and booked"
+   "proposed_answer": "owner call; proposal: the module carries a capped dedicated port so all modes remain testable as declared variants; Ar engineering reproduction starts in G-REUSE; the mode used for N2/O2 score-bearing data is fixed at LOCK-1 and booked",
+   "status": "ANSWERED_BY_A9_1 (HIQ-06)",
+   "a9_1_decision": "HIQ-06: primary ICP gas mode G-REUSE (Hall exhaust/residual); dedicated ICP port installed and capped; G-ATM / G-XE are declared contingency variants; score-bearing N2/N2+O2 uses G-REUSE unless it fails the preregistered ICP-capacity gate; no dedicated Xe to make the ICP work [primary G-REUSE; capped port for G-ATM / G-XE]",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "ICPQ-03",
@@ -3033,12 +3053,18 @@
   {
    "id": "ICPQ-04",
    "question": "Which V_d is held equal across configurations: supply-terminal voltage or anode-to-electron-source-reference potential (series resistor/filter drops differ)?",
-   "proposed_answer": "owner call via A9-01; proposal: hold the supply-terminal setting equal and record anode-to-ground, reference-to-ground and loop-element drops so either definition can be reported"
+   "proposed_answer": "owner call via A9-01; proposal: hold the supply-terminal setting equal and record anode-to-ground, reference-to-ground and loop-element drops so either definition can be reported",
+   "status": "ANSWERED_BY_A9_1 (A9-03-Vd)",
+   "a9_1_decision": "A9-03-Vd: primary controlled quantity V_d = V_anode - V_electron-source-reference; supply-terminal voltage and loop drops secondary",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "ICPQ-05",
    "question": "Matching network on the moving platform or off it (long flexible coax across the stand)?",
-   "proposed_answer": "owner call; proposal: off-platform unless the S1a dummy-load cable-loss/reflected-power characterisation requires on-platform matching"
+   "proposed_answer": "owner call; proposal: off-platform unless the S1a dummy-load cable-loss/reflected-power characterisation requires on-platform matching",
+   "status": "ANSWERED_BY_A9_1 (A9-03-matching)",
+   "a9_1_decision": "A9-03-matching: matching network off the moving stand platform (matched flexible coax, cable-loss/S-parameter correction, coupler reference plane after the matching network, matched sham routing in C1); on-platform only if S1a proves necessary",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "ICPQ-06",
@@ -3048,7 +3074,10 @@
   {
    "id": "ICPQ-07",
    "question": "Collector material for N2/O2-bearing operation (the analog's stainless steel sputtered and deposited)?",
-   "proposed_answer": "owner call; proposal: add collector candidates to the biased/floating coupon programme of row 106 before freezing"
+   "proposed_answer": "owner call; proposal: add collector candidates to the biased/floating coupon programme of row 106 before freezing",
+   "status": "ANSWERED_BY_A9_1 (A9-03-collector)",
+   "a9_1_decision": "A9-03-collector: flight collector material not frozen; 316L allowed for Ar engineering reproduction; candidates go through the O/AO coupon programme before N2/O2 life claims",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "ICPQ-08",
@@ -3302,7 +3331,7 @@
    "access": "open access full text (publisher PDF)",
    "evidence_level": "3 (primary experimental literature) for the topology; analog hardware (argon, permanent-magnet HET, different geometry), so NOT evidence for Vyovrinda H-1 performance",
    "label": "published analog, reported",
-   "authority_note": "A9-05 (docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json) owns the authoritative evidence extraction; this annex is this lane's own page-cited extraction of geometry/operating ranges for interface context and must be reconciled with A9-05 when it merges"
+   "authority_note": "A9-05 (docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json) owns the authoritative evidence extraction; this annex is this lane's own page-cited extraction of geometry/operating ranges for interface context and was reconciled with A9-05 in A9-10 (OQ-INT-04): A9-05 governs where they differ; differences listed in docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json annex_reconciliation"
   },
   "entries": [
    {
@@ -3540,5 +3569,316 @@
   "no_contact": "no supplier, lab or author contact; open-access sources only",
   "pure": "standard-library builder; not wired into archengine; no frozen data, goldens or existing modules touched",
   "thresholds": "no numeric threshold beyond the RFP and cited owner rows; tolerances are LOCK-1 rules / LOCK-2 values or after-evidence"
+ },
+ "a9_10_reconciliation": {
+  "lane": "fo_a9_10_integration",
+  "record": "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+  "overlay": "docs/experiments/hall_icp/integration/a9_10_overlay.py",
+  "a9_1_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
+  },
+  "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+  "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
+  "changes": [
+   {
+    "cid": "A910-A903-Q01",
+    "driver": "A9.1 A9-03-planes",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=ICPQ-01]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 A9-03-planes"
+   },
+   {
+    "cid": "A910-A903-Q02",
+    "driver": "A9.1 HIQ-06",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=ICPQ-02]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-06"
+   },
+   {
+    "cid": "A910-A903-Q03",
+    "driver": "A9.1 A9-03-Vd",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=ICPQ-04]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 A9-03-Vd"
+   },
+   {
+    "cid": "A910-A903-Q04",
+    "driver": "A9.1 A9-03-matching",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=ICPQ-05]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 A9-03-matching"
+   },
+   {
+    "cid": "A910-A903-Q05",
+    "driver": "A9.1 A9-03-collector",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=ICPQ-07]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 A9-03-collector"
+   },
+   {
+    "cid": "A910-A903-01",
+    "driver": "A9.1 A9-03-planes",
+    "op": "set",
+    "ptr": "/items[id=ICP-01]/status",
+    "count": 1,
+    "summary": "IP-EXIT / IP-NEU adopted; historical IP-DN unchanged"
+   },
+   {
+    "cid": "A910-A903-02",
+    "driver": "A9.1 A9-03-planes",
+    "op": "set",
+    "ptr": "/interface_planes[id=IP-NEU]/status",
+    "count": 1,
+    "summary": "IP-NEU adopted"
+   },
+   {
+    "cid": "A910-A903-03",
+    "driver": "A9.1 A9-03-Vd",
+    "op": "set",
+    "ptr": "/items[id=ICP-22]/value",
+    "count": 1,
+    "summary": "V_d definition"
+   },
+   {
+    "cid": "A910-A903-04",
+    "driver": "A9.1 A9-03-Vd",
+    "op": "set",
+    "ptr": "/items[id=ICP-22]/status",
+    "count": 1,
+    "summary": "V_d status"
+   },
+   {
+    "cid": "A910-A903-05",
+    "driver": "A9.1 A9-03-matching + A9-07 rf_reference_plane",
+    "op": "set",
+    "ptr": "/items[id=ICP-13]/value",
+    "count": 1,
+    "summary": "matching network off-platform"
+   },
+   {
+    "cid": "A910-A903-06",
+    "driver": "A9.1 A9-03-matching",
+    "op": "set",
+    "ptr": "/items[id=ICP-13]/status",
+    "count": 1,
+    "summary": "ICP-13 status"
+   },
+   {
+    "cid": "A910-A903-07",
+    "driver": "A9.1 A9-03-collector",
+    "op": "set",
+    "ptr": "/items[id=ICP-21]/material_a9_1",
+    "count": 1,
+    "summary": "collector material rule"
+   },
+   {
+    "cid": "A910-A903-08",
+    "driver": "A9.1 HIQ-06 + OQ-A902-05",
+    "op": "set",
+    "ptr": "/items[id=ICP-26]/value",
+    "count": 1,
+    "summary": "ICP gas G-REUSE"
+   },
+   {
+    "cid": "A910-A903-09",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=ICP-26]/status",
+    "count": 1,
+    "summary": "ICP-26 status"
+   },
+   {
+    "cid": "A910-A903-10",
+    "driver": "A9.1 HIQ-06 (Xe-ledger retarget)",
+    "op": "code",
+    "ptr": null,
+    "count": 0,
+    "summary": "Xe-ledger reference retargeted from the A6 ledger to the A9 ledger docs/budgets/xe_ledger_a9/ (xe_budget_dir now selects the '_a9' ledger)"
+   },
+   {
+    "cid": "A910-A903-11",
+    "driver": "A9.1 ICP-45",
+    "op": "set",
+    "ptr": "/items[id=ICP-45]/entry_condition_a9_1",
+    "count": 1,
+    "summary": "ICP-45A / ICP-45N"
+   },
+   {
+    "cid": "A910-A903-12",
+    "driver": "A9.1 ICP-45 + A9-07 IDA7-12",
+    "op": "set",
+    "ptr": "/items[id=ICP-45]/status",
+    "count": 1,
+    "summary": "ICP-45 status re-evaluated"
+   },
+   {
+    "cid": "A910-A903-28",
+    "driver": "A9.1 ICP-45 + A9-07 IDA7-12",
+    "op": "set",
+    "ptr": "/items[id=ICP-45]/tbd",
+    "count": 1,
+    "summary": "ICP-45 remaining reason"
+   },
+   {
+    "cid": "A910-A903-13",
+    "driver": "A9.1 ICP-46",
+    "op": "set",
+    "ptr": "/items[id=ICP-46]/a9_1_isolation_basis",
+    "count": 1,
+    "summary": "ICP-46 isolation basis (900 V / 1.0 kV DC hipot / 600 V pulse test)"
+   },
+   {
+    "cid": "A910-A903-14",
+    "driver": "A9.1 ICP-46",
+    "op": "set",
+    "ptr": "/items[id=ICP-46]/units",
+    "count": 1,
+    "summary": "ICP-46 units"
+   },
+   {
+    "cid": "A910-A903-29",
+    "driver": "A9.1 A9-03-matching",
+    "op": "set",
+    "ptr": "/items[id=ICP-13]/evidence_class",
+    "count": 1,
+    "summary": "ICP-13 evidence class"
+   },
+   {
+    "cid": "A910-A903-30",
+    "driver": "A9.1 A9-03-Vd",
+    "op": "set",
+    "ptr": "/items[id=ICP-22]/evidence_class",
+    "count": 1,
+    "summary": "ICP-22 evidence class"
+   },
+   {
+    "cid": "A910-A903-31",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=ICP-26]/evidence_class",
+    "count": 1,
+    "summary": "ICP-26 evidence class"
+   },
+   {
+    "cid": "A910-A903-15",
+    "driver": "A9.1 ICP-46",
+    "op": "set",
+    "ptr": "/items[id=ICP-46]/status",
+    "count": 1,
+    "summary": "ICP-46 status"
+   },
+   {
+    "cid": "A910-A903-16",
+    "driver": "A9.1 ICP-46",
+    "op": "set",
+    "ptr": "/items[id=ICP-46]/basis",
+    "count": 1,
+    "summary": "ICP-46 basis"
+   },
+   {
+    "cid": "A910-A903-17",
+    "driver": "A9.1 ICP-46",
+    "op": "set",
+    "ptr": "/items[id=ICP-46]/evidence_class",
+    "count": 1,
+    "summary": "ICP-46 evidence class"
+   },
+   {
+    "cid": "A910-A903-18",
+    "driver": "A9-07 IDA7-07",
+    "op": "set",
+    "ptr": "/items[id=ICP-43]/h1_heat_allowance_a9_07",
+    "count": 1,
+    "summary": "A9-07 heat allowance propagated to ICP-43"
+   },
+   {
+    "cid": "A910-A903-19",
+    "driver": "A9-07 IDA7-08 re-evaluation",
+    "op": "set",
+    "ptr": "/items[id=ICP-43]/status",
+    "count": 1,
+    "summary": "ICP-43 status re-evaluated"
+   },
+   {
+    "cid": "A910-A903-32",
+    "driver": "A9-07 IDA7-08 re-evaluation",
+    "op": "set",
+    "ptr": "/items[id=ICP-43]/tbd",
+    "count": 1,
+    "summary": "ICP-43 remaining reason"
+   },
+   {
+    "cid": "A910-A903-20",
+    "driver": "A9-07 K9 / IDA7-07",
+    "op": "set",
+    "ptr": "/items[id=ICP-05]/view_condition_a9_07",
+    "count": 1,
+    "summary": "exit-face view condition propagated"
+   },
+   {
+    "cid": "A910-A903-21",
+    "driver": "A9-07 merged",
+    "op": "set",
+    "ptr": "/items[id=ICP-05]/tbd",
+    "count": 1,
+    "summary": "ICP-05 re-evaluated"
+   },
+   {
+    "cid": "A910-A903-23",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=ICP-26]/tbd",
+    "count": 1,
+    "summary": "ICP-26 tbd re-evaluated"
+   },
+   {
+    "cid": "A910-A903-24",
+    "driver": "A9.1 HIQ-06 (A9-08 XA9-IF-16)",
+    "op": "set",
+    "ptr": "/interface_demands[23]/status",
+    "count": 1,
+    "summary": "ICP gas booking demand resolved"
+   },
+   {
+    "cid": "A910-A903-25",
+    "driver": "A9.1 A9-03-matching",
+    "op": "set",
+    "ptr": "/items[id=ICP-13]/tbd",
+    "count": 1,
+    "summary": "ICP-13 tbd re-evaluated"
+   },
+   {
+    "cid": "A910-A903-26",
+    "driver": "A9.1 A9-03-Vd",
+    "op": "set",
+    "ptr": "/items[id=ICP-22]/note",
+    "count": 1,
+    "summary": "ICP-22 note"
+   },
+   {
+    "cid": "A910-A903-27",
+    "driver": "A9.1 A9-03-collector",
+    "op": "replace",
+    "ptr": "/items[id=ICP-29]/tbd",
+    "count": 1,
+    "summary": "ICP-29 tbd re-evaluated"
+   },
+   {
+    "cid": "A910-A903-22",
+    "driver": "OQ-INT-04",
+    "op": "replace",
+    "ptr": "/published_analog_annex/source/authority_note",
+    "count": 1,
+    "summary": "annex reconciled with A9-05"
+   }
+  ]
  }
 }

@@ -34,7 +34,7 @@ Heated Xe-fed LaB6 hollow cathode (unit + spare) for the hall_c1_reference contr
 | RFQ-08-R09 | keeper material | non-graphite alternatives quoted | - | OWNER_GIVEN | after-evidence | owner-allocation | row 94 |
 | RFQ-08-R10 | temperature instrumentation provisions | 1843.0 | K (O-bearing floor) | OWNER_GIVEN | NOW | owner-allocation | row 128; row 95 |
 | RFQ-08-R11 | cathode-common / bleeder network | TBD - requires EMC and discharge-stability bench tests (A902-28) | ohm | TBD | after-evidence | - | row 91; H3-A902-06 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json); A902-28 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json) |
-| RFQ-08-R12 | Xe-line dielectric break | TBD - requires the C1 circuit potentials (H2-2 H3-C1-04: 'break voltage PENDING H2-4') and PENDING docs/hardware/h2_a9_revisions/ (A9-07: H2-2/H2-4 revision) | V | PENDING | LOCK-1 | - | H3-C1-04 (docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json) |
+| RFQ-08-R12 | Xe-line dielectric break | TBD - requires the C1 circuit potentials (H2-2 H3-C1-04: 'break voltage PENDING H2-4') and the H2-2 / H2-4 revision in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (merged: keeper isolation basis 900 V, 1.0 kV DC development hipot, separate 600 V pulse test per A9.1 ICP-46; the break voltage itself is not given) | V | PENDING | LOCK-1 | - | H3-C1-04 (docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json) |
 
 Requirement text:
 
@@ -72,7 +72,7 @@ Requirement text:
 - RFQ-08-R02 emission-current rating: TBD - requires the registered I_d,max (ICD ICP-45) and keeper current (LOCK-1) - freezes at **LOCK-1**
 - RFQ-08-R07 heater supply: TBD - requires A902-26/A902-27 heater power (supplier data + measurement) - freezes at **after-evidence**
 - RFQ-08-R11 cathode-common / bleeder network: TBD - requires EMC and discharge-stability bench tests (A902-28) - freezes at **after-evidence**
-- RFQ-08-R12 Xe-line dielectric break: TBD - requires the C1 circuit potentials (H2-2 H3-C1-04: 'break voltage PENDING H2-4') and PENDING docs/hardware/h2_a9_revisions/ (A9-07: H2-2/H2-4 revision) - freezes at **LOCK-1**
+- RFQ-08-R12 Xe-line dielectric break: TBD - requires the C1 circuit potentials (H2-2 H3-C1-04: 'break voltage PENDING H2-4') and the H2-2 / H2-4 revision in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (merged: keeper isolation basis 900 V, 1.0 kV DC development hipot, separate 600 V pulse test per A9.1 ICP-46; the break voltage itself is not given) - freezes at **LOCK-1**
 
 ## The supplier's response must state
 

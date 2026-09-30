@@ -43,6 +43,14 @@ import os
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+# ---- A9-10 reconciliation overlay (fo_a9_10_integration): declared, machine-checked changes applied after the build
+import importlib.util as _a910_ilu  # noqa: E402
+_A910_SPEC = _a910_ilu.spec_from_file_location(
+    "a9_10_overlay", str(ROOT) + "/docs/experiments/hall_icp/integration/a9_10_overlay.py")
+A910 = _a910_ilu.module_from_spec(_A910_SPEC)
+_A910_SPEC.loader.exec_module(A910)
+
 LANE_DIR = "docs/procurement/rfq_a9"
 OUT_JSON = LANE_DIR + "/rfq_a9_v1.json"
 OUT_MD = LANE_DIR + "/RFQ_A9.md"
@@ -1877,6 +1885,34 @@ def main(argv=None) -> int:
             f.write(text)
     print(f"wrote {len(out)} files")
     return 0
+
+
+# ---- A9-10 reconciliation overlay hooks (fo_a9_10_integration) ------------------------------------------------------
+_a910_build_core = build
+
+
+def build():
+    """Verified lane build followed by the declared A9-10 changes; package-level changes are applied first so that the
+    derived package lists (open specification items, traceability, h3/h4 inputs) are rebuilt from them."""
+    doc = A910.copy.deepcopy(_a910_build_core())
+    A910.apply("A9-09", doc, only_prefix="/packages", attach=False, copy_doc=False)
+    for p in doc["packages"]:
+        p["open_specification_items"] = [{"id": r["id"], "title": r["title"], "value": r["value"],
+                                          "freeze_point": r["freeze_point"]} for r in p["requirements"]
+                                         if is_open(r["value"])]
+    doc["traceability_matrix"] = traceability(doc["packages"])
+    doc["h3_h4_inputs"] = h3_h4_inputs(doc["packages"])
+    A910.apply("A9-09", doc, exclude_prefix="/packages", copy_doc=False)
+    validate(doc)
+    return doc
+
+
+_a910_md_core = render_md
+
+
+def render_md(doc):
+    """Lane Markdown followed by the A9-10 reconciliation section generated from the same JSON."""
+    return _a910_md_core(doc).rstrip("\n") + "\n" + "\n".join(A910.md_section(doc)) + "\n"
 
 
 if __name__ == "__main__":

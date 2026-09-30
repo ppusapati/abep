@@ -30,7 +30,7 @@ Laboratory thermal MFCs for the pure-gas atmospheric-surrogate paths (N2, O2; Ar
 | RFQ-02-R04 | O2 path envelope | `{"max_mgps": 1.885418323, "min_mgps": 0.01241017941, "overlapping_ranges_min": 4, "turndown": 151.9251464}` | mg/s | COPIED_VERIFIED | LOCK-1 | model-derived | H26-19 (docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json) |
 | RFQ-02-R05 | four-range feasibility check | `{"N2 (H26-18)": {"fits_20pct_floor": true, "max_mgps": 3.142363872, "min_mgps": 0.01181921848, "per_range_span_for_4_ranges": 4.038006, "turndown": 265.869006}, "O2 (H26-19)": {"fits_20pct_floor": true, "max_mgps": 1.885418323, "min_mgps": 0.01241017941, "per_range_span_for_4_ranges": 3.510811, "turndown": 151.925146}, "atmospheric total, row 73 envelope": {"fits_20pct_floor": true, "max_mgps": 3.2, "min_mgps": 0.38, "per_range_span_for_4_ranges": 1.703498, "turndown": 8.421053}}` | - | DERIVED | LOCK-1 | model-derived | H26-18 (docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json); H26-19 (docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json); CD-P-MFC-MINFRAC (docs/experiments/capability_demo/capability_demo_prep_v1.json) |
 | RFQ-02-R06 | Ar path (engineering-only HI-AR) | TBD - requires the HI-AR flow plan (A9-01 stage HI-AR) | mg/s | TBD | LOCK-1 | - | A9.1 UBQ-08; row 36 |
-| RFQ-02-R07 | Xe anode path for the bounded Xe reference/health check | TBD - requires the registered Xe reference/health-check point (A9-01) and PENDING docs/budgets/xe_ledger_a9/ (A9-08: XE_REFERENCE term) | mg/s | TBD | LOCK-1 | - | A9.1 HIQ-03; row 26 |
+| RFQ-02-R07 | Xe anode path for the bounded Xe reference/health check | TBD - requires the registered Xe reference/health-check point (A9-01) and the XE_REFERENCE term booked by A9-08 (docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json; structure booked, flow TBD) | mg/s | TBD | LOCK-1 | - | A9.1 HIQ-03; row 26 |
 | RFQ-02-R08 | C1 steady-flow Xe controller class | `[0.05, 0.2]` | mg/s | OWNER_GIVEN | NOW | owner-allocation | row 125; UB-F-02 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-02-R09 | C1 low-flow resolution and setpoint | 0.0005 | mg/s | OWNER_GIVEN | NOW | owner-allocation | row 98; UB-F-04 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-02-R10 | C1 spot-mode search step | 10.0 | resolution steps per search step | DERIVED | LOCK-1 | model-derived | row 92; UB-F-04 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
@@ -94,7 +94,7 @@ Requirement text:
 ## Open specification items (TBD / PENDING with the gate that freezes them)
 
 - RFQ-02-R06 Ar path (engineering-only HI-AR): TBD - requires the HI-AR flow plan (A9-01 stage HI-AR) - freezes at **LOCK-1**
-- RFQ-02-R07 Xe anode path for the bounded Xe reference/health check: TBD - requires the registered Xe reference/health-check point (A9-01) and PENDING docs/budgets/xe_ledger_a9/ (A9-08: XE_REFERENCE term) - freezes at **LOCK-1**
+- RFQ-02-R07 Xe anode path for the bounded Xe reference/health check: TBD - requires the registered Xe reference/health-check point (A9-01) and the XE_REFERENCE term booked by A9-08 (docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json; structure booked, flow TBD) - freezes at **LOCK-1**
 - RFQ-02-R16 ICP dedicated gas-port controller (contingency only): TBD - requires a declared G-ATM/G-XE variant (ICD ICP-26) - freezes at **LOCK-1**
 
 ## The supplier's response must state
