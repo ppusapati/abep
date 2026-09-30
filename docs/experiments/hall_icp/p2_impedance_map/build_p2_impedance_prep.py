@@ -532,9 +532,9 @@ def synthetic_cal(z0, line_abcd, match_abcd, e00, e11, e10e01, fixture_abcd, k_v
         "loss_bounds": {}, "cold_references": {}, "antenna_current_probe": None,
         "loss_verification": None,
         # MET-07-R2: k and u_eta_pred resolve here (registered with the calibration set; never self-declared)
-        "loss_check_registrations": {"k": {"SYN-K-REG-01": {"value": 2.0, "source": "SYNTHETIC test registration"}},
-                                     "u_eta_pred": {"SYN-SPARAM-UNC-01": {
-                                         "value": 0.01, "source": "SYNTHETIC S-parameter uncertainty"}}},
+        "loss_check_registrations": {"protocols": {"SYN-K-REG-01": {
+            "method": RED.LOSS_VERIFICATION_METHODS[0], "model_key": "TS-SYN-1", "k": 2.0, "u_eta_pred": 0.01,
+            "u_P_net_W": 1.0, "u_P_ref_load_W": 1.0, "source": "SYNTHETIC test protocol"}}},
     }
     # MET-07: the synthetic at-power loss check is produced by p2_framework.verify_line_match_loss against this set's
     # own two-port model (synthetic 50-ohm reference load, synthetic registered k; not evidence)
@@ -546,7 +546,7 @@ def synthetic_cal(z0, line_abcd, match_abcd, e00, e11, e10e01, fixture_abcd, k_v
                    "Z_load_basis": "SYNTHETIC reference load"},
         u_eta_pred=0.01, P_net_W=100.0, u_P_net_W=1.0, P_ref_load_W=100.0 * eta, u_P_ref_load_W=1.0, k=2.0,
         k_registration_id="SYN-K-REG-01", evidence_record_ids=["SYN-CALORIMETRY-01"], data_class="synthetic_test",
-        u_eta_pred_basis_id="SYN-SPARAM-UNC-01")
+        u_eta_pred_basis_id="SYN-K-REG-01")
     return cal
 
 
@@ -2111,11 +2111,13 @@ def build_framework(oq_rows):
                             "'verification': P_line/match,loss and P_delivered reconstructed only with a "
                             "LOSS_MODEL_VERIFIED record covering the logged tuning state; else REFUSED strings, "
                             "loss_status UNVERIFIED",
-                            "MET-07 / MET-07-R1 / MET-07-R2: a loss verification carries k (resolved against the "
-                            "calibration set's loss_check_registrations), the at-power evidence P_net / P_ref_load "
-                            "with uncertainties (eta_measured and u_eta_measured are recomputed from it), "
-                            "eta_predicted, u_eta_predicted (> 0 only with a registered basis; 0 for a declared "
-                            "bound), normalized_statistic and a model_ref (calibration set, tuning state + two-port "
+                            "MET-07 / -R1 / -R2 / -R3: a loss verification names the ONE registered protocol for its "
+                            "(method, loss model) in the calibration set (loss_check_registrations.protocols, frozen "
+                            "and sha256-registered at LOCK-2) and must use its k, u_eta_pred, u_P_net_W and "
+                            "u_P_ref_load_W (never free inputs, never chosen after the data); it carries the at-power "
+                            "evidence P_net / P_ref_load (eta_measured and u_eta_measured are recomputed from it; "
+                            "eta_measured > 1 + k u is LOSS_CHECK_UNPHYSICAL), eta_predicted, u_eta_predicted (0 for a "
+                            "declared bound), normalized_statistic and a model_ref (calibration set, tuning state + two-port "
                             "network + Z_load of the check, or loss bound); the reducer recomputes the statistic "
                             "against the model's own prediction (transfer_efficiency(network(TS), Z_load) to "
                             "numerical precision, or 1 - loss_fraction_max; u_eta_predicted enters u_c only) and "

@@ -54,6 +54,7 @@ TBD_EVIDENCE = "TBD_AFTER_EVIDENCE"
 TBD_OWNER = "TBD_OWNER"
 NOT_EVALUATED = "NOT_EVALUATED"
 LOSS_INCONSISTENT = "LOSS_MODEL_INCONSISTENT"
+LOSS_UNPHYSICAL = "LOSS_CHECK_UNPHYSICAL"
 RATING_STATUS = RED.RATING_STATUS                       # TBD_AFTER_IMPEDANCE_MAP (A9.2 a9_10_statuses)
 PLANE_ORDER = ("RP-GEN", "RP-CPL", "RP-MIN", "RP-ANT")  # generator -> antenna; RP-VI joins RP-ANT by a fixture
 FREQ_UNITS = {"HZ": 1.0, "KHZ": 1e3, "MHZ": 1e6, "GHZ": 1e9}
@@ -602,8 +603,9 @@ def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pre
                       one-sided statistic (eta_pred - eta_meas) / u_c <= k.
     ``eta_pred`` may be omitted (computed from the model); if supplied it must equal the model's prediction to numerical
     precision (consolidated verification MET-07-R1: u_eta_pred is used once, in u_c, never also to shift the
-    prediction). k and a u_eta_pred > 0 resolve in ``cal['loss_check_registrations']`` ({'k': {id: {value, source}},
-    'u_eta_pred': {id: {value, source}}}); they are never free inputs (MET-07-R2). k is supplied, never defaulted, and needs a registered k_registration_id (k stays TBD_OWNER / LOCK-2
+    prediction). k, u_eta_pred, u_P_net_W and u_P_ref_load_W must equal the ONE registered protocol for (method, loss
+    model) in ``cal['loss_check_registrations']['protocols']`` (named by k_registration_id); they are never free
+    inputs or chosen after the data (MET-07-R2/R3). eta_meas > 1 + k u_meas is LOSS_CHECK_UNPHYSICAL. k is supplied, never defaulted, and needs a registered k_registration_id (k stays TBD_OWNER / LOCK-2
     until registered). Any missing uncertainty -> NOT_EVALUATED (never verified). Returns the reducer's
     loss_verification record (model_ref filled with calibration_set_id and network / loss_fraction_max)."""
     if method not in RED.LOSS_VERIFICATION_METHODS:
@@ -620,12 +622,17 @@ def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pre
     kk = _fin(k, "k")
     if kk <= 0:
         raise FrameworkError("k must be positive")
+    mk = (model_ref or {}).get("tuning_state_id") if (model_ref or {}).get("kind") == "two_port" \
+        else (model_ref or {}).get("loss_bound_id")
     try:
-        k_reg = RED.loss_check_registration(cal, "k", k_registration_id)
+        prot = RED.loss_check_protocol(cal, k_registration_id, method, mk)
     except RED.P2ReducerError as e:
         raise CriteriaMissingError(f"{e}; k stays TBD_OWNER / LOCK-2 until registered, never defaulted") from e
-    if abs(kk - k_reg) > 1e-12 * max(1.0, k_reg):
-        raise CriteriaMissingError(f"k {kk!r} != registered k {k_reg!r} for {k_registration_id!r} (MET-07-R2)")
+    if abs(kk - prot["k"]) > 1e-12 * max(1.0, prot["k"]):
+        raise CriteriaMissingError(f"k {kk!r} != the protocol's registered k {prot['k']!r} (MET-07-R3)")
+    if u_eta_pred_basis_id not in (None, k_registration_id):
+        raise CriteriaMissingError("u_eta_pred comes from the same registered protocol (u_eta_pred_basis_id must be "
+                                   "omitted or equal k_registration_id; MET-07-R3)")
     try:
         eta_model, ref = RED.loss_model_prediction(cal, model_ref)
     except RED.P2ReducerError as e:
@@ -645,13 +652,12 @@ def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pre
     u_p = _fin(u_eta_pred, "u_eta_pred")
     if u_p < 0:
         raise FrameworkError("u_eta_pred must be >= 0")
-    if u_p > 0:
-        try:
-            u_reg = RED.loss_check_registration(cal, "u_eta_pred", u_eta_pred_basis_id)
-        except RED.P2ReducerError as e:
-            raise CriteriaMissingError(f"{e}; u_eta_pred is never a free input (MET-07-R1/R2)") from e
-        if abs(u_p - u_reg) > 1e-12 * max(1.0, u_reg):
-            raise CriteriaMissingError(f"u_eta_pred {u_p!r} != registered {u_reg!r} (MET-07-R2)")
+    for name, val, reg in (("u_eta_pred", u_p, prot["u_eta_pred"]),
+                           ("u_P_net_W", _fin(u_P_net_W, "u_P_net_W"), prot["u_P_net_W"]),
+                           ("u_P_ref_load_W", _fin(u_P_ref_load_W, "u_P_ref_load_W"), prot["u_P_ref_load_W"])):
+        if abs(val - reg) > 1e-12 * max(1.0, reg):
+            raise CriteriaMissingError(f"{name} {val!r} != the protocol's registered {reg!r} (uncertainties are fixed "
+                                       f"before the check, never free inputs; MET-07-R2/R3)")
     eta_p = eta_model if eta_pred is None else _fin(eta_pred, "eta_pred")
     if abs(eta_p - eta_model) > 1e-9 * max(1.0, abs(eta_model)):
         raise FrameworkError(f"eta_pred {eta_p!r} is not the {kind} model's prediction {eta_model:.9g} (the check "
@@ -666,9 +672,11 @@ def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pre
         rec.update({"status": NOT_EVALUATED, "reason": "zero combined uncertainty"})
         return rec
     stat = RED.loss_statistic(comparison, eta_m, u_m, eta_p, u_p)
-    rec.update({"status": RED.LOSS_VERIFIED if stat <= kk else LOSS_INCONSISTENT, "eta_measured": eta_m,
+    unphysical = eta_m > 1.0 + kk * u_m               # a passive line / match cannot deliver more than its input
+    rec.update({"status": LOSS_UNPHYSICAL if unphysical else (RED.LOSS_VERIFIED if stat <= kk else LOSS_INCONSISTENT),
+                "eta_measured": eta_m,
                 "u_eta_measured": u_m, "eta_predicted": eta_p, "u_eta_predicted": u_p,
-                "u_eta_predicted_basis_id": u_eta_pred_basis_id if u_p > 0 else None,
+                "u_eta_predicted_basis_id": k_registration_id,
                 "P_net_W": pn, "u_P_net_W": _fin(u_P_net_W, "u"), "P_ref_load_W": pr,
                 "u_P_ref_load_W": _fin(u_P_ref_load_W, "u"),
                 "normalized_statistic": stat})
