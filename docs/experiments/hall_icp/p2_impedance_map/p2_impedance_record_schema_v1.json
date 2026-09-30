@@ -299,7 +299,7 @@
   },
   "plasma_state": {
    "type": "object",
-   "description": "lit (boolean), mode (UNLIT, E, H, UNCERTAIN; UNLIT iff lit is false), optical_signal_V (INS-P2-10), unlit_threshold_V and unlit_threshold_source (from the P1 registered procedure; required for COLD_ANTENNA_POWERED_UNLIT, where the signal must lie below the threshold). Phases DUMMY_LOAD, COLD_ANTENNA_POWERED_UNLIT must be unlit",
+   "description": "lit (boolean), mode (UNLIT, E_MODE, H_MODE, UNCERTAIN; UNLIT iff lit is false; UNCERTAIN is never reduced), optical_signal_V (INS-P2-10 photodiode), unlit_threshold_V and unlit_threshold_source (from the P1 registered procedure), threshold_basis {dark_background_record_id, rf_powered_known_unlit_record_id, known_lit_p1_record_id, frozen_before_p2_map}, photodiode_line_of_sight_ok, photodiode_saturated, electrical_ignition_or_mode_transition and electrical_indicator_basis (A9.4 P2Q-05; required for COLD_ANTENNA_POWERED_UNLIT and HOT_MAP, with antenna_current, factors.I_collector_A and factors.p_chamber_Pa recorded simultaneously). Phases DUMMY_LOAD, COLD_ANTENNA_POWERED_UNLIT must be unlit",
    "x-units": "-; V",
    "x-reference-plane": null,
    "required": [
@@ -307,7 +307,12 @@
     "mode",
     "optical_signal_V",
     "unlit_threshold_V",
-    "unlit_threshold_source"
+    "unlit_threshold_source",
+    "threshold_basis",
+    "photodiode_line_of_sight_ok",
+    "photodiode_saturated",
+    "electrical_ignition_or_mode_transition",
+    "electrical_indicator_basis"
    ],
    "properties": {
     "lit": {
@@ -316,8 +321,8 @@
     "mode": {
      "enum": [
       "UNLIT",
-      "E",
-      "H",
+      "E_MODE",
+      "H_MODE",
       "UNCERTAIN"
      ]
     },
@@ -336,6 +341,56 @@
      "x-units": "V"
     },
     "unlit_threshold_source": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "threshold_basis": {
+     "type": [
+      "object",
+      "null"
+     ],
+     "required": [
+      "dark_background_record_id",
+      "rf_powered_known_unlit_record_id",
+      "known_lit_p1_record_id",
+      "frozen_before_p2_map"
+     ],
+     "properties": {
+      "dark_background_record_id": {
+       "type": "string"
+      },
+      "rf_powered_known_unlit_record_id": {
+       "type": "string"
+      },
+      "known_lit_p1_record_id": {
+       "type": "string"
+      },
+      "frozen_before_p2_map": {
+       "const": true
+      }
+     }
+    },
+    "photodiode_line_of_sight_ok": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    },
+    "photodiode_saturated": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    },
+    "electrical_ignition_or_mode_transition": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    },
+    "electrical_indicator_basis": {
      "type": [
       "string",
       "null"

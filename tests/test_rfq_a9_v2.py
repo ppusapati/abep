@@ -472,3 +472,89 @@ def test_cif_units_column_and_oq_rfq07_applied_everywhere(doc):
     assert "| A |" in row
     a = {x["id"]: x for x in doc["owner_answers_applied"]["a9_3"]}["OQ-RFQ-07"]
     assert {p["id"] for p in doc["packages"]} | {"RFQ2-CIF"} <= set(a["applied_in"])
+
+
+# ------------------------------------------------------------------------------ A9.4 incorporation (fo_a9_4_incorporation)
+A94_JSON = REPO / "docs" / "decisions" / "OD_2026_09_30_A9_4_p1_p2_owner_decisions.json"
+A94_MD = REPO / "docs" / "decisions" / "OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md"
+
+
+def test_a94_pinned_and_quotes_verbatim(doc, reqs):
+    pins = {p["path"]: p["sha256"] for p in doc["decision_pins"]}
+    assert pins["docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json"] == _sha(A94_JSON) == \
+        "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d"
+    assert pins["docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md"] == _sha(A94_MD) == \
+        "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+    md = A94_MD.read_text(encoding="utf-8")
+    a94 = json.loads(A94_JSON.read_text(encoding="utf-8"))
+    n = 0
+    srcs = [s for r in reqs for s in r["sources"]] + doc["dispatch_authority"]["a9_4_quotation_dispatch"]["sources"]
+    for s in srcs:
+        if s["type"] == "a9_4":
+            assert s["quote"] in md, s["quote"]
+            assert s["id"] in a94["decisions"] or s["id"] in a94["execution_decisions"]
+            n += 1
+    assert n >= 15
+    inc = doc["a9_4_incorporation"]
+    assert inc["follow_on"] == "fo_a9_4_incorporation" and inc["base_commit"] == \
+        "875ed6d0a87202bc92706b28551b0e22eda2014d"
+
+
+def test_a94_photodiode_lines_p1_needed(items, req_by_id, doc):
+    for lid in ("TH-L07", "TH-L08", "VAC-L07"):
+        assert items[lid]["dispatch"] == "P1_NEEDED", lid
+    assert "photodiode" in items["TH-L07"]["item"] and "amplifier" in items["TH-L07"]["item"]
+    assert "DAQ channel" in items["TH-L08"]["item"]
+    assert "window" in items["VAC-L07"]["item"]
+    assert "RGA/diagnostic interfaces" in items["VAC-L07"]["covers_owner_items"]
+    assert "DAQ" in items["TH-L07"]["covers_owner_items"]
+    n3 = req_by_id["RFQ2-THRUST-N03"]
+    assert n3["dispatch"] == "P1_NEEDED" and n3["status"] == "OWNER_GIVEN"
+    assert "No photodiode threshold is requested" in n3["requirement"]
+    assert req_by_id["RFQ2-VAC-N06"]["dispatch"] == "P1_NEEDED"
+    assert "RFQ2-THRUST-N03" in req_by_id["RFQ2-THRUST-N01"]["requirement"]
+    assert "RFQ2-THRUST" in doc["a9_4_incorporation"]["placement"]
+    assert "RFQ2-VAC" in doc["a9_4_incorporation"]["placement"]
+    assert any(x["id"] == "X-17" for x in doc["common_interface"]["interface_matrix"])
+
+
+def test_a94_dwv_and_design_withstand(items, req_by_id, doc):
+    h = req_by_id["RFQ2-HALLEL-N04"]
+    assert h["value"]["V_operating_max_V"] == 350.0 and h["value"]["V_design_withstand_min_V"] == 525.0
+    assert h["value"]["initial_DWV_V_DC"] == 1050.0 and h["value"]["initial_DWV_duration_s"] == 60.0
+    assert h["value"]["ICP_44_rf_insulation"] == "OPEN" and h["value"]["leakage_acceptance"].startswith("TBD")
+    assert "verify" in h["requirement"] and "ICPQ-06" in h["requirement"]
+    v = req_by_id["RFQ2-VAC-N07"]
+    assert v["value"]["V_design_withstand_min_V"] == 525.0 and v["value"]["DWV_V_DC"] == 1050.0
+    assert "RFQ2-HALLEL-N04" in items["HE-L04"]["requirements"] and "1.05 kV" in items["HE-L04"]["item"]
+    assert "RFQ2-VAC-N07" in items["VAC-L03"]["requirements"] and "525 V" in items["VAC-L03"]["item"]
+    cif = {x["id"]: x for x in doc["common_interface"]["items"]}
+    assert cif["CIF-G07"]["value"]["initial_DWV_V_DC"] == 1050.0
+    assert cif["CIF-G05"]["value"]["qualification_V_DC"] == 1000.0          # ICPQ-06 gas-line rule kept distinct
+
+
+def test_a94_quotation_dispatch_authorized_not_po(doc):
+    qd = doc["dispatch_authority"]["a9_4_quotation_dispatch"]
+    assert qd["authorized"] == ["requests for quotation", "technical clarification", "indicative lead time",
+                                "commercial quotation", "datasheets/certificates"]
+    assert qd["not_authorized"] == ["purchase orders", "advance payments", "binding commitments"]
+    assert "never contacts suppliers" in qd["sent_by"]
+    for p in doc["packages"]:
+        txt = " ".join(p["banner"])
+        assert "DO NOT PURCHASE" in txt and "may SEND the lines tagged P1_NEEDED" in txt
+        assert "NOT authorized: purchase orders, advance payments, binding commitments" in txt
+    assert "PURCHASE ORDERS, ADVANCE PAYMENTS AND BINDING COMMITMENTS NOT AUTHORIZED" in \
+        doc["h3_h4_inputs"]["h3_procurement_gate"]["state"]
+
+
+def test_a94_change_log_traceability_and_answers(doc):
+    srcs = {c["source"] for c in doc["change_log"]["package_level"]}
+    assert {"A9.4 P2Q-05", "A9.4 P1Q-14", "A9.4 execution_decisions.p1_needed_rfqs"} <= srcs
+    trace = {t["requirement"]: t for t in doc["traceability_matrix"]}
+    assert "A9.4 P2Q-05" in trace["RFQ2-THRUST-N03"]["sources"]
+    assert "A9.4 P1Q-14" in trace["RFQ2-HALLEL-N04"]["sources"]
+    a94 = {x["id"]: x for x in doc["owner_answers_applied"]["a9_4"]}
+    assert {"P2Q-05", "P1Q-14", "p1_needed_rfqs"} <= set(a94)
+    assert "RFQ2-THRUST-N03" in a94["P2Q-05"]["applied_in"] and "RFQ2-HALLEL-N04" in a94["P1Q-14"]["applied_in"]
+    new = {q["id"] for q in doc["open_owner_questions"]["new"]}
+    assert {"OQ-RFQV2-06", "OQ-RFQV2-07", "OQ-RFQV2-08"} <= new

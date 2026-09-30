@@ -25,6 +25,7 @@
     "labels",
     "gas",
     "gas_mode",
+    "record_class",
     "hall_discharge_state",
     "hall_discharge_sustained",
     "h1_electrical",
@@ -81,6 +82,64 @@
       "DIAGNOSTIC_DEDICATED_FEED"
      ]
     },
+    "record_class": {
+     "enum": [
+      "ICP45_CAPACITY",
+      "NEUTRALIZATION_CONSISTENCY",
+      "DIAGNOSTIC_VARIANT",
+      "ENGINEERING_SURFACE"
+     ],
+     "description": "A9.4 P1Q-10 / P1Q-13: only ICP45_CAPACITY records feed I_e,cap; Hall-ON records are NEUTRALIZATION_CONSISTENCY; METERED_RETURN anode only in a DIAGNOSTIC_VARIANT",
+     "x-allowed-by-hall-state": {
+      "OFF": [
+       "ICP45_CAPACITY",
+       "DIAGNOSTIC_VARIANT",
+       "ENGINEERING_SURFACE"
+      ],
+      "ON": [
+       "NEUTRALIZATION_CONSISTENCY",
+       "DIAGNOSTIC_VARIANT"
+      ]
+     }
+    },
+    "diagnostic_registration_id": {
+     "type": "string",
+     "minLength": 1,
+     "description": "required when record_class is DIAGNOSTIC_VARIANT"
+    },
+    "capacity_monitoring": {
+     "type": "object",
+     "required": [
+      "h1_body_ground_config",
+      "I_body_to_ground_continuous",
+      "V_anode_channel",
+      "V_icp_body_V",
+      "V_electron_collector_V",
+      "sign_convention_id"
+     ],
+     "description": "required on every ICP45_CAPACITY record (A9.4 P1Q-13); the terminals must then include h1_body and electron_collector (MEASURED)",
+     "properties": {
+      "h1_body_ground_config": {
+       "const": "SINGLE_POINT_METERED_FACILITY_GROUND"
+      },
+      "I_body_to_ground_continuous": {
+       "const": true
+      },
+      "V_anode_channel": {
+       "const": "HIGH_IMPEDANCE_ISOLATED"
+      },
+      "V_icp_body_V": {
+       "type": "number"
+      },
+      "V_electron_collector_V": {
+       "type": "number"
+      },
+      "sign_convention_id": {
+       "type": "string",
+       "minLength": 1
+      }
+     }
+    },
     "hall_discharge_state": {
      "enum": [
       "OFF",
@@ -98,7 +157,8 @@
       "config_id",
       "anode_state",
       "V_anode_V",
-      "h1_body_state"
+      "h1_body_state",
+      "discharge_supply_connection"
      ],
      "description": "registered H-1 electrical configuration (P1-IT-39)",
      "properties": {
@@ -119,7 +179,17 @@
       "h1_body_state": {
        "type": "string",
        "minLength": 1
+      },
+      "discharge_supply_connection": {
+       "enum": [
+        "PHYSICALLY_DISCONNECTED",
+        "CONNECTED"
+       ]
       }
+     },
+     "x-supply-connection-by-hall-state": {
+      "OFF": "PHYSICALLY_DISCONNECTED",
+      "ON": "CONNECTED"
      },
      "x-anode-states-by-hall-state": {
       "OFF": [

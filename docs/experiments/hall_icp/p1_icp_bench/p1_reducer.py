@@ -1,4 +1,5 @@
-"""P1 ICP electron-source bench - pure, deterministic analysis reducer (lane fo_a9_p1_icp_bench, A9.3 P1).
+"""P1 ICP electron-source bench - pure, deterministic analysis reducer (lane fo_a9_p1_icp_bench, A9.3 P1;
+A9.4 incorporated by fo_a9_4_incorporation).
 
 What it does
 ------------
@@ -16,17 +17,27 @@ What it never does
 * It never returns PASS for ICP-45 because some current (1 A, 2 A, ...) was reached. The ICP-45A condition is
   evaluated only against a REGISTERED I_d,max,H1 (basis MEASURED_REGISTERED_H1_OPERATION) with an explicit one-sided
   margin rule; the 8.33 A stand ceiling and the 7.5 A power-envelope bound are refused as requirements.
-* I_e,cap is never "the largest current in the bundle". Its definition here is PROPOSED for the owner (P1Q-10):
-  a CAPACITY (extraction) measurement per A9.1 ICP-45A ('demonstrate electron extraction up to I_e,cap >= I_d,max'):
-  the largest facility-corrected extracted current I_e(RF ON) - I_e(RF OFF) over records taken in the registered
-  extraction topology (stage P1-S4 or P1-S7, Hall discharge supply OFF, electrons sunk by the registered
-  electron-collecting electrode, NOT the H-1 anode), G-REUSE, RF ON, RF-pickup-checked, at the gas/magnet conditions
-  of a registered H-1 point, each with a matched RF-OFF facility pair. Hall-ON records are NOT capacity records: with
-  the H-1 anode as the sink, current continuity makes the ICP-supplied current equal to I_d <= I_d,max,H1, so they
-  can never show excess capacity and would falsely reject a working ICP (A9.3 OQ-A907-02). They are reported only as
-  a descriptive neutralization-consistency check. Records without the facility correction are excluded (never
-  silently credited); synthetic records give arithmetic only (SYNTHETIC_TEST_ONLY_NOT_EVIDENCE, condition_met None).
-  Without eligible capacity records the status is NOT_EVALUATED (never a FAIL).
+* I_e,cap is never "the largest current in the bundle". Its definition is OWNER_DECIDED (A9.4 P1Q-10,
+  CAPACITY_EXTRACTION_FORM; docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json): a discharge-OFF extraction
+  measurement - Hall discharge supply OFF and PHYSICALLY disconnected from the H-1 anode, ICP operating, electrons
+  extracted to a dedicated, isolated, instrumented electron-collecting electrode, gas / magnetic field / pressure /
+  geometry of a registered H-1 operating condition, matched RF-OFF record - with
+  I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (the A9.4 recorder reading of the incomplete verbatim formula),
+  subject to current-path closure and the registered uncertainty treatment. Only records registered as record_class
+  ICP45_CAPACITY are candidates; the capacity measurand is the dedicated electron-collector terminal current only
+  (current into the H-1 body, facility ground, chamber, floating anode or cable shields never counts). Hall-ON records
+  are NEUTRALIZATION_CONSISTENCY and never ICP45_CAPACITY: with the H-1 anode as the sink, current continuity makes the
+  ICP-supplied current equal to I_d, so they cannot show capacity. A capacity point whose Kirchhoff residual exceeds the
+  registered tolerance is invalid; without a registered tolerance no capacity point is admitted. Records without the
+  facility correction are excluded (never silently credited); synthetic records give arithmetic only
+  (SYNTHETIC_TEST_ONLY_NOT_EVIDENCE, condition_met None). Until I_d,max,H1 is registered from the H-1 envelope and
+  measured behaviour (never from the 8.33 A bench design ceiling) the ICP-45 result is exactly NOT_EVALUATED (never
+  PASS or FAIL; A9.4 execution_decisions.i_d_max_h1).
+* A capacity record (record_class ICP45_CAPACITY) is REFUSED (raised, not flagged) when the anode is not
+  DISCONNECTED_FLOATING (OPEN_CIRCUIT_BY_CONSTRUCTION), the discharge supply is not physically disconnected, V_anode is
+  not on a high-impedance isolated channel, or the H-1 body single-point metered facility-ground return current
+  (terminal h1_body) is not measured continuously (A9.4 P1Q-13). A METERED_RETURN anode is allowed only in a record
+  registered as a separate DIAGNOSTIC_VARIANT, which never feeds I_e,cap.
 * It never treats P_mains,in (laboratory generator mains input, GROUND/FACILITY_ONLY) as P_bus, and refuses any
   record field whose name reads as a bus quantity (any key that normalises to contain 'bus') and any
   generator.input_boundary text naming a bus.
@@ -61,7 +72,29 @@ ANODE_STATES_BY_HALL_STATE = {"OFF": ("DISCONNECTED_FLOATING", "METERED_RETURN")
                               "ON": ("CONNECTED_TO_DISCHARGE_SUPPLY",)}
 ANODE_TERMINAL_BASIS = {"DISCONNECTED_FLOATING": "OPEN_CIRCUIT_BY_CONSTRUCTION", "METERED_RETURN": "MEASURED",
                         "CONNECTED_TO_DISCHARGE_SUPPLY": "MEASURED"}
-H1_ELECTRICAL_REQUIRED = ("config_id", "anode_state", "V_anode_V", "h1_body_state")
+H1_ELECTRICAL_REQUIRED = ("config_id", "anode_state", "V_anode_V", "h1_body_state", "discharge_supply_connection")
+# A9.4 P1Q-13: with the discharge supply OFF its output is PHYSICALLY disconnected from the anode (never a commanded
+# zero left attached); with it ON the output is connected
+SUPPLY_CONNECTIONS = ("PHYSICALLY_DISCONNECTED", "CONNECTED")
+SUPPLY_CONNECTION_BY_HALL_STATE = {"OFF": "PHYSICALLY_DISCONNECTED", "ON": "CONNECTED"}
+# record classes (A9.4 P1Q-10 / P1Q-13): only ICP45_CAPACITY records can feed I_e,cap; Hall-ON records are
+# NEUTRALIZATION_CONSISTENCY and never ICP45_CAPACITY; a METERED_RETURN anode exists only in a separately registered
+# DIAGNOSTIC_VARIANT; ENGINEERING_SURFACE = Hall-OFF ignition / surface / stability records (P1-S3..S5)
+CAPACITY_LABEL = "ICP45_CAPACITY"
+CONSISTENCY_LABEL = "NEUTRALIZATION_CONSISTENCY"
+DIAGNOSTIC_LABEL = "DIAGNOSTIC_VARIANT"
+SURFACE_LABEL = "ENGINEERING_SURFACE"
+RECORD_CLASSES = (CAPACITY_LABEL, CONSISTENCY_LABEL, DIAGNOSTIC_LABEL, SURFACE_LABEL)
+RECORD_CLASSES_BY_HALL_STATE = {"OFF": (CAPACITY_LABEL, DIAGNOSTIC_LABEL, SURFACE_LABEL),
+                                "ON": (CONSISTENCY_LABEL, DIAGNOSTIC_LABEL)}
+# capacity-record electrical monitoring (A9.4 P1Q-13); required object on every ICP45_CAPACITY record
+CAPACITY_MONITORING_REQUIRED = ("h1_body_ground_config", "I_body_to_ground_continuous", "V_anode_channel",
+                                "V_icp_body_V", "V_electron_collector_V", "sign_convention_id")
+H1_BODY_GROUND_CONFIG = "SINGLE_POINT_METERED_FACILITY_GROUND"
+V_ANODE_CHANNEL = "HIGH_IMPEDANCE_ISOLATED"
+CAPACITY_EXTRA_TERMINALS = ("h1_body",)     # I_body->ground (single metered return), measured continuously
+# ICP-45 status vocabulary: NOT_EVALUATED is the only status before I_d,max,H1 is registered (A9.4)
+ICP45A_STATUSES = ("NOT_EVALUATED", "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE", "EVALUATED_ENGINEERING_ONLY")
 RF_REFERENCE_PLANE = "GENERATOR_50OHM_SIDE_OF_LOCAL_MATCH"
 LOSS_STATUSES = ("MEASURED", "FLAGGED_NOT_MEASURED")
 # a MEASURED line/match loss is de-embedded from the two-port data AT the recorded match setting; it is valid only up
@@ -89,7 +122,8 @@ REQUIRED_TERMINALS = {
 # terminal carries the same current, I_A = +I_e_A, as conventional current INTO the isolated network
 I_E_SIGN_CONVENTION = "POSITIVE_ELECTRONS_EXTRACTED_FROM_ICP_EQUALS_COLLECTOR_SUPPLY_TERMINAL_INTO_NETWORK"
 ICP45A_CAPACITY_STAGES = ("P1-S4", "P1-S7")
-ICP45A_CONSISTENCY_STAGE = "P1-S7"
+# Hall-ON follow-up after discharge-OFF capacity (A9.4 P1Q-10): stage P1-S7H
+ICP45A_CONSISTENCY_STAGE = "P1-S7H"
 REQUIRED_TEMPERATURES = ("T_icp_dielectric_C", "T_antenna_C", "T_collector_C", "T_match_C", "T_rf_source_C",
                          "T_h1_pole_inner_C", "T_h1_pole_outer_C", "T_sink_C")
 PRESSURE_FIELDS = ("p_chamber_Pa",)
@@ -98,7 +132,7 @@ REFUSED_REGISTRATION_BASES = ("STAND_CEILING", "SUPPLY_RATING", "POWER_ENVELOPE_
 
 OPERATING_POINT_REQUIRED = (
     "schema", "record_kind", "record_id", "run_id", "stage_id", "timestamp_utc", "synthetic", "labels", "gas",
-    "gas_mode", "hall_discharge_state", "hall_discharge_sustained", "h1_electrical", "rf", "generator", "collector",
+    "gas_mode", "record_class", "hall_discharge_state", "hall_discharge_sustained", "h1_electrical", "rf", "generator", "collector",
     "extraction", "pressures", "flows", "impedance", "terminals", "temperatures", "rf_pickup_check",
 )
 RF_REQUIRED = ("reference_plane", "P_fwd_W", "P_refl_W", "line_match_loss", "match_setting_id")
@@ -128,14 +162,18 @@ BOUNDARY_C_E_DC = {
                                    "power analyzer; GROUND/FACILITY_ONLY (A9.3 OQ-RFQ-06); includes laboratory "
                                    "AC/DC stages; NOT P_bus and never evidence for P_bus < 1.5 kW"),
 }
-I_E_CAP_DEFINITION = ("PROPOSED (owner question P1Q-10): I_e,cap = max over eligible CAPACITY records of the "
-                      "facility-corrected extracted current I_e(RF ON) - I_e(RF OFF); eligible = stage P1-S4 or "
-                      "P1-S7, Hall discharge supply OFF, electrons sunk by the registered electron-collecting "
-                      "electrode (not the H-1 anode), gas_mode G-REUSE, P_fwd > 0, rf_pickup_check DONE, "
-                      "h1_point_id in the registration's registered_point_ids (gas/magnet conditions of that point), "
-                      "and a matched RF-OFF facility pair (P1-D-07). Hall-ON records (H-1 anode sink) are a "
-                      "descriptive neutralization-consistency check only: by current continuity they cannot exceed "
-                      "I_d (A9.1 ICP-45A 'electron extraction up to I_e,cap >= I_d,max')")
+I_E_CAP_DEFINITION = ("OWNER_DECIDED (A9.4 P1Q-10, CAPACITY_EXTRACTION_FORM): I_e,cap = I_e,collector,RFON - "
+                      "I_e,collector,RFOFF (recorder reading of the incomplete verbatim formula, A9.4 "
+                      "decisions.P1Q-10.definition_recorder_reading), subject to current-path closure and the registered "
+                      "uncertainty treatment; I_e,collector = current of the dedicated, isolated, instrumented "
+                      "electron-collecting electrode (terminal electron_collector, electrons collected = -I_A under the "
+                      "registered sign convention); eligible = record_class ICP45_CAPACITY, stage P1-S4 or P1-S7, Hall "
+                      "discharge supply OFF and physically disconnected, anode floating (OPEN_CIRCUIT_BY_CONSTRUCTION), "
+                      "gas_mode G-REUSE, P_fwd > 0, rf_pickup_check DONE, h1_point_id in the registration's "
+                      "registered_point_ids, matched RF-OFF ICP45_CAPACITY record (P1-D-07) and Kirchhoff residual "
+                      "within the registered tolerance for both records. Qualification I_e,cap >= I_d,max,H1 with the "
+                      "preregistered one-sided lower confidence bound on M_n = I_e,cap / I_d,max,H1 - 1 above zero. "
+                      "Hall-ON records are NEUTRALIZATION_CONSISTENCY, never ICP45_CAPACITY")
 
 
 class P1RecordError(ValueError):
@@ -176,6 +214,12 @@ class ExtractionTopologyError(P1RecordError):
 
 class RFConsistencyError(P1RecordError):
     """Forward / reflected / line-loss readings that no passive RF chain can produce."""
+
+
+class CapacityConfigurationError(P1RecordError):
+    """A capacity record (ICP45_CAPACITY) with a METERED_RETURN / connected anode, a connected discharge supply, no
+    high-impedance isolated V_anode channel, no continuous H-1 body ground-current record, or a METERED_RETURN anode
+    outside a registered DIAGNOSTIC_VARIANT (A9.4 P1Q-13). Refused, never merely flagged."""
 
 
 # ------------------------------------------------------------------------------------------------ helpers
@@ -272,6 +316,31 @@ def validate_operating_point(rec):
         raise P1RecordError("%s: h1_electrical.anode_state %r not allowed with the discharge supply %s (allowed %s; "
                             "P1-IT-39, P1Q-13)" % (rid, h1e["anode_state"], rec["hall_discharge_state"],
                                                    ANODE_STATES_BY_HALL_STATE[rec["hall_discharge_state"]]))
+    want_conn = SUPPLY_CONNECTION_BY_HALL_STATE[rec["hall_discharge_state"]]
+    if h1e["discharge_supply_connection"] != want_conn:
+        raise CapacityConfigurationError(
+            "%s: h1_electrical.discharge_supply_connection %r with the discharge supply %s; required %s (A9.4 P1Q-13: "
+            "never a commanded-zero supply left electrically attached)"
+            % (rid, h1e["discharge_supply_connection"], rec["hall_discharge_state"], want_conn))
+    # record class (A9.4 P1Q-10 / P1Q-13)
+    rc = rec["record_class"]
+    if rc not in RECORD_CLASSES:
+        raise P1RecordError("%s: record_class %r not in %s" % (rid, rc, RECORD_CLASSES))
+    if rc not in RECORD_CLASSES_BY_HALL_STATE[rec["hall_discharge_state"]]:
+        raise CapacityConfigurationError(
+            "%s: record_class %r not allowed with the discharge supply %s (allowed %s; Hall-ON records are %s and "
+            "never %s, A9.4 P1Q-10)" % (rid, rc, rec["hall_discharge_state"],
+                                         RECORD_CLASSES_BY_HALL_STATE[rec["hall_discharge_state"]], CONSISTENCY_LABEL,
+                                         CAPACITY_LABEL))
+    if rc == DIAGNOSTIC_LABEL:
+        dreg = rec.get("diagnostic_registration_id")
+        if not isinstance(dreg, str) or not dreg.strip():
+            raise MissingInputError("%s: a DIAGNOSTIC_VARIANT record needs its separate registration id "
+                                    "(diagnostic_registration_id; A9.4 P1Q-13)" % rid)
+    if h1e["anode_state"] == "METERED_RETURN" and rc != DIAGNOSTIC_LABEL:
+        raise CapacityConfigurationError(
+            "%s: a METERED_RETURN anode is allowed only in a separately registered DIAGNOSTIC_VARIANT record, which "
+            "never feeds I_e,cap (A9.4 P1Q-13); record_class is %r" % (rid, rc))
     # gas mode / dedicated feed (A9.1 HIQ-06, A9.3 OQ-RFQ-10)
     flows = rec["flows"]
     _req(flows, FLOWS_REQUIRED, rid + " flows")
@@ -416,7 +485,61 @@ def validate_operating_point(rec):
         raise P1RecordError("%s: collector.I_e_A = %r A and terminals.collector_supply.I_A = %r A differ by more "
                             "than the channel resolution %r A (same current under %s)"
                             % (rid, i_e, cs, res, I_E_SIGN_CONVENTION))
+    if rc == CAPACITY_LABEL:
+        _check_capacity_record(rec, rid)
     return None
+
+
+def _check_capacity_record(rec, rid):
+    """A9.4 P1Q-10 / P1Q-13 configuration of an ICP45_CAPACITY record; raises (refuses) on any violation."""
+    if rec["stage_id"] not in ICP45A_CAPACITY_STAGES:
+        raise CapacityConfigurationError("%s: ICP45_CAPACITY records belong to the capacity stages %s, not %r"
+                                         % (rid, ICP45A_CAPACITY_STAGES, rec["stage_id"]))
+    h1e = rec["h1_electrical"]
+    if h1e["anode_state"] != "DISCONNECTED_FLOATING":
+        raise CapacityConfigurationError("%s: capacity record with anode_state %r refused: the H-1 anode is physically "
+                                         "disconnected from the discharge supply and left floating "
+                                         "(OPEN_CIRCUIT_BY_CONSTRUCTION) during ICP-45 capacity measurements (A9.4 "
+                                         "P1Q-13)" % (rid, h1e["anode_state"]))
+    if rec["terminals"]["hall_anode"]["basis"] != "OPEN_CIRCUIT_BY_CONSTRUCTION":
+        raise CapacityConfigurationError("%s: capacity record: terminal hall_anode must be OPEN_CIRCUIT_BY_CONSTRUCTION"
+                                         % rid)
+    if rec["extraction"]["electron_collecting_electrode"] != "DEDICATED_ELECTRON_COLLECTOR_TARGET":
+        raise CapacityConfigurationError("%s: capacity record: electrons must be extracted to the dedicated, isolated, "
+                                         "instrumented electron-collecting electrode (A9.4 P1Q-10); got %r"
+                                         % (rid, rec["extraction"]["electron_collecting_electrode"]))
+    cm = rec.get("capacity_monitoring")
+    if not isinstance(cm, dict):
+        raise CapacityConfigurationError("%s: capacity record without capacity_monitoring (A9.4 P1Q-13: continuous "
+                                         "I_body->ground, V_anode on a high-impedance isolated channel, ICP body and "
+                                         "collector potentials)" % rid)
+    for k in CAPACITY_MONITORING_REQUIRED:
+        if k not in cm or cm[k] is None:
+            raise CapacityConfigurationError("%s: capacity_monitoring.%s missing (A9.4 P1Q-13); record refused"
+                                             % (rid, k))
+    if cm["h1_body_ground_config"] != H1_BODY_GROUND_CONFIG:
+        raise CapacityConfigurationError("%s: H-1 body / magnetic circuit must have exactly one deliberate facility-"
+                                         "ground connection through a metered return (%s); got %r"
+                                         % (rid, H1_BODY_GROUND_CONFIG, cm["h1_body_ground_config"]))
+    if cm["I_body_to_ground_continuous"] is not True:
+        raise CapacityConfigurationError("%s: I_body->ground must be measured continuously during capacity records "
+                                         "(A9.4 P1Q-13)" % rid)
+    if cm["V_anode_channel"] != V_ANODE_CHANNEL:
+        raise CapacityConfigurationError("%s: V_anode must be recorded on a %s channel (A9.4 P1Q-13); got %r"
+                                         % (rid, V_ANODE_CHANNEL, cm["V_anode_channel"]))
+    _num(cm["V_icp_body_V"], rid + " capacity_monitoring.V_icp_body_V")
+    _num(cm["V_electron_collector_V"], rid + " capacity_monitoring.V_electron_collector_V")
+    if not isinstance(cm["sign_convention_id"], str) or not cm["sign_convention_id"].strip():
+        raise CapacityConfigurationError("%s: capacity_monitoring.sign_convention_id must name the registered "
+                                         "Kirchhoff sign convention" % rid)
+    terms = rec["terminals"]
+    for name in CAPACITY_EXTRA_TERMINALS + ("electron_collector",):
+        t = terms.get(name)
+        if not isinstance(t, dict) or t.get("basis") != "MEASURED":
+            raise CapacityConfigurationError("%s: capacity record needs terminal %r with basis MEASURED (A9.4 P1Q-13: "
+                                             "I_body->ground measured continuously; dedicated collector current is "
+                                             "the capacity measurand)" % (rid, name))
+        _num(t.get("I_A"), "%s terminals.%s.I_A" % (rid, name))
 
 
 # ------------------------------------------------------------------------------------------------ derived quantities
@@ -496,7 +619,7 @@ FACILITY_MATCH_REQUIRED = ("criteria_id", "p_chamber_rel_tol")
 def facility_electron_check(rf_on, rf_off, match=None):
     """Facility-electron contribution (P1-D-07): collector current with the ICP RF OFF at the same point divided by
     the current with RF ON. 'Same point' = identical V_collector and its reference, mdot_Ar,H1, mdot_ICP,dedicated,
-    gas_mode, Hall discharge state, stage and extraction topology, and p_chamber within the caller-supplied relative
+    gas_mode, record_class, Hall discharge state, stage and extraction topology, and p_chamber within the caller-supplied relative
     tolerance (match['p_chamber_rel_tol']; TBD - frozen at P1-G0, P1-IT-37; no default). Descriptive; no threshold."""
     for r in (rf_on, rf_off):
         validate_operating_point(r)
@@ -512,7 +635,7 @@ def facility_electron_check(rf_on, rf_off, match=None):
     for path in (("collector", "V_collector_V"), ("collector", "reference_potential"),
                  ("flows", "mdot_Ar_H1_mg_s"), ("flows", "mdot_icp_dedicated_mg_s"),
                  ("extraction", "topology_id"), ("extraction", "electron_collecting_electrode"),
-                 ("gas_mode",), ("hall_discharge_state",), ("stage_id",), ("h1_point_id",),
+                 ("gas_mode",), ("record_class",), ("hall_discharge_state",), ("stage_id",), ("h1_point_id",),
                  ("h1_electrical", "config_id"), ("h1_electrical", "anode_state")):
         a, b = rf_on, rf_off
         for k in path:
@@ -528,11 +651,19 @@ def facility_electron_check(rf_on, rf_off, match=None):
         raise P1RecordError("facility-electron check: p_chamber differs by %.6g (relative) > tolerance %r of rule %r "
                             "(%r vs %r Pa)" % (p_dev, tol, match["criteria_id"], p_on, p_off))
     i_on, i_off = float(rf_on["collector"]["I_e_A"]), float(rf_off["collector"]["I_e_A"])
-    return {"I_e_rf_on_A": i_on, "I_e_rf_off_A": i_off,
-            "I_e_icp_corrected_A": i_on - i_off,
-            "facility_fraction": (i_off / i_on) if i_on != 0 else None,
-            "p_chamber_rel_dev": p_dev, "match_rule_id": match["criteria_id"],
-            "records": [rf_on["record_id"], rf_off["record_id"]]}
+    out = {"I_e_rf_on_A": i_on, "I_e_rf_off_A": i_off,
+           "I_e_icp_corrected_A": i_on - i_off,
+           "facility_fraction": (i_off / i_on) if i_on != 0 else None,
+           "p_chamber_rel_dev": p_dev, "match_rule_id": match["criteria_id"],
+           "records": [rf_on["record_id"], rf_off["record_id"]]}
+    # A9.4 P1Q-10 capacity measurand: the dedicated electron-collector terminal current (electrons collected = -I_A
+    # under the registered sign convention), RF ON minus the matched RF OFF record
+    ec_on, ec_off = rf_on["terminals"].get("electron_collector"), rf_off["terminals"].get("electron_collector")
+    if isinstance(ec_on, dict) and isinstance(ec_off, dict):
+        c_on, c_off = -float(ec_on["I_A"]), -float(ec_off["I_A"])
+        out.update({"I_e_collector_rf_on_A": c_on, "I_e_collector_rf_off_A": c_off,
+                    "I_e_collector_corrected_A": c_on - c_off})
+    return out
 
 
 def dwell_metrics(dwell):
@@ -621,20 +752,39 @@ def icp45a_margin(i_e_cap_A, idm, k, ue, ud):
     return {"M_n": m_n, "u_M_n": u_m, "M_n_lower": m_n - k * u_m}
 
 
-def icp45a_candidates(records, registration, facility_checks):
+CLOSURE_RULE_REQUIRED = ("rule_id", "residual_rel_tol", "sign_convention_id")
+
+
+def _check_closure_rule(closure_rule):
+    """Registered Kirchhoff-closure tolerance for capacity points (A9.4 P1Q-13; value TBD - registered, never set
+    here). Returns the tolerance or raises."""
+    _req(closure_rule, CLOSURE_RULE_REQUIRED, "closure_rule")
+    tol = _num(closure_rule["residual_rel_tol"], "closure_rule.residual_rel_tol", allow_negative=False)
+    if not isinstance(closure_rule["sign_convention_id"], str) or not closure_rule["sign_convention_id"].strip():
+        raise MissingInputError("closure_rule.sign_convention_id must name the registered sign convention")
+    return tol
+
+
+def icp45a_candidates(records, registration, facility_checks, closure_rule=None):
     """Split validated operating-point records into I_e,cap CAPACITY candidates and exclusions (I_E_CAP_DEFINITION).
-    facility_checks: {rf_on_record_id: facility_electron_check(...) result}."""
+    facility_checks: {rf_on_record_id: facility_electron_check(...) result}. closure_rule: registered Kirchhoff
+    tolerance (A9.4 P1Q-13); when None the closure of a candidate cannot be validated and it is excluded."""
     pts = set(registration["registered_point_ids"])
+    by_id = {r["record_id"]: r for r in records}
+    tol = _check_closure_rule(closure_rule) if closure_rule is not None else None
     cands, excluded = [], []
     for rec in records:
         why = []
+        if rec["record_class"] != CAPACITY_LABEL:
+            why.append("record_class %r is not %s (Hall-ON records are %s; diagnostic variants never feed I_e,cap)"
+                       % (rec["record_class"], CAPACITY_LABEL, CONSISTENCY_LABEL))
         if rec["stage_id"] not in ICP45A_CAPACITY_STAGES:
             why.append("stage %r is not a capacity stage %s" % (rec["stage_id"], ICP45A_CAPACITY_STAGES))
         if rec["hall_discharge_state"] != "OFF":
             why.append("Hall discharge supply ON: H-1 anode sink, current continuity bounds the ICP current by I_d; "
-                       "neutralization-consistency record, not a capacity record")
-        if rec["extraction"]["electron_collecting_electrode"] not in EXTRACTION_ELECTRODES_BY_HALL_STATE["OFF"]:
-            why.append("electron sink %r is not a registered capacity-extraction electrode"
+                       "NEUTRALIZATION_CONSISTENCY record, not a capacity record")
+        if rec["extraction"]["electron_collecting_electrode"] != "DEDICATED_ELECTRON_COLLECTOR_TARGET":
+            why.append("electron sink %r is not the dedicated electron-collecting electrode (A9.4 P1Q-10)"
                        % rec["extraction"]["electron_collecting_electrode"])
         if rec["gas_mode"] != "G-REUSE":
             why.append("gas_mode %r (a dedicated feed is diagnostic only, A9.3 OQ-RFQ-10)" % rec["gas_mode"])
@@ -647,68 +797,100 @@ def icp45a_candidates(records, registration, facility_checks):
         fc = facility_checks.get(rec["record_id"])
         if fc is None and not why:
             why.append("no matched RF-OFF facility pair: facility-electron correction missing (P1-D-07)")
+        if fc is not None and not why and "I_e_collector_corrected_A" not in fc:
+            why.append("dedicated electron-collector current missing in the RF-ON / RF-OFF pair")
+        closure = None
+        if not why:
+            off_id = fc["records"][1]
+            closure = {rec["record_id"]: current_closure(rec)["residual_rel"],
+                       off_id: current_closure(by_id[off_id])["residual_rel"]}
+            if tol is None:
+                why.append("Kirchhoff closure tolerance not registered (P1-IT-47): the capacity point cannot be "
+                           "validated (A9.4 P1Q-13)")
+            else:
+                # residual None = every terminal current is zero (the sum is then exactly zero: closed)
+                bad = {k_: v_ for k_, v_ in closure.items() if v_ is not None and abs(v_) > tol}
+                if bad:
+                    why.append("Kirchhoff residual beyond the registered tolerance %r (rule %r): capacity point "
+                               "invalid (A9.4 P1Q-13): %s" % (tol, closure_rule["rule_id"], bad))
         if why:
             excluded.append({"record_id": rec["record_id"], "reasons": why})
         else:
-            cands.append({"record_id": rec["record_id"], "synthetic": rec["synthetic"],
+            cands.append({"record_id": rec["record_id"], "label": CAPACITY_LABEL, "synthetic": rec["synthetic"],
                           "h1_point_id": rec["h1_point_id"], "stage_id": rec["stage_id"],
                           "electron_collecting_electrode": rec["extraction"]["electron_collecting_electrode"],
-                          "I_e_rf_on_A": fc["I_e_rf_on_A"], "I_e_rf_off_A": fc["I_e_rf_off_A"],
-                          "I_e_icp_corrected_A": fc["I_e_icp_corrected_A"]})
+                          "I_e_collector_rf_on_A": fc["I_e_collector_rf_on_A"],
+                          "I_e_collector_rf_off_A": fc["I_e_collector_rf_off_A"],
+                          "I_e_collector_corrected_A": fc["I_e_collector_corrected_A"],
+                          "closure_residual_rel": closure, "closure_rule_id": closure_rule["rule_id"]})
     return cands, excluded
 
 
 def neutralization_consistency(records, facility_checks, registered_point_ids=None):
-    """Descriptive Hall-ON check (P1-S7, H-1 anode sink): ICP-supplied current vs the Hall anode current at the same
-    record. Never a gate and never I_e,cap (current continuity: it cannot exceed I_d)."""
+    """Hall-ON follow-up (P1-S7H, H-1 anode sink; A9.4 P1Q-10): records labelled NEUTRALIZATION_CONSISTENCY, never
+    ICP45_CAPACITY. Reports the verification items the owner listed - sustainment, current closure, neutralization
+    behaviour (ICP-supplied current vs the Hall anode current), collector/reference potentials and RF power; stability
+    comes from the dwell metrics (P1-D-08). Descriptive; never a gate and never I_e,cap."""
     pts = set(registered_point_ids or [])
     rows = []
     for rec in records:
-        if rec["stage_id"] != ICP45A_CONSISTENCY_STAGE or rec["hall_discharge_state"] != "ON":
+        if rec["record_class"] != CONSISTENCY_LABEL or rec["hall_discharge_state"] != "ON":
             continue
-        if float(rec["rf"]["P_fwd_W"]) <= 0.0:
+        if rec["stage_id"] != ICP45A_CONSISTENCY_STAGE or float(rec["rf"]["P_fwd_W"]) <= 0.0:
             continue
         fc = facility_checks.get(rec["record_id"])
         i_icp = fc["I_e_icp_corrected_A"] if fc is not None else float(rec["collector"]["I_e_A"])
         i_d = abs(float(rec["terminals"]["hall_anode"]["I_A"]))
-        rows.append({"record_id": rec["record_id"], "synthetic": rec["synthetic"],
+        cl = current_closure(rec)
+        rows.append({"record_id": rec["record_id"], "label": CONSISTENCY_LABEL, "synthetic": rec["synthetic"],
                      "h1_point_id": rec.get("h1_point_id"),
                      "at_registered_point": rec.get("h1_point_id") in pts,
                      "hall_discharge_sustained": rec["hall_discharge_sustained"],
                      "I_e_icp_A": i_icp, "I_e_icp_basis": ("FACILITY_CORRECTED" if fc is not None
                                                            else "UNCORRECTED_NO_RF_OFF_PAIR"),
                      "I_d_anode_terminal_abs_A": i_d, "ratio_I_e_icp_to_I_d": (i_icp / i_d) if i_d > 0 else None,
+                     "closure_residual_rel": cl["residual_rel"],
+                     "V_collector_V": float(rec["collector"]["V_collector_V"]),
+                     "collector_reference": rec["collector"]["reference_potential"],
+                     "V_anode_V": float(rec["h1_electrical"]["V_anode_V"]),
+                     "P_fwd_W": float(rec["rf"]["P_fwd_W"]), "P_refl_W": float(rec["rf"]["P_refl_W"]),
+                     "stability": "from the dwell metrics of this point (P1-D-08)",
                      "status": "DESCRIPTIVE_CONSISTENCY_CHECK_NOT_A_GATE"})
     return rows
 
 
-def icp45a_evaluate(records, registration=None, margin_rule=None, facility_checks=None):
-    """ICP-45A (Ar, engineering-only) condition I_e,cap >= I_d,max,H1 with a one-sided margin (A9.1 ICP-45, UBQ-02;
-    A9.3 OQ-A907-02). NOT_EVALUATED until I_d,max,H1 is registered from measured H-1 operation AND eligible,
-    facility-corrected CAPACITY records exist. I_e,cap follows I_E_CAP_DEFINITION (PROPOSED, P1Q-10); Hall-ON
-    records only feed the descriptive neutralization-consistency list."""
-    base = {"i_e_cap_definition": I_E_CAP_DEFINITION}
+def icp45a_evaluate(records, registration=None, margin_rule=None, facility_checks=None, closure_rule=None):
+    """ICP-45A (Ar, engineering-only) condition I_e,cap >= I_d,max,H1 with the one-sided lower bound of M_n above zero
+    (A9.1 ICP-45, UBQ-02; A9.3 OQ-A907-02; A9.4 P1Q-10). Status exactly NOT_EVALUATED until I_d,max,H1 is registered
+    from the H-1 envelope and measured behaviour (never the 8.33 A bench ceiling) AND eligible, facility-corrected,
+    closure-valid ICP45_CAPACITY records exist; never PASS / FAIL. Hall-ON records only feed the
+    NEUTRALIZATION_CONSISTENCY list."""
+    base = {"i_e_cap_definition": I_E_CAP_DEFINITION, "capacity_label": CAPACITY_LABEL,
+            "consistency_label": CONSISTENCY_LABEL, "status_vocabulary": list(ICP45A_STATUSES)}
     facility_checks = facility_checks or {}
     if registration is None:
-        base.update({"status": "NOT_EVALUATED",
-                     "reason": "I_d,max,H1 not registered (A9.3 OQ-A907-02: I_e,required = I_d,max,H1 from measured/"
-                               "registered H-1 operation); the surface is reported instead; reaching 1 A, 2 A, ... "
-                               "is never a PASS",
+        base.update({"status": "NOT_EVALUATED", "condition_met": None,
+                     "reason": "I_d,max,H1 not registered (A9.3 OQ-A907-02; A9.4 execution_decisions.i_d_max_h1: "
+                               "established from the registered H-1 operating envelope and measured H-1 behaviour, "
+                               "never from the 8.33 A bench design ceiling); ICP45 = NOT_EVALUATED, not PASS or FAIL; "
+                               "the surface is reported instead",
                      "neutralization_consistency": neutralization_consistency(records, facility_checks)})
         return base
     idm, k, ue, ud = _check_registration(registration, margin_rule)
-    cands, excluded = icp45a_candidates(records, registration, facility_checks)
+    cands, excluded = icp45a_candidates(records, registration, facility_checks, closure_rule)
     base.update({"registration_id": registration["registration_id"], "rule_id": margin_rule["rule_id"],
+                 "closure_rule_id": closure_rule["rule_id"] if closure_rule is not None else None,
                  "I_d_max_H1_A": idm, "excluded_records": excluded,
                  "neutralization_consistency": neutralization_consistency(
                      records, facility_checks, registration["registered_point_ids"])})
     if not cands:
         base.update({"status": "NOT_EVALUATED", "condition_met": None,
-                     "reason": "no eligible facility-corrected capacity record (registered extraction topology, "
-                               "discharge supply OFF, registered H-1 point; see excluded_records); never a FAIL"})
+                     "reason": "no eligible facility-corrected, closure-valid ICP45_CAPACITY record (dedicated "
+                               "collector, discharge supply OFF and disconnected, floating anode, registered H-1 "
+                               "point, registered closure tolerance; see excluded_records); never a FAIL"})
         return base
-    best = max(cands, key=lambda c: (c["I_e_icp_corrected_A"], c["record_id"]))
-    i_cap = best["I_e_icp_corrected_A"]
+    best = max(cands, key=lambda c: (c["I_e_collector_corrected_A"], c["record_id"]))
+    i_cap = best["I_e_collector_corrected_A"]
     base.update(icp45a_margin(i_cap, idm, k, ue, ud))
     base.update({"I_e_cap_A": i_cap, "I_e_cap_record": best["record_id"], "candidates": cands})
     if any(c["synthetic"] for c in cands):
@@ -719,8 +901,9 @@ def icp45a_evaluate(records, registration=None, margin_rule=None, facility_check
     base.update({"status": "EVALUATED_ENGINEERING_ONLY", "condition_met": bool(base["M_n_lower"] > 0.0),
                  "evidence_class": REQUIRED_LABEL,
                  "note": "ICP-45A is Ar engineering-only evidence (A9.1); ICP-45N on N2 is still required before any "
-                         "score-bearing hall_icp_neutralizer point; I_e,cap definition PROPOSED (P1Q-10); never an "
-                         "architecture PASS"})
+                         "score-bearing hall_icp_neutralizer point; I_e,cap definition OWNER_DECIDED (A9.4 P1Q-10); "
+                         "the Hall-ON follow-up (P1-S7H, NEUTRALIZATION_CONSISTENCY) must still show the capacity "
+                         "operates in the real Hall loop; never an architecture PASS"})
     return base
 
 
@@ -742,9 +925,11 @@ def _row_flags(rec, rf):
     return flags
 
 
-def reduce_operating_points(records, registration=None, margin_rule=None, facility_pairs=None, facility_match=None):
+def reduce_operating_points(records, registration=None, margin_rule=None, facility_pairs=None, facility_match=None,
+                            closure_rule=None):
     """Surface table + summaries for a list of 'icp_operating_point' records. facility_pairs = [[rf_on_id,
-    rf_off_id], ...] (each checked with facility_electron_check under facility_match)."""
+    rf_off_id], ...] (each checked with facility_electron_check under facility_match). closure_rule = registered
+    Kirchhoff tolerance for capacity points {rule_id, residual_rel_tol, sign_convention_id} (A9.4 P1Q-13; no default)."""
     if not isinstance(records, list) or not records:
         raise MissingInputError("reduce_operating_points: a non-empty list of records is required")
     rows = []
@@ -773,12 +958,13 @@ def reduce_operating_points(records, registration=None, margin_rule=None, facili
         ext = rec["extraction"]
         rows.append({
             "record_id": rec["record_id"], "run_id": rec["run_id"], "stage_id": rec["stage_id"],
-            "synthetic": rec["synthetic"], "labels": sorted(rec["labels"]), "gas": rec["gas"],
+            "record_class": rec["record_class"], "synthetic": rec["synthetic"], "labels": sorted(rec["labels"]), "gas": rec["gas"],
             "gas_mode": rec["gas_mode"], "hall_discharge_state": rec["hall_discharge_state"],
             "hall_discharge_sustained": rec["hall_discharge_sustained"],
             "h1_electrical": {"config_id": rec["h1_electrical"]["config_id"],
                               "anode_state": rec["h1_electrical"]["anode_state"],
-                              "V_anode_V": float(rec["h1_electrical"]["V_anode_V"])},
+                              "V_anode_V": float(rec["h1_electrical"]["V_anode_V"]),
+                              "discharge_supply_connection": rec["h1_electrical"]["discharge_supply_connection"]},
             "h1_point_id": rec.get("h1_point_id"), "rf_state": rf["rf_state"],
             "factors": {"P_fwd_W": rf["P_fwd_W"], "P_delivered_W": rf["P_delivered_W"],
                         "P_delivered_kind": rf["P_delivered_kind"],
@@ -814,7 +1000,7 @@ def reduce_operating_points(records, registration=None, margin_rule=None, facili
                     "I_e_max_recorded_A": float(i_e.max()),
                     "I_e_max_recorded_note": "descriptive maximum over ALL records (any stage, RF state, gas mode); "
                                              "NOT I_e,cap and never an ICP-45 result",
-                    "icp45a": icp45a_evaluate(records, registration, margin_rule, fac_by_on)},
+                    "icp45a": icp45a_evaluate(records, registration, margin_rule, fac_by_on, closure_rule)},
         "not_p_bus": "C_e,DC uses the laboratory generator input (GROUND/FACILITY_ONLY); P_bus is never produced here",
     }
 
@@ -868,13 +1054,14 @@ def reduce_topology_control(seq):
             "note": "not a PASS/FAIL gate; 'Hall must not run without ICP' is NOT a requirement (A9.3 OQ-VI-05)"}
 
 
-def reduce(bundle, registration=None, margin_rule=None, stable_criteria=None, facility_match=None):
+def reduce(bundle, registration=None, margin_rule=None, stable_criteria=None, facility_match=None, closure_rule=None):
     """Top-level reducer. bundle = {"operating_points": [...], "topology_control": [...] (optional),
     "dwells": [{"record_id", "dwell", "ignition"}] (optional), "facility_pairs": [[on_id, off_id]] (optional)}.
-    facility_match = {"criteria_id", "p_chamber_rel_tol"} is required whenever facility_pairs are given (P1-IT-37)."""
+    facility_match = {"criteria_id", "p_chamber_rel_tol"} is required whenever facility_pairs are given (P1-IT-37);
+    closure_rule = {"rule_id", "residual_rel_tol", "sign_convention_id"} validates capacity points (P1-IT-47)."""
     _req(bundle, ("operating_points",), "bundle")
     ops = reduce_operating_points(bundle["operating_points"], registration, margin_rule,
-                                  bundle.get("facility_pairs"), facility_match)
+                                  bundle.get("facility_pairs"), facility_match, closure_rule)
     dwells = []
     for d in bundle.get("dwells") or []:
         _req(d, ("record_id", "dwell"), "dwell entry")

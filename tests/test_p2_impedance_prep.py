@@ -5,7 +5,8 @@ Checks: byte-for-byte reproduction by the builder; pins verified and governance 
 impedance / de-embedding / power-accounting math against closed-form cases on SYNTHETIC, clearly labelled data; every
 refusal path (missing calibration, no reference plane, uncalibrated phase, P_forward used as P_plasma, hot map before the
 P1 stable region); the mismatch envelope stays TBD_AFTER_IMPEDANCE_MAP; schema <-> reducer consistency; item / evidence
-discipline; no open item converted to PASS; no dependency on the parallel P1 / RFQ v2 lanes.
+discipline; no open item converted to PASS; no dependency on the parallel P1 / RFQ v2 lanes; owner A9.4 P2Q-05
+(photodiode required; UNLIT / E_MODE / H_MODE / UNCERTAIN) incorporated by fo_a9_4_incorporation.
 Run: python -m pytest -q tests/test_p2_impedance_prep.py
 """
 from __future__ import annotations
@@ -117,7 +118,9 @@ def _rec(red, cal, z_ant, p_fwd=100.0, phase="DUMMY_LOAD"):
             "match_state": {"tuning_state_id": "TS1", "positions": {}, "auto_tune": False, "loss_bound_id": "LB1"},
             "factors": {k: None for k in red.REQUIRED_FACTOR_FIELDS},
             "plasma_state": {"lit": False, "mode": "UNLIT", "optical_signal_V": None, "unlit_threshold_V": None,
-                             "unlit_threshold_source": None},
+                             "unlit_threshold_source": None, "threshold_basis": None,
+                             "photodiode_line_of_sight_ok": None, "photodiode_saturated": None,
+                             "electrical_ignition_or_mode_transition": None, "electrical_indicator_basis": None},
             "sweep": {"sweep_id": "S", "direction": "single", "index": 0}, "settling": {"dwell_s": None, "settled": None},
             "temperatures_K": {}, "cold_reference_id": None, "p1_stable_region_ref": None, "antenna_current": None}
 
@@ -604,8 +607,7 @@ def test_evidence_tags_and_envelope_refuses_mixing(red, case):
     r_bad = copy.deepcopy(rec)
     r_bad["engineering_control"] = "SOMETHING"
     _raises(red, red.RecordError, r_bad, {"SYN": cal})
-    r_hot = copy.deepcopy(rec)
-    r_hot["phase"], r_hot["p1_stable_region_ref"] = "HOT_MAP", "P1-REGION-SYN"
+    r_hot = _hot(rec, sig=0.01, mode="UNLIT", gas=None)
     _raises(red, red.RecordError, r_hot, {"SYN": cal})                  # HOT_MAP without a gas
     with pytest.raises(red.RecordError):
         red.mismatch_envelope([o_ar, o_n2], ["DUMMY_LOAD"])
@@ -632,25 +634,46 @@ def test_nested_contract_in_schema_and_reducer(red, case):
 
 
 # ------------------------------------------------------------------------------------------------ phase / plasma-state gate
+TB = {"dark_background_record_id": "SYN-P1-DARK", "rf_powered_known_unlit_record_id": "SYN-P1-UNLIT",
+      "known_lit_p1_record_id": "SYN-P1-LIT", "frozen_before_p2_map": True}
+
+
+def _optical(r, sig, thr):
+    r["plasma_state"].update({"optical_signal_V": sig, "unlit_threshold_V": thr,
+                              "unlit_threshold_source": "SYNTHETIC P1 procedure id", "threshold_basis": dict(TB),
+                              "photodiode_line_of_sight_ok": True, "photodiode_saturated": False,
+                              "electrical_ignition_or_mode_transition": False, "electrical_indicator_basis": None})
+    r["antenna_current"] = {"I_rms_A": 2.0, "probe_cal_id": "ACP"}
+    r["factors"]["I_collector_A"] = 0.0
+    return r
+
+
 def _cold(rec, sig=0.01, thr=0.5):
     r = copy.deepcopy(rec)
     r["phase"] = "COLD_ANTENNA_POWERED_UNLIT"
     r["factors"].update({"gas": None, "mdot_icp_dedicated_mg_s": 0.0, "mdot_hall_anode_mg_s": 0.0,
                          "p_chamber_Pa": 1e-4})
-    r["plasma_state"].update({"optical_signal_V": sig, "unlit_threshold_V": thr,
-                              "unlit_threshold_source": "SYNTHETIC P1 procedure id"})
+    return _optical(r, sig, thr)
+
+
+def _hot(rec, sig=2.0, thr=0.5, mode="H_MODE", gas="Ar"):
+    r = copy.deepcopy(rec)
+    r["phase"], r["p1_stable_region_ref"] = "HOT_MAP", "P1-REGION-SYN"
+    r["factors"].update({"gas": gas, "p_chamber_Pa": 0.01})
+    _optical(r, sig, thr)
+    r["plasma_state"].update({"lit": mode != "UNLIT", "mode": mode})
     return r
 
 
 def test_refuses_lit_plasma_in_non_hot_phase(red, case):
     cal, rec = case
     for ph in ("DUMMY_LOAD", "COLD_ANTENNA_POWERED_UNLIT"):
-        for mode in ("H", "E", "UNCERTAIN"):
+        for mode in ("H_MODE", "E_MODE", "UNCERTAIN"):
             r = _cold(rec) if ph == "COLD_ANTENNA_POWERED_UNLIT" else copy.deepcopy(rec)
             r["plasma_state"].update({"lit": True, "mode": mode})
             _raises(red, red.PlasmaStateError, r, {"SYN": cal})
             _raises(red, red.SequenceError, r, {"SYN": cal})          # PlasmaStateError is a SequenceError
-    for lit, mode in ((False, "H"), (True, "UNLIT"), (None, "UNLIT")):   # inconsistent / unknown lit state
+    for lit, mode in ((False, "H_MODE"), (True, "UNLIT"), (None, "UNLIT")):   # inconsistent / unknown lit state
         r = copy.deepcopy(rec)
         r["plasma_state"].update({"lit": lit, "mode": mode})
         _raises(red, red.PlasmaStateError, r, {"SYN": cal})
@@ -741,3 +764,126 @@ def test_s08_powered_unlit_step_safety(d):
     assert any("P1 registered procedure" in p for p in s08["prerequisites"])
     for need in ("gas off", "base pressure", "INS-P2-10", "abort", "TBD - requires the P1 registered procedure"):
         assert need in s08["what"], need
+
+
+# ------------------------------------------------------------------------------------------------ A9.4 P2Q-05 photodiode
+A94 = REPO / "docs" / "decisions" / "OD_2026_09_30_A9_4_p1_p2_owner_decisions.json"
+
+
+def test_a94_pinned_and_state_classes(red, d):
+    a94 = json.loads(A94.read_text(encoding="utf-8"))
+    pins = {p["path"]: p["sha256"] for p in d["decision_pins"]}
+    assert pins["docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json"] == \
+        "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d"
+    assert pins["docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md"] == \
+        "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+    assert list(red.MODE_LABELS) == a94["decisions"]["P2Q-05"]["state_classes"] == \
+        ["UNLIT", "E_MODE", "H_MODE", "UNCERTAIN"]
+    assert d["data_model"]["plasma_state_classes"] == list(red.MODE_LABELS)
+    inc = d["a9_4_incorporation"]
+    assert inc["follow_on"] == "fo_a9_4_incorporation" and inc["base_commit"] == \
+        "875ed6d0a87202bc92706b28551b0e22eda2014d"
+    assert inc["answered"]["P2Q-05"] == a94["decisions"]["P2Q-05"]["status"]
+
+
+def test_a94_p2q05_answered_and_items(d):
+    qs = {q["id"] for q in d["open_owner_questions"]}
+    assert "P2Q-05" not in qs and "P2Q-09" in qs
+    applied = [o for o in d["owner_answers_applied"] if isinstance(o["ref"], dict) and o["ref"].get("kind") == "A9.4"]
+    by = {o["ref"]["decision"]: o for o in applied}
+    assert by["P2Q-05"]["how"].startswith("ANSWERED") and "p1_needed_rfqs" in by
+    assert by["P2Q-05"]["ref"]["path"] == "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json"
+    items = {it["id"]: it for it in d["items"]}
+    assert items["HM-R14"]["status"] == "OWNER_GIVEN" and "UNCERTAIN" in items["HM-R14"]["value"]
+    assert items["HM-R15"]["value"].startswith("TBD - requires") and items["HM-R15"]["evidence_class"] is None
+    assert items["HM-F05"]["name"] == "plasma state / mode (UNLIT, E_MODE, H_MODE, UNCERTAIN)"
+    ins = {i["id"]: i for i in d["instrument_list"]}
+    assert ins["INS-P2-10"]["status"] == "OWNER_GIVEN" and "A9.4 P2Q-05" in ins["INS-P2-10"]["a9_3_rf_package_line"]
+    specs = " ".join(x["quantity"] for x in ins["INS-P2-10"]["required_specs"])
+    for need in ("amplifier", "DAQ channel", "line of sight"):
+        assert need in specs, need
+    assert "not purchase orders, advance payments" in ins["INS-P2-10"]["purchase"]
+    seq = {x["step"]: x for x in d["hot_map_methodology"]["sequence"]}
+    assert "HM-R15" in seq["S-10"]["what"] and any("HM-R15" in p_ for p_ in seq["S-08"]["prerequisites"])
+    txt = json.dumps(d)
+    assert "E_MODE" in txt and '"mode": "E"' not in txt
+
+
+def test_a94_classify_plasma_state(red):
+    base = {"optical_signal_V": 0.01, "unlit_threshold_V": 0.5, "threshold_basis": dict(TB),
+            "photodiode_line_of_sight_ok": True, "photodiode_saturated": False,
+            "electrical_ignition_or_mode_transition": False, "electrical_indicator_basis": None}
+    assert red.classify_plasma_state(base)[0] == "UNLIT"
+    assert red.classify_plasma_state(dict(base, electrical_ignition_or_mode_transition=True,
+                                          electrical_indicator_basis="reflected-power step"))[0] == "UNCERTAIN"
+    assert red.classify_plasma_state(dict(base, photodiode_line_of_sight_ok=False))[0] == "UNCERTAIN"
+    assert red.classify_plasma_state(dict(base, photodiode_saturated=True))[0] == "UNCERTAIN"
+    lit = dict(base, optical_signal_V=2.0)
+    assert red.classify_plasma_state(dict(lit, lit_mode_assignment="E_MODE"))[0] == "E_MODE"
+    assert red.classify_plasma_state(dict(lit, lit_mode_assignment="H_MODE"))[0] == "H_MODE"
+    assert red.classify_plasma_state(lit)[0] == "UNCERTAIN"
+    with pytest.raises(red.PlasmaStateError):                         # threshold without its A9.4 basis
+        red.classify_plasma_state(dict(base, threshold_basis=None))
+    with pytest.raises(red.PlasmaStateError):
+        red.classify_plasma_state(dict(base, threshold_basis=dict(TB, frozen_before_p2_map=False)))
+    with pytest.raises(red.PlasmaStateError):                         # no photodiode reading
+        red.classify_plasma_state(dict(base, optical_signal_V=None))
+    with pytest.raises(red.PlasmaStateError):                         # electrical evidence without its basis
+        red.classify_plasma_state(dict(base, electrical_ignition_or_mode_transition=True))
+
+
+def test_a94_powered_unlit_needs_optical_proof(red, case):
+    cal, rec = case
+    out = red.reduce_record(_cold(rec), {"SYN": cal})
+    uv = out["unlit_verification"]
+    assert uv["state_class"] == "UNLIT" and uv["threshold_basis"] == TB
+    for k, v in (("photodiode_line_of_sight_ok", False), ("photodiode_saturated", True)):
+        r = _cold(rec)
+        r["plasma_state"][k] = v
+        _raises(red, red.UncertainPlasmaStateError, r, {"SYN": cal})   # not automatically valid
+    r = _cold(rec)
+    r["plasma_state"].update({"electrical_ignition_or_mode_transition": True,
+                              "electrical_indicator_basis": "antenna-current step"})
+    _raises(red, red.UncertainPlasmaStateError, r, {"SYN": cal})       # UNCERTAIN, never forced to UNLIT
+    for k in ("threshold_basis", "photodiode_line_of_sight_ok", "photodiode_saturated",
+              "electrical_ignition_or_mode_transition"):
+        r = _cold(rec)
+        r["plasma_state"][k] = None
+        _raises(red, red.PlasmaStateError, r, {"SYN": cal})
+    r = _cold(rec)
+    r["antenna_current"] = None                                        # corroboration recorded simultaneously
+    _raises(red, red.PlasmaStateError, r, {"SYN": cal})
+    r = _cold(rec)
+    r["factors"]["I_collector_A"] = None
+    _raises(red, red.PlasmaStateError, r, {"SYN": cal})
+    cr = red.cold_reference_from_reduced(out, 300.0)
+    bad = dict(out, unlit_verification=dict(uv, state_class="UNCERTAIN"))
+    with pytest.raises(red.PlasmaStateError):
+        red.cold_reference_from_reduced(bad, 300.0)
+    c2 = copy.deepcopy(cal)
+    c2["cold_references"]["CRU"] = dict(cr, unlit_verification=dict(cr["unlit_verification"], state_class="UNCERTAIN"))
+    r = copy.deepcopy(rec)
+    r["cold_reference_id"] = "CRU"
+    _raises(red, red.PlasmaStateError, r, {"SYN": c2})
+
+
+def test_a94_hot_map_classification_and_uncertain_refused(red, case):
+    cal, rec = case
+    out = red.reduce_record(_hot(rec, mode="H_MODE"), {"SYN": cal})
+    assert out["plasma_state_classification"]["state_class"] == "H_MODE"
+    assert red.reduce_record(_hot(rec, mode="E_MODE"), {"SYN": cal})["plasma_state_classification"]["state_class"] \
+        == "E_MODE"
+    assert red.reduce_record(_hot(rec, sig=0.01, mode="UNLIT"), {"SYN": cal})["plasma_state_classification"][
+        "state_class"] == "UNLIT"
+    _raises(red, red.UncertainPlasmaStateError, _hot(rec, mode="UNCERTAIN"), {"SYN": cal})   # never a map point
+    r = _hot(rec, sig=0.01, mode="UNLIT")
+    r["plasma_state"].update({"electrical_ignition_or_mode_transition": True,
+                              "electrical_indicator_basis": "|Gamma| step at fixed tuning"})
+    _raises(red, red.UncertainPlasmaStateError, r, {"SYN": cal})
+    r = _hot(rec, mode="H_MODE")
+    r["plasma_state"]["photodiode_saturated"] = True
+    _raises(red, red.UncertainPlasmaStateError, r, {"SYN": cal})
+    _raises(red, red.PlasmaStateError, _hot(rec, sig=0.01, mode="H_MODE"), {"SYN": cal})    # declared vs optical
+    r = _hot(rec)
+    r["antenna_current"] = None
+    _raises(red, red.PlasmaStateError, r, {"SYN": cal})
