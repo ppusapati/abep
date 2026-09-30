@@ -274,7 +274,7 @@ Fail-closed behaviour (A9.6 sec. 14):
 Reducer changes:
 
 - loss_verification (new required calibration field, nullable) and per-bound 'verification': P_line/match,loss and P_delivered reconstructed only with a LOSS_MODEL_VERIFIED record covering the logged tuning state; else REFUSED strings, loss_status UNVERIFIED
-- MET-07: a loss verification carries k with a registered k_registration_id, eta_measured, u_eta_measured, eta_predicted, u_eta_predicted, normalized_statistic and a model_ref (calibration set, tuning state + two-port network + Z_load of the check, or loss bound); the reducer recomputes the statistic, requires it <= k and requires eta_predicted to be the model's own prediction (transfer_efficiency(network(TS), Z_load) within u_eta_predicted, or 1 - loss_fraction_max); otherwise UNVERIFIED
+- MET-07 / MET-07-R1 / MET-07-R2: a loss verification carries k (resolved against the calibration set's loss_check_registrations), the at-power evidence P_net / P_ref_load with uncertainties (eta_measured and u_eta_measured are recomputed from it), eta_predicted, u_eta_predicted (> 0 only with a registered basis; 0 for a declared bound), normalized_statistic and a model_ref (calibration set, tuning state + two-port network + Z_load of the check, or loss bound); the reducer recomputes the statistic against the model's own prediction (transfer_efficiency(network(TS), Z_load) to numerical precision, or 1 - loss_fraction_max; u_eta_predicted enters u_c only) and requires it <= k; otherwise UNVERIFIED
 - MixedEvidenceError: record vs calibration set, loss verification, cold reference
 - match_states entries carry the characterized element 'positions'; the record's logged positions must equal them
 - mismatch_envelope exclusion reasons name the loss_status

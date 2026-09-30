@@ -100,13 +100,15 @@ LOSS_VERIFIED = "LOSS_MODEL_VERIFIED"
 LOSS_VERIFICATION_METHODS = ("CAL-P2-09_calorimetric_at_power", "CAL-P2-10_antenna_simulator_at_power")
 LOSS_VERIFICATION_FIELDS = ("verification_id", "status", "method", "evidence_record_ids", "tuning_states",
                             "data_class", "model_ref", "comparison", "k", "k_registration_id", "eta_measured",
-                            "u_eta_measured", "eta_predicted", "u_eta_predicted", "normalized_statistic")
+                            "u_eta_measured", "eta_predicted", "u_eta_predicted", "normalized_statistic",
+                            "P_net_W", "u_P_net_W", "P_ref_load_W", "u_P_ref_load_W")
 # MET-07: a verification is tied to the loss model it verifies (model_ref) and carries its statistic, which the reducer
 # recomputes. two_port: {kind, calibration_set_id, tuning_state_id, network, Z_load_ohm, Z_load_basis} and
-# eta_predicted must equal transfer_efficiency(network(TS), Z_load of the check) within u_eta_predicted (two-sided
+# eta_predicted must equal transfer_efficiency(network(TS), Z_load of the check) to numerical precision (u_eta_predicted enters u_c only) (two-sided
 # test |eta_m - eta_p| / u_c <= k). declared_bound: {kind, calibration_set_id, loss_bound_id, loss_fraction_max} with
 # eta_predicted = 1 - loss_fraction_max (one-sided test (eta_p - eta_m) / u_c <= k: the measured loss does not exceed
-# the bound beyond k u_c). k needs a registered k_registration_id (k stays TBD_OWNER / LOCK-2 until registered).
+# the bound beyond k u_c). k and u_eta_pred resolve in the calibration set's loss_check_registrations (MET-07-R2;
+# k stays TBD_OWNER / LOCK-2 until registered); eta_measured / u_eta_measured are recomputed from the carried powers.
 LOSS_MODEL_KINDS = {"two_port": "two_sided", "declared_bound": "one_sided_bound"}
 LOSS_MODEL_REF_FIELDS = {"two_port": ("kind", "calibration_set_id", "tuning_state_id", "network", "Z_load_ohm",
                                       "Z_load_basis"),
@@ -694,8 +696,29 @@ def reduce_record(rec, calibrations):
     return out
 
 
+_PLACEHOLDER_REFS = {"N/A", "NA", "NONE", "NULL", "-", "--", "?", "UNKNOWN", "X", "ANY"}
+
+
 def _ref_ok(x):
-    return isinstance(x, str) and bool(x.strip()) and not x.strip().upper().startswith(("PENDING", "TBD"))
+    return (isinstance(x, str) and bool(x.strip()) and not x.strip().upper().startswith(("PENDING", "TBD"))
+            and x.strip().upper() not in _PLACEHOLDER_REFS)
+
+
+def loss_check_registration(cal, kind, reg_id):
+    """Registered value of a loss-check input (consolidated verification MET-07-R2): kind 'k' (coverage factor) or
+    'u_eta_pred' (model-prediction standard uncertainty basis). Resolved in the calibration set's
+    loss_check_registrations[kind][reg_id] = {value, source}; ids are never self-declared. Returns the value or raises
+    RecordError (fail closed: no registry, unknown id, non-finite / non-positive value)."""
+    regs = cal.get("loss_check_registrations") if isinstance(cal, dict) else None
+    if not isinstance(regs, dict) or not isinstance(regs.get(kind), dict):
+        raise RecordError(f"calibration set has no loss_check_registrations[{kind!r}] (MET-07-R2)")
+    if not _ref_ok(reg_id) or reg_id not in regs[kind]:
+        raise RecordError(f"{kind} registration {reg_id!r} is not registered in the calibration set (MET-07-R2)")
+    ent = regs[kind][reg_id]
+    val = _num_or_none(ent.get("value")) if isinstance(ent, dict) else None
+    if val is None or val <= 0 or not _ref_ok(ent.get("source")):
+        raise RecordError(f"{kind} registration {reg_id!r} needs a finite positive value and a source (MET-07-R2)")
+    return val
 
 
 def network_signature(cal, tuning_state_id):
@@ -788,7 +811,7 @@ def loss_verification_status(v, cal, *, tuning_state_id=None, loss_bound_id=None
     calibration set ``cal``, with a registered k and a recomputed statistic within k, tied to the loss model used:
     for a two-port loss (``tuning_state_id``) the model_ref names that tuning state, this calibration set and the
     current two-port network (network), and eta_predicted equals transfer_efficiency(network(TS), Z_load of the
-    check) within u_eta_predicted; for a declared bound (``loss_bound_id``) the model_ref names that bound and
+    check) to numerical precision (u_eta_predicted enters u_c only); for a declared bound (``loss_bound_id``) the model_ref names that bound and
     eta_predicted = 1 - loss_fraction_max. Else (False, reason). A verification of the other data class raises
     MixedEvidenceError (MET-07; A9.6 sec. 14)."""
     if (tuning_state_id is None) == (loss_bound_id is None):
@@ -819,9 +842,12 @@ def loss_verification_status(v, cal, *, tuning_state_id=None, loss_bound_id=None
     k = _num_or_none(v["k"])
     if k is None or k <= 0:
         return False, f"loss verification {vid!r}: k must be a positive finite number"
-    if not _ref_ok(v["k_registration_id"]):
-        return False, (f"loss verification {vid!r}: k without a registered k_registration_id (TBD_OWNER / LOCK-2; "
-                       "MET-07)")
+    try:
+        k_reg = loss_check_registration(cal, "k", v["k_registration_id"])
+    except RecordError as e:
+        return False, f"loss verification {vid!r}: {e} (k stays TBD_OWNER / LOCK-2 until registered)"
+    if abs(k - k_reg) > 1e-12 * max(1.0, k_reg):
+        return False, f"loss verification {vid!r}: k {k!r} != registered k {k_reg!r} (MET-07-R2)"
     # model tie
     kind = "two_port" if tuning_state_id is not None else "declared_bound"
     mr = v["model_ref"]
@@ -852,17 +878,32 @@ def loss_verification_status(v, cal, *, tuning_state_id=None, loss_bound_id=None
         eta_model, _ = loss_model_prediction(cal, mr)
     except P2ReducerError as e:
         return False, f"loss verification {vid!r}: model prediction not reproducible ({e})"
-    eta_m, u_m = _num_or_none(v["eta_measured"]), _num_or_none(v["u_eta_measured"])
+    pn, upn = _num_or_none(v["P_net_W"]), _num_or_none(v["u_P_net_W"])
+    pr, upr = _num_or_none(v["P_ref_load_W"]), _num_or_none(v["u_P_ref_load_W"])
+    if None in (pn, upn, pr, upr) or pn <= 0 or pr < 0 or upn < 0 or upr < 0:
+        return False, f"loss verification {vid!r}: at-power evidence P_net / P_ref_load and uncertainties required"
+    eta_m = pr / pn                                  # recomputed from the carried evidence (MET-07-R2), never trusted
+    u_m = eta_m * math.hypot(upr / pr if pr else 0.0, upn / pn)
     eta_p, u_p = _num_or_none(v["eta_predicted"]), _num_or_none(v["u_eta_predicted"])
+    for fld, val in (("eta_measured", eta_m), ("u_eta_measured", u_m)):
+        rv = _num_or_none(v[fld])
+        if rv is None or abs(rv - val) > 1e-9 * max(1.0, abs(val)):
+            return False, f"loss verification {vid!r}: recorded {fld} {v[fld]!r} != recomputed {val:.9g} (MET-07-R2)"
     stat_rec = _num_or_none(v["normalized_statistic"])
     if None in (eta_m, u_m, eta_p, u_p, stat_rec) or u_m < 0 or u_p < 0:
         return False, f"loss verification {vid!r}: eta / uncertainty / statistic must be finite (u >= 0)"
     if abs(eta_p - eta_model) > 1e-9 * max(1.0, abs(eta_model)):
         return False, (f"loss verification {vid!r}: eta_predicted {eta_p!r} is not the loss model's prediction "
                        f"{eta_model:.9g} (u_eta_predicted enters u_c only, never shifts the prediction; MET-07-R1)")
-    if u_p > 0 and not _ref_ok(v.get("u_eta_predicted_basis_id")):
-        return False, (f"loss verification {vid!r}: u_eta_predicted > 0 without a registered "
-                       f"u_eta_predicted_basis_id (MET-07-R1)")
+    if kind == "declared_bound" and u_p != 0:
+        return False, f"loss verification {vid!r}: a declared bound is a limit, u_eta_predicted must be 0 (MET-07-R2)"
+    if u_p > 0:
+        try:
+            u_reg = loss_check_registration(cal, "u_eta_pred", v.get("u_eta_predicted_basis_id"))
+        except RecordError as e:
+            return False, f"loss verification {vid!r}: {e}"
+        if abs(u_p - u_reg) > 1e-12 * max(1.0, u_reg):
+            return False, f"loss verification {vid!r}: u_eta_predicted {u_p!r} != registered {u_reg!r} (MET-07-R2)"
     try:
         stat = loss_statistic(v["comparison"], eta_m, u_m, eta_model, u_p)
     except RecordError as e:

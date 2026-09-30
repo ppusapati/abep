@@ -91,6 +91,7 @@ def _lv(red, cal, model_ref, vid):
     return dict(LV_BASE, verification_id=vid, model_ref=ref, comparison=comp,
                 tuning_states=[ref["tuning_state_id"]] if kind == "two_port" else [], eta_measured=eta,
                 u_eta_measured=0.01, eta_predicted=eta, u_eta_predicted=u_p,
+                P_net_W=100.0, u_P_net_W=0.0, P_ref_load_W=100.0 * eta, u_P_ref_load_W=1.0,
                 u_eta_predicted_basis_id="SYN-SPARAM-UNC-01" if u_p > 0 else None,
                 normalized_statistic=red.loss_statistic(comp, eta, 0.01, eta, u_p))
 
@@ -115,7 +116,10 @@ def _cal(red, line, match, e00=0j, e11=0j, e10e01=1 + 0j, fix=(1 + 0j, 0j, 0j, 1
                                         "unlit_verification": {"basis": "SYNTHETIC CAL-P2-08 VNA record"},
                                         "evidence_class": SYN, "antenna_temperature_K": 300.0}},
             "antenna_current_probe": {"cal_id": "ACP", "k_mag": 1.0, "certificate": "SYNTHETIC"},
-            "loss_verification": None}
+            "loss_verification": None,
+            "loss_check_registrations": {"k": {"SYN-K-REG-01": {"value": 2.0, "source": "SYNTHETIC test registration"}},
+                                         "u_eta_pred": {"SYN-SPARAM-UNC-01": {"value": 0.01,
+                                                                              "source": "SYNTHETIC S-parameter uncertainty"}}}}
     cal["loss_verification"] = _lv(red, cal, {"kind": "two_port", "tuning_state_id": "TS1", "Z_load_ohm": [Z0, 0.0],
                                               "Z_load_basis": "SYNTHETIC reference load"}, "SYN-LV-01")
     cal["loss_bounds"]["LB1"]["verification"] = _lv(red, cal, {"kind": "declared_bound", "loss_bound_id": "LB1"},

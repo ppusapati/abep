@@ -602,8 +602,8 @@ def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pre
                       one-sided statistic (eta_pred - eta_meas) / u_c <= k.
     ``eta_pred`` may be omitted (computed from the model); if supplied it must equal the model's prediction to numerical
     precision (consolidated verification MET-07-R1: u_eta_pred is used once, in u_c, never also to shift the
-    prediction). A u_eta_pred > 0 needs a registered ``u_eta_pred_basis_id`` (e.g. the S-parameter set uncertainty
-    record); it is never a free input. k is supplied, never defaulted, and needs a registered k_registration_id (k stays TBD_OWNER / LOCK-2
+    prediction). k and a u_eta_pred > 0 resolve in ``cal['loss_check_registrations']`` ({'k': {id: {value, source}},
+    'u_eta_pred': {id: {value, source}}}); they are never free inputs (MET-07-R2). k is supplied, never defaulted, and needs a registered k_registration_id (k stays TBD_OWNER / LOCK-2
     until registered). Any missing uncertainty -> NOT_EVALUATED (never verified). Returns the reducer's
     loss_verification record (model_ref filled with calibration_set_id and network / loss_fraction_max)."""
     if method not in RED.LOSS_VERIFICATION_METHODS:
@@ -620,9 +620,12 @@ def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pre
     kk = _fin(k, "k")
     if kk <= 0:
         raise FrameworkError("k must be positive")
-    if not RED._ref_ok(k_registration_id):
-        raise CriteriaMissingError("a supplied k needs its registered k_registration_id (not empty / PENDING / TBD; "
-                                   "k stays TBD_OWNER / LOCK-2 until registered, never defaulted - MET-07)")
+    try:
+        k_reg = RED.loss_check_registration(cal, "k", k_registration_id)
+    except RED.P2ReducerError as e:
+        raise CriteriaMissingError(f"{e}; k stays TBD_OWNER / LOCK-2 until registered, never defaulted") from e
+    if abs(kk - k_reg) > 1e-12 * max(1.0, k_reg):
+        raise CriteriaMissingError(f"k {kk!r} != registered k {k_reg!r} for {k_registration_id!r} (MET-07-R2)")
     try:
         eta_model, ref = RED.loss_model_prediction(cal, model_ref)
     except RED.P2ReducerError as e:
@@ -642,9 +645,13 @@ def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pre
     u_p = _fin(u_eta_pred, "u_eta_pred")
     if u_p < 0:
         raise FrameworkError("u_eta_pred must be >= 0")
-    if u_p > 0 and not RED._ref_ok(u_eta_pred_basis_id):
-        raise CriteriaMissingError("u_eta_pred > 0 needs a registered u_eta_pred_basis_id (S-parameter / calibration "
-                                   "uncertainty record); never a free input (MET-07-R1)")
+    if u_p > 0:
+        try:
+            u_reg = RED.loss_check_registration(cal, "u_eta_pred", u_eta_pred_basis_id)
+        except RED.P2ReducerError as e:
+            raise CriteriaMissingError(f"{e}; u_eta_pred is never a free input (MET-07-R1/R2)") from e
+        if abs(u_p - u_reg) > 1e-12 * max(1.0, u_reg):
+            raise CriteriaMissingError(f"u_eta_pred {u_p!r} != registered {u_reg!r} (MET-07-R2)")
     eta_p = eta_model if eta_pred is None else _fin(eta_pred, "eta_pred")
     if abs(eta_p - eta_model) > 1e-9 * max(1.0, abs(eta_model)):
         raise FrameworkError(f"eta_pred {eta_p!r} is not the {kind} model's prediction {eta_model:.9g} (the check "
@@ -662,6 +669,8 @@ def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pre
     rec.update({"status": RED.LOSS_VERIFIED if stat <= kk else LOSS_INCONSISTENT, "eta_measured": eta_m,
                 "u_eta_measured": u_m, "eta_predicted": eta_p, "u_eta_predicted": u_p,
                 "u_eta_predicted_basis_id": u_eta_pred_basis_id if u_p > 0 else None,
+                "P_net_W": pn, "u_P_net_W": _fin(u_P_net_W, "u"), "P_ref_load_W": pr,
+                "u_P_ref_load_W": _fin(u_P_ref_load_W, "u"),
                 "normalized_statistic": stat})
     return rec
 

@@ -62,15 +62,24 @@ TS_MODEL = {"kind": "two_port", "tuning_state_id": "TS1", "Z_load_ohm": [Z0, 0.0
 LB_MODEL = {"kind": "declared_bound", "loss_bound_id": "LB1"}
 
 
-def _verify(fw, red, cal, model_ref, vid, *, eta_meas=None, u_eta_pred=0.01, k=2.0, k_reg="SYN-K-REG-01", **kw):
+SYN_LOSS_REGS = {"k": {"SYN-K-REG-01": {"value": 2.0, "source": "SYNTHETIC test registration"},
+                        "SYN-K-REG-K1": {"value": 1.0, "source": "SYNTHETIC test registration"}},
+                  "u_eta_pred": {"SYN-SPARAM-UNC-01": {"value": 0.01, "source": "SYNTHETIC S-parameter uncertainty"},
+                                 "SYN-SPARAM-UNC-06": {"value": 0.06, "source": "SYNTHETIC S-parameter uncertainty"}}}
+_K_IDS = {2.0: "SYN-K-REG-01", 1.0: "SYN-K-REG-K1"}
+_U_IDS = {0.01: "SYN-SPARAM-UNC-01", 0.06: "SYN-SPARAM-UNC-06"}
+
+
+def _verify(fw, red, cal, model_ref, vid, *, eta_meas=None, u_eta_pred=0.01, k=2.0, k_reg=None, **kw):
     """At-power loss verification produced by p2_framework.verify_line_match_loss (MET-07): P_ref_load is chosen so
     that eta_meas (default: the model's own prediction) is what the synthetic calorimeter 'measured'."""
     eta = red.loss_model_prediction(cal, model_ref)[0] if eta_meas is None else eta_meas
     args = dict(verification_id=vid, method="CAL-P2-09_calorimetric_at_power", cal=cal, model_ref=model_ref,
                 u_eta_pred=u_eta_pred if model_ref["kind"] == "two_port" else 0.0, P_net_W=100.0, u_P_net_W=1.0,
-                P_ref_load_W=100.0 * eta, u_P_ref_load_W=1.0, k=k, k_registration_id=k_reg,
+                P_ref_load_W=100.0 * eta, u_P_ref_load_W=1.0, k=k,
+                k_registration_id=k_reg if k_reg is not None else _K_IDS.get(k, "SYN-K-REG-01"),
                 evidence_record_ids=["SYN-CALORIMETRY-01"], data_class=cal["data_class"],
-                u_eta_pred_basis_id="SYN-SPARAM-UNC-01")
+                u_eta_pred_basis_id=_U_IDS.get(u_eta_pred, "SYN-SPARAM-UNC-01"))
     args.update(kw)
     return fw.verify_line_match_loss(**args)
 
@@ -121,7 +130,7 @@ def _cal_from_touchstone(fw, red, line_abcd, match_abcd, e=(complex(0.01, -0.02)
                                         "unlit_verification": {"basis": "SYNTHETIC CAL-P2-08 VNA record"},
                                         "evidence_class": lab, "antenna_temperature_K": 300.0}},
             "antenna_current_probe": {"cal_id": "ACP", "k_mag": 1.0, "certificate": "SYNTHETIC"},
-            "loss_verification": None}
+            "loss_verification": None, "loss_check_registrations": copy.deepcopy(SYN_LOSS_REGS)}
     cal["loss_verification"] = _verify(fw, red, cal, TS_MODEL, "SYN-LV-01")
     cal["loss_bounds"]["LB1"]["verification"] = _verify(fw, red, cal, LB_MODEL, "SYN-LV-LB1")
     return cal
@@ -501,7 +510,7 @@ def test_verify_line_match_loss(fw, red, case):
         _verify(fw, red, cal, TS_MODEL, "V4", k=None)
     for bad in (None, "", "PENDING-LOCK-2", "TBD_OWNER"):         # k needs a registered k_registration_id (MET-07)
         with pytest.raises(fw.CriteriaMissingError):
-            _verify(fw, red, cal, TS_MODEL, "V5", k_reg=bad)
+            _verify(fw, red, cal, TS_MODEL, "V5", k_registration_id=bad)
     with pytest.raises(fw.FrameworkError):
         _verify(fw, red, cal, TS_MODEL, "V6", method="guess")
     with pytest.raises(fw.FrameworkError):                            # eta_pred must be the model's prediction
@@ -543,15 +552,19 @@ def test_loss_verification_tied_to_model_met07(fw, red, case):
               "normalized_statistic", "model_ref", "comparison"):
         refused({k: v for k, v in lv.items() if k != f})
     for bad in ("", "PENDING-LOCK-2", "TBD"):
-        assert "k_registration_id" in refused(dict(lv, k_registration_id=bad))
+        assert "k registration" in refused(dict(lv, k_registration_id=bad))
     refused(dict(lv, k=0.0))
     # at-power check measured eta 0.5 while the network predicts ~0.61: a forged VERIFIED label with the true
     # statistic is refused (finding case 2), and so is a forged eta_predicted / statistic pair
-    stat = red.loss_statistic("two_sided", 0.5, lv["u_eta_measured"], lv["eta_predicted"], lv["u_eta_predicted"])
-    assert "> k" in refused(dict(lv, eta_measured=0.5, normalized_statistic=stat))
+    pr5 = 0.5 * lv["P_net_W"]                                         # forged label with consistent evidence
+    um5 = 0.5 * math.hypot(lv["u_P_ref_load_W"] / pr5, lv["u_P_net_W"] / lv["P_net_W"])
+    stat = red.loss_statistic("two_sided", 0.5, um5, lv["eta_predicted"], lv["u_eta_predicted"])
+    assert "> k" in refused(dict(lv, P_ref_load_W=pr5, eta_measured=0.5, u_eta_measured=um5, normalized_statistic=stat))
     assert "recomputed" in refused(dict(lv, eta_measured=0.5))
     s2 = red.loss_statistic("two_sided", 0.5, lv["u_eta_measured"], 0.5, lv["u_eta_predicted"])
-    assert "prediction" in refused(dict(lv, eta_measured=0.5, eta_predicted=0.5, normalized_statistic=s2))
+    s2 = red.loss_statistic("two_sided", 0.5, um5, 0.5, lv["u_eta_predicted"])
+    assert "prediction" in refused(dict(lv, P_ref_load_W=pr5, eta_measured=0.5, u_eta_measured=um5, eta_predicted=0.5,
+                                        normalized_statistic=s2))
     # the check verified another load / another network / another calibration set / another comparison
     mr = lv["model_ref"]
     assert "prediction" in refused(dict(lv, model_ref=dict(mr, Z_load_ohm=[5.0, 30.0])))
@@ -1078,10 +1091,40 @@ def test_met07_r1_shifted_eta_pred_cannot_flip_inconsistent_to_verified(fw, red)
     forged["normalized_statistic"] = red.loss_statistic(forged["comparison"], 0.9, forged["u_eta_measured"],
                                                         eta_model - 0.06, 0.06)
     ok, why = red.loss_verification_status(forged, cal, tuning_state_id="TS1")
-    assert not ok and "MET-07-R1" in why
+    assert not ok and "MET-07" in why
     with pytest.raises(fw.CriteriaMissingError):
         _verify(fw, red, cal, TS_MODEL, "VX4", u_eta_pred=0.06, u_eta_pred_basis_id=None)
     nobasis = dict(_verify(fw, red, cal, TS_MODEL, "VX5", u_eta_pred=0.06))
     nobasis["u_eta_predicted_basis_id"] = None
     ok, why = red.loss_verification_status(nobasis, cal, tuning_state_id="TS1")
-    assert not ok and "basis" in why
+    assert not ok and "registration" in why
+
+
+def test_met07_r2_registrations_resolved_and_evidence_recomputed(fw, red):
+    """Consolidated verification MET-07-R2: k and u_eta_pred resolve in the calibration set's registrations (never
+    self-declared ids), eta/u measured are recomputed from the carried powers, and a declared bound carries u_p = 0."""
+    cal = _cal_from_touchstone(fw, red, _line(30.0), fw.ladder_abcd(ELEMENTS))
+    with pytest.raises(fw.CriteriaMissingError):                        # unregistered id
+        _verify(fw, red, cal, TS_MODEL, "VR1", k=100.0, k_reg="x")
+    with pytest.raises(fw.CriteriaMissingError):                        # registered id, other value
+        _verify(fw, red, cal, TS_MODEL, "VR2", k=5.0, k_reg="SYN-K-REG-01")
+    with pytest.raises(fw.CriteriaMissingError):                        # unregistered u basis
+        _verify(fw, red, cal, TS_MODEL, "VR3", eta_meas=0.9, u_eta_pred=0.08, u_eta_pred_basis_id="x")
+    for ph in ("N/A", "NONE", "-", "ANY"):
+        assert not red._ref_ok(ph)
+    bad = _verify(fw, red, cal, TS_MODEL, "VR4", eta_meas=0.9, u_eta_pred=0.06, k=1.0)
+    assert bad["status"] != red.LOSS_VERIFIED
+    for forge in (dict(status=red.LOSS_VERIFIED, u_eta_predicted=0.2, u_eta_predicted_basis_id="ANY"),
+                  dict(status=red.LOSS_VERIFIED, k=5.0, k_registration_id="ANY"),
+                  dict(status=red.LOSS_VERIFIED, u_eta_measured=0.2)):
+        f = dict(bad, **forge)
+        ok, why = red.loss_verification_status(f, cal, tuning_state_id="TS1")
+        assert not ok, forge
+    lb = _verify(fw, red, cal, LB_MODEL, "VR5", eta_meas=0.6)
+    f = dict(lb, status=red.LOSS_VERIFIED, u_eta_predicted=0.5, u_eta_predicted_basis_id="SYN-SPARAM-UNC-06")
+    ok, why = red.loss_verification_status(f, cal, loss_bound_id="LB1")
+    assert not ok and "declared bound" in why
+    c2 = copy.deepcopy(cal)
+    del c2["loss_check_registrations"]
+    ok, why = red.loss_verification_status(c2["loss_verification"], c2, tuning_state_id="TS1")
+    assert not ok and "loss_check_registrations" in why
