@@ -339,11 +339,24 @@ def _no_central_bore(M):
         rec["value"] = saved
 
 
+def _min_d_worst(M, h_mm, B_cap_G, t_w, w_p, kl, f_NI, kul):
+    """Same 0.5 mm scan as H2-1 min_d_for_central_cathode (20-200 mm, L = 8.6 h) but with an explicit f_NI (the H2-1
+    function fixes f_NI = 1): the worst corner of the assumptions, as in the H2-1 'RP-1 worst-case assumptions' case."""
+    for i in range(40, 401):
+        d = i * 0.5
+        c = M.coil_case("scan", d, h_mm, 8.6 * h_mm, B_cap_G, 0.0, t_w, w_p, kl, f_NI, kul)
+        if c["central_cathode_feasible"]:
+            return d
+    return None
+
+
 def recompute_h21() -> dict:
     M = h21()
     I = M.read_inputs()
     kul = M.kulgrid_material(I)
     ch = M.channel_window(I)
+    bt = M.b_target(ch, I)
+    fni = M.a("NI_margin_factor")
     f = M.a("rLe_fraction_of_h")
     head = M.a("B_headroom_factor")
     t_w, w_p, kl = M.a("t_wall_mm"), M.a("pole_tip_width_mm"), M.a("leakage_factor")
@@ -365,10 +378,11 @@ def recompute_h21() -> dict:
             raise RuntimeError(f"H2-1 reproduction check failed at h = {key} mm: {c12}/{c18} vs {v1v}")
         with _no_central_bore(M):
             d_nom = M.min_d_for_central_cathode(hh, Bc, 0.0, t_w[1], w_p[1], kl[1], kul)
-            d_wc = M.min_d_for_central_cathode(hh, Bc, 0.0, t_w[2], w_p[2], kl[2], kul)
-        if d_nom is None or d_wc is None:
+            d_up = M.min_d_for_central_cathode(hh, Bc, 0.0, t_w[2], w_p[2], kl[2], kul)
+            d_wc = _min_d_worst(M, hh, bt["capability_G"], t_w[2], w_p[2], kl[2], fni[1], kul)
+        if d_nom is None or d_wc is None or d_up is None:
             raise RuntimeError("no feasible inner-coil build inside the 20-200 mm scan without a bore")
-        if d_nom <= 20.0 or d_wc <= 20.0:
+        if min(d_nom, d_wc, d_up) <= 20.0:
             raise RuntimeError("scan lower edge reached; floor not resolved")
         w_lo = max(A_lo * 100.0 / (math.pi * hh), dh_lo * hh)
         w_hi = min(A_hi * 100.0 / (math.pi * hh), dh_hi * hh)
@@ -376,7 +390,9 @@ def recompute_h21() -> dict:
             "h_mm": sig(hh), "B_capability_G": sig(Bc),
             "v1_central_cathode_floor_mm": {"bore_12mm": c12, "bore_18mm": c18,
                                             "reproduces_H21_22": (True if v1v is not None else "not a v1 row")},
-            "external_c1_magnetic_floor_mm": {"nominal_assumptions": d_nom, "worst_case_assumptions": d_wc},
+            "external_c1_magnetic_floor_mm": {"nominal_assumptions": d_nom,
+                                              "upper_assumptions_own_width_capability_f_NI_1": d_up,
+                                              "worst_case_assumptions": d_wc},
             "channel_window_d_mean_mm_at_this_h": [sig(w_lo), sig(w_hi)],
             "v1_floor_binding": {"bore_12mm": c12 > w_lo, "bore_18mm": c18 > w_lo},
             "external_floor_binding": {"nominal_assumptions": d_nom > w_lo, "worst_case_assumptions": d_wc > w_lo},
@@ -386,8 +402,12 @@ def recompute_h21() -> dict:
                    "circuit, f_NI = 1, L = 8.6 h): (i) the v1 H21-22 floors are reproduced exactly with the 12/18 mm "
                    "central-cathode bore; (ii) the same scan with NO cathode bore and NO cathode heat-shield allowance "
                    "(external C1, row 79) gives the floor set by the inner coil's minimum radial build alone; "
-                   "'worst_case_assumptions' uses the upper ends of the assumed wall thickness, pole-tip width and "
-                   "leakage factor (H2-1 ASSUMED t_wall_mm / pole_tip_width_mm / leakage_factor). The d_mean window at "
+                   "'upper_assumptions_own_width_capability_f_NI_1' uses the upper ends of the assumed wall thickness, "
+                   "pole-tip width and leakage factor (H2-1 ASSUMED t_wall_mm / pole_tip_width_mm / leakage_factor) "
+                   "with the own-width capability and f_NI = 1; 'worst_case_assumptions' is the worst corner as in the "
+                   "H2-1 'RP-1 worst-case assumptions' case: the same upper-end wall/pole/leakage WITH the window-wide "
+                   "capability (H2-1 b_target capability_G) and the upper NI margin factor (H2-1 NI_margin_factor). "
+                   "Both remain lumped-circuit floors; FEMM is the closing check. The d_mean window at "
                    "each h is [max(A_min/(pi h), (d/h)_min h), min(A_max/(pi h), (d/h)_max h)] from H21-01/H21-02"),
         "in_memory_override": {"module": DELIVERABLES["H21_PY"], "input": "ASSUMED.cathode_heat_shield_radial_mm",
                                "v1_value_mm": M.ASSUMED["cathode_heat_shield_radial_mm"]["value"],
@@ -395,6 +415,7 @@ def recompute_h21() -> dict:
                                "why": "no central cathode inside the inner core (row 79)"},
         "inputs": {"area_window_cm2": [A_lo, A_hi], "d_over_h_window": [dh_lo, dh_hi],
                    "t_wall_mm": t_w, "pole_tip_width_mm": w_p, "leakage_factor": kl, "cathode_bore_v1_mm": bore,
+                   "window_wide_capability_G": sig(bt["capability_G"]), "NI_margin_factor": fni,
                    "sources": [old("H21", "H21-01")["source"], old("H21", "H21-02")["source"], v1["source"]]},
         "rows": rows,
         "finding": _h21_finding(rows),
@@ -661,11 +682,25 @@ _CACHE: dict = {}
 DOMAIN_EXITS: list = []
 
 
+DOMAIN_FLAG_KEYS = ("coil_R_T_beyond_500C", "fe_k_above_measured_640C")   # H2-5 solver model-domain flags
+
+
+def _key(x, case, finish, P_d):
+    return (case, finish, P_d, tuple(sorted(x.items())))
+
+
 def _run_c(x, fx, case, finish, P_d):
-    key = (case, finish, P_d, tuple(sorted(x.items())))
+    key = _key(x, case, finish, P_d)
     if key not in _CACHE:
-        _CACHE[key] = _run(x, fx, case, finish, P_d)[0]
-    return _CACHE[key]
+        T, info = _run(x, fx, case, finish, P_d)
+        _CACHE[key] = (T, {k: bool(info[k]) for k in DOMAIN_FLAG_KEYS})
+    return _CACHE[key][0]
+
+
+def _flags_c(x, fx, case, finish, P_d):
+    """H2-5 solver domain flags of a state (the v1 deliverable reported them; review finding: they were dropped)."""
+    _run_c(x, fx, case, finish, P_d)
+    return dict(_CACHE[_key(x, case, finish, P_d)][1])
 
 
 def _ascent(rg, fx, case, finish, P_d, o, x0, npts=SEARCH_GRID):
@@ -734,13 +769,14 @@ def _envelope(rg, fx, case, finish, P_d, search_outs=SEARCH_OUTS):
                    "OAT corner only (case dominated; see bound)")
         dom = sorted(sens, key=lambda k: -abs(sens[k][o]))[:3]
         corners[o] = xbest
+        flags = _flags_c(xbest, fx, case, finish, P_d)
         if o == "Q_mount_W":
             res[o] = {"min_W": round(Tmin[o], 1), "nominal_W": round(T_nom[o], 1), "max_W": round(Tmax[o], 1),
                       "oat_corner_max_W": round(Toat[o], 1), "search": how}
         else:
             res[o] = {"T_min_C": round(Tmin[o] - T0C, 1), "T_nominal_C": round(T_nom[o] - T0C, 1),
                       "T_max_C": round(Tmax[o] - T0C, 1), "oat_corner_T_max_C": round(Toat[o] - T0C, 1),
-                      "dominant_inputs": dom, "search": how}
+                      "dominant_inputs": dom, "search": how, "domain_flags_at_T_max_state": flags}
     res["domain_exits"] = DOMAIN_EXITS[n_exit0:]
     return res, corners
 
@@ -773,12 +809,16 @@ def _task(t):
     raise ValueError(t[1])
 
 
-def _combo_worker(tasks, conn):
-    """Child process (fork): evaluates its share of the (lever, case) combinations; results go back through a pipe."""
+def _worker(tasks, q, conn):
+    """Child process (fork; tasks are inherited, never pickled): pulls task indices from a shared queue (dynamic
+    scheduling) until it receives None; results go back through a pipe."""
     try:
         out = []
-        for t in tasks:
-            out.append((t[0], _task(t)))
+        while True:
+            i = q.get()
+            if i is None:
+                break
+            out.append((i, _task(tasks[i])))
         conn.send(("ok", out))
     except Exception as e:  # noqa: BLE001 - re-raised in the parent (never swallowed)
         conn.send(("error", repr(e)))
@@ -788,17 +828,23 @@ def _combo_worker(tasks, conn):
 
 def _map_envelopes(tasks):
     """Evaluate every (key, args) task. Results do not depend on the process layout: each task is a pure function of
-    its arguments, and they are re-assembled in task order. Uses fork workers when available, else runs serially."""
+    its arguments (the per-process solve cache only memoises that function), and they are re-assembled in task order.
+    Uses fork workers pulling from a shared index queue (longest tasks listed first) when available, else runs
+    serially. A worker exception is re-raised in the parent."""
     import multiprocessing as mp
     n = min(4, os.cpu_count() or 1)
     if n <= 1 or "fork" not in mp.get_all_start_methods():
         return {t[0]: _task(t) for t in tasks}
     ctx = mp.get_context("fork")
-    chunks = [tasks[i::n] for i in range(n)]
+    q = ctx.Queue()
+    for i in range(len(tasks)):
+        q.put(i)
+    for _ in range(n):
+        q.put(None)
     procs = []
-    for ch in chunks:
+    for _ in range(n):
         rcv, snd = ctx.Pipe(duplex=False)
-        p = ctx.Process(target=_combo_worker, args=(ch, snd))
+        p = ctx.Process(target=_worker, args=(tasks, q, snd))
         p.start()
         snd.close()
         procs.append((p, rcv))
@@ -808,9 +854,11 @@ def _map_envelopes(tasks):
         p.join()
         if status != "ok":
             raise RuntimeError(f"thermal worker failed (MODEL_ERROR): {payload}")
-        for k, r in payload:
-            got[k] = r
-    return {t[0]: got[t[0]] for t in tasks}
+        for i, r in payload:
+            got[i] = r
+    if sorted(got) != list(range(len(tasks))):
+        raise RuntimeError("thermal worker results incomplete (MODEL_ERROR)")
+    return {t[0]: got[i] for i, t in enumerate(tasks)}
 
 
 SEARCH = {"allowance_K": None, "allowance_W": None}   # set by recompute_thermal from the search-gap check
@@ -832,11 +880,20 @@ def _verdict(node, e, limits):
                 v = "DO_NOT_CLOSE_WHOLE_ENVELOPE"
             else:
                 v = "DO_NOT_CLOSE"
-            return {"limit_C": L["limit_C"], "design_ceiling_C": sig(ceil, 6),
-                    "margin_worst_K": round(L["limit_C"] - e["T_max_C"], 1),
-                    "margin_to_design_ceiling_K": round(ceil - e["T_max_C"] - alw, 1),
-                    "margin_nominal_K": round(L["limit_C"] - e["T_nominal_C"], 1), "verdict": v,
-                    "nominal_closes": e["T_nominal_C"] <= ceil}
+            m_ceil = round(ceil - e["T_max_C"] - alw, 1)
+            out = {"limit_C": L["limit_C"], "design_ceiling_C": sig(ceil, 6),
+                   "margin_worst_K": round(L["limit_C"] - e["T_max_C"], 1),
+                   "margin_to_design_ceiling_K": m_ceil,
+                   "margin_nominal_K": round(L["limit_C"] - e["T_nominal_C"], 1), "verdict": v,
+                   "nominal_closes": e["T_nominal_C"] <= ceil}
+            if v == "CLOSES":
+                out["search_sensitive"] = m_ceil < SEARCH_SENSITIVE_K
+            fl = e.get("domain_flags_at_T_max_state") or {}
+            if any(fl.values()):
+                out["model_domain_note"] = ("worst-case state uses the H2-5 model-derived continuation beyond its "
+                                            "sourced data (" + ", ".join(k for k, f in sorted(fl.items()) if f) +
+                                            "); the verdict is conditional on that continuation")
+            return out
         if L.get("necessary_ceiling_C") is not None:
             ceil = L["necessary_ceiling_C"] - MARGIN_K
             return {"limit_C": None, "necessary_ceiling_C": L["necessary_ceiling_C"],
@@ -883,7 +940,7 @@ def _minimal(closing: list, row85_ok: dict) -> dict:
                                        for lv in ok if len(LEVER_PARTS[lv]) == m]}
 
 
-def _overall(summary, row85_ok) -> dict:
+def _overall(summary, row85_ok, an_driver) -> dict:
     live = {n: s for n, s in summary.items() if s["status"] != "OPEN_LIMIT_TBD"}
     joint = [lv for lv in LEVERS if lv != "LV-BASE" and row85_ok.get(lv) and
              all(lv in s["levers_that_close_every_case"] or s["status"] == "CLOSES" for s in live.values())]
@@ -894,7 +951,12 @@ def _overall(summary, row85_ok) -> dict:
             "lever_sets_closing_all_live_nodes_and_row85_100W": joint,
             "minimal_lever_sets_closing_all_live_nodes_and_row85_100W": mn,
             "status": ("CLOSES" if base_ok else "CLOSES_WITH_LEVERS" if joint else "OPEN"),
-            "open_items": ["pole/core, anode and exterior-coating use limits TBD (OPEN_LIMIT_TBD)",
+            "status_conditional_on": ICP_HEAT_CONDITION,
+            "open_items": ["ICP module heat into H-1 TBD (ICP-43): every hall_icp_neutralizer CLOSES is evaluated with "
+                           "0 W of ICP heat and holds only while 1.2 x Q_ICP->H-1 <= the allowable ICP heat of that "
+                           "node and lever set (icp_heat_into_h1)",
+                           "pole/core, anode and exterior-coating use limits TBD (OPEN_LIMIT_TBD)",
+                           "anode is a design driver: " + an_driver["statement"],
                            "supplier limits not validated (every CLOSES is conditional)",
                            "no closing lever set has a demonstrated buildability (LV-COIL NOT_DEMONSTRATED; the "
                            "others NOT_CHECKED)",
@@ -902,12 +964,16 @@ def _overall(summary, row85_ok) -> dict:
                            "worst case found by a local search with a search allowance, not a proven global maximum"]}
 
 
-INFLUENCE_LEVERS = ("LV-BASE", "LV-OPEN+ISO", "LV-RAD+ISO", "LV-COIL+ISO", "LV-ALL-NO-MOUNT", "LV-ALL", "LV-ALL-ISO")
+INFLUENCE_LEVERS = tuple(LEVERS)   # every lever set (review finding: each closing set needs its own ICP-heat allowance)
+ICP_HEAT_CONDITION = ("evaluated with 0 W of ICP module heat entering H-1 (ICP-43 TBD): the verdict holds only if "
+                      "1.2 x Q_ICP->H-1 (row 86 heat-load margin) <= the allowable ICP heat of this node and lever set "
+                      "at its injection point (recomputations.h25_thermal_rerun.icp_heat_into_h1)")
 
 
 def _influence(ck, fx, P_d, limits):
-    """dT/dQ for +1 W at PO or BP, re-solved at each node's searched hot point; linearised allowance to the design
-    ceiling minus the search allowance."""
+    """dT/dQ for +1 W at PO or BP, re-solved at each node's searched hot point; allowable ICP heat (row-86 margin
+    included: 1.2 x Q) from the linearised coefficient, then CHECKED by re-solving the network with 1.2 x Q injected
+    (review finding: the response is not assumed linear; the re-solved temperature is reported)."""
     M5 = h25()
     infl = {}
     for label, (case, rg, corners) in ck.items():
@@ -916,29 +982,92 @@ def _influence(ck, fx, P_d, limits):
             x = corners[n]
             loads, links, bnd, km, coil20 = M5.assemble(x, fx, case, FINISH_BASE, P_d)
             T0 = _solve_retry(loads, links, bnd, km, coil20)
-            d = {}
+            ceil = [L for k, L in limits.items() if k != "rule" and not L.get("coating_only")
+                    and n in L["nodes"]][0]["limit_C"] - MARGIN_K
+            head = ceil - SEARCH["allowance_K"] - (T0[n] - T0C)
+            d, qa, chk, qverified = {}, {}, {}, {}
             for inj in ("PO", "BP"):
                 l2 = dict(loads)
                 l2[inj] = l2[inj] + 1.0
                 T1 = _solve_retry(l2, links, bnd, km, coil20)
                 d[inj] = T1[n] - T0[n]
-            ceil = [L for k, L in limits.items() if k != "rule" and not L.get("coating_only")
-                    and n in L["nodes"]][0]["limit_C"] - MARGIN_K
-            head = ceil - SEARCH["allowance_K"] - (T0[n] - T0C)
+                q = head / (HEAT_LOAD_MARGIN * d[inj]) if head > 0 and d[inj] > 0 else 0.0
+                qv = q
+                if q > 0:
+                    T3 = _inject(loads, links, bnd, km, coil20, inj, HEAT_LOAD_MARGIN * q)
+                    lin = HEAT_LOAD_MARGIN * q * d[inj]
+                    ok = T3 is not None and T3[n] - T0C + SEARCH["allowance_K"] <= ceil + 1e-9
+                    chk[inj] = {"T_resolved_C": (round(T3[n] - T0C, 1) if T3 is not None else None),
+                                "rise_resolved_K": (round(T3[n] - T0[n], 2) if T3 is not None else None),
+                                "rise_linearised_K": round(lin, 2),
+                                "model_domain_exceeded": T3 is None,
+                                "within_ceiling_after_allowance": ok}
+                    if not ok:
+                        # the linearised value is not valid here: largest verified Q by bisection (re-solved state
+                        # inside the model domain and node n at or below the design ceiling after the allowance)
+                        lo_q, hi_q = 0.0, q
+                        for _ in range(BISECT_STEPS):
+                            mid = 0.5 * (lo_q + hi_q)
+                            Tm = _inject(loads, links, bnd, km, coil20, inj, HEAT_LOAD_MARGIN * mid)
+                            if Tm is not None and Tm[n] - T0C + SEARCH["allowance_K"] <= ceil + 1e-9:
+                                lo_q = mid
+                            else:
+                                hi_q = mid
+                        qv = lo_q
+                        chk[inj]["verified_by_bisection_W"] = round(qv, 1)
+                qa[inj] = round(q, 1)
+                qverified[inj] = round(qv, 1)
             per[n] = {"dT_dQ_K_per_W": {k: round(v, 4) for k, v in d.items()},
                       "headroom_to_ceiling_K": round(head, 1),
-                      "Q_NEU_allowable_W_linearised": {k: (round(head / v, 1) if head > 0 and v > 0 else 0.0)
-                                                       for k, v in d.items()}}
+                      "Q_ICP_allowable_W_linearised_incl_row86_margin": qa,
+                      "resolve_check_at_1_2_x_allowable": chk,
+                      "Q_ICP_allowable_W_verified_incl_row86_margin": qverified}
         infl[label] = per
     allow = {}
     for inj in ("PO", "BP"):
-        allow[inj] = {"min_over_nodes": min(infl[c][n]["Q_NEU_allowable_W_linearised"][inj] for c in infl for n in infl[c])}
+        k = "Q_ICP_allowable_W_verified_incl_row86_margin"
+        allow[inj] = {"min_over_nodes": min(infl[c][n][k][inj] for c in infl for n in infl[c])}
         for n in ("WI", "WO", "CI", "CO"):
-            allow[inj][n] = min(infl[c][n]["Q_NEU_allowable_W_linearised"][inj] for c in infl)
+            allow[inj][n] = min(infl[c][n][k][inj] for c in infl)
     return infl, allow
 
 
-GAP_REFERENCE = ("LV-BASE", "orbit_hot", 60.0)   # the hottest baseline combination (row-85 60 degC mount case)
+BISECT_STEPS = 30   # bisection steps of the verified allowance (resolution q_lin / 2^30; a numerical setting)
+
+
+def _inject(loads, links, bnd, km, coil20, inj, q):
+    """Re-solve with q W added at node inj; None when the state leaves the H2-5 model domain (no extrapolation)."""
+    l3 = dict(loads)
+    l3[inj] = l3[inj] + q
+    try:
+        return _solve_retry(l3, links, bnd, km, coil20)
+    except RuntimeError as e:
+        if "no extrapolation" not in str(e):
+            raise
+        return None
+
+
+def _linearity(infl_all) -> dict:
+    """Summary of the re-solve checks: sub-linear (re-solved rise <= linearised rise) => the linearised allowance is
+    conservative at the checked points."""
+    rs = [c for lv in infl_all.values() for case in lv.values() for nd in case.values()
+          for c in nd["resolve_check_at_1_2_x_allowable"].values()]
+    ins = [c for c in rs if not c["model_domain_exceeded"]]
+    sub = all(c["rise_resolved_K"] <= c["rise_linearised_K"] + 1e-6 for c in ins)
+    ok = all(c["within_ceiling_after_allowance"] for c in rs)
+    rat = [c["rise_resolved_K"] / c["rise_linearised_K"] for c in ins if c["rise_linearised_K"] > 0]
+    return {"checks": len(rs), "model_domain_exceeded": len(rs) - len(ins),
+            "all_sub_linear_inside_domain": sub, "all_within_ceiling_after_allowance": ok,
+            "replaced_by_bisection": sum(1 for c in rs if "verified_by_bisection_W" in c),
+            "ratio_resolved_over_linearised_range": ([round(min(rat), 3), round(max(rat), 3)] if rat else None),
+            "rule": ("the allowance used everywhere is the VERIFIED one: the linearised value when its re-solve stays "
+                     "inside the model domain and at or below the ceiling, else the bisection value")}
+
+
+# search-gap reference combinations (review finding: one reference is not enough): the hottest baseline combination
+# and the open-body radiator lever at the same case (where an independent probe found a larger gap on the outer coil)
+GAP_REFERENCES = (("LV-BASE", "orbit_hot", 60.0), ("LV-OPEN", "orbit_hot", 60.0))
+SEARCH_SENSITIVE_K = 10.0   # PROPOSED reporting flag (OQ-A907-10): margin after allowance below this -> search-sensitive
 
 
 def recompute_thermal() -> dict:
@@ -966,16 +1095,17 @@ def recompute_thermal() -> dict:
              "searched_T_max_C_same_v1_inputs": e_v1["WI"]["T_max_C"],
              "note": ("the v1 OAT corner is reproduced; the coordinate ascent with the SAME v1 inputs gives "
                       + ("a higher T_max, i.e. the v1 11.2 K margin was itself optimistic"
-                         if e_v1["WI"]["T_max_C"] > e_v1["WI"]["oat_corner_T_max_C"] else "no higher T_max")),
+                         if e_v1["WI"]["T_max_C"] > e_v1["WI"]["oat_corner_T_max_C"] else "no higher T_max")
+                      + "; the searched value is itself a local-search result (a lower estimate of the true maximum; "
+                      "a more exhaustive search can find a few tenths of a kelvin more)"),
              "source": src("H25", "/margins_at_P_d_max")}
-    lv0, c0, t0 = GAP_REFERENCE
     cases = [("ground", None)] + [(c, t) for c in ("orbit_hot", "orbit_cold") for t in T_MOUNT_CASES_C]
     labels = {(c, t): (c if t is None else f"{c}@T_mount={t:g}C") for c, t in cases}
     dom_case = ("orbit_hot", max(T_MOUNT_CASES_C))
     searched_T = {("ground", None), dom_case}
     nodes = ["AN", "WI", "WO", "PI", "PO", "BP", "CI", "CO"]
-    tasks = [(("gap",), "gap", (_ranges(pm, c0, "hall_icp_neutralizer", t0, lv0, kf["factor"]), fx, c0, FINISH_BASE,
-                                P_d))]
+    tasks = [(("gap", lv0, c0, t0), "gap", (_ranges(pm, c0, "hall_icp_neutralizer", t0, lv0, kf["factor"]), fx, c0,
+                                            FINISH_BASE, P_d)) for lv0, c0, t0 in GAP_REFERENCES]
     for lever in LEVERS:
         for case, tm in cases:
             rg = _ranges(pm, case, "hall_icp_neutralizer", tm, lever, kf["factor"])
@@ -990,9 +1120,10 @@ def recompute_thermal() -> dict:
         tasks.append((("c1", lever, "ground"), "env", (rg, fx, "ground", FINISH_BASE, P_d, SEARCH_OUTS)))
     envs = _map_envelopes(tasks)
     # search-gap check -> search allowance used in every verdict
-    gap = envs[("gap",)]
-    SEARCH["allowance_K"] = max(v for k, v in gap.items() if k != "Q_mount_W")
-    SEARCH["allowance_W"] = gap["Q_mount_W"]
+    gaps = {f"{lv0} / {c0} @ T_mount {t0:g} degC": envs[("gap", lv0, c0, t0)] for lv0, c0, t0 in GAP_REFERENCES}
+    # one allowance for every node: the largest gap over every searched output and every reference combination
+    SEARCH["allowance_K"] = max(v for g in gaps.values() for k, v in g.items() if k != "Q_mount_W")
+    SEARCH["allowance_W"] = max(g["Q_mount_W"] for g in gaps.values())
     # dominated orbit cases: temperature outputs bounded by the searched orbit_hot @ 60 degC case of the same lever
     # (comparison principle of the cooperative network: a higher mount temperature or extra absorbed environmental
     # load never lowers a node temperature; checked below on the OAT corners)
@@ -1009,18 +1140,25 @@ def recompute_thermal() -> dict:
                 if env[o]["oat_corner_T_max_C"] > denv[o]["T_max_C"] + 1e-6:
                     raise RuntimeError(f"dominance check failed: {lever} {labels[(case, tm)]} {o}")
                 env[o]["T_max_C"] = denv[o]["T_max_C"]
-                env[o]["search"] = f"bounded by the searched {dom_label} case (dominance; own OAT corner shown)"
+                env[o]["domain_flags_at_T_max_state"] = dict(denv[o]["domain_flags_at_T_max_state"])
+                env[o]["search"] = (f"bounded by the searched {dom_label} case of the same lever set by a "
+                                    "comparison-principle ARGUMENT (not a computed bound; spot-checked on the OAT "
+                                    "corners only); own OAT corner shown")
 
     out_cfg = {"hall_icp_neutralizer": {}, "hall_c1_reference": {}}
     corners_keep = {}
 
-    def rec_of(env, nds):
+    def rec_of(env, nds, cfg):
         r = {"nodes": {}, "Q_mount_W": env["Q_mount_W"], "domain_exits": env["domain_exits"]}
         for n in nds:
             d = dict(env[n], **_verdict(n, env[n], limits))
             if env["domain_exits"] and d.get("limit_C") is not None:
                 # a trial state left the iron table domain (> 900 degC somewhere): never counted as closing
                 d["verdict"] = "DO_NOT_CLOSE_MODEL_DOMAIN_EXCEEDED"
+                d.pop("search_sensitive", None)
+            if cfg == "hall_icp_neutralizer" and d["verdict"] == "CLOSES":
+                # review finding: the network carries 0 W of ICP module heat into H-1 (ICP-43 TBD)
+                d["closes_conditional_on"] = ICP_HEAT_CONDITION
             ct = _coating(n, env[n], limits)
             if ct:
                 d["exterior_coating"] = ct
@@ -1032,15 +1170,15 @@ def recompute_thermal() -> dict:
         env, corners = envs[key]
         k0, lever, label = key
         if k0 == "icp":
-            out_cfg["hall_icp_neutralizer"].setdefault(lever, {})[label] = rec_of(env, nodes)
+            out_cfg["hall_icp_neutralizer"].setdefault(lever, {})[label] = rec_of(env, nodes, "hall_icp_neutralizer")
             if lever in INFLUENCE_LEVERS and label in (labels[("ground", None)], dom_label):
                 corners_keep.setdefault(lever, {})[label] = (a[2], a[0], corners)
         elif k0 == "bare":
-            r = rec_of(env, nodes)
+            r = rec_of(env, nodes, "hall_icp_neutralizer")
             r["method"] = "v1 OAT adverse corner only (reference for the coating lever; not a searched bound)"
             out_cfg["hall_icp_neutralizer"].setdefault(lever, {})[label] = r
         else:
-            out_cfg["hall_c1_reference"].setdefault(lever, {})[label] = rec_of(env, nodes + ["CB"])
+            out_cfg["hall_c1_reference"].setdefault(lever, {})[label] = rec_of(env, nodes + ["CB"], "hall_c1_reference")
 
     icp = out_cfg["hall_icp_neutralizer"]
     # mount heat vs row 85 allowable conducted heat (orbit cases), every lever set
@@ -1101,6 +1239,35 @@ def recompute_thermal() -> dict:
     infl_all, allow_all = {}, {}
     for lever_i in INFLUENCE_LEVERS:
         infl_all[lever_i], allow_all[lever_i] = _influence(corners_keep[lever_i], fx, P_d, limits)
+    lin = _linearity(infl_all)
+    for n in ("WI", "WO", "CI", "CO"):
+        sm = summary[n]
+        sm["brief_verdict_at_baseline"] = ("CLOSES" if sm["status"] == "CLOSES" else "DO_NOT_CLOSE")
+        closers = (["LV-BASE"] if sm["status"] == "CLOSES" else []) + sm["levers_that_close_every_case"]
+        sm["closes_conditional_on"] = ICP_HEAT_CONDITION
+        sm["icp_heat_allowable_W_per_closing_lever_set"] = {
+            lv: {inj: allow_all[lv][inj][n] for inj in ("PO", "BP")} for lv in closers}
+        sm["search_sensitive_closing_sets"] = sorted(
+            lv for lv in closers if any(icp[lv][c]["nodes"][n].get("search_sensitive") for c in icp[lv]))
+        doms = sorted({f"{lv}: " + ", ".join(k for k, f in sorted(icp[lv][c]["nodes"][n]
+                                                                  ["domain_flags_at_T_max_state"].items()) if f)
+                       for lv in closers for c in icp[lv]
+                       if any(icp[lv][c]["nodes"][n]["domain_flags_at_T_max_state"].values())})
+        sm["closing_sets_with_model_domain_continuation"] = doms
+    for n in ("AN", "PI", "PO", "BP"):
+        summary[n]["brief_verdict_at_baseline"] = "OPEN_LIMIT_TBD"
+    an = [icp[lv][c]["nodes"]["AN"]["T_max_C"] for lv in LEVERS for c in icp[lv]]
+    an_best = min((max(icp[lv][c]["nodes"]["AN"]["T_max_C"] for c in icp[lv]), lv) for lv in LEVERS)
+    summary["AN"]["design_driver"] = {
+        "worst_case_T_max_range_C": [min(an), max(an)],
+        "lowest_worst_case_over_lever_sets_C": {"lever": an_best[1], "T_max_C": an_best[0]},
+        "statement": ("no lever set evaluated brings the searched/bounded anode worst case below "
+                      f"{an_best[0]:g} degC (lowest, {an_best[1]}); the verdict stays OPEN_LIMIT_TBD because row 87 "
+                      "forbids an unsourced anode target, but the anode material (316L is only the H-1 engineering "
+                      "baseline, row 106) and its thermal path are a DESIGN DRIVER: a sourced continuous-use limit of "
+                      "the selected material must exceed the anode worst case + 50 K, or the anode heat path must "
+                      "change (row 87 derivation from the selected material's oxidation/electrical/creep data)"),
+        "evidence_class": "model-derived"}
     return {
         "method": ("H2-5 builder imported read-only (build_parameters, ranges_for, assemble/solve: 9-node steady "
                    "network, Newton solve, energy-balance closure check). Worst case per output = the H2-5 envelope "
@@ -1127,12 +1294,21 @@ def recompute_thermal() -> dict:
                                   "(NOT_VALIDATED), so a CLOSES verdict is conditional on their validation; never "
                                   "relaxed")},
         "search": {"outputs": list(SEARCH_OUTS), "grid_points_per_input": SEARCH_GRID,
-                   "gap_check": {"reference": {"lever": lv0, "case": c0, "T_mount_C": t0},
+                   "gap_check": {"references": [{"lever": lv0, "case": c0, "T_mount_C": t0}
+                                                for lv0, c0, t0 in GAP_REFERENCES],
                                  "refine_grid_points_per_input": REFINE_GRID, "random_starts_per_output": GAP_STARTS,
-                                 "seed": GAP_SEED, "gap_per_output": gap},
+                                 "seed": GAP_SEED, "gap_per_reference_and_output": gaps},
                    "allowance_K": SEARCH["allowance_K"], "allowance_W": SEARCH["allowance_W"],
+                   "allowance_rule": ("the largest gap over every searched output and every reference combination, "
+                                      "applied uniformly to every node (not per node, so no node gets a smaller "
+                                      "allowance than any observed gap)"),
                    "use": ("added to every searched T_max (K) / Q_mount max (W) before the verdict; a heuristic "
-                           "allowance from one reference combination, not a proof of the global maximum"),
+                           "allowance from a finite number of reference combinations, NOT an upper bound of the "
+                           "search error and not a proof of the global maximum: an independent search can find a "
+                           "somewhat higher value. Every CLOSES whose margin to the design ceiling after the "
+                           "allowance is below the search-sensitivity flag is marked search_sensitive"),
+                   "search_sensitive_flag_K": {"value": SEARCH_SENSITIVE_K, "status": "PROPOSED (OQ-A907-10)",
+                                               "effect": "reporting flag only; never changes a verdict"},
                    "evidence_class": "model-derived"},
         "limits": limits,
         "coil_conductor_factor": kf,
@@ -1147,7 +1323,7 @@ def recompute_thermal() -> dict:
         "bn_wall_11_2K_case": bn_case,
         "mount_heat_vs_row85": mount,
         "row85_compatible_levers_100W": sorted(lv for lv, ok in row85_ok.items() if ok),
-        "overall": _overall(summary, row85_ok),
+        "overall": _overall(summary, row85_ok, summary["AN"]["design_driver"]),
         "hall_c1_reference_note": ("NOT a verdict on hall_c1_reference: the ground case couples C1 heat through the v1 "
                                    "CENTRAL-cathode path (G_cath_mount to the back pole, A_cath_ext), a geometry this "
                                    "lane abandons (row 79, external C1 on KC-1). It is kept only as a sensitivity "
@@ -1155,13 +1331,23 @@ def recompute_thermal() -> dict:
                                    "into H-1 is TBD - requires the KC-1 module drawing and view factors (ICP-05); the "
                                    "zero-coupling case equals the hall_icp_neutralizer ground rows"),
         "icp_heat_into_h1": {
-            "note": ("ICP module heat entering H-1 is TBD (ICP-43 total module heat load, PENDING P_d,max). Influence "
-                     "coefficients: +1 W injected at the outer front pole PO (nearest IP-EXIT/IP-NEU) or at the back "
-                     "plate BP, re-solved at each node's searched hot point; allowance = (design ceiling - search "
-                     "allowance - T) / coefficient (linearised, model-derived; 0 where the node does not close). "
-                     "Radiative links make the response super-linear, so the allowance is an upper estimate valid for "
-                     "small Q only; values of the order of the discharge allocation or above are not meaningful; every allowance "
-                     "must be re-solved with the actual ICP-43 load"),
+            "note": ("ICP module heat entering H-1 is TBD (ICP-43 total module heat load, PENDING P_d,max); the "
+                     "thermal verdicts of hall_icp_neutralizer are evaluated with 0 W of it and are conditional on it. "
+                     "Influence coefficients: +1 W injected at the outer front pole PO (nearest IP-EXIT/IP-NEU) or "
+                     "at the back plate BP, re-solved at each node's searched hot point; allowable ICP heat Q = "
+                     "(design ceiling - search allowance - T) / (1.2 x coefficient), i.e. the row-86 20 % heat-load "
+                     "margin is applied to the ICP heat (0 W where the node does not close). Each allowable Q is "
+                     "then checked by re-solving the network with 1.2 x Q injected (resolve_check_at_1_2_x_allowable; "
+                     "summary in linearity_check): " + ("inside the model domain the re-solved rise never exceeds "
+                     "the linearised rise (sub-linear response: radiation rejects heat faster as T rises), so the "
+                     "linearised allowance is conservative there" if lin["all_sub_linear_inside_domain"] else
+                     "at least one re-solved rise EXCEEDS the linearised rise (super-linear somewhere)") +
+                     "; where the re-solve leaves the model domain or the ceiling, the allowance is replaced by a "
+                     "bisection value, and only verified allowances are reported in min_allowance_W. The injection location/split of the real module is TBD (view factors, "
+                     "ICP-05); allowances far above the discharge allocation only mean the node is insensitive to "
+                     "the injection point, not that such a load is acceptable elsewhere; every allowance must be "
+                     "re-solved with the actual ICP-43 load"),
+            "linearity_check": lin,
             "per_lever_and_case": infl_all,
             "min_allowance_W": allow_all},
         "solver_initial_guess_note": ("initial-guess restarts (300/600/800 K) are used only when the Newton path leaves "
@@ -1424,8 +1610,11 @@ def revision_register(rc: dict) -> list:
     L.append(R("REV-18", "H2-2", "H22-18", "C1 conduction path",
                old("H22", "H22-18"),
                {"requirement": "C1 tube -> module flange -> KC-1 carrier (not the H-1 inner core); C1 radiation onto "
-                               "the inner coil is eliminated; the H2-5 C1-to-H-1 coupling is kept only as a "
-                               "conservative bound in the hall_c1_reference ground case (recomputations.h25_thermal_rerun)",
+                               "the inner coil is eliminated; the v1 central-cathode C1-to-H-1 coupling is kept only as a "
+                               "SENSITIVITY in the hall_c1_reference ground case (recomputations.h25_thermal_rerun; "
+                               "NOT a verdict and NOT shown to be conservative for an external module that radiates "
+                               "toward the front pole and channel); the external KC-1 coupling is TBD - requires the "
+                               "module drawing and view factors (ICP-05)",
                 "value": "carrier path"},
                "-", [row(79, ("EXTERNAL C1",))], "row 79", "assumed", "REVISED_PROPOSED", "LOCK-1",
                recomputation="recomputations/h25_thermal_rerun", applies_to=C1o))
@@ -1668,8 +1857,10 @@ def revision_register(rc: dict) -> list:
     L.append(R("REV-46", "H2-5", "H25-10", "C1 heat into the H-1 environment",
                old("H25", "H25-10"),
                {"requirement": "hall_icp_neutralizer: 0 W (no C1, OQ-A902-04; ICP heat via influence coefficients); "
-                               "hall_c1_reference ground article: v1 range x 1.2 through the v1 coupling (conservative "
-                               "bound for an external module)",
+                               "hall_c1_reference ground article: v1 range x 1.2 through the v1 central coupling as a "
+                               "SENSITIVITY only (not a verdict; not shown to be conservative for an external module "
+                               "downstream of IP-EXIT, which radiates toward the front pole and channel); the external "
+                               "KC-1 coupling is TBD - requires the module drawing and view factors (ICP-05)",
                 "value": {"hall_icp_neutralizer": 0.0,
                           "hall_c1_reference": [sig(v * HEAT_LOAD_MARGIN, 4) for v in old("H25", "H25-10")["value"]]}},
                "W", [a91("OQ-A902-04", ("no combined",)), row(79, ("EXTERNAL C1",)), row(86, ("20%",))],
@@ -1678,8 +1869,10 @@ def revision_register(rc: dict) -> list:
     L.append(R("REV-47", "H2-5", "H25-11", "heat entering H-1 from a module slot",
                old("H25", "H25-11"),
                {"requirement": "no upstream pre-ionizer slot (IP-DN passive); the downstream ICP module heat into H-1 "
-                               "is TBD (ICP-43) and is bounded here by influence coefficients and a linearised "
-                               "allowance at the outer front pole / back plate",
+                               "is TBD (ICP-43); every hall_icp_neutralizer thermal CLOSES is evaluated with 0 W of it "
+                               "and holds only while 1.2 x Q_ICP->H-1 (row 86) <= the allowable ICP heat given here per "
+                               "lever set, node and injection point (outer front pole PO / back plate BP; linearised "
+                               "with the 1.2 factor, checked by re-solving the network)",
                 "value": {"min_allowance_W": th["icp_heat_into_h1"]["min_allowance_W"]}},
                "W", [row(61, ("SUPERSEDED",)), lane_item("A9-03", "ICP-43"), lane_item("A9-03", "ID-26")],
                "rows 61, 109; ICP-43", "model-derived", "REVISED_RECOMPUTED", "LOCK-1",
@@ -1813,10 +2006,17 @@ def revision_register(rc: dict) -> list:
     bpb_rows = (1300.0, 1350.0, 1500.0)   # OQ-A902-07 context, row 109 allocation, H24-01 RFP bound
     L.append(R("REV-67", "H2-4", "H24-33", "bus input current at P_bus (harness / protection sizing)",
                old("H24", "H24-33"),
-               {"requirement": "internal propulsion bus current = P_bus / 100 V (row 111); the spacecraft-side input "
+               {"requirement": "internal propulsion bus current UPPER BOUND at the nominal 100 V = P_bus / 100 V (row "
+                               "111): under the A9-02 ledger rule P_bus = P / (eta_slot x eta_front_end) and some "
+                               "loads may take a direct path, so the power on the internal bus is <= P_bus and the "
+                               "current is <= P_bus / 100 V at the nominal voltage; at the low edge of the regulation "
+                               "band the bound is P_bus / V_bus,min (regulation band TBD); the spacecraft-side input "
                                "current stays TBD while the spacecraft front end is configurable (row 111: 100 V is "
                                "not an RFP spacecraft interface)",
-                "value": {"internal_bus_current_A": {f"{p:g} W": sig(p / 100.0, 5) for p in bpb_rows},
+                "value": {"internal_bus_current_upper_bound_at_nominal_100V_A": {f"{p:g} W": sig(p / 100.0, 5)
+                                                                                 for p in bpb_rows},
+                          "internal_bus_current_upper_bound_at_V_bus_min_A": f"{TBD} the 100 V internal-bus "
+                                                                             "regulation band (A9-02 / PPU spec)",
                           "spacecraft_input_current_A": f"{TBD} the spacecraft EPS bus voltage and front-end efficiency"}},
                "A", [row(111, ("100 V",)), row(109, ("1.35 kW",)), a91("OQ-A902-07", ("1300",)),
                      lane_item("A9-02", "H24-33 NEEDS_REVISION")],
@@ -2041,8 +2241,9 @@ def interface_demands(rc) -> list:
       "window geometry; note the thermal rerun itself uses the H2-5 ECHT-analog geometry, not RP-1); (b) radiator "
       "lever LV-RAD enlarges the MC-1 body from the H2-5 lower ends D 0.14 m / L 0.10 m to D 0.18 m / L 0.13 m: "
       "mass delta TBD - requires the MC-1 body drawing (shell thickness, open fraction) - not quantified here; "
-      "(c) C1 hardware (module, keeper supply, two series valves, filter/getter) leaves the primary A9 flight BOM "
-      "(ground article only); (d) ICP module, RF generator/matching/feedthrough, collector/bias hardware added "
+      "(c) C1 hardware (module, keeper supply, the C1 cathode-branch valves of H22-30, filter/getter) leaves the "
+      "primary A9 flight BOM (ground article only); the dual series isolation on the high-pressure Xe path that "
+      "feeds the Hall anode STAYS in the flight BOM (rows 55, 90) - A9-06 must not subtract it; (d) ICP module, RF generator/matching/feedthrough, collector/bias hardware added "
       "(row 59); (e) stand payload >= 25 kg is a ground item",
       {"LV-COIL_copper_delta_kg_lower_bound": old("H21", "H21-24")["value"]["copper_kg"],
        "LV-COIL_copper_delta_basis": "H21-24 copper_kg (RP-1 geometry); lower bound (mean turn length grows)",
@@ -2064,9 +2265,11 @@ def interface_demands(rc) -> list:
       "ceramic wire rating at representative gas, coupler/sensor calibration scope, isolator withstand)", None, "-",
       pending("A9-09", "quotations"))
     D("IDA7-07", "A9-07", "A9-03 " + A9_LANES["A9-03"], "H-1 thermal allowance for ICP module heat entering H-1 "
-      "(linearised at each node's searched hot point in the governing cases ground and orbit_hot @ 60 degC, min over "
-      "cases, per lever set and node; headroom = design ceiling - search allowance - T; 0 W where the node does not "
-      "close): injection at the outer front pole PO / back plate BP",
+      "(allowable Q_ICP->H-1 with the row-86 1.2 heat-load margin applied: 1.2 x Q <= headroom; linearised at each "
+      "node's searched hot point in the governing cases ground and orbit_hot @ 60 degC and checked by re-solving; "
+      "min over cases, per lever set and node; headroom = design ceiling - search allowance - T; 0 W where the node "
+      "does not close): injection at the outer front pole PO / back plate BP. Every hall_icp_neutralizer thermal "
+      "CLOSES is conditional on the actual ICP-43 heat meeting this allowance",
       th["icp_heat_into_h1"]["min_allowance_W"], "W", "PRELIMINARY (model-derived; closes ID-17 in part)")
     D("IDA7-08", "A9-03 " + A9_LANES["A9-03"], "A9-07", "total ICP module heat load Q_mod and its split into H-1 "
       "(ICP-43)", None, "W", "PENDING docs/architecture_comparison/power_boundary_a9/ (P_d,max; ICP-43)")
@@ -2254,6 +2457,13 @@ def open_owner_questions(rc) -> list:
                                          "environmental solar/albedo/OLR inputs at their v1 hot/cold bounds. Should the "
                                          "20 % also apply to environmental loads?",
          "proposed_answer": "owner call; this lane's reading (dissipated only) is an interpretation, recorded as such"},
+        {"id": "OQ-A907-10", "question": "The thermal worst case is found by a local search plus a heuristic search "
+                                         "allowance (not an upper bound). CLOSES verdicts whose margin to the design "
+                                         f"ceiling after the allowance is below {SEARCH_SENSITIVE_K:g} K are flagged "
+                                         "search_sensitive. Accept this PROPOSED reporting threshold, and require a "
+                                         "global-optimisation or interval-bound check of every search-sensitive "
+                                         "verdict before LOCK-1?",
+         "proposed_answer": "owner call; the flag never changes a verdict, only marks it for an independent check"},
         {"id": "OQ-A907-07", "question": "Develop a flight C1 integration (external mount on the flight article, two "
                                          "series valves, keeper supply) now for the fallback architecture "
                                          "hall_c1_reference, or defer until C1 is chosen for flight?",
@@ -2398,7 +2608,18 @@ def key_findings(rc) -> list:
         f"inner coil {sm['CI']['baseline_worst_T_max_C']:g} (OAT {sm['CI']['baseline_worst_oat_corner_T_max_C']:g}; ceiling "
         f"{ceil_coil:g}), outer coil {sm['CO']['baseline_worst_T_max_C']:g} (OAT "
         f"{sm['CO']['baseline_worst_oat_corner_T_max_C']:g}) degC: the OAT corner alone under-estimates the maximum "
-        f"(outer coil by {sm['CO']['baseline_worst_T_max_C'] - sm['CO']['baseline_worst_oat_corner_T_max_C']:.1f} K).",
+        f"(outer coil by {sm['CO']['baseline_worst_T_max_C'] - sm['CO']['baseline_worst_oat_corner_T_max_C']:.1f} K). "
+        f"Brief verdicts at baseline: " + ", ".join(f"{n} {sm[n]['brief_verdict_at_baseline']}" for n in
+                                                    ("WI", "WO", "CI", "CO")) +
+        ". Every hall_icp_neutralizer CLOSES is CONDITIONAL: it is evaluated with 0 W of ICP module heat into H-1 "
+        "(ICP-43 TBD) and holds only while 1.2 x Q_ICP->H-1 <= the allowable ICP heat at baseline: " +
+        ", ".join(f"{n} {sm[n]['icp_heat_allowable_W_per_closing_lever_set']['LV-BASE']['PO']:g} W at PO / "
+                  f"{sm[n]['icp_heat_allowable_W_per_closing_lever_set']['LV-BASE']['BP']:g} W at BP"
+                  for n in ("WI", "WO", "CI", "CO")
+                  if "LV-BASE" in sm[n]['icp_heat_allowable_W_per_closing_lever_set']) +
+        " (module sized for 0-500 W forward RF, row 72). Search-sensitive baseline closures: " +
+        (", ".join(n for n in ("WI", "WO", "CI", "CO") if "LV-BASE" in sm[n]["search_sensitive_closing_sets"])
+         or "none") + ".",
         f"K3 the v1 11.2 K BN-wall case is {b['status']} (with the SAME v1 inputs the search finds "
         f"{b['v1']['searched_T_max_C_same_v1_inputs']:g} degC vs the v1 {b['v1']['v1_T_max_C']:g}). Single levers that "
         f"close it in every case: {', '.join(lv for lv in b['levers_that_close'] if len(LEVER_PARTS[lv]) == 1) or 'none'}; "
@@ -2414,12 +2635,14 @@ def key_findings(rc) -> list:
         + (", ".join(th["row85_compatible_levers_100W"]) or "none") + "; minimal such closing sets per node: WI "
         + _mins(sm["WI"]["minimal_closing_within_row85_100W"]) + "; WO " + _mins(sm["WO"]["minimal_closing_within_row85_100W"])
         + "; CO " + _mins(sm["CO"]["minimal_closing_within_row85_100W"]) + "; CI " + _mins(sm["CI"]["minimal_closing_within_row85_100W"])
-        + ". LV-ALL-ISO is not the only route; it also carries the largest buildability risk: it contains LV-COIL "
+        + ". Each of these is also conditional on the ICP-43 heat into H-1 (allowable heat per set in "
+        "closure_summary_hall_icp_neutralizer.*.icp_heat_allowable_W_per_closing_lever_set). LV-ALL-ISO is not the only route; it also carries the largest buildability risk: it contains LV-COIL "
         "(NOT_DEMONSTRATED) together with LV-COND (D_core 50 mm), a pair without a buildability check. See OQ-A907-06.",
         f"K6 pole/core, anode and exterior-coating limits are TBD (B_sat(T), anode material, coating datasheet); "
         f"necessary Curie checks: PI {', '.join(sm['PI']['necessary_check'])}, PO {', '.join(sm['PO']['necessary_check'])}, "
         f"BP {', '.join(sm['BP']['necessary_check'])}; the coated PO/BP surfaces must withstand up to "
-        f"{', '.join(f'{k} {v:g}' for k, v in coating_need(th, 'LV-BASE').items())} degC at baseline (OQ-A907-08).",
+        f"{', '.join(f'{k} {v:g}' for k, v in coating_need(th, 'LV-BASE').items())} degC at baseline (OQ-A907-08). "
+        f"Anode: {sm['AN']['design_driver']['statement']}.",
         f"K7 ICP-46 keeper isolation basis {ds['icp46_isolation_basis_V']['value']:g} V (1.5 x 600 V), 1.0 kV DC "
         "development hipot, separate 600 V pulse test; flight discharge-supply output current bounded by "
         f"{ds['flight_discharge_output_current_bound_A']['value']:g} A (1350 W / 180 V); stand I_d,max registration is an "
@@ -2441,7 +2664,10 @@ def hard_incompatibility_check(rc) -> dict:
     return {"verdict": "HARD_INCOMPATIBILITY_CANDIDATE" if cand else "NONE",
             "nodes": cand, "veto_claimed": False,
             "checked": "a node would be a candidate only if even its best corner exceeds the design ceiling in every "
-                       "lever set and case; limits are unvalidated supplier values, so no veto is claimed"}
+                       "lever set and case; limits are unvalidated supplier values, so no veto is claimed",
+            "not_covered": ("nodes without a recorded limit (AN, PI, PO, BP) cannot be checked; the anode is a design "
+                            "driver: " + rc["h25_thermal_rerun"]["closure_summary_hall_icp_neutralizer"]["AN"]
+                            ["design_driver"]["statement"])}
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -2589,10 +2815,16 @@ def render_md(doc) -> str:
              f"degC reproduced as {rp['reproduced_T_max_C']} degC (v1 OAT method); the search with the same v1 inputs "
              f"gives {rp['searched_T_max_C_same_v1_inputs']} degC.\n")
     L.append(f"Worst-case search: outputs {', '.join(sr['outputs'])}; {sr['grid_points_per_input']} trial points per "
-             f"input; search-gap check on {sr['gap_check']['reference']} (finer grid "
+             f"input; search-gap check on {len(sr['gap_check']['references'])} reference combinations (finer grid "
              f"{sr['gap_check']['refine_grid_points_per_input']} points, {sr['gap_check']['random_starts_per_output']} "
-             f"seeded random starts, seed {sr['gap_check']['seed']}): gaps {sr['gap_check']['gap_per_output']} -> search "
-             f"allowance {sr['allowance_K']} K / {sr['allowance_W']} W added before every verdict. {sr['use']}.\n")
+             f"seeded random starts, seed {sr['gap_check']['seed']}): gaps (K; W for Q_mount) "
+             + "; ".join(f"{k}: {v}" for k, v in sr['gap_check']['gap_per_reference_and_output'].items())
+             + f" -> search allowance {sr['allowance_K']} K / {sr['allowance_W']} W added before every verdict "
+             f"({sr['allowance_rule']}). {sr['use']} (flag {sr['search_sensitive_flag_K']['value']} K, "
+             f"{sr['search_sensitive_flag_K']['status']}; {sr['search_sensitive_flag_K']['effect']}). Dominated orbit "
+             "cases (orbit_cold, orbit_hot at 20/40 degC) carry the searched orbit_hot @ 60 degC maximum of the same "
+             "lever set by a comparison-principle argument, spot-checked on the OAT corners only: an argument, not a "
+             "computed bound.\n")
     L.append(f"Mount-temperature range: {th['t_mount_range_note']}.\n")
     L.append("### Limits used\n")
     L.append("| group | nodes | limit (degC) | design ceiling = abort (UBQ-06) / necessary ceiling | validation |\n"
@@ -2604,16 +2836,30 @@ def render_md(doc) -> str:
             f"necessary: {v['necessary_ceiling_C'] - MARGIN_K:g}" if v.get("necessary_ceiling_C") is not None else "TBD")
         L.append(f"| {k} | {', '.join(v['nodes'])} | {v.get('limit_C')} | {ceil} | {_fmt(v['validation'], 160)} |")
     L.append("\n### Closure summary (hall_icp_neutralizer, flight-representative cases, all levers evaluated)\n")
-    L.append("| node | status | baseline worst T_max searched / OAT (degC) | worst margin to limit (K) | baseline "
-             "nominal (degC) | levers closing every case | minimal closing sets within 100 W (buildability) | "
-             "necessary check |\n|---|---|---|---|---|---|---|---|")
+    L.append("Verdict vocabulary: `brief_verdict_at_baseline` is CLOSES / DO_NOT_CLOSE (live limit) or OPEN_LIMIT_TBD "
+             "(no validated limit); `status` refines it: CLOSES_WITH_SINGLE_LEVER / CLOSES_ONLY_WITH_COMBINED_LEVERS "
+             "mean DO_NOT_CLOSE at baseline but CLOSES with the named lever sets. **Every hall_icp_neutralizer CLOSES "
+             "is conditional**: " + ICP_HEAT_CONDITION + " (allowances per closing set below).\n")
+    L.append("| node | brief verdict at baseline | status | baseline worst T_max searched / OAT (degC) | worst margin "
+             "to limit (K) | baseline nominal (degC) | levers closing every case | minimal closing sets within 100 W "
+             "(buildability) | necessary check |\n|---|---|---|---|---|---|---|---|---|")
     for n, s in th["closure_summary_hall_icp_neutralizer"].items():
-        L.append(f"| {n} | {s['status']} | {s['baseline_worst_T_max_C']} / {s['baseline_worst_oat_corner_T_max_C']} | "
+        L.append(f"| {n} | {s['brief_verdict_at_baseline']} | {s['status']} | {s['baseline_worst_T_max_C']} / "
+                 f"{s['baseline_worst_oat_corner_T_max_C']} | "
                  f"{s['baseline_worst_margin_K']} | {s['baseline_nominal_T_C']} | "
                  f"{', '.join(s['levers_that_close_every_case']) or '-'} | {_mins(s['minimal_closing_within_row85_100W'])} | "
                  f"{', '.join(s['necessary_check']) or '-'} |")
+    L.append("\nConditions per closing lever set (allowable ICP heat into H-1 with the 1.2 margin, W at PO / BP; "
+             "search-sensitive sets; sets whose worst-case state uses a model-derived continuation):\n")
+    for n in ("WI", "WO", "CI", "CO"):
+        s = th["closure_summary_hall_icp_neutralizer"][n]
+        al = "; ".join(f"{lv} {v['PO']:g} / {v['BP']:g}" for lv, v in s["icp_heat_allowable_W_per_closing_lever_set"].items())
+        L.append(f"- **{n}**: ICP heat allowable: {al or 'no closing set'}; search-sensitive: "
+                 f"{', '.join(s['search_sensitive_closing_sets']) or 'none'}; model-domain continuation: "
+                 f"{'; '.join(s['closing_sets_with_model_domain_continuation']) or 'none'}")
+    L.append(f"- **AN** (design driver): {th['closure_summary_hall_icp_neutralizer']['AN']['design_driver']['statement']}")
     ov = th["overall"]
-    L.append(f"\nOverall: **{ov['status']}**; minimal lever sets closing every live node within 100 W: "
+    L.append(f"\nOverall: **{ov['status']}** (conditional on the ICP-43 heat allowance); minimal lever sets closing every live node within 100 W: "
              f"{_mins(ov['minimal_lever_sets_closing_all_live_nodes_and_row85_100W'])}. Open: {'; '.join(ov['open_items'])}.\n")
     L.append("\n### Worst-case T_max per lever (degC, max over cases; hall_icp_neutralizer)\n")
     res = th["results"]["hall_icp_neutralizer"]
@@ -2639,12 +2885,16 @@ def render_md(doc) -> str:
             q = r["Q_mount_W"]
             w = r["within_allowable_W"]
             L.append(f"| {lv} | {c} | {q['min_W']} / {q['nominal_W']} / {q['max_W']} | {w['25']} | {w['50']} | {w['100']} |")
-    L.append("\n### ICP heat into H-1 (linearised allowance, W; min over the governing cases)\n")
+    L.append("\n### ICP heat into H-1 (allowable Q_ICP->H-1 with the row-86 1.2 margin, W; min over the governing cases)\n")
     L.append("| lever | injection | min over nodes | WI | WO | CI | CO |\n|---|---|---|---|---|---|---|")
     for lv, per in th["icp_heat_into_h1"]["min_allowance_W"].items():
         for inj, v in per.items():
             L.append(f"| {lv} | {inj} | {v['min_over_nodes']} | {v['WI']} | {v['WO']} | {v['CI']} | {v['CO']} |")
-    L.append(f"\n{th['icp_heat_into_h1']['note']}\n")
+    lc = th["icp_heat_into_h1"]["linearity_check"]
+    L.append(f"\n{th['icp_heat_into_h1']['note']}. Re-solve check: {lc['checks']} checks "
+             f"({lc['model_domain_exceeded']} left the model domain, {lc['replaced_by_bisection']} replaced by "
+             f"bisection), all sub-linear inside the domain {lc['all_sub_linear_inside_domain']}, all within the ceiling after the allowance {lc['all_within_ceiling_after_allowance']}, "
+             f"re-solved / linearised rise ratio {lc['ratio_resolved_over_linearised_range']}.\n")
     L.append("### hall_c1_reference ground article - sensitivity only (v1 central-cathode coupling)\n")
     L.append(th["hall_c1_reference_note"] + ".\n")
     L.append("| lever | node | T_max (degC) | verdict |\n|---|---|---|---|")

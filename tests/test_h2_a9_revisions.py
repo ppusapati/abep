@@ -269,8 +269,9 @@ def test_thermal_rules_and_verdicts(doc):
     assert lim["BN_wall"]["limit_C"] == 900.0
     assert math.isclose(lim["coil_ceramic"]["limit_C"], (1000.0 - 32.0) * 5.0 / 9.0, abs_tol=1e-3)
     alw = th["search"]["allowance_K"]
-    assert alw >= 0.0 and alw == max(v for k, v in th["search"]["gap_check"]["gap_per_output"].items()
-                                     if k != "Q_mount_W")
+    gaps = th["search"]["gap_check"]["gap_per_reference_and_output"]
+    assert len(gaps) >= 2   # more than one reference combination (review finding)
+    assert alw >= 0.0 and alw == max(v for g in gaps.values() for k, v in g.items() if k != "Q_mount_W")
     for cfg, levers in th["results"].items():
         assert cfg in doc["configurations"]
         for lv, cases in levers.items():
@@ -391,8 +392,10 @@ def test_h2_4_flags_all_covered(doc):
             assert c["covered_by"] and all(r in rev for r in c["covered_by"]), f["h2_4_id"]
     # H24-33 re-derived on the 100 V internal bus (row 111)
     r67 = [r for r in doc["revision_register"] if r["h2_item"] == "H24-33"][0]
-    cur = r67["new"]["value"]["internal_bus_current_A"]
+    cur = r67["new"]["value"]["internal_bus_current_upper_bound_at_nominal_100V_A"]
     assert cur == {"1300 W": 13.0, "1350 W": 13.5, "1500 W": 15.0}
+    assert "UPPER BOUND" in r67["new"]["requirement"]
+    assert r67["new"]["value"]["internal_bus_current_upper_bound_at_V_bus_min_A"].startswith("TBD - requires")
     # REV-52: the partition defers to the full A9-02 slot list
     r52 = [r for r in doc["revision_register"] if r["h2_item"] == "OQ-H24-03"][0]
     assert r52["new"]["value"] == [x["slot"] for x in bpb["slots"]]
@@ -457,3 +460,76 @@ def test_review_fixes_documented(doc):
     d1 = [x for x in doc["interface_demands"] if x["id"] == "IDA7-01"][0]
     assert "LV-COIL_copper_delta_kg_lower_bound" in d1["value"]
     assert d1["value"]["LV-RAD_mass_delta_kg"].startswith("TBD - requires")
+
+
+def test_icp_heat_conditions_and_verified_allowances(doc):
+    """Review finding (major): every hall_icp_neutralizer CLOSES is conditional on the ICP-43 heat into H-1, with the
+    row-86 1.2 margin applied to that heat; allowances are verified by re-solving the network."""
+    th = doc["recomputations"]["h25_thermal_rerun"]
+    icp = th["results"]["hall_icp_neutralizer"]
+    for lv, cases in icp.items():
+        for c, rec in cases.items():
+            for n, e in rec["nodes"].items():
+                if e["verdict"] == "CLOSES":
+                    assert "1.2 x Q_ICP->H-1" in e["closes_conditional_on"], (lv, c, n)
+                    assert isinstance(e["search_sensitive"], bool)
+                    assert e["search_sensitive"] == (e["margin_to_design_ceiling_K"] < 10.0)
+                assert "domain_flags_at_T_max_state" in e
+    assert any("ICP-43" in x for x in th["overall"]["open_items"])
+    assert "1.2 x Q_ICP->H-1" in th["overall"]["status_conditional_on"]
+    ih = th["icp_heat_into_h1"]
+    assert "super-linear, so the allowance is an upper estimate" not in ih["note"]
+    for lv, cases in ih["per_lever_and_case"].items():
+        for c, per in cases.items():
+            for n, v in per.items():
+                for inj in ("PO", "BP"):
+                    lin = v["Q_ICP_allowable_W_linearised_incl_row86_margin"][inj]
+                    ver = v["Q_ICP_allowable_W_verified_incl_row86_margin"][inj]
+                    assert 0.0 <= ver <= lin + 1e-9
+                    if lin > 0:
+                        chk = v["resolve_check_at_1_2_x_allowable"][inj]
+                        if chk["within_ceiling_after_allowance"]:
+                            assert ver == lin
+                        else:
+                            assert ver == chk["verified_by_bisection_W"]
+                    # the 1.2 margin is inside the linearised allowance
+                    if lin > 0 and v["dT_dQ_K_per_W"][inj] > 0:
+                        assert math.isclose(lin * 1.2 * v["dT_dQ_K_per_W"][inj], v["headroom_to_ceiling_K"],
+                                            rel_tol=2e-2, abs_tol=0.2)
+        for inj in ("PO", "BP"):
+            for n in ("WI", "WO", "CI", "CO"):
+                assert ih["min_allowance_W"][lv][inj][n] == min(
+                    per[n]["Q_ICP_allowable_W_verified_incl_row86_margin"][inj] for per in cases.values())
+    for n in ("WI", "WO", "CI", "CO"):
+        s = th["closure_summary_hall_icp_neutralizer"][n]
+        assert s["brief_verdict_at_baseline"] == ("CLOSES" if s["status"] == "CLOSES" else "DO_NOT_CLOSE")
+        closers = (["LV-BASE"] if s["status"] == "CLOSES" else []) + s["levers_that_close_every_case"]
+        assert sorted(s["icp_heat_allowable_W_per_closing_lever_set"]) == sorted(closers)
+    lc = ih["linearity_check"]
+    assert lc["checks"] > 0 and lc["all_sub_linear_inside_domain"] is True
+
+
+def test_anode_design_driver_and_wording_fixes(doc):
+    th = doc["recomputations"]["h25_thermal_rerun"]
+    an = th["closure_summary_hall_icp_neutralizer"]["AN"]
+    assert an["brief_verdict_at_baseline"] == "OPEN_LIMIT_TBD"
+    icp = th["results"]["hall_icp_neutralizer"]
+    lows = [max(icp[lv][c]["nodes"]["AN"]["T_max_C"] for c in icp[lv]) for lv in th["levers"]]
+    assert an["design_driver"]["lowest_worst_case_over_lever_sets_C"]["T_max_C"] == min(lows)
+    assert "DESIGN DRIVER" in an["design_driver"]["statement"]
+    assert "anode" in doc["hard_incompatibility_check"]["not_covered"]
+    reg = {r["id"]: r for r in doc["revision_register"]}
+    for rid in ("REV-18", "REV-46"):
+        t = reg[rid]["new"]["requirement"]
+        assert "SENSITIVITY" in t and "conservative bound" not in t, rid
+    d1 = [x for x in doc["interface_demands"] if x["id"] == "IDA7-01"][0]["quantity"]
+    assert "STAYS in the flight BOM (rows 55, 90)" in d1
+    assert "OQ-A907-10" in {x["id"] for x in doc["open_owner_questions"]}
+
+
+def test_h21_worst_corner_uses_window_capability(doc):
+    h1 = doc["recomputations"]["h21_central_bore"]
+    for r in h1["rows"]:
+        f = r["external_c1_magnetic_floor_mm"]
+        assert f["nominal_assumptions"] <= f["upper_assumptions_own_width_capability_f_NI_1"] <= f["worst_case_assumptions"]
+    assert h1["inputs"]["window_wide_capability_G"] > 0
