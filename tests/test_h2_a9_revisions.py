@@ -54,6 +54,30 @@ REV_FIELDS = ("id", "h2_lane", "h2_item", "topic", "old", "new", "units", "drive
               "status", "freeze_point", "applies_to", "recomputation")
 
 
+# A9-10 review repair 4 (A9.2 icp_coupled_thermal): the uncoupled-sensitivity values of hall_icp_neutralizer carry
+# UNCOUPLED_SENSITIVITY_* names; the arithmetic checks map them back to the lane's rule vocabulary (stated here
+# independently of the overlay, and checked against the document's a9_2_sensitivity_vocabulary).
+_SENS_BACK = {"UNCOUPLED_SENSITIVITY_WITHIN_LIMIT": "CLOSES",
+              "UNCOUPLED_SENSITIVITY_WITHIN_LIMIT_WITH_SINGLE_LEVER": "CLOSES_WITH_SINGLE_LEVER",
+              "UNCOUPLED_SENSITIVITY_WITHIN_LIMIT_ONLY_WITH_COMBINED_LEVERS": "CLOSES_ONLY_WITH_COMBINED_LEVERS",
+              "UNCOUPLED_SENSITIVITY_WITHIN_LIMIT_WITH_LEVERS": "CLOSES_WITH_LEVERS",
+              "UNCOUPLED_SENSITIVITY_BELOW_CEILING": "PASS",
+              "UNCOUPLED_SENSITIVITY_CONDITIONALLY_WITHIN_LIMIT": "CONDITIONALLY_RESOLVED"}
+
+
+def _back(v):
+    if isinstance(v, list):
+        return [_back(x) for x in v]
+    return _SENS_BACK.get(v, v) if isinstance(v, str) else v
+
+
+def _sens(e: dict, key: str):
+    """A9.2 ICP_COUPLED_THERMAL: pass-like hall_icp_neutralizer statuses are reported UNRESOLVED; the computed
+    (uncoupled) value is kept beside them as uncoupled_sensitivity_<key> under an UNCOUPLED_SENSITIVITY_* name. The
+    arithmetic checks use that value, mapped back to the rule vocabulary."""
+    return _back(e.get("uncoupled_sensitivity_" + key, e[key]))
+
+
 def _sha(rel: str) -> str:
     return hashlib.sha256((REPO / rel).read_bytes()).hexdigest()
 
@@ -292,7 +316,7 @@ def test_thermal_rules_and_verdicts(doc):
                         if rec["domain_exits"]:
                             assert e[key] == "DO_NOT_CLOSE_MODEL_DOMAIN_EXCEEDED"
                         else:
-                            assert (e[key] == "CLOSES") == (e["T_max_C"] + alw <= ceil + 1e-9), (cfg, lv, c, n)
+                            assert (_sens(e, key) == "CLOSES") == (e["T_max_C"] + alw <= ceil + 1e-9), (cfg, lv, c, n)
                     else:
                         assert e[key] == "OPEN_LIMIT_TBD"
     # dominated orbit cases carry the searched orbit_hot @ 60 degC maximum of the same lever as their bound
@@ -309,8 +333,9 @@ def test_thermal_rules_and_verdicts(doc):
     # the v1 11.2 K case is reproduced with the imported solver
     rep = th["reproduction_check"]
     assert rep["v1_margin_worst_K"] == 11.2 and abs(rep["reproduced_T_max_C"] - rep["v1_T_max_C"]) <= 0.15
-    assert th["bn_wall_11_2K_case"]["status"] in ("CONDITIONALLY_RESOLVED", "OPEN")
-    assert th["overall"]["status"] in ("CLOSES", "CLOSES_WITH_LEVERS", "OPEN")
+    assert th["bn_wall_11_2K_case"]["status"] == "UNRESOLVED"                       # A9.2
+    assert _sens(th["bn_wall_11_2K_case"], "status") in ("CONDITIONALLY_RESOLVED", "OPEN")
+    assert th["overall"]["status"] == "UNRESOLVED" and th["overall"]["status_before_a9_2"] == "OPEN"
     # EM-only: no permanent-magnet rows; coating baseline is the high-emittance option
     assert "Sm2Co17" not in json.dumps(th["results"])
     assert th["levers"]["LV-BASE"]["set"] == {}
@@ -334,10 +359,15 @@ def test_mount_heat_row85_consistency(doc):
     aw = th["search"]["allowance_W"]
     for lv, cases in th["mount_heat_vs_row85"].items():
         for c, r in cases.items():
-            for a, v in r["within_allowable_W"].items():
+            w = {a: _back(x) for a, x in r.get("within_allowable_W_uncoupled_sensitivity",
+                                                r["within_allowable_W"]).items()}
+            assert "CLOSES" not in r["within_allowable_W"].values()                     # A9.2
+            for a, v in w.items():
                 assert (v == "CLOSES") == (r["Q_mount_W"]["max_W"] + aw <= float(a))
     ok = sorted(lv for lv, cases in th["mount_heat_vs_row85"].items()
-                if all(r["within_allowable_W"]["100"] == "CLOSES" for r in cases.values()))
+                if all(_back(r.get("within_allowable_W_uncoupled_sensitivity", r["within_allowable_W"])["100"])
+                       == "CLOSES"
+                       for r in cases.values()))
     assert ok == th["row85_compatible_levers_100W"]
 
 
@@ -417,7 +447,7 @@ def test_minimal_levers_and_buildability(doc):
     for n in ("WI", "WO", "CI", "CO"):
         s = th["closure_summary_hall_icp_neutralizer"][n]
         closing = [lv for lv in th["levers"] if lv != "LV-BASE" and
-                   all(icp[lv][c]["nodes"][n]["verdict"] == "CLOSES" for c in icp[lv])]
+                   all(_sens(icp[lv][c]["nodes"][n], "verdict") == "CLOSES" for c in icp[lv])]
         assert closing == s["levers_that_close_every_case"], n
         good = [lv for lv in closing if lv in ok85]
         m = s["minimal_closing_within_row85_100W"]
@@ -478,7 +508,7 @@ def test_icp_heat_conditions_and_verified_allowances(doc):
     for lv, cases in icp.items():
         for c, rec in cases.items():
             for n, e in rec["nodes"].items():
-                if e["verdict"] == "CLOSES":
+                if _sens(e, "verdict") == "CLOSES":
                     assert "1.2 x Q_ICP->H-1" in e["closes_conditional_on"], (lv, c, n)
                     assert isinstance(e["search_sensitive"], bool)
                     assert e["search_sensitive"] == (e["margin_to_design_ceiling_K"] < 10.0)
@@ -510,8 +540,8 @@ def test_icp_heat_conditions_and_verified_allowances(doc):
                     per[n]["Q_ICP_allowable_W_verified_incl_row86_margin"][inj] for per in cases.values())
     for n in ("WI", "WO", "CI", "CO"):
         s = th["closure_summary_hall_icp_neutralizer"][n]
-        assert s["brief_verdict_at_baseline"] == ("CLOSES" if s["status"] == "CLOSES" else "DO_NOT_CLOSE")
-        closers = (["LV-BASE"] if s["status"] == "CLOSES" else []) + s["levers_that_close_every_case"]
+        assert _sens(s, "brief_verdict_at_baseline") == ("CLOSES" if _sens(s, "status") == "CLOSES" else "DO_NOT_CLOSE")
+        closers = (["LV-BASE"] if _sens(s, "status") == "CLOSES" else []) + s["levers_that_close_every_case"]
         assert sorted(s["icp_heat_allowable_W_per_closing_lever_set"]) == sorted(closers)
     lc = ih["linearity_check"]
     assert lc["checks"] > 0 and lc["all_sub_linear_inside_domain"] is True
@@ -617,10 +647,125 @@ def test_em_only_pmag_floor_and_labels(doc, builder):
     for lv, cases in th["results"]["hall_icp_neutralizer"].items():
         for c, rec in cases.items():
             for n, e in rec["nodes"].items():
-                if e["verdict"] == "CLOSES":
+                if _sens(e, "verdict") == "CLOSES":
                     assert "view" in e["closes_conditional_on_view"], (lv, c, n)
     assert "ICP-05" in th["overall"]["status_conditional_on_view"]
     an = th["closure_summary_hall_icp_neutralizer"]["AN"]["design_driver"]
     assert "316L" in an["statement"] and "verify" in an["anode_316L_note"]["316L_melting_range_C_approx"]
     md = MD_PATH.read_text(encoding="utf-8")
     assert "sensitivity outcome (not a verdict)" in md and "Recomputation 3" in md and "Recomputation 4" in md
+
+
+def test_a9_2_incorporation(doc):
+    """A9.2 (owner decisions 2026-09-30): coupled thermal UNRESOLVED, local match, anode blockers, coil-mass wording."""
+    th = doc["recomputations"]["h25_thermal_rerun"]
+    for lv, cases in th["results"]["hall_icp_neutralizer"].items():
+        for c, rec in cases.items():
+            for n, e in rec["nodes"].items():
+                assert e["verdict"] not in ("CLOSES", "PASS"), (lv, c, n)
+                assert e.get("necessary_check") != "PASS", (lv, c, n)
+    for n, s in th["closure_summary_hall_icp_neutralizer"].items():
+        assert not str(s["status"]).startswith("CLOSES") and s["brief_verdict_at_baseline"] != "CLOSES", n
+    ct = th["a9_2_icp_coupled_thermal"]
+    assert ct["ICP_COUPLED_THERMAL"] == "UNRESOLVED" and ct["coupled H-1/ICP thermal closure"] == "UNRESOLVED"
+    assert ct["pole_allowance_warning"]["value_W"] == th["icp_heat_into_h1"]["min_allowance_W"]["LV-BASE"]["PO"]["CO"]
+    assert "ignore" in ct["prohibited_assumption"]
+    an = th["closure_summary_hall_icp_neutralizer"]["AN"]["a9_2_anode"]
+    assert an["ANODE_BASELINE"] == "OPEN" and an["316L flight anode"] == "REJECTED_AS_CURRENT_BASELINE"
+    ids = {x["id"]: x for x in doc["new_items"]}
+    for i in ("A9H-ANODE-01", "A9H-ANODE-02", "A9H-RF-LM-01", "A9H-RF-PROT-01", "A9H-TH-01"):
+        assert ids[i]["value"].startswith("TBD - requires"), i
+    assert ids["A9H-INS-14"]["status"] == "SUPERSEDED_BY_A9_2"
+    q = {x["id"]: x for x in doc["open_owner_questions"]}
+    assert q["OQ-A907-11"]["status"] == "ANSWERED_BY_A9_2 (OQ-A907-11)"
+    rp = doc["recomputations"]["rf_reference_plane"]
+    assert "LOCAL matching network" in rp["reference_plane"] and "A9.1 A9-03-matching" in rp["reference_plane_before_a9_2"]
+    assert rp["options"]["a_on_module_pre_match"]["status"].startswith("SUPERSEDED_BY_A9_2")
+    assert rp["sensitivity_loads"]["review_case_20+j50"]["P_fwd_W"] == 925.0      # numbers unchanged
+    assert "NOT the MC-1 coil mass" in doc["recomputations"]["lv_coil_copper_delta"]["a9_2_coil_mass_correction"]["text"]
+    assert "alternative estimates" in doc["key_findings"][11]
+
+
+def test_a9_2_repair_no_residual_thermal_pass_wording():
+    """Review repair 3 (A9.2 icp_coupled_thermal): K6 Curie checks, REV-42 / REV-44 / REV-45 / REV-47, the per-node
+    nominal_closes flags and the thermal Markdown never read as a hall_icp_neutralizer thermal PASS / closure; the
+    computed values survive as uncoupled_sensitivity_* (numbers unchanged)."""
+    doc = json.loads(JSON_PATH.read_text(encoding="utf-8"))
+    k6 = doc["key_findings"][5]
+    assert "PO UNRESOLVED, BP UNRESOLVED" in k6 and "PO PASS" not in k6 and "BP PASS" not in k6
+    assert "uncoupled sensitivity only: PO and BP below the necessary Curie ceiling" in k6
+    reg = {r["id"]: r for r in doc["revision_register"]}
+    v42, v44, v45 = (reg[i]["new"]["value"] for i in ("REV-42", "REV-44", "REV-45"))
+    assert v42["closure_CI"] == v42["closure_CO"] == "UNRESOLVED"
+    assert _back(v42["uncoupled_sensitivity_closure_CO"]) == "CLOSES" != v42["uncoupled_sensitivity_closure_CO"]
+    assert v44["PO"] == v44["BP"] == ["UNRESOLVED"] and v44["PI"] == ["FAIL"]
+    assert _back(v44["uncoupled_sensitivity_PO"]) == ["PASS"] != v44["uncoupled_sensitivity_PO"]
+    th = doc["recomputations"]["h25_thermal_rerun"]
+    assert v45["status"] == th["bn_wall_11_2K_case"]["status"] == "UNRESOLVED"
+    assert v45["uncoupled_sensitivity_status"] == th["bn_wall_11_2K_case"]["uncoupled_sensitivity_status"]
+    assert "thermal CLOSES" not in reg["REV-47"]["new"]["requirement"]
+    assert "uncoupled sensitivity" in reg["REV-47"]["new"]["requirement"]
+    for _lv, cases in th["results"]["hall_icp_neutralizer"].items():
+        for _c, rec in cases.items():
+            for _n, e in rec["nodes"].items():
+                assert "nominal_closes" not in e     # nodes without a live limit carry no such flag
+                # review repair 5: no closes-type boolean at all; the nominal comparison is a sensitivity string
+                assert not any(isinstance(v, bool) and "clos" in k.lower() for k, v in e.items())
+                if e.get("limit_C") is not None:
+                    want = ("UNCOUPLED_SENSITIVITY_WITHIN_LIMIT" if e["T_nominal_C"] <= e["design_ceiling_C"]
+                            else "UNCOUPLED_SENSITIVITY_ABOVE_LIMIT")
+                    assert e["uncoupled_sensitivity_outcome"] == want
+    assert not any("hall_icp_neutralizer CLOSES" in x for x in th["overall"]["open_items"])
+    assert th["bn_wall_11_2K_case"]["uncoupled_sensitivity_at_baseline"] == "UNCOUPLED_SENSITIVITY_ABOVE_LIMIT"
+    assert "closes_at_baseline" not in th["bn_wall_11_2K_case"]
+    assert th["overall"]["uncoupled_sensitivity_baseline_all_live_nodes_and_row85"] == \
+        "UNCOUPLED_SENSITIVITY_ABOVE_LIMIT"
+    assert "baseline_closes_all_live_nodes_and_row85" not in th["overall"]
+    assert "boolean_outcomes" in th["a9_2_sensitivity_vocabulary"]
+    for i in (1, 2, 3, 4):                                    # K2..K5: no lower-case closure claims
+        for w in ("closes", "close it", "closing sets", "closing lever", "baseline closures"):
+            assert w not in doc["key_findings"][i], (i, w)
+    assert "for context only - not a heat allowance - the ICP module RF power" in doc["key_findings"][1]
+    oq = {q["id"]: q for q in doc["open_owner_questions"]}
+    for qid in ("OQ-A907-05", "OQ-A907-08", "OQ-A907-10"):
+        assert "CLOSES" not in oq[qid]["question"] + oq[qid]["proposed_answer"], qid
+    md = MD_PATH.read_text(encoding="utf-8")
+    assert "Every hall_icp_neutralizer CLOSES is conditional" not in md
+    assert "| levers within the limit in every case (uncoupled sensitivity) |" in md
+    assert "still closes" not in md and "closing lever set" not in md
+    assert "PO PASS, BP PASS;" not in md and "necessary Curie checks: PI FAIL, PO UNRESOLVED, BP UNRESOLVED" in md
+
+
+def test_a9_2_repair4_sensitivity_names_and_rf_wording():
+    """Review repair 4: no hall_icp_neutralizer thermal value (sensitivity fields included) uses the PASS / CLOSES /
+    CONDITIONALLY_RESOLVED words; the vocabulary is declared; K2 / K11, REV-34 / REV-35 and A9H-INS-01 follow A9.2
+    (0-500 W = delivered/operating capability, coupler on the generator / 50-ohm side of the local match)."""
+    doc = json.loads(JSON_PATH.read_text(encoding="utf-8"))
+    th = doc["recomputations"]["h25_thermal_rerun"]
+    assert {v: k for k, v in th["a9_2_sensitivity_vocabulary"]["names"].items()} == _SENS_BACK
+    bad = re.compile(r"^(PASS|CLOSES\w*|CONDITIONALLY_RESOLVED|RESOLVED|CLOSED)$")
+
+    def walk(o):
+        if isinstance(o, dict):
+            for v in o.values():
+                yield from walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                yield from walk(v)
+        elif isinstance(o, str):
+            yield o
+    for key in ("closure_summary_hall_icp_neutralizer", "bn_wall_11_2K_case", "mount_heat_vs_row85"):
+        assert not [x for x in walk(th[key]) if bad.match(x)], key
+    assert not [x for x in walk(th["results"]["hall_icp_neutralizer"]) if bad.match(x)]
+    k2, k11 = doc["key_findings"][1], doc["key_findings"][10]
+    assert "WO CLOSES" not in k2 and "CO CLOSES" not in k2
+    assert k11.startswith("K11 RF chain: A9.2") and "GENERATOR forward power;" not in k11
+    assert "delivered/operating" in k11.split(". ")[0]
+    reg = {r["id"]: r for r in doc["revision_register"]}
+    assert "LOCAL matching network" in reg["REV-34"]["new"]["requirement"]
+    assert "OFF the moving platform" in reg["REV-34"]["new"]["requirement_before_a9_2"]
+    assert "off-platform" not in reg["REV-34"]["new"]["value"]["layout"]
+    assert "P_RF,fwd,max 500 W" not in reg["REV-35"]["new"]["requirement"]
+    ins = {x["id"]: x for x in doc["new_items"]}["A9H-INS-01"]
+    assert "generator_P_fwd_W" not in ins["value"] and ins["value"]["delivered_operating_capability_W"] == [0.0, 500.0]
+    assert "after the matching network (A9.1)" not in ins["name"]

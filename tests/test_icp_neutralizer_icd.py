@@ -136,7 +136,13 @@ def test_owner_given_values_trace_to_rows(doc, answers):
 def test_rf_only_term_is_arithmetic_and_not_a_module_bound(doc):
     by = {x["id"]: x for x in doc["items"]}
     x = by["ICP-36"]
-    assert x["status"] == "DERIVED_BOUND" and x["value"] == pytest.approx(500.0 * 1.2)
+    # A9-10 review repair 4 (A9.2 rf_500W): an allocation term, not a bound; the old status is kept as history
+    assert x["status"] == "DERIVED_ALLOCATION_TERM" and x["status_before_a9_2"] == "DERIVED_BOUND"
+    assert x["value"] == pytest.approx(500.0 * 1.2)
+    assert "delivered/operating figure" in x["requirement"] and "ADDITIONAL to the 500 W" in x["requirement"]
+    assert "P_fwd,max (row 72)" not in by["ICP-43"]["requirement"]
+    closes = {h["stage"]: h["closes"] for h in doc["h3_h4_inputs"]["h4_tests"]}
+    assert "NOT a thermal closure" in closes["Ar ENGINEERING_ONLY"]
     assert "RF-only partial allocation term" in x["basis"] and 72 in x["owner_rows"] and 86 in x["owner_rows"]
     assert "NOT a bound on the total module heat load" in x["requirement"]
     dem = {d["id"]: d for d in doc["interface_demands"]}
@@ -144,7 +150,9 @@ def test_rf_only_term_is_arithmetic_and_not_a_module_bound(doc):
     assert "NOT a bound on the total" in dem["ID-16"]["quantity"]
     # the total module heat load (discharge-path + plume terms) has no value until P_d,max exists
     t = by["ICP-43"]
-    assert t["value"] is None and t["status"].startswith("PENDING ") and "Q_coll" in t["requirement"]
+    # A9-10 re-evaluation: still no value; the precise remaining reason is the registered stand P_d,max
+    assert t["value"] is None and t["status"] == "TBD" and "P_d,max" in t["tbd"] and "Q_coll" in t["requirement"]
+    assert "IDA7-07" in t["h1_heat_allowance_a9_07"]
     assert dem["ID-26"]["value"] is None and dem["ID-25"]["value"] is None
     assert "ICP-43" in by["ICP-37"]["requirement"]
 
@@ -156,7 +164,10 @@ def test_rf_voltage_rating_separate_from_dc_isolation(doc):
     assert "antenna circuit is NOT covered" in dc["requirement"]
     rf = by["ICP-44"]
     assert rf["value"] is None and rf["tbd"].startswith("TBD - requires")
-    assert "RF hipot at full forward power" in rf["verification"] and "combined stress" in rf["requirement"]
+    # A9.2 rf_500W (A9-10 review repair 3): the hipot is at the rated point of the characterized mismatch envelope,
+    # not at a 500 W forward component rating; the pre-A9.2 text is kept as verification_before_a9_2
+    assert "RF hipot at full forward power" in rf["verification_before_a9_2"] and "combined stress" in rf["requirement"]
+    assert "TBD_AFTER_IMPEDANCE_MAP" in rf["verification"] and "delivered/operating" in rf["verification"]
 
 
 def test_freeze_points_defined_and_incompatibility_checked(doc):
@@ -208,10 +219,17 @@ def test_copied_values_resolve(doc, builder):
 
 
 def test_pending_lanes_never_filled(doc):
+    """No value is invented for a demand from another lane: the value stays None; the status is either still PENDING
+    or (A9-10 review repair, OQ-INT-03) a SATISFIED / PARTIAL / OPEN re-statement that names where the merged target
+    (or an A9.1 decision) gives it, recorded as an A9-10 change."""
     lanes = {"A9-01", "A9-02", "A9-04", "A9-05"}
+    changed = {c["ptr"] for c in doc["a9_10_reconciliation"]["changes"]}
     for d in doc["interface_demands"]:
         if d["from"] in lanes:
-            assert d["value"] is None and d["status"].startswith("PENDING "), d["id"]
+            assert d["value"] is None, d["id"]
+            if not d["status"].startswith("PENDING "):
+                assert d["status"].startswith(("SATISFIED", "PARTIAL", "OPEN - ")), d["id"]
+                assert f"/interface_demands[id={d['id']}]" in changed, d["id"]
     for x in doc["items"]:
         if x["status"].startswith("PENDING"):
             assert x["value"] is None, x["id"]
@@ -302,7 +320,9 @@ def test_builder_source_hygiene():
 def test_electron_current_capacity_item(doc):
     by = {x["id"]: x for x in doc["items"]}
     x = by["ICP-45"]
-    assert x["value"] is None and x["status"].startswith("PENDING") and "I_d,max" in x["status"]
+    # A9-10: form owner-given (A9.1 ICP-45, ICP-45A / ICP-45N entry condition), value TBD until I_d,max is registered
+    assert x["value"] is None and x["status"].startswith("TBD") and "I_d,max" in x["tbd"]
+    assert "ICP-45A" in x["entry_condition_a9_1"] and "ICP-45N" in x["entry_condition_a9_1"]
     assert "I_d,max" in x["requirement"] and "Ar (ENGINEERING_ONLY)" in x["verification"]
     assert 109 in x["owner_rows"]
     dem = {d["id"]: d for d in doc["interface_demands"]}
@@ -316,6 +336,9 @@ def test_keeper_pulse_rating_separate_from_dc_isolation(doc):
     by = {x["id"]: x for x in doc["items"]}
     k = by["ICP-46"]
     assert k["value"] == 600.0 and 89 in k["owner_rows"] and k["applies_to"] == ["hall_c1_reference"]
+    iso = k["a9_1_isolation_basis"]                                    # A9.1 ICP-46 (owner-given)
+    assert (iso["design_isolation_basis_V"], iso["development_hipot_V_DC"], iso["pulse_waveform_test_V"]) == (
+        900.0, 1000.0, 600.0)
     assert "ICP-46" in by["ICP-23"]["requirement"] and "governing" in by["ICP-23"]["basis"]
 
 

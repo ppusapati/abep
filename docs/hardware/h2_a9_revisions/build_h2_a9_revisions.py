@@ -47,6 +47,14 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
+
+# ---- A9-10 reconciliation overlay (fo_a9_10_integration): declared, machine-checked changes applied after the build
+import importlib.util as _a910_ilu  # noqa: E402
+_A910_SPEC = _a910_ilu.spec_from_file_location(
+    "a9_10_overlay", str(ROOT) + "/docs/experiments/hall_icp/integration/a9_10_overlay.py")
+A910 = _a910_ilu.module_from_spec(_A910_SPEC)
+_A910_SPEC.loader.exec_module(A910)
+
 LANE_DIR = "docs/hardware/h2_a9_revisions"
 OUT_JSON = f"{LANE_DIR}/h2_a9_revisions_v1.json"
 OUT_MD = f"{LANE_DIR}/H2_A9_REVISIONS.md"
@@ -3154,6 +3162,8 @@ def _drv(ds):
             out.append(f"row {d['row']}")
         elif d["kind"] == "A9.1":
             out.append(f"A9.1 {d['id']}")
+        elif d["kind"] == "A9.2":                      # A92_SENS_VOCAB_MD: A9.2 drivers added by A9-10 repair 4
+            out.append(f"A9.2 {d['id']}")
         else:
             out.append(f"{d['lane']} {d['id']}")
     return ", ".join(out)
@@ -3413,6 +3423,70 @@ def main(argv=None) -> int:
             f.write(txt)
     print("wrote " + ", ".join(outs))
     return 0
+
+
+# ---- A9-10 reconciliation overlay hooks (fo_a9_10_integration) ------------------------------------------------------
+_a910_build_core = build
+
+
+def build(*args, **kwargs):
+    """Verified lane build followed by the declared A9-10 changes (docs/experiments/hall_icp/integration/a9_10_overlay.py)."""
+    return A910.apply("A9-07", _a910_build_core(*args, **kwargs))
+
+
+_a910_md_core = render_md
+
+
+# A92_MD_RELABEL (A9-10 review repair 3, A9.2 icp_coupled_thermal): the lane's hard-coded thermal-section wording is
+# relabelled as uncoupled sensitivity; each substitution must match exactly once (no silent skip).
+# A92_SENS_VOCAB_MD (A9-10 review repair 4): the vocabulary sentence uses the UNCOUPLED_SENSITIVITY_* names of the
+# A9-10 overlay (a9_2_sensitivity_vocabulary); the lane's CLOSES / PASS words are not used for hall_icp_neutralizer.
+# A92_WITHIN_LIMIT_MD (A9-10 review repair 5): headers / condition lines say 'within-limit lever set' instead of
+# 'closing' (A9.2 icp_coupled_thermal).
+A92_MD_RELABEL = [
+    ("Verdict vocabulary: `brief_verdict_at_baseline` is CLOSES / DO_NOT_CLOSE (live limit) or OPEN_LIMIT_TBD "
+     "(no validated limit); `status` refines it: CLOSES_WITH_SINGLE_LEVER / CLOSES_ONLY_WITH_COMBINED_LEVERS "
+     "mean DO_NOT_CLOSE at baseline but CLOSES with the named lever sets. **Every hall_icp_neutralizer CLOSES "
+     "is conditional**: (1) ",
+     "Verdict vocabulary (hall_icp_neutralizer; A9.2 ICP_COUPLED_THERMAL = UNRESOLVED, so every reported status in "
+     "this table is UNRESOLVED): the uncoupled-sensitivity outcomes (0 W ICP heat, v1 exterior views; "
+     "`uncoupled_sensitivity_*` fields) are UNCOUPLED_SENSITIVITY_WITHIN_LIMIT / DO_NOT_CLOSE (live limit) or "
+     "OPEN_LIMIT_TBD (no validated limit), refined by UNCOUPLED_SENSITIVITY_WITHIN_LIMIT_WITH_SINGLE_LEVER / "
+     "UNCOUPLED_SENSITIVITY_WITHIN_LIMIT_ONLY_WITH_COMBINED_LEVERS (DO_NOT_CLOSE at baseline, within the limit with "
+     "the named lever sets); they are sensitivity information only and never a thermal PASS or closure "
+     "(recomputations.h25_thermal_rerun.a9_2_sensitivity_vocabulary). **Every such uncoupled-sensitivity "
+     "within-limit result would in addition be conditional**: (1) "),
+    ("| levers closing every case | minimal closing sets within 100 W (buildability) | necessary check |",
+     "| levers within the limit in every case (uncoupled sensitivity) | minimal within-limit lever sets within 100 W "
+     "(uncoupled sensitivity; buildability) | necessary check |"),
+    ("\nConditions per closing lever set (",
+     "\nConditions per uncoupled-sensitivity within-limit lever set (reported UNRESOLVED, A9.2 ICP_COUPLED_THERMAL; "),
+    ("** (conditional on the ICP-43 heat allowance); minimal lever sets closing every live node within 100 W:",
+     "** (A9.2 ICP_COUPLED_THERMAL; the uncoupled sensitivity is also conditional on the ICP-43 heat allowance); "
+     "minimal lever sets within the limit at every live node and within 100 W (uncoupled sensitivity):"),
+    ("degC; levers closing: ", "degC; uncoupled-sensitivity within-limit levers: "),
+    ("Rule: CLOSES when", "Rule (lane vocabulary; for hall_icp_neutralizer every outcome is an uncoupled sensitivity "
+     "with an UNCOUPLED_SENSITIVITY_* name and the reported status is UNRESOLVED, A9.2 ICP_COUPLED_THERMAL): CLOSES "
+     "when"),
+    ("Every CLOSES whose margin", "Every within-limit result (lane rule CLOSES; UNCOUPLED_SENSITIVITY_WITHIN_LIMIT for "
+     "hall_icp_neutralizer, reported UNRESOLVED) whose margin"),
+    ("(allowances per closing set below); (2) ", "(allowances per within-limit lever set below); (2) "),
+    ("the verdict holds only if a re-solve with the real module view factors still closes.",
+     "any uncoupled-sensitivity result holds only if a re-solve with the real module view factors still gives it "
+     "(reported status UNRESOLVED, A9.2 ICP_COUPLED_THERMAL)."),
+    ("| sensitivity outcome (not a verdict) |",
+     "| sensitivity outcome (not a verdict) - never a thermal PASS (A9.2) |"),
+]
+
+
+def render_md(doc):
+    """Lane Markdown followed by the A9-10 reconciliation section generated from the same JSON."""
+    txt = _a910_md_core(doc)
+    for a, b in A92_MD_RELABEL:
+        if txt.count(a) != 1:
+            raise RuntimeError(f"A92_MD_RELABEL: {a!r} matched {txt.count(a)} times (expected 1)")
+        txt = txt.replace(a, b)
+    return txt.rstrip("\n") + "\n" + "\n".join(A910.md_section(doc)) + "\n"
 
 
 if __name__ == "__main__":

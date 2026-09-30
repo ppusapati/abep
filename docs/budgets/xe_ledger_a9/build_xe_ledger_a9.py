@@ -38,6 +38,14 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
+
+# ---- A9-10 reconciliation overlay (fo_a9_10_integration): declared, machine-checked changes applied after the build
+import importlib.util as _a910_ilu  # noqa: E402
+_A910_SPEC = _a910_ilu.spec_from_file_location(
+    "a9_10_overlay", str(REPO) + "/docs/experiments/hall_icp/integration/a9_10_overlay.py")
+A910 = _a910_ilu.module_from_spec(_A910_SPEC)
+_A910_SPEC.loader.exec_module(A910)
+
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
@@ -97,17 +105,17 @@ DELIVERABLES = {
     "H27": ("docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json",
             "d1813e153af37ebd45cb2ead964ead6c53c756d1a82f93ea89346a83168d0630", "H2-7 mechanical / mass BOM (verified)"),
     "BPB": ("docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-            "1a3c8d29404d464816f0e306e2883993a52f3094a26656937203a816dd6701df", "A9-02 bus-power boundary (verified)"),
+            "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6", "A9-02 bus-power boundary (verified)"),
     "ICD": ("schemas/interfaces/icp_neutralizer_icd_v1.json",
-            "1cdab3d71377443d41f128398159ba5ac0203d9daaca8c77840cea6fcd9a353c", "A9-03 ICP-neutralizer ICD (verified)"),
+            "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c", "A9-03 ICP-neutralizer ICD (verified)"),
     "PRE": ("docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-            "f3e6069a4c78c49822f9248d9b9bc34a157a349bf601f7065e5e182645fbd245", "A9-01 prereg framework (verified)"),
+            "f082a6d3eabf07485d447ace927f69e8980acbcc8eff54d0cd21f196e20a0afe", "A9-01 prereg framework (verified)"),
     "UB": ("docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-           "d1cf5aba0a813c676d48c3ac8741ddb3c00c31700428fbff1c0217a5ee2d92d1", "A9-04 uncertainty budget (verified)"),
+           "c6567e6d0bbc008bedd5b9c14a9716f117144ab6952b9c498f7b0c75e02a624d", "A9-04 uncertainty budget (verified)"),
     "VI": ("docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-           "1de411c5f09d96698e87ec22bdba796b5c2010ad4f0362afb5a4fd2eec9b9527", "A9-05 validation inputs (verified)"),
+           "fac472e370b54875df5dea90c3c7740403da5ac1edd1af29b43ed09ee679d450", "A9-05 validation inputs (verified)"),
     "INT": ("docs/experiments/hall_icp/integration/a9_core_integration_v1.json",
-            "20c222d9b8a65930789c767ed45127041c7b1cd06e21a715101761036bb5f2ca", "A9 core integration (verified)"),
+            "86146f986e35e4d9e507c739aac9f8dd11b483be45fd7691bdccc585c734a09f", "A9 core integration (verified)"),
     "M16": ("docs/budgets/subsystem_maturity/subsystem_maturity_v2.json",
             "a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c", "M16 v2 subsystem maturity (verified)"),
     "R6": ("docs/procurement/web_track_v1/threads/R6_xe_inputs.json",
@@ -140,11 +148,18 @@ NIST_EOS = {
 NEVER_PINNED = ("docs/orchestration/lane_registry_v1.json", "docs/orchestration/trigger_registry_v1.json",
                 "docs/orchestration/trigger_ledger_v2.jsonl", "docs/orchestration/fired_triggers.jsonl",
                 "docs/orchestration/runtime_state.json")
+# A9-10 (fo_a9_10_integration) re-evaluation: the parallel lanes are merged; a reference to them that the merged lane
+# does not supply carries its precise remaining reason (values it does supply are consumed in A9-10, e.g. the residual
+# import XA9-IF-01 and the RFQ tank ranges XA9-IF-09).
 PENDING = {
-    "A9-06": "PENDING docs/budgets/mass_a9/ (A9-06 mass reconciliation; parallel lane, not in the base)",
-    "A9-07": "PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)",
-    "A9-09": "PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base)",
-    "A9-10": "PENDING A9-10 reconciliation / M16 refresh (after A9-06..09; no path yet)",
+    "A9-06": "OPEN after A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged: owner allocations and evidence floors, "
+             "no hardware CBE; A9-10 re-evaluation)",
+    "A9-07": "OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, "
+             "no vendor/design-qualified values; A9-10 re-evaluation)",
+    "A9-09": "OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no "
+             "quotation received; A9-10 re-evaluation)",
+    "A9-10": "A9-10 reconciliation docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json / M16 refresh "
+             "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
 }
 HISTORICAL = {
     "phase1_prereg_framework": ("docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json",
@@ -1362,6 +1377,23 @@ def main(argv=None) -> int:
     pm.write_text(md, encoding="utf-8")
     print(f"wrote {pj.relative_to(REPO)} and {pm.relative_to(REPO)}")
     return 0
+
+
+# ---- A9-10 reconciliation overlay hooks (fo_a9_10_integration) ------------------------------------------------------
+_a910_build_core = build
+
+
+def build(*args, **kwargs):
+    """Verified lane build followed by the declared A9-10 changes (docs/experiments/hall_icp/integration/a9_10_overlay.py)."""
+    return A910.apply("A9-08", _a910_build_core(*args, **kwargs))
+
+
+_a910_md_core = markdown
+
+
+def markdown(doc):
+    """Lane Markdown followed by the A9-10 reconciliation section generated from the same JSON."""
+    return _a910_md_core(doc).rstrip("\n") + "\n" + "\n".join(A910.md_section(doc)) + "\n"
 
 
 if __name__ == "__main__":

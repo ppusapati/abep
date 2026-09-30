@@ -251,8 +251,11 @@ def test_required_sections_and_pending_lanes(d):
     for h in ("## (a)", "## (b)", "## (c)", "## (d)", "## (e)", "## (f)", "## (g)"):
         assert h in md
     txt = json.dumps(d["interface_demands"])
-    for p in ("docs/budgets/mass_a9/", "docs/hardware/h2_a9_revisions/", "docs/procurement/rfq_a9/"):
-        assert f"PENDING {p}" in txt
+    # A9-10 re-evaluation: the parallel lanes are merged; unsupplied references carry their precise reason
+    for p in ("docs/budgets/mass_a9/mass_a9_v1.json", "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+              "docs/procurement/rfq_a9/rfq_a9_v1.json"):
+        assert f"OPEN after A9-0" in txt and p in txt
+    assert "parallel lane, not in the base" not in json.dumps(d)
     assert {m["m16_row"] for m in d["m16_impact"]} == {6, 7, 8, 11}
 
 

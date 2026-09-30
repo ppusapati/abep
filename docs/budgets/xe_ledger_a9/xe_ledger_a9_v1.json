@@ -109,32 +109,32 @@
   },
   {
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "sha256": "1a3c8d29404d464816f0e306e2883993a52f3094a26656937203a816dd6701df",
+   "sha256": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
    "role": "A9-02 bus-power boundary (verified)"
   },
   {
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "1cdab3d71377443d41f128398159ba5ac0203d9daaca8c77840cea6fcd9a353c",
+   "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c",
    "role": "A9-03 ICP-neutralizer ICD (verified)"
   },
   {
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "sha256": "f3e6069a4c78c49822f9248d9b9bc34a157a349bf601f7065e5e182645fbd245",
+   "sha256": "f082a6d3eabf07485d447ace927f69e8980acbcc8eff54d0cd21f196e20a0afe",
    "role": "A9-01 prereg framework (verified)"
   },
   {
    "path": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "sha256": "d1cf5aba0a813c676d48c3ac8741ddb3c00c31700428fbff1c0217a5ee2d92d1",
+   "sha256": "c6567e6d0bbc008bedd5b9c14a9716f117144ab6952b9c498f7b0c75e02a624d",
    "role": "A9-04 uncertainty budget (verified)"
   },
   {
    "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-   "sha256": "1de411c5f09d96698e87ec22bdba796b5c2010ad4f0362afb5a4fd2eec9b9527",
+   "sha256": "fac472e370b54875df5dea90c3c7740403da5ac1edd1af29b43ed09ee679d450",
    "role": "A9-05 validation inputs (verified)"
   },
   {
    "path": "docs/experiments/hall_icp/integration/a9_core_integration_v1.json",
-   "sha256": "20c222d9b8a65930789c767ed45127041c7b1cd06e21a715101761036bb5f2ca",
+   "sha256": "86146f986e35e4d9e507c739aac9f8dd11b483be45fd7691bdccc585c734a09f",
    "role": "A9 core integration (verified)"
   },
   {
@@ -405,8 +405,8 @@
      "GROUND_TEST"
     ]
    },
-   "value_display": "TBD - requires the selected C1 vendor/design-qualified ignition flow (row 93; PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base); PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))",
-   "requires": "the selected C1 vendor/design-qualified ignition flow (row 93; PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base); PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))"
+   "value_display": "TBD - requires the selected C1 vendor/design-qualified ignition flow (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation); OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))",
+   "requires": "the selected C1 vendor/design-qualified ignition flow (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation); OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
   },
   {
    "id": "XA9-10",
@@ -428,8 +428,8 @@
      "GROUND_TEST"
     ]
    },
-   "value_display": "TBD - requires the selected C1 vendor/design-qualified purge flow and duration (row 93; PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))",
-   "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+   "value_display": "TBD - requires the selected C1 vendor/design-qualified purge flow and duration (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))",
+   "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
   },
   {
    "id": "XA9-11",
@@ -451,8 +451,8 @@
      "GROUND_TEST"
     ]
    },
-   "value_display": "TBD - requires the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))",
-   "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+   "value_display": "TBD - requires the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))",
+   "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
   },
   {
    "id": "XA9-12",
@@ -540,8 +540,8 @@
      "GROUND_TEST"
     ]
    },
-   "value_display": "TBD - requires the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase",
-   "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+   "value_display": "TBD - requires the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase",
+   "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
   },
   {
    "id": "XA9-16",
@@ -657,8 +657,8 @@
      "GROUND_TEST"
     ]
    },
-   "value_display": "TBD - requires the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))",
-   "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))"
+   "value_display": "TBD - requires the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))",
+   "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
   },
   {
    "id": "XA9-21",
@@ -835,8 +835,8 @@
      "FLIGHT"
     ]
    },
-   "value_display": "TBD - requires tank quotation/selection (PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base)) and the owner's MEOP choice; the design-case tables carry an explicit MEOP axis meanwhile",
-   "requires": "tank quotation/selection (PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base)) and the owner's MEOP choice; the design-case tables carry an explicit MEOP axis meanwhile"
+   "value_display": "TBD - requires tank quotation/selection (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation)) and the owner's MEOP choice; the design-case tables carry an explicit MEOP axis meanwhile",
+   "requires": "tank quotation/selection (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation)) and the owner's MEOP choice; the design-case tables carry an explicit MEOP axis meanwhile"
   },
   {
    "id": "XA9-29",
@@ -906,8 +906,8 @@
      "GROUND_TEST"
     ]
    },
-   "value_display": "TBD - requires vendor/spec verification of the selected filter/getter (row 51; PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))",
-   "requires": "vendor/spec verification of the selected filter/getter (row 51; PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))"
+   "value_display": "TBD - requires vendor/spec verification of the selected filter/getter (row 51; OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))",
+   "requires": "vendor/spec verification of the selected filter/getter (row 51; OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
   },
   {
    "id": "XA9-32",
@@ -929,8 +929,8 @@
      "GROUND_TEST"
     ]
    },
-   "value_display": "TBD - requires vendor/spec verification (PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base)); mass booked by A9-06 (PENDING docs/budgets/mass_a9/ (A9-06 mass reconciliation; parallel lane, not in the base))",
-   "requires": "vendor/spec verification (PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base)); mass booked by A9-06 (PENDING docs/budgets/mass_a9/ (A9-06 mass reconciliation; parallel lane, not in the base))"
+   "value_display": "TBD - requires vendor/spec verification (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation)); mass booked by A9-06 (OPEN after A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged: owner allocations and evidence floors, no hardware CBE; A9-10 re-evaluation))",
+   "requires": "vendor/spec verification (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation)); mass booked by A9-06 (OPEN after A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged: owner allocations and evidence floors, no hardware CBE; A9-10 re-evaluation))"
   },
   {
    "id": "XA9-33",
@@ -2295,12 +2295,12 @@
       {
        "field": "t_purge",
        "item": "XA9-10",
-       "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+       "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
       },
       {
        "field": "mdot_purge",
        "item": "XA9-10",
-       "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+       "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
       }
      ]
     },
@@ -2317,12 +2317,12 @@
       {
        "field": "t_preheat",
        "item": "XA9-11",
-       "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+       "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
       },
       {
        "field": "mdot_preheat",
        "item": "XA9-11",
-       "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+       "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
       }
      ]
     },
@@ -2339,7 +2339,7 @@
       {
        "field": "mdot_ign",
        "item": "XA9-09",
-       "requires": "the selected C1 vendor/design-qualified ignition flow (row 93; PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base); PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))"
+       "requires": "the selected C1 vendor/design-qualified ignition flow (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation); OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
       }
      ]
     },
@@ -2368,12 +2368,12 @@
       {
        "field": "t_hall_ign",
        "item": "XA9-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
       },
       {
        "field": "mdot_hall_ign",
        "item": "XA9-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
       }
      ],
      "condition": "CONDITIONAL on the Hall being ignited on Xe (start sequence PENDING A9-07)"
@@ -2470,7 +2470,7 @@
       {
        "field": "u_class",
        "item": "XA9-20",
-       "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))"
+       "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
       }
      ]
     },
@@ -2507,13 +2507,13 @@
      "term": "F-C1-PURGE",
      "field": "t_purge",
      "item": "XA9-10",
-     "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+     "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
     },
     {
      "term": "F-C1-PURGE",
      "field": "mdot_purge",
      "item": "XA9-10",
-     "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+     "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
     },
     {
      "term": "F-C1-PREHEAT",
@@ -2525,13 +2525,13 @@
      "term": "F-C1-PREHEAT",
      "field": "t_preheat",
      "item": "XA9-11",
-     "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+     "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
     },
     {
      "term": "F-C1-PREHEAT",
      "field": "mdot_preheat",
      "item": "XA9-11",
-     "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+     "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
     },
     {
      "term": "F-C1-IGN",
@@ -2543,7 +2543,7 @@
      "term": "F-C1-IGN",
      "field": "mdot_ign",
      "item": "XA9-09",
-     "requires": "the selected C1 vendor/design-qualified ignition flow (row 93; PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base); PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))"
+     "requires": "the selected C1 vendor/design-qualified ignition flow (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation); OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
     },
     {
      "term": "F-HALL-XE-START",
@@ -2555,13 +2555,13 @@
      "term": "F-HALL-XE-START",
      "field": "t_hall_ign",
      "item": "XA9-15",
-     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
     },
     {
      "term": "F-HALL-XE-START",
      "field": "mdot_hall_ign",
      "item": "XA9-15",
-     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
     },
     {
      "term": "F-TRANSITION",
@@ -2633,7 +2633,7 @@
      "term": "F-XE-FLOWUNC-OTHER",
      "field": "u_class",
      "item": "XA9-20",
-     "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))"
+     "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
     }
    ],
    "refused": true,
@@ -2700,12 +2700,12 @@
       {
        "field": "t_hall_ign",
        "item": "XA9-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
       },
       {
        "field": "mdot_hall_ign",
        "item": "XA9-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
       }
      ],
      "condition": "CONDITIONAL on the Hall being ignited on Xe (start sequence PENDING A9-07)"
@@ -2802,7 +2802,7 @@
       {
        "field": "u_class",
        "item": "XA9-20",
-       "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))"
+       "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
       }
      ]
     },
@@ -2839,13 +2839,13 @@
      "term": "F-HALL-XE-START",
      "field": "t_hall_ign",
      "item": "XA9-15",
-     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
     },
     {
      "term": "F-HALL-XE-START",
      "field": "mdot_hall_ign",
      "item": "XA9-15",
-     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
     },
     {
      "term": "F-TRANSITION",
@@ -2917,7 +2917,7 @@
      "term": "F-XE-FLOWUNC-OTHER",
      "field": "u_class",
      "item": "XA9-20",
-     "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))"
+     "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
     }
    ],
    "refused": true,
@@ -2984,12 +2984,12 @@
       {
        "field": "t_hall_ign",
        "item": "XA9-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
       },
       {
        "field": "mdot_hall_ign",
        "item": "XA9-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
       }
      ],
      "condition": "CONDITIONAL on the Hall being ignited on Xe (start sequence PENDING A9-07)"
@@ -3086,7 +3086,7 @@
       {
        "field": "u_class",
        "item": "XA9-20",
-       "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))"
+       "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
       }
      ]
     },
@@ -3123,13 +3123,13 @@
      "term": "F-HALL-XE-START",
      "field": "t_hall_ign",
      "item": "XA9-15",
-     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
     },
     {
      "term": "F-HALL-XE-START",
      "field": "mdot_hall_ign",
      "item": "XA9-15",
-     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
     },
     {
      "term": "F-TRANSITION",
@@ -3201,7 +3201,7 @@
      "term": "F-XE-FLOWUNC-OTHER",
      "field": "u_class",
      "item": "XA9-20",
-     "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))"
+     "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
     }
    ],
    "refused": true,
@@ -3268,12 +3268,12 @@
       {
        "field": "t_hall_ign",
        "item": "XA9-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
       },
       {
        "field": "mdot_hall_ign",
        "item": "XA9-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
       }
      ],
      "condition": "CONDITIONAL on the Hall being ignited on Xe (start sequence PENDING A9-07)"
@@ -3370,7 +3370,7 @@
       {
        "field": "u_class",
        "item": "XA9-20",
-       "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))"
+       "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
       }
      ]
     },
@@ -3422,13 +3422,13 @@
      "term": "F-HALL-XE-START",
      "field": "t_hall_ign",
      "item": "XA9-15",
-     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
     },
     {
      "term": "F-HALL-XE-START",
      "field": "mdot_hall_ign",
      "item": "XA9-15",
-     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
     },
     {
      "term": "F-TRANSITION",
@@ -3518,7 +3518,7 @@
      "term": "F-XE-FLOWUNC-OTHER",
      "field": "u_class",
      "item": "XA9-20",
-     "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))"
+     "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
     }
    ],
    "refused": true,
@@ -3595,12 +3595,12 @@
       {
        "field": "t_purge",
        "item": "XA9-10",
-       "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+       "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
       },
       {
        "field": "mdot_purge",
        "item": "XA9-10",
-       "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+       "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
       }
      ]
     },
@@ -3617,12 +3617,12 @@
       {
        "field": "t_preheat",
        "item": "XA9-11",
-       "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+       "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
       },
       {
        "field": "mdot_preheat",
        "item": "XA9-11",
-       "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+       "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
       }
      ]
     },
@@ -3639,7 +3639,7 @@
       {
        "field": "mdot_ign",
        "item": "XA9-09",
-       "requires": "the selected C1 vendor/design-qualified ignition flow (row 93; PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base); PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))"
+       "requires": "the selected C1 vendor/design-qualified ignition flow (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation); OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
       }
      ]
     },
@@ -3712,12 +3712,12 @@
       {
        "field": "t_hall_ign",
        "item": "XA9-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
       },
       {
        "field": "mdot_hall_ign",
        "item": "XA9-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
       }
      ],
      "condition": null
@@ -3800,13 +3800,13 @@
      "term": "G-C1-PURGE",
      "field": "t_purge",
      "item": "XA9-10",
-     "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+     "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
     },
     {
      "term": "G-C1-PURGE",
      "field": "mdot_purge",
      "item": "XA9-10",
-     "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+     "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
     },
     {
      "term": "G-C1-PREHEAT",
@@ -3818,13 +3818,13 @@
      "term": "G-C1-PREHEAT",
      "field": "t_preheat",
      "item": "XA9-11",
-     "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+     "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
     },
     {
      "term": "G-C1-PREHEAT",
      "field": "mdot_preheat",
      "item": "XA9-11",
-     "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base))"
+     "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))"
     },
     {
      "term": "G-C1-IGN",
@@ -3836,7 +3836,7 @@
      "term": "G-C1-IGN",
      "field": "mdot_ign",
      "item": "XA9-09",
-     "requires": "the selected C1 vendor/design-qualified ignition flow (row 93; PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base); PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base))"
+     "requires": "the selected C1 vendor/design-qualified ignition flow (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation); OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))"
     },
     {
      "term": "G-C1-CATHODE",
@@ -3890,13 +3890,13 @@
      "term": "G-HALL-XE-START",
      "field": "t_hall_ign",
      "item": "XA9-15",
-     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
     },
     {
      "term": "G-HALL-XE-START",
      "field": "mdot_hall_ign",
      "item": "XA9-15",
-     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
     },
     {
      "term": "G-TRANSITION",
@@ -4027,12 +4027,12 @@
       {
        "field": "t_hall_ign",
        "item": "XA9-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
       },
       {
        "field": "mdot_hall_ign",
        "item": "XA9-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
       }
      ],
      "condition": null
@@ -4115,13 +4115,13 @@
      "term": "G-HALL-XE-START",
      "field": "t_hall_ign",
      "item": "XA9-15",
-     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
     },
     {
      "term": "G-HALL-XE-START",
      "field": "mdot_hall_ign",
      "item": "XA9-15",
-     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
     },
     {
      "term": "G-TRANSITION",
@@ -4252,12 +4252,12 @@
       {
        "field": "t_hall_ign",
        "item": "XA9-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
       },
       {
        "field": "mdot_hall_ign",
        "item": "XA9-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
       }
      ],
      "condition": null
@@ -4340,13 +4340,13 @@
      "term": "G-HALL-XE-START",
      "field": "t_hall_ign",
      "item": "XA9-15",
-     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
     },
     {
      "term": "G-HALL-XE-START",
      "field": "mdot_hall_ign",
      "item": "XA9-15",
-     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
     },
     {
      "term": "G-TRANSITION",
@@ -4477,12 +4477,12 @@
       {
        "field": "t_hall_ign",
        "item": "XA9-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
       },
       {
        "field": "mdot_hall_ign",
        "item": "XA9-15",
-       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+       "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
       }
      ],
      "condition": null
@@ -4580,13 +4580,13 @@
      "term": "G-HALL-XE-START",
      "field": "t_hall_ign",
      "item": "XA9-15",
-     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
     },
     {
      "term": "G-HALL-XE-START",
      "field": "mdot_hall_ign",
      "item": "XA9-15",
-     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)) and H-1 start measurements with Xe logged per phase"
+     "requires": "the revised start sequence stating whether the Hall discharge ignites on Xe (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)) and H-1 start measurements with Xe logged per phase"
     },
     {
      "term": "G-TRANSITION",
@@ -4951,21 +4951,21 @@
      "share_of_40kg_xe_only": 0.05,
      "screening_cap_row44": 0.25,
      "xe_load_alone_reaches_screening_cap": false,
-     "note": "Xe load only; the stored-Xe subsystem share needs the hardware masses (PENDING docs/budgets/mass_a9/ (A9-06 mass reconciliation; parallel lane, not in the base))"
+     "note": "Xe load only; the stored-Xe subsystem share needs the hardware masses (OPEN after A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged: owner allocations and evidence floors, no hardware CBE; A9-10 re-evaluation))"
     },
     {
      "case_kg": 5.0,
      "share_of_40kg_xe_only": 0.125,
      "screening_cap_row44": 0.25,
      "xe_load_alone_reaches_screening_cap": false,
-     "note": "Xe load only; the stored-Xe subsystem share needs the hardware masses (PENDING docs/budgets/mass_a9/ (A9-06 mass reconciliation; parallel lane, not in the base))"
+     "note": "Xe load only; the stored-Xe subsystem share needs the hardware masses (OPEN after A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged: owner allocations and evidence floors, no hardware CBE; A9-10 re-evaluation))"
     },
     {
      "case_kg": 10.0,
      "share_of_40kg_xe_only": 0.25,
      "screening_cap_row44": 0.25,
      "xe_load_alone_reaches_screening_cap": true,
-     "note": "Xe load only; the stored-Xe subsystem share needs the hardware masses (PENDING docs/budgets/mass_a9/ (A9-06 mass reconciliation; parallel lane, not in the base))"
+     "note": "Xe load only; the stored-Xe subsystem share needs the hardware masses (OPEN after A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged: owner allocations and evidence floors, no hardware CBE; A9-10 re-evaluation))"
     }
    ]
   }
@@ -5001,16 +5001,16 @@
   {
    "id": "XA9-IF-01",
    "from": "A9-08",
-   "to": "A9-06 PENDING docs/budgets/mass_a9/ (A9-06 mass reconciliation; parallel lane, not in the base)",
+   "to": "A9-06 OPEN after A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged: owner allocations and evidence floors, no hardware CBE; A9-10 re-evaluation)",
    "quantity": "residual Xe: ONE line (F-RESIDUAL) to import; A9-06 books no residual of its own (row 45)",
    "value": "per scenario residual_kg (REFUSED while TBD); per design case reserve_residual_split.residual_kg",
    "units": "kg",
-   "status": "OFFERED"
+   "status": "CONSUMED by A9-06 in the A9-10 re-run (docs/budgets/mass_a9/mass_a9_v1.json wet_closure.residual; booked once)"
   },
   {
    "id": "XA9-IF-02",
    "from": "A9-08",
-   "to": "A9-06 PENDING docs/budgets/mass_a9/ (A9-06 mass reconciliation; parallel lane, not in the base)",
+   "to": "A9-06 OPEN after A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged: owner allocations and evidence floors, no hardware CBE; A9-10 re-evaluation)",
    "quantity": "Xe totals per configuration/scenario (loaded, usable, reserve, residual) and the 2 / 5 / 10 kg design cases",
    "value": "totals REFUSED (TBD inputs); floors and design cases offered",
    "units": "kg",
@@ -5019,7 +5019,7 @@
   {
    "id": "XA9-IF-03",
    "from": "A9-08",
-   "to": "A9-06 PENDING docs/budgets/mass_a9/ (A9-06 mass reconciliation; parallel lane, not in the base)",
+   "to": "A9-06 OPEN after A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged: owner allocations and evidence floors, no hardware CBE; A9-10 re-evaluation)",
    "quantity": "tank volume per design case at 323 K over the MEOP axis; tank / regulator / valve mass analogs are NOT re-booked here (pointer: docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json analog_data AN-MT-XSXTA, AN-MT-SXTA40, AN-MOOG-XFC, AN-XRFS, AN-MOOG-LATCH-18)",
    "value": "design_cases.tank_volume",
    "units": "l; kg",
@@ -5032,12 +5032,12 @@
    "quantity": "stored-Xe hardware masses (tank, regulator/PMU, FCUs, two series isolation valves rows 55/90, filter/getter C1 branch only, mounting/thermal) and the share of 40 kg (row 44 screening cap)",
    "value": "TBD",
    "units": "kg",
-   "status": "PENDING docs/budgets/mass_a9/ (A9-06 mass reconciliation; parallel lane, not in the base)"
+   "status": "OPEN after A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged: owner allocations and evidence floors, no hardware CBE; A9-10 re-evaluation)"
   },
   {
    "id": "XA9-IF-05",
    "from": "A9-08",
-   "to": "A9-06 PENDING docs/budgets/mass_a9/ (A9-06 mass reconciliation; parallel lane, not in the base)",
+   "to": "A9-06 OPEN after A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged: owner allocations and evidence floors, no hardware CBE; A9-10 re-evaluation)",
    "quantity": "flag: row 54 v0 'Xe hardware 1.5 kg' allocation vs the H2-7 analog range (A9 recorder flag, row 54)",
    "value": "context only; reconciliation is A9-06's",
    "units": "kg",
@@ -5046,7 +5046,7 @@
   {
    "id": "XA9-IF-06",
    "from": "A9-08",
-   "to": "A9-07 PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)",
+   "to": "A9-07 OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)",
    "quantity": "C1 start booking structure: purge, preheat, ignition bound (3 x 120 s per start, row 93, XA9Q-02), steady flow 0.10 mg/s over 15,000 h; which revised start-sequence steps flow Xe",
    "value": "F-C1-* / G-C1-* terms",
    "units": "mg/s; s",
@@ -5059,12 +5059,12 @@
    "quantity": "vendor/design-qualified C1 purge and ignition flows and durations, preheat duration (XA9-09..11); Hall discharge ignition gas (XA9-15); tank thermal control keeping <= 323 K (H2-5 revision)",
    "value": "TBD",
    "units": "mg/s; s; K",
-   "status": "PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)"
+   "status": "OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)"
   },
   {
    "id": "XA9-IF-08",
    "from": "A9-08",
-   "to": "A9-07 PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)",
+   "to": "A9-07 OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)",
    "quantity": "H2-7 H27-34 (PROPOSED >= 75 bar MEOP for a 7 l tank) was a 293.15 K check; at 323.15 K a 7 l tank at 75 bar holds the value in design_cases.tank_volume.xe_capacity_of_a_7l_tank_323K (XA9Q-06)",
    "value": "see design_cases",
    "units": "bar; kg",
@@ -5073,7 +5073,7 @@
   {
    "id": "XA9-IF-09",
    "from": "A9-08",
-   "to": "A9-09 PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base)",
+   "to": "A9-09 OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation)",
    "quantity": "Xe tank RFQ ranges: loaded 2 / 5 / 10 kg at 323 K; V_min per MEOP axis; MEOP, proof and burst factors to be quoted (XA9-28, XA9-29)",
    "value": "design_cases.tank_volume",
    "units": "kg; l; bar",
@@ -5082,7 +5082,7 @@
   {
    "id": "XA9-IF-10",
    "from": "A9-08",
-   "to": "A9-09 PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base)",
+   "to": "A9-09 OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation)",
    "quantity": "PMU/FCU RFQ ranges: C1 steady controller 0.05-0.2 mg/s class, +-2 % FS or better on Xe (rows 96, 125); C1 start/diode controller FS 1.0 mg/s only if 0.6-0.8 mg/s is retained (row 125); anode-side Xe-mode flow range TBD (XA9-18); G-XE ICP feed range TBD (XA9-22); two series isolation valves (row 90); filter/getter <= 17 W class C1 branch only after verification (row 51)",
    "value": "XA9-04..06, XA9-18, XA9-22, XA9-31",
    "units": "mg/s; W",
@@ -5095,12 +5095,12 @@
    "quantity": "quoted MEOP, tank volume/mass, FCU accuracy classes on Xe (closes XA9-20, XA9-28, XA9-29, XA9-31/32)",
    "value": "TBD",
    "units": "bar; l; kg; 1",
-   "status": "PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base)"
+   "status": "OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation)"
   },
   {
    "id": "XA9-IF-12",
    "from": "A9-08",
-   "to": "PENDING A9-10 reconciliation / M16 refresh (after A9-06..09; no path yet)",
+   "to": "A9-10 reconciliation docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json / M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
    "quantity": "owner-question state (XA9Q-01..07), M16 impacts (rows 6, 7, 8, 11), cross-references to A9-06/07/09",
    "value": "sections open_owner_questions / m16_impact",
    "units": "-",
@@ -5562,28 +5562,28 @@
    "key": "xe_tank",
    "name": "Xe tank",
    "impact": "tank sized per design case at 323 K (volume only) over a MEOP axis; the Xe ledger stays REFUSED per configuration (A7 blocker 3 unchanged); no single mission load frozen",
-   "cell_edit": "none here (M16 v2 is a verified deliverable); routed through PENDING A9-10 reconciliation / M16 refresh (after A9-06..09; no path yet)"
+   "cell_edit": "none here (M16 v2 is a verified deliverable); routed through A9-10 reconciliation docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json / M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
   },
   {
    "m16_row": 7,
    "key": "xe_regulator",
    "name": "Xe regulator",
    "impact": "regulator inlet range = MEOP (TBD, XA9-28); ranges offered to A9-09",
-   "cell_edit": "none here (M16 v2 is a verified deliverable); routed through PENDING A9-10 reconciliation / M16 refresh (after A9-06..09; no path yet)"
+   "cell_edit": "none here (M16 v2 is a verified deliverable); routed through A9-10 reconciliation docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json / M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
   },
   {
    "m16_row": 8,
    "key": "xe_metering",
    "name": "Xe metering (splits to ignition/transition feed and cathode feed)",
    "impact": "two C1 controllers (row 125) with the +-2 % FS term (row 96); ICP feed metering only in G-ATM/G-XE (OQ-A902-05); anode-side Xe-mode flow range TBD",
-   "cell_edit": "none here (M16 v2 is a verified deliverable); routed through PENDING A9-10 reconciliation / M16 refresh (after A9-06..09; no path yet)"
+   "cell_edit": "none here (M16 v2 is a verified deliverable); routed through A9-10 reconciliation docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json / M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
   },
   {
    "m16_row": 11,
    "key": "cathode",
    "name": "shielded Xe-fed LaB6 hollow cathode",
    "impact": "C1 is the reference/fallback: flight cathode term only in hall_c1_reference (15,000 h); absent in hall_icp_neutralizer flight (OQ-A902-04, row 46)",
-   "cell_edit": "none here (M16 v2 is a verified deliverable); routed through PENDING A9-10 reconciliation / M16 refresh (after A9-06..09; no path yet)"
+   "cell_edit": "none here (M16 v2 is a verified deliverable); routed through A9-10 reconciliation docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json / M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
   }
  ],
  "h3_inputs": [
@@ -5663,9 +5663,50 @@
   }
  ],
  "parallel_lanes": {
-  "A9-06": "PENDING docs/budgets/mass_a9/ (A9-06 mass reconciliation; parallel lane, not in the base)",
-  "A9-07": "PENDING docs/hardware/h2_a9_revisions/ (A9-07 H2 revisions; parallel lane, not in the base)",
-  "A9-09": "PENDING docs/procurement/rfq_a9/ (A9-09 RFQ packages; parallel lane, not in the base)",
-  "A9-10": "PENDING A9-10 reconciliation / M16 refresh (after A9-06..09; no path yet)"
+  "A9-06": "OPEN after A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged: owner allocations and evidence floors, no hardware CBE; A9-10 re-evaluation)",
+  "A9-07": "OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation)",
+  "A9-09": "OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation)",
+  "A9-10": "A9-10 reconciliation docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json / M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
+ },
+ "a9_10_reconciliation": {
+  "lane": "fo_a9_10_integration",
+  "record": "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+  "overlay": "docs/experiments/hall_icp/integration/a9_10_overlay.py",
+  "a9_1_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
+  },
+  "a9_2_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
+   "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "recorded_at_commit": "19c0040",
+   "path_resolution": "the docs/decisions/ paths exist in the execution branch (commit 19c0040) and resolve in this lane branch only after it merges there; until then the byte-identical pinned copies under docs/experiments/hall_icp/integration/a9_2_inputs/ (sha256 checked on every build) are the readable authority"
+  },
+  "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+  "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
+  "changes": [
+   {
+    "cid": "A910-A908-01",
+    "driver": "OQ-INT-03 re-evaluation + A9-10 self-reference",
+    "op": "code",
+    "ptr": null,
+    "count": 0,
+    "summary": "parallel-lane references re-evaluated: A9-06 / A9-07 / A9-09 merged references carry the precise remaining reason (they do not supply the value), A9-10 references point at the reconciliation record and M16 v3; upstream sha256 pins refreshed after the A9-10 rebuild of A9-01..05"
+   },
+   {
+    "cid": "A910-A908-02",
+    "driver": "A9-10 residual import",
+    "op": "set",
+    "ptr": "/interface_demands[id=XA9-IF-01]/status",
+    "count": 1,
+    "summary": "residual import consumed"
+   }
+  ]
  }
 }

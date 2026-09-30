@@ -44,6 +44,13 @@ SCRIPT_REL = LANE_DIR + "/build_a9_core_integration.py"
 TEST_REL = "tests/test_a9_core_integration.py"
 
 BASE = "88e4d478b81b25f0b4fd7de32aa5f76f0726c361"
+# A9-10 (fo_a9_10_integration): this record is FROZEN as the step-1 integration snapshot. Its "after" state is read with
+# ``git show`` at SNAPSHOT (the A9-10 base: integration + A9-06..A9-09 merged, before any A9-10 change), so later A9-10
+# changes to the deliverables do not rewrite it; they are recorded, change by change with their drivers, in
+# docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json. Live checks kept: authority pins, historical
+# byte-identity against BASE.
+SNAPSHOT = "ecdad06e30bc5d2f172e862e4bd4843e86332d42"
+A9_10_RECORD = "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json"
 CONFIGURATIONS = ("hall_c1_reference", "hall_icp_neutralizer")
 UNMAPPED = "UNMAPPED - owner/A9-10"
 
@@ -447,12 +454,17 @@ def sha256_file(rel: str) -> str:
         return sha256_bytes(f.read())
 
 
-def git_show(rel: str) -> bytes:
-    r = subprocess.run(["git", "show", f"{BASE}:{rel}"], cwd=ROOT, capture_output=True)
+def git_show(rel: str, commit: str = BASE) -> bytes:
+    r = subprocess.run(["git", "show", f"{commit}:{rel}"], cwd=ROOT, capture_output=True)
     if r.returncode != 0:
-        raise RuntimeError(f"git show {BASE}:{rel} failed (base commit must be available): "
+        raise RuntimeError(f"git show {commit}:{rel} failed (commit must be available): "
                            f"{r.stderr.decode(errors='replace').strip()}")
     return r.stdout
+
+
+def load_snapshot(rel: str):
+    """The deliverable as it stood at SNAPSHOT (frozen step-1 state; A9-10 changes are recorded elsewhere)."""
+    return json.loads(git_show(rel, SNAPSHOT).decode("utf-8"))
 
 
 def git_ls(rel: str):
@@ -526,7 +538,7 @@ def target_defines(rel: str, token: str) -> bool:
 def compare_deliverable(key: str, rel: str, errors: list, before=None, after=None):
     """Compare BASE vs current (or the given documents) leaf by leaf; append every violation to errors."""
     before = json.loads(git_show(rel).decode("utf-8")) if before is None else before
-    after = load_json(rel) if after is None else after
+    after = load_snapshot(rel) if after is None else after
     lb, la = dict(leaves(before)), dict(leaves(after))
     main_json = {d["key"]: d["json"] for d in DELIVERABLES}[key]
     decl = [r for r in RESOLUTIONS if r["deliverable"] == key and rel == main_json]
@@ -634,10 +646,10 @@ def build():
         pins.append({"path": rel, "sha256": got, "what": what})
 
     # A9-01 decision quantities and the A9-04 mapping table
-    a901 = load_json(J01)
+    a901 = load_snapshot(J01)
     dq01 = {q["id"]: q for q in a901["decision_quantities"]}
     a904_base = json.loads(git_show(J04).decode("utf-8"))
-    a904 = load_json(J04)
+    a904 = load_snapshot(J04)
     mapping = a904.get("dq_id_mapping")
     if not mapping:
         raise RuntimeError("A9-04 deliverable has no dq_id_mapping (run the A9-04 builder first)")
@@ -672,7 +684,7 @@ def build():
 
     # mapped ids must not survive anywhere in the A9 deliverables (outside the mapping tables)
     for key, rel in COMPARED_JSON:
-        doc = load_json(rel)
+        doc = load_snapshot(rel)
         if rel == J04:
             doc = {k: v for k, v in doc.items() if k != "dq_id_mapping"}
         txt = json.dumps(doc, ensure_ascii=False)
@@ -706,7 +718,7 @@ def build():
     # remaining PENDING occurrences
     remaining, unclassified = [], []
     for key, rel in COMPARED_JSON:
-        for p, frag, full in pending_occurrences(key, load_json(rel)):
+        for p, frag, full in pending_occurrences(key, load_snapshot(rel)):
             reason, note = classify(key, p, frag, full)
             if reason is None:
                 unclassified.append(f"{rel}{p}: {frag[:80]}")
@@ -719,8 +731,8 @@ def build():
     # pinned-input links between A9 deliverables
     pin_updates = []
     for link in PINNED_INPUT_LINKS:
-        pinned = get_ptr(load_json(link["pinned_by"]), link["field"])
-        now = sha256_file(link["pinned_file"])
+        pinned = get_ptr(load_snapshot(link["pinned_by"]), link["field"])
+        now = sha256_bytes(git_show(link["pinned_file"], SNAPSHOT))
         base_now = sha256_bytes(git_show(link["pinned_file"]))
         if pinned != now:
             errors.append(f"pinned input stale: {link['pinned_by']}{link['field']} != sha256({link['pinned_file']})")
@@ -740,8 +752,9 @@ def build():
     post = []
     for d in DELIVERABLES:
         for rel in [d["json"], d["md"], d["builder"]] + d.get("extra", []):
-            post.append({"deliverable": d["key"], "path": rel, "sha256": sha256_file(rel),
-                         "changed_by_this_lane": sha256_file(rel) != sha256_bytes(git_show(rel))})
+            snap = sha256_bytes(git_show(rel, SNAPSHOT))
+            post.append({"deliverable": d["key"], "path": rel, "sha256": snap,
+                         "changed_by_this_lane": snap != sha256_bytes(git_show(rel))})
 
     counts = {
         "ub_dq_ids": len(rows),
@@ -817,14 +830,14 @@ def assemble(pins, mapping, mapping_rows, resolved, remaining, no_change, pin_up
         {"id": "IF-INT-03", "direction": "from this lane to A9-04", "counterpart": J04,
          "quantity": "id rename (" + ", ".join(f"{a} -> {b}" for a, b in ID_RENAME) + ") and dq_id_mapping table",
          "units": "-", "status": "SUPPLIED (this lane)"},
-        {"id": "IF-INT-04", "direction": "from this lane to A9-10", "counterpart": "A9-10 governance (no path yet)",
+        {"id": "IF-INT-04", "direction": "from this lane to A9-10", "counterpart": A9_10_RECORD + " (A9-10)",
          "quantity": "resolve the UNMAPPED UB-DQ ids " + ", ".join(unmapped_ids), "units": "-",
          "status": "OPEN - owner/A9-10"},
-        {"id": "IF-INT-05", "direction": "from this lane to A9-10", "counterpart": "A9-10 governance (no path yet)",
+        {"id": "IF-INT-05", "direction": "from this lane to A9-10", "counterpart": A9_10_RECORD + " (A9-10)",
          "quantity": "re-evaluate status / value / assessment fields whose target is now in the base",
          "units": "count", "value": rem["STATUS_FIELD"] + rem["VALUE_FIELD"] + rem["ASSESSMENT_FIELD"]
          + rem["ITEM_STATUS_STATEMENT"], "status": "OPEN"},
-        {"id": "IF-INT-06", "direction": "from this lane to A9-10", "counterpart": "A9-10 governance (no path yet)",
+        {"id": "IF-INT-06", "direction": "from this lane to A9-10", "counterpart": A9_10_RECORD + " (A9-10)",
          "quantity": "per-input producing stage and decision-quantity assignment in the A9-05 validation inputs",
          "units": "count", "value": rem["ASSIGNMENT_NOT_DEFINED_BY_TARGET"], "status": "OPEN"},
         {"id": "IF-INT-07", "direction": "from this lane to A9-06 / A9-07 / A9-08 / A9-10",
@@ -851,17 +864,22 @@ def assemble(pins, mapping, mapping_rows, resolved, remaining, no_change, pin_up
         {"id": "OQ-INT-01", "question": "How should the UNMAPPED A9-04 ids (" + ", ".join(unmapped_ids) + ") relate "
          "to the A9-01 DQ-HI ids?", "proposed_answer": "keep them as measurement-chain ids (they are measured "
          "quantities feeding several or no decision quantities) and add in A9-10 an explicit chain -> DQ-HI consumer "
-         "table; owner call", "status": "OPEN - owner/A9-10"},
+         "table; owner call", "status": "OPEN - owner call (A9-10 added the PROPOSED chain -> DQ-HI consumer table, "
+         "ids kept: " + A9_10_RECORD + " dq_consumer_table)"},
         {"id": "OQ-INT-02", "question": "Should the A9 deliverables pin each other's sha256 in-file?",
          "proposed_answer": "no: they reference each other (no fixed point); pin post-integration hashes only in "
                             "this integration record and rebuild it after any later change; owner call",
          "status": "OPEN"},
         {"id": "OQ-INT-03", "question": "Status / value / assessment fields that still read 'PENDING <lane>' although "
          "the lane is now in the base: re-evaluate in A9-10?", "proposed_answer": "yes, in A9-10 with the consolidated "
-         "owner-question state (not a mechanical change)", "status": "OPEN"},
+         "owner-question state (not a mechanical change)", "status": "ADDRESSED_IN_A9_10 (" + A9_10_RECORD +
+         " pending_reevaluation: a PENDING field whose merged target or an A9.1 decision gives the value is filled or "
+         "re-stated by an A910-R* overlay record; every remaining one carries a reason code checked against its target "
+         "(no catch-all rule); interface_demand_matrix gives every demand its class and precise reason)"},
         {"id": "OQ-INT-04", "question": "A9-03 published-analog annex says it 'must be reconciled with A9-05 when it "
          "merges'; the pointer is resolved here, the reconciliation is not", "proposed_answer": "A9-10 reconciles the "
-         "annex against " + EV + " (content, not mechanical)", "status": "OPEN"},
+         "annex against " + EV + " (content, not mechanical)", "status": "ADDRESSED_IN_A9_10 (" + A9_10_RECORD +
+         " annex_reconciliation; A9-05 governs where they differ)"},
     ]
     doc = {
         "schema": "a9_core_integration_v1",
@@ -871,6 +889,10 @@ def assemble(pins, mapping, mapping_rows, resolved, remaining, no_change, pin_up
         "owner_decision": "A9 (+ A9.1 execution step_1_integration_repair)",
         "status": "MECHANICAL_INTEGRATION_NOT_A_SCIENTIFIC_RESULT",
         "base_commit": BASE,
+        "snapshot_commit": SNAPSHOT,
+        "a9_10_note": "frozen step-1 record: compared, counted and pinned at the snapshot commit (A9-10 base); the "
+                      "A9-10 changes to the deliverables (A9.1 decisions applied, references re-evaluated, M16 v3, "
+                      "owner-question state v2) are listed with their drivers in " + A9_10_RECORD,
         "generated_by": SCRIPT_REL + " (--check reproduces JSON and MD exactly and re-runs every check)",
         "companion_document": MD_REL,
         "test": TEST_REL,
@@ -956,6 +978,8 @@ def render_md(d) -> str:
     L = []
     a = L.append
     a("# A9 core integration (A9_INT): id mapping, cross-reference resolution, no-change check")
+    a("")
+    a(f"> Frozen step-1 snapshot (A9-10): compared at `{d['snapshot_commit']}`. {d['a9_10_note']}.")
     a("")
     a(f"<!-- GENERATED by {SCRIPT_REL} from a9_core_integration_v1.json; do not edit by hand -->")
     a("")

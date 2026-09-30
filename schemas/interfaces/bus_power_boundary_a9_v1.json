@@ -29,6 +29,7 @@
    "items": {
     "enum": [
      "active_cooling",
+     "flow_control_icp_feed",
      "icp_assist_magnet"
     ]
    }
@@ -40,8 +41,38 @@
    "enum": [
     "steady_state",
     "step_average",
-    "peak_sampled"
+    "peak_sampled",
+    "p_bus_1ms_max"
    ]
+  },
+  "gate_measurement": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "sample_rate_Sa_s",
+    "bandwidth_Hz",
+    "anti_alias_documented",
+    "synchronized",
+    "source"
+   ],
+   "properties": {
+    "sample_rate_Sa_s": {
+     "type": "number"
+    },
+    "bandwidth_Hz": {
+     "type": "number"
+    },
+    "anti_alias_documented": {
+     "type": "boolean"
+    },
+    "synchronized": {
+     "type": "boolean"
+    },
+    "source": {
+     "type": "string",
+     "minLength": 1
+    }
+   }
   },
   "front_end": {
    "$ref": "#/$defs/front_end"
@@ -75,6 +106,9 @@
    "properties": {
     "icp_rf_source": {
      "$ref": "#/$defs/rf_load"
+    },
+    "c1_heater": {
+     "$ref": "#/$defs/heater_load"
     }
    },
    "additionalProperties": {
@@ -223,6 +257,97 @@
     }
    ]
   },
+  "heater_load": {
+   "oneOf": [
+    {
+     "type": "object",
+     "required": [
+      "P_W",
+      "evidence_class",
+      "source"
+     ],
+     "properties": {
+      "P_W": {
+       "type": "number",
+       "minimum": 0
+      },
+      "evidence_class": {
+       "enum": [
+        "measured",
+        "digitized",
+        "inferred",
+        "reconstructed",
+        "model-derived",
+        "assumed",
+        "owner-allocation"
+       ]
+      },
+      "source": {
+       "type": "string",
+       "minLength": 1
+      }
+     },
+     "additionalProperties": false
+    },
+    {
+     "type": "object",
+     "required": [
+      "P_W",
+      "tbd_requires"
+     ],
+     "properties": {
+      "P_W": {
+       "const": "TBD"
+      },
+      "tbd_requires": {
+       "type": "string",
+       "minLength": 1
+      }
+     },
+     "additionalProperties": false
+    },
+    {
+     "type": "object",
+     "required": [
+      "P_W",
+      "tbd_requires",
+      "booked_W",
+      "evidence_class",
+      "source"
+     ],
+     "properties": {
+      "P_W": {
+       "const": "TBD"
+      },
+      "tbd_requires": {
+       "type": "string",
+       "minLength": 1
+      },
+      "booked_W": {
+       "type": "number",
+       "exclusiveMinimum": 0
+      },
+      "evidence_class": {
+       "enum": [
+        "measured",
+        "digitized",
+        "inferred",
+        "reconstructed",
+        "model-derived",
+        "assumed",
+        "owner-allocation"
+       ]
+      },
+      "source": {
+       "type": "string",
+       "minLength": 1
+      }
+     },
+     "additionalProperties": false,
+     "description": "A9.1 SEQ-heater: TBD c1_heater booked ON at conservative power"
+    }
+   ]
+  },
   "efficiency": {
    "oneOf": [
     {
@@ -368,7 +493,6 @@
     "icp_rf_source",
     "icp_matching_network",
     "icp_collector_bias",
-    "flow_control_icp_feed",
     "flow_control_atmospheric",
     "flow_control_xe",
     "compressor",
@@ -383,10 +507,25 @@
    ],
    "hall_icp_neutralizer": [
     "icp_assist_magnet",
-    "active_cooling"
+    "active_cooling",
+    "flow_control_icp_feed"
    ]
   },
   "internal_bus_V": 100.0,
-  "rfp_limit_W": 1500.0
+  "rfp_limit_W": 1500.0,
+  "gate_quantity": "P_bus,1ms,max (A9.1 OQ-A902-01)",
+  "pass_requires_power_basis": [
+   "p_bus_1ms_max"
+  ],
+  "pass_requires_gate_measurement": {
+   "keys": [
+    "sample_rate_Sa_s",
+    "bandwidth_Hz",
+    "anti_alias_documented",
+    "synchronized",
+    "source"
+   ],
+   "rule": "sample_rate_Sa_s >= 100e3, bandwidth_Hz >= 20e3, anti_alias_documented and synchronized True, non-empty source"
+  }
  }
 }

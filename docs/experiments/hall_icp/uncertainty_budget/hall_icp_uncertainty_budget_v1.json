@@ -281,7 +281,7 @@
    {
     "ub_dq_id": "UB-DQ-RF",
     "dq_hi_id": null,
-    "status": "UNMAPPED - owner/A9-10",
+    "status": "UNMAPPED - kept as a measurement-chain id; chain -> DQ-HI consumer table in docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (OQ-INT-01 PROPOSED, owner call)",
     "ub_definition": "RF forward / reflected / delivered power; P_fwd, P_ref, P_net, P_coil; W; hall_icp_neutralizer only",
     "a9_01_definition": "no A9-01 decision quantity with this name",
     "basis": "no counterpart: RF power enters A9-01 only through the RF-source DC slot of P_bus and as the reflected-power interlock limit inside a multi-limit class",
@@ -293,7 +293,7 @@
    {
     "ub_dq_id": "UB-DQ-NEUT",
     "dq_hi_id": null,
-    "status": "UNMAPPED - owner/A9-10",
+    "status": "UNMAPPED - kept as a measurement-chain id; chain -> DQ-HI consumer table in docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (OQ-INT-01 PROPOSED, owner call)",
     "ub_definition": "electron-source current, collector current / bias and neutralization margin; I_e,src, I_coll, V_coll, V_cg, M_n; A / V / -; both configurations",
     "a9_01_definition": "split over DQ-HI-ECAP (A; dimensionless ratio) and DQ-HI-VCPL (V)",
     "basis": "maps to several A9-01 quantities (current/margin part vs potential part)",
@@ -305,7 +305,7 @@
    {
     "ub_dq_id": "UB-DQ-ID",
     "dq_hi_id": null,
-    "status": "UNMAPPED - owner/A9-10",
+    "status": "UNMAPPED - kept as a measurement-chain id; chain -> DQ-HI consumer table in docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (OQ-INT-01 PROPOSED, owner call)",
     "ub_definition": "Hall discharge current and oscillations; I_d, I_d(t), A_osc, S_Id(f); A / - / A^2 Hz^-1; both configurations",
     "a9_01_definition": "used by DQ-HI-SUST (class), DQ-HI-STAB (A band, Hz, class) and DQ-HI-ECAP (Hall current demand)",
     "basis": "maps to several A9-01 quantities",
@@ -318,7 +318,7 @@
    {
     "ub_dq_id": "UB-DQ-FLOW",
     "dq_hi_id": null,
-    "status": "UNMAPPED - owner/A9-10",
+    "status": "UNMAPPED - kept as a measurement-chain id; chain -> DQ-HI consumer table in docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (OQ-INT-01 PROPOSED, owner call)",
     "ub_definition": "mass flows; mdot_N2, mdot_O2, mdot_Ar, mdot_Xe,C1, mdot_ICP; mg s^-1; both configurations",
     "a9_01_definition": "used by DQ-HI-DXE (Xe only), DQ-HI-KNEE (flow scan output) and DQ-HI-RESTART (gas per restart)",
     "basis": "maps to several A9-01 quantities; none is the set of all flows",
@@ -331,7 +331,7 @@
    {
     "ub_dq_id": "UB-DQ-PB",
     "dq_hi_id": null,
-    "status": "UNMAPPED - owner/A9-10",
+    "status": "UNMAPPED - kept as a measurement-chain id; chain -> DQ-HI consumer table in docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (OQ-INT-01 PROPOSED, owner call)",
     "ub_definition": "background pressure and residual gas composition; p_b, x_i; Pa / mole fraction; both configurations",
     "a9_01_definition": "no A9-01 decision quantity (a condition variable of the same-condition list and stage HI-PB)",
     "basis": "no counterpart",
@@ -340,7 +340,7 @@
    {
     "ub_dq_id": "UB-DQ-BZ",
     "dq_hi_id": null,
-    "status": "UNMAPPED - owner/A9-10",
+    "status": "UNMAPPED - kept as a measurement-chain id; chain -> DQ-HI consumer table in docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (OQ-INT-01 PROPOSED, owner call)",
     "ub_definition": "magnetic field B(z) and ICP-induced perturbation; B(z), Delta B_icp(z); T; both configurations",
     "a9_01_definition": "no A9-01 decision quantity (a same-condition variable; tolerance at gate deadline GD-11)",
     "basis": "no counterpart",
@@ -349,7 +349,7 @@
    {
     "ub_dq_id": "UB-DQ-TEMP",
     "dq_hi_id": null,
-    "status": "UNMAPPED - owner/A9-10",
+    "status": "UNMAPPED - kept as a measurement-chain id; chain -> DQ-HI consumer table in docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (OQ-INT-01 PROPOSED, owner call)",
     "ub_definition": "temperatures incl. measured radiative sink temperature; T_k, T_sink; K; both configurations",
     "a9_01_definition": "temperatures enter DQ-HI-SAFE only as one limit of a multi-limit class (class; W; K; V)",
     "basis": "no counterpart with the same name and units",
@@ -413,7 +413,7 @@
     "hall_c1_reference",
     "hall_icp_neutralizer"
    ],
-   "note": "kept for now; revised only before LOCK-2 and before any score-bearing physics data on metrology-only calibration evidence; never relaxed after propulsion results (row 121). Whether 1 % is a standard (k=1) or expanded uncertainty is open question UBQ-01"
+   "note": "kept for now; revised only before LOCK-2 and before any score-bearing physics data on metrology-only calibration evidence; never relaxed after propulsion results (row 121). A9.1 UBQ-01: 1 % is the standard relative uncertainty (k = 1) of a sustained reading; absolute PASS/FAIL gates use the preregistered one-sided confidence treatment; never reinterpreted as k = 2"
   },
   {
    "id": "UB-T-02",
@@ -549,7 +549,7 @@
     "hall_c1_reference",
     "hall_icp_neutralizer"
    ],
-   "note": ""
+   "note": "A9.1 UBQ-05: both - the pre/post shift enters the budget AND a block-exclusion rule applies; rule form frozen at LOCK-1, numerical limit inserted at LOCK-2 from metrology-only calibration evidence"
   },
   {
    "id": "UB-T-08",
@@ -714,12 +714,12 @@
    "name": "bus-slot list of the A9 boundary",
    "symbol": "S_A9",
    "type": "rule",
-   "value": "PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/ (slots incl. RF source/matching, collector/bias, C1 reference supplies)",
+   "value": "S_A9 = the slot list of abep_sim/bus_boundary_a9.py (A9-02): hall_discharge, hall_magnet_inner, hall_magnet_outer, hall_magnet_trim, c1_heater, c1_keeper, c1_common_tie, filter_getter, icp_rf_source, icp_matching_network, icp_collector_bias (variants: icp_assist_magnet, active_cooling, flow_control_icp_feed only for G-ATM / G-XE), flow_control_atmospheric, flow_control_xe, compressor, thermal_control, housekeeping_controls, reserved_dc_port (installed per configuration in BASE_SLOTS)",
    "units": "-",
    "basis": "A9-02",
-   "source": "owner answers rows 66, 110",
-   "evidence_class": null,
-   "status": "PENDING",
+   "source": "abep_sim/bus_boundary_a9.py SLOTS / BASE_SLOTS (A9-02, merged); owner answers rows 66, 110",
+   "evidence_class": "owner-allocation",
+   "status": "VERIFIED_INPUT",
    "freeze_point": "LOCK-1",
    "owner_rows": [
     66,
@@ -824,12 +824,12 @@
    "name": "conversion efficiency for slots supplied by non-flight-representative lab sources",
    "symbol": "eta_s",
    "type": "conditioning",
-   "value": "PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/ (and docs/hardware/h2/h2_4_ppu_bus/; a LOCK-1 conditioning input, never a variance term; unmeasured loads -> PARTIAL_BOUNDARY (row 22))",
+   "value": "TBD - requires the lab-source / breadboard efficiencies (RFQ-06; row 113): A9-02 ledger() takes every slot efficiency as an explicit caller input (value or TBD with what it requires, no default; a LOCK-1 conditioning input, never a variance term); a TBD compressor load -> PARTIAL_BOUNDARY (row 22)",
    "units": "-",
    "basis": "A9-02",
    "source": "owner answers rows 22, 108, 113",
    "evidence_class": null,
-   "status": "PENDING",
+   "status": "TBD",
    "freeze_point": "LOCK-1",
    "owner_rows": [
     22,
@@ -846,16 +846,20 @@
   {
    "id": "UB-P-07",
    "dq": "DQ-HI-PBUS",
-   "name": "start-up transient window and channel bandwidth for P_bus,peak",
+   "name": "start-up transient window and channel bandwidth for P_bus,1ms,max (A9.1 OQ-A902-01)",
    "symbol": "tau_start, f_bw,P",
    "type": "rule",
-   "value": "TBD - requires the start-up sequence (revised SEQ-1, row 112) and PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/",
-   "units": "s / Hz",
+   "value": {
+    "window_s": 0.001,
+    "bandwidth_min_Hz": 20000.0,
+    "sample_rate_min_Sa_s": 100000.0
+   },
+   "units": "s / Hz / Sa/s",
    "basis": "A9-02",
-   "source": "owner answers rows 108, 112",
-   "evidence_class": null,
-   "status": "TBD",
-   "freeze_point": "LOCK-1",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json OQ-A902-01 (A9-02 GATE_DEFINITION)",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW",
    "owner_rows": [
     108,
     112
@@ -865,7 +869,8 @@
     "hall_c1_reference",
     "hall_icp_neutralizer"
    ],
-   "note": ""
+   "note": "gate quantity P_bus,1ms,max = max 1 ms moving mean < 1500 W, start-up and steady; >= 20 kHz effective bandwidth, >= 100 kSa/s, anti-alias documented, synchronized channels; the start-up step list stays the A9-02 SEQUENCE_TEMPLATES (PROPOSED, row 112)",
+   "a9_1_decision": "OQ-A902-01"
   },
   {
    "id": "UB-P-08",
@@ -915,7 +920,7 @@
   {
    "id": "UB-RF-01",
    "dq": "UB-DQ-RF",
-   "name": "laboratory forward-power range of the RF source and inline chain",
+   "name": "laboratory delivered/operating RF investigation capability of the RF source and inline chain (row 72 as interpreted by A9.2 rf_500W; not a component rating)",
    "symbol": "P_fwd range",
    "type": "requirement",
    "value": [
@@ -935,7 +940,11 @@
    "configurations": [
     "hall_icp_neutralizer"
    ],
-   "note": "directional-coupler forward/reflected measurement is primary; calorimetry is an independent cross-check, not the sole primary measurement (row 72)"
+   "note": "directional-coupler forward/reflected measurement is primary; calorimetry is an independent cross-check, not the sole primary measurement (row 72)",
+   "name_before_a9_2": "laboratory forward-power range of the RF source and inline chain",
+   "a9_2_interpretation": "0-500 W is a laboratory delivered/operating investigation capability, not a component rating (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.rf_500W (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03; verbatim docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md)); P_forward != P_delivered",
+   "rating": "TBD - requires the ICP antenna impedance map Z_antenna = R + jX versus mdot, P_RF, p, gas composition and the Hall operating point (A9.2 post-A9 priority P2): RF component ratings (generator, coupler, coax, connectors, matching elements incl. their voltage and current, feedthroughs) are TBD_AFTER_IMPEDANCE_MAP; the 0-500 W row-72 figure is a laboratory delivered/operating investigation capability, not a component rating (A9.2)",
+   "status_detail_a9_2": "OWNER_GIVEN applies to the delivered/operating capability only (A9.2 rf_500W); forward-power ratings TBD_AFTER_IMPEDANCE_MAP"
   },
   {
    "id": "UB-RF-02",
@@ -960,7 +969,7 @@
   {
    "id": "UB-RF-03",
    "dq": "UB-DQ-RF",
-   "name": "power-sensor calibration factor and linearity over 0-500 W",
+   "name": "power-sensor calibration factor and linearity over the forward-power range of the selected generator rating (TBD_AFTER_IMPEDANCE_MAP; covering the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating))",
    "symbol": "u_r(P_sens)",
    "type": "B",
    "value": "TBD - requires sensor certificates",
@@ -985,10 +994,10 @@
    "name": "coupler finite directivity and mismatch error on P_ref and P_net",
    "symbol": "u(P_ref)_dir",
    "type": "B",
-   "value": "TBD - requires coupler directivity from its certificate and the measured load reflection; the evaluation formula is taken from the coupler/sensor documentation (from memory: a directivity-limited reflection error - verify)",
-   "units": "W",
+   "value": "TBD - requires the coupler directivity D from its certificate, the operating |Gamma| at the coupler plane (A9.2: generator / 50-ohm side of the local match, i.e. the residual mismatch after the local match) and D_min frozen at LOCK-2; first-order relation from A9-07 IDA7-21: worst-case relative error of P_net = max((|G|+d)^2 - |G|^2, |G|^2 - (|G|-d)^2) / (1 - |G|^2), d = 10^(-D/20) (verify against the coupler documentation); plus the two-port + Gamma_L load-power correction term (A9H-INS-03)",
+   "units": "1 (relative error of P_net; the absolute term in W is this value x P_net)",
    "basis": "certificate",
-   "source": "-",
+   "source": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json interface_demands IDA7-21 and recomputations.rf_reference_plane (sensitivity at residual VSWR 1.2-2.0, D 20/30/40 dB)",
    "evidence_class": null,
    "status": "TBD",
    "freeze_point": "LOCK-2",
@@ -1002,7 +1011,7 @@
   {
    "id": "UB-RF-05",
    "dq": "UB-DQ-RF",
-   "name": "matching-network and cable loss between the coupler plane and the coil",
+   "name": "50-ohm line and local matching-network loss P_line/match,loss between the coupler plane (generator / 50-ohm side) and the antenna (A9.2)",
    "symbol": "P_loss,mn + P_loss,cable",
    "type": "B",
    "value": "TBD - requires S1a dummy-load characterization of the matching network and cable (evidence class 'reconstructed' once measured)",
@@ -1017,7 +1026,8 @@
    "configurations": [
     "hall_icp_neutralizer"
    ],
-   "note": ""
+   "note": "",
+   "name_before_a9_2": "matching-network and cable loss between the coupler plane and the coil"
   },
   {
    "id": "UB-RF-06",
@@ -1065,12 +1075,12 @@
    "name": "calorimetric cross-check agreement rule",
    "symbol": "z_x, k_x",
    "type": "rule",
-   "value": "TBD - requires owner acceptance of the rule form (UBQ-04) at LOCK-1; k_x value at LOCK-2 from S1a",
+   "value": 2.0,
    "units": "-",
    "basis": "owner answer row 72 (cross-check role)",
-   "source": "owner answer row 72",
-   "evidence_class": null,
-   "status": "PROPOSED",
+   "source": "owner answer row 72; docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-04",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
    "freeze_point": "LOCK-1",
    "owner_rows": [
     72
@@ -1079,7 +1089,8 @@
    "configurations": [
     "hall_icp_neutralizer"
    ],
-   "note": ""
+   "note": "|z_x| <= k_x with k_x = 2 frozen at LOCK-1 (A9.1 UBQ-04); S1a determines the uncertainties in the denominator, not the threshold; a failed coupler-vs-calorimetry check makes RF-dependent quantities EXCLUDED_INSTRUMENT until resolved; no instrument is ever re-weighted",
+   "a9_1_decision": "UBQ-04"
   },
   {
    "id": "UB-RF-09",
@@ -1087,12 +1098,12 @@
    "name": "RF reference plane for the delivered-power quantity",
    "symbol": "plane",
    "type": "rule",
-   "value": "PENDING docs/interfaces/icp_neutralizer/ (coupler location relative to the matching network and coil)",
+   "value": "directional coupler on the generator / 50-ohm side of the LOCAL matching network (on / immediately adjacent to the ICP module; A9.2 OQ-A907-11 supersedes the A9.1 off-platform arrangement for the baseline); forward and reflected power measured on the generator / 50-ohm side of the local matching network; retained quantities P_forward, P_reflected, |Gamma|, VSWR and, where possible, P_delivered = P_forward - P_reflected - P_line/match,loss; P_forward = P_plasma is never assumed",
    "units": "-",
    "basis": "A9-03",
-   "source": "owner answers rows 62, 71",
-   "evidence_class": null,
-   "status": "PENDING",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json A9-03-matching; schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
    "freeze_point": "LOCK-1",
    "owner_rows": [
     62,
@@ -1102,7 +1113,10 @@
    "configurations": [
     "hall_icp_neutralizer"
    ],
-   "note": ""
+   "note": "",
+   "a9_1_decision": "A9-03-matching",
+   "value_before_a9_2": "directional-coupler reference plane AFTER the matching network; matching network off the moving platform with matched flexible coax and cable-loss / S-parameter correction (ICD ICP-13)",
+   "a9_2_decision": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.OQ-A907-11 (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03; verbatim docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md); docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.rf_measurement_reference (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03; verbatim docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md)"
   },
   {
    "id": "UB-N-00",
@@ -1110,12 +1124,12 @@
    "name": "electrical topology: floating ICP body, separately biased collector",
    "symbol": "",
    "type": "rule",
-   "value": "PENDING docs/interfaces/icp_neutralizer/ (floating body + separately biased collector circuit, row 70)",
+   "value": "ICP body floating by default (ICD ICP-20, row 70); electron-extraction collector / bias controlled and metered separately, never hard-grounded by default (ICD ICP-21)",
    "units": "-",
    "basis": "A9-03",
-   "source": "owner answer row 70",
-   "evidence_class": null,
-   "status": "PENDING",
+   "source": "schemas/interfaces/icp_neutralizer_icd_v1.json ICP-20 (OWNER_GIVEN, row 70), ICP-21 (A9-03, merged)",
+   "evidence_class": "owner-allocation",
+   "status": "VERIFIED_INPUT",
    "freeze_point": "LOCK-1",
    "owner_rows": [
     70
@@ -1239,12 +1253,12 @@
    "name": "neutralization-margin definition",
    "symbol": "M_n",
    "type": "rule",
-   "value": "PENDING docs/experiments/hall_icp/prereg_framework/ (gate definition; this lane proposes the ratio form M_n = I_e,cap/I_d,dem - 1, UBQ-02)",
+   "value": "M_n = I_e,cap / I_d,dem - 1; gate on the one-sided lower confidence bound > 0 (A9.1 UBQ-02); any additional design margin computed/frozen at LOCK-2 by the LOCK-1 uncertainty rule",
    "units": "-",
    "basis": "A9-01",
-   "source": "owner answers rows 37, 145",
-   "evidence_class": null,
-   "status": "PENDING",
+   "source": "owner answers rows 37, 145; docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-02",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
    "freeze_point": "LOCK-1",
    "owner_rows": [
     37,
@@ -1254,7 +1268,8 @@
    "configurations": [
     "hall_icp_neutralizer"
    ],
-   "note": ""
+   "note": "",
+   "a9_1_decision": "UBQ-02"
   },
   {
    "id": "UB-N-07",
@@ -1770,12 +1785,12 @@
    "name": "ICP gas feed: species and flow measurement chain",
    "symbol": "mdot_ICP",
    "type": "rule",
-   "value": "PENDING docs/interfaces/icp_neutralizer/ (ICP gas species and flow; A9 recorder flag row 46: not yet booked)",
+   "value": "G-REUSE (A9.1 HIQ-06; schemas/interfaces/icp_neutralizer_icd_v1.json ICP-26): no dedicated ICP feed and no ICP MFC in the primary mode; the Hall-feed chains (INS-05) already carry the gas; a dedicated-flow chain with own-gas calibration exists only for a declared G-ATM / G-XE contingency variant",
    "units": "-",
    "basis": "A9-03",
    "source": "A9 recorder_consistency_flags_for_owner (row 46)",
-   "evidence_class": null,
-   "status": "PENDING",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
    "freeze_point": "LOCK-1",
    "owner_rows": [
     46
@@ -1784,7 +1799,8 @@
    "configurations": [
     "hall_icp_neutralizer"
    ],
-   "note": ""
+   "note": "",
+   "a9_1_decision": "HIQ-06"
   },
   {
    "id": "UB-B-00",
@@ -1932,7 +1948,7 @@
    "name": "paired p_b mismatch between configurations (ICP gas load)",
    "symbol": "Delta p_b",
    "type": "A",
-   "value": "TBD - requires S1b p_b in both configurations; the ICP gas flow is PENDING docs/interfaces/icp_neutralizer/",
+   "value": "TBD - requires S1b p_b in both configurations; the ICP gas load is the Hall exhaust reused in G-REUSE (no dedicated flow, A9.1 HIQ-06; schemas/interfaces/icp_neutralizer_icd_v1.json ICP-26); a declared G-ATM / G-XE variant adds its dedicated flow",
    "units": "Pa",
    "basis": "S1b",
    "source": "this lane (facility variance group VG-4)",
@@ -2018,7 +2034,7 @@
    "name": "coil-current channels",
    "symbol": "u_r(I_coil)",
    "type": "B",
-   "value": "TBD - requires certificates (magnet slots PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/)",
+   "value": "TBD - requires certificates of the coil-current channels (magnet slots hall_magnet_inner / hall_magnet_outer / hall_magnet_trim defined by A9-02)",
    "units": "relative",
    "basis": "certificate",
    "source": "-",
@@ -2098,7 +2114,7 @@
     "hall_c1_reference",
     "hall_icp_neutralizer"
    ],
-   "note": "a design margin (plus 20 % heat-load margin), not an abort limit; whether limit aborts fire at the validated limit or at limit - margin is open question UBQ-06"
+   "note": "a design margin (plus 20 % heat-load margin); A9.1 UBQ-06 sets the score-bearing temperature abort at the validated continuous-use limit minus 50 K (stop_rules LA-05)"
   },
   {
    "id": "UB-K-01",
@@ -2195,12 +2211,12 @@
    "name": "use of eta_u in a decision quantity",
    "symbol": "",
    "type": "rule",
-   "value": "PENDING docs/experiments/hall_icp/prereg_framework/ (if used, S1b Faraday/ExB repeatability is mandatory, row 32)",
+   "value": "TBD - requires the LOCK-1 choice: A9-01 DQ-HI-ETAU is CONDITIONAL (descriptive unless preregistered at LOCK-1; if used, S1b Faraday / ExB repeatability is mandatory, row 32)",
    "units": "-",
    "basis": "A9-01",
    "source": "owner answer row 32",
    "evidence_class": null,
-   "status": "PENDING",
+   "status": "TBD",
    "freeze_point": "LOCK-1",
    "owner_rows": [
     32
@@ -2287,12 +2303,12 @@
    "name": "family-wise error rate for simultaneous contrast intervals",
    "symbol": "alpha_FW",
    "type": "rule",
-   "value": "TBD - requires owner decision at LOCK-1 (UBQ-07)",
+   "value": 0.05,
    "units": "-",
    "basis": "owner",
-   "source": "-",
-   "evidence_class": null,
-   "status": "TBD",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-07",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
    "freeze_point": "LOCK-1",
    "owner_rows": [],
    "owner_text": null,
@@ -2300,7 +2316,8 @@
     "hall_c1_reference",
     "hall_icp_neutralizer"
    ],
-   "note": ""
+   "note": "simultaneous architecture contrasts with a preregistered multiplicity-control procedure such as Holm (the Bonferroni quantile in variance_groups is a PROPOSED form, frozen at LOCK-1)",
+   "a9_1_decision": "UBQ-07"
   },
   {
    "id": "UB-C-03",
@@ -2308,12 +2325,12 @@
    "name": "one-sided error rate of the absolute gates",
    "symbol": "alpha_abs",
    "type": "rule",
-   "value": "TBD - requires owner decision at LOCK-1 (UBQ-07)",
+   "value": 0.05,
    "units": "-",
    "basis": "owner",
-   "source": "-",
-   "evidence_class": null,
-   "status": "TBD",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-07",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
    "freeze_point": "LOCK-1",
    "owner_rows": [],
    "owner_text": null,
@@ -2321,7 +2338,8 @@
     "hall_c1_reference",
     "hall_icp_neutralizer"
    ],
-   "note": ""
+   "note": "",
+   "a9_1_decision": "UBQ-07"
   },
   {
    "id": "UB-C-04",
@@ -2507,6 +2525,30 @@
     "hall_icp_neutralizer"
    ],
    "note": ""
+  },
+  {
+   "id": "UB-AR-01",
+   "dq": "engineering-only (HI-AR)",
+   "name": "Ar-specific gauge / MFC / RGA calibrations",
+   "symbol": "-",
+   "type": "requirement",
+   "value": "required for HI-AR engineering interpretation",
+   "units": "-",
+   "basis": "owner decision",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-08",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW",
+   "owner_rows": [
+    36
+   ],
+   "owner_text": null,
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "a9_1_decision": "UBQ-08",
+   "note": "Ar remains engineering-only regardless of calibration quality; Ar readings never enter LOCK-2 numbers, decision quantities or DRDO compliance claims (A9.1 HIQ-08)"
   }
  ],
  "measurement_chains": [
@@ -2585,8 +2627,9 @@
     "P_net = P_fwd - P_ref at the coupler plane;  |Gamma|^2 = P_ref / P_fwd",
     "P_coil = P_net - P_loss,mn - P_loss,cable   [reconstructed from the S1a dummy-load characterization]",
     "u^2(P_net) = u^2(P_fwd) + u^2(P_ref) - 2 r u(P_fwd) u(P_ref)   [GUM 5.2.2 Eq. (13); r from a shared sensor/coupler calibration]",
-    "cross-check: z_x = (P_coupler - P_cal) / sqrt(u^2(P_coupler) + u^2(P_cal)); PROPOSED rule |z_x| <= k_x (UBQ-04); P_cal = sum_j mdot_j c_p,j Delta T_j + C dT/dt (steady-state coolant or dummy-load calorimetry; method PENDING docs/interfaces/icp_neutralizer/)",
-    "the RF-source DC input is a P_bus slot (DQ-HI-PBUS); P_net / P_coil are accounting and diagnostic quantities, never a substitute for P_bus"
+    "cross-check: z_x = (P_coupler - P_cal) / sqrt(u^2(P_coupler) + u^2(P_cal)); rule |z_x| <= k_x with k_x = 2 frozen at LOCK-1 (A9.1 UBQ-04; failure -> RF-dependent quantities EXCLUDED_INSTRUMENT; UB-RF-08); P_cal = sum_j mdot_j c_p,j Delta T_j + C dT/dt (steady-state coolant or dummy-load calorimetry; method TBD - not defined in the merged A9-03 ICD, whose ICP-14 names calorimetry only as the independent cross-check; LOCK-1 item)",
+    "the RF-source DC input is a P_bus slot (DQ-HI-PBUS); P_net / P_coil are accounting and diagnostic quantities, never a substitute for P_bus",
+    "P_delivered = P_forward - P_reflected - P_line/match,loss (A9.2; the same quantity as P_coil above, P_line/match,loss = P_loss,mn + P_loss,cable); P_forward = P_plasma is never assumed"
    ],
    "components": [
     "UB-RF-02",
@@ -2616,9 +2659,9 @@
    "equations": [
     "current balance: I_d = I_e,src + I_gnd  (I_e,src: electron current from the active source, C1 emission or ICP extraction; I_gnd: net current to facility ground through the cathode-common/bleeder)",
     "closure residual: r_I = (I_d - I_e,src - I_gnd) / I_d   [diagnostic; both configurations]",
-    "ICP: I_e,src = I_coll (collector/bias-supply current, sign convention PENDING docs/interfaces/icp_neutralizer/)",
+    "ICP: I_e,src = I_coll (collector/bias-supply current, sign convention TBD - not defined in the merged A9-03 ICD, whose ICP-21 defines the separately metered collector only; LOCK-1 item)",
     "capacity: I_e,cap = max I_e,src over the preregistered bias sweep within V_coll <= V_coll,max and P_RF <= P_RF,max (limits from real ratings, A4)",
-    "PROPOSED margin form (UBQ-02): M_n = I_e,cap / I_d,dem - 1 with I_d,dem = I_d measured at the same condition; gate M_n,lb = M_n,hat - k_1 u_c(M_n) > 0 (margin value PENDING docs/experiments/hall_icp/prereg_framework/)",
+    "OWNER_GIVEN margin form (A9.1 UBQ-02): M_n = I_e,cap / I_d,dem - 1 with I_d,dem = I_d measured at the same condition; gate M_n,lb = M_n,hat - k_1 u_c(M_n) > 0 (any extra design margin is frozen at LOCK-2 per the LOCK-1 rule, A9.1 UBQ-02)",
     "u_r^2(M_n + 1) = u_r^2(I_e,cap) + u_r^2(I_d,dem)",
     "coupling voltage V_cg (source common to facility ground) recorded in both configurations"
    ],
@@ -2677,7 +2720,7 @@
    ],
    "equations": [
     "mdot_s = mdot_ind,s * (1 + c_cal,s)   [own-gas calibration correction from the NABL/ISO 17025 certificate]",
-    "u_r^2(mdot) = u_r^2(ref) + u_r^2(RoR) + (a_FS * FS / mdot)^2 / 3 + (u(zero)/mdot)^2 + u_r^2(T_body) + (u_A/mdot)^2   [the '/3' applies a stated +/- bound as rectangular, GUM 4.3.7 Eq. (7), unless the certificate states a multiplier, GUM 4.3.3; UBQ-03]",
+    "u_r^2(mdot) = u_r^2(ref) + u_r^2(RoR) + (a_FS * FS / mdot)^2 / 3 + (u(zero)/mdot)^2 + u_r^2(T_body) + (u_A/mdot)^2   [the '/3' applies a stated +/- bound as rectangular, GUM 4.3.7 Eq. (7), unless the certificate states a multiplier, GUM 4.3.3; accepted, A9.1 UBQ-03]",
     "rate-of-rise: mdot = (V M / (Z R T)) dp/dt   [Z: compressibility from a verified EOS for Xe (row 50); Z = 1 only where justified]",
     "mixture fraction: w_O2 = mdot_O2 / (mdot_N2 + mdot_O2);  u^2(w_O2) = [w_N2 u(mdot_O2)]^2/M^2 + [w_O2 u(mdot_N2)]^2/M^2 with M = mdot_N2 + mdot_O2",
     "Delta Xe (row 37): Delta mdot_Xe = mdot_Xe,icp_config - mdot_Xe,c1_config with PHASE_TOTAL_FLOW booking (row 42) and the ICP gas feed schemas/interfaces/icp_neutralizer_icd_v1.json ICP-26"
@@ -2788,7 +2831,7 @@
     "INS-08"
    ],
    "equations": [
-    "eta_u = mdot_i / mdot_prop,  mdot_i = (I_b / e) * sum_j (Omega_j m_j / Z_j)   [standard mass-utilization form (from memory - verify against REF-BROWN2017 / REF-ROVEY2025); mdot_prop basis PENDING docs/experiments/hall_icp/prereg_framework/]",
+    "eta_u = mdot_i / mdot_prop,  mdot_i = (I_b / e) * sum_j (Omega_j m_j / Z_j)   [standard mass-utilization form (from memory - verify against REF-BROWN2017 / REF-ROVEY2025); mdot_prop basis TBD - A9-01 DQ-HI-ETAU (CONDITIONAL) does not define it; LOCK-1 item if eta_u is preregistered]",
     "u_r^2(eta_u) = u_r^2(I_b) + u_r^2(sum_j Omega_j m_j / Z_j) + u_r^2(mdot_prop)"
    ],
    "components": [
@@ -2907,7 +2950,7 @@
      "rule": "stop if U_k < -delta_stop at every qualifying condition of the confirmation subset"
     }
    ],
-   "owner_choice": "OPEN - explicit owner choice between SR-C-SIGN and SR-C-MARGIN (UBQ-09)",
+   "owner_choice": "SR-C-MARGIN (A9.1 UBQ-09): a configuration is stopped for inferiority only when its confidence bound crosses the preregistered negative decision margin; margin rule frozen at LOCK-1, uncertainty-derived value at LOCK-2; SR-C-SIGN is not used",
    "historical_citation_only": {
     "path": "docs/architecture_comparison/lock1/lock1_decision_brief_v1.json#decisions[D-02].options[D-02-A]",
     "sha256": "7ce17e1f9101d0832a164e453fd757a813f5e1e77f689cfb661bdc920f453920",
@@ -2943,7 +2986,7 @@
      "id": "LA-02",
      "quantity": "RF forward power",
      "symbol": "P_fwd,max",
-     "value": "TBD - requires generator / matching / coil ratings inside the 0-500 W laboratory chain (row 72)",
+     "value": "TBD - requires generator / matching / coil ratings (TBD_AFTER_IMPEDANCE_MAP, A9.2) of the laboratory chain with its 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating)",
      "configurations": [
       "hall_icp_neutralizer"
      ]
@@ -2961,7 +3004,7 @@
      "id": "LA-04",
      "quantity": "collector / bias voltage and current",
      "symbol": "V_coll,max, I_coll,max",
-     "value": "TBD - requires PENDING docs/interfaces/icp_neutralizer/ and supply rating",
+     "value": "TBD - requires the collector / bias V-I range (ICD ICP-21: a design item, TBD in the merged A9-03 ICD) and the supply rating (RFQ-05)",
      "configurations": [
       "hall_icp_neutralizer"
      ]
@@ -2970,7 +3013,7 @@
      "id": "LA-05",
      "quantity": "component temperatures",
      "symbol": "T_k,max",
-     "value": "TBD - requires validated continuous-use limits (rows 86, 87); abort at the limit or at limit - margin is UBQ-06",
+     "value": "abort_C = validated continuous-use limit - 50 K for score-bearing operation (A9.1 UBQ-06; row 86); per-node abort list in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json IDA7-16 (BN wall and ceramic coil provisional on supplier limits, OQ-A907-05; other groups TBD - requires a validated limit)",
      "configurations": [
       "hall_c1_reference",
       "hall_icp_neutralizer"
@@ -3041,7 +3084,7 @@
    ],
    "vocabulary_owner": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json decision_topology (outcomes, statuses)"
   },
-  "net_benefit": "NET_BENEFIT = hard gates + Pareto over Delta Xe, Delta P_bus, Delta mass, T/P_bus, restart and life burden relative to C1; no weighted scalar and no single winner unless preregistered (row 37); every Pareto component carries its own interval from this budget"
+  "net_benefit": "NET_BENEFIT = hard gates + Pareto over Delta Xe, Delta P_bus, Delta mass, T/P_bus, restart and life burden relative to C1; no weighted scalar and no single winner unless preregistered (row 37); A9.1 HIQ-05: no mandatory Pareto relation - hard gates alone decide feasibility; the Pareto quantities are reported for engineering comparison unless a Pareto condition is preregistered at LOCK-1; every Pareto component carries its own interval from this budget"
  },
  "interpolation": {
   "status": "PROPOSED; row 15",
@@ -3114,8 +3157,8 @@
    "counterpart": "A9-01 docs/experiments/hall_icp/prereg_framework/",
    "quantity": "decision-quantity ids, roles (gate / contrast / descriptive), contrast orientation, confirmation subset, family size m",
    "units": "-",
-   "status": "PENDING",
-   "value": "PENDING docs/experiments/hall_icp/prereg_framework/"
+   "status": "PARTIAL",
+   "value": "A9-01 supplies decision-quantity ids and roles (decision_quantities, decision_topology); the contrast list, confirmation subset and family size m are LOCK-1 items"
   },
   {
    "id": "IF-02",
@@ -3123,8 +3166,8 @@
    "counterpart": "A9-01 docs/experiments/hall_icp/prereg_framework/",
    "quantity": "stage map (Ar engineering-only -> N2 -> O2-bearing NO_ATOMIC_O) and which stages are score-bearing",
    "units": "-",
-   "status": "PENDING",
-   "value": "PENDING docs/experiments/hall_icp/prereg_framework/"
+   "status": "SATISFIED",
+   "value": "A9-01 stage_map HI-ENG..HI-AO with score_bearing flags (score-bearing: HI-CMP, HI-ABS)"
   },
   {
    "id": "IF-03",
@@ -3150,14 +3193,14 @@
    "counterpart": "A9-02 abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/",
    "quantity": "bus-slot list S_A9, measured vs conditioning slots (eta_s), start-up transient window",
    "units": "W / - / s",
-   "status": "PENDING",
-   "value": "PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/"
+   "status": "PARTIAL",
+   "value": "slot list S_A9 = abep_sim/bus_boundary_a9.py SLOTS / BASE_SLOTS; window frozen by A9.1 OQ-A902-01 (UB-P-07); per-slot eta_s are caller inputs, TBD"
   },
   {
    "id": "IF-06",
    "direction": "from_this_lane_to_A9-02",
    "counterpart": "A9-02 abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/",
-   "quantity": "per-slot V and I channel requirement (4-wire, time-synchronized, declared bandwidth for P_bus,peak); correlation declaration for shared references",
+   "quantity": "per-slot V and I channel requirement (4-wire, time-synchronized, declared bandwidth for P_bus,1ms,max (A9.1 OQ-A902-01)); correlation declaration for shared references",
    "units": "relative / Hz",
    "status": "PROPOSED",
    "value": "TBD - requires values at LOCK-2 from the budget allocation"
@@ -3168,8 +3211,8 @@
    "counterpart": "A9-03 docs/interfaces/icp_neutralizer/",
    "quantity": "collector/bias circuit, floating-body potential measurement points, sign conventions, bias range",
    "units": "V / A",
-   "status": "PENDING",
-   "value": "PENDING docs/interfaces/icp_neutralizer/"
+   "status": "PARTIAL",
+   "value": "A9-03 ICP-20 (floating body, body potentials measured), ICP-21 (separately metered collector), ICP-34 (V_coll, I_coll, V_body channels); sign convention and bias range TBD (LOCK-1)"
   },
   {
    "id": "IF-08",
@@ -3177,8 +3220,9 @@
    "counterpart": "A9-03 docs/interfaces/icp_neutralizer/",
    "quantity": "coupler location / RF reference plane and matching network topology",
    "units": "-",
-   "status": "PENDING",
-   "value": "PENDING docs/interfaces/icp_neutralizer/"
+   "status": "PARTIAL",
+   "value": "A9.2 OQ-A907-11 (ICD ICP-13): adjustable local match on / adjacent to the ICP module, coupler on the generator / 50-ohm side; flight match implementation deferred until the impedance map; ratings TBD_AFTER_IMPEDANCE_MAP",
+   "value_before_a9_2": "A9.1 A9-03-matching (ICD ICP-13): coupler plane after the matching network, network off the platform; fixed vs auto-tuned topology and the on-module pre-match (OQ-A907-11) open"
   },
   {
    "id": "IF-09",
@@ -3186,8 +3230,8 @@
    "counterpart": "A9-03 docs/interfaces/icp_neutralizer/",
    "quantity": "ICP gas species and flow range (for MFC range, p_b load, Delta Xe)",
    "units": "mg s^-1",
-   "status": "PENDING",
-   "value": "PENDING docs/interfaces/icp_neutralizer/"
+   "status": "PARTIAL",
+   "value": "A9-03 ICP-26 / A9.1 HIQ-06: G-REUSE primary, dedicated ICP flow 0 mg/s; G-ATM / G-XE contingency flows TBD"
   },
   {
    "id": "IF-10",
@@ -3195,8 +3239,8 @@
    "counterpart": "A9-03 docs/interfaces/icp_neutralizer/",
    "quantity": "C1 and ICP module masses on the carrier and sham line set",
    "units": "kg",
-   "status": "PENDING",
-   "value": "PENDING docs/interfaces/icp_neutralizer/"
+   "status": "OPEN",
+   "value": "OPEN - ICD ICP-08: module masses and CG are measured per serial at S1a (TBD - requires the modules); A9-03 gives only the row-54 flight allocations"
   },
   {
    "id": "IF-11",
@@ -3213,8 +3257,8 @@
    "counterpart": "A9-05 docs/evidence/icp_neutralizer/ + docs/experiments/hall_icp/validation_inputs/",
    "quantity": "Takahashi 2024 extraction: which quantities the analog measured and how (for chain design only; never a Vyovrinda value)",
    "units": "-",
-   "status": "PENDING",
-   "value": "PENDING docs/evidence/icp_neutralizer/ + docs/experiments/hall_icp/validation_inputs/"
+   "status": "SATISFIED",
+   "value": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json extraction TK-01..TK-74 (what the analog measured and how, with page / figure locators; context only)"
   },
   {
    "id": "IF-13",
@@ -3229,7 +3273,7 @@
    "id": "IF-14",
    "direction": "from_this_lane_to_H2-6",
    "counterpart": "H2-6 docs/hardware/h2/h2_6_diagnostics_fixture/ (instrument list)",
-   "quantity": "instrument additions/changes: torsional stand (row 115) with >= 25 kg payload (row 116); 13.56 MHz directional coupler + forward/reflected sensors 0-500 W (row 72); calorimetric cross-check; floating-rated collector/bias V/I; ground-return current monitor; ICP telemetry subset (row 130); RGA ~200 amu (row 127); two C1 Xe controllers (row 125); sink-temperature sensors (row 131)",
+   "quantity": "instrument additions/changes: torsional stand (row 115) with >= 25 kg payload (row 116); 13.56 MHz directional coupler + forward/reflected sensors for the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating), ratings TBD_AFTER_IMPEDANCE_MAP; calorimetric cross-check; floating-rated collector/bias V/I; ground-return current monitor; ICP telemetry subset (row 130); RGA ~200 amu (row 127); two C1 Xe controllers (row 125); sink-temperature sensors (row 131)",
    "units": "-",
    "status": "PROPOSED",
    "value": "revision request (H2-6 v1 is sized for the historical pre-ionizer slot)"
@@ -3258,8 +3302,8 @@
    "counterpart": "H2-4 docs/hardware/h2/h2_4_ppu_bus/",
    "quantity": "breadboard discharge supply (row 113) channel points and eta_d measured before LOCK-2",
    "units": "- / W",
-   "status": "PENDING",
-   "value": "PENDING docs/hardware/h2/h2_4_ppu_bus/"
+   "status": "PARTIAL",
+   "value": "A9-07 REV-62 (breadboard discharge supply from the 100 V bus); channel points and eta_d TBD - require the breadboard measurement before LOCK-2"
   },
   {
    "id": "IF-18",
@@ -3267,8 +3311,8 @@
    "counterpart": "H2-1 docs/hardware/h2/h2_1_hall_chamber_magnet/",
    "quantity": "B(z) map extent, B_max, hot-state reference sensor location (row 82)",
    "units": "m / T",
-   "status": "PENDING",
-   "value": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/"
+   "status": "PARTIAL",
+   "value": "A9-07 REV-11 (hot-state B reference provision); B(z) map extent and B_max TBD - require FEMM of MC-1 (IDA7-17) and S1a maps"
   },
   {
    "id": "IF-19",
@@ -3285,8 +3329,8 @@
    "counterpart": "Xe ledger docs/budgets/xe_ledger/",
    "quantity": "C1 flow uncertainty term (±2 % FS class, row 96) and the ICP gas booking once A9-03 defines it (row 46 flag)",
    "units": "mg s^-1",
-   "status": "PENDING",
-   "value": "PENDING docs/interfaces/icp_neutralizer/"
+   "status": "PARTIAL",
+   "value": "ICP gas booking defined: G-REUSE 0 mg/s (ICD ICP-26; A9-08 XA9-21), G-XE only as a contingency term under PHASE_TOTAL_FLOW; the C1 flow uncertainty term (UB-F-05, +-2 % FS class, row 96) is carried by this lane, its booking size TBD"
   },
   {
    "id": "IF-21",
@@ -3399,7 +3443,7 @@
    "row": 37,
    "question": "Form of the Case B net system-level benefit where both sustain.",
    "answer_verbatim": "NEW `NET_BENEFIT` form — hard gates + Pareto, not a weighted score. ICP must meet electron-current/neutralization, thrust, full P_bus, stability and safety gates; then report ΔXe, ΔP_bus, Δmass, T/P_bus, restart and life burden relative to C1. No single scalar winner unless preregistered.",
-   "how_applied": "NET_BENEFIT = hard gates + Pareto; every Pareto component has its own interval; no scalar"
+   "how_applied": "NET_BENEFIT = hard gates + a Pareto report (A9.1 HIQ-05: no mandatory Pareto relation - hard gates alone decide feasibility; the Pareto quantities are reported for engineering comparison unless a Pareto condition is preregistered at LOCK-1); every Pareto component has its own interval; no scalar"
   },
   {
    "row": 38,
@@ -3435,7 +3479,7 @@
    "row": 46,
    "question": "Firing-hours basis of the cathode term.",
    "answer_verbatim": "15,000 h for the conventional C1 reference/fallback term. The ICP-neutralizer architecture has no continuous C1-Xe cathode term, but must carry its own RF-neutralizer lifetime/cycle requirement.",
-   "how_applied": "ICP gas feed unbooked -> UB-F-12 PENDING A9-03; C1 term 15,000 h context only"
+   "how_applied": "ICP gas feed: UB-F-12 = G-REUSE (A9.1 HIQ-06; ICD ICP-26), no dedicated feed booked; C1 term 15,000 h context only"
   },
   {
    "row": 50,
@@ -3477,7 +3521,7 @@
    "row": 72,
    "question": "RF/ECR: select frequency and P_hi (to specify INS-03 sensors); accept calorimetric load-plane method if inline sensors can't reach u_src?",
    "answer_verbatim": "13.56 MHz. Size laboratory RF source and inline measurement chain for 0–500 W forward power initially, with directional-coupler forward/reflected measurements. Calorimetry is an independent cross-check, not the sole primary power measurement.",
-   "how_applied": "13.56 MHz; 0-500 W lab chain; coupler primary, calorimetry cross-check (UB-RF-00..09)"
+   "how_applied": "13.56 MHz; 0-500 W lab chain (A9.2 rf_500W: delivered/operating investigation capability, not a component rating); coupler primary, calorimetry cross-check (UB-RF-00..09)"
   },
   {
    "row": 79,
@@ -3573,13 +3617,13 @@
    "row": 110,
    "question": "Adopt the proposed supply partition (discharge, per-coil magnet, cathode CS-A/CS-B, aux valve/housekeeping, reserved DC port)?",
    "answer_verbatim": "ADOPT with revision — partition supplies into Hall discharge, per-coil magnet, ICP RF source/matching, ICP collector/bias if required, C1 heater/keeper reference supplies, flow/valve/housekeeping and reserved DC. Every active load gets a bus slot.",
-   "how_applied": "every active load has a bus slot (UB-P-01 PENDING A9-02)"
+   "how_applied": "every active load has a bus slot (UB-P-01 = the A9-02 slot list)"
   },
   {
    "row": 112,
    "question": "Sequencing SEQ-1: heater off before compressor spin-up and before any pre-ionizer seed?",
    "answer_verbatim": "REVISE SEQ-1 — sequence to avoid simultaneous peaks, but do not force the C1 heater off before it is safe. For C1, reduce/disable heater only after keeper/discharge is stable per cathode procedure; ICP has no thermionic heater.",
-   "how_applied": "revised SEQ-1 defines the start-up window for P_bus,peak"
+   "how_applied": "revised SEQ-1 defines the start-up window for P_bus,1ms,max (A9.1 OQ-A902-01)"
   },
   {
    "row": 113,
@@ -3712,47 +3756,74 @@
   {
    "id": "UBQ-01",
    "question": "Is the 1 % absolute thrust uncertainty (row 121) a standard (k = 1) or an expanded uncertainty (and at which k)?",
-   "proposed_answer": "standard uncertainty (k = 1) of a single sustained reading at 12 mN, consistent with the H2-6 H26-05 planning basis; owner call"
+   "proposed_answer": "standard uncertainty (k = 1) of a single sustained reading at 12 mN, consistent with the H2-6 H26-05 planning basis; owner call",
+   "status": "ANSWERED_BY_A9_1 (UBQ-01)",
+   "a9_1_decision": "UBQ-01: 1 % thrust target = standard relative uncertainty (k = 1), sustained reading; gates use preregistered one-sided treatment",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "UBQ-02",
    "question": "Form of the neutralization margin",
-   "proposed_answer": "ratio form M_n = I_e,cap / I_d,dem - 1 at the registered bias and RF limits, gate on its one-sided lower bound; final definition belongs to A9-01"
+   "proposed_answer": "ratio form M_n = I_e,cap / I_d,dem - 1 at the registered bias and RF limits, gate on its one-sided lower bound; final definition belongs to A9-01",
+   "status": "ANSWERED_BY_A9_1 (UBQ-02)",
+   "a9_1_decision": "UBQ-02: M_n = I_e,cap / I_d,dem - 1; gate on one-sided lower confidence bound > 0; any extra design margin frozen at LOCK-2 per LOCK-1 rule",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "UBQ-03",
    "question": "Conversion of a manufacturer '±x % FS' specification to a standard uncertainty",
-   "proposed_answer": "rectangular bound, u = a/sqrt(3) (GUM 4.3.7 Eq. (7)), unless the certificate states a multiplier (GUM 4.3.3)"
+   "proposed_answer": "rectangular bound, u = a/sqrt(3) (GUM 4.3.7 Eq. (7)), unless the certificate states a multiplier (GUM 4.3.3)",
+   "status": "ANSWERED_BY_A9_1 (UBQ-03)",
+   "a9_1_decision": "UBQ-03: manufacturer +-x bound rectangular (u = a/sqrt(3)) unless the certificate states otherwise",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "UBQ-04",
    "question": "Agreement rule between coupler-based and calorimetric RF power",
-   "proposed_answer": "|z_x| <= k_x with k_x frozen at LOCK-2 from S1a dummy-load data; a failed cross-check marks the RF-dependent quantities EXCLUDED_INSTRUMENT until resolved (never re-weighted)"
+   "proposed_answer": "|z_x| <= k_x with k_x frozen at LOCK-2 from S1a dummy-load data; a failed cross-check marks the RF-dependent quantities EXCLUDED_INSTRUMENT until resolved (never re-weighted)",
+   "status": "ANSWERED_BY_A9_1 (UBQ-04)",
+   "a9_1_decision": "UBQ-04: normalized agreement statistic with k_x = 2 frozen at LOCK-1; failure -> RF-dependent quantities EXCLUDED_INSTRUMENT",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "UBQ-05",
    "question": "Pre/post-block calibration shift: variance component, exclusion criterion, or both?",
-   "proposed_answer": "both: a rectangular component between pre and post (GUM 4.3.7) plus a block-exclusion limit set at LOCK-2 from S1 calibrations"
+   "proposed_answer": "both: a rectangular component between pre and post (GUM 4.3.7) plus a block-exclusion limit set at LOCK-2 from S1 calibrations",
+   "status": "ANSWERED_BY_A9_1 (UBQ-05)",
+   "a9_1_decision": "UBQ-05: calibration shift both in the budget and as a block-exclusion rule; rule form at LOCK-1, number at LOCK-2 from metrology-only evidence",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "UBQ-06",
    "question": "Do temperature limit aborts fire at the validated continuous-use limit or at limit - 50 K (row 86 is a design margin)?",
-   "proposed_answer": "owner call"
+   "proposed_answer": "owner call",
+   "status": "ANSWERED_BY_A9_1 (UBQ-06)",
+   "a9_1_decision": "UBQ-06: score-bearing temperature aborts at validated continuous-use limit minus 50 K",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "UBQ-07",
    "question": "alpha_FW for contrasts and alpha_abs for absolute gates",
-   "proposed_answer": "owner call at LOCK-1 (the historical lane-25 values are not carried)"
+   "proposed_answer": "owner call at LOCK-1 (the historical lane-25 values are not carried)",
+   "status": "ANSWERED_BY_A9_1 (UBQ-07)",
+   "a9_1_decision": "UBQ-07: family-wise alpha 0.05 for simultaneous contrasts (preregistered multiplicity control, e.g. Holm); one-sided alpha 0.05 per absolute gate; frozen at LOCK-1",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "UBQ-08",
    "question": "Ar engineering-only stage: are Ar gauge, RGA and MFC calibrations required (row 127 lists N2/O2/O fragments and Xe only)?",
-   "proposed_answer": "yes for engineering use; Ar data never count toward DRDO atmospheric requirements (row 36)"
+   "proposed_answer": "yes for engineering use; Ar data never count toward DRDO atmospheric requirements (row 36)",
+   "status": "ANSWERED_BY_A9_1 (UBQ-08)",
+   "a9_1_decision": "UBQ-08: Ar-specific gauge/MFC/RGA calibration required for HI-AR; Ar stays engineering-only",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   },
   {
    "id": "UBQ-09",
    "question": "Contrast stop rule form: sign (SR-C-SIGN) or margin (SR-C-MARGIN)?",
-   "proposed_answer": "owner call (historical D-02-A rationale cited only)"
+   "proposed_answer": "owner call (historical D-02-A rationale cited only)",
+   "status": "ANSWERED_BY_A9_1 (UBQ-09)",
+   "a9_1_decision": "UBQ-09: SR-C-MARGIN stopping (not sign-only); margin rule at LOCK-1, numerical value at LOCK-2",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
   }
  ],
  "historical_reuse": [
@@ -3837,63 +3908,63 @@
    "key": "sensors_diagnostics",
    "name": "sensors/diagnostics",
    "how": "primary: decision-quantity measurement chains and uncertainty budget for the C1-vs-ICP comparison",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states PENDING A9-10 governance)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   },
   {
    "row": 12,
    "key": "ppu",
    "name": "PPU/power distribution",
    "how": "P_bus measurement chain at the spacecraft-DC boundary; breadboard discharge supply (row 113)",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states PENDING A9-10 governance)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   },
   {
    "row": 11,
    "key": "cathode",
    "name": "shielded Xe-fed LaB6 hollow cathode",
    "how": "C1 reference: flow, keeper/heater, ignition dwell records (reference/fallback only)",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states PENDING A9-10 governance)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   },
   {
    "row": 8,
    "key": "xe_metering",
    "name": "Xe metering (splits to ignition/transition feed and cathode feed)",
    "how": "C1 Xe metering: two controllers, ±2 % FS class, resolution (rows 96, 98, 125)",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states PENDING A9-10 governance)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   },
   {
    "row": 14,
    "key": "control_fdir",
    "name": "control/FDIR",
    "how": "limit aborts and safety interlocks; ICP telemetry subset (row 130)",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states PENDING A9-10 governance)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   },
   {
    "row": 16,
    "key": "mechanical_structural",
    "name": "mechanical/structural interfaces",
    "how": "stand, kinematic carrier and sham lines (VG-1)",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states PENDING A9-10 governance)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   },
   {
    "row": 10,
    "key": "magnetic_circuit",
    "name": "magnetic circuit",
    "how": "B(z) perturbation and hot-state reference (rows 67, 82)",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states PENDING A9-10 governance)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   },
   {
    "row": 13,
    "key": "thermal_control",
    "name": "thermal control",
    "how": "measured sink temperature per run (row 131)",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states PENDING A9-10 governance)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   },
   {
    "row": 17,
    "key": "preionizer_interface",
    "name": "RF pre-ionization module interface",
    "how": "reserved interface row: ICP-neutralizer chains (RF, collector) belong here once A9-10 governance repurposes it (row 142: add A9 lanes without rewriting H2 provenance)",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states PENDING A9-10 governance)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   }
  ],
  "h3_procurement_inputs": [
@@ -3910,7 +3981,7 @@
   },
   {
    "item": "13.56 MHz directional coupler, forward/reflected sensors, calibration at 13.56 MHz",
-   "spec_form": "0-500 W forward (row 72); certificate with uncertainty budget (A4)",
+   "spec_form": "forward-power range of the selected generator rating (TBD_AFTER_IMPEDANCE_MAP) covering the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating); certificate with uncertainty budget (A4)",
    "rows": [
     8,
     72
@@ -4087,7 +4158,768 @@
   "no Takahashi 2024 operating value quoted (A9-05: docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json)",
   "no frozen numeric threshold beyond owner answers (cited by row) and verified H2-6 inputs",
   "historical artifacts read and cited, never edited; mutable governance files not pinned",
-  "no winner declared; NET_BENEFIT is hard gates + Pareto (row 37)",
+  "no winner declared; NET_BENEFIT is hard gates + a Pareto report (row 37; A9.1 HIQ-05: hard gates alone decide feasibility)",
   "pure document lane: no abep_sim module, archengine or golden touched"
- ]
+ ],
+ "a9_10_reconciliation": {
+  "lane": "fo_a9_10_integration",
+  "record": "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+  "overlay": "docs/experiments/hall_icp/integration/a9_10_overlay.py",
+  "a9_1_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
+  },
+  "a9_2_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
+   "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "recorded_at_commit": "19c0040",
+   "path_resolution": "the docs/decisions/ paths exist in the execution branch (commit 19c0040) and resolve in this lane branch only after it merges there; until then the byte-identical pinned copies under docs/experiments/hall_icp/integration/a9_2_inputs/ (sha256 checked on every build) are the readable authority"
+  },
+  "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+  "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
+  "changes": [
+   {
+    "cid": "A910-A904-Q01",
+    "driver": "A9.1 UBQ-01",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=UBQ-01]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 UBQ-01"
+   },
+   {
+    "cid": "A910-A904-Q02",
+    "driver": "A9.1 UBQ-02",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=UBQ-02]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 UBQ-02"
+   },
+   {
+    "cid": "A910-A904-Q03",
+    "driver": "A9.1 UBQ-03",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=UBQ-03]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 UBQ-03"
+   },
+   {
+    "cid": "A910-A904-Q04",
+    "driver": "A9.1 UBQ-04",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=UBQ-04]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 UBQ-04"
+   },
+   {
+    "cid": "A910-A904-Q05",
+    "driver": "A9.1 UBQ-05",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=UBQ-05]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 UBQ-05"
+   },
+   {
+    "cid": "A910-A904-Q06",
+    "driver": "A9.1 UBQ-06",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=UBQ-06]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 UBQ-06"
+   },
+   {
+    "cid": "A910-A904-Q07",
+    "driver": "A9.1 UBQ-07",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=UBQ-07]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 UBQ-07"
+   },
+   {
+    "cid": "A910-A904-Q08",
+    "driver": "A9.1 UBQ-08",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=UBQ-08]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 UBQ-08"
+   },
+   {
+    "cid": "A910-A904-Q09",
+    "driver": "A9.1 UBQ-09",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=UBQ-09]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 UBQ-09"
+   },
+   {
+    "cid": "A910-A904-01",
+    "driver": "A9.1 UBQ-01",
+    "op": "replace",
+    "ptr": "/items[id=UB-T-01]/note",
+    "count": 1,
+    "summary": "k = 1"
+   },
+   {
+    "cid": "A910-A904-02",
+    "driver": "A9.1 UBQ-02",
+    "op": "set",
+    "ptr": "/items[id=UB-N-06]/value",
+    "count": 1,
+    "summary": "M_n form"
+   },
+   {
+    "cid": "A910-A904-03",
+    "driver": "A9.1 UBQ-02",
+    "op": "set",
+    "ptr": "/items[id=UB-N-06]/status",
+    "count": 1,
+    "summary": "M_n status"
+   },
+   {
+    "cid": "A910-A904-04",
+    "driver": "A9.1 UBQ-02",
+    "op": "set",
+    "ptr": "/items[id=UB-N-06]/evidence_class",
+    "count": 1,
+    "summary": "M_n evidence class"
+   },
+   {
+    "cid": "A910-A904-05",
+    "driver": "A9.1 UBQ-02",
+    "op": "set",
+    "ptr": "/items[id=UB-N-06]/source",
+    "count": 1,
+    "summary": "M_n source"
+   },
+   {
+    "cid": "A910-A904-06",
+    "driver": "A9.1 UBQ-03",
+    "op": "gsub",
+    "ptr": "/measurement_chains",
+    "count": 1,
+    "summary": "rectangular conversion accepted"
+   },
+   {
+    "cid": "A910-A904-07",
+    "driver": "A9.1 UBQ-04",
+    "op": "set",
+    "ptr": "/items[id=UB-RF-08]/value",
+    "count": 1,
+    "summary": "k_x = 2 frozen at LOCK-1"
+   },
+   {
+    "cid": "A910-A904-08",
+    "driver": "A9.1 UBQ-04",
+    "op": "set",
+    "ptr": "/items[id=UB-RF-08]/status",
+    "count": 1,
+    "summary": "k_x status"
+   },
+   {
+    "cid": "A910-A904-09",
+    "driver": "A9.1 UBQ-04",
+    "op": "set",
+    "ptr": "/items[id=UB-RF-08]/evidence_class",
+    "count": 1,
+    "summary": "k_x evidence class"
+   },
+   {
+    "cid": "A910-A904-10",
+    "driver": "A9.1 UBQ-04",
+    "op": "set",
+    "ptr": "/items[id=UB-RF-08]/note",
+    "count": 1,
+    "summary": "agreement rule"
+   },
+   {
+    "cid": "A910-A904-11",
+    "driver": "A9.1 UBQ-05",
+    "op": "set",
+    "ptr": "/items[id=UB-T-07]/note",
+    "count": 1,
+    "summary": "calibration-shift rule"
+   },
+   {
+    "cid": "A910-A904-12",
+    "driver": "A9.1 UBQ-06 + A9-07 IDA7-16",
+    "op": "set",
+    "ptr": "/stop_rules/limit_aborts/limits[id=LA-05]/value",
+    "count": 1,
+    "summary": "aborts at limit - 50 K"
+   },
+   {
+    "cid": "A910-A904-13",
+    "driver": "A9.1 UBQ-07",
+    "op": "set",
+    "ptr": "/items[id=UB-C-02]/value",
+    "count": 1,
+    "summary": "alpha_FW = 0.05"
+   },
+   {
+    "cid": "A910-A904-14",
+    "driver": "A9.1 UBQ-07",
+    "op": "set",
+    "ptr": "/items[id=UB-C-02]/status",
+    "count": 1,
+    "summary": "alpha_FW status (frozen at LOCK-1)"
+   },
+   {
+    "cid": "A910-A904-15",
+    "driver": "A9.1 UBQ-07",
+    "op": "set",
+    "ptr": "/items[id=UB-C-02]/evidence_class",
+    "count": 1,
+    "summary": "alpha_FW class"
+   },
+   {
+    "cid": "A910-A904-16",
+    "driver": "A9.1 UBQ-07",
+    "op": "set",
+    "ptr": "/items[id=UB-C-02]/source",
+    "count": 1,
+    "summary": "alpha_FW source"
+   },
+   {
+    "cid": "A910-A904-17",
+    "driver": "A9.1 UBQ-07",
+    "op": "set",
+    "ptr": "/items[id=UB-C-02]/note",
+    "count": 1,
+    "summary": "multiplicity"
+   },
+   {
+    "cid": "A910-A904-18",
+    "driver": "A9.1 UBQ-07",
+    "op": "set",
+    "ptr": "/items[id=UB-C-03]/value",
+    "count": 1,
+    "summary": "alpha_abs = 0.05 one-sided"
+   },
+   {
+    "cid": "A910-A904-19",
+    "driver": "A9.1 UBQ-07",
+    "op": "set",
+    "ptr": "/items[id=UB-C-03]/status",
+    "count": 1,
+    "summary": "alpha_abs status (frozen at LOCK-1)"
+   },
+   {
+    "cid": "A910-A904-20",
+    "driver": "A9.1 UBQ-07",
+    "op": "set",
+    "ptr": "/items[id=UB-C-03]/evidence_class",
+    "count": 1,
+    "summary": "alpha_abs class"
+   },
+   {
+    "cid": "A910-A904-21",
+    "driver": "A9.1 UBQ-07",
+    "op": "set",
+    "ptr": "/items[id=UB-C-03]/source",
+    "count": 1,
+    "summary": "alpha_abs source"
+   },
+   {
+    "cid": "A910-A904-37",
+    "driver": "A9.1 UBQ-04",
+    "op": "set",
+    "ptr": "/items[id=UB-RF-08]/source",
+    "count": 1,
+    "summary": "k_x source"
+   },
+   {
+    "cid": "A910-A904-32",
+    "driver": "A9.1 UBQ-04",
+    "op": "set",
+    "ptr": "/items[id=UB-RF-08]/a9_1_decision",
+    "count": 1,
+    "summary": "A9.1 decision id attached (owner-given value source)"
+   },
+   {
+    "cid": "A910-A904-33",
+    "driver": "A9.1 UBQ-07",
+    "op": "set",
+    "ptr": "/items[id=UB-C-02]/a9_1_decision",
+    "count": 1,
+    "summary": "A9.1 decision id attached (owner-given value source)"
+   },
+   {
+    "cid": "A910-A904-34",
+    "driver": "A9.1 UBQ-07",
+    "op": "set",
+    "ptr": "/items[id=UB-C-03]/a9_1_decision",
+    "count": 1,
+    "summary": "A9.1 decision id attached (owner-given value source)"
+   },
+   {
+    "cid": "A910-A904-35",
+    "driver": "A9.1 UBQ-02",
+    "op": "set",
+    "ptr": "/items[id=UB-N-06]/a9_1_decision",
+    "count": 1,
+    "summary": "A9.1 decision id attached"
+   },
+   {
+    "cid": "A910-A904-36",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=UB-F-12]/a9_1_decision",
+    "count": 1,
+    "summary": "A9.1 decision id attached"
+   },
+   {
+    "cid": "A910-A904-22",
+    "driver": "A9.1 UBQ-08",
+    "op": "append",
+    "ptr": "/items",
+    "count": 1,
+    "summary": "Ar calibrations required (new item; owner row 36 cited)"
+   },
+   {
+    "cid": "A910-A904-23",
+    "driver": "A9.1 UBQ-09",
+    "op": "set",
+    "ptr": "/stop_rules/contrast_stop/owner_choice",
+    "count": 1,
+    "summary": "SR-C-MARGIN"
+   },
+   {
+    "cid": "A910-A904-24",
+    "driver": "A9-07 IDA7-21",
+    "op": "set",
+    "ptr": "/items[id=UB-RF-04]/value",
+    "count": 1,
+    "summary": "UB-RF-04 directivity/mismatch term from IDA7-21"
+   },
+   {
+    "cid": "A910-A904-25",
+    "driver": "A9-07 IDA7-21",
+    "op": "set",
+    "ptr": "/items[id=UB-RF-04]/source",
+    "count": 1,
+    "summary": "UB-RF-04 source"
+   },
+   {
+    "cid": "A910-A904-28",
+    "driver": "A9.1 HIQ-06 (A9-03 ICP-26)",
+    "op": "set",
+    "ptr": "/items[id=UB-F-12]/value",
+    "count": 1,
+    "summary": "ICP gas chain under G-REUSE"
+   },
+   {
+    "cid": "A910-A904-29",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=UB-F-12]/status",
+    "count": 1,
+    "summary": "UB-F-12 status"
+   },
+   {
+    "cid": "A910-A904-30",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=UB-F-12]/evidence_class",
+    "count": 1,
+    "summary": "UB-F-12 evidence class"
+   },
+   {
+    "cid": "A910-A904-31",
+    "driver": "A9.1 HIQ-06",
+    "op": "replace",
+    "ptr": "/items[69]/value",
+    "count": 1,
+    "summary": "p_b mismatch item re-evaluated"
+   },
+   {
+    "cid": "A910-A904-26",
+    "driver": "A9-10 self-reference",
+    "op": "gsub",
+    "ptr": "/m16_impact",
+    "count": 9,
+    "summary": "M16 routing resolved"
+   },
+   {
+    "cid": "A910-A904-27",
+    "driver": "OQ-INT-01 (proposed consumer table)",
+    "op": "gsub",
+    "ptr": "/dq_id_mapping/rows",
+    "count": 7,
+    "summary": "unmapped ids kept; consumer table referenced"
+   },
+   {
+    "cid": "A910-R04-01",
+    "driver": "OQ-INT-03 (A9-02 SLOTS)",
+    "op": "merge",
+    "ptr": "/items[id=UB-P-01]",
+    "count": 1,
+    "summary": "UB-P-01 filled from A9-02"
+   },
+   {
+    "cid": "A910-R04-02",
+    "driver": "OQ-INT-03 (A9-02 ledger)",
+    "op": "merge",
+    "ptr": "/items[id=UB-P-06]",
+    "count": 1,
+    "summary": "UB-P-06 precise reason"
+   },
+   {
+    "cid": "A910-R04-03",
+    "driver": "A9.1 OQ-A902-01 + OQ-INT-03",
+    "op": "merge",
+    "ptr": "/items[id=UB-P-07]",
+    "count": 1,
+    "summary": "UB-P-07 window / bandwidth from A9.1"
+   },
+   {
+    "cid": "A910-R04-04",
+    "driver": "A9.1 A9-03-matching + OQ-INT-03",
+    "op": "merge",
+    "ptr": "/items[id=UB-RF-09]",
+    "count": 1,
+    "summary": "UB-RF-09 filled"
+   },
+   {
+    "cid": "A910-R04-05",
+    "driver": "OQ-INT-03 (A9-03 ICP-20/21)",
+    "op": "merge",
+    "ptr": "/items[id=UB-N-00]",
+    "count": 1,
+    "summary": "UB-N-00 filled"
+   },
+   {
+    "cid": "A910-R04-06",
+    "driver": "OQ-INT-03 (A9-02 SLOTS)",
+    "op": "merge",
+    "ptr": "/items[id=UB-Z-03]",
+    "count": 1,
+    "summary": "UB-Z-03 slot reference resolved"
+   },
+   {
+    "cid": "A910-R04-07",
+    "driver": "OQ-INT-03 (A9-01 decision_quantities)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-01]",
+    "count": 1,
+    "summary": "IF-01 partial"
+   },
+   {
+    "cid": "A910-R04-08",
+    "driver": "OQ-INT-03 (A9-01 stage_map)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-02]",
+    "count": 1,
+    "summary": "IF-02 satisfied"
+   },
+   {
+    "cid": "A910-R04-09",
+    "driver": "OQ-INT-03 (A9-02)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-05]",
+    "count": 1,
+    "summary": "IF-05 partial"
+   },
+   {
+    "cid": "A910-R04-10",
+    "driver": "OQ-INT-03 (A9-03)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-07]",
+    "count": 1,
+    "summary": "IF-07 partial"
+   },
+   {
+    "cid": "A910-R04-11",
+    "driver": "A9.1 A9-03-matching + OQ-INT-03",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-08]",
+    "count": 1,
+    "summary": "IF-08 partial"
+   },
+   {
+    "cid": "A910-R04-12",
+    "driver": "A9.1 HIQ-06 + OQ-INT-03",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-09]",
+    "count": 1,
+    "summary": "IF-09 partial"
+   },
+   {
+    "cid": "A910-R04-13",
+    "driver": "OQ-INT-03 (A9-03 ICP-08)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-10]",
+    "count": 1,
+    "summary": "IF-10 precise reason"
+   },
+   {
+    "cid": "A910-R04-14",
+    "driver": "OQ-INT-03 (A9-05)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-12]",
+    "count": 1,
+    "summary": "IF-12 satisfied"
+   },
+   {
+    "cid": "A910-R04-15",
+    "driver": "OQ-INT-03 (A9-07 REV-62)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-17]",
+    "count": 1,
+    "summary": "IF-17 partial"
+   },
+   {
+    "cid": "A910-R04-16",
+    "driver": "OQ-INT-03 (A9-07 REV-11, IDA7-17)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-18]",
+    "count": 1,
+    "summary": "IF-18 partial"
+   },
+   {
+    "cid": "A910-R04-17",
+    "driver": "A9.1 HIQ-06 + OQ-INT-03",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-20]",
+    "count": 1,
+    "summary": "IF-20 partial"
+   },
+   {
+    "cid": "A910-R04-18",
+    "driver": "A9.1 HIQ-06 + OQ-INT-03",
+    "op": "merge",
+    "ptr": "/owner_answers_applied[row=46]",
+    "count": 1,
+    "summary": "row 46 application updated"
+   },
+   {
+    "cid": "A910-R04-19",
+    "driver": "OQ-INT-03",
+    "op": "merge",
+    "ptr": "/owner_answers_applied[row=110]",
+    "count": 1,
+    "summary": "row 110 application updated"
+   },
+   {
+    "cid": "A910-R04-20",
+    "driver": "A9.1 HIQ-05",
+    "op": "replace",
+    "ptr": "/stop_rules/net_benefit",
+    "count": 1,
+    "summary": "NET_BENEFIT amended for HIQ-05"
+   },
+   {
+    "cid": "A910-R04-21",
+    "driver": "A9.1 HIQ-05",
+    "op": "replace",
+    "ptr": "/compliance[4]",
+    "count": 1,
+    "summary": "compliance line amended for HIQ-05"
+   },
+   {
+    "cid": "A910-R04-22",
+    "driver": "A9.1 HIQ-05",
+    "op": "replace",
+    "ptr": "/owner_answers_applied[row=37]/how_applied",
+    "count": 1,
+    "summary": "row 37 application amended"
+   },
+   {
+    "cid": "A910-R04-23",
+    "driver": "OQ-INT-03 (A9-03 ICP-14)",
+    "op": "replace",
+    "ptr": "/measurement_chains[dq=UB-DQ-RF]/equations[4]",
+    "count": 1,
+    "summary": "calorimetry method: precise remaining reason"
+   },
+   {
+    "cid": "A910-R04-24",
+    "driver": "OQ-INT-03 (A9-03 ICP-21)",
+    "op": "replace",
+    "ptr": "/measurement_chains[dq=UB-DQ-NEUT]/equations[2]",
+    "count": 1,
+    "summary": "collector-current sign convention: precise remaining reason"
+   },
+   {
+    "cid": "A910-R04-25",
+    "driver": "OQ-INT-03 (A9-01 DQ-HI-ETAU)",
+    "op": "merge",
+    "ptr": "/items[id=UB-E-00]",
+    "count": 1,
+    "summary": "UB-E-00 re-stated from A9-01 DQ-HI-ETAU"
+   },
+   {
+    "cid": "A910-R04-26",
+    "driver": "OQ-INT-03 (A9-01 DQ-HI-ETAU)",
+    "op": "replace",
+    "ptr": "/measurement_chains[dq=DQ-HI-ETAU]/equations[0]",
+    "count": 1,
+    "summary": "mdot_prop basis precise reason"
+   },
+   {
+    "cid": "A910-R04-27",
+    "driver": "OQ-INT-03 (A9-03 ICP-21)",
+    "op": "merge",
+    "ptr": "/stop_rules/limit_aborts/limits[id=LA-04]",
+    "count": 1,
+    "summary": "LA-04 precise reason"
+   },
+   {
+    "cid": "A910-R04-28",
+    "driver": "A9.1 UBQ-06 (review repair 2)",
+    "op": "set",
+    "ptr": "/items[id=UB-K-00]/note",
+    "count": 1,
+    "summary": "UB-K-00 note restated from the applied A9.1 UBQ-06"
+   },
+   {
+    "cid": "A910-R04-29",
+    "driver": "A9.1 UBQ-02 (review repair 2)",
+    "op": "replace",
+    "ptr": "/measurement_chains[dq=UB-DQ-NEUT]/equations[4]",
+    "count": 1,
+    "summary": "M_n form is owner-given (A9.1 UBQ-02)"
+   },
+   {
+    "cid": "A910-R04-30",
+    "driver": "A9.1 UBQ-02 (review repair 2)",
+    "op": "replace",
+    "ptr": "/measurement_chains[dq=UB-DQ-NEUT]/equations[4]",
+    "count": 1,
+    "summary": "M_n extra margin freeze point from A9.1 UBQ-02 (no stale A9-01 pointer)"
+   },
+   {
+    "cid": "A910-R04-31",
+    "driver": "A9.1 UBQ-04 (review repair 2)",
+    "op": "replace",
+    "ptr": "/measurement_chains[dq=UB-DQ-RF]/equations[4]",
+    "count": 1,
+    "summary": "cross-check rule restated from the applied A9.1 UBQ-04"
+   },
+   {
+    "cid": "A910-R04-32",
+    "driver": "A9-07 IDA7-21 (review repair 2)",
+    "op": "set",
+    "ptr": "/items[id=UB-RF-04]/units",
+    "count": 1,
+    "summary": "UB-RF-04 units match the imported IDA7-21 relative-error relation"
+   },
+   {
+    "cid": "A910-R04-33",
+    "driver": "A9.1 OQ-A902-01 (review repair 2)",
+    "op": "gsub",
+    "ptr": "",
+    "count": 3,
+    "summary": "gate quantity renamed P_bus,peak -> P_bus,1ms,max (UB-P-07 name, IF demand, row-112 application)"
+   },
+   {
+    "cid": "A910-A92-A904-01",
+    "driver": "A9.2 OQ-A907-11, rf_measurement_reference",
+    "op": "supersede",
+    "ptr": "/items[id=UB-RF-09]",
+    "count": 1,
+    "summary": "UB-RF-09 reference plane"
+   },
+   {
+    "cid": "A910-A92-A904-02",
+    "driver": "A9.2 OQ-A907-11",
+    "op": "merge",
+    "ptr": "/items[id=UB-RF-09]",
+    "count": 1,
+    "summary": "UB-RF-09 source"
+   },
+   {
+    "cid": "A910-A92-A904-03",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "supersede",
+    "ptr": "/items[id=UB-RF-05]",
+    "count": 1,
+    "summary": "UB-RF-05 name"
+   },
+   {
+    "cid": "A910-A92-A904-04",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "replace",
+    "ptr": "/items[id=UB-RF-04]/value",
+    "count": 1,
+    "summary": "UB-RF-04 |Gamma|"
+   },
+   {
+    "cid": "A910-A92-A904-05",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "append",
+    "ptr": "/measurement_chains[dq=UB-DQ-RF]/equations",
+    "count": 1,
+    "summary": "P_delivered equation"
+   },
+   {
+    "cid": "A910-A92-A904-06",
+    "driver": "A9.2 OQ-A907-11, icp_matching_strategy",
+    "op": "supersede",
+    "ptr": "/interface_demands[id=IF-08]",
+    "count": 1,
+    "summary": "IF-08"
+   },
+   {
+    "cid": "A910-A92R-A904-01",
+    "driver": "A9.2 rf_500W",
+    "op": "supersede",
+    "ptr": "/items[id=UB-RF-01]",
+    "count": 1,
+    "summary": "UB-RF-01 relabelled (value unchanged)"
+   },
+   {
+    "cid": "A910-A92R-A904-02",
+    "driver": "A9.2 rf_500W",
+    "op": "merge",
+    "ptr": "/items[id=UB-RF-01]",
+    "count": 1,
+    "summary": "UB-RF-01 A9.2 interpretation"
+   },
+   {
+    "cid": "A910-A92R-A904-03",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/items[id=UB-RF-03]/name",
+    "count": 1,
+    "summary": "UB-RF-03 range wording"
+   },
+   {
+    "cid": "A910-A92R-A904-04",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/stop_rules/limit_aborts/limits[id=LA-02]/value",
+    "count": 1,
+    "summary": "LA-02 wording"
+   },
+   {
+    "cid": "A910-A92R-A904-05",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/interface_demands[id=IF-14]/quantity",
+    "count": 1,
+    "summary": "IF-14 wording"
+   },
+   {
+    "cid": "A910-A92R-A904-06",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/owner_answers_applied[row=72]/how_applied",
+    "count": 1,
+    "summary": "row 72 application"
+   },
+   {
+    "cid": "A910-A92R-A904-07",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/h3_procurement_inputs[1]/spec_form",
+    "count": 1,
+    "summary": "h3 coupler spec form"
+   }
+  ]
+ }
 }

@@ -26,13 +26,13 @@ Configurations: `hall_c1_reference`, `hall_icp_neutralizer`. Outcome vocabulary:
 
 | key | path | sha256 |
 |---|---|---|
-| ICD | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `1cdab3d71377443d41f128398159ba5ac0203d9daaca8c77840cea6fcd9a353c` |
-| BUS | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `1a3c8d29404d464816f0e306e2883993a52f3094a26656937203a816dd6701df` |
-| UB | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `d1cf5aba0a813c676d48c3ac8741ddb3c00c31700428fbff1c0217a5ee2d92d1` |
-| PRE | `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` | `f3e6069a4c78c49822f9248d9b9bc34a157a349bf601f7065e5e182645fbd245` |
-| EVI | `docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json` | `541f6568043f129b5bfaec9afc73e4838816b5183701fbf68be02388dd7dadeb` |
-| VIN | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `1de411c5f09d96698e87ec22bdba796b5c2010ad4f0362afb5a4fd2eec9b9527` |
-| INT | `docs/experiments/hall_icp/integration/a9_core_integration_v1.json` | `20c222d9b8a65930789c767ed45127041c7b1cd06e21a715101761036bb5f2ca` |
+| ICD | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c` |
+| BUS | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6` |
+| UB | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `c6567e6d0bbc008bedd5b9c14a9716f117144ab6952b9c498f7b0c75e02a624d` |
+| PRE | `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` | `f082a6d3eabf07485d447ace927f69e8980acbcc8eff54d0cd21f196e20a0afe` |
+| EVI | `docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json` | `092e4ca8e1827dd2e9558058a204f46510f2633316ce188e7126b697ec6d0b53` |
+| VIN | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `fac472e370b54875df5dea90c3c7740403da5ac1edd1af29b43ed09ee679d450` |
+| INT | `docs/experiments/hall_icp/integration/a9_core_integration_v1.json` | `86146f986e35e4d9e507c739aac9f8dd11b483be45fd7691bdccc585c734a09f` |
 | H22 | `docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json` | `8436008ac458d4e7467a9c7c9592d5312b3912b918d584ceaf3ac8cb2745a971` |
 | H23 | `docs/hardware/h2/h2_3_gas_path_plenum/h2_3_gas_path_plenum_v1.json` | `f32b05bd03aad2a09a1d9b90ee5f9423e733e6ea4cb94814c92b500590d43a7b` |
 | H24 | `docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json` | `5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef` |
@@ -58,10 +58,10 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | RFQ-01 | torsional thrust stand or its critical parts | hall_c1_reference, hall_icp_neutralizer | 18 | 7 | `docs/procurement/rfq_a9/packages/RFQ-01_thrust_stand.md` |
 | RFQ-02 | mass-flow controllers (thermal, own-gas-calibrated) | hall_c1_reference, hall_icp_neutralizer | 18 | 3 | `docs/procurement/rfq_a9/packages/RFQ-02_mass_flow_controllers.md` |
 | RFQ-03 | residual gas analyser (~200 amu) with differential pumping | hall_c1_reference, hall_icp_neutralizer | 7 | 4 | `docs/procurement/rfq_a9/packages/RFQ-03_rga.md` |
-| RFQ-04 | 13.56 MHz RF generator, matching network, coupler/sensors, feedthroughs, flexible matched coax | hall_c1_reference, hall_icp_neutralizer | 14 | 7 | `docs/procurement/rfq_a9/packages/RFQ-04_rf_chain.md` |
-| RFQ-05 | ICP source-chamber components and collector/bias supply | hall_icp_neutralizer | 12 | 5 | `docs/procurement/rfq_a9/packages/RFQ-05_icp_source_components.md` |
+| RFQ-04 | 13.56 MHz RF generator, matching network, coupler/sensors, feedthroughs, flexible matched coax | hall_c1_reference, hall_icp_neutralizer | 17 | 10 | `docs/procurement/rfq_a9/packages/RFQ-04_rf_chain.md` |
+| RFQ-05 | ICP source-chamber components and collector/bias supply | hall_icp_neutralizer | 13 | 6 | `docs/procurement/rfq_a9/packages/RFQ-05_icp_source_components.md` |
 | RFQ-06 | flight-representative breadboard Hall discharge supply and the P_bus 1 ms measurement chain | hall_c1_reference, hall_icp_neutralizer | 16 | 3 | `docs/procurement/rfq_a9/packages/RFQ-06_discharge_supply_and_pbus_chain.md` |
-| RFQ-07 | Xe tank (5-20 L class), low-flow PMU/FCU, two series isolation valves | hall_c1_reference, hall_icp_neutralizer | 11 | 5 | `docs/procurement/rfq_a9/packages/RFQ-07_xe_feed.md` |
+| RFQ-07 | Xe tank (5-20 L class), low-flow PMU/FCU, two series isolation valves | hall_c1_reference, hall_icp_neutralizer | 11 | 3 | `docs/procurement/rfq_a9/packages/RFQ-07_xe_feed.md` |
 | RFQ-08 | C1 heated LaB6 hollow cathode + pulsed keeper supply (300-600 V) with ICP-46 isolation | hall_c1_reference | 12 | 4 | `docs/procurement/rfq_a9/packages/RFQ-08_c1_cathode_and_keeper.md` |
 | RFQ-09 | facility and calibration services (information only) | hall_c1_reference, hall_icp_neutralizer | 6 | 1 | `docs/procurement/rfq_a9/packages/RFQ-09_facility_calibration_services.md` |
 
@@ -74,7 +74,7 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | RFQ-01-R01 | measurement principle | torsional baseline | - | OWNER_GIVEN | NOW | owner-allocation | row 115; UB-T-00 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-01-R02 | procurement path | dual path | - | OWNER_GIVEN | NOW | owner-allocation | row 118; row 118 |
 | RFQ-01-R03 | moving payload capacity (minimum) | 25.0 | kg | OWNER_GIVEN | NOW | owner-allocation | row 116; UB-T-03 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
-| RFQ-01-R04 | mass per configuration on the platform | PENDING docs/budgets/mass_a9/ (A9-06: module masses and CG per configuration) | kg | PENDING | LOCK-1 | - | ICP-08 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
+| RFQ-01-R04 | mass per configuration on the platform | TBD - requires the C1 / ICP / sham module drawings (ICD ICP-08); A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged) books flight allocations only, no ground module masses/CG | kg | TBD | LOCK-1 | - | ICP-08 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
 | RFQ-01-R05 | thrust uncertainty design/acceptance target | 1.0 | % of reading (k = 1) | OWNER_GIVEN | LOCK-2 | owner-allocation | row 121; A9.1 UBQ-01; UB-T-01 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-01-R06 | acceptance test point | 12.0 | mN | OWNER_GIVEN | LOCK-1 | owner-allocation | row 120; UB-T-02 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-01-R07 | standard uncertainty at the acceptance point | 0.12 | mN (k = 1) | DERIVED | LOCK-2 | model-derived | UB-T-01 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); UB-T-02 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
@@ -82,8 +82,8 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | RFQ-01-R09 | in-situ SI-traceable force calibration | in-situ, SI-traceable, pre/post block | - | OWNER_GIVEN | NOW | owner-allocation | row 119; UB-T-04 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); UB-T-05 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-01-R10 | calibration-shift treatment | TBD - requires LOCK-2 metrology-only calibration evidence (UBQ-05) | relative | TBD | LOCK-2 | - | A9.1 UBQ-05; UB-T-07 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-01-R11 | service-line crossing | harp/slack loops + flexible RF coax + matched shams | - | OWNER_GIVEN | NOW | owner-allocation | row 117; row 133; ICP-18 (schemas/interfaces/icp_neutralizer_icd_v1.json); UB-T-09 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
-| RFQ-01-R12 | matching network off the platform | off-platform | - | OWNER_GIVEN | NOW | owner-allocation | A9.1 A9-03-matching; ICP-13 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
-| RFQ-01-R13 | module-exchange interface | PENDING docs/hardware/h2_a9_revisions/ (A9-07: KC-1 / downstream ICP fixture drawings) | - | PENDING | LOCK-1 | - | row 122; ICP-06 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
+| RFQ-01-R12 | local matching network on the ICP module (moving platform) | on-module local match (A9.2) | - | OWNER_GIVEN | NOW | owner-allocation | A9.1 A9-03-matching; ICP-13 (schemas/interfaces/icp_neutralizer_icd_v1.json); docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json#/decisions/OQ-A907-11 |
+| RFQ-01-R13 | module-exchange interface | TBD - requires the KC-1 / downstream ICP fixture drawings; A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged) gives the requirements (REV-29..36: H-1 bolted, KC-1 carries C1 module / ICP module / sham, >= 25 kg stand), not drawings | - | TBD | LOCK-1 | - | row 122; ICP-06 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
 | RFQ-01-R14 | RF / electrostatic pickup immunity | TBD - requires the S1a RF-pickup check (UB-T-11) | mN | TBD | LOCK-2 | - | UB-T-11 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); row 72 |
 | RFQ-01-R15 | thermal drift | TBD - requires S1b thermal time constants and the total ICP module heat load (ICD ICP-43) | mN | TBD | LOCK-2 | - | UB-T-10 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); ICP-43 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
 | RFQ-01-R16 | non-ferromagnetic construction near H-1 | non-ferromagnetic in the MC-1 exclusion zone | - | COPIED_VERIFIED | NOW | owner-allocation | ICP-32 (schemas/interfaces/icp_neutralizer_icd_v1.json); docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json#/h3_procurement_inputs/0 |
@@ -100,7 +100,7 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | RFQ-02-R04 | O2 path envelope | `{"max_mgps": 1.885418323, "min_mgps": 0.01241017941, "overlapping_ranges_min": 4, "turndown": 151.9251464}` | mg/s | COPIED_VERIFIED | LOCK-1 | model-derived | H26-19 (docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json) |
 | RFQ-02-R05 | four-range feasibility check | `{"N2 (H26-18)": {"fits_20pct_floor": true, "max_mgps": 3.142363872, "min_mgps": 0.01181921848, "per_range_span_for_4_ranges": 4.038006, "turndown": 265.869006}, "O2 (H26-19)": {"fits_20pct_floor": true, "max_mgps": 1.885418323, "min_mgps": 0.01241017941, "per_range_span_for_4_ranges": 3.510811, "turndown": 151.925146}, "atmospheric total, row 73 envelope": {"fits_20pct_floor": true, "max_mgps": 3.2, "min_mgps": 0.38, "per_range_span_for_4_ranges": 1.703498, "turndown": 8.421053}}` | - | DERIVED | LOCK-1 | model-derived | H26-18 (docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json); H26-19 (docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json); CD-P-MFC-MINFRAC (docs/experiments/capability_demo/capability_demo_prep_v1.json) |
 | RFQ-02-R06 | Ar path (engineering-only HI-AR) | TBD - requires the HI-AR flow plan (A9-01 stage HI-AR) | mg/s | TBD | LOCK-1 | - | A9.1 UBQ-08; row 36 |
-| RFQ-02-R07 | Xe anode path for the bounded Xe reference/health check | TBD - requires the registered Xe reference/health-check point (A9-01) and PENDING docs/budgets/xe_ledger_a9/ (A9-08: XE_REFERENCE term) | mg/s | TBD | LOCK-1 | - | A9.1 HIQ-03; row 26 |
+| RFQ-02-R07 | Xe anode path for the bounded Xe reference/health check | TBD - requires the registered Xe reference/health-check point (A9-01) and the XE_REFERENCE term booked by A9-08 (docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json; structure booked, flow TBD) | mg/s | TBD | LOCK-1 | - | A9.1 HIQ-03; row 26 |
 | RFQ-02-R08 | C1 steady-flow Xe controller class | `[0.05, 0.2]` | mg/s | OWNER_GIVEN | NOW | owner-allocation | row 125; UB-F-02 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-02-R09 | C1 low-flow resolution and setpoint | 0.0005 | mg/s | OWNER_GIVEN | NOW | owner-allocation | row 98; UB-F-04 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-02-R10 | C1 spot-mode search step | 10.0 | resolution steps per search step | DERIVED | LOCK-1 | model-derived | row 92; UB-F-04 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
@@ -130,19 +130,22 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | id | title | value | units | status | freeze | evidence class | sources |
 |---|---|---|---|---|---|---|---|
 | RFQ-04-R01 | frequency | 13.56 | MHz | OWNER_GIVEN | NOW | owner-allocation | row 72; UB-RF-00 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); ICP-11 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
-| RFQ-04-R02 | laboratory forward-power capability | `[0.0, 500.0]` | W | OWNER_GIVEN | NOW | owner-allocation | row 72; A9.1 OQ-A902-03; row 109; UB-RF-01 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
+| RFQ-04-R02 | laboratory delivered/operating RF investigation capability (generator rating TBD_AFTER_IMPEDANCE_MAP) | `[0.0, 500.0]` | W | OWNER_GIVEN | NOW | owner-allocation | row 72; A9.1 OQ-A902-03; row 109; UB-RF-01 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json#/decisions/rf_500W |
 | RFQ-04-R03 | generator interlock and telemetry | interlock + fwd/refl telemetry | - | OWNER_GIVEN | NOW | owner-allocation | row 62; row 130; ICP-16 (schemas/interfaces/icp_neutralizer_icd_v1.json); ICP-34 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
 | RFQ-04-R04 | generator input power and metering | TBD - requires owner answer to OQ-RFQ-06 and A902-21 (generator DC-input -> forward-power efficiency, LOCK-2) | W | TBD | LOCK-2 | - | A902-19 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json); A902-21 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json) |
 | RFQ-04-R05 | output spectrum and stability | TBD - requires S1a spectrum of the source output into the matched load (UB-RF-06) | relative | TBD | LOCK-2 | - | UB-RF-06 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
-| RFQ-04-R06 | matching network location | off-platform | - | OWNER_GIVEN | NOW | owner-allocation | A9.1 A9-03-matching; A9.1 A9-03-matching; A9.1 A9-03-matching |
-| RFQ-04-R07 | matching network rating and control | TBD - requires A902-22 matching-network DC draw and ICD ICP-15 ratings | W | TBD | LOCK-1 | - | A902-22 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json); ICP-15 (schemas/interfaces/icp_neutralizer_icd_v1.json); row 110 |
-| RFQ-04-R08 | directional coupler reference plane | after the matching network | - | OWNER_GIVEN | NOW | owner-allocation | row 72; A9.1 A9-03-matching; UB-RF-02 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); UB-RF-03 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); UB-RF-04 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
+| RFQ-04-R06 | matching network location | local match on / immediately adjacent to the ICP module | - | OWNER_GIVEN | NOW | owner-allocation | A9.1 A9-03-matching; A9.1 A9-03-matching; A9.1 A9-03-matching; docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json#/decisions/OQ-A907-11 |
+| RFQ-04-R07 | matching network rating and control | TBD - requires the ICP antenna impedance map Z_antenna = R + jX versus mdot, P_RF, p, gas composition and the Hall operating point (A9.2 post-A9 priority P2): RF component ratings (generator, coupler, coax, connectors, matching elements incl. their voltage and current, feedthroughs) are TBD_AFTER_IMPEDANCE_MAP; the 0-500 W row-72 figure is a laboratory delivered/operating investigation capability, not a component rating (A9.2); A902-22 DC draw; ICD ICP-15 | W | TBD | LOCK-1 | - | A902-22 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json); ICP-15 (schemas/interfaces/icp_neutralizer_icd_v1.json); row 110 |
+| RFQ-04-R08 | directional coupler reference plane | generator / 50-ohm side of the local match | - | OWNER_GIVEN | NOW | owner-allocation | row 72; A9.1 A9-03-matching; UB-RF-02 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); UB-RF-03 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); UB-RF-04 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json#/decisions/rf_measurement_reference |
 | RFQ-04-R09 | coupler/sensor uncertainty | TBD - requires coupler and sensor certificates (UB-RF-02..04) | relative | TBD | LOCK-2 | - | UB-RF-02 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); UB-RF-03 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); UB-RF-04 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-04-R10 | calorimetric cross-check | independent cross-check (k_x = 2 at LOCK-1) | - | OWNER_GIVEN | LOCK-1 | owner-allocation | row 72; A9.1 UBQ-04; UB-RF-08 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-04-R11 | flexible matched coax (live + sham) | flexible, matched pair | - | OWNER_GIVEN | NOW | owner-allocation | row 117; row 133; ICP-18 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
-| RFQ-04-R12 | vacuum RF feedthroughs | TBD - requires ICD ICP-15 and ICP-44 ratings (LOCK-1) | V (peak RF), W | TBD | LOCK-1 | - | ICP-15 (schemas/interfaces/icp_neutralizer_icd_v1.json); ICP-44 (schemas/interfaces/icp_neutralizer_icd_v1.json); A9.1 ICP-46 |
+| RFQ-04-R12 | vacuum RF feedthroughs | TBD - requires the ICP antenna impedance map Z_antenna = R + jX versus mdot, P_RF, p, gas composition and the Hall operating point (A9.2 post-A9 priority P2): RF component ratings (generator, coupler, coax, connectors, matching elements incl. their voltage and current, feedthroughs) are TBD_AFTER_IMPEDANCE_MAP; the 0-500 W row-72 figure is a laboratory delivered/operating investigation capability, not a component rating (A9.2); ICD ICP-15 / ICP-44 (LOCK-1) | V (peak RF), W | TBD | LOCK-1 | - | ICP-15 (schemas/interfaces/icp_neutralizer_icd_v1.json); ICP-44 (schemas/interfaces/icp_neutralizer_icd_v1.json); A9.1 ICP-46 |
 | RFQ-04-R13 | RF pickup / EMC | TBD - requires S1a pickup test (ICD ICP-17) | V, A, dB | TBD | LOCK-2 | - | ICP-17 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
-| RFQ-04-R14 | flight allocation context | PENDING docs/budgets/mass_a9/ (A9-06: RF generator/matching mass reconciliation) | kg | PENDING | after-evidence | - | row 54 |
+| RFQ-04-R14 | flight allocation context | TBD - requires supplier mass data; A9-06 records the owner v0 allocation (row 54, 1.5 kg) as ALLOCATION_UNVERIFIABLE_TBD (no evidence floor): docs/budgets/mass_a9/mass_a9_v1.json line_checks[line=AL-06] | kg | TBD | after-evidence | - | row 54 |
+| RFQ-04-R15 | optional on-module fixed pre-match (option line) - SUPERSEDED_BY_A9_2 | TBD - requires the ICP impedance map (A9.2 P2): the option line is superseded by the adjustable local match (RFQ-04-R06 / R17); a fixed network is only one possible later flight implementation | - | TBD | LOCK-1 | - | H3-A907-15 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json); A9.1 A9-03-matching |
+| RFQ-04-R16 | RF source protection functions | TBD - requires the ICP antenna / load characterization: exact reflected-power and VSWR trip thresholds are frozen after it, never invented now (A9.2 rf_protection) | W; - | TBD | after-evidence | - | docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json#/decisions/rf_protection |
+| RFQ-04-R17 | local matching network: on-module mass and matching-element voltage / current | TBD - requires the ICP antenna impedance map Z_antenna = R + jX versus mdot, P_RF, p, gas composition and the Hall operating point (A9.2 post-A9 priority P2): RF component ratings (generator, coupler, coax, connectors, matching elements incl. their voltage and current, feedthroughs) are TBD_AFTER_IMPEDANCE_MAP; the 0-500 W row-72 figure is a laboratory delivered/operating investigation capability, not a component rating (A9.2) | kg; V; A | TBD | after-evidence | - | docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json#/decisions/OQ-A907-11; docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json#/decisions/icp_matching_strategy; docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json#/decisions/rf_500W |
 
 ### RFQ-05 - ICP source-chamber components and collector/bias supply
 
@@ -159,7 +162,8 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | RFQ-05-R09 | capped dedicated gas port and pressure port | capped port + pressure port | - | OWNER_GIVEN | NOW | owner-allocation | A9.1 HIQ-06; row 63; ICP-27 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
 | RFQ-05-R10 | MODULE_ID and serialization | MODULE_ID + serial | - | OWNER_GIVEN | NOW | owner-allocation | row 62; row 83; ICP-33 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
 | RFQ-05-R11 | O2 service and materials | ASTM G93 Level C; no silver | - | OWNER_GIVEN | NOW | owner-allocation | row 107; row 103; row 132 |
-| RFQ-05-R12 | flight allocation context | PENDING docs/budgets/mass_a9/ (A9-06: ICP neutralizer mass reconciliation) | kg | PENDING | after-evidence | - | row 54 |
+| RFQ-05-R12 | flight allocation context | TBD - requires supplier mass data; A9-06 records the owner v0 ICP-neutralizer allocation (row 54, 2.0 kg) as ALLOCATION_UNVERIFIABLE_TBD (no evidence floor): docs/budgets/mass_a9/mass_a9_v1.json line_checks[line=AL-05] | kg | TBD | after-evidence | - | row 54 |
+| RFQ-05-R13 | on-module mounting provision for the local matching network | TBD - requires the ICP module drawing and the local-match selection (A9.2; ratings TBD_AFTER_IMPEDANCE_MAP) | kg; W | TBD | after-evidence | - | docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json#/decisions/OQ-A907-11; docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json#/decisions/icp_coupled_thermal |
 
 ### RFQ-06 - flight-representative breadboard Hall discharge supply and the P_bus 1 ms measurement chain
 
@@ -176,7 +180,7 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | RFQ-06-R09 | sample rate | >= 100 | kSa/s | OWNER_GIVEN | NOW | owner-allocation | A9.1 OQ-A902-01 |
 | RFQ-06-R10 | samples per 1 ms window and Nyquist check | `{"nyquist_kHz": 50.0, "samples_per_window": 100}` | samples / kHz | DERIVED | NOW | model-derived | A9.1 OQ-A902-01 |
 | RFQ-06-R11 | synchronization, anti-alias, no step-average | synchronized; AA documented; peak + 100 ms + 1 s recorded | - | OWNER_GIVEN | NOW | owner-allocation | A9.1 OQ-A902-01; A9.1 OQ-A902-01; A9.1 OQ-A902-01; A9.1 OQ-A902-01; A9.1 OQ-A902-01 |
-| RFQ-06-R12 | channel list = A9 bus slots | `{"hall_c1_reference": {"INSTALLED": ["c1_common_tie", "c1_heater", "c1_keeper", "compressor", "filter_getter", "flow_control_atmospheric", "flow_control_xe", "hall_discharge", "hall_magnet_inner", "hall_magnet_outer", "hall_magnet_trim", "housekeeping_controls", "reserved_dc_port", "thermal_control"], "VARIANT_ONLY": ["active_cooling"], "n_installed": 14}, "hall_icp_neutralizer": {"INSTALLED": ["compressor", "flow_control_atmospheric", "flow_control_icp_feed", "flow_control_xe", "hall_discharge", "hall_magnet_inner", "hall_magnet_outer", "hall_magnet_trim", "housekeeping_controls", "icp_collector_bias", "icp_matching_network", "icp_rf_source", "reserved_dc_port", "thermal_control"], "VARIANT_ONLY": ["active_cooling", "icp_assist_magnet"], "n_installed": 14}}` | slots | DERIVED | LOCK-1 | model-derived | docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json#/slots; row 110; H3-PPU-04 (docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json); UB-N-01 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
+| RFQ-06-R12 | channel list = A9 bus slots | `{"hall_c1_reference": {"INSTALLED": ["c1_common_tie", "c1_heater", "c1_keeper", "compressor", "filter_getter", "flow_control_atmospheric", "flow_control_xe", "hall_discharge", "hall_magnet_inner", "hall_magnet_outer", "hall_magnet_trim", "housekeeping_controls", "reserved_dc_port", "thermal_control"], "VARIANT_ONLY": ["active_cooling"], "n_installed": 14}, "hall_icp_neutralizer": {"INSTALLED": ["compressor", "flow_control_atmospheric", "flow_control_xe", "hall_discharge", "hall_magnet_inner", "hall_magnet_outer", "hall_magnet_trim", "housekeeping_controls", "icp_collector_bias", "icp_matching_network", "icp_rf_source", "reserved_dc_port", "thermal_control"], "VARIANT_ONLY": ["active_cooling", "flow_control_icp_feed", "icp_assist_magnet"], "n_installed": 13}}` | slots | DERIVED | LOCK-1 | model-derived | docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json#/slots; row 110; H3-PPU-04 (docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json); UB-N-01 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
 | RFQ-06-R13 | per-channel calibration uncertainty | TBD - requires calibration certificates (UB-P-02, UB-P-03) and A902-36 | relative | TBD | LOCK-2 | - | UB-P-02 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); UB-P-03 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); A902-36 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json) |
 | RFQ-06-R14 | C1 heater booking during start-up | heater logged each step | - | OWNER_GIVEN | NOW | owner-allocation | A9.1 SEQ-heater |
 | RFQ-06-R15 | wide-band I_d(t) chain | 60.0 | MHz | OWNER_GIVEN | LOCK-2 | owner-allocation | row 129; UB-I-00 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
@@ -189,13 +193,13 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | RFQ-07-R01 | tank sizing temperature and EOS | 323.0 | K | OWNER_GIVEN | NOW | owner-allocation | row 50 |
 | RFQ-07-R02 | Xe load design cases | `[2.0, 5.0, 10.0]` | kg | OWNER_GIVEN | after-evidence | owner-allocation | row 48 |
 | RFQ-07-R03 | indicative propellant volume per case at 323.15 K | `{"10 kg": {"120bar": 6.9363, "150bar": 5.9755, "180bar": 5.5325, "190bar": 5.4277}, "2 kg": {"120bar": 1.3873, "150bar": 1.1951, "180bar": 1.1065, "190bar": 1.0855}, "5 kg": {"120bar": 3.4681, "150bar": 2.9878, "180bar": 2.7663, "190bar": 2.7139}}` | L | DERIVED | after-evidence | model-derived | docs/procurement/web_track_v1/threads/R6_xe_inputs.json#/hardware_mass_data; row 48; row 50 |
-| RFQ-07-R04 | tank volume class, MEOP and final ranges | PENDING docs/budgets/xe_ledger_a9/ (A9-08: final tank ranges incl. residual (row 45) and reserve (row 43)) | L, bar | PENDING | after-evidence | - | row 45; row 43; row 8 |
+| RFQ-07-R04 | tank volume class, MEOP and final ranges | `{"MEOP": "TBD - requires quotations (XA9-28); the pressures are a sensitivity axis, not a MEOP choice", "V_min_323K_l_by_case_and_MEOP_axis": {"10 kg": {"100bar": 8.89326, "150bar": 5.98748, "187bar": 5.46856, "75bar": 16.2837}, "2 kg": {"100bar": 1.77865, "150bar": 1.1975, "187bar": 1.09371, "75bar": 3.25675}, "5 kg": {"100bar": 4.44663, "150bar": 2.99374, "187bar": 2.73428, "75bar": 8.14187}}, "reserve_kg_inside_case": {"10 kg": 1.63399, "2 kg": 0.326797, "5 kg": 0.816993}, "residual_kg_inside_case": {"10 kg": 0.196078, "2 kg": 0.0392157, "5 kg": 0.0980392}, "source": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json design_cases.tank_volume / reserve_residual_split (case = LOADED Xe, XA9Q-01 PROPOSED reading)"}` | L (V_min at 323.15 K incl. EOS density uncertainty), kg | COPIED_VERIFIED | after-evidence | model-derived | row 45; row 43; row 8; docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json#/design_cases/tank_volume; docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json#/design_cases/reserve_residual_split |
 | RFQ-07-R05 | two isolation valves in series | 2 | valves in series | OWNER_GIVEN | NOW | owner-allocation | row 90; row 55 |
 | RFQ-07-R06 | low-flow PMU/FCU flow range | TBD - requires the C1 operating point (LOCK-1) and the Xe reference point | mg/s | TBD | LOCK-1 | - | row 125; row 42; H3-03 (docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json); H3-02 (docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json) |
 | RFQ-07-R07 | no ICP Xe term in the primary mode | 0.0 | mg/s (ICP Xe, G-REUSE) | OWNER_GIVEN | NOW | owner-allocation | A9.1 HIQ-06; A9.1 A9-09 |
 | RFQ-07-R08 | filter/getter (C1/Xe branch only) | TBD - requires vendor/spec verification (A902-29) | W | TBD | after-evidence | - | row 51; A902-29 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json) |
 | RFQ-07-R09 | C1 not co-installed as a flight backup | no combined C1 + ICP flight installation | - | OWNER_GIVEN | NOW | owner-allocation | A9.1 OQ-A902-04 |
-| RFQ-07-R10 | mass context | PENDING docs/budgets/mass_a9/ (A9-06: Xe hardware mass reconciliation) | kg | PENDING | after-evidence | - | row 54; row 5 |
+| RFQ-07-R10 | mass context | `{"AL-08_evidence_floor_kg": 5.044, "AL-08_owner_allocation_kg": 1.5, "note": "owner v0 allocation (row 54) below the H2-7 analog floor (CBE); re-allocation is owner question MQ-05; supplier states mass per case", "source": "docs/budgets/mass_a9/mass_a9_v1.json line_checks[line=AL-08]", "state": "ALLOCATION_BELOW_EVIDENCE_FLOOR"}` | kg | COPIED_VERIFIED | after-evidence | owner-allocation | row 54; row 5 |
 | RFQ-07-R11 | cleanliness and materials | TBD - requires H2-3 / A9-07 cleanliness class | - | TBD | LOCK-1 | - | H3-C1-04 (docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json) |
 
 ### RFQ-08 - C1 heated LaB6 hollow cathode + pulsed keeper supply (300-600 V) with ICP-46 isolation
@@ -213,7 +217,7 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | RFQ-08-R09 | keeper material | non-graphite alternatives quoted | - | OWNER_GIVEN | after-evidence | owner-allocation | row 94 |
 | RFQ-08-R10 | temperature instrumentation provisions | 1843.0 | K (O-bearing floor) | OWNER_GIVEN | NOW | owner-allocation | row 128; row 95 |
 | RFQ-08-R11 | cathode-common / bleeder network | TBD - requires EMC and discharge-stability bench tests (A902-28) | ohm | TBD | after-evidence | - | row 91; H3-A902-06 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json); A902-28 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json) |
-| RFQ-08-R12 | Xe-line dielectric break | TBD - requires the C1 circuit potentials (H2-2 H3-C1-04: 'break voltage PENDING H2-4') and PENDING docs/hardware/h2_a9_revisions/ (A9-07: H2-2/H2-4 revision) | V | PENDING | LOCK-1 | - | H3-C1-04 (docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json) |
+| RFQ-08-R12 | Xe-line dielectric break | TBD - requires the C1 circuit potentials (H2-2 H3-C1-04: 'break voltage PENDING H2-4') and the H2-2 / H2-4 revision in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (merged: keeper isolation basis 900 V, 1.0 kV DC development hipot, separate 600 V pulse test per A9.1 ICP-46; the break voltage itself is not given) | V | PENDING | LOCK-1 | - | H3-C1-04 (docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json) |
 
 ### RFQ-09 - facility and calibration services (information only)
 
@@ -239,7 +243,7 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | c1_xe_points_sccm | `{"0.0005 mg/s": 0.0051, "0.005 mg/s": 0.0512, "0.05 mg/s": 0.5121, "0.2 mg/s": 2.0485, "0.6 mg/s": 6.1455, "0.8 mg/s": 8.194}` | sccm Xe (0 degC, 101325 Pa basis of the R4 conversion) | sccm = (mg/s) / 0.097633 (R4 unit_conversions, MKS gas density basis) |
 | c1_resolution_vs_search_step | 10.0 | steps of resolution per search step | row 92 step 0.005 mg/s / row 98 resolution 0.0005 mg/s |
 | xe_tank_indicative_volume_L | `{"10 kg": {"120bar": 6.9363, "150bar": 5.9755, "180bar": 5.5325, "190bar": 5.4277}, "2 kg": {"120bar": 1.3873, "150bar": 1.1951, "180bar": 1.1065, "190bar": 1.0855}, "5 kg": {"120bar": 3.4681, "150bar": 2.9878, "180bar": 2.7663, "190bar": 2.7139}}` | L (= kg / (g cm^-3)) | V = m_case / rho(323.15 K, p); rho from R6 /hardware_mass_data[0] (NIST WebBook SRD 69) |
-| p_bus_channel_slots | `{"hall_c1_reference": {"INSTALLED": ["c1_common_tie", "c1_heater", "c1_keeper", "compressor", "filter_getter", "flow_control_atmospheric", "flow_control_xe", "hall_discharge", "hall_magnet_inner", "hall_magnet_outer", "hall_magnet_trim", "housekeeping_controls", "reserved_dc_port", "thermal_control"], "VARIANT_ONLY": ["active_cooling"], "n_installed": 14}, "hall_icp_neutralizer": {"INSTALLED": ["compressor", "flow_control_atmospheric", "flow_control_icp_feed", "flow_control_xe", "hall_discharge", "hall_magnet_inner", "hall_magnet_outer", "hall_magnet_trim", "housekeeping_controls", "icp_collector_bias", "icp_matching_network", "icp_rf_source", "reserved_dc_port", "thermal_control"], "VARIANT_ONLY": ["active_cooling", "icp_assist_magnet"], "n_installed": 14}}` | bus slots (one synchronized V and I channel pair each) | slots with status INSTALLED / VARIANT_ONLY in bus_power_boundary_a9_v1.json |
+| p_bus_channel_slots | `{"hall_c1_reference": {"INSTALLED": ["c1_common_tie", "c1_heater", "c1_keeper", "compressor", "filter_getter", "flow_control_atmospheric", "flow_control_xe", "hall_discharge", "hall_magnet_inner", "hall_magnet_outer", "hall_magnet_trim", "housekeeping_controls", "reserved_dc_port", "thermal_control"], "VARIANT_ONLY": ["active_cooling"], "n_installed": 14}, "hall_icp_neutralizer": {"INSTALLED": ["compressor", "flow_control_atmospheric", "flow_control_xe", "hall_discharge", "hall_magnet_inner", "hall_magnet_outer", "hall_magnet_trim", "housekeeping_controls", "icp_collector_bias", "icp_matching_network", "icp_rf_source", "reserved_dc_port", "thermal_control"], "VARIANT_ONLY": ["active_cooling", "flow_control_icp_feed", "icp_assist_magnet"], "n_installed": 13}}` | bus slots (one synchronized V and I channel pair each) | slots with status INSTALLED / VARIANT_ONLY in bus_power_boundary_a9_v1.json |
 
 ## Traceability matrix (requirement -> source)
 
@@ -248,7 +252,7 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | RFQ-01-R01 | RFQ-01 | row 115; UB:UB-T-00 | OWNER_GIVEN | NOW |
 | RFQ-01-R02 | RFQ-01 | row 118; row 118 | OWNER_GIVEN | NOW |
 | RFQ-01-R03 | RFQ-01 | row 116; UB:UB-T-03 | OWNER_GIVEN | NOW |
-| RFQ-01-R04 | RFQ-01 | ICD:ICP-08 | PENDING | LOCK-1 |
+| RFQ-01-R04 | RFQ-01 | ICD:ICP-08 | TBD | LOCK-1 |
 | RFQ-01-R05 | RFQ-01 | row 121; A9.1 UBQ-01; UB:UB-T-01 | OWNER_GIVEN | LOCK-2 |
 | RFQ-01-R06 | RFQ-01 | row 120; UB:UB-T-02 | OWNER_GIVEN | LOCK-1 |
 | RFQ-01-R07 | RFQ-01 | UB:UB-T-01; UB:UB-T-02 | DERIVED | LOCK-2 |
@@ -256,8 +260,8 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | RFQ-01-R09 | RFQ-01 | row 119; UB:UB-T-04; UB:UB-T-05 | OWNER_GIVEN | NOW |
 | RFQ-01-R10 | RFQ-01 | A9.1 UBQ-05; UB:UB-T-07 | TBD | LOCK-2 |
 | RFQ-01-R11 | RFQ-01 | row 117; row 133; ICD:ICP-18; UB:UB-T-09 | OWNER_GIVEN | NOW |
-| RFQ-01-R12 | RFQ-01 | A9.1 A9-03-matching; ICD:ICP-13 | OWNER_GIVEN | NOW |
-| RFQ-01-R13 | RFQ-01 | row 122; ICD:ICP-06 | PENDING | LOCK-1 |
+| RFQ-01-R12 | RFQ-01 | A9.1 A9-03-matching; ICD:ICP-13; A9.2:/decisions/OQ-A907-11 | OWNER_GIVEN | NOW |
+| RFQ-01-R13 | RFQ-01 | row 122; ICD:ICP-06 | TBD | LOCK-1 |
 | RFQ-01-R14 | RFQ-01 | UB:UB-T-11; row 72 | TBD | LOCK-2 |
 | RFQ-01-R15 | RFQ-01 | UB:UB-T-10; ICD:ICP-43 | TBD | LOCK-2 |
 | RFQ-01-R16 | RFQ-01 | ICD:ICP-32; H26:/h3_procurement_inputs/0 | COPIED_VERIFIED | NOW |
@@ -289,19 +293,22 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | RFQ-03-R06 | RFQ-03 | INS:INS-11; INS:INS-22; ICD:ICP-07 | TBD | LOCK-1 |
 | RFQ-03-R07 | RFQ-03 | R4:/items/9 | TBD | LOCK-1 |
 | RFQ-04-R01 | RFQ-04 | row 72; UB:UB-RF-00; ICD:ICP-11 | OWNER_GIVEN | NOW |
-| RFQ-04-R02 | RFQ-04 | row 72; A9.1 OQ-A902-03; row 109; UB:UB-RF-01 | OWNER_GIVEN | NOW |
+| RFQ-04-R02 | RFQ-04 | row 72; A9.1 OQ-A902-03; row 109; UB:UB-RF-01; A9.2:/decisions/rf_500W | OWNER_GIVEN | NOW |
 | RFQ-04-R03 | RFQ-04 | row 62; row 130; ICD:ICP-16; ICD:ICP-34 | OWNER_GIVEN | NOW |
 | RFQ-04-R04 | RFQ-04 | BUS:A902-19; BUS:A902-21 | TBD | LOCK-2 |
 | RFQ-04-R05 | RFQ-04 | UB:UB-RF-06 | TBD | LOCK-2 |
-| RFQ-04-R06 | RFQ-04 | A9.1 A9-03-matching; A9.1 A9-03-matching; A9.1 A9-03-matching | OWNER_GIVEN | NOW |
+| RFQ-04-R06 | RFQ-04 | A9.1 A9-03-matching; A9.1 A9-03-matching; A9.1 A9-03-matching; A9.2:/decisions/OQ-A907-11 | OWNER_GIVEN | NOW |
 | RFQ-04-R07 | RFQ-04 | BUS:A902-22; ICD:ICP-15; row 110 | TBD | LOCK-1 |
-| RFQ-04-R08 | RFQ-04 | row 72; A9.1 A9-03-matching; UB:UB-RF-02; UB:UB-RF-03; UB:UB-RF-04 | OWNER_GIVEN | NOW |
+| RFQ-04-R08 | RFQ-04 | row 72; A9.1 A9-03-matching; UB:UB-RF-02; UB:UB-RF-03; UB:UB-RF-04; A9.2:/decisions/rf_measurement_reference | OWNER_GIVEN | NOW |
 | RFQ-04-R09 | RFQ-04 | UB:UB-RF-02; UB:UB-RF-03; UB:UB-RF-04 | TBD | LOCK-2 |
 | RFQ-04-R10 | RFQ-04 | row 72; A9.1 UBQ-04; UB:UB-RF-08 | OWNER_GIVEN | LOCK-1 |
 | RFQ-04-R11 | RFQ-04 | row 117; row 133; ICD:ICP-18 | OWNER_GIVEN | NOW |
 | RFQ-04-R12 | RFQ-04 | ICD:ICP-15; ICD:ICP-44; A9.1 ICP-46 | TBD | LOCK-1 |
 | RFQ-04-R13 | RFQ-04 | ICD:ICP-17 | TBD | LOCK-2 |
-| RFQ-04-R14 | RFQ-04 | row 54 | PENDING | after-evidence |
+| RFQ-04-R14 | RFQ-04 | row 54 | TBD | after-evidence |
+| RFQ-04-R15 | RFQ-04 | H2A9:H3-A907-15; A9.1 A9-03-matching | TBD | LOCK-1 |
+| RFQ-04-R16 | RFQ-04 | A9.2:/decisions/rf_protection | TBD | after-evidence |
+| RFQ-04-R17 | RFQ-04 | A9.2:/decisions/OQ-A907-11; A9.2:/decisions/icp_matching_strategy; A9.2:/decisions/rf_500W | TBD | after-evidence |
 | RFQ-05-R01 | RFQ-05 | row 69; ICD:ICP-32 | OWNER_GIVEN | NOW |
 | RFQ-05-R02 | RFQ-05 | row 70; ICD:ICP-20 | OWNER_GIVEN | NOW |
 | RFQ-05-R03 | RFQ-05 | A9.1 A9-03-collector; A9.1 A9-03-collector; row 106 | OWNER_GIVEN | after-evidence |
@@ -313,7 +320,8 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | RFQ-05-R09 | RFQ-05 | A9.1 HIQ-06; row 63; ICD:ICP-27 | OWNER_GIVEN | NOW |
 | RFQ-05-R10 | RFQ-05 | row 62; row 83; ICD:ICP-33 | OWNER_GIVEN | NOW |
 | RFQ-05-R11 | RFQ-05 | row 107; row 103; row 132 | OWNER_GIVEN | NOW |
-| RFQ-05-R12 | RFQ-05 | row 54 | PENDING | after-evidence |
+| RFQ-05-R12 | RFQ-05 | row 54 | TBD | after-evidence |
+| RFQ-05-R13 | RFQ-05 | A9.2:/decisions/OQ-A907-11; A9.2:/decisions/icp_coupled_thermal | TBD | after-evidence |
 | RFQ-06-R01 | RFQ-06 | row 113; H24:H3-PPU-05; BUS:H3-A902-08 | OWNER_GIVEN | NOW |
 | RFQ-06-R02 | RFQ-06 | row 111; row 111; BUS:A902-11 | OWNER_GIVEN | NOW |
 | RFQ-06-R03 | RFQ-06 | row 81; UB:UB-I-06 | OWNER_GIVEN | LOCK-1 |
@@ -333,13 +341,13 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | RFQ-07-R01 | RFQ-07 | row 50 | OWNER_GIVEN | NOW |
 | RFQ-07-R02 | RFQ-07 | row 48 | OWNER_GIVEN | after-evidence |
 | RFQ-07-R03 | RFQ-07 | R6:/hardware_mass_data; row 48; row 50 | DERIVED | after-evidence |
-| RFQ-07-R04 | RFQ-07 | row 45; row 43; row 8 | PENDING | after-evidence |
+| RFQ-07-R04 | RFQ-07 | row 45; row 43; row 8; A9-08:/design_cases/tank_volume; A9-08:/design_cases/reserve_residual_split | COPIED_VERIFIED | after-evidence |
 | RFQ-07-R05 | RFQ-07 | row 90; row 55 | OWNER_GIVEN | NOW |
 | RFQ-07-R06 | RFQ-07 | row 125; row 42; H27:H3-03; H27:H3-02 | TBD | LOCK-1 |
 | RFQ-07-R07 | RFQ-07 | A9.1 HIQ-06; A9.1 A9-09 | OWNER_GIVEN | NOW |
 | RFQ-07-R08 | RFQ-07 | row 51; BUS:A902-29 | TBD | after-evidence |
 | RFQ-07-R09 | RFQ-07 | A9.1 OQ-A902-04 | OWNER_GIVEN | NOW |
-| RFQ-07-R10 | RFQ-07 | row 54; row 5 | PENDING | after-evidence |
+| RFQ-07-R10 | RFQ-07 | row 54; row 5 | COPIED_VERIFIED | after-evidence |
 | RFQ-07-R11 | RFQ-07 | H22:H3-C1-04 | TBD | LOCK-1 |
 | RFQ-08-R01 | RFQ-08 | row 49; row 88; H22:H3-C1-01 | OWNER_GIVEN | NOW |
 | RFQ-08-R02 | RFQ-08 | row 88; A9.1 ICP-45 | TBD | LOCK-1 |
@@ -364,13 +372,13 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 
 | id | from | to | quantity | units | status |
 |---|---|---|---|---|---|
-| IF-RFQ-01 | A9-06 docs/budgets/mass_a9/ | RFQ-01 | module masses and CG per configuration on the stand | kg | PENDING |
+| IF-RFQ-01 | A9-06 docs/budgets/mass_a9/ | RFQ-01 | module masses and CG per configuration on the stand | kg | OPEN - A9-06 (merged) books flight allocations only; ground module masses/CG TBD - requires the module drawings (ICP-08) |
 | IF-RFQ-02 | RFQ-01/04/05/07/08 (supplier datasheets) | A9-06 docs/budgets/mass_a9/ | quoted masses of flight-representative options (RF generator/matching, ICP parts, Xe hardware, C1) | kg | OPEN (after quotations) |
-| IF-RFQ-03 | A9-07 docs/hardware/h2_a9_revisions/ | RFQ-01, RFQ-05, RFQ-08 | KC-1 / downstream ICP fixture drawings, external C1 mount, >= 50 K thermal protection | mm, K | PENDING |
-| IF-RFQ-04 | RFQ-06 | A9-07 docs/hardware/h2_a9_revisions/ | H2-4 H3-PPU-05 breadboard input: 28 V class -> regulated 100 V internal bus (row 111) - revision flag | V | FLAG |
-| IF-RFQ-05 | A9-08 docs/budgets/xe_ledger_a9/ | RFQ-07 | final tank ranges per 2/5/10 kg case incl. residual/reserve, MEOP; XE_REFERENCE flow; G-XE contingency term | L, bar, mg/s | PENDING |
+| IF-RFQ-03 | A9-07 docs/hardware/h2_a9_revisions/ | RFQ-01, RFQ-05, RFQ-08 | KC-1 / downstream ICP fixture drawings, external C1 mount, >= 50 K thermal protection | mm, K | PARTIAL - A9-07 (merged) supplies the fixture / external-C1 / >= 50 K thermal requirements (REV-13..50) consumed here; drawings TBD |
+| IF-RFQ-04 | RFQ-06 | A9-07 docs/hardware/h2_a9_revisions/ | H2-4 H3-PPU-05 breadboard input: 28 V class -> regulated 100 V internal bus (row 111) - revision flag | V | RESOLVED for A9 by row 111 (regulated 100 V internal bus; A9-07 REV-51 / REV-62); the H2-4 v1 28 V class stays history |
+| IF-RFQ-05 | A9-08 docs/budgets/xe_ledger_a9/ | RFQ-07 | final tank ranges per 2/5/10 kg case incl. residual/reserve, MEOP; XE_REFERENCE flow; G-XE contingency term | L, bar, mg/s | PARTIAL - A9-08 design-case volumes at 323 K and the residual/reserve split imported into RFQ-07-R04 (A9-10); MEOP and XE_REFERENCE flow TBD (XA9-28; A9-01 reference point) |
 | IF-RFQ-06 | RFQ-02, RFQ-07 | A9-08 docs/budgets/xe_ledger_a9/ | C1 MFC accuracy class (+/-2 % FS until S1a, row 96) and controller ranges used for the Xe-ledger flow term | % FS, mg/s | OWNER_GIVEN |
-| IF-RFQ-07 | A9-02 docs/architecture_comparison/power_boundary_a9/ | RFQ-05, RFQ-06, RFQ-08 | I_d,max of the registered envelope; P_d; collector/bias range (A902-23); matching-network draw (A902-22); heater power | A, W, V | OPEN |
+| IF-RFQ-07 | A9-02 docs/architecture_comparison/power_boundary_a9/ | RFQ-05, RFQ-06, RFQ-08 | I_d,max of the registered envelope; P_d; collector/bias range (A902-23); matching-network draw (A902-22); heater power | A, W, V | OPEN - I_d,max / P_d of the registered envelope pending (OQ-A907-02); collector / bias range TBD (ICP-21); matching-network draw TBD (A902-22) |
 | IF-RFQ-08 | RFQ-06 | A9-02 / A9-04 | measured channel uncertainties, bandwidth, sample rate, timing skew for P_bus,1ms,max (UB-P-02..07, A902-36) | relative, kHz, kSa/s | OPEN (after S1a) |
 | IF-RFQ-09 | A9-03 schemas/interfaces/icp_neutralizer_icd_v1.json | RFQ-04, RFQ-05 | ICP-02/04/07 geometry, ICP-15/44 RF ratings, ICP-16 interlock, ICP-21 collector, ICP-27 pressure port | mm, V, W | OPEN (LOCK-1) |
 | IF-RFQ-10 | RFQ-04 | A9-04 docs/experiments/hall_icp/uncertainty_budget/ | coupler/sensor certificates at 13.56 MHz, cable S-parameters, calorimetric method | relative | OPEN (after quotations) |
@@ -487,7 +495,7 @@ A9.1 decisions applied:
 | OQ-RFQ-06 | Is a mains-fed laboratory 13.56 MHz generator acceptable for the ground campaign given that A902-19 books the RF source's DC input at the bus boundary? | proposed: YES as GROUND/FACILITY-ONLY with input metered; the flight-representative DC-input RF source is a later separate RFQ once A902-21 is scoped |
 | OQ-RFQ-07 | Who dispatches the RFQs and may packages be split per supplier type? | owner call (the lane never contacts suppliers) |
 | OQ-RFQ-08 | Request an Option B (complete open-design stand) comparison quote at all under row 118? | proposed: YES as comparison only, never as the sole path |
-| OQ-RFQ-09 | State a MEOP basis in the tank RFQ or let suppliers propose? | proposed: suppliers propose MEOP/safety factors per case; final basis PENDING A9-08 |
+| OQ-RFQ-09 | State a MEOP basis in the tank RFQ or let suppliers propose? | proposed: suppliers propose MEOP/safety factors per case; final basis after the quotations (A9-08 design-case volumes at 323 K now in RFQ-07-R04; MEOP XA9-28 TBD) |
 | OQ-RFQ-10 | Include the optional ICP capped-port controller (G-ATM/G-XE contingency) in RFQ-02 now? | proposed: YES as an optional line; no purchase unless a contingency variant is declared |
 
 ## (e) Historical reuse
@@ -517,14 +525,14 @@ Deliberately not reused:
 
 | row | key | packages | how touched | proposed procurement_status | blocking item |
 |---|---|---|---|---|---|
-| 6 | xe_tank | RFQ-07 | tank quotations per 2/5/10 kg case at 323 K | RFQ_SPEC_READY_QUOTATION_ONLY (no purchase order; H3 gate) | PENDING A9-08 final ranges |
+| 6 | xe_tank | RFQ-07 | tank quotations per 2/5/10 kg case at 323 K | RFQ_SPEC_READY_QUOTATION_ONLY (no purchase order; H3 gate) | MEOP / tank selection from quotations (XA9-28); the A9-08 design-case volumes are in RFQ-07-R04 |
 | 7 | xe_regulator | RFQ-07 | low-flow PMU quotation | RFQ_SPEC_READY_QUOTATION_ONLY (no purchase order; H3 gate) | specification gap at the C1 flow range |
 | 8 | xe_metering | RFQ-02, RFQ-07 | C1 steady + start/diode controllers, FCU | RFQ_SPEC_READY_QUOTATION_ONLY (no purchase order; H3 gate) | C1 operating point (LOCK-1) |
 | 11 | cathode | RFQ-08 | heated LaB6 C1 + keeper supply (ICP-46 isolation) | RFQ_SPEC_READY_QUOTATION_ONLY (no purchase order; H3 gate) | I_d,max of the registered envelope |
 | 12 | ppu | RFQ-04, RFQ-06, RFQ-08 | breadboard discharge supply, 100 V bus supply, RF generator, keeper/heater supplies | RFQ_SPEC_READY_QUOTATION_ONLY (no purchase order; H3 gate) | A9-02 slot powers (A902-22/23/26/27/32) |
 | 13 | thermal_control | RFQ-05 | ICP dielectric/antenna materials with >= 50 K margin | RFQ_SPEC_READY_QUOTATION_ONLY (no purchase order; H3 gate) | ICP module heat load (ICP-43) |
 | 15 | sensors_diagnostics | RFQ-01, RFQ-02, RFQ-03, RFQ-04, RFQ-06, RFQ-09 | stand, MFCs, RGA, RF metrology, P_bus 1 ms chain, calibration | RFQ_SPEC_READY_QUOTATION_ONLY (no purchase order; H3 gate) | facility identification; LOCK-1 drawings |
-| 16 | mechanical_structural | RFQ-01, RFQ-05 | stand platform / KC-1 interface; ICP module parts | RFQ_SPEC_READY_QUOTATION_ONLY (no purchase order; H3 gate) | PENDING A9-07 fixture drawings |
+| 16 | mechanical_structural | RFQ-01, RFQ-05 | stand platform / KC-1 interface; ICP module parts | RFQ_SPEC_READY_QUOTATION_ONLY (no purchase order; H3 gate) | KC-1 / module interface drawings (A9-07 REV-29..36 give the requirements, not drawings) |
 | 17 | preionizer_interface | RFQ-04, RFQ-05 | row superseded for the primary line; RF/ICP items quoted under the downstream ICP ICD | RFQ_SPEC_READY_QUOTATION_ONLY (no purchase order; H3 gate) | A9-10 row rename (governance) |
 
 ## (g) H3 / H4 inputs
@@ -536,10 +544,10 @@ H3 procurement gate: **QUOTATION PACKAGES READY FOR OWNER DISPATCH; PURCHASE ORD
 | RFQ-01 | RFQ-01-R04, RFQ-01-R10, RFQ-01-R13, RFQ-01-R14, RFQ-01-R15, RFQ-01-R17, RFQ-01-R18 |
 | RFQ-02 | RFQ-02-R06, RFQ-02-R07, RFQ-02-R16 |
 | RFQ-03 | RFQ-03-R03, RFQ-03-R05, RFQ-03-R06, RFQ-03-R07 |
-| RFQ-04 | RFQ-04-R04, RFQ-04-R05, RFQ-04-R07, RFQ-04-R09, RFQ-04-R12, RFQ-04-R13, RFQ-04-R14 |
-| RFQ-05 | RFQ-05-R04, RFQ-05-R05, RFQ-05-R06, RFQ-05-R07, RFQ-05-R12 |
+| RFQ-04 | RFQ-04-R04, RFQ-04-R05, RFQ-04-R07, RFQ-04-R09, RFQ-04-R12, RFQ-04-R13, RFQ-04-R14, RFQ-04-R15, RFQ-04-R16, RFQ-04-R17 |
+| RFQ-05 | RFQ-05-R04, RFQ-05-R05, RFQ-05-R06, RFQ-05-R07, RFQ-05-R12, RFQ-05-R13 |
 | RFQ-06 | RFQ-06-R04, RFQ-06-R13, RFQ-06-R16 |
-| RFQ-07 | RFQ-07-R04, RFQ-07-R06, RFQ-07-R08, RFQ-07-R10, RFQ-07-R11 |
+| RFQ-07 | RFQ-07-R06, RFQ-07-R08, RFQ-07-R11 |
 | RFQ-08 | RFQ-08-R02, RFQ-08-R07, RFQ-08-R11, RFQ-08-R12 |
 | RFQ-09 | RFQ-09-R06 |
 
@@ -569,3 +577,76 @@ H4 tests enabled by the quoted hardware:
 - no_hall_performance_source: no Hall closure, screening candidate, plasma_devices model or withdrawn number read
 - pure: standard library; not wired into archengine; goldens unaffected
 - thresholds: only owner-given (row / A9.1) values or verified-deliverable copies; anything else TBD/PENDING/PROPOSED
+
+## A9-10 reconciliation (fo_a9_10_integration)
+
+Changes applied by A9-10 after this lane's verified build (record `docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json`, overlay `docs/experiments/hall_icp/integration/a9_10_overlay.py`). A9.1 decision `docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json` (sha256 `7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4`); A9.2 decision `docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json` (sha256 `e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03`). A9 stays OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; no winner; no prediction.
+
+| change | driver | op | pointer | count | summary |
+|---|---|---|---|---|---|
+| A910-A909-32 | A9.1 OQ-A902-05 via the A9-02 module (G-REUSE) | code | `None` | 0 | derived.p_bus_channel_slots is re-derived from abep_sim/bus_boundary_a9.py: flow_control_icp_feed is now a G-ATM / G-XE variant slot of hall_icp_neutralizer (one installed P_bus channel fewer) |
+| A910-A909-00 | A9-10 package changes (derived lists) | code | `None` | 0 | after the package-level A9-10 changes the derived lists (open_specification_items, traceability_matrix, h3_h4_inputs) are rebuilt from the changed packages and the lane validation is re-run |
+| A910-A909-01 | A9-07 IDA7-22, H3-A907-03, OQ-A907-11 | replace | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R08]/requirement` | 1 | coupler rated at the coupler-plane \|Gamma\| |
+| A910-A909-02 | A9-07 IDA7-21 | replace | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R09]/requirement` | 1 | directivity term demanded |
+| A910-A909-03 | A9-07 H3-A907-04 | replace | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R11]/requirement` | 1 | coax rated at coupler-plane \|Gamma\| |
+| A910-A909-04 | A9-07 H3-A907-15, OQ-A907-11 | append | `/packages[id=RFQ-04]/requirements` | 1 | optional pre-match line |
+| A910-A909-05 | A9-08 design_cases.tank_volume (323 K) | set | `/packages[id=RFQ-07]/requirements[id=RFQ-07-R04]/value` | 1 | tank ranges at 323 K from A9-08 |
+| A910-A909-06 | A9-08 design_cases.tank_volume (323 K) | set | `/packages[id=RFQ-07]/requirements[id=RFQ-07-R04]/status` | 1 | RFQ-07-R04 status |
+| A910-A909-07 | A9-08 design_cases.tank_volume (323 K) | set | `/packages[id=RFQ-07]/requirements[id=RFQ-07-R04]/evidence_class` | 1 | RFQ-07-R04 evidence class |
+| A910-A909-08 | A9-08 design_cases.tank_volume (323 K) | set | `/packages[id=RFQ-07]/requirements[id=RFQ-07-R04]/units` | 1 | RFQ-07-R04 units |
+| A910-A909-09 | A9-06 line_checks AL-08 | set | `/packages[id=RFQ-07]/requirements[id=RFQ-07-R10]/value` | 1 | Xe hardware mass context from A9-06 |
+| A910-A909-10 | A9-06 line_checks AL-08 | set | `/packages[id=RFQ-07]/requirements[id=RFQ-07-R10]/status` | 1 | RFQ-07-R10 status |
+| A910-A909-11 | A9-06 line_checks AL-08 | set | `/packages[id=RFQ-07]/requirements[id=RFQ-07-R10]/evidence_class` | 1 | RFQ-07-R10 evidence class |
+| A910-A909-12 | A9-06 line_checks AL-06 | set | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R14]/value` | 1 | RF generator mass context re-evaluated |
+| A910-A909-13 | A9-06 line_checks AL-06 | set | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R14]/status` | 1 | RFQ-04-R14 status |
+| A910-A909-15 | A9-06 merged (no ground module masses) | set | `/packages[id=RFQ-01]/requirements[id=RFQ-01-R04]/value` | 1 | RFQ-01-R04 re-evaluated |
+| A910-A909-16 | A9-06 merged | set | `/packages[id=RFQ-01]/requirements[id=RFQ-01-R04]/status` | 1 | RFQ-01-R04 status |
+| A910-A909-17 | A9-07 merged (requirements, no drawings) | set | `/packages[id=RFQ-01]/requirements[id=RFQ-01-R13]/value` | 1 | RFQ-01-R13 re-evaluated |
+| A910-A909-18 | A9-07 merged | set | `/packages[id=RFQ-01]/requirements[id=RFQ-01-R13]/status` | 1 | RFQ-01-R13 status |
+| A910-A909-19 | A9-08 merged (XE_REFERENCE term) | replace | `/packages[id=RFQ-02]/requirements[id=RFQ-02-R07]/value` | 1 | RFQ-02-R07 re-evaluated |
+| A910-A909-20 | A9-06 line_checks AL-05 | set | `/packages[id=RFQ-05]/requirements[id=RFQ-05-R12]/value` | 1 | RFQ-05-R12 re-evaluated |
+| A910-A909-21 | A9-06 line_checks AL-05 | set | `/packages[id=RFQ-05]/requirements[id=RFQ-05-R12]/status` | 1 | RFQ-05-R12 status |
+| A910-A909-22 | A9-08 design_cases (case content) | replace | `/packages[id=RFQ-07]/requirements[id=RFQ-07-R03]/note` | 1 | RFQ-07-R03 note re-evaluated |
+| A910-A909-23 | A9-08 design_cases (case content) | replace | `/derived/xe_tank_indicative_volume_L/note` | 1 | derived note re-evaluated |
+| A910-A909-24 | A9.1 ICP-46 (A9-07 K7) | replace | `/packages[id=RFQ-08]/requirements[id=RFQ-08-R12]/value` | 1 | RFQ-08-R12 re-evaluated |
+| A910-A909-25 | A9-08 merged | set | `/m16_impact[0]/blocking_item` | 1 | M16 blocking item re-evaluated |
+| A910-A909-26 | A9-07 merged | set | `/m16_impact[7]/blocking_item` | 1 | M16 blocking item re-evaluated |
+| A910-A909-27 | A9-06 merged (no ground module masses) | set | `/interface_demands[id=IF-RFQ-01]/status` | 1 | IF-RFQ-01 re-evaluated |
+| A910-A909-28 | A9-07 merged (requirements, no drawings) | set | `/interface_demands[id=IF-RFQ-03]/status` | 1 | IF-RFQ-03 re-evaluated |
+| A910-A909-29 | A9-08 design_cases | set | `/interface_demands[id=IF-RFQ-05]/status` | 1 | IF-RFQ-05 re-evaluated |
+| A910-A909-30 | OQ-INT-03 re-evaluation | set | `/pending_lanes_status_a9_10` | 1 | parallel lanes merged |
+| A910-A909-31 | A9-08 merged | replace | `/open_owner_questions[id=OQ-RFQ-09]/proposed_answer` | 1 | OQ-RFQ-09 proposed answer re-evaluated (question stays OPEN) |
+| A910-A909-14 | row 111 (H2-4 28 V vs 100 V) | merge | `/open_owner_questions[id=OQ-RFQ-05]` | 1 | H2-4 28 V vs row-111 100 V conflict recorded as resolved by row 111 |
+| A910-R09-01 | row 111 + A9-07 REV-51/62 | merge | `/interface_demands[id=IF-RFQ-04]` | 1 | 28 V vs 100 V conflict resolved by row 111 |
+| A910-R09-02 | OQ-INT-03 (OQ-A907-02; ICP-21; A902-22) | merge | `/interface_demands[id=IF-RFQ-07]` | 1 | IF-RFQ-07 precise reason |
+| A910-R09-03 | A9-08 design_cases (verified lane value) | merge | `/packages[6]/requirements[3]` | 1 | RFQ-07-R04 basis and sources name the A9-08 ledger |
+| A910-A92-A909-01 | A9.2 OQ-A907-11 | supersede | `/packages[id=RFQ-01]/requirements[id=RFQ-01-R12]` | 1 | RFQ-01-R12 local match |
+| A910-A92-A909-02 | A9.2 OQ-A907-11 | append | `/packages[id=RFQ-01]/requirements[id=RFQ-01-R12]/sources` | 1 | RFQ-01-R12 A9.2 source |
+| A910-A92-A909-03 | A9.2 OQ-A907-11 | replace | `/packages[id=RFQ-04]/scope` | 1 | RFQ-04 scope |
+| A910-A92-A909-04 | A9.2 OQ-A907-11 | supersede | `/packages[id=RFQ-04]/quantities[1]` | 1 | RFQ-04 quantity |
+| A910-A92-A909-05 | A9.2 OQ-A907-11, icp_matching_strategy | supersede | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R06]` | 1 | RFQ-04-R06 location |
+| A910-A92-A909-06 | A9.2 OQ-A907-11 | append | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R06]/sources` | 1 | RFQ-04-R06 A9.2 source |
+| A910-A92-A909-07 | A9.2 rf_500W, icp_matching_strategy | supersede | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R07]` | 1 | RFQ-04-R07 ratings TBD |
+| A910-A92-A909-08 | A9.2 rf_measurement_reference | supersede | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R08]` | 1 | RFQ-04-R08 coupler position |
+| A910-A92-A909-09 | A9.2 rf_measurement_reference | append | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R08]/sources` | 1 | RFQ-04-R08 A9.2 source |
+| A910-A92-A909-10 | A9.2 OQ-A907-11 | replace | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R11]/requirement` | 1 | RFQ-04-R11 |
+| A910-A92-A909-11 | A9.2 rf_500W | supersede | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R12]` | 1 | RFQ-04-R12 ratings TBD |
+| A910-A92-A909-12 | A9.2 OQ-A907-11, icp_matching_strategy | supersede | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R15]` | 1 | RFQ-04-R15 superseded |
+| A910-A92-A909-13 | A9.2 rf_500W | merge | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R02]` | 1 | RFQ-04-R02 interpretation |
+| A910-A92-A909-14 | A9.2 rf_protection | append | `/packages[id=RFQ-04]/requirements` | 1 | RFQ-04-R16 protection |
+| A910-A92-A909-15 | A9.2 OQ-A907-11, icp_matching_strategy, rf_500W | append | `/packages[id=RFQ-04]/requirements` | 1 | RFQ-04-R17 local match mass / V-I |
+| A910-A92-A909-16 | A9.2 OQ-A907-11 | append | `/packages[id=RFQ-05]/requirements` | 1 | RFQ-05-R13 on-module match provision |
+| A910-A92-A909-17 | A9.2 anode_316L, anode_approach | set | `/a9_2_anode_note` | 1 | no anode RFQ |
+| A910-A92R-A909-01 | A9.2 rf_500W | supersede | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R02]` | 1 | RFQ-04-R02: 500 W is the delivered/operating capability, generator rating TBD after the impedance map |
+| A910-A92R-A909-02 | A9.2 rf_500W | merge | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R02]` | 1 | RFQ-04-R02 rating field |
+| A910-A92R-A909-03 | A9.2 rf_500W | append | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R02]/sources` | 1 | RFQ-04-R02 A9.2 source |
+| A910-A92R-A909-04 | A9.2 rf_500W | replace | `/packages[id=RFQ-04]/scope` | 1 | RFQ-04 scope |
+| A910-A92R-A909-05 | A9.2 rf_500W | supersede | `/packages[id=RFQ-04]/quantities[0]` | 1 | RFQ-04 generator quantity line |
+| A910-A92R-A909-06 | A9.2 rf_500W | replace | `/packages[id=RFQ-04]/acceptance[0]` | 1 | RFQ-04 calibration acceptance |
+| A910-A92R-A909-07 | A9.2 OQ-A907-11, icp_matching_strategy | supersede | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R15]` | 1 | RFQ-04-R15 requirement / note superseded |
+| A910-A92R-A909-08 | A9.2 OQ-A907-11 | merge | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R15]/sources[1]` | 1 | RFQ-04-R15 A9.1 source = history |
+| A910-A92R-A909-09 | A9.2 OQ-A907-11 | supersede | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R06]` | 1 | RFQ-04-R06 basis |
+| A910-A92R-A909-10 | A9.2 OQ-A907-11 | merge | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R06]/sources[0]` | 1 | RFQ-04-R06 A9.1 source 1 = history |
+| A910-A92R-A909-11 | A9.2 OQ-A907-11 | merge | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R06]/sources[1]` | 1 | RFQ-04-R06 A9.1 source 2 = history |
+| A910-A92R-A909-12 | A9.2 OQ-A907-11 | merge | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R06]/sources[2]` | 1 | RFQ-04-R06 A9.1 source 3 = history |
+| A910-A92R-A909-13 | A9.2 rf_500W | replace | `/packages[id=RFQ-01]/requirements[id=RFQ-01-R14]/requirement` | 1 | RFQ-01-R14 500 W wording |

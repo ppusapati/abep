@@ -36,6 +36,14 @@ import os
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+# ---- A9-10 reconciliation overlay (fo_a9_10_integration): declared, machine-checked changes applied after the build
+import importlib.util as _a910_ilu  # noqa: E402
+_A910_SPEC = _a910_ilu.spec_from_file_location(
+    "a9_10_overlay", str(ROOT) + "/docs/experiments/hall_icp/integration/a9_10_overlay.py")
+A910 = _a910_ilu.module_from_spec(_A910_SPEC)
+_A910_SPEC.loader.exec_module(A910)
+
 OUT_JSON = "schemas/interfaces/icp_neutralizer_icd_v1.json"
 OUT_MD = "docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md"
 THIS_SCRIPT = "docs/interfaces/icp_neutralizer/build_icp_neutralizer_icd.py"
@@ -182,11 +190,12 @@ def resolve(doc, pointer: str):
 
 
 def xe_budget_dir() -> str:
-    """Directory of the verified (A6) Xe ledger lane under docs/budgets/ (exactly one match or raise). The A9 ledger
-    update ('_a9'-suffixed directory, fo_a9_08) is excluded here; retargeting this reference is an A9-10 decision."""
+    """Directory of the verified A9 Xe ledger lane under docs/budgets/ (exactly one match or raise).
+    A9-10: retargeted from the A6 ledger to the A9 ledger update ('_a9'-suffixed directory, fo_a9_08), which books the
+    G-REUSE ICP as 0 Xe and a G-XE contingency explicitly (A9.1 HIQ-06, A9-08 instruction)."""
     hits = sorted(os.path.relpath(p, ROOT).replace(os.sep, "/") + "/"
                   for p in glob.glob(os.path.join(ROOT, "docs", "budgets", "xe_*"))
-                  if os.path.isdir(p) and not os.path.basename(p).endswith("_a9"))
+                  if os.path.isdir(p) and os.path.basename(p).endswith("_a9"))
     if len(hits) != 1:
         raise FileNotFoundError(f"expected exactly one Xe ledger directory under docs/budgets/, found {hits}")
     return hits[0]
@@ -1518,6 +1527,23 @@ def main(argv=None) -> int:
             f.write(txt)
         print("wrote " + rel)
     return 0
+
+
+# ---- A9-10 reconciliation overlay hooks (fo_a9_10_integration) ------------------------------------------------------
+_a910_build_core = build
+
+
+def build(*args, **kwargs):
+    """Verified lane build followed by the declared A9-10 changes (docs/experiments/hall_icp/integration/a9_10_overlay.py)."""
+    return A910.apply("A9-03", _a910_build_core(*args, **kwargs))
+
+
+_a910_md_core = render_md
+
+
+def render_md(doc):
+    """Lane Markdown followed by the A9-10 reconciliation section generated from the same JSON."""
+    return _a910_md_core(doc).rstrip("\n") + "\n" + "\n".join(A910.md_section(doc)) + "\n"
 
 
 if __name__ == "__main__":

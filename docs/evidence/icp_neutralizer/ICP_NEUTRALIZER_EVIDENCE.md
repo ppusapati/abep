@@ -239,17 +239,17 @@ Reused from the repository (by reference, not re-fetched):
 
 | id | item | why | access seen | priority |
 |---|---|---|---|---|
-| LA-01 | Watanabe, Ichimura, Takegahara, AIAA 2016-4947 (DOI 10.2514/6.2016-4947) | only located coupled Hall thruster + RF plasma cathode performance paper besides Takahashi 2024 | metadata only (AIAA) | P1 (PROPOSED) |
-| LA-02 | Georgin & McDonald, IEPC-2022-100, 'Inductively Coupled Plasma Cathodes Enabling In-situ Resource Utilization for Hall Thrusters' (Takahashi ref. [24]) | ICP cathode for Hall thrusters on ISRU (reactive) gases | not located at an open URL (electricrocket.org guess returned 404) | P1 (PROPOSED) |
-| LA-03 | Georgin, McDonald, Brooks, AIAA 2023-0844 (DOI 10.2514/6.2023-0844) | RF plasma cathode theory + experiments (Takahashi ref. [17]) | metadata only (AIAA) | P1 (PROPOSED) |
-| LA-04 | Scholze, Tartz, Neumann, Rev. Sci. Instrum. 79, 02B724 (2008) (DOI 10.1063/1.2802587) | ICP plasma bridge neutralizer operating conditions behind the 1.6 A abstract figure | abstract only (publisher PDF HTTP 403) | P2 (PROPOSED) |
-| LA-05 | Longmier & Hershkowitz, Rev. Sci. Instrum. 79, 093506 (2008) (DOI 10.1063/1.2979012) | magnetized/unmagnetized operating conditions of the NES 30 A point | abstract only | P3 (PROPOSED) |
-| LA-06 | Dietz et al., Eur. Phys. J. Appl. Phys. 91, 10901 (2020) (DOI 10.1051/epjap/2020190213) | ICP neutralizer on a reactive propellant (iodine): current, power, flow values | abstract only (publisher PDF HTTP 403) | P2 (PROPOSED) |
-| LA-07 | Scholze et al., Procedia Engineering 185, 9-16 (2017) (DOI 10.1016/j.proeng.2017.03.284) | RF plasma bridge neutralizer performance model | metadata only; Crossref lists CC BY-NC-ND 4.0 (ScienceDirect HTTP 403 to this agent) | P2 (PROPOSED) |
-| LA-08 | H. Watanabe, Vacuum 167, 514-519 (2019) (DOI 10.1016/j.vacuum.2018.06.030), 'Effect of vessel diameter on ignition and electron emission characteristics in radio frequency plasma cathodes' | ignition vs vessel diameter (startup/restart input) | metadata only (Crossref) | P2 (PROPOSED) |
-| LA-09 | K. Takahashi, Rev. Sci. Instrum. 83, 083508 (2012) (DOI as cited in Takahashi 2024 ref. [21]: 10.1063/1.4748271), antenna for suppression of parasitic discharges | antenna shielding design used in the A9 anchor topology | not accessed (DOI from the reference list of the anchor - verify) | P3 (PROPOSED) |
+| LA-01 | Watanabe, Ichimura, Takegahara, AIAA 2016-4947 (DOI 10.2514/6.2016-4947) | only located coupled Hall thruster + RF plasma cathode performance paper besides Takahashi 2024 | metadata only (AIAA) | P1 (owner-accepted order, A9.1 OQ-EV-02) |
+| LA-02 | Georgin & McDonald, IEPC-2022-100, 'Inductively Coupled Plasma Cathodes Enabling In-situ Resource Utilization for Hall Thrusters' (Takahashi ref. [24]) | ICP cathode for Hall thrusters on ISRU (reactive) gases | not located at an open URL (electricrocket.org guess returned 404) | P1 (owner-accepted order, A9.1 OQ-EV-02) |
+| LA-03 | Georgin, McDonald, Brooks, AIAA 2023-0844 (DOI 10.2514/6.2023-0844) | RF plasma cathode theory + experiments (Takahashi ref. [17]) | metadata only (AIAA) | P1 (owner-accepted order, A9.1 OQ-EV-02) |
+| LA-04 | Scholze, Tartz, Neumann, Rev. Sci. Instrum. 79, 02B724 (2008) (DOI 10.1063/1.2802587) | ICP plasma bridge neutralizer operating conditions behind the 1.6 A abstract figure | abstract only (publisher PDF HTTP 403) | P2 (owner-accepted order, A9.1 OQ-EV-02) |
+| LA-05 | Longmier & Hershkowitz, Rev. Sci. Instrum. 79, 093506 (2008) (DOI 10.1063/1.2979012) | magnetized/unmagnetized operating conditions of the NES 30 A point | abstract only | P3 (owner-accepted order, A9.1 OQ-EV-02) |
+| LA-06 | Dietz et al., Eur. Phys. J. Appl. Phys. 91, 10901 (2020) (DOI 10.1051/epjap/2020190213) | ICP neutralizer on a reactive propellant (iodine): current, power, flow values | abstract only (publisher PDF HTTP 403) | P2 (owner-accepted order, A9.1 OQ-EV-02) |
+| LA-07 | Scholze et al., Procedia Engineering 185, 9-16 (2017) (DOI 10.1016/j.proeng.2017.03.284) | RF plasma bridge neutralizer performance model | metadata only; Crossref lists CC BY-NC-ND 4.0 (ScienceDirect HTTP 403 to this agent) | P2 (owner-accepted order, A9.1 OQ-EV-02) |
+| LA-08 | H. Watanabe, Vacuum 167, 514-519 (2019) (DOI 10.1016/j.vacuum.2018.06.030), 'Effect of vessel diameter on ignition and electron emission characteristics in radio frequency plasma cathodes' | ignition vs vessel diameter (startup/restart input) | metadata only (Crossref) | P2 (owner-accepted order, A9.1 OQ-EV-02) |
+| LA-09 | K. Takahashi, Rev. Sci. Instrum. 83, 083508 (2012) (DOI as cited in Takahashi 2024 ref. [21]: 10.1063/1.4748271), antenna for suppression of parasitic discharges | antenna shielding design used in the A9 anchor topology | not accessed (DOI from the reference list of the anchor - verify) | P3 (owner-accepted order, A9.1 OQ-EV-02) |
 
-priorities are PROPOSED; acquisition is an owner action outside the repository (A9 owner_actions_outside_the_repository)
+priorities accepted by the owner (A9.1 OQ-EV-02: P1 LA-01..03; P2 LA-04, LA-06..08; P3 LA-05, LA-09); acquisition is an owner action outside the repository; no author or laboratory data request (A9.1 OQ-EV-01)
 
 ## 8. What the analog can bound vs what only hardware can supply
 
@@ -262,7 +262,7 @@ priorities are PROPOSED; acquisition is an owner action outside the repository (
 - row 36: Takahashi Ar data are labelled engineering-topology precedent; they never count toward DRDO atmospheric requirements
 - row 69: magnetized-source analog data (S-04 helicon mode) marked context-only against the UNMAGNETIZED first build
 - row 70: TK-40 records that the anchor's ion collector floats at the negative end of V_D with no separate bias; A9 requires a floating body and separately controlled collector bias - the analog circuit is NOT the A9 circuit
-- row 72: analog RF chains (13.56 MHz, forward/reflected via generator meters, R_ant method) recorded as measurement-method precedent for the 0-500 W lab chain
+- row 72: analog RF chains (13.56 MHz, forward/reflected via generator meters, R_ant method) recorded as measurement-method precedent for the lab chain with its 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating)
 - row 132: no analog life data exist; life/erosion routed to hardware and the separate atomic-O programme
 - row 145: this extraction feeds the new Hall->ICP validation-input list (docs/experiments/hall_icp/validation_inputs/)
 - row 146: no screening or hypothesis values are manufactured from the analog
@@ -278,9 +278,9 @@ priorities are PROPOSED; acquisition is an owner action outside the repository (
 
 ## 11. Open owner questions (new)
 
-- OQ-EV-01: Authorize a formal data request to the Takahashi 2024 corresponding author (the paper offers data 'upon reasonable request')? - proposed: NO - standing rule: no contact with authors/labs; digitized values suffice for a topology precedent (owner call)
-- OQ-EV-02: Acquisition priority for LA-01..LA-09 - proposed: P1: LA-01, LA-02, LA-03 (coupled Hall + RF-cathode data); P2: LA-04, LA-06, LA-07, LA-08; P3: LA-05, LA-09 (owner call)
-- OQ-EV-03: S-02 (Xu 2022) values were read from the full text that the journal's own website serves publicly (IOP/HIPS copyright, not an open licence). Is citing values from it acceptable under the row-7 lawful-access rule? - proposed: YES for citation of reported values with locators (publisher-served, no bypass); the PDF itself is not redistributed (owner call)
+- OQ-EV-01: Authorize a formal data request to the Takahashi 2024 corresponding author (the paper offers data 'upon reasonable request')? - proposed: NO - standing rule: no contact with authors/labs; digitized values suffice for a topology precedent (ANSWERED_BY_A9_1 (OQ-EV-01))
+- OQ-EV-02: Acquisition priority for LA-01..LA-09 - proposed: P1: LA-01, LA-02, LA-03 (coupled Hall + RF-cathode data); P2: LA-04, LA-06, LA-07, LA-08; P3: LA-05, LA-09 (ANSWERED_BY_A9_1 (OQ-EV-02))
+- OQ-EV-03: S-02 (Xu 2022) values were read from the full text that the journal's own website serves publicly (IOP/HIPS copyright, not an open licence). Is citing values from it acceptable under the row-7 lawful-access rule? - proposed: YES for citation of reported values with locators (publisher-served, no bypass); the PDF itself is not redistributed (ANSWERED_BY_A9_1 (OQ-EV-03))
 
 ## 12. Historical reuse
 
@@ -294,5 +294,20 @@ priorities are PROPOSED; acquisition is an owner action outside the repository (
 
 ## 14. H3 / H4 inputs
 
-- **h3_procurement_rfq**: 13.56 MHz generator with forward/reflected metering (anchor: 200 W class; owner row 72: size 0-500 W); two-variable-capacitor matching network (anchor TK-23); high-frequency antenna current sensor (anchor R_ant method, TK-24); isolation transformer / isolated supply and series protection (anchor TK-40); RFEA (anchor TK-57)
+- **h3_procurement_rfq**: 13.56 MHz generator with forward/reflected metering (anchor: 200 W class; owner row 72 as interpreted by A9.2 rf_500W: 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating); generator rating TBD_AFTER_IMPEDANCE_MAP); two-variable-capacitor matching network (anchor TK-23); high-frequency antenna current sensor (anchor R_ant method, TK-24); isolation transformer / isolated supply and series protection (anchor TK-40); RFEA (anchor TK-57)
 - **h4_measurement**: reproduce 'no Hall discharge without ICP electrons' on Ar as an engineering-only topology check (TK-51) - criterion PENDING A9-01 preregistration; witness coupons for sputter deposition on the ICP tube and H-1 exit insulators (TK-71)
+
+## A9-10 reconciliation (fo_a9_10_integration)
+
+Changes applied by A9-10 after this lane's verified build (record `docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json`, overlay `docs/experiments/hall_icp/integration/a9_10_overlay.py`). A9.1 decision `docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json` (sha256 `7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4`); A9.2 decision `docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json` (sha256 `e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03`). A9 stays OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; no winner; no prediction.
+
+| change | driver | op | pointer | count | summary |
+|---|---|---|---|---|---|
+| A910-A905EV-Q01 | A9.1 OQ-EV-01 | merge | `/open_owner_questions[id=OQ-EV-01]` | 1 | owner question answered by A9.1 OQ-EV-01 |
+| A910-A905EV-Q02 | A9.1 OQ-EV-02 | merge | `/open_owner_questions[id=OQ-EV-02]` | 1 | owner question answered by A9.1 OQ-EV-02 |
+| A910-A905EV-Q03 | A9.1 OQ-EV-03 | merge | `/open_owner_questions[id=OQ-EV-03]` | 1 | owner question answered by A9.1 OQ-EV-03 |
+| A910-A905EV-01 | A9.1 OQ-EV-02 | gsub | `/lawful_acquisition_list/items` | 9 | acquisition order accepted |
+| A910-A905EV-02 | A9.1 OQ-EV-02 | set | `/lawful_acquisition_list/note` | 1 | acquisition note |
+| A910-A905EV-03 | A9.1 OQ-EV-01 + OQ-EV-03 | set | `/acquisition_policy_a9_1` | 1 | acquisition policy recorded |
+| A910-A92S-A905EV-01 | A9.2 rf_500W | set | `/h3_h4_inputs/h3_procurement_rfq[0]` | 1 | H3 generator line |
+| A910-A92S-A905EV-02 | A9.2 rf_500W | replace | `/owner_answers_applied[row=72]/how` | 1 | row 72 application labelled |

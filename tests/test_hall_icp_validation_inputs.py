@@ -168,7 +168,7 @@ def test_lawful_acquisition_list(ev):
     la = ev["lawful_acquisition_list"]
     assert la["owner_answer_row"] == 7
     assert len(la["items"]) >= 5
-    assert all("PROPOSED" in x["priority"] for x in la["items"])
+    assert all("owner-accepted order, A9.1 OQ-EV-02" in x["priority"] for x in la["items"])   # A9-10
 
 
 def test_analog_vs_hardware_split(ev):
@@ -203,7 +203,10 @@ def test_item_fields_complete(vi, ev):
         for r in it["how_obtained"]["analog_refs"]:
             assert r in ev_ids
         if it["how_obtained"]["route"] != "owner_allocation":
-            assert "PENDING docs/experiments/hall_icp/prereg_framework/" in it["producing_stage"]
+            # A9-10 review repair 2 (OQ-INT-03 / OQ-A910-02): the precise remaining reason sits next to the field
+            assert ("PENDING docs/experiments/hall_icp/prereg_framework/" in it["producing_stage"]
+                    or ("ASSIGNMENT_NOT_DEFINED_BY_TARGET" in it["producing_stage"]
+                        and "OQ-A910-02" in it["producing_stage"])), it["id"]
 
 
 def test_no_prediction_only_owner_values(vi):
@@ -226,9 +229,11 @@ def test_owner_given_values(vi):
 
 def test_unbooked_icp_gas_feed_flagged(vi):
     g = {i["id"]: i for i in vi["items"]}["VI-GAS-01"]
-    assert "UNBOOKED" in g["value"] and "row 46" in g["value"]
-    assert g["status"].startswith("OPEN")
-    assert any(q["id"] == "OQ-VI-01" for q in vi["open_owner_questions"])
+    # A9-10: the row-46 flag is resolved by A9.1 HIQ-06 (G-REUSE primary, no dedicated ICP flow)
+    assert g["value"].startswith("G-REUSE (A9.1 HIQ-06)") and "mdot_ICP,dedicated = 0" in g["value"]
+    assert g["status"] == "OWNER_GIVEN (A9.1 HIQ-06)"
+    q = {q["id"]: q for q in vi["open_owner_questions"]}["OQ-VI-01"]
+    assert q["status"].startswith("ANSWERED_BY_A9_1 (HIQ-06)")
 
 
 def test_analog_vs_hardware_marked(vi):
@@ -243,7 +248,12 @@ def test_pending_lanes_referenced_not_fabricated(vi):
     txt = json.dumps(vi)
     for lane in ("docs/experiments/hall_icp/prereg_framework/", "docs/architecture_comparison/power_boundary_a9/",
                  "docs/interfaces/icp_neutralizer/", "docs/experiments/hall_icp/uncertainty_budget/"):
-        assert "PENDING " + lane in txt or ("PENDING abep_sim/bus_boundary_a9.py + " + lane) in txt, lane
+        # A9-10 review repair: a reference may be resolved to the merged lane (named with its file) instead
+        assert ("PENDING " + lane in txt or ("PENDING abep_sim/bus_boundary_a9.py + " + lane) in txt
+                or "abep_sim/bus_boundary_a9.py SLOTS" in txt or "schemas/interfaces/icp_neutralizer_icd_v1.json" in txt
+                or re.search(re.escape(lane) + r"[a-z0-9_]+\.json", txt)
+                or ("merged A9-01 prereg framework" in txt and lane.endswith("prereg_framework/"))
+                or ("merged A9-04 budget" in txt and lane.endswith("uncertainty_budget/"))), lane
 
 
 def test_vocabulary(vi):

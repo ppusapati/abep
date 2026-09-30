@@ -33,11 +33,13 @@ Components for the downstream 13.56 MHz ICP electron-source module (engineering 
 | RFQ-05-R09 | capped dedicated gas port and pressure port | capped port + pressure port | - | OWNER_GIVEN | NOW | owner-allocation | A9.1 HIQ-06; row 63; ICP-27 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
 | RFQ-05-R10 | MODULE_ID and serialization | MODULE_ID + serial | - | OWNER_GIVEN | NOW | owner-allocation | row 62; row 83; ICP-33 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
 | RFQ-05-R11 | O2 service and materials | ASTM G93 Level C; no silver | - | OWNER_GIVEN | NOW | owner-allocation | row 107; row 103; row 132 |
-| RFQ-05-R12 | flight allocation context | PENDING docs/budgets/mass_a9/ (A9-06: ICP neutralizer mass reconciliation) | kg | PENDING | after-evidence | - | row 54 |
+| RFQ-05-R12 | flight allocation context | TBD - requires supplier mass data; A9-06 records the owner v0 ICP-neutralizer allocation (row 54, 2.0 kg) as ALLOCATION_UNVERIFIABLE_TBD (no evidence floor): docs/budgets/mass_a9/mass_a9_v1.json line_checks[line=AL-05] | kg | TBD | after-evidence | - | row 54 |
+| RFQ-05-R13 | on-module mounting provision for the local matching network | TBD - requires the ICP module drawing and the local-match selection (A9.2; ratings TBD_AFTER_IMPEDANCE_MAP) | kg; W | TBD | after-evidence | - | docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json#/decisions/OQ-A907-11; docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json#/decisions/icp_coupled_thermal |
 
 Notes:
 
 - RFQ-05-R06: the Takahashi 2024 analog geometry is topology context only and is never scaled to H-1
+- RFQ-05-R13: added in A9-10 for A9.2 (quotation only)
 
 Requirement text:
 
@@ -53,6 +55,7 @@ Requirement text:
 - **RFQ-05-R10** MODULE_ID line; repaired/replaced score-bearing modules become new serialized units.
 - **RFQ-05-R11** O2-wetted parts cleaned to ASTM G93 Level C; no silver in O2/AO-wetted parts; all materials declared (the O2-bearing stage is NO_ATOMIC_O; AO life is a separate programme).
 - **RFQ-05-R12** Owner v0 dry allocation for the ICP neutralizer (allocation, not a CBE); supplier states the mass of the quoted parts.
+- **RFQ-05-R13** The ICP source components provide a mounting and thermal interface for the local matching network on / immediately adjacent to the module (A9.2); its heat (P_line/match,loss) is part of the module heat load (ICD ICP-43) and its mass of the on-module payload (ICD ICP-08).
 
 ## Acceptance
 
@@ -77,7 +80,8 @@ Requirement text:
 - RFQ-05-R05 antenna and shielding: TBD - requires ICD ICP-19 and ICP-38 design - freezes at **LOCK-1**
 - RFQ-05-R06 geometry (standoff, aperture, envelope): TBD - requires ICD ICP-02, ICP-04, ICP-07 (LOCK-1) - freezes at **LOCK-1**
 - RFQ-05-R07 collector/bias supply (floating): TBD - requires A902-23 collector/bias V and I range and the registered I_d,max (ICD ICP-45) - freezes at **LOCK-1**
-- RFQ-05-R12 flight allocation context: PENDING docs/budgets/mass_a9/ (A9-06: ICP neutralizer mass reconciliation) - freezes at **after-evidence**
+- RFQ-05-R12 flight allocation context: TBD - requires supplier mass data; A9-06 records the owner v0 ICP-neutralizer allocation (row 54, 2.0 kg) as ALLOCATION_UNVERIFIABLE_TBD (no evidence floor): docs/budgets/mass_a9/mass_a9_v1.json line_checks[line=AL-05] - freezes at **after-evidence**
+- RFQ-05-R13 on-module mounting provision for the local matching network: TBD - requires the ICP module drawing and the local-match selection (A9.2; ratings TBD_AFTER_IMPEDANCE_MAP) - freezes at **after-evidence**
 
 ## The supplier's response must state
 

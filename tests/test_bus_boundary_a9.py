@@ -136,7 +136,8 @@ def test_required_sections_and_item_fields(data):
     assert {"A9-01", "A9-03", "A9-04", "A9-05", "H2-4", "H2-7"} <= targets
     for x in data["interface_demands"]:
         if x["from"] in ("A9-01", "A9-03", "A9-04", "A9-05"):
-            assert x["status"].startswith("PENDING "), x
+            # still PENDING, or re-stated by the A9-10 review repair (OQ-INT-03) naming what the merged lane supplies
+            assert x["status"].startswith(("PENDING ", "SATISFIED", "PARTIAL", "OPEN - ")), x
 
 
 def test_owner_values_cited_by_row(data):
@@ -261,10 +262,14 @@ def test_compressor_tbd_is_partial_boundary_and_lower_bound():
 
 
 # ------------------------------------------------------------------------------------------------ gates
-def _led(config, p, eta=1.0, basis="peak_sampled"):
+GM_OK = {"sample_rate_Sa_s": 100.0e3, "bandwidth_Hz": 20.0e3, "anti_alias_documented": True, "synchronized": True,
+         "source": "unit test record"}
+
+
+def _led(config, p, eta=1.0, basis="p_bus_1ms_max", gm=GM_OK):
     loads, effs = full(config, p=p, eta=eta)
     return B.ledger(config, loads, effs, {"value": 1.0, "evidence_class": "assumed", "source": "unit test"},
-                    power_basis=basis)
+                    power_basis=basis, gate_measurement=gm)
 
 
 def test_rfp_gate_steady_and_startup():
@@ -277,22 +282,120 @@ def test_rfp_gate_steady_and_startup():
     assert B.rfp_power_gate(at, [ok])["verdict"] == "FAIL"
     with pytest.raises(B.BoundaryA9Error):
         B.rfp_power_gate(ok, [])                                    # row 108: transients are part of the gate
-    assert g["transient_window_frozen"] is False and g["transient_window"]["status"] == "TBD"
+    assert g["transient_window_frozen"] is True
+    assert g["transient_window"]["status"] == "FROZEN_A9_ENGINEERING_DEFINITION"     # A9.1 OQ-A902-01
+    assert g["transient_window"]["window_s"] == 1.0e-3
 
 
 @pytest.mark.parametrize("basis", [None, "step_average", "steady_state"])
-def test_startup_pass_needs_peak_sampled_basis(basis):
-    """Averaging window TBD (A902-03): a step value below the limit cannot exclude a keeper-pulse/inrush peak."""
+def test_pass_needs_1ms_gate_basis(basis):
+    """A9.1 OQ-A902-01: P_bus,1ms,max is the gate for start-up AND steady state; no step average is substituted."""
     n = len(B.installed_slots("hall_c1_reference"))
     ok = _led("hall_c1_reference", 1000.0 / n, basis=basis)
     at = _led("hall_c1_reference", 1500.0 / n, basis=basis)
     g = B.rfp_power_gate(ok, [ok])
-    assert g["rows"][0]["verdict"] == "PASS"                    # the steady row is unaffected
+    assert g["rows"][0]["verdict"] == "NOT_EVALUABLE" and g["rows"][0]["note"]   # steady row now needs it too
     assert g["rows"][1]["verdict"] == "NOT_EVALUABLE" and g["rows"][1]["note"]
     assert g["verdict"] == "NOT_EVALUABLE"
-    assert B.rfp_power_gate(ok, [at])["verdict"] == "FAIL"      # an average at the limit still fails
+    # an average at the limit bounds the 1 ms max (duration a multiple of / >> 1 ms): fails; unstated basis: not
+    # shown to bound it (it could be an unaveraged peak, A9.1 OQ-A902-01) -> NOT_EVALUABLE (A9-10 repair)
+    assert B.rfp_power_gate(ok, [at])["verdict"] == ("NOT_EVALUABLE" if basis is None else "FAIL")
     with pytest.raises(B.BoundaryA9Error):
         _led("hall_c1_reference", 10.0, basis="rms")
+
+
+def test_unaveraged_peak_is_not_the_gate():
+    """A9.1 OQ-A902-01: the unaveraged sampled peak is for protection analysis only, not the 1.5 kW gate: a
+    peak_sampled ledger neither PASSes nor FAILs (whether a conformant peak below 1500 W may bound the 1 ms maximum is
+    the OPEN owner question OQ-A910-03, not implemented before the owner rules)."""
+    n = len(B.installed_slots("hall_icp_neutralizer"))
+    ok = _led("hall_icp_neutralizer", 1000.0 / n, basis="peak_sampled")
+    at = _led("hall_icp_neutralizer", 1500.0 / n, basis="peak_sampled")
+    assert B.PASS_BASES == ("p_bus_1ms_max",)
+    for g in (B.rfp_power_gate(ok, [ok]), B.rfp_power_gate(ok, [at])):
+        assert g["verdict"] == "NOT_EVALUABLE"
+        assert all(r["verdict"] == "NOT_EVALUABLE" and "OQ-A910-03" in r["note"] for r in g["rows"])
+
+
+def test_pass_needs_conformant_gate_measurement():
+    """A PASS on a declared p_bus_1ms_max basis needs a measurement-conformance record meeting A9.1 OQ-A902-01."""
+    n = len(B.installed_slots("hall_c1_reference"))
+    ok = _led("hall_c1_reference", 1000.0 / n)
+    assert ok["gate_measurement_conformant"] is True and B.rfp_power_gate(ok, [ok])["verdict"] == "PASS"
+    for gm in (None, {**GM_OK, "sample_rate_Sa_s": 50.0e3}, {**GM_OK, "bandwidth_Hz": 10.0e3},
+               {**GM_OK, "anti_alias_documented": False}, {**GM_OK, "synchronized": False}):
+        led = _led("hall_c1_reference", 1000.0 / n, gm=gm)
+        g = B.rfp_power_gate(led, [led])
+        assert g["verdict"] == "NOT_EVALUABLE" and "gate_measurement" in g["rows"][0]["note"]
+    at = _led("hall_c1_reference", 1500.0 / n, gm=None)          # a known 1 ms maximum at the limit still fails
+    assert B.rfp_power_gate(at, [at])["verdict"] == "FAIL"
+    for bad in ({**GM_OK, "extra": 1}, {k: v for k, v in GM_OK.items() if k != "source"}, {**GM_OK, "source": ""},
+                {**GM_OK, "synchronized": "yes"}, {**GM_OK, "bandwidth_Hz": "TBD"}, "record"):
+        with pytest.raises(B.BoundaryA9Error):
+            _led("hall_c1_reference", 10.0, gm=bad)
+    rec = B.p_bus_1ms_max([100.0] * 200, 100.0e3, 20.0e3, True, True)
+    assert rec["gate_measurement"]["sample_rate_Sa_s"] == 100.0e3
+
+
+def test_p_bus_1ms_max_from_samples():
+    fs = 100.0e3
+    rec = [100.0] * 150 + [2000.0] * 50 + [100.0] * 300           # 0.5 ms spike of 2 kW
+    r = B.p_bus_1ms_max(rec, fs, 20.0e3, True, True)
+    assert r["window_samples"] == 100
+    assert r["P_bus_1ms_max_W"] == pytest.approx(1050.0)          # 50 x 2000 + 50 x 100 over 100 samples
+    assert r["diagnostics_only"]["unaveraged_sampled_peak_W"] == 2000.0
+    assert r["diagnostics_only"]["max_mean_100ms_W"] is None      # record shorter than 100 ms
+    for args in ((rec, 50.0e3, 20.0e3, True, True), (rec, fs, 10.0e3, True, True), (rec, fs, 20.0e3, False, True),
+                 (rec, fs, 20.0e3, True, False), ([1.0] * 10, fs, 20.0e3, True, True),
+                 (rec, 150.5e3, 20.0e3, True, True)):
+        with pytest.raises(B.BoundaryA9Error):
+            B.p_bus_1ms_max(*args)
+
+
+def test_icp_power_allocation_check():
+    """A9.1 OQ-A902-03: P_ICP,available = 1350 - P_common - P_Hall - P_other,active; no fixed split."""
+    loads, effs = full("hall_icp_neutralizer", p=10.0, eta=1.0)
+    loads["hall_discharge"] = L(900.0)
+    loads["icp_rf_source"] = {**L(200.0), "plane": "generator_dc_input"}
+    led = B.ledger("hall_icp_neutralizer", loads, effs, {"value": 1.0, "evidence_class": "assumed", "source": "t"})
+    c = B.icp_power_allocation_check(led)
+    # common: 2 flow + compressor + thermal + housekeeping = 5 x 10; Hall: 900 + 3 coils x 10; other: reserved 10
+    assert c["P_ICP_available_W"] == pytest.approx(1350.0 - 50.0 - 930.0 - 10.0)
+    assert c["P_ICP_W"] == pytest.approx(200.0 + 10.0 + 10.0) and c["verdict"] == "WITHIN_AVAILABLE"
+    loads["icp_rf_source"] = {**L(400.0), "plane": "generator_dc_input"}
+    led2 = B.ledger("hall_icp_neutralizer", loads, effs, {"value": 1.0, "evidence_class": "assumed", "source": "t"})
+    assert B.icp_power_allocation_check(led2)["verdict"] == "EXCEEDS_AVAILABLE"
+    with pytest.raises(B.BoundaryA9Error):
+        B.icp_power_allocation_check(B.ledger("hall_c1_reference", *full("hall_c1_reference"), FE))
+
+
+def test_g_reuse_icp_feed_slot_only_in_variant():
+    """A9.1 HIQ-06 / OQ-A902-05: G-REUSE is primary; flow_control_icp_feed exists only in a G-ATM / G-XE variant."""
+    assert "flow_control_icp_feed" not in B.installed_slots("hall_icp_neutralizer")
+    assert "flow_control_icp_feed" in B.installed_slots("hall_icp_neutralizer", ("flow_control_icp_feed",))
+    assert B.ICP_GAS_MODES["G-REUSE"]["primary"] and B.ICP_GAS_MODES["G-REUSE"]["variant_slot"] is None
+    assert B.COMBINED_C1_ICP_FLIGHT_VARIANT is None                                   # A9.1 OQ-A902-04
+
+
+def test_tbd_heater_booked_on_at_conservative_power():
+    """A9.1 SEQ-heater: a TBD heater is ON at its conservative booked power, never OFF; only for c1_heater."""
+    loads, effs = full("hall_c1_reference", p=10.0, eta=1.0)
+    loads["c1_heater"] = {"P_W": "TBD", "tbd_requires": "C1 procedure", "booked_W": 120.0,
+                          "evidence_class": "assumed", "source": "unit test"}
+    led = B.ledger("hall_c1_reference", loads, effs, FE1)
+    it = next(i for i in led["items"] if i["slot"] == "c1_heater")
+    assert it["state"] == "ON_BOOKED_TBD" and it["P_W"] == 120.0 and led["booked_tbd_slots"] == ["c1_heater"]
+    assert led["status"] == "COMPLETE"
+    for bad in ({"P_W": "TBD", "tbd_requires": "x", "booked_W": 0.0, "evidence_class": "assumed", "source": "t"},
+                {"P_W": "TBD", "tbd_requires": "x", "booked_W": 5.0}):
+        loads["c1_heater"] = bad
+        with pytest.raises(B.BoundaryA9Error):
+            B.ledger("hall_c1_reference", loads, effs, FE1)
+    loads, effs = full("hall_c1_reference", p=10.0, eta=1.0)
+    loads["c1_keeper"] = {"P_W": "TBD", "tbd_requires": "x", "booked_W": 5.0, "evidence_class": "assumed",
+                          "source": "t"}
+    with pytest.raises(B.BoundaryA9Error):
+        B.ledger("hall_c1_reference", loads, effs, FE1)
 
 
 def test_gate_not_evaluable_vs_fail_on_lower_bound():
@@ -302,8 +405,10 @@ def test_gate_not_evaluable_vs_fail_on_lower_bound():
     partial = B.ledger("hall_c1_reference", loads, effs, fe)
     assert B.rfp_power_gate(partial, [partial])["verdict"] == "NOT_EVALUABLE"
     loads["hall_discharge"] = L(1600.0)
-    over = B.ledger("hall_c1_reference", loads, effs, fe)
+    over = B.ledger("hall_c1_reference", loads, effs, fe, power_basis="step_average")
     assert B.rfp_power_gate(over, [partial])["verdict"] == "FAIL"   # lower bound alone already fails
+    unstated = B.ledger("hall_c1_reference", loads, effs, fe)       # unstated basis: not shown to bound the 1 ms max
+    assert B.rfp_power_gate(unstated, [partial])["verdict"] == "NOT_EVALUABLE"
 
 
 def test_allocation_checks_are_owner_allocations():
@@ -319,13 +424,19 @@ def test_allocation_checks_are_owner_allocations():
     led = B.ledger("hall_icp_neutralizer", loads, effs, {"value": 1.0, "evidence_class": "assumed", "source": "t"})
     c = B.allocation_checks(led)
     assert c["controls_thermal_allowance"]["verdict"] == "EXCEEDS_ALLOWANCE"
-    assert c["common_allocation"]["P_bus_W"] == 30.0 + 30.0 + 10.0 * 4   # compressor, 2 flow, icp feed
+    assert c["common_allocation"]["P_bus_W"] == 30.0 + 30.0 + 10.0 * 3   # compressor, 2 flow (G-REUSE: no ICP feed)
 
 
 def test_rf_power_planes():
     r = B.rf_power_planes(300.0, 200.0, 10.0, 180.0, 1.0)
     assert r["bus_crossing_W"] == 300.0 and r["measurement_only"]["net_forward_W"] == 190.0
     assert r["derived"]["match_and_line_loss_W"] == 10.0
+    # A9.2 rf_measurement_reference: |Gamma| and VSWR are retained; coupler plane on the generator / 50-ohm side
+    g = math.sqrt(10.0 / 200.0)
+    assert math.isclose(r["derived"]["gamma_magnitude"], g) and math.isclose(r["derived"]["vswr"], (1 + g) / (1 - g))
+    assert "generator / 50-ohm side" in r["measurement_only"]["coupler_plane"]
+    assert B.rf_power_planes(300.0, 0.0, 0.0, "TBD", 0.0)["derived"]["vswr"] is None
+    assert B.rf_power_planes(300.0, 200.0, 200.0, "TBD", 0.0)["derived"]["vswr"] == math.inf
     assert B.rf_power_planes(300.0, 200.0, 10.0, "TBD", 0.0)["measurement_only"]["delivered_W"] is None
     for args in ((300.0, 200.0, 250.0, "TBD", 1.0), (100.0, 200.0, 0.0, "TBD", 1.0), (300.0, 200.0, 10.0, 195.0, 1.0),
                  (300.0, 200.0, 10.0, "TBD", -1.0)):
@@ -334,14 +445,15 @@ def test_rf_power_planes():
 
 
 # ------------------------------------------------------------------------------------------------ sequencing
-def _seq(config, template_events, heater=None, flags=None, basis="peak_sampled"):
+def _seq(config, template_events, heater=None, flags=None, basis="p_bus_1ms_max"):
     steps = []
     for i, ev in enumerate(template_events):
         loads, effs = full(config, p=10.0, eta=1.0)
         if heater is not None:
             h = heater[i]
             loads["c1_heater"] = {"P_W": "TBD", "tbd_requires": "C1 heater data"} if h == "TBD" else L(h)
-        st = {"step_id": f"s{i}", "event": ev, "loads": loads, "efficiencies": effs, "power_basis": basis}
+        st = {"step_id": f"s{i}", "event": ev, "loads": loads, "efficiencies": effs, "power_basis": basis,
+              "gate_measurement": GM_OK}
         if flags is not None:
             st["flags"] = flags[i]
         if i == len(template_events) - 1:
@@ -436,11 +548,43 @@ def test_undeclared_simultaneous_peak_loads_detected_by_magnitude():
     steps[2]["loads"]["compressor"] = L(200.0)                  # compressor jumps in the RF-ignition step, no label
     steps[2]["loads"]["icp_rf_source"] = {**L(300.0), "plane": "generator_dc_input"}
     r = B.check_startup_sequence("hall_icp_neutralizer", steps, FE1)
-    assert any("load rises" in v["rule"] for v in r["violations"]), r["violations"]
+    assert any("commanded to rise" in v["rule"] for v in r["violations"]), r["violations"]
     steps[2]["loads"]["compressor"] = {"P_W": "TBD", "tbd_requires": "compressor ICD"}
     r2 = B.check_startup_sequence("hall_icp_neutralizer", steps, FE1)
-    assert any("load rises" in v["rule"] for v in r2["not_evaluable"]) or \
-        any("load rises" in v["rule"] for v in r2["violations"])
+    assert any("commanded to rise" in v["rule"] for v in r2["not_evaluable"]) or \
+        any("commanded to rise" in v["rule"] for v in r2["violations"])
+
+
+def test_dependent_collector_rise_at_hall_ignition_is_not_a_second_commanded_peak():
+    """A9-10 review repair: A9.1 SEQ-peaks limits COMMANDED rises; the collector-bias load rises with I_d at Hall
+    ignition because the discharge current closes through the collector (ICD ICP-22 / ICP-45)."""
+    evs = [None, "magnet_ramp", "icp_rf_ignition", "icp_collector_bias_on", "hall_discharge_ignition", None]
+    steps = _seq("hall_icp_neutralizer", evs)
+    for k in (4, 5):
+        steps[k] = copy.deepcopy(steps[k])
+        steps[k]["loads"]["hall_discharge"] = L(900.0)
+        steps[k]["loads"]["icp_collector_bias"] = L(90.0)      # V_bias x I_d closes through the collector
+    r = B.check_startup_sequence("hall_icp_neutralizer", steps, FE1)
+    assert r["sequence_status"] == "RULES_SATISFIED", r["violations"]
+    assert r["dependent_rises"] and r["dependent_rises"][0]["step_id"] == "s4"
+    assert r["dependent_rises"][0]["dependent_slots"] == ["icp_collector_bias"]
+    # the same coupled rise in a step whose event is NOT Hall ignition is still a second commanded peak
+    steps2 = _seq("hall_icp_neutralizer", evs)
+    steps2[2] = copy.deepcopy(steps2[2])
+    steps2[2]["loads"]["icp_rf_source"] = {**L(300.0), "plane": "generator_dc_input"}
+    steps2[2]["loads"]["icp_collector_bias"] = L(90.0)
+    r2 = B.check_startup_sequence("hall_icp_neutralizer", steps2, FE1)
+    assert r2["sequence_status"] == "SEQUENCE_RULE_VIOLATION"
+    # the dependent load still counts in the power ledger
+    assert r["steps"][4]["P_bus_W"] > r["steps"][3]["P_bus_W"]
+
+
+def test_p1ms_fail_carries_sum_rule():
+    loads, effs = full("hall_icp_neutralizer", p=200.0, eta=1.0)
+    loads["icp_rf_source"]["plane"] = "generator_dc_input"
+    led = B.ledger("hall_icp_neutralizer", loads, effs, FE1, power_basis="p_bus_1ms_max", gate_measurement=GM_OK)
+    g = B.rfp_power_gate(led, [led])
+    assert g["verdict"] == "FAIL" and all(r["note"] == B.P1MS_SUM_RULE for r in g["rows"])
 
 
 def test_record_shape_refusals_schema_parity():

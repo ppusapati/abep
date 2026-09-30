@@ -198,14 +198,22 @@ def test_flight_xe_system_retained(doc):
 
 
 def test_residual_is_imported_never_computed(doc):
+    """A9-10 re-run: the single A9 Xe-ledger residual line (F-RESIDUAL) is imported, never booked a second time."""
     clo = doc["wet_closure"]
-    assert clo["residual"]["value_kg"] is None
-    assert clo["residual"]["status"].startswith("PENDING docs/budgets/") and "_a9/" in clo["residual"]["status"]
-    for c in clo["cells"]:
-        assert c["residual_kg"] is None
+    assert clo["residual"]["value_kg"] is None                     # no single number: one value per design case
+    assert clo["residual"]["status"].startswith("IMPORTED once from docs/budgets/") and "_a9/" in clo["residual"]["status"]
+    xe = json.loads((REPO / "docs" / "budgets" / ("xe" + "_ledger_a9") / ("xe" + "_ledger_a9_v1.json")).read_text())
+    split = {r["case_kg"]: r["residual_kg"] for r in xe["design_cases"]["reserve_residual_split"]["rows"]}
+    f = {i["id"]: i for i in xe["items"]}["XA9-24"]["value"]
+    for c in clo["cells"]:                                         # MQ-09 reading: residual on top, added once
+        assert c["residual_kg"] == pytest.approx(f * c["xe_case_kg"]) and c["residual_added_on_top"] is True
+        assert c["wet_known_kg"] == pytest.approx(c["dry_kg"] + c["xe_case_kg"] + c["residual_kg"])
+    for c in clo["cells_case_is_loaded"]:                          # XA9Q-01 reading: residual inside the case
+        assert c["residual_kg"] == split[c["xe_case_kg"]] and c["residual_added_on_top"] is False
         assert c["wet_known_kg"] == pytest.approx(c["dry_kg"] + c["xe_case_kg"])
     res = next(i for i in doc["a9_flight_bom"]["flight"] if i["id"] == "A9B-14")
-    assert res["value"] is None and res["status"].startswith("PENDING")
+    assert res["value"] == {str(k): v for k, v in split.items()} and res["status"].startswith("IMPORTED in A9-10")
+    assert "CLOSES" not in {c["state"] for c in clo["cells"] + clo["cells_case_is_loaded"]}
 
 
 def test_closure_matrix(doc):

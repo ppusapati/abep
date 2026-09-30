@@ -131,6 +131,11 @@ def test_every_source_resolves(doc, answers):
                 elif s["type"] == "deliverable_item":
                     node = _resolve(json.loads((REPO / s["path"]).read_text(encoding="utf-8")), s["pointer"])
                     assert s["id"] in (node.get("id"), node.get("slot")), (r["id"], s["id"])
+                elif s["type"] == "a9_2":
+                    # A9.2 decision: read the original when present, else its byte-identical pinned copy
+                    rel = s["path"] if (REPO / s["path"]).is_file() else A92_COPY
+                    assert hashlib.sha256((REPO / rel).read_bytes()).hexdigest() == s["sha256"] == A92_SHA
+                    _resolve(json.loads((REPO / rel).read_text(encoding="utf-8")), s["pointer"])
                 else:
                     _resolve(json.loads((REPO / s["path"]).read_text(encoding="utf-8")), s["pointer"])
 
@@ -243,3 +248,45 @@ def test_builder_is_pure_and_contactless():
     for banned in ("import abep_sim", "from abep_sim", "import archengine", "subprocess", "urllib", "requests", "smtplib",
                    "socket", "http.client"):
         assert banned not in src, banned
+
+
+A92_COPY = "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json"
+A92_SHA = "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03"
+
+
+def test_a9_2_local_match_and_no_invented_ratings(doc):
+    """A9.2: local match, coupler on the generator / 50-ohm side, protection and on-module items TBD, no anode RFQ."""
+    rq = {r["id"]: r for p in doc["packages"] for r in p["requirements"]}
+    assert rq["RFQ-04-R06"]["value"] == "local match on / immediately adjacent to the ICP module"
+    assert rq["RFQ-04-R06"]["value_before_a9_2"] == "off-platform"
+    assert rq["RFQ-04-R08"]["value"] == "generator / 50-ohm side of the local match"
+    assert rq["RFQ-01-R12"]["value"] == "on-module local match (A9.2)"
+    for i in ("RFQ-04-R07", "RFQ-04-R12", "RFQ-04-R15", "RFQ-04-R16", "RFQ-04-R17", "RFQ-05-R13"):
+        assert rq[i]["value"].startswith("TBD - requires") and rq[i]["status"] == "TBD", i
+    assert "TBD_AFTER_IMPEDANCE_MAP" in rq["RFQ-04-R17"]["value"]
+    assert "SUPERSEDED_BY_A9_2" in rq["RFQ-04-R15"]["title"]
+    assert "not a component rating" in rq["RFQ-04-R02"]["a9_2_interpretation"]
+    assert "No anode RFQ" in doc["a9_2_anode_note"]
+    assert not any("anode" in r["title"].lower() and "xe anode path" not in r["title"].lower() for r in rq.values())
+
+
+def test_a9_2_repair_no_500w_rating_in_supplier_text(doc):
+    """Review repair 3 (A9.2 rf_500W): 0-500 W is a delivered/operating capability, never a component rating; every
+    supplier-facing RFQ-04 text that states 500 W carries that label; R15 no longer reads as an off-platform option."""
+    import re as _re
+    rq = {r["id"]: r for p in doc["packages"] for r in p["requirements"]}
+    r02 = rq["RFQ-04-R02"]
+    assert r02["value"] == [0.0, 500.0] and r02["status"] == "OWNER_GIVEN"
+    assert "delivered/operating" in r02["requirement"] and "TBD_AFTER_IMPEDANCE_MAP" in r02["requirement"]
+    assert "sized for this forward power range" in r02["requirement_before_a9_2"]
+    assert r02["rating"].startswith("TBD - requires the ICP antenna impedance map")
+    r15 = rq["RFQ-04-R15"]
+    assert r15["requirement"].startswith("SUPERSEDED_BY_A9_2") and "off-platform" not in r15["requirement"]
+    assert "SUPERSEDED_BY_A9_2" in r15["note"]
+    assert all("role" in s for s in rq["RFQ-04-R06"]["sources"] if s.get("id") == "A9-03-matching")
+    w500 = _re.compile(r"(?<![\d.])(0\s*[-–]\s*)?500 W\b")
+    lab = _re.compile(r"delivered/operating|not a (sufficient )?component rating|not at (a )?500 W")
+    for fn in sorted((REPO / "docs/procurement/rfq_a9/packages").glob("*.md")):
+        for line in fn.read_text(encoding="utf-8").splitlines():
+            if w500.search(line) and not line.lstrip().startswith(">"):
+                assert lab.search(line), (fn.name, line[:160])
