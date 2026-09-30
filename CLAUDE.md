@@ -279,3 +279,7 @@ never rewritten, not used for the primary line. All 147 owner answers: `docs/dec
 (verbatim pack `OD_2026_09_29_OWNER_DECISION_PACK_147.md`). Recorder flags for the owner (v0 mass allocations below verified H2
 analogs, external C1 vs H2 L-CENTRAL, ≥ 50 K thermal margin vs H2-5 11.2 K, ICP gas feed unbooked) are listed in A9. A9 keeps the
 Hall family (rule 8: no model/archengine change implied). New Hall→ICP work goes under new paths (e.g. `docs/experiments/hall_icp/`).
+**A9 state (2026-09-30):** A9-01..A9-10 verified on the execution branch; A9.1 (`OD_2026_09_30_A9_1_*`) and A9.2 (`OD_2026_09_30_A9_2_*`)
+applied. Binding statuses: RF matching LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT, RF ratings TBD_AFTER_IMPEDANCE_MAP, 316L anode
+REJECTED_AS_CURRENT_BASELINE, anode material OPEN, anode and coupled H-1/ICP thermal closure UNRESOLVED (never report an ICP
+thermal result as PASS), ICP capacity PENDING_ICP45, C1 CONTROL_FALLBACK. Open owner questions: `docs/budgets/owner_decisions/owner_questions_state_v2.*`.

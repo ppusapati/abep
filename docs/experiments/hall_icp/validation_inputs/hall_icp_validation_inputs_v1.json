@@ -1,0 +1,2902 @@
+{
+ "schema": "hall_icp_validation_inputs_v1",
+ "title": "Hall -> downstream RF-ICP neutralizer validation-input list (A9-05 part 2; owner answer row 145)",
+ "lane": "fo_a9_05_hall_icp_validation_inputs",
+ "trigger": "T_A9_05_VALIDATION_INPUTS",
+ "status": "DRAFT_FOR_OWNER_REVIEW",
+ "base_commit": "0a430bb5588a438f7c8485c6d16f40ed0d402c4c",
+ "generated_by": "docs/experiments/hall_icp/validation_inputs/build_hall_icp_validation_inputs.py (--check reproduces JSON and MD exactly)",
+ "authority_pins": [
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+   "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+   "role": "governing owner decision A9"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
+   "role": "owner's 147 answers (cited by row)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+   "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976",
+   "role": "owner decision pack, verbatim"
+  }
+ ],
+ "deliverable_pins": [
+  {
+   "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+   "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
+   "role": "existing measurement chains INS-xx (adapted for A9 only via A9-04)"
+  },
+  {
+   "path": "docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json",
+   "sha256": "8436008ac458d4e7467a9c7c9592d5312b3912b918d584ceaf3ac8cb2745a971",
+   "role": "IFD-08 electron-emission bounds (I_d <= 8.33 A at 180 V, RFP bound; <= 7.5 A under 1.35 kW)"
+  },
+  {
+   "path": "docs/hardware/h2/h2_3_gas_path_plenum/h2_3_gas_path_plenum_v1.json",
+   "sha256": "f32b05bd03aad2a09a1d9b90ee5f9423e733e6ea4cb94814c92b500590d43a7b",
+   "role": "H23-27 / H23-29 gas-isolator Paschen finding (applies to any ICP gas line across potentials)"
+  },
+  {
+   "path": "docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json",
+   "sha256": "5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef",
+   "role": "supply partition / SEQ-1 / start-up peak rule context"
+  },
+  {
+   "path": "docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json",
+   "sha256": "bc7d6b049067c6fbd5489bda32ee9c8c1af36508576db4619b08d2c4ec196a56",
+   "role": "kinematic module carrier, service-line shams"
+  },
+  {
+   "path": "docs/budgets/subsystem_maturity/subsystem_maturity_v2.json",
+   "sha256": "a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c",
+   "role": "M16 v2 row numbering for m16_impact"
+  }
+ ],
+ "historical_pins": [
+  {
+   "path": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json",
+   "sha256": "84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28"
+  },
+  {
+   "path": "schemas/interfaces/preionizer_module_icd_v1.json",
+   "sha256": "2470718e1decbde874d2362a997d1e2aaae54eb855d1ed179b930c3be6e7130e"
+  }
+ ],
+ "governance_read_never_pinned": [
+  "docs/orchestration/lane_registry_v1.json",
+  "docs/orchestration/trigger_registry_v1.json",
+  "docs/orchestration/trigger_ledger_v2.jsonl",
+  "docs/orchestration/fired_triggers.jsonl",
+  "docs/orchestration/runtime_state.json"
+ ],
+ "evidence_input": {
+  "path": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
+  "sha256": "092e4ca8e1827dd2e9558058a204f46510f2633316ce188e7126b697ec6d0b53",
+  "note": "same lane (part 1); regenerated first"
+ },
+ "replaces": "the frozen parallel RF||Hall v2 input list for the primary line (row 145); v2 inputs are never supplied or invented (row 146)",
+ "configuration_ids": [
+  "hall_c1_reference",
+  "hall_icp_neutralizer"
+ ],
+ "decision_vocabulary": {
+  "outcomes_known_from_owner_answers": [
+   "NO_VIABLE_CASE (row 28)",
+   "not sustained within registered limits (row 41)",
+   "NOT_TESTED for stopped-arm slots (row 39)",
+   "PARTIAL_BOUNDARY (row 22)"
+  ],
+  "status_not_outcome": "OPEN (row 38): unresolved evidence is reported with the next discriminating test",
+  "net_benefit_form": "hard gates + Pareto (delta Xe, delta P_bus, delta mass, T/P_bus, restart and life burden vs C1); no weighted scalar unless preregistered (row 37); A9.1 HIQ-05: no mandatory Pareto relation - hard gates alone decide feasibility; the Pareto quantities are reported for engineering comparison unless a Pareto condition is preregistered at LOCK-1",
+  "full_vocabulary": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json decision_topology (A9-01)",
+  "winner": "none declared by this lane"
+ },
+ "what_this_is_not": [
+  "not a performance prediction for H-1, C1 or the A9 ICP module; no Hall closure (credible set EMPTY), no abep_sim/plasma_devices.py, no withdrawn v1.2-v1.6 number",
+  "not a supply of the frozen v2 inputs; no ASSUMED_SCREENING_VALUE manufactured (row 146)",
+  "not a numeric threshold: margins, effect sizes, stop rules and n are frozen at LOCK-1 (rules) / LOCK-2 (values); the only numbers are owner-given (cited by row)",
+  "not a stage map (A9-01), bus boundary (A9-02), ICD (A9-03) or uncertainty budget (A9-04): those are separate deliverables (docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json; abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json; schemas/interfaces/icp_neutralizer_icd_v1.json; docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) referenced, never fabricated",
+  "Hall-closure uncertainty never leaks upstream: nothing here touches intake, compressor, gas chambers or valves models"
+ ],
+ "evidence_steps": {
+  "XCHK": "module-exchange checks without plasma: cold/tare, service-line parasitic, B(z) perturbation, electrical isolation, RF pickup (row 64)",
+  "AR": "Ar, engineering-only topology reproduction (never counts toward DRDO atmospheric requirements; A9, row 36)",
+  "N2": "pure N2 (A9, row 36)",
+  "O2": "O2-bearing atmospheric surrogate, label NO_ATOMIC_O (A9, rows 36, 132)",
+  "AO": "separate dedicated atomic-O materials/life programme (A9, row 132)",
+  "XE": "bounded Xe reference / health check, labelled, never atmospheric evidence (row 26)"
+ },
+ "consumers": {
+  "G-NEUT": "NET_BENEFIT hard gate: ICP electron-current / beam-neutralization (row 37)",
+  "G-THRUST": "full-system thrust gates: >= 12 mN sustained, 25 mN capability (rows 4, 27)",
+  "G-PBUS": "full-system P_bus < 1.5 kW at the spacecraft-DC propulsion boundary incl. start-up transients (rows 27, 108)",
+  "G-ALLOC": "ICP power inside the internal ~1.35 kW design allocation, not the 1.35-1.5 kW margin (row 109)",
+  "G-MASS": "< 40 kg wet full-system gate (row 5)",
+  "G-STAB": "NET_BENEFIT hard gate: stability (row 37)",
+  "G-SAFE": "NET_BENEFIT hard gate: safety (row 37)",
+  "P-DXE": "NET_BENEFIT Pareto report: delta Xe relative to C1 (row 37)",
+  "P-DPBUS": "NET_BENEFIT Pareto report: delta P_bus relative to C1 (row 37)",
+  "P-DMASS": "NET_BENEFIT Pareto report: delta mass relative to C1 (row 37)",
+  "P-TP": "NET_BENEFIT Pareto report: T / P_bus (row 37)",
+  "P-RESTART": "NET_BENEFIT Pareto report: restart burden (row 37)",
+  "P-LIFE": "NET_BENEFIT Pareto report: life burden (row 37)",
+  "R-LIFE": "ICP-neutralizer lifetime / cycle requirement (row 46)",
+  "C-EQUIV": "comparison-validity controls: same H-1, feed, V_d/B, stand, metrology; matched shams; module exchange reproducibility (A9 decision 6; rows 17, 33, 64, 67, 122, 133)",
+  "MODEL": "future Hall->ICP model validation input (row 145); held-out custody before exposure (row 25)"
+ },
+ "items": [
+  {
+   "id": "VI-RF-01",
+   "group": "RF",
+   "name": "RF drive frequency",
+   "symbol": "f_RF",
+   "definition": "frequency of the ICP antenna drive",
+   "units": "MHz",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "owner_allocation",
+    "chain": "generator setting; verified by the directional-coupler chain (A9-04)",
+    "analog_refs": [
+     "TK-20"
+    ]
+   },
+   "producing_stage": "n/a (owner allocation / requirement)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": 13.56,
+   "evidence_class": "owner-allocation",
+   "basis": "owner answer",
+   "source": "owner answer row 72; A9 governing decision 1",
+   "status": "FIXED_BY_OWNER",
+   "freeze_point": "NOW",
+   "consumers": [],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "same frequency as the anchor (TK-20)",
+   "supply": "owner"
+  },
+  {
+   "id": "VI-RF-02",
+   "group": "RF",
+   "name": "forward RF power at the ICP-14 coupler plane (generator / 50-ohm side of the local matching network, A9.2)",
+   "symbol": "P_fwd",
+   "definition": "RF power travelling toward the matching network/antenna, measured by a directional coupler at the declared RF measurement plane, which A9.2 places on the generator / 50-ohm side of the local matching network (plane schemas/interfaces/icp_neutralizer_icd_v1.json ICP-14 (A9-03 ICD))",
+   "units": "W",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "directional coupler + power sensor (INS-03 adapted; docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-RF] (A9-04))",
+    "analog_refs": [
+     "TK-21",
+     "TK-23"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires H-1 + ICP module operation; the laboratory chain provides the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating); chain ratings TBD_AFTER_IMPEDANCE_MAP",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answer row 72 as interpreted by A9.2 rf_500W (a delivered/operating capability; not an operating value and not a component rating)",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "LOCK-1 (chain) / after-evidence (value)",
+   "consumers": [
+    "G-ALLOC",
+    "P-DPBUS",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "analog operated at 200 W forward (TK-21) on its own geometry - context only",
+   "supply": "analog can bound (context only); value from H-1 hardware",
+   "name_before_a9_2": "forward RF power at the load plane",
+   "value_before_a9_2": "TBD - requires H-1 + ICP module operation; laboratory chain sized for 0-500 W forward (row 72)",
+   "source_before_a9_2": "owner answer row 72 (range for sizing the chain, not an operating value)"
+  },
+  {
+   "id": "VI-RF-03",
+   "group": "RF",
+   "name": "reflected RF power at the ICP-14 coupler plane (generator / 50-ohm side of the local matching network, A9.2)",
+   "symbol": "P_refl",
+   "definition": "RF power reflected back toward the generator at the same plane as P_fwd",
+   "units": "W",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "directional coupler reverse port (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-RF] (A9-04))",
+    "analog_refs": [
+     "TK-22"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires H-1 + ICP module operation",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answer row 72",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "G-SAFE",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "analog reports 'no reflection detected' with generator meters (TK-22); resolution not stated",
+   "supply": "analog can bound (context only); value from H-1 hardware",
+   "name_before_a9_2": "reflected RF power at the load plane"
+  },
+  {
+   "id": "VI-RF-04",
+   "group": "RF",
+   "name": "net RF power at the ICP-14 coupler plane (P_fwd - P_refl)",
+   "symbol": "P_net",
+   "definition": "P_fwd - P_refl at the ICP-14 coupler plane (generator / 50-ohm side of the local matching network); includes the line, local-match and antenna ohmic loss downstream of the plane. A9.2: P_delivered = P_forward - P_reflected - P_line/match,loss is the power past the local match; P_forward = P_plasma is never assumed",
+   "units": "W",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "derived",
+    "chain": "from VI-RF-02, VI-RF-03 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-RF] (A9-04))",
+    "analog_refs": [
+     "TK-21"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires VI-RF-02, VI-RF-03",
+   "evidence_class": "measured (future)",
+   "basis": "derived",
+   "source": "owner answer row 72",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "H-1 hardware only",
+   "name_before_a9_2": "net RF power delivered at the load plane",
+   "definition_before_a9_2": "P_fwd - P_refl at the declared load plane (includes matching-network and antenna ohmic loss downstream of the plane)"
+  },
+  {
+   "id": "VI-RF-05",
+   "group": "RF",
+   "name": "RF power absorbed by the plasma",
+   "symbol": "P_abs",
+   "definition": "eta_p x P_net with eta_p = R_p / (R_p + R_ant), R_p = R_total - R_ant (anchor Eq. (1) method); calorimetry of antenna/electrode heat as independent cross-check (row 72)",
+   "units": "W",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "derived",
+    "chain": "antenna RF current probe + VI-RF-06/07 + calorimetric cross-check (TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1))",
+    "analog_refs": [
+     "TK-24",
+     "TK-25",
+     "TK-26",
+     "TK-27"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires VI-RF-06, VI-RF-07 on the A9 module",
+   "evidence_class": "measured (future)",
+   "basis": "derived",
+   "source": "Takahashi 2024 Eq. (1) (method); owner answer row 72 (calorimetry as cross-check)",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "MODEL",
+    "G-NEUT"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "method precedent only; anchor eta_p ~0.1 (TK-26) is geometry-specific (electrode eddy-current loss) and is NOT transferable",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-RF-06",
+   "group": "RF",
+   "name": "antenna resistance without plasma",
+   "symbol": "R_ant",
+   "definition": "antenna-circuit resistance from P_net / I_ant^2 with no plasma (gas off and gas on unlit, both recorded), with the module installed on H-1",
+   "units": "ohm",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "RF current probe on the antenna lead + VI-RF-04 (TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1))",
+    "analog_refs": [
+     "TK-24"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "XCHK",
+    "AR"
+   ],
+   "value": "TBD - requires the A9 module",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "Takahashi 2024 p. 3, p. 8 (method)",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor value 0.36 ohm (TK-24) is its own antenna/electrode - context only",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-RF-07",
+   "group": "RF",
+   "name": "antenna current and total resistance with plasma",
+   "symbol": "I_ant, R_total",
+   "definition": "RMS antenna current and P_net / I_ant^2 during discharge at each operating point",
+   "units": "A, ohm",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "RF current probe (TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1))",
+    "analog_refs": [
+     "TK-25"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires H-1 + ICP module operation",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "Takahashi 2024 p. 3, p. 8 (method)",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "H-1 hardware only"
+  },
+  {
+   "id": "VI-RF-08",
+   "group": "RF",
+   "name": "RF generator DC input power",
+   "symbol": "P_RF,DC",
+   "definition": "electrical power drawn by the RF source (generator + matching control) at its DC input; enters P_bus through its own bus slot",
+   "units": "W",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "DC V/I channel per bus slot (INS-02 adapted; bus slot abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slot icp_rf_source (A9-02))",
+    "analog_refs": []
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires the RF source selected under H3 and A9-02 bus slot",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 66, 108, 110",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "LOCK-1 (slot) / after-evidence (value)",
+   "consumers": [
+    "G-PBUS",
+    "G-ALLOC",
+    "P-DPBUS"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "H-1 hardware only"
+  },
+  {
+   "id": "VI-RF-09",
+   "group": "RF",
+   "name": "RF chain efficiency DC -> net RF",
+   "symbol": "eta_RF",
+   "definition": "P_net / P_RF,DC at each operating point (lab generator is not flight-representative; flight value PENDING)",
+   "units": "-",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "derived",
+    "chain": "VI-RF-04 / VI-RF-08",
+    "analog_refs": []
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires VI-RF-04 and VI-RF-08",
+   "evidence_class": "measured (future)",
+   "basis": "derived",
+   "source": "owner answer row 108 (no RF-generator-only power claim)",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "P-DPBUS",
+    "G-ALLOC"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "H-1 hardware only"
+  },
+  {
+   "id": "VI-RF-10",
+   "group": "RF",
+   "name": "ICP coupling mode",
+   "symbol": "mode",
+   "definition": "identification of capacitive (E) vs inductive (H) coupling at each point, and the net power / pressure of any E-H transition or hysteresis",
+   "units": "W, Pa",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "I_ant / R_total step + optical emission (INS-12 adapted; TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1))",
+    "analog_refs": [
+     "TK-26"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires the A9 module",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answer row 69",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "G-STAB",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "the anchor does not report a mode; S-04 reports a helicon transition in a magnetized source (context only, row 69 fixes an unmagnetized first build)",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-RF-11",
+   "group": "RF",
+   "name": "RF pickup on Hall and stand diagnostics",
+   "symbol": "pickup",
+   "definition": "RF-induced error on I_d, V_d, thrust-stand output and probe signals with the ICP energized and Hall off / on",
+   "units": "per channel",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "module-exchange checks (row 64; TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1))",
+    "analog_refs": [
+     "TK-40"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "XCHK",
+    "AR"
+   ],
+   "value": "TBD - requires the installed module and stand",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 64, 117",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "LOCK-2 (tolerance from measured data)",
+   "consumers": [
+    "C-EQUIV"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "the anchor needed a 13.56 MHz L-C trap in the discharge line (TK-40): pickup is a real mechanism",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-EX-01",
+   "group": "extraction",
+   "name": "electron current extracted from the ICP module",
+   "symbol": "I_e,ICP",
+   "definition": "net electron current leaving the ICP plasma toward the Hall anode and the beam, from the current balance of the module terminals (collector + body + any bias return) with the discharge supply isolated",
+   "units": "A",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "isolated current sensors on every ICP-module terminal (schemas/interfaces/icp_neutralizer_icd_v1.json ICP-20, ICP-21, ICP-34 (A9-03 ICD); docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-NEUT] (A9-04))",
+    "analog_refs": [
+     "TK-52",
+     "TK-56"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires H-1 + ICP module operation",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answer row 145; A9 governing decision 2",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "G-NEUT",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor: I_D about 1 A with 200 W forward on Ar (TK-52, digitized_fig4); diode RF cathodes 1-3.3 A at 140-270 W on Xe (S-01, S-02) - order of magnitude only",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-EX-02",
+   "group": "extraction",
+   "name": "ICP electron-current capacity curve",
+   "symbol": "I_e,sat(P_net, mdot, V_coupling)",
+   "definition": "maximum extractable electron current versus net RF power and gas flow at a registered coupling-voltage limit (saturation behaviour), measured with the Hall head as the electron sink",
+   "units": "A",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "RF-power / flow scan (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-NEUT] (A9-04))",
+    "analog_refs": [
+     "TK-53"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires the A9 module on H-1",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 37, 145",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "G-NEUT",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor authors attribute the I_D limit to RF power (TK-53) without a power scan; S-01/S-02 show current rising with RF power in diode tests",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-EX-03",
+   "group": "extraction",
+   "name": "collector (ion-collecting electrode) potential",
+   "symbol": "V_coll",
+   "definition": "potential of the ICP ion-collecting electrode with respect to the declared reference (cathode-common / facility ground; the A9-03 ICD (ICP-20 / ICP-21) records the collector bias and the body potentials but does not fix the collector reference: LOCK-1 item)",
+   "units": "V",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "isolated voltage channel (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-NEUT] (A9-04))",
+    "analog_refs": [
+     "TK-55"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires the A9 module with separately controlled collector bias (row 70)",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 62, 70, 145",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "G-NEUT",
+    "P-LIFE",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor V_K fell to about -100 V at V_D 260 V (TK-55, digitized_fig4) with no separate bias supply",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-EX-04",
+   "group": "extraction",
+   "name": "collector current and bias-supply power",
+   "symbol": "I_coll, V_bias, P_coll",
+   "definition": "ion current collected by the electrode and the electrical power of its bias supply (if the validated circuit needs one)",
+   "units": "A, V, W",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "bias supply V/I (bus slot abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slot icp_collector_bias (A9-02); docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-NEUT] (A9-04))",
+    "analog_refs": [
+     "TK-13",
+     "TK-40"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires the A9 circuit (A9-03) and hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 62, 66, 70, 110",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "LOCK-1 (slot) / after-evidence (value)",
+   "consumers": [
+    "G-PBUS",
+    "P-DPBUS",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "the anchor has no separate bias supply (TK-40)",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-EX-05",
+   "group": "extraction",
+   "name": "ICP body / dielectric floating potential",
+   "symbol": "V_body",
+   "definition": "floating potential of the ICP body (kept floating unless the validated circuit requires otherwise)",
+   "units": "V",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "high-impedance isolated voltage channel (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-NEUT] (A9-04))",
+    "analog_refs": []
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answer row 70",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "G-SAFE",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "H-1 hardware only"
+  },
+  {
+   "id": "VI-EX-06",
+   "group": "extraction",
+   "name": "coupling voltage (cathode-common / plume potential to facility ground)",
+   "symbol": "V_cg",
+   "definition": "potential of the electron-source reference (C1 cathode-common or ICP reference) with respect to facility ground, in both configurations at identical H-1 settings",
+   "units": "V",
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "isolated voltage channel, selectable bleeder topology (row 91; docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-NEUT] (A9-04))",
+    "analog_refs": [
+     "TK-54",
+     "TK-55"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answer row 91",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "G-NEUT",
+    "C-EQUIV",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor: anode potential ~120-130 V vs ground with the supply floating (TK-54); context only",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-EX-07",
+   "group": "extraction",
+   "name": "neutralization margin",
+   "symbol": "M_neut",
+   "definition": "owner form (A9.1 UBQ-02): M_n = I_e,cap / I_d,dem - 1 with I_e,cap at the registered coupling-voltage limit (VI-EX-02) and I_d,dem the measured Hall current demand at the same point (VI-HD-01); gate on the one-sided lower confidence bound > 0; any extra design margin frozen at LOCK-2 by the LOCK-1 rule (rows 18, 19)",
+   "units": "-",
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "derived",
+    "chain": "VI-EX-02, VI-HD-01 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-NEUT] (A9-04))",
+    "analog_refs": [
+     "TK-52",
+     "TK-56"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires VI-EX-02 and VI-HD-01 (hardware); form decided (A9.1 UBQ-02)",
+   "evidence_class": "measured (future)",
+   "basis": "derived",
+   "source": "owner answers rows 18, 19, 37, 145",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "LOCK-1 (form) / LOCK-2 (numeric margin)",
+   "consumers": [
+    "G-NEUT"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "H-1 hardware only"
+  },
+  {
+   "id": "VI-EX-08",
+   "group": "extraction",
+   "name": "beam-neutralization evidence",
+   "symbol": "neut",
+   "definition": "current balance of the plume (beam ion current vs electron current into the beam) and absence of net charging with the supplies isolated; plus far-field ion energy with anode-level maximum",
+   "units": "A, V",
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "Faraday probes + RPA/RFEA (INS-15, INS-14 adapted; repeatability at S1b if gating, row 32; TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1))",
+    "analog_refs": [
+     "TK-56",
+     "TK-57",
+     "TK-58"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 32, 37",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "G-NEUT",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor evidence is qualitative only (TK-56): IEDF maximum ~ anode potential, zero net current to chamber",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-EX-09",
+   "group": "extraction",
+   "name": "electron production cost",
+   "symbol": "C_e",
+   "definition": "(P_RF,DC + P_coll + ICP housekeeping) / I_e,ICP for the ICP; (heater + keeper + flow-control power) / I_emit for C1; both on the A9-02 bus boundary",
+   "units": "W/A",
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "derived",
+    "chain": "VI-RF-08, VI-EX-04, VI-EX-01, VI-PB-02 (abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slots (A9-02))",
+    "analog_refs": [
+     "S-01",
+     "S-02",
+     "S-04"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "derived",
+   "source": "owner answer row 37",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "P-DPBUS",
+    "G-ALLOC"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "open RF cathodes span ~40-260 W/A of RF input per ampere on Xe (survey derived values) - context, not a bound for the A9 module",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-EX-10",
+   "group": "extraction",
+   "name": "ion energy at the collector (sputter-energy input)",
+   "symbol": "E_i,coll",
+   "definition": "energy of ions striking the collector: (ICP plasma potential - V_coll) for ICP ions and (V_A - V_coll) for Hall ions reaching it",
+   "units": "eV",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "derived",
+    "chain": "VI-EX-03 + plasma potential (INS-16 adapted; RFEA)",
+    "analog_refs": [
+     "TK-70"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "derived",
+   "source": "Takahashi 2024 p. 6 (mechanism)",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "P-LIFE",
+    "R-LIFE"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor estimates ~140 eV and ~220 eV at its largest V_D (TK-70)",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-HD-01",
+   "group": "hall",
+   "name": "Hall discharge current demand",
+   "symbol": "I_d(V_d, B, mdot)",
+   "definition": "discharge current of H-1 at each registered V_d / coil-current / feed point, measured first with the C1 reference and then with the ICP neutralizer at identical settings",
+   "units": "A",
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-04 adapted (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-ID] (A9-04))",
+    "analog_refs": [
+     "TK-52"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2",
+    "XE"
+   ],
+   "value": "TBD - requires H-1 operation (no Hall closure admitted; credible set EMPTY)",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json IFD-08 (bound)",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "G-NEUT",
+    "G-PBUS",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "sizing envelope only (not a prediction): I_d <= 8.33 A at 180 V (RFP bound) and <= 7.5 A at 180 V under the 1.35 kW allocation (H2-2 IFD-08, PRELIMINARY)",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-HD-02",
+   "group": "hall",
+   "name": "anode potential and effective anode-to-electron-source voltage",
+   "symbol": "V_A, V_A - V_ref",
+   "definition": "anode potential vs facility ground and the voltage actually across anode and electron-source reference (series elements and sheath drops separated)",
+   "units": "V",
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-04 adapted (TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1))",
+    "analog_refs": [
+     "TK-41",
+     "TK-54"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "Takahashi 2024 p. 6 (mechanism)",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "G-PBUS",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor shows a large share of V_D lost to the 50 ohm resistor and the collector sheath (digitized_fig4: V_D - I_D x 50 ohm)",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-HD-03",
+   "group": "hall",
+   "name": "thrust",
+   "symbol": "T",
+   "definition": "sustained thrust of the full H-1 + electron-source configuration on the torsional stand with matched shams",
+   "units": "mN",
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-01 adapted; 1 % absolute uncertainty target (row 121); docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=DQ-HI-TABS] (A9-04)",
+    "analog_refs": []
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "N2",
+    "O2",
+    "XE"
+   ],
+   "value": "TBD - requires H-1 on the stand",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 4, 27, 115, 121",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "G-THRUST",
+    "P-TP"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none: the anchor measured no thrust (TK-60)",
+   "supply": "H-1 hardware only"
+  },
+  {
+   "id": "VI-HD-04",
+   "group": "hall",
+   "name": "ion energy distribution and beam current in the plume",
+   "symbol": "IEDF, I_b",
+   "definition": "RPA/RFEA and Faraday data at registered positions for both configurations",
+   "units": "V, A",
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-14, INS-15 adapted (TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1))",
+    "analog_refs": [
+     "TK-57",
+     "TK-58",
+     "TK-59"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answer row 32",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "G-NEUT",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor on-axis RFEA at z = 25 cm only (TK-57)",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-HD-05",
+   "group": "hall",
+   "name": "B(z) perturbation by the downstream module",
+   "symbol": "delta B(z)",
+   "definition": "change of the H-1 field map with the ICP (or C1) module installed and energized vs reference, and the H-1 sensitivity scan used to freeze the allowable tolerance",
+   "units": "T",
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-09 adapted (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-BZ] (A9-04))",
+    "analog_refs": []
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "XCHK"
+   ],
+   "value": "TBD - requires H-1 + modules; tolerance frozen from measured H-1 sensitivity (row 67)",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answer row 67",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "LOCK-2 (tolerance)",
+   "consumers": [
+    "C-EQUIV"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "H-1 hardware only"
+  },
+  {
+   "id": "VI-HD-06",
+   "group": "hall",
+   "name": "H-1 fringe field inside the ICP volume",
+   "symbol": "B_ICP(z, r)",
+   "definition": "magnetic field of H-1 inside the downstream ICP volume (the 'unmagnetized' ICP sits in the Hall fringe field)",
+   "units": "T",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-09 extended downstream (ICD ICP-31 B(z) perturbation / sensitivity scan with the ICP installed; map extent TBD)",
+    "analog_refs": [
+     "TK-03",
+     "TK-14"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "XCHK"
+   ],
+   "value": "TBD - requires H-1 (EM only, row 78) and the module geometry",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 69, 78",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "MODEL",
+    "C-EQUIV"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor shows fringe field extending past its exit only to z ~ +10 mm (Fig. 2)",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-HD-07",
+   "group": "hall",
+   "name": "discharge oscillations with each electron source",
+   "symbol": "I_d(t)",
+   "definition": "time-resolved I_d with each electron source (to ~60 MHz if feasible, else the declared bandwidth and transfer function), including 13.56 MHz harmonics",
+   "units": "A",
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-04 time-resolved (row 129)",
+    "analog_refs": []
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answer row 129",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "G-STAB",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "H-1 hardware only"
+  },
+  {
+   "id": "VI-GAS-01",
+   "group": "gas",
+   "name": "ICP gas species and booking",
+   "symbol": "gas_ICP",
+   "definition": "the gas that sustains the ICP: (a) Hall exhaust re-use only (anchor topology), (b) a dedicated Xe feed (booked in the A9 Xe ledger docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json as F-ICP-XE / G-ICP-XE), or (c) a dedicated atmospheric feed; the primary mode is (a) G-REUSE with no dedicated flow (A9.1 HIQ-06, which closes the row-46 recorder flag for the primary mode); (b) and (c) are declared contingency variants whose flows are TBD",
+   "units": "-",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "owner_allocation",
+    "chain": "owner decision A9.1 HIQ-06 (answers OQ-VI-01): G-REUSE, no dedicated ICP flow; INS-05 per species only for a declared G-ATM / G-XE contingency variant",
+    "analog_refs": [
+     "TK-30",
+     "TK-31"
+    ]
+   },
+   "producing_stage": "n/a (owner allocation / requirement)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "G-REUSE (A9.1 HIQ-06): Hall exhaust / residual propellant, mdot_ICP,dedicated = 0; dedicated port capped; G-ATM / G-XE only as declared contingency variants (G-XE booked in docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json under PHASE_TOTAL_FLOW)",
+   "evidence_class": "owner-allocation",
+   "basis": "owner decision (A9.1 HIQ-06)",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json HIQ-06, HIQ-06_accounting (answers the recorder flag on row 46 of docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json for the primary mode)",
+   "status": "OWNER_GIVEN (A9.1 HIQ-06)",
+   "freeze_point": "LOCK-1",
+   "consumers": [
+    "P-DXE",
+    "G-MASS",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "the anchor uses Hall-exhaust re-use with no separate feed (TK-30); orifice RF cathodes use a dedicated feed (S-01, S-02, D-01)",
+   "supply": "owner"
+  },
+  {
+   "id": "VI-GAS-02",
+   "group": "gas",
+   "name": "dedicated ICP gas flow",
+   "symbol": "mdot_ICP",
+   "definition": "mass flow of any dedicated ICP feed per species, booked as PHASE_TOTAL_FLOW (purge, ignition, operation, transition, fallback)",
+   "units": "mg/s",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-05 adapted (own-gas thermal MFC, rows 124, 126)",
+    "analog_refs": [
+     "S-01",
+     "S-02",
+     "D-01"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires OQ-VI-01 and hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 42, 46",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "P-DXE",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "open RF cathodes: 0.3 mg/s Xe for 3.3 A (S-01); 0.018 mg/s N2/O2 for up to 0.45 A (D-01) - context only",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-GAS-03",
+   "group": "gas",
+   "name": "neutral pressure in the ICP region",
+   "symbol": "p_ICP",
+   "definition": "pressure inside the ICP volume fed by the Hall exhaust (and any dedicated feed), at a declared tap",
+   "units": "Pa",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "pressure tap at the Hall-exhaust-to-ICP interface (schemas/interfaces/icp_neutralizer_icd_v1.json ICP-27 (A9-03 ICD))",
+    "analog_refs": [
+     "TK-34",
+     "TK-35"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "XCHK",
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answer row 63",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "MODEL",
+    "G-NEUT"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor gives chamber pressure 28 mPa and an estimated tube density ~2e19 m^-3 (TK-34, TK-35); no in-tube measurement",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-GAS-04",
+   "group": "gas",
+   "name": "Hall-exhaust-to-ICP conductance / pressure interface",
+   "symbol": "C_HE-ICP",
+   "definition": "measured conductance / pressure ratio between the H-1 exit plane and the ICP volume (cold flow and hot)",
+   "units": "L/s, -",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "cold-flow pressure mapping (schemas/interfaces/icp_neutralizer_icd_v1.json ICP-27 (A9-03 ICD))",
+    "analog_refs": [
+     "TK-12"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "XCHK",
+    "AR"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answer row 63",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "LOCK-1 (interface) / after-evidence (value)",
+   "consumers": [
+    "MODEL",
+    "C-EQUIV"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "H-1 hardware only"
+  },
+  {
+   "id": "VI-GAS-05",
+   "group": "gas",
+   "name": "facility background pressure and its effect on extraction",
+   "symbol": "p_b",
+   "definition": "background pressure at the registered location per run, at the nominal and two elevated levels",
+   "units": "Pa",
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-08 adapted",
+    "analog_refs": [
+     "TK-33",
+     "TK-34"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - T-PB-MAX frozen only after knee and facility capability are known (row 23)",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 23, 131, 137",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "LOCK-2",
+   "consumers": [
+    "C-EQUIV",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor ran at ~28 mPa (TK-34) - high background; facility coupling unresolved",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-GAS-06",
+   "group": "gas",
+   "name": "gas flow per ampere / gas utilization of the electron source",
+   "symbol": "mdot / I_e",
+   "definition": "electron-source gas flow per extracted ampere (ICP: dedicated flow share; C1: cathode Xe flow)",
+   "units": "mg/(s A)",
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "derived",
+    "chain": "VI-GAS-02 / VI-EX-01; C1: VI-SU-05 flow term",
+    "analog_refs": [
+     "S-01",
+     "S-04"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "derived",
+   "source": "owner answer row 37",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "P-DXE"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "survey: U_e ~15 (derived, orifice-type RF cathode, S-01) and 180 (reported, abstract, S-04) on Xe - an order of magnitude apart; context only",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-GAS-07",
+   "group": "gas",
+   "name": "delivered feed state to H-1 (common to both configurations)",
+   "symbol": "mdot_s, P_feed, T_feed, x_s",
+   "definition": "feed state at the valve outlet / anode-distributor inlet, identical in both configurations",
+   "units": "mg/s, Pa, K, -",
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-05, INS-06, INS-07, INS-11 (existing)",
+    "analog_refs": []
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires H-1 operation; compressor bus draw and valve-outlet state are PARTIAL_BOUNDARY until measured (row 22)",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 22, 73",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "C-EQUIV",
+    "G-THRUST"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "H-1 hardware only"
+  },
+  {
+   "id": "VI-PB-01",
+   "group": "power",
+   "name": "ICP-module bus power",
+   "symbol": "P_bus,ICP",
+   "definition": "sum of every ICP-related load at the spacecraft-DC propulsion boundary: RF source, collector/bias supply, any assist magnet or active cooling, ICP housekeeping",
+   "units": "W",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-02 adapted per bus slot (abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slots (A9-02))",
+    "analog_refs": [
+     "TK-21",
+     "TK-27",
+     "TK-28"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware and A9-02 slots",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 66, 108, 109, 110; A9 requirement_discipline",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "LOCK-1 (slots) / after-evidence (value)",
+   "consumers": [
+    "G-PBUS",
+    "G-ALLOC",
+    "P-DPBUS"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor power figures are RF-generator forward/absorbed only (TK-21, TK-27); a generator-only figure is not sufficient (A9 requirement discipline)",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-PB-02",
+   "group": "power",
+   "name": "C1-reference bus power",
+   "symbol": "P_bus,C1",
+   "definition": "heater, keeper (incl. pulsed ignition), cathode flow control and any filter/getter load of the C1 reference",
+   "units": "W",
+   "configurations": [
+    "hall_c1_reference"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-02 adapted per bus slot (abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slots (A9-02))",
+    "analog_refs": []
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2",
+    "XE"
+   ],
+   "value": "TBD - requires C1 hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 49, 51, 89, 110",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "G-PBUS",
+    "P-DPBUS"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "H-1 hardware only"
+  },
+  {
+   "id": "VI-PB-03",
+   "group": "power",
+   "name": "total P_bus including start-up transients",
+   "symbol": "P_bus(t)",
+   "definition": "time-resolved sum over all slots from cold start through steady state for each configuration",
+   "units": "W",
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-02 time-resolved; averaging window docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json UB-P-07 (A9-04)",
+    "analog_refs": []
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware; limit < 1500 W incl. transients unless the official RFP allows otherwise (row 108)",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 108, 112",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "LOCK-1 (window rule) / after-evidence (value)",
+   "consumers": [
+    "G-PBUS"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "H-1 hardware only"
+  },
+  {
+   "id": "VI-PB-04",
+   "group": "power",
+   "name": "internal design allocation the ICP must fit inside",
+   "symbol": "B_alloc",
+   "definition": "internal propulsion design allocation (~1.35 kW) inside which the ICP power must fit; the 1.35-1.5 kW margin is not consumed nominally",
+   "units": "W",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "owner_allocation",
+    "chain": "owner answer",
+    "analog_refs": []
+   },
+   "producing_stage": "n/a (owner allocation / requirement)",
+   "evidence_steps": [],
+   "value": "~1350 (owner answer row 109; allocation, not a measured load)",
+   "evidence_class": "owner-allocation",
+   "basis": "owner allocation",
+   "source": "owner answer row 109",
+   "status": "FIXED_BY_OWNER",
+   "freeze_point": "NOW",
+   "consumers": [
+    "G-ALLOC"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "owner"
+  },
+  {
+   "id": "VI-SU-01",
+   "group": "startup",
+   "name": "ICP ignition",
+   "symbol": "ign_ICP",
+   "definition": "ignition success per attempt, attempts, forward power, pressure and time-to-ignite of the ICP, with and without Hall flow",
+   "units": "-, W, Pa, s",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-10 adapted (row 24)",
+    "analog_refs": [
+     "TK-73"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answer row 24",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "P-RESTART",
+    "G-STAB",
+    "MODEL"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor: RF plasma turned on first, no statistics (TK-73); Paschen-type ignition of orifice RF cathodes discussed in S-01/S-02",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-SU-02",
+   "group": "startup",
+   "name": "Hall ignition with ICP electrons",
+   "symbol": "ign_Hall|ICP",
+   "definition": "Hall discharge ignition success, attempts and onset V_d with the ICP as the only electron source; confirm 'no Hall discharge without ICP electrons' as an engineering-only topology check",
+   "units": "-, V",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-10 adapted (row 24; criterion TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1))",
+    "analog_refs": [
+     "TK-50",
+     "TK-51"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answer row 24",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "P-RESTART",
+    "G-NEUT"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor: onset V_D > 140 V and no discharge without RF on Ar (TK-50, TK-51) - context only",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-SU-03",
+   "group": "startup",
+   "name": "restart success and cycle count",
+   "symbol": "N_restart, N_cycle",
+   "definition": "restart success rate and accumulated on/off cycles per configuration, classified per the preregistration",
+   "units": "-",
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-10 adapted (row 24)",
+    "analog_refs": []
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 24, 46",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "P-RESTART",
+    "R-LIFE"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none in open sources read (survey by_topic.restart)",
+   "supply": "H-1 hardware only"
+  },
+  {
+   "id": "VI-SU-04",
+   "group": "startup",
+   "name": "C1 start sequence Xe and dwell",
+   "symbol": "m_Xe,start",
+   "definition": "C1 purge / preheat / ignition Xe booked as PHASE_TOTAL_FLOW, ignition dwell capped at 120 s with at most two retries in the preliminary protocol",
+   "units": "mg, s",
+   "configurations": [
+    "hall_c1_reference"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-05 cathode Xe line (rows 42, 93)",
+    "analog_refs": []
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2",
+    "XE"
+   ],
+   "value": "TBD - requires C1 hardware; dwell cap 120 s x 2 retries (row 93, preliminary)",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 42, 92, 93",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "LOCK-2 (final bound, row 93)",
+   "consumers": [
+    "P-DXE",
+    "P-RESTART"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "H-1 hardware only"
+  },
+  {
+   "id": "VI-SU-05",
+   "group": "startup",
+   "name": "C1 steady cathode Xe flow",
+   "symbol": "mdot_c",
+   "definition": "C1 spot-mode steady flow found with a 0.005 mg/s step search and preregistered stopping criteria",
+   "units": "mg/s",
+   "configurations": [
+    "hall_c1_reference"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-05 cathode MFC (resolution <= 0.0005 mg/s, row 98)",
+    "analog_refs": []
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2",
+    "XE"
+   ],
+   "value": "TBD - requires C1 hardware; search step 0.005 mg/s (row 92)",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 46, 92, 98",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "P-DXE"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "H-1 hardware only"
+  },
+  {
+   "id": "VI-LF-01",
+   "group": "life",
+   "name": "collector / electrode erosion rate",
+   "symbol": "dm/dt, dh/dt",
+   "definition": "mass loss and profile change of the ICP ion-collecting electrode per hour at registered operating points",
+   "units": "mg/h, um/h",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-19, INS-20 adapted",
+    "analog_refs": [
+     "TK-70",
+     "TK-71"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2",
+    "AO"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 46, 132",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "P-LIFE",
+    "R-LIFE"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor: sputtering at ~140-220 eV observed, no rate (TK-70, TK-71)",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-LF-02",
+   "group": "life",
+   "name": "sputter deposition on the ICP tube and H-1 exit insulators",
+   "symbol": "deposit",
+   "definition": "deposit mass/thickness and its effect on RF coupling (eta_p drift) and on H-1 insulators, via witness coupons",
+   "units": "ug/cm^2, -",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-19, INS-20 + witness holders (row 134)",
+    "analog_refs": [
+     "TK-71"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answer row 134",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "P-LIFE",
+    "C-EQUIV"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor: metallic films on glass and HET front insulators after the experiment (TK-71)",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-LF-03",
+   "group": "life",
+   "name": "RF coupling drift over accumulated operation",
+   "symbol": "d eta_p / dt",
+   "definition": "change of R_ant, R_total and eta_p with accumulated hours and cycles",
+   "units": "1/h",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "repeat of VI-RF-06/07 at reference points",
+    "analog_refs": [
+     "TK-26"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answer row 46",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "P-LIFE",
+    "R-LIFE"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "H-1 hardware only"
+  },
+  {
+   "id": "VI-LF-04",
+   "group": "life",
+   "name": "ICP / RF thermal state and margin",
+   "symbol": "T_ICP, T_ant, T_RF",
+   "definition": "temperatures of the ICP tube, antenna, matching network and RF source; margin >= 50 K below each validated continuous-use limit plus 20 % heat-load design margin",
+   "units": "K",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "INS-17 adapted (RF source temperature in the telemetry, row 130)",
+    "analog_refs": [
+     "TK-27",
+     "TK-62"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "AR",
+    "N2",
+    "O2"
+   ],
+   "value": "TBD - requires hardware; margin rule >= 50 K (row 86)",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 86, 130",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "G-SAFE",
+    "P-LIFE"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor: most RF power heats the electrode (TK-27); shot scatter attributed to thermal issues (TK-62)",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-LF-05",
+   "group": "life",
+   "name": "ICP-neutralizer lifetime / cycle requirement",
+   "symbol": "L_req, N_req",
+   "definition": "required operating hours and on/off cycles of the ICP neutralizer (C1 carries the 15,000 h cathode term; the ICP carries its own requirement)",
+   "units": "h, -",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "owner_allocation",
+    "chain": "owner decision (OQ-VI-04)",
+    "analog_refs": []
+   },
+   "producing_stage": "n/a (owner allocation / requirement)",
+   "evidence_steps": [],
+   "value": "TBD - requires an owner decision (row 46) and the mission restart count; firing basis > 15,000 h is provisional (row 3)",
+   "evidence_class": "owner-allocation",
+   "basis": "requirement (pending)",
+   "source": "owner answers rows 3, 46",
+   "status": "OPEN",
+   "freeze_point": "LOCK-1",
+   "consumers": [
+    "R-LIFE"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "owner"
+  },
+  {
+   "id": "VI-LF-06",
+   "group": "life",
+   "name": "O2-bearing and atomic-O material compatibility",
+   "symbol": "compat",
+   "definition": "material response of ICP tube, antenna shielding and collector to O2-bearing plasma (NO_ATOMIC_O) and, separately, to atomic O in the dedicated programme",
+   "units": "-",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "measurement",
+    "chain": "coupons (INS-19, INS-20); separate AO source (row 132)",
+    "analog_refs": [
+     "TK-74"
+    ]
+   },
+   "producing_stage": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-01 prereg framework defines the stages but no per-input producing-stage assignment; owner call OQ-A910-02 (LOCK-1)",
+   "evidence_steps": [
+    "O2",
+    "AO"
+   ],
+   "value": "TBD - requires hardware and the AO programme",
+   "evidence_class": "measured (future)",
+   "basis": "measurement",
+   "source": "owner answers rows 102, 132",
+   "status": "HARDWARE_ONLY",
+   "freeze_point": "after-evidence",
+   "consumers": [
+    "P-LIFE",
+    "R-LIFE"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "anchor claim of reactive-gas operability is not demonstrated there (TK-74)",
+   "supply": "analog can bound (context only); value from H-1 hardware"
+  },
+  {
+   "id": "VI-MS-01",
+   "group": "mass",
+   "name": "ICP neutralizer mass allocation",
+   "symbol": "m_ICP",
+   "definition": "v0 dry allocation for the ICP neutralizer",
+   "units": "kg",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "owner_allocation",
+    "chain": "owner answer",
+    "analog_refs": []
+   },
+   "producing_stage": "n/a (owner allocation / requirement)",
+   "evidence_steps": [],
+   "value": "2.0 (allocation, not CBE; row 54)",
+   "evidence_class": "owner-allocation",
+   "basis": "owner allocation",
+   "source": "owner answer row 54",
+   "status": "FIXED_BY_OWNER",
+   "freeze_point": "NOW",
+   "consumers": [
+    "G-MASS",
+    "P-DMASS"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "owner"
+  },
+  {
+   "id": "VI-MS-02",
+   "group": "mass",
+   "name": "RF generator / matching mass allocation",
+   "symbol": "m_RF",
+   "definition": "v0 dry allocation for RF generator and matching",
+   "units": "kg",
+   "configurations": [
+    "hall_icp_neutralizer"
+   ],
+   "how_obtained": {
+    "route": "owner_allocation",
+    "chain": "owner answer",
+    "analog_refs": []
+   },
+   "producing_stage": "n/a (owner allocation / requirement)",
+   "evidence_steps": [],
+   "value": "1.5 (allocation, not CBE; row 54)",
+   "evidence_class": "owner-allocation",
+   "basis": "owner allocation",
+   "source": "owner answer row 54",
+   "status": "FIXED_BY_OWNER",
+   "freeze_point": "NOW",
+   "consumers": [
+    "G-MASS",
+    "P-DMASS"
+   ],
+   "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
+   "analog_bound": "none",
+   "supply": "owner"
+  }
+ ],
+ "interface_demands": [
+  {
+   "id": "IF-01",
+   "direction": "from",
+   "counterpart": "A9-01 docs/experiments/hall_icp/prereg_framework/",
+   "what": "stage map ids, decision-quantity list, prereg rules, outcome vocabulary (NO_VIABLE_CASE; OPEN as status)",
+   "units": "-",
+   "status": "PARTIAL: A9-01 supplies stage_map ids, decision_quantities, design rules and the outcome vocabulary (NO_VIABLE_CASE; OPEN as status); the per-input stage assignment stays OPEN (OQ-A910-02, LOCK-1)"
+  },
+  {
+   "id": "IF-02",
+   "direction": "to",
+   "counterpart": "A9-01 docs/experiments/hall_icp/prereg_framework/",
+   "what": "per-input producing stage requests (steps XCHK/AR/N2/O2/AO/XE) and the topology-reproduction check OQ-VI-05",
+   "units": "-",
+   "status": "OFFERED"
+  },
+  {
+   "id": "IF-03",
+   "direction": "from",
+   "counterpart": "A9-02 abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/",
+   "what": "bus slots: RF source/matching, collector/bias, C1 heater/keeper/flow, assist magnet/cooling if used",
+   "units": "W",
+   "status": "SATISFIED by A9-02: abep_sim/bus_boundary_a9.py SLOTS / BASE_SLOTS (A9-02, merged) (icp_rf_source, icp_matching_network, icp_collector_bias (variants: icp_assist_magnet, active_cooling, flow_control_icp_feed only for G-ATM / G-XE); C1 slots c1_heater, c1_keeper, c1_common_tie, filter_getter, flow_control_xe)"
+  },
+  {
+   "id": "IF-04",
+   "direction": "to",
+   "counterpart": "A9-02",
+   "what": "measurement definitions P_RF,DC, P_coll, P_bus,ICP, P_bus,C1, P_bus(t) (VI-RF-08, VI-EX-04, VI-PB-01..03)",
+   "units": "W",
+   "status": "OFFERED"
+  },
+  {
+   "id": "IF-05",
+   "direction": "from",
+   "counterpart": "A9-03 docs/interfaces/icp_neutralizer/",
+   "what": "RF load plane, collector/body terminals and reference, gas port, Hall-exhaust-to-ICP pressure tap, diagnostic access",
+   "units": "-",
+   "status": "PARTIAL: A9-03 defines the RF load plane (ICP-13 / ICP-14), collector / body terminals (ICP-20 / ICP-21), gas port (ICP-26) and channels (ICP-34); the Hall-exhaust-to-ICP pressure tap (ICP-27) and diagnostic access geometry are TBD (LOCK-1)"
+  },
+  {
+   "id": "IF-06",
+   "direction": "to",
+   "counterpart": "A9-03",
+   "what": "measurement provisions required by this list: antenna current probe port, directional coupler on the generator / 50-ohm side of the LOCAL matching network (ICP-14 plane; A9.2 OQ-A907-11 / rf_measurement_reference), isolated collector/body V/I, pressure tap, witness-coupon holders, B-probe access in the ICP volume, capped dedicated-feed port (OQ-VI-01)",
+   "units": "A, W, V, Pa, T",
+   "status": "OFFERED"
+  },
+  {
+   "id": "IF-07",
+   "direction": "from",
+   "counterpart": "A9-04 docs/experiments/hall_icp/uncertainty_budget/",
+   "what": "measurement chains, uncertainties, stop rules and decision-quantity ids consuming these inputs",
+   "units": "per item",
+   "status": "PARTIAL: A9-04 measurement chains and stop-rule forms exist; decision-quantity ids per input: see the A9-10 chain -> DQ-HI consumer table (OQ-INT-01, PROPOSED) and OQ-A910-02"
+  },
+  {
+   "id": "IF-08",
+   "direction": "to",
+   "counterpart": "A9-04",
+   "what": "the list of inputs needing a chain (every HARDWARE_ONLY item)",
+   "units": "per item",
+   "status": "OFFERED"
+  },
+  {
+   "id": "IF-09",
+   "direction": "from",
+   "counterpart": "A9-05 part 1 docs/evidence/icp_neutralizer/",
+   "what": "analog bounds (TK-/S-/D- ids)",
+   "units": "per item",
+   "status": "DELIVERED (this lane)"
+  },
+  {
+   "id": "IF-10",
+   "direction": "to",
+   "counterpart": "A9-06 mass BOM amendment",
+   "what": "ICP / RF mass allocations 2.0 / 1.5 kg are allocations only (VI-MS-01/02)",
+   "units": "kg",
+   "status": "OFFERED"
+  },
+  {
+   "id": "IF-11",
+   "direction": "to",
+   "counterpart": "A9-08 Xe ledger updates (docs/budgets/xe_ledger/)",
+   "what": "possible ICP Xe feed term (OQ-VI-01) and C1 start terms (VI-SU-04/05)",
+   "units": "mg/s, kg",
+   "status": "OFFERED (conditional on OQ-VI-01)"
+  },
+  {
+   "id": "IF-12",
+   "direction": "from",
+   "counterpart": "H2-1 docs/hardware/h2/h2_1_hall_chamber_magnet/ (+ A9-07 revision)",
+   "what": "H-1 field map incl. the downstream fringe region; external C1 (row 79) and neutralizer-agnostic head",
+   "units": "T, mm",
+   "status": "PARTIAL: A9-07 revises H2-1 (REV-01..REV-12, REV-66: external C1, IP-EXIT / IP-NEU, hot-state B sensor); the field map incl. the downstream fringe region is TBD - requires FEMM of MC-1 and the S1a map (A9-07 IDA7-17)"
+  },
+  {
+   "id": "IF-13",
+   "direction": "from",
+   "counterpart": "H2-2 docs/hardware/h2/h2_2_cathode_integration/",
+   "what": "IFD-08 emission bounds (I_d <= 8.33 A at 180 V RFP bound; <= 7.5 A under 1.35 kW) used as the electron-capacity sizing envelope",
+   "units": "A",
+   "status": "CONSUMED (PRELIMINARY bound, not a prediction)"
+  },
+  {
+   "id": "IF-14",
+   "direction": "to",
+   "counterpart": "H2-3 docs/hardware/h2/h2_3_gas_path_plenum/ (+ A9-07)",
+   "what": "any dedicated ICP gas line crossing potentials inherits the Paschen isolator requirement H23-29 (withstand across the full pressure range; ~1 kV qualification, row 105)",
+   "units": "V, Pa",
+   "status": "OFFERED"
+  },
+  {
+   "id": "IF-15",
+   "direction": "to",
+   "counterpart": "H2-4 docs/hardware/h2/h2_4_ppu_bus/ (+ A9-07)",
+   "what": "SEQ-1 revision must include ICP ignition before Hall ignition (anchor sequence TK-73) and the start-up peak rule (VI-PB-03)",
+   "units": "W",
+   "status": "OFFERED"
+  },
+  {
+   "id": "IF-16",
+   "direction": "to",
+   "counterpart": "H2-5 docs/hardware/h2/h2_5_thermal_network/ (+ A9-07)",
+   "what": "ICP / RF heat loads and >= 50 K margin (VI-LF-04)",
+   "units": "W, K",
+   "status": "OFFERED"
+  },
+  {
+   "id": "IF-17",
+   "direction": "to",
+   "counterpart": "H2-6 docs/hardware/h2/h2_6_diagnostics_fixture/",
+   "what": "kinematic carrier for C1 and ICP modules; RF coax with matched sham across the stand; RF pickup checks (VI-RF-11)",
+   "units": "-",
+   "status": "OFFERED"
+  },
+  {
+   "id": "IF-18",
+   "direction": "to",
+   "counterpart": "H2-7 docs/hardware/h2/h2_7_mechanical_bom/ (+ A9-06)",
+   "what": "ICP neutralizer, RF generator/matching/feedthrough and collector/bias BOM lines (row 59)",
+   "units": "kg",
+   "status": "OFFERED"
+  },
+  {
+   "id": "IF-19",
+   "direction": "from",
+   "counterpart": "docs/experiments/hardware/ (H-1 / C-1 configuration items)",
+   "what": "H-1 exit plane / IP-DN datum as the reference for z = 0 of the ICP geometry",
+   "units": "mm",
+   "status": "SATISFIED by A9.1 A9-03-planes (IP-EXIT = H-1 exit, z = L; IP-NEU downstream datum; historical IP-DN unchanged), ICD ICP-01 and A9-07 REV-03 / REV-66"
+  }
+ ],
+ "owner_answers_applied": [
+  {
+   "row": 3,
+   "how": "firing basis > 15,000 h kept provisional in VI-LF-05"
+  },
+  {
+   "row": 4,
+   "how": "thrust gate definition (>= 12 mN sustained, 25 mN capability) in consumer G-THRUST"
+  },
+  {
+   "row": 5,
+   "how": "40 kg is wet (Xe + tank) in consumer G-MASS"
+  },
+  {
+   "row": 7,
+   "how": "anchor full text read; lawful-acquisition list in the evidence part"
+  },
+  {
+   "row": 17,
+   "how": "H-1 fixed on the stand; only the downstream electron-source module is swapped (C-EQUIV)"
+  },
+  {
+   "row": 18,
+   "how": "no numeric margin carried over; neutralization-margin number frozen at LOCK-2 (VI-EX-07)"
+  },
+  {
+   "row": 19,
+   "how": "n from measured uncertainty at LOCK-2 (freeze points)"
+  },
+  {
+   "row": 22,
+   "how": "PARTIAL_BOUNDARY until compressor draw and valve-outlet state are measured (VI-GAS-07)"
+  },
+  {
+   "row": 23,
+   "how": "two elevated background-pressure levels; T-PB-MAX frozen later (VI-GAS-05)"
+  },
+  {
+   "row": 24,
+   "how": "ICP ignition, Hall ignition with ICP electrons, restart and cycle count recorded (VI-SU-01..03)"
+  },
+  {
+   "row": 25,
+   "how": "model-validation inputs held out before exposure (consumer MODEL)"
+  },
+  {
+   "row": 26,
+   "how": "Xe reference points labelled, never atmospheric evidence (step XE)"
+  },
+  {
+   "row": 27,
+   "how": "25 mN inside the same full boundary with P_bus < 1.5 kW (G-THRUST, G-PBUS)"
+  },
+  {
+   "row": 32,
+   "how": "Faraday/ExB repeatability if eta_u/beam current gates (VI-EX-08)"
+  },
+  {
+   "row": 33,
+   "how": "module-exchange reproducibility as a comparison control (C-EQUIV)"
+  },
+  {
+   "row": 36,
+   "how": "evidence order Ar (engineering-only) -> N2 -> O2-bearing (steps)"
+  },
+  {
+   "row": 37,
+   "how": "NET_BENEFIT = hard gates + a Pareto report, no weighted scalar (A9.1 HIQ-05: no mandatory Pareto relation) (consumer vocabulary)"
+  },
+  {
+   "row": 38,
+   "how": "OPEN used as a status only (VI-GAS-01 OPEN_UNBOOKED_FLAG, VI-LF-05 OPEN)"
+  },
+  {
+   "row": 42,
+   "how": "PHASE_TOTAL_FLOW booking for ICP and C1 gas (VI-GAS-02, VI-SU-04)"
+  },
+  {
+   "row": 46,
+   "how": "ICP carries its own lifetime/cycle requirement (VI-LF-05); ICP gas feed flagged unbooked (VI-GAS-01)"
+  },
+  {
+   "row": 54,
+   "how": "ICP 2.0 kg and RF 1.5 kg are allocations, not CBEs (VI-MS-01/02)"
+  },
+  {
+   "row": 62,
+   "how": "ICP harness quantities: RF forward/reflected, collector V/I, temperatures (VI-RF-02/03, VI-EX-03/04, VI-LF-04)"
+  },
+  {
+   "row": 63,
+   "how": "downstream Hall-exhaust-to-ICP pressure/conductance interface measured (VI-GAS-03/04)"
+  },
+  {
+   "row": 64,
+   "how": "module-exchange checks: cold/tare, parasitic, B(z), isolation, RF pickup (step XCHK, VI-RF-11, VI-HD-05)"
+  },
+  {
+   "row": 66,
+   "how": "every legitimate ICP load gets a bus slot (VI-RF-08, VI-EX-04, VI-PB-01)"
+  },
+  {
+   "row": 67,
+   "how": "measured B(z) perturbation; tolerance from measured sensitivity (VI-HD-05)"
+  },
+  {
+   "row": 69,
+   "how": "unmagnetized first build; magnetized analog data context-only (VI-RF-10)"
+  },
+  {
+   "row": 70,
+   "how": "ICP body floating, collector bias controlled and measured separately (VI-EX-03..05)"
+  },
+  {
+   "row": 72,
+   "how": "13.56 MHz; 0-500 W lab chain (A9.2 rf_500W: delivered/operating investigation capability, not a component rating) with directional coupler; calorimetry as cross-check (VI-RF-01..05)"
+  },
+  {
+   "row": 78,
+   "how": "EM-only MC-1 makes the fringe-field map traceable to coil current (VI-HD-06)"
+  },
+  {
+   "row": 86,
+   "how": ">= 50 K thermal margin rule (VI-LF-04)"
+  },
+  {
+   "row": 91,
+   "how": "selectable cathode-common/bleeder topology for coupling-voltage measurement (VI-EX-06)"
+  },
+  {
+   "row": 92,
+   "how": "0.005 mg/s C1 flow step (VI-SU-05)"
+  },
+  {
+   "row": 93,
+   "how": "120 s x 2 ignition dwell bound, preliminary (VI-SU-04)"
+  },
+  {
+   "row": 98,
+   "how": "C1 MFC resolution <= 0.0005 mg/s (VI-SU-05)"
+  },
+  {
+   "row": 108,
+   "how": "P_bus < 1.5 kW incl. start-up transients at the spacecraft-DC boundary (VI-PB-03)"
+  },
+  {
+   "row": 109,
+   "how": "ICP power inside the ~1.35 kW internal allocation (VI-PB-04)"
+  },
+  {
+   "row": 110,
+   "how": "supply partition incl. ICP RF source/matching and collector/bias (VI-PB-01)"
+  },
+  {
+   "row": 115,
+   "how": "torsional stand baseline (VI-HD-03)"
+  },
+  {
+   "row": 117,
+   "how": "flexible RF coax with matched sham routing across the stand (VI-RF-11)"
+  },
+  {
+   "row": 121,
+   "how": "1 % thrust uncertainty target (VI-HD-03)"
+  },
+  {
+   "row": 122,
+   "how": "kinematic carrier exchanges C1 and ICP modules; H-1 stays bolted (C-EQUIV)"
+  },
+  {
+   "row": 129,
+   "how": "I_d(t) to ~60 MHz or declared bandwidth (VI-HD-07)"
+  },
+  {
+   "row": 130,
+   "how": "ICP telemetry: forward/reflected RF, collector V/I, RF source temperature, health/interlock (VI-LF-04)"
+  },
+  {
+   "row": 132,
+   "how": "O2-bearing tests labelled NO_ATOMIC_O; AO life only in the separate programme (VI-LF-06)"
+  },
+  {
+   "row": 133,
+   "how": "matched sham service lines in every compared configuration (C-EQUIV)"
+  },
+  {
+   "row": 145,
+   "how": "this list is the new Hall->downstream-ICP validation-input list replacing the v2 list"
+  },
+  {
+   "row": 146,
+   "how": "no ASSUMED_SCREENING_VALUE inputs manufactured; every non-owner value is TBD"
+  }
+ ],
+ "open_owner_questions": [
+  {
+   "id": "OQ-VI-01",
+   "question": "Which gas sustains the ICP neutralizer and where is it booked: (a) Hall exhaust re-use only (anchor topology), (b) dedicated Xe feed booked in the Xe ledger, (c) dedicated atmospheric feed?",
+   "proposed_answer": "carry (a) as the A9 first-build hypothesis with a capped dedicated-feed port for (b)/(c) so the comparison can measure whether a dedicated feed is needed; book any dedicated flow as PHASE_TOTAL_FLOW; final booking is an owner call",
+   "rows": [
+    42,
+    46
+   ],
+   "freeze_point": "LOCK-1",
+   "status": "ANSWERED_BY_A9_1 (HIQ-06)",
+   "a9_1_decision": "HIQ-06: primary ICP gas mode G-REUSE (Hall exhaust/residual); dedicated ICP port installed and capped; G-ATM / G-XE are declared contingency variants; score-bearing N2/N2+O2 uses G-REUSE unless it fails the preregistered ICP-capacity gate; no dedicated Xe to make the ICP work",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
+  },
+  {
+   "id": "OQ-VI-02",
+   "question": "Form of the neutralization margin (VI-EX-07)",
+   "proposed_answer": "electron-current capacity at the registered coupling-voltage limit divided by the measured Hall I_d at the same point, per configuration; form frozen at LOCK-1, numeric margin at LOCK-2 (rows 18, 19); owner call",
+   "rows": [
+    18,
+    19,
+    37
+   ],
+   "freeze_point": "LOCK-1 / LOCK-2",
+   "status": "ANSWERED_BY_A9_1 (UBQ-02)",
+   "a9_1_decision": "UBQ-02: M_n = I_e,cap / I_d,dem - 1; gate on one-sided lower confidence bound > 0; any extra design margin frozen at LOCK-2 per LOCK-1 rule",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
+  },
+  {
+   "id": "OQ-VI-03",
+   "question": "Is an orificed RF plasma cathode (Watanabe / Xu type, dedicated feed) admissible as an A9 ICP-neutralizer variant, or only the open-tube coaxial downstream topology of the anchor?",
+   "proposed_answer": "open-tube coaxial downstream topology only for the first build (A9 governing decision 1); orificed RF cathodes remain literature bounds, not built; owner call",
+   "rows": [
+    69
+   ],
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "OQ-VI-04",
+   "question": "ICP-neutralizer lifetime and cycle requirement (VI-LF-05)",
+   "proposed_answer": "hours = the provisional > 15,000 h firing basis (row 3); cycles from the mission mode profile once measured; both TBD; owner call",
+   "rows": [
+    3,
+    46
+   ],
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "OQ-VI-05",
+   "question": "Is 'no Hall discharge without ICP electrons' (anchor TK-51) a required Ar engineering-only topology-reproduction check?",
+   "proposed_answer": "yes, qualitative and engineering-only, preregistered in A9-01; no numeric match to anchor values (different hardware)",
+   "rows": [
+    36
+   ],
+   "freeze_point": "LOCK-1"
+  }
+ ],
+ "historical_reuse": [
+  {
+   "path": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json",
+   "sha256": "84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28",
+   "reused": "record structure (id / definition / freeze point / status) and the LOCK-1-rule vs LOCK-2-value split",
+   "not_reused": "P1DQ decision quantities, cases hall_only / rf_hall / ecr_hall, all thresholds (superseded, rows 18, 28, 34)"
+  },
+  {
+   "path": "schemas/interfaces/preionizer_module_icd_v1.json",
+   "sha256": "2470718e1decbde874d2362a997d1e2aaae54eb855d1ed179b930c3be6e7130e",
+   "reused": "the 'net RF power at the coil/antenna feed terminals' load-plane definition pattern",
+   "not_reused": "upstream placement, common envelope, PMQ-01..PMQ-05, L1-L5 harness, blank-module pressure-drop class (superseded, rows 61-64)"
+  },
+  {
+   "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+   "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
+   "reused": "INS-01..INS-20 as measurement-chain anchors, adapted only through A9-04",
+   "not_reused": "DQ-RARCH, DQ-TABS/DQ-PBUS on bus_power_boundary_v1 (A9 uses a new boundary, row 108)"
+  },
+  {
+   "path": "feature/rf-hall-parallel-v2 branch (VALIDATION_PLAN.md) and A8",
+   "sha256": null,
+   "reused": "nothing",
+   "not_reused": "the entire v2 input list (RF coupling, nozzle, Hall-Xe points, compressor, start-up Xe): frozen, never supplied or invented (rows 11, 145, 146, 147)"
+  }
+ ],
+ "m16_impact": [
+  {
+   "m16_row": 6,
+   "subsystem": "Xe tank",
+   "how": "only if OQ-VI-01 books a dedicated Xe ICP feed (IF-11)",
+   "file_changed": false
+  },
+  {
+   "m16_row": 8,
+   "subsystem": "Xe metering (splits to ignition/transition feed and cathode feed)",
+   "how": "C1 start/steady flow inputs VI-SU-04/05; possible ICP feed branch",
+   "file_changed": false
+  },
+  {
+   "m16_row": 9,
+   "subsystem": "extended-channel Hall discharge chamber/accelerator",
+   "how": "Hall current demand VI-HD-01 becomes the sizing input of the electron source; no closure used",
+   "file_changed": false
+  },
+  {
+   "m16_row": 11,
+   "subsystem": "shielded Xe-fed LaB6 hollow cathode",
+   "how": "C1 becomes reference/fallback (rows 49, 88); C1 inputs VI-PB-02, VI-SU-04/05",
+   "file_changed": false
+  },
+  {
+   "m16_row": 12,
+   "subsystem": "PPU/power distribution",
+   "how": "new slots RF source/matching, collector/bias (VI-RF-08, VI-EX-04, VI-PB-01)",
+   "file_changed": false
+  },
+  {
+   "m16_row": 13,
+   "subsystem": "thermal control",
+   "how": "ICP / RF thermal inputs VI-LF-04",
+   "file_changed": false
+  },
+  {
+   "m16_row": 14,
+   "subsystem": "control/FDIR",
+   "how": "ICP telemetry and interlocks (row 130)",
+   "file_changed": false
+  },
+  {
+   "m16_row": 15,
+   "subsystem": "sensors/diagnostics",
+   "how": "new RF chain: directional coupler, antenna current probe, isolated collector/body channels, calorimetry",
+   "file_changed": false
+  },
+  {
+   "m16_row": 16,
+   "subsystem": "mechanical/structural interfaces",
+   "how": "kinematic carrier for C1/ICP modules (row 122)",
+   "file_changed": false
+  },
+  {
+   "m16_row": 17,
+   "subsystem": "RF pre-ionization module interface",
+   "how": "superseded for the primary line by the downstream ICP neutralizer; this list supplies the validation inputs of the re-scoped row (re-scope itself belongs to A9-10)",
+   "file_changed": false
+  }
+ ],
+ "h3_h4_inputs": {
+  "h3_procurement_rfq_inputs": [
+   "13.56 MHz RF generator for the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating) with forward/reflected metering (row 72; generator forward-power rating TBD_AFTER_IMPEDANCE_MAP)",
+   "adjustable LOCAL matching network on / immediately adjacent to the ICP module (A9.2 OQ-A907-11; matching-element ratings TBD_AFTER_IMPEDANCE_MAP); RF vacuum feedthrough; flexible 50-ohm coax + matched sham (rows 8, 117, 133)",
+   "inline directional coupler + power sensors on the generator / 50-ohm side of the LOCAL matching network (ICP-14 plane; A9.2 OQ-A907-11 / rf_measurement_reference) (P_forward, P_reflected, |Gamma|, VSWR, P_delivered); RF current probe for the antenna",
+   "isolated collector/bias supply with V/I telemetry (row 70)",
+   "isolated voltage/current channels for ICP body and collector; selectable bleeder (row 91)",
+   "own-gas thermal MFC for any dedicated ICP feed (rows 124, 126); capped feed port",
+   "witness-coupon holders for the ICP tube and H-1 exit (row 134)"
+  ],
+  "h4_measurement_inputs": [
+   "VI-RF-02",
+   "VI-RF-03",
+   "VI-RF-04",
+   "VI-RF-05",
+   "VI-RF-06",
+   "VI-RF-07",
+   "VI-RF-08",
+   "VI-RF-09",
+   "VI-RF-10",
+   "VI-RF-11",
+   "VI-EX-01",
+   "VI-EX-02",
+   "VI-EX-03",
+   "VI-EX-04",
+   "VI-EX-05",
+   "VI-EX-06",
+   "VI-EX-07",
+   "VI-EX-08",
+   "VI-EX-09",
+   "VI-EX-10",
+   "VI-HD-01",
+   "VI-HD-02",
+   "VI-HD-03",
+   "VI-HD-04",
+   "VI-HD-05",
+   "VI-HD-06",
+   "VI-HD-07",
+   "VI-GAS-02",
+   "VI-GAS-03",
+   "VI-GAS-04",
+   "VI-GAS-05",
+   "VI-GAS-06",
+   "VI-GAS-07",
+   "VI-PB-01",
+   "VI-PB-02",
+   "VI-PB-03",
+   "VI-SU-01",
+   "VI-SU-02",
+   "VI-SU-03",
+   "VI-SU-04",
+   "VI-SU-05",
+   "VI-LF-01",
+   "VI-LF-02",
+   "VI-LF-03",
+   "VI-LF-04",
+   "VI-LF-06"
+  ],
+  "h3_procurement_rfq_inputs_before_a9_2": {
+   "0": "13.56 MHz RF generator, 0-500 W forward with forward/reflected metering (row 72)",
+   "1": "matching network with remote tuning; RF vacuum feedthrough; flexible coax + matched sham (rows 8, 117)",
+   "2": "inline directional coupler + power sensors at the load plane; RF current probe for the antenna"
+  }
+ },
+ "summary_counts": {
+  "items": 52,
+  "hardware_only": 46,
+  "analog_can_bound_context": 31,
+  "owner_given_value": 4,
+  "tbd": 48
+ },
+ "a9_10_reconciliation": {
+  "lane": "fo_a9_10_integration",
+  "record": "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+  "overlay": "docs/experiments/hall_icp/integration/a9_10_overlay.py",
+  "a9_1_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
+  },
+  "a9_2_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
+   "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "recorded_at_commit": "19c0040",
+   "path_resolution": "the docs/decisions/ paths exist in the execution branch (commit 19c0040) and resolve in this lane branch only after it merges there; until then the byte-identical pinned copies under docs/experiments/hall_icp/integration/a9_2_inputs/ (sha256 checked on every build) are the readable authority"
+  },
+  "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+  "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
+  "changes": [
+   {
+    "cid": "A910-A905VI-Q01",
+    "driver": "A9.1 HIQ-06",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=OQ-VI-01]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-06"
+   },
+   {
+    "cid": "A910-A905VI-Q02",
+    "driver": "A9.1 UBQ-02",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=OQ-VI-02]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 UBQ-02"
+   },
+   {
+    "cid": "A910-A905VI-01",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=VI-GAS-01]/value",
+    "count": 1,
+    "summary": "ICP gas booked G-REUSE"
+   },
+   {
+    "cid": "A910-A905VI-02",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=VI-GAS-01]/status",
+    "count": 1,
+    "summary": "VI-GAS-01 status"
+   },
+   {
+    "cid": "A910-A905VI-03",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=VI-GAS-01]/basis",
+    "count": 1,
+    "summary": "VI-GAS-01 basis"
+   },
+   {
+    "cid": "A910-A905VI-04",
+    "driver": "A9.1 UBQ-02",
+    "op": "set",
+    "ptr": "/items[id=VI-EX-07]/definition",
+    "count": 1,
+    "summary": "M_n form"
+   },
+   {
+    "cid": "A910-A905VI-05",
+    "driver": "A9.1 UBQ-02",
+    "op": "set",
+    "ptr": "/items[id=VI-EX-07]/value",
+    "count": 1,
+    "summary": "VI-EX-07 value text"
+   },
+   {
+    "cid": "A910-A905VI-06",
+    "driver": "A9-08 merged (Xe-ledger retarget)",
+    "op": "replace",
+    "ptr": "/items[id=VI-GAS-01]/definition",
+    "count": 1,
+    "summary": "Xe-ledger reference retargeted"
+   },
+   {
+    "cid": "A910-R05vi-01",
+    "driver": "OQ-INT-03 (A9-03 ICP-20/21)",
+    "op": "merge",
+    "ptr": "/items[id=VI-EX-03]",
+    "count": 1,
+    "summary": "VI-EX-03 precise reason"
+   },
+   {
+    "cid": "A910-R05vi-02",
+    "driver": "OQ-INT-03 (A9-03 ICP-31)",
+    "op": "merge",
+    "ptr": "/items[id=VI-HD-06]/how_obtained",
+    "count": 1,
+    "summary": "VI-HD-06 chain resolved"
+   },
+   {
+    "cid": "A910-R05vi-03",
+    "driver": "OQ-INT-03 (A9-01)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-01]",
+    "count": 1,
+    "summary": "IF-01 partial"
+   },
+   {
+    "cid": "A910-R05vi-04",
+    "driver": "OQ-INT-03 (A9-02)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-03]",
+    "count": 1,
+    "summary": "IF-03 satisfied"
+   },
+   {
+    "cid": "A910-R05vi-05",
+    "driver": "OQ-INT-03 (A9-03)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-05]",
+    "count": 1,
+    "summary": "IF-05 partial"
+   },
+   {
+    "cid": "A910-R05vi-06",
+    "driver": "OQ-INT-03 (A9-04)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-07]",
+    "count": 1,
+    "summary": "IF-07 partial"
+   },
+   {
+    "cid": "A910-R05vi-07",
+    "driver": "OQ-INT-03 (A9-07)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-12]",
+    "count": 1,
+    "summary": "IF-12 partial"
+   },
+   {
+    "cid": "A910-R05vi-08",
+    "driver": "A9.1 A9-03-planes + OQ-INT-03",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-19]",
+    "count": 1,
+    "summary": "IF-19 satisfied"
+   },
+   {
+    "cid": "A910-R05vi-09",
+    "driver": "A9.1 HIQ-05",
+    "op": "replace",
+    "ptr": "/decision_vocabulary/net_benefit_form",
+    "count": 1,
+    "summary": "net_benefit_form amended"
+   },
+   {
+    "cid": "A910-R05vi-10",
+    "driver": "A9.1 HIQ-05",
+    "op": "replace",
+    "ptr": "/owner_answers_applied[row=37]/how",
+    "count": 1,
+    "summary": "row 37 application amended"
+   },
+   {
+    "cid": "A910-R05vi-11",
+    "driver": "A9.1 HIQ-06",
+    "op": "replace",
+    "ptr": "/items[id=VI-GAS-01]/definition",
+    "count": 1,
+    "summary": "VI-GAS-01 definition consistent with G-REUSE"
+   },
+   {
+    "cid": "A910-R05vi-12",
+    "driver": "A9.1 HIQ-06",
+    "op": "merge",
+    "ptr": "/items[id=VI-GAS-01]/how_obtained",
+    "count": 1,
+    "summary": "VI-GAS-01 chain: OQ-VI-01 answered by HIQ-06"
+   },
+   {
+    "cid": "A910-R05vi-13",
+    "driver": "A9.1 HIQ-06",
+    "op": "merge",
+    "ptr": "/items[id=VI-GAS-01]",
+    "count": 1,
+    "summary": "VI-GAS-01 source: A9.1 HIQ-06"
+   },
+   {
+    "cid": "A910-R05-01",
+    "driver": "OQ-INT-03 / OQ-A910-02 (review repair 2)",
+    "op": "gsub",
+    "ptr": "",
+    "count": 47,
+    "summary": "per-input producing stage: precise remaining reason next to the field"
+   },
+   {
+    "cid": "A910-R05-02",
+    "driver": "OQ-INT-03 / OQ-A910-02 (review repair 2)",
+    "op": "gsub",
+    "ptr": "",
+    "count": 60,
+    "summary": "per-input decision quantity: precise remaining reason next to the field"
+   },
+   {
+    "cid": "A910-A92S-A905VI-01",
+    "driver": "A9.2 rf_500W, OQ-A907-11",
+    "op": "merge",
+    "ptr": "/h3_h4_inputs",
+    "count": 1,
+    "summary": "superseded H3 RF lines kept as history"
+   },
+   {
+    "cid": "A910-A92S-A905VI-02",
+    "driver": "A9.2 rf_500W, OQ-A907-11, rf_measurement_reference",
+    "op": "set",
+    "ptr": "/h3_h4_inputs/h3_procurement_rfq_inputs[0]",
+    "count": 1,
+    "summary": "H3 RF line 1 per A9.2"
+   },
+   {
+    "cid": "A910-A92S-A905VI-03",
+    "driver": "A9.2 rf_500W, OQ-A907-11, rf_measurement_reference",
+    "op": "set",
+    "ptr": "/h3_h4_inputs/h3_procurement_rfq_inputs[1]",
+    "count": 1,
+    "summary": "H3 RF line 2 per A9.2"
+   },
+   {
+    "cid": "A910-A92S-A905VI-04",
+    "driver": "A9.2 rf_500W, OQ-A907-11, rf_measurement_reference",
+    "op": "set",
+    "ptr": "/h3_h4_inputs/h3_procurement_rfq_inputs[2]",
+    "count": 1,
+    "summary": "H3 RF line 3 per A9.2"
+   },
+   {
+    "cid": "A910-A92S-A905VI-05",
+    "driver": "A9.2 rf_500W, rf_measurement_reference",
+    "op": "supersede",
+    "ptr": "/items[id=VI-RF-02]",
+    "count": 1,
+    "summary": "VI-RF-02 plane and 500 W wording"
+   },
+   {
+    "cid": "A910-A92S-A905VI-06",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "supersede",
+    "ptr": "/items[id=VI-RF-03]",
+    "count": 1,
+    "summary": "VI-RF-03 plane"
+   },
+   {
+    "cid": "A910-A92S-A905VI-07",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "supersede",
+    "ptr": "/items[id=VI-RF-04]",
+    "count": 1,
+    "summary": "VI-RF-04 plane and A9.2 relation"
+   },
+   {
+    "cid": "A910-A92S-A905VI-08",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "replace",
+    "ptr": "/items[id=VI-RF-02]/definition",
+    "count": 1,
+    "summary": "VI-RF-02 definition plane"
+   },
+   {
+    "cid": "A910-A92S-A905VI-09",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "replace",
+    "ptr": "/interface_demands[id=IF-06]/what",
+    "count": 1,
+    "summary": "IF-06 coupler plane"
+   },
+   {
+    "cid": "A910-A92S-A905VI-10",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/owner_answers_applied[row=72]/how",
+    "count": 1,
+    "summary": "row 72 application labelled"
+   }
+  ]
+ }
+}

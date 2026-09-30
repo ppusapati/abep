@@ -1,0 +1,48 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_09_30_A9_2_a907_followup_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-09-30",
+ "decision": "A9_2_A907_FOLLOWUP_DECISIONS_RECORDED",
+ "parents": [
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+  "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+  "sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9"
+ },
+ "decisions": {
+  "OQ-A907-11": "local matching network on/immediately adjacent to the ICP module; chain = RF generator -> directional coupler -> 50-ohm line -> local match -> antenna; the off-platform-match + long unmatched coax arrangement is no longer the A9 baseline (supersedes that part of the A9.1 A9-03 'matching network location' clarification)",
+  "rf_measurement_reference": "forward/reflected power measured on the generator/50-ohm side of the local match; retain P_forward, P_reflected, |Gamma|, VSWR and where possible P_delivered = P_forward - P_reflected - P_line/match,loss; never assume P_forward = P_plasma",
+  "rf_500W": "0-500 W is a laboratory delivered/operating investigation capability, not a component rating; generator, coupler, coax, connectors, matching elements, feedthroughs selected only after the mismatch envelope is characterized",
+  "rf_protection": "reflected-power monitoring, mismatch/interlock threshold, arc detection where feasible, thermal monitoring, automatic RF reduction/shutdown; trip thresholds frozen after antenna/load characterization, not invented now",
+  "icp_matching_strategy": "adjustable local matching network for the development article; flight implementation (fixed / switched / electronically tuned / other) only after Z_antenna = R + jX is measured vs mdot, P_RF, p, gas composition, Hall operating point",
+  "anode_316L": "316L no longer the flight/design baseline for the H-1 anode (allowed as engineering/shakedown, coupon candidate, low-temperature development component); do not select W, Mo, Pt etc. merely for melting point",
+  "anode_approach": "ANODE_BASELINE = OPEN; design blockers for anode material AND anode heat-removal path; investigate conduction to backplate, support/feed-tube conduction, heat spreading, radiative area, coupling to spacecraft/stand, deposited power fraction, refractory/oxidation-resistant candidates, active cooling only if passive fails; objective = reduce operating temperature, then T_operating <= T_validated,continuous - 50 K; no new arbitrary anode limit",
+  "icp_coupled_thermal": "ICP_COUPLED_THERMAL = UNRESOLVED until the model includes Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume and the ICP assembly's geometric effect on H-1 radiation; no thermal PASS from a negligible-coupling calculation",
+  "radiative_view_requirement": "ICP mechanical design carries a radiative-view-factor objective (open-frame support, minimum obstruction, annular/open optical path, thermally isolated mounting, high-emittance outward surfaces, Hall-to-ICP axial spacing); not optimized for compactness alone",
+  "13W_pole_allowance": "design-driving warning; not grounds to reject A9; assuming ICP thermal interaction is negligible is prohibited; coupled view-factor/conduction calculation required before thermal closure",
+  "coil_mass_correction": "~0.14 kg = copper for the 60 W / fixed-ampere-turn sensitivity basis, not the MC-1 coil mass; ~1.58 kg may remain the estimated complete-coil copper mass from H2-1 sizing; never alternative estimates of the same mass; A9-06 closure uses only clearly defined complete hardware mass",
+  "a9_10_statuses": {
+   "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
+   "ICP electron-current capacity": "PENDING_ICP45",
+   "ICP RF power closure": "PENDING_HARDWARE",
+   "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
+   "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP",
+   "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
+   "final anode material": "OPEN",
+   "anode thermal closure": "UNRESOLVED",
+   "coupled H-1/ICP thermal closure": "UNRESOLVED",
+   "C1 conventional reference": "CONTROL_FALLBACK"
+  },
+  "a9_10": "may continue; incorporate the statuses and blockers; purpose is to make the unresolved state explicit, never to force closure",
+  "pr_33": "keep DRAFT; after A9-10 merges: full suite, golden, integrity, historical immutable hashes, complete A9 diff review, confirm A9-10 records the RF/anode/thermal blockers; only then convert to ready for final merge review",
+  "post_a9_priorities": [
+   "P1 ICP electron-source bench: I_e(P_RF, Z, p, mdot, gas), prove ICP-45",
+   "P2 ICP impedance map: Z_antenna = f(P_RF, mdot, p, gas, plasma state)",
+   "P3 coupled thermal redesign with actual downstream ICP geometry/view factors",
+   "P4 anode design: conductive/radiative path, candidate-material trade"
+  ]
+ }
+}

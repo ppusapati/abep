@@ -1,0 +1,4079 @@
+{
+ "schema": "hall_icp_prereg_framework_v1",
+ "id": "A9_01_hall_icp_prereg_framework_v1",
+ "follow_on": "fo_a9_01_hall_icp_prereg_framework",
+ "trigger": "T_A9_01_PREREG_FRAMEWORK",
+ "owner_decision": {
+  "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+  "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+  "status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE"
+ },
+ "owner_answers": {
+  "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+  "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
+  "verbatim_pack": {
+   "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+   "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976"
+  }
+ },
+ "status": "PROPOSED_FRAMEWORK_NOT_A_LOCK",
+ "not_locked": true,
+ "score_bearing": false,
+ "measurements_existing": false,
+ "lock_file_location": "docs/experiments/hall_icp/prereg/ (future signed LOCK-1 / LOCK-2; row 16; not created here)",
+ "base_commit": "0a430bb5588a438f7c8485c6d16f40ed0d402c4c",
+ "generated_by": "docs/experiments/hall_icp/prereg_framework/build_hall_icp_prereg_framework.py",
+ "companion_document": "docs/experiments/hall_icp/prereg_framework/HALL_ICP_PREREG_FRAMEWORK.md",
+ "test": "tests/test_hall_icp_prereg_framework.py",
+ "literals": {
+  "margin_not_set": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+  "tbd_form": "TBD - requires <what>",
+  "pending_form": "PENDING <lane path>"
+ },
+ "context": {
+  "rfp": "DRDO TDF, tender 2026_DRDO_788433_1; official RFP not yet obtained (rows 1, 2); envelope 180-230 km, 12-25 mN, < 1.5 kW, < 40 kg, air + Xe, Hall preferred",
+  "binding_immutable": [
+   "A4-A7 owner decisions (pinned)",
+   "P5-N2 v1 INCONCLUSIVE (permanent)",
+   "credible Hall set EMPTY",
+   "Bundle 1 NO_BASELINE_YET"
+  ],
+  "no_performance_prediction": "no thrust, efficiency, discharge current, neutralizer electron current or plasma state is predicted from any Hall-transport closure, the superseded 0-D Hall model or the withdrawn v1.2-v1.6 numbers",
+  "Xe ledger path (read from the pinned H2-7 linked_ledger)": "docs/budgets/xe_ledger/xe_ledger_v1.json"
+ },
+ "pinned_inputs": [
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+   "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+   "class": "immutable owner decision (governing)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
+   "class": "immutable owner answers (147 rows)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+   "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976",
+   "class": "immutable owner decision pack (verbatim)"
+  },
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A4_owner_decisions.json",
+   "sha256": "beec91f9eca3ca0257c5ee88dcd193c87481660b9368b65c6d10b3b3bdae23b4",
+   "class": "immutable owner decision"
+  },
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+   "sha256": "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
+   "class": "immutable owner decision"
+  },
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A6_a5_followon_authorization.json",
+   "sha256": "aaeb7c503c3791f81d4c589e8e25289befa6fcb3b16ce6f962b153715c883180",
+   "class": "immutable owner decision"
+  },
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A7_execution_model.json",
+   "sha256": "dae69983d9aeeb4838d9ff973a5f824c973219f8cc528adfb12717c4bb92c925",
+   "class": "immutable owner decision"
+  },
+  {
+   "path": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json",
+   "sha256": "84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28",
+   "class": "historical artifact (read-only; preserved byte-for-byte)"
+  },
+  {
+   "path": "docs/experiments/phase1_prereg_framework/PHASE1_PREREG_FRAMEWORK.md",
+   "sha256": "703e5a4e37904c2d6dfe1ca8a83c9de9818f33e7af8b75d416865e2db12f3c93",
+   "class": "historical artifact (read-only; preserved byte-for-byte)"
+  },
+  {
+   "path": "docs/experiments/phase1_prereg_framework/build_phase1_prereg_framework.py",
+   "sha256": "00896a4a0d0fcb6345734e1ef2d39de974579f45500b5fe83204cbbc06606545",
+   "class": "historical artifact (read-only; preserved byte-for-byte)"
+  },
+  {
+   "path": "docs/interfaces/preionizer_module/PREIONIZER_MODULE_ICD.md",
+   "sha256": "afc639ef772b1d12664688c7f9bd3443598a024ad9a7e7270d29d55c89c9dcb0",
+   "class": "historical artifact (read-only; preserved byte-for-byte)"
+  },
+  {
+   "path": "docs/interfaces/preionizer_module/build_preionizer_module_icd.py",
+   "sha256": "166ead5c33407dfc1e359c032ce3f0305ec3fbe7f3faeab8e2cb77ed619aeab5",
+   "class": "historical artifact (read-only; preserved byte-for-byte)"
+  },
+  {
+   "path": "schemas/interfaces/preionizer_module_icd_v1.json",
+   "sha256": "2470718e1decbde874d2362a997d1e2aaae54eb855d1ed179b930c3be6e7130e",
+   "class": "historical artifact (read-only; preserved byte-for-byte)"
+  },
+  {
+   "path": "docs/architecture_comparison/lock1/lock1_decision_brief_v1.json",
+   "sha256": "7ce17e1f9101d0832a164e453fd757a813f5e1e77f689cfb661bdc920f453920",
+   "class": "historical artifact (read-only; preserved byte-for-byte)"
+  },
+  {
+   "path": "docs/architecture_comparison/lock1/LOCK1_DRAFT.json",
+   "sha256": "ece91920699c20358dc3e3d1348666460d6adf64addaa134a6fe11cdba499693",
+   "class": "historical artifact (read-only; preserved byte-for-byte)"
+  },
+  {
+   "path": "docs/experiments/hardware/hardware_requirements_v1.json",
+   "sha256": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0",
+   "class": "verified deliverable (H-1/C-1 configuration items and planes)"
+  },
+  {
+   "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+   "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
+   "class": "verified deliverable (instrumentation)"
+  },
+  {
+   "path": "docs/experiments/instrumentation/metrology_spec/metrology_measurement_spec_v1.json",
+   "sha256": "55c11dc2d22fd92d95b498f72d60f2cdc0c62a45940da2446514049bd5130865",
+   "class": "verified deliverable (metrology spec)"
+  },
+  {
+   "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json",
+   "sha256": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d",
+   "class": "verified deliverable (H2-1)"
+  },
+  {
+   "path": "docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json",
+   "sha256": "8436008ac458d4e7467a9c7c9592d5312b3912b918d584ceaf3ac8cb2745a971",
+   "class": "verified deliverable (H2-2)"
+  },
+  {
+   "path": "docs/hardware/h2/h2_3_gas_path_plenum/h2_3_gas_path_plenum_v1.json",
+   "sha256": "f32b05bd03aad2a09a1d9b90ee5f9423e733e6ea4cb94814c92b500590d43a7b",
+   "class": "verified deliverable (H2-3)"
+  },
+  {
+   "path": "docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json",
+   "sha256": "5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef",
+   "class": "verified deliverable (H2-4)"
+  },
+  {
+   "path": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json",
+   "sha256": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083",
+   "class": "verified deliverable (H2-5)"
+  },
+  {
+   "path": "docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json",
+   "sha256": "bc7d6b049067c6fbd5489bda32ee9c8c1af36508576db4619b08d2c4ec196a56",
+   "class": "verified deliverable (H2-6)"
+  },
+  {
+   "path": "docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json",
+   "sha256": "d1813e153af37ebd45cb2ead964ead6c53c756d1a82f93ea89346a83168d0630",
+   "class": "verified deliverable (H2-7)"
+  },
+  {
+   "path": "docs/budgets/subsystem_maturity/subsystem_maturity_v2.json",
+   "sha256": "a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c",
+   "class": "verified deliverable (M16 v2)"
+  },
+  {
+   "path": "docs/evidence/cathode/cathode_evidence_v1.json",
+   "sha256": "050060204e443d5583c307becadaab55a9f213d406ff4454be856bca21249110",
+   "class": "verified deliverable (cathode evidence)"
+  },
+  {
+   "path": "docs/experiments/s1a_readiness/s1a_readiness_conditions_v1.json",
+   "sha256": "011808100ef38799668cb948324efa6492344d3b58ed3c436605ce5caf7025ac",
+   "class": "verified deliverable (S1a readiness conditions)"
+  },
+  {
+   "path": "docs/experiments/s1_readiness/s1_readiness_conditions_v1.json",
+   "sha256": "1d3388693191295f4c54ea9d1d38b36ca977193e0d9066aa40aac61776b27fd1",
+   "class": "verified deliverable (S1 readiness conditions)"
+  }
+ ],
+ "referenced_not_pinned": [
+  {
+   "path": "docs/orchestration/lane_registry_v1.json",
+   "why": "mutable governance: never pinned"
+  },
+  {
+   "path": "docs/orchestration/trigger_registry_v1.json",
+   "why": "mutable governance: never pinned"
+  },
+  {
+   "path": "docs/orchestration/trigger_ledger_v2.jsonl",
+   "why": "mutable governance: never pinned"
+  },
+  {
+   "path": "docs/orchestration/runtime_state.json",
+   "why": "mutable governance: never pinned"
+  },
+  {
+   "path": "docs/validation/hall_transport_v2_prereg/",
+   "why": "W5 held-out Hall-transport draft (DRAFT, mutable); referenced by path only"
+  },
+  {
+   "path": "docs/architecture_comparison/power_boundary_a9/",
+   "why": "A9-02 deliverable merged in the base (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json); cited by path, not pinned here (post-integration sha256 in docs/experiments/hall_icp/integration/a9_core_integration_v1.json)"
+  },
+  {
+   "path": "abep_sim/bus_boundary_a9.py",
+   "why": "A9-02 module merged in the base; cited by path, not pinned here (post-integration sha256 in docs/experiments/hall_icp/integration/a9_core_integration_v1.json); never imported here"
+  },
+  {
+   "path": "docs/interfaces/icp_neutralizer/",
+   "why": "A9-03 deliverable merged in the base (schemas/interfaces/icp_neutralizer_icd_v1.json); cited by path, not pinned here (post-integration sha256 in docs/experiments/hall_icp/integration/a9_core_integration_v1.json)"
+  },
+  {
+   "path": "docs/experiments/hall_icp/uncertainty_budget/",
+   "why": "A9-04 deliverable merged in the base (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); cited by path, not pinned here (post-integration sha256 in docs/experiments/hall_icp/integration/a9_core_integration_v1.json)"
+  },
+  {
+   "path": "docs/evidence/icp_neutralizer/",
+   "why": "A9-05 deliverable merged in the base (docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json); cited by path, not pinned here (post-integration sha256 in docs/experiments/hall_icp/integration/a9_core_integration_v1.json)"
+  },
+  {
+   "path": "docs/experiments/hall_icp/validation_inputs/",
+   "why": "A9-05 deliverable merged in the base (docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json); cited by path, not pinned here (post-integration sha256 in docs/experiments/hall_icp/integration/a9_core_integration_v1.json)"
+  },
+  {
+   "path": "docs/experiments/hall_icp/prereg/",
+   "why": "future signed LOCK-1 / LOCK-2 location (row 16); not created here"
+  }
+ ],
+ "terminology": {
+  "campaign": "A9 Hall->ICP campaign; stage ids HI-*; the A5 'Phase 1' term is not stretched to this campaign (row 34)",
+  "configurations": [
+   "hall_c1_reference",
+   "hall_icp_neutralizer"
+  ],
+  "labels": {
+   "AR_ENGINEERING_ONLY": "Ar data: engineering-only topology reproduction; never counts toward DRDO atmospheric requirements (row 36)",
+   "SURROGATE_SHAKEDOWN": "surrogate hardware, non-scoring shakedown only (row 20)",
+   "NO_ATOMIC_O": "N2 + O2 surrogate data: performance surrogate only, never atomic-O life proof (row 132)",
+   "XE_REFERENCE": "bounded Xe health / reference check; never evidence for atmospheric-only performance (row 26)",
+   "XE_AUGMENTED_PEAK": "bounded Xe peak point, only if the RFP permits; booked in the Xe ledger; never atmospheric evidence (rows 4, 26)",
+   "PARTIAL_BOUNDARY": "P_bus basis while compressor bus draw / valve-outlet feed state are not measured or provided by ICD (row 22)",
+   "NOT_TESTED": "scheduled slot of a stopped arm; order of the remaining slots kept; balance loss reported (row 39)"
+  },
+  "stage_evidence_classes": {
+   "ENGINEERING_ONLY_NON_SCORING": "engineering information only; never enters a decision quantity or a LOCK-2 number",
+   "METROLOGY_QUALIFICATION": "no-plasma Type B calibration and installation reproducibility; feeds LOCK-2 numbers",
+   "QUALIFICATION_CAPABILITY": "Hall-on / module-on dispersion statistics on the actual hardware; feeds LOCK-2 numbers only (non-scoring)",
+   "SCORE_BEARING_MEASURED": "in-house measurement on the actual Vyovrinda hardware (docs/EVIDENCE.md level 1), scored once by the frozen script",
+   "HELD_OUT_VALIDATION_EVIDENCE": "custody-controlled readings pre-registered as held-out Hall-transport validation evidence",
+   "FACILITY_EFFECT_CHARACTERIZATION": "background-pressure sensitivity; facility-mode evidence only",
+   "LABELLED_XE": "XE_REFERENCE / XE_AUGMENTED_PEAK labelled readings, booked in the Xe ledger",
+   "ABSOLUTE_DEMONSTRATION": "measured full-system gate demonstration inside the A9 spacecraft-DC propulsion boundary",
+   "MATERIALS_LIFE_AO": "atomic-O materials / lifetime evidence from a dedicated AO source"
+  }
+ },
+ "stage_map": [
+  {
+   "id": "HI-ENG",
+   "order": 1,
+   "name": "engineering shakedown",
+   "what": "surrogate or development hardware may be used for shakedown of procedures, DAQ, RF chain, interlocks and fixtures; label SURROGATE_SHAKEDOWN (row 20); adjustable-anode development insert and alternative wall-sector inserts only here or before score-bearing freeze (rows 75, 135)",
+   "entry": [
+    "A9 decision recorded (pinned)",
+    "facility and safety readiness for the gases used (O2 only after the named oxygen-safety owner and ASTM G93 Level C cleaning, row 107)"
+   ],
+   "exit": [
+    "shakedown log filed; no reading carried into any decision quantity or LOCK-2 value"
+   ],
+   "gases": [
+    "Ar",
+    "N2",
+    "Xe (bounded, booked)"
+   ],
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer",
+    "surrogate hardware"
+   ],
+   "hardware": "surrogate allowed (non-scoring only)",
+   "can_produce": [
+    "ENGINEERING_ONLY_NON_SCORING"
+   ],
+   "cannot_produce": [
+    "SCORE_BEARING_MEASURED",
+    "QUALIFICATION_CAPABILITY",
+    "HELD_OUT_VALIDATION_EVIDENCE"
+   ],
+   "score_bearing": false
+  },
+  {
+   "id": "HI-S1A",
+   "order": 2,
+   "name": "S1a analog - no-plasma metrology and module-exchange qualification",
+   "what": "no Hall-on reading. Thrust-stand in-situ calibration (SI-traceable, pre/post block, drift and hysteresis, row 119) and the preregistered u_T acceptance test at 12 mN with maximum representative moving payload and all service lines installed (row 120) against the 1 % target (row 121); power channels per A9 bus slot; RF chain 13.56 MHz with the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating) (ratings TBD_AFTER_IMPEDANCE_MAP), directional-coupler forward/reflected on the generator / 50-ohm side of the LOCAL matching network (ICP-14 plane; A9.2 OQ-A907-11 / rf_measurement_reference) into a dummy load with calorimetric cross-check (row 72); MFC calibration (rows 96, 97, 98, 124, 126); cold-flow uniformity (row 101); RGA (row 127); C1<->ICP exchange checks: cold/tare, service-line parasitic, B(z) perturbation, electrical isolation and RF pickup (row 64); RR-HI-07 no-plasma leg (row 33); C1 standalone conditioning and ICP standalone (no Hall) ignition / forward-reflected / collector current may be run here as module bench checks, non-scoring",
+   "entry": [
+    "HI-ENG procedures available",
+    "instrument set per docs/experiments/instrumentation/ plus ICP channels (schemas/interfaces/icp_neutralizer_icd_v1.json ICP-34 (A9-03))"
+   ],
+   "exit": [
+    "S1a-analog capability record: Type B uncertainties, noise floors, RF pickup bound, installation reproducibility per module, B(z) sensitivity with each module installed and energized (row 67)",
+    "u_T acceptance result at 12 mN filed; if 1 % is shown unattainable by metrology-only evidence, the target is revised before LOCK-2 (row 121)"
+   ],
+   "gases": [
+    "none (cold flow: N2, O2 after row 107 readiness, Xe, Ar)"
+   ],
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "hardware": "actual H-1 (D-09-A, row 20) for exchange checks; may run in a smaller domestic chamber (row 139)",
+   "can_produce": [
+    "METROLOGY_QUALIFICATION",
+    "ENGINEERING_ONLY_NON_SCORING"
+   ],
+   "cannot_produce": [
+    "SCORE_BEARING_MEASURED",
+    "HELD_OUT_VALIDATION_EVIDENCE"
+   ],
+   "score_bearing": false
+  },
+  {
+   "id": "HI-HOLDOUT-A",
+   "order": 3,
+   "name": "held-out partition rule frozen (validation custody, part A)",
+   "what": "before ANY Hall-on reading on the actual H-1 (any gas, including the Ar engineering reproduction; A9.1 HIQ-04), freeze which reading families are held out as Hall-transport validation evidence and the custody plan (rows 25, 35); see held_out_validation",
+   "entry": [
+    "HI-S1A exit"
+   ],
+   "exit": [
+    "partition rule and custody plan signed; no data reclassification after exposure (row 25)"
+   ],
+   "gases": [],
+   "configurations": [],
+   "hardware": "-",
+   "can_produce": [],
+   "cannot_produce": [
+    "any reading"
+   ],
+   "score_bearing": false
+  },
+  {
+   "id": "HI-AR",
+   "order": 4,
+   "name": "Ar topology reproduction (engineering-only)",
+   "what": "reproduce the Takahashi/Watanabe-type Hall + downstream ICP topology on Ar on the actual H-1 with both modules (row 36; A9 evidence_sequence item 1); reproduction targets and any published analog operating points docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json and docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json (A9-05); label AR_ENGINEERING_ONLY",
+   "entry": [
+    "HI-HOLDOUT-A signed",
+    "ICP module interfaces for this build available (schemas/interfaces/icp_neutralizer_icd_v1.json (A9-03))"
+   ],
+   "exit": [
+    "topology reproduced or not reproduced, recorded descriptively; Ar data never satisfy DRDO atmospheric requirements (row 36)"
+   ],
+   "gases": [
+    "Ar"
+   ],
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "hardware": "actual H-1 (D-09-A, row 20)",
+   "can_produce": [
+    "ENGINEERING_ONLY_NON_SCORING"
+   ],
+   "cannot_produce": [
+    "SCORE_BEARING_MEASURED",
+    "ABSOLUTE_DEMONSTRATION",
+    "HELD_OUT_VALIDATION_EVIDENCE"
+   ],
+   "score_bearing": false,
+   "a9_1": "A9.1 HIQ-08: HI-AR runs before LOCK-1 and after HI-HOLDOUT-A; engineering findings may refine hardware settings and the ICP recipe frozen at LOCK-1; Ar readings never enter LOCK-2 uncertainty numbers, architecture decision quantities or DRDO atmospheric compliance claims. A9.1 ICP-45: ICP-45A (Ar engineering qualification, I_e,cap >= I_d,max, engineering-only evidence) is demonstrated here. A9.1 UBQ-08: Ar-specific gauge/MFC/RGA calibrations are required for HI-AR interpretation"
+  },
+  {
+   "id": "HI-LOCK1",
+   "order": 5,
+   "name": "LOCK-1 (Hall->ICP)",
+   "what": "owner signature of this framework's forms: decision-quantity definitions, hard-gate and Pareto forms, outcome rules, same-condition list, sequence set and assignment algorithm, seed-generation procedure (row 30), condition grid from W1 plus the anticipated knee (row 31), REF-COND, missing-data and data-quality rule forms, remount procedure, stop-rule forms (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json stop_rules (A9-04), row 13), the rules that compute every LOCK-2 number, frozen analysis/schedule scripts (sha256); filed under docs/experiments/hall_icp/prereg/ (row 16)",
+   "entry": [
+    "HI-S1A exit",
+    "A9 bus boundary slots defined (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slots (A9-02))",
+    "uncertainty budget forms (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json (A9-04))"
+   ],
+   "exit": [
+    "LOCK-1 signed; any later change to a LOCK-1 item voids it"
+   ],
+   "gases": [],
+   "configurations": [],
+   "hardware": "-",
+   "can_produce": [],
+   "cannot_produce": [
+    "any data-derived number"
+   ],
+   "score_bearing": false
+  },
+  {
+   "id": "HI-HOLDOUT-B",
+   "order": 6,
+   "name": "held-out condition enumeration frozen (validation custody, part B)",
+   "what": "enumerate the held-out conditions from the LOCK-1 grid after LOCK-1 but before HI-S1 (row 25; A9.1 HIQ-04), so every held-out condition is predicted before it is measured",
+   "entry": [
+    "HI-LOCK1 signed"
+   ],
+   "exit": [
+    "held-out enumeration frozen (sha256) before the first HI-S1 N2 reading"
+   ],
+   "gases": [],
+   "configurations": [],
+   "hardware": "-",
+   "can_produce": [],
+   "cannot_produce": [
+    "any reading"
+   ],
+   "score_bearing": false
+  },
+  {
+   "id": "HI-S1",
+   "order": 7,
+   "name": "S1 analog - module and Hall-on qualification on N2",
+   "what": "first N2 Hall-on operation of the actual H-1 with each module: start sequences (C1 heater/keeper with pulsed keeper ignition 300-600 V class, row 89; ignition dwell cap and retries per row 93; ICP ignition; Hall ignition with ICP electrons, row 24), thermal time constants, I_d(t) oscillation band with the declared bandwidth (row 129), noise, stand drift, p_b behaviour; C1 spot-mode minimum-flow search at 0.005 mg/s steps with preregistered stopping criteria (row 92); breadboard discharge supply eta_d and transients measured before LOCK-2 (row 113); anode geometry and wall configuration already frozen (rows 75, 135)",
+   "entry": [
+    "HI-HOLDOUT-B frozen",
+    "HI-LOCK1 signed",
+    "downstream ICP interfaces frozen before score-bearing work (row 71; schemas/interfaces/icp_neutralizer_icd_v1.json (A9-03))"
+   ],
+   "exit": [
+    "S1-analog capability record released as dispersion statistics only (custody rule)"
+   ],
+   "gases": [
+    "N2",
+    "Xe (C1 cathode flow, booked PHASE_TOTAL_FLOW, row 42)"
+   ],
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "hardware": "actual H-1 (D-09-A)",
+   "can_produce": [
+    "QUALIFICATION_CAPABILITY"
+   ],
+   "cannot_produce": [
+    "SCORE_BEARING_MEASURED"
+   ],
+   "score_bearing": false
+  },
+  {
+   "id": "HI-S1B",
+   "order": 8,
+   "name": "S1b analog - Hall-on re-mount series per module",
+   "what": "K module re-installations x r readings at the REF-COND point for each configuration (RR-HI-06) and the Hall-on leg of RR-HI-07 (row 33); Faraday/ExB repeatability if eta_u enters any decision quantity (row 32); per-configuration u_inst",
+   "entry": [
+    "HI-S1 exit"
+   ],
+   "exit": [
+    "u_inst per configuration, drift, repeatability records filed for LOCK-2"
+   ],
+   "gases": [
+    "N2"
+   ],
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "hardware": "actual H-1 (D-09-A)",
+   "can_produce": [
+    "QUALIFICATION_CAPABILITY"
+   ],
+   "cannot_produce": [
+    "SCORE_BEARING_MEASURED"
+   ],
+   "score_bearing": false
+  },
+  {
+   "id": "HI-LOCK2",
+   "order": 9,
+   "name": "LOCK-2 (Hall->ICP)",
+   "what": "records the LOCK-1 sha256 and inserts, without discretion, every number the LOCK-1 rules compute from S1a/S1/S1b: decision margins and effect sizes (row 18), block count n from measured uncertainty (row 19), stop-rule numbers, tolerances, B(z) field-change tolerance from measured H-1 sensitivity (row 67), T-PB-MAX once the knee and facility capability are known (row 23); draws the seed after n is fixed and publishes seed and hash before execution (row 30)",
+   "entry": [
+    "HI-S1B exit",
+    "facility meets the registered requirements (row 139); foreign facility only with written approvals (row 136)"
+   ],
+   "exit": [
+    "LOCK-2 filed under docs/experiments/hall_icp/prereg/ (row 16)"
+   ],
+   "gases": [],
+   "configurations": [],
+   "hardware": "-",
+   "can_produce": [],
+   "cannot_produce": [
+    "any reading"
+   ],
+   "score_bearing": false
+  },
+  {
+   "id": "HI-CMP",
+   "order": 10,
+   "name": "score-bearing C1-vs-ICP comparison (atmospheric surrogates)",
+   "what": "order-balanced blocks of complete replicate sets; each block = REF installation at REF-COND (own installation, row 40) plus one installation of each configuration; inside every installation pure N2 slices first and O2-bearing slices last (row 36), O2-bearing labelled NO_ATOMIC_O (row 132); bounded XE_REFERENCE checks and, only if the RFP permits, bounded XE_AUGMENTED_PEAK points, labelled and booked (rows 6, 26); raw dataset frozen by sha256 and scored once by the frozen script",
+   "entry": [
+    "HI-LOCK2 filed",
+    "the realized schedule published with seed and hash (row 30)",
+    "ICP-45 formal entry condition met (A9.1 ICP-45): ICP-45A (Ar, engineering-only) and ICP-45N (N2) each demonstrated I_e,cap >= I_d,max, with I_d,max from the registered H-1 / discharge-supply envelope (never invented), recording at each current the extracted electron current, RF forward/reflected power, DC input power, collector voltage/current, pressure, gas state, thermal state and plasma stability; no hall_icp_neutralizer score-bearing point before it; the Takahashi ~1 A / 200 W point is context only"
+   ],
+   "exit": [
+    "scored dataset and mechanical outcome record (or OPEN status with the next discriminating test, row 38) to the owner"
+   ],
+   "gases": [
+    "N2",
+    "N2 + O2 (NO_ATOMIC_O)",
+    "Xe (labelled, bounded)"
+   ],
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "hardware": "actual H-1 (D-09-A)",
+   "can_produce": [
+    "SCORE_BEARING_MEASURED",
+    "HELD_OUT_VALIDATION_EVIDENCE",
+    "LABELLED_XE"
+   ],
+   "cannot_produce": [
+    "MATERIALS_LIFE_AO",
+    "AR_ENGINEERING_ONLY evidence"
+   ],
+   "score_bearing": true
+  },
+  {
+   "id": "HI-PB",
+   "order": 11,
+   "name": "facility-effect characterization at two elevated background-pressure levels",
+   "what": "the comparison conditions repeated at two elevated p_b levels (row 23); 5e-5 Torr may be used for engineering characterization but never silently substituted for a stricter score-bearing requirement (row 23)",
+   "entry": [
+    "HI-LOCK2 filed (levels registered there)"
+   ],
+   "exit": [
+    "p_b sensitivity per configuration reported"
+   ],
+   "gases": [
+    "N2",
+    "N2 + O2 (NO_ATOMIC_O)"
+   ],
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "hardware": "actual H-1 (D-09-A)",
+   "can_produce": [
+    "FACILITY_EFFECT_CHARACTERIZATION"
+   ],
+   "cannot_produce": [
+    "SCORE_BEARING_MEASURED at the registered p_b limit"
+   ],
+   "score_bearing": false
+  },
+  {
+   "id": "HI-ABS",
+   "order": 12,
+   "name": "absolute demonstration",
+   "what": ">= 12 mN sustained atmospheric operation and demonstrated 25 mN system capability (row 4), both inside the same full spacecraft-DC propulsion boundary with P_bus < 1.5 kW (rows 27, 108), start-up transients included unless the official RFP permits otherwise (row 108); the ICP power inside the internal ~1.35 kW design allocation without nominally consuming the 1.35->1.5 kW margin (row 109); 25 mN need not use Xe, and any Xe use is booked (row 4); PARTIAL_BOUNDARY reported while compressor draw and valve-outlet feed state are unmeasured (row 22)",
+   "entry": [
+    "HI-LOCK2 filed",
+    "A9 boundary with every active load in a bus slot (row 110; docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slots (A9-02))"
+   ],
+   "exit": [
+    "gate demonstrations recorded per configuration with their boundary basis"
+   ],
+   "gases": [
+    "N2",
+    "N2 + O2 (NO_ATOMIC_O)",
+    "Xe only if booked and permitted"
+   ],
+   "configurations": [
+    "hall_c1_reference",
+    "hall_icp_neutralizer"
+   ],
+   "hardware": "actual H-1 (D-09-A)",
+   "can_produce": [
+    "ABSOLUTE_DEMONSTRATION",
+    "SCORE_BEARING_MEASURED"
+   ],
+   "cannot_produce": [
+    "MATERIALS_LIFE_AO"
+   ],
+   "score_bearing": true
+  },
+  {
+   "id": "HI-AO",
+   "order": 13,
+   "name": "separate atomic-O materials / life programme",
+   "what": "dedicated AO source for materials and lifetime qualification (row 132); ground-only heated-emitter exposure (row 99); keeper-material and anode coupons biased and floating (rows 94, 106); runs in parallel, never inside the comparison; no N2 + O2 test is called an AO-life test",
+   "entry": [
+    "AO source and coupon plan (outside this framework)"
+   ],
+   "exit": [
+    "materials / life evidence for the life burden reported in DQ-HI-LIFE"
+   ],
+   "gases": [
+    "atomic O (dedicated source)"
+   ],
+   "configurations": [
+    "coupons / components, not the comparison configurations"
+   ],
+   "hardware": "coupons, ground-only emitters, components",
+   "can_produce": [
+    "MATERIALS_LIFE_AO"
+   ],
+   "cannot_produce": [
+    "SCORE_BEARING_MEASURED for the comparison"
+   ],
+   "score_bearing": false
+  }
+ ],
+ "gate_deadlines": [
+  {
+   "id": "GD-01",
+   "blocker": "downstream ICP mechanical, RF, electrical, gas/plume and diagnostic interfaces frozen",
+   "latest": "before HI-S1 (score-bearing Phase-1 analog work)",
+   "source": "row 71",
+   "owner_lane": "schemas/interfaces/icp_neutralizer_icd_v1.json (A9-03)"
+  },
+  {
+   "id": "GD-02",
+   "blocker": "anode position / geometry frozen",
+   "latest": "before HI-S1",
+   "source": "row 75",
+   "owner_lane": "H-1 (H2-1)"
+  },
+  {
+   "id": "GD-03",
+   "blocker": "one design-representative wall configuration frozen",
+   "latest": "before HI-S1",
+   "source": "row 135",
+   "owner_lane": "H-1 (H2-1)"
+  },
+  {
+   "id": "GD-04",
+   "blocker": "held-out Hall-transport validation subset preregistered",
+   "latest": "HI-HOLDOUT-A before any Hall-on H-1 reading; HI-HOLDOUT-B before HI-S1",
+   "source": "row 25",
+   "owner_lane": "W5 (docs/validation/hall_transport_v2_prereg/)"
+  },
+  {
+   "id": "GD-05",
+   "blocker": "seed-generation procedure frozen",
+   "latest": "LOCK-1",
+   "source": "row 30",
+   "owner_lane": "this framework"
+  },
+  {
+   "id": "GD-06",
+   "blocker": "condition grid frozen from W1 plus the anticipated knee",
+   "latest": "LOCK-1",
+   "source": "row 31",
+   "owner_lane": "this framework"
+  },
+  {
+   "id": "GD-07",
+   "blocker": "stop rules defined",
+   "latest": "LOCK-1 (forms); numbers at LOCK-2; always before any Hall->ICP score-bearing data",
+   "source": "row 13",
+   "owner_lane": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json stop_rules (A9-04)"
+  },
+  {
+   "id": "GD-08",
+   "blocker": "effect-size / decision margins frozen",
+   "latest": "LOCK-2 (value), LOCK-1 (form)",
+   "source": "row 18",
+   "owner_lane": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json UB-C-01 (A9-04)"
+  },
+  {
+   "id": "GD-09",
+   "blocker": "block count n",
+   "latest": "LOCK-2 from measured uncertainty",
+   "source": "row 19",
+   "owner_lane": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json UB-C-06, readiness_n (A9-04)"
+  },
+  {
+   "id": "GD-10",
+   "blocker": "1 % thrust-uncertainty target confirmed or revised on metrology-only evidence",
+   "latest": "before LOCK-2 and before any score-bearing physics data",
+   "source": "row 121",
+   "owner_lane": "instrumentation / thrust stand"
+  },
+  {
+   "id": "GD-11",
+   "blocker": "allowable B(z) field-change tolerance from measured H-1 sensitivity with the ICP module installed/energized",
+   "latest": "before score-bearing comparison (HI-LOCK2)",
+   "source": "row 67",
+   "owner_lane": "H-1 / MC-1"
+  },
+  {
+   "id": "GD-12",
+   "blocker": "T-PB-MAX",
+   "latest": "after the low-flow knee and facility capability are known; at the latest HI-LOCK2",
+   "source": "row 23",
+   "owner_lane": "facility"
+  },
+  {
+   "id": "GD-13",
+   "blocker": "C1 ignition-dwell bound final value",
+   "latest": "before score-bearing C1 testing (HI-LOCK2)",
+   "source": "row 93",
+   "owner_lane": "C1 (H2-2)"
+  },
+  {
+   "id": "GD-14",
+   "blocker": "breadboard discharge supply eta_d and transients measured",
+   "latest": "before HI-LOCK2",
+   "source": "row 113",
+   "owner_lane": "PPU (H2-4)"
+  },
+  {
+   "id": "GD-15",
+   "blocker": "oxygen-safety owner named and ASTM G93 Level C cleaning",
+   "latest": "before any O2 gas operation (S1a-analog cold flow included)",
+   "source": "row 107",
+   "owner_lane": "owner"
+  },
+  {
+   "id": "GD-16",
+   "blocker": "interpolation uncertainty (if any interpolation is used instead of measured midpoint / iso-power points)",
+   "latest": "LOCK-1",
+   "source": "row 15",
+   "owner_lane": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json UB-C-08, interpolation (A9-04)"
+  },
+  {
+   "id": "GD-17",
+   "blocker": "equivalent startup-state and thermal-state handling for C1 vs ICP",
+   "latest": "LOCK-1",
+   "source": "row 65",
+   "owner_lane": "this framework"
+  }
+ ],
+ "configurations": {
+  "ids": [
+   "hall_c1_reference",
+   "hall_icp_neutralizer"
+  ],
+  "common_article": {
+   "hall_head": "the actual Vyovrinda H-1 design-representative unit (D-09-A, row 20); stays bolted on the stand for the whole comparison (rows 17, 122)",
+   "magnetic_circuit": "MC-1, electromagnet only (row 78); B(z) traceable to coil current and temperature with a hot-state reference sensor (rows 78, 82)",
+   "feed": "same delivered atmospheric-surrogate feed state (SC-* same-condition list)",
+   "settings": "same V_d and B settings (A9 governing decision 6)",
+   "stand_and_metrology": "same torsional stand (row 115) and metrology in both configurations",
+   "service_lines": "matched sham service lines in every compared configuration (row 133): the lines of the absent module are present as shams with matched routing; flexible RF coax with matched sham routing, no uncompensated hard RF line across the moving stage (row 117)",
+   "carrier": "kinematic module carrier with repeatable datum control; H-1 is never unbolted (row 122); carrier datum and envelope schemas/interfaces/icp_neutralizer_icd_v1.json ICP-06, ICP-07 (A9-03)",
+   "serialization": "a repaired or replaced H-1, C1 or ICP score-bearing module is a new serialized unit and needs a new reference / reinstallation sequence before score-bearing use (row 83)",
+   "witness_items": "witness coupons / holders are non-functional exchangeable items while B(z), geometry and the reference stay inside the frozen tolerances (row 134)"
+  },
+  "configurations": [
+   {
+    "id": "hall_c1_reference",
+    "role": "reference / control and fallback (A9 control_fallback)",
+    "module": "MOD-C1: conventional heated Xe-fed LaB6 hollow cathode C1 (rows 49, 88), external location (row 79), on the kinematic carrier",
+    "configuration_defining_settings": [
+     "heater power and heater-off transition per the cathode procedure (row 112)",
+     "keeper current; pulsed keeper ignition 300-600 V class with recorded pulse energy (row 89)",
+     "cathode Xe flow, all phases booked PHASE_TOTAL_FLOW (row 42)",
+     "cathode-common / bleeder topology selectable and measured (row 91)"
+    ],
+    "shams_present": [
+     "RF coax (sham)",
+     "ICP gas line (sham)",
+     "collector / bias leads (sham)",
+     "ICP telemetry harness (sham or terminated) - schemas/interfaces/icp_neutralizer_icd_v1.json ICP-09, ICP-34 (A9-03)"
+    ],
+    "not_a_flight_claim": "C1 is not automatically the final flight neutralizer (rows 49, 88)"
+   },
+   {
+    "id": "hall_icp_neutralizer",
+    "role": "primary investigation hypothesis (A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE)",
+    "module": "MOD-ICP: downstream 13.56 MHz unmagnetized RF inductively coupled plasma electron source / neutralizer (rows 69, 72), dielectric/body floating unless the validated circuit requires otherwise, electron-extraction collector biased and measured separately (row 70), on the kinematic carrier",
+    "configuration_defining_settings": [
+     "RF forward / reflected / delivered power (P_forward, P_reflected, |Gamma|, VSWR, P_delivered; A9.2 rf_measurement_reference; the laboratory 0-500 W range is a delivered/operating investigation capability, row 72 as interpreted by A9.2 rf_500W) and the local matching-network state",
+     "collector bias V / I (row 70)",
+     "ICP gas mode G-REUSE (Hall exhaust / residual propellant; mdot_ICP,dedicated = 0; A9.1 HIQ-06); the dedicated ICP port is installed and capped; G-ATM / G-XE are separately declared contingency variants, booked when used; score-bearing N2 / N2+O2 comparison uses G-REUSE unless it fails the preregistered ICP-capacity gate",
+     "RF interlock state (row 62)"
+    ],
+    "shams_present": [
+     "C1 heater / keeper leads (sham)",
+     "C1 Xe line (sham)",
+     "C1 telemetry (sham or terminated) - schemas/interfaces/icp_neutralizer_icd_v1.json ICP-09 (A9-03)"
+    ],
+    "not_a_flight_claim": "an investigation hypothesis, not a flight baseline or a validated architecture (A9)"
+   }
+  ],
+  "controlled_difference": "the downstream electron-source module on the kinematic carrier (and its configuration-defining settings) is the only controlled difference; everything in the same-condition list is matched or recorded",
+  "topology_precedent": {
+   "citation": "K. Takahashi, H. Watanabe, Y. Nakahama, K. Kikuchi, J. Electr. Propuls. 3, 18 (2024)",
+   "doi": "10.1007/s44205-024-00081-2",
+   "license": "CC BY-NC-ND 4.0",
+   "evidence_class": "published analog (topology precedent only); no operating point is used here",
+   "extraction": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json and docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json (A9-05)"
+  }
+ },
+ "module_exchange": [
+  {
+   "id": "RR-HI-01",
+   "what": "one installation per configuration visit",
+   "reuses": "RR-01",
+   "rule": "every scored configuration visit and every reference installation is its own module installation on the kinematic carrier, so every configuration carries the same installation variance; H-1 stays bolted (rows 17, 122)"
+  },
+  {
+   "id": "RR-HI-02",
+   "what": "installation procedure (identical for MOD-C1 and MOD-ICP)",
+   "reuses": "RR-02 (adapted: downstream module, no upstream IP-UP/IP-DN insertion)",
+   "rule": "vent; exchange the module on the kinematic carrier at its datum; reconnect the live service lines and the matched shams along the registered routing (row 133); leak check; pump down; identical conditioning; startup-state and thermal-state handling per the LOCK-1 equivalence rule (row 65); settle; in-situ thrust calibration and tare pre-block (row 119); power-channel check per A9 bus slot; B(z) check with the module installed and energized (row 67); electrical isolation and RF pickup checks (row 64)",
+   "interface_items": [
+    "carrier datum and envelope",
+    "downstream Hall-exhaust-to-ICP pressure / conductance interface (row 63)",
+    "RF feedthrough and coax routing",
+    "collector / bias leads",
+    "module ID and telemetry harness (row 62)"
+   ],
+   "interface_reference": "schemas/interfaces/icp_neutralizer_icd_v1.json ICP-06, ICP-07, ICP-15, ICP-18, ICP-21, ICP-27, ICP-33, ICP-34, ICP-39 (A9-03)"
+  },
+  {
+   "id": "RR-HI-03",
+   "what": "post-installation acceptance checks",
+   "reuses": "RR-03",
+   "rule": "each RR-HI-02 check compared with its acceptance limit before the first reading; a failed check means re-installation, logged; never a reading on a failed installation",
+   "limit": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "limit_depends_on": "HI-S1A module-exchange reproducibility and HI-S1B u_inst per configuration"
+  },
+  {
+   "id": "RR-HI-04",
+   "what": "within-installation gas order and repeats",
+   "reuses": "RR-04 (gas order replaced)",
+   "rule": "inside every installation: pure N2 slices first, O2-bearing slices (NO_ATOMIC_O) last (row 36); bounded Xe reference per the bounded Xe plan (position: at the beginning of the installation, before the N2 slices and therefore before any O2-bearing exposure, A9.1 HIQ-03); the first N2 condition of the installation is repeated at the end of its N2 slices (PROPOSED)"
+  },
+  {
+   "id": "RR-HI-05",
+   "what": "reference installation per block",
+   "reuses": "RR-05 (REF-MERGED option removed)",
+   "rule": "REF-COND is taken in its own installation per block, never merged into an adjacent scored installation unless a later preregistered equivalence test supports it (row 40); reference readings are held under custody until W5 classifies them (row 35); module used for the reference: HIQ-01"
+  },
+  {
+   "id": "RR-HI-06",
+   "what": "S1b-analog re-mount series",
+   "reuses": "RR-06",
+   "rule": "K re-installations x r readings at REF-COND for EACH configuration give u_inst per configuration with K - 1 degrees of freedom; K and r are LOCK-1 items"
+  },
+  {
+   "id": "RR-HI-07",
+   "what": "C1 <-> ICP module-exchange remount check",
+   "reuses": "RR-07 (adapted to C1 <-> ICP, row 33)",
+   "rule": "before LOCK-2: MOD-C1 and MOD-ICP are each exchanged on the carrier (a) with no plasma at HI-S1A (cold/tare, service-line parasitic, B(z) perturbation, isolation, RF pickup; row 64) and (b) Hall-on at REF-COND at HI-S1B; H-1 remains fixed (row 33)"
+  },
+  {
+   "id": "RR-HI-08",
+   "what": "end-of-campaign check",
+   "reuses": "RR-08",
+   "rule": "a final reference installation after the last block; a failure flags every cross-installation class REMOUNT_CHECK_FAILED"
+  },
+  {
+   "id": "RR-HI-09",
+   "what": "campaign-level magnetic and witness records",
+   "reuses": "RR-09",
+   "rule": "B(z) maps with each module installed and energized before and after the campaign; witness items per INS-P-01..04 and row 134"
+  }
+ ],
+ "same_condition": {
+  "definition": "Readings of the two configurations are at the SAME CONDITION only if every SET_MATCHED / PROTOCOL_MATCHED variable matches its registered value within its matching tolerance and every MEASURED_COVARIATE is inside its admissibility tolerance. CONFIGURATION_DEFINING settings belong to the electron-source module and are pre-registered recipes; OUTCOME_NOT_MATCHED variables are responses and never matched away.",
+  "roles": {
+   "SET_MATCHED": "setpoint identical across configurations",
+   "PROTOCOL_MATCHED": "same hardware / procedure, verified per installation",
+   "MEASURED_COVARIATE": "recorded, required inside a tolerance",
+   "CONFIGURATION_DEFINING": "pre-registered per-configuration electron-source recipe, frozen at LOCK-1",
+   "OUTCOME_NOT_MATCHED": "a response of the configuration; recorded, never used to reject a reading"
+  },
+  "reuses": "historical same_condition roles (phase1_prereg_framework_v1.json#same_condition); CONFIGURATION_DEFINING added",
+  "variables": [
+   {
+    "id": "SC-HI-MDOT",
+    "variable": "anode (discharge) propellant mass flow and species",
+    "role": "SET_MATCHED",
+    "instruments": [
+     "INS-05"
+    ],
+    "tolerance": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)"
+   },
+   {
+    "id": "SC-HI-COMP",
+    "variable": "O2 fraction of the surrogate in O2-bearing slices",
+    "role": "SET_MATCHED",
+    "instruments": [
+     "INS-05",
+     "INS-11"
+    ],
+    "tolerance": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)"
+   },
+   {
+    "id": "SC-HI-VD",
+    "variable": "discharge voltage V_d",
+    "role": "SET_MATCHED",
+    "instruments": [
+     "INS-04"
+    ],
+    "tolerance": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)"
+   },
+   {
+    "id": "SC-HI-B",
+    "variable": "coil currents and B(z) (field change with the module installed/energized inside the row-67 tolerance)",
+    "role": "SET_MATCHED",
+    "instruments": [
+     "INS-09",
+     "INS-24"
+    ],
+    "tolerance": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)"
+   },
+   {
+    "id": "SC-HI-HW",
+    "variable": "H-1 serial unit, anode and wall configuration, stand, metrology chain",
+    "role": "PROTOCOL_MATCHED",
+    "instruments": [
+     "INS-01",
+     "INS-21"
+    ],
+    "tolerance": "identity (serial numbers; row 83)"
+   },
+   {
+    "id": "SC-HI-SVC",
+    "variable": "service lines incl. matched shams, routing, moving payload",
+    "role": "PROTOCOL_MATCHED",
+    "instruments": [
+     "INS-01"
+    ],
+    "tolerance": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)"
+   },
+   {
+    "id": "SC-HI-START",
+    "variable": "startup-state and thermal-state handling",
+    "role": "PROTOCOL_MATCHED",
+    "instruments": [
+     "INS-17",
+     "INS-18"
+    ],
+    "tolerance": "LOCK-1 equivalence rule (row 65)"
+   },
+   {
+    "id": "SC-HI-PFEED",
+    "variable": "feed pressure at the valve outlet",
+    "role": "MEASURED_COVARIATE",
+    "instruments": [
+     "INS-06"
+    ],
+    "tolerance": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)"
+   },
+   {
+    "id": "SC-HI-TFEED",
+    "variable": "feed temperature at the valve outlet",
+    "role": "MEASURED_COVARIATE",
+    "instruments": [
+     "INS-07"
+    ],
+    "tolerance": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)"
+   },
+   {
+    "id": "SC-HI-PB",
+    "variable": "background pressure p_b (paired match between configurations)",
+    "role": "MEASURED_COVARIATE",
+    "instruments": [
+     "INS-08"
+    ],
+    "tolerance": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)"
+   },
+   {
+    "id": "SC-HI-SINK",
+    "variable": "facility wall / cryopanel radiative sink temperature, measured per run",
+    "role": "MEASURED_COVARIATE",
+    "instruments": [
+     "INS-17"
+    ],
+    "tolerance": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+    "note": "300 K only as a planning case (row 131)"
+   },
+   {
+    "id": "SC-HI-THERM",
+    "variable": "thermal settling before the reading",
+    "role": "MEASURED_COVARIATE",
+    "instruments": [
+     "INS-17"
+    ],
+    "tolerance": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)"
+   },
+   {
+    "id": "SC-HI-SRC-C1",
+    "variable": "C1 heater / keeper / cathode Xe flow recipe",
+    "role": "CONFIGURATION_DEFINING",
+    "instruments": [
+     "INS-02",
+     "INS-05",
+     "INS-23"
+    ],
+    "tolerance": "recipe frozen at LOCK-1"
+   },
+   {
+    "id": "SC-HI-SRC-ICP",
+    "variable": "ICP RF forward power, matching state, collector bias, ICP gas species / flow",
+    "role": "CONFIGURATION_DEFINING",
+    "instruments": [
+     "INS-03",
+     "INS-05",
+     "ICP channels schemas/interfaces/icp_neutralizer_icd_v1.json ICP-34 (A9-03)"
+    ],
+    "tolerance": "recipe frozen at LOCK-1"
+   },
+   {
+    "id": "SC-HI-OUT",
+    "variable": "I_d, T, P_bus, electron current, coupling potential, oscillation band",
+    "role": "OUTCOME_NOT_MATCHED",
+    "instruments": [
+     "INS-01",
+     "INS-02",
+     "INS-04",
+     "INS-10"
+    ],
+    "tolerance": "not applicable"
+   }
+  ]
+ },
+ "decision_topology": {
+  "outcomes": [
+   "hall_c1_reference",
+   "hall_icp_neutralizer",
+   "NO_VIABLE_CASE"
+  ],
+  "statuses": [
+   "OPEN",
+   "NOT_EVALUATED"
+  ],
+  "open_is_status_not_outcome": "OPEN is a status, not an outcome; if evidence cannot decide, report unresolved and identify the next discriminating test (row 38)",
+  "hard_gates": [
+   "DQ-HI-SUST",
+   "DQ-HI-ECAP",
+   "DQ-HI-VCPL",
+   "DQ-HI-TABS",
+   "DQ-HI-PBUS",
+   "DQ-HI-PALLOC",
+   "DQ-HI-STAB",
+   "DQ-HI-SAFE",
+   "DQ-HI-IGN"
+  ],
+  "pareto_reported": [
+   "DQ-HI-DXE",
+   "DQ-HI-DPBUS",
+   "DQ-HI-TPBUS",
+   "DQ-HI-DMASS",
+   "DQ-HI-RESTART",
+   "DQ-HI-LIFE"
+  ],
+  "net_benefit_form": "NET_BENEFIT = hard gates first, then a Pareto report of dXe, dP_bus, dmass, T/P_bus, restart and life burden relative to C1; no weighted scalar and no single-scalar selection unless preregistered at LOCK-1 (row 37); A9.1 HIQ-05: no mandatory Pareto relation - hard gates alone determine feasibility and Pareto quantities are reported for engineering comparison only unless a particular Pareto condition is explicitly preregistered at LOCK-1",
+  "definitions": {
+   "PASS_GATES(X)": "configuration X meets every hard gate (DQ-HI-SUST, DQ-HI-ECAP, DQ-HI-VCPL, DQ-HI-TABS, DQ-HI-PBUS, DQ-HI-PALLOC, DQ-HI-STAB, DQ-HI-SAFE, DQ-HI-IGN) at every required-envelope condition, each classification RESOLVED (DQ-HI-PALLOC applies to hall_icp_neutralizer only)",
+   "FAILS_GATES(X)": "at least one hard gate of X is RESOLVED as failed at a required condition",
+   "PARETO_REPORT": "for configurations passing the gates, each Pareto quantity with its interval relative to C1; relation classes NO_WORSE_ON_ALL(ICP) / NO_WORSE_ON_ALL(C1) / TRADE_OFF / UNRESOLVED are descriptive, never a ranking"
+  },
+  "rules": [
+   {
+    "outcome": "hall_icp_neutralizer",
+    "condition": "PASS_GATES(hall_icp_neutralizer)",
+    "attached": "PARETO_REPORT (mandatory) relative to hall_c1_reference",
+    "meaning": "the downstream ICP neutralizer met every hard gate in this campaign; C1 remains the reference / fallback until the ICP also demonstrates restart and life (A9 control_fallback); not a flight baseline, not a selection"
+   },
+   {
+    "outcome": "hall_c1_reference",
+    "condition": "FAILS_GATES(hall_icp_neutralizer) AND PASS_GATES(hall_c1_reference)",
+    "attached": "the failing ICP gates and their limits",
+    "meaning": "the conventional C1 reference stays the reference / fallback; the ICP failure mode is reported"
+   },
+   {
+    "outcome": "NO_VIABLE_CASE",
+    "condition": "FAILS_GATES(hall_icp_neutralizer) AND FAILS_GATES(hall_c1_reference)",
+    "attached": "failing gates per configuration",
+    "meaning": "no configuration met the full-system gates; no case is forced to pass"
+   }
+  ],
+  "status_rule": "if any classification needed by the rules is UNRESOLVED, SUSTAINMENT_MIXED, NOT_SCOREABLE_FACILITY, NOT_TESTED or missing, the decision status is OPEN (never NO_VIABLE_CASE by default) and the next discriminating test is named (row 38)",
+  "no_winner": "the framework never declares a winner and never ranks configurations; outcomes are pre-registered classifications handed to the owner",
+  "current_status": "NOT_EVALUATED - no Hall->ICP data exist; this framework evaluates nothing and prefers no configuration",
+  "external_inputs": {
+   "mass": "A9 mass BOM (docs/budgets/mass_a9/mass_a9_v1.json (A9-06; allocations and evidence floors, no design CBE; re-evaluated in A9-10))",
+   "life": "HI-AO programme and life evidence (INS-P-10, INS-P-11)",
+   "boundary": "abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json (A9-02)"
+  }
+ },
+ "decision_quantities": [
+  {
+   "id": "DQ-HI-SUST",
+   "name": "Hall discharge sustainment with the configuration's electron source",
+   "role": "HARD_GATE",
+   "operational_definition": "Per reading: SUSTAINED iff the Hall discharge runs for the whole registered dwell with no uncommanded extinction and no automatic restart (extinction rule form from the historical THR-EXTINCTION form, parameters at LOCK-2). Per condition and configuration: SUSTAINED / NOT_SUSTAINED / SUSTAINMENT_MIXED over the blocks. An abort on a registered limit is 'not sustained within registered limits' with the limit recorded (row 41).",
+   "units": "class; I_d in A; dwell in s",
+   "per_configuration": "measured for both configurations at the same conditions",
+   "measurement_chain": [
+    "INS-04",
+    "INS-10",
+    "INS-18",
+    "INS-05",
+    "INS-08",
+    "INS-17"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   }
+  },
+  {
+   "id": "DQ-HI-ECAP",
+   "name": "electron-current capacity / neutralization current",
+   "role": "HARD_GATE",
+   "operational_definition": "Electron current delivered by the configuration's electron source to the discharge / beam at the reading, compared with the Hall current demand at the same condition (row 145: electron extraction current, Hall current demand, neutralization margin); for the ICP including the separately measured collector current and bias (row 70). The gate form (e.g. delivered current covers the demand with a registered margin) is frozen at LOCK-1; no margin value now.",
+   "units": "A (electron current, Hall current demand); dimensionless ratio",
+   "per_configuration": "measured for both configurations at the same conditions",
+   "measurement_chain": [
+    "INS-04",
+    "INS-02",
+    "ICP collector V/I channel schemas/interfaces/icp_neutralizer_icd_v1.json ICP-21 (A9-03)",
+    "C1 keeper / emission channels (HW-C1-05)"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   },
+   "entry_condition_a9_1": "ICP-45A (Ar, engineering-only) then ICP-45N (N2): I_e,cap >= I_d,max demonstrated before any hall_icp_neutralizer score-bearing point (A9.1 ICP-45); passing ICP-45 alone does not retire C1",
+   "margin_form_a9_1": "M_n = I_e,cap / I_d,dem - 1; gate on the one-sided lower confidence bound > 0 (A9.1 UBQ-02); any additional design margin is computed/frozen at LOCK-2 by the LOCK-1 uncertainty rule, none invented now"
+  },
+  {
+   "id": "DQ-HI-VCPL",
+   "name": "coupling / neutralizer potential and beam neutralization",
+   "role": "HARD_GATE",
+   "operational_definition": "Potential of the electron source (C1 cathode common or ICP body / collector) relative to facility ground and spacecraft common during the reading, with plume neutralization evidence (row 145: collector potential, neutralization margin); floating ICP body potential recorded (row 70).",
+   "units": "V",
+   "per_configuration": "measured for both configurations at the same conditions",
+   "measurement_chain": [
+    "INS-04",
+    "ICP body / collector potential channels schemas/interfaces/icp_neutralizer_icd_v1.json ICP-20, ICP-21 (A9-03)",
+    "INS-15",
+    "INS-16 (where feasible)"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   }
+  },
+  {
+   "id": "DQ-HI-TABS",
+   "name": "absolute thrust compatibility",
+   "role": "HARD_GATE",
+   "operational_definition": ">= 12 mN sustained atmospheric operation and demonstrated 25 mN system capability (row 4) inside the same full-system boundary (row 27); measured axial thrust from the calibrated stand; the uncertainty allowance of the gate is a LOCK-2 number.",
+   "units": "mN",
+   "per_configuration": "measured for both configurations at the same conditions",
+   "measurement_chain": [
+    "INS-01",
+    "INS-05",
+    "INS-06",
+    "INS-07",
+    "INS-08"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=DQ-HI-TABS] (A9-04)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   }
+  },
+  {
+   "id": "DQ-HI-PBUS",
+   "name": "full bus-power compatibility",
+   "role": "HARD_GATE",
+   "operational_definition": "P_bus = all electrical power crossing the spacecraft-DC propulsion-system boundary for the configuration, every active load in its own bus slot (Hall discharge, per-coil magnet, ICP RF source/matching, ICP collector/bias, C1 heater/keeper, flow/valve/housekeeping, reserved DC; row 110) on the A9 boundary (abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json (A9-02); bus_power_boundary_v1 untouched, row 108); < 1.5 kW including start-up transients unless the official RFP explicitly permits a transient exception (row 108); PARTIAL_BOUNDARY basis reported until compressor draw and valve-outlet feed state are provided (row 22). No discharge-only or RF-generator-only power claim is sufficient (A9 governing decision 8).",
+   "units": "W (steady and transient peak)",
+   "per_configuration": "measured for both configurations at the same conditions",
+   "measurement_chain": [
+    "INS-02",
+    "INS-03",
+    "INS-18"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=DQ-HI-PBUS] (A9-04)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   }
+  },
+  {
+   "id": "DQ-HI-PALLOC",
+   "name": "ICP power inside the internal design allocation",
+   "role": "HARD_GATE",
+   "operational_definition": "Full-system P_bus of hall_icp_neutralizer inside the internal ~1.35 kW design allocation without nominally consuming the 1.35->1.5 kW margin (row 109).",
+   "units": "W",
+   "per_configuration": "measured for both configurations at the same conditions",
+   "measurement_chain": [
+    "INS-02",
+    "INS-03"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   },
+   "applies_to": [
+    "hall_icp_neutralizer"
+   ]
+  },
+  {
+   "id": "DQ-HI-STAB",
+   "name": "stability / oscillation",
+   "role": "HARD_GATE",
+   "operational_definition": "I_d(t) oscillation class over the dwell from the exploratory chain to ~60 MHz or the declared measured bandwidth with its transfer function (row 129); the class threshold form at LOCK-1, numbers at LOCK-2 from the HI-S1 band.",
+   "units": "A (band), Hz, class",
+   "per_configuration": "measured for both configurations at the same conditions",
+   "measurement_chain": [
+    "INS-04",
+    "INS-10",
+    "INS-18"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   }
+  },
+  {
+   "id": "DQ-HI-SAFE",
+   "name": "safety / operating-limit gate",
+   "role": "HARD_GATE",
+   "operational_definition": "No registered safety limit exceeded during the reading: RF interlock and reflected power (row 62), temperatures with >= 50 K margin below validated continuous-use limits (row 86), isolation / arcing, collector bias limits, C1 poisoning protection (HW-C1-03); any limit hit is recorded with the exact limit and state (row 41).",
+   "units": "class; W; K; V",
+   "per_configuration": "measured for both configurations at the same conditions",
+   "measurement_chain": [
+    "INS-03",
+    "INS-17",
+    "INS-21",
+    "INS-23",
+    "INS-24",
+    "RF interlock channel schemas/interfaces/icp_neutralizer_icd_v1.json ICP-16 (A9-03)"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   }
+  },
+  {
+   "id": "DQ-HI-IGN",
+   "name": "ignition / start / restart",
+   "role": "HARD_GATE",
+   "operational_definition": "Per start: attempts and outcome for C1 ignition (dwell cap and retries of row 93), ICP ignition, Hall ignition with ICP electrons, restart success and cycle count (row 24); each classified per the preregistration, never hidden as a setup event.",
+   "units": "count; s; class",
+   "per_configuration": "measured for both configurations at the same conditions",
+   "measurement_chain": [
+    "INS-10",
+    "INS-04",
+    "INS-03",
+    "INS-05",
+    "INS-18"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   }
+  },
+  {
+   "id": "DQ-HI-DXE",
+   "name": "Xe burden relative to C1 (dXe)",
+   "role": "PARETO_REPORTED",
+   "operational_definition": "Xe mass per operating hour and per start of each configuration at the same condition, booked PHASE_TOTAL_FLOW (row 42) including purge, preheat, ignition, keeper, transition and fallback; ICP gas: G-REUSE books no dedicated ICP gas (A9.1 HIQ-06, no double counting of the Hall feed); a declared G-XE variant books mdot_ICP,Xe under PHASE_TOTAL_FLOW; a G-ATM variant adds mdot_ICP,dedicated to the atmospheric total; dXe = ICP minus C1.",
+   "units": "mg/s; mg per start; kg per mission case",
+   "per_configuration": "measured for both configurations at the same conditions",
+   "measurement_chain": [
+    "INS-05",
+    "INS-18"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   }
+  },
+  {
+   "id": "DQ-HI-DPBUS",
+   "name": "bus-power difference relative to C1 (dP_bus)",
+   "role": "PARETO_REPORTED",
+   "operational_definition": "P_bus(ICP) minus P_bus(C1) at the same condition and in the same block, both on the A9 boundary.",
+   "units": "W",
+   "per_configuration": "measured for both configurations at the same conditions",
+   "measurement_chain": [
+    "INS-02",
+    "INS-03"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   }
+  },
+  {
+   "id": "DQ-HI-TPBUS",
+   "name": "thrust per bus power and its paired ratio",
+   "role": "PARETO_REPORTED",
+   "operational_definition": "T/P_bus per configuration and the paired ratio (T/P_bus)_ICP / (T/P_bus)_C1 at the same condition and block, reported with its interval; never a scalar selection unless preregistered (row 37); undefined where either configuration is not sustained.",
+   "units": "mN/kW; dimensionless",
+   "per_configuration": "measured for both configurations at the same conditions",
+   "measurement_chain": [
+    "INS-01",
+    "INS-02",
+    "INS-03"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   }
+  },
+  {
+   "id": "DQ-HI-DMASS",
+   "name": "mass difference relative to C1 (dmass)",
+   "role": "PARETO_REPORTED",
+   "operational_definition": "Module, RF generator / matching / feedthrough, collector/bias hardware and Xe hardware mass differences from the A9 mass BOM (row 59), against the < 40 kg wet gate (row 5).",
+   "units": "kg",
+   "per_configuration": "external input (not a comparison measurement)",
+   "measurement_chain": [
+    "mass BOM docs/budgets/mass_a9/mass_a9_v1.json (A9-06; allocations and evidence floors, no design CBE; re-evaluated in A9-10)"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   }
+  },
+  {
+   "id": "DQ-HI-RESTART",
+   "name": "restart burden",
+   "role": "PARETO_REPORTED",
+   "operational_definition": "Per restart: energy, gas (by species) and time to sustained discharge, success fraction and cycle count per configuration (rows 24, 46).",
+   "units": "J; mg; s; count",
+   "per_configuration": "measured for both configurations at the same conditions",
+   "measurement_chain": [
+    "INS-02",
+    "INS-05",
+    "INS-10",
+    "INS-18"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   }
+  },
+  {
+   "id": "DQ-HI-LIFE",
+   "name": "life burden",
+   "role": "PARETO_REPORTED",
+   "operational_definition": "Life-limiting evidence per electron source: C1 on the 15,000 h basis (row 46); ICP-neutralizer lifetime / cycle requirement (row 46) from erosion witnesses and the separate AO programme (row 132); never extrapolated from an unadmitted Hall closure (INS-P-11).",
+   "units": "h; cycles; class",
+   "per_configuration": "external input (not a comparison measurement)",
+   "measurement_chain": [
+    "INS-19",
+    "INS-20",
+    "INS-23",
+    "HI-AO programme"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   }
+  },
+  {
+   "id": "DQ-HI-KNEE",
+   "name": "sustainment knee and envelope width per configuration",
+   "role": "DESCRIPTIVE_OUTPUT",
+   "operational_definition": "Low-flow sustainment knee location for each configuration as an OUTPUT (row 31), from down and up flow scans over the LOCK-1 grid; envelope width reported.",
+   "units": "mg/s",
+   "per_configuration": "measured for both configurations at the same conditions",
+   "measurement_chain": [
+    "INS-05",
+    "INS-04",
+    "INS-10"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains feeding this quantity per the A9-10 chain -> DQ-HI consumer table (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json dq_consumer_table; OQ-INT-01 PROPOSED, owner call)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   }
+  },
+  {
+   "id": "DQ-HI-ETAU",
+   "name": "utilization / beam current (conditional)",
+   "role": "CONDITIONAL",
+   "operational_definition": "Used in a gate or Pareto quantity only if pre-registered at LOCK-1; then Faraday / ExB repeatability at HI-S1B is mandatory (row 32); otherwise descriptive only and not gating.",
+   "units": "dimensionless; A",
+   "per_configuration": "measured for both configurations at the same conditions",
+   "measurement_chain": [
+    "INS-13",
+    "INS-15"
+   ],
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=DQ-HI-ETAU] (A9-04)",
+   "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
+   "freeze_points": {
+    "definition_form": "LOCK-1",
+    "margin_value": "LOCK-2"
+   }
+  }
+ ],
+ "design_rules": [
+  {
+   "id": "DR-01",
+   "rule": "order-balanced design governs; reference checks are not a substitute for balancing",
+   "source": "row 29"
+  },
+  {
+   "id": "DR-02",
+   "rule": "complete balanced replicate sets; minimum three complete engineering replicates; final n at LOCK-2 from measured uncertainty (R-03 analog)",
+   "source": "row 19"
+  },
+  {
+   "id": "DR-03",
+   "rule": "seed-generation procedure frozen at LOCK-1; seed drawn at LOCK-2 after n is fixed; seed and hash published at LOCK-2 before execution",
+   "source": "row 30"
+  },
+  {
+   "id": "DR-04",
+   "rule": "condition grid frozen at LOCK-1 from W1 plus the anticipated knee; knee location is an output per configuration",
+   "source": "row 31"
+  },
+  {
+   "id": "DR-05",
+   "rule": "stopped arm -> NOT_TESTED slots, remaining order kept, balance loss reported",
+   "source": "row 39"
+  },
+  {
+   "id": "DR-06",
+   "rule": "abort / limit hit = not sustained within registered limits, with the exact limit and state recorded",
+   "source": "row 41"
+  },
+  {
+   "id": "DR-07",
+   "rule": "ignition / start attempts recorded, incl. ICP ignition, Hall ignition with ICP electrons, restart success and cycle count, classified per the preregistration",
+   "source": "row 24"
+  },
+  {
+   "id": "DR-08",
+   "rule": "two elevated background-pressure levels for facility-effect characterization; T-PB-MAX frozen only after the knee and facility capability are known",
+   "source": "row 23"
+  },
+  {
+   "id": "DR-09",
+   "rule": "held-out Hall-transport validation subset preregistered before S1; no reclassification after exposure",
+   "source": "row 25"
+  },
+  {
+   "id": "DR-10",
+   "rule": "reference readings stay in held-out custody until W5 decides; no exposure-driven reclassification",
+   "source": "row 35"
+  },
+  {
+   "id": "DR-11",
+   "rule": "if eta_u / beam current enters any decision quantity, Faraday / ExB repeatability at S1b is required",
+   "source": "row 32"
+  },
+  {
+   "id": "DR-12",
+   "rule": "REF-COND in its own installation per block",
+   "source": "row 40"
+  },
+  {
+   "id": "DR-13",
+   "rule": "within every installation: pure N2 first, O2-bearing last; Ar engineering-only topology replication first in the campaign",
+   "source": "row 36"
+  },
+  {
+   "id": "DR-14",
+   "rule": "Xe used only as bounded, labelled reference / peak points, booked; never evidence for atmospheric-only performance",
+   "source": "rows 6, 26, 42"
+  },
+  {
+   "id": "DR-15",
+   "rule": "no pre-ionizer dwell matching; equivalent startup-state and thermal-state handling for C1 vs ICP preregistered",
+   "source": "row 65"
+  },
+  {
+   "id": "DR-16",
+   "rule": "matched sham service lines in every compared configuration",
+   "source": "row 133"
+  },
+  {
+   "id": "DR-17",
+   "rule": "the actual Vyovrinda H-1 is the scored article; surrogate hardware only as non-scoring shakedown",
+   "source": "row 20"
+  },
+  {
+   "id": "DR-18",
+   "rule": "thrust-stand calibration pre/post block with drift and hysteresis recorded",
+   "source": "row 119"
+  },
+  {
+   "id": "DR-19",
+   "rule": "installed MFC zero check per block and a declared MFC body-temperature band",
+   "source": "row 97"
+  },
+  {
+   "id": "DR-20",
+   "rule": "facility radiative sink temperature measured per run",
+   "source": "row 131"
+  },
+  {
+   "id": "DR-21",
+   "rule": "no score-bearing data before LOCK-2; score-bearing data taken before LOCK-2 are excluded",
+   "source": "historical locks.rule (phase1_prereg_framework_v1.json#locks)"
+  },
+  {
+   "id": "DR-22",
+   "rule": "no performance prediction from any Hall-transport closure (none admitted), the superseded 0-D Hall model or the withdrawn v1.2-v1.6 numbers; published analogs only with page / figure / table provenance and evidence class",
+   "source": "CLAUDE.md gate 3 and superseded list; A9 evidence_anchor"
+  },
+  {
+   "id": "DR-23",
+   "rule": "no hypothesis surfaces from manufactured ASSUMED_SCREENING_VALUE inputs",
+   "source": "row 146"
+  }
+ ],
+ "execution_design": {
+  "unit": "block = reference installation at REF-COND (own installation, row 40) + one installation of each configuration in the order of the block's sequence, each visiting the block's full condition set once",
+  "scheme": "complete order-balanced replicate sets: for two configurations the Williams set (REF-WILLIAMS1949, cited from the historical framework) is both orders {AB, BA}; one replicate set = one block of each sequence (rows 19, 29)",
+  "sequences": [
+   {
+    "id": "SEQ-A",
+    "order": [
+     "hall_c1_reference",
+     "hall_icp_neutralizer"
+    ]
+   },
+   {
+    "id": "SEQ-B",
+    "order": [
+     "hall_icp_neutralizer",
+     "hall_c1_reference"
+    ]
+   }
+  ],
+  "balance_checked_by_script": {
+   "position_balanced": true,
+   "first_order_carryover_balanced": true,
+   "no_self_carryover": true,
+   "equals_all_permutations": true
+  },
+  "reference_predecessor_counts_with_reference_module_hall_c1_reference": {
+   "by_installation": {
+    "hall_c1_reference": {
+     "REF(hall_c1_reference)": 1,
+     "hall_icp_neutralizer": 1
+    },
+    "hall_icp_neutralizer": {
+     "REF(hall_c1_reference)": 1,
+     "hall_c1_reference": 1
+    }
+   },
+   "by_module_on_carrier": {
+    "hall_c1_reference": {
+     "hall_c1_reference": 1,
+     "hall_icp_neutralizer": 1
+    },
+    "hall_icp_neutralizer": {
+     "hall_c1_reference": 2
+    }
+   }
+  },
+  "reference_asymmetry_note": "per installation the predecessors are balanced, but counted by the module on the carrier the configuration that does not carry the reference is always preceded by the reference module while the reference configuration is preceded by itself once and by the other module once per replicate set (by_module_on_carrier); A9.1 HIQ-01: hall_c1_reference stays the REF-COND drift/reference anchor in every block and this predecessor asymmetry is preserved and reported, never hidden or statistically erased",
+  "min_complete_replicate_sets": {
+   "value": 3,
+   "source": "row 19",
+   "evidence_class": "owner-allocation",
+   "interpretation": "OWNER (A9.1 HIQ-02): three complete balanced replicate sets = both sequences in each replicate set, i.e. at least six blocks before any larger n required by the LOCK-2 uncertainty"
+  },
+  "min_blocks_if_interpretation_accepted": {
+   "value": 6,
+   "derivation": "3 complete replicate sets x 2 sequences (computed by minimum_blocks())",
+   "evidence_class": "model-derived",
+   "owner_status": "interpretation accepted by the owner (A9.1 HIQ-02): at least 6 blocks; final n at LOCK-2"
+  },
+  "final_n": "LOCK-2 from measured uncertainty; whole multiple of the sequence-set size (row 19); assign_sequences() raises otherwise",
+  "seed_procedure_frozen_at_lock1": [
+   "the seed is drawn only at LOCK-2, after n is fixed (row 30)",
+   "PROPOSED procedure: 256-bit seed from an operating-system CSPRNG by the custodian, in the presence of a second signatory; recorded as 64 lowercase hex characters",
+   "the realized schedule = assign_sequences(n, seed, sequence set) of the LOCK-1-frozen script (sha256 recorded at LOCK-1)",
+   "seed, sha256(seed) and sha256 of the realized schedule JSON published in the LOCK-2 file before the first score-bearing reading (row 30)"
+  ],
+  "condition_grid": "frozen at LOCK-1 from W1 plus the anticipated knee; the knee is an output per configuration (row 31); flow range covers ~0.38 to ~3.2 mg/s characterization with nominal sizing near ~1.3 mg/s (row 73)",
+  "interpolation": "measured midpoint / iso-power points preferred over interpolation; any interpolation uncertainty preregistered (row 15)",
+  "stopped_arm": "if an arm / configuration stops (stop rules docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json stop_rules (A9-04)), its scheduled slots become NOT_TESTED, all remaining order is kept, and the balance loss is reported (row 39)",
+  "reference_checks": "reference checks remain reference checks, not a substitute for balancing (row 29)",
+  "protocol_basis": "one reconciled protocol basis; no competing protocol definitions against the same score-bearing campaign (row 21)",
+  "block_template": [
+   {
+    "slot": "REF-OPEN",
+    "configuration": "REF-COND reference installation (module: hall_c1_reference in every block, A9.1 HIQ-01)",
+    "scored_for_decision": false
+   },
+   {
+    "slot": "POSITION-1",
+    "configuration": "sequence position 1",
+    "scored_for_decision": true
+   },
+   {
+    "slot": "POSITION-2",
+    "configuration": "sequence position 2",
+    "scored_for_decision": true
+   },
+   {
+    "slot": "REF-CLOSE",
+    "configuration": "REF-COND reference installation; becomes the next block's REF-OPEN",
+    "scored_for_decision": false
+   }
+  ]
+ },
+ "missing_data": [
+  {
+   "id": "MD-HI-01",
+   "reuses": "MD-01",
+   "event": "uncommanded Hall extinction",
+   "classification": "OBSERVATION (NOT_SUSTAINED)",
+   "rule": "enters DQ-HI-SUST and DQ-HI-KNEE; never missing, never re-run for a sustained reading"
+  },
+  {
+   "id": "MD-HI-02",
+   "reuses": "MD-02",
+   "event": "failed C1 ignition, failed ICP ignition, failed Hall ignition with ICP electrons, or failed restart",
+   "classification": "OBSERVATION (NOT_IGNITED)",
+   "rule": "enters DQ-HI-IGN and DQ-HI-RESTART (row 24); never missing"
+  },
+  {
+   "id": "MD-HI-03",
+   "reuses": "MD-03 (adapted)",
+   "event": "discharge stays lit only with Xe added to the discharge feed or raised C1 Xe beyond the registered recipe",
+   "classification": "OBSERVATION (XE_DEPENDENT)",
+   "rule": "never counted as atmospheric sustainment; enters DQ-HI-SUST and DQ-HI-DXE"
+  },
+  {
+   "id": "MD-HI-04",
+   "reuses": "MD-04",
+   "event": "abort on a registered limit (I_d, V_d, temperature, RF reflected power / interlock, collector bias, isolation)",
+   "classification": "OBSERVATION (ABORTED_AT_LIMIT)",
+   "rule": "not sustained within registered limits, with the exact limit and state recorded (row 41)"
+  },
+  {
+   "id": "MD-HI-05",
+   "reuses": "MD-05",
+   "event": "facility-caused interruption (p_b excursion, pump fault, facility power loss)",
+   "classification": "MISSING (NOT_SCOREABLE_FACILITY)",
+   "rule": "not evidence for or against a configuration; re-run under MD-HI-08"
+  },
+  {
+   "id": "MD-HI-06",
+   "reuses": "MD-06",
+   "event": "instrument failure or invalid calibration",
+   "classification": "MISSING for the dependent decision quantities only (EXCLUDED_INSTRUMENT)",
+   "rule": "missingness per decision quantity through its measurement chain; a missing A9 bus slot makes P_bus undefined (EXCLUDED_MISSING_BOUNDARY_COMPONENT)"
+  },
+  {
+   "id": "MD-HI-07",
+   "reuses": "MD-07",
+   "event": "instrument failure correlated with a configuration (e.g. RF pickup on common diagnostics with the ICP energized)",
+   "classification": "OBSERVATION (INSTRUMENT_INCOMPATIBLE_WITH_CONFIGURATION)",
+   "rule": "counted per configuration and reported; never silently dropped"
+  },
+  {
+   "id": "MD-HI-08",
+   "reuses": "MD-08",
+   "event": "re-run of a MISSING reading",
+   "classification": "RE-RUN RULE",
+   "rule": "only MD-HI-05 / MD-HI-06 readings are re-run, inside the same installation at its end where possible, else at the end of the block; the re-run cap is a LOCK-2 number; observations are never re-run",
+   "re_run_cap": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)"
+  },
+  {
+   "id": "MD-HI-09",
+   "reuses": "MD-09",
+   "event": "lost configuration visit (incomplete block)",
+   "classification": "MISSING (block-level)",
+   "rule": "paired contrasts needing the lost visit are missing; balance loss reported; any replacement follows a LOCK-1 rule"
+  },
+  {
+   "id": "MD-HI-10",
+   "reuses": "none (new, row 39)",
+   "event": "arm / configuration stopped by a stop rule",
+   "classification": "NOT_TESTED (slot-level)",
+   "rule": "all later slots of the arm are NOT_TESTED; the remaining order is kept; balance loss reported"
+  },
+  {
+   "id": "MD-HI-11",
+   "reuses": "none (new)",
+   "event": "reading taken on hardware later found to be a different serial unit (repair / replacement)",
+   "classification": "MISSING (UNREGISTERED_UNIT)",
+   "rule": "a repaired / replaced unit is a new serialized unit needing a new reference / reinstallation sequence (row 83)"
+  },
+  {
+   "id": "MD-HI-12",
+   "reuses": "MD-10",
+   "event": "any exclusion",
+   "classification": "NO POST HOC EXCLUSION",
+   "rule": "every exclusion follows mechanically from a pre-registered status evaluated by the frozen script on logged data with coded configuration labels; excluded readings are reported, never deleted"
+  }
+ ],
+ "data_quality": [
+  {
+   "id": "DQR-HI-01",
+   "reuses": "DQR-01",
+   "check": "instrument health: self-test, zero and reference checks before and after every visit"
+  },
+  {
+   "id": "DQR-HI-02",
+   "reuses": "DQR-02",
+   "check": "calibration currency (NABL / ISO-17025 primary references, rows 119, 126)"
+  },
+  {
+   "id": "DQR-HI-03",
+   "reuses": "DQR-03",
+   "check": "drift against the REF-COND reference installations"
+  },
+  {
+   "id": "DQR-HI-04",
+   "reuses": "DQR-04",
+   "check": "stand zero drift and in-situ calibration shift pre/post block (row 119)"
+  },
+  {
+   "id": "DQR-HI-05",
+   "reuses": "DQR-05",
+   "check": "p_b below T-PB-MAX (frozen per row 23)"
+  },
+  {
+   "id": "DQR-HI-06",
+   "reuses": "DQR-06",
+   "check": "paired background-pressure match between configurations"
+  },
+  {
+   "id": "DQR-HI-07",
+   "reuses": "DQR-07",
+   "check": "thermal settling and measured facility sink temperature (row 131)"
+  },
+  {
+   "id": "DQR-HI-08",
+   "reuses": "DQR-08 (adapted)",
+   "check": "RF pickup on common diagnostics with the ICP energized and with the matched sham, within the S1a-analog bound (row 64)"
+  },
+  {
+   "id": "DQR-HI-09",
+   "reuses": "DQR-09 (adapted)",
+   "check": "bus-power completeness: every A9 bus slot of the configuration present (row 110; docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slots (A9-02))"
+  },
+  {
+   "id": "DQR-HI-10",
+   "reuses": "DQR-10",
+   "check": "common time base: channel skew within the synchronization limit"
+  },
+  {
+   "id": "DQR-HI-11",
+   "reuses": "DQR-11 (adapted)",
+   "check": "B(z) with the downstream module installed and energized within the tolerance frozen from measured H-1 sensitivity (row 67)"
+  },
+  {
+   "id": "DQR-HI-12",
+   "reuses": "DQR-12",
+   "check": "raw-data integrity: files hashed at acquisition, dataset frozen by sha256 before scoring, coded configuration labels"
+  },
+  {
+   "id": "DQR-HI-13",
+   "reuses": "none (new)",
+   "check": "matched sham service lines present and routed as registered (row 133)"
+  },
+  {
+   "id": "DQR-HI-14",
+   "reuses": "none (new)",
+   "check": "MFC installed zero per block and body temperature inside the declared band (row 97)"
+  },
+  {
+   "id": "DQR-HI-15",
+   "reuses": "none (new)",
+   "check": "RF forward / reflected via the directional coupler inside the registered chain; calorimetry as independent cross-check (row 72)"
+  }
+ ],
+ "held_out_validation": {
+  "w5_path": "docs/validation/hall_transport_v2_prereg/ (DRAFT; referenced by path only)",
+  "rule": "part of the new data is preregistered, before any Hall-on H-1 reading, as held-out Hall-transport validation evidence; no reclassification after exposure (row 25); P5-N2 v1 stays INCONCLUSIVE and is unchanged",
+  "proposed_families": [
+   {
+    "family": "HF-1",
+    "data": "hall_c1_reference pure-N2 flow scans (down and up) and grid conditions",
+    "role": "HELD_OUT (PROPOSED; analog of historical F1/F2)"
+   },
+   {
+    "family": "HF-2",
+    "data": "hall_icp_neutralizer pure-N2 readings",
+    "role": "SEQUESTERED_FOR_FUTURE_PREREG (owner, A9.1 HIQ-07): the downstream ICP electron source changes the cathode/electron boundary condition and cannot silently validate the existing transport model; kept for a future Hall-transport preregistration, not inserted into the current validation set"
+   },
+   {
+    "family": "HF-3",
+    "data": "O2-bearing slices (NO_ATOMIC_O)",
+    "role": "SEQUESTERED_FOR_FUTURE_PREREG (no O/O2 chemistry admitted)"
+   },
+   {
+    "family": "HF-4",
+    "data": "REF-COND reference installations",
+    "role": "HELD-OUT custody until W5 decides (row 35)"
+   },
+   {
+    "family": "HF-5",
+    "data": "HI-PB elevated-p_b readings",
+    "role": "FACILITY evidence only"
+   },
+   {
+    "family": "HF-6",
+    "data": "HI-AR Ar readings",
+    "role": "not validation evidence (engineering-only)"
+   }
+  ],
+  "modes_never_crossed": "the C1-vs-ICP decision and Hall-transport validation are separate processes fed from one custody-controlled raw dataset; no model output enters a decision classification and no decision outcome changes a validation criterion"
+ },
+ "items": [
+  {
+   "id": "ITM-01",
+   "name": "RF frequency of the ICP neutralizer",
+   "value": 13.56,
+   "units": "MHz",
+   "basis": "owner answer",
+   "source": "row 72",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-02",
+   "name": "laboratory RF forward-power range (source and inline chain sizing)",
+   "value": "0-500",
+   "units": "W",
+   "basis": "owner answer",
+   "source": "row 72",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED (initial sizing)",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-03",
+   "name": "ICP magnetization (first build)",
+   "value": "unmagnetized",
+   "units": "-",
+   "basis": "owner answer",
+   "source": "row 69",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-04",
+   "name": "sustained atmospheric thrust gate",
+   "value": 12,
+   "units": "mN",
+   "basis": "owner engineering basis of the RFP '12-25 mN' (official RFP not yet obtained)",
+   "source": "row 4",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED (provisional until the official RFP)",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-05",
+   "name": "system thrust capability gate",
+   "value": 25,
+   "units": "mN",
+   "basis": "owner engineering basis",
+   "source": "rows 4, 27",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED (provisional until the official RFP)",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-06",
+   "name": "full-system P_bus limit incl. start-up transients",
+   "value": 1.5,
+   "units": "kW",
+   "basis": "owner engineering basis at the spacecraft-DC propulsion boundary",
+   "source": "rows 27, 108",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED (provisional until the official RFP)",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-07",
+   "name": "internal design allocation that must contain the ICP power",
+   "value": "~1.35",
+   "units": "kW",
+   "basis": "owner answer",
+   "source": "row 109",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-08",
+   "name": "absolute full-system floor at the 25 mN point",
+   "value": 16.67,
+   "units": "mN/kW",
+   "basis": "owner-stated; ratio checked by this script",
+   "source": "row 27",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW",
+   "check": {
+    "computed": "50/3 mN/kW (25 mN / 1.5 kW)",
+    "rounded_2dp": "16.67",
+    "evidence_class": "model-derived"
+   }
+  },
+  {
+   "id": "ITM-09",
+   "name": "system mass gate (wet, incl. Xe and tank)",
+   "value": 40,
+   "units": "kg",
+   "basis": "owner conservative interpretation",
+   "source": "row 5",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED (provisional until the official RFP)",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-10",
+   "name": "mission-life engineering basis",
+   "value": 26280,
+   "units": "h",
+   "basis": "owner engineering basis",
+   "source": "row 3",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED (provisional until the official RFP)",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-11",
+   "name": "firing-life requirement (C1 cathode term basis)",
+   "value": 15000,
+   "units": "h",
+   "basis": "owner provisional hard requirement",
+   "source": "rows 3, 46",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED (provisional)",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-12",
+   "name": "absolute thrust-uncertainty design / acceptance target",
+   "value": 1,
+   "units": "%",
+   "basis": "owner answer; revised only before LOCK-2 on metrology-only evidence",
+   "source": "row 121",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED (target)",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "ITM-13",
+   "name": "S1a-analog u_T acceptance test thrust level",
+   "value": 12,
+   "units": "mN",
+   "basis": "owner answer (max moving payload, all service lines)",
+   "source": "row 120",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-14",
+   "name": "thermal margin below validated continuous-use limits",
+   "value": 50,
+   "units": "K",
+   "basis": "owner answer (plus 20 % heat-load design margin)",
+   "source": "row 86",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-15",
+   "name": "heat-load design margin",
+   "value": 20,
+   "units": "%",
+   "basis": "owner answer",
+   "source": "row 86",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-16",
+   "name": "C1 spot-mode minimum-flow search step",
+   "value": 0.005,
+   "units": "mg/s",
+   "basis": "owner answer (stopping criteria preregistered)",
+   "source": "row 92",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-17",
+   "name": "C1 ignition-dwell cap per attempt (preliminary protocol)",
+   "value": 120,
+   "units": "s",
+   "basis": "owner answer; final bound frozen before score-bearing C1 testing",
+   "source": "row 93",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED (preliminary)",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "ITM-18",
+   "name": "C1 ignition retries allowed (preliminary protocol)",
+   "value": 2,
+   "units": "count",
+   "basis": "owner answer",
+   "source": "row 93",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED (preliminary)",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "ITM-19",
+   "name": "C1 pulsed keeper ignition class",
+   "value": "300-600",
+   "units": "V",
+   "basis": "owner answer (current-limited, interlocked, pulse energy recorded)",
+   "source": "row 89",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-20",
+   "name": "number of elevated background-pressure levels",
+   "value": 2,
+   "units": "count",
+   "basis": "owner answer",
+   "source": "row 23",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-21",
+   "name": "minimum complete engineering replicates",
+   "value": 3,
+   "units": "count",
+   "basis": "owner answer (interpretation HIQ-02)",
+   "source": "row 19",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-22",
+   "name": "V_d rating end for H-1, C1, supply, isolation and diagnostics",
+   "value": 350,
+   "units": "V",
+   "basis": "owner answer",
+   "source": "row 81",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-23",
+   "name": "exploratory I_d(t) chain bandwidth",
+   "value": "~60 (or declared measured bandwidth)",
+   "units": "MHz",
+   "basis": "owner answer",
+   "source": "row 129",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "ITM-24",
+   "name": "thrust-stand moving payload design minimum",
+   "value": 25,
+   "units": "kg",
+   "basis": "owner answer",
+   "source": "row 116",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-25",
+   "name": "low-flow cathode MFC resolution",
+   "value": 0.0005,
+   "units": "mg/s",
+   "basis": "owner answer",
+   "source": "row 98",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-26",
+   "name": "C1 emitter temperature floor during O-bearing operation (experimental)",
+   "value": 1843,
+   "units": "K",
+   "basis": "owner answer; not a demonstrated lifetime solution",
+   "source": "row 95",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-27",
+   "name": "delivered-flow characterization range and nominal sizing point",
+   "value": "~0.38 to ~3.2 (nominal ~1.3)",
+   "units": "mg/s",
+   "basis": "owner answer; not flight-qualified until measured",
+   "source": "row 73",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-28",
+   "name": "gas isolator continuous rating / withstand qualification",
+   "value": "350 continuous / ~1000 DC withstand",
+   "units": "V",
+   "basis": "owner answer",
+   "source": "row 105",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-29",
+   "name": "cold-flow uniformity S1a criterion",
+   "value": "+-5 mean / 10 peak-to-peak",
+   "units": "%",
+   "basis": "owner answer",
+   "source": "row 101",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_DECIDED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "ITM-30",
+   "name": "decision margins / effect sizes of every DQ-HI-*",
+   "value": "TBD - requires S1a/S1/S1b measured uncertainty and the A9-04 budget",
+   "units": "per DQ",
+   "basis": "row 18",
+   "source": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json UB-C-01 (A9-04)",
+   "evidence_class": "none (TBD)",
+   "status": "NOT SET",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "ITM-31",
+   "name": "block count n",
+   "value": "TBD - requires measured uncertainty (S1b u_inst, u_T, u_P)",
+   "units": "blocks",
+   "basis": "row 19",
+   "source": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json UB-C-06, readiness_n (A9-04)",
+   "evidence_class": "none (TBD)",
+   "status": "NOT SET",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "ITM-32",
+   "name": "randomization seed",
+   "value": "TBD - requires n fixed at LOCK-2",
+   "units": "256-bit hex",
+   "basis": "row 30",
+   "source": "this framework (procedure)",
+   "evidence_class": "none (TBD)",
+   "status": "NOT SET",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "ITM-33",
+   "name": "stop-rule numbers",
+   "value": "TBD - requires the A9-04 stop-rule forms and S1b capability",
+   "units": "per rule",
+   "basis": "row 13",
+   "source": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json stop_rules (A9-04)",
+   "evidence_class": "none (TBD)",
+   "status": "NOT SET",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "ITM-34",
+   "name": "T-PB-MAX",
+   "value": "TBD - requires the low-flow knee and facility capability",
+   "units": "Torr",
+   "basis": "row 23",
+   "source": "facility (R5)",
+   "evidence_class": "none (TBD)",
+   "status": "NOT SET",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "ITM-35",
+   "name": "the two elevated p_b level values",
+   "value": "TBD - requires facility capability",
+   "units": "Torr",
+   "basis": "row 23",
+   "source": "facility (R5)",
+   "evidence_class": "none (TBD)",
+   "status": "NOT SET",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "ITM-36",
+   "name": "allowable B(z) field change with the ICP module installed / energized",
+   "value": "TBD - requires measured H-1 sensitivity (HI-S1A / HI-S1)",
+   "units": "G or %",
+   "basis": "row 67",
+   "source": "H-1 / MC-1",
+   "evidence_class": "none (TBD)",
+   "status": "NOT SET",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "ITM-37",
+   "name": "REF-COND (flow, V_d, B, gas)",
+   "value": "TBD - requires W1 grid and the anticipated knee",
+   "units": "mg/s; V; A",
+   "basis": "row 40",
+   "source": "this framework",
+   "evidence_class": "none (TBD)",
+   "status": "NOT SET",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "ITM-38",
+   "name": "condition grid",
+   "value": "TBD - requires W1 plus the anticipated knee",
+   "units": "mg/s; V; composition",
+   "basis": "row 31",
+   "source": "this framework",
+   "evidence_class": "none (TBD)",
+   "status": "NOT SET",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "ITM-39",
+   "name": "re-mount series K and readings per cycle r",
+   "value": "TBD - requires a LOCK-1 choice of K and r (RR-HI-06); the A9-04 budget (readiness_n) consumes the re-mount series as s_d at LOCK-2 but sets no K or r",
+   "units": "count",
+   "basis": "RR-HI-06",
+   "source": "RR-HI-06 (this framework); docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json readiness_n (A9-04, merged: no K or r defined)",
+   "evidence_class": "none (TBD)",
+   "status": "NOT SET",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "ITM-40",
+   "name": "ICP gas feed species and flow",
+   "value": "G-REUSE: 0 mg/s dedicated ICP flow (A9.1 HIQ-06); a G-ATM / G-XE contingency flow is TBD - requires the declared variant",
+   "units": "species; mg/s",
+   "basis": "A9 recorder flag (row 46)",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json HIQ-06 (A9 recorder flag row 46 resolved); schemas/interfaces/icp_neutralizer_icd_v1.json ICP-26 (A9-03)",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN (A9.1 HIQ-06; contingency variants open)",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "ITM-41",
+   "name": "published analog operating points for the Ar topology reproduction",
+   "value": "TBD - requires the Takahashi 2024 full-text extraction with page / figure / table provenance",
+   "units": "various",
+   "basis": "row 7",
+   "source": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json and docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json (A9-05)",
+   "evidence_class": "none (TBD)",
+   "status": "PENDING",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "ITM-42",
+   "name": "extinction window, dwell, sampling rate, oscillation class threshold",
+   "value": "TBD - requires HI-S1 I_d band and thermal time constants",
+   "units": "s; Hz; A",
+   "basis": "historical lock2_converts",
+   "source": "this framework",
+   "evidence_class": "none (TBD)",
+   "status": "NOT SET",
+   "freeze_point": "LOCK-2"
+  }
+ ],
+ "interface_demands": [
+  {
+   "id": "IF-HI-01",
+   "direction": "from this lane to A9-02",
+   "counterpart": "abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json (A9-02)",
+   "demand": "one bus slot per active load of each configuration: Hall discharge, per-coil magnet, ICP RF source/matching, ICP collector/bias, C1 heater and keeper (reference supplies), flow/valve/housekeeping, reserved DC; start-up transient metering; PARTIAL_BOUNDARY flag (rows 22, 108, 110)",
+   "units": "W per slot (steady, transient peak)",
+   "status": "SATISFIED by A9-02: one slot per active load in abep_sim/bus_boundary_a9.py SLOTS / BASE_SLOTS (A9-02, merged) (hall_discharge, hall_magnet_inner/outer/trim, c1_heater, c1_keeper, c1_common_tie, filter_getter, icp_rf_source, icp_matching_network, icp_collector_bias (variants: icp_assist_magnet, active_cooling, flow_control_icp_feed only for G-ATM / G-XE), flow_control_atmospheric, flow_control_xe, compressor, thermal_control, housekeeping_controls, reserved_dc_port); start-up transient metering = the gate quantity P_bus,1ms,max (A9.1 OQ-A902-01, p_bus_1ms_max()); PARTIAL_BOUNDARY status (row 22); per-slot W values TBD - measurement"
+  },
+  {
+   "id": "IF-HI-02",
+   "direction": "from A9-02 to this lane",
+   "counterpart": "abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json (A9-02)",
+   "demand": "slot ids used by DQ-HI-PBUS / DQ-HI-DPBUS / DQR-HI-09",
+   "units": "-",
+   "status": "SATISFIED by A9-02: slot ids of abep_sim/bus_boundary_a9.py SLOTS / BASE_SLOTS (A9-02, merged) (installed per configuration in BASE_SLOTS, variants in VARIANT_OPTIONS)"
+  },
+  {
+   "id": "IF-HI-03",
+   "direction": "from this lane to A9-03",
+   "counterpart": "schemas/interfaces/icp_neutralizer_icd_v1.json (A9-03)",
+   "demand": "kinematic-carrier datum and repeatability item for downstream module exchange (row 122); module ID; matched-sham definitions (row 133); RF forward/reflected, RF interlock, collector/bias V/I, temperatures and telemetry channels (rows 62, 130); floating body with separately biased collector (row 70); Hall-exhaust-to-ICP pressure/conductance interface (row 63); ICP gas feed port",
+   "units": "mm; W; V; A; K; Pa",
+   "status": "SATISFIED by A9-03 (schemas/interfaces/icp_neutralizer_icd_v1.json): carrier datum KC-1 and exchange series ICP-06 / ICP-39, MODULE_ID ICP-33, matched shams ICP-09 / ICP-18, channels ICP-34 (incl. RF forward/reflected, interlock, collector V/I, temperatures), floating body ICP-20 with separately metered collector ICP-21, Hall-exhaust-to-ICP pressure interface ICP-27, gas port ICP-26 (capped in G-REUSE); dimensions and ranges stay LOCK-1 items"
+  },
+  {
+   "id": "IF-HI-04",
+   "direction": "from A9-03 to this lane",
+   "counterpart": "schemas/interfaces/icp_neutralizer_icd_v1.json (A9-03)",
+   "demand": "frozen interface ids for RR-HI-02 and SC-HI-SRC-ICP; interfaces frozen before HI-S1 (row 71)",
+   "units": "-",
+   "status": "PARTIAL: A9-03 item ids ICP-01..ICP-47 exist and are citable for RR-HI-02 / SC-HI-SRC-ICP; they are not frozen - the freeze is gate deadline GD-01 (before HI-S1)"
+  },
+  {
+   "id": "IF-HI-05",
+   "direction": "from this lane to A9-04",
+   "counterpart": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json (A9-04)",
+   "demand": "decision-quantity list DQ-HI-* with measurement chains, for the uncertainty budget, stop-rule forms and the n computation (rows 12, 13, 18, 19)",
+   "units": "per DQ",
+   "status": "SUPPLIED (this deliverable)"
+  },
+  {
+   "id": "IF-HI-06",
+   "direction": "from A9-04 to this lane",
+   "counterpart": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json (A9-04)",
+   "demand": "uncertainty per DQ-HI-*, stop-rule forms, the LOCK-2 computation rules for margins and n",
+   "units": "per DQ",
+   "status": "PARTIAL: A9-04 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) supplies measurement chains per DQ-HI-* (measurement_chains), stop-rule forms (stop_rules SR-C-SIGN / SR-C-MARGIN; A9.1 UBQ-09 selects SR-C-MARGIN) and the n rule (readiness_n); every uncertainty value and margin number is TBD until LOCK-2"
+  },
+  {
+   "id": "IF-HI-07",
+   "direction": "from A9-05 to this lane",
+   "counterpart": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json and docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json (A9-05)",
+   "demand": "Takahashi 2024 extraction (topology precedent, Ar operating points with provenance) for HI-AR; validation-input list (row 145) mapped to DQ-HI-ECAP / DQ-HI-VCPL / DQ-HI-IGN",
+   "units": "various",
+   "status": "SATISFIED by A9-05: Takahashi 2024 extraction with page / figure locators (docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json extraction TK-01..TK-74, digitized_fig4; published analog, context only) and the validation-input list (docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json, row 145)"
+  },
+  {
+   "id": "IF-HI-08",
+   "direction": "from this lane to A9-05",
+   "counterpart": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json and docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json (A9-05)",
+   "demand": "which validation inputs become decision quantities and which stay descriptive",
+   "units": "-",
+   "status": "SUPPLIED (decision_quantities)"
+  },
+  {
+   "id": "IF-HI-09",
+   "direction": "from this lane to H2-6 / fixture",
+   "counterpart": "docs/hardware/h2/h2_6_diagnostics_fixture/ (H26-40..H26-42 upstream-module concept) and docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07; revision register REV-*, interface demands IDA7-*)",
+   "demand": "carrier re-derived for a DOWNSTREAM module (H2-6 concept was between IP-UP and IP-DN upstream); harp / slack-loop service routing with matched sham RF coax (row 117); >= 25 kg moving payload (row 116)",
+   "units": "kg; N",
+   "status": "SATISFIED at requirement level by A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-29..REV-34: H-1 stays bolted, downstream module on KC-1, 3-point seat, >= 25 kg payload, SVC-A9 matched shams, matching network off the platform (superseded for the baseline by A9.2 OQ-A907-11: local adjustable match on / adjacent to the ICP module, coupler on the generator / 50-ohm side)); seat geometry / preload stay LOCK-1 (H2-6 v1 unchanged)"
+  },
+  {
+   "id": "IF-HI-10",
+   "direction": "from this lane to H2-1 / H2-2",
+   "counterpart": "docs/hardware/h2/h2_1_hall_chamber_magnet/, docs/hardware/h2/h2_2_cathode_integration/ and docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07; revision register REV-*, interface demands IDA7-*)",
+   "demand": "external C1 (row 79) replaces the preliminary L-CENTRAL choice; H-1 neutralizer-agnostic with a downstream / coaxial ICP interface",
+   "units": "-",
+   "status": "SATISFIED at requirement level by A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-01, REV-03, REV-13, REV-66: external C1 on KC-1, no central cathode, IP-EXIT / IP-NEU datum); FEMM of MC-1 stays open (IDA7-17)"
+  },
+  {
+   "id": "IF-HI-11",
+   "direction": "from this lane to H2-4",
+   "counterpart": "docs/hardware/h2/h2_4_ppu_bus/ and docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07; revision register REV-*, interface demands IDA7-*)",
+   "demand": "flight-representative breadboard discharge supply with eta_d and transients measured before LOCK-2 (row 113); 100 V internal bus (row 111)",
+   "units": "W; V",
+   "status": "PARTIAL: A9-07 REV-62 / REV-51 revise the requirement (flight-representative breadboard discharge supply fed from the 100 V internal bus, row 111); eta_d and transients TBD - require the breadboard measurement before LOCK-2 (row 113, GD-14)"
+  },
+  {
+   "id": "IF-HI-12",
+   "direction": "from this lane to H2-5",
+   "counterpart": "docs/hardware/h2/h2_5_thermal_network/ and docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07; revision register REV-*, interface demands IDA7-*)",
+   "demand": ">= 50 K margin rule (row 86) as a DQ-HI-SAFE limit source; current 11.2 K BN wall margin not acceptable",
+   "units": "K",
+   "status": "SATISFIED at requirement level by A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-40: >= 50 K below validated limits + 20 % heat-load margin; REV-45: BN wall worst corner <= 850 degC with 1.2 x heat loads); the thermal solution itself is open (H2-5 v1 unchanged)"
+  },
+  {
+   "id": "IF-HI-13",
+   "direction": "from this lane to instrumentation",
+   "counterpart": "docs/experiments/instrumentation/ (INS-01..INS-24)",
+   "demand": "INS ids used in measurement chains; new ICP channels (RF forward/reflected via directional coupler, collector V/I, body potential, RF interlock) added by A9-03 / instrumentation",
+   "units": "per channel",
+   "status": "PARTIAL: existing INS ids verified; the ICP channel list is defined by A9-03 ICP-34 and the coupler instrument by A9-07 A9H-INS-01; no INS ids are assigned to the new channels yet (instrumentation list revision, LOCK-1)"
+  },
+  {
+   "id": "IF-HI-14",
+   "direction": "from this lane to the Xe ledger",
+   "counterpart": "docs/budgets/xe_ledger/xe_ledger_v1.json and docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json (A9-08)",
+   "demand": "bookings: C1 PHASE_TOTAL_FLOW (row 42), XE_REFERENCE and XE_AUGMENTED_PEAK points (row 26), ICP Xe only for a declared G-XE contingency variant (A9.1 HIQ-06; G-REUSE books 0), 120 s x 2 ignition dwell bound (row 93)",
+   "units": "mg/s; kg",
+   "status": "PARTIAL: A9-08 (docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json) books C1 phases under PHASE_TOTAL_FLOW (row 42), the ICP Xe term only in G-XE (G-REUSE XA9-21 = 0 mg/s) and carries XE_REFERENCE (XA9-33) with its size TBD; the 120 s x 2 dwell (row 93) enters via the A9-02 start-up template C-S4 (XA9-IF-15)"
+  },
+  {
+   "id": "IF-HI-15",
+   "direction": "from this lane to W5",
+   "counterpart": "docs/validation/hall_transport_v2_prereg/",
+   "demand": "held-out families HF-1..HF-6 (proposed) and the two-part freeze HI-HOLDOUT-A / -B",
+   "units": "-",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "IF-HI-16",
+   "direction": "from H-1 to this lane",
+   "counterpart": "docs/experiments/hardware/ (H-1, MC-1, C-1 configuration items)",
+   "demand": "H-1 serial identity, anode and wall configuration frozen before HI-S1 (rows 75, 135), B(z) sensitivity for ITM-36",
+   "units": "-; G/A",
+   "status": "OPEN - hardware not built: H-1 serial identity, anode / wall freeze (GD-02, GD-03, before HI-S1) and B(z) sensitivity (GD-11) need H-1"
+  },
+  {
+   "id": "IF-HI-17",
+   "direction": "from this lane to A9-06",
+   "counterpart": "docs/budgets/mass_a9/mass_a9_v1.json (A9-06; allocations and evidence floors, no design CBE; re-evaluated in A9-10)",
+   "demand": "mass differences for DQ-HI-DMASS (ICP module, RF generator/matching/feedthrough, collector/bias hardware vs C1 and Xe hardware; row 59)",
+   "units": "kg",
+   "status": "PARTIAL: A9-06 (docs/budgets/mass_a9/mass_a9_v1.json MA9-ID-19) supplies the item-delta set (ICP adds A9B-17..A9B-22; C1 variant adds A9B-C01..A9B-C06); masses TBD (owner allocations and evidence floors only, no CBE)"
+  }
+ ],
+ "owner_answers_applied": [
+  {
+   "row": 1,
+   "covers_ids": [
+    "WEB-ACC-1"
+   ],
+   "owner_answer_verbatim": "YES — obtain the canonical latest RFP PDF immediately through the legitimate owner/portal route; store the exact file, source URL/date and SHA-256. Do not freeze ambiguous RFP interpretations from secondary sources.",
+   "applied_as": "RFP not yet obtained; no RFP interpretation frozen here"
+  },
+  {
+   "row": 2,
+   "covers_ids": [
+    "WEB-ACC-2"
+   ],
+   "owner_answer_verbatim": "VERIFY-FIRST — use Tender ID `2026_DRDO_788433_1` for project tracking. Do not choose 05 Oct vs 20 Oct, or XI/LM vs X/L/M, from conflicting secondary material; freeze the exact RFP reference and bid-close date only from the official tender/RFP copy.",
+   "applied_as": "tender id used for tracking only"
+  },
+  {
+   "row": 3,
+   "covers_ids": [
+    "WEB-RFP-1"
+   ],
+   "owner_answer_verbatim": "ENGINEERING BASIS — use mission life ≥26,280 h until the official wording is verified because it is the conservative interpretation of 'three years' versus 26,000 h. Retain >15,000 h firing as a provisional hard requirement until the official RFP confirms it.",
+   "applied_as": "ITM-10, ITM-11 engineering bases"
+  },
+  {
+   "row": 4,
+   "covers_ids": [
+    "OD1"
+   ],
+   "owner_answer_verbatim": "AMEND option (ii) — plan for ≥12 mN sustained atmospheric operation and demonstrated 25 mN system capability. Do not require Xe specifically for 25 mN; Xe may be used if the RFP permits and must then be explicitly booked. The 25 mN point must still satisfy the full-system power gate.",
+   "applied_as": "ITM-04/05 and DQ-HI-TABS; HI-ABS; Xe for 25 mN only if booked"
+  },
+  {
+   "row": 5,
+   "covers_ids": [
+    "OD-XE-8",
+    "OD-M7",
+    "H27-Q3"
+   ],
+   "owner_answer_verbatim": "INCLUDES Xe + tank — use the conservative wet-system interpretation unless the official RFP explicitly defines the 40 kg as dry mass.",
+   "applied_as": "ITM-09 wet mass gate; DQ-HI-DMASS"
+  },
+  {
+   "row": 6,
+   "covers_ids": [
+    "OD-XE-6"
+   ],
+   "owner_answer_verbatim": "YES, bounded functional Xe mode — treat 'supplementary/alternative Xenon' as requiring a demonstrated Xe-capable operating mode beyond mere bookkeeping. It need not be continuous nominal operation; book every Xe use explicitly.",
+   "applied_as": "bounded functional Xe mode: XE_REFERENCE / XE_AUGMENTED_PEAK labels (DR-14)"
+  },
+  {
+   "row": 7,
+   "covers_ids": [
+    "WEB-ACC-3",
+    "OQ-R8-3",
+    "OQ-R3-5"
+   ],
+   "owner_answer_verbatim": "YES — authorize lawful library/ILL/purchase/owner-channel acquisition of all listed items. Add the Takahashi/Watanabe 2024 Hall + downstream RF-ICP paper and any primary RF-plasma-cathode papers. No access bypasses or author-contact shortcuts unless separately authorized.",
+   "applied_as": "ITM-41 analog points only after lawful acquisition and A9-05 extraction"
+  },
+  {
+   "row": 8,
+   "covers_ids": [
+    "WEB-SUP-1",
+    "R6-Q5"
+   ],
+   "owner_answer_verbatim": "YES, quotations only now — request quotations for Xe tank/PMU/FCU/MFCs/thrust stand and add 13.56 MHz RF generator, matching network, directional coupler, RF feedthroughs and ICP chamber components. No purchase order until H3/A9 interfaces are frozen.",
+   "applied_as": "H3 inputs are quotation specifications only"
+  },
+  {
+   "row": 12,
+   "covers_ids": [
+    "D-01"
+   ],
+   "owner_answer_verbatim": "SUPERSEDED for the primary campaign. Preserve historical D-01-A if the old pre-ionizer experiment is ever resumed. Create a new uncertainty budget for the C1-vs-ICP neutralizer comparison.",
+   "applied_as": "old D-01 budget not reused; new budget docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json (A9-04; IF-HI-05/06)"
+  },
+  {
+   "row": 13,
+   "covers_ids": [
+    "D-02"
+   ],
+   "owner_answer_verbatim": "SUPERSEDED for the primary campaign. Preserve historical D-02-A only for the old experiment; define new stop rules before any Hall→ICP score-bearing data.",
+   "applied_as": "stop rules defined before score-bearing data (GD-07, ITM-33)"
+  },
+  {
+   "row": 14,
+   "covers_ids": [
+    "D-03"
+   ],
+   "owner_answer_verbatim": "SUPERSEDED for the primary campaign. If the historical campaign is resumed, retain D-03-B; otherwise no new work.",
+   "applied_as": "historical D-03-B not carried; no new work"
+  },
+  {
+   "row": 15,
+   "covers_ids": [
+    "D-04"
+   ],
+   "owner_answer_verbatim": "HISTORICAL D-04-B if reused. For Hall→ICP, prefer measured midpoint/iso-power points over interpolation wherever practical; any interpolation uncertainty must be preregistered.",
+   "applied_as": "interpolation rule (GD-16)"
+  },
+  {
+   "row": 16,
+   "covers_ids": [
+    "D-05"
+   ],
+   "owner_answer_verbatim": "KEEP historical LOCK files in `experiment_protocol/prereg`; create a separate versioned Hall→ICP preregistration path, e.g. `docs/experiments/hall_icp/prereg/`. Never overwrite the old locks.",
+   "applied_as": "not a lock; LOCK files later under docs/experiments/hall_icp/prereg/"
+  },
+  {
+   "row": 17,
+   "covers_ids": [
+    "D-06",
+    "HWQ-01"
+   ],
+   "owner_answer_verbatim": "REPLACE old HW-0/HW-RF/HW-ECR scheme for the primary campaign. Keep H-1 fixed on the stand and swap only the downstream electron-source module: conventional Xe-fed C1 reference vs downstream 13.56 MHz ICP neutralizer, with matched sham services/fixtures.",
+   "applied_as": "module-only swap on the carrier; H-1 fixed"
+  },
+  {
+   "row": 18,
+   "covers_ids": [
+    "D-07",
+    "R-08"
+   ],
+   "owner_answer_verbatim": "SUPERSEDED numeric delta — do not carry 0.05/0.1 into the new architecture automatically. Define the new decision quantities first, then freeze any effect-size margin before score-bearing data.",
+   "applied_as": "no numeric margins; MARGIN_NOT_SET literal"
+  },
+  {
+   "row": 19,
+   "covers_ids": [
+    "D-08",
+    "R-03"
+   ],
+   "owner_answer_verbatim": "NEW CAMPAIGN RULE — use complete balanced replicate sets; minimum three complete engineering replicates, with final n determined at LOCK-2 from measured uncertainty. Preserve old D-08 only as historical.",
+   "applied_as": "replicate sets, minimum three, n at LOCK-2 (DR-02, execution_design)"
+  },
+  {
+   "row": 20,
+   "covers_ids": [
+    "D-09",
+    "HWQ-02"
+   ],
+   "owner_answer_verbatim": "D-09-A — use the actual Vyovrinda H-1 design-representative unit. A surrogate may be used only as non-scoring shakedown hardware.",
+   "applied_as": "D-09-A actual H-1; surrogate only HI-ENG"
+  },
+  {
+   "row": 21,
+   "covers_ids": [
+    "D-10"
+   ],
+   "owner_answer_verbatim": "D-10-A — adopt one reconciled protocol basis. Do not run competing protocol definitions against the same score-bearing campaign.",
+   "applied_as": "one reconciled protocol basis"
+  },
+  {
+   "row": 22,
+   "covers_ids": [
+    "D-11"
+   ],
+   "owner_answer_verbatim": "D-11-A — report `PARTIAL_BOUNDARY` until compressor bus draw and valve-outlet feed state are measured/provided by ICD. Do not insert guessed fixed loads.",
+   "applied_as": "PARTIAL_BOUNDARY label"
+  },
+  {
+   "row": 23,
+   "covers_ids": [
+    "D-12",
+    "H26Q-01",
+    "R5-Q3"
+   ],
+   "owner_answer_verbatim": "B — use two elevated background-pressure levels for facility-effect characterization. Freeze T-PB-MAX only after the low-flow knee and facility capability are known. 5e-5 Torr may be used for engineering characterization, but not silently substituted for a stricter score-bearing requirement.",
+   "applied_as": "two elevated p_b levels, T-PB-MAX timing (HI-PB, DR-08)"
+  },
+  {
+   "row": 24,
+   "covers_ids": [
+    "D-13"
+   ],
+   "owner_answer_verbatim": "B — add ignition/start attempts. For Hall→ICP, also record ICP ignition, Hall ignition with ICP electrons, restart success and cycle count; classify them per preregistration rather than hiding them as setup events.",
+   "applied_as": "ignition records incl. ICP (DQ-HI-IGN, DR-07)"
+  },
+  {
+   "row": 25,
+   "covers_ids": [
+    "D-14"
+   ],
+   "owner_answer_verbatim": "B — yes, preregister a held-out subset for Hall-transport validation before S1. No data reclassification after exposure.",
+   "applied_as": "held-out subset before S1 (HI-HOLDOUT-A/B)"
+  },
+  {
+   "row": 26,
+   "covers_ids": [
+    "D-15",
+    "R-14"
+   ],
+   "owner_answer_verbatim": "RETAIN the useful parts of D-15-C — perform a Xe health/reference check and bounded Xe peak points if permitted by the RFP. Label them explicitly and never use them as evidence for atmospheric-only performance.",
+   "applied_as": "bounded Xe reference and labelled peak points"
+  },
+  {
+   "row": 27,
+   "covers_ids": [
+    "HWQ-10"
+   ],
+   "owner_answer_verbatim": "25 mN — demonstrate 25 mN capability inside the same full spacecraft-DC propulsion boundary with P_bus <1.5 kW. 16.67 mN/kW is the absolute full-system floor at that point.",
+   "applied_as": "25 mN within P_bus < 1.5 kW; 16.67 mN/kW floor (ITM-08)"
+  },
+  {
+   "row": 28,
+   "covers_ids": [
+    "P1F-OOD-01"
+   ],
+   "owner_answer_verbatim": "SUPERSEDED — do not execute the old hall_only / rf_hall / ecr_hall topology as the primary Phase-1 decision. New primary comparison: conventional Hall + Xe-fed C1 vs Hall + downstream RF/ICP neutralizer vs `NO_VIABLE_CASE`; retain old framework as historical.",
+   "applied_as": "outcomes hall_c1_reference / hall_icp_neutralizer / NO_VIABLE_CASE"
+  },
+  {
+   "row": 29,
+   "covers_ids": [
+    "R-01"
+   ],
+   "owner_answer_verbatim": "ACCEPT — order-balanced design governs. Reference checks remain reference checks, not a substitute for balancing.",
+   "applied_as": "order balance governs (DR-01)"
+  },
+  {
+   "row": 30,
+   "covers_ids": [
+    "R-02"
+   ],
+   "owner_answer_verbatim": "Draw the randomization seed at LOCK-2 after n is fixed. At LOCK-1 freeze the seed-generation procedure; at LOCK-2 publish the actual seed and hash before execution.",
+   "applied_as": "seed procedure at LOCK-1, seed at LOCK-2 (DR-03)"
+  },
+  {
+   "row": 31,
+   "covers_ids": [
+    "R-04"
+   ],
+   "owner_answer_verbatim": "ACCEPT — freeze the condition grid at LOCK-1 from W1 plus the anticipated knee. Treat the knee location as an output for each configuration.",
+   "applied_as": "grid at LOCK-1, knee an output (DR-04, DQ-HI-KNEE)"
+  },
+  {
+   "row": 32,
+   "covers_ids": [
+    "R-05"
+   ],
+   "owner_answer_verbatim": "ADD repeatability — if eta_u/beam current is used in any decision quantity, include Faraday/ExB repeatability at S1b. Descriptive-only eta_u is insufficient for a gating comparison.",
+   "applied_as": "Faraday/ExB repeatability if eta_u gates (DQ-HI-ETAU)"
+  },
+  {
+   "row": 33,
+   "covers_ids": [
+    "R-06"
+   ],
+   "owner_answer_verbatim": "YES — add RR-07, adapted to C1 ↔ ICP-neutralizer module exchange. H-1 remains fixed.",
+   "applied_as": "RR-HI-07 C1 <-> ICP"
+  },
+  {
+   "row": 34,
+   "covers_ids": [
+    "R-07"
+   ],
+   "owner_answer_verbatim": "SUPERSEDED for new work — retain the old A5 meaning historically, but create a separate Hall→ICP campaign stage map rather than stretching A5 terminology.",
+   "applied_as": "own A9 stage map, not A5 'Phase 1'"
+  },
+  {
+   "row": 35,
+   "covers_ids": [
+    "R-09"
+   ],
+   "owner_answer_verbatim": "HELD-OUT custody until W5 decides; no exposure-driven reclassification.",
+   "applied_as": "reference readings in held-out custody (DR-10)"
+  },
+  {
+   "row": 36,
+   "covers_ids": [
+    "R-10"
+   ],
+   "owner_answer_verbatim": "Use an Ar engineering-only replication first to reproduce the Takahashi-type topology, then pure N2, then O2-bearing mixtures last; keep the Xe reference per the bounded Xe plan. Ar data do not satisfy DRDO atmospheric requirements.",
+   "applied_as": "gas order Ar -> N2 -> O2-bearing (DR-13, RR-HI-04)"
+  },
+  {
+   "row": 37,
+   "covers_ids": [
+    "R-11"
+   ],
+   "owner_answer_verbatim": "NEW `NET_BENEFIT` form — hard gates + Pareto, not a weighted score. ICP must meet electron-current/neutralization, thrust, full P_bus, stability and safety gates; then report ΔXe, ΔP_bus, Δmass, T/P_bus, restart and life burden relative to C1. No single scalar winner unless preregistered.",
+   "applied_as": "NET_BENEFIT = hard gates + Pareto"
+  },
+  {
+   "row": 38,
+   "covers_ids": [
+    "R-12",
+    "P1F-OOD-05"
+   ],
+   "owner_answer_verbatim": "`OPEN` is a status, not an outcome. If evidence cannot decide, report unresolved and identify the next discriminating test.",
+   "applied_as": "OPEN is a status; next discriminating test named"
+  },
+  {
+   "row": 39,
+   "covers_ids": [
+    "R-13"
+   ],
+   "owner_answer_verbatim": "ACCEPT — if an arm/configuration stops, mark its scheduled slots `NOT_TESTED`, keep all remaining order fixed, and report the balance loss.",
+   "applied_as": "NOT_TESTED slots (DR-05, MD-HI-10)"
+  },
+  {
+   "row": 40,
+   "covers_ids": [
+    "P1F-OOD-03"
+   ],
+   "owner_answer_verbatim": "OWN installation per block — do not merge REF-COND into an adjacent configuration unless a later preregistered equivalence test supports that change.",
+   "applied_as": "REF-COND own installation per block (DR-12, RR-HI-05)"
+  },
+  {
+   "row": 41,
+   "covers_ids": [
+    "P1F-OOD-04"
+   ],
+   "owner_answer_verbatim": "YES — abort/limit hit = `not sustained within registered limits`, with the exact limit and state recorded.",
+   "applied_as": "limit abort classification (DR-06, MD-HI-04)"
+  },
+  {
+   "row": 42,
+   "covers_ids": [
+    "OD-XE-1",
+    "R6-Q2"
+   ],
+   "owner_answer_verbatim": "`PHASE_TOTAL_FLOW` — book all Xe during purge, preheat, ignition, keeper/cathode operation, transition and fallback. No unbooked preheat flow.",
+   "applied_as": "PHASE_TOTAL_FLOW booking in DQ-HI-DXE"
+  },
+  {
+   "row": 46,
+   "covers_ids": [
+    "OD-XE-5"
+   ],
+   "owner_answer_verbatim": "15,000 h for the conventional C1 reference/fallback term. The ICP-neutralizer architecture has no continuous C1-Xe cathode term, but must carry its own RF-neutralizer lifetime/cycle requirement.",
+   "applied_as": "C1 15,000 h basis; ICP lifetime / cycle requirement in DQ-HI-LIFE; ICP gas booking (HIQ-06)"
+  },
+  {
+   "row": 49,
+   "covers_ids": [
+    "R6-Q1"
+   ],
+   "owner_answer_verbatim": "HEATED C1 — use a heated Xe-fed LaB6 cathode for the conventional reference/fallback because it minimizes low-flow uncertainty and avoids the heaterless high-start-flow penalty. It is not automatically the final flight neutralizer.",
+   "applied_as": "C1 = heated Xe-fed LaB6 reference"
+  },
+  {
+   "row": 59,
+   "covers_ids": [
+    "OD-M5"
+   ],
+   "owner_answer_verbatim": "ACCEPT with A9 amendment — add downstream ICP neutralizer, RF generator/matching/feedthrough and collector/bias hardware; retain C1 as reference/fallback. Remove pre-ionizer-only items from the new architecture BOM, not from historical v1.",
+   "applied_as": "dmass from the A9 BOM amendment"
+  },
+  {
+   "row": 61,
+   "covers_ids": [
+    "PMQ-01"
+   ],
+   "owner_answer_verbatim": "SUPERSEDED — do not size a pre-ionizer common envelope around ECR. Create a dedicated downstream ICP-neutralizer mechanical/electrical/plume interface.",
+   "applied_as": "no pre-ionizer common envelope reused"
+  },
+  {
+   "row": 62,
+   "covers_ids": [
+    "PMQ-02"
+   ],
+   "owner_answer_verbatim": "SUPERSEDED old L1-L5 definition. New ICP harness must include module ID, RF forward/reflected power, RF interlock, collector/bias V/I, temperatures and command/telemetry; blank/reference termination only where the new comparison requires it.",
+   "applied_as": "ICP harness channels in IF-HI-03"
+  },
+  {
+   "row": 63,
+   "covers_ids": [
+    "PMQ-03"
+   ],
+   "owner_answer_verbatim": "SUPERSEDED — no matched upstream pre-ionizer blank. Define and measure the downstream Hall-exhaust-to-ICP pressure/conductance interface; use a matched mechanical sham only for stand parasitics.",
+   "applied_as": "downstream pressure/conductance interface; mechanical sham for stand parasitics only"
+  },
+  {
+   "row": 64,
+   "covers_ids": [
+    "PMQ-04"
+   ],
+   "owner_answer_verbatim": "SUPERSEDED — replace RF/ECR pre-ionizer exchange with C1↔ICP neutralizer exchange checks: cold/tare, service-line parasitic, B(z) perturbation, electrical isolation and RF pickup.",
+   "applied_as": "C1 <-> ICP exchange checks at HI-S1A"
+  },
+  {
+   "row": 65,
+   "covers_ids": [
+    "PMQ-05"
+   ],
+   "owner_answer_verbatim": "SUPERSEDED — no pre-ionizer dwell matching. Any C1-vs-ICP comparison must instead preregister equivalent startup-state and thermal-state handling.",
+   "applied_as": "startup/thermal-state equivalence instead of dwell matching (DR-15)"
+  },
+  {
+   "row": 67,
+   "covers_ids": [
+    "HWQ-04"
+   ],
+   "owner_answer_verbatim": "YES — add a measured B(z) perturbation/sensitivity scan with the downstream ICP module installed/energized. Freeze an allowable field-change tolerance from measured H-1 sensitivity before score-bearing comparison; do not invent a tolerance now.",
+   "applied_as": "B(z) perturbation tolerance from measured sensitivity (ITM-36, DQR-HI-11)"
+  },
+  {
+   "row": 69,
+   "covers_ids": [
+    "HWQ-06"
+   ],
+   "owner_answer_verbatim": "UNMAGNETIZED 13.56 MHz ICP for v1/A9 first build. If magnetic assistance is later justified, treat it as a new controlled variant and book its power/mass explicitly.",
+   "applied_as": "unmagnetized ICP (ITM-03)"
+  },
+  {
+   "row": 70,
+   "covers_ids": [
+    "HWQ-07"
+   ],
+   "owner_answer_verbatim": "OLD options are not adequate. Keep the ICP dielectric/body floating unless the validated circuit requires otherwise; control and measure the electron-extraction collector bias separately. Do not hard-ground the plasma body by default.",
+   "applied_as": "floating body, separately biased collector"
+  },
+  {
+   "row": 71,
+   "covers_ids": [
+    "HWQ-15"
+   ],
+   "owner_answer_verbatim": "YES — freeze the new downstream ICP mechanical, RF, electrical, gas/plume and diagnostic interfaces before score-bearing Phase 1.",
+   "applied_as": "interfaces frozen before score-bearing work (GD-01)"
+  },
+  {
+   "row": 72,
+   "covers_ids": [
+    "R4-Q7"
+   ],
+   "owner_answer_verbatim": "13.56 MHz. Size laboratory RF source and inline measurement chain for 0–500 W forward power initially, with directional-coupler forward/reflected measurements. Calorimetry is an independent cross-check, not the sole primary power measurement.",
+   "applied_as": "13.56 MHz, 0-500 W (A9.2 rf_500W: delivered/operating investigation capability, not a component rating), coupler + calorimetric cross-check"
+  },
+  {
+   "row": 73,
+   "covers_ids": [
+    "H2-1 Q1"
+   ],
+   "owner_answer_verbatim": "Match H-1 nominal channel neutral-density sizing around ~1.3 mg/s delivered atmospheric flow, while requiring operability/thermal characterization from ~0.38 mg/s through ~3.2 mg/s. Do not claim the entire range as flight-qualified until measured.",
+   "applied_as": "flow characterization range (ITM-27)"
+  },
+  {
+   "row": 75,
+   "covers_ids": [
+    "H2-1 Q3"
+   ],
+   "owner_answer_verbatim": "Accept L/h ≤12. Allow an adjustable-anode development insert only before score-bearing S1; freeze the final anode position/geometry before S1 data.",
+   "applied_as": "anode frozen before S1 (GD-02)"
+  },
+  {
+   "row": 78,
+   "covers_ids": [
+    "HWQ-19"
+   ],
+   "owner_answer_verbatim": "EM ONLY for H-1 — this preserves traceable B(z)-versus-current control and sensitivity sweeps. Flight PM assistance can be evaluated later without contaminating H-1 validation.",
+   "applied_as": "EM-only MC-1"
+  },
+  {
+   "row": 79,
+   "covers_ids": [
+    "H2-1 Q6",
+    "H22-OQ-01"
+   ],
+   "owner_answer_verbatim": "EXTERNAL C1 reference. Do not constrain the H-1 mean diameter around a central C1. Provide a downstream/coaxial interface for the ICP neutralizer and keep the Hall head neutralizer-agnostic.",
+   "applied_as": "external C1; neutralizer-agnostic H-1"
+  },
+  {
+   "row": 81,
+   "covers_ids": [
+    "HWQ-03"
+   ],
+   "owner_answer_verbatim": "YES — rate H-1, C1 reference, discharge supply, isolation and diagnostics to the relaxed 350 V end plus appropriate transient/qualification margin.",
+   "applied_as": "350 V rating (ITM-22)"
+  },
+  {
+   "row": 82,
+   "covers_ids": [
+    "HWQ-13"
+   ],
+   "owner_answer_verbatim": "YES — install a hot-state B reference sensor/measurement provision and preserve traceability to current and temperature.",
+   "applied_as": "hot-state B reference"
+  },
+  {
+   "row": 83,
+   "covers_ids": [
+    "HWQ-14"
+   ],
+   "owner_answer_verbatim": "YES — repaired/replaced H-1, C1 or ICP score-bearing module becomes a new serialized unit and requires a new reference/reinstallation sequence before score-bearing use.",
+   "applied_as": "repaired/replaced unit = new serial unit (MD-HI-11)"
+  },
+  {
+   "row": 86,
+   "covers_ids": [
+    "H25-Q4",
+    "H25-Q6"
+   ],
+   "owner_answer_verbatim": "Require ≥50 K margin below each validated continuous-use material/insulation temperature limit plus 20% heat-load design margin. The current ~11.2 K BN-wall margin is not acceptable as a design closure.",
+   "applied_as": ">= 50 K margin, 20 % heat load (ITM-14/15)"
+  },
+  {
+   "row": 88,
+   "covers_ids": [
+    "HWQ-09"
+   ],
+   "owner_answer_verbatim": "CONFIRM C1 only as the conventional reference/fallback: heated Xe-fed LaB6 hollow cathode sized to the measured/derived current demand. It is not the primary flight neutralizer if the downstream ICP succeeds.",
+   "applied_as": "C1 is reference/fallback only"
+  },
+  {
+   "row": 89,
+   "covers_ids": [
+    "H22-OQ-02"
+   ],
+   "owner_answer_verbatim": "YES — provide current-limited pulsed keeper ignition capability in the 300–600 V class for C1 development/reference testing, with interlocks and recorded pulse energy.",
+   "applied_as": "keeper ignition class (ITM-19)"
+  },
+  {
+   "row": 91,
+   "covers_ids": [
+    "H22-OQ-04"
+   ],
+   "owner_answer_verbatim": "DO NOT freeze a resistor value yet. Use an isolated, selectable cathode-common/bleeder topology with voltage/current measurement; choose the final value/switching after EMC and discharge-stability bench tests.",
+   "applied_as": "cathode-common topology selectable/measured"
+  },
+  {
+   "row": 92,
+   "covers_ids": [
+    "H22-OQ-05"
+   ],
+   "owner_answer_verbatim": "ADOPT 0.005 mg/s flow-step resolution for the C1 spot-mode minimum-flow search, with preregistered stopping criteria.",
+   "applied_as": "0.005 mg/s step (ITM-16)"
+  },
+  {
+   "row": 93,
+   "covers_ids": [
+    "H22-OQ-06"
+   ],
+   "owner_answer_verbatim": "Use the selected cathode vendor/design-qualified purge and ignition flow; cap each ignition dwell at 120 s and allow at most two retries in the preliminary protocol, then freeze the final bound before score-bearing C1 testing. Book all Xe.",
+   "applied_as": "120 s x 2 (ITM-17/18, GD-13)"
+  },
+  {
+   "row": 94,
+   "covers_ids": [
+    "H22-OQ-07"
+   ],
+   "owner_answer_verbatim": "Do not use graphite as the flight baseline for an O/AO-exposed keeper. Screen refractory/oxygen-resistant or ceramic-shielded alternatives with biased exposure coupons; freeze material only after erosion/oxidation evidence.",
+   "applied_as": "keeper coupons in HI-AO"
+  },
+  {
+   "row": 95,
+   "covers_ids": [
+    "H22-OQ-08"
+   ],
+   "owner_answer_verbatim": "ADOPT 1843 K as the conservative C1 O-bearing experimental floor pending hardware evidence; do not present it as a demonstrated lifetime solution.",
+   "applied_as": "1843 K floor (ITM-26)"
+  },
+  {
+   "row": 96,
+   "covers_ids": [
+    "H22-FQ-1"
+   ],
+   "owner_answer_verbatim": "ACCEPT the conservative ±2% FS class and its Xe-ledger uncertainty term until S1a demonstrates a better calibrated class on Xe.",
+   "applied_as": "flow class during S1a analog"
+  },
+  {
+   "row": 97,
+   "covers_ids": [
+    "H22-FQ-2"
+   ],
+   "owner_answer_verbatim": "ADOPT installed zero check per block and a declared MFC body-temperature band.",
+   "applied_as": "MFC zero per block (DR-19)"
+  },
+  {
+   "row": 98,
+   "covers_ids": [
+    "H22-FQ-3"
+   ],
+   "owner_answer_verbatim": "ADOPT resolution ≤0.0005 mg/s and digital setpoint for the low-flow cathode MFC.",
+   "applied_as": "MFC resolution (ITM-25)"
+  },
+  {
+   "row": 99,
+   "covers_ids": [
+    "OQ-R8-5",
+    "HWQ-21"
+   ],
+   "owner_answer_verbatim": "GROUND-ONLY heated-emitter exposure for material/life work. Near C1 use passive/low-perturbation witnesses; do not add an extra heated emitter into the score-bearing plume unless separately preregistered.",
+   "applied_as": "ground-only heated emitter in HI-AO"
+  },
+  {
+   "row": 101,
+   "covers_ids": [
+    "GP-D02"
+   ],
+   "owner_answer_verbatim": "ADOPT ±5% mean / 10% peak-to-peak cold-flow uniformity as the S1a engineering criterion.",
+   "applied_as": "cold-flow uniformity (ITM-29)"
+  },
+  {
+   "row": 105,
+   "covers_ids": [
+    "H23-Q2"
+   ],
+   "owner_answer_verbatim": "Design the gas isolator for 350 V continuous operation and perform ~1 kV DC representative-pressure/gas withstand qualification with segmented/porous geometry as appropriate. Do not rely on simple vacuum creepage assumptions across the Paschen region.",
+   "applied_as": "isolator rating (ITM-28)"
+  },
+  {
+   "row": 106,
+   "covers_ids": [
+    "HWQ-08",
+    "OQ-R8-1",
+    "OQ-R8-2",
+    "OQ-R3-3"
+   ],
+   "owner_answer_verbatim": "Use 316L only as the H-1 engineering baseline. Test both biased and floating coupons across the shortlisted O-resistant candidates so electrochemical/bias effects can be separated. Flight anode material remains open until coupon evidence.",
+   "applied_as": "anode coupons biased and floating in HI-AO"
+  },
+  {
+   "row": 107,
+   "covers_ids": [
+    "OQ-R3-4",
+    "H26Q-07"
+   ],
+   "owner_answer_verbatim": "ADOPT ASTM G93 Level C cleaning for O2 service and assign a named oxygen-safety owner before S1a gas operation.",
+   "applied_as": "O2 readiness gate (GD-15)"
+  },
+  {
+   "row": 108,
+   "covers_ids": [
+    "OQ-H24-01"
+   ],
+   "owner_answer_verbatim": "YES — apply <1.5 kW at the spacecraft-DC propulsion-system boundary. Conservatively require startup transients also to remain below 1.5 kW unless the official RFP explicitly permits a transient exception. Use a new A9/v2 boundary without modifying v1.",
+   "applied_as": "P_bus incl. transients; new A9 boundary"
+  },
+  {
+   "row": 109,
+   "covers_ids": [
+    "OQ-H24-02"
+   ],
+   "owner_answer_verbatim": "SUPERSEDED — the downstream ICP is a primary neutralizer candidate, not a contingency pre-ionizer. Its power must fit inside the internal ~1.35 kW design allocation; do not plan to consume the 1.35→1.5 kW margin nominally.",
+   "applied_as": "ICP inside ~1.35 kW (DQ-HI-PALLOC)"
+  },
+  {
+   "row": 110,
+   "covers_ids": [
+    "OQ-H24-03"
+   ],
+   "owner_answer_verbatim": "ADOPT with revision — partition supplies into Hall discharge, per-coil magnet, ICP RF source/matching, ICP collector/bias if required, C1 heater/keeper reference supplies, flow/valve/housekeeping and reserved DC. Every active load gets a bus slot.",
+   "applied_as": "every load gets a bus slot"
+  },
+  {
+   "row": 111,
+   "covers_ids": [
+    "OQ-H24-04"
+   ],
+   "owner_answer_verbatim": "REGULATED 100 V internal propulsion bus for the breadboard/PPU architecture; keep the spacecraft-input front end configurable until the actual spacecraft bus is specified. Do not claim 100 V is an RFP spacecraft interface requirement.",
+   "applied_as": "100 V internal bus (IF-HI-11)"
+  },
+  {
+   "row": 112,
+   "covers_ids": [
+    "OQ-H24-05"
+   ],
+   "owner_answer_verbatim": "REVISE SEQ-1 — sequence to avoid simultaneous peaks, but do not force the C1 heater off before it is safe. For C1, reduce/disable heater only after keeper/discharge is stable per cathode procedure; ICP has no thermionic heater.",
+   "applied_as": "C1 heater sequencing in the C1 recipe"
+  },
+  {
+   "row": 113,
+   "covers_ids": [
+    "OQ-H24-06"
+   ],
+   "owner_answer_verbatim": "YES — procure/build a flight-representative breadboard Hall discharge supply so eta_d and transient behavior are measured before LOCK-2.",
+   "applied_as": "breadboard supply eta_d before LOCK-2 (GD-14)"
+  },
+  {
+   "row": 115,
+   "covers_ids": [
+    "OD-TS-1",
+    "H26Q-02",
+    "R4-Q5"
+   ],
+   "owner_answer_verbatim": "TORSIONAL baseline. An alternate stand is allowed only if it meets the same uncertainty, payload, thermal/RF service-line and reinstallation requirements.",
+   "applied_as": "torsional stand"
+  },
+  {
+   "row": 116,
+   "covers_ids": [
+    "OD-TS-2"
+   ],
+   "owner_answer_verbatim": "Design for at least 25 kg moving payload and characterize the full actual configuration spread. If the flight-representative test article exceeds that, uprate/requalify before procurement rather than trimming hardware to fit the stand.",
+   "applied_as": ">= 25 kg payload (ITM-24)"
+  },
+  {
+   "row": 117,
+   "covers_ids": [
+    "OD-TS-3"
+   ],
+   "owner_answer_verbatim": "Use low-stiffness symmetric harp/slack-loop routing for gas/electrical services and flexible RF coax with matched sham routing. Avoid an uncompensated hard RF line across the moving stage; characterize residual parasitic force.",
+   "applied_as": "flexible RF coax with matched sham routing"
+  },
+  {
+   "row": 119,
+   "covers_ids": [
+    "OD-TS-5"
+   ],
+   "owner_answer_verbatim": "Use in-situ force calibration with SI-traceable masses/force actuator and lever geometry, verified under relevant ISO/IEC 17025/NABL traceability. Calibrate pre/post block and record drift/hysteresis.",
+   "applied_as": "calibration pre/post block (DR-18)"
+  },
+  {
+   "row": 120,
+   "covers_ids": [
+    "OD-TS-6"
+   ],
+   "owner_answer_verbatim": "YES — preregister the S1a thrust-uncertainty acceptance test at 12 mN with maximum representative moving payload and all service lines installed.",
+   "applied_as": "u_T test at 12 mN (ITM-13)"
+  },
+  {
+   "row": 121,
+   "covers_ids": [
+    "OD-TS-7"
+   ],
+   "owner_answer_verbatim": "KEEP 1% as the design/acceptance target for now. If metrology-only calibration evidence shows it is unattainable, revise before LOCK-2 and before any score-bearing physics data; never relax it after seeing propulsion results.",
+   "applied_as": "1 % target (ITM-12, GD-10)"
+  },
+  {
+   "row": 122,
+   "covers_ids": [
+    "H26Q-03"
+   ],
+   "owner_answer_verbatim": "ADOPT, adapted to the new architecture — H-1 remains bolted; the kinematic carrier exchanges C1 reference and ICP-neutralizer modules with repeatable datum control.",
+   "applied_as": "kinematic carrier, H-1 bolted"
+  },
+  {
+   "row": 124,
+   "covers_ids": [
+    "R4-Q2"
+   ],
+   "owner_answer_verbatim": "THERMAL own-gas-calibrated MFCs as the primary pure-gas approach. Verify mixtures through a traceable transfer/rate-of-rise method; do not use a property-library DP estimate as the primary score-bearing flow standard.",
+   "applied_as": "own-gas MFCs"
+  },
+  {
+   "row": 126,
+   "covers_ids": [
+    "R4-Q4"
+   ],
+   "owner_answer_verbatim": "NABL/ISO-17025 calibration is the primary score-bearing reference. The in-house rate-of-rise system is acceptable as a transfer/verification standard, not as the sole external traceability claim.",
+   "applied_as": "NABL/ISO-17025 primary references"
+  },
+  {
+   "row": 127,
+   "covers_ids": [
+    "R4-Q6"
+   ],
+   "owner_answer_verbatim": "YES — include an approximately 200 amu RGA with differential pumping and species calibration for N2/O2/O-related fragments and Xe. 300 amu is unnecessary unless later diagnostics require heavier species.",
+   "applied_as": "RGA ~200 amu"
+  },
+  {
+   "row": 129,
+   "covers_ids": [
+    "H26Q-05"
+   ],
+   "owner_answer_verbatim": "Use the exploratory I_d(t) chain to ~60 MHz if feasible; if hardware bandwidth is lower, declare the measured bandwidth and its anti-alias/transfer function explicitly.",
+   "applied_as": "I_d(t) bandwidth (ITM-23)"
+  },
+  {
+   "row": 130,
+   "covers_ids": [
+    "H26Q-06"
+   ],
+   "owner_answer_verbatim": "ACCEPT H2-6 flight telemetry subset and add ICP-specific telemetry: forward/reflected RF power, collector/bias V/I, RF source temperature and neutralizer health/interlock state.",
+   "applied_as": "ICP telemetry"
+  },
+  {
+   "row": 131,
+   "covers_ids": [
+    "H26Q-08"
+   ],
+   "owner_answer_verbatim": "MEASURE actual facility wall/cryopanel radiative sink temperature per run. Use ~300 K chamber walls only as a planning case, never as an unmeasured score-bearing input.",
+   "applied_as": "sink temperature measured per run (DR-20)"
+  },
+  {
+   "row": 132,
+   "covers_ids": [
+    "HWQ-11"
+   ],
+   "owner_answer_verbatim": "ADD a dedicated AO source for separate materials/lifetime qualification. Keep N2+O2 as the performance surrogate where necessary, but label it `NO_ATOMIC_O`; never use it as AO-life proof.",
+   "applied_as": "NO_ATOMIC_O and separate HI-AO"
+  },
+  {
+   "row": 133,
+   "covers_ids": [
+    "HWQ-12"
+   ],
+   "owner_answer_verbatim": "YES — matched sham service lines in every compared configuration.",
+   "applied_as": "matched shams (DR-16)"
+  },
+  {
+   "row": 134,
+   "covers_ids": [
+    "HWQ-16"
+   ],
+   "owner_answer_verbatim": "YES — witness coupons/holders remain non-functional exchangeable items if B(z), geometry and HW reference remain within the frozen tolerances.",
+   "applied_as": "witness items non-functional"
+  },
+  {
+   "row": 135,
+   "covers_ids": [
+    "HWQ-17"
+   ],
+   "owner_answer_verbatim": "YES for engineering-only wall-sector studies before score-bearing freeze. Freeze one design-representative wall configuration before S1 and do not mix sector data into the final article unnoticed.",
+   "applied_as": "wall configuration frozen before S1 (GD-03)"
+  },
+  {
+   "row": 136,
+   "covers_ids": [
+    "R5-Q1"
+   ],
+   "owner_answer_verbatim": "CONDITIONAL YES — foreign score-bearing data are admissible only with written TDF/export/IP/data-custody approval and compatible raw-data access. Prefer a domestic facility when it can meet the registered requirements.",
+   "applied_as": "foreign facility only with written approvals"
+  },
+  {
+   "row": 139,
+   "covers_ids": [
+    "R5-Q6"
+   ],
+   "owner_answer_verbatim": "YES — use a smaller domestic chamber for engineering-only S1a where appropriate and one qualified facility for the score-bearing stages that meets the registered facility requirements.",
+   "applied_as": "S1a analog in a smaller domestic chamber"
+  },
+  {
+   "row": 140,
+   "covers_ids": [
+    "M16-Q-01"
+   ],
+   "owner_answer_verbatim": "YES — Praveen remains accountable system owner. Assign one named responsible engineer to each M16 subsystem row before that row can become READY; until names are available use explicit functional roles, but no row may remain unowned.",
+   "applied_as": "M16 row owners (functional roles)"
+  },
+  {
+   "row": 142,
+   "covers_ids": [
+    "M16-Q-03"
+   ],
+   "owner_answer_verbatim": "ACCEPT the H2-lane-to-row mapping, then add the new Hall→ICP/A9 lanes without rewriting historical H2 provenance.",
+   "applied_as": "A9 lanes added to M16 mapping without rewriting H2 provenance"
+  },
+  {
+   "row": 144,
+   "covers_ids": [
+    "REFRESH-Q3"
+   ],
+   "owner_answer_verbatim": "YES — promote inferred gates to explicit LOCK-1/LOCK-2 deadlines. Every blocker that can invalidate score-bearing work must have a stated latest decision point.",
+   "applied_as": "gate deadlines GD-01..GD-17"
+  },
+  {
+   "row": 145,
+   "covers_ids": [
+    "V2-Q2"
+   ],
+   "owner_answer_verbatim": "DO NOT supply or invent the old parallel RF∥Hall v2 inputs. Freeze that branch. Create a new Hall→downstream-ICP validation-input list instead: RF coupling, forward/reflected/absorbed power, electron extraction current, collector potential, neutralization margin, Hall current demand, ICP pressure/flow, startup, erosion and lifetime.",
+   "applied_as": "validation inputs mapped to DQ-HI-ECAP / VCPL / IGN"
+  },
+  {
+   "row": 146,
+   "covers_ids": [
+    "V2-Q3"
+   ],
+   "owner_answer_verbatim": "NO — do not generate hypothesis surfaces by manufacturing `ASSUMED_SCREENING_VALUE` inputs merely to populate plots. Generate surfaces only from explicitly approved screening assumptions with a clear decision purpose, or after real inputs exist.",
+   "applied_as": "no manufactured screening surfaces (DR-23)"
+  }
+ ],
+ "open_owner_questions": [
+  {
+   "id": "HIQ-01",
+   "question": "Which module occupies the REF-COND reference installation of each block?",
+   "proposed_answer": "hall_c1_reference (the control, analog of the historical HW-0 reference); the resulting predecessor asymmetry is computed and reported (execution_design); alternative: alternate the reference module between blocks",
+   "status": "ANSWERED_BY_A9_1 (HIQ-01)",
+   "a9_1_decision": "HIQ-01: REF-COND reference installation = hall_c1_reference in every block; predecessor asymmetry preserved and reported",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
+  },
+  {
+   "id": "HIQ-02",
+   "question": "Does 'minimum three complete engineering replicates' (row 19) mean three complete balanced replicate sets (both sequences each, i.e. at least six blocks)?",
+   "proposed_answer": "yes",
+   "status": "ANSWERED_BY_A9_1 (HIQ-02)",
+   "a9_1_decision": "HIQ-02: three complete balanced replicate sets, >= 6 blocks before any larger LOCK-2 n",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
+  },
+  {
+   "id": "HIQ-03",
+   "question": "Where inside an installation does the bounded Xe reference check sit relative to the pure-N2-first / O2-last order (row 36)?",
+   "proposed_answer": "owner call; PROPOSED: at the start of the installation, before the N2 slices, so O2 exposure within the installation cannot bias the health reading",
+   "status": "ANSWERED_BY_A9_1 (HIQ-03)",
+   "a9_1_decision": "HIQ-03: bounded Xe reference/health check at the start of the installation, before N2 and any O2-bearing exposure",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
+  },
+  {
+   "id": "HIQ-04",
+   "question": "Must the held-out partition rule be frozen before the Ar topology reproduction (the first Hall-on reading on the actual H-1), with the condition enumeration completed after LOCK-1 but before S1?",
+   "proposed_answer": "yes (two-part freeze HI-HOLDOUT-A / HI-HOLDOUT-B)",
+   "status": "ANSWERED_BY_A9_1 (HIQ-04)",
+   "a9_1_decision": "HIQ-04: HI-HOLDOUT-A frozen before the first Hall-on H-1 reading (incl. Ar); held-out enumeration after LOCK-1, before HI-S1",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
+  },
+  {
+   "id": "HIQ-05",
+   "question": "Should any Pareto relation be a necessary condition of the hall_icp_neutralizer outcome?",
+   "proposed_answer": "no; Pareto report only, unless a condition is preregistered at LOCK-1 (row 37)",
+   "status": "ANSWERED_BY_A9_1 (HIQ-05)",
+   "a9_1_decision": "HIQ-05: no mandatory Pareto relation; hard gates decide feasibility; Pareto reported unless a condition is preregistered at LOCK-1",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
+  },
+  {
+   "id": "HIQ-06",
+   "question": "ICP neutralizer gas species and feed (Xe from the Xe ledger, Ar, or atmospheric surrogate) for the comparison?",
+   "proposed_answer": "owner call; whatever is chosen is CONFIGURATION_DEFINING, frozen at LOCK-1 and fully booked (A9 recorder flag row 46)",
+   "status": "ANSWERED_BY_A9_1 (HIQ-06)",
+   "a9_1_decision": "HIQ-06: primary ICP gas mode G-REUSE (Hall exhaust/residual); dedicated ICP port installed and capped; G-ATM / G-XE are declared contingency variants; score-bearing N2/N2+O2 uses G-REUSE unless it fails the preregistered ICP-capacity gate; no dedicated Xe to make the ICP work",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
+  },
+  {
+   "id": "HIQ-07",
+   "question": "Are hall_icp_neutralizer pure-N2 readings held out as Hall-transport validation evidence or sequestered for a future pre-registration?",
+   "proposed_answer": "sequestered (the downstream ICP changes the electron-source boundary condition); W5 owner call",
+   "status": "ANSWERED_BY_A9_1 (HIQ-07)",
+   "a9_1_decision": "HIQ-07: pure-N2 hall_icp_neutralizer readings sequestered for a future Hall-transport preregistration",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
+  },
+  {
+   "id": "HIQ-08",
+   "question": "Is the Ar topology reproduction (HI-AR) run before LOCK-1 so its engineering findings can shape the ICP recipe frozen at LOCK-1?",
+   "proposed_answer": "yes, after HI-HOLDOUT-A; Ar data never feed a LOCK-2 number or a decision quantity",
+   "status": "ANSWERED_BY_A9_1 (HIQ-08)",
+   "a9_1_decision": "HIQ-08: HI-AR before LOCK-1, after HI-HOLDOUT-A; Ar never enters LOCK-2 numbers, decision quantities or DRDO compliance claims",
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
+  }
+ ],
+ "historical_reuse": {
+  "artifacts": [
+   {
+    "path": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json",
+    "sha256": "84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28",
+    "treatment": "read-only; preserved byte-for-byte; not edited"
+   },
+   {
+    "path": "docs/experiments/phase1_prereg_framework/PHASE1_PREREG_FRAMEWORK.md",
+    "sha256": "703e5a4e37904c2d6dfe1ca8a83c9de9818f33e7af8b75d416865e2db12f3c93",
+    "treatment": "read-only; preserved byte-for-byte; not edited"
+   },
+   {
+    "path": "docs/experiments/phase1_prereg_framework/build_phase1_prereg_framework.py",
+    "sha256": "00896a4a0d0fcb6345734e1ef2d39de974579f45500b5fe83204cbbc06606545",
+    "treatment": "read-only; preserved byte-for-byte; not edited"
+   },
+   {
+    "path": "docs/interfaces/preionizer_module/PREIONIZER_MODULE_ICD.md",
+    "sha256": "afc639ef772b1d12664688c7f9bd3443598a024ad9a7e7270d29d55c89c9dcb0",
+    "treatment": "read-only; preserved byte-for-byte; not edited"
+   },
+   {
+    "path": "docs/interfaces/preionizer_module/build_preionizer_module_icd.py",
+    "sha256": "166ead5c33407dfc1e359c032ce3f0305ec3fbe7f3faeab8e2cb77ed619aeab5",
+    "treatment": "read-only; preserved byte-for-byte; not edited"
+   },
+   {
+    "path": "schemas/interfaces/preionizer_module_icd_v1.json",
+    "sha256": "2470718e1decbde874d2362a997d1e2aaae54eb855d1ed179b930c3be6e7130e",
+    "treatment": "read-only; preserved byte-for-byte; not edited"
+   },
+   {
+    "path": "docs/architecture_comparison/lock1/lock1_decision_brief_v1.json",
+    "sha256": "7ce17e1f9101d0832a164e453fd757a813f5e1e77f689cfb661bdc920f453920",
+    "treatment": "read-only; preserved byte-for-byte; not edited"
+   },
+   {
+    "path": "docs/architecture_comparison/lock1/LOCK1_DRAFT.json",
+    "sha256": "ece91920699c20358dc3e3d1348666460d6adf64addaa134a6fe11cdba499693",
+    "treatment": "read-only; preserved byte-for-byte; not edited"
+   }
+  ],
+  "reused": [
+   {
+    "what": "gating order S1a -> LOCK-1 -> held-out freeze -> S1/S1b -> LOCK-2 -> score-bearing",
+    "from": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#gating_sequence",
+    "how": "re-expressed as the A9 stage map with its own ids (HI-*); held-out freeze split into parts A and B"
+   },
+   {
+    "what": "LOCK-1 fixes forms, LOCK-2 converts S1/S1b values without discretion",
+    "from": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#locks",
+    "how": "HI-LOCK1 / HI-LOCK2"
+   },
+   {
+    "what": "missing-data vocabulary MD-01..MD-10",
+    "from": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#missing_data",
+    "how": "MD-HI-* with 'reuses' pointers; MD-HI-10/11 new"
+   },
+   {
+    "what": "data-quality rules DQR-01..DQR-12",
+    "from": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#data_quality",
+    "how": "DQR-HI-* with 'reuses' pointers; DQR-HI-13..15 new"
+   },
+   {
+    "what": "same-condition roles",
+    "from": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#same_condition",
+    "how": "roles kept; CONFIGURATION_DEFINING added"
+   },
+   {
+    "what": "remount procedure RR-01..RR-09 incl. RR-07",
+    "from": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#repeatability_remount",
+    "how": "RR-HI-* adapted to a downstream module on the kinematic carrier; RR-HI-07 = C1 <-> ICP (row 33)"
+   },
+   {
+    "what": "Williams balance check and seeded assignment function pattern",
+    "from": "docs/experiments/phase1_prereg_framework/build_phase1_prereg_framework.py",
+    "how": "re-implemented for two configurations with a hash-ranked permutation per replicate set"
+   },
+   {
+    "what": "OPEN as a status, NO_VIABLE_CASE never a default for missing evidence",
+    "from": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#case_logic",
+    "how": "decision_topology.status_rule"
+   },
+   {
+    "what": "held-out family structure F1..F7",
+    "from": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#relation_to_w5",
+    "how": "HF-1..HF-6 (proposed)"
+   }
+  ],
+  "not_reused": [
+   {
+    "what": "hall_only / rf_hall / ecr_hall topology, cases A / B / C and the evaluation precedence",
+    "why": "superseded for the primary campaign (row 28; A9 supersession)"
+   },
+   {
+    "what": "P1DQ-* decision quantities and R_arch as the discriminator",
+    "why": "replaced by DQ-HI-* with hard gates + Pareto (row 37); the paired T/P_bus ratio is reported only"
+   },
+   {
+    "what": "HW-0 flow-equivalent spacer PIM-0, PIM-RF, PIM-ECR, OPTION-DIVERTER and upstream IP-UP/IP-DN insertion",
+    "why": "no upstream pre-ionizer; the module is a downstream electron source (rows 17, 63)"
+   },
+   {
+    "what": "pre-ionizer dwell matching / time-matched Xe hold (PMQ-05)",
+    "why": "superseded (row 65)"
+   },
+   {
+    "what": "common module envelope sized to the largest occupant (PMQ-01) and L1-L5 harness (PMQ-02)",
+    "why": "superseded (rows 61, 62)"
+   },
+   {
+    "what": "matched pressure-drop blank module (PMQ-03)",
+    "why": "superseded (row 63)"
+   },
+   {
+    "what": "REF-MERGED option",
+    "why": "rejected (row 40)"
+   },
+   {
+    "what": "LOCK-1 decisions D-01..D-04 and the D-07 numeric delta",
+    "why": "superseded (rows 12, 13, 14, 15, 18); preserved historically"
+   }
+  ]
+ },
+ "m16_impact": [
+  {
+   "row": 9,
+   "key": "hall_chamber",
+   "how": "H-1 stays bolted as the common scored article (D-09-A); anode / wall frozen before HI-S1 (GD-02, GD-03)",
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
+  },
+  {
+   "row": 10,
+   "key": "magnetic_circuit",
+   "how": "B(z) perturbation scan with the downstream module installed/energized; tolerance from measured sensitivity (GD-11)",
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
+  },
+  {
+   "row": 11,
+   "key": "cathode",
+   "how": "C1 becomes the reference/control module hall_c1_reference on the carrier, external location (row 79)",
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
+  },
+  {
+   "row": 8,
+   "key": "xe_metering",
+   "how": "C1 steady and start flows, XE_REFERENCE / XE_AUGMENTED_PEAK bookings, ICP gas if Xe",
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
+  },
+  {
+   "row": 12,
+   "key": "ppu",
+   "how": "bus slots for ICP RF/matching and collector/bias; breadboard discharge supply before LOCK-2 (GD-14)",
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
+  },
+  {
+   "row": 13,
+   "key": "thermal_control",
+   "how": ">= 50 K margin enters DQ-HI-SAFE; sink temperature measured per run",
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
+  },
+  {
+   "row": 14,
+   "key": "control_fdir",
+   "how": "RF interlock, restart and cycle counting (DQ-HI-IGN, DQ-HI-RESTART)",
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
+  },
+  {
+   "row": 15,
+   "key": "sensors_diagnostics",
+   "how": "ICP channels (forward/reflected, collector V/I, body potential) join the measurement chains",
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
+  },
+  {
+   "row": 16,
+   "key": "mechanical_structural",
+   "how": "kinematic carrier for a downstream module; matched shams; >= 25 kg payload",
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
+  },
+  {
+   "row": 17,
+   "key": "preionizer_interface",
+   "how": "superseded for the primary line; an ICP-neutralizer row is needed (owner / A9-10 decision); historical row untouched",
+   "note": "no M16 cell is edited here (M16 v2 is a verified deliverable); changes are routed through the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
+  }
+ ],
+ "h3_h4_inputs": {
+  "h3_procurement_inputs_quotations_only": [
+   "13.56 MHz RF generator for the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating) (generator, coupler, coax, connector, matching-element and feedthrough ratings TBD_AFTER_IMPEDANCE_MAP), adjustable LOCAL matching network on / immediately adjacent to the ICP module, directional coupler on its generator / 50-ohm side, RF feedthroughs, ICP chamber components (rows 8, 72; A9.2 rf_500W / OQ-A907-11)",
+   "kinematic module carrier for a downstream module with repeatable datum (row 122; schemas/interfaces/icp_neutralizer_icd_v1.json ICP-06 (A9-03))",
+   "matched sham service lines incl. flexible RF coax (rows 117, 133)",
+   "torsional stand for >= 25 kg moving payload (rows 115, 116)",
+   "collector / bias supply and ICP telemetry channels (rows 62, 110)",
+   "no purchase order before H3 / A9 interfaces are frozen (row 8; A9 not_authorized)"
+  ],
+  "h4_test_inputs": [
+   "stage map HI-ENG .. HI-AO with entry/exit conditions and producible evidence classes",
+   "gate deadlines GD-01..GD-17",
+   "block template, sequence set, seed procedure and remount procedure RR-HI-01..09",
+   "missing-data MD-HI-* and data-quality DQR-HI-* rule forms"
+  ]
+ },
+ "milestones": {
+  "supports": "A (conditional selection) only as pre-registered topology; outputs no outcome now",
+  "three_questions": {
+   "conditional_selection_now": "nothing: no Hall->ICP data exist; Bundle 1 stays NO_BASELINE_YET",
+   "blocks_physics_backed_selection": "empty credible Hall set; no H-1 / C1 / ICP hardware; A9-02..A9-05 pending; LOCK-1 not signed",
+   "could_overturn": "RF pickup or B(z) perturbation that makes the swap non-neutral; ICP gas feed that changes the delivered feed state; S1b capability too poor to resolve the gates (status OPEN)"
+  }
+ },
+ "compliance": [
+  "not a lock; no numeric decision margin, effect size, stop-rule number or n frozen (row 18)",
+  "owner-given values cited by row; all other values TBD or PENDING",
+  "no performance prediction; no screening candidate or unadmitted closure used",
+  "historical artifacts read-only, pinned by sha256",
+  "mutable governance never pinned",
+  "no winner declared; outcomes are pre-registered classifications"
+ ],
+ "statistics_a9_1": {
+  "alpha_family_wise": 0.05,
+  "alpha_family_wise_scope": "simultaneous architecture contrasts, preregistered multiplicity-control procedure such as Holm",
+  "alpha_one_sided_absolute_gate": 0.05,
+  "freeze_point": "LOCK-1",
+  "stop_rule_form": "SR-C-MARGIN (not sign-only): stop for inferiority only when the confidence bound crosses the preregistered negative decision margin; rule at LOCK-1, uncertainty-derived value at LOCK-2",
+  "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-07, UBQ-09",
+  "evidence_class": "owner-allocation"
+ },
+ "a9_10_reconciliation": {
+  "lane": "fo_a9_10_integration",
+  "record": "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+  "overlay": "docs/experiments/hall_icp/integration/a9_10_overlay.py",
+  "a9_1_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
+  },
+  "a9_2_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
+   "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "recorded_at_commit": "19c0040",
+   "path_resolution": "the docs/decisions/ paths exist in the execution branch (commit 19c0040) and resolve in this lane branch only after it merges there; until then the byte-identical pinned copies under docs/experiments/hall_icp/integration/a9_2_inputs/ (sha256 checked on every build) are the readable authority"
+  },
+  "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+  "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
+  "changes": [
+   {
+    "cid": "A910-A901-Q01",
+    "driver": "A9.1 HIQ-01",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=HIQ-01]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-01"
+   },
+   {
+    "cid": "A910-A901-Q02",
+    "driver": "A9.1 HIQ-02",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=HIQ-02]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-02"
+   },
+   {
+    "cid": "A910-A901-Q03",
+    "driver": "A9.1 HIQ-03",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=HIQ-03]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-03"
+   },
+   {
+    "cid": "A910-A901-Q04",
+    "driver": "A9.1 HIQ-04",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=HIQ-04]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-04"
+   },
+   {
+    "cid": "A910-A901-Q05",
+    "driver": "A9.1 HIQ-05",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=HIQ-05]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-05"
+   },
+   {
+    "cid": "A910-A901-Q06",
+    "driver": "A9.1 HIQ-06",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=HIQ-06]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-06"
+   },
+   {
+    "cid": "A910-A901-Q07",
+    "driver": "A9.1 HIQ-07",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=HIQ-07]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-07"
+   },
+   {
+    "cid": "A910-A901-Q08",
+    "driver": "A9.1 HIQ-08",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=HIQ-08]",
+    "count": 1,
+    "summary": "owner question answered by A9.1 HIQ-08"
+   },
+   {
+    "cid": "A910-A901-01",
+    "driver": "A9.1 HIQ-01",
+    "op": "replace",
+    "ptr": "/execution_design/block_template[0]/configuration",
+    "count": 1,
+    "summary": "REF-COND module = hall_c1_reference"
+   },
+   {
+    "cid": "A910-A901-02",
+    "driver": "A9.1 HIQ-01",
+    "op": "replace",
+    "ptr": "/execution_design/reference_asymmetry_note",
+    "count": 1,
+    "summary": "predecessor asymmetry preserved and reported"
+   },
+   {
+    "cid": "A910-A901-03",
+    "driver": "A9.1 HIQ-02",
+    "op": "set",
+    "ptr": "/execution_design/min_complete_replicate_sets/interpretation",
+    "count": 1,
+    "summary": ">= 6 blocks (three complete balanced replicate sets)"
+   },
+   {
+    "cid": "A910-A901-04",
+    "driver": "A9.1 HIQ-02",
+    "op": "set",
+    "ptr": "/execution_design/min_blocks_if_interpretation_accepted/owner_status",
+    "count": 1,
+    "summary": "minimum 6 blocks recorded as owner-accepted"
+   },
+   {
+    "cid": "A910-A901-05",
+    "driver": "A9.1 HIQ-03",
+    "op": "replace",
+    "ptr": "/module_exchange[3]/rule",
+    "count": 1,
+    "summary": "Xe reference/health check first in each installation"
+   },
+   {
+    "cid": "A910-A901-06",
+    "driver": "A9.1 HIQ-04",
+    "op": "replace",
+    "ptr": "/stage_map[id=HI-HOLDOUT-A]/what",
+    "count": 1,
+    "summary": "HI-HOLDOUT-A before the first Hall-on H-1 reading incl. Ar"
+   },
+   {
+    "cid": "A910-A901-07",
+    "driver": "A9.1 HIQ-04",
+    "op": "replace",
+    "ptr": "/stage_map[id=HI-HOLDOUT-B]/what",
+    "count": 1,
+    "summary": "held-out enumeration after LOCK-1, before HI-S1"
+   },
+   {
+    "cid": "A910-A901-08",
+    "driver": "A9.1 HIQ-08 + ICP-45",
+    "op": "set",
+    "ptr": "/stage_map[id=HI-AR]/a9_1",
+    "count": 1,
+    "summary": "HI-AR before LOCK-1; ICP-45A on Ar; Ar calibrations"
+   },
+   {
+    "cid": "A910-A901-09",
+    "driver": "A9.1 ICP-45",
+    "op": "append",
+    "ptr": "/stage_map[id=HI-CMP]/entry",
+    "count": 1,
+    "summary": "ICP-45A/ICP-45N as formal entry condition of score-bearing ICP points"
+   },
+   {
+    "cid": "A910-A901-10",
+    "driver": "A9.1 ICP-45",
+    "op": "set",
+    "ptr": "/decision_quantities[id=DQ-HI-ECAP]/entry_condition_a9_1",
+    "count": 1,
+    "summary": "ICP-45 entry condition attached to DQ-HI-ECAP"
+   },
+   {
+    "cid": "A910-A901-11",
+    "driver": "A9.1 UBQ-02",
+    "op": "set",
+    "ptr": "/decision_quantities[id=DQ-HI-ECAP]/margin_form_a9_1",
+    "count": 1,
+    "summary": "neutralization-margin form"
+   },
+   {
+    "cid": "A910-A901-12",
+    "driver": "A9.1 HIQ-05",
+    "op": "replace",
+    "ptr": "/decision_topology/net_benefit_form",
+    "count": 1,
+    "summary": "no mandatory Pareto relation"
+   },
+   {
+    "cid": "A910-A901-13",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/configurations/configurations[1]/configuration_defining_settings[2]",
+    "count": 1,
+    "summary": "ICP gas mode G-REUSE"
+   },
+   {
+    "cid": "A910-A901-14",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=ITM-40]/value",
+    "count": 1,
+    "summary": "ICP gas feed booked as G-REUSE"
+   },
+   {
+    "cid": "A910-A901-15",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=ITM-40]/status",
+    "count": 1,
+    "summary": "ICP gas feed status"
+   },
+   {
+    "cid": "A910-A901-25",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=ITM-40]/evidence_class",
+    "count": 1,
+    "summary": "ICP gas feed evidence class"
+   },
+   {
+    "cid": "A910-A901-26",
+    "driver": "A9.1 HIQ-06",
+    "op": "set",
+    "ptr": "/items[id=ITM-40]/source",
+    "count": 1,
+    "summary": "ICP gas feed source"
+   },
+   {
+    "cid": "A910-A901-16",
+    "driver": "A9.1 HIQ-06",
+    "op": "replace",
+    "ptr": "/decision_quantities[id=DQ-HI-DXE]/operational_definition",
+    "count": 1,
+    "summary": "dXe booking under G-REUSE"
+   },
+   {
+    "cid": "A910-A901-17",
+    "driver": "A9.1 HIQ-06",
+    "op": "replace",
+    "ptr": "/interface_demands[13]/demand",
+    "count": 1,
+    "summary": "Xe-ledger demand under G-REUSE"
+   },
+   {
+    "cid": "A910-A901-18",
+    "driver": "A9.1 HIQ-07",
+    "op": "set",
+    "ptr": "/held_out_validation/proposed_families[1]/role",
+    "count": 1,
+    "summary": "pure-N2 ICP readings sequestered"
+   },
+   {
+    "cid": "A910-A901-19",
+    "driver": "A9.1 UBQ-07 + UBQ-09",
+    "op": "set",
+    "ptr": "/statistics_a9_1",
+    "count": 1,
+    "summary": "alpha values and stop-rule form (owner-given)"
+   },
+   {
+    "cid": "A910-A901-20",
+    "driver": "A9-06 merged",
+    "op": "gsub",
+    "ptr": "",
+    "count": 3,
+    "summary": "mass BOM reference resolved to A9-06"
+   },
+   {
+    "cid": "A910-A901-21",
+    "driver": "A9-07 merged",
+    "op": "gsub",
+    "ptr": "",
+    "count": 4,
+    "summary": "H2 revision reference resolved"
+   },
+   {
+    "cid": "A910-A901-22",
+    "driver": "A9-08 merged",
+    "op": "gsub",
+    "ptr": "",
+    "count": 1,
+    "summary": "Xe ledger reference resolved to the A9 ledger"
+   },
+   {
+    "cid": "A910-A901-23",
+    "driver": "A9-10 self-reference",
+    "op": "gsub",
+    "ptr": "/m16_impact",
+    "count": 10,
+    "summary": "M16 routing resolved"
+   },
+   {
+    "cid": "A910-A901-24",
+    "driver": "OQ-INT-01 (proposed consumer table)",
+    "op": "gsub",
+    "ptr": "/decision_quantities",
+    "count": 14,
+    "summary": "uncertainty owner of the unmapped DQ-HI quantities points at the consumer table"
+   },
+   {
+    "cid": "A910-R01-01",
+    "driver": "OQ-INT-03 (A9-04 readiness_n)",
+    "op": "merge",
+    "ptr": "/items[id=ITM-39]",
+    "count": 1,
+    "summary": "ITM-39 K, r: A9-04 defines no K or r -> LOCK-1 item of this framework"
+   },
+   {
+    "cid": "A910-R01-02",
+    "driver": "OQ-INT-03 (A9-02 SLOTS / BASE_SLOTS)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-HI-01]",
+    "count": 1,
+    "summary": "IF-HI-01 satisfied"
+   },
+   {
+    "cid": "A910-R01-03",
+    "driver": "OQ-INT-03 (A9-02 SLOTS)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-HI-02]",
+    "count": 1,
+    "summary": "IF-HI-02 satisfied"
+   },
+   {
+    "cid": "A910-R01-04",
+    "driver": "OQ-INT-03 (A9-03 items)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-HI-03]",
+    "count": 1,
+    "summary": "IF-HI-03 satisfied (items defined)"
+   },
+   {
+    "cid": "A910-R01-05",
+    "driver": "OQ-INT-03 (A9-03 items; GD-01)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-HI-04]",
+    "count": 1,
+    "summary": "IF-HI-04 partial (ids exist, freeze before HI-S1)"
+   },
+   {
+    "cid": "A910-R01-06",
+    "driver": "OQ-INT-03 (A9-04 measurement_chains, stop_rules, readiness_n)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-HI-06]",
+    "count": 1,
+    "summary": "IF-HI-06 partial"
+   },
+   {
+    "cid": "A910-R01-07",
+    "driver": "OQ-INT-03 (A9-05 extraction)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-HI-07]",
+    "count": 1,
+    "summary": "IF-HI-07 satisfied"
+   },
+   {
+    "cid": "A910-R01-08",
+    "driver": "OQ-INT-03 (A9-07 REV-29..34)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-HI-09]",
+    "count": 1,
+    "summary": "IF-HI-09 satisfied (A9-07 revision)"
+   },
+   {
+    "cid": "A910-R01-09",
+    "driver": "OQ-INT-03 (A9-07 REV-01/03/13/66)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-HI-10]",
+    "count": 1,
+    "summary": "IF-HI-10 satisfied (A9-07 revision)"
+   },
+   {
+    "cid": "A910-R01-10",
+    "driver": "OQ-INT-03 (A9-07 REV-51/62)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-HI-11]",
+    "count": 1,
+    "summary": "IF-HI-11 partial"
+   },
+   {
+    "cid": "A910-R01-11",
+    "driver": "OQ-INT-03 (A9-07 REV-40/45)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-HI-12]",
+    "count": 1,
+    "summary": "IF-HI-12 satisfied (A9-07 revision)"
+   },
+   {
+    "cid": "A910-R01-12",
+    "driver": "OQ-INT-03 (A9-03 ICP-34; A9-07 A9H-INS-01)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-HI-13]",
+    "count": 1,
+    "summary": "IF-HI-13 channels defined; INS numbering open"
+   },
+   {
+    "cid": "A910-R01-13",
+    "driver": "OQ-INT-03 (A9-08 XA9-21, XA9-33, XA9-IF-15)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-HI-14]",
+    "count": 1,
+    "summary": "IF-HI-14 partial"
+   },
+   {
+    "cid": "A910-R01-14",
+    "driver": "OQ-INT-03",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-HI-16]",
+    "count": 1,
+    "summary": "IF-HI-16 precise reason"
+   },
+   {
+    "cid": "A910-R01-15",
+    "driver": "OQ-INT-03 (A9-06 MA9-ID-19)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-HI-17]",
+    "count": 1,
+    "summary": "IF-HI-17 partial"
+   },
+   {
+    "cid": "A910-A92-A901-01",
+    "driver": "A9.2 OQ-A907-11",
+    "op": "replace",
+    "ptr": "/interface_demands[8]/status",
+    "count": 1,
+    "summary": "A9-01 demand text"
+   },
+   {
+    "cid": "A910-A92S-A901-01",
+    "driver": "A9.2 rf_500W, rf_measurement_reference",
+    "op": "replace",
+    "ptr": "/stage_map[id=HI-S1A]/what",
+    "count": 1,
+    "summary": "HI-S1A RF chain wording"
+   },
+   {
+    "cid": "A910-A92S-A901-02",
+    "driver": "A9.2 rf_500W, rf_measurement_reference",
+    "op": "set",
+    "ptr": "/configurations/configurations[1]/configuration_defining_settings[0]",
+    "count": 1,
+    "summary": "MOD-ICP setting wording"
+   },
+   {
+    "cid": "A910-A92S-A901-03",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/owner_answers_applied[row=72]/applied_as",
+    "count": 1,
+    "summary": "row 72 application labelled"
+   },
+   {
+    "cid": "A910-A92S-A901-04",
+    "driver": "A9.2 rf_500W, OQ-A907-11",
+    "op": "set",
+    "ptr": "/h3_h4_inputs/h3_procurement_inputs_quotations_only[0]",
+    "count": 1,
+    "summary": "H3 RF line: no 500 W rating"
+   },
+   {
+    "cid": "A910-A92T-A901-01",
+    "driver": "A9.2 radiative_view_requirement (ICP-47 added by A9-10)",
+    "op": "replace",
+    "ptr": "/interface_demands[id=IF-HI-04]/status",
+    "count": 1,
+    "summary": "IF-HI-04 cites the extended A9-03 id range"
+   }
+  ]
+ }
+}
