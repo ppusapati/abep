@@ -533,8 +533,7 @@ def test_a95_ins_p2_10_and_pins(d):
         "c9e101f2c409c2d28ad256818c22f13ee801bc532d7e4ef470f375d7bb1fe1d3"
     assert pins["docs/decisions/OD_2026_09_30_A9_5_P1_CLOSURE_OWNER_DECISIONS.md"] == \
         "9e49e923328441c1fc82afd3eb64c13d85fc818e8fe534576ada61a16fa525f3"
-    assert pins["docs/procurement/rfq_a9_v2/rfq_a9_v2.json"] == \
-        "2d9fa0978f991674152371f4013cac64f05cddd1ac00523cfa7397b572119174"
+    assert "docs/procurement/rfq_a9_v2/rfq_a9_v2.json" not in pins   # RFQ v2 reads P2: ids checked, a pin would be circular
     assert not any("p1_icp_bench" in p_ for p_ in pins)                  # same follow-on lane: checked, not pinned
     inc = d["a9_5_incorporation"]
     assert inc["follow_on"] == "fo_a9_5_closure_rule" and inc["base_commit"] == \

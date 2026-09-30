@@ -1648,7 +1648,7 @@
           },
           {
            "quantity": "power rating",
-           "value": "TBD - requires the generator selection (PENDING docs/experiments/hall_icp/p1_icp_bench/)",
+           "value": "TBD - requires the generator selection (P1-HW-01; RFQ v2 RF-L01)",
            "units": "W",
            "source": "this package",
            "evidence_class": null
@@ -1837,7 +1837,7 @@
           },
           {
            "quantity": "voltage / current range",
-           "value": "TBD - requires the cold antenna impedance (CAL-P2-08) and the generator selection (PENDING docs/experiments/hall_icp/p1_icp_bench/); sizing relations I_ant,pk <= sqrt(2 P_del,max / R_ant,cold) if the plasma adds non-negative resistance (verify at hot conditions) and V_ant,pk = I_ant,pk |Z_ant|",
+           "value": "TBD - requires the cold antenna impedance (CAL-P2-08) and the generator selection (P1-HW-01; RFQ v2 RF-L01); sizing relations I_ant,pk <= sqrt(2 P_del,max / R_ant,cold) if the plasma adds non-negative resistance (verify at hot conditions) and V_ant,pk = I_ant,pk |Z_ant|",
            "units": "V; A",
            "source": "this package",
            "evidence_class": null
@@ -2133,7 +2133,7 @@
           },
           {
            "quantity": "power rating",
-           "value": "TBD - requires the generator selection (PENDING docs/experiments/hall_icp/p1_icp_bench/)",
+           "value": "TBD - requires the generator selection (P1-HW-01; RFQ v2 RF-L01)",
            "units": "W",
            "source": "this package",
            "evidence_class": null
@@ -3966,7 +3966,7 @@
        },
        {
         "quantity": "voltage / current range",
-        "value": "TBD - requires the cold antenna impedance (CAL-P2-08) and the generator selection (PENDING docs/experiments/hall_icp/p1_icp_bench/); sizing relations I_ant,pk <= sqrt(2 P_del,max / R_ant,cold) if the plasma adds non-negative resistance (verify at hot conditions) and V_ant,pk = I_ant,pk |Z_ant|",
+        "value": "TBD - requires the cold antenna impedance (CAL-P2-08) and the generator selection (P1-HW-01; RFQ v2 RF-L01); sizing relations I_ant,pk <= sqrt(2 P_del,max / R_ant,cold) if the plasma adds non-negative resistance (verify at hot conditions) and V_ant,pk = I_ant,pk |Z_ant|",
         "units": "V; A",
         "source": "this package",
         "evidence_class": null
@@ -4421,7 +4421,7 @@
        },
        {
         "quantity": "power rating",
-        "value": "TBD - requires the generator selection (PENDING docs/experiments/hall_icp/p1_icp_bench/)",
+        "value": "TBD - requires the generator selection (P1-HW-01; RFQ v2 RF-L01)",
         "units": "W",
         "source": "this package",
         "evidence_class": null
@@ -14651,7 +14651,7 @@
        "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
        "id": "P1-IT-40",
        "pointer": "/items/39",
-       "item_status": "PROPOSED (definition)",
+       "item_status": "PROPOSED (definition); OFF = supply output physically disconnected is OWNER_DECIDED (A9.4 P1Q-13)",
        "pinned": false,
        "note": "merged package read at build time; refined concurrently by the A9.5 / A9.6 lanes"
       },
@@ -14849,7 +14849,7 @@
        "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
        "id": "P1-IT-42",
        "pointer": "/items/41",
-       "item_status": "PROPOSED (convention)",
+       "item_status": "OWNER_DECIDED network convention (A9.5 P1Q-15); I_e orientation label PROPOSED (this lane)",
        "pinned": false,
        "note": "merged package read at build time; refined concurrently by the A9.5 / A9.6 lanes"
       },
@@ -14859,7 +14859,7 @@
        "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
        "id": "P1-IT-47",
        "pointer": "/items/46",
-       "item_status": "TBD",
+       "item_status": "OWNER_DECIDED (A9.5 P1Q-15 KIRCHHOFF_CLOSURE_RULE; magnitude form A9.6 sec. 2)",
        "pinned": false,
        "note": "merged package read at build time; refined concurrently by the A9.5 / A9.6 lanes"
       },
@@ -16570,7 +16570,7 @@
        "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
        "id": "P1-IT-36",
        "pointer": "/items/35",
-       "item_status": "TBD (PROPOSED option A)",
+       "item_status": "TBD (geometry / position / reference); option A OWNER_DECIDED for ICP45_CAPACITY records (A9.4 P1Q-10)",
        "pinned": false,
        "note": "merged package read at build time; refined concurrently by the A9.5 / A9.6 lanes"
       },
@@ -18930,7 +18930,7 @@
        "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
        "id": "P1-IT-40",
        "pointer": "/items/39",
-       "item_status": "PROPOSED (definition)",
+       "item_status": "PROPOSED (definition); OFF = supply output physically disconnected is OWNER_DECIDED (A9.4 P1Q-13)",
        "pinned": false,
        "note": "merged package read at build time; refined concurrently by the A9.5 / A9.6 lanes"
       },
@@ -21169,7 +21169,7 @@
    },
    {
     "id": "P1-HW-36",
-    "what": "P1-S4 dedicated electron-collecting target (if topology A is registered): isolated plate, support, position datum and feedthrough",
+    "what": "P1-S4 / P1-S7 dedicated electron-collecting target (OWNER_DECIDED for ICP45_CAPACITY records, A9.4 P1Q-10): isolated plate, support, position datum and feedthrough",
     "status_in_source": null,
     "rfq_lines": [
      {

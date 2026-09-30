@@ -230,12 +230,6 @@
    "path": "docs/EVIDENCE.md",
    "sha256": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61",
    "what": "evidence rules (CLAUDE.md rule 10)"
-  },
-  {
-   "key": "RFQ2",
-   "path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
-   "sha256": "2d9fa0978f991674152371f4013cac64f05cddd1ac00523cfa7397b572119174",
-   "what": "RFQ v2 (merged; instrument_list.rfq_v2_line)"
   }
  ],
  "never_pinned": [
@@ -256,7 +250,7 @@
    "path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
    "lane": "RFQ v2 split by supplier speciality (A9.3 OQ-RFQ-07)",
    "needed_for": "the RF-package / diagnostics line ids to which the P2 instrument list maps",
-   "state": "MERGED (sha256-pinned; every cited line id checked)"
+   "state": "MERGED (ids cross-checked at build time; not sha-pinned: the RFQ v2 builder copies P2 specification text, so a pin would be a circular hash dependency)"
   }
  ],
  "merged_ids_cited": {

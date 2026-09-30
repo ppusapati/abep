@@ -162,8 +162,7 @@ def test_merged_cross_references_replace_stale_pending(doc, bld):
     photo = [v for k, v in hw.items() if k.startswith("optical-emission photodiode")][0]
     assert "TH-L07" in photo and "TH-L08" in photo and "VAC-L07" in photo
     pins = {p["path"]: p["sha256"] for p in doc["authority_pins"]}
-    assert pins["docs/procurement/rfq_a9_v2/rfq_a9_v2.json"] == \
-        "2d9fa0978f991674152371f4013cac64f05cddd1ac00523cfa7397b572119174"
+    assert "docs/procurement/rfq_a9_v2/rfq_a9_v2.json" not in pins   # RFQ v2 reads P1: ids checked, a pin would be circular
     assert not any("p2_impedance_map" in p for p in pins)          # same follow-on lane: ids checked, not pinned
     refs = {r["path"]: r for r in doc["merged_cross_references"]}
     assert refs["docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json"]["state"] == "MERGED"

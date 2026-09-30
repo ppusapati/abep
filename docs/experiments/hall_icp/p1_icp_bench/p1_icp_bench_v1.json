@@ -97,11 +97,6 @@
    "role": "owner A9.6 verbatim (sec. 2 P1Q-15 / P1Q-16, sec. 5-7 derived vs TBD_OWNER, sec. 8 P1 workflow, sec. 14 reducers)"
   },
   {
-   "path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
-   "sha256": "2d9fa0978f991674152371f4013cac64f05cddd1ac00523cfa7397b572119174",
-   "role": "RFQ v2 (merged; line ids mapped in hardware_readiness)"
-  },
-  {
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
    "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c",
    "role": "A9-03 ICP-neutralizer ICD (JSON)"

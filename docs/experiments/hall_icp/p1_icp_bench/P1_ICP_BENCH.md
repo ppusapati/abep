@@ -704,7 +704,6 @@ Not done here: no measured data exist; every numeric registration (domains, thre
 - `docs/decisions/OD_2026_09_30_A9_5_P1_CLOSURE_OWNER_DECISIONS.md` - `9e49e923328441c1fc82afd3eb64c13d85fc818e8fe534576ada61a16fa525f3` (owner A9.5 verbatim (P1Q-15 Kirchhoff closure rule, P1Q-16 capacity formula))
 - `docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json` - `d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327` (owner A9.6 implementation-first directive (machine-readable; sec. 2 magnitude form, sec. 8 / 14 P1 workflow))
 - `docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md` - `c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634` (owner A9.6 verbatim (sec. 2 P1Q-15 / P1Q-16, sec. 5-7 derived vs TBD_OWNER, sec. 8 P1 workflow, sec. 14 reducers))
-- `docs/procurement/rfq_a9_v2/rfq_a9_v2.json` - `2d9fa0978f991674152371f4013cac64f05cddd1ac00523cfa7397b572119174` (RFQ v2 (merged; line ids mapped in hardware_readiness))
 - `schemas/interfaces/icp_neutralizer_icd_v1.json` - `8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c` (A9-03 ICP-neutralizer ICD (JSON))
 - `docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md` - `d346bcc5a5edc4a4dfa289010c8e48371477a0f3548a5e9dcf8886b6f55dbe77` (A9-03 ICD companion)
 - `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` - `f082a6d3eabf07485d447ace927f69e8980acbcc8eff54d0cd21f196e20a0afe` (A9-01 Hall->ICP prereg framework)

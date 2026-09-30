@@ -44,7 +44,7 @@ RFQ_V2_PATH = "docs/procurement/rfq_a9_v2/"
 # merged P2 preparation package (same follow-on lane as this file, regenerated together): its ids are cross-checked
 # at build time against the JSON; it is not sha-pinned because it is not an immutable input of this lane
 P2_JSON = P2_PATH + "p2_impedance_prep_v1.json"
-RFQ2 = RFQ_V2_PATH + "rfq_a9_v2.json"       # merged RFQ v2 (immutable deliverable; pinned below)
+RFQ2 = RFQ_V2_PATH + "rfq_a9_v2.json"       # merged RFQ v2 (current deliverable; cited ids checked, not sha-pinned: the RFQ v2 builder reads P1, so a pin would be circular)
 
 A9 = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json"
 ANS = "docs/decisions/OD_2026_09_29_owner_answers_147.json"
@@ -120,8 +120,6 @@ PINS = [
      "owner A9.6 implementation-first directive (machine-readable; sec. 2 magnitude form, sec. 8 / 14 P1 workflow)"),
     (A96_MD, "c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634",
      "owner A9.6 verbatim (sec. 2 P1Q-15 / P1Q-16, sec. 5-7 derived vs TBD_OWNER, sec. 8 P1 workflow, sec. 14 reducers)"),
-    (RFQ2, "2d9fa0978f991674152371f4013cac64f05cddd1ac00523cfa7397b572119174",
-     "RFQ v2 (merged; line ids mapped in hardware_readiness)"),
     (ICD, "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c", "A9-03 ICP-neutralizer ICD (JSON)"),
     (ICD_MD, "d346bcc5a5edc4a4dfa289010c8e48371477a0f3548a5e9dcf8886b6f55dbe77", "A9-03 ICD companion"),
     (PRE, "f082a6d3eabf07485d447ace927f69e8980acbcc8eff54d0cd21f196e20a0afe", "A9-01 Hall->ICP prereg framework"),
@@ -1147,7 +1145,7 @@ def run_matrix(ar):
 
 
 NO_V2 = "no RFQ v2 line"
-# P1-HW-nn -> RFQ v2 line ids (docs/procurement/rfq_a9_v2/rfq_a9_v2.json, pinned; every cited id is checked to exist
+# P1-HW-nn -> RFQ v2 line ids (docs/procurement/rfq_a9_v2/rfq_a9_v2.json, not pinned (circular otherwise); every cited id is checked to exist
 # by rfq_v2_check()); where no line exists this says so explicitly
 RFQ_V2_MAP = {
     1: "RF-L01", 2: "RF-L02, RF-L03", 3: "RF-L04 (mounting provision ME-L08)", 4: "RF-L05, RF-L07",

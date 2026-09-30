@@ -64,7 +64,7 @@ STATUSES = ("OWNER_GIVEN", "DEFINED", "PROPOSED", "TBD", "PENDING", "TBD_AFTER_I
 # merged P1 bench package (same follow-on lane as this file, regenerated together): ids cited here are checked to exist
 # at build time; it is not sha-pinned because it is not an immutable input of this lane
 P1_JSON = "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json"
-RFQ2_JSON = "docs/procurement/rfq_a9_v2/rfq_a9_v2.json"          # merged RFQ v2 (immutable; pinned below)
+RFQ2_JSON = "docs/procurement/rfq_a9_v2/rfq_a9_v2.json"          # merged RFQ v2 (current deliverable; ids checked, not pinned - circular otherwise)
 NO_V2 = "no RFQ v2 line"
 RATINGS_TBD = "TBD_AFTER_IMPEDANCE_MAP"
 
@@ -148,8 +148,6 @@ DELIVERABLES = {
             "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6", "A9-02 bus power boundary"),
     "EVID": ("docs/EVIDENCE.md", "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61",
              "evidence rules (CLAUDE.md rule 10)"),
-    "RFQ2": (RFQ2_JSON, "2d9fa0978f991674152371f4013cac64f05cddd1ac00523cfa7397b572119174",
-             "RFQ v2 (merged; instrument_list.rfq_v2_line)"),
 }
 NEVER_PINNED = ["docs/orchestration/lane_registry_v1.json", "docs/orchestration/trigger_registry_v1.json",
                 "docs/orchestration/fired_triggers.jsonl", "docs/orchestration/trigger_ledger_v2.jsonl",
@@ -164,9 +162,9 @@ MERGED_LANES = [
               "where P1 holds them TBD)"},
     {"path": RFQ2_JSON, "lane": "RFQ v2 split by supplier speciality (A9.3 OQ-RFQ-07)",
      "needed_for": "the RF-package / diagnostics line ids to which the P2 instrument list maps",
-     "state": "MERGED (sha256-pinned; every cited line id checked)"},
+     "state": "MERGED (ids cross-checked at build time; not sha-pinned: the RFQ v2 builder copies P2 specification text, so a pin would be a circular hash dependency)"},
 ]
-# P2 instrument -> RFQ v2 line ids (checked against the pinned RFQ v2 JSON); no line -> said explicitly
+# P2 instrument -> RFQ v2 line ids (checked against the merged RFQ v2 JSON); no line -> said explicitly
 RFQ_V2_LINES = {
     "INS-P2-01": NO_V2 + " (RFQ2-RF-N06 asks the RF supplier only to state V/I-sensing compatibility)",
     "INS-P2-02": "RF-L02", "INS-P2-03": "RF-L03",
@@ -427,7 +425,7 @@ def build():
     if "P2" not in a93["authorizations"]:
         raise SystemExit("A9.3 P2 authorization missing")
     a95 = _load("A95")
-    rfq2_txt = json.dumps(_load("RFQ2"))
+    rfq2_txt = json.dumps(json.loads((REPO / RFQ2_JSON).read_text(encoding="utf-8")))  # ids checked, not sha-pinned: the RFQ builder copies P2 text (a pin would be circular)
     p1_txt = (REPO / P1_JSON).read_text(encoding="utf-8")
 
     # ---- analog context (copied from the pinned extraction; never Vyovrinda values)

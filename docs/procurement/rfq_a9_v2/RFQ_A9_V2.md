@@ -194,7 +194,7 @@ every id of the merged P1 measurement list, P1 hardware-readiness list and P2 in
 | P1-HW-33 | open-tube coaxial dielectric tube | - | ME-L01 (RFQ2-MECH, P1_NEEDED) |  |
 | P1-HW-34 | RF antenna / coil (unmagnetized) | - | ME-L02 (RFQ2-MECH, P1_NEEDED) |  |
 | P1-HW-35 | collector (316L allowed for Ar) | - | ME-L03 (RFQ2-MECH, P1_NEEDED) |  |
-| P1-HW-36 | P1-S4 dedicated electron-collecting target (if topology A is registered): isolated plate, support, position datum and feedthrough | - | ME-O01 (RFQ2-MECH, P1_NEEDED) |  |
+| P1-HW-36 | P1-S4 / P1-S7 dedicated electron-collecting target (OWNER_DECIDED for ICP45_CAPACITY records, A9.4 P1Q-10): isolated plate, support, position datum and feedthrough | - | ME-O01 (RFQ2-MECH, P1_NEEDED) |  |
 | P1-HW-37 | carrier on KC-1 with orificed-variant provisions | - | ME-L05 (RFQ2-MECH, P1_NEEDED) |  |
 | P1-HW-38 | machined supports / open-frame mounting (view-factor objective) | - | ME-L06 (RFQ2-MECH, P1_NEEDED) |  |
 | P1-HW-39 | DAQ with common time base | - | TH-L04 (RFQ2-THRUST, P1_NEEDED) |  |
