@@ -51,6 +51,12 @@ MP = ROOT / "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json"
 XV2 = ROOT / "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json"
 RFQV2 = ROOT / "docs/procurement/rfq_a9_v2/rfq_a9_v2.json"
 A910 = ROOT / "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json"
+# register completion (lane A9_6_M16, fo_a9_6_m16_refresh; RVM interface demands RVM-ID-10 / RVM-ID-11)
+HGM = ROOT / "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json"  # historical lane-24 matrix (immutable)
+HGM_SHA = "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f"
+ANS = DEC / "OD_2026_09_29_owner_answers_147.json"
+ANS_SHA = "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1"
+RVM = ROOT / "docs/requirements/rvm_a9/rvm_a9_v1.json"  # mutable deliverable: read, ids checked, never pinned
 
 OUT_JSON = HERE / "owner_questions_state_v4.json"
 OUT_MD = HERE / "OWNER_QUESTIONS_STATE_v4.md"
@@ -80,6 +86,9 @@ DEPENDENCIES = {
     "MATERIAL_DATA": "depends on selected / validated material data",
     "MEASURED_THERMAL_COUPLING": "depends on measured thermal coupling",
     "FACILITY_CAPABILITY": "depends on facility / laboratory capability",
+    "OFFICIAL_RFP_TEXT": "depends on the reading of the canonical RFP document, which is not in the repository (owner row "
+                         "1: obtain it through the legitimate owner / portal route; do not freeze ambiguous RFP "
+                         "interpretations from secondary sources)",
 }
 BLOCKS = {
     "BLOCKS_P1_START": "needed at or before P1-G0 (incl. dispatch of P1_NEEDED RFQ lines)",
@@ -239,6 +248,7 @@ DERIVED_RFQV2_CLOSED = {
 LK, P3P4, P2B, P1S, P1L, NI = "BLOCKS_LOCK_1", "BLOCKS_P3_P4", "BLOCKS_P2", "BLOCKS_P1_START", "BLOCKS_P1_LATER_STAGE", "NOTHING_IMMEDIATE"
 OJ, P1D, P2D, IDM, VQ, MD, MTC, FC = ("OWNER_JUDGMENT", "P1_DATA", "P2_IMPEDANCE_DATA", "MEASURED_H1_DISCHARGE_CURRENT",
                                       "VENDOR_QUOTATIONS", "MATERIAL_DATA", "MEASURED_THERMAL_COUPLING", "FACILITY_CAPABILITY")
+RFP = "OFFICIAL_RFP_TEXT"
 TBD = {
     # --- v3 OPEN rows ---
     "ICPQ-03": ([OJ, FC], [LK], None, "measured-system boundary on the thrust stand (architecture/measurement choice); P3 carries both mountings"),
@@ -333,12 +343,72 @@ TBD = {
     "OQ-RFQV2-08": ([OJ, FC], [P1S], None, "who performs the initial DWV (P1 RFQ dispatch)"),
     "OQ-RFQV2-09": ([OJ], [P1L], "P1-S6", "C1 hardware for P1-S6: advance to P1_NEEDED or run with C1 absent"),
     "OQ-RFQV2-10": ([OJ, VQ], [P1L], "P1-S3", "H-1 fabrication route (separate RFQ / RFQ2-MECH / in-house)"),
+    # --- register completion: lane-24 open decisions carried by RVM rows (RVM-ID-11) and RVMQ-01 (RVM-ID-10) ---
+    "OD2": ([RFP, OJ], [NI], None, "RFP reading of the quantifier over 180-230 km x atmosphere states (every point vs some "
+                                   "altitude); owner row 1 forbids freezing it from secondary sources; RVM-01 carries both "
+                                   "readings and is NOT_EVALUATED; needed before any requirement verdict (Milestone C), not "
+                                   "by P1 / P2 / P3 / P4 / LOCK-1"),
+    "OD3": ([OJ], [NI], None, "definition of the atmosphere design states (lane 24 used a PROPOSED low / mean / high set on "
+                              "the frozen atmosphere dataset; never adopted by the owner); a design-basis choice for the "
+                              "altitude verdict of RVM-01, not an input of the P1-P4 hardware stages"),
+    "OD5": ([RFP, OJ], [NI], None, "whether an air-only start is required or a xenon-assisted start is acceptable; owner row "
+                                   "24 already makes the experiments record start attempts per arm (air-only and Xe-assisted) "
+                                   "and row 93 bounds the dwell, so both readings are measured; only the RVM-14 verdict waits"),
+    "OD6": ([RFP, OJ], [NI], None, "residual of the 'air + Xe' meaning after owner row 6 (bounded functional Xe-capable mode "
+                                   "required, not continuous): whether feed switching without extinction or a simultaneous "
+                                   "mixed feed is also required; RVM-10 carries the readings side by side"),
+    "OD12": ([RFP, OJ], [NI], None, "whether the recorded-but-ungated RFP statements (indigenous content, no single-point "
+                                    "failure in electronics, 'ionise nascent O') become gates; owner rows 55 (limited "
+                                    "redundancy), 102 / 132 (species measured, NO_ATOMIC_O) set policies without deciding "
+                                    "the gate question; RVM-09 / -16 / -18 / -19 carry it"),
+    "OD14": ([RFP, OJ], [NI], None, "whether ignition from the off state on atmospheric propellant is an RFP requirement "
+                                    "(lane 24: inferred, no ignition / restart clause recorded); owner rows 24 / 108 / 112 "
+                                    "set recording, start-up power and sequencing rules without deciding the requirement; RVM-14 "
+                                    "carries it"),
+    "RVMQ-01": ([RFP, OJ], [NI], None, "redundancy basis if the official RFP confirms 'no single-point failure in "
+                                       "electronics' (row 55 limited redundancy vs re-basing RVM-19 on the RFP clause); "
+                                       "genuine design choice (mass / power / FMEA); needed when the RFP is obtained, before "
+                                       "Milestone C (RVM lane needed_by)"),
+}
+
+# register completion (lane A9_6_M16): lane-24 open decisions named by RVM-ID-11 and the RVM question named by RVM-ID-10.
+# Each lane-24 decision is registered with its historical source (pinned matrix) and the RVM rows that carry it. A row is
+# SUPERSEDED only where an owner answer answers the same question (quoted verbatim and sha-checked); every other row is
+# TBD_OWNER (A9.6 sec. 7) and names the owner answers that bear on it without settling it.
+LANE24_REGISTERED = ["OD2", "OD3", "OD5", "OD6", "OD12", "OD13", "OD14"]
+RVM_QUESTIONS = ["RVMQ-01"]
+RVM_DEMANDS = {"RVM-ID-10": RVM_QUESTIONS, "RVM-ID-11": LANE24_REGISTERED}
+LANE24_SUPERSEDED = {
+    "OD13": {
+        "owner_row": 3,
+        "how": "owner row 3 answers the same question ('is > 15,000 h firing in the RFP?'): retain > 15,000 h firing as a "
+               "provisional hard requirement until the official RFP confirms it. The lane-24 option 'cumulative firing "
+               "time' is therefore the governing engineering basis; what remains is verification of the wording against "
+               "the canonical RFP, which is the owner action of row 1 (RVM-ID-12, AWAITING_OWNER_ACTION), not an open "
+               "question. A different official wording would open a new question.",
+        "implemented_in": ("RVM", "rows[id=RVM-12]"),
+    },
+}
+LANE24_RELATED_ROWS = {  # owner answers that bear on a TBD_OWNER lane-24 decision without settling it (why not)
+    "OD2": [(1, "orders the canonical RFP to be obtained and forbids freezing ambiguous readings; does not choose one")],
+    "OD5": [(24, "records start attempts per arm (air-only and Xe-assisted); does not say which start the RFP requires"),
+            (93, "bounds the C1 ignition dwell; says nothing on an air-only start requirement")],
+    "OD6": [(6, "settles that a demonstrated bounded functional Xe-capable mode is required (beyond ignition, cathode and "
+                "contingency); does not decide feed switching without extinction or a simultaneous mixed feed")],
+    "OD12": [(55, "sets a limited-redundancy policy; does not decide whether the no-SPF statement is a gate (see RVMQ-01)"),
+             (102, "delivered species measured, O survival never assumed; does not make 'ionise nascent O' a gate"),
+             (132, "dedicated AO source for materials / lifetime, NO_ATOMIC_O label on N2 + O2 surrogates; does not make "
+                   "'ionise nascent O' a gate")],
+    "OD14": [(24, "records ICP ignition, Hall ignition with ICP electrons, restart success and cycle count; does not make "
+                  "ignition an RFP requirement"),
+             (108, "start-up transients below 1.5 kW; a power rule, not an ignition requirement")],
 }
 
 GROUPS = [
     ("DG-XE-CASE", "SAME_QUESTION", ["XA9Q-01", "MQ-09", "OQ-A910-01"], "content of the row-48 Xe design cases (RA-CASE)"),
     ("DG-IGN-DWELL", "SAME_QUESTION", ["OQ-A907-01", "XA9Q-02"], "row-93 ignition dwell / retry count (RA-DWELL)"),
-    ("DG-XE-FUNC", "COUPLED", ["XA9Q-07", "XV2Q-01"], "Xe functional mode of hall_icp_neutralizer; XV2Q-01 applies only if XA9Q-07 = NO"),
+    ("DG-XE-FUNC", "COUPLED", ["XA9Q-07", "XV2Q-01", "OD6"], "Xe functional mode of hall_icp_neutralizer; XV2Q-01 applies "
+     "only if XA9Q-07 = NO; OD6 (register completion) is the residual RFP meaning of 'air + Xe' that the mode must satisfy"),
     ("DG-MEOP", "SAME_QUESTION", ["XA9Q-06", "OQ-RFQ-09"], "Xe tank MEOP basis from quotations"),
     ("DG-MASS-MAP", "COUPLED", ["MQ-07", "MPQ-02", "OQ-A910-05"], "mapping of unnamed A9 items to row-54 allocation lines"),
     ("DG-MASS-CLOSURE", "COUPLED", ["MQ-01", "MQ-02", "MQ-03", "MQ-04", "MQ-05", "MQ-10"], "allocation policy and re-allocation for mass closure"),
@@ -351,6 +421,13 @@ GROUPS = [
     ("DG-COLLECTOR", "COUPLED", ["P1Q-09", "P3Q-01", "P4-OQ-05"], "electron collector geometry / diagnostics / coupon bias"),
     ("DG-HALL-START", "COUPLED", ["P1Q-02", "P1Q-03", "OQ-RFQV2-09"], "P1-S6 Takahashi-like topology control"),
     ("DG-Z-METHOD", "COUPLED", ["P2Q-01", "P2Q-03", "P2Q-06"], "Z_antenna method and agreement rule"),
+    # register completion (lane-24 decisions / RVM question)
+    ("DG-RFP-ENVELOPE", "COUPLED", ["OD2", "OD3"], "altitude-envelope quantifier and the atmosphere design states it "
+     "ranges over (lane-24 topic 'envelope quantifier over 180-230 km x atmosphere states'; RVM-01)"),
+    ("DG-RFP-START", "COUPLED", ["OD5", "OD14"], "whether ignition from off on atmospheric propellant is an RFP requirement "
+     "and, if so, whether it must be air-only (RVM-14)"),
+    ("DG-RFP-UNGATED", "COUPLED", ["OD12", "RVMQ-01"], "gate status of the recorded RFP statements (indigenous content, "
+     "no-SPF, nascent O) and the redundancy basis if no-SPF is confirmed (RVM-09 / -16 / -18 / -19)"),
 ]
 
 
@@ -562,10 +639,85 @@ def _lane_rows(docs, a94, a95):
     return rows
 
 
+def _owner_row(answers, row):
+    hit = [a for a in answers if a["row"] == row]
+    if len(hit) != 1 or not hit[0]["owner_answer_verbatim"]:
+        raise SystemExit(f"state v4: owner answer row {row} missing or empty")
+    return hit[0]
+
+
+def _register_completion_rows(docs):
+    """Lane-24 open decisions carried by RVM rows (RVM-ID-11) and the RVM question RVMQ-01 (RVM-ID-10)."""
+    for p, want in ((HGM, HGM_SHA), (ANS, ANS_SHA)):
+        if _sha(p) != want:
+            raise SystemExit(f"state v4: pinned input {REL(p)} changed (sha256 mismatch)")
+    hgm, rvm, answers = docs[HGM], docs[RVM], docs[ANS]["answers"]
+    for dem, ids in RVM_DEMANDS.items():
+        text = resolve(rvm, f"interface_demands[id={dem}]")
+        blob = json.dumps(text, ensure_ascii=False)
+        missing = [i for i in ids if i not in blob]
+        if missing:
+            raise SystemExit(f"state v4: {dem} no longer names {missing}")
+    carried = {}
+    for row in rvm["rows"]:
+        for o in row.get("open_readings", []):
+            if o.get("register") == REL(HGM):
+                carried.setdefault(o["id"], []).append(row["id"])
+    if sorted(carried) != sorted(LANE24_REGISTERED):
+        raise SystemExit(f"state v4: lane-24 decisions carried by RVM rows {sorted(carried)} != registered "
+                         f"{sorted(LANE24_REGISTERED)}")
+    out = []
+    for rid in LANE24_REGISTERED:
+        od = resolve(hgm, f"open_owner_decisions[id={rid}]")
+        ref = {"path": REL(HGM), "locator": f"open_owner_decisions[id={rid}]"}
+        base = {"id": rid, "kind": "lane24_open_decision", "lane": "lane-24 hard-gate matrix v1 (historical; registered by "
+                "A9_6_M16 via RVM-ID-11)", "source": f"{ref['path']} {ref['locator']}; carried by "
+                f"{REL(RVM)} rows {', '.join(carried[rid])}", "source_ref": ref, "source_sha256": HGM_SHA,
+                "rvm_rows": carried[rid], "rvm_interface_demand": f"{REL(RVM)} interface_demands[id=RVM-ID-11]",
+                "question": od["topic"], "alternatives": list(od["options"]),
+                "lane24_current_handling": od["current_handling"], "proposed": "", "needed_by": ""}
+        if rid in LANE24_SUPERSEDED:
+            spec = LANE24_SUPERSEDED[rid]
+            a = _owner_row(answers, spec["owner_row"])
+            key, loc = spec["implemented_in"]
+            resolve(docs[RVM], loc)
+            base.update(status="SUPERSEDED", status_detail="SUPERSEDED (owner row %d; register completion)" % a["row"],
+                        superseded_by={"owner_row": a["row"], "covers_ids": a["covers_ids"], "path": REL(ANS),
+                                       "sha256": ANS_SHA, "owner_answer_verbatim": a["owner_answer_verbatim"]},
+                        supersession_basis=spec["how"], implemented_in=[f"{REL(RVM)} {loc}"],
+                        implemented_paths=[REL(RVM)])
+        else:
+            base.update(status="TBD_OWNER", status_detail="TBD_OWNER (A9.6 sec. 7)", **_tbd_fields(rid))
+            rel = []
+            for row, why in LANE24_RELATED_ROWS.get(rid, []):
+                a = _owner_row(answers, row)
+                rel.append({"owner_row": row, "covers_ids": a["covers_ids"], "owner_answer_verbatim":
+                            a["owner_answer_verbatim"], "why_not_settled": why})
+            if rel:
+                base["related_owner_answers"] = rel
+        out.append(base)
+    for rid in RVM_QUESTIONS:
+        q = resolve(rvm, f"open_owner_questions[id={rid}]")
+        if q.get("status") != "TBD_OWNER":
+            raise SystemExit(f"state v4: {rid} lane status {q.get('status')!r} not handled")
+        ref = {"path": REL(RVM), "locator": f"open_owner_questions[id={rid}]"}
+        rows_citing = [row["id"] for row in rvm["rows"] if rid in json.dumps(row, ensure_ascii=False)]
+        if not rows_citing:
+            raise SystemExit(f"state v4: no RVM row cites {rid}")
+        out.append({"id": rid, "kind": "lane_question", "lane": "RVM (fo_a9_6_rvm; registered by A9_6_M16 via RVM-ID-10)",
+                    "source": f"{ref['path']} {ref['locator']}", "source_ref": ref, "rvm_rows": rows_citing,
+                    "rvm_interface_demand": f"{REL(RVM)} interface_demands[id=RVM-ID-10]",
+                    "question": q["question"], "alternatives": list(q["admissible_readings"]),
+                    "proposed": "owner call; admissible alternatives: " + " | ".join(q["admissible_readings"]),
+                    "needed_by": q["needed_by"], "status": "TBD_OWNER", "status_detail": "TBD_OWNER (A9.6 sec. 7)",
+                    **_tbd_fields(rid)})
+    return out
+
+
 def build():
     _check_decisions()
     v3 = _load(V3)
-    docs = {p: _load(p) for p in (A94, A95, P1, P2, P3, P4, MP, XV2, RFQV2, A910)}
+    docs = {p: _load(p) for p in (A94, A95, P1, P2, P3, P4, MP, XV2, RFQV2, A910, HGM, ANS, RVM)}
     a94, a95 = set(docs[A94]["decisions"]), set(docs[A95]["decisions"])
     for k, v in HIST_BLOBS.items():
         if not re.fullmatch(r"[0-9a-f]{64}", v["sha256"]) or not re.fullmatch(r"[0-9a-f]{40}", v["commit"]):
@@ -576,6 +728,10 @@ def build():
         rows.append(_reclassify_v3(r, a94, a95) if r["status"] == "OPEN" else dict(r))
     v3_ids = {r["id"] for r in v3["rows"]}
     new = _lane_rows(docs, a94, a95)
+    completion = _register_completion_rows(docs)
+    new += completion
+    if len({r["id"] for r in new}) != len(new):
+        raise SystemExit("state v4: duplicate id among the rows added since v3")
     clash = sorted({r["id"] for r in new} & v3_ids)
     if clash:
         raise SystemExit(f"state v4: lane ids collide with v3 ids: {clash}")
@@ -610,6 +766,8 @@ def build():
     # vocabulary
     vocab = {k: v for k, v in v3["status_vocabulary"].items() if k != "OPEN"}
     vocab.update(NEW_STATUSES)
+    vocab["SUPERSEDED"] = (v3["status_vocabulary"]["SUPERSEDED"] + "; v4 register completion: also a registered lane-24 "
+                           "open decision whose question an owner answer supersedes ('superseded_by' quotes it)")
     detail = dict(v3["status_detail_vocabulary"])
     detail.update({"ANSWERED (A9.4)": "A9.4 owner decision (binding); status ANSWERED_BY_A9_4",
                    "ANSWERED (A9.5)": "A9.5 owner decision (binding); status ANSWERED_BY_A9_5",
@@ -620,7 +778,8 @@ def build():
             raise SystemExit(f"state v4: {r['id']} status {r['status']} outside the closed vocabulary")
         if r["status"] == "DERIVED" and not r.get("implemented_in"):
             raise SystemExit(f"state v4: DERIVED row {r['id']} names no implementing artifact")
-        if r["status"] == "SUPERSEDED" and r.get("v3_status") == "OPEN" and not r.get("superseded_by"):
+        if r["status"] == "SUPERSEDED" and (r.get("v3_status") == "OPEN" or r.get("kind") == "lane24_open_decision") \
+                and not r.get("superseded_by"):
             raise SystemExit(f"state v4: SUPERSEDED row {r['id']} names nothing that superseded it")
 
     counts, reclass, new_counts, blocks_counts = {}, {}, {}, {}
@@ -634,7 +793,9 @@ def build():
             blocks_counts[b] = blocks_counts.get(b, 0) + 1
     tbd = counts.get("TBD_OWNER", 0)
 
-    pins = {"state_v3": {"path": REL(V3), "sha256": _sha(V3)}}
+    pins = {"state_v3": {"path": REL(V3), "sha256": _sha(V3)},
+            "lane24_hard_gate_matrix": {"path": REL(HGM), "sha256": HGM_SHA},
+            "owner_answers_147": {"path": REL(ANS), "sha256": ANS_SHA}}
     for key, p in (("a9_4_decision", A94), ("a9_4_verbatim", A94_MD), ("a9_5_decision", A95), ("a9_5_verbatim", A95_MD),
                    ("a9_6_decision", A96), ("a9_6_verbatim", A96_MD)):
         pins[key] = {"path": REL(p), "sha256": _sha(p)}
@@ -643,11 +804,14 @@ def build():
         ("V4-IT-01", "rows in state v4", len(rows)),
         ("V4-IT-02", "rows copied from state v3", len(v3["rows"])),
         ("V4-IT-03", "v3 OPEN rows re-classified", v3["open_count"]),
-        ("V4-IT-04", "rows added since v3 (lane questions, registrations, A9.4/A9.5 answers, lane DERIVED settlements)", len(new)),
+        ("V4-IT-04", "rows added since v3 (lane questions, registrations, A9.4/A9.5 answers, lane DERIVED settlements, register completion)", len(new)),
         ("V4-IT-05", "TBD_OWNER rows (genuine owner questions still open)", tbd),
         ("V4-IT-06", "DERIVED rows", counts.get("DERIVED", 0)),
         ("V4-IT-07", "TBD_OWNER rows that block P1 start", blocks_counts.get("BLOCKS_P1_START", 0)),
         ("V4-IT-08", "OPEN rows remaining (must be 0: every v3 OPEN row re-classified)", counts.get("OPEN", 0)),
+        ("V4-IT-09", "rows added by the register completion (lane-24 decisions of RVM-ID-11, RVM question of RVM-ID-10)",
+         len(completion)),
+        ("V4-IT-10", "register-completion rows TBD_OWNER", sum(1 for r in completion if r["status"] == "TBD_OWNER")),
     ]
     items = [{"id": i, "name": n, "value": v, "units": "count", "basis": "deterministic count over 'rows' by this builder",
               "source": f"{REL(OUT_JSON)} rows", "evidence_class": "derived (bookkeeping count; no physical quantity)",
@@ -669,7 +833,13 @@ def build():
         "referenced_not_pinned": {
             "rule": "lane packages are mutable deliverables: read at build time and their ids checked (a missing id raises); "
                     "never sha-pinned; governance files (lane/trigger registries, ledgers, runtime state) are never read or pinned",
-            "paths": [REL(p) for p in (P1, P2, P3, P4, MP, XV2, RFQV2, A910)]},
+            "paths": [REL(p) for p in (P1, P2, P3, P4, MP, XV2, RFQV2, A910, RVM)]},
+        "revisions": [
+            {"lane": "A9_6_DECPROP (fo_a9_6_decision_propagation)", "what": "state v4 built from v3 and the merged lanes"},
+            {"lane": "A9_6_M16 (fo_a9_6_m16_refresh)", "what": "register completion (A9.6 sec. 16 lane): lane-24 open "
+             "decisions OD2, OD3, OD5, OD6, OD12, OD13, OD14 carried by RVM rows (RVM-ID-11) and RVMQ-01 (RVM-ID-10) "
+             "registered; OD13 SUPERSEDED by owner row 3, the others TBD_OWNER; groups DG-RFP-ENVELOPE, DG-RFP-START, "
+             "DG-RFP-UNGATED added and OD6 joined to DG-XE-FUNC"}],
         "status_vocabulary": vocab, "status_vocabulary_retired": {"OPEN": v3["status_vocabulary"]["OPEN"] +
                                                                    " (retired in v4: every v3 OPEN row re-classified under A9.6 sec. 6-7)"},
         "status_detail_vocabulary": detail,
@@ -695,6 +865,13 @@ def build():
              "quantity": "one row per lane question id with a resolvable source; the test resolves every source_ref", "status": "PROVIDED"},
             {"id": "IF-V4-06", "direction": "provides", "counterpart": "each lane package (next rebuild)",
              "quantity": "v4 status of every id the lane carries; a lane still listing a v4-DERIVED id as open should cite v4", "status": "PROVIDED"},
+            {"id": "IF-V4-07", "direction": "consumes", "counterpart": "docs/requirements/rvm_a9/rvm_a9_v1.json RVM-ID-10 / RVM-ID-11 "
+             "and the historical lane-24 matrix (pinned)", "quantity": "lane-24 decisions carried by RVM rows; RVMQ-01 "
+             "(ids and carrying rows resolved at build time; a lane-24 id carried by an RVM row but not registered raises)",
+             "status": "APPLIED"},
+            {"id": "IF-V4-08", "direction": "provides", "counterpart": "M16 v4 (docs/experiments/hall_icp/integration/m16_v4/)",
+             "quantity": "owner-question ids used as M16 v4 blocking items (each must resolve to a TBD_OWNER row here)",
+             "status": "PROVIDED"},
         ],
         "owner_answers_applied": [
             {"id": "A9.4 P1Q-10 / P1Q-13 / P1Q-14 / P2Q-05", "how_applied": "rows ANSWERED_BY_A9_4 with pointer, sha256, excerpt"},
@@ -703,12 +880,22 @@ def build():
             {"id": "A9.6 sec. 7", "how_applied": "every other open question stays TBD_OWNER with its dependency and blocker; no answer invented"},
             {"id": "A9.6 sec. 18", "how_applied": "no orphan questions: every question container of every merged lane enumerated; unmapped ids raise"},
             {"id": "A9.4 execution_decisions.i_d_max_h1", "how_applied": "P1Q-07 dependency MEASURED_H1_DISCHARGE_CURRENT (never from the 8.33 A rating)"},
+            {"id": "owner row 3 (WEB-RFP-1)", "how_applied": "lane-24 OD13 SUPERSEDED: > 15,000 h firing retained as a "
+             "provisional hard requirement until the official RFP confirms it (verbatim in superseded_by)"},
+            {"id": "owner rows 1, 6, 24, 55, 93, 102, 108, 132", "how_applied": "quoted as related_owner_answers of the "
+             "TBD_OWNER lane-24 decisions with why each does not settle the question; nothing answered"},
         ],
         "open_owner_questions": [],
-        "open_owner_questions_note": "this lane raises no new owner question; it re-classifies existing ones",
+        "open_owner_questions_note": "no new owner question is raised here: v4 re-classifies existing ones and registers "
+                                     "existing lane-24 decisions and the RVM question RVMQ-01 (raised by the RVM lane)",
         "historical_reuse": [{"path": v["path"], "commit": v["commit"], "sha256": v["sha256"], "use": "verbatim question texts"}
-                             for v in HIST_BLOBS.values()] + [{"path": REL(V3), "sha256": _sha(V3), "use": "all rows copied"}],
-        "m16_impact": "none: no M16 row changes state; M16-V3-Q-01 stays TBD_OWNER (NOTHING_IMMEDIATE)",
+                             for v in HIST_BLOBS.values()] + [{"path": REL(V3), "sha256": _sha(V3), "use": "all rows copied"},
+                                                              {"path": REL(HGM), "sha256": HGM_SHA,
+                                                               "use": "lane-24 open decisions (topic, options, handling) "
+                                                                      "quoted for the register completion"}],
+        "m16_impact": "none from this register: no M16 row changes state here; M16 v4 "
+                      "(docs/experiments/hall_icp/integration/m16_v4/) cites v4 TBD_OWNER ids as blocking items; "
+                      "M16-V3-Q-01 stays TBD_OWNER (NOTHING_IMMEDIATE)",
         "compliance": ["every v3 row present; non-OPEN v3 rows copied unchanged",
                        "every v3 OPEN row re-classified into exactly one A9.6 class",
                        "DERIVED only where an owner decision / standard rule applies and an implementing artifact exists",
@@ -742,13 +929,21 @@ def render_md(doc):
     out += ["", "## Answered by A9.4 / A9.5", "", "| # | ID | Status | Answer (excerpt) |", "|---|---|---|---|"]
     out += [f"| {r['no']} | {r['id']} | {r['status']} | {cell(r['answer_excerpt'])} |" for r in rows
             if r["status"] in ("ANSWERED_BY_A9_4", "ANSWERED_BY_A9_5")]
+    out += ["", "## Register completion (lane-24 decisions carried by RVM rows; RVM question)", "",
+            "| # | ID | Status | Topic | RVM rows | Blocks | Basis / superseded by |", "|---|---|---|---|---|---|---|"]
+    for r in rows:
+        if r["kind"] == "lane24_open_decision" or r["id"] in RVM_QUESTIONS:
+            why = (f"owner row {r['superseded_by']['owner_row']}: {r['supersession_basis']}" if r["status"] == "SUPERSEDED"
+                   else r["classification_basis"])
+            out.append(f"| {r['no']} | {r['id']} | {r['status']} | {cell(_clip(r['question'], 200))} | "
+                       f"{cell(r.get('rvm_rows', ''))} | {cell(r.get('blocks', ''))} | {cell(_clip(why, 300))} |")
     out += ["", "## Question groups", "", "| Group | Relation | Members | What |", "|---|---|---|---|"]
     out += [f"| {g['id']} | {g['relation']} | {', '.join(g['members'])} | {cell(g['what'])} |" for g in doc["question_groups"]]
     out += ["", "## Sources of the rows added since v3", "", "| # | ID | Kind | Source |", "|---|---|---|---|"]
     out += [f"| {r['no']} | {r['id']} | {r['kind']} | {cell(r['source'])} |" for r in rows if "source_ref" in r]
     out += ["", "## Pins", ""] + [f"- `{v['path']}` sha256 `{v['sha256']}`" for v in doc["pins"].values()]
     out += [f"- git `{v['commit'][:7]}:{v['path']}` sha256 `{v['sha256']}` ({v['what']})" for v in doc["historical_blobs"].values()]
-    out += ["", "No new owner question is raised here. M16 impact: none. No PASS, no winner."]
+    out += ["", "No new owner question is raised here. M16 impact: none from this register (M16 v4 cites v4 ids). No PASS, no winner."]
     return "\n".join(out) + "\n"
 
 
@@ -756,7 +951,8 @@ def render_csv(doc):
     buf = io.StringIO()
     w = csv.writer(buf, lineterminator="\n")
     cols = ["no", "id", "kind", "lane", "source", "v3_status", "status", "status_detail", "question", "dependency", "blocks",
-            "blocks_stage", "group", "derived_rule", "implemented_in", "answer_pointer", "answer_excerpt", "proposed", "needed_by"]
+            "blocks_stage", "group", "derived_rule", "implemented_in", "answer_pointer", "answer_excerpt", "superseded_by",
+            "proposed", "needed_by"]
     w.writerow(cols)
     for r in doc["rows"]:
         w.writerow([_flat(r.get(c, "") if r.get(c) is not None else "") for c in cols])
