@@ -2332,3 +2332,7 @@ post-merge checks passed. The merged main reproduces: 2204 passed / 5 skipped / 
 This is the clean post-A9 baseline. Owner sequence: triage the 54 open owner questions, then P1 ICP bench (ICP-45) → P2
 impedance map → P3 coupled thermal redesign → P4 anode design. P3/P4 are not closed before P1/P2 data exist, because the
 measured ICP/RF electrical behaviour sets the real thermal load. No model, frozen data or golden changed.
+Owner-question triage (recorder proposal, not a decision): `docs/budgets/owner_decisions/OWNER_QUESTIONS_TRIAGE_POST_A9.md`
+puts each of the 54 OPEN state-v2 questions in exactly one tier: 8 gate the P1 bench, 2 wait for P2 data, 8 set the
+P3/P4 thermal rules, 20 are mass/Xe closure, 12 are comparison-campaign design and 4 are governance. There are two
+duplicate groups (Xe design-case content; ignition dwells).
