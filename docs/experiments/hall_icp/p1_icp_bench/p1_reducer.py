@@ -16,7 +16,15 @@ What it never does
 * It never returns PASS for ICP-45 because some current (1 A, 2 A, ...) was reached. The ICP-45A condition is
   evaluated only against a REGISTERED I_d,max,H1 (basis MEASURED_REGISTERED_H1_OPERATION) with an explicit one-sided
   margin rule; the 8.33 A stand ceiling and the 7.5 A power-envelope bound are refused as requirements.
-* It never treats P_mains,in (laboratory generator mains input, GROUND/FACILITY_ONLY) as P_bus.
+* I_e,cap is never "the largest current in the bundle". Its definition here is PROPOSED for the owner (P1Q-10):
+  the largest facility-corrected ICP-supplied current I_e(RF ON) - I_e(RF OFF) over records that are P1-S7, Hall ON,
+  G-REUSE, RF ON, RF-pickup-checked, at a registered H-1 point, each with a matched RF-OFF facility pair. Records
+  without that correction are excluded (never silently credited); synthetic records give arithmetic only
+  (SYNTHETIC_TEST_ONLY_NOT_EVIDENCE, condition_met None). Without eligible records the status is NOT_EVALUATED.
+* It never treats P_mains,in (laboratory generator mains input, GROUND/FACILITY_ONLY) as P_bus, and refuses any
+  record field whose name reads as P_bus (any spelling that normalises to '...pbus...').
+* P1 records accept only the GROUND/FACILITY_ONLY mains generator (A9.3 OQ-RFQ-06); a
+  FLIGHT_REPRESENTATIVE_DC_RF_SOURCE belongs to a later programme and is refused here.
 * It never applies a stable-region threshold of its own: criteria are owner inputs; without them the verdict is
   NOT_EVALUATED.
 * No hidden defaults: a missing input raises (CLAUDE.md rule 3).
@@ -37,12 +45,25 @@ GAS_MODES = ("G-REUSE", "DIAGNOSTIC_DEDICATED_FEED")
 HALL_STATES = ("OFF", "ON")
 RF_REFERENCE_PLANE = "GENERATOR_50OHM_SIDE_OF_LOCAL_MATCH"
 LOSS_STATUSES = ("MEASURED", "FLAGGED_NOT_MEASURED")
-GENERATOR_CLASSES = ("GROUND_FACILITY_ONLY_MAINS", "FLIGHT_REPRESENTATIVE_DC_RF_SOURCE")
+GENERATOR_CLASSES = ("GROUND_FACILITY_ONLY_MAINS",)
+REFUSED_GENERATOR_CLASSES = ("FLIGHT_REPRESENTATIVE_DC_RF_SOURCE",)
 TERMINAL_BASES = ("MEASURED", "OPEN_CIRCUIT_BY_CONSTRUCTION")
-REQUIRED_TERMINALS = {
-    "OFF": ("collector_supply", "icp_body", "facility_ground"),
-    "ON": ("collector_supply", "icp_body", "facility_ground", "hall_anode"),
+# Electron-extraction topology (the electrode that SINKS the extracted electrons; the ICP 'collector' is the
+# ion-collecting electrode inside the source, TK-13 / ICD ICP-21). Registered per run at P1-G0 (P1-IT-36, P1Q-09).
+EXTRACTION_ELECTRODES = ("DEDICATED_ELECTRON_COLLECTOR_TARGET", "CHAMBER_WALL_FACILITY_GROUND", "H1_ANODE")
+EXTRACTION_ELECTRODES_BY_HALL_STATE = {
+    "OFF": ("DEDICATED_ELECTRON_COLLECTOR_TARGET", "CHAMBER_WALL_FACILITY_GROUND"),
+    "ON": ("H1_ANODE",),
 }
+REFERENCE_POTENTIALS = ("FACILITY_GROUND", "ICP_BODY", "ELECTRON_COLLECTOR_ELECTRODE")
+EXTRACTION_REQUIRED = ("topology_id", "electron_collecting_electrode")
+REQUIRED_TERMINALS = {
+    ("OFF", "DEDICATED_ELECTRON_COLLECTOR_TARGET"): ("collector_supply", "icp_body", "facility_ground",
+                                                     "electron_collector"),
+    ("OFF", "CHAMBER_WALL_FACILITY_GROUND"): ("collector_supply", "icp_body", "facility_ground"),
+    ("ON", "H1_ANODE"): ("collector_supply", "icp_body", "facility_ground", "hall_anode"),
+}
+ICP45A_STAGE = "P1-S7"
 REQUIRED_TEMPERATURES = ("T_icp_dielectric_C", "T_antenna_C", "T_collector_C", "T_match_C", "T_rf_source_C",
                          "T_h1_pole_inner_C", "T_h1_pole_outer_C", "T_sink_C")
 PRESSURE_FIELDS = ("p_chamber_Pa",)
@@ -51,8 +72,8 @@ REFUSED_REGISTRATION_BASES = ("STAND_CEILING", "SUPPLY_RATING", "POWER_ENVELOPE_
 
 OPERATING_POINT_REQUIRED = (
     "schema", "record_kind", "record_id", "run_id", "stage_id", "timestamp_utc", "synthetic", "labels", "gas",
-    "gas_mode", "hall_discharge_state", "rf", "generator", "collector", "pressures", "flows", "impedance",
-    "terminals", "temperatures", "rf_pickup_check",
+    "gas_mode", "hall_discharge_state", "rf", "generator", "collector", "extraction", "pressures", "flows",
+    "impedance", "terminals", "temperatures", "rf_pickup_check",
 )
 RF_REQUIRED = ("reference_plane", "P_fwd_W", "P_refl_W", "line_match_loss", "match_setting_id")
 GENERATOR_REQUIRED = ("generator_class", "P_generator_input_W", "input_boundary", "instrument")
@@ -80,10 +101,11 @@ BOUNDARY_C_E_DC = {
     "GROUND_FACILITY_ONLY_MAINS": ("P_mains,in: AC mains input of the LABORATORY 13.56 MHz generator measured by a "
                                    "power analyzer; GROUND/FACILITY_ONLY (A9.3 OQ-RFQ-06); includes laboratory "
                                    "AC/DC stages; NOT P_bus and never evidence for P_bus < 1.5 kW"),
-    "FLIGHT_REPRESENTATIVE_DC_RF_SOURCE": ("P_DC,in: DC input of a FLIGHT_REPRESENTATIVE_DC_RF_SOURCE (A9.3 "
-                                           "OQ-RFQ-06, later programme); one term of P_bus only, never P_bus "
-                                           "itself"),
 }
+I_E_CAP_DEFINITION = ("PROPOSED (owner question P1Q-10): I_e,cap = max over eligible records of the facility-"
+                      "corrected ICP-supplied current I_e(RF ON) - I_e(RF OFF); eligible = stage P1-S7, Hall ON, "
+                      "gas_mode G-REUSE, P_fwd > 0, rf_pickup_check DONE, h1_point_id in the registration's "
+                      "registered_point_ids, and a matched RF-OFF facility pair (P1-D-07)")
 
 
 class P1RecordError(ValueError):
@@ -118,6 +140,14 @@ class GasModeError(P1RecordError):
     """G-REUSE / dedicated-feed accounting violated (A9.3 OQ-RFQ-10)."""
 
 
+class ExtractionTopologyError(P1RecordError):
+    """Electron-extraction topology undeclared or inconsistent with the Hall discharge state."""
+
+
+class RFConsistencyError(P1RecordError):
+    """Forward / reflected / line-loss readings that no passive RF chain can produce."""
+
+
 # ------------------------------------------------------------------------------------------------ helpers
 def _req(obj, keys, where):
     if not isinstance(obj, dict):
@@ -145,12 +175,23 @@ def _labels_ok(rec, where):
         raise LabelError("%s: P1 records are non-scoring; forbidden label(s) %s" % (where, bad))
 
 
-def _refuse_p_bus_claim(rec, where):
-    for key in ("P_bus_W", "p_bus_W", "P_bus"):
-        if key in rec or key in (rec.get("generator") or {}):
-            raise PMainsNotPBusError("%s: field '%s' present; a P1 bench record never carries P_bus - the laboratory "
-                                     "generator input is P_mains,in (GROUND/FACILITY_ONLY, A9.3 OQ-RFQ-06)"
-                                     % (where, key))
+def _normalise_key(key):
+    return "".join(ch for ch in str(key).lower() if ch.isalnum())
+
+
+def _refuse_p_bus_claim(obj, where, path=""):
+    """Recursive screen: any field name that normalises to contain 'pbus' (P_bus_W, Pbus_W, P_bus_mains_W, ...)."""
+    if isinstance(obj, dict):
+        for key, val in obj.items():
+            here = path + "." + str(key) if path else str(key)
+            if "pbus" in _normalise_key(key):
+                raise PMainsNotPBusError("%s: field '%s' present; a P1 bench record never carries P_bus - the "
+                                         "laboratory generator input is P_mains,in (GROUND/FACILITY_ONLY, A9.3 "
+                                         "OQ-RFQ-06)" % (where, here))
+            _refuse_p_bus_claim(val, where, here)
+    elif isinstance(obj, list):
+        for i, val in enumerate(obj):
+            _refuse_p_bus_claim(val, where, "%s[%d]" % (path, i))
 
 
 def p_bus_from_generator_input(record):
@@ -205,28 +246,53 @@ def validate_operating_point(rec):
                             "matching network (A9.2 OQ-A907-11); got %r" % (rid, rf["reference_plane"]))
     pf = _num(rf["P_fwd_W"], rid + " rf.P_fwd_W", allow_negative=False)
     pr = _num(rf["P_refl_W"], rid + " rf.P_refl_W", allow_negative=False)
+    if pf == 0.0 and pr > 0.0:
+        raise RFConsistencyError("%s: P_refl = %r W with P_fwd = 0 is not a physical reading of a passive load "
+                                 "(RF OFF records carry P_refl = 0)" % (rid, pr))
     if pf > 0 and pr >= pf:
-        raise P1RecordError("%s: P_refl >= P_fwd (%r >= %r) is not a physical reading of a passive load" % (rid, pr, pf))
+        raise RFConsistencyError("%s: P_refl >= P_fwd (%r >= %r) is not a physical reading of a passive load"
+                                 % (rid, pr, pf))
     loss = rf["line_match_loss"]
     if not isinstance(loss, dict) or loss.get("status") not in LOSS_STATUSES:
         raise LineMatchLossError("%s: P_delivered needs the line/match loss term either MEASURED or explicitly "
                                  "FLAGGED_NOT_MEASURED (A9.2); got %r" % (rid, loss))
     if loss["status"] == "MEASURED":
-        _num(loss.get("value_W"), rid + " rf.line_match_loss.value_W", allow_negative=False)
+        lw = _num(loss.get("value_W"), rid + " rf.line_match_loss.value_W", allow_negative=False)
         if not loss.get("source"):
             raise MissingInputError("%s: a MEASURED line/match loss needs its source (S1 dummy-load / two-port "
                                     "characterization id)" % rid)
-    # generator
+        if pf > 0.0 and lw > pf - pr:
+            raise RFConsistencyError("%s: MEASURED line/match loss %r W exceeds P_fwd - P_refl = %r W; P_delivered "
+                                     "would be negative - loss characterization inconsistent with this reading"
+                                     % (rid, lw, pf - pr))
+    # generator (A9.3 OQ-RFQ-06: P1 uses the GROUND/FACILITY_ONLY mains generator only)
     gen = rec["generator"]
     _req(gen, GENERATOR_REQUIRED, rid + " generator")
+    if gen["generator_class"] in REFUSED_GENERATOR_CLASSES:
+        raise P1RecordError("%s: generator_class %r refused in P1: A9.3 OQ-RFQ-06 fixes P1 to the "
+                            "GROUND/FACILITY_ONLY mains generator; a FLIGHT_REPRESENTATIVE_DC_RF_SOURCE belongs to a "
+                            "later programme with its own record schema" % (rid, gen["generator_class"]))
     if gen["generator_class"] not in GENERATOR_CLASSES:
         raise P1RecordError("%s: generator_class %r not in %s" % (rid, gen["generator_class"], GENERATOR_CLASSES))
     _num(gen["P_generator_input_W"], rid + " generator.P_generator_input_W", allow_negative=False)
-    # collector
+    # collector (the ICP ion-collecting electrode; TK-13, ICD ICP-21)
     col = rec["collector"]
     _req(col, COLLECTOR_REQUIRED, rid + " collector")
     _num(col["I_e_A"], rid + " collector.I_e_A")
     _num(col["V_collector_V"], rid + " collector.V_collector_V")
+    if col["reference_potential"] not in REFERENCE_POTENTIALS:
+        raise ExtractionTopologyError("%s: collector.reference_potential %r not in %s (the reference of V_collector "
+                                      "is declared per record and registered at P1-G0)"
+                                      % (rid, col["reference_potential"], REFERENCE_POTENTIALS))
+    # electron-extraction topology (P1-IT-36)
+    ext = rec["extraction"]
+    _req(ext, EXTRACTION_REQUIRED, rid + " extraction")
+    if not isinstance(ext["topology_id"], str) or not ext["topology_id"].strip():
+        raise ExtractionTopologyError("%s: extraction.topology_id must be the id registered at P1-G0" % rid)
+    electrode = ext["electron_collecting_electrode"]
+    if electrode not in EXTRACTION_ELECTRODES:
+        raise ExtractionTopologyError("%s: electron_collecting_electrode %r not in %s"
+                                      % (rid, electrode, EXTRACTION_ELECTRODES))
     # pressures, impedance, temperatures, pickup
     _req(rec["pressures"], PRESSURE_FIELDS, rid + " pressures")
     for k in PRESSURE_FIELDS:
@@ -244,9 +310,18 @@ def validate_operating_point(rec):
         _num(temps[k], rid + " temperatures." + k)
     if rec["rf_pickup_check"] not in ("DONE", "NOT_DONE"):
         raise P1RecordError("%s: rf_pickup_check must be DONE or NOT_DONE" % rid)
+    # extraction electrode vs Hall state: with the Hall discharge OFF the H-1 anode cannot be the electron sink
+    # (a positively biased H-1 anode with Ar flowing is a Hall discharge); with it ON the electrons close through
+    # the H-1 anode (ICD ICP-45; anchor TK-40)
+    allowed = EXTRACTION_ELECTRODES_BY_HALL_STATE[rec["hall_discharge_state"]]
+    if electrode not in allowed:
+        raise ExtractionTopologyError("%s: electron_collecting_electrode %r is inconsistent with Hall discharge %s "
+                                      "(allowed %s)" % (rid, electrode, rec["hall_discharge_state"], allowed))
+    if "h1_point_id" in rec and (not isinstance(rec["h1_point_id"], str) or not rec["h1_point_id"].strip()):
+        raise P1RecordError("%s: h1_point_id, when present, must be a non-empty registered H-1 point id" % rid)
     # terminals
     terms = rec["terminals"]
-    need = REQUIRED_TERMINALS[rec["hall_discharge_state"]]
+    need = REQUIRED_TERMINALS[(rec["hall_discharge_state"], electrode)]
     if not isinstance(terms, dict):
         raise MissingInputError("%s: terminals must be an object" % rid)
     for name in need:
@@ -269,16 +344,25 @@ def derive_rf(rec):
     if not isinstance(loss, dict) or loss.get("status") not in LOSS_STATUSES:
         raise LineMatchLossError("record %r: line/match loss neither MEASURED nor FLAGGED_NOT_MEASURED"
                                  % rec.get("record_id"))
-    gamma = math.sqrt(pr / pf) if pf > 0 else None
-    vswr = (1.0 + gamma) / (1.0 - gamma) if gamma is not None else None
+    if pf == 0.0:
+        if pr != 0.0:
+            raise RFConsistencyError("record %r: P_refl > 0 with P_fwd = 0" % rec.get("record_id"))
+        return {"rf_state": "RF_OFF", "P_fwd_W": pf, "P_refl_W": pr, "gamma_abs": None, "VSWR": None,
+                "P_delivered_W": None, "P_delivered_kind": "RF_OFF_NOT_DEFINED", "reference_plane": RF_REFERENCE_PLANE,
+                "note": "RF OFF: P_delivered, |Gamma|, VSWR and C_e are undefined"}
+    gamma = math.sqrt(pr / pf)
+    vswr = (1.0 + gamma) / (1.0 - gamma)
     if loss["status"] == "MEASURED":
-        p_del = pf - pr - float(loss["value_W"])
+        lw = float(loss["value_W"])
+        if lw > pf - pr:
+            raise RFConsistencyError("record %r: MEASURED line/match loss exceeds P_fwd - P_refl" % rec.get("record_id"))
+        p_del = pf - pr - lw
         kind = "P_RF_DELIVERED"
     else:
         p_del = pf - pr
         kind = "P_RF_DELIVERED_UPPER_BOUND_LOSS_NOT_MEASURED"
-    return {"P_fwd_W": pf, "P_refl_W": pr, "gamma_abs": gamma, "VSWR": vswr, "P_delivered_W": p_del,
-            "P_delivered_kind": kind, "reference_plane": RF_REFERENCE_PLANE,
+    return {"rf_state": "RF_ON", "P_fwd_W": pf, "P_refl_W": pr, "gamma_abs": gamma, "VSWR": vswr,
+            "P_delivered_W": p_del, "P_delivered_kind": kind, "reference_plane": RF_REFERENCE_PLANE,
             "note": "P_fwd is never P_plasma (A9.2)"}
 
 
@@ -287,8 +371,12 @@ def electron_cost(rec, rf_derived):
     i_e = float(rec["collector"]["I_e_A"])
     gen = rec["generator"]
     out = {"I_e_A": i_e}
-    if i_e <= 0.0:
+    reason = None
+    if rf_derived["rf_state"] == "RF_OFF":
+        reason = "RF OFF: electron cost undefined (any collected current is not RF-produced; see P1-D-07)"
+    elif i_e <= 0.0:
         reason = "I_e <= 0: electron cost undefined"
+    if reason is not None:
         out.update({"C_e_W_per_A": None, "C_e_kind": None, "C_e_boundary": None, "C_e_reason": reason,
                     "C_e_DC_W_per_A": None, "C_e_DC_boundary": None, "C_e_DC_reason": reason})
         return out
@@ -318,20 +406,47 @@ def current_closure(rec):
                     "(A9-04 UB-N-07 form)"}
 
 
-def facility_electron_check(rf_on, rf_off):
-    """Facility-electron contribution: collector current with the ICP RF OFF at the same bias/flow/pressure point
-    divided by the current with RF ON. Descriptive; no threshold."""
+FACILITY_MATCH_REQUIRED = ("criteria_id", "p_chamber_rel_tol")
+
+
+def facility_electron_check(rf_on, rf_off, match=None):
+    """Facility-electron contribution (P1-D-07): collector current with the ICP RF OFF at the same point divided by
+    the current with RF ON. 'Same point' = identical V_collector and its reference, mdot_Ar,H1, mdot_ICP,dedicated,
+    gas_mode, Hall discharge state, stage and extraction topology, and p_chamber within the caller-supplied relative
+    tolerance (match['p_chamber_rel_tol']; TBD - frozen at P1-G0, P1-IT-37; no default). Descriptive; no threshold."""
     for r in (rf_on, rf_off):
         validate_operating_point(r)
+    if match is None:
+        raise MissingInputError("facility-electron check: the pressure-match rule (criteria_id, p_chamber_rel_tol) "
+                                "is required - TBD, frozen at P1-G0 (P1-IT-37); no default")
+    _req(match, FACILITY_MATCH_REQUIRED, "facility match rule")
+    tol = _num(match["p_chamber_rel_tol"], "facility match rule p_chamber_rel_tol", allow_negative=False)
+    if float(rf_on["rf"]["P_fwd_W"]) <= 0.0:
+        raise P1RecordError("facility-electron check: the RF-ON record has P_fwd = %r W" % rf_on["rf"]["P_fwd_W"])
     if float(rf_off["rf"]["P_fwd_W"]) != 0.0:
         raise P1RecordError("facility-electron check: the RF-OFF record has P_fwd = %r W" % rf_off["rf"]["P_fwd_W"])
-    for path in (("collector", "V_collector_V"), ("flows", "mdot_Ar_H1_mg_s")):
-        a, b = rf_on[path[0]][path[1]], rf_off[path[0]][path[1]]
-        if float(a) != float(b):
-            raise P1RecordError("facility-electron check: %s differs between records (%r vs %r)" % (".".join(path), a, b))
+    for path in (("collector", "V_collector_V"), ("collector", "reference_potential"),
+                 ("flows", "mdot_Ar_H1_mg_s"), ("flows", "mdot_icp_dedicated_mg_s"),
+                 ("extraction", "topology_id"), ("extraction", "electron_collecting_electrode"),
+                 ("gas_mode",), ("hall_discharge_state",), ("stage_id",), ("h1_point_id",)):
+        a, b = rf_on, rf_off
+        for k in path:
+            a = a.get(k) if isinstance(a, dict) else None
+            b = b.get(k) if isinstance(b, dict) else None
+        if a != b:
+            raise P1RecordError("facility-electron check: %s differs between records (%r vs %r)"
+                                % (".".join(path), a, b))
+    p_on, p_off = float(rf_on["pressures"]["p_chamber_Pa"]), float(rf_off["pressures"]["p_chamber_Pa"])
+    p_ref = max(abs(p_on), abs(p_off))
+    p_dev = abs(p_on - p_off) / p_ref if p_ref > 0 else 0.0
+    if p_dev > tol:
+        raise P1RecordError("facility-electron check: p_chamber differs by %.6g (relative) > tolerance %r of rule %r "
+                            "(%r vs %r Pa)" % (p_dev, tol, match["criteria_id"], p_on, p_off))
     i_on, i_off = float(rf_on["collector"]["I_e_A"]), float(rf_off["collector"]["I_e_A"])
     return {"I_e_rf_on_A": i_on, "I_e_rf_off_A": i_off,
+            "I_e_icp_corrected_A": i_on - i_off,
             "facility_fraction": (i_off / i_on) if i_on != 0 else None,
+            "p_chamber_rel_dev": p_dev, "match_rule_id": match["criteria_id"],
             "records": [rf_on["record_id"], rf_off["record_id"]]}
 
 
@@ -386,44 +501,126 @@ def classify_stable_region(metrics, criteria=None, ignition=None):
             "note": "engineering handoff classification for P2 only; not an architecture gate"}
 
 
-def icp45a_condition(max_i_e_A, registration=None, margin_rule=None):
-    """ICP-45A (Ar, engineering-only) condition I_e,cap >= I_d,max,H1 with a one-sided margin (A9.1 ICP-45, UBQ-02;
-    A9.3 OQ-A907-02). NOT_EVALUATED until I_d,max,H1 is registered from measured H-1 operation."""
-    if registration is None:
-        return {"status": "NOT_EVALUATED",
-                "reason": "I_d,max,H1 not registered (A9.3 OQ-A907-02: I_e,required = I_d,max,H1 from measured/"
-                          "registered H-1 operation); the surface is reported instead; reaching 1 A, 2 A, ... is "
-                          "never a PASS"}
-    _req(registration, ("registration_id", "I_d_max_H1_A", "basis", "source"), "registration")
+REGISTRATION_REQUIRED = ("registration_id", "I_d_max_H1_A", "basis", "source", "registered_point_ids")
+MARGIN_RULE_REQUIRED = ("rule_id", "k_one_sided", "u_I_e_A", "u_I_d_max_A")
+
+
+def _check_registration(registration, margin_rule):
+    _req(registration, REGISTRATION_REQUIRED, "registration")
     if registration["basis"] != REGISTRATION_BASIS:
         raise RegistrationError("I_d,max,H1 basis %r refused: only %s (the 8.33 A stand ceiling and the 7.5 A "
                                 "power-envelope bound are not the ICP-45 requirement, A9.3 OQ-A907-02)"
                                 % (registration["basis"], REGISTRATION_BASIS))
+    pts = registration["registered_point_ids"]
+    if not isinstance(pts, list) or not pts or not all(isinstance(x, str) and x.strip() for x in pts):
+        raise RegistrationError("registration.registered_point_ids must be a non-empty list of registered H-1 "
+                                "point ids")
     if margin_rule is None:
         raise RegistrationError("ICP-45A needs the preregistered one-sided margin rule (k_one_sided, u_I_e_A, "
                                 "rule_id); none supplied")
-    _req(margin_rule, ("rule_id", "k_one_sided", "u_I_e_A", "u_I_d_max_A"), "margin_rule")
+    _req(margin_rule, MARGIN_RULE_REQUIRED, "margin_rule")
     idm = _num(registration["I_d_max_H1_A"], "registration.I_d_max_H1_A", allow_negative=False)
     if idm <= 0:
         raise RegistrationError("I_d,max,H1 must be > 0")
     k = _num(margin_rule["k_one_sided"], "margin_rule.k_one_sided", allow_negative=False)
     ue = _num(margin_rule["u_I_e_A"], "margin_rule.u_I_e_A", allow_negative=False)
     ud = _num(margin_rule["u_I_d_max_A"], "margin_rule.u_I_d_max_A", allow_negative=False)
-    m_n = max_i_e_A / idm - 1.0
-    u_m = math.sqrt((ue / idm) ** 2 + (max_i_e_A * ud / idm ** 2) ** 2)
-    lower = m_n - k * u_m
-    return {"status": "EVALUATED_ENGINEERING_ONLY", "registration_id": registration["registration_id"],
-            "rule_id": margin_rule["rule_id"], "I_e_cap_observed_A": max_i_e_A, "I_d_max_H1_A": idm,
-            "M_n": m_n, "u_M_n": u_m, "M_n_lower": lower,
-            "condition_met": bool(lower > 0.0),
-            "evidence_class": REQUIRED_LABEL,
-            "note": "ICP-45A is Ar engineering-only evidence (A9.1); ICP-45N on N2 is still required before any "
-                    "score-bearing hall_icp_neutralizer point; never an architecture PASS"}
+    return idm, k, ue, ud
+
+
+def icp45a_margin(i_e_cap_A, idm, k, ue, ud):
+    """Pure arithmetic of the owner M_n form (A9.1 UBQ-02 / UBQ-07): M_n = I_e,cap / I_d,max,H1 - 1 and its
+    one-sided lower bound. It carries no status: only icp45a_evaluate decides whether the inputs are admissible."""
+    m_n = i_e_cap_A / idm - 1.0
+    u_m = math.sqrt((ue / idm) ** 2 + (i_e_cap_A * ud / idm ** 2) ** 2)
+    return {"M_n": m_n, "u_M_n": u_m, "M_n_lower": m_n - k * u_m}
+
+
+def icp45a_candidates(records, registration, facility_checks):
+    """Split validated operating-point records into I_e,cap candidates and exclusions (I_E_CAP_DEFINITION).
+    facility_checks: {rf_on_record_id: facility_electron_check(...) result}."""
+    pts = set(registration["registered_point_ids"])
+    cands, excluded = [], []
+    for rec in records:
+        why = []
+        if rec["stage_id"] != ICP45A_STAGE:
+            why.append("stage %r is not %s" % (rec["stage_id"], ICP45A_STAGE))
+        if rec["hall_discharge_state"] != "ON":
+            why.append("Hall discharge OFF")
+        if rec["gas_mode"] != "G-REUSE":
+            why.append("gas_mode %r (a dedicated feed is diagnostic only, A9.3 OQ-RFQ-10)" % rec["gas_mode"])
+        if float(rec["rf"]["P_fwd_W"]) <= 0.0:
+            why.append("RF OFF (not ICP-supplied current)")
+        if rec["rf_pickup_check"] != "DONE":
+            why.append("rf_pickup_check NOT_DONE")
+        if rec.get("h1_point_id") not in pts:
+            why.append("h1_point_id %r not a registered H-1 point" % rec.get("h1_point_id"))
+        fc = facility_checks.get(rec["record_id"])
+        if fc is None and not why:
+            why.append("no matched RF-OFF facility pair: facility-electron correction missing (P1-D-07)")
+        if why:
+            excluded.append({"record_id": rec["record_id"], "reasons": why})
+        else:
+            cands.append({"record_id": rec["record_id"], "synthetic": rec["synthetic"],
+                          "h1_point_id": rec["h1_point_id"], "I_e_rf_on_A": fc["I_e_rf_on_A"],
+                          "I_e_rf_off_A": fc["I_e_rf_off_A"], "I_e_icp_corrected_A": fc["I_e_icp_corrected_A"]})
+    return cands, excluded
+
+
+def icp45a_evaluate(records, registration=None, margin_rule=None, facility_checks=None):
+    """ICP-45A (Ar, engineering-only) condition I_e,cap >= I_d,max,H1 with a one-sided margin (A9.1 ICP-45, UBQ-02;
+    A9.3 OQ-A907-02). NOT_EVALUATED until I_d,max,H1 is registered from measured H-1 operation AND eligible,
+    facility-corrected records exist. I_e,cap follows I_E_CAP_DEFINITION (PROPOSED, P1Q-10)."""
+    base = {"i_e_cap_definition": I_E_CAP_DEFINITION}
+    if registration is None:
+        base.update({"status": "NOT_EVALUATED",
+                     "reason": "I_d,max,H1 not registered (A9.3 OQ-A907-02: I_e,required = I_d,max,H1 from measured/"
+                               "registered H-1 operation); the surface is reported instead; reaching 1 A, 2 A, ... "
+                               "is never a PASS"})
+        return base
+    idm, k, ue, ud = _check_registration(registration, margin_rule)
+    cands, excluded = icp45a_candidates(records, registration, facility_checks or {})
+    base.update({"registration_id": registration["registration_id"], "rule_id": margin_rule["rule_id"],
+                 "I_d_max_H1_A": idm, "excluded_records": excluded})
+    if not cands:
+        base.update({"status": "NOT_EVALUATED", "condition_met": None,
+                     "reason": "no eligible facility-corrected P1-S7 record (see excluded_records)"})
+        return base
+    best = max(cands, key=lambda c: (c["I_e_icp_corrected_A"], c["record_id"]))
+    i_cap = best["I_e_icp_corrected_A"]
+    base.update(icp45a_margin(i_cap, idm, k, ue, ud))
+    base.update({"I_e_cap_A": i_cap, "I_e_cap_record": best["record_id"], "candidates": cands})
+    if any(c["synthetic"] for c in cands):
+        base.update({"status": "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE", "condition_met": None,
+                     "arithmetic_lower_bound_positive": bool(base["M_n_lower"] > 0.0),
+                     "note": "synthetic candidates: arithmetic check only, never an ICP-45A evaluation"})
+        return base
+    base.update({"status": "EVALUATED_ENGINEERING_ONLY", "condition_met": bool(base["M_n_lower"] > 0.0),
+                 "evidence_class": REQUIRED_LABEL,
+                 "note": "ICP-45A is Ar engineering-only evidence (A9.1); ICP-45N on N2 is still required before any "
+                         "score-bearing hall_icp_neutralizer point; I_e,cap definition PROPOSED (P1Q-10); never an "
+                         "architecture PASS"})
+    return base
 
 
 # ------------------------------------------------------------------------------------------------ reducers
-def reduce_operating_points(records, registration=None, margin_rule=None):
-    """Surface table + summaries for a list of 'icp_operating_point' records."""
+def _row_flags(rec, rf):
+    flags = []
+    if rec["rf_pickup_check"] != "DONE":
+        flags.append("RF_PICKUP_CHECK_NOT_DONE: floating / Hall channel readings not verified against RF pickup "
+                     "(owner row 64; ICD ICP-17)")
+    if rf["P_delivered_kind"] == "P_RF_DELIVERED_UPPER_BOUND_LOSS_NOT_MEASURED":
+        flags.append("LINE_MATCH_LOSS_NOT_MEASURED: P_delivered and C_e are upper bounds")
+    if rf["rf_state"] == "RF_OFF":
+        flags.append("RF_OFF: facility / non-ICP current record (P1-D-07)")
+    if rec["synthetic"]:
+        flags.append("SYNTHETIC_TEST_FIXTURE: not data")
+    return flags
+
+
+def reduce_operating_points(records, registration=None, margin_rule=None, facility_pairs=None, facility_match=None):
+    """Surface table + summaries for a list of 'icp_operating_point' records. facility_pairs = [[rf_on_id,
+    rf_off_id], ...] (each checked with facility_electron_check under facility_match)."""
     if not isinstance(records, list) or not records:
         raise MissingInputError("reduce_operating_points: a non-empty list of records is required")
     rows = []
@@ -433,14 +630,28 @@ def reduce_operating_points(records, registration=None, margin_rule=None):
         if rec["record_id"] in ids:
             raise P1RecordError("duplicate record_id %r" % rec["record_id"])
         ids.add(rec["record_id"])
+    by_id = {r["record_id"]: r for r in records}
+    fac = []
+    for pair in facility_pairs or []:
+        if not isinstance(pair, (list, tuple)) or len(pair) != 2 or pair[0] not in by_id or pair[1] not in by_id:
+            raise MissingInputError("facility pair %r refers to unknown records" % (pair,))
+        fac.append(facility_electron_check(by_id[pair[0]], by_id[pair[1]], facility_match))
+    fac_by_on = {}
+    for f in fac:
+        if f["records"][0] in fac_by_on:
+            raise P1RecordError("RF-ON record %r appears in more than one facility pair" % f["records"][0])
+        fac_by_on[f["records"][0]] = f
+    for rec in records:
         rf = derive_rf(rec)
         ce = electron_cost(rec, rf)
         cl = current_closure(rec)
         imp = rec["impedance"]
+        ext = rec["extraction"]
         rows.append({
             "record_id": rec["record_id"], "run_id": rec["run_id"], "stage_id": rec["stage_id"],
             "synthetic": rec["synthetic"], "labels": sorted(rec["labels"]), "gas": rec["gas"],
             "gas_mode": rec["gas_mode"], "hall_discharge_state": rec["hall_discharge_state"],
+            "h1_point_id": rec.get("h1_point_id"), "rf_state": rf["rf_state"],
             "factors": {"P_fwd_W": rf["P_fwd_W"], "P_delivered_W": rf["P_delivered_W"],
                         "P_delivered_kind": rf["P_delivered_kind"],
                         "p_chamber_Pa": float(rec["pressures"]["p_chamber_Pa"]),
@@ -450,26 +661,32 @@ def reduce_operating_points(records, registration=None, margin_rule=None):
                                   if imp["status"] == "MEASURED" else None),
                         "V_collector_V": float(rec["collector"]["V_collector_V"]),
                         "collector_reference": rec["collector"]["reference_potential"],
+                        "extraction_topology_id": ext["topology_id"],
+                        "electron_collecting_electrode": ext["electron_collecting_electrode"],
                         "match_setting_id": rec["rf"]["match_setting_id"]},
             "I_e_A": ce["I_e_A"], "gamma_abs": rf["gamma_abs"], "VSWR": rf["VSWR"], "P_refl_W": rf["P_refl_W"],
             "C_e_W_per_A": ce["C_e_W_per_A"], "C_e_kind": ce["C_e_kind"], "C_e_boundary": ce["C_e_boundary"],
+            "C_e_reason": ce["C_e_reason"],
             "C_e_DC_W_per_A": ce["C_e_DC_W_per_A"], "C_e_DC_boundary": ce["C_e_DC_boundary"],
             "closure_residual_rel": cl["residual_rel"], "closure_sum_A": cl["sum_A"],
+            "rf_pickup_check": rec["rf_pickup_check"], "flags": _row_flags(rec, rf),
             "temperatures_C": dict(sorted(rec["temperatures"].items())),
             "thermal_status": "RECORDED_ONLY - ICP_COUPLED_THERMAL = UNRESOLVED (A9.2); never a thermal PASS",
         })
     rows.sort(key=lambda r: r["record_id"])
     i_e = np.array([r["I_e_A"] for r in rows], dtype=float)
-    max_ie = float(i_e.max())
     return {
         "schema": "p1_reduction_v1",
         "any_synthetic": any(r["synthetic"] for r in rows),
         "evidence_class": REQUIRED_LABEL,
         "surface_definition": "I_e = f(P_RF, p, mdot, Z_ICP, V_collector) (A9.3 OQ-A907-02)",
         "surface": rows,
-        "summary": {"n_records": len(rows), "I_e_max_observed_A": max_ie,
-                    "I_e_max_record": rows[int(np.argmax(i_e))]["record_id"],
-                    "icp45a": icp45a_condition(max_ie, registration, margin_rule)},
+        "facility_electron_checks": fac,
+        "summary": {"n_records": len(rows),
+                    "I_e_max_recorded_A": float(i_e.max()),
+                    "I_e_max_recorded_note": "descriptive maximum over ALL records (any stage, RF state, gas mode); "
+                                             "NOT I_e,cap and never an ICP-45 result",
+                    "icp45a": icp45a_evaluate(records, registration, margin_rule, fac_by_on)},
         "not_p_bus": "C_e,DC uses the laboratory generator input (GROUND/FACILITY_ONLY); P_bus is never produced here",
     }
 
@@ -523,17 +740,13 @@ def reduce_topology_control(seq):
             "note": "not a PASS/FAIL gate; 'Hall must not run without ICP' is NOT a requirement (A9.3 OQ-VI-05)"}
 
 
-def reduce(bundle, registration=None, margin_rule=None, stable_criteria=None):
+def reduce(bundle, registration=None, margin_rule=None, stable_criteria=None, facility_match=None):
     """Top-level reducer. bundle = {"operating_points": [...], "topology_control": [...] (optional),
-    "dwells": [{"record_id", "dwell", "ignition"}] (optional), "facility_pairs": [[on_id, off_id]] (optional)}."""
+    "dwells": [{"record_id", "dwell", "ignition"}] (optional), "facility_pairs": [[on_id, off_id]] (optional)}.
+    facility_match = {"criteria_id", "p_chamber_rel_tol"} is required whenever facility_pairs are given (P1-IT-37)."""
     _req(bundle, ("operating_points",), "bundle")
-    ops = reduce_operating_points(bundle["operating_points"], registration, margin_rule)
-    by_id = {r["record_id"]: r for r in bundle["operating_points"]}
-    fac = []
-    for pair in bundle.get("facility_pairs") or []:
-        if len(pair) != 2 or pair[0] not in by_id or pair[1] not in by_id:
-            raise MissingInputError("facility pair %r refers to unknown records" % (pair,))
-        fac.append(facility_electron_check(by_id[pair[0]], by_id[pair[1]]))
+    ops = reduce_operating_points(bundle["operating_points"], registration, margin_rule,
+                                  bundle.get("facility_pairs"), facility_match)
     dwells = []
     for d in bundle.get("dwells") or []:
         _req(d, ("record_id", "dwell"), "dwell entry")
@@ -541,5 +754,6 @@ def reduce(bundle, registration=None, margin_rule=None, stable_criteria=None):
         dwells.append({"record_id": d["record_id"], "metrics": m,
                        "stable_region": classify_stable_region(m, stable_criteria, d.get("ignition"))})
     topo = [reduce_topology_control(s) for s in bundle.get("topology_control") or []]
-    return {"operating_points": ops, "facility_electron_checks": fac, "dwells": dwells, "topology_control": topo,
+    return {"operating_points": ops, "facility_electron_checks": ops["facility_electron_checks"], "dwells": dwells,
+            "topology_control": topo,
             "any_synthetic": ops["any_synthetic"] or any(t["synthetic"] for t in topo)}

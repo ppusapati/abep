@@ -149,6 +149,11 @@
    "role": "H2-1 Hall chamber / magnet"
   },
   {
+   "path": "docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json",
+   "sha256": "8436008ac458d4e7467a9c7c9592d5312b3912b918d584ceaf3ac8cb2745a971",
+   "role": "H2-2 cathode (C-1) integration"
+  },
+  {
    "path": "docs/hardware/h2/h2_3_gas_path_plenum/h2_3_gas_path_plenum_v1.json",
    "sha256": "f32b05bd03aad2a09a1d9b90ee5f9423e733e6ea4cb94814c92b500590d43a7b",
    "role": "H2-3 gas path / plenum"
@@ -204,7 +209,7 @@
   "orificed_variant_provisions": [
    "the ICP module attaches only through the IP-NEU datum of the KC-1 carrier (ICD ICP-01, ICP-06; H2-6 REV-30); no H-1 feature depends on the ICP bore, tube or collector geometry",
    "the capped dedicated ICP gas port and its carrier-side gas feedthrough are retained so a later orificed variant's dedicated feed can use them (sizing TBD, ICD ICP-26)",
-   "RF feed, local match and harness terminate on the module side of IP-NEU with a fixed connector/harness interface (ICD ICP-13, ICP-33, ICP-34), so a different antenna/cathode body can be fitted",
+   "RF feed, local match and harness terminate on the module side of IP-NEU so a different antenna/cathode body can be fitted; the connector/harness interface itself is NOT defined in ICD v1 (ICP-13 fixes the local-match location, ICP-15 defers connector ratings to the impedance map, ICP-16 names the coax/connector interlock loop, ICP-33 the MODULE_ID line and ICP-34 the channel list the harness must carry): TBD - requires an ICD revision (owner question P1Q-12)",
    "the module envelope / keep-out zone (ICD ICP-07, TBD) is reserved generously enough to be re-used by an ICP_ORIFICED_VARIANT; its value is set at LOCK-1 by the ICD, not by this lane",
    "the axial standoff (ICD ICP-02, TBD) is set by carrier spacers, not by H-1 machining",
    "any orificed variant is a new serialized module with a new reference sequence (owner row 83; ICD ICP-40) and an A9.x follow-on; it is NOT built in P1 (A9.3 OQ-VI-03)"
@@ -414,7 +419,9 @@
     "DAQ and common time base (INS-18) verified"
    ],
    "exit": [
-    "P1-G0 readiness record signed: interlock functional-test log, isolation results, instrument certificates or their TBD status, collector bias range and Ar MFC range(s) recorded"
+    "P1-G0 readiness record signed: interlock functional-test log, isolation results, instrument certificates or their TBD status, collector bias range and Ar MFC range(s) recorded",
+    "P1-S4 electron-extraction topology registered with an id (P1-IT-36: electron-collecting electrode, geometry and axial/radial position, bias polarity, V_collector reference, instrumented terminals)",
+    "facility-pair pressure-match tolerance registered (P1-IT-37)"
    ],
    "produces": [
     "ENGINEERING_ONLY_NON_SCORING"
@@ -493,13 +500,15 @@
    "prereg_stage": "HI-S1A (module bench check)",
    "entry": [
     "ignition region from P1-S3",
-    "collector circuit rated to the 8.33 A stand ceiling basis (P1-IT-06)"
+    "collector circuit rated to the 8.33 A stand ceiling basis (P1-IT-06)",
+    "extraction topology registered at P1-G0 (P1-IT-36); the H-1 anode is not the electron sink while the Hall discharge is OFF"
    ],
    "work": [
+    "electron extraction to the registered electron-collecting electrode (PROPOSED: dedicated isolated downstream target, terminal 'electron_collector'); the ICP ion-collecting electrode is biased negative w.r.t. that electrode (TK-40 polarity); V_collector recorded against the registered reference",
     "collector bias sweep at each (P_RF, mdot) point, ascending current limit with hold points",
     "report the SURFACE I_e = f(P_RF, p, mdot, Z_ICP, V_collector) (A9.3 OQ-A907-02)",
-    "Kirchhoff current-path closure per point (collector, ICP body, facility/chamber ground)",
-    "facility-electron contribution check: RF OFF at the same bias / flow / pressure",
+    "Kirchhoff current-path closure per point (collector, ICP body, facility/chamber ground, and the electron_collector terminal when the dedicated target is used)",
+    "facility-electron contribution check: RF OFF at the same bias and reference, flow, gas mode, Hall state, extraction topology and pressure (within P1-IT-37)",
     "C_e and C_e,DC with boundary labels per point"
    ],
    "exit": [
@@ -580,8 +589,9 @@
     "one-sided margin rule and uncertainties supplied (P1-IT-29)"
    ],
    "work": [
-    "ICP-supplied electron current at registered H-1 points; closure incl. hall_anode",
-    "ICP-45A condition I_e,cap >= I_d,max,H1 with the one-sided lower bound of M_n"
+    "ICP-supplied electron current at registered H-1 points (h1_point_id), electrons sunk by the H-1 anode; closure incl. hall_anode",
+    "RF-OFF facility pair at every candidate point (P1-D-07)",
+    "ICP-45A condition I_e,cap >= I_d,max,H1 with the one-sided lower bound of M_n; I_e,cap per the PROPOSED definition P1-IT-38 (P1Q-10): never the largest current in the bundle, never an RF-OFF, dedicated-feed, Hall-OFF or uncorrected record"
    ],
    "exit": [
     "ICP-45A engineering-only evaluation record (A9.1 ICP-45A); ICP-45N on N2 still required before any score-bearing hall_icp_neutralizer point; BLOCKED (surface only) while the entry is unmet"
@@ -892,7 +902,7 @@
    "status": "OWNER_GIVEN",
    "freeze_point": "NOW",
    "p1_gate": null,
-   "note": ""
+   "note": "V_collector = potential of the ICP ion-collecting electrode w.r.t. the reference declared per record (FACILITY_GROUND / ICP_BODY / ELECTRON_COLLECTOR_ELECTRODE); which reference is used is fixed with the extraction topology at P1-G0 (P1-IT-36); VI-EX-03 keeps the hall_icp_neutralizer reference a LOCK-1 item"
   },
   {
    "id": "P1-IT-18",
@@ -1127,6 +1137,45 @@
    "freeze_point": "after-evidence",
    "p1_gate": null,
    "note": ""
+  },
+  {
+   "id": "P1-IT-36",
+   "name": "P1-S4 electron-extraction topology (Hall discharge OFF): electron-collecting electrode, its geometry and position, bias polarity and reference, instrumented terminals",
+   "value": "TBD - requires registration at P1-G0 (owner question P1Q-09). Fixed by physics / sources: the extracted electrons must be sunk by an electrode positive w.r.t. the ICP ion-collecting electrode (in the anchor the ion collector is the negative end of V_D and the HET anode sinks the electrons, TK-13 / TK-40); with the Hall discharge OFF the H-1 anode is NOT used as the sink (a positively biased H-1 anode with Ar flowing is a Hall discharge, contradicting P1-S4). Candidates: (A) a dedicated isolated downstream electron-collecting target, instrumented as terminal 'electron_collector'; (B) the grounded chamber wall (sink = facility_ground terminal). PROPOSED: (A), because with (B) ICP emission cannot be separated from wall / facility current paths in the Kirchhoff closure",
+   "units": "-, mm, V",
+   "basis": "this lane (form) + published anchor",
+   "source": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json TK-13, TK-40; ICD ICP-21; docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json VI-EX-03",
+   "evidence_class": null,
+   "status": "TBD (PROPOSED option A)",
+   "freeze_point": "after-evidence",
+   "p1_gate": "P1-G0",
+   "note": "the reducer requires extraction.topology_id and electron_collecting_electrode on every record and refuses H1_ANODE with the Hall discharge OFF and anything but H1_ANODE with it ON"
+  },
+  {
+   "id": "P1-IT-37",
+   "name": "facility-electron pair pressure-match tolerance (P1-D-07)",
+   "value": "TBD - requires registration at P1-G0 (owner question P1Q-11); the reducer takes it as an explicit input and has no default",
+   "units": "- (relative)",
+   "basis": "this lane (form)",
+   "source": "this lane",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "after-evidence",
+   "p1_gate": "P1-G0",
+   "note": ""
+  },
+  {
+   "id": "P1-IT-38",
+   "name": "I_e,cap definition for the ICP-45A engineering evaluation",
+   "value": "PROPOSED: maximum over eligible records of the facility-corrected ICP-supplied current I_e(RF ON) - I_e(RF OFF); eligible = P1-S7, Hall ON, G-REUSE, RF ON, RF pickup check DONE, registered H-1 point, matched RF-OFF pair. No owner answer or cited source defines I_e,cap; owner question P1Q-10",
+   "units": "A",
+   "basis": "this lane (PROPOSED form)",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json ICP-45, UBQ-02; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02, OQ-VI-05 ('the ICP supplies the required electron current')",
+   "evidence_class": "assumed",
+   "status": "PROPOSED (owner call P1Q-10)",
+   "freeze_point": "after-evidence",
+   "p1_gate": "P1-S7 entry",
+   "note": "synthetic records only ever yield SYNTHETIC_TEST_ONLY_NOT_EVIDENCE; excluded records are listed with reasons"
   }
  ],
  "measurements": [
@@ -1147,7 +1196,8 @@
    ],
    "stages": "S1-S8",
    "status": "REQUIRED",
-   "note": ""
+   "note": "",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-02",
@@ -1167,7 +1217,8 @@
    ],
    "stages": "S1-S8",
    "status": "REQUIRED",
-   "note": ""
+   "note": "",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-03",
@@ -1182,7 +1233,8 @@
    ],
    "stages": "S1, S2",
    "status": "REQUIRED",
-   "note": "if not measured: FLAGGED_NOT_MEASURED; P_delivered then reported as an upper bound only"
+   "note": "if not measured: FLAGGED_NOT_MEASURED; P_delivered then reported as an upper bound only",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-04",
@@ -1197,7 +1249,8 @@
    ],
    "stages": "S1",
    "status": "REQUIRED",
-   "note": ""
+   "note": "",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-05",
@@ -1213,7 +1266,8 @@
    ],
    "stages": "S1-S8",
    "status": "REQUIRED",
-   "note": "never P_bus, never evidence for P_bus < 1.5 kW (A9.3 OQ-RFQ-06)"
+   "note": "never P_bus, never evidence for P_bus < 1.5 kW (A9.3 OQ-RFQ-06)",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-06",
@@ -1229,7 +1283,8 @@
    ],
    "stages": "S1",
    "status": "REQUIRED",
-   "note": ""
+   "note": "",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-07",
@@ -1244,7 +1299,8 @@
    ],
    "stages": "S2-S5",
    "status": "PROPOSED",
-   "note": ""
+   "note": "",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-08",
@@ -1260,7 +1316,8 @@
    ],
    "stages": "S2-S5",
    "status": "PENDING (P2 chain)",
-   "note": ""
+   "note": "",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-09",
@@ -1275,7 +1332,8 @@
    ],
    "stages": "S2-S7",
    "status": "REQUIRED",
-   "note": ""
+   "note": "",
+   "metrology_spec": "none: state / event record, not a calibrated measurand (MS-M-01..05 do not apply)"
   },
   {
    "id": "P1-M-10",
@@ -1283,7 +1341,7 @@
    "symbol": "V_collector",
    "units": "V",
    "instrument_class": "floating-rated divider (A9H-INS-04)",
-   "reference_plane": "collector vs its declared reference potential",
+   "reference_plane": "ICP ion-collecting electrode vs the reference registered with the extraction topology (P1-IT-36)",
    "sampling": "TBD - frozen at P1-G0 (PROPOSED: continuous logging on the common time base INS-18)",
    "uncertainty_sources": [
     "UB-N-02",
@@ -1291,7 +1349,8 @@
    ],
    "stages": "S4-S7",
    "status": "REQUIRED",
-   "note": ""
+   "note": "",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-11",
@@ -1299,7 +1358,7 @@
    "symbol": "I_e",
    "units": "A",
    "instrument_class": "floating-rated current channel (A9H-INS-04), range to the 8.33 A stand ceiling",
-   "reference_plane": "collector supply lead",
+   "reference_plane": "ICP ion-collecting electrode supply lead (the loop closes through the registered electron-collecting electrode, P1-IT-36)",
    "sampling": "TBD - frozen at P1-G0 (PROPOSED: continuous logging on the common time base INS-18)",
    "uncertainty_sources": [
     "UB-N-01",
@@ -1307,7 +1366,8 @@
    ],
    "stages": "S4-S7",
    "status": "REQUIRED",
-   "note": ""
+   "note": "",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-12",
@@ -1323,7 +1383,8 @@
    ],
    "stages": "S3-S7",
    "status": "REQUIRED",
-   "note": "I_body is 0 by construction when the body is open-circuit (declared per record)"
+   "note": "I_body is 0 by construction when the body is open-circuit (declared per record)",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-13",
@@ -1338,7 +1399,8 @@
    ],
    "stages": "S3-S7",
    "status": "REQUIRED",
-   "note": ""
+   "note": "",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-14",
@@ -1355,7 +1417,8 @@
    ],
    "stages": "S6, S6D, S7",
    "status": "REQUIRED",
-   "note": ""
+   "note": "",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-15",
@@ -1370,7 +1433,8 @@
    ],
    "stages": "S6, S6D, S7",
    "status": "REQUIRED",
-   "note": ""
+   "note": "",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-16",
@@ -1387,7 +1451,8 @@
    ],
    "stages": "S2-S7",
    "status": "REQUIRED",
-   "note": ""
+   "note": "",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-17",
@@ -1402,7 +1467,8 @@
    ],
    "stages": "S3-S7",
    "status": "PROPOSED",
-   "note": "ICP-27 geometry TBD (after-evidence)"
+   "note": "ICP-27 geometry TBD (after-evidence)",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-18",
@@ -1422,7 +1488,8 @@
    ],
    "stages": "S3-S7",
    "status": "REQUIRED",
-   "note": "verified by the rate-of-rise / transfer path"
+   "note": "verified by the rate-of-rise / transfer path",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-19",
@@ -1437,7 +1504,8 @@
    ],
    "stages": "diagnostic branch only",
    "status": "CONDITIONAL",
-   "note": "0 in G-REUSE; measured and ledger-booked only in the DIAGNOSTIC_DEDICATED_FEED branch"
+   "note": "0 in G-REUSE; measured and ledger-booked only in the DIAGNOSTIC_DEDICATED_FEED branch",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-20",
@@ -1452,7 +1520,8 @@
    ],
    "stages": "S2-S7",
    "status": "REQUIRED",
-   "note": ""
+   "note": "",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-21",
@@ -1468,7 +1537,8 @@
    ],
    "stages": "S1-S8",
    "status": "REQUIRED",
-   "note": "recorded only: ICP_COUPLED_THERMAL = UNRESOLVED; never a thermal PASS"
+   "note": "recorded only: ICP_COUPLED_THERMAL = UNRESOLVED; never a thermal PASS",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-22",
@@ -1483,7 +1553,8 @@
    ],
    "stages": "S2, S6",
    "status": "REQUIRED",
-   "note": "owner row 64; ICD ICP-17"
+   "note": "owner row 64; ICD ICP-17",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-23",
@@ -1498,7 +1569,8 @@
    ],
    "stages": "S3-S7",
    "status": "REQUIRED",
-   "note": "owner row 24"
+   "note": "owner row 24",
+   "metrology_spec": "none: state / event record, not a calibrated measurand (MS-M-01..05 do not apply)"
   },
   {
    "id": "P1-M-24",
@@ -1513,7 +1585,8 @@
    ],
    "stages": "S3-S7",
    "status": "CONDITIONAL",
-   "note": ""
+   "note": "",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   },
   {
    "id": "P1-M-25",
@@ -1528,7 +1601,8 @@
    ],
    "stages": "S0-S8",
    "status": "REQUIRED",
-   "note": ""
+   "note": "",
+   "metrology_spec": "none: state / event record, not a calibrated measurand (MS-M-01..05 do not apply)"
   },
   {
    "id": "P1-M-26",
@@ -1543,7 +1617,26 @@
    ],
    "stages": "S0-S8",
    "status": "REQUIRED",
-   "note": ""
+   "note": "",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
+  },
+  {
+   "id": "P1-M-27",
+   "quantity": "electron-collecting electrode current and potential (P1-S4 topology A)",
+   "symbol": "I_ecoll, V_ecoll",
+   "units": "A, V",
+   "instrument_class": "floating-rated current channel and divider (A9H-INS-04 class)",
+   "reference_plane": "dedicated electron-collecting target lead (terminal 'electron_collector')",
+   "sampling": "TBD - frozen at P1-G0 (PROPOSED: continuous logging on the common time base INS-18)",
+   "uncertainty_sources": [
+    "UB-N-01",
+    "UB-N-02",
+    "UB-N-03"
+   ],
+   "stages": "S4, S5",
+   "status": "CONDITIONAL",
+   "note": "required when the registered P1-S4 topology is the dedicated target (P1-IT-36); with the chamber-wall topology the sink current is P1-M-13",
+   "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
   }
  ],
  "derived_quantities": [
@@ -1590,8 +1683,8 @@
   },
   {
    "id": "P1-D-07",
-   "quantity": "facility-electron fraction",
-   "formula": "I_e(RF OFF) / I_e(RF ON) at the same V_collector, mdot and p",
+   "quantity": "facility-electron fraction and corrected ICP current",
+   "formula": "I_e(RF OFF) / I_e(RF ON) and I_e(RF ON) - I_e(RF OFF) at the same V_collector and reference, mdot_Ar,H1, mdot_ICP,dedicated, gas mode, Hall state, stage, extraction topology and H-1 point, with p_chamber within the P1-IT-37 tolerance",
    "source": "this lane (A9.3 authorization: current-path verification)"
   },
   {
@@ -1609,7 +1702,7 @@
   {
    "id": "P1-D-10",
    "quantity": "M_n lower bound (ICP-45A, only after registration)",
-   "formula": "M_n = I_e,cap / I_d,max,H1 - 1; lower = M_n - k_one_sided u(M_n)",
+   "formula": "M_n = I_e,cap / I_d,max,H1 - 1; lower = M_n - k_one_sided u(M_n); I_e,cap per P1-IT-38 (PROPOSED, P1Q-10)",
    "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-02, UBQ-07, ICP-45; docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json OQ-A907-02"
   },
   {
@@ -1889,6 +1982,15 @@
   },
   {
    "id": "P1-HW-15",
+   "family": "gas_metrology",
+   "item": "H-1 Ar gas path and anode plenum/distributor delivering the G-REUSE flow (needed from P1-S3 on)",
+   "rfq_v1_package": "none (H2-3 / H2-1 design item; the MFC itself is RFQ-02) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
+   "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
+   "h2_or_h1_items": "H2-3 gas path / plenum; H2-1 CI H-1; IF-P1-14",
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+  },
+  {
+   "id": "P1-HW-16",
    "family": "vacuum_facility",
    "item": "vacuum chamber (smaller domestic chamber allowed for S0-S5)",
    "rfq_v1_package": "RFQ-09 (information) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
@@ -1897,7 +1999,7 @@
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
-   "id": "P1-HW-16",
+   "id": "P1-HW-17",
    "family": "vacuum_facility",
    "item": "pumping for the Ar anchor flow",
    "rfq_v1_package": "RFQ-09 (information) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
@@ -1906,7 +2008,7 @@
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
-   "id": "P1-HW-17",
+   "id": "P1-HW-18",
    "family": "vacuum_facility",
    "item": "electrical, RF and gas feedthroughs",
    "rfq_v1_package": "RFQ-04 / RFQ-09 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
@@ -1915,7 +2017,7 @@
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
-   "id": "P1-HW-18",
+   "id": "P1-HW-19",
    "family": "vacuum_facility",
    "item": "RGA ~200 amu with differential pumping",
    "rfq_v1_package": "RFQ-03 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
@@ -1924,7 +2026,7 @@
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
-   "id": "P1-HW-19",
+   "id": "P1-HW-20",
    "family": "vacuum_facility",
    "item": "ICP pressure port (if provided)",
    "rfq_v1_package": "RFQ-05 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
@@ -1933,25 +2035,34 @@
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
-   "id": "P1-HW-20",
-   "family": "hall_electrical",
-   "item": "discharge supply, conductors, sensors and protection sized to the 8.33 A stand ceiling",
-   "rfq_v1_package": "RFQ-06 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
-   "h2_or_h1_items": "H2-4 H24-27; A9.3 OQ-A907-02",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
-  },
-  {
    "id": "P1-HW-21",
    "family": "hall_electrical",
-   "item": "magnet supplies (per coil)",
-   "rfq_v1_package": "RFQ-06 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
+   "item": "H-1 Hall thruster with its magnet circuit (needed from P1-S3 as the G-REUSE gas path and for magnet factor F6; Hall-on in P1-S6/S6D/S7)",
+   "rfq_v1_package": "none (H-1 is the H2-1 design item, not an RFQ v1 package) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
-   "h2_or_h1_items": "A9-02 A902-31",
+   "h2_or_h1_items": "H2-1 CI H-1, MC-1; IF-P1-14",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
    "id": "P1-HW-22",
+   "family": "hall_electrical",
+   "item": "laboratory discharge supply (ground only), conductors, sensors and protection sized to the 8.33 A stand ceiling",
+   "rfq_v1_package": "RFQ-06 part (b) laboratory discharge supply (ground only); NOT part (a) flight-representative breadboard supply (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
+   "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
+   "h2_or_h1_items": "H2-4 H24-27, H3-PPU-01; A9.3 OQ-A907-02",
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+  },
+  {
+   "id": "P1-HW-23",
+   "family": "hall_electrical",
+   "item": "magnet supplies (per coil)",
+   "rfq_v1_package": "none as a v1 quotation line (A9-02 bus slots hall_magnet_inner/outer/trim only) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
+   "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
+   "h2_or_h1_items": "A9-02 A902-31; H2-1 MC-1",
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+  },
+  {
+   "id": "P1-HW-24",
    "family": "hall_electrical",
    "item": "floating collector / bias supply with V/I metering",
    "rfq_v1_package": "RFQ-05 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
@@ -1960,16 +2071,25 @@
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
-   "id": "P1-HW-23",
+   "id": "P1-HW-25",
+   "family": "hall_electrical",
+   "item": "P1-S4 electron-collecting electrode circuit: return lead, current channel and bias reference per the registered topology (P1-IT-36)",
+   "rfq_v1_package": "none explicit in RFQ v1 (RFQ-05 covers the ICP collector/bias supply only) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
+   "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
+   "h2_or_h1_items": "P1-IT-36; P1-M-27; ICD ICP-21",
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+  },
+  {
+   "id": "P1-HW-26",
    "family": "hall_electrical",
    "item": "ground-return current monitor",
-   "rfq_v1_package": "RFQ-06 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
+   "rfq_v1_package": "none explicit in RFQ v1 (closest: RFQ-06 part (d) synchronized V/I channel pairs) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9H-INS-05",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
-   "id": "P1-HW-24",
+   "id": "P1-HW-27",
    "family": "hall_electrical",
    "item": "isolation of floating circuits (350 V, row 81; margin TBD)",
    "rfq_v1_package": "RFQ-05 / RFQ-06 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
@@ -1978,16 +2098,25 @@
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
-   "id": "P1-HW-25",
+   "id": "P1-HW-28",
    "family": "hall_electrical",
    "item": "V_d reference-potential channels",
-   "rfq_v1_package": "RFQ-06 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
+   "rfq_v1_package": "closest: RFQ-06 part (d) synchronized V/I channel pairs (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
    "h2_or_h1_items": "A9H-INS-10",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
-   "id": "P1-HW-26",
+   "id": "P1-HW-29",
+   "family": "hall_electrical",
+   "item": "C1 (hall_c1_reference) with heater / keeper supplies: present on its own module but DISCONNECTED and verified not supplying electrons in P1-S6 (OQ-VI-05 step 2); disconnect means and its verification record",
+   "rfq_v1_package": "RFQ-08 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
+   "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
+   "h2_or_h1_items": "H2-2 C-1; ICD ICP-25, ICP-46; A9.1 ICP-46 (keeper isolation basis)",
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+  },
+  {
+   "id": "P1-HW-30",
    "family": "mechanical_icp_fabrication",
    "item": "open-tube coaxial dielectric tube",
    "rfq_v1_package": "RFQ-05 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
@@ -1996,7 +2125,7 @@
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
-   "id": "P1-HW-27",
+   "id": "P1-HW-31",
    "family": "mechanical_icp_fabrication",
    "item": "RF antenna / coil (unmagnetized)",
    "rfq_v1_package": "RFQ-05 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
@@ -2005,7 +2134,7 @@
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
-   "id": "P1-HW-28",
+   "id": "P1-HW-32",
    "family": "mechanical_icp_fabrication",
    "item": "collector (316L allowed for Ar)",
    "rfq_v1_package": "RFQ-05 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
@@ -2014,7 +2143,16 @@
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
-   "id": "P1-HW-29",
+   "id": "P1-HW-33",
+   "family": "mechanical_icp_fabrication",
+   "item": "P1-S4 dedicated electron-collecting target (if topology A is registered): isolated plate, support, position datum and feedthrough",
+   "rfq_v1_package": "none (not in RFQ v1; geometry TBD at P1-G0, P1-IT-36) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
+   "rfq_v2_package": "PENDING docs/procurement/rfq_a9_v2/",
+   "h2_or_h1_items": "P1-IT-36; P1Q-09",
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
+  },
+  {
+   "id": "P1-HW-34",
    "family": "mechanical_icp_fabrication",
    "item": "carrier on KC-1 with orificed-variant provisions",
    "rfq_v1_package": "RFQ-01 / RFQ-05 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
@@ -2023,7 +2161,7 @@
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
-   "id": "P1-HW-30",
+   "id": "P1-HW-35",
    "family": "mechanical_icp_fabrication",
    "item": "machined supports / open-frame mounting (view-factor objective)",
    "rfq_v1_package": "RFQ-05 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
@@ -2032,7 +2170,7 @@
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
-   "id": "P1-HW-31",
+   "id": "P1-HW-36",
    "family": "thrust_metrology",
    "item": "DAQ with common time base",
    "rfq_v1_package": "RFQ-06 / RFQ-01 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
@@ -2041,7 +2179,7 @@
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
-   "id": "P1-HW-32",
+   "id": "P1-HW-37",
    "family": "thrust_metrology",
    "item": "traceability hardware (certificates for V, I, RF, T, flow)",
    "rfq_v1_package": "RFQ-09 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
@@ -2050,7 +2188,7 @@
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane)"
   },
   {
-   "id": "P1-HW-33",
+   "id": "P1-HW-38",
    "family": "thrust_metrology",
    "item": "thrust stand: not required for P1-S0..S6 (no thrust claim); only if P1-S7 is run on the stand",
    "rfq_v1_package": "RFQ-01 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
@@ -2219,6 +2357,22 @@
    "what": "INS-04, INS-08, INS-10, INS-11, INS-17, INS-18; MS-G-01..03 for certificate traceability",
    "units": "-",
    "status": "CONSUMED"
+  },
+  {
+   "id": "IF-P1-21",
+   "direction": "from",
+   "counterpart": "H2-2 docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json / RFQ-08",
+   "what": "C1 (C-1) module installed on KC-1 with a disconnect means and a verification that it supplies no electrons in P1-S6 (OQ-VI-05 step 2)",
+   "units": "-, A",
+   "status": "REQUIRED (C1 stays CONTROL_FALLBACK)"
+  },
+  {
+   "id": "IF-P1-22",
+   "direction": "to",
+   "counterpart": "A9-03 ICD schemas/interfaces/icp_neutralizer_icd_v1.json",
+   "what": "P1-S4 extraction topology (P1-IT-36) and the interim connector/harness record as inputs to the ICD revision (P1Q-12)",
+   "units": "mm, V, A",
+   "status": "OFFERED (after P1-G0)"
   }
  ],
  "owner_answers_applied": [
@@ -2250,7 +2404,7 @@
   {
    "id": "A9.3 OQ-RFQ-06",
    "kind": "decision",
-   "how_applied": "mains generator GROUND/FACILITY_ONLY; P_mains,in engineering; C_e and C_e,DC with boundary labels; reducer refuses P_mains,in as P_bus"
+   "how_applied": "mains generator GROUND/FACILITY_ONLY; P_mains,in engineering; C_e and C_e,DC with boundary labels; reducer refuses P_mains,in as P_bus (any field name reading as P_bus) and refuses FLIGHT_REPRESENTATIVE_DC_RF_SOURCE records (later programme)"
   },
   {
    "id": "A9.3 OQ-RFQ-07",
@@ -2351,6 +2505,16 @@
    "id": "A9.1 OQ-EV-01 / OQ-EV-03",
    "kind": "decision",
    "how_applied": "no author contact; published values with locators only"
+  },
+  {
+   "id": "A9.1 ICP-46",
+   "kind": "decision",
+   "how_applied": "NOT APPLICABLE to P1 measurements: it rates the C1 keeper-pulse isolation (900 V basis, 1.0 kV DC hipot, 600 V pulse test) on the C1 reference module; P1 does not fire C1 (C1 is disconnected in P1-S6). Carried only as the isolation basis of the C1 module that stays installed (P1-HW C1 row)"
+  },
+  {
+   "id": "A9.1 OQ-A902-01",
+   "kind": "decision",
+   "how_applied": "NOT APPLICABLE to P1: the 1 ms P_bus window is defined at the spacecraft-DC propulsion boundary; P1 has no such boundary (mains laboratory generator, GROUND/FACILITY_ONLY) and never produces P_bus; the RFQ-06 part (d) chain is not used for any P1 claim"
   },
   {
    "id": "row 7",
@@ -2511,6 +2675,30 @@
    "question": "Do P1-S0..S5 (ICP only, Ar through the H-1 gas path, Hall discharge OFF) belong to the HI-ENG / HI-S1A module-bench envelope, so that HI-HOLDOUT-A is required only from P1-S6 on?",
    "proposed_answer": "YES (no Hall-on reading occurs before P1-S6; A9.1 HIQ-04 binds the first Hall-on reading)",
    "needed_by": "P1-S3"
+  },
+  {
+   "id": "P1Q-09",
+   "question": "Which electron-extraction topology does P1-S4 (Hall discharge OFF) use: (A) a dedicated isolated downstream electron-collecting target, or (B) the grounded chamber wall; with which geometry/position, V_collector reference and instrumented terminals (P1-IT-36)?",
+   "proposed_answer": "(A), with the ICP ion collector biased negative w.r.t. the target, V_collector referenced to the target and all four terminals (collector_supply, icp_body, facility_ground, electron_collector) metered; geometry and position owner call at P1-G0",
+   "needed_by": "P1-G0"
+  },
+  {
+   "id": "P1Q-10",
+   "question": "Adopt the PROPOSED I_e,cap definition for the ICP-45A engineering evaluation (P1-IT-38: maximum facility-corrected ICP-supplied current over eligible P1-S7 records)?",
+   "proposed_answer": "owner call; until adopted any EVALUATED_ENGINEERING_ONLY output carries the label 'I_e,cap definition PROPOSED'",
+   "needed_by": "P1-S7 entry"
+  },
+  {
+   "id": "P1Q-11",
+   "question": "Pressure-match tolerance for RF-ON / RF-OFF facility-electron pairs (P1-IT-37)?",
+   "proposed_answer": "owner call; value set from the S2/S3 gauge repeatability before the first P1-S4 pair",
+   "needed_by": "P1-G0"
+  },
+  {
+   "id": "P1Q-12",
+   "question": "Define the ICP module connector / harness interface at IP-NEU in an ICD revision so an ICP_ORIFICED_VARIANT can reuse it (not an ICD v1 item)?",
+   "proposed_answer": "YES, in the LOCK-1 module drawings; P1 builds to a documented interim harness",
+   "needed_by": "LOCK-1"
   }
  ],
  "historical_reuse": [
@@ -2601,7 +2789,7 @@
   {
    "row": 15,
    "key": "sensors_diagnostics",
-   "impact": "P1 measurement list (P1-M-01..26) and derived quantities; P2 chain PENDING"
+   "impact": "P1 measurement list (P1-M-01..27) and derived quantities; P2 chain PENDING"
   },
   {
    "row": 13,
@@ -2650,20 +2838,25 @@
    "gas isolators where a line bridges potentials (~1 kV DC qualification) [gas_metrology]",
    "optional dedicated ICP feed controller (quote option only) [gas_metrology]",
    "capped ICP gas port [gas_metrology]",
+   "H-1 Ar gas path and anode plenum/distributor delivering the G-REUSE flow (needed from P1-S3 on) [gas_metrology]",
    "vacuum chamber (smaller domestic chamber allowed for S0-S5) [vacuum_facility]",
    "pumping for the Ar anchor flow [vacuum_facility]",
    "electrical, RF and gas feedthroughs [vacuum_facility]",
    "RGA ~200 amu with differential pumping [vacuum_facility]",
    "ICP pressure port (if provided) [vacuum_facility]",
-   "discharge supply, conductors, sensors and protection sized to the 8.33 A stand ceiling [hall_electrical]",
+   "H-1 Hall thruster with its magnet circuit (needed from P1-S3 as the G-REUSE gas path and for magnet factor F6; Hall-on in P1-S6/S6D/S7) [hall_electrical]",
+   "laboratory discharge supply (ground only), conductors, sensors and protection sized to the 8.33 A stand ceiling [hall_electrical]",
    "magnet supplies (per coil) [hall_electrical]",
    "floating collector / bias supply with V/I metering [hall_electrical]",
+   "P1-S4 electron-collecting electrode circuit: return lead, current channel and bias reference per the registered topology (P1-IT-36) [hall_electrical]",
    "ground-return current monitor [hall_electrical]",
    "isolation of floating circuits (350 V, row 81; margin TBD) [hall_electrical]",
    "V_d reference-potential channels [hall_electrical]",
+   "C1 (hall_c1_reference) with heater / keeper supplies: present on its own module but DISCONNECTED and verified not supplying electrons in P1-S6 (OQ-VI-05 step 2); disconnect means and its verification record [hall_electrical]",
    "open-tube coaxial dielectric tube [mechanical_icp_fabrication]",
    "RF antenna / coil (unmagnetized) [mechanical_icp_fabrication]",
    "collector (316L allowed for Ar) [mechanical_icp_fabrication]",
+   "P1-S4 dedicated electron-collecting target (if topology A is registered): isolated plate, support, position datum and feedthrough [mechanical_icp_fabrication]",
    "carrier on KC-1 with orificed-variant provisions [mechanical_icp_fabrication]",
    "machined supports / open-frame mounting (view-factor objective) [mechanical_icp_fabrication]",
    "DAQ with common time base [thrust_metrology]",

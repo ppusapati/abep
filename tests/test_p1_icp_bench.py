@@ -62,7 +62,8 @@ def synth_op(**over):
                "line_match_loss": {"status": "MEASURED", "value_W": 6.0, "source": "SYNTH-S1-CHAR"}},
         "generator": {"generator_class": "GROUND_FACILITY_ONLY_MAINS", "P_generator_input_W": 200.0,
                       "input_boundary": "mains AC input of the lab generator", "instrument": "SYNTH-PA"},
-        "collector": {"I_e_A": 0.5, "V_collector_V": 40.0, "reference_potential": "facility ground"},
+        "collector": {"I_e_A": 0.5, "V_collector_V": -40.0, "reference_potential": "FACILITY_GROUND"},
+        "extraction": {"topology_id": "SYNTH-TOPO-B", "electron_collecting_electrode": "CHAMBER_WALL_FACILITY_GROUND"},
         "pressures": {"p_chamber_Pa": 0.01},
         "flows": {"mdot_Ar_H1_mg_s": 1.0, "mdot_icp_dedicated_mg_s": 0.0},
         "impedance": {"status": "NOT_MEASURED_PENDING_P2_CHAIN"},
@@ -191,6 +192,8 @@ def test_schema_matches_reducer(red):
         sc = json.load(f)
     op = sc["$defs"]["icp_operating_point"]
     assert op["required"] == list(red.OPERATING_POINT_REQUIRED)
+    assert op["properties"]["generator"]["properties"]["generator_class"]["enum"] == ["GROUND_FACILITY_ONLY_MAINS"]
+    assert op["properties"]["extraction"]["required"] == list(red.EXTRACTION_REQUIRED)
     assert op["properties"]["rf"]["required"] == list(red.RF_REQUIRED)
     seq = sc["$defs"]["topology_control_sequence"]
     assert seq["required"] == list(red.SEQUENCE_REQUIRED)
@@ -311,8 +314,9 @@ def test_refuse_plane_gas_terminals(red):
         red.validate_operating_point(rec)
     with pytest.raises(red.P1RecordError):
         red.validate_operating_point(synth_op(gas="N2"))
-    with pytest.raises(red.MissingInputError):
-        red.validate_operating_point(synth_op(hall_discharge_state="ON"))
+    with pytest.raises(red.MissingInputError):          # Hall ON needs the hall_anode terminal
+        red.validate_operating_point(synth_op(hall_discharge_state="ON", extraction={
+            "topology_id": "SYNTH-T", "electron_collecting_electrode": "H1_ANODE"}))
     rec = synth_op()
     rec["rf"]["P_refl_W"] = 150.0
     with pytest.raises(red.P1RecordError):
@@ -321,22 +325,87 @@ def test_refuse_plane_gas_terminals(red):
         red.reduce_operating_points([synth_op(), synth_op()])
 
 
+REG = {"registration_id": "SYNTH-R", "I_d_max_H1_A": 2.0, "basis": "MEASURED_REGISTERED_H1_OPERATION",
+       "source": "synthetic", "registered_point_ids": ["SYNTH-H1-PT-1"]}
+RULE = {"rule_id": "SYNTH-RULE", "k_one_sided": 1.645, "u_I_e_A": 0.05, "u_I_d_max_A": 0.05}
+MATCH = {"criteria_id": "SYNTH-MATCH-RULE", "p_chamber_rel_tol": 0.05}
+
+
+def synth_s7(red, rid, i_e, rf_on=True, **over):
+    """Synthetic P1-S7 Hall-ON record (electrons sunk by the H-1 anode)."""
+    rec = synth_op(record_id=rid, stage_id="P1-S7", hall_discharge_state="ON", h1_point_id="SYNTH-H1-PT-1",
+                   extraction={"topology_id": "SYNTH-TOPO-S7", "electron_collecting_electrode": "H1_ANODE"})
+    rec["collector"]["I_e_A"] = i_e
+    rec["terminals"] = {"collector_supply": {"I_A": i_e, "basis": "MEASURED"},
+                        "icp_body": {"I_A": 0.0, "basis": "OPEN_CIRCUIT_BY_CONSTRUCTION"},
+                        "facility_ground": {"I_A": 0.0, "basis": "MEASURED"},
+                        "hall_anode": {"I_A": -i_e, "basis": "MEASURED"}}
+    if not rf_on:
+        rec["rf"]["P_fwd_W"] = 0.0
+        rec["rf"]["P_refl_W"] = 0.0
+    rec.update(over)
+    return rec
+
+
 def test_icp45a_registration_rules(red):
-    assert red.icp45a_condition(1.0)["status"] == "NOT_EVALUATED"
+    rec = synth_op()
+    assert red.icp45a_evaluate([rec])["status"] == "NOT_EVALUATED"
     for basis in ("STAND_CEILING", "POWER_ENVELOPE_BOUND", "SUPPLY_RATING"):
         with pytest.raises(red.RegistrationError):
-            red.icp45a_condition(9.0, {"registration_id": "SYNTH-R", "I_d_max_H1_A": 8.33, "basis": basis,
-                                       "source": "synthetic"}, {"rule_id": "x", "k_one_sided": 1.0,
-                                                                "u_I_e_A": 0.1, "u_I_d_max_A": 0.1})
-    reg = {"registration_id": "SYNTH-R", "I_d_max_H1_A": 2.0, "basis": "MEASURED_REGISTERED_H1_OPERATION",
-           "source": "synthetic"}
+            red.icp45a_evaluate([rec], dict(REG, basis=basis, I_d_max_H1_A=8.33), RULE)
     with pytest.raises(red.RegistrationError):
-        red.icp45a_condition(3.0, reg, None)
-    rule = {"rule_id": "SYNTH-RULE", "k_one_sided": 1.645, "u_I_e_A": 0.05, "u_I_d_max_A": 0.05}
-    ok = red.icp45a_condition(3.0, reg, rule)
-    assert ok["status"] == "EVALUATED_ENGINEERING_ONLY" and ok["condition_met"] is True
-    assert ok["M_n"] == pytest.approx(0.5)
-    assert red.icp45a_condition(2.0, reg, rule)["condition_met"] is False
+        red.icp45a_evaluate([rec], REG, None)
+    with pytest.raises(red.MissingInputError):
+        red.icp45a_evaluate([rec], {k: v for k, v in REG.items() if k != "registered_point_ids"}, RULE)
+    with pytest.raises(red.RegistrationError):
+        red.icp45a_evaluate([rec], dict(REG, registered_point_ids=[]), RULE)
+    m = red.icp45a_margin(3.0, 2.0, 1.645, 0.05, 0.05)
+    assert m["M_n"] == pytest.approx(0.5)
+    assert m["M_n_lower"] == pytest.approx(0.5 - 1.645 * math.sqrt((0.05 / 2) ** 2 + (3.0 * 0.05 / 4) ** 2))
+
+
+def test_icp45a_never_credits_rf_off_or_diagnostic_feed(red):
+    """Reviewer repro: an RF-OFF 50 A record or a dedicated-feed 9 A record must never become I_e,cap."""
+    rf_off = synth_op(record_id="SYNTH-RFOFF-50A")
+    rf_off["rf"]["P_fwd_W"] = 0.0
+    rf_off["rf"]["P_refl_W"] = 0.0
+    rf_off["collector"]["I_e_A"] = 50.0
+    rf_off["terminals"]["collector_supply"]["I_A"] = 50.0
+    rf_off["terminals"]["facility_ground"]["I_A"] = -50.0
+    diag = synth_s7(red, "SYNTH-DIAG-9A", 9.0, gas_mode="DIAGNOSTIC_DEDICATED_FEED")
+    diag["labels"].append("DIAGNOSTIC_VARIABLE_NOT_BASELINE")
+    diag["flows"]["mdot_icp_dedicated_mg_s"] = 0.1
+    diag["flows"]["ledger_booking_id"] = "SYNTH-BOOKING"
+    out = red.reduce_operating_points([rf_off, diag], dict(REG, I_d_max_H1_A=5.0), RULE)
+    ic = out["summary"]["icp45a"]
+    assert ic["status"] == "NOT_EVALUATED" and ic["condition_met"] is None
+    reasons = {e["record_id"]: " ".join(e["reasons"]) for e in ic["excluded_records"]}
+    assert "RF OFF" in reasons["SYNTH-RFOFF-50A"] and "P1-S7" in reasons["SYNTH-RFOFF-50A"]
+    assert "DIAGNOSTIC_DEDICATED_FEED" in reasons["SYNTH-DIAG-9A"]
+    assert out["summary"]["I_e_max_recorded_A"] == 50.0 and "NOT I_e,cap" in out["summary"]["I_e_max_recorded_note"]
+    # Hall OFF / wrong stage / unregistered point / pickup not done are excluded too
+    for bad in (synth_s7(red, "SYNTH-X1", 3.0, h1_point_id="SYNTH-UNREGISTERED"),
+                synth_s7(red, "SYNTH-X2", 3.0, stage_id="P1-S4"),
+                synth_s7(red, "SYNTH-X3", 3.0, rf_pickup_check="NOT_DONE")):
+        r = red.icp45a_evaluate([bad], REG, RULE, {})
+        assert r["status"] == "NOT_EVALUATED"
+
+
+def test_icp45a_needs_facility_correction_and_synthetic_is_not_evidence(red):
+    on = synth_s7(red, "SYNTH-S7-ON", 3.0)
+    off = synth_s7(red, "SYNTH-S7-OFF", 0.4, rf_on=False)
+    r = red.reduce_operating_points([on, off], REG, RULE)
+    ic = r["summary"]["icp45a"]
+    assert ic["status"] == "NOT_EVALUATED"
+    assert any("facility-electron correction missing" in " ".join(e["reasons"]) for e in ic["excluded_records"])
+    with pytest.raises(red.MissingInputError):
+        red.reduce_operating_points([on, off], REG, RULE, [["SYNTH-S7-ON", "SYNTH-S7-OFF"]])
+    r = red.reduce_operating_points([on, off], REG, RULE, [["SYNTH-S7-ON", "SYNTH-S7-OFF"]], MATCH)
+    ic = r["summary"]["icp45a"]
+    assert ic["status"] == "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE" and ic["condition_met"] is None
+    assert ic["I_e_cap_A"] == pytest.approx(3.0 - 0.4) and ic["I_e_cap_record"] == "SYNTH-S7-ON"
+    assert ic["M_n"] == pytest.approx(2.6 / 2.0 - 1.0)
+    assert "PROPOSED" in ic["i_e_cap_definition"]
 
 
 def test_topology_control_paths(red):
@@ -391,11 +460,128 @@ def test_stable_region_and_facility_check(red):
     off["rf"]["P_fwd_W"] = 0.0
     off["rf"]["P_refl_W"] = 0.0
     off["collector"]["I_e_A"] = 0.01
-    fc = red.facility_electron_check(on, off)
+    with pytest.raises(red.MissingInputError):
+        red.facility_electron_check(on, off)
+    fc = red.facility_electron_check(on, off, MATCH)
     assert fc["facility_fraction"] == pytest.approx(0.02)
+    assert fc["I_e_icp_corrected_A"] == pytest.approx(0.49)
     out = red.reduce({"operating_points": [on, off], "facility_pairs": [["SYNTH-OP-001", "SYNTH-OP-OFF"]],
                       "dwells": [{"record_id": "SYNTH-OP-001", "dwell": dwell}],
-                      "topology_control": [synth_seq(red)]})
+                      "topology_control": [synth_seq(red)]}, facility_match=MATCH)
     assert out["dwells"][0]["stable_region"]["verdict"] == "NOT_EVALUATED"
     off_row = [r for r in out["operating_points"]["surface"] if r["record_id"] == "SYNTH-OP-OFF"][0]
     assert off_row["gamma_abs"] is None
+    assert off_row["C_e_W_per_A"] is None and off_row["factors"]["P_delivered_W"] is None
+    assert off_row["rf_state"] == "RF_OFF" and "RF OFF" in off_row["C_e_reason"]
+
+
+def test_facility_pair_must_match_point(red):
+    on = synth_op()
+    base_off = synth_op(record_id="SYNTH-OP-OFF")
+    base_off["rf"]["P_fwd_W"] = 0.0
+    base_off["rf"]["P_refl_W"] = 0.0
+    off = copy.deepcopy(base_off)
+    off["pressures"]["p_chamber_Pa"] = 1.0              # 0.01 Pa vs 1.0 Pa
+    with pytest.raises(red.P1RecordError):
+        red.facility_electron_check(on, off, MATCH)
+    off = copy.deepcopy(base_off)
+    off["pressures"]["p_chamber_Pa"] = 0.0102            # within the synthetic 5 % tolerance
+    red.facility_electron_check(on, off, MATCH)
+    off = copy.deepcopy(base_off)
+    off["extraction"]["topology_id"] = "SYNTH-TOPO-OTHER"
+    with pytest.raises(red.P1RecordError):
+        red.facility_electron_check(on, off, MATCH)
+    off = copy.deepcopy(base_off)
+    off["gas_mode"] = "DIAGNOSTIC_DEDICATED_FEED"
+    off["labels"].append("DIAGNOSTIC_VARIABLE_NOT_BASELINE")
+    off["flows"]["ledger_booking_id"] = "SYNTH-BOOKING"
+    with pytest.raises(red.P1RecordError):
+        red.facility_electron_check(on, off, MATCH)
+    with pytest.raises(red.P1RecordError):                 # RF-ON record must have P_fwd > 0
+        red.facility_electron_check(base_off, copy.deepcopy(base_off), MATCH)
+
+
+def test_refuse_impossible_rf(red):
+    rec = synth_op()
+    rec["rf"]["line_match_loss"]["value_W"] = 1e6
+    with pytest.raises(red.RFConsistencyError):
+        red.validate_operating_point(rec)
+    rec = synth_op()
+    rec["rf"]["P_fwd_W"] = 200.0
+    rec["rf"]["P_refl_W"] = 8.0
+    rec["rf"]["line_match_loss"]["value_W"] = 500.0
+    with pytest.raises(red.RFConsistencyError):
+        red.reduce_operating_points([rec])
+    rec = synth_op()
+    rec["rf"]["P_fwd_W"] = 0.0
+    rec["rf"]["P_refl_W"] = 5.0
+    with pytest.raises(red.RFConsistencyError):
+        red.validate_operating_point(rec)
+
+
+def test_refuse_flight_generator_and_flag_pickup(red):
+    rec = synth_op()
+    rec["generator"]["generator_class"] = "FLIGHT_REPRESENTATIVE_DC_RF_SOURCE"
+    with pytest.raises(red.P1RecordError):
+        red.validate_operating_point(rec)
+    row = red.reduce_operating_points([synth_op(rf_pickup_check="NOT_DONE")])["surface"][0]
+    assert any(f.startswith("RF_PICKUP_CHECK_NOT_DONE") for f in row["flags"])
+
+
+def test_refuse_p_bus_spellings(red):
+    for key in ("P_bus_mains_W", "Pbus_W", "p-BUS", "P_BUS_equivalent"):
+        rec = synth_op()
+        rec["generator"][key] = 1.0
+        with pytest.raises(red.PMainsNotPBusError):
+            red.validate_operating_point(rec)
+        with pytest.raises(red.PMainsNotPBusError):
+            red.validate_operating_point(synth_op(**{key: 1.0}))
+    rec = synth_op()
+    rec["temperatures"]["P_bus_W"] = 1.0
+    with pytest.raises(red.PMainsNotPBusError):
+        red.validate_operating_point(rec)
+
+
+def test_extraction_topology_rules(red):
+    rec = synth_op()
+    del rec["extraction"]
+    with pytest.raises(red.MissingInputError):
+        red.validate_operating_point(rec)
+    rec = synth_op(extraction={"topology_id": "SYNTH-T", "electron_collecting_electrode": "H1_ANODE"})
+    with pytest.raises(red.ExtractionTopologyError):              # H-1 anode as sink with Hall OFF
+        red.validate_operating_point(rec)
+    rec = synth_s7(red, "SYNTH-S7", 1.0,
+                   extraction={"topology_id": "SYNTH-T", "electron_collecting_electrode": "CHAMBER_WALL_FACILITY_GROUND"})
+    with pytest.raises(red.ExtractionTopologyError):
+        red.validate_operating_point(rec)
+    rec = synth_op(extraction={"topology_id": "", "electron_collecting_electrode": "CHAMBER_WALL_FACILITY_GROUND"})
+    with pytest.raises(red.ExtractionTopologyError):
+        red.validate_operating_point(rec)
+    rec = synth_op(extraction={"topology_id": "SYNTH-T",
+                               "electron_collecting_electrode": "DEDICATED_ELECTRON_COLLECTOR_TARGET"})
+    with pytest.raises(red.MissingInputError):                    # electron_collector terminal required
+        red.validate_operating_point(rec)
+    rec["terminals"]["electron_collector"] = {"I_A": -0.49, "basis": "MEASURED"}
+    rec["terminals"]["facility_ground"]["I_A"] = 0.0
+    red.validate_operating_point(rec)
+    rec = synth_op()
+    rec["collector"]["reference_potential"] = "somewhere"
+    with pytest.raises(red.ExtractionTopologyError):
+        red.validate_operating_point(rec)
+
+
+def test_plan_defines_extraction_topology_and_readiness(doc):
+    items = {i["id"]: i for i in doc["items"]}
+    assert "P1-G0" == items["P1-IT-36"]["p1_gate"] and "TBD" in items["P1-IT-36"]["value"]
+    assert "PROPOSED" in items["P1-IT-38"]["status"]
+    s0 = [s for s in doc["stage_map"] if s["id"] == "P1-S0"][0]
+    assert any("extraction topology" in x for x in s0["exit"])
+    hw = " ".join(h["item"] + " " + h["rfq_v1_package"] + " " + h["h2_or_h1_items"] for h in doc["hardware_readiness"])
+    for needle in ("H-1 Hall thruster", "anode plenum", "C1 (hall_c1_reference)", "electron-collecting",
+                   "RFQ-06 part (b)", "RFQ-08", "H2-2 C-1"):
+        assert needle in hw, needle
+    for mrow in doc["measurements"]:
+        assert mrow["metrology_spec"], mrow["id"]
+    ids = {a["id"]: a["how_applied"] for a in doc["owner_answers_applied"]}
+    assert ids["A9.1 ICP-46"].startswith("NOT APPLICABLE") and ids["A9.1 OQ-A902-01"].startswith("NOT APPLICABLE")
+    assert not any("ICP-33, ICP-34), so" in p for p in doc["scope"]["orificed_variant_provisions"])

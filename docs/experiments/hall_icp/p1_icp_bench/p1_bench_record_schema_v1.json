@@ -29,6 +29,7 @@
     "rf",
     "generator",
     "collector",
+    "extraction",
     "pressures",
     "flows",
     "impedance",
@@ -136,11 +137,15 @@
       "input_boundary",
       "instrument"
      ],
+     "propertyNames": {
+      "not": {
+       "pattern": "[Pp][^A-Za-z0-9]*[Bb][^A-Za-z0-9]*[Uu][^A-Za-z0-9]*[Ss]"
+      }
+     },
      "properties": {
       "generator_class": {
        "enum": [
-        "GROUND_FACILITY_ONLY_MAINS",
-        "FLIGHT_REPRESENTATIVE_DC_RF_SOURCE"
+        "GROUND_FACILITY_ONLY_MAINS"
        ]
       },
       "P_generator_input_W": {
@@ -161,6 +166,7 @@
       "V_collector_V",
       "reference_potential"
      ],
+     "description": "the ICP ion-collecting electrode (TK-13; ICD ICP-21); I_e is its supply-lead current; V_collector is its potential w.r.t. reference_potential",
      "properties": {
       "I_e_A": {
        "type": "number"
@@ -169,9 +175,48 @@
        "type": "number"
       },
       "reference_potential": {
-       "type": "string"
+       "enum": [
+        "FACILITY_GROUND",
+        "ICP_BODY",
+        "ELECTRON_COLLECTOR_ELECTRODE"
+       ]
       }
      }
+    },
+    "extraction": {
+     "type": "object",
+     "required": [
+      "topology_id",
+      "electron_collecting_electrode"
+     ],
+     "description": "electron-extraction topology registered at P1-G0 (P1-IT-36): the electrode that sinks the extracted electrons",
+     "properties": {
+      "topology_id": {
+       "type": "string",
+       "minLength": 1
+      },
+      "electron_collecting_electrode": {
+       "enum": [
+        "DEDICATED_ELECTRON_COLLECTOR_TARGET",
+        "CHAMBER_WALL_FACILITY_GROUND",
+        "H1_ANODE"
+       ]
+      }
+     },
+     "x-allowed-by-hall-state": {
+      "OFF": [
+       "DEDICATED_ELECTRON_COLLECTOR_TARGET",
+       "CHAMBER_WALL_FACILITY_GROUND"
+      ],
+      "ON": [
+       "H1_ANODE"
+      ]
+     }
+    },
+    "h1_point_id": {
+     "type": "string",
+     "minLength": 1,
+     "description": "registered H-1 point id (required for ICP-45A candidacy, P1-S7)"
     },
     "pressures": {
      "type": "object",
@@ -245,13 +290,19 @@
        }
       }
      },
-     "x-required-by-hall-state": {
-      "OFF": [
+     "x-required-by-hall-state-and-electrode": {
+      "OFF/DEDICATED_ELECTRON_COLLECTOR_TARGET": [
+       "collector_supply",
+       "icp_body",
+       "facility_ground",
+       "electron_collector"
+      ],
+      "OFF/CHAMBER_WALL_FACILITY_GROUND": [
        "collector_supply",
        "icp_body",
        "facility_ground"
       ],
-      "ON": [
+      "ON/H1_ANODE": [
        "collector_supply",
        "icp_body",
        "facility_ground",
@@ -282,25 +333,12 @@
      ]
     }
    },
-   "not": {
-    "anyOf": [
-     {
-      "required": [
-       "P_bus_W"
-      ]
-     },
-     {
-      "required": [
-       "p_bus_W"
-      ]
-     },
-     {
-      "required": [
-       "P_bus"
-      ]
-     }
-    ]
-   }
+   "propertyNames": {
+    "not": {
+     "pattern": "[Pp][^A-Za-z0-9]*[Bb][^A-Za-z0-9]*[Uu][^A-Za-z0-9]*[Ss]"
+    }
+   },
+   "x-p-bus-screen": "the reducer refuses, at any nesting depth, every field name that normalises (lower-case, alphanumerics only) to contain 'pbus' (A9.3 OQ-RFQ-06)"
   },
   "topology_control_sequence": {
    "type": "object",
