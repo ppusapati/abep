@@ -80,6 +80,31 @@ PENDING_A901 = "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage
 PENDING_A902 = "PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/ (A9-02)"
 PENDING_A903 = "PENDING docs/interfaces/icp_neutralizer/ (A9-03 ICD)"
 PENDING_A904 = "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)"
+# A9_INT (fo_a9_int_core_integration): A9-01..A9-04 are merged in the base 88e4d47. A cross-reference whose target the
+# merged deliverable defines (an A9-04 measurement chain keyed by its dq id, an A9-02 slot, an A9-03 ICD item) cites the
+# concrete file + id; per-input stage and decision-quantity assignments are not defined by any target and stay
+# PENDING_A901 / PENDING_A904. Targets are cited, never read here and never pinned here (the five A9 deliverables
+# reference each other, so an in-file sha256 has no fixed point); their post-integration sha256 is pinned in
+# docs/experiments/hall_icp/integration/a9_core_integration_v1.json.
+A901_JSON = "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json"
+A902_REF = "abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json"
+A903_JSON = "schemas/interfaces/icp_neutralizer_icd_v1.json"
+A904_JSON = "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json"
+
+
+def chain_a904(dq):
+    """Resolved A9-04 measurement-chain reference (A9_INT)."""
+    return A904_JSON + " measurement_chains[dq=" + dq + "] (A9-04)"
+
+
+def slot_a902(what):
+    """Resolved A9-02 bus-slot reference (A9_INT)."""
+    return A902_REF + " " + what + " (A9-02)"
+
+
+def icd_a903(*ids):
+    """Resolved A9-03 ICD item reference (A9_INT)."""
+    return A903_JSON + " " + ", ".join(ids) + " (A9-03 ICD)"
 
 # evidence-sequence steps (A9 evidence_sequence + owner row 64 module-exchange checks); NOT stage ids
 STEPS = {
@@ -124,22 +149,22 @@ ITEMS = [
      "FIXED_BY_OWNER", "owner answer", "owner answer row 72; A9 governing decision 1", ),
     ("VI-RF-02", "RF", "forward RF power at the load plane", "P_fwd",
      "RF power travelling toward the matching network/antenna, measured by a directional coupler at the declared "
-     "RF load plane (plane PENDING A9-03)", "W", [ICP], "measurement",
-     "directional coupler + power sensor (INS-03 adapted; " + PENDING_A904 + ")", ["TK-21", "TK-23"],
+     "RF load plane (plane " + icd_a903("ICP-14") + ")", "W", [ICP], "measurement",
+     "directional coupler + power sensor (INS-03 adapted; " + chain_a904("UB-DQ-RF") + ")", ["TK-21", "TK-23"],
      "analog operated at 200 W forward (TK-21) on its own geometry - context only", ["AR", "N2", "O2"],
      "TBD - requires H-1 + ICP module operation; laboratory chain sized for 0-500 W forward (row 72)",
      "measured (future)", ["G-ALLOC", "P-DPBUS", "MODEL"], "LOCK-1 (chain) / after-evidence (value)",
      "HARDWARE_ONLY", "measurement", "owner answer row 72 (range for sizing the chain, not an operating value)"),
     ("VI-RF-03", "RF", "reflected RF power at the load plane", "P_refl",
      "RF power reflected back toward the generator at the same plane as P_fwd", "W", [ICP], "measurement",
-     "directional coupler reverse port (" + PENDING_A904 + ")", ["TK-22"],
+     "directional coupler reverse port (" + chain_a904("UB-DQ-RF") + ")", ["TK-22"],
      "analog reports 'no reflection detected' with generator meters (TK-22); resolution not stated", ["AR", "N2", "O2"],
      "TBD - requires H-1 + ICP module operation", "measured (future)", ["G-SAFE", "MODEL"],
      "after-evidence", "HARDWARE_ONLY", "measurement", "owner answer row 72"),
     ("VI-RF-04", "RF", "net RF power delivered at the load plane", "P_net",
      "P_fwd - P_refl at the declared load plane (includes matching-network and antenna ohmic loss downstream of "
      "the plane)", "W", [ICP], "derived",
-     "from VI-RF-02, VI-RF-03 (" + PENDING_A904 + ")", ["TK-21"], None, ["AR", "N2", "O2"],
+     "from VI-RF-02, VI-RF-03 (" + chain_a904("UB-DQ-RF") + ")", ["TK-21"], None, ["AR", "N2", "O2"],
      "TBD - requires VI-RF-02, VI-RF-03", "measured (future)", ["MODEL"], "after-evidence", "HARDWARE_ONLY",
      "derived", "owner answer row 72"),
     ("VI-RF-05", "RF", "RF power absorbed by the plasma", "P_abs",
@@ -166,7 +191,7 @@ ITEMS = [
     ("VI-RF-08", "RF", "RF generator DC input power", "P_RF,DC",
      "electrical power drawn by the RF source (generator + matching control) at its DC input; enters P_bus through "
      "its own bus slot", "W", [ICP], "measurement",
-     "DC V/I channel per bus slot (INS-02 adapted; bus slot " + PENDING_A902 + ")", [], None, ["AR", "N2", "O2"],
+     "DC V/I channel per bus slot (INS-02 adapted; bus slot " + slot_a902("slot icp_rf_source") + ")", [], None, ["AR", "N2", "O2"],
      "TBD - requires the RF source selected under H3 and A9-02 bus slot", "measured (future)",
      ["G-PBUS", "G-ALLOC", "P-DPBUS"], "LOCK-1 (slot) / after-evidence (value)", "HARDWARE_ONLY", "measurement",
      "owner answers rows 66, 108, 110"),
@@ -192,7 +217,8 @@ ITEMS = [
     ("VI-EX-01", "extraction", "electron current extracted from the ICP module", "I_e,ICP",
      "net electron current leaving the ICP plasma toward the Hall anode and the beam, from the current balance of "
      "the module terminals (collector + body + any bias return) with the discharge supply isolated", "A", [ICP],
-     "measurement", "isolated current sensors on every ICP-module terminal (" + PENDING_A903 + "; " + PENDING_A904 + ")",
+     "measurement", "isolated current sensors on every ICP-module terminal (" + icd_a903("ICP-20", "ICP-21", "ICP-34") + "; "
+     + chain_a904("UB-DQ-NEUT") + ")",
      ["TK-52", "TK-56"],
      "anchor: I_D about 1 A with 200 W forward on Ar (TK-52, digitized_fig4); diode RF cathodes 1-3.3 A at "
      "140-270 W on Xe (S-01, S-02) - order of magnitude only", ["AR", "N2", "O2"],
@@ -201,7 +227,7 @@ ITEMS = [
     ("VI-EX-02", "extraction", "ICP electron-current capacity curve", "I_e,sat(P_net, mdot, V_coupling)",
      "maximum extractable electron current versus net RF power and gas flow at a registered coupling-voltage limit "
      "(saturation behaviour), measured with the Hall head as the electron sink", "A", [ICP], "measurement",
-     "RF-power / flow scan (" + PENDING_A904 + ")", ["TK-53"],
+     "RF-power / flow scan (" + chain_a904("UB-DQ-NEUT") + ")", ["TK-53"],
      "anchor authors attribute the I_D limit to RF power (TK-53) without a power scan; S-01/S-02 show current rising "
      "with RF power in diode tests", ["AR", "N2", "O2"], "TBD - requires the A9 module on H-1",
      "measured (future)", ["G-NEUT", "MODEL"], "after-evidence", "HARDWARE_ONLY", "measurement",
@@ -209,7 +235,7 @@ ITEMS = [
     ("VI-EX-03", "extraction", "collector (ion-collecting electrode) potential", "V_coll",
      "potential of the ICP ion-collecting electrode with respect to the declared reference (cathode-common / "
      "facility ground, " + PENDING_A903 + ")", "V", [ICP], "measurement",
-     "isolated voltage channel (" + PENDING_A904 + ")", ["TK-55"],
+     "isolated voltage channel (" + chain_a904("UB-DQ-NEUT") + ")", ["TK-55"],
      "anchor V_K fell to about -100 V at V_D 260 V (TK-55, digitized_fig4) with no separate bias supply",
      ["AR", "N2", "O2"], "TBD - requires the A9 module with separately controlled collector bias (row 70)",
      "measured (future)", ["G-NEUT", "P-LIFE", "MODEL"], "after-evidence", "HARDWARE_ONLY", "measurement",
@@ -217,26 +243,26 @@ ITEMS = [
     ("VI-EX-04", "extraction", "collector current and bias-supply power", "I_coll, V_bias, P_coll",
      "ion current collected by the electrode and the electrical power of its bias supply (if the validated circuit "
      "needs one)", "A, V, W", [ICP], "measurement",
-     "bias supply V/I (bus slot " + PENDING_A902 + "; " + PENDING_A904 + ")", ["TK-13", "TK-40"],
+     "bias supply V/I (bus slot " + slot_a902("slot icp_collector_bias") + "; " + chain_a904("UB-DQ-NEUT") + ")", ["TK-13", "TK-40"],
      "the anchor has no separate bias supply (TK-40)", ["AR", "N2", "O2"],
      "TBD - requires the A9 circuit (A9-03) and hardware", "measured (future)", ["G-PBUS", "P-DPBUS", "MODEL"],
      "LOCK-1 (slot) / after-evidence (value)", "HARDWARE_ONLY", "measurement", "owner answers rows 62, 66, 70, 110"),
     ("VI-EX-05", "extraction", "ICP body / dielectric floating potential", "V_body",
      "floating potential of the ICP body (kept floating unless the validated circuit requires otherwise)", "V",
-     [ICP], "measurement", "high-impedance isolated voltage channel (" + PENDING_A904 + ")", [], None,
+     [ICP], "measurement", "high-impedance isolated voltage channel (" + chain_a904("UB-DQ-NEUT") + ")", [], None,
      ["AR", "N2", "O2"], "TBD - requires hardware", "measured (future)", ["G-SAFE", "MODEL"], "after-evidence",
      "HARDWARE_ONLY", "measurement", "owner answer row 70"),
     ("VI-EX-06", "extraction", "coupling voltage (cathode-common / plume potential to facility ground)", "V_cg",
      "potential of the electron-source reference (C1 cathode-common or ICP reference) with respect to facility "
      "ground, in both configurations at identical H-1 settings", "V", BOTH, "measurement",
-     "isolated voltage channel, selectable bleeder topology (row 91; " + PENDING_A904 + ")", ["TK-54", "TK-55"],
+     "isolated voltage channel, selectable bleeder topology (row 91; " + chain_a904("UB-DQ-NEUT") + ")", ["TK-54", "TK-55"],
      "anchor: anode potential ~120-130 V vs ground with the supply floating (TK-54); context only",
      ["AR", "N2", "O2"], "TBD - requires hardware", "measured (future)", ["G-NEUT", "C-EQUIV", "MODEL"],
      "after-evidence", "HARDWARE_ONLY", "measurement", "owner answer row 91"),
     ("VI-EX-07", "extraction", "neutralization margin", "M_neut",
      "PROPOSED form (OQ-VI-02): electron-current capacity of the electron source at the registered coupling-voltage "
      "limit (VI-EX-02) relative to the measured Hall current demand at the same point (VI-HD-01); the numeric margin "
-     "is frozen only at LOCK-2 (rows 18, 19)", "-", BOTH, "derived", "VI-EX-02, VI-HD-01 (" + PENDING_A904 + ")",
+     "is frozen only at LOCK-2 (rows 18, 19)", "-", BOTH, "derived", "VI-EX-02, VI-HD-01 (" + chain_a904("UB-DQ-NEUT") + ")",
      ["TK-52", "TK-56"], None, ["AR", "N2", "O2"],
      "TBD - requires VI-EX-02 and VI-HD-01; form: owner call (OQ-VI-02)", "measured (future)", ["G-NEUT"],
      "LOCK-1 (form) / LOCK-2 (numeric margin)", "HARDWARE_ONLY", "derived", "owner answers rows 18, 19, 37, 145"),
@@ -251,7 +277,7 @@ ITEMS = [
     ("VI-EX-09", "extraction", "electron production cost", "C_e",
      "(P_RF,DC + P_coll + ICP housekeeping) / I_e,ICP for the ICP; (heater + keeper + flow-control power) / I_emit "
      "for C1; both on the A9-02 bus boundary", "W/A", BOTH, "derived",
-     "VI-RF-08, VI-EX-04, VI-EX-01, VI-PB-02 (" + PENDING_A902 + ")", ["S-01", "S-02", "S-04"],
+     "VI-RF-08, VI-EX-04, VI-EX-01, VI-PB-02 (" + slot_a902("slots") + ")", ["S-01", "S-02", "S-04"],
      "open RF cathodes span ~40-260 W/A of RF input per ampere on Xe (survey derived values) - context, not a bound "
      "for the A9 module", ["AR", "N2", "O2"], "TBD - requires hardware", "measured (future)",
      ["P-DPBUS", "G-ALLOC"], "after-evidence", "HARDWARE_ONLY", "derived", "owner answer row 37"),
@@ -265,7 +291,7 @@ ITEMS = [
     ("VI-HD-01", "hall", "Hall discharge current demand", "I_d(V_d, B, mdot)",
      "discharge current of H-1 at each registered V_d / coil-current / feed point, measured first with the C1 "
      "reference and then with the ICP neutralizer at identical settings", "A", BOTH, "measurement",
-     "INS-04 adapted (" + PENDING_A904 + ")", ["TK-52"],
+     "INS-04 adapted (" + chain_a904("UB-DQ-ID") + ")", ["TK-52"],
      "sizing envelope only (not a prediction): I_d <= 8.33 A at 180 V (RFP bound) and <= 7.5 A at 180 V under the "
      "1.35 kW allocation (H2-2 IFD-08, PRELIMINARY)", ["AR", "N2", "O2", "XE"],
      "TBD - requires H-1 operation (no Hall closure admitted; credible set EMPTY)", "measured (future)",
@@ -279,7 +305,7 @@ ITEMS = [
      ["G-PBUS", "MODEL"], "after-evidence", "HARDWARE_ONLY", "measurement", "Takahashi 2024 p. 6 (mechanism)"),
     ("VI-HD-03", "hall", "thrust", "T",
      "sustained thrust of the full H-1 + electron-source configuration on the torsional stand with matched shams",
-     "mN", BOTH, "measurement", "INS-01 adapted; 1 % absolute uncertainty target (row 121); " + PENDING_A904, [],
+     "mN", BOTH, "measurement", "INS-01 adapted; 1 % absolute uncertainty target (row 121); " + chain_a904("DQ-HI-TABS"), [],
      "none: the anchor measured no thrust (TK-60)", ["N2", "O2", "XE"],
      "TBD - requires H-1 on the stand", "measured (future)", ["G-THRUST", "P-TP"], "after-evidence",
      "HARDWARE_ONLY", "measurement", "owner answers rows 4, 27, 115, 121"),
@@ -292,7 +318,7 @@ ITEMS = [
     ("VI-HD-05", "hall", "B(z) perturbation by the downstream module", "delta B(z)",
      "change of the H-1 field map with the ICP (or C1) module installed and energized vs reference, and the H-1 "
      "sensitivity scan used to freeze the allowable tolerance", "T", BOTH, "measurement",
-     "INS-09 adapted (" + PENDING_A904 + ")", [], None, ["XCHK"],
+     "INS-09 adapted (" + chain_a904("UB-DQ-BZ") + ")", [], None, ["XCHK"],
      "TBD - requires H-1 + modules; tolerance frozen from measured H-1 sensitivity (row 67)", "measured (future)",
      ["C-EQUIV"], "LOCK-2 (tolerance)", "HARDWARE_ONLY", "measurement", "owner answer row 67"),
     ("VI-HD-06", "hall", "H-1 fringe field inside the ICP volume", "B_ICP(z, r)",
@@ -324,13 +350,13 @@ ITEMS = [
      ["P-DXE", "MODEL"], "after-evidence", "HARDWARE_ONLY", "measurement", "owner answers rows 42, 46"),
     ("VI-GAS-03", "gas", "neutral pressure in the ICP region", "p_ICP",
      "pressure inside the ICP volume fed by the Hall exhaust (and any dedicated feed), at a declared tap", "Pa",
-     [ICP], "measurement", "pressure tap at the Hall-exhaust-to-ICP interface (" + PENDING_A903 + ")",
+     [ICP], "measurement", "pressure tap at the Hall-exhaust-to-ICP interface (" + icd_a903("ICP-27") + ")",
      ["TK-34", "TK-35"], "anchor gives chamber pressure 28 mPa and an estimated tube density ~2e19 m^-3 (TK-34, "
      "TK-35); no in-tube measurement", ["XCHK", "AR", "N2", "O2"], "TBD - requires hardware", "measured (future)",
      ["MODEL", "G-NEUT"], "after-evidence", "HARDWARE_ONLY", "measurement", "owner answer row 63"),
     ("VI-GAS-04", "gas", "Hall-exhaust-to-ICP conductance / pressure interface", "C_HE-ICP",
      "measured conductance / pressure ratio between the H-1 exit plane and the ICP volume (cold flow and hot)",
-     "L/s, -", [ICP], "measurement", "cold-flow pressure mapping (" + PENDING_A903 + ")", ["TK-12"], None,
+     "L/s, -", [ICP], "measurement", "cold-flow pressure mapping (" + icd_a903("ICP-27") + ")", ["TK-12"], None,
      ["XCHK", "AR"], "TBD - requires hardware", "measured (future)", ["MODEL", "C-EQUIV"], "LOCK-1 (interface) / "
      "after-evidence (value)", "HARDWARE_ONLY", "measurement", "owner answer row 63"),
     ("VI-GAS-05", "gas", "facility background pressure and its effect on extraction", "p_b",
@@ -355,19 +381,19 @@ ITEMS = [
     ("VI-PB-01", "power", "ICP-module bus power", "P_bus,ICP",
      "sum of every ICP-related load at the spacecraft-DC propulsion boundary: RF source, collector/bias supply, "
      "any assist magnet or active cooling, ICP housekeeping", "W", [ICP], "measurement",
-     "INS-02 adapted per bus slot (" + PENDING_A902 + ")", ["TK-21", "TK-27", "TK-28"],
+     "INS-02 adapted per bus slot (" + slot_a902("slots") + ")", ["TK-21", "TK-27", "TK-28"],
      "anchor power figures are RF-generator forward/absorbed only (TK-21, TK-27); a generator-only figure is not "
      "sufficient (A9 requirement discipline)", ["AR", "N2", "O2"], "TBD - requires hardware and A9-02 slots",
      "measured (future)", ["G-PBUS", "G-ALLOC", "P-DPBUS"], "LOCK-1 (slots) / after-evidence (value)",
      "HARDWARE_ONLY", "measurement", "owner answers rows 66, 108, 109, 110; A9 requirement_discipline"),
     ("VI-PB-02", "power", "C1-reference bus power", "P_bus,C1",
      "heater, keeper (incl. pulsed ignition), cathode flow control and any filter/getter load of the C1 reference",
-     "W", [C1], "measurement", "INS-02 adapted per bus slot (" + PENDING_A902 + ")", [], None, ["AR", "N2", "O2", "XE"],
+     "W", [C1], "measurement", "INS-02 adapted per bus slot (" + slot_a902("slots") + ")", [], None, ["AR", "N2", "O2", "XE"],
      "TBD - requires C1 hardware", "measured (future)", ["G-PBUS", "P-DPBUS"], "after-evidence", "HARDWARE_ONLY",
      "measurement", "owner answers rows 49, 51, 89, 110"),
     ("VI-PB-03", "power", "total P_bus including start-up transients", "P_bus(t)",
      "time-resolved sum over all slots from cold start through steady state for each configuration", "W", BOTH,
-     "measurement", "INS-02 time-resolved; averaging window " + PENDING_A904, [], None, ["AR", "N2", "O2"],
+     "measurement", "INS-02 time-resolved; averaging window " + A904_JSON + " UB-P-07 (A9-04)", [], None, ["AR", "N2", "O2"],
      "TBD - requires hardware; limit < 1500 W incl. transients unless the official RFP allows otherwise (row 108)",
      "measured (future)", ["G-PBUS"], "LOCK-1 (window rule) / after-evidence (value)", "HARDWARE_ONLY",
      "measurement", "owner answers rows 108, 112"),
@@ -690,7 +716,7 @@ def build():
             "status_not_outcome": "OPEN (row 38): unresolved evidence is reported with the next discriminating test",
             "net_benefit_form": "hard gates + Pareto (delta Xe, delta P_bus, delta mass, T/P_bus, restart and life "
                                 "burden vs C1); no weighted scalar unless preregistered (row 37)",
-            "full_vocabulary": PENDING_A901,
+            "full_vocabulary": A901_JSON + " decision_topology (A9-01)",
             "winner": "none declared by this lane",
         },
         "what_this_is_not": [
@@ -700,7 +726,8 @@ def build():
             "not a numeric threshold: margins, effect sizes, stop rules and n are frozen at LOCK-1 (rules) / LOCK-2 "
             "(values); the only numbers are owner-given (cited by row)",
             "not a stage map (A9-01), bus boundary (A9-02), ICD (A9-03) or uncertainty budget (A9-04): those are "
-            "PENDING and referenced, never fabricated",
+            "separate deliverables (" + A901_JSON + "; " + A902_REF + "; " + A903_JSON + "; " + A904_JSON + ") "
+            "referenced, never fabricated",
             "Hall-closure uncertainty never leaks upstream: nothing here touches intake, compressor, gas chambers or "
             "valves models",
         ],

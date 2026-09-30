@@ -45,8 +45,8 @@ Other pinned inputs: `abep_sim/arch_boundary.py` `8dfc309a5d2c717913fd4961bc660f
 | A902-20 | ICP electron-source sub-allocation inside A902-10 | TBD | W | pending | TBD - owner call OQ-A902-03 (A8/v2 'rf <= 700 W' is a parallel-branch number and is not carried) | TBD | OPEN | LOCK-1 |
 | A902-21 | RF generator DC-input -> forward-power efficiency | TBD | - | pending | TBD - requires S1a measurement (generator DC input metered + coupler forward power); H2-4 H24-14 was a pre-ionizer chain analog and is not reused | TBD | OPEN | LOCK-2 |
 | A902-22 | matching-network DC draw (tuning actuators / controller) | TBD | W | pending | PENDING docs/interfaces/icp_neutralizer/ (fixed vs auto-tuned match) | TBD | OPEN | LOCK-1 |
-| A902-23 | collector/bias supply V and I range | TBD | V / A | pending | PENDING docs/interfaces/icp_neutralizer/ (electron-extraction collector bias, floating body row 70) | TBD | OPEN | LOCK-1 |
-| A902-24 | ICP gas-feed valve/controller power and feed species | TBD | W | pending | TBD - A9 recorder flag row 46 (ICP gas feed not yet booked); PENDING docs/interfaces/icp_neutralizer/ | TBD | OPEN | LOCK-1 |
+| A902-23 | collector/bias supply V and I range | TBD | V / A | pending | schemas/interfaces/icp_neutralizer_icd_v1.json ICP-20, ICP-21 (electron-extraction collector bias, floating body row 70) | TBD | OPEN | LOCK-1 |
+| A902-24 | ICP gas-feed valve/controller power and feed species | TBD | W | pending | TBD - A9 recorder flag row 46 (ICP gas feed not yet booked); schemas/interfaces/icp_neutralizer_icd_v1.json ICP-26 | TBD | OPEN | LOCK-1 |
 | A902-25 | C1 keeper pulsed ignition capability (current-limited; interlocks; pulse energy recorded) | [300.0, 600.0] | V | owner decision | docs/decisions/OD_2026_09_29_owner_answers_147.json row 89; H2-2 H22-22 [300.0, 600.0] V (measured) | owner-allocation | ADOPTED (capability, not a load) | NOW |
 | A902-26 | C1 heater power during preheat | TBD | W | pending | TBD - requires the C1 unit selection; analog envelope only: H2-2 H22-16 [45.0, 400.0] W (measured analog, not a C1 value) | TBD | OPEN | after-evidence |
 | A902-27 | C1 heater power in steady state | TBD | W | pending | TBD - H2-2 H22-17: '0 W if C-1 self-heats at the lowest H-1 operating I_d; otherwise the maintained ...' (conditional on self-heating) | TBD | OPEN | after-evidence |
@@ -58,7 +58,7 @@ Other pinned inputs: `abep_sim/arch_boundary.py` `8dfc309a5d2c717913fd4961bc660f
 | A902-33 | ICP assist magnet | not installed in the first build | W | owner decision | docs/decisions/OD_2026_09_29_owner_answers_147.json row 69: unmagnetized first build; a magnetic variant is a new controlled variant with booked power/mass | n/a (rule) | ADOPTED | NOW |
 | A902-34 | active cooling load | TBD | W | pending | docs/decisions/OD_2026_09_29_owner_answers_147.json row 66: slot present only in a declared variant; context docs/decisions/OD_2026_09_29_owner_answers_147.json row 86 (>= 50 K margin, +20 % heat load); PENDING docs/hardware/h2/h2_5_thermal_network/ | TBD | OPEN | after-evidence |
 | A902-35 | supply efficiencies (internal bus -> load plane), one per slot | TBD | - | pending | explicit ledger inputs with evidence class. H2-4 candidate evidence: H24-05 is digitized at 25-34 V input (needs re-basing to the 100 V internal bus); H24-06..H24-11 are S-OSUGA05 (IEPC-2005-114) analogs on a regulated 100 V +/- 3 V bus (bus voltage matches) but for a 200 mN / 3 kW-class PPU and mostly minimum-efficiency specifications, so transfer to A9 load levels is not established (see h2_4_revision_flags) | TBD | OPEN | LOCK-2 |
-| A902-36 | P_bus measurement-chain uncertainty (DC channels + RF planes) | TBD | relative | pending | PENDING docs/experiments/hall_icp/uncertainty_budget/; historical INS-02 numbers are not carried (row 18) | TBD | OPEN | LOCK-1 |
+| A902-36 | P_bus measurement-chain uncertainty (DC channels + RF planes) | TBD | relative | pending | docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=DQ-HI-PBUS]; historical INS-02 numbers are not carried (row 18) | TBD | OPEN | LOCK-1 |
 | A902-37 | C1 ignition-flow dwell cap in the start-up sequence | 120 s per attempt, at most two retries | s | owner decision | docs/decisions/OD_2026_09_29_owner_answers_147.json row 93 (preliminary; final bound frozen before score-bearing C1 testing) | owner-allocation | ADOPTED (preliminary) | LOCK-2 |
 | A902-38 | reserved DC port | stated explicitly per step (0 W when unused) | W | definition | docs/decisions/OD_2026_09_29_owner_answers_147.json row 110; PROPOSED: any use must fit inside A902-10 | n/a (rule) | PROPOSED | LOCK-1 |
 
@@ -301,7 +301,7 @@ Other pinned inputs: `abep_sim/arch_boundary.py` `8dfc309a5d2c717913fd4961bc660f
 | H3-A902-01 | 13.56 MHz laboratory RF generator, 0-500 W forward, DC input metered | row 72 | quotations only (row 8); no supplier contact by the lane |
 | H3-A902-02 | directional coupler + forward/reflected sensors; calorimetric cross-check load | row 72 | - |
 | H3-A902-03 | matching network (fixed or auto-tuned; DC draw metered) | PENDING docs/interfaces/icp_neutralizer/ | - |
-| H3-A902-04 | collector/bias supply (floating, V/I metered) | row 70; PENDING docs/interfaces/icp_neutralizer/ | - |
+| H3-A902-04 | collector/bias supply (floating, V/I metered) | row 70; schemas/interfaces/icp_neutralizer_icd_v1.json ICP-21 | - |
 | H3-A902-05 | C1 keeper supply with current-limited pulsed ignition 300-600 V class, interlocks, pulse-energy recording | row 89 | - |
 | H3-A902-06 | selectable cathode-common/bleeder network with V/I measurement | row 91 | - |
 | H3-A902-07 | regulated 100 V internal-bus breadboard supply + configurable front end | row 111 | - |

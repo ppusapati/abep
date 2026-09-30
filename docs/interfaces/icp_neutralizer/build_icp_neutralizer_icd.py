@@ -124,7 +124,10 @@ TAKAHASHI = {
     "evidence_level": "3 (primary experimental literature) for the topology; analog hardware (argon, permanent-magnet HET, "
                       "different geometry), so NOT evidence for Vyovrinda H-1 performance",
     "label": "published analog, reported",
-    "authority_note": ("A9-05 (PENDING docs/evidence/icp_neutralizer/) owns the authoritative evidence extraction; this "
+    # A9_INT (fo_a9_int_core_integration): pointer resolved to the merged A9-05 deliverable (cited, not read, not pinned
+    # here; post-integration sha256 in docs/experiments/hall_icp/integration/a9_core_integration_v1.json)
+    "authority_note": ("A9-05 (docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json) owns the authoritative "
+                       "evidence extraction; this "
                        "annex is this lane's own page-cited extraction of geometry/operating ranges for interface "
                        "context and must be reconciled with A9-05 when it merges"),
 }

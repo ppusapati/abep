@@ -91,14 +91,14 @@
   ],
   "status_not_outcome": "OPEN (row 38): unresolved evidence is reported with the next discriminating test",
   "net_benefit_form": "hard gates + Pareto (delta Xe, delta P_bus, delta mass, T/P_bus, restart and life burden vs C1); no weighted scalar unless preregistered (row 37)",
-  "full_vocabulary": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
+  "full_vocabulary": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json decision_topology (A9-01)",
   "winner": "none declared by this lane"
  },
  "what_this_is_not": [
   "not a performance prediction for H-1, C1 or the A9 ICP module; no Hall closure (credible set EMPTY), no abep_sim/plasma_devices.py, no withdrawn v1.2-v1.6 number",
   "not a supply of the frozen v2 inputs; no ASSUMED_SCREENING_VALUE manufactured (row 146)",
   "not a numeric threshold: margins, effect sizes, stop rules and n are frozen at LOCK-1 (rules) / LOCK-2 (values); the only numbers are owner-given (cited by row)",
-  "not a stage map (A9-01), bus boundary (A9-02), ICD (A9-03) or uncertainty budget (A9-04): those are PENDING and referenced, never fabricated",
+  "not a stage map (A9-01), bus boundary (A9-02), ICD (A9-03) or uncertainty budget (A9-04): those are separate deliverables (docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json; abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json; schemas/interfaces/icp_neutralizer_icd_v1.json; docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) referenced, never fabricated",
   "Hall-closure uncertainty never leaks upstream: nothing here touches intake, compressor, gas chambers or valves models"
  ],
  "evidence_steps": {
@@ -167,14 +167,14 @@
    "group": "RF",
    "name": "forward RF power at the load plane",
    "symbol": "P_fwd",
-   "definition": "RF power travelling toward the matching network/antenna, measured by a directional coupler at the declared RF load plane (plane PENDING A9-03)",
+   "definition": "RF power travelling toward the matching network/antenna, measured by a directional coupler at the declared RF load plane (plane schemas/interfaces/icp_neutralizer_icd_v1.json ICP-14 (A9-03 ICD))",
    "units": "W",
    "configurations": [
     "hall_icp_neutralizer"
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "directional coupler + power sensor (INS-03 adapted; PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "directional coupler + power sensor (INS-03 adapted; docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-RF] (A9-04))",
     "analog_refs": [
      "TK-21",
      "TK-23"
@@ -213,7 +213,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "directional coupler reverse port (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "directional coupler reverse port (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-RF] (A9-04))",
     "analog_refs": [
      "TK-22"
     ]
@@ -250,7 +250,7 @@
    ],
    "how_obtained": {
     "route": "derived",
-    "chain": "from VI-RF-02, VI-RF-03 (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "from VI-RF-02, VI-RF-03 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-RF] (A9-04))",
     "analog_refs": [
      "TK-21"
     ]
@@ -397,7 +397,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "DC V/I channel per bus slot (INS-02 adapted; bus slot PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/ (A9-02))",
+    "chain": "DC V/I channel per bus slot (INS-02 adapted; bus slot abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slot icp_rf_source (A9-02))",
     "analog_refs": []
    },
    "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
@@ -540,7 +540,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "isolated current sensors on every ICP-module terminal (PENDING docs/interfaces/icp_neutralizer/ (A9-03 ICD); PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "isolated current sensors on every ICP-module terminal (schemas/interfaces/icp_neutralizer_icd_v1.json ICP-20, ICP-21, ICP-34 (A9-03 ICD); docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-NEUT] (A9-04))",
     "analog_refs": [
      "TK-52",
      "TK-56"
@@ -578,7 +578,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "RF-power / flow scan (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "RF-power / flow scan (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-NEUT] (A9-04))",
     "analog_refs": [
      "TK-53"
     ]
@@ -615,7 +615,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "isolated voltage channel (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "isolated voltage channel (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-NEUT] (A9-04))",
     "analog_refs": [
      "TK-55"
     ]
@@ -653,7 +653,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "bias supply V/I (bus slot PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/ (A9-02); PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "bias supply V/I (bus slot abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slot icp_collector_bias (A9-02); docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-NEUT] (A9-04))",
     "analog_refs": [
      "TK-13",
      "TK-40"
@@ -692,7 +692,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "high-impedance isolated voltage channel (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "high-impedance isolated voltage channel (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-NEUT] (A9-04))",
     "analog_refs": []
    },
    "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
@@ -728,7 +728,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "isolated voltage channel, selectable bleeder topology (row 91; PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "isolated voltage channel, selectable bleeder topology (row 91; docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-NEUT] (A9-04))",
     "analog_refs": [
      "TK-54",
      "TK-55"
@@ -768,7 +768,7 @@
    ],
    "how_obtained": {
     "route": "derived",
-    "chain": "VI-EX-02, VI-HD-01 (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "VI-EX-02, VI-HD-01 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-NEUT] (A9-04))",
     "analog_refs": [
      "TK-52",
      "TK-56"
@@ -846,7 +846,7 @@
    ],
    "how_obtained": {
     "route": "derived",
-    "chain": "VI-RF-08, VI-EX-04, VI-EX-01, VI-PB-02 (PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/ (A9-02))",
+    "chain": "VI-RF-08, VI-EX-04, VI-EX-01, VI-PB-02 (abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slots (A9-02))",
     "analog_refs": [
      "S-01",
      "S-02",
@@ -923,7 +923,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "INS-04 adapted (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "INS-04 adapted (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-ID] (A9-04))",
     "analog_refs": [
      "TK-52"
     ]
@@ -1002,7 +1002,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "INS-01 adapted; 1 % absolute uncertainty target (row 121); PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+    "chain": "INS-01 adapted; 1 % absolute uncertainty target (row 121); docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=DQ-HI-TABS] (A9-04)",
     "analog_refs": []
    },
    "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
@@ -1078,7 +1078,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "INS-09 adapted (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity))",
+    "chain": "INS-09 adapted (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=UB-DQ-BZ] (A9-04))",
     "analog_refs": []
    },
    "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
@@ -1260,7 +1260,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "pressure tap at the Hall-exhaust-to-ICP interface (PENDING docs/interfaces/icp_neutralizer/ (A9-03 ICD))",
+    "chain": "pressure tap at the Hall-exhaust-to-ICP interface (schemas/interfaces/icp_neutralizer_icd_v1.json ICP-27 (A9-03 ICD))",
     "analog_refs": [
      "TK-34",
      "TK-35"
@@ -1299,7 +1299,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "cold-flow pressure mapping (PENDING docs/interfaces/icp_neutralizer/ (A9-03 ICD))",
+    "chain": "cold-flow pressure mapping (schemas/interfaces/icp_neutralizer_icd_v1.json ICP-27 (A9-03 ICD))",
     "analog_refs": [
      "TK-12"
     ]
@@ -1448,7 +1448,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "INS-02 adapted per bus slot (PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/ (A9-02))",
+    "chain": "INS-02 adapted per bus slot (abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slots (A9-02))",
     "analog_refs": [
      "TK-21",
      "TK-27",
@@ -1488,7 +1488,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "INS-02 adapted per bus slot (PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/ (A9-02))",
+    "chain": "INS-02 adapted per bus slot (abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slots (A9-02))",
     "analog_refs": []
    },
    "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
@@ -1525,7 +1525,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "INS-02 time-resolved; averaging window PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
+    "chain": "INS-02 time-resolved; averaging window docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json UB-P-07 (A9-04)",
     "analog_refs": []
    },
    "producing_stage": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",

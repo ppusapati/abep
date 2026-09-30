@@ -73,15 +73,42 @@ def test_required_sections_present(doc):
     assert doc["configurations"] == CONFIGS
 
 
+A9_01_JSON = "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json"
+# A9_INT (fo_a9_int_core_integration): provisional UB-DQ-* ids renamed to the final A9-01 DQ-HI-* ids where a unique
+# counterpart exists; the others keep their UB-DQ-* id and are marked 'UNMAPPED - owner/A9-10'.
+EXPECTED_MAPPING = {"UB-DQ-T": "DQ-HI-TABS", "UB-DQ-PBUS": "DQ-HI-PBUS", "UB-DQ-RF": None, "UB-DQ-NEUT": None,
+                    "UB-DQ-ID": None, "UB-DQ-FLOW": None, "UB-DQ-PB": None, "UB-DQ-BZ": None, "UB-DQ-TEMP": None,
+                    "UB-DQ-ETAU": "DQ-HI-ETAU"}
+
+
 def test_decision_quantities_cover_the_lane_scope(doc):
     ids = {q["id"] for q in doc["decision_quantities"]}
-    assert ids == {"UB-DQ-T", "UB-DQ-PBUS", "UB-DQ-RF", "UB-DQ-NEUT", "UB-DQ-ID", "UB-DQ-FLOW", "UB-DQ-PB",
-                   "UB-DQ-BZ", "UB-DQ-TEMP", "UB-DQ-ETAU"}
+    assert ids == {v or k for k, v in EXPECTED_MAPPING.items()}
     for q in doc["decision_quantities"]:
-        assert q["a9_01_dq_id"].startswith("PENDING docs/experiments/hall_icp/prereg_framework/")
+        if q["id"].startswith("DQ-HI-"):
+            assert q["a9_01_dq_id"].startswith(A9_01_JSON + " " + q["id"] + " (role ")
+        else:
+            assert q["a9_01_dq_id"].startswith("PENDING docs/experiments/hall_icp/prereg_framework/")
         assert set(q["configurations"]) <= set(CONFIGS)
     chains = {c["dq"] for c in doc["measurement_chains"]}
     assert chains == ids
+    rest = json.dumps({k: v for k, v in doc.items() if k != "dq_id_mapping"})
+    for old_id in ("UB-DQ-T\"", "UB-DQ-T)", "UB-DQ-T ", "UB-DQ-PBUS", "UB-DQ-ETAU"):
+        assert old_id not in rest, old_id
+
+
+def test_dq_id_mapping_table(doc):
+    m = doc["dq_id_mapping"]
+    assert m["integration_record"] == "docs/experiments/hall_icp/integration/a9_core_integration_v1.json"
+    rows = {r["ub_dq_id"]: r for r in m["rows"]}
+    assert set(rows) == set(EXPECTED_MAPPING)
+    for ub, dq in EXPECTED_MAPPING.items():
+        r = rows[ub]
+        assert r["dq_hi_id"] == dq
+        assert r["status"] == ("MAPPED" if dq else "UNMAPPED - owner/A9-10")
+        assert r["basis"] and r["ub_definition"] and r["a9_01_definition"]
+    targets = [r["dq_hi_id"] for r in m["rows"] if r["dq_hi_id"]]
+    assert len(targets) == len(set(targets))
 
 
 def test_every_item_is_sourced_or_tbd(doc):
@@ -190,7 +217,10 @@ def test_parallel_a9_lanes_only_pending(doc):
         assert p in txt
         for m in re.finditer(re.escape(p), txt):
             window = txt[max(0, m.start() - 200):m.start()]
-            assert ("PENDING" in window or "A9-0" in window or "counterpart" in window), p
+            # A9_INT: a resolved reference names a concrete file of the merged lane deliverable
+            token = re.match(re.escape(p) + r"[A-Za-z0-9_./]*", txt[m.start():]).group(0)
+            resolved = token.endswith((".json", ".py"))
+            assert (resolved or "PENDING" in window or "A9-0" in window or "counterpart" in window), p
     for p in A9_LANE_PATHS:
         assert p not in [x["path"] for x in doc["authority_pins"]]
 

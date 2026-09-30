@@ -3302,7 +3302,7 @@
    "access": "open access full text (publisher PDF)",
    "evidence_level": "3 (primary experimental literature) for the topology; analog hardware (argon, permanent-magnet HET, different geometry), so NOT evidence for Vyovrinda H-1 performance",
    "label": "published analog, reported",
-   "authority_note": "A9-05 (PENDING docs/evidence/icp_neutralizer/) owns the authoritative evidence extraction; this annex is this lane's own page-cited extraction of geometry/operating ranges for interface context and must be reconciled with A9-05 when it merges"
+   "authority_note": "A9-05 (docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json) owns the authoritative evidence extraction; this annex is this lane's own page-cited extraction of geometry/operating ranges for interface context and must be reconciled with A9-05 when it merges"
   },
   "entries": [
    {

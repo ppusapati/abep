@@ -211,27 +211,27 @@
   },
   {
    "path": "docs/architecture_comparison/power_boundary_a9/",
-   "why": "parallel lane A9-02, not in the base; PENDING"
+   "why": "A9-02 deliverable merged in the base (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json); cited by path, not pinned here (post-integration sha256 in docs/experiments/hall_icp/integration/a9_core_integration_v1.json)"
   },
   {
    "path": "abep_sim/bus_boundary_a9.py",
-   "why": "parallel lane A9-02, not in the base; PENDING; never imported here"
+   "why": "A9-02 module merged in the base; cited by path, not pinned here (post-integration sha256 in docs/experiments/hall_icp/integration/a9_core_integration_v1.json); never imported here"
   },
   {
    "path": "docs/interfaces/icp_neutralizer/",
-   "why": "parallel lane A9-03, not in the base; PENDING"
+   "why": "A9-03 deliverable merged in the base (schemas/interfaces/icp_neutralizer_icd_v1.json); cited by path, not pinned here (post-integration sha256 in docs/experiments/hall_icp/integration/a9_core_integration_v1.json)"
   },
   {
    "path": "docs/experiments/hall_icp/uncertainty_budget/",
-   "why": "parallel lane A9-04, not in the base; PENDING"
+   "why": "A9-04 deliverable merged in the base (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); cited by path, not pinned here (post-integration sha256 in docs/experiments/hall_icp/integration/a9_core_integration_v1.json)"
   },
   {
    "path": "docs/evidence/icp_neutralizer/",
-   "why": "parallel lane A9-05, not in the base; PENDING"
+   "why": "A9-05 deliverable merged in the base (docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json); cited by path, not pinned here (post-integration sha256 in docs/experiments/hall_icp/integration/a9_core_integration_v1.json)"
   },
   {
    "path": "docs/experiments/hall_icp/validation_inputs/",
-   "why": "parallel lane A9-05, not in the base; PENDING"
+   "why": "A9-05 deliverable merged in the base (docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json); cited by path, not pinned here (post-integration sha256 in docs/experiments/hall_icp/integration/a9_core_integration_v1.json)"
   },
   {
    "path": "docs/experiments/hall_icp/prereg/",
@@ -306,7 +306,7 @@
    "what": "no Hall-on reading. Thrust-stand in-situ calibration (SI-traceable, pre/post block, drift and hysteresis, row 119) and the preregistered u_T acceptance test at 12 mN with maximum representative moving payload and all service lines installed (row 120) against the 1 % target (row 121); power channels per A9 bus slot; RF chain 13.56 MHz, 0-500 W forward, directional-coupler forward/reflected into a dummy load with calorimetric cross-check (row 72); MFC calibration (rows 96, 97, 98, 124, 126); cold-flow uniformity (row 101); RGA (row 127); C1<->ICP exchange checks: cold/tare, service-line parasitic, B(z) perturbation, electrical isolation and RF pickup (row 64); RR-HI-07 no-plasma leg (row 33); C1 standalone conditioning and ICP standalone (no Hall) ignition / forward-reflected / collector current may be run here as module bench checks, non-scoring",
    "entry": [
     "HI-ENG procedures available",
-    "instrument set per docs/experiments/instrumentation/ plus ICP channels (PENDING docs/interfaces/icp_neutralizer/ (A9-03))"
+    "instrument set per docs/experiments/instrumentation/ plus ICP channels (schemas/interfaces/icp_neutralizer_icd_v1.json ICP-34 (A9-03))"
    ],
    "exit": [
     "S1a-analog capability record: Type B uncertainties, noise floors, RF pickup bound, installation reproducibility per module, B(z) sensitivity with each module installed and energized (row 67)",
@@ -354,10 +354,10 @@
    "id": "HI-AR",
    "order": 4,
    "name": "Ar topology reproduction (engineering-only)",
-   "what": "reproduce the Takahashi/Watanabe-type Hall + downstream ICP topology on Ar on the actual H-1 with both modules (row 36; A9 evidence_sequence item 1); reproduction targets and any published analog operating points PENDING docs/evidence/icp_neutralizer/ and docs/experiments/hall_icp/validation_inputs/ (A9-05); label AR_ENGINEERING_ONLY",
+   "what": "reproduce the Takahashi/Watanabe-type Hall + downstream ICP topology on Ar on the actual H-1 with both modules (row 36; A9 evidence_sequence item 1); reproduction targets and any published analog operating points docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json and docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json (A9-05); label AR_ENGINEERING_ONLY",
    "entry": [
     "HI-HOLDOUT-A signed",
-    "ICP module interfaces for this build available (PENDING docs/interfaces/icp_neutralizer/ (A9-03))"
+    "ICP module interfaces for this build available (schemas/interfaces/icp_neutralizer_icd_v1.json (A9-03))"
    ],
    "exit": [
     "topology reproduced or not reproduced, recorded descriptively; Ar data never satisfy DRDO atmospheric requirements (row 36)"
@@ -384,11 +384,11 @@
    "id": "HI-LOCK1",
    "order": 5,
    "name": "LOCK-1 (Hall->ICP)",
-   "what": "owner signature of this framework's forms: decision-quantity definitions, hard-gate and Pareto forms, outcome rules, same-condition list, sequence set and assignment algorithm, seed-generation procedure (row 30), condition grid from W1 plus the anticipated knee (row 31), REF-COND, missing-data and data-quality rule forms, remount procedure, stop-rule forms (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04), row 13), the rules that compute every LOCK-2 number, frozen analysis/schedule scripts (sha256); filed under docs/experiments/hall_icp/prereg/ (row 16)",
+   "what": "owner signature of this framework's forms: decision-quantity definitions, hard-gate and Pareto forms, outcome rules, same-condition list, sequence set and assignment algorithm, seed-generation procedure (row 30), condition grid from W1 plus the anticipated knee (row 31), REF-COND, missing-data and data-quality rule forms, remount procedure, stop-rule forms (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json stop_rules (A9-04), row 13), the rules that compute every LOCK-2 number, frozen analysis/schedule scripts (sha256); filed under docs/experiments/hall_icp/prereg/ (row 16)",
    "entry": [
     "HI-S1A exit",
-    "A9 bus boundary slots defined (PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02))",
-    "uncertainty budget forms (PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04))"
+    "A9 bus boundary slots defined (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slots (A9-02))",
+    "uncertainty budget forms (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json (A9-04))"
    ],
    "exit": [
     "LOCK-1 signed; any later change to a LOCK-1 item voids it"
@@ -430,7 +430,7 @@
    "entry": [
     "HI-HOLDOUT-B frozen",
     "HI-LOCK1 signed",
-    "downstream ICP interfaces frozen before score-bearing work (row 71; PENDING docs/interfaces/icp_neutralizer/ (A9-03))"
+    "downstream ICP interfaces frozen before score-bearing work (row 71; schemas/interfaces/icp_neutralizer_icd_v1.json (A9-03))"
    ],
    "exit": [
     "S1-analog capability record released as dispersion statistics only (custody rule)"
@@ -568,7 +568,7 @@
    "what": ">= 12 mN sustained atmospheric operation and demonstrated 25 mN system capability (row 4), both inside the same full spacecraft-DC propulsion boundary with P_bus < 1.5 kW (rows 27, 108), start-up transients included unless the official RFP permits otherwise (row 108); the ICP power inside the internal ~1.35 kW design allocation without nominally consuming the 1.35->1.5 kW margin (row 109); 25 mN need not use Xe, and any Xe use is booked (row 4); PARTIAL_BOUNDARY reported while compressor draw and valve-outlet feed state are unmeasured (row 22)",
    "entry": [
     "HI-LOCK2 filed",
-    "A9 boundary with every active load in a bus slot (row 110; PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02))"
+    "A9 boundary with every active load in a bus slot (row 110; docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slots (A9-02))"
    ],
    "exit": [
     "gate demonstrations recorded per configuration with their boundary basis"
@@ -625,7 +625,7 @@
    "blocker": "downstream ICP mechanical, RF, electrical, gas/plume and diagnostic interfaces frozen",
    "latest": "before HI-S1 (score-bearing Phase-1 analog work)",
    "source": "row 71",
-   "owner_lane": "PENDING docs/interfaces/icp_neutralizer/ (A9-03)"
+   "owner_lane": "schemas/interfaces/icp_neutralizer_icd_v1.json (A9-03)"
   },
   {
    "id": "GD-02",
@@ -667,21 +667,21 @@
    "blocker": "stop rules defined",
    "latest": "LOCK-1 (forms); numbers at LOCK-2; always before any Hall->ICP score-bearing data",
    "source": "row 13",
-   "owner_lane": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)"
+   "owner_lane": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json stop_rules (A9-04)"
   },
   {
    "id": "GD-08",
    "blocker": "effect-size / decision margins frozen",
    "latest": "LOCK-2 (value), LOCK-1 (form)",
    "source": "row 18",
-   "owner_lane": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)"
+   "owner_lane": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json UB-C-01 (A9-04)"
   },
   {
    "id": "GD-09",
    "blocker": "block count n",
    "latest": "LOCK-2 from measured uncertainty",
    "source": "row 19",
-   "owner_lane": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)"
+   "owner_lane": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json UB-C-06, readiness_n (A9-04)"
   },
   {
    "id": "GD-10",
@@ -730,7 +730,7 @@
    "blocker": "interpolation uncertainty (if any interpolation is used instead of measured midpoint / iso-power points)",
    "latest": "LOCK-1",
    "source": "row 15",
-   "owner_lane": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)"
+   "owner_lane": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json UB-C-08, interpolation (A9-04)"
   },
   {
    "id": "GD-17",
@@ -752,7 +752,7 @@
    "settings": "same V_d and B settings (A9 governing decision 6)",
    "stand_and_metrology": "same torsional stand (row 115) and metrology in both configurations",
    "service_lines": "matched sham service lines in every compared configuration (row 133): the lines of the absent module are present as shams with matched routing; flexible RF coax with matched sham routing, no uncompensated hard RF line across the moving stage (row 117)",
-   "carrier": "kinematic module carrier with repeatable datum control; H-1 is never unbolted (row 122); carrier datum and envelope PENDING docs/interfaces/icp_neutralizer/ (A9-03)",
+   "carrier": "kinematic module carrier with repeatable datum control; H-1 is never unbolted (row 122); carrier datum and envelope schemas/interfaces/icp_neutralizer_icd_v1.json ICP-06, ICP-07 (A9-03)",
    "serialization": "a repaired or replaced H-1, C1 or ICP score-bearing module is a new serialized unit and needs a new reference / reinstallation sequence before score-bearing use (row 83)",
    "witness_items": "witness coupons / holders are non-functional exchangeable items while B(z), geometry and the reference stay inside the frozen tolerances (row 134)"
   },
@@ -771,7 +771,7 @@
      "RF coax (sham)",
      "ICP gas line (sham)",
      "collector / bias leads (sham)",
-     "ICP telemetry harness (sham or terminated) - PENDING docs/interfaces/icp_neutralizer/ (A9-03)"
+     "ICP telemetry harness (sham or terminated) - schemas/interfaces/icp_neutralizer_icd_v1.json ICP-09, ICP-34 (A9-03)"
     ],
     "not_a_flight_claim": "C1 is not automatically the final flight neutralizer (rows 49, 88)"
    },
@@ -788,7 +788,7 @@
     "shams_present": [
      "C1 heater / keeper leads (sham)",
      "C1 Xe line (sham)",
-     "C1 telemetry (sham or terminated) - PENDING docs/interfaces/icp_neutralizer/ (A9-03)"
+     "C1 telemetry (sham or terminated) - schemas/interfaces/icp_neutralizer_icd_v1.json ICP-09 (A9-03)"
     ],
     "not_a_flight_claim": "an investigation hypothesis, not a flight baseline or a validated architecture (A9)"
    }
@@ -799,7 +799,7 @@
    "doi": "10.1007/s44205-024-00081-2",
    "license": "CC BY-NC-ND 4.0",
    "evidence_class": "published analog (topology precedent only); no operating point is used here",
-   "extraction": "PENDING docs/evidence/icp_neutralizer/ and docs/experiments/hall_icp/validation_inputs/ (A9-05)"
+   "extraction": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json and docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json (A9-05)"
   }
  },
  "module_exchange": [
@@ -821,7 +821,7 @@
     "collector / bias leads",
     "module ID and telemetry harness (row 62)"
    ],
-   "interface_reference": "PENDING docs/interfaces/icp_neutralizer/ (A9-03)"
+   "interface_reference": "schemas/interfaces/icp_neutralizer_icd_v1.json ICP-06, ICP-07, ICP-15, ICP-18, ICP-21, ICP-27, ICP-33, ICP-34, ICP-39 (A9-03)"
   },
   {
    "id": "RR-HI-03",
@@ -1010,7 +1010,7 @@
     "instruments": [
      "INS-03",
      "INS-05",
-     "ICP channels PENDING docs/interfaces/icp_neutralizer/ (A9-03)"
+     "ICP channels schemas/interfaces/icp_neutralizer_icd_v1.json ICP-34 (A9-03)"
     ],
     "tolerance": "recipe frozen at LOCK-1"
    },
@@ -1090,7 +1090,7 @@
   "external_inputs": {
    "mass": "A9 mass BOM (PENDING A9-06 mass BOM A9 amendment (backlog item in the A9 decision; no path yet))",
    "life": "HI-AO programme and life evidence (INS-P-10, INS-P-11)",
-   "boundary": "PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02)"
+   "boundary": "abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json (A9-02)"
   }
  },
  "decision_quantities": [
@@ -1126,7 +1126,7 @@
    "measurement_chain": [
     "INS-04",
     "INS-02",
-    "ICP collector V/I channel PENDING docs/interfaces/icp_neutralizer/ (A9-03)",
+    "ICP collector V/I channel schemas/interfaces/icp_neutralizer_icd_v1.json ICP-21 (A9-03)",
     "C1 keeper / emission channels (HW-C1-05)"
    ],
    "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
@@ -1145,7 +1145,7 @@
    "per_configuration": "measured for both configurations at the same conditions",
    "measurement_chain": [
     "INS-04",
-    "ICP body / collector potential channels PENDING docs/interfaces/icp_neutralizer/ (A9-03)",
+    "ICP body / collector potential channels schemas/interfaces/icp_neutralizer_icd_v1.json ICP-20, ICP-21 (A9-03)",
     "INS-15",
     "INS-16 (where feasible)"
    ],
@@ -1170,7 +1170,7 @@
     "INS-07",
     "INS-08"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=DQ-HI-TABS] (A9-04)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
@@ -1181,7 +1181,7 @@
    "id": "DQ-HI-PBUS",
    "name": "full bus-power compatibility",
    "role": "HARD_GATE",
-   "operational_definition": "P_bus = all electrical power crossing the spacecraft-DC propulsion-system boundary for the configuration, every active load in its own bus slot (Hall discharge, per-coil magnet, ICP RF source/matching, ICP collector/bias, C1 heater/keeper, flow/valve/housekeeping, reserved DC; row 110) on the A9 boundary (PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02); bus_power_boundary_v1 untouched, row 108); < 1.5 kW including start-up transients unless the official RFP explicitly permits a transient exception (row 108); PARTIAL_BOUNDARY basis reported until compressor draw and valve-outlet feed state are provided (row 22). No discharge-only or RF-generator-only power claim is sufficient (A9 governing decision 8).",
+   "operational_definition": "P_bus = all electrical power crossing the spacecraft-DC propulsion-system boundary for the configuration, every active load in its own bus slot (Hall discharge, per-coil magnet, ICP RF source/matching, ICP collector/bias, C1 heater/keeper, flow/valve/housekeeping, reserved DC; row 110) on the A9 boundary (abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json (A9-02); bus_power_boundary_v1 untouched, row 108); < 1.5 kW including start-up transients unless the official RFP explicitly permits a transient exception (row 108); PARTIAL_BOUNDARY basis reported until compressor draw and valve-outlet feed state are provided (row 22). No discharge-only or RF-generator-only power claim is sufficient (A9 governing decision 8).",
    "units": "W (steady and transient peak)",
    "per_configuration": "measured for both configurations at the same conditions",
    "measurement_chain": [
@@ -1189,7 +1189,7 @@
     "INS-03",
     "INS-18"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=DQ-HI-PBUS] (A9-04)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
@@ -1249,7 +1249,7 @@
     "INS-21",
     "INS-23",
     "INS-24",
-    "RF interlock channel PENDING docs/interfaces/icp_neutralizer/ (A9-03)"
+    "RF interlock channel schemas/interfaces/icp_neutralizer_icd_v1.json ICP-16 (A9-03)"
    ],
    "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
@@ -1421,7 +1421,7 @@
     "INS-13",
     "INS-15"
    ],
-   "measurement_chain_uncertainty_owner": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "measurement_chain_uncertainty_owner": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json measurement_chains[dq=DQ-HI-ETAU] (A9-04)",
    "margin": "NOT SET - defined here as a quantity only; its form is frozen at LOCK-1 and its value is computed at LOCK-2 by the LOCK-1 rule from measured uncertainty (row 18)",
    "freeze_points": {
     "definition_form": "LOCK-1",
@@ -1613,7 +1613,7 @@
   ],
   "condition_grid": "frozen at LOCK-1 from W1 plus the anticipated knee; the knee is an output per configuration (row 31); flow range covers ~0.38 to ~3.2 mg/s characterization with nominal sizing near ~1.3 mg/s (row 73)",
   "interpolation": "measured midpoint / iso-power points preferred over interpolation; any interpolation uncertainty preregistered (row 15)",
-  "stopped_arm": "if an arm / configuration stops (stop rules PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)), its scheduled slots become NOT_TESTED, all remaining order is kept, and the balance loss is reported (row 39)",
+  "stopped_arm": "if an arm / configuration stops (stop rules docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json stop_rules (A9-04)), its scheduled slots become NOT_TESTED, all remaining order is kept, and the balance loss is reported (row 39)",
   "reference_checks": "reference checks remain reference checks, not a substitute for balancing (row 29)",
   "protocol_basis": "one reconciled protocol basis; no competing protocol definitions against the same score-bearing campaign (row 21)",
   "block_template": [
@@ -1770,7 +1770,7 @@
   {
    "id": "DQR-HI-09",
    "reuses": "DQR-09 (adapted)",
-   "check": "bus-power completeness: every A9 bus slot of the configuration present (row 110; PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02))"
+   "check": "bus-power completeness: every A9 bus slot of the configuration present (row 110; docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json slots (A9-02))"
   },
   {
    "id": "DQR-HI-10",
@@ -2171,7 +2171,7 @@
    "value": "TBD - requires S1a/S1/S1b measured uncertainty and the A9-04 budget",
    "units": "per DQ",
    "basis": "row 18",
-   "source": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "source": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json UB-C-01 (A9-04)",
    "evidence_class": "none (TBD)",
    "status": "NOT SET",
    "freeze_point": "LOCK-2"
@@ -2182,7 +2182,7 @@
    "value": "TBD - requires measured uncertainty (S1b u_inst, u_T, u_P)",
    "units": "blocks",
    "basis": "row 19",
-   "source": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "source": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json UB-C-06, readiness_n (A9-04)",
    "evidence_class": "none (TBD)",
    "status": "NOT SET",
    "freeze_point": "LOCK-2"
@@ -2204,7 +2204,7 @@
    "value": "TBD - requires the A9-04 stop-rule forms and S1b capability",
    "units": "per rule",
    "basis": "row 13",
-   "source": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "source": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json stop_rules (A9-04)",
    "evidence_class": "none (TBD)",
    "status": "NOT SET",
    "freeze_point": "LOCK-2"
@@ -2281,7 +2281,7 @@
    "value": "TBD - requires owner decision HIQ-06 and ICP ICD",
    "units": "species; mg/s",
    "basis": "A9 recorder flag (row 46)",
-   "source": "PENDING docs/interfaces/icp_neutralizer/ (A9-03)",
+   "source": "schemas/interfaces/icp_neutralizer_icd_v1.json ICP-26 (A9-03)",
    "evidence_class": "none (TBD)",
    "status": "OPEN (unbooked)",
    "freeze_point": "LOCK-1"
@@ -2292,7 +2292,7 @@
    "value": "TBD - requires the Takahashi 2024 full-text extraction with page / figure / table provenance",
    "units": "various",
    "basis": "row 7",
-   "source": "PENDING docs/evidence/icp_neutralizer/ and docs/experiments/hall_icp/validation_inputs/ (A9-05)",
+   "source": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json and docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json (A9-05)",
    "evidence_class": "none (TBD)",
    "status": "PENDING",
    "freeze_point": "after-evidence"
@@ -2313,7 +2313,7 @@
   {
    "id": "IF-HI-01",
    "direction": "from this lane to A9-02",
-   "counterpart": "PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02)",
+   "counterpart": "abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json (A9-02)",
    "demand": "one bus slot per active load of each configuration: Hall discharge, per-coil magnet, ICP RF source/matching, ICP collector/bias, C1 heater and keeper (reference supplies), flow/valve/housekeeping, reserved DC; start-up transient metering; PARTIAL_BOUNDARY flag (rows 22, 108, 110)",
    "units": "W per slot (steady, transient peak)",
    "status": "PENDING"
@@ -2321,7 +2321,7 @@
   {
    "id": "IF-HI-02",
    "direction": "from A9-02 to this lane",
-   "counterpart": "PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02)",
+   "counterpart": "abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json (A9-02)",
    "demand": "slot ids used by DQ-HI-PBUS / DQ-HI-DPBUS / DQR-HI-09",
    "units": "-",
    "status": "PENDING"
@@ -2329,7 +2329,7 @@
   {
    "id": "IF-HI-03",
    "direction": "from this lane to A9-03",
-   "counterpart": "PENDING docs/interfaces/icp_neutralizer/ (A9-03)",
+   "counterpart": "schemas/interfaces/icp_neutralizer_icd_v1.json (A9-03)",
    "demand": "kinematic-carrier datum and repeatability item for downstream module exchange (row 122); module ID; matched-sham definitions (row 133); RF forward/reflected, RF interlock, collector/bias V/I, temperatures and telemetry channels (rows 62, 130); floating body with separately biased collector (row 70); Hall-exhaust-to-ICP pressure/conductance interface (row 63); ICP gas feed port",
    "units": "mm; W; V; A; K; Pa",
    "status": "PENDING"
@@ -2337,7 +2337,7 @@
   {
    "id": "IF-HI-04",
    "direction": "from A9-03 to this lane",
-   "counterpart": "PENDING docs/interfaces/icp_neutralizer/ (A9-03)",
+   "counterpart": "schemas/interfaces/icp_neutralizer_icd_v1.json (A9-03)",
    "demand": "frozen interface ids for RR-HI-02 and SC-HI-SRC-ICP; interfaces frozen before HI-S1 (row 71)",
    "units": "-",
    "status": "PENDING"
@@ -2345,7 +2345,7 @@
   {
    "id": "IF-HI-05",
    "direction": "from this lane to A9-04",
-   "counterpart": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "counterpart": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json (A9-04)",
    "demand": "decision-quantity list DQ-HI-* with measurement chains, for the uncertainty budget, stop-rule forms and the n computation (rows 12, 13, 18, 19)",
    "units": "per DQ",
    "status": "SUPPLIED (this deliverable)"
@@ -2353,7 +2353,7 @@
   {
    "id": "IF-HI-06",
    "direction": "from A9-04 to this lane",
-   "counterpart": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
+   "counterpart": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json (A9-04)",
    "demand": "uncertainty per DQ-HI-*, stop-rule forms, the LOCK-2 computation rules for margins and n",
    "units": "per DQ",
    "status": "PENDING"
@@ -2361,7 +2361,7 @@
   {
    "id": "IF-HI-07",
    "direction": "from A9-05 to this lane",
-   "counterpart": "PENDING docs/evidence/icp_neutralizer/ and docs/experiments/hall_icp/validation_inputs/ (A9-05)",
+   "counterpart": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json and docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json (A9-05)",
    "demand": "Takahashi 2024 extraction (topology precedent, Ar operating points with provenance) for HI-AR; validation-input list (row 145) mapped to DQ-HI-ECAP / DQ-HI-VCPL / DQ-HI-IGN",
    "units": "various",
    "status": "PENDING"
@@ -2369,7 +2369,7 @@
   {
    "id": "IF-HI-08",
    "direction": "from this lane to A9-05",
-   "counterpart": "PENDING docs/evidence/icp_neutralizer/ and docs/experiments/hall_icp/validation_inputs/ (A9-05)",
+   "counterpart": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json and docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json (A9-05)",
    "demand": "which validation inputs become decision quantities and which stay descriptive",
    "units": "-",
    "status": "SUPPLIED (decision_quantities)"
@@ -2523,7 +2523,7 @@
     "D-01"
    ],
    "owner_answer_verbatim": "SUPERSEDED for the primary campaign. Preserve historical D-01-A if the old pre-ionizer experiment is ever resumed. Create a new uncertainty budget for the C1-vs-ICP neutralizer comparison.",
-   "applied_as": "old D-01 budget not reused; new budget PENDING A9-04 (IF-HI-05/06)"
+   "applied_as": "old D-01 budget not reused; new budget docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json (A9-04; IF-HI-05/06)"
   },
   {
    "row": 13,
@@ -3552,7 +3552,7 @@
  "h3_h4_inputs": {
   "h3_procurement_inputs_quotations_only": [
    "13.56 MHz RF generator sized for 0-500 W forward, matching network, directional coupler, RF feedthroughs, ICP chamber components (rows 8, 72)",
-   "kinematic module carrier for a downstream module with repeatable datum (row 122; PENDING docs/interfaces/icp_neutralizer/ (A9-03))",
+   "kinematic module carrier for a downstream module with repeatable datum (row 122; schemas/interfaces/icp_neutralizer_icd_v1.json ICP-06 (A9-03))",
    "matched sham service lines incl. flexible RF coax (rows 117, 133)",
    "torsional stand for >= 25 kg moving payload (rows 115, 116)",
    "collector / bias supply and ICP telemetry channels (rows 62, 110)",
