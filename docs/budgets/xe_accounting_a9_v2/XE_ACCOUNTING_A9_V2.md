@@ -393,9 +393,9 @@ Xe load alone vs the row-44 0.25 screening cap on the 40 kg wet gate (row 5); th
 | XV2-IF-05 | IN | docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) IFD-15 | xe_accounting_a9_v2 | MEOP and tank selection (XV2-28), vendor/design-qualified C1 purge, preheat and ignition flows (XV2-09/10/11), non-C1 flow-class accuracy (XV2-20), filter/getter spec (XV2-31/32) | bar; mg/s; s; 1 | TBD_AFTER_EVIDENCE (after quotations; none received; RFQ only, no purchase) | XL-35 -> RFQ:IFD-15 |
 | XV2-IF-06 | IN | docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json (merged P1 bench) IF-P1-37 | xe_accounting_a9_v2 | per-record gas state; dedicated-feed flag; measured dedicated-feed flow if a labelled DIAGNOSTIC G-XE feed is activated (OPT-GT-P1-GXE-DIAG; P1-M-19) | mg/s; s | TBD_AFTER_EVIDENCE (P1 records; the diagnostic feed is CONDITIONAL, never baseline) | XL-36 -> P1:IF-P1-37 |
 | XV2-IF-07 | OUT | xe_accounting_a9_v2 | docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json (merged P1 bench) IF-P1-17 | booking rule: G-REUSE mdot_ICP,dedicated = 0; any activated diagnostic dedicated feed is booked here as a separate optional entry (S3-GT-P1-DIAG), never as baseline | mg/s | DEFINED (rule; no booking in the baseline) | XL-37 -> P1:IF-P1-17 |
-| XV2-IF-08 | OUT | xe_accounting_a9_v2 | PENDING fo_a9_6_decision_propagation (owner-question state v4) | open questions carried (XA9Q-01/02/03/07, MQ-09, OQ-A907-01, OQ-A910-01) and new XV2Q-01; no answers | - | OFFERED | - |
-| XV2-IF-09 | OUT | xe_accounting_a9_v2 | PENDING fo_a9_6_rvm (system requirement-verification matrix) | Xe capability / Xe accounting evidence state: every total with a TBD input is REFUSED; the RVM Xe rows can only be NOT_EVALUATED / INCOMPLETE_EVIDENCE from this accounting (never PASS) | - | OFFERED | - |
-| XV2-IF-10 | OUT | xe_accounting_a9_v2 | PENDING fo_a9_6_m16_refresh | m16_impact rows (no readiness change: framework only) | - | OFFERED | - |
+| XV2-IF-08 | OUT | xe_accounting_a9_v2 | downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_decision_propagation (owner-question state v4) | open questions carried (XA9Q-01/02/03/07, MQ-09, OQ-A907-01, OQ-A910-01) and new XV2Q-01; no answers | - | OFFERED | - |
+| XV2-IF-09 | OUT | xe_accounting_a9_v2 | downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_rvm (system requirement-verification matrix) | Xe capability / Xe accounting evidence state: every total with a TBD input is REFUSED; the RVM Xe rows can only be NOT_EVALUATED / INCOMPLETE_EVIDENCE from this accounting (never PASS) | - | OFFERED | - |
+| XV2-IF-10 | OUT | xe_accounting_a9_v2 | downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_m16_refresh | m16_impact rows (no readiness change: framework only) | - | OFFERED | - |
 | XV2-IF-11 | IN | C1 vendor/design qualification (external, not contacted) | xe_accounting_a9_v2 | C1 purge/ignition flow and durations; heater procedure | mg/s; s | TBD_AFTER_EVIDENCE | - |
 | XV2-IF-12 | IN | H-1 measurements (hardware campaign) | xe_accounting_a9_v2 | Hall Xe operating point, Xe ignition use, transition Xe logged per phase (PHASE_TOTAL_FLOW) | mg/s; s | TBD_AFTER_EVIDENCE | - |
 | XV2-IF-13 | IN | docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (merged mass / power v2) MPV2-ID-04 | xe_accounting_a9_v2 | consistency rules demanded by mass / power and applied here: one design-case content with both RA-CASE readings carried (OQ-A910-01 / XA9Q-01 / MQ-09 TBD_OWNER), C1 terms only in the hall_c1_reference scenarios (S2-*), primary G-REUSE Xe line = 0 (S1-*) | kg | DEFINED (rules applied in both packages; the design-case content question stays TBD_OWNER) | XL-33 -> MP:MPV2-ID-04 |
@@ -453,10 +453,10 @@ Xe load alone vs the row-44 0.25 screening cap on the 40 kg wet gate (row 5); th
 
 | row | key | impact | cell edit |
 |---|---|---|---|
-| 6 | xe_tank | tank volume per design case at 323 K under both RA-CASE readings (USABLE reading adds the residual: loaded x 1.02); totals REFUSED; no readiness change | none; PENDING fo_a9_6_m16_refresh |
-| 7 | xe_regulator | inlet = MEOP (TBD, XV2-28); no change | none; PENDING fo_a9_6_m16_refresh |
-| 8 | xe_metering | C1 FCUs only in hall_c1_reference; ICP feed metering only as a CASE-3 optional entry (G-XE/G-ATM/diagnostic); Hall-side Xe metering under RA-FUNC APPLIES only for the ICP configuration | none; PENDING fo_a9_6_m16_refresh |
-| 11 | cathode | C1 remains CONTROL_FALLBACK: every C1 Xe phase a separate line; not present in the ICP configuration | none; PENDING fo_a9_6_m16_refresh |
+| 6 | xe_tank | tank volume per design case at 323 K under both RA-CASE readings (USABLE reading adds the residual: loaded x 1.02); totals REFUSED; no readiness change | none; downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_m16_refresh |
+| 7 | xe_regulator | inlet = MEOP (TBD, XV2-28); no change | none; downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_m16_refresh |
+| 8 | xe_metering | C1 FCUs only in hall_c1_reference; ICP feed metering only as a CASE-3 optional entry (G-XE/G-ATM/diagnostic); Hall-side Xe metering under RA-FUNC APPLIES only for the ICP configuration | none; downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_m16_refresh |
+| 11 | cathode | C1 remains CONTROL_FALLBACK: every C1 Xe phase a separate line; not present in the ICP configuration | none; downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_m16_refresh |
 
 ## Pins
 
@@ -489,7 +489,7 @@ Xe load alone vs the row-44 0.25 screening cap on the 40 kg wet gate (row 5); th
 
 Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `docs/orchestration/trigger_registry_v1.json`, `docs/orchestration/trigger_ledger_v2.jsonl`, `docs/orchestration/fired_triggers.jsonl`, `docs/orchestration/runtime_state.json`
 
-Lanes not merged in this base (referenced by lane id only): PENDING fo_a9_6_decision_propagation (owner-question state v4); PENDING fo_a9_6_rvm (system requirement-verification matrix); PENDING fo_a9_6_m16_refresh
+Downstream consumer lanes (merged; built later in the A9.6 order, not pinned to avoid a cycle): downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_decision_propagation (owner-question state v4); downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_rvm (system requirement-verification matrix); downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_m16_refresh
 
 ### Merged cross-lane references
 

@@ -57,8 +57,22 @@ def d():
 
 # ------------------------------------------------------------------------------------------------ synthetic fixtures
 POS = {"C_series": "SYN-1", "C_shunt": "SYN-1"}
-LV = {"verification_id": "SYN-LV-01", "status": "LOSS_MODEL_VERIFIED", "method": "CAL-P2-09_calorimetric_at_power",
-      "evidence_record_ids": ["SYN-CALORIMETRY-01"], "tuning_states": ["TS1"], "data_class": "synthetic_test"}
+TS_MODEL = {"kind": "two_port", "tuning_state_id": "TS1", "Z_load_ohm": [Z0, 0.0],
+            "Z_load_basis": "SYNTHETIC calorimetric reference load"}
+LB_MODEL = {"kind": "declared_bound", "loss_bound_id": "LB1"}
+
+
+def _verify(fw, red, cal, model_ref, vid, *, eta_meas=None, u_eta_pred=0.01, k=2.0, k_reg="SYN-K-REG-01", **kw):
+    """At-power loss verification produced by p2_framework.verify_line_match_loss (MET-07): P_ref_load is chosen so
+    that eta_meas (default: the model's own prediction) is what the synthetic calorimeter 'measured'."""
+    eta = red.loss_model_prediction(cal, model_ref)[0] if eta_meas is None else eta_meas
+    args = dict(verification_id=vid, method="CAL-P2-09_calorimetric_at_power", cal=cal, model_ref=model_ref,
+                u_eta_pred=u_eta_pred if model_ref["kind"] == "two_port" else 0.0, P_net_W=100.0, u_P_net_W=1.0,
+                P_ref_load_W=100.0 * eta, u_P_ref_load_W=1.0, k=k, k_registration_id=k_reg,
+                evidence_record_ids=["SYN-CALORIMETRY-01"], data_class=cal["data_class"],
+                u_eta_pred_basis_id="SYN-SPARAM-UNC-01")
+    args.update(kw)
+    return fw.verify_line_match_loss(**args)
 
 
 def _c(z):
@@ -93,7 +107,7 @@ def _cal_from_touchstone(fw, red, line_abcd, match_abcd, e=(complex(0.01, -0.02)
                        phase_calibrated=True, data_class=data_class, tuning_state_id="TS1", positions=POS)
     terms = {"e00": e[0], "e11": e[1], "e10e01": e[2]}
     lab = SYN if data_class == "synthetic_test" else "measured"
-    return {"schema": red.CAL_SCHEMA_ID, "calibration_set_id": "SYN", "data_class": data_class, "f_Hz": F0,
+    cal = {"schema": red.CAL_SCHEMA_ID, "calibration_set_id": "SYN", "data_class": data_class, "f_Hz": F0,
             "Z0_ohm": Z0, "power_sensors": {"PS": {"CF_fwd": 1.0, "CF_ref": 1.0, "certificate": "SYNTHETIC"}},
             "coupler": fw.coupler_error_model(terms, "SYN-CPL"),
             "two_ports": {"line": fw.two_port_entry(ls, F0, Z0), "match_states": {"TS1": fw.two_port_entry(ms, F0, Z0)}},
@@ -101,14 +115,16 @@ def _cal_from_touchstone(fw, red, line_abcd, match_abcd, e=(complex(0.01, -0.02)
                          "fixture_abcd": [[_c(fix[0]), _c(fix[1])], [_c(fix[2]), _c(fix[3])]],
                          "fixture_from_plane": "RP-VI", "fixture_to_plane": "RP-ANT", "amplitude_convention": "peak"},
             "loss_bounds": {"LB1": {"loss_fraction_max": 0.1, "source": "SYNTHETIC", "evidence_class": "assumed",
-                                    "verification": dict(LV, verification_id="SYN-LV-LB1", tuning_states=[],
-                                                         data_class=data_class)}},
+                                    "verification": None}},
             "cold_references": {"CR1": {"R_cold_ohm": 1.5, "source_record_id": "SYN-COLD",
                                         "source_phase": "CAL-P2-08_VNA_UNPOWERED",
                                         "unlit_verification": {"basis": "SYNTHETIC CAL-P2-08 VNA record"},
                                         "evidence_class": lab, "antenna_temperature_K": 300.0}},
             "antenna_current_probe": {"cal_id": "ACP", "k_mag": 1.0, "certificate": "SYNTHETIC"},
-            "loss_verification": dict(LV, data_class=data_class)}
+            "loss_verification": None}
+    cal["loss_verification"] = _verify(fw, red, cal, TS_MODEL, "SYN-LV-01")
+    cal["loss_bounds"]["LB1"]["verification"] = _verify(fw, red, cal, LB_MODEL, "SYN-LV-LB1")
+    return cal
 
 
 def _rec(fw, red, cal, z_ant, p_fwd=100.0, rid="SYN-1"):
@@ -136,7 +152,8 @@ def _rec(fw, red, cal, z_ant, p_fwd=100.0, rid="SYN-1"):
             "plasma_state": {"lit": False, "mode": "UNLIT", "optical_signal_V": None, "unlit_threshold_V": None,
                              "unlit_threshold_source": None, "threshold_basis": None,
                              "photodiode_line_of_sight_ok": None, "photodiode_saturated": None,
-                             "electrical_ignition_or_mode_transition": None, "electrical_indicator_basis": None},
+                             "electrical_ignition_or_mode_transition": None, "electrical_indicator_basis": None,
+                             "mode_indicator_basis": None},
             "sweep": {"sweep_id": "S", "direction": "single", "index": 0}, "settling": {"dwell_s": None, "settled": None},
             "temperatures_K": {}, "cold_reference_id": None, "p1_stable_region_ref": None, "antenna_current": None}
 
@@ -436,6 +453,8 @@ def test_delivered_power_refused_when_loss_unverified(fw, red, case):
     cal, rec = case
     ok = red.reduce_record(rec, {"SYN": cal})
     assert isinstance(ok["P_delivered_W"], float) and ok["loss_status"].startswith("VERIFIED")
+    LV = cal["loss_verification"]
+    assert LV["status"] == red.LOSS_VERIFIED
     variants = [None, dict(LV, status="LOSS_MODEL_INCONSISTENT"), dict(LV, status="NOT_EVALUATED"),
                 dict(LV, tuning_states=["TS-OTHER"]), dict(LV, method="datasheet"), dict(LV, evidence_record_ids=[]),
                 {k: v for k, v in LV.items() if k != "method"}]
@@ -468,24 +487,100 @@ def test_delivered_power_refused_when_loss_unverified(fw, red, case):
 
 def test_verify_line_match_loss(fw, red, case):
     cal, rec = case
-    base = dict(verification_id="V1", method="CAL-P2-09_calorimetric_at_power", evidence_record_ids=["SYN-CAL"],
-                tuning_states=["TS1"], data_class="synthetic_test")
-    v = fw.verify_line_match_loss(eta_pred=0.9, u_eta_pred=0.01, P_net_W=100.0, u_P_net_W=1.0, P_ref_load_W=89.5,
-                                  u_P_ref_load_W=1.0, k=2.0, **base)
+    eta = red.loss_model_prediction(cal, TS_MODEL)[0]
+    v = _verify(fw, red, cal, TS_MODEL, "V1", eta_meas=eta - 0.005)
     assert v["status"] == red.LOSS_VERIFIED and v["normalized_statistic"] < 2.0
-    assert red.loss_verification_status(v, "synthetic_test", "TS1") == (True, "")
-    v2 = fw.verify_line_match_loss(eta_pred=0.9, u_eta_pred=0.01, P_net_W=100.0, u_P_net_W=1.0, P_ref_load_W=80.0,
-                                   u_P_ref_load_W=1.0, k=2.0, **base)
-    assert v2["status"] == fw.LOSS_INCONSISTENT and red.loss_verification_status(v2, "synthetic_test", "TS1")[0] is False
-    v3 = fw.verify_line_match_loss(eta_pred=0.9, u_eta_pred=None, P_net_W=100.0, u_P_net_W=1.0, P_ref_load_W=89.5,
-                                   u_P_ref_load_W=1.0, k=2.0, **base)
+    assert v["eta_predicted"] == pytest.approx(eta) and v["model_ref"]["calibration_set_id"] == "SYN"
+    assert red.loss_verification_status(v, cal, tuning_state_id="TS1") == (True, "")
+    v2 = _verify(fw, red, cal, TS_MODEL, "V2", eta_meas=eta - 0.1)
+    assert v2["status"] == fw.LOSS_INCONSISTENT
+    assert red.loss_verification_status(v2, cal, tuning_state_id="TS1")[0] is False
+    v3 = _verify(fw, red, cal, TS_MODEL, "V3", u_eta_pred=None)
     assert v3["status"] == fw.NOT_EVALUATED                          # missing uncertainty -> never verified
     with pytest.raises(fw.CriteriaMissingError):
-        fw.verify_line_match_loss(eta_pred=0.9, u_eta_pred=0.01, P_net_W=100.0, u_P_net_W=1.0, P_ref_load_W=89.5,
-                                  u_P_ref_load_W=1.0, k=None, **base)
+        _verify(fw, red, cal, TS_MODEL, "V4", k=None)
+    for bad in (None, "", "PENDING-LOCK-2", "TBD_OWNER"):         # k needs a registered k_registration_id (MET-07)
+        with pytest.raises(fw.CriteriaMissingError):
+            _verify(fw, red, cal, TS_MODEL, "V5", k_reg=bad)
     with pytest.raises(fw.FrameworkError):
-        fw.verify_line_match_loss(eta_pred=0.9, u_eta_pred=0.01, P_net_W=100.0, u_P_net_W=1.0, P_ref_load_W=89.5,
-                                  u_P_ref_load_W=1.0, k=2.0, **dict(base, method="guess"))
+        _verify(fw, red, cal, TS_MODEL, "V6", method="guess")
+    with pytest.raises(fw.FrameworkError):                            # eta_pred must be the model's prediction
+        _verify(fw, red, cal, TS_MODEL, "V7", eta_pred=0.5)
+    with pytest.raises(fw.FrameworkError):
+        _verify(fw, red, cal, TS_MODEL, "V8", evidence_record_ids=["PENDING-CAL"])
+    with pytest.raises(fw.FrameworkError):                            # unknown tuning state
+        _verify(fw, red, cal, dict(TS_MODEL, tuning_state_id="TS9"), "V9", eta_meas=0.6)
+    # declared bound: one-sided (measured loss not above the bound beyond k u_c)
+    vb = _verify(fw, red, cal, LB_MODEL, "VB1", eta_meas=0.95)
+    assert vb["status"] == red.LOSS_VERIFIED and vb["eta_predicted"] == pytest.approx(0.9)
+    assert red.loss_verification_status(vb, cal, loss_bound_id="LB1") == (True, "")
+    vb2 = _verify(fw, red, cal, LB_MODEL, "VB2", eta_meas=0.8)
+    assert vb2["status"] == fw.LOSS_INCONSISTENT
+    assert red.loss_verification_status(vb, cal, loss_bound_id="LB2")[0] is False   # other bound
+    assert red.loss_verification_status(vb, cal, tuning_state_id="TS1")[0] is False  # not a two-port check
+
+
+def test_loss_verification_tied_to_model_met07(fw, red, case):
+    """MET-07: a LOSS_MODEL_VERIFIED label alone never reconstructs P_delivered; the reducer recomputes the statistic,
+    requires a registered k and ties eta_predicted to the two-port network / load of the check it verifies."""
+    cal, rec = case
+    lv = cal["loss_verification"]
+    ok = red.reduce_record(rec, {"SYN": cal})
+    assert ok["loss_status"] == "VERIFIED (SYN-LV-01)"
+
+    def refused(v, c=None):
+        c2 = copy.deepcopy(cal if c is None else c)
+        c2["loss_verification"] = v
+        out = red.reduce_record(rec, {"SYN": c2})
+        assert out["loss_status"] == "UNVERIFIED", out["loss_status"]
+        assert out["P_delivered_W"].startswith("REFUSED") and "match_line_efficiency" not in out
+        return out["P_line_match_loss_W"]
+
+    bare = {k: lv[k] for k in ("verification_id", "status", "method", "evidence_record_ids", "tuning_states",
+                               "data_class")}
+    assert "lacks" in refused(bare)                                   # status label alone (finding case 1)
+    for f in ("k", "k_registration_id", "eta_measured", "u_eta_measured", "eta_predicted", "u_eta_predicted",
+              "normalized_statistic", "model_ref", "comparison"):
+        refused({k: v for k, v in lv.items() if k != f})
+    for bad in ("", "PENDING-LOCK-2", "TBD"):
+        assert "k_registration_id" in refused(dict(lv, k_registration_id=bad))
+    refused(dict(lv, k=0.0))
+    # at-power check measured eta 0.5 while the network predicts ~0.61: a forged VERIFIED label with the true
+    # statistic is refused (finding case 2), and so is a forged eta_predicted / statistic pair
+    stat = red.loss_statistic("two_sided", 0.5, lv["u_eta_measured"], lv["eta_predicted"], lv["u_eta_predicted"])
+    assert "> k" in refused(dict(lv, eta_measured=0.5, normalized_statistic=stat))
+    assert "recomputed" in refused(dict(lv, eta_measured=0.5))
+    s2 = red.loss_statistic("two_sided", 0.5, lv["u_eta_measured"], 0.5, lv["u_eta_predicted"])
+    assert "prediction" in refused(dict(lv, eta_measured=0.5, eta_predicted=0.5, normalized_statistic=s2))
+    # the check verified another load / another network / another calibration set / another comparison
+    mr = lv["model_ref"]
+    assert "prediction" in refused(dict(lv, model_ref=dict(mr, Z_load_ohm=[5.0, 30.0])))
+    c_other = copy.deepcopy(cal)
+    c_other["two_ports"]["match_states"]["TS1"]["S21"] = [0.5, 0.1]
+    assert "different two-port network" in refused(lv, c_other)
+    assert "calibration set" in refused(dict(lv, model_ref=dict(mr, calibration_set_id="OTHER")))
+    assert "comparison" in refused(dict(lv, comparison="one_sided_bound"))
+    refused(dict(lv, model_ref=dict(mr, tuning_state_id="TS2")))
+    # list form: one record per tuning state; none / ambiguous -> refused, never chosen silently
+    assert red.reduce_record(rec, {"SYN": dict(cal, loss_verification=[lv])})["loss_status"].startswith("VERIFIED")
+    assert "no loss verification names" in refused([dict(lv, model_ref=dict(mr, tuning_state_id="TS2"))])
+    assert "ambiguous" in refused([lv, dict(lv, verification_id="SYN-LV-02")])
+    # declared bound: the bound's verification must name that bound and its 1 - loss_fraction_max
+    r = copy.deepcopy(rec)
+    r["loss_method"] = "declared_bound"
+    assert isinstance(red.reduce_record(r, {"SYN": cal})["P_delivered_W"], dict)
+    c3 = copy.deepcopy(cal)
+    c3["loss_bounds"]["LB1"]["loss_fraction_max"] = 0.05             # bound tightened after the check
+    assert red.reduce_record(r, {"SYN": c3})["loss_status"] == "UNVERIFIED"
+    c4 = copy.deepcopy(cal)
+    c4["loss_bounds"]["LB1"]["verification"] = lv                    # a two-port check is not a bound check
+    assert red.reduce_record(r, {"SYN": c4})["loss_status"] == "UNVERIFIED"
+    # JSON round trip keeps the verification valid (no rounding in the record)
+    cj = json.loads(json.dumps(cal))
+    assert red.reduce_record(rec, {"SYN": cj})["loss_status"] == "VERIFIED (SYN-LV-01)"
+
+
+def test_dissipated_fraction_matched(fw):
     a = 0.8
     assert fw.dissipated_fraction_matched(0j, a) == pytest.approx(1 - a * a)
     assert fw.dissipated_fraction_matched(0j, 1.0) == 0.0
@@ -500,7 +595,7 @@ def test_mixed_evidence_refused(fw, red, case):
     with pytest.raises(red.MixedEvidenceError):
         red.reduce_record(r, {"SYN": cal})
     c2 = copy.deepcopy(cal)
-    c2["loss_verification"] = dict(LV, data_class="measured")
+    c2["loss_verification"] = dict(cal["loss_verification"], data_class="measured")
     with pytest.raises(red.MixedEvidenceError):
         red.reduce_record(rec, {"SYN": c2})
     c3 = copy.deepcopy(cal)
@@ -666,7 +761,9 @@ def _hot(rec, mode="H_MODE", sig=2.0, gas="Ar", rid="SYN-H"):
     r["plasma_state"].update({"lit": mode != "UNLIT", "mode": mode, "optical_signal_V": sig, "unlit_threshold_V": 0.5,
                               "unlit_threshold_source": "SYNTHETIC P1 procedure id", "threshold_basis": dict(TB),
                               "photodiode_line_of_sight_ok": True, "photodiode_saturated": False,
-                              "electrical_ignition_or_mode_transition": False, "electrical_indicator_basis": None})
+                              "electrical_ignition_or_mode_transition": False, "electrical_indicator_basis": None,
+                              "mode_indicator_basis": ("SYNTH HM-R06 indicators" if mode in ("E_MODE", "H_MODE")
+                                                       else None)})
     r["antenna_current"] = {"I_rms_A": 2.0, "probe_cal_id": "ACP"}
     return r
 
@@ -881,17 +978,29 @@ def test_p1_handoff_admissibility_fail_closed():
            "V_collector_V": [-50.0, -30.0]}
     pt = {"operating_point_record_id": "SYN-OP", "match_setting_id": "SYN-M", "h1_point_id": None, "gas": "Ar",
           "gas_mode": "G-REUSE", "Z_ICP": None, "factors": {}}
-    h = {"handoff": "IF-P1-01 -> P2 IDP2-01", "status": fw.P1_HANDOFF_ADMISSIBLE, "criteria_id": "SYN-CRIT",
-         "points_within_criteria": [pt], "envelope_of_tested_points": env, "envelope_note": "x", "dwells": [],
-         "note": "synthetic"}
-    ref, region = fw.p1_handoff_admissible(h)
+    h = {"handoff": "IF-P1-01 -> P2 IDP2-01", "evidence_kind": "SYNTHETIC_TEST_ONLY", "status": fw.P1_HANDOFF_ADMISSIBLE,
+         "criteria_id": "SYN-CRIT", "points_within_criteria": [pt], "envelope_of_tested_points": env,
+         "envelope_note": "x", "dwells": [], "note": "synthetic"}
+    ref, region = fw.p1_handoff_admissible(h, "synthetic_test")
     assert region["factor_ranges"]["mdot_hall_anode_mg_s"] == [0.9, 1.1] and "SYN-CRIT" in ref
+    assert region["p1_evidence_kind"] == "SYNTHETIC_TEST_ONLY"
+    # SW-R2-01: a synthetic P1 handoff never opens a measured P2 map (default target), nor a measured one a synthetic
+    with pytest.raises(fw.RED.MixedEvidenceError):
+        fw.p1_handoff_admissible(h)
+    with pytest.raises(fw.RED.MixedEvidenceError):
+        fw.p1_handoff_admissible(dict(h, evidence_kind="MEASURED"), "synthetic_test")
+    for kind in ("NO_RECORDS", None, "measured"):
+        with pytest.raises(fw.RED.SequenceError):
+            fw.p1_handoff_admissible(dict(h, evidence_kind=kind), "synthetic_test")
+    mref, _ = fw.p1_handoff_admissible(dict(h, evidence_kind="MEASURED"), "measured")
+    assert "evidence MEASURED" in mref
     for bad in (dict(h, status="NOT_EVALUATED"), dict(h, status="NO_TESTED_POINT_WITHIN_CRITERIA"),
                 dict(h, status="SOMETHING"), dict(h, criteria_id="TBD"), dict(h, points_within_criteria=[]),
                 dict(h, envelope_of_tested_points={k: v for k, v in env.items() if k != "P_fwd_W"}),
-                dict(h, envelope_of_tested_points=dict(env, P_fwd_W=[120.0, 80.0])), None):
+                dict(h, envelope_of_tested_points=dict(env, P_fwd_W=[120.0, 80.0])), None,
+                {k: v for k, v in h.items() if k != "evidence_kind"}):
         with pytest.raises(fw.RED.SequenceError):
-            fw.p1_handoff_admissible(bad)
+            fw.p1_handoff_admissible(bad, "synthetic_test")
     pts = [{"record_id": "A", "factors": {"P_RF_setpoint_W": 100.0, "mdot_hall_anode_mg_s": 1.0, "p_chamber_Pa": 0.015,
                                           "V_collector_V": -40.0, "gas": "Ar", "gas_mode": "G-REUSE"}},
            {"record_id": "B", "factors": {"P_RF_setpoint_W": 100.0, "mdot_hall_anode_mg_s": 1.0, "p_chamber_Pa": 0.015,
@@ -899,3 +1008,80 @@ def test_p1_handoff_admissibility_fail_closed():
     ins, outs, nev = fw.split_by_domain(pts, region)
     assert [p["record_id"] for p in ins] == ["A"] and [p["record_id"] for p in nev] == ["B"] and not outs
 
+
+
+# ------------------------------------------------------------------ A9.6 sec. 18 consolidated verification, repair round 1
+def test_sw04_uncertainty_helpers_refuse_invalid_inputs(fw):
+    """SW-04: non-PSD / negative / non-finite covariances and inputs, negative u, eta > 1, |Gamma| > 1 are refused."""
+    f = lambda x: [x[0] + x[1]]
+    for bad in ([[0.01, 0.5], [0.5, 0.01]], [[-0.01, 0.0], [0.0, 0.01]]):
+        with pytest.raises(fw.UncertaintyMissingError):
+            fw.propagate_linear(f, [1.0, 1.0], bad)
+        with pytest.raises(fw.UncertaintyMissingError):
+            fw.propagate_mc(f, [1.0, 1.0], bad, n_trials=1000, seed=1)
+    for x in ([float("nan"), 1.0], [float("inf"), 1.0]):
+        with pytest.raises(fw.FrameworkError):
+            fw.propagate_linear(f, x, [[0.01, 0.0], [0.0, 0.01]])
+    with pytest.raises(fw.UncertaintyMissingError):
+        fw.gamma_vswr_pnet_uncertainty(100.0, -1.0, 4.0, -1.0, 0.0)
+    for args in ((100.0, 1.0, 1.5, 0.1), (100.0, 1.0, 0.9, -0.1), (-5.0, 1.0, 0.9, 0.01)):
+        with pytest.raises(fw.FrameworkError):
+            fw.p_delivered_uncertainty(*args)
+    with pytest.raises(fw.FrameworkError):
+        fw.z_from_gamma_uncertainty(2 + 0j, [[1e-4, 0.0], [0.0, 1e-4]], 50.0)
+    assert fw.p_delivered_uncertainty(100.0, 1.0, 0.9, 0.01)["P_delivered_W"] == pytest.approx(90.0)
+
+
+def test_sw09_mc_coverage_order_statistic_and_type_checks(fw):
+    """SW-09: the JCGM 101 7.7.2 order statistics [y_(r), y_(r+q)] are exact for a deterministic identity case;
+    a bool seed and a None sweep index are refused with framework errors."""
+    import random as _random
+    n = 1000
+    out = fw.propagate_mc(lambda x: [x[0]], [0.0], [[1.0]], n_trials=n, seed=7)
+    rng = _random.Random(7)
+    zs, spare = [], None
+    for _ in range(n):                       # replay the documented Box-Muller stream (one input: spare unused)
+        if spare is not None:
+            zs.append(spare)
+            spare = None
+            continue
+        u1 = 1.0 - rng.random()
+        u2 = rng.random()
+        rad = math.sqrt(-2.0 * math.log(u1))
+        zs.append(rad * math.cos(2 * math.pi * u2))
+        spare = rad * math.sin(2 * math.pi * u2)
+    col = sorted(zs)
+    q, r = 950, 25                           # q = int(0.95 * 1000) (integer pM), r = (M - q) / 2 (JCGM 101 7.7.2)
+    assert out["coverage_interval_95"][0] == [col[r - 1], col[r + q - 1]]
+    with pytest.raises(fw.FrameworkError):
+        fw.propagate_mc(lambda x: [x[0]], [0.0], [[1.0]], n_trials=1000, seed=True)
+
+
+def test_sw09_sweep_index_type_checked(fw):
+    pts = _sweep("up", UP)
+    pts[0]["index"] = None
+    with pytest.raises(fw.FrameworkError):
+        fw.detect_eh_transitions(pts, CRIT)
+
+
+def test_met07_r1_shifted_eta_pred_cannot_flip_inconsistent_to_verified(fw, red):
+    """Consolidated verification MET-07-R1: u_eta_pred is used once (in u_c); a caller-shifted eta_pred is refused
+    and a record carrying one is rejected by the reducer, so an INCONSISTENT check never becomes VERIFIED."""
+    cal = _cal_from_touchstone(fw, red, _line(30.0), fw.ladder_abcd(ELEMENTS))
+    eta_model = red.loss_model_prediction(cal, TS_MODEL)[0]
+    bad = _verify(fw, red, cal, TS_MODEL, "VX1", eta_meas=0.9, u_eta_pred=0.06, k=1.0)
+    assert bad["status"] != red.LOSS_VERIFIED
+    with pytest.raises(fw.FrameworkError):
+        _verify(fw, red, cal, TS_MODEL, "VX2", eta_meas=0.9, u_eta_pred=0.06, k=1.0, eta_pred=eta_model - 0.06)
+    forged = dict(_verify(fw, red, cal, TS_MODEL, "VX3", u_eta_pred=0.06, k=1.0))
+    forged.update(eta_measured=0.9, eta_predicted=eta_model - 0.06)
+    forged["normalized_statistic"] = red.loss_statistic(forged["comparison"], 0.9, forged["u_eta_measured"],
+                                                        eta_model - 0.06, 0.06)
+    ok, why = red.loss_verification_status(forged, cal, tuning_state_id="TS1")
+    assert not ok and "MET-07-R1" in why
+    with pytest.raises(fw.CriteriaMissingError):
+        _verify(fw, red, cal, TS_MODEL, "VX4", u_eta_pred=0.06, u_eta_pred_basis_id=None)
+    nobasis = dict(_verify(fw, red, cal, TS_MODEL, "VX5", u_eta_pred=0.06))
+    nobasis["u_eta_predicted_basis_id"] = None
+    ok, why = red.loss_verification_status(nobasis, cal, tuning_state_id="TS1")
+    assert not ok and "basis" in why

@@ -93,7 +93,9 @@ WORKFLOW = [
      "entry": ["P1-G0 met"],
      "exit": ["calorimetric cross-check |z_x| <= k_x = 2 on every dummy-load record (CROSS_CHECK_AGREES; A9.1 UBQ-04, "
               "UB-RF-08) - otherwise RF-dependent quantities EXCLUDED_INSTRUMENT", "line/match-loss characterizations "
-              "verified only under CROSS_CHECK_AGREES (else P_delivered stays an upper bound)",
+              "verified only under CROSS_CHECK_AGREES AND an at-power loss-model verification (CAL-P2-09 / -10 form, "
+              "k registered, P1Q-24); a record's loss must agree with its cited characterization (else P_delivered "
+              "stays an upper bound)",
               "installed-antenna records carry the photodiode state (A9.4 P2Q-05): threshold inputs for P2 (IDP2-17)"],
      "record_template": _tpl("rf_cold_checkout", red.COLD_REQUIRED),
      "required_channels": ["P1-M-01", "P1-M-02", "P1-M-03", "P1-M-04", "P1-M-05", "P1-M-06", "P1-M-08", "P1-M-09",
@@ -211,6 +213,11 @@ def _check_bundle(bundle):
             if (not isinstance(v, list) or len(v) != 2 or any(isinstance(x, bool) or not isinstance(x, (int, float))
                                                                for x in v) or v[0] > v[1]):
                 raise CampaignInputError("operating domain of %r: factor %r must be [min, max]" % (st, f))
+    if reg["stable_criteria"] is not None:
+        try:
+            red.check_stable_criteria(reg["stable_criteria"])
+        except red.P1RecordError as e:
+            raise CampaignInputError("registrations.stable_criteria invalid: %s" % e)
     if not isinstance(reg["facility_pairs"], list):
         raise CampaignInputError("registrations.facility_pairs must be a list (empty when none)")
     recs = bundle["records"]
@@ -253,10 +260,11 @@ def _domain_reasons(rec, doms):
     st = rec["stage_id"]
     if st == G0_STAGE:
         return []
+    iso = red.isolation_class_reasons(rec) if rec.get("record_kind") == "icp_operating_point" else []
     d = doms.get(st)
     if d is None:
-        return ["stage %r has no registered operating domain (registrations.operating_domains)" % st]
-    out = []
+        return iso + ["stage %r has no registered operating domain (registrations.operating_domains)" % st]
+    out = list(iso)
     for f, (a, b) in DOMAIN_FACTORS.items():
         sub = rec.get(a)
         if not isinstance(sub, dict) or b not in sub:
@@ -315,6 +323,13 @@ def run_campaign(bundle):
         raise MixedEvidenceError("campaign %r is %s but records %s say synthetic = %r: synthetic and measured evidence "
                                  "mixed - refused (A9.6 sec. 14; a synthetic record never suppresses or substitutes a "
                                  "measured one)" % (man["campaign_id"], man["evidence_kind"], mixed, not synthetic))
+    # synthetic-data contamination through labels (consolidated verification SW-03): a record labelled SYNTHETIC* is
+    # synthetic whatever its boolean flag says; in a MEASURED campaign it is mixed evidence and refused
+    labelled = [i for i, r in zip(ids, raw) if isinstance(r, dict) and isinstance(r.get("labels"), list)
+                and any("SYNTHETIC" in str(lab).upper() for lab in r["labels"])]
+    if labelled and not synthetic:
+        raise MixedEvidenceError("campaign %r is MEASURED but records %s carry a SYNTHETIC label: synthetic and measured "
+                                 "evidence mixed - refused (A9.6 sec. 14)" % (man["campaign_id"], labelled))
     index = {i: {"record_id": i, "record_kind": (r.get("record_kind") if isinstance(r, dict) else None),
                  "stage_id": (r.get("stage_id") if isinstance(r, dict) else None), "disposition": None,
                  "reasons": []} for i, r in zip(ids, raw)}
@@ -357,7 +372,8 @@ def run_campaign(bundle):
             by_kind.setdefault(use[i]["record_kind"], []).append(use[i])
     # P1-W02 RF cold checkout
     cold = red.reduce_rf_cold_checkout(by_kind.get("rf_cold_checkout", []))
-    lv = {"rf_chain_status": cold["rf_chain_status"], "verified_loss_ids": list(cold["verified_loss_ids"])}
+    lv = {"rf_chain_status": cold["rf_chain_status"], "verified_loss_ids": list(cold["verified_loss_ids"]),
+          "characterizations": dict(cold["characterizations"])}
     # P1-W03 ignition
     ign = red.reduce_ignition(by_kind.get("ignition_attempt", []))
     # P1-W04..W07, W10

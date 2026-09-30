@@ -326,7 +326,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-01, RVM-08, RVM-09 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -454,7 +454,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-08, RVM-09 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -562,7 +562,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-01, RVM-08 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -669,7 +669,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-08 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -755,7 +755,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-08 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -871,13 +871,13 @@
      "lane": "fo_a9_6_mass_power_integration",
      "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
      "how": "Xe hardware in both configurations (row 6); XA9Q-07 OPEN",
-     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+     "stated_readiness_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
     },
     {
      "lane": "fo_a9_6_xe_accounting",
      "artifact": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
      "how": "tank volume per design case at 323 K under both RA-CASE readings (USABLE reading adds the residual: loaded x 1.02); totals REFUSED; no readiness change",
-     "stated_readiness_change": "none; PENDING fo_a9_6_m16_refresh"
+     "stated_readiness_change": "none; downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_m16_refresh"
     },
     {
      "lane": "fo_a9_6_rfq_completion",
@@ -889,7 +889,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-06, RVM-07, RVM-10, RVM-13 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -1066,7 +1066,7 @@
      "lane": "fo_a9_6_xe_accounting",
      "artifact": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
      "how": "inlet = MEOP (TBD, XV2-28); no change",
-     "stated_readiness_change": "none; PENDING fo_a9_6_m16_refresh"
+     "stated_readiness_change": "none; downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_m16_refresh"
     },
     {
      "lane": "fo_a9_6_rfq_completion",
@@ -1078,7 +1078,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-10 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -1244,13 +1244,13 @@
      "lane": "fo_a9_6_mass_power_integration",
      "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
      "how": "C1 cathode branch only in hall_c1_reference (inside the AL-08 floor)",
-     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+     "stated_readiness_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
     },
     {
      "lane": "fo_a9_6_xe_accounting",
      "artifact": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
      "how": "C1 FCUs only in hall_c1_reference; ICP feed metering only as a CASE-3 optional entry (G-XE/G-ATM/diagnostic); Hall-side Xe metering under RA-FUNC APPLIES only for the ICP configuration",
-     "stated_readiness_change": "none; PENDING fo_a9_6_m16_refresh"
+     "stated_readiness_change": "none; downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_m16_refresh"
     },
     {
      "lane": "fo_a9_6_rfq_completion",
@@ -1262,7 +1262,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-10 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -1402,13 +1402,13 @@
      "lane": "fo_a9_6_mass_power_integration",
      "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
      "how": "anode material OPEN, 316L rejected as baseline; heat-removal line MPV2-N03",
-     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+     "stated_readiness_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
     },
     {
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-01, RVM-02, RVM-03, RVM-08, RVM-09, RVM-11, RVM-12, RVM-13 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -1604,13 +1604,13 @@
      "lane": "fo_a9_6_mass_power_integration",
      "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
      "how": "coil-mass correction applied (1.579 kg booked, 0.136 kg sensitivity only)",
-     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+     "stated_readiness_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
     },
     {
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-02, RVM-11 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -1783,13 +1783,13 @@
      "lane": "fo_a9_6_mass_power_integration",
      "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
      "how": "C1 line AL-C1 without owner allocation (MPQ-01); hall_c1_reference column only",
-     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+     "stated_readiness_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
     },
     {
      "lane": "fo_a9_6_xe_accounting",
      "artifact": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
      "how": "C1 remains CONTROL_FALLBACK: every C1 Xe phase a separate line; not present in the ICP configuration",
-     "stated_readiness_change": "none; PENDING fo_a9_6_m16_refresh"
+     "stated_readiness_change": "none; downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): fo_a9_6_m16_refresh"
     },
     {
      "lane": "fo_a9_6_rfq_completion",
@@ -1801,7 +1801,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-12, RVM-13, RVM-14, RVM-15, RVM-16 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -2028,7 +2028,7 @@
      "lane": "fo_a9_6_mass_power_integration",
      "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
      "how": "flight RF source = FLIGHT_REPRESENTATIVE_DC_RF_SOURCE; RF protection line; collector bias rating TBD (I_d,max,H1 NOT_EVALUATED)",
-     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+     "stated_readiness_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
     },
     {
      "lane": "fo_a9_6_rfq_completion",
@@ -2040,7 +2040,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-02, RVM-03, RVM-04, RVM-05, RVM-06, RVM-07, RVM-14, RVM-19 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -2277,7 +2277,7 @@
      "lane": "fo_a9_6_mass_power_integration",
      "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
      "how": "UNRESOLVED (anode, coupled ICP); active cooling variant-only",
-     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+     "stated_readiness_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
     },
     {
      "lane": "fo_a9_6_rfq_completion",
@@ -2289,7 +2289,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-17 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -2596,8 +2596,8 @@
      "rvm_row": "RVM-17",
      "title": "Thermal closure (>= 50 K below validated limits, 20 % heat-load margin)",
      "status": {
-      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
-      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
      }
     }
    ],
@@ -2669,7 +2669,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-14, RVM-19 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -2877,7 +2877,7 @@
      "lane": "fo_a9_6_mass_power_integration",
      "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
      "how": "RF fwd/refl telemetry; photodiode ground-only",
-     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+     "stated_readiness_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
     },
     {
      "lane": "fo_a9_6_rfq_completion",
@@ -3076,7 +3076,7 @@
      "lane": "fo_a9_6_mass_power_integration",
      "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
      "how": "ICP open-frame support / spacer line MPV2-N04",
-     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+     "stated_readiness_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
     },
     {
      "lane": "fo_a9_6_rfq_completion",
@@ -3088,7 +3088,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-06, RVM-07 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -3431,7 +3431,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-05, RVM-12, RVM-13, RVM-14, RVM-15, RVM-16 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -3795,7 +3795,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-04, RVM-05, RVM-15 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -4031,7 +4031,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-12, RVM-16, RVM-17 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -4187,8 +4187,8 @@
      "rvm_row": "RVM-17",
      "title": "Thermal closure (>= 50 K below validated limits, 20 % heat-load margin)",
      "status": {
-      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
-      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
      }
     }
    ],
@@ -4268,7 +4268,7 @@
      "lane": "fo_a9_6_rvm",
      "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "how": "requirement rows RVM-17 (status per configuration in rvm_requirement_status)",
-     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+     "stated_readiness_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
     }
    ],
    "evidence": {
@@ -4350,8 +4350,8 @@
      "rvm_row": "RVM-17",
      "title": "Thermal closure (>= 50 K below validated limits, 20 % heat-load margin)",
      "status": {
-      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
-      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
      }
     }
    ],
@@ -4611,6 +4611,237 @@
   "XA9Q-06",
   "XA9Q-07"
  ],
+ "rvm_register_reconciliation": {
+  "rule": "every RVM open reading has the same status as its row in owner_questions_state_v4 (S-01); checked after both are built (build order ... RVM, state v4, M16 v4)",
+  "n_readings": 32,
+  "all_agree": true,
+  "rows": [
+   {
+    "rvm_row": "RVM-01",
+    "id": "OD2",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-01",
+    "id": "OD3",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-04",
+    "id": "OQ-A910-03",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-06",
+    "id": "MQ-01",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-06",
+    "id": "MQ-02",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-06",
+    "id": "MQ-09",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-06",
+    "id": "MQ-10",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-06",
+    "id": "XA9Q-01",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-06",
+    "id": "XA9Q-07",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-06",
+    "id": "OQ-A910-01",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-07",
+    "id": "MQ-01",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-07",
+    "id": "MQ-02",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-07",
+    "id": "MQ-09",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-07",
+    "id": "MQ-10",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-07",
+    "id": "XA9Q-07",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-09",
+    "id": "OD12",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-10",
+    "id": "XA9Q-07",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-10",
+    "id": "XA9Q-01",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-10",
+    "id": "OD6",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-12",
+    "id": "OQ-VI-04",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-12",
+    "id": "OD13",
+    "rvm_status": "SUPERSEDED",
+    "state_v4_status": "SUPERSEDED",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-14",
+    "id": "OD5",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-14",
+    "id": "OD14",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-14",
+    "id": "OQ-A907-01",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-14",
+    "id": "XA9Q-02",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-16",
+    "id": "OD12",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-17",
+    "id": "OQ-A907-03",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-17",
+    "id": "OQ-A907-05",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-17",
+    "id": "OQ-A907-09",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-17",
+    "id": "OQ-A907-10",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-18",
+    "id": "OD12",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   },
+   {
+    "rvm_row": "RVM-19",
+    "id": "OD12",
+    "rvm_status": "TBD_OWNER",
+    "state_v4_status": "TBD_OWNER",
+    "agrees": true
+   }
+  ]
+ },
  "items": [
   {
    "id": "M16V4-IT-01",

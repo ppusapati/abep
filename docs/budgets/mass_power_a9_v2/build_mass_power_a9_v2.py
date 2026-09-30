@@ -118,7 +118,10 @@ PINS = {  # key: (path, sha256, kind)
 NEVER_PINNED = ["docs/orchestration/lane_registry_v1.json", "docs/orchestration/trigger_registry_v1.json",
                 "docs/orchestration/fired_triggers.jsonl", "docs/orchestration/trigger_ledger_v2.jsonl",
                 "docs/orchestration/runtime_state.json"]
-PENDING_LANES = {  # A9.6 lanes NOT merged in this base (other worktrees): referenced only as 'PENDING ...', never read
+# A9.6 lanes built LATER in the build order (P4, XE, P1, P2, P3, MP, RFQ, RVM, state v4, M16 v4) that consume this
+# package: merged, but named here only as downstream consumers - never read and never pinned (a pin would be circular).
+# Consolidated verification S-02 / PHYS-01: they were formerly worded 'PENDING / not merged', which is no longer true.
+DOWNSTREAM_LANES = {
     "M16": ("fo_a9_6_m16_refresh", "(M16 refresh after the implementation batch; A9.6 sec. 16)"),
     "RVM": ("fo_a9_6_rvm", "(system requirement-verification matrix; A9.6 sec. 15)"),
 }
@@ -130,9 +133,9 @@ MERGED_REF = {  # merged A9.6 packages cited here (ids checked at build time by 
 }
 
 
-def pending(key: str) -> str:
-    lane, path = PENDING_LANES[key]
-    return f"PENDING {path} ({lane})"
+def downstream(key: str) -> str:
+    lane, path = DOWNSTREAM_LANES[key]
+    return f"downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): {path} ({lane})"
 
 
 # ------------------------------------------------------------------ merged A9.6 cross-lane references (A9.6 sec. 5-6, 18)
@@ -471,7 +474,19 @@ def c1_line(m6: dict) -> dict:
                                     "evidence_class": None, "status": "TBD - requires vendor/spec verification (row 51)"}]}
 
 
+def _kg_or_none(v, what: str):
+    """None (explicitly absent) or a finite number >= 0; anything else raises (consolidated verification SW-08: a
+    negative / NaN / string mass never reaches a roll-up, a closure state or CONSISTENT)."""
+    if v is None:
+        return None
+    if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or v < 0:
+        raise MassPowerV2Error(f"{what} must be None or a finite number >= 0 kg, got {v!r}")
+    return float(v)
+
+
 def line_state(alloc, floor, partial: bool) -> str:
+    alloc = _kg_or_none(alloc, "allocation_kg")
+    floor = _kg_or_none(floor, "evidence_floor_kg")
     if alloc is None:
         return "ALLOCATION_ABSENT_TBD_OWNER"
     if floor is not None and floor > alloc:
@@ -513,9 +528,24 @@ def dry_rollup(lines: list, reading: str, basis: str, reserve_kg: float, f_harne
             raise MassPowerV2Error(f"{name} must be a finite number >= 0 (no default), got {v!r}")
     if not 0 <= f_harness < 1:
         raise MassPowerV2Error("f_harness must be in [0, 1)")
+    ids = []
+    for ln in lines:
+        for k in ("line", "allocation_kg", "evidence_floor_kg", "is_harness"):
+            if not isinstance(ln, dict) or k not in ln:
+                raise MassPowerV2Error(f"line record lacks {k!r} (no default)")
+        if not isinstance(ln["is_harness"], bool):
+            raise MassPowerV2Error(f"{ln['line']}: is_harness must be true or false")
+        _kg_or_none(ln["allocation_kg"], f"{ln['line']} allocation_kg")
+        _kg_or_none(ln["evidence_floor_kg"], f"{ln['line']} evidence_floor_kg")
+        ids.append(ln["line"])
+    dup = sorted({i for i in ids if ids.count(i) > 1})
+    if dup:
+        raise MassPowerV2Error(f"duplicate line records {dup}: a line is booked once")
     harness = [ln for ln in lines if ln["is_harness"]]
     if len(harness) != 1:
         raise MassPowerV2Error("exactly one harness line is required (row 60 policy line)")
+    if harness[0]["allocation_kg"] is None:
+        raise MassPowerV2Error("the harness line needs its owner allocation (row 60 policy floor); no default")
     unresolved, parts, nonharness_nominal = [], [], 0.0
     for ln in lines:
         for k in ("line", "allocation_kg", "evidence_floor_kg", "is_harness"):
@@ -586,7 +616,10 @@ def wet_cell(dry: dict, xe_case_kg: float, reading: str, residual_on_top_kg: flo
         if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or v < 0:
             raise MassPowerV2Error(f"{n} must be a finite number >= 0 (no default), got {v!r}")
     add = residual_on_top_kg if reading == "USABLE_MQ09" else 0.0
-    wet = dry["dry_known_kg"] + xe_case_kg + add
+    dk = dry.get("dry_known_kg") if isinstance(dry, dict) else None
+    if isinstance(dk, bool) or not isinstance(dk, (int, float)) or not math.isfinite(dk) or dk < 0:
+        raise MassPowerV2Error(f"dry_known_kg must be a finite number >= 0, got {dk!r} (SW-08)")
+    wet = dk + xe_case_kg + add
     exceeded = wet >= ref_kg if strict else wet > ref_kg
     if exceeded:
         state = "DOES_NOT_CLOSE"
@@ -1130,7 +1163,7 @@ def build() -> dict:
         "statuses": statuses(a92, a96),
         "pins": [{"key": k, "path": p, "sha256": s, "kind": kd} for k, (p, s, kd) in PINS.items()],
         "never_pinned": NEVER_PINNED,
-        "pending_parallel_lanes": {k: pending(k) for k in PENDING_LANES},
+        "downstream_consumer_lanes": {k: downstream(k) for k in DOWNSTREAM_LANES},
         "merged_cross_lane": xlane_report(None),
         "xe_v2_import": {"source": xe2["source"], "pairs": ["XL-30", "XL-31"],
                          "residual_by_reading_kg": {rd: {str(k): v for k, v in sorted(m.items())}
@@ -1313,9 +1346,9 @@ def interface_demands() -> list:
           ["XL-39"]),
         d("MPV2-ID-10", L, "A9-07 docs/hardware/h2_a9_revisions/ (H-1 / MC-1)", "frozen H-1 coil (NI, l_mt, window) "
           "-> MC-1 mass and magnet slot power; H-1 channel / anode / body masses", "TBD", "kg; W", "OPEN"),
-        d("MPV2-ID-11", L, pending("RVM"), "mass rows: <40 kg wet = NOT_EVALUATED / INCOMPLETE_EVIDENCE (no CBE); power "
+        d("MPV2-ID-11", L, downstream("RVM"), "mass rows: <40 kg wet = NOT_EVALUATED / INCOMPLETE_EVIDENCE (no CBE); power "
           "rows: <1.5 kW and 1.35 kW = NOT_EVALUATED (all loads TBD)", "see rollups / power", "-", "PROPOSED"),
-        d("MPV2-ID-12", L, pending("M16"), "M16 allocation columns and new rows (m16_impact); no row READY/VERIFIED "
+        d("MPV2-ID-12", L, downstream("M16"), "M16 allocation columns and new rows (m16_impact); no row READY/VERIFIED "
           "from this lane", "-", "-", "PROPOSED"),
         d("MPV2-ID-13", "A9-02 " + PINS["BBMOD"][0], L, "slot set, envelopes, gate definition, templates (used by "
           "import)", "-", "-", "USED"),
@@ -1441,7 +1474,7 @@ def m16_impact() -> list:
         (15, "sensors_diagnostics", "RF fwd/refl telemetry; photodiode ground-only"),
         (16, "mechanical_structural", "ICP open-frame support / spacer line MPV2-N04"),
     ]
-    return [{"m16_row": r, "key": k, "how_touched": h, "state_change": "none (refresh by " + pending("M16") + ")"}
+    return [{"m16_row": r, "key": k, "how_touched": h, "state_change": "none (refresh by " + downstream("M16") + ")"}
             for r, k, h in rows]
 
 
@@ -1495,7 +1528,8 @@ def render_md(doc: dict) -> str:
     a("")
     a("Never pinned (mutable governance): " + ", ".join(f"`{x}`" for x in doc["never_pinned"]) + ".")
     a("")
-    a("Lanes not merged in this base: " + "; ".join(doc["pending_parallel_lanes"].values()) + ".")
+    a("Downstream consumer lanes (merged; built later in the A9.6 order, not pinned to avoid a cycle): "
+      + "; ".join(doc["downstream_consumer_lanes"].values()) + ".")
     a("")
     a("### Merged cross-lane references")
     a("")

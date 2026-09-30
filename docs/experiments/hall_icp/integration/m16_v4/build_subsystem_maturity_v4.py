@@ -19,6 +19,11 @@ For every v3 row (1-21) v4 records, after the A9.6 implementation batch:
   * the ten A9.2 statuses verbatim (read from the pinned A9.2 decision; never promoted, never PASS);
   * a v3 -> v4 diff per row (state unchanged / changed, blocking item unchanged / re-pointed, reason).
 
+Build order (data dependency; consolidated verification S-03): P4, XE, P1, P2, P3, MP, RFQ, RVM, owner-question
+state v4, M16 v4. State v4 reads rvm_a9_v1.json (ids of RVM-ID-10 / RVM-ID-11, RVMQ-01, the lane-24 rows), the RVM
+reads only the immutable state v3 snapshot, and M16 v4 reads both - so after any RVM change rebuild state v4 and
+then M16 v4 (--check on each catches a stale downstream output).
+
 stdlib only. Usage:
     python docs/experiments/hall_icp/integration/m16_v4/build_subsystem_maturity_v4.py          # write JSON + MD
     python docs/experiments/hall_icp/integration/m16_v4/build_subsystem_maturity_v4.py --check  # verify outputs
@@ -381,6 +386,30 @@ def _rvm_status(ctx: Ctx) -> dict:
     return out
 
 
+def rvm_register_reconciliation(ctx: Ctx) -> dict:
+    """Post-v4 reconciliation (consolidated verification S-01): the RVM is built before owner-question state v4 and
+    cannot pin it (v4 reads the RVM; a pin would be circular), so the RVM carries every open reading with the status the
+    owner register gives it and names v4 as its current register. Here, after both exist, every RVM open reading is
+    compared with its v4 row; any disagreement (or a reading absent from v4) raises - the RVM must then be rebuilt with
+    the current classification, never silently left stale."""
+    v4 = {r["id"]: r for r in ctx.docs["OQ4"]["rows"]}
+    rows, bad = [], []
+    for row in ctx.docs["RVM"]["rows"]:
+        for o in row.get("open_readings", []):
+            r4 = v4.get(o["id"])
+            st4 = r4["status"] if r4 else None
+            agree = st4 is not None and st4 == o["status"]
+            rows.append({"rvm_row": row["id"], "id": o["id"], "rvm_status": o["status"], "state_v4_status": st4,
+                         "agrees": agree})
+            if not agree:
+                bad.append(f"{row['id']} {o['id']}: RVM {o['status']!r} vs state v4 {st4!r}")
+    if bad:
+        raise BuildError("RVM open readings disagree with owner-question state v4 (rebuild the RVM): " + "; ".join(bad))
+    return {"rule": "every RVM open reading has the same status as its row in owner_questions_state_v4 (S-01); "
+                    "checked after both are built (build order ... RVM, state v4, M16 v4)",
+            "n_readings": len(rows), "all_agree": True, "rows": rows}
+
+
 def build() -> dict:
     ctx = Ctx()
     if sorted(SPEC.ROWS) != [r["row"] for r in ctx.v3["rows"]]:
@@ -546,6 +575,7 @@ def build() -> dict:
         "diff_v3_v4": diff,
         "rollup": {"execution_states": dict(sorted(states.items())), "waits_on": dict(sorted(waits_c.items()))},
         "owner_question_ids_used": oq_ids,
+        "rvm_register_reconciliation": rvm_register_reconciliation(ctx),
         "items": items,
         "interface_demands": [
             {"id": "M16V4-ID-01", "direction": "consumes", "counterpart": V3_REL,

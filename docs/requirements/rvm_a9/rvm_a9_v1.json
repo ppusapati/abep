@@ -357,17 +357,17 @@
   "hall_icp_neutralizer": {
    "PASS": 0,
    "FAIL": 0,
-   "NOT_EVALUATED": 15,
+   "NOT_EVALUATED": 16,
    "OUT_OF_DOMAIN": 0,
-   "INCOMPLETE_EVIDENCE": 4,
+   "INCOMPLETE_EVIDENCE": 3,
    "NUMERICAL_FAILURE": 0
   },
   "hall_c1_reference": {
    "PASS": 0,
    "FAIL": 0,
-   "NOT_EVALUATED": 15,
+   "NOT_EVALUATED": 16,
    "OUT_OF_DOMAIN": 0,
-   "INCOMPLETE_EVIDENCE": 4,
+   "INCOMPLETE_EVIDENCE": 3,
    "NUMERICAL_FAILURE": 0
   }
  },
@@ -427,16 +427,20 @@
     {
      "id": "OD2",
      "register": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
-     "status": "OPEN in the historical lane-24 matrix; not carried in owner_questions_state_v3 (TBD_OWNER; interface demand RVM-ID-11)",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Envelope quantifier over 180–230 km × atmosphere states",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "status": "TBD_OWNER",
+     "status_detail": "TBD_OWNER - open in the historical lane-24 matrix, not in owner_questions_state_v3; registered in the current register via RVM-ID-11",
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "OD3",
      "register": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
-     "status": "OPEN in the historical lane-24 matrix; not carried in owner_questions_state_v3 (TBD_OWNER; interface demand RVM-ID-11)",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Atmosphere design states",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "status": "TBD_OWNER",
+     "status_detail": "TBD_OWNER - open in the historical lane-24 matrix, not in owner_questions_state_v3; registered in the current register via RVM-ID-11",
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     }
    ],
    "rtm_xref": [
@@ -1494,9 +1498,11 @@
     {
      "id": "OQ-A910-03",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "May a ledger declared 'peak_sampled' (the unaveraged sampled peak) PASS the 1.5 kW gate when the peak is below 1500 W and the record meets the A9.1 OQ-A902-01 measurement requirements (the maximum 1 ms mean cannot exceed the maximum sample)? A9.1 OQ-A902-01 calls the unaveraged peak 'protection analysis only; not the 1.5 kW gate', so A9-02 does NOT implement this reading: today only a declared p_bus_1ms_max ledger with a conformant gate_measurement record can PASS, and a peak_sampled ledger is NOT_EVALUABLE in both directions.",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     }
    ],
    "rtm_xref": [
@@ -2098,51 +2104,65 @@
     {
      "id": "MQ-01",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Are the row-54 allocations MEV-level line budgets (row-57 equipment margin inside) or CBE-level budgets (row-57 margin on top)? RFQ ceilings and closure depend on it.",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "MQ-02",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Is the 4 kg dry development reserve (row 54) the row-52 20 % internal system margin, or additional to it?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "MQ-09",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Do the 2 / 5 / 10 kg Xe design cases (row 48) include the row-43 20 % reserve, with the row-45 residual on top?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "MQ-10",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Under the primary policy reading with the three evidence floors (R2E) the dry mass alone exceeds 40 kg. Accept that closure requires reducing the six evidence-free lines AL-01/02/03/05/06/10 (harness line held at the row-60 rule; e.g. by 4.478556 kg at Xe 2 kg against 40 kg), or revisit the margin reading?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "XA9Q-01",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Are the row-48 design cases (2 / 5 / 10 kg) LOADED Xe (usable + residual) or usable Xe?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "XA9Q-07",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Does the row-6 functional Xe mode apply to the hall_icp_neutralizer flight configuration (so it also carries a Xe tank and Xe flow control)?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "OQ-A910-01",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Which content do the row-48 Xe design cases have for BOTH the A9 Xe ledger and the A9 mass BOM: LOADED Xe incl. reserve and residual (A9-08 XA9Q-01) or usable Xe incl. reserve with the residual on top (A9-06 MQ-09)? The two lanes propose different readings.",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     }
    ],
    "rtm_xref": [
@@ -2813,37 +2833,47 @@
     {
      "id": "MQ-01",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Are the row-54 allocations MEV-level line budgets (row-57 equipment margin inside) or CBE-level budgets (row-57 margin on top)? RFQ ceilings and closure depend on it.",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "MQ-02",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Is the 4 kg dry development reserve (row 54) the row-52 20 % internal system margin, or additional to it?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "MQ-09",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Do the 2 / 5 / 10 kg Xe design cases (row 48) include the row-43 20 % reserve, with the row-45 residual on top?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "MQ-10",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Under the primary policy reading with the three evidence floors (R2E) the dry mass alone exceeds 40 kg. Accept that closure requires reducing the six evidence-free lines AL-01/02/03/05/06/10 (harness line held at the row-60 rule; e.g. by 4.478556 kg at Xe 2 kg against 40 kg), or revisit the margin reading?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "XA9Q-07",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Does the row-6 functional Xe mode apply to the hall_icp_neutralizer flight configuration (so it also carries a Xe tank and Xe flow control)?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     }
    ],
    "rtm_xref": [],
@@ -4282,9 +4312,11 @@
     {
      "id": "OD12",
      "register": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
-     "status": "OPEN in the historical lane-24 matrix; not carried in owner_questions_state_v3 (TBD_OWNER; interface demand RVM-ID-11)",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "RFP requirements recorded but not gated (indigenous content, no single-point failure, 'ionise nascent O')",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "status": "TBD_OWNER",
+     "status_detail": "TBD_OWNER - open in the historical lane-24 matrix, not in owner_questions_state_v3; registered in the current register via RVM-ID-11",
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     }
    ],
    "rtm_xref": [
@@ -4561,23 +4593,29 @@
     {
      "id": "XA9Q-07",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Does the row-6 functional Xe mode apply to the hall_icp_neutralizer flight configuration (so it also carries a Xe tank and Xe flow control)?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "XA9Q-01",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Are the row-48 design cases (2 / 5 / 10 kg) LOADED Xe (usable + residual) or usable Xe?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "OD6",
      "register": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
-     "status": "OPEN in the historical lane-24 matrix; not carried in owner_questions_state_v3 (TBD_OWNER; interface demand RVM-ID-11)",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Meaning of 'air + Xe'",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "status": "TBD_OWNER",
+     "status_detail": "TBD_OWNER - open in the historical lane-24 matrix, not in owner_questions_state_v3; registered in the current register via RVM-ID-11",
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     }
    ],
    "rtm_xref": [
@@ -4905,16 +4943,25 @@
     {
      "id": "OQ-VI-04",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "ICP-neutralizer lifetime and cycle requirement (VI-LF-05)",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "OD13",
      "register": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
-     "status": "OPEN in the historical lane-24 matrix; not carried in owner_questions_state_v3 (TBD_OWNER; interface demand RVM-ID-11)",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "'>15,000 h ignition' wording",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "status": "SUPERSEDED",
+     "status_detail": "SUPERSEDED (owner row 3; register completion)",
+     "superseded_by": {
+      "owner_row": 3,
+      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+      "owner_answer_verbatim": "ENGINEERING BASIS — use mission life ≥26,280 h until the official wording is verified because it is the conservative interpretation of 'three years' versus 26,000 h. Retain >15,000 h firing as a provisional hard requirement until the official RFP confirms it."
+     },
+     "handling": "superseded by an owner answer to the same question: owner row 3 retains > 15,000 h firing as a provisional hard requirement until the official RFP confirms it; the remaining verification of the wording is the owner action of row 1 (RVM-ID-12), not an open question; not an open question (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     }
    ],
    "rtm_xref": [
@@ -5537,30 +5584,38 @@
     {
      "id": "OD5",
      "register": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
-     "status": "OPEN in the historical lane-24 matrix; not carried in owner_questions_state_v3 (TBD_OWNER; interface demand RVM-ID-11)",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Ignition start sequence and restart count",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "status": "TBD_OWNER",
+     "status_detail": "TBD_OWNER - open in the historical lane-24 matrix, not in owner_questions_state_v3; registered in the current register via RVM-ID-11",
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "OD14",
      "register": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
-     "status": "OPEN in the historical lane-24 matrix; not carried in owner_questions_state_v3 (TBD_OWNER; interface demand RVM-ID-11)",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Is ignition from the off state on atmospheric propellant an RFP requirement? (G6.ignition is inferred from 'air + Xe' and the RFP architecture; no ignition or restart clause is recorded in the repository)",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "status": "TBD_OWNER",
+     "status_detail": "TBD_OWNER - open in the historical lane-24 matrix, not in owner_questions_state_v3; registered in the current register via RVM-ID-11",
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "OQ-A907-01",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Row 93 'cap each ignition dwell at 120 s and allow at most two retries': book 3 attempts (1 + 2 retries, literal) or 2 (the '120 s x 2' shorthand used in the A9 backlog) per start in the Xe ledger?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "XA9Q-02",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Row 93 'at most two retries': is the per-start bound 3 dwells (1 + 2 retries, 360 s) or 2 dwells (240 s)?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     }
    ],
    "rtm_xref": [
@@ -6367,9 +6422,11 @@
     {
      "id": "OD12",
      "register": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
-     "status": "OPEN in the historical lane-24 matrix; not carried in owner_questions_state_v3 (TBD_OWNER; interface demand RVM-ID-11)",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "RFP requirements recorded but not gated (indigenous content, no single-point failure, 'ionise nascent O')",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "status": "TBD_OWNER",
+     "status_detail": "TBD_OWNER - open in the historical lane-24 matrix, not in owner_questions_state_v3; registered in the current register via RVM-ID-11",
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     }
    ],
    "rtm_xref": [
@@ -6686,30 +6743,38 @@
     {
      "id": "OQ-A907-03",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Is the >= 50 K rule tested at the bounding corner (all adverse analog inputs together, as done here) or at a nominal point plus a pre-registered uncertainty treatment?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "OQ-A907-05",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Accept the supplier continuous ratings (BN 900 degC oxidizing guide value, ceramic wire 1000 F) as PROVISIONAL limits for the >= 50 K rule until qualification tests validate them?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "OQ-A907-09",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "Row 86 '20% heat-load design margin': this lane scales only the DISSIPATED loads (discharge fractions, coil I^2R, cathode) by 1.2 and keeps the environmental solar/albedo/OLR inputs at their v1 hot/cold bounds. Should the 20 % also apply to environmental loads?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     },
     {
      "id": "OQ-A907-10",
      "register": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
-     "status": "OPEN",
+     "v3_status": "OPEN",
+     "status": "TBD_OWNER",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "The thermal worst case is found by a local search plus a heuristic search allowance (not an upper bound). Within-limit results (for hall_icp_neutralizer: UNCOUPLED_SENSITIVITY_WITHIN_LIMIT, reported UNRESOLVED under A9.2 ICP_COUPLED_THERMAL) whose margin to the design ceiling after the allowance is below 10 K are flagged search_sensitive. Accept this PROPOSED reporting threshold, and require a global-optimisation or interval-bound check of every search-sensitive verdict before LOCK-1?",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     }
    ],
    "rtm_xref": [
@@ -6737,17 +6802,17 @@
    ],
    "configurations": {
     "hall_icp_neutralizer": {
-     "status": "INCOMPLETE_EVIDENCE",
-     "rule": "R6-INCOMPLETE",
-     "reason": "evaluation run with evidenced terms but inconclusive: p3_coupled_thermal_v1:fail_closed_evaluations (6 evidenced term(s))",
-     "current_evidence_state": "FRAMEWORK EVALUATED - ICP_COUPLED_THERMAL UNRESOLVED and ANODE_THERMAL_CLOSURE UNRESOLVED; heat terms Q_Hall->ICP INCOMPLETE_EVIDENCE, Q_collector INCOMPLETE_EVIDENCE, Q_RF/match INCOMPLETE_EVIDENCE, Q_plume INCOMPLETE_EVIDENCE, coupled_network INCOMPLETE_EVIDENCE; 6 analog / model-derived input(s) in the framework; never a thermal PASS (A9.2, A9.6)",
+     "status": "NOT_EVALUATED",
+     "rule": "R7-NOT-EVALUATED",
+     "reason": "no determining evaluation with evidenced terms: p3_coupled_thermal_v1:fail_closed_evaluations [FRAMEWORK_EVALUATION]",
+     "current_evidence_state": "FRAMEWORK RUN, FAIL-CLOSED - ICP_COUPLED_THERMAL UNRESOLVED and ANODE_THERMAL_CLOSURE UNRESOLVED; heat terms Q_Hall->ICP INCOMPLETE_EVIDENCE, Q_collector INCOMPLETE_EVIDENCE, Q_RF/match INCOMPLETE_EVIDENCE, Q_plume INCOMPLETE_EVIDENCE, coupled_network INCOMPLETE_EVIDENCE; 0 heat term(s) / network evaluated on evidenced inputs (every one refused as INCOMPLETE_EVIDENCE when 0); 6 analog / model-derived framework input(s) exist but are not evaluated terms; never a thermal PASS (A9.2, A9.6)",
      "artifacts": [
       {
        "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
        "id": "p3_coupled_thermal_v1:fail_closed_evaluations",
        "role": "DETERMINING",
        "kind": "FRAMEWORK_EVALUATION",
-       "evidence_state": "FRAMEWORK EVALUATED - ICP_COUPLED_THERMAL UNRESOLVED and ANODE_THERMAL_CLOSURE UNRESOLVED; heat terms Q_Hall->ICP INCOMPLETE_EVIDENCE, Q_collector INCOMPLETE_EVIDENCE, Q_RF/match INCOMPLETE_EVIDENCE, Q_plume INCOMPLETE_EVIDENCE, coupled_network INCOMPLETE_EVIDENCE; 6 analog / model-derived input(s) in the framework; never a thermal PASS (A9.2, A9.6)",
+       "evidence_state": "FRAMEWORK RUN, FAIL-CLOSED - ICP_COUPLED_THERMAL UNRESOLVED and ANODE_THERMAL_CLOSURE UNRESOLVED; heat terms Q_Hall->ICP INCOMPLETE_EVIDENCE, Q_collector INCOMPLETE_EVIDENCE, Q_RF/match INCOMPLETE_EVIDENCE, Q_plume INCOMPLETE_EVIDENCE, coupled_network INCOMPLETE_EVIDENCE; 0 heat term(s) / network evaluated on evidenced inputs (every one refused as INCOMPLETE_EVIDENCE when 0); 6 analog / model-derived framework input(s) exist but are not evaluated terms; never a thermal PASS (A9.2, A9.6)",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -6755,7 +6820,7 @@
        "in_domain": true,
        "meets": null,
        "coverage_complete": false,
-       "evidenced_terms": 6,
+       "evidenced_terms": 0,
        "numerical_failure": false,
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null
@@ -6785,17 +6850,17 @@
      ]
     },
     "hall_c1_reference": {
-     "status": "INCOMPLETE_EVIDENCE",
-     "rule": "R6-INCOMPLETE",
-     "reason": "evaluation run with evidenced terms but inconclusive: p3_coupled_thermal_v1:fail_closed_evaluations (6 evidenced term(s))",
-     "current_evidence_state": "FRAMEWORK EVALUATED - ANODE_THERMAL_CLOSURE UNRESOLVED (shared H-1 anode; A9.2 anode_approach); the ICP heat terms do not apply to this configuration; the H-1 network is only method-checked against H2-5 (no temperatures reported); 6 analog / model-derived input(s) in the framework; never a thermal PASS (A9.2, A9.6)",
+     "status": "NOT_EVALUATED",
+     "rule": "R7-NOT-EVALUATED",
+     "reason": "no determining evaluation with evidenced terms: p3_coupled_thermal_v1:fail_closed_evaluations [FRAMEWORK_EVALUATION]",
+     "current_evidence_state": "FRAMEWORK RUN, FAIL-CLOSED - ANODE_THERMAL_CLOSURE UNRESOLVED (shared H-1 anode; A9.2 anode_approach); the ICP heat terms do not apply to this configuration; the H-1 network is only method-checked against H2-5 (no temperatures reported); 0 heat term(s) / network evaluated on evidenced inputs (every one refused as INCOMPLETE_EVIDENCE when 0); 6 analog / model-derived framework input(s) exist but are not evaluated terms; never a thermal PASS (A9.2, A9.6)",
      "artifacts": [
       {
        "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
        "id": "p3_coupled_thermal_v1:fail_closed_evaluations",
        "role": "DETERMINING",
        "kind": "FRAMEWORK_EVALUATION",
-       "evidence_state": "FRAMEWORK EVALUATED - ANODE_THERMAL_CLOSURE UNRESOLVED (shared H-1 anode; A9.2 anode_approach); the ICP heat terms do not apply to this configuration; the H-1 network is only method-checked against H2-5 (no temperatures reported); 6 analog / model-derived input(s) in the framework; never a thermal PASS (A9.2, A9.6)",
+       "evidence_state": "FRAMEWORK RUN, FAIL-CLOSED - ANODE_THERMAL_CLOSURE UNRESOLVED (shared H-1 anode; A9.2 anode_approach); the ICP heat terms do not apply to this configuration; the H-1 network is only method-checked against H2-5 (no temperatures reported); 0 heat term(s) / network evaluated on evidenced inputs (every one refused as INCOMPLETE_EVIDENCE when 0); 6 analog / model-derived framework input(s) exist but are not evaluated terms; never a thermal PASS (A9.2, A9.6)",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -6803,7 +6868,7 @@
        "in_domain": true,
        "meets": null,
        "coverage_complete": false,
-       "evidenced_terms": 6,
+       "evidenced_terms": 0,
        "numerical_failure": false,
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null
@@ -6875,9 +6940,11 @@
     {
      "id": "OD12",
      "register": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
-     "status": "OPEN in the historical lane-24 matrix; not carried in owner_questions_state_v3 (TBD_OWNER; interface demand RVM-ID-11)",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "RFP requirements recorded but not gated (indigenous content, no single-point failure, 'ionise nascent O')",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "status": "TBD_OWNER",
+     "status_detail": "TBD_OWNER - open in the historical lane-24 matrix, not in owner_questions_state_v3; registered in the current register via RVM-ID-11",
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     }
    ],
    "rtm_xref": [
@@ -6996,9 +7063,11 @@
     {
      "id": "OD12",
      "register": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
-     "status": "OPEN in the historical lane-24 matrix; not carried in owner_questions_state_v3 (TBD_OWNER; interface demand RVM-ID-11)",
+     "current_register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
      "question": "RFP requirements recorded but not gated (indigenous content, no single-point failure, 'ionise nascent O')",
-     "handling": "carried side by side as TBD_OWNER; never answered here"
+     "status": "TBD_OWNER",
+     "status_detail": "TBD_OWNER - open in the historical lane-24 matrix, not in owner_questions_state_v3; registered in the current register via RVM-ID-11",
+     "handling": "carried side by side as TBD_OWNER; never answered here (question text from the pinned immutable v3 snapshot; current register docs/budgets/owner_decisions/owner_questions_state_v4.json (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation))"
     }
    ],
    "rtm_xref": [
@@ -7676,30 +7745,30 @@
   {
    "id": "RVM-ID-08",
    "direction": "RVM -> M16 refresh",
-   "counterpart": "PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh)",
+   "counterpart": "downstream consumer (merged; built later in the A9.6 order, not pinned to avoid a cycle): docs/experiments/hall_icp/integration/m16_v4/ (fo_a9_6_m16_refresh; A9.6 sec. 16)",
    "content": "requirement-status column per M16 row (m16_impact); no row READY / VERIFIED from this lane",
-   "status": "OFFERED"
+   "status": "CONSUMED"
   },
   {
    "id": "RVM-ID-09",
    "direction": "RVM -> consolidated verification",
-   "counterpart": "PENDING fo_a9_6_consolidated_verification (A9.6 sec. 18)",
+   "counterpart": "fo_a9_6_consolidated_verification (A9.6 sec. 18; the campaign that reviews this package)",
    "content": "rules R0-R7, probes and per-row artifacts for the structural / evidence review",
    "status": "OFFERED"
   },
   {
    "id": "RVM-ID-10",
    "direction": "RVM -> owner-question state v4",
-   "counterpart": "PENDING fo_a9_6_decision_propagation (owner-question state v4)",
+   "counterpart": "downstream consumer (merged; built later in the A9.6 order, not pinned to avoid a cycle): docs/budgets/owner_decisions/owner_questions_state_v4.json (fo_a9_6_decision_propagation)",
    "content": "new question RVMQ-01",
-   "status": "OFFERED"
+   "status": "CONSUMED"
   },
   {
    "id": "RVM-ID-11",
    "direction": "RVM -> owner-question state v4",
-   "counterpart": "PENDING fo_a9_6_decision_propagation (owner-question state v4)",
-   "content": "lane-24 open decisions carried by RVM rows but absent from owner_questions_state_v3: OD2, OD3, OD5, OD6, OD12, OD13, OD14 (register or declare superseded for the A9 configurations; bookkeeping, no answer implied)",
-   "status": "OFFERED"
+   "counterpart": "downstream consumer (merged; built later in the A9.6 order, not pinned to avoid a cycle): docs/budgets/owner_decisions/owner_questions_state_v4.json (fo_a9_6_decision_propagation)",
+   "content": "lane-24 open decisions carried by RVM rows but absent from owner_questions_state_v3: OD2, OD3, OD5, OD6, OD12, OD13, OD14 (registered in state v4: OD13 SUPERSEDED by owner row 3, the others TBD_OWNER; bookkeeping, no answer implied)",
+   "status": "CONSUMED"
   },
   {
    "id": "RVM-ID-12",
@@ -8191,7 +8260,7 @@
     "RVM-08",
     "RVM-09"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 2,
@@ -8201,7 +8270,7 @@
     "RVM-08",
     "RVM-09"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 3,
@@ -8211,7 +8280,7 @@
     "RVM-01",
     "RVM-08"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 4,
@@ -8220,7 +8289,7 @@
    "rvm_rows": [
     "RVM-08"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 5,
@@ -8229,7 +8298,7 @@
    "rvm_rows": [
     "RVM-08"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 6,
@@ -8241,7 +8310,7 @@
     "RVM-10",
     "RVM-13"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 7,
@@ -8250,7 +8319,7 @@
    "rvm_rows": [
     "RVM-10"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 8,
@@ -8259,7 +8328,7 @@
    "rvm_rows": [
     "RVM-10"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 9,
@@ -8275,7 +8344,7 @@
     "RVM-12",
     "RVM-13"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 10,
@@ -8285,7 +8354,7 @@
     "RVM-02",
     "RVM-11"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 11,
@@ -8298,7 +8367,7 @@
     "RVM-15",
     "RVM-16"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 12,
@@ -8314,7 +8383,7 @@
     "RVM-14",
     "RVM-19"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 13,
@@ -8323,7 +8392,7 @@
    "rvm_rows": [
     "RVM-17"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 14,
@@ -8333,7 +8402,7 @@
     "RVM-14",
     "RVM-19"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 16,
@@ -8343,7 +8412,7 @@
     "RVM-06",
     "RVM-07"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 18,
@@ -8357,7 +8426,7 @@
     "RVM-15",
     "RVM-16"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 19,
@@ -8368,7 +8437,7 @@
     "RVM-05",
     "RVM-15"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 20,
@@ -8379,7 +8448,7 @@
     "RVM-16",
     "RVM-17"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   },
   {
    "m16_row": 21,
@@ -8388,7 +8457,7 @@
    "rvm_rows": [
     "RVM-17"
    ],
-   "state_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+   "state_change": "none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)"
   }
  ],
  "excluded_candidates": [

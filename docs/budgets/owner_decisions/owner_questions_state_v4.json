@@ -158,9 +158,9 @@
   "ANSWERED_BY_A9_5": 2,
   "DERIVED": 11,
   "SUPERSEDED": 14,
-  "TBD_OWNER": 94
+  "TBD_OWNER": 95
  },
- "tbd_owner_count": 94,
+ "tbd_owner_count": 95,
  "v3_open_reclassified": {
   "DERIVED": 4,
   "TBD_OWNER": 42
@@ -170,11 +170,11 @@
   "ANSWERED_BY_A9_5": 2,
   "DERIVED": 7,
   "SUPERSEDED": 1,
-  "TBD_OWNER": 52
+  "TBD_OWNER": 53
  },
  "tbd_owner_blocks": {
   "BLOCKS_LOCK_1": 50,
-  "BLOCKS_P1_LATER_STAGE": 9,
+  "BLOCKS_P1_LATER_STAGE": 10,
   "BLOCKS_P1_START": 16,
   "BLOCKS_P2": 8,
   "BLOCKS_P3_P4": 15,
@@ -363,7 +363,7 @@
   {
    "id": "V4-IT-01",
    "name": "rows in state v4",
-   "value": 360,
+   "value": 361,
    "units": "count",
    "basis": "deterministic count over 'rows' by this builder",
    "source": "docs/budgets/owner_decisions/owner_questions_state_v4.json rows",
@@ -396,7 +396,7 @@
   {
    "id": "V4-IT-04",
    "name": "rows added since v3 (lane questions, registrations, A9.4/A9.5 answers, lane DERIVED settlements, register completion)",
-   "value": 66,
+   "value": 67,
    "units": "count",
    "basis": "deterministic count over 'rows' by this builder",
    "source": "docs/budgets/owner_decisions/owner_questions_state_v4.json rows",
@@ -407,7 +407,7 @@
   {
    "id": "V4-IT-05",
    "name": "TBD_OWNER rows (genuine owner questions still open)",
-   "value": 94,
+   "value": 95,
    "units": "count",
    "basis": "deterministic count over 'rows' by this builder",
    "source": "docs/budgets/owner_decisions/owner_questions_state_v4.json rows",
@@ -5787,7 +5787,7 @@
     "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
     "locator": "open_owner_questions[id=P1Q-18]"
    },
-   "question": "A9.5 P1Q-15 applies the instrument-adequacy rule (3 u_R > 0.02 |I_e,collector| -> NOT_EVALUATED_INSTRUMENT) 'at a candidate qualification point'. Recorder reading implemented: it is tested on the RF-ON ICP45_CAPACITY record (the candidate point); the matched RF-OFF record, whose collector current is the facility/background term and may be near zero, is tested only with the statistical and fractional closure using the I_scale,min floor. Confirm?",
+   "question": "A9.5 P1Q-15 applies the instrument-adequacy rule (3 u_R > 0.02 |I_e,collector| -> NOT_EVALUATED_INSTRUMENT) 'at a candidate qualification point'. Recorder reading implemented: it is tested on the RF-ON ICP45_CAPACITY record (the candidate point); the matched RF-OFF record, whose collector current is the facility/background term and may be near zero, is tested only with the statistical and fractional closure using the I_scale,min floor; a fractional-only failure of the RF-OFF record that its instrument cannot resolve (3 u_R > 0.02 max(|I_e,collector|, I_scale,min)) is NOT_EVALUATED_INSTRUMENT, not an exclusion (consolidated verification MET-03). Confirm?",
    "proposed": "YES (otherwise every RF-OFF record with I_e,collector ~ 0 would be NOT_EVALUATED_INSTRUMENT by construction, which the I_scale,min floor exists to avoid)",
    "needed_by": "before the first ICP45_CAPACITY record (P1-G0)",
    "status": "TBD_OWNER",
@@ -5855,6 +5855,30 @@
   },
   {
    "no": 310,
+   "id": "P1Q-24",
+   "kind": "lane_question",
+   "lane": "P1 (fo_a9_6_p1_workflow_completion)",
+   "source": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json open_owner_questions[id=P1Q-24]",
+   "source_ref": {
+    "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "locator": "open_owner_questions[id=P1Q-24]"
+   },
+   "question": "A two-port (small-signal S-parameter) line/match-loss characterization is now counted as verified in P1 only after an at-power loss-model verification in the P2 form (CAL-P2-09 calorimetric / CAL-P2-10 antenna simulator: |eta_meas - eta_pred| / u_c <= k), because the P1-S1 dummy-load coupler-vs-calorimeter cross-check tests the coupler, not the loss model (consolidated verification MET-02); without it P_delivered and C_e stay upper bounds. Register the coverage factor k of that check (never defaulted; the same k as the P2 loss verification, TBD_OWNER / LOCK-2), and confirm the fail-closed reading?",
+   "proposed": "owner call on k; PROPOSED: one k for P1 and P2 frozen together (no value proposed here)",
+   "needed_by": "before the first P_RF_DELIVERED / C_e is reported from P1-S4",
+   "status": "TBD_OWNER",
+   "status_detail": "TBD_OWNER (A9.6 sec. 7)",
+   "dependency": [
+    "OWNER_JUDGMENT"
+   ],
+   "blocks": [
+    "BLOCKS_P1_LATER_STAGE"
+   ],
+   "blocks_stage": "P1-S4",
+   "classification_basis": "coverage factor k of the at-power line/match-loss verification (P2 CAL-P2-09 / -10 form; never defaulted) before any P1 P_RF_DELIVERED / C_e; raised by the consolidated verification (MET-02); P_delivered stays an upper bound until registered"
+  },
+  {
+   "no": 311,
    "id": "P1Q-19 (ext)",
    "kind": "lane_derived_resolution",
    "lane": "P1 (fo_a9_6_p1_workflow_completion)",
@@ -5883,7 +5907,7 @@
    ]
   },
   {
-   "no": 311,
+   "no": 312,
    "id": "P1Q-19 (below propagation)",
    "kind": "lane_derived_resolution",
    "lane": "P1 (fo_a9_6_p1_workflow_completion)",
@@ -5911,7 +5935,7 @@
    ]
   },
   {
-   "no": 312,
+   "no": 313,
    "id": "P1Q-21",
    "kind": "lane_derived_resolution",
    "lane": "P1 (fo_a9_6_p1_workflow_completion)",
@@ -5939,7 +5963,7 @@
    ]
   },
   {
-   "no": 313,
+   "no": 314,
    "id": "P1Q-22",
    "kind": "lane_derived_resolution",
    "lane": "P1 (fo_a9_6_p1_workflow_completion)",
@@ -5954,7 +5978,7 @@
    "question_source": "git 9374d44:docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json open_owner_questions[id=P1Q-22] (part settled: P1Q-22)",
    "status": "DERIVED",
    "status_detail": "DERIVED (A9.6 sec. 6; settled by the P1 workflow lane)",
-   "derived_answer": "DERIVED (P1Q-22): A9.5 exclusions independent of the closure test first (EXCLUDED) -> missing u(I_k) (NOT_EVALUATED_UNCERTAINTY, A9.6 sec. 14) -> statistical failure |R_I| > 3 u_R (EXCLUDED; normalised to u_R, so not explainable by instrument inadequacy) -> 3 u_R > 0.02 |I_e,collector| (NOT_EVALUATED_INSTRUMENT; fractional-only failures not decisive) -> fractional failure (EXCLUDED)",
+   "derived_answer": "DERIVED (P1Q-22): A9.5 exclusions independent of the closure test first (EXCLUDED) -> missing u(I_k) (NOT_EVALUATED_UNCERTAINTY, A9.6 sec. 14) -> statistical failure |R_I| > 3 u_R (EXCLUDED; normalised to u_R, so not explainable by instrument inadequacy) -> 3 u_R > 0.02 |I_e,collector| at the RF-ON point, or 3 u_R > 0.02 max(|I_e,collector|, I_scale,min) at the matched RF-OFF record (NOT_EVALUATED_INSTRUMENT; fractional-only failures not decisive) -> fractional failure (EXCLUDED)",
    "derived_rule": "A9.5 P1Q-15 exclusions '|R_I| > 3 u_R' and 'fractional closure exceeds 2 %' plus the adequacy rule: the statistical test is normalised to the instrument's own u_R, so a statistically significant residual is resolved by the instrument and stays an exclusion; only the 2 % test is unresolvable when 3 u_R > 0.02 |I_e,collector| (A9.6 sec. 2: NOT_EVALUATED_INSTRUMENT 'rather than widening the tolerance'); A9.6 sec. 14 missing uncertainty -> NOT_EVALUATED",
    "implemented_in": [
     "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py p1_reducer.icp45a_candidates"
@@ -5968,7 +5992,7 @@
    ]
   },
   {
-   "no": 314,
+   "no": 315,
    "id": "P1Q-23 (a)",
    "kind": "lane_derived_resolution",
    "lane": "P1 (fo_a9_6_p1_workflow_completion)",
@@ -5996,7 +6020,7 @@
    ]
   },
   {
-   "no": 315,
+   "no": 316,
    "id": "P1Q-23 (b)",
    "kind": "lane_derived_resolution",
    "lane": "P1 (fo_a9_6_p1_workflow_completion)",
@@ -6024,7 +6048,7 @@
    ]
   },
   {
-   "no": 316,
+   "no": 317,
    "id": "P2Q-01",
    "kind": "lane_question",
    "lane": "P2 (fo_a9_6_p2_framework_completion)",
@@ -6050,7 +6074,7 @@
    "group": "DG-Z-METHOD"
   },
   {
-   "no": 317,
+   "no": 318,
    "id": "P2Q-02",
    "kind": "lane_question",
    "lane": "P2 (fo_a9_6_p2_framework_completion)",
@@ -6074,7 +6098,7 @@
    "classification_basis": "RFQ package placement of P1_NEEDED RF-metrology lines RF-L12..RF-L19 / RF-O01"
   },
   {
-   "no": 318,
+   "no": 319,
    "id": "P2Q-03",
    "kind": "lane_question",
    "lane": "P2 (fo_a9_6_p2_framework_completion)",
@@ -6100,7 +6124,7 @@
    "group": "DG-Z-METHOD"
   },
   {
-   "no": 319,
+   "no": 320,
    "id": "P2Q-04",
    "kind": "lane_question",
    "lane": "P2 (fo_a9_6_p2_framework_completion)",
@@ -6125,7 +6149,7 @@
    "classification_basis": "hot-map tuning policy"
   },
   {
-   "no": 320,
+   "no": 321,
    "id": "P2Q-06",
    "kind": "lane_question",
    "lane": "P2 (fo_a9_6_p2_framework_completion)",
@@ -6151,7 +6175,7 @@
    "group": "DG-Z-METHOD"
   },
   {
-   "no": 321,
+   "no": 322,
    "id": "P2Q-07",
    "kind": "lane_question",
    "lane": "P2 (fo_a9_6_p2_framework_completion)",
@@ -6177,7 +6201,7 @@
    "classification_basis": "depends on whether an accredited 13.56 MHz V/I phase-calibration scope exists"
   },
   {
-   "no": 322,
+   "no": 323,
    "id": "P2Q-08",
    "kind": "lane_question",
    "lane": "P2 (fo_a9_6_p2_framework_completion)",
@@ -6201,7 +6225,7 @@
    "classification_basis": "scope of the A9.3 ICPQ-06 isolator qualification (before the first biased / floating P2 point)"
   },
   {
-   "no": 323,
+   "no": 324,
    "id": "P2Q-09",
    "kind": "lane_question",
    "lane": "P2 (fo_a9_6_p2_framework_completion)",
@@ -6226,7 +6250,7 @@
    "classification_basis": "electrical-evidence rule for UNLIT -> UNCERTAIN (form at LOCK-1, multiple at LOCK-2)"
   },
   {
-   "no": 324,
+   "no": 325,
    "id": "P2Q-10",
    "kind": "lane_question",
    "lane": "P2 (fo_a9_6_p2_framework_completion)",
@@ -6252,7 +6276,7 @@
    "group": "DG-RF-RATING-MARGIN"
   },
   {
-   "no": 325,
+   "no": 326,
    "id": "P3Q-01",
    "kind": "lane_question",
    "lane": "P3 (fo_a9_6_p3_coupled_thermal)",
@@ -6283,7 +6307,7 @@
    "group": "DG-COLLECTOR"
   },
   {
-   "no": 326,
+   "no": 327,
    "id": "P3Q-02",
    "kind": "lane_question",
    "lane": "P3 (fo_a9_6_p3_coupled_thermal)",
@@ -6313,7 +6337,7 @@
    "group": "DG-THERMAL-METHOD"
   },
   {
-   "no": 327,
+   "no": 328,
    "id": "P4-OQ-01",
    "kind": "lane_question",
    "lane": "P4 (fo_a9_6_p4_anode_materials)",
@@ -6345,7 +6369,7 @@
    "group": "DG-THERMAL-LIMITS"
   },
   {
-   "no": 328,
+   "no": 329,
    "id": "P4-OQ-02",
    "kind": "lane_question",
    "lane": "P4 (fo_a9_6_p4_anode_materials)",
@@ -6374,7 +6398,7 @@
    ]
   },
   {
-   "no": 329,
+   "no": 330,
    "id": "P4-OQ-03",
    "kind": "lane_question",
    "lane": "P4 (fo_a9_6_p4_anode_materials)",
@@ -6403,7 +6427,7 @@
    ]
   },
   {
-   "no": 330,
+   "no": 331,
    "id": "P4-OQ-04",
    "kind": "lane_question",
    "lane": "P4 (fo_a9_6_p4_anode_materials)",
@@ -6432,7 +6456,7 @@
    ]
   },
   {
-   "no": 331,
+   "no": 332,
    "id": "P4-OQ-05",
    "kind": "lane_question",
    "lane": "P4 (fo_a9_6_p4_anode_materials)",
@@ -6463,7 +6487,7 @@
    "group": "DG-COLLECTOR"
   },
   {
-   "no": 332,
+   "no": 333,
    "id": "MPQ-01",
    "kind": "lane_question",
    "lane": "mass/power v2 (fo_a9_6_mass_power_integration)",
@@ -6488,7 +6512,7 @@
    "group": "DG-C1-FLIGHT"
   },
   {
-   "no": 333,
+   "no": 334,
    "id": "MPQ-02",
    "kind": "lane_question",
    "lane": "mass/power v2 (fo_a9_6_mass_power_integration)",
@@ -6513,7 +6537,7 @@
    "group": "DG-MASS-MAP"
   },
   {
-   "no": 334,
+   "no": 335,
    "id": "XV2Q-01",
    "kind": "lane_question",
    "lane": "Xe accounting v2 (fo_a9_6_xe_accounting)",
@@ -6538,7 +6562,7 @@
    "group": "DG-XE-FUNC"
   },
   {
-   "no": 335,
+   "no": 336,
    "id": "OQ-RFQV2-01",
    "kind": "lane_question",
    "lane": "RFQ v2 (fo_a9_6_rfq_completion)",
@@ -6562,7 +6586,7 @@
    "classification_basis": "certificate level for the Ar MFC (P1 RFQ dispatch)"
   },
   {
-   "no": 336,
+   "no": 337,
    "id": "OQ-RFQV2-02",
    "kind": "lane_question",
    "lane": "RFQ v2 (fo_a9_6_rfq_completion)",
@@ -6586,7 +6610,7 @@
    "classification_basis": "facility identification (P1 RFQ dispatch)"
   },
   {
-   "no": 337,
+   "no": 338,
    "id": "OQ-RFQV2-03",
    "kind": "lane_question",
    "lane": "RFQ v2 (fo_a9_6_rfq_completion)",
@@ -6611,7 +6635,7 @@
    "classification_basis": "allowed if the supplier certifies both functions (P1 RFQ dispatch)"
   },
   {
-   "no": 338,
+   "no": 339,
    "id": "OQ-RFQV2-04",
    "kind": "lane_question",
    "lane": "RFQ v2 (fo_a9_6_rfq_completion)",
@@ -6635,7 +6659,7 @@
    "classification_basis": "package placement of items outside the owner's six lists (dispatch of the affected package)"
   },
   {
-   "no": 339,
+   "no": 340,
    "id": "OQ-RFQV2-05",
    "kind": "lane_question",
    "lane": "RFQ v2 (fo_a9_6_rfq_completion)",
@@ -6659,7 +6683,7 @@
    "classification_basis": "availability of a laboratory magnet supply (P1 RFQ dispatch)"
   },
   {
-   "no": 340,
+   "no": 341,
    "id": "OQ-RFQV2-06",
    "kind": "lane_question",
    "lane": "RFQ v2 (fo_a9_6_rfq_completion)",
@@ -6684,7 +6708,7 @@
    "group": "DG-ISOLATION-DWV"
   },
   {
-   "no": 341,
+   "no": 342,
    "id": "OQ-RFQV2-08",
    "kind": "lane_question",
    "lane": "RFQ v2 (fo_a9_6_rfq_completion)",
@@ -6710,7 +6734,7 @@
    "group": "DG-ISOLATION-DWV"
   },
   {
-   "no": 342,
+   "no": 343,
    "id": "OQ-RFQV2-09",
    "kind": "lane_question",
    "lane": "RFQ v2 (fo_a9_6_rfq_completion)",
@@ -6735,7 +6759,7 @@
    "group": "DG-HALL-START"
   },
   {
-   "no": 343,
+   "no": 344,
    "id": "OQ-RFQV2-10",
    "kind": "lane_question",
    "lane": "RFQ v2 (fo_a9_6_rfq_completion)",
@@ -6760,7 +6784,7 @@
    "classification_basis": "H-1 fabrication route (separate RFQ / RFQ2-MECH / in-house)"
   },
   {
-   "no": 344,
+   "no": 345,
    "id": "OQ-RFQV2-07",
    "kind": "lane_closed_question",
    "lane": "RFQ v2 (fo_a9_6_rfq_completion)",
@@ -6784,7 +6808,7 @@
    ]
   },
   {
-   "no": 345,
+   "no": 346,
    "id": "P1-IT-52",
    "kind": "lane_registration",
    "lane": "P1 (fo_a9_6_p1_workflow_completion)",
@@ -6809,7 +6833,7 @@
    "classification_basis": "per-stage operating domains from procured ratings and the P1 run matrix; no default domain"
   },
   {
-   "no": 346,
+   "no": 347,
    "id": "P1-IT-55",
    "kind": "lane_registration",
    "lane": "P1 (fo_a9_6_p1_workflow_completion)",
@@ -6835,7 +6859,7 @@
    "group": "DG-ISOLATION-DWV"
   },
   {
-   "no": 347,
+   "no": 348,
    "id": "P1Q-10",
    "kind": "lane_answered",
    "lane": "P1 (fo_a9_p1_icp_bench)",
@@ -6855,7 +6879,7 @@
    "answer_excerpt": "OWNER_DECIDED — CAPACITY_EXTRACTION_FORM :: I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF, subject to current-path closure and the registered uncertainty treatment. The verbatim formula lacks 'I_e,cap =' and the minus sign; this reading follows the owner's 'matched RF-OFF measurements used to quantify facility/background electron current' and the verified P1 reducer (I_e_icp_corrected = I_..."
   },
   {
-   "no": 348,
+   "no": 349,
    "id": "P1Q-13",
    "kind": "lane_answered",
    "lane": "P1 (fo_a9_p1_icp_bench)",
@@ -6875,7 +6899,7 @@
    "answer_excerpt": "OWNER_DECIDED — ANODE_FLOATING / BODY_SINGLE_POINT_METERED_GROUND :: physically disconnected from the discharge supply and left floating during ICP-45 discharge-OFF capacity measurements (never a commanded-zero supply left attached); V_anode recorded on a high-impedance isolated channel; anode terminal classified OPEN_CIRCUIT_BY_CONSTRUCTION"
   },
   {
-   "no": 349,
+   "no": 350,
    "id": "P1Q-14",
    "kind": "lane_answered",
    "lane": "P1 (fo_a9_p1_icp_bench)",
@@ -6895,7 +6919,7 @@
    "answer_excerpt": "OWNER_DECIDED — ICP_350V_CLASS / 1.05kV_INITIAL_DWV :: the 350 V operating isolation class (row 81) is extended to the ICP body/collector circuits relative to the Hall anode, H-1 body/common, facility ground and other isolated circuits where those potential differences can physically occur (deliberate A9 extension)"
   },
   {
-   "no": 350,
+   "no": 351,
    "id": "P2Q-05",
    "kind": "lane_answered",
    "lane": "P2 (fo_a9_p2_impedance_prep)",
@@ -6915,7 +6939,7 @@
    "answer_excerpt": "OWNER_DECIDED — PHOTODIODE_REQUIRED :: independent plasma ignition/unlit indicator; E-mode/H-mode transition indicator during P2"
   },
   {
-   "no": 351,
+   "no": 352,
    "id": "P1Q-15",
    "kind": "lane_answered",
    "lane": "P1 (fo_a9_p1_icp_bench)",
@@ -6935,7 +6959,7 @@
    "answer_excerpt": "OWNER_DECIDED — KIRCHHOFF_CLOSURE_RULE :: R_I = sum_k I_k"
   },
   {
-   "no": 352,
+   "no": 353,
    "id": "P1Q-16",
    "kind": "lane_answered",
    "lane": "P1 (fo_a9_p1_icp_bench)",
@@ -6955,7 +6979,7 @@
    "answer_excerpt": "OWNER_CONFIRMED — CAPACITY_FORMULA :: I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (the A9.4 recorder reading, confirmed; the verbatim block again lacks 'I_e,cap =' and the minus sign), signed currents under the same registered convention"
   },
   {
-   "no": 353,
+   "no": 354,
    "id": "OD2",
    "kind": "lane24_open_decision",
    "lane": "lane-24 hard-gate matrix v1 (historical; registered by A9_6_M16 via RVM-ID-11)",
@@ -7001,7 +7025,7 @@
    "group": "DG-RFP-ENVELOPE"
   },
   {
-   "no": 354,
+   "no": 355,
    "id": "OD3",
    "kind": "lane24_open_decision",
    "lane": "lane-24 hard-gate matrix v1 (historical; registered by A9_6_M16 via RVM-ID-11)",
@@ -7036,7 +7060,7 @@
    "group": "DG-RFP-ENVELOPE"
   },
   {
-   "no": 355,
+   "no": 356,
    "id": "OD5",
    "kind": "lane24_open_decision",
    "lane": "lane-24 hard-gate matrix v1 (historical; registered by A9_6_M16 via RVM-ID-11)",
@@ -7090,7 +7114,7 @@
    "group": "DG-RFP-START"
   },
   {
-   "no": 356,
+   "no": 357,
    "id": "OD6",
    "kind": "lane24_open_decision",
    "lane": "lane-24 hard-gate matrix v1 (historical; registered by A9_6_M16 via RVM-ID-11)",
@@ -7137,7 +7161,7 @@
    "group": "DG-XE-FUNC"
   },
   {
-   "no": 357,
+   "no": 358,
    "id": "OD12",
    "kind": "lane24_open_decision",
    "lane": "lane-24 hard-gate matrix v1 (historical; registered by A9_6_M16 via RVM-ID-11)",
@@ -7202,7 +7226,7 @@
    "group": "DG-RFP-UNGATED"
   },
   {
-   "no": 358,
+   "no": 359,
    "id": "OD13",
    "kind": "lane24_open_decision",
    "lane": "lane-24 hard-gate matrix v1 (historical; registered by A9_6_M16 via RVM-ID-11)",
@@ -7244,7 +7268,7 @@
    ]
   },
   {
-   "no": 359,
+   "no": 360,
    "id": "OD14",
    "kind": "lane24_open_decision",
    "lane": "lane-24 hard-gate matrix v1 (historical; registered by A9_6_M16 via RVM-ID-11)",
@@ -7299,7 +7323,7 @@
    "group": "DG-RFP-START"
   },
   {
-   "no": 360,
+   "no": 361,
    "id": "RVMQ-01",
    "kind": "lane_question",
    "lane": "RVM (fo_a9_6_rvm; registered by A9_6_M16 via RVM-ID-10)",

@@ -339,13 +339,18 @@ def test_open_questions_new_only_and_open(doc):
         assert v == "OPEN", k           # carried owner calls stay open (never answered here)
 
 
-def test_pending_lanes_referenced_not_read(doc, b):
-    for k, v in doc["pending_parallel_lanes"].items():
-        assert v.startswith("PENDING "), v
+def test_downstream_lanes_referenced_not_read(doc, b):
+    """S-02 / PHYS-01: RVM and M16 are merged and consume this package; they are named as downstream consumers (built
+    later in the A9.6 order, never pinned - a pin would be circular), never as 'PENDING / not merged'."""
+    assert "pending_parallel_lanes" not in doc
+    for k, v in doc["downstream_consumer_lanes"].items():
+        assert v.startswith("downstream consumer "), v
     pinned = {p["path"] for p in doc["pins"]}
-    for _lane, path in b.PENDING_LANES.values():
+    for _lane, path in b.DOWNSTREAM_LANES.values():
         assert path not in pinned
-    assert set(doc["pending_parallel_lanes"]) == {"M16", "RVM"}   # only lanes not merged in this base
+    assert set(doc["downstream_consumer_lanes"]) == {"M16", "RVM"}
+    txt = json.dumps(doc)
+    assert "PENDING fo_a9_6_" not in txt and "not merged in this base" not in txt
     demands = {d["id"]: d for d in doc["interface_demands"]}
     assert demands["MPV2-ID-01"]["from"].startswith("docs/experiments/hall_icp/p3_coupled_thermal/")
     assert demands["MPV2-ID-15"]["from"].startswith("docs/budgets/xe_accounting_a9_v2/")
@@ -482,3 +487,27 @@ def test_xlane_references_checked_not_pinned_not_stale():
             break
     assert b.xlane_check(bad)
 
+
+
+def test_sw08_rollup_refuses_impossible_line_values(b):
+    """SW-08: negative / NaN / string masses, duplicate lines and a harness without allocation are refused; a NaN never
+    reaches NOT_EVALUABLE or CONSISTENT."""
+    good = [{"line": "AL-01", "allocation_kg": 1.0, "evidence_floor_kg": None, "is_harness": False},
+            {"line": "AL-09", "allocation_kg": 1.0, "evidence_floor_kg": None, "is_harness": True}]
+    for bad in (-30.0, float("nan"), float("inf"), "3", True):
+        for key in ("allocation_kg", "evidence_floor_kg"):
+            lines = [dict(good[0], **{key: bad}), good[1]]
+            with pytest.raises(b.MassPowerV2Error):
+                b.dry_rollup(lines, "MQ01_CBE_LEVEL", "WITH_EVIDENCE_FLOORS", 4.0, 0.05, 0.2, 0.2)
+    with pytest.raises(b.MassPowerV2Error):
+        b.dry_rollup(good + [dict(good[0])], "MQ01_CBE_LEVEL", "ALLOCATIONS", 4.0, 0.05, 0.2, 0.2)
+    with pytest.raises(b.MassPowerV2Error):
+        b.dry_rollup([good[0], dict(good[1], allocation_kg=None)], "MQ01_CBE_LEVEL", "ALLOCATIONS", 4.0, 0.05, 0.2,
+                     0.2)
+    d = b.dry_rollup(good, "MQ01_CBE_LEVEL", "ALLOCATIONS", 4.0, 0.05, 0.2, 0.2)
+    with pytest.raises(b.MassPowerV2Error):
+        b.wet_cell(dict(d, dry_known_kg=float("nan")), 1.0, "LOADED_XA9Q01", 0.0, 40.0, True)
+    for alloc, floor in ((5.0, float("nan")), (-1.0, None), (5.0, -2.0)):
+        with pytest.raises(b.MassPowerV2Error):
+            b.line_state(alloc, floor, False)
+    assert b.line_state(5.0, 4.0, False) == "CONSISTENT"

@@ -37,6 +37,7 @@ import argparse
 import hashlib
 import itertools
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -147,11 +148,14 @@ NEVER_PINNED = [
     "docs/orchestration/fired_triggers.jsonl",
     "docs/orchestration/runtime_state.json",
 ]
-# A9.6 lanes that are NOT merged in this base (other worktrees): referenced by path / lane id only.
-PENDING = {
-    "DECPROP": "PENDING fo_a9_6_decision_propagation (owner-question state v4)",
-    "RVM": "PENDING fo_a9_6_rvm (system requirement-verification matrix)",
-    "M16": "PENDING fo_a9_6_m16_refresh",
+# A9.6 lanes built LATER in the build order (P4, XE, P1, P2, P3, MP, RFQ, RVM, state v4, M16 v4) that consume this
+# package: merged, named by lane id only as downstream consumers - never read, never pinned (a pin would be circular).
+# Consolidated verification S-02 / PHYS-01: formerly worded 'PENDING / not merged in this base', no longer true.
+_DS = "downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): "
+DOWNSTREAM = {
+    "DECPROP": _DS + "fo_a9_6_decision_propagation (owner-question state v4)",
+    "RVM": _DS + "fo_a9_6_rvm (system requirement-verification matrix)",
+    "M16": _DS + "fo_a9_6_m16_refresh",
 }
 # Merged A9.6 packages cited here (ids checked at build time; never sha-pinned).
 MERGED = {
@@ -761,6 +765,8 @@ def eval_line(ln: dict, items: dict, reading: dict, done: dict) -> dict:
                 continue
             if isinstance(v, (list, str, bool)):
                 raise BookingError(f"{ln['id']}: non-numeric value for {f['name']}")
+            if not math.isfinite(float(v)) or float(v) < 0:          # SW-08: no negative / NaN Xe mass
+                raise BookingError(f"{ln['id']}: {f['name']} = {v!r} must be a finite number >= 0")
             if f["unit"] not in UNIT_SI:
                 raise BookingError(f"{ln['id']}: unknown unit {f['unit']}")
             val *= float(v) * UNIT_SI[f["unit"]]
@@ -772,6 +778,8 @@ def eval_line(ln: dict, items: dict, reading: dict, done: dict) -> dict:
         if u is None:
             out["missing"].append({"field": f["name"], "item": f["item"],
                                    "requires": items[f["item"]].get("requires")})
+        if u is not None and (isinstance(u, (bool, str, list)) or not math.isfinite(float(u)) or float(u) < 0):
+            raise BookingError(f"{ln['id']}: fraction {f['name']} = {u!r} must be a finite number >= 0 (SW-08)")
         parts = [done[x]["kg"] for x in ln["of_lines"]]
         if u is None or any(p is None for p in parts):
             out["missing"] += [{"field": "sum of", "lines": [x for x in ln["of_lines"] if done[x]["kg"] is None]}] \
@@ -928,6 +936,10 @@ def read_isotherm(rel: str) -> dict:
 
 
 def case_split(case_kg: float, reading: str, f_reserve: float, f_residual: float) -> dict:
+    for name, v in (("case_kg", case_kg), ("f_reserve", f_reserve), ("f_residual", f_residual)):
+        if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or v < 0:
+            raise BookingError(f"case split: {name} = {v!r} must be a finite number >= 0 (SW-08; no NaN / negative "
+                               "reserve or residual)")
     if reading == "LOADED":
         loaded = case_kg
         usable = case_kg / (1.0 + f_residual)
@@ -939,7 +951,7 @@ def case_split(case_kg: float, reading: str, f_reserve: float, f_residual: float
     residual = f_residual * usable
     non_reserve_cap = usable / (1.0 + f_reserve)
     reserve = f_reserve * non_reserve_cap
-    if abs(non_reserve_cap + reserve + residual - loaded) > 1e-12 * max(1.0, loaded):
+    if not abs(non_reserve_cap + reserve + residual - loaded) <= 1e-12 * max(1.0, loaded):   # NaN-safe (SW-08)
         raise BookingError("design-case split does not close (double counting)")
     return {"case_kg": case_kg, "reading": reading, "loaded_kg": loaded, "usable_kg": usable,
             "residual_kg": residual, "reserve_kg": reserve, "non_reserve_cap_kg": non_reserve_cap}
@@ -1205,14 +1217,14 @@ def interface_demands() -> list:
         pair("XV2-IF-07", "OUT", SCHEMA_ID, p1 + " IF-P1-17",
              "booking rule: G-REUSE mdot_ICP,dedicated = 0; any activated diagnostic dedicated feed is booked here "
              "as a separate optional entry (S3-GT-P1-DIAG), never as baseline", "XL-37"),
-        {"id": "XV2-IF-08", "direction": "OUT", "from": SCHEMA_ID, "to": PENDING["DECPROP"],
+        {"id": "XV2-IF-08", "direction": "OUT", "from": SCHEMA_ID, "to": DOWNSTREAM["DECPROP"],
          "quantity": "open questions carried (XA9Q-01/02/03/07, MQ-09, OQ-A907-01, OQ-A910-01) and new XV2Q-01; no "
                      "answers", "units": "-", "status": "OFFERED", "xref": []},
-        {"id": "XV2-IF-09", "direction": "OUT", "from": SCHEMA_ID, "to": PENDING["RVM"],
+        {"id": "XV2-IF-09", "direction": "OUT", "from": SCHEMA_ID, "to": DOWNSTREAM["RVM"],
          "quantity": "Xe capability / Xe accounting evidence state: every total with a TBD input is REFUSED; the RVM "
                      "Xe rows can only be NOT_EVALUATED / INCOMPLETE_EVIDENCE from this accounting (never PASS)",
          "units": "-", "status": "OFFERED", "xref": []},
-        {"id": "XV2-IF-10", "direction": "OUT", "from": SCHEMA_ID, "to": PENDING["M16"],
+        {"id": "XV2-IF-10", "direction": "OUT", "from": SCHEMA_ID, "to": DOWNSTREAM["M16"],
          "quantity": "m16_impact rows (no readiness change: framework only)", "units": "-", "status": "OFFERED",
          "xref": []},
         {"id": "XV2-IF-11", "direction": "IN", "from": "C1 vendor/design qualification (external, not contacted)",
@@ -1231,14 +1243,14 @@ def interface_demands() -> list:
 M16_IMPACT = [
     {"m16_row": 6, "key": "xe_tank", "impact": "tank volume per design case at 323 K under both RA-CASE readings "
      "(USABLE reading adds the residual: loaded x 1.02); totals REFUSED; no readiness change", "cell_edit": "none; "
-     + PENDING["M16"]},
+     + DOWNSTREAM["M16"]},
     {"m16_row": 7, "key": "xe_regulator", "impact": "inlet = MEOP (TBD, XV2-28); no change", "cell_edit": "none; " +
-     PENDING["M16"]},
+     DOWNSTREAM["M16"]},
     {"m16_row": 8, "key": "xe_metering", "impact": "C1 FCUs only in hall_c1_reference; ICP feed metering only as a "
      "CASE-3 optional entry (G-XE/G-ATM/diagnostic); Hall-side Xe metering under RA-FUNC APPLIES only for the ICP "
-     "configuration", "cell_edit": "none; " + PENDING["M16"]},
+     "configuration", "cell_edit": "none; " + DOWNSTREAM["M16"]},
     {"m16_row": 11, "key": "cathode", "impact": "C1 remains CONTROL_FALLBACK: every C1 Xe phase a separate line; "
-     "not present in the ICP configuration", "cell_edit": "none; " + PENDING["M16"]},
+     "not present in the ICP configuration", "cell_edit": "none; " + DOWNSTREAM["M16"]},
 ]
 
 
@@ -1309,7 +1321,7 @@ def build_doc() -> dict:
         "pins": {"decisions": pins_list(DECISIONS), "deliverables": pins_list(DELIVERABLES),
                  "source_snapshots": pins_list(SNAPSHOTS), "historical": pins_list(HISTORICAL)},
         "never_pinned": NEVER_PINNED,
-        "parallel_lanes": PENDING,
+        "downstream_consumer_lanes": DOWNSTREAM,
         "merged_cross_lane": xlane_report(None),
         "accounting_convention": prev["accounting_convention"],
         "cases": {
@@ -1453,8 +1465,8 @@ def render_md(doc: dict) -> str:
     o += _table(["group", "path", "sha256", "role"],
                 [[g, p["path"], p["sha256"], p["role"]] for g, ps in doc["pins"].items() for p in ps])
     o += ["Never pinned (mutable governance): " + ", ".join(f"`{x}`" for x in doc["never_pinned"]), ""]
-    o += ["Lanes not merged in this base (referenced by lane id only): " +
-          "; ".join(doc["parallel_lanes"].values()), ""]
+    o += ["Downstream consumer lanes (merged; built later in the A9.6 order, not pinned to avoid a cycle): " +
+          "; ".join(doc["downstream_consumer_lanes"].values()), ""]
     o += ["### Merged cross-lane references", "", doc["merged_cross_lane"]["rule"], ""]
     o += _table(["package", "path", "pairs", "ids cited", "check"],
                 [[k, v["path"], ", ".join(v["pairs"]) or "-", ", ".join(v["ids_cited"]) or "-", v["check"]]

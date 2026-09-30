@@ -225,9 +225,9 @@
   "docs/orchestration/trigger_ledger_v2.jsonl",
   "docs/orchestration/runtime_state.json"
  ],
- "pending_parallel_lanes": {
-  "M16": "PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh)",
-  "RVM": "PENDING (system requirement-verification matrix; A9.6 sec. 15) (fo_a9_6_rvm)"
+ "downstream_consumer_lanes": {
+  "M16": "downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh)",
+  "RVM": "downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (system requirement-verification matrix; A9.6 sec. 15) (fo_a9_6_rvm)"
  },
  "merged_cross_lane": {
   "rule": "values flow only P4 -> MP (candidate densities) and XE -> MP (Xe residual and headroom, both readings), and P1 / P2 -> RFQ (ids, item text and statuses of the instrument coverage); every other cross-lane reference is an id checked at build time. Rebuild in the order P4, XE, P1, P2, P3, MP, RFQ; a second pass of any package is a no-op",
@@ -9186,7 +9186,7 @@
   {
    "id": "MPV2-ID-11",
    "from": "docs/budgets/mass_power_a9_v2/",
-   "to": "PENDING (system requirement-verification matrix; A9.6 sec. 15) (fo_a9_6_rvm)",
+   "to": "downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (system requirement-verification matrix; A9.6 sec. 15) (fo_a9_6_rvm)",
    "quantity": "mass rows: <40 kg wet = NOT_EVALUATED / INCOMPLETE_EVIDENCE (no CBE); power rows: <1.5 kW and 1.35 kW = NOT_EVALUATED (all loads TBD)",
    "value": "see rollups / power",
    "units": "-",
@@ -9196,7 +9196,7 @@
   {
    "id": "MPV2-ID-12",
    "from": "docs/budgets/mass_power_a9_v2/",
-   "to": "PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh)",
+   "to": "downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh)",
    "quantity": "M16 allocation columns and new rows (m16_impact); no row READY/VERIFIED from this lane",
    "value": "-",
    "units": "-",
@@ -9716,55 +9716,55 @@
    "m16_row": 6,
    "key": "xe_tank",
    "how_touched": "Xe hardware in both configurations (row 6); XA9Q-07 OPEN",
-   "state_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+   "state_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
   },
   {
    "m16_row": 8,
    "key": "xe_metering",
    "how_touched": "C1 cathode branch only in hall_c1_reference (inside the AL-08 floor)",
-   "state_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+   "state_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
   },
   {
    "m16_row": 9,
    "key": "hall_chamber",
    "how_touched": "anode material OPEN, 316L rejected as baseline; heat-removal line MPV2-N03",
-   "state_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+   "state_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
   },
   {
    "m16_row": 10,
    "key": "magnetic_circuit",
    "how_touched": "coil-mass correction applied (1.579 kg booked, 0.136 kg sensitivity only)",
-   "state_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+   "state_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
   },
   {
    "m16_row": 11,
    "key": "cathode",
    "how_touched": "C1 line AL-C1 without owner allocation (MPQ-01); hall_c1_reference column only",
-   "state_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+   "state_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
   },
   {
    "m16_row": 12,
    "key": "ppu",
    "how_touched": "flight RF source = FLIGHT_REPRESENTATIVE_DC_RF_SOURCE; RF protection line; collector bias rating TBD (I_d,max,H1 NOT_EVALUATED)",
-   "state_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+   "state_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
   },
   {
    "m16_row": 13,
    "key": "thermal_control",
    "how_touched": "UNRESOLVED (anode, coupled ICP); active cooling variant-only",
-   "state_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+   "state_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
   },
   {
    "m16_row": 15,
    "key": "sensors_diagnostics",
    "how_touched": "RF fwd/refl telemetry; photodiode ground-only",
-   "state_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+   "state_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
   },
   {
    "m16_row": 16,
    "key": "mechanical_structural",
    "how_touched": "ICP open-frame support / spacer line MPV2-N04",
-   "state_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+   "state_change": "none (refresh by downstream consumer (read-only; built later in the A9.6 order, not pinned to avoid a cycle): (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
   }
  ],
  "compliance": {

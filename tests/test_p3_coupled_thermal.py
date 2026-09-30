@@ -333,8 +333,13 @@ def test_plume_interception_and_q_plume(L, mod):
     assert narrow["SPACE"] == pytest.approx(1.0, abs=1e-12)  # axial pencil passes the aperture
     rec = {"I_beam_A": S(L, 3.0, "A"), "E_ion_mean_eV": S(L, 200.0, "eV"),
            "alpha_energy_accommodation": S(L, 1.0, "-")}
-    q = L.q_plume(rec, f)
+    cdf = L.q(mod.uniform_cone_cdf(40.0), L.PLUME_CDF_UNITS, L.SYN, "synthetic cone")
+    ir = L.plume_interception_record([h, icp], h, "H.ap", cdf, (8, 16, 32))
+    assert ir["fractions"] == f
+    q = L.q_plume(rec, ir)
     assert q["Q_plume_W"] == pytest.approx(600.0 * (1.0 - f["SPACE"]), rel=1e-12)
+    with pytest.raises(L.InputError):                                   # a bare fraction map carries no provenance
+        L.q_plume(rec, f)
     for bad in ([(0.0, 0.0), (30.0, 0.9)], [(5.0, 0.0), (30.0, 1.0)], [(0.0, 0.0), (100.0, 1.0)]):
         with pytest.raises(L.DomainError):
             L.plume_directions(bad, 4, 4)
@@ -568,3 +573,81 @@ def test_xlane_references_checked_not_pinned_not_stale():
             break
     assert b.xlane_check(bad)
 
+
+
+# ------------------------------------------------------------------ A9.6 sec. 18 consolidated verification, repair round 1
+def test_th01_env_rad_with_absorbed_load_closes(L):
+    """TH-01: an env_rad boundary with a nonzero absorbed load converges and the balance counts it once:
+    eps A sigma (T^4 - Te^4) = load + absorbed."""
+    net = L.Network(unknown=["A"], fixed={}, loads={"A": 10.0}, env_rad=[("A", 0.01, 5.0, 3.0)])
+    res = L.solve_network(net)
+    T = res["T_K"]["A"]
+    assert 0.01 * L.SIGMA_SB * (T ** 4 - 3.0 ** 4) == pytest.approx(15.0, rel=1e-9)
+    assert res["rejected_W"] == pytest.approx(res["load_W"] + res["absorbed_env_W"], rel=1e-9)
+    two = L.Network(unknown=["A", "B"], fixed={}, loads={"A": 4.0}, cond=[("A", "B", 0.2)],
+                    env_rad=[("A", 0.01, 2.0, 3.0), ("B", 0.02, 7.0, 3.0)])
+    r2 = L.solve_network(two)
+    assert r2["rejected_W"] == pytest.approx(4.0 + 9.0, rel=1e-9)
+
+
+def _plume_rec(L, ib=0.02, e=200.0):
+    return {"I_beam_A": L.q(ib, "A", "measured", "probe"), "E_ion_mean_eV": L.q(e, "eV", "measured", "RPA"),
+            "alpha_energy_accommodation": L.q(1.0, "-", "measured", "calorimetry")}
+
+
+def _ir(fr, ec="measured", src="Faraday probe"):
+    return {"fractions": fr, "evidence_class": ec, "source": src}
+
+
+def test_th02_plume_distribution_provenance(L, mod):
+    """TH-02: a geometric / assumed angular distribution never yields MEASURED_INPUTS_ONLY."""
+    B = L.Body
+    h = B("H", 0.0, 0.08, -0.1, 0.0, down=[("H.c", 0.0, 0.04), ("H.ap", 0.04, 0.05), ("H.o", 0.05, 0.08)])
+    icp = B("I", 0.05, 0.08, 0.03, 0.15)
+    rec = _plume_rec(L)
+    geo = L.plume_interception_record([h, icp], h, "H.ap",
+                                      L.q(mod.uniform_cone_cdf(40.0), L.PLUME_CDF_UNITS, "assumed", "test cone"),
+                                      (8, 16, 32))
+    q = L.q_plume(rec, geo)
+    assert q["provenance"]["basis"] == "CONDITIONAL_ON_NON_MEASURED_INPUTS"
+    assert "plume_angular_distribution" in q["provenance"]["conditional_on"]
+    meas = L.plume_interception_record([h, icp], h, "H.ap",
+                                       L.q(mod.uniform_cone_cdf(40.0), L.PLUME_CDF_UNITS, "measured", "FP scan"),
+                                       (8, 16, 32))
+    assert L.q_plume(rec, meas)["provenance"]["basis"] == "MEASURED_INPUTS_ONLY"
+    with pytest.raises(L.InputError):
+        L.plume_interception_record([h, icp], h, "H.ap", mod.uniform_cone_cdf(40.0), (8, 16, 32))
+    with pytest.raises(L.SyntheticMixError):
+        L.q_plume(rec, _ir({"I.up": 0.1, "SPACE": 0.9}, ec=L.SYN))
+    assert "PER UNIT CHARGE" in L.q_plume(rec, meas)["E_ion_mean_definition"]
+
+
+def test_sw07_interception_map_validated(L):
+    """SW-07: fractions finite in [0, 1] summing to 1 with SPACE; empty -> missing evidence."""
+    rec = _plume_rec(L, ib=1.0, e=200.0)
+    for bad in ({"ICP": 3.0, "SPACE": -2.0}, {"ICP": float("nan"), "SPACE": 1.0}, {"ICP": 0.5, "SPACE": 0.4},
+                {"ICP": 1.0}):
+        with pytest.raises((L.InputError, L.DomainError)):
+            L.q_plume(rec, _ir(bad))
+    for empty in ({}, None, _ir({})):
+        with pytest.raises(L.MissingInputError):
+            L.q_plume(rec, empty)
+    q = L.q_plume(rec, _ir({"ICP": 0.25, "SPACE": 0.75}))
+    assert q["Q_plume_W"] == pytest.approx(50.0) and q["Q_plume_W"] <= q["P_ion_beam_W"]
+    prov = L.provenance({"x": "measured"})
+    for args in ((-5.0, float("nan"), 1.0, prov), (1.0, 1.0, -1.0, prov), (1.0, 1.0, 1.0, None),
+                 (float("inf"), 0.0, 0.0, prov)):
+        with pytest.raises((L.InputError, L.DomainError)):
+            L.q_hall_to_icp(*args)
+    assert L.q_hall_to_icp(-2.0, 1.0, 3.0, prov)["Q_Hall_to_ICP_W"] == pytest.approx(2.0)
+
+
+def test_sw07_collector_surface_terms_positive(L):
+    for k, v in (("phi_wf_eV", -50.0), ("E_iz_eV", -3.0), ("phi_wf_eV", 0.0)):
+        rec = _coll(L)
+        rec["surface_energy_terms"] = {"value": "INCLUDED", "source": "test"}
+        rec["phi_wf_eV"] = S(L, 4.5, "eV")
+        rec["E_iz_eV"] = S(L, 15.8, "eV")
+        rec[k] = S(L, v, "eV")
+        with pytest.raises(L.DomainError):
+            L.q_collector(rec)

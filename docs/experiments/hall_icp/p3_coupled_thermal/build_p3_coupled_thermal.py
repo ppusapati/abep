@@ -607,8 +607,10 @@ def build_items(h25pm, a92, ans):
              "(no Hall-closure or 0-D prediction may be used: credible Hall set EMPTY)", "A", "pending",
              "CLAUDE.md gate 3; A9 evidence_sequence", None, "TBD_AFTER_EVIDENCE", "after-evidence", "phase1_hall",
              ["Q_plume"], "I_beam_A"),
-        item("P3-H-02", "mean ion energy of the intercepted plume", "TBD_AFTER_EVIDENCE - requires Phase-1 RPA / E x B "
-             "data", "eV", "pending", "A9 evidence_sequence", None, "TBD_AFTER_EVIDENCE", "after-evidence",
+        item("P3-H-02", "mean ion energy per unit charge of the intercepted plume (beam-current-weighted, "
+             "sum_i I_i E_i / (Z_i e) / I_beam; p3_thermal_lib.E_ION_MEAN_DEFINITION)", "TBD_AFTER_EVIDENCE - requires "
+             "Phase-1 RPA / E x B data (charge-state resolved where multiply charged ions are present)", "eV",
+             "pending", "A9 evidence_sequence", None, "TBD_AFTER_EVIDENCE", "after-evidence",
              "phase1_hall", ["Q_plume"], "E_ion_mean_eV"),
         item("P3-H-03", "plume angular current distribution (cumulative fraction vs angle)", "TBD_AFTER_EVIDENCE - "
              "requires a Phase-1 Faraday-probe angular sweep; the uniform-cone distributions of the parametric study "
@@ -860,6 +862,22 @@ def parametric_view_study(h25):
                             r[z] = {"F_to_ICP": _r(f_icp, 4), "F_to_SPACE": _r(vf["F"][z]["SPACE"], 4),
                                     "AF_to_ICP_m2": _r(vf["area_m2"][z] * f_icp, 4)}
                         rows.append(r)
+    # quadrature error of the parametric resolution (consolidated verification PHYS-02): the corner rows of the grid
+    # re-run at the verification resolution; the difference bounds how many digits of F_to_ICP are meaningful
+    qerr = []
+    for L in (min(GRID["L_over_Ro"]), max(GRID["L_over_Ro"])):
+        for rap in (min(GRID["rap_over_Ro"]), max(GRID["rap_over_Ro"])):
+            wall, H, tau = min(GRID["wall_over_Ro"]), max(GRID["H_over_Ro"]), min(GRID["tau"])
+            icp = LIB.Body("ICP", rap * Ro, (rap + wall) * Ro, L * Ro, (L + H) * Ro, tau=tau)
+            lo = LIB.view_factors([h1, icp], RES_STUDY, emitters=list(H1_ZONES))
+            hi = LIB.view_factors([h1, icp], RES_VERIFY, emitters=list(H1_ZONES))
+            for z in H1_ZONES:
+                fl = sum(v for k, v in lo["F"][z].items() if k.startswith("ICP."))
+                fh = sum(v for k, v in hi["F"][z].items() if k.startswith("ICP."))
+                qerr.append({"L_over_Ro": L, "rap_over_Ro": rap, "wall_over_Ro": wall, "H_over_Ro": H, "tau": tau,
+                             "zone": z, "F_to_ICP_parametric": _r(fl, 4), "F_to_ICP_verification": _r(fh, 4),
+                             "abs_diff": _r(abs(fl - fh), 2)})
+    qerr_max = max(x["abs_diff"] for x in qerr)
     # plume geometric interception of test distributions (opaque bodies, longest body)
     plume = []
     for L in GRID["L_over_Ro"]:
@@ -888,6 +906,14 @@ def parametric_view_study(h25):
         "baseline_without_icp": {z: {"F_to_SPACE": _r(base["F"][z]["SPACE"], 4),
                                      "area_m2": _r(base["area_m2"][z], 4)} for z in H1_ZONES},
         "rows": rows,
+        "quadrature_error_estimate": {
+            "method": "corner rows of the grid re-run at the verification resolution %s; abs_diff = |F(parametric) - "
+                      "F(verification)| of F_to_ICP per H-1 zone (PHYS-02)" % (list(RES_VERIFY),),
+            "resolution_parametric": list(RES_STUDY), "resolution_verification": list(RES_VERIFY),
+            "max_abs_diff": qerr_max, "rows": qerr,
+            "reading": "F values in 'rows' are printed to 4 significant figures but are indicative only to about +/- %s "
+                       "absolute (quadrature); the consolidated-verification Monte Carlo check (PHYS-02) found errors up to ~0.005 "
+                       "absolute at this resolution - use the verification resolution for any design number" % qerr_max},
         "plume_geometric_interception": {
             "label": "GEOMETRIC_TEST_DISTRIBUTION_NOT_A_PLUME_PREDICTION",
             "distribution": "uniform current per solid angle inside a cone of the given half-angle, emitted "
@@ -907,18 +933,40 @@ def parametric_view_study(h25):
 def a907_allowance_port(h2a9):
     ih = h2a9["recomputations"]["h25_thermal_rerun"]["icp_heat_into_h1"]
     lv = ih["min_allowance_W"]["LV-BASE"]
+    # nodes whose allowance is 0 W at LV-BASE because their headroom is already negative with 0 W of ICP heat
+    # (consolidated verification TH-06); read from the pinned A9-07 JSON, never typed in
+    zero = {}
+    for inj in ("PO", "BP"):
+        for node, w in lv[inj].items():
+            if node != "min_over_nodes" and w == 0.0:
+                zero.setdefault(node, []).append(inj)
+    headroom = {node: {case: ih["per_lever_and_case"]["LV-BASE"][case][node]["headroom_to_ceiling_K"]
+                       for case in sorted(ih["per_lever_and_case"]["LV-BASE"])}
+                for node in sorted(zero)}
     return {"source": DELIVERABLES["H2A9"][0] + " recomputations.h25_thermal_rerun.icp_heat_into_h1.min_allowance_W",
             "sha256": DELIVERABLES["H2A9"][1],
             "LV-BASE": {"PO": lv["PO"], "BP": lv["BP"]},
             "evidence_class": "model-derived (uncoupled sensitivity; 0 W ICP heat, v1 exterior views)",
             "comparison_rule": "P3 equivalent heat into H-1 (equivalent_heat_into_h1 + carrier conduction + plume "
-                               "back-flow) at PO / BP is reported beside these allowances as a ratio; a ratio > 1 is "
-                               "a design-driving warning; a ratio <= 1 is NOT a closure (the allowances assume v1 "
-                               "exterior views, which the ICP changes) - status stays COMPUTED_CONDITIONAL / "
-                               "UNRESOLVED",
+                               "back-flow) at PO / BP is to be reported beside these allowances, per node, as the ratio "
+                               "Q_equivalent / allowance; a ratio > 1 is a design-driving warning; a ratio <= 1 is NOT "
+                               "a closure (the allowances assume v1 exterior views, which the ICP changes); against a "
+                               "0 W allowance the ratio is undefined and ANY positive equivalent heat is a "
+                               "design-driving warning (ZERO_ALLOWANCE_ALWAYS_WARNING) - status stays "
+                               "COMPUTED_CONDITIONAL / UNRESOLVED. No ratio is computed in this lane (heat terms TBD)",
+            "zero_allowance_nodes": {"nodes_by_injection": {k: sorted(v) for k, v in sorted(zero.items())},
+                                     "headroom_to_ceiling_K_with_0_W_icp_heat": headroom,
+                                     "reading": "these nodes do not close even without ICP heat at LV-BASE (negative "
+                                                "headroom in at least one case); they are the binding constraint, "
+                                                "not the 13 W CO pole allowance"},
             "status": "NOT_EVALUATED (ICP temperatures and heat terms TBD)",
             "a9_2_warning": "A9.2 13W_pole_allowance: the outer coil CO tolerates only about 13 W of ICP heat "
-                            "injected at PO at LV-BASE; design-driving warning, not grounds to reject A9"}
+                            "injected at PO at LV-BASE; design-driving warning, not grounds to reject A9. Binding "
+                            "constraint (TH-06): %s have a 0 W allowance at LV-BASE - their headroom is already "
+                            "negative with 0 W of ICP heat (%s), so any ICP heat reaching them is a design-driving "
+                            "warning" % (", ".join(sorted(zero)), "; ".join(
+                                "%s %s" % (n, ", ".join("%s %s K" % (c, h) for c, h in headroom[n].items()))
+                                for n in sorted(headroom)))}
 
 
 # ------------------------------------------------------------------------------------------------ build
@@ -1295,6 +1343,9 @@ def render_md(doc):
         L.append(f"| {r['L_over_Ro']} | {r['rap_over_Ro']} | {r['wall_over_Ro']} | {r['H_over_Ro']} | {r['tau']} | "
                  f"{r['H1.aperture']['F_to_ICP']} | {r['H1.PO_face']['F_to_ICP']} | {r['H1.PI_face']['F_to_ICP']} | "
                  f"{r['H1.PO_lateral']['F_to_ICP']} |")
+    qe = ps["quadrature_error_estimate"]
+    L += ["", f"Quadrature error at the parametric resolution {qe['resolution_parametric']} (PHYS-02): max |dF| = "
+              f"{qe['max_abs_diff']} against {qe['resolution_verification']} on the grid corners. {qe['reading']}."]
     pl = ps["plume_geometric_interception"]
     L += ["", f"Plume geometric interception ({pl['label']}; {pl['distribution']}):", "",
           "| L/R_o | r_ap/R_o | cone half-angle (deg) | upstream face | bore | escape |", "|---|---|---|---|---|---|"]

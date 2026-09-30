@@ -640,7 +640,9 @@ def items(ar):
            "each with its boundary label", "W/A", "owner decision", A93 + " OQ-RFQ-06.p1_outputs",
            "owner-allocation", "OWNER_GIVEN", "NOW"),
         it("P1-IT-29", "neutralization-margin form (used only once I_d,max,H1 is registered)",
-           "M_n = I_e,cap / I_d,dem - 1; one-sided lower confidence bound > 0; one-sided alpha 0.05 per absolute gate",
+           "M_n = I_e,cap / I_d,dem - 1; one-sided lower confidence bound > 0; one-sided alpha 0.05 per absolute gate "
+           "(the registered margin_rule carries alpha_one_sided = 0.05 and k_basis; k_one_sided below the normal "
+           "one-sided quantile 1.6449 is refused - consolidated verification MET-04)",
            "-", "owner decision", A91 + " UBQ-02, UBQ-07", "owner-allocation", "OWNER_GIVEN (freeze LOCK-1)",
            "LOCK-1"),
         it("P1-IT-30", "stable ICP operating region criteria (P1 -> P2 handoff)", tbd + "owner decision on the "
@@ -1632,7 +1634,7 @@ def _pair(i, direction, counterpart, what, pair):
 def interface_demands():
     return [
         _pair("IF-P1-01", "to", "P2 " + P2_JSON + " IDP2-01 (gate S-10, HM-R01)", "stable ICP operating region "
-              "handoff: p1_reducer.stable_region_handoff output (status, criteria_id, points within the owner "
+              "handoff: p1_reducer.stable_region_handoff output (evidence_kind, status, criteria_id, points within the owner "
               "criteria with match settings, gas, H-1 point and Z_ICP when MEASURED, dwell verdicts, envelope of "
               "tested points over P_fwd, mdot, p, V_collector)", "XL-01"),
         _pair("IF-P1-02", "from", "P2 " + P2_JSON + " IDP2-03 (ZM-A/B/C, CAL-P2-01..15)", "V/I sensing, coupler "
@@ -1941,7 +1943,10 @@ def open_questions():
          "NOT_EVALUATED_INSTRUMENT) 'at a candidate qualification point'. Recorder reading implemented: it is tested on "
          "the RF-ON ICP45_CAPACITY record (the candidate point); the matched RF-OFF record, whose collector current is "
          "the facility/background term and may be near zero, is tested only with the statistical and fractional "
-         "closure using the I_scale,min floor. Confirm?", "proposed_answer": "YES (otherwise every RF-OFF record with "
+         "closure using the I_scale,min floor; a fractional-only failure of the RF-OFF record that its instrument "
+         "cannot resolve (3 u_R > 0.02 max(|I_e,collector|, I_scale,min)) is NOT_EVALUATED_INSTRUMENT, not an "
+         "exclusion (consolidated verification MET-03). Confirm?", "proposed_answer": "YES (otherwise every RF-OFF "
+         "record with "
          "I_e,collector ~ 0 would be NOT_EVALUATED_INSTRUMENT by construction, which the I_scale,min floor exists to "
          "avoid)", "needed_by": "before the first ICP45_CAPACITY record (P1-G0)"},
         {"id": "P1Q-19", "status": "TBD_OWNER", "question": "(Remaining genuine choice; the 'zero = not available' "
@@ -1958,6 +1963,14 @@ def open_questions():
          "instead of 0?", "proposed_answer": "owner call; PROPOSED: YES when the recorded leakage at the operating "
          "potential is not negligible against u_R; register it as a u_zero_offset_A of the anode terminal",
          "needed_by": "before the first ICP45_CAPACITY record (P1-G0)"},
+        {"id": "P1Q-24", "status": "TBD_OWNER", "question": "A two-port (small-signal S-parameter) line/match-loss "
+         "characterization is now counted as verified in P1 only after an at-power loss-model verification in the P2 "
+         "form (CAL-P2-09 calorimetric / CAL-P2-10 antenna simulator: |eta_meas - eta_pred| / u_c <= k), because the "
+         "P1-S1 dummy-load coupler-vs-calorimeter cross-check tests the coupler, not the loss model (consolidated "
+         "verification MET-02); without it P_delivered and C_e stay upper bounds. Register the coverage factor k of "
+         "that check (never defaulted; the same k as the P2 loss verification, TBD_OWNER / LOCK-2), and confirm the "
+         "fail-closed reading?", "proposed_answer": "owner call on k; PROPOSED: one k for P1 and P2 frozen together "
+         "(no value proposed here)", "needed_by": "before the first P_RF_DELIVERED / C_e is reported from P1-S4"},
     ]
 
 
@@ -2433,8 +2446,13 @@ def _optical_def(red):
                            "electrical_ignition_or_mode_transition": {"type": "boolean"},
                            "electrical_indicator_basis": {"type": "string"},
                            "unlit_threshold": {"anyOf": [{"type": "null"}, {
-                               "type": "object", "required": ["threshold_id", "threshold_V"],
-                               "properties": {"threshold_id": {"type": "string"}, "threshold_V": {"type": "number"}}}]},
+                               "type": "object", "required": ["threshold_id", "threshold_V", "basis"],
+                               "properties": {"threshold_id": {"type": "string"}, "threshold_V": {"type": "number"},
+                                              "basis": {"type": "object",
+                                                        "required": list(red.THRESHOLD_BASIS_FIELDS),
+                                                        "properties": {"frozen_before_p2_map": {"const": True}},
+                                                        "description": "A9.4 P2Q-05 basis, identical to the P2 "
+                                                                       "reducer (consolidated verification MET-05)"}}}]},
                            "lit_mode_assignment": {"enum": ["E_MODE", "H_MODE", None]},
                            "mode_indicator_basis": {"type": "string"}}}
 
@@ -2458,7 +2476,15 @@ def _stage_defs(red):
                                                                  {"type": "null"}, {"type": "object", "required": [
                                                                      "criterion_id", "max_leakage_A"]}]}}}},
         gas_lines={"type": "array", "minItems": 1, "items": {"type": "object", "required": [
-            "line_id", "bridges_isolated_potentials", "isolator_installed", "qualification"]}},
+            "line_id", "bridges_isolated_potentials", "isolator_installed", "qualification"],
+            "properties": {"service_gas": {"type": ["string", "null"],
+                                           "description": "representative service gas; required (null = not "
+                                                          "registered) on a line that bridges isolated potentials"},
+                           "qualification": {"anyOf": [{"type": "null"}, {"type": "object", "required": [
+                               "qualification_id", "level_id", "level_V", "V_test_V", "gas", "p_Pa",
+                               "breakdown_or_flashover"], "properties": {
+                               "level_V": {"type": ["number", "null"]}, "V_test_V": num, "p_Pa": num,
+                               "gas": {"type": "string", "minLength": 1}}}]}}}},
         ar_mfcs={"type": "array", "items": {"type": "object", "required": ["mfc_id", "range_min_mg_s",
                                                                            "range_max_mg_s"]}},
         ar_sweep_bounds_mg_s={"anyOf": [{"type": "null"}, {"type": "array", "minItems": 2, "maxItems": 2}]},
@@ -2468,7 +2494,8 @@ def _stage_defs(red):
         "x-owner-values": {"V_operating_max_V_max": red.ISOLATION_V_OPERATING_MAX_V,
                            "V_design_withstand_V_min": red.ISOLATION_V_DESIGN_WITHSTAND_MIN_V,
                            "dwv_V_test_V_min": red.DWV_V_TEST_V, "dwv_duration_s_min": red.DWV_DURATION_S,
-                           "required_interlocks": list(red.READINESS_INTERLOCK_IDS), "source": red.A94_P1Q14}}
+                           "required_interlocks": list(red.READINESS_INTERLOCK_IDS), "source": red.A94_P1Q14,
+                           "icpq06_class_V": red.ICPQ06_CLASS_V}}
     cold = {"type": "object", "required": list(red.COLD_REQUIRED), "properties": dict(
         common, record_kind={"const": "rf_cold_checkout"}, stage_id={"enum": sorted(set(red.COLD_KINDS.values()))},
         checkout_kind={"enum": list(red.COLD_KINDS)}, rf=rf,
@@ -2476,7 +2503,14 @@ def _stage_defs(red):
             "P_cal_W": num, "u_P_cal_W": upos, "u_P_coupler_W": upos, "method_id": {"type": "string"}}},
         loss_characterization={"anyOf": [{"type": "null"}, {"type": "object", "required": list(red.LOSS_CHAR_REQUIRED),
                                                             "properties": {"method": {"enum": list(
-                                                                red.LOSS_CHAR_METHODS)}, "u_value_W": upos}}]},
+                                                                red.LOSS_CHAR_METHODS)}, "u_value_W": upos,
+                                                                "at_power_verification": {"anyOf": [
+                                                                    {"type": "null"},
+                                                                    {"type": "object",
+                                                                     "required": list(red.AT_POWER_REQUIRED),
+                                                                     "properties": {"method": {"enum": list(
+                                                                         red.AT_POWER_METHODS)},
+                                                                         "k": {"type": ["number", "null"]}}}]}}}]},
         optical=_optical_def(red), gas_flow_state={"enum": ["OFF", "FLOWING"]},
         unlit_procedure_id={"type": "string"}, rf_pickup_check={"enum": ["DONE", "NOT_DONE"]}),
         "x-required-by-kind": {"DUMMY_LOAD": ["calorimetric_cross_check"],
@@ -2638,6 +2672,14 @@ def build_schema():
                                  "sign_convention": red.KIRCHHOFF_SIGN_CONVENTION,
                                  "owner_constants": {"k_sigma": red.CLOSURE_K_SIGMA,
                                                      "fraction_max": red.CLOSURE_FRACTION_MAX},
+                                 "open_by_construction_terminals": {
+                                     "items_required": ["terminal", "basis"],
+                                     "implicit": list(red.OPEN_BY_CONSTRUCTION_IMPLICIT),
+                                     "never_registrable": list(red.INTENTIONAL_PATH_TERMINALS),
+                                     "description": "terminals other than the floating H-1 anode that are open by "
+                                                    "construction, each with its basis (P1-G0); any other "
+                                                    "OPEN_CIRCUIT_BY_CONSTRUCTION declaration excludes the capacity "
+                                                    "point (consolidated verification E2)"},
                                  "covariance": {"required": list(red.COVARIANCE_REQUIRED),
                                                 "description": "registered correlation r_ij of the listed terminals "
                                                                "(symmetric, unit diagonal, positive semi-definite)"},

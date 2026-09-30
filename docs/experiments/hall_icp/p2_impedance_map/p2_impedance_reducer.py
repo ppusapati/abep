@@ -99,7 +99,18 @@ REQUIRED_CAL_FIELDS = ("schema", "calibration_set_id", "data_class", "f_Hz", "Z0
 LOSS_VERIFIED = "LOSS_MODEL_VERIFIED"
 LOSS_VERIFICATION_METHODS = ("CAL-P2-09_calorimetric_at_power", "CAL-P2-10_antenna_simulator_at_power")
 LOSS_VERIFICATION_FIELDS = ("verification_id", "status", "method", "evidence_record_ids", "tuning_states",
-                            "data_class")
+                            "data_class", "model_ref", "comparison", "k", "k_registration_id", "eta_measured",
+                            "u_eta_measured", "eta_predicted", "u_eta_predicted", "normalized_statistic")
+# MET-07: a verification is tied to the loss model it verifies (model_ref) and carries its statistic, which the reducer
+# recomputes. two_port: {kind, calibration_set_id, tuning_state_id, network, Z_load_ohm, Z_load_basis} and
+# eta_predicted must equal transfer_efficiency(network(TS), Z_load of the check) within u_eta_predicted (two-sided
+# test |eta_m - eta_p| / u_c <= k). declared_bound: {kind, calibration_set_id, loss_bound_id, loss_fraction_max} with
+# eta_predicted = 1 - loss_fraction_max (one-sided test (eta_p - eta_m) / u_c <= k: the measured loss does not exceed
+# the bound beyond k u_c). k needs a registered k_registration_id (k stays TBD_OWNER / LOCK-2 until registered).
+LOSS_MODEL_KINDS = {"two_port": "two_sided", "declared_bound": "one_sided_bound"}
+LOSS_MODEL_REF_FIELDS = {"two_port": ("kind", "calibration_set_id", "tuning_state_id", "network", "Z_load_ohm",
+                                      "Z_load_basis"),
+                         "declared_bound": ("kind", "calibration_set_id", "loss_bound_id", "loss_fraction_max")}
 MATCH_STATE_CAL_FIELDS = ("from_plane", "to_plane", "S11", "S12", "S21", "S22", "cal_id", "phase_calibrated",
                           "positions")
 FORBIDDEN_KEY_PREFIXES = ("P_plasma", "P_absorbed_plasma")
@@ -111,7 +122,7 @@ NESTED_REQUIRED = {
     "factors": REQUIRED_FACTOR_FIELDS,
     "plasma_state": ("lit", "mode", "optical_signal_V", "unlit_threshold_V", "unlit_threshold_source",
                      "threshold_basis", "photodiode_line_of_sight_ok", "photodiode_saturated",
-                     "electrical_ignition_or_mode_transition", "electrical_indicator_basis"),
+                     "electrical_ignition_or_mode_transition", "electrical_indicator_basis", "mode_indicator_basis"),
     "sweep": ("sweep_id", "direction", "index"),
     "settling": ("dwell_s", "settled"),
     "antenna_current": ("I_rms_A", "probe_cal_id"),
@@ -596,13 +607,16 @@ def reduce_record(rec, calibrations):
             raise MissingCalibrationError("two_port loss needs match_state.tuning_state_id")
         if net is None:
             net = network_cpl_to_ant(cal, ms["tuning_state_id"], ms.get("positions"))
-        ok, why = loss_verification_status(cal["loss_verification"], cal["data_class"], ms["tuning_state_id"])
+        lv, why = select_loss_verification(cal["loss_verification"], ms["tuning_state_id"])
+        ok = False
+        if lv is not None:
+            ok, why = loss_verification_status(lv, cal, tuning_state_id=ms["tuning_state_id"])
         if ok:
             eta = transfer_efficiency(net, zp)
             out["P_line_match_loss_W"] = _r(p_net * (1 - eta))
             out["P_delivered_W"] = _r(p_net * eta)
             out["match_line_efficiency"] = _r(eta)
-            out["loss_status"] = "VERIFIED (" + cal["loss_verification"]["verification_id"] + ")"
+            out["loss_status"] = "VERIFIED (" + lv["verification_id"] + ")"
         else:
             _refuse_loss(out, why)
         out["loss_basis"] = "two-port S-parameters (CAL-P2-02/03) at the logged tuning state with Z_antenna " + primary
@@ -620,7 +634,7 @@ def reduce_record(rec, calibrations):
         fmax = _finite(b["loss_fraction_max"], "loss_fraction_max")
         if not 0 <= fmax < 1:
             raise MissingCalibrationError("loss_fraction_max must lie in [0, 1)")
-        ok, why = loss_verification_status(b["verification"], cal["data_class"], None)
+        ok, why = loss_verification_status(b["verification"], cal, loss_bound_id=bid)
         if ok:
             out["P_line_match_loss_W"] = {"min": 0.0, "max": _r(p_net * fmax)}
             out["P_delivered_W"] = {"min": _r(p_net * (1 - fmax)), "max": _r(p_net)}
@@ -684,31 +698,180 @@ def _ref_ok(x):
     return isinstance(x, str) and bool(x.strip()) and not x.strip().upper().startswith(("PENDING", "TBD"))
 
 
-def loss_verification_status(v, data_class, tuning_state_id):
+def network_signature(cal, tuning_state_id):
+    """Identity of the two-port model a two_port loss verification verifies (MET-07): the line and match-state
+    entries (planes, cal ids, S-parameter set ids when present, S-parameters, characterized positions) with the
+    calibration frequency and Z0. A verification is valid only while this equals the calibration set's current model."""
+    tps = cal.get("two_ports") if isinstance(cal, dict) else None
+    if not isinstance(tps, dict) or not isinstance(tps.get("match_states"), dict) \
+            or tuning_state_id not in tps["match_states"] or not isinstance(tps.get("line"), dict):
+        raise MissingCalibrationError(f"no characterized two-port for tuning state {tuning_state_id!r}")
+    keys = ("from_plane", "to_plane", "cal_id", "sparam_set_id", "phase_calibrated", "S11", "S12", "S21", "S22")
+    ms = tps["match_states"][tuning_state_id]
+    if not isinstance(ms, dict):
+        raise MissingCalibrationError(f"match_states[{tuning_state_id}] must be an object")
+    return {"f_Hz": cal.get("f_Hz"), "Z0_ohm": cal.get("Z0_ohm"),
+            "line": {k: tps["line"].get(k) for k in keys},
+            "match": {k: ms.get(k) for k in keys + ("positions",)}}
+
+
+def loss_model_prediction(cal, model_ref):
+    """eta predicted by the loss model named in ``model_ref`` from the calibration set itself: two_port ->
+    transfer_efficiency(network_cpl_to_ant(cal, TS), Z_load of the at-power check); declared_bound -> 1 -
+    loss_fraction_max of that bound. Returns (eta_pred, filled model_ref)."""
+    if not isinstance(model_ref, dict) or model_ref.get("kind") not in LOSS_MODEL_KINDS:
+        raise RecordError(f"model_ref.kind must be one of {tuple(LOSS_MODEL_KINDS)}")
+    ref = dict(model_ref, calibration_set_id=cal["calibration_set_id"])
+    if ref["kind"] == "two_port":
+        ts = ref.get("tuning_state_id")
+        if not _ref_ok(ts):
+            raise RecordError("two_port model_ref needs tuning_state_id")
+        if not _ref_ok(ref.get("Z_load_basis")):
+            raise RecordError("two_port model_ref needs Z_load_basis (what the at-power check load was)")
+        zl = cx(ref.get("Z_load_ohm"), "model_ref.Z_load_ohm")
+        if zl.real <= 0:
+            raise RecordError("model_ref.Z_load_ohm must have a positive real part")
+        ref["network"] = network_signature(cal, ts)
+        return transfer_efficiency(network_cpl_to_ant(cal, ts), zl), ref
+    lb = cal.get("loss_bounds")
+    bid = ref.get("loss_bound_id")
+    if not isinstance(lb, dict) or bid not in lb or not isinstance(lb[bid], dict):
+        raise MissingCalibrationError(f"declared loss bound {bid!r} not in the calibration set")
+    fmax = _finite(lb[bid].get("loss_fraction_max"), "loss_fraction_max")
+    if not 0 <= fmax < 1:
+        raise MissingCalibrationError("loss_fraction_max must lie in [0, 1)")
+    ref["loss_fraction_max"] = fmax
+    return 1.0 - fmax, ref
+
+
+def loss_statistic(comparison, eta_m, u_m, eta_p, u_p):
+    """Normalized statistic of an at-power loss check (single definition for p2_framework and the reducer)."""
+    u_c = math.hypot(u_m, u_p)
+    if u_c <= 0:
+        raise RecordError("zero combined uncertainty")
+    if comparison == "two_sided":
+        return abs(eta_m - eta_p) / u_c
+    if comparison == "one_sided_bound":
+        return (eta_p - eta_m) / u_c
+    raise RecordError(f"comparison {comparison!r} not in {tuple(LOSS_MODEL_KINDS.values())}")
+
+
+def select_loss_verification(lv, tuning_state_id):
+    """The calibration field loss_verification is one record, a list of records (one per verified tuning state) or
+    null. Returns (record, '') for the single record whose model_ref names ``tuning_state_id``, else (None, reason)
+    (none or an ambiguous choice is never resolved silently)."""
+    if lv is None:
+        return None, "no loss verification record (null)"
+    if isinstance(lv, dict):
+        return lv, ""
+    if not isinstance(lv, list):
+        return None, "loss verification must be an object or a list of objects"
+    hits = [v for v in lv if isinstance(v, dict) and isinstance(v.get("model_ref"), dict)
+            and v["model_ref"].get("tuning_state_id") == tuning_state_id]
+    if not hits:
+        return None, f"no loss verification names tuning state {tuning_state_id!r}"
+    if len(hits) > 1:
+        return None, (f"ambiguous: {len(hits)} loss verifications name tuning state {tuning_state_id!r} "
+                      "(never chosen silently)")
+    return hits[0], ""
+
+
+def _num_or_none(x):
+    try:
+        return _finite(x, "x")
+    except (P2ReducerError, TypeError, ValueError):
+        return None
+
+
+def loss_verification_status(v, cal, *, tuning_state_id=None, loss_bound_id=None):
     """(True, '') when ``v`` is a LOSS_VERIFIED record of an admissible at-power method, of the same data class as the
-    calibration set and (for a two-port loss) covering the logged tuning state; else (False, reason). A verification
-    of the other data class raises MixedEvidenceError."""
+    calibration set ``cal``, with a registered k and a recomputed statistic within k, tied to the loss model used:
+    for a two-port loss (``tuning_state_id``) the model_ref names that tuning state, this calibration set and the
+    current two-port network (network), and eta_predicted equals transfer_efficiency(network(TS), Z_load of the
+    check) within u_eta_predicted; for a declared bound (``loss_bound_id``) the model_ref names that bound and
+    eta_predicted = 1 - loss_fraction_max. Else (False, reason). A verification of the other data class raises
+    MixedEvidenceError (MET-07; A9.6 sec. 14)."""
+    if (tuning_state_id is None) == (loss_bound_id is None):
+        raise RecordError("loss_verification_status needs exactly one of tuning_state_id / loss_bound_id")
     if v is None:
         return False, "no loss verification record (null)"
     if not isinstance(v, dict):
         return False, "loss verification must be an object"
+    head = ("verification_id", "status", "method", "data_class")
+    miss = [k for k in head if k not in v or v[k] is None]
+    if miss:
+        return False, f"loss verification lacks {miss}"
+    if v["data_class"] != cal["data_class"]:
+        raise MixedEvidenceError(f"loss verification {v['verification_id']!r} data_class {v['data_class']!r} with "
+                                 f"calibration data_class {cal['data_class']!r}")
+    vid = v["verification_id"]
+    if v["status"] != LOSS_VERIFIED:
+        return False, f"loss verification {vid!r} status {v['status']!r}"
     miss = [k for k in LOSS_VERIFICATION_FIELDS if k not in v or v[k] is None]
     if miss:
         return False, f"loss verification lacks {miss}"
-    if v["data_class"] != data_class:
-        raise MixedEvidenceError(f"loss verification {v['verification_id']!r} data_class {v['data_class']!r} with "
-                                 f"calibration data_class {data_class!r}")
-    if v["status"] != LOSS_VERIFIED:
-        return False, f"loss verification {v['verification_id']!r} status {v['status']!r}"
     if v["method"] not in LOSS_VERIFICATION_METHODS:
         return False, f"loss verification method {v['method']!r} not in {LOSS_VERIFICATION_METHODS}"
     ids = v["evidence_record_ids"]
     if not isinstance(ids, list) or not ids or not all(_ref_ok(i) for i in ids):
         return False, "loss verification without evidence record ids"
-    if tuning_state_id is not None:
+    # k: supplied and registered (never defaulted; k stays TBD_OWNER / LOCK-2 until registered)
+    k = _num_or_none(v["k"])
+    if k is None or k <= 0:
+        return False, f"loss verification {vid!r}: k must be a positive finite number"
+    if not _ref_ok(v["k_registration_id"]):
+        return False, (f"loss verification {vid!r}: k without a registered k_registration_id (TBD_OWNER / LOCK-2; "
+                       "MET-07)")
+    # model tie
+    kind = "two_port" if tuning_state_id is not None else "declared_bound"
+    mr = v["model_ref"]
+    if not isinstance(mr, dict) or mr.get("kind") != kind:
+        return False, f"loss verification {vid!r} does not verify a {kind} loss model (model_ref.kind)"
+    miss = [f for f in LOSS_MODEL_REF_FIELDS[kind] if mr.get(f) is None]
+    if miss:
+        return False, f"loss verification {vid!r} model_ref lacks {miss}"
+    if mr["calibration_set_id"] != cal["calibration_set_id"]:
+        return False, (f"loss verification {vid!r} verifies calibration set {mr['calibration_set_id']!r}, not "
+                       f"{cal['calibration_set_id']!r}")
+    if v["comparison"] != LOSS_MODEL_KINDS[kind]:
+        return False, f"loss verification {vid!r} comparison {v['comparison']!r} != {LOSS_MODEL_KINDS[kind]!r}"
+    if kind == "two_port":
         ts = v["tuning_states"]
-        if not isinstance(ts, list) or tuning_state_id not in ts:
-            return False, f"tuning state {tuning_state_id!r} not covered by loss verification {v['verification_id']!r}"
+        if mr["tuning_state_id"] != tuning_state_id or not isinstance(ts, list) or ts != [tuning_state_id]:
+            return False, f"tuning state {tuning_state_id!r} not covered by loss verification {vid!r}"
+        try:
+            same = mr["network"] == network_signature(cal, tuning_state_id)
+        except P2ReducerError as e:
+            return False, f"loss verification {vid!r}: {e}"
+        if not same:
+            return False, (f"loss verification {vid!r} verified a different two-port network than the one in the "
+                           f"calibration set for {tuning_state_id!r} (model_ref.network)")
+    elif mr["loss_bound_id"] != loss_bound_id:
+        return False, f"loss verification {vid!r} verifies bound {mr['loss_bound_id']!r}, not {loss_bound_id!r}"
+    try:
+        eta_model, _ = loss_model_prediction(cal, mr)
+    except P2ReducerError as e:
+        return False, f"loss verification {vid!r}: model prediction not reproducible ({e})"
+    eta_m, u_m = _num_or_none(v["eta_measured"]), _num_or_none(v["u_eta_measured"])
+    eta_p, u_p = _num_or_none(v["eta_predicted"]), _num_or_none(v["u_eta_predicted"])
+    stat_rec = _num_or_none(v["normalized_statistic"])
+    if None in (eta_m, u_m, eta_p, u_p, stat_rec) or u_m < 0 or u_p < 0:
+        return False, f"loss verification {vid!r}: eta / uncertainty / statistic must be finite (u >= 0)"
+    if abs(eta_p - eta_model) > 1e-9 * max(1.0, abs(eta_model)):
+        return False, (f"loss verification {vid!r}: eta_predicted {eta_p!r} is not the loss model's prediction "
+                       f"{eta_model:.9g} (u_eta_predicted enters u_c only, never shifts the prediction; MET-07-R1)")
+    if u_p > 0 and not _ref_ok(v.get("u_eta_predicted_basis_id")):
+        return False, (f"loss verification {vid!r}: u_eta_predicted > 0 without a registered "
+                       f"u_eta_predicted_basis_id (MET-07-R1)")
+    try:
+        stat = loss_statistic(v["comparison"], eta_m, u_m, eta_model, u_p)
+    except RecordError as e:
+        return False, f"loss verification {vid!r}: {e}"
+    if abs(stat - stat_rec) > 1e-6 * max(1.0, abs(stat)):
+        return False, (f"loss verification {vid!r}: recorded normalized_statistic {stat_rec!r} != recomputed "
+                       f"{stat:.9g}")
+    if stat > k:
+        return False, f"loss verification {vid!r}: normalized statistic {stat:.6g} > k {k!r}"
     return True, ""
 
 
@@ -759,6 +922,10 @@ def classify_plasma_state(obs):
     mode = obs.get("lit_mode_assignment")
     if mode is not None and mode not in LIT_MODES:
         raise PlasmaStateError(f"lit_mode_assignment {mode!r} not in (E_MODE, H_MODE, None)")
+    # same rule as p1_reducer.classify_plasma_state (consolidated verification MET-05): an E/H assignment needs the
+    # registered indicators it was made from (HM-R06), never a bare label
+    if mode is not None and not _ref_ok(obs.get("mode_indicator_basis")):
+        raise PlasmaStateError("lit_mode_assignment needs mode_indicator_basis (the registered E/H indicators, HM-R06)")
     if obs["photodiode_line_of_sight_ok"] is not True:
         return "UNCERTAIN", "photodiode line of sight lost: the optical record is not valid evidence"
     if obs["photodiode_saturated"] is not False:

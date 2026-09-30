@@ -268,12 +268,13 @@ Fail-closed behaviour (A9.6 sec. 14):
 | unknown I_d,max,H1 -> NOT_EVALUATED | P2 map coverage of the H-1 registered maximum point stays PENDING (IDP2-10); split_by_domain returns NOT_EVALUATED for points whose factors or region bounds are missing | applies (coverage) |
 | missing uncertainty -> NOT_EVALUATED | map_point(uncertainty=None) -> status NOT_EVALUATED; verify_line_match_loss with a missing u -> NOT_EVALUATED (never verified); propagation without a covariance raises UncertaintyMissingError | applies |
 | unresolved plasma state -> UNCERTAIN | classify_plasma_state -> UNCERTAIN; reduce_record raises UncertainPlasmaStateError; ingest_records keeps the record as excluded with plasma_state UNCERTAIN; detect_eh_transitions reports UNCERTAIN_ELECTRICAL_ONLY / UNCERTAIN_PHOTODIODE_INVALID | applies |
-| unverified line loss -> no silently reconstructed plasma power | P_line/match,loss and P_delivered are REFUSED strings with loss_status UNVERIFIED unless a LOSS_MODEL_VERIFIED at-power verification covers the logged tuning state; P_plasma is never an input or output (ForwardAsPlasmaError) | applies |
+| unverified line loss -> no silently reconstructed plasma power | P_line/match,loss and P_delivered are REFUSED strings with loss_status UNVERIFIED unless a LOSS_MODEL_VERIFIED at-power verification covers the logged tuning state, carries a registered k and a recomputed statistic <= k, and verifies the loss model used (same two-port network and Z_load prediction, or the same declared bound; MET-07); P_plasma is never an input or output (ForwardAsPlasmaError) | applies |
 | OUT_OF_DOMAIN remains distinct from FAIL | split_by_domain labels points outside the P1 stable-region bounds OUT_OF_DOMAIN (excluded, not failed); verification statuses are LOSS_MODEL_VERIFIED / LOSS_MODEL_INCONSISTENT / NOT_EVALUATED - there is no PASS/FAIL score in P2 | applies |
 
 Reducer changes:
 
 - loss_verification (new required calibration field, nullable) and per-bound 'verification': P_line/match,loss and P_delivered reconstructed only with a LOSS_MODEL_VERIFIED record covering the logged tuning state; else REFUSED strings, loss_status UNVERIFIED
+- MET-07: a loss verification carries k with a registered k_registration_id, eta_measured, u_eta_measured, eta_predicted, u_eta_predicted, normalized_statistic and a model_ref (calibration set, tuning state + two-port network + Z_load of the check, or loss bound); the reducer recomputes the statistic, requires it <= k and requires eta_predicted to be the model's own prediction (transfer_efficiency(network(TS), Z_load) within u_eta_predicted, or 1 - loss_fraction_max); otherwise UNVERIFIED
 - MixedEvidenceError: record vs calibration set, loss verification, cold reference
 - match_states entries carry the characterized element 'positions'; the record's logged positions must equal them
 - mismatch_envelope exclusion reasons name the loss_status

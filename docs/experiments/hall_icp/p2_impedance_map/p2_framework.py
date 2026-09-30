@@ -590,41 +590,79 @@ def dissipated_fraction_matched(s11, s21):
     return max(f, 0.0)
 
 
-def verify_line_match_loss(*, verification_id, method, eta_pred, u_eta_pred, P_net_W, u_P_net_W, P_ref_load_W,
-                           u_P_ref_load_W, k, evidence_record_ids, tuning_states, data_class):
-    """At-power verification of the line / match loss model: eta_meas = P_ref_load / P_net (the known power absorbed
-    in the reference load, e.g. calorimetry, over the net power at RP-CPL) against the two-port prediction eta_pred.
-    Normalized statistic |eta_meas - eta_pred| / sqrt(u^2(eta_meas) + u^2(eta_pred)) <= k (k supplied, never
-    defaulted). Any missing uncertainty -> NOT_EVALUATED (never verified). Returns the reducer's
-    loss_verification record."""
+def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pred, P_net_W, u_P_net_W, P_ref_load_W,
+                           u_P_ref_load_W, k, k_registration_id, evidence_record_ids, data_class, eta_pred=None,
+                           u_eta_pred_basis_id=None):
+    """At-power verification of the line / match loss model of calibration set ``cal``: eta_meas = P_ref_load / P_net
+    (the known power absorbed in the reference load, e.g. calorimetry, over the net power at RP-CPL) against the
+    prediction of the loss model named in ``model_ref`` (MET-07):
+      two_port        {kind, tuning_state_id, Z_load_ohm, Z_load_basis}: eta_pred = transfer_efficiency(network(TS),
+                      Z_load of the check); two-sided statistic |eta_meas - eta_pred| / u_c <= k;
+      declared_bound  {kind, loss_bound_id}: eta_pred = 1 - loss_fraction_max (u_eta_pred = 0: a declared limit);
+                      one-sided statistic (eta_pred - eta_meas) / u_c <= k.
+    ``eta_pred`` may be omitted (computed from the model); if supplied it must equal the model's prediction to numerical
+    precision (consolidated verification MET-07-R1: u_eta_pred is used once, in u_c, never also to shift the
+    prediction). A u_eta_pred > 0 needs a registered ``u_eta_pred_basis_id`` (e.g. the S-parameter set uncertainty
+    record); it is never a free input. k is supplied, never defaulted, and needs a registered k_registration_id (k stays TBD_OWNER / LOCK-2
+    until registered). Any missing uncertainty -> NOT_EVALUATED (never verified). Returns the reducer's
+    loss_verification record (model_ref filled with calibration_set_id and network / loss_fraction_max)."""
     if method not in RED.LOSS_VERIFICATION_METHODS:
         raise FrameworkError(f"method {method!r} not in {RED.LOSS_VERIFICATION_METHODS}")
     if data_class not in RED.DATA_CLASSES:
         raise FrameworkError("data_class")
-    if not isinstance(evidence_record_ids, list) or not evidence_record_ids:
-        raise FrameworkError("evidence_record_ids required")
-    if not isinstance(tuning_states, list):
-        raise FrameworkError("tuning_states must be a list")
-    rec = {"verification_id": verification_id, "method": method, "evidence_record_ids": list(evidence_record_ids),
-           "tuning_states": list(tuning_states), "data_class": data_class}
+    if not isinstance(cal, dict) or cal.get("data_class") != data_class:
+        raise RED.MixedEvidenceError("loss verification data_class differs from the calibration set's")
+    if not isinstance(evidence_record_ids, list) or not evidence_record_ids \
+            or not all(RED._ref_ok(i) for i in evidence_record_ids):
+        raise FrameworkError("evidence_record_ids required (registered ids; no PENDING / TBD placeholder)")
     if k is None:
         raise CriteriaMissingError("k (coverage factor of the loss check) not supplied - TBD_OWNER / LOCK-2")
     kk = _fin(k, "k")
+    if kk <= 0:
+        raise FrameworkError("k must be positive")
+    if not RED._ref_ok(k_registration_id):
+        raise CriteriaMissingError("a supplied k needs its registered k_registration_id (not empty / PENDING / TBD; "
+                                   "k stays TBD_OWNER / LOCK-2 until registered, never defaulted - MET-07)")
+    try:
+        eta_model, ref = RED.loss_model_prediction(cal, model_ref)
+    except RED.P2ReducerError as e:
+        raise FrameworkError(f"model_ref: {e}") from e
+    kind = ref["kind"]
+    comparison = RED.LOSS_MODEL_KINDS[kind]
+    if kind == "declared_bound":
+        if u_eta_pred not in (None, 0, 0.0):
+            raise FrameworkError("a declared bound is a limit: u_eta_pred must be 0 (or omitted)")
+        u_eta_pred = 0.0
+    rec = {"verification_id": verification_id, "method": method, "evidence_record_ids": list(evidence_record_ids),
+           "tuning_states": [ref["tuning_state_id"]] if kind == "two_port" else [], "data_class": data_class,
+           "model_ref": ref, "comparison": comparison, "k": kk, "k_registration_id": k_registration_id}
     if any(x is None for x in (u_eta_pred, u_P_net_W, u_P_ref_load_W)):
         rec.update({"status": NOT_EVALUATED, "reason": "missing uncertainty"})
         return rec
+    u_p = _fin(u_eta_pred, "u_eta_pred")
+    if u_p < 0:
+        raise FrameworkError("u_eta_pred must be >= 0")
+    if u_p > 0 and not RED._ref_ok(u_eta_pred_basis_id):
+        raise CriteriaMissingError("u_eta_pred > 0 needs a registered u_eta_pred_basis_id (S-parameter / calibration "
+                                   "uncertainty record); never a free input (MET-07-R1)")
+    eta_p = eta_model if eta_pred is None else _fin(eta_pred, "eta_pred")
+    if abs(eta_p - eta_model) > 1e-9 * max(1.0, abs(eta_model)):
+        raise FrameworkError(f"eta_pred {eta_p!r} is not the {kind} model's prediction {eta_model:.9g} (the check "
+                             f"verifies the loss model that is used; u_eta_pred enters u_c only; MET-07-R1)")
+    eta_p = eta_model
     pn, pr = _fin(P_net_W, "P_net_W"), _fin(P_ref_load_W, "P_ref_load_W")
     if pn <= 0 or pr < 0:
         raise FrameworkError("P_net > 0 and P_ref_load >= 0 required")
     eta_m = pr / pn
     u_m = eta_m * math.hypot(_fin(u_P_ref_load_W, "u") / pr if pr else 0.0, _fin(u_P_net_W, "u") / pn)
-    u_c = math.hypot(u_m, _fin(u_eta_pred, "u_eta_pred"))
-    if u_c == 0:
+    if math.hypot(u_m, u_p) == 0:
         rec.update({"status": NOT_EVALUATED, "reason": "zero combined uncertainty"})
         return rec
-    stat = abs(eta_m - _fin(eta_pred, "eta_pred")) / u_c
-    rec.update({"status": RED.LOSS_VERIFIED if stat <= kk else LOSS_INCONSISTENT, "eta_measured": _r(eta_m),
-                "u_eta_measured": _r(u_m), "eta_predicted": _r(eta_pred), "normalized_statistic": _r(stat), "k": kk})
+    stat = RED.loss_statistic(comparison, eta_m, u_m, eta_p, u_p)
+    rec.update({"status": RED.LOSS_VERIFIED if stat <= kk else LOSS_INCONSISTENT, "eta_measured": eta_m,
+                "u_eta_measured": u_m, "eta_predicted": eta_p, "u_eta_predicted": u_p,
+                "u_eta_predicted_basis_id": u_eta_pred_basis_id if u_p > 0 else None,
+                "normalized_statistic": stat})
     return rec
 
 
@@ -645,24 +683,33 @@ def _cholesky(u):
 
 
 def _check_cov(x, u):
+    """Inputs finite, covariance square / symmetric / finite with a non-negative diagonal and positive semidefinite
+    (Cholesky, the same test propagate_mc applies): consolidated verification SW-04 - an invalid covariance is never
+    propagated into a number."""
     n = len(x)
+    for i, v in enumerate(x):
+        if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(float(v)):
+            raise FrameworkError(f"input x[{i}] = {v!r} is not a finite number")
     if u is None:
         raise UncertaintyMissingError("covariance of the inputs not supplied -> NOT_EVALUATED")
     if len(u) != n or any(len(r) != n for r in u):
         raise UncertaintyMissingError("covariance matrix shape does not match the inputs")
     for i in range(n):
         for j in range(n):
-            if u[i][j] is None or not math.isfinite(u[i][j]):
+            if u[i][j] is None or isinstance(u[i][j], bool) or not math.isfinite(u[i][j]):
                 raise UncertaintyMissingError(f"covariance element ({i},{j}) missing -> NOT_EVALUATED")
             if abs(u[i][j] - u[j][i]) > 1e-12 * max(1.0, abs(u[i][j])):
                 raise UncertaintyMissingError("covariance matrix not symmetric")
+        if u[i][i] < 0:
+            raise UncertaintyMissingError(f"negative variance u[{i}][{i}] = {u[i][i]!r}")
+    _cholesky(u)                     # raises UncertaintyMissingError when not positive semidefinite
 
 
 def propagate_linear(f, x, u):
     """Law of propagation of uncertainty U_y = C U_x C^T (REF-JCGM102 6.2.1.3 Eq. (3); scalar form REF-GUM2008 5.2.2
     Eq. (13)), C by central differences with step 1e-3 u(x_i) (inputs with u = 0 contribute nothing)."""
-    x = [float(v) for v in x]
     _check_cov(x, u)
+    x = [float(v) for v in x]
     y0 = [float(v) for v in f(x)]
     m, n = len(y0), len(x)
     c = [[0.0] * n for _ in range(m)]
@@ -689,10 +736,10 @@ def propagate_mc(f, x, u, *, n_trials, seed):
     random.Random(seed).random()."""
     if not isinstance(n_trials, int) or n_trials < 1000:
         raise FrameworkError("n_trials must be an integer >= 1000 (declared by the caller; see JCGM 101 7.2)")
-    if not isinstance(seed, int):
-        raise FrameworkError("an integer seed is required (deterministic Monte Carlo)")
-    x = [float(v) for v in x]
+    if isinstance(seed, bool) or not isinstance(seed, int):
+        raise FrameworkError("an integer seed is required (deterministic Monte Carlo; a bool is not a seed)")
     _check_cov(x, u)
+    x = [float(v) for v in x]
     lo = _cholesky(u)
     rng = random.Random(seed)
     n = len(x)
@@ -736,6 +783,8 @@ def gamma_vswr_pnet_uncertainty(P_fwd_W, u_P_fwd_W, P_ref_W, u_P_ref_W, r_fwd_re
                                       "NOT_EVALUATED")
     pf, pr = _fin(P_fwd_W, "P_fwd"), _fin(P_ref_W, "P_ref")
     uf, ur, rr = _fin(u_P_fwd_W, "u_P_fwd"), _fin(u_P_ref_W, "u_P_ref"), _fin(r_fwd_ref, "r")
+    if uf < 0 or ur < 0:
+        raise UncertaintyMissingError("standard uncertainties must be >= 0 (a negative u flips the correlation term)")
     if not -1 <= rr <= 1:
         raise UncertaintyMissingError("correlation coefficient outside [-1, 1]")
     if pf <= 0 or pr <= 0 or pr >= pf:
@@ -755,6 +804,8 @@ def z_from_gamma_uncertainty(gamma, U_gamma, z0):
     real and imaginary parts)."""
     g = complex(gamma)
     _check_cov([g.real, g.imag], U_gamma)
+    if abs(g) > 1:
+        raise FrameworkError(f"|Gamma| = {abs(g):.6g} > 1 is not a passive antenna load (R < 0); refused (SW-04)")
     if g == 1:
         raise FrameworkError("Gamma = 1")
     d = 2 * z0 / (1 - g) ** 2
@@ -770,7 +821,12 @@ def p_delivered_uncertainty(P_net_W, u_P_net_W, eta, u_eta):
     if u_P_net_W is None or u_eta is None:
         raise UncertaintyMissingError("u(P_net) and u(eta) required -> NOT_EVALUATED")
     pn, e = _fin(P_net_W, "P_net"), _fin(eta, "eta")
-    return {"P_delivered_W": e * pn, "u_P_delivered_W": math.hypot(e * _fin(u_P_net_W, "u"), pn * _fin(u_eta, "u"))}
+    upn, ue = _fin(u_P_net_W, "u"), _fin(u_eta, "u")
+    if pn < 0 or not 0.0 <= e <= 1.0:
+        raise FrameworkError("P_net >= 0 and 0 <= eta <= 1 required (a passive line / match delivers at most P_net)")
+    if upn < 0 or ue < 0:
+        raise UncertaintyMissingError("standard uncertainties must be >= 0")
+    return {"P_delivered_W": e * pn, "u_P_delivered_W": math.hypot(e * upn, pn * ue)}
 
 
 DEEMBED_INPUTS = ("m_raw", "e00", "e11", "e10e01", "L11", "L12", "L21", "L22", "M11", "M12", "M21", "M22")
@@ -841,6 +897,8 @@ def detect_eh_transitions(points, criteria):
     if len(dirs) != 1 or dirs.pop() not in ("up", "down"):
         raise FrameworkError("one sweep = one direction ('up' or 'down'); split up/down sweeps")
     idx = [p.get("index") for p in points]
+    if any(isinstance(i, bool) or not isinstance(i, int) for i in idx):
+        raise FrameworkError("every sweep point needs an integer index (SW-09)")
     if idx != sorted(idx) or len(set(idx)) != len(idx):
         raise FrameworkError("points must be ordered by strictly increasing sweep index")
     events = []
@@ -1002,7 +1060,7 @@ def split_by_domain(points, region):
 P1_HANDOFF_STATUSES = ("NOT_EVALUATED", "REGION_OF_TESTED_POINTS_WITHIN_OWNER_CRITERIA",
                        "NO_TESTED_POINT_WITHIN_CRITERIA")
 P1_HANDOFF_ADMISSIBLE = "REGION_OF_TESTED_POINTS_WITHIN_OWNER_CRITERIA"
-P1_HANDOFF_FIELDS = ("handoff", "status", "criteria_id", "points_within_criteria", "envelope_of_tested_points",
+P1_HANDOFF_FIELDS = ("handoff", "evidence_kind", "status", "criteria_id", "points_within_criteria", "envelope_of_tested_points",
                      "envelope_note", "dwells", "note")
 P1_HANDOFF_POINT_FIELDS = ("operating_point_record_id", "match_setting_id", "h1_point_id", "gas", "gas_mode", "Z_ICP",
                            "factors")
@@ -1012,13 +1070,18 @@ P1_HANDOFF_POINT_FIELDS = ("operating_point_record_id", "match_setting_id", "h1_
 P1_TO_P2_FACTORS = {"P_fwd_W": "P_RF_setpoint_W", "mdot_Ar_H1_mg_s": "mdot_hall_anode_mg_s",
                     "p_chamber_Pa": "p_chamber_Pa", "V_collector_V": "V_collector_V"}
 P1_TO_P2_CATEGORICAL = {"gas": "gas", "gas_mode": "gas_mode"}
+# SW-R2-01: the P1 handoff evidence kind (p1_reducer.HANDOFF_EVIDENCE_KINDS, derived from the P1 records' synthetic
+# flags) must match the P2 map data class; synthetic and measured evidence never mix across the P1 -> P2 lanes.
+P1_EVIDENCE_TO_DATA_CLASS = {"MEASURED": "measured", "SYNTHETIC_TEST_ONLY": "synthetic_test"}
+P1_REF_EVIDENCE_TOKEN = "evidence %s"
 
 
-def p1_handoff_admissible(handoff):
+def p1_handoff_admissible(handoff, for_data_class="measured"):
     """Admit a P1 stable-region handoff record for the P2 hot map. Returns (p1_stable_region_ref, region) where region
     is the split_by_domain input (numeric factor envelope of the tested points within the owner criteria, mapped to the
     P2 factor names, plus the tested gas / gas-mode sets). Raises SequenceError when the handoff is not admissible
-    (missing fields, NOT_EVALUATED / NO_TESTED_POINT_WITHIN_CRITERIA, no criteria id, empty or inconsistent envelope)."""
+    (missing fields, NOT_EVALUATED / NO_TESTED_POINT_WITHIN_CRITERIA, no criteria id, empty or inconsistent envelope)
+    and MixedEvidenceError when the handoff evidence_kind does not match the target map data class (SW-R2-01)."""
     if not isinstance(handoff, dict):
         raise RED.SequenceError("P1 handoff must be the stable_region_handoff record (IF-P1-01)")
     miss = [k for k in P1_HANDOFF_FIELDS if k not in handoff]
@@ -1031,6 +1094,14 @@ def p1_handoff_admissible(handoff):
                                 "P1Q-01 absent or no tested point within them); the hot map stays closed")
     if not RED._ref_ok(handoff["criteria_id"]):
         raise RED.SequenceError("P1 handoff without an owner criteria id (P1Q-01)")
+    if for_data_class not in RED.DATA_CLASSES:
+        raise RED.SequenceError(f"target map data class {for_data_class!r} not in {RED.DATA_CLASSES}")
+    kind = handoff["evidence_kind"]
+    if kind not in P1_EVIDENCE_TO_DATA_CLASS:
+        raise RED.SequenceError(f"P1 handoff evidence_kind {kind!r} not in {tuple(P1_EVIDENCE_TO_DATA_CLASS)}")
+    if P1_EVIDENCE_TO_DATA_CLASS[kind] != for_data_class:
+        raise RED.MixedEvidenceError(f"P1 handoff evidence_kind {kind} cannot open a {for_data_class} P2 map "
+                                     "(synthetic and measured evidence never mix; SW-R2-01)")
     pts, env = handoff["points_within_criteria"], handoff["envelope_of_tested_points"]
     if not isinstance(pts, list) or not pts or not isinstance(env, dict):
         raise RED.SequenceError("P1 handoff without points within criteria / envelope of tested points")
@@ -1052,8 +1123,9 @@ def p1_handoff_admissible(handoff):
             cats.setdefault(f2, [])
             if p[f1] not in cats[f2]:
                 cats[f2].append(p[f1])
-    ref = f"P1 stable region {handoff['criteria_id']} ({len(pts)} tested points; IF-P1-01)"
-    return ref, {"region_id": ref, "factor_ranges": ranges,
+    ref = (f"P1 stable region {handoff['criteria_id']} ({len(pts)} tested points; "
+           f"{P1_REF_EVIDENCE_TOKEN % kind}; IF-P1-01)")
+    return ref, {"region_id": ref, "p1_evidence_kind": kind, "factor_ranges": ranges,
                  "categorical_sets": {k: sorted(v) for k, v in cats.items()},
                  "note": "envelope of tested points within the owner criteria, not a stability claim between them"}
 
@@ -1069,9 +1141,17 @@ def build_map(map_id, points, excluded, p1_stable_region_ref, calibration_set_id
         raise RED.MixedEvidenceError(f"map mixes data classes {sorted(classes)}")
     if len(tags) != 1:
         raise MapFormatError(f"map mixes evidence tags {sorted(tags)}")
-    if any(p["phase"] == "HOT_MAP" for p in points) and not RED._ref_ok(p1_stable_region_ref):
+    hot = any(p["phase"] == "HOT_MAP" for p in points)
+    if hot and not RED._ref_ok(p1_stable_region_ref):
         raise RED.SequenceError("HOT_MAP points without a P1 stable-region reference")
     dc = classes.pop()
+    if hot and dc == "measured":
+        # SW-R2-01: a measured hot map needs the ref p1_handoff_admissible(..., 'measured') issued for a MEASURED P1
+        # handoff; a synthetic (or unmarked) P1 region never opens a measured map
+        if (P1_REF_EVIDENCE_TOKEN % "MEASURED") not in p1_stable_region_ref or "SYNTHETIC" in p1_stable_region_ref.upper():
+            raise RED.MixedEvidenceError("measured HOT_MAP needs a P1 stable-region ref admitted from a MEASURED P1 "
+                                         "handoff (p1_handoff_admissible(handoff, 'measured')); got "
+                                         f"{p1_stable_region_ref!r} (SW-R2-01)")
     body = {"schema": MAP_SCHEMA_ID, "map_id": map_id, "data_class": dc,
             "evidence_status": RED.SYNTHETIC_LABEL if dc == "synthetic_test" else "measured (P2 impedance map)",
             "evidence_tag": tags.pop(), "p1_stable_region_ref": p1_stable_region_ref,

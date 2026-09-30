@@ -244,9 +244,16 @@ def test_expected_statuses_today(doc):
                 "ATMOSPHERIC_PROPELLANT"):
         for c in B.CONFIGS:
             assert _row(doc, key)["configurations"][c]["status"] == "NOT_EVALUATED", (key, c)
-    for key in ("MASS_LT_40KG_WET", "INTERNAL_34_36KG_ALLOCATION", "AO_MATERIAL_COMPATIBILITY", "THERMAL_CLOSURE"):
+    for key in ("MASS_LT_40KG_WET", "INTERNAL_34_36KG_ALLOCATION", "AO_MATERIAL_COMPATIBILITY"):
         for c in B.CONFIGS:
             assert _row(doc, key)["configurations"][c]["status"] == "INCOMPLETE_EVIDENCE", (key, c)
+    # TH-05: every P3 heat term and the coupled network are refused (INCOMPLETE_EVIDENCE inputs): 0 evaluated terms,
+    # so the thermal row is NOT_EVALUATED (R7), never an 'evaluation with evidenced terms'
+    for c in B.CONFIGS:
+        cell = _row(doc, "THERMAL_CLOSURE")["configurations"][c]
+        assert cell["status"] == "NOT_EVALUATED", c
+        det = [a for a in cell["artifacts"] if a["role"] == "DETERMINING" and a["kind"] == "FRAMEWORK_EVALUATION"]
+        assert det and all(a["evidenced_terms"] == 0 for a in det), c
 
 
 def test_mass_rows_report_per_reading_and_no_fail(doc):
@@ -314,7 +321,16 @@ def test_open_questions_not_answered(doc):
     ctx = B.Ctx(B.load_pins(), B.load_refs())
     for r in doc["rows"]:
         for o in r["open_readings"]:
-            assert "never answered" in o["handling"]
+            assert o["status"] in ("TBD_OWNER", "SUPERSEDED"), (r["id"], o["id"])
+            assert o["current_register"] == "docs/budgets/owner_decisions/owner_questions_state_v4.json"
+            if o["status"] == "TBD_OWNER":
+                assert "never answered" in o["handling"]
+            else:                       # S-01: only an owner answer to the same question supersedes (OD13, row 3)
+                assert (r["id"], o["id"]) == ("RVM-12", "OD13") and o["superseded_by"]["owner_row"] == 3
+    demands = {d["id"]: d for d in doc["interface_demands"]}
+    for dem in ("RVM-ID-08", "RVM-ID-10", "RVM-ID-11"):    # S-01 / PHYS-01: consumed downstream, never PENDING
+        assert demands[dem]["status"] == "CONSUMED" and "PENDING" not in json.dumps(demands[dem])
+    assert "PENDING fo_a9_6_" not in json.dumps(doc)
     with pytest.raises(B.BuildError):   # an ANSWERED question cannot be carried as open
         B.oq(ctx, "OD1")
     assert [q["id"] for q in doc["open_owner_questions"]] == ["RVMQ-01"]
