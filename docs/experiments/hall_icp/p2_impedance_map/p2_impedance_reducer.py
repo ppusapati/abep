@@ -54,6 +54,28 @@ REQUIRED_FACTOR_FIELDS = (
 REQUIRED_CAL_FIELDS = ("schema", "calibration_set_id", "data_class", "f_Hz", "Z0_ohm", "power_sensors", "coupler",
                        "two_ports", "vi_probe", "loss_bounds", "cold_references", "antenna_current_probe")
 FORBIDDEN_KEY_PREFIXES = ("P_plasma", "P_absorbed_plasma")
+# Nested-object contracts (single source; the builder writes them into the JSON schema, the reducer enforces them).
+NESTED_REQUIRED = {
+    "coupler": ("P_sens_fwd_W", "P_sens_ref_W", "power_sensor_cal_id", "reflection_raw"),
+    "vi_probe": ("V_raw", "I_raw", "vi_cal_id"),
+    "match_state": ("tuning_state_id", "positions", "auto_tune", "loss_bound_id"),
+    "factors": REQUIRED_FACTOR_FIELDS,
+    "plasma_state": ("lit", "mode", "optical_signal_V"),
+    "sweep": ("sweep_id", "direction", "index"),
+    "settling": ("dwell_s", "settled"),
+    "antenna_current": ("I_rms_A", "probe_cal_id"),
+}
+NULLABLE_OBJECTS = ("vi_probe", "antenna_current")
+# Evidence tag derived from the gas (A9 evidence order; A9.3 OQ-RFQ-02, OQ-VI-05). Optional record field
+# 'engineering_control' names a required engineering-control sequence; its only value now is "OQ-VI-05".
+ENGINEERING_CONTROLS = ("OQ-VI-05",)
+TAG_AR = "ENGINEERING_ONLY_NON_SCORING (A9.3 OQ-RFQ-02: Ar)"
+TAG_VI05 = "REQUIRED_ENGINEERING_CONTROL_NON_SCORING (A9.3 OQ-VI-05)"
+TAG_N2 = "N2_STAGE (A9 evidence order)"
+TAG_O2 = "O2_BEARING_NO_ATOMIC_O (A9 evidence order)"
+TAG_OTHER = "OTHER_GAS_UNCLASSIFIED_NON_SCORING"
+TAG_NONE = "NO_GAS_NOT_APPLICABLE (calibration / dummy-load / unlit record)"
+EVIDENCE_TAGS = (TAG_AR, TAG_VI05, TAG_N2, TAG_O2, TAG_OTHER, TAG_NONE)
 
 
 class P2ReducerError(ValueError):
@@ -198,10 +220,24 @@ def line_peak_stress(p_fwd, gmag, z0):
 
 
 # ------------------------------------------------------------------------------------------------ guards
+def _is_plasma_power_key(k):
+    """A key naming plasma power: the forbidden prefixes, or 'plasma' anywhere in a power-like key
+    (starts with 'P_' / 'p_', contains 'power' or 'pwr', or carries a watt unit suffix '_W' / '_kW' / '_mW')."""
+    if not isinstance(k, str):
+        return False
+    if k.startswith(FORBIDDEN_KEY_PREFIXES):
+        return True
+    kl = k.lower()
+    if "plasma" not in kl:
+        return False
+    return (kl.startswith("p_") or "power" in kl or "pwr" in kl or kl.endswith(("_w", "_kw", "_mw"))
+            or any(t in kl for t in ("_w_", "_kw_", "_mw_")))
+
+
 def _scan_forbidden(obj, path="record"):
     if isinstance(obj, dict):
         for k, v in obj.items():
-            if isinstance(k, str) and k.startswith(FORBIDDEN_KEY_PREFIXES):
+            if _is_plasma_power_key(k):
                 raise ForwardAsPlasmaError(
                     f"{path}.{k}: plasma power is not an input of the impedance chain; P_forward (or P_net) is never "
                     "P_plasma (A9.2 rf_measurement_reference)")
@@ -216,7 +252,7 @@ def _check_labels(rec):
     if not isinstance(labels, dict):
         raise RecordError("power_labels must be an object")
     for src, lab in labels.items():
-        if "plasma" in str(lab).lower():
+        if "plasma" in str(lab).lower() or "plasma" in str(src).lower():
             raise ForwardAsPlasmaError(f"power_labels: {src} -> {lab}: P_forward / P_net / P_delivered is never "
                                        "labelled as plasma power (A9.2)")
 
@@ -319,7 +355,17 @@ def reduce_record(rec, calibrations):
         if not isinstance(ref, str) or not ref.strip() or ref.strip().upper().startswith(("PENDING", "TBD")):
             raise SequenceError("HOT_MAP record without a P1 stable-region reference: the plasma impedance map is "
                                 "meaningful only inside a stable region handed over by P1 (A9.3 authorizations.P2)")
-    _require(rec["factors"], REQUIRED_FACTOR_FIELDS, "factors")
+    for key, fields in NESTED_REQUIRED.items():
+        if key in ("coupler", "vi_probe", "antenna_current"):
+            continue                                  # checked where used (method / loss / cross-check paths)
+        if not isinstance(rec[key], dict):
+            raise RecordError(f"{key} must be an object")
+        _require(rec[key], fields, key)
+    if rec["plasma_state"]["mode"] not in MODE_LABELS:
+        raise RecordError(f"plasma_state.mode {rec['plasma_state']['mode']!r} not in {MODE_LABELS}")
+    if rec["sweep"]["direction"] not in SWEEP_DIRECTIONS:
+        raise RecordError(f"sweep.direction {rec['sweep']['direction']!r} not in {SWEEP_DIRECTIONS}")
+    tag = evidence_tag(rec)
     methods = rec["methods"]
     if not isinstance(methods, list) or not methods or any(m not in METHODS for m in methods):
         raise RecordError(f"methods must be a non-empty subset of {METHODS}")
@@ -346,7 +392,7 @@ def reduce_record(rec, calibrations):
     if _plane(rec, "coupler_powers") != "RP-CPL":
         raise ReferencePlaneError("forward/reflected power must be measured at RP-CPL (generator / 50-ohm side of the "
                                   "local matching network, A9.2 rf_measurement_reference)")
-    _require(cp, ("P_sens_fwd_W", "P_sens_ref_W", "power_sensor_cal_id", "reflection_raw"), "coupler")
+    _require(cp, NESTED_REQUIRED["coupler"], "coupler")
     ps = cal["power_sensors"]
     if not isinstance(ps, dict) or cp["power_sensor_cal_id"] not in ps:
         raise MissingCalibrationError(f"power-sensor calibration {cp['power_sensor_cal_id']!r} not in the set")
@@ -361,7 +407,7 @@ def reduce_record(rec, calibrations):
     out = {
         "record_id": rec["record_id"], "phase": rec["phase"], "data_class": rec["data_class"],
         "evidence_status": SYNTHETIC_LABEL if synthetic else "measured (calibrated record reduction)",
-        "f_Hz": f, "Z0_ohm": z0, "calibration_set_id": cid,
+        "evidence_tag": tag, "f_Hz": f, "Z0_ohm": z0, "calibration_set_id": cid,
         "at_RP_CPL": {"P_forward_W": _r(p_fwd), "P_reflected_W": _r(p_ref), "P_net_W": _r(p_net),
                       "gamma_mag_from_powers": _r(g_scalar), "VSWR_from_powers": _r(vswr(g_scalar)),
                       "note": "P_net = P_forward - P_reflected at RP-CPL; it includes the line, local-match and antenna "
@@ -408,7 +454,7 @@ def reduce_record(rec, calibrations):
             raise RecordError("vi_probe readings required for method 'vi_probe'")
         if _plane(rec, "vi_probe") != "RP-VI":
             raise ReferencePlaneError("V/I readings must be referred to RP-VI")
-        _require(vp, ("V_raw", "I_raw", "vi_cal_id"), "vi_probe")
+        _require(vp, NESTED_REQUIRED["vi_probe"], "vi_probe")
         vc = cal["vi_probe"]
         if not isinstance(vc, dict) or vc.get("cal_id") != vp["vi_cal_id"]:
             raise MissingCalibrationError(f"V/I probe calibration {vp['vi_cal_id']!r} not in the set")
@@ -483,7 +529,7 @@ def reduce_record(rec, calibrations):
     # ---- antenna-current cross-check (method C) and cold/hot resistance split (anchor Eq. (1) method)
     ac = rec["antenna_current"]
     if ac is not None:
-        _require(ac, ("I_rms_A", "probe_cal_id"), "antenna_current")
+        _require(ac, NESTED_REQUIRED["antenna_current"], "antenna_current")
         acp = cal["antenna_current_probe"]
         if not isinstance(acp, dict) or acp.get("cal_id") != ac["probe_cal_id"]:
             raise MissingCalibrationError(f"antenna current-probe calibration {ac['probe_cal_id']!r} not in the set")
@@ -521,6 +567,30 @@ def reduce_record(rec, calibrations):
                                         else "TBD - requires a numeric P_delivered")
         out["resistance_split"] = split
     return out
+
+
+def evidence_tag(rec):
+    """Evidence tag of a record from its gas and engineering-control label (never a score)."""
+    ec = rec.get("engineering_control")
+    if ec is not None and ec not in ENGINEERING_CONTROLS:
+        raise RecordError(f"engineering_control {ec!r} not in {ENGINEERING_CONTROLS} (or null)")
+    if ec == "OQ-VI-05":
+        return TAG_VI05
+    gas = rec["factors"].get("gas")
+    if gas is None:
+        if rec["phase"] == "HOT_MAP":
+            raise RecordError("HOT_MAP record without factors.gas: the evidence stage cannot be tagged")
+        return TAG_NONE
+    if not isinstance(gas, str) or not gas.strip():
+        raise RecordError(f"factors.gas must be a non-empty string or null, got {gas!r}")
+    g = gas.strip().upper().replace(" ", "")
+    if g in ("AR", "ARGON"):
+        return TAG_AR
+    if "O2" in g or "O_2" in g or g.startswith(("AIR", "OXYGEN")):
+        return TAG_O2
+    if g in ("N2", "NITROGEN"):
+        return TAG_N2
+    return TAG_OTHER
 
 
 def mismatch_envelope(reduced, phases):
@@ -562,9 +632,17 @@ def mismatch_envelope(reduced, phases):
         return {"min": _r(min(v)), "max": _r(max(v))} if v else "TBD - no record supplies this quantity"
 
     classes = sorted({r["data_class"] for r in sel})
-    synthetic = any(r["evidence_status"] == SYNTHETIC_LABEL for r in sel)
+    statuses = {r["evidence_status"] for r in sel}
+    tags = sorted({r["evidence_tag"] for r in sel})
+    if len(classes) > 1 or len(statuses) > 1:
+        raise RecordError(f"mismatch envelope refuses to mix data classes / evidence statuses {classes} / "
+                          f"{sorted(statuses)}: measured and synthetic records are never combined")
+    if len(tags) > 1:
+        raise RecordError(f"mismatch envelope refuses to mix evidence tags {tags}: Ar engineering-only, engineering-"
+                          "control, N2 and O2-bearing records are enveloped separately")
+    synthetic = SYNTHETIC_LABEL in statuses
     return {
-        "n_records": len(sel), "phases": list(phases), "data_classes": classes,
+        "n_records": len(sel), "phases": list(phases), "data_classes": classes, "evidence_tag": tags[0],
         "evidence_status": SYNTHETIC_LABEL if synthetic else "measured (P2 impedance map reduction)",
         "rating_status": RATING_STATUS,
         "rating_note": "an envelope of measured conditions, not a component rating: ratings (generator, coupler, coax, "

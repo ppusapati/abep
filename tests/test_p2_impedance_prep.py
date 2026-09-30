@@ -516,3 +516,113 @@ def test_lane_dir_contents():
     names = sorted(p.name for p in LANE.iterdir() if p.name != "__pycache__")
     assert names == sorted(["build_p2_impedance_prep.py", "p2_impedance_reducer.py", "p2_impedance_prep_v1.json",
                             "P2_IMPEDANCE_PREP.md", "p2_impedance_record_schema_v1.json"])
+
+
+# ------------------------------------------------------------------------------------------------ repair-round checks
+A93_IDS = {"OQ-VI-03", "OQ-VI-05", "OQ-A907-02", "ICPQ-06", "OQ-RFQ-06", "OQ-RFQ-07", "OQ-RFQ-02", "OQ-RFQ-10"}
+
+
+def test_every_a93_decision_dispositioned(d):
+    a93 = json.loads((REPO / "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json")
+                     .read_text(encoding="utf-8"))
+    assert set(a93["decisions"]) == A93_IDS
+    done = {o["ref"]["decision"] for o in d["owner_answers_applied"]
+            if isinstance(o["ref"], dict) and o["ref"].get("kind") == "A9.3"}
+    assert A93_IDS <= done, A93_IDS - done
+    md = OUT_MD.read_text(encoding="utf-8")
+    sec_c = md.split("## (c) Owner answers applied")[1].split("## (d)")[0]
+    for i in A93_IDS:
+        assert f"A9.3 {i}" in sec_c, i
+    hm = {x["id"]: x for x in d["hot_map_methodology"]["factors"]}
+    assert "ICPQ-06" in hm["HM-F07"]["value"] and "OQ-RFQ-02" in hm["HM-F02"]["value"]
+    assert "I_d,max,H1" in hm["HM-F06"]["value"]
+    assert hm["HM-F01"]["evidence_class"] == "owner-allocation"
+    ids = {x["id"]: x for x in d["interface_demands"]}
+    assert "I_d,max,H1" in ids["IDP2-10"]["quantity"] and "ICPQ-06" in ids["IDP2-15"]["quantity"]
+    assert "OQ-RFQ-02" in ids["IDP2-14"]["quantity"]
+
+
+def test_sequence_order_and_powered_prerequisites(d):
+    seq = d["hot_map_methodology"]["sequence"]
+    order = [s["step"] for s in seq]
+    assert order == [f"S-{i:02d}" for i in range(len(seq))]
+    pos = {}
+    for s in seq:
+        for m in re.finditer(r"CAL-P2-(\d+)((?:/\d+)*)", s["what"]):
+            for c in [m.group(1)] + [x for x in m.group(2).split("/") if x]:
+                pos.setdefault(int(c), order.index(s["step"]))
+    assert pos[8] < pos[10]                       # cold antenna impedance before the simulator validation
+    assert pos[7] < pos[15] and pos[9] < pos[15]  # known power (calorimetry) before at-power V/I verification
+    rules = {r["id"]: r for r in d["hot_map_methodology"]["rules"]}
+    assert "HM-R13" in rules and "pre-tuned" in rules["HM-R13"]["value"] and "ICP-16" in rules["HM-R13"]["value"]
+    for s in seq:
+        assert isinstance(s["powered"], bool)
+        if s["powered"]:
+            assert "HM-R13" in s["prerequisites"], s["step"]
+    cal = {c["id"]: c for c in d["calibration_plan"]}
+    assert "LOW LEVEL ONLY" in cal["CAL-P2-07"]["name"]
+    assert not any("at power" in x for x in cal["CAL-P2-05"]["standards"] if "never" not in x)
+    gate = next(s for s in seq if s["what"].startswith("GATE"))
+    assert order.index(gate["step"]) == len(seq) - 2 and seq[-1]["what"].startswith("hot map")
+
+
+def test_method_precedent_inference_labelled(d):
+    e = next(x for x in d["published_method_precedents"] if x["id"] == "RF-SCHU24-05")
+    assert e["use_here"].startswith("lane inference")
+
+
+def test_plasma_power_keys_refused_anywhere(red, case):
+    cal, rec = case
+    for where, key in ((None, "P_RF_plasma_W"), (None, "plasma_power_W"), ("factors", "RF_power_to_plasma"),
+                       ("settling", "p_plasma_kW"), ("temperatures_K", "plasma_W")):
+        r = copy.deepcopy(rec)
+        (r if where is None else r[where])[key] = 1.0
+        _raises(red, red.ForwardAsPlasmaError, r, {"SYN": cal})
+    r = copy.deepcopy(rec)
+    r["power_labels"] = {"plasma_power": "P_net"}
+    _raises(red, red.ForwardAsPlasmaError, r, {"SYN": cal})
+    assert red.reduce_record(rec, {"SYN": cal})["plasma_state"]["mode"] == "UNLIT"   # plasma_state itself is fine
+
+
+def test_evidence_tags_and_envelope_refuses_mixing(red, case):
+    cal, rec = case
+    assert red.reduce_record(rec, {"SYN": cal})["evidence_tag"] == red.TAG_NONE
+    r_ar = copy.deepcopy(rec)
+    r_ar["factors"]["gas"] = "Ar"
+    o_ar = red.reduce_record(r_ar, {"SYN": cal})
+    assert o_ar["evidence_tag"] == red.TAG_AR and "ENGINEERING_ONLY_NON_SCORING" in o_ar["evidence_tag"]
+    r_n2 = copy.deepcopy(rec)
+    r_n2["factors"]["gas"] = "N2"
+    o_n2 = red.reduce_record(r_n2, {"SYN": cal})
+    assert o_n2["evidence_tag"] == red.TAG_N2
+    r_vi = copy.deepcopy(r_n2)
+    r_vi["engineering_control"] = "OQ-VI-05"
+    assert red.reduce_record(r_vi, {"SYN": cal})["evidence_tag"] == red.TAG_VI05
+    r_bad = copy.deepcopy(rec)
+    r_bad["engineering_control"] = "SOMETHING"
+    _raises(red, red.RecordError, r_bad, {"SYN": cal})
+    r_hot = copy.deepcopy(rec)
+    r_hot["phase"], r_hot["p1_stable_region_ref"] = "HOT_MAP", "P1-REGION-SYN"
+    _raises(red, red.RecordError, r_hot, {"SYN": cal})                  # HOT_MAP without a gas
+    with pytest.raises(red.RecordError):
+        red.mismatch_envelope([o_ar, o_n2], ["DUMMY_LOAD"])
+    assert red.mismatch_envelope([o_ar], ["DUMMY_LOAD"])["evidence_tag"] == red.TAG_AR
+    fake_measured = dict(o_n2, data_class="measured", evidence_status="measured (calibrated record reduction)")
+    with pytest.raises(red.RecordError):
+        red.mismatch_envelope([o_n2, fake_measured], ["DUMMY_LOAD"])
+
+
+def test_nested_contract_in_schema_and_reducer(red, case):
+    cal, rec = case
+    sc = json.loads(OUT_SCHEMA.read_text(encoding="utf-8"))
+    for k, fields in red.NESTED_REQUIRED.items():
+        assert sc["properties"][k]["required"] == list(fields)
+        assert set(sc["properties"][k]["properties"]) == set(fields)
+    for k, sub in (("sweep", "direction"), ("plasma_state", "mode"), ("settling", "dwell_s"),
+                   ("match_state", "auto_tune")):
+        r = copy.deepcopy(rec)
+        del r[k][sub]
+        _raises(red, red.RecordError, r, {"SYN": cal})
+    r = copy.deepcopy(rec)
+    r["sweep"]["direction"] = "sideways"
+    _raises(red, red.RecordError, r, {"SYN": cal})

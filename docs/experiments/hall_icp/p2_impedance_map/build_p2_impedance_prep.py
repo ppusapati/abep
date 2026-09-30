@@ -133,6 +133,12 @@ PENDING_LANES = [
 ]
 
 
+# every A9.3 decision id must carry a disposition in owner_answers_applied (checked in build() and by the test)
+A93_DECISION_IDS = ("OQ-VI-03", "OQ-VI-05", "OQ-A907-02", "ICPQ-06", "OQ-RFQ-06", "OQ-RFQ-07", "OQ-RFQ-02",
+                    "OQ-RFQ-10")
+POWERED_STEP_RULE = "HM-R13"
+
+
 def _sha(rel):
     return hashlib.sha256((REPO / rel).read_bytes()).hexdigest()
 
@@ -380,7 +386,9 @@ def build():
            "RF-VOLK18-02": "load resistance changes with flow: report mismatch effects separately from plasma physics",
            "RF-IPT20-07": "forward/reflected accounting must separate matching-network and antenna losses",
            "RF-IPT20-D1": "cold (no-plasma) antenna S11 measured with a VNA before matching (CAL-P2-08 precedent)",
-           "RF-SCHU24-05": "low reflected power with automatic matching does not separate matchbox/coil dissipation",
+           "RF-SCHU24-05": "lane inference, not stated by the source (the entry records only reflected power <= 1 % with "
+                           "automatic matching): a low reflected power does not by itself separate matchbox / coil "
+                           "dissipation, hence HM-R08",
            "RF-DALT08-01": "E-H hysteresis vs applied power vs plasma power corrected for matching losses: plot the "
                            "map against P_forward AND P_delivered (hysteresis rule HM-R05)",
            "RF-IPG6S-06": "operating points lost to reflected-power trips of an unmatched supply: log trips as "
@@ -396,8 +404,7 @@ def build():
     A92_REF = {k: dec("A92", k) for k in ("OQ-A907-11", "rf_measurement_reference", "rf_500W", "rf_protection",
                                              "icp_matching_strategy", "a9_10_statuses", "post_a9_priorities",
                                              "icp_coupled_thermal")}
-    A93_REF = {k: dec("A93", k) for k in ("OQ-VI-03", "OQ-VI-05", "OQ-A907-02", "OQ-RFQ-06", "OQ-RFQ-07",
-                                             "OQ-RFQ-10", "P2")}
+    A93_REF = {k: dec("A93", k) for k in A93_DECISION_IDS + ("P1", "P2")}
     A91_REF = {k: dec("A91", k) for k in ("UBQ-03", "UBQ-04", "UBQ-05", "A9-03-matching")}
 
     # ================================================================ (1) reference planes
@@ -542,8 +549,9 @@ def build():
         cal("CAL-P2-05", "V/I probe calibration: complex gains k_V, k_I (magnitude AND relative phase) at 13.56 MHz",
             ["RP-VI"], ["short (current only)", "open (voltage only)", "precision 50-ohm termination",
                         "reactive standard of VNA-measured impedance (phase check near +/-90 degrees)",
-                        "at power: 50-ohm calorimetric dummy load and the antenna-simulator load (INS-P2-07)"],
-            "S-04; pre/post each block", ["UB-P2-Z-01", "UB-P2-Z-02"], ["MS-P2-03"], ["UB-P2-Z-01", "UB-P2-Z-02"],
+                        "all at low level (VNA / signal source), never at generator power; the at-power verification "
+                        "is CAL-P2-15"],
+            "S-04 (unpowered); pre/post each block", ["UB-P2-Z-01", "UB-P2-Z-02"], ["MS-P2-03"], ["UB-P2-Z-01", "UB-P2-Z-02"],
             "TBD - requires the probe selection (INS-P2-01) and the calibration data", "LOCK-2"),
         cal("CAL-P2-06", "V/I probe fixture (RP-VI -> RP-ANT) ABCD, or a verified declaration that RP-VI = RP-ANT",
             ["RP-VI", "RP-ANT"], ["CAL-P2-01 at the antenna terminals", "known loads at RP-ANT"], "S-04",
@@ -551,34 +559,42 @@ def build():
             "LOCK-2"),
         cal("CAL-P2-07", "directional coupler + forward/reflected sensors: coupling factors (incl. cable), directivity "
             "and sensor calibration factor / linearity at 13.56 MHz; in-situ checks into a matched load (directivity "
-            "floor) and into short/open (full reflection); calorimetric cross-check at power with k_x = 2",
+            "floor) and into short/open (full reflection) at LOW LEVEL ONLY (VNA / low-level signal source through the "
+            "coupler; never generator power into a short or open: total reflection and an unbounded open-circuit "
+            "voltage); then the calorimetric cross-check at power into the matched 50-ohm calorimetric load only, "
+            "with k_x = 2, under HM-R13",
             ["RP-CPL"], ["traceable certificates (A9H-CAL-02; A4 force_DC_RF_traceability)",
                          "50-ohm calorimetric dummy load (RFQ-04-R10)"],
-            "S-00 (certificates), S-05 (in situ)", ["UB-RF-02", "UB-RF-03", "UB-RF-04", "UB-RF-08"],
+            "S-00 (certificates), S-05 (in situ: low level first, then at power into the 50-ohm load)", ["UB-RF-02", "UB-RF-03", "UB-RF-04", "UB-RF-08"],
             ["MS-G-01", "MS-G-02", "MS-G-03", "MS-P2-01"], ["UB-RF-02", "UB-RF-03", "UB-RF-04", "UB-RF-08 (check)"],
             "TBD - requires coupler and sensor certificates; D_min at LOCK-2 (UB-RF-04, A9H-INS-16)", "LOCK-2",
             note="bare +/-a bounds enter as a/sqrt(3) unless the certificate states otherwise (A9.1 UBQ-03)"),
         cal("CAL-P2-08", "cold antenna impedance vs frequency around 13.56 MHz (installed on the module; no plasma: gas "
-            "off, and gas on unlit), VNA at RP-ANT and via RP-MIN", ["RP-ANT", "RP-MIN"], ["CAL-P2-01"],
-            "S-07; repeated at more than one antenna temperature for the R_cold reference",
+            "off, and gas on unlit), VNA at RP-ANT and via RP-MIN (unpowered: VNA excitation only)", ["RP-ANT", "RP-MIN"],
+            ["CAL-P2-01"],
+            "S-06 (before the antenna simulator is specified, CAL-P2-10); repeated at more than one antenna "
+            "temperature for the R_cold reference; low-power powered-unlit records follow at S-08 under HM-R13",
             ["UB-P2-Z-07"], ["MS-P2-02"], ["VI-RF-06 (cold part)", "sizing input of INS-P2-01 ranges"],
             "TBD - requires the antenna (" + P1_PENDING + "); sweep span TBD - requires the antenna design "
             "(self-resonance must be located, not assumed)", "LOCK-2"),
         cal("CAL-P2-09", "dummy-load checks of the complete chain at power: 50-ohm calorimetric load (P_net vs "
             "calorimetry, k_x = 2) and the harmonic spectrum into the matched load", ["RP-CPL", "RP-MIN"],
-            ["50-ohm calorimetric dummy load", "spectrum measurement (INS-P2-04 receiver mode or analyser)"], "S-05",
+            ["50-ohm calorimetric dummy load", "spectrum measurement (INS-P2-04 receiver mode or analyser)"],
+            "S-05 (powered, HM-R13)",
             ["UB-RF-06", "UB-RF-07", "UB-RF-08"], ["MS-P2-01"], ["UB-RF-06", "UB-RF-07 (bench part)"],
             "TBD - requires the generator (" + P1_PENDING + ")", "LOCK-2"),
         cal("CAL-P2-10", "end-to-end method validation on an antenna-simulator load of VNA-known Z (low-R, high-X "
-            "network in place of the antenna): Z by ZM-A, ZM-B and ZM-C vs the VNA value, cold and at power",
-            ["RP-ANT", "RP-VI", "RP-CPL"], ["antenna-simulator load (INS-P2-07b)", "CAL-P2-01..07"], "S-06",
+            "network in place of the antenna, built to the S-06 cold impedance): Z by ZM-A, ZM-B and ZM-C vs the VNA value, "
+            "first at VNA level, then at power with the local match pre-tuned on the VNA into the simulator (HM-R13)",
+            ["RP-ANT", "RP-VI", "RP-CPL"], ["antenna-simulator load (INS-P2-07b)", "CAL-P2-01..09"],
+            "S-07 (after S-06 cold impedance and S-05 at-power chain check)",
             ["UB-P2-Z-01", "UB-P2-Z-02", "UB-P2-Z-03", "UB-P2-Z-05"], ["MS-P2-02", "MS-P2-03"],
             ["method agreement evidence for the P2Q-01 transfer rule"],
             "TBD - requires the simulator design (from CAL-P2-08 cold impedance) and data", "LOCK-2"),
         cal("CAL-P2-11", "phase drift and temperature: reference-load re-measurement before / during / after each block;"
             " temperatures of probe, match elements and cables logged; pre/post shift in the budget and as a block "
             "exclusion rule", ["RP-VI", "RP-CPL", "RP-ANT"], ["reference load of CAL-P2-05/10"],
-            "every block (S-10)", ["UB-P2-Z-05"], ["MS-P2-03"], ["UB-P2-Z-05", "A9H-CAL-05 (P2 part)"],
+            "every block (S-11)", ["UB-P2-Z-05"], ["MS-P2-03"], ["UB-P2-Z-05", "A9H-CAL-05 (P2 part)"],
             "TBD - requires metrology-only drift evidence; rule form LOCK-1, number LOCK-2 (A9.1 UBQ-05; A9H-CAL-05)", "LOCK-2"),
         cal("CAL-P2-12", "phase-stable cable characterization: phase of the VNA test cables and of the flexible "
             "stand-crossing coax vs flexure / stand position and temperature", ["RP-CPL", "RP-MIN"],
@@ -586,11 +602,19 @@ def build():
             "TBD - requires the cables (INS-P2-08) and the stand routing (ICP-18)", "LOCK-2"),
         cal("CAL-P2-13", "RF pickup on the V/I, current-probe and optical channels (generator into dummy load; ICP "
             "energized, H-1 off) - part of the ICP-17 / row-64 pickup check", ["RP-VI"], ["dummy load; ICP on/H-1 off"],
-            "S-08", ["UB-P2-Z-01", "UB-P2-Z-02"], ["MS-P2-03"], ["ICP-17 (P2 channels)", "VI-RF-11"],
+            "S-09 (powered, HM-R13; ICP energized only under the P1 registered procedure, " + P1_PENDING + ")",
+            ["UB-P2-Z-01", "UB-P2-Z-02"], ["MS-P2-03"], ["ICP-17 (P2 channels)", "VI-RF-11"],
             "TBD - requires the S1a pickup test (ICD ICP-17)", "LOCK-2"),
         cal("CAL-P2-14", "time-base alignment of RF, V/I, optical, Hall, collector, pressure and flow channels (INS-18)",
             ["-"], ["common trigger"], "S-01", ["UB-P2-Z-05"], ["-"], ["INS-18 (P2 channels)"],
             "TBD - requires the skew allowance from the P1 stability band", "LOCK-2"),
+        cal("CAL-P2-15", "V/I probe at-power verification (magnitude and phase) against the known power of the "
+            "50-ohm calorimetric load (established by CAL-P2-07/09) and against the VNA-known antenna-simulator "
+            "impedance (CAL-P2-10)", ["RP-VI"], ["50-ohm calorimetric dummy load (INS-P2-07a)",
+                                                 "antenna-simulator load (INS-P2-07b)"],
+            "S-07 (powered, HM-R13; after S-05 established the known power)", ["UB-P2-Z-01", "UB-P2-Z-02"],
+            ["MS-P2-03"], ["UB-P2-Z-01 (at-power part)", "UB-P2-Z-02 (at-power part)"],
+            "TBD - requires CAL-P2-05 low-level data, the S-05 calorimetric power and the simulator", "LOCK-2"),
     ]
     ub_new = [
         item("UB-P2-Z-01", "V/I probe magnitude calibration (k_V, k_I) at 13.56 MHz", "TBD - requires CAL-P2-05 data",
@@ -617,6 +641,11 @@ def build():
         item("UB-P2-Z-08", "VNA calibration residuals (directivity, source match, tracking) at each plane",
              "TBD - requires VNA / kit certificates and check-standard data", "-", "certificate",
              ["REF-GUM2008 4.3.3"], None, "TBD", "LOCK-2", proposed_addition_to="A9-04 UB-DQ-RF"),
+        item("UB-P2-M-01", "Ar flow factor-level uncertainty (hot-map mdot factor, Ar stage)",
+             "TBD - requires the Ar MFC calibration by the rate-of-rise / transfer path (A9.3 OQ-RFQ-02; one or two "
+             "overlapping Ar ranges); engineering-only, non-scoring", "relative", "calibration",
+             [A93_REF["OQ-RFQ-02"]], None, "TBD", "LOCK-2",
+             proposed_addition_to="P1 gas metrology (interface demand IDP2-14); not a scoring component"),
     ]
     ms_new = [
         item("MS-P2-01", "RF power at 13.56 MHz (sensors + coupler incl. cable) - calibration-lab scope requirement",
@@ -642,28 +671,46 @@ def build():
         item("HM-F01", "RF power (setpoint; recorded as P_forward, P_reflected, P_delivered)",
              "levels TBD - " + P1_PENDING + " (stable region); bounded by the 0-500 W delivered/operating investigation "
              "capability (row 72 as interpreted by A9.2 rf_500W; not a component rating) and the P1 registered limits",
-             "W", "row 72; A9.2 rf_500W", [r72, A92_REF["rf_500W"]], None, "PENDING", "after-evidence",
+             "W", "row 72; A9.2 rf_500W", [r72, A92_REF["rf_500W"]], "owner-allocation", "PENDING", "after-evidence",
              owner_bound=[0.0, 500.0], owner_bound_evidence_class="owner-allocation"),
         item("HM-F02", "mass flow through the ICP (G-REUSE: Hall anode flow; dedicated ICP flow)",
              "Hall anode flow levels TBD - " + P1_PENDING + "; dedicated ICP flow = 0 in the primary mode (G-REUSE); a "
              "dedicated feed is a diagnostic variable only (quote option, never silently the baseline; booked in the "
-             "corresponding ledger if activated)", "mg/s", "A9.3 OQ-RFQ-10; A9.1 HIQ-06",
-             [A93_REF["OQ-RFQ-10"]], "owner-allocation", "PENDING", "after-evidence", owner_value_dedicated=0.0),
+             "corresponding ledger if activated). Ar stage (A9.3 OQ-RFQ-02): calibrated Ar flow over the neighbourhood of the "
+             "Takahashi anchor (70 sccm ~ 2.1 mg/s, owner-stated in A9.3 OQ-RFQ-02; its attribution to the Takahashi "
+             "experiment is to be confirmed by the P1 lane per the A9.3 recorder note - verify) and above/below it; one Ar MFC range "
+             "if it covers the sweep, two overlapping ranges only if one cannot (the row-123 four-range rule is not "
+             "applied to Ar; atmospheric score-bearing paths keep four overlapping ranges); the Ar controller is "
+             "verified by the rate-of-rise / transfer calibration path (IDP2-14, UB-P2-M-01); Ar records carry the "
+             "evidence tag ENGINEERING_ONLY_NON_SCORING whatever the metrology quality. A dedicated G-ATM / G-XE "
+             "diagnostic line that bridges isolated potentials needs the ~1 kV-class representative-gas isolator "
+             "qualification before use (A9.3 ICPQ-06; IDP2-15)", "mg/s",
+             "A9.3 OQ-RFQ-10, OQ-RFQ-02, ICPQ-06; A9.1 HIQ-06",
+             [A93_REF["OQ-RFQ-10"], A93_REF["OQ-RFQ-02"], A93_REF["ICPQ-06"]], "owner-allocation", "PENDING",
+             "after-evidence", owner_value_dedicated=0.0, owner_value_ar_anchor="70 sccm ~ 2.1 mg/s (owner-stated, "
+             "A9.3 OQ-RFQ-02; neighbourhood centre, not a level)"),
         item("HM-F03", "pressure (ICP source volume via the ICP-34 port; chamber background)",
              "levels TBD - " + P1_PENDING, "Pa", "ICD ICP-34", ["ICD ICP-34"], None, "PENDING", "after-evidence"),
         item("HM-F04", "gas composition", "evidence order Ar (engineering-only) -> N2 -> O2-bearing (NO_ATOMIC_O); "
              "levels inside each stage TBD - " + P1_PENDING, "-", "A9 evidence order", ["A9"], "owner-allocation",
-             "PENDING", "after-evidence", note="Ar data stay ENGINEERING_ONLY_NON_SCORING (A9.3 OQ-RFQ-02)"),
+             "PENDING", "after-evidence", note="Ar data stay ENGINEERING_ONLY_NON_SCORING (A9.3 OQ-RFQ-02); the reducer "
+             "derives an evidence_tag from factors.gas and the mismatch envelope never mixes tags"),
         item("HM-F05", "plasma state / mode (UNLIT, E, H, UNCERTAIN)", "observed response, not a set factor; classified "
              "per record by rule HM-R06", "-", "VI-RF-10", ["VI-RF-10", "RF-DALT08-01"], "assumed", "PROPOSED",
              "LOCK-1"),
         item("HM-F06", "Hall operating point (off / on; V_d, I_d, coil currents)",
              "levels TBD - inside the registered H-1 operating envelope (" + P1_PENDING + "); current-sensor range uses "
-             "the 8.33 A stand ceiling, which is a rating ceiling and not a level (A9.3 OQ-A907-02)", "V; A",
+             "the 8.33 A stand ceiling, which is a rating ceiling and not a level (A9.3 OQ-A907-02). The map must reach "
+             "the Hall operating point that sets the ICP-45 requirement: I_e,required = I_d,max,H1 "
+             "(ICP45_REQUIRED_CURRENT = H1_REGISTERED_MAX, A9.3 OQ-A907-02), i.e. the maximum H-1 discharge current "
+             "of the registered envelope, PENDING H-1 registration (IDP2-10)", "V; A",
              "A9.3 OQ-A907-02; A9.2 icp_matching_strategy", [A93_REF["OQ-A907-02"], A92_REF["icp_matching_strategy"]],
              None, "PENDING", "after-evidence"),
         item("HM-F07", "collector bias (V_collector, I_collector)", "levels TBD - requires the collector / bias V-I "
-             "range (ICD ICP-21) and " + P1_PENDING, "V; A", "row 70; ICD ICP-21", [r70, "ICD ICP-21"], None,
+             "range (ICD ICP-21) and " + P1_PENDING + "; a bias level that puts a potential difference across an ICP "
+             "gas line (or the floating ICP body against grounded plumbing) is applied only after that line's ~1 kV-"
+             "class representative-gas isolator qualification (A9.3 ICPQ-06, ICD ICP-23; IDP2-15)", "V; A",
+             "row 70; ICD ICP-21; A9.3 ICPQ-06", [r70, "ICD ICP-21", A93_REF["ICPQ-06"], "ICD ICP-23"], None,
              "PENDING", "after-evidence"),
         item("HM-F08", "local-match tuning state (logged state variable)", "policy: re-tuned for minimum reflected "
              "power at every point, plus fixed-tune sub-sweeps around representative points (P2Q-04); positions logged "
@@ -714,7 +761,7 @@ def build():
              "engineering quantity labelled GROUND/FACILITY_ONLY; never P_bus evidence; the flight question needs a "
              "FLIGHT_REPRESENTATIVE_DC_RF_SOURCE", "W", "A9.3 OQ-RFQ-06", [A93_REF["OQ-RFQ-06"]], "owner-allocation",
              "OWNER_GIVEN", "NOW"),
-        item("HM-R11", "protection during the map", "only the provisional limits of the P1 registered procedure apply "
+        item("HM-R11", "protection during the map (S-11; the powered preparation steps follow HM-R13)", "only the provisional limits of the P1 registered procedure apply "
              "(" + P1_PENDING + "); reflected-power / VSWR trip thresholds are an OUTPUT of this characterization "
              "(A9.2 rf_protection), never invented here; a trip is logged as an observation (RF-IPG6S-06)", "-",
              "A9.2 rf_protection", [A92_REF["rf_protection"], "A9H-RF-PROT-01"], "owner-allocation", "OWNER_GIVEN",
@@ -722,21 +769,52 @@ def build():
         item("HM-R12", "analysis frozen before data", "reducer version, calibration-set ids and the rules above are "
              "frozen (sha256) before the first HOT_MAP record; no re-analysis choice after seeing data", "-",
              "CLAUDE.md rule 10 (no tuning to force agreement)", ["docs/EVIDENCE.md"], "assumed", "PROPOSED", "LOCK-1"),
+        item("HM-R13", "RF-on prerequisites for every powered step (S-05, S-07, S-08, S-09, S-11)",
+             "(i) before any RF power into a non-50-ohm load (antenna simulator, cold antenna, ICP) the local match is "
+             "pre-tuned at low level with the VNA into that load and the tuning state logged (CAL-P2-03), so the "
+             "generator never drives an unmatched reactive load; generator power into a short or open is never "
+             "applied (CAL-P2-07 short/open checks are low level only); (ii) whenever RF is on, the calibrated "
+             "coupler chain (CAL-P2-07) monitors P_forward / P_reflected, the provisional reflected-power / VSWR "
+             "limits and generator foldback of the P1 registered procedure (" + P1_PENDING + ") are active, and the "
+             "ICD ICP-16 RF interlock permissives are in force with the functional interlock test done before first "
+             "RF-on and at every configuration change (ICP-16 verification); no limit value is set here (A9.2 "
+             "rf_protection: thresholds after characterization); (iii) RF enclosure / shielding, personnel RF-exposure"
+             " control and antenna-terminal high-voltage clearance per the facility RF-safety procedure and the ICD "
+             "ICP-44 antenna-circuit rating - values TBD, requiring that procedure and the ICP-44 rating; a powered "
+             "step whose (i)-(iii) are not satisfied is not started", "-",
+             "ICD ICP-16, ICP-44; A9.2 rf_protection; A9.3 authorizations.P1 ('subject to existing safety/interlock/"
+             "metrology requirements')", ["ICD ICP-16", "ICD ICP-44", A92_REF["rf_protection"], A93_REF["P1"]],
+             "assumed", "PROPOSED", "LOCK-1"),
     ]
+    R13 = POWERED_STEP_RULE
     sequence = [
-        {"step": "S-00", "what": "instrument receipt; certificates checked (CAL-P2-07 certificates)", "gate": "H3 "
-         "procurement gate (row 8: quotations only now)"},
-        {"step": "S-01", "what": "VNA calibration, cable phase characterization, time base (CAL-P2-01, -12, -14)"},
-        {"step": "S-02", "what": "line + feedthrough two-port (CAL-P2-02)"},
-        {"step": "S-03", "what": "local-match two-port over the tuning grid + interpolation verification (CAL-P2-03/04)"},
-        {"step": "S-04", "what": "V/I probe and fixture calibration on known loads (CAL-P2-05/06)"},
-        {"step": "S-05", "what": "coupler / sensors in situ + calorimetric cross-check at power + harmonics (CAL-P2-07/09)"},
-        {"step": "S-06", "what": "antenna-simulator end-to-end validation of ZM-A/B/C (CAL-P2-10)"},
-        {"step": "S-07", "what": "cold antenna impedance vs frequency, gas off and gas on unlit; low-power powered-unlit "
-                                 "records (CAL-P2-08; phase COLD_ANTENNA_POWERED_UNLIT)"},
-        {"step": "S-08", "what": "RF pickup on P2 channels (CAL-P2-13; ICP-17)"},
-        {"step": "S-09", "what": "GATE: P1 hands over a stable ICP operating region (" + P1_PENDING + ")"},
-        {"step": "S-10", "what": "hot map (phase HOT_MAP) under HM-R01..R12 with CAL-P2-11 bracketing"},
+        {"step": "S-00", "powered": False, "what": "instrument receipt; certificates checked (CAL-P2-07 certificates)",
+         "gate": "H3 procurement gate (row 8: quotations only now)"},
+        {"step": "S-01", "powered": False, "what": "VNA calibration, cable phase characterization, time base "
+                                                   "(CAL-P2-01, -12, -14)"},
+        {"step": "S-02", "powered": False, "what": "line + feedthrough two-port (CAL-P2-02)"},
+        {"step": "S-03", "powered": False, "what": "local-match two-port over the tuning grid + interpolation "
+                                                   "verification (CAL-P2-03/04)"},
+        {"step": "S-04", "powered": False, "what": "V/I probe and fixture calibration on known loads at low level "
+                                                   "(VNA / signal source) (CAL-P2-05/06)"},
+        {"step": "S-05", "powered": True, "prerequisites": [R13], "what": "coupler / sensors in situ: matched, short and "
+         "open checks at LOW LEVEL only; then at power into the matched 50-ohm calorimetric load only: calorimetric "
+         "cross-check (establishes the known power) + harmonics (CAL-P2-07/09)"},
+        {"step": "S-06", "powered": False, "what": "cold antenna impedance vs frequency by VNA only, gas off and gas on "
+         "unlit (CAL-P2-08); its result specifies the antenna-simulator load (INS-P2-07b)"},
+        {"step": "S-07", "powered": True, "prerequisites": [R13], "what": "antenna simulator built to the S-06 cold "
+         "impedance and VNA-measured; end-to-end validation of ZM-A/B/C first at VNA level, then at power with the "
+         "local match pre-tuned on the VNA (CAL-P2-10); V/I probe at-power verification on the calorimetric load "
+         "and the simulator (CAL-P2-15)"},
+        {"step": "S-08", "powered": True, "prerequisites": [R13], "what": "low-power powered-unlit records into the "
+         "installed antenna, local match pre-tuned on the VNA into the cold antenna (phase COLD_ANTENNA_POWERED_UNLIT; "
+         "CAL-P2-08 follow-on)"},
+        {"step": "S-09", "powered": True, "prerequisites": [R13, "P1 registered procedure (" + P1_PENDING + ")"],
+         "what": "RF pickup on P2 channels (CAL-P2-13; ICP-17)"},
+        {"step": "S-10", "powered": False, "what": "GATE: P1 hands over a stable ICP operating region (" + P1_PENDING
+         + ")"},
+        {"step": "S-11", "powered": True, "prerequisites": [R13, "HM-R01", "HM-R11"],
+         "what": "hot map (phase HOT_MAP) under HM-R01..R13 with CAL-P2-11 bracketing"},
     ]
 
     # ================================================================ (4) data model
@@ -753,13 +831,19 @@ def build():
                                    "two-port or fixture planes not as declared",
             "UncalibratedPhaseError": "de-embedding with scalar-only data or a non-phase-calibrated coupler / two-port; "
                                       "V/I probe without phase calibration",
-            "ForwardAsPlasmaError": "any P_plasma* / P_absorbed_plasma* input key or a power label naming plasma power",
+            "ForwardAsPlasmaError": "any P_plasma* / P_absorbed_plasma* input key, any power-like key containing "
+                                    "'plasma' at any depth, or a power label (key or value) naming plasma power",
             "SequenceError": "HOT_MAP record without a P1 stable-region reference (or one that is PENDING/TBD)",
-            "RecordError": "malformed or non-finite values, P_reflected > P_forward, singular transforms"},
+            "RecordError": "malformed or non-finite values, P_reflected > P_forward, singular transforms, missing "
+                           "nested sub-fields, HOT_MAP without factors.gas; mismatch envelope mixing data classes / "
+                           "evidence statuses or evidence tags"},
+        "evidence_tags": list(RED.EVIDENCE_TAGS),
         "outputs": ["at_RP_CPL: P_forward, P_reflected, P_net, |Gamma| (powers and complex), VSWR",
                     "Z_antenna per method at RP-ANT (R, X), primary method, method difference",
                     "P_line/match,loss, P_delivered, match/line efficiency (or TBD / declared-bound interval)",
                     "antenna-current cross-check, resistance split (reconstructed)",
+                    "evidence_tag per record (from factors.gas / engineering_control; Ar and OQ-VI-05 records are "
+                    "non-scoring)",
                     "mismatch_envelope(): ranges and line/antenna peak stresses; rating_status "
                     "TBD_AFTER_IMPEDANCE_MAP; synthetic data labelled SYNTHETIC_TEST_DATA_NOT_EVIDENCE"],
         "complex_encoding": "[re, im]",
@@ -902,7 +986,9 @@ def build():
          "loss envelope for ICP-36 / ICP-43; ratings for ICP-15 / A9H-INS-15/16 / A9H-RF-LM-01", "V; A; W",
          "LATER (after the hot map)"),
         ("IDP2-10", "H2 / H-1 -> P2", "Hall operating-point channels (V_d, I_d, coil currents) and registered "
-         "envelope; I_d sensor range to the 8.33 A stand ceiling", "V; A", "PENDING (H-1 registration; "
+         "envelope incl. I_d,max,H1, which sets the ICP-45 requirement I_e,required = I_d,max,H1 "
+         "(ICP45_REQUIRED_CURRENT = H1_REGISTERED_MAX) and hence the Hall points the map must cover; I_d sensor range "
+         "to the 8.33 A stand ceiling (a rating ceiling, not a requirement)", "V; A", "PENDING (H-1 registration; "
          "A9.3 OQ-A907-02)"),
         ("IDP2-11", "A9-02 bus boundary -> P2", "A902-21 generator DC-input -> forward-power efficiency and A902-22 "
          "match DC draw stay TBD; P2 logs P_mains,in only as a GROUND/FACILITY_ONLY engineering quantity", "W",
@@ -910,6 +996,16 @@ def build():
         ("IDP2-12", "P2 -> thermal (P3)", "P_line/match,loss on the module (heat source for the coupled thermal "
          "model); coupled H-1/ICP thermal closure stays UNRESOLVED", "W", "LATER"),
         ("IDP2-13", "P2 -> INS-18 time base", "P2 channels on the common time base", "s", "PROPOSED"),
+        ("IDP2-14", "P1 gas metrology -> P2", "Ar MFC (one range, or two overlapping ranges only if one cannot cover "
+         "the sweep) calibration record via the rate-of-rise / transfer path, for the HM-F02 Ar levels and "
+         "UB-P2-M-01 (A9.3 OQ-RFQ-02); Ar data ENGINEERING_ONLY_NON_SCORING", "mg/s; sccm", P1_PENDING),
+        ("IDP2-15", "ICD ICP-23 / P1 -> P2", "~1 kV-class representative-gas isolator qualification record for any "
+         "ICP gas line bridging isolated potentials (dedicated G-ATM / G-XE diagnostic feed of HM-F02; any line across "
+         "the floating ICP body when HM-F07 biases the collector); none required where both ends are intentionally "
+         "at the same floating potential (A9.3 ICPQ-06)", "V", "PENDING (qualification not yet run)"),
+        ("IDP2-16", "P2 -> P1", "powered-step prerequisites HM-R13 (match pre-tuned on the VNA, calibrated coupler "
+         "monitoring, P1 provisional limits / foldback, ICP-16 interlocks, facility RF safety) offered for the P1 "
+         "bench RF-on sequence", "-", "OFFERED"),
     ]
     interface_demands = [{"id": i, "direction": d, "quantity": q, "units": u, "status": s} for i, d, q, u, s in idem]
 
@@ -943,12 +1039,34 @@ def build():
         {"ref": A92_REF["a9_10_statuses"], "how": "statuses carried unchanged; no open item converted to PASS"},
         {"ref": A92_REF["post_a9_priorities"], "how": "this lane prepares P2"},
         {"ref": A92_REF["icp_coupled_thermal"], "how": "P2 supplies Q_RF/match inputs later; thermal stays UNRESOLVED"},
+        {"ref": A93_REF["P1"], "how": "P1 runs 'subject to existing safety/interlock/metrology requirements': HM-R13 "
+                                      "carries that into every powered P2 preparation step; P1 content is PENDING"},
         {"ref": A93_REF["P2"], "how": "V/I sensing, coupler chain, calibration, S-parameter/impedance methodology, data "
-                                      "model prepared; the plasma map waits for P1 (HM-R01, S-09 gate)"},
+                                      "model prepared; the plasma map waits for P1 (HM-R01, S-10 gate)"},
         {"ref": A93_REF["OQ-VI-03"], "how": "the antenna of the open-tube coaxial first build is the map object; "
                                             "orificed variants not addressed"},
-        {"ref": A93_REF["OQ-VI-05"], "how": "record model carries P_RF,fwd(t), P_RF,refl(t) on the common time base"},
-        {"ref": A93_REF["OQ-A907-02"], "how": "8.33 A only as a sensor-range ceiling (HM-F06)"},
+        {"ref": A93_REF["OQ-VI-05"], "how": "record model carries P_RF,fwd(t), P_RF,refl(t) on the common time base; "
+                                            "records of that sequence set engineering_control = 'OQ-VI-05' and the "
+                                            "reducer tags them REQUIRED_ENGINEERING_CONTROL_NON_SCORING (not a PASS/"
+                                            "FAIL gate); envelopes never mix them with other tags"},
+        {"ref": A93_REF["OQ-A907-02"], "how": "8.33 A only as a sensor-range ceiling (HM-F06, IDP2-10); the ICP-45 "
+                                              "requirement I_e,required = I_d,max,H1 (ICP45_REQUIRED_CURRENT = "
+                                              "H1_REGISTERED_MAX) fixes that the map must cover the registered H-1 "
+                                              "maximum discharge current point, PENDING H-1 registration; no current "
+                                              "value is set or predicted here"},
+        {"ref": A93_REF["ICPQ-06"], "how": "applies where P2 puts a potential difference across ICP gas plumbing: "
+                                           "a dedicated G-ATM / G-XE diagnostic feed (HM-F02) or a collector-bias / "
+                                           "floating-body level (HM-F07) is used only after the ~1 kV-class "
+                                           "representative-gas isolator qualification of that line (IDP2-15); not "
+                                           "applicable to the primary G-REUSE mode where no dedicated line is used, "
+                                           "nor to lines whose ends sit at the same floating potential; P2 runs no "
+                                           "isolator qualification itself"},
+        {"ref": A93_REF["OQ-RFQ-02"], "how": "Ar mdot levels (HM-F02) use one Ar MFC range, or two overlapping ranges "
+                                             "only if one cannot cover the sweep around the owner-stated 70 sccm ~ "
+                                             "2.1 mg/s anchor; controller verified by the rate-of-rise / transfer path "
+                                             "(IDP2-14, UB-P2-M-01); Ar records tagged ENGINEERING_ONLY_NON_SCORING "
+                                             "by the reducer; the row-123 four-range rule stays for atmospheric "
+                                             "score-bearing paths (not an RF instrument: no INS-P2 line)"},
         {"ref": A93_REF["OQ-RFQ-06"], "how": "mains generator, P_mains,in logged GROUND/FACILITY_ONLY (HM-R10, "
                                              "INS-P2-11)"},
         {"ref": A93_REF["OQ-RFQ-07"], "how": "instrument list mapped to the RF package; no supplier contact"},
@@ -979,7 +1097,15 @@ def build():
         {"id": "P2Q-07", "question": "Where no accredited scope exists for V/I-probe phase calibration at 13.56 MHz, "
          "accept an in-house procedure traceable through the VNA and its kit (MS-P2-03)?",
          "proposed_answer": "owner call", "needed_by": "LOCK-1"},
+        {"id": "P2Q-08", "question": "Does the A9.3 ICPQ-06 isolator qualification ('wherever ICP plumbing bridges "
+         "isolated potentials') also cover the ICP-34 pressure-sensing line when the ICP body floats or the collector "
+         "is biased during P2?", "proposed_answer": "yes where that line bridges isolated potentials (PROPOSED; same "
+         "plumbing logic)", "needed_by": "before the first biased / floating P2 point (S-11)"},
     ]
+    dispositioned = {o["ref"].get("decision") for o in oaa if isinstance(o["ref"], dict)}
+    miss = [i for i in A93_DECISION_IDS if i not in dispositioned]
+    if miss or set(A93_DECISION_IDS) != set(_load("A93")["decisions"]):
+        raise SystemExit(f"A9.3 decisions without a disposition: {miss}")
     for q in new_q:
         if q["id"] in oq_rows:
             raise SystemExit(f"new question id {q['id']} collides with state v3")
@@ -1005,7 +1131,7 @@ def build():
 
     # ================================================================ (f) m16 impact
     m16_impact = [
-        {"row": 15, "key": "sensors_diagnostics", "how": "supplies PROPOSED RF calibration procedures CAL-P2-01..14 "
+        {"row": 15, "key": "sensors_diagnostics", "how": "supplies PROPOSED RF calibration procedures CAL-P2-01..15 "
          "and the P2 channel list toward the row's S1A-C4 blocker; state unchanged (BLOCKED; procedures not frozen, "
          "instruments not procured)"},
         {"row": 18, "key": "icp_neutralizer_head", "how": "defines how Z_antenna and the antenna-terminal V/I "
@@ -1090,6 +1216,35 @@ FIELD_DOCS = {
 }
 
 
+_NUM = {"type": "number"}
+_NUMN = {"type": ["number", "null"]}
+_STR = {"type": "string"}
+_STRN = {"type": ["string", "null"]}
+_CX = {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2, "description": "[re, im]"}
+_CXN = {"type": ["array", "null"], "items": {"type": "number"}, "minItems": 2, "maxItems": 2,
+        "description": "[re, im] or null"}
+SUBFIELD_TYPES = {
+    "coupler": {"P_sens_fwd_W": dict(_NUM, **{"x-units": "W"}), "P_sens_ref_W": dict(_NUM, **{"x-units": "W"}),
+                "power_sensor_cal_id": _STR, "reflection_raw": _CXN},
+    "vi_probe": {"V_raw": dict(_CX, **{"x-units": "V (raw)"}), "I_raw": dict(_CX, **{"x-units": "A (raw)"}),
+                 "vi_cal_id": _STR},
+    "match_state": {"tuning_state_id": _STRN, "positions": {"type": "object"}, "auto_tune": {"type": ["boolean", "null"]},
+                    "loss_bound_id": _STRN},
+    "plasma_state": {"lit": {"type": ["boolean", "null"]}, "mode": {"enum": list(RED.MODE_LABELS)},
+                     "optical_signal_V": dict(_NUMN, **{"x-units": "V"})},
+    "sweep": {"sweep_id": _STR, "direction": {"enum": list(RED.SWEEP_DIRECTIONS)}, "index": {"type": "integer"}},
+    "settling": {"dwell_s": dict(_NUMN, **{"x-units": "s"}), "settled": {"type": ["boolean", "null"]}},
+    "antenna_current": {"I_rms_A": dict(_NUM, **{"x-units": "A"}), "probe_cal_id": _STR},
+    "factors": {"P_RF_setpoint_W": dict(_NUMN, **{"x-units": "W"}), "mdot_hall_anode_mg_s": dict(_NUMN, **{"x-units": "mg/s"}),
+                "mdot_icp_dedicated_mg_s": dict(_NUMN, **{"x-units": "mg/s"}), "gas_mode": _STRN,
+                "gas": dict(_STRN, description="evidence tag derived by the reducer (Ar -> ENGINEERING_ONLY_NON_SCORING)"),
+                "p_icp_source_Pa": dict(_NUMN, **{"x-units": "Pa"}), "p_chamber_Pa": dict(_NUMN, **{"x-units": "Pa"}),
+                "hall_state": {"type": ["string", "object", "null"]}, "V_collector_V": dict(_NUMN, **{"x-units": "V"}),
+                "I_collector_A": dict(_NUMN, **{"x-units": "A"}),
+                "P_mains_in_W": dict(_NUMN, **{"x-units": "W"}, description="GROUND/FACILITY_ONLY; never P_bus")},
+}
+
+
 def build_schema():
     missing = [f for f in RED.REQUIRED_RECORD_FIELDS if f not in FIELD_DOCS]
     if missing:
@@ -1100,13 +1255,25 @@ def build_schema():
         types = t.split("|")
         props[f] = {"type": types if len(types) > 1 else types[0], "description": desc, "x-units": u,
                     "x-reference-plane": plane}
+        if f in RED.NESTED_REQUIRED:
+            req = list(RED.NESTED_REQUIRED[f])
+            if set(SUBFIELD_TYPES[f]) != set(req):
+                raise SystemExit(f"schema sub-field types for {f} out of step with the reducer")
+            props[f]["required"] = req
+            props[f]["properties"] = {k: SUBFIELD_TYPES[f][k] for k in req}
     props["power_labels"] = {"type": "object", "description": "optional; any label naming plasma power is refused",
                              "x-units": "-", "x-reference-plane": None}
+    props["engineering_control"] = {"type": ["string", "null"], "enum": list(RED.ENGINEERING_CONTROLS) + [None],
+                                    "description": "optional; 'OQ-VI-05' marks the A9.3 required engineering-control "
+                                                   "sequence (tag REQUIRED_ENGINEERING_CONTROL_NON_SCORING)",
+                                    "x-units": "-", "x-reference-plane": None}
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": f"{LANE_REL}/{SCHEMA_NAME}", "title": "P2 ICP impedance-map record (p2_impedance_record_v1)",
         "description": "Generated by " + SCRIPT_REL + " from the reducer's field tuples; complex values are [re, im]. "
-                       "Forbidden keys (any depth): names starting with " + ", ".join(RED.FORBIDDEN_KEY_PREFIXES),
+                       "Forbidden keys (any depth): names starting with " + ", ".join(RED.FORBIDDEN_KEY_PREFIXES) +
+                       ", and any power-like key (P_/p_ prefix, 'power', 'pwr' or a watt suffix) containing 'plasma'. "
+                       "Nested required sub-fields mirror the reducer's NESTED_REQUIRED contract.",
         "type": "object", "required": list(RED.REQUIRED_RECORD_FIELDS), "properties": props,
         "$defs": {"calibration_set": {
             "type": "object", "required": list(RED.REQUIRED_CAL_FIELDS),
@@ -1180,8 +1347,10 @@ def render_md(doc):
     L += ["", "Rules:", "", "| id | rule | text | status | freeze |", "|---|---|---|---|---|"]
     for f in hm["rules"]:
         L.append(f"| {f['id']} | {_v(f['name'])} | {_v(f['value'])} | {f['status']} | {f['freeze_point']} |")
-    L += ["", "Sequence:", ""] + [f"- **{s['step']}** {s['what']}" + (f" (gate: {s['gate']})" if "gate" in s else "")
-                                  for s in hm["sequence"]]
+    L += ["", "Sequence (powered steps start only when their prerequisites hold):", ""] + \
+        [f"- **{s['step']}** [{'POWERED' if s['powered'] else 'unpowered'}] {s['what']}"
+         + (f" (prerequisites: {', '.join(s['prerequisites'])})" if s.get("prerequisites") else "")
+         + (f" (gate: {s['gate']})" if "gate" in s else "") for s in hm["sequence"]]
     dm = doc["data_model"]
     L += ["", "## 4. Data model", "", f"Schema `{dm['schema_file']}` (record `{dm['record_schema_id']}`, calibration "
           f"set `{dm['calibration_schema_id']}`); reducer `{dm['reducer']}` (pure, standard library).", "",
@@ -1207,7 +1376,7 @@ def render_md(doc):
           "| freeze |", "|---|---|---|---|---|---|---|---|---|"]
     for it in doc["items"]:
         L.append(f"| {it['id']} | {_v(it['name'])} | {_v(it['value'])} | {it['units']} | {_v(it['basis'])} | "
-                 f"{_v(_src(it['source']))} | {it['evidence_class'] or '-'} | {it['status']} | {it['freeze_point']} |")
+                 f"{_v(_src(it['source']))} | {it['evidence_class'] or 'n/a (no numeric value; TBD / PENDING)'} | {it['status']} | {it['freeze_point']} |")
     L += ["", "## (b) Interface demands", "", "| id | direction | quantity | units | status |", "|---|---|---|---|---|"]
     for d in doc["interface_demands"]:
         L.append(f"| {d['id']} | {d['direction']} | {_v(d['quantity'])} | {d['units']} | {_v(d['status'])} |")
