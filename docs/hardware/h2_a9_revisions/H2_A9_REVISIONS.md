@@ -53,7 +53,7 @@ Configurations: `hall_c1_reference`, `hall_icp_neutralizer` (never ranked; no wi
 | UB | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `d1cf5aba0a813c67...` |
 | PREREG | `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` | `f3e6069a4c78c498...` |
 | VI | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `1de411c5f09d9669...` |
-| INT | `docs/experiments/hall_icp/integration/a9_core_integration_v1.json` | `0f452718b973a5e3...` |
+| INT | `docs/experiments/hall_icp/integration/a9_core_integration_v1.json` | `20c222d9b8a65930...` |
 | MCQ | `docs/experiments/magnet_coil/magnet_coil_qualification_v1.json` | `53e92f4536f7b300...` |
 | LIMITS | `schemas/thermal_life/limits_v1.json` | `0df363f76dcb6efc...` |
 | INS | `docs/experiments/instrumentation/instrumentation_definition_v1.json` | `7c6d37b00f38a44c...` |
