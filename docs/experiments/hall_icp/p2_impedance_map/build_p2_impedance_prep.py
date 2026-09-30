@@ -164,18 +164,279 @@ MERGED_LANES = [
      "needed_for": "the RF-package / diagnostics line ids to which the P2 instrument list maps",
      "state": "MERGED (ids cross-checked at build time; not sha-pinned: the RFQ v2 builder copies P2 specification text, so a pin would be a circular hash dependency)"},
 ]
-# P2 instrument -> RFQ v2 line ids (checked against the merged RFQ v2 JSON); no line -> said explicitly
+# P2 instrument -> RFQ v2 line ids (checked against the merged RFQ v2 JSON; the line set per instrument must equal the
+# RFQ v2 instrument_coverage of the same INS-P2 id, rfq_coverage_check(), pair XL-12)
 RFQ_V2_LINES = {
-    "INS-P2-01": NO_V2 + " (RFQ2-RF-N06 asks the RF supplier only to state V/I-sensing compatibility)",
+    "INS-P2-01": "RF-L12 (V/I probe at RP-VI)",
     "INS-P2-02": "RF-L02", "INS-P2-03": "RF-L03",
-    "INS-P2-04": NO_V2 + " (RFQ2-RF-N06 compatibility statement only)", "INS-P2-05": NO_V2,
-    "INS-P2-06": NO_V2, "INS-P2-07": "RF-L08 and RF-L09 for (a); " + NO_V2 + " for (b) the antenna-simulator load",
-    "INS-P2-08": "RF-L06 for the flexible live / sham stand-crossing pair (dispatch LATER); " + NO_V2 + " for the "
+    "INS-P2-04": "RF-L13 (vector network analyser)", "INS-P2-05": "RF-L14 (calibration kits)",
+    "INS-P2-06": "RF-L15 (fixed attenuators)",
+    "INS-P2-07": "RF-L08 and RF-L09 for (a); RF-L16 for (b) the antenna-simulator load",
+    "INS-P2-08": "RF-L06 for the flexible live / sham stand-crossing pair (dispatch LATER); RF-L17 for the "
                  "phase-stable VNA test cables",
-    "INS-P2-09": NO_V2, "INS-P2-10": "TH-L07 (photodiode + amplifier), TH-L08 (DAQ channel), VAC-L07 (optical access / "
-                                     "window)",
-    "INS-P2-11": "RF-L11", "INS-P2-12": NO_V2 + " as a separate encoder line (closest RF-L04 local matching network, "
-                                                "requirement RFQ2-RF-R07 'manual or auto-tuned')",
+    "INS-P2-09": "RF-L18 (antenna RF current probe)",
+    "INS-P2-10": "TH-L07 (photodiode + amplifier), TH-L08 (DAQ channel), VAC-L07 (optical access / window)",
+    "INS-P2-11": "RF-L11", "INS-P2-12": "RF-L19 (match-element position read-out / encoders)",
+}
+_LINE_RE = r"\b(?:RF|GAS|VAC|HE|ME|TH)-[LO]\d\d\b"
+
+
+def rfq_coverage_check(rfq2):
+    """XL-12: the RFQ v2 lines cited per P2 instrument equal the RFQ v2 instrument_coverage lines of that id."""
+    cov = {e["id"]: e for e in rfq2["instrument_coverage"]["p2_instruments"]}
+    bad, out = [], {}
+    for iid, text in RFQ_V2_LINES.items():
+        mine = set(re.findall(_LINE_RE, text)) if not text.startswith(NO_V2) else set()
+        e = cov.get(iid)
+        theirs = {x["line"] for x in e["rfq_lines"]} if e else None
+        if e is None:
+            bad.append(f"{iid} not in RFQ v2 instrument_coverage")
+        elif mine != theirs:
+            bad.append(f"{iid}: P2 cites {sorted(mine)}, RFQ v2 coverage {sorted(theirs)}")
+        out[iid] = sorted(mine) or e["disposition"]
+    if bad:
+        raise SystemExit("RFQ v2 instrument_coverage disagrees with RFQ_V2_LINES: " + "; ".join(bad))
+    return out
+
+
+# ------------------------------------------------------------------ merged A9.6 cross-lane references (A9.6 sec. 5-6, 18)
+# The seven A9.6 packages (P1, P2, P3, P4, mass / power v2, Xe accounting v2, RFQ v2) are merged. Each cites the others
+# by id; every cited id is CHECKED at build time against the target's current JSON (xlane_check, after the outputs are
+# written, so a pair added on both sides converges in one rebuild of the second side; --check fails until it does).
+# Nothing is sha-pinned between the seven packages: several read each other back (ids, or text such as the RFQ v2
+# instrument coverage of the P1 / P2 ids), so a pin would be a circular hash dependency. Interface pairs XL-nn carry
+# identical quantity / units / status text on both sides (tests check the pairing).
+XLANE_PATHS = {
+    "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+    "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+    "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+    "RFQ": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+}
+XLANE_SELF = 'P2'
+XLANE_BUILD_ORDER = ["P4", "XE", "P1", "P2", "P3", "MP", "RFQ"]
+XLANE_BUILD_ORDER_RULE = ("values flow only P4 -> MP (candidate densities) and XE -> MP (Xe residual and headroom, "
+                          "both readings), and P1 / P2 -> RFQ (ids, item text and statuses of the instrument "
+                          "coverage); every other cross-lane reference is an id checked at build time. Rebuild in "
+                          "the order P4, XE, P1, P2, P3, MP, RFQ; a second pass of any package is a no-op")
+XL_PAIRS = {  # pair: (counterpart package, counterpart id, quantity, units, status) - identical text on both sides
+    'XL-01': (
+        'P1',
+        'IF-P1-01',
+        ('P1-S5 stable-region handoff record (p1_reducer.stable_region_handoff: status, criteria_id, '
+         'points_within_criteria with operating_point_record_id / match_setting_id / h1_point_id / gas / gas_mode / '
+         'Z_ICP (MEASURED or null) / factors, envelope_of_tested_points over P_fwd_W, mdot_Ar_H1_mg_s, p_chamber_Pa, '
+         'V_collector_V); P2 admits it only with status REGION_OF_TESTED_POINTS_WITHIN_OWNER_CRITERIA '
+         '(p2_framework.p1_handoff_admissible)'),
+        'W; mg/s; Pa; V; ohm',
+        'TBD_AFTER_EVIDENCE (owning stage P1-S5, gate P1-G5; stability criteria TBD_OWNER P1Q-01; no record yet)',
+    ),
+    'XL-02': (
+        'P1',
+        'IF-P1-02',
+        ('calibrated RF chain and reducer: P_net at RP-CPL; P_line/match,loss and P_delivered only from a '
+         'LOSS_MODEL_VERIFIED loss model (otherwise REFUSED, never reconstructed); Z_ICP methods ZM-A / ZM-B / ZM-C '
+         'with CAL-P2-01..15'),
+        'W; ohm',
+        ('DEFINED (method and reducer); P2 instruments NOT_PROCURED, so Z_ICP stays NOT_MEASURED_PENDING_P2_CHAIN '
+         'until the chain is installed and calibrated'),
+    ),
+    'XL-03': (
+        'P1',
+        'IF-P1-28',
+        ('powered-step prerequisites HM-R13 (match pre-tuned on the VNA, calibrated coupler monitoring, P1 '
+         'provisional limits / foldback, ICP-16 interlocks, facility RF safety) for the P1 RF-on sequence'),
+        '-',
+        'DEFINED (prerequisite list; numeric limits TBD at P1-G0, P1-IT-05)',
+    ),
+    'XL-04': (
+        'P1',
+        'IF-P1-29',
+        ('selected laboratory generator, adjustable local match (tuning range, element read-out), antenna / terminal '
+         'geometry and provisional protection limits (P1-HW-01, P1-HW-03, P1-HW-34, P1-IT-22, P1-IT-05)'),
+        '-',
+        'TBD_AFTER_EVIDENCE (hardware NOT_PROCURED; values registered at P1-G0)',
+    ),
+    'XL-05': (
+        'P1',
+        'IF-P1-30',
+        ('Ar MFC calibration record (one range; two overlapping ranges only if one cannot cover the sweep) via the '
+         'rate-of-rise / transfer path (P1-IT-10, P1-IT-11, P1-M-18; RFQ v2 GAS-L01, GAS-L16, GAS-L17) for the '
+         'HM-F02 Ar levels and UB-P2-M-01; Ar data ENGINEERING_ONLY_NON_SCORING'),
+        'mg/s; sccm',
+        'TBD_AFTER_EVIDENCE (owning stages P1-S0 / P1-S3; calibration record not yet made)',
+    ),
+    'XL-06': (
+        'P1',
+        'IF-P1-23',
+        ('photodiode (INS-P2-10, P1-M-28) dark / background, RF-powered known-unlit and known-lit P1 records with '
+         'simultaneous P_refl, antenna current, collector / current-path response and pressure, from which the P2 '
+         'unlit threshold is frozen before the P2 map (A9.4 P2Q-05)'),
+        'V; W; A; Pa',
+        'TBD_AFTER_EVIDENCE (owning stages P1-S2, P1-S3..S5; records not yet taken)',
+    ),
+    'XL-07': (
+        'P1',
+        'IF-P1-31',
+        ('Touchstone (.s2p / .s1p) files with calibration ids and certificates: line + feedthrough (S-02), every '
+         "local-match tuning state with its logged element positions (S-03), cold antenna (S-06), SOL standards' "
+         'definitions (S-01)'),
+        '-',
+        'TBD_AFTER_EVIDENCE (owning stages P1-S1 / P1-S2; bench hardware NOT_PROCURED)',
+    ),
+    'XL-08': (
+        'P1',
+        'IF-P1-32',
+        ('~1 kV-class representative-gas isolator qualification record for any ICP gas line bridging isolated '
+         'potentials (ICD ICP-23; A9.3 ICPQ-06; P1-HW-12); none required where both ends are intentionally at the '
+         'same floating potential'),
+        'V',
+        'TBD_AFTER_EVIDENCE (qualification not yet run; owning stage P1-S0 readiness)',
+    ),
+    'XL-12': (
+        'RFQ',
+        'IFD-13',
+        ('RFQ v2 line id (or explicit not-procured disposition) per P2 instrument (rfq_a9_v2 instrument_coverage); '
+         'P2 instrument_list.rfq_v2_line cites exactly these lines (checked at build time)'),
+        '-',
+        'DEFINED (line ids reconciled; quotation only, no purchase order)',
+    ),
+    'XL-14': (
+        'RFQ',
+        'IFD-18',
+        ('INS-P2-10 photodiode, optical access / window, amplifier and DAQ channel for the P1_NEEDED / P2 '
+         'preparation instrumentation quote (A9.4 P2Q-05)'),
+        '-',
+        'DEFINED (recorded in RFQ v2 as TH-L07, TH-L08 and VAC-L07; quotation only)',
+    ),
+    'XL-15': (
+        'RFQ',
+        'IFD-03',
+        ('P2 instrument list INS-P2-01..12 with required specifications as quantities or TBD (copied into '
+         'RFQ2-RF-N07..N16)'),
+        '-',
+        'DEFINED (copied; package placement TBD_OWNER P2Q-02)',
+    ),
+    'XL-16': (
+        'RFQ',
+        'IFD-04',
+        ('Z_antenna = R + jX envelope from the P2 hot map -> component ratings (generator, coupler, coax, '
+         'connectors, matching elements, feedthroughs, dummy load)'),
+        'ohm; W; V; A',
+        'TBD_AFTER_IMPEDANCE_MAP (owning stage P2 hot map after the P1 handoff)',
+    ),
+    'XL-19': (
+        'P3',
+        'P3-IF-N03',
+        ('location split of P_line/match,loss (share dissipated on the ICP module / moving platform, from the '
+         'CAL-P2-02 / CAL-P2-03 two-ports) -> P3-P2-04'),
+        '-',
+        'TBD_AFTER_IMPEDANCE_MAP (owning stage P2 two-port characterization; coupled thermal UNRESOLVED)',
+    ),
+    'XL-20': (
+        'P3',
+        'P3-IF-N04',
+        ('P_forward, P_reflected, P_line/match,loss and P_delivered (numeric only with loss_status VERIFIED; a '
+         'REFUSED / TBD value is refused by p3_thermal_lib.q_rf_match, never reconstructed), antenna current, cold '
+         'antenna resistance (CAL-P2-08) -> P3-P2-01, P3-P2-02, P3-P2-03, P3-P2-06, P3-P2-07'),
+        'W; A; ohm',
+        'TBD_AFTER_IMPEDANCE_MAP (owning stage P2 hot map; coupled thermal UNRESOLVED)',
+    ),
+    'XL-22': (
+        'P3',
+        'P3-IF-S06',
+        ('ICP-module calorimetric energy balance (thermocouple map with RF on / off, ICD ICP-36 verification) that '
+         'fixes f_leaving (P3-P2-05)'),
+        'W; -',
+        'TBD_AFTER_EVIDENCE (owning stage P2 hot map; f_leaving = 0 only as an explicitly labelled bound)',
+    ),
+    'XL-39': (
+        'MP',
+        'MPV2-ID-09',
+        ('measured P_forward envelope at RP-CPL and Z_antenna map (-> RF_COMPONENT_RATINGS -> flight match '
+         'implementation mass / actuator power and generator sizing); laboratory quantities, never P_bus evidence'),
+        'W; ohm; kg',
+        'TBD_AFTER_IMPEDANCE_MAP (owning stage P2 hot map)',
+    ),
+}
+
+
+def xref(pair):
+    """The shared description of one cross-lane interface pair (identical on both sides)."""
+    pkg, cid, quantity, units, status = XL_PAIRS[pair]
+    return {"pair": pair, "counterpart": pkg + ":" + cid, "counterpart_path": XLANE_PATHS[pkg],
+            "quantity": quantity, "units": units, "status": status}
+
+
+def _xlane_demands(doc):
+    d = doc["interface_demands"]
+    return [e for v in d.values() for e in v] if isinstance(d, dict) else list(d)
+
+
+def _xlane_has_id(text, ident):
+    import re as _re
+    return _re.search(r"(?<![A-Za-z0-9_-])" + _re.escape(ident) + r"(?![A-Za-z0-9_])", text) is not None
+
+
+def xlane_check(doc):
+    """Every cross-lane pair points at an existing interface-demand id of the merged target package, and every other
+    cited id (XL_CITED) occurs in the target's current JSON. Returns the list of problems (empty = consistent)."""
+    problems, cache = [], {}
+
+    def target(pkg):
+        if pkg not in cache:
+            p = REPO / XLANE_PATHS[pkg]
+            cache[pkg] = json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+        return cache[pkg]
+
+    seen = set()
+    for e in _xlane_demands(doc):
+        for x in e.get("xref", []):
+            seen.add(x["pair"])
+            pkg, cid = x["counterpart"].split(":", 1)
+            t = target(pkg)
+            if t is None:
+                problems.append("%s: %s missing" % (x["pair"], XLANE_PATHS[pkg]))
+                continue
+            ids = {d.get("id") for d in _xlane_demands(t)}
+            if cid not in ids:
+                problems.append("%s: %s has no interface demand %s" % (x["pair"], XLANE_PATHS[pkg], cid))
+    missing_pairs = sorted(set(XL_PAIRS) - seen)
+    if missing_pairs:
+        problems.append("pairs declared but not attached to an interface demand: %s" % missing_pairs)
+    for pkg, idents in sorted(XL_CITED.items()):
+        t = target(pkg)
+        if t is None:
+            problems.append("%s missing" % XLANE_PATHS[pkg])
+            continue
+        text = json.dumps(t, ensure_ascii=False)
+        for ident in idents:
+            if not _xlane_has_id(text, ident):
+                problems.append("cited id %s absent from %s" % (ident, XLANE_PATHS[pkg]))
+    return problems
+
+
+def xlane_report(doc):
+    """The merged-lane record written into the JSON: per counterpart package, the pairs and the cited ids."""
+    out = {}
+    for pkg in XLANE_BUILD_ORDER:
+        if pkg == XLANE_SELF:
+            continue
+        pairs = sorted(k for k, v in XL_PAIRS.items() if v[0] == pkg)
+        cited = sorted(XL_CITED.get(pkg, []))
+        out[pkg] = {"path": XLANE_PATHS[pkg], "state": "MERGED", "pairs": pairs, "ids_cited": cited,
+                    "sha_pinned": False,
+                    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other "
+                             "back; a pin would be circular)" if (pairs or cited) else
+                             "no interface demand between the two packages"}
+    return {"rule": XLANE_BUILD_ORDER_RULE, "build_order": XLANE_BUILD_ORDER, "packages": out}
+
+XL_CITED = {  # ids cited outside the XL pairs (checked to occur in the target JSON)
+    "P3": ["P3-P2-01", "P3-P2-02", "P3-P2-03", "P3-P2-04", "P3-P2-05", "P3-P2-06", "P3-P2-07"],
+    "MP": ["MPV2-ID-09"],
+    "RFQ": ["NIR-01"],
 }
 
 
@@ -1113,16 +1374,18 @@ def build():
     # ================================================================ (b) interface demands
     idem = [
         ("IDP2-01", "P1 -> P2", "stable ICP operating region (factor ranges of P_RF, mdot, p, gas, Hall point, "
-         "collector bias) and its hand-over record", "W; mg/s; Pa; -; V, A", "OFFERED by P1 as IF-P1-01 (after "
-         "P1-S5, gate P1-G5); no record yet"),
+         "collector bias) and its hand-over record (P1 stable_region_handoff; admitted only through "
+         "p2_framework.p1_handoff_admissible)", XL_PAIRS["XL-01"][3], XL_PAIRS["XL-01"][4], ["XL-01"]),
         ("IDP2-02", "P1 -> P2", "selected laboratory generator, adjustable local match (tuning range, element "
-         "read-out), antenna / terminal geometry, provisional protection limits", "-", "P1-HW-01 / P1-HW-03 / "
-         "P1-HW-34 / P1-IT-22 / P1-IT-05 (hardware NOT_PROCURED; values TBD there)"),
+         "read-out), antenna / terminal geometry, provisional protection limits (P1-HW-01 / P1-HW-03 / P1-HW-34 / "
+         "P1-IT-22 / P1-IT-05)", XL_PAIRS["XL-04"][3], XL_PAIRS["XL-04"][4], ["XL-04"]),
         ("IDP2-03", "P2 -> P1", "calibrated RF chain and reducer usable by P1 for P_delivered (C_e = P_RF,delivered / "
-         "I_e, A9.3 OQ-RFQ-06) and for the OQ-VI-05 time series P_RF,fwd(t), P_RF,refl(t)", "W", "OFFERED"),
-        ("IDP2-04", "P2 -> RFQ v2", "instrument list INS-P2-01..12 with required specs as quantities or TBD",
-         "-", "MAPPED (instrument_list.rfq_v2_line; instruments without a line are stated as such)"),
-        ("IDP2-05", "RFQ v2 -> P2", "RF-package line ids for the instruments", "-", "CONSUMED (" + RFQ2_JSON + ")"),
+         "I_e, A9.3 OQ-RFQ-06; verified-loss records only) and for the OQ-VI-05 time series P_RF,fwd(t), "
+         "P_RF,refl(t); Z_ICP methods for IF-P1-02", XL_PAIRS["XL-02"][3], XL_PAIRS["XL-02"][4], ["XL-02"]),
+        ("IDP2-04", "P2 -> RFQ v2", "instrument list INS-P2-01..12 with required specs as quantities or TBD "
+         "(RFQ v2 IFD-03)", XL_PAIRS["XL-15"][3], XL_PAIRS["XL-15"][4], ["XL-15"]),
+        ("IDP2-05", "RFQ v2 -> P2", "RF-package line ids for the instruments (RFQ v2 IFD-13, instrument_coverage; "
+         "instrument_list.rfq_v2_line equals it)", XL_PAIRS["XL-12"][3], XL_PAIRS["XL-12"][4], ["XL-12"]),
         ("IDP2-06", "P2 -> A9-04 uncertainty budget", "new PROPOSED components UB-P2-Z-01..08 for the UB-DQ-RF chain; "
          "closes UB-RF-02..07 via CAL-P2-02/03/07/09", "relative; ohm; rad",
          "OFFERED (adoption is an A9-04 successor / owner item; the merged budget is not edited)"),
@@ -1141,31 +1404,31 @@ def build():
         ("IDP2-11", "A9-02 bus boundary -> P2", "A902-21 generator DC-input -> forward-power efficiency and A902-22 "
          "match DC draw stay TBD; P2 logs P_mains,in only as a GROUND/FACILITY_ONLY engineering quantity", "W",
          "TBD LOCK-2 / LOCK-1 (unchanged)"),
-        ("IDP2-12", "P2 -> thermal (P3)", "P_line/match,loss on the module (heat source for the coupled thermal "
-         "model); coupled H-1/ICP thermal closure stays UNRESOLVED", "W", "LATER"),
+        ("IDP2-12", "P2 -> thermal (P3 P3-IF-N03)", "P_line/match,loss location split: share dissipated on the "
+         "module / moving platform (heat source for the coupled thermal model); coupled H-1/ICP thermal closure "
+         "stays UNRESOLVED", XL_PAIRS["XL-19"][3], XL_PAIRS["XL-19"][4], ["XL-19"]),
         ("IDP2-13", "P2 -> INS-18 time base", "P2 channels on the common time base", "s", "PROPOSED"),
         ("IDP2-14", "P1 gas metrology -> P2", "Ar MFC (one range, or two overlapping ranges only if one cannot cover "
          "the sweep) calibration record via the rate-of-rise / transfer path, for the HM-F02 Ar levels and "
-         "UB-P2-M-01 (A9.3 OQ-RFQ-02); Ar data ENGINEERING_ONLY_NON_SCORING", "mg/s; sccm", "P1-IT-10 / P1-IT-11 "
-         "(P1-M-18; RFQ v2 GAS-L01 / GAS-L16); calibration record not yet made"),
+         "UB-P2-M-01 (A9.3 OQ-RFQ-02); Ar data ENGINEERING_ONLY_NON_SCORING (P1-IT-10 / P1-IT-11, P1-M-18; RFQ v2 "
+         "GAS-L01 / GAS-L16 / GAS-L17; P1 IF-P1-30)", XL_PAIRS["XL-05"][3], XL_PAIRS["XL-05"][4], ["XL-05"]),
         ("IDP2-15", "ICD ICP-23 / P1 -> P2", "~1 kV-class representative-gas isolator qualification record for any "
          "ICP gas line bridging isolated potentials (dedicated G-ATM / G-XE diagnostic feed of HM-F02; any line across "
          "the floating ICP body when HM-F07 biases the collector); none required where both ends are intentionally "
-         "at the same floating potential (A9.3 ICPQ-06)", "V", "PENDING (qualification not yet run)"),
+         "at the same floating potential (A9.3 ICPQ-06; P1 IF-P1-32)", XL_PAIRS["XL-08"][3], XL_PAIRS["XL-08"][4], ["XL-08"]),
         ("IDP2-16", "P2 -> P1", "powered-step prerequisites HM-R13 (match pre-tuned on the VNA, calibrated coupler "
          "monitoring, P1 provisional limits / foldback, ICP-16 interlocks, facility RF safety) offered for the P1 "
-         "bench RF-on sequence", "-", "OFFERED"),
+         "bench RF-on sequence (P1 IF-P1-28)", XL_PAIRS["XL-03"][3], XL_PAIRS["XL-03"][4], ["XL-03"]),
         ("IDP2-17", "P1 -> P2", "photodiode dark / background, RF-powered known-unlit and known-lit P1 plasma records "
          "(with simultaneous P_reflected, antenna current, collector / current-path response, pressure) for the HM-R15 "
-         "threshold, frozen before the P2 map (A9.4 P2Q-05)", "V; W; A; Pa", "OFFERED by P1 as IF-P1-23 "
-         "(P1-M-28); records not yet taken"),
+         "threshold, frozen before the P2 map (A9.4 P2Q-05; P1 IF-P1-23, P1-M-28)", XL_PAIRS["XL-06"][3], XL_PAIRS["XL-06"][4], ["XL-06"]),
         ("IDP2-18", "P2 -> RFQ v2", "INS-P2-10 photodiode, optical access / window, amplifier and DAQ channel for the "
-         "P1_NEEDED / P2 preparation instrumentation quote (A9.4 P2Q-05)", "-", "RECORDED in RFQ v2 as TH-L07, TH-L08 and "
-         "VAC-L07 (quotation only)"),
+         "P1_NEEDED / P2 preparation instrumentation quote (A9.4 P2Q-05; RFQ v2 IFD-18)", XL_PAIRS["XL-14"][3], XL_PAIRS["XL-14"][4], ["XL-14"]),
     ]
     framework, items_fw, idem_fw, oaa_fw, new_q_fw = build_framework(oq_rows)
     idem = idem + idem_fw
-    interface_demands = [{"id": i, "direction": d, "quantity": q, "units": u, "status": s} for i, d, q, u, s in idem]
+    interface_demands = [{"id": e[0], "direction": e[1], "quantity": e[2], "units": e[3], "status": e[4],
+                          "xref": [xref(p) for p in (e[5] if len(e) > 5 else [])]} for e in idem]
 
     # ================================================================ (c) owner answers applied
     oaa = [
@@ -1351,6 +1614,7 @@ def build():
     if missing:
         raise SystemExit(f"merged-lane ids cited but absent: {missing}")
     merged_ids = {P1_JSON: p1_ids, RFQ2_JSON: v2_ids}
+    coverage_checked = rfq_coverage_check(json.loads(rfq2_txt))
 
     doc = {
         "schema": "p2_impedance_prep_v1", "id": "p2_impedance_prep_v1", "lane": LANE, "trigger": TRIGGER,
@@ -1368,6 +1632,7 @@ def build():
         "decision_pins": [{"key": k, "path": p, "sha256": h, "what": w} for k, (p, h, w) in DECISIONS.items()],
         "deliverable_pins": [{"key": k, "path": p, "sha256": h, "what": w} for k, (p, h, w) in DELIVERABLES.items()],
         "never_pinned": NEVER_PINNED, "merged_lanes": MERGED_LANES, "merged_ids_cited": merged_ids,
+        "rfq_v2_coverage_checked": coverage_checked, "merged_cross_lane": xlane_report(None),
         "a9_5_incorporation": {
             "follow_on": "fo_a9_5_closure_rule", "trigger": "T_A9_5_CLOSURE_RULE", "base_commit": A95_INC_BASE,
             "decision": {"path": DECISIONS["A95"][0], "sha256": DECISIONS["A95"][1]},
@@ -1772,16 +2037,25 @@ def build_framework(oq_rows):
     idem_fw = [
         ("IDP2-19", "P1 -> P2", "Touchstone (.s2p / .s1p) files with calibration ids and certificates: line + "
          "feedthrough (S-02), every local-match tuning state with its logged element positions (S-03), cold antenna "
-         "(S-06), SOL standards' definitions (S-01)", "-", "PENDING (no measurement yet; P1 bench hardware "
-         "NOT_PROCURED)"),
-        ("IDP2-20", "P2 -> P3 coupled thermal (PENDING docs/experiments/hall_icp/p3_coupled_thermal/)",
-         "P_line/match,loss envelope (verified-loss records only) and P_delivered envelope as Q_RF/match inputs",
-         "W", "LATER (after the hot map); coupled thermal stays UNRESOLVED"),
-        ("IDP2-21", "P2 -> mass / power (PENDING docs/budgets/mass_power_a9_v2/)", "measured P_forward envelope at "
-         "RP-CPL for generator sizing (a laboratory quantity; never P_bus evidence)", "W", "LATER"),
+         "(S-06), SOL standards' definitions (S-01) (P1 IF-P1-31)", XL_PAIRS["XL-07"][3], XL_PAIRS["XL-07"][4],
+         ["XL-07"]),
+        ("IDP2-20", "P2 -> P3 coupled thermal (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json "
+         "P3-IF-N04)", "P_forward, P_reflected, P_line/match,loss and P_delivered envelopes (numeric only from "
+         "verified-loss records; REFUSED values are passed as REFUSED and refused by P3), antenna current and cold "
+         "antenna resistance as Q_RF/match inputs", XL_PAIRS["XL-20"][3], XL_PAIRS["XL-20"][4], ["XL-20"]),
+        ("IDP2-21", "P2 -> mass / power (docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json MPV2-ID-09)",
+         "measured P_forward envelope at RP-CPL and the Z_antenna map for generator sizing and the flight match "
+         "implementation (laboratory quantities; never P_bus evidence)", XL_PAIRS["XL-39"][3], XL_PAIRS["XL-39"][4],
+         ["XL-39"]),
         ("IDP2-22", "owner -> P2", "ICPQ-10 (heat-load bound alternative), ICPQ-11 (k_RF), P2Q-10 (component "
          "margins), P2Q-09 (E/H criteria form), P2Q-03 (agreement rule), loss-check k (FW-09)", "-",
          "OPEN (TBD_OWNER; rating_structure and detect_eh_transitions take them as explicit inputs)"),
+        ("IDP2-23", "P2 -> RFQ v2 (docs/procurement/rfq_a9_v2/rfq_a9_v2.json IFD-04)", "Z_antenna envelope from the "
+         "hot map -> RF component ratings for the RFQ lines (rating_structure; candidates for owner selection only)",
+         XL_PAIRS["XL-16"][3], XL_PAIRS["XL-16"][4], ["XL-16"]),
+        ("IDP2-24", "P3 coupled thermal -> P2 (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json "
+         "P3-IF-S06)", "module calorimetric energy balance (thermocouple map RF on / off) that fixes f_leaving; "
+         "recorded with the hot map, never a thermal PASS", XL_PAIRS["XL-22"][3], XL_PAIRS["XL-22"][4], ["XL-22"]),
     ]
     oaa_fw = [
         {"ref": dict(a96, decision="sec. 9"), "how": "P2 framework implemented for later data ingestion (framework."
@@ -2098,9 +2372,16 @@ def render_md(doc):
     for it in doc["items"]:
         L.append(f"| {it['id']} | {_v(it['name'])} | {_v(it['value'])} | {it['units']} | {_v(it['basis'])} | "
                  f"{_v(_src(it['source']))} | {it['evidence_class'] or 'n/a (no numeric value; TBD / PENDING)'} | {it['status']} | {it['freeze_point']} |")
-    L += ["", "## (b) Interface demands", "", "| id | direction | quantity | units | status |", "|---|---|---|---|---|"]
+    L += ["", "## (b) Interface demands", "", "| id | direction | quantity | units | status | pairs |",
+          "|---|---|---|---|---|---|"]
     for d in doc["interface_demands"]:
-        L.append(f"| {d['id']} | {d['direction']} | {_v(d['quantity'])} | {d['units']} | {_v(d['status'])} |")
+        prs = ", ".join(x["pair"] + " -> " + x["counterpart"] for x in d["xref"]) or "-"
+        L.append(f"| {d['id']} | {d['direction']} | {_v(d['quantity'])} | {d['units']} | {_v(d['status'])} | {prs} |")
+    L += ["", "### Merged cross-lane references", "", doc["merged_cross_lane"]["rule"], "",
+          "| package | path | pairs | ids cited | check |", "|---|---|---|---|---|"]
+    for k, v in doc["merged_cross_lane"]["packages"].items():
+        L.append(f"| {k} | {v['path']} | {', '.join(v['pairs']) or '-'} | {', '.join(v['ids_cited']) or '-'} | "
+                 f"{v['check']} |")
     L += ["", "## (c) Owner answers applied", "", "| ref | how applied |", "|---|---|"]
     for o in doc["owner_answers_applied"]:
         L.append(f"| {_src(o['ref'])} | {_v(o['how'])} |")
@@ -2161,11 +2442,19 @@ def main(argv=None):
         if bad:
             print("NOT REPRODUCED:", ", ".join(bad))
             return 1
+        probs = xlane_check(json.loads(js))
+        if probs:
+            print("CROSS-LANE REFERENCES BROKEN:", "; ".join(probs))
+            return 1
         print("OK: outputs reproduced")
         return 0
     for p, t in outs:
         p.write_text(t, encoding="utf-8")
     print("wrote", ", ".join(p.name for p, _ in outs))
+    probs = xlane_check(json.loads(js))
+    if probs:
+        print("CROSS-LANE REFERENCES BROKEN (rebuild the counterpart, then this package):", "; ".join(probs))
+        return 1
     return 0
 
 

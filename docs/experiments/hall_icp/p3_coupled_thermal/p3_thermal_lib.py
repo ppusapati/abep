@@ -47,6 +47,10 @@ RESULT_STATUSES = ("COMPUTED_CONDITIONAL", "NOT_EVALUATED", "INCOMPLETE_EVIDENCE
                    "NUMERICAL_FAILURE")
 CLOSURE_STATUSES = {"ICP_COUPLED_THERMAL": "UNRESOLVED", "ANODE_THERMAL_CLOSURE": "UNRESOLVED"}
 TBD_PREFIXES = ("TBD", "PENDING", "TBD_AFTER_EVIDENCE", "TBD_OWNER", "TBD_AFTER_IMPEDANCE_MAP")
+# P2 refusal semantics (pair XL-20; p2_impedance_reducer._refuse_loss / NOT_AVAILABLE): a P_line/match,loss or
+# P_delivered that P2 reports as 'REFUSED - ...' (loss model unverified) or NOT_AVAILABLE is refused here as well -
+# never reconstructed, never replaced by P_net
+REFUSED_PREFIXES = ("REFUSED", "NOT_AVAILABLE")
 
 
 # ============================================================================================ errors
@@ -60,6 +64,11 @@ class MissingInputError(InputError):
     def __init__(self, missing, context=""):
         self.missing = sorted(set(missing))
         super().__init__(f"{context}: missing / TBD inputs {self.missing}")
+
+
+class RefusedInputError(MissingInputError):
+    """An upstream package REFUSED the value (e.g. P2 line/match loss unverified): the calculation refuses too
+    (INCOMPLETE_EVIDENCE); the refused value is never reconstructed from other inputs (A9.6 sec. 14)."""
 
 
 class SyntheticMixError(InputError):
@@ -94,9 +103,13 @@ def take(inputs, spec, context):
     spec: {key: units}. Returns ({key: value}, provenance) or raises. A record is a dict with value / units /
     evidence_class / source. Missing, None or TBD -> MissingInputError listing every missing key (not just the first).
     """
-    missing, vals, classes = [], {}, {}
+    missing, refused, vals, classes = [], [], {}, {}
     for key, units in spec.items():
         rec = inputs.get(key) if isinstance(inputs, dict) else None
+        if isinstance(rec, dict) and isinstance(rec.get("value"), str) and \
+                rec["value"].strip().upper().startswith(REFUSED_PREFIXES):
+            refused.append(key)
+            continue
         if rec is None or not isinstance(rec, dict) or _is_tbd(rec.get("value")):
             missing.append(key)
             continue
@@ -114,9 +127,19 @@ def take(inputs, spec, context):
             raise InputError(f"{context}: {key} is not finite")
         vals[key] = v
         classes[key] = ec
+    if refused:
+        raise RefusedInputError(refused + missing, context + " (REFUSED upstream: " + ", ".join(sorted(refused)) + ")")
     if missing:
         raise MissingInputError(missing, context)
     return vals, provenance(classes)
+
+
+def _numbers(vals, context):
+    """Scalar real numbers only (a string, list or bound object is not a measured scalar here)."""
+    for k, v in vals.items():
+        if isinstance(v, bool) or not isinstance(v, (int, float)):
+            raise InputError(f"{context}: {k} must be a real number, got {type(v).__name__}")
+    return vals
 
 
 def provenance(classes):
@@ -721,6 +744,7 @@ def q_rf_match(inputs):
     f_leaving = 0 (all delivered power dissipated on the module) is accepted only as an explicit input record.
     Optional antenna_ohmic breakdown: I_ant,rms^2 R_ant,cold(T) (P2 CAL-P2-08 cold reference) when both are given."""
     v, prov = take(inputs, Q_RF_SPEC, "Q_RF/match")
+    _numbers(v, "Q_RF/match")
     Pf, Pr, Pl = _nonneg("P_forward", v["P_forward_W"]), _nonneg("P_reflected", v["P_reflected_W"]), \
         _nonneg("P_line/match,loss", v["P_line_match_loss_W"])
     fon, fl = _fraction("f_on_module", v["f_line_match_loss_on_module"]), \
@@ -765,6 +789,7 @@ def q_collector(inputs):
     never the net terminal current (the split must be measured / registered; P1-IT-42 sign convention applies to
     the terminal record, not to these magnitudes)."""
     v, prov = take(inputs, Q_COLL_SPEC, "Q_collector")
+    _numbers(v, "Q_collector")
     Ie, Ii = _nonneg("I_electron_collected", v["I_electron_collected_A"]), _nonneg("I_ion_collected", v["I_ion_collected_A"])
     Te = v["T_e_eV"]
     if Te <= 0:
@@ -795,6 +820,7 @@ def q_plume(inputs, interception):
     prediction). alpha_E: energy accommodation (1 = bound). Charge-exchange / neutral / electron plume terms are
     not included and are listed as omitted."""
     v, prov = take(inputs, Q_PLUME_SPEC, "Q_plume")
+    _numbers(v, "Q_plume")
     Ib, E = _nonneg("I_beam", v["I_beam_A"]), _nonneg("E_ion_mean", v["E_ion_mean_eV"])
     al = _fraction("alpha_E", v["alpha_energy_accommodation"])
     P = Ib * E

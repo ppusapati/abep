@@ -160,7 +160,9 @@ def test_merged_cross_references_replace_stale_pending(doc, bld):
             assert '"%s"' % i in rfq2, (h["id"], i)
     hw = {h["item"].split(" (")[0]: h["rfq_v2_package"] for h in doc["hardware_readiness"]}
     photo = [v for k, v in hw.items() if k.startswith("optical-emission photodiode")][0]
-    assert "TH-L07" in photo and "TH-L08" in photo and "VAC-L07" in photo
+    assert "TH-L07" in photo and "TH-L08" in photo
+    window = [h["rfq_v2_package"] for h in doc["hardware_readiness"] if h["id"] == "P1-HW-20"][0]
+    assert window.startswith("VAC-L07")          # the optical window is its own item (RFQ v2 instrument_coverage)
     pins = {p["path"]: p["sha256"] for p in doc["authority_pins"]}
     assert "docs/procurement/rfq_a9_v2/rfq_a9_v2.json" not in pins   # RFQ v2 reads P1: ids checked, a pin would be circular
     assert not any("p2_impedance_map" in p for p in pins)          # same follow-on lane: ids checked, not pinned
@@ -1763,7 +1765,8 @@ def test_a96_pinned_and_recorded(doc):
     assert "PASS" not in json.dumps(inc["fixed_statuses"])
     applied = {a["id"] for a in doc["owner_answers_applied"]}
     assert {"A9.6 sec. 2", "A9.6 sec. 5-7", "A9.6 sec. 8", "A9.6 sec. 14"} <= applied
-    assert "PENDING docs/experiments/hall_icp/p3_coupled_thermal/" in " ".join(inc["not_done_here"])
+    assert "merged and cited by id" in " ".join(inc["not_done_here"])
+    assert "PENDING docs/experiments/hall_icp/p3_coupled_thermal/" not in json.dumps(doc)
 
 
 def test_a96_workflow_stages_complete(doc, camp, red):
@@ -2189,3 +2192,199 @@ def test_a96_campaign_code_hygiene():
     imports = set(re.findall(r"^(?:import|from) (\S+)", src, re.M))
     assert imports <= {"copy", "hashlib", "importlib.util", "json", "os"}, imports
     assert "open(" not in src
+
+
+# ------------------------------------------------------------------ A9.6 cross-lane integration (fo_a9_6_cross_lane_integration)
+_XL_SELF = 'P1'
+_XL_JSON = {
+    "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+    "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+    "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+    "RFQ": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+}
+_XL_MD = ['docs/experiments/hall_icp/p1_icp_bench/P1_ICP_BENCH.md']
+_XL_BUILDER = 'docs/experiments/hall_icp/p1_icp_bench/build_p1_icp_bench.py'
+_XL_ROOT = __import__("pathlib").Path(__file__).resolve().parents[1]
+
+
+def _xl_load(k):
+    return __import__("json").loads((_XL_ROOT / _XL_JSON[k]).read_text(encoding="utf-8"))
+
+
+def _xl_demands(d):
+    ifd = d["interface_demands"]
+    return [e for v in ifd.values() for e in v] if isinstance(ifd, dict) else list(ifd)
+
+
+def _xl_builder():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("xl_builder_" + _XL_SELF.lower(), str(_XL_ROOT / _XL_BUILDER))
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
+def test_xlane_pairs_reconciled_both_directions():
+    """A9.6 sec. 5-6: every cross-lane interface demand of this package has exactly one matching entry in the
+    counterpart package: same pair id, identical quantity / units / status text, mutual pointers; a single-pair entry
+    carries the pair's units and status itself; no pair status is a PASS."""
+    here = _xl_load(_XL_SELF)
+    n = 0
+    for e in _xl_demands(here):
+        for x in e.get("xref", []):
+            pkg, cid = x["counterpart"].split(":", 1)
+            assert x["counterpart_path"] == _XL_JSON[pkg]
+            there = _xl_demands(_xl_load(pkg))
+            match = [(f, y) for f in there if f["id"] == cid for y in f.get("xref", []) if y["pair"] == x["pair"]]
+            assert len(match) == 1, (x["pair"], x["counterpart"])
+            f, y = match[0]
+            assert y["counterpart"] == _XL_SELF + ":" + e["id"], x["pair"]
+            for k in ("quantity", "units", "status"):
+                assert y[k] == x[k], (x["pair"], k)
+            assert not x["status"].upper().startswith("PASS"), x["pair"]
+            if len(e["xref"]) == 1:
+                assert e["units"] == x["units"] and e["status"] == x["status"], e["id"]
+            n += 1
+    assert n >= 1
+
+
+def test_xlane_references_checked_not_pinned_not_stale():
+    """A9.6 sec. 18 'no stale references': no 'PENDING <merged package>' marker survives; every merged package is
+    recorded MERGED and never sha-pinned (packages read each other back: a pin would be circular); the builder's
+    build-time id check passes on the committed JSON and refuses a broken counterpart id."""
+    import copy
+    import hashlib
+    import re
+    doc = _xl_load(_XL_SELF)
+    txt = (_XL_ROOT / _XL_JSON[_XL_SELF]).read_text(encoding="utf-8") + "".join(
+        (_XL_ROOT / p).read_text(encoding="utf-8") for p in _XL_MD)
+    for k, p in _XL_JSON.items():
+        if k == _XL_SELF:
+            continue
+        d = p.rsplit("/", 1)[0]
+        assert re.search(r"PENDING[ :`'\"]*" + re.escape(d), txt) is None, d
+        sha = hashlib.sha256((_XL_ROOT / p).read_bytes()).hexdigest()
+        assert sha not in txt, "sha-pinned merged package " + p
+    rec = doc["merged_cross_lane"]
+    assert rec["build_order"] == ["P4", "XE", "P1", "P2", "P3", "MP", "RFQ"]
+    for k, v in rec["packages"].items():
+        assert v["state"] == "MERGED" and v["sha_pinned"] is False and v["path"] == _XL_JSON[k]
+    b = _xl_builder()
+    assert b.xlane_check(doc) == []
+    bad = copy.deepcopy(doc)
+    for e in _xl_demands(bad):
+        if e.get("xref"):
+            e["xref"][0]["counterpart"] = e["xref"][0]["counterpart"].split(":")[0] + ":NO-SUCH-ID"
+            break
+    assert b.xlane_check(bad)
+
+
+# ------------------------------------------------------------------ cross-package consistency with P2 (pairs XL-01, XL-06)
+P2_DIR = os.path.join(ROOT, "docs", "experiments", "hall_icp", "p2_impedance_map")
+P2_TB = {"dark_background_record_id": "SYN-P1-DARK", "rf_powered_known_unlit_record_id": "SYN-P1-UNLIT",
+         "known_lit_p1_record_id": "SYN-P1-LIT", "frozen_before_p2_map": True}
+
+
+def _p2_mods():
+    red2 = _load_mod(os.path.join(P2_DIR, "p2_impedance_reducer.py"), "p2_reducer_for_p1_xl")
+    fw = _load_mod(os.path.join(P2_DIR, "p2_framework.py"), "p2_framework_for_p1_xl")
+    return red2, fw
+
+
+def _obs_pair(sig, thr, los, sat, el, mode):
+    p1 = {"photodiode_channel_id": "SYNTH-PD", "optical_signal_V": sig, "photodiode_line_of_sight_ok": los,
+          "photodiode_saturated": sat, "electrical_ignition_or_mode_transition": el,
+          "unlit_threshold": {"threshold_id": "SYNTH-THR", "threshold_V": thr}, "lit_mode_assignment": mode}
+    p2 = {"optical_signal_V": sig, "unlit_threshold_V": thr, "threshold_basis": dict(P2_TB),
+          "photodiode_line_of_sight_ok": los, "photodiode_saturated": sat,
+          "electrical_ignition_or_mode_transition": el, "lit_mode_assignment": mode}
+    if el:
+        p1["electrical_indicator_basis"] = p2["electrical_indicator_basis"] = "SYNTH reflected-power step"
+    if mode is not None:
+        p1["mode_indicator_basis"] = "SYNTH HM-R06 indicators"
+    return p1, p2
+
+
+def test_plasma_state_classifiers_agree_p1_p2(red):
+    """A9.4 P2Q-05 / A9.6 sec. 14: p1_reducer.classify_plasma_state and p2_impedance_reducer.classify_plasma_state give
+    the same state for the same observation (P1 threshold record vs P2 frozen threshold + basis), and both raise on a
+    malformed record (non-finite signal even when line of sight is lost; an unknown lit-mode label)."""
+    import itertools
+    red2, _ = _p2_mods()
+    n = 0
+    for sig, los, sat, el, mode in itertools.product((0.2, 2.0), (True, False), (False, True), (False, True),
+                                                     (None, "E_MODE", "H_MODE")):
+        a, b = _obs_pair(sig, 1.0, los, sat, el, mode)
+        s1, _ = red.classify_plasma_state(a)
+        s2, _ = red2.classify_plasma_state(b)
+        assert s1 == s2, (sig, los, sat, el, mode, s1, s2)
+        assert s1 in red.PLASMA_STATES and s1 in red2.MODE_LABELS
+        n += 1
+    assert n == 48 and tuple(red.PLASMA_STATES) == tuple(red2.MODE_LABELS)
+    for bad in ({"optical_signal_V": float("nan"), "photodiode_line_of_sight_ok": False},
+                {"lit_mode_assignment": "X_MODE"}):
+        a, b = _obs_pair(2.0, 1.0, True, False, False, None)
+        a.update(bad)
+        b.update(bad)
+        if bad.get("lit_mode_assignment"):
+            a["mode_indicator_basis"] = "SYNTH"
+        with pytest.raises(Exception):
+            red.classify_plasma_state(a)
+        with pytest.raises(Exception):
+            red2.classify_plasma_state(b)
+    # documented difference: P1 records WITHOUT a registered threshold are UNCERTAIN (they are the threshold inputs);
+    # P2 never classifies without the frozen threshold (it refuses) - neither yields UNLIT
+    a, b = _obs_pair(0.2, 1.0, True, False, False, None)
+    a["unlit_threshold"] = None
+    assert red.classify_plasma_state(a)[0] == "UNCERTAIN"
+    b["threshold_basis"] = None
+    with pytest.raises(red2.PlasmaStateError):
+        red2.classify_plasma_state(b)
+
+
+def test_stable_region_handoff_fields_match_p2_consumer(red):
+    """XL-01: the P1-S5 handoff record (p1_reducer.stable_region_handoff) carries exactly the fields P2 consumes
+    (p2_framework.P1_HANDOFF_*), is admitted by p2_framework.p1_handoff_admissible only with owner criteria and a tested
+    point within them, and maps onto P2 factor names that exist in the P2 record schema."""
+    red2, fw = _p2_mods()
+    assert tuple(red.HANDOFF_STATUSES) == tuple(fw.P1_HANDOFF_STATUSES)
+    assert set(fw.P1_TO_P2_FACTORS) == {n for n, _ in red.HANDOFF_FACTORS}
+    assert set(fw.P1_TO_P2_FACTORS.values()) <= set(red2.REQUIRED_FACTOR_FIELDS)
+    assert set(fw.P1_TO_P2_CATEGORICAL.values()) <= set(red2.REQUIRED_FACTOR_FIELDS)
+    op = synth_op()
+    dw = synth_dwell("SYNTH-DW-1", op["record_id"])
+    ign = {"SYNTH-IGN-PT-1": {"attempts": 3, "successes": 3}}
+    h = red.stable_region_handoff([dw], {op["record_id"]: op}, ign, CRIT)
+    assert h["status"] == "REGION_OF_TESTED_POINTS_WITHIN_OWNER_CRITERIA"
+    assert tuple(h) == fw.P1_HANDOFF_FIELDS
+    assert tuple(h["points_within_criteria"][0]) == fw.P1_HANDOFF_POINT_FIELDS
+    ref, region = fw.p1_handoff_admissible(h)
+    assert "SYNTH-CRIT" in ref and region["factor_ranges"]["P_RF_setpoint_W"] == [100.0, 100.0]
+    assert region["categorical_sets"] == {"gas": ["Ar"], "gas_mode": ["G-REUSE"]}
+    inside = {"record_id": "SYN-IN", "factors": {"P_RF_setpoint_W": 100.0, "mdot_hall_anode_mg_s": 1.0,
+                                                 "p_chamber_Pa": 0.01, "V_collector_V": -40.0, "gas": "Ar",
+                                                 "gas_mode": "G-REUSE"}}
+    outside = {"record_id": "SYN-OUT", "factors": dict(inside["factors"], gas="N2")}
+    ins, outs, nev = fw.split_by_domain([inside, outside], region)
+    assert [p["record_id"] for p in ins] == ["SYN-IN"] and [o["record_id"] for o in outs] == ["SYN-OUT"]
+    for bad in (red.stable_region_handoff([dw], {op["record_id"]: op}, ign, None),     # no owner criteria: NOT_EVALUATED
+                dict(h, criteria_id=None), {k: v for k, v in h.items() if k != "envelope_of_tested_points"}):
+        with pytest.raises(fw.RED.SequenceError):
+            fw.p1_handoff_admissible(bad)
+
+
+def test_rfq_v2_coverage_equals_readiness_lines(doc, bld):
+    """XL-10: every P1 hardware item cites exactly the RFQ v2 instrument_coverage lines (or its not-procured
+    disposition); the conditional P1-M-30 has the RFQ v2 disposition NP-CONDITIONAL-P3Q01."""
+    cov = bld.rfq_coverage_check()
+    assert set(cov) == {h["id"] for h in doc["hardware_readiness"]}
+    with open(os.path.join(ROOT, "docs", "procurement", "rfq_a9_v2", "rfq_a9_v2.json"), encoding="utf-8") as f:
+        rfq = json.load(f)
+    m30 = [m for m in rfq["instrument_coverage"]["p1_measurements"] if m["id"] == "P1-M-30"][0]
+    assert m30["disposition"] == "NP-CONDITIONAL-P3Q01" and m30["rfq_lines"] == []
+    meas = {m["id"]: m for m in doc["measurements"]}
+    assert meas["P1-M-30"]["status"] == "CONDITIONAL (TBD_OWNER P3Q-01)" and "TBD_OWNER" in meas["P1-M-30"]["metrology_spec"]
+

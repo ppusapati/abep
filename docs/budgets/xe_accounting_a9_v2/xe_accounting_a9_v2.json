@@ -192,14 +192,89 @@
   "docs/orchestration/runtime_state.json"
  ],
  "parallel_lanes": {
-  "MASS_POWER": "PENDING docs/budgets/mass_power_a9_v2/ (fo_a9_6_mass_power_integration)",
-  "RFQ": "PENDING docs/procurement/rfq_a9_v2/ (fo_a9_6_rfq_completion; the current files there change in that lane and are therefore not pinned here)",
-  "P1": "PENDING docs/experiments/hall_icp/p1_icp_bench/ (fo_a9_6_p1_workflow_completion)",
   "DECPROP": "PENDING fo_a9_6_decision_propagation (owner-question state v4)",
   "RVM": "PENDING fo_a9_6_rvm (system requirement-verification matrix)",
-  "M16": "PENDING fo_a9_6_m16_refresh",
-  "P3": "PENDING docs/experiments/hall_icp/p3_coupled_thermal/ (no Xe-accounting demand)",
-  "P4": "PENDING docs/experiments/hall_icp/p4_anode_materials/ (no Xe-accounting demand)"
+  "M16": "PENDING fo_a9_6_m16_refresh"
+ },
+ "merged_cross_lane": {
+  "rule": "values flow only P4 -> MP (candidate densities) and XE -> MP (Xe residual and headroom, both readings), and P1 / P2 -> RFQ (ids, item text and statuses of the instrument coverage); every other cross-lane reference is an id checked at build time. Rebuild in the order P4, XE, P1, P2, P3, MP, RFQ; a second pass of any package is a no-op",
+  "build_order": [
+   "P4",
+   "XE",
+   "P1",
+   "P2",
+   "P3",
+   "MP",
+   "RFQ"
+  ],
+  "packages": {
+   "P4": {
+    "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+    "state": "MERGED",
+    "pairs": [],
+    "ids_cited": [],
+    "sha_pinned": false,
+    "check": "no interface demand between the two packages"
+   },
+   "P1": {
+    "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-36",
+     "XL-37"
+    ],
+    "ids_cited": [
+     "P1-M-19"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   },
+   "P2": {
+    "path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+    "state": "MERGED",
+    "pairs": [],
+    "ids_cited": [],
+    "sha_pinned": false,
+    "check": "no interface demand between the two packages"
+   },
+   "P3": {
+    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "state": "MERGED",
+    "pairs": [],
+    "ids_cited": [],
+    "sha_pinned": false,
+    "check": "no interface demand between the two packages"
+   },
+   "MP": {
+    "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-30",
+     "XL-31",
+     "XL-32",
+     "XL-33"
+    ],
+    "ids_cited": [
+     "AL-08"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   },
+   "RFQ": {
+    "path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-34",
+     "XL-35"
+    ],
+    "ids_cited": [
+     "GAS-O02",
+     "NIR-04"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   }
+  }
  },
  "accounting_convention": {
   "id": "PHASE_TOTAL_FLOW",
@@ -554,7 +629,7 @@
    },
    "v2_change": "imported unchanged from A9-08",
    "requires": "the selected C1 vendor/design-qualified ignition flow (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation); OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))",
-   "v2_pending": "PENDING docs/procurement/rfq_a9_v2/ (fo_a9_6_rfq_completion; the current files there change in that lane and are therefore not pinned here)"
+   "v2_counterpart": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) (IFD-15, pair XL-35; none received, no purchase)"
   },
   {
    "id": "XV2-10",
@@ -580,7 +655,7 @@
    },
    "v2_change": "imported unchanged from A9-08",
    "requires": "the selected C1 vendor/design-qualified purge flow and duration (row 93; OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))",
-   "v2_pending": "PENDING docs/procurement/rfq_a9_v2/ (fo_a9_6_rfq_completion; the current files there change in that lane and are therefore not pinned here)"
+   "v2_counterpart": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) (IFD-15, pair XL-35; none received, no purchase)"
   },
   {
    "id": "XV2-11",
@@ -606,7 +681,7 @@
    },
    "v2_change": "imported unchanged from A9-08",
    "requires": "the selected C1 heater procedure and the H-1/C-1 start sequence with Xe logged per phase (OPEN after A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json, merged: requirement revisions, no vendor/design-qualified values; A9-10 re-evaluation))",
-   "v2_pending": "PENDING docs/procurement/rfq_a9_v2/ (fo_a9_6_rfq_completion; the current files there change in that lane and are therefore not pinned here)"
+   "v2_counterpart": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) (IFD-15, pair XL-35; none received, no purchase)"
   },
   {
    "id": "XV2-12",
@@ -832,7 +907,7 @@
    },
    "v2_change": "imported unchanged from A9-08",
    "requires": "the anode-side / ICP-feed Xe flow controller selection and its Xe calibration (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))",
-   "v2_pending": "PENDING docs/procurement/rfq_a9_v2/ (fo_a9_6_rfq_completion; the current files there change in that lane and are therefore not pinned here)"
+   "v2_counterpart": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) (IFD-15, pair XL-35; none received, no purchase)"
   },
   {
    "id": "XV2-21",
@@ -1033,7 +1108,7 @@
    },
    "v2_change": "imported unchanged from A9-08",
    "requires": "tank quotation/selection (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation)) and the owner's MEOP choice; the design-case tables carry an explicit MEOP axis meanwhile",
-   "v2_pending": "PENDING docs/procurement/rfq_a9_v2/ (fo_a9_6_rfq_completion; the current files there change in that lane and are therefore not pinned here)"
+   "v2_counterpart": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) (IFD-15, pair XL-35; none received, no purchase)"
   },
   {
    "id": "XV2-29",
@@ -1116,7 +1191,7 @@
    },
    "v2_change": "imported unchanged from A9-08",
    "requires": "vendor/spec verification of the selected filter/getter (row 51; OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation))",
-   "v2_pending": "PENDING docs/procurement/rfq_a9_v2/ (fo_a9_6_rfq_completion; the current files there change in that lane and are therefore not pinned here)"
+   "v2_counterpart": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) (IFD-15, pair XL-35; none received, no purchase)"
   },
   {
    "id": "XV2-32",
@@ -1142,7 +1217,7 @@
    },
    "v2_change": "imported unchanged from A9-08",
    "requires": "vendor/spec verification (OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no quotation received; A9-10 re-evaluation)); mass booked by A9-06 (OPEN after A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged: owner allocations and evidence floors, no hardware CBE; A9-10 re-evaluation))",
-   "v2_pending": "PENDING docs/budgets/mass_power_a9_v2/ (fo_a9_6_mass_power_integration)"
+   "v2_counterpart": "TBD_AFTER_EVIDENCE - stored-Xe hardware masses exchanged with docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (merged mass / power v2) (MPV2-ID-16, pair XL-32; no CBE, owner line allocation AL-08 only)"
   },
   {
    "id": "XV2-33",
@@ -1447,7 +1522,7 @@
    "a9_08_item": null,
    "name": "P1 diagnostic dedicated Xe ICP feed (only if activated): events, duration, flow",
    "value": null,
-   "value_display": "TBD - requires a labelled DIAGNOSTIC dedicated Xe feed actually activated in P1 with its flow measured and recorded per record (PENDING docs/experiments/hall_icp/p1_icp_bench/ (fo_a9_6_p1_workflow_completion))",
+   "value_display": "TBD - requires a labelled DIAGNOSTIC dedicated Xe feed actually activated in P1 with its flow measured and recorded per record (docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json (merged P1 bench) P1-M-19, pair XL-36)",
    "unit": "1; s; mg/s",
    "kind": "count",
    "basis": "owner decision (booking rule) / pending (size)",
@@ -7007,7 +7082,7 @@
    ]
   },
   "mass_share": {
-   "label": "Xe load alone vs the row-44 0.25 screening cap on the 40 kg wet gate (row 5); the stored-Xe subsystem share needs hardware masses (PENDING docs/budgets/mass_power_a9_v2/ (fo_a9_6_mass_power_integration))",
+   "label": "Xe load alone vs the row-44 0.25 screening cap on the 40 kg wet gate (row 5); the stored-Xe subsystem share needs hardware masses (TBD_AFTER_EVIDENCE: docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (merged mass / power v2) MPV2-ID-16, pair XL-32)",
    "rows": [
     {
      "case_kg": 2.0,
@@ -7167,64 +7242,134 @@
    "id": "XV2-IF-01",
    "direction": "OUT",
    "from": "xe_accounting_a9_v2",
-   "to": "PENDING docs/budgets/mass_power_a9_v2/ (fo_a9_6_mass_power_integration)",
-   "quantity": "residual Xe: ONE line per flight evaluation (RESIDUAL) and per design case/reading (design_cases.reserve_residual_split.residual_kg); import once, never re-book (row 45)",
+   "to": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (merged mass / power v2) MPV2-ID-15",
+   "quantity": "residual Xe: ONE line per flight evaluation (RESIDUAL) and per design case/reading (design_cases.reserve_residual_split.residual_kg); import once, never re-book (row 45); totals with a TBD input stay REFUSED",
    "units": "kg",
-   "status": "OFFERED (totals REFUSED while TBD; design-case values offered)"
+   "status": "IMPORTED (read at build time; XA9Q-01 / MQ-09 / OQ-A910-01 TBD_OWNER, both readings carried)",
+   "xref": [
+    {
+     "pair": "XL-30",
+     "counterpart": "MP:MPV2-ID-15",
+     "counterpart_path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "quantity": "Xe residual per design case under both RA-CASE readings (design_cases.reserve_residual_split.residual_kg), imported once by mass / power: inside the case under LOADED (LOADED_XA9Q01), on top under USABLE_RESIDUAL_ON_TOP (USABLE_MQ09)",
+     "units": "kg",
+     "status": "IMPORTED (read at build time; XA9Q-01 / MQ-09 / OQ-A910-01 TBD_OWNER, both readings carried)"
+    }
+   ]
   },
   {
    "id": "XV2-IF-02",
    "direction": "OUT",
    "from": "xe_accounting_a9_v2",
-   "to": "PENDING docs/budgets/mass_power_a9_v2/ (fo_a9_6_mass_power_integration)",
-   "quantity": "loaded Xe per design case under both RA-CASE readings and the 323 K tank volume table",
+   "to": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (merged mass / power v2) MPV2-ID-05",
+   "quantity": "loaded Xe and headroom per design case under both RA-CASE readings (design_cases.headroom) and the 323 K tank volume table",
    "units": "kg; l",
-   "status": "OFFERED"
+   "status": "IMPORTED (headroom statuses read at build time; totals with TBD inputs REFUSED)",
+   "xref": [
+    {
+     "pair": "XL-31",
+     "counterpart": "MP:MPV2-ID-05",
+     "counterpart_path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "quantity": "loaded Xe and headroom per design case and flight scenario under both RA-CASE readings (design_cases.headroom), 323 K tank volume table",
+     "units": "kg; l",
+     "status": "IMPORTED (headroom statuses read at build time; totals with TBD inputs REFUSED)"
+    }
+   ]
   },
   {
    "id": "XV2-IF-03",
    "direction": "IN",
-   "from": "PENDING docs/budgets/mass_power_a9_v2/ (fo_a9_6_mass_power_integration)",
+   "from": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (merged mass / power v2) MPV2-ID-16",
    "to": "xe_accounting_a9_v2",
    "quantity": "stored-Xe hardware masses (tank, regulator/PMU, FCUs, isolation valves, C1-branch filter/getter) for the row-44 subsystem share",
    "units": "kg",
-   "status": "TBD - PENDING docs/budgets/mass_power_a9_v2/ (fo_a9_6_mass_power_integration)"
+   "status": "TBD_AFTER_EVIDENCE (no CBE; owner line allocation AL-08 and evidence floors only)",
+   "xref": [
+    {
+     "pair": "XL-32",
+     "counterpart": "MP:MPV2-ID-16",
+     "counterpart_path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "quantity": "stored-Xe hardware masses (tank, regulator / PMU, FCUs, isolation valves, C1-branch filter / getter) for the row-44 subsystem share",
+     "units": "kg",
+     "status": "TBD_AFTER_EVIDENCE (no CBE; owner line allocation AL-08 and evidence floors only)"
+    }
+   ]
   },
   {
    "id": "XV2-IF-04",
    "direction": "OUT",
    "from": "xe_accounting_a9_v2",
-   "to": "PENDING docs/procurement/rfq_a9_v2/ (fo_a9_6_rfq_completion; the current files there change in that lane and are therefore not pinned here)",
+   "to": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) IFD-19",
    "quantity": "tank ranges (loaded 2.0-10.2 kg across both readings, V_min per MEOP axis at 323 K); C1 steady FCU 0.05-0.2 mg/s class; C1 start FCU FS 1.0 mg/s (conditional, row 125); ICP dedicated-feed controller as an option line only (A9.3 OQ-RFQ-10)",
    "units": "kg; l; mg/s",
-   "status": "OFFERED"
+   "status": "NOT_IN_THIS_REVISION (no Xe tank line; flight C1 hardware NIR-04; dedicated-feed controller option GAS-O02 only; RFQ only, no purchase)",
+   "xref": [
+    {
+     "pair": "XL-34",
+     "counterpart": "RFQ:IFD-19",
+     "counterpart_path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "quantity": "Xe tank ranges (loaded 2.0-10.2 kg across both readings, V_min per MEOP axis at 323 K), C1 steady FCU 0.05-0.2 mg/s class, C1 start FCU FS 1.0 mg/s (conditional, row 125), ICP dedicated-feed controller as an option line only (A9.3 OQ-RFQ-10)",
+     "units": "kg; l; mg/s",
+     "status": "NOT_IN_THIS_REVISION (no Xe tank line; flight C1 hardware NIR-04; dedicated-feed controller option GAS-O02 only; RFQ only, no purchase)"
+    }
+   ]
   },
   {
    "id": "XV2-IF-05",
    "direction": "IN",
-   "from": "PENDING docs/procurement/rfq_a9_v2/ (fo_a9_6_rfq_completion; the current files there change in that lane and are therefore not pinned here)",
+   "from": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only) IFD-15",
    "to": "xe_accounting_a9_v2",
    "quantity": "MEOP and tank selection (XV2-28), vendor/design-qualified C1 purge, preheat and ignition flows (XV2-09/10/11), non-C1 flow-class accuracy (XV2-20), filter/getter spec (XV2-31/32)",
    "units": "bar; mg/s; s; 1",
-   "status": "TBD - PENDING docs/procurement/rfq_a9_v2/ (fo_a9_6_rfq_completion; the current files there change in that lane and are therefore not pinned here) (RFQ only; no quotation received, no purchase)"
+   "status": "TBD_AFTER_EVIDENCE (after quotations; none received; RFQ only, no purchase)",
+   "xref": [
+    {
+     "pair": "XL-35",
+     "counterpart": "RFQ:IFD-15",
+     "counterpart_path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "quantity": "MEOP and tank selection, vendor / design-qualified C1 purge, preheat and ignition flows, flow-class accuracy, filter / getter specification, and mdot_ICP,dedicated of GAS-O02 if a dedicated-feed variant is ever activated (G-REUSE books 0)",
+     "units": "bar; mg/s; s; 1",
+     "status": "TBD_AFTER_EVIDENCE (after quotations; none received; RFQ only, no purchase)"
+    }
+   ]
   },
   {
    "id": "XV2-IF-06",
    "direction": "IN",
-   "from": "PENDING docs/experiments/hall_icp/p1_icp_bench/ (fo_a9_6_p1_workflow_completion)",
+   "from": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json (merged P1 bench) IF-P1-37",
    "to": "xe_accounting_a9_v2",
-   "quantity": "per-record gas state; dedicated-feed flag; measured dedicated-feed flow if a labelled DIAGNOSTIC G-XE feed is activated (OPT-GT-P1-GXE-DIAG)",
+   "quantity": "per-record gas state; dedicated-feed flag; measured dedicated-feed flow if a labelled DIAGNOSTIC G-XE feed is activated (OPT-GT-P1-GXE-DIAG; P1-M-19)",
    "units": "mg/s; s",
-   "status": "TBD - PENDING docs/experiments/hall_icp/p1_icp_bench/ (fo_a9_6_p1_workflow_completion)"
+   "status": "TBD_AFTER_EVIDENCE (P1 records; the diagnostic feed is CONDITIONAL, never baseline)",
+   "xref": [
+    {
+     "pair": "XL-36",
+     "counterpart": "P1:IF-P1-37",
+     "counterpart_path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "quantity": "per-record gas state, dedicated-feed flag and the measured dedicated-feed flow if a labelled DIAGNOSTIC G-XE feed is activated (P1-M-19; OPT-GT-P1-GXE-DIAG)",
+     "units": "mg/s; s",
+     "status": "TBD_AFTER_EVIDENCE (P1 records; the diagnostic feed is CONDITIONAL, never baseline)"
+    }
+   ]
   },
   {
    "id": "XV2-IF-07",
    "direction": "OUT",
    "from": "xe_accounting_a9_v2",
-   "to": "PENDING docs/experiments/hall_icp/p1_icp_bench/ (fo_a9_6_p1_workflow_completion)",
-   "quantity": "booking rule: G-REUSE mdot_ICP,dedicated = 0; any activated diagnostic dedicated feed is booked here as a separate optional entry, never as baseline",
-   "units": "-",
-   "status": "OFFERED"
+   "to": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json (merged P1 bench) IF-P1-17",
+   "quantity": "booking rule: G-REUSE mdot_ICP,dedicated = 0; any activated diagnostic dedicated feed is booked here as a separate optional entry (S3-GT-P1-DIAG), never as baseline",
+   "units": "mg/s",
+   "status": "DEFINED (rule; no booking in the baseline)",
+   "xref": [
+    {
+     "pair": "XL-37",
+     "counterpart": "P1:IF-P1-17",
+     "counterpart_path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "quantity": "booking rule: G-REUSE mdot_ICP,dedicated = 0; an activated diagnostic dedicated feed is booked as a separate optional Xe entry (S3-GT-P1-DIAG), never as baseline",
+     "units": "mg/s",
+     "status": "DEFINED (rule; no booking in the baseline)"
+    }
+   ]
   },
   {
    "id": "XV2-IF-08",
@@ -7233,7 +7378,8 @@
    "to": "PENDING fo_a9_6_decision_propagation (owner-question state v4)",
    "quantity": "open questions carried (XA9Q-01/02/03/07, MQ-09, OQ-A907-01, OQ-A910-01) and new XV2Q-01; no answers",
    "units": "-",
-   "status": "OFFERED"
+   "status": "OFFERED",
+   "xref": []
   },
   {
    "id": "XV2-IF-09",
@@ -7242,7 +7388,8 @@
    "to": "PENDING fo_a9_6_rvm (system requirement-verification matrix)",
    "quantity": "Xe capability / Xe accounting evidence state: every total with a TBD input is REFUSED; the RVM Xe rows can only be NOT_EVALUATED / INCOMPLETE_EVIDENCE from this accounting (never PASS)",
    "units": "-",
-   "status": "OFFERED"
+   "status": "OFFERED",
+   "xref": []
   },
   {
    "id": "XV2-IF-10",
@@ -7251,7 +7398,8 @@
    "to": "PENDING fo_a9_6_m16_refresh",
    "quantity": "m16_impact rows (no readiness change: framework only)",
    "units": "-",
-   "status": "OFFERED"
+   "status": "OFFERED",
+   "xref": []
   },
   {
    "id": "XV2-IF-11",
@@ -7260,7 +7408,8 @@
    "to": "xe_accounting_a9_v2",
    "quantity": "C1 purge/ignition flow and durations; heater procedure",
    "units": "mg/s; s",
-   "status": "TBD_AFTER_EVIDENCE"
+   "status": "TBD_AFTER_EVIDENCE",
+   "xref": []
   },
   {
    "id": "XV2-IF-12",
@@ -7269,7 +7418,27 @@
    "to": "xe_accounting_a9_v2",
    "quantity": "Hall Xe operating point, Xe ignition use, transition Xe logged per phase (PHASE_TOTAL_FLOW)",
    "units": "mg/s; s",
-   "status": "TBD_AFTER_EVIDENCE"
+   "status": "TBD_AFTER_EVIDENCE",
+   "xref": []
+  },
+  {
+   "id": "XV2-IF-13",
+   "direction": "IN",
+   "from": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (merged mass / power v2) MPV2-ID-04",
+   "to": "xe_accounting_a9_v2",
+   "quantity": "consistency rules demanded by mass / power and applied here: one design-case content with both RA-CASE readings carried (OQ-A910-01 / XA9Q-01 / MQ-09 TBD_OWNER), C1 terms only in the hall_c1_reference scenarios (S2-*), primary G-REUSE Xe line = 0 (S1-*)",
+   "units": "kg",
+   "status": "DEFINED (rules applied in both packages; the design-case content question stays TBD_OWNER)",
+   "xref": [
+    {
+     "pair": "XL-33",
+     "counterpart": "MP:MPV2-ID-04",
+     "counterpart_path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "quantity": "booking rules shared by both ledgers: one Xe design-case content (OQ-A910-01, both readings carried), C1 terms booked only in hall_c1_reference, primary G-REUSE m_Xe,ICP = 0",
+     "units": "kg",
+     "status": "DEFINED (rules applied in both packages; the design-case content question stays TBD_OWNER)"
+    }
+   ]
   }
  ],
  "owner_answers_applied": [
@@ -7335,7 +7504,7 @@
    "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
    "id": "row 45",
    "owner_answer_verbatim": "Separate Xe-ledger line — book the 2% unusable/residual Xe once in the Xe ledger and import that total into the mass BOM. Never add a second residual in the BOM.",
-   "how_applied": "residual 2 % booked once (one RESIDUAL line); exported to PENDING docs/budgets/mass_power_a9_v2/ (fo_a9_6_mass_power_integration) for import, never re-booked"
+   "how_applied": "residual 2 % booked once (one RESIDUAL line); exported to docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (merged mass / power v2) (XL-30) for import, never re-booked"
   },
   {
    "decision": "147 answers",

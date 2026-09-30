@@ -118,19 +118,266 @@ PINS = {  # key: (path, sha256, kind)
 NEVER_PINNED = ["docs/orchestration/lane_registry_v1.json", "docs/orchestration/trigger_registry_v1.json",
                 "docs/orchestration/fired_triggers.jsonl", "docs/orchestration/trigger_ledger_v2.jsonl",
                 "docs/orchestration/runtime_state.json"]
-PENDING_LANES = {  # parallel A9.6 lanes (other worktrees): referenced only as 'PENDING <path>', never read
-    "P3": ("fo_a9_6_p3_coupled_thermal", "docs/experiments/hall_icp/p3_coupled_thermal/"),
-    "P4": ("fo_a9_6_p4_anode_materials", "docs/experiments/hall_icp/p4_anode_materials/"),
-    "XE2": ("fo_a9_6_xe_accounting", "docs/budgets/xe_accounting_a9_v2/"),
-    "RFQ2": ("fo_a9_6_rfq_completion", "docs/procurement/rfq_a9_v2/"),
+PENDING_LANES = {  # A9.6 lanes NOT merged in this base (other worktrees): referenced only as 'PENDING ...', never read
     "M16": ("fo_a9_6_m16_refresh", "(M16 refresh after the implementation batch; A9.6 sec. 16)"),
     "RVM": ("fo_a9_6_rvm", "(system requirement-verification matrix; A9.6 sec. 15)"),
+}
+MERGED_REF = {  # merged A9.6 packages cited here (ids checked at build time by xlane_check; never sha-pinned)
+    "P3": "merged P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P4": "merged P4 docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+    "XE2": "merged Xe accounting v2 docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+    "RFQ2": "merged RFQ v2 docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
 }
 
 
 def pending(key: str) -> str:
     lane, path = PENDING_LANES[key]
     return f"PENDING {path} ({lane})"
+
+
+# ------------------------------------------------------------------ merged A9.6 cross-lane references (A9.6 sec. 5-6, 18)
+# The seven A9.6 packages (P1, P2, P3, P4, mass / power v2, Xe accounting v2, RFQ v2) are merged. Each cites the others
+# by id; every cited id is CHECKED at build time against the target's current JSON (xlane_check, after the outputs are
+# written, so a pair added on both sides converges in one rebuild of the second side; --check fails until it does).
+# Nothing is sha-pinned between the seven packages: several read each other back (ids, or text such as the RFQ v2
+# instrument coverage of the P1 / P2 ids), so a pin would be a circular hash dependency. Interface pairs XL-nn carry
+# identical quantity / units / status text on both sides (tests check the pairing).
+XLANE_PATHS = {
+    "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+    "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+    "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+    "RFQ": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+}
+XLANE_SELF = 'MP'
+XLANE_BUILD_ORDER = ["P4", "XE", "P1", "P2", "P3", "MP", "RFQ"]
+XLANE_BUILD_ORDER_RULE = ("values flow only P4 -> MP (candidate densities) and XE -> MP (Xe residual and headroom, "
+                          "both readings), and P1 / P2 -> RFQ (ids, item text and statuses of the instrument "
+                          "coverage); every other cross-lane reference is an id checked at build time. Rebuild in "
+                          "the order P4, XE, P1, P2, P3, MP, RFQ; a second pass of any package is a no-op")
+XL_PAIRS = {  # pair: (counterpart package, counterpart id, quantity, units, status) - identical text on both sides
+    'XL-26': (
+        'P4',
+        'ID-07',
+        ('candidate densities PR-001, PR-011, PR-021 (P4 property_records) imported by mass / power; part mass = '
+         'density x CAD volume'),
+        'kg/m3; kg',
+        'IMPORTED (densities); part mass TBD - requires the anode / collector geometry; FINAL_ANODE_MATERIAL OPEN',
+    ),
+    'XL-28': (
+        'P3',
+        'P3-IF-S08',
+        ('thermal-hardware mass (radiator / heaters / MLI / heat paths) and any active-cooling variant from the '
+         'coupled H-1 / ICP thermal model'),
+        'kg',
+        'TBD_AFTER_EVIDENCE (ICP_COUPLED_THERMAL UNRESOLVED; no PASS)',
+    ),
+    'XL-29': (
+        'P3',
+        'P3-IF-S09',
+        'thermal_control slot power (steady / start-up) for the power ledger',
+        'W',
+        'TBD_AFTER_EVIDENCE (ICP_COUPLED_THERMAL UNRESOLVED; no PASS)',
+    ),
+    'XL-30': (
+        'XE',
+        'XV2-IF-01',
+        ('Xe residual per design case under both RA-CASE readings (design_cases.reserve_residual_split.residual_kg), '
+         'imported once by mass / power: inside the case under LOADED (LOADED_XA9Q01), on top under '
+         'USABLE_RESIDUAL_ON_TOP (USABLE_MQ09)'),
+        'kg',
+        'IMPORTED (read at build time; XA9Q-01 / MQ-09 / OQ-A910-01 TBD_OWNER, both readings carried)',
+    ),
+    'XL-31': (
+        'XE',
+        'XV2-IF-02',
+        ('loaded Xe and headroom per design case and flight scenario under both RA-CASE readings '
+         '(design_cases.headroom), 323 K tank volume table'),
+        'kg; l',
+        'IMPORTED (headroom statuses read at build time; totals with TBD inputs REFUSED)',
+    ),
+    'XL-32': (
+        'XE',
+        'XV2-IF-03',
+        ('stored-Xe hardware masses (tank, regulator / PMU, FCUs, isolation valves, C1-branch filter / getter) for '
+         'the row-44 subsystem share'),
+        'kg',
+        'TBD_AFTER_EVIDENCE (no CBE; owner line allocation AL-08 and evidence floors only)',
+    ),
+    'XL-33': (
+        'XE',
+        'XV2-IF-13',
+        ('booking rules shared by both ledgers: one Xe design-case content (OQ-A910-01, both readings carried), C1 '
+         'terms booked only in hall_c1_reference, primary G-REUSE m_Xe,ICP = 0'),
+        'kg',
+        'DEFINED (rules applied in both packages; the design-case content question stays TBD_OWNER)',
+    ),
+    'XL-38': (
+        'P1',
+        'IF-P1-38',
+        ('C_e and C_e,DC with the boundary labelled and the I_e surface; P_mains,in recorded as GROUND/FACILITY_ONLY '
+         '(never P_bus evidence)'),
+        'W/A; A; W',
+        'TBD_AFTER_EVIDENCE (owning stages P1-S4..S5; hardware NOT_PROCURED)',
+    ),
+    'XL-39': (
+        'P2',
+        'IDP2-21',
+        ('measured P_forward envelope at RP-CPL and Z_antenna map (-> RF_COMPONENT_RATINGS -> flight match '
+         'implementation mass / actuator power and generator sizing); laboratory quantities, never P_bus evidence'),
+        'W; ohm; kg',
+        'TBD_AFTER_IMPEDANCE_MAP (owning stage P2 hot map)',
+    ),
+    'XL-40': (
+        'RFQ',
+        'IFD-14',
+        ('supplier mass fields for flight-representative options (DC-input RF source, local match, ICP module, '
+         'isolation hardware); ceilings only from owner line allocations under the open MQ-01 reading; no ceiling on '
+         'GROUND/FACILITY_ONLY lines'),
+        'kg',
+        ('NOT_IN_THIS_REVISION (flight-representative source NIR-01 is a later separate RFQ; RFQ v2 lines are ground '
+         '/ P1 articles; ceilings TBD_OWNER MQ-01)'),
+    ),
+    'XL-41': (
+        'RFQ',
+        'IFD-14',
+        'DC-input power and efficiency of the flight-representative RF source over the delivered-power range',
+        'W',
+        'NOT_IN_THIS_REVISION (NIR-01; RF_COMPONENT_RATINGS TBD_AFTER_IMPEDANCE_MAP)',
+    ),
+}
+
+
+def xref(pair):
+    """The shared description of one cross-lane interface pair (identical on both sides)."""
+    pkg, cid, quantity, units, status = XL_PAIRS[pair]
+    return {"pair": pair, "counterpart": pkg + ":" + cid, "counterpart_path": XLANE_PATHS[pkg],
+            "quantity": quantity, "units": units, "status": status}
+
+
+def _xlane_demands(doc):
+    d = doc["interface_demands"]
+    return [e for v in d.values() for e in v] if isinstance(d, dict) else list(d)
+
+
+def _xlane_has_id(text, ident):
+    import re as _re
+    return _re.search(r"(?<![A-Za-z0-9_-])" + _re.escape(ident) + r"(?![A-Za-z0-9_])", text) is not None
+
+
+def xlane_check(doc):
+    """Every cross-lane pair points at an existing interface-demand id of the merged target package, and every other
+    cited id (XL_CITED) occurs in the target's current JSON. Returns the list of problems (empty = consistent)."""
+    problems, cache = [], {}
+
+    def target(pkg):
+        if pkg not in cache:
+            p = REPO / XLANE_PATHS[pkg]
+            cache[pkg] = json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+        return cache[pkg]
+
+    seen = set()
+    for e in _xlane_demands(doc):
+        for x in e.get("xref", []):
+            seen.add(x["pair"])
+            pkg, cid = x["counterpart"].split(":", 1)
+            t = target(pkg)
+            if t is None:
+                problems.append("%s: %s missing" % (x["pair"], XLANE_PATHS[pkg]))
+                continue
+            ids = {d.get("id") for d in _xlane_demands(t)}
+            if cid not in ids:
+                problems.append("%s: %s has no interface demand %s" % (x["pair"], XLANE_PATHS[pkg], cid))
+    missing_pairs = sorted(set(XL_PAIRS) - seen)
+    if missing_pairs:
+        problems.append("pairs declared but not attached to an interface demand: %s" % missing_pairs)
+    for pkg, idents in sorted(XL_CITED.items()):
+        t = target(pkg)
+        if t is None:
+            problems.append("%s missing" % XLANE_PATHS[pkg])
+            continue
+        text = json.dumps(t, ensure_ascii=False)
+        for ident in idents:
+            if not _xlane_has_id(text, ident):
+                problems.append("cited id %s absent from %s" % (ident, XLANE_PATHS[pkg]))
+    return problems
+
+
+def xlane_report(doc):
+    """The merged-lane record written into the JSON: per counterpart package, the pairs and the cited ids."""
+    out = {}
+    for pkg in XLANE_BUILD_ORDER:
+        if pkg == XLANE_SELF:
+            continue
+        pairs = sorted(k for k, v in XL_PAIRS.items() if v[0] == pkg)
+        cited = sorted(XL_CITED.get(pkg, []))
+        out[pkg] = {"path": XLANE_PATHS[pkg], "state": "MERGED", "pairs": pairs, "ids_cited": cited,
+                    "sha_pinned": False,
+                    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other "
+                             "back; a pin would be circular)" if (pairs or cited) else
+                             "no interface demand between the two packages"}
+    return {"rule": XLANE_BUILD_ORDER_RULE, "build_order": XLANE_BUILD_ORDER, "packages": out}
+
+XL_CITED = {  # ids cited outside the XL pairs (checked to occur in the target JSON)
+    "P1": ["P1-M-05"],
+    "P3": ["P3-IF-S08", "P3-IF-S09", "heat_terms"],
+    "P4": ["PR-001", "PR-011", "PR-021", "FINAL_ANODE_MATERIAL"],
+    "XE": ["reserve_residual_split", "S1-FL-PRIMARY", "S2-FL-C1"],
+    "RFQ": ["NIR-01"],
+}
+# XE v2 case readings <-> the two mass readings (same owner calls, XA9Q-01 vs MQ-09); scenario per configuration
+XE2_READING = {"LOADED_XA9Q01": "LOADED", "USABLE_MQ09": "USABLE_RESIDUAL_ON_TOP"}
+XE2_SCENARIO = {"hall_icp_neutralizer": "S1-FL-PRIMARY", "hall_c1_reference": "S2-FL-C1"}
+P4_DENSITY_IDS = ("PR-001", "PR-011", "PR-021")
+
+
+def import_xe_v2(m6: dict) -> dict:
+    """XL-30 / XL-31: the Xe residual (both readings, imported ONCE, never computed here) and the design-case headroom
+    statuses per flight scenario from the merged Xe accounting v2 (read at build time; values flow XE -> MP only). The
+    residual must agree with the immutable mass_a9_v1 import (same owner f_residual, XA9-24); a disagreement refuses
+    the build (no silent choice between the two)."""
+    xe2 = json.loads((REPO / XLANE_PATHS["XE"]).read_text(encoding="utf-8"))
+    dc = xe2["design_cases"]
+    res = {"LOADED": {}, "USABLE_RESIDUAL_ON_TOP": {}}
+    for r in dc["reserve_residual_split"]["rows"]:
+        res[r["reading"]][float(r["case_kg"])] = r["residual_kg"]
+    v1 = m6["wet_closure"]["residual"]["by_case_kg"]
+    agree = []
+    for key, rd in (("inside_case_XA9Q-01", "LOADED"), ("residual_on_top_MQ-09", "USABLE_RESIDUAL_ON_TOP")):
+        for k, v in v1[key].items():
+            ok = res[rd].get(float(k)) == v
+            agree.append({"check": f"mass_a9_v1 {key} {k} kg = Xe v2 {rd} residual", "agrees": ok})
+            if not ok:
+                raise MassPowerV2Error(f"Xe residual disagreement ({key} {k} kg): v1 {v} vs Xe v2 {res[rd].get(float(k))}")
+    head = {}
+    for h in dc["headroom"]["rows"]:
+        if h["scenario"] not in XE2_SCENARIO.values():
+            continue
+        rd = h["reading"]["RA-CASE"]
+        sub = ", ".join(f"{k}={v}" for k, v in sorted(h["reading"].items()) if k != "RA-CASE")
+        head.setdefault((h["scenario"], rd, float(h["case_kg"])), {})[sub] = h["status"]
+    return {"source": XLANE_PATHS["XE"], "residual_by_reading_kg": res, "headroom": head, "agreement_with_v1": agree}
+
+
+def import_p4_densities() -> list:
+    """XL-26: candidate densities from the merged P4 property records (read at build time; values flow P4 -> MP only).
+    Informational for a later CBE (part mass = density x CAD volume); never booked, never a CBE."""
+    p4 = json.loads((REPO / XLANE_PATHS["P4"]).read_text(encoding="utf-8"))
+    recs = {r["id"]: r for r in p4["property_records"]}
+    cands = {c["id"]: c["name"] for c in p4["candidates"]}
+    out = []
+    for pid in P4_DENSITY_IDS:
+        r = recs.get(pid)
+        if r is None or r["property"] != "density" or r["unit_si"] != "kg/m3":
+            raise MassPowerV2Error(f"P4 density record {pid} missing or not a density in kg/m3")
+        out.append({"id": pid, "candidate": r["candidate"], "material": cands.get(r["candidate"]),
+                    "density_kg_m3": r["value_si"], "quantity_type": r["quantity_type"], "source_id": r["source_id"],
+                    "locator": r["locator"], "condition": r["condition"],
+                    "use_here": "informational: part mass = density x CAD volume once the anode (AL-04) / collector "
+                                "(AL-05) geometry exists; not booked, not a CBE; FINAL_ANODE_MATERIAL OPEN"})
+    return out
 
 
 class MassPowerV2Error(ValueError):
@@ -463,7 +710,8 @@ NEW_GROUND = [
 
 
 def _fill(s: str) -> str:
-    return s.replace("{P3}", pending("P3")).replace("{P4}", pending("P4"))
+    return s.replace("{P3}", MERGED_REF["P3"] + " (inputs TBD; ICP_COUPLED_THERMAL / ANODE_THERMAL_CLOSURE "
+                     "UNRESOLVED)").replace("{P4}", MERGED_REF["P4"] + " (FINAL_ANODE_MATERIAL OPEN)")
 
 
 def build_bom(m6: dict) -> list:
@@ -797,7 +1045,8 @@ def open_status(oqs: dict, ids) -> dict:
 
 def build() -> dict:
     verify_pins()
-    m6, a92, a96, xe, oqs = load("M6"), load("A92"), load("A96"), load("XEA9"), load("OQS3")
+    m6, a92, a96, oqs = load("M6"), load("A92"), load("A96"), load("OQS3")
+    xe2 = import_xe_v2(m6)
     v1 = {i["id"]: i for i in m6["items"]}
     ln = v1_lines(m6)
     ln[C1_LINE] = c1_line(m6)
@@ -808,11 +1057,8 @@ def build() -> dict:
     cases = v1["MP-06"]["value"]
     refs = [("INTERNAL_34", v1["MP-02"]["value"][0], False), ("INTERNAL_36", v1["MP-02"]["value"][1], False),
             ("HARD_40_WET", v1["MP-01"]["value"], True)]
-    res = m6["wet_closure"]["residual"]["by_case_kg"]
-    res_top = {float(k): v for k, v in res["residual_on_top_MQ-09"].items()}
-    res_in = {float(k): v for k, v in res["inside_case_XA9Q-01"].items()}
-    headroom = {(h["scenario"], h["case_kg"]): h["status"] for h in xe["design_cases"]["headroom"]["rows"]}
-    xe_scn = {"hall_icp_neutralizer": "FL-ICP-REUSE", "hall_c1_reference": "FL-C1"}
+    res_top = xe2["residual_by_reading_kg"]["USABLE_RESIDUAL_ON_TOP"]    # imported once (XL-30)
+    res_in = xe2["residual_by_reading_kg"]["LOADED"]
 
     lines_out, rollups = {}, []
     for c in CONFIGS:
@@ -834,13 +1080,17 @@ def build() -> dict:
                             w = wet_cell(d, case, xr, res_top[float(case)], ref_kg, strict)
                             w["reference"] = ref_id
                             w["residual_inside_case_kg"] = res_in[float(case)] if xr == "LOADED_XA9Q01" else None
-                            hs = headroom.get((xe_scn[c], float(case)))
+                            hs = xe2["headroom"].get((XE2_SCENARIO[c], XE2_READING[xr], float(case)))
+                            if not hs:
+                                raise MassPowerV2Error(f"Xe v2 headroom missing for {XE2_SCENARIO[c]} "
+                                                       f"{XE2_READING[xr]} {case} kg")
                             w["xe_case_headroom_status"] = (
-                                f"{hs} (A9 Xe ledger scenario {xe_scn[c]}, XA9Q-01 reading)" if xr == "LOADED_XA9Q01"
-                                else "not evaluated under MQ-09 by the A9 Xe ledger - " + pending("XE2"))
-                            if xr == "LOADED_XA9Q01" and hs == "EXCEEDED_BY_CLOSED_TERMS":
-                                w["xe_case_flag"] = ("XE_CASE_BELOW_BOOKED_TERMS: this design case is smaller than the "
-                                                     "Xe terms already booked for this configuration (A9 Xe ledger "
+                                "; ".join(f"{k}: {v}" for k, v in sorted(hs.items())) +
+                                f" (Xe accounting v2 scenario {XE2_SCENARIO[c]}, RA-CASE {XE2_READING[xr]}; XL-31)")
+                            if any(v == "EXCEEDED_BY_CLOSED_TERMS" for v in hs.values()):
+                                w["xe_case_flag"] = ("XE_CASE_BELOW_BOOKED_TERMS: under at least one Xe-accounting "
+                                                     "sub-reading this design case is smaller than the Xe terms "
+                                                     "already booked for this configuration (Xe accounting v2 "
                                                      "headroom); the wet known part understates the need")
                             else:
                                 w["xe_case_flag"] = None
@@ -881,6 +1131,15 @@ def build() -> dict:
         "pins": [{"key": k, "path": p, "sha256": s, "kind": kd} for k, (p, s, kd) in PINS.items()],
         "never_pinned": NEVER_PINNED,
         "pending_parallel_lanes": {k: pending(k) for k in PENDING_LANES},
+        "merged_cross_lane": xlane_report(None),
+        "xe_v2_import": {"source": xe2["source"], "pairs": ["XL-30", "XL-31"],
+                         "residual_by_reading_kg": {rd: {str(k): v for k, v in sorted(m.items())}
+                                                    for rd, m in xe2["residual_by_reading_kg"].items()},
+                         "agreement_with_mass_a9_v1": xe2["agreement_with_v1"],
+                         "rule": "imported once (row 45): inside the case under LOADED_XA9Q01, on top under "
+                                 "USABLE_MQ09; never computed or added a second time; headroom statuses per "
+                                 "sub-reading copied, totals with TBD inputs stay REFUSED in the Xe accounting"},
+        "p4_density_import": {"source": XLANE_PATHS["P4"], "pair": "XL-26", "records": import_p4_densities()},
         "items": items_table(v1, m6),
         "bom": build_bom(m6),
         "ground_article_only": ground_articles(m6),
@@ -897,9 +1156,10 @@ def build() -> dict:
                             "a NO answer would remove AL-08 and the Xe load from that column")},
             "harness": "row 60: harness = max(1.0 kg AL-09 line, f/(1-f) x other nominal dry), f = 0.05 (v1 "
                        "convention; MQ-06 split question OPEN)",
-            "residual": "row 45: imported once from mass_a9_v1 wet_closure.residual (itself imported from the A9 Xe "
-                        "ledger F-RESIDUAL); inside the case under LOADED_XA9Q01, on top under USABLE_MQ09; never "
-                        "computed here",
+            "residual": "row 45: imported once from the merged Xe accounting v2 (XV2-IF-01, pair XL-30; "
+                        "design_cases.reserve_residual_split, both RA-CASE readings), checked equal to the immutable "
+                        "mass_a9_v1 wet_closure.residual; inside the case under LOADED_XA9Q01, on top under "
+                        "USABLE_MQ09; never computed here",
             "closure_rule": "CLOSES only when every term is resolved (CBE or measured) and the reference is met; "
                             "DOES_NOT_CLOSE when the booked known part already reaches the reference on this reading; "
                             "otherwise NOT_EVALUABLE",
@@ -1019,32 +1279,38 @@ def coil_section(m6: dict, h2a9: dict) -> dict:
 def interface_demands() -> list:
     L = LANE_DIR
 
-    def d(i, frm, to, q, v, u, st):
-        return {"id": i, "from": frm, "to": to, "quantity": q, "value": v, "units": u, "status": st}
+    def d(i, frm, to, q, v, u, st, pairs=()):
+        xs = [xref(p) for p in pairs]
+        if xs:
+            u, st = xs[0]["units"], xs[0]["status"]
+        return {"id": i, "from": frm, "to": to, "quantity": q, "value": v, "units": u, "status": st, "xref": xs}
+    P3, P4, XE, RFQ = (XLANE_PATHS[k] for k in ("P3", "P4", "XE", "RFQ"))
     return [
-        d("MPV2-ID-01", L, pending("P3"), "thermal-hardware mass (radiator / heaters / MLI / heat paths) and any "
-          "active-cooling variant from the coupled H-1/ICP thermal model (A9.2 icp_coupled_thermal)", "TBD", "kg",
-          "PENDING (UNRESOLVED thermal; no PASS)"),
-        d("MPV2-ID-02", pending("P3"), L, "thermal_control slot power (steady / start-up) for the power ledger", "TBD",
-          "W", "PENDING"),
-        d("MPV2-ID-03", L, pending("P4"), "mass effect of the anode / collector material candidates and of the anode "
-          "heat-removal path (MPV2-N03)", "TBD", "kg", "PENDING (FINAL_ANODE_MATERIAL OPEN)"),
-        d("MPV2-ID-04", L, pending("XE2"), "one Xe design-case content governing both ledgers (OQ-A910-01) and "
+        d("MPV2-ID-01", P3 + " P3-IF-S08", L, "thermal-hardware mass (radiator / heaters / MLI / heat paths) and any "
+          "active-cooling variant from the coupled H-1/ICP thermal model (A9.2 icp_coupled_thermal)", "TBD", None,
+          None, ["XL-28"]),
+        d("MPV2-ID-02", P3 + " P3-IF-S09", L, "thermal_control slot power (steady / start-up) for the power ledger",
+          "TBD", None, None, ["XL-29"]),
+        d("MPV2-ID-03", P4 + " ID-07", L, "candidate densities (p4_density_import: PR-001, PR-011, PR-021) for the "
+          "mass effect of the anode / collector material candidates and of the anode heat-removal path (MPV2-N03); "
+          "part mass needs the geometry", {r: "p4_density_import" for r in P4_DENSITY_IDS}, None, None, ["XL-26"]),
+        d("MPV2-ID-04", L, XE + " XV2-IF-13", "one Xe design-case content governing both ledgers (OQ-A910-01) and "
           "hall_c1_reference headroom under the MQ-09 reading; C1 terms booked only in hall_c1_reference; primary "
-          "G-REUSE m_Xe,ICP = 0", "TBD", "kg", "PENDING"),
-        d("MPV2-ID-05", pending("XE2"), L, "Xe design-case headroom per configuration under both case readings", "TBD",
-          "kg", "PENDING"),
-        d("MPV2-ID-06", L, pending("RFQ2"), "RFQ mass fields: request supplier mass for the FLIGHT_REPRESENTATIVE_DC_RF_"
+          "G-REUSE m_Xe,ICP = 0", "TBD", None, None, ["XL-33"]),
+        d("MPV2-ID-05", XE + " XV2-IF-02", L, "Xe design-case headroom per configuration under both case readings "
+          "(rollups[].wet[].xe_case_headroom_status)", "see rollups", None, None, ["XL-31"]),
+        d("MPV2-ID-06", L, RFQ + " IFD-14", "RFQ mass fields: request supplier mass for the FLIGHT_REPRESENTATIVE_DC_RF_"
           "SOURCE, local match, ICP module, isolation hardware; ceilings = owner allocations only (MQ-01 reading "
           "open); no ceiling for GROUND/FACILITY_ONLY items; below-floor ceilings flagged (MQ-03..MQ-05)",
-          {"AL-05": 2.0, "AL-06": 1.5}, "kg", "PROPOSED"),
-        d("MPV2-ID-07", L, pending("RFQ2"), "RFQ power field: DC-input power and efficiency of the flight-"
-          "representative RF source at the delivered-power range (no rating before the impedance map)", "TBD", "W",
-          "PROPOSED (RF_COMPONENT_RATINGS = TBD_AFTER_IMPEDANCE_MAP)"),
-        d("MPV2-ID-08", L, "docs/experiments/hall_icp/p1_icp_bench/ (P1)", "C_e and C_e,DC with the boundary labelled; "
-          "I_e surface; P_mains,in recorded as GROUND/FACILITY_ONLY", "TBD", "W/A", "PENDING_HARDWARE"),
-        d("MPV2-ID-09", L, "docs/experiments/hall_icp/p2_impedance_map/ (P2)", "Z_antenna map -> RF component ratings -> "
-          "flight match implementation and its mass / actuator power", "TBD", "kg; W", "TBD_AFTER_IMPEDANCE_MAP"),
+          {"AL-05": 2.0, "AL-06": 1.5}, None, None, ["XL-40"]),
+        d("MPV2-ID-07", L, RFQ + " IFD-14", "RFQ power field: DC-input power and efficiency of the flight-"
+          "representative RF source at the delivered-power range (no rating before the impedance map)", "TBD", None,
+          None, ["XL-41"]),
+        d("MPV2-ID-08", XLANE_PATHS["P1"] + " IF-P1-38", L, "C_e and C_e,DC with the boundary labelled; I_e surface; "
+          "P_mains,in (P1-M-05) recorded as GROUND/FACILITY_ONLY", "TBD", None, None, ["XL-38"]),
+        d("MPV2-ID-09", XLANE_PATHS["P2"] + " IDP2-21", L, "measured P_forward envelope and Z_antenna map -> RF "
+          "component ratings -> flight match implementation and its mass / actuator power", "TBD", None, None,
+          ["XL-39"]),
         d("MPV2-ID-10", L, "A9-07 docs/hardware/h2_a9_revisions/ (H-1 / MC-1)", "frozen H-1 coil (NI, l_mt, window) "
           "-> MC-1 mass and magnet slot power; H-1 channel / anode / body masses", "TBD", "kg; W", "OPEN"),
         d("MPV2-ID-11", L, pending("RVM"), "mass rows: <40 kg wet = NOT_EVALUATED / INCOMPLETE_EVIDENCE (no CBE); power "
@@ -1055,6 +1321,10 @@ def interface_demands() -> list:
           "import)", "-", "-", "USED"),
         d("MPV2-ID-14", L, "owner", "C1 line allocation (MPQ-01) and mapping of the new v2 lines (MPQ-02)", TBD_OWNER,
           "kg", "OPEN"),
+        d("MPV2-ID-15", XE + " XV2-IF-01", L, "Xe residual per design case under both readings, imported once "
+          "(xe_v2_import.residual_by_reading_kg)", "see xe_v2_import", None, None, ["XL-30"]),
+        d("MPV2-ID-16", L, XE + " XV2-IF-03", "stored-Xe hardware masses (tank, regulator / PMU, FCUs, isolation "
+          "valves, C1-branch filter / getter) inside the AL-08 owner line allocation", "TBD", None, None, ["XL-32"]),
     ]
 
 
@@ -1225,7 +1495,26 @@ def render_md(doc: dict) -> str:
     a("")
     a("Never pinned (mutable governance): " + ", ".join(f"`{x}`" for x in doc["never_pinned"]) + ".")
     a("")
-    a("Parallel lanes: " + "; ".join(doc["pending_parallel_lanes"].values()) + ".")
+    a("Lanes not merged in this base: " + "; ".join(doc["pending_parallel_lanes"].values()) + ".")
+    a("")
+    a("### Merged cross-lane references")
+    a("")
+    a(doc["merged_cross_lane"]["rule"])
+    a("")
+    a("| package | path | pairs | ids cited | check |")
+    a("|---|---|---|---|---|")
+    for k, v in doc["merged_cross_lane"]["packages"].items():
+        a(f"| {k} | `{v['path']}` | {', '.join(v['pairs']) or '-'} | {', '.join(v['ids_cited']) or '-'} | {v['check']} |")
+    a("")
+    xi = doc["xe_v2_import"]
+    a(f"Xe v2 import (`{xi['source']}`, {', '.join(xi['pairs'])}): residual by reading (kg) " +
+      "; ".join(f"{rd}: " + ", ".join(f"{k} kg -> {v}" for k, v in m.items()) for rd, m in
+                xi["residual_by_reading_kg"].items()) + f". {xi['rule']}.")
+    a("")
+    pi = doc["p4_density_import"]
+    a(f"P4 density import (`{pi['source']}`, {pi['pair']}): " + "; ".join(
+        f"{r['id']} {r['candidate']} ({r['material']}) {r['density_kg_m3']} kg/m3 [{r['quantity_type']}, "
+        f"{r['source_id']}]" for r in pi["records"]) + ". Informational only; never a CBE.")
     a("")
     a("## (a) Items")
     a("")
@@ -1363,10 +1652,12 @@ def render_md(doc: dict) -> str:
     a("")
     a("## (b) Interface demands")
     a("")
-    a("| id | from | to | quantity | value | units | status |")
-    a("|---|---|---|---|---|---|---|")
+    a("| id | from | to | quantity | value | units | status | pairs |")
+    a("|---|---|---|---|---|---|---|---|")
     for d in doc["interface_demands"]:
-        a(f"| {d['id']} | {d['from']} | {d['to']} | {d['quantity']} | {_v(d['value'])} | {d['units']} | {d['status']} |")
+        prs = ", ".join(x["pair"] + " -> " + x["counterpart"] for x in d["xref"]) or "-"
+        a(f"| {d['id']} | {d['from']} | {d['to']} | {d['quantity']} | {_v(d['value'])} | {d['units']} | {d['status']} "
+          f"| {prs} |")
     a("")
     a("## (c) Owner answers and decisions applied")
     a("")
@@ -1421,12 +1712,20 @@ def main(argv=None) -> int:
     if args.check:
         ok = pj.is_file() and pm.is_file() and pj.read_text(encoding="utf-8") == js and \
             pm.read_text(encoding="utf-8") == md
+        probs = xlane_check(json.loads(js))
+        if probs:
+            print("CROSS-LANE REFERENCES BROKEN:", "; ".join(probs))
+            return 1
         print("OK" if ok else "DIFFERS: rebuild with build_mass_power_a9_v2.py")
         return 0 if ok else 1
     pj.parent.mkdir(parents=True, exist_ok=True)
     pj.write_text(js, encoding="utf-8")
     pm.write_text(md, encoding="utf-8")
     print(f"wrote {OUT_JSON} and {OUT_MD}")
+    probs = xlane_check(json.loads(js))
+    if probs:
+        print("CROSS-LANE REFERENCES BROKEN (rebuild the counterpart, then this package):", "; ".join(probs))
+        return 1
     return 0
 
 

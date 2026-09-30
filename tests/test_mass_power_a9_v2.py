@@ -345,9 +345,47 @@ def test_pending_lanes_referenced_not_read(doc, b):
     pinned = {p["path"] for p in doc["pins"]}
     for _lane, path in b.PENDING_LANES.values():
         assert path not in pinned
+    assert set(doc["pending_parallel_lanes"]) == {"M16", "RVM"}   # only lanes not merged in this base
     demands = {d["id"]: d for d in doc["interface_demands"]}
-    assert any(d["to"].startswith("PENDING docs/experiments/hall_icp/p3_coupled_thermal/") for d in demands.values())
-    assert any(d["to"].startswith("PENDING docs/budgets/xe_accounting_a9_v2/") for d in demands.values())
+    assert demands["MPV2-ID-01"]["from"].startswith("docs/experiments/hall_icp/p3_coupled_thermal/")
+    assert demands["MPV2-ID-15"]["from"].startswith("docs/budgets/xe_accounting_a9_v2/")
+
+
+def test_xe_residual_imported_once_from_xe_v2_both_readings(doc, v1):
+    """XL-30: the residual is read from the merged Xe accounting v2 (both readings), equals the immutable v1 import,
+    and is booked once per wet cell (inside the case or on top, never both)."""
+    xe = json.loads((REPO / "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json").read_text(encoding="utf-8"))
+    rows = xe["design_cases"]["reserve_residual_split"]["rows"]
+    imp = doc["xe_v2_import"]["residual_by_reading_kg"]
+    for r in rows:
+        assert imp[r["reading"]][str(float(r["case_kg"]))] == r["residual_kg"]
+    assert all(a["agrees"] for a in doc["xe_v2_import"]["agreement_with_mass_a9_v1"])
+    for r in doc["rollups"]:
+        for w in r["wet"]:
+            inside = w["residual_inside_case_kg"] is not None
+            on_top = w["residual_added_on_top_kg"] != 0.0
+            assert inside != on_top
+            assert "Xe accounting v2" in w["xe_case_headroom_status"]
+
+
+def test_xe_residual_disagreement_refused(b, monkeypatch):
+    m6 = b.load("M6")
+    m6["wet_closure"]["residual"]["by_case_kg"]["residual_on_top_MQ-09"]["2.0"] = 0.05
+    with pytest.raises(b.MassPowerV2Error):
+        b.import_xe_v2(m6)
+
+
+def test_p4_densities_imported_not_booked(doc):
+    """XL-26: P4 densities are informational imports (never a CBE / booked mass)."""
+    p4 = json.loads((REPO / "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json").read_text(
+        encoding="utf-8"))
+    recs = {r["id"]: r for r in p4["property_records"]}
+    got = doc["p4_density_import"]["records"]
+    assert [r["id"] for r in got] == ["PR-001", "PR-011", "PR-021"]
+    for r in got:
+        assert r["density_kg_m3"] == recs[r["id"]]["value_si"] and "not a CBE" in r["use_here"]
+    for line in doc["bom"]:
+        assert line["columns"]["CBE"]["value"] is None
 
 
 def test_m16_no_state_promotion(doc):
@@ -355,3 +393,92 @@ def test_m16_no_state_promotion(doc):
         assert m["state_change"].startswith("none")
     txt = json.dumps(doc["m16_impact"])
     assert "VERIFIED" not in txt and "READY" not in txt
+
+
+# ------------------------------------------------------------------ A9.6 cross-lane integration (fo_a9_6_cross_lane_integration)
+_XL_SELF = 'MP'
+_XL_JSON = {
+    "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+    "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+    "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+    "RFQ": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+}
+_XL_MD = ['docs/budgets/mass_power_a9_v2/MASS_POWER_A9_V2.md']
+_XL_BUILDER = 'docs/budgets/mass_power_a9_v2/build_mass_power_a9_v2.py'
+_XL_ROOT = __import__("pathlib").Path(__file__).resolve().parents[1]
+
+
+def _xl_load(k):
+    return __import__("json").loads((_XL_ROOT / _XL_JSON[k]).read_text(encoding="utf-8"))
+
+
+def _xl_demands(d):
+    ifd = d["interface_demands"]
+    return [e for v in ifd.values() for e in v] if isinstance(ifd, dict) else list(ifd)
+
+
+def _xl_builder():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("xl_builder_" + _XL_SELF.lower(), str(_XL_ROOT / _XL_BUILDER))
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
+def test_xlane_pairs_reconciled_both_directions():
+    """A9.6 sec. 5-6: every cross-lane interface demand of this package has exactly one matching entry in the
+    counterpart package: same pair id, identical quantity / units / status text, mutual pointers; a single-pair entry
+    carries the pair's units and status itself; no pair status is a PASS."""
+    here = _xl_load(_XL_SELF)
+    n = 0
+    for e in _xl_demands(here):
+        for x in e.get("xref", []):
+            pkg, cid = x["counterpart"].split(":", 1)
+            assert x["counterpart_path"] == _XL_JSON[pkg]
+            there = _xl_demands(_xl_load(pkg))
+            match = [(f, y) for f in there if f["id"] == cid for y in f.get("xref", []) if y["pair"] == x["pair"]]
+            assert len(match) == 1, (x["pair"], x["counterpart"])
+            f, y = match[0]
+            assert y["counterpart"] == _XL_SELF + ":" + e["id"], x["pair"]
+            for k in ("quantity", "units", "status"):
+                assert y[k] == x[k], (x["pair"], k)
+            assert not x["status"].upper().startswith("PASS"), x["pair"]
+            if len(e["xref"]) == 1:
+                assert e["units"] == x["units"] and e["status"] == x["status"], e["id"]
+            n += 1
+    assert n >= 1
+
+
+def test_xlane_references_checked_not_pinned_not_stale():
+    """A9.6 sec. 18 'no stale references': no 'PENDING <merged package>' marker survives; every merged package is
+    recorded MERGED and never sha-pinned (packages read each other back: a pin would be circular); the builder's
+    build-time id check passes on the committed JSON and refuses a broken counterpart id."""
+    import copy
+    import hashlib
+    import re
+    doc = _xl_load(_XL_SELF)
+    txt = (_XL_ROOT / _XL_JSON[_XL_SELF]).read_text(encoding="utf-8") + "".join(
+        (_XL_ROOT / p).read_text(encoding="utf-8") for p in _XL_MD)
+    for k, p in _XL_JSON.items():
+        if k == _XL_SELF:
+            continue
+        d = p.rsplit("/", 1)[0]
+        assert re.search(r"PENDING[ :`'\"]*" + re.escape(d), txt) is None, d
+        sha = hashlib.sha256((_XL_ROOT / p).read_bytes()).hexdigest()
+        assert sha not in txt, "sha-pinned merged package " + p
+    rec = doc["merged_cross_lane"]
+    assert rec["build_order"] == ["P4", "XE", "P1", "P2", "P3", "MP", "RFQ"]
+    for k, v in rec["packages"].items():
+        assert v["state"] == "MERGED" and v["sha_pinned"] is False and v["path"] == _XL_JSON[k]
+    b = _xl_builder()
+    assert b.xlane_check(doc) == []
+    bad = copy.deepcopy(doc)
+    for e in _xl_demands(bad):
+        if e.get("xref"):
+            e["xref"][0]["counterpart"] = e["xref"][0]["counterpart"].split(":")[0] + ":NO-SUCH-ID"
+            break
+    assert b.xlane_check(bad)
+

@@ -1120,7 +1120,7 @@
   "not_done_here": [
    "no measured data exist; every numeric registration (domains, thresholds, criteria, I_scale,min, I_d,max,H1, leakage acceptance, correlation) stays TBD",
    "P1 hardware readiness, RF ratings, thermal and anode closures unchanged (TBD_AFTER_IMPEDANCE_MAP / UNRESOLVED / OPEN)",
-   "parallel lanes referenced only by path: PENDING docs/experiments/hall_icp/p3_coupled_thermal/, PENDING docs/experiments/hall_icp/p4_anode_materials/"
+   "the P3 / P4 / mass-power / Xe packages are merged and cited by id (pairs XL-17, XL-18, XL-21, XL-25, XL-36..XL-38; merged_cross_lane); nothing is read from them beyond id existence"
   ],
   "m16_impact_change": "none: software workflow only; ICP electron-current capacity stays PENDING_ICP45 and no physical item becomes READY / VERIFIED (A9.6 sec. 16)"
  },
@@ -1133,16 +1133,24 @@
    "ids_cited": [
     "CAL-P2-01",
     "CAL-P2-08",
+    "HM-F02",
     "HM-F08",
     "HM-R01",
+    "HM-R13",
     "HM-R15",
     "IDP2-01",
+    "IDP2-02",
     "IDP2-03",
+    "IDP2-14",
+    "IDP2-15",
+    "IDP2-16",
     "IDP2-17",
+    "IDP2-19",
     "INS-P2-01",
     "INS-P2-04",
     "INS-P2-10",
     "RP-ANT",
+    "RP-CPL",
     "UB-P2-Z-03",
     "UB-P2-Z-08",
     "ZM-A",
@@ -1154,14 +1162,13 @@
    "lane": "fo_a9_rfq_v2_split",
    "path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
    "state": "MERGED",
-   "how": "sha256-pinned; every cited line / requirement / question id is checked to exist",
+   "how": "not sha-pinned (the RFQ v2 builder reads P1: a pin would be circular); every cited line / requirement / question id is checked to exist and the per-item line sets equal the RFQ v2 instrument_coverage (rfq_coverage_check)",
    "ids_cited": [
     "GAS-L01",
-    "GAS-L07",
     "GAS-L12",
     "GAS-L13",
     "GAS-L14",
-    "GAS-L16",
+    "GAS-L17",
     "GAS-O01",
     "GAS-O02",
     "HE-L01",
@@ -1172,7 +1179,11 @@
     "HE-L10",
     "HE-L11",
     "HE-L12",
-    "HE-L13",
+    "HE-L15",
+    "HE-L16",
+    "HE-L17",
+    "HE-L18",
+    "HE-O02",
     "ME-L01",
     "ME-L02",
     "ME-L03",
@@ -1180,7 +1191,7 @@
     "ME-L06",
     "ME-L07",
     "ME-L08",
-    "OQ-RFQV2-07",
+    "ME-O01",
     "RF-L01",
     "RF-L02",
     "RF-L03",
@@ -1191,22 +1202,281 @@
     "RF-L09",
     "RF-L10",
     "RF-L11",
+    "RF-L13",
+    "RF-L14",
+    "RF-L15",
+    "RF-L17",
+    "RF-L19",
     "RFQ2-HALLEL-R07",
-    "RFQ2-RF-N06",
     "TH-L01",
     "TH-L04",
     "TH-L06",
     "TH-L07",
     "TH-L08",
-    "VAC-L01",
+    "TH-L09",
     "VAC-L02",
     "VAC-L03",
     "VAC-L04",
     "VAC-L05",
     "VAC-L07"
-   ]
+   ],
+   "coverage_checked": {
+    "P1-HW-01": [
+     "RF-L01"
+    ],
+    "P1-HW-02": [
+     "RF-L02",
+     "RF-L03"
+    ],
+    "P1-HW-03": [
+     "ME-L08",
+     "RF-L04",
+     "RF-L19"
+    ],
+    "P1-HW-04": [
+     "RF-L05",
+     "RF-L07"
+    ],
+    "P1-HW-05": [
+     "RF-L08",
+     "RF-L09"
+    ],
+    "P1-HW-06": [
+     "RF-L10"
+    ],
+    "P1-HW-07": [
+     "RF-L13",
+     "RF-L14",
+     "RF-L15",
+     "RF-L17"
+    ],
+    "P1-HW-08": [
+     "RF-L11"
+    ],
+    "P1-HW-09": [
+     "GAS-L01",
+     "GAS-O01"
+    ],
+    "P1-HW-10": [
+     "GAS-L17"
+    ],
+    "P1-HW-11": [
+     "GAS-L12"
+    ],
+    "P1-HW-12": [
+     "GAS-L13",
+     "GAS-L14"
+    ],
+    "P1-HW-13": [
+     "GAS-O02"
+    ],
+    "P1-HW-14": [
+     "ME-L07"
+    ],
+    "P1-HW-15": "NP-H1-BUILD",
+    "P1-HW-16": "NP-FACILITY",
+    "P1-HW-17": [
+     "VAC-L02"
+    ],
+    "P1-HW-18": [
+     "RF-L07",
+     "VAC-L03",
+     "VAC-L04"
+    ],
+    "P1-HW-19": [
+     "VAC-L05"
+    ],
+    "P1-HW-20": [
+     "VAC-L07"
+    ],
+    "P1-HW-21": [
+     "GAS-L12",
+     "ME-L07"
+    ],
+    "P1-HW-22": "NP-H1-BUILD",
+    "P1-HW-23": [
+     "HE-L01",
+     "HE-L05"
+    ],
+    "P1-HW-24": [
+     "HE-L16",
+     "HE-L17"
+    ],
+    "P1-HW-25": [
+     "HE-L02"
+    ],
+    "P1-HW-26": [
+     "HE-L03"
+    ],
+    "P1-HW-27": [
+     "HE-L18",
+     "ME-O01"
+    ],
+    "P1-HW-28": [
+     "HE-L15"
+    ],
+    "P1-HW-29": [
+     "HE-L04"
+    ],
+    "P1-HW-30": [
+     "HE-O02"
+    ],
+    "P1-HW-31": [
+     "HE-L16"
+    ],
+    "P1-HW-32": [
+     "HE-L10",
+     "HE-L11",
+     "HE-L12"
+    ],
+    "P1-HW-33": [
+     "ME-L01"
+    ],
+    "P1-HW-34": [
+     "ME-L02"
+    ],
+    "P1-HW-35": [
+     "ME-L03"
+    ],
+    "P1-HW-36": [
+     "ME-O01"
+    ],
+    "P1-HW-37": [
+     "ME-L05"
+    ],
+    "P1-HW-38": [
+     "ME-L06"
+    ],
+    "P1-HW-39": [
+     "TH-L04"
+    ],
+    "P1-HW-40": [
+     "TH-L07",
+     "TH-L08"
+    ],
+    "P1-HW-41": [
+     "TH-L06",
+     "TH-L09"
+    ],
+    "P1-HW-42": [
+     "TH-L01"
+    ]
+   }
   }
  ],
+ "merged_cross_lane": {
+  "rule": "values flow only P4 -> MP (candidate densities) and XE -> MP (Xe residual and headroom, both readings), and P1 / P2 -> RFQ (ids, item text and statuses of the instrument coverage); every other cross-lane reference is an id checked at build time. Rebuild in the order P4, XE, P1, P2, P3, MP, RFQ; a second pass of any package is a no-op",
+  "build_order": [
+   "P4",
+   "XE",
+   "P1",
+   "P2",
+   "P3",
+   "MP",
+   "RFQ"
+  ],
+  "packages": {
+   "P4": {
+    "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-25"
+    ],
+    "ids_cited": [
+     "CR-04",
+     "IT-19"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   },
+   "XE": {
+    "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-36",
+     "XL-37"
+    ],
+    "ids_cited": [
+     "S3-GT-P1-DIAG",
+     "XV2-45"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   },
+   "P2": {
+    "path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-01",
+     "XL-02",
+     "XL-03",
+     "XL-04",
+     "XL-05",
+     "XL-06",
+     "XL-07",
+     "XL-08"
+    ],
+    "ids_cited": [
+     "CAL-P2-08",
+     "HM-R13",
+     "HM-R15",
+     "INS-P2-10"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   },
+   "P3": {
+    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-17",
+     "XL-18",
+     "XL-21"
+    ],
+    "ids_cited": [
+     "P3-P1-01",
+     "P3-P1-02",
+     "P3-P1-03",
+     "P3-P1-04",
+     "P3-P1-05",
+     "P3-P1-07",
+     "P3-P1-08",
+     "P3Q-01"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   },
+   "MP": {
+    "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-38"
+    ],
+    "ids_cited": [
+     "ground_article_only"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   },
+   "RFQ": {
+    "path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-09",
+     "XL-10",
+     "XL-11",
+     "XL-13"
+    ],
+    "ids_cited": [
+     "NP-CONDITIONAL-P3Q01",
+     "NP-FACILITY",
+     "NP-H1-BUILD"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   }
+  }
+ },
  "scope": {
   "question": "Can a Takahashi-type downstream open-tube coaxial 13.56 MHz ICP supply the electron current and neutralization function H-1 needs (i.e. replace C1)?",
   "first_build": "open-tube coaxial downstream ICP only (A9.3 OQ-VI-03); orificed RF plasma cathodes (Watanabe / Xu type) are literature comparators only",
@@ -2972,6 +3242,22 @@
    "status": "REQUIRED (A9.4 P1Q-13)",
    "note": "terminal absent from a capacity record -> the reducer refuses the record (incomplete); declared NOT_MEASURED or not continuous -> the capacity point is excluded (intentional return path unmeasured, A9.5 P1Q-15); enters the Kirchhoff closure P1-D-13",
    "metrology_spec": "MS-G-01, MS-G-02, MS-G-03 applied to this instrument's calibration certificate (accredited scope, SI-traceable chain, GUM uncertainty; as IF-P1-20); no MS-M measurand covers it (MS-M-01..05 are post-test external-lab measurands: mass, profile, SEM/EDS, XPS, C-1 orifice)"
+  },
+  {
+   "id": "P1-M-30",
+   "quantity": "plasma potential and electron temperature at the collector sheath edge (conditional)",
+   "symbol": "V_p,coll, T_e,coll",
+   "units": "V, eV",
+   "instrument_class": "TBD_OWNER (P3Q-01): probe diagnostic near the collector (e.g. Langmuir or emissive probe) or none if the calorimetric collector energy balance is accepted instead",
+   "reference_plane": "collector sheath edge (probe position TBD at P1-G0)",
+   "sampling": "TBD - frozen at P1-G0 (PROPOSED: continuous logging on the common time base INS-18)",
+   "uncertainty_sources": [
+    "TBD - requires the probe selection and its calibration (P3Q-01)"
+   ],
+   "stages": "S4-S7",
+   "status": "CONDITIONAL (TBD_OWNER P3Q-01)",
+   "note": "listed so that P3 Q_collector (P3-P1-04 / P3-P1-05, pair XL-18) and the P4 collector ion energy (IT-19, pair XL-25) have a named P1 channel; recorded only if the owner selects a probe diagnostic under P3Q-01; never assumed, never replaced by an analog value; no RFQ v2 line (disposition NP-CONDITIONAL-P3Q01)",
+   "metrology_spec": "TBD_OWNER - conditional on P3Q-01 (docs/experiments/hall_icp/p3_coupled_thermal/): no metrology specification until a probe diagnostic is selected; if the calorimetric alternative is accepted this channel is not recorded"
   }
  ],
  "derived_quantities": [
@@ -3270,7 +3556,7 @@
    "family": "RF",
    "item": "adjustable LOCAL matching network on / adjacent to the ICP module",
    "rfq_v1_package": "RFQ-04 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "RF-L04 (mounting provision ME-L08) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "RF-L04, RF-L19 (match-element position read-out); mounting provision ME-L08 (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "A9H-RF-LM-01; ICD ICP-13",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3306,7 +3592,7 @@
    "family": "RF",
    "item": "VNA / two-port characterization set",
    "rfq_v1_package": "RFQ-04 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "no RFQ v2 line for the VNA / two-port set (RFQ2-RF-N06 only asks the RF supplier to state compatibility with calibrated complex-reflection / V/I measurement) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "RF-L13 (VNA), RF-L14 (calibration kits), RF-L15 (attenuators), RF-L17 (phase-stable test cables) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "A9H-INS-03; P2 INS-P2-04 / CAL-P2-01",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3333,7 +3619,7 @@
    "family": "gas_metrology",
    "item": "rate-of-rise / transfer calibration volume",
    "rfq_v1_package": "RFQ-02 / RFQ-09 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "GAS-L16 (calibration line; no separate calibration-volume line) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "GAS-L17 (rate-of-rise / transfer calibration volume with reference pressure transducer) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "UB-F-07",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3378,7 +3664,7 @@
    "family": "gas_metrology",
    "item": "H-1 Ar gas path and anode plenum/distributor delivering the G-REUSE flow (needed from P1-S3 on)",
    "rfq_v1_package": "none (H2-3 / H2-1 design item; the MFC itself is RFQ-02) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "no RFQ v2 line (H-1 gas path / plenum is an H2-3 / H2-1 design item; P1 Ar shut-off valves GAS-L07) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "no RFQ v2 line (H-1 gas path / plenum is an H2-3 / H2-1 design item; RFQ v2 disposition NP-H1-BUILD) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "H2-3 gas path / plenum; H2-1 CI H-1; IF-P1-14",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3387,7 +3673,7 @@
    "family": "vacuum_facility",
    "item": "vacuum chamber (smaller domestic chamber allowed for S0-S5)",
    "rfq_v1_package": "RFQ-09 (information) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "VAC-L01 (chamber interfaces; the chamber itself has no line - facility, owner row 139) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "no RFQ v2 line for the chamber itself (facility, owner row 139; RFQ v2 disposition NP-FACILITY) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "owner row 139",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3441,7 +3727,7 @@
    "family": "hall_electrical",
    "item": "H-1 Hall thruster with its magnet circuit (needed from P1-S3 as the G-REUSE gas path and for magnet factor F6; Hall-on in P1-S6/S6D/S7)",
    "rfq_v1_package": "none (H-1 is the H2-1 design item, not an RFQ v1 package) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "no RFQ v2 line (H-1 is the H2-1 design item) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "no RFQ v2 line (H-1 is the H2-1 design item; RFQ v2 disposition NP-H1-BUILD) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "H2-1 CI H-1, MC-1; IF-P1-14",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3450,7 +3736,7 @@
    "family": "hall_electrical",
    "item": "laboratory discharge supply (ground only), conductors, sensors and protection sized to the 8.33 A stand ceiling",
    "rfq_v1_package": "RFQ-06 part (b) laboratory discharge supply (ground only); NOT part (a) flight-representative breadboard supply (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "HE-L01 (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "HE-L01, HE-L05 (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "H2-4 H24-27, H3-PPU-01; A9.3 OQ-A907-02",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3459,7 +3745,7 @@
    "family": "hall_electrical",
    "item": "H-1 anode physical disconnect means (discharge-supply output disconnected in Hall-OFF stages) and high-impedance isolated V_anode channel; metered anode return only for a registered DIAGNOSTIC_VARIANT (A9.4 P1Q-13; P1-IT-39)",
    "rfq_v1_package": "none explicit in RFQ v1 (closest: RFQ-06 part (d) synchronized V/I channel pairs) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "no RFQ v2 line as an explicit line (closest HE-L05 sensing; whether the high-impedance V_anode channel becomes an explicit line is RFQ v2 OQ-RFQV2-07, OPEN) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "HE-L16 (high-impedance isolated V_anode / V_ref channels), HE-L17 (anode physical disconnect means) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "P1-IT-39; P1-M-15; A9H-INS-10",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3486,7 +3772,7 @@
    "family": "hall_electrical",
    "item": "P1-S4 electron-collecting electrode circuit: return lead, current channel and bias reference per the registered topology (P1-IT-36)",
    "rfq_v1_package": "none explicit in RFQ v1 (RFQ-05 covers the ICP collector/bias supply only) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "no RFQ v2 line for the electron-collecting target circuit (closest HE-L05 discharge / collector V/I sensing) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "HE-L18 (floating-rated V/I channels), ME-O01 (option: dedicated electron-collecting target) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "P1-IT-36; P1-M-27; ICD ICP-21",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3495,7 +3781,7 @@
    "family": "hall_electrical",
    "item": "ground-return current monitors: H-1 body single-point metered facility-ground return (I_body->ground, continuous) and chamber / facility return where measurable (A9.4 P1Q-13)",
    "rfq_v1_package": "none explicit in RFQ v1 (closest: RFQ-06 part (d) synchronized V/I channel pairs) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "no RFQ v2 line as an explicit line (RFQ v2 OQ-RFQV2-07, OPEN, asks whether the H-1 body metered ground-current monitor becomes an explicit line; closest HE-L05) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "HE-L15 (H-1 body single-point metered ground-current monitor) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "A9H-INS-05; P1-M-13; P1-M-29",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3504,7 +3790,7 @@
    "family": "hall_electrical",
    "item": "isolation of floating circuits (350 V class, row 81, extended to the ICP body / collector by A9.4 P1Q-14; V_design,withstand >= 525 V; initial DWV 1.05 kV DC / 60 s)",
    "rfq_v1_package": "RFQ-05 / RFQ-06 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "HE-L04, VAC-L03 (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "HE-L04 (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "ICD ICP-23; H2-6 REV-36; P1-IT-43 / P1-IT-44",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3513,7 +3799,7 @@
    "family": "hall_electrical",
    "item": "current-limited DC dielectric-withstand tester >= 1.05 kV with leakage read-out (initial DWV, A9.4 P1Q-14)",
    "rfq_v1_package": "none in RFQ v1 (owner question P1Q-17 covers the reverification level only) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "no RFQ v2 line (the DWV requirement is carried by HE-L04 / VAC-L03; no tester line) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "HE-O02 (option: current-limited DC dielectric-withstand tester) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "P1-IT-44; P1-SI-11",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3522,7 +3808,7 @@
    "family": "hall_electrical",
    "item": "V_d reference-potential channels",
    "rfq_v1_package": "closest: RFQ-06 part (d) synchronized V/I channel pairs (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "HE-L05 (requirement RFQ2-HALLEL-R07) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "HE-L16 (requirement RFQ2-HALLEL-R07) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "A9H-INS-10",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3531,7 +3817,7 @@
    "family": "hall_electrical",
    "item": "C1 (hall_c1_reference) with heater / keeper supplies: present on its own module but DISCONNECTED and verified not supplying electrons in P1-S6 (OQ-VI-05 step 2); disconnect means and its verification record",
    "rfq_v1_package": "RFQ-08 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "HE-L10, HE-L11, HE-L12, HE-L13 (dispatch LATER) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "HE-L10, HE-L11, HE-L12 (dispatch LATER) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "H2-2 C-1; ICD ICP-25, ICP-46; A9.1 ICP-46 (keeper isolation basis)",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3567,7 +3853,7 @@
    "family": "mechanical_icp_fabrication",
    "item": "P1-S4 / P1-S7 dedicated electron-collecting target (OWNER_DECIDED for ICP45_CAPACITY records, A9.4 P1Q-10): isolated plate, support, position datum and feedthrough",
    "rfq_v1_package": "none (not in RFQ v1; geometry TBD at P1-G0, P1-IT-36) (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "no RFQ v2 line for the dedicated electron-collecting target (geometry TBD at P1-G0, P1-IT-36) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "ME-O01 (option line; geometry TBD at P1-G0, P1-IT-36) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "P1-IT-36; P1Q-09",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3603,7 +3889,7 @@
    "family": "thrust_metrology",
    "item": "optical-emission photodiode + amplifier + DAQ channel (A9.4 P2Q-05)",
    "rfq_v1_package": "none in RFQ v1 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "TH-L07, TH-L08 (window VAC-L07) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "TH-L07, TH-L08 (the optical window is P1-HW-20) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "INS-P2-10; P1-M-28",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3612,7 +3898,7 @@
    "family": "thrust_metrology",
    "item": "traceability hardware (certificates for V, I, RF, T, flow)",
    "rfq_v1_package": "RFQ-09 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
-   "rfq_v2_package": "TH-L06 (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
+   "rfq_v2_package": "TH-L06, TH-L09 (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "A9H-CAL-02..04",
    "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
   },
@@ -3631,33 +3917,73 @@
    "id": "IF-P1-01",
    "direction": "to",
    "counterpart": "P2 docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json IDP2-01 (gate S-10, HM-R01)",
-   "what": "stable ICP operating region handoff (region bounds in P_fwd, mdot, p, V_collector; match settings; dwell metrics; cold Z)",
-   "units": "W, mg/s, Pa, V, ohm",
-   "status": "OFFERED (after P1-S5)"
+   "what": "stable ICP operating region handoff: p1_reducer.stable_region_handoff output (status, criteria_id, points within the owner criteria with match settings, gas, H-1 point and Z_ICP when MEASURED, dwell verdicts, envelope of tested points over P_fwd, mdot, p, V_collector)",
+   "units": "W; mg/s; Pa; V; ohm",
+   "status": "TBD_AFTER_EVIDENCE (owning stage P1-S5, gate P1-G5; stability criteria TBD_OWNER P1Q-01; no record yet)",
+   "xref": [
+    {
+     "pair": "XL-01",
+     "counterpart": "P2:IDP2-01",
+     "counterpart_path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "quantity": "P1-S5 stable-region handoff record (p1_reducer.stable_region_handoff: status, criteria_id, points_within_criteria with operating_point_record_id / match_setting_id / h1_point_id / gas / gas_mode / Z_ICP (MEASURED or null) / factors, envelope_of_tested_points over P_fwd_W, mdot_Ar_H1_mg_s, p_chamber_Pa, V_collector_V); P2 admits it only with status REGION_OF_TESTED_POINTS_WITHIN_OWNER_CRITERIA (p2_framework.p1_handoff_admissible)",
+     "units": "W; mg/s; Pa; V; ohm",
+     "status": "TBD_AFTER_EVIDENCE (owning stage P1-S5, gate P1-G5; stability criteria TBD_OWNER P1Q-01; no record yet)"
+    }
+   ]
   },
   {
    "id": "IF-P1-02",
    "direction": "from",
    "counterpart": "P2 docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json IDP2-03 (ZM-A/B/C, CAL-P2-01..15)",
-   "what": "V/I sensing, coupler chain calibration, S-parameter / de-embedding method and data model for the Z_ICP factor",
-   "units": "ohm, -",
-   "status": "DEFINED as method in the merged P2 preparation package; the P2 instruments are not procured, so Z_ICP stays NOT_MEASURED_PENDING_P2_CHAIN"
+   "what": "V/I sensing, coupler chain calibration, S-parameter / de-embedding method, verified-loss P_delivered reconstruction and data model for the Z_ICP factor",
+   "units": "W; ohm",
+   "status": "DEFINED (method and reducer); P2 instruments NOT_PROCURED, so Z_ICP stays NOT_MEASURED_PENDING_P2_CHAIN until the chain is installed and calibrated",
+   "xref": [
+    {
+     "pair": "XL-02",
+     "counterpart": "P2:IDP2-03",
+     "counterpart_path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "quantity": "calibrated RF chain and reducer: P_net at RP-CPL; P_line/match,loss and P_delivered only from a LOSS_MODEL_VERIFIED loss model (otherwise REFUSED, never reconstructed); Z_ICP methods ZM-A / ZM-B / ZM-C with CAL-P2-01..15",
+     "units": "W; ohm",
+     "status": "DEFINED (method and reducer); P2 instruments NOT_PROCURED, so Z_ICP stays NOT_MEASURED_PENDING_P2_CHAIN until the chain is installed and calibrated"
+    }
+   ]
   },
   {
    "id": "IF-P1-03",
    "direction": "to",
-   "counterpart": "RFQ v2 docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
-   "what": "P1 readiness items per A9.3 family (hardware_readiness)",
-   "units": "-",
-   "status": "MAPPED (hardware_readiness.rfq_v2_package names the RFQ v2 line ids or states that no line exists)"
+   "counterpart": "RFQ v2 docs/procurement/rfq_a9_v2/rfq_a9_v2.json IFD-01",
+   "what": "P1 readiness items per A9.3 family (hardware_readiness) and the P1-G0 registrations the RFQ requirements reference",
+   "units": "sccm; Pa; Sa/s; A",
+   "status": "TBD_AFTER_EVIDENCE (values registered at P1-G0; ids referenced, nothing filled)",
+   "xref": [
+    {
+     "pair": "XL-09",
+     "counterpart": "RFQ:IFD-01",
+     "counterpart_path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "quantity": "P1 readiness / measurement ids and their P1-G0 registrations as RFQ requirement inputs: Ar sweep bounds (F2), gas schematic (P1-HW-12, P1-HW-15, P1-HW-18), gauge ranges (P1-M-16, P1-M-17), DAQ rate (P1-M-26), magnet states (F6), P1-S4 topology (P1-IT-36), I_scale,min (P1-IT-48)",
+     "units": "sccm; Pa; Sa/s; A",
+     "status": "TBD_AFTER_EVIDENCE (values registered at P1-G0; ids referenced, nothing filled)"
+    }
+   ]
   },
   {
    "id": "IF-P1-04",
    "direction": "from",
-   "counterpart": "RFQ v2 docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
-   "what": "package / line ids (CONSUMED) and quoted datasheet values (ratings, calibration scope)",
+   "counterpart": "RFQ v2 docs/procurement/rfq_a9_v2/rfq_a9_v2.json IFD-13 (instrument_coverage)",
+   "what": "package / line ids per P1 measurement and hardware item (hardware_readiness.rfq_v2_package equals the RFQ v2 coverage)",
    "units": "-",
-   "status": "line ids CONSUMED; quoted values PENDING quotations (none received; no supplier contact by this lane)"
+   "status": "DEFINED (line ids reconciled; quotation only, no purchase order)",
+   "xref": [
+    {
+     "pair": "XL-10",
+     "counterpart": "RFQ:IFD-13",
+     "counterpart_path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "quantity": "RFQ v2 line id (or explicit not-procured disposition) per P1 measurement and P1 hardware item (rfq_a9_v2 instrument_coverage); P1 hardware_readiness.rfq_v2_package cites exactly these lines (checked at build time)",
+     "units": "-",
+     "status": "DEFINED (line ids reconciled; quotation only, no purchase order)"
+    }
+   ]
   },
   {
    "id": "IF-P1-05",
@@ -3750,18 +4076,38 @@
   {
    "id": "IF-P1-16",
    "direction": "to",
-   "counterpart": "A9-07 / P3 coupled thermal",
-   "what": "measured temperatures incl. H-1 poles and T_sink per run",
-   "units": "degC",
-   "status": "OFFERED (recorded only; UNRESOLVED)"
+   "counterpart": "P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json P3-IF-N01 (and A9-07 as context)",
+   "what": "measured collector / body currents and potentials, Hall I_d / V_d at consistency points, temperatures incl. H-1 poles and T_sink per run; the terminal currents are net signed currents (P1-IT-42) - the ion / electron particle-current split at the collector that Q_collector needs (P3-P1-01 / P3-P1-02) is not a P1 measurand and stays TBD_AFTER_EVIDENCE until registered",
+   "units": "A; V; degC",
+   "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; records only; ICP_COUPLED_THERMAL UNRESOLVED)",
+   "xref": [
+    {
+     "pair": "XL-17",
+     "counterpart": "P3:P3-IF-N01",
+     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "quantity": "P1 measured records for the coupled thermal model: collector current and potential (P1-M-10, P1-M-11, P1-M-27), ICP body current (P1-M-12), Hall I_d / V_d at consistency points (P1-M-14), module and H-1 pole temperatures and T_sink per run (P1-M-21) -> P3-P1-01, P3-P1-02, P3-P1-03, P3-P1-07, P3-P1-08",
+     "units": "A; V; degC",
+     "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; records only; ICP_COUPLED_THERMAL UNRESOLVED)"
+    }
+   ]
   },
   {
    "id": "IF-P1-17",
-   "direction": "to",
-   "counterpart": "A9-08 docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
-   "what": "G-REUSE books mdot_ICP,dedicated = 0; an activated diagnostic G-XE feed is booked there (A9.3 OQ-RFQ-10)",
+   "direction": "from",
+   "counterpart": "Xe accounting v2 docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json XV2-IF-07 (revision of A9-08 docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json)",
+   "what": "G-REUSE books mdot_ICP,dedicated = 0; an activated diagnostic G-XE feed is booked there as a separate optional entry (A9.3 OQ-RFQ-10)",
    "units": "mg/s",
-   "status": "RULE (no booking in the baseline)"
+   "status": "DEFINED (rule; no booking in the baseline)",
+   "xref": [
+    {
+     "pair": "XL-37",
+     "counterpart": "XE:XV2-IF-07",
+     "counterpart_path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+     "quantity": "booking rule: G-REUSE mdot_ICP,dedicated = 0; an activated diagnostic dedicated feed is booked as a separate optional Xe entry (S3-GT-P1-DIAG), never as baseline",
+     "units": "mg/s",
+     "status": "DEFINED (rule; no booking in the baseline)"
+    }
+   ]
   },
   {
    "id": "IF-P1-18",
@@ -3808,16 +4154,36 @@
    "direction": "to",
    "counterpart": "P2 docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json IDP2-17 / HM-R15",
    "what": "photodiode (INS-P2-10) dark/background, RF-powered known-unlit and known-lit P1 records with simultaneous P_refl, antenna current, collector/current-path response and pressure, from which the P2 unlit threshold is frozen before the P2 map (A9.4 P2Q-05)",
-   "units": "V, W, A, Pa",
-   "status": "OFFERED (P1-S2, P1-S3..S5)"
+   "units": "V; W; A; Pa",
+   "status": "TBD_AFTER_EVIDENCE (owning stages P1-S2, P1-S3..S5; records not yet taken)",
+   "xref": [
+    {
+     "pair": "XL-06",
+     "counterpart": "P2:IDP2-17",
+     "counterpart_path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "quantity": "photodiode (INS-P2-10, P1-M-28) dark / background, RF-powered known-unlit and known-lit P1 records with simultaneous P_refl, antenna current, collector / current-path response and pressure, from which the P2 unlit threshold is frozen before the P2 map (A9.4 P2Q-05)",
+     "units": "V; W; A; Pa",
+     "status": "TBD_AFTER_EVIDENCE (owning stages P1-S2, P1-S3..S5; records not yet taken)"
+    }
+   ]
   },
   {
    "id": "IF-P1-24",
    "direction": "to",
-   "counterpart": "RFQ v2 docs/procurement/rfq_a9_v2/rfq_a9_v2.json TH-L07, TH-L08, VAC-L07, HE-L04, VAC-L03",
-   "what": "A9.4 procurement items: photodiode, optical access / window, amplifier, DAQ channel (P2Q-05); >= 525 V design withstand and 1.05 kV DC / 60 s initial DWV on the ICP body / collector isolation and feedthrough lines (P1Q-14)",
-   "units": "V, s",
-   "status": "RECORDED in RFQ v2 (quotation only; the DWV tester itself has no RFQ v2 line)"
+   "counterpart": "RFQ v2 docs/procurement/rfq_a9_v2/rfq_a9_v2.json IFD-18 (TH-L07, TH-L08, VAC-L07, HE-L04, VAC-L03, HE-O02)",
+   "what": "A9.4 procurement items: photodiode, optical access / window, amplifier, DAQ channel (P2Q-05); >= 525 V design withstand and 1.05 kV DC / 60 s initial DWV on the ICP body / collector isolation and feedthrough lines, DWV tester as option line (P1Q-14)",
+   "units": "V; s",
+   "status": "DEFINED (recorded in RFQ v2 as TH-L07, TH-L08, VAC-L07, VAC-L03, HE-L04 and option HE-O02; quotation only)",
+   "xref": [
+    {
+     "pair": "XL-13",
+     "counterpart": "RFQ:IFD-18",
+     "counterpart_path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "quantity": "A9.4 procurement items: photodiode, optical access / window, amplifier, DAQ channel (P2Q-05); >= 525 V design withstand and 1.05 kV DC / 60 s initial DWV on the ICP body / collector isolation and feedthrough lines, DWV tester as option (P1Q-14)",
+     "units": "V; s",
+     "status": "DEFINED (recorded in RFQ v2 as TH-L07, TH-L08, VAC-L07, VAC-L03, HE-L04 and option HE-O02; quotation only)"
+    }
+   ]
   },
   {
    "id": "IF-P1-25",
@@ -3842,6 +4208,204 @@
    "what": "the owner Kirchhoff closure rule for ICP-45 capacity points (A9.5 P1Q-15: |R_I| <= 3 u_R and <= 2 % of max(|I_e,collector|, I_scale,min); NOT_EVALUATED_INSTRUMENT when 3 u_R > 0.02 |I_e,collector|) as the decided form of the UB-N-07 current-path closure diagnostic for capacity records (no UB file edit by this lane)",
    "units": "A, -",
    "status": "OFFERED (owner-decided rule)"
+  },
+  {
+   "id": "IF-P1-28",
+   "direction": "from",
+   "counterpart": "P2 docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json IDP2-16 (HM-R13)",
+   "what": "powered-step prerequisites for the P1 RF-on sequence (P1-S1 / P1-S2 entry)",
+   "units": "-",
+   "status": "DEFINED (prerequisite list; numeric limits TBD at P1-G0, P1-IT-05)",
+   "xref": [
+    {
+     "pair": "XL-03",
+     "counterpart": "P2:IDP2-16",
+     "counterpart_path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "quantity": "powered-step prerequisites HM-R13 (match pre-tuned on the VNA, calibrated coupler monitoring, P1 provisional limits / foldback, ICP-16 interlocks, facility RF safety) for the P1 RF-on sequence",
+     "units": "-",
+     "status": "DEFINED (prerequisite list; numeric limits TBD at P1-G0, P1-IT-05)"
+    }
+   ]
+  },
+  {
+   "id": "IF-P1-29",
+   "direction": "to",
+   "counterpart": "P2 docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json IDP2-02",
+   "what": "selected generator, local match, antenna / terminal geometry, provisional protection limits",
+   "units": "-",
+   "status": "TBD_AFTER_EVIDENCE (hardware NOT_PROCURED; values registered at P1-G0)",
+   "xref": [
+    {
+     "pair": "XL-04",
+     "counterpart": "P2:IDP2-02",
+     "counterpart_path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "quantity": "selected laboratory generator, adjustable local match (tuning range, element read-out), antenna / terminal geometry and provisional protection limits (P1-HW-01, P1-HW-03, P1-HW-34, P1-IT-22, P1-IT-05)",
+     "units": "-",
+     "status": "TBD_AFTER_EVIDENCE (hardware NOT_PROCURED; values registered at P1-G0)"
+    }
+   ]
+  },
+  {
+   "id": "IF-P1-30",
+   "direction": "to",
+   "counterpart": "P2 docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json IDP2-14",
+   "what": "Ar MFC calibration record (rate-of-rise / transfer path) for the P2 Ar levels",
+   "units": "mg/s; sccm",
+   "status": "TBD_AFTER_EVIDENCE (owning stages P1-S0 / P1-S3; calibration record not yet made)",
+   "xref": [
+    {
+     "pair": "XL-05",
+     "counterpart": "P2:IDP2-14",
+     "counterpart_path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "quantity": "Ar MFC calibration record (one range; two overlapping ranges only if one cannot cover the sweep) via the rate-of-rise / transfer path (P1-IT-10, P1-IT-11, P1-M-18; RFQ v2 GAS-L01, GAS-L16, GAS-L17) for the HM-F02 Ar levels and UB-P2-M-01; Ar data ENGINEERING_ONLY_NON_SCORING",
+     "units": "mg/s; sccm",
+     "status": "TBD_AFTER_EVIDENCE (owning stages P1-S0 / P1-S3; calibration record not yet made)"
+    }
+   ]
+  },
+  {
+   "id": "IF-P1-31",
+   "direction": "to",
+   "counterpart": "P2 docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json IDP2-19",
+   "what": "Touchstone files of the line, every local-match tuning state, the cold antenna and the standards",
+   "units": "-",
+   "status": "TBD_AFTER_EVIDENCE (owning stages P1-S1 / P1-S2; bench hardware NOT_PROCURED)",
+   "xref": [
+    {
+     "pair": "XL-07",
+     "counterpart": "P2:IDP2-19",
+     "counterpart_path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "quantity": "Touchstone (.s2p / .s1p) files with calibration ids and certificates: line + feedthrough (S-02), every local-match tuning state with its logged element positions (S-03), cold antenna (S-06), SOL standards' definitions (S-01)",
+     "units": "-",
+     "status": "TBD_AFTER_EVIDENCE (owning stages P1-S1 / P1-S2; bench hardware NOT_PROCURED)"
+    }
+   ]
+  },
+  {
+   "id": "IF-P1-32",
+   "direction": "to",
+   "counterpart": "P2 docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json IDP2-15",
+   "what": "gas-isolator qualification record where an ICP gas line bridges isolated potentials",
+   "units": "V",
+   "status": "TBD_AFTER_EVIDENCE (qualification not yet run; owning stage P1-S0 readiness)",
+   "xref": [
+    {
+     "pair": "XL-08",
+     "counterpart": "P2:IDP2-15",
+     "counterpart_path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "quantity": "~1 kV-class representative-gas isolator qualification record for any ICP gas line bridging isolated potentials (ICD ICP-23; A9.3 ICPQ-06; P1-HW-12); none required where both ends are intentionally at the same floating potential",
+     "units": "V",
+     "status": "TBD_AFTER_EVIDENCE (qualification not yet run; owning stage P1-S0 readiness)"
+    }
+   ]
+  },
+  {
+   "id": "IF-P1-33",
+   "direction": "from",
+   "counterpart": "RFQ v2 docs/procurement/rfq_a9_v2/rfq_a9_v2.json IFD-02",
+   "what": "quoted capability ranges, calibration uncertainties and interfaces (none received; no supplier contact by this lane)",
+   "units": "W; mg/s; A; -",
+   "status": "TBD_AFTER_EVIDENCE (after quotations; none received; RFQ only, no purchase order)",
+   "xref": [
+    {
+     "pair": "XL-11",
+     "counterpart": "RFQ:IFD-02",
+     "counterpart_path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "quantity": "quoted capability ranges, calibration uncertainties (A9.5 current-channel components) and interfaces of the RFQ2-RF, RFQ2-GAS, RFQ2-HALLEL and RFQ2-THRUST lines",
+     "units": "W; mg/s; A; -",
+     "status": "TBD_AFTER_EVIDENCE (after quotations; none received; RFQ only, no purchase order)"
+    }
+   ]
+  },
+  {
+   "id": "IF-P1-34",
+   "direction": "to",
+   "counterpart": "P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json P3-IF-N02",
+   "what": "conditional P1-M-30 sheath-edge plasma potential / T_e for Q_collector, or the calorimetric alternative (P3Q-01)",
+   "units": "V; eV",
+   "status": "TBD_OWNER (P3Q-01 OPEN; registration at P1-G0)",
+   "xref": [
+    {
+     "pair": "XL-18",
+     "counterpart": "P3:P3-IF-N02",
+     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "quantity": "plasma potential and electron temperature at the collector sheath edge (conditional P1 measurement P1-M-30) or an accepted calorimetric alternative -> P3-P1-04, P3-P1-05",
+     "units": "V; eV",
+     "status": "TBD_OWNER (P3Q-01 OPEN; registration at P1-G0)"
+    }
+   ]
+  },
+  {
+   "id": "IF-P1-35",
+   "direction": "from",
+   "counterpart": "P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json P3-IF-S05",
+   "what": "verification temperature set of the coupled thermal model (P1-M-21 channel list)",
+   "units": "degC",
+   "status": "DEFINED (channel list); readings TBD_AFTER_EVIDENCE; never a thermal PASS",
+   "xref": [
+    {
+     "pair": "XL-21",
+     "counterpart": "P3:P3-IF-S05",
+     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "quantity": "verification temperature set of the coupled model (P3-P1-07 -> P1-M-21 channels: antenna, dielectric, collector, match, H-1 inner / outer pole, sink)",
+     "units": "degC",
+     "status": "DEFINED (channel list); readings TBD_AFTER_EVIDENCE; never a thermal PASS"
+    }
+   ]
+  },
+  {
+   "id": "IF-P1-36",
+   "direction": "to",
+   "counterpart": "P4 docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json ID-06",
+   "what": "measured collector bias / current and the conditional sheath-edge plasma potential for the P4 collector ion energy",
+   "units": "V; A",
+   "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy additionally TBD_OWNER P3Q-01)",
+   "xref": [
+    {
+     "pair": "XL-25",
+     "counterpart": "P4:ID-06",
+     "counterpart_path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "quantity": "measured collector bias and current (P1-M-10, P1-M-11, P1-M-27) and the conditional sheath-edge plasma potential (P1-M-30) for the collector ion energy (P4 IT-19, CR-04)",
+     "units": "V; A",
+     "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy additionally TBD_OWNER P3Q-01)"
+    }
+   ]
+  },
+  {
+   "id": "IF-P1-37",
+   "direction": "to",
+   "counterpart": "Xe accounting v2 docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json XV2-IF-06",
+   "what": "per-record gas state, dedicated-feed flag and measured diagnostic dedicated-feed flow (P1-M-19)",
+   "units": "mg/s; s",
+   "status": "TBD_AFTER_EVIDENCE (P1 records; the diagnostic feed is CONDITIONAL, never baseline)",
+   "xref": [
+    {
+     "pair": "XL-36",
+     "counterpart": "XE:XV2-IF-06",
+     "counterpart_path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+     "quantity": "per-record gas state, dedicated-feed flag and the measured dedicated-feed flow if a labelled DIAGNOSTIC G-XE feed is activated (P1-M-19; OPT-GT-P1-GXE-DIAG)",
+     "units": "mg/s; s",
+     "status": "TBD_AFTER_EVIDENCE (P1 records; the diagnostic feed is CONDITIONAL, never baseline)"
+    }
+   ]
+  },
+  {
+   "id": "IF-P1-38",
+   "direction": "to",
+   "counterpart": "mass / power v2 docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json MPV2-ID-08",
+   "what": "C_e, C_e,DC and the I_e surface with boundary labels; P_mains,in GROUND/FACILITY_ONLY",
+   "units": "W/A; A; W",
+   "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S5; hardware NOT_PROCURED)",
+   "xref": [
+    {
+     "pair": "XL-38",
+     "counterpart": "MP:MPV2-ID-08",
+     "counterpart_path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "quantity": "C_e and C_e,DC with the boundary labelled and the I_e surface; P_mains,in recorded as GROUND/FACILITY_ONLY (never P_bus evidence)",
+     "units": "W/A; A; W",
+     "status": "TBD_AFTER_EVIDENCE (owning stages P1-S4..S5; hardware NOT_PROCURED)"
+    }
+   ]
   }
  ],
  "owner_answers_applied": [

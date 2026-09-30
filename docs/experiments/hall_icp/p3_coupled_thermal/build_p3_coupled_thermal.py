@@ -113,8 +113,8 @@ DELIVERABLES = {
 NEVER_PINNED = ["docs/orchestration/lane_registry_v1.json", "docs/orchestration/trigger_registry_v1.json",
                 "docs/orchestration/fired_triggers.jsonl", "docs/orchestration/trigger_ledger_v2.jsonl",
                 "docs/orchestration/runtime_state.json"]
-# P1 / P2 are verified deliverables that parallel A9.6 lanes may extend; they are referenced by id (read at the base
-# commit), NOT pinned, so that an A9.6 revision of them cannot break this builder; the test checks the ids still exist.
+# P1 / P2 are merged A9.6 packages that cite P3 ids back (pairs XL-17..XL-22); they are referenced by id, NOT pinned
+# (a pin would be a circular hash dependency); their ids are checked by xlane_check (XL_CITED) and by the test.
 REFERENCED_NOT_PINNED = {
     "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
     "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
@@ -123,18 +123,202 @@ P1_IDS = ("P1-M-01", "P1-M-02", "P1-M-03", "P1-M-07", "P1-M-10", "P1-M-11", "P1-
           "P1-M-27", "P1-IT-26", "P1-IT-36", "P1-IT-42", "P1-IT-19")
 P2_IDS = ("RP-CPL", "RP-MIN", "RP-ANT", "HM-F01", "HM-R08", "HM-R09", "CAL-P2-02", "CAL-P2-03", "CAL-P2-08",
           "INS-P2-09")
-PENDING_LANES = [
-    {"path": "docs/experiments/hall_icp/p4_anode_materials/", "lane": "fo_a9_6_p4_anode_materials (A9.6 sec. 10)",
-     "needed_for": "validated continuous-use limits and emittances of the collector / anode candidate materials "
-                   "(P3-M-04, P3-R-04); ANODE_THERMAL_CLOSURE stays UNRESOLVED until a material and its limit exist"},
-    {"path": "docs/budgets/mass_power_a9_v2/", "lane": "fo_a9_6_mass_power_integration (A9.6 sec. 11)",
-     "needed_for": "the ICP / RF / collector power slots whose dissipation enters Q_RF/match and the generator "
-                   "conversion loss Q_gen (ICD ICP-43)"},
-    {"path": "docs/budgets/xe_accounting_a9_v2/", "lane": "fo_a9_6_xe_accounting (A9.6 sec. 12)",
-     "needed_for": "none for the thermal terms (G-REUSE: no dedicated ICP flow); listed for completeness"},
-    {"path": "docs/procurement/rfq_a9_v2/", "lane": "fo_a9_6_rfq_completion (A9.6 sec. 13)",
-     "needed_for": "thermocouple / sink-sensor lines that measure the P3 verification temperatures"},
-]
+# ------------------------------------------------------------------ merged A9.6 cross-lane references (A9.6 sec. 5-6, 18)
+# The seven A9.6 packages (P1, P2, P3, P4, mass / power v2, Xe accounting v2, RFQ v2) are merged. Each cites the others
+# by id; every cited id is CHECKED at build time against the target's current JSON (xlane_check, after the outputs are
+# written, so a pair added on both sides converges in one rebuild of the second side; --check fails until it does).
+# Nothing is sha-pinned between the seven packages: several read each other back (ids, or text such as the RFQ v2
+# instrument coverage of the P1 / P2 ids), so a pin would be a circular hash dependency. Interface pairs XL-nn carry
+# identical quantity / units / status text on both sides (tests check the pairing).
+XLANE_PATHS = {
+    "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+    "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+    "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+    "RFQ": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+}
+XLANE_SELF = 'P3'
+XLANE_BUILD_ORDER = ["P4", "XE", "P1", "P2", "P3", "MP", "RFQ"]
+XLANE_BUILD_ORDER_RULE = ("values flow only P4 -> MP (candidate densities) and XE -> MP (Xe residual and headroom, "
+                          "both readings), and P1 / P2 -> RFQ (ids, item text and statuses of the instrument "
+                          "coverage); every other cross-lane reference is an id checked at build time. Rebuild in "
+                          "the order P4, XE, P1, P2, P3, MP, RFQ; a second pass of any package is a no-op")
+XL_PAIRS = {  # pair: (counterpart package, counterpart id, quantity, units, status) - identical text on both sides
+    'XL-17': (
+        'P1',
+        'IF-P1-16',
+        ('P1 measured records for the coupled thermal model: collector current and potential (P1-M-10, P1-M-11, '
+         'P1-M-27), ICP body current (P1-M-12), Hall I_d / V_d at consistency points (P1-M-14), module and H-1 pole '
+         'temperatures and T_sink per run (P1-M-21) -> P3-P1-01, P3-P1-02, P3-P1-03, P3-P1-07, P3-P1-08'),
+        'A; V; degC',
+        'TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; records only; ICP_COUPLED_THERMAL UNRESOLVED)',
+    ),
+    'XL-18': (
+        'P1',
+        'IF-P1-34',
+        ('plasma potential and electron temperature at the collector sheath edge (conditional P1 measurement '
+         'P1-M-30) or an accepted calorimetric alternative -> P3-P1-04, P3-P1-05'),
+        'V; eV',
+        'TBD_OWNER (P3Q-01 OPEN; registration at P1-G0)',
+    ),
+    'XL-19': (
+        'P2',
+        'IDP2-12',
+        ('location split of P_line/match,loss (share dissipated on the ICP module / moving platform, from the '
+         'CAL-P2-02 / CAL-P2-03 two-ports) -> P3-P2-04'),
+        '-',
+        'TBD_AFTER_IMPEDANCE_MAP (owning stage P2 two-port characterization; coupled thermal UNRESOLVED)',
+    ),
+    'XL-20': (
+        'P2',
+        'IDP2-20',
+        ('P_forward, P_reflected, P_line/match,loss and P_delivered (numeric only with loss_status VERIFIED; a '
+         'REFUSED / TBD value is refused by p3_thermal_lib.q_rf_match, never reconstructed), antenna current, cold '
+         'antenna resistance (CAL-P2-08) -> P3-P2-01, P3-P2-02, P3-P2-03, P3-P2-06, P3-P2-07'),
+        'W; A; ohm',
+        'TBD_AFTER_IMPEDANCE_MAP (owning stage P2 hot map; coupled thermal UNRESOLVED)',
+    ),
+    'XL-21': (
+        'P1',
+        'IF-P1-35',
+        ('verification temperature set of the coupled model (P3-P1-07 -> P1-M-21 channels: antenna, dielectric, '
+         'collector, match, H-1 inner / outer pole, sink)'),
+        'degC',
+        'DEFINED (channel list); readings TBD_AFTER_EVIDENCE; never a thermal PASS',
+    ),
+    'XL-22': (
+        'P2',
+        'IDP2-24',
+        ('ICP-module calorimetric energy balance (thermocouple map with RF on / off, ICD ICP-36 verification) that '
+         'fixes f_leaving (P3-P2-05)'),
+        'W; -',
+        'TBD_AFTER_EVIDENCE (owning stage P2 hot map; f_leaving = 0 only as an explicitly labelled bound)',
+    ),
+    'XL-23': (
+        'P4',
+        'ID-02',
+        ('per-candidate thermal conductivity and density with provenance (P4 property_records), validated '
+         'continuous-use limits (CR-01) and emittances -> P3-M-04, P3-R-01, P3-R-04'),
+        'W/(m*K); kg/m3; K; -',
+        ('DEFINED (k and density records); T_validated,continuous and emittance TBD_AFTER_EVIDENCE; '
+         'FINAL_ANODE_MATERIAL OPEN'),
+    ),
+    'XL-24': (
+        'P4',
+        'ID-01',
+        ('T_operating of anode and collector (worst case, coupled; 20 % heat-load margin, row 86), heat flux, '
+         'gradients -> P4 IT-09, IT-11'),
+        'K; W/m2; K/m',
+        'TBD_AFTER_EVIDENCE (ANODE_THERMAL_CLOSURE and ICP_COUPLED_THERMAL UNRESOLVED; no PASS)',
+    ),
+    'XL-28': (
+        'MP',
+        'MPV2-ID-01',
+        ('thermal-hardware mass (radiator / heaters / MLI / heat paths) and any active-cooling variant from the '
+         'coupled H-1 / ICP thermal model'),
+        'kg',
+        'TBD_AFTER_EVIDENCE (ICP_COUPLED_THERMAL UNRESOLVED; no PASS)',
+    ),
+    'XL-29': (
+        'MP',
+        'MPV2-ID-02',
+        'thermal_control slot power (steady / start-up) for the power ledger',
+        'W',
+        'TBD_AFTER_EVIDENCE (ICP_COUPLED_THERMAL UNRESOLVED; no PASS)',
+    ),
+    'XL-42': (
+        'RFQ',
+        'IFD-16',
+        ('ICP-part material continuous-use temperature data requested from the fabricator (RFQ2-MECH-N04) as '
+         'material limits for the coupled thermal framework'),
+        'K',
+        'TBD_AFTER_EVIDENCE (after quotations; ICP_COUPLED_THERMAL UNRESOLVED; never PASS)',
+    ),
+}
+
+
+def xref(pair):
+    """The shared description of one cross-lane interface pair (identical on both sides)."""
+    pkg, cid, quantity, units, status = XL_PAIRS[pair]
+    return {"pair": pair, "counterpart": pkg + ":" + cid, "counterpart_path": XLANE_PATHS[pkg],
+            "quantity": quantity, "units": units, "status": status}
+
+
+def _xlane_demands(doc):
+    d = doc["interface_demands"]
+    return [e for v in d.values() for e in v] if isinstance(d, dict) else list(d)
+
+
+def _xlane_has_id(text, ident):
+    import re as _re
+    return _re.search(r"(?<![A-Za-z0-9_-])" + _re.escape(ident) + r"(?![A-Za-z0-9_])", text) is not None
+
+
+def xlane_check(doc):
+    """Every cross-lane pair points at an existing interface-demand id of the merged target package, and every other
+    cited id (XL_CITED) occurs in the target's current JSON. Returns the list of problems (empty = consistent)."""
+    problems, cache = [], {}
+
+    def target(pkg):
+        if pkg not in cache:
+            p = REPO / XLANE_PATHS[pkg]
+            cache[pkg] = json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+        return cache[pkg]
+
+    seen = set()
+    for e in _xlane_demands(doc):
+        for x in e.get("xref", []):
+            seen.add(x["pair"])
+            pkg, cid = x["counterpart"].split(":", 1)
+            t = target(pkg)
+            if t is None:
+                problems.append("%s: %s missing" % (x["pair"], XLANE_PATHS[pkg]))
+                continue
+            ids = {d.get("id") for d in _xlane_demands(t)}
+            if cid not in ids:
+                problems.append("%s: %s has no interface demand %s" % (x["pair"], XLANE_PATHS[pkg], cid))
+    missing_pairs = sorted(set(XL_PAIRS) - seen)
+    if missing_pairs:
+        problems.append("pairs declared but not attached to an interface demand: %s" % missing_pairs)
+    for pkg, idents in sorted(XL_CITED.items()):
+        t = target(pkg)
+        if t is None:
+            problems.append("%s missing" % XLANE_PATHS[pkg])
+            continue
+        text = json.dumps(t, ensure_ascii=False)
+        for ident in idents:
+            if not _xlane_has_id(text, ident):
+                problems.append("cited id %s absent from %s" % (ident, XLANE_PATHS[pkg]))
+    return problems
+
+
+def xlane_report(doc):
+    """The merged-lane record written into the JSON: per counterpart package, the pairs and the cited ids."""
+    out = {}
+    for pkg in XLANE_BUILD_ORDER:
+        if pkg == XLANE_SELF:
+            continue
+        pairs = sorted(k for k, v in XL_PAIRS.items() if v[0] == pkg)
+        cited = sorted(XL_CITED.get(pkg, []))
+        out[pkg] = {"path": XLANE_PATHS[pkg], "state": "MERGED", "pairs": pairs, "ids_cited": cited,
+                    "sha_pinned": False,
+                    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other "
+                             "back; a pin would be circular)" if (pairs or cited) else
+                             "no interface demand between the two packages"}
+    return {"rule": XLANE_BUILD_ORDER_RULE, "build_order": XLANE_BUILD_ORDER, "packages": out}
+
+XL_CITED = {  # ids cited outside the XL pairs (checked to occur in the target JSON)
+    "P1": ["P1-M-21", "P1-M-30"],
+    "P2": ["CAL-P2-02", "CAL-P2-03", "CAL-P2-08"],
+    "P4": ["CR-01", "IT-09", "IT-11", "property_records"],
+    "MP": ["thermal_control"],
+    "RFQ": ["RFQ2-MECH-N04"],
+}
+P4_REF = "the merged P4 framework docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json"
+
+
 EXTERNAL_SOURCES = {
     "EXT-HOWELL-CATALOG": {
         "citation": "J. R. Howell, 'A Catalog of Radiation Heat Transfer Configuration Factors' (online edition), "
@@ -296,8 +480,8 @@ def build_items(h25pm, a92, ans):
     # ---- radiative properties
     I += [
         item("P3-R-01", "ICP upstream-face (Hall-facing) hemispherical emittance",
-             "TBD - requires the selected face material / finish data (PENDING docs/experiments/hall_icp/"
-             "p4_anode_materials/ for metal candidates)", "-", "pending", "ICD ICP-47", None, "TBD", "after-evidence",
+             "TBD - requires the selected face material / finish data and a sourced emittance per candidate and surface "
+             "state (" + P4_REF + " carries no emittance record: TBD there, ID-02 / XL-23)", "-", "pending", "ICD ICP-47", None, "TBD", "after-evidence",
              "P4", ["network", "Q_Hall->ICP"], "icp_eps[<ICP>.up]"),
         item("P3-R-02", "ICP outward-facing surfaces emittance (A9.2 objective: high-emittance outward surfaces)",
              "TBD - requires the selected coating / finish and its temperature capability", "-", "pending",
@@ -307,7 +491,7 @@ def build_items(h25pm, a92, ans):
              "-", "pending", "ICD ICP-07", None, "TBD", "after-evidence", "hardware", ["network"],
              "icp_eps[<ICP>.bore]"),
         item("P3-R-04", "collector emittance", "TBD - requires the collector material (A9.1 A9-03-collector: not "
-             "frozen; PENDING docs/experiments/hall_icp/p4_anode_materials/)", "-", "pending",
+             "frozen; FINAL_COLLECTOR_MATERIAL OPEN in " + P4_REF + "; no emittance record there)", "-", "pending",
              "A9.1 A9-03-collector", None, "TBD", "after-evidence", "P4", ["network"]),
         item("P3-R-05", "H-1 exterior emittances (BN walls, metal, anode, finish)",
              {"eps_BN": P("eps_BN")["value"], "eps_metal": P("eps_metal")["value"],
@@ -455,8 +639,9 @@ def build_items(h25pm, a92, ans):
              "owner decision", "A9.1 UBQ-06", "owner-allocation", "OWNER_GIVEN", "NOW", "owner", ["verification"]),
         item("P3-M-04", "validated continuous-use temperature limits of ICP parts (dielectric, antenna insulation, "
              "collector, feedthrough, match components, carrier interface) and of the H-1 anode",
-             "TBD - requires the selected materials' sourced data (PENDING docs/experiments/hall_icp/"
-             "p4_anode_materials/; owner row 87: no unsourced anode target)", "degC", "pending",
+             "TBD - requires the selected materials' validated continuous-use limits (CR-01 of " + P4_REF + ": "
+             "T_validated,continuous TBD_AFTER_EVIDENCE for every candidate; owner row 87: no unsourced anode target)",
+             "degC", "pending",
              "owner rows 86, 87; ICD ICP-37", None, "TBD", "after-evidence", "P4", ["verification"]),
         item("P3-M-05", "mounting-interface cases (temperature and allowable conducted heat)",
              {"T_mount_degC": [20, 40, 60], "Q_mount_allowable_W": [25, 50, 100]}, "degC; W", "owner answer",
@@ -797,19 +982,22 @@ def build():
         "decision_pins": [{"key": k, "path": p, "sha256": h, "role": r} for k, (p, h, r) in DECISIONS.items()],
         "deliverable_pins": [{"key": k, "path": p, "sha256": h, "role": r} for k, (p, h, r) in DELIVERABLES.items()],
         "referenced_not_pinned": {"paths": REFERENCED_NOT_PINNED, "p1_ids": list(P1_IDS), "p2_ids": list(P2_IDS),
-                                  "rule": "verified deliverables that parallel A9.6 lanes may extend; referenced by id "
+                                  "rule": "merged A9.6 packages that cite P3 back; referenced by id "
                                           "as read at the base commit; tests/test_p3_coupled_thermal.py checks the ids "
                                           "still exist"},
         "never_pinned": NEVER_PINNED,
-        "pending_parallel_lanes": [dict(p, status="PENDING (parallel lane; not read, content never assumed)")
-                                   for p in PENDING_LANES],
+        "merged_cross_lane": xlane_report(None),
         "external_sources": EXTERNAL_SOURCES,
         "heat_terms": {
             "Q_RF/match": {"function": "q_rf_match", "formula": "Q = f_on_module P_line/match,loss + (1 - f_leaving) "
                            "P_delivered; P_delivered = P_forward - P_reflected - P_line/match,loss (A9.2); P_forward is "
                            "never P_plasma", "inputs": ["P3-P2-01", "P3-P2-02", "P3-P2-03", "P3-P2-04", "P3-P2-05"],
                            "optional_breakdown": "antenna ohmic I_ant,rms^2 R_ant,cold (P3-P2-06, P3-P2-07) with a "
-                                                 "consistency flag vs P_delivered"},
+                                                 "consistency flag vs P_delivered",
+                           "upstream_refusal": "a P2 value reported 'REFUSED - ...' (line/match loss model unverified) "
+                                               "or NOT_AVAILABLE raises RefusedInputError (INCOMPLETE_EVIDENCE); it is "
+                                               "never reconstructed from P_net; a declared-bound interval or a string "
+                                               "is not a measured scalar (InputError); pair XL-20"},
             "Q_collector": {"function": "q_collector", "formula": "Q = I_e,coll (2 T_e + max(0, V_s - V_p)) + I_i,coll "
                             "(T_e/2 + max(0, V_p - V_s)) [+ I_e phi_wf + I_i (E_iz - phi_wf) only if the switch is "
                             "INCLUDED]", "source": "EXT-GOEBEL-KATZ-2008 Eq. (4.2-9), (4.2-10), (7.3-47), (7.3-61), "
@@ -876,45 +1064,82 @@ def build():
     return doc
 
 
+def _need(i, frm, what, items, freeze, pairs=(), units="-", status=None):
+    xs = [xref(p) for p in pairs]
+    if xs and len(xs) == 1:
+        units, status = xs[0]["units"], xs[0]["status"]
+    return {"id": i, "from": frm, "what": what, "items": items, "freeze": freeze, "units": units,
+            "status": status, "xref": xs}
+
+
+def _supply(i, to, what, pairs=(), units="-", status=None):
+    xs = [xref(p) for p in pairs]
+    if xs and len(xs) == 1:
+        units, status = xs[0]["units"], xs[0]["status"]
+    return {"id": i, "to": to, "what": what, "units": units, "status": status, "xref": xs}
+
+
 def interface_demands():
+    p1, p2, p4 = XLANE_PATHS["P1"], XLANE_PATHS["P2"], XLANE_PATHS["P4"]
+    mp, rfq = XLANE_PATHS["MP"], XLANE_PATHS["RFQ"]
     return {
         "p3_needs": [
-            {"from": "P1 (docs/experiments/hall_icp/p1_icp_bench/)", "what": "collector ion / electron currents, "
-             "collector potential, body current, Hall I_d / V_d at consistency points, module temperature records",
-             "items": ["P3-P1-01", "P3-P1-02", "P3-P1-03", "P3-P1-07", "P3-P1-08"], "freeze": "after-evidence"},
-            {"from": "P1 (registration at P1-G0)", "what": "plasma potential and T_e at the collector sheath edge, or "
-             "an accepted calorimetric alternative (P3Q-01)", "items": ["P3-P1-04", "P3-P1-05"], "freeze": "P1-G0"},
-            {"from": "P2 (docs/experiments/hall_icp/p2_impedance_map/)", "what": "P_forward, P_reflected, "
-             "P_line/match,loss and its on-module share, P_delivered, antenna current, cold antenna resistance",
-             "items": ["P3-P2-01", "P3-P2-02", "P3-P2-03", "P3-P2-04", "P3-P2-06", "P3-P2-07"],
-             "freeze": "after-evidence (TBD_AFTER_IMPEDANCE_MAP)"},
-            {"from": "hardware (KC-1 / ICP module drawing; H2-1 / H2-7 frozen H-1 geometry)", "what": "standoff, "
-             "aperture, envelope, open-frame fraction, surface-node map, collector position, conductances, emittances",
-             "items": ["P3-G-01..08", "P3-K-01..06", "P3-R-02", "P3-R-03"], "freeze": "LOCK-1"},
-            {"from": "Phase-1 Hall data", "what": "I_beam, mean ion energy, angular current distribution (never "
-             "predicted)", "items": ["P3-H-01", "P3-H-02", "P3-H-03"], "freeze": "after-evidence"},
-            {"from": "P4 (PENDING docs/experiments/hall_icp/p4_anode_materials/)", "what": "validated continuous-use "
-             "limits and emittances of collector / anode candidates", "items": ["P3-M-04", "P3-R-01", "P3-R-04"],
-             "freeze": "after-evidence"},
-            {"from": "facility", "what": "radiative sink temperature measured per run (owner row 131)",
-             "items": ["P3-R-06"], "freeze": "after-evidence"},
-            {"from": "owner", "what": "ICPQ-10 bound choice; P3Q-01; P3Q-02", "items": ["P3-B-01", "P3-B-02",
-                                                                                      "P3-B-03"], "freeze": "LOCK-1"},
+            _need("P3-IF-N01", "P1 " + p1 + " IF-P1-16", "collector ion / electron currents, collector potential, "
+                  "body current, Hall I_d / V_d at consistency points, module temperature records",
+                  ["P3-P1-01", "P3-P1-02", "P3-P1-03", "P3-P1-07", "P3-P1-08"], "after-evidence", ["XL-17"]),
+            _need("P3-IF-N02", "P1 " + p1 + " IF-P1-34 (registration at P1-G0; conditional P1-M-30)",
+                  "plasma potential and T_e at the collector sheath edge, or an accepted calorimetric alternative "
+                  "(P3Q-01)", ["P3-P1-04", "P3-P1-05"], "P1-G0", ["XL-18"]),
+            _need("P3-IF-N03", "P2 " + p2 + " IDP2-12", "location split of P_line/match,loss (on-module / "
+                  "moving-platform share)", ["P3-P2-04"], "after-evidence (TBD_AFTER_IMPEDANCE_MAP)", ["XL-19"]),
+            _need("P3-IF-N04", "P2 " + p2 + " IDP2-20", "P_forward, P_reflected, P_line/match,loss, P_delivered "
+                  "(REFUSED values refused by q_rf_match), antenna current, cold antenna resistance",
+                  ["P3-P2-01", "P3-P2-02", "P3-P2-03", "P3-P2-06", "P3-P2-07"],
+                  "after-evidence (TBD_AFTER_IMPEDANCE_MAP)", ["XL-20"]),
+            _need("P3-IF-N05", "P4 " + p4 + " ID-02", "validated continuous-use limits, conductivities, densities "
+                  "and emittances of collector / anode candidates", ["P3-M-04", "P3-R-01", "P3-R-04"],
+                  "after-evidence", ["XL-23"]),
+            _need("P3-IF-N06", "RFQ v2 " + rfq + " IFD-16 (RFQ2-MECH-N04)", "fabricator continuous-use temperature "
+                  "data of the ICP-part materials", ["P3-M-04"], "after-evidence", ["XL-42"]),
+            _need("P3-IF-N07", "hardware (KC-1 / ICP module drawing; H2-1 / H2-7 frozen H-1 geometry)", "standoff, "
+                  "aperture, envelope, open-frame fraction, surface-node map, collector position, conductances, "
+                  "emittances", ["P3-G-01..08", "P3-K-01..06", "P3-R-02", "P3-R-03"], "LOCK-1", units="m; W/K; -",
+                  status="TBD (hardware design; LOCK-1)"),
+            _need("P3-IF-N08", "Phase-1 Hall data", "I_beam, mean ion energy, angular current distribution (never "
+                  "predicted)", ["P3-H-01", "P3-H-02", "P3-H-03"], "after-evidence", units="A; eV; deg",
+                  status="TBD_AFTER_EVIDENCE (Phase-1 measurements)"),
+            _need("P3-IF-N09", "facility", "radiative sink temperature measured per run (owner row 131)",
+                  ["P3-R-06"], "after-evidence", units="K", status="TBD_AFTER_EVIDENCE (measured per run)"),
+            _need("P3-IF-N10", "owner", "ICPQ-10 bound choice; P3Q-01; P3Q-02", ["P3-B-01", "P3-B-02", "P3-B-03"],
+                  "LOCK-1", units="W; -", status="TBD_OWNER (ICPQ-10, P3Q-01, P3Q-02 OPEN)"),
         ],
         "p3_supplies": [
-            {"to": "ICD ICP-43 (total module heat load)", "what": "the Q_RF/match + Q_collector + Q_plume "
-             "decomposition and the functions that evaluate it once inputs exist"},
-            {"to": "ICD ICP-47 (radiative-view objective)", "what": "view-factor calculator and the parametric "
-             "structure over standoff / aperture / wall / length / open-area fraction"},
-            {"to": "ICD ICP-37 / A9.1 UBQ-06", "what": "node temperatures of the coupled network (once inputs exist) "
-             "for the >= 50 K margin and abort checks; never a PASS by itself"},
-            {"to": "A9-07 / H2 (docs/hardware/h2_a9_revisions/, read-only)", "what": "equivalent heat into H-1 PO / "
-             "BP comparable with the A9-07 allowances (a907_allowance_port)"},
-            {"to": "P1 / P2 instrumentation", "what": "the verification temperature set (P3-P1-07) and the "
-             "calorimetric energy balance that fixes f_leaving (P3-P2-05)"},
-            {"to": "M16 v3 rows thermal_control / icp_neutralizer_head / h1_anode_heat_path", "what": "framework "
-             "status (m16_impact)"},
-            {"to": "system RVM (A9.6 sec. 15; parallel lane)", "what": "thermal rows stay INCOMPLETE_EVIDENCE"},
+            _supply("P3-IF-S01", "ICD ICP-43 (total module heat load)", "the Q_RF/match + Q_collector + Q_plume "
+                    "decomposition and the functions that evaluate it once inputs exist", units="W",
+                    status="DEFINED (functions); values TBD; never PASS"),
+            _supply("P3-IF-S02", "ICD ICP-47 (radiative-view objective)", "view-factor calculator and the parametric "
+                    "structure over standoff / aperture / wall / length / open-area fraction", units="-",
+                    status="DEFINED (functions); geometry TBD at LOCK-1"),
+            _supply("P3-IF-S03", "ICD ICP-37 / A9.1 UBQ-06", "node temperatures of the coupled network (once inputs "
+                    "exist) for the >= 50 K margin and abort checks; never a PASS by itself", units="K",
+                    status="TBD_AFTER_EVIDENCE (ICP_COUPLED_THERMAL UNRESOLVED)"),
+            _supply("P3-IF-S04", "A9-07 / H2 (docs/hardware/h2_a9_revisions/, read-only)", "equivalent heat into H-1 "
+                    "PO / BP comparable with the A9-07 allowances (a907_allowance_port)", units="W",
+                    status="DEFINED (comparison structure); values TBD"),
+            _supply("P3-IF-S05", "P1 " + p1 + " IF-P1-35", "the verification temperature set (P3-P1-07 -> P1-M-21 "
+                    "channels)", ["XL-21"]),
+            _supply("P3-IF-S06", "P2 " + p2 + " IDP2-24", "the calorimetric energy balance that fixes f_leaving "
+                    "(P3-P2-05)", ["XL-22"]),
+            _supply("P3-IF-S07", "P4 " + p4 + " ID-01", "T_operating of anode and collector (coupled; row 86 margin), "
+                    "heat flux and gradients for the P4 CR-01 / CR-05 / CR-06 conditions", ["XL-24"]),
+            _supply("P3-IF-S08", "mass / power v2 " + mp + " MPV2-ID-01", "thermal-hardware mass from the coupled "
+                    "model (radiator / heaters / MLI / heat paths; any active-cooling variant)", ["XL-28"]),
+            _supply("P3-IF-S09", "mass / power v2 " + mp + " MPV2-ID-02", "thermal_control slot power (steady / "
+                    "start-up)", ["XL-29"]),
+            _supply("P3-IF-S10", "M16 v3 rows thermal_control / icp_neutralizer_head / h1_anode_heat_path",
+                    "framework status (m16_impact)", units="-", status="PROPOSED (no readiness change)"),
+            _supply("P3-IF-S11", "system RVM (A9.6 sec. 15; parallel lane fo_a9_6_rvm, not merged in this base)",
+                    "thermal rows stay INCOMPLETE_EVIDENCE", units="-", status="PROPOSED"),
         ],
     }
 
@@ -992,7 +1217,7 @@ def m16_impact(rows):
             ("thermal_control", "coupled H-1 / ICP thermal framework exists (software); thermal closure UNRESOLVED; "
                                 "blocking inputs P3-G/K/R (hardware), P1/P2 data"),
             ("icp_neutralizer_head", "ICP-43 / ICP-47 now have calculators; values TBD; physical ICP not VERIFIED"),
-            ("h1_anode_heat_path", "anode heat path is a network input; ANODE_THERMAL_CLOSURE UNRESOLVED (P4 PENDING)")):
+            ("h1_anode_heat_path", "anode heat path is a network input; ANODE_THERMAL_CLOSURE UNRESOLVED (P4 merged: FINAL_ANODE_MATERIAL OPEN, no validated limit)")):
         out.append({"row": rows[key]["row"], "key": key, "proposed_change": "none to maturity (framework only)",
                     "note": note, "rule": "a row becomes READY / VERIFIED only under the repository's evidence rules; "
                                           "software completeness is not physical verification (A9.6 sec. 16)"})
@@ -1079,11 +1304,19 @@ def render_md(doc):
     ap = doc["a907_allowance_port"]
     L += ["## A9-07 allowance port", "", f"LV-BASE allowances (W; {ap['evidence_class']}): PO {_v(ap['LV-BASE']['PO'])}; "
           f"BP {_v(ap['LV-BASE']['BP'])}. {ap['comparison_rule']}. Status: {ap['status']}. {ap['a9_2_warning']}.", ""]
-    L += ["## (b) Interface demands", "", "P3 needs:", ""]
-    L += [f"- from {d['from']}: {d['what']} ({', '.join(d['items'])}; freeze {d['freeze']})"
+    L += ["## (b) Interface demands", "", "P3 needs:", "", "| id | from | what | items | freeze | units | status | "
+          "pairs |", "|---|---|---|---|---|---|---|---|"]
+    L += [f"| {d['id']} | {d['from']} | {d['what']} | {', '.join(d['items'])} | {d['freeze']} | {d['units']} | "
+          f"{d['status']} | {', '.join(x['pair'] + ' -> ' + x['counterpart'] for x in d['xref']) or '-'} |"
           for d in doc["interface_demands"]["p3_needs"]]
-    L += ["", "P3 supplies:", ""]
-    L += [f"- to {d['to']}: {d['what']}" for d in doc["interface_demands"]["p3_supplies"]]
+    L += ["", "P3 supplies:", "", "| id | to | what | units | status | pairs |", "|---|---|---|---|---|---|"]
+    L += [f"| {d['id']} | {d['to']} | {d['what']} | {d['units']} | {d['status']} | "
+          f"{', '.join(x['pair'] + ' -> ' + x['counterpart'] for x in d['xref']) or '-'} |"
+          for d in doc["interface_demands"]["p3_supplies"]]
+    L += ["", "### Merged cross-lane references", "", doc["merged_cross_lane"]["rule"], "",
+          "| package | path | pairs | ids cited | check |", "|---|---|---|---|---|"]
+    L += [f"| {k} | {v['path']} | {', '.join(v['pairs']) or '-'} | {', '.join(v['ids_cited']) or '-'} | {v['check']} |"
+          for k, v in doc["merged_cross_lane"]["packages"].items()]
     L += ["", "## (c) Owner answers applied", "", "| source | id | applied |", "|---|---|---|"]
     for r in doc["owner_answers_applied"]:
         rid = f"row {r['row']}" if r["kind"] == "owner_row" else r["decision"]
@@ -1101,9 +1334,10 @@ def render_md(doc):
     L += [f"| {m['row']} | {m['key']} | {m['proposed_change']} | {m['note']} |" for m in doc["m16_impact"]]
     L += ["", "## Pins", "", "| key | path | sha256 |", "|---|---|---|"]
     L += [f"| {p['key']} | `{p['path']}` | `{p['sha256']}` |" for p in doc["decision_pins"] + doc["deliverable_pins"]]
-    L += ["", "Referenced, not pinned (parallel A9.6 lanes may extend them): " +
-          ", ".join(f"`{v}`" for v in doc["referenced_not_pinned"]["paths"].values()) + ". Parallel lanes PENDING: " +
-          ", ".join(f"`{p['path']}`" for p in doc["pending_parallel_lanes"]) + ". Never pinned: " +
+    L += ["", "Referenced, not pinned (merged A9.6 packages citing P3 back): " +
+          ", ".join(f"`{v}`" for v in doc["referenced_not_pinned"]["paths"].values()) + ". Merged A9.6 packages cited "
+          "by id: " + ", ".join(f"`{v['path']}`" for v in doc["merged_cross_lane"]["packages"].values()) +
+          ". Never pinned: " +
           ", ".join(f"`{p}`" for p in doc["never_pinned"]) + ".", "", "## External sources", ""]
     for k, v in doc["external_sources"].items():
         L.append(f"- **{k}**: {v['citation']}. {v['access']}. Evidence: {v['evidence_class']}.")
@@ -1132,11 +1366,19 @@ def main(argv=None):
         if bad:
             print("NOT REPRODUCED:", ", ".join(bad))
             return 1
+        probs = xlane_check(json.loads(js))
+        if probs:
+            print("CROSS-LANE REFERENCES BROKEN:", "; ".join(probs))
+            return 1
         print("OK: outputs reproduced")
         return 0
     for p, t in outs:
         p.write_text(t, encoding="utf-8")
     print("wrote", ", ".join(p.name for p, _ in outs))
+    probs = xlane_check(json.loads(js))
+    if probs:
+        print("CROSS-LANE REFERENCES BROKEN (rebuild the counterpart, then this package):", "; ".join(probs))
+        return 1
     return 0
 
 

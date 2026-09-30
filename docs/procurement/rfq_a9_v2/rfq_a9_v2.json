@@ -105,7 +105,7 @@
    "path": "docs/decisions/OD_2026_09_30_A9_5_P1_CLOSURE_OWNER_DECISIONS.md",
    "sha256": "9e49e923328441c1fc82afd3eb64c13d85fc818e8fe534576ada61a16fa525f3"
   },
-  "rule": "implementation-first (A9.6): packages completed for sending; verification deferred to the consolidated campaign; earlier ids kept, additions and re-tags in change_log CL-15..CL-22",
+  "rule": "implementation-first (A9.6): packages completed for sending; verification deferred to the consolidated campaign; earlier ids kept, additions and re-tags in change_log CL-15..CL-23",
   "rfq_only_quote": {
    "type": "a9_6",
    "key": "A9.6",
@@ -339,11 +339,114 @@
   "placement": "photodiode + amplifier + DAQ channel -> RFQ2-THRUST (owner family 'DAQ'; an optical, non-RF diagnostic that must stay independent of the RF impedance chain); optical access / window -> RFQ2-VAC (owner family 'RGA/diagnostic interfaces': a chamber port item)"
  },
  "pending_parallel_lanes": {
-  "P3": "docs/experiments/hall_icp/p3_coupled_thermal/",
-  "P4": "docs/experiments/hall_icp/p4_anode_materials/",
-  "MASS_POWER": "docs/budgets/mass_power_a9_v2/",
-  "XE_ACCOUNTING": "docs/budgets/xe_accounting_a9_v2/",
-  "rule": "A9.6 parallel lanes not in this base: referenced as PENDING <path> only; nothing is read from them"
+  "rule": "none of the seven A9.6 packages is pending any more: P3, P4, mass / power v2 and Xe accounting v2 are merged and cited by id (merged_cross_lane)"
+ },
+ "merged_cross_lane": {
+  "rule": "values flow only P4 -> MP (candidate densities) and XE -> MP (Xe residual and headroom, both readings), and P1 / P2 -> RFQ (ids, item text and statuses of the instrument coverage); every other cross-lane reference is an id checked at build time. Rebuild in the order P4, XE, P1, P2, P3, MP, RFQ; a second pass of any package is a no-op",
+  "build_order": [
+   "P4",
+   "XE",
+   "P1",
+   "P2",
+   "P3",
+   "MP",
+   "RFQ"
+  ],
+  "packages": {
+   "P4": {
+    "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-27"
+    ],
+    "ids_cited": [
+     "CR-04",
+     "FINAL_COLLECTOR_MATERIAL",
+     "IT-17"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   },
+   "XE": {
+    "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-34",
+     "XL-35"
+    ],
+    "ids_cited": [
+     "XV2-09",
+     "XV2-10",
+     "XV2-11",
+     "XV2-20",
+     "XV2-28",
+     "XV2-31",
+     "XV2-32"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   },
+   "P1": {
+    "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-09",
+     "XL-10",
+     "XL-11",
+     "XL-13"
+    ],
+    "ids_cited": [
+     "P1-HW-20",
+     "P1-HW-29",
+     "P1-HW-30",
+     "P1-HW-40",
+     "P1-M-30"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   },
+   "P2": {
+    "path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-12",
+     "XL-14",
+     "XL-15",
+     "XL-16"
+    ],
+    "ids_cited": [],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   },
+   "P3": {
+    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-42"
+    ],
+    "ids_cited": [
+     "P3-M-04",
+     "heat_terms"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   },
+   "MP": {
+    "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+    "state": "MERGED",
+    "pairs": [
+     "XL-40",
+     "XL-41"
+    ],
+    "ids_cited": [
+     "AL-05",
+     "AL-06",
+     "ground_article_only"
+    ],
+    "sha_pinned": false,
+    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other back; a pin would be circular)"
+   }
+  }
  },
  "merged_lanes_read": {
   "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
@@ -16595,10 +16698,16 @@
        "note": "merged package read at build time; refined concurrently by the A9.5 / A9.6 lanes"
       },
       {
-       "type": "pending_lane",
-       "path": "docs/experiments/hall_icp/p4_anode_materials/",
-       "what": "collector / anode candidate-material framework",
-       "note": "parallel lane not in this base; nothing is read from it"
+       "type": "merged_lane",
+       "key": "P4",
+       "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+       "what": "collector / anode candidate-material framework (no material selected; coupon shortlist TBD_OWNER)",
+       "ids": [
+        "IT-17",
+        "CR-04",
+        "FINAL_COLLECTOR_MATERIAL"
+       ],
+       "note": "merged A9.6 package; ids checked at build time, not sha-pinned (it reads this package back)"
       }
      ],
      "evidence_class": null,
@@ -20147,6 +20256,10 @@
    "NP-H1-BUILD": {
     "disposition": "NOT_PROCURED_IN_THIS_RFQ_REVISION",
     "why": "H-1 (H2-1 CI H-1, MC-1) and its Ar gas path / anode plenum (H2-3) are H-1 design / build items outside the six owner RFQ families; procurement route TBD_OWNER (OQ-RFQV2-10; NIR-06)"
+   },
+   "NP-CONDITIONAL-P3Q01": {
+    "disposition": "CONDITIONAL_NOT_PROCURED_TBD_OWNER",
+    "why": "P1-M-30 (sheath-edge plasma potential / T_e at the collector) is recorded only if the owner selects a probe diagnostic under P3Q-01 (merged P3 package); no probe is selected, so no RFQ line is issued in this revision"
    }
   },
   "p1_measurements": [
@@ -20636,6 +20749,13 @@
      }
     ],
     "disposition": "RFQ_LINE"
+   },
+   {
+    "id": "P1-M-30",
+    "what": "plasma potential and electron temperature at the collector sheath edge (conditional)",
+    "status_in_source": "CONDITIONAL (TBD_OWNER P3Q-01)",
+    "rfq_lines": [],
+    "disposition": "NP-CONDITIONAL-P3Q01"
    }
   ],
   "p1_hardware": [
@@ -21609,6 +21729,11 @@
     "id": "CL-22",
     "change": "A9.6 sec. 3 cleanup: stale 'PENDING <P1 / P2 lane>' references replaced by the merged P1 / P2 ids (values stay TBD, freeze gate P1-G0 where P1 registers them); PENDING is now used only for the A9.6 parallel lanes not in this base (P3, P4, mass/power, Xe)",
     "source": "A9.6 sec. 3"
+   },
+   {
+    "id": "CL-23",
+    "change": "A9.6 cross-lane integration (fo_a9_6_cross_lane_integration): the P3, P4, mass / power v2 and Xe accounting v2 packages are merged; their 'PENDING <path>' references are replaced by id citations (interface pairs XL-09..XL-16, XL-27, XL-34, XL-35, XL-40..XL-42; new IFD-18, IFD-19; not-procured disposition NP-CONDITIONAL-P3Q01 for the conditional P1-M-30), checked at build time and never sha-pinned",
+    "source": "A9.6 sec. 5-6, 18"
    }
   ],
   "per_requirement": [
@@ -26342,7 +26467,7 @@
     "P1:P1-HW-36",
     "P1:P1-IT-36",
     "P1:P1-M-27",
-    "PENDING docs/experiments/hall_icp/p4_anode_materials/"
+    "P4:IT-17, CR-04, FINAL_COLLECTOR_MATERIAL (docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json)"
    ],
    "status": "TBD",
    "freeze_point": "P1-G0",
@@ -26540,75 +26665,225 @@
  "interface_demands": [
   {
    "id": "IFD-01",
-   "from": "P1 bench docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json (merged)",
+   "from": "P1 bench docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json IF-P1-03 (merged)",
    "to": "RFQ2-GAS, RFQ2-VAC, RFQ2-HALLEL, RFQ2-THRUST",
-   "quantity": "Ar sweep bounds (F2); gas schematic (P1-HW-12, P1-HW-15, P1-HW-18); gauge ranges (P1-M-16/17); DAQ sample rate / bandwidth (P1-M-26); magnet states (F6); P1-S4 topology (P1-IT-36); I_scale,min (A9.5)",
+   "quantity": "Ar sweep bounds (F2); gas schematic (P1-HW-12, P1-HW-15, P1-HW-18); gauge ranges (P1-M-16/17); DAQ sample rate / bandwidth (P1-M-26); magnet states (F6); P1-S4 topology (P1-IT-36); I_scale,min (A9.5, P1-IT-48)",
    "units": "sccm; Pa; Sa/s; A",
-   "status": "OPEN - values TBD at P1-G0 (ids referenced; nothing filled)"
+   "status": "TBD_AFTER_EVIDENCE (values registered at P1-G0; ids referenced, nothing filled)",
+   "xref": [
+    {
+     "pair": "XL-09",
+     "counterpart": "P1:IF-P1-03",
+     "counterpart_path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "quantity": "P1 readiness / measurement ids and their P1-G0 registrations as RFQ requirement inputs: Ar sweep bounds (F2), gas schematic (P1-HW-12, P1-HW-15, P1-HW-18), gauge ranges (P1-M-16, P1-M-17), DAQ rate (P1-M-26), magnet states (F6), P1-S4 topology (P1-IT-36), I_scale,min (P1-IT-48)",
+     "units": "sccm; Pa; Sa/s; A",
+     "status": "TBD_AFTER_EVIDENCE (values registered at P1-G0; ids referenced, nothing filled)"
+    }
+   ]
   },
   {
    "id": "IFD-02",
    "from": "RFQ2-RF, RFQ2-GAS, RFQ2-HALLEL, RFQ2-THRUST (quotations)",
-   "to": "P1 bench docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "to": "P1 bench docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json IF-P1-33",
    "quantity": "offered capability ranges, calibration uncertainties (A9.5 components), interfaces",
    "units": "W; mg/s; A; -",
-   "status": "OPEN (after quotations)"
+   "status": "TBD_AFTER_EVIDENCE (after quotations; none received; RFQ only, no purchase order)",
+   "xref": [
+    {
+     "pair": "XL-11",
+     "counterpart": "P1:IF-P1-33",
+     "counterpart_path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "quantity": "quoted capability ranges, calibration uncertainties (A9.5 current-channel components) and interfaces of the RFQ2-RF, RFQ2-GAS, RFQ2-HALLEL and RFQ2-THRUST lines",
+     "units": "W; mg/s; A; -",
+     "status": "TBD_AFTER_EVIDENCE (after quotations; none received; RFQ only, no purchase order)"
+    }
+   ]
   },
   {
    "id": "IFD-03",
-   "from": "P2 prep docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json (merged)",
+   "from": "P2 prep docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json IDP2-04 (merged)",
    "to": "RFQ2-RF",
    "quantity": "instrument specifications INS-P2-01..12 (copied into RFQ2-RF-N07..N16); package placement P2Q-02",
    "units": "-",
-   "status": "COPIED (P2 lane refines concurrently; placement TBD_OWNER P2Q-02)"
+   "status": "DEFINED (copied; package placement TBD_OWNER P2Q-02)",
+   "xref": [
+    {
+     "pair": "XL-15",
+     "counterpart": "P2:IDP2-04",
+     "counterpart_path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "quantity": "P2 instrument list INS-P2-01..12 with required specifications as quantities or TBD (copied into RFQ2-RF-N07..N16)",
+     "units": "-",
+     "status": "DEFINED (copied; package placement TBD_OWNER P2Q-02)"
+    }
+   ]
   },
   {
    "id": "IFD-13",
    "from": "RFQ v2 instrument_coverage",
-   "to": "P1 bench and P2 prep packages (their rfq_v2_package / rfq_v2_line fields)",
-   "quantity": "RFQ v2 line id per P1 measurement, P1 hardware item and P2 instrument (replaces their stale pending reference to this package)",
+   "to": "P1 bench IF-P1-04 (hardware_readiness.rfq_v2_package) and P2 prep IDP2-05 (instrument_list.rfq_v2_line)",
+   "quantity": "RFQ v2 line id per P1 measurement, P1 hardware item and P2 instrument; both packages check their cited line sets against it at build time",
    "units": "-",
-   "status": "OFFERED (reconciled by the A9.5 / A9.6 P1 and P2 lanes and the consolidated integration pass)"
+   "status": "DEFINED (line ids reconciled; quotation only, no purchase order)",
+   "xref": [
+    {
+     "pair": "XL-10",
+     "counterpart": "P1:IF-P1-04",
+     "counterpart_path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "quantity": "RFQ v2 line id (or explicit not-procured disposition) per P1 measurement and P1 hardware item (rfq_a9_v2 instrument_coverage); P1 hardware_readiness.rfq_v2_package cites exactly these lines (checked at build time)",
+     "units": "-",
+     "status": "DEFINED (line ids reconciled; quotation only, no purchase order)"
+    },
+    {
+     "pair": "XL-12",
+     "counterpart": "P2:IDP2-05",
+     "counterpart_path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "quantity": "RFQ v2 line id (or explicit not-procured disposition) per P2 instrument (rfq_a9_v2 instrument_coverage); P2 instrument_list.rfq_v2_line cites exactly these lines (checked at build time)",
+     "units": "-",
+     "status": "DEFINED (line ids reconciled; quotation only, no purchase order)"
+    }
+   ]
   },
   {
    "id": "IFD-14",
    "from": "RFQ2-* (supplier datasheets: masses, input powers)",
-   "to": "PENDING docs/budgets/mass_power_a9_v2/",
-   "quantity": "quoted masses and input powers of flight-representative options",
+   "to": "mass / power v2 docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json MPV2-ID-06 / MPV2-ID-07",
+   "quantity": "quoted masses and input powers of flight-representative options; the flight-representative DC-input RF source is not in this revision (NIR-01); RFQ v2 lines are ground / P1 articles without a mass ceiling (mass is recorded, never a flight CBE)",
    "units": "kg; W",
-   "status": "OPEN (after quotations; nothing read from the lane)"
+   "status": "NOT_IN_THIS_REVISION (flight-representative source NIR-01 is a later separate RFQ; RFQ v2 lines are ground / P1 articles; ceilings TBD_OWNER MQ-01)",
+   "xref": [
+    {
+     "pair": "XL-40",
+     "counterpart": "MP:MPV2-ID-06",
+     "counterpart_path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "quantity": "supplier mass fields for flight-representative options (DC-input RF source, local match, ICP module, isolation hardware); ceilings only from owner line allocations under the open MQ-01 reading; no ceiling on GROUND/FACILITY_ONLY lines",
+     "units": "kg",
+     "status": "NOT_IN_THIS_REVISION (flight-representative source NIR-01 is a later separate RFQ; RFQ v2 lines are ground / P1 articles; ceilings TBD_OWNER MQ-01)"
+    },
+    {
+     "pair": "XL-41",
+     "counterpart": "MP:MPV2-ID-07",
+     "counterpart_path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "quantity": "DC-input power and efficiency of the flight-representative RF source over the delivered-power range",
+     "units": "W",
+     "status": "NOT_IN_THIS_REVISION (NIR-01; RF_COMPONENT_RATINGS TBD_AFTER_IMPEDANCE_MAP)"
+    }
+   ]
   },
   {
    "id": "IFD-15",
    "from": "RFQ2-GAS GAS-O02 (if ever activated) and the C1 Xe lines (LATER)",
-   "to": "PENDING docs/budgets/xe_accounting_a9_v2/",
-   "quantity": "mdot_ICP,dedicated (0 in G-REUSE); C1 Xe controller ranges",
-   "units": "mg/s",
-   "status": "RULE (G-REUSE books 0; nothing read from the lane)"
+   "to": "Xe accounting v2 docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json XV2-IF-05",
+   "quantity": "mdot_ICP,dedicated (0 in G-REUSE); C1 Xe controller ranges; MEOP / tank, C1 purge / preheat / ignition flows, flow-class accuracy, filter / getter data once quoted",
+   "units": "bar; mg/s; s; 1",
+   "status": "TBD_AFTER_EVIDENCE (after quotations; none received; RFQ only, no purchase)",
+   "xref": [
+    {
+     "pair": "XL-35",
+     "counterpart": "XE:XV2-IF-05",
+     "counterpart_path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+     "quantity": "MEOP and tank selection, vendor / design-qualified C1 purge, preheat and ignition flows, flow-class accuracy, filter / getter specification, and mdot_ICP,dedicated of GAS-O02 if a dedicated-feed variant is ever activated (G-REUSE books 0)",
+     "units": "bar; mg/s; s; 1",
+     "status": "TBD_AFTER_EVIDENCE (after quotations; none received; RFQ only, no purchase)"
+    }
+   ]
   },
   {
    "id": "IFD-16",
    "from": "RFQ2-MECH (ICP material continuous-use temperature data, RFQ2-MECH-N04)",
-   "to": "PENDING docs/experiments/hall_icp/p3_coupled_thermal/",
-   "quantity": "material limits for the coupled thermal framework",
+   "to": "P3 docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json P3-IF-N06",
+   "quantity": "material limits for the coupled thermal framework (P3-M-04)",
    "units": "K",
-   "status": "OPEN (ICP_COUPLED_THERMAL UNRESOLVED; never PASS)"
+   "status": "TBD_AFTER_EVIDENCE (after quotations; ICP_COUPLED_THERMAL UNRESOLVED; never PASS)",
+   "xref": [
+    {
+     "pair": "XL-42",
+     "counterpart": "P3:P3-IF-N06",
+     "counterpart_path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "quantity": "ICP-part material continuous-use temperature data requested from the fabricator (RFQ2-MECH-N04) as material limits for the coupled thermal framework",
+     "units": "K",
+     "status": "TBD_AFTER_EVIDENCE (after quotations; ICP_COUPLED_THERMAL UNRESOLVED; never PASS)"
+    }
+   ]
   },
   {
    "id": "IFD-17",
-   "from": "PENDING docs/experiments/hall_icp/p4_anode_materials/",
+   "from": "P4 docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json ID-09",
    "to": "RFQ2-MECH (ME-L03, ME-L04, ME-O01)",
    "quantity": "collector / electrode candidate materials (no anode RFQ: FINAL_ANODE_MATERIAL OPEN)",
    "units": "-",
-   "status": "PENDING (nothing read from the lane)"
+   "status": "DEFINED (RFQ2-MECH ME-L03, ME-L04, option ME-O01; coupon shortlist TBD_OWNER P4 IT-17; AO-source hardware NOT_IN_THIS_REVISION NIR-05)",
+   "xref": [
+    {
+     "pair": "XL-27",
+     "counterpart": "P4:ID-09",
+     "counterpart_path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "quantity": "collector / electrode candidate material lots with heat / lot certificates, coatings, AO-source access; no anode RFQ while FINAL_ANODE_MATERIAL is OPEN (NIR-03)",
+     "units": "-",
+     "status": "DEFINED (RFQ2-MECH ME-L03, ME-L04, option ME-O01; coupon shortlist TBD_OWNER P4 IT-17; AO-source hardware NOT_IN_THIS_REVISION NIR-05)"
+    }
+   ]
   },
   {
    "id": "IFD-04",
-   "from": "P2 impedance map (after P1 stable plasma)",
+   "from": "P2 impedance map (after P1 stable plasma) docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json IDP2-23",
    "to": "RFQ2-RF, RFQ2-VAC, CIF-C01",
    "quantity": "Z_antenna = R + jX envelope -> component ratings (generator, coupler, coax, connectors, matching elements, feedthroughs, dummy load)",
    "units": "ohm; W; V; A",
-   "status": "TBD_AFTER_IMPEDANCE_MAP"
+   "status": "TBD_AFTER_IMPEDANCE_MAP (owning stage P2 hot map after the P1 handoff)",
+   "xref": [
+    {
+     "pair": "XL-16",
+     "counterpart": "P2:IDP2-23",
+     "counterpart_path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "quantity": "Z_antenna = R + jX envelope from the P2 hot map -> component ratings (generator, coupler, coax, connectors, matching elements, feedthroughs, dummy load)",
+     "units": "ohm; W; V; A",
+     "status": "TBD_AFTER_IMPEDANCE_MAP (owning stage P2 hot map after the P1 handoff)"
+    }
+   ]
+  },
+  {
+   "id": "IFD-18",
+   "from": "P1 bench docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json IF-P1-24 and P2 prep docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json IDP2-18",
+   "to": "RFQ2-THRUST, RFQ2-VAC, RFQ2-HALLEL (TH-L07, TH-L08, VAC-L07, VAC-L03, HE-L04, option HE-O02)",
+   "quantity": "A9.4 procurement items: photodiode + amplifier + DAQ channel and optical access (P2Q-05); ICP body / collector isolation >= 525 V design withstand with 1.05 kV DC / 60 s initial DWV, DWV tester as option (P1Q-14)",
+   "units": "V; s; -",
+   "status": "DEFINED (recorded in RFQ v2 as TH-L07, TH-L08, VAC-L07, VAC-L03, HE-L04 and option HE-O02; quotation only)",
+   "xref": [
+    {
+     "pair": "XL-13",
+     "counterpart": "P1:IF-P1-24",
+     "counterpart_path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "quantity": "A9.4 procurement items: photodiode, optical access / window, amplifier, DAQ channel (P2Q-05); >= 525 V design withstand and 1.05 kV DC / 60 s initial DWV on the ICP body / collector isolation and feedthrough lines, DWV tester as option (P1Q-14)",
+     "units": "V; s",
+     "status": "DEFINED (recorded in RFQ v2 as TH-L07, TH-L08, VAC-L07, VAC-L03, HE-L04 and option HE-O02; quotation only)"
+    },
+    {
+     "pair": "XL-14",
+     "counterpart": "P2:IDP2-18",
+     "counterpart_path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "quantity": "INS-P2-10 photodiode, optical access / window, amplifier and DAQ channel for the P1_NEEDED / P2 preparation instrumentation quote (A9.4 P2Q-05)",
+     "units": "-",
+     "status": "DEFINED (recorded in RFQ v2 as TH-L07, TH-L08 and VAC-L07; quotation only)"
+    }
+   ]
+  },
+  {
+   "id": "IFD-19",
+   "from": "Xe accounting v2 docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json XV2-IF-04",
+   "to": "RFQ2-GAS (later Xe lines)",
+   "quantity": "Xe tank ranges, C1 FCU classes, ICP dedicated-feed controller as option only: recorded for the later Xe lines; no Xe tank line and no flight C1 hardware in this revision (NIR-04); GAS-O02 option only",
+   "units": "kg; l; mg/s",
+   "status": "NOT_IN_THIS_REVISION (no Xe tank line; flight C1 hardware NIR-04; dedicated-feed controller option GAS-O02 only; RFQ only, no purchase)",
+   "xref": [
+    {
+     "pair": "XL-34",
+     "counterpart": "XE:XV2-IF-04",
+     "counterpart_path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+     "quantity": "Xe tank ranges (loaded 2.0-10.2 kg across both readings, V_min per MEOP axis at 323 K), C1 steady FCU 0.05-0.2 mg/s class, C1 start FCU FS 1.0 mg/s (conditional, row 125), ICP dedicated-feed controller as an option line only (A9.3 OQ-RFQ-10)",
+     "units": "kg; l; mg/s",
+     "status": "NOT_IN_THIS_REVISION (no Xe tank line; flight C1 hardware NIR-04; dedicated-feed controller option GAS-O02 only; RFQ only, no purchase)"
+    }
+   ]
   },
   {
    "id": "IFD-05",
@@ -27896,7 +28171,7 @@
    "v1 reference_data (web-track catalogue records, REFERENCE ONLY) and the R5 facility list (file order)",
    "web-track source register (docs/procurement/web_track_v1/source_register_v1.json, pinned by sha256): URL and access date only, for carried reference entries whose v1 record holds '-' (basis per entry in provenance_display); no datum is taken from it",
    "v1 do-not-purchase banner wording (extended by the A9.3 dispatch statement)",
-   "the verified RFQ v2 (fo_a9_rfq_v2_split + fo_a9_4_incorporation) as the base of the A9.6 completion: every earlier id kept; additions and re-tags recorded in change_log CL-15..CL-22"
+   "the verified RFQ v2 (fo_a9_rfq_v2_split + fo_a9_4_incorporation) as the base of the A9.6 completion: every earlier id kept; additions and re-tags recorded in change_log CL-15..CL-23"
   ],
   "not_reused": [
    "the nine-family package split (replaced by the six owner families + RFQ2-CIF, A9.3 OQ-RFQ-07)",
@@ -27961,7 +28236,7 @@
    "key": "thermal_control",
    "name": "thermal control",
    "packages": "RFQ2-MECH",
-   "how_touched": "ICP material temperature data; ICP_COUPLED_THERMAL stays UNRESOLVED (no PASS); coupled thermal framework PENDING docs/experiments/hall_icp/p3_coupled_thermal/",
+   "how_touched": "ICP material temperature data; ICP_COUPLED_THERMAL stays UNRESOLVED (no PASS); coupled thermal framework merged (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json; inputs TBD, material limits pair XL-42)",
    "proposed_procurement_status": "RFQ_V2_SPEC_READY_QUOTATION_ONLY (P1_NEEDED subset authorized by A9.4 to be sent for quotation by the owner / procurement; no purchase order, advance payment or binding commitment; H3 gate)",
    "note": "proposal only; M16 v3 is not edited by this lane"
   },
@@ -28006,7 +28281,7 @@
    "key": "h1_anode_material",
    "name": "H-1 anode material (design-representative / flight)",
    "packages": "none",
-   "how_touched": "no anode RFQ (A9.2 ANODE_BASELINE OPEN; NIR-03); materials framework PENDING docs/experiments/hall_icp/p4_anode_materials/",
+   "how_touched": "no anode RFQ (A9.2 ANODE_BASELINE OPEN; NIR-03); materials framework merged (docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json; FINAL_ANODE_MATERIAL OPEN)",
    "proposed_procurement_status": "NO_RFQ (design blocker; A9.2)",
    "note": "proposal only; M16 v3 is not edited by this lane"
   },
