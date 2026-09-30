@@ -531,9 +531,10 @@
     "vi_probe",
     "loss_bounds",
     "cold_references",
-    "antenna_current_probe"
+    "antenna_current_probe",
+    "loss_verification"
    ],
-   "description": "schema 'p2_calibration_set_v1': power_sensors {id: {CF_fwd, CF_ref, certificate}}; coupler {cal_id, plane RP-CPL, phase_calibrated, e00, e11, e10e01}; two_ports {line (RP-CPL->RP-MIN), match_states {tuning_state_id: two-port RP-MIN->RP-ANT}} with S11, S12, S21, S22, cal_id, phase_calibrated; vi_probe {cal_id, phase_calibrated, k_V, k_I, fixture_abcd, fixture_from_plane RP-VI, fixture_to_plane RP-ANT, amplitude_convention}; loss_bounds {id: {loss_fraction_max, source, evidence_class}}; cold_references {id: {R_cold_ohm, source_record_id, source_phase, unlit_verification, evidence_class, antenna_temperature_K} with source_phase in CAL-P2-08_VNA_UNPOWERED | COLD_ANTENNA_POWERED_UNLIT and a verified-unlit unlit_verification (cold_reference_from_reduced() builds it from a reduced powered-unlit record)}; antenna_current_probe {cal_id, k_mag, certificate} | null"
+   "description": "schema 'p2_calibration_set_v1': power_sensors {id: {CF_fwd, CF_ref, certificate}}; coupler {cal_id, plane RP-CPL, phase_calibrated, e00, e11, e10e01}; two_ports {line (RP-CPL->RP-MIN), match_states {tuning_state_id: two-port RP-MIN->RP-ANT}} with S11, S12, S21, S22, cal_id, phase_calibrated (+ positions for every match state: the element positions it was characterized at); vi_probe {cal_id, phase_calibrated, k_V, k_I, fixture_abcd, fixture_from_plane RP-VI, fixture_to_plane RP-ANT, amplitude_convention}; loss_bounds {id: {loss_fraction_max, source, evidence_class, verification}}; cold_references {id: {R_cold_ohm, source_record_id, source_phase, unlit_verification, evidence_class, antenna_temperature_K} with source_phase in CAL-P2-08_VNA_UNPOWERED | COLD_ANTENNA_POWERED_UNLIT and a verified-unlit unlit_verification (cold_reference_from_reduced() builds it from a reduced powered-unlit record)}; antenna_current_probe {cal_id, k_mag, certificate} | null; loss_verification {verification_id, status, method, evidence_record_ids, tuning_states, data_class} | null (status LOSS_MODEL_VERIFIED required for a reconstructed P_delivered; each loss bound carries 'verification' of the same form)"
   }
  }
 }

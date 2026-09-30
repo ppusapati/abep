@@ -132,6 +132,18 @@
    "path": "docs/decisions/OD_2026_09_30_A9_5_P1_CLOSURE_OWNER_DECISIONS.md",
    "sha256": "9e49e923328441c1fc82afd3eb64c13d85fc818e8fe534576ada61a16fa525f3",
    "what": "A9.5 (verbatim)"
+  },
+  {
+   "key": "A96",
+   "path": "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json",
+   "sha256": "d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327",
+   "what": "A9.6 implementation-first directive (machine-readable)"
+  },
+  {
+   "key": "A96MD",
+   "path": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md",
+   "sha256": "c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634",
+   "what": "A9.6 (verbatim; sec. 9 and 14 bind the framework)"
   }
  ],
  "deliverable_pins": [
@@ -1912,7 +1924,8 @@
    "vi_probe",
    "loss_bounds",
    "cold_references",
-   "antenna_current_probe"
+   "antenna_current_probe",
+   "loss_verification"
   ],
   "planes": [
    "RP-GEN",
@@ -1944,7 +1957,8 @@
    "PlasmaStateError (SequenceError)": "lit plasma in a DUMMY_LOAD / COLD_ANTENNA_POWERED_UNLIT record, lit/mode inconsistent or lit not boolean, powered-unlit record without gas off (gas null, both mdot = 0, p_chamber logged) or without the optical unlit verification, a COLD_ANTENNA_POWERED_UNLIT / HOT_MAP record without the simultaneous photodiode, reflected-power, antenna-current, collector-response and pressure records or without the threshold basis, a HOT_MAP mode that differs from the photodiode classification, cold reference not from a verified-unlit source",
    "UncertainPlasmaStateError (PlasmaStateError)": "plasma state UNCERTAIN (A9.4 P2Q-05): optical UNLIT with electrical evidence of ignition / mode transition, lost line of sight, saturated photodiode, or lit without an E/H assignment; never a cold reference or map point without re-classification",
    "IgnitionDetectedError (PlasmaStateError)": "powered-unlit record whose optical signal reached the unlit threshold of the P1 registered procedure (abort and flag, S-08)",
-   "RecordError": "malformed or non-finite values, P_reflected > P_forward, singular transforms, missing nested sub-fields, HOT_MAP without factors.gas; mismatch envelope mixing data classes / evidence statuses or evidence tags"
+   "RecordError": "malformed or non-finite values, P_reflected > P_forward, singular transforms, missing nested sub-fields, HOT_MAP without factors.gas; mismatch envelope mixing data classes / evidence statuses or evidence tags; a declared tuning state without logged element positions, or logged positions differing from the characterized state (A9.6)",
+   "MixedEvidenceError (RecordError)": "record and calibration set of different data classes, or a loss verification / cold reference of the other class (A9.6 sec. 14)"
   },
   "evidence_tags": [
    "ENGINEERING_ONLY_NON_SCORING (A9.3 OQ-RFQ-02: Ar)",
@@ -1963,7 +1977,7 @@
   "outputs": [
    "at_RP_CPL: P_forward, P_reflected, P_net, |Gamma| (powers and complex), VSWR",
    "Z_antenna per method at RP-ANT (R, X), primary method, method difference",
-   "P_line/match,loss, P_delivered, match/line efficiency (or TBD / declared-bound interval)",
+   "P_line/match,loss, P_delivered, match/line efficiency (or TBD / declared-bound interval) - only with a LOSS_MODEL_VERIFIED loss verification; otherwise REFUSED strings and loss_status UNVERIFIED (A9.6 sec. 14)",
    "antenna-current cross-check, resistance split (reconstructed; its P_delivered_x_Rsplit_fraction_W is a diagnostic, never P_plasma evidence for any gate)",
    "unlit_verification of powered-unlit records (state_class UNLIT, A9.4 P2Q-05); plasma_state_classification of HOT_MAP records (UNLIT / E_MODE / H_MODE; UNCERTAIN refused); classify_plasma_state(); cold_reference_from_reduced() for R_cold entries",
    "evidence_tag per record (from factors.gas / engineering_control; Ar and OQ-VI-05 records are non-scoring)",
@@ -3902,6 +3916,290 @@
    "evidence_class": "assumed",
    "status": "PROPOSED",
    "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "FW-01",
+   "name": "Touchstone ingestion rule",
+   "value": "Touchstone 1.1 .s1p / .s2p, S-parameters only; every option-line field explicit (spec defaults applied only when allowed AND recorded); ASCII; increasing frequency; 2-port order N11 N21 N12 N22; file sha256 recorded",
+   "units": "-",
+   "basis": "A9.6 sec. 9 'S-parameter data'",
+   "source": [
+    "REF-TOUCHSTONE11"
+   ],
+   "evidence_class": "assumed",
+   "status": "DEFINED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "FW-02",
+   "name": "calibration two-ports from stored S-parameter sets",
+   "value": "exact drive-frequency point only (float tolerance FREQ_MATCH_RTOL); Z0 must equal the file reference R; no interpolation, no renormalization inside the reducer",
+   "units": "-",
+   "basis": "A9.6 sec. 9",
+   "source": [
+    "this package CAL-P2-02/03"
+   ],
+   "evidence_class": "assumed",
+   "status": "DEFINED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "FW-03",
+   "name": "float-representation tolerance for frequency matching",
+   "value": 1e-12,
+   "units": "relative",
+   "basis": "numerical convention (not a physical quantity)",
+   "source": [
+    "p2_framework.FREQ_MATCH_RTOL"
+   ],
+   "evidence_class": "assumed",
+   "status": "DEFINED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "FW-04",
+   "name": "one-port SOL error terms and correction",
+   "value": "three-term model, >= 3 known standards with definition sources, least squares for > 3",
+   "units": "-",
+   "basis": "A9.6 sec. 9 'VNA calibration'",
+   "source": [
+    "REF-WALKER2023",
+    "REF-AN1287-3"
+   ],
+   "evidence_class": "assumed",
+   "status": "DEFINED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "FW-05",
+   "name": "coupler power factors and scalar |Gamma| bounds",
+   "value": "CF = 10^((C + L)/10) / K (K = indicated / incident); worst-case one-port error E_D + |G|^2 E_S + |G| |1 - E_RT|",
+   "units": "-",
+   "basis": "A9.6 sec. 9 'directional-coupler measurements'",
+   "source": [
+    "REF-AN1287-3"
+   ],
+   "evidence_class": "assumed",
+   "status": "DEFINED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "FW-06",
+   "name": "V/I calibration on a known load",
+   "value": "k_V / k_I = Z_known I_raw / V_raw; |k_I|^2 = P_known / (c R_known |I_raw|^2), c = 1/2 peak or 1 rms; phase of k_I declared 0",
+   "units": "-",
+   "basis": "A9.6 sec. 9 'V/I RF measurements' (closed form from Z = V/I and P = c Re(V I*))",
+   "source": [
+    "this package CAL-P2-05/15"
+   ],
+   "evidence_class": "model-derived",
+   "status": "DEFINED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "FW-07",
+   "name": "local-match state logging rule",
+   "value": "a record declaring a tuning state logs its element positions; they must equal the positions logged when that state was characterized; otherwise refused",
+   "units": "-",
+   "basis": "A9.6 sec. 9 'local match settings'",
+   "source": [
+    "this package CAL-P2-03/04"
+   ],
+   "evidence_class": "assumed",
+   "status": "DEFINED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "FW-08",
+   "name": "line / match loss verification rule (form)",
+   "value": "eta_meas = P_ref_load / P_net vs eta_pred; |eta_meas - eta_pred| / u_c <= k -> LOSS_MODEL_VERIFIED; otherwise LOSS_MODEL_INCONSISTENT; missing u -> NOT_EVALUATED; P_delivered reconstructed only when VERIFIED",
+   "units": "-",
+   "basis": "A9.6 sec. 14 'unverified line loss'",
+   "source": [
+    "this package CAL-P2-09/10",
+    "UB-RF-08"
+   ],
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "FW-09",
+   "name": "coverage factor k of the loss verification",
+   "value": "TBD - requires the owner-frozen value (LOCK-2; the UB-RF-08 coupler-vs-calorimetry k_x = 2 is a candidate, not adopted here)",
+   "units": "-",
+   "basis": "LOCK-2",
+   "source": [
+    "UB-RF-08"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "FW-10",
+   "name": "E/H transition criteria form",
+   "value": "TBD - requires the owner answer to P2Q-09 (absolute step or k x combined step uncertainty; both implemented side by side)",
+   "units": "-",
+   "basis": "HM-R06",
+   "source": [
+    "P2Q-09",
+    "HM-R06"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "FW-11",
+   "name": "E/H transition thresholds",
+   "value": "TBD - requires the P1 photodiode / reflected-power / antenna-current records (IF-P1-23) and their step uncertainties; frozen before the P2 map",
+   "units": "V; W; A",
+   "basis": "HM-R06, HM-R15",
+   "source": [
+    "HM-R06"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "FW-12",
+   "name": "up / down hysteresis agreement rule",
+   "value": "TBD - requires the owner answer to P2Q-03; hysteresis() reports widths in P_forward and P_delivered without judging",
+   "units": "-",
+   "basis": "HM-R05",
+   "source": [
+    "P2Q-03",
+    "HM-R05"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1"
+  },
+  {
+   "id": "FW-13",
+   "name": "uncertainty propagation methods",
+   "value": "GUM law of propagation (analytic or numerical Jacobian) and seeded Monte Carlo; complex quantities via real and imaginary parts",
+   "units": "-",
+   "basis": "A9.6 sec. 9",
+   "source": [
+    "REF-GUM2008",
+    "REF-JCGM101",
+    "REF-JCGM102"
+   ],
+   "evidence_class": "assumed",
+   "status": "DEFINED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "FW-14",
+   "name": "numerical-derivative step as a fraction of u(x_i)",
+   "value": 0.001,
+   "units": "-",
+   "basis": "numerical convention (not a physical quantity); checked against analytic derivatives in the tests",
+   "source": [
+    "p2_framework.STEP_FRACTION_OF_U"
+   ],
+   "evidence_class": "assumed",
+   "status": "DEFINED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "FW-15",
+   "name": "Monte Carlo trial count and seed per campaign",
+   "value": "TBD - requires the campaign declaration (fixed M or the JCGM 101 7.9 adaptive procedure) before the map is reduced",
+   "units": "-",
+   "basis": "REF-JCGM101 7.2",
+   "source": [
+    "REF-JCGM101"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-2"
+  },
+  {
+   "id": "FW-16",
+   "name": "impedance-map storage format",
+   "value": "p2_impedance_map_v1 (p2_impedance_map_schema_v1.json): canonical JSON with content sha256, excluded records preserved with refusal class and reason, rating_status fixed TBD_AFTER_IMPEDANCE_MAP",
+   "units": "-",
+   "basis": "A9.6 sec. 9 'impedance-map storage'",
+   "source": [
+    "this package"
+   ],
+   "evidence_class": "assumed",
+   "status": "DEFINED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "FW-17",
+   "name": "rating-derivation structure",
+   "value": "candidate minimum = owner margin x complete measured envelope maximum, status CANDIDATE_FOR_OWNER_SELECTION; otherwise TBD_AFTER_EVIDENCE / TBD_OWNER; RF_COMPONENT_RATINGS stays TBD_AFTER_IMPEDANCE_MAP",
+   "units": "-",
+   "basis": "A9.6 sec. 9 'rating derivation'; A9.2 rf_500W",
+   "source": [
+    {
+     "kind": "A9.2",
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "decision": "rf_500W"
+    }
+   ],
+   "evidence_class": "owner-allocation",
+   "status": "DEFINED",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "FW-18",
+   "name": "k_RF (antenna-circuit rated voltage / V_ant,peak)",
+   "value": "TBD - requires the owner answer to ICPQ-11 (TBD_OWNER)",
+   "units": "-",
+   "basis": "ICP-44",
+   "source": [
+    "ICPQ-11"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "FW-19",
+   "name": "ICP module heat-load bound (ICP-43)",
+   "value": "TBD - requires the owner answer to ICPQ-10 (TBD_OWNER; both alternatives carried side by side in framework.heat_load_alternatives)",
+   "units": "W",
+   "basis": "ICP-43",
+   "source": [
+    "ICPQ-10"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "FW-20",
+   "name": "rating margins of the other RF components",
+   "value": "TBD - requires the owner answer to P2Q-10 (TBD_OWNER)",
+   "units": "-",
+   "basis": "A9.2 rf_500W",
+   "source": [
+    "P2Q-10"
+   ],
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "after-evidence"
+  },
+  {
+   "id": "FW-21",
+   "name": "P1 stable-region factor bounds for OUT_OF_DOMAIN labelling",
+   "value": "TBD - requires the P1 hand-over record (IF-P1-01)",
+   "units": "W; mg/s; Pa; V; A",
+   "basis": "HM-R01",
+   "source": [
+    "IDP2-01"
+   ],
+   "evidence_class": null,
+   "status": "PENDING",
+   "freeze_point": "after-evidence"
   }
  ],
  "interface_demands": [
@@ -4030,6 +4328,34 @@
    "quantity": "INS-P2-10 photodiode, optical access / window, amplifier and DAQ channel for the P1_NEEDED / P2 preparation instrumentation quote (A9.4 P2Q-05)",
    "units": "-",
    "status": "RECORDED in RFQ v2 as TH-L07, TH-L08 and VAC-L07 (quotation only)"
+  },
+  {
+   "id": "IDP2-19",
+   "direction": "P1 -> P2",
+   "quantity": "Touchstone (.s2p / .s1p) files with calibration ids and certificates: line + feedthrough (S-02), every local-match tuning state with its logged element positions (S-03), cold antenna (S-06), SOL standards' definitions (S-01)",
+   "units": "-",
+   "status": "PENDING (no measurement yet; P1 bench hardware NOT_PROCURED)"
+  },
+  {
+   "id": "IDP2-20",
+   "direction": "P2 -> P3 coupled thermal (PENDING docs/experiments/hall_icp/p3_coupled_thermal/)",
+   "quantity": "P_line/match,loss envelope (verified-loss records only) and P_delivered envelope as Q_RF/match inputs",
+   "units": "W",
+   "status": "LATER (after the hot map); coupled thermal stays UNRESOLVED"
+  },
+  {
+   "id": "IDP2-21",
+   "direction": "P2 -> mass / power (PENDING docs/budgets/mass_power_a9_v2/)",
+   "quantity": "measured P_forward envelope at RP-CPL for generator sizing (a laboratory quantity; never P_bus evidence)",
+   "units": "W",
+   "status": "LATER"
+  },
+  {
+   "id": "IDP2-22",
+   "direction": "owner -> P2",
+   "quantity": "ICPQ-10 (heat-load bound alternative), ICPQ-11 (k_RF), P2Q-10 (component margins), P2Q-09 (E/H criteria form), P2Q-03 (agreement rule), loss-check k (FW-09)",
+   "units": "-",
+   "status": "OPEN (TBD_OWNER; rating_structure and detect_eh_transitions take them as explicit inputs)"
   }
  ],
  "owner_answers_applied": [
@@ -4412,6 +4738,51 @@
     "decision": "execution"
    },
    "how": "carried A9.4 minors fixed ('fix all the issues'): INS-P2-10 cites A9.4 P2Q-05 as source with evidence class owner-stated; every instrument maps to its RFQ v2 line ids or states that no line exists (instrument_list.rfq_v2_line); stale P1 / RFQ v2 PENDING references replaced by merged ids (merged_ids_cited, checked at build time); P1Q-15 / P1Q-16 change no P2 item"
+  },
+  {
+   "ref": {
+    "kind": "A9.6",
+    "path": "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json",
+    "sha256": "d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327",
+    "decision": "sec. 9"
+   },
+   "how": "P2 framework implemented for later data ingestion (framework.capabilities: all 16 listed items mapped to functions and tests); unknown numbers TBD_AFTER_EVIDENCE"
+  },
+  {
+   "ref": {
+    "kind": "A9.6",
+    "path": "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json",
+    "sha256": "d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327",
+    "decision": "sec. 14"
+   },
+   "how": "fail-closed behaviour (framework.fail_closed); P1-only items stated as such"
+  },
+  {
+   "ref": {
+    "kind": "A9.6",
+    "path": "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json",
+    "sha256": "d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327",
+    "decision": "sec. 5"
+   },
+   "how": "RF_COMPONENT_RATINGS = TBD_AFTER_IMPEDANCE_MAP kept; rating_structure produces candidates for owner selection only, never a rating; LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT kept (local-match state logging)"
+  },
+  {
+   "ref": {
+    "kind": "A9.6",
+    "path": "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json",
+    "sha256": "d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327",
+    "decision": "sec. 7"
+   },
+   "how": "ICPQ-10, ICPQ-11, P2Q-03, P2Q-09 stay open (TBD_OWNER inputs); ICPQ-10 alternatives carried side by side; no answer selected"
+  },
+  {
+   "ref": {
+    "kind": "A9.6",
+    "path": "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json",
+    "sha256": "d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327",
+    "decision": "sec. 17"
+   },
+   "how": "hygiene only: own tests (tests/test_p2_impedance_prep.py, tests/test_p2_impedance_framework.py) and builder --check; formal verification deferred to fo_a9_6_consolidated_verification"
   }
  ],
  "open_owner_questions": [
@@ -4462,6 +4833,12 @@
    "question": "Which recorded signals and step criteria constitute the 'electrical evidence of an ignition / mode transition' that turns an optically UNLIT record into UNCERTAIN (A9.4 P2Q-05): the HM-R06 indicators (step in reflected power / |Gamma| at fixed tuning, antenna-current step, collector / current-path response step, pressure step) with the same declared multiple of the combined uncertainty?",
    "proposed_answer": "yes (PROPOSED): reuse the HM-R06 indicator set; form frozen at LOCK-1, multiple at LOCK-2, before the P2 map; each record states the basis (electrical_indicator_basis)",
    "needed_by": "LOCK-1"
+  },
+  {
+   "id": "P2Q-10",
+   "question": "Rating margin policy for the RF components other than the antenna-circuit voltage (ICPQ-11): generator forward power, coupler / sensors, coax and connectors, vacuum feedthrough, local-match elements - one factor per component class applied to the complete measured P2 envelope maximum?",
+   "proposed_answer": "owner call; no value proposed (framework input FW-20, TBD_OWNER)",
+   "needed_by": "before any RF component rating is selected (after the complete P2 map)"
   }
  ],
  "historical_reuse": [
@@ -4500,17 +4877,17 @@
   {
    "row": 15,
    "key": "sensors_diagnostics",
-   "how": "supplies PROPOSED RF calibration procedures CAL-P2-01..15 and the P2 channel list toward the row's S1A-C4 blocker; state unchanged (BLOCKED; procedures not frozen, instruments not procured)"
+   "how": "supplies PROPOSED RF calibration procedures CAL-P2-01..15, the P2 channel list toward the row's S1A-C4 blocker and (A9.6) the ingestion software for VNA / coupler / V/I calibration data (Touchstone, SOL, coupler and V/I corrections); state unchanged (BLOCKED; procedures not frozen, instruments not procured; software is not hardware verification)"
   },
   {
    "row": 18,
    "key": "icp_neutralizer_head",
-   "how": "defines how Z_antenna and the antenna-terminal V/I envelope (ICP-44 input) will be measured; state unchanged (BLOCKED on ICP module design)"
+   "how": "defines how Z_antenna and the antenna-terminal V/I envelope (ICP-44 input) will be measured and (A9.6) implements its reduction, uncertainty propagation and map storage; state unchanged (BLOCKED on ICP module design; the physical ICP is not verified by software)"
   },
   {
    "row": 19,
    "key": "flight_rf_chain",
-   "how": "methodology and data model for the analysis_test_needed 'ICP impedance map'; ratings stay TBD_AFTER_IMPEDANCE_MAP; state unchanged"
+   "how": "methodology, data model and (A9.6) the rating-derivation structure for the analysis_test_needed 'ICP impedance map'; ratings stay TBD_AFTER_IMPEDANCE_MAP; state unchanged"
   },
   {
    "row": 17,
@@ -4778,6 +5155,452 @@
    "evidence_class": "model-derived"
   }
  ],
+ "framework": {
+  "follow_on": "fo_a9_6_p2_framework_completion",
+  "trigger": "T_A9_6_P2_FRAMEWORK_COMPLETION",
+  "base_commit": "1d67f99f88007982eff77670b64c6eb7c595bccd",
+  "decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json",
+   "sha256": "d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327"
+  },
+  "verbatim": {
+   "path": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md",
+   "sha256": "c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634"
+  },
+  "status": "IMPLEMENTED_FRAMEWORK_NOT_RUN_ON_DATA (no measured record exists; physical ICP / RF chain unverified; verification deferred to fo_a9_6_consolidated_verification)",
+  "module": "docs/experiments/hall_icp/p2_impedance_map/p2_framework.py",
+  "test": "tests/test_p2_impedance_framework.py",
+  "map_schema_file": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_map_schema_v1.json",
+  "capabilities": [
+   {
+    "a9_6_sec9_item": "reference planes",
+    "implementation": [
+     "reference_planes (RP-GEN, RP-CPL, RP-MIN, RP-ANT, RP-VI)",
+     "p2_framework.check_plane_chain",
+     "p2_framework.PLANE_ORDER"
+    ],
+    "data_needed": "planes' physical locations TBD (module drawings)",
+    "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
+   },
+   {
+    "a9_6_sec9_item": "VNA calibration",
+    "implementation": [
+     "p2_framework.sol_error_terms",
+     "p2_framework.sol_correct",
+     "p2_framework.coupler_error_model"
+    ],
+    "data_needed": "VNA / kit certificates and standard definitions (CAL-P2-01, MS-P2-02)",
+    "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
+   },
+   {
+    "a9_6_sec9_item": "directional-coupler measurements",
+    "implementation": [
+     "p2_framework.coupler_power_factor",
+     "p2_framework.term_from_dB",
+     "p2_framework.tracking_term_from_dB",
+     "p2_framework.reflection_worst_case_error",
+     "p2_framework.scalar_gamma_bounds"
+    ],
+    "data_needed": "coupler / sensor certificates; D_min at LOCK-2 (CAL-P2-07)",
+    "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
+   },
+   {
+    "a9_6_sec9_item": "V/I RF measurements",
+    "implementation": [
+     "p2_framework.k_from_mag_phase",
+     "p2_framework.vi_calibration_from_known_load",
+     "p2_framework.vi_power_and_impedance",
+     "p2_impedance_reducer.reduce_record (method vi_probe)"
+    ],
+    "data_needed": "probe selection and CAL-P2-05/06/15 data",
+    "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
+   },
+   {
+    "a9_6_sec9_item": "local match settings",
+    "implementation": [
+     "p2_impedance_reducer.network_cpl_to_ant (logged positions == characterized positions)",
+     "p2_framework.ladder_element_stress",
+     "p2_framework.ladder_abcd"
+    ],
+    "data_needed": "selected match, its tuning grid (CAL-P2-03) and topology / element values",
+    "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
+   },
+   {
+    "a9_6_sec9_item": "S-parameter data",
+    "implementation": [
+     "p2_framework.parse_touchstone",
+     "p2_framework.read_touchstone",
+     "p2_framework.write_touchstone",
+     "p2_framework.sparam_set",
+     "p2_framework.two_port_entry",
+     "p2_framework.one_port_gamma"
+    ],
+    "data_needed": "Touchstone files of S-01..S-06 (IDP2-19)",
+    "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
+   },
+   {
+    "a9_6_sec9_item": "antenna impedance",
+    "implementation": [
+     "p2_impedance_reducer.reduce_record (Z_antenna at RP-ANT by vi_probe / deembed)",
+     "p2_framework.z_deembed_function"
+    ],
+    "data_needed": "calibrated records",
+    "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
+   },
+   {
+    "a9_6_sec9_item": "delivered-power reconstruction",
+    "implementation": [
+     "p2_impedance_reducer.reduce_record (P_delivered only with a VERIFIED loss model; else REFUSED strings, loss_status UNVERIFIED)",
+     "p2_impedance_reducer.loss_verification_status"
+    ],
+    "data_needed": "at-power loss verification (CAL-P2-09 / CAL-P2-10)",
+    "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
+   },
+   {
+    "a9_6_sec9_item": "RF line/match loss",
+    "implementation": [
+     "p2_framework.dissipated_fraction_matched",
+     "p2_framework.verify_line_match_loss",
+     "p2_impedance_reducer.transfer_efficiency"
+    ],
+    "data_needed": "two-port data + calorimetric check; k TBD",
+    "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
+   },
+   {
+    "a9_6_sec9_item": "plasma-state classification",
+    "implementation": [
+     "p2_impedance_reducer.classify_plasma_state (UNLIT / E_MODE / H_MODE / UNCERTAIN)"
+    ],
+    "data_needed": "frozen photodiode threshold HM-R15",
+    "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
+   },
+   {
+    "a9_6_sec9_item": "photodiode channel",
+    "implementation": [
+     "record plasma_state.optical_signal_V / threshold_basis / line of sight / saturation",
+     "p2_framework.detect_eh_transitions (photodiode required)"
+    ],
+    "data_needed": "INS-P2-10 hardware and P1 records IF-P1-23",
+    "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
+   },
+   {
+    "a9_6_sec9_item": "E/H-mode transition detection",
+    "implementation": [
+     "p2_framework.detect_eh_transitions",
+     "p2_framework.hysteresis"
+    ],
+    "data_needed": "criteria form P2Q-09 / agreement rule P2Q-03 (TBD_OWNER); thresholds TBD_AFTER_EVIDENCE",
+    "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
+   },
+   {
+    "a9_6_sec9_item": "mismatch envelope",
+    "implementation": [
+     "p2_impedance_reducer.mismatch_envelope",
+     "p2_framework.feedthrough_peaks_from_network"
+    ],
+    "data_needed": "complete measured map of the P1 stable region",
+    "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
+   },
+   {
+    "a9_6_sec9_item": "uncertainty propagation",
+    "implementation": [
+     "p2_framework.propagate_linear",
+     "p2_framework.propagate_mc",
+     "p2_framework.gamma_vswr_pnet_uncertainty",
+     "p2_framework.z_from_gamma_uncertainty",
+     "p2_framework.p_delivered_uncertainty",
+     "p2_framework.z_deembed_function"
+    ],
+    "data_needed": "calibration uncertainties UB-P2-Z-01..08, UB-RF-02..08",
+    "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
+   },
+   {
+    "a9_6_sec9_item": "impedance-map storage",
+    "implementation": [
+     "p2_framework.map_point",
+     "p2_framework.ingest_records",
+     "p2_framework.build_map",
+     "p2_framework.write_map / read_map / validate_map",
+     "p2_framework.split_by_domain",
+     "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_map_schema_v1.json"
+    ],
+    "data_needed": "reduced measured records",
+    "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
+   },
+   {
+    "a9_6_sec9_item": "rating derivation",
+    "implementation": [
+     "p2_framework.rating_structure",
+     "p2_framework.ladder_element_stress",
+     "p2_framework.feedthrough_peaks_from_network"
+    ],
+    "data_needed": "complete measured envelope + owner inputs ICPQ-10, ICPQ-11, P2Q-10",
+    "status": "IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output)"
+   }
+  ],
+  "fail_closed": [
+   {
+    "a9_6_sec14_item": "missing required data -> no PASS",
+    "p2_behaviour": "every missing input raises (MissingCalibrationError, RecordError, TouchstoneError, SParamError, CriteriaMissingError, UncertaintyMissingError, RatingInputError); no function returns PASS",
+    "applicability": "applies"
+   },
+   {
+    "a9_6_sec14_item": "mismatched sign convention -> excluded",
+    "p2_behaviour": "P2 carries I_collector_A only as photodiode corroboration (A9.4 P2Q-05) and computes nothing from its sign; the capacity sign convention is the P1 registered network (A9.5 P1Q-15/16)",
+    "applicability": "P1 reducer (not re-implemented here)"
+   },
+   {
+    "a9_6_sec14_item": "missing current path -> excluded",
+    "p2_behaviour": "not a P2 quantity (ICP-45 current closure)",
+    "applicability": "P1 reducer"
+   },
+   {
+    "a9_6_sec14_item": "mixed synthetic/measured evidence -> refused",
+    "p2_behaviour": "MixedEvidenceError: record vs calibration set, loss verification, cold reference; build_map / validate_map refuse mixed points; mismatch_envelope refuses mixing",
+    "applicability": "applies"
+   },
+   {
+    "a9_6_sec14_item": "invalid RF-ON/RF-OFF pair -> excluded",
+    "p2_behaviour": "not a P2 quantity (ICP-45 capacity I_ON - I_OFF)",
+    "applicability": "P1 reducer"
+   },
+   {
+    "a9_6_sec14_item": "unknown I_d,max,H1 -> NOT_EVALUATED",
+    "p2_behaviour": "P2 map coverage of the H-1 registered maximum point stays PENDING (IDP2-10); split_by_domain returns NOT_EVALUATED for points whose factors or region bounds are missing",
+    "applicability": "applies (coverage)"
+   },
+   {
+    "a9_6_sec14_item": "missing uncertainty -> NOT_EVALUATED",
+    "p2_behaviour": "map_point(uncertainty=None) -> status NOT_EVALUATED; verify_line_match_loss with a missing u -> NOT_EVALUATED (never verified); propagation without a covariance raises UncertaintyMissingError",
+    "applicability": "applies"
+   },
+   {
+    "a9_6_sec14_item": "unresolved plasma state -> UNCERTAIN",
+    "p2_behaviour": "classify_plasma_state -> UNCERTAIN; reduce_record raises UncertainPlasmaStateError; ingest_records keeps the record as excluded with plasma_state UNCERTAIN; detect_eh_transitions reports UNCERTAIN_ELECTRICAL_ONLY / UNCERTAIN_PHOTODIODE_INVALID",
+    "applicability": "applies"
+   },
+   {
+    "a9_6_sec14_item": "unverified line loss -> no silently reconstructed plasma power",
+    "p2_behaviour": "P_line/match,loss and P_delivered are REFUSED strings with loss_status UNVERIFIED unless a LOSS_MODEL_VERIFIED at-power verification covers the logged tuning state; P_plasma is never an input or output (ForwardAsPlasmaError)",
+    "applicability": "applies"
+   },
+   {
+    "a9_6_sec14_item": "OUT_OF_DOMAIN remains distinct from FAIL",
+    "p2_behaviour": "split_by_domain labels points outside the P1 stable-region bounds OUT_OF_DOMAIN (excluded, not failed); verification statuses are LOSS_MODEL_VERIFIED / LOSS_MODEL_INCONSISTENT / NOT_EVALUATED - there is no PASS/FAIL score in P2",
+    "applicability": "applies"
+   }
+  ],
+  "reducer_changes": [
+   "loss_verification (new required calibration field, nullable) and per-bound 'verification': P_line/match,loss and P_delivered reconstructed only with a LOSS_MODEL_VERIFIED record covering the logged tuning state; else REFUSED strings, loss_status UNVERIFIED",
+   "MixedEvidenceError: record vs calibration set, loss verification, cold reference",
+   "match_states entries carry the characterized element 'positions'; the record's logged positions must equal them",
+   "mismatch_envelope exclusion reasons name the loss_status"
+  ],
+  "heat_load_alternatives": {
+   "owner_question": "ICPQ-10",
+   "status": "TBD_OWNER",
+   "question_text": "Total ICP module heat-load bound (ICP-43): use 1.20 x (P_fwd,max + P_d,max) with P_d,max from the A9-02 discharge slot, or, if every score-bearing stand point is held inside the P_bus < 1.5 kW ceiling (row 108), the envelope 1.20 x 1.5 kW used for the stand by H2-6 H26-44?",
+   "source": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
+   "alternatives": [
+    "A: bound from P_fwd,max (P2 envelope) and P_d,max (A9-02 discharge slot) as stated in the question",
+    "B: envelope tied to the P_bus < 1.5 kW ceiling (row 108) as stated in the question"
+   ],
+   "note": "carried side by side; neither selected; the factor and ceiling are the question's own text (copied from the pinned state v3)"
+  },
+  "references": [
+   {
+    "id": "REF-TOUCHSTONE11",
+    "citation": "Touchstone(R) File Format Specification, Rev 1.1, EIA/IBIS Open Forum (copyright 2002; page footer dated 10/1/2003)",
+    "url": "https://ibis.org/connector/touchstone_spec11.pdf",
+    "sha256": "180ff686cc8a77e4576618158ce7fe5ed494d3941b13520e0593112f5bde9de0",
+    "access": "full text downloaded and text-extracted by this lane on 2026-09-30 (open access, no login); free distribution as long as the document is intact (its copyright notice)",
+    "locators": [
+     "p. 3 general rules ('!' comments, ASCII only, .snp extension, angles in degrees)",
+     "pp. 4-5 option line '# <frequency unit> <parameter> <format> R <n>'; defaults GHz, S, MA, R 50; formats DB (20 log10 |magnitude|), MA, RI",
+     "p. 6 data lines: 1-port <f> <N11>; 2-port <f> <N11> <N21> <N12> <N22> ('21' precedes '12'); frequencies in increasing order",
+     "pp. 10-11 noise parameters after 2-port data"
+    ],
+    "use_here": "Touchstone reader / writer (parse_touchstone, read_touchstone, write_touchstone)",
+    "evidence_class": "published standard (format definition)"
+   },
+   {
+    "id": "REF-WALKER2023",
+    "citation": "B. Walker (Copper Mountain Technologies), 'What is the 12-Term VNA Calibration Model?', Microwaves & RF (mwrf.com; PDF hosted under document/2023/11 - publication date: verify)",
+    "url": "https://img.mwrf.com/files/base/ebm/mwrf/document/2023/11/655bd7483b5d34001e6defc1-copper.pdf?dl=655bd7483b5d34001e6defc1-copper.pdf",
+    "sha256": "f21809e84347ce79b498149812633c5c05788e5448d0927b415db709a34013c1",
+    "access": "full text downloaded and text-extracted by this lane on 2026-09-30 (open access, no login); the equations are images in the PDF and were read from the rendered pages 3-4",
+    "locators": [
+     "p. 3 Eq. (8) Gamma_in = e00 + e10e01 Gamma_L / (1 - e11 Gamma_L) (three unknowns)",
+     "p. 3 C = [[Gamma_a1, 1, Gamma_a1 Gamma_m1], ...], V = [Gamma_m1, ...]",
+     "p. 4 E = (C^H C)^-1 C^H V; e00 = E2, e11 = E3, e10e01 = E1 + E2 E3; least squares with more standards"
+    ],
+    "use_here": "sol_error_terms / sol_correct / coupler_error_model",
+    "evidence_class": "published method"
+   },
+   {
+    "id": "REF-AN1287-3",
+    "citation": "Agilent Technologies, 'Applying Error Correction to Network Analyzer Measurements', Application Note 1287-3 (Keysight literature no. 5965-7709E)",
+    "url": "https://anlage.umd.edu/Microwave%20Measurements%20for%20Personal%20Web%20Site/5965-7709E.pdf",
+    "sha256": "77788abe195df147799483fb97148070294b5987950d5db1dac3447b57ac0f81",
+    "access": "full text downloaded and text-extracted by this lane on 2026-09-30 (open access, no login)",
+    "locators": [
+     "p. 4 one-port calibration: directivity, source match and reflection tracking from three known standards (open, short, load)",
+     "p. 12 Fig. 14 reflection uncertainty S11m = S11a +/- (ED + S11a^2 ES + S21a S12a EL + S11a (1 - ERT)); worked numbers 47 dB -> .0045, 36 dB -> .0158, .019 dB -> .0022, total +/-.0088"
+    ],
+    "use_here": "reflection_worst_case_error / scalar_gamma_bounds / term_from_dB; FS-04 recomputes the published Fig. 14 example as a code check",
+    "evidence_class": "published method"
+   },
+   {
+    "id": "REF-GUM2008",
+    "citation": "JCGM 100:2008 (GUM 1995 with minor corrections)",
+    "url": "https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf",
+    "sha256": "41bbf068fbc0d7986c98691b2d1af6680cb3044f6a1a89b3560933ed9ef9626c",
+    "access": "as recorded by the A9-04 uncertainty budget (REF-GUM2008, same sha256); section numbers re-checked in the extracted text by this lane",
+    "locators": [
+     "5.1.2 Eq. (10) law of propagation, uncorrelated inputs",
+     "5.2.2 Eq. (13) correlated inputs"
+    ],
+    "use_here": "gamma_vswr_pnet_uncertainty / p_delivered_uncertainty / propagate_linear",
+    "evidence_class": "published standard"
+   },
+   {
+    "id": "REF-JCGM101",
+    "citation": "JCGM 101:2008, Supplement 1 to the GUM - Propagation of distributions using a Monte Carlo method",
+    "url": "https://www.bipm.org/documents/20126/2071204/JCGM_101_2008_E.pdf",
+    "sha256": "6d8548af875df112dfc5cf14eb974f5544341f4a31cbbdfc19fc5ed155d8fa20",
+    "access": "full text downloaded and text-extracted by this lane on 2026-09-30 (open access, no login)",
+    "locators": [
+     "6.4.8.4 sampling N(x, U_x) through the Cholesky factor",
+     "7.2.1 number of trials M",
+     "7.6 estimate and standard uncertainty",
+     "7.7.2 probabilistically symmetric coverage interval (q = pM or integer part of pM + 1/2; r = (M - q)/2 or integer part of (M - q + 1)/2)"
+    ],
+    "use_here": "propagate_mc",
+    "evidence_class": "published standard"
+   },
+   {
+    "id": "REF-JCGM102",
+    "citation": "JCGM 102:2011, Supplement 2 to the GUM - Extension to any number of output quantities",
+    "url": "https://www.bipm.org/documents/20126/2071204/JCGM_102_2011_E.pdf",
+    "sha256": "98dffc68bd69c3b6433601eb1d453ba7ca84733a0fe7013df13eabe0d541b46d",
+    "access": "full text downloaded and text-extracted by this lane on 2026-09-30 (open access, no login)",
+    "locators": [
+     "6.2.1.3 Eq. (3) U_y = C_x U_x C_x^T",
+     "6.4 propagation for models involving complex quantities (real and imaginary parts)"
+    ],
+    "use_here": "propagate_linear (multivariate) / z_from_gamma_uncertainty / z_deembed_function",
+    "evidence_class": "published standard"
+   }
+  ],
+  "selfcheck": [
+   {
+    "id": "FS-01",
+    "what": "Touchstone 1.1 write -> parse round trip of a synthetic 2-port, 3 points",
+    "max_abs_error_below_1e-12": {
+     "RI": true,
+     "MA": true,
+     "DB": true
+    },
+    "ok": true,
+    "evidence_status": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+    "evidence_class": "model-derived"
+   },
+   {
+    "id": "FS-02",
+    "what": "one-port SOL error terms recovered from synthetic ideal short / open / load (REF-WALKER2023 p. 4 matrix solution)",
+    "max_abs_error_below_1e-12": true,
+    "ok": true,
+    "evidence_status": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+    "evidence_class": "model-derived"
+   },
+   {
+    "id": "FS-03",
+    "what": "Z_antenna = 2 + j80 ohm de-embedded from Touchstone-derived two-ports against the closed-form input impedance of a lossless 30-degree 50-ohm line (Z0 (Z + j Z0 tan) / (Z0 + j Z tan)) loaded by a series/shunt ladder",
+    "recovered_Z_ohm": [
+     2.0,
+     80.0
+    ],
+    "ok": true,
+    "evidence_status": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+    "evidence_class": "model-derived"
+   },
+   {
+    "id": "FS-04",
+    "what": "REF-AN1287-3 p. 12 Fig. 14 reflection uncertainty recomputed from its stated inputs (47 dB directivity and load match, 36 dB source match, .019 dB tracking, |S11| .158, |S21| .891)",
+    "terms": {
+     "E_D": 0.00447,
+     "E_S": 0.0158,
+     "E_RT": 0.00219
+    },
+    "total": 0.00875,
+    "published_total": 0.0088,
+    "ok": true,
+    "tolerance_note": "the publication adds terms rounded to 2 significant digits",
+    "evidence_class_of_inputs": "published worked example (code check only; not a Vyovrinda value)",
+    "evidence_status": "published worked example (code check)",
+    "evidence_class": "model-derived"
+   },
+   {
+    "id": "FS-05",
+    "what": "u(|Gamma|) for synthetic P_fwd = 100 +/- 1 W, P_ref = 4 +/- 0.2 W: analytic GUM vs numerical-Jacobian GUM vs seeded Monte Carlo (M = 20000, seed 20260930)",
+    "u_analytic": 0.00509902,
+    "u_linear": 0.00509902,
+    "u_mc": 0.005123,
+    "mc_coverage_interval_95": [
+     0.18963,
+     0.2098
+    ],
+    "ok": true,
+    "evidence_status": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+    "evidence_class": "model-derived"
+   },
+   {
+    "id": "FS-06",
+    "what": "E/H jump detection on a synthetic 4-point up sweep (photodiode + reflected power + antenna current step between index 1 and 2)",
+    "events": [
+     {
+      "between": [
+       1,
+       2
+      ],
+      "class": "TRANSITION_CANDIDATE_CORROBORATED",
+      "emission_step": "UP"
+     }
+    ],
+    "ok": true,
+    "evidence_status": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+    "evidence_class": "model-derived"
+   },
+   {
+    "id": "FS-07",
+    "what": "map build -> JSON -> validate round trip with one reduced synthetic record and one refused record (measured record against a synthetic calibration set: MixedEvidenceError, kept as excluded)",
+    "content_sha256_verified": true,
+    "excluded": [
+     [
+      "SYN-REC-02",
+      "MixedEvidenceError"
+     ]
+    ],
+    "point_uncertainty_status": "NOT_EVALUATED",
+    "ok": true,
+    "evidence_status": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+    "evidence_class": "model-derived"
+   },
+   {
+    "id": "FS-08",
+    "what": "rating_structure without an envelope: every candidate TBD, RF_COMPONENT_RATINGS unchanged",
+    "RF_COMPONENT_RATINGS": "TBD_AFTER_IMPEDANCE_MAP",
+    "candidates": [
+     "TBD_AFTER_EVIDENCE",
+     "TBD_OWNER"
+    ],
+    "ok": true,
+    "evidence_status": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
+    "evidence_class": "model-derived"
+   }
+  ],
+  "numbers_policy": "no Vyovrinda value is produced; every numeric output needs measured input and stays TBD_AFTER_EVIDENCE until then; synthetic values are labelled SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
+ },
  "compliance": {
   "no_prediction": true,
   "no_rating": true,

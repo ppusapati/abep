@@ -14,6 +14,14 @@ A lit plasma state in a non-HOT_MAP phase, a powered-unlit record without gas of
 (ignition -> abort and flag), and a cold reference not taken from a verified-unlit source also raise, so the A9.3
 'P1 stable plasma -> P2 map' gate cannot be bypassed by relabelling the phase.
 
+A9.6 sec. 14 (follow-on fo_a9_6_p2_framework_completion): P_line/match,loss and P_delivered are reconstructed only when
+the loss model used carries a LOSS_MODEL_VERIFIED at-power verification covering the logged tuning state (calibration
+field loss_verification; 'verification' of a declared bound); otherwise both are REFUSED strings with loss_status
+UNVERIFIED (no silently reconstructed power). A record and its calibration set (and any loss verification or cold
+reference) must share the data class (MixedEvidenceError). A record declaring a tuning state logs the element
+positions, which must equal those of the characterized state. Ingestion of VNA / coupler / V/I calibration data,
+uncertainty propagation, E/H detection, map storage and the rating structure live in p2_framework.py.
+
 Plasma-state classification (owner A9.4 P2Q-05, PHOTODIODE_REQUIRED; docs/decisions/
 OD_2026_09_30_A9_4_p1_p2_owner_decisions.json; incorporated by fo_a9_4_incorporation): the optical-emission photodiode
 (INS-P2-10) is the required independent ignition / unlit and E/H-mode indicator; reflected RF power, antenna current,
@@ -81,7 +89,19 @@ REQUIRED_FACTOR_FIELDS = (
     "p_chamber_Pa", "hall_state", "V_collector_V", "I_collector_A", "P_mains_in_W",
 )
 REQUIRED_CAL_FIELDS = ("schema", "calibration_set_id", "data_class", "f_Hz", "Z0_ohm", "power_sensors", "coupler",
-                       "two_ports", "vi_probe", "loss_bounds", "cold_references", "antenna_current_probe")
+                       "two_ports", "vi_probe", "loss_bounds", "cold_references", "antenna_current_probe",
+                       "loss_verification")
+# Line / match loss verification (owner A9.6 sec. 14: 'unverified line loss -> no silently reconstructed plasma
+# power'; A9.2 rf_measurement_reference). P_line/match,loss and P_delivered are reconstructed only when the loss model
+# used (two-port at the logged tuning state, or a declared bound) carries a verification record with status
+# LOSS_VERIFIED from an at-power check (built by p2_framework.verify_line_match_loss); otherwise they are reported as
+# REFUSED strings with loss_status UNVERIFIED - never as numbers.
+LOSS_VERIFIED = "LOSS_MODEL_VERIFIED"
+LOSS_VERIFICATION_METHODS = ("CAL-P2-09_calorimetric_at_power", "CAL-P2-10_antenna_simulator_at_power")
+LOSS_VERIFICATION_FIELDS = ("verification_id", "status", "method", "evidence_record_ids", "tuning_states",
+                            "data_class")
+MATCH_STATE_CAL_FIELDS = ("from_plane", "to_plane", "S11", "S12", "S21", "S22", "cal_id", "phase_calibrated",
+                          "positions")
 FORBIDDEN_KEY_PREFIXES = ("P_plasma", "P_absorbed_plasma")
 # Nested-object contracts (single source; the builder writes them into the JSON schema, the reducer enforces them).
 NESTED_REQUIRED = {
@@ -131,6 +151,11 @@ class ForwardAsPlasmaError(P2ReducerError):
 
 class RecordError(P2ReducerError):
     pass
+
+
+class MixedEvidenceError(RecordError):
+    """Synthetic and measured evidence combined in one reduction (record vs calibration set, loss verification or cold
+    reference): refused (owner A9.6 sec. 14 'mixed synthetic/measured evidence -> refused')."""
 
 
 class SequenceError(P2ReducerError):
@@ -336,10 +361,12 @@ def _two_port_abcd(tp, z0, what):
     return s_to_abcd(*s, z0)
 
 
-def network_cpl_to_ant(cal, tuning_state_id):
+def network_cpl_to_ant(cal, tuning_state_id, logged_positions=None):
     """ABCD of RP-CPL -> RP-MIN (line incl. feedthrough) cascaded with RP-MIN -> RP-ANT (local match at the logged
     tuning state). Refuses a missing tuning state: interpolation between characterized states is a separate, declared
-    calibration product (CAL-P2-04), never done silently here."""
+    calibration product (CAL-P2-04), never done silently here. When ``logged_positions`` is given (the record's
+    match_state.positions), it must equal the element positions logged when that tuning state was characterized
+    (CAL-P2-03), so a record cannot borrow another state's two-port."""
     z0 = float(cal["Z0_ohm"])
     tps = cal["two_ports"]
     if not isinstance(tps, dict) or "line" not in tps or "match_states" not in tps:
@@ -354,6 +381,12 @@ def network_cpl_to_ant(cal, tuning_state_id):
     if not isinstance(states, dict) or tuning_state_id not in states:
         raise MissingCalibrationError(f"local-match tuning state {tuning_state_id!r} has no characterized two-port")
     ms = states[tuning_state_id]
+    if not isinstance(ms, dict) or not isinstance(ms.get("positions"), dict) or not ms["positions"]:
+        raise MissingCalibrationError(f"match_states[{tuning_state_id}]: characterized element positions "
+                                      "(non-empty 'positions') required to tie the two-port to a logged tuning state")
+    if logged_positions is not None and logged_positions != ms["positions"]:
+        raise RecordError(f"logged match positions {logged_positions!r} differ from the positions of characterized "
+                          f"tuning state {tuning_state_id!r} {ms['positions']!r} (no silent interpolation; CAL-P2-04)")
     if (ms.get("from_plane"), ms.get("to_plane")) != ("RP-MIN", "RP-ANT"):
         raise ReferencePlaneError(f"match two-port planes {ms.get('from_plane')} -> {ms.get('to_plane')} "
                                   "!= RP-MIN -> RP-ANT")
@@ -432,7 +465,17 @@ def reduce_record(rec, calibrations):
         raise MissingCalibrationError(f"record f = {f} Hz has no calibration (set {cid!r} is at {cal['f_Hz']} Hz)")
     if z0 != float(cal["Z0_ohm"]):
         raise MissingCalibrationError(f"record Z0 = {z0} ohm differs from calibration Z0 = {cal['Z0_ohm']} ohm")
-    synthetic = rec["data_class"] == "synthetic_test" or cal["data_class"] == "synthetic_test"
+    if rec["data_class"] != cal["data_class"]:
+        raise MixedEvidenceError(f"record data_class {rec['data_class']!r} with calibration set data_class "
+                                 f"{cal['data_class']!r}: synthetic and measured evidence are never combined")
+    synthetic = rec["data_class"] == "synthetic_test"
+    ms_log = rec["match_state"]
+    if ms_log.get("tuning_state_id") is not None:
+        if not isinstance(ms_log.get("positions"), dict) or not ms_log["positions"]:
+            raise RecordError("match_state.positions must log the local-match element positions (read-back) whenever "
+                              "a tuning_state_id is declared")
+        if not isinstance(ms_log.get("auto_tune"), bool):
+            raise RecordError("match_state.auto_tune must be true or false when a tuning state is declared")
 
     # ---- coupler powers at RP-CPL (A9.2: generator / 50-ohm side of the local match)
     cp = rec["coupler"]
@@ -492,7 +535,7 @@ def reduce_record(rec, calibrations):
         ms = rec["match_state"]
         if not isinstance(ms, dict) or not ms.get("tuning_state_id"):
             raise MissingCalibrationError("match_state.tuning_state_id required to select the characterized network")
-        net = network_cpl_to_ant(cal, ms["tuning_state_id"])
+        net = network_cpl_to_ant(cal, ms["tuning_state_id"], ms.get("positions"))
         zl = deembed_load(net, z_from_gamma(g_in, z0))
         z_ant["deembed"] = zl
         out["at_RP_CPL"].update({"gamma_complex": _cxo(g_in), "gamma_mag_complex": _r(abs(g_in)),
@@ -545,18 +588,23 @@ def reduce_record(rec, calibrations):
         out["method_difference"] = {"dR_ohm": _r(dz.real), "dX_ohm": _r(dz.imag),
                                     "acceptance": "TBD - agreement rule form LOCK-1, value LOCK-2 (P2Q-03)"}
 
-    # ---- P_line/match,loss and P_delivered (A9.2)
+    # ---- P_line/match,loss and P_delivered (A9.2); reconstructed only from a VERIFIED loss model (A9.6 sec. 14)
     lm = rec["loss_method"]
     if lm == "two_port":
+        ms = rec["match_state"]
+        if not isinstance(ms, dict) or not ms.get("tuning_state_id"):
+            raise MissingCalibrationError("two_port loss needs match_state.tuning_state_id")
         if net is None:
-            ms = rec["match_state"]
-            if not isinstance(ms, dict) or not ms.get("tuning_state_id"):
-                raise MissingCalibrationError("two_port loss needs match_state.tuning_state_id")
-            net = network_cpl_to_ant(cal, ms["tuning_state_id"])
-        eta = transfer_efficiency(net, zp)
-        out["P_line_match_loss_W"] = _r(p_net * (1 - eta))
-        out["P_delivered_W"] = _r(p_net * eta)
-        out["match_line_efficiency"] = _r(eta)
+            net = network_cpl_to_ant(cal, ms["tuning_state_id"], ms.get("positions"))
+        ok, why = loss_verification_status(cal["loss_verification"], cal["data_class"], ms["tuning_state_id"])
+        if ok:
+            eta = transfer_efficiency(net, zp)
+            out["P_line_match_loss_W"] = _r(p_net * (1 - eta))
+            out["P_delivered_W"] = _r(p_net * eta)
+            out["match_line_efficiency"] = _r(eta)
+            out["loss_status"] = "VERIFIED (" + cal["loss_verification"]["verification_id"] + ")"
+        else:
+            _refuse_loss(out, why)
         out["loss_basis"] = "two-port S-parameters (CAL-P2-02/03) at the logged tuning state with Z_antenna " + primary
     elif lm == "declared_bound":
         lb = cal["loss_bounds"]
@@ -564,19 +612,27 @@ def reduce_record(rec, calibrations):
         if not isinstance(lb, dict) or bid not in lb:
             raise MissingCalibrationError(f"declared loss bound {bid!r} not in the calibration set")
         b = lb[bid]
-        for k in ("loss_fraction_max", "source", "evidence_class"):
-            if k not in b or b[k] is None:
+        for k in ("loss_fraction_max", "source", "evidence_class", "verification"):
+            if k not in b:
+                raise MissingCalibrationError(f"loss bound {bid!r} lacks {k} (explicit null allowed for verification)")
+            if k != "verification" and b[k] is None:
                 raise MissingCalibrationError(f"loss bound {bid!r} lacks {k}")
         fmax = _finite(b["loss_fraction_max"], "loss_fraction_max")
         if not 0 <= fmax < 1:
             raise MissingCalibrationError("loss_fraction_max must lie in [0, 1)")
-        out["P_line_match_loss_W"] = {"min": 0.0, "max": _r(p_net * fmax)}
-        out["P_delivered_W"] = {"min": _r(p_net * (1 - fmax)), "max": _r(p_net)}
+        ok, why = loss_verification_status(b["verification"], cal["data_class"], None)
+        if ok:
+            out["P_line_match_loss_W"] = {"min": 0.0, "max": _r(p_net * fmax)}
+            out["P_delivered_W"] = {"min": _r(p_net * (1 - fmax)), "max": _r(p_net)}
+            out["loss_status"] = "VERIFIED (" + b["verification"]["verification_id"] + ")"
+        else:
+            _refuse_loss(out, why)
         out["loss_basis"] = f"declared bound {bid} ({b['source']}; {b['evidence_class']})"
     else:
         out["P_line_match_loss_W"] = "TBD - requires the two-port characterization (CAL-P2-02/03) or a declared loss bound"
         out["P_delivered_W"] = "TBD - requires P_line/match,loss; P_net at RP-CPL is not P_delivered"
         out["loss_basis"] = "not_available (declared in the record)"
+        out["loss_status"] = "NOT_AVAILABLE"
 
     # ---- antenna-current cross-check (method C) and cold/hot resistance split (anchor Eq. (1) method)
     ac = rec["antenna_current"]
@@ -604,6 +660,9 @@ def reduce_record(rec, calibrations):
             raise MissingCalibrationError(f"cold antenna reference {crid!r} not in the set")
         cr = crs[crid]
         _check_cold_reference(cr, crid)
+        if (cr["evidence_class"] == SYNTHETIC_LABEL) != synthetic:
+            raise MixedEvidenceError(f"cold reference {crid!r} evidence_class {cr['evidence_class']!r} with a "
+                                     f"{rec['data_class']} record")
         r_cold = _finite(cr["R_cold_ohm"], "R_cold_ohm")
         r_hot = zp.real
         if r_hot <= 0:
@@ -623,6 +682,42 @@ def reduce_record(rec, calibrations):
 
 def _ref_ok(x):
     return isinstance(x, str) and bool(x.strip()) and not x.strip().upper().startswith(("PENDING", "TBD"))
+
+
+def loss_verification_status(v, data_class, tuning_state_id):
+    """(True, '') when ``v`` is a LOSS_VERIFIED record of an admissible at-power method, of the same data class as the
+    calibration set and (for a two-port loss) covering the logged tuning state; else (False, reason). A verification
+    of the other data class raises MixedEvidenceError."""
+    if v is None:
+        return False, "no loss verification record (null)"
+    if not isinstance(v, dict):
+        return False, "loss verification must be an object"
+    miss = [k for k in LOSS_VERIFICATION_FIELDS if k not in v or v[k] is None]
+    if miss:
+        return False, f"loss verification lacks {miss}"
+    if v["data_class"] != data_class:
+        raise MixedEvidenceError(f"loss verification {v['verification_id']!r} data_class {v['data_class']!r} with "
+                                 f"calibration data_class {data_class!r}")
+    if v["status"] != LOSS_VERIFIED:
+        return False, f"loss verification {v['verification_id']!r} status {v['status']!r}"
+    if v["method"] not in LOSS_VERIFICATION_METHODS:
+        return False, f"loss verification method {v['method']!r} not in {LOSS_VERIFICATION_METHODS}"
+    ids = v["evidence_record_ids"]
+    if not isinstance(ids, list) or not ids or not all(_ref_ok(i) for i in ids):
+        return False, "loss verification without evidence record ids"
+    if tuning_state_id is not None:
+        ts = v["tuning_states"]
+        if not isinstance(ts, list) or tuning_state_id not in ts:
+            return False, f"tuning state {tuning_state_id!r} not covered by loss verification {v['verification_id']!r}"
+    return True, ""
+
+
+def _refuse_loss(out, why):
+    out["P_line_match_loss_W"] = ("REFUSED - line/match loss unverified (" + why + "); requires an at-power loss "
+                                  "verification (CAL-P2-09 / CAL-P2-10) of the loss model used")
+    out["P_delivered_W"] = ("REFUSED - not reconstructed while the line/match loss is unverified; P_net at RP-CPL is "
+                            "not P_delivered (A9.6 sec. 14; A9.2 rf_measurement_reference)")
+    out["loss_status"] = "UNVERIFIED"
 
 
 def _threshold_basis_ok(tb):
@@ -854,13 +949,12 @@ def mismatch_envelope(reduced, phases):
         if "match_line_efficiency" in r:
             eff.append(r["match_line_efficiency"])
         else:
-            excl_eff[rid] = "no two-port loss reduction (loss_method " + ("declared_bound" if isinstance(pd, dict)
-                                                                          else "not_available") + ")"
+            excl_eff[rid] = "no verified two-port loss reduction (loss_status " + str(r.get("loss_status")) + ")"
         if pd_num:
             pdl.append(pd)
         else:
             excl_pdel[rid] = ("declared_bound interval (not a point value)" if isinstance(pd, dict)
-                              else "not_available (TBD)")
+                              else "not reconstructed (loss_status " + str(r.get("loss_status")) + ")")
         if "at_RP_ANT_vi" in r:
             vap_m.append(r["at_RP_ANT_vi"]["V_peak_V"])
             iap_m.append(r["at_RP_ANT_vi"]["I_peak_A"])
