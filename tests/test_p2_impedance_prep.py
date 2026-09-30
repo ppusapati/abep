@@ -76,8 +76,22 @@ def _series_shunt(zs, ys):
 
 
 POS = {"C_series": "SYN-1", "C_shunt": "SYN-1"}
-LV = {"verification_id": "SYN-LV-01", "status": "LOSS_MODEL_VERIFIED", "method": "CAL-P2-09_calorimetric_at_power",
-      "evidence_record_ids": ["SYN-CALORIMETRY-01"], "tuning_states": ["TS1"], "data_class": "synthetic_test"}
+LV_BASE = {"status": "LOSS_MODEL_VERIFIED", "method": "CAL-P2-09_calorimetric_at_power",
+           "evidence_record_ids": ["SYN-CALORIMETRY-01"], "data_class": "synthetic_test", "k": 2.0,
+           "k_registration_id": "SYN-K-REG-01"}
+
+
+def _lv(red, cal, model_ref, vid):
+    """A synthetic at-power loss verification consistent with the calibration set's own loss model (MET-07): the
+    prediction comes from red.loss_model_prediction, the measured eta equals it and the statistic is recomputed."""
+    eta, ref = red.loss_model_prediction(cal, model_ref)
+    kind = ref["kind"]
+    u_p = 0.01 if kind == "two_port" else 0.0
+    comp = red.LOSS_MODEL_KINDS[kind]
+    return dict(LV_BASE, verification_id=vid, model_ref=ref, comparison=comp,
+                tuning_states=[ref["tuning_state_id"]] if kind == "two_port" else [], eta_measured=eta,
+                u_eta_measured=0.01, eta_predicted=eta, u_eta_predicted=u_p,
+                normalized_statistic=red.loss_statistic(comp, eta, 0.01, eta, u_p))
 
 
 def _cal(red, line, match, e00=0j, e11=0j, e10e01=1 + 0j, fix=(1 + 0j, 0j, 0j, 1 + 0j)):
@@ -85,7 +99,7 @@ def _cal(red, line, match, e00=0j, e11=0j, e10e01=1 + 0j, fix=(1 + 0j, 0j, 0j, 1
         s11, s12, s21, s22 = red.abcd_to_s(abcd, Z0)
         return {"from_plane": a, "to_plane": b, "S11": _c(s11), "S12": _c(s12), "S21": _c(s21), "S22": _c(s22),
                 "cal_id": "SYN-2P", "phase_calibrated": True, "positions": dict(POS)}
-    return {"schema": red.CAL_SCHEMA_ID, "calibration_set_id": "SYN", "data_class": "synthetic_test", "f_Hz": 13.56e6,
+    cal = {"schema": red.CAL_SCHEMA_ID, "calibration_set_id": "SYN", "data_class": "synthetic_test", "f_Hz": 13.56e6,
             "Z0_ohm": Z0, "power_sensors": {"PS": {"CF_fwd": 1.0, "CF_ref": 1.0, "certificate": "SYNTHETIC"}},
             "coupler": {"cal_id": "CPL", "plane": "RP-CPL", "phase_calibrated": True, "e00": _c(e00), "e11": _c(e11),
                         "e10e01": _c(e10e01)},
@@ -94,13 +108,18 @@ def _cal(red, line, match, e00=0j, e11=0j, e10e01=1 + 0j, fix=(1 + 0j, 0j, 0j, 1
                          "fixture_abcd": [[_c(fix[0]), _c(fix[1])], [_c(fix[2]), _c(fix[3])]],
                          "fixture_from_plane": "RP-VI", "fixture_to_plane": "RP-ANT", "amplitude_convention": "peak"},
             "loss_bounds": {"LB1": {"loss_fraction_max": 0.1, "source": "SYNTHETIC", "evidence_class": "assumed",
-                                    "verification": dict(LV, verification_id="SYN-LV-LB1", tuning_states=[])}},
+                                    "verification": None}},
             "cold_references": {"CR1": {"R_cold_ohm": 1.5, "source_record_id": "SYN-COLD",
                                         "source_phase": "CAL-P2-08_VNA_UNPOWERED",
                                         "unlit_verification": {"basis": "SYNTHETIC CAL-P2-08 VNA record"},
                                         "evidence_class": SYN, "antenna_temperature_K": 300.0}},
             "antenna_current_probe": {"cal_id": "ACP", "k_mag": 1.0, "certificate": "SYNTHETIC"},
-            "loss_verification": dict(LV)}
+            "loss_verification": None}
+    cal["loss_verification"] = _lv(red, cal, {"kind": "two_port", "tuning_state_id": "TS1", "Z_load_ohm": [Z0, 0.0],
+                                              "Z_load_basis": "SYNTHETIC reference load"}, "SYN-LV-01")
+    cal["loss_bounds"]["LB1"]["verification"] = _lv(red, cal, {"kind": "declared_bound", "loss_bound_id": "LB1"},
+                                                    "SYN-LV-LB1")
+    return cal
 
 
 def _rec(red, cal, z_ant, p_fwd=100.0, phase="DUMMY_LOAD"):

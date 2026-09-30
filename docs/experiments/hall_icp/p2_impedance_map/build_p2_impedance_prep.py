@@ -517,7 +517,7 @@ def synthetic_cal(z0, line_abcd, match_abcd, e00, e11, e10e01, fixture_abcd, k_v
         s11, s12, s21, s22 = RED.abcd_to_s(abcd, z0)
         return {"from_plane": a, "to_plane": b, "S11": _c(s11), "S12": _c(s12), "S21": _c(s21), "S22": _c(s22),
                 "cal_id": "SYN-2P", "phase_calibrated": True, "positions": dict(SYN_POS)}
-    return {
+    cal = {
         "schema": RED.CAL_SCHEMA_ID, "calibration_set_id": "SYN-CAL-01", "data_class": "synthetic_test",
         "f_Hz": 13.56e6, "Z0_ohm": z0,
         "power_sensors": {"SYN-PS": {"CF_fwd": 1.0, "CF_ref": 1.0, "certificate": "SYNTHETIC - no certificate"}},
@@ -530,10 +530,19 @@ def synthetic_cal(z0, line_abcd, match_abcd, e00, e11, e10e01, fixture_abcd, k_v
                                       [_c(fixture_abcd[2]), _c(fixture_abcd[3])]],
                      "fixture_from_plane": "RP-VI", "fixture_to_plane": "RP-ANT", "amplitude_convention": "peak"},
         "loss_bounds": {}, "cold_references": {}, "antenna_current_probe": None,
-        "loss_verification": {"verification_id": "SYN-LV-01", "status": RED.LOSS_VERIFIED,
-                              "method": RED.LOSS_VERIFICATION_METHODS[0], "evidence_record_ids": ["SYN-CALORIMETRY-01"],
-                              "tuning_states": ["TS-SYN-1"], "data_class": "synthetic_test"},
+        "loss_verification": None,
     }
+    # MET-07: the synthetic at-power loss check is produced by p2_framework.verify_line_match_loss against this set's
+    # own two-port model (synthetic 50-ohm reference load, synthetic registered k; not evidence)
+    eta = RED.loss_model_prediction(cal, {"kind": "two_port", "tuning_state_id": "TS-SYN-1", "Z_load_ohm": [z0, 0.0],
+                                          "Z_load_basis": "SYNTHETIC reference load"})[0]
+    cal["loss_verification"] = FW.verify_line_match_loss(
+        verification_id="SYN-LV-01", method=RED.LOSS_VERIFICATION_METHODS[0], cal=cal,
+        model_ref={"kind": "two_port", "tuning_state_id": "TS-SYN-1", "Z_load_ohm": [z0, 0.0],
+                   "Z_load_basis": "SYNTHETIC reference load"},
+        u_eta_pred=0.01, P_net_W=100.0, u_P_net_W=1.0, P_ref_load_W=100.0 * eta, u_P_ref_load_W=1.0, k=2.0,
+        k_registration_id="SYN-K-REG-01", evidence_record_ids=["SYN-CALORIMETRY-01"], data_class="synthetic_test")
+    return cal
 
 
 def synthetic_record(cal, z_ant, p_fwd, phase="DUMMY_LOAD"):
@@ -1814,7 +1823,8 @@ SEC14 = [
      "detect_eh_transitions reports UNCERTAIN_ELECTRICAL_ONLY / UNCERTAIN_PHOTODIODE_INVALID", "applies"),
     ("unverified line loss -> no silently reconstructed plasma power", "P_line/match,loss and P_delivered are "
      "REFUSED strings with loss_status UNVERIFIED unless a LOSS_MODEL_VERIFIED at-power verification covers the "
-     "logged tuning state; P_plasma is never an input or output (ForwardAsPlasmaError)", "applies"),
+     "logged tuning state, carries a registered k and a recomputed statistic <= k, and verifies the loss model used "
+     "(same two-port network and Z_load prediction, or the same declared bound; MET-07); P_plasma is never an input or output (ForwardAsPlasmaError)", "applies"),
     ("OUT_OF_DOMAIN remains distinct from FAIL", "split_by_domain labels points outside the P1 stable-region bounds "
      "OUT_OF_DOMAIN (excluded, not failed); verification statuses are LOSS_MODEL_VERIFIED / LOSS_MODEL_INCONSISTENT / "
      "NOT_EVALUATED - there is no PASS/FAIL score in P2", "applies"),
@@ -2096,6 +2106,12 @@ def build_framework(oq_rows):
                             "'verification': P_line/match,loss and P_delivered reconstructed only with a "
                             "LOSS_MODEL_VERIFIED record covering the logged tuning state; else REFUSED strings, "
                             "loss_status UNVERIFIED",
+                            "MET-07: a loss verification carries k with a registered k_registration_id, eta_measured, "
+                            "u_eta_measured, eta_predicted, u_eta_predicted, normalized_statistic and a model_ref "
+                            "(calibration set, tuning state + two-port network + Z_load of the check, or loss bound); "
+                            "the reducer recomputes the statistic, requires it <= k and requires eta_predicted to be "
+                            "the model's own prediction (transfer_efficiency(network(TS), Z_load) within "
+                            "u_eta_predicted, or 1 - loss_fraction_max); otherwise UNVERIFIED",
                             "MixedEvidenceError: record vs calibration set, loss verification, cold reference",
                             "match_states entries carry the characterized element 'positions'; the record's logged "
                             "positions must equal them",

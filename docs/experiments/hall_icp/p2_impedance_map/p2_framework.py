@@ -590,41 +590,71 @@ def dissipated_fraction_matched(s11, s21):
     return max(f, 0.0)
 
 
-def verify_line_match_loss(*, verification_id, method, eta_pred, u_eta_pred, P_net_W, u_P_net_W, P_ref_load_W,
-                           u_P_ref_load_W, k, evidence_record_ids, tuning_states, data_class):
-    """At-power verification of the line / match loss model: eta_meas = P_ref_load / P_net (the known power absorbed
-    in the reference load, e.g. calorimetry, over the net power at RP-CPL) against the two-port prediction eta_pred.
-    Normalized statistic |eta_meas - eta_pred| / sqrt(u^2(eta_meas) + u^2(eta_pred)) <= k (k supplied, never
-    defaulted). Any missing uncertainty -> NOT_EVALUATED (never verified). Returns the reducer's
-    loss_verification record."""
+def verify_line_match_loss(*, verification_id, method, cal, model_ref, u_eta_pred, P_net_W, u_P_net_W, P_ref_load_W,
+                           u_P_ref_load_W, k, k_registration_id, evidence_record_ids, data_class, eta_pred=None):
+    """At-power verification of the line / match loss model of calibration set ``cal``: eta_meas = P_ref_load / P_net
+    (the known power absorbed in the reference load, e.g. calorimetry, over the net power at RP-CPL) against the
+    prediction of the loss model named in ``model_ref`` (MET-07):
+      two_port        {kind, tuning_state_id, Z_load_ohm, Z_load_basis}: eta_pred = transfer_efficiency(network(TS),
+                      Z_load of the check); two-sided statistic |eta_meas - eta_pred| / u_c <= k;
+      declared_bound  {kind, loss_bound_id}: eta_pred = 1 - loss_fraction_max (u_eta_pred = 0: a declared limit);
+                      one-sided statistic (eta_pred - eta_meas) / u_c <= k.
+    ``eta_pred`` may be omitted (computed from the model); if supplied it must equal the model's prediction within
+    u_eta_pred. k is supplied, never defaulted, and needs a registered k_registration_id (k stays TBD_OWNER / LOCK-2
+    until registered). Any missing uncertainty -> NOT_EVALUATED (never verified). Returns the reducer's
+    loss_verification record (model_ref filled with calibration_set_id and network / loss_fraction_max)."""
     if method not in RED.LOSS_VERIFICATION_METHODS:
         raise FrameworkError(f"method {method!r} not in {RED.LOSS_VERIFICATION_METHODS}")
     if data_class not in RED.DATA_CLASSES:
         raise FrameworkError("data_class")
-    if not isinstance(evidence_record_ids, list) or not evidence_record_ids:
-        raise FrameworkError("evidence_record_ids required")
-    if not isinstance(tuning_states, list):
-        raise FrameworkError("tuning_states must be a list")
-    rec = {"verification_id": verification_id, "method": method, "evidence_record_ids": list(evidence_record_ids),
-           "tuning_states": list(tuning_states), "data_class": data_class}
+    if not isinstance(cal, dict) or cal.get("data_class") != data_class:
+        raise RED.MixedEvidenceError("loss verification data_class differs from the calibration set's")
+    if not isinstance(evidence_record_ids, list) or not evidence_record_ids \
+            or not all(RED._ref_ok(i) for i in evidence_record_ids):
+        raise FrameworkError("evidence_record_ids required (registered ids; no PENDING / TBD placeholder)")
     if k is None:
         raise CriteriaMissingError("k (coverage factor of the loss check) not supplied - TBD_OWNER / LOCK-2")
     kk = _fin(k, "k")
+    if kk <= 0:
+        raise FrameworkError("k must be positive")
+    if not RED._ref_ok(k_registration_id):
+        raise CriteriaMissingError("a supplied k needs its registered k_registration_id (not empty / PENDING / TBD; "
+                                   "k stays TBD_OWNER / LOCK-2 until registered, never defaulted - MET-07)")
+    try:
+        eta_model, ref = RED.loss_model_prediction(cal, model_ref)
+    except RED.P2ReducerError as e:
+        raise FrameworkError(f"model_ref: {e}") from e
+    kind = ref["kind"]
+    comparison = RED.LOSS_MODEL_KINDS[kind]
+    if kind == "declared_bound":
+        if u_eta_pred not in (None, 0, 0.0):
+            raise FrameworkError("a declared bound is a limit: u_eta_pred must be 0 (or omitted)")
+        u_eta_pred = 0.0
+    rec = {"verification_id": verification_id, "method": method, "evidence_record_ids": list(evidence_record_ids),
+           "tuning_states": [ref["tuning_state_id"]] if kind == "two_port" else [], "data_class": data_class,
+           "model_ref": ref, "comparison": comparison, "k": kk, "k_registration_id": k_registration_id}
     if any(x is None for x in (u_eta_pred, u_P_net_W, u_P_ref_load_W)):
         rec.update({"status": NOT_EVALUATED, "reason": "missing uncertainty"})
         return rec
+    u_p = _fin(u_eta_pred, "u_eta_pred")
+    if u_p < 0:
+        raise FrameworkError("u_eta_pred must be >= 0")
+    eta_p = eta_model if eta_pred is None else _fin(eta_pred, "eta_pred")
+    if abs(eta_p - eta_model) > u_p + 1e-9:
+        raise FrameworkError(f"eta_pred {eta_p!r} is not the {kind} model's prediction {eta_model:.9g} within "
+                             f"u_eta_pred {u_p!r} (the check must verify the loss model that is used; MET-07)")
     pn, pr = _fin(P_net_W, "P_net_W"), _fin(P_ref_load_W, "P_ref_load_W")
     if pn <= 0 or pr < 0:
         raise FrameworkError("P_net > 0 and P_ref_load >= 0 required")
     eta_m = pr / pn
     u_m = eta_m * math.hypot(_fin(u_P_ref_load_W, "u") / pr if pr else 0.0, _fin(u_P_net_W, "u") / pn)
-    u_c = math.hypot(u_m, _fin(u_eta_pred, "u_eta_pred"))
-    if u_c == 0:
+    if math.hypot(u_m, u_p) == 0:
         rec.update({"status": NOT_EVALUATED, "reason": "zero combined uncertainty"})
         return rec
-    stat = abs(eta_m - _fin(eta_pred, "eta_pred")) / u_c
-    rec.update({"status": RED.LOSS_VERIFIED if stat <= kk else LOSS_INCONSISTENT, "eta_measured": _r(eta_m),
-                "u_eta_measured": _r(u_m), "eta_predicted": _r(eta_pred), "normalized_statistic": _r(stat), "k": kk})
+    stat = RED.loss_statistic(comparison, eta_m, u_m, eta_p, u_p)
+    rec.update({"status": RED.LOSS_VERIFIED if stat <= kk else LOSS_INCONSISTENT, "eta_measured": eta_m,
+                "u_eta_measured": u_m, "eta_predicted": eta_p, "u_eta_predicted": u_p,
+                "normalized_statistic": stat})
     return rec
 
 
