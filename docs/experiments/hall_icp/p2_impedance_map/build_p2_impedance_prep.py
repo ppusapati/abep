@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """P2 ICP impedance-map INSTRUMENT PREPARATION package (follow-on fo_a9_p2_impedance_prep, trigger
 T_A9_P2_IMPEDANCE_PREP; owner decision A9.3 authorizations.P2; owner A9.4 P2Q-05 incorporated mechanically by
-fo_a9_4_incorporation, trigger T_A9_4_INCORPORATION).
+fo_a9_4_incorporation, trigger T_A9_4_INCORPORATION; carried A9.4 minors fixed under owner A9.5 execution by
+fo_a9_5_closure_rule, trigger T_A9_5_CLOSURE_RULE).
 
 Deterministic, standard library only, no Julia, well under a second.
 
@@ -32,6 +33,7 @@ import hashlib
 import importlib.util
 import json
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -46,6 +48,7 @@ SCHEMA_NAME = "p2_impedance_record_schema_v1.json"
 TEST_REL = "tests/test_p2_impedance_prep.py"
 BASE_COMMIT = "ee9dc7db7d11e0b5f1d8b514258778ac1b6030d3"
 A94_INC_BASE = "875ed6d0a87202bc92706b28551b0e22eda2014d"   # base of the A9.4 incorporation (fo_a9_4_incorporation)
+A95_INC_BASE = "71f31b2a254fe01059b130b554b97c7584ae6b30"   # base of the A9.5 lane (fo_a9_5_closure_rule)
 DATE = "2026-09-30"
 LANE = "fo_a9_p2_impedance_prep"
 TRIGGER = "T_A9_P2_IMPEDANCE_PREP"
@@ -53,8 +56,11 @@ FREEZE_POINTS = ("NOW", "LOCK-1", "LOCK-2", "after-evidence")
 EVIDENCE_CLASSES = ("measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed",
                     "owner-allocation", "owner-stated", "published analog")
 STATUSES = ("OWNER_GIVEN", "DEFINED", "PROPOSED", "TBD", "PENDING", "TBD_AFTER_IMPEDANCE_MAP")
-P1_PENDING = "PENDING docs/experiments/hall_icp/p1_icp_bench/"
-RFQV2_PENDING = "PENDING docs/procurement/rfq_a9_v2/"
+# merged P1 bench package (same follow-on lane as this file, regenerated together): ids cited here are checked to exist
+# at build time; it is not sha-pinned because it is not an immutable input of this lane
+P1_JSON = "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json"
+RFQ2_JSON = "docs/procurement/rfq_a9_v2/rfq_a9_v2.json"          # merged RFQ v2 (immutable; pinned below)
+NO_V2 = "no RFQ v2 line"
 RATINGS_TBD = "TBD_AFTER_IMPEDANCE_MAP"
 
 _spec = importlib.util.spec_from_file_location("p2_impedance_reducer", str(HERE / "p2_impedance_reducer.py"))
@@ -93,6 +99,11 @@ DECISIONS = {
             "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d", "A9.4 P1/P2 owner decisions"),
     "A94MD": ("docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
               "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c", "A9.4 (verbatim; P2Q-05)"),
+    "A95": ("docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json",
+            "c9e101f2c409c2d28ad256818c22f13ee801bc532d7e4ef470f375d7bb1fe1d3",
+            "A9.5 owner decisions (execution: carried A9.4 minors incl. the P2 ones)"),
+    "A95MD": ("docs/decisions/OD_2026_09_30_A9_5_P1_CLOSURE_OWNER_DECISIONS.md",
+              "9e49e923328441c1fc82afd3eb64c13d85fc818e8fe534576ada61a16fa525f3", "A9.5 (verbatim)"),
 }
 DELIVERABLES = {
     "UB": ("docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
@@ -123,20 +134,37 @@ DELIVERABLES = {
             "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6", "A9-02 bus power boundary"),
     "EVID": ("docs/EVIDENCE.md", "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61",
              "evidence rules (CLAUDE.md rule 10)"),
+    "RFQ2": (RFQ2_JSON, "2d9fa0978f991674152371f4013cac64f05cddd1ac00523cfa7397b572119174",
+             "RFQ v2 (merged; instrument_list.rfq_v2_line)"),
 }
 NEVER_PINNED = ["docs/orchestration/lane_registry_v1.json", "docs/orchestration/trigger_registry_v1.json",
                 "docs/orchestration/fired_triggers.jsonl", "docs/orchestration/trigger_ledger_v2.jsonl",
                 "docs/orchestration/runtime_state.json"]
-PENDING_LANES = [
-    {"path": "docs/experiments/hall_icp/p1_icp_bench/", "lane": "P1 ICP electron-source bench (A9.3 authorizations.P1)",
-     "needed_for": "the stable ICP operating region (factor levels of the hot map), the selected laboratory generator, the "
-                   "adjustable local match hardware and its tuning range, the antenna / module geometry and the "
-                   "registered procedure's provisional limits",
-     "status": "PENDING (built in parallel; not read, not imported, content never assumed)"},
-    {"path": "docs/procurement/rfq_a9_v2/", "lane": "RFQ v2 split by supplier speciality (A9.3 OQ-RFQ-07)",
-     "needed_for": "the RF-package line ids to which the P2 instrument list maps",
-     "status": "PENDING (built in parallel; not read, not imported, content never assumed)"},
+MERGED_LANES = [
+    {"path": P1_JSON, "lane": "P1 ICP electron-source bench (A9.3 authorizations.P1)",
+     "needed_for": "the stable ICP operating region (P1-G5 / IF-P1-01), the laboratory generator (P1-HW-01), the "
+                   "adjustable local match (P1-HW-03, P1-IT-22), the antenna (P1-HW-34), the registered ignition "
+                   "procedure (P1-S3) and provisional protection settings (P1-S0, P1-IT-05), the photodiode records "
+                   "(P1-M-28, IF-P1-23)",
+     "state": "MERGED (ids cross-checked at build time; not sha-pinned: same follow-on lane; its values stay TBD "
+              "where P1 holds them TBD)"},
+    {"path": RFQ2_JSON, "lane": "RFQ v2 split by supplier speciality (A9.3 OQ-RFQ-07)",
+     "needed_for": "the RF-package / diagnostics line ids to which the P2 instrument list maps",
+     "state": "MERGED (sha256-pinned; every cited line id checked)"},
 ]
+# P2 instrument -> RFQ v2 line ids (checked against the pinned RFQ v2 JSON); no line -> said explicitly
+RFQ_V2_LINES = {
+    "INS-P2-01": NO_V2 + " (RFQ2-RF-N06 asks the RF supplier only to state V/I-sensing compatibility)",
+    "INS-P2-02": "RF-L02", "INS-P2-03": "RF-L03",
+    "INS-P2-04": NO_V2 + " (RFQ2-RF-N06 compatibility statement only)", "INS-P2-05": NO_V2,
+    "INS-P2-06": NO_V2, "INS-P2-07": "RF-L08 and RF-L09 for (a); " + NO_V2 + " for (b) the antenna-simulator load",
+    "INS-P2-08": "RF-L06 for the flexible live / sham stand-crossing pair (dispatch LATER); " + NO_V2 + " for the "
+                 "phase-stable VNA test cables",
+    "INS-P2-09": NO_V2, "INS-P2-10": "TH-L07 (photodiode + amplifier), TH-L08 (DAQ channel), VAC-L07 (optical access / "
+                                     "window)",
+    "INS-P2-11": "RF-L11", "INS-P2-12": NO_V2 + " as a separate encoder line (closest RF-L04 local matching network, "
+                                                "requirement RFQ2-RF-R07 'manual or auto-tuned')",
+}
 
 
 # every A9.3 decision id must carry a disposition in owner_answers_applied (checked in build() and by the test)
@@ -378,6 +406,9 @@ def build():
             raise SystemExit(f"A9.2 status {k} changed")
     if "P2" not in a93["authorizations"]:
         raise SystemExit("A9.3 P2 authorization missing")
+    a95 = _load("A95")
+    rfq2_txt = json.dumps(_load("RFQ2"))
+    p1_txt = (REPO / P1_JSON).read_text(encoding="utf-8")
 
     # ---- analog context (copied from the pinned extraction; never Vyovrinda values)
     tk = []
@@ -440,15 +471,15 @@ def build():
              "-", "definition from the A9.2 chain generator -> coupler -> 50-ohm line -> local match -> antenna",
              [A92_REF["OQ-A907-11"], "H2-A9 recomputations.rf_reference_plane.a9_2_segments.retained_50_ohm_segment"],
              "assumed", "PROPOSED", "LOCK-1", physical_location="TBD - requires the ICP module drawings (ICD ICP-02/04/07) "
-             "and " + P1_PENDING),
+             "and the P1 bench build (P1-HW-03 local match, P1-HW-04 coax / feedthrough; " + P1_JSON + ")"),
         item("RP-ANT", "antenna terminals (output side of the local matching network) - plane of Z_antenna = R + jX",
              "the pair of antenna feed terminals at which Z_antenna is reported; it excludes the matching elements and "
              "includes the antenna, its in-vacuum leads up to the terminal pair and, when lit, the plasma loading",
              "-", "A9.2 icp_matching_strategy (Z_antenna = R + jX measured vs mdot, P_RF, p, gas composition, Hall "
              "operating point)", [A92_REF["icp_matching_strategy"],
                                   "H2-A9 recomputations.rf_reference_plane.a9_2_segments.short_match_to_antenna_segment"],
-             "assumed", "PROPOSED", "LOCK-1", physical_location="TBD - requires the antenna/terminal drawing (" +
-             P1_PENDING + "; ICD ICP-07)"),
+             "assumed", "PROPOSED", "LOCK-1", physical_location="TBD - requires the antenna/terminal drawing (P1-HW-34, "
+             "RFQ v2 ME-L02; ICD ICP-07)"),
         item("RP-VI", "V/I probe sensing plane", "the plane at which the V/I probe senses voltage and current; joined to "
              "RP-ANT by a characterized fixture two-port (the identity only when declared and verified)", "-",
              "method A", ["this package CAL-P2-06"], "assumed", "PROPOSED", "LOCK-1",
@@ -546,7 +577,7 @@ def build():
             "flexible stand-crossing coax, vacuum feedthrough)", ["RP-CPL", "RP-MIN"],
             ["CAL-P2-01 two-port calibration"], "S-02; repeated after any re-routing and pre/post each block "
             "(phase with stand motion: CAL-P2-12)", ["UB-RF-05", "UB-P2-Z-03"], ["MS-P2-02"], ["UB-RF-05 (line part)"],
-            "TBD - requires the installed line (" + P1_PENDING + ")", "LOCK-2",
+            "TBD - requires the installed line (P1-HW-04; RFQ v2 RF-L05 / RF-L07)", "LOCK-2",
             note="the live and sham coax pair is characterized as a pair (rows 117, 133)"),
         cal("CAL-P2-03", "two-port S-parameters of the adjustable local match RP-MIN -> RP-ANT at each tuning state of "
             "a declared grid over its tuning range (or a fitted equivalent-circuit model of the measured data, "
@@ -554,7 +585,7 @@ def build():
                                                                      "antenna-terminal fixture adapter"],
             "S-03; grid spacing TBD from the P1 tuning range", ["UB-RF-05", "UB-P2-Z-03", "UB-P2-Z-04"], ["MS-P2-02"],
             ["UB-RF-05 (match part)", "A9H-INS-03"], "TBD - requires the selected matching network and its tuning range "
-            "(" + P1_PENDING + "; RFQ-04-R07)", "LOCK-2"),
+            "(P1-HW-03 / P1-IT-22; RFQ v2 RF-L04, requirement RFQ2-RF-R07 (v1 RFQ-04-R07))", "LOCK-2"),
         cal("CAL-P2-04", "tuning-state interpolation rule and its verification at off-grid states",
             ["RP-MIN", "RP-ANT"], ["CAL-P2-03 grid", "verification states not used to build the rule"],
             "S-03", ["UB-P2-Z-04"], ["MS-P2-02"], ["UB-P2-Z-04"],
@@ -590,14 +621,14 @@ def build():
             "temperature for the R_cold reference; powered-unlit records follow at S-08 (gas off, base pressure; HM-R13 and "
             "the P1 registered procedure; unlit verified by INS-P2-10)",
             ["UB-P2-Z-07"], ["MS-P2-02"], ["VI-RF-06 (cold part)", "sizing input of INS-P2-01 ranges"],
-            "TBD - requires the antenna (" + P1_PENDING + "); sweep span TBD - requires the antenna design "
+            "TBD - requires the antenna (P1-HW-34; RFQ v2 ME-L02); sweep span TBD - requires the antenna design "
             "(self-resonance must be located, not assumed)", "LOCK-2"),
         cal("CAL-P2-09", "dummy-load checks of the complete chain at power: 50-ohm calorimetric load (P_net vs "
             "calorimetry, k_x = 2) and the harmonic spectrum into the matched load", ["RP-CPL", "RP-MIN"],
             ["50-ohm calorimetric dummy load", "spectrum measurement (INS-P2-04 receiver mode or analyser)"],
             "S-05 (powered, HM-R13)",
             ["UB-RF-06", "UB-RF-07", "UB-RF-08"], ["MS-P2-01"], ["UB-RF-06", "UB-RF-07 (bench part)"],
-            "TBD - requires the generator (" + P1_PENDING + ")", "LOCK-2"),
+            "TBD - requires the generator (P1-HW-01, P1-IT-02; RFQ v2 RF-L01)", "LOCK-2"),
         cal("CAL-P2-10", "end-to-end method validation on an antenna-simulator load of VNA-known Z (low-R, high-X "
             "network in place of the antenna, built to the S-06 cold impedance): Z by ZM-A, ZM-B and ZM-C vs the VNA value, "
             "first at VNA level, then at power with the local match pre-tuned on the VNA into the simulator (HM-R13)",
@@ -617,7 +648,7 @@ def build():
             "TBD - requires the cables (INS-P2-08) and the stand routing (ICP-18)", "LOCK-2"),
         cal("CAL-P2-13", "RF pickup on the V/I, current-probe and optical channels (generator into dummy load; ICP "
             "energized, H-1 off) - part of the ICP-17 / row-64 pickup check", ["RP-VI"], ["dummy load; ICP on/H-1 off"],
-            "S-09 (powered, HM-R13; ICP energized only under the P1 registered procedure, " + P1_PENDING + ")",
+            "S-09 (powered, HM-R13; ICP energized only under the P1 registered ignition procedure, P1-S3 entry)",
             ["UB-P2-Z-01", "UB-P2-Z-02"], ["MS-P2-03"], ["ICP-17 (P2 channels)", "VI-RF-11"],
             "TBD - requires the S1a pickup test (ICD ICP-17)", "LOCK-2"),
         cal("CAL-P2-14", "time-base alignment of RF, V/I, optical, Hall, collector, pressure and flow channels (INS-18)",
@@ -684,12 +715,12 @@ def build():
     # ================================================================ (3) hot-map methodology
     factors = [
         item("HM-F01", "RF power (setpoint; recorded as P_forward, P_reflected, P_delivered)",
-             "levels TBD - " + P1_PENDING + " (stable region); bounded by the 0-500 W delivered/operating investigation "
+             "levels TBD - requires the P1 stable-region handoff (P1-G5, IF-P1-01); bounded by the 0-500 W delivered/operating investigation "
              "capability (row 72 as interpreted by A9.2 rf_500W; not a component rating) and the P1 registered limits",
              "W", "row 72; A9.2 rf_500W", [r72, A92_REF["rf_500W"]], "owner-allocation", "PENDING", "after-evidence",
              owner_bound=[0.0, 500.0], owner_bound_evidence_class="owner-allocation"),
         item("HM-F02", "mass flow through the ICP (G-REUSE: Hall anode flow; dedicated ICP flow)",
-             "Hall anode flow levels TBD - " + P1_PENDING + "; dedicated ICP flow = 0 in the primary mode (G-REUSE); a "
+             "Hall anode flow levels TBD - requires the P1 stable-region handoff (P1-G5; P1 run-matrix F2); dedicated ICP flow = 0 in the primary mode (G-REUSE); a "
              "dedicated feed is a diagnostic variable only (quote option, never silently the baseline; booked in the "
              "corresponding ledger if activated). Ar stage (A9.3 OQ-RFQ-02): calibrated Ar flow over the neighbourhood of the "
              "Takahashi anchor (70 sccm ~ 2.1 mg/s, owner-stated in A9.3 OQ-RFQ-02; its attribution to the Takahashi "
@@ -705,9 +736,9 @@ def build():
              "after-evidence", owner_value_dedicated=0.0, owner_value_ar_anchor="70 sccm ~ 2.1 mg/s (owner-stated, "
              "A9.3 OQ-RFQ-02; neighbourhood centre, not a level)"),
         item("HM-F03", "pressure (ICP source volume via the ICP-34 port; chamber background)",
-             "levels TBD - " + P1_PENDING, "Pa", "ICD ICP-34", ["ICD ICP-34"], None, "PENDING", "after-evidence"),
+             "levels TBD - requires the P1 stable-region handoff (P1-G5; P1 run-matrix F3)", "Pa", "ICD ICP-34", ["ICD ICP-34"], None, "PENDING", "after-evidence"),
         item("HM-F04", "gas composition", "evidence order Ar (engineering-only) -> N2 -> O2-bearing (NO_ATOMIC_O); "
-             "levels inside each stage TBD - " + P1_PENDING, "-", "A9 evidence order", ["A9"], "owner-allocation",
+             "levels inside each stage TBD - requires the P1 stable-region handoff (P1-G5)", "-", "A9 evidence order", ["A9"], "owner-allocation",
              "PENDING", "after-evidence", note="Ar data stay ENGINEERING_ONLY_NON_SCORING (A9.3 OQ-RFQ-02); the reducer "
              "derives an evidence_tag from factors.gas and the mismatch envelope never mixes tags"),
         item("HM-F05", "plasma state / mode (UNLIT, E_MODE, H_MODE, UNCERTAIN)", "observed response, not a set factor; "
@@ -717,7 +748,7 @@ def build():
              "A9.4 P2Q-05; VI-RF-10", [A94_REF["P2Q-05"], "VI-RF-10", "RF-DALT08-01"], "owner-stated", "OWNER_GIVEN",
              "NOW"),
         item("HM-F06", "Hall operating point (off / on; V_d, I_d, coil currents)",
-             "levels TBD - inside the registered H-1 operating envelope (" + P1_PENDING + "); current-sensor range uses "
+             "levels TBD - inside the registered H-1 operating envelope (P1-IT-07 / IF-P1-25, not yet registered); current-sensor range uses "
              "the 8.33 A stand ceiling, which is a rating ceiling and not a level (A9.3 OQ-A907-02). The map must reach "
              "the Hall operating point that sets the ICP-45 requirement: I_e,required = I_d,max,H1 "
              "(ICP45_REQUIRED_CURRENT = H1_REGISTERED_MAX, A9.3 OQ-A907-02), i.e. the maximum H-1 discharge current "
@@ -725,7 +756,7 @@ def build():
              "A9.3 OQ-A907-02; A9.2 icp_matching_strategy", [A93_REF["OQ-A907-02"], A92_REF["icp_matching_strategy"]],
              None, "PENDING", "after-evidence"),
         item("HM-F07", "collector bias (V_collector, I_collector)", "levels TBD - requires the collector / bias V-I "
-             "range (ICD ICP-21) and " + P1_PENDING + "; a bias level that puts a potential difference across an ICP "
+             "range (ICD ICP-21) and the P1 collector bias range (P1-IT-18, TBD there); a bias level that puts a potential difference across an ICP "
              "gas line (or the floating ICP body against grounded plumbing) is applied only after that line's ~1 kV-"
              "class representative-gas isolator qualification (A9.3 ICPQ-06, ICD ICP-23; IDP2-15); ICP body / "
              "collector circuits stay inside the 350 V operating class with >= 525 V design withstand and the initial "
@@ -785,7 +816,7 @@ def build():
              "FLIGHT_REPRESENTATIVE_DC_RF_SOURCE", "W", "A9.3 OQ-RFQ-06", [A93_REF["OQ-RFQ-06"]], "owner-allocation",
              "OWNER_GIVEN", "NOW"),
         item("HM-R11", "protection during the map (S-11; the powered preparation steps follow HM-R13)", "only the provisional limits of the P1 registered procedure apply "
-             "(" + P1_PENDING + "); reflected-power / VSWR trip thresholds are an OUTPUT of this characterization "
+             "(P1-S0 provisional settings; trip thresholds P1-IT-05 frozen at P1-G2); reflected-power / VSWR trip thresholds are an OUTPUT of this characterization "
              "(A9.2 rf_protection), never invented here; a trip is logged as an observation (RF-IPG6S-06)", "-",
              "A9.2 rf_protection", [A92_REF["rf_protection"], "A9H-RF-PROT-01"], "owner-allocation", "OWNER_GIVEN",
              "NOW"),
@@ -798,7 +829,7 @@ def build():
              "generator never drives an unmatched reactive load; generator power into a short or open is never "
              "applied (CAL-P2-07 short/open checks are low level only); (ii) whenever RF is on, the calibrated "
              "coupler chain (CAL-P2-07) monitors P_forward / P_reflected, the provisional reflected-power / VSWR "
-             "limits and generator foldback of the P1 registered procedure (" + P1_PENDING + ") are active, and the "
+             "limits and generator foldback of the P1 registered procedure (P1-S0 provisional settings, P1-IT-05) are active, and the "
              "ICD ICP-16 RF interlock permissives are in force with the functional interlock test done before first "
              "RF-on and at every configuration change (ICP-16 verification); no limit value is set here (A9.2 "
              "rf_protection: thresholds after characterization); (iii) RF enclosure / shielding, personnel RF-exposure"
@@ -819,7 +850,7 @@ def build():
              "re-classification", "-", "owner decision A9.4 P2Q-05", [A94_REF["P2Q-05"]], "owner-stated",
              "OWNER_GIVEN", "NOW"),
         item("HM-R15", "photodiode unlit threshold", "TBD - requires the dark / background, RF-powered known-unlit and "
-             "known-lit P1 plasma photodiode records (" + P1_PENDING + "); frozen before the P2 map; no arbitrary "
+             "known-lit P1 plasma photodiode records (P1-M-28 in P1-S2 / P1-S3..S5, handed over as IF-P1-23); frozen before the P2 map; no arbitrary "
              "photodiode voltage threshold is assigned now (A9.4 P2Q-05); each record carries the value, its source and "
              "threshold_basis (the three record ids, frozen_before_p2_map = true)", "V",
              "owner decision A9.4 P2Q-05 (rule)", [A94_REF["P2Q-05"]], None, "TBD", "after-evidence"),
@@ -844,7 +875,8 @@ def build():
          "impedance and VNA-measured; end-to-end validation of ZM-A/B/C first at VNA level, then at power with the "
          "local match pre-tuned on the VNA (CAL-P2-10); V/I probe at-power verification on the calorimetric load "
          "and the simulator (CAL-P2-15)"},
-        {"step": "S-08", "powered": True, "prerequisites": [R13, "P1 registered procedure (" + P1_PENDING + ")",
+        {"step": "S-08", "powered": True, "prerequisites": [R13, "P1 registered procedure (P1-S3 ignition procedure id; P1-S0 "
+                                                                 "provisional settings)",
                                                             "HM-R15 photodiode threshold frozen (A9.4 P2Q-05)"],
          "what": "powered-unlit records into the installed antenna, local match pre-tuned on the VNA into the cold "
          "antenna (phase COLD_ANTENNA_POWERED_UNLIT; CAL-P2-08 follow-on), energized only under the P1 registered "
@@ -858,10 +890,11 @@ def build():
          "breakdown (e.g. at the antenna terminals or feedthrough in residual gas): RF off (abort), record flagged, "
          "never reduced and never a cold reference (reducer IgnitionDetectedError / PlasmaStateError); the local-match "
          "tuning state is re-checked on the VNA before RF is re-applied"},
-        {"step": "S-09", "powered": True, "prerequisites": [R13, "P1 registered procedure (" + P1_PENDING + ")"],
+        {"step": "S-09", "powered": True, "prerequisites": [R13, "P1 registered procedure (P1-S3 ignition procedure id; P1-S0 "
+                                                                 "provisional settings)"],
          "what": "RF pickup on P2 channels (CAL-P2-13; ICP-17)"},
-        {"step": "S-10", "powered": False, "what": "GATE: P1 hands over a stable ICP operating region (" + P1_PENDING
-         + "); photodiode threshold frozen before the P2 map (HM-R15, A9.4 P2Q-05)"},
+        {"step": "S-10", "powered": False, "what": "GATE: P1 hands over a stable ICP operating region (P1-G5 via "
+         "IF-P1-01); photodiode threshold frozen before the P2 map (HM-R15, A9.4 P2Q-05)"},
         {"step": "S-11", "powered": True, "prerequisites": [R13, "HM-R01", "HM-R11"],
          "what": "hot map (phase HOT_MAP) under HM-R01..R15 with CAL-P2-11 bracketing"},
     ]
@@ -923,10 +956,12 @@ def build():
     }
 
     # ================================================================ (5) instrument list
-    def ins_(iid, name, a93_line, rfq_v1, specs, status="PROPOSED"):
-        return item(iid, name, "see required_specs", "-", "P2 preparation (A9.3 authorizations.P2)",
-                    [A93_REF["P2"], A93_REF["OQ-RFQ-07"]], "assumed", status, "LOCK-1",
-                    a9_3_rf_package_line=a93_line, rfq_v2_line=RFQV2_PENDING, rfq_v1_line=rfq_v1,
+    def ins_(iid, name, a93_line, rfq_v1, specs, status="PROPOSED", basis="P2 preparation (A9.3 authorizations.P2)",
+             extra_sources=(), evidence_class="assumed"):
+        return item(iid, name, "see required_specs", "-", basis,
+                    [A93_REF["P2"], A93_REF["OQ-RFQ-07"]] + list(extra_sources), evidence_class, status, "LOCK-1",
+                    a9_3_rf_package_line=a93_line, rfq_v2_line=RFQ_V2_LINES[iid] + " (" + RFQ2_JSON + ")",
+                    rfq_v1_line=rfq_v1,
                     required_specs=specs, purchase="quotation only; no purchase order (row 8; H3 gate); dispatch by "
                     "the owner / procurement, never by this lane (A9.3 OQ-RFQ-07); A9.4 authorizes the owner / "
                     "procurement to send the P1_NEEDED packages for quotation (RFQ, technical clarification, indicative "
@@ -938,7 +973,7 @@ def build():
         ins_("INS-P2-01", "V/I probe (complex V and I, phase-resolved) for RP-VI",
              "not in the A9.3 RF package list -> proposed addition (P2Q-02)", None,
              [f_spec, {"quantity": "voltage / current range", "value": "TBD - requires the cold antenna impedance "
-                       "(CAL-P2-08) and the generator selection (" + P1_PENDING + "); sizing relations "
+                       "(CAL-P2-08) and the generator selection (P1-HW-01; RFQ v2 RF-L01); sizing relations "
                        "I_ant,pk <= sqrt(2 P_del,max / R_ant,cold) if the plasma adds non-negative resistance (verify at "
                        "hot conditions) and V_ant,pk = I_ant,pk |Z_ant|", "units": "V; A", "source": "this package",
                        "evidence_class": None},
@@ -986,8 +1021,8 @@ def build():
         ins_("INS-P2-07", "dummy loads: (a) 50-ohm calorimetric load; (b) antenna-simulator load of VNA-known low-R / "
              "high-X impedance", "dummy load (A9.3 RF package) for (a); (b) proposed addition (P2Q-02)",
              "RFQ-04 'calorimetric cross-check load' (RFQ-04-R10) for (a)",
-             [f_spec, {"quantity": "power rating", "value": "TBD - requires the generator selection (" + P1_PENDING +
-                       ")", "units": "W", "source": "this package", "evidence_class": None},
+             [f_spec, {"quantity": "power rating", "value": "TBD - requires the generator selection (P1-HW-01; RFQ v2 "
+                       "RF-L01)", "units": "W", "source": "this package", "evidence_class": None},
               {"quantity": "simulator impedance", "value": "TBD - requires the cold antenna impedance (CAL-P2-08); "
                "never taken from the analog", "units": "ohm", "source": "this package CAL-P2-10",
                "evidence_class": None}]),
@@ -1015,7 +1050,8 @@ def build():
               {"quantity": "DAQ channel on the common time base, simultaneous with P_reflected, antenna current, "
                "collector / current-path and pressure channels", "value": "1 channel (sample rate TBD - requires the "
                "P1 plan)", "units": "-", "source": "A9.4 P2Q-05; INS-18", "evidence_class": "owner-stated"}],
-             status="OWNER_GIVEN"),
+             status="OWNER_GIVEN", basis="owner decision A9.4 P2Q-05 (PHOTODIODE_REQUIRED)",
+             extra_sources=(A94_REF["P2Q-05"],), evidence_class="owner-stated"),
         ins_("INS-P2-11", "input power analyser for P_mains,in of the laboratory generator",
              "13.56 MHz generator line (A9.3 OQ-RFQ-06 measurement requirement)", "RFQ-04-R04",
              [{"quantity": "range", "value": "TBD - requires the generator selection", "units": "W",
@@ -1054,14 +1090,16 @@ def build():
     # ================================================================ (b) interface demands
     idem = [
         ("IDP2-01", "P1 -> P2", "stable ICP operating region (factor ranges of P_RF, mdot, p, gas, Hall point, "
-         "collector bias) and its hand-over record", "W; mg/s; Pa; -; V, A", P1_PENDING),
+         "collector bias) and its hand-over record", "W; mg/s; Pa; -; V, A", "OFFERED by P1 as IF-P1-01 (after "
+         "P1-S5, gate P1-G5); no record yet"),
         ("IDP2-02", "P1 -> P2", "selected laboratory generator, adjustable local match (tuning range, element "
-         "read-out), antenna / terminal geometry, provisional protection limits", "-", P1_PENDING),
+         "read-out), antenna / terminal geometry, provisional protection limits", "-", "P1-HW-01 / P1-HW-03 / "
+         "P1-HW-34 / P1-IT-22 / P1-IT-05 (hardware NOT_PROCURED; values TBD there)"),
         ("IDP2-03", "P2 -> P1", "calibrated RF chain and reducer usable by P1 for P_delivered (C_e = P_RF,delivered / "
          "I_e, A9.3 OQ-RFQ-06) and for the OQ-VI-05 time series P_RF,fwd(t), P_RF,refl(t)", "W", "OFFERED"),
         ("IDP2-04", "P2 -> RFQ v2", "instrument list INS-P2-01..12 with required specs as quantities or TBD",
-         "-", "OFFERED; mapping " + RFQV2_PENDING),
-        ("IDP2-05", "RFQ v2 -> P2", "RF-package line ids for the instruments", "-", RFQV2_PENDING),
+         "-", "MAPPED (instrument_list.rfq_v2_line; instruments without a line are stated as such)"),
+        ("IDP2-05", "RFQ v2 -> P2", "RF-package line ids for the instruments", "-", "CONSUMED (" + RFQ2_JSON + ")"),
         ("IDP2-06", "P2 -> A9-04 uncertainty budget", "new PROPOSED components UB-P2-Z-01..08 for the UB-DQ-RF chain; "
          "closes UB-RF-02..07 via CAL-P2-02/03/07/09", "relative; ohm; rad",
          "OFFERED (adoption is an A9-04 successor / owner item; the merged budget is not edited)"),
@@ -1085,7 +1123,8 @@ def build():
         ("IDP2-13", "P2 -> INS-18 time base", "P2 channels on the common time base", "s", "PROPOSED"),
         ("IDP2-14", "P1 gas metrology -> P2", "Ar MFC (one range, or two overlapping ranges only if one cannot cover "
          "the sweep) calibration record via the rate-of-rise / transfer path, for the HM-F02 Ar levels and "
-         "UB-P2-M-01 (A9.3 OQ-RFQ-02); Ar data ENGINEERING_ONLY_NON_SCORING", "mg/s; sccm", P1_PENDING),
+         "UB-P2-M-01 (A9.3 OQ-RFQ-02); Ar data ENGINEERING_ONLY_NON_SCORING", "mg/s; sccm", "P1-IT-10 / P1-IT-11 "
+         "(P1-M-18; RFQ v2 GAS-L01 / GAS-L16); calibration record not yet made"),
         ("IDP2-15", "ICD ICP-23 / P1 -> P2", "~1 kV-class representative-gas isolator qualification record for any "
          "ICP gas line bridging isolated potentials (dedicated G-ATM / G-XE diagnostic feed of HM-F02; any line across "
          "the floating ICP body when HM-F07 biases the collector); none required where both ends are intentionally "
@@ -1095,9 +1134,11 @@ def build():
          "bench RF-on sequence", "-", "OFFERED"),
         ("IDP2-17", "P1 -> P2", "photodiode dark / background, RF-powered known-unlit and known-lit P1 plasma records "
          "(with simultaneous P_reflected, antenna current, collector / current-path response, pressure) for the HM-R15 "
-         "threshold, frozen before the P2 map (A9.4 P2Q-05)", "V; W; A; Pa", P1_PENDING),
+         "threshold, frozen before the P2 map (A9.4 P2Q-05)", "V; W; A; Pa", "OFFERED by P1 as IF-P1-23 "
+         "(P1-M-28); records not yet taken"),
         ("IDP2-18", "P2 -> RFQ v2", "INS-P2-10 photodiode, optical access / window, amplifier and DAQ channel for the "
-         "P1_NEEDED / P2 preparation instrumentation quote (A9.4 P2Q-05)", "-", "OFFERED; mapping " + RFQV2_PENDING),
+         "P1_NEEDED / P2 preparation instrumentation quote (A9.4 P2Q-05)", "-", "RECORDED in RFQ v2 as TH-L07, TH-L08 and "
+         "VAC-L07 (quotation only)"),
     ]
     interface_demands = [{"id": i, "direction": d, "quantity": q, "units": u, "status": s} for i, d, q, u, s in idem]
 
@@ -1132,7 +1173,8 @@ def build():
         {"ref": A92_REF["post_a9_priorities"], "how": "this lane prepares P2"},
         {"ref": A92_REF["icp_coupled_thermal"], "how": "P2 supplies Q_RF/match inputs later; thermal stays UNRESOLVED"},
         {"ref": A93_REF["P1"], "how": "P1 runs 'subject to existing safety/interlock/metrology requirements': HM-R13 "
-                                      "carries that into every powered P2 preparation step; P1 content is PENDING"},
+                                      "carries that into every powered P2 preparation step; the merged P1 package supplies the registered-procedure "
+                                      "ids (P1-S0, P1-S3, P1-G5), their values stay TBD there"},
         {"ref": A93_REF["P2"], "how": "V/I sensing, coupler chain, calibration, S-parameter/impedance methodology, data "
                                       "model prepared; the plasma map waits for P1 (HM-R01, S-10 gate)"},
         {"ref": A93_REF["OQ-VI-03"], "how": "the antenna of the open-tube coaxial first build is the map object; "
@@ -1180,6 +1222,11 @@ def build():
                                                   "commercial quotation, datasheets / certificates); no purchase order, "
                                                   "advance payment or binding commitment; this lane contacts no "
                                                   "supplier"},
+        {"ref": {"kind": "A9.5", "path": DECISIONS["A95"][0], "sha256": DECISIONS["A95"][1], "decision": "execution"},
+         "how": "carried A9.4 minors fixed ('fix all the issues'): INS-P2-10 cites A9.4 P2Q-05 as source with evidence "
+                "class owner-stated; every instrument maps to its RFQ v2 line ids or states that no line exists "
+                "(instrument_list.rfq_v2_line); stale P1 / RFQ v2 PENDING references replaced by merged ids "
+                "(merged_ids_cited, checked at build time); P1Q-15 / P1Q-16 change no P2 item"},
     ]
 
     # ================================================================ (d) new open owner questions
@@ -1239,7 +1286,7 @@ def build():
          "reused": "TK-20..26 as method context", "not_reused": "any analog number as Vyovrinda performance"},
         {"path": DELIVERABLES["RFQ04"][0], "sha256": DELIVERABLES["RFQ04"][1],
          "reused": "v1 line mapping (coupler/sensors, calorimetric load, live/sham coax)",
-         "not_reused": "v1 predates A9.2/A9.3; v2 mapping PENDING"},
+         "not_reused": "v1 predates A9.2/A9.3; the v2 mapping is instrument_list.rfq_v2_line"},
     ]
 
     # ================================================================ (f) m16 impact
@@ -1265,6 +1312,16 @@ def build():
     items_table = [{k: it[k] for k in ("id", "name", "value", "units", "basis", "source", "evidence_class", "status",
                                        "freeze_point")} for it in all_items]
 
+    # ---- merged-lane ids cited here must exist (P1: same follow-on lane, checked not pinned; RFQ v2: pinned)
+    body = json.dumps([all_items, sequence, idem, oaa, MERGED_LANES, RFQ_V2_LINES, hist], ensure_ascii=False)
+    p1_ids = sorted(set(re.findall(r"\b(?:P1-HW-\d\d|P1-IT-\d\d|P1-M-\d\d|P1-G\d|P1-S\d+H?|IF-P1-\d\d)\b",
+                                   body)))
+    v2_ids = sorted(set(re.findall(r"\b(?:(?:RF|GAS|VAC|HE|ME|TH)-[LO]\d\d|RFQ2-[A-Z]+-[RN]\d\d)\b", body)))
+    missing = [i for i in p1_ids if f'"{i}"' not in p1_txt] + [i for i in v2_ids if f'"{i}"' not in rfq2_txt]
+    if missing:
+        raise SystemExit(f"merged-lane ids cited but absent: {missing}")
+    merged_ids = {P1_JSON: p1_ids, RFQ2_JSON: v2_ids}
+
     doc = {
         "schema": "p2_impedance_prep_v1", "id": "p2_impedance_prep_v1", "lane": LANE, "trigger": TRIGGER,
         "title": "P2 ICP impedance-map instrument preparation", "date": DATE, "base_commit": BASE_COMMIT,
@@ -1280,7 +1337,20 @@ def build():
                              "an answer to any open owner question"],
         "decision_pins": [{"key": k, "path": p, "sha256": h, "what": w} for k, (p, h, w) in DECISIONS.items()],
         "deliverable_pins": [{"key": k, "path": p, "sha256": h, "what": w} for k, (p, h, w) in DELIVERABLES.items()],
-        "never_pinned": NEVER_PINNED, "pending_lanes": PENDING_LANES,
+        "never_pinned": NEVER_PINNED, "merged_lanes": MERGED_LANES, "merged_ids_cited": merged_ids,
+        "a9_5_incorporation": {
+            "follow_on": "fo_a9_5_closure_rule", "trigger": "T_A9_5_CLOSURE_RULE", "base_commit": A95_INC_BASE,
+            "decision": {"path": DECISIONS["A95"][0], "sha256": DECISIONS["A95"][1]},
+            "verbatim": {"path": DECISIONS["A95MD"][0], "sha256": DECISIONS["A95MD"][1]},
+            "applies_here": a95["execution"]["instruction"],
+            "changes": ["INS-P2-10 source list cites A9.4 P2Q-05 and its evidence class is owner-stated (owner "
+                        "decision), no longer 'assumed'",
+                        "stale PENDING references to the RFQ v2 path replaced by RFQ v2 line ids (instrument_list."
+                        "rfq_v2_line; no line -> said explicitly)",
+                        "stale PENDING references to the P1 path replaced by the merged P1 ids (P1-G5, P1-S0, P1-S3, "
+                        "P1-HW-*, P1-IT-*, P1-M-28, IF-P1-01 / IF-P1-23 / IF-P1-25)"],
+            "p1q15_p1q16": "P1 decisions (closure rule, capacity formula); no P2 item changes",
+            "m16_impact_change": "none"},
         "a9_4_incorporation": {
             "follow_on": "fo_a9_4_incorporation", "trigger": "T_A9_4_INCORPORATION", "base_commit": A94_INC_BASE,
             "decision": {"path": DECISIONS["A94"][0], "sha256": DECISIONS["A94"][1]},
@@ -1303,7 +1373,7 @@ def build():
             "not_wired_into_archengine": True, "julia_run": False,
             "open_items_never_pass": "RF component ratings TBD_AFTER_IMPEDANCE_MAP; ICP / coupled thermal UNRESOLVED; "
                                      "anode OPEN / UNRESOLVED - carried unchanged",
-            "pending_lanes_not_read": [p["path"] for p in PENDING_LANES]},
+            "merged_lanes_cross_checked": [p["path"] for p in MERGED_LANES]},
     }
     return doc
 
@@ -1514,12 +1584,13 @@ def render_md(doc):
     for s in doc["reducer_selfcheck"]:
         body = {k: v for k, v in s.items() if k not in ("id", "what", "evidence_status", "evidence_class")}
         L.append(f"- **{s['id']}** {s['what']}: `{json.dumps(body, ensure_ascii=False)}`")
-    L += ["", "## 5. Instrument list (quotation only; mapped to the A9.3 RF package; RFQ v2 mapping PENDING)", "",
-          "| id | instrument | A9.3 RF package line | RFQ v1 line | required specs |", "|---|---|---|---|---|"]
+    L += ["", "## 5. Instrument list (quotation only; mapped to the A9.3 RF package and to the RFQ v2 line ids)", "",
+          "| id | instrument | A9.3 RF package line | RFQ v1 line | RFQ v2 line | source | evidence class | required "
+          "specs |", "|---|---|---|---|---|---|---|---|"]
     for i in doc["instrument_list"]:
         specs = "; ".join(f"{s['quantity']}: {s['value']} [{s['units']}]" for s in i["required_specs"])
         L.append(f"| {i['id']} | {_v(i['name'])} | {_v(i['a9_3_rf_package_line'])} | {_v(i['rfq_v1_line'])} | "
-                 f"{_v(specs)} |")
+                 f"{_v(i['rfq_v2_line'])} | {_v(_src(i['source']))} | {i['evidence_class']} | {_v(specs)} |")
     L += ["", "## 6. Outputs P2 will feed later (not answered now)", "", "| id | what | P2 supplies | status |",
           "|---|---|---|---|"]
     for o in doc["p2_outputs_later"]:
@@ -1561,8 +1632,14 @@ def render_md(doc):
     for p in doc["decision_pins"] + doc["deliverable_pins"]:
         L.append(f"| {p['key']} | {p['path']} | `{p['sha256']}` |")
     L += ["", "Never pinned (mutable governance): " + ", ".join(doc["never_pinned"]) + ".", "",
-          "Pending parallel lanes (not read, not imported): " + "; ".join(f"{p['path']} ({p['needed_for']})"
-                                                                         for p in doc["pending_lanes"]) + ".", ""]
+          "Merged cross-referenced lanes: " + "; ".join(f"{p['path']} - {p['state']} ({p['needed_for']}); ids "
+                                                         f"cited: {', '.join(doc['merged_ids_cited'][p['path']])}"
+                                                         for p in doc["merged_lanes"]) + ".", ""]
+    i5 = doc["a9_5_incorporation"]
+    L += [f"A9.5 execution (`{i5['follow_on']}`, trigger `{i5['trigger']}`, base `{i5['base_commit']}`): decision "
+          f"`{i5['decision']['path']}` (sha256 `{i5['decision']['sha256']}`), verbatim `{i5['verbatim']['path']}` "
+          f"(sha256 `{i5['verbatim']['sha256']}`). Changes: " + "; ".join(i5["changes"]) +
+          f". P1Q-15 / P1Q-16: {i5['p1q15_p1q16']}. M16: {i5['m16_impact_change']}.", ""]
     return "\n".join(L)
 
 

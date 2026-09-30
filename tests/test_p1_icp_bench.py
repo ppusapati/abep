@@ -1,5 +1,5 @@
 """Tests for the P1 ICP electron-source bench package (fo_a9_p1_icp_bench, owner A9.3; A9.4 incorporated by
-fo_a9_4_incorporation).
+fo_a9_4_incorporation; owner A9.5 P1Q-15 Kirchhoff closure rule / P1Q-16 capacity formula by fo_a9_5_closure_rule).
 
 File checks, the deterministic builder (--check) and the pure reducer exercised with CLEARLY SYNTHETIC records
 (synthetic = true, ids 'SYNTH-*'); the synthetic numbers are test fixtures, never data or predictions.
@@ -142,16 +142,35 @@ def test_interface_demands_both_directions(doc):
         assert d["units"] and d["status"]
 
 
-def test_pending_parallel_lanes_marked_not_read(doc, bld):
-    txt = json.dumps(doc)
-    assert "PENDING docs/experiments/hall_icp/p2_impedance_map/" in txt
-    assert "PENDING docs/procurement/rfq_a9_v2/" in txt
+def test_merged_cross_references_replace_stale_pending(doc, bld):
+    """A9.5 execution (carried A9.4 minor): no stale 'PENDING <path>' for the merged RFQ v2 / P2 lanes; every readiness
+    row names RFQ v2 line ids or says explicitly that no line exists; cited ids exist in the merged files."""
+    txt = json.dumps(doc) + open(MD_PATH, encoding="utf-8").read()
+    assert "PENDING docs/experiments/hall_icp/p2_impedance_map/" not in txt
+    assert "PENDING docs/procurement/rfq_a9_v2/" not in txt
+    assert "pending_parallel_lanes" not in doc
+    with open(os.path.join(ROOT, "docs", "procurement", "rfq_a9_v2", "rfq_a9_v2.json"), encoding="utf-8") as f:
+        rfq2 = f.read()
     for h in doc["hardware_readiness"]:
-        assert h["rfq_v2_package"] == "PENDING docs/procurement/rfq_a9_v2/"
-    pinned = {p["path"] for p in doc["authority_pins"]}
-    assert not any("p2_impedance_map" in p or "rfq_a9_v2" in p for p in pinned)
-    src = open(BUILDER, encoding="utf-8").read()
-    assert "_load(P2_PATH" not in src and "_load(RFQ_V2_PATH" not in src
+        v = h["rfq_v2_package"]
+        assert "PENDING" not in v and "docs/procurement/rfq_a9_v2/rfq_a9_v2.json" in v, h["id"]
+        ids = re.findall(r"\b(?:RF|GAS|VAC|HE|ME|TH)-[LO]\d\d\b", v)
+        assert ids or v.startswith("no RFQ v2 line"), h["id"]
+        for i in ids:
+            assert '"%s"' % i in rfq2, (h["id"], i)
+    hw = {h["item"].split(" (")[0]: h["rfq_v2_package"] for h in doc["hardware_readiness"]}
+    photo = [v for k, v in hw.items() if k.startswith("optical-emission photodiode")][0]
+    assert "TH-L07" in photo and "TH-L08" in photo and "VAC-L07" in photo
+    pins = {p["path"]: p["sha256"] for p in doc["authority_pins"]}
+    assert pins["docs/procurement/rfq_a9_v2/rfq_a9_v2.json"] == \
+        "2d9fa0978f991674152371f4013cac64f05cddd1ac00523cfa7397b572119174"
+    assert not any("p2_impedance_map" in p for p in pins)          # same follow-on lane: ids checked, not pinned
+    refs = {r["path"]: r for r in doc["merged_cross_references"]}
+    assert refs["docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json"]["state"] == "MERGED"
+    assert "IDP2-01" in refs["docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json"]["ids_cited"]
+    assert "TH-L07" in refs["docs/procurement/rfq_a9_v2/rfq_a9_v2.json"]["ids_cited"]
+    ifd = {d["id"]: d for d in doc["interface_demands"]}
+    assert "IDP2-01" in ifd["IF-P1-01"]["counterpart"] and "IDP2-17" in ifd["IF-P1-23"]["counterpart"]
 
 
 def test_governance_not_pinned(doc):
@@ -397,7 +416,17 @@ def test_refuse_plane_gas_terminals(red):
 
 REG = {"registration_id": "SYNTH-R", "I_d_max_H1_A": 2.0, "basis": "MEASURED_REGISTERED_H1_OPERATION",
        "source": "synthetic", "registered_point_ids": ["SYNTH-H1-PT-1"]}
-CLOSE = {"rule_id": "SYNTH-CLOSURE", "residual_rel_tol": 0.05, "sign_convention_id": "SYNTH-SIGN"}
+KSC = "CONVENTIONAL_CURRENT_INTO_THE_DEFINED_ISOLATED_ELECTRICAL_NETWORK_IS_POSITIVE"
+CLOSE = {"rule_id": "SYNTH-CLOSURE", "sign_convention": KSC, "sign_convention_id": "SYNTH-SIGN",
+         "I_scale_min_A": 0.01, "I_scale_min_basis": "SYNTH instrument-capability floor (fixture, not data)"}
+# synthetic per-channel u(I_k) components (fixture numbers, never data): u = sqrt(1e-3^2 + 5e-4^2 + 1e-4^2) A
+U_CH = {"u_calibration_A": 1e-3, "u_zero_offset_A": 5e-4, "u_resolution_A": 1e-4, "u_repeatability_A": "NOT_APPLICABLE",
+        "u_rf_pickup_A": "NONE_REGISTERED"}
+U1 = math.sqrt(1e-3 ** 2 + 5e-4 ** 2 + 1e-4 ** 2)
+
+
+def _meas(i_a, sign="SYNTH-SIGN"):
+    return {"I_A": i_a, "basis": "MEASURED", "sign_convention_id": sign, "uncertainty": dict(U_CH)}
 RULE = {"rule_id": "SYNTH-RULE", "k_one_sided": 1.645, "u_I_e_A": 0.05, "u_I_d_max_A": 0.05}
 MATCH = {"criteria_id": "SYNTH-MATCH-RULE", "p_chamber_rel_tol": 0.05}
 
@@ -434,13 +463,14 @@ def synth_cap(rid, i_e, rf_on=True, synthetic=True, stage="P1-S7", **over):
     rec["capacity_monitoring"] = {"h1_body_ground_config": "SINGLE_POINT_METERED_FACILITY_GROUND",
                                   "I_body_to_ground_continuous": True, "V_anode_channel": "HIGH_IMPEDANCE_ISOLATED",
                                   "V_icp_body_V": -5.0, "V_electron_collector_V": 20.0,
-                                  "sign_convention_id": "SYNTH-SIGN"}
+                                  "sign_convention_id": "SYNTH-SIGN", "unintended_ground_path_found": False,
+                                  "ground_path_check_id": "SYNTH-GND-CHECK"}
     rec["collector"]["I_e_A"] = i_e
-    rec["terminals"] = {"collector_supply": {"I_A": i_e, "basis": "MEASURED"},
+    rec["terminals"] = {"collector_supply": _meas(i_e),
                         "icp_body": {"I_A": 0.0, "basis": "OPEN_CIRCUIT_BY_CONSTRUCTION"},
-                        "facility_ground": {"I_A": 0.0, "basis": "MEASURED"},
-                        "electron_collector": {"I_A": -i_e, "basis": "MEASURED"},
-                        "h1_body": {"I_A": 0.0, "basis": "MEASURED"},
+                        "facility_ground": _meas(0.0),
+                        "electron_collector": _meas(-i_e),
+                        "h1_body": _meas(0.0),
                         "hall_anode": {"I_A": 0.0, "basis": "OPEN_CIRCUIT_BY_CONSTRUCTION"}}
     if not rf_on:
         rec["rf"]["P_fwd_W"] = 0.0
@@ -861,8 +891,8 @@ def test_a94_pinned_and_recorded(doc):
 
 def test_a94_answered_questions_moved(doc):
     qs = {q["id"] for q in doc["open_owner_questions"]}
-    assert not ({"P1Q-10", "P1Q-13", "P1Q-14"} & qs)
-    assert {"P1Q-15", "P1Q-16", "P1Q-17"} <= qs
+    assert not ({"P1Q-10", "P1Q-13", "P1Q-14", "P1Q-15", "P1Q-16"} & qs)          # P1Q-15/16 answered by A9.5
+    assert {"P1Q-17", "P1Q-18", "P1Q-19", "P1Q-20"} <= qs
     applied = {a["id"]: a for a in doc["owner_answers_applied"]}
     for k in ("A9.4 P1Q-10", "A9.4 P1Q-13", "A9.4 P1Q-14", "A9.4 P2Q-05", "A9.4 execution_decisions.i_d_max_h1",
               "A9.4 execution_decisions.p1_needed_rfqs"):
@@ -885,7 +915,8 @@ def test_a94_items_owner_decided(doc):
     assert "verify" in items["P1-IT-44"]["basis"] and "ICPQ-06" in items["P1-IT-44"]["note"]
     assert items["P1-IT-45"]["value"].startswith("TBD") and items["P1-IT-45"]["evidence_class"] is None
     assert items["P1-IT-46"]["value"].startswith("TBD") and "ICP-44" in items["P1-IT-46"]["name"]
-    assert items["P1-IT-47"]["value"].startswith("TBD") and items["P1-IT-47"]["freeze_point"] in FREEZE
+    assert items["P1-IT-47"]["status"].startswith("OWNER_DECIDED (A9.5 P1Q-15")          # A9.5 answered P1Q-15
+    assert items["P1-IT-47"]["value"]["k_sigma"] == 3.0 and items["P1-IT-47"]["value"]["fraction_max"] == 0.02
     assert "~1 kV DC" in items["P1-IT-20"]["value"]                      # ICPQ-06 gas-line rule kept distinct
     assert "8.33" not in str(items["P1-IT-07"]["value"]) and "NOT_EVALUATED" in items["P1-IT-07"]["note"]
     for it in doc["items"]:
@@ -985,18 +1016,18 @@ def test_a94_capacity_measurand_is_dedicated_collector_and_closure_gate(red):
     ic = r["summary"]["icp45a"]
     assert ic["status"] == "EVALUATED_ENGINEERING_ONLY"
     assert ic["I_e_cap_A"] == pytest.approx(2.5 - 0.2)              # collector current only, RF ON - RF OFF
-    # no registered closure tolerance -> no capacity point admitted
+    # no registered closure rule -> no capacity point admitted
     r = red.reduce_operating_points([on, off], reg, RULE, pair, MATCH)
     ic = r["summary"]["icp45a"]
     assert ic["status"] == "NOT_EVALUATED" and ic["condition_met"] is None
-    assert any("closure tolerance not registered" in " ".join(e["reasons"]) for e in ic["excluded_records"])
-    # residual beyond the registered tolerance invalidates the point
+    assert any("closure rule not registered" in " ".join(e["reasons"]) for e in ic["excluded_records"])
+    # an unexplained residual invalidates the point (owner rule A9.5: statistical and fractional closure)
     leak = copy.deepcopy(on)
     leak["terminals"]["h1_body"]["I_A"] = 0.0                         # 0.5 A unexplained
     r = red.reduce_operating_points([leak, off], reg, RULE, pair, MATCH, CLOSE)
     ic = r["summary"]["icp45a"]
     assert ic["status"] == "NOT_EVALUATED"
-    assert any("beyond the registered tolerance" in " ".join(e["reasons"]) for e in ic["excluded_records"])
+    assert any("statistical closure fails" in " ".join(e["reasons"]) for e in ic["excluded_records"])
     with pytest.raises(red.MissingInputError):
         red.reduce_operating_points([on, off], reg, RULE, pair, MATCH, {"rule_id": "X"})
 
@@ -1059,3 +1090,325 @@ def test_a94_mixed_synthetic_and_measured_candidates_refused(red):
         red.reduce_operating_points(recs, reg, RULE, pairs, MATCH, CLOSE)
     ic = red.reduce_operating_points(recs[:2], reg, RULE, pairs[:1], MATCH, CLOSE)["summary"]["icp45a"]
     assert ic["status"] == "EVALUATED_ENGINEERING_ONLY" and ic["I_e_cap_A"] == pytest.approx(2.8)
+
+
+# ------------------------------------------------------------------ A9.5 P1Q-15 / P1Q-16 (fo_a9_5_closure_rule)
+A95 = os.path.join(ROOT, "docs", "decisions", "OD_2026_09_30_A9_5_p1_closure_owner_decisions.json")
+
+
+def _pair(on_ie=3.0, off_ie=0.2, synthetic=False, tag="P"):
+    on = synth_cap("SYNTH-%s-ON" % tag, on_ie, synthetic=synthetic, stage="P1-S4")
+    off = synth_cap("SYNTH-%s-OFF" % tag, off_ie, rf_on=False, synthetic=synthetic, stage="P1-S4")
+    return on, off
+
+
+def _ic(red, on, off, rule=None, reg=None, margin=None):
+    reg = reg or dict(REG, I_d_max_H1_A=2.0)
+    rule = CLOSE if rule is None else rule
+    return red.reduce_operating_points([on, off], reg, margin or RULE, [[on["record_id"], off["record_id"]]], MATCH,
+                                       rule)["summary"]["icp45a"]
+
+
+def _reasons(ic, rid):
+    return " ".join([" ".join(e["reasons"]) for e in ic["excluded_records"] if e["record_id"] == rid])
+
+
+def test_a95_pinned_and_recorded(doc):
+    with open(A95, encoding="utf-8") as f:
+        a95 = json.load(f)
+    pins = {p["path"]: p["sha256"] for p in doc["authority_pins"]}
+    assert pins["docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json"] == \
+        "c9e101f2c409c2d28ad256818c22f13ee801bc532d7e4ef470f375d7bb1fe1d3"
+    assert pins["docs/decisions/OD_2026_09_30_A9_5_P1_CLOSURE_OWNER_DECISIONS.md"] == \
+        "9e49e923328441c1fc82afd3eb64c13d85fc818e8fe534576ada61a16fa525f3"
+    inc = doc["a9_5_incorporation"]
+    assert inc["follow_on"] == "fo_a9_5_closure_rule" and inc["trigger"] == "T_A9_5_CLOSURE_RULE"
+    assert inc["base_commit"] == "71f31b2a254fe01059b130b554b97c7584ae6b30"
+    for q in ("P1Q-15", "P1Q-16"):
+        assert inc["answered"][q] == a95["decisions"][q]["status"]
+    assert inc["reducer"]["owner_constants"] == {"CLOSURE_K_SIGMA": 3.0, "CLOSURE_FRACTION_MAX": 0.02}
+    items = {i["id"]: i for i in doc["items"]}
+    for k in ("P1-IT-48", "P1-IT-49", "P1-IT-50", "P1-IT-51"):
+        assert k in items, k
+    assert items["P1-IT-48"]["value"].startswith("TBD") and items["P1-IT-48"]["evidence_class"] is None
+    assert "NOT_EVALUATED_INSTRUMENT" in items["P1-IT-50"]["value"]
+    assert "CONFIRMED by owner A9.5 P1Q-16" in items["P1-IT-38"]["value"]
+    assert "no zero-clipping" in items["P1-IT-38"]["value"]
+    assert items["P1-IT-42"]["status"].startswith("OWNER_DECIDED network convention (A9.5 P1Q-15)")
+    applied = {a["id"]: a for a in doc["owner_answers_applied"]}
+    for k in ("A9.5 P1Q-15", "A9.5 P1Q-16"):
+        assert applied[k]["how_applied"].startswith("ANSWERED"), k
+        assert "OD_2026_09_30_A9_5_p1_closure_owner_decisions.json" in applied[k]["kind"]
+    s4 = [s_ for s_ in doc["stage_map"] if s_["id"] == "P1-S4"][0]
+    work = " ".join(s4["work"])
+    assert "PROPOSED" not in work and "OWNER_DECIDED, A9.4 P1Q-10" in work       # carried A9.4 minor fixed
+    assert "PROPOSED option A" not in json.dumps(items["P1-IT-36"])
+    d13 = {d["id"]: d for d in doc["derived_quantities"]}
+    assert "3 u_R" in d13["P1-D-13"]["formula"] and "P1-D-14" in d13 and "P1-D-15" in d13
+
+
+def test_a95_closure_rule_constants_not_parameters(red):
+    assert red.CLOSURE_K_SIGMA == 3.0 and red.CLOSURE_FRACTION_MAX == 0.02
+    on, off = _pair()
+    for widen in ({"residual_rel_tol": 0.05}, {"k_sigma": 5.0}, {"fraction_max": 0.05}, {"tolerance": 1.0}):
+        with pytest.raises(red.ClosureRuleError):
+            _ic(red, on, off, rule=dict(CLOSE, **widen))
+    with pytest.raises(red.ClosureRuleError):
+        _ic(red, on, off, rule=dict(CLOSE, sign_convention="ELECTRON_FLOW_POSITIVE"))
+    for k in ("I_scale_min_A", "I_scale_min_basis", "sign_convention_id", "sign_convention", "rule_id"):
+        rule = dict(CLOSE)
+        del rule[k]
+        with pytest.raises(red.MissingInputError):                   # I_scale,min has no default
+            _ic(red, on, off, rule=rule)
+    for bad in (0.0, -0.01, None):
+        with pytest.raises((red.MissingInputError, red.P1RecordError)):
+            _ic(red, on, off, rule=dict(CLOSE, I_scale_min_A=bad))
+    ic = _ic(red, on, off)
+    assert ic["status"] == "EVALUATED_ENGINEERING_ONLY" and ic["condition_met"] is True
+    assert ic["closure_owner_rule"]["k_sigma"] == 3.0 and ic["closure_owner_rule"]["fraction_max"] == 0.02
+    ev = ic["candidates"][0]["closure"]["SYNTH-P-ON"]
+    assert ev["R_I_A"] == pytest.approx(0.0) and ev["u_R_A"] == pytest.approx(2.0 * U1)   # four measured channels
+    assert ev["channels"]["hall_anode"]["basis"] == "OPEN_CIRCUIT_BY_CONSTRUCTION"
+    assert ev["channels"]["hall_anode"]["I_A"] == 0.0 and ev["V_anode_V"] == 3.0          # potential still recorded
+
+
+def test_a95_unavailable_channel_never_zeroed(red):
+    on, off = _pair(tag="U")
+    on["terminals"]["facility_ground"] = {"I_A": None, "basis": "NOT_MEASURED"}
+    red.validate_operating_point(on)                                  # declared unavailable: valid record
+    cl = red.current_closure(on)
+    assert cl["sum_A"] is None and cl["closure_state"] == "NOT_EVALUABLE_UNMEASURED_CHANNEL"
+    ev = red.kirchhoff_closure(on, CLOSE)
+    assert ev["evaluable"] is False and ev["R_I_A"] is None and ev["closure_valid"] is False
+    assert "intentional return path unmeasured" in " ".join(ev["reasons"])
+    ic = _ic(red, on, off)
+    assert ic["status"] == "NOT_EVALUATED" and ic["condition_met"] is None
+    assert "intentional return path unmeasured" in _reasons(ic, "SYNTH-U-ON")
+    assert {"record_id": "SYNTH-U-ON", "outcome": "EXCLUDED"} in ic["capacity_point_outcomes"]
+    row = [r for r in red.reduce_operating_points([on, off])["surface"] if r["record_id"] == "SYNTH-U-ON"][0]
+    assert row["closure_sum_A"] is None and any(f.startswith("TERMINAL_NOT_MEASURED") for f in row["flags"])
+    bad = copy.deepcopy(on)
+    bad["terminals"]["facility_ground"] = {"I_A": 0.0, "basis": "NOT_MEASURED"}     # a silent zero is refused
+    with pytest.raises(red.P1RecordError):
+        red.validate_operating_point(bad)
+    bad = copy.deepcopy(on)
+    bad["terminals"]["collector_supply"] = {"I_A": None, "basis": "NOT_MEASURED"}
+    with pytest.raises(red.MissingInputError):
+        red.validate_operating_point(bad)
+    # an all-zero record is never 'automatically closed': it is reported as such, and a capacity record with
+    # all-zero currents still needs measured channels with their uncertainties
+    zero = synth_cap("SYNTH-Z-OFF", 0.0, rf_on=False, synthetic=False, stage="P1-S4")
+    assert red.current_closure(zero)["closure_state"] == "ALL_TERMINAL_CURRENTS_ZERO_NOT_A_CLOSURE_RESULT"
+    for t in zero["terminals"].values():
+        t.pop("uncertainty", None)
+    ev = red.kirchhoff_closure(zero, CLOSE)
+    assert ev["evaluable"] is False and ev["closure_valid"] is False and ev["uncertainties_available"] is False
+
+
+def test_a95_missing_uncertainty_component_not_evaluable(red):
+    for comp, val in (("u_calibration_A", None), ("u_zero_offset_A", "NOT_APPLICABLE"), ("u_resolution_A", 0.0),
+                      ("u_repeatability_A", None), ("u_rf_pickup_A", "NA"), ("u_calibration_A", -1e-3)):
+        on, off = _pair(tag="M")
+        if val is None:
+            del off["terminals"]["h1_body"]["uncertainty"][comp]
+        else:
+            off["terminals"]["h1_body"]["uncertainty"][comp] = val
+        ic = _ic(red, on, off)
+        assert ic["status"] == "NOT_EVALUATED", comp
+        assert "u(I_k) unavailable for terminal 'h1_body'" in _reasons(ic, "SYNTH-M-ON"), comp
+        ex = [e for e in ic["excluded_records"] if e["record_id"] == "SYNTH-M-ON"][0]
+        assert ex["eligibility"]["3_required_channel_uncertainties_available"] is False
+    on, off = _pair(tag="M2")
+    del on["terminals"]["electron_collector"]["uncertainty"]
+    assert "no uncertainty object" in _reasons(_ic(red, on, off), "SYNTH-M2-ON")
+    on, off = _pair(tag="M3")                                          # explicit tokens and numbers are accepted
+    on["terminals"]["h1_body"]["uncertainty"].update({"u_repeatability_A": 2e-4, "u_rf_pickup_A": 1e-4})
+    assert _ic(red, on, off)["status"] == "EVALUATED_ENGINEERING_ONLY"
+
+
+def test_a95_statistical_fail(red):
+    on, off = _pair(tag="S")
+    on["terminals"]["electron_collector"]["I_A"] = -2.99               # R_I = +0.01 A, 3 u_R = 3 * 2 U1 < 0.01 A
+    ev = red.kirchhoff_closure(on, CLOSE)
+    assert ev["R_I_A"] == pytest.approx(0.01) and ev["statistical_ok"] is False
+    assert ev["fractional_ok"] is True and ev["fraction"] == pytest.approx(0.01 / 2.99)
+    ic = _ic(red, on, off)
+    assert ic["status"] == "NOT_EVALUATED"
+    r = _reasons(ic, "SYNTH-S-ON")
+    assert "statistical closure fails" in r and "fractional closure" not in r
+    ex = [e for e in ic["excluded_records"] if e["record_id"] == "SYNTH-S-ON"][0]
+    assert ex["outcome"] == "EXCLUDED" and ex["eligibility"]["1_capacity_point_passes_current_closure"] is False
+    assert ex["closure"]["SYNTH-S-ON"]["R_I_A"] == pytest.approx(0.01)       # excluded point keeps its closure record
+
+
+def test_a95_fractional_fail(red):
+    on, off = _pair(tag="F", off_ie=0.05)
+    for t in off["terminals"].values():                                  # coarse channels on the RF-OFF record
+        if t["basis"] == "MEASURED":
+            t["uncertainty"]["u_calibration_A"] = 0.01
+    off["terminals"]["h1_body"]["I_A"] = -0.005                          # R_I = -0.005 A on the RF-OFF record
+    ev = red.kirchhoff_closure(off, CLOSE)
+    assert ev["statistical_ok"] is True and ev["fractional_ok"] is False
+    assert ev["denominator_A"] == pytest.approx(0.05) and ev["fraction"] == pytest.approx(0.1)
+    ev_floor = red.kirchhoff_closure(off, dict(CLOSE, I_scale_min_A=1.0))    # floor only enters the denominator
+    assert ev_floor["denominator_A"] == pytest.approx(1.0) and ev_floor["fractional_ok"] is True
+    assert ev_floor["u_R_A"] == pytest.approx(ev["u_R_A"])
+    ic = _ic(red, on, off)
+    assert ic["status"] == "NOT_EVALUATED"
+    r = _reasons(ic, "SYNTH-F-ON")
+    assert "matched RF-OFF record 'SYNTH-F-OFF'" in r and "fractional closure exceeds 2 %" in r
+
+
+def test_a95_not_evaluated_instrument(red):
+    on, off = _pair(on_ie=0.2, off_ie=0.0, tag="I")                   # 3 u_R = 6 U1 ~ 6.7 mA > 0.02 * 0.2 A
+    ev = red.kirchhoff_closure(on, CLOSE)
+    assert ev["closure_valid"] is True and ev["instrument_adequate"] is False
+    ic = _ic(red, on, off)
+    assert ic["status"] == "NOT_EVALUATED" and ic["condition_met"] is None
+    assert "NOT_EVALUATED_INSTRUMENT" in ic["point_outcome_vocabulary"]
+    assert "NOT_EVALUATED_INSTRUMENT" not in ic["status_vocabulary"]    # overall status stays NOT_EVALUATED
+    ni = ic["not_evaluated_instrument_records"]
+    assert [x["record_id"] for x in ni] == ["SYNTH-I-ON"] and ni[0]["outcome"] == "NOT_EVALUATED_INSTRUMENT"
+    assert "never widened" in ni[0]["reasons"][0]
+    assert {"record_id": "SYNTH-I-ON", "outcome": "NOT_EVALUATED_INSTRUMENT"} in ic["capacity_point_outcomes"]
+    assert not any(e["record_id"] == "SYNTH-I-ON" for e in ic["excluded_records"])
+    assert "NOT_EVALUATED_INSTRUMENT" in ic["reason"]
+    on, off = _pair(on_ie=0.5, off_ie=0.0, tag="J")                   # 0.02 * 0.5 A = 10 mA >= 6.7 mA: adequate
+    assert _ic(red, on, off)["status"] == "EVALUATED_ENGINEERING_ONLY"
+
+
+def test_a95_covariance_form(red):
+    on, off = _pair(tag="C")
+    on["terminals"]["h1_body"]["I_A"] = -0.008                          # R_I = -0.008 A
+    ind = red.kirchhoff_closure(on, CLOSE)
+    assert ind["u_R_A"] == pytest.approx(2.0 * U1) and ind["statistical_ok"] is False
+    names = ["collector_supply", "electron_collector", "facility_ground", "h1_body"]
+    full = dict(CLOSE, covariance={"covariance_id": "SYNTH-COV-1", "terminals": names,
+                                   "correlation": [[1.0] * 4 for _ in range(4)]})
+    cov = red.kirchhoff_closure(on, full)
+    assert cov["u_R_A"] == pytest.approx(4.0 * U1) and cov["statistical_ok"] is True
+    assert cov["u_R_method"].startswith("FULL_COVARIANCE")
+    rho = [[1.0, 0.5, 0.0, 0.0], [0.5, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, -0.3], [0.0, 0.0, -0.3, 1.0]]
+    part = red.kirchhoff_closure(on, dict(CLOSE, covariance={"covariance_id": "SYNTH-COV-2", "terminals": names,
+                                                               "correlation": rho}))
+    assert part["u_R_A"] == pytest.approx(math.sqrt(sum(r for row in rho for r in row)) * U1)
+    eye = red.kirchhoff_closure(on, dict(CLOSE, covariance={"covariance_id": "SYNTH-COV-3", "terminals": names,
+                                                              "correlation": [[1.0 if i == j else 0.0 for j in range(4)]
+                                                                              for i in range(4)]}))
+    assert eye["u_R_A"] == pytest.approx(ind["u_R_A"])                 # identity correlation = independent form
+    ic = _ic(red, on, off, rule=full)
+    assert ic["status"] == "EVALUATED_ENGINEERING_ONLY"
+    assert _ic(red, on, off)["status"] == "NOT_EVALUATED"
+    short = red.kirchhoff_closure(on, dict(CLOSE, covariance={"covariance_id": "SYNTH-COV-4", "terminals": names[:3],
+                                                                "correlation": [[1.0, 0, 0], [0, 1.0, 0], [0, 0, 1.0]]}))
+    assert short["evaluable"] is False and "does not cover" in " ".join(short["reasons"])
+    for bad in ([[1.0, 0.2, 0, 0], [0.1, 1.0, 0, 0], [0, 0, 1.0, 0], [0, 0, 0, 1.0]],        # not symmetric
+                [[2.0, 0, 0, 0], [0, 1.0, 0, 0], [0, 0, 1.0, 0], [0, 0, 0, 1.0]],          # diagonal != 1
+                [[1.0, 0.9, 0.9, 0], [0.9, 1.0, -0.9, 0], [0.9, -0.9, 1.0, 0], [0, 0, 0, 1.0]],  # not PSD
+                [[1.0, 0], [0, 1.0]]):                                                      # wrong size
+        with pytest.raises(red.ClosureRuleError):
+            red.kirchhoff_closure(on, dict(CLOSE, covariance={"covariance_id": "X", "terminals": names,
+                                                                "correlation": bad}))
+
+
+def test_a95_negative_capacity_kept_signed(red):
+    on, off = _pair(on_ie=0.5, off_ie=0.9, tag="N")
+    ic = _ic(red, on, off)
+    assert ic["status"] == "EVALUATED_ENGINEERING_ONLY"
+    assert ic["I_e_cap_A"] == pytest.approx(-0.4)                        # no abs, no clipping
+    assert ic["M_n"] == pytest.approx(-0.4 / 2.0 - 1.0) and ic["condition_met"] is False
+    assert any(f.startswith("I_E_CAP_NEGATIVE") for f in ic["flags"])
+    fc = red.facility_electron_check(on, off, MATCH)
+    assert fc["I_e_collector_corrected_A"] == pytest.approx(-0.4) and fc["I_e_icp_corrected_A"] == pytest.approx(-0.4)
+    assert red.i_e_cap_signed(0.1, 0.3) == pytest.approx(-0.2)
+    import inspect
+    body = inspect.getsource(red.i_e_cap_signed).split('"""')[-1]
+    for banned in ("abs(", "max(", "min(", "clip", "fabs"):
+        assert banned not in body, banned
+    ev_src = inspect.getsource(red.icp45a_evaluate)
+    for banned in ("abs(", "max(0", "clip(", "fabs("):
+        assert banned not in ev_src, banned
+
+
+def test_a95_eligibility_conditions(red):
+    on, off = _pair(tag="E")
+    ic = _ic(red, on, off)                                               # all four conditions met
+    assert ic["status"] == "EVALUATED_ENGINEERING_ONLY"
+    assert ic["eligibility"] == {"1_capacity_point_passes_current_closure": True,
+                                 "2_matched_rf_off_correction_valid": True,
+                                 "3_required_channel_uncertainties_available": True, "4_I_d_max_H1_registered": True}
+    assert ic["u_I_e_cap_from_channels_A"] == pytest.approx(math.sqrt(2.0) * U1)
+    assert ic["u_I_e_cap_used_A"] == RULE["u_I_e_A"]
+    # (1) closure fails
+    bad_on = copy.deepcopy(on)
+    bad_on["terminals"]["h1_body"]["I_A"] = -0.3
+    ex = [e for e in _ic(red, bad_on, off)["excluded_records"] if e["record_id"] == "SYNTH-E-ON"][0]
+    assert ex["eligibility"]["1_capacity_point_passes_current_closure"] is False
+    # (2) no matched RF-OFF record
+    reg = dict(REG, I_d_max_H1_A=2.0)
+    ic2 = red.reduce_operating_points([on, off], reg, RULE, None, MATCH, CLOSE)["summary"]["icp45a"]
+    assert ic2["status"] == "NOT_EVALUATED" and "pairing not matched" in _reasons(ic2, "SYNTH-E-ON")
+    # (3) channel uncertainty missing; margin-rule uncertainty missing is refused (no hidden default)
+    miss = copy.deepcopy(on)
+    del miss["terminals"]["collector_supply"]["uncertainty"]
+    assert _ic(red, miss, off)["status"] == "NOT_EVALUATED"
+    for k in ("u_I_e_A", "u_I_d_max_A"):
+        mr = dict(RULE)
+        del mr[k]
+        with pytest.raises(red.MissingInputError):
+            _ic(red, on, off, margin=mr)
+    # (4) I_d,max,H1 not registered
+    ic4 = red.reduce_operating_points([on, off], None, None, [["SYNTH-E-ON", "SYNTH-E-OFF"]], MATCH,
+                                      CLOSE)["summary"]["icp45a"]
+    assert ic4["status"] == "NOT_EVALUATED" and ic4["eligibility"] == {"4_I_d_max_H1_registered": False}
+    # a registered u_I_e_A below the channel propagation is flagged, never silently replaced
+    small = dict(RULE, u_I_e_A=1e-4)
+    ic5 = _ic(red, on, off, margin=small)
+    assert any(f.startswith("REGISTERED_u_I_e_BELOW_CHANNEL_PROPAGATION") for f in ic5["flags"])
+    assert ic5["u_I_e_cap_used_A"] == 1e-4
+
+
+def test_a95_exclusions_ground_path_sign_and_mixed(red):
+    on, off = _pair(tag="G")
+    on["capacity_monitoring"]["unintended_ground_path_found"] = True
+    ic = _ic(red, on, off)
+    assert ic["status"] == "NOT_EVALUATED" and "unintended ground path found" in _reasons(ic, "SYNTH-G-ON")
+    for k in ("unintended_ground_path_found", "ground_path_check_id"):
+        bad, _ = _pair(tag="G2")
+        del bad["capacity_monitoring"][k]
+        with pytest.raises(red.CapacityConfigurationError):
+            red.validate_operating_point(bad)
+    bad, _ = _pair(tag="G3")
+    bad["capacity_monitoring"]["unintended_ground_path_found"] = "no"
+    with pytest.raises(red.CapacityConfigurationError):
+        red.validate_operating_point(bad)
+    on, off = _pair(tag="SC")
+    off["terminals"]["h1_body"]["sign_convention_id"] = "SYNTH-OTHER-SIGN"
+    assert "current sign conventions differ between channels" in _reasons(_ic(red, on, off), "SYNTH-SC-ON")
+    on, off = _pair(tag="SD")
+    del on["terminals"]["facility_ground"]["sign_convention_id"]
+    assert "declares no sign_convention_id" in _reasons(_ic(red, on, off), "SYNTH-SD-ON")
+    on, off = _pair(tag="MX")
+    off["synthetic"] = True
+    assert "synthetic and measured evidence mixed" in _reasons(_ic(red, on, off), "SYNTH-MX-ON")
+    # the anode rule stays a refusal for ICP45_CAPACITY records (A9.4 P1Q-13) and names the reason
+    on, off = _pair(tag="AN")
+    on["h1_electrical"]["anode_state"] = "METERED_RETURN"
+    on["terminals"]["hall_anode"] = _meas(0.0)
+    with pytest.raises(red.CapacityConfigurationError, match="anode"):
+        _ic(red, on, off)
+
+
+def test_a95_schema_and_hall_on(red):
+    with open(SCHEMA_PATH, encoding="utf-8") as f:
+        sc = json.load(f)
+    op = sc["$defs"]["icp_operating_point"]
+    term = op["properties"]["terminals"]["additionalProperties"]
+    assert "NOT_MEASURED" in term["properties"]["basis"]["enum"]
+    assert term["properties"]["uncertainty"]["required"] == list(red.U_COMPONENTS)
+    cm = op["properties"]["capacity_monitoring"]["properties"]
+    assert cm["unintended_ground_path_found"] == {"type": "boolean"}
+    x = sc["x-closure-rule-input"]
+    assert x["owner_constants"] == {"k_sigma": 3.0, "fraction_max": 0.02}
+    assert "residual_rel_tol" not in x["allowed"] and "I_scale_min_A" in x["required"]
+    assert "never define I_e,cap" in red.I_E_CAP_DEFINITION and "OWNER_CONFIRMED by A9.5" in red.I_E_CAP_DEFINITION

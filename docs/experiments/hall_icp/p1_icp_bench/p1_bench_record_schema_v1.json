@@ -115,7 +115,9 @@
       "V_anode_channel",
       "V_icp_body_V",
       "V_electron_collector_V",
-      "sign_convention_id"
+      "sign_convention_id",
+      "unintended_ground_path_found",
+      "ground_path_check_id"
      ],
      "description": "required on every ICP45_CAPACITY record (A9.4 P1Q-13); the terminals must then include h1_body and electron_collector (MEASURED)",
      "properties": {
@@ -135,6 +137,13 @@
        "type": "number"
       },
       "sign_convention_id": {
+       "type": "string",
+       "minLength": 1
+      },
+      "unintended_ground_path_found": {
+       "type": "boolean"
+      },
+      "ground_path_check_id": {
        "type": "string",
        "minLength": 1
       }
@@ -420,20 +429,76 @@
      "additionalProperties": {
       "type": "object",
       "required": [
-       "I_A",
        "basis"
       ],
+      "description": "signed terminal current, conventional current INTO the isolated network positive (A9.5 P1Q-15); NOT_MEASURED = unavailable, carries no I_A (never a silent zero)",
       "properties": {
        "I_A": {
-        "type": "number"
+        "type": [
+         "number",
+         "null"
+        ]
        },
        "basis": {
         "enum": [
          "MEASURED",
-         "OPEN_CIRCUIT_BY_CONSTRUCTION"
+         "OPEN_CIRCUIT_BY_CONSTRUCTION",
+         "NOT_MEASURED"
         ]
+       },
+       "sign_convention_id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "uncertainty": {
+        "type": "object",
+        "required": [
+         "u_calibration_A",
+         "u_zero_offset_A",
+         "u_resolution_A",
+         "u_repeatability_A",
+         "u_rf_pickup_A"
+        ],
+        "description": "u(I_k) components of a MEASURED channel (A9.5 P1Q-15); required on every MEASURED terminal of an ICP45_CAPACITY record, else the point cannot be evaluated",
+        "properties": {
+         "u_calibration_A": {
+          "type": "number",
+          "minimum": 0
+         },
+         "u_zero_offset_A": {
+          "type": "number",
+          "minimum": 0
+         },
+         "u_resolution_A": {
+          "type": "number",
+          "exclusiveMinimum": 0
+         },
+         "u_repeatability_A": {
+          "anyOf": [
+           {
+            "type": "number",
+            "minimum": 0
+           },
+           {
+            "const": "NOT_APPLICABLE"
+           }
+          ]
+         },
+         "u_rf_pickup_A": {
+          "anyOf": [
+           {
+            "type": "number",
+            "minimum": 0
+           },
+           {
+            "const": "NONE_REGISTERED"
+           }
+          ]
+         }
+        }
        }
-      }
+      },
+      "x-I_A-required-unless-basis": "NOT_MEASURED"
      },
      "x-required-by-hall-state-and-electrode": {
       "OFF/DEDICATED_ELECTRON_COLLECTOR_TARGET": [
@@ -603,5 +668,36 @@
     }
    ]
   }
+ },
+ "x-closure-rule-input": {
+  "required": [
+   "rule_id",
+   "sign_convention",
+   "sign_convention_id",
+   "I_scale_min_A",
+   "I_scale_min_basis"
+  ],
+  "allowed": [
+   "rule_id",
+   "sign_convention",
+   "sign_convention_id",
+   "I_scale_min_A",
+   "I_scale_min_basis",
+   "covariance"
+  ],
+  "sign_convention": "CONVENTIONAL_CURRENT_INTO_THE_DEFINED_ISOLATED_ELECTRICAL_NETWORK_IS_POSITIVE",
+  "owner_constants": {
+   "k_sigma": 3.0,
+   "fraction_max": 0.02
+  },
+  "covariance": {
+   "required": [
+    "covariance_id",
+    "terminals",
+    "correlation"
+   ],
+   "description": "registered correlation r_ij of the listed terminals (symmetric, unit diagonal, positive semi-definite)"
+  },
+  "source": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-15"
  }
 }

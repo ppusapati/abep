@@ -1,5 +1,5 @@
 """P1 ICP electron-source bench - pure, deterministic analysis reducer (lane fo_a9_p1_icp_bench, A9.3 P1;
-A9.4 incorporated by fo_a9_4_incorporation).
+A9.4 incorporated by fo_a9_4_incorporation; owner A9.5 P1Q-15 / P1Q-16 applied by fo_a9_5_closure_rule).
 
 What it does
 ------------
@@ -22,17 +22,28 @@ What it never does
   measurement - Hall discharge supply OFF and PHYSICALLY disconnected from the H-1 anode, ICP operating, electrons
   extracted to a dedicated, isolated, instrumented electron-collecting electrode, gas / magnetic field / pressure /
   geometry of a registered H-1 operating condition, matched RF-OFF record - with
-  I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (the A9.4 recorder reading of the incomplete verbatim formula),
-  subject to current-path closure and the registered uncertainty treatment. Only records registered as record_class
-  ICP45_CAPACITY are candidates; the capacity measurand is the dedicated electron-collector terminal current only
-  (current into the H-1 body, facility ground, chamber, floating anode or cable shields never counts). Hall-ON records
-  are NEUTRALIZATION_CONSISTENCY and never ICP45_CAPACITY: with the H-1 anode as the sink, current continuity makes the
-  ICP-supplied current equal to I_d, so they cannot show capacity. A capacity point whose Kirchhoff residual exceeds the
-  registered tolerance is invalid; without a registered tolerance no capacity point is admitted. Records without the
-  facility correction are excluded (never silently credited); synthetic records give arithmetic only
-  (SYNTHETIC_TEST_ONLY_NOT_EVIDENCE, condition_met None). Until I_d,max,H1 is registered from the H-1 envelope and
-  measured behaviour (never from the 8.33 A bench design ceiling) the ICP-45 result is exactly NOT_EVALUATED (never
-  PASS or FAIL; A9.4 execution_decisions.i_d_max_h1).
+  I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (the A9.4 recorder reading, CONFIRMED by owner A9.5 P1Q-16;
+  docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json) using SIGNED currents under the same registered
+  convention: no absolute-value correction and no zero-clipping (a negative corrected value stays negative and is
+  reported as such). Only records registered as record_class ICP45_CAPACITY are candidates; the capacity measurand is
+  the dedicated electron-collector terminal current only (current into the H-1 body, facility ground, chamber, floating
+  anode or cable shields never counts). Hall-ON records are NEUTRALIZATION_CONSISTENCY and never ICP45_CAPACITY: with
+  the H-1 anode as the sink, current continuity makes the ICP-supplied current equal to I_d, so they cannot show
+  capacity. Records without the facility correction are excluded (never silently credited); synthetic records give
+  arithmetic only (SYNTHETIC_TEST_ONLY_NOT_EVIDENCE, condition_met None). Until I_d,max,H1 is registered from the H-1
+  envelope and measured behaviour (never from the 8.33 A bench design ceiling) the ICP-45 result is exactly
+  NOT_EVALUATED (never PASS or FAIL; A9.4 execution_decisions.i_d_max_h1).
+* Kirchhoff current closure of a capacity point is the OWNER rule A9.5 P1Q-15 (kirchhoff_closure): one global
+  convention (conventional current INTO the defined isolated electrical network is positive; every channel transformed
+  into it and declaring the registered convention id), R_I = sum_k I_k over every intentional terminal crossing the
+  network boundary, u_R = sqrt(sum_k u^2(I_k)) for independent channels (u(I_k) = calibration, zero/offset, resolution,
+  repeatability where applicable, registered RF-pickup contribution) or the full covariance form when a registered
+  correlation of the channels is supplied; closure-valid only if |R_I| <= 3 u_R AND |R_I| / max(I_e,collector,
+  I_scale,min) <= 0.02. The factor 3 and the 2 % are owner constants (never caller parameters; a closure_rule that
+  tries to set them is refused); I_scale,min is a REGISTERED instrument-capability floor with no default. An
+  unavailable channel is never set to zero: a terminal declared NOT_MEASURED (an intentional return path unmeasured)
+  or a channel without its uncertainty components excludes the point. If 3 u_R > 0.02 I_e,collector at the candidate
+  (RF-ON) capacity point the point is NOT_EVALUATED_INSTRUMENT - the tolerance is never widened.
 * A capacity record (record_class ICP45_CAPACITY) is REFUSED (raised, not flagged) when the anode is not
   DISCONNECTED_FLOATING (OPEN_CIRCUIT_BY_CONSTRUCTION), the discharge supply is not physically disconnected, V_anode is
   not on a high-impedance isolated channel, or the H-1 body single-point metered facility-ground return current
@@ -87,14 +98,36 @@ SURFACE_LABEL = "ENGINEERING_SURFACE"
 RECORD_CLASSES = (CAPACITY_LABEL, CONSISTENCY_LABEL, DIAGNOSTIC_LABEL, SURFACE_LABEL)
 RECORD_CLASSES_BY_HALL_STATE = {"OFF": (CAPACITY_LABEL, DIAGNOSTIC_LABEL, SURFACE_LABEL),
                                 "ON": (CONSISTENCY_LABEL, DIAGNOSTIC_LABEL)}
-# capacity-record electrical monitoring (A9.4 P1Q-13); required object on every ICP45_CAPACITY record
+# capacity-record electrical monitoring (A9.4 P1Q-13); required object on every ICP45_CAPACITY record.
+# unintended_ground_path_found / ground_path_check_id: the recorded outcome and id of the check for any second
+# (unintended) ground path of the isolated network (A9.4 P1Q-13 'no second chassis / stand / coax / shield path';
+# A9.5 P1Q-15 exclusion 'an unintended ground path is found'); true -> the capacity point is excluded (kept with reason)
 CAPACITY_MONITORING_REQUIRED = ("h1_body_ground_config", "I_body_to_ground_continuous", "V_anode_channel",
-                                "V_icp_body_V", "V_electron_collector_V", "sign_convention_id")
+                                "V_icp_body_V", "V_electron_collector_V", "sign_convention_id",
+                                "unintended_ground_path_found", "ground_path_check_id")
 H1_BODY_GROUND_CONFIG = "SINGLE_POINT_METERED_FACILITY_GROUND"
 V_ANODE_CHANNEL = "HIGH_IMPEDANCE_ISOLATED"
 CAPACITY_EXTRA_TERMINALS = ("h1_body",)     # I_body->ground (single metered return), measured continuously
-# ICP-45 status vocabulary: NOT_EVALUATED is the only status before I_d,max,H1 is registered (A9.4)
+# ICP-45 status vocabulary: NOT_EVALUATED is the only status before I_d,max,H1 is registered (A9.4); it stays
+# NOT_EVALUATED whenever no admissible capacity point exists (A9.5 P1Q-16)
 ICP45A_STATUSES = ("NOT_EVALUATED", "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE", "EVALUATED_ENGINEERING_ONLY")
+# per capacity point (RF-ON ICP45_CAPACITY record with its matched RF-OFF record) outcome vocabulary (A9.5 P1Q-15)
+POINT_OUTCOMES = ("CLOSURE_VALID_CANDIDATE", "NOT_EVALUATED_INSTRUMENT", "EXCLUDED")
+# ------------------------------------------------------------ A9.5 P1Q-15 Kirchhoff current-closure rule (owner)
+A95_REF = "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-15"
+# the one global convention for every ICP-45 capacity record (owner text, A9.5 P1Q-15)
+KIRCHHOFF_SIGN_CONVENTION = "CONVENTIONAL_CURRENT_INTO_THE_DEFINED_ISOLATED_ELECTRICAL_NETWORK_IS_POSITIVE"
+# owner constants: statistical closure |R_I| <= 3 u_R; fractional closure <= 0.02 (never caller parameters)
+CLOSURE_K_SIGMA = 3.0
+CLOSURE_FRACTION_MAX = 0.02
+# u(I_k) components of every MEASURED channel of a capacity record (A9.5 P1Q-15 'including: ...'); each is required.
+# Only 'repeatability where applicable' and 'any registered RF-pickup contribution' may be declared explicitly absent,
+# with the exact tokens below (never by omission); resolution must be a positive number.
+U_COMPONENTS = ("u_calibration_A", "u_zero_offset_A", "u_resolution_A", "u_repeatability_A", "u_rf_pickup_A")
+U_EXPLICIT_ABSENT = {"u_repeatability_A": "NOT_APPLICABLE", "u_rf_pickup_A": "NONE_REGISTERED"}
+CLOSURE_RULE_REQUIRED = ("rule_id", "sign_convention", "sign_convention_id", "I_scale_min_A", "I_scale_min_basis")
+CLOSURE_RULE_ALLOWED = CLOSURE_RULE_REQUIRED + ("covariance",)
+COVARIANCE_REQUIRED = ("covariance_id", "terminals", "correlation")
 RF_REFERENCE_PLANE = "GENERATOR_50OHM_SIDE_OF_LOCAL_MATCH"
 LOSS_STATUSES = ("MEASURED", "FLAGGED_NOT_MEASURED")
 # a MEASURED line/match loss is de-embedded from the two-port data AT the recorded match setting; it is valid only up
@@ -102,7 +135,9 @@ LOSS_STATUSES = ("MEASURED", "FLAGGED_NOT_MEASURED")
 LOSS_MEASURED_REQUIRED = ("value_W", "source", "match_setting_id", "valid_max_gamma_abs")
 GENERATOR_CLASSES = ("GROUND_FACILITY_ONLY_MAINS",)
 REFUSED_GENERATOR_CLASSES = ("FLIGHT_REPRESENTATIVE_DC_RF_SOURCE",)
-TERMINAL_BASES = ("MEASURED", "OPEN_CIRCUIT_BY_CONSTRUCTION")
+# NOT_MEASURED: a terminal that exists but whose current is unavailable - declared, never silently zero (A9.5 P1Q-15);
+# it carries no I_A value and no Kirchhoff residual is formed with it
+TERMINAL_BASES = ("MEASURED", "OPEN_CIRCUIT_BY_CONSTRUCTION", "NOT_MEASURED")
 # Electron-extraction topology (the electrode that SINKS the extracted electrons; the ICP 'collector' is the
 # ion-collecting electrode inside the source, TK-13 / ICD ICP-21). Registered per run at P1-G0 (P1-IT-36, P1Q-09).
 EXTRACTION_ELECTRODES = ("DEDICATED_ELECTRON_COLLECTOR_TARGET", "CHAMBER_WALL_FACILITY_GROUND", "H1_ANODE")
@@ -119,7 +154,8 @@ REQUIRED_TERMINALS = {
     ("ON", "H1_ANODE"): ("collector_supply", "icp_body", "facility_ground", "hall_anode"),
 }
 # I_e sign convention (declared per record): I_e_A > 0 = net electrons extracted from the ICP; the collector_supply
-# terminal carries the same current, I_A = +I_e_A, as conventional current INTO the isolated network
+# terminal carries the same current, I_A = +I_e_A, as conventional current INTO the isolated network (the owner's
+# global convention, A9.5 P1Q-15 / KIRCHHOFF_SIGN_CONVENTION)
 I_E_SIGN_CONVENTION = "POSITIVE_ELECTRONS_EXTRACTED_FROM_ICP_EQUALS_COLLECTOR_SUPPLY_TERMINAL_INTO_NETWORK"
 ICP45A_CAPACITY_STAGES = ("P1-S4", "P1-S7")
 # Hall-ON follow-up after discharge-OFF capacity (A9.4 P1Q-10): stage P1-S7H
@@ -162,18 +198,22 @@ BOUNDARY_C_E_DC = {
                                    "power analyzer; GROUND/FACILITY_ONLY (A9.3 OQ-RFQ-06); includes laboratory "
                                    "AC/DC stages; NOT P_bus and never evidence for P_bus < 1.5 kW"),
 }
-I_E_CAP_DEFINITION = ("OWNER_DECIDED (A9.4 P1Q-10, CAPACITY_EXTRACTION_FORM): I_e,cap = I_e,collector,RFON - "
-                      "I_e,collector,RFOFF (recorder reading of the incomplete verbatim formula, A9.4 "
-                      "decisions.P1Q-10.definition_recorder_reading), subject to current-path closure and the registered "
-                      "uncertainty treatment; I_e,collector = current of the dedicated, isolated, instrumented "
-                      "electron-collecting electrode (terminal electron_collector, electrons collected = -I_A under the "
-                      "registered sign convention); eligible = record_class ICP45_CAPACITY, stage P1-S4 or P1-S7, Hall "
+I_E_CAP_DEFINITION = ("OWNER_DECIDED (A9.4 P1Q-10, CAPACITY_EXTRACTION_FORM; formula OWNER_CONFIRMED by A9.5 "
+                      "P1Q-16): I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF using SIGNED currents under the same "
+                      "registered current convention (no absolute-value correction, no zero-clipping; the RF-OFF term "
+                      "estimates facility/background electron collection); I_e,collector = current of the dedicated, "
+                      "isolated, instrumented electron-collecting electrode (terminal electron_collector, electrons "
+                      "collected = -I_A under the registered convention 'conventional current INTO the isolated network "
+                      "positive', A9.5 P1Q-15); eligible = record_class ICP45_CAPACITY, stage P1-S4 or P1-S7, Hall "
                       "discharge supply OFF and physically disconnected, anode floating (OPEN_CIRCUIT_BY_CONSTRUCTION), "
                       "gas_mode G-REUSE, P_fwd > 0, rf_pickup_check DONE, h1_point_id in the registration's "
-                      "registered_point_ids, matched RF-OFF ICP45_CAPACITY record (P1-D-07) and Kirchhoff residual "
-                      "within the registered tolerance for both records. Qualification I_e,cap >= I_d,max,H1 with the "
-                      "preregistered one-sided lower confidence bound on M_n = I_e,cap / I_d,max,H1 - 1 above zero. "
-                      "Hall-ON records are NEUTRALIZATION_CONSISTENCY, never ICP45_CAPACITY")
+                      "registered_point_ids, and ICP-45A evaluated only when (1) the capacity point passes the A9.5 "
+                      "Kirchhoff closure (|R_I| <= 3 u_R and |R_I| / max(I_e,collector, I_scale,min) <= 0.02, RF-ON and "
+                      "matched RF-OFF records), (2) the matched RF-OFF correction is valid (P1-D-07), (3) all required "
+                      "uncertainties are available (u(I_k) of every channel; u_I_e_A and u_I_d_max_A of the margin rule) "
+                      "and (4) I_d,max,H1 is registered; then the preregistered one-sided lower bound M_n,LB of "
+                      "M_n = I_e,cap / I_d,max,H1 - 1 must be > 0; until all four exist ICP45 = NOT_EVALUATED. Hall-ON "
+                      "records are NEUTRALIZATION_CONSISTENCY and never define I_e,cap")
 
 
 class P1RecordError(ValueError):
@@ -220,6 +260,11 @@ class CapacityConfigurationError(P1RecordError):
     """A capacity record (ICP45_CAPACITY) with a METERED_RETURN / connected anode, a connected discharge supply, no
     high-impedance isolated V_anode channel, no continuous H-1 body ground-current record, or a METERED_RETURN anode
     outside a registered DIAGNOSTIC_VARIANT (A9.4 P1Q-13). Refused, never merely flagged."""
+
+
+class ClosureRuleError(P1RecordError):
+    """A closure_rule that tries to set or widen an owner constant (the factor 3, the 2 %), names another sign
+    convention than the owner's, or carries a malformed registered covariance (A9.5 P1Q-15)."""
 
 
 # ------------------------------------------------------------------------------------------------ helpers
@@ -471,9 +516,21 @@ def validate_operating_point(rec):
         if not isinstance(t, dict) or t.get("basis") not in TERMINAL_BASES:
             raise MissingInputError("%s: current-path terminal '%s' missing or without basis %s (Kirchhoff closure "
                                     "needs every terminal of the isolated network)" % (rid, name, TERMINAL_BASES))
+    for name in sorted(terms):                  # every terminal, required or additional (A9.5: any other terminal)
+        t = terms[name]
+        if not isinstance(t, dict) or t.get("basis") not in TERMINAL_BASES:
+            raise MissingInputError("%s: terminal '%s' without basis %s" % (rid, name, TERMINAL_BASES))
+        if t["basis"] == "NOT_MEASURED":
+            # an unavailable channel is declared, never silently set to zero (A9.5 P1Q-15)
+            if t.get("I_A") is not None:
+                raise P1RecordError("%s: terminal '%s' declared NOT_MEASURED but carries I_A = %r; an unavailable "
+                                    "channel carries no value (never a silent zero, A9.5 P1Q-15)" % (rid, name, t["I_A"]))
+            continue
         _num(t.get("I_A"), "%s terminals.%s.I_A" % (rid, name))
         if t["basis"] == "OPEN_CIRCUIT_BY_CONSTRUCTION" and float(t["I_A"]) != 0.0:
             raise P1RecordError("%s: terminal '%s' declared open circuit but carries %r A" % (rid, name, t["I_A"]))
+    if terms["collector_supply"]["basis"] != "MEASURED":
+        raise MissingInputError("%s: terminal 'collector_supply' must be MEASURED (it carries I_e, P1-IT-42)" % rid)
     # the H-1 anode terminal basis follows the registered anode state
     want = ANODE_TERMINAL_BASIS[h1e["anode_state"]]
     if terms["hall_anode"]["basis"] != want:
@@ -532,6 +589,12 @@ def _check_capacity_record(rec, rid):
     if not isinstance(cm["sign_convention_id"], str) or not cm["sign_convention_id"].strip():
         raise CapacityConfigurationError("%s: capacity_monitoring.sign_convention_id must name the registered "
                                          "Kirchhoff sign convention" % rid)
+    if not isinstance(cm["unintended_ground_path_found"], bool):
+        raise CapacityConfigurationError("%s: capacity_monitoring.unintended_ground_path_found must be recorded true "
+                                         "or false (A9.5 P1Q-15 exclusion; A9.4 P1Q-13 single-point ground)" % rid)
+    if not isinstance(cm["ground_path_check_id"], str) or not cm["ground_path_check_id"].strip():
+        raise CapacityConfigurationError("%s: capacity_monitoring.ground_path_check_id must name the recorded "
+                                         "unintended-ground-path check" % rid)
     terms = rec["terminals"]
     for name in CAPACITY_EXTRA_TERMINALS + ("electron_collector",):
         t = terms.get(name)
@@ -600,17 +663,219 @@ def electron_cost(rec, rf_derived):
 
 
 def current_closure(rec):
-    """Kirchhoff closure of the isolated electrical network: sum of signed terminal currents (positive = conventional
-    current INTO the network) should vanish; residual normalised by the largest terminal magnitude."""
+    """DESCRIPTIVE Kirchhoff sum of the isolated electrical network (P1-D-06, every record): sum of signed terminal
+    currents (positive = conventional current INTO the network) and that sum normalised by the largest terminal
+    magnitude. Never an admission test: ICP45_CAPACITY points are admitted only by kirchhoff_closure (A9.5 P1Q-15).
+    A NOT_MEASURED terminal is never summed as zero (sum None, state NOT_EVALUABLE_UNMEASURED_CHANNEL); an all-zero
+    set of terminal currents is reported as such, never as 'closed'."""
     terms = rec["terminals"]
     names = sorted(terms)
+    unmeasured = [n for n in names if terms[n]["basis"] == "NOT_MEASURED"]
+    note = ("descriptive residual (P1-D-06); ICP45_CAPACITY admission uses the owner rule A9.5 P1Q-15 "
+            "(kirchhoff_closure: |R_I| <= 3 u_R and |R_I| / max(I_e,collector, I_scale,min) <= 0.02)")
+    if unmeasured:
+        return {"terminals": names, "sum_A": None, "scale_A": None, "residual_rel": None,
+                "unmeasured_terminals": unmeasured, "closure_state": "NOT_EVALUABLE_UNMEASURED_CHANNEL", "note": note}
     vals = np.array([float(terms[n]["I_A"]) for n in names], dtype=float)
     total = float(vals.sum())
     scale = float(np.max(np.abs(vals))) if vals.size else 0.0
     return {"terminals": names, "sum_A": total, "scale_A": scale,
-            "residual_rel": (total / scale) if scale > 0 else None,
-            "note": "descriptive residual; acceptance limit TBD - frozen at LOCK-2 from S1b-type readings "
-                    "(A9-04 UB-N-07 form)"}
+            "residual_rel": (total / scale) if scale > 0 else None, "unmeasured_terminals": [],
+            "closure_state": "COMPUTED" if scale > 0 else "ALL_TERMINAL_CURRENTS_ZERO_NOT_A_CLOSURE_RESULT",
+            "note": note}
+
+
+# ------------------------------------------------------------------------------------------------ A9.5 P1Q-15
+def _check_closure_rule(closure_rule):
+    """Registered inputs of the owner Kirchhoff rule (A9.5 P1Q-15): rule_id, the owner's sign convention and its
+    registration id, I_scale,min (instrument-capability denominator floor, > 0, with its basis; no default) and an
+    optional registered channel correlation (covariance form). The factor 3 and the 2 % are owner constants and are
+    never accepted from a caller (any other key is refused). Returns a normalised copy or raises."""
+    if not isinstance(closure_rule, dict):
+        raise MissingInputError("closure_rule: expected an object, got %r" % type(closure_rule).__name__)
+    extra = sorted(set(closure_rule) - set(CLOSURE_RULE_ALLOWED))
+    if extra:
+        raise ClosureRuleError("closure_rule keys %s refused: the statistical factor %g and the fractional limit %g are "
+                               "owner constants (%s) and are never set or widened by a caller; the registered inputs "
+                               "are %s" % (extra, CLOSURE_K_SIGMA, CLOSURE_FRACTION_MAX, A95_REF,
+                                           list(CLOSURE_RULE_ALLOWED)))
+    _req(closure_rule, CLOSURE_RULE_REQUIRED, "closure_rule")
+    if closure_rule["sign_convention"] != KIRCHHOFF_SIGN_CONVENTION:
+        raise ClosureRuleError("closure_rule.sign_convention %r is not the owner's global convention %s (%s)"
+                               % (closure_rule["sign_convention"], KIRCHHOFF_SIGN_CONVENTION, A95_REF))
+    for k in ("rule_id", "sign_convention_id", "I_scale_min_basis"):
+        if not isinstance(closure_rule[k], str) or not closure_rule[k].strip():
+            raise MissingInputError("closure_rule.%s must be a non-empty registered string" % k)
+    floor = _num(closure_rule["I_scale_min_A"], "closure_rule.I_scale_min_A", allow_negative=False)
+    if floor <= 0.0:
+        raise MissingInputError("closure_rule.I_scale_min_A must be > 0 (registered instrument-capability floor)")
+    out = dict(closure_rule)
+    out["I_scale_min_A"] = floor
+    cov = closure_rule.get("covariance")
+    if cov is not None:
+        _req(cov, COVARIANCE_REQUIRED, "closure_rule.covariance")
+        names = cov["terminals"]
+        if (not isinstance(names, list) or not names or len(set(names)) != len(names)
+                or not all(isinstance(n, str) and n.strip() for n in names)):
+            raise ClosureRuleError("closure_rule.covariance.terminals must be a non-empty list of distinct terminal "
+                                   "names")
+        rho = cov["correlation"]
+        if not isinstance(rho, list) or len(rho) != len(names) or not all(
+                isinstance(r, list) and len(r) == len(names) for r in rho):
+            raise ClosureRuleError("closure_rule.covariance.correlation must be a %dx%d matrix" % (len(names),
+                                                                                                   len(names)))
+        m = np.array([[_num(x, "closure_rule.covariance.correlation") for x in r] for r in rho], dtype=float)
+        if not np.allclose(m, m.T, rtol=0.0, atol=1e-12) or not np.allclose(np.diag(m), 1.0, rtol=0.0, atol=1e-12) \
+                or np.any(np.abs(m) > 1.0 + 1e-12):
+            raise ClosureRuleError("closure_rule.covariance.correlation must be symmetric with unit diagonal and "
+                                   "|r_ij| <= 1")
+        if float(np.min(np.linalg.eigvalsh(m))) < -1e-10:
+            raise ClosureRuleError("closure_rule.covariance.correlation is not positive semi-definite")
+        if not isinstance(cov["covariance_id"], str) or not cov["covariance_id"].strip():
+            raise MissingInputError("closure_rule.covariance.covariance_id must be the registered id")
+        out["covariance"] = {"covariance_id": cov["covariance_id"], "terminals": list(names),
+                             "correlation": m.tolist()}
+    return out
+
+
+def _channel_uncertainty(t, name):
+    """u(I_k) of one MEASURED channel: root-sum-square of its registered components (A9.5 P1Q-15). Returns
+    (u_A, components, None) or (None, None, reason) - a missing component never defaults to zero."""
+    u = t.get("uncertainty")
+    if not isinstance(u, dict):
+        return None, None, ("u(I_k) unavailable for terminal %r (no uncertainty object with %s): the point cannot be "
+                            "evaluated (A9.5 P1Q-15 / P1Q-16 condition 3)" % (name, list(U_COMPONENTS)))
+    parts, comps = [], {}
+    for c in U_COMPONENTS:
+        v = u.get(c)
+        if isinstance(v, str) and U_EXPLICIT_ABSENT.get(c) == v:
+            comps[c] = v
+            continue
+        if v is None or isinstance(v, (bool, str)) or not isinstance(v, (int, float)) or not math.isfinite(float(v)) \
+                or v < 0:
+            return None, None, ("u(I_k) unavailable for terminal %r: component %s is %r (required: a non-negative "
+                                "number%s); the point cannot be evaluated (A9.5 P1Q-15 / P1Q-16 condition 3)"
+                                % (name, c, v, (" or the explicit token %r" % U_EXPLICIT_ABSENT[c])
+                                   if c in U_EXPLICIT_ABSENT else ""))
+        comps[c] = float(v)
+        parts.append(float(v))
+    if comps["u_resolution_A"] <= 0.0:
+        return None, None, ("u(I_k) unavailable for terminal %r: u_resolution_A must be > 0 (channel resolution from "
+                            "its certificate)" % name)
+    return math.sqrt(sum(p * p for p in parts)), comps, None
+
+
+def kirchhoff_closure(rec, closure_rule):
+    """Owner Kirchhoff current-closure rule for one ICP45_CAPACITY record (A9.5 P1Q-15).
+
+    R_I = sum_k I_k over every terminal crossing the registered network boundary (signed, conventional current INTO
+    the network positive; OPEN_CIRCUIT_BY_CONSTRUCTION terminals contribute I = 0 and u = 0 by construction, e.g. the
+    floating H-1 anode, whose potential is still recorded). u_R = sqrt(sum_k u^2(I_k)) for independent channels, or
+    sqrt(sum_ij r_ij u(I_i) u(I_j)) with a registered correlation (full covariance form). closure_valid only if
+    |R_I| <= 3 u_R AND |R_I| / max(I_e,collector, I_scale,min) <= 0.02. instrument_adequate = 3 u_R <= 0.02
+    I_e,collector (applied by icp45a_candidates at the RF-ON candidate point). Structural reasons (sign conventions
+    differ, a NOT_MEASURED intentional return path, missing u(I_k), unintended ground path) make the record
+    non-evaluable; no residual is then formed. Pure arithmetic on recorded values; never widens a tolerance."""
+    rule = _check_closure_rule(closure_rule)
+    rid = rec.get("record_id")
+    terms = rec["terminals"]
+    cm = rec.get("capacity_monitoring") or {}
+    reasons = []
+    u_ok = True
+    if cm.get("sign_convention_id") != rule["sign_convention_id"]:
+        reasons.append("sign convention %r differs from the closure rule's registered convention %r (rule %r): "
+                       "residuals not comparable, capacity point invalid (A9.5 P1Q-15: current sign conventions "
+                       "differ)" % (cm.get("sign_convention_id"), rule["sign_convention_id"], rule["rule_id"]))
+    if cm.get("unintended_ground_path_found") is not False:
+        reasons.append("unintended ground path found or its check not recorded (capacity_monitoring."
+                       "unintended_ground_path_found = %r, check %r; A9.5 P1Q-15 exclusion)"
+                       % (cm.get("unintended_ground_path_found"), cm.get("ground_path_check_id")))
+    channels = {}
+    for name in sorted(terms):
+        t = terms[name]
+        basis = t["basis"]
+        if basis == "OPEN_CIRCUIT_BY_CONSTRUCTION":
+            channels[name] = {"basis": basis, "I_A": 0.0, "u_A": 0.0, "u_basis": "ZERO_BY_CONSTRUCTION"}
+        elif basis == "NOT_MEASURED":
+            channels[name] = {"basis": basis, "I_A": None, "u_A": None}
+            reasons.append("intentional return path unmeasured: terminal %r declared NOT_MEASURED; an unavailable "
+                           "channel is never set to zero (A9.5 P1Q-15)" % name)
+        else:
+            sc = t.get("sign_convention_id")
+            if not isinstance(sc, str) or not sc.strip():
+                reasons.append("terminal %r declares no sign_convention_id: the channel is not shown transformed "
+                               "into the registered convention; the point cannot be evaluated" % name)
+            elif sc != rule["sign_convention_id"]:
+                reasons.append("current sign conventions differ between channels: terminal %r in %r, registered %r "
+                               "(A9.5 P1Q-15)" % (name, sc, rule["sign_convention_id"]))
+            u, comps, why = _channel_uncertainty(t, name)
+            if why:
+                reasons.append(why)
+                u_ok = False
+            channels[name] = {"basis": basis, "I_A": float(t["I_A"]), "u_A": u, "u_components": comps,
+                              "sign_convention_id": sc}
+    ec = terms.get("electron_collector")
+    if not isinstance(ec, dict) or ec.get("basis") != "MEASURED":
+        reasons.append("dedicated electron-collector terminal not MEASURED: I_e,collector unavailable")
+    out = {"record_id": rid, "rule_id": rule["rule_id"], "sign_convention": KIRCHHOFF_SIGN_CONVENTION,
+           "sign_convention_id": rule["sign_convention_id"], "k_sigma": CLOSURE_K_SIGMA,
+           "fraction_max": CLOSURE_FRACTION_MAX, "owner_source": A95_REF, "I_scale_min_A": rule["I_scale_min_A"],
+           "channels": channels, "uncertainties_available": u_ok,
+           "V_anode_V": float(rec["h1_electrical"]["V_anode_V"])}
+    if not reasons:
+        meas = [n for n in sorted(channels) if channels[n]["basis"] == "MEASURED"]
+        cov = rule.get("covariance")
+        if cov is None:
+            u_r = math.sqrt(sum(channels[n]["u_A"] ** 2 for n in meas))
+            method = "INDEPENDENT_CHANNELS: u_R = sqrt(sum_k u^2(I_k))"
+        else:
+            idx = {n: i for i, n in enumerate(cov["terminals"])}
+            missing = [n for n in meas if n not in idx]
+            if missing:
+                reasons.append("registered covariance %r does not cover measured terminal(s) %s: u_R cannot be "
+                               "evaluated" % (cov["covariance_id"], missing))
+                u_ok = False
+                out["uncertainties_available"] = False
+            else:
+                corr = np.array(cov["correlation"], dtype=float)
+                s = float(sum(corr[idx[a], idx[b]] * channels[a]["u_A"] * channels[b]["u_A"]
+                              for a in meas for b in meas))
+                if not s > 0.0:
+                    reasons.append("combined covariance-form variance %r is not positive" % s)
+                u_r = math.sqrt(s) if s > 0.0 else None
+                method = ("FULL_COVARIANCE (registered %s): u_R^2 = sum_ij r_ij u(I_i) u(I_j)"
+                          % cov["covariance_id"])
+    if reasons:
+        out.update({"evaluable": False, "R_I_A": None, "u_R_A": None, "I_e_collector_A": None,
+                    "statistical_ok": None, "fractional_ok": None, "closure_valid": False,
+                    "instrument_adequate": None, "reasons": reasons})
+        return out
+    r_i = sum(channels[n]["I_A"] for n in sorted(channels))
+    i_col = -channels["electron_collector"]["I_A"]
+    denom = max(i_col, rule["I_scale_min_A"])
+    frac = abs(r_i) / denom
+    stat_ok = abs(r_i) <= CLOSURE_K_SIGMA * u_r
+    frac_ok = frac <= CLOSURE_FRACTION_MAX
+    fails = []
+    if not stat_ok:
+        fails.append("statistical closure fails: |R_I| = %.6g A > %g u_R = %.6g A (A9.5 P1Q-15)"
+                     % (abs(r_i), CLOSURE_K_SIGMA, CLOSURE_K_SIGMA * u_r))
+    if not frac_ok:
+        fails.append("fractional closure exceeds 2 %%: |R_I| / max(I_e,collector, I_scale,min) = %.6g > %g "
+                     "(A9.5 P1Q-15)" % (frac, CLOSURE_FRACTION_MAX))
+    out.update({"evaluable": True, "R_I_A": r_i, "u_R_A": u_r, "u_R_method": method, "I_e_collector_A": i_col,
+                "denominator_A": denom, "fraction": frac, "statistical_ok": stat_ok, "fractional_ok": frac_ok,
+                "closure_valid": stat_ok and frac_ok,
+                "instrument_adequate": CLOSURE_K_SIGMA * u_r <= CLOSURE_FRACTION_MAX * i_col,
+                "reasons": fails})
+    return out
+
+
+def i_e_cap_signed(i_e_collector_rf_on_A, i_e_collector_rf_off_A):
+    """I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (A9.4 P1Q-10; confirmed A9.5 P1Q-16): signed currents under
+    the same registered convention; no absolute-value correction and no zero-clipping (a negative result stays
+    negative)."""
+    return i_e_collector_rf_on_A - i_e_collector_rf_off_A
 
 
 FACILITY_MATCH_REQUIRED = ("criteria_id", "p_chamber_rel_tol")
@@ -657,12 +922,14 @@ def facility_electron_check(rf_on, rf_off, match=None):
            "p_chamber_rel_dev": p_dev, "match_rule_id": match["criteria_id"],
            "records": [rf_on["record_id"], rf_off["record_id"]]}
     # A9.4 P1Q-10 capacity measurand: the dedicated electron-collector terminal current (electrons collected = -I_A
-    # under the registered sign convention), RF ON minus the matched RF OFF record
+    # under the registered sign convention), RF ON minus the matched RF OFF record, SIGNED (A9.5 P1Q-16: no
+    # absolute-value correction, no zero-clipping). Only MEASURED channels form it (never a NOT_MEASURED channel as 0).
     ec_on, ec_off = rf_on["terminals"].get("electron_collector"), rf_off["terminals"].get("electron_collector")
-    if isinstance(ec_on, dict) and isinstance(ec_off, dict):
+    if isinstance(ec_on, dict) and isinstance(ec_off, dict) and ec_on.get("basis") == "MEASURED" \
+            and ec_off.get("basis") == "MEASURED":
         c_on, c_off = -float(ec_on["I_A"]), -float(ec_off["I_A"])
         out.update({"I_e_collector_rf_on_A": c_on, "I_e_collector_rf_off_A": c_off,
-                    "I_e_collector_corrected_A": c_on - c_off})
+                    "I_e_collector_corrected_A": i_e_cap_signed(c_on, c_off)})
     return out
 
 
@@ -752,27 +1019,26 @@ def icp45a_margin(i_e_cap_A, idm, k, ue, ud):
     return {"M_n": m_n, "u_M_n": u_m, "M_n_lower": m_n - k * u_m}
 
 
-CLOSURE_RULE_REQUIRED = ("rule_id", "residual_rel_tol", "sign_convention_id")
-
-
-def _check_closure_rule(closure_rule):
-    """Registered Kirchhoff-closure tolerance for capacity points (A9.4 P1Q-13; value TBD - registered, never set
-    here). Returns the tolerance or raises."""
-    _req(closure_rule, CLOSURE_RULE_REQUIRED, "closure_rule")
-    tol = _num(closure_rule["residual_rel_tol"], "closure_rule.residual_rel_tol", allow_negative=False)
-    if not isinstance(closure_rule["sign_convention_id"], str) or not closure_rule["sign_convention_id"].strip():
-        raise MissingInputError("closure_rule.sign_convention_id must name the registered sign convention")
-    return tol
+def _point_eligibility(fc_ok, ev_on, ev_off, closure_ok):
+    return {"1_capacity_point_passes_current_closure": bool(closure_ok),
+            "2_matched_rf_off_correction_valid": bool(fc_ok),
+            "3_required_channel_uncertainties_available": bool(ev_on is not None and ev_off is not None
+                                                               and ev_on["uncertainties_available"]
+                                                               and ev_off["uncertainties_available"]),
+            "4_I_d_max_H1_registered": True}
 
 
 def icp45a_candidates(records, registration, facility_checks, closure_rule=None):
-    """Split validated operating-point records into I_e,cap CAPACITY candidates and exclusions (I_E_CAP_DEFINITION).
-    facility_checks: {rf_on_record_id: facility_electron_check(...) result}. closure_rule: registered Kirchhoff
-    tolerance (A9.4 P1Q-13); when None the closure of a candidate cannot be validated and it is excluded."""
+    """Split validated operating-point records into I_e,cap CAPACITY candidates, NOT_EVALUATED_INSTRUMENT points and
+    exclusions (I_E_CAP_DEFINITION; A9.5 P1Q-15 / P1Q-16). facility_checks: {rf_on_record_id:
+    facility_electron_check(...) result}. closure_rule: the registered inputs of the owner Kirchhoff rule
+    {rule_id, sign_convention, sign_convention_id, I_scale_min_A, I_scale_min_basis (, covariance)}; when None no
+    capacity point can be closure-validated and it is excluded. Every excluded point keeps its reasons (and, where
+    formed, its closure record). Returns (candidates, excluded, not_evaluated_instrument)."""
     pts = set(registration["registered_point_ids"])
     by_id = {r["record_id"]: r for r in records}
-    tol = _check_closure_rule(closure_rule) if closure_rule is not None else None
-    cands, excluded = [], []
+    rule = _check_closure_rule(closure_rule) if closure_rule is not None else None
+    cands, excluded, instrument = [], [], []
     for rec in records:
         why = []
         if rec["record_class"] != CAPACITY_LABEL:
@@ -783,6 +1049,11 @@ def icp45a_candidates(records, registration, facility_checks, closure_rule=None)
         if rec["hall_discharge_state"] != "OFF":
             why.append("Hall discharge supply ON: H-1 anode sink, current continuity bounds the ICP current by I_d; "
                        "NEUTRALIZATION_CONSISTENCY record, not a capacity record")
+        h1e = rec["h1_electrical"]
+        if h1e["anode_state"] != "DISCONNECTED_FLOATING" or h1e["discharge_supply_connection"] != \
+                "PHYSICALLY_DISCONNECTED" or rec["terminals"]["hall_anode"]["basis"] != "OPEN_CIRCUIT_BY_CONSTRUCTION":
+            why.append("H-1 anode not physically disconnected / floating (anode_state %r, supply %r; A9.5 P1Q-15 "
+                       "exclusion, A9.4 P1Q-13)" % (h1e["anode_state"], h1e["discharge_supply_connection"]))
         if rec["extraction"]["electron_collecting_electrode"] != "DEDICATED_ELECTRON_COLLECTOR_TARGET":
             why.append("electron sink %r is not the dedicated electron-collecting electrode (A9.4 P1Q-10)"
                        % rec["extraction"]["electron_collecting_electrode"])
@@ -794,45 +1065,65 @@ def icp45a_candidates(records, registration, facility_checks, closure_rule=None)
             why.append("rf_pickup_check NOT_DONE")
         if rec.get("h1_point_id") not in pts:
             why.append("h1_point_id %r not a registered H-1 point" % rec.get("h1_point_id"))
-        fc = facility_checks.get(rec["record_id"])
-        if fc is None and not why:
-            why.append("no matched RF-OFF facility pair: facility-electron correction missing (P1-D-07)")
-        if fc is not None and not why and "I_e_collector_corrected_A" not in fc:
-            why.append("dedicated electron-collector current missing in the RF-ON / RF-OFF pair")
-        closure = None
-        if not why:
-            off_id = fc["records"][1]
-            closure = {rec["record_id"]: current_closure(rec)["residual_rel"],
-                       off_id: current_closure(by_id[off_id])["residual_rel"]}
-            if tol is None:
-                why.append("Kirchhoff closure tolerance not registered (P1-IT-47): the capacity point cannot be "
-                           "validated (A9.4 P1Q-13)")
-            else:
-                # residuals are only comparable with the registered tolerance under the rule's own sign convention
-                conv = {rid_: (by_id[rid_].get("capacity_monitoring") or {}).get("sign_convention_id")
-                        for rid_ in closure}
-                off_conv = {k_: v_ for k_, v_ in conv.items() if v_ != closure_rule["sign_convention_id"]}
-                if off_conv:
-                    why.append("sign convention %s differs from the closure rule's registered convention %r (rule "
-                               "%r): residuals not comparable, capacity point invalid (A9.4 P1Q-13)"
-                               % (off_conv, closure_rule["sign_convention_id"], closure_rule["rule_id"]))
-            if tol is not None and not why:
-                # residual None = every terminal current is zero (the sum is then exactly zero: closed)
-                bad = {k_: v_ for k_, v_ in closure.items() if v_ is not None and abs(v_) > tol}
-                if bad:
-                    why.append("Kirchhoff residual beyond the registered tolerance %r (rule %r): capacity point "
-                               "invalid (A9.4 P1Q-13): %s" % (tol, closure_rule["rule_id"], bad))
         if why:
-            excluded.append({"record_id": rec["record_id"], "reasons": why})
-        else:
-            cands.append({"record_id": rec["record_id"], "label": CAPACITY_LABEL, "synthetic": rec["synthetic"],
-                          "h1_point_id": rec["h1_point_id"], "stage_id": rec["stage_id"],
-                          "electron_collecting_electrode": rec["extraction"]["electron_collecting_electrode"],
-                          "I_e_collector_rf_on_A": fc["I_e_collector_rf_on_A"],
-                          "I_e_collector_rf_off_A": fc["I_e_collector_rf_off_A"],
-                          "I_e_collector_corrected_A": fc["I_e_collector_corrected_A"],
-                          "closure_residual_rel": closure, "closure_rule_id": closure_rule["rule_id"]})
-    return cands, excluded
+            excluded.append({"record_id": rec["record_id"], "outcome": "EXCLUDED", "reasons": why})
+            continue
+        # from here on: an RF-ON ICP45_CAPACITY candidate point (eligibility conditions 1-3 of A9.5 P1Q-16)
+        fc = facility_checks.get(rec["record_id"])
+        fc_ok = fc is not None and "I_e_collector_corrected_A" in fc
+        if fc is None:
+            why.append("no matched RF-OFF facility pair: facility-electron correction missing; RF-ON/RF-OFF pairing "
+                       "not matched (P1-D-07; A9.5 P1Q-15 / P1Q-16 condition 2)")
+        elif not fc_ok:
+            why.append("dedicated electron-collector current missing (or not MEASURED) in the RF-ON / RF-OFF pair")
+        if fc is not None and bool(by_id[fc["records"][1]]["synthetic"]) != bool(rec["synthetic"]):
+            why.append("synthetic and measured evidence mixed in the RF-ON / RF-OFF pair (A9.5 P1Q-15 exclusion)")
+        ev_on = ev_off = None
+        closure = None
+        if fc is not None:
+            off_id = fc["records"][1]
+            if rule is None:
+                why.append("Kirchhoff closure rule not registered (P1-IT-47 / P1-IT-48: registered sign convention id "
+                           "and I_scale,min; A9.5 P1Q-15): the capacity point cannot be validated")
+            else:
+                ev_on, ev_off = kirchhoff_closure(rec, rule), kirchhoff_closure(by_id[off_id], rule)
+                closure = {rec["record_id"]: ev_on, off_id: ev_off}
+                for tag, ev in (("RF-ON", ev_on), ("matched RF-OFF", ev_off)):
+                    why += ["%s record %r: %s" % (tag, ev["record_id"], r_) for r_ in ev["reasons"]]
+        closure_ok = ev_on is not None and ev_on["closure_valid"] and ev_off["closure_valid"]
+        elig = _point_eligibility(fc_ok, ev_on, ev_off, closure_ok)
+        entry = {"record_id": rec["record_id"], "closure": closure, "eligibility": elig}
+        if why:
+            if ev_on is not None and ev_on["instrument_adequate"] is False:
+                why.append("also NOT_EVALUATED_INSTRUMENT at this point: 3 u_R = %.6g A > 0.02 I_e,collector = "
+                           "%.6g A (the tolerance is never widened)" % (CLOSURE_K_SIGMA * ev_on["u_R_A"],
+                                                                         CLOSURE_FRACTION_MAX * ev_on["I_e_collector_A"]))
+            entry.update({"outcome": "EXCLUDED", "reasons": why})
+            excluded.append(entry)
+            continue
+        if not ev_on["instrument_adequate"]:
+            entry.update({"outcome": "NOT_EVALUATED_INSTRUMENT",
+                          "reasons": ["instrument adequacy: 3 u_R = %.6g A > 0.02 I_e,collector = %.6g A at this "
+                                      "candidate qualification point: the instrumentation cannot establish the 2 %% "
+                                      "closure; the tolerance is never widened (A9.5 P1Q-15)"
+                                      % (CLOSURE_K_SIGMA * ev_on["u_R_A"],
+                                         CLOSURE_FRACTION_MAX * ev_on["I_e_collector_A"])]})
+            instrument.append(entry)
+            continue
+        c_on, c_off = fc["I_e_collector_rf_on_A"], fc["I_e_collector_rf_off_A"]
+        u_on = ev_on["channels"]["electron_collector"]["u_A"]
+        u_off = ev_off["channels"]["electron_collector"]["u_A"]
+        cands.append({"record_id": rec["record_id"], "label": CAPACITY_LABEL, "outcome": "CLOSURE_VALID_CANDIDATE",
+                      "synthetic": rec["synthetic"], "h1_point_id": rec["h1_point_id"], "stage_id": rec["stage_id"],
+                      "electron_collecting_electrode": rec["extraction"]["electron_collecting_electrode"],
+                      "rf_off_record_id": fc["records"][1],
+                      "I_e_collector_rf_on_A": c_on, "I_e_collector_rf_off_A": c_off,
+                      "I_e_collector_corrected_A": fc["I_e_collector_corrected_A"],
+                      "I_e_cap_A": i_e_cap_signed(c_on, c_off),
+                      "u_I_e_collector_rf_on_A": u_on, "u_I_e_collector_rf_off_A": u_off,
+                      "u_I_e_cap_from_channels_A": math.sqrt(u_on ** 2 + u_off ** 2),
+                      "closure": closure, "closure_rule_id": rule["rule_id"], "eligibility": elig})
+    return cands, excluded, instrument
 
 
 def neutralization_consistency(records, facility_checks, registered_point_ids=None):
@@ -870,43 +1161,70 @@ def neutralization_consistency(records, facility_checks, registered_point_ids=No
 
 def icp45a_evaluate(records, registration=None, margin_rule=None, facility_checks=None, closure_rule=None):
     """ICP-45A (Ar, engineering-only) condition I_e,cap >= I_d,max,H1 with the one-sided lower bound of M_n above zero
-    (A9.1 ICP-45, UBQ-02; A9.3 OQ-A907-02; A9.4 P1Q-10). Status exactly NOT_EVALUATED until I_d,max,H1 is registered
-    from the H-1 envelope and measured behaviour (never the 8.33 A bench ceiling) AND eligible, facility-corrected,
-    closure-valid ICP45_CAPACITY records exist; never PASS / FAIL. Hall-ON records only feed the
+    (A9.1 ICP-45, UBQ-02; A9.3 OQ-A907-02; A9.4 P1Q-10; A9.5 P1Q-15 / P1Q-16). Eligible only when (1) the capacity
+    point passes the owner Kirchhoff closure, (2) the matched RF-OFF correction is valid, (3) all required
+    uncertainties are available (u(I_k) of every channel; u_I_e_A and u_I_d_max_A of the margin rule) and (4)
+    I_d,max,H1 is registered from the H-1 envelope and measured behaviour (never the 8.33 A bench ceiling); until all
+    four exist the status is exactly NOT_EVALUATED; never PASS / FAIL. Per capacity point the outcome is one of
+    POINT_OUTCOMES (NOT_EVALUATED_INSTRUMENT when 3 u_R > 0.02 I_e,collector). Hall-ON records only feed the
     NEUTRALIZATION_CONSISTENCY list."""
     base = {"i_e_cap_definition": I_E_CAP_DEFINITION, "capacity_label": CAPACITY_LABEL,
-            "consistency_label": CONSISTENCY_LABEL, "status_vocabulary": list(ICP45A_STATUSES)}
+            "consistency_label": CONSISTENCY_LABEL, "status_vocabulary": list(ICP45A_STATUSES),
+            "point_outcome_vocabulary": list(POINT_OUTCOMES),
+            "closure_owner_rule": {"source": A95_REF, "sign_convention": KIRCHHOFF_SIGN_CONVENTION,
+                                   "residual": "R_I = sum_k I_k", "k_sigma": CLOSURE_K_SIGMA,
+                                   "fraction_max": CLOSURE_FRACTION_MAX,
+                                   "instrument_adequacy": "3 u_R <= 0.02 I_e,collector at the candidate point, "
+                                                          "else NOT_EVALUATED_INSTRUMENT"}}
     facility_checks = facility_checks or {}
     if registration is None:
         base.update({"status": "NOT_EVALUATED", "condition_met": None,
+                     "eligibility": {"4_I_d_max_H1_registered": False},
                      "reason": "I_d,max,H1 not registered (A9.3 OQ-A907-02; A9.4 execution_decisions.i_d_max_h1: "
                                "established from the registered H-1 operating envelope and measured H-1 behaviour, "
-                               "never from the 8.33 A bench design ceiling); ICP45 = NOT_EVALUATED, not PASS or FAIL; "
-                               "the surface is reported instead",
+                               "never from the 8.33 A bench design ceiling); ICP45 = NOT_EVALUATED, not PASS or FAIL "
+                               "(A9.5 P1Q-16 condition 4); the surface is reported instead",
                      "neutralization_consistency": neutralization_consistency(records, facility_checks)})
         return base
     idm, k, ue, ud = _check_registration(registration, margin_rule)
-    cands, excluded = icp45a_candidates(records, registration, facility_checks, closure_rule)
+    cands, excluded, instrument = icp45a_candidates(records, registration, facility_checks, closure_rule)
+    points = [{"record_id": c["record_id"], "outcome": c["outcome"]} for c in cands]
+    points += [{"record_id": e["record_id"], "outcome": e["outcome"]} for e in instrument]
+    points += [{"record_id": e["record_id"], "outcome": e["outcome"]} for e in excluded if "eligibility" in e]
     base.update({"registration_id": registration["registration_id"], "rule_id": margin_rule["rule_id"],
                  "closure_rule_id": closure_rule["rule_id"] if closure_rule is not None else None,
-                 "I_d_max_H1_A": idm, "excluded_records": excluded,
+                 "I_d_max_H1_A": idm, "excluded_records": excluded, "not_evaluated_instrument_records": instrument,
+                 "capacity_point_outcomes": sorted(points, key=lambda p: p["record_id"]),
                  "neutralization_consistency": neutralization_consistency(
                      records, facility_checks, registration["registered_point_ids"])})
     if not cands:
         base.update({"status": "NOT_EVALUATED", "condition_met": None,
-                     "reason": "no eligible facility-corrected, closure-valid ICP45_CAPACITY record (dedicated "
-                               "collector, discharge supply OFF and disconnected, floating anode, registered H-1 "
-                               "point, registered closure tolerance; see excluded_records); never a FAIL"})
+                     "reason": "no admissible ICP45_CAPACITY point: conditions (1) owner Kirchhoff closure, (2) matched "
+                               "RF-OFF correction, (3) required uncertainties are not all met at any point (dedicated "
+                               "collector, discharge supply OFF and disconnected, floating anode, registered H-1 point, "
+                               "registered closure rule; %d point(s) NOT_EVALUATED_INSTRUMENT; see excluded_records); "
+                               "ICP45 = NOT_EVALUATED (A9.5 P1Q-16), never a FAIL" % len(instrument)})
         return base
     if len({bool(c["synthetic"]) for c in cands}) > 1:
         raise P1RecordError("ICP45_CAPACITY candidates mix synthetic fixtures %s with measured records %s: refused "
                             "(a synthetic record must never suppress or substitute a measured evaluation)"
                             % (sorted(c["record_id"] for c in cands if c["synthetic"]),
                                sorted(c["record_id"] for c in cands if not c["synthetic"])))
-    best = max(cands, key=lambda c: (c["I_e_collector_corrected_A"], c["record_id"]))
-    i_cap = best["I_e_collector_corrected_A"]
+    best = max(cands, key=lambda c: (c["I_e_cap_A"], c["record_id"]))
+    i_cap = best["I_e_cap_A"]                       # signed; never clipped (A9.5 P1Q-16)
     base.update(icp45a_margin(i_cap, idm, k, ue, ud))
-    base.update({"I_e_cap_A": i_cap, "I_e_cap_record": best["record_id"], "candidates": cands})
+    flags = []
+    if i_cap < 0.0:
+        flags.append("I_E_CAP_NEGATIVE: the RF-OFF (facility/background) collector current exceeds the RF-ON value; "
+                     "reported signed, no absolute-value correction and no zero-clipping (A9.5 P1Q-16)")
+    if ue < best["u_I_e_cap_from_channels_A"]:
+        flags.append("REGISTERED_u_I_e_BELOW_CHANNEL_PROPAGATION: margin_rule.u_I_e_A = %.6g A < sqrt(u^2(I_col,ON) + "
+                     "u^2(I_col,OFF)) = %.6g A; the preregistered value is used unchanged (owner question P1Q-19)"
+                     % (ue, best["u_I_e_cap_from_channels_A"]))
+    base.update({"I_e_cap_A": i_cap, "I_e_cap_record": best["record_id"], "candidates": cands,
+                 "u_I_e_cap_used_A": ue, "u_I_e_cap_used_basis": "margin_rule.u_I_e_A (preregistered, P1-IT-29)",
+                 "u_I_e_cap_from_channels_A": best["u_I_e_cap_from_channels_A"],
+                 "eligibility": dict(best["eligibility"]), "flags": flags})
     if any(c["synthetic"] for c in cands):
         base.update({"status": "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE", "condition_met": None,
                      "arithmetic_lower_bound_positive": bool(base["M_n_lower"] > 0.0),
@@ -915,9 +1233,10 @@ def icp45a_evaluate(records, registration=None, margin_rule=None, facility_check
     base.update({"status": "EVALUATED_ENGINEERING_ONLY", "condition_met": bool(base["M_n_lower"] > 0.0),
                  "evidence_class": REQUIRED_LABEL,
                  "note": "ICP-45A is Ar engineering-only evidence (A9.1); ICP-45N on N2 is still required before any "
-                         "score-bearing hall_icp_neutralizer point; I_e,cap definition OWNER_DECIDED (A9.4 P1Q-10); "
-                         "the Hall-ON follow-up (P1-S7H, NEUTRALIZATION_CONSISTENCY) must still show the capacity "
-                         "operates in the real Hall loop; never an architecture PASS"})
+                         "score-bearing hall_icp_neutralizer point; I_e,cap definition OWNER_DECIDED (A9.4 P1Q-10) and "
+                         "formula OWNER_CONFIRMED (A9.5 P1Q-16); condition_met = (M_n,LB > 0); the Hall-ON follow-up "
+                         "(P1-S7H, NEUTRALIZATION_CONSISTENCY) must still show the capacity operates in the real Hall "
+                         "loop; never an architecture PASS"})
     return base
 
 
@@ -934,6 +1253,10 @@ def _row_flags(rec, rf):
     if float(rec["collector"]["I_e_A"]) < 0.0:
         flags.append("I_E_NEGATIVE: net ion collection at this bias, or a sensor orientation inconsistent with "
                      "the declared sign convention - verify before use")
+    unmeasured = sorted(n for n, t in rec["terminals"].items() if t["basis"] == "NOT_MEASURED")
+    if unmeasured:
+        flags.append("TERMINAL_NOT_MEASURED: %s declared unavailable; never summed as zero, no Kirchhoff residual "
+                     "formed (A9.5 P1Q-15)" % unmeasured)
     if rec["synthetic"]:
         flags.append("SYNTHETIC_TEST_FIXTURE: not data")
     return flags
@@ -943,7 +1266,9 @@ def reduce_operating_points(records, registration=None, margin_rule=None, facili
                             closure_rule=None):
     """Surface table + summaries for a list of 'icp_operating_point' records. facility_pairs = [[rf_on_id,
     rf_off_id], ...] (each checked with facility_electron_check under facility_match). closure_rule = registered
-    Kirchhoff tolerance for capacity points {rule_id, residual_rel_tol, sign_convention_id} (A9.4 P1Q-13; no default)."""
+    registered inputs of the owner Kirchhoff rule for capacity points {rule_id, sign_convention, sign_convention_id,
+    I_scale_min_A, I_scale_min_basis (, covariance)} (A9.5 P1Q-15; no default; the factor 3 and the 2 % are owner
+    constants, never inputs)."""
     if not isinstance(records, list) or not records:
         raise MissingInputError("reduce_operating_points: a non-empty list of records is required")
     rows = []
@@ -997,6 +1322,7 @@ def reduce_operating_points(records, registration=None, margin_rule=None, facili
             "C_e_reason": ce["C_e_reason"],
             "C_e_DC_W_per_A": ce["C_e_DC_W_per_A"], "C_e_DC_boundary": ce["C_e_DC_boundary"],
             "closure_residual_rel": cl["residual_rel"], "closure_sum_A": cl["sum_A"],
+            "closure_state": cl["closure_state"],
             "rf_pickup_check": rec["rf_pickup_check"], "flags": _row_flags(rec, rf),
             "temperatures_C": dict(sorted(rec["temperatures"].items())),
             "thermal_status": "RECORDED_ONLY - ICP_COUPLED_THERMAL = UNRESOLVED (A9.2); never a thermal PASS",
@@ -1072,7 +1398,9 @@ def reduce(bundle, registration=None, margin_rule=None, stable_criteria=None, fa
     """Top-level reducer. bundle = {"operating_points": [...], "topology_control": [...] (optional),
     "dwells": [{"record_id", "dwell", "ignition"}] (optional), "facility_pairs": [[on_id, off_id]] (optional)}.
     facility_match = {"criteria_id", "p_chamber_rel_tol"} is required whenever facility_pairs are given (P1-IT-37);
-    closure_rule = {"rule_id", "residual_rel_tol", "sign_convention_id"} validates capacity points (P1-IT-47)."""
+    closure_rule = {"rule_id", "sign_convention", "sign_convention_id", "I_scale_min_A", "I_scale_min_basis"
+    (, "covariance")} carries the registered inputs of the owner Kirchhoff rule for capacity points (A9.5 P1Q-15;
+    P1-IT-47 / P1-IT-48)."""
     _req(bundle, ("operating_points",), "bundle")
     ops = reduce_operating_points(bundle["operating_points"], registration, margin_rule,
                                   bundle.get("facility_pairs"), facility_match, closure_rule)

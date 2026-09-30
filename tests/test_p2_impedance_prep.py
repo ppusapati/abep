@@ -5,7 +5,7 @@ Checks: byte-for-byte reproduction by the builder; pins verified and governance 
 impedance / de-embedding / power-accounting math against closed-form cases on SYNTHETIC, clearly labelled data; every
 refusal path (missing calibration, no reference plane, uncalibrated phase, P_forward used as P_plasma, hot map before the
 P1 stable region); the mismatch envelope stays TBD_AFTER_IMPEDANCE_MAP; schema <-> reducer consistency; item / evidence
-discipline; no open item converted to PASS; no dependency on the parallel P1 / RFQ v2 lanes; owner A9.4 P2Q-05
+discipline; no open item converted to PASS; merged P1 / RFQ v2 ids cross-checked (A9.5 execution); owner A9.4 P2Q-05
 (photodiode required; UNLIT / E_MODE / H_MODE / UNCERTAIN) incorporated by fo_a9_4_incorporation.
 Run: python -m pytest -q tests/test_p2_impedance_prep.py
 """
@@ -476,14 +476,62 @@ def test_new_questions_are_new_and_answerable(d):
         assert q["proposed_answer"] and q["needed_by"]
 
 
-def test_interface_demands_both_directions_and_pending_lanes(d):
+def test_interface_demands_both_directions_and_merged_lanes(d):
+    """A9.5 execution (carried A9.4 minor): the P1 bench and RFQ v2 packages are merged; stale 'PENDING <path>'
+    references are replaced by their real ids, which must exist in the merged files."""
     dirs = {x["direction"] for x in d["interface_demands"]}
     assert "P1 -> P2" in dirs and "P2 -> P1" in dirs
     assert any("RFQ v2" in x for x in dirs)
-    pend = {p["path"] for p in d["pending_lanes"]}
-    assert pend == {"docs/experiments/hall_icp/p1_icp_bench/", "docs/procurement/rfq_a9_v2/"}
+    assert "pending_lanes" not in d
+    merged = {p["path"] for p in d["merged_lanes"]}
+    assert merged == {"docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+                      "docs/procurement/rfq_a9_v2/rfq_a9_v2.json"}
+    txt = json.dumps(d) + OUT_MD.read_text(encoding="utf-8")
+    assert "PENDING docs/experiments/hall_icp/p1_icp_bench/" not in txt
+    assert "PENDING docs/procurement/rfq_a9_v2/" not in txt
+    rfq2 = (REPO / "docs/procurement/rfq_a9_v2/rfq_a9_v2.json").read_text(encoding="utf-8")
+    p1 = (REPO / "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json").read_text(encoding="utf-8")
     for inst in d["instrument_list"]:
-        assert inst["rfq_v2_line"].startswith("PENDING docs/procurement/rfq_a9_v2/")
+        v = inst["rfq_v2_line"]
+        assert "PENDING" not in v and v.endswith("(docs/procurement/rfq_a9_v2/rfq_a9_v2.json)"), inst["id"]
+        ids = re.findall(r"\b(?:RF|GAS|VAC|HE|ME|TH)-[LO]\d\d\b", v)
+        assert ids or v.startswith("no RFQ v2 line"), inst["id"]
+        for i in ids:
+            assert f'"{i}"' in rfq2, (inst["id"], i)
+    for i in d["merged_ids_cited"]["docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json"]:
+        assert f'"{i}"' in p1, i
+    for i in d["merged_ids_cited"]["docs/procurement/rfq_a9_v2/rfq_a9_v2.json"]:
+        assert f'"{i}"' in rfq2, i
+    idem = {x["id"]: x for x in d["interface_demands"]}
+    assert "IF-P1-01" in idem["IDP2-01"]["status"] and "IF-P1-23" in idem["IDP2-17"]["status"]
+    assert "TH-L07" in idem["IDP2-18"]["status"] and idem["IDP2-05"]["status"].startswith("CONSUMED")
+
+
+def test_a95_ins_p2_10_and_pins(d):
+    ins = {i["id"]: i for i in d["instrument_list"]}
+    p10 = ins["INS-P2-10"]
+    assert any(isinstance(s_, dict) and s_.get("kind") == "A9.4" and s_.get("decision") == "P2Q-05"
+               for s_ in p10["source"])
+    assert p10["evidence_class"] == "owner-stated" and "A9.4 P2Q-05" in p10["basis"]
+    for need in ("TH-L07", "TH-L08", "VAC-L07"):
+        assert need in p10["rfq_v2_line"], need
+    assert ins["INS-P2-02"]["rfq_v2_line"].startswith("RF-L02") and ins["INS-P2-11"]["rfq_v2_line"].startswith("RF-L11")
+    assert ins["INS-P2-04"]["rfq_v2_line"].startswith("no RFQ v2 line")
+    items = {it["id"]: it for it in d["items"]}
+    assert items["INS-P2-10"]["evidence_class"] == "owner-stated"
+    pins = {p["path"]: p["sha256"] for p in d["decision_pins"] + d["deliverable_pins"]}
+    assert pins["docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json"] == \
+        "c9e101f2c409c2d28ad256818c22f13ee801bc532d7e4ef470f375d7bb1fe1d3"
+    assert pins["docs/decisions/OD_2026_09_30_A9_5_P1_CLOSURE_OWNER_DECISIONS.md"] == \
+        "9e49e923328441c1fc82afd3eb64c13d85fc818e8fe534576ada61a16fa525f3"
+    assert pins["docs/procurement/rfq_a9_v2/rfq_a9_v2.json"] == \
+        "2d9fa0978f991674152371f4013cac64f05cddd1ac00523cfa7397b572119174"
+    assert not any("p1_icp_bench" in p_ for p_ in pins)                  # same follow-on lane: checked, not pinned
+    inc = d["a9_5_incorporation"]
+    assert inc["follow_on"] == "fo_a9_5_closure_rule" and inc["base_commit"] == \
+        "71f31b2a254fe01059b130b554b97c7584ae6b30"
+    applied = [o for o in d["owner_answers_applied"] if isinstance(o["ref"], dict) and o["ref"].get("kind") == "A9.5"]
+    assert applied and "INS-P2-10" in applied[0]["how"]
 
 
 def test_m16_rows_and_sections_present(d):
