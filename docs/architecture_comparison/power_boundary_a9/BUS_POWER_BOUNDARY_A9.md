@@ -44,7 +44,7 @@ Other pinned inputs: `abep_sim/arch_boundary.py` `8dfc309a5d2c717913fd4961bc660f
 | A902-19 | RF quantity crossing the bus boundary | generator DC input only | - | definition | docs/decisions/OD_2026_09_29_owner_answers_147.json row 66; docs/decisions/OD_2026_09_29_owner_answers_147.json row 72; A9 requirement_discipline | n/a (rule) | ADOPTED | NOW |
 | A902-20 | ICP electron-source sub-allocation inside A902-10 | no fixed split: P_ICP,available = 1350 W - P_common - P_Hall - P_other,active at every registered condition | W | owner decision | docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json OQ-A902-03 (A8/v2 'rf <= 700 W' is a parallel-branch number and is not carried) | n/a (rule) | ADOPTED (A9.1) | NOW |
 | A902-21 | RF generator DC-input -> forward-power efficiency | TBD | - | pending | TBD - requires S1a measurement (generator DC input metered + coupler forward power); H2-4 H24-14 was a pre-ionizer chain analog and is not reused | TBD | OPEN | LOCK-2 |
-| A902-22 | matching-network DC draw (tuning actuators / controller) | TBD | W | pending | schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13 (A9-03, merged; A9.1 A9-03-matching fixes the location off the moving platform but not fixed vs auto-tuned; on-module pre-match OQ-A907-11 OPEN): TBD - requires the matching-network selection (RFQ-04) | TBD | OPEN | LOCK-1 |
+| A902-22 | matching-network DC draw (tuning actuators / controller) | TBD | W | pending | schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13 (A9-03, merged; A9.2 OQ-A907-11: adjustable local match on / adjacent to the ICP module for development; flight implementation after the impedance map): TBD - requires the matching-network selection (RFQ-04) | TBD | OPEN | LOCK-1 |
 | A902-23 | collector/bias supply V and I range | TBD | V / A | pending | schemas/interfaces/icp_neutralizer_icd_v1.json ICP-20, ICP-21 (electron-extraction collector bias, floating body row 70) | TBD | OPEN | LOCK-1 |
 | A902-24 | ICP gas-feed valve/controller power and feed species | G-REUSE (primary): no dedicated feed, flow_control_icp_feed not installed (0 W); TBD only for a declared G-ATM / G-XE contingency variant | W | owner decision | docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json HIQ-06; docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json OQ-A902-05; A9 recorder flag row 46; schemas/interfaces/icp_neutralizer_icd_v1.json ICP-26 | n/a (rule) | ADOPTED (A9.1) | LOCK-1 |
 | A902-25 | C1 keeper pulsed ignition capability (current-limited; interlocks; pulse energy recorded) | [300.0, 600.0] | V | owner decision | docs/decisions/OD_2026_09_29_owner_answers_147.json row 89; H2-2 H22-22 [300.0, 600.0] V (measured) | owner-allocation | ADOPTED (capability, not a load) | NOW |
@@ -311,7 +311,7 @@ Other pinned inputs: `abep_sim/arch_boundary.py` `8dfc309a5d2c717913fd4961bc660f
 |---|---|---|---|
 | H3-A902-01 | 13.56 MHz laboratory RF generator, 0-500 W forward, DC input metered | row 72 | quotations only (row 8); no supplier contact by the lane |
 | H3-A902-02 | directional coupler + forward/reflected sensors; calorimetric cross-check load | row 72 | - |
-| H3-A902-03 | matching network (fixed or auto-tuned; DC draw metered) | schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13 (A9.1 A9-03-matching: off the moving platform; fixed vs auto-tuned and the on-module pre-match OQ-A907-11 still open) | - |
+| H3-A902-03 | matching network (fixed or auto-tuned; DC draw metered) | schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13 (A9.2 OQ-A907-11: adjustable local match on / adjacent to the ICP module; ratings TBD_AFTER_IMPEDANCE_MAP) | - |
 | H3-A902-04 | collector/bias supply (floating, V/I metered) | row 70; schemas/interfaces/icp_neutralizer_icd_v1.json ICP-21 | - |
 | H3-A902-05 | C1 keeper supply with current-limited pulsed ignition 300-600 V class, interlocks, pulse-energy recording | row 89 | - |
 | H3-A902-06 | selectable cathode-common/bleeder network with V/I measurement | row 91 | - |
@@ -333,7 +333,7 @@ Other pinned inputs: `abep_sim/arch_boundary.py` `8dfc309a5d2c717913fd4961bc660f
 
 ## A9-10 reconciliation (fo_a9_10_integration)
 
-Changes applied by A9-10 after this lane's verified build (record `docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json`, overlay `docs/experiments/hall_icp/integration/a9_10_overlay.py`). A9.1 decision `docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json` (sha256 `7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4`). A9 stays OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; no winner; no prediction.
+Changes applied by A9-10 after this lane's verified build (record `docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json`, overlay `docs/experiments/hall_icp/integration/a9_10_overlay.py`). A9.1 decision `docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json` (sha256 `7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4`); A9.2 decision `docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json` (sha256 `e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03`). A9 stays OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; no winner; no prediction.
 
 | change | driver | op | pointer | count | summary |
 |---|---|---|---|---|---|
@@ -364,3 +364,7 @@ Changes applied by A9-10 after this lane's verified build (record `docs/experime
 | A910-R02-11 | OQ-INT-03 (A9-07 REV-40..50) | merge | `/interface_demands[18]` | 1 | H2-5 -> A9-02 precise reason |
 | A910-R02-12 | OQ-INT-03 (A9-08 XA9-IF-15) | merge | `/interface_demands[20]` | 1 | A9-02 -> Xe ledger satisfied |
 | A910-R02-13 | OQ-INT-03 (A9-03 ICP-13) | merge | `/h3_inputs[id=H3-A902-03]` | 1 | H3-A902-03 basis |
+| A910-A92-A902-01 | A9.2 OQ-A907-11, rf_measurement_reference | merge | `/slots[slot=icp_rf_source]` | 1 | icp_rf_source match loss |
+| A910-A92-A902-02 | A9.2 OQ-A907-11, icp_matching_strategy | merge | `/slots[slot=icp_matching_network]` | 1 | icp_matching_network slot |
+| A910-A92-A902-03 | A9.2 OQ-A907-11 | replace | `/items[id=A902-22]/source` | 1 | A902-22 source |
+| A910-A92-A902-04 | A9.2 OQ-A907-11 | replace | `/h3_inputs[2]/basis` | 1 | h3 matching basis |

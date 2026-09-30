@@ -260,7 +260,9 @@ def test_targets_that_supply_the_value_are_used(doc):
                     .read_text(encoding="utf-8"))
     ui = {x["id"]: x for x in ub["items"]}
     assert "icp_rf_source" in ui["UB-P-01"]["value"] and "PENDING" not in ui["UB-P-01"]["value"]
-    assert "AFTER the matching network" in ui["UB-RF-09"]["value"] and ui["UB-RF-09"]["a9_1_decision"] == "A9-03-matching"
+    # A9.2 OQ-A907-11 supersedes the A9.1 reference plane for the baseline; the A9.1 value is kept as history
+    assert "AFTER the matching network" in ui["UB-RF-09"]["value_before_a9_2"]
+    assert "generator / 50-ohm side" in ui["UB-RF-09"]["value"] and ui["UB-RF-09"]["a9_1_decision"] == "A9-03-matching"
     assert "floating" in ui["UB-N-00"]["value"] and "PENDING" not in ui["UB-N-00"]["value"]
     assert ui["UB-P-07"]["value"]["window_s"] == 1.0e-3 and ui["UB-P-07"]["a9_1_decision"] == "OQ-A902-01"
     bpb = json.loads((ROOT / "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json")
@@ -286,3 +288,120 @@ def test_m16_v3_location_declared_and_h2_7_scan_unchanged(doc):
     sd = {x["id"]: x for x in doc["scope_deviations"]}["SD-A910-01"]
     assert sd["within_allowed_paths"] and (ROOT / sd["actual_path"]).is_file()
     assert any(q["id"] == "OQ-A910-04" for q in doc["new_open_questions"])
+
+
+# ------------------------------------------------------------------------------------------------------ A9.2
+A92_STATUSES = {
+    "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
+    "ICP electron-current capacity": "PENDING_ICP45",
+    "ICP RF power closure": "PENDING_HARDWARE",
+    "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
+    "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP",
+    "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
+    "final anode material": "OPEN",
+    "anode thermal closure": "UNRESOLVED",
+    "coupled H-1/ICP thermal closure": "UNRESOLVED",
+    "C1 conventional reference": "CONTROL_FALLBACK",
+}
+A92_COPY = LANE / "a9_2_inputs" / "OD_2026_09_30_A9_2_a907_followup_owner_decisions.json"
+A92_MD_COPY = LANE / "a9_2_inputs" / "OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md"
+
+
+def test_a9_2_pinned_copies_and_originals():
+    import hashlib
+    for p, sha, orig in ((A92_COPY, "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+                          "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json"),
+                         (A92_MD_COPY, "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
+                          "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md")):
+        assert hashlib.sha256(p.read_bytes()).hexdigest() == sha
+        if (ROOT / orig).is_file():                                     # present after the orchestrator merge
+            assert (ROOT / orig).read_bytes() == p.read_bytes()
+
+
+def test_a9_2_status_literals_exact(doc):
+    """A9.2 item 9: each status literal exactly as given, in the JSON and in the Markdown."""
+    got = {x["item"]: x["status"] for x in doc["a9_2"]["statuses"]}
+    assert got == A92_STATUSES
+    dec = json.loads(A92_COPY.read_text(encoding="utf-8"))["decisions"]["a9_10_statuses"]
+    assert dec == A92_STATUSES
+    md = OUT_MD.read_text(encoding="utf-8")
+    for k, v in A92_STATUSES.items():
+        assert f"| {k} | **{v}** |" in md, k
+    assert doc["a9_status"] == "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE"
+
+
+PASS_RX = re.compile(r"^(PASS|CLOSES\w*|CLOSED|RESOLVED|CONDITIONALLY_RESOLVED)\b")
+STATUS_KEY_RX = re.compile(r"(^|_)(status|verdict|state|outcome|necessary_check|brief_verdict_at_baseline)$")
+TOPIC_RX = re.compile(r"ICP-45|electron-current capa|P_ICP,available|ICP RF power|matching network|local match|"
+                      r"TBD_AFTER_IMPEDANCE_MAP|component rating|316L|anode (worst|thermal|temperature|material)|"
+                      r"coupled|ICP_COUPLED_THERMAL")
+
+
+def _walk(o, p=""):
+    if isinstance(o, dict):
+        yield p, o
+        for k, v in o.items():
+            yield from _walk(v, p + "/" + str(k))
+    elif isinstance(o, list):
+        for i, v in enumerate(o):
+            yield from _walk(v, p + f"[{i}]")
+
+
+def test_a9_2_no_status_claims_pass_for_the_a9_2_items(doc):
+    """Independent re-scan (not the builder's): no status-like field in any A9 deliverable, M16 v3 or the owner-question
+    state claims PASS / CLOSES / RESOLVED for the A9.2 items; the hall_icp_neutralizer thermal rerun reports no pass at
+    all; the scan is proven sensitive on the A9-10 base version of A9-07."""
+    files = [c["file"] for c in doc["changes_by_deliverable"]] + [
+        "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"]
+
+    def scan(rel, d):
+        bad = []
+        for path, node in _walk(d):
+            if path.startswith("/a9_10_reconciliation") or "before_a9_2" in path:
+                continue
+            for k, v in node.items():
+                if not STATUS_KEY_RX.search(k) or "sensitivity" in k or "before_a9_2" in k:
+                    continue
+                for x in (v if isinstance(v, list) else [v]):
+                    if not (isinstance(x, str) and PASS_RX.match(x)):
+                        continue
+                    thermal = "/recomputations/h25_thermal_rerun" in path and "hall_c1_reference" not in path
+                    if thermal or TOPIC_RX.search(json.dumps(node, ensure_ascii=False)):
+                        bad.append((rel, path, k, x))
+        return bad
+    bad = []
+    for rel in files:
+        bad += scan(rel, json.loads((ROOT / rel).read_text(encoding="utf-8")))
+    assert bad == [], bad[:5]
+    base = json.loads(_git("show", f"{BASE}:docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json"))
+    assert len(scan("A9-07@base", base)) > 100            # the scan would catch the pre-A9.2 CLOSES verdicts
+    assert doc["a9_2"]["status_scan"]["violations"] == []
+    h2 = json.loads((ROOT / "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json").read_text(encoding="utf-8"))
+    assert h2["recomputations"]["h25_thermal_rerun"]["overall"]["status"] == "UNRESOLVED"
+
+
+def test_a9_2_supersession_blockers_and_next_lanes(doc):
+    g = doc["a9_2"]
+    assert "LOCAL matching network" in g["supersession"]["by"] and "A9.1 A9-03-matching" in g["supersession"]["superseded"]
+    assert g["anode"]["ANODE_BASELINE"] == "OPEN" and g["anode"]["no_rfq_implied"] is True
+    assert [b["id"] for b in g["anode"]["design_blockers"]] == ["A9H-ANODE-01", "A9H-ANODE-02"]
+    assert g["coupled_thermal"]["ICP_COUPLED_THERMAL"] == "UNRESOLVED"
+    assert g["coupled_thermal"]["pole_allowance_warning"]["value_W"] == 13.0
+    assert [x["id"] for x in g["recommended_next_lanes_not_launched"]] == ["P1", "P2", "P3", "P4"]
+    cov = {c["decision"]: c for c in g["decision_coverage"]}
+    for k in ("OQ-A907-11", "rf_measurement_reference", "rf_500W", "rf_protection", "icp_matching_strategy",
+              "anode_316L", "anode_approach", "icp_coupled_thermal", "radiative_view_requirement",
+              "13W_pole_allowance", "coil_mass_correction", "a9_10_statuses"):
+        assert cov[k]["applied_by"], k
+    assert "DRAFT" in g["pr_33"]
+    icd = json.loads((ROOT / "schemas/interfaces/icp_neutralizer_icd_v1.json").read_text(encoding="utf-8"))
+    it = {x["id"]: x for x in icd["items"]}
+    assert "open-frame ICP support" in it["ICP-47"]["requirement"] and it["ICP-47"]["group"] == "mechanical"
+    assert it["ICP-13"]["status"].startswith("OWNER_GIVEN (A9.2 OQ-A907-11: LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT")
+    assert "off the moving thrust-stand platform" in it["ICP-13"]["value_before_a9_2"]
+    assert it["ICP-15"]["tbd"].startswith("TBD - requires the ICP antenna impedance map")
+    mass = json.loads((ROOT / "docs/budgets/mass_a9/mass_a9_v1.json").read_text(encoding="utf-8"))
+    b = {x["id"]: x for x in mass["a9_flight_bom"]["flight"]}
+    assert b["A9B-20"]["value"] is None and "ICP module" in b["A9B-20"]["name"]
+    assert "NOT the MC-1 coil mass" in mass["lv_coil_sensitivity"]["a9_2_coil_mass_correction"]
+    assert b["A9B-16"]["value"] == 3.504                                   # closure mass unchanged

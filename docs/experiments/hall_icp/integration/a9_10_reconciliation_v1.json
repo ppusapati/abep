@@ -87,7 +87,7 @@
   {
    "id": "REC-01",
    "name": "declared A9-10 changes to the A9 deliverables",
-   "value": 300,
+   "value": 399,
    "units": "count",
    "basis": "a9_10_overlay.py records",
    "source": "computed by this builder",
@@ -190,6 +190,28 @@
    "freeze_point": "NOW"
   },
   {
+   "id": "REC-10",
+   "name": "A9.2 statuses carried verbatim (item 9)",
+   "value": 10,
+   "units": "count",
+   "basis": "owner decision A9.2",
+   "source": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json a9_10_statuses",
+   "evidence_class": "owner-allocation",
+   "status": "APPLIED (none converted to PASS)",
+   "freeze_point": "NOW"
+  },
+  {
+   "id": "REC-11",
+   "name": "status-like fields claiming PASS / CLOSES / RESOLVED for an A9.2 item",
+   "value": 0,
+   "units": "count",
+   "basis": "A9.2 item 9",
+   "source": "computed by this builder (a9_2.status_scan)",
+   "evidence_class": "inferred",
+   "status": "VERIFIED (must be 0)",
+   "freeze_point": "NOW"
+  },
+  {
    "id": "REC-09",
    "name": "interface demands classified (A9 lanes + step-1 record)",
    "value": 199,
@@ -205,17 +227,17 @@
   {
    "deliverable": "A9-01",
    "file": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "changed_leaves": 402,
+   "changed_leaves": 415,
    "explained_by": {
     "op": 73,
     "gsub": 26,
     "code": 0,
     "pin": 0,
-    "section": 303
+    "section": 316
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 51,
+   "numeric_leaves_changed": 52,
    "changes": [
     {
      "cid": "A910-A901-Q01",
@@ -657,23 +679,32 @@
      "count": 1,
      "numeric": false,
      "summary": "IF-HI-17 partial"
+    },
+    {
+     "cid": "A910-A92-A901-01",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "replace",
+     "ptr": "/interface_demands[8]/status",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9-01 demand text"
     }
    ]
   },
   {
    "deliverable": "A9-02",
    "file": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "changed_leaves": 403,
+   "changed_leaves": 436,
    "explained_by": {
-    "op": 35,
+    "op": 37,
     "gsub": 0,
     "code": 197,
     "pin": 0,
-    "section": 171
+    "section": 202
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 37,
+   "numeric_leaves_changed": 41,
    "changes": [
     {
      "cid": "A910-A902-Q01",
@@ -959,23 +990,59 @@
      "count": 1,
      "numeric": false,
      "summary": "H3-A902-03 basis"
+    },
+    {
+     "cid": "A910-A92-A902-01",
+     "driver": "A9.2 OQ-A907-11, rf_measurement_reference",
+     "op": "merge",
+     "ptr": "/slots[slot=icp_rf_source]",
+     "count": 1,
+     "numeric": false,
+     "summary": "icp_rf_source match loss"
+    },
+    {
+     "cid": "A910-A92-A902-02",
+     "driver": "A9.2 OQ-A907-11, icp_matching_strategy",
+     "op": "merge",
+     "ptr": "/slots[slot=icp_matching_network]",
+     "count": 1,
+     "numeric": false,
+     "summary": "icp_matching_network slot"
+    },
+    {
+     "cid": "A910-A92-A902-03",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "replace",
+     "ptr": "/items[id=A902-22]/source",
+     "count": 1,
+     "numeric": false,
+     "summary": "A902-22 source"
+    },
+    {
+     "cid": "A910-A92-A902-04",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "replace",
+     "ptr": "/h3_inputs[2]/basis",
+     "count": 1,
+     "numeric": false,
+     "summary": "h3 matching basis"
     }
    ]
   },
   {
    "deliverable": "A9-03",
    "file": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "changed_leaves": 470,
+   "changed_leaves": 643,
    "explained_by": {
-    "op": 83,
+    "op": 122,
     "gsub": 0,
-    "code": 0,
+    "code": 25,
     "pin": 0,
-    "section": 387
+    "section": 496
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 67,
+   "numeric_leaves_changed": 84,
    "changes": [
     {
      "cid": "A910-A903-Q01",
@@ -1559,23 +1626,176 @@
      "count": 1,
      "numeric": false,
      "summary": "ICP-46 verification aligned with A9.1"
+    },
+    {
+     "cid": "A910-A92-A903-01",
+     "driver": "A9.2 OQ-A907-11, icp_matching_strategy",
+     "op": "supersede",
+     "ptr": "/items[id=ICP-13]",
+     "count": 1,
+     "numeric": false,
+     "summary": "matching network location: local match (A9.2)"
+    },
+    {
+     "cid": "A910-A92-A903-02",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "merge",
+     "ptr": "/items[id=ICP-13]",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9.2 decision text on ICP-13"
+    },
+    {
+     "cid": "A910-A92-A903-03",
+     "driver": "A9.2 rf_measurement_reference",
+     "op": "replace",
+     "ptr": "/items[id=ICP-14]/requirement",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-14 measurement reference"
+    },
+    {
+     "cid": "A910-A92-A903-04",
+     "driver": "A9.2 rf_measurement_reference",
+     "op": "merge",
+     "ptr": "/items[id=ICP-14]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-14 retained quantities"
+    },
+    {
+     "cid": "A910-A92-A903-05",
+     "driver": "A9.2 rf_500W",
+     "op": "supersede",
+     "ptr": "/items[id=ICP-15]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-15 ratings after impedance map"
+    },
+    {
+     "cid": "A910-A92-A903-06",
+     "driver": "A9.2 rf_protection",
+     "op": "merge",
+     "ptr": "/items[id=ICP-16]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-16 RF protection items"
+    },
+    {
+     "cid": "A910-A92-A903-07",
+     "driver": "A9.2 rf_500W",
+     "op": "merge",
+     "ptr": "/items[id=ICP-12]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-12 interpretation"
+    },
+    {
+     "cid": "A910-A92-A903-08",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "merge",
+     "ptr": "/items[id=ICP-18]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-18 coax role"
+    },
+    {
+     "cid": "A910-A92-A903-09",
+     "driver": "A9.2 OQ-A907-11, icp_coupled_thermal",
+     "op": "merge",
+     "ptr": "/items[id=ICP-36]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-36 local match heat"
+    },
+    {
+     "cid": "A910-A92-A903-10",
+     "driver": "A9.2 icp_coupled_thermal, 13W_pole_allowance",
+     "op": "replace",
+     "ptr": "/items[id=ICP-43]/h1_heat_allowance_a9_07",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-43 coupled thermal status"
+    },
+    {
+     "cid": "A910-A92-A903-11",
+     "driver": "A9.2 icp_coupled_thermal, OQ-A907-11",
+     "op": "merge",
+     "ptr": "/items[id=ICP-43]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-43 coupled thermal block"
+    },
+    {
+     "cid": "A910-A92-A903-12",
+     "driver": "A9.2 icp_coupled_thermal, radiative_view_requirement",
+     "op": "replace",
+     "ptr": "/items[id=ICP-05]/view_condition_a9_07",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-05 view condition"
+    },
+    {
+     "cid": "A910-A92-A903-13",
+     "driver": "A9.2 radiative_view_requirement, 13W_pole_allowance",
+     "op": "append",
+     "ptr": "/items",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-47 radiative-view objective"
+    },
+    {
+     "cid": "A910-A92-A903-14",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "merge",
+     "ptr": "/open_owner_questions[id=ICPQ-05]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICPQ-05 supersession"
+    },
+    {
+     "cid": "A910-A92-A903-15",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "supersede",
+     "ptr": "/h3_h4_inputs/h3_procurement_quotation_only[1]",
+     "count": 1,
+     "numeric": false,
+     "summary": "h3 matching item"
+    },
+    {
+     "cid": "A910-A92-A903-16",
+     "driver": "A9.2 rf_protection",
+     "op": "append",
+     "ptr": "/h3_h4_inputs/h3_procurement_quotation_only",
+     "count": 1,
+     "numeric": false,
+     "summary": "h3 protection item"
+    },
+    {
+     "cid": "A910-A92-A903-17",
+     "driver": "A9.2 post_a9_priorities (P1, P2)",
+     "op": "append",
+     "ptr": "/h3_h4_inputs/h4_tests",
+     "count": 1,
+     "numeric": false,
+     "summary": "h4 impedance map"
     }
    ]
   },
   {
    "deliverable": "A9-04",
    "file": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "changed_leaves": 644,
+   "changed_leaves": 693,
    "explained_by": {
-    "op": 142,
+    "op": 148,
     "gsub": 19,
     "code": 0,
     "pin": 0,
-    "section": 483
+    "section": 526
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 86,
+   "numeric_leaves_changed": 92,
    "changes": [
     {
      "cid": "A910-A904-Q01",
@@ -2287,19 +2507,73 @@
      "count": 3,
      "numeric": false,
      "summary": "gate quantity renamed P_bus,peak -> P_bus,1ms,max (UB-P-07 name, IF demand, row-112 application)"
+    },
+    {
+     "cid": "A910-A92-A904-01",
+     "driver": "A9.2 OQ-A907-11, rf_measurement_reference",
+     "op": "supersede",
+     "ptr": "/items[id=UB-RF-09]",
+     "count": 1,
+     "numeric": false,
+     "summary": "UB-RF-09 reference plane"
+    },
+    {
+     "cid": "A910-A92-A904-02",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "merge",
+     "ptr": "/items[id=UB-RF-09]",
+     "count": 1,
+     "numeric": false,
+     "summary": "UB-RF-09 source"
+    },
+    {
+     "cid": "A910-A92-A904-03",
+     "driver": "A9.2 rf_measurement_reference",
+     "op": "supersede",
+     "ptr": "/items[id=UB-RF-05]",
+     "count": 1,
+     "numeric": false,
+     "summary": "UB-RF-05 name"
+    },
+    {
+     "cid": "A910-A92-A904-04",
+     "driver": "A9.2 rf_measurement_reference",
+     "op": "replace",
+     "ptr": "/items[id=UB-RF-04]/value",
+     "count": 1,
+     "numeric": false,
+     "summary": "UB-RF-04 |Gamma|"
+    },
+    {
+     "cid": "A910-A92-A904-05",
+     "driver": "A9.2 rf_measurement_reference",
+     "op": "append",
+     "ptr": "/measurement_chains[dq=UB-DQ-RF]/equations",
+     "count": 1,
+     "numeric": false,
+     "summary": "P_delivered equation"
+    },
+    {
+     "cid": "A910-A92-A904-06",
+     "driver": "A9.2 OQ-A907-11, icp_matching_strategy",
+     "op": "supersede",
+     "ptr": "/interface_demands[id=IF-08]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-08"
     }
    ]
   },
   {
    "deliverable": "A9-05ev",
    "file": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
-   "changed_leaves": 73,
+   "changed_leaves": 80,
    "explained_by": {
     "op": 19,
     "gsub": 9,
     "code": 0,
     "pin": 0,
-    "section": 45
+    "section": 52
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
@@ -2364,13 +2638,13 @@
   {
    "deliverable": "A9-05vi",
    "file": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-   "changed_leaves": 279,
+   "changed_leaves": 286,
    "explained_by": {
     "op": 27,
     "gsub": 104,
     "code": 0,
     "pin": 1,
-    "section": 147
+    "section": 154
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
@@ -2588,17 +2862,17 @@
   {
    "deliverable": "A9-06",
    "file": "docs/budgets/mass_a9/mass_a9_v1.json",
-   "changed_leaves": 2187,
+   "changed_leaves": 2260,
    "explained_by": {
-    "op": 1,
+    "op": 11,
     "gsub": 0,
-    "code": 2159,
+    "code": 2161,
     "pin": 0,
-    "section": 27
+    "section": 88
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 701,
+   "numeric_leaves_changed": 710,
    "changes": [
     {
      "cid": "A910-A906-01",
@@ -2648,23 +2922,104 @@
      "count": 1,
      "numeric": false,
      "summary": "MA9-ID-18 satisfied"
+    },
+    {
+     "cid": "A910-A92-A906-01",
+     "driver": "A9.2 OQ-A907-11, icp_matching_strategy",
+     "op": "supersede",
+     "ptr": "/a9_flight_bom/flight[id=A9B-20]",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9B-20 local match line"
+    },
+    {
+     "cid": "A910-A92-A906-02",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "merge",
+     "ptr": "/a9_flight_bom/flight[id=A9B-20]",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9B-20 allocation mapping proposal"
+    },
+    {
+     "cid": "A910-A92-A906-03",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "merge",
+     "ptr": "/a9_flight_bom/flight[id=A9B-17]",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9B-17 note"
+    },
+    {
+     "cid": "A910-A92-A906-04",
+     "driver": "A9.2 anode_316L, anode_approach",
+     "op": "merge",
+     "ptr": "/a9_flight_bom/flight[id=A9B-15]",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9B-15 anode note"
+    },
+    {
+     "cid": "A910-A92-A906-08",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "replace",
+     "ptr": "/a9_flight_bom/ground_article_only[1]/item",
+     "count": 1,
+     "numeric": false,
+     "summary": "ground-article matching location"
+    },
+    {
+     "cid": "A910-A92-A906-09",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "replace",
+     "ptr": "/a9_1_decisions_applied[4]/how_applied",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9.1 application superseded in part"
+    },
+    {
+     "cid": "A910-A92-A906-05",
+     "driver": "A9.2 coil_mass_correction",
+     "op": "supersede",
+     "ptr": "/lv_coil_sensitivity",
+     "count": 1,
+     "numeric": false,
+     "summary": "LV-COIL label"
+    },
+    {
+     "cid": "A910-A92-A906-06",
+     "driver": "A9.2 coil_mass_correction",
+     "op": "merge",
+     "ptr": "/lv_coil_sensitivity",
+     "count": 1,
+     "numeric": false,
+     "summary": "coil-mass correction"
+    },
+    {
+     "cid": "A910-A92-A906-07",
+     "driver": "A9.2 coil_mass_correction",
+     "op": "merge",
+     "ptr": "/wet_closure",
+     "count": 1,
+     "numeric": false,
+     "summary": "closure mass basis"
     }
    ]
   },
   {
    "deliverable": "A9-07",
    "file": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
-   "changed_leaves": 99,
+   "changed_leaves": 1938,
    "explained_by": {
-    "op": 11,
-    "gsub": 1,
+    "op": 1571,
+    "gsub": 3,
     "code": 0,
     "pin": 6,
-    "section": 81
+    "section": 358
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 12,
+   "numeric_leaves_changed": 58,
    "changes": [
     {
      "cid": "A910-A907-01",
@@ -2773,19 +3128,429 @@
      "count": 1,
      "numeric": false,
      "summary": "A9H-INS-01 note re-evaluated"
+    },
+    {
+     "cid": "A910-A92-A907-01",
+     "driver": "A9.2 icp_coupled_thermal, 13W_pole_allowance, a9_10_statuses",
+     "op": "a92_thermal",
+     "ptr": "/recomputations/h25_thermal_rerun",
+     "count": 646,
+     "numeric": true,
+     "summary": "ICP_COUPLED_THERMAL = UNRESOLVED: every pass-like hall_icp_neutralizer thermal status (node verdicts, necessary checks, closure summaries, BN-wall 11.2 K case, row-85 mount-heat checks, overall) is reported UNRESOLVED; the computed value is kept as uncoupled_sensitivity_*; anode block and the 13 W pole warning added (numbers unchanged; 13.0 W copied)",
+     "source": {
+      "file": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+      "ptr": "/recomputations/h25_thermal_rerun/icp_heat_into_h1/min_allowance_W/LV-BASE/PO/CO",
+      "value": 13.0
+     }
+    },
+    {
+     "cid": "A910-A92-A907-02",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/key_findings[1]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K2 relabelled as uncoupled sensitivity"
+    },
+    {
+     "cid": "A910-A92-A907-43",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/key_findings[1]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K2 overall status"
+    },
+    {
+     "cid": "A910-A92-A907-44",
+     "driver": "A9.2 a9_10_statuses, post_a9_priorities",
+     "op": "append",
+     "ptr": "/key_findings",
+     "count": 1,
+     "numeric": false,
+     "summary": "K13 A9.2 summary"
+    },
+    {
+     "cid": "A910-A92-A907-03",
+     "driver": "A9.2 13W_pole_allowance",
+     "op": "replace",
+     "ptr": "/key_findings[1]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K2 13 W pole warning"
+    },
+    {
+     "cid": "A910-A92-A907-04",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/key_findings[2]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K3 relabelled"
+    },
+    {
+     "cid": "A910-A92-A907-05",
+     "driver": "A9.2 anode_316L, anode_approach",
+     "op": "replace",
+     "ptr": "/key_findings[5]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K6 anode status"
+    },
+    {
+     "cid": "A910-A92-A907-06",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "replace",
+     "ptr": "/key_findings[7]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K8 matching location"
+    },
+    {
+     "cid": "A910-A92-A907-07",
+     "driver": "A9.2 OQ-A907-11, rf_500W, icp_matching_strategy",
+     "op": "replace",
+     "ptr": "/key_findings[10]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K11 RF chain"
+    },
+    {
+     "cid": "A910-A92-A907-08",
+     "driver": "A9.2 coil_mass_correction",
+     "op": "replace",
+     "ptr": "/key_findings[11]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K12 coil-mass wording"
+    },
+    {
+     "cid": "A910-A92-A907-09",
+     "driver": "A9.2 coil_mass_correction",
+     "op": "merge",
+     "ptr": "/recomputations/lv_coil_copper_delta",
+     "count": 1,
+     "numeric": false,
+     "summary": "coil-mass correction recorded"
+    },
+    {
+     "cid": "A910-A92-A907-10",
+     "driver": "A9.2 coil_mass_correction",
+     "op": "replace",
+     "ptr": "/recomputations/lv_coil_copper_delta/not_reconciled",
+     "count": 1,
+     "numeric": false,
+     "summary": "not_reconciled wording"
+    },
+    {
+     "cid": "A910-A92-A907-11",
+     "driver": "A9.2 OQ-A907-11, rf_measurement_reference",
+     "op": "supersede",
+     "ptr": "/recomputations/rf_reference_plane",
+     "count": 1,
+     "numeric": false,
+     "summary": "RF reference plane recomputation re-described (A9.2 local match)"
+    },
+    {
+     "cid": "A910-A92-A907-12",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "merge",
+     "ptr": "/recomputations/rf_reference_plane",
+     "count": 1,
+     "numeric": false,
+     "summary": "retained 50-ohm segment and short match-to-antenna segment described"
+    },
+    {
+     "cid": "A910-A92-A907-13",
+     "driver": "A9.2 OQ-A907-11, icp_matching_strategy",
+     "op": "supersede",
+     "ptr": "/recomputations/rf_reference_plane/options/a_on_module_pre_match",
+     "count": 1,
+     "numeric": false,
+     "summary": "option a superseded"
+    },
+    {
+     "cid": "A910-A92-A907-14",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "supersede",
+     "ptr": "/recomputations/rf_reference_plane/options/b_rate_the_mismatched_segment",
+     "count": 1,
+     "numeric": false,
+     "summary": "option b not baseline"
+    },
+    {
+     "cid": "A910-A92-A907-15",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "replace",
+     "ptr": "/recomputations/rf_reference_plane/residual_vswr_note",
+     "count": 1,
+     "numeric": false,
+     "summary": "residual VSWR note"
+    },
+    {
+     "cid": "A910-A92-A907-16",
+     "driver": "A9.2 OQ-A907-11, rf_500W",
+     "op": "replace",
+     "ptr": "/recomputations/rf_reference_plane/sensitivity_loads_note",
+     "count": 1,
+     "numeric": false,
+     "summary": "sensitivity loads note"
+    },
+    {
+     "cid": "A910-A92-A907-17",
+     "driver": "A9.2 rf_500W",
+     "op": "merge",
+     "ptr": "/recomputations/rf_reference_plane/P_net_max_W",
+     "count": 1,
+     "numeric": false,
+     "summary": "500 W interpretation"
+    },
+    {
+     "cid": "A910-A92-A907-Q01",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "merge",
+     "ptr": "/open_owner_questions[id=OQ-A907-11]",
+     "count": 1,
+     "numeric": false,
+     "summary": "owner question answered by A9.2 OQ-A907-11"
+    },
+    {
+     "cid": "A910-A92-A907-18",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "merge",
+     "ptr": "/revision_register[id=REV-34]",
+     "count": 1,
+     "numeric": false,
+     "summary": "REV-34 superseded in part"
+    },
+    {
+     "cid": "A910-A92-A907-19",
+     "driver": "A9.2 anode_316L, anode_approach",
+     "op": "merge",
+     "ptr": "/revision_register[id=REV-50]",
+     "count": 1,
+     "numeric": false,
+     "summary": "REV-50 anode status"
+    },
+    {
+     "cid": "A910-A92-A907-20",
+     "driver": "A9.2 anode_316L",
+     "op": "gsub",
+     "ptr": "",
+     "count": 2,
+     "numeric": false,
+     "summary": "anode limit texts"
+    },
+    {
+     "cid": "A910-A92-A907-21",
+     "driver": "A9.2 anode_316L",
+     "op": "gsub",
+     "ptr": "",
+     "count": 4,
+     "numeric": false,
+     "summary": "anode design-driver texts"
+    },
+    {
+     "cid": "A910-A92-A907-22",
+     "driver": "A9.2 anode_approach",
+     "op": "append",
+     "ptr": "/new_items",
+     "count": 1,
+     "numeric": false,
+     "summary": "anode material design blocker"
+    },
+    {
+     "cid": "A910-A92-A907-23",
+     "driver": "A9.2 anode_approach",
+     "op": "append",
+     "ptr": "/new_items",
+     "count": 1,
+     "numeric": false,
+     "summary": "anode heat-path design blocker"
+    },
+    {
+     "cid": "A910-A92-A907-24",
+     "driver": "A9.2 OQ-A907-11, icp_matching_strategy",
+     "op": "append",
+     "ptr": "/new_items",
+     "count": 1,
+     "numeric": false,
+     "summary": "local match item"
+    },
+    {
+     "cid": "A910-A92-A907-25",
+     "driver": "A9.2 rf_protection",
+     "op": "append",
+     "ptr": "/new_items",
+     "count": 1,
+     "numeric": false,
+     "summary": "RF protection item"
+    },
+    {
+     "cid": "A910-A92-A907-26",
+     "driver": "A9.2 icp_coupled_thermal, radiative_view_requirement",
+     "op": "append",
+     "ptr": "/new_items",
+     "count": 1,
+     "numeric": false,
+     "summary": "coupled thermal model item"
+    },
+    {
+     "cid": "A910-A92-A907-27",
+     "driver": "A9.2 OQ-A907-11, icp_matching_strategy",
+     "op": "supersede",
+     "ptr": "/new_items[id=A9H-INS-14]",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9H-INS-14 superseded"
+    },
+    {
+     "cid": "A910-A92-A907-28",
+     "driver": "A9.2 rf_500W, OQ-A907-11",
+     "op": "supersede",
+     "ptr": "/new_items[id=A9H-INS-01]",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9H-INS-01 note"
+    },
+    {
+     "cid": "A910-A92-A907-29",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "set",
+     "ptr": "/new_items[id=A9H-INS-01]/value/coupler_plane_P_fwd_max_W",
+     "count": 1,
+     "numeric": false,
+     "summary": "coupler-plane rating TBD after impedance map"
+    },
+    {
+     "cid": "A910-A92-A907-30",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "set",
+     "ptr": "/interface_demands[id=IDA7-20]/status",
+     "count": 1,
+     "numeric": false,
+     "summary": "IDA7-20"
+    },
+    {
+     "cid": "A910-A92-A907-31",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IDA7-22]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IDA7-22"
+    },
+    {
+     "cid": "A910-A92-A907-32",
+     "driver": "A9.2 icp_coupled_thermal, 13W_pole_allowance",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IDA7-07]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IDA7-07 coupled-thermal status"
+    },
+    {
+     "cid": "A910-A92-A907-33",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "replace",
+     "ptr": "/h3_inputs[id=H3-A907-02]/item",
+     "count": 1,
+     "numeric": false,
+     "summary": "H3-A907-02"
+    },
+    {
+     "cid": "A910-A92-A907-34",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "replace",
+     "ptr": "/h3_inputs[id=H3-A907-15]/item",
+     "count": 1,
+     "numeric": false,
+     "summary": "H3-A907-15 superseded"
+    },
+    {
+     "cid": "A910-A92-A907-35",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/m16_impact[m16_row=10]/how_touched",
+     "count": 1,
+     "numeric": false,
+     "summary": "M16 row 10"
+    },
+    {
+     "cid": "A910-A92-A907-36",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "merge",
+     "ptr": "/m16_impact[m16_row=13]",
+     "count": 1,
+     "numeric": false,
+     "summary": "M16 row 13"
+    },
+    {
+     "cid": "A910-A92-A907-37",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "merge",
+     "ptr": "/m16_impact[m16_row=15]",
+     "count": 1,
+     "numeric": false,
+     "summary": "M16 row 15"
+    },
+    {
+     "cid": "A910-A92-A907-38",
+     "driver": "A9.2 anode_approach",
+     "op": "replace",
+     "ptr": "/m16_impact[m16_row=9]/how_touched",
+     "count": 1,
+     "numeric": false,
+     "summary": "M16 row 9"
+    },
+    {
+     "cid": "A910-A92-A907-39",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "replace",
+     "ptr": "/a9_1_decisions_applied[id=A9-03-matching]/how_applied",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9.1 application superseded in part"
+    },
+    {
+     "cid": "A910-A92-A907-40",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/owner_answers_applied[row=72]/how_applied",
+     "count": 1,
+     "numeric": false,
+     "summary": "row 72 application"
+    },
+    {
+     "cid": "A910-A92-A907-41",
+     "driver": "A9.2 anode_316L",
+     "op": "replace",
+     "ptr": "/owner_answers_applied[row=106]/how_applied",
+     "count": 1,
+     "numeric": false,
+     "summary": "row 106 application"
+    },
+    {
+     "cid": "A910-A92-A907-42",
+     "driver": "A9.2 a9_10_statuses",
+     "op": "set",
+     "ptr": "/a9_2_statuses",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9.2 statuses carried"
     }
    ]
   },
   {
    "deliverable": "A9-08",
    "file": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
-   "changed_leaves": 127,
+   "changed_leaves": 134,
    "explained_by": {
     "op": 1,
     "gsub": 0,
     "code": 105,
     "pin": 0,
-    "section": 21
+    "section": 28
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
@@ -2838,17 +3603,17 @@
   {
    "deliverable": "A9-09",
    "file": "docs/procurement/rfq_a9/rfq_a9_v1.json",
-   "changed_leaves": 747,
+   "changed_leaves": 1047,
    "explained_by": {
-    "op": 87,
+    "op": 202,
     "gsub": 0,
-    "code": 428,
+    "code": 504,
     "pin": 7,
-    "section": 225
+    "section": 334
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 58,
+   "numeric_leaves_changed": 75,
    "changes": [
     {
      "cid": "A910-A909-32",
@@ -3192,6 +3957,159 @@
      "count": 1,
      "numeric": false,
      "summary": "RFQ-07-R04 basis and sources name the A9-08 ledger"
+    },
+    {
+     "cid": "A910-A92-A909-01",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "supersede",
+     "ptr": "/packages[id=RFQ-01]/requirements[id=RFQ-01-R12]",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-01-R12 local match"
+    },
+    {
+     "cid": "A910-A92-A909-02",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "append",
+     "ptr": "/packages[id=RFQ-01]/requirements[id=RFQ-01-R12]/sources",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-01-R12 A9.2 source"
+    },
+    {
+     "cid": "A910-A92-A909-03",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "replace",
+     "ptr": "/packages[id=RFQ-04]/scope",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-04 scope"
+    },
+    {
+     "cid": "A910-A92-A909-04",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "supersede",
+     "ptr": "/packages[id=RFQ-04]/quantities[1]",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-04 quantity"
+    },
+    {
+     "cid": "A910-A92-A909-05",
+     "driver": "A9.2 OQ-A907-11, icp_matching_strategy",
+     "op": "supersede",
+     "ptr": "/packages[id=RFQ-04]/requirements[id=RFQ-04-R06]",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-04-R06 location"
+    },
+    {
+     "cid": "A910-A92-A909-06",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "append",
+     "ptr": "/packages[id=RFQ-04]/requirements[id=RFQ-04-R06]/sources",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-04-R06 A9.2 source"
+    },
+    {
+     "cid": "A910-A92-A909-07",
+     "driver": "A9.2 rf_500W, icp_matching_strategy",
+     "op": "supersede",
+     "ptr": "/packages[id=RFQ-04]/requirements[id=RFQ-04-R07]",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-04-R07 ratings TBD"
+    },
+    {
+     "cid": "A910-A92-A909-08",
+     "driver": "A9.2 rf_measurement_reference",
+     "op": "supersede",
+     "ptr": "/packages[id=RFQ-04]/requirements[id=RFQ-04-R08]",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-04-R08 coupler position"
+    },
+    {
+     "cid": "A910-A92-A909-09",
+     "driver": "A9.2 rf_measurement_reference",
+     "op": "append",
+     "ptr": "/packages[id=RFQ-04]/requirements[id=RFQ-04-R08]/sources",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-04-R08 A9.2 source"
+    },
+    {
+     "cid": "A910-A92-A909-10",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "replace",
+     "ptr": "/packages[id=RFQ-04]/requirements[id=RFQ-04-R11]/requirement",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-04-R11"
+    },
+    {
+     "cid": "A910-A92-A909-11",
+     "driver": "A9.2 rf_500W",
+     "op": "supersede",
+     "ptr": "/packages[id=RFQ-04]/requirements[id=RFQ-04-R12]",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-04-R12 ratings TBD"
+    },
+    {
+     "cid": "A910-A92-A909-12",
+     "driver": "A9.2 OQ-A907-11, icp_matching_strategy",
+     "op": "supersede",
+     "ptr": "/packages[id=RFQ-04]/requirements[id=RFQ-04-R15]",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-04-R15 superseded"
+    },
+    {
+     "cid": "A910-A92-A909-13",
+     "driver": "A9.2 rf_500W",
+     "op": "merge",
+     "ptr": "/packages[id=RFQ-04]/requirements[id=RFQ-04-R02]",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-04-R02 interpretation"
+    },
+    {
+     "cid": "A910-A92-A909-14",
+     "driver": "A9.2 rf_protection",
+     "op": "append",
+     "ptr": "/packages[id=RFQ-04]/requirements",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-04-R16 protection"
+    },
+    {
+     "cid": "A910-A92-A909-15",
+     "driver": "A9.2 OQ-A907-11, icp_matching_strategy, rf_500W",
+     "op": "append",
+     "ptr": "/packages[id=RFQ-04]/requirements",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-04-R17 local match mass / V-I"
+    },
+    {
+     "cid": "A910-A92-A909-16",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "append",
+     "ptr": "/packages[id=RFQ-05]/requirements",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-05-R13 on-module match provision"
+    },
+    {
+     "cid": "A910-A92-A909-17",
+     "driver": "A9.2 anode_316L, anode_approach",
+     "op": "set",
+     "ptr": "/a9_2_anode_note",
+     "count": 1,
+     "numeric": false,
+     "summary": "no anode RFQ"
     }
    ]
   }
@@ -3742,6 +4660,409 @@
    "status": "APPLIED"
   }
  ],
+ "a9_2": {
+  "decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
+   "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "recorded_at_commit": "19c0040"
+  },
+  "statuses": [
+   {
+    "item": "Hall->ICP architecture",
+    "status": "INVESTIGATION_HYPOTHESIS"
+   },
+   {
+    "item": "ICP electron-current capacity",
+    "status": "PENDING_ICP45"
+   },
+   {
+    "item": "ICP RF power closure",
+    "status": "PENDING_HARDWARE"
+   },
+   {
+    "item": "RF matching architecture",
+    "status": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT"
+   },
+   {
+    "item": "RF component ratings",
+    "status": "TBD_AFTER_IMPEDANCE_MAP"
+   },
+   {
+    "item": "316L flight anode",
+    "status": "REJECTED_AS_CURRENT_BASELINE"
+   },
+   {
+    "item": "final anode material",
+    "status": "OPEN"
+   },
+   {
+    "item": "anode thermal closure",
+    "status": "UNRESOLVED"
+   },
+   {
+    "item": "coupled H-1/ICP thermal closure",
+    "status": "UNRESOLVED"
+   },
+   {
+    "item": "C1 conventional reference",
+    "status": "CONTROL_FALLBACK"
+   }
+  ],
+  "statuses_rule": "verbatim A9.2 item 9; none of them is converted into PASS to close A9-10 (a9_2_status_scan)",
+  "supersession": {
+   "id": "SUP-A92-01",
+   "superseded": "A9.1 A9-03-matching: matching network off the moving platform, long flexible coax, coupler reference plane after the match",
+   "by": "A9.2 OQ-A907-11: RF generator -> directional coupler -> 50-ohm transmission line -> LOCAL matching network on / immediately adjacent to the ICP module -> ICP antenna",
+   "scope": "the A9 baseline (history kept: the A9.1 value is preserved as *_before_a9_2 fields and in REV-34 / ICPQ-05 records; nothing deleted)"
+  },
+  "rf_chain": {
+   "chain": "RF generator -> directional coupler -> 50-ohm transmission line -> LOCAL matching network on / immediately adjacent to the ICP module -> ICP antenna",
+   "measurement": "forward and reflected power measured on the generator / 50-ohm side of the local matching network; retained quantities P_forward, P_reflected, |Gamma|, VSWR and, where possible, P_delivered = P_forward - P_reflected - P_line/match,loss; P_forward = P_plasma is never assumed",
+   "ratings": "TBD - requires the ICP antenna impedance map Z_antenna = R + jX versus mdot, P_RF, p, gas composition and the Hall operating point (A9.2 post-A9 priority P2): RF component ratings (generator, coupler, coax, connectors, matching elements incl. their voltage and current, feedthroughs) are TBD_AFTER_IMPEDANCE_MAP; the 0-500 W row-72 figure is a laboratory delivered/operating investigation capability, not a component rating (A9.2)",
+   "protection": [
+    "reflected-power monitoring",
+    "mismatch / interlock threshold",
+    "arc detection where feasible",
+    "thermal monitoring",
+    "automatic RF reduction / shutdown"
+   ],
+   "trip_thresholds": "TBD - requires the ICP antenna / load characterization: exact reflected-power and VSWR trip thresholds are frozen after it, never invented now (A9.2 rf_protection)",
+   "matching_strategy": "adjustable local match for the development article; flight implementation (fixed / switched / electronically tuned / other) only after Z_antenna = R + jX is mapped vs mdot, P_RF, p, gas composition and the Hall operating point"
+  },
+  "anode": {
+   "ANODE_BASELINE": "OPEN",
+   "text": "A9.2: 316L REJECTED_AS_CURRENT_BASELINE for the design-representative / flight H-1 anode (allowed only as an engineering / shakedown material, a coupon candidate or a low-temperature development component); ANODE_BASELINE = OPEN; final anode material OPEN; anode thermal closure UNRESOLVED; no refractory metal (W, Mo, Pt, ...) is selected merely for its melting point; objective: reduce the actual anode operating temperature first, then select a material with T_operating <= T_validated,continuous - 50 K; no new anode temperature limit is set",
+   "investigate": [
+    "stronger anode-to-backplate conduction",
+    "anode support / feed-tube conduction",
+    "geometric heat spreading",
+    "radiative area",
+    "thermal coupling to the spacecraft / stand",
+    "deposited discharge-power fraction",
+    "refractory / oxidation-resistant material candidates",
+    "optional active cooling only if passive closure fails"
+   ],
+   "design_blockers": [
+    {
+     "id": "A9H-ANODE-01",
+     "what": "anode material",
+     "m16_row": 20
+    },
+    {
+     "id": "A9H-ANODE-02",
+     "what": "anode heat-removal path",
+     "m16_row": 21
+    }
+   ],
+   "no_rfq_implied": true
+  },
+  "coupled_thermal": {
+   "ICP_COUPLED_THERMAL": "UNRESOLVED",
+   "required_terms": [
+    "Q_Hall->ICP",
+    "Q_collector",
+    "Q_RF/match",
+    "Q_plume",
+    "geometric effect of the ICP assembly on H-1 radiation (view obstruction, back-radiation, carrier conduction, plume interception)"
+   ],
+   "statement": "A9.2 ICP_COUPLED_THERMAL = UNRESOLVED: every hall_icp_neutralizer thermal result of the A9-07 rerun is an UNCOUPLED sensitivity (0 W ICP heat, v1 exterior views) and is reported as UNRESOLVED until the coupled model includes Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume and the ICP assembly's geometric effect on H-1 radiation; a calculation assuming negligible ICP coupling cannot close A9 (prohibited assumption)",
+   "pole_allowance_warning": {
+    "value_W": 13.0,
+    "node": "CO (outer coil)",
+    "injection": "PO (outer front pole)",
+    "lever": "LV-BASE",
+    "source": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json recomputations.h25_thermal_rerun.icp_heat_into_h1.min_allowance_W.LV-BASE.PO.CO",
+    "evidence_class": "model-derived (uncoupled sensitivity)",
+    "status": "DESIGN_DRIVING_WARNING (A9.2)",
+    "text": "A9.2 13 W pole allowance: the outer coil CO tolerates only about 13 W of ICP heat injected at the outer front pole PO at LV-BASE (A9-07 icp_heat_into_h1.min_allowance_W) - a design-driving warning, not grounds to reject A9; a coupled view-factor / conduction calculation is required before thermal closure"
+   },
+   "overall_status_now": "UNRESOLVED",
+   "radiative_view_objective": {
+    "icd_item": "ICP-47",
+    "objectives": [
+     "open-frame ICP support",
+     "minimum necessary downstream obstruction",
+     "annular / open optical path",
+     "thermally isolated mounting",
+     "high-emittance outward-facing surfaces",
+     "suitable Hall-to-ICP axial spacing"
+    ]
+   },
+   "prohibited_assumption": "ICP thermal interaction is small enough to ignore"
+  },
+  "coil_mass_correction": "A9.2 coil-mass correction: about 0.14 kg (0.136 kg) is the copper of the 60 W / fixed-ampere-turn sensitivity basis, NOT the MC-1 coil mass; about 1.58 kg is the current estimated copper mass of the complete coil geometry from the H2-1 sizing (H21-24 1.579 kg, RP-1 f_NI 2); the two are never alternative estimates of the same physical mass; the A9-06 closure uses only the clearly defined complete hardware mass (A9B-16 MC-1 3.504 kg = iron 1.925 kg + complete-coil copper 1.579 kg)",
+  "decision_coverage": [
+   {
+    "decision": "OQ-A907-11",
+    "applied_by": [
+     "A910-A92-A901-01",
+     "A910-A92-A902-01",
+     "A910-A92-A902-02",
+     "A910-A92-A902-03",
+     "A910-A92-A902-04",
+     "A910-A92-A903-01",
+     "A910-A92-A903-02",
+     "A910-A92-A903-08",
+     "A910-A92-A903-09",
+     "A910-A92-A903-11",
+     "A910-A92-A903-14",
+     "A910-A92-A903-15",
+     "A910-A92-A904-01",
+     "A910-A92-A904-02",
+     "A910-A92-A904-06",
+     "A910-A92-A906-01",
+     "A910-A92-A906-02",
+     "A910-A92-A906-03",
+     "A910-A92-A906-08",
+     "A910-A92-A906-09",
+     "A910-A92-A907-06",
+     "A910-A92-A907-07",
+     "A910-A92-A907-11",
+     "A910-A92-A907-12",
+     "A910-A92-A907-13",
+     "A910-A92-A907-14",
+     "A910-A92-A907-15",
+     "A910-A92-A907-16",
+     "A910-A92-A907-18",
+     "A910-A92-A907-24",
+     "A910-A92-A907-27",
+     "A910-A92-A907-28",
+     "A910-A92-A907-29",
+     "A910-A92-A907-30",
+     "A910-A92-A907-31",
+     "A910-A92-A907-33",
+     "A910-A92-A907-34",
+     "A910-A92-A907-37",
+     "A910-A92-A907-39",
+     "A910-A92-A907-Q01",
+     "A910-A92-A909-01",
+     "A910-A92-A909-02",
+     "A910-A92-A909-03",
+     "A910-A92-A909-04",
+     "A910-A92-A909-05",
+     "A910-A92-A909-06",
+     "A910-A92-A909-10",
+     "A910-A92-A909-12",
+     "A910-A92-A909-15",
+     "A910-A92-A909-16"
+    ],
+    "status": "APPLIED"
+   },
+   {
+    "decision": "rf_measurement_reference",
+    "applied_by": [
+     "A910-A92-A902-01",
+     "A910-A92-A903-03",
+     "A910-A92-A903-04",
+     "A910-A92-A904-01",
+     "A910-A92-A904-03",
+     "A910-A92-A904-04",
+     "A910-A92-A904-05",
+     "A910-A92-A907-11",
+     "A910-A92-A909-08",
+     "A910-A92-A909-09"
+    ],
+    "status": "APPLIED"
+   },
+   {
+    "decision": "rf_500W",
+    "applied_by": [
+     "A910-A92-A903-05",
+     "A910-A92-A903-07",
+     "A910-A92-A907-07",
+     "A910-A92-A907-16",
+     "A910-A92-A907-17",
+     "A910-A92-A907-28",
+     "A910-A92-A907-40",
+     "A910-A92-A909-07",
+     "A910-A92-A909-11",
+     "A910-A92-A909-13",
+     "A910-A92-A909-15"
+    ],
+    "status": "APPLIED"
+   },
+   {
+    "decision": "rf_protection",
+    "applied_by": [
+     "A910-A92-A903-06",
+     "A910-A92-A903-16",
+     "A910-A92-A907-25",
+     "A910-A92-A909-14"
+    ],
+    "status": "APPLIED"
+   },
+   {
+    "decision": "icp_matching_strategy",
+    "applied_by": [
+     "A910-A92-A902-02",
+     "A910-A92-A903-01",
+     "A910-A92-A904-06",
+     "A910-A92-A906-01",
+     "A910-A92-A907-07",
+     "A910-A92-A907-13",
+     "A910-A92-A907-24",
+     "A910-A92-A907-27",
+     "A910-A92-A909-05",
+     "A910-A92-A909-07",
+     "A910-A92-A909-12",
+     "A910-A92-A909-15"
+    ],
+    "status": "APPLIED"
+   },
+   {
+    "decision": "anode_316L",
+    "applied_by": [
+     "A910-A92-A906-04",
+     "A910-A92-A907-05",
+     "A910-A92-A907-19",
+     "A910-A92-A907-20",
+     "A910-A92-A907-21",
+     "A910-A92-A907-41",
+     "A910-A92-A909-17"
+    ],
+    "status": "APPLIED"
+   },
+   {
+    "decision": "anode_approach",
+    "applied_by": [
+     "A910-A92-A906-04",
+     "A910-A92-A907-05",
+     "A910-A92-A907-19",
+     "A910-A92-A907-22",
+     "A910-A92-A907-23",
+     "A910-A92-A907-38",
+     "A910-A92-A909-17"
+    ],
+    "status": "APPLIED"
+   },
+   {
+    "decision": "icp_coupled_thermal",
+    "applied_by": [
+     "A910-A92-A903-09",
+     "A910-A92-A903-10",
+     "A910-A92-A903-11",
+     "A910-A92-A903-12",
+     "A910-A92-A907-01",
+     "A910-A92-A907-02",
+     "A910-A92-A907-04",
+     "A910-A92-A907-26",
+     "A910-A92-A907-32",
+     "A910-A92-A907-35",
+     "A910-A92-A907-36",
+     "A910-A92-A907-43"
+    ],
+    "status": "APPLIED"
+   },
+   {
+    "decision": "radiative_view_requirement",
+    "applied_by": [
+     "A910-A92-A903-12",
+     "A910-A92-A903-13",
+     "A910-A92-A907-26"
+    ],
+    "status": "APPLIED"
+   },
+   {
+    "decision": "13W_pole_allowance",
+    "applied_by": [
+     "A910-A92-A903-10",
+     "A910-A92-A903-13",
+     "A910-A92-A907-01",
+     "A910-A92-A907-03",
+     "A910-A92-A907-32"
+    ],
+    "status": "APPLIED"
+   },
+   {
+    "decision": "coil_mass_correction",
+    "applied_by": [
+     "A910-A92-A906-05",
+     "A910-A92-A906-06",
+     "A910-A92-A906-07",
+     "A910-A92-A907-08",
+     "A910-A92-A907-09",
+     "A910-A92-A907-10"
+    ],
+    "status": "APPLIED"
+   },
+   {
+    "decision": "a9_10_statuses",
+    "applied_by": [
+     "A910-A92-A907-01",
+     "A910-A92-A907-42",
+     "A910-A92-A907-44"
+    ],
+    "status": "APPLIED"
+   },
+   {
+    "decision": "a9_10",
+    "applied_by": [],
+    "status": "RECORDED (process / scope item; no deliverable field)"
+   },
+   {
+    "decision": "pr_33",
+    "applied_by": [],
+    "status": "RECORDED (process / scope item; no deliverable field)"
+   },
+   {
+    "decision": "post_a9_priorities",
+    "applied_by": [
+     "A910-A92-A903-17",
+     "A910-A92-A907-44"
+    ],
+    "status": "APPLIED"
+   }
+  ],
+  "recommended_next_lanes_not_launched": [
+   {
+    "id": "P1",
+    "name": "ICP electron-source bench",
+    "measure": "I_e(P_RF, Z, p, mdot, gas); prove ICP-45 (ICP-45A Ar, ICP-45N N2)",
+    "status_it_moves": "ICP electron-current capacity PENDING_ICP45"
+   },
+   {
+    "id": "P2",
+    "name": "ICP impedance map",
+    "measure": "Z_antenna = f(P_RF, mdot, p, gas, plasma state) to size the matching network and RF chain",
+    "status_it_moves": "RF component ratings TBD_AFTER_IMPEDANCE_MAP"
+   },
+   {
+    "id": "P3",
+    "name": "coupled thermal redesign",
+    "measure": "recalculate H-1 with the actual downstream ICP geometry / view factors (Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume)",
+    "status_it_moves": "coupled H-1/ICP thermal closure UNRESOLVED"
+   },
+   {
+    "id": "P4",
+    "name": "anode design",
+    "measure": "improve the conductive / radiative path and run the candidate-material trade",
+    "status_it_moves": "final anode material OPEN; anode thermal closure UNRESOLVED"
+   }
+  ],
+  "pr_33": "keep DRAFT (A9.2 item 11): after A9-10 merges into the execution branch run the full suite, golden checks, integrity checks, historical immutable hashes, a complete A9 diff review and confirm this record carries the RF / anode / thermal blockers; only then convert PR #33 to ready (orchestrator / owner action, not performed by this lane)",
+  "status_scan": {
+   "rule": "every status-like field (key ending in status / verdict / state / outcome / necessary_check / brief_verdict_at_baseline; *_sensitivity and *_before_a9_2 history fields excluded) of every A9 deliverable JSON and M16 v3 is scanned; a PASS / CLOSES* / RESOLVED / CONDITIONALLY_RESOLVED value inside the hall_icp_neutralizer thermal recomputation, or inside a record mentioning one of the A9.2 status items, is a violation (A9.2 item 9: never convert an open item into PASS)",
+   "files": [
+    "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
+    "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+    "schemas/interfaces/icp_neutralizer_icd_v1.json",
+    "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
+    "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
+    "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
+    "docs/budgets/mass_a9/mass_a9_v1.json",
+    "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+    "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
+    "docs/procurement/rfq_a9/rfq_a9_v1.json",
+    "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
+   ],
+   "fields_checked": 3371,
+   "violations": []
+  }
+ },
  "pending_reevaluation": {
   "rule": "every 'PENDING' still present is re-evaluated against the now-merged lanes: filled or re-stated where the target (or an A9.1 decision) gives the value (overlay records A910-R*, driver OQ-INT-03, see changes_by_deliverable), otherwise kept with a reason code (reason_codes) and, where the code is TARGET_CHECKED_NOT_DEFINED, the per-occurrence detail of what the target does and does not define; there is no catch-all rule: an unclassified occurrence fails the build",
   "reason_codes": {
@@ -4259,7 +5580,7 @@
    },
    {
     "deliverable": "A9-09",
-    "pointer": "/traceability_matrix/requirement_to_source[108]/status",
+    "pointer": "/traceability_matrix/requirement_to_source[111]/status",
     "text": "PENDING",
     "reason": "NOT_A_CROSS_REFERENCE"
    },
@@ -4966,8 +6287,8 @@
   "counts": {
    "SATISFIED": 49,
    "OFFERED": 77,
-   "PARTIAL": 34,
-   "OPEN": 38,
+   "PARTIAL": 35,
+   "OPEN": 37,
    "NOT_APPLICABLE": 1
   },
   "pairs": {
@@ -5296,8 +6617,8 @@
    "A9-07 <-> A9-03": {
     "SATISFIED": 1,
     "OFFERED": 1,
-    "PARTIAL": 0,
-    "OPEN": 3,
+    "PARTIAL": 1,
+    "OPEN": 2,
     "NOT_APPLICABLE": 0
    },
    "A9-07 <-> A9-04": {
@@ -5661,7 +6982,7 @@
      "H2/H-1"
     ],
     "quantity": "carrier re-derived for a DOWNSTREAM module (H2-6 concept was between IP-UP and IP-DN upstream); harp / slack-loop service routing with matched sham RF coax (row 117); >= 25 kg moving payload (row 116)",
-    "status": "SATISFIED at requirement level by A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-29..REV-34: H-1 stays bolted, downstream module on KC-1, 3-point seat, >= 25 kg payload, SVC-A9 matched shams, matching network off the platform); seat geometry / preload stay LOCK-1 (H2-6 v1 unchanged)",
+    "status": "SATISFIED at requirement level by A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-29..REV-34: H-1 stays bolted, downstream module on KC-1, 3-point seat, >= 25 kg payload, SVC-A9 matched shams, matching network off the platform (superseded for the baseline by A9.2 OQ-A907-11: local adjustable match on / adjacent to the ICP module, coupler on the generator / 50-ohm side)); seat geom",
     "class": "SATISFIED",
     "open_reason": null
    },
@@ -6528,7 +7849,7 @@
     "quantity": "coupler location / RF reference plane and matching network topology",
     "status": "PARTIAL",
     "class": "PARTIAL",
-    "open_reason": "A9.1 A9-03-matching (ICD ICP-13): coupler plane after the matching network, network off the platform; fixed vs auto-tuned topology and the on-module pre-match (OQ-A907-11) open"
+    "open_reason": "A9.2 OQ-A907-11 (ICD ICP-13): adjustable local match on / adjacent to the ICP module, coupler on the generator / 50-ohm side; flight match implementation deferred until the impedance map; ratings TBD_AFTER_IMPEDANCE_MAP"
    },
    {
     "lane": "A9-04",
@@ -7542,9 +8863,9 @@
      "A9-03"
     ],
     "quantity": "ICP antenna impedance Z_ant at 13.56 MHz (cold and plasma-loaded range) and the decision on an on-module fixed pre-match / impedance transformation; ICP-15 coax/feedthrough/connector ratings to be restated at the coupler",
-    "status": "TBD - requires the A9-03 antenna design + S1a VNA measurement; owner call OQ-A907-11",
-    "class": "OPEN",
-    "open_reason": "TBD - requires the A9-03 antenna design + S1a VNA measurement; owner call OQ-A907-11"
+    "status": "PARTIAL - the pre-match decision is ANSWERED by A9.2 OQ-A907-11 (adjustable local match for development); Z_antenna TBD - requires the ICP impedance map (A9.2 P2); ratings TBD_AFTER_IMPEDANCE_MAP",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL - the pre-match decision is ANSWERED by A9.2 OQ-A907-11 (adjustable local match for development); Z_antenna TBD - requires the ICP impedance map (A9.2 P2); ratings TBD_AFTER_IMPEDANCE_MAP"
    },
    {
     "lane": "A9-07",
@@ -8181,13 +9502,13 @@
   {
    "deliverable": "A9-01",
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "sha256": "1310a84fa9840792ab7ae9617c55fd1a041653064ccaa6eb364785214f45a4ee",
+   "sha256": "ef07a3ecdfadec2c5933de2683fc0cc09466b7a25de268a8ac4fde2dfc3256b8",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-01",
    "path": "docs/experiments/hall_icp/prereg_framework/HALL_ICP_PREREG_FRAMEWORK.md",
-   "sha256": "f90c08e2c1262bc81689e0105a41ae1966d217cf0d24cf6e36ee9a1fb1ab4127",
+   "sha256": "0276a37313f2a50129127285d4cbc5c0fdb5ced3867cd6770f61716132dfa66b",
    "changed_since_base": true
   },
   {
@@ -8199,13 +9520,13 @@
   {
    "deliverable": "A9-02",
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "sha256": "a16496b06df5876efb8764ec183bf65888c372e2719983b07cf2c946112704af",
+   "sha256": "3178d462d230656a313cd33060a42a74d99bc9ba3dc6afdc2036c0ca01664cb7",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-02",
    "path": "docs/architecture_comparison/power_boundary_a9/BUS_POWER_BOUNDARY_A9.md",
-   "sha256": "4806cd454344c8cf384e68f645eced9c9dc37e3ae248bb64878a5e2e6ffe7294",
+   "sha256": "bf97b53c2908a338ba39f65737bec79f45a2e9efb30951db852fef0e874a4030",
    "changed_since_base": true
   },
   {
@@ -8229,13 +9550,13 @@
   {
    "deliverable": "A9-03",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "81b073e6545d9bffb12b655058ca3bc6dec8827fd9f4b8779132e30678741997",
+   "sha256": "05d6f20cb758eaaf71ad4598f6a57f6965ec8389d92a04931d63919dc3a5f097",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-03",
    "path": "docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md",
-   "sha256": "6c2b9dce4962864e56be75ef71efff52401dee1c4825727017a8de1d65bbc5e6",
+   "sha256": "b069201feaa1097d1be2acf6fcd254a4f2014ea92b7477360059e87756d3b07a",
    "changed_since_base": true
   },
   {
@@ -8247,13 +9568,13 @@
   {
    "deliverable": "A9-04",
    "path": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "sha256": "4d087e993410a795cd6bc25c3fd5af19f481a9692ff13cc6fe8a56b7e4bb4b44",
+   "sha256": "46df69a1024d512d2880fd0528798c13ee9b8bb3ab155538550f597bc65d4822",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-04",
    "path": "docs/experiments/hall_icp/uncertainty_budget/HALL_ICP_UNCERTAINTY_BUDGET.md",
-   "sha256": "ef819bb397b7b19fbf54cbd94034a84211e75aa6b5c8e36445540e431d6b28ea",
+   "sha256": "f03e3b8e0e734ab4d42e06d1670b3f0d63dff228f8edd02ccb739c80a5beca18",
    "changed_since_base": true
   },
   {
@@ -8265,13 +9586,13 @@
   {
    "deliverable": "A9-05ev",
    "path": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
-   "sha256": "1c511db53b5874168c361683bae3d121bc0883a99868e72906bb5cf9234cc8fc",
+   "sha256": "ec300df97864c84617d47a76138acc37177c9453f306cbb2bf139874f2c68621",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-05ev",
    "path": "docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md",
-   "sha256": "d2fa7957e1daa1b60d555c91ef9bc08ad9015c9bb9c24d84ddc89c313547aef6",
+   "sha256": "a2777c6d1f57d24f4efabce2c3a3fe35d275abb38cd229f9c62a42b14f24d375",
    "changed_since_base": true
   },
   {
@@ -8283,13 +9604,13 @@
   {
    "deliverable": "A9-05vi",
    "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-   "sha256": "4924f31b9b0a9315b96ecc121ece07ca3ef47d4e86515b17e76144fcb212da61",
+   "sha256": "4a54bd1e4d52af7073a6016c07d47d10330220b7c7f45778b3996930714ee5e2",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-05vi",
    "path": "docs/experiments/hall_icp/validation_inputs/HALL_ICP_VALIDATION_INPUTS.md",
-   "sha256": "3eb1fe24a462ab05f491582068fd289e895a1ee1889d2d79c9d82d57b93a03cb",
+   "sha256": "9b1a5258af649a522ad35cb7b697f15428d103370b71701e202e7d47e38a12d3",
    "changed_since_base": true
   },
   {
@@ -8301,13 +9622,13 @@
   {
    "deliverable": "A9-06",
    "path": "docs/budgets/mass_a9/mass_a9_v1.json",
-   "sha256": "fa32662a3450df04bb14cf36adaf59c6a55847e3e30b28b1062bdfe95e624a4e",
+   "sha256": "046cda4a07318d283d46ae05c0557113dbc72b7bfbf37469d58b979ab94b9f30",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-06",
    "path": "docs/budgets/mass_a9/MASS_A9.md",
-   "sha256": "d11799113d70a61152bdc74e3daec54914b60a0c1bd062a052aa5cef939efd4d",
+   "sha256": "8692fdc26e3758ff33170bdb4c6b2e222cfb92a20a6e868637ffc5b69df1711c",
    "changed_since_base": true
   },
   {
@@ -8319,13 +9640,13 @@
   {
    "deliverable": "A9-07",
    "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
-   "sha256": "c8d575cb70e0472305cf632f1d9b9b24ae1108bc1cc1ddc32ff1a6b7699bd5c4",
+   "sha256": "27978613fc09a1aa23ac55a616ab543ca59ad6d144d0ec25527f7a1fe904fd86",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-07",
    "path": "docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md",
-   "sha256": "8b06fc316ff82e4a22a7c2028dee3e7c3eda17638d3eb9b562f7b7fab61a6bd2",
+   "sha256": "e9f420e0823491334b8a78dec5b7c92234aafa7b28e9ff1f7507fe7273e008b2",
    "changed_since_base": true
   },
   {
@@ -8337,31 +9658,31 @@
   {
    "deliverable": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
-   "sha256": "c2540246cc1e9bf394f94f51b1f0628fab4545d5112c1b558e6c35b761e302d1",
+   "sha256": "00752fb35e0821ca29b8b808c6fb143a0127f90376c1fd3f1074d2e2df36d766",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/XE_LEDGER_A9.md",
-   "sha256": "c703ed97a4074bf222764fcb82c08c7557e379564a4d302187765e0cc4b4acc3",
+   "sha256": "b382ff5a0b146fc535b772150ba28605bfb338b9702bb94854addfe9f331043a",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/build_xe_ledger_a9.py",
-   "sha256": "a97be213cda30be7cde6563cd10d2236a71c12ceae7f4f3e9685a8b692bf36c1",
+   "sha256": "7c3c32e09a8fe632fcc88ce0b005190c140370f2f91a3b24233c6a41ef36f717",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-09",
    "path": "docs/procurement/rfq_a9/rfq_a9_v1.json",
-   "sha256": "6b13fb03320edda1ea3455df7dff396b1f9e933d0a4abebc56ae00dddf17afb7",
+   "sha256": "962f9c4a04df5f29db9f577c04d070b6921829986a1a0bb1d030f0075a4838dc",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-09",
    "path": "docs/procurement/rfq_a9/RFQ_A9.md",
-   "sha256": "5064521247418e3d3b2015e338ce96bf641cba9845243aa3b30ff52231a20de9",
+   "sha256": "66a9f9de7169c2c4cbf3a97c5cf560aaa5e6ac64b66e5a5adbbddf70d5a3a08a",
    "changed_since_base": true
   },
   {
@@ -8391,7 +9712,7 @@
   {
    "deliverable": "A9-10",
    "path": "docs/experiments/hall_icp/integration/a9_10_overlay.py",
-   "sha256": "5fbdbbb55281c83eaf66f0e31936e82393c7ea9a174513924154f6d6288a9404",
+   "sha256": "a03ad5132a56088b658f365ff835eb74de69ebaad70697e97d7f8d844ce843c7",
    "changed_since_base": true
   }
  ],
@@ -8788,7 +10109,7 @@
    "id": "IF-A910-02",
    "direction": "from A9-10 to M16",
    "counterpart": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
-   "quantity": "row refresh (rows 1-17), row 17 superseded, new rows 18-19",
+   "quantity": "row refresh (rows 1-17), row 17 superseded, new rows 18-19; A9.2 anode design-blocker rows 20-21 and per-row A9.2 statuses",
    "units": "-",
    "status": "SUPPLIED"
   },
@@ -8796,7 +10117,7 @@
    "id": "IF-A910-03",
    "direction": "from A9-10 to the owner",
    "counterpart": "docs/budgets/owner_decisions/owner_questions_state_v2.json",
-   "quantity": "owner-question state v2 (147 rows + A9.1 + every new lane question)",
+   "quantity": "owner-question state v2 (147 rows + A9.1 + A9.2 + every new lane question; OQ-A907-11 ANSWERED_BY_A9_2)",
    "units": "-",
    "status": "SUPPLIED"
   },
@@ -8871,6 +10192,13 @@
    "proposed_answer": "PROPOSED accept (the alternative is to change the immutable H2-7 v1 builder, which is not allowed); orchestrator / owner call",
    "needed_by": "merge of this lane",
    "raised_by": "A9-10"
+  },
+  {
+   "id": "OQ-A910-05",
+   "question": "With the A9.2 local matching network on / adjacent to the ICP module (moving platform), the matched sham configuration (row 133) must present the same service-line parasitics. Should the hall_c1_reference sham carry a mass / stiffness / thermal equivalent of the on-module match (not only a sham coax), and which of the A9-06 allocation lines (AL-05 ICP head or AL-06 RF) books the local match hardware?",
+   "proposed_answer": "PROPOSED yes (sham equivalent of the on-module match, value TBD - requires the match selection); allocation line: owner call together with MQ-07 (A9-06 keeps it on AL-06, no number changed)",
+   "needed_by": "LOCK-1 (ICD ICP-08 / ICP-18, A9-06 AL-05/06)",
+   "raised_by": "A9-10 (A9.2 incorporation)"
   }
  ],
  "open_owner_questions": [
@@ -8901,6 +10229,13 @@
    "proposed_answer": "PROPOSED accept (the alternative is to change the immutable H2-7 v1 builder, which is not allowed); orchestrator / owner call",
    "needed_by": "merge of this lane",
    "raised_by": "A9-10"
+  },
+  {
+   "id": "OQ-A910-05",
+   "question": "With the A9.2 local matching network on / adjacent to the ICP module (moving platform), the matched sham configuration (row 133) must present the same service-line parasitics. Should the hall_c1_reference sham carry a mass / stiffness / thermal equivalent of the on-module match (not only a sham coax), and which of the A9-06 allocation lines (AL-05 ICP head or AL-06 RF) books the local match hardware?",
+   "proposed_answer": "PROPOSED yes (sham equivalent of the on-module match, value TBD - requires the match selection); allocation line: owner call together with MQ-07 (A9-06 keeps it on AL-06, no number changed)",
+   "needed_by": "LOCK-1 (ICD ICP-08 / ICP-18, A9-06 AL-05/06)",
+   "raised_by": "A9-10 (A9.2 incorporation)"
   }
  ],
  "remaining_open_items": {
@@ -8924,7 +10259,15 @@
    "H2_4_SELECTION": 2
   },
   "interface_demands_open": 72,
-  "m16": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json (every row BLOCKED or READY per the accepted scheduler rule; named owners missing)"
+  "m16": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json (every row BLOCKED or READY per the accepted scheduler rule; named owners missing)",
+  "a9_2_blockers": [
+   "RF component ratings TBD_AFTER_IMPEDANCE_MAP (P2)",
+   "ICP electron-current capacity PENDING_ICP45 (P1)",
+   "ICP RF power closure PENDING_HARDWARE",
+   "coupled H-1/ICP thermal closure UNRESOLVED (P3; A9H-TH-01, ICD ICP-47)",
+   "anode material OPEN (A9H-ANODE-01, P4)",
+   "anode thermal closure UNRESOLVED (A9H-ANODE-02, P4)"
+  ]
  },
  "historical_reuse": {
   "reused": [
@@ -8956,20 +10299,24 @@
    16,
    17,
    18,
-   19
+   19,
+   20,
+   21
   ],
-  "note": "v1 and v2 unchanged; v3 adds rows 18 (ICP neutralizer head) and 19 (flight RF chain) and marks row 17 superseded for the primary line"
+  "note": "v1 and v2 unchanged; v3 adds rows 18 (ICP neutralizer head) and 19 (flight RF chain) and marks row 17 superseded for the primary line; A9.2 adds the anode design-blocker rows 20 (material) and 21 (heat-removal path), re-points rows 13 / 15 to the coupled thermal model / impedance map and carries the A9.2 statuses per row"
  },
  "h3_h4_inputs": {
   "h3": [
-   "RFQ-04-R08/R09/R11 re-rated at the coupler-plane |Gamma| (A9-07)",
-   "RFQ-04-R15 optional on-module fixed pre-match (OQ-A907-11)",
+   "RFQ-04-R06/R07/R08/R11/R12 re-stated for the A9.2 local match (coupler on the generator / 50-ohm side; ratings TBD_AFTER_IMPEDANCE_MAP)",
+   "RFQ-04-R15 optional fixed pre-match SUPERSEDED_BY_A9_2; RFQ-04-R16 RF protection, RFQ-04-R17 local-match mass and V/I, RFQ-05-R13 on-module match provision (all TBD)",
+   "no anode RFQ implied (A9.2)",
    "RFQ-07-R04 tank V_min per case at 323 K (A9-08)"
   ],
   "h4": [
    "P_bus,1ms,max channel: >= 20 kHz, >= 100 kSa/s, synchronized, anti-alias documented (A9-02 H4-A902-03)",
    "ICP-45A (Ar) / ICP-45N (N2) electron-current capacity records (A9-03 ICP-45)",
-   "ICP-46 1.0 kV DC hipot + 600 V pulse test (A9-03)"
+   "ICP-46 1.0 kV DC hipot + 600 V pulse test (A9-03)",
+   "A9.2 P1 ICP electron-source bench I_e(P_RF, Z, p, mdot, gas) and P2 impedance map Z_antenna = R + jX (recommended next lanes, not launched)"
   ]
  },
  "compliance": [

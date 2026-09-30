@@ -51,7 +51,7 @@ def test_pins(doc):
 
 def test_rows(doc):
     rows = {r["row"]: r for r in doc["rows"]}
-    assert sorted(rows) == list(range(1, 20))
+    assert sorted(rows) == list(range(1, 22))                              # A9.2 adds rows 20 / 21 (anode)
     assert rows[17]["a9_refresh"]["execution_state"] == "SUPERSEDED_FOR_PRIMARY_LINE"
     assert rows[18]["key"] == "icp_neutralizer_head" and rows[19]["key"] == "flight_rf_chain"
     for k in (18, 19):
@@ -81,3 +81,20 @@ def test_status_and_no_winner(doc):
     assert "winner:" not in t and "recommended architecture" not in t
     for q in doc["open_owner_questions"]:
         assert q["proposed_answer"] and q["needed_by"]
+
+
+def test_a9_2_rows_and_statuses(doc):
+    rows = {r["row"]: r for r in doc["rows"]}
+    st = doc["a9_2"]["statuses"]
+    assert st["RF matching architecture"] == "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT"
+    assert st["coupled H-1/ICP thermal closure"] == "UNRESOLVED" and st["C1 conventional reference"] == "CONTROL_FALLBACK"
+    assert rows[20]["key"] == "h1_anode_material" and rows[21]["key"] == "h1_anode_heat_path"
+    for k in (20, 21):
+        assert rows[k]["a9_refresh"]["execution_state"] == "BLOCKED" and rows[k]["baseline_flight_hardware"] is False
+    assert rows[20]["a9_2"]["statuses"]["316L flight anode"] == "REJECTED_AS_CURRENT_BASELINE"
+    assert rows[21]["a9_2"]["statuses"]["anode thermal closure"] == "UNRESOLVED"
+    assert "coupled H-1 / ICP thermal model" in rows[13]["a9_refresh"]["blocking_item"]["text"]
+    assert "impedance map" in rows[15]["a9_refresh"]["blocking_item"]["text"]
+    assert "LOCAL matching network" in rows[19]["name"]
+    assert rows[18]["a9_2"]["statuses"]["ICP electron-current capacity"] == "PENDING_ICP45"
+    assert rows[11]["a9_2"]["statuses"]["C1 conventional reference"] == "CONTROL_FALLBACK"

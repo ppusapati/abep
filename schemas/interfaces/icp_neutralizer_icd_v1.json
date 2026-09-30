@@ -461,7 +461,7 @@
     "hall_c1_reference"
    ],
    "tbd": "TBD - requires the C1 reference module design (orifice position, view factors); the H2-1/H2-2 revision for the external C1 is done in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (REV-13..28)",
-   "view_condition_a9_07": "A9-07: the external KC-1 C1 module coupling to H-1 is TBD - requires the C1 module drawing and view factors (ICP-05); the hall_c1_reference thermal case run by A9-07 is a sensitivity only (v1 central path), no thermal verdict; the downstream module's view of the H-1 exit face enters the ICP-43 heat split"
+   "view_condition_a9_07": "A9-07: the external KC-1 C1 module coupling to H-1 is TBD - requires the C1 module drawing and view factors (ICP-05); the hall_c1_reference thermal case run by A9-07 is a sensitivity only (v1 central path), no thermal verdict; the downstream module's view of the H-1 exit face enters the ICP-43 heat split; A9.2: the ICP assembly's geometric effect on H-1 radiation is a required term of the coupled thermal model (ICP_COUPLED_THERMAL = UNRESOLVED); radiative-view objective ICP-47"
   },
   {
    "id": "ICP-06",
@@ -779,14 +779,15 @@
    ],
    "applies_to": [
     "hall_icp_neutralizer"
-   ]
+   ],
+   "a9_2_interpretation": "0-500 W is a laboratory delivered/operating investigation capability, not a component rating (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.rf_500W (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03; verbatim docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md))"
   },
   {
    "id": "ICP-13",
    "group": "rf",
    "title": "Matching-network location",
    "requirement": "The matching network location (on the moving platform next to the antenna, or off the platform with a flexible coax across the stand) is declared on the interface drawing; the RF load plane (ICP-14) and the sham routing (ICP-18) follow from it.",
-   "value": "off the moving thrust-stand platform: matched flexible RF coax, calibrated cable-loss / S-parameter correction, directional coupler reference plane AFTER the matching network, matched sham routing in the C1 configuration; on-platform only if S1a proves the off-platform chain cannot meet the RF-power uncertainty; at the coupler plane P_fwd = P_net / (1 - |Gamma|^2) with Gamma the antenna-side reflection (A9-07 recomputations.rf_reference_plane); an on-module fixed pre-match holding |Gamma| <= Gamma_max is owner question OQ-A907-11 (Gamma_max at LOCK-1)",
+   "value": "RF generator -> directional coupler -> 50-ohm transmission line -> LOCAL matching network on / immediately adjacent to the ICP module -> ICP antenna (A9.2 OQ-A907-11): the long flexible coax on the thrust stand stays approximately a controlled 50-ohm line; the matching network is ADJUSTABLE for the development article; the flight implementation (fixed / switched / electronically tuned / other) is deferred until Z_antenna = R + jX is measured vs mdot, P_RF, p, gas composition and the Hall operating point; RF reference planes: A9-07 recomputations.rf_reference_plane.a9_2_segments",
    "units": "-",
    "basis": "row 117 (flexible coax with matched sham)",
    "sources": [
@@ -808,7 +809,7 @@
     }
    ],
    "evidence_class": "owner-allocation",
-   "status": "OWNER_GIVEN (location, A9.1); pre-match OPEN (OQ-A907-11)",
+   "status": "OWNER_GIVEN (A9.2 OQ-A907-11: LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT; supersedes the A9.1 A9-03-matching off-platform location for the baseline)",
    "freeze_point": "LOCK-1",
    "verification": "inspection",
    "owner_rows": [
@@ -818,13 +819,17 @@
    "applies_to": [
     "hall_icp_neutralizer"
    ],
-   "tbd": "TBD - requires the S1a dummy-load cable-loss / S-parameter characterisation (location decided off-platform, A9.1) and the pre-match decision OQ-A907-11"
+   "tbd": "TBD - requires the ICP antenna impedance map Z_antenna = R + jX versus mdot, P_RF, p, gas composition and the Hall operating point (A9.2 post-A9 priority P2): RF component ratings (generator, coupler, coax, connectors, matching elements incl. their voltage and current, feedthroughs) are TBD_AFTER_IMPEDANCE_MAP; the 0-500 W row-72 figure is a laboratory delivered/operating investigation capability, not a component rating (A9.2)",
+   "value_before_a9_2": "off the moving thrust-stand platform: matched flexible RF coax, calibrated cable-loss / S-parameter correction, directional coupler reference plane AFTER the matching network, matched sham routing in the C1 configuration; on-platform only if S1a proves the off-platform chain cannot meet the RF-power uncertainty; at the coupler plane P_fwd = P_net / (1 - |Gamma|^2) with Gamma the antenna-side reflection (A9-07 recomputations.rf_reference_plane); an on-module fixed pre-match holding |Gamma| <= Gamma_max is owner question OQ-A907-11 (Gamma_max at LOCK-1)",
+   "status_before_a9_2": "OWNER_GIVEN (location, A9.1); pre-match OPEN (OQ-A907-11)",
+   "tbd_before_a9_2": "TBD - requires the S1a dummy-load cable-loss / S-parameter characterisation (location decided off-platform, A9.1) and the pre-match decision OQ-A907-11",
+   "a9_2_decision": "local matching network on/immediately adjacent to the ICP module; chain = RF generator -> directional coupler -> 50-ohm line -> local match -> antenna; the off-platform-match + long unmatched coax arrangement is no longer the A9 baseline (supersedes that part of the A9.1 A9-03 'matching network location' clarification) | adjustable local matching network for the development article; flight implementation (fixed / switched / electronically tuned / other) only after Z_antenna = R + jX is measured vs mdot, P_RF, p, gas composition, Hall operating point (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.OQ-A907-11 (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03; verbatim docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md))"
   },
   {
    "id": "ICP-14",
    "group": "rf",
    "title": "Directional-coupler forward/reflected measurement and RF load plane",
-   "requirement": "A directional coupler measures forward and reflected power at a declared load plane; net delivered power = P_fwd - P_refl at that plane. Losses between the load plane and the antenna are characterised on a dummy load and with the module unpowered. Calorimetry is an independent cross-check, not the sole primary measurement (row 72). Generator-internal meters alone (as in the analog, annex TAK-04) are not sufficient. Measurement uncertainty is allocated by A9-04.",
+   "requirement": "A directional coupler measures forward and reflected power at a declared load plane; net power at that plane = P_fwd - P_refl; the plane is on the generator / 50-ohm side of the local matching network and the delivered power is P_delivered = P_forward - P_reflected - P_line/match,loss (A9.2); P_forward = P_plasma is never assumed. Losses between the load plane and the antenna are characterised on a dummy load and with the module unpowered. Calorimetry is an independent cross-check, not the sole primary measurement (row 72). Generator-internal meters alone (as in the analog, annex TAK-04) are not sufficient. Measurement uncertainty is allocated by A9-04.",
    "value": null,
    "units": "W",
    "basis": "row 72",
@@ -848,13 +853,14 @@
    "applies_to": [
     "hall_icp_neutralizer"
    ],
-   "tbd": "TBD - requires coupler / sensor certificates and S1a dummy-load characterization; A9-04 allocates the chain terms UB-RF-02..UB-RF-07 (coupling factor, sensor calibration, directivity / mismatch, matching and cable loss, harmonics, repeatability) with the reference plane UB-RF-09, values TBD"
+   "tbd": "TBD - requires coupler / sensor certificates and S1a dummy-load characterization; A9-04 allocates the chain terms UB-RF-02..UB-RF-07 (coupling factor, sensor calibration, directivity / mismatch, matching and cable loss, harmonics, repeatability) with the reference plane UB-RF-09, values TBD",
+   "a9_2_measurement_reference": "forward and reflected power measured on the generator / 50-ohm side of the local matching network; retained quantities P_forward, P_reflected, |Gamma|, VSWR and, where possible, P_delivered = P_forward - P_reflected - P_line/match,loss; P_forward = P_plasma is never assumed (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.rf_measurement_reference (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03; verbatim docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md))"
   },
   {
    "id": "ICP-15",
    "group": "rf",
    "title": "Coax, vacuum RF feedthrough and connector ratings",
-   "requirement": "Coax, vacuum feedthrough and connectors are rated for at least the full laboratory forward power (row 72) at 13.56 MHz under the measured reflected-power condition; impedance, voltage rating and connector family follow the selected generator and matching network (quotations only, row 8).",
+   "requirement": "Coax, vacuum feedthrough, connectors and the local matching elements (incl. their voltage and current) are selected only after the expected mismatch envelope is characterized (A9.2): the row-72 0-500 W figure is a laboratory delivered/operating investigation capability, not a sufficient component rating by itself (A9-07 sensitivity: VSWR about 5.2 -> P_forward about 925 W for 500 W delivered); impedance, voltage rating and connector family follow the impedance map and the selected generator (quotations only, row 8).",
    "value": null,
    "units": "W, V, ohm",
    "basis": "row 72 (power floor); row 8 (quotation stage)",
@@ -878,7 +884,7 @@
     }
    ],
    "evidence_class": null,
-   "status": "TBD",
+   "status": "TBD (TBD_AFTER_IMPEDANCE_MAP, A9.2)",
    "freeze_point": "LOCK-1",
    "verification": "datasheet review; hipot/RF power test of the installed chain",
    "owner_rows": [
@@ -888,7 +894,10 @@
    "applies_to": [
     "hall_icp_neutralizer"
    ],
-   "tbd": "TBD - requires the generator/matching-network selection from quotations (RFQ package A9-09)"
+   "tbd": "TBD - requires the ICP antenna impedance map Z_antenna = R + jX versus mdot, P_RF, p, gas composition and the Hall operating point (A9.2 post-A9 priority P2): RF component ratings (generator, coupler, coax, connectors, matching elements incl. their voltage and current, feedthroughs) are TBD_AFTER_IMPEDANCE_MAP; the 0-500 W row-72 figure is a laboratory delivered/operating investigation capability, not a component rating (A9.2)",
+   "requirement_before_a9_2": "Coax, vacuum feedthrough and connectors are rated for at least the full laboratory forward power (row 72) at 13.56 MHz under the measured reflected-power condition; impedance, voltage rating and connector family follow the selected generator and matching network (quotations only, row 8).",
+   "status_before_a9_2": "TBD",
+   "tbd_before_a9_2": "TBD - requires the generator/matching-network selection from quotations (RFQ package A9-09)"
   },
   {
    "id": "ICP-16",
@@ -918,7 +927,15 @@
    "applies_to": [
     "hall_icp_neutralizer"
    ],
-   "tbd": "TBD - requires the generator interlock interface and S1a-measured reflected-power behaviour"
+   "tbd": "TBD - requires the generator interlock interface and S1a-measured reflected-power behaviour",
+   "a9_2_protection": [
+    "reflected-power monitoring",
+    "mismatch / interlock threshold",
+    "arc detection where feasible",
+    "thermal monitoring",
+    "automatic RF reduction / shutdown"
+   ],
+   "a9_2_trip_thresholds": "TBD - requires the ICP antenna / load characterization: exact reflected-power and VSWR trip thresholds are frozen after it, never invented now (A9.2 rf_protection)"
   },
   {
    "id": "ICP-17",
@@ -1023,7 +1040,8 @@
    "applies_to": [
     "hall_c1_reference",
     "hall_icp_neutralizer"
-   ]
+   ],
+   "a9_2_note": "with the local match (A9.2 OQ-A907-11) the flexible coax across the stand is the retained, approximately controlled 50-ohm segment; the on-module match adds mass / stiffness on the moving platform, so the sham configuration carries an equivalent (row 133; PROPOSED, value TBD - requires the match selection and module drawing)"
   },
   {
    "id": "ICP-19",
@@ -1845,7 +1863,8 @@
      "id": "H26-44",
      "name": "heat load into H-1 + mount (upper bound for stand thermal design)"
     }
-   }
+   },
+   "a9_2_note": "the local matching network sits on / adjacent to the module (A9.2), so its loss P_line/match,loss is dissipated on the module and is part of Q_RF/match in ICP-43; the 600 W RF-only partial allocation term is unchanged and is not a component rating"
   },
   {
    "id": "ICP-37",
@@ -2152,8 +2171,21 @@
     "hall_icp_neutralizer"
    ],
    "note": "ICP-37 (>= 50 K margin) cannot be closed until this item has a value",
-   "h1_heat_allowance_a9_07": "A9-07 IDA7-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json interface_demands IDA7-07): the allowable ICP-module heat entering H-1 (1.2 x Q <= headroom, injection at PO / BP) is 0 W at LV-BASE (min over nodes, the inner coil CI and wall WI have no headroom) and stays 0 W min-over-nodes for every single lever; every hall_icp_neutralizer thermal CLOSES is conditional on the actual ICP-43 heat meeting this allowance",
-   "tbd": "TBD - requires P_d,max = I_d,max x V_d,max of the registered stand envelope (owner registration OQ-A907-02; A9-02 registers no stand value) and the ICPQ-10 bounding choice; the H-1 side is limited by the A9-07 IDA7-07 allowance"
+   "h1_heat_allowance_a9_07": "A9-07 IDA7-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json interface_demands IDA7-07): the allowable ICP-module heat entering H-1 (1.2 x Q <= headroom, injection at PO / BP) is 0 W at LV-BASE (min over nodes, the inner coil CI and wall WI have no headroom) and stays 0 W min-over-nodes for every single lever; every hall_icp_neutralizer thermal result is an uncoupled sensitivity reported as UNRESOLVED (A9.2 ICP_COUPLED_THERMAL = UNRESOLVED: every hall_icp_neutralizer thermal result of the A9-07 rerun is an UNCOUPLED sensitivity (0 W ICP heat, v1 exterior views) and is reported as UNRESOLVED until the coupled model includes Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume and the ICP assembly's geometric effect on H-1 radiation; a calculation assuming negligible ICP coupling cannot close A9 (prohibited assumption)); A9.2 13 W pole allowance: the outer coil CO tolerates only about 13 W of ICP heat injected at the outer front pole PO at LV-BASE (A9-07 icp_heat_into_h1.min_allowance_W) - a design-driving warning, not grounds to reject A9; a coupled view-factor / conduction calculation is required before thermal closure",
+   "tbd": "TBD - requires P_d,max = I_d,max x V_d,max of the registered stand envelope (owner registration OQ-A907-02; A9-02 registers no stand value) and the ICPQ-10 bounding choice; the H-1 side is limited by the A9-07 IDA7-07 allowance",
+   "a9_2_coupled_thermal": {
+    "ICP_COUPLED_THERMAL": "UNRESOLVED",
+    "required_terms": [
+     "Q_Hall->ICP",
+     "Q_collector",
+     "Q_RF/match",
+     "Q_plume",
+     "geometric effect of the ICP assembly on H-1 radiation (view obstruction, back-radiation, carrier conduction, plume interception)"
+    ],
+    "local_match": "the local match sits on / adjacent to the module (A9.2): Q_RF/match enters Q_mod",
+    "prohibited_assumption": "negligible ICP thermal coupling",
+    "source": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.icp_coupled_thermal (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03; verbatim docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md)"
+   }
   },
   {
    "id": "ICP-44",
@@ -2288,6 +2320,44 @@
     "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json ICP-46",
     "evidence_class": "owner-allocation"
    }
+  },
+  {
+   "id": "ICP-47",
+   "group": "mechanical",
+   "title": "Radiative-view-factor design objective for the downstream ICP assembly",
+   "requirement": "The ICP mechanical design carries a radiative-view-factor objective (A9.2): investigate open-frame ICP support; minimum necessary downstream obstruction; annular / open optical path; thermally isolated mounting; high-emittance outward-facing surfaces; suitable Hall-to-ICP axial spacing. The geometry is not optimized for compactness alone; the ICP must not solve the cathode problem by creating an unacceptable Hall-head thermal problem. The downstream ICP can obstruct H-1's radiative view, radiate back toward the Hall head, conduct heat through the carrier and intercept plume energy; a coupled view-factor / conduction calculation (A9-07 A9H-TH-01) is required before thermal closure, and the negligible-coupling assumption is prohibited (A9.2 13 W pole allowance: the outer coil CO tolerates only about 13 W of ICP heat injected at the outer front pole PO at LV-BASE (A9-07 icp_heat_into_h1.min_allowance_W) - a design-driving warning, not grounds to reject A9; a coupled view-factor / conduction calculation is required before thermal closure).",
+   "value": null,
+   "units": "- (view factors); mm (axial spacing)",
+   "basis": "A9.2 radiative_view_requirement / icp_coupled_thermal / 13W_pole_allowance; the >= 50 K rule of owner row 86 applies to the resulting temperatures (ICP-37)",
+   "sources": [
+    {
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "id": "radiative_view_requirement",
+     "role": "owner decision (A9.2)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "id": "icp_coupled_thermal",
+     "role": "owner decision (A9.2)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+     "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+     "id": "13W_pole_allowance",
+     "role": "owner decision (A9.2)"
+    }
+   ],
+   "evidence_class": null,
+   "status": "OWNER_GIVEN_OBJECTIVE (A9.2); geometry TBD",
+   "freeze_point": "LOCK-1",
+   "verification": "view-factor analysis of the module drawing + coupled H-1 / ICP thermal model; thermocouple map with the module installed / removed in S1a",
+   "owner_rows": [],
+   "applies_to": [
+    "hall_icp_neutralizer"
+   ],
+   "tbd": "TBD - requires the KC-1 / ICP module drawing, its view factors to H-1 and the coupled thermal model (A9.2 post-A9 priority P3)"
   }
  ],
  "interface_demands": [
@@ -3070,7 +3140,8 @@
    "proposed_answer": "owner call; proposal: off-platform unless the S1a dummy-load cable-loss/reflected-power characterisation requires on-platform matching",
    "status": "ANSWERED_BY_A9_1 (A9-03-matching)",
    "a9_1_decision": "A9-03-matching: matching network off the moving stand platform (matched flexible coax, cable-loss/S-parameter correction, coupler reference plane after the matching network, matched sham routing in C1); on-platform only if S1a proves necessary",
-   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md"
+   "decision_source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json (sha256 7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4); verbatim docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
+   "superseded_in_part_by_a9_2": "location superseded for the baseline by A9.2 OQ-A907-11 (local adjustable match on / adjacent to the ICP module; coupler on the generator / 50-ohm side); the A9.1 answer is kept as history (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.OQ-A907-11 (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03; verbatim docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md))"
   },
   {
    "id": "ICPQ-06",
@@ -3225,9 +3296,10 @@
     "status": "quotation only (row 8)"
    },
    {
-    "item": "matching network (auto or manual) rated for full forward power",
+    "item": "adjustable LOCAL matching network on / immediately adjacent to the ICP module (development article, A9.2); component ratings incl. matching-element voltage / current TBD_AFTER_IMPEDANCE_MAP",
     "spec_level": "ICP-13, ICP-15",
-    "status": "quotation only (row 8)"
+    "status": "quotation only (row 8)",
+    "item_before_a9_2": "matching network (auto or manual) rated for full forward power"
    },
    {
     "item": "calibrated dual directional coupler + power sensors at the load plane",
@@ -3252,6 +3324,11 @@
    {
     "item": "capacitance manometer for the ICP source volume",
     "spec_level": "ICP-27",
+    "status": "quotation only (row 8)"
+   },
+   {
+    "item": "RF source protection: reflected-power monitoring, mismatch / interlock threshold, arc detection where feasible, thermal monitoring, automatic RF reduction / shutdown (trip thresholds TBD after load characterization)",
+    "spec_level": "ICP-16",
     "status": "quotation only (row 8)"
    }
   ],
@@ -3290,6 +3367,11 @@
     "stage": "facility-effect series",
     "measure": "base + two elevated p_b levels per configuration",
     "closes": "ICP-28"
+   },
+   {
+    "stage": "ICP bench (A9.2 P1 / P2; recommended, not launched)",
+    "measure": "I_e(P_RF, Z, p, mdot, gas) (ICP-45) and the impedance map Z_antenna = R + jX vs mdot, P_RF, p, gas composition and Hall operating point",
+    "closes": "ICP-45 entry evidence; ICP-13 flight implementation; ICP-15 ratings"
    }
   ]
  },
@@ -3585,6 +3667,15 @@
    "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
    "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
    "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
+  },
+  "a9_2_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
+   "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "recorded_at_commit": "19c0040"
   },
   "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
   "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
@@ -4092,6 +4183,142 @@
     "ptr": "/items[id=ICP-46]/verification",
     "count": 1,
     "summary": "ICP-46 verification aligned with A9.1"
+   },
+   {
+    "cid": "A910-A92-A903-01",
+    "driver": "A9.2 OQ-A907-11, icp_matching_strategy",
+    "op": "supersede",
+    "ptr": "/items[id=ICP-13]",
+    "count": 1,
+    "summary": "matching network location: local match (A9.2)"
+   },
+   {
+    "cid": "A910-A92-A903-02",
+    "driver": "A9.2 OQ-A907-11",
+    "op": "merge",
+    "ptr": "/items[id=ICP-13]",
+    "count": 1,
+    "summary": "A9.2 decision text on ICP-13"
+   },
+   {
+    "cid": "A910-A92-A903-03",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "replace",
+    "ptr": "/items[id=ICP-14]/requirement",
+    "count": 1,
+    "summary": "ICP-14 measurement reference"
+   },
+   {
+    "cid": "A910-A92-A903-04",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "merge",
+    "ptr": "/items[id=ICP-14]",
+    "count": 1,
+    "summary": "ICP-14 retained quantities"
+   },
+   {
+    "cid": "A910-A92-A903-05",
+    "driver": "A9.2 rf_500W",
+    "op": "supersede",
+    "ptr": "/items[id=ICP-15]",
+    "count": 1,
+    "summary": "ICP-15 ratings after impedance map"
+   },
+   {
+    "cid": "A910-A92-A903-06",
+    "driver": "A9.2 rf_protection",
+    "op": "merge",
+    "ptr": "/items[id=ICP-16]",
+    "count": 1,
+    "summary": "ICP-16 RF protection items"
+   },
+   {
+    "cid": "A910-A92-A903-07",
+    "driver": "A9.2 rf_500W",
+    "op": "merge",
+    "ptr": "/items[id=ICP-12]",
+    "count": 1,
+    "summary": "ICP-12 interpretation"
+   },
+   {
+    "cid": "A910-A92-A903-08",
+    "driver": "A9.2 OQ-A907-11",
+    "op": "merge",
+    "ptr": "/items[id=ICP-18]",
+    "count": 1,
+    "summary": "ICP-18 coax role"
+   },
+   {
+    "cid": "A910-A92-A903-09",
+    "driver": "A9.2 OQ-A907-11, icp_coupled_thermal",
+    "op": "merge",
+    "ptr": "/items[id=ICP-36]",
+    "count": 1,
+    "summary": "ICP-36 local match heat"
+   },
+   {
+    "cid": "A910-A92-A903-10",
+    "driver": "A9.2 icp_coupled_thermal, 13W_pole_allowance",
+    "op": "replace",
+    "ptr": "/items[id=ICP-43]/h1_heat_allowance_a9_07",
+    "count": 1,
+    "summary": "ICP-43 coupled thermal status"
+   },
+   {
+    "cid": "A910-A92-A903-11",
+    "driver": "A9.2 icp_coupled_thermal, OQ-A907-11",
+    "op": "merge",
+    "ptr": "/items[id=ICP-43]",
+    "count": 1,
+    "summary": "ICP-43 coupled thermal block"
+   },
+   {
+    "cid": "A910-A92-A903-12",
+    "driver": "A9.2 icp_coupled_thermal, radiative_view_requirement",
+    "op": "replace",
+    "ptr": "/items[id=ICP-05]/view_condition_a9_07",
+    "count": 1,
+    "summary": "ICP-05 view condition"
+   },
+   {
+    "cid": "A910-A92-A903-13",
+    "driver": "A9.2 radiative_view_requirement, 13W_pole_allowance",
+    "op": "append",
+    "ptr": "/items",
+    "count": 1,
+    "summary": "ICP-47 radiative-view objective"
+   },
+   {
+    "cid": "A910-A92-A903-14",
+    "driver": "A9.2 OQ-A907-11",
+    "op": "merge",
+    "ptr": "/open_owner_questions[id=ICPQ-05]",
+    "count": 1,
+    "summary": "ICPQ-05 supersession"
+   },
+   {
+    "cid": "A910-A92-A903-15",
+    "driver": "A9.2 OQ-A907-11",
+    "op": "supersede",
+    "ptr": "/h3_h4_inputs/h3_procurement_quotation_only[1]",
+    "count": 1,
+    "summary": "h3 matching item"
+   },
+   {
+    "cid": "A910-A92-A903-16",
+    "driver": "A9.2 rf_protection",
+    "op": "append",
+    "ptr": "/h3_h4_inputs/h3_procurement_quotation_only",
+    "count": 1,
+    "summary": "h3 protection item"
+   },
+   {
+    "cid": "A910-A92-A903-17",
+    "driver": "A9.2 post_a9_priorities (P1, P2)",
+    "op": "append",
+    "ptr": "/h3_h4_inputs/h4_tests",
+    "count": 1,
+    "summary": "h4 impedance map"
    }
   ]
  }

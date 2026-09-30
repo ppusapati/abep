@@ -74,7 +74,7 @@
  ],
  "evidence_input": {
   "path": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
-  "sha256": "1c511db53b5874168c361683bae3d121bc0883a99868e72906bb5cf9234cc8fc",
+  "sha256": "ec300df97864c84617d47a76138acc37177c9453f306cbb2bf139874f2c68621",
   "note": "same lane (part 1); regenerated first"
  },
  "replaces": "the frozen parallel RF||Hall v2 input list for the primary line (row 145); v2 inputs are never supplied or invented (row 146)",
@@ -2608,6 +2608,15 @@
    "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
    "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
    "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
+  },
+  "a9_2_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
+   "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "recorded_at_commit": "19c0040"
   },
   "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
   "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",

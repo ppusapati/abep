@@ -33,11 +33,11 @@ Binding context: p5_n2_v1 = INCONCLUSIVE (permanent); credible_hall_set = EMPTY;
 | docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json | 8436008ac458d4e7467a9c7c9592d5312b3912b918d584ceaf3ac8cb2745a971 | H2-2 C-1 integration (verified) |
 | docs/hardware/h2/h2_3_gas_path_plenum/h2_3_gas_path_plenum_v1.json | f32b05bd03aad2a09a1d9b90ee5f9423e733e6ea4cb94814c92b500590d43a7b | H2-3 gas path / plenum (verified) |
 | docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json | d1813e153af37ebd45cb2ead964ead6c53c756d1a82f93ea89346a83168d0630 | H2-7 mechanical / mass BOM (verified) |
-| docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json | a16496b06df5876efb8764ec183bf65888c372e2719983b07cf2c946112704af | A9-02 bus-power boundary (verified) |
-| schemas/interfaces/icp_neutralizer_icd_v1.json | 81b073e6545d9bffb12b655058ca3bc6dec8827fd9f4b8779132e30678741997 | A9-03 ICP-neutralizer ICD (verified) |
-| docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json | 1310a84fa9840792ab7ae9617c55fd1a041653064ccaa6eb364785214f45a4ee | A9-01 prereg framework (verified) |
-| docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json | 4d087e993410a795cd6bc25c3fd5af19f481a9692ff13cc6fe8a56b7e4bb4b44 | A9-04 uncertainty budget (verified) |
-| docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json | 4924f31b9b0a9315b96ecc121ece07ca3ef47d4e86515b17e76144fcb212da61 | A9-05 validation inputs (verified) |
+| docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json | 3178d462d230656a313cd33060a42a74d99bc9ba3dc6afdc2036c0ca01664cb7 | A9-02 bus-power boundary (verified) |
+| schemas/interfaces/icp_neutralizer_icd_v1.json | 05d6f20cb758eaaf71ad4598f6a57f6965ec8389d92a04931d63919dc3a5f097 | A9-03 ICP-neutralizer ICD (verified) |
+| docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json | ef07a3ecdfadec2c5933de2683fc0cc09466b7a25de268a8ac4fde2dfc3256b8 | A9-01 prereg framework (verified) |
+| docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json | 46df69a1024d512d2880fd0528798c13ee9b8bb3ab155538550f597bc65d4822 | A9-04 uncertainty budget (verified) |
+| docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json | 4a54bd1e4d52af7073a6016c07d47d10330220b7c7f45778b3996930714ee5e2 | A9-05 validation inputs (verified) |
 | docs/experiments/hall_icp/integration/a9_core_integration_v1.json | 86146f986e35e4d9e507c739aac9f8dd11b483be45fd7691bdccc585c734a09f | A9 core integration (verified) |
 | docs/budgets/subsystem_maturity/subsystem_maturity_v2.json | a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c | M16 v2 subsystem maturity (verified) |
 | docs/procurement/web_track_v1/threads/R6_xe_inputs.json | f8eda3db0419d56497a9e35b11e643d87549a1942e2d4677f53446a7c7c228cd | web track R6 Xe inputs (verified) |
@@ -534,7 +534,7 @@ Parallel lanes: A9-06: OPEN after A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, m
 
 ## A9-10 reconciliation (fo_a9_10_integration)
 
-Changes applied by A9-10 after this lane's verified build (record `docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json`, overlay `docs/experiments/hall_icp/integration/a9_10_overlay.py`). A9.1 decision `docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json` (sha256 `7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4`). A9 stays OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; no winner; no prediction.
+Changes applied by A9-10 after this lane's verified build (record `docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json`, overlay `docs/experiments/hall_icp/integration/a9_10_overlay.py`). A9.1 decision `docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json` (sha256 `7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4`); A9.2 decision `docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json` (sha256 `e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03`). A9 stays OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; no winner; no prediction.
 
 | change | driver | op | pointer | count | summary |
 |---|---|---|---|---|---|

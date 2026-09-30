@@ -48,26 +48,37 @@
   {
    "path": "docs/budgets/subsystem_maturity/subsystem_maturity_v2.json",
    "sha256": "a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c"
+  },
+  {
+   "path": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03"
+  },
+  {
+   "path": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9"
   }
  ],
  "status_vocabulary": {
   "ANSWERED": "answered by the owner: a v1 row (row pointer into the 147 answers), an A9.1 decision row, or a lane question answered by an existing owner row (see status_detail)",
   "SUPERSEDED": "v1 row whose owner answer supersedes the question for the primary campaign",
   "ANSWERED_BY_A9_1": "lane question answered by an A9.1 decision",
+  "ANSWERED_BY_A9_2": "lane question answered by an A9.2 decision (A9-07 follow-up, 2026-09-30)",
   "ADDRESSED_IN_A9_10": "integration work item performed by A9-10 as directed by the brief (not an owner decision; lane-assigned, the owner may reopen it)",
   "OPEN": "owner call; the lane's proposed answer is a proposal only"
  },
  "status_detail_vocabulary": {
   "ANSWERED": "v1 row answered by the owner (row pointer into the 147 answers)",
   "ANSWERED (A9.1)": "A9.1 follow-up decision (binding); status ANSWERED",
+  "ANSWERED (A9.2)": "A9.2 A9-07 follow-up decision (binding; OQ-A907-11 supersedes the A9.1 off-platform matching location for the baseline); status ANSWERED",
   "ANSWERED (owner row N)": "lane question answered by an existing owner row; status ANSWERED",
-  "SUPERSEDED / ANSWERED_BY_A9_1 / ADDRESSED_IN_A9_10 / OPEN": "detail equals the status"
+  "SUPERSEDED / ANSWERED_BY_A9_1 / ANSWERED_BY_A9_2 / ADDRESSED_IN_A9_10 / OPEN": "detail equals the status"
  },
  "status_rule": "'status' is the canonical value (filter on it; 'counts' counts it); 'status_detail' keeps the provenance form. ADDRESSED_IN_A9_10 is assigned by the lane for integration work the brief directed A9-10 to perform (OQ-INT-03 / OQ-INT-04); it is not an owner decision and the owner may reopen it.",
  "counts": {
   "ADDRESSED_IN_A9_10": 2,
-  "ANSWERED": 175,
+  "ANSWERED": 190,
   "ANSWERED_BY_A9_1": 34,
+  "ANSWERED_BY_A9_2": 1,
   "OPEN": 53,
   "SUPERSEDED": 13
  },
@@ -2904,6 +2915,218 @@
    "status_detail": "ANSWERED (A9.1)"
   },
   {
+   "id": "A9.2 OQ-A907-11",
+   "source": "A9.2 A9-07 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json)",
+   "question": "A9.2 decision OQ-A907-11",
+   "status": "ANSWERED",
+   "answer_pointer": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.OQ-A907-11",
+   "answer_excerpt": "local matching network on/immediately adjacent to the ICP module; chain = RF generator -> directional coupler -> 50-ohm line -> local match -> antenna; the off-platform-match + long unmatched coax arrangement is no longer the A9 baseline...",
+   "answers_lane_questions": [
+    "OQ-A907-11"
+   ],
+   "proposed": "",
+   "needed_by": "",
+   "kind": "a9_2",
+   "no": 184,
+   "status_detail": "ANSWERED (A9.2)"
+  },
+  {
+   "id": "A9.2 rf_measurement_reference",
+   "source": "A9.2 A9-07 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json)",
+   "question": "A9.2 decision rf_measurement_reference",
+   "status": "ANSWERED",
+   "answer_pointer": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.rf_measurement_reference",
+   "answer_excerpt": "forward/reflected power measured on the generator/50-ohm side of the local match; retain P_forward, P_reflected, |Gamma|, VSWR and where possible P_delivered = P_forward - P_reflected - P_line/match,loss; never assume P_forward = P_plasma",
+   "answers_lane_questions": [],
+   "proposed": "",
+   "needed_by": "",
+   "kind": "a9_2",
+   "no": 185,
+   "status_detail": "ANSWERED (A9.2)"
+  },
+  {
+   "id": "A9.2 rf_500W",
+   "source": "A9.2 A9-07 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json)",
+   "question": "A9.2 decision rf_500W",
+   "status": "ANSWERED",
+   "answer_pointer": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.rf_500W",
+   "answer_excerpt": "0-500 W is a laboratory delivered/operating investigation capability, not a component rating; generator, coupler, coax, connectors, matching elements, feedthroughs selected only after the mismatch envelope is characterized",
+   "answers_lane_questions": [],
+   "proposed": "",
+   "needed_by": "",
+   "kind": "a9_2",
+   "no": 186,
+   "status_detail": "ANSWERED (A9.2)"
+  },
+  {
+   "id": "A9.2 rf_protection",
+   "source": "A9.2 A9-07 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json)",
+   "question": "A9.2 decision rf_protection",
+   "status": "ANSWERED",
+   "answer_pointer": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.rf_protection",
+   "answer_excerpt": "reflected-power monitoring, mismatch/interlock threshold, arc detection where feasible, thermal monitoring, automatic RF reduction/shutdown; trip thresholds frozen after antenna/load characterization, not invented now",
+   "answers_lane_questions": [],
+   "proposed": "",
+   "needed_by": "",
+   "kind": "a9_2",
+   "no": 187,
+   "status_detail": "ANSWERED (A9.2)"
+  },
+  {
+   "id": "A9.2 icp_matching_strategy",
+   "source": "A9.2 A9-07 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json)",
+   "question": "A9.2 decision icp_matching_strategy",
+   "status": "ANSWERED",
+   "answer_pointer": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.icp_matching_strategy",
+   "answer_excerpt": "adjustable local matching network for the development article; flight implementation (fixed / switched / electronically tuned / other) only after Z_antenna = R + jX is measured vs mdot, P_RF, p, gas composition, Hall operating point",
+   "answers_lane_questions": [],
+   "proposed": "",
+   "needed_by": "",
+   "kind": "a9_2",
+   "no": 188,
+   "status_detail": "ANSWERED (A9.2)"
+  },
+  {
+   "id": "A9.2 anode_316L",
+   "source": "A9.2 A9-07 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json)",
+   "question": "A9.2 decision anode_316L",
+   "status": "ANSWERED",
+   "answer_pointer": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.anode_316L",
+   "answer_excerpt": "316L no longer the flight/design baseline for the H-1 anode (allowed as engineering/shakedown, coupon candidate, low-temperature development component); do not select W, Mo, Pt etc. merely for melting point",
+   "answers_lane_questions": [],
+   "proposed": "",
+   "needed_by": "",
+   "kind": "a9_2",
+   "no": 189,
+   "status_detail": "ANSWERED (A9.2)"
+  },
+  {
+   "id": "A9.2 anode_approach",
+   "source": "A9.2 A9-07 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json)",
+   "question": "A9.2 decision anode_approach",
+   "status": "ANSWERED",
+   "answer_pointer": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.anode_approach",
+   "answer_excerpt": "ANODE_BASELINE = OPEN; design blockers for anode material AND anode heat-removal path; investigate conduction to backplate, support/feed-tube conduction, heat spreading, radiative area, coupling to spacecraft/stand, deposited power fract...",
+   "answers_lane_questions": [],
+   "proposed": "",
+   "needed_by": "",
+   "kind": "a9_2",
+   "no": 190,
+   "status_detail": "ANSWERED (A9.2)"
+  },
+  {
+   "id": "A9.2 icp_coupled_thermal",
+   "source": "A9.2 A9-07 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json)",
+   "question": "A9.2 decision icp_coupled_thermal",
+   "status": "ANSWERED",
+   "answer_pointer": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.icp_coupled_thermal",
+   "answer_excerpt": "ICP_COUPLED_THERMAL = UNRESOLVED until the model includes Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume and the ICP assembly's geometric effect on H-1 radiation; no thermal PASS from a negligible-coupling calculation",
+   "answers_lane_questions": [],
+   "proposed": "",
+   "needed_by": "",
+   "kind": "a9_2",
+   "no": 191,
+   "status_detail": "ANSWERED (A9.2)"
+  },
+  {
+   "id": "A9.2 radiative_view_requirement",
+   "source": "A9.2 A9-07 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json)",
+   "question": "A9.2 decision radiative_view_requirement",
+   "status": "ANSWERED",
+   "answer_pointer": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.radiative_view_requirement",
+   "answer_excerpt": "ICP mechanical design carries a radiative-view-factor objective (open-frame support, minimum obstruction, annular/open optical path, thermally isolated mounting, high-emittance outward surfaces, Hall-to-ICP axial spacing); not optimized ...",
+   "answers_lane_questions": [],
+   "proposed": "",
+   "needed_by": "",
+   "kind": "a9_2",
+   "no": 192,
+   "status_detail": "ANSWERED (A9.2)"
+  },
+  {
+   "id": "A9.2 13W_pole_allowance",
+   "source": "A9.2 A9-07 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json)",
+   "question": "A9.2 decision 13W_pole_allowance",
+   "status": "ANSWERED",
+   "answer_pointer": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.13W_pole_allowance",
+   "answer_excerpt": "design-driving warning; not grounds to reject A9; assuming ICP thermal interaction is negligible is prohibited; coupled view-factor/conduction calculation required before thermal closure",
+   "answers_lane_questions": [],
+   "proposed": "",
+   "needed_by": "",
+   "kind": "a9_2",
+   "no": 193,
+   "status_detail": "ANSWERED (A9.2)"
+  },
+  {
+   "id": "A9.2 coil_mass_correction",
+   "source": "A9.2 A9-07 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json)",
+   "question": "A9.2 decision coil_mass_correction",
+   "status": "ANSWERED",
+   "answer_pointer": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.coil_mass_correction",
+   "answer_excerpt": "~0.14 kg = copper for the 60 W / fixed-ampere-turn sensitivity basis, not the MC-1 coil mass; ~1.58 kg may remain the estimated complete-coil copper mass from H2-1 sizing; never alternative estimates of the same mass; A9-06 closure uses ...",
+   "answers_lane_questions": [],
+   "proposed": "",
+   "needed_by": "",
+   "kind": "a9_2",
+   "no": 194,
+   "status_detail": "ANSWERED (A9.2)"
+  },
+  {
+   "id": "A9.2 a9_10_statuses",
+   "source": "A9.2 A9-07 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json)",
+   "question": "A9.2 decision a9_10_statuses",
+   "status": "ANSWERED",
+   "answer_pointer": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.a9_10_statuses",
+   "answer_excerpt": "{\"Hall->ICP architecture\": \"INVESTIGATION_HYPOTHESIS\", \"ICP electron-current capacity\": \"PENDING_ICP45\", \"ICP RF power closure\": \"PENDING_HARDWARE\", \"RF matching architecture\": \"LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT\", \"RF component rating...",
+   "answers_lane_questions": [],
+   "proposed": "",
+   "needed_by": "",
+   "kind": "a9_2",
+   "no": 195,
+   "status_detail": "ANSWERED (A9.2)"
+  },
+  {
+   "id": "A9.2 a9_10",
+   "source": "A9.2 A9-07 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json)",
+   "question": "A9.2 decision a9_10",
+   "status": "ANSWERED",
+   "answer_pointer": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.a9_10",
+   "answer_excerpt": "may continue; incorporate the statuses and blockers; purpose is to make the unresolved state explicit, never to force closure",
+   "answers_lane_questions": [],
+   "proposed": "",
+   "needed_by": "",
+   "kind": "a9_2",
+   "no": 196,
+   "status_detail": "ANSWERED (A9.2)"
+  },
+  {
+   "id": "A9.2 pr_33",
+   "source": "A9.2 A9-07 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json)",
+   "question": "A9.2 decision pr_33",
+   "status": "ANSWERED",
+   "answer_pointer": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.pr_33",
+   "answer_excerpt": "keep DRAFT; after A9-10 merges: full suite, golden, integrity, historical immutable hashes, complete A9 diff review, confirm A9-10 records the RF/anode/thermal blockers; only then convert to ready for final merge review",
+   "answers_lane_questions": [],
+   "proposed": "",
+   "needed_by": "",
+   "kind": "a9_2",
+   "no": 197,
+   "status_detail": "ANSWERED (A9.2)"
+  },
+  {
+   "id": "A9.2 post_a9_priorities",
+   "source": "A9.2 A9-07 follow-up owner decisions (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json)",
+   "question": "A9.2 decision post_a9_priorities",
+   "status": "ANSWERED",
+   "answer_pointer": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.post_a9_priorities",
+   "answer_excerpt": "[\"P1 ICP electron-source bench: I_e(P_RF, Z, p, mdot, gas), prove ICP-45\", \"P2 ICP impedance map: Z_antenna = f(P_RF, mdot, p, gas, plasma state)\", \"P3 coupled thermal redesign with actual downstream ICP geometry/view factors\", \"P4 anode...",
+   "answers_lane_questions": [],
+   "proposed": "",
+   "needed_by": "",
+   "kind": "a9_2",
+   "no": 198,
+   "status_detail": "ANSWERED (A9.2)"
+  },
+  {
    "id": "HIQ-01",
    "source": "A9-01 (docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json)",
    "question": "Which module occupies the REF-COND reference installation of each block?",
@@ -2914,7 +3137,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-01",
    "answer_excerpt": "HIQ-01: REF-COND reference installation = hall_c1_reference in every block; predecessor asymmetry preserved and reported",
-   "no": 184,
+   "no": 199,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -2928,7 +3151,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-02",
    "answer_excerpt": "HIQ-02: three complete balanced replicate sets, >= 6 blocks before any larger LOCK-2 n",
-   "no": 185,
+   "no": 200,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -2942,7 +3165,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-03",
    "answer_excerpt": "HIQ-03: bounded Xe reference/health check at the start of the installation, before N2 and any O2-bearing exposure",
-   "no": 186,
+   "no": 201,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -2956,7 +3179,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-04",
    "answer_excerpt": "HIQ-04: HI-HOLDOUT-A frozen before the first Hall-on H-1 reading (incl. Ar); held-out enumeration after LOCK-1, before HI-S1",
-   "no": 187,
+   "no": 202,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -2970,7 +3193,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-05",
    "answer_excerpt": "HIQ-05: no mandatory Pareto relation; hard gates decide feasibility; Pareto reported unless a condition is preregistered at LOCK-1",
-   "no": 188,
+   "no": 203,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -2984,7 +3207,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-06",
    "answer_excerpt": "HIQ-06: primary ICP gas mode G-REUSE (Hall exhaust/residual); dedicated ICP port installed and capped; G-ATM / G-XE are declared contingency variants; score-bearing N2/N2+O2 uses G-REUSE unless it fails the preregistered ICP-capacity gat...",
-   "no": 189,
+   "no": 204,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -2998,7 +3221,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-07",
    "answer_excerpt": "HIQ-07: pure-N2 hall_icp_neutralizer readings sequestered for a future Hall-transport preregistration",
-   "no": 190,
+   "no": 205,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3012,7 +3235,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-08",
    "answer_excerpt": "HIQ-08: HI-AR before LOCK-1, after HI-HOLDOUT-A; Ar never enters LOCK-2 numbers, decision quantities or DRDO compliance claims",
-   "no": 191,
+   "no": 206,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3026,7 +3249,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-01",
    "answer_excerpt": "OQ-A902-01: P_bus,1ms,max = max_t (1/1 ms) integral_t^{t+1 ms} P_bus dt; requirement: P_bus,1ms,max < 1500 W, startup and steady state, unless the official RFP provides a transient exception; status: A9 engineering definition pending aut...",
-   "no": 192,
+   "no": 207,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3040,7 +3263,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-02",
    "answer_excerpt": "OQ-A902-02: 300 W common allocation = compressor + atm/Xe/ICP flow-control + filter/getter if active + thermal control + housekeeping/controls; 50 W controls/thermal inside it; extra active cooling and reserved ports outside unless reall...",
-   "no": 193,
+   "no": 208,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3054,7 +3277,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-03",
    "answer_excerpt": "OQ-A902-03: no fixed Hall/ICP split; P_ICP,available = 1350 - P_common - P_Hall - P_other_active at every registered condition; ICP-45 demonstrated within it; 0-500 W lab RF is a test capability only",
-   "no": 194,
+   "no": 209,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3068,7 +3291,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-04",
    "answer_excerpt": "OQ-A902-04: no combined flight C1 + ICP installation in primary A9 (would be a new variant with its own closures)",
-   "no": 195,
+   "no": 210,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3082,7 +3305,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-05",
    "answer_excerpt": "OQ-A902-05: primary G-REUSE; flow_control_icp_feed booked only when G-ATM or G-XE is installed/used; capped port stays in the ICD",
-   "no": 196,
+   "no": 211,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3096,7 +3319,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-06",
    "answer_excerpt": "OQ-A902-06: housekeeping and thermal routed through the internal propulsion bus by default; any direct spacecraft-input path represented explicitly",
-   "no": 197,
+   "no": 212,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3110,7 +3333,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-A902-07",
    "answer_excerpt": "OQ-A902-07: report 1300 W as context/sensitivity; active internal check 1350 W; hard requirement 1500 W",
-   "no": 198,
+   "no": 213,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3124,7 +3347,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.A9-03-planes",
    "answer_excerpt": "A9-03-planes: IP-EXIT = H-1 exit; IP-NEU = downstream neutralizer datum; historical IP-DN unchanged",
-   "no": 199,
+   "no": 214,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3138,7 +3361,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-06",
    "answer_excerpt": "HIQ-06: primary ICP gas mode G-REUSE (Hall exhaust/residual); dedicated ICP port installed and capped; G-ATM / G-XE are declared contingency variants; score-bearing N2/N2+O2 uses G-REUSE unless it fails the preregistered ICP-capacity gat...",
-   "no": 200,
+   "no": 215,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3152,7 +3375,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 201,
+   "no": 216,
    "status_detail": "OPEN"
   },
   {
@@ -3166,7 +3389,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.A9-03-Vd",
    "answer_excerpt": "A9-03-Vd: primary controlled quantity V_d = V_anode - V_electron-source-reference; supply-terminal voltage and loop drops secondary",
-   "no": 202,
+   "no": 217,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3180,7 +3403,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.A9-03-matching",
    "answer_excerpt": "A9-03-matching: matching network off the moving stand platform (matched flexible coax, cable-loss/S-parameter correction, coupler reference plane after the matching network, matched sham routing in C1); on-platform only if S1a proves nec...",
-   "no": 203,
+   "no": 218,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3194,7 +3417,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 204,
+   "no": 219,
    "status_detail": "OPEN"
   },
   {
@@ -3208,7 +3431,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.A9-03-collector",
    "answer_excerpt": "A9-03-collector: flight collector material not frozen; 316L allowed for Ar engineering reproduction; candidates go through the O/AO coupon programme before N2/O2 life claims",
-   "no": 205,
+   "no": 220,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3222,7 +3445,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 206,
+   "no": 221,
    "status_detail": "OPEN"
   },
   {
@@ -3236,7 +3459,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 207,
+   "no": 222,
    "status_detail": "OPEN"
   },
   {
@@ -3250,7 +3473,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 208,
+   "no": 223,
    "status_detail": "OPEN"
   },
   {
@@ -3264,7 +3487,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 209,
+   "no": 224,
    "status_detail": "OPEN"
   },
   {
@@ -3278,7 +3501,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-01",
    "answer_excerpt": "UBQ-01: 1 % thrust target = standard relative uncertainty (k = 1), sustained reading; gates use preregistered one-sided treatment",
-   "no": 210,
+   "no": 225,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3292,7 +3515,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-02",
    "answer_excerpt": "UBQ-02: M_n = I_e,cap / I_d,dem - 1; gate on one-sided lower confidence bound > 0; any extra design margin frozen at LOCK-2 per LOCK-1 rule",
-   "no": 211,
+   "no": 226,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3306,7 +3529,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-03",
    "answer_excerpt": "UBQ-03: manufacturer +-x bound rectangular (u = a/sqrt(3)) unless the certificate states otherwise",
-   "no": 212,
+   "no": 227,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3320,7 +3543,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-04",
    "answer_excerpt": "UBQ-04: normalized agreement statistic with k_x = 2 frozen at LOCK-1; failure -> RF-dependent quantities EXCLUDED_INSTRUMENT",
-   "no": 213,
+   "no": 228,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3334,7 +3557,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-05",
    "answer_excerpt": "UBQ-05: calibration shift both in the budget and as a block-exclusion rule; rule form at LOCK-1, number at LOCK-2 from metrology-only evidence",
-   "no": 214,
+   "no": 229,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3348,7 +3571,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-06",
    "answer_excerpt": "UBQ-06: score-bearing temperature aborts at validated continuous-use limit minus 50 K",
-   "no": 215,
+   "no": 230,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3362,7 +3585,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-07",
    "answer_excerpt": "UBQ-07: family-wise alpha 0.05 for simultaneous contrasts (preregistered multiplicity control, e.g. Holm); one-sided alpha 0.05 per absolute gate; frozen at LOCK-1",
-   "no": 216,
+   "no": 231,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3376,7 +3599,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-08",
    "answer_excerpt": "UBQ-08: Ar-specific gauge/MFC/RGA calibration required for HI-AR; Ar stays engineering-only",
-   "no": 217,
+   "no": 232,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3390,7 +3613,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-09",
    "answer_excerpt": "UBQ-09: SR-C-MARGIN stopping (not sign-only); margin rule at LOCK-1, numerical value at LOCK-2",
-   "no": 218,
+   "no": 233,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3404,7 +3627,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-EV-01",
    "answer_excerpt": "OQ-EV-01: no author/laboratory data request",
-   "no": 219,
+   "no": 234,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3418,7 +3641,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-EV-02",
    "answer_excerpt": "OQ-EV-02: acquisition order P1 LA-01..03; P2 LA-04, LA-06..08; P3 LA-05, LA-09",
-   "no": 220,
+   "no": 235,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3432,7 +3655,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.OQ-EV-03",
    "answer_excerpt": "OQ-EV-03: YES: values may be extracted from lawfully accessed publisher-served full text with URL, DOI, locator, access date, evidence class; no redistribution of non-redistributable PDFs",
-   "no": 221,
+   "no": 236,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3446,7 +3669,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.HIQ-06",
    "answer_excerpt": "HIQ-06: primary ICP gas mode G-REUSE (Hall exhaust/residual); dedicated ICP port installed and capped; G-ATM / G-XE are declared contingency variants; score-bearing N2/N2+O2 uses G-REUSE unless it fails the preregistered ICP-capacity gat...",
-   "no": 222,
+   "no": 237,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3460,7 +3683,7 @@
    "status": "ANSWERED_BY_A9_1",
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json decisions.UBQ-02",
    "answer_excerpt": "UBQ-02: M_n = I_e,cap / I_d,dem - 1; gate on one-sided lower confidence bound > 0; any extra design margin frozen at LOCK-2 per LOCK-1 rule",
-   "no": 223,
+   "no": 238,
    "status_detail": "ANSWERED_BY_A9_1"
   },
   {
@@ -3474,7 +3697,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 224,
+   "no": 239,
    "status_detail": "OPEN"
   },
   {
@@ -3488,7 +3711,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 225,
+   "no": 240,
    "status_detail": "OPEN"
   },
   {
@@ -3502,7 +3725,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 226,
+   "no": 241,
    "status_detail": "OPEN"
   },
   {
@@ -3516,7 +3739,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 227,
+   "no": 242,
    "status_detail": "OPEN"
   },
   {
@@ -3530,7 +3753,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 228,
+   "no": 243,
    "status_detail": "OPEN"
   },
   {
@@ -3544,7 +3767,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 229,
+   "no": 244,
    "status_detail": "OPEN"
   },
   {
@@ -3558,7 +3781,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 230,
+   "no": 245,
    "status_detail": "OPEN"
   },
   {
@@ -3572,7 +3795,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 231,
+   "no": 246,
    "status_detail": "OPEN"
   },
   {
@@ -3586,7 +3809,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 232,
+   "no": 247,
    "status_detail": "OPEN"
   },
   {
@@ -3600,7 +3823,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 233,
+   "no": 248,
    "status_detail": "OPEN"
   },
   {
@@ -3614,7 +3837,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 234,
+   "no": 249,
    "status_detail": "OPEN"
   },
   {
@@ -3628,7 +3851,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 235,
+   "no": 250,
    "status_detail": "OPEN"
   },
   {
@@ -3642,7 +3865,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 236,
+   "no": 251,
    "status_detail": "OPEN"
   },
   {
@@ -3656,7 +3879,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 237,
+   "no": 252,
    "status_detail": "OPEN"
   },
   {
@@ -3670,7 +3893,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 238,
+   "no": 253,
    "status_detail": "OPEN"
   },
   {
@@ -3684,7 +3907,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 239,
+   "no": 254,
    "status_detail": "OPEN"
   },
   {
@@ -3698,7 +3921,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 240,
+   "no": 255,
    "status_detail": "OPEN"
   },
   {
@@ -3712,7 +3935,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 241,
+   "no": 256,
    "status_detail": "OPEN"
   },
   {
@@ -3726,7 +3949,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 242,
+   "no": 257,
    "status_detail": "OPEN"
   },
   {
@@ -3740,7 +3963,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 243,
+   "no": 258,
    "status_detail": "OPEN"
   },
   {
@@ -3754,7 +3977,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 244,
+   "no": 259,
    "status_detail": "OPEN"
   },
   {
@@ -3768,7 +3991,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 245,
+   "no": 260,
    "status_detail": "OPEN"
   },
   {
@@ -3779,11 +4002,11 @@
    "needed_by": "LOCK-1 (PROPOSED by A9-10 per row 144; the lane stated no gate)",
    "kind": "lane",
    "lane": "A9-07",
-   "status": "OPEN",
-   "answer_pointer": "",
-   "answer_excerpt": "",
-   "no": 246,
-   "status_detail": "OPEN"
+   "status": "ANSWERED_BY_A9_2",
+   "answer_pointer": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.OQ-A907-11",
+   "answer_excerpt": "local matching network on/immediately adjacent to the ICP module; chain = RF generator -> directional coupler -> 50-ohm line -> local match -> antenna; the off-platform-match + long unmatched coax arrangement is no longer the A9 baseline...",
+   "no": 261,
+   "status_detail": "ANSWERED_BY_A9_2"
   },
   {
    "id": "OQ-A907-07",
@@ -3796,7 +4019,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 247,
+   "no": 262,
    "status_detail": "OPEN"
   },
   {
@@ -3810,7 +4033,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 248,
+   "no": 263,
    "status_detail": "OPEN"
   },
   {
@@ -3824,7 +4047,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 249,
+   "no": 264,
    "status_detail": "OPEN"
   },
   {
@@ -3838,7 +4061,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 250,
+   "no": 265,
    "status_detail": "OPEN"
   },
   {
@@ -3852,7 +4075,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 251,
+   "no": 266,
    "status_detail": "OPEN"
   },
   {
@@ -3866,7 +4089,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 252,
+   "no": 267,
    "status_detail": "OPEN"
   },
   {
@@ -3880,7 +4103,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 253,
+   "no": 268,
    "status_detail": "OPEN"
   },
   {
@@ -3894,7 +4117,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 254,
+   "no": 269,
    "status_detail": "OPEN"
   },
   {
@@ -3908,7 +4131,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 255,
+   "no": 270,
    "status_detail": "OPEN"
   },
   {
@@ -3922,7 +4145,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 256,
+   "no": 271,
    "status_detail": "OPEN"
   },
   {
@@ -3936,7 +4159,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 257,
+   "no": 272,
    "status_detail": "OPEN"
   },
   {
@@ -3950,7 +4173,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 258,
+   "no": 273,
    "status_detail": "OPEN"
   },
   {
@@ -3964,7 +4187,7 @@
    "status": "ANSWERED",
    "answer_pointer": "docs/decisions/OD_2026_09_29_owner_answers_147.json row 111",
    "answer_excerpt": "REGULATED 100 V internal propulsion bus for the breadboard/PPU architecture; keep the spacecraft-input front end configurable until the actual spacecraft bus is specified. Do not claim 100 V is an RFP spacecraft interface requirement.",
-   "no": 259,
+   "no": 274,
    "status_detail": "ANSWERED (owner row 111)"
   },
   {
@@ -3978,7 +4201,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 260,
+   "no": 275,
    "status_detail": "OPEN"
   },
   {
@@ -3992,7 +4215,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 261,
+   "no": 276,
    "status_detail": "OPEN"
   },
   {
@@ -4006,7 +4229,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 262,
+   "no": 277,
    "status_detail": "OPEN"
   },
   {
@@ -4020,7 +4243,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 263,
+   "no": 278,
    "status_detail": "OPEN"
   },
   {
@@ -4034,7 +4257,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 264,
+   "no": 279,
    "status_detail": "OPEN"
   },
   {
@@ -4048,7 +4271,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 265,
+   "no": 280,
    "status_detail": "OPEN"
   },
   {
@@ -4062,7 +4285,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 266,
+   "no": 281,
    "status_detail": "OPEN"
   },
   {
@@ -4076,7 +4299,7 @@
    "status": "ADDRESSED_IN_A9_10",
    "answer_pointer": "ADDRESSED_IN_A9_10 (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json pending_reevaluation: a PENDING field whose merged target or an A9.1 decision gives the value is filled or re-stated by an A910-R* overlay record; every remaining one carries a reason code checked against its t...",
    "answer_excerpt": "",
-   "no": 267,
+   "no": 282,
    "status_detail": "ADDRESSED_IN_A9_10"
   },
   {
@@ -4090,7 +4313,7 @@
    "status": "ADDRESSED_IN_A9_10",
    "answer_pointer": "ADDRESSED_IN_A9_10 (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json annex_reconciliation; A9-05 governs where they differ)",
    "answer_excerpt": "",
-   "no": 268,
+   "no": 283,
    "status_detail": "ADDRESSED_IN_A9_10"
   },
   {
@@ -4104,7 +4327,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 269,
+   "no": 284,
    "status_detail": "OPEN"
   },
   {
@@ -4118,7 +4341,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 270,
+   "no": 285,
    "status_detail": "OPEN"
   },
   {
@@ -4132,7 +4355,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 271,
+   "no": 286,
    "status_detail": "OPEN"
   },
   {
@@ -4146,13 +4369,27 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 272,
+   "no": 287,
+   "status_detail": "OPEN"
+  },
+  {
+   "id": "OQ-A910-05",
+   "source": "A9-10 (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json)",
+   "question": "With the A9.2 local matching network on / adjacent to the ICP module (moving platform), the matched sham configuration (row 133) must present the same service-line parasitics. Should the hall_c1_reference sham carry a mass / stiffness / thermal equivalent of the on-module match (not only a sham coax), and which of the A9-06 allocation lines (AL-05 ICP head or AL-06 RF) books the local match hardware?",
+   "proposed": "PROPOSED yes (sham equivalent of the on-module match, value TBD - requires the match selection); allocation line: owner call together with MQ-07 (A9-06 keeps it on AL-06, no number changed)",
+   "needed_by": "LOCK-1 (ICD ICP-08 / ICP-18, A9-06 AL-05/06)",
+   "kind": "lane",
+   "lane": "A9-10",
+   "status": "OPEN",
+   "answer_pointer": "",
+   "answer_excerpt": "",
+   "no": 288,
    "status_detail": "OPEN"
   },
   {
    "id": "M16-V3-Q-01",
    "source": "M16 v3 (A9-10) (docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)",
-   "question": "Accept the PROPOSED A9 blocking item, functional-role owner and latest decision point of each row (rows 1-16, 18, 19), and name the responsible engineers (row 140)?",
+   "question": "Accept the PROPOSED A9 blocking item, functional-role owner and latest decision point of each row (rows 1-16, 18-21), and name the responsible engineers (row 140)?",
    "proposed": "owner call",
    "needed_by": "before any row can become READY (row 140)",
    "kind": "lane",
@@ -4160,7 +4397,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 273,
+   "no": 289,
    "status_detail": "OPEN"
   },
   {
@@ -4174,7 +4411,7 @@
    "needed_by": "",
    "kind": "lane",
    "lane": "M16 v2",
-   "no": 274,
+   "no": 290,
    "status_detail": "ANSWERED (owner row 140)"
   },
   {
@@ -4188,7 +4425,7 @@
    "needed_by": "",
    "kind": "lane",
    "lane": "M16 v2",
-   "no": 275,
+   "no": 291,
    "status_detail": "ANSWERED (owner row 141)"
   },
   {
@@ -4202,7 +4439,7 @@
    "needed_by": "",
    "kind": "lane",
    "lane": "M16 v2",
-   "no": 276,
+   "no": 292,
    "status_detail": "ANSWERED (owner row 142)"
   },
   {
@@ -4216,7 +4453,7 @@
    "needed_by": "",
    "kind": "lane",
    "lane": "M16 v2",
-   "no": 277,
+   "no": 293,
    "status_detail": "ANSWERED (owner row 143)"
   }
  ],

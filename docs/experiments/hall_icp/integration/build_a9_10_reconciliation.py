@@ -13,7 +13,10 @@ a9_10_overlay.py (applied by each lane builder) and in the listed builder/module
   4. re-evaluates every remaining 'PENDING' (OQ-INT-03) with a precise reason code, builds the chain -> DQ-HI consumer
      table for the unmapped A9-04 ids (OQ-INT-01, PROPOSED), reconciles the A9-03 published-analog annex with the A9-05
      extraction (OQ-INT-04; A9-05 governs), classifies every interface demand between the A9 lanes (both directions);
-  5. verifies that every immutable / historical file is byte-identical to the A9-10 base.
+  5. verifies that every immutable / historical file is byte-identical to the A9-10 base;
+  6. records the A9.2 incorporation (owner decisions 2026-09-30): the ten verbatim statuses, the RF-matching
+     supersession, the anode and coupled-thermal blockers, decision coverage, the recommended next lanes (not launched)
+     and a scan proving that no status-like field of the A9 deliverables claims PASS / CLOSES / RESOLVED for them.
 
 Usage:
     python docs/experiments/hall_icp/integration/build_a9_10_reconciliation.py          # write JSON + MD
@@ -672,6 +675,133 @@ def cross_lane(errors: list) -> list:
     ]
 
 
+# ------------------------------------------------------------------------------------------------------------------
+# A9.2 incorporation (owner decisions 2026-09-30, A9-07 follow-up)
+# ------------------------------------------------------------------------------------------------------------------
+STATUS_KEY = re.compile(r"(^|_)(status|verdict|state|outcome|necessary_check|brief_verdict_at_baseline)$")
+A92_PASS = re.compile(r"^(PASS|CLOSES\w*|CLOSED|RESOLVED|CONDITIONALLY_RESOLVED)\b")
+# topic of each A9.2 status item: a status-like field claiming a pass inside a record that mentions the topic is a
+# violation (thermal limited to the hall_icp_neutralizer thermal recomputation, where the coupled closure lives)
+A92_TOPICS = {
+    "ICP electron-current capacity": re.compile(r"ICP-45|electron-current capa|electron-extraction .*capab"),
+    "ICP RF power closure": re.compile(r"P_ICP,available|ICP RF power|RF power closure"),
+    "RF matching architecture": re.compile(r"matching network|local match"),
+    "RF component ratings": re.compile(r"TBD_AFTER_IMPEDANCE_MAP|component rating"),
+    "316L flight anode": re.compile(r"316L[^\"]{0,80}anode|anode[^\"]{0,80}316L"),
+    "final anode material": re.compile(r"anode material"),
+    "anode thermal closure": re.compile(r"\bAN\b|anode (worst|thermal|temperature)"),
+}
+A92_SCAN_FILES = [d["json"] for d in DELIVERABLES] + [M16_V3]
+
+
+def _dicts(o, p=""):
+    if isinstance(o, dict):
+        yield p, o
+        for k, v in o.items():
+            yield from _dicts(v, p + "/" + str(k))
+    elif isinstance(o, list):
+        for i, v in enumerate(o):
+            yield from _dicts(v, p + f"[{i}]")
+
+
+def a92_status_scan(errors: list) -> dict:
+    """No status-like field in the A9 deliverables claims PASS / CLOSES / RESOLVED for an A9.2 status item."""
+    hits, checked = [], 0
+    for rel in A92_SCAN_FILES:
+        doc = load(rel)
+        for path, d in _dicts(doc):
+            if path.startswith("/a9_10_reconciliation") or "before_a9_2" in path:
+                continue
+            for k, v in d.items():
+                if not STATUS_KEY.search(k) or "sensitivity" in k or "before_a9_2" in k:
+                    continue
+                vals = v if isinstance(v, list) else [v]
+                for x in vals:
+                    if not isinstance(x, str):
+                        continue
+                    checked += 1
+                    if not A92_PASS.match(x):
+                        continue
+                    thermal = "/recomputations/h25_thermal_rerun" in path and "hall_c1_reference" not in path
+                    blob = json.dumps(d, ensure_ascii=False)
+                    items = (["coupled H-1/ICP thermal closure"] if thermal else []) + \
+                        [t for t, rx in A92_TOPICS.items() if rx.search(blob)]
+                    if items:
+                        hits.append({"file": rel, "pointer": path + "/" + k, "value": x, "items": items})
+    for h in hits[:20]:
+        errors.append(f"A9.2 status violated: {h['file']}{h['pointer']} = {h['value']!r} ({h['items']})")
+    return {"rule": "every status-like field (key ending in status / verdict / state / outcome / necessary_check / "
+                    "brief_verdict_at_baseline; *_sensitivity and *_before_a9_2 history fields excluded) of every A9 "
+                    "deliverable JSON and M16 v3 is scanned; a PASS / CLOSES* / RESOLVED / CONDITIONALLY_RESOLVED value "
+                    "inside the hall_icp_neutralizer thermal recomputation, or inside a record mentioning one of the A9.2 "
+                    "status items, is a violation (A9.2 item 9: never convert an open item into PASS)",
+            "files": A92_SCAN_FILES, "fields_checked": checked, "violations": hits}
+
+
+def a92_section(recs: dict, errors: list) -> dict:
+    dec = load(OV.A92_COPY)
+    for rel, sha in ((OV.A92_COPY, OV.A92_SHA), (OV.A92_MD_COPY, OV.A92_MD_SHA)):
+        if sha256_file(rel) != sha:
+            errors.append(f"A9.2 pinned copy changed: {rel}")
+    for rel, sha in ((OV.A92_REL, OV.A92_SHA), (OV.A92_MD_REL, OV.A92_MD_SHA)):
+        if os.path.isfile(os.path.join(ROOT, rel)) and sha256_file(rel) != sha:
+            errors.append(f"A9.2 decision file differs from its pin: {rel}")
+    st = dec["decisions"]["a9_10_statuses"]
+    want = {"Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS", "ICP electron-current capacity": "PENDING_ICP45",
+            "ICP RF power closure": "PENDING_HARDWARE", "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
+            "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP", "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
+            "final anode material": "OPEN", "anode thermal closure": "UNRESOLVED",
+            "coupled H-1/ICP thermal closure": "UNRESOLVED", "C1 conventional reference": "CONTROL_FALLBACK"}
+    if st != want:
+        errors.append("A9.2 status table differs from the verbatim item 9")
+    cover = []
+    for key in dec["decisions"]:
+        cids = sorted({r["cid"] for rs in recs.values() for r in rs
+                       if re.search(r"A9\.2\b[^|]*\b" + re.escape(key) + r"\b", r["driver"])})
+        cover.append({"decision": key, "applied_by": cids,
+                      "status": "APPLIED" if cids else "RECORDED (process / scope item; no deliverable field)"})
+    must = ["OQ-A907-11", "rf_measurement_reference", "rf_500W", "rf_protection", "icp_matching_strategy", "anode_316L",
+            "anode_approach", "icp_coupled_thermal", "radiative_view_requirement", "13W_pole_allowance",
+            "coil_mass_correction", "a9_10_statuses"]
+    for c in cover:
+        if c["decision"] in must and not c["applied_by"]:
+            errors.append(f"A9.2 {c['decision']} not applied to any deliverable")
+    h2 = load(OV.H2A9)
+    th = h2["recomputations"]["h25_thermal_rerun"]
+    return {
+        "decision": OV.a92_pin(),
+        "statuses": [{"item": k, "status": v} for k, v in st.items()],
+        "statuses_rule": "verbatim A9.2 item 9; none of them is converted into PASS to close A9-10 (a9_2_status_scan)",
+        "supersession": {"id": "SUP-A92-01", "superseded": "A9.1 A9-03-matching: matching network off the moving "
+                         "platform, long flexible coax, coupler reference plane after the match",
+                         "by": "A9.2 OQ-A907-11: " + OV.LOCAL_CHAIN, "scope": "the A9 baseline (history kept: the A9.1 "
+                         "value is preserved as *_before_a9_2 fields and in REV-34 / ICPQ-05 records; nothing deleted)"},
+        "rf_chain": {"chain": OV.LOCAL_CHAIN, "measurement": OV.MEAS_REF, "ratings": OV.RATINGS_TBD,
+                     "protection": OV.PROTECTION, "trip_thresholds": OV.TRIP_TBD,
+                     "matching_strategy": "adjustable local match for the development article; flight implementation "
+                                          "(fixed / switched / electronically tuned / other) only after Z_antenna = R + "
+                                          "jX is mapped vs mdot, P_RF, p, gas composition and the Hall operating point"},
+        "anode": {"ANODE_BASELINE": "OPEN", "text": OV.ANODE_TEXT, "investigate": OV.ANODE_INVESTIGATION,
+                  "design_blockers": [{"id": "A9H-ANODE-01", "what": "anode material", "m16_row": 20},
+                                      {"id": "A9H-ANODE-02", "what": "anode heat-removal path", "m16_row": 21}],
+                  "no_rfq_implied": True},
+        "coupled_thermal": {"ICP_COUPLED_THERMAL": th["a9_2_icp_coupled_thermal"]["ICP_COUPLED_THERMAL"],
+                            "required_terms": OV.COUPLED_TERMS, "statement": OV.COUPLED_TEXT,
+                            "pole_allowance_warning": th["a9_2_icp_coupled_thermal"]["pole_allowance_warning"],
+                            "overall_status_now": th["overall"]["status"],
+                            "radiative_view_objective": {"icd_item": "ICP-47", "objectives": OV.VIEW_OBJECTIVE},
+                            "prohibited_assumption": "ICP thermal interaction is small enough to ignore"},
+        "coil_mass_correction": OV.COIL_TEXT,
+        "decision_coverage": cover,
+        "recommended_next_lanes_not_launched": OV.POST_A9,
+        "pr_33": "keep DRAFT (A9.2 item 11): after A9-10 merges into the execution branch run the full suite, golden "
+                 "checks, integrity checks, historical immutable hashes, a complete A9 diff review and confirm this "
+                 "record carries the RF / anode / thermal blockers; only then convert PR #33 to ready (orchestrator / "
+                 "owner action, not performed by this lane)",
+        "status_scan": a92_status_scan(errors),
+    }
+
+
 NEW_QUESTIONS = [
     {"id": "OQ-A910-01", "question": "Which content do the row-48 Xe design cases have for BOTH the A9 Xe ledger and "
      "the A9 mass BOM: LOADED Xe incl. reserve and residual (A9-08 XA9Q-01) or usable Xe incl. reserve with the "
@@ -702,6 +832,14 @@ NEW_QUESTIONS = [
      "proposed_answer": "PROPOSED accept (the alternative is to change the immutable H2-7 v1 builder, which is not "
                         "allowed); orchestrator / owner call", "needed_by": "merge of this lane",
      "raised_by": "A9-10"},
+    {"id": "OQ-A910-05", "question": "With the A9.2 local matching network on / adjacent to the ICP module (moving "
+     "platform), the matched sham configuration (row 133) must present the same service-line parasitics. Should the "
+     "hall_c1_reference sham carry a mass / stiffness / thermal equivalent of the on-module match (not only a sham "
+     "coax), and which of the A9-06 allocation lines (AL-05 ICP head or AL-06 RF) books the local match hardware?",
+     "proposed_answer": "PROPOSED yes (sham equivalent of the on-module match, value TBD - requires the match "
+                        "selection); allocation line: owner call together with MQ-07 (A9-06 keeps it on AL-06, no "
+                        "number changed)", "needed_by": "LOCK-1 (ICD ICP-08 / ICP-18, A9-06 AL-05/06)",
+     "raised_by": "A9-10 (A9.2 incorporation)"},
 ]
 SCOPE_DEVIATIONS = [
     {"id": "SD-A910-01", "item": "M16 v3 JSON location", "brief_path": "docs/budgets/subsystem_maturity/"
@@ -753,6 +891,7 @@ def build():
     ifm = interface_matrix(errors)
     imm = immutability(errors)
     xl = cross_lane(errors)
+    a92 = a92_section(recs, errors)
     pins_now = []
     for d in DELIVERABLES + [dict(INTEGRATION, key="A9-INT")]:
         for rel in [d["json"], d["md"], d["builder"]] + d.get("extra", []):
@@ -793,6 +932,13 @@ def build():
          "value": sum(1 for x in imm if x["byte_identical_to_base"]), "units": "count", "basis": "A9 supersession rule",
          "source": "computed by this builder", "evidence_class": "inferred", "status": "VERIFIED",
          "freeze_point": "NOW"},
+        {"id": "REC-10", "name": "A9.2 statuses carried verbatim (item 9)", "value": len(a92["statuses"]),
+         "units": "count", "basis": "owner decision A9.2", "source": OV.A92_REL + " a9_10_statuses",
+         "evidence_class": "owner-allocation", "status": "APPLIED (none converted to PASS)", "freeze_point": "NOW"},
+        {"id": "REC-11", "name": "status-like fields claiming PASS / CLOSES / RESOLVED for an A9.2 item",
+         "value": len(a92["status_scan"]["violations"]), "units": "count", "basis": "A9.2 item 9",
+         "source": "computed by this builder (a9_2.status_scan)", "evidence_class": "inferred",
+         "status": "VERIFIED (must be 0)", "freeze_point": "NOW"},
         {"id": "REC-09", "name": "interface demands classified (A9 lanes + step-1 record)",
          "value": len(ifm["rows"]), "units": "count", "basis": "task scope (2)", "source": "computed by this builder",
          "evidence_class": "inferred", "status": "CLASSIFIED", "freeze_point": "NOW"},
@@ -817,6 +963,7 @@ def build():
         "changes_by_deliverable": by_deliv,
         "a9_1_decision_coverage": coverage,
         "cross_lane_reconciliation": xl,
+        "a9_2": a92,
         "pending_reevaluation": pend,
         "dq_consumer_table": cons,
         "annex_reconciliation": annex,
@@ -833,10 +980,12 @@ def build():
              "quantity": "open owner questions, m16_impact, interface demands, PENDING references", "units": "-",
              "status": "CONSUMED"},
             {"id": "IF-A910-02", "direction": "from A9-10 to M16", "counterpart": M16_V3,
-             "quantity": "row refresh (rows 1-17), row 17 superseded, new rows 18-19", "units": "-",
+             "quantity": "row refresh (rows 1-17), row 17 superseded, new rows 18-19; A9.2 anode design-blocker "
+                         "rows 20-21 and per-row A9.2 statuses", "units": "-",
              "status": "SUPPLIED"},
             {"id": "IF-A910-03", "direction": "from A9-10 to the owner", "counterpart": OQ_V2,
-             "quantity": "owner-question state v2 (147 rows + A9.1 + every new lane question)", "units": "-",
+             "quantity": "owner-question state v2 (147 rows + A9.1 + A9.2 + every new lane question; OQ-A907-11 "
+                         "ANSWERED_BY_A9_2)", "units": "-",
              "status": "SUPPLIED"},
             {"id": "IF-A910-04", "direction": "from A9-10 to H3 / H4", "counterpart": "A9-09 RFQ packages; A9-02 H4",
              "quantity": "RFQ rating updates (RFQ-04 coupler/coax/pre-match, RFQ-07 tank ranges); 1 ms P_bus "
@@ -861,7 +1010,11 @@ def build():
             "integration": ["OQ-INT-01 (consumer table PROPOSED)", "OQ-INT-02"],
             "pending_by_reason": pend["remaining_by_reason"],
             "interface_demands_open": ifm["counts"]["OPEN"] + ifm["counts"]["PARTIAL"],
-            "m16": M16_V3 + " (every row BLOCKED or READY per the accepted scheduler rule; named owners missing)"},
+            "m16": M16_V3 + " (every row BLOCKED or READY per the accepted scheduler rule; named owners missing)",
+            "a9_2_blockers": ["RF component ratings TBD_AFTER_IMPEDANCE_MAP (P2)", "ICP electron-current capacity "
+                              "PENDING_ICP45 (P1)", "ICP RF power closure PENDING_HARDWARE", "coupled H-1/ICP thermal "
+                              "closure UNRESOLVED (P3; A9H-TH-01, ICD ICP-47)", "anode material OPEN (A9H-ANODE-01, P4)",
+                              "anode thermal closure UNRESOLVED (A9H-ANODE-02, P4)"]},
         "historical_reuse": {
             "reused": ["docs/experiments/hall_icp/integration/build_a9_core_integration.py: leaf-by-leaf comparison "
                        "and immutability pattern (git show at a pinned commit)",
@@ -869,16 +1022,23 @@ def build():
                        "waits_on vocabulary, re-used by the v3 builder"],
             "not_reused": ["A5 Phase-1 prereg framework, pre-ionizer module ICD, LOCK-1 drafts, bus_power_boundary_v1, "
                            "A8 / RF||Hall v2: nothing reused; byte-identity verified (immutability)"]},
-        "m16_impact": {"file": M16_V3, "rows_touched": list(range(1, 20)),
+        "m16_impact": {"file": M16_V3, "rows_touched": list(range(1, 22)),
                        "note": "v1 and v2 unchanged; v3 adds rows 18 (ICP neutralizer head) and 19 (flight RF chain) "
-                               "and marks row 17 superseded for the primary line"},
-        "h3_h4_inputs": {"h3": ["RFQ-04-R08/R09/R11 re-rated at the coupler-plane |Gamma| (A9-07)",
-                                "RFQ-04-R15 optional on-module fixed pre-match (OQ-A907-11)",
+                               "and marks row 17 superseded for the primary line; A9.2 adds the anode design-blocker "
+                               "rows 20 (material) and 21 (heat-removal path), re-points rows 13 / 15 to the coupled "
+                               "thermal model / impedance map and carries the A9.2 statuses per row"},
+        "h3_h4_inputs": {"h3": ["RFQ-04-R06/R07/R08/R11/R12 re-stated for the A9.2 local match (coupler on the "
+                                "generator / 50-ohm side; ratings TBD_AFTER_IMPEDANCE_MAP)",
+                                "RFQ-04-R15 optional fixed pre-match SUPERSEDED_BY_A9_2; RFQ-04-R16 RF protection, "
+                                "RFQ-04-R17 local-match mass and V/I, RFQ-05-R13 on-module match provision (all TBD)",
+                                "no anode RFQ implied (A9.2)",
                                 "RFQ-07-R04 tank V_min per case at 323 K (A9-08)"],
                          "h4": ["P_bus,1ms,max channel: >= 20 kHz, >= 100 kSa/s, synchronized, anti-alias "
                                 "documented (A9-02 H4-A902-03)",
                                 "ICP-45A (Ar) / ICP-45N (N2) electron-current capacity records (A9-03 ICP-45)",
-                                "ICP-46 1.0 kV DC hipot + 600 V pulse test (A9-03)"]},
+                                "ICP-46 1.0 kV DC hipot + 600 V pulse test (A9-03)",
+                                "A9.2 P1 ICP electron-source bench I_e(P_RF, Z, p, mdot, gas) and P2 impedance map "
+                                "Z_antenna = R + jX (recommended next lanes, not launched)"]},
         "compliance": [
             "every change has a driver; every changed number is explained by an A9.1 decision or a verified upstream "
             "value (machine-checked)", "immutable inputs pinned by sha256; mutable governance never pinned",
@@ -948,6 +1108,52 @@ def render_md(d) -> str:
     for x in d["cross_lane_reconciliation"]:
         a(f"* **{x['id']}** {x['item']}: {_c(x['result'])} (driver {x['driver']}; change {_c(x['change'])}; "
           f"{x['status']})")
+    a("")
+    g = d["a9_2"]
+    a("## A9.2 incorporation (owner decisions 2026-09-30, A9-07 follow-up)")
+    a("")
+    a(f"Decision `{g['decision']['path']}` (sha256 `{g['decision']['sha256']}`), verbatim `{g['decision']['verbatim']}` "
+      f"(sha256 `{g['decision']['verbatim_sha256']}`); read from the byte-identical pinned copy "
+      f"`{g['decision']['pinned_copy']}` (recorded at commit {g['decision']['recorded_at_commit']}).")
+    a("")
+    a("### A9.2 statuses (verbatim, item 9)")
+    a("")
+    a("| item | status |")
+    a("|---|---|")
+    for x in g["statuses"]:
+        a(f"| {_c(x['item'])} | **{x['status']}** |")
+    a("")
+    a(g["statuses_rule"] + ". Status scan: " + f"{g['status_scan']['fields_checked']} status-like fields checked, "
+      f"{len(g['status_scan']['violations'])} violations.")
+    a("")
+    sp = g["supersession"]
+    a(f"* **{sp['id']}** superseded: {sp['superseded']}; by {sp['by']}; scope: {sp['scope']}.")
+    a(f"* **RF chain**: {_c(g['rf_chain']['chain'])}. Measurement: {_c(g['rf_chain']['measurement'])}. Ratings: "
+      f"{_c(g['rf_chain']['ratings'])}. Protection: {', '.join(g['rf_chain']['protection'])}; "
+      f"{_c(g['rf_chain']['trip_thresholds'])}. Matching strategy: {_c(g['rf_chain']['matching_strategy'])}.")
+    a(f"* **Anode**: ANODE_BASELINE = {g['anode']['ANODE_BASELINE']}. {_c(g['anode']['text'])}. Investigate: "
+      f"{'; '.join(g['anode']['investigate'])}. Design blockers: "
+      + "; ".join(f"{b['id']} ({b['what']}, M16 v3 row {b['m16_row']})" for b in g["anode"]["design_blockers"])
+      + ". No anode RFQ implied.")
+    ct = g["coupled_thermal"]
+    a(f"* **Coupled thermal**: ICP_COUPLED_THERMAL = {ct['ICP_COUPLED_THERMAL']} (A9-07 overall now "
+      f"{ct['overall_status_now']}). {_c(ct['statement'])}. Pole warning: {_c(ct['pole_allowance_warning']['text'])} "
+      f"({ct['pole_allowance_warning']['value_W']} W, {ct['pole_allowance_warning']['source']}). Radiative-view "
+      f"objective {ct['radiative_view_objective']['icd_item']}: {'; '.join(ct['radiative_view_objective']['objectives'])}.")
+    a(f"* **Coil-mass correction**: {_c(g['coil_mass_correction'])}.")
+    a(f"* **PR #33**: {_c(g['pr_33'])}.")
+    a("")
+    a("### A9.2 decision coverage")
+    a("")
+    a("| A9.2 item | applied by | status |")
+    a("|---|---|---|")
+    for c in g["decision_coverage"]:
+        a(f"| {c['decision']} | {', '.join(c['applied_by']) or '-'} | {c['status']} |")
+    a("")
+    a("### Recommended next lanes (A9.2 item 12; not launched)")
+    a("")
+    for x in g["recommended_next_lanes_not_launched"]:
+        a(f"* **{x['id']} {x['name']}**: {x['measure']} (moves: {x['status_it_moves']})")
     a("")
     p = d["pending_reevaluation"]
     a("## PENDING re-evaluation (OQ-INT-03)")

@@ -852,7 +852,7 @@ def _a909() -> list:
 def records() -> dict:
     out = {"A9-01": _a901(), "A9-02": _a902(), "A9-03": _a903(), "A9-04": _a904(), "A9-05ev": _a905ev(),
            "A9-05vi": _a905vi(), "A9-06": _a906(), "A9-07": _a907(), "A9-08": _a908(), "A9-09": _a909()}
-    for extra in (_repair_code(), _repair(), _repair2(), _repair3(), _repair4(), _repair5()):
+    for extra in (_repair_code(), _repair(), _repair2(), _repair3(), _repair4(), _repair5(), _a92()):
         for k, recs in extra.items():
             out[k] = out[k] + [dict(r) for r in recs]
     return out
@@ -2118,6 +2118,7 @@ def apply(key: str, doc: dict, only_prefix: str = None, exclude_prefix: str = No
         doc["a9_10_reconciliation"] = {
             "lane": LANE, "record": RECORD_REL, "overlay": OVERLAY_REL,
             "a9_1_decision": {"path": A91_REL, "sha256": A91_SHA, "verbatim": A91_MD_REL, "verbatim_sha256": A91_MD_SHA},
+            "a9_2_decision": a92_pin(),
             "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
             "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or "
                     "A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; "
@@ -2188,6 +2189,29 @@ def _apply_one(doc, r) -> int:
                     raise OverlayError(f"{r['cid']}: {path}/{kk} is {cur.get(kk, ABSENT)!r:.80}, expected {ov!r:.80}")
             for kk, nv in r["new"].items():
                 cur[kk] = copy.deepcopy(nv)
+        elif op == "supersede":
+            # A9.2 supersession: the current value is kept as <field>_before_a9_2 (history never deleted)
+            if not isinstance(cur, dict):
+                raise OverlayError(f"{r['cid']}: {path} is not an object")
+            for kk, sub in r["old"].items():
+                if kk not in cur:
+                    raise OverlayError(f"{r['cid']}: {path}/{kk} absent")
+                have = cur[kk] if isinstance(cur[kk], str) else json.dumps(cur[kk], ensure_ascii=False)
+                if sub not in have:
+                    raise OverlayError(f"{r['cid']}: {path}/{kk} does not contain {sub!r:.80}")
+                if kk + "_before_a9_2" in cur:
+                    raise OverlayError(f"{r['cid']}: {path}/{kk} already superseded")
+            for kk, nv in r["new"].items():
+                if kk in r["old"]:
+                    cur[kk + "_before_a9_2"] = copy.deepcopy(cur[kk])
+                elif kk in cur:
+                    raise OverlayError(f"{r['cid']}: {path}/{kk} exists but is not declared in old")
+                cur[kk] = copy.deepcopy(nv)
+        elif op == "a92_thermal":
+            k_changed = _a92_thermal(cur)
+            if k_changed == 0:
+                raise OverlayError(f"{r['cid']}: A9.2 thermal status change matched nothing")
+            n += k_changed - 1
         else:
             raise OverlayError(f"{r['cid']}: unknown op {op!r}")
         n += 1
@@ -2206,9 +2230,784 @@ def md_section(doc: dict) -> list:
     L = ["", "## A9-10 reconciliation (fo_a9_10_integration)", "",
          f"Changes applied by A9-10 after this lane's verified build (record `{sec['record']}`, overlay "
          f"`{sec['overlay']}`). A9.1 decision `{sec['a9_1_decision']['path']}` (sha256 "
-         f"`{sec['a9_1_decision']['sha256']}`). A9 stays {sec['a9_status']}; no winner; no prediction.", "",
+         f"`{sec['a9_1_decision']['sha256']}`); A9.2 decision `{sec['a9_2_decision']['path']}` (sha256 "
+         f"`{sec['a9_2_decision']['sha256']}`). A9 stays {sec['a9_status']}; no winner; no prediction.", "",
          "| change | driver | op | pointer | count | summary |", "|---|---|---|---|---|---|"]
     for c in sec["changes"]:
         L.append(f"| {c['cid']} | {_c(c['driver'])} | {c['op']} | `{_c(c['ptr'])}` | {c['count']} | "
                  f"{_c(c['summary'])} |")
     return L
+
+
+# ------------------------------------------------------------------------------------------------------ A9.2
+# Owner-directed incorporation of A9.2 (A9-07 follow-up owner decisions, 2026-09-30). The decision files live in
+# docs/decisions/ of the execution branch (commit 19c0040); this lane reads a byte-identical pinned copy under
+# a9_2_inputs/ (sha256 checked; when the original is present it must carry the same sha256). Every record below cites
+# the A9.2 item it applies (driver 'A9.2 <item>'); no number changes except status/label changes A9.2 requires.
+A92_REL = "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json"
+A92_SHA = "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03"
+A92_MD_REL = "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md"
+A92_MD_SHA = "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9"
+A92_COPY_DIR = "docs/experiments/hall_icp/integration/a9_2_inputs/"
+A92_COPY = A92_COPY_DIR + "OD_2026_09_30_A9_2_a907_followup_owner_decisions.json"
+A92_MD_COPY = A92_COPY_DIR + "OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md"
+A92_COMMIT = "19c0040"
+ANSWERED_A92 = "ANSWERED_BY_A9_2"
+UNRES = "UNRESOLVED"
+_A92_CACHE: dict = {}
+
+
+def _sha_rel(rel: str):
+    p = os.path.join(ROOT, rel)
+    if not os.path.isfile(p):
+        return None
+    with open(p, "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+
+def a92() -> dict:
+    """The A9.2 decision JSON (verified pinned copy; the original, when present, must be byte-identical)."""
+    if "d" in _A92_CACHE:
+        return _A92_CACHE["d"]
+    for copy_rel, orig_rel, sha in ((A92_COPY, A92_REL, A92_SHA), (A92_MD_COPY, A92_MD_REL, A92_MD_SHA)):
+        got = _sha_rel(copy_rel)
+        if got != sha:
+            raise OverlayError(f"{copy_rel} sha256 {got} != pinned {sha} (A9.2 immutable owner decision)")
+        orig = _sha_rel(orig_rel)
+        if orig is not None and orig != sha:
+            raise OverlayError(f"{orig_rel} sha256 {orig} != pinned {sha}")
+    with open(os.path.join(ROOT, A92_COPY), encoding="utf-8") as f:
+        _A92_CACHE["d"] = json.load(f)
+    return _A92_CACHE["d"]
+
+
+def a92_pin() -> dict:
+    return {"path": A92_REL, "sha256": A92_SHA, "verbatim": A92_MD_REL, "verbatim_sha256": A92_MD_SHA,
+            "pinned_copy": A92_COPY, "verbatim_pinned_copy": A92_MD_COPY, "recorded_at_commit": A92_COMMIT}
+
+
+def a92_statuses() -> dict:
+    return dict(a92()["decisions"]["a9_10_statuses"])
+
+
+def a92_text(item: str) -> str:
+    v = a92()["decisions"][item]
+    return v if isinstance(v, str) else json.dumps(v, ensure_ascii=False)
+
+
+def a92_src(item: str) -> str:
+    return f"{A92_REL} decisions.{item} (sha256 {A92_SHA}; verbatim {A92_MD_REL})"
+
+
+PASS_LIKE = re.compile(r"^(CLOSES(_WITH_SINGLE_LEVER|_ONLY_WITH_COMBINED_LEVERS|_WITH_LEVERS)?|CONDITIONALLY_RESOLVED|"
+                       r"PASS|RESOLVED|CLOSED)$")
+COUPLED_TERMS = ["Q_Hall->ICP", "Q_collector", "Q_RF/match", "Q_plume",
+                 "geometric effect of the ICP assembly on H-1 radiation (view obstruction, back-radiation, carrier "
+                 "conduction, plume interception)"]
+POLE_PTR = "/recomputations/h25_thermal_rerun/icp_heat_into_h1/min_allowance_W/LV-BASE/PO/CO"
+LOCAL_CHAIN = ("RF generator -> directional coupler -> 50-ohm transmission line -> LOCAL matching network on / "
+               "immediately adjacent to the ICP module -> ICP antenna")
+MEAS_REF = ("forward and reflected power measured on the generator / 50-ohm side of the local matching network; retained "
+            "quantities P_forward, P_reflected, |Gamma|, VSWR and, where possible, P_delivered = P_forward - P_reflected "
+            "- P_line/match,loss; P_forward = P_plasma is never assumed")
+RATINGS_TBD = ("TBD - requires the ICP antenna impedance map Z_antenna = R + jX versus mdot, P_RF, p, gas composition and "
+               "the Hall operating point (A9.2 post-A9 priority P2): RF component ratings (generator, coupler, coax, "
+               "connectors, matching elements incl. their voltage and current, feedthroughs) are TBD_AFTER_IMPEDANCE_MAP; "
+               "the 0-500 W row-72 figure is a laboratory delivered/operating investigation capability, not a component "
+               "rating (A9.2)")
+PROTECTION = ["reflected-power monitoring", "mismatch / interlock threshold", "arc detection where feasible",
+              "thermal monitoring", "automatic RF reduction / shutdown"]
+TRIP_TBD = ("TBD - requires the ICP antenna / load characterization: exact reflected-power and VSWR trip thresholds are "
+            "frozen after it, never invented now (A9.2 rf_protection)")
+ANODE_INVESTIGATION = ["stronger anode-to-backplate conduction", "anode support / feed-tube conduction",
+                       "geometric heat spreading", "radiative area", "thermal coupling to the spacecraft / stand",
+                       "deposited discharge-power fraction", "refractory / oxidation-resistant material candidates",
+                       "optional active cooling only if passive closure fails"]
+ANODE_TEXT = ("A9.2: 316L REJECTED_AS_CURRENT_BASELINE for the design-representative / flight H-1 anode (allowed only as "
+              "an engineering / shakedown material, a coupon candidate or a low-temperature development component); "
+              "ANODE_BASELINE = OPEN; final anode material OPEN; anode thermal closure UNRESOLVED; no refractory metal "
+              "(W, Mo, Pt, ...) is selected merely for its melting point; objective: reduce the actual anode operating "
+              "temperature first, then select a material with T_operating <= T_validated,continuous - 50 K; no new "
+              "anode temperature limit is set")
+COUPLED_TEXT = ("A9.2 ICP_COUPLED_THERMAL = UNRESOLVED: every hall_icp_neutralizer thermal result of the A9-07 rerun is an "
+                "UNCOUPLED sensitivity (0 W ICP heat, v1 exterior views) and is reported as UNRESOLVED until the coupled "
+                "model includes Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume and the ICP assembly's geometric effect "
+                "on H-1 radiation; a calculation assuming negligible ICP coupling cannot close A9 (prohibited "
+                "assumption)")
+POLE_TEXT = ("A9.2 13 W pole allowance: the outer coil CO tolerates only about 13 W of ICP heat injected at the outer "
+             "front pole PO at LV-BASE (A9-07 icp_heat_into_h1.min_allowance_W) - a design-driving warning, not grounds "
+             "to reject A9; a coupled view-factor / conduction calculation is required before thermal closure")
+COIL_TEXT = ("A9.2 coil-mass correction: about 0.14 kg (0.136 kg) is the copper of the 60 W / fixed-ampere-turn "
+             "sensitivity basis, NOT the MC-1 coil mass; about 1.58 kg is the current estimated copper mass of the "
+             "complete coil geometry from the H2-1 sizing (H21-24 1.579 kg, RP-1 f_NI 2); the two are never alternative "
+             "estimates of the same physical mass; the A9-06 closure uses only the clearly defined complete hardware "
+             "mass (A9B-16 MC-1 3.504 kg = iron 1.925 kg + complete-coil copper 1.579 kg)")
+VIEW_OBJECTIVE = ["open-frame ICP support", "minimum necessary downstream obstruction", "annular / open optical path",
+                  "thermally isolated mounting", "high-emittance outward-facing surfaces",
+                  "suitable Hall-to-ICP axial spacing"]
+POST_A9 = [
+    {"id": "P1", "name": "ICP electron-source bench", "measure": "I_e(P_RF, Z, p, mdot, gas); prove ICP-45 (ICP-45A Ar, "
+     "ICP-45N N2)", "status_it_moves": "ICP electron-current capacity PENDING_ICP45"},
+    {"id": "P2", "name": "ICP impedance map", "measure": "Z_antenna = f(P_RF, mdot, p, gas, plasma state) to size the "
+     "matching network and RF chain", "status_it_moves": "RF component ratings TBD_AFTER_IMPEDANCE_MAP"},
+    {"id": "P3", "name": "coupled thermal redesign", "measure": "recalculate H-1 with the actual downstream ICP geometry / "
+     "view factors (Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume)", "status_it_moves":
+     "coupled H-1/ICP thermal closure UNRESOLVED"},
+    {"id": "P4", "name": "anode design", "measure": "improve the conductive / radiative path and run the candidate-material "
+     "trade", "status_it_moves": "final anode material OPEN; anode thermal closure UNRESOLVED"},
+]
+
+
+def _a92_thermal(th: dict) -> int:
+    """A9.2 ICP_COUPLED_THERMAL: every pass-like hall_icp_neutralizer thermal status becomes UNRESOLVED; the computed
+    value is kept beside it as the uncoupled sensitivity (numbers untouched). Returns the number of changed fields."""
+    n = 0
+
+    def fix(d, key, sens_key):
+        nonlocal n
+        v = d.get(key)
+        if isinstance(v, str) and PASS_LIKE.match(v):
+            d[sens_key] = v
+            d[key] = UNRES
+            n += 1
+        elif isinstance(v, list) and any(isinstance(x, str) and PASS_LIKE.match(x) for x in v):
+            d[sens_key] = list(v)
+            d[key] = [UNRES if isinstance(x, str) and PASS_LIKE.match(x) else x for x in v]
+            n += 1
+
+    for _lv, cases in th["results"]["hall_icp_neutralizer"].items():
+        for _c, rec in cases.items():
+            for _node, e in rec["nodes"].items():
+                fix(e, "verdict", "uncoupled_sensitivity_verdict")
+                fix(e, "necessary_check", "uncoupled_sensitivity_necessary_check")
+    for node, s in th["closure_summary_hall_icp_neutralizer"].items():
+        for k in ("status", "brief_verdict_at_baseline", "necessary_check"):
+            fix(s, k, "uncoupled_sensitivity_" + k)
+        if node == "AN":
+            s["a9_2_anode"] = {"ANODE_BASELINE": "OPEN", "316L flight anode": a92_statuses()["316L flight anode"],
+                               "final anode material": a92_statuses()["final anode material"],
+                               "anode thermal closure": a92_statuses()["anode thermal closure"],
+                               "statement": ANODE_TEXT, "investigate": ANODE_INVESTIGATION,
+                               "design_blockers": ["A9H-ANODE-01", "A9H-ANODE-02"], "source": a92_src("anode_approach")}
+            n += 1
+    bn = th["bn_wall_11_2K_case"]
+    fix(bn, "status", "uncoupled_sensitivity_status")
+    fix(bn["outer_wall"], "status", "uncoupled_sensitivity_status")
+    for _lv, cases in th["mount_heat_vs_row85"].items():
+        for _c, r in cases.items():
+            w = r["within_allowable_W"]
+            if any(PASS_LIKE.match(v) for v in w.values()):
+                r["within_allowable_W_uncoupled_sensitivity"] = dict(w)
+                r["within_allowable_W"] = {a: (UNRES if PASS_LIKE.match(v) else v) for a, v in w.items()}
+                n += 1
+    ov = th["overall"]
+    if ov["status"] != "OPEN":
+        raise OverlayError(f"A9-07 overall thermal status is {ov['status']!r}, expected 'OPEN'")
+    ov["status_before_a9_2"] = ov["status"]
+    ov["status"] = UNRES
+    n += 1
+    pole = th["icp_heat_into_h1"]["min_allowance_W"]["LV-BASE"]["PO"]["CO"]
+    th["a9_2_icp_coupled_thermal"] = {
+        "ICP_COUPLED_THERMAL": UNRES, "coupled H-1/ICP thermal closure": a92_statuses()["coupled H-1/ICP thermal closure"],
+        "statement": COUPLED_TEXT, "required_terms": COUPLED_TERMS,
+        "prohibited_assumption": "ICP thermal interaction is small enough to ignore (A9.2 13W_pole_allowance)",
+        "icp_effects_to_model": ["obstruct H-1's radiative view", "radiate back toward the Hall head",
+                                 "conduct heat through the carrier", "intercept plume energy"],
+        "pole_allowance_warning": {"value_W": pole, "node": "CO (outer coil)", "injection": "PO (outer front pole)",
+                                   "lever": "LV-BASE", "source": H2A9 + " " + POLE_PTR.replace(
+                                       "/recomputations", "recomputations").replace("/", "."),
+                                   "evidence_class": "model-derived (uncoupled sensitivity)",
+                                   "status": "DESIGN_DRIVING_WARNING (A9.2)", "text": POLE_TEXT},
+        "sensitivity_label": "the computed temperatures, margins, allowances and the uncoupled_sensitivity_* verdicts are "
+                             "kept unchanged as sensitivity information only; reported statuses are UNRESOLVED",
+        "radiative_view_objective": "ICD ICP-47 (A9.2 radiative_view_requirement)",
+        "next_lane": "P3 coupled thermal redesign (recommended, not launched)",
+        "source": a92_src("icp_coupled_thermal") + "; " + a92_src("13W_pole_allowance")}
+    n += 1
+    return n
+
+
+def _a92_answered(qptr: str, item: str, note: str = "") -> dict:
+    return {"op": "merge", "ptr": qptr,
+            "old": {"status": ABSENT, "a9_2_decision": ABSENT, "decision_source": ABSENT},
+            "new": {"status": f"{ANSWERED_A92} ({item})", "a9_2_decision": a92_text(item) + (f" [{note}]" if note else ""),
+                    "decision_source": a92_src(item)},
+            "driver": "A9.2 " + item, "summary": f"owner question answered by A9.2 {item}"}
+
+
+def _new_item_a907(iid, name, value, units, basis, note, status="TBD", freeze="after-evidence", items=()):
+    return {"id": iid, "name": name, "value": value, "units": units, "basis": basis,
+            "source": [{"kind": "A9.2", "id": x, "path": A92_REL, "sha256": A92_SHA} for x in items],
+            "evidence_class": None, "status": status, "freeze_point": freeze,
+            "applies_to": ["hall_c1_reference", "hall_icp_neutralizer"] if "ANODE" in iid else ["hall_icp_neutralizer"],
+            "note": note}
+
+
+def _a92_a907() -> list:
+    kf = "/key_findings[{}]"
+    rp = "/recomputations/rf_reference_plane"
+    ids = "/interface_demands[id={}]"
+    h3 = "/h3_inputs[id={}]"
+    m16 = "/m16_impact[m16_row={}]"
+    return [
+        dict(R("A910-A92-A907-01", "A9.2 icp_coupled_thermal, 13W_pole_allowance, a9_10_statuses", "a92_thermal",
+               "/recomputations/h25_thermal_rerun",
+               summary="ICP_COUPLED_THERMAL = UNRESOLVED: every pass-like hall_icp_neutralizer thermal status (node "
+                       "verdicts, necessary checks, closure summaries, BN-wall 11.2 K case, row-85 mount-heat checks, "
+                       "overall) is reported UNRESOLVED; the computed value is kept as uncoupled_sensitivity_*; anode "
+                       "block and the 13 W pole warning added (numbers unchanged; 13.0 W copied)"),
+             numeric=True, source={"file": H2A9, "ptr": POLE_PTR, "value": 13.0}),
+        R("A910-A92-A907-02", "A9.2 icp_coupled_thermal", "replace", kf.format(1), "Brief verdicts at baseline:",
+          "Uncoupled sensitivity verdicts at baseline (A9.2 ICP_COUPLED_THERMAL = UNRESOLVED: the reported status of "
+          "every hall_icp_neutralizer thermal closure is UNRESOLVED; sensitivity information only):",
+          "K2 relabelled as uncoupled sensitivity"),
+        R("A910-A92-A907-43", "A9.2 icp_coupled_thermal", "replace", kf.format(1), "overall status OPEN.",
+          "overall status UNRESOLVED (A9.2 ICP_COUPLED_THERMAL; before A9.2: OPEN).", "K2 overall status"),
+        R("A910-A92-A907-44", "A9.2 a9_10_statuses, post_a9_priorities", "append", "/key_findings", None,
+          "K13 A9.2 (owner decisions 2026-09-30): RF matching architecture LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT (" +
+          LOCAL_CHAIN + "); RF component ratings TBD_AFTER_IMPEDANCE_MAP; 316L flight anode "
+          "REJECTED_AS_CURRENT_BASELINE; final anode material OPEN; anode thermal closure UNRESOLVED; coupled H-1/ICP "
+          "thermal closure UNRESOLVED (" + COUPLED_TEXT + "); " + POLE_TEXT + "; " + COIL_TEXT + ". Recommended next "
+          "lanes (not launched): P1 ICP electron-source bench (ICP-45), P2 ICP impedance map, P3 coupled thermal "
+          "redesign, P4 anode design.", "K13 A9.2 summary"),
+        R("A910-A92-A907-03", "A9.2 13W_pole_allowance", "replace", kf.format(1), "Search-sensitive baseline closures: CO.",
+          "Search-sensitive baseline closures: CO. " + POLE_TEXT + ".", "K2 13 W pole warning"),
+        R("A910-A92-A907-04", "A9.2 icp_coupled_thermal", "replace", kf.format(2), "the v1 11.2 K BN-wall case is "
+          "CONDITIONALLY_RESOLVED", "the v1 11.2 K BN-wall case is UNRESOLVED (A9.2 ICP_COUPLED_THERMAL; uncoupled "
+          "sensitivity: CONDITIONALLY_RESOLVED)", "K3 relabelled"),
+        R("A910-A92-A907-05", "A9.2 anode_316L, anode_approach", "replace", kf.format(5),
+          "or a changed heat path is needed.", "or a changed heat path is needed. " + ANODE_TEXT + "; design blockers "
+          "A9H-ANODE-01 (material) and A9H-ANODE-02 (heat-removal path).", "K6 anode status"),
+        R("A910-A92-A907-06", "A9.2 OQ-A907-11", "replace", kf.format(7),
+          "matching network off-platform with the coupler plane after the match",
+          "local adjustable matching network on / immediately adjacent to the ICP module with the directional coupler "
+          "on the generator / 50-ohm side (A9.2 OQ-A907-11; the A9.1 off-platform arrangement is superseded for the "
+          "baseline)", "K8 matching location"),
+        R("A910-A92-A907-07", "A9.2 OQ-A907-11, rf_500W, icp_matching_strategy", "replace", kf.format(10),
+          "Proposed: a fixed on-module pre-match (OQ-A907-11)",
+          "A9.2 (OQ-A907-11 answered): chain " + LOCAL_CHAIN + "; " + MEAS_REF + "; the review sensitivity loads now "
+          "describe the short match-to-antenna segment and the matching elements; ratings TBD_AFTER_IMPEDANCE_MAP; "
+          "earlier proposal: a fixed on-module pre-match (OQ-A907-11)", "K11 RF chain"),
+        R("A910-A92-A907-08", "A9.2 coil_mass_correction", "replace", kf.format(11),
+          "delta 0.136 kg at a 60 W basis, 1.58 kg at a 5.164 W basis; fixed-mean-turn estimates, not bounds;",
+          "0.136 kg is the copper of the 60 W / fixed-ampere-turn sensitivity basis (NOT the MC-1 coil mass) and 1.58 kg "
+          "the current complete-coil copper estimate of the H2-1 RP-1 sizing (5.164 W basis); A9.2 coil-mass "
+          "correction: never alternative estimates of the same mass; fixed-mean-turn estimates, not bounds;",
+          "K12 coil-mass wording"),
+        R("A910-A92-A907-09", "A9.2 coil_mass_correction", "merge", "/recomputations/lv_coil_copper_delta",
+          {"a9_2_coil_mass_correction": ABSENT}, {"a9_2_coil_mass_correction": {
+              "text": COIL_TEXT, "source": a92_src("coil_mass_correction"),
+              "P_mag_basis_60W_H25-08_upper": "copper of the 60 W / fixed-ampere-turn sensitivity basis; NOT the MC-1 "
+                                              "coil mass",
+              "P_mag_basis_RP1_as_sized": "current estimated copper mass of the complete coil geometry (H2-1 sizing)"}},
+          "coil-mass correction recorded"),
+        R("A910-A92-A907-10", "A9.2 coil_mass_correction", "replace", "/recomputations/lv_coil_copper_delta/not_reconciled",
+          "(about 0.14 kg copper)", "(about 0.14 kg copper: the copper of that 60 W / fixed-ampere-turn sensitivity basis, "
+          "NOT the MC-1 coil mass, A9.2)", "not_reconciled wording"),
+        R("A910-A92-A907-11", "A9.2 OQ-A907-11, rf_measurement_reference", "supersede", rp,
+          {"reference_plane": "A9.1 A9-03-matching", "finding": "the row-72 0-500 W range is the GENERATOR forward power"},
+          {"reference_plane": "A9.2 OQ-A907-11 (supersedes the A9.1 off-platform arrangement for the A9 baseline): " +
+                              LOCAL_CHAIN + ". The long flexible coax on the thrust stand stays approximately a "
+                              "controlled 50-ohm line; the antenna mismatch is confined to the short match-to-antenna "
+                              "segment and the matching elements. " + MEAS_REF,
+           "finding": "A9.2: 0-500 W is a laboratory delivered/operating investigation capability, not a component "
+                      "rating. With the local match, the retained 50-ohm segment (generator -> coupler -> line -> match "
+                      "input) sees only the residual mismatch after the match (residual_vswr_sensitivity); the review "
+                      "sensitivity loads (e.g. VSWR 5.208 -> P_fwd 925 W for 500 W delivered) now describe the SHORT "
+                      "match-to-antenna segment and the voltage / current stress of the matching elements and show why "
+                      "rating the chain merely for 500 W is unacceptable. " + RATINGS_TBD},
+          "RF reference plane recomputation re-described (A9.2 local match)"),
+        R("A910-A92-A907-12", "A9.2 OQ-A907-11", "merge", rp, {"a9_2_segments": ABSENT}, {"a9_2_segments": {
+            "retained_50_ohm_segment": {"path": "generator -> directional coupler -> 50-ohm transmission line (incl. the "
+                                                "flexible stand crossing) -> local match input",
+                                        "mismatch": "residual |Gamma| after the local match",
+                                        "sensitivity_table": "residual_vswr_sensitivity (VSWR 1.2 / 1.5 / 2.0; "
+                                                             "sensitivity values, not limits)",
+                                        "measurement": MEAS_REF},
+            "short_match_to_antenna_segment": {"path": "local matching network output -> ICP antenna",
+                                               "mismatch": "the antenna's own reflection",
+                                               "sensitivity_table": "sensitivity_loads (review cases; not antenna data)",
+                                               "ratings": RATINGS_TBD},
+            "p_delivered": "P_delivered = P_forward - P_reflected - P_line/match,loss; P_forward = P_plasma never assumed",
+            "source": a92_src("OQ-A907-11") + "; " + a92_src("rf_measurement_reference")}},
+          "retained 50-ohm segment and short match-to-antenna segment described"),
+        R("A910-A92-A907-13", "A9.2 OQ-A907-11, icp_matching_strategy", "supersede", rp + "/options/a_on_module_pre_match",
+          {"status": "PROPOSED (owner call, OQ-A907-11)"},
+          {"status": "SUPERSEDED_BY_A9_2 (OQ-A907-11: an ADJUSTABLE local matching network on / immediately adjacent "
+                     "to the ICP module is selected for the development article; a fixed network is only one possible "
+                     "later flight implementation, decided after the impedance map)"}, "option a superseded"),
+        R("A910-A92-A907-14", "A9.2 OQ-A907-11", "supersede", rp + "/options/b_rate_the_mismatched_segment",
+          {"status": "FALLBACK"}, {"status": "NOT_BASELINE (A9.2 OQ-A907-11: the long coax no longer carries the antenna "
+                                             "mismatch)"}, "option b not baseline"),
+        R("A910-A92-A907-15", "A9.2 OQ-A907-11", "replace", rp + "/residual_vswr_note",
+          "option (a) cases: the flexible segment sees only a residual mismatch after an on-module pre-match",
+          "A9.2 retained 50-ohm segment: the coupler and the flexible line see only the residual mismatch after the "
+          "local match", "residual VSWR note"),
+        R("A910-A92-A907-16", "A9.2 OQ-A907-11, rf_500W", "replace", rp + "/sensitivity_loads_note",
+          "No rating below is taken from them", "No rating below is taken from them. A9.2: they now describe the short "
+          "match-to-antenna segment and the matching elements (voltage / current stress), not the 50-ohm line; ratings "
+          "TBD_AFTER_IMPEDANCE_MAP", "sensitivity loads note"),
+        R("A910-A92-A907-17", "A9.2 rf_500W", "merge", rp + "/P_net_max_W", {"a9_2_interpretation": ABSENT},
+          {"a9_2_interpretation": "0-500 W is a laboratory delivered/operating investigation capability, not a component "
+                                  "rating (" + a92_src("rf_500W") + ")"}, "500 W interpretation"),
+        dict(_a92_answered("/open_owner_questions[id=OQ-A907-11]", "OQ-A907-11",
+                           "supersedes the A9.1 A9-03-matching off-platform location for the A9 baseline"),
+             cid="A910-A92-A907-Q01"),
+        R("A910-A92-A907-18", "A9.2 OQ-A907-11", "merge", "/revision_register[id=REV-34]",
+          {"superseded_in_part_by_a9_2": ABSENT},
+          {"superseded_in_part_by_a9_2": "matching location: the off-platform tunable match with the coupler after the "
+                                         "match is no longer the A9 baseline (A9.2 OQ-A907-11): " + LOCAL_CHAIN + "; " +
+                                         MEAS_REF + "; history kept (this REV entry is not rewritten)"},
+          "REV-34 superseded in part"),
+        R("A910-A92-A907-19", "A9.2 anode_316L, anode_approach", "merge", "/revision_register[id=REV-50]",
+          {"a9_2_anode": ABSENT}, {"a9_2_anode": {"text": ANODE_TEXT, "design_blockers": ["A9H-ANODE-01",
+                                                                                          "A9H-ANODE-02"],
+                                                  "source": a92_src("anode_316L") + "; " + a92_src("anode_approach")}},
+          "REV-50 anode status"),
+        R("A910-A92-A907-20", "A9.2 anode_316L", "gsub", "", "(row 87; 316L engineering baseline only, row 106)",
+          "(row 87; 316L engineering baseline only, row 106; A9.2: 316L REJECTED_AS_CURRENT_BASELINE for the "
+          "design-representative / flight anode, ANODE_BASELINE = OPEN, no new anode temperature limit)",
+          "anode limit texts"),
+        R("A910-A92-A907-21", "A9.2 anode_316L", "gsub", "", "the anode material (316L is only the H-1 engineering "
+          "baseline, row 106)", "the anode material (316L: H-1 engineering baseline only per row 106 and "
+          "REJECTED_AS_CURRENT_BASELINE for the design-representative / flight anode per A9.2; ANODE_BASELINE = OPEN)",
+          "anode design-driver texts"),
+        R("A910-A92-A907-22", "A9.2 anode_approach", "append", "/new_items", None, _new_item_a907(
+            "A9H-ANODE-01", "DESIGN BLOCKER: H-1 anode material (design-representative / flight)",
+            "TBD - requires the candidate-material trade (oxygen compatibility, sputtering, electrical behaviour, "
+            "fabrication, thermal conductivity) on a reduced operating temperature; ANODE_BASELINE = OPEN",
+            "-", "A9.2 anode_316L / anode_approach", ANODE_TEXT, items=("anode_316L", "anode_approach")),
+          "anode material design blocker"),
+        R("A910-A92-A907-23", "A9.2 anode_approach", "append", "/new_items", None, _new_item_a907(
+            "A9H-ANODE-02", "DESIGN BLOCKER: H-1 anode heat-removal path (thermal-design problem first)",
+            "TBD - requires the anode thermal redesign: " + "; ".join(ANODE_INVESTIGATION),
+            "W; K", "A9.2 anode_approach", "objective: reduce the actual anode operating temperature substantially, then "
+            "T_operating <= T_validated,continuous - 50 K; no new arbitrary anode temperature limit (A9.2)",
+            items=("anode_approach",)), "anode heat-path design blocker"),
+        R("A910-A92-A907-24", "A9.2 OQ-A907-11, icp_matching_strategy", "append", "/new_items", None, _new_item_a907(
+            "A9H-RF-LM-01", "adjustable LOCAL matching network on / immediately adjacent to the ICP module "
+            "(development article)", RATINGS_TBD, "ohm; V; A; W", "A9.2 OQ-A907-11 / icp_matching_strategy",
+            "flight implementation (fixed / switched / electronically tuned / other) only after Z_antenna = R + jX is "
+            "measured vs mdot, P_RF, p, gas composition and the Hall operating point; the sham carries a mass / "
+            "stiffness equivalent of the on-module match (row 133; PROPOSED)", freeze="after-evidence",
+            items=("OQ-A907-11", "icp_matching_strategy")), "local match item"),
+        R("A910-A92-A907-25", "A9.2 rf_protection", "append", "/new_items", None, _new_item_a907(
+            "A9H-RF-PROT-01", "RF source protection: " + ", ".join(PROTECTION), TRIP_TBD, "W; -",
+            "A9.2 rf_protection", "trip thresholds frozen after the antenna / load characterization",
+            items=("rf_protection",)), "RF protection item"),
+        R("A910-A92-A907-26", "A9.2 icp_coupled_thermal, radiative_view_requirement", "append", "/new_items", None,
+          _new_item_a907("A9H-TH-01", "coupled H-1 / ICP thermal model (A9.2 ICP_COUPLED_THERMAL)",
+                         "TBD - requires the KC-1 / ICP module geometry and view factors: " + "; ".join(COUPLED_TERMS),
+                         "W; K", "A9.2 icp_coupled_thermal", COUPLED_TEXT + "; " + POLE_TEXT,
+                         items=("icp_coupled_thermal", "13W_pole_allowance", "radiative_view_requirement")),
+          "coupled thermal model item"),
+        R("A910-A92-A907-27", "A9.2 OQ-A907-11, icp_matching_strategy", "supersede", "/new_items[id=A9H-INS-14]",
+          {"value": "OQ-A907-11", "status": "TBD"},
+          {"value": "TBD - requires the ICP impedance map (A9.2 P2); SUPERSEDED_BY_A9_2 as the baseline treatment: the "
+                    "adjustable local match (A9H-RF-LM-01) replaces the fixed pre-match / rated-mismatch options",
+           "status": "SUPERSEDED_BY_A9_2"}, "A9H-INS-14 superseded"),
+        R("A910-A92-A907-28", "A9.2 rf_500W, OQ-A907-11", "supersede", "/new_items[id=A9H-INS-01]",
+          {"note": "0-500 W is the generator forward power"},
+          {"note": "A9.2: the coupler sits on the generator / 50-ohm side of the local match and sees the residual "
+                   "mismatch; 0-500 W is a laboratory delivered/operating investigation capability, not a component "
+                   "rating; coupler / sensor ratings TBD_AFTER_IMPEDANCE_MAP. u(P_fwd), u(P_refl): A9-04 UB-RF-02..07"},
+          "A9H-INS-01 note"),
+        R("A910-A92-A907-29", "A9.2 OQ-A907-11", "set", "/new_items[id=A9H-INS-01]/value/coupler_plane_P_fwd_max_W",
+          "TBD - requires Gamma_max at the coupler plane (on-module pre-match, OQ-A907-11) or the antenna impedance "
+          "range (A9-03): P_fwd = P_net / (1 - |Gamma|^2) (recomputations.rf_reference_plane)", RATINGS_TBD,
+          "coupler-plane rating TBD after impedance map"),
+        R("A910-A92-A907-30", "A9.2 OQ-A907-11", "set", ids.format("IDA7-20") + "/status",
+          "TBD - requires the A9-03 antenna design + S1a VNA measurement; owner call OQ-A907-11",
+          "PARTIAL - the pre-match decision is ANSWERED by A9.2 OQ-A907-11 (adjustable local match for development); "
+          "Z_antenna TBD - requires the ICP impedance map (A9.2 P2); ratings TBD_AFTER_IMPEDANCE_MAP", "IDA7-20"),
+        R("A910-A92-A907-31", "A9.2 OQ-A907-11", "merge", ids.format("IDA7-22"), {"a9_2": ABSENT},
+          {"a9_2": "ratings of coupler / sensors / coax / connectors / matching elements / feedthroughs "
+                   "TBD_AFTER_IMPEDANCE_MAP; the optional fixed pre-match line is superseded by the adjustable local "
+                   "match; protection items " + ", ".join(PROTECTION) + " (" + a92_src("rf_protection") + ")"},
+          "IDA7-22"),
+        R("A910-A92-A907-32", "A9.2 icp_coupled_thermal, 13W_pole_allowance", "merge", ids.format("IDA7-07"),
+          {"a9_2": ABSENT}, {"a9_2": COUPLED_TEXT + "; " + POLE_TEXT}, "IDA7-07 coupled-thermal status"),
+        R("A910-A92-A907-33", "A9.2 OQ-A907-11", "replace", h3.format("H3-A907-02") + "/item",
+          "matching network for off-platform mounting (row 72)",
+          "adjustable LOCAL matching network for mounting on / immediately adjacent to the ICP module (row 72; A9.2 "
+          "OQ-A907-11); component ratings TBD_AFTER_IMPEDANCE_MAP", "H3-A907-02"),
+        R("A910-A92-A907-34", "A9.2 OQ-A907-11", "replace", h3.format("H3-A907-15") + "/item",
+          "optional on-module fixed pre-match",
+          "SUPERSEDED_BY_A9_2 (replaced by the adjustable local match, H3-A907-02): optional on-module fixed pre-match",
+          "H3-A907-15 superseded"),
+        R("A910-A92-A907-35", "A9.2 icp_coupled_thermal", "replace", m16.format(10) + "/how_touched",
+          "coil node closure CLOSES_ONLY_WITH_COMBINED_LEVERS / CLOSES",
+          "coil node closure UNRESOLVED (A9.2 ICP_COUPLED_THERMAL; uncoupled sensitivity CLOSES_ONLY_WITH_COMBINED_"
+          "LEVERS / CLOSES)", "M16 row 10"),
+        R("A910-A92-A907-36", "A9.2 icp_coupled_thermal", "merge", m16.format(13),
+          {"how_touched": "thermal rerun with the owner rules; BN wall CLOSES_WITH_SINGLE_LEVER (REV-40..50)",
+           "blocking_item": "measured deposition fractions / sourced BN k(T)"},
+          {"how_touched": "thermal rerun with the owner rules (REV-40..50); every hall_icp_neutralizer thermal closure "
+                          "reported UNRESOLVED (A9.2 ICP_COUPLED_THERMAL; BN wall uncoupled sensitivity "
+                          "CLOSES_WITH_SINGLE_LEVER)",
+           "blocking_item": "coupled H-1 / ICP thermal model (A9H-TH-01: Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume, "
+                            "ICP view factors; A9.2 ICP_COUPLED_THERMAL = UNRESOLVED)"}, "M16 row 13"),
+        R("A910-A92-A907-37", "A9.2 OQ-A907-11", "merge", m16.format(15),
+          {"blocking_item": "quotations (A9-09) + antenna impedance / pre-match decision (OQ-A907-11)"},
+          {"blocking_item": "quotations (A9-09) + ICP antenna impedance map (A9.2 P2; RF component ratings "
+                            "TBD_AFTER_IMPEDANCE_MAP)"}, "M16 row 15"),
+        R("A910-A92-A907-38", "A9.2 anode_approach", "replace", m16.format(9) + "/how_touched",
+          "exit face = IP-EXIT (REV-01..03)", "exit face = IP-EXIT (REV-01..03); A9.2 anode design blockers "
+          "A9H-ANODE-01 (material) / A9H-ANODE-02 (heat-removal path), ANODE_BASELINE = OPEN", "M16 row 9"),
+        R("A910-A92-A907-39", "A9.2 OQ-A907-11", "replace", "/a9_1_decisions_applied[id=A9-03-matching]/how_applied",
+          "S-parameter correction (REV-34, A9H-INS-03)", "S-parameter correction (REV-34, A9H-INS-03); location "
+          "SUPERSEDED for the A9 baseline by A9.2 OQ-A907-11 (local match on / adjacent to the ICP module, coupler on "
+          "the generator / 50-ohm side)", "A9.1 application superseded in part"),
+        R("A910-A92-A907-40", "A9.2 rf_500W", "replace", "/owner_answers_applied[row=72]/how_applied",
+          "(rf_reference_plane, OQ-A907-11)", "(rf_reference_plane; OQ-A907-11 answered by A9.2: 0-500 W is a "
+          "laboratory delivered/operating capability, not a component rating)", "row 72 application"),
+        R("A910-A92-A907-41", "A9.2 anode_316L", "replace", "/owner_answers_applied[row=106]/how_applied",
+          "316L engineering-only anode baseline (REV-50)", "316L engineering-only anode baseline (REV-50); A9.2: 316L "
+          "REJECTED_AS_CURRENT_BASELINE for the design-representative / flight anode, ANODE_BASELINE = OPEN",
+          "row 106 application"),
+        R("A910-A92-A907-42", "A9.2 a9_10_statuses", "set", "/a9_2_statuses", ABSENT,
+          {"a9_2_statuses": {"statuses": "see " + RECORD_REL + " a9_2.statuses (verbatim A9.2 item 9)",
+                             "applied_here": {k: v for k, v in (("RF matching architecture", "LOCAL_MATCH_SELECTED_FOR_"
+                                                                 "DEVELOPMENT"), ("RF component ratings",
+                                                                                  "TBD_AFTER_IMPEDANCE_MAP"),
+                                                                ("316L flight anode", "REJECTED_AS_CURRENT_BASELINE"),
+                                                                ("final anode material", "OPEN"),
+                                                                ("anode thermal closure", UNRES),
+                                                                ("coupled H-1/ICP thermal closure", UNRES))},
+                             "source": a92_src("a9_10_statuses")}}["a9_2_statuses"], "A9.2 statuses carried"),
+    ]
+
+
+def _a92_a903() -> list:
+    it = "/items[id={}]"
+    return [
+        R("A910-A92-A903-01", "A9.2 OQ-A907-11, icp_matching_strategy", "supersede", it.format("ICP-13"),
+          {"value": "off the moving thrust-stand platform", "status": "OWNER_GIVEN (location, A9.1)",
+           "tbd": "TBD - requires the S1a dummy-load"},
+          {"value": LOCAL_CHAIN + " (A9.2 OQ-A907-11): the long flexible coax on the thrust stand stays approximately a "
+                    "controlled 50-ohm line; the matching network is ADJUSTABLE for the development article; the flight "
+                    "implementation (fixed / switched / electronically tuned / other) is deferred until Z_antenna = R + "
+                    "jX is measured vs mdot, P_RF, p, gas composition and the Hall operating point; RF reference planes: "
+                    "A9-07 recomputations.rf_reference_plane.a9_2_segments",
+           "status": "OWNER_GIVEN (A9.2 OQ-A907-11: LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT; supersedes the A9.1 "
+                     "A9-03-matching off-platform location for the baseline)",
+           "tbd": RATINGS_TBD}, "matching network location: local match (A9.2)"),
+        R("A910-A92-A903-02", "A9.2 OQ-A907-11", "merge", it.format("ICP-13"), {"a9_2_decision": ABSENT},
+          {"a9_2_decision": a92_text("OQ-A907-11") + " | " + a92_text("icp_matching_strategy") + " (" +
+                            a92_src("OQ-A907-11") + ")"}, "A9.2 decision text on ICP-13"),
+        R("A910-A92-A903-03", "A9.2 rf_measurement_reference", "replace", it.format("ICP-14") + "/requirement",
+          "net delivered power = P_fwd - P_refl at that plane.",
+          "net power at that plane = P_fwd - P_refl; the plane is on the generator / 50-ohm side of the local matching "
+          "network and the delivered power is P_delivered = P_forward - P_reflected - P_line/match,loss (A9.2); "
+          "P_forward = P_plasma is never assumed.", "ICP-14 measurement reference"),
+        R("A910-A92-A903-04", "A9.2 rf_measurement_reference", "merge", it.format("ICP-14"),
+          {"a9_2_measurement_reference": ABSENT}, {"a9_2_measurement_reference": MEAS_REF + " (" +
+                                                    a92_src("rf_measurement_reference") + ")"},
+          "ICP-14 retained quantities"),
+        R("A910-A92-A903-05", "A9.2 rf_500W", "supersede", it.format("ICP-15"),
+          {"requirement": "rated for at least the full laboratory forward power (row 72)", "status": "TBD",
+           "tbd": "TBD - requires the generator/matching-network selection"},
+          {"requirement": "Coax, vacuum feedthrough, connectors and the local matching elements (incl. their voltage and "
+                          "current) are selected only after the expected mismatch envelope is characterized (A9.2): the "
+                          "row-72 0-500 W figure is a laboratory delivered/operating investigation capability, not a "
+                          "sufficient component rating by itself (A9-07 sensitivity: VSWR about 5.2 -> P_forward about "
+                          "925 W for 500 W delivered); impedance, voltage rating and connector family follow the "
+                          "impedance map and the selected generator (quotations only, row 8).",
+           "status": "TBD (TBD_AFTER_IMPEDANCE_MAP, A9.2)", "tbd": RATINGS_TBD}, "ICP-15 ratings after impedance map"),
+        R("A910-A92-A903-06", "A9.2 rf_protection", "merge", it.format("ICP-16"),
+          {"a9_2_protection": ABSENT, "a9_2_trip_thresholds": ABSENT},
+          {"a9_2_protection": PROTECTION, "a9_2_trip_thresholds": TRIP_TBD}, "ICP-16 RF protection items"),
+        R("A910-A92-A903-07", "A9.2 rf_500W", "merge", it.format("ICP-12"), {"a9_2_interpretation": ABSENT},
+          {"a9_2_interpretation": "0-500 W is a laboratory delivered/operating investigation capability, not a "
+                                  "component rating (" + a92_src("rf_500W") + ")"}, "ICP-12 interpretation"),
+        R("A910-A92-A903-08", "A9.2 OQ-A907-11", "merge", it.format("ICP-18"), {"a9_2_note": ABSENT},
+          {"a9_2_note": "with the local match (A9.2 OQ-A907-11) the flexible coax across the stand is the retained, "
+                        "approximately controlled 50-ohm segment; the on-module match adds mass / stiffness on the "
+                        "moving platform, so the sham configuration carries an equivalent (row 133; PROPOSED, value TBD - "
+                        "requires the match selection and module drawing)"}, "ICP-18 coax role"),
+        R("A910-A92-A903-09", "A9.2 OQ-A907-11, icp_coupled_thermal", "merge", it.format("ICP-36"), {"a9_2_note": ABSENT},
+          {"a9_2_note": "the local matching network sits on / adjacent to the module (A9.2), so its loss "
+                        "P_line/match,loss is dissipated on the module and is part of Q_RF/match in ICP-43; the 600 W "
+                        "RF-only partial allocation term is unchanged and is not a component rating"},
+          "ICP-36 local match heat"),
+        R("A910-A92-A903-10", "A9.2 icp_coupled_thermal, 13W_pole_allowance", "replace",
+          it.format("ICP-43") + "/h1_heat_allowance_a9_07",
+          "every hall_icp_neutralizer thermal CLOSES is conditional on the actual ICP-43 heat meeting this allowance",
+          "every hall_icp_neutralizer thermal result is an uncoupled sensitivity reported as UNRESOLVED (" + COUPLED_TEXT +
+          "); " + POLE_TEXT, "ICP-43 coupled thermal status"),
+        R("A910-A92-A903-11", "A9.2 icp_coupled_thermal, OQ-A907-11", "merge", it.format("ICP-43"),
+          {"a9_2_coupled_thermal": ABSENT},
+          {"a9_2_coupled_thermal": {"ICP_COUPLED_THERMAL": UNRES, "required_terms": COUPLED_TERMS,
+                                    "local_match": "the local match sits on / adjacent to the module (A9.2): Q_RF/match "
+                                                   "enters Q_mod",
+                                    "prohibited_assumption": "negligible ICP thermal coupling",
+                                    "source": a92_src("icp_coupled_thermal")}}, "ICP-43 coupled thermal block"),
+        R("A910-A92-A903-12", "A9.2 icp_coupled_thermal, radiative_view_requirement", "replace",
+          it.format("ICP-05") + "/view_condition_a9_07", "the downstream module's view of the H-1 exit face enters the "
+          "ICP-43 heat split", "the downstream module's view of the H-1 exit face enters the ICP-43 heat split; A9.2: the "
+          "ICP assembly's geometric effect on H-1 radiation is a required term of the coupled thermal model "
+          "(ICP_COUPLED_THERMAL = UNRESOLVED); radiative-view objective ICP-47", "ICP-05 view condition"),
+        R("A910-A92-A903-13", "A9.2 radiative_view_requirement, 13W_pole_allowance", "append", "/items", None, {
+            "id": "ICP-47", "group": "mechanical",
+            "title": "Radiative-view-factor design objective for the downstream ICP assembly",
+            "requirement": "The ICP mechanical design carries a radiative-view-factor objective (A9.2): investigate "
+                           + "; ".join(VIEW_OBJECTIVE) + ". The geometry is not optimized for compactness alone; the ICP "
+                           "must not solve the cathode problem by creating an unacceptable Hall-head thermal problem. The "
+                           "downstream ICP can obstruct H-1's radiative view, radiate back toward the Hall head, conduct "
+                           "heat through the carrier and intercept plume energy; a coupled view-factor / conduction "
+                           "calculation (A9-07 A9H-TH-01) is required before thermal closure, and the negligible-coupling "
+                           "assumption is prohibited (" + POLE_TEXT + ").",
+            "value": None, "units": "- (view factors); mm (axial spacing)",
+            "basis": "A9.2 radiative_view_requirement / icp_coupled_thermal / 13W_pole_allowance; the >= 50 K rule of "
+                     "owner row 86 applies to the resulting temperatures (ICP-37)",
+            "sources": [{"path": A92_REL, "sha256": A92_SHA, "id": x, "role": "owner decision (A9.2)"}
+                        for x in ("radiative_view_requirement", "icp_coupled_thermal", "13W_pole_allowance")],
+            "evidence_class": None, "status": "OWNER_GIVEN_OBJECTIVE (A9.2); geometry TBD", "freeze_point": "LOCK-1",
+            "verification": "view-factor analysis of the module drawing + coupled H-1 / ICP thermal model; thermocouple "
+                            "map with the module installed / removed in S1a",
+            "owner_rows": [], "applies_to": ["hall_icp_neutralizer"],
+            "tbd": "TBD - requires the KC-1 / ICP module drawing, its view factors to H-1 and the coupled thermal model "
+                   "(A9.2 post-A9 priority P3)"}, "ICP-47 radiative-view objective"),
+        R("A910-A92-A903-14", "A9.2 OQ-A907-11", "merge", "/open_owner_questions[id=ICPQ-05]",
+          {"superseded_in_part_by_a9_2": ABSENT},
+          {"superseded_in_part_by_a9_2": "location superseded for the baseline by A9.2 OQ-A907-11 (local adjustable "
+                                         "match on / adjacent to the ICP module; coupler on the generator / 50-ohm side); "
+                                         "the A9.1 answer is kept as history (" + a92_src("OQ-A907-11") + ")"},
+          "ICPQ-05 supersession"),
+        R("A910-A92-A903-15", "A9.2 OQ-A907-11", "supersede", "/h3_h4_inputs/h3_procurement_quotation_only[1]",
+          {"item": "matching network (auto or manual) rated for full forward power"},
+          {"item": "adjustable LOCAL matching network on / immediately adjacent to the ICP module (development article, "
+                   "A9.2); component ratings incl. matching-element voltage / current TBD_AFTER_IMPEDANCE_MAP"},
+          "h3 matching item"),
+        R("A910-A92-A903-16", "A9.2 rf_protection", "append", "/h3_h4_inputs/h3_procurement_quotation_only", None,
+          {"item": "RF source protection: " + ", ".join(PROTECTION) + " (trip thresholds TBD after load "
+                   "characterization)", "spec_level": "ICP-16", "status": "quotation only (row 8)"},
+          "h3 protection item"),
+        R("A910-A92-A903-17", "A9.2 post_a9_priorities (P1, P2)", "append", "/h3_h4_inputs/h4_tests", None,
+          {"stage": "ICP bench (A9.2 P1 / P2; recommended, not launched)",
+           "measure": "I_e(P_RF, Z, p, mdot, gas) (ICP-45) and the impedance map Z_antenna = R + jX vs mdot, P_RF, p, "
+                      "gas composition and Hall operating point",
+           "closes": "ICP-45 entry evidence; ICP-13 flight implementation; ICP-15 ratings"}, "h4 impedance map"),
+    ]
+
+
+def _a92_a904() -> list:
+    it = "/items[id={}]"
+    return [
+        R("A910-A92-A904-01", "A9.2 OQ-A907-11, rf_measurement_reference", "supersede", it.format("UB-RF-09"),
+          {"value": "directional-coupler reference plane AFTER the matching network"},
+          {"value": "directional coupler on the generator / 50-ohm side of the LOCAL matching network (on / immediately "
+                    "adjacent to the ICP module; A9.2 OQ-A907-11 supersedes the A9.1 off-platform arrangement for the "
+                    "baseline); " + MEAS_REF}, "UB-RF-09 reference plane"),
+        R("A910-A92-A904-02", "A9.2 OQ-A907-11", "merge", it.format("UB-RF-09"), {"a9_2_decision": ABSENT},
+          {"a9_2_decision": a92_src("OQ-A907-11") + "; " + a92_src("rf_measurement_reference")}, "UB-RF-09 source"),
+        R("A910-A92-A904-03", "A9.2 rf_measurement_reference", "supersede", it.format("UB-RF-05"),
+          {"name": "matching-network and cable loss between the coupler plane and the coil"},
+          {"name": "50-ohm line and local matching-network loss P_line/match,loss between the coupler plane "
+                   "(generator / 50-ohm side) and the antenna (A9.2)"}, "UB-RF-05 name"),
+        R("A910-A92-A904-04", "A9.2 rf_measurement_reference", "replace", it.format("UB-RF-04") + "/value",
+          "the operating |Gamma| at the coupler plane", "the operating |Gamma| at the coupler plane (A9.2: generator / "
+          "50-ohm side of the local match, i.e. the residual mismatch after the local match)", "UB-RF-04 |Gamma|"),
+        R("A910-A92-A904-05", "A9.2 rf_measurement_reference", "append", "/measurement_chains[dq=UB-DQ-RF]/equations",
+          None, "P_delivered = P_forward - P_reflected - P_line/match,loss (A9.2; the same quantity as P_coil above, "
+                "P_line/match,loss = P_loss,mn + P_loss,cable); P_forward = P_plasma is never assumed",
+          "P_delivered equation"),
+        R("A910-A92-A904-06", "A9.2 OQ-A907-11, icp_matching_strategy", "supersede", "/interface_demands[id=IF-08]",
+          {"value": "A9.1 A9-03-matching (ICD ICP-13)"},
+          {"value": "A9.2 OQ-A907-11 (ICD ICP-13): adjustable local match on / adjacent to the ICP module, coupler on the "
+                    "generator / 50-ohm side; flight match implementation deferred until the impedance map; ratings "
+                    "TBD_AFTER_IMPEDANCE_MAP"}, "IF-08"),
+    ]
+
+
+def _a92_a909() -> list:
+    rf = "/packages[id=RFQ-04]/requirements[id={}]"
+    def src(item):
+        return {"type": "a9_2", "key": "A9.2", "id": item, "path": A92_REL, "pointer": "/decisions/" + item,
+                "sha256": A92_SHA}
+    a92s = src("OQ-A907-11")
+    return [
+        R("A910-A92-A909-01", "A9.2 OQ-A907-11", "supersede", "/packages[id=RFQ-01]/requirements[id=RFQ-01-R12]",
+          {"title": "matching network off the platform", "requirement": "OFF the moving platform",
+           "value": "off-platform"},
+          {"title": "local matching network on the ICP module (moving platform)",
+           "requirement": "Baseline (A9.2 OQ-A907-11): the adjustable local RF matching network sits on / immediately "
+                          "adjacent to the ICP module on the moving platform; an approximately controlled 50-ohm flexible "
+                          "coax crosses the stage (see RFQ-04); the stand must accept one live and one sham RF coax and "
+                          "the on-module match mass (TBD - requires the match selection).",
+           "value": "on-module local match (A9.2)"}, "RFQ-01-R12 local match"),
+        R("A910-A92-A909-02", "A9.2 OQ-A907-11", "append", "/packages[id=RFQ-01]/requirements[id=RFQ-01-R12]/sources",
+          None, a92s, "RFQ-01-R12 A9.2 source"),
+        R("A910-A92-A909-03", "A9.2 OQ-A907-11", "replace", "/packages[id=RFQ-04]/scope",
+          "off-platform matching network, calibrated dual directional coupler with forward/reflected sensors at the "
+          "reference plane after the matching network",
+          "adjustable LOCAL matching network on / immediately adjacent to the ICP module (A9.2 OQ-A907-11), calibrated "
+          "dual directional coupler with forward/reflected sensors on the generator / 50-ohm side of the local match "
+          "(component ratings TBD_AFTER_IMPEDANCE_MAP)", "RFQ-04 scope"),
+        R("A910-A92-A909-04", "A9.2 OQ-A907-11", "supersede", "/packages[id=RFQ-04]/quantities[1]",
+          {"item": "matching network (manual or auto)"},
+          {"item": "adjustable local matching network for on-module mounting (development article, A9.2)"},
+          "RFQ-04 quantity"),
+        R("A910-A92-A909-05", "A9.2 OQ-A907-11, icp_matching_strategy", "supersede", rf.format("RFQ-04-R06"),
+          {"requirement": "Baseline OFF the moving thrust-stand platform", "value": "off-platform"},
+          {"requirement": "Baseline (A9.2 OQ-A907-11): " + LOCAL_CHAIN + "; adjustable for the development article; the "
+                          "long flexible coax stays an approximately controlled 50-ohm line; the flight implementation "
+                          "is deferred until the impedance map; matched sham routing in the C1 configuration (row 133).",
+           "value": "local match on / immediately adjacent to the ICP module"}, "RFQ-04-R06 location"),
+        R("A910-A92-A909-06", "A9.2 OQ-A907-11", "append", rf.format("RFQ-04-R06") + "/sources", None, a92s,
+          "RFQ-04-R06 A9.2 source"),
+        R("A910-A92-A909-07", "A9.2 rf_500W, icp_matching_strategy", "supersede", rf.format("RFQ-04-R07"),
+          {"requirement": "Rated for the full laboratory forward power", "value": "TBD - requires A902-22"},
+          {"requirement": "Adjustable (manual or auto-tuned) local matching network for the development article; its "
+                          "power, voltage and current ratings are selected only after the mismatch envelope is "
+                          "characterized (A9.2: 0-500 W is a laboratory delivered/operating capability, not a component "
+                          "rating); any DC draw (tuning actuators/controller) metered as its own bus slot.",
+           "value": RATINGS_TBD + "; A902-22 DC draw; ICD ICP-15"}, "RFQ-04-R07 ratings TBD"),
+        R("A910-A92-A909-08", "A9.2 rf_measurement_reference", "supersede", rf.format("RFQ-04-R08"),
+          {"requirement": "at a declared reference plane AFTER the matching network", "value": "after the matching network"},
+          {"requirement": "Directional coupler with forward and reflected sensors on the generator / 50-ohm side of the "
+                          "local matching network (A9.2 OQ-A907-11); calibrated at 13.56 MHz; coupling factor, "
+                          "directivity and sensor linearity certified; " + MEAS_REF + ". Ratings at the residual |Gamma| "
+                          "after the local match are TBD_AFTER_IMPEDANCE_MAP (A9-07 IDA7-22, H3-A907-03).",
+           "value": "generator / 50-ohm side of the local match"}, "RFQ-04-R08 coupler position"),
+        R("A910-A92-A909-09", "A9.2 rf_measurement_reference", "append", rf.format("RFQ-04-R08") + "/sources", None,
+          src("rf_measurement_reference"), "RFQ-04-R08 A9.2 source"),
+        R("A910-A92-A909-10", "A9.2 OQ-A907-11", "replace", rf.format("RFQ-04-R11") + "/requirement",
+          "(A9-07 H3-A907-04, REV-33, A9H-INS-15).", "(A9-07 H3-A907-04, REV-33, A9H-INS-15); A9.2: this coax is the "
+          "retained 50-ohm segment on the generator side of the local match; ratings TBD_AFTER_IMPEDANCE_MAP.",
+          "RFQ-04-R11"),
+        R("A910-A92-A909-11", "A9.2 rf_500W", "supersede", rf.format("RFQ-04-R12"),
+          {"requirement": "Rated for the full laboratory forward power", "value": "TBD - requires ICD ICP-15"},
+          {"requirement": "RF-voltage, creepage/clearance and Paschen rating and combined RF + DC stress qualification "
+                          "(ICP-44; not replaced by the C1 keeper hipot); power / voltage / current ratings selected only "
+                          "after the mismatch envelope is characterized (A9.2; 0-500 W is not a component rating).",
+           "value": RATINGS_TBD + "; ICD ICP-15 / ICP-44 (LOCK-1)"}, "RFQ-04-R12 ratings TBD"),
+        R("A910-A92-A909-12", "A9.2 OQ-A907-11, icp_matching_strategy", "supersede", rf.format("RFQ-04-R15"),
+          {"title": "optional on-module fixed pre-match (option line)", "value": "TBD - requires the owner answer"},
+          {"title": "optional on-module fixed pre-match (option line) - SUPERSEDED_BY_A9_2",
+           "value": "TBD - requires the ICP impedance map (A9.2 P2): the option line is superseded by the adjustable local "
+                    "match (RFQ-04-R06 / R17); a fixed network is only one possible later flight implementation"},
+          "RFQ-04-R15 superseded"),
+        R("A910-A92-A909-13", "A9.2 rf_500W", "merge", rf.format("RFQ-04-R02"), {"a9_2_interpretation": ABSENT},
+          {"a9_2_interpretation": "0-500 W is a laboratory delivered/operating investigation capability, not a component "
+                                  "rating (A9.2 rf_500W)"}, "RFQ-04-R02 interpretation"),
+        R("A910-A92-A909-14", "A9.2 rf_protection", "append", "/packages[id=RFQ-04]/requirements", None, {
+            "id": "RFQ-04-R16", "title": "RF source protection functions",
+            "requirement": "The RF source provides " + ", ".join(PROTECTION) + " (A9.2). Exact reflected-power and VSWR "
+                           "trip thresholds are frozen after the ICP antenna/load characterization and are not stated "
+                           "in this RFQ.",
+            "value": TRIP_TBD, "units": "W; -", "basis": "A9.2 rf_protection", "sources": [src("rf_protection")],
+            "evidence_class": None, "status": "TBD", "freeze_point": "after-evidence",
+            "applies_to": ["hall_icp_neutralizer"], "note": "added in A9-10 for A9.2 (quotation only; no purchase order)"},
+          "RFQ-04-R16 protection"),
+        R("A910-A92-A909-15", "A9.2 OQ-A907-11, icp_matching_strategy, rf_500W", "append",
+          "/packages[id=RFQ-04]/requirements", None, {
+              "id": "RFQ-04-R17", "title": "local matching network: on-module mass and matching-element voltage / current",
+              "requirement": "Supplier states the mass and envelope of the adjustable local matching network for on-module "
+                             "mounting and the voltage / current capability of its elements; required values are set "
+                             "after the impedance map (A9.2). No rating is stated in this RFQ.",
+              "value": RATINGS_TBD, "units": "kg; V; A", "basis": "A9.2 OQ-A907-11 / icp_matching_strategy / rf_500W",
+              "sources": [src("OQ-A907-11"), src("icp_matching_strategy"), src("rf_500W")], "evidence_class": None,
+              "status": "TBD", "freeze_point": "after-evidence", "applies_to": ["hall_icp_neutralizer"],
+              "note": "added in A9-10 for A9.2 (quotation only)"}, "RFQ-04-R17 local match mass / V-I"),
+        R("A910-A92-A909-16", "A9.2 OQ-A907-11", "append", "/packages[id=RFQ-05]/requirements", None, {
+            "id": "RFQ-05-R13", "title": "on-module mounting provision for the local matching network",
+            "requirement": "The ICP source components provide a mounting and thermal interface for the local matching "
+                           "network on / immediately adjacent to the module (A9.2); its heat (P_line/match,loss) is part "
+                           "of the module heat load (ICD ICP-43) and its mass of the on-module payload (ICD ICP-08).",
+            "value": "TBD - requires the ICP module drawing and the local-match selection (A9.2; ratings "
+                     "TBD_AFTER_IMPEDANCE_MAP)", "units": "kg; W", "basis": "A9.2 OQ-A907-11",
+            "sources": [src("OQ-A907-11"), src("icp_coupled_thermal")], "evidence_class": None, "status": "TBD",
+            "freeze_point": "after-evidence", "applies_to": ["hall_icp_neutralizer"],
+            "note": "added in A9-10 for A9.2 (quotation only)"}, "RFQ-05-R13 on-module match provision"),
+        R("A910-A92-A909-17", "A9.2 anode_316L, anode_approach", "set", "/a9_2_anode_note", ABSENT,
+          "No anode RFQ is implied by A9.2: ANODE_BASELINE = OPEN; 316L REJECTED_AS_CURRENT_BASELINE for the "
+          "design-representative / flight anode; final anode material OPEN; no refractory metal selected; the anode "
+          "material and heat-removal path are design blockers (A9-07 A9H-ANODE-01 / A9H-ANODE-02). RFQ-05-R03 concerns "
+          "the ICP collector, not the Hall anode.", "no anode RFQ"),
+    ]
+
+
+def _a92_a906() -> list:
+    b = "/a9_flight_bom/flight[id={}]"
+    return [
+        R("A910-A92-A906-01", "A9.2 OQ-A907-11, icp_matching_strategy", "supersede", b.format("A9B-20"),
+          {"name": "flight RF matching network", "status": "TBD - requires a flight matching-network design"},
+          {"name": "local RF matching network hardware on / immediately adjacent to the ICP module (A9.2)",
+           "status": "TBD - requires the local-match selection after the impedance map (A9.2: adjustable for the "
+                     "development article; flight implementation deferred until Z_antenna = R + jX is mapped)"},
+          "A9B-20 local match line"),
+        R("A910-A92-A906-02", "A9.2 OQ-A907-11", "merge", b.format("A9B-20"), {"allocation_mapping_proposal_a9_2": ABSENT},
+          {"allocation_mapping_proposal_a9_2": "PROPOSED only: the local match is on the ICP module; it may be booked "
+                                               "within the ICP-head (AL-05) or the RF (AL-06) allocation; kept on AL-06 "
+                                               "here (no number changes); owner call with MQ-07"},
+          "A9B-20 allocation mapping proposal"),
+        R("A910-A92-A906-03", "A9.2 OQ-A907-11", "merge", b.format("A9B-17"), {"a9_2_note": ABSENT},
+          {"a9_2_note": "the local matching network hardware is mounted on / adjacent to this module (A9.2); its mass is "
+                        "the separate TBD line A9B-20"}, "A9B-17 note"),
+        R("A910-A92-A906-04", "A9.2 anode_316L, anode_approach", "merge", b.format("A9B-15"), {"a9_2_anode": ABSENT},
+          {"a9_2_anode": ANODE_TEXT + "; anode material and heat-removal path hardware mass TBD - requires the anode "
+                                      "design (A9-07 A9H-ANODE-01 / A9H-ANODE-02)"}, "A9B-15 anode note"),
+        R("A910-A92-A906-08", "A9.2 OQ-A907-11", "replace", "/a9_flight_bom/ground_article_only[1]/item",
+          "matching network off the moving platform (A9.1 A9-03-matching)",
+          "adjustable local matching network on / adjacent to the ICP module (A9.2 OQ-A907-11; supersedes the A9.1 "
+          "off-platform location)", "ground-article matching location"),
+        R("A910-A92-A906-09", "A9.2 OQ-A907-11", "replace", "/a9_1_decisions_applied[4]/how_applied",
+          "matching network off the moving platform (ground)", "matching network off the moving platform (ground; "
+          "superseded for the baseline by A9.2 OQ-A907-11: local match on / adjacent to the ICP module)",
+          "A9.1 application superseded in part"),
+        R("A910-A92-A906-05", "A9.2 coil_mass_correction", "supersede", "/lv_coil_sensitivity",
+          {"label": "sensitivity only (not booked)"},
+          {"label": "sensitivity only (not booked): LV-COIL adoption is an owner/LOCK-1 call; mass to book TBD - requires "
+                    "the frozen H-1 coil (A9-07 IDA7-01). A9.2 coil-mass correction: the 60 W-basis copper (0.136 kg) is "
+                    "NOT the MC-1 coil mass; the RP-1 basis (1.58 kg) is the complete-coil copper estimate; the two rows "
+                    "are different bases, never alternative estimates of the same mass"}, "LV-COIL label"),
+        R("A910-A92-A906-06", "A9.2 coil_mass_correction", "merge", "/lv_coil_sensitivity",
+          {"a9_2_coil_mass_correction": ABSENT}, {"a9_2_coil_mass_correction": COIL_TEXT}, "coil-mass correction"),
+        R("A910-A92-A906-07", "A9.2 coil_mass_correction", "merge", "/wet_closure",
+          {"closure_mass_basis_a9_2": ABSENT},
+          {"closure_mass_basis_a9_2": "the closure books MC-1 only as A9B-16 (3.504 kg = H2-1 H21-24 iron 1.925 kg + "
+                                      "complete-coil copper 1.579 kg); the 0.136 kg 60 W-basis copper and the LV-COIL "
+                                      "sensitivity are never booked (A9.2 coil_mass_correction)"}, "closure mass basis"),
+    ]
+
+
+def _a92_a902() -> list:
+    sl = "/slots[slot={}]"
+    return [
+        R("A910-A92-A902-01", "A9.2 OQ-A907-11, rf_measurement_reference", "merge", sl.format("icp_rf_source"),
+          {"a9_2_note": ABSENT},
+          {"a9_2_note": "A9.2: forward/reflected power is measured on the generator / 50-ohm side of the local match; "
+                        "the 50-ohm line and local matching-network loss P_line/match,loss lies inside P_forward and is "
+                        "therefore paid through this slot's DC input; P_delivered = P_forward - P_reflected - "
+                        "P_line/match,loss is a measurement quantity, never a bus quantity"}, "icp_rf_source match loss"),
+        R("A910-A92-A902-02", "A9.2 OQ-A907-11, icp_matching_strategy", "merge", sl.format("icp_matching_network"),
+          {"a9_2_note": ABSENT},
+          {"a9_2_note": "A9.2: adjustable LOCAL matching network on / adjacent to the ICP module (development article); "
+                        "this slot carries only its tuning actuator / controller DC draw; its RF dissipation "
+                        "(P_line/match,loss) is counted in icp_rf_source and is a module heat term (ICD ICP-43 "
+                        "Q_RF/match)"}, "icp_matching_network slot"),
+        R("A910-A92-A902-03", "A9.2 OQ-A907-11", "replace", "/items[id=A902-22]/source",
+          "(A9-03, merged; A9.1 A9-03-matching fixes the location off the moving platform but not fixed vs auto-tuned; "
+          "on-module pre-match OQ-A907-11 OPEN)",
+          "(A9-03, merged; A9.2 OQ-A907-11: adjustable local match on / adjacent to the ICP module for development; "
+          "flight implementation after the impedance map)", "A902-22 source"),
+        R("A910-A92-A902-04", "A9.2 OQ-A907-11", "replace", "/h3_inputs[2]/basis",
+          "(A9.1 A9-03-matching: off the moving platform; fixed vs auto-tuned and the on-module pre-match OQ-A907-11 "
+          "still open)", "(A9.2 OQ-A907-11: adjustable local match on / adjacent to the ICP module; ratings "
+          "TBD_AFTER_IMPEDANCE_MAP)", "h3 matching basis"),
+    ]
+
+
+def _a92_a901() -> list:
+    return [
+        R("A910-A92-A901-01", "A9.2 OQ-A907-11", "replace", "/interface_demands[8]/status",
+          "matching network off the platform", "matching network off the platform (superseded for the baseline by A9.2 "
+          "OQ-A907-11: local adjustable match on / adjacent to the ICP module, coupler on the generator / 50-ohm side)",
+          "A9-01 demand text"),
+    ]
+
+
+def _a92() -> dict:
+    return {"A9-01": _a92_a901(), "A9-02": _a92_a902(), "A9-03": _a92_a903(), "A9-04": _a92_a904(),
+            "A9-06": _a92_a906(), "A9-07": _a92_a907(), "A9-09": _a92_a909()}

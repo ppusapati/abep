@@ -8,7 +8,7 @@
 | machine-readable | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` |
 | replaces | the frozen parallel RF||Hall v2 input list for the primary line (row 145); v2 inputs are never supplied or invented (row 146) |
 | configuration ids | `hall_c1_reference`, `hall_icp_neutralizer` |
-| evidence input | `docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json` (`1c511db53b5874168c361683bae3d121bc0883a99868e72906bb5cf9234cc8fc`) |
+| evidence input | `docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json` (`ec300df97864c84617d47a76138acc37177c9453f306cbb2bf139874f2c68621`) |
 
 **Pins (sha256, verified at build):**
 
@@ -290,7 +290,7 @@ Producing stage for every measured input: PENDING docs/experiments/hall_icp/prer
 
 ## A9-10 reconciliation (fo_a9_10_integration)
 
-Changes applied by A9-10 after this lane's verified build (record `docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json`, overlay `docs/experiments/hall_icp/integration/a9_10_overlay.py`). A9.1 decision `docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json` (sha256 `7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4`). A9 stays OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; no winner; no prediction.
+Changes applied by A9-10 after this lane's verified build (record `docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json`, overlay `docs/experiments/hall_icp/integration/a9_10_overlay.py`). A9.1 decision `docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json` (sha256 `7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4`); A9.2 decision `docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json` (sha256 `e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03`). A9 stays OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; no winner; no prediction.
 
 | change | driver | op | pointer | count | summary |
 |---|---|---|---|---|---|

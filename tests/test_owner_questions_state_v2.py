@@ -116,3 +116,17 @@ def test_every_lane_open_question_is_listed(doc):
         for q in json.loads((ROOT / rel).read_text(encoding="utf-8")).get("open_owner_questions", []):
             assert q["id"] in ids, (rel, q["id"])
     assert any(r["id"] == "M16-V3-Q-01" and r["status"] == "OPEN" for r in doc["rows"])
+
+
+def test_a9_2_rows_and_oq_a907_11(doc):
+    by = {(r["id"], r["kind"]): r for r in doc["rows"]}
+    q = [r for r in doc["rows"] if r["id"] == "OQ-A907-11"][0]
+    assert q["status"] == "ANSWERED_BY_A9_2" and "decisions.OQ-A907-11" in q["answer_pointer"]
+    a92 = [r for r in doc["rows"] if r["kind"] == "a9_2"]
+    keys = json.loads((ROOT / "docs/experiments/hall_icp/integration/a9_2_inputs/"
+                               "OD_2026_09_30_A9_2_a907_followup_owner_decisions.json").read_text(encoding="utf-8"))
+    assert sorted(r["id"] for r in a92) == sorted("A9.2 " + k for k in keys["decisions"])
+    assert all(r["status"] == "ANSWERED" and r["status_detail"] == "ANSWERED (A9.2)" for r in a92)
+    assert "OQ-A907-11" in by[("A9.2 OQ-A907-11", "a9_2")]["answers_lane_questions"]
+    assert "ANSWERED_BY_A9_2" in doc["status_vocabulary"]
+    assert any(r["id"] == "OQ-A910-05" and r["status"] == "OPEN" for r in doc["rows"])

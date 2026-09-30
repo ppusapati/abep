@@ -50,58 +50,66 @@
   {
    "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A7_execution_model.json",
    "sha256": "dae69983d9aeeb4838d9ff973a5f824c973219f8cc528adfb12717c4bb92c925"
+  },
+  {
+   "path": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03"
+  },
+  {
+   "path": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9"
   }
  ],
  "lane_deliverables_read": [
   {
    "lane": "A9-01",
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "sha256": "1310a84fa9840792ab7ae9617c55fd1a041653064ccaa6eb364785214f45a4ee"
+   "sha256": "ef07a3ecdfadec2c5933de2683fc0cc09466b7a25de268a8ac4fde2dfc3256b8"
   },
   {
    "lane": "A9-02",
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "sha256": "a16496b06df5876efb8764ec183bf65888c372e2719983b07cf2c946112704af"
+   "sha256": "3178d462d230656a313cd33060a42a74d99bc9ba3dc6afdc2036c0ca01664cb7"
   },
   {
    "lane": "A9-03",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "81b073e6545d9bffb12b655058ca3bc6dec8827fd9f4b8779132e30678741997"
+   "sha256": "05d6f20cb758eaaf71ad4598f6a57f6965ec8389d92a04931d63919dc3a5f097"
   },
   {
    "lane": "A9-04",
    "path": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "sha256": "4d087e993410a795cd6bc25c3fd5af19f481a9692ff13cc6fe8a56b7e4bb4b44"
+   "sha256": "46df69a1024d512d2880fd0528798c13ee9b8bb3ab155538550f597bc65d4822"
   },
   {
    "lane": "A9-05ev",
    "path": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
-   "sha256": "1c511db53b5874168c361683bae3d121bc0883a99868e72906bb5cf9234cc8fc"
+   "sha256": "ec300df97864c84617d47a76138acc37177c9453f306cbb2bf139874f2c68621"
   },
   {
    "lane": "A9-05vi",
    "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-   "sha256": "4924f31b9b0a9315b96ecc121ece07ca3ef47d4e86515b17e76144fcb212da61"
+   "sha256": "4a54bd1e4d52af7073a6016c07d47d10330220b7c7f45778b3996930714ee5e2"
   },
   {
    "lane": "A9-06",
    "path": "docs/budgets/mass_a9/mass_a9_v1.json",
-   "sha256": "fa32662a3450df04bb14cf36adaf59c6a55847e3e30b28b1062bdfe95e624a4e"
+   "sha256": "046cda4a07318d283d46ae05c0557113dbc72b7bfbf37469d58b979ab94b9f30"
   },
   {
    "lane": "A9-07",
    "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
-   "sha256": "c8d575cb70e0472305cf632f1d9b9b24ae1108bc1cc1ddc32ff1a6b7699bd5c4"
+   "sha256": "27978613fc09a1aa23ac55a616ab543ca59ad6d144d0ec25527f7a1fe904fd86"
   },
   {
    "lane": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
-   "sha256": "c2540246cc1e9bf394f94f51b1f0628fab4545d5112c1b558e6c35b761e302d1"
+   "sha256": "00752fb35e0821ca29b8b808c6fb143a0127f90376c1fd3f1074d2e2df36d766"
   },
   {
    "lane": "A9-09",
    "path": "docs/procurement/rfq_a9/rfq_a9_v1.json",
-   "sha256": "6b13fb03320edda1ea3455df7dff396b1f9e933d0a4abebc56ae00dddf17afb7"
+   "sha256": "962f9c4a04df5f29db9f577c04d070b6921829986a1a0bb1d030f0075a4838dc"
   }
  ],
  "scheduler_rule": {
@@ -576,7 +584,7 @@
     },
     {
      "lane": "A9-07",
-     "how": "H21-22 central-cathode floor removed; exit face = IP-EXIT (REV-01..03)",
+     "how": "H21-22 central-cathode floor removed; exit face = IP-EXIT (REV-01..03); A9.2 anode design blockers A9H-ANODE-01 (material) / A9H-ANODE-02 (heat-removal path), ANODE_BASELINE = OPEN",
      "blocking_item": "FEMM of the preliminary MC-1"
     }
    ],
@@ -637,7 +645,7 @@
     },
     {
      "lane": "A9-07",
-     "how": "EM-only, FeCo-2V/pure iron, ceramic coil; coil node closure CLOSES_ONLY_WITH_COMBINED_LEVERS / CLOSES",
+     "how": "EM-only, FeCo-2V/pure iron, ceramic coil; coil node closure UNRESOLVED (A9.2 ICP_COUPLED_THERMAL; uncoupled sensitivity CLOSES_ONLY_WITH_COMBINED_LEVERS / CLOSES)",
      "blocking_item": "sourced B_sat(T) and coil qualification"
     }
    ],
@@ -740,6 +748,12 @@
      "named_engineer": null,
      "rule": "row 140: a named responsible engineer is needed before the row can become READY"
     }
+   },
+   "a9_2": {
+    "statuses": {
+     "C1 conventional reference": "CONTROL_FALLBACK"
+    },
+    "source": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03) decisions.a9_10_statuses"
    }
   },
   {
@@ -862,8 +876,8 @@
     },
     {
      "lane": "A9-07",
-     "how": "thermal rerun with the owner rules; BN wall CLOSES_WITH_SINGLE_LEVER (REV-40..50)",
-     "blocking_item": "measured deposition fractions / sourced BN k(T)"
+     "how": "thermal rerun with the owner rules (REV-40..50); every hall_icp_neutralizer thermal closure reported UNRESOLVED (A9.2 ICP_COUPLED_THERMAL; BN wall uncoupled sensitivity CLOSES_WITH_SINGLE_LEVER)",
+     "blocking_item": "coupled H-1 / ICP thermal model (A9H-TH-01: Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume, ICP view factors; A9.2 ICP_COUPLED_THERMAL = UNRESOLVED)"
     },
     {
      "lane": "A9-09",
@@ -874,13 +888,13 @@
    "a9_refresh": {
     "blocking_item": {
      "source": "A9-07 docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json m16_impact (row 13)",
-     "text": "measured deposition fractions / sourced BN k(T)"
+     "text": "coupled H-1 / ICP thermal model (A9H-TH-01: Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume, ICP view factors; A9.2 ICP_COUPLED_THERMAL = UNRESOLVED)"
     },
     "execution_state": "BLOCKED",
     "worked_by": null,
     "not_worked_reason": "no registered follow-on is scoped to produce this item: A9-01..A9-10 are complete deliverables and the H3 / H4 waves are PLANNED_NOT_REGISTERED (v2 scheduler rule, accepted in row 141)",
-    "waits_on": "H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)",
-    "latest_decision_point": "before HI-S1 (score-bearing aborts at limit - 50 K, A9.1 UBQ-06)",
+    "waits_on": "design work outside every registered scope",
+    "latest_decision_point": "before any thermal closure of hall_icp_neutralizer and before HI-S1 (A9.2 ICP_COUPLED_THERMAL = UNRESOLVED; score-bearing aborts at limit - 50 K, A9.1 UBQ-06)",
     "a7_category": "proposal-only documentation gap",
     "owner": {
      "functional_role": "thermal lead",
@@ -888,6 +902,12 @@
      "named_engineer": null,
      "rule": "row 140: a named responsible engineer is needed before the row can become READY"
     }
+   },
+   "a9_2": {
+    "statuses": {
+     "coupled H-1/ICP thermal closure": "UNRESOLVED"
+    },
+    "source": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03) decisions.a9_10_statuses"
    }
   },
   {
@@ -1001,7 +1021,7 @@
     {
      "lane": "A9-07",
      "how": "instrument additions A9H-INS-01..16, calibrations A9H-CAL-01..05; RF chain ratings at the coupler-plane |Gamma| (rf_reference_plane)",
-     "blocking_item": "quotations (A9-09) + antenna impedance / pre-match decision (OQ-A907-11)"
+     "blocking_item": "quotations (A9-09) + ICP antenna impedance map (A9.2 P2; RF component ratings TBD_AFTER_IMPEDANCE_MAP)"
     },
     {
      "lane": "A9-09",
@@ -1012,13 +1032,13 @@
    "a9_refresh": {
     "blocking_item": {
      "source": "A9-07 docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json m16_impact (row 15)",
-     "text": "antenna impedance / pre-match decision (OQ-A907-11)"
+     "text": "ICP antenna impedance map (A9.2 P2; RF component ratings TBD_AFTER_IMPEDANCE_MAP)"
     },
     "execution_state": "BLOCKED",
     "worked_by": null,
     "not_worked_reason": "no registered follow-on is scoped to produce this item: A9-01..A9-10 are complete deliverables and the H3 / H4 waves are PLANNED_NOT_REGISTERED (v2 scheduler rule, accepted in row 141)",
-    "waits_on": "owner decision",
-    "latest_decision_point": "LOCK-1 (Gamma_max, OQ-A907-11)",
+    "waits_on": "H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)",
+    "latest_decision_point": "before the RF component ratings are frozen (A9.2: TBD_AFTER_IMPEDANCE_MAP; trip thresholds after the load characterization)",
     "a7_category": "test-readiness blocker",
     "owner": {
      "functional_role": "test and diagnostics lead",
@@ -1026,6 +1046,12 @@
      "named_engineer": null,
      "rule": "row 140: a named responsible engineer is needed before the row can become READY"
     }
+   },
+   "a9_2": {
+    "statuses": {
+     "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP"
+    },
+    "source": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03) decisions.a9_10_statuses"
    }
   },
   {
@@ -1226,12 +1252,20 @@
      "named_engineer": null,
      "rule": "row 140: named engineer needed before READY"
     }
+   },
+   "a9_2": {
+    "statuses": {
+     "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
+     "ICP electron-current capacity": "PENDING_ICP45",
+     "ICP RF power closure": "PENDING_HARDWARE"
+    },
+    "source": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03) decisions.a9_10_statuses"
    }
   },
   {
    "row": 19,
    "key": "flight_rf_chain",
-   "name": "flight RF chain: 13.56 MHz RF source (spacecraft-DC input), matching network, RF feedthrough / coax, optional fixed on-module pre-match",
+   "name": "flight RF chain: 13.56 MHz RF source (spacecraft-DC input), directional coupler, 50-ohm line, LOCAL matching network on / immediately adjacent to the ICP module (adjustable for development, A9.2), RF feedthrough",
    "group": "power",
    "flag": "primary investigation hypothesis (A9), not flight baseline",
    "baseline_flight_hardware": false,
@@ -1252,9 +1286,9 @@
      "document": "schemas/interfaces/icp_neutralizer_icd_v1.json",
      "document_status": "DRAFT_PENDING_OWNER",
      "items": {
-      "ICP-13": "OWNER_GIVEN (location, A9.1); pre-match OPEN (OQ-A907-11)",
+      "ICP-13": "OWNER_GIVEN (A9.2 OQ-A907-11: LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT; supersedes the A9.1 A9-03-matching off-platform location for the baseline)",
       "ICP-14": "TBD (value LOCK-2)",
-      "ICP-15": "TBD",
+      "ICP-15": "TBD (TBD_AFTER_IMPEDANCE_MAP, A9.2)",
       "ICP-16": "TBD",
       "ICP-24": "PARTIAL (slot ids defined by A9-02; loads and efficiencies TBD)"
      }
@@ -1266,7 +1300,7 @@
      "file": "docs/procurement/rfq_a9/packages/RFQ-04_rf_chain.md",
      "status": "RFQ_SPEC_READY_QUOTATION_ONLY (no purchase order; H3 gate)"
     },
-    "analysis_test_needed": "generator DC-input -> forward-power efficiency (A902-21, S1a); coupler-plane |Gamma| ratings (A9-07 rf_reference_plane, OQ-A907-11); flight-representative DC-input RF source scoping"
+    "analysis_test_needed": "generator DC-input -> forward-power efficiency (A902-21, S1a); ICP impedance map Z_antenna = R + jX vs mdot, P_RF, p, gas, Hall operating point (A9.2 P2) before any component rating (TBD_AFTER_IMPEDANCE_MAP); RF protection trip thresholds after the load characterization (A9.2); flight-representative DC-input RF source scoping"
    },
    "a9_lanes": [],
    "a9_refresh": {
@@ -1286,26 +1320,173 @@
      "named_engineer": null,
      "rule": "row 140: named engineer needed before READY"
     }
+   },
+   "a9_2": {
+    "statuses": {
+     "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
+     "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP",
+     "ICP RF power closure": "PENDING_HARDWARE"
+    },
+    "source": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03) decisions.a9_10_statuses"
+   }
+  },
+  {
+   "row": 20,
+   "key": "h1_anode_material",
+   "name": "H-1 anode material (design-representative / flight)",
+   "group": "propulsion",
+   "flag": "design blocker of the H-1 Hall head (A9.2); not flight baseline",
+   "baseline_flight_hardware": false,
+   "new_in_v3": true,
+   "cells": {
+    "requirement": "A9.2: 316L REJECTED_AS_CURRENT_BASELINE for the design-representative / flight anode (engineering / shakedown, coupon candidate, low-temperature development only); ANODE_BASELINE = OPEN; no refractory metal selected merely for melting point; T_operating <= T_validated,continuous - 50 K after the operating temperature is reduced; no new anode temperature limit",
+    "allocation": {
+     "mass": "inside AL-04 (A9-06 A9B-15, TBD)",
+     "power": "none (passive)"
+    },
+    "interface_status": {
+     "document": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+     "items": {
+      "A9H-ANODE-01": "TBD"
+     }
+    },
+    "preliminary_design": "none (ANODE_BASELINE = OPEN)",
+    "evidence_status": "A9-07 uncoupled thermal sensitivity only (anode worst case OPEN_LIMIT_TBD; no validated material limit)",
+    "procurement_status": "none (no anode RFQ implied, A9.2)",
+    "analysis_test_needed": "candidate-material trade (oxygen compatibility, sputtering, electrical behaviour, fabrication, thermal conductivity); biased + floating coupons (row 106)"
+   },
+   "a9_lanes": [
+    {
+     "lane": "A9-07",
+     "how": "A9H-ANODE-01: DESIGN BLOCKER: H-1 anode material (design-representative / flight)"
+    }
+   ],
+   "a9_2": {
+    "statuses": {
+     "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
+     "final anode material": "OPEN"
+    },
+    "source": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03) decisions.anode_316L / anode_approach"
+   },
+   "a9_refresh": {
+    "blocking_item": {
+     "source": "A9-07 docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json new_items A9H-ANODE-01",
+     "text": "DESIGN BLOCKER: H-1 anode material"
+    },
+    "execution_state": "BLOCKED",
+    "worked_by": null,
+    "not_worked_reason": "no registered follow-on is scoped to produce this item (accepted scheduler rule, row 141); recommended next lane P4 (anode design), not launched",
+    "waits_on": "design work outside every registered scope",
+    "latest_decision_point": "before any design-representative / score-bearing anode is built (A9.2; owner call on the trade)",
+    "a7_category": null,
+    "owner": {
+     "functional_role": "Hall thruster (H-1) lead (anode material)",
+     "accountable": "Praveen (accountable system owner, owner row 140)",
+     "named_engineer": null,
+     "rule": "row 140: named engineer needed before READY"
+    }
+   }
+  },
+  {
+   "row": 21,
+   "key": "h1_anode_heat_path",
+   "name": "H-1 anode heat-removal path",
+   "group": "propulsion",
+   "flag": "design blocker of the H-1 Hall head (A9.2); not flight baseline",
+   "baseline_flight_hardware": false,
+   "new_in_v3": true,
+   "cells": {
+    "requirement": "A9.2: attack the anode as a thermal-design problem first: reduce the actual anode operating temperature substantially (backplate conduction, support / feed-tube conduction, heat spreading, radiative area, coupling to spacecraft / stand, deposited power fraction; active cooling only if passive closure fails)",
+    "allocation": {
+     "mass": "inside AL-04 (A9-06 A9B-15, TBD)",
+     "power": "none (passive)"
+    },
+    "interface_status": {
+     "document": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+     "items": {
+      "A9H-ANODE-02": "TBD"
+     }
+    },
+    "preliminary_design": "none (ANODE_BASELINE = OPEN)",
+    "evidence_status": "A9-07 uncoupled thermal sensitivity only (anode worst case OPEN_LIMIT_TBD; no validated material limit)",
+    "procurement_status": "none (no anode RFQ implied, A9.2)",
+    "analysis_test_needed": "anode thermal redesign in the coupled H-1 / ICP model (A9-07 A9H-ANODE-02, A9H-TH-01)"
+   },
+   "a9_lanes": [
+    {
+     "lane": "A9-07",
+     "how": "A9H-ANODE-02: DESIGN BLOCKER: H-1 anode heat-removal path (thermal-design problem first)"
+    }
+   ],
+   "a9_2": {
+    "statuses": {
+     "anode thermal closure": "UNRESOLVED"
+    },
+    "source": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03) decisions.anode_316L / anode_approach"
+   },
+   "a9_refresh": {
+    "blocking_item": {
+     "source": "A9-07 docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json new_items A9H-ANODE-02",
+     "text": "DESIGN BLOCKER: H-1 anode heat-removal path"
+    },
+    "execution_state": "BLOCKED",
+    "worked_by": null,
+    "not_worked_reason": "no registered follow-on is scoped to produce this item (accepted scheduler rule, row 141); recommended next lane P4 (anode design), not launched",
+    "waits_on": "design work outside every registered scope",
+    "latest_decision_point": "before the anode material selection (A9.2 order: heat path first, then material)",
+    "a7_category": null,
+    "owner": {
+     "functional_role": "thermal lead (H-1 anode heat-removal path)",
+     "accountable": "Praveen (accountable system owner, owner row 140)",
+     "named_engineer": null,
+     "rule": "row 140: named engineer needed before READY"
+    }
    }
   }
  ],
  "rollup": {
   "execution_states": {
-   "BLOCKED": 18,
+   "BLOCKED": 20,
    "SUPERSEDED_FOR_PRIMARY_LINE": 1
   },
   "waits_on": {
    "H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)": 2,
-   "design work outside every registered scope": 4,
+   "design work outside every registered scope": 7,
    "first-hand source verification": 2,
-   "owner decision": 5,
+   "owner decision": 4,
    "procurement (wave H3, PLANNED_NOT_REGISTERED)": 5
   }
+ },
+ "a9_2": {
+  "decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json"
+  },
+  "statuses": {
+   "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
+   "ICP electron-current capacity": "PENDING_ICP45",
+   "ICP RF power closure": "PENDING_HARDWARE",
+   "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
+   "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP",
+   "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
+   "final anode material": "OPEN",
+   "anode thermal closure": "UNRESOLVED",
+   "coupled H-1/ICP thermal closure": "UNRESOLVED",
+   "C1 conventional reference": "CONTROL_FALLBACK"
+  },
+  "applied": "rows 13 / 15 blocking items (coupled thermal model, impedance map); row 19 renamed for the local match; new design-blocker rows 20 (anode material) and 21 (anode heat-removal path); per-row A9.2 statuses (rows 11, 13, 15, 18, 19, 20, 21)",
+  "recommended_next_lanes_not_launched": [
+   "P1 ICP electron-source bench (ICP-45)",
+   "P2 ICP impedance map",
+   "P3 coupled thermal redesign",
+   "P4 anode design"
+  ]
  },
  "open_owner_questions": [
   {
    "id": "M16-V3-Q-01",
-   "question": "Accept the PROPOSED A9 blocking item, functional-role owner and latest decision point of each row (rows 1-16, 18, 19), and name the responsible engineers (row 140)?",
+   "question": "Accept the PROPOSED A9 blocking item, functional-role owner and latest decision point of each row (rows 1-16, 18-21), and name the responsible engineers (row 140)?",
    "proposed_answer": "owner call",
    "needed_by": "before any row can become READY (row 140)"
   }

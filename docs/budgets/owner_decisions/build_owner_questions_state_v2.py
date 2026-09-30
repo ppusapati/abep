@@ -12,6 +12,9 @@ Rows:
     ANSWERED (row pointer into docs/decisions/OD_2026_09_29_owner_answers_147.json) or SUPERSEDED (the owner's answer
     classifies the question as superseded for the primary campaign);
   * every A9.1 follow-up decision (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json): ANSWERED (A9.1);
+  * every A9.2 decision (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json, read from its sha256-pinned
+    copy under docs/experiments/hall_icp/integration/a9_2_inputs/): ANSWERED (A9.2); lane questions it answers
+    (OQ-A907-11) become ANSWERED_BY_A9_2;
   * every question raised by the A9 lanes (A9-01..A9-09 open_owner_questions, the step-1 integration record, the M16
     v2 matrix and A9-10 itself), read from the current deliverables: ANSWERED_BY_A9_1 where the lane records that an
     A9.1 decision answers it, ANSWERED (row N) where an owner row answers it, ADDRESSED_IN_A9_10 for A9-10 work items,
@@ -54,7 +57,18 @@ PINS = {
     REL + "/OWNER_QUESTIONS_CONSOLIDATED.md": "a3d15db8bd332312a6db77a1fdd740b7e9f5972475f269fc43a76ddf7e1b062c",
     "docs/budgets/subsystem_maturity/subsystem_maturity_v2.json":
         "a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c",
+    # A9.2 (A9-07 follow-up owner decisions, 2026-09-30): byte-identical pinned copies of the docs/decisions/ files
+    # (execution-branch commit 19c0040); the originals, when present, must carry the same sha256 (checked below)
+    "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json":
+        "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+    "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md":
+        "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
 }
+A92_REL = "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json"
+A92_MD_REL = "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md"
+A92_COPY = "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json"
+A92_ORIGINALS = {A92_REL: "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+                 A92_MD_REL: "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9"}
 ANS_REL = "docs/decisions/OD_2026_09_29_owner_answers_147.json"
 A91_REL = "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json"
 M16_V2 = "docs/budgets/subsystem_maturity/subsystem_maturity_v2.json"
@@ -80,6 +94,7 @@ STATUSES = {
                 "question answered by an existing owner row (see status_detail)",
     "SUPERSEDED": "v1 row whose owner answer supersedes the question for the primary campaign",
     "ANSWERED_BY_A9_1": "lane question answered by an A9.1 decision",
+    "ANSWERED_BY_A9_2": "lane question answered by an A9.2 decision (A9-07 follow-up, 2026-09-30)",
     "ADDRESSED_IN_A9_10": "integration work item performed by A9-10 as directed by the brief (not an owner decision; "
                           "lane-assigned, the owner may reopen it)",
     "OPEN": "owner call; the lane's proposed answer is a proposal only"}
@@ -103,6 +118,9 @@ def verify_pins() -> list:
         if got != sha:
             raise RuntimeError(f"pinned input changed: {rel} sha256 {got} != {sha}")
         out.append({"path": rel, "sha256": got})
+    for rel, sha in A92_ORIGINALS.items():      # the A9.2 originals are optional in this checkout, never different
+        if os.path.isfile(os.path.join(ROOT, rel)) and _sha(rel) != sha:
+            raise RuntimeError(f"A9.2 decision file differs from its pin: {rel}")
     return out
 
 
@@ -149,6 +167,19 @@ def a91_rows(a91: dict, lane_q: list) -> list:
     return out
 
 
+def a92_rows(a92: dict, lane_q: list) -> list:
+    out = []
+    for did, text in a92["decisions"].items():
+        answered = [q for q in lane_q if re.search(r"\b" + re.escape(did) + r"\b", q.get("_answered_by_a92", ""))]
+        out.append({"id": "A9.2 " + did, "source": "A9.2 A9-07 follow-up owner decisions (" + A92_REL + ")",
+                    "question": "A9.2 decision " + did, "status": "ANSWERED (A9.2)",
+                    "answer_pointer": f"{A92_REL} decisions.{did}",
+                    "answer_excerpt": _short(text if isinstance(text, str) else json.dumps(text, ensure_ascii=False)),
+                    "answers_lane_questions": sorted(q["id"] for q in answered), "proposed": "", "needed_by": "",
+                    "kind": "a9_2"})
+    return out
+
+
 def lane_rows(answers_file: dict) -> list:
     out = []
     for lane, rel in LANE_SOURCES:
@@ -162,12 +193,16 @@ def lane_rows(answers_file: dict) -> list:
                 gate = "LOCK-2" if "LOCK-2" in txt and "LOCK-1" not in txt else "LOCK-1"
                 need = f"{gate} (PROPOSED by A9-10 per row 144; the lane stated no gate)"
             row = {"id": q["id"], "source": f"{lane} ({rel})", "question": q["question"], "proposed": prop,
-                   "needed_by": need, "kind": "lane", "lane": lane, "_answered_by": ""}
+                   "needed_by": need, "kind": "lane", "lane": lane, "_answered_by": "", "_answered_by_a92": ""}
             m91 = re.match(r"ANSWERED_BY_A9_1 \(([^)]*)\)", st)
+            m92 = re.match(r"ANSWERED_BY_A9_2 \(([^)]*)\)", st)
             mrow = re.match(r"ANSWERED_BY_OWNER_ROW_(\d+)", st)
             if m91:
                 row.update(status="ANSWERED_BY_A9_1", answer_pointer=f"{A91_REL} decisions.{m91.group(1)}",
                            answer_excerpt=_short(q.get("a9_1_decision")), _answered_by=m91.group(1))
+            elif m92:
+                row.update(status="ANSWERED_BY_A9_2", answer_pointer=f"{A92_REL} decisions.{m92.group(1)}",
+                           answer_excerpt=_short(q.get("a9_2_decision")), _answered_by_a92=m92.group(1))
             elif mrow:
                 n = int(mrow.group(1))
                 row.update(status=f"ANSWERED (owner row {n})", answer_pointer=f"{ANS_REL} row {n}",
@@ -185,7 +220,7 @@ def lane_rows(answers_file: dict) -> list:
         out.append({"id": q["id"], "source": f"M16 v2 ({M16_V2})", "question": q["question"],
                     "status": f"ANSWERED (owner row {n})", "answer_pointer": f"{ANS_REL} row {n}",
                     "answer_excerpt": _short(answers_file[n]["owner_answer_verbatim"]), "proposed": "",
-                    "needed_by": "", "kind": "lane", "lane": "M16 v2", "_answered_by": ""})
+                    "needed_by": "", "kind": "lane", "lane": "M16 v2", "_answered_by": "", "_answered_by_a92": ""})
     return out
 
 
@@ -196,10 +231,12 @@ def build() -> dict:
     v1 = v1_rows(answers)
     lanes = lane_rows(answers)
     a9 = a91_rows(a91, lanes)
-    rows = v1 + a9 + lanes
+    a92 = a92_rows(_load(A92_COPY), lanes)
+    rows = v1 + a9 + a92 + lanes
     for i, r in enumerate(rows, 1):
         r["no"] = i
         r.pop("_answered_by", None)
+        r.pop("_answered_by_a92", None)
         detail = r["status"]
         r["status"] = detail.split(" (")[0]        # canonical, machine-filterable status (review repair)
         r["status_detail"] = detail                 # e.g. 'ANSWERED (A9.1)', 'ANSWERED (owner row 111)'
@@ -224,8 +261,10 @@ def build() -> dict:
         "status_detail_vocabulary": {
             "ANSWERED": "v1 row answered by the owner (row pointer into the 147 answers)",
             "ANSWERED (A9.1)": "A9.1 follow-up decision (binding); status ANSWERED",
+            "ANSWERED (A9.2)": "A9.2 A9-07 follow-up decision (binding; OQ-A907-11 supersedes the A9.1 off-platform "
+                               "matching location for the baseline); status ANSWERED",
             "ANSWERED (owner row N)": "lane question answered by an existing owner row; status ANSWERED",
-            "SUPERSEDED / ANSWERED_BY_A9_1 / ADDRESSED_IN_A9_10 / OPEN": "detail equals the status"},
+            "SUPERSEDED / ANSWERED_BY_A9_1 / ANSWERED_BY_A9_2 / ADDRESSED_IN_A9_10 / OPEN": "detail equals the status"},
         "status_rule": "'status' is the canonical value (filter on it; 'counts' counts it); 'status_detail' keeps the "
                        "provenance form. ADDRESSED_IN_A9_10 is assigned by the lane for integration work the brief "
                        "directed A9-10 to perform (OQ-INT-03 / OQ-INT-04); it is not an owner decision and the owner "

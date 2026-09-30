@@ -10,8 +10,11 @@ sha256; cells not copied) and adds the A9 refresh for the Hall -> downstream 13.
     (row 141), what it waits on (v2 waits_on vocabulary), its latest decision point (row 144) and a functional-role
     owner (row 140: until named engineers exist; no row unowned);
   * row 17 (RF pre-ionization module interface): SUPERSEDED_FOR_PRIMARY_LINE (historical, kept; A9, rows 61-65);
-  * new row 18: downstream ICP neutralizer head; new row 19: flight RF chain (RF source DC input, matching, feedthrough/
-    coax, optional fixed pre-match).
+  * new row 18: downstream ICP neutralizer head; new row 19: flight RF chain (RF source DC input, coupler, 50-ohm line,
+    LOCAL matching network on / adjacent to the ICP module per A9.2, feedthrough);
+  * A9.2 (owner decisions 2026-09-30): new design-blocker rows 20 (H-1 anode material) and 21 (H-1 anode heat-removal
+    path), rows 13 / 15 blockers re-pointed to the coupled thermal model / impedance map, and the verbatim A9.2 statuses
+    per row (read from the sha256-pinned copy under docs/experiments/hall_icp/integration/a9_2_inputs/).
 
 Every blocking item is copied from a verified A9 deliverable and checked at build time (its text must appear at the
 cited place). Selection rule (PROPOSED for the owner under the accepted one-blocker rule): the item named by the most
@@ -52,7 +55,16 @@ PINS = {
         "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A7_execution_model.json":
         "dae69983d9aeeb4838d9ff973a5f824c973219f8cc528adfb12717c4bb92c925",
+    # A9.2 (owner decisions 2026-09-30, A9-07 follow-up): byte-identical pinned copy of
+    # docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json (execution-branch commit 19c0040)
+    "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json":
+        "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+    "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md":
+        "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
 }
+A92_COPY = "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json"
+A92_REL = "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json"
+A92_SHA = "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03"
 ANS = "docs/decisions/OD_2026_09_29_owner_answers_147.json"
 XE_A9 = "docs/budgets/" + "xe" + "_ledger_a9/" + "xe" + "_ledger_a9_v1.json"
 LANES = {
@@ -81,7 +93,8 @@ ROLES = {
     11: "electron-source lead (C1 reference / fallback)", 12: "power / PPU lead", 13: "thermal lead",
     14: "controls / FDIR lead", 15: "test and diagnostics lead", 16: "mechanical / structures lead",
     17: "electron-source lead (historical row)", 18: "electron-source lead (ICP neutralizer)",
-    19: "power / PPU lead (RF chain)",
+    19: "power / PPU lead (RF chain)", 20: "Hall thruster (H-1) lead (anode material)",
+    21: "thermal lead (H-1 anode heat-removal path)",
 }
 
 # One A9 blocking item per row: (lane, locator, text that must appear there, waits_on, latest decision point, a7 cat)
@@ -100,12 +113,15 @@ A9_BLOCKERS = {
     11: ("A9-09", ("m16", 11), "I_d,max of the registered envelope", OWN,
          "LOCK-1 (OQ-A907-02: stand I_d,max registered before LOCK-1)", None),
     12: ("A9-07", ("m16", 12), "breadboard discharge supply (row 113)", H3, "before HI-LOCK2 (A9-01 GD-14)", None),
-    13: ("A9-07", ("m16", 13), "measured deposition fractions / sourced BN k(T)", H4,
-         "before HI-S1 (score-bearing aborts at limit - 50 K, A9.1 UBQ-06)", None),
+    13: ("A9-07", ("m16", 13), ("coupled H-1 / ICP thermal model (A9H-TH-01: Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume, ICP view "
+         "factors; A9.2 ICP_COUPLED_THERMAL = UNRESOLVED)"), DES,
+         "before any thermal closure of hall_icp_neutralizer and before HI-S1 (A9.2 ICP_COUPLED_THERMAL = UNRESOLVED; "
+         "score-bearing aborts at limit - 50 K, A9.1 UBQ-06)", None),
     14: ("A9-03", ("m16", 14), "generator interlock interface (quotation)", H3, "before HI-S1A (A4 minimum interlocks)",
          None),
-    15: ("A9-07", ("m16", 15), "antenna impedance / pre-match decision (OQ-A907-11)", OWN,
-         "LOCK-1 (Gamma_max, OQ-A907-11)", None),
+    15: ("A9-07", ("m16", 15), "ICP antenna impedance map (A9.2 P2; RF component ratings TBD_AFTER_IMPEDANCE_MAP)", H4,
+         "before the RF component ratings are frozen (A9.2: TBD_AFTER_IMPEDANCE_MAP; trip thresholds after the load "
+         "characterization)", None),
     16: ("A9-07", ("m16", 16), "module drawings (ICP-02/04/07)", DES, "before HI-S1 (A9-01 GD-01)", None),
 }
 NEW_ROWS = [
@@ -130,8 +146,9 @@ NEW_ROWS = [
                  "RF voltage rating TBD); no registered lane designs the ICP module", DES,
                  "before HI-S1 (A9-01 GD-01: downstream ICP interfaces frozen)", "hardware-definition blocker")},
     {"row": 19, "key": "flight_rf_chain", "group": "power",
-     "name": "flight RF chain: 13.56 MHz RF source (spacecraft-DC input), matching network, RF feedthrough / coax, "
-             "optional fixed on-module pre-match",
+     "name": "flight RF chain: 13.56 MHz RF source (spacecraft-DC input), directional coupler, 50-ohm line, LOCAL "
+             "matching network on / immediately adjacent to the ICP module (adjustable for development, A9.2), RF "
+             "feedthrough",
      "flag": "primary investigation hypothesis (A9), not flight baseline", "baseline_flight_hardware": False,
      "requirement": "only the RF source DC input crosses the bus boundary (A9-02 A902-19, row 66 / 72); ICP power fits "
                     "P_ICP,available (A9.1 OQ-A902-03); P_bus,1ms,max < 1500 W incl. start-up (A9.1 OQ-A902-01)",
@@ -139,15 +156,54 @@ NEW_ROWS = [
      "interface_items": ["ICP-13", "ICP-14", "ICP-15", "ICP-16", "ICP-24"],
      "evidence": "none for a flight unit (laboratory 0-500 W generator is a ground/facility test capability, row 72)",
      "procurement": ("A9-09", "RFQ-04"),
-     "analysis_test_needed": "generator DC-input -> forward-power efficiency (A902-21, S1a); coupler-plane |Gamma| "
-                             "ratings (A9-07 rf_reference_plane, OQ-A907-11); flight-representative DC-input RF "
-                             "source scoping",
+     "analysis_test_needed": "generator DC-input -> forward-power efficiency (A902-21, S1a); ICP impedance map "
+                             "Z_antenna = R + jX vs mdot, P_RF, p, gas, Hall operating point (A9.2 P2) before any "
+                             "component rating (TBD_AFTER_IMPEDANCE_MAP); RF protection trip thresholds after the load "
+                             "characterization (A9.2); flight-representative DC-input RF source scoping",
      "blocker": ("A9-02", ("items_status", ["A902-21"]),
                  "flight-representative DC-input RF source not scoped: A902-21 (generator DC-input -> forward-power "
                  "efficiency) OPEN; the laboratory generator is ground/facility-only (OQ-RFQ-06)", H3,
                  "proposal / flight design freeze (Milestone C); A902-21 value at LOCK-2", "proposal-only "
                  "documentation gap")},
 ]
+
+
+_A92 = None
+
+
+def _a92_statuses() -> dict:
+    with open(os.path.join(ROOT, A92_COPY), encoding="utf-8") as f:
+        return json.load(f)["decisions"]["a9_10_statuses"]
+
+
+ANODE_ROWS = [
+    {"row": 20, "key": "h1_anode_material", "item": "A9H-ANODE-01",
+     "name": "H-1 anode material (design-representative / flight)",
+     "blocker_text": "DESIGN BLOCKER: H-1 anode material",
+     "requirement": "A9.2: 316L REJECTED_AS_CURRENT_BASELINE for the design-representative / flight anode (engineering / "
+                    "shakedown, coupon candidate, low-temperature development only); ANODE_BASELINE = OPEN; no "
+                    "refractory metal selected merely for melting point; T_operating <= T_validated,continuous - 50 K "
+                    "after the operating temperature is reduced; no new anode temperature limit",
+     "analysis": "candidate-material trade (oxygen compatibility, sputtering, electrical behaviour, fabrication, thermal "
+                 "conductivity); biased + floating coupons (row 106)",
+     "statuses": ["316L flight anode", "final anode material"],
+     "latest": "before any design-representative / score-bearing anode is built (A9.2; owner call on the trade)"},
+    {"row": 21, "key": "h1_anode_heat_path", "item": "A9H-ANODE-02",
+     "name": "H-1 anode heat-removal path",
+     "blocker_text": "DESIGN BLOCKER: H-1 anode heat-removal path",
+     "requirement": "A9.2: attack the anode as a thermal-design problem first: reduce the actual anode operating "
+                    "temperature substantially (backplate conduction, support / feed-tube conduction, heat spreading, "
+                    "radiative area, coupling to spacecraft / stand, deposited power fraction; active cooling only if "
+                    "passive closure fails)",
+     "analysis": "anode thermal redesign in the coupled H-1 / ICP model (A9-07 A9H-ANODE-02, A9H-TH-01)",
+     "statuses": ["anode thermal closure"],
+     "latest": "before the anode material selection (A9.2 order: heat path first, then material)"},
+]
+A92_ROW_STATUS = {11: ["C1 conventional reference"], 13: ["coupled H-1/ICP thermal closure"],
+                  15: ["RF component ratings"],
+                  18: ["Hall->ICP architecture", "ICP electron-current capacity", "ICP RF power closure"],
+                  19: ["RF matching architecture", "RF component ratings", "ICP RF power closure"]}
+A92_ST = _a92_statuses()
 
 
 def _sha(rel: str) -> str:
@@ -285,6 +341,42 @@ def build() -> dict:
                            "owner": {"functional_role": ROLES[spec["row"]], "accountable": ACCOUNTABLE,
                                      "named_engineer": None,
                                      "rule": "row 140: named engineer needed before READY"}}})
+    # A9.2 (anode_316L / anode_approach): two design-blocker rows under H-1, blocker copied from A9-07 new_items
+    h2a9_items = {x["id"]: x for x in lanes["A9-07"]["new_items"]}
+    for spec in ANODE_ROWS:
+        it = h2a9_items[spec["item"]]
+        if spec["blocker_text"] not in it["name"] or not it["value"].startswith("TBD - requires"):
+            raise RuntimeError(f"row {spec['row']}: A9-07 {spec['item']} does not carry the blocker")
+        rows.append({
+            "row": spec["row"], "key": spec["key"], "name": spec["name"], "group": "propulsion",
+            "flag": "design blocker of the H-1 Hall head (A9.2); not flight baseline", "baseline_flight_hardware": False,
+            "new_in_v3": True,
+            "cells": {"requirement": spec["requirement"], "allocation": {"mass": "inside AL-04 (A9-06 A9B-15, TBD)",
+                                                                         "power": "none (passive)"},
+                      "interface_status": {"document": LANES["A9-07"], "items": {spec["item"]: it["status"]}},
+                      "preliminary_design": "none (ANODE_BASELINE = OPEN)",
+                      "evidence_status": "A9-07 uncoupled thermal sensitivity only (anode worst case "
+                                         "OPEN_LIMIT_TBD; no validated material limit)",
+                      "procurement_status": "none (no anode RFQ implied, A9.2)",
+                      "analysis_test_needed": spec["analysis"]},
+            "a9_lanes": [{"lane": "A9-07", "how": f"{spec['item']}: {it['name']}"}],
+            "a9_2": {"statuses": {k: A92_ST[k] for k in spec["statuses"]}, "source": A92_REL + " (sha256 " + A92_SHA +
+                     ") decisions.anode_316L / anode_approach"},
+            "a9_refresh": {"blocking_item": {"source": f"A9-07 {LANES['A9-07']} new_items {spec['item']}",
+                                             "text": spec["blocker_text"]},
+                           "execution_state": "BLOCKED", "worked_by": None,
+                           "not_worked_reason": "no registered follow-on is scoped to produce this item (accepted "
+                                                "scheduler rule, row 141); recommended next lane P4 (anode design), "
+                                                "not launched",
+                           "waits_on": DES, "latest_decision_point": spec["latest"], "a7_category": None,
+                           "owner": {"functional_role": ROLES[spec["row"]], "accountable": ACCOUNTABLE,
+                                     "named_engineer": None, "rule": "row 140: named engineer needed before READY"}}})
+    for r in rows:
+        extra = A92_ROW_STATUS.get(r["row"])
+        if extra:
+            r["a9_2"] = dict(r.get("a9_2", {}), statuses=dict(r.get("a9_2", {}).get("statuses", {}),
+                                                              **{k: A92_ST[k] for k in extra}),
+                             source=A92_REL + " (sha256 " + A92_SHA + ") decisions.a9_10_statuses")
     states = {}
     waits_c = {}
     for r in rows:
@@ -326,9 +418,17 @@ def build() -> dict:
                        "READY; until then an explicit functional role (PROPOSED here); no row unowned"},
         "rows": rows,
         "rollup": {"execution_states": dict(sorted(states.items())), "waits_on": dict(sorted(waits_c.items()))},
+        "a9_2": {"decision": {"path": A92_REL, "sha256": A92_SHA, "pinned_copy": A92_COPY},
+                 "statuses": A92_ST,
+                 "applied": "rows 13 / 15 blocking items (coupled thermal model, impedance map); row 19 renamed for the "
+                            "local match; new design-blocker rows 20 (anode material) and 21 (anode heat-removal path); "
+                            "per-row A9.2 statuses (rows 11, 13, 15, 18, 19, 20, 21)",
+                 "recommended_next_lanes_not_launched": ["P1 ICP electron-source bench (ICP-45)",
+                                                         "P2 ICP impedance map", "P3 coupled thermal redesign",
+                                                         "P4 anode design"]},
         "open_owner_questions": [
             {"id": "M16-V3-Q-01", "question": "Accept the PROPOSED A9 blocking item, functional-role owner and latest "
-             "decision point of each row (rows 1-16, 18, 19), and name the responsible engineers (row 140)?",
+             "decision point of each row (rows 1-16, 18-21), and name the responsible engineers (row 140)?",
              "proposed_answer": "owner call", "needed_by": "before any row can become READY (row 140)"}],
         "compliance": ["v1 / v2 unchanged", "blocking items copied from merged A9 deliverables and checked at build "
                        "time", "mutable governance never pinned", "no winner; no prediction"],

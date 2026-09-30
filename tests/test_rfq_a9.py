@@ -131,6 +131,11 @@ def test_every_source_resolves(doc, answers):
                 elif s["type"] == "deliverable_item":
                     node = _resolve(json.loads((REPO / s["path"]).read_text(encoding="utf-8")), s["pointer"])
                     assert s["id"] in (node.get("id"), node.get("slot")), (r["id"], s["id"])
+                elif s["type"] == "a9_2":
+                    # A9.2 decision: read the original when present, else its byte-identical pinned copy
+                    rel = s["path"] if (REPO / s["path"]).is_file() else A92_COPY
+                    assert hashlib.sha256((REPO / rel).read_bytes()).hexdigest() == s["sha256"] == A92_SHA
+                    _resolve(json.loads((REPO / rel).read_text(encoding="utf-8")), s["pointer"])
                 else:
                     _resolve(json.loads((REPO / s["path"]).read_text(encoding="utf-8")), s["pointer"])
 
@@ -243,3 +248,23 @@ def test_builder_is_pure_and_contactless():
     for banned in ("import abep_sim", "from abep_sim", "import archengine", "subprocess", "urllib", "requests", "smtplib",
                    "socket", "http.client"):
         assert banned not in src, banned
+
+
+A92_COPY = "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json"
+A92_SHA = "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03"
+
+
+def test_a9_2_local_match_and_no_invented_ratings(doc):
+    """A9.2: local match, coupler on the generator / 50-ohm side, protection and on-module items TBD, no anode RFQ."""
+    rq = {r["id"]: r for p in doc["packages"] for r in p["requirements"]}
+    assert rq["RFQ-04-R06"]["value"] == "local match on / immediately adjacent to the ICP module"
+    assert rq["RFQ-04-R06"]["value_before_a9_2"] == "off-platform"
+    assert rq["RFQ-04-R08"]["value"] == "generator / 50-ohm side of the local match"
+    assert rq["RFQ-01-R12"]["value"] == "on-module local match (A9.2)"
+    for i in ("RFQ-04-R07", "RFQ-04-R12", "RFQ-04-R15", "RFQ-04-R16", "RFQ-04-R17", "RFQ-05-R13"):
+        assert rq[i]["value"].startswith("TBD - requires") and rq[i]["status"] == "TBD", i
+    assert "TBD_AFTER_IMPEDANCE_MAP" in rq["RFQ-04-R17"]["value"]
+    assert "SUPERSEDED_BY_A9_2" in rq["RFQ-04-R15"]["title"]
+    assert "not a component rating" in rq["RFQ-04-R02"]["a9_2_interpretation"]
+    assert "No anode RFQ" in doc["a9_2_anode_note"]
+    assert not any("anode" in r["title"].lower() and "xe anode path" not in r["title"].lower() for r in rq.values())

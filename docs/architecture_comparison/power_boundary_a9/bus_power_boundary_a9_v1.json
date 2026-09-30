@@ -376,7 +376,7 @@
    "value": "TBD",
    "units": "W",
    "basis": "pending",
-   "source": "schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13 (A9-03, merged; A9.1 A9-03-matching fixes the location off the moving platform but not fixed vs auto-tuned; on-module pre-match OQ-A907-11 OPEN): TBD - requires the matching-network selection (RFQ-04)",
+   "source": "schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13 (A9-03, merged; A9.2 OQ-A907-11: adjustable local match on / adjacent to the ICP module for development; flight implementation after the impedance map): TBD - requires the matching-network selection (RFQ-04)",
    "evidence_class": "TBD",
    "status": "OPEN",
    "freeze_point": "LOCK-1"
@@ -794,7 +794,8 @@
    "configurations": {
     "hall_c1_reference": "NOT_INSTALLED",
     "hall_icp_neutralizer": "INSTALLED"
-   }
+   },
+   "a9_2_note": "A9.2: forward/reflected power is measured on the generator / 50-ohm side of the local match; the 50-ohm line and local matching-network loss P_line/match,loss lies inside P_forward and is therefore paid through this slot's DC input; P_delivered = P_forward - P_reflected - P_line/match,loss is a measurement quantity, never a bus quantity"
   },
   {
    "slot": "icp_matching_network",
@@ -809,7 +810,8 @@
    "configurations": {
     "hall_c1_reference": "NOT_INSTALLED",
     "hall_icp_neutralizer": "INSTALLED"
-   }
+   },
+   "a9_2_note": "A9.2: adjustable LOCAL matching network on / adjacent to the ICP module (development article); this slot carries only its tuning actuator / controller DC draw; its RF dissipation (P_line/match,loss) is counted in icp_rf_source and is a module heat term (ICD ICP-43 Q_RF/match)"
   },
   {
    "slot": "icp_collector_bias",
@@ -2186,7 +2188,7 @@
   {
    "id": "H3-A902-03",
    "item": "matching network (fixed or auto-tuned; DC draw metered)",
-   "basis": "schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13 (A9.1 A9-03-matching: off the moving platform; fixed vs auto-tuned and the on-module pre-match OQ-A907-11 still open)"
+   "basis": "schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13 (A9.2 OQ-A907-11: adjustable local match on / adjacent to the ICP module; ratings TBD_AFTER_IMPEDANCE_MAP)"
   },
   {
    "id": "H3-A902-04",
@@ -2276,6 +2278,15 @@
    "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
    "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
    "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
+  },
+  "a9_2_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
+   "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "recorded_at_commit": "19c0040"
   },
   "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
   "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
@@ -2495,6 +2506,38 @@
     "ptr": "/h3_inputs[id=H3-A902-03]",
     "count": 1,
     "summary": "H3-A902-03 basis"
+   },
+   {
+    "cid": "A910-A92-A902-01",
+    "driver": "A9.2 OQ-A907-11, rf_measurement_reference",
+    "op": "merge",
+    "ptr": "/slots[slot=icp_rf_source]",
+    "count": 1,
+    "summary": "icp_rf_source match loss"
+   },
+   {
+    "cid": "A910-A92-A902-02",
+    "driver": "A9.2 OQ-A907-11, icp_matching_strategy",
+    "op": "merge",
+    "ptr": "/slots[slot=icp_matching_network]",
+    "count": 1,
+    "summary": "icp_matching_network slot"
+   },
+   {
+    "cid": "A910-A92-A902-03",
+    "driver": "A9.2 OQ-A907-11",
+    "op": "replace",
+    "ptr": "/items[id=A902-22]/source",
+    "count": 1,
+    "summary": "A902-22 source"
+   },
+   {
+    "cid": "A910-A92-A902-04",
+    "driver": "A9.2 OQ-A907-11",
+    "op": "replace",
+    "ptr": "/h3_inputs[2]/basis",
+    "count": 1,
+    "summary": "h3 matching basis"
    }
   ]
  }

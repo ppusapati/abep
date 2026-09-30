@@ -2385,7 +2385,7 @@
    "counterpart": "docs/hardware/h2/h2_6_diagnostics_fixture/ (H26-40..H26-42 upstream-module concept) and docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07; revision register REV-*, interface demands IDA7-*)",
    "demand": "carrier re-derived for a DOWNSTREAM module (H2-6 concept was between IP-UP and IP-DN upstream); harp / slack-loop service routing with matched sham RF coax (row 117); >= 25 kg moving payload (row 116)",
    "units": "kg; N",
-   "status": "SATISFIED at requirement level by A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-29..REV-34: H-1 stays bolted, downstream module on KC-1, 3-point seat, >= 25 kg payload, SVC-A9 matched shams, matching network off the platform); seat geometry / preload stay LOCK-1 (H2-6 v1 unchanged)"
+   "status": "SATISFIED at requirement level by A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-29..REV-34: H-1 stays bolted, downstream module on KC-1, 3-point seat, >= 25 kg payload, SVC-A9 matched shams, matching network off the platform (superseded for the baseline by A9.2 OQ-A907-11: local adjustable match on / adjacent to the ICP module, coupler on the generator / 50-ohm side)); seat geometry / preload stay LOCK-1 (H2-6 v1 unchanged)"
   },
   {
    "id": "IF-HI-10",
@@ -3621,6 +3621,15 @@
    "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
    "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
   },
+  "a9_2_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
+   "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "recorded_at_commit": "19c0040"
+  },
   "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
   "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
   "changes": [
@@ -4015,6 +4024,14 @@
     "ptr": "/interface_demands[id=IF-HI-17]",
     "count": 1,
     "summary": "IF-HI-17 partial"
+   },
+   {
+    "cid": "A910-A92-A901-01",
+    "driver": "A9.2 OQ-A907-11",
+    "op": "replace",
+    "ptr": "/interface_demands[8]/status",
+    "count": 1,
+    "summary": "A9-01 demand text"
    }
   ]
  }

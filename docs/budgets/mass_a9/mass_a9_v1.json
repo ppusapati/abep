@@ -189,17 +189,17 @@
   {
    "key": "BUS_A9",
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "sha256": "a16496b06df5876efb8764ec183bf65888c372e2719983b07cf2c946112704af"
+   "sha256": "3178d462d230656a313cd33060a42a74d99bc9ba3dc6afdc2036c0ca01664cb7"
   },
   {
    "key": "ICD_A9",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "81b073e6545d9bffb12b655058ca3bc6dec8827fd9f4b8779132e30678741997"
+   "sha256": "05d6f20cb758eaaf71ad4598f6a57f6965ec8389d92a04931d63919dc3a5f097"
   },
   {
    "key": "PREREG_A9",
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "sha256": "1310a84fa9840792ab7ae9617c55fd1a041653064ccaa6eb364785214f45a4ee"
+   "sha256": "ef07a3ecdfadec2c5933de2683fc0cc09466b7a25de268a8ac4fde2dfc3256b8"
   },
   {
    "key": "INT_A9",
@@ -209,12 +209,12 @@
   {
    "key": "XE_A9",
    "path": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
-   "sha256": "c2540246cc1e9bf394f94f51b1f0628fab4545d5112c1b558e6c35b761e302d1"
+   "sha256": "00752fb35e0821ca29b8b808c6fb143a0127f90376c1fd3f1074d2e2df36d766"
   },
   {
    "key": "H2_A9",
    "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
-   "sha256": "c8d575cb70e0472305cf632f1d9b9b24ae1108bc1cc1ddc32ff1a6b7699bd5c4"
+   "sha256": "27978613fc09a1aa23ac55a616ab543ca59ad6d144d0ec25527f7a1fe904fd86"
   }
  ],
  "never_pinned": [
@@ -1395,7 +1395,8 @@
      106
     ],
     "a9_1_decisions": [],
-    "note": "flight H-1 is neutralizer-agnostic (row 79); no central C1 bore/mount in flight"
+    "note": "flight H-1 is neutralizer-agnostic (row 79); no central C1 bore/mount in flight",
+    "a9_2_anode": "A9.2: 316L REJECTED_AS_CURRENT_BASELINE for the design-representative / flight H-1 anode (allowed only as an engineering / shakedown material, a coupon candidate or a low-temperature development component); ANODE_BASELINE = OPEN; final anode material OPEN; anode thermal closure UNRESOLVED; no refractory metal (W, Mo, Pt, ...) is selected merely for its melting point; objective: reduce the actual anode operating temperature first, then select a material with T_operating <= T_validated,continuous - 50 K; no new anode temperature limit is set; anode material and heat-removal path hardware mass TBD - requires the anode design (A9-07 A9H-ANODE-01 / A9H-ANODE-02)"
    },
    {
     "id": "A9B-16",
@@ -1461,7 +1462,8 @@
      "HIQ-06",
      "OQ-A902-05"
     ],
-    "note": "unmagnetized in v1 (row 69); the capped dedicated ICP gas port stays in the ICD (OQ-A902-05)"
+    "note": "unmagnetized in v1 (row 69); the capped dedicated ICP gas port stays in the ICD (OQ-A902-05)",
+    "a9_2_note": "the local matching network hardware is mounted on / adjacent to this module (A9.2); its mass is the separate TBD line A9B-20"
    },
    {
     "id": "A9B-18",
@@ -1525,7 +1527,7 @@
    },
    {
     "id": "A9B-20",
-    "name": "flight RF matching network",
+    "name": "local RF matching network hardware on / immediately adjacent to the ICP module (A9.2)",
     "group": "icp",
     "bom_status": "NEW_A9",
     "predecessor_mass_bom_v1": null,
@@ -1542,7 +1544,7 @@
     "units": "kg",
     "evidence_class": null,
     "basis": "TBD",
-    "status": "TBD - requires a flight matching-network design or supplier data",
+    "status": "TBD - requires the local-match selection after the impedance map (A9.2: adjustable for the development article; flight implementation deferred until Z_antenna = R + jX is mapped)",
     "freeze_point": "after-evidence",
     "owner_rows": [
      59
@@ -1550,7 +1552,10 @@
     "a9_1_decisions": [
      "A9-03-matching"
     ],
-    "note": ""
+    "note": "",
+    "name_before_a9_2": "flight RF matching network",
+    "status_before_a9_2": "TBD - requires a flight matching-network design or supplier data",
+    "allocation_mapping_proposal_a9_2": "PROPOSED only: the local match is on the ICP module; it may be booked within the ICP-head (AL-05) or the RF (AL-06) allocation; kept on AL-06 here (no number changes); owner call with MQ-07"
    },
    {
     "id": "A9B-21",
@@ -2308,7 +2313,7 @@
    },
    {
     "id": "GA-02",
-    "item": "laboratory ICP module, 13.56 MHz 0-500 W lab RF generator, matching network off the moving platform (A9.1 A9-03-matching), directional coupler",
+    "item": "laboratory ICP module, 13.56 MHz 0-500 W lab RF generator, adjustable local matching network on / adjacent to the ICP module (A9.2 OQ-A907-11; supersedes the A9.1 off-platform location), directional coupler",
     "rule": "test capability only (row 72, OQ-A902-03); no flight mass"
    },
    {
@@ -6586,10 +6591,11 @@
    "rule": "row 45: booked once in the A9 Xe ledger (F-RESIDUAL), imported here; never computed or added a second time in this BOM (single booking in both case readings)"
   },
   "xe_case_content": "two PROPOSED readings are carried (owner call): 'cells' = MQ-09 (case = usable Xe incl. the row-43 reserve, residual imported ON TOP; the heavier reading); 'cells_case_is_loaded' = A9-08 XA9Q-01 (case = LOADED Xe incl. reserve and residual, residual shown inside the case, not added)",
-  "comparator_note": "34/36 kg are internal allocations (<=, row 53); 40 kg wet is strict (<, row 5). CLOSES requires every term resolved; the residual is imported (A9-10), but every dry line is still an allocation or an evidence floor, so no cell reaches CLOSES"
+  "comparator_note": "34/36 kg are internal allocations (<=, row 53); 40 kg wet is strict (<, row 5). CLOSES requires every term resolved; the residual is imported (A9-10), but every dry line is still an allocation or an evidence floor, so no cell reaches CLOSES",
+  "closure_mass_basis_a9_2": "the closure books MC-1 only as A9B-16 (3.504 kg = H2-1 H21-24 iron 1.925 kg + complete-coil copper 1.579 kg); the 0.136 kg 60 W-basis copper and the LV-COIL sensitivity are never booked (A9.2 coil_mass_correction)"
  },
  "lv_coil_sensitivity": {
-  "label": "sensitivity only (not booked): LV-COIL adoption is an owner/LOCK-1 call; mass to book TBD - requires the frozen H-1 coil (A9-07 IDA7-01)",
+  "label": "sensitivity only (not booked): LV-COIL adoption is an owner/LOCK-1 call; mass to book TBD - requires the frozen H-1 coil (A9-07 IDA7-01). A9.2 coil-mass correction: the 60 W-basis copper (0.136 kg) is NOT the MC-1 coil mass; the RP-1 basis (1.58 kg) is the complete-coil copper estimate; the two rows are different bases, never alternative estimates of the same mass",
   "source": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json interface_demands IDA7-01 (recomputations.lv_coil_copper_delta)",
   "basis_note": "consistent-geometry P x m_cu invariant, fixed NI and mean turn (H2-1 RP-1 f_NI 2); per P_mag basis; not a bound",
   "rows": [
@@ -6791,7 +6797,9 @@
     "wet_known_kg": 57.383495,
     "vs_40_kg_wet": "DOES_NOT_CLOSE"
    }
-  ]
+  ],
+  "label_before_a9_2": "sensitivity only (not booked): LV-COIL adoption is an owner/LOCK-1 call; mass to book TBD - requires the frozen H-1 coil (A9-07 IDA7-01)",
+  "a9_2_coil_mass_correction": "A9.2 coil-mass correction: about 0.14 kg (0.136 kg) is the copper of the 60 W / fixed-ampere-turn sensitivity basis, NOT the MC-1 coil mass; about 1.58 kg is the current estimated copper mass of the complete coil geometry from the H2-1 sizing (H21-24 1.579 kg, RP-1 f_NI 2); the two are never alternative estimates of the same physical mass; the A9-06 closure uses only the clearly defined complete hardware mass (A9B-16 MC-1 3.504 kg = iron 1.925 kg + complete-coil copper 1.579 kg)"
  },
  "required_reduction_of_evidence_free_lines": [
   {
@@ -8054,7 +8062,7 @@
     "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
     "decision": "A9-03-matching"
    },
-   "how_applied": "matching network off the moving platform (ground); flight matching network is A9B-20"
+   "how_applied": "matching network off the moving platform (ground; superseded for the baseline by A9.2 OQ-A907-11: local match on / adjacent to the ICP module); flight matching network is A9B-20"
   },
   {
    "decision": "A9-03-collector",
@@ -8377,6 +8385,15 @@
    "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
    "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
   },
+  "a9_2_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
+   "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "recorded_at_commit": "19c0040"
+  },
   "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
   "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
   "changes": [
@@ -8403,6 +8420,78 @@
     "ptr": "/interface_demands[id=MA9-ID-18]",
     "count": 1,
     "summary": "MA9-ID-18 satisfied"
+   },
+   {
+    "cid": "A910-A92-A906-01",
+    "driver": "A9.2 OQ-A907-11, icp_matching_strategy",
+    "op": "supersede",
+    "ptr": "/a9_flight_bom/flight[id=A9B-20]",
+    "count": 1,
+    "summary": "A9B-20 local match line"
+   },
+   {
+    "cid": "A910-A92-A906-02",
+    "driver": "A9.2 OQ-A907-11",
+    "op": "merge",
+    "ptr": "/a9_flight_bom/flight[id=A9B-20]",
+    "count": 1,
+    "summary": "A9B-20 allocation mapping proposal"
+   },
+   {
+    "cid": "A910-A92-A906-03",
+    "driver": "A9.2 OQ-A907-11",
+    "op": "merge",
+    "ptr": "/a9_flight_bom/flight[id=A9B-17]",
+    "count": 1,
+    "summary": "A9B-17 note"
+   },
+   {
+    "cid": "A910-A92-A906-04",
+    "driver": "A9.2 anode_316L, anode_approach",
+    "op": "merge",
+    "ptr": "/a9_flight_bom/flight[id=A9B-15]",
+    "count": 1,
+    "summary": "A9B-15 anode note"
+   },
+   {
+    "cid": "A910-A92-A906-08",
+    "driver": "A9.2 OQ-A907-11",
+    "op": "replace",
+    "ptr": "/a9_flight_bom/ground_article_only[1]/item",
+    "count": 1,
+    "summary": "ground-article matching location"
+   },
+   {
+    "cid": "A910-A92-A906-09",
+    "driver": "A9.2 OQ-A907-11",
+    "op": "replace",
+    "ptr": "/a9_1_decisions_applied[4]/how_applied",
+    "count": 1,
+    "summary": "A9.1 application superseded in part"
+   },
+   {
+    "cid": "A910-A92-A906-05",
+    "driver": "A9.2 coil_mass_correction",
+    "op": "supersede",
+    "ptr": "/lv_coil_sensitivity",
+    "count": 1,
+    "summary": "LV-COIL label"
+   },
+   {
+    "cid": "A910-A92-A906-06",
+    "driver": "A9.2 coil_mass_correction",
+    "op": "merge",
+    "ptr": "/lv_coil_sensitivity",
+    "count": 1,
+    "summary": "coil-mass correction"
+   },
+   {
+    "cid": "A910-A92-A906-07",
+    "driver": "A9.2 coil_mass_correction",
+    "op": "merge",
+    "ptr": "/wet_closure",
+    "count": 1,
+    "summary": "closure mass basis"
    }
   ]
  }

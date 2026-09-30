@@ -990,7 +990,7 @@
    "name": "coupler finite directivity and mismatch error on P_ref and P_net",
    "symbol": "u(P_ref)_dir",
    "type": "B",
-   "value": "TBD - requires the coupler directivity D from its certificate, the operating |Gamma| at the coupler plane and D_min frozen at LOCK-2; first-order relation from A9-07 IDA7-21: worst-case relative error of P_net = max((|G|+d)^2 - |G|^2, |G|^2 - (|G|-d)^2) / (1 - |G|^2), d = 10^(-D/20) (verify against the coupler documentation); plus the two-port + Gamma_L load-power correction term (A9H-INS-03)",
+   "value": "TBD - requires the coupler directivity D from its certificate, the operating |Gamma| at the coupler plane (A9.2: generator / 50-ohm side of the local match, i.e. the residual mismatch after the local match) and D_min frozen at LOCK-2; first-order relation from A9-07 IDA7-21: worst-case relative error of P_net = max((|G|+d)^2 - |G|^2, |G|^2 - (|G|-d)^2) / (1 - |G|^2), d = 10^(-D/20) (verify against the coupler documentation); plus the two-port + Gamma_L load-power correction term (A9H-INS-03)",
    "units": "1 (relative error of P_net; the absolute term in W is this value x P_net)",
    "basis": "certificate",
    "source": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json interface_demands IDA7-21 and recomputations.rf_reference_plane (sensitivity at residual VSWR 1.2-2.0, D 20/30/40 dB)",
@@ -1007,7 +1007,7 @@
   {
    "id": "UB-RF-05",
    "dq": "UB-DQ-RF",
-   "name": "matching-network and cable loss between the coupler plane and the coil",
+   "name": "50-ohm line and local matching-network loss P_line/match,loss between the coupler plane (generator / 50-ohm side) and the antenna (A9.2)",
    "symbol": "P_loss,mn + P_loss,cable",
    "type": "B",
    "value": "TBD - requires S1a dummy-load characterization of the matching network and cable (evidence class 'reconstructed' once measured)",
@@ -1022,7 +1022,8 @@
    "configurations": [
     "hall_icp_neutralizer"
    ],
-   "note": ""
+   "note": "",
+   "name_before_a9_2": "matching-network and cable loss between the coupler plane and the coil"
   },
   {
    "id": "UB-RF-06",
@@ -1093,7 +1094,7 @@
    "name": "RF reference plane for the delivered-power quantity",
    "symbol": "plane",
    "type": "rule",
-   "value": "directional-coupler reference plane AFTER the matching network; matching network off the moving platform with matched flexible coax and cable-loss / S-parameter correction (ICD ICP-13)",
+   "value": "directional coupler on the generator / 50-ohm side of the LOCAL matching network (on / immediately adjacent to the ICP module; A9.2 OQ-A907-11 supersedes the A9.1 off-platform arrangement for the baseline); forward and reflected power measured on the generator / 50-ohm side of the local matching network; retained quantities P_forward, P_reflected, |Gamma|, VSWR and, where possible, P_delivered = P_forward - P_reflected - P_line/match,loss; P_forward = P_plasma is never assumed",
    "units": "-",
    "basis": "A9-03",
    "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json A9-03-matching; schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13",
@@ -1109,7 +1110,9 @@
     "hall_icp_neutralizer"
    ],
    "note": "",
-   "a9_1_decision": "A9-03-matching"
+   "a9_1_decision": "A9-03-matching",
+   "value_before_a9_2": "directional-coupler reference plane AFTER the matching network; matching network off the moving platform with matched flexible coax and cable-loss / S-parameter correction (ICD ICP-13)",
+   "a9_2_decision": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.OQ-A907-11 (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03; verbatim docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md); docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.rf_measurement_reference (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03; verbatim docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md)"
   },
   {
    "id": "UB-N-00",
@@ -2621,7 +2624,8 @@
     "P_coil = P_net - P_loss,mn - P_loss,cable   [reconstructed from the S1a dummy-load characterization]",
     "u^2(P_net) = u^2(P_fwd) + u^2(P_ref) - 2 r u(P_fwd) u(P_ref)   [GUM 5.2.2 Eq. (13); r from a shared sensor/coupler calibration]",
     "cross-check: z_x = (P_coupler - P_cal) / sqrt(u^2(P_coupler) + u^2(P_cal)); rule |z_x| <= k_x with k_x = 2 frozen at LOCK-1 (A9.1 UBQ-04; failure -> RF-dependent quantities EXCLUDED_INSTRUMENT; UB-RF-08); P_cal = sum_j mdot_j c_p,j Delta T_j + C dT/dt (steady-state coolant or dummy-load calorimetry; method TBD - not defined in the merged A9-03 ICD, whose ICP-14 names calorimetry only as the independent cross-check; LOCK-1 item)",
-    "the RF-source DC input is a P_bus slot (DQ-HI-PBUS); P_net / P_coil are accounting and diagnostic quantities, never a substitute for P_bus"
+    "the RF-source DC input is a P_bus slot (DQ-HI-PBUS); P_net / P_coil are accounting and diagnostic quantities, never a substitute for P_bus",
+    "P_delivered = P_forward - P_reflected - P_line/match,loss (A9.2; the same quantity as P_coil above, P_line/match,loss = P_loss,mn + P_loss,cable); P_forward = P_plasma is never assumed"
    ],
    "components": [
     "UB-RF-02",
@@ -3213,7 +3217,8 @@
    "quantity": "coupler location / RF reference plane and matching network topology",
    "units": "-",
    "status": "PARTIAL",
-   "value": "A9.1 A9-03-matching (ICD ICP-13): coupler plane after the matching network, network off the platform; fixed vs auto-tuned topology and the on-module pre-match (OQ-A907-11) open"
+   "value": "A9.2 OQ-A907-11 (ICD ICP-13): adjustable local match on / adjacent to the ICP module, coupler on the generator / 50-ohm side; flight match implementation deferred until the impedance map; ratings TBD_AFTER_IMPEDANCE_MAP",
+   "value_before_a9_2": "A9.1 A9-03-matching (ICD ICP-13): coupler plane after the matching network, network off the platform; fixed vs auto-tuned topology and the on-module pre-match (OQ-A907-11) open"
   },
   {
    "id": "IF-09",
@@ -4162,6 +4167,15 @@
    "verbatim": "docs/decisions/OD_2026_09_30_A9_1_FOLLOWUP_OWNER_DECISIONS.md",
    "verbatim_sha256": "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
   },
+  "a9_2_decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "verbatim": "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
+   "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "recorded_at_commit": "19c0040"
+  },
   "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
   "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
   "changes": [
@@ -4796,6 +4810,54 @@
     "ptr": "",
     "count": 3,
     "summary": "gate quantity renamed P_bus,peak -> P_bus,1ms,max (UB-P-07 name, IF demand, row-112 application)"
+   },
+   {
+    "cid": "A910-A92-A904-01",
+    "driver": "A9.2 OQ-A907-11, rf_measurement_reference",
+    "op": "supersede",
+    "ptr": "/items[id=UB-RF-09]",
+    "count": 1,
+    "summary": "UB-RF-09 reference plane"
+   },
+   {
+    "cid": "A910-A92-A904-02",
+    "driver": "A9.2 OQ-A907-11",
+    "op": "merge",
+    "ptr": "/items[id=UB-RF-09]",
+    "count": 1,
+    "summary": "UB-RF-09 source"
+   },
+   {
+    "cid": "A910-A92-A904-03",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "supersede",
+    "ptr": "/items[id=UB-RF-05]",
+    "count": 1,
+    "summary": "UB-RF-05 name"
+   },
+   {
+    "cid": "A910-A92-A904-04",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "replace",
+    "ptr": "/items[id=UB-RF-04]/value",
+    "count": 1,
+    "summary": "UB-RF-04 |Gamma|"
+   },
+   {
+    "cid": "A910-A92-A904-05",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "append",
+    "ptr": "/measurement_chains[dq=UB-DQ-RF]/equations",
+    "count": 1,
+    "summary": "P_delivered equation"
+   },
+   {
+    "cid": "A910-A92-A904-06",
+    "driver": "A9.2 OQ-A907-11, icp_matching_strategy",
+    "op": "supersede",
+    "ptr": "/interface_demands[id=IF-08]",
+    "count": 1,
+    "summary": "IF-08"
    }
   ]
  }
