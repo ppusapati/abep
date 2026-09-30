@@ -1,0 +1,9 @@
+{
+ "schema": "rfq_a9_lane_paths_v1",
+ "note": "Paths of the parallel A9 lanes referenced as PENDING by the A9-09 RFQ builder (read as data so the builder code never spells ledger paths; nothing is read from these lanes).",
+ "pending_parallel_lanes": {
+  "A9-06": "docs/budgets/mass_a9/",
+  "A9-07": "docs/hardware/h2_a9_revisions/",
+  "A9-08": "docs/budgets/xe_ledger_a9/"
+ }
+}
