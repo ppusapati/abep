@@ -1,0 +1,85 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_09_30_A9_4_p1_p2_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-09-30",
+ "decision": "A9_4_P1_P2_DECISIONS_RECORDED",
+ "applies_to": "verified A9.3 work at execution-branch commit 3f857d8",
+ "owner_title": "A9.3 OWNER DECISIONS — P1 / P2 (filed as A9.4; A9.3 is the post-A9 tier-1 record)",
+ "parents": [
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+  "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+  "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+  "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md",
+  "sha256": "53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c"
+ },
+ "decisions": {
+  "P1Q-10": {
+   "status": "OWNER_DECIDED — CAPACITY_EXTRACTION_FORM",
+   "conditions": [
+    "Hall discharge supply OFF and electrically disconnected from the H-1 anode",
+    "ICP operating",
+    "electrons extracted to a dedicated, isolated, instrumented electron-collecting electrode",
+    "gas, magnetic field, pressure and geometry corresponding to the registered H-1 operating condition",
+    "matched RF-OFF measurements quantify facility/background electron current"
+   ],
+   "definition_recorder_reading": "I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF, subject to current-path closure and the registered uncertainty treatment. The verbatim formula lacks 'I_e,cap =' and the minus sign; this reading follows the owner's 'matched RF-OFF measurements used to quantify facility/background electron current' and the verified P1 reducer (I_e_icp_corrected = I_e,RF-on - I_e,RF-off). Owner may correct.",
+   "qualification": "I_e,cap >= I_d,max,H1 with the preregistered one-sided lower confidence bound on M_n = I_e,cap/I_d,max,H1 - 1 remaining above zero",
+   "hall_on": "Hall-ON measurements are retained only as NEUTRALIZATION_CONSISTENCY, never ICP45_CAPACITY (with Hall ON, I_e,ICP ~ I_d because the anode closes the discharge circuit)",
+   "hall_on_follow_up": "after discharge-OFF capacity is shown, repeat the corresponding Hall-ON point and verify sustainment, current closure, neutralization behaviour, stability, collector/reference potentials, RF power"
+  },
+  "P1Q-13": {
+   "status": "OWNER_DECIDED — ANODE_FLOATING / BODY_SINGLE_POINT_METERED_GROUND",
+   "anode": "physically disconnected from the discharge supply and left floating during ICP-45 discharge-OFF capacity measurements (never a commanded-zero supply left attached); V_anode recorded on a high-impedance isolated channel; anode terminal classified OPEN_CIRCUIT_BY_CONSTRUCTION",
+   "body": "H-1 body/magnetic circuit has exactly one deliberate facility-ground connection through an instrumented/metered return (ground-current monitor); no second chassis/stand/coax/shield grounding path; I_body->ground measured continuously during capacity measurements",
+   "also_monitor": [
+    "ICP body potential",
+    "H-1 anode potential",
+    "dedicated electron collector potential/current",
+    "chamber/facility return current where measurable"
+   ],
+   "closure": "Kirchhoff residual per ICP-45 point, e.g. I_collector + I_body + I_anode + I_facility + I_ICP,body ~ 0 under the registered sign convention; a large unexplained residual invalidates that capacity point",
+   "measurand": "only the dedicated electron-collector current is the capacity measurand; current into H-1 body, facility ground, chamber, floating anode or unintended cable shields does not count",
+   "diagnostic_variant": "a metered-return anode configuration may later be run as a separately registered diagnostic; it never replaces the floating-anode baseline because it gives a larger current"
+  },
+  "P1Q-14": {
+   "status": "OWNER_DECIDED — ICP_350V_CLASS / 1.05kV_INITIAL_DWV",
+   "class": "the 350 V operating isolation class (row 81) is extended to the ICP body/collector circuits relative to the Hall anode, H-1 body/common, facility ground and other isolated circuits where those potential differences can physically occur (deliberate A9 extension)",
+   "design_margin": "V_operating,max = 350 V; V_design,withstand >= 525 V (1.5x; minimum design basis, not the test voltage)",
+   "initial_dwv": "passive insulation paths and feedthrough assemblies: 1.05 kV DC for 60 s where component ratings permit; current-limited, sensitive electronics disconnected where necessary, leakage recorded, relevant insulation configuration, before first HV/RF operation; plus representative-pressure/gas testing for Paschen-risk paths",
+   "no_repeated_hipot": "the 1.05 kV test is qualification-style, not repeated before each campaign; later acceptance/reverification at an appropriately lower controlled level/procedure unless a fault or hardware modification requires requalification",
+   "rf_insulation": "does not close ICP-44: antenna/matching network still need separate qualification for RF peak voltage, RF current, RF creepage/clearance, combined RF + DC stress, vacuum/gas breakdown"
+  },
+  "P2Q-05": {
+   "status": "OWNER_DECIDED — PHOTODIODE_REQUIRED",
+   "roles": [
+    "independent plasma ignition/unlit indicator",
+    "E-mode/H-mode transition indicator during P2"
+   ],
+   "powered_unlit_rule": "a COLD_ANTENNA_POWERED_UNLIT record is valid only when the optical channel demonstrates the plasma did not ignite",
+   "threshold": "established from dark/background, RF-powered known-unlit and known-lit P1 plasma measurements; frozen before the P2 map; no arbitrary voltage threshold assigned now",
+   "corroboration": "record simultaneously photodiode intensity, reflected RF power, antenna current, collector/current-path response, pressure; optical UNLIT with electrical evidence of ignition/mode transition -> UNCERTAIN; lost line-of-sight or saturation -> record not automatically valid",
+   "state_classes": [
+    "UNLIT",
+    "E_MODE",
+    "H_MODE",
+    "UNCERTAIN"
+   ],
+   "procurement": "photodiode, optical access/window, amplifier and DAQ channel added to the P1_NEEDED / P2 preparation instrumentation quote"
+  }
+ },
+ "execution_decisions": {
+  "p1_needed_rfqs": "AUTHORIZED to be sent for quotation (RFQ, technical clarification, indicative lead time, commercial quotation, datasheets/certificates); NOT authorized: purchase orders, advance payments, binding commitments; packages stay split by speciality",
+  "i_d_max_h1": "never assigned from the 8.33 A supply rating (bench design ceiling only); established from the registered H-1 operating envelope and measured H-1 behaviour; until then ICP45 = NOT_EVALUATED (not PASS/FAIL); the P1 capability surface may be generated before it is frozen",
+  "merge_authorization": "ONE merge of the A9.3 execution branch into main after: (1) this addendum recorded; (2) P1/P2 generated artifacts updated mechanically; (3) no prior owner-decision file modified; (4) complete repository suite; (5) all tests green, exactly the expected skip/xfail state, golden OK, integrity 10/10, protected historical artifacts unchanged; (6) final diff reviewed. Does not extend to any later merge."
+ },
+ "recorder_flags": [
+  "P1Q-10 'Define:' formula is incomplete in the verbatim text; recorder reading given in decisions.P1Q-10.definition_recorder_reading.",
+  "The ECSS high-voltage guidance (Level-2-style ~3x nominal qualification, ~2x lower-level) is owner-stated; the specific ECSS standard and clause are not identified in the record (verify before citing as a source).",
+  "RFQ dispatch: A9.3 OQ-RFQ-07 keeps commercial dispatch with P9E/Vyovrinda under Praveen's authorization; Claude does not contact suppliers. This authorization lets the owner/procurement send the P1_NEEDED packages."
+ ],
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

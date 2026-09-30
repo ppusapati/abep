@@ -1226,6 +1226,11 @@
    "id": "fo_a9_rfq_v2_split",
    "kind": "follow_on",
    "title": "RFQ packages v2: split by supplier speciality with a common top-level interface document; A9.2 local match, A9.3 Ar 1-2 ranges, dedicated-feed option line, mains RF ground-only (quotations only)"
+  },
+  {
+   "id": "fo_a9_4_incorporation",
+   "kind": "follow_on",
+   "title": "Apply A9.4 (P1Q-10, P1Q-13, P1Q-14, P2Q-05) mechanically to the P1 bench, P2 impedance prep and RFQ v2 packages"
   }
  ],
  "owner_dispositions": [
@@ -1305,6 +1310,18 @@
    },
    "decision_states": {
     "A9_3_POST_A9_TIER1_DECISIONS_RECORDED": "approved"
+   },
+   "immutability": "never edited after commit; later owner amendments are new addendum files"
+  },
+  {
+   "id": "od_a9_4_p1_p2",
+   "file": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+   "states": {
+    "pending": "no disposition file",
+    "approved": "decision A9_4_P1_P2_DECISIONS_RECORDED"
+   },
+   "decision_states": {
+    "A9_4_P1_P2_DECISIONS_RECORDED": "approved"
    },
    "immutability": "never edited after commit; later owner amendments are new addendum files"
   }

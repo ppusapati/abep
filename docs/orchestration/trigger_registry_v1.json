@@ -958,6 +958,30 @@
    "produces": "fo_a9_rfq_v2_split",
    "kind": "follow_on_launch",
    "note": "owner A9.3 2026-09-30 (docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json, authorizations): OQ-RFQ-07 split packages prepared by the technical team, dispatched only by the owner/procurement"
+  },
+  {
+   "id": "T_A9_4_INCORPORATION",
+   "prerequisites": [
+    {
+     "id": "fo_a9_p1_icp_bench",
+     "state": "verified"
+    },
+    {
+     "id": "fo_a9_p2_impedance_prep",
+     "state": "verified"
+    },
+    {
+     "id": "fo_a9_rfq_v2_split",
+     "state": "verified"
+    },
+    {
+     "id": "od_a9_4_p1_p2",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_a9_4_incorporation",
+   "kind": "follow_on_launch",
+   "note": "owner A9.4 2026-09-30 merge sequence step 2: update the P1/P2 generated artifacts mechanically"
   }
  ]
 }
