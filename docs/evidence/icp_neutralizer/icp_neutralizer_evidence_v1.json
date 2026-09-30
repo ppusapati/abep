@@ -1437,7 +1437,7 @@
   },
   {
    "row": 72,
-   "how": "analog RF chains (13.56 MHz, forward/reflected via generator meters, R_ant method) recorded as measurement-method precedent for the 0-500 W lab chain"
+   "how": "analog RF chains (13.56 MHz, forward/reflected via generator meters, R_ant method) recorded as measurement-method precedent for the lab chain with its 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating)"
   },
   {
    "row": 132,
@@ -1540,7 +1540,7 @@
  ],
  "h3_h4_inputs": {
   "h3_procurement_rfq": [
-   "13.56 MHz generator with forward/reflected metering (anchor: 200 W class; owner row 72: size 0-500 W)",
+   "13.56 MHz generator with forward/reflected metering (anchor: 200 W class; owner row 72 as interpreted by A9.2 rf_500W: 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating); generator rating TBD_AFTER_IMPEDANCE_MAP)",
    "two-variable-capacitor matching network (anchor TK-23)",
    "high-frequency antenna current sensor (anchor R_ant method, TK-24)",
    "isolation transformer / isolated supply and series protection (anchor TK-40)",
@@ -1581,7 +1581,8 @@
    "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
    "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
    "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
-   "recorded_at_commit": "19c0040"
+   "recorded_at_commit": "19c0040",
+   "path_resolution": "the docs/decisions/ paths exist in the execution branch (commit 19c0040) and resolve in this lane branch only after it merges there; until then the byte-identical pinned copies under docs/experiments/hall_icp/integration/a9_2_inputs/ (sha256 checked on every build) are the readable authority"
   },
   "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
   "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
@@ -1633,6 +1634,22 @@
     "ptr": "/acquisition_policy_a9_1",
     "count": 1,
     "summary": "acquisition policy recorded"
+   },
+   {
+    "cid": "A910-A92S-A905EV-01",
+    "driver": "A9.2 rf_500W",
+    "op": "set",
+    "ptr": "/h3_h4_inputs/h3_procurement_rfq[0]",
+    "count": 1,
+    "summary": "H3 generator line"
+   },
+   {
+    "cid": "A910-A92S-A905EV-02",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/owner_answers_applied[row=72]/how",
+    "count": 1,
+    "summary": "row 72 application labelled"
    }
   ]
  }

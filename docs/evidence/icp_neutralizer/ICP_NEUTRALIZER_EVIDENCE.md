@@ -262,7 +262,7 @@ priorities accepted by the owner (A9.1 OQ-EV-02: P1 LA-01..03; P2 LA-04, LA-06..
 - row 36: Takahashi Ar data are labelled engineering-topology precedent; they never count toward DRDO atmospheric requirements
 - row 69: magnetized-source analog data (S-04 helicon mode) marked context-only against the UNMAGNETIZED first build
 - row 70: TK-40 records that the anchor's ion collector floats at the negative end of V_D with no separate bias; A9 requires a floating body and separately controlled collector bias - the analog circuit is NOT the A9 circuit
-- row 72: analog RF chains (13.56 MHz, forward/reflected via generator meters, R_ant method) recorded as measurement-method precedent for the 0-500 W lab chain
+- row 72: analog RF chains (13.56 MHz, forward/reflected via generator meters, R_ant method) recorded as measurement-method precedent for the lab chain with its 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating)
 - row 132: no analog life data exist; life/erosion routed to hardware and the separate atomic-O programme
 - row 145: this extraction feeds the new Hall->ICP validation-input list (docs/experiments/hall_icp/validation_inputs/)
 - row 146: no screening or hypothesis values are manufactured from the analog
@@ -294,7 +294,7 @@ priorities accepted by the owner (A9.1 OQ-EV-02: P1 LA-01..03; P2 LA-04, LA-06..
 
 ## 14. H3 / H4 inputs
 
-- **h3_procurement_rfq**: 13.56 MHz generator with forward/reflected metering (anchor: 200 W class; owner row 72: size 0-500 W); two-variable-capacitor matching network (anchor TK-23); high-frequency antenna current sensor (anchor R_ant method, TK-24); isolation transformer / isolated supply and series protection (anchor TK-40); RFEA (anchor TK-57)
+- **h3_procurement_rfq**: 13.56 MHz generator with forward/reflected metering (anchor: 200 W class; owner row 72 as interpreted by A9.2 rf_500W: 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating); generator rating TBD_AFTER_IMPEDANCE_MAP); two-variable-capacitor matching network (anchor TK-23); high-frequency antenna current sensor (anchor R_ant method, TK-24); isolation transformer / isolated supply and series protection (anchor TK-40); RFEA (anchor TK-57)
 - **h4_measurement**: reproduce 'no Hall discharge without ICP electrons' on Ar as an engineering-only topology check (TK-51) - criterion PENDING A9-01 preregistration; witness coupons for sputter deposition on the ICP tube and H-1 exit insulators (TK-71)
 
 ## A9-10 reconciliation (fo_a9_10_integration)
@@ -309,3 +309,5 @@ Changes applied by A9-10 after this lane's verified build (record `docs/experime
 | A910-A905EV-01 | A9.1 OQ-EV-02 | gsub | `/lawful_acquisition_list/items` | 9 | acquisition order accepted |
 | A910-A905EV-02 | A9.1 OQ-EV-02 | set | `/lawful_acquisition_list/note` | 1 | acquisition note |
 | A910-A905EV-03 | A9.1 OQ-EV-01 + OQ-EV-03 | set | `/acquisition_policy_a9_1` | 1 | acquisition policy recorded |
+| A910-A92S-A905EV-01 | A9.2 rf_500W | set | `/h3_h4_inputs/h3_procurement_rfq[0]` | 1 | H3 generator line |
+| A910-A92S-A905EV-02 | A9.2 rf_500W | replace | `/owner_answers_applied[row=72]/how` | 1 | row 72 application labelled |

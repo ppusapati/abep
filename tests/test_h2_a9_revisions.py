@@ -54,10 +54,28 @@ REV_FIELDS = ("id", "h2_lane", "h2_item", "topic", "old", "new", "units", "drive
               "status", "freeze_point", "applies_to", "recomputation")
 
 
+# A9-10 review repair 4 (A9.2 icp_coupled_thermal): the uncoupled-sensitivity values of hall_icp_neutralizer carry
+# UNCOUPLED_SENSITIVITY_* names; the arithmetic checks map them back to the lane's rule vocabulary (stated here
+# independently of the overlay, and checked against the document's a9_2_sensitivity_vocabulary).
+_SENS_BACK = {"UNCOUPLED_SENSITIVITY_WITHIN_LIMIT": "CLOSES",
+              "UNCOUPLED_SENSITIVITY_WITHIN_LIMIT_WITH_SINGLE_LEVER": "CLOSES_WITH_SINGLE_LEVER",
+              "UNCOUPLED_SENSITIVITY_WITHIN_LIMIT_ONLY_WITH_COMBINED_LEVERS": "CLOSES_ONLY_WITH_COMBINED_LEVERS",
+              "UNCOUPLED_SENSITIVITY_WITHIN_LIMIT_WITH_LEVERS": "CLOSES_WITH_LEVERS",
+              "UNCOUPLED_SENSITIVITY_BELOW_CEILING": "PASS",
+              "UNCOUPLED_SENSITIVITY_CONDITIONALLY_WITHIN_LIMIT": "CONDITIONALLY_RESOLVED"}
+
+
+def _back(v):
+    if isinstance(v, list):
+        return [_back(x) for x in v]
+    return _SENS_BACK.get(v, v) if isinstance(v, str) else v
+
+
 def _sens(e: dict, key: str):
     """A9.2 ICP_COUPLED_THERMAL: pass-like hall_icp_neutralizer statuses are reported UNRESOLVED; the computed
-    (uncoupled) value is kept beside them as uncoupled_sensitivity_<key>. The arithmetic checks use that value."""
-    return e.get("uncoupled_sensitivity_" + key, e[key])
+    (uncoupled) value is kept beside them as uncoupled_sensitivity_<key> under an UNCOUPLED_SENSITIVITY_* name. The
+    arithmetic checks use that value, mapped back to the rule vocabulary."""
+    return _back(e.get("uncoupled_sensitivity_" + key, e[key]))
 
 
 def _sha(rel: str) -> str:
@@ -341,12 +359,14 @@ def test_mount_heat_row85_consistency(doc):
     aw = th["search"]["allowance_W"]
     for lv, cases in th["mount_heat_vs_row85"].items():
         for c, r in cases.items():
-            w = r.get("within_allowable_W_uncoupled_sensitivity", r["within_allowable_W"])
+            w = {a: _back(x) for a, x in r.get("within_allowable_W_uncoupled_sensitivity",
+                                                r["within_allowable_W"]).items()}
             assert "CLOSES" not in r["within_allowable_W"].values()                     # A9.2
             for a, v in w.items():
                 assert (v == "CLOSES") == (r["Q_mount_W"]["max_W"] + aw <= float(a))
     ok = sorted(lv for lv, cases in th["mount_heat_vs_row85"].items()
-                if all(r.get("within_allowable_W_uncoupled_sensitivity", r["within_allowable_W"])["100"] == "CLOSES"
+                if all(_back(r.get("within_allowable_W_uncoupled_sensitivity", r["within_allowable_W"])["100"])
+                       == "CLOSES"
                        for r in cases.values()))
     assert ok == th["row85_compatible_levers_100W"]
 
@@ -672,11 +692,14 @@ def test_a9_2_repair_no_residual_thermal_pass_wording():
     computed values survive as uncoupled_sensitivity_* (numbers unchanged)."""
     doc = json.loads(JSON_PATH.read_text(encoding="utf-8"))
     k6 = doc["key_findings"][5]
-    assert "PO UNRESOLVED, BP UNRESOLVED" in k6 and "uncoupled sensitivity only: PO PASS, BP PASS" in k6
+    assert "PO UNRESOLVED, BP UNRESOLVED" in k6 and "PO PASS" not in k6 and "BP PASS" not in k6
+    assert "uncoupled sensitivity only: PO and BP below the necessary Curie ceiling" in k6
     reg = {r["id"]: r for r in doc["revision_register"]}
     v42, v44, v45 = (reg[i]["new"]["value"] for i in ("REV-42", "REV-44", "REV-45"))
-    assert v42["closure_CI"] == v42["closure_CO"] == "UNRESOLVED" and v42["uncoupled_sensitivity_closure_CO"] == "CLOSES"
-    assert v44["PO"] == v44["BP"] == ["UNRESOLVED"] and v44["PI"] == ["FAIL"] and v44["uncoupled_sensitivity_PO"] == ["PASS"]
+    assert v42["closure_CI"] == v42["closure_CO"] == "UNRESOLVED"
+    assert _back(v42["uncoupled_sensitivity_closure_CO"]) == "CLOSES" != v42["uncoupled_sensitivity_closure_CO"]
+    assert v44["PO"] == v44["BP"] == ["UNRESOLVED"] and v44["PI"] == ["FAIL"]
+    assert _back(v44["uncoupled_sensitivity_PO"]) == ["PASS"] != v44["uncoupled_sensitivity_PO"]
     th = doc["recomputations"]["h25_thermal_rerun"]
     assert v45["status"] == th["bn_wall_11_2K_case"]["status"] == "UNRESOLVED"
     assert v45["uncoupled_sensitivity_status"] == th["bn_wall_11_2K_case"]["uncoupled_sensitivity_status"]
@@ -693,3 +716,38 @@ def test_a9_2_repair_no_residual_thermal_pass_wording():
     assert "Every hall_icp_neutralizer CLOSES is conditional" not in md
     assert "| levers closing every case (uncoupled sensitivity) |" in md
     assert "PO PASS, BP PASS;" not in md and "necessary Curie checks: PI FAIL, PO UNRESOLVED, BP UNRESOLVED" in md
+
+
+def test_a9_2_repair4_sensitivity_names_and_rf_wording():
+    """Review repair 4: no hall_icp_neutralizer thermal value (sensitivity fields included) uses the PASS / CLOSES /
+    CONDITIONALLY_RESOLVED words; the vocabulary is declared; K2 / K11, REV-34 / REV-35 and A9H-INS-01 follow A9.2
+    (0-500 W = delivered/operating capability, coupler on the generator / 50-ohm side of the local match)."""
+    doc = json.loads(JSON_PATH.read_text(encoding="utf-8"))
+    th = doc["recomputations"]["h25_thermal_rerun"]
+    assert {v: k for k, v in th["a9_2_sensitivity_vocabulary"]["names"].items()} == _SENS_BACK
+    bad = re.compile(r"^(PASS|CLOSES\w*|CONDITIONALLY_RESOLVED|RESOLVED|CLOSED)$")
+
+    def walk(o):
+        if isinstance(o, dict):
+            for v in o.values():
+                yield from walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                yield from walk(v)
+        elif isinstance(o, str):
+            yield o
+    for key in ("closure_summary_hall_icp_neutralizer", "bn_wall_11_2K_case", "mount_heat_vs_row85"):
+        assert not [x for x in walk(th[key]) if bad.match(x)], key
+    assert not [x for x in walk(th["results"]["hall_icp_neutralizer"]) if bad.match(x)]
+    k2, k11 = doc["key_findings"][1], doc["key_findings"][10]
+    assert "WO CLOSES" not in k2 and "CO CLOSES" not in k2
+    assert k11.startswith("K11 RF chain: A9.2") and "GENERATOR forward power;" not in k11
+    assert "delivered/operating" in k11.split(". ")[0]
+    reg = {r["id"]: r for r in doc["revision_register"]}
+    assert "LOCAL matching network" in reg["REV-34"]["new"]["requirement"]
+    assert "OFF the moving platform" in reg["REV-34"]["new"]["requirement_before_a9_2"]
+    assert "off-platform" not in reg["REV-34"]["new"]["value"]["layout"]
+    assert "P_RF,fwd,max 500 W" not in reg["REV-35"]["new"]["requirement"]
+    ins = {x["id"]: x for x in doc["new_items"]}["A9H-INS-01"]
+    assert "generator_P_fwd_W" not in ins["value"] and ins["value"]["delivered_operating_capability_W"] == [0.0, 500.0]
+    assert "after the matching network (A9.1)" not in ins["name"]

@@ -136,7 +136,13 @@ def test_owner_given_values_trace_to_rows(doc, answers):
 def test_rf_only_term_is_arithmetic_and_not_a_module_bound(doc):
     by = {x["id"]: x for x in doc["items"]}
     x = by["ICP-36"]
-    assert x["status"] == "DERIVED_BOUND" and x["value"] == pytest.approx(500.0 * 1.2)
+    # A9-10 review repair 4 (A9.2 rf_500W): an allocation term, not a bound; the old status is kept as history
+    assert x["status"] == "DERIVED_ALLOCATION_TERM" and x["status_before_a9_2"] == "DERIVED_BOUND"
+    assert x["value"] == pytest.approx(500.0 * 1.2)
+    assert "delivered/operating figure" in x["requirement"] and "ADDITIONAL to the 500 W" in x["requirement"]
+    assert "P_fwd,max (row 72)" not in by["ICP-43"]["requirement"]
+    closes = {h["stage"]: h["closes"] for h in doc["h3_h4_inputs"]["h4_tests"]}
+    assert "NOT a thermal closure" in closes["Ar ENGINEERING_ONLY"]
     assert "RF-only partial allocation term" in x["basis"] and 72 in x["owner_rows"] and 86 in x["owner_rows"]
     assert "NOT a bound on the total module heat load" in x["requirement"]
     dem = {d["id"]: d for d in doc["interface_demands"]}

@@ -966,7 +966,10 @@ def render_md(d: dict) -> str:
           f"declared {', '.join('`' + b + '`' for b in g['rfp_gate']['pass_requires_power_basis'])}, otherwise "
           f"NOT_EVALUABLE; diagnostics only: {'; '.join(g['rfp_gate']['transient_window']['diagnostics_only'])}.",
           f"- ICP available power: {g['icp_available_power']['relation']} at {g['icp_available_power']['per']} "
-          f"({g['icp_available_power']['decision']}); the 0-500 W laboratory RF range is a test capability only.",
+          # A92_W500_LABEL (A9-10 review repair 4): 0-500 W labelled per A9.2 rf_500W
+          f"({g['icp_available_power']['decision']}); the 0-500 W laboratory RF range "
+          "(A9.2 rf_500W: delivered/operating investigation capability, not a component rating) is a "
+          "test capability only.",
           f"- Context level: {g['context_levels']['a5_lower_end_W']:g} W - {g['context_levels']['role']}.",
           f"- Design allocation {g['design_allocation']['limit_W']:g} W (row 109): owner allocation check.",
           f"- Common allocation {g['common_allocation']['limit_W']:g} W incl. "

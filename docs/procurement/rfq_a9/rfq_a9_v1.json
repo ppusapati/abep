@@ -73,32 +73,32 @@
   {
    "key": "ICD",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "d073133bf31a404bc10df50730bf61f658316eefebcf7c177b92ea80a7907724"
+   "sha256": "95cdd7a543c0879a0f21f5ef64607ec7cba79a2f3cede9044c46195c91c7012a"
   },
   {
    "key": "BUS",
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "sha256": "f855cecaa1707bfe5c3a01bf7fd199ebdc7f9ae83cde6e132c2dfc16004558a3"
+   "sha256": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6"
   },
   {
    "key": "UB",
    "path": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "sha256": "cc7d41c534f72731f7545c3396d7037b7e4721a3a20ff3591ee5da698b0fe2e8"
+   "sha256": "c6567e6d0bbc008bedd5b9c14a9716f117144ab6952b9c498f7b0c75e02a624d"
   },
   {
    "key": "PRE",
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "sha256": "ef07a3ecdfadec2c5933de2683fc0cc09466b7a25de268a8ac4fde2dfc3256b8"
+   "sha256": "b634357fe17ba59af17d5f76b48d704ed1e156fc4c6a1bb08dae4fea0c52fcac"
   },
   {
    "key": "EVI",
    "path": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
-   "sha256": "ec300df97864c84617d47a76138acc37177c9453f306cbb2bf139874f2c68621"
+   "sha256": "092e4ca8e1827dd2e9558058a204f46510f2633316ce188e7126b697ec6d0b53"
   },
   {
    "key": "VIN",
    "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-   "sha256": "4a54bd1e4d52af7073a6016c07d47d10330220b7c7f45778b3996930714ee5e2"
+   "sha256": "fac472e370b54875df5dea90c3c7740403da5ac1edd1af29b43ed09ee679d450"
   },
   {
    "key": "INT",
@@ -9488,7 +9488,8 @@
    "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
    "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
    "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
-   "recorded_at_commit": "19c0040"
+   "recorded_at_commit": "19c0040",
+   "path_resolution": "the docs/decisions/ paths exist in the execution branch (commit 19c0040) and resolve in this lane branch only after it merges there; until then the byte-identical pinned copies under docs/experiments/hall_icp/integration/a9_2_inputs/ (sha256 checked on every build) are the readable authority"
   },
   "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
   "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",

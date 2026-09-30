@@ -357,7 +357,7 @@
    "evidence_class": "n/a (rule)",
    "status": "ADOPTED (A9.1)",
    "freeze_point": "NOW",
-   "note": "ICP-45 must be demonstrated within this residual budget (icp_power_allocation_check); the laboratory 0-500 W RF source is a test capability, not permission for the flight architecture to consume 500 W"
+   "note": "ICP-45 must be demonstrated within this residual budget (icp_power_allocation_check); the laboratory RF source (0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating)) is a test capability, not permission for the flight architecture to consume 500 W"
   },
   {
    "id": "A902-21",
@@ -1838,7 +1838,7 @@
    ],
    "owner_answer_verbatim": "13.56 MHz. Size laboratory RF source and inline measurement chain for 0–500 W forward power initially, with directional-coupler forward/reflected measurements. Calorimetry is an independent cross-check, not the sole primary power measurement.",
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
-   "how_applied": "13.56 MHz; lab 0-500 W forward; coupler primary, calorimetry cross-check; only generator DC input crosses the boundary"
+   "how_applied": "13.56 MHz; lab 0-500 W (A9.2 rf_500W: delivered/operating investigation capability, not a component rating); coupler primary, calorimetry cross-check; only generator DC input crosses the boundary"
   },
   {
    "row": 79,
@@ -2176,9 +2176,10 @@
  "h3_inputs": [
   {
    "id": "H3-A902-01",
-   "item": "13.56 MHz laboratory RF generator, 0-500 W forward, DC input metered",
+   "item": "13.56 MHz laboratory RF generator for the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating); forward-power rating TBD_AFTER_IMPEDANCE_MAP; DC input metered",
    "basis": "row 72",
-   "note": "quotations only (row 8); no supplier contact by the lane"
+   "note": "quotations only (row 8); no supplier contact by the lane",
+   "item_before_a9_2": "13.56 MHz laboratory RF generator, 0-500 W forward, DC input metered"
   },
   {
    "id": "H3-A902-02",
@@ -2220,7 +2221,7 @@
   {
    "id": "H4-A902-01",
    "stage": "S1a",
-   "measure": "RF generator DC input vs coupler forward/reflected into a dummy load over 0-500 W; calorimetric cross-check",
+   "measure": "RF generator DC input vs coupler forward/reflected into a dummy load over the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating) plus the characterized mismatch (generator rating TBD_AFTER_IMPEDANCE_MAP); calorimetric cross-check",
    "closes": "A902-21"
   },
   {
@@ -2286,7 +2287,8 @@
    "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
    "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
    "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
-   "recorded_at_commit": "19c0040"
+   "recorded_at_commit": "19c0040",
+   "path_resolution": "the docs/decisions/ paths exist in the execution branch (commit 19c0040) and resolve in this lane branch only after it merges there; until then the byte-identical pinned copies under docs/experiments/hall_icp/integration/a9_2_inputs/ (sha256 checked on every build) are the readable authority"
   },
   "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
   "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
@@ -2546,6 +2548,46 @@
     "ptr": null,
     "count": 0,
     "summary": "rf_power_planes() also returns |Gamma| and VSWR (derived from the measured forward / reflected power) and labels the coupler plane as the generator / 50-ohm side of the local match; arithmetic and ordering checks unchanged"
+   },
+   {
+    "cid": "A910-A92S-A902-01",
+    "driver": "A9.2 rf_500W",
+    "op": "supersede",
+    "ptr": "/h3_inputs[id=H3-A902-01]",
+    "count": 1,
+    "summary": "H3-A902-01 no 500 W rating"
+   },
+   {
+    "cid": "A910-A92S-A902-02",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/h4_inputs[id=H4-A902-01]/measure",
+    "count": 1,
+    "summary": "H4-A902-01 wording"
+   },
+   {
+    "cid": "A910-A92S-A902-03",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/owner_answers_applied[row=72]/how_applied",
+    "count": 1,
+    "summary": "row 72 application labelled"
+   },
+   {
+    "cid": "A910-A92S-A902-04",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/items[id=A902-20]/note",
+    "count": 1,
+    "summary": "A902-20 note labelled"
+   },
+   {
+    "cid": "A910-A92S-A902-05",
+    "driver": "A9.2 rf_500W",
+    "op": "code",
+    "ptr": null,
+    "count": 0,
+    "summary": "BUS_POWER_BOUNDARY_A9.md ICP-available-power line: the 0-500 W laboratory RF range labelled as the delivered/operating capability (builder literal)"
    }
   ]
  }

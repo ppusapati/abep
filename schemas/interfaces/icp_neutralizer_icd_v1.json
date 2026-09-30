@@ -1812,7 +1812,7 @@
    "id": "ICP-36",
    "group": "thermal",
    "title": "ICP dissipation path and RF-path heat contribution (RF only, partial term)",
-   "requirement": "All RF power not absorbed by the plasma, and part of the absorbed power, ends as heat in the antenna, collector, dielectric, matching network and cabling (analog: only ~10 % absorbed by the plasma, visible collector heating, annex TAK-12/13). The RF-path heat allocation term for the module is the full laboratory RF capability of row 72 (500 W, a delivered/operating investigation capability per A9.2 rf_500W, not a component rating; used here only as a heat-allocation term) x the 20 % heat-load design margin (row 86). This value is a margin-inflated RF-ONLY PARTIAL ALLOCATION TERM (an allocation, not a physical bound); it is NOT a bound on the total module heat load. It covers RF power delivered past the directional coupler only; the RF generator's own conversion loss is a separate term (ICP-24, ICP-43). In hall_icp_neutralizer the Hall discharge loop closes through the ICP collector (ICP-22), so the collector collects an ion current matching the extracted electron current and receives particle heating of order I_coll x sheath voltage (analog ion impact energies, annex TAK-10), plus Hall-plume interception and plasma heat flux on the module (ICP-29). Those terms scale with the discharge current, not with the RF power, and are carried in the total module heat-load item ICP-43. Heat into H-1 + mount stays inside the H2-6 stand bound (copied).",
+   "requirement": "All RF power not absorbed by the plasma, and part of the absorbed power, ends as heat in the antenna, collector, dielectric, matching network and cabling (analog: only ~10 % absorbed by the plasma, visible collector heating, annex TAK-12/13). The RF-path heat allocation term for the module is the full laboratory RF capability of row 72 (500 W, a delivered/operating investigation capability per A9.2 rf_500W, not a component rating; used here only as a heat-allocation term) x the 20 % heat-load design margin (row 86). This value is a margin-inflated RF-ONLY PARTIAL ALLOCATION TERM (an allocation, not a physical bound); it is NOT a bound on the total module heat load. Reference plane of the 500 W delivered/operating figure: the delivered plane past the local matching network (P_delivered = P_forward - P_reflected - P_line/match,loss, A9.2 rf_measurement_reference). The heat downstream of the directional coupler is P_forward - P_reflected = P_delivered + P_line/match,loss, so the local-match / line loss dissipated on the module (TBD_AFTER_IMPEDANCE_MAP) is ADDITIONAL to the 500 W delivered figure: it consumes part of the 20 % margin or exceeds it, and it is carried as Q_RF/match in ICP-43; the RF generator's own conversion loss is a separate term (ICP-24, ICP-43). In hall_icp_neutralizer the Hall discharge loop closes through the ICP collector (ICP-22), so the collector collects an ion current matching the extracted electron current and receives particle heating of order I_coll x sheath voltage (analog ion impact energies, annex TAK-10), plus Hall-plume interception and plasma heat flux on the module (ICP-29). Those terms scale with the discharge current, not with the RF power, and are carried in the total module heat-load item ICP-43. Heat into H-1 + mount stays inside the H2-6 stand bound (copied).",
    "value": 600.0,
    "units": "W",
    "basis": "RF-only partial allocation term: 500 W (row 72; A9.2: delivered/operating capability, not a component rating) x 1.20 (row 86)",
@@ -1842,8 +1842,8 @@
      "name": "heat load into H-1 + mount (upper bound for stand thermal design)"
     }
    ],
-   "evidence_class": "model-derived (bound on owner values)",
-   "status": "DERIVED_BOUND",
+   "evidence_class": "model-derived (allocation term on owner values; not a bound, not a component rating)",
+   "status": "DERIVED_ALLOCATION_TERM",
    "freeze_point": "LOCK-1",
    "verification": "thermocouple map + energy balance in S1a",
    "owner_rows": [
@@ -1866,7 +1866,9 @@
      "name": "heat load into H-1 + mount (upper bound for stand thermal design)"
     }
    },
-   "a9_2_note": "the local matching network sits on / adjacent to the module (A9.2), so its loss P_line/match,loss is dissipated on the module and is part of Q_RF/match in ICP-43; the 600 W RF-only partial allocation term is unchanged and is not a component rating"
+   "a9_2_note": "the local matching network sits on / adjacent to the module (A9.2), so its loss P_line/match,loss is dissipated on the module and is part of Q_RF/match in ICP-43; the 600 W RF-only partial allocation term is unchanged and is not a component rating",
+   "status_before_a9_2": "DERIVED_BOUND",
+   "evidence_class_before_a9_2": "model-derived (bound on owner values)"
   },
   {
    "id": "ICP-37",
@@ -2118,7 +2120,7 @@
    "id": "ICP-43",
    "group": "thermal",
    "title": "Total ICP module heat load (RF + discharge-path + plume terms)",
-   "requirement": "The module thermal path (antenna, collector, dielectric, matching network, carrier interface) is sized to the TOTAL module heat load Q_mod = Q_RF + Q_coll + Q_plume, where Q_RF is bounded by ICP-36, Q_coll is the collector particle heating from the Hall discharge current closing through the collector (ICP-22; of order I_d x the collector sheath/impact voltage, analog TAK-10) and Q_plume is Hall-plume interception and plasma heat flux on the module (ICP-29). Q_coll and Q_plume scale with the discharge current, not the RF power. PROPOSED bounding rule (frozen at LOCK-1): Q_mod,bound = 1.20 (row 86) x (P_fwd,max (row 72) + P_d,max), where P_d,max = I_d,max x V_d,max is the maximum discharge-supply power permitted at the stand (A9-02 discharge slot / H2-4 supply limit); the true split is measured in S1a by thermocouple map and energy balance. No value is set until P_d,max exists (see ICPQ-10 for an alternative envelope). The RF generator and matching-network conversion loss Q_gen is a further, separate heat term (and bus-power term, ICP-24) wherever that hardware is mounted: it enters Q_mod if the generator/matching network sits on the moving platform or in the module, and the platform/flight thermal budget otherwise; it is never dropped (value TBD - requires the selected generator's published efficiency or a measured DC-in/RF-out balance).",
+   "requirement": "The module thermal path (antenna, collector, dielectric, matching network, carrier interface) is sized to the TOTAL module heat load Q_mod = Q_RF + Q_coll + Q_plume, where Q_RF is the ICP-36 RF-only allocation term (not a bound) plus the local-match / line loss P_line/match,loss dissipated on the module (A9.2 rf_measurement_reference), Q_coll is the collector particle heating from the Hall discharge current closing through the collector (ICP-22; of order I_d x the collector sheath/impact voltage, analog TAK-10) and Q_plume is Hall-plume interception and plasma heat flux on the module (ICP-29). Q_coll and Q_plume scale with the discharge current, not the RF power. PROPOSED bounding rule (frozen at LOCK-1): Q_mod,bound = 1.20 (row 86) x (P_fwd,max + P_d,max) with P_fwd,max = the forward power on the generator / 50-ohm side at the maximum operating point of the characterized mismatch envelope (TBD_AFTER_IMPEDANCE_MAP; not the row-72 0-500 W figure, which is a delivered/operating investigation capability and not a component rating, A9.2 rf_500W), where P_d,max = I_d,max x V_d,max is the maximum discharge-supply power permitted at the stand (A9-02 discharge slot / H2-4 supply limit); the true split is measured in S1a by thermocouple map and energy balance. No value is set until P_d,max exists (see ICPQ-10 for an alternative envelope). The RF generator and matching-network conversion loss Q_gen is a further, separate heat term (and bus-power term, ICP-24) wherever that hardware is mounted: it enters Q_mod if the generator/matching network sits on the moving platform or in the module, and the platform/flight thermal budget otherwise; it is never dropped (value TBD - requires the selected generator's published efficiency or a measured DC-in/RF-out balance).",
    "value": null,
    "units": "W",
    "basis": "rows 72, 86, 108; ICP-22 topology (discharge closes on the collector)",
@@ -3313,9 +3315,10 @@
     "item_before_a9_2": "matching network (auto or manual) rated for full forward power"
    },
    {
-    "item": "calibrated dual directional coupler + power sensors at the load plane",
+    "item": "calibrated dual directional coupler + power sensors on the generator / 50-ohm side of the LOCAL matching network (ICP-14 plane; A9.2 OQ-A907-11 / rf_measurement_reference); ratings TBD_AFTER_IMPEDANCE_MAP",
     "spec_level": "ICP-14",
-    "status": "quotation only (row 8)"
+    "status": "quotation only (row 8)",
+    "item_before_a9_2": "calibrated dual directional coupler + power sensors at the load plane"
    },
    {
     "item": "vacuum RF feedthrough and flexible low-stiffness coax (live + sham)",
@@ -3351,7 +3354,7 @@
    },
    {
     "stage": "S1a",
-    "measure": "coupler calibration + calorimetric cross-check; load-plane loss chain",
+    "measure": "coupler calibration + calorimetric cross-check; loss chain from the coupler plane (generator / 50-ohm side) through the line and the local match to the antenna feed (A9.2)",
     "closes": "ICP-14"
    },
    {
@@ -3372,7 +3375,7 @@
    {
     "stage": "Ar ENGINEERING_ONLY",
     "measure": "topology reproduction: ICP ignition, Hall ignition with ICP electrons, collector V/I, thermal map, deposition witnesses",
-    "closes": "ICP-21, ICP-29, ICP-36, ICP-43 (engineering evidence only)"
+    "closes": "ICP-21, ICP-29 (engineering evidence only); ICP-36 / ICP-43: engineering heat-map input only, NOT a thermal closure (A9.2 ICP_COUPLED_THERMAL = UNRESOLVED: a coupled closure needs Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume and the ICP view factors)"
    },
    {
     "stage": "facility-effect series",
@@ -3686,7 +3689,8 @@
    "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
    "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
    "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
-   "recorded_at_commit": "19c0040"
+   "recorded_at_commit": "19c0040",
+   "path_resolution": "the docs/decisions/ paths exist in the execution branch (commit 19c0040) and resolve in this lane branch only after it merges there; until then the byte-identical pinned copies under docs/experiments/hall_icp/integration/a9_2_inputs/ (sha256 checked on every build) are the readable authority"
   },
   "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
   "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
@@ -4410,6 +4414,62 @@
     "ptr": "/h3_h4_inputs/h3_procurement_quotation_only[0]",
     "count": 1,
     "summary": "h3 generator line"
+   },
+   {
+    "cid": "A910-A92S-A903-01",
+    "driver": "A9.2 rf_500W, rf_measurement_reference",
+    "op": "supersede",
+    "ptr": "/items[id=ICP-36]",
+    "count": 1,
+    "summary": "ICP-36 status names an allocation term, not a bound (value 600 W unchanged)"
+   },
+   {
+    "cid": "A910-A92S-A903-02",
+    "driver": "A9.2 rf_measurement_reference, rf_500W",
+    "op": "replace",
+    "ptr": "/items[id=ICP-36]/requirement",
+    "count": 1,
+    "summary": "ICP-36 reference plane stated; match loss additional"
+   },
+   {
+    "cid": "A910-A92S-A903-03",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/items[id=ICP-43]/requirement",
+    "count": 1,
+    "summary": "ICP-43 Q_RF wording"
+   },
+   {
+    "cid": "A910-A92S-A903-04",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/items[id=ICP-43]/requirement",
+    "count": 1,
+    "summary": "ICP-43 rule: P_fwd,max is not 500 W"
+   },
+   {
+    "cid": "A910-A92S-A903-05",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "supersede",
+    "ptr": "/h3_h4_inputs/h3_procurement_quotation_only[2]",
+    "count": 1,
+    "summary": "H3 coupler line: A9.2 plane"
+   },
+   {
+    "cid": "A910-A92S-A903-06",
+    "driver": "A9.2 icp_coupled_thermal",
+    "op": "set",
+    "ptr": "/h3_h4_inputs/h4_tests[5]/closes",
+    "count": 1,
+    "summary": "Ar thermal map re-scoped: no ICP-43 closure"
+   },
+   {
+    "cid": "A910-A92S-A903-07",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "replace",
+    "ptr": "/h3_h4_inputs/h4_tests[1]/measure",
+    "count": 1,
+    "summary": "S1a loss-chain wording"
    }
   ]
  }

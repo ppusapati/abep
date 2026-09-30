@@ -3162,6 +3162,8 @@ def _drv(ds):
             out.append(f"row {d['row']}")
         elif d["kind"] == "A9.1":
             out.append(f"A9.1 {d['id']}")
+        elif d["kind"] == "A9.2":                      # A92_SENS_VOCAB_MD: A9.2 drivers added by A9-10 repair 4
+            out.append(f"A9.2 {d['id']}")
         else:
             out.append(f"{d['lane']} {d['id']}")
     return ", ".join(out)
@@ -3437,14 +3439,21 @@ _a910_md_core = render_md
 
 # A92_MD_RELABEL (A9-10 review repair 3, A9.2 icp_coupled_thermal): the lane's hard-coded thermal-section wording is
 # relabelled as uncoupled sensitivity; each substitution must match exactly once (no silent skip).
+# A92_SENS_VOCAB_MD (A9-10 review repair 4): the vocabulary sentence uses the UNCOUPLED_SENSITIVITY_* names of the
+# A9-10 overlay (a9_2_sensitivity_vocabulary); the lane's CLOSES / PASS words are not used for hall_icp_neutralizer.
 A92_MD_RELABEL = [
-    ("Verdict vocabulary: `brief_verdict_at_baseline` is CLOSES",
-     "Verdict vocabulary (uncoupled sensitivity; every hall_icp_neutralizer status is reported UNRESOLVED, A9.2 "
-     "ICP_COUPLED_THERMAL): `brief_verdict_at_baseline` is CLOSES"),
-    ("**Every hall_icp_neutralizer CLOSES is conditional**: (1) ",
-     "**A9.2 ICP_COUPLED_THERMAL = UNRESOLVED: every hall_icp_neutralizer status in this table is reported UNRESOLVED; "
-     "the CLOSES vocabulary above describes the uncoupled sensitivity only (0 W ICP heat, v1 exterior views), and every "
-     "such uncoupled-sensitivity CLOSES would in addition be conditional**: (1) "),
+    ("Verdict vocabulary: `brief_verdict_at_baseline` is CLOSES / DO_NOT_CLOSE (live limit) or OPEN_LIMIT_TBD "
+     "(no validated limit); `status` refines it: CLOSES_WITH_SINGLE_LEVER / CLOSES_ONLY_WITH_COMBINED_LEVERS "
+     "mean DO_NOT_CLOSE at baseline but CLOSES with the named lever sets. **Every hall_icp_neutralizer CLOSES "
+     "is conditional**: (1) ",
+     "Verdict vocabulary (hall_icp_neutralizer; A9.2 ICP_COUPLED_THERMAL = UNRESOLVED, so every reported status in "
+     "this table is UNRESOLVED): the uncoupled-sensitivity outcomes (0 W ICP heat, v1 exterior views; "
+     "`uncoupled_sensitivity_*` fields) are UNCOUPLED_SENSITIVITY_WITHIN_LIMIT / DO_NOT_CLOSE (live limit) or "
+     "OPEN_LIMIT_TBD (no validated limit), refined by UNCOUPLED_SENSITIVITY_WITHIN_LIMIT_WITH_SINGLE_LEVER / "
+     "UNCOUPLED_SENSITIVITY_WITHIN_LIMIT_ONLY_WITH_COMBINED_LEVERS (DO_NOT_CLOSE at baseline, within the limit with "
+     "the named lever sets); they are sensitivity information only and never a thermal PASS or closure "
+     "(recomputations.h25_thermal_rerun.a9_2_sensitivity_vocabulary). **Every such uncoupled-sensitivity "
+     "within-limit result would in addition be conditional**: (1) "),
     ("| levers closing every case | minimal closing sets within 100 W (buildability) | necessary check |",
      "| levers closing every case (uncoupled sensitivity) | minimal closing sets within 100 W (uncoupled sensitivity; "
      "buildability) | necessary check |"),

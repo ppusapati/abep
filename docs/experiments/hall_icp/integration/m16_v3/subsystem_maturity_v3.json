@@ -64,52 +64,52 @@
   {
    "lane": "A9-01",
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "sha256": "ef07a3ecdfadec2c5933de2683fc0cc09466b7a25de268a8ac4fde2dfc3256b8"
+   "sha256": "b634357fe17ba59af17d5f76b48d704ed1e156fc4c6a1bb08dae4fea0c52fcac"
   },
   {
    "lane": "A9-02",
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "sha256": "f855cecaa1707bfe5c3a01bf7fd199ebdc7f9ae83cde6e132c2dfc16004558a3"
+   "sha256": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6"
   },
   {
    "lane": "A9-03",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "d073133bf31a404bc10df50730bf61f658316eefebcf7c177b92ea80a7907724"
+   "sha256": "95cdd7a543c0879a0f21f5ef64607ec7cba79a2f3cede9044c46195c91c7012a"
   },
   {
    "lane": "A9-04",
    "path": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "sha256": "cc7d41c534f72731f7545c3396d7037b7e4721a3a20ff3591ee5da698b0fe2e8"
+   "sha256": "c6567e6d0bbc008bedd5b9c14a9716f117144ab6952b9c498f7b0c75e02a624d"
   },
   {
    "lane": "A9-05ev",
    "path": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
-   "sha256": "ec300df97864c84617d47a76138acc37177c9453f306cbb2bf139874f2c68621"
+   "sha256": "092e4ca8e1827dd2e9558058a204f46510f2633316ce188e7126b697ec6d0b53"
   },
   {
    "lane": "A9-05vi",
    "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-   "sha256": "4a54bd1e4d52af7073a6016c07d47d10330220b7c7f45778b3996930714ee5e2"
+   "sha256": "fac472e370b54875df5dea90c3c7740403da5ac1edd1af29b43ed09ee679d450"
   },
   {
    "lane": "A9-06",
    "path": "docs/budgets/mass_a9/mass_a9_v1.json",
-   "sha256": "40a057c6f86965c1ca0d4b5346c6ad449a255f3a2f1fc46f332a437512dc8659"
+   "sha256": "a4a70426dbfc917c9906275b2475110a158f7008006b075cabb259c045ca9680"
   },
   {
    "lane": "A9-07",
    "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
-   "sha256": "7bd76fcb27761ddc6e014e5c58d079ecc9b9fa53bf845ade3dfc0576f6280b6a"
+   "sha256": "c26eb71d6d76fac8e4744feeda4e015a648600779d7791dd7665ce1aad52881b"
   },
   {
    "lane": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
-   "sha256": "65d39aabeb7b6362aecfeabca8dca8d09a2474f948a686e7af9aa552ca69b466"
+   "sha256": "9d687e5f7ea64c5245070819ebea9d180362c3c3600afcda38c492178cf4f519"
   },
   {
    "lane": "A9-09",
    "path": "docs/procurement/rfq_a9/rfq_a9_v1.json",
-   "sha256": "6c0e8e5987b5967f7ed49eefbae2caa0112b002882e44a297ba3a26dd5be319a"
+   "sha256": "882292e7700c0a93c31574ef2487ae63e8ba844b578b6050eaa4ddc37767dcfd"
   }
  ],
  "scheduler_rule": {
@@ -645,7 +645,7 @@
     },
     {
      "lane": "A9-07",
-     "how": "EM-only, FeCo-2V/pure iron, ceramic coil; coil node closure UNRESOLVED (A9.2 ICP_COUPLED_THERMAL; uncoupled sensitivity CLOSES_ONLY_WITH_COMBINED_LEVERS / CLOSES)",
+     "how": "EM-only, FeCo-2V/pure iron, ceramic coil; coil node closure UNRESOLVED (A9.2 ICP_COUPLED_THERMAL; uncoupled sensitivity CI UNCOUPLED_SENSITIVITY_WITHIN_LIMIT_ONLY_WITH_COMBINED_LEVERS / CO UNCOUPLED_SENSITIVITY_WITHIN_LIMIT)",
      "blocking_item": "sourced B_sat(T) and coil qualification"
     }
    ],
@@ -876,7 +876,7 @@
     },
     {
      "lane": "A9-07",
-     "how": "thermal rerun with the owner rules (REV-40..50); every hall_icp_neutralizer thermal closure reported UNRESOLVED (A9.2 ICP_COUPLED_THERMAL; BN wall uncoupled sensitivity CLOSES_WITH_SINGLE_LEVER)",
+     "how": "thermal rerun with the owner rules (REV-40..50); every hall_icp_neutralizer thermal closure reported UNRESOLVED (A9.2 ICP_COUPLED_THERMAL; BN wall uncoupled sensitivity UNCOUPLED_SENSITIVITY_WITHIN_LIMIT_WITH_SINGLE_LEVER)",
      "blocking_item": "coupled H-1 / ICP thermal model (A9H-TH-01: Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume, ICP view factors; A9.2 ICP_COUPLED_THERMAL = UNRESOLVED)"
     },
     {
@@ -1294,7 +1294,7 @@
      }
     },
     "preliminary_design": "none (ICD items PROPOSED / TBD; no ICP module design lane registered)",
-    "evidence_status": "none for a flight unit (laboratory 0-500 W generator is a ground/facility test capability, row 72)",
+    "evidence_status": "none for a flight unit (the laboratory RF generator with its 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating; ratings TBD_AFTER_IMPEDANCE_MAP) is a ground/facility test capability)",
     "procurement_status": {
      "package": "RFQ-04",
      "file": "docs/procurement/rfq_a9/packages/RFQ-04_rf_chain.md",

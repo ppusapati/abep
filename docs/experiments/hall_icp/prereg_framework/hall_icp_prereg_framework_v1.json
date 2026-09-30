@@ -303,7 +303,7 @@
    "id": "HI-S1A",
    "order": 2,
    "name": "S1a analog - no-plasma metrology and module-exchange qualification",
-   "what": "no Hall-on reading. Thrust-stand in-situ calibration (SI-traceable, pre/post block, drift and hysteresis, row 119) and the preregistered u_T acceptance test at 12 mN with maximum representative moving payload and all service lines installed (row 120) against the 1 % target (row 121); power channels per A9 bus slot; RF chain 13.56 MHz, 0-500 W forward, directional-coupler forward/reflected into a dummy load with calorimetric cross-check (row 72); MFC calibration (rows 96, 97, 98, 124, 126); cold-flow uniformity (row 101); RGA (row 127); C1<->ICP exchange checks: cold/tare, service-line parasitic, B(z) perturbation, electrical isolation and RF pickup (row 64); RR-HI-07 no-plasma leg (row 33); C1 standalone conditioning and ICP standalone (no Hall) ignition / forward-reflected / collector current may be run here as module bench checks, non-scoring",
+   "what": "no Hall-on reading. Thrust-stand in-situ calibration (SI-traceable, pre/post block, drift and hysteresis, row 119) and the preregistered u_T acceptance test at 12 mN with maximum representative moving payload and all service lines installed (row 120) against the 1 % target (row 121); power channels per A9 bus slot; RF chain 13.56 MHz with the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating) (ratings TBD_AFTER_IMPEDANCE_MAP), directional-coupler forward/reflected on the generator / 50-ohm side of the LOCAL matching network (ICP-14 plane; A9.2 OQ-A907-11 / rf_measurement_reference) into a dummy load with calorimetric cross-check (row 72); MFC calibration (rows 96, 97, 98, 124, 126); cold-flow uniformity (row 101); RGA (row 127); C1<->ICP exchange checks: cold/tare, service-line parasitic, B(z) perturbation, electrical isolation and RF pickup (row 64); RR-HI-07 no-plasma leg (row 33); C1 standalone conditioning and ICP standalone (no Hall) ignition / forward-reflected / collector current may be run here as module bench checks, non-scoring",
    "entry": [
     "HI-ENG procedures available",
     "instrument set per docs/experiments/instrumentation/ plus ICP channels (schemas/interfaces/icp_neutralizer_icd_v1.json ICP-34 (A9-03))"
@@ -782,7 +782,7 @@
     "role": "primary investigation hypothesis (A9 status OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE)",
     "module": "MOD-ICP: downstream 13.56 MHz unmagnetized RF inductively coupled plasma electron source / neutralizer (rows 69, 72), dielectric/body floating unless the validated circuit requires otherwise, electron-extraction collector biased and measured separately (row 70), on the kinematic carrier",
     "configuration_defining_settings": [
-     "RF forward power (laboratory 0-500 W range, row 72) and matching state",
+     "RF forward / reflected / delivered power (P_forward, P_reflected, |Gamma|, VSWR, P_delivered; A9.2 rf_measurement_reference; the laboratory 0-500 W range is a delivered/operating investigation capability, row 72 as interpreted by A9.2 rf_500W) and the local matching-network state",
      "collector bias V / I (row 70)",
      "ICP gas mode G-REUSE (Hall exhaust / residual propellant; mdot_ICP,dedicated = 0; A9.1 HIQ-06); the dedicated ICP port is installed and capped; G-ATM / G-XE are separately declared contingency variants, booked when used; score-bearing N2 / N2+O2 comparison uses G-REUSE unless it fails the preregistered ICP-capacity gate",
      "RF interlock state (row 62)"
@@ -2881,7 +2881,7 @@
     "R4-Q7"
    ],
    "owner_answer_verbatim": "13.56 MHz. Size laboratory RF source and inline measurement chain for 0–500 W forward power initially, with directional-coupler forward/reflected measurements. Calorimetry is an independent cross-check, not the sole primary power measurement.",
-   "applied_as": "13.56 MHz, 0-500 W, coupler + calorimetric cross-check"
+   "applied_as": "13.56 MHz, 0-500 W (A9.2 rf_500W: delivered/operating investigation capability, not a component rating), coupler + calorimetric cross-check"
   },
   {
    "row": 73,
@@ -3572,7 +3572,7 @@
  ],
  "h3_h4_inputs": {
   "h3_procurement_inputs_quotations_only": [
-   "13.56 MHz RF generator sized for 0-500 W forward, matching network, directional coupler, RF feedthroughs, ICP chamber components (rows 8, 72)",
+   "13.56 MHz RF generator for the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating) (generator, coupler, coax, connector, matching-element and feedthrough ratings TBD_AFTER_IMPEDANCE_MAP), adjustable LOCAL matching network on / immediately adjacent to the ICP module, directional coupler on its generator / 50-ohm side, RF feedthroughs, ICP chamber components (rows 8, 72; A9.2 rf_500W / OQ-A907-11)",
    "kinematic module carrier for a downstream module with repeatable datum (row 122; schemas/interfaces/icp_neutralizer_icd_v1.json ICP-06 (A9-03))",
    "matched sham service lines incl. flexible RF coax (rows 117, 133)",
    "torsional stand for >= 25 kg moving payload (rows 115, 116)",
@@ -3628,7 +3628,8 @@
    "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
    "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
    "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
-   "recorded_at_commit": "19c0040"
+   "recorded_at_commit": "19c0040",
+   "path_resolution": "the docs/decisions/ paths exist in the execution branch (commit 19c0040) and resolve in this lane branch only after it merges there; until then the byte-identical pinned copies under docs/experiments/hall_icp/integration/a9_2_inputs/ (sha256 checked on every build) are the readable authority"
   },
   "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
   "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
@@ -4032,6 +4033,38 @@
     "ptr": "/interface_demands[8]/status",
     "count": 1,
     "summary": "A9-01 demand text"
+   },
+   {
+    "cid": "A910-A92S-A901-01",
+    "driver": "A9.2 rf_500W, rf_measurement_reference",
+    "op": "replace",
+    "ptr": "/stage_map[id=HI-S1A]/what",
+    "count": 1,
+    "summary": "HI-S1A RF chain wording"
+   },
+   {
+    "cid": "A910-A92S-A901-02",
+    "driver": "A9.2 rf_500W, rf_measurement_reference",
+    "op": "set",
+    "ptr": "/configurations/configurations[1]/configuration_defining_settings[0]",
+    "count": 1,
+    "summary": "MOD-ICP setting wording"
+   },
+   {
+    "cid": "A910-A92S-A901-03",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/owner_answers_applied[row=72]/applied_as",
+    "count": 1,
+    "summary": "row 72 application labelled"
+   },
+   {
+    "cid": "A910-A92S-A901-04",
+    "driver": "A9.2 rf_500W, OQ-A907-11",
+    "op": "set",
+    "ptr": "/h3_h4_inputs/h3_procurement_inputs_quotations_only[0]",
+    "count": 1,
+    "summary": "H3 RF line: no 500 W rating"
    }
   ]
  }

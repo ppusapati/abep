@@ -430,3 +430,52 @@ def test_a9_2_residual_wording_scan_is_clean_and_sensitive(doc):
     assert any("Curie" in v["sentence"] for v in old["wording_violations"])
     assert any("/revision_register" in v["pointer"] for v in old["value_violations"])
     assert any("0-500 W forward" in v["text"] for v in old["w500_violations"])
+
+
+PRE_REPAIR4 = "3a5b75c"   # A9-10 review repair 3 (the version the repair-4 reviewers read)
+
+
+def test_a9_2_text_scan_covers_every_deliverable_and_is_sensitive(doc):
+    """Review repair 4: the 500 W rule is checked 'anywhere' (every A9 deliverable JSON and Markdown, M16 v3, the
+    owner-question state v2, the step-1 integration record, the RFQ packages) and the scan is proven sensitive on the
+    repair-3 versions of the files the reviewers named (A9-01 H3 input, A9-02 H3-A902-01, A9-05 VI-RF-02 / H3 inputs,
+    A9-05 evidence, A9-07 K11 / A9H-INS-01 / REV-35) and of the K2 / K6 CLOSES / PASS wording."""
+    b = _mod(BUILDER, "a9_10_builder_text_scan_4")
+    ts = doc["a9_2"]["text_scan"]
+    for d in b.DELIVERABLES:
+        assert d["json"] in ts["w500_files"] and d["md"] in ts["w500_md_files"], d["key"]
+    for rel in (b.M16_V3, b.OQ_V2, b.INTEGRATION["json"]):
+        assert rel in ts["w500_files"]
+    assert "docs/procurement/rfq_a9/packages/RFQ-04_rf_chain.md" in ts["w500_md_files"]
+    assert ts["violations"] == []
+    named = ["docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
+             "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+             "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
+             "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
+             "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json"]
+    old_docs = {f: json.loads(_git("show", f"{PRE_REPAIR4}:{f}")) for f in named}
+    h2_old = old_docs[named[-1]]
+    h2_md_old = _git("show", f"{PRE_REPAIR4}:docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md").decode("utf-8")
+    old = b.a92_text_scan([], h2=h2_old, h2_md=h2_md_old, w500_docs=old_docs, w500_mds={})
+    hit = {(v["file"], v["pointer"]) for v in old["w500_violations"]}
+    for f, ptr in [(named[0], "/h3_h4_inputs/h3_procurement_inputs_quotations_only[0]"),
+                   (named[1], "/h3_inputs[0]/item"), (named[2], "/items[1]/value"),
+                   (named[2], "/h3_h4_inputs/h3_procurement_rfq_inputs[0]"),
+                   (named[3], "/h3_h4_inputs/h3_procurement_rfq[0]"), (named[4], "/key_findings[10]"),
+                   (named[4], "/new_items[0]/name"), (named[4], "/revision_register[34]/new/requirement")]:
+        assert (f, ptr) in hit, (f, ptr)
+    ptrs = {v["pointer"] for v in old["wording_violations"]}
+    assert {"/key_findings[1]", "/key_findings[5]"} <= ptrs          # K2 'WO CLOSES', K6 'PO PASS, BP PASS'
+    assert any("uncoupled_sensitivity" in v["pointer"] for v in old["value_violations"])
+
+
+def test_bus_power_boundary_v1_schema_is_protected(doc):
+    rows = {x["path"]: x for x in doc["immutability"]}
+    x = rows["schemas/architecture_comparison/bus_power_boundary_v1.json"]
+    assert x["byte_identical_to_base"] is True
+
+
+def test_a9_2_decision_path_resolution_declared(doc):
+    dec = doc["a9_2"]["decision"]
+    assert "pinned copies" in dec["path_resolution"] and dec["pinned_copy"].startswith(
+        "docs/experiments/hall_icp/integration/a9_2_inputs/")

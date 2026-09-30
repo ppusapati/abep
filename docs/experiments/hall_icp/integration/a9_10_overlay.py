@@ -852,7 +852,7 @@ def _a909() -> list:
 def records() -> dict:
     out = {"A9-01": _a901(), "A9-02": _a902(), "A9-03": _a903(), "A9-04": _a904(), "A9-05ev": _a905ev(),
            "A9-05vi": _a905vi(), "A9-06": _a906(), "A9-07": _a907(), "A9-08": _a908(), "A9-09": _a909()}
-    for extra in (_repair_code(), _repair(), _repair2(), _repair3(), _repair4(), _repair5(), _a92(), _a92_repair()):
+    for extra in (_repair_code(), _repair(), _repair2(), _repair3(), _repair4(), _repair5(), _a92(), _a92_repair(), _a92_repair2()):
         for k, recs in extra.items():
             out[k] = out[k] + [dict(r) for r in recs]
     return out
@@ -2212,6 +2212,11 @@ def _apply_one(doc, r) -> int:
             if k_changed == 0:
                 raise OverlayError(f"{r['cid']}: A9.2 residual thermal relabel matched nothing")
             n += k_changed - 1
+        elif op == "a92_sens_vocab":
+            k_changed = _a92_sens_vocab(cur)
+            if k_changed == 0:
+                raise OverlayError(f"{r['cid']}: A9.2 sensitivity vocabulary rename matched nothing")
+            n += k_changed - 1
         elif op == "a92_thermal":
             k_changed = _a92_thermal(cur)
             if k_changed == 0:
@@ -2288,7 +2293,11 @@ def a92() -> dict:
 
 def a92_pin() -> dict:
     return {"path": A92_REL, "sha256": A92_SHA, "verbatim": A92_MD_REL, "verbatim_sha256": A92_MD_SHA,
-            "pinned_copy": A92_COPY, "verbatim_pinned_copy": A92_MD_COPY, "recorded_at_commit": A92_COMMIT}
+            "pinned_copy": A92_COPY, "verbatim_pinned_copy": A92_MD_COPY, "recorded_at_commit": A92_COMMIT,
+            "path_resolution": "the docs/decisions/ paths exist in the execution branch (commit " + A92_COMMIT + ") "
+                               "and resolve in this lane branch only after it merges there; until then the byte-identical "
+                               "pinned copies under " + A92_COPY_DIR + " (sha256 checked on every build) are the "
+                               "readable authority"}
 
 
 def a92_statuses() -> dict:
@@ -3322,3 +3331,397 @@ def _a92_repair_a902() -> list:
 def _a92_repair() -> dict:
     return {"A9-02": _a92_repair_a902(), "A9-03": _a92_repair_a903(), "A9-04": _a92_repair_a904(),
             "A9-07": _a92_repair_a907(), "A9-09": _a92_repair_a909()}
+
+
+# ------------------------------------------------------------------------------------------------------ A9.2 repair 2
+# A9-10 review repair 4 (A9.2 residual wording, all deliverables): repair 3 relabelled the A9-03 / A9-04 / A9-09 RF
+# texts, but key finding K11, A9H-INS-01, REV-34 / REV-35 / REV-60 (A9-07), the A9-01 / A9-02 / A9-05 / A9-06 H3
+# inputs and owner-row summaries still sized or rated the RF chain at 0-500 W FORWARD, and REV-34 still carried the
+# superseded A9.1 off-platform layout as its current requirement. The uncoupled-sensitivity thermal values of
+# hall_icp_neutralizer still used the PASS / CLOSES vocabulary. Every record below is a wording / label change required
+# by A9.2 (rf_500W, rf_measurement_reference, OQ-A907-11, icp_coupled_thermal). No number changes: the 0-500 W row-72
+# figure is kept as the delivered/operating capability; superseded texts are kept as *_before_a9_2 (history).
+SENS_VOCAB = {
+    "CLOSES": "UNCOUPLED_SENSITIVITY_WITHIN_LIMIT",
+    "CLOSES_WITH_SINGLE_LEVER": "UNCOUPLED_SENSITIVITY_WITHIN_LIMIT_WITH_SINGLE_LEVER",
+    "CLOSES_ONLY_WITH_COMBINED_LEVERS": "UNCOUPLED_SENSITIVITY_WITHIN_LIMIT_ONLY_WITH_COMBINED_LEVERS",
+    "CLOSES_WITH_LEVERS": "UNCOUPLED_SENSITIVITY_WITHIN_LIMIT_WITH_LEVERS",
+    "PASS": "UNCOUPLED_SENSITIVITY_BELOW_CEILING",
+    "CONDITIONALLY_RESOLVED": "UNCOUPLED_SENSITIVITY_CONDITIONALLY_WITHIN_LIMIT",
+}
+SENS_VOCAB_RULE = ("A9.2 ICP_COUPLED_THERMAL (A9-10 review repair 4): the lane's rule vocabulary (CLOSES / PASS / "
+                   "CONDITIONALLY_RESOLVED, recomputations.h25_thermal_rerun.rule) is recorded for hall_icp_neutralizer "
+                   "only as uncoupled-sensitivity outcomes with the names below; they are sensitivity information, never "
+                   "a thermal PASS or closure; every reported hall_icp_neutralizer thermal status is UNRESOLVED")
+PLANE_A92 = ("on the generator / 50-ohm side of the LOCAL matching network (ICP-14 plane; A9.2 OQ-A907-11 / "
+             "rf_measurement_reference)")
+FWD_MAX_TBD = ("P_RF,fwd,max (TBD_AFTER_IMPEDANCE_MAP: the forward power on the generator / 50-ohm side at the maximum "
+               "operating point of the characterized mismatch envelope; the row-72 0-500 W figure is the delivered/"
+               "operating investigation capability, not a forward maximum and not a component rating - A9.2 rf_500W; "
+               "A9.2 cites about 925 W forward at VSWR about 5.2 for 500 W delivered)")
+LBL_500 = "(A9.2 rf_500W: delivered/operating investigation capability, not a component rating)"
+
+
+def _sens_map(v):
+    if isinstance(v, str):
+        if v in SENS_VOCAB:
+            return SENS_VOCAB[v], 1
+        if PASS_LIKE.match(v):
+            raise OverlayError(f"no uncoupled-sensitivity name for {v!r}")
+        return v, 0
+    if isinstance(v, list):
+        out, n = [], 0
+        for x in v:
+            y, k = _sens_map(x)
+            out.append(y)
+            n += k
+        return out, n
+    return v, 0
+
+
+def _a92_sens_vocab(th: dict) -> int:
+    """Rename the pass-like values of every uncoupled_sensitivity_* field (and the uncoupled-sensitivity mount-heat
+    table) of the hall_icp_neutralizer thermal records to the SENS_VOCAB names. Returns the number of renamed fields."""
+    n = 0
+
+    def walk(o):
+        nonlocal n
+        if isinstance(o, dict):
+            for k in list(o):
+                v = o[k]
+                if k.startswith("uncoupled_sensitivity_") and not isinstance(v, (dict, bool)):
+                    o[k], c = _sens_map(v)
+                    n += 1 if c else 0
+                elif k == "within_allowable_W_uncoupled_sensitivity":
+                    new = {}
+                    for a, x in v.items():
+                        new[a], c = _sens_map(x)
+                        n += c
+                    o[k] = new
+                else:
+                    walk(v)
+        elif isinstance(o, list):
+            for x in o:
+                walk(x)
+    for key in ("results", "closure_summary_hall_icp_neutralizer", "bn_wall_11_2K_case", "mount_heat_vs_row85"):
+        node = th[key]["hall_icp_neutralizer"] if key == "results" else th[key]
+        walk(node)
+    if "a9_2_sensitivity_vocabulary" in th:
+        raise OverlayError("sensitivity vocabulary already renamed")
+    th["a9_2_sensitivity_vocabulary"] = {"rule": SENS_VOCAB_RULE, "names": dict(SENS_VOCAB),
+                                         "source": a92_src("icp_coupled_thermal")}
+    return n
+
+
+def _a92_repair2_a907() -> list:
+    kf = "/key_findings[{}]"
+    th = "/recomputations/h25_thermal_rerun"
+    rv = "/revision_register[id={}]"
+    a92drv = lambda i: {"kind": "A9.2", "id": i, "path": A92_REL, "sha256": A92_SHA}  # noqa: E731
+    return [
+        R("A910-A92S-A907-01", "A9.2 icp_coupled_thermal", "a92_sens_vocab", th,
+          summary="uncoupled_sensitivity_* values of every hall_icp_neutralizer thermal record renamed from the "
+                  "CLOSES / PASS / CONDITIONALLY_RESOLVED vocabulary to UNCOUPLED_SENSITIVITY_* names (a9_2_sensitivity_"
+                  "vocabulary; values' meaning and every number unchanged)"),
+        R("A910-A92S-A907-02", "A9.2 icp_coupled_thermal", "merge", rv.format("REV-42") + "/new/value",
+          {"uncoupled_sensitivity_closure_CI": "CLOSES_ONLY_WITH_COMBINED_LEVERS",
+           "uncoupled_sensitivity_closure_CO": "CLOSES"},
+          {"uncoupled_sensitivity_closure_CI": SENS_VOCAB["CLOSES_ONLY_WITH_COMBINED_LEVERS"],
+           "uncoupled_sensitivity_closure_CO": SENS_VOCAB["CLOSES"]}, "REV-42 sensitivity names"),
+        R("A910-A92S-A907-03", "A9.2 icp_coupled_thermal", "merge", rv.format("REV-44") + "/new/value",
+          {"uncoupled_sensitivity_PO": ["PASS"], "uncoupled_sensitivity_BP": ["PASS"]},
+          {"uncoupled_sensitivity_PO": [SENS_VOCAB["PASS"]], "uncoupled_sensitivity_BP": [SENS_VOCAB["PASS"]]},
+          "REV-44 sensitivity names"),
+        R("A910-A92S-A907-04", "A9.2 icp_coupled_thermal", "merge", rv.format("REV-45") + "/new/value",
+          {"uncoupled_sensitivity_status": "CONDITIONALLY_RESOLVED"},
+          {"uncoupled_sensitivity_status": SENS_VOCAB["CONDITIONALLY_RESOLVED"]}, "REV-45 sensitivity name"),
+        R("A910-A92S-A907-05", "A9.2 icp_coupled_thermal", "replace", th + "/bn_wall_11_2K_case/status_meaning",
+          "CONDITIONALLY_RESOLVED = the searched", SENS_VOCAB["CONDITIONALLY_RESOLVED"] + " = the searched",
+          "BN-wall status meaning uses the sensitivity name"),
+        R("A910-A92S-A907-06", "A9.2 icp_coupled_thermal", "replace", kf.format(1),
+          "WI DO_NOT_CLOSE, WO CLOSES, CI DO_NOT_CLOSE, CO CLOSES.",
+          "WI DO_NOT_CLOSE, WO UNCOUPLED_SENSITIVITY_WITHIN_LIMIT (uncoupled-sensitivity margin positive), CI "
+          "DO_NOT_CLOSE, CO UNCOUPLED_SENSITIVITY_WITHIN_LIMIT (uncoupled-sensitivity margin positive).",
+          "K2 node verdicts use the sensitivity names"),
+        R("A910-A92S-A907-07", "A9.2 icp_coupled_thermal", "replace", kf.format(1),
+          "Every hall_icp_neutralizer uncoupled-sensitivity CLOSES above",
+          "Every hall_icp_neutralizer uncoupled-sensitivity within-limit result above", "K2 clause"),
+        R("A910-A92S-A907-08", "A9.2 icp_coupled_thermal", "replace", kf.format(2),
+          "uncoupled sensitivity: CONDITIONALLY_RESOLVED)",
+          "uncoupled sensitivity: " + SENS_VOCAB["CONDITIONALLY_RESOLVED"] + ")", "K3 sensitivity name"),
+        R("A910-A92S-A907-09", "A9.2 icp_coupled_thermal", "replace", kf.format(5),
+          "uncoupled sensitivity only: PO PASS, BP PASS",
+          "uncoupled sensitivity only: PO and BP below the necessary Curie ceiling, " + SENS_VOCAB["PASS"],
+          "K6 Curie sensitivity wording"),
+        R("A910-A92S-A907-10", "A9.2 icp_coupled_thermal", "replace", "/m16_impact[m16_row=10]/how_touched",
+          "uncoupled sensitivity CLOSES_ONLY_WITH_COMBINED_LEVERS / CLOSES",
+          "uncoupled sensitivity CI " + SENS_VOCAB["CLOSES_ONLY_WITH_COMBINED_LEVERS"] + " / CO " + SENS_VOCAB["CLOSES"],
+          "M16 row 10 wording"),
+        R("A910-A92S-A907-11", "A9.2 icp_coupled_thermal", "replace", "/m16_impact[m16_row=13]/how_touched",
+          "BN wall uncoupled sensitivity CLOSES_WITH_SINGLE_LEVER",
+          "BN wall uncoupled sensitivity " + SENS_VOCAB["CLOSES_WITH_SINGLE_LEVER"], "M16 row 13 wording"),
+        R("A910-A92S-A907-12", "A9.2 rf_500W, OQ-A907-11", "replace", kf.format(10),
+          "the row-72 0-500 W range is the GENERATOR forward power; at the A9.1 coupler plane (after the match) the "
+          "forward power is P_net / (1 - |Gamma|^2) and depends on the antenna impedance, which is TBD.",
+          "A9.2 (rf_500W, OQ-A907-11 answered): the row-72 0-500 W range is a laboratory delivered/operating "
+          "investigation capability, NOT the generator forward power and not a component rating; the directional "
+          "coupler sits on the generator / 50-ohm side of the LOCAL matching network and every RF component rating is "
+          "TBD_AFTER_IMPEDANCE_MAP. History (A9-07 analysis on the superseded A9.1 plane, coupler after an off-platform "
+          "match; kept for provenance): at that plane the forward power was P_net / (1 - |Gamma|^2) and depended on "
+          "the antenna impedance, which is TBD.", "K11 opens with the A9.2 interpretation"),
+        R("A910-A92S-A907-13", "A9.2 rf_500W, OQ-A907-11", "replace", kf.format(10),
+          "Coupler/sensor/coax ratings and the directivity requirement are therefore TBD until either an on-module "
+          "pre-match fixes Gamma_max (option a, proposed) or the antenna impedance range is known (option b).",
+          "Coupler/sensor/coax ratings and the directivity requirement were therefore TBD until either an on-module "
+          "pre-match fixed Gamma_max (option a, then proposed) or the antenna impedance range was known (option b); "
+          "both options are superseded by A9.2 (adjustable local match; ratings TBD_AFTER_IMPEDANCE_MAP).",
+          "K11 history clause"),
+        R("A910-A92S-A907-14", "A9.2 rf_500W", "replace", kf.format(10),
+          "At the review's illustrative loads (not antenna data) and 500 W net:",
+          "At the review's illustrative loads (not antenna data) and 500 W net (the delivered/operating capability; "
+          "sensitivity only, not a rating):", "K11 sensitivity sentence labelled"),
+        R("A910-A92S-A907-15", "A9.2 OQ-A907-11, rf_measurement_reference, rf_500W", "supersede", rv.format("REV-34")
+          + "/new",
+          {"requirement": "matching network OFF the moving platform", "value": "off-platform tunable match"},
+          {"requirement": "A9.2 OQ-A907-11 (supersedes the A9.1 A9-03-matching location for the A9 baseline): "
+                          + LOCAL_CHAIN + "; the long flexible coax across the stand stays approximately a controlled "
+                          "50-ohm line; " + MEAS_REF + "; calibrated line-loss / S-parameter correction from the coupler "
+                          "plane to the local-match input; matched sham coax and an equivalent sham network in "
+                          "hall_c1_reference (row 133); RF component ratings TBD_AFTER_IMPEDANCE_MAP (A9.2 rf_500W); "
+                          "protection per A9.2 rf_protection, trip thresholds frozen after the ICP load "
+                          "characterization. The A9.1 text (match off the moving platform, coupler after the match) is "
+                          "kept as requirement_before_a9_2 (history, superseded).",
+           "value": {"layout": "LOCAL adjustable matching network on / immediately adjacent to the ICP module; "
+                               "directional coupler on the generator / 50-ohm side (A9.2 OQ-A907-11)",
+                     "flexible_segment_treatment": "controlled 50-ohm line; the antenna mismatch is confined to the "
+                                                   "short match-to-antenna segment and the matching elements (A9.2); "
+                                                   "ratings TBD_AFTER_IMPEDANCE_MAP"}},
+          "REV-34 current requirement = the A9.2 local-match layout; A9.1 layout kept as history"),
+        R("A910-A92S-A907-16", "A9.2 OQ-A907-11", "supersede", rv.format("REV-34"),
+          {"basis": "A9.1 A9-03 clarification"},
+          {"basis": "A9.2 OQ-A907-11 / rf_measurement_reference / rf_500W (supersede the A9.1 A9-03-matching location "
+                    "for the A9 baseline; OWNER_GIVEN by A9.2)"}, "REV-34 basis"),
+        R("A910-A92S-A907-17", "A9.2 OQ-A907-11", "append", rv.format("REV-34") + "/driver", None,
+          a92drv("OQ-A907-11"), "REV-34 A9.2 driver"),
+        R("A910-A92S-A907-18", "A9.2 rf_500W", "replace", rv.format("REV-35") + "/new/requirement",
+          "P_RF,fwd,max 500 W", FWD_MAX_TBD, "REV-35 forward maximum is TBD_AFTER_IMPEDANCE_MAP, not 500 W"),
+        R("A910-A92S-A907-19", "A9.2 rf_500W", "append", rv.format("REV-35") + "/driver", None, a92drv("rf_500W"),
+          "REV-35 A9.2 driver"),
+        R("A910-A92S-A907-20", "A9.2 rf_500W", "replace", rv.format("REV-60") + "/new/requirement",
+          "the 0-500 W lab RF source is a test capability only",
+          "the lab RF source (0-500 W delivered/operating investigation capability, A9.2 rf_500W; not a component "
+          "rating) is a test capability only", "REV-60 500 W label"),
+        R("A910-A92S-A907-21", "A9.2 rf_500W, rf_measurement_reference", "supersede", "/new_items[id=A9H-INS-01]",
+          {"name": "reference plane after the matching network (A9.1)", "value": "generator_P_fwd_W",
+           "basis": "row 72; A9.1 A9-03-matching"},
+          {"name": "13.56 MHz directional coupler + forward/reflected power sensors " + PLANE_A92 + "; laboratory chain "
+                   "with the " + DELIV_500,
+           "value": {"f_MHz": 13.56, "delivered_operating_capability_W": [0.0, 500.0],
+                     "generator_and_coupler_ratings": RATINGS_TBD,
+                     "coupler_plane_P_fwd_max_W": RATINGS_TBD,
+                     "directivity_min_dB": "TBD - requires the A9-04 u(P_net) allocation at the coupler-plane |Gamma| "
+                                           "(UB-RF-04)"},
+           "basis": "row 72 as interpreted by A9.2 rf_500W; A9.2 OQ-A907-11 / rf_measurement_reference (the A9.1 "
+                    "A9-03-matching plane is history)"},
+          "A9H-INS-01 name / value: coupler plane per A9.2; 0-500 W kept as the delivered/operating capability "
+          "(number unchanged, owner row 72)", numeric=True),
+        R("A910-A92S-A907-22", "A9.2 OQ-A907-11", "replace", "/new_items[id=A9H-INS-14]/note",
+          "the tunable match stays off-platform (A9.1);",
+          "history (A9.1, superseded for the A9 baseline by A9.2 OQ-A907-11: adjustable local match on / adjacent to "
+          "the ICP module): the tunable match stayed off-platform;", "A9H-INS-14 note marked history"),
+        R("A910-A92S-A907-23", "A9.2 rf_500W", "replace", "/h3_inputs[id=H3-A907-02]/item",
+          "13.56 MHz RF generator 0-500 W +", "13.56 MHz RF generator for the " + DELIV_500 + " +",
+          "H3-A907-02 500 W label"),
+        R("A910-A92S-A907-24", "A9.2 rf_500W", "supersede", "/recomputations/rf_reference_plane/P_net_max_W",
+          {"basis": "row 72 lab forward power 0-500 W"},
+          {"basis": "row 72 0-500 W as interpreted by A9.2 rf_500W: the delivered/operating investigation capability; "
+                    "P_net = 500 W is the delivered power of the sensitivity cases (A9.2 cites about 925 W forward at "
+                    "VSWR about 5.2 for this 500 W delivered case); not a component rating"},
+          "P_net_max basis relabelled (value unchanged)"),
+        R("A910-A92S-A907-25", "A9.2 rf_500W", "replace",
+          "/recomputations/rf_reference_plane/options/b_rate_the_mismatched_segment/note",
+          "for 500 W net: a 0-500 W forward-rated sensor would be over-ranged",
+          "for 500 W net (the delivered/operating capability): a sensor rated at 500 W would be over-ranged (A9.2 "
+          "rf_500W: 500 W is not a component rating; ratings TBD_AFTER_IMPEDANCE_MAP)", "option-b note labelled"),
+        R("A910-A92S-A907-27", "A9.2 icp_coupled_thermal", "replace", th + "/overall/open_items[4]",
+          "(every uncoupled-sensitivity CLOSES is conditional;", "(every uncoupled-sensitivity within-limit result is "
+          "conditional;", "open item 5 wording"),
+        R("A910-A92S-A907-28", "A9.2 rf_500W", "replace", "/owner_answers_applied[row=72]/how_applied",
+          "13.56 MHz, 0-500 W generator/chain;", "13.56 MHz, 0-500 W generator/chain " + LBL_500 + ";",
+          "row 72 application labelled"),
+        R("A910-A92S-A907-26", "A9.2 icp_coupled_thermal", "code", None,
+          summary="H2_A9_REVISIONS.md closure-summary vocabulary sentence rewritten with the UNCOUPLED_SENSITIVITY_* "
+                  "names (render wrapper A92_MD_RELABEL, each substitution matched exactly once); the register "
+                  "renderer shows A9.2 drivers",
+          file="docs/hardware/h2_a9_revisions/build_h2_a9_revisions.py", marker="A92_SENS_VOCAB_MD", scope=[]),
+    ]
+
+
+def _a92_repair2_a901() -> list:
+    return [
+        R("A910-A92S-A901-01", "A9.2 rf_500W, rf_measurement_reference", "replace", "/stage_map[id=HI-S1A]/what",
+          "RF chain 13.56 MHz, 0-500 W forward, directional-coupler forward/reflected into a dummy load",
+          "RF chain 13.56 MHz with the " + DELIV_500 + " (ratings TBD_AFTER_IMPEDANCE_MAP), directional-coupler "
+          "forward/reflected " + PLANE_A92 + " into a dummy load", "HI-S1A RF chain wording"),
+        R("A910-A92S-A901-02", "A9.2 rf_500W, rf_measurement_reference", "set",
+          "/configurations/configurations[1]/configuration_defining_settings[0]",
+          "RF forward power (laboratory 0-500 W range, row 72) and matching state",
+          "RF forward / reflected / delivered power (P_forward, P_reflected, |Gamma|, VSWR, P_delivered; A9.2 "
+          "rf_measurement_reference; the laboratory 0-500 W range is a delivered/operating investigation capability, "
+          "row 72 as interpreted by A9.2 rf_500W) and the local matching-network state", "MOD-ICP setting wording"),
+        R("A910-A92S-A901-03", "A9.2 rf_500W", "replace", "/owner_answers_applied[row=72]/applied_as",
+          "13.56 MHz, 0-500 W,", "13.56 MHz, 0-500 W " + LBL_500 + ",", "row 72 application labelled"),
+        R("A910-A92S-A901-04", "A9.2 rf_500W, OQ-A907-11", "set", "/h3_h4_inputs/h3_procurement_inputs_quotations_only[0]",
+          "13.56 MHz RF generator sized for 0-500 W forward, matching network, directional coupler, RF feedthroughs, "
+          "ICP chamber components (rows 8, 72)",
+          "13.56 MHz RF generator for the " + DELIV_500 + " (generator, coupler, coax, connector, matching-element and "
+          "feedthrough ratings TBD_AFTER_IMPEDANCE_MAP), adjustable LOCAL matching network on / immediately adjacent to "
+          "the ICP module, directional coupler on its generator / 50-ohm side, RF feedthroughs, ICP chamber components "
+          "(rows 8, 72; A9.2 rf_500W / OQ-A907-11)", "H3 RF line: no 500 W rating"),
+    ]
+
+
+def _a92_repair2_a902() -> list:
+    return [
+        R("A910-A92S-A902-01", "A9.2 rf_500W", "supersede", "/h3_inputs[id=H3-A902-01]",
+          {"item": "13.56 MHz laboratory RF generator, 0-500 W forward"},
+          {"item": "13.56 MHz laboratory RF generator for the " + DELIV_500 + "; forward-power rating "
+                   "TBD_AFTER_IMPEDANCE_MAP; DC input metered"}, "H3-A902-01 no 500 W rating"),
+        R("A910-A92S-A902-02", "A9.2 rf_500W", "replace", "/h4_inputs[id=H4-A902-01]/measure",
+          "into a dummy load over 0-500 W;", "into a dummy load over the " + DELIV_500 + " plus the characterized "
+          "mismatch (generator rating TBD_AFTER_IMPEDANCE_MAP);", "H4-A902-01 wording"),
+        R("A910-A92S-A902-03", "A9.2 rf_500W", "replace", "/owner_answers_applied[row=72]/how_applied",
+          "lab 0-500 W forward;", "lab 0-500 W " + LBL_500 + ";", "row 72 application labelled"),
+        R("A910-A92S-A902-04", "A9.2 rf_500W", "replace", "/items[id=A902-20]/note",
+          "the laboratory 0-500 W RF source is a test capability",
+          "the laboratory RF source (" + DELIV_500 + ") is a test capability", "A902-20 note labelled"),
+        R("A910-A92S-A902-05", "A9.2 rf_500W", "code", None,
+          summary="BUS_POWER_BOUNDARY_A9.md ICP-available-power line: the 0-500 W laboratory RF range labelled as the "
+                  "delivered/operating capability (builder literal)",
+          file="docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py",
+          marker="A92_W500_LABEL", scope=[]),
+    ]
+
+
+def _a92_repair2_a903() -> list:
+    it = "/items[id={}]"
+    return [
+        R("A910-A92S-A903-01", "A9.2 rf_500W, rf_measurement_reference", "supersede", it.format("ICP-36"),
+          {"status": "DERIVED_BOUND", "evidence_class": "bound on owner values"},
+          {"status": "DERIVED_ALLOCATION_TERM",
+           "evidence_class": "model-derived (allocation term on owner values; not a bound, not a component rating)"},
+          "ICP-36 status names an allocation term, not a bound (value 600 W unchanged)"),
+        R("A910-A92S-A903-02", "A9.2 rf_measurement_reference, rf_500W", "replace", it.format("ICP-36") + "/requirement",
+          "It covers RF power delivered past the directional coupler only;",
+          "Reference plane of the 500 W delivered/operating figure: the delivered plane past the local matching network (P_delivered = "
+          "P_forward - P_reflected - P_line/match,loss, A9.2 rf_measurement_reference). The heat downstream of the "
+          "directional coupler is P_forward - P_reflected = P_delivered + P_line/match,loss, so the local-match / line "
+          "loss dissipated on the module (TBD_AFTER_IMPEDANCE_MAP) is ADDITIONAL to the 500 W delivered figure: it consumes part "
+          "of the 20 % margin or exceeds it, and it is carried as Q_RF/match in ICP-43;",
+          "ICP-36 reference plane stated; match loss additional"),
+        R("A910-A92S-A903-03", "A9.2 rf_500W", "replace", it.format("ICP-43") + "/requirement",
+          "Q_RF is bounded by ICP-36,", "Q_RF is the ICP-36 RF-only allocation term (not a bound) plus the local-match / "
+          "line loss P_line/match,loss dissipated on the module (A9.2 rf_measurement_reference),",
+          "ICP-43 Q_RF wording"),
+        R("A910-A92S-A903-04", "A9.2 rf_500W", "replace", it.format("ICP-43") + "/requirement",
+          "x (P_fwd,max (row 72) + P_d,max)", "x (P_fwd,max + P_d,max) with P_fwd,max = the forward power on the "
+          "generator / 50-ohm side at the maximum operating point of the characterized mismatch envelope "
+          "(TBD_AFTER_IMPEDANCE_MAP; not the row-72 0-500 W figure, which is a delivered/operating investigation "
+          "capability and not a component rating, A9.2 rf_500W)", "ICP-43 rule: P_fwd,max is not 500 W"),
+        R("A910-A92S-A903-05", "A9.2 rf_measurement_reference", "supersede",
+          "/h3_h4_inputs/h3_procurement_quotation_only[2]", {"item": "at the load plane"},
+          {"item": "calibrated dual directional coupler + power sensors " + PLANE_A92 + "; ratings "
+                   "TBD_AFTER_IMPEDANCE_MAP"}, "H3 coupler line: A9.2 plane"),
+        R("A910-A92S-A903-06", "A9.2 icp_coupled_thermal", "set", "/h3_h4_inputs/h4_tests[5]/closes",
+          "ICP-21, ICP-29, ICP-36, ICP-43 (engineering evidence only)",
+          "ICP-21, ICP-29 (engineering evidence only); ICP-36 / ICP-43: engineering heat-map input only, NOT a thermal "
+          "closure (A9.2 ICP_COUPLED_THERMAL = UNRESOLVED: a coupled closure needs Q_Hall->ICP, Q_collector, "
+          "Q_RF/match, Q_plume and the ICP view factors)", "Ar thermal map re-scoped: no ICP-43 closure"),
+        R("A910-A92S-A903-07", "A9.2 rf_measurement_reference", "replace", "/h3_h4_inputs/h4_tests[1]/measure",
+          "load-plane loss chain", "loss chain from the coupler plane (generator / 50-ohm side) through the line and "
+          "the local match to the antenna feed (A9.2)", "S1a loss-chain wording"),
+    ]
+
+
+def _a92_repair2_a905ev() -> list:
+    return [
+        R("A910-A92S-A905EV-01", "A9.2 rf_500W", "set", "/h3_h4_inputs/h3_procurement_rfq[0]",
+          "13.56 MHz generator with forward/reflected metering (anchor: 200 W class; owner row 72: size 0-500 W)",
+          "13.56 MHz generator with forward/reflected metering (anchor: 200 W class; owner row 72 as interpreted by "
+          "A9.2 rf_500W: " + DELIV_500 + "; generator rating TBD_AFTER_IMPEDANCE_MAP)", "H3 generator line"),
+        R("A910-A92S-A905EV-02", "A9.2 rf_500W", "replace", "/owner_answers_applied[row=72]/how",
+          "for the 0-500 W lab chain", "for the lab chain with its " + DELIV_500, "row 72 application labelled"),
+    ]
+
+
+def _a92_repair2_a905vi() -> list:
+    it = "/items[id={}]"
+    h3 = "/h3_h4_inputs/h3_procurement_rfq_inputs[{}]"
+    old = ["13.56 MHz RF generator, 0-500 W forward with forward/reflected metering (row 72)",
+           "matching network with remote tuning; RF vacuum feedthrough; flexible coax + matched sham (rows 8, 117)",
+           "inline directional coupler + power sensors at the load plane; RF current probe for the antenna"]
+    new = ["13.56 MHz RF generator for the " + DELIV_500 + " with forward/reflected metering (row 72; generator "
+           "forward-power rating TBD_AFTER_IMPEDANCE_MAP)",
+           "adjustable LOCAL matching network on / immediately adjacent to the ICP module (A9.2 OQ-A907-11; "
+           "matching-element ratings TBD_AFTER_IMPEDANCE_MAP); RF vacuum feedthrough; flexible 50-ohm coax + matched "
+           "sham (rows 8, 117, 133)",
+           "inline directional coupler + power sensors " + PLANE_A92 + " (P_forward, P_reflected, |Gamma|, VSWR, "
+           "P_delivered); RF current probe for the antenna"]
+    out = [R("A910-A92S-A905VI-01", "A9.2 rf_500W, OQ-A907-11", "merge", "/h3_h4_inputs",
+             {"h3_procurement_rfq_inputs_before_a9_2": ABSENT},
+             {"h3_procurement_rfq_inputs_before_a9_2": {str(i): s for i, s in enumerate(old)}},
+             "superseded H3 RF lines kept as history")]
+    for i in range(3):
+        out.append(R(f"A910-A92S-A905VI-0{i + 2}", "A9.2 rf_500W, OQ-A907-11, rf_measurement_reference", "set",
+                     h3.format(i), old[i], new[i], f"H3 RF line {i + 1} per A9.2"))
+    out += [
+        R("A910-A92S-A905VI-05", "A9.2 rf_500W, rf_measurement_reference", "supersede", it.format("VI-RF-02"),
+          {"name": "at the load plane", "value": "sized for 0-500 W forward", "source": "range for sizing the chain"},
+          {"name": "forward RF power at the ICP-14 coupler plane (generator / 50-ohm side of the local matching "
+                   "network, A9.2)",
+           "value": "TBD - requires H-1 + ICP module operation; the laboratory chain provides the " + DELIV_500
+                    + "; chain ratings TBD_AFTER_IMPEDANCE_MAP",
+           "source": "owner answer row 72 as interpreted by A9.2 rf_500W (a delivered/operating capability; not an "
+                     "operating value and not a component rating)"}, "VI-RF-02 plane and 500 W wording"),
+        R("A910-A92S-A905VI-06", "A9.2 rf_measurement_reference", "supersede", it.format("VI-RF-03"),
+          {"name": "at the load plane"},
+          {"name": "reflected RF power at the ICP-14 coupler plane (generator / 50-ohm side of the local matching "
+                   "network, A9.2)"}, "VI-RF-03 plane"),
+        R("A910-A92S-A905VI-07", "A9.2 rf_measurement_reference", "supersede", it.format("VI-RF-04"),
+          {"name": "at the load plane", "definition": "at the declared load plane"},
+          {"name": "net RF power at the ICP-14 coupler plane (P_fwd - P_refl)",
+           "definition": "P_fwd - P_refl at the ICP-14 coupler plane (generator / 50-ohm side of the local matching "
+                         "network); includes the line, local-match and antenna ohmic loss downstream of the plane. "
+                         "A9.2: P_delivered = P_forward - P_reflected - P_line/match,loss is the power past the local "
+                         "match; P_forward = P_plasma is never assumed"}, "VI-RF-04 plane and A9.2 relation"),
+        R("A910-A92S-A905VI-08", "A9.2 rf_measurement_reference", "replace", it.format("VI-RF-02") + "/definition",
+          "at the declared RF load plane", "at the declared RF measurement plane, which A9.2 places on the generator / "
+          "50-ohm side of the local matching network", "VI-RF-02 definition plane"),
+        R("A910-A92S-A905VI-09", "A9.2 rf_measurement_reference", "replace", "/interface_demands[id=IF-06]/what",
+          "directional coupler at the load plane", "directional coupler " + PLANE_A92, "IF-06 coupler plane"),
+        R("A910-A92S-A905VI-10", "A9.2 rf_500W", "replace", "/owner_answers_applied[row=72]/how",
+          "0-500 W lab chain", "0-500 W lab chain " + LBL_500, "row 72 application labelled"),
+    ]
+    return out
+
+
+def _a92_repair2_a906() -> list:
+    lab_gen = "the laboratory RF generator (" + DELIV_500 + "; rating TBD_AFTER_IMPEDANCE_MAP)"
+    return [
+        R("A910-A92S-A906-01", "A9.2 rf_500W", "replace", "/a9_flight_bom/flight[id=A9B-19]/status",
+          "the laboratory 0-500 W generator (row 72)", lab_gen + " (row 72)", "A9B-19 500 W label"),
+        R("A910-A92S-A906-02", "A9.2 rf_500W", "replace", "/a9_flight_bom/ground_article_only[id=GA-02]/item",
+          "13.56 MHz 0-500 W lab RF generator", "13.56 MHz lab RF generator (" + DELIV_500 + ")", "GA-02 500 W label"),
+        R("A910-A92S-A906-03", "A9.2 rf_500W", "replace", "/interface_demands[id=MA9-ID-13]/quantity",
+          "the lab 0-500 W RF generator", "the lab RF generator (" + DELIV_500 + ")", "MA9-ID-13 500 W label"),
+        R("A910-A92S-A906-04", "A9.2 rf_500W", "replace", "/owner_answers_applied[row=72]/how_applied",
+          "lab 0-500 W RF generator", "lab RF generator (" + DELIV_500 + ")", "row 72 application labelled"),
+        R("A910-A92S-A906-05", "A9.2 rf_500W", "replace", "/a9_1_decisions_applied[decision=OQ-A902-03]/how_applied",
+          "lab 0-500 W RF is", "lab 0-500 W RF " + LBL_500 + " is", "OQ-A902-03 application labelled"),
+    ]
+
+
+def _a92_repair2() -> dict:
+    return {"A9-01": _a92_repair2_a901(), "A9-02": _a92_repair2_a902(), "A9-03": _a92_repair2_a903(),
+            "A9-05ev": _a92_repair2_a905ev(), "A9-05vi": _a92_repair2_a905vi(), "A9-06": _a92_repair2_a906(),
+            "A9-07": _a92_repair2_a907()}

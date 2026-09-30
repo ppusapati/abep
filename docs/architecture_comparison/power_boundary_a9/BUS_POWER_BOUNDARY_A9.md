@@ -120,7 +120,7 @@ Other pinned inputs: `abep_sim/arch_boundary.py` `8dfc309a5d2c717913fd4961bc660f
 
 - RFP gate: P_bus,1ms,max (A9.1 OQ-A902-01) < 1500 W (strict), steady AND every start-up step (row 108); verdicts PASS, FAIL, NOT_EVALUABLE.
 - Gate definition: P_bus,1ms,max = max_t (1/1 ms) integral_t^{t+1 ms} P_bus(tau) dtau; status FROZEN_A9_ENGINEERING_DEFINITION (A9.1 OQ-A902-01 (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)); measurement: spacecraft-DC propulsion boundary; all required channels synchronized; effective measurement bandwidth >= 20 kHz; sample rate >= 100 kSa/s per relevant channel or an equivalent direct spacecraft-bus power channel; anti-alias filtering documented; no step-average may be substituted for this gate; a ledger PASSes only when declared `p_bus_1ms_max`, otherwise NOT_EVALUABLE; diagnostics only: unaveraged sampled peak (hardware/current/voltage protection analysis; not the 1.5 kW system-power gate); 100 ms and 1 s averages (diagnostic/energy metrics, not substitutes).
-- ICP available power: P_ICP,available = 1350 - P_common - P_Hall - P_other,active at every registered operating condition (A9.1 OQ-A902-03); the 0-500 W laboratory RF range is a test capability only.
+- ICP available power: P_ICP,available = 1350 - P_common - P_Hall - P_other,active at every registered operating condition (A9.1 OQ-A902-03); the 0-500 W laboratory RF range (A9.2 rf_500W: delivered/operating investigation capability, not a component rating) is a test capability only.
 - Context level: 1300 W - context/sensitivity only (A9.1 OQ-A902-07); active internal check 1350 W; hard requirement 1500 W.
 - Design allocation 1350 W (row 109): owner allocation check.
 - Common allocation 300 W incl. 50 W controls/thermal (row 114): owner allocation check.
@@ -247,7 +247,7 @@ Other pinned inputs: `abep_sim/arch_boundary.py` `8dfc309a5d2c717913fd4961bc660f
 | 66 | ["PMQ-06"] | new boundary version with explicit RF source/matching, collector/bias, assist-magnet and active-cooling slots; v1 untouched | NEW BUS-BOUNDARY VERSION — do not prohibit legitimate loads. Add explicit components for RF source/matching, collector/bias supply, any assist magnet and active cooling if used. |
 | 69 | ["HWQ-06"] | icp_assist_magnet is a variant-only slot; not installed in the first build | UNMAGNETIZED 13.56 MHz ICP for v1/A9 first build. If magnetic assistance is later justified, treat it as a new controlled variant and book its power/mass explicitly. |
 | 70 | ["HWQ-07"] | icp_collector_bias is a separate metered slot; ICP body floating | OLD options are not adequate. Keep the ICP dielectric/body floating unless the validated circuit requires otherwise; control and measure the electron-extraction collector bias separately. Do not hard-ground the plasma body by default. |
-| 72 | ["R4-Q7"] | 13.56 MHz; lab 0-500 W forward; coupler primary, calorimetry cross-check; only generator DC input crosses the boundary | 13.56 MHz. Size laboratory RF source and inline measurement chain for 0–500 W forward power initially, with directional-coupler forward/reflected measurements. Calorimetry is an independent cross-check, not the sole primary power measurement. |
+| 72 | ["R4-Q7"] | 13.56 MHz; lab 0-500 W (A9.2 rf_500W: delivered/operating investigation capability, not a component rating); coupler primary, calorimetry cross-check; only generator DC input crosses the boundary | 13.56 MHz. Size laboratory RF source and inline measurement chain for 0–500 W forward power initially, with directional-coupler forward/reflected measurements. Calorimetry is an independent cross-check, not the sole primary power measurement. |
 | 79 | ["H2-1 Q6", "H22-OQ-01"] | external C1: C1 slots belong to the swappable downstream module, the Hall slots are neutralizer-agnostic | EXTERNAL C1 reference. Do not constrain the H-1 mean diameter around a central C1. Provide a downstream/coaxial interface for the ICP neutralizer and keep the Hall head neutralizer-agnostic. |
 | 86 | ["H25-Q4", "H25-Q6"] | active_cooling variant slot provided for the >= 50 K margin rule if needed | Require ≥50 K margin below each validated continuous-use material/insulation temperature limit plus 20% heat-load design margin. The current ~11.2 K BN-wall margin is not acceptable as a design closure. |
 | 89 | ["H22-OQ-02"] | c1_keeper includes current-limited pulsed ignition 300-600 V class as a start-up transient; its peak enters the P_bus,1ms,max gate (A9.1 OQ-A902-01); pulse energy is a measurement record (A9-04 DQ-HI-PBUS chain defines no pulse-energy record yet, LOCK-1 item); H2-4 H24-19 flagged NEEDS_REVISION | YES — provide current-limited pulsed keeper ignition capability in the 300–600 V class for C1 development/reference testing, with interlocks and recorded pulse energy. |
@@ -309,7 +309,7 @@ Other pinned inputs: `abep_sim/arch_boundary.py` `8dfc309a5d2c717913fd4961bc660f
 
 | id | item | basis | note |
 |---|---|---|---|
-| H3-A902-01 | 13.56 MHz laboratory RF generator, 0-500 W forward, DC input metered | row 72 | quotations only (row 8); no supplier contact by the lane |
+| H3-A902-01 | 13.56 MHz laboratory RF generator for the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating); forward-power rating TBD_AFTER_IMPEDANCE_MAP; DC input metered | row 72 | quotations only (row 8); no supplier contact by the lane |
 | H3-A902-02 | directional coupler + forward/reflected sensors; calorimetric cross-check load | row 72 | - |
 | H3-A902-03 | matching network (fixed or auto-tuned; DC draw metered) | schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13 (A9.2 OQ-A907-11: adjustable local match on / adjacent to the ICP module; ratings TBD_AFTER_IMPEDANCE_MAP) | - |
 | H3-A902-04 | collector/bias supply (floating, V/I metered) | row 70; schemas/interfaces/icp_neutralizer_icd_v1.json ICP-21 | - |
@@ -320,7 +320,7 @@ Other pinned inputs: `abep_sim/arch_boundary.py` `8dfc309a5d2c717913fd4961bc660f
 
 | id | stage | measure | closes |
 |---|---|---|---|
-| H4-A902-01 | S1a | RF generator DC input vs coupler forward/reflected into a dummy load over 0-500 W; calorimetric cross-check | A902-21 |
+| H4-A902-01 | S1a | RF generator DC input vs coupler forward/reflected into a dummy load over the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating) plus the characterized mismatch (generator rating TBD_AFTER_IMPEDANCE_MAP); calorimetric cross-check | A902-21 |
 | H4-A902-02 | S1a | DUMMY_LOAD_PICKUP of the RF generator on every DC channel | A902-36 (with A9-04) |
 | H4-A902-03 | S1 | time-resolved spacecraft-side bus power through both start-up sequences and in steady state: P_bus,1ms,max with >= 20 kHz bandwidth, >= 100 kSa/s, synchronized channels, documented anti-alias filtering; unaveraged peak and 100 ms / 1 s means as diagnostics | the P_bus,1ms,max gate per A902-03 / A902-39..41 (frozen, A9.1 OQ-A902-01) |
 | H4-A902-04 | S1 | C1 heater reduction timing vs keeper/discharge stability; keeper pulse energy | A902-25..27 |
@@ -369,3 +369,8 @@ Changes applied by A9-10 after this lane's verified build (record `docs/experime
 | A910-A92-A902-03 | A9.2 OQ-A907-11 | replace | `/items[id=A902-22]/source` | 1 | A902-22 source |
 | A910-A92-A902-04 | A9.2 OQ-A907-11 | replace | `/h3_inputs[2]/basis` | 1 | h3 matching basis |
 | A910-A92R-A902-01 | A9.2 rf_measurement_reference | code | `None` | 0 | rf_power_planes() also returns \|Gamma\| and VSWR (derived from the measured forward / reflected power) and labels the coupler plane as the generator / 50-ohm side of the local match; arithmetic and ordering checks unchanged |
+| A910-A92S-A902-01 | A9.2 rf_500W | supersede | `/h3_inputs[id=H3-A902-01]` | 1 | H3-A902-01 no 500 W rating |
+| A910-A92S-A902-02 | A9.2 rf_500W | replace | `/h4_inputs[id=H4-A902-01]/measure` | 1 | H4-A902-01 wording |
+| A910-A92S-A902-03 | A9.2 rf_500W | replace | `/owner_answers_applied[row=72]/how_applied` | 1 | row 72 application labelled |
+| A910-A92S-A902-04 | A9.2 rf_500W | replace | `/items[id=A902-20]/note` | 1 | A902-20 note labelled |
+| A910-A92S-A902-05 | A9.2 rf_500W | code | `None` | 0 | BUS_POWER_BOUNDARY_A9.md ICP-available-power line: the 0-500 W laboratory RF range labelled as the delivered/operating capability (builder literal) |

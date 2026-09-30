@@ -87,7 +87,7 @@
   {
    "id": "REC-01",
    "name": "declared A9-10 changes to the A9 deliverables",
-   "value": 450,
+   "value": 511,
    "units": "count",
    "basis": "a9_10_overlay.py records",
    "source": "computed by this builder",
@@ -181,7 +181,7 @@
   {
    "id": "REC-08",
    "name": "immutable / historical files byte-identical to the A9-10 base",
-   "value": 63,
+   "value": 64,
    "units": "count",
    "basis": "A9 supersession rule",
    "source": "computed by this builder",
@@ -213,7 +213,7 @@
   },
   {
    "id": "REC-12",
-   "name": "residual A9.2 wording: pass-like values under any key, PASS / CLOSES sentences without an uncoupled-sensitivity label, 500 W texts without the delivered/operating label",
+   "name": "residual A9.2 wording: pass-like values under any key (sensitivity fields included), PASS / CLOSES sentences in the A9-07 findings / register / summaries, and 500 W RF sentences without the delivered/operating label in EVERY A9 deliverable, M16 v3, owner-state v2, the integration record and the RFQ packages",
    "value": 0,
    "units": "count",
    "basis": "A9.2 icp_coupled_thermal, rf_500W",
@@ -238,17 +238,17 @@
   {
    "deliverable": "A9-01",
    "file": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "changed_leaves": 415,
+   "changed_leaves": 444,
    "explained_by": {
-    "op": 73,
+    "op": 77,
     "gsub": 26,
     "code": 0,
     "pin": 0,
-    "section": 316
+    "section": 341
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 52,
+   "numeric_leaves_changed": 56,
    "changes": [
     {
      "cid": "A910-A901-Q01",
@@ -699,23 +699,59 @@
      "count": 1,
      "numeric": false,
      "summary": "A9-01 demand text"
+    },
+    {
+     "cid": "A910-A92S-A901-01",
+     "driver": "A9.2 rf_500W, rf_measurement_reference",
+     "op": "replace",
+     "ptr": "/stage_map[id=HI-S1A]/what",
+     "count": 1,
+     "numeric": false,
+     "summary": "HI-S1A RF chain wording"
+    },
+    {
+     "cid": "A910-A92S-A901-02",
+     "driver": "A9.2 rf_500W, rf_measurement_reference",
+     "op": "set",
+     "ptr": "/configurations/configurations[1]/configuration_defining_settings[0]",
+     "count": 1,
+     "numeric": false,
+     "summary": "MOD-ICP setting wording"
+    },
+    {
+     "cid": "A910-A92S-A901-03",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/owner_answers_applied[row=72]/applied_as",
+     "count": 1,
+     "numeric": false,
+     "summary": "row 72 application labelled"
+    },
+    {
+     "cid": "A910-A92S-A901-04",
+     "driver": "A9.2 rf_500W, OQ-A907-11",
+     "op": "set",
+     "ptr": "/h3_h4_inputs/h3_procurement_inputs_quotations_only[0]",
+     "count": 1,
+     "numeric": false,
+     "summary": "H3 RF line: no 500 W rating"
     }
    ]
   },
   {
    "deliverable": "A9-02",
    "file": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "changed_leaves": 442,
+   "changed_leaves": 477,
    "explained_by": {
-    "op": 37,
+    "op": 42,
     "gsub": 0,
-    "code": 197,
+    "code": 196,
     "pin": 0,
-    "section": 208
+    "section": 239
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 42,
+   "numeric_leaves_changed": 47,
    "changes": [
     {
      "cid": "A910-A902-Q01",
@@ -1047,23 +1083,69 @@
      "numeric": false,
      "summary": "rf_power_planes() also returns |Gamma| and VSWR (derived from the measured forward / reflected power) and labels the coupler plane as the generator / 50-ohm side of the local match; arithmetic and ordering checks unchanged",
      "scope": []
+    },
+    {
+     "cid": "A910-A92S-A902-01",
+     "driver": "A9.2 rf_500W",
+     "op": "supersede",
+     "ptr": "/h3_inputs[id=H3-A902-01]",
+     "count": 1,
+     "numeric": false,
+     "summary": "H3-A902-01 no 500 W rating"
+    },
+    {
+     "cid": "A910-A92S-A902-02",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/h4_inputs[id=H4-A902-01]/measure",
+     "count": 1,
+     "numeric": false,
+     "summary": "H4-A902-01 wording"
+    },
+    {
+     "cid": "A910-A92S-A902-03",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/owner_answers_applied[row=72]/how_applied",
+     "count": 1,
+     "numeric": false,
+     "summary": "row 72 application labelled"
+    },
+    {
+     "cid": "A910-A92S-A902-04",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/items[id=A902-20]/note",
+     "count": 1,
+     "numeric": false,
+     "summary": "A902-20 note labelled"
+    },
+    {
+     "cid": "A910-A92S-A902-05",
+     "driver": "A9.2 rf_500W",
+     "op": "code",
+     "ptr": "docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py",
+     "count": 0,
+     "numeric": false,
+     "summary": "BUS_POWER_BOUNDARY_A9.md ICP-available-power line: the 0-500 W laboratory RF range labelled as the delivered/operating capability (builder literal)",
+     "scope": []
     }
    ]
   },
   {
    "deliverable": "A9-03",
    "file": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "changed_leaves": 725,
+   "changed_leaves": 777,
    "explained_by": {
-    "op": 144,
+    "op": 153,
     "gsub": 0,
     "code": 25,
     "pin": 0,
-    "section": 556
+    "section": 599
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 94,
+   "numeric_leaves_changed": 101,
    "changes": [
     {
      "cid": "A910-A903-Q01",
@@ -1890,19 +1972,82 @@
      "count": 1,
      "numeric": false,
      "summary": "h3 generator line"
+    },
+    {
+     "cid": "A910-A92S-A903-01",
+     "driver": "A9.2 rf_500W, rf_measurement_reference",
+     "op": "supersede",
+     "ptr": "/items[id=ICP-36]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-36 status names an allocation term, not a bound (value 600 W unchanged)"
+    },
+    {
+     "cid": "A910-A92S-A903-02",
+     "driver": "A9.2 rf_measurement_reference, rf_500W",
+     "op": "replace",
+     "ptr": "/items[id=ICP-36]/requirement",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-36 reference plane stated; match loss additional"
+    },
+    {
+     "cid": "A910-A92S-A903-03",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/items[id=ICP-43]/requirement",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-43 Q_RF wording"
+    },
+    {
+     "cid": "A910-A92S-A903-04",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/items[id=ICP-43]/requirement",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-43 rule: P_fwd,max is not 500 W"
+    },
+    {
+     "cid": "A910-A92S-A903-05",
+     "driver": "A9.2 rf_measurement_reference",
+     "op": "supersede",
+     "ptr": "/h3_h4_inputs/h3_procurement_quotation_only[2]",
+     "count": 1,
+     "numeric": false,
+     "summary": "H3 coupler line: A9.2 plane"
+    },
+    {
+     "cid": "A910-A92S-A903-06",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "set",
+     "ptr": "/h3_h4_inputs/h4_tests[5]/closes",
+     "count": 1,
+     "numeric": false,
+     "summary": "Ar thermal map re-scoped: no ICP-43 closure"
+    },
+    {
+     "cid": "A910-A92S-A903-07",
+     "driver": "A9.2 rf_measurement_reference",
+     "op": "replace",
+     "ptr": "/h3_h4_inputs/h4_tests[1]/measure",
+     "count": 1,
+     "numeric": false,
+     "summary": "S1a loss-chain wording"
     }
    ]
   },
   {
    "deliverable": "A9-04",
    "file": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "changed_leaves": 745,
+   "changed_leaves": 746,
    "explained_by": {
     "op": 158,
     "gsub": 19,
     "code": 0,
     "pin": 0,
-    "section": 568
+    "section": 569
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
@@ -2741,17 +2886,17 @@
   {
    "deliverable": "A9-05ev",
    "file": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
-   "changed_leaves": 80,
+   "changed_leaves": 95,
    "explained_by": {
-    "op": 19,
+    "op": 21,
     "gsub": 9,
     "code": 0,
     "pin": 0,
-    "section": 52
+    "section": 65
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 6,
+   "numeric_leaves_changed": 8,
    "changes": [
     {
      "cid": "A910-A905EV-Q01",
@@ -2806,23 +2951,41 @@
      "count": 1,
      "numeric": false,
      "summary": "acquisition policy recorded"
+    },
+    {
+     "cid": "A910-A92S-A905EV-01",
+     "driver": "A9.2 rf_500W",
+     "op": "set",
+     "ptr": "/h3_h4_inputs/h3_procurement_rfq[0]",
+     "count": 1,
+     "numeric": false,
+     "summary": "H3 generator line"
+    },
+    {
+     "cid": "A910-A92S-A905EV-02",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/owner_answers_applied[row=72]/how",
+     "count": 1,
+     "numeric": false,
+     "summary": "row 72 application labelled"
     }
    ]
   },
   {
    "deliverable": "A9-05vi",
    "file": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-   "changed_leaves": 286,
+   "changed_leaves": 368,
    "explained_by": {
-    "op": 27,
-    "gsub": 104,
+    "op": 54,
+    "gsub": 98,
     "code": 0,
     "pin": 1,
-    "section": 154
+    "section": 215
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 23,
+   "numeric_leaves_changed": 33,
    "changes": [
     {
      "cid": "A910-A905VI-Q01",
@@ -3030,23 +3193,113 @@
      "count": 60,
      "numeric": false,
      "summary": "per-input decision quantity: precise remaining reason next to the field"
+    },
+    {
+     "cid": "A910-A92S-A905VI-01",
+     "driver": "A9.2 rf_500W, OQ-A907-11",
+     "op": "merge",
+     "ptr": "/h3_h4_inputs",
+     "count": 1,
+     "numeric": false,
+     "summary": "superseded H3 RF lines kept as history"
+    },
+    {
+     "cid": "A910-A92S-A905VI-02",
+     "driver": "A9.2 rf_500W, OQ-A907-11, rf_measurement_reference",
+     "op": "set",
+     "ptr": "/h3_h4_inputs/h3_procurement_rfq_inputs[0]",
+     "count": 1,
+     "numeric": false,
+     "summary": "H3 RF line 1 per A9.2"
+    },
+    {
+     "cid": "A910-A92S-A905VI-03",
+     "driver": "A9.2 rf_500W, OQ-A907-11, rf_measurement_reference",
+     "op": "set",
+     "ptr": "/h3_h4_inputs/h3_procurement_rfq_inputs[1]",
+     "count": 1,
+     "numeric": false,
+     "summary": "H3 RF line 2 per A9.2"
+    },
+    {
+     "cid": "A910-A92S-A905VI-04",
+     "driver": "A9.2 rf_500W, OQ-A907-11, rf_measurement_reference",
+     "op": "set",
+     "ptr": "/h3_h4_inputs/h3_procurement_rfq_inputs[2]",
+     "count": 1,
+     "numeric": false,
+     "summary": "H3 RF line 3 per A9.2"
+    },
+    {
+     "cid": "A910-A92S-A905VI-05",
+     "driver": "A9.2 rf_500W, rf_measurement_reference",
+     "op": "supersede",
+     "ptr": "/items[id=VI-RF-02]",
+     "count": 1,
+     "numeric": false,
+     "summary": "VI-RF-02 plane and 500 W wording"
+    },
+    {
+     "cid": "A910-A92S-A905VI-06",
+     "driver": "A9.2 rf_measurement_reference",
+     "op": "supersede",
+     "ptr": "/items[id=VI-RF-03]",
+     "count": 1,
+     "numeric": false,
+     "summary": "VI-RF-03 plane"
+    },
+    {
+     "cid": "A910-A92S-A905VI-07",
+     "driver": "A9.2 rf_measurement_reference",
+     "op": "supersede",
+     "ptr": "/items[id=VI-RF-04]",
+     "count": 1,
+     "numeric": false,
+     "summary": "VI-RF-04 plane and A9.2 relation"
+    },
+    {
+     "cid": "A910-A92S-A905VI-08",
+     "driver": "A9.2 rf_measurement_reference",
+     "op": "replace",
+     "ptr": "/items[id=VI-RF-02]/definition",
+     "count": 1,
+     "numeric": false,
+     "summary": "VI-RF-02 definition plane"
+    },
+    {
+     "cid": "A910-A92S-A905VI-09",
+     "driver": "A9.2 rf_measurement_reference",
+     "op": "replace",
+     "ptr": "/interface_demands[id=IF-06]/what",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-06 coupler plane"
+    },
+    {
+     "cid": "A910-A92S-A905VI-10",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/owner_answers_applied[row=72]/how",
+     "count": 1,
+     "numeric": false,
+     "summary": "row 72 application labelled"
     }
    ]
   },
   {
    "deliverable": "A9-06",
    "file": "docs/budgets/mass_a9/mass_a9_v1.json",
-   "changed_leaves": 2260,
+   "changed_leaves": 2295,
    "explained_by": {
-    "op": 11,
+    "op": 15,
     "gsub": 0,
     "code": 2161,
     "pin": 0,
-    "section": 88
+    "section": 119
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 710,
+   "numeric_leaves_changed": 715,
    "changes": [
     {
      "cid": "A910-A906-01",
@@ -3177,23 +3430,68 @@
      "count": 1,
      "numeric": false,
      "summary": "closure mass basis"
+    },
+    {
+     "cid": "A910-A92S-A906-01",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/a9_flight_bom/flight[id=A9B-19]/status",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9B-19 500 W label"
+    },
+    {
+     "cid": "A910-A92S-A906-02",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/a9_flight_bom/ground_article_only[id=GA-02]/item",
+     "count": 1,
+     "numeric": false,
+     "summary": "GA-02 500 W label"
+    },
+    {
+     "cid": "A910-A92S-A906-03",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/interface_demands[id=MA9-ID-13]/quantity",
+     "count": 1,
+     "numeric": false,
+     "summary": "MA9-ID-13 500 W label"
+    },
+    {
+     "cid": "A910-A92S-A906-04",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/owner_answers_applied[row=72]/how_applied",
+     "count": 1,
+     "numeric": false,
+     "summary": "row 72 application labelled"
+    },
+    {
+     "cid": "A910-A92S-A906-05",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/a9_1_decisions_applied[decision=OQ-A902-03]/how_applied",
+     "count": 1,
+     "numeric": false,
+     "summary": "OQ-A902-03 application labelled"
     }
    ]
   },
   {
    "deliverable": "A9-07",
    "file": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
-   "changed_leaves": 3033,
+   "changed_leaves": 3246,
    "explained_by": {
-    "op": 2546,
+    "op": 2590,
     "gsub": 3,
     "code": 0,
     "pin": 6,
-    "section": 478
+    "section": 647
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 78,
+   "numeric_leaves_changed": 113,
    "changes": [
     {
      "cid": "A910-A907-01",
@@ -3893,19 +4191,272 @@
      "numeric": false,
      "summary": "H2_A9_REVISIONS.md thermal section: closure-summary vocabulary, table headers, overall line, BN-wall line and C1-sensitivity header relabelled as uncoupled sensitivity (render wrapper, each substitution must match exactly once)",
      "scope": []
+    },
+    {
+     "cid": "A910-A92S-A907-01",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "a92_sens_vocab",
+     "ptr": "/recomputations/h25_thermal_rerun",
+     "count": 643,
+     "numeric": false,
+     "summary": "uncoupled_sensitivity_* values of every hall_icp_neutralizer thermal record renamed from the CLOSES / PASS / CONDITIONALLY_RESOLVED vocabulary to UNCOUPLED_SENSITIVITY_* names (a9_2_sensitivity_vocabulary; values' meaning and every number unchanged)"
+    },
+    {
+     "cid": "A910-A92S-A907-02",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "merge",
+     "ptr": "/revision_register[id=REV-42]/new/value",
+     "count": 1,
+     "numeric": false,
+     "summary": "REV-42 sensitivity names"
+    },
+    {
+     "cid": "A910-A92S-A907-03",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "merge",
+     "ptr": "/revision_register[id=REV-44]/new/value",
+     "count": 1,
+     "numeric": false,
+     "summary": "REV-44 sensitivity names"
+    },
+    {
+     "cid": "A910-A92S-A907-04",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "merge",
+     "ptr": "/revision_register[id=REV-45]/new/value",
+     "count": 1,
+     "numeric": false,
+     "summary": "REV-45 sensitivity name"
+    },
+    {
+     "cid": "A910-A92S-A907-05",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/recomputations/h25_thermal_rerun/bn_wall_11_2K_case/status_meaning",
+     "count": 1,
+     "numeric": false,
+     "summary": "BN-wall status meaning uses the sensitivity name"
+    },
+    {
+     "cid": "A910-A92S-A907-06",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/key_findings[1]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K2 node verdicts use the sensitivity names"
+    },
+    {
+     "cid": "A910-A92S-A907-07",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/key_findings[1]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K2 clause"
+    },
+    {
+     "cid": "A910-A92S-A907-08",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/key_findings[2]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K3 sensitivity name"
+    },
+    {
+     "cid": "A910-A92S-A907-09",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/key_findings[5]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K6 Curie sensitivity wording"
+    },
+    {
+     "cid": "A910-A92S-A907-10",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/m16_impact[m16_row=10]/how_touched",
+     "count": 1,
+     "numeric": false,
+     "summary": "M16 row 10 wording"
+    },
+    {
+     "cid": "A910-A92S-A907-11",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/m16_impact[m16_row=13]/how_touched",
+     "count": 1,
+     "numeric": false,
+     "summary": "M16 row 13 wording"
+    },
+    {
+     "cid": "A910-A92S-A907-12",
+     "driver": "A9.2 rf_500W, OQ-A907-11",
+     "op": "replace",
+     "ptr": "/key_findings[10]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K11 opens with the A9.2 interpretation"
+    },
+    {
+     "cid": "A910-A92S-A907-13",
+     "driver": "A9.2 rf_500W, OQ-A907-11",
+     "op": "replace",
+     "ptr": "/key_findings[10]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K11 history clause"
+    },
+    {
+     "cid": "A910-A92S-A907-14",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/key_findings[10]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K11 sensitivity sentence labelled"
+    },
+    {
+     "cid": "A910-A92S-A907-15",
+     "driver": "A9.2 OQ-A907-11, rf_measurement_reference, rf_500W",
+     "op": "supersede",
+     "ptr": "/revision_register[id=REV-34]/new",
+     "count": 1,
+     "numeric": false,
+     "summary": "REV-34 current requirement = the A9.2 local-match layout; A9.1 layout kept as history"
+    },
+    {
+     "cid": "A910-A92S-A907-16",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "supersede",
+     "ptr": "/revision_register[id=REV-34]",
+     "count": 1,
+     "numeric": false,
+     "summary": "REV-34 basis"
+    },
+    {
+     "cid": "A910-A92S-A907-17",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "append",
+     "ptr": "/revision_register[id=REV-34]/driver",
+     "count": 1,
+     "numeric": false,
+     "summary": "REV-34 A9.2 driver"
+    },
+    {
+     "cid": "A910-A92S-A907-18",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/revision_register[id=REV-35]/new/requirement",
+     "count": 1,
+     "numeric": false,
+     "summary": "REV-35 forward maximum is TBD_AFTER_IMPEDANCE_MAP, not 500 W"
+    },
+    {
+     "cid": "A910-A92S-A907-19",
+     "driver": "A9.2 rf_500W",
+     "op": "append",
+     "ptr": "/revision_register[id=REV-35]/driver",
+     "count": 1,
+     "numeric": false,
+     "summary": "REV-35 A9.2 driver"
+    },
+    {
+     "cid": "A910-A92S-A907-20",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/revision_register[id=REV-60]/new/requirement",
+     "count": 1,
+     "numeric": false,
+     "summary": "REV-60 500 W label"
+    },
+    {
+     "cid": "A910-A92S-A907-21",
+     "driver": "A9.2 rf_500W, rf_measurement_reference",
+     "op": "supersede",
+     "ptr": "/new_items[id=A9H-INS-01]",
+     "count": 1,
+     "numeric": true,
+     "summary": "A9H-INS-01 name / value: coupler plane per A9.2; 0-500 W kept as the delivered/operating capability (number unchanged, owner row 72)"
+    },
+    {
+     "cid": "A910-A92S-A907-22",
+     "driver": "A9.2 OQ-A907-11",
+     "op": "replace",
+     "ptr": "/new_items[id=A9H-INS-14]/note",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9H-INS-14 note marked history"
+    },
+    {
+     "cid": "A910-A92S-A907-23",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/h3_inputs[id=H3-A907-02]/item",
+     "count": 1,
+     "numeric": false,
+     "summary": "H3-A907-02 500 W label"
+    },
+    {
+     "cid": "A910-A92S-A907-24",
+     "driver": "A9.2 rf_500W",
+     "op": "supersede",
+     "ptr": "/recomputations/rf_reference_plane/P_net_max_W",
+     "count": 1,
+     "numeric": false,
+     "summary": "P_net_max basis relabelled (value unchanged)"
+    },
+    {
+     "cid": "A910-A92S-A907-25",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/recomputations/rf_reference_plane/options/b_rate_the_mismatched_segment/note",
+     "count": 1,
+     "numeric": false,
+     "summary": "option-b note labelled"
+    },
+    {
+     "cid": "A910-A92S-A907-27",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/recomputations/h25_thermal_rerun/overall/open_items[4]",
+     "count": 1,
+     "numeric": false,
+     "summary": "open item 5 wording"
+    },
+    {
+     "cid": "A910-A92S-A907-28",
+     "driver": "A9.2 rf_500W",
+     "op": "replace",
+     "ptr": "/owner_answers_applied[row=72]/how_applied",
+     "count": 1,
+     "numeric": false,
+     "summary": "row 72 application labelled"
+    },
+    {
+     "cid": "A910-A92S-A907-26",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "code",
+     "ptr": "docs/hardware/h2_a9_revisions/build_h2_a9_revisions.py",
+     "count": 0,
+     "numeric": false,
+     "summary": "H2_A9_REVISIONS.md closure-summary vocabulary sentence rewritten with the UNCOUPLED_SENSITIVITY_* names (render wrapper A92_MD_RELABEL, each substitution matched exactly once); the register renderer shows A9.2 drivers",
+     "scope": []
     }
    ]
   },
   {
    "deliverable": "A9-08",
    "file": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
-   "changed_leaves": 134,
+   "changed_leaves": 135,
    "explained_by": {
     "op": 1,
     "gsub": 0,
     "code": 105,
     "pin": 0,
-    "section": 28
+    "section": 29
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
@@ -3958,13 +4509,13 @@
   {
    "deliverable": "A9-09",
    "file": "docs/procurement/rfq_a9/rfq_a9_v1.json",
-   "changed_leaves": 1153,
+   "changed_leaves": 1154,
    "explained_by": {
     "op": 227,
     "gsub": 0,
     "code": 507,
     "pin": 7,
-    "section": 412
+    "section": 413
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
@@ -4851,6 +5402,7 @@
    "decision": "OQ-A902-03",
    "applied_by": [
     "A910-A902-Q03",
+    "A910-A92S-A906-05",
     "A910-R03-22",
     "A910-R03-23"
    ],
@@ -5140,7 +5692,8 @@
    "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
    "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
    "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
-   "recorded_at_commit": "19c0040"
+   "recorded_at_commit": "19c0040",
+   "path_resolution": "the docs/decisions/ paths exist in the execution branch (commit 19c0040) and resolve in this lane branch only after it merges there; until then the byte-identical pinned copies under docs/experiments/hall_icp/integration/a9_2_inputs/ (sha256 checked on every build) are the readable authority"
   },
   "statuses": [
    {
@@ -5326,7 +5879,18 @@
      "A910-A92R-A909-09",
      "A910-A92R-A909-10",
      "A910-A92R-A909-11",
-     "A910-A92R-A909-12"
+     "A910-A92R-A909-12",
+     "A910-A92S-A901-04",
+     "A910-A92S-A905VI-01",
+     "A910-A92S-A905VI-02",
+     "A910-A92S-A905VI-03",
+     "A910-A92S-A905VI-04",
+     "A910-A92S-A907-12",
+     "A910-A92S-A907-13",
+     "A910-A92S-A907-15",
+     "A910-A92S-A907-16",
+     "A910-A92S-A907-17",
+     "A910-A92S-A907-22"
     ],
     "status": "APPLIED"
    },
@@ -5343,7 +5907,23 @@
      "A910-A92-A907-11",
      "A910-A92-A909-08",
      "A910-A92-A909-09",
-     "A910-A92R-A902-01"
+     "A910-A92R-A902-01",
+     "A910-A92S-A901-01",
+     "A910-A92S-A901-02",
+     "A910-A92S-A903-01",
+     "A910-A92S-A903-02",
+     "A910-A92S-A903-05",
+     "A910-A92S-A903-07",
+     "A910-A92S-A905VI-02",
+     "A910-A92S-A905VI-03",
+     "A910-A92S-A905VI-04",
+     "A910-A92S-A905VI-05",
+     "A910-A92S-A905VI-06",
+     "A910-A92S-A905VI-07",
+     "A910-A92S-A905VI-08",
+     "A910-A92S-A905VI-09",
+     "A910-A92S-A907-15",
+     "A910-A92S-A907-21"
     ],
     "status": "APPLIED"
    },
@@ -5385,7 +5965,45 @@
      "A910-A92R-A909-04",
      "A910-A92R-A909-05",
      "A910-A92R-A909-06",
-     "A910-A92R-A909-13"
+     "A910-A92R-A909-13",
+     "A910-A92S-A901-01",
+     "A910-A92S-A901-02",
+     "A910-A92S-A901-03",
+     "A910-A92S-A901-04",
+     "A910-A92S-A902-01",
+     "A910-A92S-A902-02",
+     "A910-A92S-A902-03",
+     "A910-A92S-A902-04",
+     "A910-A92S-A902-05",
+     "A910-A92S-A903-01",
+     "A910-A92S-A903-02",
+     "A910-A92S-A903-03",
+     "A910-A92S-A903-04",
+     "A910-A92S-A905EV-01",
+     "A910-A92S-A905EV-02",
+     "A910-A92S-A905VI-01",
+     "A910-A92S-A905VI-02",
+     "A910-A92S-A905VI-03",
+     "A910-A92S-A905VI-04",
+     "A910-A92S-A905VI-05",
+     "A910-A92S-A905VI-10",
+     "A910-A92S-A906-01",
+     "A910-A92S-A906-02",
+     "A910-A92S-A906-03",
+     "A910-A92S-A906-04",
+     "A910-A92S-A906-05",
+     "A910-A92S-A907-12",
+     "A910-A92S-A907-13",
+     "A910-A92S-A907-14",
+     "A910-A92S-A907-15",
+     "A910-A92S-A907-18",
+     "A910-A92S-A907-19",
+     "A910-A92S-A907-20",
+     "A910-A92S-A907-21",
+     "A910-A92S-A907-23",
+     "A910-A92S-A907-24",
+     "A910-A92S-A907-25",
+     "A910-A92S-A907-28"
     ],
     "status": "APPLIED"
    },
@@ -5482,7 +6100,21 @@
      "A910-A92R-A907-17",
      "A910-A92R-A907-18",
      "A910-A92R-A907-19",
-     "A910-A92R-A907-20"
+     "A910-A92R-A907-20",
+     "A910-A92S-A903-06",
+     "A910-A92S-A907-01",
+     "A910-A92S-A907-02",
+     "A910-A92S-A907-03",
+     "A910-A92S-A907-04",
+     "A910-A92S-A907-05",
+     "A910-A92S-A907-06",
+     "A910-A92S-A907-07",
+     "A910-A92S-A907-08",
+     "A910-A92S-A907-09",
+     "A910-A92S-A907-10",
+     "A910-A92S-A907-11",
+     "A910-A92S-A907-26",
+     "A910-A92S-A907-27"
     ],
     "status": "APPLIED"
    },
@@ -5592,7 +6224,46 @@
    "violations": []
   },
   "text_scan": {
-   "rule": "(i) no PASS / CLOSES* / RESOLVED / CONDITIONALLY_RESOLVED value and no True *closes* flag under ANY key of the hall_icp_neutralizer thermal records or of a revision-register row applying to hall_icp_neutralizer (uncoupled_sensitivity_* / *_before_a9_2 excluded); (ii) every sentence of the A9-07 key findings, register text, demands, open items, Curie / closure summaries and thermal Markdown that uses PASS / CLOSES* / CONDITIONALLY_RESOLVED carries an uncoupled-sensitivity or UNRESOLVED label; (iii) every A9-03 / A9-04 / A9-09 text (JSON and RFQ package Markdown; verbatim owner / source quotes excluded) stating 500 W carries the A9.2 delivered/operating label",
+   "rule": "(i) no PASS / CLOSES* / RESOLVED / CONDITIONALLY_RESOLVED value and no True *closes* flag under ANY key (uncoupled_sensitivity_* included; they carry UNCOUPLED_SENSITIVITY_* names) of the hall_icp_neutralizer thermal records or of a revision-register row applying to hall_icp_neutralizer (*_before_a9_2 history excluded); (ii) no sentence of the A9-07 key findings, register text, demands, M16 impact, open items, Curie / closure summaries or thermal / key-finding / register Markdown uses PASS / CLOSES* / CONDITIONALLY_RESOLVED except to deny a thermal PASS; (iii) every sentence of every A9 deliverable JSON and Markdown, M16 v3, the owner-question state v2, the step-1 integration record and the RFQ package texts that states 500 W in an RF context carries the A9.2 delivered/operating label (verbatim owner / decision texts, answered questions and *_before_a9_2 history excluded)",
+   "w500_files": [
+    "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+    "docs/budgets/mass_a9/mass_a9_v1.json",
+    "docs/budgets/owner_decisions/owner_questions_state_v2.json",
+    "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
+    "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
+    "docs/experiments/hall_icp/integration/a9_core_integration_v1.json",
+    "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
+    "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
+    "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
+    "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
+    "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+    "docs/procurement/rfq_a9/rfq_a9_v1.json",
+    "schemas/interfaces/icp_neutralizer_icd_v1.json"
+   ],
+   "w500_md_files": [
+    "docs/architecture_comparison/power_boundary_a9/BUS_POWER_BOUNDARY_A9.md",
+    "docs/budgets/mass_a9/MASS_A9.md",
+    "docs/budgets/owner_decisions/OWNER_QUESTIONS_STATE_v2.md",
+    "docs/budgets/subsystem_maturity/SUBSYSTEM_MATURITY_v3.md",
+    "docs/budgets/xe_ledger_a9/XE_LEDGER_A9.md",
+    "docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md",
+    "docs/experiments/hall_icp/integration/A9_CORE_INTEGRATION.md",
+    "docs/experiments/hall_icp/prereg_framework/HALL_ICP_PREREG_FRAMEWORK.md",
+    "docs/experiments/hall_icp/uncertainty_budget/HALL_ICP_UNCERTAINTY_BUDGET.md",
+    "docs/experiments/hall_icp/validation_inputs/HALL_ICP_VALIDATION_INPUTS.md",
+    "docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md",
+    "docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md",
+    "docs/procurement/rfq_a9/RFQ_A9.md",
+    "docs/procurement/rfq_a9/packages/RFQ-01_thrust_stand.md",
+    "docs/procurement/rfq_a9/packages/RFQ-02_mass_flow_controllers.md",
+    "docs/procurement/rfq_a9/packages/RFQ-03_rga.md",
+    "docs/procurement/rfq_a9/packages/RFQ-04_rf_chain.md",
+    "docs/procurement/rfq_a9/packages/RFQ-05_icp_source_components.md",
+    "docs/procurement/rfq_a9/packages/RFQ-06_discharge_supply_and_pbus_chain.md",
+    "docs/procurement/rfq_a9/packages/RFQ-07_xe_feed.md",
+    "docs/procurement/rfq_a9/packages/RFQ-08_c1_cathode_and_keeper.md",
+    "docs/procurement/rfq_a9/packages/RFQ-09_facility_calibration_services.md"
+   ],
    "value_violations": [],
    "wording_violations": [],
    "w500_violations": [],
@@ -8676,7 +9347,7 @@
     "lanes_named": [
      "A9-03"
     ],
-    "quantity": "measurement provisions required by this list: antenna current probe port, directional coupler at the load plane, isolated collector/body V/I, pressure tap, witness-coupon holders, B-probe access in the ICP volume, capped",
+    "quantity": "measurement provisions required by this list: antenna current probe port, directional coupler on the generator / 50-ohm side of the LOCAL matching network (ICP-14 plane; A9.2 OQ-A907-11 / rf_measurement_reference), isola",
     "status": "OFFERED",
     "class": "OFFERED",
     "open_reason": null
@@ -9019,7 +9690,7 @@
     "lanes_named": [
      "A9-09"
     ],
-    "quantity": "RFQ mass ceilings = owner v0 allocations per line: ICP head (+ collector if MQ-07 accepted) <= 2.0 kg; flight RF generator + matching (+ feedthrough if MQ-07) <= 1.5 kg combined; compressor + drive <= 5.5 kg; the lab 0-5",
+    "quantity": "RFQ mass ceilings = owner v0 allocations per line: ICP head (+ collector if MQ-07 accepted) <= 2.0 kg; flight RF generator + matching (+ feedthrough if MQ-07) <= 1.5 kg combined; compressor + drive <= 5.5 kg; the lab RF ",
     "status": "PROPOSED (ceiling reading CBE vs MEV: MQ-01)",
     "class": "OFFERED",
     "open_reason": null
@@ -10038,13 +10709,13 @@
   {
    "deliverable": "A9-01",
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "sha256": "ef07a3ecdfadec2c5933de2683fc0cc09466b7a25de268a8ac4fde2dfc3256b8",
+   "sha256": "b634357fe17ba59af17d5f76b48d704ed1e156fc4c6a1bb08dae4fea0c52fcac",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-01",
    "path": "docs/experiments/hall_icp/prereg_framework/HALL_ICP_PREREG_FRAMEWORK.md",
-   "sha256": "0276a37313f2a50129127285d4cbc5c0fdb5ced3867cd6770f61716132dfa66b",
+   "sha256": "9c2afe34a3b8daf12606be02ba2186e74bfabc411962ed0c40c0c1d4fe9aeb5b",
    "changed_since_base": true
   },
   {
@@ -10056,19 +10727,19 @@
   {
    "deliverable": "A9-02",
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "sha256": "f855cecaa1707bfe5c3a01bf7fd199ebdc7f9ae83cde6e132c2dfc16004558a3",
+   "sha256": "9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-02",
    "path": "docs/architecture_comparison/power_boundary_a9/BUS_POWER_BOUNDARY_A9.md",
-   "sha256": "4780430719195b24f8015d1c674f345adf007ab2a3e44e4ea06492c7e8d8a1cb",
+   "sha256": "bc2c761720ad39a3e7c21a17937ff44a87059d4b5f3b3aadcee64cb323b0a5d0",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-02",
    "path": "docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py",
-   "sha256": "901ceea5ae68e8522d985253b353ab344b81a22172a2369be27932ad6f50d707",
+   "sha256": "d5c8130ff0f7bea66d9eb82f552f96ebea0eac7f9514fd097bd120ad7397c482",
    "changed_since_base": true
   },
   {
@@ -10086,13 +10757,13 @@
   {
    "deliverable": "A9-03",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "d073133bf31a404bc10df50730bf61f658316eefebcf7c177b92ea80a7907724",
+   "sha256": "95cdd7a543c0879a0f21f5ef64607ec7cba79a2f3cede9044c46195c91c7012a",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-03",
    "path": "docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md",
-   "sha256": "f5b2f474f95bb6f59912dc419f3d88ee1716d9bec7dd5ca6a8ba188ba49fb669",
+   "sha256": "777e669de5516ea0102902c333eb0a0917ba8f61b02a58aad5d9193424c4de8d",
    "changed_since_base": true
   },
   {
@@ -10104,7 +10775,7 @@
   {
    "deliverable": "A9-04",
    "path": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "sha256": "cc7d41c534f72731f7545c3396d7037b7e4721a3a20ff3591ee5da698b0fe2e8",
+   "sha256": "c6567e6d0bbc008bedd5b9c14a9716f117144ab6952b9c498f7b0c75e02a624d",
    "changed_since_base": true
   },
   {
@@ -10122,13 +10793,13 @@
   {
    "deliverable": "A9-05ev",
    "path": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
-   "sha256": "ec300df97864c84617d47a76138acc37177c9453f306cbb2bf139874f2c68621",
+   "sha256": "092e4ca8e1827dd2e9558058a204f46510f2633316ce188e7126b697ec6d0b53",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-05ev",
    "path": "docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md",
-   "sha256": "a2777c6d1f57d24f4efabce2c3a3fe35d275abb38cd229f9c62a42b14f24d375",
+   "sha256": "e63865c55f79af6c809a9dc0b1d915927e5c58e7422f1072fa32ed6a1844cd95",
    "changed_since_base": true
   },
   {
@@ -10140,13 +10811,13 @@
   {
    "deliverable": "A9-05vi",
    "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-   "sha256": "4a54bd1e4d52af7073a6016c07d47d10330220b7c7f45778b3996930714ee5e2",
+   "sha256": "fac472e370b54875df5dea90c3c7740403da5ac1edd1af29b43ed09ee679d450",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-05vi",
    "path": "docs/experiments/hall_icp/validation_inputs/HALL_ICP_VALIDATION_INPUTS.md",
-   "sha256": "9b1a5258af649a522ad35cb7b697f15428d103370b71701e202e7d47e38a12d3",
+   "sha256": "b4b4975ac40df76f5a3f7b563b4de096f812f41c918ab5a26d9f4cfd759013a1",
    "changed_since_base": true
   },
   {
@@ -10158,13 +10829,13 @@
   {
    "deliverable": "A9-06",
    "path": "docs/budgets/mass_a9/mass_a9_v1.json",
-   "sha256": "40a057c6f86965c1ca0d4b5346c6ad449a255f3a2f1fc46f332a437512dc8659",
+   "sha256": "a4a70426dbfc917c9906275b2475110a158f7008006b075cabb259c045ca9680",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-06",
    "path": "docs/budgets/mass_a9/MASS_A9.md",
-   "sha256": "a6c6bd5bceb73bb5523bbed74c2a0d3bb5be6bec77ee0e7a7f316d6bbeb16922",
+   "sha256": "d6659e139aef4ac4a154ec38c0a122a596f2df5ea9137181fbc108f0b4bf6a83",
    "changed_since_base": true
   },
   {
@@ -10176,49 +10847,49 @@
   {
    "deliverable": "A9-07",
    "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
-   "sha256": "7bd76fcb27761ddc6e014e5c58d079ecc9b9fa53bf845ade3dfc0576f6280b6a",
+   "sha256": "c26eb71d6d76fac8e4744feeda4e015a648600779d7791dd7665ce1aad52881b",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-07",
    "path": "docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md",
-   "sha256": "ce5eecae9fc61d180182113630acb9cd3f1bc4eb1a60b2dca55d4de3a109ce3b",
+   "sha256": "193595c350969769200aa9552dd3a20a3fd1f7ad6e1edcbf4956fafa99b3dcfc",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-07",
    "path": "docs/hardware/h2_a9_revisions/build_h2_a9_revisions.py",
-   "sha256": "24be38b2555efff0051c0bb7e58b43246f661e56d05046452d784446eadfd5f0",
+   "sha256": "e1bbc3119ce099fd6459315364d191d056acfa3dcc7f40b81f647e3887b5511f",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
-   "sha256": "65d39aabeb7b6362aecfeabca8dca8d09a2474f948a686e7af9aa552ca69b466",
+   "sha256": "9d687e5f7ea64c5245070819ebea9d180362c3c3600afcda38c492178cf4f519",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/XE_LEDGER_A9.md",
-   "sha256": "cc489439d9d5388a57d1c807c6789ff0c3d709ee3ad20e97226560028a77f405",
+   "sha256": "f98c0e05cb94ff90d9013a4598735c15134a9510134d188841d8c4fbaccffeaa",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/build_xe_ledger_a9.py",
-   "sha256": "6841e23de03daf1669ffda2e2804c20ad5e85955e827d1b92f01353f914b4759",
+   "sha256": "d6d2c9b9dce6a2b574e5ae88d4a5b0cee0c8b419818f9800d039207f6bf1a60a",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-09",
    "path": "docs/procurement/rfq_a9/rfq_a9_v1.json",
-   "sha256": "6c0e8e5987b5967f7ed49eefbae2caa0112b002882e44a297ba3a26dd5be319a",
+   "sha256": "882292e7700c0a93c31574ef2487ae63e8ba844b578b6050eaa4ddc37767dcfd",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-09",
    "path": "docs/procurement/rfq_a9/RFQ_A9.md",
-   "sha256": "2b5817ac88416c6b08e8aa352a2c10810aac035dc0905e2d1067a2297cab4988",
+   "sha256": "6c6455d6b016c53fb0fe1d79556209dd057868fce4d5244f0b8ffa71aa789060",
    "changed_since_base": true
   },
   {
@@ -10248,7 +10919,7 @@
   {
    "deliverable": "A9-10",
    "path": "docs/experiments/hall_icp/integration/a9_10_overlay.py",
-   "sha256": "9c95836a044f0639607509503b679957a22715eaa940c5e88d21b3d1f6b728f6",
+   "sha256": "51c52d1e47aec09745e6ed7090e9124495356cf67df296bc1ebbb5d5f3ad77cd",
    "changed_since_base": true
   }
  ],
@@ -10629,6 +11300,12 @@
    "path": "abep_sim/arch_boundary.py",
    "what": "historical bus_power_boundary_v1 module",
    "sha256": "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae",
+   "byte_identical_to_base": true
+  },
+  {
+   "path": "schemas/architecture_comparison/bus_power_boundary_v1.json",
+   "what": "historical bus_power_boundary_v1 schema",
+   "sha256": "a78068a31ad097d94d83f36b9860c6992d0e560cfdc51335b4c222a3feaed3e9",
    "byte_identical_to_base": true
   }
  ],

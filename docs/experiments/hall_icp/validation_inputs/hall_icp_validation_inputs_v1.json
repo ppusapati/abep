@@ -74,7 +74,7 @@
  ],
  "evidence_input": {
   "path": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
-  "sha256": "ec300df97864c84617d47a76138acc37177c9453f306cbb2bf139874f2c68621",
+  "sha256": "092e4ca8e1827dd2e9558058a204f46510f2633316ce188e7126b697ec6d0b53",
   "note": "same lane (part 1); regenerated first"
  },
  "replaces": "the frozen parallel RF||Hall v2 input list for the primary line (row 145); v2 inputs are never supplied or invented (row 146)",
@@ -165,9 +165,9 @@
   {
    "id": "VI-RF-02",
    "group": "RF",
-   "name": "forward RF power at the load plane",
+   "name": "forward RF power at the ICP-14 coupler plane (generator / 50-ohm side of the local matching network, A9.2)",
    "symbol": "P_fwd",
-   "definition": "RF power travelling toward the matching network/antenna, measured by a directional coupler at the declared RF load plane (plane schemas/interfaces/icp_neutralizer_icd_v1.json ICP-14 (A9-03 ICD))",
+   "definition": "RF power travelling toward the matching network/antenna, measured by a directional coupler at the declared RF measurement plane, which A9.2 places on the generator / 50-ohm side of the local matching network (plane schemas/interfaces/icp_neutralizer_icd_v1.json ICP-14 (A9-03 ICD))",
    "units": "W",
    "configurations": [
     "hall_icp_neutralizer"
@@ -186,10 +186,10 @@
     "N2",
     "O2"
    ],
-   "value": "TBD - requires H-1 + ICP module operation; laboratory chain sized for 0-500 W forward (row 72)",
+   "value": "TBD - requires H-1 + ICP module operation; the laboratory chain provides the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating); chain ratings TBD_AFTER_IMPEDANCE_MAP",
    "evidence_class": "measured (future)",
    "basis": "measurement",
-   "source": "owner answer row 72 (range for sizing the chain, not an operating value)",
+   "source": "owner answer row 72 as interpreted by A9.2 rf_500W (a delivered/operating capability; not an operating value and not a component rating)",
    "status": "HARDWARE_ONLY",
    "freeze_point": "LOCK-1 (chain) / after-evidence (value)",
    "consumers": [
@@ -199,12 +199,15 @@
    ],
    "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "analog operated at 200 W forward (TK-21) on its own geometry - context only",
-   "supply": "analog can bound (context only); value from H-1 hardware"
+   "supply": "analog can bound (context only); value from H-1 hardware",
+   "name_before_a9_2": "forward RF power at the load plane",
+   "value_before_a9_2": "TBD - requires H-1 + ICP module operation; laboratory chain sized for 0-500 W forward (row 72)",
+   "source_before_a9_2": "owner answer row 72 (range for sizing the chain, not an operating value)"
   },
   {
    "id": "VI-RF-03",
    "group": "RF",
-   "name": "reflected RF power at the load plane",
+   "name": "reflected RF power at the ICP-14 coupler plane (generator / 50-ohm side of the local matching network, A9.2)",
    "symbol": "P_refl",
    "definition": "RF power reflected back toward the generator at the same plane as P_fwd",
    "units": "W",
@@ -236,14 +239,15 @@
    ],
    "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "analog reports 'no reflection detected' with generator meters (TK-22); resolution not stated",
-   "supply": "analog can bound (context only); value from H-1 hardware"
+   "supply": "analog can bound (context only); value from H-1 hardware",
+   "name_before_a9_2": "reflected RF power at the load plane"
   },
   {
    "id": "VI-RF-04",
    "group": "RF",
-   "name": "net RF power delivered at the load plane",
+   "name": "net RF power at the ICP-14 coupler plane (P_fwd - P_refl)",
    "symbol": "P_net",
-   "definition": "P_fwd - P_refl at the declared load plane (includes matching-network and antenna ohmic loss downstream of the plane)",
+   "definition": "P_fwd - P_refl at the ICP-14 coupler plane (generator / 50-ohm side of the local matching network); includes the line, local-match and antenna ohmic loss downstream of the plane. A9.2: P_delivered = P_forward - P_reflected - P_line/match,loss is the power past the local match; P_forward = P_plasma is never assumed",
    "units": "W",
    "configurations": [
     "hall_icp_neutralizer"
@@ -272,7 +276,9 @@
    ],
    "decision_quantity_ids": "TBD - ASSIGNMENT_NOT_DEFINED_BY_TARGET: the merged A9-04 budget defines the measurement chains but no per-input decision-quantity assignment (chain -> DQ-HI consumers: A9-10 dq_consumer_table); owner call OQ-A910-02 (LOCK-1)",
    "analog_bound": "none",
-   "supply": "H-1 hardware only"
+   "supply": "H-1 hardware only",
+   "name_before_a9_2": "net RF power delivered at the load plane",
+   "definition_before_a9_2": "P_fwd - P_refl at the declared load plane (includes matching-network and antenna ohmic loss downstream of the plane)"
   },
   {
    "id": "VI-RF-05",
@@ -2085,7 +2091,7 @@
    "id": "IF-06",
    "direction": "to",
    "counterpart": "A9-03",
-   "what": "measurement provisions required by this list: antenna current probe port, directional coupler at the load plane, isolated collector/body V/I, pressure tap, witness-coupon holders, B-probe access in the ICP volume, capped dedicated-feed port (OQ-VI-01)",
+   "what": "measurement provisions required by this list: antenna current probe port, directional coupler on the generator / 50-ohm side of the LOCAL matching network (ICP-14 plane; A9.2 OQ-A907-11 / rf_measurement_reference), isolated collector/body V/I, pressure tap, witness-coupon holders, B-probe access in the ICP volume, capped dedicated-feed port (OQ-VI-01)",
    "units": "A, W, V, Pa, T",
    "status": "OFFERED"
   },
@@ -2309,7 +2315,7 @@
   },
   {
    "row": 72,
-   "how": "13.56 MHz; 0-500 W lab chain with directional coupler; calorimetry as cross-check (VI-RF-01..05)"
+   "how": "13.56 MHz; 0-500 W lab chain (A9.2 rf_500W: delivered/operating investigation capability, not a component rating) with directional coupler; calorimetry as cross-check (VI-RF-01..05)"
   },
   {
    "row": 78,
@@ -2535,9 +2541,9 @@
  ],
  "h3_h4_inputs": {
   "h3_procurement_rfq_inputs": [
-   "13.56 MHz RF generator, 0-500 W forward with forward/reflected metering (row 72)",
-   "matching network with remote tuning; RF vacuum feedthrough; flexible coax + matched sham (rows 8, 117)",
-   "inline directional coupler + power sensors at the load plane; RF current probe for the antenna",
+   "13.56 MHz RF generator for the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating) with forward/reflected metering (row 72; generator forward-power rating TBD_AFTER_IMPEDANCE_MAP)",
+   "adjustable LOCAL matching network on / immediately adjacent to the ICP module (A9.2 OQ-A907-11; matching-element ratings TBD_AFTER_IMPEDANCE_MAP); RF vacuum feedthrough; flexible 50-ohm coax + matched sham (rows 8, 117, 133)",
+   "inline directional coupler + power sensors on the generator / 50-ohm side of the LOCAL matching network (ICP-14 plane; A9.2 OQ-A907-11 / rf_measurement_reference) (P_forward, P_reflected, |Gamma|, VSWR, P_delivered); RF current probe for the antenna",
    "isolated collector/bias supply with V/I telemetry (row 70)",
    "isolated voltage/current channels for ICP body and collector; selectable bleeder (row 91)",
    "own-gas thermal MFC for any dedicated ICP feed (rows 124, 126); capped feed port",
@@ -2590,7 +2596,12 @@
    "VI-LF-03",
    "VI-LF-04",
    "VI-LF-06"
-  ]
+  ],
+  "h3_procurement_rfq_inputs_before_a9_2": {
+   "0": "13.56 MHz RF generator, 0-500 W forward with forward/reflected metering (row 72)",
+   "1": "matching network with remote tuning; RF vacuum feedthrough; flexible coax + matched sham (rows 8, 117)",
+   "2": "inline directional coupler + power sensors at the load plane; RF current probe for the antenna"
+  }
  },
  "summary_counts": {
   "items": 52,
@@ -2616,7 +2627,8 @@
    "verbatim_sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
    "pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
    "verbatim_pinned_copy": "docs/experiments/hall_icp/integration/a9_2_inputs/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
-   "recorded_at_commit": "19c0040"
+   "recorded_at_commit": "19c0040",
+   "path_resolution": "the docs/decisions/ paths exist in the execution branch (commit 19c0040) and resolve in this lane branch only after it merges there; until then the byte-identical pinned copies under docs/experiments/hall_icp/integration/a9_2_inputs/ (sha256 checked on every build) are the readable authority"
   },
   "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
   "rule": "every change below has a driver (A9.1 decision id, verified lane item, integration open item or A9-10 self-reference); no number changes without an A9.1 decision or a verified upstream value; no winner; no prediction",
@@ -2804,6 +2816,86 @@
     "ptr": "",
     "count": 60,
     "summary": "per-input decision quantity: precise remaining reason next to the field"
+   },
+   {
+    "cid": "A910-A92S-A905VI-01",
+    "driver": "A9.2 rf_500W, OQ-A907-11",
+    "op": "merge",
+    "ptr": "/h3_h4_inputs",
+    "count": 1,
+    "summary": "superseded H3 RF lines kept as history"
+   },
+   {
+    "cid": "A910-A92S-A905VI-02",
+    "driver": "A9.2 rf_500W, OQ-A907-11, rf_measurement_reference",
+    "op": "set",
+    "ptr": "/h3_h4_inputs/h3_procurement_rfq_inputs[0]",
+    "count": 1,
+    "summary": "H3 RF line 1 per A9.2"
+   },
+   {
+    "cid": "A910-A92S-A905VI-03",
+    "driver": "A9.2 rf_500W, OQ-A907-11, rf_measurement_reference",
+    "op": "set",
+    "ptr": "/h3_h4_inputs/h3_procurement_rfq_inputs[1]",
+    "count": 1,
+    "summary": "H3 RF line 2 per A9.2"
+   },
+   {
+    "cid": "A910-A92S-A905VI-04",
+    "driver": "A9.2 rf_500W, OQ-A907-11, rf_measurement_reference",
+    "op": "set",
+    "ptr": "/h3_h4_inputs/h3_procurement_rfq_inputs[2]",
+    "count": 1,
+    "summary": "H3 RF line 3 per A9.2"
+   },
+   {
+    "cid": "A910-A92S-A905VI-05",
+    "driver": "A9.2 rf_500W, rf_measurement_reference",
+    "op": "supersede",
+    "ptr": "/items[id=VI-RF-02]",
+    "count": 1,
+    "summary": "VI-RF-02 plane and 500 W wording"
+   },
+   {
+    "cid": "A910-A92S-A905VI-06",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "supersede",
+    "ptr": "/items[id=VI-RF-03]",
+    "count": 1,
+    "summary": "VI-RF-03 plane"
+   },
+   {
+    "cid": "A910-A92S-A905VI-07",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "supersede",
+    "ptr": "/items[id=VI-RF-04]",
+    "count": 1,
+    "summary": "VI-RF-04 plane and A9.2 relation"
+   },
+   {
+    "cid": "A910-A92S-A905VI-08",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "replace",
+    "ptr": "/items[id=VI-RF-02]/definition",
+    "count": 1,
+    "summary": "VI-RF-02 definition plane"
+   },
+   {
+    "cid": "A910-A92S-A905VI-09",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "replace",
+    "ptr": "/interface_demands[id=IF-06]/what",
+    "count": 1,
+    "summary": "IF-06 coupler plane"
+   },
+   {
+    "cid": "A910-A92S-A905VI-10",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/owner_answers_applied[row=72]/how",
+    "count": 1,
+    "summary": "row 72 application labelled"
    }
   ]
  }

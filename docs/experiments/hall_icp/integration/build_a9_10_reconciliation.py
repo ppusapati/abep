@@ -144,6 +144,7 @@ IMMUTABLE_ROOTS = [
     ("docs/experiments/phase1_prereg_framework", "historical A5 Phase-1 prereg framework"),
     ("docs/architecture_comparison/lock1", "historical LOCK-1 drafts"),
     ("abep_sim/arch_boundary.py", "historical bus_power_boundary_v1 module"),
+    ("schemas/architecture_comparison/bus_power_boundary_v1.json", "historical bus_power_boundary_v1 schema"),
 ]
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -251,7 +252,9 @@ def verify_deliverable(d: dict, recs: list, errors: list) -> dict:
     for p, vb, va in changed:
         numeric = is_num(vb) or is_num(va)
         hits = [(len(pre), r) for pre, r in covered_prefix if under(p, pre)]
-        rec = max(hits, key=lambda t: t[0])[1] if hits else None       # most specific declared change wins
+        # most specific declared change wins; at equal specificity a numeric record (A9.1 / A9.2 decision or verified
+        # upstream value) explains a number (repair 4: A9H-INS-01 relabel keeps the owner row-72 0-500 W value)
+        rec = max(hits, key=lambda t: (t[0], bool(t[1].get("numeric"))))[1] if hits else None
         kind = None
         if rec is not None:
             kind = "section" if rec["cid"] == "A9-10 section" else ("code" if rec.get("op") == "code" else "op")
@@ -743,11 +746,18 @@ def a92_status_scan(errors: list) -> dict:
 # open items, the Curie-check clause, the Markdown), nor supplier-facing RF text rating anything at 500 W. Three more
 # scans close that gap; each is proven sensitive on the A9-10 base version in tests/test_a9_10_reconciliation.py.
 PASS_TOKEN = re.compile(r"\b(PASS|CLOSES\w*|CONDITIONALLY_RESOLVED)\b")
-SENS_LABEL = re.compile(r"uncoupled[ _-]sensitivity|UNRESOLVED|sensitivity only|never a thermal PASS", re.I)
-W500 = re.compile(r"(?<![\d.])(0\s*[-\u2013]\s*)?500 W\b")
-W500_LABEL = re.compile(r"delivered/operating|not a (sufficient )?component rating|not at (a )?500 W")
-W500_SKIP_KEYS = {"quote", "answer_verbatim", "owner_text", "owner_answer_verbatim", "verbatim"}
-H2_TEXT_ROOTS = ["/key_findings", "/revision_register", "/interface_demands",
+# A9-10 review repair 4: a sentence may use PASS only to deny it (e.g. 'never a thermal PASS'); the earlier
+# uncoupled-sensitivity label exemption is withdrawn (the sensitivity values now carry UNCOUPLED_SENSITIVITY_* names).
+NEGATED_PASS = re.compile(r"\b(never|not|no)\s+(a\s+|an\s+)?(thermal\s+)?PASS\b")
+W500 = re.compile(r"(?<![\d.])(0\s*[-–]\s*)?500 W\b")
+W500_LABEL = re.compile(r"delivered/operating|not a (sufficient )?component rating|not at (a )?500 W|500 W delivered")
+RF_CONTEXT = re.compile(r"\bRF\b|_RF\b|RF,|fwd|13\.56|generator|coupler|forward|coax|feedthrough|match|antenna|"
+                        r"sensor|chain", re.I)
+# verbatim owner / decision texts (never rewritten) and the text of questions already answered by the owner
+W500_SKIP_KEYS = {"quote", "answer_verbatim", "owner_text", "owner_answer_verbatim", "verbatim", "answer_excerpt",
+                  "a9_1_decision", "a9_2_decision"}
+ANSWERED_QUESTION_KEYS = {"question", "proposed", "proposed_answer"}
+H2_TEXT_ROOTS = ["/key_findings", "/revision_register", "/interface_demands", "/m16_impact",
                  "/recomputations/h25_thermal_rerun/overall", "/recomputations/h25_thermal_rerun/bn_wall_11_2K_case",
                  "/recomputations/h25_thermal_rerun/closure_summary_hall_icp_neutralizer",
                  "/recomputations/h25_thermal_rerun/icp_heat_into_h1/note",
@@ -757,7 +767,12 @@ H2_VALUE_ROOTS = ["/revision_register", "/recomputations/h25_thermal_rerun/resul
                   "/recomputations/h25_thermal_rerun/bn_wall_11_2K_case",
                   "/recomputations/h25_thermal_rerun/mount_heat_vs_row85", "/recomputations/h25_thermal_rerun/overall"]
 RFQ_PACKAGE_DIR = "docs/procurement/rfq_a9/packages/"
-W500_FILES = [OV.RFQ_A9, OV.ICD, OV.UB]
+M16_V3_MD = "docs/budgets/subsystem_maturity/SUBSYSTEM_MATURITY_v3.md"
+OQ_V2_MD = "docs/budgets/owner_decisions/OWNER_QUESTIONS_STATE_v2.md"
+# every A9 deliverable (JSON and companion Markdown), M16 v3, the owner-question state v2, the step-1 integration record
+# and the supplier-facing RFQ package texts (A9.2 rf_500W applies 'anywhere')
+W500_FILES = [d["json"] for d in DELIVERABLES] + [M16_V3, OQ_V2, INTEGRATION["json"]]
+W500_MD_FILES = [d["md"] for d in DELIVERABLES] + [M16_V3_MD, OQ_V2_MD, INTEGRATION["md"]]
 
 
 def _leaf_items(o, p=""):
@@ -772,7 +787,7 @@ def _leaf_items(o, p=""):
 
 
 def _skip(path: str) -> bool:
-    return "sensitivity" in path or "before_a9_2" in path or path.startswith("/a9_10_reconciliation")
+    return "before_a9_2" in path or path.startswith("/a9_10_reconciliation")
 
 
 def _h2_icp_register(doc: dict, path: str) -> bool:
@@ -786,42 +801,88 @@ def _h2_icp_register(doc: dict, path: str) -> bool:
                                                                                               "/source")
 
 
+def _sentences(text: str) -> list:
+    return [x for x in re.split(r"(?<=\.)\s+", text) if x]
+
+
 def _bad_sentences(text: str) -> list:
-    return [s for s in re.split(r"(?<=\.)\s+", text) if PASS_TOKEN.search(s) and not SENS_LABEL.search(s)]
+    return [x for x in _sentences(text) if PASS_TOKEN.search(x) and not NEGATED_PASS.search(x)]
+
+
+def _w500_bad(text: str) -> list:
+    return [x for x in _sentences(text) if W500.search(x) and RF_CONTEXT.search(x) and not W500_LABEL.search(x)]
+
+
+def _exempt(doc) -> tuple:
+    """(paths, strings) exempt from the 500 W rule: verbatim owner / decision texts, answered questions, history."""
+    paths, strings = set(), set()
+
+    def walk(o, p, answered):
+        if isinstance(o, dict):
+            ans = answered or str(o.get("status", "")).startswith("ANSWERED")
+            for k, v in o.items():
+                q = p + "/" + str(k)
+                if k in W500_SKIP_KEYS or "before_a9_2" in k or (ans and k in ANSWERED_QUESTION_KEYS) or \
+                        re.fullmatch(r"/revision_register\[\d+\]/old", q):
+                    for lp, lv in _leaf_items(v, q):
+                        paths.add(lp)
+                        if isinstance(lv, str) and len(lv) >= 30:
+                            strings.add(lv)
+                else:
+                    walk(v, q, False)
+        elif isinstance(o, list):
+            for i, v in enumerate(o):
+                walk(v, p + f"[{i}]", answered)
+    walk(doc, "", False)
+    return paths, strings
+
+
+def _strip_exempt(line: str, strings) -> str:
+    for x in strings:
+        for v in (x, x.replace("|", "\\|"), x.replace("|", "/"), x.replace("\n", " ")):
+            if v in line:
+                line = line.replace(v, " ")
+    return line
+
+
+def _read(rel: str) -> str:
+    with open(os.path.join(ROOT, rel), encoding="utf-8") as f:
+        return f.read()
 
 
 def a92_text_scan(errors: list, h2: dict = None, h2_md: str = None, w500_docs: dict = None,
                   w500_mds: dict = None) -> dict:
-    """(i) pass-like VALUES under any key in the hall_icp_neutralizer thermal records and register rows; (ii) pass-like
-    WORDING in A9-07 key findings, register text, open items, Curie / closure summaries and the thermal Markdown without
-    an uncoupled-sensitivity / UNRESOLVED label in the same sentence; (iii) supplier-facing / rating text stating
-    500 W without the A9.2 delivered/operating label. Inputs default to the committed files (tests pass base copies)."""
+    """(i) pass-like VALUES under any key (uncoupled_sensitivity_* included) in the hall_icp_neutralizer thermal records
+    and register rows; (ii) PASS / CLOSES* / CONDITIONALLY_RESOLVED WORDING in the A9-07 key findings, register text,
+    demands, M16 impact, open items, Curie / closure summaries and the thermal / key-finding / register Markdown (only a
+    denial such as 'never a thermal PASS' is allowed); (iii) every sentence of every A9 deliverable, M16 v3, owner-state
+    v2, integration record and RFQ package text stating 500 W in an RF context without the A9.2 delivered/operating
+    label (verbatim owner / decision texts, answered questions and *_before_a9_2 history excluded). Inputs default to
+    the committed files (tests pass base copies)."""
     h2 = load(OV.H2A9) if h2 is None else h2
     if h2_md is None:
-        with open(os.path.join(ROOT, "docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md"), encoding="utf-8") as f:
-            h2_md = f.read()
+        h2_md = _read("docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md")
     if w500_docs is None:
         w500_docs = {rel: load(rel) for rel in W500_FILES}
     if w500_mds is None:
-        w500_mds = {}
+        w500_mds = {rel: _read(rel) for rel in W500_MD_FILES}
         for fn in sorted(os.listdir(os.path.join(ROOT, RFQ_PACKAGE_DIR))):
             if fn.endswith(".md"):
-                with open(os.path.join(ROOT, RFQ_PACKAGE_DIR, fn), encoding="utf-8") as f:
-                    w500_mds[RFQ_PACKAGE_DIR + fn] = f.read()
+                w500_mds[RFQ_PACKAGE_DIR + fn] = _read(RFQ_PACKAGE_DIR + fn)
     values, wording, w500 = [], [], []
     for path, v in _leaf_items(h2):
         if _skip(path) or not any(path.startswith(r) for r in H2_VALUE_ROOTS) or not _h2_icp_register(h2, path):
             continue
         if isinstance(v, str) and OV.PASS_LIKE.match(v):
             values.append({"pointer": path, "value": v})
-        elif v is True and re.search(r"closes", path.rsplit("/", 1)[-1]):
+        elif v is True and re.search(r"closes", path.rsplit("/", 1)[-1]) and "sensitivity" not in path:
             values.append({"pointer": path, "value": True})
     for path, v in _leaf_items(h2):
         if (not isinstance(v, str) or _skip(path) or not any(path.startswith(r) for r in H2_TEXT_ROOTS)
                 or not _h2_icp_register(h2, path) or OV.PASS_LIKE.match(v)):
             continue
-        for s in _bad_sentences(v):
-            wording.append({"pointer": path, "sentence": s[:200]})
+        for x in _bad_sentences(v):
+            wording.append({"pointer": path, "sentence": x[:200]})
     sec, keep = None, []
     for line in h2_md.splitlines():
         if line.startswith("### ") or line.startswith("## "):
@@ -832,29 +893,36 @@ def a92_text_scan(errors: list, h2: dict = None, h2_md: str = None, w500_docs: d
     for line in keep:
         if line.startswith("| REV-") and "hall_icp_neutralizer" not in line and "REV-4" not in line:
             continue
-        for s in _bad_sentences(line):
-            wording.append({"pointer": "H2_A9_REVISIONS.md", "sentence": s[:200]})
+        for x in _bad_sentences(line):
+            wording.append({"pointer": "H2_A9_REVISIONS.md", "sentence": x[:200]})
+    exempt_strings = set()
     for rel, d in w500_docs.items():
+        paths, strings = _exempt(d)
+        exempt_strings |= strings
         for path, v in _leaf_items(d):
-            key = path.rsplit("/", 1)[-1].split("[")[0]
-            if (not isinstance(v, str) or "before_a9_2" in path or path.startswith("/a9_10_reconciliation")
-                    or key in W500_SKIP_KEYS):
+            if not isinstance(v, str) or _skip(path) or path in paths:
                 continue
-            if W500.search(v) and not W500_LABEL.search(v):
-                w500.append({"file": rel, "pointer": path, "text": v[:200]})
+            for x in _w500_bad(v):
+                w500.append({"file": rel, "pointer": path, "text": x[:200]})
     for rel, txt in w500_mds.items():
-        for line in txt.splitlines():
-            if W500.search(line) and not W500_LABEL.search(line) and not line.lstrip().startswith(">"):
-                w500.append({"file": rel, "pointer": "line", "text": line[:200]})
+        for i, line in enumerate(txt.splitlines(), 1):
+            if line.lstrip().startswith(">") or line.startswith("| A910-"):
+                continue
+            for x in _w500_bad(_strip_exempt(line, exempt_strings)):
+                w500.append({"file": rel, "pointer": f"line {i}", "text": x[:200]})
     for h in (values + wording + w500)[:20]:
         errors.append(f"A9.2 residual wording: {h}")
     return {"rule": "(i) no PASS / CLOSES* / RESOLVED / CONDITIONALLY_RESOLVED value and no True *closes* flag under ANY "
-                    "key of the hall_icp_neutralizer thermal records or of a revision-register row applying to "
-                    "hall_icp_neutralizer (uncoupled_sensitivity_* / *_before_a9_2 excluded); (ii) every sentence of the "
-                    "A9-07 key findings, register text, demands, open items, Curie / closure summaries and thermal "
-                    "Markdown that uses PASS / CLOSES* / CONDITIONALLY_RESOLVED carries an uncoupled-sensitivity or "
-                    "UNRESOLVED label; (iii) every A9-03 / A9-04 / A9-09 text (JSON and RFQ package Markdown; verbatim "
-                    "owner / source quotes excluded) stating 500 W carries the A9.2 delivered/operating label",
+                    "key (uncoupled_sensitivity_* included; they carry UNCOUPLED_SENSITIVITY_* names) of the "
+                    "hall_icp_neutralizer thermal records or of a revision-register row applying to "
+                    "hall_icp_neutralizer (*_before_a9_2 history excluded); (ii) no sentence of the A9-07 key "
+                    "findings, register text, demands, M16 impact, open items, Curie / closure summaries or thermal / "
+                    "key-finding / register Markdown uses PASS / CLOSES* / CONDITIONALLY_RESOLVED except to deny a "
+                    "thermal PASS; (iii) every sentence of every A9 deliverable JSON and Markdown, M16 v3, the "
+                    "owner-question state v2, the step-1 integration record and the RFQ package texts that states "
+                    "500 W in an RF context carries the A9.2 delivered/operating label (verbatim owner / decision "
+                    "texts, answered questions and *_before_a9_2 history excluded)",
+            "w500_files": sorted(w500_docs), "w500_md_files": sorted(w500_mds),
             "value_violations": values, "wording_violations": wording, "w500_violations": w500,
             "violations": values + wording + w500}
 
@@ -1061,8 +1129,10 @@ def build():
          "value": len(a92["status_scan"]["violations"]), "units": "count", "basis": "A9.2 item 9",
          "source": "computed by this builder (a9_2.status_scan)", "evidence_class": "inferred",
          "status": "VERIFIED (must be 0)", "freeze_point": "NOW"},
-        {"id": "REC-12", "name": "residual A9.2 wording: pass-like values under any key, PASS / CLOSES sentences "
-         "without an uncoupled-sensitivity label, 500 W texts without the delivered/operating label",
+        {"id": "REC-12", "name": "residual A9.2 wording: pass-like values under any key (sensitivity fields "
+         "included), PASS / CLOSES sentences in the A9-07 findings / register / summaries, and 500 W RF sentences "
+         "without the delivered/operating label in EVERY A9 deliverable, M16 v3, owner-state v2, the integration "
+         "record and the RFQ packages",
          "value": len(a92["text_scan"]["violations"]), "units": "count", "basis": "A9.2 icp_coupled_thermal, rf_500W",
          "source": "computed by this builder (a9_2.text_scan)", "evidence_class": "inferred",
          "status": "VERIFIED (must be 0)", "freeze_point": "NOW"},
@@ -1248,7 +1318,8 @@ def render_md(d) -> str:
     a("")
     a(f"Decision `{g['decision']['path']}` (sha256 `{g['decision']['sha256']}`), verbatim `{g['decision']['verbatim']}` "
       f"(sha256 `{g['decision']['verbatim_sha256']}`); read from the byte-identical pinned copy "
-      f"`{g['decision']['pinned_copy']}` (recorded at commit {g['decision']['recorded_at_commit']}).")
+      f"`{g['decision']['pinned_copy']}` (recorded at commit {g['decision']['recorded_at_commit']}). "
+      f"Path resolution: {g['decision']['path_resolution']}.")
     a("")
     a("### A9.2 statuses (verbatim, item 9)")
     a("")
@@ -1258,7 +1329,7 @@ def render_md(d) -> str:
         a(f"| {_c(x['item'])} | **{x['status']}** |")
     a("")
     a(g["statuses_rule"] + ". Status scan: " + f"{g['status_scan']['fields_checked']} status-like fields checked, "
-      f"{len(g['status_scan']['violations'])} violations. Text scan (review repair 3): "
+      f"{len(g['status_scan']['violations'])} violations. Text scan (review repairs 3 and 4; every A9 deliverable): "
       f"{len(g['text_scan']['violations'])} violations ({g['text_scan']['rule']}).")
     a("")
     sp = g["supersession"]

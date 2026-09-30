@@ -154,7 +154,9 @@ NEW_ROWS = [
                     "P_ICP,available (A9.1 OQ-A902-03); P_bus,1ms,max < 1500 W incl. start-up (A9.1 OQ-A902-01)",
      "allocation": {"mass": ("A9-06", "AL-06"), "power": "inside P_ICP,available (no fixed split, A9.1 OQ-A902-03)"},
      "interface_items": ["ICP-13", "ICP-14", "ICP-15", "ICP-16", "ICP-24"],
-     "evidence": "none for a flight unit (laboratory 0-500 W generator is a ground/facility test capability, row 72)",
+     "evidence": "none for a flight unit (the laboratory RF generator with its 0-500 W delivered/operating "
+                 "investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating; ratings "
+                 "TBD_AFTER_IMPEDANCE_MAP) is a ground/facility test capability)",
      "procurement": ("A9-09", "RFQ-04"),
      "analysis_test_needed": "generator DC-input -> forward-power efficiency (A902-21, S1a); ICP impedance map "
                              "Z_antenna = R + jX vs mdot, P_RF, p, gas, Hall operating point (A9.2 P2) before any "
