@@ -2355,3 +2355,13 @@ machine-readable `OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json`):
 Owner-question state v3 records these answers; 46 questions remain OPEN, and v2 is unchanged. Triggers registered:
 T_A9_P1_ICP_BENCH, T_A9_P2_IMPEDANCE_PREP (the plasma map needs stable P1 plasma first) and T_A9_RFQ_V2_SPLIT. No model,
 frozen data or golden changed.
+A9.3 lanes verified and merged on the execution branch:
+- **P1 ICP bench** `docs/experiments/hall_icp/p1_icp_bench/`: stages, capability surface, OQ-VI-05 control,
+  current-path closure, analysis script, record format.
+- **P2 impedance preparation** `docs/experiments/hall_icp/p2_impedance_map/`: reference planes, calibration,
+  analysis script; the plasma map needs P1 stable plasma first.
+- **RFQ v2** `docs/procurement/rfq_a9_v2/`: six supplier-type packages plus a common interface document; v1 unchanged.
+
+Post-merge: 2321 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10. New owner questions: P1Q-10 (I_e,cap as
+a Hall-OFF capacity-extraction measurement), P1Q-13 (H-1 anode/body configuration in Hall-OFF stages), P1Q-14 (ICP
+isolation class and hipot voltage), P2Q-05 (optical unlit-verification indicator).
