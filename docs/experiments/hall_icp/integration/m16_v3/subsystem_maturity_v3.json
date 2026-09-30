@@ -64,7 +64,7 @@
   {
    "lane": "A9-01",
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "sha256": "b634357fe17ba59af17d5f76b48d704ed1e156fc4c6a1bb08dae4fea0c52fcac"
+   "sha256": "f082a6d3eabf07485d447ace927f69e8980acbcc8eff54d0cd21f196e20a0afe"
   },
   {
    "lane": "A9-02",
@@ -74,7 +74,7 @@
   {
    "lane": "A9-03",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "95cdd7a543c0879a0f21f5ef64607ec7cba79a2f3cede9044c46195c91c7012a"
+   "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c"
   },
   {
    "lane": "A9-04",
@@ -94,22 +94,22 @@
   {
    "lane": "A9-06",
    "path": "docs/budgets/mass_a9/mass_a9_v1.json",
-   "sha256": "a4a70426dbfc917c9906275b2475110a158f7008006b075cabb259c045ca9680"
+   "sha256": "071b03fb634c6b25ef422e7ec81006d337e6c333b80133240bdea32999a4f7d4"
   },
   {
    "lane": "A9-07",
    "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
-   "sha256": "c26eb71d6d76fac8e4744feeda4e015a648600779d7791dd7665ce1aad52881b"
+   "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa"
   },
   {
    "lane": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
-   "sha256": "9d687e5f7ea64c5245070819ebea9d180362c3c3600afcda38c492178cf4f519"
+   "sha256": "37c32cda9fb04200f6e9041b0e790ca700e270866f29e7c10f8a298034ddacfd"
   },
   {
    "lane": "A9-09",
    "path": "docs/procurement/rfq_a9/rfq_a9_v1.json",
-   "sha256": "882292e7700c0a93c31574ef2487ae63e8ba844b578b6050eaa4ddc37767dcfd"
+   "sha256": "d2e654cf49d89b8f84a65e5bf7626517a37c02d0a4a0de97f128c3155ef4a84b"
   }
  ],
  "scheduler_rule": {
@@ -1200,7 +1200,7 @@
    "baseline_flight_hardware": false,
    "new_in_v3": true,
    "cells": {
-    "requirement": "A9 governing decision (primary investigation); A9.1 ICP-45 (ICP-45A Ar / ICP-45N N2: I_e,cap >= I_d,max before any score-bearing point); ICD ICP-01..ICP-46; G-REUSE primary gas mode (A9.1 HIQ-06)",
+    "requirement": "A9 governing decision (primary investigation); A9.1 ICP-45 (ICP-45A Ar / ICP-45N N2: I_e,cap >= I_d,max before any score-bearing point); ICD ICP-01..ICP-47; G-REUSE primary gas mode (A9.1 HIQ-06)",
     "allocation": {
      "mass": {
       "line": "AL-05",

@@ -2345,7 +2345,7 @@
    "counterpart": "schemas/interfaces/icp_neutralizer_icd_v1.json (A9-03)",
    "demand": "frozen interface ids for RR-HI-02 and SC-HI-SRC-ICP; interfaces frozen before HI-S1 (row 71)",
    "units": "-",
-   "status": "PARTIAL: A9-03 item ids ICP-01..ICP-46 exist and are citable for RR-HI-02 / SC-HI-SRC-ICP; they are not frozen - the freeze is gate deadline GD-01 (before HI-S1)"
+   "status": "PARTIAL: A9-03 item ids ICP-01..ICP-47 exist and are citable for RR-HI-02 / SC-HI-SRC-ICP; they are not frozen - the freeze is gate deadline GD-01 (before HI-S1)"
   },
   {
    "id": "IF-HI-05",
@@ -4065,6 +4065,14 @@
     "ptr": "/h3_h4_inputs/h3_procurement_inputs_quotations_only[0]",
     "count": 1,
     "summary": "H3 RF line: no 500 W rating"
+   },
+   {
+    "cid": "A910-A92T-A901-01",
+    "driver": "A9.2 radiative_view_requirement (ICP-47 added by A9-10)",
+    "op": "replace",
+    "ptr": "/interface_demands[id=IF-HI-04]/status",
+    "count": 1,
+    "summary": "IF-HI-04 cites the extended A9-03 id range"
    }
   ]
  }

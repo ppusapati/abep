@@ -34,8 +34,8 @@ Binding context: p5_n2_v1 = INCONCLUSIVE (permanent); credible_hall_set = EMPTY;
 | docs/hardware/h2/h2_3_gas_path_plenum/h2_3_gas_path_plenum_v1.json | f32b05bd03aad2a09a1d9b90ee5f9423e733e6ea4cb94814c92b500590d43a7b | H2-3 gas path / plenum (verified) |
 | docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json | d1813e153af37ebd45cb2ead964ead6c53c756d1a82f93ea89346a83168d0630 | H2-7 mechanical / mass BOM (verified) |
 | docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json | 9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6 | A9-02 bus-power boundary (verified) |
-| schemas/interfaces/icp_neutralizer_icd_v1.json | 95cdd7a543c0879a0f21f5ef64607ec7cba79a2f3cede9044c46195c91c7012a | A9-03 ICP-neutralizer ICD (verified) |
-| docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json | b634357fe17ba59af17d5f76b48d704ed1e156fc4c6a1bb08dae4fea0c52fcac | A9-01 prereg framework (verified) |
+| schemas/interfaces/icp_neutralizer_icd_v1.json | 8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c | A9-03 ICP-neutralizer ICD (verified) |
+| docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json | f082a6d3eabf07485d447ace927f69e8980acbcc8eff54d0cd21f196e20a0afe | A9-01 prereg framework (verified) |
 | docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json | c6567e6d0bbc008bedd5b9c14a9716f117144ab6952b9c498f7b0c75e02a624d | A9-04 uncertainty budget (verified) |
 | docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json | fac472e370b54875df5dea90c3c7740403da5ac1edd1af29b43ed09ee679d450 | A9-05 validation inputs (verified) |
 | docs/experiments/hall_icp/integration/a9_core_integration_v1.json | 86146f986e35e4d9e507c739aac9f8dd11b483be45fd7691bdccc585c734a09f | A9 core integration (verified) |

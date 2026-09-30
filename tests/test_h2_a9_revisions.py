@@ -709,12 +709,30 @@ def test_a9_2_repair_no_residual_thermal_pass_wording():
         for _c, rec in cases.items():
             for _n, e in rec["nodes"].items():
                 assert "nominal_closes" not in e     # nodes without a live limit carry no such flag
+                # review repair 5: no closes-type boolean at all; the nominal comparison is a sensitivity string
+                assert not any(isinstance(v, bool) and "clos" in k.lower() for k, v in e.items())
                 if e.get("limit_C") is not None:
-                    assert isinstance(e["uncoupled_sensitivity_nominal_closes"], bool)
+                    want = ("UNCOUPLED_SENSITIVITY_WITHIN_LIMIT" if e["T_nominal_C"] <= e["design_ceiling_C"]
+                            else "UNCOUPLED_SENSITIVITY_ABOVE_LIMIT")
+                    assert e["uncoupled_sensitivity_outcome"] == want
     assert not any("hall_icp_neutralizer CLOSES" in x for x in th["overall"]["open_items"])
+    assert th["bn_wall_11_2K_case"]["uncoupled_sensitivity_at_baseline"] == "UNCOUPLED_SENSITIVITY_ABOVE_LIMIT"
+    assert "closes_at_baseline" not in th["bn_wall_11_2K_case"]
+    assert th["overall"]["uncoupled_sensitivity_baseline_all_live_nodes_and_row85"] == \
+        "UNCOUPLED_SENSITIVITY_ABOVE_LIMIT"
+    assert "baseline_closes_all_live_nodes_and_row85" not in th["overall"]
+    assert "boolean_outcomes" in th["a9_2_sensitivity_vocabulary"]
+    for i in (1, 2, 3, 4):                                    # K2..K5: no lower-case closure claims
+        for w in ("closes", "close it", "closing sets", "closing lever", "baseline closures"):
+            assert w not in doc["key_findings"][i], (i, w)
+    assert "for context only - not a heat allowance - the ICP module RF power" in doc["key_findings"][1]
+    oq = {q["id"]: q for q in doc["open_owner_questions"]}
+    for qid in ("OQ-A907-05", "OQ-A907-08", "OQ-A907-10"):
+        assert "CLOSES" not in oq[qid]["question"] + oq[qid]["proposed_answer"], qid
     md = MD_PATH.read_text(encoding="utf-8")
     assert "Every hall_icp_neutralizer CLOSES is conditional" not in md
-    assert "| levers closing every case (uncoupled sensitivity) |" in md
+    assert "| levers within the limit in every case (uncoupled sensitivity) |" in md
+    assert "still closes" not in md and "closing lever set" not in md
     assert "PO PASS, BP PASS;" not in md and "necessary Curie checks: PI FAIL, PO UNRESOLVED, BP UNRESOLVED" in md
 
 

@@ -62,7 +62,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 
 ### Row 18: downstream 13.56 MHz RF ICP electron source / neutralizer head (antenna, dielectric, collector/bias electrode, capped dedicated gas port)
 
-* **requirement**: A9 governing decision (primary investigation); A9.1 ICP-45 (ICP-45A Ar / ICP-45N N2: I_e,cap >= I_d,max before any score-bearing point); ICD ICP-01..ICP-46; G-REUSE primary gas mode (A9.1 HIQ-06)
+* **requirement**: A9 governing decision (primary investigation); A9.1 ICP-45 (ICP-45A Ar / ICP-45N N2: I_e,cap >= I_d,max before any score-bearing point); ICD ICP-01..ICP-47; G-REUSE primary gas mode (A9.1 HIQ-06)
 * **allocation**: {"mass": {"line": "AL-05", "owner_allocation_kg": 2.0, "state": "ALLOCATION_UNVERIFIABLE_TBD", "source": "docs/budgets/mass_a9/mass_a9_v1.json line_checks[line=AL-05]", "evidence_class": "owner-allocation"}, "power": "P_ICP,available = 1350 - P_common - P_Hall - P_other,active (A9.1 OQ-A902-03; A9-02 A902-20)"}
 * **interface_status**: {"document": "schemas/interfaces/icp_neutralizer_icd_v1.json", "document_status": "DRAFT_PENDING_OWNER", "items": {"ICP-02": "TBD", "ICP-04": "TBD", "ICP-07": "TBD", "ICP-21": "TBD", "ICP-26": "OWNER_GIVEN (G-REUSE primary, A9.1 HIQ-06); contingency flows TBD", "ICP-43": "TBD", "ICP-44": "TBD", "ICP-45": "TBD (value); form OWNER_GIVEN (A9.1 ICP-45)"}}
 * **preliminary_design**: none (ICD items PROPOSED / TBD; no ICP module design lane registered)

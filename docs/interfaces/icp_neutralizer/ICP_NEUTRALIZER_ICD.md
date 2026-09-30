@@ -652,7 +652,7 @@ Freeze points:
 
 | id | from | to | quantity | value | units | status |
 |---|---|---|---|---|---|---|
-| ID-01 | A9-03 | A9-01 | configuration ids and per-configuration hardware identity (which ICD items may differ between hall_c1_reference and hall_icp_neutralizer) | ICP-01..ICP-46 applies_to | - | PROPOSED |
+| ID-01 | A9-03 | A9-01 | configuration ids and per-configuration hardware identity (which ICD items may differ between hall_c1_reference and hall_icp_neutralizer) | ICP-01..ICP-47 applies_to | - | PROPOSED |
 | ID-02 | A9-01 | A9-03 | definition of the V_d setting held equal across configurations | **TBD** | V | SATISFIED by A9.1 A9-03-Vd (V_d = V_anode - V_electron-source-reference, primary controlled quantity; applied in ICP-22) |
 | ID-03 | A9-01 | A9-03 | ICP ignition dwell/retry bound; start/restart classification; start-up/thermal-state rule | **TBD** | s, count | PARTIAL: A9-01 supplies the start / restart classification (DQ-HI-IGN, DQ-HI-RESTART, DR-07, MD-HI-02) and lists the start-up / thermal-state rule as GD-17 (LOCK-1); no ICP ignition dwell / retry bound yet (LOCK-1 item) |
 | ID-04 | A9-01 | A9-03 | stage map (Ar ENGINEERING_ONLY -> N2 -> O2 NO_ATOMIC_O) and exchange schedule | **TBD** | - | SATISFIED by A9-01: stage_map HI-ENG..HI-AO (Ar ENGINEERING_ONLY -> N2 -> O2 NO_ATOMIC_O -> AO) and execution_design (block template, SEQ-A / SEQ-B) |
@@ -986,3 +986,4 @@ Changes applied by A9-10 after this lane's verified build (record `docs/experime
 | A910-A92S-A903-05 | A9.2 rf_measurement_reference | supersede | `/h3_h4_inputs/h3_procurement_quotation_only[2]` | 1 | H3 coupler line: A9.2 plane |
 | A910-A92S-A903-06 | A9.2 icp_coupled_thermal | set | `/h3_h4_inputs/h4_tests[5]/closes` | 1 | Ar thermal map re-scoped: no ICP-43 closure |
 | A910-A92S-A903-07 | A9.2 rf_measurement_reference | replace | `/h3_h4_inputs/h4_tests[1]/measure` | 1 | S1a loss-chain wording |
+| A910-A92T-A903-01 | A9.2 radiative_view_requirement (ICP-47 added by A9-10) | replace | `/interface_demands[id=ID-01]/value` | 1 | ID-01 cites the extended id range |

@@ -852,7 +852,8 @@ def _a909() -> list:
 def records() -> dict:
     out = {"A9-01": _a901(), "A9-02": _a902(), "A9-03": _a903(), "A9-04": _a904(), "A9-05ev": _a905ev(),
            "A9-05vi": _a905vi(), "A9-06": _a906(), "A9-07": _a907(), "A9-08": _a908(), "A9-09": _a909()}
-    for extra in (_repair_code(), _repair(), _repair2(), _repair3(), _repair4(), _repair5(), _a92(), _a92_repair(), _a92_repair2()):
+    for extra in (_repair_code(), _repair(), _repair2(), _repair3(), _repair4(), _repair5(), _a92(), _a92_repair(), _a92_repair2(),
+                  _a92_repair3()):
         for k, recs in extra.items():
             out[k] = out[k] + [dict(r) for r in recs]
     return out
@@ -2211,6 +2212,11 @@ def _apply_one(doc, r) -> int:
             k_changed = _a92_thermal_residual(cur)
             if k_changed == 0:
                 raise OverlayError(f"{r['cid']}: A9.2 residual thermal relabel matched nothing")
+            n += k_changed - 1
+        elif op == "a92_bool_outcome":
+            k_changed = _a92_bool_outcome(cur)
+            if k_changed == 0:
+                raise OverlayError(f"{r['cid']}: A9.2 boolean outcome replacement matched nothing")
             n += k_changed - 1
         elif op == "a92_sens_vocab":
             k_changed = _a92_sens_vocab(cur)
@@ -3725,3 +3731,155 @@ def _a92_repair2() -> dict:
     return {"A9-01": _a92_repair2_a901(), "A9-02": _a92_repair2_a902(), "A9-03": _a92_repair2_a903(),
             "A9-05ev": _a92_repair2_a905ev(), "A9-05vi": _a92_repair2_a905vi(), "A9-06": _a92_repair2_a906(),
             "A9-07": _a92_repair2_a907()}
+
+
+# ------------------------------------------------------------------------------------------------------ A9.2 repair 3
+# A9-10 review repair 5 (A9.2 ICP_COUPLED_THERMAL / rf_500W, residual): the per-node boolean
+# uncoupled_sensitivity_nominal_closes (and the two baseline booleans closes_at_baseline /
+# baseline_closes_all_live_nodes_and_row85) of the hall_icp_neutralizer thermal records still carried a True/False
+# 'closes' flag; key findings K2-K5, the BN-wall buildability / status-meaning texts, the view condition, IDA7-07 and
+# the OPEN owner-question proposals OQ-A907-05 / -08 / -10 still used CLOSES / 'closes' wording; the K2 500 W label
+# read as if it qualified a thermal heat allowance. Every record below is a wording / representation change required
+# by A9.2 (icp_coupled_thermal, rf_500W); the same underlying comparison is kept (no number changes).
+BOOL_OUTCOME = {True: "UNCOUPLED_SENSITIVITY_WITHIN_LIMIT", False: "UNCOUPLED_SENSITIVITY_ABOVE_LIMIT"}
+BOOL_OUTCOME_RULE = {
+    "uncoupled_sensitivity_outcome": "per node of every hall_icp_neutralizer result with a live limit: the nominal-state "
+                                     "comparison T_nominal_C <= limit_C - 50 K (row 86) of the uncoupled sensitivity "
+                                     "(0 W ICP heat, v1 exterior views); formerly the boolean nominal_closes",
+    "uncoupled_sensitivity_at_baseline": "BN inner wall WI at LV-BASE: the searched worst case meets the rule "
+                                         "(brief outcome within limit) or not; formerly the boolean closes_at_baseline",
+    "uncoupled_sensitivity_baseline_all_live_nodes_and_row85": "LV-BASE: every live node within the rule AND the corner "
+                                                               "mount heat within the row-85 100 W case, or not "
+                                                               "(ABOVE_LIMIT = at least one of them is not); formerly "
+                                                               "the boolean baseline_closes_all_live_nodes_and_row85",
+    "values": {"true": BOOL_OUTCOME[True], "false": BOOL_OUTCOME[False]},
+    "note": "sensitivity information only, never a thermal PASS or closure; every reported hall_icp_neutralizer thermal "
+            "status is UNRESOLVED (A9.2 ICP_COUPLED_THERMAL)"}
+
+
+def _a92_bool_outcome(th: dict) -> int:
+    """Replace every closes-type boolean of the hall_icp_neutralizer thermal records by an UNCOUPLED_SENSITIVITY_*
+    string (same comparison, no number changes). Returns the number of replaced flags."""
+    n = 0
+    for _lv, cases in th["results"]["hall_icp_neutralizer"].items():
+        for _c, rec in cases.items():
+            for _node, e in rec["nodes"].items():
+                if "uncoupled_sensitivity_nominal_closes" in e:
+                    v = e.pop("uncoupled_sensitivity_nominal_closes")
+                    if not isinstance(v, bool) or "uncoupled_sensitivity_outcome" in e:
+                        raise OverlayError("uncoupled_sensitivity_nominal_closes is not a fresh boolean")
+                    e["uncoupled_sensitivity_outcome"] = BOOL_OUTCOME[v]
+                    n += 1
+    for node, old, new in ((th["bn_wall_11_2K_case"], "closes_at_baseline", "uncoupled_sensitivity_at_baseline"),
+                           (th["overall"], "baseline_closes_all_live_nodes_and_row85",
+                            "uncoupled_sensitivity_baseline_all_live_nodes_and_row85")):
+        v = node.pop(old)
+        if not isinstance(v, bool) or new in node:
+            raise OverlayError(f"{old} is not a fresh boolean")
+        node[new] = BOOL_OUTCOME[v]
+        n += 1
+    voc = th.get("a9_2_sensitivity_vocabulary")
+    if voc is None or "boolean_outcomes" in voc:
+        raise OverlayError("a9_2_sensitivity_vocabulary missing or boolean outcomes already recorded")
+    voc["boolean_outcomes"] = dict(BOOL_OUTCOME_RULE)
+    return n
+
+
+VIEW_OLD = "the verdict holds only if a re-solve with the real module view factors still closes"
+VIEW_NEW = ("any uncoupled-sensitivity result holds only if a re-solve with the real module view factors still gives "
+            "it (reported status UNRESOLVED, A9.2 ICP_COUPLED_THERMAL)")
+BUILD_OLD = "no closing lever set is demonstrated buildable; resolution is conditional on"
+BUILD_NEW = ("no within-limit lever set (uncoupled sensitivity) is demonstrated buildable; the status stays UNRESOLVED "
+             "and any later resolution is conditional on")
+K2_500_OLD = " (" + DELIV_500 + "). Search-sensitive baseline closures: CO."
+K2_500_NEW = ("; for context only - not a heat allowance - the ICP module RF power is the " + DELIV_500 + ". "
+              "Search-sensitive baseline uncoupled-sensitivity within-limit results (reported UNRESOLVED, A9.2 "
+              "ICP_COUPLED_THERMAL): CO.")
+
+
+def _a92_repair3_a907() -> list:
+    kf = "/key_findings[{}]"
+    th = "/recomputations/h25_thermal_rerun"
+    q = "/open_owner_questions[id={}]"
+    return [
+        R("A910-A92T-A907-01", "A9.2 icp_coupled_thermal", "a92_bool_outcome", th,
+          summary="every closes-type boolean of the hall_icp_neutralizer thermal records (per-node "
+                  "uncoupled_sensitivity_nominal_closes, bn_wall closes_at_baseline, overall "
+                  "baseline_closes_all_live_nodes_and_row85) replaced by an UNCOUPLED_SENSITIVITY_WITHIN_LIMIT / "
+                  "UNCOUPLED_SENSITIVITY_ABOVE_LIMIT string (same comparison; a9_2_sensitivity_vocabulary."
+                  "boolean_outcomes; no number changes)"),
+        R("A910-A92T-A907-02", "A9.2 icp_coupled_thermal", "gsub", th, VIEW_OLD, VIEW_NEW,
+          "view condition worded as an uncoupled-sensitivity condition (no 'closes')"),
+        R("A910-A92T-A907-03", "A9.2 rf_500W, icp_coupled_thermal", "replace", kf.format(1), K2_500_OLD, K2_500_NEW,
+          "K2: the 500 W label is stated as ICP module power context, not a heat allowance; search-sensitive "
+          "results worded as uncoupled-sensitivity results"),
+        R("A910-A92T-A907-04", "A9.2 icp_coupled_thermal", "replace", kf.format(2),
+          "single levers that close it in every case:",
+          "single levers with an UNCOUPLED_SENSITIVITY_WITHIN_LIMIT result in every case:", "K3 lever wording"),
+        R("A910-A92T-A907-05", "A9.2 icp_coupled_thermal", "replace", kf.format(2),
+          "minimal closing sets that also keep", "minimal within-limit lever sets (uncoupled sensitivity) that also keep",
+          "K3 minimal-set wording"),
+        R("A910-A92T-A907-06", "A9.2 icp_coupled_thermal", "replace", kf.format(2), BUILD_OLD, BUILD_NEW,
+          "K3 buildability wording"),
+        R("A910-A92T-A907-07", "A9.2 icp_coupled_thermal", "replace", th + "/bn_wall_11_2K_case/buildability",
+          BUILD_OLD, BUILD_NEW, "BN-wall buildability wording"),
+        R("A910-A92T-A907-08", "A9.2 icp_coupled_thermal", "replace",
+          "/revision_register[id=REV-45]/new/value/buildability", BUILD_OLD, BUILD_NEW, "REV-45 buildability wording"),
+        R("A910-A92T-A907-09", "A9.2 icp_coupled_thermal", "replace", th + "/bn_wall_11_2K_case/status_meaning",
+          "every closing set is NOT_CHECKED", "every within-limit lever set is NOT_CHECKED",
+          "BN-wall status meaning: lever-set wording"),
+        R("A910-A92T-A907-10", "A9.2 icp_coupled_thermal", "replace", th + "/bn_wall_11_2K_case/status_meaning",
+          "OPEN = no evaluated lever set closes", "OPEN = no evaluated lever set gives a within-limit result",
+          "BN-wall status meaning: OPEN wording"),
+        R("A910-A92T-A907-11", "A9.2 icp_coupled_thermal", "replace", kf.format(3),
+          "in the uncoupled sensitivity it closes in every case only with LV-ALL",
+          "in the uncoupled sensitivity it is UNCOUPLED_SENSITIVITY_WITHIN_LIMIT in every case only with LV-ALL",
+          "K4 wording"),
+        R("A910-A92T-A907-12", "A9.2 icp_coupled_thermal", "replace", kf.format(4),
+          "minimal such closing sets per node", "minimal such within-limit lever sets per node", "K5 wording"),
+        R("A910-A92T-A907-13", "A9.2 icp_coupled_thermal", "replace", th + "/overall/open_items[5]",
+          "no closing lever set has a demonstrated buildability",
+          "no within-limit lever set (uncoupled sensitivity; reported UNRESOLVED) has a demonstrated buildability",
+          "open item 6 wording"),
+        R("A910-A92T-A907-14", "A9.2 icp_coupled_thermal", "replace", "/interface_demands[id=IDA7-07]/status",
+          "closes ID-17 in part", "partly satisfies ID-17", "IDA7-07 status wording"),
+        R("A910-A92T-A907-15", "A9.2 icp_coupled_thermal", "replace", q.format("OQ-A907-05") + "/proposed_answer",
+          "every CLOSES verdict stays conditional on validation",
+          "every within-limit result stays conditional on validation (for hall_icp_neutralizer an "
+          "UNCOUPLED_SENSITIVITY_WITHIN_LIMIT result; the reported status stays UNRESOLVED, A9.2 ICP_COUPLED_THERMAL)",
+          "OQ-A907-05 proposal wording (question stays OPEN; not answered here)"),
+        R("A910-A92T-A907-16", "A9.2 icp_coupled_thermal", "replace", q.format("OQ-A907-08") + "/proposed_answer",
+          "every thermal CLOSES that relies on the Z-93 finish is conditional on it",
+          "every uncoupled-sensitivity within-limit result that relies on the Z-93 finish is conditional on it and "
+          "the reported status stays UNRESOLVED (A9.2 ICP_COUPLED_THERMAL)",
+          "OQ-A907-08 proposal wording (question stays OPEN; not answered here)"),
+        R("A910-A92T-A907-17", "A9.2 icp_coupled_thermal", "replace", q.format("OQ-A907-10") + "/question",
+          "CLOSES verdicts whose margin to the design ceiling after the allowance is below 10 K are flagged "
+          "search_sensitive.",
+          "Within-limit results (for hall_icp_neutralizer: UNCOUPLED_SENSITIVITY_WITHIN_LIMIT, reported UNRESOLVED "
+          "under A9.2 ICP_COUPLED_THERMAL) whose margin to the design ceiling after the allowance is below 10 K are "
+          "flagged search_sensitive.", "OQ-A907-10 question wording (question stays OPEN; not answered here)"),
+        R("A910-A92T-A907-18", "A9.2 icp_coupled_thermal", "code", None,
+          summary="H2_A9_REVISIONS.md thermal-table headers and condition lines use within-limit lever-set wording "
+                  "(A92_MD_RELABEL entries, matched exactly once)",
+          file="docs/hardware/h2_a9_revisions/build_h2_a9_revisions.py", marker="A92_WITHIN_LIMIT_MD", scope=[]),
+    ]
+
+
+def _a92_repair3_icp47() -> dict:
+    """ICP-47 (radiative-view objective, added by A9-10 under A9.2 radiative_view_requirement) extends the A9-03 id
+    range; the citations of the range follow."""
+    return {
+        "A9-01": [R("A910-A92T-A901-01", "A9.2 radiative_view_requirement (ICP-47 added by A9-10)", "replace",
+                    "/interface_demands[id=IF-HI-04]/status", "ICP-01..ICP-46", "ICP-01..ICP-47",
+                    "IF-HI-04 cites the extended A9-03 id range")],
+        "A9-03": [R("A910-A92T-A903-01", "A9.2 radiative_view_requirement (ICP-47 added by A9-10)", "replace",
+                    "/interface_demands[id=ID-01]/value", "ICP-01..ICP-46", "ICP-01..ICP-47",
+                    "ID-01 cites the extended id range")],
+    }
+
+
+def _a92_repair3() -> dict:
+    out = {"A9-07": _a92_repair3_a907()}
+    out.update(_a92_repair3_icp47())
+    return out

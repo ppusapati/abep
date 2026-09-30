@@ -3441,6 +3441,8 @@ _a910_md_core = render_md
 # relabelled as uncoupled sensitivity; each substitution must match exactly once (no silent skip).
 # A92_SENS_VOCAB_MD (A9-10 review repair 4): the vocabulary sentence uses the UNCOUPLED_SENSITIVITY_* names of the
 # A9-10 overlay (a9_2_sensitivity_vocabulary); the lane's CLOSES / PASS words are not used for hall_icp_neutralizer.
+# A92_WITHIN_LIMIT_MD (A9-10 review repair 5): headers / condition lines say 'within-limit lever set' instead of
+# 'closing' (A9.2 icp_coupled_thermal).
 A92_MD_RELABEL = [
     ("Verdict vocabulary: `brief_verdict_at_baseline` is CLOSES / DO_NOT_CLOSE (live limit) or OPEN_LIMIT_TBD "
      "(no validated limit); `status` refines it: CLOSES_WITH_SINGLE_LEVER / CLOSES_ONLY_WITH_COMBINED_LEVERS "
@@ -3455,14 +3457,23 @@ A92_MD_RELABEL = [
      "(recomputations.h25_thermal_rerun.a9_2_sensitivity_vocabulary). **Every such uncoupled-sensitivity "
      "within-limit result would in addition be conditional**: (1) "),
     ("| levers closing every case | minimal closing sets within 100 W (buildability) | necessary check |",
-     "| levers closing every case (uncoupled sensitivity) | minimal closing sets within 100 W (uncoupled sensitivity; "
-     "buildability) | necessary check |"),
+     "| levers within the limit in every case (uncoupled sensitivity) | minimal within-limit lever sets within 100 W "
+     "(uncoupled sensitivity; buildability) | necessary check |"),
     ("\nConditions per closing lever set (",
-     "\nConditions per uncoupled-sensitivity closing lever set (reported UNRESOLVED, A9.2 ICP_COUPLED_THERMAL; "),
+     "\nConditions per uncoupled-sensitivity within-limit lever set (reported UNRESOLVED, A9.2 ICP_COUPLED_THERMAL; "),
     ("** (conditional on the ICP-43 heat allowance); minimal lever sets closing every live node within 100 W:",
      "** (A9.2 ICP_COUPLED_THERMAL; the uncoupled sensitivity is also conditional on the ICP-43 heat allowance); "
-     "minimal lever sets closing every live node within 100 W (uncoupled sensitivity):"),
-    ("degC; levers closing: ", "degC; uncoupled-sensitivity levers closing: "),
+     "minimal lever sets within the limit at every live node and within 100 W (uncoupled sensitivity):"),
+    ("degC; levers closing: ", "degC; uncoupled-sensitivity within-limit levers: "),
+    ("Rule: CLOSES when", "Rule (lane vocabulary; for hall_icp_neutralizer every outcome is an uncoupled sensitivity "
+     "with an UNCOUPLED_SENSITIVITY_* name and the reported status is UNRESOLVED, A9.2 ICP_COUPLED_THERMAL): CLOSES "
+     "when"),
+    ("Every CLOSES whose margin", "Every within-limit result (lane rule CLOSES; UNCOUPLED_SENSITIVITY_WITHIN_LIMIT for "
+     "hall_icp_neutralizer, reported UNRESOLVED) whose margin"),
+    ("(allowances per closing set below); (2) ", "(allowances per within-limit lever set below); (2) "),
+    ("the verdict holds only if a re-solve with the real module view factors still closes.",
+     "any uncoupled-sensitivity result holds only if a re-solve with the real module view factors still gives it "
+     "(reported status UNRESOLVED, A9.2 ICP_COUPLED_THERMAL)."),
     ("| sensitivity outcome (not a verdict) |",
      "| sensitivity outcome (not a verdict) - never a thermal PASS (A9.2) |"),
 ]

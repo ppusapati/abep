@@ -87,7 +87,7 @@
   {
    "id": "REC-01",
    "name": "declared A9-10 changes to the A9 deliverables",
-   "value": 511,
+   "value": 531,
    "units": "count",
    "basis": "a9_10_overlay.py records",
    "source": "computed by this builder",
@@ -238,17 +238,17 @@
   {
    "deliverable": "A9-01",
    "file": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "changed_leaves": 444,
+   "changed_leaves": 450,
    "explained_by": {
     "op": 77,
     "gsub": 26,
     "code": 0,
     "pin": 0,
-    "section": 341
+    "section": 347
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 56,
+   "numeric_leaves_changed": 57,
    "changes": [
     {
      "cid": "A910-A901-Q01",
@@ -735,6 +735,15 @@
      "count": 1,
      "numeric": false,
      "summary": "H3 RF line: no 500 W rating"
+    },
+    {
+     "cid": "A910-A92T-A901-01",
+     "driver": "A9.2 radiative_view_requirement (ICP-47 added by A9-10)",
+     "op": "replace",
+     "ptr": "/interface_demands[id=IF-HI-04]/status",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-HI-04 cites the extended A9-03 id range"
     }
    ]
   },
@@ -1135,17 +1144,17 @@
   {
    "deliverable": "A9-03",
    "file": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "changed_leaves": 777,
+   "changed_leaves": 784,
    "explained_by": {
-    "op": 153,
+    "op": 154,
     "gsub": 0,
     "code": 25,
     "pin": 0,
-    "section": 599
+    "section": 605
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 101,
+   "numeric_leaves_changed": 102,
    "changes": [
     {
      "cid": "A910-A903-Q01",
@@ -2035,6 +2044,15 @@
      "count": 1,
      "numeric": false,
      "summary": "S1a loss-chain wording"
+    },
+    {
+     "cid": "A910-A92T-A903-01",
+     "driver": "A9.2 radiative_view_requirement (ICP-47 added by A9-10)",
+     "op": "replace",
+     "ptr": "/interface_demands[id=ID-01]/value",
+     "count": 1,
+     "numeric": false,
+     "summary": "ID-01 cites the extended id range"
     }
    ]
   },
@@ -3481,17 +3499,17 @@
   {
    "deliverable": "A9-07",
    "file": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
-   "changed_leaves": 3246,
+   "changed_leaves": 3679,
    "explained_by": {
-    "op": 2590,
+    "op": 2915,
     "gsub": 3,
     "code": 0,
     "pin": 6,
-    "section": 647
+    "section": 755
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 113,
+   "numeric_leaves_changed": 131,
    "changes": [
     {
      "cid": "A910-A907-01",
@@ -4443,6 +4461,169 @@
      "count": 0,
      "numeric": false,
      "summary": "H2_A9_REVISIONS.md closure-summary vocabulary sentence rewritten with the UNCOUPLED_SENSITIVITY_* names (render wrapper A92_MD_RELABEL, each substitution matched exactly once); the register renderer shows A9.2 drivers",
+     "scope": []
+    },
+    {
+     "cid": "A910-A92T-A907-01",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "a92_bool_outcome",
+     "ptr": "/recomputations/h25_thermal_rerun",
+     "count": 478,
+     "numeric": false,
+     "summary": "every closes-type boolean of the hall_icp_neutralizer thermal records (per-node uncoupled_sensitivity_nominal_closes, bn_wall closes_at_baseline, overall baseline_closes_all_live_nodes_and_row85) replaced by an UNCOUPLED_SENSITIVITY_WITHIN_LIMIT / UNCOUPLED_SENSITIVITY_ABOVE_LIMIT string (same comparison; a9_2_sensitivity_vocabulary.boolean_outcomes; no number changes)"
+    },
+    {
+     "cid": "A910-A92T-A907-02",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "gsub",
+     "ptr": "/recomputations/h25_thermal_rerun",
+     "count": 308,
+     "numeric": false,
+     "summary": "view condition worded as an uncoupled-sensitivity condition (no 'closes')"
+    },
+    {
+     "cid": "A910-A92T-A907-03",
+     "driver": "A9.2 rf_500W, icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/key_findings[1]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K2: the 500 W label is stated as ICP module power context, not a heat allowance; search-sensitive results worded as uncoupled-sensitivity results"
+    },
+    {
+     "cid": "A910-A92T-A907-04",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/key_findings[2]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K3 lever wording"
+    },
+    {
+     "cid": "A910-A92T-A907-05",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/key_findings[2]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K3 minimal-set wording"
+    },
+    {
+     "cid": "A910-A92T-A907-06",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/key_findings[2]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K3 buildability wording"
+    },
+    {
+     "cid": "A910-A92T-A907-07",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/recomputations/h25_thermal_rerun/bn_wall_11_2K_case/buildability",
+     "count": 1,
+     "numeric": false,
+     "summary": "BN-wall buildability wording"
+    },
+    {
+     "cid": "A910-A92T-A907-08",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/revision_register[id=REV-45]/new/value/buildability",
+     "count": 1,
+     "numeric": false,
+     "summary": "REV-45 buildability wording"
+    },
+    {
+     "cid": "A910-A92T-A907-09",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/recomputations/h25_thermal_rerun/bn_wall_11_2K_case/status_meaning",
+     "count": 1,
+     "numeric": false,
+     "summary": "BN-wall status meaning: lever-set wording"
+    },
+    {
+     "cid": "A910-A92T-A907-10",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/recomputations/h25_thermal_rerun/bn_wall_11_2K_case/status_meaning",
+     "count": 1,
+     "numeric": false,
+     "summary": "BN-wall status meaning: OPEN wording"
+    },
+    {
+     "cid": "A910-A92T-A907-11",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/key_findings[3]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K4 wording"
+    },
+    {
+     "cid": "A910-A92T-A907-12",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/key_findings[4]",
+     "count": 1,
+     "numeric": false,
+     "summary": "K5 wording"
+    },
+    {
+     "cid": "A910-A92T-A907-13",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/recomputations/h25_thermal_rerun/overall/open_items[5]",
+     "count": 1,
+     "numeric": false,
+     "summary": "open item 6 wording"
+    },
+    {
+     "cid": "A910-A92T-A907-14",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/interface_demands[id=IDA7-07]/status",
+     "count": 1,
+     "numeric": false,
+     "summary": "IDA7-07 status wording"
+    },
+    {
+     "cid": "A910-A92T-A907-15",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/open_owner_questions[id=OQ-A907-05]/proposed_answer",
+     "count": 1,
+     "numeric": false,
+     "summary": "OQ-A907-05 proposal wording (question stays OPEN; not answered here)"
+    },
+    {
+     "cid": "A910-A92T-A907-16",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/open_owner_questions[id=OQ-A907-08]/proposed_answer",
+     "count": 1,
+     "numeric": false,
+     "summary": "OQ-A907-08 proposal wording (question stays OPEN; not answered here)"
+    },
+    {
+     "cid": "A910-A92T-A907-17",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "replace",
+     "ptr": "/open_owner_questions[id=OQ-A907-10]/question",
+     "count": 1,
+     "numeric": false,
+     "summary": "OQ-A907-10 question wording (question stays OPEN; not answered here)"
+    },
+    {
+     "cid": "A910-A92T-A907-18",
+     "driver": "A9.2 icp_coupled_thermal",
+     "op": "code",
+     "ptr": "docs/hardware/h2_a9_revisions/build_h2_a9_revisions.py",
+     "count": 0,
+     "numeric": false,
+     "summary": "H2_A9_REVISIONS.md thermal-table headers and condition lines use within-limit lever-set wording (A92_MD_RELABEL entries, matched exactly once)",
      "scope": []
     }
    ]
@@ -6003,7 +6184,8 @@
      "A910-A92S-A907-23",
      "A910-A92S-A907-24",
      "A910-A92S-A907-25",
-     "A910-A92S-A907-28"
+     "A910-A92S-A907-28",
+     "A910-A92T-A907-03"
     ],
     "status": "APPLIED"
    },
@@ -6114,7 +6296,25 @@
      "A910-A92S-A907-10",
      "A910-A92S-A907-11",
      "A910-A92S-A907-26",
-     "A910-A92S-A907-27"
+     "A910-A92S-A907-27",
+     "A910-A92T-A907-01",
+     "A910-A92T-A907-02",
+     "A910-A92T-A907-03",
+     "A910-A92T-A907-04",
+     "A910-A92T-A907-05",
+     "A910-A92T-A907-06",
+     "A910-A92T-A907-07",
+     "A910-A92T-A907-08",
+     "A910-A92T-A907-09",
+     "A910-A92T-A907-10",
+     "A910-A92T-A907-11",
+     "A910-A92T-A907-12",
+     "A910-A92T-A907-13",
+     "A910-A92T-A907-14",
+     "A910-A92T-A907-15",
+     "A910-A92T-A907-16",
+     "A910-A92T-A907-17",
+     "A910-A92T-A907-18"
     ],
     "status": "APPLIED"
    },
@@ -6123,7 +6323,9 @@
     "applied_by": [
      "A910-A92-A903-12",
      "A910-A92-A903-13",
-     "A910-A92-A907-26"
+     "A910-A92-A907-26",
+     "A910-A92T-A901-01",
+     "A910-A92T-A903-01"
     ],
     "status": "APPLIED"
    },
@@ -6224,7 +6426,7 @@
    "violations": []
   },
   "text_scan": {
-   "rule": "(i) no PASS / CLOSES* / RESOLVED / CONDITIONALLY_RESOLVED value and no True *closes* flag under ANY key (uncoupled_sensitivity_* included; they carry UNCOUPLED_SENSITIVITY_* names) of the hall_icp_neutralizer thermal records or of a revision-register row applying to hall_icp_neutralizer (*_before_a9_2 history excluded); (ii) no sentence of the A9-07 key findings, register text, demands, M16 impact, open items, Curie / closure summaries or thermal / key-finding / register Markdown uses PASS / CLOSES* / CONDITIONALLY_RESOLVED except to deny a thermal PASS; (iii) every sentence of every A9 deliverable JSON and Markdown, M16 v3, the owner-question state v2, the step-1 integration record and the RFQ package texts that states 500 W in an RF context carries the A9.2 delivered/operating label (verbatim owner / decision texts, answered questions and *_before_a9_2 history excluded)",
+   "rule": "(i) no PASS / CLOSES* / RESOLVED / CONDITIONALLY_RESOLVED value and no closes-type boolean (True OR False; key containing 'clos') under ANY key - uncoupled_sensitivity_* keys included, no key exempted - of the hall_icp_neutralizer thermal records or of a revision-register row applying to hall_icp_neutralizer (*_before_a9_2 history excluded); the sensitivity outcomes carry UNCOUPLED_SENSITIVITY_* strings; (ii) no sentence of the A9-07 key findings, register text, demands, M16 impact, open items, Curie / closure summaries, OPEN A9-07 owner questions or thermal / key-finding / register / open-question Markdown uses PASS / CLOSES* / CONDITIONALLY_RESOLVED (except to deny a thermal PASS) or a lower-case closure claim ('closes', 'close it', 'closing (lever) sets', 'levers closing / that close', 'baseline closures'); (iii) the OPEN A9-07 rows of the owner-question state v2 follow (ii); (iv) every sentence of every A9 deliverable JSON and Markdown, M16 v3, the owner-question state v2, the step-1 integration record and the RFQ package texts that states 500 W in an RF context carries the A9.2 delivered/operating label; (v) no supplier-facing RFQ text (package Markdown and the RFQ JSON) states 500 W next to a rating word (rated / rating / capability / class / max) without that label, whatever the context (verbatim owner / decision texts, answered questions and *_before_a9_2 history excluded)",
    "w500_files": [
     "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
     "docs/budgets/mass_a9/mass_a9_v1.json",
@@ -6267,6 +6469,8 @@
    "value_violations": [],
    "wording_violations": [],
    "w500_violations": [],
+   "owner_question_wording_violations": [],
+   "rfq_rating_violations": [],
    "violations": []
   }
  },
@@ -8123,9 +8327,9 @@
      "A9-03"
     ],
     "quantity": "frozen interface ids for RR-HI-02 and SC-HI-SRC-ICP; interfaces frozen before HI-S1 (row 71)",
-    "status": "PARTIAL: A9-03 item ids ICP-01..ICP-46 exist and are citable for RR-HI-02 / SC-HI-SRC-ICP; they are not frozen - the freeze is gate deadline GD-01 (before HI-S1)",
+    "status": "PARTIAL: A9-03 item ids ICP-01..ICP-47 exist and are citable for RR-HI-02 / SC-HI-SRC-ICP; they are not frozen - the freeze is gate deadline GD-01 (before HI-S1)",
     "class": "PARTIAL",
-    "open_reason": "PARTIAL: A9-03 item ids ICP-01..ICP-46 exist and are citable for RR-HI-02 / SC-HI-SRC-ICP; they are not frozen - the freeze is gate deadline GD-01 (before HI-S1)"
+    "open_reason": "PARTIAL: A9-03 item ids ICP-01..ICP-47 exist and are citable for RR-HI-02 / SC-HI-SRC-ICP; they are not frozen - the freeze is gate deadline GD-01 (before HI-S1)"
    },
    {
     "lane": "A9-01",
@@ -9900,7 +10104,7 @@
      "A9-03"
     ],
     "quantity": "H-1 thermal allowance for ICP module heat entering H-1 (allowable Q_ICP->H-1 with the row-86 1.2 heat-load margin applied: 1.2 x Q <= headroom; linearised at each node's searched hot point in the governing cases ground a",
-    "status": "PRELIMINARY (model-derived; closes ID-17 in part)",
+    "status": "PRELIMINARY (model-derived; partly satisfies ID-17)",
     "class": "OFFERED",
     "open_reason": null
    },
@@ -10709,13 +10913,13 @@
   {
    "deliverable": "A9-01",
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "sha256": "b634357fe17ba59af17d5f76b48d704ed1e156fc4c6a1bb08dae4fea0c52fcac",
+   "sha256": "f082a6d3eabf07485d447ace927f69e8980acbcc8eff54d0cd21f196e20a0afe",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-01",
    "path": "docs/experiments/hall_icp/prereg_framework/HALL_ICP_PREREG_FRAMEWORK.md",
-   "sha256": "9c2afe34a3b8daf12606be02ba2186e74bfabc411962ed0c40c0c1d4fe9aeb5b",
+   "sha256": "e1e85d7b15621ec97b4d25c72ef5a393549ceda97db57b24ec35f4e0da319245",
    "changed_since_base": true
   },
   {
@@ -10757,13 +10961,13 @@
   {
    "deliverable": "A9-03",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "95cdd7a543c0879a0f21f5ef64607ec7cba79a2f3cede9044c46195c91c7012a",
+   "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-03",
    "path": "docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md",
-   "sha256": "777e669de5516ea0102902c333eb0a0917ba8f61b02a58aad5d9193424c4de8d",
+   "sha256": "d346bcc5a5edc4a4dfa289010c8e48371477a0f3548a5e9dcf8886b6f55dbe77",
    "changed_since_base": true
   },
   {
@@ -10829,13 +11033,13 @@
   {
    "deliverable": "A9-06",
    "path": "docs/budgets/mass_a9/mass_a9_v1.json",
-   "sha256": "a4a70426dbfc917c9906275b2475110a158f7008006b075cabb259c045ca9680",
+   "sha256": "071b03fb634c6b25ef422e7ec81006d337e6c333b80133240bdea32999a4f7d4",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-06",
    "path": "docs/budgets/mass_a9/MASS_A9.md",
-   "sha256": "d6659e139aef4ac4a154ec38c0a122a596f2df5ea9137181fbc108f0b4bf6a83",
+   "sha256": "ee748279b52c9233563cc796e5b06613f6aa19d48a5c1513637d33ff4bad8a44",
    "changed_since_base": true
   },
   {
@@ -10847,49 +11051,49 @@
   {
    "deliverable": "A9-07",
    "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
-   "sha256": "c26eb71d6d76fac8e4744feeda4e015a648600779d7791dd7665ce1aad52881b",
+   "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-07",
    "path": "docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md",
-   "sha256": "193595c350969769200aa9552dd3a20a3fd1f7ad6e1edcbf4956fafa99b3dcfc",
+   "sha256": "450c4accbdaf251e93e004bafb63cab1508c337ab11996fc612d81f9d668ed42",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-07",
    "path": "docs/hardware/h2_a9_revisions/build_h2_a9_revisions.py",
-   "sha256": "e1bbc3119ce099fd6459315364d191d056acfa3dcc7f40b81f647e3887b5511f",
+   "sha256": "ee49019d295093e721095697c10cf41642eabe3455fecc4c69771a93c9e6d645",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
-   "sha256": "9d687e5f7ea64c5245070819ebea9d180362c3c3600afcda38c492178cf4f519",
+   "sha256": "37c32cda9fb04200f6e9041b0e790ca700e270866f29e7c10f8a298034ddacfd",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/XE_LEDGER_A9.md",
-   "sha256": "f98c0e05cb94ff90d9013a4598735c15134a9510134d188841d8c4fbaccffeaa",
+   "sha256": "ccc92f52ce53165042f696f710283e519ced387cca61d12d109f1fbe10581ae1",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/build_xe_ledger_a9.py",
-   "sha256": "d6d2c9b9dce6a2b574e5ae88d4a5b0cee0c8b419818f9800d039207f6bf1a60a",
+   "sha256": "289ff8403314469c6d14fdb846c042f46e3141e3290825e0b657cb42a732ec0b",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-09",
    "path": "docs/procurement/rfq_a9/rfq_a9_v1.json",
-   "sha256": "882292e7700c0a93c31574ef2487ae63e8ba844b578b6050eaa4ddc37767dcfd",
+   "sha256": "d2e654cf49d89b8f84a65e5bf7626517a37c02d0a4a0de97f128c3155ef4a84b",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-09",
    "path": "docs/procurement/rfq_a9/RFQ_A9.md",
-   "sha256": "6c6455d6b016c53fb0fe1d79556209dd057868fce4d5244f0b8ffa71aa789060",
+   "sha256": "9d83c0f98f8365d8b758824382d6dea4d2f388ae0a10be2fa6367a252ef77334",
    "changed_since_base": true
   },
   {
@@ -10919,7 +11123,7 @@
   {
    "deliverable": "A9-10",
    "path": "docs/experiments/hall_icp/integration/a9_10_overlay.py",
-   "sha256": "51c52d1e47aec09745e6ed7090e9124495356cf67df296bc1ebbb5d5f3ad77cd",
+   "sha256": "28aa2ad05ce047517ab257dc3ab8d805fbb7d679d01bb153567997bd49ea8fc0",
    "changed_since_base": true
   }
  ],
@@ -11412,6 +11616,13 @@
    "proposed_answer": "PROPOSED yes (sham equivalent of the on-module match, value TBD - requires the match selection); allocation line: owner call together with MQ-07 (A9-06 keeps it on AL-06, no number changed)",
    "needed_by": "LOCK-1 (ICD ICP-08 / ICP-18, A9-06 AL-05/06)",
    "raised_by": "A9-10 (A9.2 incorporation)"
+  },
+  {
+   "id": "OQ-A910-06",
+   "question": "Should ICP-36 keep 500 W x 1.2 = 600 W (row 72 delivered/operating capability x row 86 heat-load margin) as the RF-path heat-allocation basis of the ICP module thermal design (an allocation term, not a bound and not a component rating; P_line/match,loss added on top per A9.2 rf_measurement_reference), given that A9.2 rf_500W makes 500 W a delivered/operating investigation capability and not a rating?",
+   "proposed_answer": "PROPOSED yes, until the ICP antenna impedance map (A9.2 post-A9 priority P2) gives the P_delivered and P_line/match,loss envelope; then re-derive ICP-36 from it; owner call (value 600 W unchanged by A9-10)",
+   "needed_by": "LOCK-1 (ICD ICP-36 / ICP-43 freeze point)",
+   "raised_by": "A9-10 (review repair 5)"
   }
  ],
  "open_owner_questions": [
@@ -11449,6 +11660,13 @@
    "proposed_answer": "PROPOSED yes (sham equivalent of the on-module match, value TBD - requires the match selection); allocation line: owner call together with MQ-07 (A9-06 keeps it on AL-06, no number changed)",
    "needed_by": "LOCK-1 (ICD ICP-08 / ICP-18, A9-06 AL-05/06)",
    "raised_by": "A9-10 (A9.2 incorporation)"
+  },
+  {
+   "id": "OQ-A910-06",
+   "question": "Should ICP-36 keep 500 W x 1.2 = 600 W (row 72 delivered/operating capability x row 86 heat-load margin) as the RF-path heat-allocation basis of the ICP module thermal design (an allocation term, not a bound and not a component rating; P_line/match,loss added on top per A9.2 rf_measurement_reference), given that A9.2 rf_500W makes 500 W a delivered/operating investigation capability and not a rating?",
+   "proposed_answer": "PROPOSED yes, until the ICP antenna impedance map (A9.2 post-A9 priority P2) gives the P_delivered and P_line/match,loss envelope; then re-derive ICP-36 from it; owner call (value 600 W unchanged by A9-10)",
+   "needed_by": "LOCK-1 (ICD ICP-36 / ICP-43 freeze point)",
+   "raised_by": "A9-10 (review repair 5)"
   }
  ],
  "remaining_open_items": {

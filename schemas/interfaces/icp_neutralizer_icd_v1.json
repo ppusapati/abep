@@ -2373,7 +2373,7 @@
    "from": "A9-03",
    "to": "A9-01",
    "quantity": "configuration ids and per-configuration hardware identity (which ICD items may differ between hall_c1_reference and hall_icp_neutralizer)",
-   "value": "ICP-01..ICP-46 applies_to",
+   "value": "ICP-01..ICP-47 applies_to",
    "units": "-",
    "status": "PROPOSED"
   },
@@ -4470,6 +4470,14 @@
     "ptr": "/h3_h4_inputs/h4_tests[1]/measure",
     "count": 1,
     "summary": "S1a loss-chain wording"
+   },
+   {
+    "cid": "A910-A92T-A903-01",
+    "driver": "A9.2 radiative_view_requirement (ICP-47 added by A9-10)",
+    "op": "replace",
+    "ptr": "/interface_demands[id=ID-01]/value",
+    "count": 1,
+    "summary": "ID-01 cites the extended id range"
    }
   ]
  }

@@ -79,10 +79,10 @@
   "ANSWERED": 190,
   "ANSWERED_BY_A9_1": 34,
   "ANSWERED_BY_A9_2": 1,
-  "OPEN": 53,
+  "OPEN": 54,
   "SUPERSEDED": 13
  },
- "open_count": 53,
+ "open_count": 54,
  "rows": [
   {
    "no": 1,
@@ -3932,7 +3932,7 @@
    "id": "OQ-A907-05",
    "source": "A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json)",
    "question": "Accept the supplier continuous ratings (BN 900 degC oxidizing guide value, ceramic wire 1000 F) as PROVISIONAL limits for the >= 50 K rule until qualification tests validate them?",
-   "proposed": "yes, provisional; every CLOSES verdict stays conditional on validation",
+   "proposed": "yes, provisional; every within-limit result stays conditional on validation (for hall_icp_neutralizer an UNCOUPLED_SENSITIVITY_WITHIN_LIMIT result; the reported status stays UNRESOLVED, A9.2 ICP_COUPLED_THERMAL)",
    "needed_by": "LOCK-1 (PROPOSED by A9-10 per row 144; the lane stated no gate)",
    "kind": "lane",
    "lane": "A9-07",
@@ -3960,7 +3960,7 @@
    "id": "OQ-A907-08",
    "source": "A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json)",
    "question": "Exterior coating temperature limit (row 84): the Z-93-class coating's temperature capability on the Hall body is not established (H2-5 v1 TBD). The coated PO/BP surfaces must withstand up to PO 442, BP 588 degC at baseline (searched T_max + allowance + 50 K). Carry the coating limit as a node limit with the same >= 50 K rule once sourced?",
-   "proposed": "yes; until a datasheet/coupon value exists the coating stays OPEN and every thermal CLOSES that relies on the Z-93 finish is conditional on it (row 84 qualification)",
+   "proposed": "yes; until a datasheet/coupon value exists the coating stays OPEN and every uncoupled-sensitivity within-limit result that relies on the Z-93 finish is conditional on it and the reported status stays UNRESOLVED (A9.2 ICP_COUPLED_THERMAL) (row 84 qualification)",
    "needed_by": "LOCK-1 (PROPOSED by A9-10 per row 144; the lane stated no gate)",
    "kind": "lane",
    "lane": "A9-07",
@@ -3987,7 +3987,7 @@
   {
    "id": "OQ-A907-10",
    "source": "A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json)",
-   "question": "The thermal worst case is found by a local search plus a heuristic search allowance (not an upper bound). CLOSES verdicts whose margin to the design ceiling after the allowance is below 10 K are flagged search_sensitive. Accept this PROPOSED reporting threshold, and require a global-optimisation or interval-bound check of every search-sensitive verdict before LOCK-1?",
+   "question": "The thermal worst case is found by a local search plus a heuristic search allowance (not an upper bound). Within-limit results (for hall_icp_neutralizer: UNCOUPLED_SENSITIVITY_WITHIN_LIMIT, reported UNRESOLVED under A9.2 ICP_COUPLED_THERMAL) whose margin to the design ceiling after the allowance is below 10 K are flagged search_sensitive. Accept this PROPOSED reporting threshold, and require a global-optimisation or interval-bound check of every search-sensitive verdict before LOCK-1?",
    "proposed": "owner call; the flag never changes a verdict, only marks it for an independent check",
    "needed_by": "LOCK-1 (PROPOSED by A9-10 per row 144; the lane stated no gate)",
    "kind": "lane",
@@ -4391,6 +4391,20 @@
    "status_detail": "OPEN"
   },
   {
+   "id": "OQ-A910-06",
+   "source": "A9-10 (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json)",
+   "question": "Should ICP-36 keep 500 W x 1.2 = 600 W (row 72 delivered/operating capability x row 86 heat-load margin) as the RF-path heat-allocation basis of the ICP module thermal design (an allocation term, not a bound and not a component rating; P_line/match,loss added on top per A9.2 rf_measurement_reference), given that A9.2 rf_500W makes 500 W a delivered/operating investigation capability and not a rating?",
+   "proposed": "PROPOSED yes, until the ICP antenna impedance map (A9.2 post-A9 priority P2) gives the P_delivered and P_line/match,loss envelope; then re-derive ICP-36 from it; owner call (value 600 W unchanged by A9-10)",
+   "needed_by": "LOCK-1 (ICD ICP-36 / ICP-43 freeze point)",
+   "kind": "lane",
+   "lane": "A9-10",
+   "status": "OPEN",
+   "answer_pointer": "",
+   "answer_excerpt": "",
+   "no": 289,
+   "status_detail": "OPEN"
+  },
+  {
    "id": "M16-V3-Q-01",
    "source": "M16 v3 (A9-10) (docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)",
    "question": "Accept the PROPOSED A9 blocking item, functional-role owner and latest decision point of each row (rows 1-16, 18-21), and name the responsible engineers (row 140)?",
@@ -4401,7 +4415,7 @@
    "status": "OPEN",
    "answer_pointer": "",
    "answer_excerpt": "",
-   "no": 289,
+   "no": 290,
    "status_detail": "OPEN"
   },
   {
@@ -4415,7 +4429,7 @@
    "needed_by": "",
    "kind": "lane",
    "lane": "M16 v2",
-   "no": 290,
+   "no": 291,
    "status_detail": "ANSWERED (owner row 140)"
   },
   {
@@ -4429,7 +4443,7 @@
    "needed_by": "",
    "kind": "lane",
    "lane": "M16 v2",
-   "no": 291,
+   "no": 292,
    "status_detail": "ANSWERED (owner row 141)"
   },
   {
@@ -4443,7 +4457,7 @@
    "needed_by": "",
    "kind": "lane",
    "lane": "M16 v2",
-   "no": 292,
+   "no": 293,
    "status_detail": "ANSWERED (owner row 142)"
   },
   {
@@ -4457,7 +4471,7 @@
    "needed_by": "",
    "kind": "lane",
    "lane": "M16 v2",
-   "no": 293,
+   "no": 294,
    "status_detail": "ANSWERED (owner row 143)"
   }
  ],

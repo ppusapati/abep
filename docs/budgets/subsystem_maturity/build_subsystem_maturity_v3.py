@@ -130,7 +130,7 @@ NEW_ROWS = [
              "electrode, capped dedicated gas port)",
      "flag": "primary investigation hypothesis (A9), not flight baseline", "baseline_flight_hardware": False,
      "requirement": "A9 governing decision (primary investigation); A9.1 ICP-45 (ICP-45A Ar / ICP-45N N2: I_e,cap >= "
-                    "I_d,max before any score-bearing point); ICD ICP-01..ICP-46; G-REUSE primary gas mode (A9.1 "
+                    "I_d,max before any score-bearing point); ICD ICP-01..ICP-47; G-REUSE primary gas mode (A9.1 "
                     "HIQ-06)",
      "allocation": {"mass": ("A9-06", "AL-05"), "power": "P_ICP,available = 1350 - P_common - P_Hall - P_other,active "
                                                           "(A9.1 OQ-A902-03; A9-02 A902-20)"},

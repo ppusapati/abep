@@ -479,3 +479,52 @@ def test_a9_2_decision_path_resolution_declared(doc):
     dec = doc["a9_2"]["decision"]
     assert "pinned copies" in dec["path_resolution"] and dec["pinned_copy"].startswith(
         "docs/experiments/hall_icp/integration/a9_2_inputs/")
+
+
+PRE_REPAIR5 = "31e7115"   # A9-10 review repair 4 (the version the repair-5 reviewers read)
+
+
+def test_a9_2_repair5_closes_booleans_replaced_and_scan_covers_sensitivity_keys(doc):
+    """Review repair 5: the published text-scan rule ('no closes-type boolean under ANY key, uncoupled_sensitivity_*
+    included') is literally true: 0 violations now, and on the repair-4 version the scan reports the 476 per-node
+    uncoupled_sensitivity_nominal_closes flags (no sensitivity-key exclusion) plus the two baseline booleans."""
+    b = _mod(BUILDER, "a9_10_builder_text_scan_5")
+    ts = doc["a9_2"]["text_scan"]
+    assert ts["violations"] == [] and "no key exempted" in ts["rule"]
+    h2_old = json.loads(_git("show", f"{PRE_REPAIR5}:docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json"))
+    h2_md_old = _git("show", f"{PRE_REPAIR5}:docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md").decode("utf-8")
+    oq_old = json.loads(_git("show", f"{PRE_REPAIR5}:docs/budgets/owner_decisions/owner_questions_state_v2.json"))
+    old = b.a92_text_scan([], h2=h2_old, h2_md=h2_md_old, w500_docs={}, w500_mds={}, oq=oq_old, rfq_texts={})
+    flags = [v for v in old["value_violations"] if v["pointer"].endswith("/uncoupled_sensitivity_nominal_closes")]
+    assert len(flags) == 476
+    ptrs = {v["pointer"] for v in old["value_violations"]}
+    assert "/recomputations/h25_thermal_rerun/bn_wall_11_2K_case/closes_at_baseline" in ptrs
+    assert "/recomputations/h25_thermal_rerun/overall/baseline_closes_all_live_nodes_and_row85" in ptrs
+    wp = {v["pointer"] for v in old["wording_violations"]}
+    assert {"/key_findings[1]", "/key_findings[2]", "/key_findings[3]", "/key_findings[4]"} <= wp   # K2..K5
+    assert any(p.startswith("/open_owner_questions[") for p in wp)                                  # OQ-A907-05/08/10
+    assert {v["id"] for v in old["owner_question_wording_violations"]} >= {"OQ-A907-05", "OQ-A907-08", "OQ-A907-10"}
+    # supplier-facing RFQ rating rule: sensitive to an unlabelled 500 W rating even without an RF word
+    hit = b.a92_text_scan([], h2={"key_findings": []}, h2_md="", w500_docs={}, w500_mds={}, oq={"rows": []},
+                          rfq_texts={"x": "The supply is rated 500 W continuous.", "y": "0-500 W delivered/operating "
+                                     "investigation capability (not a component rating) rated for use."})
+    assert [v["file"] for v in hit["rfq_rating_violations"]] == ["x"]
+
+
+def test_a9_2_repair5_new_owner_question_and_icp47_range(doc):
+    """ICP-36 heat-allocation basis raised as OPEN OQ-A910-06 (not answered here; value unchanged); the A9-03 id
+    range cited as ICP-01..ICP-47 wherever A9-10 cites it."""
+    q = {x["id"]: x for x in doc["open_owner_questions"]}["OQ-A910-06"]
+    assert "ICP-36" in q["question"] and q["proposed_answer"].startswith("PROPOSED yes")
+    oq = json.loads((ROOT / "docs/budgets/owner_decisions/owner_questions_state_v2.json").read_text(encoding="utf-8"))
+    row = {r["id"]: r for r in oq["rows"]}["OQ-A910-06"]
+    assert row["status"] == "OPEN" and row["answer_pointer"] == ""
+    icd = json.loads((ROOT / "schemas/interfaces/icp_neutralizer_icd_v1.json").read_text(encoding="utf-8"))
+    assert {i["id"]: i for i in icd["items"]}["ICP-36"]["value"] == 600.0
+    assert {d["id"]: d for d in icd["interface_demands"]}["ID-01"]["value"] == "ICP-01..ICP-47 applies_to"
+    m16 = json.loads((ROOT / "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json")
+                     .read_text(encoding="utf-8"))
+    assert "ICP-01..ICP-46" not in json.dumps(m16) and "ICP-01..ICP-47" in json.dumps(m16)
+    pre = json.loads((ROOT / "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json")
+                     .read_text(encoding="utf-8"))
+    assert "ICP-01..ICP-47" in {d["id"]: d for d in pre["interface_demands"]}["IF-HI-04"]["status"]

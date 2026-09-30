@@ -73,7 +73,7 @@
   {
    "key": "ICD",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "95cdd7a543c0879a0f21f5ef64607ec7cba79a2f3cede9044c46195c91c7012a"
+   "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c"
   },
   {
    "key": "BUS",
@@ -88,7 +88,7 @@
   {
    "key": "PRE",
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "sha256": "b634357fe17ba59af17d5f76b48d704ed1e156fc4c6a1bb08dae4fea0c52fcac"
+   "sha256": "f082a6d3eabf07485d447ace927f69e8980acbcc8eff54d0cd21f196e20a0afe"
   },
   {
    "key": "EVI",

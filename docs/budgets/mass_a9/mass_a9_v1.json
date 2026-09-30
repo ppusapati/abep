@@ -194,12 +194,12 @@
   {
    "key": "ICD_A9",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "95cdd7a543c0879a0f21f5ef64607ec7cba79a2f3cede9044c46195c91c7012a"
+   "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c"
   },
   {
    "key": "PREREG_A9",
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "sha256": "b634357fe17ba59af17d5f76b48d704ed1e156fc4c6a1bb08dae4fea0c52fcac"
+   "sha256": "f082a6d3eabf07485d447ace927f69e8980acbcc8eff54d0cd21f196e20a0afe"
   },
   {
    "key": "INT_A9",
@@ -209,12 +209,12 @@
   {
    "key": "XE_A9",
    "path": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
-   "sha256": "9d687e5f7ea64c5245070819ebea9d180362c3c3600afcda38c492178cf4f519"
+   "sha256": "37c32cda9fb04200f6e9041b0e790ca700e270866f29e7c10f8a298034ddacfd"
   },
   {
    "key": "H2_A9",
    "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
-   "sha256": "c26eb71d6d76fac8e4744feeda4e015a648600779d7791dd7665ce1aad52881b"
+   "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa"
   }
  ],
  "never_pinned": [

@@ -26,10 +26,10 @@ Configurations: `hall_c1_reference`, `hall_icp_neutralizer`. Outcome vocabulary:
 
 | key | path | sha256 |
 |---|---|---|
-| ICD | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `95cdd7a543c0879a0f21f5ef64607ec7cba79a2f3cede9044c46195c91c7012a` |
+| ICD | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c` |
 | BUS | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6` |
 | UB | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `c6567e6d0bbc008bedd5b9c14a9716f117144ab6952b9c498f7b0c75e02a624d` |
-| PRE | `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` | `b634357fe17ba59af17d5f76b48d704ed1e156fc4c6a1bb08dae4fea0c52fcac` |
+| PRE | `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` | `f082a6d3eabf07485d447ace927f69e8980acbcc8eff54d0cd21f196e20a0afe` |
 | EVI | `docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json` | `092e4ca8e1827dd2e9558058a204f46510f2633316ce188e7126b697ec6d0b53` |
 | VIN | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `fac472e370b54875df5dea90c3c7740403da5ac1edd1af29b43ed09ee679d450` |
 | INT | `docs/experiments/hall_icp/integration/a9_core_integration_v1.json` | `86146f986e35e4d9e507c739aac9f8dd11b483be45fd7691bdccc585c734a09f` |
