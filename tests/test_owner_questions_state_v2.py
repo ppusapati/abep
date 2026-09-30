@@ -73,15 +73,17 @@ def test_csv_and_xlsx_match_json(doc):
     body = rows[1:]
     assert len(body) == len(doc["rows"])
     assert all(b[1] == r["id"] and b[4] == r["status"] and b[-1] == "" for b, r in zip(body, doc["rows"]))
-    openpyxl = pytest.importorskip("openpyxl")
-    ws = openpyxl.load_workbook(D / "owner_questions_state_v2.xlsx").active
-    hdr = next(i for i in range(1, 6) if ws.cell(i, 1).value == "No")
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("oqs_v2_builder", D / "build_owner_questions_state_v2.py")
+    b = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(b)
+    grid = b.xlsx_grid(D / "owner_questions_state_v2.xlsx")          # stdlib reader: no openpyxl, no skip
+    hdr = next(i for i in range(5) if grid[i][0][0] == "No")
     for k, r in enumerate(doc["rows"]):
-        c = ws.cell(hdr + 1 + k, 9)
-        assert ws.cell(hdr + 1 + k, 2).value == r["id"]
-        assert c.value in (None, "")
-        yellow = str(c.fill.fgColor.rgb).upper().endswith("FFFF00")
-        assert yellow == (r["status"] == "OPEN"), r["id"]
+        row = grid[hdr + 1 + k]
+        assert row[1][0] == r["id"]
+        assert row[8][0] is None
+        assert row[8][1] == (r["status"] == "OPEN"), r["id"]
 
 
 def test_no_winner(doc):

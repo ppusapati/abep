@@ -21,7 +21,7 @@ Rows:
     otherwise OPEN with the lane's proposed answer and needed-by gate. This builder never answers an OPEN question.
 
 Usage:  python docs/budgets/owner_decisions/build_owner_questions_state_v2.py [--check]
-The xlsx is compared by cell content in --check (its zip container carries timestamps).
+The xlsx is compared by cell content and yellow fill in --check, read with the standard library (no openpyxl needed).
 """
 from __future__ import annotations
 
@@ -372,13 +372,65 @@ def write_xlsx(doc, path) -> None:
     wb.save(path)
 
 
-def xlsx_cells(path) -> list:
-    from openpyxl import load_workbook
-    ws = load_workbook(path).active
-    out = []
-    for row in ws.iter_rows():
-        out.append([(c.value, c.fill.start_color.rgb if c.fill and c.fill.fill_type else None) for c in row])
-    return out
+def xlsx_grid(path) -> list:
+    """Cell values and yellow-fill flags of the first worksheet, read with the standard library only (zip + XML), so
+    --check and the tests never need openpyxl (not in the CI lock file). Returns rows of (text or None, is_yellow)."""
+    import re
+    import zipfile
+    import xml.etree.ElementTree as ET
+    ns = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+    with zipfile.ZipFile(path) as z:
+        names = set(z.namelist())
+        shared = []
+        if "xl/sharedStrings.xml" in names:
+            for si in ET.fromstring(z.read("xl/sharedStrings.xml")).findall("m:si", ns):
+                shared.append("".join(t.text or "" for t in si.iter("{%s}t" % ns["m"])))
+        yellow_xf = set()
+        if "xl/styles.xml" in names:
+            st = ET.fromstring(z.read("xl/styles.xml"))
+            fills = st.find("m:fills", ns)
+            yfill = set()
+            for i, fl in enumerate(fills.findall("m:fill", ns) if fills is not None else []):
+                fg = fl.find("m:patternFill/m:fgColor", ns)
+                if fg is not None and (fg.get("rgb") or "").upper().endswith("FFFF00"):
+                    yfill.add(i)
+            xfs = st.find("m:cellXfs", ns)
+            for i, xf in enumerate(xfs.findall("m:xf", ns) if xfs is not None else []):
+                if int(xf.get("fillId", "0")) in yfill:
+                    yellow_xf.add(i)
+        sheet = ET.fromstring(z.read("xl/worksheets/sheet1.xml"))
+    grid = {}
+    for c in sheet.iter("{%s}c" % ns["m"]):
+        col, row = re.match(r"([A-Z]+)(\d+)", c.get("r")).groups()
+        ci = 0
+        for ch in col:
+            ci = ci * 26 + (ord(ch) - 64)
+        t, v = c.get("t"), c.find("m:v", ns)
+        if t == "s":
+            val = shared[int(v.text)]
+        elif t == "inlineStr":
+            val = "".join(x.text or "" for x in c.iter("{%s}t" % ns["m"]))
+        else:
+            val = v.text if v is not None else None
+        grid[(int(row), ci)] = (val if val not in ("",) else None, int(c.get("s", "0")) in yellow_xf)
+    nrow = max(r for r, _ in grid) if grid else 0
+    ncol = max(c for _, c in grid) if grid else 0
+    return [[grid.get((r, c), (None, False)) for c in range(1, ncol + 1)] for r in range(1, nrow + 1)]
+
+
+def expected_grid(doc) -> list:
+    """The (text, yellow) grid write_xlsx produces for doc, computed without openpyxl."""
+    title = ("Owner-question state v2 - fill in the yellow 'Your answer' column (column I) of the OPEN rows only. "
+             "'Proposed (lane)' is the lane's proposal, not a decision.")
+    ncol = len(HEAD)
+    norm = lambda x: None if x is None or x == "" else (str(x) if not isinstance(x, float) else repr(x))
+    rows = [[(title, False)] + [(None, False)] * (ncol - 1), [(norm(h), False) for h in HEAD]]
+    for r in table(doc):
+        cells = [(norm(v), False) for v in r] + [(None, False)] * (ncol - len(r))
+        if r[4] == "OPEN":
+            cells[8] = (cells[8][0], True)
+        rows.append(cells)
+    return rows
 
 
 def main(argv=None) -> int:
@@ -392,13 +444,9 @@ def main(argv=None) -> int:
         bad = [rel for rel, txt in outs.items()
                if not os.path.isfile(os.path.join(ROOT, rel))
                or open(os.path.join(ROOT, rel), encoding="utf-8", newline="").read() != txt]
-        import tempfile
-        with tempfile.TemporaryDirectory() as td:
-            tmp = os.path.join(td, "x.xlsx")
-            write_xlsx(doc, tmp)
-            if not os.path.isfile(os.path.join(ROOT, XLSX_REL)) or \
-                    xlsx_cells(tmp) != xlsx_cells(os.path.join(ROOT, XLSX_REL)):
-                bad.append(XLSX_REL)
+        if not os.path.isfile(os.path.join(ROOT, XLSX_REL)) or \
+                xlsx_grid(os.path.join(ROOT, XLSX_REL)) != expected_grid(doc):
+            bad.append(XLSX_REL)
         print("OK" if not bad else "DRIFT: " + ", ".join(bad))
         return 0 if not bad else 1
     for rel, txt in outs.items():
