@@ -223,11 +223,13 @@
    "fo_a9_6_rfq_completion": "IMPLEMENTED (d9ade4f, wf_2715cb88-d09), merged; verification deferred",
    "fo_a9_6_cross_lane_integration": "IMPLEMENTED (0191675, wf_e6be9e5a-e5b), merged; 42 cross-lane pairs; build order P4,XE,P1,P2,P3,MP,RFQ",
    "fo_a9_6_rvm": "IMPLEMENTED (c7529d8), merged; 19 rows x 2 configs: 0 PASS, 0 FAIL, 15 NOT_EVALUATED, 4 INCOMPLETE_EVIDENCE",
-   "fo_a9_6_decision_propagation": "IMPLEMENTED (f9c6870), merged; state v4 352 rows, 87 TBD_OWNER, 11 DERIVED, 0 OPEN"
+   "fo_a9_6_decision_propagation": "IMPLEMENTED (f9c6870), merged; state v4 352 rows, 87 TBD_OWNER, 11 DERIVED, 0 OPEN",
+   "fo_a9_6_m16_refresh": "IMPLEMENTED (28f73b1, wf_016c8550-ee0), merged; M16 v4 20 BLOCKED + 1 SUPERSEDED, no state change; register +8 rows (lane-24 ODs, RVMQ-01)"
   },
   "integration_notes": [
    "circular P1/P2 -> RFQ v2 sha pins replaced by id checks (RFQ v2 reads P1/P2 text)",
    "hygiene: full suite 2541/5/1 after waves 1-2; all repo builders --check OK (the v1 consolidated-questions builder ignores --check and rewrites its xlsx: never run it; restored byte-identical)"
-  ]
+  ],
+  "phase": "IMPLEMENTATION COMPLETE; consolidated verification (A9.6 sec. 18) launched"
  }
 }
