@@ -42,6 +42,8 @@ PINNED = {
     "docs/procurement/rfq_a9/rfq_a9_v1.json": "d2e654cf49d89b8f84a65e5bf7626517a37c02d0a4a0de97f128c3155ef4a84b",
     "docs/procurement/rfq_a9/RFQ_A9.md": "9d83c0f98f8365d8b758824382d6dea4d2f388ae0a10be2fa6367a252ef77334",
     "docs/procurement/rfq_a9/build_rfq_a9.py": "955862af1381dacabc0b1f22b5a51c182383c9b38ed6bb12359a9f93fed62bef",
+    "docs/procurement/web_track_v1/source_register_v1.json":
+        "e2661a49892b58271f25405ecbcc7d37cc22ba9a85d29fec83a0f72bdc10c77d",
 }
 FAMILIES = ["RF package", "Gas/metrology package", "Vacuum/facility package", "Hall electrical package",
             "Mechanical/ICP fabrication package", "Thrust/metrology package"]
@@ -427,4 +429,46 @@ def test_builder_hygiene():
     src = SCRIPT.read_text(encoding="utf-8")
     assert "xe" + "_ledger" not in src
     for m in re.findall(r"^(?:import|from) (\S+)", src, re.M):
-        assert m in ("__future__", "argparse", "copy", "hashlib", "json", "os", "sys"), m
+        assert m in ("__future__", "argparse", "copy", "hashlib", "json", "os", "re", "sys"), m
+
+
+def test_reference_data_rendered_with_url_access_date_and_datum(doc):
+    """Regression (review): every carried reference entry shows its datum, URL and access date in the package."""
+    reg = {x["id"]: x for x in json.loads((REPO / "docs/procurement/web_track_v1/source_register_v1.json")
+                                          .read_text(encoding="utf-8"))["sources"]}
+    n = 0
+    for p in doc["packages"]:
+        md = (REPO / p["package_file"]).read_text(encoding="utf-8")
+        for x in p["reference_data"]:
+            n += 1
+            pv = x["provenance_display"]
+            assert pv["url"] not in ("-", "", None) and pv["accessed"] not in ("-", "", None), x["source_id"]
+            line = [ln for ln in md.splitlines() if ln.startswith(f"- {x['source_id']}: ")
+                    and x["pointer"] in ln]
+            assert len(line) == 1, x["source_id"]
+            ln = line[0]
+            assert f"URL {pv['url']};" in ln and f"accessed {pv['accessed']};" in ln
+            assert json.dumps(x["datum"], ensure_ascii=False, sort_keys=True) in ln
+            assert "- -: -" not in md
+            for sid in [t.strip() for t in x["source_id"].split(";")]:
+                assert sid in reg
+                if x["url"] == "-":
+                    assert pv["url"].startswith("http") or pv["url"].startswith("not recorded (non-web source")
+                    assert reg[sid].get("accessed") in pv["accessed"]
+    assert n == 17
+    gas = (LANE / "packages" / "RFQ2-02_gas_metrology.md").read_text(encoding="utf-8")
+    for v in ("1.9536", "<=3.5", "<0.974", "https://www.mt-aerospace.de/files/mta/tankkatalog/XS-XTA.pdf"):
+        assert v in gas
+
+
+def test_takahashi_anchor_locator_inline():
+    gas = (LANE / "packages" / "RFQ2-02_gas_metrology.md").read_text(encoding="utf-8")
+    assert "EVI:TK-31 (p. 3 text)" in gas
+
+
+def test_cif_units_column_and_oq_rfq07_applied_everywhere(doc):
+    cif = (LANE / "packages" / "RFQ2-00_common_interface.md").read_text(encoding="utf-8")
+    row = [ln for ln in cif.splitlines() if ln.startswith("| CIF-E01 |")][0]
+    assert "| A |" in row
+    a = {x["id"]: x for x in doc["owner_answers_applied"]["a9_3"]}["OQ-RFQ-07"]
+    assert {p["id"] for p in doc["packages"]} | {"RFQ2-CIF"} <= set(a["applied_in"])

@@ -38,6 +38,7 @@ import copy
 import hashlib
 import json
 import os
+import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -134,6 +135,8 @@ DELIVERABLES = {
               "636cbd3318831f6f56e9833813c4d8c259aef7db3de1c6e503cccce14dade7e2"),
     "OQS3": ("docs/budgets/owner_decisions/owner_questions_state_v3.json",
              "1c2e74340852dfe8c58b1804c3cfda2bfbfb3bfb5d631aaebd715cf716b76af2"),
+    "REG": ("docs/procurement/web_track_v1/source_register_v1.json",
+            "e2661a49892b58271f25405ecbcc7d37cc22ba9a85d29fec83a0f72bdc10c77d"),
 }
 
 NEVER_PINNED = [
@@ -266,8 +269,12 @@ def DI(key: str, did: str) -> dict:
     ptr = _find_id(load(key), did)
     if ptr is None:
         raise KeyError(f"{did} not found in {key} ({DELIVERABLES[key][0]})")
-    return {"type": "deliverable_item", "key": key, "path": DELIVERABLES[key][0], "id": did, "pointer": ptr,
-            "sha256": DELIVERABLES[key][1]}
+    out = {"type": "deliverable_item", "key": key, "path": DELIVERABLES[key][0], "id": did, "pointer": ptr,
+           "sha256": DELIVERABLES[key][1]}
+    loc = _resolve(load(key), ptr).get("locator")
+    if loc:
+        out["locator"] = loc
+    return out
 
 
 def V1R(rid: str) -> dict:
@@ -297,7 +304,7 @@ def label(s: dict) -> str:
     if t == "a9_3_record":
         return f"A9.3 record {s['pointer']}"
     if t == "deliverable_item":
-        return f"{s['key']}:{s['id']}"
+        return f"{s['key']}:{s['id']}" + (f" ({s['locator']})" if s.get("locator") else "")
     if t == "deliverable":
         return s.get("key", s.get("path", "deliverable"))
     if t == "v1_requirement":
@@ -1413,6 +1420,40 @@ COMMON_SUPPLIER_MUST_STATE_V2 = [
 ]
 
 
+_URL_RE = re.compile(r"https?://[^\s,;)]+")
+
+
+def reference_provenance(x: dict) -> dict:
+    """URL and access date shown for a carried v1 reference entry. The carried v1 fields are kept verbatim; where v1
+    recorded '-', the value is taken from the pinned web-track source register (URL extracted from the register's
+    citation string, access date from its 'accessed' field). Nothing is invented: absent values stay 'not recorded'."""
+    reg = {s_["id"]: (i, s_) for i, s_ in enumerate(load("REG")["sources"])}
+    ids = [t.strip() for t in x["source_id"].split(";")]
+    url, url_basis = x.get("url"), "v1 reference entry 'url'"
+    acc, acc_basis = x.get("accessed"), "v1 reference entry 'accessed'"
+    if url in (None, "", "-"):
+        found = []
+        for sid in ids:
+            if sid not in reg:
+                raise KeyError(f"reference source {sid} not in the web-track source register")
+            i, rs = reg[sid]
+            found += [u for u in ([rs["url"]] if rs.get("url") else _URL_RE.findall(rs["citation"])) if u not in found]
+        url = " | ".join(found) if found else "not recorded (non-web source: " + x["citation"] + ")"
+        url_basis = ("web-track source register " + DELIVERABLES["REG"][0] + "#/sources/"
+                     + ",".join(str(reg[sid][0]) for sid in ids) + " (URL taken from the register citation string)")
+    if acc in (None, "", "-"):
+        dates = []
+        for sid in ids:
+            d = reg[sid][1].get("accessed")
+            if d and d not in dates:
+                dates.append(d)
+        acc = " | ".join(dates) if dates else "not recorded"
+        acc_basis = ("web-track source register " + DELIVERABLES["REG"][0] + "#/sources/"
+                     + ",".join(str(reg[sid][0]) for sid in ids) + " 'accessed'")
+    return {"url": url, "url_basis": url_basis, "accessed": acc, "accessed_basis": acc_basis,
+            "access_mode": x.get("access", "-")}
+
+
 def assemble_packages(reqs: list, items: dict) -> list:
     v1 = {p["id"]: p for p in load("V1_JSON")["packages"]}
     primary = {v1id: pk for pk, _n, _s, _h, v1s in PACKAGES for v1id in v1s}
@@ -1428,6 +1469,7 @@ def assemble_packages(reqs: list, items: dict) -> list:
         for i, x in enumerate(p["reference_data"]):
             e = copy.deepcopy(x)
             e["carried_from"] = f"v1 {v1id} reference_data[{i}]"
+            e["provenance_display"] = reference_provenance(x)
             carried[primary[v1id]]["reference_data"].append(e)
         for x in p["supplier_must_state"]:
             lst = carried[primary[v1id]]["supplier_must_state"]
@@ -1566,8 +1608,9 @@ def owner_answers_applied(reqs: list) -> dict:
         "OQ-VI-03": "RFQ2-MECH-N01/N02; NIR-02",
         "OQ-VI-05": "RFQ2-HALLEL-N03; RFQ2-THRUST-N01",
     }
+    structural = {"OQ-RFQ-07": set(PKG_IDS) | {"RFQ2-CIF"}}
     a93 = [{"id": k, "status": load("A93")["decisions"][k]["status"], "how_applied": a93_how[k],
-            "applied_in": sorted(ids["a9_3"].get(k, set()))} for k in a93_how]
+            "applied_in": sorted(ids["a9_3"].get(k, set()) | structural.get(k, set()))} for k in a93_how]
     return {"owner_rows": row_list,
             "a9_1": [{"id": k, "applied_in": sorted(v)} for k, v in sorted(ids["a9_1"].items())],
             "a9_2": [{"id": k, "applied_in": sorted(v)} for k, v in sorted(ids["a9_2"].items())],
@@ -1723,6 +1766,9 @@ def historical_reuse() -> dict:
             "v1 quantity lines as the starting line-item structure (v1_ref per line item)",
             "v1 acceptance, calibration/traceability, documentation and supplier-must-state lists (tagged carried_from)",
             "v1 reference_data (web-track catalogue records, REFERENCE ONLY) and the R5 facility list (file order)",
+            "web-track source register (docs/procurement/web_track_v1/source_register_v1.json, pinned by sha256): "
+            "URL and access date only, for carried reference entries whose v1 record holds '-' (basis per entry in "
+            "provenance_display); no datum is taken from it",
             "v1 do-not-purchase banner wording (extended by the A9.3 dispatch statement)",
         ],
         "not_reused": [
@@ -1869,6 +1915,12 @@ ITEM_COLS = [("id", lambda x: x["id"]), ("item", lambda x: x["item"]), ("qty", l
              ("change", lambda x: x["change"]["type"])]
 
 
+def _fmt_datum(v) -> str:
+    if isinstance(v, (dict, list)):
+        return "`" + json.dumps(v, ensure_ascii=False, sort_keys=True) + "`"
+    return str(v).replace("|", "/")
+
+
 def render_package(p: dict) -> str:
     L_ = [f"# {p['id']} - {p['owner_family']}", "", "> **" + p["banner"][0] + "**", ">"]
     L_ += ["> " + b for b in p["banner"][1:]]
@@ -1901,9 +1953,14 @@ def render_package(p: dict) -> str:
     if p["reference_data"]:
         L_ += ["", "## Reference data (" + p["reference_data_use"] + ")", ""]
         for x in p["reference_data"]:
-            d = x.get("datum", {})
-            L_.append(f"- {d.get('quantity', '-')}: {d.get('value', '-')} - {x.get('citation', '-')} "
-                      f"({x.get('access', '-')}; {x['carried_from']})")
+            pv = x["provenance_display"]
+            L_.append(f"- {x['source_id']}: {_fmt_datum(x['datum'])} - {x['note']}. Source: {x['citation']}; "
+                      f"URL {pv['url']}; accessed {pv['accessed']}; access: {pv['access_mode']}. Recorded at "
+                      f"`{x['path']}#{x['pointer']}` _({x['carried_from']})_.")
+        L_.append("")
+        L_.append("Reference data are not requirements, not a selection and not a supplier ranking. Where v1 recorded "
+                  "no URL/access date, they are taken from the pinned web-track source register (basis recorded per "
+                  "entry in the JSON as provenance_display).")
     if p.get("facilities_recorded_R5"):
         L_ += ["", "## Facilities recorded by the web track (" + p["facilities_note"] + ")", ""]
         for e in p["facilities_recorded_R5"]["entries"]:
@@ -1923,6 +1980,7 @@ def render_cif(c: dict) -> str:
            "## Shared items", ""]
     L_ += _table(c["items"], [("id", lambda x: x["id"]), ("group", lambda x: x["group"]),
                               ("title", lambda x: x["title"]), ("value", lambda x: x["value"]),
+                              ("units", lambda x: x.get("units", "in value keys / text")),
                               ("status", lambda x: x["status"]), ("freeze", lambda x: x["freeze_point"]),
                               ("source", lambda x: x["source"])])
     L_ += ["", "## Cross-package interface matrix", ""]

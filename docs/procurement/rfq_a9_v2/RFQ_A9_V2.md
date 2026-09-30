@@ -372,7 +372,7 @@ Counts: {"CARRIED_MODIFIED": 13, "CARRIED_UNCHANGED": 104, "NEW": 27, "SUPERSEDE
 | RFQ2-RF-N04 | - | RFQ2-RF | A9.2 rf_500W; ICD:ICP-14; ICD:ICP-17; UB:UB-RF-06 | PROPOSED | after-evidence | P1_NEEDED |
 | RFQ2-RF-N05 | - | RFQ2-RF | A9.2 OQ-A907-11; A9.2 rf_measurement_reference; PENDING docs/experiments/hall_icp/p1_icp_bench/ | PENDING | NOW | P1_NEEDED |
 | RFQ2-RF-N06 | - | RFQ2-RF | A9.2 rf_measurement_reference; A9.3 record /authorizations/P2; PENDING docs/experiments/hall_icp/p2_impedance_map/ | PENDING | NOW | P1_NEEDED |
-| RFQ2-GAS-N01 | - | RFQ2-GAS | A9.3 OQ-RFQ-02; EVI:TK-31; PENDING docs/experiments/hall_icp/p1_icp_bench/ | PENDING | NOW | P1_NEEDED |
+| RFQ2-GAS-N01 | - | RFQ2-GAS | A9.3 OQ-RFQ-02; EVI:TK-31 (p. 3 text); PENDING docs/experiments/hall_icp/p1_icp_bench/ | PENDING | NOW | P1_NEEDED |
 | RFQ2-GAS-N02 | - | RFQ2-GAS | A9.3 OQ-RFQ-02 | OWNER_GIVEN | NOW | P1_NEEDED |
 | RFQ2-GAS-N03 | - | RFQ2-GAS | A9.1 UBQ-08; A9.3 OQ-RFQ-02 | OWNER_GIVEN | NOW | P1_NEEDED |
 | RFQ2-GAS-N04 | - | RFQ2-GAS | A9.3 ICPQ-06; PENDING docs/experiments/hall_icp/p1_icp_bench/; row 105 | OWNER_GIVEN | NOW | P1_NEEDED |
@@ -380,7 +380,7 @@ Counts: {"CARRIED_MODIFIED": 13, "CARRIED_UNCHANGED": 104, "NEW": 27, "SUPERSEDE
 | RFQ2-GAS-N06 | - | RFQ2-GAS | A9.1 UBQ-08; A9.3 OQ-RFQ-07; H26:H26-25; H26:H26-30; ICD:ICP-34; INS:INS-06; INS:INS-08; PENDING docs/experiments/hall_icp/p1_icp_bench/ | PENDING | NOW | P1_NEEDED |
 | RFQ2-GAS-N07 | - | RFQ2-GAS | A9.3 OQ-RFQ-07; PENDING docs/experiments/hall_icp/p1_icp_bench/ | PENDING | NOW | P1_NEEDED |
 | RFQ2-VAC-N01 | - | RFQ2-VAC | A9.3 OQ-RFQ-07; ICD:ICP-07; row 139 | TBD | after-evidence | P1_NEEDED |
-| RFQ2-VAC-N02 | - | RFQ2-VAC | A9.3 OQ-RFQ-07; EVI:TK-34; PENDING docs/experiments/hall_icp/p1_icp_bench/; row 139; row 23 | TBD | after-evidence | P1_NEEDED |
+| RFQ2-VAC-N02 | - | RFQ2-VAC | A9.3 OQ-RFQ-07; EVI:TK-34 (p. 3 text ('about 28 mPa')); PENDING docs/experiments/hall_icp/p1_icp_bench/; row 139; row 23 | TBD | after-evidence | P1_NEEDED |
 | RFQ2-VAC-N03 | - | RFQ2-VAC | A9.3 OQ-A907-02; row 81 | OWNER_GIVEN | NOW | P1_NEEDED |
 | RFQ2-VAC-N04 | - | RFQ2-VAC | A9.3 OQ-RFQ-07; PENDING docs/experiments/hall_icp/p1_icp_bench/; row 107 | PENDING | NOW | P1_NEEDED |
 | RFQ2-VAC-N05 | - | RFQ2-VAC | A9.3 OQ-RFQ-07; ICD:ICP-07; INS:INS-22 | TBD | LOCK-1 | LATER |
@@ -572,6 +572,7 @@ Reused:
 - v1 quantity lines as the starting line-item structure (v1_ref per line item)
 - v1 acceptance, calibration/traceability, documentation and supplier-must-state lists (tagged carried_from)
 - v1 reference_data (web-track catalogue records, REFERENCE ONLY) and the R5 facility list (file order)
+- web-track source register (docs/procurement/web_track_v1/source_register_v1.json, pinned by sha256): URL and access date only, for carried reference entries whose v1 record holds '-' (basis per entry in provenance_display); no datum is taken from it
 - v1 do-not-purchase banner wording (extended by the A9.3 dispatch statement)
 
 Not reused:
@@ -652,5 +653,6 @@ H3 gate: QUOTATION PACKAGES v2 READY FOR OWNER DISPATCH (P1 subset first); PURCH
 | H26 | docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json | bc7d6b049067c6fbd5489bda32ee9c8c1af36508576db4619b08d2c4ec196a56 |
 | M16V3 | docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json | 636cbd3318831f6f56e9833813c4d8c259aef7db3de1c6e503cccce14dade7e2 |
 | OQS3 | docs/budgets/owner_decisions/owner_questions_state_v3.json | 1c2e74340852dfe8c58b1804c3cfda2bfbfb3bfb5d631aaebd715cf716b76af2 |
+| REG | docs/procurement/web_track_v1/source_register_v1.json | e2661a49892b58271f25405ecbcc7d37cc22ba9a85d29fec83a0f72bdc10c77d |
 
 Never pinned (mutable governance): docs/orchestration/lane_registry_v1.json; docs/orchestration/trigger_registry_v1.json; docs/orchestration/trigger_ledger_v2.jsonl (and fired_triggers.jsonl); docs/orchestration/runtime_state.json

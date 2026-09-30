@@ -167,8 +167,10 @@ X-01, X-02, X-03, X-04, X-05, X-16
 
 ## Reference data (REFERENCE ONLY - published/catalogue data as recorded by the web track (citation/URL and access record as recorded there); not a requirement, selection or ranking)
 
-- frequency: 25 MHz - 1 GHz - R&S NRT-Z14/44 directional power sensors (manual pages + distributor listings), https://www.rohde-schwarz.com/us/manual/r-s-nrt-z14-44-directional-power-sensors-user-manual-manuals_78701-1205888.html (search-result snippets only (verify); v1 RFQ-04 reference_data[0])
-- frequency: element dependent, ~2 MHz upward - Bird 5010B directional power sensor, https://www.testequity.com/product/32113-1-5010B (search-result snippet only (verify); v1 RFQ-04 reference_data[1])
+- SRC-RS-NRTZ14: `{"evidence_class": "search_snippet_verify", "quantity": "frequency", "source_id": "SRC-RS-NRTZ14", "unit": "Hz", "value": "25 MHz - 1 GHz"}` - frequency range recorded for an inline HF/VHF sensor class: the recorded lower edge (25 MHz) lies above 13.56 MHz (snippet; verify). Source: R&S NRT-Z14/44 directional power sensors (manual pages + distributor listings), https://www.rohde-schwarz.com/us/manual/r-s-nrt-z14-44-directional-power-sensors-user-manual-manuals_78701-1205888.html; URL https://www.rohde-schwarz.com/us/manual/r-s-nrt-z14-44-directional-power-sensors-user-manual-manuals_78701-1205888.html; accessed 2026-09-27; access: search-result snippets only (verify). Recorded at `docs/procurement/web_track_v1/threads/R4_instrumentation.json#/items/6/options/0/key_specs/0` _(v1 RFQ-04 reference_data[0])_.
+- SRC-BIRD-5010B: `{"evidence_class": "search_snippet_verify", "quantity": "frequency", "source_id": "SRC-BIRD-5010B", "unit": "Hz", "value": "element dependent, ~2 MHz upward"}` - element-based wattmeter frequency coverage (snippet; verify). Source: Bird 5010B directional power sensor, https://www.testequity.com/product/32113-1-5010B; URL https://www.testequity.com/product/32113-1-5010B; accessed 2026-09-27; access: search-result snippet only (verify). Recorded at `docs/procurement/web_track_v1/threads/R4_instrumentation.json#/items/6/options/1/key_specs/1` _(v1 RFQ-04 reference_data[1])_.
+
+Reference data are not requirements, not a selection and not a supplier ranking. Where v1 recorded no URL/access date, they are taken from the pinned web-track source register (basis recorded per entry in the JSON as provenance_display).
 
 ## Open specification items
 
