@@ -250,7 +250,8 @@ def synthetic_record(cal, z_ant, p_fwd, phase="DUMMY_LOAD"):
         "match_state": {"tuning_state_id": "TS-SYN-1", "positions": {"C_series": "SYN", "C_shunt": "SYN"},
                         "auto_tune": False, "loss_bound_id": None},
         "factors": {k: None for k in RED.REQUIRED_FACTOR_FIELDS},
-        "plasma_state": {"lit": False, "mode": "UNLIT", "optical_signal_V": None},
+        "plasma_state": {"lit": False, "mode": "UNLIT", "optical_signal_V": None, "unlit_threshold_V": None,
+                         "unlit_threshold_source": None},
         "sweep": {"sweep_id": "SYN", "direction": "single", "index": 0},
         "settling": {"dwell_s": None, "settled": None},
         "temperatures_K": {}, "cold_reference_id": None, "p1_stable_region_ref": None, "antenna_current": None,
@@ -385,7 +386,7 @@ def build():
            "RF-VOLK18-01": "phase-resolved V/I sensing near the coil as a precedent for method A",
            "RF-VOLK18-02": "load resistance changes with flow: report mismatch effects separately from plasma physics",
            "RF-IPT20-07": "forward/reflected accounting must separate matching-network and antenna losses",
-           "RF-IPT20-D1": "cold (no-plasma) antenna S11 measured with a VNA before matching (CAL-P2-08 precedent)",
+           "RF-IPT20-06": "cold (no-plasma) antenna S11 measured with a VNA before matching (CAL-P2-08 precedent)",
            "RF-SCHU24-05": "lane inference, not stated by the source (the entry records only reflected power <= 1 % with "
                            "automatic matching): a low reflected power does not by itself separate matchbox / coil "
                            "dissipation, hence HM-R08",
@@ -410,8 +411,9 @@ def build():
     # ================================================================ (1) reference planes
     planes = [
         item("RP-GEN", "generator output connector", "RF generator output; generator-internal forward/reflected meters "
-             "are not a measurement plane (ICD ICP-14: generator-internal meters alone are not sufficient; analog "
-             "TK-22/TK-23 relied on them)", "-", "definition", [ "ICD ICP-14"], "assumed", "DEFINED", "NOW",
+             "are not a measurement plane (ICD ICP-14: generator-internal meters alone are not sufficient; the "
+             "analog relied on them: TK-22/TK-23 in docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json, "
+             "the same fact the ICD cites as its annex row TAK-04)", "-", "definition", [ "ICD ICP-14"], "assumed", "DEFINED", "NOW",
              measured_here=["P_mains,in of the mains-powered laboratory generator (A9.3 OQ-RFQ-06; engineering quantity, "
                             "GROUND/FACILITY_ONLY, never P_bus evidence)"]),
         item("RP-CPL", "directional-coupler plane on the generator / 50-ohm side of the LOCAL matching network",
@@ -573,7 +575,8 @@ def build():
             "off, and gas on unlit), VNA at RP-ANT and via RP-MIN (unpowered: VNA excitation only)", ["RP-ANT", "RP-MIN"],
             ["CAL-P2-01"],
             "S-06 (before the antenna simulator is specified, CAL-P2-10); repeated at more than one antenna "
-            "temperature for the R_cold reference; low-power powered-unlit records follow at S-08 under HM-R13",
+            "temperature for the R_cold reference; powered-unlit records follow at S-08 (gas off, base pressure; HM-R13 and "
+            "the P1 registered procedure; unlit verified by INS-P2-10)",
             ["UB-P2-Z-07"], ["MS-P2-02"], ["VI-RF-06 (cold part)", "sizing input of INS-P2-01 ranges"],
             "TBD - requires the antenna (" + P1_PENDING + "); sweep span TBD - requires the antenna design "
             "(self-resonance must be located, not assumed)", "LOCK-2"),
@@ -753,8 +756,9 @@ def build():
              "match/cable temperature rise and calorimetry; P_delivered is 'TBD' when neither exists (never P_net)",
              "W", "A9.2 rf_measurement_reference", [A92_REF["rf_measurement_reference"], "UB-RF-05", "A9H-INS-03"],
              "owner-allocation", "PROPOSED", "LOCK-1"),
-        item("HM-R09", "never P_forward = P_plasma", "the reducer refuses any plasma-power input or label; plasma-"
-             "absorbed power only from the resistance split (reconstructed, UB-P2-Z-07)", "-",
+        item("HM-R09", "never P_forward = P_plasma", "the reducer refuses any plasma-power input or label; the "
+             "resistance split gives only a reconstructed diagnostic (P_delivered_x_Rsplit_fraction_W, UB-P2-Z-07) "
+             "that is never P_plasma evidence for any gate", "-",
              "A9.2 rf_measurement_reference", [A92_REF["rf_measurement_reference"]], "owner-allocation",
              "OWNER_GIVEN", "NOW"),
         item("HM-R10", "generator input power", "P_mains,in of the mains-powered laboratory generator is logged as an "
@@ -806,9 +810,16 @@ def build():
          "impedance and VNA-measured; end-to-end validation of ZM-A/B/C first at VNA level, then at power with the "
          "local match pre-tuned on the VNA (CAL-P2-10); V/I probe at-power verification on the calorimetric load "
          "and the simulator (CAL-P2-15)"},
-        {"step": "S-08", "powered": True, "prerequisites": [R13], "what": "low-power powered-unlit records into the "
-         "installed antenna, local match pre-tuned on the VNA into the cold antenna (phase COLD_ANTENNA_POWERED_UNLIT; "
-         "CAL-P2-08 follow-on)"},
+        {"step": "S-08", "powered": True, "prerequisites": [R13, "P1 registered procedure (" + P1_PENDING + ")"],
+         "what": "powered-unlit records into the installed antenna, local match pre-tuned on the VNA into the cold "
+         "antenna (phase COLD_ANTENNA_POWERED_UNLIT; CAL-P2-08 follow-on), energized only under the P1 registered "
+         "procedure. Vacuum/gas state: gas off at chamber base pressure (factors.gas null, both mdot = 0, p_chamber "
+         "logged; 'gas on unlit' stays a VNA-only, unpowered CAL-P2-08 condition). RF power level: TBD - requires the "
+         "P1 registered procedure (no ceiling is set here). Unlit verification per record: INS-P2-10 optical signal "
+         "below the unlit threshold of the P1 procedure (value and source carried in the record). Ignition or "
+         "breakdown (e.g. at the antenna terminals or feedthrough in residual gas): RF off (abort), record flagged, "
+         "never reduced and never a cold reference (reducer IgnitionDetectedError / PlasmaStateError); the local-match "
+         "tuning state is re-checked on the VNA before RF is re-applied"},
         {"step": "S-09", "powered": True, "prerequisites": [R13, "P1 registered procedure (" + P1_PENDING + ")"],
          "what": "RF pickup on P2 channels (CAL-P2-13; ICP-17)"},
         {"step": "S-10", "powered": False, "what": "GATE: P1 hands over a stable ICP operating region (" + P1_PENDING
@@ -834,6 +845,14 @@ def build():
             "ForwardAsPlasmaError": "any P_plasma* / P_absorbed_plasma* input key, any power-like key containing "
                                     "'plasma' at any depth, or a power label (key or value) naming plasma power",
             "SequenceError": "HOT_MAP record without a P1 stable-region reference (or one that is PENDING/TBD)",
+            "PlasmaStateError (SequenceError)": "lit plasma in a DUMMY_LOAD / COLD_ANTENNA_POWERED_UNLIT record, lit/"
+                                                "mode inconsistent or lit not boolean, powered-unlit record without "
+                                                "gas off (gas null, both mdot = 0, p_chamber logged) or without the "
+                                                "optical unlit verification, cold reference not from a verified-unlit "
+                                                "source",
+            "IgnitionDetectedError (PlasmaStateError)": "powered-unlit record whose optical signal reached the unlit "
+                                                        "threshold of the P1 registered procedure (abort and flag, "
+                                                        "S-08)",
             "RecordError": "malformed or non-finite values, P_reflected > P_forward, singular transforms, missing "
                            "nested sub-fields, HOT_MAP without factors.gas; mismatch envelope mixing data classes / "
                            "evidence statuses or evidence tags"},
@@ -841,10 +860,14 @@ def build():
         "outputs": ["at_RP_CPL: P_forward, P_reflected, P_net, |Gamma| (powers and complex), VSWR",
                     "Z_antenna per method at RP-ANT (R, X), primary method, method difference",
                     "P_line/match,loss, P_delivered, match/line efficiency (or TBD / declared-bound interval)",
-                    "antenna-current cross-check, resistance split (reconstructed)",
+                    "antenna-current cross-check, resistance split (reconstructed; its P_delivered_x_Rsplit_fraction_W"
+                    " is a diagnostic, never P_plasma evidence for any gate)",
+                    "unlit_verification of powered-unlit records; cold_reference_from_reduced() for R_cold entries",
                     "evidence_tag per record (from factors.gas / engineering_control; Ar and OQ-VI-05 records are "
                     "non-scoring)",
-                    "mismatch_envelope(): ranges and line/antenna peak stresses; rating_status "
+                    "mismatch_envelope(): ranges, line peak stresses referred to RP-CPL, antenna peaks split into "
+                    "V/I-measured and derived-from-P_delivered, coverage counts with excluded record ids; "
+                    "rating_status "
                     "TBD_AFTER_IMPEDANCE_MAP; synthetic data labelled SYNTHETIC_TEST_DATA_NOT_EVIDENCE"],
         "complex_encoding": "[re, im]",
         "two_port_convention": "ABCD, port 1 toward the generator, port 2 toward the antenna; S referenced to Z0",
@@ -925,7 +948,7 @@ def build():
              "not in the A9.3 RF package list -> proposed addition (P2Q-02)", None,
              [f_spec, {"quantity": "current range", "value": "TBD - same sizing relation as INS-P2-01",
                        "units": "A", "source": "this package", "evidence_class": None}]),
-        ins_("INS-P2-10", "optical emission photodiode (mode-jump indicator)",
+        ins_("INS-P2-10", "optical emission photodiode (mode-jump indicator; S-08 unlit verification)",
              "not in the A9.3 RF package list -> proposed addition (P2Q-05)", None,
              [{"quantity": "spectral band / view", "value": "TBD - requires the module optical access", "units": "-",
                "source": "this package HM-R06", "evidence_class": None}]),
@@ -1089,8 +1112,10 @@ def build():
         {"id": "P2Q-04", "question": "Hot-map tuning policy: re-tune for minimum reflected power at every point, plus "
          "fixed-tune sub-sweeps around representative points to inform the flight match implementation?",
          "proposed_answer": "yes (PROPOSED)", "needed_by": "LOCK-1"},
-        {"id": "P2Q-05", "question": "Add an optical-emission photodiode as a mode-jump (E/H) indicator?",
-         "proposed_answer": "yes (PROPOSED; low-cost, independent of the RF chain)", "needed_by": "LOCK-1"},
+        {"id": "P2Q-05", "question": "Add an optical-emission photodiode as a mode-jump (E/H) indicator and as the unlit-verification "
+         "indicator of the S-08 powered-unlit records?",
+         "proposed_answer": "yes (PROPOSED; low-cost, independent of the RF chain; without it (or an equivalent "
+         "independent indicator named by the owner) S-08 powered-unlit records cannot be reduced)", "needed_by": "LOCK-1"},
         {"id": "P2Q-06", "question": "On the thrust stand, rely on ZM-B (no V/I probe line across the stage) once the "
          "bench shows agreement, rather than routing a V/I probe line with a matched sham?",
          "proposed_answer": "yes, conditional on the P2Q-03 bench agreement (PROPOSED)", "needed_by": "LOCK-1"},
@@ -1206,7 +1231,10 @@ FIELD_DOCS = {
     "match_state": ("object", "-", "RP-MIN -> RP-ANT", "tuning_state_id, positions, auto_tune, loss_bound_id"),
     "factors": ("object", "W; mg/s; Pa; V; A", None, "fields: " + ", ".join(RED.REQUIRED_FACTOR_FIELDS) +
                 " (explicit null where not applicable; P_mains_in_W is GROUND/FACILITY_ONLY)"),
-    "plasma_state": ("object", "-; V", None, "lit, mode (" + ", ".join(RED.MODE_LABELS) + "), optical_signal_V"),
+    "plasma_state": ("object", "-; V", None, "lit (boolean), mode (" + ", ".join(RED.MODE_LABELS) + "; UNLIT iff lit "
+                     "is false), optical_signal_V (INS-P2-10), unlit_threshold_V and unlit_threshold_source (from the P1 "
+                     "registered procedure; required for COLD_ANTENNA_POWERED_UNLIT, where the signal must lie below "
+                     "the threshold). Phases " + ", ".join(RED.UNLIT_PHASES) + " must be unlit"),
     "sweep": ("object", "-", None, "sweep_id, direction (" + ", ".join(RED.SWEEP_DIRECTIONS) + "), index"),
     "settling": ("object", "s", None, "dwell_s, settled"),
     "temperatures_K": ("object", "K", None, "antenna, dielectric, collector, match, cables, probe"),
@@ -1230,8 +1258,9 @@ SUBFIELD_TYPES = {
                  "vi_cal_id": _STR},
     "match_state": {"tuning_state_id": _STRN, "positions": {"type": "object"}, "auto_tune": {"type": ["boolean", "null"]},
                     "loss_bound_id": _STRN},
-    "plasma_state": {"lit": {"type": ["boolean", "null"]}, "mode": {"enum": list(RED.MODE_LABELS)},
-                     "optical_signal_V": dict(_NUMN, **{"x-units": "V"})},
+    "plasma_state": {"lit": {"type": "boolean"}, "mode": {"enum": list(RED.MODE_LABELS)},
+                     "optical_signal_V": dict(_NUMN, **{"x-units": "V"}),
+                     "unlit_threshold_V": dict(_NUMN, **{"x-units": "V"}), "unlit_threshold_source": _STRN},
     "sweep": {"sweep_id": _STR, "direction": {"enum": list(RED.SWEEP_DIRECTIONS)}, "index": {"type": "integer"}},
     "settling": {"dwell_s": dict(_NUMN, **{"x-units": "s"}), "settled": {"type": ["boolean", "null"]}},
     "antenna_current": {"I_rms_A": dict(_NUM, **{"x-units": "A"}), "probe_cal_id": _STR},
@@ -1283,7 +1312,9 @@ def build_schema():
                            "S21, S22, cal_id, phase_calibrated; vi_probe {cal_id, phase_calibrated, k_V, k_I, "
                            "fixture_abcd, fixture_from_plane RP-VI, fixture_to_plane RP-ANT, amplitude_convention}; "
                            "loss_bounds {id: {loss_fraction_max, source, evidence_class}}; cold_references {id: "
-                           "{R_cold_ohm, source_record_id, evidence_class, antenna_temperature_K}}; "
+                           "{" + ", ".join(RED.COLD_REF_FIELDS) + "} with source_phase in "
+                           + " | ".join(RED.COLD_REF_SOURCES) + " and a verified-unlit unlit_verification "
+                           "(cold_reference_from_reduced() builds it from a reduced powered-unlit record)}; "
                            "antenna_current_probe {cal_id, k_mag, certificate} | null"}},
     }
 

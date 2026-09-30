@@ -88,8 +88,10 @@ def _cal(red, line, match, e00=0j, e11=0j, e10e01=1 + 0j, fix=(1 + 0j, 0j, 0j, 1
                          "fixture_abcd": [[_c(fix[0]), _c(fix[1])], [_c(fix[2]), _c(fix[3])]],
                          "fixture_from_plane": "RP-VI", "fixture_to_plane": "RP-ANT", "amplitude_convention": "peak"},
             "loss_bounds": {"LB1": {"loss_fraction_max": 0.1, "source": "SYNTHETIC", "evidence_class": "assumed"}},
-            "cold_references": {"CR1": {"R_cold_ohm": 1.5, "source_record_id": "SYN-COLD", "evidence_class": "measured",
-                                        "antenna_temperature_K": 300.0}},
+            "cold_references": {"CR1": {"R_cold_ohm": 1.5, "source_record_id": "SYN-COLD",
+                                        "source_phase": "CAL-P2-08_VNA_UNPOWERED",
+                                        "unlit_verification": {"basis": "SYNTHETIC CAL-P2-08 VNA record"},
+                                        "evidence_class": "measured", "antenna_temperature_K": 300.0}},
             "antenna_current_probe": {"cal_id": "ACP", "k_mag": 1.0, "certificate": "SYNTHETIC"}}
 
 
@@ -114,7 +116,8 @@ def _rec(red, cal, z_ant, p_fwd=100.0, phase="DUMMY_LOAD"):
             "vi_probe": {"V_raw": _c(a * v_a + b * i_a), "I_raw": _c(c * v_a + dd * i_a), "vi_cal_id": "VI"},
             "match_state": {"tuning_state_id": "TS1", "positions": {}, "auto_tune": False, "loss_bound_id": "LB1"},
             "factors": {k: None for k in red.REQUIRED_FACTOR_FIELDS},
-            "plasma_state": {"lit": False, "mode": "UNLIT", "optical_signal_V": None},
+            "plasma_state": {"lit": False, "mode": "UNLIT", "optical_signal_V": None, "unlit_threshold_V": None,
+                             "unlit_threshold_source": None},
             "sweep": {"sweep_id": "S", "direction": "single", "index": 0}, "settling": {"dwell_s": None, "settled": None},
             "temperatures_K": {}, "cold_reference_id": None, "p1_stable_region_ref": None, "antenna_current": None}
 
@@ -626,3 +629,115 @@ def test_nested_contract_in_schema_and_reducer(red, case):
     r = copy.deepcopy(rec)
     r["sweep"]["direction"] = "sideways"
     _raises(red, red.RecordError, r, {"SYN": cal})
+
+
+# ------------------------------------------------------------------------------------------------ phase / plasma-state gate
+def _cold(rec, sig=0.01, thr=0.5):
+    r = copy.deepcopy(rec)
+    r["phase"] = "COLD_ANTENNA_POWERED_UNLIT"
+    r["factors"].update({"gas": None, "mdot_icp_dedicated_mg_s": 0.0, "mdot_hall_anode_mg_s": 0.0,
+                         "p_chamber_Pa": 1e-4})
+    r["plasma_state"].update({"optical_signal_V": sig, "unlit_threshold_V": thr,
+                              "unlit_threshold_source": "SYNTHETIC P1 procedure id"})
+    return r
+
+
+def test_refuses_lit_plasma_in_non_hot_phase(red, case):
+    cal, rec = case
+    for ph in ("DUMMY_LOAD", "COLD_ANTENNA_POWERED_UNLIT"):
+        for mode in ("H", "E", "UNCERTAIN"):
+            r = _cold(rec) if ph == "COLD_ANTENNA_POWERED_UNLIT" else copy.deepcopy(rec)
+            r["plasma_state"].update({"lit": True, "mode": mode})
+            _raises(red, red.PlasmaStateError, r, {"SYN": cal})
+            _raises(red, red.SequenceError, r, {"SYN": cal})          # PlasmaStateError is a SequenceError
+    for lit, mode in ((False, "H"), (True, "UNLIT"), (None, "UNLIT")):   # inconsistent / unknown lit state
+        r = copy.deepcopy(rec)
+        r["plasma_state"].update({"lit": lit, "mode": mode})
+        _raises(red, red.PlasmaStateError, r, {"SYN": cal})
+
+
+def test_powered_unlit_requires_gas_off_and_optical_verification(red, case):
+    cal, rec = case
+    out = red.reduce_record(_cold(rec), {"SYN": cal})
+    assert out["unlit_verification"]["verified_unlit"] is True
+    for k, v in (("gas", "N2"), ("mdot_icp_dedicated_mg_s", 0.1), ("mdot_icp_dedicated_mg_s", None),
+                 ("mdot_hall_anode_mg_s", None), ("p_chamber_Pa", None)):
+        r = _cold(rec)
+        r["factors"][k] = v
+        _raises(red, red.PlasmaStateError, r, {"SYN": cal})
+    for k, v in (("optical_signal_V", None), ("unlit_threshold_V", None), ("unlit_threshold_source", None),
+                 ("unlit_threshold_source", "PENDING docs/experiments/hall_icp/p1_icp_bench/")):
+        r = _cold(rec)
+        r["plasma_state"][k] = v
+        _raises(red, red.PlasmaStateError, r, {"SYN": cal})
+
+
+def test_ignition_detected_abort_and_flag(red, case):
+    cal, rec = case
+    for sig in (0.5, 2.0):                                           # at or above the (record-carried) threshold
+        _raises(red, red.IgnitionDetectedError, _cold(rec, sig=sig, thr=0.5), {"SYN": cal})
+
+
+def test_cold_reference_only_from_verified_unlit(red, case):
+    cal, rec = case
+    cold_out = red.reduce_record(_cold(rec), {"SYN": cal})
+    cr = red.cold_reference_from_reduced(cold_out, 300.0)
+    assert cr["source_phase"] == "COLD_ANTENNA_POWERED_UNLIT" and cr["unlit_verification"]["verified_unlit"] is True
+    assert cr["R_cold_ohm"] == pytest.approx(2.0, abs=1e-6) and cr["evidence_class"] == SYN
+    dummy_out = red.reduce_record(rec, {"SYN": cal})
+    with pytest.raises(red.PlasmaStateError):
+        red.cold_reference_from_reduced(dummy_out, 300.0)            # not a powered-unlit record
+    stripped = {k: v for k, v in cold_out.items() if k != "unlit_verification"}
+    with pytest.raises(red.PlasmaStateError):
+        red.cold_reference_from_reduced(stripped, 300.0)
+    r = copy.deepcopy(rec)
+    r["cold_reference_id"] = "CRX"
+    c2 = copy.deepcopy(cal)
+    c2["cold_references"]["CRX"] = cr
+    assert red.reduce_record(r, {"SYN": c2})["resistance_split"]["R_cold_ohm"] == pytest.approx(2.0, abs=1e-6)
+    bad = [dict(cr, source_phase="HOT_MAP"), dict(cr, unlit_verification=dict(cr["unlit_verification"],
+                                                                                verified_unlit=False)),
+           dict(cr, unlit_verification=dict(cr["unlit_verification"], optical_signal_V=0.9)),
+           dict(cal["cold_references"]["CR1"], unlit_verification={})]
+    for b in bad:
+        c3 = copy.deepcopy(cal)
+        c3["cold_references"]["CRX"] = b
+        _raises(red, red.PlasmaStateError, r, {"SYN": c3})
+    c4 = copy.deepcopy(cal)
+    c4["cold_references"]["CRX"] = {k: v for k, v in cr.items() if k != "source_phase"}
+    _raises(red, red.MissingCalibrationError, r, {"SYN": c4})
+
+
+def test_rsplit_output_not_plasma_power(red, case):
+    cal, rec = case
+    r = copy.deepcopy(rec)
+    r["cold_reference_id"] = "CR1"
+    sp = red.reduce_record(r, {"SYN": cal})["resistance_split"]
+    assert "P_delivered_x_Rsplit_fraction_W" in sp and "NOT P_plasma evidence" in sp["gate_use"]
+    assert not any(red._is_plasma_power_key(k) for k in sp)
+
+
+def test_mismatch_envelope_coverage_and_peak_sources(red, case):
+    cal, rec = case
+    full = red.reduce_record(rec, {"SYN": cal})
+    r2 = copy.deepcopy(rec)
+    r2["record_id"], r2["loss_method"] = "SYN-2", "declared_bound"
+    bound = red.reduce_record(r2, {"SYN": cal})
+    r3 = copy.deepcopy(rec)
+    r3["record_id"], r3["methods"], r3["vi_probe"] = "SYN-3", ["deembed"], None
+    derived = red.reduce_record(r3, {"SYN": cal})
+    env = red.mismatch_envelope([full, bound, derived], ["DUMMY_LOAD"])
+    cov = env["coverage"]
+    assert cov["n_selected"] == 3 and cov["complete"] is False
+    assert cov["P_delivered_W"]["n_included"] == 2 and set(cov["P_delivered_W"]["excluded"]) == {"SYN-2"}
+    assert env["antenna_peaks_vi_measured"]["n_records"] == 2
+    assert env["antenna_peaks_derived_from_P_delivered"]["n_records"] == 1
+    assert "RP-CPL" in env["line_peaks_note"] and env["rating_status"] == "TBD_AFTER_IMPEDANCE_MAP"
+    assert red.mismatch_envelope([full], ["DUMMY_LOAD"])["coverage"]["complete"] is True
+
+
+def test_s08_powered_unlit_step_safety(d):
+    s08 = next(s for s in d["hot_map_methodology"]["sequence"] if s["step"] == "S-08")
+    assert any("P1 registered procedure" in p for p in s08["prerequisites"])
+    for need in ("gas off", "base pressure", "INS-P2-10", "abort", "TBD - requires the P1 registered procedure"):
+        assert need in s08["what"], need

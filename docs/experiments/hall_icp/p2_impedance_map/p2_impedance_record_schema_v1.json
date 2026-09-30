@@ -299,20 +299,19 @@
   },
   "plasma_state": {
    "type": "object",
-   "description": "lit, mode (UNLIT, E, H, UNCERTAIN), optical_signal_V",
+   "description": "lit (boolean), mode (UNLIT, E, H, UNCERTAIN; UNLIT iff lit is false), optical_signal_V (INS-P2-10), unlit_threshold_V and unlit_threshold_source (from the P1 registered procedure; required for COLD_ANTENNA_POWERED_UNLIT, where the signal must lie below the threshold). Phases DUMMY_LOAD, COLD_ANTENNA_POWERED_UNLIT must be unlit",
    "x-units": "-; V",
    "x-reference-plane": null,
    "required": [
     "lit",
     "mode",
-    "optical_signal_V"
+    "optical_signal_V",
+    "unlit_threshold_V",
+    "unlit_threshold_source"
    ],
    "properties": {
     "lit": {
-     "type": [
-      "boolean",
-      "null"
-     ]
+     "type": "boolean"
     },
     "mode": {
      "enum": [
@@ -328,6 +327,19 @@
       "null"
      ],
      "x-units": "V"
+    },
+    "unlit_threshold_V": {
+     "type": [
+      "number",
+      "null"
+     ],
+     "x-units": "V"
+    },
+    "unlit_threshold_source": {
+     "type": [
+      "string",
+      "null"
+     ]
     }
    }
   },
@@ -466,7 +478,7 @@
     "cold_references",
     "antenna_current_probe"
    ],
-   "description": "schema 'p2_calibration_set_v1': power_sensors {id: {CF_fwd, CF_ref, certificate}}; coupler {cal_id, plane RP-CPL, phase_calibrated, e00, e11, e10e01}; two_ports {line (RP-CPL->RP-MIN), match_states {tuning_state_id: two-port RP-MIN->RP-ANT}} with S11, S12, S21, S22, cal_id, phase_calibrated; vi_probe {cal_id, phase_calibrated, k_V, k_I, fixture_abcd, fixture_from_plane RP-VI, fixture_to_plane RP-ANT, amplitude_convention}; loss_bounds {id: {loss_fraction_max, source, evidence_class}}; cold_references {id: {R_cold_ohm, source_record_id, evidence_class, antenna_temperature_K}}; antenna_current_probe {cal_id, k_mag, certificate} | null"
+   "description": "schema 'p2_calibration_set_v1': power_sensors {id: {CF_fwd, CF_ref, certificate}}; coupler {cal_id, plane RP-CPL, phase_calibrated, e00, e11, e10e01}; two_ports {line (RP-CPL->RP-MIN), match_states {tuning_state_id: two-port RP-MIN->RP-ANT}} with S11, S12, S21, S22, cal_id, phase_calibrated; vi_probe {cal_id, phase_calibrated, k_V, k_I, fixture_abcd, fixture_from_plane RP-VI, fixture_to_plane RP-ANT, amplitude_convention}; loss_bounds {id: {loss_fraction_max, source, evidence_class}}; cold_references {id: {R_cold_ohm, source_record_id, source_phase, unlit_verification, evidence_class, antenna_temperature_K} with source_phase in CAL-P2-08_VNA_UNPOWERED | COLD_ANTENNA_POWERED_UNLIT and a verified-unlit unlit_verification (cold_reference_from_reduced() builds it from a reduced powered-unlit record)}; antenna_current_probe {cal_id, k_mag, certificate} | null"
   }
  }
 }

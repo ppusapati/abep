@@ -10,6 +10,9 @@ It does not predict anything: no thrust, efficiency, discharge current, electron
 computed from a model. Every output is a transformation of a supplied measurement through a supplied calibration.
 Missing calibration, a record without a reference plane, uncalibrated phase and any attempt to label P_forward (or any
 input) as plasma power raise (CLAUDE.md rule 3: no silent fallbacks, no hidden defaults).
+A lit plasma state in a non-HOT_MAP phase, a powered-unlit record without gas off and an optical unlit verification
+(ignition -> abort and flag), and a cold reference not taken from a verified-unlit source also raise, so the A9.3
+'P1 stable plasma -> P2 map' gate cannot be bypassed by relabelling the phase.
 
 Reference planes (docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json reference_planes):
   RP-GEN  generator output connector (generator-internal meters are not a measurement plane, ICD ICP-14)
@@ -39,6 +42,13 @@ LOSS_METHODS = ("two_port", "declared_bound", "not_available")
 SWEEP_DIRECTIONS = ("up", "down", "reference", "single")
 MODE_LABELS = ("UNLIT", "E", "H", "UNCERTAIN")
 RATING_STATUS = "TBD_AFTER_IMPEDANCE_MAP"
+# Phases in which no plasma may exist (the plasma impedance map is HOT_MAP only, after the P1 hand-over, A9.3).
+UNLIT_PHASES = ("DUMMY_LOAD", "COLD_ANTENNA_POWERED_UNLIT")
+# Admissible origins of a cold-antenna (R_cold) reference: the unpowered VNA measurement (CAL-P2-08) or a reduced,
+# verified-unlit powered record (S-08). Built with cold_reference_from_reduced() / checked in reduce_record().
+COLD_REF_SOURCES = ("CAL-P2-08_VNA_UNPOWERED", "COLD_ANTENNA_POWERED_UNLIT")
+COLD_REF_FIELDS = ("R_cold_ohm", "source_record_id", "source_phase", "unlit_verification", "evidence_class",
+                   "antenna_temperature_K")
 SYNTHETIC_LABEL = "SYNTHETIC_TEST_DATA_NOT_EVIDENCE"
 
 # Single source of the record contract: the builder writes the JSON schema from these tuples and the tests check both.
@@ -60,7 +70,7 @@ NESTED_REQUIRED = {
     "vi_probe": ("V_raw", "I_raw", "vi_cal_id"),
     "match_state": ("tuning_state_id", "positions", "auto_tune", "loss_bound_id"),
     "factors": REQUIRED_FACTOR_FIELDS,
-    "plasma_state": ("lit", "mode", "optical_signal_V"),
+    "plasma_state": ("lit", "mode", "optical_signal_V", "unlit_threshold_V", "unlit_threshold_source"),
     "sweep": ("sweep_id", "direction", "index"),
     "settling": ("dwell_s", "settled"),
     "antenna_current": ("I_rms_A", "probe_cal_id"),
@@ -104,6 +114,17 @@ class RecordError(P2ReducerError):
 
 class SequenceError(P2ReducerError):
     """A HOT_MAP record without a P1 stable-region reference (A9.3: P1 stable plasma -> P2 plasma impedance map)."""
+
+
+class PlasmaStateError(SequenceError):
+    """A lit (or unverified) plasma state in a phase that must be unlit (DUMMY_LOAD, COLD_ANTENNA_POWERED_UNLIT), an
+    inconsistent lit/mode pair, or a powered-unlit record without its gas-off / optical unlit verification. Closes the
+    route around the P1 -> P2 gate of relabelling a lit point with a non-HOT phase."""
+
+
+class IgnitionDetectedError(PlasmaStateError):
+    """Powered-unlit record whose optical signal reached the unlit threshold of the P1 registered procedure: the
+    source ignited. Abort-and-flag (S-08): the record is not reduced and never becomes a cold reference."""
 
 
 # ------------------------------------------------------------------------------------------------ basic relations
@@ -363,6 +384,7 @@ def reduce_record(rec, calibrations):
         _require(rec[key], fields, key)
     if rec["plasma_state"]["mode"] not in MODE_LABELS:
         raise RecordError(f"plasma_state.mode {rec['plasma_state']['mode']!r} not in {MODE_LABELS}")
+    unlit_verification = _check_plasma_state(rec)
     if rec["sweep"]["direction"] not in SWEEP_DIRECTIONS:
         raise RecordError(f"sweep.direction {rec['sweep']['direction']!r} not in {SWEEP_DIRECTIONS}")
     tag = evidence_tag(rec)
@@ -415,6 +437,8 @@ def reduce_record(rec, calibrations):
         "factors": rec["factors"], "match_state": rec["match_state"], "plasma_state": rec["plasma_state"],
         "sweep": rec["sweep"], "settling": rec["settling"],
     }
+    if unlit_verification is not None:
+        out["unlit_verification"] = unlit_verification
 
     net = None
     z_ant = {}
@@ -551,9 +575,7 @@ def reduce_record(rec, calibrations):
         if not isinstance(crs, dict) or crid not in crs:
             raise MissingCalibrationError(f"cold antenna reference {crid!r} not in the set")
         cr = crs[crid]
-        for k in ("R_cold_ohm", "source_record_id", "evidence_class", "antenna_temperature_K"):
-            if k not in cr or cr[k] is None:
-                raise MissingCalibrationError(f"cold reference {crid!r} lacks {k}")
+        _check_cold_reference(cr, crid)
         r_cold = _finite(cr["R_cold_ohm"], "R_cold_ohm")
         r_hot = zp.real
         if r_hot <= 0:
@@ -563,10 +585,102 @@ def reduce_record(rec, calibrations):
                  "assumption": "antenna-circuit resistance unchanged between the cold reference and the hot point "
                                "(temperature-dependent; UB-P2-Z-07; verify)"}
         pdel = out["P_delivered_W"]
-        split["P_absorbed_Rsplit_W"] = (_r(pdel * (r_hot - r_cold) / r_hot) if isinstance(pdel, float)
-                                        else "TBD - requires a numeric P_delivered")
+        split["P_delivered_x_Rsplit_fraction_W"] = (_r(pdel * (r_hot - r_cold) / r_hot) if isinstance(pdel, float)
+                                                    else "TBD - requires a numeric P_delivered")
+        split["gate_use"] = ("reconstructed diagnostic only: P_delivered x (R_hot - R_cold) / R_hot is NOT P_plasma "
+                             "evidence for any gate, budget or score (A9.2 rf_measurement_reference; UB-P2-Z-07)")
         out["resistance_split"] = split
     return out
+
+
+def _ref_ok(x):
+    return isinstance(x, str) and bool(x.strip()) and not x.strip().upper().startswith(("PENDING", "TBD"))
+
+
+def _unlit_optical(ps, what):
+    """Optical unlit verification: signal below the threshold of the P1 registered procedure (value and source are
+    carried by the record; no threshold is set here). Returns the verification object; raises on ignition."""
+    sig = ps.get("optical_signal_V")
+    thr = ps.get("unlit_threshold_V")
+    src = ps.get("unlit_threshold_source")
+    if sig is None or thr is None or not _ref_ok(src):
+        raise PlasmaStateError(f"{what}: unlit not verified - optical_signal_V (INS-P2-10), unlit_threshold_V and a "
+                               "non-PENDING unlit_threshold_source (P1 registered procedure) are all required")
+    sig = _finite(sig, what + ".optical_signal_V")
+    thr = _finite(thr, what + ".unlit_threshold_V")
+    if sig >= thr:
+        raise IgnitionDetectedError(f"{what}: optical signal {sig} V >= unlit threshold {thr} V ({src}): ignition "
+                                    "detected - abort and flag (S-08); the record is not reduced and is never a cold "
+                                    "reference")
+    return {"indicator": "INS-P2-10 optical", "optical_signal_V": sig, "unlit_threshold_V": thr,
+            "unlit_threshold_source": src.strip(), "verified_unlit": True}
+
+
+def _check_plasma_state(rec):
+    """Phase <-> plasma-state consistency. Returns the unlit verification of a powered-unlit record, else None."""
+    ps, ph, rid = rec["plasma_state"], rec["phase"], rec.get("record_id")
+    lit, mode = ps["lit"], ps["mode"]
+    if not isinstance(lit, bool):
+        raise PlasmaStateError(f"record {rid!r}: plasma_state.lit must be true or false (an unknown state is not "
+                               "reducible)")
+    if (lit is False) != (mode == "UNLIT"):
+        raise PlasmaStateError(f"record {rid!r}: plasma_state lit={lit} inconsistent with mode {mode!r}")
+    if ph in UNLIT_PHASES and lit:
+        raise PlasmaStateError(f"record {rid!r}: phase {ph} with a lit plasma ({mode}); a lit point is a plasma "
+                               "impedance record and exists only as HOT_MAP after the P1 hand-over (A9.3 "
+                               "authorizations.P2)")
+    if ph != "COLD_ANTENNA_POWERED_UNLIT":
+        return None
+    fac = rec["factors"]
+    if fac.get("gas") is not None:
+        raise PlasmaStateError(f"record {rid!r}: powered-unlit records are gas off at base pressure (S-08); "
+                               f"factors.gas = {fac.get('gas')!r}")
+    for k in ("mdot_icp_dedicated_mg_s", "mdot_hall_anode_mg_s"):
+        if fac.get(k) is None or _finite(fac[k], "factors." + k) != 0.0:
+            raise PlasmaStateError(f"record {rid!r}: powered-unlit records need factors.{k} = 0 declared explicitly "
+                                   "(gas off, S-08)")
+    if fac.get("p_chamber_Pa") is None:
+        raise PlasmaStateError(f"record {rid!r}: powered-unlit records log the chamber base pressure p_chamber_Pa")
+    _finite(fac["p_chamber_Pa"], "factors.p_chamber_Pa")
+    return _unlit_optical(ps, f"record {rid!r}")
+
+
+def _check_cold_reference(cr, crid):
+    """A cold reference must come from a verified-unlit source (never from a lit or unverified record)."""
+    if not isinstance(cr, dict):
+        raise MissingCalibrationError(f"cold reference {crid!r} must be an object")
+    for k in COLD_REF_FIELDS:
+        if k not in cr or cr[k] is None:
+            raise MissingCalibrationError(f"cold reference {crid!r} lacks {k}")
+    if cr["source_phase"] not in COLD_REF_SOURCES:
+        raise PlasmaStateError(f"cold reference {crid!r}: source_phase {cr['source_phase']!r} not in "
+                               f"{COLD_REF_SOURCES}")
+    uv = cr["unlit_verification"]
+    if not isinstance(uv, dict):
+        raise PlasmaStateError(f"cold reference {crid!r}: unlit_verification must be an object")
+    if cr["source_phase"] == "COLD_ANTENNA_POWERED_UNLIT":
+        if uv.get("verified_unlit") is not True:
+            raise PlasmaStateError(f"cold reference {crid!r}: source record not verified unlit")
+        _unlit_optical(uv, f"cold reference {crid!r}")
+    elif not _ref_ok(uv.get("basis")):
+        raise PlasmaStateError(f"cold reference {crid!r}: unpowered VNA reference needs unlit_verification.basis "
+                               "(e.g. the CAL-P2-08 record id; VNA excitation only)")
+
+
+def cold_reference_from_reduced(reduced, antenna_temperature_K):
+    """Cold-reference entry from a REDUCED, verified-unlit COLD_ANTENNA_POWERED_UNLIT record (primary Z method).
+    Refuses any other phase and any record without an unlit verification."""
+    if not isinstance(reduced, dict) or reduced.get("phase") != "COLD_ANTENNA_POWERED_UNLIT":
+        raise PlasmaStateError("cold references come only from reduced COLD_ANTENNA_POWERED_UNLIT records (or the "
+                               "unpowered CAL-P2-08 VNA measurement)")
+    uv = reduced.get("unlit_verification")
+    if not isinstance(uv, dict) or uv.get("verified_unlit") is not True:
+        raise PlasmaStateError(f"reduced record {reduced.get('record_id')!r} carries no unlit verification")
+    z = reduced["Z_antenna"][reduced["Z_antenna_primary_method"]]
+    return {"R_cold_ohm": z["R_ohm"], "source_record_id": reduced["record_id"],
+            "source_phase": "COLD_ANTENNA_POWERED_UNLIT", "unlit_verification": dict(uv),
+            "evidence_class": "measured" if reduced["data_class"] == "measured" else SYNTHETIC_LABEL,
+            "antenna_temperature_K": _finite(antenna_temperature_K, "antenna_temperature_K")}
 
 
 def evidence_tag(rec):
@@ -603,8 +717,11 @@ def mismatch_envelope(reduced, phases):
     sel = [r for r in reduced if r["phase"] in phases]
     if not sel:
         raise RecordError("mismatch envelope over zero records")
-    rs, xs, gl, pf, pr, gc, eff, vlp, ilp, vap, iap, pdl = ([] for _ in range(12))
+    rs, xs, gl, pf, pr, gc, eff, vlp, ilp, pdl = ([] for _ in range(10))
+    vap_m, iap_m, vap_d, iap_d = ([] for _ in range(4))
+    excl_pdel, excl_eff, no_ant_peak = {}, {}, {}
     for r in sel:
+        rid = r["record_id"]
         z = r["Z_antenna"][r["Z_antenna_primary_method"]]
         rs.append(z["R_ohm"])
         xs.append(z["X_ohm"])
@@ -616,17 +733,27 @@ def mismatch_envelope(reduced, phases):
         v, i = line_peak_stress(c["P_forward_W"], c["gamma_mag_from_powers"], r["Z0_ohm"])
         vlp.append(v)
         ilp.append(i)
+        pd = r["P_delivered_W"]
+        pd_num = isinstance(pd, float)
         if "match_line_efficiency" in r:
             eff.append(r["match_line_efficiency"])
-        if isinstance(r["P_delivered_W"], float):
-            pdl.append(r["P_delivered_W"])
+        else:
+            excl_eff[rid] = "no two-port loss reduction (loss_method " + ("declared_bound" if isinstance(pd, dict)
+                                                                          else "not_available") + ")"
+        if pd_num:
+            pdl.append(pd)
+        else:
+            excl_pdel[rid] = ("declared_bound interval (not a point value)" if isinstance(pd, dict)
+                              else "not_available (TBD)")
         if "at_RP_ANT_vi" in r:
-            vap.append(r["at_RP_ANT_vi"]["V_peak_V"])
-            iap.append(r["at_RP_ANT_vi"]["I_peak_A"])
-        elif isinstance(r["P_delivered_W"], float) and z["R_ohm"] > 0:
-            ipk = math.sqrt(2 * r["P_delivered_W"] / z["R_ohm"])
-            iap.append(ipk)
-            vap.append(ipk * math.hypot(z["R_ohm"], z["X_ohm"]))
+            vap_m.append(r["at_RP_ANT_vi"]["V_peak_V"])
+            iap_m.append(r["at_RP_ANT_vi"]["I_peak_A"])
+        elif pd_num and z["R_ohm"] > 0:
+            ipk = math.sqrt(2 * pd / z["R_ohm"])
+            iap_d.append(ipk)
+            vap_d.append(ipk * math.hypot(z["R_ohm"], z["X_ohm"]))
+        else:
+            no_ant_peak[rid] = "no V/I reading and no numeric P_delivered with R > 0"
 
     def rng(v):
         return {"min": _r(min(v)), "max": _r(max(v))} if v else "TBD - no record supplies this quantity"
@@ -652,9 +779,26 @@ def mismatch_envelope(reduced, phases):
         "P_forward_W_at_RP_CPL": rng(pf), "P_reflected_W_at_RP_CPL": rng(pr), "gamma_mag_at_RP_CPL": rng(gc),
         "VSWR_max_at_RP_CPL": _r(vswr(max(gc))),
         "line_V_peak_max_V": _r(max(vlp)), "line_I_peak_max_A": _r(max(ilp)),
+        "line_peaks_note": "line peaks are referred to RP-CPL (P_forward and |Gamma| measured there) and applied to "
+                           "the whole 50-ohm run; line and feedthrough loss make |Gamma| at RP-MIN larger than at "
+                           "RP-CPL, so the stress at the feedthrough end is understated by that loss (bound from "
+                           "CAL-P2-02); stresses on the local-match internal elements are NOT in this envelope (TBD - "
+                           "requires the match topology and its element values at each tuning state)",
         "match_line_efficiency": rng(eff), "P_delivered_W": rng(pdl),
-        "antenna_V_peak_V": rng(vap), "antenna_I_peak_A": rng(iap),
-        "relations": "line peaks sqrt(2 P_fwd Z0)(1+|Gamma|), sqrt(2 P_fwd/Z0)(1+|Gamma|) (A9-07 "
-                     "recomputations.rf_reference_plane.relations.peaks); antenna peaks from V/I where measured, else "
-                     "I_pk = sqrt(2 P_delivered / R), V_pk = I_pk |Z|",
+        "antenna_peaks_vi_measured": {"V_peak_V": rng(vap_m), "I_peak_A": rng(iap_m), "n_records": len(vap_m)},
+        "antenna_peaks_derived_from_P_delivered": {"V_peak_V": rng(vap_d), "I_peak_A": rng(iap_d),
+                                                   "n_records": len(vap_d),
+                                                   "relation": "I_pk = sqrt(2 P_delivered / R), V_pk = I_pk |Z|"},
+        "coverage": {
+            "n_selected": len(sel),
+            "P_delivered_W": {"n_included": len(pdl), "excluded": dict(sorted(excl_pdel.items()))},
+            "match_line_efficiency": {"n_included": len(eff), "excluded": dict(sorted(excl_eff.items()))},
+            "antenna_peaks": {"n_vi_measured": len(vap_m), "n_derived": len(vap_d),
+                              "excluded": dict(sorted(no_ant_peak.items()))},
+            "complete": not (excl_pdel or excl_eff or no_ant_peak),
+            "note": "ranges cover only the included records; an incomplete envelope is labelled here, never silently "
+                    "partial"},
+        "relations": "line peaks sqrt(2 P_fwd Z0)(1+|Gamma|), sqrt(2 P_fwd/Z0)(1+|Gamma|) at RP-CPL (A9-07 "
+                     "recomputations.rf_reference_plane.relations.peaks); antenna peaks measured by V/I and derived "
+                     "from P_delivered are reported separately",
     }
