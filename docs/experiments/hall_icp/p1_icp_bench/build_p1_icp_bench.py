@@ -372,9 +372,10 @@ def items(ar):
            "TK-40); with the Hall discharge OFF the H-1 anode is NOT used as the sink (a positively biased H-1 anode "
            "with Ar flowing is a Hall discharge, contradicting P1-S4). Candidates: (A) a dedicated isolated "
            "downstream electron-collecting target, instrumented as terminal 'electron_collector'; (B) the grounded "
-           "chamber wall (sink = facility_ground terminal). PROPOSED: (A), because with (B) ICP emission cannot be "
-           "separated from wall / facility current paths in the Kirchhoff closure; option (A) is OWNER_DECIDED for every "
-           "ICP45_CAPACITY record by A9.4 P1Q-10 (dedicated, isolated, instrumented electron-collecting electrode); "
+           "chamber wall (sink = facility_ground terminal). Option (A) is OWNER_DECIDED for every ICP45_CAPACITY record "
+           "by A9.4 P1Q-10 (dedicated, isolated, instrumented electron-collecting electrode; consistent with this "
+           "lane's earlier reasoning that with (B) ICP emission cannot be separated from wall / facility current paths "
+           "in the Kirchhoff closure); "
            "whether (B) remains usable for non-capacity ENGINEERING_SURFACE records is P1Q-09", "-, mm, V",
            "this lane (form) + published anchor; option A for capacity records owner decision A9.4 P1Q-10",
            EVI + " TK-13, TK-40; ICD ICP-21; " + VIN + " VI-EX-03; " + A94 + " decisions.P1Q-10", None,
@@ -521,7 +522,9 @@ def items(ar):
            A95 + " decisions.P1Q-15.instrument_adequacy", "owner-stated",
            "OWNER_DECIDED (A9.5 P1Q-15)", "NOW", "P1-G1",
            "applied at the RF-ON ICP45_CAPACITY record (the candidate point); the matched RF-OFF record is tested with "
-           "the I_scale,min floor (recorder reading, P1Q-18); reported per point in capacity_point_outcomes"),
+           "the I_scale,min floor (recorder reading, P1Q-18); reported per point in capacity_point_outcomes; precedence "
+           "(recorder reading, P1Q-22): structural exclusions first, then instrument inadequacy over a statistical / "
+           "fractional closure-test failure (kept as closure_test_results_not_decisive)"),
         it("P1-IT-51", "capacity-point exclusions (retained with reason)",
            ["current sign conventions differ between channels", "an intentional return path is unmeasured",
             "an unintended ground path is found (capacity_monitoring.unintended_ground_path_found, "
@@ -530,10 +533,19 @@ def items(ar):
             "the H-1 anode is not physically disconnected/floating in an ICP45_CAPACITY record"],
            "-", "owner decision", A95 + " decisions.P1Q-15.exclusions", "owner-stated", "OWNER_DECIDED (A9.5 P1Q-15)",
            "NOW", "P1-G0",
-           "excluded points stay in the raw record; the reducer lists them in excluded_records with every reason. Two "
-           "cases are REFUSED (raised) as before, which also names the reason and never alters the raw record: a "
-           "capacity record whose anode is not floating (A9.4 P1Q-13) and synthetic / measured candidates mixed in "
-           "one evaluation (PR #34)"),
+           "excluded points stay in the raw record; the reducer lists them in excluded_records and "
+           "capacity_point_outcomes with every reason and still evaluates every other point. Exclusions, not refusals: "
+           "a registered RF-ON / RF-OFF pair that is not matched (each differing field with both values and the match "
+           "rule id, p1_reducer.facility_pair_mismatches), an H-1 anode not physically disconnected / floating in an "
+           "ICP45_CAPACITY record (A9.5 exclusion applied over the A9.4 P1Q-13 'refused' wording - recorder reading, "
+           "P1Q-21), any terminal declared NOT_MEASURED (h1_body, electron_collector, icp_body, facility_ground or any "
+           "other) and I_body->ground not continuous (intentional return path unmeasured), an unintended ground path, "
+           "differing sign conventions, missing u(I_k), and the statistical / fractional closure failures. Still "
+           "REFUSED (raised; input errors, not findings): a record that is incomplete (a required terminal or "
+           "capacity_monitoring field absent from the record, CLAUDE.md rule 3) or not a capacity record at all "
+           "(Hall ON, wrong stage, not the dedicated collector, not the single-point metered body ground, V_anode not on "
+           "a high-impedance isolated channel), a missing match rule, and synthetic / measured capacity candidates "
+           "mixed in one evaluation (PR #34)"),
     ]
 
 
@@ -874,7 +886,9 @@ def _measurements():
           "I_body->ground", "A", "ground-current monitor in the only deliberate H-1 body ground path (A9H-INS-05 "
           "class)", "H-1 body -> ground-current monitor -> facility ground (terminal h1_body)", "continuous during "
           "every ICP45_CAPACITY record (A9.4 P1Q-13); " + SAMP, ["UB-N-04"], "S3-S7H", "REQUIRED (A9.4 P1Q-13)",
-          "missing in a capacity record -> the reducer refuses the record; enters the Kirchhoff closure P1-D-13"),
+          "terminal absent from a capacity record -> the reducer refuses the record (incomplete); declared NOT_MEASURED "
+          "or not continuous -> the capacity point is excluded (intentional return path unmeasured, A9.5 P1Q-15); "
+          "enters the Kirchhoff closure P1-D-13"),
     ]
 
 
@@ -928,12 +942,20 @@ def derived():
          "formula": "independent channels: u_R = sqrt(sum_k u^2(I_k)), u(I_k) = sqrt(u_cal^2 + u_zero^2 + u_res^2 "
                     "(+ u_rep^2) (+ u_pickup^2)); correlated channels: u_R^2 = sum_ij r_ij u(I_i) u(I_j) with the "
                     "registered correlation (full covariance form)",
+         "basis": "u_R forms: owner (A9.5 P1Q-15). The root-sum-square combination of the five listed components "
+                  "into u(I_k) is a LANE CHOICE (the owner lists the components, not how they combine; owner "
+                  "question P1Q-23)",
          "source": A95 + " decisions.P1Q-15.uncertainty"},
         {"id": "P1-D-15", "quantity": "instrument adequacy and I_e,cap channel uncertainty",
          "formula": "adequate iff 3 u_R <= 0.02 I_e,collector at the RF-ON candidate point (else "
                     "NOT_EVALUATED_INSTRUMENT); u(I_e,cap)_channels = sqrt(u^2(I_col,RFON) + u^2(I_col,RFOFF)) reported "
                     "beside the preregistered margin-rule u_I_e_A (which is the value used in M_n; flag when smaller, "
-                    "P1Q-19)", "source": A95 + " decisions.P1Q-15.instrument_adequacy, P1Q-16; " + A91 + " UBQ-02"},
+                    "P1Q-19)",
+         "basis": "adequacy test: owner (A9.5 P1Q-15). u(I_e,cap)_channels treats the RF-ON and RF-OFF readings of the "
+                  "same collector channel as independent - a LANE CHOICE (their calibration terms are largely "
+                  "common-mode, so it may overstate the difference uncertainty); reported only, never used in M_n "
+                  "(owner question P1Q-23)",
+         "source": A95 + " decisions.P1Q-15.instrument_adequacy, P1Q-16; " + A91 + " UBQ-02"},
         {"id": "P1-D-11", "quantity": "I_e surface", "formula": "table of I_e against (P_RF, p, mdot, Z_ICP, "
          "V_collector)", "source": A93 + " OQ-A907-02"},
     ]
@@ -1408,14 +1430,18 @@ def owner_answers_applied():
          "path unmeasured); u(I_k) components required (P1-IT-49), independent and full-covariance u_R (P1-D-14); "
          "admission |R_I| <= 3 u_R AND |R_I| / max(I_e,collector, I_scale,min) <= 0.02 with 3 and 0.02 hard-coded "
          "owner constants (a closure_rule that tries to set them is refused) and I_scale,min a registered input "
-         "(P1-IT-48); NOT_EVALUATED_INSTRUMENT per point (P1-IT-50); exclusions with reasons (P1-IT-51; "
-         "unintended-ground-path field defined); the earlier residual_rel_tol rule removed; P1Q-15 removed from the "
-         "open list"),
+         "(P1-IT-48); NOT_EVALUATED_INSTRUMENT per point (P1-IT-50; precedence P1Q-22); exclusions with reasons "
+         "(P1-IT-51; unintended-ground-path field defined): a registered pair that is not matched and a non-floating "
+         "anode in a capacity record are per-point exclusions that keep their reasons (never an abort of the "
+         "reduction; anode precedence over A9.4 P1Q-13 in P1Q-21), and every terminal declared NOT_MEASURED is "
+         "excluded uniformly; the earlier residual_rel_tol rule removed; P1Q-15 removed from the open list"),
         ("A9.5 P1Q-16", A95 + " decisions.P1Q-16 (OWNER_CONFIRMED - CAPACITY_FORMULA)",
          "ANSWERED: I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF confirmed (P1-IT-38); signed currents, no "
          "absolute-value correction, no zero-clipping (p1_reducer.i_e_cap_signed; a negative value stays negative and "
          "is flagged I_E_CAP_NEGATIVE); Hall-ON stays NEUTRALIZATION_CONSISTENCY; eligibility conditions (1)-(4) "
-         "reported per point; ICP45 = NOT_EVALUATED until all four exist; the margin rule's preregistered u_I_e_A is "
+         "reported per point; ICP45 = NOT_EVALUATED until all four exist (a margin-rule u_I_e_A / u_I_d_max_A that is "
+         "absent, None or 0 gives NOT_EVALUATED with condition 3 false, never a raise); the margin rule's "
+         "preregistered u_I_e_A is "
          "kept as the I_e,cap uncertainty used in M_n and the channel-propagated value is reported beside it (P1-D-15, "
          "P1Q-19); P1Q-16 removed from the open list"),
         ("A9.5 execution", A95 + " execution", "carried A9.4 minors fixed: P1-S4 collector wording OWNER_DECIDED "
@@ -1486,8 +1512,11 @@ def open_questions():
          "I_e,cap uncertainty in M_n; the reducer also reports sqrt(u^2(I_col,RFON) + u^2(I_col,RFOFF)) from the "
          "channel uncertainties and flags REGISTERED_u_I_e_BELOW_CHANNEL_PROPAGATION when the registered value is "
          "smaller. Should the preregistration require u_I_e_A >= the channel-propagated value (or use the larger of "
-         "the two)?", "proposed_answer": "owner call; PROPOSED: register u_I_e_A no smaller than the channel "
-         "propagation (it then also covers any non-channel terms), frozen before the first P1-S7 point",
+         "the two)? Also: the reducer treats a registered u_I_e_A or u_I_d_max_A that is absent, None or 0 as "
+         "'not available' (A9.5 P1Q-16 condition 3 false -> ICP45 = NOT_EVALUATED), reading a zero standard "
+         "uncertainty of a measured / registered current as no uncertainty statement. Confirm?", "proposed_answer":
+         "owner call; PROPOSED: register u_I_e_A no smaller than the channel propagation (it then also covers any "
+         "non-channel terms), frozen before the first P1-S7 point; YES to zero = not available",
          "needed_by": "P1-S7 entry"},
         {"id": "P1Q-20", "question": "A9.5 states I_anode ~ 0 'by construction'. The reducer gives every "
          "OPEN_CIRCUIT_BY_CONSTRUCTION terminal (floating anode, open ICP body) I = 0 and u = 0. Should the insulation "
@@ -1495,6 +1524,31 @@ def open_questions():
          "instead of 0?", "proposed_answer": "owner call; PROPOSED: YES when the recorded leakage at the operating "
          "potential is not negligible against u_R; register it as a u_zero_offset_A of the anode terminal",
          "needed_by": "before the first ICP45_CAPACITY record (P1-G0)"},
+        {"id": "P1Q-21", "question": "A9.4 P1Q-13 says an ICP45_CAPACITY record whose H-1 anode is not physically "
+         "disconnected / floating is 'refused, never merely flagged'; A9.5 P1Q-15 lists the same case as an "
+         "exclusion whose point 'remains in the raw record with the exclusion reason'. Recorder reading implemented: "
+         "A9.5 (the later owner decision) governs - the point is excluded with its reason, never admitted, and the "
+         "other points of the bundle are still evaluated; non-capacity records keep the A9.4 refusal of an OFF supply "
+         "left connected. Confirm?", "proposed_answer": "YES (the point can never feed I_e,cap either way; the "
+         "exclusion keeps the raw record and does not abort the other points)", "needed_by":
+         "before the first ICP45_CAPACITY record (P1-G0)"},
+        {"id": "P1Q-22", "question": "Outcome precedence at a capacity point that is instrument-inadequate "
+         "(3 u_R > 0.02 I_e,collector) and also fails the statistical or fractional closure. Recorder reading "
+         "implemented: structural exclusions first (pairing, anode, unmeasured return path, ground path, sign "
+         "convention, missing u(I_k), mixed evidence); otherwise NOT_EVALUATED_INSTRUMENT takes precedence over the "
+         "closure-test failure, which is kept as closure_test_results_not_decisive (when the instrument cannot "
+         "resolve 2 %, a fractional failure is expected and should not point the laboratory at a ground-path "
+         "problem). Confirm?", "proposed_answer": "YES", "needed_by": "before the first ICP45_CAPACITY record "
+         "(P1-G0)"},
+        {"id": "P1Q-23", "question": "Two uncertainty combinations are lane choices, not owner text: (a) u(I_k) = "
+         "root-sum-square of the five listed components (calibration, zero/offset, resolution, repeatability where "
+         "applicable, registered RF-pickup) (P1-D-14); (b) the reported u(I_e,cap)_channels = sqrt(u^2(I_col,RFON) + "
+         "u^2(I_col,RFOFF)) treats the RF-ON and RF-OFF readings of the same collector channel as independent, "
+         "although their calibration terms are largely common-mode (P1-D-15; reported only, never used in M_n). "
+         "Adopt, or register other forms (e.g. a registered RF-ON / RF-OFF correlation)?", "proposed_answer":
+         "owner call; PROPOSED: (a) YES (GUM-style combination of independent components); (b) register the "
+         "RF-ON / RF-OFF correlation of the collector channel with the channel calibration before the first "
+         "P1-S7 point and use the correlated form", "needed_by": "P1-S7 entry"},
     ]
 
 
@@ -1589,6 +1643,11 @@ def a9_5_incorporation():
             "rule": "applied exactly (no redesign): only what A9.5 decides changed; ids and verified behaviour kept",
             "answered": {q: a95["decisions"][q]["status"] for q in ("P1Q-15", "P1Q-16")},
             "items_changed": ["P1-IT-36", "P1-IT-38", "P1-IT-40", "P1-IT-42", "P1-IT-47"],
+            "review_repair": "adversarial review round 1: pairing mismatch and non-floating anode made per-point "
+                             "exclusions with reasons; NOT_MEASURED terminals excluded uniformly; missing / zero "
+                             "margin-rule uncertainties -> NOT_EVALUATED (condition 3); instrument-inadequacy "
+                             "precedence; lane-choice uncertainty combinations labelled; new owner questions "
+                             "P1Q-21..P1Q-23",
             "items_added": ["P1-IT-48", "P1-IT-49", "P1-IT-50", "P1-IT-51"],
             "derived_added": ["P1-D-14", "P1-D-15"],
             "reducer": {"owner_constants": {"CLOSURE_K_SIGMA": red.CLOSURE_K_SIGMA,

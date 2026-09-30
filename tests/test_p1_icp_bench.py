@@ -956,14 +956,20 @@ def test_a94_schema_carries_record_class_and_capacity_monitoring(red):
 
 def test_a94_capacity_record_refusals(red):
     red.validate_operating_point(synth_cap("SYNTH-CAP-OK", 1.0))
+    # A9.5 P1Q-15 turns a non-floating anode in an ICP45_CAPACITY record into an EXCLUSION of the point (kept with
+    # its reason; test_a95_anode_not_floating_is_excluded_not_aborting): validation no longer raises for it
     bad = synth_cap("SYNTH-CAP-MET", 1.0)
     bad["h1_electrical"]["anode_state"] = "METERED_RETURN"
     bad["terminals"]["hall_anode"] = {"I_A": 0.0, "basis": "MEASURED"}
-    with pytest.raises(red.CapacityConfigurationError):              # refused, not merely flagged
-        red.validate_operating_point(bad)
+    red.validate_operating_point(bad)
+    assert "not physically disconnected" in " ".join(red.capacity_structural_reasons(bad))
     bad = synth_cap("SYNTH-CAP-CONN", 1.0)
     bad["h1_electrical"]["discharge_supply_connection"] = "CONNECTED"
-    with pytest.raises(red.CapacityConfigurationError):
+    red.validate_operating_point(bad)
+    assert "not physically disconnected" in " ".join(red.capacity_structural_reasons(bad))
+    bad = synth_cap("SYNTH-CAP-NOSUPPLYSTATE", 1.0)
+    bad["h1_electrical"]["discharge_supply_connection"] = "COMMANDED_ZERO"
+    with pytest.raises(red.P1RecordError):                           # not a recorded connection state at all
         red.validate_operating_point(bad)
     for k in ("h1_body_ground_config", "I_body_to_ground_continuous", "V_anode_channel", "V_icp_body_V",
               "V_electron_collector_V", "sign_convention_id"):
@@ -971,7 +977,7 @@ def test_a94_capacity_record_refusals(red):
         del bad["capacity_monitoring"][k]
         with pytest.raises(red.CapacityConfigurationError):
             red.validate_operating_point(bad)
-    for k, v in (("h1_body_ground_config", "TWO_GROUND_PATHS"), ("I_body_to_ground_continuous", False),
+    for k, v in (("h1_body_ground_config", "TWO_GROUND_PATHS"), ("I_body_to_ground_continuous", "yes"),
                  ("V_anode_channel", "SCOPE_PROBE")):
         bad = synth_cap("SYNTH-CAP-V-" + k, 1.0)
         bad["capacity_monitoring"][k] = v
@@ -1143,6 +1149,12 @@ def test_a95_pinned_and_recorded(doc):
     work = " ".join(s4["work"])
     assert "PROPOSED" not in work and "OWNER_DECIDED, A9.4 P1Q-10" in work       # carried A9.4 minor fixed
     assert "PROPOSED option A" not in json.dumps(items["P1-IT-36"])
+    assert "PROPOSED: (A)" not in items["P1-IT-36"]["value"] and "PROPOSED" not in items["P1-IT-36"]["value"]
+    assert "Two cases are REFUSED" not in json.dumps(items["P1-IT-51"]) and "P1Q-21" in json.dumps(items["P1-IT-51"])
+    qs = {q["id"] for q in doc["open_owner_questions"]}
+    assert {"P1Q-21", "P1Q-22", "P1Q-23"} <= qs and "P1Q-15" not in qs and "P1Q-16" not in qs
+    dq = {d["id"]: d for d in doc["derived_quantities"]}
+    assert "LANE CHOICE" in dq["P1-D-14"]["basis"] and "LANE CHOICE" in dq["P1-D-15"]["basis"]
     d13 = {d["id"]: d for d in doc["derived_quantities"]}
     assert "3 u_R" in d13["P1-D-13"]["formula"] and "P1-D-14" in d13 and "P1-D-15" in d13
 
@@ -1336,7 +1348,9 @@ def test_a95_eligibility_conditions(red):
     assert ic["status"] == "EVALUATED_ENGINEERING_ONLY"
     assert ic["eligibility"] == {"1_capacity_point_passes_current_closure": True,
                                  "2_matched_rf_off_correction_valid": True,
-                                 "3_required_channel_uncertainties_available": True, "4_I_d_max_H1_registered": True}
+                                 "3_required_channel_uncertainties_available": True,
+                                 "3_required_margin_rule_uncertainties_available": True,
+                                 "4_I_d_max_H1_registered": True}
     assert ic["u_I_e_cap_from_channels_A"] == pytest.approx(math.sqrt(2.0) * U1)
     assert ic["u_I_e_cap_used_A"] == RULE["u_I_e_A"]
     # (1) closure fails
@@ -1348,15 +1362,25 @@ def test_a95_eligibility_conditions(red):
     reg = dict(REG, I_d_max_H1_A=2.0)
     ic2 = red.reduce_operating_points([on, off], reg, RULE, None, MATCH, CLOSE)["summary"]["icp45a"]
     assert ic2["status"] == "NOT_EVALUATED" and "pairing not matched" in _reasons(ic2, "SYNTH-E-ON")
-    # (3) channel uncertainty missing; margin-rule uncertainty missing is refused (no hidden default)
+    # (3) channel uncertainty missing; margin-rule uncertainty missing / None / zero -> NOT_EVALUATED with condition
+    # (3) false (A9.5 P1Q-16 'until all four exist: ICP45 = NOT_EVALUATED'; no hidden default, no raise)
     miss = copy.deepcopy(on)
     del miss["terminals"]["collector_supply"]["uncertainty"]
     assert _ic(red, miss, off)["status"] == "NOT_EVALUATED"
     for k in ("u_I_e_A", "u_I_d_max_A"):
-        mr = dict(RULE)
-        del mr[k]
-        with pytest.raises(red.MissingInputError):
-            _ic(red, on, off, margin=mr)
+        for how in ("del", None, 0.0):
+            mr = dict(RULE)
+            if how == "del":
+                del mr[k]
+            else:
+                mr[k] = how
+            icm = _ic(red, on, off, margin=mr)
+            assert icm["status"] == "NOT_EVALUATED" and icm["condition_met"] is None, (k, how)
+            assert icm["eligibility"]["3_required_margin_rule_uncertainties_available"] is False
+            assert "condition (3)" in icm["reason"] and k in icm["reason"]
+            assert "M_n" not in icm and "M_n_lower" not in icm
+        with pytest.raises(red.P1RecordError):                         # a negative value is an input error
+            _ic(red, on, off, margin=dict(RULE, **{k: -0.01}))
     # (4) I_d,max,H1 not registered
     ic4 = red.reduce_operating_points([on, off], None, None, [["SYNTH-E-ON", "SYNTH-E-OFF"]], MATCH,
                                       CLOSE)["summary"]["icp45a"]
@@ -1391,12 +1415,137 @@ def test_a95_exclusions_ground_path_sign_and_mixed(red):
     on, off = _pair(tag="MX")
     off["synthetic"] = True
     assert "synthetic and measured evidence mixed" in _reasons(_ic(red, on, off), "SYNTH-MX-ON")
-    # the anode rule stays a refusal for ICP45_CAPACITY records (A9.4 P1Q-13) and names the reason
+    # the anode rule is an A9.5 exclusion of the capacity point (kept with reason), no longer an abort
     on, off = _pair(tag="AN")
     on["h1_electrical"]["anode_state"] = "METERED_RETURN"
     on["terminals"]["hall_anode"] = _meas(0.0)
-    with pytest.raises(red.CapacityConfigurationError, match="anode"):
-        _ic(red, on, off)
+    off["h1_electrical"]["anode_state"] = "METERED_RETURN"
+    off["terminals"]["hall_anode"] = _meas(0.0)
+    ic = _ic(red, on, off)
+    assert ic["status"] == "NOT_EVALUATED" and "not physically disconnected / floating" in _reasons(ic, "SYNTH-AN-ON")
+    assert {"record_id": "SYNTH-AN-ON", "outcome": "EXCLUDED"} in ic["capacity_point_outcomes"]
+
+
+def _two_pairs(red, mutate_off):
+    """One valid measured pair (A) next to a second measured pair (B) whose RF-OFF record is mutated."""
+    on_a, off_a = _pair(tag="PA")
+    on_b, off_b = _pair(on_ie=3.5, off_ie=0.2, tag="PB")
+    mutate_off(on_b, off_b)
+    reg = dict(REG, I_d_max_H1_A=2.0)
+    pairs = [["SYNTH-PA-ON", "SYNTH-PA-OFF"], ["SYNTH-PB-ON", "SYNTH-PB-OFF"]]
+    return red.reduce_operating_points([on_a, off_a, on_b, off_b], reg, RULE, pairs, MATCH, CLOSE)
+
+
+def test_a95_pair_mismatch_is_excluded_not_aborting(red):
+    """Reviewer repro: a registered pair that is not matched excludes its point with the mismatch reason; the other
+    (valid) pair is still evaluated and the reduction does not abort."""
+    def p10(on, off):
+        off["pressures"]["p_chamber_Pa"] = 0.02                         # 0.02 vs 0.01 Pa: outside the 5 % rule
+
+    def vcol(on, off):
+        off["collector"]["V_collector_V"] = -30.0                       # -30 V vs -40 V: different V_collector
+
+    for mut, needle in ((p10, "p_chamber differs by 0.5"), (vcol, "collector.V_collector_V differs")):
+        out = _two_pairs(red, mut)
+        ic = out["summary"]["icp45a"]
+        assert ic["status"] == "EVALUATED_ENGINEERING_ONLY" and ic["I_e_cap_record"] == "SYNTH-PA-ON"
+        assert [c["record_id"] for c in ic["candidates"]] == ["SYNTH-PA-ON"]
+        r = _reasons(ic, "SYNTH-PB-ON")
+        assert "RF-ON/RF-OFF pairing not matched" in r and needle in r and "SYNTH-MATCH-RULE" in r
+        assert {"record_id": "SYNTH-PB-ON", "outcome": "EXCLUDED"} in ic["capacity_point_outcomes"]
+        ex = [e for e in ic["excluded_records"] if e["record_id"] == "SYNTH-PB-ON"][0]
+        assert ex["eligibility"]["2_matched_rf_off_correction_valid"] is False
+        assert ex["rf_off_record_id"] == "SYNTH-PB-OFF"
+        fcs = {tuple(f["records"]): f for f in out["facility_electron_checks"]}
+        assert fcs[("SYNTH-PB-ON", "SYNTH-PB-OFF")]["pair_matched"] is False
+        assert needle in " ".join(fcs[("SYNTH-PB-ON", "SYNTH-PB-OFF")]["mismatch_reasons"])
+        assert fcs[("SYNTH-PA-ON", "SYNTH-PA-OFF")]["pair_matched"] is True
+        assert len(out["surface"]) == 4                                 # raw records all kept
+    # direct call on a mismatched pair still raises (no facility correction exists for it)
+    on, off = _pair(tag="PD")
+    off["pressures"]["p_chamber_Pa"] = 0.02
+    with pytest.raises(red.P1RecordError, match="p_chamber differs"):
+        red.facility_electron_check(on, off, MATCH)
+    # a missing match rule is an input error, not a finding
+    with pytest.raises(red.MissingInputError):
+        red.reduce_operating_points([on, off], dict(REG, I_d_max_H1_A=2.0), RULE, [["SYNTH-PD-ON", "SYNTH-PD-OFF"]],
+                                    None, CLOSE)
+
+
+def test_a95_anode_not_floating_is_excluded_not_aborting(red):
+    """Reviewer repro: discharge_supply_connection CONNECTED (or a non-floating anode) on an ICP45_CAPACITY record
+    excludes that point with the reason; other points are still evaluated."""
+    def conn(on, off):
+        for r_ in (on, off):
+            r_["h1_electrical"]["discharge_supply_connection"] = "CONNECTED"
+
+    def anode(on, off):
+        for r_ in (on, off):
+            r_["h1_electrical"]["anode_state"] = "CONNECTED_TO_DISCHARGE_SUPPLY"
+            r_["h1_electrical"]["discharge_supply_connection"] = "CONNECTED"
+            r_["terminals"]["hall_anode"] = _meas(0.0)
+
+    for mut in (conn, anode):
+        ic = _two_pairs(red, mut)["summary"]["icp45a"]
+        assert ic["status"] == "EVALUATED_ENGINEERING_ONLY" and ic["I_e_cap_record"] == "SYNTH-PA-ON"
+        r = _reasons(ic, "SYNTH-PB-ON")
+        assert "H-1 anode not physically disconnected / floating" in r
+        ex = [e for e in ic["excluded_records"] if e["record_id"] == "SYNTH-PB-ON"][0]
+        assert ex["outcome"] == "EXCLUDED" and ex["eligibility"]["1_capacity_point_passes_current_closure"] is False
+    # without a closure rule the anode reason is still reported
+    on, off = _pair(tag="AR")
+    conn(on, off)
+    ic = red.reduce_operating_points([on, off], dict(REG, I_d_max_H1_A=2.0), RULE, [["SYNTH-AR-ON", "SYNTH-AR-OFF"]],
+                                     MATCH)["summary"]["icp45a"]
+    assert "not physically disconnected / floating" in _reasons(ic, "SYNTH-AR-ON")
+    # a non-capacity record keeps the A9.4 refusal (supply OFF left connected)
+    rec = synth_op()
+    rec["h1_electrical"]["discharge_supply_connection"] = "CONNECTED"
+    with pytest.raises(red.CapacityConfigurationError):
+        red.validate_operating_point(rec)
+
+
+def test_a95_unmeasured_return_paths_excluded_uniformly(red):
+    """h1_body / electron_collector / icp_body / facility_ground declared NOT_MEASURED, or I_body->ground not
+    continuous: every case is excluded with 'intentional return path unmeasured' (never zeroed, never refused)."""
+    for name in ("h1_body", "electron_collector", "facility_ground"):
+        on, off = _pair(tag="R" + name[:2].upper())
+        on["terminals"][name] = {"I_A": None, "basis": "NOT_MEASURED"}
+        red.validate_operating_point(on)
+        ic = _ic(red, on, off)
+        assert ic["status"] == "NOT_EVALUATED", name
+        assert "intentional return path unmeasured: terminal %r" % name in _reasons(ic, on["record_id"]), name
+    on, off = _pair(tag="RIC")
+    on["terminals"]["icp_body"] = {"I_A": None, "basis": "NOT_MEASURED"}
+    assert "terminal 'icp_body' declared NOT_MEASURED" in _reasons(_ic(red, on, off), "SYNTH-RIC-ON")
+    on, off = _pair(tag="RCT")
+    on["capacity_monitoring"]["I_body_to_ground_continuous"] = False
+    red.validate_operating_point(on)
+    assert "I_body->ground not measured continuously" in _reasons(_ic(red, on, off), "SYNTH-RCT-ON")
+    bad, _ = _pair(tag="RAB")
+    del bad["terminals"]["h1_body"]                                    # absent from the record: incomplete -> refused
+    with pytest.raises(red.CapacityConfigurationError):
+        red.validate_operating_point(bad)
+
+
+def test_a95_instrument_inadequacy_precedence(red):
+    """3 u_R > 0.02 I_e,collector and a closure-test failure -> NOT_EVALUATED_INSTRUMENT (failure kept, not decisive);
+    a structural exclusion keeps precedence over inadequacy."""
+    on, off = _pair(on_ie=0.2, off_ie=0.0, tag="IP")
+    on["terminals"]["h1_body"]["I_A"] = -0.01                          # |R_I| = 0.01 A > 3 u_R and > 2 % of 0.2 A
+    ev = red.kirchhoff_closure(on, CLOSE)
+    assert ev["closure_valid"] is False and ev["instrument_adequate"] is False
+    ic = _ic(red, on, off)
+    assert ic["status"] == "NOT_EVALUATED"
+    ni = ic["not_evaluated_instrument_records"]
+    assert [x["record_id"] for x in ni] == ["SYNTH-IP-ON"]
+    assert any("statistical closure fails" in x for x in ni[0]["closure_test_results_not_decisive"])
+    assert "P1Q-22" in ni[0]["precedence"]
+    assert not any(e["record_id"] == "SYNTH-IP-ON" for e in ic["excluded_records"])
+    on, off = _pair(on_ie=0.2, off_ie=0.0, tag="IQ")
+    on["capacity_monitoring"]["unintended_ground_path_found"] = True     # structural: excluded
+    ic = _ic(red, on, off)
+    assert {"record_id": "SYNTH-IQ-ON", "outcome": "EXCLUDED"} in ic["capacity_point_outcomes"]
 
 
 def test_a95_schema_and_hall_on(red):
