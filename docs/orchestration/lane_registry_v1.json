@@ -1236,6 +1236,72 @@
    "id": "fo_a9_5_closure_rule",
    "kind": "follow_on",
    "title": "Apply A9.5 (P1Q-15 Kirchhoff closure rule, P1Q-16 capacity formula) to the P1 bench; fix the carried A9.4 minors in P1/P2"
+  },
+  {
+   "id": "fo_a9_6_p3_coupled_thermal",
+   "kind": "follow_on",
+   "title": "A9.6 implementation-first: P3 coupled thermal framework (sec. 10)",
+   "verification": "deferred to fo_a9_6_consolidated_verification (A9.6 sec. 17-18)"
+  },
+  {
+   "id": "fo_a9_6_p4_anode_materials",
+   "kind": "follow_on",
+   "title": "A9.6 implementation-first: P4 anode/collector materials framework (sec. 10)",
+   "verification": "deferred to fo_a9_6_consolidated_verification (A9.6 sec. 17-18)"
+  },
+  {
+   "id": "fo_a9_6_mass_power_integration",
+   "kind": "follow_on",
+   "title": "A9.6 implementation-first: mass BOM + power integration for the current architecture (sec. 11)",
+   "verification": "deferred to fo_a9_6_consolidated_verification (A9.6 sec. 17-18)"
+  },
+  {
+   "id": "fo_a9_6_xe_accounting",
+   "kind": "follow_on",
+   "title": "A9.6 implementation-first: complete Xe accounting (sec. 12)",
+   "verification": "deferred to fo_a9_6_consolidated_verification (A9.6 sec. 17-18)"
+  },
+  {
+   "id": "fo_a9_6_rfq_completion",
+   "kind": "follow_on",
+   "title": "A9.6 implementation-first: complete RFQ packages (sec. 13)",
+   "verification": "deferred to fo_a9_6_consolidated_verification (A9.6 sec. 17-18)"
+  },
+  {
+   "id": "fo_a9_6_p1_workflow_completion",
+   "kind": "follow_on",
+   "title": "A9.6 implementation-first: complete P1 workflow + fail-closed reducer (sec. 8, 14)",
+   "verification": "deferred to fo_a9_6_consolidated_verification (A9.6 sec. 17-18)"
+  },
+  {
+   "id": "fo_a9_6_p2_framework_completion",
+   "kind": "follow_on",
+   "title": "A9.6 implementation-first: complete P2 framework (sec. 9, 14)",
+   "verification": "deferred to fo_a9_6_consolidated_verification (A9.6 sec. 17-18)"
+  },
+  {
+   "id": "fo_a9_6_rvm",
+   "kind": "follow_on",
+   "title": "A9.6 implementation-first: system requirement-verification matrix (sec. 15)",
+   "verification": "deferred to fo_a9_6_consolidated_verification (A9.6 sec. 17-18)"
+  },
+  {
+   "id": "fo_a9_6_decision_propagation",
+   "kind": "follow_on",
+   "title": "A9.6 implementation-first: propagate decided questions; owner-question state v4 (sec. 5-7)",
+   "verification": "deferred to fo_a9_6_consolidated_verification (A9.6 sec. 17-18)"
+  },
+  {
+   "id": "fo_a9_6_m16_refresh",
+   "kind": "follow_on",
+   "title": "A9.6 implementation-first: M16 refresh after implementation (sec. 16)",
+   "verification": "deferred to fo_a9_6_consolidated_verification (A9.6 sec. 17-18)"
+  },
+  {
+   "id": "fo_a9_6_consolidated_verification",
+   "kind": "follow_on",
+   "title": "A9.6 implementation-first: one consolidated verification campaign (sec. 18)",
+   "verification": "deferred to fo_a9_6_consolidated_verification (A9.6 sec. 17-18)"
   }
  ],
  "owner_dispositions": [
@@ -1339,6 +1405,18 @@
    },
    "decision_states": {
     "A9_5_P1_CLOSURE_DECISIONS_RECORDED": "approved"
+   },
+   "immutability": "never edited after commit; later owner amendments are new addendum files"
+  },
+  {
+   "id": "od_a9_6_implementation_first",
+   "file": "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json",
+   "states": {
+    "pending": "no disposition file",
+    "approved": "decision A9_6_IMPLEMENTATION_FIRST_DIRECTIVE_RECORDED"
+   },
+   "decision_states": {
+    "A9_6_IMPLEMENTATION_FIRST_DIRECTIVE_RECORDED": "approved"
    },
    "immutability": "never edited after commit; later owner amendments are new addendum files"
   }
