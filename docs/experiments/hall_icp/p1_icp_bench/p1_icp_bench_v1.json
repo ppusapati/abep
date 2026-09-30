@@ -10,6 +10,9 @@
  "companion_document": "docs/experiments/hall_icp/p1_icp_bench/P1_ICP_BENCH.md",
  "record_schema": "docs/experiments/hall_icp/p1_icp_bench/p1_bench_record_schema_v1.json",
  "reducer": "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py",
+ "campaign_driver": "docs/experiments/hall_icp/p1_icp_bench/p1_campaign.py",
+ "campaign_cli": "docs/experiments/hall_icp/p1_icp_bench/p1_campaign_cli.py",
+ "campaign_report_schema": "docs/experiments/hall_icp/p1_icp_bench/p1_campaign_report_schema_v1.json",
  "test": "tests/test_p1_icp_bench.py",
  "what_it_is_not": [
   "not a prediction (no Hall closure admitted; abep_sim/plasma_devices.py superseded; v1.2-v1.6 numbers withdrawn)",
@@ -82,6 +85,16 @@
    "path": "docs/decisions/OD_2026_09_30_A9_5_P1_CLOSURE_OWNER_DECISIONS.md",
    "sha256": "9e49e923328441c1fc82afd3eb64c13d85fc818e8fe534576ada61a16fa525f3",
    "role": "owner A9.5 verbatim (P1Q-15 Kirchhoff closure rule, P1Q-16 capacity formula)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json",
+   "sha256": "d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327",
+   "role": "owner A9.6 implementation-first directive (machine-readable; sec. 2 magnitude form, sec. 8 / 14 P1 workflow)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md",
+   "sha256": "c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634",
+   "role": "owner A9.6 verbatim (sec. 2 P1Q-15 / P1Q-16, sec. 5-7 derived vs TBD_OWNER, sec. 8 P1 workflow, sec. 14 reducers)"
   },
   {
    "path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
@@ -315,7 +328,10 @@
    "point_outcomes": [
     "CLOSURE_VALID_CANDIDATE",
     "NOT_EVALUATED_INSTRUMENT",
-    "EXCLUDED"
+    "NOT_EVALUATED_UNCERTAINTY",
+    "NOT_EVALUATED_REGISTRATION",
+    "EXCLUDED",
+    "OUT_OF_DOMAIN"
    ],
    "icp45_statuses": [
     "NOT_EVALUATED",
@@ -330,6 +346,788 @@
   ],
   "execution_note": "no merge to main is authorized by this addendum (the A9.4 one-merge authorization was consumed by PR #34)",
   "m16_impact_change": "none: A9.5 changes no M16 v3 row state (ICP electron-current capacity stays PENDING_ICP45; ICP45 = NOT_EVALUATED)"
+ },
+ "a9_6_incorporation": {
+  "follow_on": "fo_a9_6_p1_workflow_completion",
+  "trigger": "A9.6 wave 2 (lane A9_6_P1C)",
+  "base_commit": "1d67f99f88007982eff77670b64c6eb7c595bccd",
+  "decision": {
+   "path": "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json",
+   "sha256": "d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327"
+  },
+  "verbatim": {
+   "path": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md",
+   "sha256": "c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634"
+  },
+  "lane_scope": "complete P1 workflow + fail-closed reducer (sec. 8, 14)",
+  "gap_audit": [
+   {
+    "id": "G-01",
+    "a9_6_requirement": "sec. 8 P1-G0",
+    "gap_at_base": "P1-S0 existed only as a stage description: no record template or reducer for the interlocks, the 1.05 kV / 60 s DWV, the ICPQ-06 gas-line rule or the Ar MFC rule",
+    "closure": "record kind p1_g0_readiness + p1_reducer.reduce_readiness (G0_STATUSES; never PASS)",
+    "state": "CLOSED_IN_IMPLEMENTATION (formal verification deferred to the A9.6 sec. 18 campaign)"
+   },
+   {
+    "id": "G-02",
+    "a9_6_requirement": "sec. 8 RF cold checkout",
+    "gap_at_base": "no P1-S1 / P1-S2 record or reducer; the UB-RF-08 calorimetric cross-check was not computed; a MEASURED line/match loss was accepted without a verified characterization",
+    "closure": "record kind rf_cold_checkout + reduce_rf_cold_checkout (z_x, RF_CHAIN_STATUSES, verified loss ids)",
+    "state": "CLOSED_IN_IMPLEMENTATION (formal verification deferred to the A9.6 sec. 18 campaign)"
+   },
+   {
+    "id": "G-03",
+    "a9_6_requirement": "sec. 8 ICP ignition",
+    "gap_at_base": "no ignition record; ignition repeatability entered only as a free dict",
+    "closure": "record kind ignition_attempt + reduce_ignition (per-point success fraction P1-D-09)",
+    "state": "CLOSED_IN_IMPLEMENTATION (formal verification deferred to the A9.6 sec. 18 campaign)"
+   },
+   {
+    "id": "G-04",
+    "a9_6_requirement": "sec. 5 / 14 photodiode",
+    "gap_at_base": "the optical channel P1-M-28 was not part of any P1 record; no UNCERTAIN state",
+    "closure": "classify_plasma_state (A9.4 P2Q-05 classes); required on ignition and installed-antenna records, optional on operating points; surface column plasma_state",
+    "state": "CLOSED_IN_IMPLEMENTATION (formal verification deferred to the A9.6 sec. 18 campaign)"
+   },
+   {
+    "id": "G-05",
+    "a9_6_requirement": "sec. 8 stable region",
+    "gap_at_base": "dwells were ad hoc bundle entries; no P2 handoff record",
+    "closure": "record kind stability_dwell + stable_region_handoff (IF-P1-01 -> IDP2-01)",
+    "state": "CLOSED_IN_IMPLEMENTATION (formal verification deferred to the A9.6 sec. 18 campaign)"
+   },
+   {
+    "id": "G-06",
+    "a9_6_requirement": "sec. 8 Hall-ON consistency after capacity",
+    "gap_at_base": "consistency rows were produced without checking that capacity had been shown at the same registered point",
+    "closure": "campaign entry rule; rows otherwise OUT_OF_DOMAIN",
+    "state": "CLOSED_IN_IMPLEMENTATION (formal verification deferred to the A9.6 sec. 18 campaign)"
+   },
+   {
+    "id": "G-07",
+    "a9_6_requirement": "sec. 8 raw data schemas",
+    "gap_at_base": "no campaign driver or report schema; the bundle reducer aborted on the first invalid record, so a raw record could be absent from any result",
+    "closure": "p1_campaign.run_campaign + p1_campaign_cli.py + p1_campaign_report_schema_v1.json (raw records verbatim, disposition and reasons for each)",
+    "state": "CLOSED_IN_IMPLEMENTATION (formal verification deferred to the A9.6 sec. 18 campaign)"
+   },
+   {
+    "id": "G-08",
+    "a9_6_requirement": "sec. 2",
+    "gap_at_base": "denominator and instrument adequacy used the signed I_e,collector",
+    "closure": "max(|I_e,collector|, I_scale,min); 3 u_R <= 0.02 |I_e,collector|",
+    "state": "CLOSED_IN_IMPLEMENTATION (formal verification deferred to the A9.6 sec. 18 campaign)"
+   },
+   {
+    "id": "G-09",
+    "a9_6_requirement": "sec. 14 missing uncertainty",
+    "gap_at_base": "a missing u(I_k) excluded the point (EXCLUDED) instead of NOT_EVALUATED",
+    "closure": "point outcome NOT_EVALUATED_UNCERTAINTY",
+    "state": "CLOSED_IN_IMPLEMENTATION (formal verification deferred to the A9.6 sec. 18 campaign)"
+   },
+   {
+    "id": "G-10",
+    "a9_6_requirement": "sec. 14 OUT_OF_DOMAIN",
+    "gap_at_base": "no OUT_OF_DOMAIN outcome and no registered operating domain",
+    "closure": "registrations.operating_domains (P1-IT-52); disposition / point outcome / row status OUT_OF_DOMAIN",
+    "state": "CLOSED_IN_IMPLEMENTATION (formal verification deferred to the A9.6 sec. 18 campaign)"
+   },
+   {
+    "id": "G-11",
+    "a9_6_requirement": "sec. 14 mixed evidence",
+    "gap_at_base": "mixed synthetic / measured refused only when capacity candidates mixed",
+    "closure": "bundle-level refusal (P1-IT-53, MixedEvidenceError)",
+    "state": "CLOSED_IN_IMPLEMENTATION (formal verification deferred to the A9.6 sec. 18 campaign)"
+   },
+   {
+    "id": "G-12",
+    "a9_6_requirement": "sec. 6-7",
+    "gap_at_base": "P1Q-19 (ext), P1Q-21, P1Q-22, P1Q-23 open although derivable",
+    "closure": "derived_resolutions (DERIVED with the rule followed); P1Q-19 remaining choice TBD_OWNER with both treatments",
+    "state": "CLOSED_IN_IMPLEMENTATION (formal verification deferred to the A9.6 sec. 18 campaign)"
+   },
+   {
+    "id": "G-13",
+    "a9_6_requirement": "sec. 2 / 14",
+    "gap_at_base": "instrument inadequacy masked a statistically significant closure failure (|R_I| > 3 u_R)",
+    "closure": "DERIVED precedence (P1Q-22): statistical failure -> EXCLUDED",
+    "state": "CLOSED_IN_IMPLEMENTATION (formal verification deferred to the A9.6 sec. 18 campaign)"
+   },
+   {
+    "id": "G-14",
+    "a9_6_requirement": "sec. 8 topology control",
+    "gap_at_base": "outputs did not say explicitly that the observation is not a gate",
+    "closure": "campaign rows carry gate = false, scoring = false",
+    "state": "CLOSED_IN_IMPLEMENTATION (formal verification deferred to the A9.6 sec. 18 campaign)"
+   },
+   {
+    "id": "G-15",
+    "a9_6_requirement": "sec. 8 raw data schemas",
+    "gap_at_base": "record schema covered only operating points and topology sequences",
+    "closure": "schema $defs for all six record kinds (p1_bench_record_schema_v1.json)",
+    "state": "CLOSED_IN_IMPLEMENTATION (formal verification deferred to the A9.6 sec. 18 campaign)"
+   }
+  ],
+  "workflow": [
+   {
+    "id": "P1-W01",
+    "name": "P1-G0 readiness and safety",
+    "stage_ids": [
+     "P1-S0"
+    ],
+    "entry": [
+     "A9.3..A9.6 recorded and pinned",
+     "hardware readiness families available for S0-S2"
+    ],
+    "exit": [
+     "G0_ENTRY_CONDITIONS_RECORDED: every P1-SI interlock functionally tested; 350 V class / >= 525 V design withstand declared; every applicable passive insulation path at 1.05 kV DC / 60 s current-limited with leakage recorded against a registered acceptance (A9.4 P1Q-14); ICPQ-06 ~1 kV representative-gas qualification ONLY on gas lines that bridge isolated potentials (A9.3); one Ar MFC (two overlapping only if necessary, A9.6 sec. 5); GROUND/FACILITY_ONLY generator; P1-G0 registrations recorded",
+     "otherwise G0_NOT_MET (deficiency) or G0_NOT_EVALUATED_TBD (input missing); every later stage record is OUT_OF_DOMAIN until G0 is met"
+    ],
+    "record_template": {
+     "record_kind": "p1_g0_readiness",
+     "schema_ref": "p1_bench_record_schema_v1.json#/$defs/p1_g0_readiness",
+     "required_fields": [
+      "schema",
+      "record_kind",
+      "record_id",
+      "run_id",
+      "stage_id",
+      "timestamp_utc",
+      "synthetic",
+      "labels",
+      "interlocks",
+      "isolation_class",
+      "dwv_tests",
+      "gas_lines",
+      "ar_mfcs",
+      "ar_sweep_bounds_mg_s",
+      "second_mfc_necessity",
+      "generator_class",
+      "registrations"
+     ]
+    },
+    "required_channels": [
+     "P1-M-25",
+     "P1-M-26"
+    ],
+    "reducer": "p1_reducer.reduce_readiness"
+   },
+   {
+    "id": "P1-W02",
+    "name": "RF cold checkout (dummy load; installed unlit antenna through the local match)",
+    "stage_ids": [
+     "P1-S1",
+     "P1-S2"
+    ],
+    "entry": [
+     "P1-G0 met"
+    ],
+    "exit": [
+     "calorimetric cross-check |z_x| <= k_x = 2 on every dummy-load record (CROSS_CHECK_AGREES; A9.1 UBQ-04, UB-RF-08) - otherwise RF-dependent quantities EXCLUDED_INSTRUMENT",
+     "line/match-loss characterizations verified only under CROSS_CHECK_AGREES (else P_delivered stays an upper bound)",
+     "installed-antenna records carry the photodiode state (A9.4 P2Q-05): threshold inputs for P2 (IDP2-17)"
+    ],
+    "record_template": {
+     "record_kind": "rf_cold_checkout",
+     "schema_ref": "p1_bench_record_schema_v1.json#/$defs/rf_cold_checkout",
+     "required_fields": [
+      "schema",
+      "record_kind",
+      "record_id",
+      "run_id",
+      "stage_id",
+      "timestamp_utc",
+      "synthetic",
+      "labels",
+      "checkout_kind",
+      "rf",
+      "generator",
+      "loss_characterization",
+      "rf_pickup_check"
+     ]
+    },
+    "required_channels": [
+     "P1-M-01",
+     "P1-M-02",
+     "P1-M-03",
+     "P1-M-04",
+     "P1-M-05",
+     "P1-M-06",
+     "P1-M-08",
+     "P1-M-09",
+     "P1-M-22",
+     "P1-M-28"
+    ],
+    "reducer": "p1_reducer.reduce_rf_cold_checkout"
+   },
+   {
+    "id": "P1-W03",
+    "name": "ICP ignition map (Ar, G-REUSE, Hall discharge supply OFF)",
+    "stage_ids": [
+     "P1-S3"
+    ],
+    "entry": [
+     "P1-G0 met; RF chain characterized (P1-W02)"
+    ],
+    "exit": [
+     "descriptive ignition map incl. non-ignition; ignition success fraction per registered point (P1-D-09); optical state beside the recorded ignition, disagreement flagged"
+    ],
+    "record_template": {
+     "record_kind": "ignition_attempt",
+     "schema_ref": "p1_bench_record_schema_v1.json#/$defs/ignition_attempt",
+     "required_fields": [
+      "schema",
+      "record_kind",
+      "record_id",
+      "run_id",
+      "stage_id",
+      "timestamp_utc",
+      "synthetic",
+      "labels",
+      "gas",
+      "gas_mode",
+      "hall_discharge_state",
+      "ignition_procedure_id",
+      "point_id",
+      "rf",
+      "flows",
+      "pressures",
+      "ignited",
+      "ignition_delay_s",
+      "extinguished",
+      "optical",
+      "h1_magnet_state"
+     ]
+    },
+    "required_channels": [
+     "P1-M-01",
+     "P1-M-02",
+     "P1-M-09",
+     "P1-M-16",
+     "P1-M-18",
+     "P1-M-19",
+     "P1-M-23",
+     "P1-M-24",
+     "P1-M-28"
+    ],
+    "reducer": "p1_reducer.reduce_ignition"
+   },
+   {
+    "id": "P1-W04",
+    "name": "electron-current surface I_e = f(P_RF, p, mdot, Z_ICP, V_collector)",
+    "stage_ids": [
+     "P1-S4"
+    ],
+    "entry": [
+     "ignition region from P1-W03; extraction topology registered (P1-IT-36)"
+    ],
+    "exit": [
+     "surface table filed (descriptive; A9.3 OQ-A907-02); P_delivered only with a verified loss, else an upper bound; plasma state per row where the optical channel is recorded"
+    ],
+    "record_template": {
+     "record_kind": "icp_operating_point",
+     "schema_ref": "p1_bench_record_schema_v1.json#/$defs/icp_operating_point",
+     "required_fields": [
+      "schema",
+      "record_kind",
+      "record_id",
+      "run_id",
+      "stage_id",
+      "timestamp_utc",
+      "synthetic",
+      "labels",
+      "gas",
+      "gas_mode",
+      "record_class",
+      "hall_discharge_state",
+      "hall_discharge_sustained",
+      "h1_electrical",
+      "rf",
+      "generator",
+      "collector",
+      "extraction",
+      "pressures",
+      "flows",
+      "impedance",
+      "terminals",
+      "temperatures",
+      "rf_pickup_check"
+     ]
+    },
+    "required_channels": [
+     "P1-M-01",
+     "P1-M-02",
+     "P1-M-03",
+     "P1-M-05",
+     "P1-M-10",
+     "P1-M-11",
+     "P1-M-12",
+     "P1-M-13",
+     "P1-M-15",
+     "P1-M-16",
+     "P1-M-18",
+     "P1-M-19",
+     "P1-M-21",
+     "P1-M-22",
+     "P1-M-27",
+     "P1-M-28"
+    ],
+    "reducer": "p1_reducer.reduce_operating_points"
+   },
+   {
+    "id": "P1-W05",
+    "name": "ICP-45 discharge-OFF capacity",
+    "stage_ids": [
+     "P1-S4",
+     "P1-S7"
+    ],
+    "entry": [
+     "ICP45_CAPACITY configuration (A9.4 P1Q-10 / P1Q-13): supply OFF and physically disconnected, anode floating, V_anode high-impedance, H-1 body single-point metered ground, dedicated collector"
+    ],
+    "exit": [
+     "per point: CLOSURE_VALID_CANDIDATE / NOT_EVALUATED_INSTRUMENT / NOT_EVALUATED_UNCERTAINTY / NOT_EVALUATED_REGISTRATION / EXCLUDED / OUT_OF_DOMAIN with reasons; ICP45 exactly NOT_EVALUATED until A9.5 P1Q-16 conditions (1)-(4) hold; never PASS"
+    ],
+    "record_template": {
+     "record_kind": "icp_operating_point",
+     "schema_ref": "p1_bench_record_schema_v1.json#/$defs/icp_operating_point",
+     "required_fields": [
+      "schema",
+      "record_kind",
+      "record_id",
+      "run_id",
+      "stage_id",
+      "timestamp_utc",
+      "synthetic",
+      "labels",
+      "gas",
+      "gas_mode",
+      "record_class",
+      "hall_discharge_state",
+      "hall_discharge_sustained",
+      "h1_electrical",
+      "rf",
+      "generator",
+      "collector",
+      "extraction",
+      "pressures",
+      "flows",
+      "impedance",
+      "terminals",
+      "temperatures",
+      "rf_pickup_check",
+      "capacity_monitoring",
+      "h1_point_id"
+     ]
+    },
+    "required_channels": [
+     "P1-M-11",
+     "P1-M-12",
+     "P1-M-13",
+     "P1-M-15",
+     "P1-M-27",
+     "P1-M-29"
+    ],
+    "reducer": "p1_reducer.icp45a_candidates; p1_reducer.icp45a_evaluate"
+   },
+   {
+    "id": "P1-W06",
+    "name": "RF-OFF paired correction I_on - I_off (signed)",
+    "stage_ids": [
+     "P1-S4",
+     "P1-S7"
+    ],
+    "entry": [
+     "registered pair [RF-ON id, RF-OFF id] and the pressure-match rule (P1-IT-37)"
+    ],
+    "exit": [
+     "I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF, signed, no abs, no clipping (A9.5 P1Q-16; A9.6 sec. 2); an unmatched pair excludes its point with the mismatch reasons"
+    ],
+    "record_template": {
+     "record_kind": "registration",
+     "required_fields": [
+      "facility_pairs",
+      "facility_match"
+     ]
+    },
+    "required_channels": [
+     "P1-M-27",
+     "P1-M-16",
+     "P1-M-18",
+     "P1-M-10"
+    ],
+    "reducer": "p1_reducer.facility_pair_mismatches; p1_reducer.facility_electron_check; p1_reducer.i_e_cap_signed"
+   },
+   {
+    "id": "P1-W07",
+    "name": "Kirchhoff current closure (A9.5 P1Q-15 owner rule)",
+    "stage_ids": [
+     "P1-S4",
+     "P1-S7"
+    ],
+    "entry": [
+     "closure rule registered: sign-convention id, I_scale,min (no default), optional channel correlation; u(I_k) of every MEASURED channel"
+    ],
+    "exit": [
+     "R_I = sum I_k; closure-valid only if |R_I| <= 3 u_R and |R_I| / max(|I_e,collector|, I_scale,min) <= 0.02; 3 u_R > 0.02 |I_e,collector| -> NOT_EVALUATED_INSTRUMENT (A9.6 sec. 2)"
+    ],
+    "record_template": {
+     "record_kind": "registration",
+     "required_fields": [
+      "rule_id",
+      "sign_convention",
+      "sign_convention_id",
+      "I_scale_min_A",
+      "I_scale_min_basis"
+     ]
+    },
+    "required_channels": [
+     "P1-M-11",
+     "P1-M-12",
+     "P1-M-13",
+     "P1-M-15",
+     "P1-M-27",
+     "P1-M-29"
+    ],
+    "reducer": "p1_reducer.kirchhoff_closure"
+   },
+   {
+    "id": "P1-W08",
+    "name": "stable-region determination and P2 handoff (IF-P1-01 -> IDP2-01)",
+    "stage_ids": [
+     "P1-S5"
+    ],
+    "entry": [
+     "surface from P1-W04; ignition repeatability from P1-W03"
+    ],
+    "exit": [
+     "handoff record: points within OWNER criteria (P1Q-01) and the envelope of tested points; NOT_EVALUATED without criteria (raw metrics handed over)"
+    ],
+    "record_template": {
+     "record_kind": "stability_dwell",
+     "schema_ref": "p1_bench_record_schema_v1.json#/$defs/stability_dwell",
+     "required_fields": [
+      "schema",
+      "record_kind",
+      "record_id",
+      "run_id",
+      "stage_id",
+      "timestamp_utc",
+      "synthetic",
+      "labels",
+      "operating_point_record_id",
+      "ignition_point_id",
+      "dwell"
+     ]
+    },
+    "required_channels": [
+     "P1-M-02",
+     "P1-M-11",
+     "P1-M-21",
+     "P1-M-23",
+     "P1-M-26"
+    ],
+    "reducer": "p1_reducer.stable_region_handoff"
+   },
+   {
+    "id": "P1-W09",
+    "name": "Takahashi-like topology control (ICP OFF Hall start attempt; ICP ON repeat)",
+    "stage_ids": [
+     "P1-S6"
+    ],
+    "entry": [
+     "HI-HOLDOUT-A signed; Hall start limits (P1-IT-31) and sustainment definition (P1-IT-32) registered; C1 disconnected"
+    ],
+    "exit": [
+     "observation class only; engineering-only, non-scoring, never a gate (A9.3 OQ-VI-05; A9.6 sec. 8)"
+    ],
+    "record_template": {
+     "record_kind": "topology_control_sequence",
+     "schema_ref": "p1_bench_record_schema_v1.json#/$defs/topology_control_sequence",
+     "required_fields": [
+      "schema",
+      "record_kind",
+      "record_id",
+      "run_id",
+      "stage_id",
+      "synthetic",
+      "labels",
+      "gas",
+      "classification",
+      "c1_disconnected",
+      "hall_start_registration_id",
+      "steps"
+     ]
+    },
+    "required_channels": [
+     "P1-M-01",
+     "P1-M-02",
+     "P1-M-10",
+     "P1-M-11",
+     "P1-M-14",
+     "P1-M-15"
+    ],
+    "reducer": "p1_reducer.reduce_topology_control"
+   },
+   {
+    "id": "P1-W10",
+    "name": "Hall-ON NEUTRALIZATION_CONSISTENCY after capacity",
+    "stage_ids": [
+     "P1-S7H"
+    ],
+    "entry": [
+     "discharge-OFF capacity shown at the same registered H-1 point (a CLOSURE_VALID_CANDIDATE with M_n,LB > 0 under both P1Q-19 treatments); otherwise the row is OUT_OF_DOMAIN (entry not met)"
+    ],
+    "exit": [
+     "descriptive consistency rows (sustainment, closure, I_e,ICP vs I_d, potentials, RF power); never ICP45_CAPACITY and never I_e,cap (A9.4 P1Q-10; A9.6 sec. 2)"
+    ],
+    "record_template": {
+     "record_kind": "icp_operating_point",
+     "schema_ref": "p1_bench_record_schema_v1.json#/$defs/icp_operating_point",
+     "required_fields": [
+      "schema",
+      "record_kind",
+      "record_id",
+      "run_id",
+      "stage_id",
+      "timestamp_utc",
+      "synthetic",
+      "labels",
+      "gas",
+      "gas_mode",
+      "record_class",
+      "hall_discharge_state",
+      "hall_discharge_sustained",
+      "h1_electrical",
+      "rf",
+      "generator",
+      "collector",
+      "extraction",
+      "pressures",
+      "flows",
+      "impedance",
+      "terminals",
+      "temperatures",
+      "rf_pickup_check"
+     ]
+    },
+    "required_channels": [
+     "P1-M-01",
+     "P1-M-02",
+     "P1-M-11",
+     "P1-M-14",
+     "P1-M-15",
+     "P1-M-27"
+    ],
+    "reducer": "p1_reducer.neutralization_consistency; p1_campaign entry rule"
+   }
+  ],
+  "campaign_driver": {
+   "module": "docs/experiments/hall_icp/p1_icp_bench/p1_campaign.py (pure: run_campaign)",
+   "cli": "docs/experiments/hall_icp/p1_icp_bench/p1_campaign_cli.py",
+   "report_schema": "docs/experiments/hall_icp/p1_icp_bench/p1_campaign_report_schema_v1.json",
+   "bundle_schema": "p1_campaign_bundle_v1",
+   "report_schema_id": "p1_campaign_report_v1",
+   "registration_keys": [
+    "registration_set_id",
+    "operating_domains",
+    "facility_pairs",
+    "facility_match",
+    "closure_rule",
+    "i_d_max_registration",
+    "margin_rule",
+    "stable_criteria"
+   ],
+   "registration_nullable": [
+    "facility_match",
+    "closure_rule",
+    "i_d_max_registration",
+    "margin_rule",
+    "stable_criteria"
+   ],
+   "dispositions": [
+    "REDUCED",
+    "OUT_OF_DOMAIN",
+    "REFUSED_INVALID_RECORD"
+   ],
+   "point_outcomes": [
+    "CLOSURE_VALID_CANDIDATE",
+    "NOT_EVALUATED_INSTRUMENT",
+    "NOT_EVALUATED_UNCERTAINTY",
+    "NOT_EVALUATED_REGISTRATION",
+    "EXCLUDED",
+    "OUT_OF_DOMAIN"
+   ]
+  },
+  "fail_closed_audit": [
+   {
+    "n": 1,
+    "a9_6_sec14_bullet": "missing required data -> no PASS",
+    "implementation": "a record missing any required field is REFUSED_INVALID_RECORD with the reducer's error text verbatim; a missing registration gives NOT_EVALUATED / NOT_EVALUATED_REGISTRATION; the report self-check refuses any 'PASS' value",
+    "where": "p1_campaign._validate / run_campaign._walk_no_pass; p1_reducer._req",
+    "test": "tests/test_p1_icp_bench.py::test_a96_sec14_missing_required_data_no_pass"
+   },
+   {
+    "n": 2,
+    "a9_6_sec14_bullet": "mismatched sign convention -> excluded",
+    "implementation": "a channel or record sign_convention_id different from the registered closure-rule convention excludes the capacity point with the reason (A9.5 P1Q-15); a collector I_e_sign_convention other than the declared one refuses the record (REFUSED_INVALID_RECORD, kept verbatim)",
+    "where": "p1_reducer.kirchhoff_closure; validate_operating_point",
+    "test": "tests/test_p1_icp_bench.py::test_a96_sec14_sign_convention_mismatch_excluded"
+   },
+   {
+    "n": 3,
+    "a9_6_sec14_bullet": "missing current path -> excluded",
+    "implementation": "a terminal declared NOT_MEASURED, I_body->ground not continuous, or a required terminal absent: the point is EXCLUDED (declared) or the record REFUSED (absent) - never summed as zero",
+    "where": "p1_reducer.capacity_structural_reasons; _check_capacity_record",
+    "test": "tests/test_p1_icp_bench.py::test_a96_sec14_missing_current_path_excluded"
+   },
+   {
+    "n": 4,
+    "a9_6_sec14_bullet": "mixed synthetic/measured -> refused",
+    "implementation": "a bundle whose records contradict the manifest evidence_kind raises MixedEvidenceError (no report); inside a reduction, a synthetic / measured pair is excluded and mixed candidates raise (PR #34)",
+    "where": "p1_campaign.run_campaign (MixedEvidenceError); p1_reducer.icp45a_candidates / icp45a_evaluate",
+    "test": "tests/test_p1_icp_bench.py::test_a96_sec14_mixed_evidence_refused"
+   },
+   {
+    "n": 5,
+    "a9_6_sec14_bullet": "invalid RF-ON/RF-OFF pair -> excluded",
+    "implementation": "a registered pair that is not matched (field differences, pressure outside the registered tolerance, RF-OFF P_fwd != 0), whose partner is refused / out of domain, or without a registered match rule excludes (or, out of domain, OUT_OF_DOMAIN) the capacity point with every reason",
+    "where": "p1_reducer.facility_pair_mismatches; p1_campaign pair handling",
+    "test": "tests/test_p1_icp_bench.py::test_a96_sec14_invalid_pair_excluded"
+   },
+   {
+    "n": 6,
+    "a9_6_sec14_bullet": "unknown I_d,max,H1 -> NOT_EVALUATED",
+    "implementation": "no registration (or no margin rule): ICP45 status NOT_EVALUATED and each capacity point NOT_EVALUATED_REGISTRATION (or its closure outcome without an ICP-45 evaluation)",
+    "where": "p1_reducer.icp45a_evaluate; p1_campaign.run_campaign",
+    "test": "tests/test_p1_icp_bench.py::test_a96_sec14_unknown_i_d_max_not_evaluated"
+   },
+   {
+    "n": 7,
+    "a9_6_sec14_bullet": "missing uncertainty -> NOT_EVALUATED",
+    "implementation": "a missing / zero u(I_k) component gives the point outcome NOT_EVALUATED_UNCERTAINTY; a missing / zero margin-rule uncertainty gives ICP45 = NOT_EVALUATED (condition 3); a zero cross-check or loss uncertainty refuses the record",
+    "where": "p1_reducer._channel_uncertainty / _check_registration / _pos",
+    "test": "tests/test_p1_icp_bench.py::test_a96_sec14_missing_uncertainty_not_evaluated"
+   },
+   {
+    "n": 8,
+    "a9_6_sec14_bullet": "unresolved plasma state -> UNCERTAIN",
+    "implementation": "optical record with lost line of sight, saturation, no registered threshold, optical-unlit with electrical evidence, or lit without E/H assignment -> UNCERTAIN; an incomplete optical object refuses the record",
+    "where": "p1_reducer.classify_plasma_state",
+    "test": "tests/test_p1_icp_bench.py::test_a96_sec14_unresolved_plasma_state_uncertain"
+   },
+   {
+    "n": 9,
+    "a9_6_sec14_bullet": "unverified line loss -> no silently reconstructed plasma power",
+    "implementation": "in the campaign a MEASURED loss that is not a verified P1-S1/S2 characterization under CROSS_CHECK_AGREES gives P_RF_DELIVERED_UPPER_BOUND_LOSS_UNVERIFIED (flagged); a failed cross-check gives EXCLUDED_INSTRUMENT (no P_delivered, no C_e); P_fwd is never P_plasma",
+    "where": "p1_reducer.derive_rf(loss_verification)",
+    "test": "tests/test_p1_icp_bench.py::test_a96_sec14_unverified_loss_no_reconstructed_power"
+   },
+   {
+    "n": 10,
+    "a9_6_sec14_bullet": "OUT_OF_DOMAIN remains distinct from FAIL",
+    "implementation": "a record of an unregistered stage, outside its registered operating domain, or taken before P1-G0 is met is OUT_OF_DOMAIN (disposition, point outcome, consistency row status) - never EXCLUDED as a failure and never FAIL",
+    "where": "p1_campaign._domain_reasons; POINT_OUTCOMES",
+    "test": "tests/test_p1_icp_bench.py::test_a96_sec14_out_of_domain_not_fail"
+   }
+  ],
+  "derived_resolutions": [
+   {
+    "id": "P1Q-19 (ext)",
+    "disposition": "DERIVED",
+    "answer": "a registered standard uncertainty of zero (u_I_e_A, u_I_d_max_A, u_P_cal_W, u_P_coupler_W, u_value_W, u_resolution_A) is treated as not available: ICP45 = NOT_EVALUATED (margin rule) or the record is refused (stage records)",
+    "follows_from": "JCGM 100:2008 F.2.2.1 (even identical repeated indications leave a non-zero resolution uncertainty); A9.5 P1Q-16 condition (3) 'all required uncertainties are available'",
+    "implemented_in": "p1_reducer._check_registration, _channel_uncertainty, _pos",
+    "tests": [
+     "test_a95_eligibility_conditions",
+     "test_a96_sec14_missing_uncertainty_not_evaluated"
+    ]
+   },
+   {
+    "id": "P1Q-19 (below propagation)",
+    "disposition": "DERIVED",
+    "answer": "a registered u_I_e_A below the GUM propagation of its own collector-channel uncertainties is never used as it stands (flag REGISTERED_u_I_e_BELOW_CHANNEL_PROPAGATION)",
+    "follows_from": "JCGM 100:2008 5.1.2 Eq. (10) / 5.2.2 Eq. (13): the combined standard uncertainty of I_on - I_off is fixed by its input uncertainties (and their registered correlation)",
+    "implemented_in": "p1_reducer._p1q19_alternatives",
+    "tests": [
+     "test_a96_p1q19_alternatives_side_by_side"
+    ]
+   },
+   {
+    "id": "P1Q-19 (require vs use larger)",
+    "disposition": "TBD_OWNER",
+    "answer": "both admissible treatments ['REQUIRE_REGISTERED_GE_CHANNEL', 'USE_LARGER_OF_REGISTERED_AND_CHANNEL'] computed side by side; ICP45 = NOT_EVALUATED while they disagree",
+    "follows_from": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 7 (a genuine preregistration design choice is not answered by the lane)",
+    "implemented_in": "p1_reducer.icp45a_evaluate",
+    "tests": [
+     "test_a96_p1q19_alternatives_side_by_side"
+    ]
+   },
+   {
+    "id": "P1Q-21",
+    "disposition": "DERIVED",
+    "answer": "an ICP45_CAPACITY record whose H-1 anode is not physically disconnected / floating is an EXCLUDED capacity point kept with its reason (the other points are still evaluated); non-capacity records keep the A9.4 refusal of an OFF supply left connected",
+    "follows_from": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-15.exclusions (the later owner addendum lists the case as an exclusion whose point 'remains in the raw record'; A9.5 parents include A9.4)",
+    "implemented_in": "p1_reducer.validate_operating_point / capacity_structural_reasons",
+    "tests": [
+     "test_a95_anode_not_floating_is_excluded_not_aborting"
+    ]
+   },
+   {
+    "id": "P1Q-22",
+    "disposition": "DERIVED",
+    "answer": "DERIVED (P1Q-22): A9.5 exclusions independent of the closure test first (EXCLUDED) -> missing u(I_k) (NOT_EVALUATED_UNCERTAINTY, A9.6 sec. 14) -> statistical failure |R_I| > 3 u_R (EXCLUDED; normalised to u_R, so not explainable by instrument inadequacy) -> 3 u_R > 0.02 |I_e,collector| (NOT_EVALUATED_INSTRUMENT; fractional-only failures not decisive) -> fractional failure (EXCLUDED)",
+    "follows_from": "A9.5 P1Q-15 exclusions '|R_I| > 3 u_R' and 'fractional closure exceeds 2 %' plus the adequacy rule: the statistical test is normalised to the instrument's own u_R, so a statistically significant residual is resolved by the instrument and stays an exclusion; only the 2 % test is unresolvable when 3 u_R > 0.02 |I_e,collector| (A9.6 sec. 2: NOT_EVALUATED_INSTRUMENT 'rather than widening the tolerance'); A9.6 sec. 14 missing uncertainty -> NOT_EVALUATED",
+    "implemented_in": "p1_reducer.icp45a_candidates",
+    "tests": [
+     "test_a95_instrument_inadequacy_precedence",
+     "test_a95_statistical_fail"
+    ]
+   },
+   {
+    "id": "P1Q-23 (a)",
+    "disposition": "DERIVED",
+    "answer": "u(I_k) = root-sum-square of its registered components (calibration, zero/offset, resolution, repeatability where applicable, registered RF pickup)",
+    "follows_from": "JCGM 100:2008 5.1.2 Eq. (10) with sensitivity 1 for each independent component",
+    "implemented_in": "p1_reducer._channel_uncertainty",
+    "tests": [
+     "test_a95_closure_rule_constants_not_parameters"
+    ]
+   },
+   {
+    "id": "P1Q-23 (b)",
+    "disposition": "DERIVED",
+    "answer": "u(I_e,cap)_channels = sqrt(u_on^2 + u_off^2 - 2 r u_on u_off) with a registered RF-ON / RF-OFF correlation r (margin_rule.rf_on_off_collector_correlation, P1-IT-56); without one r = 0 is reported as an ASSUMPTION in the basis text",
+    "follows_from": "JCGM 100:2008 5.2.2 Eq. (13)-(15) (sensitivities +1 / -1); 5.2.1 (significant correlations must be taken into account)",
+    "implemented_in": "p1_reducer.u_i_e_cap_channels",
+    "tests": [
+     "test_a96_p1q23_correlated_form"
+    ]
+   }
+  ],
+  "external_reference": {
+   "citation": "JCGM 100:2008, Evaluation of measurement data - Guide to the expression of uncertainty in measurement (GUM 1995 with minor corrections), Joint Committee for Guides in Metrology",
+   "url": "https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf",
+   "fetched_pdf_sha256": "41bbf068fbc0d7986c98691b2d1af6680cb3044f6a1a89b3560933ed9ef9626c",
+   "clauses_used": {
+    "5.1.2": "Eq. (10): u_c^2(y) = sum_i (df/dx_i)^2 u^2(x_i) for uncorrelated input quantities (law of propagation of uncertainty)",
+    "5.2.1": "Eq. (10) valid only for independent / uncorrelated inputs; significant correlations must be taken into account",
+    "5.2.2": "Eq. (13) covariance form; Eq. (14) correlation coefficient r(x_i, x_j), -1 <= r <= 1; Eq. (15) covariance term 2 sum_i<j (df/dx_i)(df/dx_j) u(x_i) u(x_j) r(x_i, x_j)",
+    "F.2.2.1": "resolution of a digital indication: even identical repeated indications leave a non-zero uncertainty, u = 0.29 delta_x"
+   },
+   "evidence_class": "published standard (verified by this lane against the fetched PDF text)"
+  },
+  "fixed_statuses": {
+   "316L_FLIGHT_ANODE": "REJECTED_AS_CURRENT_BASELINE",
+   "FINAL_ANODE_MATERIAL": "OPEN",
+   "ANODE_THERMAL_CLOSURE": "UNRESOLVED",
+   "ICP_COUPLED_THERMAL": "UNRESOLVED",
+   "RF_COMPONENT_RATINGS": "TBD_AFTER_IMPEDANCE_MAP"
+  },
+  "not_done_here": [
+   "no measured data exist; every numeric registration (domains, thresholds, criteria, I_scale,min, I_d,max,H1, leakage acceptance, correlation) stays TBD",
+   "P1 hardware readiness, RF ratings, thermal and anode closures unchanged (TBD_AFTER_IMPEDANCE_MAP / UNRESOLVED / OPEN)",
+   "parallel lanes referenced only by path: PENDING docs/experiments/hall_icp/p3_coupled_thermal/, PENDING docs/experiments/hall_icp/p4_anode_materials/"
+  ],
+  "m16_impact_change": "none: software workflow only; ICP electron-current capacity stays PENDING_ICP45 and no physical item becomes READY / VERIFIED (A9.6 sec. 16)"
  },
  "merged_cross_references": [
   {
@@ -724,7 +1522,7 @@
     "electron extraction to the registered electron-collecting electrode: for every ICP45_CAPACITY record the dedicated, isolated, instrumented electron-collecting electrode (OWNER_DECIDED, A9.4 P1Q-10; terminal 'electron_collector'; geometry / position / reference registered at P1-G0, P1-IT-36); the ICP ion-collecting electrode is biased negative w.r.t. that electrode (TK-40 polarity); V_collector recorded against the registered reference",
     "collector bias sweep at each (P_RF, mdot) point, ascending current limit with hold points",
     "report the SURFACE I_e = f(P_RF, p, mdot, Z_ICP, V_collector) (A9.3 OQ-A907-02)",
-    "Kirchhoff current-path closure per point (collector, ICP body, facility/chamber ground, H-1 anode (MEASURED metered return or OPEN_CIRCUIT_BY_CONSTRUCTION, P1-IT-39), and the electron_collector terminal when the dedicated target is used); for ICP45_CAPACITY records the owner rule P1-IT-47 (A9.5 P1Q-15: |R_I| <= 3 u_R and <= 2 % of max(I_e,collector, I_scale,min); channels in the registered convention with u(I_k), P1-IT-49; unavailable channels declared NOT_MEASURED, never zero)",
+    "Kirchhoff current-path closure per point (collector, ICP body, facility/chamber ground, H-1 anode (MEASURED metered return or OPEN_CIRCUIT_BY_CONSTRUCTION, P1-IT-39), and the electron_collector terminal when the dedicated target is used); for ICP45_CAPACITY records the owner rule P1-IT-47 (A9.5 P1Q-15: |R_I| <= 3 u_R and <= 2 % of max(|I_e,collector|, I_scale,min); channels in the registered convention with u(I_k), P1-IT-49; unavailable channels declared NOT_MEASURED, never zero)",
     "V_anode recorded (P1-M-15)",
     "facility-electron contribution check: RF OFF at the same bias and reference, flow, gas mode, Hall state, extraction topology and pressure (within P1-IT-37)",
     "C_e and C_e,DC with boundary labels per point",
@@ -810,7 +1608,7 @@
     "H-1 electrical configuration per A9.4 P1Q-13 registered (P1-IT-39)"
    ],
    "work": [
-    "CAPACITY block (ICP-45A, record_class ICP45_CAPACITY): Hall discharge supply OFF and physically disconnected from the H-1 anode (anode floating, V_anode on a high-impedance isolated channel, OPEN_CIRCUIT_BY_CONSTRUCTION); ICP operating; electrons extracted to the dedicated, isolated, instrumented electron-collecting electrode (P1-IT-36); gas / magnetic field / pressure / geometry of each registered H-1 point (h1_point_id); ascending to and beyond I_d,max,H1 inside the stand-ceiling ratings; matched RF-OFF ICP45_CAPACITY record at every candidate point (P1-D-07); H-1 body single-point metered return with I_body->ground logged continuously; ICP body, anode and collector potentials and chamber / facility return current (where measurable) monitored; owner Kirchhoff closure per point, RF-ON and matched RF-OFF record (P1-IT-47, P1-D-13); instrument adequacy 3 u_R <= 0.02 I_e,collector at the candidate point, else NOT_EVALUATED_INSTRUMENT (P1-IT-50)",
+    "CAPACITY block (ICP-45A, record_class ICP45_CAPACITY): Hall discharge supply OFF and physically disconnected from the H-1 anode (anode floating, V_anode on a high-impedance isolated channel, OPEN_CIRCUIT_BY_CONSTRUCTION); ICP operating; electrons extracted to the dedicated, isolated, instrumented electron-collecting electrode (P1-IT-36); gas / magnetic field / pressure / geometry of each registered H-1 point (h1_point_id); ascending to and beyond I_d,max,H1 inside the stand-ceiling ratings; matched RF-OFF ICP45_CAPACITY record at every candidate point (P1-D-07); H-1 body single-point metered return with I_body->ground logged continuously; ICP body, anode and collector potentials and chamber / facility return current (where measurable) monitored; owner Kirchhoff closure per point, RF-ON and matched RF-OFF record (P1-IT-47, P1-D-13); instrument adequacy 3 u_R <= 0.02 |I_e,collector| at the candidate point, else NOT_EVALUATED_INSTRUMENT (P1-IT-50)",
     "I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF, signed, no absolute value, no clipping (P1-IT-38; OWNER_DECIDED A9.4 P1Q-10, confirmed A9.5 P1Q-16); ICP-45A evaluated only when conditions (1)-(4) of A9.5 P1Q-16 hold, then M_n,LB > 0",
     "never the largest current in the bundle, never an RF-OFF, dedicated-feed, Hall-ON, metered-return (DIAGNOSTIC_VARIANT), closure-invalid, NOT_EVALUATED_INSTRUMENT or uncorrected record as I_e,cap"
    ],
@@ -1534,16 +2332,16 @@
     "residual": "R_I = sum_k I_k",
     "statistical_closure": "|R_I| <= 3 u_R",
     "k_sigma": 3.0,
-    "fractional_closure": "|R_I| / max(I_e,collector, I_scale,min) <= 0.02",
+    "fractional_closure": "|R_I| / max(|I_e,collector|, I_scale,min) <= 0.02",
     "fraction_max": 0.02,
     "floating_anode": "I_anode ~ 0 by construction (OPEN_CIRCUIT_BY_CONSTRUCTION); V_anode still recorded",
     "no_silent_zero": "an unavailable channel is never set to zero (terminal basis NOT_MEASURED excludes the point: intentional return path unmeasured)"
    },
    "units": "-, A",
    "basis": "owner decision; the factor 3 and the 2 % are hard-coded owner constants (p1_reducer CLOSURE_K_SIGMA, CLOSURE_FRACTION_MAX), never caller parameters; not relaxed after observing propulsion results",
-   "source": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-15; docs/decisions/OD_2026_09_30_A9_5_P1_CLOSURE_OWNER_DECISIONS.md P1Q-15",
+   "source": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-15; docs/decisions/OD_2026_09_30_A9_5_P1_CLOSURE_OWNER_DECISIONS.md P1Q-15; docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json summary.p1q15_denominator",
    "evidence_class": "owner-stated",
-   "status": "OWNER_DECIDED (A9.5 P1Q-15 KIRCHHOFF_CLOSURE_RULE)",
+   "status": "OWNER_DECIDED (A9.5 P1Q-15 KIRCHHOFF_CLOSURE_RULE; magnitude form A9.6 sec. 2)",
    "freeze_point": "NOW",
    "p1_gate": "P1-G0",
    "note": "replaces the earlier registered relative-tolerance rule (P1Q-15 answered); the registered inputs are the sign-convention id and I_scale,min (P1-IT-48); implemented by p1_reducer.kirchhoff_closure"
@@ -1559,7 +2357,7 @@
    "status": "TBD (registered input)",
    "freeze_point": "after-evidence",
    "p1_gate": "P1-G0",
-   "note": "used only as max(I_e,collector, I_scale,min) in the fractional closure; never in the statistical closure and never in the instrument-adequacy test"
+   "note": "used only as max(|I_e,collector|, I_scale,min) in the fractional closure; never in the statistical closure and never in the instrument-adequacy test"
   },
   {
    "id": "P1-IT-49",
@@ -1577,15 +2375,15 @@
   {
    "id": "P1-IT-50",
    "name": "instrument adequacy at a candidate qualification point",
-   "value": "if 3 u_R > 0.02 I_e,collector the point is NOT_EVALUATED_INSTRUMENT; the tolerance is never widened; the 2 % criterion is never relaxed after observing propulsion results",
+   "value": "if 3 u_R > 0.02 |I_e,collector| the point is NOT_EVALUATED_INSTRUMENT; the tolerance is never widened; the 2 % criterion is never relaxed after observing propulsion results",
    "units": "-",
    "basis": "owner decision",
-   "source": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-15.instrument_adequacy",
+   "source": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-15.instrument_adequacy; docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json summary.p1q15_denominator",
    "evidence_class": "owner-stated",
-   "status": "OWNER_DECIDED (A9.5 P1Q-15)",
+   "status": "OWNER_DECIDED (A9.5 P1Q-15; A9.6 sec. 2)",
    "freeze_point": "NOW",
    "p1_gate": "P1-G1",
-   "note": "applied at the RF-ON ICP45_CAPACITY record (the candidate point); the matched RF-OFF record is tested with the I_scale,min floor (recorder reading, P1Q-18); reported per point in capacity_point_outcomes; precedence (recorder reading, P1Q-22): structural exclusions first, then instrument inadequacy over a statistical / fractional closure-test failure (kept as closure_test_results_not_decisive)"
+   "note": "applied at the RF-ON ICP45_CAPACITY record (the candidate point); the matched RF-OFF record is tested with the I_scale,min floor (recorder reading, P1Q-18); reported per point in capacity_point_outcomes; precedence DERIVED (P1Q-22, derived_resolutions): A9.5 exclusions independent of the closure test -> missing u(I_k) (NOT_EVALUATED_UNCERTAINTY) -> statistical failure |R_I| > 3 u_R (EXCLUDED: normalised to u_R, so not explainable by instrument inadequacy) -> NOT_EVALUATED_INSTRUMENT (fractional-only failures kept as closure_test_results_not_decisive) -> fractional failure (EXCLUDED)"
   },
   {
    "id": "P1-IT-51",
@@ -1607,7 +2405,85 @@
    "status": "OWNER_DECIDED (A9.5 P1Q-15)",
    "freeze_point": "NOW",
    "p1_gate": "P1-G0",
-   "note": "excluded points stay in the raw record; the reducer lists them in excluded_records and capacity_point_outcomes with every reason and still evaluates every other point. Exclusions, not refusals: a registered RF-ON / RF-OFF pair that is not matched (each differing field with both values and the match rule id, p1_reducer.facility_pair_mismatches), an H-1 anode not physically disconnected / floating in an ICP45_CAPACITY record (A9.5 exclusion applied over the A9.4 P1Q-13 'refused' wording - recorder reading, P1Q-21), any terminal declared NOT_MEASURED (h1_body, electron_collector, icp_body, facility_ground or any other) and I_body->ground not continuous (intentional return path unmeasured), an unintended ground path, differing sign conventions, missing u(I_k), and the statistical / fractional closure failures. Still REFUSED (raised; input errors, not findings): a record that is incomplete (a required terminal or capacity_monitoring field absent from the record, CLAUDE.md rule 3) or not a capacity record at all (Hall ON, wrong stage, not the dedicated collector, not the single-point metered body ground, V_anode not on a high-impedance isolated channel), a missing match rule, and synthetic / measured capacity candidates mixed in one evaluation (PR #34)"
+   "note": "excluded points stay in the raw record; the reducer lists them in excluded_records and capacity_point_outcomes with every reason and still evaluates every other point. Exclusions, not refusals: a registered RF-ON / RF-OFF pair that is not matched (each differing field with both values and the match rule id, p1_reducer.facility_pair_mismatches), an H-1 anode not physically disconnected / floating in an ICP45_CAPACITY record (A9.5 exclusion applied over the A9.4 P1Q-13 'refused' wording - DERIVED, P1Q-21: A9.5 is the later owner addendum and lists it as an exclusion), any terminal declared NOT_MEASURED (h1_body, electron_collector, icp_body, facility_ground or any other) and I_body->ground not continuous (intentional return path unmeasured), an unintended ground path, differing sign conventions and the statistical / fractional closure failures; a missing u(I_k) gives NOT_EVALUATED_UNCERTAINTY (A9.6 sec. 14). Still REFUSED (raised; input errors, not findings): a record that is incomplete (a required terminal or capacity_monitoring field absent from the record, CLAUDE.md rule 3) or not a capacity record at all (Hall ON, wrong stage, not the dedicated collector, not the single-point metered body ground, V_anode not on a high-impedance isolated channel), a missing match rule, and synthetic / measured capacity candidates mixed in one evaluation (PR #34); in the campaign driver a whole bundle mixing synthetic and measured records is refused (P1-IT-53)"
+  },
+  {
+   "id": "P1-IT-52",
+   "name": "registered operating domain per P1 stage (campaign OUT_OF_DOMAIN rule)",
+   "value": "TBD - requires registration before each stage (registrations.operating_domains: {stage_id: {domain_id, P_fwd_W, p_chamber_Pa, mdot_Ar_H1_mg_s, V_collector_V as [min, max]}}), from the procured ratings and the P1 run matrix; a record outside it, of an unregistered stage, or taken before P1-G0 is met is OUT_OF_DOMAIN (never a FAIL)",
+   "units": "W, Pa, mg/s, V",
+   "basis": "A9.6 sec. 14 (OUT_OF_DOMAIN distinct from FAIL); values registered",
+   "source": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 14",
+   "evidence_class": null,
+   "status": "TBD (registered input)",
+   "freeze_point": "LOCK-1",
+   "p1_gate": "P1-G0",
+   "note": "the driver has no default domain; P_fwd is not checked on RF-OFF records"
+  },
+  {
+   "id": "P1-IT-53",
+   "name": "campaign evidence kind",
+   "value": "one bundle is either SYNTHETIC_TEST_ONLY or MEASURED; any record whose 'synthetic' flag contradicts the manifest refuses the whole bundle (no report)",
+   "units": "-",
+   "basis": "owner rule: A9.5 P1Q-15 exclusion 'synthetic and measured evidence mixed'; A9.6 sec. 14 'mixed synthetic/measured evidence -> refused'",
+   "source": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-15.exclusions; docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 14",
+   "evidence_class": "owner-stated",
+   "status": "OWNER_DECIDED (A9.6 sec. 14)",
+   "freeze_point": "NOW",
+   "p1_gate": "P1-G0",
+   "note": "p1_campaign.MixedEvidenceError"
+  },
+  {
+   "id": "P1-IT-54",
+   "name": "P1 photodiode unlit threshold for the optical plasma-state class",
+   "value": "TBD - requires the P1 dark / background, RF-powered known-unlit and known-lit records (A9.4 P2Q-05); frozen before the P2 map. Until registered, every P1 optical state is UNCERTAIN (never forced to UNLIT)",
+   "units": "V",
+   "basis": "owner decision (method); value from P1 evidence",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P2Q-05",
+   "evidence_class": null,
+   "status": "TBD_AFTER_EVIDENCE",
+   "freeze_point": "after-evidence",
+   "p1_gate": "P1-G5",
+   "note": "p1_reducer.classify_plasma_state"
+  },
+  {
+   "id": "P1-IT-55",
+   "name": "DWV leakage acceptance criterion (per insulation path)",
+   "value": "TBD - requires the insulation-path / feedthrough ratings (P1-IT-44 note; not given by the owner). Until registered the P1-G0 status is G0_NOT_EVALUATED_TBD",
+   "units": "A",
+   "basis": "owner decision (DWV performed at 1.05 kV / 60 s, leakage recorded); acceptance value not decided",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14.initial_dwv",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "p1_gate": "P1-G0",
+   "note": "p1_reducer.reduce_readiness"
+  },
+  {
+   "id": "P1-IT-56",
+   "name": "RF-ON / RF-OFF collector-channel correlation r",
+   "value": "TBD - requires the collector-channel calibration (certificate) - registered as margin_rule.rf_on_off_collector_correlation {correlation_id, r}; when absent u(I_e,cap)_channels uses r = 0, reported as an ASSUMPTION (JCGM 100:2008 5.2.1)",
+   "units": "-",
+   "basis": "DERIVED form (JCGM 100:2008 5.2.2 Eq. (13)/(15)); value registered",
+   "source": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 6; https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf",
+   "evidence_class": null,
+   "status": "TBD (registered input, optional)",
+   "freeze_point": "after-evidence",
+   "p1_gate": "P1-S7",
+   "note": "p1_reducer.u_i_e_cap_channels (P1Q-23(b) DERIVED)"
+  },
+  {
+   "id": "P1-IT-57",
+   "name": "treatment of a registered u_I_e_A below the channel propagation",
+   "value": "TBD_OWNER (P1Q-19): the two admissible treatments REQUIRE_REGISTERED_GE_CHANNEL and USE_LARGER_OF_REGISTERED_AND_CHANNEL are computed side by side; ICP45 = NOT_EVALUATED whenever they disagree; the registered value is never used as it stands when it is below the propagation (DERIVED)",
+   "units": "A",
+   "basis": "A9.6 sec. 7 (genuine design choice stays TBD_OWNER; support all admissible outcomes)",
+   "source": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 7",
+   "evidence_class": null,
+   "status": "TBD_OWNER",
+   "freeze_point": "LOCK-1",
+   "p1_gate": "P1-S7",
+   "note": "p1_reducer._p1q19_alternatives"
   }
  ],
  "measurements": [
@@ -2178,22 +3054,46 @@
   {
    "id": "P1-D-13",
    "quantity": "capacity-point closure validity (owner Kirchhoff rule)",
-   "formula": "R_I = sum_k I_k (every terminal in the registered convention; OPEN_CIRCUIT_BY_CONSTRUCTION = 0); closure-valid iff |R_I| <= 3 u_R AND |R_I| / max(I_e,collector, I_scale,min) <= 0.02, for the RF-ON ICP45_CAPACITY record and its matched RF-OFF record; excluded (reason kept) otherwise",
+   "formula": "R_I = sum_k I_k (every terminal in the registered convention; OPEN_CIRCUIT_BY_CONSTRUCTION = 0); closure-valid iff |R_I| <= 3 u_R AND |R_I| / max(|I_e,collector|, I_scale,min) <= 0.02, for the RF-ON ICP45_CAPACITY record and its matched RF-OFF record; excluded (reason kept) otherwise",
    "source": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-15"
   },
   {
    "id": "P1-D-14",
    "quantity": "combined residual uncertainty u_R",
    "formula": "independent channels: u_R = sqrt(sum_k u^2(I_k)), u(I_k) = sqrt(u_cal^2 + u_zero^2 + u_res^2 (+ u_rep^2) (+ u_pickup^2)); correlated channels: u_R^2 = sum_ij r_ij u(I_i) u(I_j) with the registered correlation (full covariance form)",
-   "basis": "u_R forms: owner (A9.5 P1Q-15). The root-sum-square combination of the five listed components into u(I_k) is a LANE CHOICE (the owner lists the components, not how they combine; owner question P1Q-23)",
+   "basis": "u_R forms: owner (A9.5 P1Q-15). The root-sum-square combination of the five listed components into u(I_k) is DERIVED (P1Q-23(a)): each component is an independent input quantity with sensitivity 1, so JCGM 100:2008 5.1.2 Eq. (10) gives the root-sum-square",
    "source": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-15.uncertainty"
   },
   {
    "id": "P1-D-15",
    "quantity": "instrument adequacy and I_e,cap channel uncertainty",
-   "formula": "adequate iff 3 u_R <= 0.02 I_e,collector at the RF-ON candidate point (else NOT_EVALUATED_INSTRUMENT); u(I_e,cap)_channels = sqrt(u^2(I_col,RFON) + u^2(I_col,RFOFF)) reported beside the preregistered margin-rule u_I_e_A (which is the value used in M_n; flag when smaller, P1Q-19)",
-   "basis": "adequacy test: owner (A9.5 P1Q-15). u(I_e,cap)_channels treats the RF-ON and RF-OFF readings of the same collector channel as independent - a LANE CHOICE (their calibration terms are largely common-mode, so it may overstate the difference uncertainty); reported only, never used in M_n (owner question P1Q-23)",
-   "source": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-15.instrument_adequacy, P1Q-16; docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-02"
+   "formula": "adequate iff 3 u_R <= 0.02 |I_e,collector| at the RF-ON candidate point (else NOT_EVALUATED_INSTRUMENT); u(I_e,cap)_channels = sqrt(u^2(I_col,RFON) + u^2(I_col,RFOFF) - 2 r u(I_col,RFON) u(I_col,RFOFF)) with a registered r (P1-IT-56) or r = 0 as a reported assumption; compared with the preregistered margin-rule u_I_e_A (P1-D-19)",
+   "basis": "adequacy test: owner (A9.5 P1Q-15, magnitude form A9.6 sec. 2). u(I_e,cap)_channels DERIVED (P1Q-23(b)): JCGM 100:2008 5.2.2 Eq. (13)/(15) with sensitivities +1 / -1",
+   "source": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-15.instrument_adequacy, P1Q-16; docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-02; docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json summary.p1q15_denominator; https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf 5.2.2"
+  },
+  {
+   "id": "P1-D-16",
+   "quantity": "calorimetric cross-check statistic z_x (P1-S1 dummy load)",
+   "formula": "z_x = (P_coupler - P_cal) / sqrt(u^2(P_coupler) + u^2(P_cal)), P_coupler = P_fwd - P_refl at the coupler plane; |z_x| <= k_x = 2 on every record -> CROSS_CHECK_AGREES, else EXCLUDED_INSTRUMENT (every RF-dependent derived quantity withheld); no record -> NOT_EVALUATED",
+   "source": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json UB-RF-08; docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json UBQ-04"
+  },
+  {
+   "id": "P1-D-17",
+   "quantity": "optical plasma-state class (UNLIT / E_MODE / H_MODE / UNCERTAIN)",
+   "formula": "line of sight lost or saturated -> UNCERTAIN; no registered threshold -> UNCERTAIN; below threshold with electrical evidence of ignition / mode transition -> UNCERTAIN, else UNLIT; lit with a registered E/H assignment -> E_MODE / H_MODE, else UNCERTAIN",
+   "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P2Q-05; docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 5, 14"
+  },
+  {
+   "id": "P1-D-18",
+   "quantity": "stable-region handoff record (P1-S5 -> P2 IDP2-01)",
+   "formula": "points within OWNER criteria (P1Q-01) with ignition repeatability of their registered ignition point; envelope [min, max] of P_fwd, mdot_Ar,H1, p_chamber, V_collector over those TESTED points (labelled ENVELOPE_OF_TESTED_POINTS_NOT_A_STABILITY_CLAIM_BETWEEN_POINTS); NOT_EVALUATED without criteria",
+   "source": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 8; P2 IDP2-01"
+  },
+  {
+   "id": "P1-D-19",
+   "quantity": "P1Q-19 alternatives for the u(I_e,cap) used in M_n",
+   "formula": "registered u_I_e_A >= u(I_e,cap)_channels: both treatments identical, M_n with u_I_e_A; otherwise REQUIRE_REGISTERED_GE_CHANNEL -> NOT_EVALUATED, USE_LARGER_OF_REGISTERED_AND_CHANNEL -> M_n with u(I_e,cap)_channels; overall NOT_EVALUATED (TBD_OWNER) when they disagree",
+   "source": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 6-7; https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf 5.1.2 / 5.2.2"
   },
   {
    "id": "P1-D-11",
@@ -2944,7 +3844,7 @@
    "id": "IF-P1-27",
    "direction": "to",
    "counterpart": "A9-04 docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "what": "the owner Kirchhoff closure rule for ICP-45 capacity points (A9.5 P1Q-15: |R_I| <= 3 u_R and <= 2 % of max(I_e,collector, I_scale,min); NOT_EVALUATED_INSTRUMENT when 3 u_R > 0.02 I_e,collector) as the decided form of the UB-N-07 current-path closure diagnostic for capacity records (no UB file edit by this lane)",
+   "what": "the owner Kirchhoff closure rule for ICP-45 capacity points (A9.5 P1Q-15: |R_I| <= 3 u_R and <= 2 % of max(|I_e,collector|, I_scale,min); NOT_EVALUATED_INSTRUMENT when 3 u_R > 0.02 |I_e,collector|) as the decided form of the UB-N-07 current-path closure diagnostic for capacity records (no UB file edit by this lane)",
    "units": "A, -",
    "status": "OFFERED (owner-decided rule)"
   }
@@ -3233,7 +4133,7 @@
   {
    "id": "A9.5 P1Q-15",
    "kind": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-15 (OWNER_DECIDED - KIRCHHOFF_CLOSURE_RULE); verbatim docs/decisions/OD_2026_09_30_A9_5_P1_CLOSURE_OWNER_DECISIONS.md",
-   "how_applied": "ANSWERED (also this lane's former P1Q-15 on the closure tolerance / sign convention): P1-IT-47 OWNER_DECIDED; global convention KIRCHHOFF_SIGN_CONVENTION (conventional current INTO the defined isolated network positive) with a registered convention id shared by every channel and every paired record (PR #34 check kept); R_I = sum_k I_k over every terminal incl. any other intentional terminal; floating anode I = 0 by construction with V_anode recorded; NOT_MEASURED terminals never zero (point excluded: intentional return path unmeasured); u(I_k) components required (P1-IT-49), independent and full-covariance u_R (P1-D-14); admission |R_I| <= 3 u_R AND |R_I| / max(I_e,collector, I_scale,min) <= 0.02 with 3 and 0.02 hard-coded owner constants (a closure_rule that tries to set them is refused) and I_scale,min a registered input (P1-IT-48); NOT_EVALUATED_INSTRUMENT per point (P1-IT-50; precedence P1Q-22); exclusions with reasons (P1-IT-51; unintended-ground-path field defined): a registered pair that is not matched and a non-floating anode in a capacity record are per-point exclusions that keep their reasons (never an abort of the reduction; anode precedence over A9.4 P1Q-13 in P1Q-21), and every terminal declared NOT_MEASURED is excluded uniformly; the earlier residual_rel_tol rule removed; P1Q-15 removed from the open list"
+   "how_applied": "ANSWERED (also this lane's former P1Q-15 on the closure tolerance / sign convention): P1-IT-47 OWNER_DECIDED; global convention KIRCHHOFF_SIGN_CONVENTION (conventional current INTO the defined isolated network positive) with a registered convention id shared by every channel and every paired record (PR #34 check kept); R_I = sum_k I_k over every terminal incl. any other intentional terminal; floating anode I = 0 by construction with V_anode recorded; NOT_MEASURED terminals never zero (point excluded: intentional return path unmeasured); u(I_k) components required (P1-IT-49), independent and full-covariance u_R (P1-D-14); admission |R_I| <= 3 u_R AND |R_I| / max(|I_e,collector|, I_scale,min) <= 0.02 with 3 and 0.02 hard-coded owner constants (a closure_rule that tries to set them is refused) and I_scale,min a registered input (P1-IT-48); NOT_EVALUATED_INSTRUMENT per point (P1-IT-50; precedence P1Q-22); exclusions with reasons (P1-IT-51; unintended-ground-path field defined): a registered pair that is not matched and a non-floating anode in a capacity record are per-point exclusions that keep their reasons (never an abort of the reduction; anode precedence over A9.4 P1Q-13 in P1Q-21), and every terminal declared NOT_MEASURED is excluded uniformly; the earlier residual_rel_tol rule removed; P1Q-15 removed from the open list"
   },
   {
    "id": "A9.5 P1Q-16",
@@ -3244,6 +4144,26 @@
    "id": "A9.5 execution",
    "kind": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json execution",
    "how_applied": "carried A9.4 minors fixed: P1-S4 collector wording OWNER_DECIDED (A9.4 P1Q-10) instead of PROPOSED (also P1-IT-36, P1-IT-42, P1-IT-40 and the readiness row); the stale PENDING references to the RFQ v2 and P2 preparation paths are replaced by the merged RFQ v2 line ids and P2 ids (checked at build time); no merge to main is implied"
+  },
+  {
+   "id": "A9.6 sec. 2",
+   "kind": "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json summary.p1q15_denominator / p1q16; verbatim docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 2",
+   "how_applied": "APPLIED: denominator max(|I_e,collector|, I_scale,min) and instrument adequacy 3 u_R <= 0.02 |I_e,collector| (magnitudes of the signed collector current; p1_reducer.kirchhoff_closure); I_e,cap signed, no abs / clipping / replacement of a negative result / Hall-ON capacity evidence (unchanged, re-tested)"
+  },
+  {
+   "id": "A9.6 sec. 5-7",
+   "kind": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 5-7",
+   "how_applied": "APPLIED: P1Q-19 ext, P1Q-21, P1Q-22, P1Q-23(a)/(b) settled as DERIVED (derived_resolutions, each with the rule it follows from); P1Q-19 remaining choice kept TBD_OWNER with both admissible treatments computed (P1-IT-57, P1-D-19); fixed statuses carried (a9_2_statuses_carried_unchanged)"
+  },
+  {
+   "id": "A9.6 sec. 8",
+   "kind": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 8",
+   "how_applied": "APPLIED: complete P1 workflow P1-W01..P1-W10 (a9_6_incorporation.workflow) with entry / exit criteria, record templates, required channels and reducers; campaign driver p1_campaign.run_campaign + CLI p1_campaign_cli.py; report schema p1_campaign_report_schema_v1.json; raw records and exclusion reasons preserved verbatim"
+  },
+  {
+   "id": "A9.6 sec. 14",
+   "kind": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 14",
+   "how_applied": "APPLIED: fail-closed audit bullet by bullet with one explicit test each (a9_6_incorporation.fail_closed_audit); OUT_OF_DOMAIN outcome added, never counted as FAIL"
   }
  ],
  "open_owner_questions": [
@@ -3321,39 +4241,23 @@
   },
   {
    "id": "P1Q-18",
-   "question": "A9.5 P1Q-15 applies the instrument-adequacy rule (3 u_R > 0.02 I_e,collector -> NOT_EVALUATED_INSTRUMENT) 'at a candidate qualification point'. Recorder reading implemented: it is tested on the RF-ON ICP45_CAPACITY record (the candidate point); the matched RF-OFF record, whose collector current is the facility/background term and may be near zero, is tested only with the statistical and fractional closure using the I_scale,min floor. Confirm?",
+   "question": "A9.5 P1Q-15 applies the instrument-adequacy rule (3 u_R > 0.02 |I_e,collector| -> NOT_EVALUATED_INSTRUMENT) 'at a candidate qualification point'. Recorder reading implemented: it is tested on the RF-ON ICP45_CAPACITY record (the candidate point); the matched RF-OFF record, whose collector current is the facility/background term and may be near zero, is tested only with the statistical and fractional closure using the I_scale,min floor. Confirm?",
    "proposed_answer": "YES (otherwise every RF-OFF record with I_e,collector ~ 0 would be NOT_EVALUATED_INSTRUMENT by construction, which the I_scale,min floor exists to avoid)",
    "needed_by": "before the first ICP45_CAPACITY record (P1-G0)"
   },
   {
    "id": "P1Q-19",
-   "question": "The margin rule's preregistered u_I_e_A (A9.1 UBQ-02 / UBQ-07) is kept as the I_e,cap uncertainty in M_n; the reducer also reports sqrt(u^2(I_col,RFON) + u^2(I_col,RFOFF)) from the channel uncertainties and flags REGISTERED_u_I_e_BELOW_CHANNEL_PROPAGATION when the registered value is smaller. Should the preregistration require u_I_e_A >= the channel-propagated value (or use the larger of the two)? Also: the reducer treats a registered u_I_e_A or u_I_d_max_A that is absent, None or 0 as 'not available' (A9.5 P1Q-16 condition 3 false -> ICP45 = NOT_EVALUATED), reading a zero standard uncertainty of a measured / registered current as no uncertainty statement. Confirm?",
-   "proposed_answer": "owner call; PROPOSED: register u_I_e_A no smaller than the channel propagation (it then also covers any non-channel terms), frozen before the first P1-S7 point; YES to zero = not available",
+   "status": "TBD_OWNER",
+   "question": "(Remaining genuine choice; the 'zero = not available' part and the rule that a registered u_I_e_A below the GUM channel propagation is never used as it stands are now DERIVED, see derived_resolutions.) When the registered u_I_e_A is below the channel-propagated u(I_e,cap)_channels, should the preregistration be REQUIRE_REGISTERED_GE_CHANNEL (registration inadmissible -> NOT_EVALUATED) or USE_LARGER_OF_REGISTERED_AND_CHANNEL? Both are computed side by side (P1-D-19); ICP45 = NOT_EVALUATED while they disagree.",
+   "proposed_answer": "owner call; PROPOSED: REQUIRE_REGISTERED_GE_CHANNEL (the preregistration then carries a self-consistent value, frozen before the first P1-S7 point)",
    "needed_by": "P1-S7 entry"
   },
   {
    "id": "P1Q-20",
+   "status": "TBD_OWNER",
    "question": "A9.5 states I_anode ~ 0 'by construction'. The reducer gives every OPEN_CIRCUIT_BY_CONSTRUCTION terminal (floating anode, open ICP body) I = 0 and u = 0. Should the insulation leakage recorded in the P1-S0 isolation / DWV test (P1-IT-44) be entered as a registered u(I_anode) instead of 0?",
    "proposed_answer": "owner call; PROPOSED: YES when the recorded leakage at the operating potential is not negligible against u_R; register it as a u_zero_offset_A of the anode terminal",
    "needed_by": "before the first ICP45_CAPACITY record (P1-G0)"
-  },
-  {
-   "id": "P1Q-21",
-   "question": "A9.4 P1Q-13 says an ICP45_CAPACITY record whose H-1 anode is not physically disconnected / floating is 'refused, never merely flagged'; A9.5 P1Q-15 lists the same case as an exclusion whose point 'remains in the raw record with the exclusion reason'. Recorder reading implemented: A9.5 (the later owner decision) governs - the point is excluded with its reason, never admitted, and the other points of the bundle are still evaluated; non-capacity records keep the A9.4 refusal of an OFF supply left connected. Confirm?",
-   "proposed_answer": "YES (the point can never feed I_e,cap either way; the exclusion keeps the raw record and does not abort the other points)",
-   "needed_by": "before the first ICP45_CAPACITY record (P1-G0)"
-  },
-  {
-   "id": "P1Q-22",
-   "question": "Outcome precedence at a capacity point that is instrument-inadequate (3 u_R > 0.02 I_e,collector) and also fails the statistical or fractional closure. Recorder reading implemented: structural exclusions first (pairing, anode, unmeasured return path, ground path, sign convention, missing u(I_k), mixed evidence); otherwise NOT_EVALUATED_INSTRUMENT takes precedence over the closure-test failure, which is kept as closure_test_results_not_decisive (when the instrument cannot resolve 2 %, a fractional failure is expected and should not point the laboratory at a ground-path problem). Confirm?",
-   "proposed_answer": "YES",
-   "needed_by": "before the first ICP45_CAPACITY record (P1-G0)"
-  },
-  {
-   "id": "P1Q-23",
-   "question": "Two uncertainty combinations are lane choices, not owner text: (a) u(I_k) = root-sum-square of the five listed components (calibration, zero/offset, resolution, repeatability where applicable, registered RF-pickup) (P1-D-14); (b) the reported u(I_e,cap)_channels = sqrt(u^2(I_col,RFON) + u^2(I_col,RFOFF)) treats the RF-ON and RF-OFF readings of the same collector channel as independent, although their calibration terms are largely common-mode (P1-D-15; reported only, never used in M_n). Adopt, or register other forms (e.g. a registered RF-ON / RF-OFF correlation)?",
-   "proposed_answer": "owner call; PROPOSED: (a) YES (GUM-style combination of independent components); (b) register the RF-ON / RF-OFF correlation of the collector channel with the channel calibration before the first P1-S7 point and use the correlated form",
-   "needed_by": "P1-S7 entry"
   }
  ],
  "historical_reuse": [
@@ -3529,7 +4433,8 @@
    "Kirchhoff closure rule inputs registered before the first ICP45_CAPACITY record: sign-convention id, I_scale,min, u(I_k) of every channel, optional channel correlation (A9.5 P1Q-15; P1-IT-47..49); unintended-ground-path check recorded per capacity record (P1-IT-51)",
    "run-matrix structure F1..F8",
    "record schema docs/experiments/hall_icp/p1_icp_bench/p1_bench_record_schema_v1.json",
-   "reducer docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py"
+   "reducer docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py",
+   "campaign driver docs/experiments/hall_icp/p1_icp_bench/p1_campaign.py (CLI p1_campaign_cli.py; report schema p1_campaign_report_schema_v1.json): one bundle per campaign with the P1-G0 registrations"
   ]
  },
  "a9_2_statuses_carried_unchanged": {
@@ -3549,6 +4454,8 @@
   "no Julia; no archengine wiring; no change outside docs/experiments/hall_icp/p1_icp_bench/ and tests/test_p1_icp_bench.py",
   "immutable inputs pinned by sha256; governance files read but never pinned",
   "no supplier / author / lab contact; published sources only",
-  "never PASS for ICP thermal, RF ratings or anode items"
+  "never PASS for ICP thermal, RF ratings or anode items",
+  "A9.6 sec. 14 fail-closed reducers: one explicit test per bullet (a9_6_incorporation.fail_closed_audit); OUT_OF_DOMAIN never counted as FAIL",
+  "genuine owner choices stay TBD_OWNER (P1Q-19 remaining part, P1Q-20 and the other open questions); derived rules cite the decision or the published standard they follow from"
  ]
 }

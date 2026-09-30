@@ -5,13 +5,710 @@
  "description": "Raw P1 bench records reduced by docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py. Generated from the reducer constants by build_p1_icp_bench.py; the reducer enforces these rules and raises on violations (no silent defaults). Every record is ENGINEERING_ONLY_NON_SCORING; synthetic records must say synthetic = true.",
  "oneOf": [
   {
+   "$ref": "#/$defs/p1_g0_readiness"
+  },
+  {
+   "$ref": "#/$defs/rf_cold_checkout"
+  },
+  {
+   "$ref": "#/$defs/ignition_attempt"
+  },
+  {
    "$ref": "#/$defs/icp_operating_point"
+  },
+  {
+   "$ref": "#/$defs/stability_dwell"
   },
   {
    "$ref": "#/$defs/topology_control_sequence"
   }
  ],
  "$defs": {
+  "p1_g0_readiness": {
+   "type": "object",
+   "required": [
+    "schema",
+    "record_kind",
+    "record_id",
+    "run_id",
+    "stage_id",
+    "timestamp_utc",
+    "synthetic",
+    "labels",
+    "interlocks",
+    "isolation_class",
+    "dwv_tests",
+    "gas_lines",
+    "ar_mfcs",
+    "ar_sweep_bounds_mg_s",
+    "second_mfc_necessity",
+    "generator_class",
+    "registrations"
+   ],
+   "properties": {
+    "schema": {
+     "const": "p1_bench_record_v1"
+    },
+    "record_id": {
+     "type": "string"
+    },
+    "run_id": {
+     "type": "string"
+    },
+    "timestamp_utc": {
+     "type": "string"
+    },
+    "synthetic": {
+     "type": "boolean"
+    },
+    "labels": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "contains": {
+      "const": "ENGINEERING_ONLY_NON_SCORING"
+     }
+    },
+    "record_kind": {
+     "const": "p1_g0_readiness"
+    },
+    "stage_id": {
+     "const": "P1-S0"
+    },
+    "interlocks": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "interlock_id",
+       "functional_test_done",
+       "functional",
+       "log_id"
+      ]
+     }
+    },
+    "isolation_class": {
+     "type": "object",
+     "required": [
+      "V_operating_max_V",
+      "V_design_withstand_V"
+     ]
+    },
+    "dwv_tests": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "path_id",
+       "applicable"
+      ],
+      "properties": {
+       "leakage_acceptance": {
+        "anyOf": [
+         {
+          "type": "null"
+         },
+         {
+          "type": "object",
+          "required": [
+           "criterion_id",
+           "max_leakage_A"
+          ]
+         }
+        ]
+       }
+      }
+     }
+    },
+    "gas_lines": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "line_id",
+       "bridges_isolated_potentials",
+       "isolator_installed",
+       "qualification"
+      ]
+     }
+    },
+    "ar_mfcs": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "mfc_id",
+       "range_min_mg_s",
+       "range_max_mg_s"
+      ]
+     }
+    },
+    "ar_sweep_bounds_mg_s": {
+     "anyOf": [
+      {
+       "type": "null"
+      },
+      {
+       "type": "array",
+       "minItems": 2,
+       "maxItems": 2
+      }
+     ]
+    },
+    "second_mfc_necessity": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "generator_class": {
+     "enum": [
+      "GROUND_FACILITY_ONLY_MAINS"
+     ]
+    },
+    "registrations": {
+     "type": "object",
+     "properties": {
+      "extraction_topology_id": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "h1_electrical_config_id": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "facility_match_rule_id": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "closure_rule_id": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "ignition_procedure_id": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "time_base_id": {
+       "type": [
+        "string",
+        "null"
+       ]
+      }
+     }
+    }
+   },
+   "x-owner-values": {
+    "V_operating_max_V_max": 350.0,
+    "V_design_withstand_V_min": 525.0,
+    "dwv_V_test_V_min": 1050.0,
+    "dwv_duration_s_min": 60.0,
+    "required_interlocks": [
+     "P1-SI-01",
+     "P1-SI-02",
+     "P1-SI-03",
+     "P1-SI-04",
+     "P1-SI-05",
+     "P1-SI-06",
+     "P1-SI-07",
+     "P1-SI-08",
+     "P1-SI-09",
+     "P1-SI-10",
+     "P1-SI-11"
+    ],
+    "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14"
+   }
+  },
+  "rf_cold_checkout": {
+   "type": "object",
+   "required": [
+    "schema",
+    "record_kind",
+    "record_id",
+    "run_id",
+    "stage_id",
+    "timestamp_utc",
+    "synthetic",
+    "labels",
+    "checkout_kind",
+    "rf",
+    "generator",
+    "loss_characterization",
+    "rf_pickup_check"
+   ],
+   "properties": {
+    "schema": {
+     "const": "p1_bench_record_v1"
+    },
+    "record_id": {
+     "type": "string"
+    },
+    "run_id": {
+     "type": "string"
+    },
+    "timestamp_utc": {
+     "type": "string"
+    },
+    "synthetic": {
+     "type": "boolean"
+    },
+    "labels": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "contains": {
+      "const": "ENGINEERING_ONLY_NON_SCORING"
+     }
+    },
+    "record_kind": {
+     "const": "rf_cold_checkout"
+    },
+    "stage_id": {
+     "enum": [
+      "P1-S1",
+      "P1-S2"
+     ]
+    },
+    "checkout_kind": {
+     "enum": [
+      "DUMMY_LOAD",
+      "INSTALLED_UNLIT_ANTENNA_VIA_LOCAL_MATCH"
+     ]
+    },
+    "rf": {
+     "type": "object",
+     "required": [
+      "reference_plane",
+      "P_fwd_W",
+      "P_refl_W",
+      "match_setting_id"
+     ],
+     "properties": {
+      "reference_plane": {
+       "const": "GENERATOR_50OHM_SIDE_OF_LOCAL_MATCH"
+      },
+      "P_fwd_W": {
+       "type": "number"
+      },
+      "P_refl_W": {
+       "type": "number"
+      },
+      "match_setting_id": {
+       "type": "string"
+      }
+     }
+    },
+    "calorimetric_cross_check": {
+     "type": "object",
+     "required": [
+      "method_id",
+      "P_cal_W",
+      "u_P_cal_W",
+      "u_P_coupler_W"
+     ],
+     "properties": {
+      "P_cal_W": {
+       "type": "number"
+      },
+      "u_P_cal_W": {
+       "type": "number",
+       "exclusiveMinimum": 0
+      },
+      "u_P_coupler_W": {
+       "type": "number",
+       "exclusiveMinimum": 0
+      },
+      "method_id": {
+       "type": "string"
+      }
+     }
+    },
+    "loss_characterization": {
+     "anyOf": [
+      {
+       "type": "null"
+      },
+      {
+       "type": "object",
+       "required": [
+        "characterization_id",
+        "method",
+        "match_setting_id",
+        "value_W",
+        "u_value_W",
+        "valid_max_gamma_abs"
+       ],
+       "properties": {
+        "method": {
+         "enum": [
+          "TWO_PORT_S_PARAMETER"
+         ]
+        },
+        "u_value_W": {
+         "type": "number",
+         "exclusiveMinimum": 0
+        }
+       }
+      }
+     ]
+    },
+    "optical": {
+     "type": "object",
+     "required": [
+      "photodiode_channel_id",
+      "optical_signal_V",
+      "photodiode_line_of_sight_ok",
+      "photodiode_saturated",
+      "electrical_ignition_or_mode_transition",
+      "unlit_threshold"
+     ],
+     "description": "photodiode channel (P1-M-28; A9.4 P2Q-05): classified by p1_reducer.classify_plasma_state into UNLIT / E_MODE / H_MODE / UNCERTAIN; unlit_threshold null until registered (P1-IT-54) -> UNCERTAIN",
+     "properties": {
+      "photodiode_channel_id": {
+       "type": "string",
+       "minLength": 1
+      },
+      "optical_signal_V": {
+       "type": "number"
+      },
+      "photodiode_line_of_sight_ok": {
+       "type": "boolean"
+      },
+      "photodiode_saturated": {
+       "type": "boolean"
+      },
+      "electrical_ignition_or_mode_transition": {
+       "type": "boolean"
+      },
+      "electrical_indicator_basis": {
+       "type": "string"
+      },
+      "unlit_threshold": {
+       "anyOf": [
+        {
+         "type": "null"
+        },
+        {
+         "type": "object",
+         "required": [
+          "threshold_id",
+          "threshold_V"
+         ],
+         "properties": {
+          "threshold_id": {
+           "type": "string"
+          },
+          "threshold_V": {
+           "type": "number"
+          }
+         }
+        }
+       ]
+      },
+      "lit_mode_assignment": {
+       "enum": [
+        "E_MODE",
+        "H_MODE",
+        null
+       ]
+      },
+      "mode_indicator_basis": {
+       "type": "string"
+      }
+     }
+    },
+    "gas_flow_state": {
+     "enum": [
+      "OFF",
+      "FLOWING"
+     ]
+    },
+    "unlit_procedure_id": {
+     "type": "string"
+    },
+    "rf_pickup_check": {
+     "enum": [
+      "DONE",
+      "NOT_DONE"
+     ]
+    }
+   },
+   "x-required-by-kind": {
+    "DUMMY_LOAD": [
+     "calorimetric_cross_check"
+    ],
+    "INSTALLED_UNLIT_ANTENNA_VIA_LOCAL_MATCH": [
+     "optical",
+     "gas_flow_state",
+     "unlit_procedure_id"
+    ]
+   },
+   "x-stage-by-kind": {
+    "DUMMY_LOAD": "P1-S1",
+    "INSTALLED_UNLIT_ANTENNA_VIA_LOCAL_MATCH": "P1-S2"
+   },
+   "x-k_x": 2.0
+  },
+  "ignition_attempt": {
+   "type": "object",
+   "required": [
+    "schema",
+    "record_kind",
+    "record_id",
+    "run_id",
+    "stage_id",
+    "timestamp_utc",
+    "synthetic",
+    "labels",
+    "gas",
+    "gas_mode",
+    "hall_discharge_state",
+    "ignition_procedure_id",
+    "point_id",
+    "rf",
+    "flows",
+    "pressures",
+    "ignited",
+    "ignition_delay_s",
+    "extinguished",
+    "optical",
+    "h1_magnet_state"
+   ],
+   "properties": {
+    "schema": {
+     "const": "p1_bench_record_v1"
+    },
+    "record_id": {
+     "type": "string"
+    },
+    "run_id": {
+     "type": "string"
+    },
+    "timestamp_utc": {
+     "type": "string"
+    },
+    "synthetic": {
+     "type": "boolean"
+    },
+    "labels": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "contains": {
+      "const": "ENGINEERING_ONLY_NON_SCORING"
+     }
+    },
+    "record_kind": {
+     "const": "ignition_attempt"
+    },
+    "stage_id": {
+     "const": "P1-S3"
+    },
+    "gas": {
+     "enum": [
+      "Ar"
+     ]
+    },
+    "gas_mode": {
+     "enum": [
+      "G-REUSE",
+      "DIAGNOSTIC_DEDICATED_FEED"
+     ]
+    },
+    "hall_discharge_state": {
+     "const": "OFF"
+    },
+    "rf": {
+     "type": "object",
+     "required": [
+      "reference_plane",
+      "P_fwd_W",
+      "P_refl_W",
+      "match_setting_id"
+     ],
+     "properties": {
+      "reference_plane": {
+       "const": "GENERATOR_50OHM_SIDE_OF_LOCAL_MATCH"
+      },
+      "P_fwd_W": {
+       "type": "number"
+      },
+      "P_refl_W": {
+       "type": "number"
+      },
+      "match_setting_id": {
+       "type": "string"
+      }
+     }
+    },
+    "ignited": {
+     "type": "boolean"
+    },
+    "ignition_delay_s": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "extinguished": {
+     "type": "boolean"
+    },
+    "optical": {
+     "type": "object",
+     "required": [
+      "photodiode_channel_id",
+      "optical_signal_V",
+      "photodiode_line_of_sight_ok",
+      "photodiode_saturated",
+      "electrical_ignition_or_mode_transition",
+      "unlit_threshold"
+     ],
+     "description": "photodiode channel (P1-M-28; A9.4 P2Q-05): classified by p1_reducer.classify_plasma_state into UNLIT / E_MODE / H_MODE / UNCERTAIN; unlit_threshold null until registered (P1-IT-54) -> UNCERTAIN",
+     "properties": {
+      "photodiode_channel_id": {
+       "type": "string",
+       "minLength": 1
+      },
+      "optical_signal_V": {
+       "type": "number"
+      },
+      "photodiode_line_of_sight_ok": {
+       "type": "boolean"
+      },
+      "photodiode_saturated": {
+       "type": "boolean"
+      },
+      "electrical_ignition_or_mode_transition": {
+       "type": "boolean"
+      },
+      "electrical_indicator_basis": {
+       "type": "string"
+      },
+      "unlit_threshold": {
+       "anyOf": [
+        {
+         "type": "null"
+        },
+        {
+         "type": "object",
+         "required": [
+          "threshold_id",
+          "threshold_V"
+         ],
+         "properties": {
+          "threshold_id": {
+           "type": "string"
+          },
+          "threshold_V": {
+           "type": "number"
+          }
+         }
+        }
+       ]
+      },
+      "lit_mode_assignment": {
+       "enum": [
+        "E_MODE",
+        "H_MODE",
+        null
+       ]
+      },
+      "mode_indicator_basis": {
+       "type": "string"
+      }
+     }
+    },
+    "point_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "ignition_procedure_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "h1_magnet_state": {
+     "type": "string",
+     "minLength": 1
+    }
+   }
+  },
+  "stability_dwell": {
+   "type": "object",
+   "required": [
+    "schema",
+    "record_kind",
+    "record_id",
+    "run_id",
+    "stage_id",
+    "timestamp_utc",
+    "synthetic",
+    "labels",
+    "operating_point_record_id",
+    "ignition_point_id",
+    "dwell"
+   ],
+   "properties": {
+    "schema": {
+     "const": "p1_bench_record_v1"
+    },
+    "record_id": {
+     "type": "string"
+    },
+    "run_id": {
+     "type": "string"
+    },
+    "timestamp_utc": {
+     "type": "string"
+    },
+    "synthetic": {
+     "type": "boolean"
+    },
+    "labels": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "contains": {
+      "const": "ENGINEERING_ONLY_NON_SCORING"
+     }
+    },
+    "record_kind": {
+     "const": "stability_dwell"
+    },
+    "stage_id": {
+     "const": "P1-S5"
+    },
+    "operating_point_record_id": {
+     "type": "string"
+    },
+    "ignition_point_id": {
+     "type": "string"
+    },
+    "dwell": {
+     "type": "object",
+     "required": [
+      "t_s",
+      "I_e_A",
+      "P_refl_W"
+     ]
+    }
+   }
+  },
   "icp_operating_point": {
    "type": "object",
    "required": [
@@ -543,6 +1240,71 @@
       "DONE",
       "NOT_DONE"
      ]
+    },
+    "optical": {
+     "type": "object",
+     "required": [
+      "photodiode_channel_id",
+      "optical_signal_V",
+      "photodiode_line_of_sight_ok",
+      "photodiode_saturated",
+      "electrical_ignition_or_mode_transition",
+      "unlit_threshold"
+     ],
+     "description": "photodiode channel (P1-M-28; A9.4 P2Q-05): classified by p1_reducer.classify_plasma_state into UNLIT / E_MODE / H_MODE / UNCERTAIN; unlit_threshold null until registered (P1-IT-54) -> UNCERTAIN",
+     "properties": {
+      "photodiode_channel_id": {
+       "type": "string",
+       "minLength": 1
+      },
+      "optical_signal_V": {
+       "type": "number"
+      },
+      "photodiode_line_of_sight_ok": {
+       "type": "boolean"
+      },
+      "photodiode_saturated": {
+       "type": "boolean"
+      },
+      "electrical_ignition_or_mode_transition": {
+       "type": "boolean"
+      },
+      "electrical_indicator_basis": {
+       "type": "string"
+      },
+      "unlit_threshold": {
+       "anyOf": [
+        {
+         "type": "null"
+        },
+        {
+         "type": "object",
+         "required": [
+          "threshold_id",
+          "threshold_V"
+         ],
+         "properties": {
+          "threshold_id": {
+           "type": "string"
+          },
+          "threshold_V": {
+           "type": "number"
+          }
+         }
+        }
+       ]
+      },
+      "lit_mode_assignment": {
+       "enum": [
+        "E_MODE",
+        "H_MODE",
+        null
+       ]
+      },
+      "mode_indicator_basis": {
+       "type": "string"
+      }
+     }
     }
    },
    "propertyNames": {
