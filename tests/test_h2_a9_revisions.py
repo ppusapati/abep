@@ -1,6 +1,7 @@
 """Tests for the A9-07 H2 revisions deliverable (fo_a9_07_h2_revisions).
 
-Run: python -m pytest -q tests/test_h2_a9_revisions.py   (about 20 s: one deterministic rebuild in memory).
+Run: python -m pytest -q tests/test_h2_a9_revisions.py   (about 60 s: one deterministic rebuild in memory, the thermal
+worst-case search split over fork worker processes).
 """
 from __future__ import annotations
 
@@ -217,8 +218,17 @@ def test_external_c1_recomputation(doc):
         assert f["nominal_assumptions"] <= f["worst_case_assumptions"]
         lo, hi = r["channel_window_d_mean_mm_at_this_h"]
         assert r["external_floor_binding"]["nominal_assumptions"] == (f["nominal_assumptions"] > lo)
+        assert r["external_floor_binding"]["worst_case_assumptions"] == (f["worst_case_assumptions"] > lo)
     assert matched == 3
     assert h1["in_memory_override"]["restored"] is True
+    # REV-01 binding flags must agree with the rows (review finding: the flag was inverted)
+    rev01 = [r for r in doc["revision_register"] if r["id"] == "REV-01"][0]["new"]
+    for kind in ("nominal_assumptions", "worst_case_assumptions"):
+        rows = [r["h_mm"] for r in h1["rows"] if r["external_c1_magnetic_floor_mm"][kind]
+                > r["channel_window_d_mean_mm_at_this_h"][0]]
+        assert rev01["binding_inside_window"][kind] == bool(rows), kind
+        assert rev01["binding_rows_h_mm"][kind] == rows, kind
+    assert rev01["binding_inside_window"]["worst_case_assumptions"] is True
 
 
 def test_small_derivations(doc):
@@ -258,17 +268,36 @@ def test_thermal_rules_and_verdicts(doc):
     lim = th["limits"]
     assert lim["BN_wall"]["limit_C"] == 900.0
     assert math.isclose(lim["coil_ceramic"]["limit_C"], (1000.0 - 32.0) * 5.0 / 9.0, abs_tol=1e-3)
+    alw = th["search"]["allowance_K"]
+    assert alw >= 0.0 and alw == max(v for k, v in th["search"]["gap_check"]["gap_per_output"].items()
+                                     if k != "Q_mount_W")
     for cfg, levers in th["results"].items():
         assert cfg in doc["configurations"]
         for lv, cases in levers.items():
             for c, rec in cases.items():
                 for n, e in rec["nodes"].items():
                     assert e["T_min_C"] <= e["T_nominal_C"] + 1e-6 <= e["T_max_C"] + 2e-6, (cfg, lv, c, n)
+                    # the searched / bounded maximum is never below the OAT adverse corner
+                    assert e["T_max_C"] >= e["oat_corner_T_max_C"] - 1e-9, (cfg, lv, c, n)
                     if e.get("limit_C") is not None:
                         ceil = e["limit_C"] - 50.0
-                        assert (e["verdict"] == "CLOSES") == (e["T_max_C"] <= ceil + 1e-9), (cfg, lv, c, n)
+                        if rec["domain_exits"]:
+                            assert e["verdict"] == "DO_NOT_CLOSE_MODEL_DOMAIN_EXCEEDED"
+                        else:
+                            assert (e["verdict"] == "CLOSES") == (e["T_max_C"] + alw <= ceil + 1e-9), (cfg, lv, c, n)
                     else:
                         assert e["verdict"] == "OPEN_LIMIT_TBD"
+    # dominated orbit cases carry the searched orbit_hot @ 60 degC maximum of the same lever as their bound
+    icp = th["results"]["hall_icp_neutralizer"]
+    for lv, cases in icp.items():
+        if lv.startswith("LV-BASE-BARE"):
+            continue
+        dom = cases["orbit_hot@T_mount=60C"]["nodes"]
+        for c, rec in cases.items():
+            if c.startswith("orbit") and c != "orbit_hot@T_mount=60C":
+                for n in ("WI", "WO", "CI", "CO", "PI", "PO", "BP"):
+                    assert rec["nodes"][n]["T_max_C"] == dom[n]["T_max_C"], (lv, c, n)
+                    assert rec["nodes"][n]["oat_corner_T_max_C"] <= dom[n]["T_max_C"], (lv, c, n)
     # the v1 11.2 K case is reproduced with the imported solver
     rep = th["reproduction_check"]
     assert rep["v1_margin_worst_K"] == 11.2 and abs(rep["reproduced_T_max_C"] - rep["v1_T_max_C"]) <= 0.15
@@ -294,10 +323,11 @@ def test_levers_never_leave_the_h2_5_ranges(doc):
 
 def test_mount_heat_row85_consistency(doc):
     th = doc["recomputations"]["h25_thermal_rerun"]
+    aw = th["search"]["allowance_W"]
     for lv, cases in th["mount_heat_vs_row85"].items():
         for c, r in cases.items():
             for a, v in r["within_allowable_W"].items():
-                assert (v == "CLOSES") == (r["Q_mount_W"]["max_W"] <= float(a))
+                assert (v == "CLOSES") == (r["Q_mount_W"]["max_W"] + aw <= float(a))
     ok = sorted(lv for lv, cases in th["mount_heat_vs_row85"].items()
                 if all(r["within_allowable_W"]["100"] == "CLOSES" for r in cases.values()))
     assert ok == th["row85_compatible_levers_100W"]
@@ -329,3 +359,101 @@ def test_markdown_sections():
               "## (c) Owner answers applied", "## (d) Open owner questions", "## (e) Historical reuse",
               "## (f) M16 impact", "## (g) H3 inputs"):
         assert h in md, h
+
+
+def test_abort_list_is_limit_minus_50K(doc):
+    """IDA7-16 (to A9-01): aborts are limit - 50 K (UBQ-06, row 86), never the limit itself (review finding)."""
+    d = [x for x in doc["interface_demands"] if x["id"] == "IDA7-16"][0]
+    assert d["to"].startswith("A9-01")
+    lim = doc["recomputations"]["h25_thermal_rerun"]["limits"]
+    assert set(d["value"]) == {k for k in lim if k != "rule"}
+    for k, v in d["value"].items():
+        if lim[k].get("limit_C") is not None:
+            assert v["limit_C"] == lim[k]["limit_C"]
+            assert math.isclose(v["abort_C"], lim[k]["limit_C"] - 50.0, abs_tol=1e-3), k
+        else:
+            assert isinstance(v["abort_C"], str) and v["abort_C"].startswith("TBD - requires"), k
+    assert d["value"]["BN_wall"]["abort_C"] == 850.0
+    assert math.isclose(d["value"]["coil_ceramic"]["abort_C"], 487.778, abs_tol=1e-3)
+
+
+def test_h2_4_flags_all_covered(doc):
+    bpb = json.loads((REPO / "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json")
+                     .read_text(encoding="utf-8"))
+    rev = {r["id"]: r for r in doc["revision_register"]}
+    cov = {c["h2_4_id"]: c for c in doc["h2_4_flag_coverage"]}
+    for f in bpb["h2_4_revision_flags"]:
+        c = cov[f["h2_4_id"]]
+        assert c["a9_02_disposition"] == f["disposition"]
+        if f["disposition"] in ("RETAINED", "RETAINED_AS_CANDIDATE"):
+            assert c["covered_by"] == []
+        else:
+            assert c["covered_by"] and all(r in rev for r in c["covered_by"]), f["h2_4_id"]
+    # H24-33 re-derived on the 100 V internal bus (row 111)
+    r67 = [r for r in doc["revision_register"] if r["h2_item"] == "H24-33"][0]
+    cur = r67["new"]["value"]["internal_bus_current_A"]
+    assert cur == {"1300 W": 13.0, "1350 W": 13.5, "1500 W": 15.0}
+    # REV-52: the partition defers to the full A9-02 slot list
+    r52 = [r for r in doc["revision_register"] if r["h2_item"] == "OQ-H24-03"][0]
+    assert r52["new"]["value"] == [x["slot"] for x in bpb["slots"]]
+    for slot in ("icp_assist_magnet", "filter_getter", "active_cooling", "flow_control_icp_feed"):
+        assert slot in r52["new"]["value"]
+
+
+def test_minimal_levers_and_buildability(doc):
+    th = doc["recomputations"]["h25_thermal_rerun"]
+    icp = th["results"]["hall_icp_neutralizer"]
+    ok85 = set(th["row85_compatible_levers_100W"])
+    for n in ("WI", "WO", "CI", "CO"):
+        s = th["closure_summary_hall_icp_neutralizer"][n]
+        closing = [lv for lv in th["levers"] if lv != "LV-BASE" and
+                   all(icp[lv][c]["nodes"][n]["verdict"] == "CLOSES" for c in icp[lv])]
+        assert closing == s["levers_that_close_every_case"], n
+        good = [lv for lv in closing if lv in ok85]
+        m = s["minimal_closing_within_row85_100W"]
+        if good:
+            k = min(len(th["levers"][lv]["parts"]) for lv in good)
+            assert m["lever_count"] == k
+            assert [x["lever"] for x in m["sets"]] == [lv for lv in good if len(th["levers"][lv]["parts"]) == k]
+        else:
+            assert m["sets"] == []
+    # single levers are also evaluated with the isolated mount (review finding)
+    for lv in ("LV-OPEN+ISO", "LV-RAD+ISO", "LV-COIL+ISO", "LV-COND+ISO", "LV-BN+ISO"):
+        assert lv in th["levers"]
+    assert th["levers"]["LV-COIL"]["buildability"]["status"] == "NOT_DEMONSTRATED"
+    assert "combination" in th["levers"]["LV-ALL-ISO"]["buildability"]
+    assert all(v["buildability"]["status"] != "DEMONSTRATED" for v in th["levers"].values())
+
+
+def test_search_bounds_random_points(builder):
+    """Seeded random states of the hottest baseline box never exceed the reported searched maximum + allowance."""
+    import random
+    doc = json.loads(JSON_PATH.read_text(encoding="utf-8"))
+    th = doc["recomputations"]["h25_thermal_rerun"]
+    M5 = builder.h25()
+    rows = M5.build_parameters()
+    pm = M5.param_map(rows)
+    fx = M5.fixed_inputs(pm)
+    rg = builder._ranges(pm, "orbit_hot", "hall_icp_neutralizer", 60.0, "LV-BASE", th["coil_conductor_factor"]["factor"])
+    rec = th["results"]["hall_icp_neutralizer"]["LV-BASE"]["orbit_hot@T_mount=60C"]
+    alw = th["search"]["allowance_K"]
+    rnd = random.Random(7)
+    for _ in range(25):
+        x = {k: (lo if lo == hi else rnd.choice((lo, hi, rnd.uniform(lo, hi)))) for k, (lo, hi) in rg.items()}
+        T, _ = builder._run(x, fx, "orbit_hot", builder.FINISH_BASE, pm["P_d_max_W"]["value"])
+        for n in ("WI", "WO", "CI", "CO", "PI", "PO", "BP"):
+            assert T[n] - 273.15 <= rec["nodes"][n]["T_max_C"] + alw + 0.05, n
+        assert T["Q_mount_W"] <= rec["Q_mount_W"]["max_W"] + th["search"]["allowance_W"] + 0.05
+
+
+def test_review_fixes_documented(doc):
+    th = doc["recomputations"]["h25_thermal_rerun"]
+    assert th["limits"]["exterior_coating"]["limit_C"] is None
+    assert set(th["limits"]["exterior_coating"]["nodes"]) == {"PO", "BP"}
+    q = {x["id"] for x in doc["open_owner_questions"]}
+    assert {"OQ-A907-08", "OQ-A907-09"} <= q
+    assert "EXTENDS" in [r for r in doc["revision_register"] if r["h2_item"] == "H25-36"][0]["new"]["requirement"]
+    assert "NOT a verdict" in th["hall_c1_reference_note"]
+    d1 = [x for x in doc["interface_demands"] if x["id"] == "IDA7-01"][0]
+    assert "LV-COIL_copper_delta_kg_lower_bound" in d1["value"]
+    assert d1["value"]["LV-RAD_mass_delta_kg"].startswith("TBD - requires")
