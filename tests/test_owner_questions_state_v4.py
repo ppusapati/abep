@@ -199,3 +199,82 @@ def test_no_forbidden_substring_in_code():
     needle = "xe_" + "ledger"
     for p in (HERE / "build_owner_questions_state_v4.py", Path(__file__)):
         assert needle not in p.read_text(encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# register completion (lane A9_6_M16): lane-24 open decisions carried by RVM rows (RVM-ID-11) and RVMQ-01 (RVM-ID-10)
+# ---------------------------------------------------------------------------------------------------------------------
+HGM_REL = "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json"
+RVM_REL = "docs/requirements/rvm_a9/rvm_a9_v1.json"
+ANS_REL = "docs/decisions/OD_2026_09_29_owner_answers_147.json"
+REGISTERED = ["OD2", "OD3", "OD5", "OD6", "OD12", "OD13", "OD14", "RVMQ-01"]
+
+
+def test_register_completion_rows_present_once_with_pinned_source():
+    assert DOC["pins"]["lane24_hard_gate_matrix"]["sha256"] == hashlib.sha256((ROOT / HGM_REL).read_bytes()).hexdigest()
+    assert DOC["pins"]["owner_answers_147"]["sha256"] == hashlib.sha256((ROOT / ANS_REL).read_bytes()).hexdigest()
+    hgm = _load(HGM_REL)
+    for rid in REGISTERED:
+        assert len(BY_ID.get(rid, [])) == 1, rid
+        r = BY_ID[rid][0]
+        assert r["no"] > len(V3["rows"])
+        if rid.startswith("OD"):
+            od = B.resolve(hgm, r["source_ref"]["locator"])
+            assert r["source_ref"]["path"] == HGM_REL and od["id"] == rid
+            assert r["question"] == od["topic"] and r["alternatives"] == od["options"]
+        assert r["rvm_rows"], rid
+
+
+def test_every_lane24_decision_carried_by_an_rvm_row_is_registered():
+    rvm = _load(RVM_REL)
+    carried = {o["id"] for row in rvm["rows"] for o in row.get("open_readings", []) if o.get("register") == HGM_REL}
+    assert carried == set(B.LANE24_REGISTERED)
+    for oid in carried:
+        assert BY_ID[oid][0]["status"] in ("TBD_OWNER", "SUPERSEDED")
+        for row in rvm["rows"]:
+            if any(o["id"] == oid for o in row.get("open_readings", [])):
+                assert row["id"] in BY_ID[oid][0]["rvm_rows"]
+    for q in rvm["open_owner_questions"]:
+        assert q["id"] in BY_ID, q["id"]
+    for dem in ("RVM-ID-10", "RVM-ID-11"):
+        assert B.resolve(rvm, f"interface_demands[id={dem}]")
+
+
+def test_register_completion_classification_is_conservative():
+    answers = {a["row"]: a for a in _load(ANS_REL)["answers"]}
+    for rid in REGISTERED:
+        r = BY_ID[rid][0]
+        if rid in B.LANE24_SUPERSEDED:
+            sb = r["superseded_by"]
+            assert r["status"] == "SUPERSEDED"
+            assert sb["owner_answer_verbatim"] == answers[sb["owner_row"]]["owner_answer_verbatim"]
+            assert sb["sha256"] == DOC["pins"]["owner_answers_147"]["sha256"]
+            for p in r["implemented_paths"]:
+                assert (ROOT / p).exists()
+        else:
+            assert r["status"] == "TBD_OWNER", rid
+            assert "OWNER_JUDGMENT" in r["dependency"]
+            for rel in r.get("related_owner_answers", []):
+                assert rel["owner_answer_verbatim"] == answers[rel["owner_row"]]["owner_answer_verbatim"]
+                assert rel["why_not_settled"]
+    assert set(B.LANE24_SUPERSEDED) == {"OD13"}
+    assert "OFFICIAL_RFP_TEXT" in DOC["dependency_vocabulary"]
+
+
+def test_register_completion_grouped():
+    groups = {g["id"]: g for g in DOC["question_groups"]}
+    assert groups["DG-RFP-ENVELOPE"]["members"] == ["OD2", "OD3"]
+    assert groups["DG-RFP-START"]["members"] == ["OD5", "OD14"]
+    assert groups["DG-RFP-UNGATED"]["members"] == ["OD12", "RVMQ-01"]
+    assert "OD6" in groups["DG-XE-FUNC"]["members"]
+    assert BY_ID["OD13"][0].get("group") is None
+
+
+def test_register_completion_fails_closed(monkeypatch):
+    monkeypatch.setattr(B, "LANE24_REGISTERED", [x for x in B.LANE24_REGISTERED if x != "OD5"])
+    with pytest.raises(SystemExit):
+        B.build()
+    monkeypatch.setattr(B, "LANE24_REGISTERED", B.LANE24_REGISTERED + ["OD5"])
+    monkeypatch.setattr(B, "HGM_SHA", "0" * 64)
+    with pytest.raises(SystemExit):
+        B.build()

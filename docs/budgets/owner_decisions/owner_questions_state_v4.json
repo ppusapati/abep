@@ -14,6 +14,14 @@
    "path": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
    "sha256": "1c2e74340852dfe8c58b1804c3cfda2bfbfb3bfb5d631aaebd715cf716b76af2"
   },
+  "lane24_hard_gate_matrix": {
+   "path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+   "sha256": "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f"
+  },
+  "owner_answers_147": {
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1"
+  },
   "a9_4_decision": {
    "path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
    "sha256": "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d"
@@ -75,12 +83,23 @@
    "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
    "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
    "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
-   "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json"
+   "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json",
+   "docs/requirements/rvm_a9/rvm_a9_v1.json"
   ]
  },
+ "revisions": [
+  {
+   "lane": "A9_6_DECPROP (fo_a9_6_decision_propagation)",
+   "what": "state v4 built from v3 and the merged lanes"
+  },
+  {
+   "lane": "A9_6_M16 (fo_a9_6_m16_refresh)",
+   "what": "register completion (A9.6 sec. 16 lane): lane-24 open decisions OD2, OD3, OD5, OD6, OD12, OD13, OD14 carried by RVM rows (RVM-ID-11) and RVMQ-01 (RVM-ID-10) registered; OD13 SUPERSEDED by owner row 3, the others TBD_OWNER; groups DG-RFP-ENVELOPE, DG-RFP-START, DG-RFP-UNGATED added and OD6 joined to DG-XE-FUNC"
+  }
+ ],
  "status_vocabulary": {
   "ANSWERED": "answered by the owner: a v1 row (row pointer into the 147 answers), an A9.1 decision row, or a lane question answered by an existing owner row (see status_detail)",
-  "SUPERSEDED": "v1 row whose owner answer supersedes the question for the primary campaign",
+  "SUPERSEDED": "v1 row whose owner answer supersedes the question for the primary campaign; v4 register completion: also a registered lane-24 open decision whose question an owner answer supersedes ('superseded_by' quotes it)",
   "ANSWERED_BY_A9_1": "lane question answered by an A9.1 decision",
   "ANSWERED_BY_A9_2": "lane question answered by an A9.2 decision (A9-07 follow-up, 2026-09-30)",
   "ADDRESSED_IN_A9_10": "integration work item performed by A9-10 as directed by the brief (not an owner decision; lane-assigned, the owner may reopen it)",
@@ -113,7 +132,8 @@
   "VENDOR_QUOTATIONS": "depends on vendor quotations, datasheets or ratings",
   "MATERIAL_DATA": "depends on selected / validated material data",
   "MEASURED_THERMAL_COUPLING": "depends on measured thermal coupling",
-  "FACILITY_CAPABILITY": "depends on facility / laboratory capability"
+  "FACILITY_CAPABILITY": "depends on facility / laboratory capability",
+  "OFFICIAL_RFP_TEXT": "depends on the reading of the canonical RFP document, which is not in the repository (owner row 1: obtain it through the legitimate owner / portal route; do not freeze ambiguous RFP interpretations from secondary sources)"
  },
  "blocks_vocabulary": {
   "BLOCKS_P1_START": "needed at or before P1-G0 (incl. dispatch of P1_NEEDED RFQ lines)",
@@ -137,10 +157,10 @@
   "ANSWERED_BY_A9_4": 4,
   "ANSWERED_BY_A9_5": 2,
   "DERIVED": 11,
-  "SUPERSEDED": 13,
-  "TBD_OWNER": 87
+  "SUPERSEDED": 14,
+  "TBD_OWNER": 94
  },
- "tbd_owner_count": 87,
+ "tbd_owner_count": 94,
  "v3_open_reclassified": {
   "DERIVED": 4,
   "TBD_OWNER": 42
@@ -149,7 +169,8 @@
   "ANSWERED_BY_A9_4": 4,
   "ANSWERED_BY_A9_5": 2,
   "DERIVED": 7,
-  "TBD_OWNER": 45
+  "SUPERSEDED": 1,
+  "TBD_OWNER": 52
  },
  "tbd_owner_blocks": {
   "BLOCKS_LOCK_1": 50,
@@ -157,7 +178,7 @@
   "BLOCKS_P1_START": 16,
   "BLOCKS_P2": 8,
   "BLOCKS_P3_P4": 15,
-  "NOTHING_IMMEDIATE": 6
+  "NOTHING_IMMEDIATE": 13
  },
  "question_groups": [
   {
@@ -184,9 +205,10 @@
    "relation": "COUPLED",
    "members": [
     "XA9Q-07",
-    "XV2Q-01"
+    "XV2Q-01",
+    "OD6"
    ],
-   "what": "Xe functional mode of hall_icp_neutralizer; XV2Q-01 applies only if XA9Q-07 = NO"
+   "what": "Xe functional mode of hall_icp_neutralizer; XV2Q-01 applies only if XA9Q-07 = NO; OD6 (register completion) is the residual RFP meaning of 'air + Xe' that the mode must satisfy"
   },
   {
    "id": "DG-MEOP",
@@ -308,13 +330,40 @@
     "P2Q-06"
    ],
    "what": "Z_antenna method and agreement rule"
+  },
+  {
+   "id": "DG-RFP-ENVELOPE",
+   "relation": "COUPLED",
+   "members": [
+    "OD2",
+    "OD3"
+   ],
+   "what": "altitude-envelope quantifier and the atmosphere design states it ranges over (lane-24 topic 'envelope quantifier over 180-230 km x atmosphere states'; RVM-01)"
+  },
+  {
+   "id": "DG-RFP-START",
+   "relation": "COUPLED",
+   "members": [
+    "OD5",
+    "OD14"
+   ],
+   "what": "whether ignition from off on atmospheric propellant is an RFP requirement and, if so, whether it must be air-only (RVM-14)"
+  },
+  {
+   "id": "DG-RFP-UNGATED",
+   "relation": "COUPLED",
+   "members": [
+    "OD12",
+    "RVMQ-01"
+   ],
+   "what": "gate status of the recorded RFP statements (indigenous content, no-SPF, nascent O) and the redundancy basis if no-SPF is confirmed (RVM-09 / -16 / -18 / -19)"
   }
  ],
  "items": [
   {
    "id": "V4-IT-01",
    "name": "rows in state v4",
-   "value": 352,
+   "value": 360,
    "units": "count",
    "basis": "deterministic count over 'rows' by this builder",
    "source": "docs/budgets/owner_decisions/owner_questions_state_v4.json rows",
@@ -346,8 +395,8 @@
   },
   {
    "id": "V4-IT-04",
-   "name": "rows added since v3 (lane questions, registrations, A9.4/A9.5 answers, lane DERIVED settlements)",
-   "value": 58,
+   "name": "rows added since v3 (lane questions, registrations, A9.4/A9.5 answers, lane DERIVED settlements, register completion)",
+   "value": 66,
    "units": "count",
    "basis": "deterministic count over 'rows' by this builder",
    "source": "docs/budgets/owner_decisions/owner_questions_state_v4.json rows",
@@ -358,7 +407,7 @@
   {
    "id": "V4-IT-05",
    "name": "TBD_OWNER rows (genuine owner questions still open)",
-   "value": 87,
+   "value": 94,
    "units": "count",
    "basis": "deterministic count over 'rows' by this builder",
    "source": "docs/budgets/owner_decisions/owner_questions_state_v4.json rows",
@@ -392,6 +441,28 @@
    "id": "V4-IT-08",
    "name": "OPEN rows remaining (must be 0: every v3 OPEN row re-classified)",
    "value": 0,
+   "units": "count",
+   "basis": "deterministic count over 'rows' by this builder",
+   "source": "docs/budgets/owner_decisions/owner_questions_state_v4.json rows",
+   "evidence_class": "derived (bookkeeping count; no physical quantity)",
+   "status": "COMPUTED",
+   "freeze_point": "rebuilt whenever a pinned input or a lane package changes"
+  },
+  {
+   "id": "V4-IT-09",
+   "name": "rows added by the register completion (lane-24 decisions of RVM-ID-11, RVM question of RVM-ID-10)",
+   "value": 8,
+   "units": "count",
+   "basis": "deterministic count over 'rows' by this builder",
+   "source": "docs/budgets/owner_decisions/owner_questions_state_v4.json rows",
+   "evidence_class": "derived (bookkeeping count; no physical quantity)",
+   "status": "COMPUTED",
+   "freeze_point": "rebuilt whenever a pinned input or a lane package changes"
+  },
+  {
+   "id": "V4-IT-10",
+   "name": "register-completion rows TBD_OWNER",
+   "value": 7,
    "units": "count",
    "basis": "deterministic count over 'rows' by this builder",
    "source": "docs/budgets/owner_decisions/owner_questions_state_v4.json rows",
@@ -442,6 +513,20 @@
    "counterpart": "each lane package (next rebuild)",
    "quantity": "v4 status of every id the lane carries; a lane still listing a v4-DERIVED id as open should cite v4",
    "status": "PROVIDED"
+  },
+  {
+   "id": "IF-V4-07",
+   "direction": "consumes",
+   "counterpart": "docs/requirements/rvm_a9/rvm_a9_v1.json RVM-ID-10 / RVM-ID-11 and the historical lane-24 matrix (pinned)",
+   "quantity": "lane-24 decisions carried by RVM rows; RVMQ-01 (ids and carrying rows resolved at build time; a lane-24 id carried by an RVM row but not registered raises)",
+   "status": "APPLIED"
+  },
+  {
+   "id": "IF-V4-08",
+   "direction": "provides",
+   "counterpart": "M16 v4 (docs/experiments/hall_icp/integration/m16_v4/)",
+   "quantity": "owner-question ids used as M16 v4 blocking items (each must resolve to a TBD_OWNER row here)",
+   "status": "PROVIDED"
   }
  ],
  "owner_answers_applied": [
@@ -468,10 +553,18 @@
   {
    "id": "A9.4 execution_decisions.i_d_max_h1",
    "how_applied": "P1Q-07 dependency MEASURED_H1_DISCHARGE_CURRENT (never from the 8.33 A rating)"
+  },
+  {
+   "id": "owner row 3 (WEB-RFP-1)",
+   "how_applied": "lane-24 OD13 SUPERSEDED: > 15,000 h firing retained as a provisional hard requirement until the official RFP confirms it (verbatim in superseded_by)"
+  },
+  {
+   "id": "owner rows 1, 6, 24, 55, 93, 102, 108, 132",
+   "how_applied": "quoted as related_owner_answers of the TBD_OWNER lane-24 decisions with why each does not settle the question; nothing answered"
   }
  ],
  "open_owner_questions": [],
- "open_owner_questions_note": "this lane raises no new owner question; it re-classifies existing ones",
+ "open_owner_questions_note": "no new owner question is raised here: v4 re-classifies existing ones and registers existing lane-24 decisions and the RVM question RVMQ-01 (raised by the RVM lane)",
  "historical_reuse": [
   {
    "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
@@ -501,9 +594,14 @@
    "path": "docs/budgets/owner_decisions/owner_questions_state_v3.json",
    "sha256": "1c2e74340852dfe8c58b1804c3cfda2bfbfb3bfb5d631aaebd715cf716b76af2",
    "use": "all rows copied"
+  },
+  {
+   "path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+   "sha256": "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f",
+   "use": "lane-24 open decisions (topic, options, handling) quoted for the register completion"
   }
  ],
- "m16_impact": "none: no M16 row changes state; M16-V3-Q-01 stays TBD_OWNER (NOTHING_IMMEDIATE)",
+ "m16_impact": "none from this register: no M16 row changes state here; M16 v4 (docs/experiments/hall_icp/integration/m16_v4/) cites v4 TBD_OWNER ids as blocking items; M16-V3-Q-01 stays TBD_OWNER (NOTHING_IMMEDIATE)",
  "compliance": [
   "every v3 row present; non-OPEN v3 rows copied unchanged",
   "every v3 OPEN row re-classified into exactly one A9.6 class",
@@ -6855,6 +6953,384 @@
    "answer_pointer": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json decisions.P1Q-16",
    "answer_sha256": "c9e101f2c409c2d28ad256818c22f13ee801bc532d7e4ef470f375d7bb1fe1d3",
    "answer_excerpt": "OWNER_CONFIRMED — CAPACITY_FORMULA :: I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (the A9.4 recorder reading, confirmed; the verbatim block again lacks 'I_e,cap =' and the minus sign), signed currents under the same registered convention"
+  },
+  {
+   "no": 353,
+   "id": "OD2",
+   "kind": "lane24_open_decision",
+   "lane": "lane-24 hard-gate matrix v1 (historical; registered by A9_6_M16 via RVM-ID-11)",
+   "source": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json open_owner_decisions[id=OD2]; carried by docs/requirements/rvm_a9/rvm_a9_v1.json rows RVM-01",
+   "source_ref": {
+    "path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+    "locator": "open_owner_decisions[id=OD2]"
+   },
+   "source_sha256": "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f",
+   "rvm_rows": [
+    "RVM-01"
+   ],
+   "rvm_interface_demand": "docs/requirements/rvm_a9/rvm_a9_v1.json interface_demands[id=RVM-ID-11]",
+   "question": "Envelope quantifier over 180–230 km × atmosphere states",
+   "alternatives": [
+    "every point of the envelope",
+    "some operating altitude in the band"
+   ],
+   "lane24_current_handling": "PASS must cover every point AND FAIL must cover every point, so no verdict depends on the open reading.",
+   "proposed": "",
+   "needed_by": "",
+   "status": "TBD_OWNER",
+   "status_detail": "TBD_OWNER (A9.6 sec. 7)",
+   "dependency": [
+    "OFFICIAL_RFP_TEXT",
+    "OWNER_JUDGMENT"
+   ],
+   "blocks": [
+    "NOTHING_IMMEDIATE"
+   ],
+   "blocks_stage": null,
+   "classification_basis": "RFP reading of the quantifier over 180-230 km x atmosphere states (every point vs some altitude); owner row 1 forbids freezing it from secondary sources; RVM-01 carries both readings and is NOT_EVALUATED; needed before any requirement verdict (Milestone C), not by P1 / P2 / P3 / P4 / LOCK-1",
+   "related_owner_answers": [
+    {
+     "owner_row": 1,
+     "covers_ids": [
+      "WEB-ACC-1"
+     ],
+     "owner_answer_verbatim": "YES — obtain the canonical latest RFP PDF immediately through the legitimate owner/portal route; store the exact file, source URL/date and SHA-256. Do not freeze ambiguous RFP interpretations from secondary sources.",
+     "why_not_settled": "orders the canonical RFP to be obtained and forbids freezing ambiguous readings; does not choose one"
+    }
+   ],
+   "group": "DG-RFP-ENVELOPE"
+  },
+  {
+   "no": 354,
+   "id": "OD3",
+   "kind": "lane24_open_decision",
+   "lane": "lane-24 hard-gate matrix v1 (historical; registered by A9_6_M16 via RVM-ID-11)",
+   "source": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json open_owner_decisions[id=OD3]; carried by docs/requirements/rvm_a9/rvm_a9_v1.json rows RVM-01",
+   "source_ref": {
+    "path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+    "locator": "open_owner_decisions[id=OD3]"
+   },
+   "source_sha256": "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f",
+   "rvm_rows": [
+    "RVM-01"
+   ],
+   "rvm_interface_demand": "docs/requirements/rvm_a9/rvm_a9_v1.json interface_demands[id=RVM-ID-11]",
+   "question": "Atmosphere design states",
+   "alternatives": [
+    "PROPOSED: 'low', 'mean', 'high' (F10.7 70/150/230, ap 15; frozen atmosphere_msis21_v1 via abep_sim/atmosphere.py)",
+    "other owner-defined states"
+   ],
+   "lane24_current_handling": "PROPOSED set used.",
+   "proposed": "",
+   "needed_by": "",
+   "status": "TBD_OWNER",
+   "status_detail": "TBD_OWNER (A9.6 sec. 7)",
+   "dependency": [
+    "OWNER_JUDGMENT"
+   ],
+   "blocks": [
+    "NOTHING_IMMEDIATE"
+   ],
+   "blocks_stage": null,
+   "classification_basis": "definition of the atmosphere design states (lane 24 used a PROPOSED low / mean / high set on the frozen atmosphere dataset; never adopted by the owner); a design-basis choice for the altitude verdict of RVM-01, not an input of the P1-P4 hardware stages",
+   "group": "DG-RFP-ENVELOPE"
+  },
+  {
+   "no": 355,
+   "id": "OD5",
+   "kind": "lane24_open_decision",
+   "lane": "lane-24 hard-gate matrix v1 (historical; registered by A9_6_M16 via RVM-ID-11)",
+   "source": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json open_owner_decisions[id=OD5]; carried by docs/requirements/rvm_a9/rvm_a9_v1.json rows RVM-14",
+   "source_ref": {
+    "path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+    "locator": "open_owner_decisions[id=OD5]"
+   },
+   "source_sha256": "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f",
+   "rvm_rows": [
+    "RVM-14"
+   ],
+   "rvm_interface_demand": "docs/requirements/rvm_a9/rvm_a9_v1.json interface_demands[id=RVM-ID-11]",
+   "question": "Ignition start sequence and restart count",
+   "alternatives": [
+    "air-only start required",
+    "xenon-assisted start acceptable"
+   ],
+   "lane24_current_handling": "PASS needs an air-only start; FAIL must exclude both start sequences, which are exhaustive (with or without xenon); the restart count is TBD and not counted (G6.restart_count, P2.start_cycles).",
+   "proposed": "",
+   "needed_by": "",
+   "status": "TBD_OWNER",
+   "status_detail": "TBD_OWNER (A9.6 sec. 7)",
+   "dependency": [
+    "OFFICIAL_RFP_TEXT",
+    "OWNER_JUDGMENT"
+   ],
+   "blocks": [
+    "NOTHING_IMMEDIATE"
+   ],
+   "blocks_stage": null,
+   "classification_basis": "whether an air-only start is required or a xenon-assisted start is acceptable; owner row 24 already makes the experiments record start attempts per arm (air-only and Xe-assisted) and row 93 bounds the dwell, so both readings are measured; only the RVM-14 verdict waits",
+   "related_owner_answers": [
+    {
+     "owner_row": 24,
+     "covers_ids": [
+      "D-13"
+     ],
+     "owner_answer_verbatim": "B — add ignition/start attempts. For Hall→ICP, also record ICP ignition, Hall ignition with ICP electrons, restart success and cycle count; classify them per preregistration rather than hiding them as setup events.",
+     "why_not_settled": "records start attempts per arm (air-only and Xe-assisted); does not say which start the RFP requires"
+    },
+    {
+     "owner_row": 93,
+     "covers_ids": [
+      "H22-OQ-06"
+     ],
+     "owner_answer_verbatim": "Use the selected cathode vendor/design-qualified purge and ignition flow; cap each ignition dwell at 120 s and allow at most two retries in the preliminary protocol, then freeze the final bound before score-bearing C1 testing. Book all Xe.",
+     "why_not_settled": "bounds the C1 ignition dwell; says nothing on an air-only start requirement"
+    }
+   ],
+   "group": "DG-RFP-START"
+  },
+  {
+   "no": 356,
+   "id": "OD6",
+   "kind": "lane24_open_decision",
+   "lane": "lane-24 hard-gate matrix v1 (historical; registered by A9_6_M16 via RVM-ID-11)",
+   "source": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json open_owner_decisions[id=OD6]; carried by docs/requirements/rvm_a9/rvm_a9_v1.json rows RVM-10",
+   "source_ref": {
+    "path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+    "locator": "open_owner_decisions[id=OD6]"
+   },
+   "source_sha256": "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f",
+   "rvm_rows": [
+    "RVM-10"
+   ],
+   "rvm_interface_demand": "docs/requirements/rvm_a9/rvm_a9_v1.json interface_demands[id=RVM-ID-11]",
+   "question": "Meaning of 'air + Xe'",
+   "alternatives": [
+    "operation on each feed separately",
+    "feed switching without extinction",
+    "simultaneous mixed feed"
+   ],
+   "lane24_current_handling": "G7.xenon_operation counts for PASS and FAIL; its FAIL must cover every xenon-containing feed (xenon and atmospheric_xenon_mixed, steady and peak), so it holds under each reading. G7.feed_switching and G7.mixed_feed count toward PASS only.",
+   "proposed": "",
+   "needed_by": "",
+   "status": "TBD_OWNER",
+   "status_detail": "TBD_OWNER (A9.6 sec. 7)",
+   "dependency": [
+    "OFFICIAL_RFP_TEXT",
+    "OWNER_JUDGMENT"
+   ],
+   "blocks": [
+    "NOTHING_IMMEDIATE"
+   ],
+   "blocks_stage": null,
+   "classification_basis": "residual of the 'air + Xe' meaning after owner row 6 (bounded functional Xe-capable mode required, not continuous): whether feed switching without extinction or a simultaneous mixed feed is also required; RVM-10 carries the readings side by side",
+   "related_owner_answers": [
+    {
+     "owner_row": 6,
+     "covers_ids": [
+      "OD-XE-6"
+     ],
+     "owner_answer_verbatim": "YES, bounded functional Xe mode — treat 'supplementary/alternative Xenon' as requiring a demonstrated Xe-capable operating mode beyond mere bookkeeping. It need not be continuous nominal operation; book every Xe use explicitly.",
+     "why_not_settled": "settles that a demonstrated bounded functional Xe-capable mode is required (beyond ignition, cathode and contingency); does not decide feed switching without extinction or a simultaneous mixed feed"
+    }
+   ],
+   "group": "DG-XE-FUNC"
+  },
+  {
+   "no": 357,
+   "id": "OD12",
+   "kind": "lane24_open_decision",
+   "lane": "lane-24 hard-gate matrix v1 (historical; registered by A9_6_M16 via RVM-ID-11)",
+   "source": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json open_owner_decisions[id=OD12]; carried by docs/requirements/rvm_a9/rvm_a9_v1.json rows RVM-09, RVM-16, RVM-18, RVM-19",
+   "source_ref": {
+    "path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+    "locator": "open_owner_decisions[id=OD12]"
+   },
+   "source_sha256": "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f",
+   "rvm_rows": [
+    "RVM-09",
+    "RVM-16",
+    "RVM-18",
+    "RVM-19"
+   ],
+   "rvm_interface_demand": "docs/requirements/rvm_a9/rvm_a9_v1.json interface_demands[id=RVM-ID-11]",
+   "question": "RFP requirements recorded but not gated (indigenous content, no single-point failure, 'ionise nascent O')",
+   "alternatives": [
+    "add as gates",
+    "keep outside the hard-gate matrix"
+   ],
+   "lane24_current_handling": "outside the matrix, listed in rfp_requirements_recorded_not_gated.",
+   "proposed": "",
+   "needed_by": "",
+   "status": "TBD_OWNER",
+   "status_detail": "TBD_OWNER (A9.6 sec. 7)",
+   "dependency": [
+    "OFFICIAL_RFP_TEXT",
+    "OWNER_JUDGMENT"
+   ],
+   "blocks": [
+    "NOTHING_IMMEDIATE"
+   ],
+   "blocks_stage": null,
+   "classification_basis": "whether the recorded-but-ungated RFP statements (indigenous content, no single-point failure in electronics, 'ionise nascent O') become gates; owner rows 55 (limited redundancy), 102 / 132 (species measured, NO_ATOMIC_O) set policies without deciding the gate question; RVM-09 / -16 / -18 / -19 carry it",
+   "related_owner_answers": [
+    {
+     "owner_row": 55,
+     "covers_ids": [
+      "H27-Q4"
+     ],
+     "owner_answer_verbatim": "LIMITED redundancy — dual series isolation on the high-pressure Xe path plus critical sensing/FDIR redundancy; do not duplicate the thruster, ICP neutralizer or full PPU at this stage. Revisit after failure-tree evidence.",
+     "why_not_settled": "sets a limited-redundancy policy; does not decide whether the no-SPF statement is a gate (see RVMQ-01)"
+    },
+    {
+     "owner_row": 102,
+     "covers_ids": [
+      "GP-D03"
+     ],
+     "owner_answer_verbatim": "INERT/low-recombination lining baseline to preserve representative atomic-O fraction as far as practical. Measure the delivered species state and retain catalytic reference coupons/sections; never assume O survival.",
+     "why_not_settled": "delivered species measured, O survival never assumed; does not make 'ionise nascent O' a gate"
+    },
+    {
+     "owner_row": 132,
+     "covers_ids": [
+      "HWQ-11"
+     ],
+     "owner_answer_verbatim": "ADD a dedicated AO source for separate materials/lifetime qualification. Keep N2+O2 as the performance surrogate where necessary, but label it `NO_ATOMIC_O`; never use it as AO-life proof.",
+     "why_not_settled": "dedicated AO source for materials / lifetime, NO_ATOMIC_O label on N2 + O2 surrogates; does not make 'ionise nascent O' a gate"
+    }
+   ],
+   "group": "DG-RFP-UNGATED"
+  },
+  {
+   "no": 358,
+   "id": "OD13",
+   "kind": "lane24_open_decision",
+   "lane": "lane-24 hard-gate matrix v1 (historical; registered by A9_6_M16 via RVM-ID-11)",
+   "source": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json open_owner_decisions[id=OD13]; carried by docs/requirements/rvm_a9/rvm_a9_v1.json rows RVM-12",
+   "source_ref": {
+    "path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+    "locator": "open_owner_decisions[id=OD13]"
+   },
+   "source_sha256": "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f",
+   "rvm_rows": [
+    "RVM-12"
+   ],
+   "rvm_interface_demand": "docs/requirements/rvm_a9/rvm_a9_v1.json interface_demands[id=RVM-ID-11]",
+   "question": "'>15,000 h ignition' wording",
+   "alternatives": [
+    "cumulative firing time (CLAUDE.md '> 15,000 h firing')",
+    "something else in the RFP text"
+   ],
+   "lane24_current_handling": "cumulative firing time: R1 records '> 15,000 h firing' and no alternative reading is recorded; verify the wording against the RFP document.",
+   "proposed": "",
+   "needed_by": "",
+   "status": "SUPERSEDED",
+   "status_detail": "SUPERSEDED (owner row 3; register completion)",
+   "superseded_by": {
+    "owner_row": 3,
+    "covers_ids": [
+     "WEB-RFP-1"
+    ],
+    "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+    "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
+    "owner_answer_verbatim": "ENGINEERING BASIS — use mission life ≥26,280 h until the official wording is verified because it is the conservative interpretation of 'three years' versus 26,000 h. Retain >15,000 h firing as a provisional hard requirement until the official RFP confirms it."
+   },
+   "supersession_basis": "owner row 3 answers the same question ('is > 15,000 h firing in the RFP?'): retain > 15,000 h firing as a provisional hard requirement until the official RFP confirms it. The lane-24 option 'cumulative firing time' is therefore the governing engineering basis; what remains is verification of the wording against the canonical RFP, which is the owner action of row 1 (RVM-ID-12, AWAITING_OWNER_ACTION), not an open question. A different official wording would open a new question.",
+   "implemented_in": [
+    "docs/requirements/rvm_a9/rvm_a9_v1.json rows[id=RVM-12]"
+   ],
+   "implemented_paths": [
+    "docs/requirements/rvm_a9/rvm_a9_v1.json"
+   ]
+  },
+  {
+   "no": 359,
+   "id": "OD14",
+   "kind": "lane24_open_decision",
+   "lane": "lane-24 hard-gate matrix v1 (historical; registered by A9_6_M16 via RVM-ID-11)",
+   "source": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json open_owner_decisions[id=OD14]; carried by docs/requirements/rvm_a9/rvm_a9_v1.json rows RVM-14",
+   "source_ref": {
+    "path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+    "locator": "open_owner_decisions[id=OD14]"
+   },
+   "source_sha256": "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f",
+   "rvm_rows": [
+    "RVM-14"
+   ],
+   "rvm_interface_demand": "docs/requirements/rvm_a9/rvm_a9_v1.json interface_demands[id=RVM-ID-11]",
+   "question": "Is ignition from the off state on atmospheric propellant an RFP requirement? (G6.ignition is inferred from 'air + Xe' and the RFP architecture; no ignition or restart clause is recorded in the repository)",
+   "alternatives": [
+    "keep G6.ignition binding (inferred)",
+    "the RFP text states an ignition/restart clause (verify against RFP document)",
+    "drop G6.ignition as a separate criterion"
+   ],
+   "lane24_current_handling": "binding. Its FAIL needs every start sequence (air-only and xenon-assisted, exhaustive) excluded, which means the architecture cannot operate on atmospheric propellant at all, so the FAIL does not depend on this decision; its PASS (air-only start) is the conservative side.",
+   "proposed": "",
+   "needed_by": "",
+   "status": "TBD_OWNER",
+   "status_detail": "TBD_OWNER (A9.6 sec. 7)",
+   "dependency": [
+    "OFFICIAL_RFP_TEXT",
+    "OWNER_JUDGMENT"
+   ],
+   "blocks": [
+    "NOTHING_IMMEDIATE"
+   ],
+   "blocks_stage": null,
+   "classification_basis": "whether ignition from the off state on atmospheric propellant is an RFP requirement (lane 24: inferred, no ignition / restart clause recorded); owner rows 24 / 108 / 112 set recording, start-up power and sequencing rules without deciding the requirement; RVM-14 carries it",
+   "related_owner_answers": [
+    {
+     "owner_row": 24,
+     "covers_ids": [
+      "D-13"
+     ],
+     "owner_answer_verbatim": "B — add ignition/start attempts. For Hall→ICP, also record ICP ignition, Hall ignition with ICP electrons, restart success and cycle count; classify them per preregistration rather than hiding them as setup events.",
+     "why_not_settled": "records ICP ignition, Hall ignition with ICP electrons, restart success and cycle count; does not make ignition an RFP requirement"
+    },
+    {
+     "owner_row": 108,
+     "covers_ids": [
+      "OQ-H24-01"
+     ],
+     "owner_answer_verbatim": "YES — apply <1.5 kW at the spacecraft-DC propulsion-system boundary. Conservatively require startup transients also to remain below 1.5 kW unless the official RFP explicitly permits a transient exception. Use a new A9/v2 boundary without modifying v1.",
+     "why_not_settled": "start-up transients below 1.5 kW; a power rule, not an ignition requirement"
+    }
+   ],
+   "group": "DG-RFP-START"
+  },
+  {
+   "no": 360,
+   "id": "RVMQ-01",
+   "kind": "lane_question",
+   "lane": "RVM (fo_a9_6_rvm; registered by A9_6_M16 via RVM-ID-10)",
+   "source": "docs/requirements/rvm_a9/rvm_a9_v1.json open_owner_questions[id=RVMQ-01]",
+   "source_ref": {
+    "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+    "locator": "open_owner_questions[id=RVMQ-01]"
+   },
+   "rvm_rows": [
+    "RVM-19"
+   ],
+   "rvm_interface_demand": "docs/requirements/rvm_a9/rvm_a9_v1.json interface_demands[id=RVM-ID-10]",
+   "question": "If the official RFP confirms 'no single-point failure in electronics' (recorded only in abep_sim/ppu.py, R7), does the row-55 limited-redundancy policy (no duplicated thruster, ICP neutralizer or full PPU at this stage) stand, or must RVM-19 be re-based on the RFP clause?",
+   "alternatives": [
+    "keep row 55 as is (R7 not an RFP clause or waived)",
+    "re-base on the RFP clause (redundant PPU / RF electronics; mass and power impact)"
+   ],
+   "proposed": "owner call; admissible alternatives: keep row 55 as is (R7 not an RFP clause or waived) | re-base on the RFP clause (redundant PPU / RF electronics; mass and power impact)",
+   "needed_by": "when the official RFP is obtained (row 1), before Milestone C",
+   "status": "TBD_OWNER",
+   "status_detail": "TBD_OWNER (A9.6 sec. 7)",
+   "dependency": [
+    "OFFICIAL_RFP_TEXT",
+    "OWNER_JUDGMENT"
+   ],
+   "blocks": [
+    "NOTHING_IMMEDIATE"
+   ],
+   "blocks_stage": null,
+   "classification_basis": "redundancy basis if the official RFP confirms 'no single-point failure in electronics' (row 55 limited redundancy vs re-basing RVM-19 on the RFP clause); genuine design choice (mass / power / FMEA); needed when the RFP is obtained, before Milestone C (RVM lane needed_by)",
+   "group": "DG-RFP-UNGATED"
   }
  ]
 }

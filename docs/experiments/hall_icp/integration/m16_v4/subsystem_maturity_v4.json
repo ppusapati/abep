@@ -1,0 +1,4854 @@
+{
+ "schema": "subsystem_maturity_matrix_v4",
+ "id": "subsystem_maturity_v4",
+ "lane": "A9_6_M16 (fo_a9_6_m16_refresh)",
+ "directive": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md sec. 16",
+ "status": "DRAFT_IMPLEMENTATION_FIRST_PENDING_CONSOLIDATED_VERIFICATION",
+ "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+ "supersedes_for_use": {
+  "path": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
+  "sha256": "636cbd3318831f6f56e9833813c4d8c259aef7db3de1c6e503cccce14dade7e2",
+  "note": "v3 (and v1 / v2) stay byte-identical"
+ },
+ "generated_by": "docs/experiments/hall_icp/integration/m16_v4/build_subsystem_maturity_v4.py",
+ "rows_module": "docs/experiments/hall_icp/integration/m16_v4/m16_v4_rows.py",
+ "companion_document": "docs/experiments/hall_icp/integration/m16_v4/SUBSYSTEM_MATURITY_v4.md",
+ "test": "tests/test_m16_v4.py",
+ "file_location": "docs/experiments/hall_icp/integration/m16_v4/ (nothing under docs/budgets/subsystem_maturity/: the immutable H2-7 v1 builder globs that folder; OQ-A910-04 DERIVED in state v4)",
+ "what_it_is_not": [
+  "not a performance prediction",
+  "not an architecture selection (no winner)",
+  "not a requirement verdict (see the RVM)",
+  "not a change to v1 / v2 / v3",
+  "not an owner decision: blocking-item selection, roles and latest decision points are PROPOSED",
+  "software / framework completeness is not physical readiness"
+ ],
+ "state_vocabulary": [
+  "READY",
+  "RUNNING",
+  "BLOCKED",
+  "VERIFIED",
+  "SUPERSEDED_FOR_PRIMARY_LINE"
+ ],
+ "waits_on_vocabulary": [
+  "owner decision",
+  "H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)",
+  "procurement (wave H3, PLANNED_NOT_REGISTERED)",
+  "design work outside every registered scope",
+  "first-hand source verification"
+ ],
+ "implementation_kinds": {
+  "FRAMEWORK": "data structures / calculation framework with inputs TBD (not a result)",
+  "SOFTWARE": "reducer / library / campaign code (fail-closed); software completeness is not physical verification",
+  "PLAN": "test / workflow plan (stages, run matrix, measurement list); nothing measured",
+  "RFQ": "request-for-quotation line or open specification item (quotation only; no purchase order)",
+  "LEDGER": "Xe accounting line or scenario (parametric; totals with a TBD input are REFUSED)",
+  "BUDGET": "mass / power BOM line (allocation / CBE / measured kept distinct)",
+  "REQUIREMENT_MATRIX": "RVM row (requirement status; never a readiness statement)"
+ },
+ "blocker_kinds": {
+  "OWNER_QUESTION": "an owner-question state v4 row that is TBD_OWNER",
+  "P1_MEASUREMENT": "a P1 measurement or stage that has not been run (P1 bench plan; nothing measured)",
+  "P2_MEASUREMENT": "a P2 output that needs the measured impedance map (after P1 stable region)",
+  "P3_INPUT": "a P3 coupled-thermal input whose value is TBD / TBD_AFTER_EVIDENCE / TBD_AFTER_IMPEDANCE_MAP / TBD_OWNER",
+  "P4_EVIDENCE": "a P4 coupon / material test that has not been run",
+  "VENDOR_QUOTE": "an RFQ v2 line or open specification item awaiting a quotation / supplier data",
+  "INTERFACE_TBD": "an ICD item whose value is still TBD",
+  "BUS_ITEM_OPEN": "an A9-02 bus-boundary item whose status is OPEN",
+  "H2A9_ITEM_TBD": "an A9-07 H-1 revision item whose value is still TBD"
+ },
+ "readiness_rules": [
+  {
+   "id": "R-M16V4-01",
+   "rule": "precedence VERIFIED > RUNNING > BLOCKED > READY; the first condition that holds sets the state (M16 v2 scheduler rule, accepted by the owner in row 141)"
+  },
+  {
+   "id": "R-M16V4-02",
+   "rule": "VERIFIED: every governing interface document of the row owner-frozen AND every referenced readiness condition SATISFIED (v2 rule) AND, for a physical row, at least one cited artifact of quantity type 'measured' on the project hardware (docs/EVIDENCE.md) that exists and is not synthetic (A9.6 sec. 16). Framework / software / plan / RFQ / ledger / budget / requirement-matrix entries never count"
+  },
+  {
+   "id": "R-M16V4-03",
+   "rule": "RUNNING: the single blocking item is worked by a registered lane whose scope produces EVERY missing input; never for an owner decision, a measurement, a coupon test or a vendor quotation (v2 owner_decision_items / non_lane_inputs guards)"
+  },
+  {
+   "id": "R-M16V4-04",
+   "rule": "BLOCKED: a single named blocking item exists (one-blocker rule, row 141) or contributing blockers remain open, and no registered lane works it"
+  },
+  {
+   "id": "R-M16V4-05",
+   "rule": "READY: no open blocking item AND a named responsible engineer (row 140); without a named engineer the row stays BLOCKED on M16-V3-Q-01"
+  },
+  {
+   "id": "R-M16V4-06",
+   "rule": "the ten A9.2 statuses are carried verbatim from the pinned A9.2 decision; this matrix never changes, promotes or turns any of them into PASS"
+  },
+  {
+   "id": "R-M16V4-07",
+   "rule": "SUPERSEDED_FOR_PRIMARY_LINE (v3 addition): a historical row that is not scheduled"
+  },
+  {
+   "id": "R-M16V4-08",
+   "rule": "blocking-item selection (PROPOSED, extends the v3 rule): the v3 item is carried unless an A9.6 deliverable implements the named item itself as a framework, in which case the row is re-pointed to the missing inputs of that framework (ids checked TBD at build time)"
+  }
+ ],
+ "scheduler_rule_source": {
+  "path": "docs/budgets/subsystem_maturity/subsystem_maturity_v2.json",
+  "sha256": "a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c",
+  "scheduler_rule": {
+   "status": "PROPOSED rule for the owner (A7 names the four states and the one-blocker rule; the derivation below is this lane's)",
+   "precedence": "VERIFIED > RUNNING > BLOCKED > READY; the first condition that holds sets the state",
+   "VERIFIED": "every governing document of the row's interface cell is owner-frozen (interface_status FROZEN) AND every S1a / S1 readiness condition the row references is SATISFIED in the committed readiness status files AND the row references at least one such condition",
+   "RUNNING": "the row's single blocking item is worked by a REGISTERED H2 follow-on: the lane id is present in docs/orchestration/lane_registry_v1.json follow_ons (read, never pinned) and its registered scope (workflow script prompt, quoted verbatim and checked at build time) produces the missing input of that item",
+   "BLOCKED": "a single named blocking item exists and no registered lane works it (an owner decision, an H-1 / C-1 measurement (A7 wave H4, PLANNED_NOT_REGISTERED), a procurement action (wave H3, PLANNED_NOT_REGISTERED) or an item outside every registered scope)",
+   "READY": "no open blocking item",
+   "owner_decision_items": "a blocking item whose resolved state OR requires text (derived from its defining files: MCQ items via the hardware_requirements_v1 requirements that trace to them; BOM items via cbe.requires; JSON paths via their 'from' / 'now' / 'requires' strings) names an owner decision ('owner decision' / OPEN_OWNER_DECISION) is never RUNNING: no lane can take an owner decision; enforced at build time",
+   "non_lane_inputs": "likewise never RUNNING when that text requires a MEASURED hardware quantity (wave H4) or an ADMITTED Hall closure (credible set EMPTY): no registered H2 design lane produces either; enforced at build time",
+   "partial_scope": "RUNNING needs registered scopes that produce EVERY missing input the blocking item names; when registered lanes cover only part of it (checked against the item's own 'requires' text), they are listed under partial_scope and the row stays BLOCKED",
+   "one_blocker_rule": "every row carries exactly ONE blocking evidence/interface item (typed id resolved against its defining file); A7: every BLOCKED row points to exactly one item",
+   "lanes_that_mature_but_do_not_work_the_blocker": "an H2 lane that matures other aspects of a row is listed under h2_lanes but does not change the execution state",
+   "live_execution_state_of_lanes": "not read: the trigger ledgers are mutable and time-varying; RUNNING means 'assigned by registration and scope', not 'an agent is executing now'"
+  },
+  "owner_acceptance": {
+   "row": 141,
+   "verbatim": "ACCEPT the scheduler rule, one-blocker rule, non-lane-input guard, per-row blockers and A7 roll-up categories."
+  }
+ },
+ "owner_rule": {
+  "row": 140,
+  "verbatim": "YES — Praveen remains accountable system owner. Assign one named responsible engineer to each M16 subsystem row before that row can become READY; until names are available use explicit functional roles, but no row may remain unowned."
+ },
+ "a9_2_statuses": {
+  "source": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.a9_10_statuses",
+  "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+  "statuses": {
+   "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
+   "ICP electron-current capacity": "PENDING_ICP45",
+   "ICP RF power closure": "PENDING_HARDWARE",
+   "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
+   "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP",
+   "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
+   "final anode material": "OPEN",
+   "anode thermal closure": "UNRESOLVED",
+   "coupled H-1/ICP thermal closure": "UNRESOLVED",
+   "C1 conventional reference": "CONTROL_FALLBACK"
+  }
+ },
+ "pins": [
+  {
+   "path": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
+   "sha256": "636cbd3318831f6f56e9833813c4d8c259aef7db3de1c6e503cccce14dade7e2",
+   "role": "M16 v3 (immutable; rows refreshed here)"
+  },
+  {
+   "path": "docs/budgets/subsystem_maturity/build_subsystem_maturity_v3.py",
+   "sha256": "ba163d09afe9596cdaed1e14fb0fea83aa317ee457674e82f00ef88299936327",
+   "role": "M16 v3 builder (immutable)"
+  },
+  {
+   "path": "docs/budgets/subsystem_maturity/SUBSYSTEM_MATURITY_v3.md",
+   "sha256": "16cb3b9218cc9428d0c0bf34cb884da18c48469bf48f120f7c1c840bee34427c",
+   "role": "M16 v3 companion (immutable)"
+  },
+  {
+   "path": "docs/budgets/subsystem_maturity/subsystem_maturity_v2.json",
+   "sha256": "a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c",
+   "role": "M16 v2 (scheduler rule accepted by the owner, row 141)"
+  },
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json",
+   "sha256": "74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f",
+   "role": "governing owner decision A9"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
+   "role": "147 owner answers (rows 140-144)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json",
+   "sha256": "7a8f93dbc2487de90ebba0b2801fc5d3f5d983fc96ba418b55c492f1f9e851a4",
+   "role": "owner decisions A9.1"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json",
+   "sha256": "e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03",
+   "role": "owner decisions A9.2 (the ten statuses, a9_10_statuses)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md",
+   "sha256": "dbccb9284e257b55d1d7ed0587086544029396de896a3f5f4cd09fd703fd83a9",
+   "role": "owner decisions A9.2 (verbatim)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_30_A9_3_post_a9_tier1_owner_decisions.json",
+   "sha256": "81c69b200b9ce51f8aa745636d7aa4dbbddc39005b064235841722ebfdedad1b",
+   "role": "owner decisions A9.3"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json",
+   "sha256": "b3d9a9f1ed5b76637b1508ca40fdd719b40f8184bdbc433804eeeb6119dc360d",
+   "role": "owner decisions A9.4"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json",
+   "sha256": "c9e101f2c409c2d28ad256818c22f13ee801bc532d7e4ef470f375d7bb1fe1d3",
+   "role": "owner decisions A9.5"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json",
+   "sha256": "d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327",
+   "role": "owner directive A9.6"
+  },
+  {
+   "path": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md",
+   "sha256": "c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634",
+   "role": "owner directive A9.6 (verbatim; sec. 16)"
+  },
+  {
+   "path": "docs/EVIDENCE.md",
+   "sha256": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61",
+   "role": "evidence rules (quantity types; CLAUDE.md rule 10)"
+  }
+ ],
+ "referenced_not_pinned": {
+  "rule": "mutable deliverables: read at build time, identity and every cited id checked (a missing or no-longer-open id raises); never sha-pinned; governance files (lane / trigger registries, ledgers, runtime state) are neither read nor pinned",
+  "artifacts": [
+   {
+    "key": "P1",
+    "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "identity": "p1_icp_bench_v1",
+    "lane": "fo_a9_6_p1_workflow_completion"
+   },
+   {
+    "key": "P2",
+    "path": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+    "identity": "p2_impedance_prep_v1",
+    "lane": "fo_a9_6_p2_framework_completion"
+   },
+   {
+    "key": "P3",
+    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "identity": "p3_coupled_thermal_v1",
+    "lane": "fo_a9_6_p3_coupled_thermal"
+   },
+   {
+    "key": "P4",
+    "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+    "identity": "p4_anode_materials_v1",
+    "lane": "fo_a9_6_p4_anode_materials"
+   },
+   {
+    "key": "MP",
+    "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+    "identity": "fo_a9_6_mass_power_integration_v2",
+    "lane": "fo_a9_6_mass_power_integration"
+   },
+   {
+    "key": "XE",
+    "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+    "identity": "xe_accounting_a9_v2",
+    "lane": "fo_a9_6_xe_accounting"
+   },
+   {
+    "key": "RFQ",
+    "path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+    "identity": "RFQ_A9_V2",
+    "lane": "fo_a9_6_rfq_completion"
+   },
+   {
+    "key": "RVM",
+    "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+    "identity": "rvm_a9_v1",
+    "lane": "fo_a9_6_rvm"
+   },
+   {
+    "key": "OQ4",
+    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+    "identity": "owner_questions_state_v4",
+    "lane": "fo_a9_6_decision_propagation (+ register completion by fo_a9_6_m16_refresh)"
+   },
+   {
+    "key": "ICD",
+    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+    "identity": "icp_neutralizer_icd_v1",
+    "lane": "A9-03 (verified)"
+   },
+   {
+    "key": "BUS",
+    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+    "identity": "bus_power_boundary_a9_v1",
+    "lane": "A9-02 (verified)"
+   },
+   {
+    "key": "H2A9",
+    "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+    "identity": "h2_a9_revisions_v1",
+    "lane": "A9-07 (verified)"
+   }
+  ]
+ },
+ "rows": [
+  {
+   "row": 1,
+   "key": "intake",
+   "name": "intake",
+   "group": "atmospheric_branch",
+   "flag": "baseline subsystem",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/0",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-01",
+      "A9B-03"
+     ],
+     "kind": "BUDGET",
+     "what": "intake and duct mass lines",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-01",
+      "RVM-08",
+      "RVM-09"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "altitude envelope, atmospheric propellant, nascent O",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-01, RVM-08, RVM-09 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/0 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "owner decisions DI-1.1 / DI-1.2 (intake area sizing rule and geometry) not taken; A4 records intake sizing as a spacecraft-level driver",
+    "source": "v2 (no A9 lane names a blocker for this row)",
+    "ref": "FSCOD:DI-1.1",
+    "kind": "V3_CARRIED"
+   },
+   "contributing_blockers": [
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OD2",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OD2]",
+     "state": "TBD_OWNER",
+     "detail": "Envelope quantifier over 180–230 km × atmosphere states",
+     "blocks": [
+      "NOTHING_IMMEDIATE"
+     ],
+     "group": "DG-RFP-ENVELOPE"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OD3",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OD3]",
+     "state": "TBD_OWNER",
+     "detail": "Atmosphere design states",
+     "blocks": [
+      "NOTHING_IMMEDIATE"
+     ],
+     "group": "DG-RFP-ENVELOPE"
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "owner decision",
+   "latest_decision_point": "FLIGHT_DESIGN_FREEZE",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "proposal-only documentation gap",
+   "owner": {
+    "functional_role": "atmospheric intake lead",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: a named responsible engineer is needed before the row can become READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {},
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-01",
+     "title": "Altitude envelope 180-230 km",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-08",
+     "title": "Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-09",
+     "title": "Ionise nascent (atomic) O (recorded as an RFP statement; verify)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 2,
+   "key": "filter",
+   "name": "protective/filter stage",
+   "group": "atmospheric_branch",
+   "flag": "baseline subsystem",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/1",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-02"
+     ],
+     "kind": "BUDGET",
+     "what": "protective / filter stage mass line",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-08",
+      "RVM-09"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "atmospheric propellant, nascent O",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-08, RVM-09 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/1 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "filter concept undefined (ICD G-01 / owner question 1)",
+    "source": "v2 (no A9 lane names a blocker for this row)",
+    "ref": "ICDGAP:G-01",
+    "kind": "V3_CARRIED"
+   },
+   "contributing_blockers": [
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OD12",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OD12]",
+     "state": "TBD_OWNER",
+     "detail": "RFP requirements recorded but not gated (indigenous content, no single-point failure, 'ionise nascent O')",
+     "blocks": [
+      "NOTHING_IMMEDIATE"
+     ],
+     "group": "DG-RFP-UNGATED"
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "owner decision",
+   "latest_decision_point": "FLIGHT_DESIGN_FREEZE",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "proposal-only documentation gap",
+   "owner": {
+    "functional_role": "atmospheric intake lead",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: a named responsible engineer is needed before the row can become READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {},
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-08",
+     "title": "Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-09",
+     "title": "Ionise nascent (atomic) O (recorded as an RFP statement; verify)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 3,
+   "key": "compressor",
+   "name": "compressor",
+   "group": "atmospheric_branch",
+   "flag": "baseline subsystem",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/2",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-04"
+     ],
+     "kind": "BUDGET",
+     "what": "compressor mass line",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-01",
+      "RVM-08"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "altitude envelope, atmospheric propellant",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-01, RVM-08 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/2 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "first-hand verification of the Li 2015 compression claim (A4: DI-1.4 not frozen until verified; a secondary citation is not enough)",
+    "source": "v2 (no A9 lane names a blocker for this row)",
+    "ref": "CMPEV:EV-08",
+    "kind": "V3_CARRIED"
+   },
+   "contributing_blockers": [
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OD2",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OD2]",
+     "state": "TBD_OWNER",
+     "detail": "Envelope quantifier over 180–230 km × atmosphere states",
+     "blocks": [
+      "NOTHING_IMMEDIATE"
+     ],
+     "group": "DG-RFP-ENVELOPE"
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "first-hand source verification",
+   "latest_decision_point": "FLIGHT_DESIGN_FREEZE",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "proposal-only documentation gap",
+   "owner": {
+    "functional_role": "compressor / gas-path lead",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: a named responsible engineer is needed before the row can become READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {},
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-01",
+     "title": "Altitude envelope 180-230 km",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-08",
+     "title": "Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 4,
+   "key": "buffer_plenum",
+   "name": "buffer/plenum",
+   "group": "atmospheric_branch",
+   "flag": "baseline subsystem",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/3",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-05"
+     ],
+     "kind": "BUDGET",
+     "what": "buffer / plenum mass line",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-08"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "atmospheric propellant",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-08 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/3 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "chamber volume and operating pressure not set (mass_bom atmospheric_gas_chamber CBE requires them)",
+    "source": "v2 (no A9 lane names a blocker for this row)",
+    "ref": "BOM:atmospheric_gas_chamber",
+    "kind": "V3_CARRIED"
+   },
+   "contributing_blockers": [],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "design work outside every registered scope",
+   "latest_decision_point": "FLIGHT_DESIGN_FREEZE",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "proposal-only documentation gap",
+   "owner": {
+    "functional_role": "gas-path lead",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: a named responsible engineer is needed before the row can become READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {},
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-08",
+     "title": "Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 5,
+   "key": "atm_metering_valve",
+   "name": "atmospheric metering valve",
+   "group": "atmospheric_branch",
+   "flag": "baseline subsystem",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/4",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-06"
+     ],
+     "kind": "BUDGET",
+     "what": "atmospheric metering / isolation valves mass line",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-08"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "atmospheric propellant",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-08 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/4 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "released ground-qualification feed points (S1A-C3: GROUND_QUALIFICATION_POINT from the feed-state closure, owner-released) do not exist",
+    "source": "v2 (no A9 lane names a blocker for this row)",
+    "ref": "S1A:S1A-C3",
+    "kind": "V3_CARRIED"
+   },
+   "contributing_blockers": [],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "owner decision",
+   "latest_decision_point": "S1a",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "test-readiness blocker",
+   "owner": {
+    "functional_role": "gas-path / flow-control lead",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: a named responsible engineer is needed before the row can become READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {},
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-08",
+     "title": "Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 6,
+   "key": "xe_tank",
+   "name": "Xe tank",
+   "group": "xe_branch",
+   "flag": "baseline subsystem",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/5",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-07",
+      "A9B-08",
+      "A9B-13",
+      "A9B-14",
+      "A9B-C06"
+     ],
+     "kind": "BUDGET",
+     "what": "Xe tank, mounting, load and residual lines; C1 cathode Xe term (hall_c1_reference only)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+     "container": "ledger_lines",
+     "ids": [
+      "P-FL-ICP-XE",
+      "P-FL-FUNC",
+      "C1-FL-KEEPER",
+      "OPT-FL-GXE"
+     ],
+     "kind": "LEDGER",
+     "what": "Xe accounting v2: G-REUSE ICP line, bounded functional Xe mode, C1 keeper line, G-XE contingency",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "container": "packages[].line_items",
+     "ids": [
+      "GAS-L08"
+     ],
+     "kind": "RFQ",
+     "what": "Xe tank quote line per 2 / 5 / 10 kg case (LATER)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-06",
+      "RVM-07",
+      "RVM-10",
+      "RVM-13"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "wet mass, internal allocations, Xe capability, mission-life basis",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_mass_power_integration",
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "how": "Xe hardware in both configurations (row 6); XA9Q-07 OPEN",
+     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+    },
+    {
+     "lane": "fo_a9_6_xe_accounting",
+     "artifact": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+     "how": "tank volume per design case at 323 K under both RA-CASE readings (USABLE reading adds the residual: loaded x 1.02); totals REFUSED; no readiness change",
+     "stated_readiness_change": "none; PENDING fo_a9_6_m16_refresh"
+    },
+    {
+     "lane": "fo_a9_6_rfq_completion",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "how": "Xe tank quote lines (LATER)",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-06, RVM-07, RVM-10, RVM-13 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/5 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "the Xe ledger stays REFUSED per configuration (A7 blocker 3 unchanged)",
+    "source": "A9-08 docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json m16_impact (row 6)",
+    "ref": null,
+    "kind": "V3_CARRIED"
+   },
+   "contributing_blockers": [
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "XA9Q-07",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=XA9Q-07]",
+     "state": "TBD_OWNER",
+     "detail": "Does the row-6 functional Xe mode apply to the hall_icp_neutralizer flight configuration (so it also carries a Xe tank and Xe flow control)?",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": "DG-XE-FUNC"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "XA9Q-01",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=XA9Q-01]",
+     "state": "TBD_OWNER",
+     "detail": "Are the row-48 design cases (2 / 5 / 10 kg) LOADED Xe (usable + residual) or usable Xe?",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": "DG-XE-CASE"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "XA9Q-06",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=XA9Q-06]",
+     "state": "TBD_OWNER",
+     "detail": "Retire H2-7 H27-34 (PROPOSED >= 75 bar MEOP, a 293.15 K check) in favour of a MEOP chosen from quotations against the 323 K volume table?",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": "DG-MEOP"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OD6",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OD6]",
+     "state": "TBD_OWNER",
+     "detail": "Meaning of 'air + Xe'",
+     "blocks": [
+      "NOTHING_IMMEDIATE"
+     ],
+     "group": "DG-XE-FUNC"
+    },
+    {
+     "kind": "VENDOR_QUOTE",
+     "id": "GAS-L08",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "locator": "packages[].line_items[id=GAS-L08]",
+     "state": "QUOTATION_ONLY (LATER); no purchase order",
+     "detail": "Xe tank (one quote line per 2/5/10 kg case)"
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)",
+   "latest_decision_point": "architecture closure (A7 blocker 3 unchanged)",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "architecture blocker",
+   "owner": {
+    "functional_role": "Xe feed-system lead",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: a named responsible engineer is needed before the row can become READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {},
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-06",
+     "title": "< 40 kg wet (incl. Xe + tank)",
+     "status": {
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+     }
+    },
+    {
+     "rvm_row": "RVM-07",
+     "title": "Internal 34 kg and 36 kg design allocations (row 53)",
+     "status": {
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+     }
+    },
+    {
+     "rvm_row": "RVM-10",
+     "title": "Xe capability (air + Xe; bounded functional Xe mode)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-13",
+     "title": "Mission-life basis >= 26,280 h",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 7,
+   "key": "xe_regulator",
+   "name": "Xe regulator",
+   "group": "xe_branch",
+   "flag": "baseline subsystem",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/6",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-09"
+     ],
+     "kind": "BUDGET",
+     "what": "Xe pressure regulator mass line",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "container": "packages[].line_items",
+     "ids": [
+      "GAS-L09"
+     ],
+     "kind": "RFQ",
+     "what": "low-flow PMU quote line (LATER)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-10"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "Xe capability",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_xe_accounting",
+     "artifact": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+     "how": "inlet = MEOP (TBD, XV2-28); no change",
+     "stated_readiness_change": "none; PENDING fo_a9_6_m16_refresh"
+    },
+    {
+     "lane": "fo_a9_6_rfq_completion",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "how": "low-flow PMU (LATER)",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-10 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/6 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "specification gap at the C1 flow range",
+    "source": "A9-09 docs/procurement/rfq_a9/rfq_a9_v1.json m16_impact (row 7)",
+    "ref": null,
+    "kind": "V3_CARRIED",
+    "still_open_check": [
+     {
+      "kind": "VENDOR_QUOTE",
+      "id": "RFQ2-GAS-R24",
+      "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+      "locator": "packages[].open_specification_items[id=RFQ2-GAS-R24]",
+      "state": "OPEN_SPECIFICATION (supplier / evidence input)",
+      "detail": "low-flow PMU/FCU flow range"
+     }
+    ]
+   },
+   "contributing_blockers": [
+    {
+     "kind": "VENDOR_QUOTE",
+     "id": "RFQ2-GAS-R24",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "locator": "packages[].open_specification_items[id=RFQ2-GAS-R24]",
+     "state": "OPEN_SPECIFICATION (supplier / evidence input)",
+     "detail": "low-flow PMU/FCU flow range"
+    },
+    {
+     "kind": "VENDOR_QUOTE",
+     "id": "GAS-L09",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "locator": "packages[].line_items[id=GAS-L09]",
+     "state": "QUOTATION_ONLY (LATER); no purchase order",
+     "detail": "low-flow PMU (regulator)"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "XA9Q-06",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=XA9Q-06]",
+     "state": "TBD_OWNER",
+     "detail": "Retire H2-7 H27-34 (PROPOSED >= 75 bar MEOP, a 293.15 K check) in favour of a MEOP chosen from quotations against the 323 K volume table?",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": "DG-MEOP"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OQ-RFQ-09",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OQ-RFQ-09]",
+     "state": "TBD_OWNER",
+     "detail": "State a MEOP basis in the tank RFQ or let suppliers propose?",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": "DG-MEOP"
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
+   "latest_decision_point": "LOCK-1 (A9-01 GD-01 interfaces)",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "proposal-only documentation gap",
+   "owner": {
+    "functional_role": "Xe feed-system lead",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: a named responsible engineer is needed before the row can become READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {},
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-10",
+     "title": "Xe capability (air + Xe; bounded functional Xe mode)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 8,
+   "key": "xe_metering",
+   "name": "Xe metering (splits to ignition/transition feed and cathode feed)",
+   "group": "xe_branch",
+   "flag": "baseline subsystem",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/7",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-10",
+      "A9B-11",
+      "A9B-12",
+      "A9B-C04",
+      "A9B-C05"
+     ],
+     "kind": "BUDGET",
+     "what": "Xe isolation valves, anode-feed flow control, plumbing; C1 branch lines (hall_c1_reference)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+     "container": "ledger_lines",
+     "ids": [
+      "C1-FL-FLOWUNC",
+      "P-FL-FLOWUNC-OTHER"
+     ],
+     "kind": "LEDGER",
+     "what": "flow-class uncertainty lines",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "container": "packages[].line_items",
+     "ids": [
+      "GAS-L04",
+      "GAS-L05",
+      "GAS-L06",
+      "GAS-L10",
+      "GAS-L11"
+     ],
+     "kind": "RFQ",
+     "what": "Xe reference MFC, C1 controllers, FCU, series isolation valves (LATER)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-10"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "Xe capability",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_mass_power_integration",
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "how": "C1 cathode branch only in hall_c1_reference (inside the AL-08 floor)",
+     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+    },
+    {
+     "lane": "fo_a9_6_xe_accounting",
+     "artifact": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+     "how": "C1 FCUs only in hall_c1_reference; ICP feed metering only as a CASE-3 optional entry (G-XE/G-ATM/diagnostic); Hall-side Xe metering under RA-FUNC APPLIES only for the ICP configuration",
+     "stated_readiness_change": "none; PENDING fo_a9_6_m16_refresh"
+    },
+    {
+     "lane": "fo_a9_6_rfq_completion",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "how": "C1 controllers, FCU, Xe reference MFC (LATER)",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-10 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/7 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "valve selection (A9-09 quotation)",
+    "source": "A9-07 docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json m16_impact (row 8)",
+    "ref": null,
+    "kind": "V3_CARRIED"
+   },
+   "contributing_blockers": [
+    {
+     "kind": "VENDOR_QUOTE",
+     "id": "GAS-L11",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "locator": "packages[].line_items[id=GAS-L11]",
+     "state": "QUOTATION_ONLY (LATER); no purchase order",
+     "detail": "Xe isolation valves (series pair)"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "XA9Q-03",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=XA9Q-03]",
+     "state": "TBD_OWNER",
+     "detail": "Is the row-96 flow-class term booked additively (conservative) and inside the reserve base?",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": null
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
+   "latest_decision_point": "before HI-S1A (instrument/valve availability)",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "procurement blocker",
+   "owner": {
+    "functional_role": "Xe feed-system lead",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: a named responsible engineer is needed before the row can become READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {},
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-10",
+     "title": "Xe capability (air + Xe; bounded functional Xe mode)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 9,
+   "key": "hall_chamber",
+   "name": "extended-channel Hall discharge chamber/accelerator",
+   "group": "propulsion",
+   "flag": "baseline subsystem",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/8",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-15",
+      "MPV2-N03"
+     ],
+     "kind": "BUDGET",
+     "what": "Hall head and anode heat-removal hardware lines",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "container": "stage_map",
+     "ids": [
+      "P1-S6",
+      "P1-S7",
+      "P1-S7H"
+     ],
+     "kind": "PLAN",
+     "what": "H-1 Hall-on only in the Ar topology-control and capacity / consistency stages (engineering-only)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "container": "hardware_readiness",
+     "ids": [
+      "P1-HW-22",
+      "P1-HW-24"
+     ],
+     "kind": "PLAN",
+     "what": "H-1 and anode physical disconnect (hardware readiness list)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-02",
+      "RVM-03",
+      "RVM-11",
+      "RVM-12"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "12 mN, 25 mN, Hall preference, firing hours",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_p1_workflow_completion",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "how": "H-1 Hall-on only in P1-S6/S7 on Ar, engineering-only",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_mass_power_integration",
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "how": "anode material OPEN, 316L rejected as baseline; heat-removal line MPV2-N03",
+     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+    },
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-01, RVM-02, RVM-03, RVM-08, RVM-09, RVM-11, RVM-12, RVM-13 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/8 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "FEMM of the preliminary MC-1",
+    "source": "A9-07 docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json m16_impact (row 9)",
+    "ref": null,
+    "kind": "V3_CARRIED"
+   },
+   "contributing_blockers": [
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OQ-RFQV2-10",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OQ-RFQV2-10]",
+     "state": "TBD_OWNER",
+     "detail": "H-1 (H2-1 CI H-1 with MC-1) and its Ar gas path / anode plenum (H2-3) are needed from P1-S3 (P1-HW-15, P1-HW-22) but belong to none of the six owner RFQ families. Issue a separate H-1 fabrication RFQ, extend RFQ2-MECH, o",
+     "blocks": [
+      "BLOCKS_P1_LATER_STAGE"
+     ],
+     "group": null
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P1Q-07",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P1Q-07]",
+     "state": "TBD_OWNER",
+     "detail": "Which campaign produces the registered I_d,max,H1 (A9.3 OQ-A907-02) - H-1 with C1 (hall_c1_reference) in HI-AR, or another registered H-1 operation - and at which gate is it registered?",
+     "blocks": [
+      "BLOCKS_P1_LATER_STAGE"
+     ],
+     "group": null
+    },
+    {
+     "kind": "P1_MEASUREMENT",
+     "id": "P1-M-14",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "locator": "measurements[id=P1-M-14]",
+     "state": "NOT_RUN (plan only; nothing measured)",
+     "detail": ""
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "design work outside every registered scope",
+   "latest_decision_point": "before HI-S1 (A9-01 GD-02 / GD-03)",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "architecture blocker",
+   "owner": {
+    "functional_role": "Hall thruster (H-1) lead",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: a named responsible engineer is needed before the row can become READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {},
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-01",
+     "title": "Altitude envelope 180-230 km",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-02",
+     "title": ">= 12 mN minimum sustained thrust on atmospheric propellant",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-03",
+     "title": "25 mN demonstrated system capability inside P_bus < 1.5 kW",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-08",
+     "title": "Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-09",
+     "title": "Ionise nascent (atomic) O (recorded as an RFP statement; verify)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-11",
+     "title": "Hall-effect thruster preferred",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-12",
+     "title": "> 15,000 h firing (provisional hard requirement)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-13",
+     "title": "Mission-life basis >= 26,280 h",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 10,
+   "key": "magnetic_circuit",
+   "name": "magnetic circuit",
+   "group": "propulsion",
+   "flag": "baseline subsystem",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/9",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-16"
+     ],
+     "kind": "BUDGET",
+     "what": "MC-1 magnetic circuit line (coil-mass correction applied)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "container": "packages[].line_items",
+     "ids": [
+      "HE-L02"
+     ],
+     "kind": "RFQ",
+     "what": "per-coil laboratory magnet supplies (P1_NEEDED)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "container": "measurements",
+     "ids": [
+      "P1-M-24"
+     ],
+     "kind": "PLAN",
+     "what": "H-1 magnet coil currents recorded when energized",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-02",
+      "RVM-11"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "12 mN, Hall preference",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_mass_power_integration",
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "how": "coil-mass correction applied (1.579 kg booked, 0.136 kg sensitivity only)",
+     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+    },
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-02, RVM-11 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/9 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "sourced B_sat(T) and coil qualification",
+    "source": "A9-07 docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json m16_impact (row 10)",
+    "ref": null,
+    "kind": "V3_CARRIED"
+   },
+   "contributing_blockers": [
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OQ-A907-04",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OQ-A907-04]",
+     "state": "TBD_OWNER",
+     "detail": "Ceramic-insulated coil conductor: plain copper or Ni-clad (Kulgrid)? The Ni-clad conductor raises I^2R by up to x1.33 at equal section and needs a measured magnetic perturbation (row 77)",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": null
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P1Q-06",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P1Q-06]",
+     "state": "TBD_OWNER",
+     "detail": "H-1 magnet state during the ICP-only stages P1-S3..S5: OFF only, or OFF plus the registered H-1 setting(s) (the fringe field in the ICP volume is not yet known, IDA7-17)?",
+     "blocks": [
+      "BLOCKS_P1_LATER_STAGE"
+     ],
+     "group": null
+    },
+    {
+     "kind": "VENDOR_QUOTE",
+     "id": "RFQ2-HALLEL-N02",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "locator": "packages[].open_specification_items[id=RFQ2-HALLEL-N02]",
+     "state": "OPEN_SPECIFICATION (supplier / evidence input)",
+     "detail": "H-1 magnet supplies (per coil)"
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "first-hand source verification",
+   "latest_decision_point": "before HI-LOCK2 (A9-01 GD-11 field tolerance)",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "hardware-definition blocker",
+   "owner": {
+    "functional_role": "magnetic circuit (MC-1) lead",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: a named responsible engineer is needed before the row can become READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {},
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-02",
+     "title": ">= 12 mN minimum sustained thrust on atmospheric propellant",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-11",
+     "title": "Hall-effect thruster preferred",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 11,
+   "key": "cathode",
+   "name": "shielded Xe-fed LaB6 hollow cathode",
+   "group": "propulsion",
+   "flag": "baseline subsystem",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/10",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-C01",
+      "A9B-C02",
+      "A9B-C03"
+     ],
+     "kind": "BUDGET",
+     "what": "C1 unit, shield / mount, supplies (hall_c1_reference column only)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+     "container": "ledger_lines",
+     "ids": [
+      "C1-FL-PURGE",
+      "C1-FL-HEAT",
+      "C1-FL-IGN",
+      "C1-FL-KEEPER",
+      "C1-FL-TRANSITION",
+      "C1-FL-FALLBACK"
+     ],
+     "kind": "LEDGER",
+     "what": "every C1 Xe phase booked as a separate line (PHASE_TOTAL_FLOW)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "container": "packages[].line_items",
+     "ids": [
+      "HE-L10",
+      "HE-L11",
+      "HE-L12"
+     ],
+     "kind": "RFQ",
+     "what": "C1 cathode, heater and pulsed keeper supplies (LATER)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "container": "hardware_readiness",
+     "ids": [
+      "P1-HW-32"
+     ],
+     "kind": "PLAN",
+     "what": "C1 on its own module, disconnected in P1-S6",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-14",
+      "RVM-15"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "start-up / restart, neutralization",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_p1_workflow_completion",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "how": "C1 disconnected in P1-S6; stays CONTROL_FALLBACK",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_mass_power_integration",
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "how": "C1 line AL-C1 without owner allocation (MPQ-01); hall_c1_reference column only",
+     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+    },
+    {
+     "lane": "fo_a9_6_xe_accounting",
+     "artifact": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+     "how": "C1 remains CONTROL_FALLBACK: every C1 Xe phase a separate line; not present in the ICP configuration",
+     "stated_readiness_change": "none; PENDING fo_a9_6_m16_refresh"
+    },
+    {
+     "lane": "fo_a9_6_rfq_completion",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "how": "C1 cathode + keeper/heater supplies (LATER)",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-12, RVM-13, RVM-14, RVM-15, RVM-16 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/10 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "I_d,max of the registered envelope",
+    "source": "A9-09 docs/procurement/rfq_a9/rfq_a9_v1.json m16_impact (row 11)",
+    "ref": null,
+    "kind": "V3_CARRIED"
+   },
+   "contributing_blockers": [
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P1Q-07",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P1Q-07]",
+     "state": "TBD_OWNER",
+     "detail": "Which campaign produces the registered I_d,max,H1 (A9.3 OQ-A907-02) - H-1 with C1 (hall_c1_reference) in HI-AR, or another registered H-1 operation - and at which gate is it registered?",
+     "blocks": [
+      "BLOCKS_P1_LATER_STAGE"
+     ],
+     "group": null
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "MPQ-01",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=MPQ-01]",
+     "state": "TBD_OWNER",
+     "detail": "Row 54 gives no allocation for the C1 electron-source hardware of the hall_c1_reference flight fallback configuration (cathode unit, shield/mount, filter/getter; supplies and cathode Xe branch possibly inside AL-07/AL-08",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": "DG-C1-FLIGHT"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OQ-A907-07",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OQ-A907-07]",
+     "state": "TBD_OWNER",
+     "detail": "Develop a flight C1 integration (external mount on the flight article, two series valves, keeper supply) now for the fallback architecture hall_c1_reference, or defer until C1 is chosen for flight?",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": "DG-C1-FLIGHT"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OQ-A907-01",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OQ-A907-01]",
+     "state": "TBD_OWNER",
+     "detail": "Row 93 'cap each ignition dwell at 120 s and allow at most two retries': book 3 attempts (1 + 2 retries, literal) or 2 (the '120 s x 2' shorthand used in the A9 backlog) per start in the Xe ledger?",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": "DG-IGN-DWELL"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OQ-RFQ-04",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OQ-RFQ-04]",
+     "state": "TBD_OWNER",
+     "detail": "Is the 0.6-0.8 mg/s C1 start/diode flow retained (row 125 'if ... retained')?",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": null
+    },
+    {
+     "kind": "VENDOR_QUOTE",
+     "id": "RFQ2-HALLEL-R20",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "locator": "packages[].open_specification_items[id=RFQ2-HALLEL-R20]",
+     "state": "OPEN_SPECIFICATION (supplier / evidence input)",
+     "detail": "emission-current rating"
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "owner decision",
+   "latest_decision_point": "LOCK-1 (OQ-A907-02: stand I_d,max registered before LOCK-1)",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "procurement blocker",
+   "owner": {
+    "functional_role": "electron-source lead (C1 reference / fallback)",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: a named responsible engineer is needed before the row can become READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {
+    "C1 conventional reference": "CONTROL_FALLBACK"
+   },
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-12",
+     "title": "> 15,000 h firing (provisional hard requirement)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-13",
+     "title": "Mission-life basis >= 26,280 h",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-14",
+     "title": "Start-up / restart (ignition, Hall ignition with the electron source, restart, transients)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-15",
+     "title": "Beam neutralization / electron-current capacity (ICP-45 or C1)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-16",
+     "title": "Atomic-oxygen / material compatibility (AO-beam test; anode, collector, keeper, gas path)",
+     "status": {
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 12,
+   "key": "ppu",
+   "name": "PPU/power distribution",
+   "group": "support",
+   "flag": "baseline subsystem",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/11",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-19",
+      "A9B-20",
+      "A9B-21",
+      "A9B-22",
+      "A9B-25",
+      "MPV2-N02"
+     ],
+     "kind": "BUDGET",
+     "what": "flight RF generator, local match, RF line, collector / bias supply, Hall PPU, RF protection lines",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "container": "packages[].line_items",
+     "ids": [
+      "HE-L01",
+      "HE-L03",
+      "HE-L06",
+      "HE-L07",
+      "RF-L01"
+     ],
+     "kind": "RFQ",
+     "what": "laboratory discharge and collector / bias supplies (P1), breadboard supplies (LATER), laboratory RF generator (GROUND/FACILITY_ONLY)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "container": "hardware_readiness",
+     "ids": [
+      "P1-HW-23",
+      "P1-HW-26"
+     ],
+     "kind": "PLAN",
+     "what": "laboratory discharge supply; floating collector / bias supply",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-04",
+      "RVM-05",
+      "RVM-19"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "full bus < 1.5 kW, 1.35 kW allocation, no-SPF statement",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_p1_workflow_completion",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "how": "collector/bias supply and stand-ceiling sizing (8.33 A) for ground hardware only",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_mass_power_integration",
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "how": "flight RF source = FLIGHT_REPRESENTATIVE_DC_RF_SOURCE; RF protection line; collector bias rating TBD (I_d,max,H1 NOT_EVALUATED)",
+     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+    },
+    {
+     "lane": "fo_a9_6_rfq_completion",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "how": "laboratory discharge/magnet/collector supplies (P1), H-1 body ground-current monitor, V_anode channel and anode disconnect (A9.4 P1Q-13; P1), breadboard supplies (LATER), laboratory RF generator (P1, ground only)",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-02, RVM-03, RVM-04, RVM-05, RVM-06, RVM-07, RVM-14, RVM-19 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/11 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "breadboard discharge supply (row 113)",
+    "source": "A9-07 docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json m16_impact (row 12)",
+    "ref": null,
+    "kind": "V3_CARRIED"
+   },
+   "contributing_blockers": [
+    {
+     "kind": "VENDOR_QUOTE",
+     "id": "HE-L06",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "locator": "packages[].line_items[id=HE-L06]",
+     "state": "QUOTATION_ONLY (LATER); no purchase order",
+     "detail": "flight-representative breadboard Hall discharge supply"
+    },
+    {
+     "kind": "VENDOR_QUOTE",
+     "id": "RFQ2-HALLEL-R06",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "locator": "packages[].open_specification_items[id=RFQ2-HALLEL-R06]",
+     "state": "OPEN_SPECIFICATION (supplier / evidence input)",
+     "detail": "discharge output power / current rating"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "MQ-04",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=MQ-04]",
+     "state": "TBD_OWNER",
+     "detail": "AL-07 Hall PPU 2.5 kg is below every row-56-admissible measured PPU analog (lowest 5.0 kg; H2-4 6.1 kg). Which re-allocation?",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": "DG-MASS-CLOSURE"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "RVMQ-01",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=RVMQ-01]",
+     "state": "TBD_OWNER",
+     "detail": "If the official RFP confirms 'no single-point failure in electronics' (recorded only in abep_sim/ppu.py, R7), does the row-55 limited-redundancy policy (no duplicated thruster, ICP neutralizer or full PPU at this stage) ",
+     "blocks": [
+      "NOTHING_IMMEDIATE"
+     ],
+     "group": "DG-RFP-UNGATED"
+    },
+    {
+     "kind": "BUS_ITEM_OPEN",
+     "id": "A902-21",
+     "artifact": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+     "locator": "items[id=A902-21]",
+     "state": "OPEN",
+     "detail": "RF generator DC-input -> forward-power efficiency"
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
+   "latest_decision_point": "before HI-LOCK2 (A9-01 GD-14)",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "proposal-only documentation gap",
+   "owner": {
+    "functional_role": "power / PPU lead",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: a named responsible engineer is needed before the row can become READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {},
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-02",
+     "title": ">= 12 mN minimum sustained thrust on atmospheric propellant",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-03",
+     "title": "25 mN demonstrated system capability inside P_bus < 1.5 kW",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-04",
+     "title": "< 1.5 kW full bus power (A9-02 boundary, steady and start-up, 1 ms window)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-05",
+     "title": "Internal ~1.35 kW design allocation (row 109)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-06",
+     "title": "< 40 kg wet (incl. Xe + tank)",
+     "status": {
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+     }
+    },
+    {
+     "rvm_row": "RVM-07",
+     "title": "Internal 34 kg and 36 kg design allocations (row 53)",
+     "status": {
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+     }
+    },
+    {
+     "rvm_row": "RVM-14",
+     "title": "Start-up / restart (ignition, Hall ignition with the electron source, restart, transients)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-19",
+     "title": "No single-point failure in electronics (recorded; verify) vs limited redundancy (row 55)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 13,
+   "key": "thermal_control",
+   "name": "thermal control",
+   "group": "support",
+   "flag": "baseline subsystem",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/12",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "container": "items",
+     "ids": [
+      "P3-B-01",
+      "P3-B-02",
+      "P3-M-01",
+      "P3-M-02",
+      "P3-M-03"
+     ],
+     "kind": "FRAMEWORK",
+     "what": "coupled H-1 / ICP thermal framework: heat-load bound alternatives, owner margins",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "kind": "SOFTWARE",
+     "paths": [
+      "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py"
+     ],
+     "what": "coupled thermal network library (fail-closed on REFUSED inputs)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-30",
+      "MPV2-N05"
+     ],
+     "kind": "BUDGET",
+     "what": "thermal-control hardware; active-cooling variant only",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "container": "measurements",
+     "ids": [
+      "P1-M-21"
+     ],
+     "kind": "PLAN",
+     "what": "temperatures recorded for the P3 model",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-17"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "thermal closure",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_p1_workflow_completion",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "how": "temperatures recorded for the P3 coupled model; ICP_COUPLED_THERMAL stays UNRESOLVED",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_p3_coupled_thermal",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "how": "coupled H-1 / ICP thermal framework exists (software); thermal closure UNRESOLVED; blocking inputs P3-G/K/R (hardware), P1/P2 data",
+     "stated_readiness_change": "none to maturity (framework only)"
+    },
+    {
+     "lane": "fo_a9_6_mass_power_integration",
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "how": "UNRESOLVED (anode, coupled ICP); active cooling variant-only",
+     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+    },
+    {
+     "lane": "fo_a9_6_rfq_completion",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "how": "ICP material temperature data; ICP_COUPLED_THERMAL stays UNRESOLVED (no PASS); coupled thermal framework merged (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json; inputs TBD, material limits pair XL-42)",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-17 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/12 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": false,
+    "text": "coupled H-1 / ICP thermal CLOSURE INPUTS: the P3 coupled model now exists as software (FRAMEWORK_IMPLEMENTED_INPUTS_TBD), but the ICP module geometry, conductances, ICP emittances and validated continuous-use limits it needs are TBD (A9.2 ICP_COUPLED_THERMAL = UNRESOLVED)",
+    "source": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "kind": "P3_INPUT",
+    "items": [
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-G-01",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-G-01]",
+      "state": "TBD",
+      "detail": "axial standoff L of the ICP module datum IP-NEU downstream of IP-EXIT"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-G-02",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-G-02]",
+      "state": "TBD",
+      "detail": "ICP clear aperture radius r_ap (plume passage; open-tube coaxial first build, A9.3 OQ-VI-03)"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-G-03",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-G-03]",
+      "state": "TBD",
+      "detail": "ICP module outer radius r_mod (minimum necessary downstream obstruction, A9.2)"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-G-04",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-G-04]",
+      "state": "TBD",
+      "detail": "ICP module axial length H"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-G-05",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-G-05]",
+      "state": "TBD",
+      "detail": "open-frame support open-area fraction tau (A9.2 open-frame support; gray, direction-independent approximation in the engine)"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-G-06",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-G-06]",
+      "state": "TBD",
+      "detail": "ICP surface -> thermal node map (dielectric tube, antenna, collector, body, match) and the surfaces' zoning"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-G-07",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-G-07]",
+      "state": "TBD",
+      "detail": "collector geometry and position relative to the bore / plume (Takahashi-type ion collector)"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-K-01",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-K-01]",
+      "state": "TBD",
+      "detail": "conductance ICP body <-> KC-1 carrier (A9.2 objective: thermally isolated mounting)"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-K-02",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-K-02]",
+      "state": "TBD",
+      "detail": "conductance KC-1 carrier <-> H-1 (through the stand / moving platform)"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-K-03",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-K-03]",
+      "state": "TBD",
+      "detail": "conductance KC-1 carrier <-> stand / spacecraft boundary"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-K-04",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-K-04]",
+      "state": "TBD",
+      "detail": "conductance antenna <-> ICP body"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-K-05",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-K-05]",
+      "state": "TBD",
+      "detail": "conductance collector <-> ICP body (through its 350 V-class insulator)"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-K-06",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-K-06]",
+      "state": "TBD",
+      "detail": "conductance local match <-> ICP body / carrier (match on / immediately adjacent to the module, A9.2 OQ-A907-11)"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-R-01",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-R-01]",
+      "state": "TBD",
+      "detail": "ICP upstream-face (Hall-facing) hemispherical emittance"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-R-02",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-R-02]",
+      "state": "TBD",
+      "detail": "ICP outward-facing surfaces emittance (A9.2 objective: high-emittance outward surfaces)"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-R-03",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-R-03]",
+      "state": "TBD",
+      "detail": "ICP bore / dielectric tube emittance"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-R-04",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-R-04]",
+      "state": "TBD",
+      "detail": "collector emittance"
+     },
+     {
+      "kind": "P3_INPUT",
+      "id": "P3-M-04",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "locator": "items[id=P3-M-04]",
+      "state": "TBD",
+      "detail": "validated continuous-use temperature limits of ICP parts (dielectric, antenna insulation, collector, feedthrough, match components, carrier interface) and of the H-1 anode"
+     }
+    ],
+    "v3_item": {
+     "text": "coupled H-1 / ICP thermal model (A9H-TH-01: Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume, ICP view factors; A9.2 ICP_COUPLED_THERMAL = UNRESOLVED)",
+     "source": "A9-07 docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json m16_impact (row 13)"
+    },
+    "also_open": [
+     {
+      "kind": "H2A9_ITEM_TBD",
+      "id": "A9H-TH-01",
+      "artifact": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+      "locator": "new_items[id=A9H-TH-01]",
+      "state": "TBD",
+      "detail": "coupled H-1 / ICP thermal model (A9.2 ICP_COUPLED_THERMAL)"
+     }
+    ]
+   },
+   "contributing_blockers": [
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P3Q-02",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P3Q-02]",
+     "state": "TBD_OWNER",
+     "detail": "For the coupled thermal closure at LOCK-1, is the lumped H2-5 network coupled through this P3 radiosity enclosure the accepted model class, or is a finer (finite-element / multi-node) H-1 + ICP model required before any ",
+     "blocks": [
+      "BLOCKS_LOCK_1",
+      "BLOCKS_P3_P4"
+     ],
+     "group": "DG-THERMAL-METHOD"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OQ-A907-03",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OQ-A907-03]",
+     "state": "TBD_OWNER",
+     "detail": "Is the >= 50 K rule tested at the bounding corner (all adverse analog inputs together, as done here) or at a nominal point plus a pre-registered uncertainty treatment?",
+     "blocks": [
+      "BLOCKS_LOCK_1",
+      "BLOCKS_P3_P4"
+     ],
+     "group": "DG-THERMAL-METHOD"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OQ-A907-09",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OQ-A907-09]",
+     "state": "TBD_OWNER",
+     "detail": "Row 86 '20% heat-load design margin': this lane scales only the DISSIPATED loads (discharge fractions, coil I^2R, cathode) by 1.2 and keeps the environmental solar/albedo/OLR inputs at their v1 hot/cold bounds. Should th",
+     "blocks": [
+      "BLOCKS_LOCK_1",
+      "BLOCKS_P3_P4"
+     ],
+     "group": "DG-THERMAL-METHOD"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OQ-A907-10",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OQ-A907-10]",
+     "state": "TBD_OWNER",
+     "detail": "The thermal worst case is found by a local search plus a heuristic search allowance (not an upper bound). Within-limit results (for hall_icp_neutralizer: UNCOUPLED_SENSITIVITY_WITHIN_LIMIT, reported UNRESOLVED under A9.2",
+     "blocks": [
+      "BLOCKS_LOCK_1",
+      "BLOCKS_P3_P4"
+     ],
+     "group": "DG-THERMAL-METHOD"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "ICPQ-10",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=ICPQ-10]",
+     "state": "TBD_OWNER",
+     "detail": "Total ICP module heat-load bound (ICP-43): use 1.20 x (P_fwd,max + P_d,max) with P_d,max from the A9-02 discharge slot, or, if every score-bearing stand point is held inside the P_bus < 1.5 kW ceiling (row 108), the enve",
+     "blocks": [
+      "BLOCKS_LOCK_1",
+      "BLOCKS_P3_P4"
+     ],
+     "group": "DG-ICP-HEAT-BOUND"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OQ-A910-06",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OQ-A910-06]",
+     "state": "TBD_OWNER",
+     "detail": "Should ICP-36 keep 500 W x 1.2 = 600 W (row 72 delivered/operating capability x row 86 heat-load margin) as the RF-path heat-allocation basis of the ICP module thermal design (an allocation term, not a bound and not a co",
+     "blocks": [
+      "BLOCKS_LOCK_1",
+      "BLOCKS_P3_P4"
+     ],
+     "group": "DG-ICP-HEAT-BOUND"
+    },
+    {
+     "kind": "P3_INPUT",
+     "id": "P3-P2-03",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "locator": "items[id=P3-P2-03]",
+     "state": "TBD_AFTER_IMPEDANCE_MAP",
+     "detail": "P_line/match,loss (line + local match, at the logged tuning state)"
+    },
+    {
+     "kind": "P3_INPUT",
+     "id": "P3-P1-07",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "locator": "items[id=P3-P1-07]",
+     "state": "TBD_AFTER_EVIDENCE",
+     "detail": "ICP-module temperatures for model verification (antenna, dielectric, collector, match, H-1 inner / outer pole, sink)"
+    },
+    {
+     "kind": "P1_MEASUREMENT",
+     "id": "P1-M-21",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "locator": "measurements[id=P1-M-21]",
+     "state": "NOT_RUN (plan only; nothing measured)",
+     "detail": ""
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "design work outside every registered scope",
+   "latest_decision_point": "before any thermal closure of hall_icp_neutralizer and before HI-S1 (A9.2 ICP_COUPLED_THERMAL = UNRESOLVED; score-bearing aborts at limit - 50 K, A9.1 UBQ-06)",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "proposal-only documentation gap",
+   "owner": {
+    "functional_role": "thermal lead",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: a named responsible engineer is needed before the row can become READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {
+    "coupled H-1/ICP thermal closure": "UNRESOLVED"
+   },
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-17",
+     "title": "Thermal closure (>= 50 K below validated limits, 20 % heat-load margin)",
+     "status": {
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 14,
+   "key": "control_fdir",
+   "name": "control/FDIR",
+   "group": "support",
+   "flag": "baseline subsystem",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/13",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-26",
+      "A9B-27"
+     ],
+     "kind": "BUDGET",
+     "what": "valve drivers / housekeeping and control / FDIR lines",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "container": "safety_interlocks",
+     "ids": [
+      "P1-SI-01",
+      "P1-SI-02",
+      "P1-SI-03"
+     ],
+     "kind": "PLAN",
+     "what": "P1 safety interlocks",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "container": "packages[].line_items",
+     "ids": [
+      "RF-L10"
+     ],
+     "kind": "RFQ",
+     "what": "RF protection / interlock functions (P1_NEEDED)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-14",
+      "RVM-19"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "start-up / restart, no-SPF statement",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_p1_workflow_completion",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "how": "RF protection / interlock functions exercised; thresholds frozen at P1-G2",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-14, RVM-19 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/13 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "generator interlock interface (quotation)",
+    "source": "A9-03 schemas/interfaces/icp_neutralizer_icd_v1.json m16_impact (row 14)",
+    "ref": null,
+    "kind": "V3_CARRIED"
+   },
+   "contributing_blockers": [
+    {
+     "kind": "VENDOR_QUOTE",
+     "id": "RF-L10",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "locator": "packages[].line_items[id=RF-L10]",
+     "state": "QUOTATION_ONLY (P1_NEEDED); no purchase order",
+     "detail": "RF protection / interlock functions: reflected-power monitoring, mismatch interlock, arc detection where feasible, thermal monitoring, automatic reduction/shutdown (thresholds after characterization)"
+    },
+    {
+     "kind": "P2_MEASUREMENT",
+     "id": "RF_INTERLOCK_TRIP_THRESHOLDS",
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "locator": "p2_outputs_later[id=RF_INTERLOCK_TRIP_THRESHOLDS]",
+     "state": "after-evidence (A9.2 rf_protection)",
+     "detail": "reflected-power / VSWR trips (ICP-16, A9H-RF-PROT-01, RFQ-04-R16, A9-04 LA-03)"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OD14",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OD14]",
+     "state": "TBD_OWNER",
+     "detail": "Is ignition from the off state on atmospheric propellant an RFP requirement? (G6.ignition is inferred from 'air + Xe' and the RFP architecture; no ignition or restart clause is recorded in the repository)",
+     "blocks": [
+      "NOTHING_IMMEDIATE"
+     ],
+     "group": "DG-RFP-START"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "RVMQ-01",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=RVMQ-01]",
+     "state": "TBD_OWNER",
+     "detail": "If the official RFP confirms 'no single-point failure in electronics' (recorded only in abep_sim/ppu.py, R7), does the row-55 limited-redundancy policy (no duplicated thruster, ICP neutralizer or full PPU at this stage) ",
+     "blocks": [
+      "NOTHING_IMMEDIATE"
+     ],
+     "group": "DG-RFP-UNGATED"
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
+   "latest_decision_point": "before HI-S1A (A4 minimum interlocks)",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "test-readiness blocker",
+   "owner": {
+    "functional_role": "controls / FDIR lead",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: a named responsible engineer is needed before the row can become READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {},
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-14",
+     "title": "Start-up / restart (ignition, Hall ignition with the electron source, restart, transients)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-19",
+     "title": "No single-point failure in electronics (recorded; verify) vs limited redundancy (row 55)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 15,
+   "key": "sensors_diagnostics",
+   "name": "sensors/diagnostics",
+   "group": "support",
+   "flag": "baseline subsystem",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/14",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "container": "measurements",
+     "ids": [
+      "P1-M-01",
+      "P1-M-02",
+      "P1-M-08",
+      "P1-M-11",
+      "P1-M-28",
+      "P1-M-29"
+     ],
+     "kind": "PLAN",
+     "what": "P1 measurement list (RF forward / reflected, load reflection, collector current, photodiode, H-1 body ground current)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "kind": "SOFTWARE",
+     "paths": [
+      "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py",
+      "docs/experiments/hall_icp/p1_icp_bench/p1_campaign.py"
+     ],
+     "what": "P1 reducer and campaign driver (fail-closed)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "container": "calibration_plan",
+     "ids": [
+      "CAL-P2-01",
+      "CAL-P2-15"
+     ],
+     "kind": "PLAN",
+     "what": "RF calibration procedures CAL-P2-01..15 (PROPOSED)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "container": "instrument_list",
+     "ids": [
+      "INS-P2-01",
+      "INS-P2-04",
+      "INS-P2-10"
+     ],
+     "kind": "PLAN",
+     "what": "V/I probe, VNA, photodiode channel",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "kind": "SOFTWARE",
+     "paths": [
+      "docs/experiments/hall_icp/p2_impedance_map/p2_framework.py",
+      "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_reducer.py"
+     ],
+     "what": "P2 ingestion / reduction / uncertainty / map-storage framework",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "container": "packages[].line_items",
+     "ids": [
+      "RF-L12",
+      "RF-L13",
+      "TH-L04",
+      "TH-L07"
+     ],
+     "kind": "RFQ",
+     "what": "V/I probe, VNA, P1 DAQ, photodiode + amplifier (P1_NEEDED)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-29"
+     ],
+     "kind": "BUDGET",
+     "what": "flight sensors / telemetry subset",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_p1_workflow_completion",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "how": "P1 measurement list (P1-M-01..27) and derived quantities; P2 preparation package merged (ZM-A/B/C, CAL-P2-01..15), its instruments not procured",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_p2_framework_completion",
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "how": "supplies PROPOSED RF calibration procedures CAL-P2-01..15, the P2 channel list toward the row's S1A-C4 blocker and (A9.6) the ingestion software for VNA / coupler / V/I calibration data (Touchstone, SOL, coupler and V/I corrections); state unchanged (BLOCKED; procedures not frozen, instruments not procured; software is not hardware verification)",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_mass_power_integration",
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "how": "RF fwd/refl telemetry; photodiode ground-only",
+     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+    },
+    {
+     "lane": "fo_a9_6_rfq_completion",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "how": "P1 DAQ incl. event / state inputs, gauges, Ar MFC and calibration volume, RF metrology (V/I probe, VNA, kits, current probe; placement P2Q-02), power analyzer, photodiode + amplifier + DAQ channel and its optical access (A9.4 P2Q-05), RGA, calibration services (P1); stand (LATER)",
+     "stated_readiness_change": null
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/14 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "ICP antenna impedance map (A9.2 P2; RF component ratings TBD_AFTER_IMPEDANCE_MAP)",
+    "source": "A9-07 docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json m16_impact (row 15)",
+    "ref": null,
+    "kind": "V3_CARRIED"
+   },
+   "contributing_blockers": [
+    {
+     "kind": "P2_MEASUREMENT",
+     "id": "RF_COMPONENT_RATINGS",
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "locator": "p2_outputs_later[id=RF_COMPONENT_RATINGS]",
+     "state": "TBD_AFTER_IMPEDANCE_MAP",
+     "detail": "generator, coupler, coax, connectors, local-match elements (voltage / current), feedthroughs (UB-RF-01 rating, ICP-15, A9H-INS-15/16, A9H-RF-LM-01, RFQ-04-R07/R11/R12/R17)"
+    },
+    {
+     "kind": "P1_MEASUREMENT",
+     "id": "P1-S5",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "locator": "stage_map[id=P1-S5]",
+     "state": "NOT_RUN (plan only; nothing measured)",
+     "detail": "stability dwells and stable-region handoff to P2"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P2Q-01",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P2Q-01]",
+     "state": "TBD_OWNER",
+     "detail": "Adopt ZM-A (V/I probe at the antenna terminals) as the primary Z_antenna method on the P1/P2 bench, with ZM-B (de-embedding) as the per-point cross-check and ZM-C (antenna current) for R?",
+     "blocks": [
+      "BLOCKS_LOCK_1",
+      "BLOCKS_P2"
+     ],
+     "group": "DG-Z-METHOD"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P2Q-03",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P2Q-03]",
+     "state": "TBD_OWNER",
+     "detail": "Agreement rules for ZM-A vs ZM-B and for up/down sweeps (hysteresis): same normalized-statistic form as UB-RF-08 with a k frozen at LOCK-1?",
+     "blocks": [
+      "BLOCKS_LOCK_1",
+      "BLOCKS_P2"
+     ],
+     "group": "DG-Z-METHOD"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P2Q-07",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P2Q-07]",
+     "state": "TBD_OWNER",
+     "detail": "Where no accredited scope exists for V/I-probe phase calibration at 13.56 MHz, accept an in-house procedure traceable through the VNA and its kit (MS-P2-03)?",
+     "blocks": [
+      "BLOCKS_LOCK_1",
+      "BLOCKS_P2"
+     ],
+     "group": null
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P2Q-02",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P2Q-02]",
+     "state": "TBD_OWNER",
+     "detail": "The owner's A9.3 RF package list does not name the V/I probe, VNA, calibration kits, attenuators, antenna-simulator load, antenna current probe or phase-stable test cables. Add them to the RF package, or to a separate RF",
+     "blocks": [
+      "BLOCKS_P1_START"
+     ],
+     "group": null
+    },
+    {
+     "kind": "VENDOR_QUOTE",
+     "id": "RF-L12",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "locator": "packages[].line_items[id=RF-L12]",
+     "state": "QUOTATION_ONLY (P1_NEEDED); no purchase order",
+     "detail": "V/I probe (complex V and I, phase-resolved) at the antenna-terminal reference plane RP-VI (P2 INS-P2-01)"
+    },
+    {
+     "kind": "VENDOR_QUOTE",
+     "id": "RF-L13",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "locator": "packages[].line_items[id=RF-L13]",
+     "state": "QUOTATION_ONLY (P1_NEEDED); no purchase order",
+     "detail": "vector network analyser, one-port and two-port, receiver/spectrum mode if available (P2 INS-P2-04; P1 two-port / cold-antenna characterization)"
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)",
+   "latest_decision_point": "before the RF component ratings are frozen (A9.2: TBD_AFTER_IMPEDANCE_MAP; trip thresholds after the load characterization)",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "test-readiness blocker",
+   "owner": {
+    "functional_role": "test and diagnostics lead",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: a named responsible engineer is needed before the row can become READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {
+    "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP"
+   },
+   "rvm_requirement_status": [],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 16,
+   "key": "mechanical_structural",
+   "name": "mechanical/structural interfaces",
+   "group": "support",
+   "flag": "baseline subsystem",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/15",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-31",
+      "MPV2-N04"
+     ],
+     "kind": "BUDGET",
+     "what": "structure and ICP open-frame support lines",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "container": "packages[].line_items",
+     "ids": [
+      "ME-L05",
+      "ME-L06"
+     ],
+     "kind": "RFQ",
+     "what": "modular ICP carrier and machined supports (P1_NEEDED)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "container": "hardware_readiness",
+     "ids": [
+      "P1-HW-37",
+      "P1-HW-38"
+     ],
+     "kind": "PLAN",
+     "what": "carrier on KC-1; open-frame supports",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-06",
+      "RVM-07"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "wet mass, internal allocations",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_p1_workflow_completion",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "how": "KC-1 carrier provisions for a later ICP_ORIFICED_VARIANT",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_mass_power_integration",
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "how": "ICP open-frame support / spacer line MPV2-N04",
+     "stated_readiness_change": "none (refresh by PENDING (M16 refresh after the implementation batch; A9.6 sec. 16) (fo_a9_6_m16_refresh))"
+    },
+    {
+     "lane": "fo_a9_6_rfq_completion",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "how": "modular ICP carrier and supports (P1); stand/KC-1 (LATER)",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-06, RVM-07 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/15 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "module drawings (ICP-02/04/07)",
+    "source": "A9-07 docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json m16_impact (row 16)",
+    "ref": null,
+    "kind": "V3_CARRIED",
+    "still_open_check": [
+     {
+      "kind": "INTERFACE_TBD",
+      "id": "ICP-02",
+      "artifact": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+      "locator": "items[id=ICP-02]",
+      "state": "TBD",
+      "detail": ""
+     },
+     {
+      "kind": "INTERFACE_TBD",
+      "id": "ICP-04",
+      "artifact": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+      "locator": "items[id=ICP-04]",
+      "state": "TBD",
+      "detail": ""
+     },
+     {
+      "kind": "INTERFACE_TBD",
+      "id": "ICP-07",
+      "artifact": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+      "locator": "items[id=ICP-07]",
+      "state": "TBD",
+      "detail": ""
+     }
+    ]
+   },
+   "contributing_blockers": [
+    {
+     "kind": "P3_INPUT",
+     "id": "P3-G-01",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "locator": "items[id=P3-G-01]",
+     "state": "TBD",
+     "detail": "axial standoff L of the ICP module datum IP-NEU downstream of IP-EXIT"
+    },
+    {
+     "kind": "P3_INPUT",
+     "id": "P3-G-05",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "locator": "items[id=P3-G-05]",
+     "state": "TBD",
+     "detail": "open-frame support open-area fraction tau (A9.2 open-frame support; gray, direction-independent approximation in the engine)"
+    },
+    {
+     "kind": "VENDOR_QUOTE",
+     "id": "RFQ2-MECH-R06",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "locator": "packages[].open_specification_items[id=RFQ2-MECH-R06]",
+     "state": "OPEN_SPECIFICATION (supplier / evidence input)",
+     "detail": "geometry (standoff, aperture, envelope)"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "ICPQ-03",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=ICPQ-03]",
+     "state": "TBD_OWNER",
+     "detail": "Mount both downstream modules on the moving platform so plume-module forces are inside the measured system (ICP-10)?",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": null
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OQ-A910-05",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OQ-A910-05]",
+     "state": "TBD_OWNER",
+     "detail": "With the A9.2 local matching network on / adjacent to the ICP module (moving platform), the matched sham configuration (row 133) must present the same service-line parasitics. Should the hall_c1_reference sham carry a ma",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": "DG-MASS-MAP"
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "design work outside every registered scope",
+   "latest_decision_point": "before HI-S1 (A9-01 GD-01)",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "hardware-definition blocker",
+   "owner": {
+    "functional_role": "mechanical / structures lead",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: a named responsible engineer is needed before the row can become READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {},
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-06",
+     "title": "< 40 kg wet (incl. Xe + tank)",
+     "status": {
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+     }
+    },
+    {
+     "rvm_row": "RVM-07",
+     "title": "Internal 34 kg and 36 kg design allocations (row 53)",
+     "status": {
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 17,
+   "key": "preionizer_interface",
+   "name": "RF pre-ionization module interface",
+   "group": "reserved_interface",
+   "flag": "reserved, not baseline flight hardware",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/16",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-R08"
+     ],
+     "kind": "BUDGET",
+     "what": "reserved RF pre-ionizer interface provision (historical)",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_p2_framework_completion",
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "how": "not touched (historical)",
+     "stated_readiness_change": null
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/16 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": null,
+   "contributing_blockers": [],
+   "worked_by": null,
+   "not_worked_reason": null,
+   "waits_on": null,
+   "latest_decision_point": null,
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": null,
+   "owner": {
+    "functional_role": "electron-source lead (historical row)",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {},
+   "rvm_requirement_status": [],
+   "execution_state": "SUPERSEDED_FOR_PRIMARY_LINE",
+   "state_rule": "R-M16V4-07"
+  },
+  {
+   "row": 18,
+   "key": "icp_neutralizer_head",
+   "name": "downstream 13.56 MHz RF ICP electron source / neutralizer head (antenna, dielectric, collector/bias electrode, capped dedicated gas port)",
+   "group": "propulsion",
+   "flag": "primary investigation hypothesis (A9), not flight baseline",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/17",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "container": "stage_map",
+     "ids": [
+      "P1-S3",
+      "P1-S4",
+      "P1-S5",
+      "P1-S7",
+      "P1-S7H"
+     ],
+     "kind": "PLAN",
+     "what": "ICP ignition map (G-REUSE), electron-current sweep, stable region, ICP-45A discharge-OFF capacity, Hall-ON NEUTRALIZATION_CONSISTENCY",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "kind": "SOFTWARE",
+     "paths": [
+      "docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py",
+      "docs/experiments/hall_icp/p1_icp_bench/p1_campaign.py"
+     ],
+     "what": "signed I_e,cap = I_RFON - I_RFOFF and Kirchhoff admission (fail-closed)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "container": "z_antenna_methods",
+     "ids": [
+      "ZM-A",
+      "ZM-B",
+      "ZM-C"
+     ],
+     "kind": "FRAMEWORK",
+     "what": "Z_antenna measurement methods",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "container": "items",
+     "ids": [
+      "P3-B-01",
+      "P3-B-02"
+     ],
+     "kind": "FRAMEWORK",
+     "what": "ICP-43 total module heat-load bound alternatives (TBD_OWNER)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "container": "applications",
+     "ids": [
+      "APP-COLLECTOR"
+     ],
+     "kind": "FRAMEWORK",
+     "what": "collector material comparison (material OPEN)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-17",
+      "A9B-18",
+      "MPV2-N01"
+     ],
+     "kind": "BUDGET",
+     "what": "ICP head, collector / bias electrode, isolation hardware",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+     "container": "ledger_lines",
+     "ids": [
+      "P-FL-ICP-XE"
+     ],
+     "kind": "LEDGER",
+     "what": "dedicated ICP Xe line; A9.6 sec. 12: m_Xe,ICP = 0 under the primary G-REUSE mode",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "container": "packages[].line_items",
+     "ids": [
+      "ME-L01",
+      "ME-L02",
+      "ME-L03",
+      "ME-L07",
+      "HE-L03"
+     ],
+     "kind": "RFQ",
+     "what": "open-tube coaxial ICP head parts, collector (316L Ar engineering only), module body, collector / bias supply",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-15",
+      "RVM-16"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "neutralization / capacity, AO compatibility",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_p1_workflow_completion",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "how": "P1 produces the ICP-45A surface (engineering-only) named in analysis_test_needed; status stays PENDING_ICP45; no M16 file edit (M16 owner lane)",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_p2_framework_completion",
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "how": "defines how Z_antenna and the antenna-terminal V/I envelope (ICP-44 input) will be measured and (A9.6) implements its reduction, uncertainty propagation and map storage; state unchanged (BLOCKED on ICP module design; the physical ICP is not verified by software)",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_p3_coupled_thermal",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "how": "ICP-43 / ICP-47 now have calculators; values TBD; physical ICP not VERIFIED",
+     "stated_readiness_change": "none to maturity (framework only)"
+    },
+    {
+     "lane": "fo_a9_6_p4_anode_materials",
+     "artifact": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "how": "APP-COLLECTOR rows for ICP-21 collector material; material OPEN",
+     "stated_readiness_change": "NONE - no row becomes READY / VERIFIED; framework implementation is not material evidence (A9.6 sec. 16)"
+    },
+    {
+     "lane": "fo_a9_6_rfq_completion",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "how": "open-tube coaxial ICP head parts, collector/bias supply, capped port (P1)",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-05, RVM-12, RVM-13, RVM-14, RVM-15, RVM-16 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/17 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "ICP module design (ICD ICP-02 standoff, ICP-04 aperture, ICP-07 envelope, ICP-21 collector, ICP-44 RF voltage rating TBD); no registered lane designs the ICP module",
+    "source": "A9-03 schemas/interfaces/icp_neutralizer_icd_v1.json (ICP-02, ICP-04, ICP-07, ICP-21, ICP-44)",
+    "ref": null,
+    "kind": "V3_CARRIED",
+    "still_open_check": [
+     {
+      "kind": "INTERFACE_TBD",
+      "id": "ICP-02",
+      "artifact": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+      "locator": "items[id=ICP-02]",
+      "state": "TBD",
+      "detail": ""
+     },
+     {
+      "kind": "INTERFACE_TBD",
+      "id": "ICP-04",
+      "artifact": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+      "locator": "items[id=ICP-04]",
+      "state": "TBD",
+      "detail": ""
+     },
+     {
+      "kind": "INTERFACE_TBD",
+      "id": "ICP-07",
+      "artifact": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+      "locator": "items[id=ICP-07]",
+      "state": "TBD",
+      "detail": ""
+     },
+     {
+      "kind": "INTERFACE_TBD",
+      "id": "ICP-21",
+      "artifact": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+      "locator": "items[id=ICP-21]",
+      "state": "TBD",
+      "detail": ""
+     },
+     {
+      "kind": "INTERFACE_TBD",
+      "id": "ICP-44",
+      "artifact": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+      "locator": "items[id=ICP-44]",
+      "state": "TBD",
+      "detail": ""
+     }
+    ]
+   },
+   "contributing_blockers": [
+    {
+     "kind": "P1_MEASUREMENT",
+     "id": "P1-S7",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "locator": "stage_map[id=P1-S7]",
+     "state": "NOT_RUN (plan only; nothing measured)",
+     "detail": "ICP-45A discharge-OFF capacity at registered H-1 conditions (conditional)"
+    },
+    {
+     "kind": "P1_MEASUREMENT",
+     "id": "P1-M-11",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "locator": "measurements[id=P1-M-11]",
+     "state": "NOT_RUN (plan only; nothing measured)",
+     "detail": ""
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P1Q-07",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P1Q-07]",
+     "state": "TBD_OWNER",
+     "detail": "Which campaign produces the registered I_d,max,H1 (A9.3 OQ-A907-02) - H-1 with C1 (hall_c1_reference) in HI-AR, or another registered H-1 operation - and at which gate is it registered?",
+     "blocks": [
+      "BLOCKS_P1_LATER_STAGE"
+     ],
+     "group": null
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P1Q-09",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P1Q-09]",
+     "state": "TBD_OWNER",
+     "detail": "A9.4 P1Q-10 fixes the dedicated, isolated, instrumented electron-collecting electrode (option A) for ICP45_CAPACITY records. Still open: its geometry / position, the V_collector reference and instrumented terminals (P1-I",
+     "blocks": [
+      "BLOCKS_P1_START"
+     ],
+     "group": "DG-COLLECTOR"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OQ-VI-04",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OQ-VI-04]",
+     "state": "TBD_OWNER",
+     "detail": "ICP-neutralizer lifetime and cycle requirement (VI-LF-05)",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": null
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "ICPQ-10",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=ICPQ-10]",
+     "state": "TBD_OWNER",
+     "detail": "Total ICP module heat-load bound (ICP-43): use 1.20 x (P_fwd,max + P_d,max) with P_d,max from the A9-02 discharge slot, or, if every score-bearing stand point is held inside the P_bus < 1.5 kW ceiling (row 108), the enve",
+     "blocks": [
+      "BLOCKS_LOCK_1",
+      "BLOCKS_P3_P4"
+     ],
+     "group": "DG-ICP-HEAT-BOUND"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "ICPQ-11",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=ICPQ-11]",
+     "state": "TBD_OWNER",
+     "detail": "Factor k_RF between the rated antenna-circuit RF voltage and the V_ant,peak computed at the maximum operating point of the characterized mismatch envelope (ICP antenna impedance map, A9.2 P2; not at a 500 W component rat",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": "DG-RF-RATING-MARGIN"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P3Q-01",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P3Q-01]",
+     "state": "TBD_OWNER",
+     "detail": "Q_collector needs the plasma potential and electron temperature at the collector sheath edge (P3-P1-04/05), which are not in the P1 measurement list. Add a probe diagnostic (Langmuir or emissive probe near the collector)",
+     "blocks": [
+      "BLOCKS_P1_START",
+      "BLOCKS_P3_P4"
+     ],
+     "group": "DG-COLLECTOR"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P4-OQ-05",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P4-OQ-05]",
+     "state": "TBD_OWNER",
+     "detail": "Collector coupons: bias polarity (ion-collecting negative bias as the collector runs, in addition to or instead of the row-106 electron-collecting / floating pair)?",
+     "blocks": [
+      "BLOCKS_P3_P4"
+     ],
+     "group": "DG-COLLECTOR"
+    },
+    {
+     "kind": "P3_INPUT",
+     "id": "P3-G-07",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "locator": "items[id=P3-G-07]",
+     "state": "TBD",
+     "detail": "collector geometry and position relative to the bore / plume (Takahashi-type ion collector)"
+    },
+    {
+     "kind": "VENDOR_QUOTE",
+     "id": "ME-L01",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "locator": "packages[].line_items[id=ME-L01]",
+     "state": "QUOTATION_ONLY (P1_NEEDED); no purchase order",
+     "detail": "dielectric source tube/chamber (open-tube coaxial)"
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "design work outside every registered scope",
+   "latest_decision_point": "before HI-S1 (A9-01 GD-01: downstream ICP interfaces frozen)",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "hardware-definition blocker",
+   "owner": {
+    "functional_role": "electron-source lead (ICP neutralizer)",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: named engineer needed before READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {
+    "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
+    "ICP electron-current capacity": "PENDING_ICP45",
+    "ICP RF power closure": "PENDING_HARDWARE"
+   },
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-05",
+     "title": "Internal ~1.35 kW design allocation (row 109)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-12",
+     "title": "> 15,000 h firing (provisional hard requirement)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-13",
+     "title": "Mission-life basis >= 26,280 h",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-14",
+     "title": "Start-up / restart (ignition, Hall ignition with the electron source, restart, transients)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-15",
+     "title": "Beam neutralization / electron-current capacity (ICP-45 or C1)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-16",
+     "title": "Atomic-oxygen / material compatibility (AO-beam test; anode, collector, keeper, gas path)",
+     "status": {
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 19,
+   "key": "flight_rf_chain",
+   "name": "flight RF chain: 13.56 MHz RF source (spacecraft-DC input), directional coupler, 50-ohm line, LOCAL matching network on / immediately adjacent to the ICP module (adjustable for development, A9.2), RF feedthrough",
+   "group": "power",
+   "flag": "primary investigation hypothesis (A9), not flight baseline",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/18",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "container": "reference_planes",
+     "ids": [
+      "RP-GEN",
+      "RP-CPL",
+      "RP-MIN",
+      "RP-ANT",
+      "RP-VI"
+     ],
+     "kind": "FRAMEWORK",
+     "what": "RF reference planes",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "container": "p2_outputs_later",
+     "ids": [
+      "RF_COMPONENT_RATINGS",
+      "LOCAL_MATCH_FLIGHT_IMPLEMENTATION"
+     ],
+     "kind": "FRAMEWORK",
+     "what": "rating-derivation and flight-match structures (values after the measured map)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "container": "measurements",
+     "ids": [
+      "P1-M-03",
+      "P1-M-05"
+     ],
+     "kind": "PLAN",
+     "what": "line + local-match loss; mains input (ENGINEERING only)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "A9B-19",
+      "A9B-20",
+      "A9B-21",
+      "MPV2-N02"
+     ],
+     "kind": "BUDGET",
+     "what": "flight RF generator, local match, RF line, RF protection / sensing",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "container": "packages[].line_items",
+     "ids": [
+      "RF-L01",
+      "RF-L02",
+      "RF-L03",
+      "RF-L04",
+      "RF-L05",
+      "RF-L07"
+     ],
+     "kind": "RFQ",
+     "what": "development RF chain with the local match (P1, ground only)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-04",
+      "RVM-05"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "full bus, 1.35 kW allocation",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_p1_workflow_completion",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "how": "P1 uses a GROUND/FACILITY_ONLY mains generator; C_e,DC is the efficiency input for a later FLIGHT_REPRESENTATIVE_DC_RF_SOURCE; ratings stay TBD_AFTER_IMPEDANCE_MAP",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_p2_framework_completion",
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "how": "methodology, data model and (A9.6) the rating-derivation structure for the analysis_test_needed 'ICP impedance map'; ratings stay TBD_AFTER_IMPEDANCE_MAP; state unchanged",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_rfq_completion",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "how": "development RF chain with local match (P1, ground only); the flight DC-input RF source is not in this revision (NIR-01); ratings TBD_AFTER_IMPEDANCE_MAP",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-04, RVM-05, RVM-15 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/18 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "flight-representative DC-input RF source not scoped: A902-21 (generator DC-input -> forward-power efficiency) OPEN; the laboratory generator is ground/facility-only (OQ-RFQ-06)",
+    "source": "A9-02 docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json (A902-21)",
+    "ref": null,
+    "kind": "V3_CARRIED",
+    "still_open_check": [
+     {
+      "kind": "BUS_ITEM_OPEN",
+      "id": "A902-21",
+      "artifact": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
+      "locator": "items[id=A902-21]",
+      "state": "OPEN",
+      "detail": "RF generator DC-input -> forward-power efficiency"
+     }
+    ]
+   },
+   "contributing_blockers": [
+    {
+     "kind": "P2_MEASUREMENT",
+     "id": "RF_COMPONENT_RATINGS",
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "locator": "p2_outputs_later[id=RF_COMPONENT_RATINGS]",
+     "state": "TBD_AFTER_IMPEDANCE_MAP",
+     "detail": "generator, coupler, coax, connectors, local-match elements (voltage / current), feedthroughs (UB-RF-01 rating, ICP-15, A9H-INS-15/16, A9H-RF-LM-01, RFQ-04-R07/R11/R12/R17)"
+    },
+    {
+     "kind": "P2_MEASUREMENT",
+     "id": "LOCAL_MATCH_FLIGHT_IMPLEMENTATION",
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "locator": "p2_outputs_later[id=LOCAL_MATCH_FLIGHT_IMPLEMENTATION]",
+     "state": "DEFERRED by A9.2 icp_matching_strategy",
+     "detail": "fixed / switched / electronically tuned / other (ICP-13)"
+    },
+    {
+     "kind": "VENDOR_QUOTE",
+     "id": "RFQ2-RF-R07",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "locator": "packages[].open_specification_items[id=RFQ2-RF-R07]",
+     "state": "OPEN_SPECIFICATION (supplier / evidence input)",
+     "detail": "matching network rating and control"
+    },
+    {
+     "kind": "VENDOR_QUOTE",
+     "id": "RFQ2-RF-R17",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "locator": "packages[].open_specification_items[id=RFQ2-RF-R17]",
+     "state": "OPEN_SPECIFICATION (supplier / evidence input)",
+     "detail": "local matching network: on-module mass and matching-element voltage / current"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "ICPQ-11",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=ICPQ-11]",
+     "state": "TBD_OWNER",
+     "detail": "Factor k_RF between the rated antenna-circuit RF voltage and the V_ant,peak computed at the maximum operating point of the characterized mismatch envelope (ICP antenna impedance map, A9.2 P2; not at a 500 W component rat",
+     "blocks": [
+      "BLOCKS_LOCK_1"
+     ],
+     "group": "DG-RF-RATING-MARGIN"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P2Q-10",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P2Q-10]",
+     "state": "TBD_OWNER",
+     "detail": "Rating margin policy for the RF components other than the antenna-circuit voltage (ICPQ-11): generator forward power, coupler / sensors, coax and connectors, vacuum feedthrough, local-match elements - one factor per comp",
+     "blocks": [
+      "NOTHING_IMMEDIATE"
+     ],
+     "group": "DG-RF-RATING-MARGIN"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P2Q-04",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P2Q-04]",
+     "state": "TBD_OWNER",
+     "detail": "Hot-map tuning policy: re-tune for minimum reflected power at every point, plus fixed-tune sub-sweeps around representative points to inform the flight match implementation?",
+     "blocks": [
+      "BLOCKS_LOCK_1",
+      "BLOCKS_P2"
+     ],
+     "group": null
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
+   "latest_decision_point": "proposal / flight design freeze (Milestone C); A902-21 value at LOCK-2",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": "proposal-only documentation gap",
+   "owner": {
+    "functional_role": "power / PPU lead (RF chain)",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: named engineer needed before READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {
+    "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
+    "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP",
+    "ICP RF power closure": "PENDING_HARDWARE"
+   },
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-04",
+     "title": "< 1.5 kW full bus power (A9-02 boundary, steady and start-up, 1 ms window)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-05",
+     "title": "Internal ~1.35 kW design allocation (row 109)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-15",
+     "title": "Beam neutralization / electron-current capacity (ICP-45 or C1)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 20,
+   "key": "h1_anode_material",
+   "name": "H-1 anode material (design-representative / flight)",
+   "group": "propulsion",
+   "flag": "design blocker of the H-1 Hall head (A9.2); not flight baseline",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/19",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "container": "applications",
+     "ids": [
+      "APP-ANODE"
+     ],
+     "kind": "FRAMEWORK",
+     "what": "anode candidate-material comparison (no material selected)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "container": "test_plan.tests",
+     "ids": [
+      "TP-01",
+      "TP-02",
+      "TP-03",
+      "TP-04",
+      "TP-05",
+      "TP-06",
+      "TP-07",
+      "TP-08",
+      "TP-09"
+     ],
+     "kind": "PLAN",
+     "what": "coupon test plan (not run)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "kind": "SOFTWARE",
+     "paths": [
+      "docs/experiments/hall_icp/p4_anode_materials/p4_screening.py"
+     ],
+     "what": "screening module (every gate INCOMPLETE_EVIDENCE)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "container": "packages[].line_items",
+     "ids": [
+      "ME-L04"
+     ],
+     "kind": "RFQ",
+     "what": "collector candidate-material coupons (LATER)",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-16",
+      "RVM-17"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "AO / material compatibility, thermal",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_p4_anode_materials",
+     "artifact": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "how": "candidate-material comparison framework, gate matrix and coupon test plan now exist (software / documentation only); A9H-ANODE-01 stays a design blocker",
+     "stated_readiness_change": "NONE - no row becomes READY / VERIFIED; framework implementation is not material evidence (A9.6 sec. 16)"
+    },
+    {
+     "lane": "fo_a9_6_rfq_completion",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "how": "no anode RFQ (A9.2 ANODE_BASELINE OPEN; NIR-03); materials framework merged (docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json; FINAL_ANODE_MATERIAL OPEN)",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-12, RVM-16, RVM-17 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/19 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "DESIGN BLOCKER: H-1 anode material",
+    "source": "A9-07 docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json new_items A9H-ANODE-01",
+    "ref": null,
+    "kind": "V3_CARRIED",
+    "still_open_check": [
+     {
+      "kind": "H2A9_ITEM_TBD",
+      "id": "A9H-ANODE-01",
+      "artifact": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+      "locator": "new_items[id=A9H-ANODE-01]",
+      "state": "TBD",
+      "detail": "DESIGN BLOCKER: H-1 anode material (design-representative / flight)"
+     }
+    ]
+   },
+   "contributing_blockers": [
+    {
+     "kind": "P4_EVIDENCE",
+     "id": "TP-01",
+     "artifact": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "locator": "test_plan.tests[id=TP-01]",
+     "state": "NOT_RUN (coupon test plan)",
+     "detail": "CR-01: populates T_validated_continuous"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P4-OQ-01",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P4-OQ-01]",
+     "state": "TBD_OWNER",
+     "detail": "Evidence standard for 'T_validated,continuous' of an anode / collector material: which exposure (atmosphere, bias, duration relative to the provisional firing basis, acceptance metric) makes a continuous-use temperature ",
+     "blocks": [
+      "BLOCKS_P3_P4"
+     ],
+     "group": "DG-THERMAL-LIMITS"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P4-OQ-02",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P4-OQ-02]",
+     "state": "TBD_OWNER",
+     "detail": "Coupon shortlist: which variants of R8-C02 (IN600 / IN625 / Haynes 230 / X-750 / Hastelloy) and R8-C03 (IN601 / FeCrAl / Haynes 214) and which optional R8-matrix rows (Ti, TiN / ZrN, Cu, Ir) enter Q0-Q1?",
+     "blocks": [
+      "BLOCKS_P3_P4"
+     ],
+     "group": null
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P4-OQ-03",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P4-OQ-03]",
+     "state": "TBD_OWNER",
+     "detail": "Pre-registered coupon acceptance: resistance-rise threshold, AO / sputter recession limits and exposure durations (before any exposure).",
+     "blocks": [
+      "BLOCKS_P3_P4",
+      "BLOCKS_LOCK_1"
+     ],
+     "group": null
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P4-OQ-04",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P4-OQ-04]",
+     "state": "TBD_OWNER",
+     "detail": "Authorize lawful acquisition (library / ILL / purchase) of species-resolved (N+, N2+, O+, O2+) sputtering-yield data for alloy and coating candidates not covered by open elemental compilations?",
+     "blocks": [
+      "BLOCKS_P3_P4"
+     ],
+     "group": null
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OQ-A907-05",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OQ-A907-05]",
+     "state": "TBD_OWNER",
+     "detail": "Accept the supplier continuous ratings (BN 900 degC oxidizing guide value, ceramic wire 1000 F) as PROVISIONAL limits for the >= 50 K rule until qualification tests validate them?",
+     "blocks": [
+      "BLOCKS_LOCK_1",
+      "BLOCKS_P3_P4"
+     ],
+     "group": "DG-THERMAL-LIMITS"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OQ-A907-08",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OQ-A907-08]",
+     "state": "TBD_OWNER",
+     "detail": "Exterior coating temperature limit (row 84): the Z-93-class coating's temperature capability on the Hall body is not established (H2-5 v1 TBD). The coated PO/BP surfaces must withstand up to PO 442, BP 588 degC at baseli",
+     "blocks": [
+      "BLOCKS_LOCK_1",
+      "BLOCKS_P3_P4"
+     ],
+     "group": null
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "design work outside every registered scope",
+   "latest_decision_point": "before any design-representative / score-bearing anode is built (A9.2; owner call on the trade)",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": null,
+   "owner": {
+    "functional_role": "Hall thruster (H-1) lead (anode material)",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: named engineer needed before READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {
+    "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
+    "final anode material": "OPEN"
+   },
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-12",
+     "title": "> 15,000 h firing (provisional hard requirement)",
+     "status": {
+      "hall_icp_neutralizer": "NOT_EVALUATED",
+      "hall_c1_reference": "NOT_EVALUATED"
+     }
+    },
+    {
+     "rvm_row": "RVM-16",
+     "title": "Atomic-oxygen / material compatibility (AO-beam test; anode, collector, keeper, gas path)",
+     "status": {
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+     }
+    },
+    {
+     "rvm_row": "RVM-17",
+     "title": "Thermal closure (>= 50 K below validated limits, 20 % heat-load margin)",
+     "status": {
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  },
+  {
+   "row": 21,
+   "key": "h1_anode_heat_path",
+   "name": "H-1 anode heat-removal path",
+   "group": "propulsion",
+   "flag": "design blocker of the H-1 Hall head (A9.2); not flight baseline",
+   "physical_item": true,
+   "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/20",
+   "a9_6_implemented": [
+    {
+     "artifact": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "container": "interface_demands",
+     "ids": [
+      "ID-01",
+      "ID-02"
+     ],
+     "kind": "FRAMEWORK",
+     "what": "P3 <-> P4 interface (T_operating, k(T))",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "kind": "SOFTWARE",
+     "paths": [
+      "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py"
+     ],
+     "what": "anode heat path is a network input of the coupled model",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+     "container": "bom",
+     "ids": [
+      "MPV2-N03"
+     ],
+     "kind": "BUDGET",
+     "what": "H-1 anode heat-removal path hardware line",
+     "counts_as_evidence": false
+    },
+    {
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "container": "rows",
+     "ids": [
+      "RVM-17"
+     ],
+     "kind": "REQUIREMENT_MATRIX",
+     "what": "thermal closure",
+     "counts_as_evidence": false
+    }
+   ],
+   "a9_6_lanes": [
+    {
+     "lane": "fo_a9_6_p3_coupled_thermal",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "how": "anode heat path is a network input; ANODE_THERMAL_CLOSURE UNRESOLVED (P4 merged: FINAL_ANODE_MATERIAL OPEN, no validated limit)",
+     "stated_readiness_change": "none to maturity (framework only)"
+    },
+    {
+     "lane": "fo_a9_6_p4_anode_materials",
+     "artifact": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "how": "interface ID-01 / ID-02 to the P3 framework defined; A9H-ANODE-02 stays a design blocker",
+     "stated_readiness_change": "NONE - no row becomes READY / VERIFIED; framework implementation is not material evidence (A9.6 sec. 16)"
+    },
+    {
+     "lane": "fo_a9_6_rfq_completion",
+     "artifact": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+     "how": "no anode heat-path RFQ (design blocker)",
+     "stated_readiness_change": null
+    },
+    {
+     "lane": "fo_a9_6_rvm",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "how": "requirement rows RVM-17 (status per configuration in rvm_requirement_status)",
+     "stated_readiness_change": "none (requirement-status input to PENDING fo_a9_6_m16_refresh; no row READY/VERIFIED)"
+    }
+   ],
+   "evidence": {
+    "new_measured_or_validated_artifacts": [],
+    "statement": "none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware",
+    "carried": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/20 (v3 evidence cells / v2 cells by reference)"
+   },
+   "interface": {
+    "frozen": false,
+    "basis": "no governing interface document is owner-frozen (ICD schemas/interfaces/icp_neutralizer_icd_v1.json status DRAFT_PENDING_OWNER)"
+   },
+   "readiness_conditions": {
+    "satisfied": [],
+    "note": "no S1a / S1 readiness condition newly SATISFIED by the A9.6 batch (no hardware run)"
+   },
+   "blocking_item": {
+    "carried_from_v3": true,
+    "text": "DESIGN BLOCKER: H-1 anode heat-removal path",
+    "source": "A9-07 docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json new_items A9H-ANODE-02",
+    "ref": null,
+    "kind": "V3_CARRIED",
+    "still_open_check": [
+     {
+      "kind": "H2A9_ITEM_TBD",
+      "id": "A9H-ANODE-02",
+      "artifact": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
+      "locator": "new_items[id=A9H-ANODE-02]",
+      "state": "TBD",
+      "detail": "DESIGN BLOCKER: H-1 anode heat-removal path (thermal-design problem first)"
+     }
+    ]
+   },
+   "contributing_blockers": [
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "P3Q-02",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=P3Q-02]",
+     "state": "TBD_OWNER",
+     "detail": "For the coupled thermal closure at LOCK-1, is the lumped H2-5 network coupled through this P3 radiosity enclosure the accepted model class, or is a finer (finite-element / multi-node) H-1 + ICP model required before any ",
+     "blocks": [
+      "BLOCKS_LOCK_1",
+      "BLOCKS_P3_P4"
+     ],
+     "group": "DG-THERMAL-METHOD"
+    },
+    {
+     "kind": "OWNER_QUESTION",
+     "id": "OQ-A907-06",
+     "artifact": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+     "locator": "rows[id=OQ-A907-06]",
+     "state": "TBD_OWNER",
+     "detail": "Heat conducted into the spacecraft mount stays within the row-85 100 W case at the searched corners only for LV-ALL-ISO, LV-COIL+ISO, LV-OPEN+ISO, LV-RAD+ISO; with LV-ALL-ISO the inner coil still has margin -12.3 K to it",
+     "blocks": [
+      "BLOCKS_LOCK_1",
+      "BLOCKS_P3_P4"
+     ],
+     "group": null
+    }
+   ],
+   "worked_by": null,
+   "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
+   "waits_on": "design work outside every registered scope",
+   "latest_decision_point": "before the anode material selection (A9.2 order: heat path first, then material)",
+   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "a7_category": null,
+   "owner": {
+    "functional_role": "thermal lead (H-1 anode heat-removal path)",
+    "accountable": "Praveen (accountable system owner, owner row 140)",
+    "named_engineer": null,
+    "rule": "row 140: named engineer needed before READY",
+    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+   },
+   "a9_2_statuses": {
+    "anode thermal closure": "UNRESOLVED"
+   },
+   "rvm_requirement_status": [
+    {
+     "rvm_row": "RVM-17",
+     "title": "Thermal closure (>= 50 K below validated limits, 20 % heat-load margin)",
+     "status": {
+      "hall_icp_neutralizer": "INCOMPLETE_EVIDENCE",
+      "hall_c1_reference": "INCOMPLETE_EVIDENCE"
+     }
+    }
+   ],
+   "execution_state": "BLOCKED",
+   "state_rule": "R-M16V4-04"
+  }
+ ],
+ "diff_v3_v4": [
+  {
+   "row": 1,
+   "key": "intake",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 2,
+   "key": "filter",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 3,
+   "key": "compressor",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 4,
+   "key": "buffer_plenum",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 5,
+   "key": "atm_metering_valve",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 6,
+   "key": "xe_tank",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 7,
+   "key": "xe_regulator",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 8,
+   "key": "xe_metering",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 9,
+   "key": "hall_chamber",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 10,
+   "key": "magnetic_circuit",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 11,
+   "key": "cathode",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 12,
+   "key": "ppu",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 13,
+   "key": "thermal_control",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": true,
+   "reason": "state unchanged: R-M16V4-04; the v3 item named the coupled thermal MODEL (A9-07 A9H-TH-01); fo_a9_6_p3_coupled_thermal implemented the model as a framework, so under the one-blocker rule the row now waits on the model's missing inputs (geometry from the ICP module / KC-1 design, conductances, emittances, validated limits); the state is unchanged (BLOCKED) and no thermal result is produced"
+  },
+  {
+   "row": 14,
+   "key": "control_fdir",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 15,
+   "key": "sensors_diagnostics",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 16,
+   "key": "mechanical_structural",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 17,
+   "key": "preionizer_interface",
+   "state_v3": "SUPERSEDED_FOR_PRIMARY_LINE",
+   "state_v4": "SUPERSEDED_FOR_PRIMARY_LINE",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-07; historical row, not scheduled"
+  },
+  {
+   "row": 18,
+   "key": "icp_neutralizer_head",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 19,
+   "key": "flight_rf_chain",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 20,
+   "key": "h1_anode_material",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  },
+  {
+   "row": 21,
+   "key": "h1_anode_heat_path",
+   "state_v3": "BLOCKED",
+   "state_v4": "BLOCKED",
+   "state_changed": false,
+   "blocking_item_changed": false,
+   "reason": "state unchanged: R-M16V4-04; v3 blocking item carried: no A9.6 deliverable produces the missing input"
+  }
+ ],
+ "rollup": {
+  "execution_states": {
+   "BLOCKED": 20,
+   "SUPERSEDED_FOR_PRIMARY_LINE": 1
+  },
+  "waits_on": {
+   "H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)": 2,
+   "design work outside every registered scope": 7,
+   "first-hand source verification": 2,
+   "owner decision": 4,
+   "procurement (wave H3, PLANNED_NOT_REGISTERED)": 5
+  }
+ },
+ "owner_question_ids_used": [
+  "ICPQ-03",
+  "ICPQ-10",
+  "ICPQ-11",
+  "MPQ-01",
+  "MQ-04",
+  "OD12",
+  "OD14",
+  "OD2",
+  "OD3",
+  "OD6",
+  "OQ-A907-01",
+  "OQ-A907-03",
+  "OQ-A907-04",
+  "OQ-A907-05",
+  "OQ-A907-06",
+  "OQ-A907-07",
+  "OQ-A907-08",
+  "OQ-A907-09",
+  "OQ-A907-10",
+  "OQ-A910-05",
+  "OQ-A910-06",
+  "OQ-RFQ-04",
+  "OQ-RFQ-09",
+  "OQ-RFQV2-10",
+  "OQ-VI-04",
+  "P1Q-06",
+  "P1Q-07",
+  "P1Q-09",
+  "P2Q-01",
+  "P2Q-02",
+  "P2Q-03",
+  "P2Q-04",
+  "P2Q-07",
+  "P2Q-10",
+  "P3Q-01",
+  "P3Q-02",
+  "P4-OQ-01",
+  "P4-OQ-02",
+  "P4-OQ-03",
+  "P4-OQ-04",
+  "P4-OQ-05",
+  "RVMQ-01",
+  "XA9Q-01",
+  "XA9Q-03",
+  "XA9Q-06",
+  "XA9Q-07"
+ ],
+ "items": [
+  {
+   "id": "M16V4-IT-01",
+   "name": "rows in M16 v4",
+   "value": 21,
+   "units": "count",
+   "basis": "one row per v3 row (1-21)",
+   "source": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json rows",
+   "evidence_class": "derived (bookkeeping count; no physical quantity)",
+   "status": "COMPUTED",
+   "freeze_point": "rebuilt whenever a pinned input or a referenced deliverable changes"
+  },
+  {
+   "id": "M16V4-IT-02",
+   "name": "rows BLOCKED",
+   "value": 20,
+   "units": "count",
+   "basis": "derive_state() over every row",
+   "source": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json rows",
+   "evidence_class": "derived (bookkeeping count; no physical quantity)",
+   "status": "COMPUTED",
+   "freeze_point": "rebuilt whenever a pinned input or a referenced deliverable changes"
+  },
+  {
+   "id": "M16V4-IT-03",
+   "name": "rows READY",
+   "value": 0,
+   "units": "count",
+   "basis": "R-M16V4-05",
+   "source": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json rows",
+   "evidence_class": "derived (bookkeeping count; no physical quantity)",
+   "status": "COMPUTED",
+   "freeze_point": "rebuilt whenever a pinned input or a referenced deliverable changes"
+  },
+  {
+   "id": "M16V4-IT-04",
+   "name": "rows VERIFIED",
+   "value": 0,
+   "units": "count",
+   "basis": "R-M16V4-02 (no measured artifact exists)",
+   "source": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json rows",
+   "evidence_class": "derived (bookkeeping count; no physical quantity)",
+   "status": "COMPUTED",
+   "freeze_point": "rebuilt whenever a pinned input or a referenced deliverable changes"
+  },
+  {
+   "id": "M16V4-IT-05",
+   "name": "rows RUNNING",
+   "value": 0,
+   "units": "count",
+   "basis": "R-M16V4-03",
+   "source": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json rows",
+   "evidence_class": "derived (bookkeeping count; no physical quantity)",
+   "status": "COMPUTED",
+   "freeze_point": "rebuilt whenever a pinned input or a referenced deliverable changes"
+  },
+  {
+   "id": "M16V4-IT-06",
+   "name": "rows whose state changed v3 -> v4",
+   "value": 0,
+   "units": "count",
+   "basis": "diff_v3_v4",
+   "source": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json rows",
+   "evidence_class": "derived (bookkeeping count; no physical quantity)",
+   "status": "COMPUTED",
+   "freeze_point": "rebuilt whenever a pinned input or a referenced deliverable changes"
+  },
+  {
+   "id": "M16V4-IT-07",
+   "name": "rows whose scheduler blocking item was re-pointed",
+   "value": 1,
+   "units": "count",
+   "basis": "R-M16V4-08",
+   "source": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json rows",
+   "evidence_class": "derived (bookkeeping count; no physical quantity)",
+   "status": "COMPUTED",
+   "freeze_point": "rebuilt whenever a pinned input or a referenced deliverable changes"
+  },
+  {
+   "id": "M16V4-IT-08",
+   "name": "blocking entries (scheduler + contributing) resolved at build time",
+   "value": 105,
+   "units": "count",
+   "basis": "resolve_blocker()",
+   "source": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json rows",
+   "evidence_class": "derived (bookkeeping count; no physical quantity)",
+   "status": "COMPUTED",
+   "freeze_point": "rebuilt whenever a pinned input or a referenced deliverable changes"
+  },
+  {
+   "id": "M16V4-IT-09",
+   "name": "distinct owner-question v4 ids used as blockers",
+   "value": 46,
+   "units": "count",
+   "basis": "each resolves to one TBD_OWNER row",
+   "source": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json rows",
+   "evidence_class": "derived (bookkeeping count; no physical quantity)",
+   "status": "COMPUTED",
+   "freeze_point": "rebuilt whenever a pinned input or a referenced deliverable changes"
+  },
+  {
+   "id": "M16V4-IT-10",
+   "name": "A9.2 statuses carried verbatim",
+   "value": 10,
+   "units": "count",
+   "basis": "R-M16V4-06",
+   "source": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json rows",
+   "evidence_class": "derived (bookkeeping count; no physical quantity)",
+   "status": "COMPUTED",
+   "freeze_point": "rebuilt whenever a pinned input or a referenced deliverable changes"
+  },
+  {
+   "id": "M16V4-IT-11",
+   "name": "new measured / validated artifacts",
+   "value": 0,
+   "units": "count",
+   "basis": "A9.6 batch: frameworks only",
+   "source": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json rows",
+   "evidence_class": "derived (bookkeeping count; no physical quantity)",
+   "status": "COMPUTED",
+   "freeze_point": "rebuilt whenever a pinned input or a referenced deliverable changes"
+  }
+ ],
+ "interface_demands": [
+  {
+   "id": "M16V4-ID-01",
+   "direction": "consumes",
+   "counterpart": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
+   "quantity": "every v3 row (state, blocking item, waits_on, latest decision point, owner, A9.2 statuses)",
+   "status": "APPLIED (pinned)"
+  },
+  {
+   "id": "M16V4-ID-02",
+   "direction": "consumes",
+   "counterpart": "m16_impact of the A9.6 deliverables P1, P2, P3, P4, mass/power v2, Xe accounting v2, RFQ v2, RVM",
+   "quantity": "per-row touches; every entry lands in rows[].a9_6_lanes; none changes a readiness state",
+   "status": "APPLIED"
+  },
+  {
+   "id": "M16V4-ID-03",
+   "direction": "consumes",
+   "counterpart": "docs/requirements/rvm_a9/rvm_a9_v1.json interface_demands[id=RVM-ID-08]",
+   "quantity": "requirement status per M16 row (rows[].rvm_requirement_status)",
+   "status": "APPLIED"
+  },
+  {
+   "id": "M16V4-ID-04",
+   "direction": "consumes",
+   "counterpart": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json interface_demands[id=ID-11]",
+   "quantity": "rows 18, 20, 21: framework implemented; readiness unchanged",
+   "status": "APPLIED"
+  },
+  {
+   "id": "M16V4-ID-05",
+   "direction": "consumes",
+   "counterpart": "docs/budgets/owner_decisions/owner_questions_state_v4.json (IF-V4-08)",
+   "quantity": "owner-question ids used as blockers; each must be one TBD_OWNER row",
+   "status": "APPLIED"
+  },
+  {
+   "id": "M16V4-ID-06",
+   "direction": "provides",
+   "counterpart": "fo_a9_6_consolidated_verification (A9.6 sec. 18)",
+   "quantity": "readiness rules R-M16V4-01..08, derive_state(), per-row blockers and the v3 -> v4 diff",
+   "status": "OFFERED"
+  },
+  {
+   "id": "M16V4-ID-07",
+   "direction": "provides",
+   "counterpart": "owner (M16-V3-Q-01)",
+   "quantity": "PROPOSED blocking items, roles and latest decision points for acceptance; named engineers",
+   "status": "AWAITING_OWNER_DECISION"
+  }
+ ],
+ "owner_answers_applied": [
+  {
+   "id": "owner row 140",
+   "how_applied": "R-M16V4-05: READY needs a named responsible engineer; functional roles carried from v3; accountable owner carried"
+  },
+  {
+   "id": "owner row 141",
+   "how_applied": "R-M16V4-01..04: scheduler rule, one-blocker rule, non-lane-input guard"
+  },
+  {
+   "id": "owner row 142",
+   "how_applied": "A9.6 lanes added per row (rows[].a9_6_lanes) without rewriting H2 / A9 provenance (v3 carried by pointer)"
+  },
+  {
+   "id": "owner row 144",
+   "how_applied": "every blocker keeps a latest decision point (carried from v3, PROPOSED)"
+  },
+  {
+   "id": "A9.2 a9_10_statuses",
+   "how_applied": "R-M16V4-06: ten statuses verbatim; none promoted"
+  },
+  {
+   "id": "A9.6 sec. 16",
+   "how_applied": "R-M16V4-02 guard: no physical row READY / VERIFIED from software / framework completeness; physical ICP, anode, coupled thermal and RF ratings stay at their A9.2 statuses"
+  },
+  {
+   "id": "A9.6 sec. 7",
+   "how_applied": "no open owner question answered; blockers cite TBD_OWNER rows"
+  }
+ ],
+ "open_owner_questions": [],
+ "open_owner_questions_note": "no new owner question: M16-V3-Q-01 (TBD_OWNER, state v4) is carried and covers acceptance of the v4 blocking-item selection, roles and latest decision points",
+ "historical_reuse": [
+  {
+   "path": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
+   "sha256": "636cbd3318831f6f56e9833813c4d8c259aef7db3de1c6e503cccce14dade7e2",
+   "use": "M16 v3 (immutable; rows refreshed here)"
+  },
+  {
+   "path": "docs/budgets/subsystem_maturity/build_subsystem_maturity_v3.py",
+   "sha256": "ba163d09afe9596cdaed1e14fb0fea83aa317ee457674e82f00ef88299936327",
+   "use": "M16 v3 builder (immutable)"
+  },
+  {
+   "path": "docs/budgets/subsystem_maturity/SUBSYSTEM_MATURITY_v3.md",
+   "sha256": "16cb3b9218cc9428d0c0bf34cb884da18c48469bf48f120f7c1c840bee34427c",
+   "use": "M16 v3 companion (immutable)"
+  },
+  {
+   "path": "docs/budgets/subsystem_maturity/subsystem_maturity_v2.json",
+   "sha256": "a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c",
+   "use": "M16 v2 (scheduler rule accepted by the owner, row 141)"
+  }
+ ],
+ "m16_impact": {
+  "rows_state_changed": 0,
+  "rows_blocking_item_repointed": 1,
+  "summary": "20 BLOCKED, 1 SUPERSEDED_FOR_PRIMARY_LINE, 0 READY, 0 VERIFIED; no state change v3 -> v4"
+ },
+ "compliance": [
+  "v1 / v2 / v3 unchanged (v3 pinned)",
+  "every cited id resolved at build time; no-longer-open ids raise",
+  "no PASS; no winner; no prediction",
+  "A9.2 statuses verbatim",
+  "no file under docs/budgets/subsystem_maturity/"
+ ]
+}
