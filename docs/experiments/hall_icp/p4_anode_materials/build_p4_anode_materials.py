@@ -49,9 +49,15 @@ QUANTITY_TYPES = ("measured", "digitized", "inferred", "reconstructed", "model-d
                   "owner-allocation", "owner-stated", "published analog", "qualitative")
 ITEM_STATUSES = ("OWNER_GIVEN", "TBD", "TBD_OWNER", "TBD_AFTER_EVIDENCE", "PENDING", "REJECTED_AS_CURRENT_BASELINE",
                  "OPEN", "UNRESOLVED", "ALLOWED_ENGINEERING_ONLY", "CONTEXT_NOT_ADMISSIBLE")
-P3_PENDING = "PENDING docs/experiments/hall_icp/p3_coupled_thermal/"
-MASS_PENDING = "PENDING docs/budgets/mass_power_a9_v2/"
-RFQ_PENDING = "PENDING docs/procurement/rfq_a9_v2/"
+# merged A9.6 packages (cross-lane integration; ids checked at build time by xlane_check, never sha-pinned)
+P3_REF = ("the merged P3 coupled-thermal framework docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json "
+          "(supply P3-IF-S07; its inputs are TBD and ANODE_THERMAL_CLOSURE / ICP_COUPLED_THERMAL stay UNRESOLVED)")
+P3_TBD = "TBD_AFTER_EVIDENCE - requires the coupled solution of " + P3_REF
+MASS_REF = ("the merged mass / power v2 docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (owner line allocations "
+            "AL-04 anode, AL-05 ICP module; interface MPV2-ID-03)")
+RFQ_REF = "the merged RFQ v2 docs/procurement/rfq_a9_v2/rfq_a9_v2.json (RFQ2-MECH ME-L03, ME-L04, option ME-O01)"
+P1_REF = ("the merged P1 bench docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json (P1-M-10, P1-M-11, "
+          "P1-M-27; conditional P1-M-30)")
 
 _spec = importlib.util.spec_from_file_location("p4_screening", str(HERE / "p4_screening.py"))
 SCR = importlib.util.module_from_spec(_spec)
@@ -93,11 +99,149 @@ PINS = {
 NEVER_PINNED = ("docs/orchestration/lane_registry_v1.json", "docs/orchestration/trigger_registry_v1.json",
                 "docs/orchestration/fired_triggers.jsonl", "docs/orchestration/trigger_ledger_v2.jsonl",
                 "docs/orchestration/runtime_state.json")
-PARALLEL_PENDING = {
-    "P3": P3_PENDING,
-    "mass_power": MASS_PENDING,
-    "rfq_v2": RFQ_PENDING,
-    "xe_v2": "PENDING docs/budgets/xe_accounting_a9_v2/",
+# ------------------------------------------------------------------ merged A9.6 cross-lane references (A9.6 sec. 5-6, 18)
+# The seven A9.6 packages (P1, P2, P3, P4, mass / power v2, Xe accounting v2, RFQ v2) are merged. Each cites the others
+# by id; every cited id is CHECKED at build time against the target's current JSON (xlane_check, after the outputs are
+# written, so a pair added on both sides converges in one rebuild of the second side; --check fails until it does).
+# Nothing is sha-pinned between the seven packages: several read each other back (ids, or text such as the RFQ v2
+# instrument coverage of the P1 / P2 ids), so a pin would be a circular hash dependency. Interface pairs XL-nn carry
+# identical quantity / units / status text on both sides (tests check the pairing).
+XLANE_PATHS = {
+    "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+    "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+    "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+    "RFQ": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+}
+XLANE_SELF = 'P4'
+XLANE_BUILD_ORDER = ["P4", "XE", "P1", "P2", "P3", "MP", "RFQ"]
+XLANE_BUILD_ORDER_RULE = ("values flow only P4 -> MP (candidate densities) and XE -> MP (Xe residual and headroom, "
+                          "both readings), and P1 / P2 -> RFQ (ids, item text and statuses of the instrument "
+                          "coverage); every other cross-lane reference is an id checked at build time. Rebuild in "
+                          "the order P4, XE, P1, P2, P3, MP, RFQ; a second pass of any package is a no-op")
+XL_PAIRS = {  # pair: (counterpart package, counterpart id, quantity, units, status) - identical text on both sides
+    'XL-23': (
+        'P3',
+        'P3-IF-N05',
+        ('per-candidate thermal conductivity and density with provenance (P4 property_records), validated '
+         'continuous-use limits (CR-01) and emittances -> P3-M-04, P3-R-01, P3-R-04'),
+        'W/(m*K); kg/m3; K; -',
+        ('DEFINED (k and density records); T_validated,continuous and emittance TBD_AFTER_EVIDENCE; '
+         'FINAL_ANODE_MATERIAL OPEN'),
+    ),
+    'XL-24': (
+        'P3',
+        'P3-IF-S07',
+        ('T_operating of anode and collector (worst case, coupled; 20 % heat-load margin, row 86), heat flux, '
+         'gradients -> P4 IT-09, IT-11'),
+        'K; W/m2; K/m',
+        'TBD_AFTER_EVIDENCE (ANODE_THERMAL_CLOSURE and ICP_COUPLED_THERMAL UNRESOLVED; no PASS)',
+    ),
+    'XL-25': (
+        'P1',
+        'IF-P1-36',
+        ('measured collector bias and current (P1-M-10, P1-M-11, P1-M-27) and the conditional sheath-edge plasma '
+         'potential (P1-M-30) for the collector ion energy (P4 IT-19, CR-04)'),
+        'V; A',
+        'TBD_AFTER_EVIDENCE (owning stages P1-S4..S7; sheath energy additionally TBD_OWNER P3Q-01)',
+    ),
+    'XL-26': (
+        'MP',
+        'MPV2-ID-03',
+        ('candidate densities PR-001, PR-011, PR-021 (P4 property_records) imported by mass / power; part mass = '
+         'density x CAD volume'),
+        'kg/m3; kg',
+        'IMPORTED (densities); part mass TBD - requires the anode / collector geometry; FINAL_ANODE_MATERIAL OPEN',
+    ),
+    'XL-27': (
+        'RFQ',
+        'IFD-17',
+        ('collector / electrode candidate material lots with heat / lot certificates, coatings, AO-source access; no '
+         'anode RFQ while FINAL_ANODE_MATERIAL is OPEN (NIR-03)'),
+        '-',
+        ('DEFINED (RFQ2-MECH ME-L03, ME-L04, option ME-O01; coupon shortlist TBD_OWNER P4 IT-17; AO-source hardware '
+         'NOT_IN_THIS_REVISION NIR-05)'),
+    ),
+}
+
+
+def xref(pair):
+    """The shared description of one cross-lane interface pair (identical on both sides)."""
+    pkg, cid, quantity, units, status = XL_PAIRS[pair]
+    return {"pair": pair, "counterpart": pkg + ":" + cid, "counterpart_path": XLANE_PATHS[pkg],
+            "quantity": quantity, "units": units, "status": status}
+
+
+def _xlane_demands(doc):
+    d = doc["interface_demands"]
+    return [e for v in d.values() for e in v] if isinstance(d, dict) else list(d)
+
+
+def _xlane_has_id(text, ident):
+    import re as _re
+    return _re.search(r"(?<![A-Za-z0-9_-])" + _re.escape(ident) + r"(?![A-Za-z0-9_])", text) is not None
+
+
+def xlane_check(doc):
+    """Every cross-lane pair points at an existing interface-demand id of the merged target package, and every other
+    cited id (XL_CITED) occurs in the target's current JSON. Returns the list of problems (empty = consistent)."""
+    problems, cache = [], {}
+
+    def target(pkg):
+        if pkg not in cache:
+            p = REPO / XLANE_PATHS[pkg]
+            cache[pkg] = json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+        return cache[pkg]
+
+    seen = set()
+    for e in _xlane_demands(doc):
+        for x in e.get("xref", []):
+            seen.add(x["pair"])
+            pkg, cid = x["counterpart"].split(":", 1)
+            t = target(pkg)
+            if t is None:
+                problems.append("%s: %s missing" % (x["pair"], XLANE_PATHS[pkg]))
+                continue
+            ids = {d.get("id") for d in _xlane_demands(t)}
+            if cid not in ids:
+                problems.append("%s: %s has no interface demand %s" % (x["pair"], XLANE_PATHS[pkg], cid))
+    missing_pairs = sorted(set(XL_PAIRS) - seen)
+    if missing_pairs:
+        problems.append("pairs declared but not attached to an interface demand: %s" % missing_pairs)
+    for pkg, idents in sorted(XL_CITED.items()):
+        t = target(pkg)
+        if t is None:
+            problems.append("%s missing" % XLANE_PATHS[pkg])
+            continue
+        text = json.dumps(t, ensure_ascii=False)
+        for ident in idents:
+            if not _xlane_has_id(text, ident):
+                problems.append("cited id %s absent from %s" % (ident, XLANE_PATHS[pkg]))
+    return problems
+
+
+def xlane_report(doc):
+    """The merged-lane record written into the JSON: per counterpart package, the pairs and the cited ids."""
+    out = {}
+    for pkg in XLANE_BUILD_ORDER:
+        if pkg == XLANE_SELF:
+            continue
+        pairs = sorted(k for k, v in XL_PAIRS.items() if v[0] == pkg)
+        cited = sorted(XL_CITED.get(pkg, []))
+        out[pkg] = {"path": XLANE_PATHS[pkg], "state": "MERGED", "pairs": pairs, "ids_cited": cited,
+                    "sha_pinned": False,
+                    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other "
+                             "back; a pin would be circular)" if (pairs or cited) else
+                             "no interface demand between the two packages"}
+    return {"rule": XLANE_BUILD_ORDER_RULE, "build_order": XLANE_BUILD_ORDER, "packages": out}
+
+XL_CITED = {  # ids cited outside the XL pairs (checked to occur in the target JSON)
+    "P1": ["P1-M-10", "P1-M-11", "P1-M-27", "P1-M-30"],
+    "P3": ["P3-M-04", "P3-R-01", "P3-R-04", "heat_terms"],
+    "MP": ["AL-04", "AL-05"],
+    "RFQ": ["ME-L03", "ME-L04", "ME-O01", "NIR-03", "NIR-05"],
 }
 
 
@@ -387,9 +531,9 @@ GATED = [c for c in CRITERIA if c["kind"] is not None]
 
 REQ_TBD = {
     ("CR-01", "APP-ANODE"): "TBD - margin 50 K is OWNER_GIVEN (row 87); T_operating is not evidenced "
-                            "(ANODE_THERMAL_CLOSURE = UNRESOLVED; " + P3_PENDING + ")",
+                            "(ANODE_THERMAL_CLOSURE = UNRESOLVED; " + P3_REF + ")",
     ("CR-01", "APP-COLLECTOR"): "TBD - margin 50 K is OWNER_GIVEN (row 86 via ICD); T_operating of the collector is "
-                                "not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; " + P3_PENDING + ")",
+                                "not evidenced (ICP_COUPLED_THERMAL = UNRESOLVED; " + P3_REF + ")",
     ("CR-02", "APP-ANODE"): "TBD_OWNER - resistance-rise threshold and exposure are pre-registered before exposure "
                             "(R8 note; P4-OQ-03)",
     ("CR-02", "APP-COLLECTOR"): "TBD_OWNER - as APP-ANODE, plus the collector bias polarity for coupons (P4-OQ-05)",
@@ -404,12 +548,12 @@ REQ_TBD = {
     ("CR-05", "APP-ANODE"): "TBD - requires the allowed anode-path voltage drop (V_d defined at the anode potential, "
                             "A9.1 A9-03-Vd) and the anode geometry",
     ("CR-05", "APP-COLLECTOR"): "TBD - requires the collector current path budget (ICP-21 V/I range TBD) and geometry",
-    ("CR-06", "APP-ANODE"): "TBD - " + P3_PENDING + " (anode heat-removal path, A9H-ANODE-02)",
-    ("CR-06", "APP-COLLECTOR"): "TBD - " + P3_PENDING + " (Q_collector)",
+    ("CR-06", "APP-ANODE"): P3_TBD + " (anode heat-removal path, A9H-ANODE-02)",
+    ("CR-06", "APP-COLLECTOR"): P3_TBD + " (Q_collector)",
     ("CR-07", "APP-ANODE"): "TBD_OWNER - fabrication / joining acceptance pre-registered with the coupon plan",
     ("CR-07", "APP-COLLECTOR"): "TBD_OWNER - as APP-ANODE",
-    ("CR-08", "APP-ANODE"): "TBD - " + MASS_PENDING + " (anode inside AL-04; geometry TBD)",
-    ("CR-08", "APP-COLLECTOR"): "TBD - " + MASS_PENDING + " (collector inside AL-05; geometry TBD)",
+    ("CR-08", "APP-ANODE"): "TBD - requires the anode geometry (part mass inside AL-04 of " + MASS_REF + ")",
+    ("CR-08", "APP-COLLECTOR"): "TBD - requires the collector geometry (part mass inside AL-05 of " + MASS_REF + ")",
 }
 
 
@@ -593,15 +737,15 @@ def build_items(pins, h2_val):
          f"{A} row 87 (anode), row 86 (all materials); A9.2 anode_approach", "owner-stated", "OWNER_GIVEN", "NOW"),
         ("IT-08", "heat-load design margin (input to the P3 T_operating, not applied here)", 20, "%",
          r86["owner_answer_verbatim"], f"{A} row 86", "owner-stated", "OWNER_GIVEN", "NOW"),
-        ("IT-09", "T_operating,anode", "TBD - " + P3_PENDING, "K",
-         "requires the coupled anode thermal model (A9H-ANODE-02)", P3_PENDING, "model-derived", "PENDING",
+        ("IT-09", "T_operating,anode", P3_TBD, "K",
+         "requires the coupled anode thermal model (A9H-ANODE-02)", P3_REF, "model-derived", "TBD_AFTER_EVIDENCE",
          "after-evidence"),
         ("IT-10", "context only: H2 A9 uncoupled sensitivity, anode worst case not brought below (degC)", h2_val,
          "degC", "searched/bounded worst case over the lever sets evaluated (lowest, LV-ALL); UNCOUPLED, "
                  "ICP_COUPLED_THERMAL = UNRESOLVED; never a T_operating for a gate",
          PINS["H2A9"][0] + " key_findings (K6)", "model-derived", "CONTEXT_NOT_ADMISSIBLE", "after-evidence"),
-        ("IT-11", "T_operating,collector", "TBD - " + P3_PENDING, "K", "requires Q_collector in the coupled model",
-         P3_PENDING, "model-derived", "PENDING", "after-evidence"),
+        ("IT-11", "T_operating,collector", P3_TBD, "K", "requires Q_collector in the coupled model",
+         P3_REF, "model-derived", "TBD_AFTER_EVIDENCE", "after-evidence"),
         ("IT-12", "T_validated,continuous per candidate", "TBD_AFTER_EVIDENCE", "K",
          "requires coupon exposure in the service condition (TP-01); no datasheet air rating or melting range "
          "counts", "test plan TP-01", "measured", "TBD_AFTER_EVIDENCE", "after-evidence"),
@@ -621,12 +765,14 @@ def build_items(pins, h2_val):
          "the electrode locations (not in the repository)", "atoms/m2", "input to CR-03", "-", "model-derived",
          "TBD", "after-evidence"),
         ("IT-19", "ion species / energy at the collector", "TBD - requires P1 measured collector bias (ICD ICP-21; "
-         "analog value analog-only)", "eV", "input to CR-04", "PENDING docs/experiments/hall_icp/p1_icp_bench/ (P1 "
-         "data)", "measured", "TBD_AFTER_EVIDENCE", "after-evidence"),
+         "analog value analog-only)", "eV", "input to CR-04", "P1 measured data from " + P1_REF + " (none recorded yet; "
+         "the sheath-edge plasma potential is conditional on P3Q-01)", "measured", "TBD_AFTER_EVIDENCE",
+         "after-evidence"),
         ("IT-20", "allowable electrode-path resistance", "TBD - requires the V_d / collector V-I budget", "ohm",
          "input to CR-05", "A9.1 A9-03-Vd; ICD ICP-21", "owner-allocation", "TBD", "LOCK-1"),
-        ("IT-21", "anode / collector mass allocation", "TBD - " + MASS_PENDING, "kg", "input to CR-08",
-         MASS_PENDING, "owner-allocation", "PENDING", "LOCK-1"),
+        ("IT-21", "anode / collector mass allocation", "TBD - the part share inside the owner line allocations AL-04 / "
+         "AL-05 of " + MASS_REF + " requires the part geometry (no part allocation exists)", "kg", "input to CR-08",
+         MASS_REF, "owner-allocation", "TBD", "LOCK-1"),
         ("IT-22", "sputter-yield data for candidates", "TBD - requires species-resolved yields (open elemental "
          "compilation NIFS_DATA_23 located, not digitized; alloys / coatings need measurement or acquisition, "
          "P4-OQ-04)", "atoms/ion", "input to CR-04", "NIFS_DATA_23 (located only)", "digitized", "TBD",
@@ -758,7 +904,7 @@ TEST_PLAN = [
      "measure": "k(T) (e.g. laser flash + density + specific heat) on the procured lot up to above T_operating; "
                 "joint / contact conductance of the anode-to-backplate and feed-tube joints for the P3 heat path",
      "instruments": "thermal diffusivity rig; instrumented joint test", "atmosphere_sequence": "vacuum",
-     "acceptance": "TBD (" + P3_PENDING + ")", "register_links": []},
+     "acceptance": "TBD (k required by the heat path of " + P3_REF + ")", "register_links": []},
     {"id": "TP-07", "criterion": "CR-07", "populates": "fabrication_trial_defect_metric",
      "measure": "machining to the anode / collector drawing tolerances; joining (braze / weld / mechanical) to "
                 "backplate and feed tube; coating adhesion and thickness after thermal cycling to above T_operating",
@@ -766,7 +912,7 @@ TEST_PLAN = [
      "acceptance": "TBD_OWNER", "register_links": ["AOL-RC-01"]},
     {"id": "TP-08", "criterion": "CR-08", "populates": "density",
      "measure": "density of the procured lot; part mass from CAD and weighed part", "instruments": "balance; CAD",
-     "atmosphere_sequence": "-", "acceptance": "TBD (" + MASS_PENDING + ")", "register_links": []},
+     "atmosphere_sequence": "-", "acceptance": "TBD (part mass within " + MASS_REF + ")", "register_links": []},
     {"id": "TP-09", "criterion": "CR-09", "populates": "provenance fields",
      "measure": "every coupon / lot record carries heat / lot id, supplier certificate, test procedure id, raw data "
                 "file sha256, evidence class, applicability domain; excluded records kept with the reason",
@@ -782,30 +928,33 @@ QUAL_STAGES = [
     {"id": "Q4", "name": "in-H-1 / in-ICP witness and replaceable-anode metrology", "tests": ["TP-02", "TP-04"]},
 ]
 
-INTERFACE_DEMANDS = [
-    ("ID-01", "P4 <- P3", P3_PENDING, "T_operating of anode and collector (worst case, coupled), heat flux, gradients"
-     ", 20 % heat-load margin applied (row 86)", "CR-01 / CR-05 / CR-06 condition", "PENDING"),
-    ("ID-02", "P4 -> P3", P3_PENDING, "k(T), density per candidate with provenance (PR-xxx); emissivity TBD - "
-     "requires a sourced emissivity per candidate and surface state", "anode / collector conduction and radiation "
-     "nodes", "DEFINED"),
+INTERFACE_DEMANDS = [  # (id, direction, counterpart, content, used_for, status, units, xref pairs)
+    ("ID-01", "P4 <- P3", XLANE_PATHS["P3"] + " (P3-IF-S07)", "T_operating of anode and collector (worst case, "
+     "coupled), heat flux, gradients, 20 % heat-load margin applied (row 86)", "CR-01 / CR-05 / CR-06 condition",
+     XL_PAIRS["XL-24"][4], XL_PAIRS["XL-24"][3], ["XL-24"]),
+    ("ID-02", "P4 -> P3", XLANE_PATHS["P3"] + " (P3-IF-N05)", "k(T), density per candidate with provenance (PR-xxx); "
+     "emissivity TBD - requires a sourced emissivity per candidate and surface state", "anode / collector "
+     "conduction and radiation nodes", XL_PAIRS["XL-23"][4], XL_PAIRS["XL-23"][3], ["XL-23"]),
     ("ID-03", "P4 <- H-1 design", PINS["H2A9"][0], "anode geometry, joints, feed-tube path (A9H-ANODE-01/02)",
-     "CR-04 / CR-07 / CR-08", "PENDING"),
+     "CR-04 / CR-07 / CR-08", "PENDING", "mm", []),
     ("ID-04", "P4 <- ICD", PINS["ICD"][0], "ICP-21 collector V/I range and geometry; witness positions",
-     "CR-04 / CR-05 (collector)", "PENDING"),
+     "CR-04 / CR-05 (collector)", "PENDING", "V; A; mm", []),
     ("ID-05", "P4 -> ICD", PINS["ICD"][0], "collector material remains OPEN; 316L Ar-engineering only; the framework "
-     "rows APP-COLLECTOR", "ICP-21 material_a9_1", "DEFINED"),
-    ("ID-06", "P4 <- P1", "PENDING docs/experiments/hall_icp/p1_icp_bench/ (P1 data)", "measured collector bias / "
-     "current, sheath energy estimate", "CR-04 collector ion energy", "PENDING"),
-    ("ID-07", "P4 -> mass", MASS_PENDING, "density per candidate (PR-001/011/021)", "anode (AL-04) / collector "
-     "(AL-05) CBE when geometry exists", "DEFINED"),
+     "rows APP-COLLECTOR", "ICP-21 material_a9_1", "DEFINED", "-", []),
+    ("ID-06", "P4 <- P1", XLANE_PATHS["P1"] + " (IF-P1-36)", "measured collector bias / current, sheath energy "
+     "estimate", "CR-04 collector ion energy", XL_PAIRS["XL-25"][4], XL_PAIRS["XL-25"][3], ["XL-25"]),
+    ("ID-07", "P4 -> mass", XLANE_PATHS["MP"] + " (MPV2-ID-03)", "density per candidate (PR-001/011/021)",
+     "anode (AL-04) / collector (AL-05) CBE when geometry exists", XL_PAIRS["XL-26"][4], XL_PAIRS["XL-26"][3],
+     ["XL-26"]),
     ("ID-08", "P4 <-> AO / lifetime register", PINS["AOL5"][0], "AOL-EX-02 / AOL-WC-02 / AOL-RC-01 / AOL-RC-02 / "
-     "AOL-CX-07 / AOL-PM-02 coupon and metrology rules", "test plan TP-01..TP-04", "DEFINED"),
-    ("ID-09", "P4 -> RFQ", RFQ_PENDING, "coupon material lots (heat / lot certificates), coatings, AO-source access "
-     "(RFQ only, no purchase)", "Q0-Q3", "PENDING"),
+     "AOL-CX-07 / AOL-PM-02 coupon and metrology rules", "test plan TP-01..TP-04", "DEFINED", "-", []),
+    ("ID-09", "P4 -> RFQ", XLANE_PATHS["RFQ"] + " (IFD-17)", "coupon material lots (heat / lot certificates), "
+     "coatings, AO-source access (RFQ only, no purchase)", "Q0-Q3", XL_PAIRS["XL-27"][4], XL_PAIRS["XL-27"][3],
+     ["XL-27"]),
     ("ID-10", "P4 -> RVM", "fo_a9_6_rvm (parallel lane, path not in this base)", "AO / material compatibility row: "
-     "INCOMPLETE_EVIDENCE for every candidate and application", "RVM state", "DEFINED"),
+     "INCOMPLETE_EVIDENCE for every candidate and application", "RVM state", "DEFINED", "-", []),
     ("ID-11", "P4 -> M16", PINS["M16V3"][0], "rows 18, 20, 21: framework implemented; readiness unchanged",
-     "m16_impact", "DEFINED"),
+     "m16_impact", "DEFINED", "-", []),
 ]
 
 NEW_OPEN_QUESTIONS = [
@@ -962,7 +1111,7 @@ def build_doc(pins):
         "fixed_statuses": fixed,
         "a9_status": pins["A92"]["decisions"]["a9_10_statuses"],
         "pins": {k: {"path": v[0], "sha256": v[1], "role": v[2]} for k, v in sorted(PINS.items())},
-        "never_pinned": list(NEVER_PINNED), "parallel_lanes_pending": PARALLEL_PENDING,
+        "never_pinned": list(NEVER_PINNED), "merged_cross_lane": xlane_report(None),
         "vocabulary": {"gate_outcomes": list(SCR.GATE_OUTCOMES),
                        "candidate_screening_states": list(SCR.CANDIDATE_SCREENING_STATES),
                        "never_emitted_as_status": ", ".join(SCR.FORBIDDEN_WORDS), "quantity_types": list(QUANTITY_TYPES),
@@ -988,8 +1137,9 @@ def build_doc(pins):
         "evidence_coverage": build_coverage(props, links),
         "pareto_views": build_pareto(props),
         "test_plan": {"tests": TEST_PLAN, "qualification_stages": QUAL_STAGES},
-        "interface_demands": [{"id": i, "direction": d, "counterpart": c, "content": t, "used_for": u, "status": s}
-                              for (i, d, c, t, u, s) in INTERFACE_DEMANDS],
+        "interface_demands": [{"id": i, "direction": d, "counterpart": c, "content": t, "used_for": u, "status": s,
+                               "units": un, "xref": [xref(p) for p in xr]}
+                              for (i, d, c, t, u, s, un, xr) in INTERFACE_DEMANDS],
         "owner_answers_applied": build_owner_answers_applied(pins),
         "open_owner_questions": NEW_OPEN_QUESTIONS,
         "historical_reuse": [{"path": v[0], "sha256": v[1], "use": v[2]} for _k, v in sorted(PINS.items())],
@@ -1090,9 +1240,14 @@ def render_md(doc):
           md_table(["stage", "name", "tests"], [(q["id"], q["name"], ", ".join(q["tests"]))
                                                 for q in doc["test_plan"]["qualification_stages"]]), "",
           "## (b) Interface demands", "",
-          md_table(["id", "direction", "counterpart", "content", "used for", "status"],
-                   [(i["id"], i["direction"], i["counterpart"], i["content"], i["used_for"], i["status"])
+          md_table(["id", "direction", "counterpart", "content", "used for", "units", "status", "pairs"],
+                   [(i["id"], i["direction"], i["counterpart"], i["content"], i["used_for"], i["units"], i["status"],
+                     ", ".join(x["pair"] + " -> " + x["counterpart"] for x in i["xref"]) or "-")
                     for i in doc["interface_demands"]]), "",
+          "### Merged cross-lane references", "", doc["merged_cross_lane"]["rule"], "",
+          md_table(["package", "path", "pairs", "ids cited", "check"],
+                   [(k, v["path"], ", ".join(v["pairs"]) or "-", ", ".join(v["ids_cited"]) or "-", v["check"])
+                    for k, v in doc["merged_cross_lane"]["packages"].items()]), "",
           "## (c) Owner answers applied", "",
           md_table(["decision", "covers", "verbatim", "how applied"],
                    [(o["decision"], ", ".join(o["covers_ids"]), o["owner_answer_verbatim"], o["how_applied"])
@@ -1134,11 +1289,19 @@ def main(argv=None):
         if bad:
             print("NOT REPRODUCED:", ", ".join(bad))
             return 1
+        probs = xlane_check(json.loads(js))
+        if probs:
+            print("CROSS-LANE REFERENCES BROKEN:", "; ".join(probs))
+            return 1
         print("OK: outputs reproduced")
         return 0
     for p, t in outs:
         p.write_text(t, encoding="utf-8")
     print("wrote", ", ".join(p.name for p, _ in outs))
+    probs = xlane_check(json.loads(js))
+    if probs:
+        print("CROSS-LANE REFERENCES BROKEN (rebuild the counterpart, then this package):", "; ".join(probs))
+        return 1
     return 0
 
 

@@ -751,18 +751,23 @@ def classify_plasma_state(obs):
         raise PlasmaStateError("electrical evidence of ignition / mode transition needs electrical_indicator_basis "
                                "(which of reflected power, antenna current, collector / current-path response, "
                                "pressure)")
+    # cross-lane integration (A9.6 sec. 18; pair XL-06): same rule order as p1_reducer.classify_plasma_state - the
+    # numeric fields and the lit-mode label are validated BEFORE the line-of-sight / saturation decisions, so a
+    # malformed record raises in both packages instead of being classified in one and refused in the other
+    sig = _finite(obs["optical_signal_V"], "optical_signal_V")
+    thr = _finite(obs["unlit_threshold_V"], "unlit_threshold_V")
+    mode = obs.get("lit_mode_assignment")
+    if mode is not None and mode not in LIT_MODES:
+        raise PlasmaStateError(f"lit_mode_assignment {mode!r} not in (E_MODE, H_MODE, None)")
     if obs["photodiode_line_of_sight_ok"] is not True:
         return "UNCERTAIN", "photodiode line of sight lost: the optical record is not valid evidence"
     if obs["photodiode_saturated"] is not False:
         return "UNCERTAIN", "photodiode saturated: the optical record is not valid evidence"
-    sig = _finite(obs["optical_signal_V"], "optical_signal_V")
-    thr = _finite(obs["unlit_threshold_V"], "unlit_threshold_V")
     if sig < thr:
         if obs["electrical_ignition_or_mode_transition"]:
             return "UNCERTAIN", ("optical UNLIT but electrical evidence of ignition / mode transition ("
                                  f"{obs['electrical_indicator_basis']}); never forced to UNLIT")
         return "UNLIT", "optical signal below the frozen threshold; no electrical evidence of ignition"
-    mode = obs.get("lit_mode_assignment")
     if mode in LIT_MODES:
         return mode, "optically lit; E/H assignment from the HM-R06 indicators"
     return "UNCERTAIN", "optically lit but no E_MODE / H_MODE assignment"

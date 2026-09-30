@@ -23,8 +23,9 @@ Rules implemented here
   * every v1 requirement is carried exactly once into one v2 package with a per-line change record (what changed, why);
   * new lines cite an owner row / A9.1 / A9.2 / A9.3 id or a verified deliverable item located by id at build time;
   * P1 / P2 values are referenced by their merged ids (e.g. P1-M-26, F2, INS-P2-04) and stay TBD with freeze gate P1-G0
-    (or the P2 gate) until registered there; nothing is filled here. The A9.6 parallel lanes not in this base (P3, P4,
-    mass/power v2, Xe accounting v2) are written 'PENDING <path>' and nothing is read from them;
+    (or the P2 gate) until registered there; nothing is filled here. The other merged A9.6 packages (P3, P4, mass /
+    power v2, Xe accounting v2) are cited by id through the cross-lane pairs XL-nn (ids checked at build time by
+    xlane_check; never sha-pinned); no value is read from them;
   * A9.6 sec. 13: every owner item maps to lines; every P1_NEEDED line carries a quote sheet (specification rows with
     value / TBD and freeze gate, acceptance, calibration / traceability, documentation); every merged P1 measurement,
     P1 hardware item and P2 instrument maps to an RFQ line or an explicit not-procured disposition (fail-closed);
@@ -69,12 +70,235 @@ P1_JSON = "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json"
 P2_JSON = "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json"
 CURRENT = {"P1": P1_JSON, "P2": P2_JSON}
 
-# Parallel lanes of A9.6 not in this base: referenced as 'PENDING <path>' only; nothing is read from them.
-PARALLEL_LANES = {
-    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/",
-    "P4": "docs/experiments/hall_icp/p4_anode_materials/",
-    "MASS_POWER": "docs/budgets/mass_power_a9_v2/",
-    "XE_ACCOUNTING": "docs/budgets/xe_accounting_a9_v2/",
+# Parallel A9.6 lanes not in this base: none of the seven A9.6 packages is pending any more (all merged; cross-lane
+# integration). PEND() therefore refuses every path; merged packages are cited with MRG() (ids checked at build time).
+PARALLEL_LANES = {}
+# ------------------------------------------------------------------ merged A9.6 cross-lane references (A9.6 sec. 5-6, 18)
+# The seven A9.6 packages (P1, P2, P3, P4, mass / power v2, Xe accounting v2, RFQ v2) are merged. Each cites the others
+# by id; every cited id is CHECKED at build time against the target's current JSON (xlane_check, after the outputs are
+# written, so a pair added on both sides converges in one rebuild of the second side; --check fails until it does).
+# Nothing is sha-pinned between the seven packages: several read each other back (ids, or text such as the RFQ v2
+# instrument coverage of the P1 / P2 ids), so a pin would be a circular hash dependency. Interface pairs XL-nn carry
+# identical quantity / units / status text on both sides (tests check the pairing).
+XLANE_PATHS = {
+    "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+    "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+    "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+    "RFQ": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+}
+XLANE_SELF = 'RFQ'
+XLANE_BUILD_ORDER = ["P4", "XE", "P1", "P2", "P3", "MP", "RFQ"]
+XLANE_BUILD_ORDER_RULE = ("values flow only P4 -> MP (candidate densities) and XE -> MP (Xe residual and headroom, "
+                          "both readings), and P1 / P2 -> RFQ (ids, item text and statuses of the instrument "
+                          "coverage); every other cross-lane reference is an id checked at build time. Rebuild in "
+                          "the order P4, XE, P1, P2, P3, MP, RFQ; a second pass of any package is a no-op")
+XL_PAIRS = {  # pair: (counterpart package, counterpart id, quantity, units, status) - identical text on both sides
+    'XL-09': (
+        'P1',
+        'IF-P1-03',
+        ('P1 readiness / measurement ids and their P1-G0 registrations as RFQ requirement inputs: Ar sweep bounds '
+         '(F2), gas schematic (P1-HW-12, P1-HW-15, P1-HW-18), gauge ranges (P1-M-16, P1-M-17), DAQ rate (P1-M-26), '
+         'magnet states (F6), P1-S4 topology (P1-IT-36), I_scale,min (P1-IT-48)'),
+        'sccm; Pa; Sa/s; A',
+        'TBD_AFTER_EVIDENCE (values registered at P1-G0; ids referenced, nothing filled)',
+    ),
+    'XL-10': (
+        'P1',
+        'IF-P1-04',
+        ('RFQ v2 line id (or explicit not-procured disposition) per P1 measurement and P1 hardware item (rfq_a9_v2 '
+         'instrument_coverage); P1 hardware_readiness.rfq_v2_package cites exactly these lines (checked at build '
+         'time)'),
+        '-',
+        'DEFINED (line ids reconciled; quotation only, no purchase order)',
+    ),
+    'XL-11': (
+        'P1',
+        'IF-P1-33',
+        ('quoted capability ranges, calibration uncertainties (A9.5 current-channel components) and interfaces of '
+         'the RFQ2-RF, RFQ2-GAS, RFQ2-HALLEL and RFQ2-THRUST lines'),
+        'W; mg/s; A; -',
+        'TBD_AFTER_EVIDENCE (after quotations; none received; RFQ only, no purchase order)',
+    ),
+    'XL-12': (
+        'P2',
+        'IDP2-05',
+        ('RFQ v2 line id (or explicit not-procured disposition) per P2 instrument (rfq_a9_v2 instrument_coverage); '
+         'P2 instrument_list.rfq_v2_line cites exactly these lines (checked at build time)'),
+        '-',
+        'DEFINED (line ids reconciled; quotation only, no purchase order)',
+    ),
+    'XL-13': (
+        'P1',
+        'IF-P1-24',
+        ('A9.4 procurement items: photodiode, optical access / window, amplifier, DAQ channel (P2Q-05); >= 525 V '
+         'design withstand and 1.05 kV DC / 60 s initial DWV on the ICP body / collector isolation and feedthrough '
+         'lines, DWV tester as option (P1Q-14)'),
+        'V; s',
+        'DEFINED (recorded in RFQ v2 as TH-L07, TH-L08, VAC-L07, VAC-L03, HE-L04 and option HE-O02; quotation only)',
+    ),
+    'XL-14': (
+        'P2',
+        'IDP2-18',
+        ('INS-P2-10 photodiode, optical access / window, amplifier and DAQ channel for the P1_NEEDED / P2 '
+         'preparation instrumentation quote (A9.4 P2Q-05)'),
+        '-',
+        'DEFINED (recorded in RFQ v2 as TH-L07, TH-L08 and VAC-L07; quotation only)',
+    ),
+    'XL-15': (
+        'P2',
+        'IDP2-04',
+        ('P2 instrument list INS-P2-01..12 with required specifications as quantities or TBD (copied into '
+         'RFQ2-RF-N07..N16)'),
+        '-',
+        'DEFINED (copied; package placement TBD_OWNER P2Q-02)',
+    ),
+    'XL-16': (
+        'P2',
+        'IDP2-23',
+        ('Z_antenna = R + jX envelope from the P2 hot map -> component ratings (generator, coupler, coax, '
+         'connectors, matching elements, feedthroughs, dummy load)'),
+        'ohm; W; V; A',
+        'TBD_AFTER_IMPEDANCE_MAP (owning stage P2 hot map after the P1 handoff)',
+    ),
+    'XL-27': (
+        'P4',
+        'ID-09',
+        ('collector / electrode candidate material lots with heat / lot certificates, coatings, AO-source access; no '
+         'anode RFQ while FINAL_ANODE_MATERIAL is OPEN (NIR-03)'),
+        '-',
+        ('DEFINED (RFQ2-MECH ME-L03, ME-L04, option ME-O01; coupon shortlist TBD_OWNER P4 IT-17; AO-source hardware '
+         'NOT_IN_THIS_REVISION NIR-05)'),
+    ),
+    'XL-34': (
+        'XE',
+        'XV2-IF-04',
+        ('Xe tank ranges (loaded 2.0-10.2 kg across both readings, V_min per MEOP axis at 323 K), C1 steady FCU '
+         '0.05-0.2 mg/s class, C1 start FCU FS 1.0 mg/s (conditional, row 125), ICP dedicated-feed controller as an '
+         'option line only (A9.3 OQ-RFQ-10)'),
+        'kg; l; mg/s',
+        ('NOT_IN_THIS_REVISION (no Xe tank line; flight C1 hardware NIR-04; dedicated-feed controller option GAS-O02 '
+         'only; RFQ only, no purchase)'),
+    ),
+    'XL-35': (
+        'XE',
+        'XV2-IF-05',
+        ('MEOP and tank selection, vendor / design-qualified C1 purge, preheat and ignition flows, flow-class '
+         'accuracy, filter / getter specification, and mdot_ICP,dedicated of GAS-O02 if a dedicated-feed variant is '
+         'ever activated (G-REUSE books 0)'),
+        'bar; mg/s; s; 1',
+        'TBD_AFTER_EVIDENCE (after quotations; none received; RFQ only, no purchase)',
+    ),
+    'XL-40': (
+        'MP',
+        'MPV2-ID-06',
+        ('supplier mass fields for flight-representative options (DC-input RF source, local match, ICP module, '
+         'isolation hardware); ceilings only from owner line allocations under the open MQ-01 reading; no ceiling on '
+         'GROUND/FACILITY_ONLY lines'),
+        'kg',
+        ('NOT_IN_THIS_REVISION (flight-representative source NIR-01 is a later separate RFQ; RFQ v2 lines are ground '
+         '/ P1 articles; ceilings TBD_OWNER MQ-01)'),
+    ),
+    'XL-41': (
+        'MP',
+        'MPV2-ID-07',
+        'DC-input power and efficiency of the flight-representative RF source over the delivered-power range',
+        'W',
+        'NOT_IN_THIS_REVISION (NIR-01; RF_COMPONENT_RATINGS TBD_AFTER_IMPEDANCE_MAP)',
+    ),
+    'XL-42': (
+        'P3',
+        'P3-IF-N06',
+        ('ICP-part material continuous-use temperature data requested from the fabricator (RFQ2-MECH-N04) as '
+         'material limits for the coupled thermal framework'),
+        'K',
+        'TBD_AFTER_EVIDENCE (after quotations; ICP_COUPLED_THERMAL UNRESOLVED; never PASS)',
+    ),
+}
+
+
+def xref(pair):
+    """The shared description of one cross-lane interface pair (identical on both sides)."""
+    pkg, cid, quantity, units, status = XL_PAIRS[pair]
+    return {"pair": pair, "counterpart": pkg + ":" + cid, "counterpart_path": XLANE_PATHS[pkg],
+            "quantity": quantity, "units": units, "status": status}
+
+
+def _xlane_demands(doc):
+    d = doc["interface_demands"]
+    return [e for v in d.values() for e in v] if isinstance(d, dict) else list(d)
+
+
+def _xlane_has_id(text, ident):
+    import re as _re
+    return _re.search(r"(?<![A-Za-z0-9_-])" + _re.escape(ident) + r"(?![A-Za-z0-9_])", text) is not None
+
+
+def xlane_check(doc):
+    """Every cross-lane pair points at an existing interface-demand id of the merged target package, and every other
+    cited id (XL_CITED) occurs in the target's current JSON. Returns the list of problems (empty = consistent)."""
+    problems, cache = [], {}
+
+    def target(pkg):
+        if pkg not in cache:
+            p = os.path.join(ROOT, XLANE_PATHS[pkg])
+            if os.path.isfile(p):
+                with open(p, encoding="utf-8") as fh:
+                    cache[pkg] = json.load(fh)
+            else:
+                cache[pkg] = None
+        return cache[pkg]
+
+    seen = set()
+    for e in _xlane_demands(doc):
+        for x in e.get("xref", []):
+            seen.add(x["pair"])
+            pkg, cid = x["counterpart"].split(":", 1)
+            t = target(pkg)
+            if t is None:
+                problems.append("%s: %s missing" % (x["pair"], XLANE_PATHS[pkg]))
+                continue
+            ids = {d.get("id") for d in _xlane_demands(t)}
+            if cid not in ids:
+                problems.append("%s: %s has no interface demand %s" % (x["pair"], XLANE_PATHS[pkg], cid))
+    missing_pairs = sorted(set(XL_PAIRS) - seen)
+    if missing_pairs:
+        problems.append("pairs declared but not attached to an interface demand: %s" % missing_pairs)
+    for pkg, idents in sorted(XL_CITED.items()):
+        t = target(pkg)
+        if t is None:
+            problems.append("%s missing" % XLANE_PATHS[pkg])
+            continue
+        text = json.dumps(t, ensure_ascii=False)
+        for ident in idents:
+            if not _xlane_has_id(text, ident):
+                problems.append("cited id %s absent from %s" % (ident, XLANE_PATHS[pkg]))
+    return problems
+
+
+def xlane_report(doc):
+    """The merged-lane record written into the JSON: per counterpart package, the pairs and the cited ids."""
+    out = {}
+    for pkg in XLANE_BUILD_ORDER:
+        if pkg == XLANE_SELF:
+            continue
+        pairs = sorted(k for k, v in XL_PAIRS.items() if v[0] == pkg)
+        cited = sorted(XL_CITED.get(pkg, []))
+        out[pkg] = {"path": XLANE_PATHS[pkg], "state": "MERGED", "pairs": pairs, "ids_cited": cited,
+                    "sha_pinned": False,
+                    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other "
+                             "back; a pin would be circular)" if (pairs or cited) else
+                             "no interface demand between the two packages"}
+    return {"rule": XLANE_BUILD_ORDER_RULE, "build_order": XLANE_BUILD_ORDER, "packages": out}
+
+XL_CITED = {  # ids cited outside the XL pairs (checked to occur in the target JSON)
+    "P1": ["P1-M-30", "P1-HW-20", "P1-HW-29", "P1-HW-30", "P1-HW-40"],
+    "P3": ["P3-M-04", "heat_terms"],
+    "P4": ["IT-17", "CR-04", "FINAL_COLLECTOR_MATERIAL"],
+    "MP": ["AL-05", "AL-06", "ground_article_only"],
+    "XE": ["XV2-28", "XV2-09", "XV2-10", "XV2-11", "XV2-20", "XV2-31", "XV2-32"],
 }
 
 # ------------------------------------------------------------------------------------------------------------- pins
@@ -345,6 +569,15 @@ def PEND(path: str, what: str) -> dict:
             "note": "parallel lane not in this base; nothing is read from it"}
 
 
+def MRG(key: str, what: str, ids: list) -> dict:
+    """A merged A9.6 package cited by id (checked at build time by xlane_check through XL_CITED; never sha-pinned)."""
+    missing = [i for i in ids if i not in XL_CITED.get(key, [])]
+    if key not in XLANE_PATHS or missing:
+        raise ValueError(f"merged-lane citation {key} {missing}: add the ids to XL_CITED so they are checked")
+    return {"type": "merged_lane", "key": key, "path": XLANE_PATHS[key], "what": what, "ids": list(ids),
+            "note": "merged A9.6 package; ids checked at build time, not sha-pinned (it reads this package back)"}
+
+
 def A95(did: str, quote: str) -> dict:
     """A9.5 owner decision with a quote that must occur verbatim in the A9.5 verbatim record."""
     if did not in load("A95")["decisions"]:
@@ -433,6 +666,8 @@ def label(s: dict) -> str:
         return f"v1 {s['id']}"
     if t == "pending_lane":
         return f"PENDING {s['path']}"
+    if t == "merged_lane":
+        return f"{s['key']}:{', '.join(s['ids'])} ({s['path']})"
     if t == "a9_5":
         return f"A9.5 {s['id']}"
     if t == "a9_6":
@@ -1218,7 +1453,8 @@ def a96_requirements() -> list:
         "mm; V", "A9.4 P1Q-10, P1Q-14; P1-IT-36, P1-HW-36, P1-M-27",
         [A94("P1Q-10", "electrons extracted to a dedicated, isolated, instrumented electron-collecting electrode;"),
          A94("P1Q-14", "1.05~kV~DC"), CUR("P1", "P1-IT-36"), CUR("P1", "P1-HW-36"), CUR("P1", "P1-M-27"),
-         PEND(PARALLEL_LANES["P4"], "collector / anode candidate-material framework")],
+         MRG("P4", "collector / anode candidate-material framework (no material selected; coupon shortlist "
+             "TBD_OWNER)", ["IT-17", "CR-04", "FINAL_COLLECTOR_MATERIAL"])],
         None, "TBD", "P1-G0", "P1_NEEDED",
         change_why="A9.6 RFQ completion: P1-HW-36 had no RFQ line"))
     # ---------------------------------------------------------------- THRUST / METROLOGY
@@ -2040,6 +2276,10 @@ NOT_PROCURED = {
     "NP-H1-BUILD": {"disposition": "NOT_PROCURED_IN_THIS_RFQ_REVISION",
                     "why": "H-1 (H2-1 CI H-1, MC-1) and its Ar gas path / anode plenum (H2-3) are H-1 design / build "
                            "items outside the six owner RFQ families; procurement route TBD_OWNER (OQ-RFQV2-10; NIR-06)"},
+    "NP-CONDITIONAL-P3Q01": {"disposition": "CONDITIONAL_NOT_PROCURED_TBD_OWNER",
+                             "why": "P1-M-30 (sheath-edge plasma potential / T_e at the collector) is recorded only if "
+                                    "the owner selects a probe diagnostic under P3Q-01 (merged P3 package); no probe is "
+                                    "selected, so no RFQ line is issued in this revision"},
 }
 
 # P1 measurement id -> RFQ lines (or a NOT_PROCURED key)
@@ -2053,6 +2293,7 @@ P1_MEAS_COVERAGE = {
     "P1-M-19": ["GAS-O02"], "P1-M-20": ["VAC-L05"], "P1-M-21": ["TH-L05"], "P1-M-22": ["TH-L04", "HE-L05"],
     "P1-M-23": ["TH-L04"], "P1-M-24": ["HE-L02", "TH-L04"], "P1-M-25": ["RF-L10", "TH-L04"], "P1-M-26": ["TH-L04"],
     "P1-M-27": ["HE-L18", "ME-O01"], "P1-M-28": ["TH-L07", "TH-L08", "VAC-L07"], "P1-M-29": ["HE-L15"],
+    "P1-M-30": "NP-CONDITIONAL-P3Q01",
 }
 P1_HW_COVERAGE = {
     "P1-HW-01": ["RF-L01"], "P1-HW-02": ["RF-L02", "RF-L03"], "P1-HW-03": ["RF-L04", "ME-L08", "RF-L19"],
@@ -2633,6 +2874,12 @@ def change_log(reqs: list, pkgs: list) -> dict:
                                   "P1 / P2 ids (values stay TBD, freeze gate P1-G0 where P1 registers them); PENDING is "
                                   "now used only for the A9.6 parallel lanes not in this base (P3, P4, mass/power, Xe)",
          "source": "A9.6 sec. 3"},
+        {"id": "CL-23", "change": "A9.6 cross-lane integration (fo_a9_6_cross_lane_integration): the P3, P4, mass / "
+                                  "power v2 and Xe accounting v2 packages are merged; their 'PENDING <path>' references "
+                                  "are replaced by id citations (interface pairs XL-09..XL-16, XL-27, XL-34, XL-35, "
+                                  "XL-40..XL-42; new IFD-18, IFD-19; not-procured disposition NP-CONDITIONAL-P3Q01 for "
+                                  "the conditional P1-M-30), checked at build time and never sha-pinned",
+         "source": "A9.6 sec. 5-6, 18"},
     ]
     counts = {}
     for r in reqs:
@@ -2805,43 +3052,55 @@ def open_owner_questions() -> dict:
             "rule": "no OPEN owner question of state v3 is answered by this lane"}
 
 
+def _ifd(i, frm, to, quantity, pairs, units=None, status=None):
+    xs = [xref(p) for p in pairs]
+    if len(xs) == 1:
+        units, status = xs[0]["units"], xs[0]["status"]
+    return {"id": i, "from": frm, "to": to, "quantity": quantity, "units": units, "status": status, "xref": xs}
+
+
 def interface_demands() -> list:
     return [
-        {"id": "IFD-01", "from": "P1 bench " + P1_JSON + " (merged)", "to": "RFQ2-GAS, RFQ2-VAC, RFQ2-HALLEL, "
-                                                                          "RFQ2-THRUST",
-         "quantity": "Ar sweep bounds (F2); gas schematic (P1-HW-12, P1-HW-15, P1-HW-18); gauge ranges (P1-M-16/17); DAQ "
-                     "sample rate / bandwidth (P1-M-26); magnet states (F6); P1-S4 topology (P1-IT-36); I_scale,min "
-                     "(A9.5)", "units": "sccm; Pa; Sa/s; A",
-         "status": "OPEN - values TBD at P1-G0 (ids referenced; nothing filled)"},
-        {"id": "IFD-02", "from": "RFQ2-RF, RFQ2-GAS, RFQ2-HALLEL, RFQ2-THRUST (quotations)", "to": "P1 bench " + P1_JSON,
-         "quantity": "offered capability ranges, calibration uncertainties (A9.5 components), interfaces",
-         "units": "W; mg/s; A; -", "status": "OPEN (after quotations)"},
-        {"id": "IFD-03", "from": "P2 prep " + P2_JSON + " (merged)", "to": "RFQ2-RF",
-         "quantity": "instrument specifications INS-P2-01..12 (copied into RFQ2-RF-N07..N16); package placement P2Q-02",
-         "units": "-", "status": "COPIED (P2 lane refines concurrently; placement TBD_OWNER P2Q-02)"},
-        {"id": "IFD-13", "from": "RFQ v2 instrument_coverage", "to": "P1 bench and P2 prep packages (their "
-                                                                   "rfq_v2_package / rfq_v2_line fields)",
-         "quantity": "RFQ v2 line id per P1 measurement, P1 hardware item and P2 instrument (replaces their stale pending "
-                     "reference to this package)", "units": "-",
-         "status": "OFFERED (reconciled by the A9.5 / A9.6 P1 and P2 lanes and the consolidated integration pass)"},
-        {"id": "IFD-14", "from": "RFQ2-* (supplier datasheets: masses, input powers)",
-         "to": "PENDING " + PARALLEL_LANES["MASS_POWER"], "quantity": "quoted masses and input powers of "
-                                                                     "flight-representative options",
-         "units": "kg; W", "status": "OPEN (after quotations; nothing read from the lane)"},
-        {"id": "IFD-15", "from": "RFQ2-GAS GAS-O02 (if ever activated) and the C1 Xe lines (LATER)",
-         "to": "PENDING " + PARALLEL_LANES["XE_ACCOUNTING"], "quantity": "mdot_ICP,dedicated (0 in G-REUSE); C1 Xe "
-                                                                        "controller ranges", "units": "mg/s",
-         "status": "RULE (G-REUSE books 0; nothing read from the lane)"},
-        {"id": "IFD-16", "from": "RFQ2-MECH (ICP material continuous-use temperature data, RFQ2-MECH-N04)",
-         "to": "PENDING " + PARALLEL_LANES["P3"], "quantity": "material limits for the coupled thermal framework",
-         "units": "K", "status": "OPEN (ICP_COUPLED_THERMAL UNRESOLVED; never PASS)"},
-        {"id": "IFD-17", "from": "PENDING " + PARALLEL_LANES["P4"], "to": "RFQ2-MECH (ME-L03, ME-L04, ME-O01)",
-         "quantity": "collector / electrode candidate materials (no anode RFQ: FINAL_ANODE_MATERIAL OPEN)", "units": "-",
-         "status": "PENDING (nothing read from the lane)"},
-        {"id": "IFD-04", "from": "P2 impedance map (after P1 stable plasma)", "to": "RFQ2-RF, RFQ2-VAC, CIF-C01",
-         "quantity": "Z_antenna = R + jX envelope -> component ratings (generator, coupler, coax, connectors, matching "
-                     "elements, feedthroughs, dummy load)", "units": "ohm; W; V; A",
-         "status": "TBD_AFTER_IMPEDANCE_MAP"},
+        _ifd("IFD-01", "P1 bench " + P1_JSON + " IF-P1-03 (merged)", "RFQ2-GAS, RFQ2-VAC, RFQ2-HALLEL, RFQ2-THRUST",
+             "Ar sweep bounds (F2); gas schematic (P1-HW-12, P1-HW-15, P1-HW-18); gauge ranges (P1-M-16/17); DAQ "
+             "sample rate / bandwidth (P1-M-26); magnet states (F6); P1-S4 topology (P1-IT-36); I_scale,min (A9.5, "
+             "P1-IT-48)", ["XL-09"]),
+        _ifd("IFD-02", "RFQ2-RF, RFQ2-GAS, RFQ2-HALLEL, RFQ2-THRUST (quotations)", "P1 bench " + P1_JSON +
+             " IF-P1-33", "offered capability ranges, calibration uncertainties (A9.5 components), interfaces",
+             ["XL-11"]),
+        _ifd("IFD-03", "P2 prep " + P2_JSON + " IDP2-04 (merged)", "RFQ2-RF",
+             "instrument specifications INS-P2-01..12 (copied into RFQ2-RF-N07..N16); package placement P2Q-02",
+             ["XL-15"]),
+        _ifd("IFD-13", "RFQ v2 instrument_coverage", "P1 bench IF-P1-04 (hardware_readiness.rfq_v2_package) and P2 "
+             "prep IDP2-05 (instrument_list.rfq_v2_line)", "RFQ v2 line id per P1 measurement, P1 hardware item and "
+             "P2 instrument; both packages check their cited line sets against it at build time",
+             ["XL-10", "XL-12"], units="-", status="DEFINED (line ids reconciled; quotation only, no purchase order)"),
+        _ifd("IFD-14", "RFQ2-* (supplier datasheets: masses, input powers)", "mass / power v2 " + XLANE_PATHS["MP"] +
+             " MPV2-ID-06 / MPV2-ID-07", "quoted masses and input powers of flight-representative options; the "
+             "flight-representative DC-input RF source is not in this revision (NIR-01); RFQ v2 lines are ground / P1 "
+             "articles without a mass ceiling (mass is recorded, never a flight CBE)", ["XL-40", "XL-41"],
+             units="kg; W", status=XL_PAIRS["XL-40"][4]),
+        _ifd("IFD-15", "RFQ2-GAS GAS-O02 (if ever activated) and the C1 Xe lines (LATER)", "Xe accounting v2 " +
+             XLANE_PATHS["XE"] + " XV2-IF-05", "mdot_ICP,dedicated (0 in G-REUSE); C1 Xe controller ranges; MEOP / "
+             "tank, C1 purge / preheat / ignition flows, flow-class accuracy, filter / getter data once quoted",
+             ["XL-35"]),
+        _ifd("IFD-16", "RFQ2-MECH (ICP material continuous-use temperature data, RFQ2-MECH-N04)", "P3 " +
+             XLANE_PATHS["P3"] + " P3-IF-N06", "material limits for the coupled thermal framework (P3-M-04)",
+             ["XL-42"]),
+        _ifd("IFD-17", "P4 " + XLANE_PATHS["P4"] + " ID-09", "RFQ2-MECH (ME-L03, ME-L04, ME-O01)",
+             "collector / electrode candidate materials (no anode RFQ: FINAL_ANODE_MATERIAL OPEN)", ["XL-27"]),
+        _ifd("IFD-04", "P2 impedance map (after P1 stable plasma) " + P2_JSON + " IDP2-23", "RFQ2-RF, RFQ2-VAC, "
+             "CIF-C01", "Z_antenna = R + jX envelope -> component ratings (generator, coupler, coax, connectors, "
+             "matching elements, feedthroughs, dummy load)", ["XL-16"]),
+        _ifd("IFD-18", "P1 bench " + P1_JSON + " IF-P1-24 and P2 prep " + P2_JSON + " IDP2-18", "RFQ2-THRUST, "
+             "RFQ2-VAC, RFQ2-HALLEL (TH-L07, TH-L08, VAC-L07, VAC-L03, HE-L04, option HE-O02)", "A9.4 procurement "
+             "items: photodiode + amplifier + DAQ channel and optical access (P2Q-05); ICP body / collector isolation "
+             ">= 525 V design withstand with 1.05 kV DC / 60 s initial DWV, DWV tester as option (P1Q-14)",
+             ["XL-13", "XL-14"], units="V; s; -", status=XL_PAIRS["XL-13"][4]),
+        _ifd("IFD-19", "Xe accounting v2 " + XLANE_PATHS["XE"] + " XV2-IF-04", "RFQ2-GAS (later Xe lines)",
+             "Xe tank ranges, C1 FCU classes, ICP dedicated-feed controller as option only: recorded for the later Xe "
+             "lines; no Xe tank line and no flight C1 hardware in this revision (NIR-04); GAS-O02 option only",
+             ["XL-34"]),
         {"id": "IFD-05", "from": "H2-1 (docs/hardware/h2/h2_1_hall_chamber_magnet/)", "to": "RFQ2-HALLEL",
          "quantity": "MC-1 coil count, currents and resistances for the magnet supplies", "units": "A; ohm",
          "status": "OPEN (H2-1 PRELIMINARY)"},
@@ -2877,7 +3136,8 @@ def m16_impact() -> list:
                                      "monitor, V_anode channel and anode disconnect (A9.4 P1Q-13; P1), breadboard "
                                      "supplies (LATER), laboratory RF generator (P1, ground only)"),
         (13, "RFQ2-MECH", "ICP material temperature data; ICP_COUPLED_THERMAL stays UNRESOLVED (no PASS); coupled "
-                          "thermal framework PENDING docs/experiments/hall_icp/p3_coupled_thermal/"),
+                          "thermal framework merged (docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json; inputs "
+                          "TBD, material limits pair XL-42)"),
         (15, "RFQ2-GAS, RFQ2-THRUST, RFQ2-VAC, RFQ2-RF", "P1 DAQ incl. event / state inputs, gauges, Ar MFC and "
                                                          "calibration volume, RF metrology (V/I probe, VNA, kits, "
                                                          "current probe; placement P2Q-02), power analyzer, "
@@ -2889,8 +3149,9 @@ def m16_impact() -> list:
                                                 "(P1)"),
         (19, "RFQ2-RF", "development RF chain with local match (P1, ground only); the flight DC-input RF source is not "
                         "in this revision (NIR-01); ratings TBD_AFTER_IMPEDANCE_MAP"),
-        (20, "none", "no anode RFQ (A9.2 ANODE_BASELINE OPEN; NIR-03); materials framework PENDING "
-                     "docs/experiments/hall_icp/p4_anode_materials/"),
+        (20, "none", "no anode RFQ (A9.2 ANODE_BASELINE OPEN; NIR-03); materials framework merged "
+                     "(docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json; FINAL_ANODE_MATERIAL "
+                     "OPEN)"),
         (21, "none", "no anode heat-path RFQ (design blocker)"),
     ]
     out = []
@@ -2963,7 +3224,7 @@ def historical_reuse() -> dict:
             "provenance_display); no datum is taken from it",
             "v1 do-not-purchase banner wording (extended by the A9.3 dispatch statement)",
             "the verified RFQ v2 (fo_a9_rfq_v2_split + fo_a9_4_incorporation) as the base of the A9.6 completion: every "
-            "earlier id kept; additions and re-tags recorded in change_log CL-15..CL-22",
+            "earlier id kept; additions and re-tags recorded in change_log CL-15..CL-23",
         ],
         "not_reused": [
             "the nine-family package split (replaced by the six owner families + RFQ2-CIF, A9.3 OQ-RFQ-07)",
@@ -3042,7 +3303,7 @@ def build() -> dict:
                           "json": DECISIONS["A96"][0], "json_sha256": DECISIONS["A96"][1]},
             "a9_5": {"path": DECISIONS["A95_MD"][0], "sha256": DECISIONS["A95_MD"][1]},
             "rule": "implementation-first (A9.6): packages completed for sending; verification deferred to the "
-                    "consolidated campaign; earlier ids kept, additions and re-tags in change_log CL-15..CL-22",
+                    "consolidated campaign; earlier ids kept, additions and re-tags in change_log CL-15..CL-23",
             "rfq_only_quote": A96("13", "RFQ only — no purchase order authorization"),
             "ready_to_send_quote": A96("13", "Finish all quotation packages so they are ready to send."),
             "p1_later_quote": A96("13", "`P1_NEEDED`"),
@@ -3063,8 +3324,9 @@ def build() -> dict:
                          "diagnostic that must stay independent of the RF impedance chain); optical access / window -> "
                          "RFQ2-VAC (owner family 'RGA/diagnostic interfaces': a chamber port item)"},
         "pending_parallel_lanes": {**PARALLEL_LANES,
-                                   "rule": "A9.6 parallel lanes not in this base: referenced as PENDING <path> only; "
-                                           "nothing is read from them"},
+                                   "rule": "none of the seven A9.6 packages is pending any more: P3, P4, mass / power "
+                                           "v2 and Xe accounting v2 are merged and cited by id (merged_cross_lane)"},
+        "merged_cross_lane": xlane_report(None),
         "merged_lanes_read": {"P1": P1_JSON, "P2": P2_JSON,
                               "rule": "read (ids, statuses, P2 instrument specifications) but not pinned: refined "
                                       "concurrently by the A9.5 / A9.6 lanes; the instrument-coverage cross-check raises "
@@ -3329,7 +3591,14 @@ def render_main(d: dict) -> str:
     L_ += ["", "## (b) Interface demands", ""]
     L_ += _table(d["interface_demands"], [("id", lambda x: x["id"]), ("from", lambda x: x["from"]),
                                           ("to", lambda x: x["to"]), ("quantity", lambda x: x["quantity"]),
-                                          ("units", lambda x: x["units"]), ("status", lambda x: x["status"])])
+                                          ("units", lambda x: x["units"]), ("status", lambda x: x["status"]),
+                                          ("pairs", lambda x: ", ".join(p["pair"] + " -> " + p["counterpart"]
+                                                                        for p in x.get("xref", [])) or "-")])
+    L_ += ["", "### Merged cross-lane references", "", d["merged_cross_lane"]["rule"], ""]
+    L_ += _table([dict(v, key=k) for k, v in d["merged_cross_lane"]["packages"].items()],
+                 [("package", lambda x: x["key"]), ("path", lambda x: x["path"]),
+                  ("pairs", lambda x: ", ".join(x["pairs"]) or "-"), ("ids cited", lambda x: ", ".join(x["ids_cited"]) or "-"),
+                  ("check", lambda x: x["check"])])
     oa = d["owner_answers_applied"]
     L_ += ["", "## (c) Owner answers applied", "", "### A9.6 (" + d["a9_6_completion"]["directive"]["path"] + ")", ""]
     L_ += _table(oa["a9_6"], [("id", lambda x: x["id"]), ("how applied", lambda x: x["how_applied"]),
@@ -3415,16 +3684,22 @@ def main(argv=None) -> int:
             with open(p, encoding="utf-8") as fh:
                 if fh.read() != txt:
                     bad.append(rel)
+        doc = json.loads(files[OUT_JSON])
+        bad += ["cross-lane: " + p for p in xlane_check(doc)]
         if bad:
             print("STALE: " + ", ".join(bad))
             return 1
-        print(f"OK: {len(files)} outputs reproduce")
+        print(f"OK: {len(files)} outputs reproduce; cross-lane ids verified")
         return 0
     os.makedirs(_abs(PKG_DIR), exist_ok=True)
     for rel, txt in files.items():
         with open(_abs(rel), "w", encoding="utf-8") as fh:
             fh.write(txt)
     print(f"wrote {len(files)} files")
+    probs = xlane_check(json.loads(files[OUT_JSON]))
+    if probs:
+        print("CROSS-LANE REFERENCES BROKEN (rebuild the counterpart, then this package): " + "; ".join(probs))
+        return 1
     return 0
 
 

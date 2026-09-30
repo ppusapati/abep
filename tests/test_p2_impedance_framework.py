@@ -847,7 +847,9 @@ def test_a96_pins_items_questions_and_statuses(d):
     ids = {x["id"]: x for x in d["interface_demands"]}
     for i in ("IDP2-19", "IDP2-20", "IDP2-21", "IDP2-22"):
         assert i in ids
-    assert "PENDING docs/experiments/hall_icp/p3_coupled_thermal/" in ids["IDP2-20"]["direction"]
+    assert "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json P3-IF-N04" in ids["IDP2-20"]["direction"]
+    assert "PENDING docs/" not in ids["IDP2-20"]["direction"] + ids["IDP2-21"]["direction"]
+    assert ids["IDP2-20"]["status"].startswith("TBD_AFTER_IMPEDANCE_MAP")
     assert d["a9_2_statuses_carried"]["RF component ratings"] == "TBD_AFTER_IMPEDANCE_MAP"
     txt = json.dumps(d)
     assert '"PASS"' not in txt
@@ -866,3 +868,34 @@ def test_framework_hygiene():
     assert '"PASS"' not in src
     test_src = Path(__file__).read_text(encoding="utf-8")
     assert "xe" + "_ledger" not in test_src.replace('"xe" + "_ledger"', "")
+
+
+def test_p1_handoff_admissibility_fail_closed():
+    """XL-01 (P2 side): a P1 handoff that is not REGION_OF_TESTED_POINTS_WITHIN_OWNER_CRITERIA, lacks the criteria
+    id, or lacks an envelope factor never opens the hot map; split_by_domain applies the categorical gas sets."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("p2_fw_handoff_test", str(FW_PATH))
+    fw = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(fw)
+    env = {"P_fwd_W": [80.0, 120.0], "mdot_Ar_H1_mg_s": [0.9, 1.1], "p_chamber_Pa": [0.01, 0.02],
+           "V_collector_V": [-50.0, -30.0]}
+    pt = {"operating_point_record_id": "SYN-OP", "match_setting_id": "SYN-M", "h1_point_id": None, "gas": "Ar",
+          "gas_mode": "G-REUSE", "Z_ICP": None, "factors": {}}
+    h = {"handoff": "IF-P1-01 -> P2 IDP2-01", "status": fw.P1_HANDOFF_ADMISSIBLE, "criteria_id": "SYN-CRIT",
+         "points_within_criteria": [pt], "envelope_of_tested_points": env, "envelope_note": "x", "dwells": [],
+         "note": "synthetic"}
+    ref, region = fw.p1_handoff_admissible(h)
+    assert region["factor_ranges"]["mdot_hall_anode_mg_s"] == [0.9, 1.1] and "SYN-CRIT" in ref
+    for bad in (dict(h, status="NOT_EVALUATED"), dict(h, status="NO_TESTED_POINT_WITHIN_CRITERIA"),
+                dict(h, status="SOMETHING"), dict(h, criteria_id="TBD"), dict(h, points_within_criteria=[]),
+                dict(h, envelope_of_tested_points={k: v for k, v in env.items() if k != "P_fwd_W"}),
+                dict(h, envelope_of_tested_points=dict(env, P_fwd_W=[120.0, 80.0])), None):
+        with pytest.raises(fw.RED.SequenceError):
+            fw.p1_handoff_admissible(bad)
+    pts = [{"record_id": "A", "factors": {"P_RF_setpoint_W": 100.0, "mdot_hall_anode_mg_s": 1.0, "p_chamber_Pa": 0.015,
+                                          "V_collector_V": -40.0, "gas": "Ar", "gas_mode": "G-REUSE"}},
+           {"record_id": "B", "factors": {"P_RF_setpoint_W": 100.0, "mdot_hall_anode_mg_s": 1.0, "p_chamber_Pa": 0.015,
+                                          "V_collector_V": -40.0, "gas": "Ar"}}]
+    ins, outs, nev = fw.split_by_domain(pts, region)
+    assert [p["record_id"] for p in ins] == ["A"] and [p["record_id"] for p in nev] == ["B"] and not outs
+

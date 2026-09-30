@@ -147,17 +147,188 @@ NEVER_PINNED = [
     "docs/orchestration/fired_triggers.jsonl",
     "docs/orchestration/runtime_state.json",
 ]
-# Parallel A9.6 lanes (other worktrees): referenced by path only; their content is never assumed.
+# A9.6 lanes that are NOT merged in this base (other worktrees): referenced by path / lane id only.
 PENDING = {
-    "MASS_POWER": "PENDING docs/budgets/mass_power_a9_v2/ (fo_a9_6_mass_power_integration)",
-    "RFQ": "PENDING docs/procurement/rfq_a9_v2/ (fo_a9_6_rfq_completion; the current files there change in that lane "
-           "and are therefore not pinned here)",
-    "P1": "PENDING docs/experiments/hall_icp/p1_icp_bench/ (fo_a9_6_p1_workflow_completion)",
     "DECPROP": "PENDING fo_a9_6_decision_propagation (owner-question state v4)",
     "RVM": "PENDING fo_a9_6_rvm (system requirement-verification matrix)",
     "M16": "PENDING fo_a9_6_m16_refresh",
-    "P3": "PENDING docs/experiments/hall_icp/p3_coupled_thermal/ (no Xe-accounting demand)",
-    "P4": "PENDING docs/experiments/hall_icp/p4_anode_materials/ (no Xe-accounting demand)",
+}
+# Merged A9.6 packages cited here (ids checked at build time; never sha-pinned).
+MERGED = {
+    "MASS_POWER": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json (merged mass / power v2)",
+    "RFQ": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json (merged RFQ v2; quotation only)",
+    "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json (merged P1 bench)",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json (merged; no Xe-accounting demand)",
+    "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json (merged; no Xe-accounting demand)",
+}
+# ------------------------------------------------------------------ merged A9.6 cross-lane references (A9.6 sec. 5-6, 18)
+# The seven A9.6 packages (P1, P2, P3, P4, mass / power v2, Xe accounting v2, RFQ v2) are merged. Each cites the others
+# by id; every cited id is CHECKED at build time against the target's current JSON (xlane_check, after the outputs are
+# written, so a pair added on both sides converges in one rebuild of the second side; --check fails until it does).
+# Nothing is sha-pinned between the seven packages: several read each other back (ids, or text such as the RFQ v2
+# instrument coverage of the P1 / P2 ids), so a pin would be a circular hash dependency. Interface pairs XL-nn carry
+# identical quantity / units / status text on both sides (tests check the pairing).
+XLANE_PATHS = {
+    "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+    "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+    "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+    "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+    "RFQ": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+}
+XLANE_SELF = 'XE'
+XLANE_BUILD_ORDER = ["P4", "XE", "P1", "P2", "P3", "MP", "RFQ"]
+XLANE_BUILD_ORDER_RULE = ("values flow only P4 -> MP (candidate densities) and XE -> MP (Xe residual and headroom, "
+                          "both readings), and P1 / P2 -> RFQ (ids, item text and statuses of the instrument "
+                          "coverage); every other cross-lane reference is an id checked at build time. Rebuild in "
+                          "the order P4, XE, P1, P2, P3, MP, RFQ; a second pass of any package is a no-op")
+XL_PAIRS = {  # pair: (counterpart package, counterpart id, quantity, units, status) - identical text on both sides
+    'XL-30': (
+        'MP',
+        'MPV2-ID-15',
+        ('Xe residual per design case under both RA-CASE readings (design_cases.reserve_residual_split.residual_kg), '
+         'imported once by mass / power: inside the case under LOADED (LOADED_XA9Q01), on top under '
+         'USABLE_RESIDUAL_ON_TOP (USABLE_MQ09)'),
+        'kg',
+        'IMPORTED (read at build time; XA9Q-01 / MQ-09 / OQ-A910-01 TBD_OWNER, both readings carried)',
+    ),
+    'XL-31': (
+        'MP',
+        'MPV2-ID-05',
+        ('loaded Xe and headroom per design case and flight scenario under both RA-CASE readings '
+         '(design_cases.headroom), 323 K tank volume table'),
+        'kg; l',
+        'IMPORTED (headroom statuses read at build time; totals with TBD inputs REFUSED)',
+    ),
+    'XL-32': (
+        'MP',
+        'MPV2-ID-16',
+        ('stored-Xe hardware masses (tank, regulator / PMU, FCUs, isolation valves, C1-branch filter / getter) for '
+         'the row-44 subsystem share'),
+        'kg',
+        'TBD_AFTER_EVIDENCE (no CBE; owner line allocation AL-08 and evidence floors only)',
+    ),
+    'XL-33': (
+        'MP',
+        'MPV2-ID-04',
+        ('booking rules shared by both ledgers: one Xe design-case content (OQ-A910-01, both readings carried), C1 '
+         'terms booked only in hall_c1_reference, primary G-REUSE m_Xe,ICP = 0'),
+        'kg',
+        'DEFINED (rules applied in both packages; the design-case content question stays TBD_OWNER)',
+    ),
+    'XL-34': (
+        'RFQ',
+        'IFD-19',
+        ('Xe tank ranges (loaded 2.0-10.2 kg across both readings, V_min per MEOP axis at 323 K), C1 steady FCU '
+         '0.05-0.2 mg/s class, C1 start FCU FS 1.0 mg/s (conditional, row 125), ICP dedicated-feed controller as an '
+         'option line only (A9.3 OQ-RFQ-10)'),
+        'kg; l; mg/s',
+        ('NOT_IN_THIS_REVISION (no Xe tank line; flight C1 hardware NIR-04; dedicated-feed controller option GAS-O02 '
+         'only; RFQ only, no purchase)'),
+    ),
+    'XL-35': (
+        'RFQ',
+        'IFD-15',
+        ('MEOP and tank selection, vendor / design-qualified C1 purge, preheat and ignition flows, flow-class '
+         'accuracy, filter / getter specification, and mdot_ICP,dedicated of GAS-O02 if a dedicated-feed variant is '
+         'ever activated (G-REUSE books 0)'),
+        'bar; mg/s; s; 1',
+        'TBD_AFTER_EVIDENCE (after quotations; none received; RFQ only, no purchase)',
+    ),
+    'XL-36': (
+        'P1',
+        'IF-P1-37',
+        ('per-record gas state, dedicated-feed flag and the measured dedicated-feed flow if a labelled DIAGNOSTIC '
+         'G-XE feed is activated (P1-M-19; OPT-GT-P1-GXE-DIAG)'),
+        'mg/s; s',
+        'TBD_AFTER_EVIDENCE (P1 records; the diagnostic feed is CONDITIONAL, never baseline)',
+    ),
+    'XL-37': (
+        'P1',
+        'IF-P1-17',
+        ('booking rule: G-REUSE mdot_ICP,dedicated = 0; an activated diagnostic dedicated feed is booked as a '
+         'separate optional Xe entry (S3-GT-P1-DIAG), never as baseline'),
+        'mg/s',
+        'DEFINED (rule; no booking in the baseline)',
+    ),
+}
+
+
+def xref(pair):
+    """The shared description of one cross-lane interface pair (identical on both sides)."""
+    pkg, cid, quantity, units, status = XL_PAIRS[pair]
+    return {"pair": pair, "counterpart": pkg + ":" + cid, "counterpart_path": XLANE_PATHS[pkg],
+            "quantity": quantity, "units": units, "status": status}
+
+
+def _xlane_demands(doc):
+    d = doc["interface_demands"]
+    return [e for v in d.values() for e in v] if isinstance(d, dict) else list(d)
+
+
+def _xlane_has_id(text, ident):
+    import re as _re
+    return _re.search(r"(?<![A-Za-z0-9_-])" + _re.escape(ident) + r"(?![A-Za-z0-9_])", text) is not None
+
+
+def xlane_check(doc):
+    """Every cross-lane pair points at an existing interface-demand id of the merged target package, and every other
+    cited id (XL_CITED) occurs in the target's current JSON. Returns the list of problems (empty = consistent)."""
+    problems, cache = [], {}
+
+    def target(pkg):
+        if pkg not in cache:
+            p = REPO / XLANE_PATHS[pkg]
+            cache[pkg] = json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+        return cache[pkg]
+
+    seen = set()
+    for e in _xlane_demands(doc):
+        for x in e.get("xref", []):
+            seen.add(x["pair"])
+            pkg, cid = x["counterpart"].split(":", 1)
+            t = target(pkg)
+            if t is None:
+                problems.append("%s: %s missing" % (x["pair"], XLANE_PATHS[pkg]))
+                continue
+            ids = {d.get("id") for d in _xlane_demands(t)}
+            if cid not in ids:
+                problems.append("%s: %s has no interface demand %s" % (x["pair"], XLANE_PATHS[pkg], cid))
+    missing_pairs = sorted(set(XL_PAIRS) - seen)
+    if missing_pairs:
+        problems.append("pairs declared but not attached to an interface demand: %s" % missing_pairs)
+    for pkg, idents in sorted(XL_CITED.items()):
+        t = target(pkg)
+        if t is None:
+            problems.append("%s missing" % XLANE_PATHS[pkg])
+            continue
+        text = json.dumps(t, ensure_ascii=False)
+        for ident in idents:
+            if not _xlane_has_id(text, ident):
+                problems.append("cited id %s absent from %s" % (ident, XLANE_PATHS[pkg]))
+    return problems
+
+
+def xlane_report(doc):
+    """The merged-lane record written into the JSON: per counterpart package, the pairs and the cited ids."""
+    out = {}
+    for pkg in XLANE_BUILD_ORDER:
+        if pkg == XLANE_SELF:
+            continue
+        pairs = sorted(k for k, v in XL_PAIRS.items() if v[0] == pkg)
+        cited = sorted(XL_CITED.get(pkg, []))
+        out[pkg] = {"path": XLANE_PATHS[pkg], "state": "MERGED", "pairs": pairs, "ids_cited": cited,
+                    "sha_pinned": False,
+                    "check": "ids checked at build time (xlane_check); not sha-pinned (packages read each other "
+                             "back; a pin would be circular)" if (pairs or cited) else
+                             "no interface demand between the two packages"}
+    return {"rule": XLANE_BUILD_ORDER_RULE, "build_order": XLANE_BUILD_ORDER, "packages": out}
+
+XL_CITED = {  # ids cited outside the XL pairs (checked to occur in the target JSON)
+    "MP": ["AL-08"],
+    "RFQ": ["GAS-O02", "NIR-04"],
+    "P1": ["P1-M-19"],
 }
 
 
@@ -258,6 +429,14 @@ V2_PENDING = {
 }
 
 
+V2_COUNTERPART = {
+    "RFQ": "TBD_AFTER_EVIDENCE - requires quotations / vendor data requested through " + MERGED["RFQ"] +
+           " (IFD-15, pair XL-35; none received, no purchase)",
+    "MASS_POWER": "TBD_AFTER_EVIDENCE - stored-Xe hardware masses exchanged with " + MERGED["MASS_POWER"] +
+                  " (MPV2-ID-16, pair XL-32; no CBE, owner line allocation AL-08 only)",
+}
+
+
 def v2id(a908_id: str) -> str:
     return "XV2-" + a908_id.split("-")[1]
 
@@ -278,7 +457,7 @@ def build_items(prev: dict, a93: dict) -> list:
             if it.get(extra) is not None:
                 x[extra] = it[extra]
         if it["id"] in V2_PENDING:
-            x["v2_pending"] = PENDING[V2_PENDING[it["id"]]]
+            x["v2_counterpart"] = V2_COUNTERPART[V2_PENDING[it["id"]]]
         items.append(x)
     prev_items = {i["id"]: i for i in prev["items"]}
     p08, p30 = prev_items["XA9-08"], prev_items["XA9-30"]
@@ -334,7 +513,8 @@ def build_items(prev: dict, a93: dict) -> list:
         "id": "XV2-45", "a9_08_item": None,
         "name": "P1 diagnostic dedicated Xe ICP feed (only if activated): events, duration, flow",
         "value": None, "value_display": "TBD - requires a labelled DIAGNOSTIC dedicated Xe feed actually activated in "
-        "P1 with its flow measured and recorded per record (" + PENDING["P1"] + ")", "unit": "1; s; mg/s",
+        "P1 with its flow measured and recorded per record (" + MERGED["P1"] + " P1-M-19, pair XL-36)",
+        "unit": "1; s; mg/s",
         "kind": "count", "basis": "owner decision (booking rule) / pending (size)",
         "source": f"{DECISIONS['A93'][0]} decisions.OQ-RFQ-10 (booking: 'if G-XE/G-ATM is activated, mdot_ICP,dedicated "
                   "is explicitly booked in the corresponding atmospheric/Xe ledger')",
@@ -899,7 +1079,8 @@ def design_cases(prev: dict, items: dict, evals: list) -> dict:
                                      "other TBD term at zero (a ceiling, not an allowance)", "rows": ceiling},
         "c1_ignition_per_start": {"label": "RA-DWELL: Xe per C1 start per mg/s of (TBD) ignition flow", "rows": ign},
         "mass_share": {"label": "Xe load alone vs the row-44 0.25 screening cap on the 40 kg wet gate (row 5); the "
-                                "stored-Xe subsystem share needs hardware masses (" + PENDING["MASS_POWER"] + ")",
+                                "stored-Xe subsystem share needs hardware masses (TBD_AFTER_EVIDENCE: " + MERGED["MASS_POWER"] +
+                                " MPV2-ID-16, pair XL-32)",
                        "rows": share},
         "a9_08_agreement": agreement,
     }
@@ -915,7 +1096,7 @@ ROW_APPLIED = {
     42: "PHASE_TOTAL_FLOW: purge, heating/start, ignition, keeper/cathode, transition and fallback each a separate line",
     43: "reserve 20 % of planned non-reserve Xe, booked once per flight evaluation (book_reserve_and_residual)",
     44: "0.25 screening cap only (mass_share); not an entitlement",
-    45: "residual 2 % booked once (one RESIDUAL line); exported to " + PENDING["MASS_POWER"] + " for import, never "
+    45: "residual 2 % booked once (one RESIDUAL line); exported to " + MERGED["MASS_POWER"] + " (XL-30) for import, never "
         "re-booked",
     46: "C1 keeper term only in hall_c1_reference; no continuous C1-Xe term in hall_icp_neutralizer",
     48: "2 / 5 / 10 kg design cases under both content readings; no mission load frozen",
@@ -995,48 +1176,55 @@ NEW_OPEN_QUESTIONS = [
 
 
 def interface_demands() -> list:
-    mp, rfq, p1 = PENDING["MASS_POWER"], PENDING["RFQ"], PENDING["P1"]
+    def pair(i, direction, frm, to, quantity_local, p):
+        x = xref(p)
+        return {"id": i, "direction": direction, "from": frm, "to": to, "quantity": quantity_local,
+                "units": x["units"], "status": x["status"], "xref": [x]}
+    mp, rfq, p1 = MERGED["MASS_POWER"], MERGED["RFQ"], MERGED["P1"]
     return [
-        {"id": "XV2-IF-01", "direction": "OUT", "from": SCHEMA_ID, "to": mp,
-         "quantity": "residual Xe: ONE line per flight evaluation (RESIDUAL) and per design case/reading "
-                     "(design_cases.reserve_residual_split.residual_kg); import once, never re-book (row 45)",
-         "units": "kg", "status": "OFFERED (totals REFUSED while TBD; design-case values offered)"},
-        {"id": "XV2-IF-02", "direction": "OUT", "from": SCHEMA_ID, "to": mp,
-         "quantity": "loaded Xe per design case under both RA-CASE readings and the 323 K tank volume table",
-         "units": "kg; l", "status": "OFFERED"},
-        {"id": "XV2-IF-03", "direction": "IN", "from": mp, "to": SCHEMA_ID,
-         "quantity": "stored-Xe hardware masses (tank, regulator/PMU, FCUs, isolation valves, C1-branch filter/getter) "
-                     "for the row-44 subsystem share", "units": "kg", "status": "TBD - " + mp},
-        {"id": "XV2-IF-04", "direction": "OUT", "from": SCHEMA_ID, "to": rfq,
-         "quantity": "tank ranges (loaded 2.0-10.2 kg across both readings, V_min per MEOP axis at 323 K); C1 steady "
-                     "FCU 0.05-0.2 mg/s class; C1 start FCU FS 1.0 mg/s (conditional, row 125); ICP dedicated-feed "
-                     "controller as an option line only (A9.3 OQ-RFQ-10)", "units": "kg; l; mg/s", "status": "OFFERED"},
-        {"id": "XV2-IF-05", "direction": "IN", "from": rfq, "to": SCHEMA_ID,
-         "quantity": "MEOP and tank selection (XV2-28), vendor/design-qualified C1 purge, preheat and ignition flows "
-                     "(XV2-09/10/11), non-C1 flow-class accuracy (XV2-20), filter/getter spec (XV2-31/32)",
-         "units": "bar; mg/s; s; 1", "status": "TBD - " + rfq + " (RFQ only; no quotation received, no purchase)"},
-        {"id": "XV2-IF-06", "direction": "IN", "from": p1, "to": SCHEMA_ID,
-         "quantity": "per-record gas state; dedicated-feed flag; measured dedicated-feed flow if a labelled "
-                     "DIAGNOSTIC G-XE feed is activated (OPT-GT-P1-GXE-DIAG)", "units": "mg/s; s",
-         "status": "TBD - " + p1},
-        {"id": "XV2-IF-07", "direction": "OUT", "from": SCHEMA_ID, "to": p1,
-         "quantity": "booking rule: G-REUSE mdot_ICP,dedicated = 0; any activated diagnostic dedicated feed is booked "
-                     "here as a separate optional entry, never as baseline", "units": "-", "status": "OFFERED"},
+        pair("XV2-IF-01", "OUT", SCHEMA_ID, mp + " MPV2-ID-15",
+             "residual Xe: ONE line per flight evaluation (RESIDUAL) and per design case/reading "
+             "(design_cases.reserve_residual_split.residual_kg); import once, never re-book (row 45); totals with a "
+             "TBD input stay REFUSED", "XL-30"),
+        pair("XV2-IF-02", "OUT", SCHEMA_ID, mp + " MPV2-ID-05",
+             "loaded Xe and headroom per design case under both RA-CASE readings (design_cases.headroom) and the "
+             "323 K tank volume table", "XL-31"),
+        pair("XV2-IF-03", "IN", mp + " MPV2-ID-16", SCHEMA_ID,
+             "stored-Xe hardware masses (tank, regulator/PMU, FCUs, isolation valves, C1-branch filter/getter) for "
+             "the row-44 subsystem share", "XL-32"),
+        pair("XV2-IF-04", "OUT", SCHEMA_ID, rfq + " IFD-19",
+             "tank ranges (loaded 2.0-10.2 kg across both readings, V_min per MEOP axis at 323 K); C1 steady FCU "
+             "0.05-0.2 mg/s class; C1 start FCU FS 1.0 mg/s (conditional, row 125); ICP dedicated-feed controller as "
+             "an option line only (A9.3 OQ-RFQ-10)", "XL-34"),
+        pair("XV2-IF-05", "IN", rfq + " IFD-15", SCHEMA_ID,
+             "MEOP and tank selection (XV2-28), vendor/design-qualified C1 purge, preheat and ignition flows "
+             "(XV2-09/10/11), non-C1 flow-class accuracy (XV2-20), filter/getter spec (XV2-31/32)", "XL-35"),
+        pair("XV2-IF-06", "IN", p1 + " IF-P1-37", SCHEMA_ID,
+             "per-record gas state; dedicated-feed flag; measured dedicated-feed flow if a labelled DIAGNOSTIC G-XE "
+             "feed is activated (OPT-GT-P1-GXE-DIAG; P1-M-19)", "XL-36"),
+        pair("XV2-IF-07", "OUT", SCHEMA_ID, p1 + " IF-P1-17",
+             "booking rule: G-REUSE mdot_ICP,dedicated = 0; any activated diagnostic dedicated feed is booked here "
+             "as a separate optional entry (S3-GT-P1-DIAG), never as baseline", "XL-37"),
         {"id": "XV2-IF-08", "direction": "OUT", "from": SCHEMA_ID, "to": PENDING["DECPROP"],
          "quantity": "open questions carried (XA9Q-01/02/03/07, MQ-09, OQ-A907-01, OQ-A910-01) and new XV2Q-01; no "
-                     "answers", "units": "-", "status": "OFFERED"},
+                     "answers", "units": "-", "status": "OFFERED", "xref": []},
         {"id": "XV2-IF-09", "direction": "OUT", "from": SCHEMA_ID, "to": PENDING["RVM"],
          "quantity": "Xe capability / Xe accounting evidence state: every total with a TBD input is REFUSED; the RVM "
                      "Xe rows can only be NOT_EVALUATED / INCOMPLETE_EVIDENCE from this accounting (never PASS)",
-         "units": "-", "status": "OFFERED"},
+         "units": "-", "status": "OFFERED", "xref": []},
         {"id": "XV2-IF-10", "direction": "OUT", "from": SCHEMA_ID, "to": PENDING["M16"],
-         "quantity": "m16_impact rows (no readiness change: framework only)", "units": "-", "status": "OFFERED"},
+         "quantity": "m16_impact rows (no readiness change: framework only)", "units": "-", "status": "OFFERED",
+         "xref": []},
         {"id": "XV2-IF-11", "direction": "IN", "from": "C1 vendor/design qualification (external, not contacted)",
          "to": SCHEMA_ID, "quantity": "C1 purge/ignition flow and durations; heater procedure",
-         "units": "mg/s; s", "status": "TBD_AFTER_EVIDENCE"},
+         "units": "mg/s; s", "status": "TBD_AFTER_EVIDENCE", "xref": []},
         {"id": "XV2-IF-12", "direction": "IN", "from": "H-1 measurements (hardware campaign)", "to": SCHEMA_ID,
          "quantity": "Hall Xe operating point, Xe ignition use, transition Xe logged per phase (PHASE_TOTAL_FLOW)",
-         "units": "mg/s; s", "status": "TBD_AFTER_EVIDENCE"},
+         "units": "mg/s; s", "status": "TBD_AFTER_EVIDENCE", "xref": []},
+        pair("XV2-IF-13", "IN", mp + " MPV2-ID-04", SCHEMA_ID,
+             "consistency rules demanded by mass / power and applied here: one design-case content with both RA-CASE "
+             "readings carried (OQ-A910-01 / XA9Q-01 / MQ-09 TBD_OWNER), C1 terms only in the hall_c1_reference "
+             "scenarios (S2-*), primary G-REUSE Xe line = 0 (S1-*)", "XL-33"),
     ]
 
 
@@ -1122,6 +1310,7 @@ def build_doc() -> dict:
                  "source_snapshots": pins_list(SNAPSHOTS), "historical": pins_list(HISTORICAL)},
         "never_pinned": NEVER_PINNED,
         "parallel_lanes": PENDING,
+        "merged_cross_lane": xlane_report(None),
         "accounting_convention": prev["accounting_convention"],
         "cases": {
             "CASE-1": "PRIMARY hall_icp_neutralizer, G-REUSE: m_Xe,ICP = 0 exactly; flight Xe only for the Hall "
@@ -1241,8 +1430,9 @@ def render_md(doc: dict) -> str:
     o += ["### Agreement with the verified A9-08 tables", ""]
     o += _table(["check", "agrees"], [[a["check"], a["agrees"]] for a in dc["a9_08_agreement"]])
     o += ["## (b) Interface demands", ""]
-    o += _table(["id", "direction", "from", "to", "quantity", "units", "status"],
-                [[d["id"], d["direction"], d["from"], d["to"], d["quantity"], d["units"], d["status"]]
+    o += _table(["id", "direction", "from", "to", "quantity", "units", "status", "pairs"],
+                [[d["id"], d["direction"], d["from"], d["to"], d["quantity"], d["units"], d["status"],
+                  ", ".join(x["pair"] + " -> " + x["counterpart"] for x in d["xref"]) or "-"]
                  for d in doc["interface_demands"]])
     o += ["## (c) Owner answers applied", ""]
     o += _table(["decision", "id", "verbatim", "how applied"],
@@ -1263,7 +1453,12 @@ def render_md(doc: dict) -> str:
     o += _table(["group", "path", "sha256", "role"],
                 [[g, p["path"], p["sha256"], p["role"]] for g, ps in doc["pins"].items() for p in ps])
     o += ["Never pinned (mutable governance): " + ", ".join(f"`{x}`" for x in doc["never_pinned"]), ""]
-    o += ["Parallel lanes (referenced by path only): " + "; ".join(doc["parallel_lanes"].values()), ""]
+    o += ["Lanes not merged in this base (referenced by lane id only): " +
+          "; ".join(doc["parallel_lanes"].values()), ""]
+    o += ["### Merged cross-lane references", "", doc["merged_cross_lane"]["rule"], ""]
+    o += _table(["package", "path", "pairs", "ids cited", "check"],
+                [[k, v["path"], ", ".join(v["pairs"]) or "-", ", ".join(v["ids_cited"]) or "-", v["check"]]
+                 for k, v in doc["merged_cross_lane"]["packages"].items()])
     return "\n".join(o)
 
 
@@ -1283,11 +1478,19 @@ def main(argv=None) -> int:
     if a.check:
         ok = jp.is_file() and mp.is_file() and jp.read_text(encoding="utf-8") == js and \
             mp.read_text(encoding="utf-8") == md
+        probs = xlane_check(json.loads(js))
+        if probs:
+            print("CROSS-LANE REFERENCES BROKEN:", "; ".join(probs))
+            return 1
         print("OK" if ok else "MISMATCH: rerun the builder")
         return 0 if ok else 1
     jp.write_text(js, encoding="utf-8")
     mp.write_text(md, encoding="utf-8")
     print(f"wrote {jp.relative_to(REPO)} and {mp.relative_to(REPO)}")
+    probs = xlane_check(json.loads(js))
+    if probs:
+        print("CROSS-LANE REFERENCES BROKEN (rebuild the counterpart, then this package):", "; ".join(probs))
+        return 1
     return 0
 
 
