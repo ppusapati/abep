@@ -48,12 +48,12 @@ Configurations: `hall_c1_reference`, `hall_icp_neutralizer` (never ranked; no wi
 | H27 | `docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json` | `d1813e153af37ebd...` |
 | H21_PY | `docs/hardware/h2/h2_1_hall_chamber_magnet/build_h2_1_hall_chamber_magnet.py` | `5df465d564640db4...` |
 | H25_PY | `docs/hardware/h2/h2_5_thermal_network/build_h2_5_thermal_network.py` | `4e937fa97b104d10...` |
-| BPB_A9 | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `7ca8ed23652c4f3a...` |
-| ICD | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `4d16ee4d0e342584...` |
-| UB | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `650aa32b4b388aeb...` |
-| PREREG | `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` | `f22e12e73a664df2...` |
-| VI | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `54ae028df1ea940d...` |
-| INT | `docs/experiments/hall_icp/integration/a9_core_integration_v1.json` | `425218cf84c6bb86...` |
+| BPB_A9 | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `dd888719d36e5de2...` |
+| ICD | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `0a2ec6666530e846...` |
+| UB | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `4c9f57fa28bf4465...` |
+| PREREG | `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` | `1310a84fa9840792...` |
+| VI | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `e26c38ef0af4f56d...` |
+| INT | `docs/experiments/hall_icp/integration/a9_core_integration_v1.json` | `86146f986e35e4d9...` |
 | MCQ | `docs/experiments/magnet_coil/magnet_coil_qualification_v1.json` | `53e92f4536f7b300...` |
 | LIMITS | `schemas/thermal_life/limits_v1.json` | `0df363f76dcb6efc...` |
 | INS | `docs/experiments/instrumentation/instrumentation_definition_v1.json` | `7c6d37b00f38a44c...` |
@@ -554,7 +554,7 @@ Each entry's old value carries `path + pointer + sha256` in the JSON (`revision_
 | IDA7-12 | A9-02 docs/architecture_comparison/power_boundary_a9/ | A9-07 | registered I_d,max of the stand discharge slot (ICP-45 sizing) and per-slot efficiencies on the 100 V bus | None | A; - | TBD (owner registration; breadboard eta_d before LOCK-2) |
 | IDA7-13 | A9-07 | A9-02 docs/architecture_comparison/power_boundary_a9/ | thermal_control load: no active cooling demanded by this lane (passive levers only); any active cooling would need its own slot (row 66) | 0.0 | W | PRELIMINARY |
 | IDA7-14 | A9-07 | A9-04 docs/experiments/hall_icp/uncertainty_budget/ | instrument additions answering IF-14/IF-16 | A9H-INS-*, A9H-CAL-* | - | ANSWERED (proposed items) |
-| IDA7-15 | A9-04 docs/experiments/hall_icp/uncertainty_budget/ | A9-07 | u(P_fwd), u(P_refl), cable-loss chain uncertainty (ICP-14) | None | W | PENDING docs/experiments/hall_icp/uncertainty_budget/ (LOCK-2 numbers) |
+| IDA7-15 | A9-04 docs/experiments/hall_icp/uncertainty_budget/ | A9-07 | u(P_fwd), u(P_refl), cable-loss chain uncertainty (ICP-14) | None | W | PARTIAL - A9-04 defines u(P_fwd), u(P_refl) and the cable-loss terms (UB-RF-02..UB-RF-07); values TBD - require certificates / S1a (LOCK-2) |
 | IDA7-16 | A9-07 | A9-01 docs/experiments/hall_icp/prereg_framework/ | score-bearing temperature aborts per node group: abort_C = validated limit - 50 K (UBQ-06, row 86); abort list for the prereg operating rules (limit_C shown for traceability only - it is NOT an abort value); groups without a validated limit carry a TBD abort | see the abort table below | degC | OFFERED |
 | IDA7-17 | H2-1 docs/hardware/h2/h2_1_hall_chamber_magnet/ | A9-07 | FEMM B(z) incl. fringe field at IP-C1 and in the ICP volume; frozen channel geometry | None | G; mm | TBD - requires FEMM of the preliminary MC-1 (H2-1 follow-up; not in this lane) |
 | IDA7-18 | A9-07 | H-1 CI (docs/experiments/hardware/) | H-1 exit face = IP-EXIT; no C1 on H-1; hot-state B sensor; EM-only MC-1 | REV-03, REV-07, REV-11 | - | OFFERED |
@@ -758,3 +758,5 @@ Changes applied by A9-10 after this lane's verified build (record `docs/experime
 | A910-A907-09 | A9-10 self-reference | set | `/parallel_lanes_pending/A9-10` | 1 | A9-10 path resolved |
 | A910-A907-10 | OQ-INT-03 re-evaluation | set | `/parallel_lanes_status_a9_10` | 1 | parallel lanes merged |
 | A910-A907-08 | A9-02 merged (no stand registration) | set | `/interface_demands[id=IDA7-08]/status` | 1 | IDA7-08 re-evaluated |
+| A910-R07-01 | OQ-INT-03 (A9-04 UB-RF-*) | merge | `/interface_demands[id=IDA7-15]` | 1 | IDA7-15 partial |
+| A910-R07-02 | OQ-INT-03 (A9-04 UB-RF-02..07) | replace | `/new_items[id=A9H-INS-01]/note` | 1 | A9H-INS-01 note re-evaluated |

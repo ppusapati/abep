@@ -45,6 +45,35 @@
     "p_bus_1ms_max"
    ]
   },
+  "gate_measurement": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "sample_rate_Sa_s",
+    "bandwidth_Hz",
+    "anti_alias_documented",
+    "synchronized",
+    "source"
+   ],
+   "properties": {
+    "sample_rate_Sa_s": {
+     "type": "number"
+    },
+    "bandwidth_Hz": {
+     "type": "number"
+    },
+    "anti_alias_documented": {
+     "type": "boolean"
+    },
+    "synchronized": {
+     "type": "boolean"
+    },
+    "source": {
+     "type": "string",
+     "minLength": 1
+    }
+   }
+  },
   "front_end": {
    "$ref": "#/$defs/front_end"
   },
@@ -486,8 +515,17 @@
   "rfp_limit_W": 1500.0,
   "gate_quantity": "P_bus,1ms,max (A9.1 OQ-A902-01)",
   "pass_requires_power_basis": [
-   "p_bus_1ms_max",
-   "peak_sampled"
-  ]
+   "p_bus_1ms_max"
+  ],
+  "pass_requires_gate_measurement": {
+   "keys": [
+    "sample_rate_Sa_s",
+    "bandwidth_Hz",
+    "anti_alias_documented",
+    "synchronized",
+    "source"
+   ],
+   "rule": "sample_rate_Sa_s >= 100e3, bandwidth_Hz >= 20e3, anti_alias_documented and synchronized True, non-empty source"
+  }
  }
 }

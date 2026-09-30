@@ -17,7 +17,7 @@ Every blocking item is copied from a verified A9 deliverable and checked at buil
 cited place). Selection rule (PROPOSED for the owner under the accepted one-blocker rule): the item named by the most
 downstream merged A9 lane for that row (A9-07 > A9-09 > A9-03 > A9-02 > A9-08 > A9-06), else the v2 item.
 
-Usage:  python docs/budgets/subsystem_maturity/v3/build_subsystem_maturity_v3.py [--check]
+Usage:  python docs/budgets/subsystem_maturity/build_subsystem_maturity_v3.py [--check]
 No prediction, no winner; A9 stays OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE.
 """
 from __future__ import annotations
@@ -29,12 +29,16 @@ import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(HERE))))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
 REL = "docs/budgets/subsystem_maturity"
-JSON_REL, MD_REL = REL + "/v3/subsystem_maturity_v3.json", REL + "/v3/SUBSYSTEM_MATURITY_v3.md"
-# v3 lives in its own subdirectory: the historical H2-7 mechanical BOM scans subsystem_maturity/*.json
-# (non-recursive) and must keep reproducing byte-for-byte.
-SCRIPT_REL = REL + "/v3/build_subsystem_maturity_v3.py"
+# DECLARED SCOPE DEVIATION (recorded in the A9-10 reconciliation record, section scope_deviations): the brief names
+# docs/budgets/subsystem_maturity/subsystem_maturity_v3.json, but the historical, immutable H2-7 mechanical BOM builder
+# scans docs/budgets/subsystem_maturity/*.json (non-recursive) and pins the sha256 of every file it finds, so ANY new
+# JSON there makes the H2-7 v1 --check stale. The v3 JSON therefore lives under an allowed A9-10 path; the builder and
+# the companion Markdown are at the names the brief gives. Orchestrator acceptance requested (OQ-A910-04).
+JSON_REL = "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
+MD_REL = REL + "/SUBSYSTEM_MATURITY_v3.md"
+SCRIPT_REL = REL + "/build_subsystem_maturity_v3.py"
 TEST_REL = "tests/test_subsystem_maturity_v3.py"
 V2 = REL + "/subsystem_maturity_v2.json"
 PINS = {
@@ -298,6 +302,14 @@ def build() -> dict:
         "status": "DRAFT_FOR_OWNER_REVIEW",
         "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
         "generated_by": SCRIPT_REL, "companion_document": MD_REL, "test": TEST_REL,
+        "file_location": {"json": JSON_REL, "brief_named_path": REL + "/subsystem_maturity_v3.json",
+                          "status": "DECLARED_SCOPE_DEVIATION (orchestrator acceptance requested, OQ-A910-04)",
+                          "reason": "the immutable H2-7 v1 mechanical BOM builder (docs/hardware/h2/"
+                                    "h2_7_mechanical_bom/build_h2_7_mechanical_bom.py, lane_consumption) scans "
+                                    + REL + "/*.json non-recursively and pins the sha256 of every file found; a new "
+                                    "JSON at the brief-named path makes the H2-7 v1 --check stale (verified), so the "
+                                    "JSON lives under an allowed A9-10 path; builder and Markdown keep the "
+                                    "brief-named paths"},
         "what_it_is_not": ["not a performance prediction", "not an architecture selection (no winner)",
                            "not a change to v1 / v2", "not an owner decision: blocking-item selection, roles and "
                                                       "latest decision points are PROPOSED"],
@@ -338,6 +350,8 @@ def render_md(d) -> str:
          f"(sha256 `{d['supersedes_for_use']['sha256']}`); v1 and v2 unchanged.", "",
          f"Scheduler rule: {d['scheduler_rule']['status']}; {d['scheduler_rule']['v3_addition']}; blocking-item "
          f"selection (PROPOSED): {d['scheduler_rule']['blocking_item_selection_PROPOSED']}.", "",
+         f"File location: JSON at `{d['file_location']['json']}` instead of `{d['file_location']['brief_named_path']}` "
+         f"- {d['file_location']['status']}: {d['file_location']['reason']}.", "",
          f"Owner rule (row 140): {d['owner_rule']['rule']}; accountable: {d['owner_rule']['accountable']}.", "",
          f"Roll-up: {_c(d['rollup'])}.", "",
          "| row | subsystem | state | A9 blocking item | waits on | latest decision point | owner (functional role) |",

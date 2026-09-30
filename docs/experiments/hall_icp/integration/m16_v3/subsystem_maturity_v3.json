@@ -11,9 +11,15 @@
  "authorization": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json execution.step_3_A9-10 ('refresh M16'); owner rows 140-144",
  "status": "DRAFT_FOR_OWNER_REVIEW",
  "a9_status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
- "generated_by": "docs/budgets/subsystem_maturity/v3/build_subsystem_maturity_v3.py",
- "companion_document": "docs/budgets/subsystem_maturity/v3/SUBSYSTEM_MATURITY_v3.md",
+ "generated_by": "docs/budgets/subsystem_maturity/build_subsystem_maturity_v3.py",
+ "companion_document": "docs/budgets/subsystem_maturity/SUBSYSTEM_MATURITY_v3.md",
  "test": "tests/test_subsystem_maturity_v3.py",
+ "file_location": {
+  "json": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
+  "brief_named_path": "docs/budgets/subsystem_maturity/subsystem_maturity_v3.json",
+  "status": "DECLARED_SCOPE_DEVIATION (orchestrator acceptance requested, OQ-A910-04)",
+  "reason": "the immutable H2-7 v1 mechanical BOM builder (docs/hardware/h2/h2_7_mechanical_bom/build_h2_7_mechanical_bom.py, lane_consumption) scans docs/budgets/subsystem_maturity/*.json non-recursively and pins the sha256 of every file found; a new JSON at the brief-named path makes the H2-7 v1 --check stale (verified), so the JSON lives under an allowed A9-10 path; builder and Markdown keep the brief-named paths"
+ },
  "what_it_is_not": [
   "not a performance prediction",
   "not an architecture selection (no winner)",
@@ -50,22 +56,22 @@
   {
    "lane": "A9-01",
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "sha256": "f22e12e73a664df26349642aa64e850ffd8e6581e7239effd8230410bb97264f"
+   "sha256": "1310a84fa9840792ab7ae9617c55fd1a041653064ccaa6eb364785214f45a4ee"
   },
   {
    "lane": "A9-02",
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "sha256": "7ca8ed23652c4f3a1054461c7d14919c7e169d2ae97e20b318acba397ddeb3af"
+   "sha256": "dd888719d36e5de2fc9e622451ff2ea7b88522d12aacf32919be130dc225bcb3"
   },
   {
    "lane": "A9-03",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "4d16ee4d0e3425843f24c78b3dea038e46ca44360bf44a1451c36dcbad500fb8"
+   "sha256": "0a2ec6666530e8464f63a9517eaff8b2eece61aac9c7b73b4e2de897f5387d75"
   },
   {
    "lane": "A9-04",
    "path": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "sha256": "650aa32b4b388aebba4c20a54ca35f762b09f7d04403f4f0b440d6fd8fda0983"
+   "sha256": "4c9f57fa28bf4465a80966a12661eddcd77dd37d487fd63fb111d60937426de6"
   },
   {
    "lane": "A9-05ev",
@@ -75,27 +81,27 @@
   {
    "lane": "A9-05vi",
    "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-   "sha256": "54ae028df1ea940d624e7caa074eed47fe8576ef1a0d631391601ddf855e6158"
+   "sha256": "e26c38ef0af4f56d8d7b21e024867e7c6ad0378841d2f9992ac8f0d904a9a2ed"
   },
   {
    "lane": "A9-06",
    "path": "docs/budgets/mass_a9/mass_a9_v1.json",
-   "sha256": "1e4ed866d678023e5e2a5223f263cf2f012aa04f72279d30b8acc55e5c1759f0"
+   "sha256": "bc3a4d7095cb4650db866baf6d8c5e86d45d87821a4ea82a25fdda698dfec309"
   },
   {
    "lane": "A9-07",
    "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
-   "sha256": "6cd838459cfa06351379ff9d33a6f7ec0571f150ce4658f6af9eb951c45c08cd"
+   "sha256": "c50986bafc004b4f82fbcd408830c286a2d30d1bb045d0f6f250d3e91a117c1c"
   },
   {
    "lane": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
-   "sha256": "ec2adedd8b20cfc8d7c7d47263cc1a8a07a39d6e43cc1e1655be97816a0b7f18"
+   "sha256": "52d77cd06d4615f368fa3a4da5b729c253a0bb4708c30cf96ba03c0f88a6e0db"
   },
   {
    "lane": "A9-09",
    "path": "docs/procurement/rfq_a9/rfq_a9_v1.json",
-   "sha256": "32622554ddbcb5abe7291564d2785f028e4f4fc67d877e1f02cb46024f37cfbb"
+   "sha256": "b92ad25e698589e75b8a426d613f97288a021d8b512f90fc976e15e3db96d530"
   }
  ],
  "scheduler_rule": {
@@ -766,7 +772,7 @@
     {
      "lane": "A9-03",
      "how": "new ICP RF source/matching and collector/bias channels",
-     "blocking_item": "PENDING A9-02 bus slots"
+     "blocking_item": "A9-02 slots defined (icp_rf_source, icp_matching_network, icp_collector_bias); blocking: supply selection and efficiencies TBD (RFQ-04 / RFQ-06)"
     },
     {
      "lane": "A9-04",
@@ -1117,7 +1123,7 @@
     },
     {
      "lane": "A9-02",
-     "how": "superseded for the primary line (historical); ICP-neutralizer head and flight RF chain rows are added in the A9-10 M16 refresh (docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json)"
+     "how": "superseded for the primary line (historical); ICP-neutralizer head and flight RF chain rows are added in the A9-10 M16 refresh (docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
     },
     {
      "lane": "A9-03",
@@ -1247,10 +1253,10 @@
      "document_status": "DRAFT_PENDING_OWNER",
      "items": {
       "ICP-13": "OWNER_GIVEN (location, A9.1); pre-match OPEN (OQ-A907-11)",
-      "ICP-14": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (u(P_fwd), u(P_refl), load-plane loss chain)",
+      "ICP-14": "TBD (value LOCK-2)",
       "ICP-15": "TBD",
       "ICP-16": "TBD",
-      "ICP-24": "PENDING docs/architecture_comparison/power_boundary_a9/ + abep_sim/bus_boundary_a9.py (slot ids and ledger efficiencies)"
+      "ICP-24": "PARTIAL (slot ids defined by A9-02; loads and efficiencies TBD)"
      }
     },
     "preliminary_design": "none (ICD items PROPOSED / TBD; no ICP module design lane registered)",

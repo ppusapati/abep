@@ -41,7 +41,7 @@ A91_MD_SHA = "2587ca6931f6c9dac865005db9dc518dab0fcb829d789293467dc4179879c46e"
 ABSENT = "__ABSENT__"
 XE_A9_DIR = "docs/budgets/" + "xe" + "_ledger_a9/"
 XE_A9_JSON = XE_A9_DIR + "xe" + "_ledger_a9_v1.json"
-M16_V3 = "docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json"
+M16_V3 = "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
 OQ_V2 = "docs/budgets/owner_decisions/owner_questions_state_v2.json"
 MASS_A9 = "docs/budgets/mass_a9/mass_a9_v1.json"
 H2A9 = "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json"
@@ -267,7 +267,7 @@ def _a902() -> list:
           marker="A902-46", scope=["/items", "/slots", "/variant_options", "/sequencing", "/gates_and_allocations"],
           numeric=True),
         R("A910-A902-03", "A9-10 self-reference", "set", "/interface_demands[21]/status",
-          "PENDING docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json (A9-10 refresh); PENDING "
+          "PENDING docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json (A9-10 refresh); PENDING "
           "docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json (A9-10)",
           "SUPPLIED to " + M16_V3 + " (A9-10 M16 refresh; rows 3, 5, 8, 11-15, 17 and new rows 18-19)",
           "M16 demand satisfied by the v3 refresh"),
@@ -850,8 +850,1085 @@ def _a909() -> list:
 
 
 def records() -> dict:
-    return {"A9-01": _a901(), "A9-02": _a902(), "A9-03": _a903(), "A9-04": _a904(), "A9-05ev": _a905ev(),
-            "A9-05vi": _a905vi(), "A9-06": _a906(), "A9-07": _a907(), "A9-08": _a908(), "A9-09": _a909()}
+    out = {"A9-01": _a901(), "A9-02": _a902(), "A9-03": _a903(), "A9-04": _a904(), "A9-05ev": _a905ev(),
+           "A9-05vi": _a905vi(), "A9-06": _a906(), "A9-07": _a907(), "A9-08": _a908(), "A9-09": _a909()}
+    for extra in (_repair_code(), _repair(), _repair2(), _repair3(), _repair4()):
+        for k, recs in extra.items():
+            out[k] = out[k] + [dict(r) for r in recs]
+    return out
+
+
+# ------------------------------------------------------------------------------------------------------ repair
+# A9-10 review repair (OQ-INT-03 / interface-demand reconciliation): each PENDING field or demand whose target
+# lane (or an A9.1 decision) now supplies the value is filled or classified SATISFIED / PARTIAL with the exact
+# locator; the rest carry the precise remaining reason. 'old' pins the pre-repair value (checked on apply).
+def _repair() -> dict:
+    return {'A9-01': [{'cid': 'A910-R01-01',
+                       'driver': 'OQ-INT-03 (A9-04 readiness_n)',
+                       'op': 'merge',
+                       'ptr': '/items[id=ITM-39]',
+                       'old': {'value': 'TBD - requires the A9-04 budget',
+                               'source': 'PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)'},
+                       'new': {'value': 'TBD - requires a LOCK-1 choice of K and r (RR-HI-06); the A9-04 budget (readiness_n) '
+                                        'consumes the re-mount series as s_d at LOCK-2 but sets no K or r',
+                               'source': 'RR-HI-06 (this framework); '
+                                         'docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json '
+                                         'readiness_n (A9-04, merged: no K or r defined)'},
+                       'summary': 'ITM-39 K, r: A9-04 defines no K or r -> LOCK-1 item of this framework'},
+                      {'cid': 'A910-R01-02',
+                       'driver': 'OQ-INT-03 (A9-02 SLOTS / BASE_SLOTS)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-HI-01]',
+                       'old': {'status': 'PENDING'},
+                       'new': {'status': 'SATISFIED by A9-02: one slot per active load in abep_sim/bus_boundary_a9.py SLOTS / '
+                                         'BASE_SLOTS (A9-02, merged) (hall_discharge, hall_magnet_inner/outer/trim, '
+                                         'c1_heater, c1_keeper, c1_common_tie, filter_getter, icp_rf_source, '
+                                         'icp_matching_network, icp_collector_bias (variants: icp_assist_magnet, '
+                                         'active_cooling, flow_control_icp_feed only for G-ATM / G-XE), '
+                                         'flow_control_atmospheric, flow_control_xe, compressor, thermal_control, '
+                                         'housekeeping_controls, reserved_dc_port); start-up transient metering = the gate '
+                                         'quantity P_bus,1ms,max (A9.1 OQ-A902-01, p_bus_1ms_max()); PARTIAL_BOUNDARY status '
+                                         '(row 22); per-slot W values TBD - measurement'},
+                       'summary': 'IF-HI-01 satisfied'},
+                      {'cid': 'A910-R01-03',
+                       'driver': 'OQ-INT-03 (A9-02 SLOTS)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-HI-02]',
+                       'old': {'status': 'PENDING'},
+                       'new': {'status': 'SATISFIED by A9-02: slot ids of abep_sim/bus_boundary_a9.py SLOTS / BASE_SLOTS '
+                                         '(A9-02, merged) (installed per configuration in BASE_SLOTS, variants in '
+                                         'VARIANT_OPTIONS)'},
+                       'summary': 'IF-HI-02 satisfied'},
+                      {'cid': 'A910-R01-04',
+                       'driver': 'OQ-INT-03 (A9-03 items)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-HI-03]',
+                       'old': {'status': 'PENDING'},
+                       'new': {'status': 'SATISFIED by A9-03 (schemas/interfaces/icp_neutralizer_icd_v1.json): carrier datum '
+                                         'KC-1 and exchange series ICP-06 / ICP-39, MODULE_ID ICP-33, matched shams ICP-09 / '
+                                         'ICP-18, channels ICP-34 (incl. RF forward/reflected, interlock, collector V/I, '
+                                         'temperatures), floating body ICP-20 with separately metered collector ICP-21, '
+                                         'Hall-exhaust-to-ICP pressure interface ICP-27, gas port ICP-26 (capped in G-REUSE); '
+                                         'dimensions and ranges stay LOCK-1 items'},
+                       'summary': 'IF-HI-03 satisfied (items defined)'},
+                      {'cid': 'A910-R01-05',
+                       'driver': 'OQ-INT-03 (A9-03 items; GD-01)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-HI-04]',
+                       'old': {'status': 'PENDING'},
+                       'new': {'status': 'PARTIAL: A9-03 item ids ICP-01..ICP-46 exist and are citable for RR-HI-02 / '
+                                         'SC-HI-SRC-ICP; they are not frozen - the freeze is gate deadline GD-01 (before '
+                                         'HI-S1)'},
+                       'summary': 'IF-HI-04 partial (ids exist, freeze before HI-S1)'},
+                      {'cid': 'A910-R01-06',
+                       'driver': 'OQ-INT-03 (A9-04 measurement_chains, stop_rules, readiness_n)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-HI-06]',
+                       'old': {'status': 'PENDING'},
+                       'new': {'status': 'PARTIAL: A9-04 '
+                                         '(docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) '
+                                         'supplies measurement chains per DQ-HI-* (measurement_chains), stop-rule forms '
+                                         '(stop_rules SR-C-SIGN / SR-C-MARGIN; A9.1 UBQ-09 selects SR-C-MARGIN) and the n '
+                                         'rule (readiness_n); every uncertainty value and margin number is TBD until LOCK-2'},
+                       'summary': 'IF-HI-06 partial'},
+                      {'cid': 'A910-R01-07',
+                       'driver': 'OQ-INT-03 (A9-05 extraction)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-HI-07]',
+                       'old': {'status': 'PENDING'},
+                       'new': {'status': 'SATISFIED by A9-05: Takahashi 2024 extraction with page / figure locators '
+                                         '(docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json extraction '
+                                         'TK-01..TK-74, digitized_fig4; published analog, context only) and the '
+                                         'validation-input list '
+                                         '(docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json, '
+                                         'row 145)'},
+                       'summary': 'IF-HI-07 satisfied'},
+                      {'cid': 'A910-R01-08',
+                       'driver': 'OQ-INT-03 (A9-07 REV-29..34)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-HI-09]',
+                       'old': {'status': 'OPEN (revision needed)'},
+                       'new': {'status': 'SATISFIED at requirement level by A9-07 '
+                                         '(docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-29..REV-34: H-1 stays '
+                                         'bolted, downstream module on KC-1, 3-point seat, >= 25 kg payload, SVC-A9 matched '
+                                         'shams, matching network off the platform); seat geometry / preload stay LOCK-1 '
+                                         '(H2-6 v1 unchanged)'},
+                       'summary': 'IF-HI-09 satisfied (A9-07 revision)'},
+                      {'cid': 'A910-R01-09',
+                       'driver': 'OQ-INT-03 (A9-07 REV-01/03/13/66)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-HI-10]',
+                       'old': {'status': 'OPEN (revision needed)'},
+                       'new': {'status': 'SATISFIED at requirement level by A9-07 '
+                                         '(docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-01, REV-03, REV-13, '
+                                         'REV-66: external C1 on KC-1, no central cathode, IP-EXIT / IP-NEU datum); FEMM of '
+                                         'MC-1 stays open (IDA7-17)'},
+                       'summary': 'IF-HI-10 satisfied (A9-07 revision)'},
+                      {'cid': 'A910-R01-10',
+                       'driver': 'OQ-INT-03 (A9-07 REV-51/62)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-HI-11]',
+                       'old': {'status': 'OPEN'},
+                       'new': {'status': 'PARTIAL: A9-07 REV-62 / REV-51 revise the requirement (flight-representative '
+                                         'breadboard discharge supply fed from the 100 V internal bus, row 111); eta_d and '
+                                         'transients TBD - require the breadboard measurement before LOCK-2 (row 113, GD-14)'},
+                       'summary': 'IF-HI-11 partial'},
+                      {'cid': 'A910-R01-11',
+                       'driver': 'OQ-INT-03 (A9-07 REV-40/45)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-HI-12]',
+                       'old': {'status': 'OPEN (revision needed)'},
+                       'new': {'status': 'SATISFIED at requirement level by A9-07 '
+                                         '(docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-40: >= 50 K below '
+                                         'validated limits + 20 % heat-load margin; REV-45: BN wall worst corner <= 850 degC '
+                                         'with 1.2 x heat loads); the thermal solution itself is open (H2-5 v1 unchanged)'},
+                       'summary': 'IF-HI-12 satisfied (A9-07 revision)'},
+                      {'cid': 'A910-R01-12',
+                       'driver': 'OQ-INT-03 (A9-03 ICP-34; A9-07 A9H-INS-01)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-HI-13]',
+                       'old': {'status': 'PARTIAL (existing INS ids verified; ICP channels PENDING)'},
+                       'new': {'status': 'PARTIAL: existing INS ids verified; the ICP channel list is defined by A9-03 ICP-34 '
+                                         'and the coupler instrument by A9-07 A9H-INS-01; no INS ids are assigned to the new '
+                                         'channels yet (instrumentation list revision, LOCK-1)'},
+                       'summary': 'IF-HI-13 channels defined; INS numbering open'},
+                      {'cid': 'A910-R01-13',
+                       'driver': 'OQ-INT-03 (A9-08 XA9-21, XA9-33, XA9-IF-15)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-HI-14]',
+                       'old': {'status': 'OPEN'},
+                       'new': {'status': 'PARTIAL: A9-08 (docs/budgets/xe' '_ledger_a9/xe' '_ledger_a9_v1.json) books C1 phases '
+                                         'under PHASE_TOTAL_FLOW (row 42), the ICP Xe term only in G-XE (G-REUSE XA9-21 = 0 '
+                                         'mg/s) and carries XE_REFERENCE (XA9-33) with its size TBD; the 120 s x 2 dwell (row '
+                                         '93) enters via the A9-02 start-up template C-S4 (XA9-IF-15)'},
+                       'summary': 'IF-HI-14 partial'},
+                      {'cid': 'A910-R01-14',
+                       'driver': 'OQ-INT-03',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-HI-16]',
+                       'old': {'status': 'PENDING (hardware not built)'},
+                       'new': {'status': 'OPEN - hardware not built: H-1 serial identity, anode / wall freeze (GD-02, GD-03, '
+                                         'before HI-S1) and B(z) sensitivity (GD-11) need H-1'},
+                       'summary': 'IF-HI-16 precise reason'},
+                      {'cid': 'A910-R01-15',
+                       'driver': 'OQ-INT-03 (A9-06 MA9-ID-19)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-HI-17]',
+                       'old': {'status': 'PENDING'},
+                       'new': {'status': 'PARTIAL: A9-06 (docs/budgets/mass_a9/mass_a9_v1.json MA9-ID-19) supplies the '
+                                         'item-delta set (ICP adds A9B-17..A9B-22; C1 variant adds A9B-C01..A9B-C06); masses '
+                                         'TBD (owner allocations and evidence floors only, no CBE)'},
+                       'summary': 'IF-HI-17 partial'}],
+            'A9-02': [{'cid': 'A910-R02-01',
+                       'driver': 'OQ-INT-03 (A9-03 ICP-13)',
+                       'op': 'merge',
+                       'ptr': '/items[id=A902-22]',
+                       'old': {'source': 'PENDING docs/interfaces/icp_neutralizer/ (fixed vs auto-tuned match)'},
+                       'new': {'source': 'schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13 (A9-03, merged; A9.1 '
+                                         'A9-03-matching fixes the location off the moving platform but not fixed vs '
+                                         'auto-tuned; on-module pre-match OQ-A907-11 OPEN): TBD - requires the '
+                                         'matching-network selection (RFQ-04)'},
+                       'summary': 'A902-22 precise remaining reason'},
+                      {'cid': 'A910-R02-02',
+                       'driver': 'A9.1 OQ-A902-01 + OQ-INT-03 (A9-01 stage_map)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[1]',
+                       'old': {'status': 'PENDING docs/experiments/hall_icp/prereg_framework/'},
+                       'new': {'status': 'SATISFIED: stage map = A9-01 stage_map HI-ENG..HI-AO '
+                                         '(docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json; '
+                                         'score-bearing stages HI-CMP and HI-ABS evaluate DQ-HI-PBUS, a hard gate); the '
+                                         'transient averaging window is frozen by A9.1 OQ-A902-01 (1 ms; no longer a LOCK-1 '
+                                         'item)'},
+                       'summary': 'A9-01 -> A9-02 demand satisfied'},
+                      {'cid': 'A910-R02-03',
+                       'driver': 'OQ-INT-03 (A9-03 items)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[3]',
+                       'old': {'status': 'PENDING docs/interfaces/icp_neutralizer/'},
+                       'new': {'status': 'PARTIAL: A9-03 (schemas/interfaces/icp_neutralizer_icd_v1.json) supplies matching '
+                                         'location (ICP-13, A9.1 A9-03-matching), floating body and separately metered '
+                                         'collector (ICP-20 / ICP-21), no assist magnet in v1 (ICP-32), passive cooling '
+                                         'PROPOSED (ICP-38); generator DC input vs forward power, matching type and draw, and '
+                                         'the collector V/I range are TBD - require the selected hardware (RFQ-04 / RFQ-05)'},
+                       'summary': 'A9-03 -> A9-02 demand partial'},
+                      {'cid': 'A910-R02-04',
+                       'driver': 'OQ-INT-03 (A9-04 UB-P-*)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[5]',
+                       'old': {'status': 'PENDING docs/experiments/hall_icp/uncertainty_budget/'},
+                       'new': {'status': 'PARTIAL: A9-04 '
+                                         '(docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) '
+                                         'defines the DQ-HI-PBUS chain terms UB-P-01..UB-P-07 and the stop-rule forms '
+                                         '(stop_rules); values TBD - require certificates / S1a, numbers at LOCK-2'},
+                       'summary': 'A9-04 -> A9-02 demand partial'},
+                      {'cid': 'A910-R02-05',
+                       'driver': 'OQ-INT-03 (A9-05 extraction)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[7]',
+                       'old': {'status': 'PENDING docs/experiments/hall_icp/validation_inputs/ (+ '
+                                         'docs/evidence/icp_neutralizer/)'},
+                       'new': {'status': 'SATISFIED by A9-05: docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json '
+                                         'extraction TK-20..TK-23, TK-27, TK-40 (13.56 MHz, 200 W, matching network, ~20 W '
+                                         'absorbed, circuit) with page locators (published analog, reported; context only)'},
+                       'summary': 'A9-05 -> A9-02 demand satisfied'},
+                      {'cid': 'A910-R02-06',
+                       'driver': 'OQ-INT-03 (A9-07 REV-51/68/69)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[9]',
+                       'old': {'status': 'PENDING docs/hardware/h2/h2_4_ppu_bus/ (revision under A9-07)'},
+                       'new': {'status': 'OPEN - A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-51, REV-68, '
+                                         'REV-69) revises H2-4 to the 100 V internal bus but gives no converter efficiency; '
+                                         'TBD - requires the breadboard measurement (row 113) / quotations (RFQ-06)'},
+                       'summary': 'H2-4 -> A9-02 precise reason'},
+                      {'cid': 'A910-R02-07',
+                       'driver': 'OQ-INT-03 (A9-06)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[12]',
+                       'old': {'status': 'PENDING docs/hardware/h2/h2_7_mechanical_bom/; PENDING '
+                                         'docs/budgets/mass_a9/mass_a9_v1.json (A9-06, merged)'},
+                       'new': {'status': 'OPEN - A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged) books owner allocations '
+                                         'and evidence floors only; electronics CBE masses TBD - require quotations (RFQ-04 / '
+                                         'RFQ-06); H2-7 v1 unchanged'},
+                       'summary': 'H2-7 -> A9-02 precise reason'},
+                      {'cid': 'A910-R02-08',
+                       'driver': 'OQ-INT-03 (A9-07 REV-04/58)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[13]',
+                       'old': {'status': 'PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (revision under A9-07)'},
+                       'new': {'status': 'OPEN - A9-07 (REV-04 ceramic-insulated coil, REV-58 one slot per coil) revises H2-1 '
+                                         'but gives no hot coil V / I / P; TBD - requires the coil design and S1a'},
+                       'summary': 'H2-1 -> A9-02 precise reason'},
+                      {'cid': 'A910-R02-09',
+                       'driver': 'OQ-INT-03 (A9-07 REV-19/21/25/28)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[14]',
+                       'old': {'status': 'PENDING docs/hardware/h2/h2_2_cathode_integration/'},
+                       'new': {'status': 'OPEN - A9-07 (REV-19, REV-21, REV-25, REV-28) revises the C1 requirements (heater '
+                                         'stated per step, pulsed ignition, 120 s x 2 dwell, selectable common tie) but gives '
+                                         'no heater V / I / P, preheat duration or pulse energy; TBD - requires the C1 unit '
+                                         'selection (RFQ-08)'},
+                       'summary': 'H2-2 -> A9-02 precise reason'},
+                      {'cid': 'A910-R02-10',
+                       'driver': 'OQ-INT-03 (row 22; A9-07)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[16]',
+                       'old': {'status': 'PENDING docs/hardware/h2/h2_3_gas_path_plenum/'},
+                       'new': {'status': 'OPEN - the compressor ICD has not supplied the drive power (row 22, '
+                                         'PARTIAL_BOUNDARY); A9-07 (REV-64, REV-65) gives no compressor or valve power'},
+                       'summary': 'H2-3 -> A9-02 precise reason'},
+                      {'cid': 'A910-R02-11',
+                       'driver': 'OQ-INT-03 (A9-07 REV-40..50)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[18]',
+                       'old': {'status': 'PENDING docs/hardware/h2/h2_5_thermal_network/'},
+                       'new': {'status': 'OPEN - A9-07 (REV-40..REV-50) revises the thermal limits (>= 50 K) but gives no '
+                                         'thermal_control load per step or active-cooling decision; TBD - requires the '
+                                         'thermal model / S1b'},
+                       'summary': 'H2-5 -> A9-02 precise reason'},
+                      {'cid': 'A910-R02-12',
+                       'driver': 'OQ-INT-03 (A9-08 XA9-IF-15)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[20]',
+                       'old': {'status': 'PENDING docs/budgets/xe' '_ledger_a9/ (A9-08, merged)'},
+                       'new': {'status': 'SATISFIED: consumed by A9-08 (docs/budgets/xe' '_ledger_a9/xe' '_ledger_a9_v1.json '
+                                         'XA9-IF-15: start-up templates C-S2, C-S4, I-S3 booked under PHASE_TOTAL_FLOW)'},
+                       'summary': 'A9-02 -> Xe ledger satisfied'},
+                      {'cid': 'A910-R02-13',
+                       'driver': 'OQ-INT-03 (A9-03 ICP-13)',
+                       'op': 'merge',
+                       'ptr': '/h3_inputs[id=H3-A902-03]',
+                       'old': {'basis': 'PENDING docs/interfaces/icp_neutralizer/'},
+                       'new': {'basis': 'schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13 (A9.1 A9-03-matching: off the '
+                                        'moving platform; fixed vs auto-tuned and the on-module pre-match OQ-A907-11 still '
+                                        'open)'},
+                       'summary': 'H3-A902-03 basis'}],
+            'A9-03': [{'cid': 'A910-R03-01',
+                       'driver': 'OQ-INT-03 (A9-04 UB-T-12)',
+                       'op': 'merge',
+                       'ptr': '/items[id=ICP-03]',
+                       'old': {'status': 'PENDING docs/experiments/hall_icp/uncertainty_budget/ (alignment share of the '
+                                         'C1-vs-ICP uncertainty budget)',
+                               'tbd': '__ABSENT__'},
+                       'new': {'status': 'TBD (rule LOCK-1, value LOCK-2)',
+                               'tbd': 'TBD - requires the measured exchange series (ICP-39) and the carrier datum '
+                                      'repeatability (row 122); A9-04 defines the alignment term UB-T-12 (thrust-axis cosine '
+                                      'error per carrier exchange), value TBD'},
+                       'summary': 'ICP-03 precise reason'},
+                      {'cid': 'A910-R03-02',
+                       'driver': 'OQ-INT-03 (A9-04 UB-RF-02..09)',
+                       'op': 'merge',
+                       'ptr': '/items[id=ICP-14]',
+                       'old': {'status': 'PENDING docs/experiments/hall_icp/uncertainty_budget/ (u(P_fwd), u(P_refl), '
+                                         'load-plane loss chain)',
+                               'tbd': '__ABSENT__'},
+                       'new': {'status': 'TBD (value LOCK-2)',
+                               'tbd': 'TBD - requires coupler / sensor certificates and S1a dummy-load characterization; '
+                                      'A9-04 allocates the chain terms UB-RF-02..UB-RF-07 (coupling factor, sensor '
+                                      'calibration, directivity / mismatch, matching and cable loss, harmonics, '
+                                      'repeatability) with the reference plane UB-RF-09, values TBD'},
+                       'summary': 'ICP-14 precise reason'},
+                      {'cid': 'A910-R03-03',
+                       'driver': 'OQ-INT-03 (A9-02 SLOTS)',
+                       'op': 'merge',
+                       'ptr': '/items[id=ICP-24]',
+                       'old': {'status': 'PENDING docs/architecture_comparison/power_boundary_a9/ + '
+                                         'abep_sim/bus_boundary_a9.py (slot ids and ledger efficiencies)',
+                               'tbd': '__ABSENT__'},
+                       'new': {'status': 'PARTIAL (slot ids defined by A9-02; loads and efficiencies TBD)',
+                               'tbd': 'TBD - requires the selected RF source, matching network and collector supply (RFQ-04 / '
+                                      'RFQ-05) for the per-slot efficiencies and loads; slot ids defined in '
+                                      'abep_sim/bus_boundary_a9.py: icp_rf_source, icp_matching_network, icp_collector_bias '
+                                      '(variants: icp_assist_magnet, active_cooling, flow_control_icp_feed only for G-ATM / '
+                                      'G-XE)'},
+                       'summary': 'ICP-24 slot ids from A9-02'},
+                      {'cid': 'A910-R03-04',
+                       'driver': 'OQ-INT-03 (A9-01 DQ-HI-IGN, DR-07, MD-HI-02)',
+                       'op': 'merge',
+                       'ptr': '/items[id=ICP-35]',
+                       'old': {'status': 'PENDING docs/experiments/hall_icp/prereg_framework/ (ICP ignition dwell/retry bound '
+                                         'and start classification)',
+                               'tbd': '__ABSENT__'},
+                       'new': {'status': 'TBD (LOCK-1)',
+                               'tbd': 'TBD - requires a LOCK-1 ICP ignition dwell / retry bound: A9-01 supplies the start '
+                                      'classification (DQ-HI-IGN, DR-07, MD-HI-02) but no ICP dwell / retry bound'},
+                       'summary': 'ICP-35 precise reason'},
+                      {'cid': 'A910-R03-05',
+                       'driver': 'OQ-INT-03 (A9-01 GD-17)',
+                       'op': 'merge',
+                       'ptr': '/items[id=ICP-41]',
+                       'old': {'status': 'PENDING docs/experiments/hall_icp/prereg_framework/ (pre-registered '
+                                         'start-up/thermal-state rule)',
+                               'tbd': '__ABSENT__'},
+                       'new': {'status': 'TBD (LOCK-1)',
+                               'tbd': 'TBD - requires the A9-01 start-up / thermal-state rule, listed as gate deadline GD-17 '
+                                      '(latest LOCK-1) and not yet written'},
+                       'summary': 'ICP-41 precise reason'},
+                      {'cid': 'A910-R03-06',
+                       'driver': 'OQ-INT-03 (A9-01 stage_map, execution_design)',
+                       'op': 'merge',
+                       'ptr': '/items[id=ICP-42]',
+                       'old': {'status': 'PENDING docs/experiments/hall_icp/prereg_framework/ (stage map and schedule)',
+                               'tbd': '__ABSENT__'},
+                       'new': {'status': 'SUPPLIED_BY_A9_01 (schedule form)',
+                               'tbd': 'TBD - requires the LOCK-2 block count n and the seed (A9-01 GD-05, GD-09); the '
+                                      'schedule form is supplied by A9-01: stage_map HI-ENG..HI-AO, execution_design '
+                                      '(REF-COND installation with hall_c1_reference in every block, A9.1 HIQ-01; SEQ-A / '
+                                      'SEQ-B; >= 6 blocks, A9.1 HIQ-02; NOT_TESTED after a stop, row 39)'},
+                       'summary': 'ICP-42 schedule form supplied by A9-01'},
+                      {'cid': 'A910-R03-07',
+                       'driver': 'A9.1 A9-03-Vd + OQ-INT-03',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=ID-02]',
+                       'old': {'status': 'PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01: V_d definition)'},
+                       'new': {'status': 'SATISFIED by A9.1 A9-03-Vd (V_d = V_anode - V_electron-source-reference, primary '
+                                         'controlled quantity; applied in ICP-22)'},
+                       'summary': 'ID-02 satisfied by A9.1'},
+                      {'cid': 'A910-R03-08',
+                       'driver': 'OQ-INT-03 (A9-01)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=ID-03]',
+                       'old': {'status': 'PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01: start rules)'},
+                       'new': {'status': 'PARTIAL: A9-01 supplies the start / restart classification (DQ-HI-IGN, '
+                                         'DQ-HI-RESTART, DR-07, MD-HI-02) and lists the start-up / thermal-state rule as '
+                                         'GD-17 (LOCK-1); no ICP ignition dwell / retry bound yet (LOCK-1 item)'},
+                       'summary': 'ID-03 partial'},
+                      {'cid': 'A910-R03-09',
+                       'driver': 'OQ-INT-03 (A9-01 stage_map)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=ID-04]',
+                       'old': {'status': 'PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01: stage map)'},
+                       'new': {'status': 'SATISFIED by A9-01: stage_map HI-ENG..HI-AO (Ar ENGINEERING_ONLY -> N2 -> O2 '
+                                         'NO_ATOMIC_O -> AO) and execution_design (block template, SEQ-A / SEQ-B)'},
+                       'summary': 'ID-04 satisfied'},
+                      {'cid': 'A910-R03-10',
+                       'driver': 'OQ-INT-03 (A9-02)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=ID-07]',
+                       'old': {'status': 'PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02: slots) + '
+                                         'abep_sim/bus_boundary_a9.py'},
+                       'new': {'status': 'PARTIAL: slot ids and start-up transient accounting (P_bus,1ms,max, A9.1 '
+                                         'OQ-A902-01; SEQUENCE_TEMPLATES, PROPOSED) defined in abep_sim/bus_boundary_a9.py; '
+                                         'ledger efficiencies are explicit caller inputs, TBD - require the selected '
+                                         'supplies'},
+                       'summary': 'ID-07 partial'},
+                      {'cid': 'A910-R03-11',
+                       'driver': 'OQ-INT-03 (A9-04)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=ID-09]',
+                       'old': {'status': 'PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04: allocations)'},
+                       'new': {'status': 'PARTIAL: A9-04 defines the RF chain terms UB-RF-02..UB-RF-09, the alignment term '
+                                         'UB-T-12 and the stop-rule forms (A9.1 UBQ-09: SR-C-MARGIN); values LOCK-2'},
+                       'summary': 'ID-09 partial'},
+                      {'cid': 'A910-R03-12',
+                       'driver': 'OQ-INT-03 (A9-05)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=ID-11]',
+                       'old': {'status': 'PENDING docs/evidence/icp_neutralizer/ (A9-05: evidence matrix) and PENDING '
+                                         'docs/experiments/hall_icp/validation_inputs/'},
+                       'new': {'status': 'SATISFIED by A9-05: docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json '
+                                         '(extraction, survey, lawful_acquisition_list) and '
+                                         'docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json '
+                                         '(validation inputs, row 145)'},
+                       'summary': 'ID-11 satisfied'},
+                      {'cid': 'A910-R03-13',
+                       'driver': 'OQ-INT-03 (A9-07 REV-03/66, IDA7-17)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=ID-13]',
+                       'old': {'status': 'PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (H2-1: revision for external C1 '
+                                         '/ FEMM)'},
+                       'new': {'status': 'PARTIAL: A9-07 REV-03 / REV-66 give the exit-face datum IP-EXIT; channel OD, MC-1 '
+                                         'stray field in the ICP volume and at the C1 orifice TBD - require FEMM of MC-1 '
+                                         '(A9-07 IDA7-17)'},
+                       'summary': 'ID-13 partial'},
+                      {'cid': 'A910-R03-14',
+                       'driver': 'OQ-INT-03 (A9-07 REV-40/48/49)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=ID-17]',
+                       'old': {'status': 'PENDING docs/hardware/h2/h2_5_thermal_network/ (H2-5: >= 50 K revision (row 86))'},
+                       'new': {'status': 'SATISFIED at requirement level by A9-07 (REV-40: >= 50 K + 20 % heat-load margin; '
+                                         'REV-48: 20 / 40 / 60 degC mounting-interface and 25 / 50 / 100 W conducted-heat '
+                                         'cases); sink measured per run (REV-49)'},
+                       'summary': 'ID-17 satisfied (requirement)'},
+                      {'cid': 'A910-R03-15',
+                       'driver': 'OQ-INT-03 (A9-07 REV-30..32, REV-38)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=ID-21]',
+                       'old': {'status': 'PENDING docs/hardware/h2/h2_6_diagnostics_fixture/ (H2-6: fixture revision for A9)'},
+                       'new': {'status': 'PARTIAL: A9-07 REV-30..REV-32 and REV-38 (3-point seat, weight path, >= 25 kg '
+                                         'payload, 1 % thrust test with maximum payload); seat dimensions and the '
+                                         'per-configuration calibration procedure stay LOCK-1 items'},
+                       'summary': 'ID-21 partial'},
+                      {'cid': 'A910-R03-16',
+                       'driver': 'OQ-INT-03 (A9-06 MA9-ID-20)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=ID-23]',
+                       'old': {'status': 'PENDING docs/hardware/h2/h2_7_mechanical_bom/ (H2-7: A9 amendment (A9-06))'},
+                       'new': {'status': 'PARTIAL: A9-06 (MA9-ID-20) answers the flight allocations vs evidence floors '
+                                         '(line_checks); module masses and CG per serial TBD - require S1a weighing'},
+                       'summary': 'ID-23 partial'},
+                      {'cid': 'A910-R03-17',
+                       'driver': 'OQ-INT-03 (A9-02; OQ-A907-02)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=ID-25]',
+                       'old': {'status': 'PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02: discharge slot '
+                                         'limit)'},
+                       'new': {'status': 'OPEN - A9-02 registers no stand discharge-slot limit: P_d,max needs the owner '
+                                         'registration of the H-1 / discharge-supply envelope (OQ-A907-02)'},
+                       'summary': 'ID-25 precise reason'},
+                      {'cid': 'A910-R03-18',
+                       'driver': 'OQ-INT-03 (ICP-43)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=ID-26]',
+                       'old': {'status': 'PENDING docs/architecture_comparison/power_boundary_a9/ (P_d,max; ICP-43)'},
+                       'new': {'status': 'OPEN - ICP-43 needs P_d,max (ID-25, OQ-A907-02) and the collector / plume terms; '
+                                         'not assessable before that registration'},
+                       'summary': 'ID-26 precise reason'},
+                      {'cid': 'A910-R03-19',
+                       'driver': 'OQ-INT-03 (A9.1 ICP-45; OQ-A907-02)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=ID-27]',
+                       'old': {'status': 'PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02: discharge slot '
+                                         'I_d,max)'},
+                       'new': {'status': 'OPEN - A9-02 registers no stand discharge-slot I_d,max: owner registration of the '
+                                         'envelope pending (OQ-A907-02; A9.1 ICP-45: I_d,max from the registered H-1 / '
+                                         'discharge-supply envelope)'},
+                       'summary': 'ID-27 precise reason'},
+                      {'cid': 'A910-R03-20',
+                       'driver': 'OQ-INT-03 (A9-05 TK-21/27/52)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=ID-29]',
+                       'old': {'status': 'PENDING docs/evidence/icp_neutralizer/ (A9-05: electron-current vs RF power '
+                                         'evidence)'},
+                       'new': {'status': 'PARTIAL: anchor only '
+                                         '(docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json TK-52 I_D about 1 A '
+                                         'at TK-21 200 W forward, TK-27 ~20 W absorbed; published analog, reported, context '
+                                         'only, never scaled, A9.1 ICP-45); further RF / ICP plasma-cathode sources in '
+                                         'lawful_acquisition_list LA-01..LA-09 await owner acquisition (A9.1 OQ-EV-02 order)'},
+                       'summary': 'ID-29 partial'},
+                      {'cid': 'A910-R03-21',
+                       'driver': 'OQ-INT-03 (A9-02 SLOTS)',
+                       'op': 'merge',
+                       'ptr': '/m16_impact[m16_row=12]',
+                       'old': {'blocking_item': 'PENDING A9-02 bus slots'},
+                       'new': {'blocking_item': 'A9-02 slots defined (icp_rf_source, icp_matching_network, '
+                                                'icp_collector_bias); blocking: supply selection and efficiencies TBD (RFQ-04 '
+                                                '/ RFQ-06)'},
+                       'summary': 'M16 row 12 blocking item re-evaluated'},
+                      {'cid': 'A910-R03-22',
+                       'driver': 'A9.1 OQ-A902-03 + OQ-INT-03',
+                       'op': 'merge',
+                       'ptr': '/hard_incompatibility_check/checked[2]',
+                       'old': {'finding': 'not assessable: bus slots PENDING A9-02 and no performance is predicted here; '
+                                          'decided only by measurement against the full-system gate'},
+                       'new': {'finding': 'not assessable: A9-02 defines the ICP bus slots and the residual P_ICP,available = '
+                                          '1350 - P_common - P_Hall - P_other,active (A9.1 OQ-A902-03), but every load is TBD '
+                                          'and no performance is predicted here; decided only by measurement against the '
+                                          'full-system gate'},
+                       'summary': 'hard-incompatibility finding re-evaluated'},
+                      {'cid': 'A910-R03-23',
+                       'driver': 'A9.1 OQ-A902-03',
+                       'op': 'replace',
+                       'ptr': '/items[id=ICP-24]/requirement',
+                       'old': 'must fit inside the ~1.35 kW internal allocation (row 109);',
+                       'new': 'must fit inside the ~1.35 kW internal allocation (row 109), i.e. inside P_ICP,available = 1350 '
+                              '- P_common - P_Hall - P_other,active at every registered condition (A9.1 OQ-A902-03; A9-02 '
+                              'icp_power_allocation_check; no fixed Hall/ICP split);',
+                       'summary': 'ICP-24 cross-references the OQ-A902-03 residual form'}],
+            'A9-04': [{'cid': 'A910-R04-01',
+                       'driver': 'OQ-INT-03 (A9-02 SLOTS)',
+                       'op': 'merge',
+                       'ptr': '/items[id=UB-P-01]',
+                       'old': {'value': 'PENDING abep_sim/bus_boundary_a9.py + '
+                                        'docs/architecture_comparison/power_boundary_a9/ (slots incl. RF source/matching, '
+                                        'collector/bias, C1 reference supplies)',
+                               'evidence_class': None,
+                               'status': 'PENDING',
+                               'source': 'owner answers rows 66, 110'},
+                       'new': {'value': 'S_A9 = the slot list of abep_sim/bus_boundary_a9.py (A9-02): hall_discharge, '
+                                        'hall_magnet_inner, hall_magnet_outer, hall_magnet_trim, c1_heater, c1_keeper, '
+                                        'c1_common_tie, filter_getter, icp_rf_source, icp_matching_network, '
+                                        'icp_collector_bias (variants: icp_assist_magnet, active_cooling, '
+                                        'flow_control_icp_feed only for G-ATM / G-XE), flow_control_atmospheric, '
+                                        'flow_control_xe, compressor, thermal_control, housekeeping_controls, '
+                                        'reserved_dc_port (installed per configuration in BASE_SLOTS)',
+                               'evidence_class': 'owner-allocation',
+                               'status': 'VERIFIED_INPUT',
+                               'source': 'abep_sim/bus_boundary_a9.py SLOTS / BASE_SLOTS (A9-02, merged); owner answers rows '
+                                         '66, 110'},
+                       'summary': 'UB-P-01 filled from A9-02'},
+                      {'cid': 'A910-R04-02',
+                       'driver': 'OQ-INT-03 (A9-02 ledger)',
+                       'op': 'merge',
+                       'ptr': '/items[id=UB-P-06]',
+                       'old': {'value': 'PENDING abep_sim/bus_boundary_a9.py + '
+                                        'docs/architecture_comparison/power_boundary_a9/ (and docs/hardware/h2/h2_4_ppu_bus/; '
+                                        'a LOCK-1 conditioning input, never a variance term; unmeasured loads -> '
+                                        'PARTIAL_BOUNDARY (row 22))',
+                               'status': 'PENDING'},
+                       'new': {'value': 'TBD - requires the lab-source / breadboard efficiencies (RFQ-06; row 113): A9-02 '
+                                        'ledger() takes every slot efficiency as an explicit caller input (value or TBD with '
+                                        'what it requires, no default; a LOCK-1 conditioning input, never a variance term); a '
+                                        'TBD compressor load -> PARTIAL_BOUNDARY (row 22)',
+                               'status': 'TBD'},
+                       'summary': 'UB-P-06 precise reason'},
+                      {'cid': 'A910-R04-03',
+                       'driver': 'A9.1 OQ-A902-01 + OQ-INT-03',
+                       'op': 'merge',
+                       'ptr': '/items[id=UB-P-07]',
+                       'old': {'value': 'TBD - requires the start-up sequence (revised SEQ-1, row 112) and PENDING '
+                                        'abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/',
+                               'units': 's / Hz',
+                               'evidence_class': None,
+                               'status': 'TBD',
+                               'a9_1_decision': '__ABSENT__',
+                               'source': 'owner answers rows 108, 112',
+                               'freeze_point': 'LOCK-1',
+                               'note': ''},
+                       'new': {'value': {'window_s': 0.001, 'bandwidth_min_Hz': 20000.0, 'sample_rate_min_Sa_s': 100000.0},
+                               'units': 's / Hz / Sa/s',
+                               'evidence_class': 'owner-allocation',
+                               'status': 'OWNER_GIVEN',
+                               'a9_1_decision': 'OQ-A902-01',
+                               'source': 'docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json OQ-A902-01 (A9-02 '
+                                         'GATE_DEFINITION)',
+                               'freeze_point': 'NOW',
+                               'note': 'gate quantity P_bus,1ms,max = max 1 ms moving mean < 1500 W, start-up and steady; >= '
+                                       '20 kHz effective bandwidth, >= 100 kSa/s, anti-alias documented, synchronized '
+                                       'channels; the start-up step list stays the A9-02 SEQUENCE_TEMPLATES (PROPOSED, row '
+                                       '112)'},
+                       'summary': 'UB-P-07 window / bandwidth from A9.1',
+                       'numeric': True},
+                      {'cid': 'A910-R04-04',
+                       'driver': 'A9.1 A9-03-matching + OQ-INT-03',
+                       'op': 'merge',
+                       'ptr': '/items[id=UB-RF-09]',
+                       'old': {'value': 'PENDING docs/interfaces/icp_neutralizer/ (coupler location relative to the matching '
+                                        'network and coil)',
+                               'evidence_class': None,
+                               'status': 'PENDING',
+                               'a9_1_decision': '__ABSENT__',
+                               'source': 'owner answers rows 62, 71'},
+                       'new': {'value': 'directional-coupler reference plane AFTER the matching network; matching network off '
+                                        'the moving platform with matched flexible coax and cable-loss / S-parameter '
+                                        'correction (ICD ICP-13)',
+                               'evidence_class': 'owner-allocation',
+                               'status': 'OWNER_GIVEN',
+                               'a9_1_decision': 'A9-03-matching',
+                               'source': 'docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json A9-03-matching; '
+                                         'schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13'},
+                       'summary': 'UB-RF-09 filled'},
+                      {'cid': 'A910-R04-05',
+                       'driver': 'OQ-INT-03 (A9-03 ICP-20/21)',
+                       'op': 'merge',
+                       'ptr': '/items[id=UB-N-00]',
+                       'old': {'value': 'PENDING docs/interfaces/icp_neutralizer/ (floating body + separately biased '
+                                        'collector circuit, row 70)',
+                               'evidence_class': None,
+                               'status': 'PENDING',
+                               'source': 'owner answer row 70'},
+                       'new': {'value': 'ICP body floating by default (ICD ICP-20, row 70); electron-extraction collector / '
+                                        'bias controlled and metered separately, never hard-grounded by default (ICD ICP-21)',
+                               'evidence_class': 'owner-allocation',
+                               'status': 'VERIFIED_INPUT',
+                               'source': 'schemas/interfaces/icp_neutralizer_icd_v1.json ICP-20 (OWNER_GIVEN, row 70), ICP-21 '
+                                         '(A9-03, merged)'},
+                       'summary': 'UB-N-00 filled'},
+                      {'cid': 'A910-R04-06',
+                       'driver': 'OQ-INT-03 (A9-02 SLOTS)',
+                       'op': 'merge',
+                       'ptr': '/items[id=UB-Z-03]',
+                       'old': {'value': 'TBD - requires certificates (magnet slots PENDING abep_sim/bus_boundary_a9.py + '
+                                        'docs/architecture_comparison/power_boundary_a9/)'},
+                       'new': {'value': 'TBD - requires certificates of the coil-current channels (magnet slots '
+                                        'hall_magnet_inner / hall_magnet_outer / hall_magnet_trim defined by A9-02)'},
+                       'summary': 'UB-Z-03 slot reference resolved'},
+                      {'cid': 'A910-R04-07',
+                       'driver': 'OQ-INT-03 (A9-01 decision_quantities)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-01]',
+                       'old': {'status': 'PENDING', 'value': 'PENDING docs/experiments/hall_icp/prereg_framework/'},
+                       'new': {'status': 'PARTIAL',
+                               'value': 'A9-01 supplies decision-quantity ids and roles (decision_quantities, '
+                                        'decision_topology); the contrast list, confirmation subset and family size m are '
+                                        'LOCK-1 items'},
+                       'summary': 'IF-01 partial'},
+                      {'cid': 'A910-R04-08',
+                       'driver': 'OQ-INT-03 (A9-01 stage_map)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-02]',
+                       'old': {'status': 'PENDING', 'value': 'PENDING docs/experiments/hall_icp/prereg_framework/'},
+                       'new': {'status': 'SATISFIED',
+                               'value': 'A9-01 stage_map HI-ENG..HI-AO with score_bearing flags (score-bearing: HI-CMP, '
+                                        'HI-ABS)'},
+                       'summary': 'IF-02 satisfied'},
+                      {'cid': 'A910-R04-09',
+                       'driver': 'OQ-INT-03 (A9-02)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-05]',
+                       'old': {'status': 'PENDING',
+                               'value': 'PENDING abep_sim/bus_boundary_a9.py + '
+                                        'docs/architecture_comparison/power_boundary_a9/'},
+                       'new': {'status': 'PARTIAL',
+                               'value': 'slot list S_A9 = abep_sim/bus_boundary_a9.py SLOTS / BASE_SLOTS; window frozen by '
+                                        'A9.1 OQ-A902-01 (UB-P-07); per-slot eta_s are caller inputs, TBD'},
+                       'summary': 'IF-05 partial'},
+                      {'cid': 'A910-R04-10',
+                       'driver': 'OQ-INT-03 (A9-03)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-07]',
+                       'old': {'status': 'PENDING', 'value': 'PENDING docs/interfaces/icp_neutralizer/'},
+                       'new': {'status': 'PARTIAL',
+                               'value': 'A9-03 ICP-20 (floating body, body potentials measured), ICP-21 (separately metered '
+                                        'collector), ICP-34 (V_coll, I_coll, V_body channels); sign convention and bias range '
+                                        'TBD (LOCK-1)'},
+                       'summary': 'IF-07 partial'},
+                      {'cid': 'A910-R04-11',
+                       'driver': 'A9.1 A9-03-matching + OQ-INT-03',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-08]',
+                       'old': {'status': 'PENDING', 'value': 'PENDING docs/interfaces/icp_neutralizer/'},
+                       'new': {'status': 'PARTIAL',
+                               'value': 'A9.1 A9-03-matching (ICD ICP-13): coupler plane after the matching network, network '
+                                        'off the platform; fixed vs auto-tuned topology and the on-module pre-match '
+                                        '(OQ-A907-11) open'},
+                       'summary': 'IF-08 partial'},
+                      {'cid': 'A910-R04-12',
+                       'driver': 'A9.1 HIQ-06 + OQ-INT-03',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-09]',
+                       'old': {'status': 'PENDING', 'value': 'PENDING docs/interfaces/icp_neutralizer/'},
+                       'new': {'status': 'PARTIAL',
+                               'value': 'A9-03 ICP-26 / A9.1 HIQ-06: G-REUSE primary, dedicated ICP flow 0 mg/s; G-ATM / G-XE '
+                                        'contingency flows TBD'},
+                       'summary': 'IF-09 partial'},
+                      {'cid': 'A910-R04-13',
+                       'driver': 'OQ-INT-03 (A9-03 ICP-08)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-10]',
+                       'old': {'status': 'PENDING', 'value': 'PENDING docs/interfaces/icp_neutralizer/'},
+                       'new': {'status': 'OPEN',
+                               'value': 'OPEN - ICD ICP-08: module masses and CG are measured per serial at S1a (TBD - '
+                                        'requires the modules); A9-03 gives only the row-54 flight allocations'},
+                       'summary': 'IF-10 precise reason'},
+                      {'cid': 'A910-R04-14',
+                       'driver': 'OQ-INT-03 (A9-05)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-12]',
+                       'old': {'status': 'PENDING',
+                               'value': 'PENDING docs/evidence/icp_neutralizer/ + '
+                                        'docs/experiments/hall_icp/validation_inputs/'},
+                       'new': {'status': 'SATISFIED',
+                               'value': 'docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json extraction '
+                                        'TK-01..TK-74 (what the analog measured and how, with page / figure locators; context '
+                                        'only)'},
+                       'summary': 'IF-12 satisfied'},
+                      {'cid': 'A910-R04-15',
+                       'driver': 'OQ-INT-03 (A9-07 REV-62)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-17]',
+                       'old': {'status': 'PENDING', 'value': 'PENDING docs/hardware/h2/h2_4_ppu_bus/'},
+                       'new': {'status': 'PARTIAL',
+                               'value': 'A9-07 REV-62 (breadboard discharge supply from the 100 V bus); channel points and '
+                                        'eta_d TBD - require the breadboard measurement before LOCK-2'},
+                       'summary': 'IF-17 partial'},
+                      {'cid': 'A910-R04-16',
+                       'driver': 'OQ-INT-03 (A9-07 REV-11, IDA7-17)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-18]',
+                       'old': {'status': 'PENDING', 'value': 'PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/'},
+                       'new': {'status': 'PARTIAL',
+                               'value': 'A9-07 REV-11 (hot-state B reference provision); B(z) map extent and B_max TBD - '
+                                        'require FEMM of MC-1 (IDA7-17) and S1a maps'},
+                       'summary': 'IF-18 partial'},
+                      {'cid': 'A910-R04-17',
+                       'driver': 'A9.1 HIQ-06 + OQ-INT-03',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-20]',
+                       'old': {'status': 'PENDING', 'value': 'PENDING docs/interfaces/icp_neutralizer/'},
+                       'new': {'status': 'PARTIAL',
+                               'value': 'ICP gas booking defined: G-REUSE 0 mg/s (ICD ICP-26; A9-08 XA9-21), G-XE only as a '
+                                        'contingency term under PHASE_TOTAL_FLOW; the C1 flow uncertainty term (UB-F-05, +-2 '
+                                        '% FS class, row 96) is carried by this lane, its booking size TBD'},
+                       'summary': 'IF-20 partial'},
+                      {'cid': 'A910-R04-18',
+                       'driver': 'A9.1 HIQ-06 + OQ-INT-03',
+                       'op': 'merge',
+                       'ptr': '/owner_answers_applied[row=46]',
+                       'old': {'how_applied': 'ICP gas feed unbooked -> UB-F-12 PENDING A9-03; C1 term 15,000 h context only'},
+                       'new': {'how_applied': 'ICP gas feed: UB-F-12 = G-REUSE (A9.1 HIQ-06; ICD ICP-26), no dedicated feed '
+                                              'booked; C1 term 15,000 h context only'},
+                       'summary': 'row 46 application updated'},
+                      {'cid': 'A910-R04-19',
+                       'driver': 'OQ-INT-03',
+                       'op': 'merge',
+                       'ptr': '/owner_answers_applied[row=110]',
+                       'old': {'how_applied': 'every active load has a bus slot (UB-P-01 PENDING A9-02)'},
+                       'new': {'how_applied': 'every active load has a bus slot (UB-P-01 = the A9-02 slot list)'},
+                       'summary': 'row 110 application updated'},
+                      {'cid': 'A910-R04-20',
+                       'driver': 'A9.1 HIQ-05',
+                       'op': 'replace',
+                       'ptr': '/stop_rules/net_benefit',
+                       'old': 'no weighted scalar and no single winner unless preregistered (row 37);',
+                       'new': 'no weighted scalar and no single winner unless preregistered (row 37); A9.1 HIQ-05: no '
+                              'mandatory Pareto relation - hard gates alone decide feasibility; the Pareto quantities are '
+                              'reported for engineering comparison unless a Pareto condition is preregistered at LOCK-1;',
+                       'summary': 'NET_BENEFIT amended for HIQ-05'},
+                      {'cid': 'A910-R04-21',
+                       'driver': 'A9.1 HIQ-05',
+                       'op': 'replace',
+                       'ptr': '/compliance[4]',
+                       'old': 'NET_BENEFIT is hard gates + Pareto (row 37)',
+                       'new': 'NET_BENEFIT is hard gates + a Pareto report (row 37; A9.1 HIQ-05: hard gates alone decide '
+                              'feasibility)',
+                       'summary': 'compliance line amended for HIQ-05'},
+                      {'cid': 'A910-R04-22',
+                       'driver': 'A9.1 HIQ-05',
+                       'op': 'replace',
+                       'ptr': '/owner_answers_applied[row=37]/how_applied',
+                       'old': 'NET_BENEFIT = hard gates + Pareto;',
+                       'new': 'NET_BENEFIT = hard gates + a Pareto report (A9.1 HIQ-05: no mandatory Pareto relation - hard '
+                              'gates alone decide feasibility; the Pareto quantities are reported for engineering comparison '
+                              'unless a Pareto condition is preregistered at LOCK-1);',
+                       'summary': 'row 37 application amended'}],
+            'A9-05vi': [{'cid': 'A910-R05vi-01',
+                         'driver': 'OQ-INT-03 (A9-03 ICP-20/21)',
+                         'op': 'merge',
+                         'ptr': '/items[id=VI-EX-03]',
+                         'old': {'definition': 'potential of the ICP ion-collecting electrode with respect to the declared '
+                                               'reference (cathode-common / facility ground, PENDING '
+                                               'docs/interfaces/icp_neutralizer/ (A9-03 ICD))'},
+                         'new': {'definition': 'potential of the ICP ion-collecting electrode with respect to the declared '
+                                               'reference (cathode-common / facility ground; the A9-03 ICD (ICP-20 / ICP-21) '
+                                               'records the collector bias and the body potentials but does not fix the '
+                                               'collector reference: LOCK-1 item)'},
+                         'summary': 'VI-EX-03 precise reason'},
+                        {'cid': 'A910-R05vi-02',
+                         'driver': 'OQ-INT-03 (A9-03 ICP-31)',
+                         'op': 'merge',
+                         'ptr': '/items[id=VI-HD-06]/how_obtained',
+                         'old': {'chain': 'INS-09 extended downstream (PENDING docs/interfaces/icp_neutralizer/ (A9-03 ICD))'},
+                         'new': {'chain': 'INS-09 extended downstream (ICD ICP-31 B(z) perturbation / sensitivity scan with '
+                                          'the ICP installed; map extent TBD)'},
+                         'summary': 'VI-HD-06 chain resolved'},
+                        {'cid': 'A910-R05vi-03',
+                         'driver': 'OQ-INT-03 (A9-01)',
+                         'op': 'merge',
+                         'ptr': '/interface_demands[id=IF-01]',
+                         'old': {'status': 'PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)'},
+                         'new': {'status': 'PARTIAL: A9-01 supplies stage_map ids, decision_quantities, design rules and the '
+                                           'outcome vocabulary (NO_VIABLE_CASE; OPEN as status); the per-input stage '
+                                           'assignment stays OPEN (OQ-A910-02, LOCK-1)'},
+                         'summary': 'IF-01 partial'},
+                        {'cid': 'A910-R05vi-04',
+                         'driver': 'OQ-INT-03 (A9-02)',
+                         'op': 'merge',
+                         'ptr': '/interface_demands[id=IF-03]',
+                         'old': {'status': 'PENDING abep_sim/bus_boundary_a9.py + '
+                                           'docs/architecture_comparison/power_boundary_a9/ (A9-02)'},
+                         'new': {'status': 'SATISFIED by A9-02: abep_sim/bus_boundary_a9.py SLOTS / BASE_SLOTS (A9-02, '
+                                           'merged) (icp_rf_source, icp_matching_network, icp_collector_bias (variants: '
+                                           'icp_assist_magnet, active_cooling, flow_control_icp_feed only for G-ATM / G-XE); '
+                                           'C1 slots c1_heater, c1_keeper, c1_common_tie, filter_getter, flow_control_xe)'},
+                         'summary': 'IF-03 satisfied'},
+                        {'cid': 'A910-R05vi-05',
+                         'driver': 'OQ-INT-03 (A9-03)',
+                         'op': 'merge',
+                         'ptr': '/interface_demands[id=IF-05]',
+                         'old': {'status': 'PENDING docs/interfaces/icp_neutralizer/ (A9-03 ICD)'},
+                         'new': {'status': 'PARTIAL: A9-03 defines the RF load plane (ICP-13 / ICP-14), collector / body '
+                                           'terminals (ICP-20 / ICP-21), gas port (ICP-26) and channels (ICP-34); the '
+                                           'Hall-exhaust-to-ICP pressure tap (ICP-27) and diagnostic access geometry are TBD '
+                                           '(LOCK-1)'},
+                         'summary': 'IF-05 partial'},
+                        {'cid': 'A910-R05vi-06',
+                         'driver': 'OQ-INT-03 (A9-04)',
+                         'op': 'merge',
+                         'ptr': '/interface_demands[id=IF-07]',
+                         'old': {'status': 'PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / '
+                                           'decision quantity)'},
+                         'new': {'status': 'PARTIAL: A9-04 measurement chains and stop-rule forms exist; decision-quantity '
+                                           'ids per input: see the A9-10 chain -> DQ-HI consumer table (OQ-INT-01, PROPOSED) '
+                                           'and OQ-A910-02'},
+                         'summary': 'IF-07 partial'},
+                        {'cid': 'A910-R05vi-07',
+                         'driver': 'OQ-INT-03 (A9-07)',
+                         'op': 'merge',
+                         'ptr': '/interface_demands[id=IF-12]',
+                         'old': {'status': 'PENDING A9-07 revision of H2-1'},
+                         'new': {'status': 'PARTIAL: A9-07 revises H2-1 (REV-01..REV-12, REV-66: external C1, IP-EXIT / '
+                                           'IP-NEU, hot-state B sensor); the field map incl. the downstream fringe region is '
+                                           'TBD - requires FEMM of MC-1 and the S1a map (A9-07 IDA7-17)'},
+                         'summary': 'IF-12 partial'},
+                        {'cid': 'A910-R05vi-08',
+                         'driver': 'A9.1 A9-03-planes + OQ-INT-03',
+                         'op': 'merge',
+                         'ptr': '/interface_demands[id=IF-19]',
+                         'old': {'status': 'PENDING A9-03 (downstream plane definition)'},
+                         'new': {'status': 'SATISFIED by A9.1 A9-03-planes (IP-EXIT = H-1 exit, z = L; IP-NEU downstream '
+                                           'datum; historical IP-DN unchanged), ICD ICP-01 and A9-07 REV-03 / REV-66'},
+                         'summary': 'IF-19 satisfied'},
+                        {'cid': 'A910-R05vi-09',
+                         'driver': 'A9.1 HIQ-05',
+                         'op': 'replace',
+                         'ptr': '/decision_vocabulary/net_benefit_form',
+                         'old': 'no weighted scalar unless preregistered (row 37)',
+                         'new': 'no weighted scalar unless preregistered (row 37); A9.1 HIQ-05: no mandatory Pareto relation '
+                                '- hard gates alone decide feasibility; the Pareto quantities are reported for engineering '
+                                'comparison unless a Pareto condition is preregistered at LOCK-1',
+                         'summary': 'net_benefit_form amended'},
+                        {'cid': 'A910-R05vi-10',
+                         'driver': 'A9.1 HIQ-05',
+                         'op': 'replace',
+                         'ptr': '/owner_answers_applied[row=37]/how',
+                         'old': 'NET_BENEFIT = hard gates + Pareto, no weighted scalar',
+                         'new': 'NET_BENEFIT = hard gates + a Pareto report, no weighted scalar (A9.1 HIQ-05: no mandatory '
+                                'Pareto relation)',
+                         'summary': 'row 37 application amended'},
+                        {'cid': 'A910-R05vi-11',
+                         'driver': 'A9.1 HIQ-06',
+                         'op': 'replace',
+                         'ptr': '/items[id=VI-GAS-01]/definition',
+                         'old': '; UNBOOKED today (A9 recorder flag row 46)',
+                         'new': '; the primary mode is (a) G-REUSE with no dedicated flow (A9.1 HIQ-06, which closes the '
+                                'row-46 recorder flag for the primary mode); (b) and (c) are declared contingency variants '
+                                'whose flows are TBD',
+                         'summary': 'VI-GAS-01 definition consistent with G-REUSE'},
+                        {'cid': 'A910-R05vi-12',
+                         'driver': 'A9.1 HIQ-06',
+                         'op': 'merge',
+                         'ptr': '/items[id=VI-GAS-01]/how_obtained',
+                         'old': {'chain': 'owner decision (OQ-VI-01) then INS-05 per species'},
+                         'new': {'chain': 'owner decision A9.1 HIQ-06 (answers OQ-VI-01): G-REUSE, no dedicated ICP flow; '
+                                          'INS-05 per species only for a declared G-ATM / G-XE contingency variant'},
+                         'summary': 'VI-GAS-01 chain: OQ-VI-01 answered by HIQ-06'},
+                        {'cid': 'A910-R05vi-13',
+                         'driver': 'A9.1 HIQ-06',
+                         'op': 'merge',
+                         'ptr': '/items[id=VI-GAS-01]',
+                         'old': {'source': 'docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json '
+                                           'recorder_consistency_flags_for_owner (row 46)'},
+                         'new': {'source': 'docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json HIQ-06, '
+                                           'HIQ-06_accounting (answers the recorder flag on row 46 of '
+                                           'docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json '
+                                           'for the primary mode)'},
+                         'summary': 'VI-GAS-01 source: A9.1 HIQ-06'}],
+            'A9-06': [{'cid': 'A910-R06-01',
+                       'driver': 'A9-10 self-reference',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=MA9-ID-18]',
+                       'old': {'status': 'PENDING'},
+                       'new': {'status': 'SATISFIED by A9-10: closure re-run with the A9-08 residual import and the corrected '
+                                         'A9-07 LV-COIL basis (builder --check reproduces)'},
+                       'summary': 'MA9-ID-18 satisfied'}],
+            'A9-07': [{'cid': 'A910-R07-01',
+                       'driver': 'OQ-INT-03 (A9-04 UB-RF-*)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IDA7-15]',
+                       'old': {'status': 'PENDING docs/experiments/hall_icp/uncertainty_budget/ (LOCK-2 numbers)'},
+                       'new': {'status': 'PARTIAL - A9-04 defines u(P_fwd), u(P_refl) and the cable-loss terms '
+                                         '(UB-RF-02..UB-RF-07); values TBD - require certificates / S1a (LOCK-2)'},
+                       'summary': 'IDA7-15 partial'},
+                      {'cid': 'A910-R07-02',
+                       'driver': 'OQ-INT-03 (A9-04 UB-RF-02..07)',
+                       'op': 'replace',
+                       'ptr': '/new_items[id=A9H-INS-01]/note',
+                       'old': 'u(P_fwd), u(P_refl) PENDING A9-04 (ICP-14, UB-RF-04)',
+                       'new': 'u(P_fwd), u(P_refl): A9-04 (merged) defines the terms UB-RF-02..UB-RF-07 (ICP-14, UB-RF-04), '
+                              'values TBD - require certificates / S1a',
+                       'summary': 'A9H-INS-01 note re-evaluated'}],
+            'A9-09': [{'cid': 'A910-R09-01',
+                       'driver': 'row 111 + A9-07 REV-51/62',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-RFQ-04]',
+                       'old': {'status': 'FLAG'},
+                       'new': {'status': 'RESOLVED for A9 by row 111 (regulated 100 V internal bus; A9-07 REV-51 / REV-62); '
+                                         'the H2-4 v1 28 V class stays history'},
+                       'summary': '28 V vs 100 V conflict resolved by row 111'},
+                      {'cid': 'A910-R09-02',
+                       'driver': 'OQ-INT-03 (OQ-A907-02; ICP-21; A902-22)',
+                       'op': 'merge',
+                       'ptr': '/interface_demands[id=IF-RFQ-07]',
+                       'old': {'status': 'OPEN'},
+                       'new': {'status': 'OPEN - I_d,max / P_d of the registered envelope pending (OQ-A907-02); collector / '
+                                         'bias range TBD (ICP-21); matching-network draw TBD (A902-22)'},
+                       'summary': 'IF-RFQ-07 precise reason'},
+                      {'cid': 'A910-R09-03',
+                       'driver': 'A9-08 design_cases (verified lane value)',
+                       'op': 'merge',
+                       'ptr': '/packages[6]/requirements[3]',
+                       'old': {'basis': 'pending lane',
+                               'sources': [{'type': 'owner_row',
+                                            'row': 45,
+                                            'covers_ids': ['OD-XE-4', 'H27-Q6'],
+                                            'quote': 'book the 2% unusable/residual Xe once in the Xe ledger',
+                                            'answer_sha256': 'bb83b79a0651b351139537fc709cfd348e03347511cb59330ae3abecd8c913db',
+                                            'path': 'docs/decisions/OD_2026_09_29_owner_answers_147.json'},
+                                           {'type': 'owner_row',
+                                            'row': 43,
+                                            'covers_ids': ['OD-XE-2'],
+                                            'quote': 'Use a separate reserve term equal to 20% of planned non-reserve mission '
+                                                     'Xe',
+                                            'answer_sha256': 'f42b3e3852bb0524e398bec2e9991a7b0dbc3af6c3629ea8e2048e4f38b97872',
+                                            'path': 'docs/decisions/OD_2026_09_29_owner_answers_147.json'},
+                                           {'type': 'owner_row',
+                                            'row': 8,
+                                            'covers_ids': ['WEB-SUP-1', 'R6-Q5'],
+                                            'quote': 'request quotations for Xe tank/PMU/FCU/MFCs/thrust stand',
+                                            'answer_sha256': 'e68149db165896264789c70c412f21a33c4b8356d0184f625a674f7f53e8ea36',
+                                            'path': 'docs/decisions/OD_2026_09_29_owner_answers_147.json'}]},
+                       'new': {'basis': 'copied from the verified lane A9-08 (design_cases at 323.15 K; reserve / residual '
+                                        'split)',
+                               'sources': [{'type': 'owner_row',
+                                            'row': 45,
+                                            'covers_ids': ['OD-XE-4', 'H27-Q6'],
+                                            'quote': 'book the 2% unusable/residual Xe once in the Xe ledger',
+                                            'answer_sha256': 'bb83b79a0651b351139537fc709cfd348e03347511cb59330ae3abecd8c913db',
+                                            'path': 'docs/decisions/OD_2026_09_29_owner_answers_147.json'},
+                                           {'type': 'owner_row',
+                                            'row': 43,
+                                            'covers_ids': ['OD-XE-2'],
+                                            'quote': 'Use a separate reserve term equal to 20% of planned non-reserve mission '
+                                                     'Xe',
+                                            'answer_sha256': 'f42b3e3852bb0524e398bec2e9991a7b0dbc3af6c3629ea8e2048e4f38b97872',
+                                            'path': 'docs/decisions/OD_2026_09_29_owner_answers_147.json'},
+                                           {'type': 'owner_row',
+                                            'row': 8,
+                                            'covers_ids': ['WEB-SUP-1', 'R6-Q5'],
+                                            'quote': 'request quotations for Xe tank/PMU/FCU/MFCs/thrust stand',
+                                            'answer_sha256': 'e68149db165896264789c70c412f21a33c4b8356d0184f625a674f7f53e8ea36',
+                                            'path': 'docs/decisions/OD_2026_09_29_owner_answers_147.json'},
+                                           {'type': 'deliverable',
+                                            'key': 'A9-08',
+                                            'path': 'docs/budgets/xe' '_ledger_a9/xe' '_ledger_a9_v1.json',
+                                            'pointer': '/design_cases/tank_volume'},
+                                           {'type': 'deliverable',
+                                            'key': 'A9-08',
+                                            'path': 'docs/budgets/xe' '_ledger_a9/xe' '_ledger_a9_v1.json',
+                                            'pointer': '/design_cases/reserve_residual_split'}]},
+                       'summary': 'RFQ-07-R04 basis and sources name the A9-08 ledger'}]}
+
+
+def _repair2() -> dict:
+    return {'A9-04': [{'cid': 'A910-R04-23',
+                       'driver': 'OQ-INT-03 (A9-03 ICP-14)',
+                       'op': 'replace',
+                       'ptr': '/measurement_chains[dq=UB-DQ-RF]/equations[4]',
+                       'old': 'method PENDING docs/interfaces/icp_neutralizer/)',
+                       'new': 'method TBD - not defined in the merged A9-03 ICD, whose ICP-14 names calorimetry only as the '
+                              'independent cross-check; LOCK-1 item)',
+                       'summary': 'calorimetry method: precise remaining reason'},
+                      {'cid': 'A910-R04-24',
+                       'driver': 'OQ-INT-03 (A9-03 ICP-21)',
+                       'op': 'replace',
+                       'ptr': '/measurement_chains[dq=UB-DQ-NEUT]/equations[2]',
+                       'old': 'sign convention PENDING docs/interfaces/icp_neutralizer/)',
+                       'new': 'sign convention TBD - not defined in the merged A9-03 ICD, whose ICP-21 defines the separately '
+                              'metered collector only; LOCK-1 item)',
+                       'summary': 'collector-current sign convention: precise remaining reason'}]}
+
+def _repair3() -> dict:
+    return {'A9-03': [{'cid': 'A910-R03-24',
+                       'driver': 'OQ-INT-03 (A9-02; A9-05 TK-21/52)',
+                       'op': 'replace',
+                       'ptr': '/hard_incompatibility_check/checked[3]/finding',
+                       'old': 'not assessable, PENDING docs/architecture_comparison/power_boundary_a9/ (I_d,max) and '
+                              'docs/evidence/icp_neutralizer/ (analog electron-current vs RF power evidence).',
+                       'new': 'not assessable: A9-02 (merged) registers no stand I_d,max (owner registration OQ-A907-02) and '
+                              'A9-05 (merged) holds only the anchor analog '
+                              '(docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json TK-52 I_D about 1 A at TK-21 '
+                              '200 W forward; published analog, context only, never scaled, A9.1 ICP-45).',
+                       'summary': 'hard-incompatibility finding re-evaluated against A9-02 / A9-05'}]}
+
+def _repair4() -> dict:
+    return {'A9-04': [{'cid': 'A910-R04-25',
+                       'driver': 'OQ-INT-03 (A9-01 DQ-HI-ETAU)',
+                       'op': 'merge',
+                       'ptr': '/items[id=UB-E-00]',
+                       'old': {'value': 'PENDING docs/experiments/hall_icp/prereg_framework/ (if used, S1b Faraday/ExB '
+                                        'repeatability is mandatory, row 32)',
+                               'status': 'PENDING'},
+                       'new': {'value': 'TBD - requires the LOCK-1 choice: A9-01 DQ-HI-ETAU is CONDITIONAL (descriptive '
+                                        'unless preregistered at LOCK-1; if used, S1b Faraday / ExB repeatability is '
+                                        'mandatory, row 32)',
+                               'status': 'TBD'},
+                       'summary': 'UB-E-00 re-stated from A9-01 DQ-HI-ETAU'},
+                      {'cid': 'A910-R04-26',
+                       'driver': 'OQ-INT-03 (A9-01 DQ-HI-ETAU)',
+                       'op': 'replace',
+                       'ptr': '/measurement_chains[dq=DQ-HI-ETAU]/equations[0]',
+                       'old': 'mdot_prop basis PENDING docs/experiments/hall_icp/prereg_framework/]',
+                       'new': 'mdot_prop basis TBD - A9-01 DQ-HI-ETAU (CONDITIONAL) does not define it; LOCK-1 item if eta_u '
+                              'is preregistered]',
+                       'summary': 'mdot_prop basis precise reason'},
+                      {'cid': 'A910-R04-27',
+                       'driver': 'OQ-INT-03 (A9-03 ICP-21)',
+                       'op': 'merge',
+                       'ptr': '/stop_rules/limit_aborts/limits[id=LA-04]',
+                       'old': {'value': 'TBD - requires PENDING docs/interfaces/icp_neutralizer/ and supply rating'},
+                       'new': {'value': 'TBD - requires the collector / bias V-I range (ICD ICP-21: a design item, TBD in the '
+                                        'merged A9-03 ICD) and the supply rating (RFQ-05)'},
+                       'summary': 'LA-04 precise reason'}]}
+
+
+def _repair_code() -> dict:
+    """Source-code changes of the review repair (recorded as 'code' records with a marker and a scope)."""
+    return {"A9-02": [
+        R("A910-R02-C1", "A9.1 OQ-A902-01 (review repair; OQ-A910-03 not pre-empted)", "code", None,
+          summary="rfp_power_gate: PASS only on p_bus_1ms_max WITH a conformant gate_measurement record (>= 100 kSa/s, "
+          ">= 20 kHz, anti-alias documented, synchronized); peak_sampled is NOT_EVALUABLE both ways (protection record; "
+          "the reading 'a conformant peak below 1500 W bounds the 1 ms maximum' is the OPEN owner question OQ-A910-03); "
+          "an unstated basis is NOT_EVALUABLE; step_average / steady_state FAIL only under the stated duration "
+          "assumption; c1_keeper load plane no longer cites peak_sampled",
+          file="abep_sim/bus_boundary_a9.py", marker="PEAK_SAMPLED_RULE",
+          scope=["/items", "/gates_and_allocations", "/sequencing", "/slots", "/bus_architecture", "/h4_inputs"],
+          numeric=False),
+        R("A910-R02-C2", "OQ-INT-03 (A9-04 DQ-HI-PBUS chain)", "code", None,
+          summary="A902-25 note and the row-89 application: the pulse-energy record is not defined by the merged "
+          "A9-04 DQ-HI-PBUS chain (LOCK-1 item) instead of 'PENDING A9-04'; schema gains the gate_measurement record",
+          file="docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py",
+          marker="defines no pulse-energy record yet", scope=["/items", "/owner_answers_applied"], numeric=False),
+    ]}
 
 
 # ------------------------------------------------------------------------------------------------------ pointers

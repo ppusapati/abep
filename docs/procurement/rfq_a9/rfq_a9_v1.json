@@ -73,22 +73,22 @@
   {
    "key": "ICD",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "4d16ee4d0e3425843f24c78b3dea038e46ca44360bf44a1451c36dcbad500fb8"
+   "sha256": "0a2ec6666530e8464f63a9517eaff8b2eece61aac9c7b73b4e2de897f5387d75"
   },
   {
    "key": "BUS",
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "sha256": "7ca8ed23652c4f3a1054461c7d14919c7e169d2ae97e20b318acba397ddeb3af"
+   "sha256": "dd888719d36e5de2fc9e622451ff2ea7b88522d12aacf32919be130dc225bcb3"
   },
   {
    "key": "UB",
    "path": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "sha256": "650aa32b4b388aebba4c20a54ca35f762b09f7d04403f4f0b440d6fd8fda0983"
+   "sha256": "4c9f57fa28bf4465a80966a12661eddcd77dd37d487fd63fb111d60937426de6"
   },
   {
    "key": "PRE",
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "sha256": "f22e12e73a664df26349642aa64e850ffd8e6581e7239effd8230410bb97264f"
+   "sha256": "1310a84fa9840792ab7ae9617c55fd1a041653064ccaa6eb364785214f45a4ee"
   },
   {
    "key": "EVI",
@@ -98,12 +98,12 @@
   {
    "key": "VIN",
    "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-   "sha256": "54ae028df1ea940d624e7caa074eed47fe8576ef1a0d631391601ddf855e6158"
+   "sha256": "e26c38ef0af4f56d8d7b21e024867e7c6ad0378841d2f9992ac8f0d904a9a2ed"
   },
   {
    "key": "INT",
    "path": "docs/experiments/hall_icp/integration/a9_core_integration_v1.json",
-   "sha256": "425218cf84c6bb862924f3a3c125186b0ee00fc403c752f1e3c2ddb4f658386d"
+   "sha256": "86146f986e35e4d9e507c739aac9f8dd11b483be45fd7691bdccc585c734a09f"
   },
   {
    "key": "H22",
@@ -4742,7 +4742,7 @@
       "source": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json design_cases.tank_volume / reserve_residual_split (case = LOADED Xe, XA9Q-01 PROPOSED reading)"
      },
      "units": "L (V_min at 323.15 K incl. EOS density uncertainty), kg",
-     "basis": "pending lane",
+     "basis": "copied from the verified lane A9-08 (design_cases at 323.15 K; reserve / residual split)",
      "sources": [
       {
        "type": "owner_row",
@@ -4775,6 +4775,18 @@
        "quote": "request quotations for Xe tank/PMU/FCU/MFCs/thrust stand",
        "answer_sha256": "e68149db165896264789c70c412f21a33c4b8356d0184f625a674f7f53e8ea36",
        "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json"
+      },
+      {
+       "type": "deliverable",
+       "key": "A9-08",
+       "path": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
+       "pointer": "/design_cases/tank_volume"
+      },
+      {
+       "type": "deliverable",
+       "key": "A9-08",
+       "path": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
+       "pointer": "/design_cases/reserve_residual_split"
       }
      ],
      "evidence_class": "model-derived",
@@ -7084,7 +7096,9 @@
     "sources": [
      "row 45",
      "row 43",
-     "row 8"
+     "row 8",
+     "A9-08:/design_cases/tank_volume",
+     "A9-08:/design_cases/reserve_residual_split"
     ],
     "status": "COPIED_VERIFIED",
     "freeze_point": "after-evidence"
@@ -7369,6 +7383,12 @@
    }
   ],
   "source_to_requirements": {
+   "A9-08:/design_cases/reserve_residual_split": [
+    "RFQ-07-R04"
+   ],
+   "A9-08:/design_cases/tank_volume": [
+    "RFQ-07-R04"
+   ],
    "A9.1 A9-03-Vd": [
     "RFQ-06-R05"
    ],
@@ -8040,7 +8060,7 @@
    "to": "A9-07 docs/hardware/h2_a9_revisions/",
    "quantity": "H2-4 H3-PPU-05 breadboard input: 28 V class -> regulated 100 V internal bus (row 111) - revision flag",
    "units": "V",
-   "status": "FLAG"
+   "status": "RESOLVED for A9 by row 111 (regulated 100 V internal bus; A9-07 REV-51 / REV-62); the H2-4 v1 28 V class stays history"
   },
   {
    "id": "IF-RFQ-05",
@@ -8064,7 +8084,7 @@
    "to": "RFQ-05, RFQ-06, RFQ-08",
    "quantity": "I_d,max of the registered envelope; P_d; collector/bias range (A902-23); matching-network draw (A902-22); heater power",
    "units": "A, W, V",
-   "status": "OPEN"
+   "status": "OPEN - I_d,max / P_d of the registered envelope pending (OQ-A907-02); collector / bias range TBD (ICP-21); matching-network draw TBD (A902-22)"
   },
   {
    "id": "IF-RFQ-08",
@@ -9487,6 +9507,30 @@
     "ptr": "/open_owner_questions[id=OQ-RFQ-05]",
     "count": 1,
     "summary": "H2-4 28 V vs row-111 100 V conflict recorded as resolved by row 111"
+   },
+   {
+    "cid": "A910-R09-01",
+    "driver": "row 111 + A9-07 REV-51/62",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-RFQ-04]",
+    "count": 1,
+    "summary": "28 V vs 100 V conflict resolved by row 111"
+   },
+   {
+    "cid": "A910-R09-02",
+    "driver": "OQ-INT-03 (OQ-A907-02; ICP-21; A902-22)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-RFQ-07]",
+    "count": 1,
+    "summary": "IF-RFQ-07 precise reason"
+   },
+   {
+    "cid": "A910-R09-03",
+    "driver": "A9-08 design_cases (verified lane value)",
+    "op": "merge",
+    "ptr": "/packages[6]/requirements[3]",
+    "count": 1,
+    "summary": "RFQ-07-R04 basis and sources name the A9-08 ledger"
    }
   ]
  }

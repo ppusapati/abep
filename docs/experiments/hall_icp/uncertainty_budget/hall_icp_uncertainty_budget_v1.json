@@ -714,12 +714,12 @@
    "name": "bus-slot list of the A9 boundary",
    "symbol": "S_A9",
    "type": "rule",
-   "value": "PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/ (slots incl. RF source/matching, collector/bias, C1 reference supplies)",
+   "value": "S_A9 = the slot list of abep_sim/bus_boundary_a9.py (A9-02): hall_discharge, hall_magnet_inner, hall_magnet_outer, hall_magnet_trim, c1_heater, c1_keeper, c1_common_tie, filter_getter, icp_rf_source, icp_matching_network, icp_collector_bias (variants: icp_assist_magnet, active_cooling, flow_control_icp_feed only for G-ATM / G-XE), flow_control_atmospheric, flow_control_xe, compressor, thermal_control, housekeeping_controls, reserved_dc_port (installed per configuration in BASE_SLOTS)",
    "units": "-",
    "basis": "A9-02",
-   "source": "owner answers rows 66, 110",
-   "evidence_class": null,
-   "status": "PENDING",
+   "source": "abep_sim/bus_boundary_a9.py SLOTS / BASE_SLOTS (A9-02, merged); owner answers rows 66, 110",
+   "evidence_class": "owner-allocation",
+   "status": "VERIFIED_INPUT",
    "freeze_point": "LOCK-1",
    "owner_rows": [
     66,
@@ -824,12 +824,12 @@
    "name": "conversion efficiency for slots supplied by non-flight-representative lab sources",
    "symbol": "eta_s",
    "type": "conditioning",
-   "value": "PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/ (and docs/hardware/h2/h2_4_ppu_bus/; a LOCK-1 conditioning input, never a variance term; unmeasured loads -> PARTIAL_BOUNDARY (row 22))",
+   "value": "TBD - requires the lab-source / breadboard efficiencies (RFQ-06; row 113): A9-02 ledger() takes every slot efficiency as an explicit caller input (value or TBD with what it requires, no default; a LOCK-1 conditioning input, never a variance term); a TBD compressor load -> PARTIAL_BOUNDARY (row 22)",
    "units": "-",
    "basis": "A9-02",
    "source": "owner answers rows 22, 108, 113",
    "evidence_class": null,
-   "status": "PENDING",
+   "status": "TBD",
    "freeze_point": "LOCK-1",
    "owner_rows": [
     22,
@@ -849,13 +849,17 @@
    "name": "start-up transient window and channel bandwidth for P_bus,peak",
    "symbol": "tau_start, f_bw,P",
    "type": "rule",
-   "value": "TBD - requires the start-up sequence (revised SEQ-1, row 112) and PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/",
-   "units": "s / Hz",
+   "value": {
+    "window_s": 0.001,
+    "bandwidth_min_Hz": 20000.0,
+    "sample_rate_min_Sa_s": 100000.0
+   },
+   "units": "s / Hz / Sa/s",
    "basis": "A9-02",
-   "source": "owner answers rows 108, 112",
-   "evidence_class": null,
-   "status": "TBD",
-   "freeze_point": "LOCK-1",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json OQ-A902-01 (A9-02 GATE_DEFINITION)",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW",
    "owner_rows": [
     108,
     112
@@ -865,7 +869,8 @@
     "hall_c1_reference",
     "hall_icp_neutralizer"
    ],
-   "note": ""
+   "note": "gate quantity P_bus,1ms,max = max 1 ms moving mean < 1500 W, start-up and steady; >= 20 kHz effective bandwidth, >= 100 kSa/s, anti-alias documented, synchronized channels; the start-up step list stays the A9-02 SEQUENCE_TEMPLATES (PROPOSED, row 112)",
+   "a9_1_decision": "OQ-A902-01"
   },
   {
    "id": "UB-P-08",
@@ -1088,12 +1093,12 @@
    "name": "RF reference plane for the delivered-power quantity",
    "symbol": "plane",
    "type": "rule",
-   "value": "PENDING docs/interfaces/icp_neutralizer/ (coupler location relative to the matching network and coil)",
+   "value": "directional-coupler reference plane AFTER the matching network; matching network off the moving platform with matched flexible coax and cable-loss / S-parameter correction (ICD ICP-13)",
    "units": "-",
    "basis": "A9-03",
-   "source": "owner answers rows 62, 71",
-   "evidence_class": null,
-   "status": "PENDING",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json A9-03-matching; schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
    "freeze_point": "LOCK-1",
    "owner_rows": [
     62,
@@ -1103,7 +1108,8 @@
    "configurations": [
     "hall_icp_neutralizer"
    ],
-   "note": ""
+   "note": "",
+   "a9_1_decision": "A9-03-matching"
   },
   {
    "id": "UB-N-00",
@@ -1111,12 +1117,12 @@
    "name": "electrical topology: floating ICP body, separately biased collector",
    "symbol": "",
    "type": "rule",
-   "value": "PENDING docs/interfaces/icp_neutralizer/ (floating body + separately biased collector circuit, row 70)",
+   "value": "ICP body floating by default (ICD ICP-20, row 70); electron-extraction collector / bias controlled and metered separately, never hard-grounded by default (ICD ICP-21)",
    "units": "-",
    "basis": "A9-03",
-   "source": "owner answer row 70",
-   "evidence_class": null,
-   "status": "PENDING",
+   "source": "schemas/interfaces/icp_neutralizer_icd_v1.json ICP-20 (OWNER_GIVEN, row 70), ICP-21 (A9-03, merged)",
+   "evidence_class": "owner-allocation",
+   "status": "VERIFIED_INPUT",
    "freeze_point": "LOCK-1",
    "owner_rows": [
     70
@@ -2021,7 +2027,7 @@
    "name": "coil-current channels",
    "symbol": "u_r(I_coil)",
    "type": "B",
-   "value": "TBD - requires certificates (magnet slots PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/)",
+   "value": "TBD - requires certificates of the coil-current channels (magnet slots hall_magnet_inner / hall_magnet_outer / hall_magnet_trim defined by A9-02)",
    "units": "relative",
    "basis": "certificate",
    "source": "-",
@@ -2198,12 +2204,12 @@
    "name": "use of eta_u in a decision quantity",
    "symbol": "",
    "type": "rule",
-   "value": "PENDING docs/experiments/hall_icp/prereg_framework/ (if used, S1b Faraday/ExB repeatability is mandatory, row 32)",
+   "value": "TBD - requires the LOCK-1 choice: A9-01 DQ-HI-ETAU is CONDITIONAL (descriptive unless preregistered at LOCK-1; if used, S1b Faraday / ExB repeatability is mandatory, row 32)",
    "units": "-",
    "basis": "A9-01",
    "source": "owner answer row 32",
    "evidence_class": null,
-   "status": "PENDING",
+   "status": "TBD",
    "freeze_point": "LOCK-1",
    "owner_rows": [
     32
@@ -2614,7 +2620,7 @@
     "P_net = P_fwd - P_ref at the coupler plane;  |Gamma|^2 = P_ref / P_fwd",
     "P_coil = P_net - P_loss,mn - P_loss,cable   [reconstructed from the S1a dummy-load characterization]",
     "u^2(P_net) = u^2(P_fwd) + u^2(P_ref) - 2 r u(P_fwd) u(P_ref)   [GUM 5.2.2 Eq. (13); r from a shared sensor/coupler calibration]",
-    "cross-check: z_x = (P_coupler - P_cal) / sqrt(u^2(P_coupler) + u^2(P_cal)); PROPOSED rule |z_x| <= k_x (UBQ-04); P_cal = sum_j mdot_j c_p,j Delta T_j + C dT/dt (steady-state coolant or dummy-load calorimetry; method PENDING docs/interfaces/icp_neutralizer/)",
+    "cross-check: z_x = (P_coupler - P_cal) / sqrt(u^2(P_coupler) + u^2(P_cal)); PROPOSED rule |z_x| <= k_x (UBQ-04); P_cal = sum_j mdot_j c_p,j Delta T_j + C dT/dt (steady-state coolant or dummy-load calorimetry; method TBD - not defined in the merged A9-03 ICD, whose ICP-14 names calorimetry only as the independent cross-check; LOCK-1 item)",
     "the RF-source DC input is a P_bus slot (DQ-HI-PBUS); P_net / P_coil are accounting and diagnostic quantities, never a substitute for P_bus"
    ],
    "components": [
@@ -2645,7 +2651,7 @@
    "equations": [
     "current balance: I_d = I_e,src + I_gnd  (I_e,src: electron current from the active source, C1 emission or ICP extraction; I_gnd: net current to facility ground through the cathode-common/bleeder)",
     "closure residual: r_I = (I_d - I_e,src - I_gnd) / I_d   [diagnostic; both configurations]",
-    "ICP: I_e,src = I_coll (collector/bias-supply current, sign convention PENDING docs/interfaces/icp_neutralizer/)",
+    "ICP: I_e,src = I_coll (collector/bias-supply current, sign convention TBD - not defined in the merged A9-03 ICD, whose ICP-21 defines the separately metered collector only; LOCK-1 item)",
     "capacity: I_e,cap = max I_e,src over the preregistered bias sweep within V_coll <= V_coll,max and P_RF <= P_RF,max (limits from real ratings, A4)",
     "PROPOSED margin form (UBQ-02): M_n = I_e,cap / I_d,dem - 1 with I_d,dem = I_d measured at the same condition; gate M_n,lb = M_n,hat - k_1 u_c(M_n) > 0 (margin value PENDING docs/experiments/hall_icp/prereg_framework/)",
     "u_r^2(M_n + 1) = u_r^2(I_e,cap) + u_r^2(I_d,dem)",
@@ -2817,7 +2823,7 @@
     "INS-08"
    ],
    "equations": [
-    "eta_u = mdot_i / mdot_prop,  mdot_i = (I_b / e) * sum_j (Omega_j m_j / Z_j)   [standard mass-utilization form (from memory - verify against REF-BROWN2017 / REF-ROVEY2025); mdot_prop basis PENDING docs/experiments/hall_icp/prereg_framework/]",
+    "eta_u = mdot_i / mdot_prop,  mdot_i = (I_b / e) * sum_j (Omega_j m_j / Z_j)   [standard mass-utilization form (from memory - verify against REF-BROWN2017 / REF-ROVEY2025); mdot_prop basis TBD - A9-01 DQ-HI-ETAU (CONDITIONAL) does not define it; LOCK-1 item if eta_u is preregistered]",
     "u_r^2(eta_u) = u_r^2(I_b) + u_r^2(sum_j Omega_j m_j / Z_j) + u_r^2(mdot_prop)"
    ],
    "components": [
@@ -2990,7 +2996,7 @@
      "id": "LA-04",
      "quantity": "collector / bias voltage and current",
      "symbol": "V_coll,max, I_coll,max",
-     "value": "TBD - requires PENDING docs/interfaces/icp_neutralizer/ and supply rating",
+     "value": "TBD - requires the collector / bias V-I range (ICD ICP-21: a design item, TBD in the merged A9-03 ICD) and the supply rating (RFQ-05)",
      "configurations": [
       "hall_icp_neutralizer"
      ]
@@ -3070,7 +3076,7 @@
    ],
    "vocabulary_owner": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json decision_topology (outcomes, statuses)"
   },
-  "net_benefit": "NET_BENEFIT = hard gates + Pareto over Delta Xe, Delta P_bus, Delta mass, T/P_bus, restart and life burden relative to C1; no weighted scalar and no single winner unless preregistered (row 37); every Pareto component carries its own interval from this budget"
+  "net_benefit": "NET_BENEFIT = hard gates + Pareto over Delta Xe, Delta P_bus, Delta mass, T/P_bus, restart and life burden relative to C1; no weighted scalar and no single winner unless preregistered (row 37); A9.1 HIQ-05: no mandatory Pareto relation - hard gates alone decide feasibility; the Pareto quantities are reported for engineering comparison unless a Pareto condition is preregistered at LOCK-1; every Pareto component carries its own interval from this budget"
  },
  "interpolation": {
   "status": "PROPOSED; row 15",
@@ -3143,8 +3149,8 @@
    "counterpart": "A9-01 docs/experiments/hall_icp/prereg_framework/",
    "quantity": "decision-quantity ids, roles (gate / contrast / descriptive), contrast orientation, confirmation subset, family size m",
    "units": "-",
-   "status": "PENDING",
-   "value": "PENDING docs/experiments/hall_icp/prereg_framework/"
+   "status": "PARTIAL",
+   "value": "A9-01 supplies decision-quantity ids and roles (decision_quantities, decision_topology); the contrast list, confirmation subset and family size m are LOCK-1 items"
   },
   {
    "id": "IF-02",
@@ -3152,8 +3158,8 @@
    "counterpart": "A9-01 docs/experiments/hall_icp/prereg_framework/",
    "quantity": "stage map (Ar engineering-only -> N2 -> O2-bearing NO_ATOMIC_O) and which stages are score-bearing",
    "units": "-",
-   "status": "PENDING",
-   "value": "PENDING docs/experiments/hall_icp/prereg_framework/"
+   "status": "SATISFIED",
+   "value": "A9-01 stage_map HI-ENG..HI-AO with score_bearing flags (score-bearing: HI-CMP, HI-ABS)"
   },
   {
    "id": "IF-03",
@@ -3179,8 +3185,8 @@
    "counterpart": "A9-02 abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/",
    "quantity": "bus-slot list S_A9, measured vs conditioning slots (eta_s), start-up transient window",
    "units": "W / - / s",
-   "status": "PENDING",
-   "value": "PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/"
+   "status": "PARTIAL",
+   "value": "slot list S_A9 = abep_sim/bus_boundary_a9.py SLOTS / BASE_SLOTS; window frozen by A9.1 OQ-A902-01 (UB-P-07); per-slot eta_s are caller inputs, TBD"
   },
   {
    "id": "IF-06",
@@ -3197,8 +3203,8 @@
    "counterpart": "A9-03 docs/interfaces/icp_neutralizer/",
    "quantity": "collector/bias circuit, floating-body potential measurement points, sign conventions, bias range",
    "units": "V / A",
-   "status": "PENDING",
-   "value": "PENDING docs/interfaces/icp_neutralizer/"
+   "status": "PARTIAL",
+   "value": "A9-03 ICP-20 (floating body, body potentials measured), ICP-21 (separately metered collector), ICP-34 (V_coll, I_coll, V_body channels); sign convention and bias range TBD (LOCK-1)"
   },
   {
    "id": "IF-08",
@@ -3206,8 +3212,8 @@
    "counterpart": "A9-03 docs/interfaces/icp_neutralizer/",
    "quantity": "coupler location / RF reference plane and matching network topology",
    "units": "-",
-   "status": "PENDING",
-   "value": "PENDING docs/interfaces/icp_neutralizer/"
+   "status": "PARTIAL",
+   "value": "A9.1 A9-03-matching (ICD ICP-13): coupler plane after the matching network, network off the platform; fixed vs auto-tuned topology and the on-module pre-match (OQ-A907-11) open"
   },
   {
    "id": "IF-09",
@@ -3215,8 +3221,8 @@
    "counterpart": "A9-03 docs/interfaces/icp_neutralizer/",
    "quantity": "ICP gas species and flow range (for MFC range, p_b load, Delta Xe)",
    "units": "mg s^-1",
-   "status": "PENDING",
-   "value": "PENDING docs/interfaces/icp_neutralizer/"
+   "status": "PARTIAL",
+   "value": "A9-03 ICP-26 / A9.1 HIQ-06: G-REUSE primary, dedicated ICP flow 0 mg/s; G-ATM / G-XE contingency flows TBD"
   },
   {
    "id": "IF-10",
@@ -3224,8 +3230,8 @@
    "counterpart": "A9-03 docs/interfaces/icp_neutralizer/",
    "quantity": "C1 and ICP module masses on the carrier and sham line set",
    "units": "kg",
-   "status": "PENDING",
-   "value": "PENDING docs/interfaces/icp_neutralizer/"
+   "status": "OPEN",
+   "value": "OPEN - ICD ICP-08: module masses and CG are measured per serial at S1a (TBD - requires the modules); A9-03 gives only the row-54 flight allocations"
   },
   {
    "id": "IF-11",
@@ -3242,8 +3248,8 @@
    "counterpart": "A9-05 docs/evidence/icp_neutralizer/ + docs/experiments/hall_icp/validation_inputs/",
    "quantity": "Takahashi 2024 extraction: which quantities the analog measured and how (for chain design only; never a Vyovrinda value)",
    "units": "-",
-   "status": "PENDING",
-   "value": "PENDING docs/evidence/icp_neutralizer/ + docs/experiments/hall_icp/validation_inputs/"
+   "status": "SATISFIED",
+   "value": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json extraction TK-01..TK-74 (what the analog measured and how, with page / figure locators; context only)"
   },
   {
    "id": "IF-13",
@@ -3287,8 +3293,8 @@
    "counterpart": "H2-4 docs/hardware/h2/h2_4_ppu_bus/",
    "quantity": "breadboard discharge supply (row 113) channel points and eta_d measured before LOCK-2",
    "units": "- / W",
-   "status": "PENDING",
-   "value": "PENDING docs/hardware/h2/h2_4_ppu_bus/"
+   "status": "PARTIAL",
+   "value": "A9-07 REV-62 (breadboard discharge supply from the 100 V bus); channel points and eta_d TBD - require the breadboard measurement before LOCK-2"
   },
   {
    "id": "IF-18",
@@ -3296,8 +3302,8 @@
    "counterpart": "H2-1 docs/hardware/h2/h2_1_hall_chamber_magnet/",
    "quantity": "B(z) map extent, B_max, hot-state reference sensor location (row 82)",
    "units": "m / T",
-   "status": "PENDING",
-   "value": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/"
+   "status": "PARTIAL",
+   "value": "A9-07 REV-11 (hot-state B reference provision); B(z) map extent and B_max TBD - require FEMM of MC-1 (IDA7-17) and S1a maps"
   },
   {
    "id": "IF-19",
@@ -3314,8 +3320,8 @@
    "counterpart": "Xe ledger docs/budgets/xe_ledger/",
    "quantity": "C1 flow uncertainty term (±2 % FS class, row 96) and the ICP gas booking once A9-03 defines it (row 46 flag)",
    "units": "mg s^-1",
-   "status": "PENDING",
-   "value": "PENDING docs/interfaces/icp_neutralizer/"
+   "status": "PARTIAL",
+   "value": "ICP gas booking defined: G-REUSE 0 mg/s (ICD ICP-26; A9-08 XA9-21), G-XE only as a contingency term under PHASE_TOTAL_FLOW; the C1 flow uncertainty term (UB-F-05, +-2 % FS class, row 96) is carried by this lane, its booking size TBD"
   },
   {
    "id": "IF-21",
@@ -3428,7 +3434,7 @@
    "row": 37,
    "question": "Form of the Case B net system-level benefit where both sustain.",
    "answer_verbatim": "NEW `NET_BENEFIT` form — hard gates + Pareto, not a weighted score. ICP must meet electron-current/neutralization, thrust, full P_bus, stability and safety gates; then report ΔXe, ΔP_bus, Δmass, T/P_bus, restart and life burden relative to C1. No single scalar winner unless preregistered.",
-   "how_applied": "NET_BENEFIT = hard gates + Pareto; every Pareto component has its own interval; no scalar"
+   "how_applied": "NET_BENEFIT = hard gates + a Pareto report (A9.1 HIQ-05: no mandatory Pareto relation - hard gates alone decide feasibility; the Pareto quantities are reported for engineering comparison unless a Pareto condition is preregistered at LOCK-1); every Pareto component has its own interval; no scalar"
   },
   {
    "row": 38,
@@ -3464,7 +3470,7 @@
    "row": 46,
    "question": "Firing-hours basis of the cathode term.",
    "answer_verbatim": "15,000 h for the conventional C1 reference/fallback term. The ICP-neutralizer architecture has no continuous C1-Xe cathode term, but must carry its own RF-neutralizer lifetime/cycle requirement.",
-   "how_applied": "ICP gas feed unbooked -> UB-F-12 PENDING A9-03; C1 term 15,000 h context only"
+   "how_applied": "ICP gas feed: UB-F-12 = G-REUSE (A9.1 HIQ-06; ICD ICP-26), no dedicated feed booked; C1 term 15,000 h context only"
   },
   {
    "row": 50,
@@ -3602,7 +3608,7 @@
    "row": 110,
    "question": "Adopt the proposed supply partition (discharge, per-coil magnet, cathode CS-A/CS-B, aux valve/housekeeping, reserved DC port)?",
    "answer_verbatim": "ADOPT with revision — partition supplies into Hall discharge, per-coil magnet, ICP RF source/matching, ICP collector/bias if required, C1 heater/keeper reference supplies, flow/valve/housekeeping and reserved DC. Every active load gets a bus slot.",
-   "how_applied": "every active load has a bus slot (UB-P-01 PENDING A9-02)"
+   "how_applied": "every active load has a bus slot (UB-P-01 = the A9-02 slot list)"
   },
   {
    "row": 112,
@@ -3893,63 +3899,63 @@
    "key": "sensors_diagnostics",
    "name": "sensors/diagnostics",
    "how": "primary: decision-quantity measurement chains and uncertainty budget for the C1-vs-ICP comparison",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   },
   {
    "row": 12,
    "key": "ppu",
    "name": "PPU/power distribution",
    "how": "P_bus measurement chain at the spacecraft-DC boundary; breadboard discharge supply (row 113)",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   },
   {
    "row": 11,
    "key": "cathode",
    "name": "shielded Xe-fed LaB6 hollow cathode",
    "how": "C1 reference: flow, keeper/heater, ignition dwell records (reference/fallback only)",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   },
   {
    "row": 8,
    "key": "xe_metering",
    "name": "Xe metering (splits to ignition/transition feed and cathode feed)",
    "how": "C1 Xe metering: two controllers, ±2 % FS class, resolution (rows 96, 98, 125)",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   },
   {
    "row": 14,
    "key": "control_fdir",
    "name": "control/FDIR",
    "how": "limit aborts and safety interlocks; ICP telemetry subset (row 130)",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   },
   {
    "row": 16,
    "key": "mechanical_structural",
    "name": "mechanical/structural interfaces",
    "how": "stand, kinematic carrier and sham lines (VG-1)",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   },
   {
    "row": 10,
    "key": "magnetic_circuit",
    "name": "magnetic circuit",
    "how": "B(z) perturbation and hot-state reference (rows 67, 82)",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   },
   {
    "row": 13,
    "key": "thermal_control",
    "name": "thermal control",
    "how": "measured sink temperature per run (row 131)",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   },
   {
    "row": 17,
    "key": "preionizer_interface",
    "name": "RF pre-ionization module interface",
    "how": "reserved interface row: ICP-neutralizer chains (RF, collector) belong here once A9-10 governance repurposes it (row 142: add A9 lanes without rewriting H2 provenance)",
-   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json)"
+   "proposed_state_change": "none by this lane (contribution only; row owners and states set in the A9-10 M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   }
  ],
  "h3_procurement_inputs": [
@@ -4143,7 +4149,7 @@
   "no Takahashi 2024 operating value quoted (A9-05: docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json)",
   "no frozen numeric threshold beyond owner answers (cited by row) and verified H2-6 inputs",
   "historical artifacts read and cited, never edited; mutable governance files not pinned",
-  "no winner declared; NET_BENEFIT is hard gates + Pareto (row 37)",
+  "no winner declared; NET_BENEFIT is hard gates + a Pareto report (row 37; A9.1 HIQ-05: hard gates alone decide feasibility)",
   "pure document lane: no abep_sim module, archengine or golden touched"
  ],
  "a9_10_reconciliation": {
@@ -4526,6 +4532,222 @@
     "ptr": "/dq_id_mapping/rows",
     "count": 7,
     "summary": "unmapped ids kept; consumer table referenced"
+   },
+   {
+    "cid": "A910-R04-01",
+    "driver": "OQ-INT-03 (A9-02 SLOTS)",
+    "op": "merge",
+    "ptr": "/items[id=UB-P-01]",
+    "count": 1,
+    "summary": "UB-P-01 filled from A9-02"
+   },
+   {
+    "cid": "A910-R04-02",
+    "driver": "OQ-INT-03 (A9-02 ledger)",
+    "op": "merge",
+    "ptr": "/items[id=UB-P-06]",
+    "count": 1,
+    "summary": "UB-P-06 precise reason"
+   },
+   {
+    "cid": "A910-R04-03",
+    "driver": "A9.1 OQ-A902-01 + OQ-INT-03",
+    "op": "merge",
+    "ptr": "/items[id=UB-P-07]",
+    "count": 1,
+    "summary": "UB-P-07 window / bandwidth from A9.1"
+   },
+   {
+    "cid": "A910-R04-04",
+    "driver": "A9.1 A9-03-matching + OQ-INT-03",
+    "op": "merge",
+    "ptr": "/items[id=UB-RF-09]",
+    "count": 1,
+    "summary": "UB-RF-09 filled"
+   },
+   {
+    "cid": "A910-R04-05",
+    "driver": "OQ-INT-03 (A9-03 ICP-20/21)",
+    "op": "merge",
+    "ptr": "/items[id=UB-N-00]",
+    "count": 1,
+    "summary": "UB-N-00 filled"
+   },
+   {
+    "cid": "A910-R04-06",
+    "driver": "OQ-INT-03 (A9-02 SLOTS)",
+    "op": "merge",
+    "ptr": "/items[id=UB-Z-03]",
+    "count": 1,
+    "summary": "UB-Z-03 slot reference resolved"
+   },
+   {
+    "cid": "A910-R04-07",
+    "driver": "OQ-INT-03 (A9-01 decision_quantities)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-01]",
+    "count": 1,
+    "summary": "IF-01 partial"
+   },
+   {
+    "cid": "A910-R04-08",
+    "driver": "OQ-INT-03 (A9-01 stage_map)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-02]",
+    "count": 1,
+    "summary": "IF-02 satisfied"
+   },
+   {
+    "cid": "A910-R04-09",
+    "driver": "OQ-INT-03 (A9-02)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-05]",
+    "count": 1,
+    "summary": "IF-05 partial"
+   },
+   {
+    "cid": "A910-R04-10",
+    "driver": "OQ-INT-03 (A9-03)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-07]",
+    "count": 1,
+    "summary": "IF-07 partial"
+   },
+   {
+    "cid": "A910-R04-11",
+    "driver": "A9.1 A9-03-matching + OQ-INT-03",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-08]",
+    "count": 1,
+    "summary": "IF-08 partial"
+   },
+   {
+    "cid": "A910-R04-12",
+    "driver": "A9.1 HIQ-06 + OQ-INT-03",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-09]",
+    "count": 1,
+    "summary": "IF-09 partial"
+   },
+   {
+    "cid": "A910-R04-13",
+    "driver": "OQ-INT-03 (A9-03 ICP-08)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-10]",
+    "count": 1,
+    "summary": "IF-10 precise reason"
+   },
+   {
+    "cid": "A910-R04-14",
+    "driver": "OQ-INT-03 (A9-05)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-12]",
+    "count": 1,
+    "summary": "IF-12 satisfied"
+   },
+   {
+    "cid": "A910-R04-15",
+    "driver": "OQ-INT-03 (A9-07 REV-62)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-17]",
+    "count": 1,
+    "summary": "IF-17 partial"
+   },
+   {
+    "cid": "A910-R04-16",
+    "driver": "OQ-INT-03 (A9-07 REV-11, IDA7-17)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-18]",
+    "count": 1,
+    "summary": "IF-18 partial"
+   },
+   {
+    "cid": "A910-R04-17",
+    "driver": "A9.1 HIQ-06 + OQ-INT-03",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-20]",
+    "count": 1,
+    "summary": "IF-20 partial"
+   },
+   {
+    "cid": "A910-R04-18",
+    "driver": "A9.1 HIQ-06 + OQ-INT-03",
+    "op": "merge",
+    "ptr": "/owner_answers_applied[row=46]",
+    "count": 1,
+    "summary": "row 46 application updated"
+   },
+   {
+    "cid": "A910-R04-19",
+    "driver": "OQ-INT-03",
+    "op": "merge",
+    "ptr": "/owner_answers_applied[row=110]",
+    "count": 1,
+    "summary": "row 110 application updated"
+   },
+   {
+    "cid": "A910-R04-20",
+    "driver": "A9.1 HIQ-05",
+    "op": "replace",
+    "ptr": "/stop_rules/net_benefit",
+    "count": 1,
+    "summary": "NET_BENEFIT amended for HIQ-05"
+   },
+   {
+    "cid": "A910-R04-21",
+    "driver": "A9.1 HIQ-05",
+    "op": "replace",
+    "ptr": "/compliance[4]",
+    "count": 1,
+    "summary": "compliance line amended for HIQ-05"
+   },
+   {
+    "cid": "A910-R04-22",
+    "driver": "A9.1 HIQ-05",
+    "op": "replace",
+    "ptr": "/owner_answers_applied[row=37]/how_applied",
+    "count": 1,
+    "summary": "row 37 application amended"
+   },
+   {
+    "cid": "A910-R04-23",
+    "driver": "OQ-INT-03 (A9-03 ICP-14)",
+    "op": "replace",
+    "ptr": "/measurement_chains[dq=UB-DQ-RF]/equations[4]",
+    "count": 1,
+    "summary": "calorimetry method: precise remaining reason"
+   },
+   {
+    "cid": "A910-R04-24",
+    "driver": "OQ-INT-03 (A9-03 ICP-21)",
+    "op": "replace",
+    "ptr": "/measurement_chains[dq=UB-DQ-NEUT]/equations[2]",
+    "count": 1,
+    "summary": "collector-current sign convention: precise remaining reason"
+   },
+   {
+    "cid": "A910-R04-25",
+    "driver": "OQ-INT-03 (A9-01 DQ-HI-ETAU)",
+    "op": "merge",
+    "ptr": "/items[id=UB-E-00]",
+    "count": 1,
+    "summary": "UB-E-00 re-stated from A9-01 DQ-HI-ETAU"
+   },
+   {
+    "cid": "A910-R04-26",
+    "driver": "OQ-INT-03 (A9-01 DQ-HI-ETAU)",
+    "op": "replace",
+    "ptr": "/measurement_chains[dq=DQ-HI-ETAU]/equations[0]",
+    "count": 1,
+    "summary": "mdot_prop basis precise reason"
+   },
+   {
+    "cid": "A910-R04-27",
+    "driver": "OQ-INT-03 (A9-03 ICP-21)",
+    "op": "merge",
+    "ptr": "/stop_rules/limit_aborts/limits[id=LA-04]",
+    "count": 1,
+    "summary": "LA-04 precise reason"
    }
   ]
  }

@@ -255,7 +255,9 @@ def test_interface_demands_both_directions(doc):
                  "from_H2-6_to_this_lane", "from_this_lane_to_metrology_spec"):
         assert want in dirs, want
     for x in doc["interface_demands"]:
-        assert x["units"] and x["status"] in STATUSES
+        # A9-10 review repair (OQ-INT-03): a demand whose merged counterpart now supplies (part of) the value is
+        # re-stated SATISFIED / PARTIAL / OPEN with the locator in its value text
+        assert x["units"] and (x["status"] in STATUSES or x["status"] in {"SATISFIED", "PARTIAL", "OPEN"})
 
 
 def test_m16_rows_exist(doc):

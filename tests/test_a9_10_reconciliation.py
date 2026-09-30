@@ -224,8 +224,65 @@ def test_no_winner_no_prediction_no_open_question_answered(doc):
 
 
 def test_no_xe_ledger_substring_in_new_code():
-    for p in (BUILDER, OVERLAY, ROOT / "docs/budgets/subsystem_maturity/v3/build_subsystem_maturity_v3.py",
+    for p in (BUILDER, OVERLAY, ROOT / "docs/budgets/subsystem_maturity/build_subsystem_maturity_v3.py",
               ROOT / "docs/budgets/owner_decisions/build_owner_questions_state_v2.py"):
         assert "xe" + "_ledger" not in p.read_text(encoding="utf-8"), p.name
     assert not re.search(r"^import (?!json|os|re|sys|copy|hashlib|argparse|subprocess|importlib|csv|io)",
                          BUILDER.read_text(encoding="utf-8"), re.M)
+
+
+# ------------------------------------------------------------------------------------------------ review repair
+def test_no_catch_all_pending_rule():
+    """OQ-INT-03: no regex catch-all may label a remaining 'PENDING <A9 lane>' as not defined by its target."""
+    b = _mod(BUILDER, "a9_10_builder_under_test")
+    assert "TARGET_MERGED_DOES_NOT_DEFINE" not in b.REASONS
+    for dk, pk, tk, _reason in b.PENDING_RULES:
+        if tk in (r".*", r"^PENDING"):       # a text catch-all is allowed only for one deliverable AND one pointer family
+            assert dk != r".*" and pk != r".*", (dk, pk)
+        assert "power_boundary_a9" not in tk and "A9-0[1-9]" not in tk, tk
+
+
+def test_targets_that_supply_the_value_are_used(doc):
+    """The reviewer's counter-examples: where the merged target (or A9.1) supplies the value, the source deliverable
+    now says so (filled / SATISFIED / PARTIAL with the locator), never 'target does not define'."""
+    icd = json.loads((ROOT / "schemas/interfaces/icp_neutralizer_icd_v1.json").read_text(encoding="utf-8"))
+    dem = {d["id"]: d for d in icd["interface_demands"]}
+    assert dem["ID-02"]["status"].startswith("SATISFIED") and "A9-03-Vd" in dem["ID-02"]["status"]
+    assert dem["ID-04"]["status"].startswith("SATISFIED") and "stage_map" in dem["ID-04"]["status"]
+    assert dem["ID-07"]["status"].startswith("PARTIAL") and "efficiencies" in dem["ID-07"]["status"]
+    items = {x["id"]: x for x in icd["items"]}
+    assert "icp_rf_source" in items["ICP-24"]["tbd"] and "OQ-A902-03" in items["ICP-24"]["requirement"]
+    pre = json.loads((ROOT / "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json")
+                     .read_text(encoding="utf-8"))
+    pd = {d["id"]: d for d in pre["interface_demands"]}
+    assert pd["IF-HI-01"]["status"].startswith("SATISFIED") and pd["IF-HI-02"]["status"].startswith("SATISFIED")
+    ub = json.loads((ROOT / "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json")
+                    .read_text(encoding="utf-8"))
+    ui = {x["id"]: x for x in ub["items"]}
+    assert "icp_rf_source" in ui["UB-P-01"]["value"] and "PENDING" not in ui["UB-P-01"]["value"]
+    assert "AFTER the matching network" in ui["UB-RF-09"]["value"] and ui["UB-RF-09"]["a9_1_decision"] == "A9-03-matching"
+    assert "floating" in ui["UB-N-00"]["value"] and "PENDING" not in ui["UB-N-00"]["value"]
+    assert ui["UB-P-07"]["value"]["window_s"] == 1.0e-3 and ui["UB-P-07"]["a9_1_decision"] == "OQ-A902-01"
+    bpb = json.loads((ROOT / "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json")
+                     .read_text(encoding="utf-8"))
+    assert bpb["interface_demands"][1]["status"].startswith("SATISFIED")
+    m = doc["interface_demand_matrix"]
+    cls = {(r["lane"], r["id"]): r["class"] for r in m["rows"]}
+    assert cls[("A9-03", "ID-02")] == "SATISFIED" and cls[("A9-01", "IF-HI-01")] == "SATISFIED"
+    for r in m["rows"]:
+        if r["class"] in ("OPEN", "PARTIAL"):
+            assert "does not define this value" not in (r["open_reason"] or "")
+            assert not re.fullmatch(r"(PENDING|OPEN)( .{0,25})?", r["open_reason"] or ""), (r["lane"], r["id"])
+
+
+def test_m16_v3_location_declared_and_h2_7_scan_unchanged(doc):
+    """The M16 v3 JSON is not placed in docs/budgets/subsystem_maturity/ (the immutable H2-7 v1 builder globs *.json
+    there and pins each file); the deviation is declared (SD-A910-01, OQ-A910-04)."""
+    base = sorted(x for x in _git("ls-tree", "--name-only", BASE, "docs/budgets/subsystem_maturity/").decode()
+                  .splitlines() if x.endswith(".json"))
+    now = sorted("docs/budgets/subsystem_maturity/" + p.name
+                 for p in (ROOT / "docs/budgets/subsystem_maturity").glob("*.json"))
+    assert now == base
+    sd = {x["id"]: x for x in doc["scope_deviations"]}["SD-A910-01"]
+    assert sd["within_allowed_paths"] and (ROOT / sd["actual_path"]).is_file()
+    assert any(q["id"] == "OQ-A910-04" for q in doc["new_open_questions"])

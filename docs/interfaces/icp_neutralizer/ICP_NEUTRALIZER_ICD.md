@@ -49,7 +49,7 @@ Freeze points:
 |---|---|---|---|---|---|---|---|---|
 | ICP-01 | mechanical | Coordinate frame and interface planes | IP-EXIT / IP-NEU / IP-C1 / KC-1 (definitions) | - | assumed (convention) | OWNER_GIVEN (plane names, A9.1 A9-03-planes; dimensions stay LOCK-1 items) | LOCK-1 | 79, 122 |
 | ICP-02 | mechanical | Axial standoff of the ICP module datum from IP-EXIT (downstream, coaxial) | **TBD** | mm | - | TBD | LOCK-1 | 71, 79 |
-| ICP-03 | mechanical | Coaxiality and angular alignment of the ICP bore to the H-1 thrust axis | **TBD** | mm, deg | - | PENDING | LOCK-2 | 18, 19, 122 |
+| ICP-03 | mechanical | Coaxiality and angular alignment of the ICP bore to the H-1 thrust axis | **TBD** | mm, deg | - | TBD (rule LOCK-1, value LOCK-2) | LOCK-2 | 18, 19, 122 |
 | ICP-04 | mechanical | ICP clear aperture for the Hall plume | **TBD** | mm | - | TBD | LOCK-1 | - |
 | ICP-05 | mechanical | External C1 reference location on the C1 reference module | **TBD** | mm (orifice position r, z relative to IP-EXIT) | - | TBD | LOCK-1 | 79 |
 | ICP-06 | mechanical | Kinematic carrier KC-1: shared datum, weight path, H-1 stays bolted | 3-point kinematic seat (PROPOSED concept) | - | assumed | PROPOSED | LOCK-1 | 17, 122 |
@@ -60,7 +60,7 @@ Freeze points:
 | ICP-11 | rf | RF frequency | 13.56 | MHz | owner-allocation | OWNER_GIVEN | NOW | 72 |
 | ICP-12 | rf | Laboratory forward-power range (initial) | `[0.0, 500.0]` | W | owner-allocation | OWNER_GIVEN | NOW | 72, 108, 109 |
 | ICP-13 | rf | Matching-network location | off the moving thrust-stand platform: matched flexible RF coax, calibrated cable-loss / S-parameter correction, directional coupler reference plane AFTER the matching network, matched sham routing in the C1 configuration; on-platform only if S1a proves the off-platform chain cannot meet the RF-power uncertainty; at the coupler plane P_fwd = P_net / (1 - |Gamma|^2) with Gamma the antenna-side reflection (A9-07 recomputations.rf_reference_plane); an on-module fixed pre-match holding |Gamma| <= Gamma_max is owner question OQ-A907-11 (Gamma_max at LOCK-1) | - | owner-allocation | OWNER_GIVEN (location, A9.1); pre-match OPEN (OQ-A907-11) | LOCK-1 | 72, 117 |
-| ICP-14 | rf | Directional-coupler forward/reflected measurement and RF load plane | **TBD** | W | - | PENDING | LOCK-2 | 72 |
+| ICP-14 | rf | Directional-coupler forward/reflected measurement and RF load plane | **TBD** | W | - | TBD (value LOCK-2) | LOCK-2 | 72 |
 | ICP-15 | rf | Coax, vacuum RF feedthrough and connector ratings | **TBD** | W, V, ohm | - | TBD | LOCK-1 | 8, 72 |
 | ICP-16 | rf | RF interlock | **TBD** | - | - | TBD | LOCK-1 | 62 |
 | ICP-17 | rf | RF pickup / EMC limits on H-1 and diagnostics | **TBD** | V, A (per channel), dB | - | TBD | LOCK-2 | 64, 129 |
@@ -70,7 +70,7 @@ Freeze points:
 | ICP-21 | electrical | Electron-extraction collector / bias electrode | **TBD** | V, A | - | TBD | LOCK-1 | 70 |
 | ICP-22 | electrical | Hall discharge circuit topology and V_d definition per configuration | V_d = V_anode - V_electron-source-reference (primary controlled quantity); supply-terminal voltage and all loop drops recorded as secondary quantities | V | owner-allocation | OWNER_GIVEN (A9.1 A9-03-Vd) | LOCK-1 | 81, 91 |
 | ICP-23 | electrical | Isolation from the Hall anode and the cathode-common | 350.0 | V | owner-allocation (margin TBD) | PROPOSED (margin TBD) | LOCK-1 | 81, 105 |
-| ICP-24 | electrical | Bus-power slots for the ICP loads | **TBD** | W | - | PENDING | LOCK-1 | 66, 108, 109, 110 |
+| ICP-24 | electrical | Bus-power slots for the ICP loads | **TBD** | W | - | PARTIAL (slot ids defined by A9-02; loads and efficiencies TBD) | LOCK-1 | 66, 108, 109, 110 |
 | ICP-25 | electrical | C1 reference supplies on the C1 module | `[300.0, 600.0]` | V (pulsed keeper ignition class) | owner-allocation | OWNER_GIVEN | NOW | 49, 89, 91 |
 | ICP-26 | gas_plume | ICP source gas species and flow (booked item) | G-REUSE (primary): the ICP operates on Hall exhaust / residual propellant, dedicated ICP flow 0 mg/s (no double counting of the Hall atmospheric feed); the dedicated port stays installed and capped; G-ATM and G-XE are separately declared contingency variants (G-ATM: mdot_atm,total = mdot_Hall + mdot_ICP,dedicated; G-XE: mdot_ICP,Xe booked in docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json under PHASE_TOTAL_FLOW) | mg/s (per species) | owner-allocation | OWNER_GIVEN (G-REUSE primary, A9.1 HIQ-06); contingency flows TBD | LOCK-1 | 42, 46 |
 | ICP-27 | gas_plume | Hall-exhaust-to-ICP pressure / conductance interface | **TBD** | Pa; m^3/s (conductance) | - | TBD | after-evidence | 63 |
@@ -81,14 +81,14 @@ Freeze points:
 | ICP-32 | magnetic | Unmagnetized ICP (v1) and ferromagnetic content | no dedicated ICP magnet (v1) | - | owner-allocation | OWNER_GIVEN | NOW | 69, 77 |
 | ICP-33 | harness_telemetry | MODULE_ID and serial identity | MODULE_ID line on every module | - | owner-allocation | OWNER_GIVEN | NOW | 62, 83 |
 | ICP-34 | harness_telemetry | ICP telemetry list | `["P_fwd", "P_refl", "rf_interlock_state", "V_coll", "I_coll", "V_body", "T_antenna", "T_dielectric", "T_collector", "T_matching", "T_rf_source", "p_icp", "mdot_icp", "cmd_tlm", "neutralizer_health"]` | - | owner-allocation | OWNER_GIVEN | NOW | 62, 130 |
-| ICP-35 | harness_telemetry | Commands, states and start records | **TBD** | -, s, count | - | PENDING | LOCK-1 | 24, 93 |
+| ICP-35 | harness_telemetry | Commands, states and start records | **TBD** | -, s, count | - | TBD (LOCK-1) | LOCK-1 | 24, 93 |
 | ICP-36 | thermal | ICP dissipation path and RF-path heat contribution (RF only, partial term) | 600.0 | W | model-derived (bound on owner values) | DERIVED_BOUND | LOCK-1 | 72, 86 |
 | ICP-37 | thermal | Interface temperatures and >= 50 K margin | 50.0 | K (minimum margin) | owner-allocation | OWNER_GIVEN | NOW | 86, 131 |
 | ICP-38 | thermal | Cooling provision | passive (proposed) | - | assumed | PROPOSED | LOCK-1 | 66, 133 |
 | ICP-39 | exchange | C1 <-> ICP module exchange series (RR-07 adapted) | `["cold_tare", "service_line_parasitic", "Bz_perturbation", "electrical_isolation", "rf_pickup"]` | - | owner-allocation | OWNER_GIVEN | LOCK-2 | 19, 33, 64 |
 | ICP-40 | exchange | Serialized-unit rule for repaired modules | repair/replacement -> new serial + new reference sequence | - | owner-allocation | OWNER_GIVEN | NOW | 83 |
-| ICP-41 | exchange | Start-up-state and thermal-state equivalence | **TBD** | - | - | PENDING | LOCK-1 | 65 |
-| ICP-42 | exchange | Order-balanced installation schedule and reference condition | **TBD** | - | - | PENDING | LOCK-1 | 29, 39, 40 |
+| ICP-41 | exchange | Start-up-state and thermal-state equivalence | **TBD** | - | - | TBD (LOCK-1) | LOCK-1 | 65 |
+| ICP-42 | exchange | Order-balanced installation schedule and reference condition | **TBD** | - | - | SUPPLIED_BY_A9_01 (schedule form) | LOCK-1 | 29, 39, 40 |
 | ICP-43 | thermal | Total ICP module heat load (RF + discharge-path + plume terms) | **TBD** | W | - | TBD | LOCK-1 | 72, 86, 108 |
 | ICP-44 | rf | Antenna-circuit RF voltage, creepage/clearance and Paschen rating | **TBD** | V (peak RF), mm (clearance/creepage) | - | TBD | LOCK-1 | 72, 81 |
 | ICP-45 | electrical | Electron-extraction (collector) current capability | **TBD** | A (extracted electron current), W (RF forward power at that current) | - | TBD (value); form OWNER_GIVEN (A9.1 ICP-45) | LOCK-1 | 72, 109 |
@@ -122,9 +122,10 @@ Freeze points:
 **Requirement.** Lateral offset and tilt of the ICP module axis relative to the H-1 thrust axis are recorded at every installation against a tolerance whose rule is fixed at LOCK-1 and whose value is fixed at LOCK-2 from the measured exchange series (ICP-39) and the A9-04 uncertainty allocation.
 
 * value: **TBD** [mm, deg]
+* TBD - requires the measured exchange series (ICP-39) and the carrier datum repeatability (row 122); A9-04 defines the alignment term UB-T-12 (thrust-axis cosine error per carrier exchange), value TBD
 * basis: uncertainty allocation (A9-04)
 * sources: row 18; row 19; row 122
-* evidence class: - (TBD/PENDING); status: PENDING docs/experiments/hall_icp/uncertainty_budget/ (alignment share of the C1-vs-ICP uncertainty budget); freeze point: LOCK-2
+* evidence class: - (TBD/PENDING); status: TBD (rule LOCK-1, value LOCK-2); freeze point: LOCK-2
 * applies to: hall_c1_reference, hall_icp_neutralizer
 * verification: alignment reference on the H-1 adapter and carrier fiducials read before and after every exchange (H2-6 H26-FX-07)
 
@@ -250,9 +251,10 @@ Freeze points:
 **Requirement.** A directional coupler measures forward and reflected power at a declared load plane; net delivered power = P_fwd - P_refl at that plane. Losses between the load plane and the antenna are characterised on a dummy load and with the module unpowered. Calorimetry is an independent cross-check, not the sole primary measurement (row 72). Generator-internal meters alone (as in the analog, annex TAK-04) are not sufficient. Measurement uncertainty is allocated by A9-04.
 
 * value: **TBD** [W]
+* TBD - requires coupler / sensor certificates and S1a dummy-load characterization; A9-04 allocates the chain terms UB-RF-02..UB-RF-07 (coupling factor, sensor calibration, directivity / mismatch, matching and cable loss, harmonics, repeatability) with the reference plane UB-RF-09, values TBD
 * basis: row 72
 * sources: row 72
-* evidence class: - (TBD/PENDING); status: PENDING docs/experiments/hall_icp/uncertainty_budget/ (u(P_fwd), u(P_refl), load-plane loss chain); freeze point: LOCK-2
+* evidence class: - (TBD/PENDING); status: TBD (value LOCK-2); freeze point: LOCK-2
 * applies to: hall_icp_neutralizer
 * verification: coupler calibration against a traceable power standard; calorimetric cross-check
 
@@ -365,12 +367,13 @@ Freeze points:
 
 ### ICP-24 Bus-power slots for the ICP loads
 
-**Requirement.** Every active ICP load has a bus slot: RF source/matching, collector/bias supply if required, and any active cooling; no assist magnet in v1 (row 69). P_bus is taken at the spacecraft-DC propulsion boundary incl. start-up transients (row 108) on the new A9 boundary, never on bus_power_boundary_v1; discharge-only or RF-generator-only power is never sufficient (A9 requirement discipline). The RF generator's and matching network's own conversion loss (DC in minus RF forward power out) is a separate bus-power term booked in the RF-source slot, and a separate heat term wherever that hardware sits (platform, stand or flight unit; see ICP-43). The RF power drawn at the electron current of ICP-45 must fit inside the ~1.35 kW internal allocation (row 109); this is decided by measurement only.
+**Requirement.** Every active ICP load has a bus slot: RF source/matching, collector/bias supply if required, and any active cooling; no assist magnet in v1 (row 69). P_bus is taken at the spacecraft-DC propulsion boundary incl. start-up transients (row 108) on the new A9 boundary, never on bus_power_boundary_v1; discharge-only or RF-generator-only power is never sufficient (A9 requirement discipline). The RF generator's and matching network's own conversion loss (DC in minus RF forward power out) is a separate bus-power term booked in the RF-source slot, and a separate heat term wherever that hardware sits (platform, stand or flight unit; see ICP-43). The RF power drawn at the electron current of ICP-45 must fit inside the ~1.35 kW internal allocation (row 109), i.e. inside P_ICP,available = 1350 - P_common - P_Hall - P_other,active at every registered condition (A9.1 OQ-A902-03; A9-02 icp_power_allocation_check; no fixed Hall/ICP split); this is decided by measurement only.
 
 * value: **TBD** [W]
+* TBD - requires the selected RF source, matching network and collector supply (RFQ-04 / RFQ-05) for the per-slot efficiencies and loads; slot ids defined in abep_sim/bus_boundary_a9.py: icp_rf_source, icp_matching_network, icp_collector_bias (variants: icp_assist_magnet, active_cooling, flow_control_icp_feed only for G-ATM / G-XE)
 * basis: rows 66, 108, 109, 110
 * sources: row 66; row 108; row 109; row 110
-* evidence class: - (TBD/PENDING); status: PENDING docs/architecture_comparison/power_boundary_a9/ + abep_sim/bus_boundary_a9.py (slot ids and ledger efficiencies); freeze point: LOCK-1
+* evidence class: - (TBD/PENDING); status: PARTIAL (slot ids defined by A9-02; loads and efficiencies TBD); freeze point: LOCK-1
 * applies to: hall_c1_reference, hall_icp_neutralizer
 * verification: per-slot DC metering at the bus-boundary-equivalent point
 
@@ -495,9 +498,10 @@ Freeze points:
 **Requirement.** The ICP state set (OFF, ARMED, IGNITE, ON, TRIP) is commanded and reported. Start records: ICP ignition attempts, Hall ignition with ICP electrons, restart success and cycle count, classified per pre-registration (row 24). The ICP ignition dwell/retry bound is pre-registered by A9-01; the C1 bound (120 s per dwell, at most two retries, row 93) applies only to C1.
 
 * value: **TBD** [-, s, count]
+* TBD - requires a LOCK-1 ICP ignition dwell / retry bound: A9-01 supplies the start classification (DQ-HI-IGN, DR-07, MD-HI-02) but no ICP dwell / retry bound
 * basis: rows 24, 93
 * sources: row 24; row 93
-* evidence class: - (TBD/PENDING); status: PENDING docs/experiments/hall_icp/prereg_framework/ (ICP ignition dwell/retry bound and start classification); freeze point: LOCK-1
+* evidence class: - (TBD/PENDING); status: TBD (LOCK-1); freeze point: LOCK-1
 * applies to: hall_c1_reference, hall_icp_neutralizer
 * verification: sequence log audit
 
@@ -563,9 +567,10 @@ Freeze points:
 **Requirement.** No pre-ionizer dwell matching (row 65): any C1-vs-ICP comparison pre-registers equivalent start-up-state and thermal-state handling (C1 heater/keeper conditioning vs ICP ignition; T-SETTLE).
 
 * value: **TBD** [-]
+* TBD - requires the A9-01 start-up / thermal-state rule, listed as gate deadline GD-17 (latest LOCK-1) and not yet written
 * basis: row 65
 * sources: row 65
-* evidence class: - (TBD/PENDING); status: PENDING docs/experiments/hall_icp/prereg_framework/ (pre-registered start-up/thermal-state rule); freeze point: LOCK-1
+* evidence class: - (TBD/PENDING); status: TBD (LOCK-1); freeze point: LOCK-1
 * applies to: hall_c1_reference, hall_icp_neutralizer
 * verification: sequence log audit
 
@@ -574,9 +579,10 @@ Freeze points:
 **Requirement.** The ICD supplies the exchange procedure; the order-balanced schedule (row 29), REF-COND as its own installation per block (row 40) and NOT_TESTED slots after a stop (row 39) belong to the A9-01 framework.
 
 * value: **TBD** [-]
+* TBD - requires the LOCK-2 block count n and the seed (A9-01 GD-05, GD-09); the schedule form is supplied by A9-01: stage_map HI-ENG..HI-AO, execution_design (REF-COND installation with hall_c1_reference in every block, A9.1 HIQ-01; SEQ-A / SEQ-B; >= 6 blocks, A9.1 HIQ-02; NOT_TESTED after a stop, row 39)
 * basis: rows 29, 39, 40
 * sources: row 29; row 39; row 40
-* evidence class: - (TBD/PENDING); status: PENDING docs/experiments/hall_icp/prereg_framework/ (stage map and schedule); freeze point: LOCK-1
+* evidence class: - (TBD/PENDING); status: SUPPLIED_BY_A9_01 (schedule form); freeze point: LOCK-1
 * applies to: hall_c1_reference, hall_icp_neutralizer
 * verification: schedule audit
 
@@ -634,34 +640,34 @@ Freeze points:
 | id | from | to | quantity | value | units | status |
 |---|---|---|---|---|---|---|
 | ID-01 | A9-03 | A9-01 | configuration ids and per-configuration hardware identity (which ICD items may differ between hall_c1_reference and hall_icp_neutralizer) | ICP-01..ICP-46 applies_to | - | PROPOSED |
-| ID-02 | A9-01 | A9-03 | definition of the V_d setting held equal across configurations | **TBD** | V | PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01: V_d definition) |
-| ID-03 | A9-01 | A9-03 | ICP ignition dwell/retry bound; start/restart classification; start-up/thermal-state rule | **TBD** | s, count | PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01: start rules) |
-| ID-04 | A9-01 | A9-03 | stage map (Ar ENGINEERING_ONLY -> N2 -> O2 NO_ATOMIC_O) and exchange schedule | **TBD** | - | PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01: stage map) |
+| ID-02 | A9-01 | A9-03 | definition of the V_d setting held equal across configurations | **TBD** | V | SATISFIED by A9.1 A9-03-Vd (V_d = V_anode - V_electron-source-reference, primary controlled quantity; applied in ICP-22) |
+| ID-03 | A9-01 | A9-03 | ICP ignition dwell/retry bound; start/restart classification; start-up/thermal-state rule | **TBD** | s, count | PARTIAL: A9-01 supplies the start / restart classification (DQ-HI-IGN, DQ-HI-RESTART, DR-07, MD-HI-02) and lists the start-up / thermal-state rule as GD-17 (LOCK-1); no ICP ignition dwell / retry bound yet (LOCK-1 item) |
+| ID-04 | A9-01 | A9-03 | stage map (Ar ENGINEERING_ONLY -> N2 -> O2 NO_ATOMIC_O) and exchange schedule | **TBD** | - | SATISFIED by A9-01: stage_map HI-ENG..HI-AO (Ar ENGINEERING_ONLY -> N2 -> O2 NO_ATOMIC_O -> AO) and execution_design (block template, SEQ-A / SEQ-B) |
 | ID-05 | A9-03 | A9-02 | ICP active loads needing bus slots: RF source/matching, collector/bias, active cooling (if any); no assist magnet in v1 | `["rf_source_matching", "collector_bias", "active_cooling_if_used"]` | W | PROPOSED |
 | ID-06 | A9-03 | A9-02 | laboratory RF forward-power range (capability, not allocation) | `[0.0, 500.0]` | W | OWNER_GIVEN (row 72) |
-| ID-07 | A9-02 | A9-03 | bus slot ids, ledger efficiencies, start-up transient accounting | **TBD** | W | PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02: slots) + abep_sim/bus_boundary_a9.py |
+| ID-07 | A9-02 | A9-03 | bus slot ids, ledger efficiencies, start-up transient accounting | **TBD** | W | PARTIAL: slot ids and start-up transient accounting (P_bus,1ms,max, A9.1 OQ-A902-01; SEQUENCE_TEMPLATES, PROPOSED) defined in abep_sim/bus_boundary_a9.py; ledger efficiencies are explicit caller inputs, TBD - require the selected supplies |
 | ID-08 | A9-03 | A9-04 | measurement chains owned by the ICD: P_fwd/P_refl coupler, collector V/I, body potential, B(z) maps, exchange series | `["ICP-14", "ICP-21", "ICP-20", "ICP-31", "ICP-39"]` | - | PROPOSED |
-| ID-09 | A9-04 | A9-03 | uncertainty allocations: RF power chain, alignment/installation share, stop rules | **TBD** | W, mm, deg, ln-ratio | PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04: allocations) |
+| ID-09 | A9-04 | A9-03 | uncertainty allocations: RF power chain, alignment/installation share, stop rules | **TBD** | W, mm, deg, ln-ratio | PARTIAL: A9-04 defines the RF chain terms UB-RF-02..UB-RF-09, the alignment term UB-T-12 and the stop-rule forms (A9.1 UBQ-09: SR-C-MARGIN); values LOCK-2 |
 | ID-10 | A9-03 | A9-05 | this lane's page-cited Takahashi 2024 extraction (annex) for reconciliation | TAK-01..TAK-14 | - | PROPOSED |
-| ID-11 | A9-05 | A9-03 | authoritative analog evidence and validation-input list (RF coupling, electron extraction current, collector potential, neutralization margin, ICP pressure/flow, start-up, erosion, life; row 145) | **TBD** | - | PENDING docs/evidence/icp_neutralizer/ (A9-05: evidence matrix) and PENDING docs/experiments/hall_icp/validation_inputs/ |
+| ID-11 | A9-05 | A9-03 | authoritative analog evidence and validation-input list (RF coupling, electron extraction current, collector potential, neutralization margin, ICP pressure/flow, start-up, erosion, life; row 145) | **TBD** | - | SATISFIED by A9-05: docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json (extraction, survey, lawful_acquisition_list) and docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json (validation inputs, row 145) |
 | ID-12 | A9-03 | H2-1 | downstream/coaxial neutralizer interface on the H-1 exit face; H-1 neutralizer-agnostic; external C1 (row 79) -> channel sizing no longer constrained by a central bore | required | - | PROPOSED (H2-1 revision A9-07) |
-| ID-13 | H2-1 | A9-03 | exit-face geometry, channel OD (frozen), MC-1 stray field in the ICP volume and at the C1 orifice (FEMM) | **TBD** | mm, G | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (H2-1: revision for external C1 / FEMM) |
+| ID-13 | H2-1 | A9-03 | exit-face geometry, channel OD (frozen), MC-1 stray field in the ICP volume and at the C1 orifice (FEMM) | **TBD** | mm, G | PARTIAL: A9-07 REV-03 / REV-66 give the exit-face datum IP-EXIT; channel OD, MC-1 stray field in the ICP volume and at the C1 orifice TBD - require FEMM of MC-1 (A9-07 IDA7-17) |
 | ID-14 | A9-03 | H2-2 | C1 moves to an external reference module on KC-1 (L-EXTERNAL); orifice position per installation | required | - | PROPOSED (H2-2 revision A9-07) |
 | ID-15 | A9-03 | H2-4 | ICP PPU channels: 13.56 MHz RF source, collector/bias supply; floating secondaries | required | - | PROPOSED |
 | ID-16 | A9-03 | H2-5 | RF-path heat contribution only (ICP-36 partial term; NOT a bound on the total module heat load, which adds collector particle heating from the Hall discharge current and plume interception, ICP-43) | 600.0 | W | DERIVED_BOUND (ICP-36, RF-only partial term) |
-| ID-17 | H2-5 | A9-03 | sink / interface temperature cases and the >= 50 K margin revision | **TBD** | K | PENDING docs/hardware/h2/h2_5_thermal_network/ (H2-5: >= 50 K revision (row 86)) |
+| ID-17 | H2-5 | A9-03 | sink / interface temperature cases and the >= 50 K margin revision | **TBD** | K | SATISFIED at requirement level by A9-07 (REV-40: >= 50 K + 20 % heat-load margin; REV-48: 20 / 40 / 60 degC mounting-interface and 25 / 50 / 100 W conducted-heat cases); sink measured per run (REV-49) |
 | ID-18 | A9-03 | H2-6 | kinematic carrier KC-1 shared by C1 reference module, ICP module and sham; H-1 bolted | required | - | PROPOSED |
 | ID-19 | A9-03 | H2-6 | service-line bundle additions: RF coax (live in ICP, sham in C1), ICP collector/bias leads, ICP thermocouples, ICP pressure line, ICP gas line (if dedicated), MODULE_ID/interlock lines | required | - | PROPOSED |
 | ID-20 | A9-03 | H2-6 | diagnostics: directional coupler, RF-immune B(z) mapping check, pickup test channels, witness positions on H-1 front face and module | required | - | PROPOSED |
-| ID-21 | H2-6 | A9-03 | carrier seat dimensions, stand payload capability (>= 25 kg, row 116), per-configuration calibration procedure | **TBD** | mm, kg | PENDING docs/hardware/h2/h2_6_diagnostics_fixture/ (H2-6: fixture revision for A9) |
+| ID-21 | H2-6 | A9-03 | carrier seat dimensions, stand payload capability (>= 25 kg, row 116), per-configuration calibration procedure | **TBD** | mm, kg | PARTIAL: A9-07 REV-30..REV-32 and REV-38 (3-point seat, weight path, >= 25 kg payload, 1 % thrust test with maximum payload); seat dimensions and the per-configuration calibration procedure stay LOCK-1 items |
 | ID-22 | A9-03 | H2-7 | new BOM lines: ICP neutralizer, RF generator/matching/feedthrough, collector/bias hardware (row 59); C1 kept as reference/fallback | required | kg | PROPOSED |
-| ID-23 | H2-7 | A9-03 | module masses and CG per serial; flight dry allocations vs CBE (row 54 flags) | **TBD** | kg | PENDING docs/hardware/h2/h2_7_mechanical_bom/ (H2-7: A9 amendment (A9-06)) |
+| ID-23 | H2-7 | A9-03 | module masses and CG per serial; flight dry allocations vs CBE (row 54 flags) | **TBD** | kg | PARTIAL: A9-06 (MA9-ID-20) answers the flight allocations vs evidence floors (line_checks); module masses and CG per serial TBD - require S1a weighing |
 | ID-24 | A9-03 | Xe ledger | ICP gas feed booking if mode G-XE (PHASE_TOTAL_FLOW, row 42); ICP lifetime/cycle requirement replaces the continuous C1 cathode term (row 46) | **TBD** | kg | RESOLVED by A9.1 HIQ-06 (G-REUSE books 0 Xe; a G-XE contingency is booked as F-ICP-XE / G-ICP-XE in docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json, A9-08 XA9-IF-16) |
-| ID-25 | A9-02 | A9-03 | maximum discharge-supply power at the stand P_d,max = I_d,max x V_d,max (for the total module heat-load bound ICP-43) | **TBD** | W | PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02: discharge slot limit) |
-| ID-26 | A9-03 | H2-5 | total ICP module heat load for the thermal path (ICP-43: RF + discharge-path + plume terms) | **TBD** | W | PENDING docs/architecture_comparison/power_boundary_a9/ (P_d,max; ICP-43) |
-| ID-27 | A9-02 | A9-03 | maximum discharge current of the stand discharge slot I_d,max as the SIZING input for the ICP electron-extraction capability (ICP-45), not only as a heat input | **TBD** | A | PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02: discharge slot I_d,max) |
+| ID-25 | A9-02 | A9-03 | maximum discharge-supply power at the stand P_d,max = I_d,max x V_d,max (for the total module heat-load bound ICP-43) | **TBD** | W | OPEN - A9-02 registers no stand discharge-slot limit: P_d,max needs the owner registration of the H-1 / discharge-supply envelope (OQ-A907-02) |
+| ID-26 | A9-03 | H2-5 | total ICP module heat load for the thermal path (ICP-43: RF + discharge-path + plume terms) | **TBD** | W | OPEN - ICP-43 needs P_d,max (ID-25, OQ-A907-02) and the collector / plume terms; not assessable before that registration |
+| ID-27 | A9-02 | A9-03 | maximum discharge current of the stand discharge slot I_d,max as the SIZING input for the ICP electron-extraction capability (ICP-45), not only as a heat input | **TBD** | A | OPEN - A9-02 registers no stand discharge-slot I_d,max: owner registration of the envelope pending (OQ-A907-02; A9.1 ICP-45: I_d,max from the registered H-1 / discharge-supply envelope) |
 | ID-28 | A9-03 | A9-01 | electron-current capacity demonstration (collector-current step/ramp to I_d,max on Ar ENGINEERING_ONLY, ICP-45) as a stage entry condition before any score-bearing hall_icp_neutralizer point | required | - | PROPOSED |
-| ID-29 | A9-05 | A9-03 | published analog evidence on extracted electron current vs RF power for RF/ICP plasma cathodes (context for ICP-45; never a Vyovrinda prediction) | **TBD** | A, W | PENDING docs/evidence/icp_neutralizer/ (A9-05: electron-current vs RF power evidence) |
+| ID-29 | A9-05 | A9-03 | published analog evidence on extracted electron current vs RF power for RF/ICP plasma cathodes (context for ICP-45; never a Vyovrinda prediction) | **TBD** | A, W | PARTIAL: anchor only (docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json TK-52 I_D about 1 A at TK-21 200 W forward, TK-27 ~20 W absorbed; published analog, reported, context only, never scaled, A9.1 ICP-45); further RF / ICP plasma-cathode sources in lawful_acquisition_list LA-01..LA-09 await owner acquisition (A9.1 OQ-EV-02 order) |
 
 ## 4. Owner answers applied (c)
 
@@ -770,7 +776,7 @@ Deliberately not reused:
 | 11 | cathode | C1 becomes reference/fallback on an external module (row 79); ICP electron source is the primary investigation | BLOCKED | H2-2 revision for L-EXTERNAL (A9-07) |
 | 9 | hall_chamber | H-1 exit face carries the downstream/coaxial interface; neutralizer-agnostic | BLOCKED | H2-1 revision (external C1, exit-face geometry) |
 | 10 | magnetic_circuit | B(z) perturbation/sensitivity scan with the ICP installed/energized; stray field in the ICP volume | BLOCKED | FEMM of the preliminary circuit (H2-1) |
-| 12 | ppu | new ICP RF source/matching and collector/bias channels | BLOCKED | PENDING A9-02 bus slots |
+| 12 | ppu | new ICP RF source/matching and collector/bias channels | BLOCKED | A9-02 slots defined (icp_rf_source, icp_matching_network, icp_collector_bias); blocking: supply selection and efficiencies TBD (RFQ-04 / RFQ-06) |
 | 13 | thermal_control | ICP dissipation path: RF-only partial term 600 W (ICP-36), total module heat load TBD (ICP-43, adds discharge-path and plume terms), >= 50 K margin | BLOCKED | ICP module design + P_d,max (A9-02) for ICP-43 + H2-5 revision for row 86 |
 | 14 | control_fdir | RF interlock, neutralizer health state, ICP command set | BLOCKED | generator interlock interface (quotation) |
 | 15 | sensors_diagnostics | directional coupler, collector V/I, RF pickup checks, ICP pressure port | BLOCKED | S1a pickup and coupler calibration |
@@ -803,8 +809,8 @@ H4 tests:
 
 * ICP module aperture vs the H-1 channel OD window (ICP-04): not assessable yet: H-1 channel OD is PRELIMINARY (H2-1) and the ICP module is not designed; left TBD at LOCK-1, not a veto
 * external C1 (row 79) vs the H2-2 PRELIMINARY L-CENTRAL choice: a location revision (A9-07), not an architecture incompatibility; H2-2 carries L-EXTERNAL as its alternative
-* ICP power vs the ~1.35 kW internal allocation (row 109) and P_bus < 1.5 kW (row 108): not assessable: bus slots PENDING A9-02 and no performance is predicted here; decided only by measurement against the full-system gate
-* ICP electron-current capacity at I_d,max vs RF power inside the ~1.35 kW internal allocation (row 109) (ICP-45): not assessable, PENDING docs/architecture_comparison/power_boundary_a9/ (I_d,max) and docs/evidence/icp_neutralizer/ (analog electron-current vs RF power evidence). A real tension to watch: the only analog in the annex reported ~1 A at 200 W forward power with the limit attributed to the RF power (TAK-04, TAK-13); no scaling to H-1 is made and no veto is claimed; decided only by the ICP-45 capacity demonstration
+* ICP power vs the ~1.35 kW internal allocation (row 109) and P_bus < 1.5 kW (row 108): not assessable: A9-02 defines the ICP bus slots and the residual P_ICP,available = 1350 - P_common - P_Hall - P_other,active (A9.1 OQ-A902-03), but every load is TBD and no performance is predicted here; decided only by measurement against the full-system gate
+* ICP electron-current capacity at I_d,max vs RF power inside the ~1.35 kW internal allocation (row 109) (ICP-45): not assessable: A9-02 (merged) registers no stand I_d,max (owner registration OQ-A907-02) and A9-05 (merged) holds only the anchor analog (docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json TK-52 I_D about 1 A at TK-21 200 W forward; published analog, context only, never scaled, A9.1 ICP-45). A real tension to watch: the only analog in the annex reported ~1 A at 200 W forward power with the limit attributed to the RF power (TAK-04, TAK-13); no scaling to H-1 is made and no veto is claimed; decided only by the ICP-45 capacity demonstration
 * stand payload (>= 25 kg design, row 116) vs module mass on the carrier: module masses PENDING H2-7 / module design; no evidence of exceedance
 * antenna-circuit RF voltage vs the 350 V DC isolation item: resolved by separating the RF rating (ICP-44) from the DC discharge-circuit rating (ICP-23); no incompatibility, a design item
 
@@ -905,3 +911,27 @@ Changes applied by A9-10 after this lane's verified build (record `docs/experime
 | A910-A903-26 | A9.1 A9-03-Vd | set | `/items[id=ICP-22]/note` | 1 | ICP-22 note |
 | A910-A903-27 | A9.1 A9-03-collector | replace | `/items[id=ICP-29]/tbd` | 1 | ICP-29 tbd re-evaluated |
 | A910-A903-22 | OQ-INT-04 | replace | `/published_analog_annex/source/authority_note` | 1 | annex reconciled with A9-05 |
+| A910-R03-01 | OQ-INT-03 (A9-04 UB-T-12) | merge | `/items[id=ICP-03]` | 1 | ICP-03 precise reason |
+| A910-R03-02 | OQ-INT-03 (A9-04 UB-RF-02..09) | merge | `/items[id=ICP-14]` | 1 | ICP-14 precise reason |
+| A910-R03-03 | OQ-INT-03 (A9-02 SLOTS) | merge | `/items[id=ICP-24]` | 1 | ICP-24 slot ids from A9-02 |
+| A910-R03-04 | OQ-INT-03 (A9-01 DQ-HI-IGN, DR-07, MD-HI-02) | merge | `/items[id=ICP-35]` | 1 | ICP-35 precise reason |
+| A910-R03-05 | OQ-INT-03 (A9-01 GD-17) | merge | `/items[id=ICP-41]` | 1 | ICP-41 precise reason |
+| A910-R03-06 | OQ-INT-03 (A9-01 stage_map, execution_design) | merge | `/items[id=ICP-42]` | 1 | ICP-42 schedule form supplied by A9-01 |
+| A910-R03-07 | A9.1 A9-03-Vd + OQ-INT-03 | merge | `/interface_demands[id=ID-02]` | 1 | ID-02 satisfied by A9.1 |
+| A910-R03-08 | OQ-INT-03 (A9-01) | merge | `/interface_demands[id=ID-03]` | 1 | ID-03 partial |
+| A910-R03-09 | OQ-INT-03 (A9-01 stage_map) | merge | `/interface_demands[id=ID-04]` | 1 | ID-04 satisfied |
+| A910-R03-10 | OQ-INT-03 (A9-02) | merge | `/interface_demands[id=ID-07]` | 1 | ID-07 partial |
+| A910-R03-11 | OQ-INT-03 (A9-04) | merge | `/interface_demands[id=ID-09]` | 1 | ID-09 partial |
+| A910-R03-12 | OQ-INT-03 (A9-05) | merge | `/interface_demands[id=ID-11]` | 1 | ID-11 satisfied |
+| A910-R03-13 | OQ-INT-03 (A9-07 REV-03/66, IDA7-17) | merge | `/interface_demands[id=ID-13]` | 1 | ID-13 partial |
+| A910-R03-14 | OQ-INT-03 (A9-07 REV-40/48/49) | merge | `/interface_demands[id=ID-17]` | 1 | ID-17 satisfied (requirement) |
+| A910-R03-15 | OQ-INT-03 (A9-07 REV-30..32, REV-38) | merge | `/interface_demands[id=ID-21]` | 1 | ID-21 partial |
+| A910-R03-16 | OQ-INT-03 (A9-06 MA9-ID-20) | merge | `/interface_demands[id=ID-23]` | 1 | ID-23 partial |
+| A910-R03-17 | OQ-INT-03 (A9-02; OQ-A907-02) | merge | `/interface_demands[id=ID-25]` | 1 | ID-25 precise reason |
+| A910-R03-18 | OQ-INT-03 (ICP-43) | merge | `/interface_demands[id=ID-26]` | 1 | ID-26 precise reason |
+| A910-R03-19 | OQ-INT-03 (A9.1 ICP-45; OQ-A907-02) | merge | `/interface_demands[id=ID-27]` | 1 | ID-27 precise reason |
+| A910-R03-20 | OQ-INT-03 (A9-05 TK-21/27/52) | merge | `/interface_demands[id=ID-29]` | 1 | ID-29 partial |
+| A910-R03-21 | OQ-INT-03 (A9-02 SLOTS) | merge | `/m16_impact[m16_row=12]` | 1 | M16 row 12 blocking item re-evaluated |
+| A910-R03-22 | A9.1 OQ-A902-03 + OQ-INT-03 | merge | `/hard_incompatibility_check/checked[2]` | 1 | hard-incompatibility finding re-evaluated |
+| A910-R03-23 | A9.1 OQ-A902-03 | replace | `/items[id=ICP-24]/requirement` | 1 | ICP-24 cross-references the OQ-A902-03 residual form |
+| A910-R03-24 | OQ-INT-03 (A9-02; A9-05 TK-21/52) | replace | `/hard_incompatibility_check/checked[3]/finding` | 1 | hard-incompatibility finding re-evaluated against A9-02 / A9-05 |

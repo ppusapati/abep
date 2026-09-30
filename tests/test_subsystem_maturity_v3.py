@@ -14,14 +14,17 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 D0 = ROOT / "docs" / "budgets" / "subsystem_maturity"
-D = D0 / "v3"   # own subdirectory: the historical H2-7 BOM scans subsystem_maturity/*.json non-recursively
+D = D0
+# declared scope deviation (OQ-A910-04): the immutable H2-7 v1 BOM builder scans subsystem_maturity/*.json
+# non-recursively and pins every file, so the v3 JSON lives under an allowed A9-10 path
+JSON = ROOT / "docs" / "experiments" / "hall_icp" / "integration" / "m16_v3" / "subsystem_maturity_v3.json"
 BUILDER = D / "build_subsystem_maturity_v3.py"
 BASE = "ecdad06e30bc5d2f172e862e4bd4843e86332d42"
 
 
 @pytest.fixture(scope="module")
 def doc():
-    return json.loads((D / "subsystem_maturity_v3.json").read_text(encoding="utf-8"))
+    return json.loads(JSON.read_text(encoding="utf-8"))
 
 
 def test_builder_check():

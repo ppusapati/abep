@@ -106,7 +106,7 @@ LANES = {
     "H2-5": "docs/hardware/h2/h2_5_thermal_network/",
     "H2-6": "docs/hardware/h2/h2_6_diagnostics_fixture/",
     "H2-7": "docs/hardware/h2/h2_7_mechanical_bom/",
-    "M16": "docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json (A9-10 refresh)",
+    "M16": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json (A9-10 refresh)",
 }
 A91_REL = "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json"
 
@@ -238,8 +238,10 @@ def build(inp: dict) -> dict:
           B.GATE_WINDOW_S, "s", "owner decision", A91("OQ-A902-01") + " (H2-4 H24-37 had left it TBD)",
           "owner-allocation", "ADOPTED (A9.1; A9 engineering definition pending authoritative RFP wording)", "NOW",
           "P_bus,1ms,max = max_t (1/1 ms) integral_t^{t+1 ms} P_bus dtau < 1500 W; rfp_power_gate PASSes a ledger only "
-          "when declared p_bus_1ms_max (or peak_sampled, which bounds it); the interim 'PASS only if peak_sampled' "
-          "rule is replaced; the 1 ms window is not an ECSS requirement"),
+          "when declared p_bus_1ms_max with a conformant gate_measurement record (>= 100 kSa/s, >= 20 kHz, anti-alias "
+          "documented, synchronized); the interim 'PASS only if peak_sampled' rule is replaced and a peak_sampled "
+          "ledger no longer PASSes (protection record only; OQ-A910-03 OPEN); the 1 ms window is not an ECSS "
+          "requirement"),
         I("A902-04", "internal design allocation (ICP must fit inside it)", B.DESIGN_ALLOCATION_W, "W", "allocation",
           f"{R(109)} ('~1.35 kW'; do not plan to consume the 1.35 -> 1.5 kW margin nominally)", "owner-allocation",
           "ALLOCATION (not a prediction, not a gate)", "NOW"),
@@ -310,8 +312,8 @@ def build(inp: dict) -> dict:
           "owner-allocation", "ADOPTED (capability, not a load)", "NOW",
           "its bus power is a start-up transient of slot c1_keeper, value TBD - requires the measured "
           "P_bus,1ms,max through the pulse (the unaveraged peak is recorded for protection analysis only, A9.1 "
-          "OQ-A902-01) and recorded pulse energy (a measurement record, PENDING A9-04; "
-          "the ledger has no pulse-energy field); H2-4 H24-19 (DC ignition 10-30 W bracket) does not cover it"),
+          "OQ-A902-01) and recorded pulse energy (a measurement record; the A9-04 DQ-HI-PBUS chain (INS-02 per slot) "
+          "defines no pulse-energy record yet, LOCK-1 item; the ledger has no pulse-energy field); H2-4 H24-19 (DC ignition 10-30 W bracket) does not cover it"),
         I("A902-26", "C1 heater power during preheat", "TBD", "W", "pending",
           f"TBD - requires the C1 unit selection; analog envelope only: H2-2 H22-16 {h22_16['value']} "
           f"{h22_16['units']} ({h22_16['evidence_class']} analog, not a C1 value)", "TBD", "OPEN", "after-evidence",
@@ -442,7 +444,8 @@ def build(inp: dict) -> dict:
         79: "external C1: C1 slots belong to the swappable downstream module, the Hall slots are neutralizer-agnostic",
         86: "active_cooling variant slot provided for the >= 50 K margin rule if needed",
         89: "c1_keeper includes current-limited pulsed ignition 300-600 V class as a start-up transient; its peak "
-            "enters the P_bus,1ms,max gate (A9.1 OQ-A902-01); pulse energy is a measurement record (PENDING A9-04); "
+            "enters the P_bus,1ms,max gate (A9.1 OQ-A902-01); pulse energy is a measurement record (A9-04 DQ-HI-PBUS "
+            "chain defines no pulse-energy record yet, LOCK-1 item); "
             "H2-4 H24-19 flagged NEEDS_REVISION",
         90: "flow_control_xe covers the two series isolation valves",
         91: "c1_common_tie slot, value TBD, selectable and measured",
@@ -660,7 +663,7 @@ def build(inp: dict) -> dict:
                 ("sensors_diagnostics", "one DC channel per slot + RF planes + ICP telemetry"),
                 ("preionizer_interface", "superseded for the primary line (historical); ICP-neutralizer head and "
                                          "flight RF chain rows are added in the A9-10 M16 refresh "
-                                         "(docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json)")]
+                                         "(docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)")]
     m16 = []
     for key, how in m16_keys:
         r = m16_row(inp, key)
@@ -762,7 +765,9 @@ def build(inp: dict) -> dict:
                          "quantity": "P_bus,1ms,max (A9.1 OQ-A902-01)",
                          "transient_window": dict(B.TRANSIENT_WINDOW),
                          "pass_requires_power_basis": list(B.PASS_BASES),
-                         "fail_bases": [b for b in B.FAIL_BASES if b is not None] + ["unstated"]},
+                         "pass_requires_gate_measurement": dict(B.TRANSIENT_WINDOW["pass_requires_gate_measurement"]),
+                         "fail_bases": list(B.FAIL_BASES), "fail_basis_assumption": B.FAIL_BASIS_ASSUMPTION,
+                         "peak_sampled_rule": B.PEAK_SAMPLED_RULE},
             "icp_available_power": {"relation": "P_ICP,available = 1350 - P_common - P_Hall - P_other,active",
                                     "per": "every registered operating condition", "decision": "A9.1 OQ-A902-03",
                                     "function": "icp_power_allocation_check",
@@ -789,7 +794,8 @@ def build(inp: dict) -> dict:
                       "steps; an unclassifiable change gives RULES_NOT_EVALUABLE",
                       "sequence_status: SEQUENCE_RULE_VIOLATION > RULES_NOT_EVALUABLE > RULES_SATISFIED",
                       "every step (start-up and steady) PASSes the gate only when declared power_basis "
-                      "'p_bus_1ms_max' (or 'peak_sampled', which bounds it); no step average is substituted "
+                      "'p_bus_1ms_max' with a conformant gate_measurement record; 'peak_sampled' is NOT_EVALUABLE "
+                      "(protection record; OQ-A910-03 OPEN); no step average is substituted "
                       "(A9.1 OQ-A902-01, A902-03)",
                       "hall_icp_neutralizer has no c1_heater slot (no thermionic heater)",
                       "the last step is the steady step; the gate is applied to it and to every earlier step"],
@@ -876,6 +882,13 @@ def build_schema() -> dict:
                         "items": {"enum": sorted({o for c in B.CONFIGURATIONS for o in B.VARIANT_OPTIONS[c]})}},
             "label": {"type": "string"},
             "power_basis": {"enum": list(B.POWER_BASES)},
+            "gate_measurement": {"type": "object", "additionalProperties": False,
+                                 "required": list(B.GATE_MEASUREMENT_KEYS),
+                                 "properties": {"sample_rate_Sa_s": {"type": "number"},
+                                                "bandwidth_Hz": {"type": "number"},
+                                                "anti_alias_documented": {"type": "boolean"},
+                                                "synchronized": {"type": "boolean"},
+                                                "source": {"type": "string", "minLength": 1}}},
             "front_end": {"$ref": "#/$defs/front_end"},
             "loads": {"type": "object", "propertyNames": {"enum": list(B.ALL_SLOTS)},
                       "properties": {"icp_rf_source": {"$ref": "#/$defs/rf_load"},
@@ -893,6 +906,7 @@ def build_schema() -> dict:
             "rfp_limit_W": B.P_BUS_REQUIREMENT_W,
             "gate_quantity": "P_bus,1ms,max (A9.1 OQ-A902-01)",
             "pass_requires_power_basis": list(B.PASS_BASES),
+            "pass_requires_gate_measurement": dict(B.TRANSIENT_WINDOW["pass_requires_gate_measurement"]),
         },
     }
 

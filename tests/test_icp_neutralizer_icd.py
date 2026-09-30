@@ -210,10 +210,17 @@ def test_copied_values_resolve(doc, builder):
 
 
 def test_pending_lanes_never_filled(doc):
+    """No value is invented for a demand from another lane: the value stays None; the status is either still PENDING
+    or (A9-10 review repair, OQ-INT-03) a SATISFIED / PARTIAL / OPEN re-statement that names where the merged target
+    (or an A9.1 decision) gives it, recorded as an A9-10 change."""
     lanes = {"A9-01", "A9-02", "A9-04", "A9-05"}
+    changed = {c["ptr"] for c in doc["a9_10_reconciliation"]["changes"]}
     for d in doc["interface_demands"]:
         if d["from"] in lanes:
-            assert d["value"] is None and d["status"].startswith("PENDING "), d["id"]
+            assert d["value"] is None, d["id"]
+            if not d["status"].startswith("PENDING "):
+                assert d["status"].startswith(("SATISFIED", "PARTIAL", "OPEN - ")), d["id"]
+                assert f"/interface_demands[id={d['id']}]" in changed, d["id"]
     for x in doc["items"]:
         if x["status"].startswith("PENDING"):
             assert x["value"] is None, x["id"]

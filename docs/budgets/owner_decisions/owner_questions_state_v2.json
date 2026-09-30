@@ -63,10 +63,10 @@
   "ADDRESSED_IN_A9_10": 2,
   "ANSWERED": 175,
   "ANSWERED_BY_A9_1": 34,
-  "OPEN": 51,
+  "OPEN": 52,
   "SUPERSEDED": 13
  },
- "open_count": 51,
+ "open_count": 52,
  "rows": [
   {
    "no": 1,
@@ -3803,7 +3803,7 @@
    "kind": "lane",
    "lane": "A9-INT (step-1 integration)",
    "status": "ADDRESSED_IN_A9_10",
-   "answer_pointer": "ADDRESSED_IN_A9_10 (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json pending_reevaluation: every remaining PENDING filled from its target or given its precise reason)",
+   "answer_pointer": "ADDRESSED_IN_A9_10 (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json pending_reevaluation: a PENDING field whose merged target or an A9.1 decision gives the value is filled or re-stated by an A910-R* overlay record; every remaining one carries a reason code checked against its t...",
    "answer_excerpt": "",
    "no": 267
   },
@@ -3849,8 +3849,8 @@
   {
    "id": "OQ-A910-03",
    "source": "A9-10 (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json)",
-   "question": "A9-02 now PASSes a ledger declared 'peak_sampled' (the unaveraged sampled peak) when it is below 1500 W, because the maximum 1 ms mean cannot exceed the maximum sample; an unaveraged peak at or above 1500 W gives NOT_EVALUABLE (not FAIL). Accept this reading of A9.1 OQ-A902-01?",
-   "proposed": "PROPOSED yes (it never substitutes a step average; the peak record must meet the same >= 20 kHz / >= 100 kSa/s requirements); owner call",
+   "question": "May a ledger declared 'peak_sampled' (the unaveraged sampled peak) PASS the 1.5 kW gate when the peak is below 1500 W and the record meets the A9.1 OQ-A902-01 measurement requirements (the maximum 1 ms mean cannot exceed the maximum sample)? A9.1 OQ-A902-01 calls the unaveraged peak 'protection analysis only; not the 1.5 kW gate', so A9-02 does NOT implement this reading: today only a declared p_bus_1ms_max ledger with a conformant gate_measurement record can PASS, and a peak_sampled ledger is NOT_EVALUABLE in both directions.",
+   "proposed": "PROPOSED yes, limited to records meeting >= 100 kSa/s, >= 20 kHz, documented anti-alias filtering and synchronized channels (it is conservative and never substitutes a step average); owner call - not implemented until answered",
    "needed_by": "LOCK-1",
    "kind": "lane",
    "lane": "A9-10",
@@ -3858,6 +3858,19 @@
    "answer_pointer": "",
    "answer_excerpt": "",
    "no": 271
+  },
+  {
+   "id": "OQ-A910-04",
+   "source": "A9-10 (docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json)",
+   "question": "Accept the location of the M16 v3 JSON at docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json instead of the brief-named docs/budgets/subsystem_maturity/subsystem_maturity_v3.json? The immutable H2-7 v1 mechanical BOM builder scans docs/budgets/subsystem_maturity/*.json non-recursively and pins every file it finds, so any new JSON there makes the H2-7 v1 --check stale (verified). The builder and the Markdown keep the brief-named paths (docs/budgets/subsystem_maturity/build_subsystem_maturity_v3.py, SUBSYSTEM_MATURITY_v3.md).",
+   "proposed": "PROPOSED accept (the alternative is to change the immutable H2-7 v1 builder, which is not allowed); orchestrator / owner call",
+   "needed_by": "merge of this lane",
+   "kind": "lane",
+   "lane": "A9-10",
+   "status": "OPEN",
+   "answer_pointer": "",
+   "answer_excerpt": "",
+   "no": 272
   },
   {
    "id": "M16-Q-01",
@@ -3870,7 +3883,7 @@
    "needed_by": "",
    "kind": "lane",
    "lane": "M16 v2",
-   "no": 272
+   "no": 273
   },
   {
    "id": "M16-Q-02",
@@ -3883,7 +3896,7 @@
    "needed_by": "",
    "kind": "lane",
    "lane": "M16 v2",
-   "no": 273
+   "no": 274
   },
   {
    "id": "M16-Q-03",
@@ -3896,7 +3909,7 @@
    "needed_by": "",
    "kind": "lane",
    "lane": "M16 v2",
-   "no": 274
+   "no": 275
   },
   {
    "id": "M16-Q-04",
@@ -3909,7 +3922,7 @@
    "needed_by": "",
    "kind": "lane",
    "lane": "M16 v2",
-   "no": 275
+   "no": 276
   }
  ],
  "compliance": [

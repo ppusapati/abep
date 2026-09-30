@@ -25,10 +25,16 @@ Conventions (per slot, see ``SLOTS``):
     the spacecraft-DC propulsion boundary with synchronized channels, effective bandwidth >= 20 kHz, >= 100 kSa/s per
     relevant channel (or an equivalent direct bus-power channel) and documented anti-alias filtering
     (``GATE_DEFINITION``; ``p_bus_1ms_max()`` evaluates it from a sampled record). A ledger PASSes the gate only when
-    declared ``p_bus_1ms_max`` or ``peak_sampled`` (the maximum 1 ms mean never exceeds the maximum sample, so an
-    unaveraged peak below the limit bounds it); no step average may be substituted (A9.1). A FAIL needs a basis that
-    bounds the 1 ms maximum from below (``p_bus_1ms_max``, ``step_average``, ``steady_state`` or unstated): an
-    unaveraged peak at/above the limit is a protection-analysis record, not the 1.5 kW system-power gate (A9.1).
+    declared ``p_bus_1ms_max`` AND it carries a ``gate_measurement`` conformance record meeting those requirements
+    (A9-10 repair; the record is what makes the declared basis checkable). No step average may be substituted
+    (A9.1). The unaveraged sampled peak (``peak_sampled``) is for protection analysis only, not the 1.5 kW gate
+    (A9.1 OQ-A902-01): it never PASSes and never FAILs here (NOT_EVALUABLE); whether a conformant sampled peak below
+    the limit may bound the 1 ms maximum is the OPEN owner question OQ-A910-03 and is not implemented before the owner
+    rules. A FAIL needs a declared basis whose value bounds P_bus,1ms,max from below: ``p_bus_1ms_max`` itself, or
+    ``step_average`` / ``steady_state``, which bound it only under the stated assumption that the averaging duration
+    is a whole multiple of 1 ms or much longer than 1 ms (then the mean over the step cannot exceed the largest 1 ms
+    mean; for a duration of a non-integer number of ms the bound is approximate). An unstated basis (None) gives
+    NOT_EVALUABLE in both directions.
     For ``icp_rf_source`` the load plane is the RF generator's DC input: only that DC input crosses the bus boundary.
     Forward, reflected and delivered RF power are MEASUREMENT quantities (``rf_power_planes``; row 72: directional
     coupler primary, calorimetry cross-check) and are refused as a bus load.
@@ -83,8 +89,16 @@ GATE_WINDOW_S = 1.0e-3                # A9.1 OQ-A902-01: 1 ms moving-average win
 GATE_MIN_BANDWIDTH_HZ = 20.0e3        # A9.1 OQ-A902-01: effective measurement bandwidth >= 20 kHz
 GATE_MIN_SAMPLE_RATE_SA_S = 100.0e3   # A9.1 OQ-A902-01: >= 100 kSa/s per relevant channel
 DIAGNOSTIC_WINDOWS_S = (0.1, 1.0)     # A9.1 OQ-A902-01: 100 ms and 1 s averages, diagnostic/energy metrics only
-PASS_BASES = ("p_bus_1ms_max", "peak_sampled")
-FAIL_BASES = ("p_bus_1ms_max", "step_average", "steady_state", None)
+PASS_BASES = ("p_bus_1ms_max",)      # + a conformant gate_measurement record (A9.1 OQ-A902-01 requirements)
+FAIL_BASES = ("p_bus_1ms_max", "step_average", "steady_state")   # averages: duration a multiple of / >> 1 ms
+FAIL_BASIS_ASSUMPTION = ("step_average / steady_state bound P_bus,1ms,max from below only when the averaging duration "
+                         "is a whole multiple of 1 ms (exact) or much longer than 1 ms (approximate); an unstated "
+                         "basis gives NOT_EVALUABLE")
+PEAK_SAMPLED_RULE = ("an unaveraged sampled peak is a protection-analysis record, not the 1.5 kW gate (A9.1 "
+                     "OQ-A902-01): NOT_EVALUABLE in both directions; whether a conformant sampled peak below 1500 W "
+                     "may bound P_bus,1ms,max is the OPEN owner question OQ-A910-03 (not implemented before the "
+                     "owner rules)")
+GATE_MEASUREMENT_KEYS = ("sample_rate_Sa_s", "bandwidth_Hz", "anti_alias_documented", "synchronized", "source")
 TRANSIENT_WINDOW = {
     "status": "FROZEN_A9_ENGINEERING_DEFINITION",
     "decision": "A9.1 OQ-A902-01 (docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json)",
@@ -101,8 +115,14 @@ TRANSIENT_WINDOW = {
     "diagnostics_only": ["unaveraged sampled peak (hardware/current/voltage protection analysis; not the 1.5 kW "
                          "system-power gate)", "100 ms and 1 s averages (diagnostic/energy metrics, not substitutes)"],
     "pass_requires_power_basis": list(PASS_BASES),
+    "pass_requires_gate_measurement": {"keys": list(GATE_MEASUREMENT_KEYS),
+                                       "rule": "sample_rate_Sa_s >= 100e3, bandwidth_Hz >= 20e3, "
+                                               "anti_alias_documented and synchronized True, non-empty source"},
+    "fail_bases": list(FAIL_BASES), "fail_basis_assumption": FAIL_BASIS_ASSUMPTION,
+    "peak_sampled_rule": PEAK_SAMPLED_RULE,
     "note": "an A9 engineering definition pending authoritative RFP wording; the 1 ms window is not an ECSS "
-            "requirement (A9.1 preamble); replaces the interim 'PASS only if peak_sampled' rule",
+            "requirement (A9.1 preamble); replaces the interim 'PASS only if peak_sampled' rule (a peak_sampled "
+            "ledger no longer PASSes)",
     "item": "A902-03", "owner_question": "OQ-A902-01 (ANSWERED_BY_A9_1)", "freeze_point": "NOW",
 }
 GATE_DEFINITION = TRANSIENT_WINDOW
@@ -136,9 +156,10 @@ SLOTS = {
     "c1_keeper": {
         "group": "c1", "rows": [89, 110],
         "load_plane": "C1 keeper terminals; includes the current-limited pulsed ignition (300-600 V class, row 89) as a "
-                      "start-up transient: its instantaneous peak is only covered by a step declared peak_sampled; "
-                      "the pulse energy (row 89 'recorded pulse energy') is a measurement record of the power "
-                      "measurement chain (PENDING A9-04), not a ledger field"},
+                      "start-up transient: its bus draw enters the gate as P_bus,1ms,max through the pulse (A9.1 "
+                      "OQ-A902-01; the unaveraged peak is a protection record only); the pulse energy (row 89 "
+                      "'recorded pulse energy') is a measurement record, not a ledger field: the A9-04 DQ-HI-PBUS "
+                      "chain (INS-02, one DC channel per slot) defines no pulse-energy record yet (LOCK-1 item)"},
     "c1_common_tie": {
         "group": "c1", "rows": [91],
         "load_plane": "DC bus draw of the isolated, selectable cathode-common/bleeder network (selector, active bias "
@@ -411,8 +432,31 @@ def _not_installed_ok(slot: str, loads: Mapping, effs: Mapping, config: str) -> 
 
 
 # ------------------------------------------------------------------------------------------------------ ledger
+def _gate_measurement(rec):
+    """Validate an optional gate-measurement conformance record (A9.1 OQ-A902-01); return (record, conformant)."""
+    if rec is None:
+        return None, False
+    if not isinstance(rec, Mapping):
+        raise BoundaryA9Error("gate_measurement must be a mapping")
+    _keys(rec, set(GATE_MEASUREMENT_KEYS), "gate_measurement")
+    missing = [k for k in GATE_MEASUREMENT_KEYS if k not in rec]
+    if missing:
+        raise BoundaryA9Error(f"gate_measurement lacks {missing} (no default)")
+    fs = _real(rec["sample_rate_Sa_s"], "gate_measurement.sample_rate_Sa_s")
+    bw = _real(rec["bandwidth_Hz"], "gate_measurement.bandwidth_Hz")
+    for k in ("anti_alias_documented", "synchronized"):
+        if not isinstance(rec[k], bool):
+            raise BoundaryA9Error(f"gate_measurement.{k} must be a bool")
+    src = _nonempty(rec, "source", "gate_measurement")
+    out = {"sample_rate_Sa_s": fs, "bandwidth_Hz": bw, "anti_alias_documented": rec["anti_alias_documented"],
+           "synchronized": rec["synchronized"], "source": src}
+    ok = (fs >= GATE_MIN_SAMPLE_RATE_SA_S and bw >= GATE_MIN_BANDWIDTH_HZ and rec["anti_alias_documented"] is True
+          and rec["synchronized"] is True)
+    return out, ok
+
+
 def ledger(config: str, loads: Mapping, efficiencies: Mapping, front_end: Mapping, variant: Sequence = (),
-           label: str = "", power_basis=None) -> dict:
+           label: str = "", power_basis=None, gate_measurement=None) -> dict:
     """Spacecraft-side DC bus-power ledger of one configuration in one evaluated step.
 
     ``loads``/``efficiencies`` must contain every installed slot (``installed_slots(config, variant)``); slots that
@@ -424,11 +468,15 @@ def ledger(config: str, loads: Mapping, efficiencies: Mapping, front_end: Mappin
     ``P_bus_lower_bound_W`` is the rigorous lower bound (TBD loads count 0 W; a TBD efficiency counts 1).
     ``power_basis``: what the step values represent (one of ``POWER_BASES``) or None = unstated; a ledger whose basis
     is not in ``PASS_BASES`` cannot PASS the gate (``rfp_power_gate``, A9.1 OQ-A902-01).
+    ``gate_measurement``: optional conformance record of the measurement behind the step values
+    ({'sample_rate_Sa_s', 'bandwidth_Hz', 'anti_alias_documented', 'synchronized', 'source'}); malformed records
+    raise; the ledger reports whether it meets the A9.1 OQ-A902-01 requirements (``gate_measurement_conformant``).
     A TBD ``c1_heater`` carrying ``booked_W`` is counted ON at that conservative booked power (A9.1 SEQ-heater) and
     listed in ``booked_tbd_slots``; its actual power stays TBD.
     """
     if power_basis is not None and power_basis not in POWER_BASES:
         raise BoundaryA9Error(f"power_basis must be one of {list(POWER_BASES)} or None, got {power_basis!r}")
+    gm, gm_ok = _gate_measurement(gate_measurement)
     inst = installed_slots(config, variant)
     if not isinstance(loads, Mapping):
         raise BoundaryA9Error(f"loads must be a mapping slot -> record, got {type(loads).__name__}")
@@ -500,7 +548,8 @@ def ledger(config: str, loads: Mapping, efficiencies: Mapping, front_end: Mappin
         p_total = dest_total
     classes = sorted({it["evidence_class"] for it in items if it["evidence_class"]})
     return {"boundary_version": BOUNDARY_VERSION, "configuration": config, "variant": list(variant),
-            "label": label, "power_basis": power_basis, "status": status, "P_bus_W": p_total, "P_bus_lower_bound_W": lower,
+            "label": label, "power_basis": power_basis, "gate_measurement": gm,
+            "gate_measurement_conformant": gm_ok, "status": status, "P_bus_W": p_total, "P_bus_lower_bound_W": lower,
             "residual_W": residual, "tbd": tbd, "load_evidence_classes": classes,
             "booked_tbd_slots": [it["slot"] for it in items if it.get("booked_conservative")],
             "measured_only": classes == ["measured"],
@@ -528,11 +577,12 @@ def _verdict_below(value, lower, limit, strict: bool, ok: str, bad: str) -> str:
 def rfp_power_gate(steady: dict, startup_steps: Sequence) -> dict:
     """RFP gate P_bus,1ms,max < 1500 W applied to the steady ledger AND every start-up step (row 108; A9.1 OQ-A902-01).
 
-    PASS only if every ledger is COMPLETE, below the limit AND declared in ``PASS_BASES`` (``p_bus_1ms_max``, or
-    ``peak_sampled``, whose maximum bounds the maximum 1 ms mean); no step average is substituted for the gate.
-    FAIL if a known total or a lower bound reaches the limit on a basis in ``FAIL_BASES`` (every such value bounds
-    P_bus,1ms,max from below); an unaveraged ``peak_sampled`` value at/above the limit is a protection-analysis
-    record, not the system-power gate, and gives NOT_EVALUABLE. Otherwise NOT_EVALUABLE. An empty start-up list is
+    PASS only if every ledger is COMPLETE, below the limit, declared ``p_bus_1ms_max`` (``PASS_BASES``) AND carries a
+    conformant ``gate_measurement`` record (>= 100 kSa/s, >= 20 kHz, anti-alias documented, synchronized); no step
+    average is substituted for the gate. FAIL if a known total or a lower bound reaches the limit on a basis in
+    ``FAIL_BASES`` (``FAIL_BASIS_ASSUMPTION``). An unaveraged ``peak_sampled`` value is a protection-analysis record,
+    not the system-power gate: NOT_EVALUABLE either way (``PEAK_SAMPLED_RULE``; OPEN owner question OQ-A910-03). An
+    unstated basis gives NOT_EVALUABLE. Otherwise NOT_EVALUABLE. An empty start-up list is
     refused (the gate covers transients). The result carries the frozen gate definition (``GATE_DEFINITION``).
     """
     if isinstance(startup_steps, (str, Mapping)) or not isinstance(startup_steps, Sequence) or not startup_steps:
@@ -545,14 +595,20 @@ def rfp_power_gate(steady: dict, startup_steps: Sequence) -> dict:
         v = _verdict_below(led["P_bus_W"], led["P_bus_lower_bound_W"], P_BUS_REQUIREMENT_W, True, "PASS", "FAIL")
         basis = led.get("power_basis")
         note = None
-        if v == "PASS" and basis not in PASS_BASES:
-            v, note = "NOT_EVALUABLE", (f"value basis {basis!r} is not P_bus,1ms,max (or an unaveraged peak bounding "
-                                        f"it): no step average is substituted for the gate (A9.1 OQ-A902-01)")
+        if basis == "peak_sampled" and v in ("PASS", "FAIL"):
+            v, note = "NOT_EVALUABLE", PEAK_SAMPLED_RULE
+        elif v == "PASS" and basis not in PASS_BASES:
+            v, note = "NOT_EVALUABLE", (f"value basis {basis!r} is not P_bus,1ms,max: no step average is "
+                                        f"substituted for the gate (A9.1 OQ-A902-01)")
+        elif v == "PASS" and not led.get("gate_measurement_conformant"):
+            v, note = "NOT_EVALUABLE", ("declared p_bus_1ms_max without a conformant gate_measurement record "
+                                        "(>= 100 kSa/s, >= 20 kHz, anti-alias documented, synchronized channels; "
+                                        "A9.1 OQ-A902-01)")
         elif v == "FAIL" and basis not in FAIL_BASES:
-            v, note = "NOT_EVALUABLE", ("an unaveraged sampled peak at/above the limit is a protection-analysis "
-                                        "record, not the 1.5 kW system-power gate (A9.1 OQ-A902-01); the 1 ms "
-                                        "maximum is needed")
+            v, note = "NOT_EVALUABLE", ("unstated power basis: the value is not shown to bound P_bus,1ms,max from "
+                                        "below (it could be an unaveraged peak, A9.1 OQ-A902-01)")
         rows.append({"role": role, "label": led["label"], "status": led["status"], "power_basis": basis,
+                     "gate_measurement_conformant": bool(led.get("gate_measurement_conformant")),
                      "P_bus_W": led["P_bus_W"], "P_bus_lower_bound_W": led["P_bus_lower_bound_W"], "verdict": v,
                      "note": note, "measured_only": led["measured_only"],
                      "booked_tbd_slots": list(led.get("booked_tbd_slots", []))})
@@ -611,7 +667,9 @@ def p_bus_1ms_max(samples_W: Sequence, sample_rate_Sa_s, bandwidth_Hz, anti_alia
             "diagnostics_only": {"unaveraged_sampled_peak_W": max(xs),
                                  "max_mean_100ms_W": _max_mean(_n(DIAGNOSTIC_WINDOWS_S[0])),
                                  "max_mean_1s_W": _max_mean(_n(DIAGNOSTIC_WINDOWS_S[1]))},
-            "power_basis": "p_bus_1ms_max", "definition": TRANSIENT_WINDOW["quantity"]}
+            "power_basis": "p_bus_1ms_max", "definition": TRANSIENT_WINDOW["quantity"],
+            "gate_measurement": {"sample_rate_Sa_s": fs, "bandwidth_Hz": bw, "anti_alias_documented": True,
+                                 "synchronized": True}}
 
 
 def icp_power_allocation_check(led: dict) -> dict:
@@ -779,7 +837,8 @@ def check_startup_sequence(config: str, steps: Sequence, front_end: Mapping, var
     """Evaluate a time-ordered start-up sequence (revised SEQ-1, row 112) and the transient RFP gate (row 108).
 
     ``steps``: list of {'step_id', 'event' (a PEAK_EVENTS key or None), 'loads', 'efficiencies', optional 'flags'
-    {'keeper_stable', 'discharge_stable'}, optional 'power_basis' (``POWER_BASES``), optional 'phase' ('steady'
+    {'keeper_stable', 'discharge_stable'}, optional 'power_basis' (``POWER_BASES``), optional 'gate_measurement'
+    (conformance record, see ``ledger``), optional 'phase' ('steady'
     only on the last step)}. The last step must be the steady step. Rule violations (simultaneous peaks by declared
     event AND by actual load increase, forbidden heater reduction, enforced order) are reported, not raised; rules
     that cannot be evaluated because of TBD loads are reported as ``not_evaluable``; malformed input raises.
@@ -815,7 +874,7 @@ def check_startup_sequence(config: str, steps: Sequence, front_end: Mapping, var
             violations.append({"step_id": sid, "rule": "one peak-class event per step (row 112; A9.1 SEQ-peaks)",
                                "detail": events})
         led = ledger(config, st.get("loads"), st.get("efficiencies"), front_end, variant, label=sid,
-                     power_basis=st.get("power_basis"))
+                     power_basis=st.get("power_basis"), gate_measurement=st.get("gate_measurement"))
         ledgers.append(led)
         # a booked TBD heater (A9.1 SEQ-heater) is ON at a conservative booking; its actual power stays TBD here
         cur_p = {it["slot"]: (None if it.get("booked_conservative") else it["P_W"]) for it in led["items"]}

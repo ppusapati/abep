@@ -26,13 +26,13 @@ Configurations: `hall_c1_reference`, `hall_icp_neutralizer`. Outcome vocabulary:
 
 | key | path | sha256 |
 |---|---|---|
-| ICD | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `4d16ee4d0e3425843f24c78b3dea038e46ca44360bf44a1451c36dcbad500fb8` |
-| BUS | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `7ca8ed23652c4f3a1054461c7d14919c7e169d2ae97e20b318acba397ddeb3af` |
-| UB | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `650aa32b4b388aebba4c20a54ca35f762b09f7d04403f4f0b440d6fd8fda0983` |
-| PRE | `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` | `f22e12e73a664df26349642aa64e850ffd8e6581e7239effd8230410bb97264f` |
+| ICD | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `0a2ec6666530e8464f63a9517eaff8b2eece61aac9c7b73b4e2de897f5387d75` |
+| BUS | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `dd888719d36e5de2fc9e622451ff2ea7b88522d12aacf32919be130dc225bcb3` |
+| UB | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `4c9f57fa28bf4465a80966a12661eddcd77dd37d487fd63fb111d60937426de6` |
+| PRE | `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` | `1310a84fa9840792ab7ae9617c55fd1a041653064ccaa6eb364785214f45a4ee` |
 | EVI | `docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json` | `1c511db53b5874168c361683bae3d121bc0883a99868e72906bb5cf9234cc8fc` |
-| VIN | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `54ae028df1ea940d624e7caa074eed47fe8576ef1a0d631391601ddf855e6158` |
-| INT | `docs/experiments/hall_icp/integration/a9_core_integration_v1.json` | `425218cf84c6bb862924f3a3c125186b0ee00fc403c752f1e3c2ddb4f658386d` |
+| VIN | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `e26c38ef0af4f56d8d7b21e024867e7c6ad0378841d2f9992ac8f0d904a9a2ed` |
+| INT | `docs/experiments/hall_icp/integration/a9_core_integration_v1.json` | `86146f986e35e4d9e507c739aac9f8dd11b483be45fd7691bdccc585c734a09f` |
 | H22 | `docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json` | `8436008ac458d4e7467a9c7c9592d5312b3912b918d584ceaf3ac8cb2745a971` |
 | H23 | `docs/hardware/h2/h2_3_gas_path_plenum/h2_3_gas_path_plenum_v1.json` | `f32b05bd03aad2a09a1d9b90ee5f9423e733e6ea4cb94814c92b500590d43a7b` |
 | H24 | `docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json` | `5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef` |
@@ -190,7 +190,7 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | RFQ-07-R01 | tank sizing temperature and EOS | 323.0 | K | OWNER_GIVEN | NOW | owner-allocation | row 50 |
 | RFQ-07-R02 | Xe load design cases | `[2.0, 5.0, 10.0]` | kg | OWNER_GIVEN | after-evidence | owner-allocation | row 48 |
 | RFQ-07-R03 | indicative propellant volume per case at 323.15 K | `{"10 kg": {"120bar": 6.9363, "150bar": 5.9755, "180bar": 5.5325, "190bar": 5.4277}, "2 kg": {"120bar": 1.3873, "150bar": 1.1951, "180bar": 1.1065, "190bar": 1.0855}, "5 kg": {"120bar": 3.4681, "150bar": 2.9878, "180bar": 2.7663, "190bar": 2.7139}}` | L | DERIVED | after-evidence | model-derived | docs/procurement/web_track_v1/threads/R6_xe_inputs.json#/hardware_mass_data; row 48; row 50 |
-| RFQ-07-R04 | tank volume class, MEOP and final ranges | `{"MEOP": "TBD - requires quotations (XA9-28); the pressures are a sensitivity axis, not a MEOP choice", "V_min_323K_l_by_case_and_MEOP_axis": {"10 kg": {"100bar": 8.89326, "150bar": 5.98748, "187bar": 5.46856, "75bar": 16.2837}, "2 kg": {"100bar": 1.77865, "150bar": 1.1975, "187bar": 1.09371, "75bar": 3.25675}, "5 kg": {"100bar": 4.44663, "150bar": 2.99374, "187bar": 2.73428, "75bar": 8.14187}}, "reserve_kg_inside_case": {"10 kg": 1.63399, "2 kg": 0.326797, "5 kg": 0.816993}, "residual_kg_inside_case": {"10 kg": 0.196078, "2 kg": 0.0392157, "5 kg": 0.0980392}, "source": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json design_cases.tank_volume / reserve_residual_split (case = LOADED Xe, XA9Q-01 PROPOSED reading)"}` | L (V_min at 323.15 K incl. EOS density uncertainty), kg | COPIED_VERIFIED | after-evidence | model-derived | row 45; row 43; row 8 |
+| RFQ-07-R04 | tank volume class, MEOP and final ranges | `{"MEOP": "TBD - requires quotations (XA9-28); the pressures are a sensitivity axis, not a MEOP choice", "V_min_323K_l_by_case_and_MEOP_axis": {"10 kg": {"100bar": 8.89326, "150bar": 5.98748, "187bar": 5.46856, "75bar": 16.2837}, "2 kg": {"100bar": 1.77865, "150bar": 1.1975, "187bar": 1.09371, "75bar": 3.25675}, "5 kg": {"100bar": 4.44663, "150bar": 2.99374, "187bar": 2.73428, "75bar": 8.14187}}, "reserve_kg_inside_case": {"10 kg": 1.63399, "2 kg": 0.326797, "5 kg": 0.816993}, "residual_kg_inside_case": {"10 kg": 0.196078, "2 kg": 0.0392157, "5 kg": 0.0980392}, "source": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json design_cases.tank_volume / reserve_residual_split (case = LOADED Xe, XA9Q-01 PROPOSED reading)"}` | L (V_min at 323.15 K incl. EOS density uncertainty), kg | COPIED_VERIFIED | after-evidence | model-derived | row 45; row 43; row 8; docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json#/design_cases/tank_volume; docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json#/design_cases/reserve_residual_split |
 | RFQ-07-R05 | two isolation valves in series | 2 | valves in series | OWNER_GIVEN | NOW | owner-allocation | row 90; row 55 |
 | RFQ-07-R06 | low-flow PMU/FCU flow range | TBD - requires the C1 operating point (LOCK-1) and the Xe reference point | mg/s | TBD | LOCK-1 | - | row 125; row 42; H3-03 (docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json); H3-02 (docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json) |
 | RFQ-07-R07 | no ICP Xe term in the primary mode | 0.0 | mg/s (ICP Xe, G-REUSE) | OWNER_GIVEN | NOW | owner-allocation | A9.1 HIQ-06; A9.1 A9-09 |
@@ -335,7 +335,7 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | RFQ-07-R01 | RFQ-07 | row 50 | OWNER_GIVEN | NOW |
 | RFQ-07-R02 | RFQ-07 | row 48 | OWNER_GIVEN | after-evidence |
 | RFQ-07-R03 | RFQ-07 | R6:/hardware_mass_data; row 48; row 50 | DERIVED | after-evidence |
-| RFQ-07-R04 | RFQ-07 | row 45; row 43; row 8 | COPIED_VERIFIED | after-evidence |
+| RFQ-07-R04 | RFQ-07 | row 45; row 43; row 8; A9-08:/design_cases/tank_volume; A9-08:/design_cases/reserve_residual_split | COPIED_VERIFIED | after-evidence |
 | RFQ-07-R05 | RFQ-07 | row 90; row 55 | OWNER_GIVEN | NOW |
 | RFQ-07-R06 | RFQ-07 | row 125; row 42; H27:H3-03; H27:H3-02 | TBD | LOCK-1 |
 | RFQ-07-R07 | RFQ-07 | A9.1 HIQ-06; A9.1 A9-09 | OWNER_GIVEN | NOW |
@@ -369,10 +369,10 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | IF-RFQ-01 | A9-06 docs/budgets/mass_a9/ | RFQ-01 | module masses and CG per configuration on the stand | kg | OPEN - A9-06 (merged) books flight allocations only; ground module masses/CG TBD - requires the module drawings (ICP-08) |
 | IF-RFQ-02 | RFQ-01/04/05/07/08 (supplier datasheets) | A9-06 docs/budgets/mass_a9/ | quoted masses of flight-representative options (RF generator/matching, ICP parts, Xe hardware, C1) | kg | OPEN (after quotations) |
 | IF-RFQ-03 | A9-07 docs/hardware/h2_a9_revisions/ | RFQ-01, RFQ-05, RFQ-08 | KC-1 / downstream ICP fixture drawings, external C1 mount, >= 50 K thermal protection | mm, K | PARTIAL - A9-07 (merged) supplies the fixture / external-C1 / >= 50 K thermal requirements (REV-13..50) consumed here; drawings TBD |
-| IF-RFQ-04 | RFQ-06 | A9-07 docs/hardware/h2_a9_revisions/ | H2-4 H3-PPU-05 breadboard input: 28 V class -> regulated 100 V internal bus (row 111) - revision flag | V | FLAG |
+| IF-RFQ-04 | RFQ-06 | A9-07 docs/hardware/h2_a9_revisions/ | H2-4 H3-PPU-05 breadboard input: 28 V class -> regulated 100 V internal bus (row 111) - revision flag | V | RESOLVED for A9 by row 111 (regulated 100 V internal bus; A9-07 REV-51 / REV-62); the H2-4 v1 28 V class stays history |
 | IF-RFQ-05 | A9-08 docs/budgets/xe_ledger_a9/ | RFQ-07 | final tank ranges per 2/5/10 kg case incl. residual/reserve, MEOP; XE_REFERENCE flow; G-XE contingency term | L, bar, mg/s | PARTIAL - A9-08 design-case volumes at 323 K and the residual/reserve split imported into RFQ-07-R04 (A9-10); MEOP and XE_REFERENCE flow TBD (XA9-28; A9-01 reference point) |
 | IF-RFQ-06 | RFQ-02, RFQ-07 | A9-08 docs/budgets/xe_ledger_a9/ | C1 MFC accuracy class (+/-2 % FS until S1a, row 96) and controller ranges used for the Xe-ledger flow term | % FS, mg/s | OWNER_GIVEN |
-| IF-RFQ-07 | A9-02 docs/architecture_comparison/power_boundary_a9/ | RFQ-05, RFQ-06, RFQ-08 | I_d,max of the registered envelope; P_d; collector/bias range (A902-23); matching-network draw (A902-22); heater power | A, W, V | OPEN |
+| IF-RFQ-07 | A9-02 docs/architecture_comparison/power_boundary_a9/ | RFQ-05, RFQ-06, RFQ-08 | I_d,max of the registered envelope; P_d; collector/bias range (A902-23); matching-network draw (A902-22); heater power | A, W, V | OPEN - I_d,max / P_d of the registered envelope pending (OQ-A907-02); collector / bias range TBD (ICP-21); matching-network draw TBD (A902-22) |
 | IF-RFQ-08 | RFQ-06 | A9-02 / A9-04 | measured channel uncertainties, bandwidth, sample rate, timing skew for P_bus,1ms,max (UB-P-02..07, A902-36) | relative, kHz, kSa/s | OPEN (after S1a) |
 | IF-RFQ-09 | A9-03 schemas/interfaces/icp_neutralizer_icd_v1.json | RFQ-04, RFQ-05 | ICP-02/04/07 geometry, ICP-15/44 RF ratings, ICP-16 interlock, ICP-21 collector, ICP-27 pressure port | mm, V, W | OPEN (LOCK-1) |
 | IF-RFQ-10 | RFQ-04 | A9-04 docs/experiments/hall_icp/uncertainty_budget/ | coupler/sensor certificates at 13.56 MHz, cable S-parameters, calorimetric method | relative | OPEN (after quotations) |
@@ -611,3 +611,6 @@ Changes applied by A9-10 after this lane's verified build (record `docs/experime
 | A910-A909-30 | OQ-INT-03 re-evaluation | set | `/pending_lanes_status_a9_10` | 1 | parallel lanes merged |
 | A910-A909-31 | A9-08 merged | replace | `/open_owner_questions[id=OQ-RFQ-09]/proposed_answer` | 1 | OQ-RFQ-09 proposed answer re-evaluated (question stays OPEN) |
 | A910-A909-14 | row 111 (H2-4 28 V vs 100 V) | merge | `/open_owner_questions[id=OQ-RFQ-05]` | 1 | H2-4 28 V vs row-111 100 V conflict recorded as resolved by row 111 |
+| A910-R09-01 | row 111 + A9-07 REV-51/62 | merge | `/interface_demands[id=IF-RFQ-04]` | 1 | 28 V vs 100 V conflict resolved by row 111 |
+| A910-R09-02 | OQ-INT-03 (OQ-A907-02; ICP-21; A902-22) | merge | `/interface_demands[id=IF-RFQ-07]` | 1 | IF-RFQ-07 precise reason |
+| A910-R09-03 | A9-08 design_cases (verified lane value) | merge | `/packages[6]/requirements[3]` | 1 | RFQ-07-R04 basis and sources name the A9-08 ledger |

@@ -87,7 +87,7 @@
   {
    "id": "REC-01",
    "name": "declared A9-10 changes to the A9 deliverables",
-   "value": 188,
+   "value": 288,
    "units": "count",
    "basis": "a9_10_overlay.py records",
    "source": "computed by this builder",
@@ -122,7 +122,7 @@
    "name": "PENDING occurrences at the A9-10 base / now",
    "value": [
     634,
-    279
+    177
    ],
    "units": "count",
    "basis": "OQ-INT-03",
@@ -205,17 +205,17 @@
   {
    "deliverable": "A9-01",
    "file": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "changed_leaves": 296,
+   "changed_leaves": 402,
    "explained_by": {
-    "op": 51,
-    "gsub": 32,
+    "op": 73,
+    "gsub": 26,
     "code": 0,
     "pin": 0,
-    "section": 213
+    "section": 303
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 36,
+   "numeric_leaves_changed": 51,
    "changes": [
     {
      "cid": "A910-A901-Q01",
@@ -522,23 +522,158 @@
      "count": 14,
      "numeric": false,
      "summary": "uncertainty owner of the unmapped DQ-HI quantities points at the consumer table"
+    },
+    {
+     "cid": "A910-R01-01",
+     "driver": "OQ-INT-03 (A9-04 readiness_n)",
+     "op": "merge",
+     "ptr": "/items[id=ITM-39]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ITM-39 K, r: A9-04 defines no K or r -> LOCK-1 item of this framework"
+    },
+    {
+     "cid": "A910-R01-02",
+     "driver": "OQ-INT-03 (A9-02 SLOTS / BASE_SLOTS)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-HI-01]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-HI-01 satisfied"
+    },
+    {
+     "cid": "A910-R01-03",
+     "driver": "OQ-INT-03 (A9-02 SLOTS)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-HI-02]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-HI-02 satisfied"
+    },
+    {
+     "cid": "A910-R01-04",
+     "driver": "OQ-INT-03 (A9-03 items)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-HI-03]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-HI-03 satisfied (items defined)"
+    },
+    {
+     "cid": "A910-R01-05",
+     "driver": "OQ-INT-03 (A9-03 items; GD-01)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-HI-04]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-HI-04 partial (ids exist, freeze before HI-S1)"
+    },
+    {
+     "cid": "A910-R01-06",
+     "driver": "OQ-INT-03 (A9-04 measurement_chains, stop_rules, readiness_n)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-HI-06]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-HI-06 partial"
+    },
+    {
+     "cid": "A910-R01-07",
+     "driver": "OQ-INT-03 (A9-05 extraction)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-HI-07]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-HI-07 satisfied"
+    },
+    {
+     "cid": "A910-R01-08",
+     "driver": "OQ-INT-03 (A9-07 REV-29..34)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-HI-09]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-HI-09 satisfied (A9-07 revision)"
+    },
+    {
+     "cid": "A910-R01-09",
+     "driver": "OQ-INT-03 (A9-07 REV-01/03/13/66)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-HI-10]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-HI-10 satisfied (A9-07 revision)"
+    },
+    {
+     "cid": "A910-R01-10",
+     "driver": "OQ-INT-03 (A9-07 REV-51/62)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-HI-11]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-HI-11 partial"
+    },
+    {
+     "cid": "A910-R01-11",
+     "driver": "OQ-INT-03 (A9-07 REV-40/45)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-HI-12]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-HI-12 satisfied (A9-07 revision)"
+    },
+    {
+     "cid": "A910-R01-12",
+     "driver": "OQ-INT-03 (A9-03 ICP-34; A9-07 A9H-INS-01)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-HI-13]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-HI-13 channels defined; INS numbering open"
+    },
+    {
+     "cid": "A910-R01-13",
+     "driver": "OQ-INT-03 (A9-08 XA9-21, XA9-33, XA9-IF-15)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-HI-14]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-HI-14 partial"
+    },
+    {
+     "cid": "A910-R01-14",
+     "driver": "OQ-INT-03",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-HI-16]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-HI-16 precise reason"
+    },
+    {
+     "cid": "A910-R01-15",
+     "driver": "OQ-INT-03 (A9-06 MA9-ID-19)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-HI-17]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-HI-17 partial"
     }
    ]
   },
   {
    "deliverable": "A9-02",
    "file": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "changed_leaves": 267,
+   "changed_leaves": 385,
    "explained_by": {
-    "op": 22,
+    "op": 35,
     "gsub": 0,
-    "code": 176,
+    "code": 191,
     "pin": 0,
-    "section": 69
+    "section": 159
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 20,
+   "numeric_leaves_changed": 35,
    "changes": [
     {
      "cid": "A910-A902-Q01",
@@ -650,23 +785,170 @@
      "count": 1,
      "numeric": false,
      "summary": "M16 demand satisfied by the v3 refresh"
+    },
+    {
+     "cid": "A910-R02-C1",
+     "driver": "A9.1 OQ-A902-01 (review repair; OQ-A910-03 not pre-empted)",
+     "op": "code",
+     "ptr": "abep_sim/bus_boundary_a9.py",
+     "count": 0,
+     "numeric": false,
+     "summary": "rfp_power_gate: PASS only on p_bus_1ms_max WITH a conformant gate_measurement record (>= 100 kSa/s, >= 20 kHz, anti-alias documented, synchronized); peak_sampled is NOT_EVALUABLE both ways (protection record; the reading 'a conformant peak below 1500 W bounds the 1 ms maximum' is the OPEN owner question OQ-A910-03); an unstated basis is NOT_EVALUABLE; step_average / steady_state FAIL only under the stated duration assumption; c1_keeper load plane no longer cites peak_sampled",
+     "scope": [
+      "/items",
+      "/gates_and_allocations",
+      "/sequencing",
+      "/slots",
+      "/bus_architecture",
+      "/h4_inputs"
+     ]
+    },
+    {
+     "cid": "A910-R02-C2",
+     "driver": "OQ-INT-03 (A9-04 DQ-HI-PBUS chain)",
+     "op": "code",
+     "ptr": "docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py",
+     "count": 0,
+     "numeric": false,
+     "summary": "A902-25 note and the row-89 application: the pulse-energy record is not defined by the merged A9-04 DQ-HI-PBUS chain (LOCK-1 item) instead of 'PENDING A9-04'; schema gains the gate_measurement record",
+     "scope": [
+      "/items",
+      "/owner_answers_applied"
+     ]
+    },
+    {
+     "cid": "A910-R02-01",
+     "driver": "OQ-INT-03 (A9-03 ICP-13)",
+     "op": "merge",
+     "ptr": "/items[id=A902-22]",
+     "count": 1,
+     "numeric": false,
+     "summary": "A902-22 precise remaining reason"
+    },
+    {
+     "cid": "A910-R02-02",
+     "driver": "A9.1 OQ-A902-01 + OQ-INT-03 (A9-01 stage_map)",
+     "op": "merge",
+     "ptr": "/interface_demands[1]",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9-01 -> A9-02 demand satisfied"
+    },
+    {
+     "cid": "A910-R02-03",
+     "driver": "OQ-INT-03 (A9-03 items)",
+     "op": "merge",
+     "ptr": "/interface_demands[3]",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9-03 -> A9-02 demand partial"
+    },
+    {
+     "cid": "A910-R02-04",
+     "driver": "OQ-INT-03 (A9-04 UB-P-*)",
+     "op": "merge",
+     "ptr": "/interface_demands[5]",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9-04 -> A9-02 demand partial"
+    },
+    {
+     "cid": "A910-R02-05",
+     "driver": "OQ-INT-03 (A9-05 extraction)",
+     "op": "merge",
+     "ptr": "/interface_demands[7]",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9-05 -> A9-02 demand satisfied"
+    },
+    {
+     "cid": "A910-R02-06",
+     "driver": "OQ-INT-03 (A9-07 REV-51/68/69)",
+     "op": "merge",
+     "ptr": "/interface_demands[9]",
+     "count": 1,
+     "numeric": false,
+     "summary": "H2-4 -> A9-02 precise reason"
+    },
+    {
+     "cid": "A910-R02-07",
+     "driver": "OQ-INT-03 (A9-06)",
+     "op": "merge",
+     "ptr": "/interface_demands[12]",
+     "count": 1,
+     "numeric": false,
+     "summary": "H2-7 -> A9-02 precise reason"
+    },
+    {
+     "cid": "A910-R02-08",
+     "driver": "OQ-INT-03 (A9-07 REV-04/58)",
+     "op": "merge",
+     "ptr": "/interface_demands[13]",
+     "count": 1,
+     "numeric": false,
+     "summary": "H2-1 -> A9-02 precise reason"
+    },
+    {
+     "cid": "A910-R02-09",
+     "driver": "OQ-INT-03 (A9-07 REV-19/21/25/28)",
+     "op": "merge",
+     "ptr": "/interface_demands[14]",
+     "count": 1,
+     "numeric": false,
+     "summary": "H2-2 -> A9-02 precise reason"
+    },
+    {
+     "cid": "A910-R02-10",
+     "driver": "OQ-INT-03 (row 22; A9-07)",
+     "op": "merge",
+     "ptr": "/interface_demands[16]",
+     "count": 1,
+     "numeric": false,
+     "summary": "H2-3 -> A9-02 precise reason"
+    },
+    {
+     "cid": "A910-R02-11",
+     "driver": "OQ-INT-03 (A9-07 REV-40..50)",
+     "op": "merge",
+     "ptr": "/interface_demands[18]",
+     "count": 1,
+     "numeric": false,
+     "summary": "H2-5 -> A9-02 precise reason"
+    },
+    {
+     "cid": "A910-R02-12",
+     "driver": "OQ-INT-03 (A9-08 XA9-IF-15)",
+     "op": "merge",
+     "ptr": "/interface_demands[20]",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9-02 -> Xe ledger satisfied"
+    },
+    {
+     "cid": "A910-R02-13",
+     "driver": "OQ-INT-03 (A9-03 ICP-13)",
+     "op": "merge",
+     "ptr": "/h3_inputs[id=H3-A902-03]",
+     "count": 1,
+     "numeric": false,
+     "summary": "H3-A902-03 basis"
     }
    ]
   },
   {
    "deliverable": "A9-03",
    "file": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "changed_leaves": 282,
+   "changed_leaves": 456,
    "explained_by": {
-    "op": 51,
+    "op": 81,
     "gsub": 0,
     "code": 0,
     "pin": 0,
-    "section": 231
+    "section": 375
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 41,
+   "numeric_leaves_changed": 65,
    "changes": [
     {
      "cid": "A910-A903-Q01",
@@ -1016,23 +1298,239 @@
      "count": 1,
      "numeric": false,
      "summary": "annex reconciled with A9-05"
+    },
+    {
+     "cid": "A910-R03-01",
+     "driver": "OQ-INT-03 (A9-04 UB-T-12)",
+     "op": "merge",
+     "ptr": "/items[id=ICP-03]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-03 precise reason"
+    },
+    {
+     "cid": "A910-R03-02",
+     "driver": "OQ-INT-03 (A9-04 UB-RF-02..09)",
+     "op": "merge",
+     "ptr": "/items[id=ICP-14]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-14 precise reason"
+    },
+    {
+     "cid": "A910-R03-03",
+     "driver": "OQ-INT-03 (A9-02 SLOTS)",
+     "op": "merge",
+     "ptr": "/items[id=ICP-24]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-24 slot ids from A9-02"
+    },
+    {
+     "cid": "A910-R03-04",
+     "driver": "OQ-INT-03 (A9-01 DQ-HI-IGN, DR-07, MD-HI-02)",
+     "op": "merge",
+     "ptr": "/items[id=ICP-35]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-35 precise reason"
+    },
+    {
+     "cid": "A910-R03-05",
+     "driver": "OQ-INT-03 (A9-01 GD-17)",
+     "op": "merge",
+     "ptr": "/items[id=ICP-41]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-41 precise reason"
+    },
+    {
+     "cid": "A910-R03-06",
+     "driver": "OQ-INT-03 (A9-01 stage_map, execution_design)",
+     "op": "merge",
+     "ptr": "/items[id=ICP-42]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-42 schedule form supplied by A9-01"
+    },
+    {
+     "cid": "A910-R03-07",
+     "driver": "A9.1 A9-03-Vd + OQ-INT-03",
+     "op": "merge",
+     "ptr": "/interface_demands[id=ID-02]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ID-02 satisfied by A9.1"
+    },
+    {
+     "cid": "A910-R03-08",
+     "driver": "OQ-INT-03 (A9-01)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=ID-03]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ID-03 partial"
+    },
+    {
+     "cid": "A910-R03-09",
+     "driver": "OQ-INT-03 (A9-01 stage_map)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=ID-04]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ID-04 satisfied"
+    },
+    {
+     "cid": "A910-R03-10",
+     "driver": "OQ-INT-03 (A9-02)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=ID-07]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ID-07 partial"
+    },
+    {
+     "cid": "A910-R03-11",
+     "driver": "OQ-INT-03 (A9-04)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=ID-09]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ID-09 partial"
+    },
+    {
+     "cid": "A910-R03-12",
+     "driver": "OQ-INT-03 (A9-05)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=ID-11]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ID-11 satisfied"
+    },
+    {
+     "cid": "A910-R03-13",
+     "driver": "OQ-INT-03 (A9-07 REV-03/66, IDA7-17)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=ID-13]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ID-13 partial"
+    },
+    {
+     "cid": "A910-R03-14",
+     "driver": "OQ-INT-03 (A9-07 REV-40/48/49)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=ID-17]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ID-17 satisfied (requirement)"
+    },
+    {
+     "cid": "A910-R03-15",
+     "driver": "OQ-INT-03 (A9-07 REV-30..32, REV-38)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=ID-21]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ID-21 partial"
+    },
+    {
+     "cid": "A910-R03-16",
+     "driver": "OQ-INT-03 (A9-06 MA9-ID-20)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=ID-23]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ID-23 partial"
+    },
+    {
+     "cid": "A910-R03-17",
+     "driver": "OQ-INT-03 (A9-02; OQ-A907-02)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=ID-25]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ID-25 precise reason"
+    },
+    {
+     "cid": "A910-R03-18",
+     "driver": "OQ-INT-03 (ICP-43)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=ID-26]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ID-26 precise reason"
+    },
+    {
+     "cid": "A910-R03-19",
+     "driver": "OQ-INT-03 (A9.1 ICP-45; OQ-A907-02)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=ID-27]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ID-27 precise reason"
+    },
+    {
+     "cid": "A910-R03-20",
+     "driver": "OQ-INT-03 (A9-05 TK-21/27/52)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=ID-29]",
+     "count": 1,
+     "numeric": false,
+     "summary": "ID-29 partial"
+    },
+    {
+     "cid": "A910-R03-21",
+     "driver": "OQ-INT-03 (A9-02 SLOTS)",
+     "op": "merge",
+     "ptr": "/m16_impact[m16_row=12]",
+     "count": 1,
+     "numeric": false,
+     "summary": "M16 row 12 blocking item re-evaluated"
+    },
+    {
+     "cid": "A910-R03-22",
+     "driver": "A9.1 OQ-A902-03 + OQ-INT-03",
+     "op": "merge",
+     "ptr": "/hard_incompatibility_check/checked[2]",
+     "count": 1,
+     "numeric": false,
+     "summary": "hard-incompatibility finding re-evaluated"
+    },
+    {
+     "cid": "A910-R03-23",
+     "driver": "A9.1 OQ-A902-03",
+     "op": "replace",
+     "ptr": "/items[id=ICP-24]/requirement",
+     "count": 1,
+     "numeric": false,
+     "summary": "ICP-24 cross-references the OQ-A902-03 residual form"
+    },
+    {
+     "cid": "A910-R03-24",
+     "driver": "OQ-INT-03 (A9-02; A9-05 TK-21/52)",
+     "op": "replace",
+     "ptr": "/hard_incompatibility_check/checked[3]/finding",
+     "count": 1,
+     "numeric": false,
+     "summary": "hard-incompatibility finding re-evaluated against A9-02 / A9-05"
     }
    ]
   },
   {
    "deliverable": "A9-04",
    "file": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "changed_leaves": 380,
+   "changed_leaves": 602,
    "explained_by": {
-    "op": 78,
+    "op": 138,
     "gsub": 17,
     "code": 0,
     "pin": 0,
-    "section": 285
+    "section": 447
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 50,
+   "numeric_leaves_changed": 80,
    "changes": [
     {
      "cid": "A910-A904-Q01",
@@ -1447,6 +1945,249 @@
      "count": 7,
      "numeric": false,
      "summary": "unmapped ids kept; consumer table referenced"
+    },
+    {
+     "cid": "A910-R04-01",
+     "driver": "OQ-INT-03 (A9-02 SLOTS)",
+     "op": "merge",
+     "ptr": "/items[id=UB-P-01]",
+     "count": 1,
+     "numeric": false,
+     "summary": "UB-P-01 filled from A9-02"
+    },
+    {
+     "cid": "A910-R04-02",
+     "driver": "OQ-INT-03 (A9-02 ledger)",
+     "op": "merge",
+     "ptr": "/items[id=UB-P-06]",
+     "count": 1,
+     "numeric": false,
+     "summary": "UB-P-06 precise reason"
+    },
+    {
+     "cid": "A910-R04-03",
+     "driver": "A9.1 OQ-A902-01 + OQ-INT-03",
+     "op": "merge",
+     "ptr": "/items[id=UB-P-07]",
+     "count": 1,
+     "numeric": true,
+     "summary": "UB-P-07 window / bandwidth from A9.1"
+    },
+    {
+     "cid": "A910-R04-04",
+     "driver": "A9.1 A9-03-matching + OQ-INT-03",
+     "op": "merge",
+     "ptr": "/items[id=UB-RF-09]",
+     "count": 1,
+     "numeric": false,
+     "summary": "UB-RF-09 filled"
+    },
+    {
+     "cid": "A910-R04-05",
+     "driver": "OQ-INT-03 (A9-03 ICP-20/21)",
+     "op": "merge",
+     "ptr": "/items[id=UB-N-00]",
+     "count": 1,
+     "numeric": false,
+     "summary": "UB-N-00 filled"
+    },
+    {
+     "cid": "A910-R04-06",
+     "driver": "OQ-INT-03 (A9-02 SLOTS)",
+     "op": "merge",
+     "ptr": "/items[id=UB-Z-03]",
+     "count": 1,
+     "numeric": false,
+     "summary": "UB-Z-03 slot reference resolved"
+    },
+    {
+     "cid": "A910-R04-07",
+     "driver": "OQ-INT-03 (A9-01 decision_quantities)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-01]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-01 partial"
+    },
+    {
+     "cid": "A910-R04-08",
+     "driver": "OQ-INT-03 (A9-01 stage_map)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-02]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-02 satisfied"
+    },
+    {
+     "cid": "A910-R04-09",
+     "driver": "OQ-INT-03 (A9-02)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-05]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-05 partial"
+    },
+    {
+     "cid": "A910-R04-10",
+     "driver": "OQ-INT-03 (A9-03)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-07]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-07 partial"
+    },
+    {
+     "cid": "A910-R04-11",
+     "driver": "A9.1 A9-03-matching + OQ-INT-03",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-08]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-08 partial"
+    },
+    {
+     "cid": "A910-R04-12",
+     "driver": "A9.1 HIQ-06 + OQ-INT-03",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-09]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-09 partial"
+    },
+    {
+     "cid": "A910-R04-13",
+     "driver": "OQ-INT-03 (A9-03 ICP-08)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-10]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-10 precise reason"
+    },
+    {
+     "cid": "A910-R04-14",
+     "driver": "OQ-INT-03 (A9-05)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-12]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-12 satisfied"
+    },
+    {
+     "cid": "A910-R04-15",
+     "driver": "OQ-INT-03 (A9-07 REV-62)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-17]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-17 partial"
+    },
+    {
+     "cid": "A910-R04-16",
+     "driver": "OQ-INT-03 (A9-07 REV-11, IDA7-17)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-18]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-18 partial"
+    },
+    {
+     "cid": "A910-R04-17",
+     "driver": "A9.1 HIQ-06 + OQ-INT-03",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-20]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-20 partial"
+    },
+    {
+     "cid": "A910-R04-18",
+     "driver": "A9.1 HIQ-06 + OQ-INT-03",
+     "op": "merge",
+     "ptr": "/owner_answers_applied[row=46]",
+     "count": 1,
+     "numeric": false,
+     "summary": "row 46 application updated"
+    },
+    {
+     "cid": "A910-R04-19",
+     "driver": "OQ-INT-03",
+     "op": "merge",
+     "ptr": "/owner_answers_applied[row=110]",
+     "count": 1,
+     "numeric": false,
+     "summary": "row 110 application updated"
+    },
+    {
+     "cid": "A910-R04-20",
+     "driver": "A9.1 HIQ-05",
+     "op": "replace",
+     "ptr": "/stop_rules/net_benefit",
+     "count": 1,
+     "numeric": false,
+     "summary": "NET_BENEFIT amended for HIQ-05"
+    },
+    {
+     "cid": "A910-R04-21",
+     "driver": "A9.1 HIQ-05",
+     "op": "replace",
+     "ptr": "/compliance[4]",
+     "count": 1,
+     "numeric": false,
+     "summary": "compliance line amended for HIQ-05"
+    },
+    {
+     "cid": "A910-R04-22",
+     "driver": "A9.1 HIQ-05",
+     "op": "replace",
+     "ptr": "/owner_answers_applied[row=37]/how_applied",
+     "count": 1,
+     "numeric": false,
+     "summary": "row 37 application amended"
+    },
+    {
+     "cid": "A910-R04-23",
+     "driver": "OQ-INT-03 (A9-03 ICP-14)",
+     "op": "replace",
+     "ptr": "/measurement_chains[dq=UB-DQ-RF]/equations[4]",
+     "count": 1,
+     "numeric": false,
+     "summary": "calorimetry method: precise remaining reason"
+    },
+    {
+     "cid": "A910-R04-24",
+     "driver": "OQ-INT-03 (A9-03 ICP-21)",
+     "op": "replace",
+     "ptr": "/measurement_chains[dq=UB-DQ-NEUT]/equations[2]",
+     "count": 1,
+     "numeric": false,
+     "summary": "collector-current sign convention: precise remaining reason"
+    },
+    {
+     "cid": "A910-R04-25",
+     "driver": "OQ-INT-03 (A9-01 DQ-HI-ETAU)",
+     "op": "merge",
+     "ptr": "/items[id=UB-E-00]",
+     "count": 1,
+     "numeric": false,
+     "summary": "UB-E-00 re-stated from A9-01 DQ-HI-ETAU"
+    },
+    {
+     "cid": "A910-R04-26",
+     "driver": "OQ-INT-03 (A9-01 DQ-HI-ETAU)",
+     "op": "replace",
+     "ptr": "/measurement_chains[dq=DQ-HI-ETAU]/equations[0]",
+     "count": 1,
+     "numeric": false,
+     "summary": "mdot_prop basis precise reason"
+    },
+    {
+     "cid": "A910-R04-27",
+     "driver": "OQ-INT-03 (A9-03 ICP-21)",
+     "op": "merge",
+     "ptr": "/stop_rules/limit_aborts/limits[id=LA-04]",
+     "count": 1,
+     "numeric": false,
+     "summary": "LA-04 precise reason"
     }
    ]
   },
@@ -1524,17 +2265,17 @@
   {
    "deliverable": "A9-05vi",
    "file": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-   "changed_leaves": 70,
+   "changed_leaves": 160,
    "explained_by": {
-    "op": 12,
+    "op": 24,
     "gsub": 0,
     "code": 0,
     "pin": 1,
-    "section": 57
+    "section": 135
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 8,
+   "numeric_leaves_changed": 21,
    "changes": [
     {
      "cid": "A910-A905VI-Q01",
@@ -1607,23 +2348,140 @@
      "count": 1,
      "numeric": false,
      "summary": "Xe-ledger reference retargeted"
+    },
+    {
+     "cid": "A910-R05vi-01",
+     "driver": "OQ-INT-03 (A9-03 ICP-20/21)",
+     "op": "merge",
+     "ptr": "/items[id=VI-EX-03]",
+     "count": 1,
+     "numeric": false,
+     "summary": "VI-EX-03 precise reason"
+    },
+    {
+     "cid": "A910-R05vi-02",
+     "driver": "OQ-INT-03 (A9-03 ICP-31)",
+     "op": "merge",
+     "ptr": "/items[id=VI-HD-06]/how_obtained",
+     "count": 1,
+     "numeric": false,
+     "summary": "VI-HD-06 chain resolved"
+    },
+    {
+     "cid": "A910-R05vi-03",
+     "driver": "OQ-INT-03 (A9-01)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-01]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-01 partial"
+    },
+    {
+     "cid": "A910-R05vi-04",
+     "driver": "OQ-INT-03 (A9-02)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-03]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-03 satisfied"
+    },
+    {
+     "cid": "A910-R05vi-05",
+     "driver": "OQ-INT-03 (A9-03)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-05]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-05 partial"
+    },
+    {
+     "cid": "A910-R05vi-06",
+     "driver": "OQ-INT-03 (A9-04)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-07]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-07 partial"
+    },
+    {
+     "cid": "A910-R05vi-07",
+     "driver": "OQ-INT-03 (A9-07)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-12]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-12 partial"
+    },
+    {
+     "cid": "A910-R05vi-08",
+     "driver": "A9.1 A9-03-planes + OQ-INT-03",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-19]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-19 satisfied"
+    },
+    {
+     "cid": "A910-R05vi-09",
+     "driver": "A9.1 HIQ-05",
+     "op": "replace",
+     "ptr": "/decision_vocabulary/net_benefit_form",
+     "count": 1,
+     "numeric": false,
+     "summary": "net_benefit_form amended"
+    },
+    {
+     "cid": "A910-R05vi-10",
+     "driver": "A9.1 HIQ-05",
+     "op": "replace",
+     "ptr": "/owner_answers_applied[row=37]/how",
+     "count": 1,
+     "numeric": false,
+     "summary": "row 37 application amended"
+    },
+    {
+     "cid": "A910-R05vi-11",
+     "driver": "A9.1 HIQ-06",
+     "op": "replace",
+     "ptr": "/items[id=VI-GAS-01]/definition",
+     "count": 1,
+     "numeric": false,
+     "summary": "VI-GAS-01 definition consistent with G-REUSE"
+    },
+    {
+     "cid": "A910-R05vi-12",
+     "driver": "A9.1 HIQ-06",
+     "op": "merge",
+     "ptr": "/items[id=VI-GAS-01]/how_obtained",
+     "count": 1,
+     "numeric": false,
+     "summary": "VI-GAS-01 chain: OQ-VI-01 answered by HIQ-06"
+    },
+    {
+     "cid": "A910-R05vi-13",
+     "driver": "A9.1 HIQ-06",
+     "op": "merge",
+     "ptr": "/items[id=VI-GAS-01]",
+     "count": 1,
+     "numeric": false,
+     "summary": "VI-GAS-01 source: A9.1 HIQ-06"
     }
    ]
   },
   {
    "deliverable": "A9-06",
    "file": "docs/budgets/mass_a9/mass_a9_v1.json",
-   "changed_leaves": 2180,
+   "changed_leaves": 2187,
    "explained_by": {
-    "op": 0,
+    "op": 1,
     "gsub": 0,
     "code": 2159,
     "pin": 0,
-    "section": 21
+    "section": 27
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 700,
+   "numeric_leaves_changed": 701,
    "changes": [
     {
      "cid": "A910-A906-01",
@@ -1664,23 +2522,32 @@
       "/reallocation_options",
       "/a9_1_decisions_applied"
      ]
+    },
+    {
+     "cid": "A910-R06-01",
+     "driver": "A9-10 self-reference",
+     "op": "merge",
+     "ptr": "/interface_demands[id=MA9-ID-18]",
+     "count": 1,
+     "numeric": false,
+     "summary": "MA9-ID-18 satisfied"
     }
    ]
   },
   {
    "deliverable": "A9-07",
    "file": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
-   "changed_leaves": 85,
+   "changed_leaves": 99,
    "explained_by": {
-    "op": 9,
+    "op": 11,
     "gsub": 1,
     "code": 0,
     "pin": 6,
-    "section": 69
+    "section": 81
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 10,
+   "numeric_leaves_changed": 12,
    "changes": [
     {
      "cid": "A910-A907-01",
@@ -1771,6 +2638,24 @@
      "count": 1,
      "numeric": false,
      "summary": "IDA7-08 re-evaluated"
+    },
+    {
+     "cid": "A910-R07-01",
+     "driver": "OQ-INT-03 (A9-04 UB-RF-*)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IDA7-15]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IDA7-15 partial"
+    },
+    {
+     "cid": "A910-R07-02",
+     "driver": "OQ-INT-03 (A9-04 UB-RF-02..07)",
+     "op": "replace",
+     "ptr": "/new_items[id=A9H-INS-01]/note",
+     "count": 1,
+     "numeric": false,
+     "summary": "A9H-INS-01 note re-evaluated"
     }
    ]
   },
@@ -1836,17 +2721,17 @@
   {
    "deliverable": "A9-09",
    "file": "docs/procurement/rfq_a9/rfq_a9_v1.json",
-   "changed_leaves": 714,
+   "changed_leaves": 747,
    "explained_by": {
-    "op": 76,
+    "op": 87,
     "gsub": 0,
-    "code": 424,
+    "code": 428,
     "pin": 7,
-    "section": 207
+    "section": 225
    },
    "unexplained": 0,
    "numeric_unexplained": 0,
-   "numeric_leaves_changed": 55,
+   "numeric_leaves_changed": 58,
    "changes": [
     {
      "cid": "A910-A909-32",
@@ -2163,6 +3048,33 @@
      "count": 1,
      "numeric": false,
      "summary": "H2-4 28 V vs row-111 100 V conflict recorded as resolved by row 111"
+    },
+    {
+     "cid": "A910-R09-01",
+     "driver": "row 111 + A9-07 REV-51/62",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-RFQ-04]",
+     "count": 1,
+     "numeric": false,
+     "summary": "28 V vs 100 V conflict resolved by row 111"
+    },
+    {
+     "cid": "A910-R09-02",
+     "driver": "OQ-INT-03 (OQ-A907-02; ICP-21; A902-22)",
+     "op": "merge",
+     "ptr": "/interface_demands[id=IF-RFQ-07]",
+     "count": 1,
+     "numeric": false,
+     "summary": "IF-RFQ-07 precise reason"
+    },
+    {
+     "cid": "A910-R09-03",
+     "driver": "A9-08 design_cases (verified lane value)",
+     "op": "merge",
+     "ptr": "/packages[6]/requirements[3]",
+     "count": 1,
+     "numeric": false,
+     "summary": "RFQ-07-R04 basis and sources name the A9-08 ledger"
     }
    ]
   }
@@ -2207,7 +3119,12 @@
    "decision": "HIQ-05",
    "applied_by": [
     "A910-A901-12",
-    "A910-A901-Q05"
+    "A910-A901-Q05",
+    "A910-R04-20",
+    "A910-R04-21",
+    "A910-R04-22",
+    "A910-R05vi-09",
+    "A910-R05vi-10"
    ],
    "status": "APPLIED"
   },
@@ -2238,7 +3155,13 @@
     "A910-A905VI-01",
     "A910-A905VI-02",
     "A910-A905VI-03",
-    "A910-A905VI-Q01"
+    "A910-A905VI-Q01",
+    "A910-R04-12",
+    "A910-R04-17",
+    "A910-R04-18",
+    "A910-R05vi-11",
+    "A910-R05vi-12",
+    "A910-R05vi-13"
    ],
    "status": "APPLIED"
   },
@@ -2269,7 +3192,13 @@
     "A910-A905VI-01",
     "A910-A905VI-02",
     "A910-A905VI-03",
-    "A910-A905VI-Q01"
+    "A910-A905VI-Q01",
+    "A910-R04-12",
+    "A910-R04-17",
+    "A910-R04-18",
+    "A910-R05vi-11",
+    "A910-R05vi-12",
+    "A910-R05vi-13"
    ],
    "status": "APPLIED"
   },
@@ -2390,7 +3319,10 @@
    "decision": "OQ-A902-01",
    "applied_by": [
     "A910-A902-01",
-    "A910-A902-Q01"
+    "A910-A902-Q01",
+    "A910-R02-02",
+    "A910-R02-C1",
+    "A910-R04-03"
    ],
    "status": "APPLIED"
   },
@@ -2405,7 +3337,9 @@
   {
    "decision": "OQ-A902-03",
    "applied_by": [
-    "A910-A902-Q03"
+    "A910-A902-Q03",
+    "A910-R03-22",
+    "A910-R03-23"
    ],
    "status": "APPLIED"
   },
@@ -2461,7 +3395,8 @@
     "A910-A901-10",
     "A910-A903-11",
     "A910-A903-12",
-    "A910-A903-28"
+    "A910-A903-28",
+    "A910-R03-19"
    ],
    "status": "APPLIED"
   },
@@ -2482,7 +3417,8 @@
    "applied_by": [
     "A910-A903-01",
     "A910-A903-02",
-    "A910-A903-Q01"
+    "A910-A903-Q01",
+    "A910-R05vi-08"
    ],
    "status": "APPLIED"
   },
@@ -2493,7 +3429,8 @@
     "A910-A903-04",
     "A910-A903-26",
     "A910-A903-30",
-    "A910-A903-Q03"
+    "A910-A903-Q03",
+    "A910-R03-07"
    ],
    "status": "APPLIED"
   },
@@ -2504,7 +3441,9 @@
     "A910-A903-06",
     "A910-A903-25",
     "A910-A903-29",
-    "A910-A903-Q04"
+    "A910-A903-Q04",
+    "A910-R04-04",
+    "A910-R04-11"
    ],
    "status": "APPLIED"
   },
@@ -2677,7 +3616,7 @@
   }
  ],
  "pending_reevaluation": {
-  "rule": "every 'PENDING' still present is re-evaluated against the now-merged lanes: filled where the target gives the value (see changes_by_deliverable), otherwise kept with a precise reason code (reason_codes); an unclassified occurrence fails the build",
+  "rule": "every 'PENDING' still present is re-evaluated against the now-merged lanes: filled or re-stated where the target (or an A9.1 decision) gives the value (overlay records A910-R*, driver OQ-INT-03, see changes_by_deliverable), otherwise kept with a reason code (reason_codes) and, where the code is TARGET_CHECKED_NOT_DEFINED, the per-occurrence detail of what the target does and does not define; there is no catch-all rule: an unclassified occurrence fails the build",
   "reason_codes": {
    "NOT_A_CROSS_REFERENCE": "status vocabulary / document status literal / form definition; not a reference to another lane",
    "HISTORICAL_COPY": "verbatim copy of an H2 v1 status inside the A9-07 revision register ('old' side); historical text is never rewritten; the revision is the REV entry's 'new' side",
@@ -2687,7 +3626,7 @@
    "UNMAPPED_DQ_ID": "UNMAPPED A9-04 id: kept as a measurement-chain id; its DQ-HI consumers are listed in dq_consumer_table (OQ-INT-01 PROPOSED, owner call)",
    "DEPENDS_ON_LOCK_OR_OWNER": "frozen only at LOCK-1 / LOCK-2 or by an owner decision; the target lane defines the form only",
    "DEPENDS_ON_HARDWARE_OR_EVIDENCE": "needs hardware, a registered stand envelope, a selected device or a measurement; no lane can supply it",
-   "TARGET_MERGED_DOES_NOT_DEFINE": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)",
+   "TARGET_CHECKED_NOT_DEFINED": "checked against the merged target: it does not define this value (the precise detail is given per occurrence in 'detail')",
    "A9_08_OPEN_AFTER_A9_07": "the A9 Xe ledger item waits on vendor/design-qualified C1 values; A9-07 (merged) revises requirements and gives none",
    "A9_08_OPEN_AFTER_A9_09": "the A9 Xe ledger item waits on quotations; A9-09 (merged) issued specifications only",
    "H2_4_SELECTION": "waits on the H2-4 PPU/supply selection (quotation stage, A9-09)"
@@ -2697,32 +3636,32 @@
     "deliverable": "A9-01",
     "file": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
     "pending_at_base": 45,
-    "pending_now": 13,
-    "leaves_no_longer_pending": 32,
+    "pending_now": 3,
+    "leaves_no_longer_pending": 42,
     "leaves_pending_at_base": 45
    },
    {
     "deliverable": "A9-02",
     "file": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
     "pending_at_base": 21,
-    "pending_now": 19,
-    "leaves_no_longer_pending": 1,
+    "pending_now": 2,
+    "leaves_no_longer_pending": 17,
     "leaves_pending_at_base": 19
    },
    {
     "deliverable": "A9-03",
     "file": "schemas/interfaces/icp_neutralizer_icd_v1.json",
     "pending_at_base": 33,
-    "pending_now": 30,
-    "leaves_no_longer_pending": 3,
+    "pending_now": 6,
+    "leaves_no_longer_pending": 26,
     "leaves_pending_at_base": 32
    },
    {
     "deliverable": "A9-04",
     "file": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
     "pending_at_base": 68,
-    "pending_now": 54,
-    "leaves_no_longer_pending": 14,
+    "pending_now": 14,
+    "leaves_no_longer_pending": 54,
     "leaves_pending_at_base": 68
    },
    {
@@ -2737,24 +3676,24 @@
     "deliverable": "A9-05vi",
     "file": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
     "pending_at_base": 116,
-    "pending_now": 116,
-    "leaves_no_longer_pending": 0,
+    "pending_now": 108,
+    "leaves_no_longer_pending": 8,
     "leaves_pending_at_base": 116
    },
    {
     "deliverable": "A9-06",
     "file": "docs/budgets/mass_a9/mass_a9_v1.json",
     "pending_at_base": 156,
-    "pending_now": 4,
-    "leaves_no_longer_pending": 152,
+    "pending_now": 3,
+    "leaves_no_longer_pending": 153,
     "leaves_pending_at_base": 156
    },
    {
     "deliverable": "A9-07",
     "file": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
     "pending_at_base": 39,
-    "pending_now": 30,
-    "leaves_no_longer_pending": 8,
+    "pending_now": 28,
+    "leaves_no_longer_pending": 10,
     "leaves_pending_at_base": 37
    },
    {
@@ -2775,15 +3714,15 @@
    }
   ],
   "remaining_by_reason": {
-   "NOT_A_CROSS_REFERENCE": 37,
+   "NOT_A_CROSS_REFERENCE": 13,
    "HISTORICAL_COPY": 26,
-   "H2_V1_REVISED_IN_A9_07": 20,
+   "H2_V1_REVISED_IN_A9_07": 7,
    "HISTORICAL_PREIONIZER": 1,
-   "ASSIGNMENT_NOT_DEFINED_BY_TARGET": 109,
+   "ASSIGNMENT_NOT_DEFINED_BY_TARGET": 107,
    "UNMAPPED_DQ_ID": 7,
-   "DEPENDS_ON_LOCK_OR_OWNER": 8,
-   "DEPENDS_ON_HARDWARE_OR_EVIDENCE": 9,
-   "TARGET_MERGED_DOES_NOT_DEFINE": 54,
+   "DEPENDS_ON_LOCK_OR_OWNER": 5,
+   "DEPENDS_ON_HARDWARE_OR_EVIDENCE": 3,
+   "TARGET_CHECKED_NOT_DEFINED": 0,
    "A9_08_OPEN_AFTER_A9_07": 5,
    "A9_08_OPEN_AFTER_A9_09": 1,
    "H2_4_SELECTION": 2
@@ -2797,67 +3736,7 @@
    },
    {
     "deliverable": "A9-01",
-    "pointer": "/items[38]/source",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-01",
     "pointer": "/items[40]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-01",
-    "pointer": "/interface_demands[0]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-01",
-    "pointer": "/interface_demands[1]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-01",
-    "pointer": "/interface_demands[2]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-01",
-    "pointer": "/interface_demands[3]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-01",
-    "pointer": "/interface_demands[5]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-01",
-    "pointer": "/interface_demands[6]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-01",
-    "pointer": "/interface_demands[12]/status",
-    "text": "ified; ICP channels PENDING)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-01",
-    "pointer": "/interface_demands[15]/status",
-    "text": "PENDING (hardware not built)",
-    "reason": "DEPENDS_ON_HARDWARE_OR_EVIDENCE"
-   },
-   {
-    "deliverable": "A9-01",
-    "pointer": "/interface_demands[16]/status",
     "text": "PENDING",
     "reason": "NOT_A_CROSS_REFERENCE"
    },
@@ -2866,18 +3745,6 @@
     "pointer": "/compliance[1]",
     "text": "other values TBD or PENDING",
     "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/items[21]/source",
-    "text": "PENDING docs/interfaces/icp_neutralizer/ (fixed vs auto-tuned match)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/items[24]/note",
-    "text": "measurement record, PENDING A9-04; the ledger has no pulse-energy field); H2-4 H24-19 (DC ignition 10-30 W bracket) does not cover it",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
    },
    {
     "deliverable": "A9-02",
@@ -2890,96 +3757,6 @@
     "pointer": "/items[33]/source",
     "text": ", +20 % heat load); PENDING docs/hardware/h2/h2_5_thermal_network/",
     "reason": "H2_V1_REVISED_IN_A9_07"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/slots[5]/load_plane",
-    "text": " measurement chain (PENDING A9-04), not a ledger field",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/interface_demands[1]/status",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/interface_demands[3]/status",
-    "text": "PENDING docs/interfaces/icp_neutralizer/",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/interface_demands[5]/status",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/interface_demands[7]/status",
-    "text": "PENDING docs/experiments/hall_icp/validation_inputs/ (+ docs/evidence/icp_neutralizer/)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/interface_demands[9]/status",
-    "text": "PENDING docs/hardware/h2/h2_4_ppu_bus/ (revision under A9-07)",
-    "reason": "H2_V1_REVISED_IN_A9_07"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/interface_demands[12]/status",
-    "text": "PENDING docs/hardware/h2/h2_7_mechanical_bom/; PENDING docs/budgets/mass_a9/mass_a9_v1.json (A9-06, merged)",
-    "reason": "H2_V1_REVISED_IN_A9_07"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/interface_demands[12]/status",
-    "text": "_7_mechanical_bom/; PENDING docs/budgets/mass_a9/mass_a9_v1.json (A9-06, merged)",
-    "reason": "H2_V1_REVISED_IN_A9_07"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/interface_demands[13]/status",
-    "text": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (revision under A9-07)",
-    "reason": "H2_V1_REVISED_IN_A9_07"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/interface_demands[14]/status",
-    "text": "PENDING docs/hardware/h2/h2_2_cathode_integration/",
-    "reason": "H2_V1_REVISED_IN_A9_07"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/interface_demands[16]/status",
-    "text": "PENDING docs/hardware/h2/h2_3_gas_path_plenum/",
-    "reason": "H2_V1_REVISED_IN_A9_07"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/interface_demands[18]/status",
-    "text": "PENDING docs/hardware/h2/h2_5_thermal_network/",
-    "reason": "H2_V1_REVISED_IN_A9_07"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/interface_demands[20]/status",
-    "text": "PENDING docs/budgets/xe_ledger_a9/ (A9-08, merged)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/owner_answers_applied[18]/how_applied",
-    "text": "measurement record (PENDING A9-04); H2-4 H24-19 flagged NEEDS_REVISION",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-02",
-    "pointer": "/h3_inputs[2]/basis",
-    "text": "PENDING docs/interfaces/icp_neutralizer/",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
    },
    {
     "deliverable": "A9-03",
@@ -2995,12 +3772,6 @@
    },
    {
     "deliverable": "A9-03",
-    "pointer": "/items[2]/status",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (alignment share of the C1-vs-ICP uncertainty budget)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-03",
     "pointer": "/items[5]/copied_from/source_status",
     "text": "PENDING docs/interfaces/preionizer_module/ (mechanical envelope, mounting datum, installation/removal reproducibility item)",
     "reason": "HISTORICAL_PREIONIZER"
@@ -3013,147 +3784,9 @@
    },
    {
     "deliverable": "A9-03",
-    "pointer": "/items[13]/status",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (u(P_fwd), u(P_refl), load-plane loss chain)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/items[23]/status",
-    "text": "PENDING docs/architecture_comparison/power_boundary_a9/ + abep_sim/bus_boundary_a9.py (slot ids and ledger efficiencies)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/items[34]/status",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (ICP ignition dwell/retry bound and start classification)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-03",
     "pointer": "/items[35]/copied_from/source_status",
     "text": "PENDING docs/hardware/h2/h2_5_thermal_network/ (conduction share into the mount)",
     "reason": "H2_V1_REVISED_IN_A9_07"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/items[40]/status",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (pre-registered start-up/thermal-state rule)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/items[41]/status",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (stage map and schedule)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/interface_demands[1]/status",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01: V_d definition)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/interface_demands[2]/status",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01: start rules)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/interface_demands[3]/status",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01: stage map)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/interface_demands[6]/status",
-    "text": "PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02: slots) + abep_sim/bus_boundary_a9.py",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/interface_demands[8]/status",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04: allocations)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/interface_demands[10]/status",
-    "text": "PENDING docs/evidence/icp_neutralizer/ (A9-05: evidence matrix) and PENDING docs/experiments/hall_icp/validation_inputs/",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/interface_demands[10]/status",
-    "text": "vidence matrix) and PENDING docs/experiments/hall_icp/validation_inputs/",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/interface_demands[12]/status",
-    "text": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (H2-1: revision for external C1 / FEMM)",
-    "reason": "H2_V1_REVISED_IN_A9_07"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/interface_demands[16]/status",
-    "text": "PENDING docs/hardware/h2/h2_5_thermal_network/ (H2-5: >= 50 K revision (row 86))",
-    "reason": "H2_V1_REVISED_IN_A9_07"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/interface_demands[20]/status",
-    "text": "PENDING docs/hardware/h2/h2_6_diagnostics_fixture/ (H2-6: fixture revision for A9)",
-    "reason": "H2_V1_REVISED_IN_A9_07"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/interface_demands[22]/status",
-    "text": "PENDING docs/hardware/h2/h2_7_mechanical_bom/ (H2-7: A9 amendment (A9-06))",
-    "reason": "H2_V1_REVISED_IN_A9_07"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/interface_demands[24]/status",
-    "text": "PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02: discharge slot limit)",
-    "reason": "DEPENDS_ON_HARDWARE_OR_EVIDENCE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/interface_demands[25]/status",
-    "text": "PENDING docs/architecture_comparison/power_boundary_a9/ (P_d,max; ICP-43)",
-    "reason": "DEPENDS_ON_HARDWARE_OR_EVIDENCE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/interface_demands[26]/status",
-    "text": "PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02: discharge slot I_d,max)",
-    "reason": "DEPENDS_ON_HARDWARE_OR_EVIDENCE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/interface_demands[28]/status",
-    "text": "PENDING docs/evidence/icp_neutralizer/ (A9-05: electron-current vs RF power evidence)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/m16_impact[3]/blocking_item",
-    "text": "PENDING A9-02 bus slots",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/hard_incompatibility_check/checked[2]/finding",
-    "text": "sessable: bus slots PENDING A9-02 and no performance is predicted here; decided only by measurement against the full-system gate",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-03",
-    "pointer": "/hard_incompatibility_check/checked[3]/finding",
-    "text": "not assessable, PENDING docs/architecture_comparison/power_boundary_a9/ (I_d,max) and docs/evidence/icp_neutralizer/ (analog electron-current vs RF power ev",
-    "reason": "DEPENDS_ON_HARDWARE_OR_EVIDENCE"
    },
    {
     "deliverable": "A9-03",
@@ -3217,60 +3850,6 @@
    },
    {
     "deliverable": "A9-04",
-    "pointer": "/items[15]/value",
-    "text": "PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/ (slots incl. RF source/matching, collector/bias, C1 re",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/items[15]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/items[20]/value",
-    "text": "PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/ (and docs/hardware/h2/h2_4_ppu_bus/; a LOCK-1 conditio",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/items[20]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/items[21]/value",
-    "text": "SEQ-1, row 112) and PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/items[32]/value",
-    "text": "PENDING docs/interfaces/icp_neutralizer/ (coupler location relative to the matching network and coil)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/items[32]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/items[33]/value",
-    "text": "PENDING docs/interfaces/icp_neutralizer/ (floating body + separately biased collector circuit, row 70)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/items[33]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-04",
     "pointer": "/items[60]/note",
     "text": "a (row 92; criteria PENDING docs/experiments/hall_icp/prereg_framework/)",
     "reason": "DEPENDS_ON_LOCK_OR_OWNER"
@@ -3283,44 +3862,8 @@
    },
    {
     "deliverable": "A9-04",
-    "pointer": "/items[73]/value",
-    "text": "cates (magnet slots PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/items[81]/value",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (if used, S1b Faraday/ExB repeatability is mandatory, row 32)",
-    "reason": "DEPENDS_ON_LOCK_OR_OWNER"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/items[81]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/measurement_chains[2]/equations[4]",
-    "text": "calorimetry; method PENDING docs/interfaces/icp_neutralizer/)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/measurement_chains[3]/equations[2]",
-    "text": "nt, sign convention PENDING docs/interfaces/icp_neutralizer/)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
     "pointer": "/measurement_chains[3]/equations[4]",
     "text": ") > 0 (margin value PENDING docs/experiments/hall_icp/prereg_framework/)",
-    "reason": "DEPENDS_ON_LOCK_OR_OWNER"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/measurement_chains[9]/equations[0]",
-    "text": "5); mdot_prop basis PENDING docs/experiments/hall_icp/prereg_framework/]",
     "reason": "DEPENDS_ON_LOCK_OR_OWNER"
    },
    {
@@ -3334,156 +3877,6 @@
     "pointer": "/stop_rules/contrast_stop/applies_to",
     "text": "p_neutralizer (list PENDING docs/experiments/hall_icp/prereg_framework/)",
     "reason": "DEPENDS_ON_LOCK_OR_OWNER"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/stop_rules/limit_aborts/limits[3]/value",
-    "text": "TBD - requires PENDING docs/interfaces/icp_neutralizer/ and supply rating",
-    "reason": "DEPENDS_ON_HARDWARE_OR_EVIDENCE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[0]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[0]/value",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[1]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[1]/value",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[4]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[4]/value",
-    "text": "PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[6]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[6]/value",
-    "text": "PENDING docs/interfaces/icp_neutralizer/",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[7]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[7]/value",
-    "text": "PENDING docs/interfaces/icp_neutralizer/",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[8]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[8]/value",
-    "text": "PENDING docs/interfaces/icp_neutralizer/",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[9]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[9]/value",
-    "text": "PENDING docs/interfaces/icp_neutralizer/",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[11]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[11]/value",
-    "text": "PENDING docs/evidence/icp_neutralizer/ + docs/experiments/hall_icp/validation_inputs/",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[16]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[16]/value",
-    "text": "PENDING docs/hardware/h2/h2_4_ppu_bus/",
-    "reason": "H2_V1_REVISED_IN_A9_07"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[17]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[17]/value",
-    "text": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/",
-    "reason": "H2_V1_REVISED_IN_A9_07"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[19]/status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/interface_demands[19]/value",
-    "text": "PENDING docs/interfaces/icp_neutralizer/",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/owner_answers_applied[22]/how_applied",
-    "text": "unbooked -> UB-F-12 PENDING A9-03; C1 term 15,000 h context only",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-04",
-    "pointer": "/owner_answers_applied[45]/how_applied",
-    "text": "a bus slot (UB-P-01 PENDING A9-02)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
    },
    {
     "deliverable": "A9-05ev",
@@ -3679,12 +4072,6 @@
    },
    {
     "deliverable": "A9-05vi",
-    "pointer": "/items[13]/definition",
-    "text": " / facility ground, PENDING docs/interfaces/icp_neutralizer/ (A9-03 ICD))",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-05vi",
     "pointer": "/items[13]/producing_stage",
     "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
     "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
@@ -3856,12 +4243,6 @@
     "pointer": "/items[25]/decision_quantity_ids",
     "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
     "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/items[26]/how_obtained/chain",
-    "text": "xtended downstream (PENDING docs/interfaces/icp_neutralizer/ (A9-03 ICD))",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
    },
    {
     "deliverable": "A9-05vi",
@@ -4152,42 +4533,6 @@
     "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
    },
    {
-    "deliverable": "A9-05vi",
-    "pointer": "/interface_demands[0]/status",
-    "text": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/interface_demands[2]/status",
-    "text": "PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/ (A9-02)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/interface_demands[4]/status",
-    "text": "PENDING docs/interfaces/icp_neutralizer/ (A9-03 ICD)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/interface_demands[6]/status",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "reason": "ASSIGNMENT_NOT_DEFINED_BY_TARGET"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/interface_demands[11]/status",
-    "text": "PENDING A9-07 revision of H2-1",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-05vi",
-    "pointer": "/interface_demands[18]/status",
-    "text": "PENDING A9-03 (downstream plane definition)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
     "deliverable": "A9-06",
     "pointer": "/status",
     "text": "DRAFT_PENDING_OWNER",
@@ -4202,12 +4547,6 @@
    {
     "deliverable": "A9-06",
     "pointer": "/h2_7_demands_reevaluated/incoming_to_h2_7_v1[4]/a9_status",
-    "text": "PENDING",
-    "reason": "NOT_A_CROSS_REFERENCE"
-   },
-   {
-    "deliverable": "A9-06",
-    "pointer": "/interface_demands[17]/status",
     "text": "PENDING",
     "reason": "NOT_A_CROSS_REFERENCE"
    },
@@ -4378,18 +4717,6 @@
     "pointer": "/revision_register[65]/old/status",
     "text": "PENDING docs/hardware/h2/h2_6_diagnostics_fixture/ (sensor + controller power)",
     "reason": "HISTORICAL_COPY"
-   },
-   {
-    "deliverable": "A9-07",
-    "pointer": "/new_items[0]/note",
-    "text": "u(P_fwd), u(P_refl) PENDING A9-04 (ICP-14, UB-RF-04)",
-    "reason": "TARGET_MERGED_DOES_NOT_DEFINE"
-   },
-   {
-    "deliverable": "A9-07",
-    "pointer": "/interface_demands[14]/status",
-    "text": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (LOCK-2 numbers)",
-    "reason": "DEPENDS_ON_LOCK_OR_OWNER"
    },
    {
     "deliverable": "A9-08",
@@ -5156,103 +5483,104 @@
  },
  "interface_demand_matrix": {
   "rule": "every interface demand of every A9 lane (and of the step-1 integration record) is classified SATISFIED / OFFERED (content supplied, possibly preliminary) / PARTIAL / OPEN (with the precise reason) / NOT_APPLICABLE; both directions are covered because each lane lists its demands to and from the others",
+  "open_rule": "an OPEN / PARTIAL row states its precise reason (its own status names what the merged target does or does not supply, or an A9-10 assessment in ASSESS); a bare PENDING / OPEN fails the build",
   "counts": {
-   "SATISFIED": 26,
-   "OFFERED": 76,
-   "PARTIAL": 5,
-   "OPEN": 91,
+   "SATISFIED": 49,
+   "OFFERED": 77,
+   "PARTIAL": 34,
+   "OPEN": 38,
    "NOT_APPLICABLE": 1
   },
   "pairs": {
    "A9-01 <-> A9-02": {
-    "SATISFIED": 0,
+    "SATISFIED": 2,
     "OFFERED": 0,
     "PARTIAL": 0,
-    "OPEN": 2,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-01 <-> A9-03": {
-    "SATISFIED": 0,
+    "SATISFIED": 1,
     "OFFERED": 0,
-    "PARTIAL": 0,
-    "OPEN": 2,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-01 <-> A9-04": {
     "SATISFIED": 1,
     "OFFERED": 0,
-    "PARTIAL": 0,
-    "OPEN": 1,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-01 <-> A9-05": {
-    "SATISFIED": 1,
+    "SATISFIED": 2,
     "OFFERED": 0,
     "PARTIAL": 0,
-    "OPEN": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-01 <-> A9-06": {
     "SATISFIED": 0,
     "OFFERED": 0,
-    "PARTIAL": 0,
-    "OPEN": 1,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-01 <-> A9-07": {
-    "SATISFIED": 0,
+    "SATISFIED": 3,
     "OFFERED": 0,
-    "PARTIAL": 0,
-    "OPEN": 4,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-01 <-> A9-08": {
     "SATISFIED": 0,
     "OFFERED": 0,
-    "PARTIAL": 0,
-    "OPEN": 1,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-01 <-> A9-10": {
     "SATISFIED": 0,
     "OFFERED": 0,
-    "PARTIAL": 0,
-    "OPEN": 1,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-01 <-> H2/H-1": {
-    "SATISFIED": 0,
+    "SATISFIED": 3,
     "OFFERED": 0,
-    "PARTIAL": 0,
-    "OPEN": 5,
+    "PARTIAL": 1,
+    "OPEN": 1,
     "NOT_APPLICABLE": 0
    },
    "A9-02 <-> A9-01": {
-    "SATISFIED": 0,
+    "SATISFIED": 1,
     "OFFERED": 1,
     "PARTIAL": 0,
-    "OPEN": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-02 <-> A9-03": {
     "SATISFIED": 0,
     "OFFERED": 1,
-    "PARTIAL": 0,
-    "OPEN": 1,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-02 <-> A9-04": {
     "SATISFIED": 0,
     "OFFERED": 1,
-    "PARTIAL": 0,
-    "OPEN": 1,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-02 <-> A9-05": {
-    "SATISFIED": 0,
+    "SATISFIED": 1,
     "OFFERED": 1,
     "PARTIAL": 0,
-    "OPEN": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-02 <-> H2/H-1": {
@@ -5263,73 +5591,73 @@
     "NOT_APPLICABLE": 0
    },
    "A9-03 <-> A9-01": {
-    "SATISFIED": 0,
+    "SATISFIED": 2,
     "OFFERED": 2,
-    "PARTIAL": 0,
-    "OPEN": 3,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-03 <-> A9-02": {
     "SATISFIED": 0,
     "OFFERED": 2,
-    "PARTIAL": 0,
-    "OPEN": 3,
+    "PARTIAL": 1,
+    "OPEN": 2,
     "NOT_APPLICABLE": 0
    },
    "A9-03 <-> A9-04": {
     "SATISFIED": 0,
     "OFFERED": 1,
-    "PARTIAL": 0,
-    "OPEN": 1,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-03 <-> A9-05": {
-    "SATISFIED": 0,
+    "SATISFIED": 1,
     "OFFERED": 1,
-    "PARTIAL": 0,
-    "OPEN": 2,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-03 <-> H2/H-1": {
-    "SATISFIED": 0,
-    "OFFERED": 7,
-    "PARTIAL": 0,
-    "OPEN": 6,
+    "SATISFIED": 1,
+    "OFFERED": 8,
+    "PARTIAL": 3,
+    "OPEN": 1,
     "NOT_APPLICABLE": 0
    },
    "A9-04 <-> A9-01": {
-    "SATISFIED": 0,
+    "SATISFIED": 1,
     "OFFERED": 2,
-    "PARTIAL": 0,
-    "OPEN": 2,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-04 <-> A9-02": {
     "SATISFIED": 0,
     "OFFERED": 1,
-    "PARTIAL": 0,
-    "OPEN": 1,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-04 <-> A9-03": {
     "SATISFIED": 0,
     "OFFERED": 1,
-    "PARTIAL": 0,
-    "OPEN": 4,
+    "PARTIAL": 3,
+    "OPEN": 1,
     "NOT_APPLICABLE": 0
    },
    "A9-04 <-> A9-05": {
-    "SATISFIED": 0,
+    "SATISFIED": 1,
     "OFFERED": 1,
     "PARTIAL": 0,
-    "OPEN": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-04 <-> H2/H-1": {
     "SATISFIED": 1,
     "OFFERED": 3,
-    "PARTIAL": 0,
-    "OPEN": 2,
+    "PARTIAL": 2,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-05ev <-> A9-03": {
@@ -5356,29 +5684,29 @@
    "A9-05vi <-> A9-01": {
     "SATISFIED": 0,
     "OFFERED": 1,
-    "PARTIAL": 0,
-    "OPEN": 1,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-05vi <-> A9-02": {
-    "SATISFIED": 0,
+    "SATISFIED": 1,
     "OFFERED": 1,
     "PARTIAL": 0,
-    "OPEN": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-05vi <-> A9-03": {
     "SATISFIED": 0,
     "OFFERED": 1,
-    "PARTIAL": 0,
-    "OPEN": 1,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-05vi <-> A9-04": {
     "SATISFIED": 0,
     "OFFERED": 1,
-    "PARTIAL": 0,
-    "OPEN": 1,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-05vi <-> A9-05": {
@@ -5398,8 +5726,8 @@
    "A9-05vi <-> A9-07": {
     "SATISFIED": 0,
     "OFFERED": 3,
-    "PARTIAL": 0,
-    "OPEN": 1,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-05vi <-> A9-08": {
@@ -5410,10 +5738,10 @@
     "NOT_APPLICABLE": 0
    },
    "A9-05vi <-> H2/H-1": {
-    "SATISFIED": 1,
+    "SATISFIED": 2,
     "OFFERED": 5,
-    "PARTIAL": 0,
-    "OPEN": 2,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-06 <-> A9-01": {
@@ -5424,16 +5752,16 @@
     "NOT_APPLICABLE": 0
    },
    "A9-06 <-> A9-02": {
-    "SATISFIED": 0,
-    "OFFERED": 0,
-    "PARTIAL": 0,
-    "OPEN": 1,
-    "NOT_APPLICABLE": 0
-   },
-   "A9-06 <-> A9-03": {
     "SATISFIED": 1,
     "OFFERED": 0,
     "PARTIAL": 0,
+    "OPEN": 0,
+    "NOT_APPLICABLE": 0
+   },
+   "A9-06 <-> A9-03": {
+    "SATISFIED": 0,
+    "OFFERED": 0,
+    "PARTIAL": 1,
     "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
@@ -5459,10 +5787,10 @@
     "NOT_APPLICABLE": 0
    },
    "A9-06 <-> A9-10": {
-    "SATISFIED": 0,
+    "SATISFIED": 1,
     "OFFERED": 2,
     "PARTIAL": 0,
-    "OPEN": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-06 <-> H2/H-1": {
@@ -5496,8 +5824,8 @@
    "A9-07 <-> A9-04": {
     "SATISFIED": 1,
     "OFFERED": 1,
-    "PARTIAL": 0,
-    "OPEN": 1,
+    "PARTIAL": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-07 <-> A9-05": {
@@ -5641,10 +5969,10 @@
     "NOT_APPLICABLE": 0
    },
    "A9-09 <-> A9-07": {
-    "SATISFIED": 0,
+    "SATISFIED": 1,
     "OFFERED": 0,
     "PARTIAL": 1,
-    "OPEN": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-09 <-> A9-08": {
@@ -5662,10 +5990,10 @@
     "NOT_APPLICABLE": 0
    },
    "A9-09 <-> H2/H-1": {
-    "SATISFIED": 0,
+    "SATISFIED": 1,
     "OFFERED": 0,
     "PARTIAL": 0,
-    "OPEN": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-INT <-> A9-01": {
@@ -5704,31 +6032,31 @@
     "NOT_APPLICABLE": 0
    },
    "A9-INT <-> A9-06": {
-    "SATISFIED": 1,
+    "SATISFIED": 2,
     "OFFERED": 0,
     "PARTIAL": 0,
-    "OPEN": 1,
+    "OPEN": 0,
     "NOT_APPLICABLE": 0
    },
    "A9-INT <-> A9-07": {
-    "SATISFIED": 0,
-    "OFFERED": 0,
-    "PARTIAL": 0,
-    "OPEN": 1,
-    "NOT_APPLICABLE": 0
-   },
-   "A9-INT <-> A9-08": {
-    "SATISFIED": 0,
-    "OFFERED": 0,
-    "PARTIAL": 0,
-    "OPEN": 1,
-    "NOT_APPLICABLE": 0
-   },
-   "A9-INT <-> A9-10": {
     "SATISFIED": 1,
     "OFFERED": 0,
     "PARTIAL": 0,
-    "OPEN": 4,
+    "OPEN": 0,
+    "NOT_APPLICABLE": 0
+   },
+   "A9-INT <-> A9-08": {
+    "SATISFIED": 1,
+    "OFFERED": 0,
+    "PARTIAL": 0,
+    "OPEN": 0,
+    "NOT_APPLICABLE": 0
+   },
+   "A9-INT <-> A9-10": {
+    "SATISFIED": 3,
+    "OFFERED": 0,
+    "PARTIAL": 1,
+    "OPEN": 1,
     "NOT_APPLICABLE": 0
    },
    "A9-INT <-> H2/H-1": {
@@ -5749,9 +6077,9 @@
      "A9-02"
     ],
     "quantity": "one bus slot per active load of each configuration: Hall discharge, per-coil magnet, ICP RF source/matching, ICP collector/bias, C1 heater and keeper (reference supplies), flow/valve/housekeeping, reserved DC; start-up t",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "target lane named in the demand is merged; the value is not supplied there (LOCK / hardware / owner item)"
+    "status": "SATISFIED by A9-02: one slot per active load in abep_sim/bus_boundary_a9.py SLOTS / BASE_SLOTS (A9-02, merged) (hall_discharge, hall_magnet_inner/outer/trim, c1_heater, c1_keeper, c1_common_tie, filter_getter, icp_rf_source, icp_matching_network, icp_collector_bias (variants: icp_assist_magnet, active_cooling, flow_control_icp_feed only for G-ATM / G-XE), flow_control_atmospheric, flow_control_xe,",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-01",
@@ -5762,9 +6090,9 @@
      "A9-02"
     ],
     "quantity": "slot ids used by DQ-HI-PBUS / DQ-HI-DPBUS / DQR-HI-09",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "target lane named in the demand is merged; the value is not supplied there (LOCK / hardware / owner item)"
+    "status": "SATISFIED by A9-02: slot ids of abep_sim/bus_boundary_a9.py SLOTS / BASE_SLOTS (A9-02, merged) (installed per configuration in BASE_SLOTS, variants in VARIANT_OPTIONS)",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-01",
@@ -5775,9 +6103,9 @@
      "A9-03"
     ],
     "quantity": "kinematic-carrier datum and repeatability item for downstream module exchange (row 122); module ID; matched-sham definitions (row 133); RF forward/reflected, RF interlock, collector/bias V/I, temperatures and telemetry c",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "target lane named in the demand is merged; the value is not supplied there (LOCK / hardware / owner item)"
+    "status": "SATISFIED by A9-03 (schemas/interfaces/icp_neutralizer_icd_v1.json): carrier datum KC-1 and exchange series ICP-06 / ICP-39, MODULE_ID ICP-33, matched shams ICP-09 / ICP-18, channels ICP-34 (incl. RF forward/reflected, interlock, collector V/I, temperatures), floating body ICP-20 with separately metered collector ICP-21, Hall-exhaust-to-ICP pressure interface ICP-27, gas port ICP-26 (capped in G-R",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-01",
@@ -5788,9 +6116,9 @@
      "A9-03"
     ],
     "quantity": "frozen interface ids for RR-HI-02 and SC-HI-SRC-ICP; interfaces frozen before HI-S1 (row 71)",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "target lane named in the demand is merged; the value is not supplied there (LOCK / hardware / owner item)"
+    "status": "PARTIAL: A9-03 item ids ICP-01..ICP-46 exist and are citable for RR-HI-02 / SC-HI-SRC-ICP; they are not frozen - the freeze is gate deadline GD-01 (before HI-S1)",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: A9-03 item ids ICP-01..ICP-46 exist and are citable for RR-HI-02 / SC-HI-SRC-ICP; they are not frozen - the freeze is gate deadline GD-01 (before HI-S1)"
    },
    {
     "lane": "A9-01",
@@ -5814,9 +6142,9 @@
      "A9-04"
     ],
     "quantity": "uncertainty per DQ-HI-*, stop-rule forms, the LOCK-2 computation rules for margins and n",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "target lane named in the demand is merged; the value is not supplied there (LOCK / hardware / owner item)"
+    "status": "PARTIAL: A9-04 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) supplies measurement chains per DQ-HI-* (measurement_chains), stop-rule forms (stop_rules SR-C-SIGN / SR-C-MARGIN; A9.1 UBQ-09 selects SR-C-MARGIN) and the n rule (readiness_n); every uncertainty value and margin number is TBD until LOCK-2",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: A9-04 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) supplies measurement chains per DQ-HI-* (measurement_chains), stop-rule forms (stop_rules SR-C-SIGN / SR-C-MARGIN; A9.1 UBQ-09 selects SR-C-MARGIN) and the n rule (readiness_n); every uncertainty value and margin number is TBD until LOCK-2"
    },
    {
     "lane": "A9-01",
@@ -5827,9 +6155,9 @@
      "A9-05"
     ],
     "quantity": "Takahashi 2024 extraction (topology precedent, Ar operating points with provenance) for HI-AR; validation-input list (row 145) mapped to DQ-HI-ECAP / DQ-HI-VCPL / DQ-HI-IGN",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "target lane named in the demand is merged; the value is not supplied there (LOCK / hardware / owner item)"
+    "status": "SATISFIED by A9-05: Takahashi 2024 extraction with page / figure locators (docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json extraction TK-01..TK-74, digitized_fig4; published analog, context only) and the validation-input list (docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json, row 145)",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-01",
@@ -5854,9 +6182,9 @@
      "H2/H-1"
     ],
     "quantity": "carrier re-derived for a DOWNSTREAM module (H2-6 concept was between IP-UP and IP-DN upstream); harp / slack-loop service routing with matched sham RF coax (row 117); >= 25 kg moving payload (row 116)",
-    "status": "OPEN (revision needed)",
-    "class": "OPEN",
-    "open_reason": "OPEN (revision needed)"
+    "status": "SATISFIED at requirement level by A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-29..REV-34: H-1 stays bolted, downstream module on KC-1, 3-point seat, >= 25 kg payload, SVC-A9 matched shams, matching network off the platform); seat geometry / preload stay LOCK-1 (H2-6 v1 unchanged)",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-01",
@@ -5868,9 +6196,9 @@
      "H2/H-1"
     ],
     "quantity": "external C1 (row 79) replaces the preliminary L-CENTRAL choice; H-1 neutralizer-agnostic with a downstream / coaxial ICP interface",
-    "status": "OPEN (revision needed)",
-    "class": "OPEN",
-    "open_reason": "OPEN (revision needed)"
+    "status": "SATISFIED at requirement level by A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-01, REV-03, REV-13, REV-66: external C1 on KC-1, no central cathode, IP-EXIT / IP-NEU datum); FEMM of MC-1 stays open (IDA7-17)",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-01",
@@ -5882,9 +6210,9 @@
      "H2/H-1"
     ],
     "quantity": "flight-representative breadboard discharge supply with eta_d and transients measured before LOCK-2 (row 113); 100 V internal bus (row 111)",
-    "status": "OPEN",
-    "class": "OPEN",
-    "open_reason": "OPEN"
+    "status": "PARTIAL: A9-07 REV-62 / REV-51 revise the requirement (flight-representative breadboard discharge supply fed from the 100 V internal bus, row 111); eta_d and transients TBD - require the breadboard measurement before LOCK-2 (row 113, GD-14)",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: A9-07 REV-62 / REV-51 revise the requirement (flight-representative breadboard discharge supply fed from the 100 V internal bus, row 111); eta_d and transients TBD - require the breadboard measurement before LOCK-2 (row 113, GD-14)"
    },
    {
     "lane": "A9-01",
@@ -5896,9 +6224,9 @@
      "H2/H-1"
     ],
     "quantity": ">= 50 K margin rule (row 86) as a DQ-HI-SAFE limit source; current 11.2 K BN wall margin not acceptable",
-    "status": "OPEN (revision needed)",
-    "class": "OPEN",
-    "open_reason": "OPEN (revision needed)"
+    "status": "SATISFIED at requirement level by A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-40: >= 50 K below validated limits + 20 % heat-load margin; REV-45: BN wall worst corner <= 850 degC with 1.2 x heat loads); the thermal solution itself is open (H2-5 v1 unchanged)",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-01",
@@ -5907,9 +6235,9 @@
     "to": "docs/experiments/instrumentation/ (INS-01..INS-24)",
     "lanes_named": [],
     "quantity": "INS ids used in measurement chains; new ICP channels (RF forward/reflected via directional coupler, collector V/I, body potential, RF interlock) added by A9-03 / instrumentation",
-    "status": "PARTIAL (existing INS ids verified; ICP channels PENDING)",
+    "status": "PARTIAL: existing INS ids verified; the ICP channel list is defined by A9-03 ICP-34 and the coupler instrument by A9-07 A9H-INS-01; no INS ids are assigned to the new channels yet (instrumentation list revision, LOCK-1)",
     "class": "PARTIAL",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "open_reason": "PARTIAL: existing INS ids verified; the ICP channel list is defined by A9-03 ICP-34 and the coupler instrument by A9-07 A9H-INS-01; no INS ids are assigned to the new channels yet (instrumentation list revision, LOCK-1)"
    },
    {
     "lane": "A9-01",
@@ -5920,9 +6248,9 @@
      "A9-08"
     ],
     "quantity": "bookings: C1 PHASE_TOTAL_FLOW (row 42), XE_REFERENCE and XE_AUGMENTED_PEAK points (row 26), ICP Xe only for a declared G-XE contingency variant (A9.1 HIQ-06; G-REUSE books 0), 120 s x 2 ignition dwell bound (row 93)",
-    "status": "OPEN",
-    "class": "OPEN",
-    "open_reason": "OPEN"
+    "status": "PARTIAL: A9-08 (docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json) books C1 phases under PHASE_TOTAL_FLOW (row 42), the ICP Xe term only in G-XE (G-REUSE XA9-21 = 0 mg/s) and carries XE_REFERENCE (XA9-33) with its size TBD; the 120 s x 2 dwell (row 93) enters via the A9-02 start-up template C-S4 (XA9-IF-15)",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: A9-08 (docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json) books C1 phases under PHASE_TOTAL_FLOW (row 42), the ICP Xe term only in G-XE (G-REUSE XA9-21 = 0 mg/s) and carries XE_REFERENCE (XA9-33) with its size TBD; the 120 s x 2 dwell (row 93) enters via the A9-02 start-up template C-S4 (XA9-IF-15)"
    },
    {
     "lane": "A9-01",
@@ -5944,9 +6272,9 @@
      "H2/H-1"
     ],
     "quantity": "H-1 serial identity, anode and wall configuration frozen before HI-S1 (rows 75, 135), B(z) sensitivity for ITM-36",
-    "status": "PENDING (hardware not built)",
+    "status": "OPEN - hardware not built: H-1 serial identity, anode / wall freeze (GD-02, GD-03, before HI-S1) and B(z) sensitivity (GD-11) need H-1",
     "class": "OPEN",
-    "open_reason": "needs hardware, a registered stand envelope, a selected device or a measurement; no lane can supply it"
+    "open_reason": "OPEN - hardware not built: H-1 serial identity, anode / wall freeze (GD-02, GD-03, before HI-S1) and B(z) sensitivity (GD-11) need H-1"
    },
    {
     "lane": "A9-01",
@@ -5958,13 +6286,13 @@
      "A9-10"
     ],
     "quantity": "mass differences for DQ-HI-DMASS (ICP module, RF generator/matching/feedthrough, collector/bias hardware vs C1 and Xe hardware; row 59)",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "target lane named in the demand is merged; the value is not supplied there (LOCK / hardware / owner item)"
+    "status": "PARTIAL: A9-06 (docs/budgets/mass_a9/mass_a9_v1.json MA9-ID-19) supplies the item-delta set (ICP adds A9B-17..A9B-22; C1 variant adds A9B-C01..A9B-C06); masses TBD (owner allocations and evidence floors only, no CBE)",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: A9-06 (docs/budgets/mass_a9/mass_a9_v1.json MA9-ID-19) supplies the item-delta set (ICP adds A9B-17..A9B-22; C1 variant adds A9B-C01..A9B-C06); masses TBD (owner allocations and evidence floors only, no CBE)"
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#0",
     "from": "A9-02",
     "to": "A9-01",
     "lanes_named": [
@@ -5977,20 +6305,20 @@
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#1",
     "from": "A9-01",
     "to": "A9-02",
     "lanes_named": [
      "A9-01"
     ],
     "quantity": "stage map: which stages evaluate the full-boundary gate; LOCK-1 freeze of the transient averaging window",
-    "status": "PENDING docs/experiments/hall_icp/prereg_framework/",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "SATISFIED: stage map = A9-01 stage_map HI-ENG..HI-AO (docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json; score-bearing stages HI-CMP and HI-ABS evaluate DQ-HI-PBUS, a hard gate); the transient averaging window is frozen by A9.1 OQ-A902-01 (1 ms; no longer a LOCK-1 item)",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#2",
     "from": "A9-02",
     "to": "A9-03",
     "lanes_named": [
@@ -6003,20 +6331,20 @@
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#3",
     "from": "A9-03",
     "to": "A9-02",
     "lanes_named": [
      "A9-03"
     ],
     "quantity": "generator DC input vs forward power, matching type (fixed/auto) and its DC draw, collector bias V/I range, assist magnet (none in first build), cooling (passive/active)",
-    "status": "PENDING docs/interfaces/icp_neutralizer/",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "PARTIAL: A9-03 (schemas/interfaces/icp_neutralizer_icd_v1.json) supplies matching location (ICP-13, A9.1 A9-03-matching), floating body and separately metered collector (ICP-20 / ICP-21), no assist magnet in v1 (ICP-32), passive cooling PROPOSED (ICP-38); generator DC input vs forward power, matching type and draw, and the collector V/I range are TBD - require the selected hardware (RFQ-04 / RFQ-0",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: A9-03 (schemas/interfaces/icp_neutralizer_icd_v1.json) supplies matching location (ICP-13, A9.1 A9-03-matching), floating body and separately metered collector (ICP-20 / ICP-21), no assist magnet in v1 (ICP-32), passive cooling PROPOSED (ICP-38); generator DC input vs forward power, matching type and draw, and the collector V/I range are TBD - require the selected hardware (RFQ-04 / RFQ-05)"
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#4",
     "from": "A9-02",
     "to": "A9-04",
     "lanes_named": [
@@ -6029,20 +6357,20 @@
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#5",
     "from": "A9-04",
     "to": "A9-02",
     "lanes_named": [
      "A9-04"
     ],
     "quantity": "u(P_bus) per slot and total; stop rules touching power",
-    "status": "PENDING docs/experiments/hall_icp/uncertainty_budget/",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "PARTIAL: A9-04 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) defines the DQ-HI-PBUS chain terms UB-P-01..UB-P-07 and the stop-rule forms (stop_rules); values TBD - require certificates / S1a, numbers at LOCK-2",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: A9-04 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) defines the DQ-HI-PBUS chain terms UB-P-01..UB-P-07 and the stop-rule forms (stop_rules); values TBD - require certificates / S1a, numbers at LOCK-2"
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#6",
     "from": "A9-02",
     "to": "A9-05",
     "lanes_named": [
@@ -6055,20 +6383,20 @@
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#7",
     "from": "A9-05",
     "to": "A9-02",
     "lanes_named": [
      "A9-05"
     ],
     "quantity": "published analog RF power/generator arrangement (Takahashi 2024) with page/figure provenance (published analog only)",
-    "status": "PENDING docs/experiments/hall_icp/validation_inputs/ (+ docs/evidence/icp_neutralizer/)",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "SATISFIED by A9-05: docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json extraction TK-20..TK-23, TK-27, TK-40 (13.56 MHz, 200 W, matching network, ~20 W absorbed, circuit) with page locators (published analog, reported; context only)",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#8",
     "from": "A9-02",
     "to": "H2-4",
     "lanes_named": [
@@ -6081,20 +6409,20 @@
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#9",
     "from": "H2-4",
     "to": "A9-02",
     "lanes_named": [
      "H2/H-1"
     ],
     "quantity": "revised converter efficiencies on the 100 V internal bus; front-end topology",
-    "status": "PENDING docs/hardware/h2/h2_4_ppu_bus/ (revision under A9-07)",
+    "status": "OPEN - A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-51, REV-68, REV-69) revises H2-4 to the 100 V internal bus but gives no converter efficiency; TBD - requires the breadboard measurement (row 113) / quotations (RFQ-06)",
     "class": "OPEN",
-    "open_reason": "the H2 v1 deliverable is immutable; its A9 revision is recorded in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07), which revises the requirement but gives no measured or design value for this item"
+    "open_reason": "OPEN - A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-51, REV-68, REV-69) revises H2-4 to the 100 V internal bus but gives no converter efficiency; TBD - requires the breadboard measurement (row 113) / quotations (RFQ-06)"
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#10",
     "from": "A9-02",
     "to": "H2-7",
     "lanes_named": [
@@ -6107,7 +6435,7 @@
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#11",
     "from": "A9-02",
     "to": "H2-7",
     "lanes_named": [
@@ -6120,46 +6448,46 @@
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#12",
     "from": "H2-7",
     "to": "A9-02",
     "lanes_named": [
      "H2/H-1"
     ],
     "quantity": "electronics CBE masses",
-    "status": "PENDING docs/hardware/h2/h2_7_mechanical_bom/; PENDING docs/budgets/mass_a9/mass_a9_v1.json (A9-06, merged)",
+    "status": "OPEN - A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged) books owner allocations and evidence floors only; electronics CBE masses TBD - require quotations (RFQ-04 / RFQ-06); H2-7 v1 unchanged",
     "class": "OPEN",
-    "open_reason": "the H2 v1 deliverable is immutable; its A9 revision is recorded in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07), which revises the requirement but gives no measured or design value for this item"
+    "open_reason": "OPEN - A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged) books owner allocations and evidence floors only; electronics CBE masses TBD - require quotations (RFQ-04 / RFQ-06); H2-7 v1 unchanged"
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#13",
     "from": "H2-1",
     "to": "A9-02",
     "lanes_named": [
      "H2/H-1"
     ],
     "quantity": "coil V/I/P per coil at setpoint (hot), trim use",
-    "status": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (revision under A9-07)",
+    "status": "OPEN - A9-07 (REV-04 ceramic-insulated coil, REV-58 one slot per coil) revises H2-1 but gives no hot coil V / I / P; TBD - requires the coil design and S1a",
     "class": "OPEN",
-    "open_reason": "the H2 v1 deliverable is immutable; its A9 revision is recorded in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07), which revises the requirement but gives no measured or design value for this item"
+    "open_reason": "OPEN - A9-07 (REV-04 ceramic-insulated coil, REV-58 one slot per coil) revises H2-1 but gives no hot coil V / I / P; TBD - requires the coil design and S1a"
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#14",
     "from": "H2-2",
     "to": "A9-02",
     "lanes_named": [
      "H2/H-1"
     ],
     "quantity": "C1 heater V/I/P and preheat duration; keeper ignition pulse energy; steady keeper policy; common-tie topology",
-    "status": "PENDING docs/hardware/h2/h2_2_cathode_integration/",
+    "status": "OPEN - A9-07 (REV-19, REV-21, REV-25, REV-28) revises the C1 requirements (heater stated per step, pulsed ignition, 120 s x 2 dwell, selectable common tie) but gives no heater V / I / P, preheat duration or pulse energy; TBD - requires the C1 unit selection (RFQ-08)",
     "class": "OPEN",
-    "open_reason": "the H2 v1 deliverable is immutable; its A9 revision is recorded in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07), which revises the requirement but gives no measured or design value for this item"
+    "open_reason": "OPEN - A9-07 (REV-19, REV-21, REV-25, REV-28) revises the C1 requirements (heater stated per step, pulsed ignition, 120 s x 2 dwell, selectable common tie) but gives no heater V / I / P, preheat duration or pulse energy; TBD - requires the C1 unit selection (RFQ-08)"
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#15",
     "from": "A9-02",
     "to": "H2-3",
     "lanes_named": [
@@ -6172,20 +6500,20 @@
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#16",
     "from": "H2-3",
     "to": "A9-02",
     "lanes_named": [
      "H2/H-1"
     ],
     "quantity": "compressor motor-drive input power (steady, spin-up); valve coil powers",
-    "status": "PENDING docs/hardware/h2/h2_3_gas_path_plenum/",
+    "status": "OPEN - the compressor ICD has not supplied the drive power (row 22, PARTIAL_BOUNDARY); A9-07 (REV-64, REV-65) gives no compressor or valve power",
     "class": "OPEN",
-    "open_reason": "the H2 v1 deliverable is immutable; its A9 revision is recorded in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07), which revises the requirement but gives no measured or design value for this item"
+    "open_reason": "OPEN - the compressor ICD has not supplied the drive power (row 22, PARTIAL_BOUNDARY); A9-07 (REV-64, REV-65) gives no compressor or valve power"
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#17",
     "from": "A9-02",
     "to": "H2-5",
     "lanes_named": [
@@ -6198,20 +6526,20 @@
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#18",
     "from": "H2-5",
     "to": "A9-02",
     "lanes_named": [
      "H2/H-1"
     ],
     "quantity": "thermal_control load per step; need for active cooling (>= 50 K rule, row 86)",
-    "status": "PENDING docs/hardware/h2/h2_5_thermal_network/",
+    "status": "OPEN - A9-07 (REV-40..REV-50) revises the thermal limits (>= 50 K) but gives no thermal_control load per step or active-cooling decision; TBD - requires the thermal model / S1b",
     "class": "OPEN",
-    "open_reason": "the H2 v1 deliverable is immutable; its A9 revision is recorded in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07), which revises the requirement but gives no measured or design value for this item"
+    "open_reason": "OPEN - A9-07 (REV-40..REV-50) revises the thermal limits (>= 50 K) but gives no thermal_control load per step or active-cooling decision; TBD - requires the thermal model / S1b"
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#19",
     "from": "A9-02",
     "to": "H2-6",
     "lanes_named": [
@@ -6224,23 +6552,23 @@
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#20",
     "from": "A9-02",
     "to": "Xe ledger",
     "lanes_named": [],
     "quantity": "start-up steps with Xe flow (purge, preheat, ignition <= 120 s x 2) for PHASE_TOTAL_FLOW booking",
-    "status": "PENDING docs/budgets/xe_ledger_a9/ (A9-08, merged)",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "SATISFIED: consumed by A9-08 (docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json XA9-IF-15: start-up templates C-S2, C-S4, I-S3 booked under PHASE_TOTAL_FLOW)",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-02",
-    "id": null,
+    "id": "#21",
     "from": "A9-02",
     "to": "M16",
     "lanes_named": [],
     "quantity": "row impacts (m16_impact)",
-    "status": "SUPPLIED to docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json (A9-10 M16 refresh; rows 3, 5, 8, 11-15, 17 and new rows 18-19)",
+    "status": "SUPPLIED to docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json (A9-10 M16 refresh; rows 3, 5, 8, 11-15, 17 and new rows 18-19)",
     "class": "SATISFIED",
     "open_reason": null
    },
@@ -6266,9 +6594,9 @@
      "A9-01"
     ],
     "quantity": "definition of the V_d setting held equal across configurations",
-    "status": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01: V_d definition)",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "SATISFIED by A9.1 A9-03-Vd (V_d = V_anode - V_electron-source-reference, primary controlled quantity; applied in ICP-22)",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-03",
@@ -6279,9 +6607,9 @@
      "A9-01"
     ],
     "quantity": "ICP ignition dwell/retry bound; start/restart classification; start-up/thermal-state rule",
-    "status": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01: start rules)",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "PARTIAL: A9-01 supplies the start / restart classification (DQ-HI-IGN, DQ-HI-RESTART, DR-07, MD-HI-02) and lists the start-up / thermal-state rule as GD-17 (LOCK-1); no ICP ignition dwell / retry bound yet (LOCK-1 item)",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: A9-01 supplies the start / restart classification (DQ-HI-IGN, DQ-HI-RESTART, DR-07, MD-HI-02) and lists the start-up / thermal-state rule as GD-17 (LOCK-1); no ICP ignition dwell / retry bound yet (LOCK-1 item)"
    },
    {
     "lane": "A9-03",
@@ -6292,9 +6620,9 @@
      "A9-01"
     ],
     "quantity": "stage map (Ar ENGINEERING_ONLY -> N2 -> O2 NO_ATOMIC_O) and exchange schedule",
-    "status": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01: stage map)",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "SATISFIED by A9-01: stage_map HI-ENG..HI-AO (Ar ENGINEERING_ONLY -> N2 -> O2 NO_ATOMIC_O -> AO) and execution_design (block template, SEQ-A / SEQ-B)",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-03",
@@ -6331,9 +6659,9 @@
      "A9-02"
     ],
     "quantity": "bus slot ids, ledger efficiencies, start-up transient accounting",
-    "status": "PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02: slots) + abep_sim/bus_boundary_a9.py",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "PARTIAL: slot ids and start-up transient accounting (P_bus,1ms,max, A9.1 OQ-A902-01; SEQUENCE_TEMPLATES, PROPOSED) defined in abep_sim/bus_boundary_a9.py; ledger efficiencies are explicit caller inputs, TBD - require the selected supplies",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: slot ids and start-up transient accounting (P_bus,1ms,max, A9.1 OQ-A902-01; SEQUENCE_TEMPLATES, PROPOSED) defined in abep_sim/bus_boundary_a9.py; ledger efficiencies are explicit caller inputs, TBD - require the selected supplies"
    },
    {
     "lane": "A9-03",
@@ -6357,9 +6685,9 @@
      "A9-04"
     ],
     "quantity": "uncertainty allocations: RF power chain, alignment/installation share, stop rules",
-    "status": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04: allocations)",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "PARTIAL: A9-04 defines the RF chain terms UB-RF-02..UB-RF-09, the alignment term UB-T-12 and the stop-rule forms (A9.1 UBQ-09: SR-C-MARGIN); values LOCK-2",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: A9-04 defines the RF chain terms UB-RF-02..UB-RF-09, the alignment term UB-T-12 and the stop-rule forms (A9.1 UBQ-09: SR-C-MARGIN); values LOCK-2"
    },
    {
     "lane": "A9-03",
@@ -6383,9 +6711,9 @@
      "A9-05"
     ],
     "quantity": "authoritative analog evidence and validation-input list (RF coupling, electron extraction current, collector potential, neutralization margin, ICP pressure/flow, start-up, erosion, life; row 145)",
-    "status": "PENDING docs/evidence/icp_neutralizer/ (A9-05: evidence matrix) and PENDING docs/experiments/hall_icp/validation_inputs/",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "SATISFIED by A9-05: docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json (extraction, survey, lawful_acquisition_list) and docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json (validation inputs, row 145)",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-03",
@@ -6409,9 +6737,9 @@
      "H2/H-1"
     ],
     "quantity": "exit-face geometry, channel OD (frozen), MC-1 stray field in the ICP volume and at the C1 orifice (FEMM)",
-    "status": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (H2-1: revision for external C1 / FEMM)",
-    "class": "OPEN",
-    "open_reason": "the H2 v1 deliverable is immutable; its A9 revision is recorded in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07), which revises the requirement but gives no measured or design value for this item"
+    "status": "PARTIAL: A9-07 REV-03 / REV-66 give the exit-face datum IP-EXIT; channel OD, MC-1 stray field in the ICP volume and at the C1 orifice TBD - require FEMM of MC-1 (A9-07 IDA7-17)",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: A9-07 REV-03 / REV-66 give the exit-face datum IP-EXIT; channel OD, MC-1 stray field in the ICP volume and at the C1 orifice TBD - require FEMM of MC-1 (A9-07 IDA7-17)"
    },
    {
     "lane": "A9-03",
@@ -6449,8 +6777,8 @@
     ],
     "quantity": "RF-path heat contribution only (ICP-36 partial term; NOT a bound on the total module heat load, which adds collector particle heating from the Hall discharge current and plume interception, ICP-43)",
     "status": "DERIVED_BOUND (ICP-36, RF-only partial term)",
-    "class": "OPEN",
-    "open_reason": "DERIVED_BOUND (ICP-36, RF-only partial term)"
+    "class": "OFFERED",
+    "open_reason": null
    },
    {
     "lane": "A9-03",
@@ -6461,9 +6789,9 @@
      "H2/H-1"
     ],
     "quantity": "sink / interface temperature cases and the >= 50 K margin revision",
-    "status": "PENDING docs/hardware/h2/h2_5_thermal_network/ (H2-5: >= 50 K revision (row 86))",
-    "class": "OPEN",
-    "open_reason": "the H2 v1 deliverable is immutable; its A9 revision is recorded in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07), which revises the requirement but gives no measured or design value for this item"
+    "status": "SATISFIED at requirement level by A9-07 (REV-40: >= 50 K + 20 % heat-load margin; REV-48: 20 / 40 / 60 degC mounting-interface and 25 / 50 / 100 W conducted-heat cases); sink measured per run (REV-49)",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-03",
@@ -6513,9 +6841,9 @@
      "H2/H-1"
     ],
     "quantity": "carrier seat dimensions, stand payload capability (>= 25 kg, row 116), per-configuration calibration procedure",
-    "status": "PENDING docs/hardware/h2/h2_6_diagnostics_fixture/ (H2-6: fixture revision for A9)",
-    "class": "OPEN",
-    "open_reason": "the H2 v1 deliverable is immutable; its A9 revision is recorded in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07), which revises the requirement but gives no measured or design value for this item"
+    "status": "PARTIAL: A9-07 REV-30..REV-32 and REV-38 (3-point seat, weight path, >= 25 kg payload, 1 % thrust test with maximum payload); seat dimensions and the per-configuration calibration procedure stay LOCK-1 items",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: A9-07 REV-30..REV-32 and REV-38 (3-point seat, weight path, >= 25 kg payload, 1 % thrust test with maximum payload); seat dimensions and the per-configuration calibration procedure stay LOCK-1 items"
    },
    {
     "lane": "A9-03",
@@ -6539,9 +6867,9 @@
      "H2/H-1"
     ],
     "quantity": "module masses and CG per serial; flight dry allocations vs CBE (row 54 flags)",
-    "status": "PENDING docs/hardware/h2/h2_7_mechanical_bom/ (H2-7: A9 amendment (A9-06))",
-    "class": "OPEN",
-    "open_reason": "the H2 v1 deliverable is immutable; its A9 revision is recorded in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07), which revises the requirement but gives no measured or design value for this item"
+    "status": "PARTIAL: A9-06 (MA9-ID-20) answers the flight allocations vs evidence floors (line_checks); module masses and CG per serial TBD - require S1a weighing",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: A9-06 (MA9-ID-20) answers the flight allocations vs evidence floors (line_checks); module masses and CG per serial TBD - require S1a weighing"
    },
    {
     "lane": "A9-03",
@@ -6563,9 +6891,9 @@
      "A9-02"
     ],
     "quantity": "maximum discharge-supply power at the stand P_d,max = I_d,max x V_d,max (for the total module heat-load bound ICP-43)",
-    "status": "PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02: discharge slot limit)",
+    "status": "OPEN - A9-02 registers no stand discharge-slot limit: P_d,max needs the owner registration of the H-1 / discharge-supply envelope (OQ-A907-02)",
     "class": "OPEN",
-    "open_reason": "needs hardware, a registered stand envelope, a selected device or a measurement; no lane can supply it"
+    "open_reason": "OPEN - A9-02 registers no stand discharge-slot limit: P_d,max needs the owner registration of the H-1 / discharge-supply envelope (OQ-A907-02)"
    },
    {
     "lane": "A9-03",
@@ -6576,9 +6904,9 @@
      "H2/H-1"
     ],
     "quantity": "total ICP module heat load for the thermal path (ICP-43: RF + discharge-path + plume terms)",
-    "status": "PENDING docs/architecture_comparison/power_boundary_a9/ (P_d,max; ICP-43)",
+    "status": "OPEN - ICP-43 needs P_d,max (ID-25, OQ-A907-02) and the collector / plume terms; not assessable before that registration",
     "class": "OPEN",
-    "open_reason": "needs hardware, a registered stand envelope, a selected device or a measurement; no lane can supply it"
+    "open_reason": "OPEN - ICP-43 needs P_d,max (ID-25, OQ-A907-02) and the collector / plume terms; not assessable before that registration"
    },
    {
     "lane": "A9-03",
@@ -6589,9 +6917,9 @@
      "A9-02"
     ],
     "quantity": "maximum discharge current of the stand discharge slot I_d,max as the SIZING input for the ICP electron-extraction capability (ICP-45), not only as a heat input",
-    "status": "PENDING docs/architecture_comparison/power_boundary_a9/ (A9-02: discharge slot I_d,max)",
+    "status": "OPEN - A9-02 registers no stand discharge-slot I_d,max: owner registration of the envelope pending (OQ-A907-02; A9.1 ICP-45: I_d,max from the registered H-1 / discharge-supply envelope)",
     "class": "OPEN",
-    "open_reason": "needs hardware, a registered stand envelope, a selected device or a measurement; no lane can supply it"
+    "open_reason": "OPEN - A9-02 registers no stand discharge-slot I_d,max: owner registration of the envelope pending (OQ-A907-02; A9.1 ICP-45: I_d,max from the registered H-1 / discharge-supply envelope)"
    },
    {
     "lane": "A9-03",
@@ -6615,9 +6943,9 @@
      "A9-05"
     ],
     "quantity": "published analog evidence on extracted electron current vs RF power for RF/ICP plasma cathodes (context for ICP-45; never a Vyovrinda prediction)",
-    "status": "PENDING docs/evidence/icp_neutralizer/ (A9-05: electron-current vs RF power evidence)",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "PARTIAL: anchor only (docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json TK-52 I_D about 1 A at TK-21 200 W forward, TK-27 ~20 W absorbed; published analog, reported, context only, never scaled, A9.1 ICP-45); further RF / ICP plasma-cathode sources in lawful_acquisition_list LA-01..LA-09 await owner acquisition (A9.1 OQ-EV-02 order)",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: anchor only (docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json TK-52 I_D about 1 A at TK-21 200 W forward, TK-27 ~20 W absorbed; published analog, reported, context only, never scaled, A9.1 ICP-45); further RF / ICP plasma-cathode sources in lawful_acquisition_list LA-01..LA-09 await owner acquisition (A9.1 OQ-EV-02 order)"
    },
    {
     "lane": "A9-04",
@@ -6628,9 +6956,9 @@
      "A9-01"
     ],
     "quantity": "decision-quantity ids, roles (gate / contrast / descriptive), contrast orientation, confirmation subset, family size m",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "PARTIAL",
+    "class": "PARTIAL",
+    "open_reason": "A9-01 supplies decision-quantity ids and roles (decision_quantities, decision_topology); the contrast list, confirmation subset and family size m are LOCK-1 items"
    },
    {
     "lane": "A9-04",
@@ -6641,9 +6969,9 @@
      "A9-01"
     ],
     "quantity": "stage map (Ar engineering-only -> N2 -> O2-bearing NO_ATOMIC_O) and which stages are score-bearing",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "SATISFIED",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-04",
@@ -6680,9 +7008,9 @@
      "A9-02"
     ],
     "quantity": "bus-slot list S_A9, measured vs conditioning slots (eta_s), start-up transient window",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "PARTIAL",
+    "class": "PARTIAL",
+    "open_reason": "slot list S_A9 = abep_sim/bus_boundary_a9.py SLOTS / BASE_SLOTS; window frozen by A9.1 OQ-A902-01 (UB-P-07); per-slot eta_s are caller inputs, TBD"
    },
    {
     "lane": "A9-04",
@@ -6706,9 +7034,9 @@
      "A9-03"
     ],
     "quantity": "collector/bias circuit, floating-body potential measurement points, sign conventions, bias range",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "PARTIAL",
+    "class": "PARTIAL",
+    "open_reason": "A9-03 ICP-20 (floating body, body potentials measured), ICP-21 (separately metered collector), ICP-34 (V_coll, I_coll, V_body channels); sign convention and bias range TBD (LOCK-1)"
    },
    {
     "lane": "A9-04",
@@ -6719,9 +7047,9 @@
      "A9-03"
     ],
     "quantity": "coupler location / RF reference plane and matching network topology",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "PARTIAL",
+    "class": "PARTIAL",
+    "open_reason": "A9.1 A9-03-matching (ICD ICP-13): coupler plane after the matching network, network off the platform; fixed vs auto-tuned topology and the on-module pre-match (OQ-A907-11) open"
    },
    {
     "lane": "A9-04",
@@ -6732,9 +7060,9 @@
      "A9-03"
     ],
     "quantity": "ICP gas species and flow range (for MFC range, p_b load, Delta Xe)",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "PARTIAL",
+    "class": "PARTIAL",
+    "open_reason": "A9-03 ICP-26 / A9.1 HIQ-06: G-REUSE primary, dedicated ICP flow 0 mg/s; G-ATM / G-XE contingency flows TBD"
    },
    {
     "lane": "A9-04",
@@ -6745,9 +7073,9 @@
      "A9-03"
     ],
     "quantity": "C1 and ICP module masses on the carrier and sham line set",
-    "status": "PENDING",
+    "status": "OPEN",
     "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "open_reason": "OPEN - ICD ICP-08: module masses and CG are measured per serial at S1a (TBD - requires the modules); A9-03 gives only the row-54 flight allocations"
    },
    {
     "lane": "A9-04",
@@ -6771,9 +7099,9 @@
      "A9-05"
     ],
     "quantity": "Takahashi 2024 extraction: which quantities the analog measured and how (for chain design only; never a Vyovrinda value)",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "SATISFIED",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-04",
@@ -6834,9 +7162,9 @@
      "H2/H-1"
     ],
     "quantity": "breadboard discharge supply (row 113) channel points and eta_d measured before LOCK-2",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "the H2 v1 deliverable is immutable; its A9 revision is recorded in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07), which revises the requirement but gives no measured or design value for this item"
+    "status": "PARTIAL",
+    "class": "PARTIAL",
+    "open_reason": "A9-07 REV-62 (breadboard discharge supply from the 100 V bus); channel points and eta_d TBD - require the breadboard measurement before LOCK-2"
    },
    {
     "lane": "A9-04",
@@ -6847,9 +7175,9 @@
      "H2/H-1"
     ],
     "quantity": "B(z) map extent, B_max, hot-state reference sensor location (row 82)",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "the H2 v1 deliverable is immutable; its A9 revision is recorded in docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json (A9-07), which revises the requirement but gives no measured or design value for this item"
+    "status": "PARTIAL",
+    "class": "PARTIAL",
+    "open_reason": "A9-07 REV-11 (hot-state B reference provision); B(z) map extent and B_max TBD - require FEMM of MC-1 (IDA7-17) and S1a maps"
    },
    {
     "lane": "A9-04",
@@ -6871,9 +7199,9 @@
     "to": "Xe ledger docs/budgets/xe_ledger/",
     "lanes_named": [],
     "quantity": "C1 flow uncertainty term (±2 % FS class, row 96) and the ICP gas booking once A9-03 defines it (row 46 flag)",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "PARTIAL",
+    "class": "PARTIAL",
+    "open_reason": "ICP gas booking defined: G-REUSE 0 mg/s (ICD ICP-26; A9-08 XA9-21), G-XE only as a contingency term under PHASE_TOTAL_FLOW; the C1 flow uncertainty term (UB-F-05, +-2 % FS class, row 96) is carried by this lane, its booking size TBD"
    },
    {
     "lane": "A9-04",
@@ -6936,7 +7264,8 @@
     "quantity": "lawful acquisition of LA-01..LA-09 (row 7)",
     "status": "OPEN (owner action)",
     "class": "OPEN",
-    "open_reason": "OPEN (owner action)"
+    "open_reason": "owner action: lawful acquisition of LA-01..LA-09 (row 7); A9.1 OQ-EV-02 fixes the order P1 / P2 / P3 and OQ-EV-03 the extraction rule; no lane can do it",
+    "assessed_by": "A9-10 assessment (checked against the merged target)"
    },
    {
     "lane": "A9-05vi",
@@ -6947,9 +7276,9 @@
      "A9-01"
     ],
     "quantity": "stage map ids, decision-quantity list, prereg rules, outcome vocabulary (NO_VIABLE_CASE; OPEN as status)",
-    "status": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)",
-    "class": "OPEN",
-    "open_reason": "A9-01 and A9-04 are merged, but neither defines the per-input producing stage / decision-quantity assignment; proposed for LOCK-1 as OQ-A910-02 (owner call)"
+    "status": "PARTIAL: A9-01 supplies stage_map ids, decision_quantities, design rules and the outcome vocabulary (NO_VIABLE_CASE; OPEN as status); the per-input stage assignment stays OPEN (OQ-A910-02, LOCK-1)",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: A9-01 supplies stage_map ids, decision_quantities, design rules and the outcome vocabulary (NO_VIABLE_CASE; OPEN as status); the per-input stage assignment stays OPEN (OQ-A910-02, LOCK-1)"
    },
    {
     "lane": "A9-05vi",
@@ -6973,9 +7302,9 @@
      "A9-02"
     ],
     "quantity": "bus slots: RF source/matching, collector/bias, C1 heater/keeper/flow, assist magnet/cooling if used",
-    "status": "PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/ (A9-02)",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "SATISFIED by A9-02: abep_sim/bus_boundary_a9.py SLOTS / BASE_SLOTS (A9-02, merged) (icp_rf_source, icp_matching_network, icp_collector_bias (variants: icp_assist_magnet, active_cooling, flow_control_icp_feed only for G-ATM / G-XE); C1 slots c1_heater, c1_keeper, c1_common_tie, filter_getter, flow_control_xe)",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-05vi",
@@ -6999,9 +7328,9 @@
      "A9-03"
     ],
     "quantity": "RF load plane, collector/body terminals and reference, gas port, Hall-exhaust-to-ICP pressure tap, diagnostic access",
-    "status": "PENDING docs/interfaces/icp_neutralizer/ (A9-03 ICD)",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "PARTIAL: A9-03 defines the RF load plane (ICP-13 / ICP-14), collector / body terminals (ICP-20 / ICP-21), gas port (ICP-26) and channels (ICP-34); the Hall-exhaust-to-ICP pressure tap (ICP-27) and diagnostic access geometry are TBD (LOCK-1)",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: A9-03 defines the RF load plane (ICP-13 / ICP-14), collector / body terminals (ICP-20 / ICP-21), gas port (ICP-26) and channels (ICP-34); the Hall-exhaust-to-ICP pressure tap (ICP-27) and diagnostic access geometry are TBD (LOCK-1)"
    },
    {
     "lane": "A9-05vi",
@@ -7025,9 +7354,9 @@
      "A9-04"
     ],
     "quantity": "measurement chains, uncertainties, stop rules and decision-quantity ids consuming these inputs",
-    "status": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-    "class": "OPEN",
-    "open_reason": "A9-01 and A9-04 are merged, but neither defines the per-input producing stage / decision-quantity assignment; proposed for LOCK-1 as OQ-A910-02 (owner call)"
+    "status": "PARTIAL: A9-04 measurement chains and stop-rule forms exist; decision-quantity ids per input: see the A9-10 chain -> DQ-HI consumer table (OQ-INT-01, PROPOSED) and OQ-A910-02",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: A9-04 measurement chains and stop-rule forms exist; decision-quantity ids per input: see the A9-10 chain -> DQ-HI consumer table (OQ-INT-01, PROPOSED) and OQ-A910-02"
    },
    {
     "lane": "A9-05vi",
@@ -7091,9 +7420,9 @@
      "H2/H-1"
     ],
     "quantity": "H-1 field map incl. the downstream fringe region; external C1 (row 79) and neutralizer-agnostic head",
-    "status": "PENDING A9-07 revision of H2-1",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "PARTIAL: A9-07 revises H2-1 (REV-01..REV-12, REV-66: external C1, IP-EXIT / IP-NEU, hot-state B sensor); the field map incl. the downstream fringe region is TBD - requires FEMM of MC-1 and the S1a map (A9-07 IDA7-17)",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL: A9-07 revises H2-1 (REV-01..REV-12, REV-66: external C1, IP-EXIT / IP-NEU, hot-state B sensor); the field map incl. the downstream fringe region is TBD - requires FEMM of MC-1 and the S1a map (A9-07 IDA7-17)"
    },
    {
     "lane": "A9-05vi",
@@ -7186,9 +7515,9 @@
      "H2/H-1"
     ],
     "quantity": "H-1 exit plane / IP-DN datum as the reference for z = 0 of the ICP geometry",
-    "status": "PENDING A9-03 (downstream plane definition)",
-    "class": "OPEN",
-    "open_reason": "the target A9 lane is merged and verified but does not define this value (interface item to be closed at LOCK-1 / with the module design)"
+    "status": "SATISFIED by A9.1 A9-03-planes (IP-EXIT = H-1 exit, z = L; IP-NEU downstream datum; historical IP-DN unchanged), ICD ICP-01 and A9-07 REV-03 / REV-66",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-06",
@@ -7420,9 +7749,9 @@
      "A9-10"
     ],
     "quantity": "re-run this closure after A9-07 / A9-08 merge (builder --check reproduces)",
-    "status": "PENDING",
-    "class": "OPEN",
-    "open_reason": "target lane named in the demand is merged; the value is not supplied there (LOCK / hardware / owner item)"
+    "status": "SATISFIED by A9-10: closure re-run with the A9-08 residual import and the corrected A9-07 LV-COIL basis (builder --check reproduces)",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-06",
@@ -7447,8 +7776,8 @@
     ],
     "quantity": "ICD ID-22 (new BOM lines) answered by the A9 flight BOM; ID-23 flight allocations vs evidence answered by line_checks; module masses/CG per serial stay TBD (S1a)",
     "status": "ANSWERED_IN_PART",
-    "class": "SATISFIED",
-    "open_reason": null
+    "class": "PARTIAL",
+    "open_reason": "ANSWERED_IN_PART"
    },
    {
     "lane": "A9-06",
@@ -7460,8 +7789,8 @@
     ],
     "quantity": "bus slots used to map BOM items; C1 slots NOT_INSTALLED in hall_icp_neutralizer (consistent with OQ-A902-04)",
     "status": "USED",
-    "class": "OPEN",
-    "open_reason": "USED"
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-06",
@@ -7474,7 +7803,8 @@
     "quantity": "as-built masses of H-1, MC-1, the C1 module, the ICP module and shams, weighed separately",
     "status": "TBD - requires S1a",
     "class": "OPEN",
-    "open_reason": "TBD - requires S1a"
+    "open_reason": "as-built masses need the S1a hardware (TBD - requires S1a)",
+    "assessed_by": "A9-10 assessment (checked against the merged target)"
    },
    {
     "lane": "A9-07",
@@ -7578,7 +7908,7 @@
     "quantity": "total ICP module heat load Q_mod and its split into H-1 (ICP-43)",
     "status": "OPEN - TBD - requires the owner registration of the stand I_d,max / P_d,max (OQ-A907-02); A9-02 registers no stand value; ICD ICP-43 now carries the A9-07 IDA7-07 H-1 allowance",
     "class": "OPEN",
-    "open_reason": "needs hardware, a registered stand envelope, a selected device or a measurement; no lane can supply it"
+    "open_reason": "OPEN - TBD - requires the owner registration of the stand I_d,max / P_d,max (OQ-A907-02); A9-02 registers no stand value; ICD ICP-43 now carries the A9-07 IDA7-07 H-1 allowance"
    },
    {
     "lane": "A9-07",
@@ -7604,7 +7934,8 @@
     "quantity": "standoff z_NEU (ICP-02), module envelope and seat dimensions (ICP-04/07)",
     "status": "TBD (LOCK-1)",
     "class": "OPEN",
-    "open_reason": "TBD (LOCK-1)"
+    "open_reason": "ICD ICP-02 / ICP-04 / ICP-07 geometry is TBD, frozen at LOCK-1 (GD-01 before HI-S1); no lane supplies it before the module design",
+    "assessed_by": "A9-10 assessment (checked against the merged target)"
    },
    {
     "lane": "A9-07",
@@ -7667,9 +7998,9 @@
      "A9-04"
     ],
     "quantity": "u(P_fwd), u(P_refl), cable-loss chain uncertainty (ICP-14)",
-    "status": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (LOCK-2 numbers)",
-    "class": "OPEN",
-    "open_reason": "frozen only at LOCK-1 / LOCK-2 or by an owner decision; the target lane defines the form only"
+    "status": "PARTIAL - A9-04 defines u(P_fwd), u(P_refl) and the cable-loss terms (UB-RF-02..UB-RF-07); values TBD - require certificates / S1a (LOCK-2)",
+    "class": "PARTIAL",
+    "open_reason": "PARTIAL - A9-04 defines u(P_fwd), u(P_refl) and the cable-loss terms (UB-RF-02..UB-RF-07); values TBD - require certificates / S1a (LOCK-2)"
    },
    {
     "lane": "A9-07",
@@ -7917,7 +8248,7 @@
     "lane": "A9-08",
     "id": "XA9-IF-12",
     "from": "A9-08",
-    "to": "A9-10 reconciliation docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json / M16 refresh docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json",
+    "to": "A9-10 reconciliation docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json / M16 refresh docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
     "lanes_named": [
      "A9-10"
     ],
@@ -8067,7 +8398,8 @@
     "quantity": "quoted masses of flight-representative options (RF generator/matching, ICP parts, Xe hardware, C1)",
     "status": "OPEN (after quotations)",
     "class": "OPEN",
-    "open_reason": "OPEN (after quotations)"
+    "open_reason": "quoted masses exist only after quotations (row 8: quotations only, no purchase)",
+    "assessed_by": "A9-10 assessment (checked against the merged target)"
    },
    {
     "lane": "A9-09",
@@ -8091,9 +8423,9 @@
      "A9-07"
     ],
     "quantity": "H2-4 H3-PPU-05 breadboard input: 28 V class -> regulated 100 V internal bus (row 111) - revision flag",
-    "status": "FLAG",
-    "class": "OPEN",
-    "open_reason": "FLAG"
+    "status": "RESOLVED for A9 by row 111 (regulated 100 V internal bus; A9-07 REV-51 / REV-62); the H2-4 v1 28 V class stays history",
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-09",
@@ -8130,9 +8462,9 @@
      "A9-02"
     ],
     "quantity": "I_d,max of the registered envelope; P_d; collector/bias range (A902-23); matching-network draw (A902-22); heater power",
-    "status": "OPEN",
+    "status": "OPEN - I_d,max / P_d of the registered envelope pending (OQ-A907-02); collector / bias range TBD (ICP-21); matching-network draw TBD (A902-22)",
     "class": "OPEN",
-    "open_reason": "OPEN"
+    "open_reason": "OPEN - I_d,max / P_d of the registered envelope pending (OQ-A907-02); collector / bias range TBD (ICP-21); matching-network draw TBD (A902-22)"
    },
    {
     "lane": "A9-09",
@@ -8146,7 +8478,8 @@
     "quantity": "measured channel uncertainties, bandwidth, sample rate, timing skew for P_bus,1ms,max (UB-P-02..07, A902-36)",
     "status": "OPEN (after S1a)",
     "class": "OPEN",
-    "open_reason": "OPEN (after S1a)"
+    "open_reason": "measured channel data exist only after S1a",
+    "assessed_by": "A9-10 assessment (checked against the merged target)"
    },
    {
     "lane": "A9-09",
@@ -8159,7 +8492,8 @@
     "quantity": "ICP-02/04/07 geometry, ICP-15/44 RF ratings, ICP-16 interlock, ICP-21 collector, ICP-27 pressure port",
     "status": "OPEN (LOCK-1)",
     "class": "OPEN",
-    "open_reason": "OPEN (LOCK-1)"
+    "open_reason": "ICD geometry / RF ratings / interlock / collector / pressure port are TBD (LOCK-1, GD-01)",
+    "assessed_by": "A9-10 assessment (checked against the merged target)"
    },
    {
     "lane": "A9-09",
@@ -8172,7 +8506,8 @@
     "quantity": "coupler/sensor certificates at 13.56 MHz, cable S-parameters, calorimetric method",
     "status": "OPEN (after quotations)",
     "class": "OPEN",
-    "open_reason": "OPEN (after quotations)"
+    "open_reason": "certificates and S-parameters exist only after quotations / delivery",
+    "assessed_by": "A9-10 assessment (checked against the merged target)"
    },
    {
     "lane": "A9-09",
@@ -8185,7 +8520,8 @@
     "quantity": "HI-AR flow plan (Ar ranges) and the Xe reference/health-check point",
     "status": "OPEN (LOCK-1)",
     "class": "OPEN",
-    "open_reason": "OPEN (LOCK-1)"
+    "open_reason": "the HI-AR flow plan and the Xe reference point size are LOCK-1 items of A9-01 (A9.1 HIQ-03 / HIQ-08 fix placement, not size)",
+    "assessed_by": "A9-10 assessment (checked against the merged target)"
    },
    {
     "lane": "A9-09",
@@ -8197,8 +8533,8 @@
     ],
     "quantity": "C1 procurement inputs reused (flow classes, cathode data, valves/break)",
     "status": "COPIED_VERIFIED",
-    "class": "OPEN",
-    "open_reason": "COPIED_VERIFIED"
+    "class": "SATISFIED",
+    "open_reason": null
    },
    {
     "lane": "A9-09",
@@ -8265,8 +8601,9 @@
     ],
     "quantity": "resolve the UNMAPPED UB-DQ ids UB-DQ-RF, UB-DQ-NEUT, UB-DQ-ID, UB-DQ-FLOW, UB-DQ-PB, UB-DQ-BZ, UB-DQ-TEMP",
     "status": "OPEN - owner/A9-10",
-    "class": "OPEN",
-    "open_reason": "OPEN - owner/A9-10"
+    "class": "PARTIAL",
+    "open_reason": "A9-10 dq_consumer_table gives the chain -> DQ-HI consumer map for the 7 UNMAPPED ids (PROPOSED; ids kept; owner call OQ-INT-01)",
+    "assessed_by": "A9-10 assessment (checked against the merged target)"
    },
    {
     "lane": "A9-INT",
@@ -8278,8 +8615,9 @@
     ],
     "quantity": "re-evaluate status / value / assessment fields whose target is now in the base",
     "status": "OPEN",
-    "class": "OPEN",
-    "open_reason": "OPEN"
+    "class": "SATISFIED",
+    "open_reason": "A9-10 pending_reevaluation (this record): filled / re-stated by the A910-R* overlay records or given a checked reason",
+    "assessed_by": "A9-10 assessment (checked against the merged target)"
    },
    {
     "lane": "A9-INT",
@@ -8292,7 +8630,8 @@
     "quantity": "per-input producing stage and decision-quantity assignment in the A9-05 validation inputs",
     "status": "OPEN",
     "class": "OPEN",
-    "open_reason": "OPEN"
+    "open_reason": "owner call OQ-A910-02 (per-input producing stage / decision quantity at LOCK-1); no assignment is invented",
+    "assessed_by": "A9-10 assessment (checked against the merged target)"
    },
    {
     "lane": "A9-INT",
@@ -8307,8 +8646,9 @@
     ],
     "quantity": "references that stay PENDING until those lanes exist",
     "status": "OPEN",
-    "class": "OPEN",
-    "open_reason": "OPEN"
+    "class": "SATISFIED",
+    "open_reason": "A9-06 / A9-07 / A9-08 are merged; their references were re-evaluated (pending_reevaluation)",
+    "assessed_by": "A9-10 assessment (checked against the merged target)"
    },
    {
     "lane": "A9-INT",
@@ -8341,19 +8681,34 @@
  },
  "integration_record": {
   "path": "docs/experiments/hall_icp/integration/a9_core_integration_v1.json",
-  "status": "frozen step-1 snapshot (compared at ecdad06e30bc5d2f172e862e4bd4843e86332d42); OQ-INT-01 OPEN (owner call; consumer table PROPOSED here), OQ-INT-02 OPEN, OQ-INT-03 / OQ-INT-04 addressed here"
+  "status": "frozen step-1 snapshot (compared at ecdad06e30bc5d2f172e862e4bd4843e86332d42); OQ-INT-01 OPEN (owner call; consumer table PROPOSED here), OQ-INT-02 OPEN, OQ-INT-03 / OQ-INT-04 addressed here (OQ-INT-03: fields filled or re-stated by the A910-R* records, remaining ones with a target-checked reason, no catch-all)"
  },
+ "scope_deviations": [
+  {
+   "id": "SD-A910-01",
+   "item": "M16 v3 JSON location",
+   "brief_path": "docs/budgets/subsystem_maturity/subsystem_maturity_v3.json",
+   "actual_path": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
+   "within_allowed_paths": true,
+   "reason": "the immutable H2-7 v1 builder (docs/hardware/h2/h2_7_mechanical_bom/build_h2_7_mechanical_bom.py, lane_consumption) globs docs/budgets/subsystem_maturity/*.json and pins each file's sha256; a new JSON there makes H2-7 v1 --check STALE (verified by copying the file there and running the check)",
+   "companion_files_at_brief_paths": [
+    "docs/budgets/subsystem_maturity/build_subsystem_maturity_v3.py",
+    "docs/budgets/subsystem_maturity/SUBSYSTEM_MATURITY_v3.md"
+   ],
+   "status": "DECLARED; orchestrator acceptance requested (OQ-A910-04)"
+  }
+ ],
  "current_pins": [
   {
    "deliverable": "A9-01",
    "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-   "sha256": "f22e12e73a664df26349642aa64e850ffd8e6581e7239effd8230410bb97264f",
+   "sha256": "1310a84fa9840792ab7ae9617c55fd1a041653064ccaa6eb364785214f45a4ee",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-01",
    "path": "docs/experiments/hall_icp/prereg_framework/HALL_ICP_PREREG_FRAMEWORK.md",
-   "sha256": "e502b24b24379063891278fda7216793d7c6822bd623a5b3e39de9a248b09eb4",
+   "sha256": "f90c08e2c1262bc81689e0105a41ae1966d217cf0d24cf6e36ee9a1fb1ab4127",
    "changed_since_base": true
   },
   {
@@ -8365,43 +8720,43 @@
   {
    "deliverable": "A9-02",
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "sha256": "7ca8ed23652c4f3a1054461c7d14919c7e169d2ae97e20b318acba397ddeb3af",
+   "sha256": "dd888719d36e5de2fc9e622451ff2ea7b88522d12aacf32919be130dc225bcb3",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-02",
    "path": "docs/architecture_comparison/power_boundary_a9/BUS_POWER_BOUNDARY_A9.md",
-   "sha256": "3c0d0b4bbb1184413a786cb52ff3d5b7d3906b5a41ab308f641c099ebbe795df",
+   "sha256": "c805c4bf2b94b1cd402e3a059e9ff96838d6f99a912713da35d91c26b9a90bbd",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-02",
    "path": "docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py",
-   "sha256": "45213a9eec97c1c327598e03d2aad4a3d532cafff5a493a06744a46a34241f61",
+   "sha256": "92a269f660828e0c95510da938d3d4c4dd842a1a9ab71adf5a72dddb6ca58590",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-02",
    "path": "abep_sim/bus_boundary_a9.py",
-   "sha256": "239f19192d0691c8787124b71d5d7955833dada6feb81ed0b64f5dfcb48b897a",
+   "sha256": "08d8d6e730aabb30203944613fba1fe73ce738cdbe93c2bb9b161d6511d57819",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-02",
    "path": "schemas/interfaces/bus_power_boundary_a9_v1.json",
-   "sha256": "97458dac4cce74993afb89299255d4eca27710a3825f93083f33398f11164d1c",
+   "sha256": "64238d1526d8ce6bf3ca6b45f385f8948e6dcf916e4f2140cbcb6c46d2c7aa09",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-03",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "4d16ee4d0e3425843f24c78b3dea038e46ca44360bf44a1451c36dcbad500fb8",
+   "sha256": "0a2ec6666530e8464f63a9517eaff8b2eece61aac9c7b73b4e2de897f5387d75",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-03",
    "path": "docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md",
-   "sha256": "2c55a2706f988237b1c8d53a02a03d2ab8469cd32aa0a22608756552ff34ef58",
+   "sha256": "258c6c95e21f1374ac03beb3a7aa6ffaf0b8bcb42e0a20138096a2c0d32ef8d4",
    "changed_since_base": true
   },
   {
@@ -8413,13 +8768,13 @@
   {
    "deliverable": "A9-04",
    "path": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "sha256": "650aa32b4b388aebba4c20a54ca35f762b09f7d04403f4f0b440d6fd8fda0983",
+   "sha256": "4c9f57fa28bf4465a80966a12661eddcd77dd37d487fd63fb111d60937426de6",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-04",
    "path": "docs/experiments/hall_icp/uncertainty_budget/HALL_ICP_UNCERTAINTY_BUDGET.md",
-   "sha256": "725ab811e0638b8c16ceda7387b1dd9daaa359a7106e5fe0f16d4ad30f67f84c",
+   "sha256": "309f9a586897243b17ffc3ed6e430c29a3fb3e156e27229e78471744812041b9",
    "changed_since_base": true
   },
   {
@@ -8449,13 +8804,13 @@
   {
    "deliverable": "A9-05vi",
    "path": "docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-   "sha256": "54ae028df1ea940d624e7caa074eed47fe8576ef1a0d631391601ddf855e6158",
+   "sha256": "e26c38ef0af4f56d8d7b21e024867e7c6ad0378841d2f9992ac8f0d904a9a2ed",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-05vi",
    "path": "docs/experiments/hall_icp/validation_inputs/HALL_ICP_VALIDATION_INPUTS.md",
-   "sha256": "c51c2466d058228aa95ef8b6b185817a6910eab9f8efde713b0e67ba5f12b936",
+   "sha256": "391c523a1fe732abb9dc6fdae1d974c8db1fad651732c1bb85f7c372cd1cdf72",
    "changed_since_base": true
   },
   {
@@ -8467,13 +8822,13 @@
   {
    "deliverable": "A9-06",
    "path": "docs/budgets/mass_a9/mass_a9_v1.json",
-   "sha256": "1e4ed866d678023e5e2a5223f263cf2f012aa04f72279d30b8acc55e5c1759f0",
+   "sha256": "bc3a4d7095cb4650db866baf6d8c5e86d45d87821a4ea82a25fdda698dfec309",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-06",
    "path": "docs/budgets/mass_a9/MASS_A9.md",
-   "sha256": "ae76f0fa774fd0a65904adb9da01f62a6c78d7958126e33aa9b51f8f4e717a8b",
+   "sha256": "d1a7c0576ef01e7766b2cb9ba29ce4eb8bc54639aeb55ff8853bd2ac7d54c10c",
    "changed_since_base": true
   },
   {
@@ -8485,13 +8840,13 @@
   {
    "deliverable": "A9-07",
    "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
-   "sha256": "6cd838459cfa06351379ff9d33a6f7ec0571f150ce4658f6af9eb951c45c08cd",
+   "sha256": "c50986bafc004b4f82fbcd408830c286a2d30d1bb045d0f6f250d3e91a117c1c",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-07",
    "path": "docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md",
-   "sha256": "360424ab9fea23aa09383033771247ee314824a54bafb70b121dee168a830795",
+   "sha256": "d06aebff1aa71eb0e16bd79ed689a3a2056b26ce33992b0505caf30082624252",
    "changed_since_base": true
   },
   {
@@ -8503,31 +8858,31 @@
   {
    "deliverable": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
-   "sha256": "ec2adedd8b20cfc8d7c7d47263cc1a8a07a39d6e43cc1e1655be97816a0b7f18",
+   "sha256": "52d77cd06d4615f368fa3a4da5b729c253a0bb4708c30cf96ba03c0f88a6e0db",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/XE_LEDGER_A9.md",
-   "sha256": "2f68aecd671362328361ef1b379ecdcd2471a5cba589e0a67a71328ea37fa1b1",
+   "sha256": "af93c24e90401d4f6592ba5f287841d8fd29c2703dbfcc514e81de1f3ee9aff5",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-08",
    "path": "docs/budgets/xe_ledger_a9/build_xe_ledger_a9.py",
-   "sha256": "25d5985de84e6f6266a367875c0bcc29e0cfcf7efbf04b5ecfbd0e21a118c49e",
+   "sha256": "b72d68ce6fe6c917067dc1ab871ce764ac871054fc10a8473cf363fce82ed6a4",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-09",
    "path": "docs/procurement/rfq_a9/rfq_a9_v1.json",
-   "sha256": "32622554ddbcb5abe7291564d2785f028e4f4fc67d877e1f02cb46024f37cfbb",
+   "sha256": "b92ad25e698589e75b8a426d613f97288a021d8b512f90fc976e15e3db96d530",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-09",
    "path": "docs/procurement/rfq_a9/RFQ_A9.md",
-   "sha256": "eaf7cdecde20e800947b95029b57a5651a48ce2158e2ddcc2119516528b3dd88",
+   "sha256": "b281bfb09569991792d77cc974891ea894ec864605760f5efa7492cedad3be5a",
    "changed_since_base": true
   },
   {
@@ -8539,25 +8894,25 @@
   {
    "deliverable": "A9-INT",
    "path": "docs/experiments/hall_icp/integration/a9_core_integration_v1.json",
-   "sha256": "425218cf84c6bb862924f3a3c125186b0ee00fc403c752f1e3c2ddb4f658386d",
+   "sha256": "86146f986e35e4d9e507c739aac9f8dd11b483be45fd7691bdccc585c734a09f",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-INT",
    "path": "docs/experiments/hall_icp/integration/A9_CORE_INTEGRATION.md",
-   "sha256": "81a50e9d059c32061ecb3eaea88ec78ebe5417810c715942de52f9d62ada1c83",
+   "sha256": "a64e4ad5d309afb218aaaf130239691f2e3d524c02997f2c0b42220afcd6803f",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-INT",
    "path": "docs/experiments/hall_icp/integration/build_a9_core_integration.py",
-   "sha256": "21a52f33cab904678faae3343509ebf80632cd8ef1068d2d2ac5ab9ca871c1b2",
+   "sha256": "5438fbe0a88c3fb216c59711a7cfeb1d29855659d241494a71bda0558b9c7c76",
    "changed_since_base": true
   },
   {
    "deliverable": "A9-10",
    "path": "docs/experiments/hall_icp/integration/a9_10_overlay.py",
-   "sha256": "80507b94fbdf515932a9afa0e02fe82e5b119282a6a0cf61c3bb24df33a196aa",
+   "sha256": "a941354fa1016bd35280f936e761748bd99e75f3a3eccf41dd92ed6b70d79ea1",
    "changed_since_base": true
   }
  ],
@@ -8953,7 +9308,7 @@
   {
    "id": "IF-A910-02",
    "direction": "from A9-10 to M16",
-   "counterpart": "docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json",
+   "counterpart": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
    "quantity": "row refresh (rows 1-17), row 17 superseded, new rows 18-19",
    "units": "-",
    "status": "SUPPLIED"
@@ -9026,9 +9381,16 @@
   },
   {
    "id": "OQ-A910-03",
-   "question": "A9-02 now PASSes a ledger declared 'peak_sampled' (the unaveraged sampled peak) when it is below 1500 W, because the maximum 1 ms mean cannot exceed the maximum sample; an unaveraged peak at or above 1500 W gives NOT_EVALUABLE (not FAIL). Accept this reading of A9.1 OQ-A902-01?",
-   "proposed_answer": "PROPOSED yes (it never substitutes a step average; the peak record must meet the same >= 20 kHz / >= 100 kSa/s requirements); owner call",
+   "question": "May a ledger declared 'peak_sampled' (the unaveraged sampled peak) PASS the 1.5 kW gate when the peak is below 1500 W and the record meets the A9.1 OQ-A902-01 measurement requirements (the maximum 1 ms mean cannot exceed the maximum sample)? A9.1 OQ-A902-01 calls the unaveraged peak 'protection analysis only; not the 1.5 kW gate', so A9-02 does NOT implement this reading: today only a declared p_bus_1ms_max ledger with a conformant gate_measurement record can PASS, and a peak_sampled ledger is NOT_EVALUABLE in both directions.",
+   "proposed_answer": "PROPOSED yes, limited to records meeting >= 100 kSa/s, >= 20 kHz, documented anti-alias filtering and synchronized channels (it is conservative and never substitutes a step average); owner call - not implemented until answered",
    "needed_by": "LOCK-1",
+   "raised_by": "A9-10"
+  },
+  {
+   "id": "OQ-A910-04",
+   "question": "Accept the location of the M16 v3 JSON at docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json instead of the brief-named docs/budgets/subsystem_maturity/subsystem_maturity_v3.json? The immutable H2-7 v1 mechanical BOM builder scans docs/budgets/subsystem_maturity/*.json non-recursively and pins every file it finds, so any new JSON there makes the H2-7 v1 --check stale (verified). The builder and the Markdown keep the brief-named paths (docs/budgets/subsystem_maturity/build_subsystem_maturity_v3.py, SUBSYSTEM_MATURITY_v3.md).",
+   "proposed_answer": "PROPOSED accept (the alternative is to change the immutable H2-7 v1 builder, which is not allowed); orchestrator / owner call",
+   "needed_by": "merge of this lane",
    "raised_by": "A9-10"
   }
  ],
@@ -9049,9 +9411,16 @@
   },
   {
    "id": "OQ-A910-03",
-   "question": "A9-02 now PASSes a ledger declared 'peak_sampled' (the unaveraged sampled peak) when it is below 1500 W, because the maximum 1 ms mean cannot exceed the maximum sample; an unaveraged peak at or above 1500 W gives NOT_EVALUABLE (not FAIL). Accept this reading of A9.1 OQ-A902-01?",
-   "proposed_answer": "PROPOSED yes (it never substitutes a step average; the peak record must meet the same >= 20 kHz / >= 100 kSa/s requirements); owner call",
+   "question": "May a ledger declared 'peak_sampled' (the unaveraged sampled peak) PASS the 1.5 kW gate when the peak is below 1500 W and the record meets the A9.1 OQ-A902-01 measurement requirements (the maximum 1 ms mean cannot exceed the maximum sample)? A9.1 OQ-A902-01 calls the unaveraged peak 'protection analysis only; not the 1.5 kW gate', so A9-02 does NOT implement this reading: today only a declared p_bus_1ms_max ledger with a conformant gate_measurement record can PASS, and a peak_sampled ledger is NOT_EVALUABLE in both directions.",
+   "proposed_answer": "PROPOSED yes, limited to records meeting >= 100 kSa/s, >= 20 kHz, documented anti-alias filtering and synchronized channels (it is conservative and never substitutes a step average); owner call - not implemented until answered",
    "needed_by": "LOCK-1",
+   "raised_by": "A9-10"
+  },
+  {
+   "id": "OQ-A910-04",
+   "question": "Accept the location of the M16 v3 JSON at docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json instead of the brief-named docs/budgets/subsystem_maturity/subsystem_maturity_v3.json? The immutable H2-7 v1 mechanical BOM builder scans docs/budgets/subsystem_maturity/*.json non-recursively and pins every file it finds, so any new JSON there makes the H2-7 v1 --check stale (verified). The builder and the Markdown keep the brief-named paths (docs/budgets/subsystem_maturity/build_subsystem_maturity_v3.py, SUBSYSTEM_MATURITY_v3.md).",
+   "proposed_answer": "PROPOSED accept (the alternative is to change the immutable H2-7 v1 builder, which is not allowed); orchestrator / owner call",
+   "needed_by": "merge of this lane",
    "raised_by": "A9-10"
   }
  ],
@@ -9062,21 +9431,21 @@
    "OQ-INT-02"
   ],
   "pending_by_reason": {
-   "NOT_A_CROSS_REFERENCE": 37,
+   "NOT_A_CROSS_REFERENCE": 13,
    "HISTORICAL_COPY": 26,
-   "H2_V1_REVISED_IN_A9_07": 20,
+   "H2_V1_REVISED_IN_A9_07": 7,
    "HISTORICAL_PREIONIZER": 1,
-   "ASSIGNMENT_NOT_DEFINED_BY_TARGET": 109,
+   "ASSIGNMENT_NOT_DEFINED_BY_TARGET": 107,
    "UNMAPPED_DQ_ID": 7,
-   "DEPENDS_ON_LOCK_OR_OWNER": 8,
-   "DEPENDS_ON_HARDWARE_OR_EVIDENCE": 9,
-   "TARGET_MERGED_DOES_NOT_DEFINE": 54,
+   "DEPENDS_ON_LOCK_OR_OWNER": 5,
+   "DEPENDS_ON_HARDWARE_OR_EVIDENCE": 3,
+   "TARGET_CHECKED_NOT_DEFINED": 0,
    "A9_08_OPEN_AFTER_A9_07": 5,
    "A9_08_OPEN_AFTER_A9_09": 1,
    "H2_4_SELECTION": 2
   },
-  "interface_demands_open": 96,
-  "m16": "docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json (every row BLOCKED or READY per the accepted scheduler rule; named owners missing)"
+  "interface_demands_open": 72,
+  "m16": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json (every row BLOCKED or READY per the accepted scheduler rule; named owners missing)"
  },
  "historical_reuse": {
   "reused": [
@@ -9088,7 +9457,7 @@
   ]
  },
  "m16_impact": {
-  "file": "docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json",
+  "file": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
   "rows_touched": [
    1,
    2,

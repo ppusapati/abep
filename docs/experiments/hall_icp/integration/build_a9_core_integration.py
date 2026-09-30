@@ -873,7 +873,9 @@ def assemble(pins, mapping, mapping_rows, resolved, remaining, no_change, pin_up
         {"id": "OQ-INT-03", "question": "Status / value / assessment fields that still read 'PENDING <lane>' although "
          "the lane is now in the base: re-evaluate in A9-10?", "proposed_answer": "yes, in A9-10 with the consolidated "
          "owner-question state (not a mechanical change)", "status": "ADDRESSED_IN_A9_10 (" + A9_10_RECORD +
-         " pending_reevaluation: every remaining PENDING filled from its target or given its precise reason)"},
+         " pending_reevaluation: a PENDING field whose merged target or an A9.1 decision gives the value is filled or "
+         "re-stated by an A910-R* overlay record; every remaining one carries a reason code checked against its target "
+         "(no catch-all rule); interface_demand_matrix gives every demand its class and precise reason)"},
         {"id": "OQ-INT-04", "question": "A9-03 published-analog annex says it 'must be reconciled with A9-05 when it "
          "merges'; the pointer is resolved here, the reconciliation is not", "proposed_answer": "A9-10 reconciles the "
          "annex against " + EV + " (content, not mechanical)", "status": "ADDRESSED_IN_A9_10 (" + A9_10_RECORD +

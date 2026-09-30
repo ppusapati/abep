@@ -44,7 +44,7 @@ BASE = "ecdad06e30bc5d2f172e862e4bd4843e86332d42"
 CONFIGURATIONS = ("hall_c1_reference", "hall_icp_neutralizer")
 A9_STATUS = "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE"
 XE_DIR = "docs/budgets/" + "xe" + "_ledger_a9/"
-M16_V3 = "docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json"
+M16_V3 = "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json"
 OQ_V2 = "docs/budgets/owner_decisions/owner_questions_state_v2.json"
 
 _spec = importlib.util.spec_from_file_location("a9_10_overlay", os.path.join(HERE, "a9_10_overlay.py"))
@@ -311,8 +311,8 @@ REASONS = {
                                 "form only",
     "DEPENDS_ON_HARDWARE_OR_EVIDENCE": "needs hardware, a registered stand envelope, a selected device or a "
                                       "measurement; no lane can supply it",
-    "TARGET_MERGED_DOES_NOT_DEFINE": "the target A9 lane is merged and verified but does not define this value "
-                                     "(interface item to be closed at LOCK-1 / with the module design)",
+    "TARGET_CHECKED_NOT_DEFINED": "checked against the merged target: it does not define this value (the precise "
+                                  "detail is given per occurrence in 'detail')",
     "A9_08_OPEN_AFTER_A9_07": "the A9 Xe ledger item waits on vendor/design-qualified C1 values; A9-07 (merged) "
                               "revises requirements and gives none",
     "A9_08_OPEN_AFTER_A9_09": "the A9 Xe ledger item waits on quotations; A9-09 (merged) issued specifications only",
@@ -337,14 +337,17 @@ PENDING_RULES = [
     (r"A9-01", r"/interface_demands", r"ICP channels PENDING", "TARGET_MERGED_DOES_NOT_DEFINE"),
     (r"A9-08", r".*", r"PENDING A9-07", "A9_08_OPEN_AFTER_A9_07"),
     (r"A9-08", r".*", r"PENDING A9-09", "A9_08_OPEN_AFTER_A9_09"),
-    (r".*", r".*", r"PENDING (docs/(experiments/hall_icp|architecture_comparison/power_boundary_a9|interfaces/"
-                   r"icp_neutralizer|evidence/icp_neutralizer|budgets/mass_a9|budgets/" + "xe" + r"_ledger_a9)|"
-                   r"abep_sim/bus_boundary_a9|A9-0[1-9])", "TARGET_MERGED_DOES_NOT_DEFINE"),
-    (r".*", r"/status$|/value$|/a9_status$", r"^PENDING", "TARGET_MERGED_DOES_NOT_DEFINE"),
+    # No catch-all: every remaining 'PENDING <A9 lane>' is either filled / re-stated by an overlay record (the
+    # review repair, a9_10_overlay._repair) or listed individually in PRECISE_REMAINING with the checked reason.
 ]
+# (deliverable, pointer) -> (reason code, precise detail checked against the target content). Every entry was
+# checked against the merged target; an entry whose pointer no longer reads PENDING fails the build (stale entry).
+PRECISE_REMAINING = {}
 
 
 def classify_pending(key: str, ptr: str, frag: str, full: str):
+    if (key, ptr) in PRECISE_REMAINING:
+        return PRECISE_REMAINING[(key, ptr)][0]
     for dk, pk, tk, reason in PENDING_RULES:
         if re.fullmatch(dk, key) and re.search(pk, ptr) and (re.search(tk, frag) or re.search(tk, full)):
             return reason
@@ -372,15 +375,23 @@ def pending_reevaluation(errors: list) -> dict:
             if reason is None:
                 errors.append(f"unclassified remaining PENDING {d['json']}{p}: {frag[:80]}")
                 continue
-            remaining.append({"deliverable": d["key"], "pointer": p, "text": frag, "reason": reason})
+            row = {"deliverable": d["key"], "pointer": p, "text": frag, "reason": reason}
+            if (d["key"], p) in PRECISE_REMAINING:
+                row["detail"] = PRECISE_REMAINING[(d["key"], p)][1]
+            remaining.append(row)
         pb = {p for p, _f, _v in occ_b}
         pa = {p for p, _f, _v in occ_a}
+        for (k, ptr) in PRECISE_REMAINING:
+            if k == d["key"] and ptr not in pa:
+                errors.append(f"stale PRECISE_REMAINING entry {k}{ptr} (no PENDING there any more)")
         per.append({"deliverable": d["key"], "file": d["json"], "pending_at_base": len(occ_b),
                     "pending_now": len(occ_a), "leaves_no_longer_pending": len(pb - pa),
                     "leaves_pending_at_base": len(pb)})
-    return {"rule": "every 'PENDING' still present is re-evaluated against the now-merged lanes: filled where the "
-                    "target gives the value (see changes_by_deliverable), otherwise kept with a precise reason code "
-                    "(reason_codes); an unclassified occurrence fails the build",
+    return {"rule": "every 'PENDING' still present is re-evaluated against the now-merged lanes: filled or re-stated "
+                    "where the target (or an A9.1 decision) gives the value (overlay records A910-R*, driver OQ-INT-03, "
+                    "see changes_by_deliverable), otherwise kept with a reason code (reason_codes) and, where the "
+                    "code is TARGET_CHECKED_NOT_DEFINED, the per-occurrence detail of what the target does and does "
+                    "not define; there is no catch-all rule: an unclassified occurrence fails the build",
             "reason_codes": REASONS, "per_deliverable": per,
             "remaining_by_reason": {k: sum(1 for x in remaining if x["reason"] == k) for k in REASONS},
             "remaining": remaining}
@@ -489,8 +500,36 @@ def annex_reconciliation(errors: list) -> dict:
 # ------------------------------------------------------------------------------------------------------------------
 # (4d) interface demands between the A9 lanes, both directions
 # ------------------------------------------------------------------------------------------------------------------
-SAT = ("CONSUMED", "VERIFIED", "ANSWERED", "SUPPLIED", "RESOLVED", "SATISFIED", "DELIVERED", "SOURCED")
-OFFER = ("OFFERED", "PRELIMINARY", "PROPOSED", "OWNER_GIVEN", "OWNER_ALLOCATION", "ADOPTED")
+SAT = ("CONSUMED", "VERIFIED", "ANSWERED", "SUPPLIED", "RESOLVED", "SATISFIED", "DELIVERED", "SOURCED", "USED",
+       "COPIED_VERIFIED")
+OFFER = ("OFFERED", "PRELIMINARY", "PROPOSED", "OWNER_GIVEN", "OWNER_ALLOCATION", "ADOPTED", "DERIVED_BOUND")
+PART = ("PARTIAL", "ANSWERED_IN_PART")
+# An OPEN / PARTIAL demand must state WHY in its own status (it names what the merged target does not supply), or
+# carry an explicit assessment here (checked against the target). A bare 'PENDING' / 'OPEN' fails the build.
+VAGUE = re.compile(r"^(PENDING|OPEN|PARTIAL|FLAG|TBD)?\s*(\((revision needed|owner action|LOCK-1|after quotations|"
+                   r"hardware not built)\))?$")
+ASSESS = {
+    ("A9-05ev", "EV-IF-04"): ("OPEN", "owner action: lawful acquisition of LA-01..LA-09 (row 7); A9.1 OQ-EV-02 fixes "
+                                      "the order P1 / P2 / P3 and OQ-EV-03 the extraction rule; no lane can do it"),
+    ("A9-06", "MA9-ID-22"): ("OPEN", "as-built masses need the S1a hardware (TBD - requires S1a)"),
+    ("A9-07", "IDA7-10"): ("OPEN", "ICD ICP-02 / ICP-04 / ICP-07 geometry is TBD, frozen at LOCK-1 (GD-01 before "
+                                   "HI-S1); no lane supplies it before the module design"),
+    ("A9-09", "IF-RFQ-02"): ("OPEN", "quoted masses exist only after quotations (row 8: quotations only, no purchase)"),
+    ("A9-09", "IF-RFQ-08"): ("OPEN", "measured channel data exist only after S1a"),
+    ("A9-09", "IF-RFQ-09"): ("OPEN", "ICD geometry / RF ratings / interlock / collector / pressure port are TBD "
+                                     "(LOCK-1, GD-01)"),
+    ("A9-09", "IF-RFQ-10"): ("OPEN", "certificates and S-parameters exist only after quotations / delivery"),
+    ("A9-09", "IF-RFQ-11"): ("OPEN", "the HI-AR flow plan and the Xe reference point size are LOCK-1 items of A9-01 "
+                                     "(A9.1 HIQ-03 / HIQ-08 fix placement, not size)"),
+    ("A9-INT", "IF-INT-04"): ("PARTIAL", "A9-10 dq_consumer_table gives the chain -> DQ-HI consumer map for the 7 "
+                                         "UNMAPPED ids (PROPOSED; ids kept; owner call OQ-INT-01)"),
+    ("A9-INT", "IF-INT-05"): ("SATISFIED", "A9-10 pending_reevaluation (this record): filled / re-stated by the "
+                                           "A910-R* overlay records or given a checked reason"),
+    ("A9-INT", "IF-INT-06"): ("OPEN", "owner call OQ-A910-02 (per-input producing stage / decision quantity at "
+                                      "LOCK-1); no assignment is invented"),
+    ("A9-INT", "IF-INT-07"): ("SATISFIED", "A9-06 / A9-07 / A9-08 are merged; their references were re-evaluated "
+                                           "(pending_reevaluation)"),
+}
 LANE_TOKENS = [("A9-01", r"A9-01|prereg_framework"), ("A9-02", r"A9-02|power_boundary_a9|bus_boundary_a9"),
                ("A9-03", r"A9-03|icp_neutralizer_icd|interfaces/icp_neutralizer"),
                ("A9-04", r"A9-04|uncertainty_budget"), ("A9-05", r"A9-05|validation_inputs|evidence/icp_neutralizer"),
@@ -503,7 +542,7 @@ def _lanes_in(txt: str) -> list:
     return [k for k, pat in LANE_TOKENS if re.search(pat, txt or "")]
 
 
-def interface_matrix() -> dict:
+def interface_matrix(errors: list) -> dict:
     rows = []
     srcs = [(d["key"], d["json"]) for d in DELIVERABLES] + [("A9-INT", INTEGRATION["json"])]
     for key, rel in srcs:
@@ -514,9 +553,10 @@ def interface_matrix() -> dict:
             qty = x.get("quantity") or x.get("demand") or x.get("what") or ""
             st = str(x.get("status", ""))
             up = st.upper()
+            rid = x.get("id") or f"#{doc['interface_demands'].index(x)}"
             if up.startswith("NOT APPLICABLE"):
                 cls = "NOT_APPLICABLE"
-            elif up.startswith("PARTIAL"):
+            elif up.startswith(PART):
                 cls = "PARTIAL"
             elif up.startswith(SAT):
                 cls = "SATISFIED"
@@ -524,20 +564,21 @@ def interface_matrix() -> dict:
                 cls = "OFFERED"
             else:
                 cls = "OPEN"
-            reason = None
-            if cls in ("OPEN", "PARTIAL"):
-                r = classify_pending(key if key != "A9-INT" else "A9-01", "/interface_demands/status", st, st)
-                reason = (REASONS[r] if r else None) or st
-                if st.strip() in ("PENDING", ""):
-                    v = str(x.get("value") or "")
-                    r2 = classify_pending(key, "/interface_demands/value", v, v)
-                    reason = REASONS.get(r2, "target lane named in the demand is merged; the value is not supplied "
-                                             "there (LOCK / hardware / owner item)") if r2 else (
-                        "target lane named in the demand is merged; the value is not supplied there (LOCK / hardware "
-                        "/ owner item)")
-            rows.append({"lane": key, "id": x.get("id"), "from": frm.strip(), "to": to.strip(),
+            reason, assessed = None, None
+            if (key, rid) in ASSESS:
+                cls, reason = ASSESS[(key, rid)]
+                assessed = "A9-10 assessment (checked against the merged target)"
+            elif cls in ("OPEN", "PARTIAL"):
+                # the reason is the demand's own status (or, when the status is a bare word, its value text)
+                val = str(x.get("value") or "") if not isinstance(x.get("value"), (dict, list)) else ""
+                txt = st if not VAGUE.match(st.strip()) else (val if val and not VAGUE.match(val.strip()) else "")
+                if not txt or "PENDING" in txt.split(" - ")[0][:8]:
+                    errors.append(f"interface demand {key} {rid}: {cls} without a precise reason: {st!r:.120}")
+                reason = txt
+            rows.append({"lane": key, "id": rid, "from": frm.strip(), "to": to.strip(),
                          "lanes_named": sorted(set(_lanes_in(frm + " " + to)) - {key}), "quantity": str(qty)[:220],
-                         "status": st[:300], "class": cls, "open_reason": reason})
+                         "status": st[:400], "class": cls, "open_reason": reason,
+                         **({"assessed_by": assessed} if assessed else {})})
     pairs = {}
     for r in rows:
         for other in r["lanes_named"]:
@@ -548,6 +589,9 @@ def interface_matrix() -> dict:
                     "SATISFIED / OFFERED (content supplied, possibly preliminary) / PARTIAL / OPEN (with the precise "
                     "reason) / NOT_APPLICABLE; both directions are covered because each lane lists its demands to "
                     "and from the others",
+            "open_rule": "an OPEN / PARTIAL row states its precise reason (its own status names what the merged target "
+                         "does or does not supply, or an A9-10 assessment in ASSESS); a bare PENDING / OPEN fails the "
+                         "build",
             "counts": {c: sum(1 for r in rows if r["class"] == c)
                        for c in ("SATISFIED", "OFFERED", "PARTIAL", "OPEN", "NOT_APPLICABLE")},
             "pairs": dict(sorted(pairs.items())), "rows": rows}
@@ -640,12 +684,34 @@ NEW_QUESTIONS = [
      "quantity')?", "proposed_answer": "assign at LOCK-1 from the A9-01 stage map and the A9-10 chain -> DQ-HI "
      "consumer table (dq_consumer_table); no assignment is invented here; owner call",
      "needed_by": "LOCK-1", "raised_by": "A9-10"},
-    {"id": "OQ-A910-03", "question": "A9-02 now PASSes a ledger declared 'peak_sampled' (the unaveraged sampled peak) "
-     "when it is below 1500 W, because the maximum 1 ms mean cannot exceed the maximum sample; an unaveraged peak at "
-     "or above 1500 W gives NOT_EVALUABLE (not FAIL). Accept this reading of A9.1 OQ-A902-01?",
-     "proposed_answer": "PROPOSED yes (it never substitutes a step average; the peak record must meet the same "
-                        ">= 20 kHz / >= 100 kSa/s requirements); owner call", "needed_by": "LOCK-1",
+    {"id": "OQ-A910-03", "question": "May a ledger declared 'peak_sampled' (the unaveraged sampled peak) PASS the "
+     "1.5 kW gate when the peak is below 1500 W and the record meets the A9.1 OQ-A902-01 measurement requirements "
+     "(the maximum 1 ms mean cannot exceed the maximum sample)? A9.1 OQ-A902-01 calls the unaveraged peak 'protection "
+     "analysis only; not the 1.5 kW gate', so A9-02 does NOT implement this reading: today only a declared "
+     "p_bus_1ms_max ledger with a conformant gate_measurement record can PASS, and a peak_sampled ledger is "
+     "NOT_EVALUABLE in both directions.",
+     "proposed_answer": "PROPOSED yes, limited to records meeting >= 100 kSa/s, >= 20 kHz, documented anti-alias "
+                        "filtering and synchronized channels (it is conservative and never substitutes a step "
+                        "average); owner call - not implemented until answered", "needed_by": "LOCK-1",
      "raised_by": "A9-10"},
+    {"id": "OQ-A910-04", "question": "Accept the location of the M16 v3 JSON at " + M16_V3 + " instead of the "
+     "brief-named docs/budgets/subsystem_maturity/subsystem_maturity_v3.json? The immutable H2-7 v1 mechanical BOM "
+     "builder scans docs/budgets/subsystem_maturity/*.json non-recursively and pins every file it finds, so any new "
+     "JSON there makes the H2-7 v1 --check stale (verified). The builder and the Markdown keep the brief-named paths "
+     "(docs/budgets/subsystem_maturity/build_subsystem_maturity_v3.py, SUBSYSTEM_MATURITY_v3.md).",
+     "proposed_answer": "PROPOSED accept (the alternative is to change the immutable H2-7 v1 builder, which is not "
+                        "allowed); orchestrator / owner call", "needed_by": "merge of this lane",
+     "raised_by": "A9-10"},
+]
+SCOPE_DEVIATIONS = [
+    {"id": "SD-A910-01", "item": "M16 v3 JSON location", "brief_path": "docs/budgets/subsystem_maturity/"
+     "subsystem_maturity_v3.json", "actual_path": M16_V3, "within_allowed_paths": True,
+     "reason": "the immutable H2-7 v1 builder (docs/hardware/h2/h2_7_mechanical_bom/build_h2_7_mechanical_bom.py, "
+               "lane_consumption) globs docs/budgets/subsystem_maturity/*.json and pins each file's sha256; a new JSON "
+               "there makes H2-7 v1 --check STALE (verified by copying the file there and running the check)",
+     "companion_files_at_brief_paths": ["docs/budgets/subsystem_maturity/build_subsystem_maturity_v3.py",
+                                        "docs/budgets/subsystem_maturity/SUBSYSTEM_MATURITY_v3.md"],
+     "status": "DECLARED; orchestrator acceptance requested (OQ-A910-04)"},
 ]
 
 
@@ -684,7 +750,7 @@ def build():
     pend = pending_reevaluation(errors)
     cons = dq_consumer_table(errors)
     annex = annex_reconciliation(errors)
-    ifm = interface_matrix()
+    ifm = interface_matrix(errors)
     imm = immutability(errors)
     xl = cross_lane(errors)
     pins_now = []
@@ -757,7 +823,9 @@ def build():
         "interface_demand_matrix": ifm,
         "integration_record": {"path": INTEGRATION["json"], "status": "frozen step-1 snapshot (compared at "
                                + BASE + "); OQ-INT-01 OPEN (owner call; consumer table PROPOSED here), OQ-INT-02 "
-                               "OPEN, OQ-INT-03 / OQ-INT-04 addressed here"},
+                               "OPEN, OQ-INT-03 / OQ-INT-04 addressed here (OQ-INT-03: fields filled or re-stated by "
+                               "the A910-R* records, remaining ones with a target-checked reason, no catch-all)"},
+        "scope_deviations": SCOPE_DEVIATIONS,
         "current_pins": pins_now,
         "immutability": imm,
         "interface_demands": [
@@ -896,6 +964,13 @@ def render_md(d) -> str:
     for k, n in p["remaining_by_reason"].items():
         a(f"| {k} | {n} | {_c(p['reason_codes'][k])} |")
     a("")
+    det = [x for x in p["remaining"] if x.get("detail")]
+    if det:
+        a("| deliverable | pointer | checked detail |")
+        a("|---|---|---|")
+        for x in det:
+            a(f"| {x['deliverable']} | `{x['pointer']}` | {_c(x['detail'])} |")
+        a("")
     cons = d["dq_consumer_table"]
     a("## Chain -> DQ-HI consumer table (OQ-INT-01, PROPOSED; ids kept)")
     a("")
@@ -945,6 +1020,13 @@ def render_md(d) -> str:
         a(f"* **{q['id']}** {q['question']} Proposed: {q['proposed_answer']}. Needed by {q['needed_by']}.")
     a("")
     a("Remaining open items: " + _c(d["remaining_open_items"]))
+    a("")
+    a("## Scope deviations (declared)")
+    a("")
+    for x in d["scope_deviations"]:
+        a(f"* **{x['id']}** {x['item']}: `{x['actual_path']}` instead of `{x['brief_path']}` (inside the allowed "
+          f"paths: {x['within_allowed_paths']}); {x['reason']}; builder and Markdown at "
+          f"{', '.join('`' + c + '`' for c in x['companion_files_at_brief_paths'])}; {x['status']}")
     a("")
     a("## (e) Historical reuse")
     a("")

@@ -161,7 +161,7 @@
    "evidence_class": "owner-allocation",
    "status": "ADOPTED (A9.1; A9 engineering definition pending authoritative RFP wording)",
    "freeze_point": "NOW",
-   "note": "P_bus,1ms,max = max_t (1/1 ms) integral_t^{t+1 ms} P_bus dtau < 1500 W; rfp_power_gate PASSes a ledger only when declared p_bus_1ms_max (or peak_sampled, which bounds it); the interim 'PASS only if peak_sampled' rule is replaced; the 1 ms window is not an ECSS requirement"
+   "note": "P_bus,1ms,max = max_t (1/1 ms) integral_t^{t+1 ms} P_bus dtau < 1500 W; rfp_power_gate PASSes a ledger only when declared p_bus_1ms_max with a conformant gate_measurement record (>= 100 kSa/s, >= 20 kHz, anti-alias documented, synchronized); the interim 'PASS only if peak_sampled' rule is replaced and a peak_sampled ledger no longer PASSes (protection record only; OQ-A910-03 OPEN); the 1 ms window is not an ECSS requirement"
   },
   {
    "id": "A902-04",
@@ -376,7 +376,7 @@
    "value": "TBD",
    "units": "W",
    "basis": "pending",
-   "source": "PENDING docs/interfaces/icp_neutralizer/ (fixed vs auto-tuned match)",
+   "source": "schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13 (A9-03, merged; A9.1 A9-03-matching fixes the location off the moving platform but not fixed vs auto-tuned; on-module pre-match OQ-A907-11 OPEN): TBD - requires the matching-network selection (RFQ-04)",
    "evidence_class": "TBD",
    "status": "OPEN",
    "freeze_point": "LOCK-1"
@@ -417,7 +417,7 @@
    "evidence_class": "owner-allocation",
    "status": "ADOPTED (capability, not a load)",
    "freeze_point": "NOW",
-   "note": "its bus power is a start-up transient of slot c1_keeper, value TBD - requires the measured P_bus,1ms,max through the pulse (the unaveraged peak is recorded for protection analysis only, A9.1 OQ-A902-01) and recorded pulse energy (a measurement record, PENDING A9-04; the ledger has no pulse-energy field); H2-4 H24-19 (DC ignition 10-30 W bracket) does not cover it"
+   "note": "its bus power is a start-up transient of slot c1_keeper, value TBD - requires the measured P_bus,1ms,max through the pulse (the unaveraged peak is recorded for protection analysis only, A9.1 OQ-A902-01) and recorded pulse energy (a measurement record; the A9-04 DQ-HI-PBUS chain (INS-02 per slot) defines no pulse-energy record yet, LOCK-1 item; the ledger has no pulse-energy field); H2-4 H24-19 (DC ignition 10-30 W bracket) does not cover it"
   },
   {
    "id": "A902-26",
@@ -740,7 +740,7 @@
   {
    "slot": "c1_keeper",
    "group": "c1",
-   "load_plane": "C1 keeper terminals; includes the current-limited pulsed ignition (300-600 V class, row 89) as a start-up transient: its instantaneous peak is only covered by a step declared peak_sampled; the pulse energy (row 89 'recorded pulse energy') is a measurement record of the power measurement chain (PENDING A9-04), not a ledger field",
+   "load_plane": "C1 keeper terminals; includes the current-limited pulsed ignition (300-600 V class, row 89) as a start-up transient: its bus draw enters the gate as P_bus,1ms,max through the pulse (A9.1 OQ-A902-01; the unaveraged peak is a protection record only); the pulse energy (row 89 'recorded pulse energy') is a measurement record, not a ledger field: the A9-04 DQ-HI-PBUS chain (INS-02, one DC channel per slot) defines no pulse-energy record yet (LOCK-1 item)",
    "rows": [
     89,
     110
@@ -1036,24 +1036,50 @@
      "100 ms and 1 s averages (diagnostic/energy metrics, not substitutes)"
     ],
     "pass_requires_power_basis": [
-     "p_bus_1ms_max",
-     "peak_sampled"
+     "p_bus_1ms_max"
     ],
-    "note": "an A9 engineering definition pending authoritative RFP wording; the 1 ms window is not an ECSS requirement (A9.1 preamble); replaces the interim 'PASS only if peak_sampled' rule",
+    "pass_requires_gate_measurement": {
+     "keys": [
+      "sample_rate_Sa_s",
+      "bandwidth_Hz",
+      "anti_alias_documented",
+      "synchronized",
+      "source"
+     ],
+     "rule": "sample_rate_Sa_s >= 100e3, bandwidth_Hz >= 20e3, anti_alias_documented and synchronized True, non-empty source"
+    },
+    "fail_bases": [
+     "p_bus_1ms_max",
+     "step_average",
+     "steady_state"
+    ],
+    "fail_basis_assumption": "step_average / steady_state bound P_bus,1ms,max from below only when the averaging duration is a whole multiple of 1 ms (exact) or much longer than 1 ms (approximate); an unstated basis gives NOT_EVALUABLE",
+    "peak_sampled_rule": "an unaveraged sampled peak is a protection-analysis record, not the 1.5 kW gate (A9.1 OQ-A902-01): NOT_EVALUABLE in both directions; whether a conformant sampled peak below 1500 W may bound P_bus,1ms,max is the OPEN owner question OQ-A910-03 (not implemented before the owner rules)",
+    "note": "an A9 engineering definition pending authoritative RFP wording; the 1 ms window is not an ECSS requirement (A9.1 preamble); replaces the interim 'PASS only if peak_sampled' rule (a peak_sampled ledger no longer PASSes)",
     "item": "A902-03",
     "owner_question": "OQ-A902-01 (ANSWERED_BY_A9_1)",
     "freeze_point": "NOW"
    },
    "pass_requires_power_basis": [
-    "p_bus_1ms_max",
-    "peak_sampled"
+    "p_bus_1ms_max"
    ],
+   "pass_requires_gate_measurement": {
+    "keys": [
+     "sample_rate_Sa_s",
+     "bandwidth_Hz",
+     "anti_alias_documented",
+     "synchronized",
+     "source"
+    ],
+    "rule": "sample_rate_Sa_s >= 100e3, bandwidth_Hz >= 20e3, anti_alias_documented and synchronized True, non-empty source"
+   },
    "fail_bases": [
     "p_bus_1ms_max",
     "step_average",
-    "steady_state",
-    "unstated"
-   ]
+    "steady_state"
+   ],
+   "fail_basis_assumption": "step_average / steady_state bound P_bus,1ms,max from below only when the averaging duration is a whole multiple of 1 ms (exact) or much longer than 1 ms (approximate); an unstated basis gives NOT_EVALUABLE",
+   "peak_sampled_rule": "an unaveraged sampled peak is a protection-analysis record, not the 1.5 kW gate (A9.1 OQ-A902-01): NOT_EVALUABLE in both directions; whether a conformant sampled peak below 1500 W may bound P_bus,1ms,max is the OPEN owner question OQ-A910-03 (not implemented before the owner rules)"
   },
   "icp_available_power": {
    "relation": "P_ICP,available = 1350 - P_common - P_Hall - P_other,active",
@@ -1125,7 +1151,7 @@
    "at most one peak-class slot (active_cooling, c1_heater, c1_keeper, compressor, hall_discharge, hall_magnet_inner, icp_collector_bias, icp_rf_source) whose load rises in a step, checked on the step loads independently of event labels (A9.1 SEQ-peaks baseline; an overlap is a registered variant needing measured transient evidence; a TBD transition that may rise gives RULES_NOT_EVALUABLE)",
    "C1 heater reduced/disabled only in a step flagged keeper_stable and discharge_stable; a TBD heater counts as ON (OFF = exactly 0 W) and is booked at conservative/worst-case power in the bus ledger when booked_W is given (A9.1 SEQ-heater); the last known value is kept across TBD steps; an unclassifiable change gives RULES_NOT_EVALUABLE",
    "sequence_status: SEQUENCE_RULE_VIOLATION > RULES_NOT_EVALUABLE > RULES_SATISFIED",
-   "every step (start-up and steady) PASSes the gate only when declared power_basis 'p_bus_1ms_max' (or 'peak_sampled', which bounds it); no step average is substituted (A9.1 OQ-A902-01, A902-03)",
+   "every step (start-up and steady) PASSes the gate only when declared power_basis 'p_bus_1ms_max' with a conformant gate_measurement record; 'peak_sampled' is NOT_EVALUABLE (protection record; OQ-A910-03 OPEN); no step average is substituted (A9.1 OQ-A902-01, A902-03)",
    "hall_icp_neutralizer has no c1_heater slot (no thermionic heater)",
    "the last step is the steady step; the gate is applied to it and to every earlier step"
   ],
@@ -1284,7 +1310,7 @@
    "quantity": "stage map: which stages evaluate the full-boundary gate; LOCK-1 freeze of the transient averaging window",
    "value": null,
    "units": "-",
-   "status": "PENDING docs/experiments/hall_icp/prereg_framework/"
+   "status": "SATISFIED: stage map = A9-01 stage_map HI-ENG..HI-AO (docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json; score-bearing stages HI-CMP and HI-ABS evaluate DQ-HI-PBUS, a hard gate); the transient averaging window is frozen by A9.1 OQ-A902-01 (1 ms; no longer a LOCK-1 item)"
   },
   {
    "from": "A9-02",
@@ -1300,7 +1326,7 @@
    "quantity": "generator DC input vs forward power, matching type (fixed/auto) and its DC draw, collector bias V/I range, assist magnet (none in first build), cooling (passive/active)",
    "value": null,
    "units": "W / V / A",
-   "status": "PENDING docs/interfaces/icp_neutralizer/"
+   "status": "PARTIAL: A9-03 (schemas/interfaces/icp_neutralizer_icd_v1.json) supplies matching location (ICP-13, A9.1 A9-03-matching), floating body and separately metered collector (ICP-20 / ICP-21), no assist magnet in v1 (ICP-32), passive cooling PROPOSED (ICP-38); generator DC input vs forward power, matching type and draw, and the collector V/I range are TBD - require the selected hardware (RFQ-04 / RFQ-05)"
   },
   {
    "from": "A9-02",
@@ -1316,7 +1342,7 @@
    "quantity": "u(P_bus) per slot and total; stop rules touching power",
    "value": null,
    "units": "relative",
-   "status": "PENDING docs/experiments/hall_icp/uncertainty_budget/"
+   "status": "PARTIAL: A9-04 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) defines the DQ-HI-PBUS chain terms UB-P-01..UB-P-07 and the stop-rule forms (stop_rules); values TBD - require certificates / S1a, numbers at LOCK-2"
   },
   {
    "from": "A9-02",
@@ -1332,7 +1358,7 @@
    "quantity": "published analog RF power/generator arrangement (Takahashi 2024) with page/figure provenance (published analog only)",
    "value": null,
    "units": "W",
-   "status": "PENDING docs/experiments/hall_icp/validation_inputs/ (+ docs/evidence/icp_neutralizer/)"
+   "status": "SATISFIED by A9-05: docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json extraction TK-20..TK-23, TK-27, TK-40 (13.56 MHz, 200 W, matching network, ~20 W absorbed, circuit) with page locators (published analog, reported; context only)"
   },
   {
    "from": "A9-02",
@@ -1348,7 +1374,7 @@
    "quantity": "revised converter efficiencies on the 100 V internal bus; front-end topology",
    "value": null,
    "units": "-",
-   "status": "PENDING docs/hardware/h2/h2_4_ppu_bus/ (revision under A9-07)"
+   "status": "OPEN - A9-07 (docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json REV-51, REV-68, REV-69) revises H2-4 to the 100 V internal bus but gives no converter efficiency; TBD - requires the breadboard measurement (row 113) / quotations (RFQ-06)"
   },
   {
    "from": "A9-02",
@@ -1378,7 +1404,7 @@
    "quantity": "electronics CBE masses",
    "value": null,
    "units": "kg",
-   "status": "PENDING docs/hardware/h2/h2_7_mechanical_bom/; PENDING docs/budgets/mass_a9/mass_a9_v1.json (A9-06, merged)"
+   "status": "OPEN - A9-06 (docs/budgets/mass_a9/mass_a9_v1.json, merged) books owner allocations and evidence floors only; electronics CBE masses TBD - require quotations (RFQ-04 / RFQ-06); H2-7 v1 unchanged"
   },
   {
    "from": "H2-1",
@@ -1386,7 +1412,7 @@
    "quantity": "coil V/I/P per coil at setpoint (hot), trim use",
    "value": null,
    "units": "V / A / W",
-   "status": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (revision under A9-07)"
+   "status": "OPEN - A9-07 (REV-04 ceramic-insulated coil, REV-58 one slot per coil) revises H2-1 but gives no hot coil V / I / P; TBD - requires the coil design and S1a"
   },
   {
    "from": "H2-2",
@@ -1394,7 +1420,7 @@
    "quantity": "C1 heater V/I/P and preheat duration; keeper ignition pulse energy; steady keeper policy; common-tie topology",
    "value": null,
    "units": "V / A / W / J",
-   "status": "PENDING docs/hardware/h2/h2_2_cathode_integration/"
+   "status": "OPEN - A9-07 (REV-19, REV-21, REV-25, REV-28) revises the C1 requirements (heater stated per step, pulsed ignition, 120 s x 2 dwell, selectable common tie) but gives no heater V / I / P, preheat duration or pulse energy; TBD - requires the C1 unit selection (RFQ-08)"
   },
   {
    "from": "A9-02",
@@ -1410,7 +1436,7 @@
    "quantity": "compressor motor-drive input power (steady, spin-up); valve coil powers",
    "value": null,
    "units": "W",
-   "status": "PENDING docs/hardware/h2/h2_3_gas_path_plenum/"
+   "status": "OPEN - the compressor ICD has not supplied the drive power (row 22, PARTIAL_BOUNDARY); A9-07 (REV-64, REV-65) gives no compressor or valve power"
   },
   {
    "from": "A9-02",
@@ -1426,7 +1452,7 @@
    "quantity": "thermal_control load per step; need for active cooling (>= 50 K rule, row 86)",
    "value": null,
    "units": "W",
-   "status": "PENDING docs/hardware/h2/h2_5_thermal_network/"
+   "status": "OPEN - A9-07 (REV-40..REV-50) revises the thermal limits (>= 50 K) but gives no thermal_control load per step or active-cooling decision; TBD - requires the thermal model / S1b"
   },
   {
    "from": "A9-02",
@@ -1442,7 +1468,7 @@
    "quantity": "start-up steps with Xe flow (purge, preheat, ignition <= 120 s x 2) for PHASE_TOTAL_FLOW booking",
    "value": null,
    "units": "s",
-   "status": "PENDING docs/budgets/xe_ledger_a9/ (A9-08, merged)"
+   "status": "SATISFIED: consumed by A9-08 (docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json XA9-IF-15: start-up templates C-S2, C-S4, I-S3 booked under PHASE_TOTAL_FLOW)"
   },
   {
    "from": "A9-02",
@@ -1450,7 +1476,7 @@
    "quantity": "row impacts (m16_impact)",
    "value": null,
    "units": "-",
-   "status": "SUPPLIED to docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json (A9-10 M16 refresh; rows 3, 5, 8, 11-15, 17 and new rows 18-19)"
+   "status": "SUPPLIED to docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json (A9-10 M16 refresh; rows 3, 5, 8, 11-15, 17 and new rows 18-19)"
   }
  ],
  "h2_4_revision_flags": [
@@ -1836,7 +1862,7 @@
    ],
    "owner_answer_verbatim": "YES — provide current-limited pulsed keeper ignition capability in the 300–600 V class for C1 development/reference testing, with interlocks and recorded pulse energy.",
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
-   "how_applied": "c1_keeper includes current-limited pulsed ignition 300-600 V class as a start-up transient; its peak enters the P_bus,1ms,max gate (A9.1 OQ-A902-01); pulse energy is a measurement record (PENDING A9-04); H2-4 H24-19 flagged NEEDS_REVISION"
+   "how_applied": "c1_keeper includes current-limited pulsed ignition 300-600 V class as a start-up transient; its peak enters the P_bus,1ms,max gate (A9.1 OQ-A902-01); pulse energy is a measurement record (A9-04 DQ-HI-PBUS chain defines no pulse-energy record yet, LOCK-1 item); H2-4 H24-19 flagged NEEDS_REVISION"
   },
   {
    "row": 90,
@@ -2139,7 +2165,7 @@
    "m16_row": 17,
    "key": "preionizer_interface",
    "name": "RF pre-ionization module interface",
-   "how_touched": "superseded for the primary line (historical); ICP-neutralizer head and flight RF chain rows are added in the A9-10 M16 refresh (docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json)"
+   "how_touched": "superseded for the primary line (historical); ICP-neutralizer head and flight RF chain rows are added in the A9-10 M16 refresh (docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json)"
   }
  ],
  "h3_inputs": [
@@ -2157,7 +2183,7 @@
   {
    "id": "H3-A902-03",
    "item": "matching network (fixed or auto-tuned; DC draw metered)",
-   "basis": "PENDING docs/interfaces/icp_neutralizer/"
+   "basis": "schemas/interfaces/icp_neutralizer_icd_v1.json ICP-13 (A9.1 A9-03-matching: off the moving platform; fixed vs auto-tuned and the on-module pre-match OQ-A907-11 still open)"
   },
   {
    "id": "H3-A902-04",
@@ -2330,6 +2356,126 @@
     "ptr": "/interface_demands[21]/status",
     "count": 1,
     "summary": "M16 demand satisfied by the v3 refresh"
+   },
+   {
+    "cid": "A910-R02-C1",
+    "driver": "A9.1 OQ-A902-01 (review repair; OQ-A910-03 not pre-empted)",
+    "op": "code",
+    "ptr": null,
+    "count": 0,
+    "summary": "rfp_power_gate: PASS only on p_bus_1ms_max WITH a conformant gate_measurement record (>= 100 kSa/s, >= 20 kHz, anti-alias documented, synchronized); peak_sampled is NOT_EVALUABLE both ways (protection record; the reading 'a conformant peak below 1500 W bounds the 1 ms maximum' is the OPEN owner question OQ-A910-03); an unstated basis is NOT_EVALUABLE; step_average / steady_state FAIL only under the stated duration assumption; c1_keeper load plane no longer cites peak_sampled"
+   },
+   {
+    "cid": "A910-R02-C2",
+    "driver": "OQ-INT-03 (A9-04 DQ-HI-PBUS chain)",
+    "op": "code",
+    "ptr": null,
+    "count": 0,
+    "summary": "A902-25 note and the row-89 application: the pulse-energy record is not defined by the merged A9-04 DQ-HI-PBUS chain (LOCK-1 item) instead of 'PENDING A9-04'; schema gains the gate_measurement record"
+   },
+   {
+    "cid": "A910-R02-01",
+    "driver": "OQ-INT-03 (A9-03 ICP-13)",
+    "op": "merge",
+    "ptr": "/items[id=A902-22]",
+    "count": 1,
+    "summary": "A902-22 precise remaining reason"
+   },
+   {
+    "cid": "A910-R02-02",
+    "driver": "A9.1 OQ-A902-01 + OQ-INT-03 (A9-01 stage_map)",
+    "op": "merge",
+    "ptr": "/interface_demands[1]",
+    "count": 1,
+    "summary": "A9-01 -> A9-02 demand satisfied"
+   },
+   {
+    "cid": "A910-R02-03",
+    "driver": "OQ-INT-03 (A9-03 items)",
+    "op": "merge",
+    "ptr": "/interface_demands[3]",
+    "count": 1,
+    "summary": "A9-03 -> A9-02 demand partial"
+   },
+   {
+    "cid": "A910-R02-04",
+    "driver": "OQ-INT-03 (A9-04 UB-P-*)",
+    "op": "merge",
+    "ptr": "/interface_demands[5]",
+    "count": 1,
+    "summary": "A9-04 -> A9-02 demand partial"
+   },
+   {
+    "cid": "A910-R02-05",
+    "driver": "OQ-INT-03 (A9-05 extraction)",
+    "op": "merge",
+    "ptr": "/interface_demands[7]",
+    "count": 1,
+    "summary": "A9-05 -> A9-02 demand satisfied"
+   },
+   {
+    "cid": "A910-R02-06",
+    "driver": "OQ-INT-03 (A9-07 REV-51/68/69)",
+    "op": "merge",
+    "ptr": "/interface_demands[9]",
+    "count": 1,
+    "summary": "H2-4 -> A9-02 precise reason"
+   },
+   {
+    "cid": "A910-R02-07",
+    "driver": "OQ-INT-03 (A9-06)",
+    "op": "merge",
+    "ptr": "/interface_demands[12]",
+    "count": 1,
+    "summary": "H2-7 -> A9-02 precise reason"
+   },
+   {
+    "cid": "A910-R02-08",
+    "driver": "OQ-INT-03 (A9-07 REV-04/58)",
+    "op": "merge",
+    "ptr": "/interface_demands[13]",
+    "count": 1,
+    "summary": "H2-1 -> A9-02 precise reason"
+   },
+   {
+    "cid": "A910-R02-09",
+    "driver": "OQ-INT-03 (A9-07 REV-19/21/25/28)",
+    "op": "merge",
+    "ptr": "/interface_demands[14]",
+    "count": 1,
+    "summary": "H2-2 -> A9-02 precise reason"
+   },
+   {
+    "cid": "A910-R02-10",
+    "driver": "OQ-INT-03 (row 22; A9-07)",
+    "op": "merge",
+    "ptr": "/interface_demands[16]",
+    "count": 1,
+    "summary": "H2-3 -> A9-02 precise reason"
+   },
+   {
+    "cid": "A910-R02-11",
+    "driver": "OQ-INT-03 (A9-07 REV-40..50)",
+    "op": "merge",
+    "ptr": "/interface_demands[18]",
+    "count": 1,
+    "summary": "H2-5 -> A9-02 precise reason"
+   },
+   {
+    "cid": "A910-R02-12",
+    "driver": "OQ-INT-03 (A9-08 XA9-IF-15)",
+    "op": "merge",
+    "ptr": "/interface_demands[20]",
+    "count": 1,
+    "summary": "A9-02 -> Xe ledger satisfied"
+   },
+   {
+    "cid": "A910-R02-13",
+    "driver": "OQ-INT-03 (A9-03 ICP-13)",
+    "op": "merge",
+    "ptr": "/h3_inputs[id=H3-A902-03]",
+    "count": 1,
+    "summary": "H3-A902-03 basis"
    }
   ]
  }

@@ -90,7 +90,7 @@
    "PARTIAL_BOUNDARY (row 22)"
   ],
   "status_not_outcome": "OPEN (row 38): unresolved evidence is reported with the next discriminating test",
-  "net_benefit_form": "hard gates + Pareto (delta Xe, delta P_bus, delta mass, T/P_bus, restart and life burden vs C1); no weighted scalar unless preregistered (row 37)",
+  "net_benefit_form": "hard gates + Pareto (delta Xe, delta P_bus, delta mass, T/P_bus, restart and life burden vs C1); no weighted scalar unless preregistered (row 37); A9.1 HIQ-05: no mandatory Pareto relation - hard gates alone decide feasibility; the Pareto quantities are reported for engineering comparison unless a Pareto condition is preregistered at LOCK-1",
   "full_vocabulary": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json decision_topology (A9-01)",
   "winner": "none declared by this lane"
  },
@@ -608,7 +608,7 @@
    "group": "extraction",
    "name": "collector (ion-collecting electrode) potential",
    "symbol": "V_coll",
-   "definition": "potential of the ICP ion-collecting electrode with respect to the declared reference (cathode-common / facility ground, PENDING docs/interfaces/icp_neutralizer/ (A9-03 ICD))",
+   "definition": "potential of the ICP ion-collecting electrode with respect to the declared reference (cathode-common / facility ground; the A9-03 ICD (ICP-20 / ICP-21) records the collector bias and the body potentials but does not fix the collector reference: LOCK-1 item)",
    "units": "V",
    "configurations": [
     "hall_icp_neutralizer"
@@ -1110,7 +1110,7 @@
    ],
    "how_obtained": {
     "route": "measurement",
-    "chain": "INS-09 extended downstream (PENDING docs/interfaces/icp_neutralizer/ (A9-03 ICD))",
+    "chain": "INS-09 extended downstream (ICD ICP-31 B(z) perturbation / sensitivity scan with the ICP installed; map extent TBD)",
     "analog_refs": [
      "TK-03",
      "TK-14"
@@ -1175,14 +1175,14 @@
    "group": "gas",
    "name": "ICP gas species and booking",
    "symbol": "gas_ICP",
-   "definition": "the gas that sustains the ICP: (a) Hall exhaust re-use only (anchor topology), (b) a dedicated Xe feed (booked in the A9 Xe ledger docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json as F-ICP-XE / G-ICP-XE), or (c) a dedicated atmospheric feed; UNBOOKED today (A9 recorder flag row 46)",
+   "definition": "the gas that sustains the ICP: (a) Hall exhaust re-use only (anchor topology), (b) a dedicated Xe feed (booked in the A9 Xe ledger docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json as F-ICP-XE / G-ICP-XE), or (c) a dedicated atmospheric feed; the primary mode is (a) G-REUSE with no dedicated flow (A9.1 HIQ-06, which closes the row-46 recorder flag for the primary mode); (b) and (c) are declared contingency variants whose flows are TBD",
    "units": "-",
    "configurations": [
     "hall_icp_neutralizer"
    ],
    "how_obtained": {
     "route": "owner_allocation",
-    "chain": "owner decision (OQ-VI-01) then INS-05 per species",
+    "chain": "owner decision A9.1 HIQ-06 (answers OQ-VI-01): G-REUSE, no dedicated ICP flow; INS-05 per species only for a declared G-ATM / G-XE contingency variant",
     "analog_refs": [
      "TK-30",
      "TK-31"
@@ -1197,7 +1197,7 @@
    "value": "G-REUSE (A9.1 HIQ-06): Hall exhaust / residual propellant, mdot_ICP,dedicated = 0; dedicated port capped; G-ATM / G-XE only as declared contingency variants (G-XE booked in docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json under PHASE_TOTAL_FLOW)",
    "evidence_class": "owner-allocation",
    "basis": "owner decision (A9.1 HIQ-06)",
-   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json recorder_consistency_flags_for_owner (row 46)",
+   "source": "docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json HIQ-06, HIQ-06_accounting (answers the recorder flag on row 46 of docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json for the primary mode)",
    "status": "OWNER_GIVEN (A9.1 HIQ-06)",
    "freeze_point": "LOCK-1",
    "consumers": [
@@ -2047,7 +2047,7 @@
    "counterpart": "A9-01 docs/experiments/hall_icp/prereg_framework/",
    "what": "stage map ids, decision-quantity list, prereg rules, outcome vocabulary (NO_VIABLE_CASE; OPEN as status)",
    "units": "-",
-   "status": "PENDING docs/experiments/hall_icp/prereg_framework/ (A9-01 stage map)"
+   "status": "PARTIAL: A9-01 supplies stage_map ids, decision_quantities, design rules and the outcome vocabulary (NO_VIABLE_CASE; OPEN as status); the per-input stage assignment stays OPEN (OQ-A910-02, LOCK-1)"
   },
   {
    "id": "IF-02",
@@ -2063,7 +2063,7 @@
    "counterpart": "A9-02 abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/",
    "what": "bus slots: RF source/matching, collector/bias, C1 heater/keeper/flow, assist magnet/cooling if used",
    "units": "W",
-   "status": "PENDING abep_sim/bus_boundary_a9.py + docs/architecture_comparison/power_boundary_a9/ (A9-02)"
+   "status": "SATISFIED by A9-02: abep_sim/bus_boundary_a9.py SLOTS / BASE_SLOTS (A9-02, merged) (icp_rf_source, icp_matching_network, icp_collector_bias (variants: icp_assist_magnet, active_cooling, flow_control_icp_feed only for G-ATM / G-XE); C1 slots c1_heater, c1_keeper, c1_common_tie, filter_getter, flow_control_xe)"
   },
   {
    "id": "IF-04",
@@ -2079,7 +2079,7 @@
    "counterpart": "A9-03 docs/interfaces/icp_neutralizer/",
    "what": "RF load plane, collector/body terminals and reference, gas port, Hall-exhaust-to-ICP pressure tap, diagnostic access",
    "units": "-",
-   "status": "PENDING docs/interfaces/icp_neutralizer/ (A9-03 ICD)"
+   "status": "PARTIAL: A9-03 defines the RF load plane (ICP-13 / ICP-14), collector / body terminals (ICP-20 / ICP-21), gas port (ICP-26) and channels (ICP-34); the Hall-exhaust-to-ICP pressure tap (ICP-27) and diagnostic access geometry are TBD (LOCK-1)"
   },
   {
    "id": "IF-06",
@@ -2095,7 +2095,7 @@
    "counterpart": "A9-04 docs/experiments/hall_icp/uncertainty_budget/",
    "what": "measurement chains, uncertainties, stop rules and decision-quantity ids consuming these inputs",
    "units": "per item",
-   "status": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)"
+   "status": "PARTIAL: A9-04 measurement chains and stop-rule forms exist; decision-quantity ids per input: see the A9-10 chain -> DQ-HI consumer table (OQ-INT-01, PROPOSED) and OQ-A910-02"
   },
   {
    "id": "IF-08",
@@ -2135,7 +2135,7 @@
    "counterpart": "H2-1 docs/hardware/h2/h2_1_hall_chamber_magnet/ (+ A9-07 revision)",
    "what": "H-1 field map incl. the downstream fringe region; external C1 (row 79) and neutralizer-agnostic head",
    "units": "T, mm",
-   "status": "PENDING A9-07 revision of H2-1"
+   "status": "PARTIAL: A9-07 revises H2-1 (REV-01..REV-12, REV-66: external C1, IP-EXIT / IP-NEU, hot-state B sensor); the field map incl. the downstream fringe region is TBD - requires FEMM of MC-1 and the S1a map (A9-07 IDA7-17)"
   },
   {
    "id": "IF-13",
@@ -2191,7 +2191,7 @@
    "counterpart": "docs/experiments/hardware/ (H-1 / C-1 configuration items)",
    "what": "H-1 exit plane / IP-DN datum as the reference for z = 0 of the ICP geometry",
    "units": "mm",
-   "status": "PENDING A9-03 (downstream plane definition)"
+   "status": "SATISFIED by A9.1 A9-03-planes (IP-EXIT = H-1 exit, z = L; IP-NEU downstream datum; historical IP-DN unchanged), ICD ICP-01 and A9-07 REV-03 / REV-66"
   }
  ],
  "owner_answers_applied": [
@@ -2261,7 +2261,7 @@
   },
   {
    "row": 37,
-   "how": "NET_BENEFIT = hard gates + Pareto, no weighted scalar (consumer vocabulary)"
+   "how": "NET_BENEFIT = hard gates + a Pareto report, no weighted scalar (A9.1 HIQ-05: no mandatory Pareto relation) (consumer vocabulary)"
   },
   {
    "row": 38,
@@ -2675,6 +2675,110 @@
     "ptr": "/items[id=VI-GAS-01]/definition",
     "count": 1,
     "summary": "Xe-ledger reference retargeted"
+   },
+   {
+    "cid": "A910-R05vi-01",
+    "driver": "OQ-INT-03 (A9-03 ICP-20/21)",
+    "op": "merge",
+    "ptr": "/items[id=VI-EX-03]",
+    "count": 1,
+    "summary": "VI-EX-03 precise reason"
+   },
+   {
+    "cid": "A910-R05vi-02",
+    "driver": "OQ-INT-03 (A9-03 ICP-31)",
+    "op": "merge",
+    "ptr": "/items[id=VI-HD-06]/how_obtained",
+    "count": 1,
+    "summary": "VI-HD-06 chain resolved"
+   },
+   {
+    "cid": "A910-R05vi-03",
+    "driver": "OQ-INT-03 (A9-01)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-01]",
+    "count": 1,
+    "summary": "IF-01 partial"
+   },
+   {
+    "cid": "A910-R05vi-04",
+    "driver": "OQ-INT-03 (A9-02)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-03]",
+    "count": 1,
+    "summary": "IF-03 satisfied"
+   },
+   {
+    "cid": "A910-R05vi-05",
+    "driver": "OQ-INT-03 (A9-03)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-05]",
+    "count": 1,
+    "summary": "IF-05 partial"
+   },
+   {
+    "cid": "A910-R05vi-06",
+    "driver": "OQ-INT-03 (A9-04)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-07]",
+    "count": 1,
+    "summary": "IF-07 partial"
+   },
+   {
+    "cid": "A910-R05vi-07",
+    "driver": "OQ-INT-03 (A9-07)",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-12]",
+    "count": 1,
+    "summary": "IF-12 partial"
+   },
+   {
+    "cid": "A910-R05vi-08",
+    "driver": "A9.1 A9-03-planes + OQ-INT-03",
+    "op": "merge",
+    "ptr": "/interface_demands[id=IF-19]",
+    "count": 1,
+    "summary": "IF-19 satisfied"
+   },
+   {
+    "cid": "A910-R05vi-09",
+    "driver": "A9.1 HIQ-05",
+    "op": "replace",
+    "ptr": "/decision_vocabulary/net_benefit_form",
+    "count": 1,
+    "summary": "net_benefit_form amended"
+   },
+   {
+    "cid": "A910-R05vi-10",
+    "driver": "A9.1 HIQ-05",
+    "op": "replace",
+    "ptr": "/owner_answers_applied[row=37]/how",
+    "count": 1,
+    "summary": "row 37 application amended"
+   },
+   {
+    "cid": "A910-R05vi-11",
+    "driver": "A9.1 HIQ-06",
+    "op": "replace",
+    "ptr": "/items[id=VI-GAS-01]/definition",
+    "count": 1,
+    "summary": "VI-GAS-01 definition consistent with G-REUSE"
+   },
+   {
+    "cid": "A910-R05vi-12",
+    "driver": "A9.1 HIQ-06",
+    "op": "merge",
+    "ptr": "/items[id=VI-GAS-01]/how_obtained",
+    "count": 1,
+    "summary": "VI-GAS-01 chain: OQ-VI-01 answered by HIQ-06"
+   },
+   {
+    "cid": "A910-R05vi-13",
+    "driver": "A9.1 HIQ-06",
+    "op": "merge",
+    "ptr": "/items[id=VI-GAS-01]",
+    "count": 1,
+    "summary": "VI-GAS-01 source: A9.1 HIQ-06"
    }
   ]
  }

@@ -136,7 +136,8 @@ def test_required_sections_and_item_fields(data):
     assert {"A9-01", "A9-03", "A9-04", "A9-05", "H2-4", "H2-7"} <= targets
     for x in data["interface_demands"]:
         if x["from"] in ("A9-01", "A9-03", "A9-04", "A9-05"):
-            assert x["status"].startswith("PENDING "), x
+            # still PENDING, or re-stated by the A9-10 review repair (OQ-INT-03) naming what the merged lane supplies
+            assert x["status"].startswith(("PENDING ", "SATISFIED", "PARTIAL", "OPEN - ")), x
 
 
 def test_owner_values_cited_by_row(data):
@@ -261,10 +262,14 @@ def test_compressor_tbd_is_partial_boundary_and_lower_bound():
 
 
 # ------------------------------------------------------------------------------------------------ gates
-def _led(config, p, eta=1.0, basis="p_bus_1ms_max"):
+GM_OK = {"sample_rate_Sa_s": 100.0e3, "bandwidth_Hz": 20.0e3, "anti_alias_documented": True, "synchronized": True,
+         "source": "unit test record"}
+
+
+def _led(config, p, eta=1.0, basis="p_bus_1ms_max", gm=GM_OK):
     loads, effs = full(config, p=p, eta=eta)
     return B.ledger(config, loads, effs, {"value": 1.0, "evidence_class": "assumed", "source": "unit test"},
-                    power_basis=basis)
+                    power_basis=basis, gate_measurement=gm)
 
 
 def test_rfp_gate_steady_and_startup():
@@ -292,20 +297,44 @@ def test_pass_needs_1ms_gate_basis(basis):
     assert g["rows"][0]["verdict"] == "NOT_EVALUABLE" and g["rows"][0]["note"]   # steady row now needs it too
     assert g["rows"][1]["verdict"] == "NOT_EVALUABLE" and g["rows"][1]["note"]
     assert g["verdict"] == "NOT_EVALUABLE"
-    assert B.rfp_power_gate(ok, [at])["verdict"] == "FAIL"      # an average at the limit bounds the 1 ms max: fails
+    # an average at the limit bounds the 1 ms max (duration a multiple of / >> 1 ms): fails; unstated basis: not
+    # shown to bound it (it could be an unaveraged peak, A9.1 OQ-A902-01) -> NOT_EVALUABLE (A9-10 repair)
+    assert B.rfp_power_gate(ok, [at])["verdict"] == ("NOT_EVALUABLE" if basis is None else "FAIL")
     with pytest.raises(B.BoundaryA9Error):
         _led("hall_c1_reference", 10.0, basis="rms")
 
 
-def test_unaveraged_peak_bounds_pass_but_is_not_the_gate():
-    """A9.1 OQ-A902-01: an unaveraged sampled peak below the limit bounds P_bus,1ms,max (PASS); at/above the limit it is
-    a protection-analysis record, not the 1.5 kW gate (NOT_EVALUABLE)."""
+def test_unaveraged_peak_is_not_the_gate():
+    """A9.1 OQ-A902-01: the unaveraged sampled peak is for protection analysis only, not the 1.5 kW gate: a
+    peak_sampled ledger neither PASSes nor FAILs (whether a conformant peak below 1500 W may bound the 1 ms maximum is
+    the OPEN owner question OQ-A910-03, not implemented before the owner rules)."""
     n = len(B.installed_slots("hall_icp_neutralizer"))
     ok = _led("hall_icp_neutralizer", 1000.0 / n, basis="peak_sampled")
     at = _led("hall_icp_neutralizer", 1500.0 / n, basis="peak_sampled")
-    assert B.rfp_power_gate(ok, [ok])["verdict"] == "PASS"
-    r = B.rfp_power_gate(ok, [at])
-    assert r["verdict"] == "NOT_EVALUABLE" and "protection" in r["rows"][1]["note"]
+    assert B.PASS_BASES == ("p_bus_1ms_max",)
+    for g in (B.rfp_power_gate(ok, [ok]), B.rfp_power_gate(ok, [at])):
+        assert g["verdict"] == "NOT_EVALUABLE"
+        assert all(r["verdict"] == "NOT_EVALUABLE" and "OQ-A910-03" in r["note"] for r in g["rows"])
+
+
+def test_pass_needs_conformant_gate_measurement():
+    """A PASS on a declared p_bus_1ms_max basis needs a measurement-conformance record meeting A9.1 OQ-A902-01."""
+    n = len(B.installed_slots("hall_c1_reference"))
+    ok = _led("hall_c1_reference", 1000.0 / n)
+    assert ok["gate_measurement_conformant"] is True and B.rfp_power_gate(ok, [ok])["verdict"] == "PASS"
+    for gm in (None, {**GM_OK, "sample_rate_Sa_s": 50.0e3}, {**GM_OK, "bandwidth_Hz": 10.0e3},
+               {**GM_OK, "anti_alias_documented": False}, {**GM_OK, "synchronized": False}):
+        led = _led("hall_c1_reference", 1000.0 / n, gm=gm)
+        g = B.rfp_power_gate(led, [led])
+        assert g["verdict"] == "NOT_EVALUABLE" and "gate_measurement" in g["rows"][0]["note"]
+    at = _led("hall_c1_reference", 1500.0 / n, gm=None)          # a known 1 ms maximum at the limit still fails
+    assert B.rfp_power_gate(at, [at])["verdict"] == "FAIL"
+    for bad in ({**GM_OK, "extra": 1}, {k: v for k, v in GM_OK.items() if k != "source"}, {**GM_OK, "source": ""},
+                {**GM_OK, "synchronized": "yes"}, {**GM_OK, "bandwidth_Hz": "TBD"}, "record"):
+        with pytest.raises(B.BoundaryA9Error):
+            _led("hall_c1_reference", 10.0, gm=bad)
+    rec = B.p_bus_1ms_max([100.0] * 200, 100.0e3, 20.0e3, True, True)
+    assert rec["gate_measurement"]["sample_rate_Sa_s"] == 100.0e3
 
 
 def test_p_bus_1ms_max_from_samples():
@@ -376,8 +405,10 @@ def test_gate_not_evaluable_vs_fail_on_lower_bound():
     partial = B.ledger("hall_c1_reference", loads, effs, fe)
     assert B.rfp_power_gate(partial, [partial])["verdict"] == "NOT_EVALUABLE"
     loads["hall_discharge"] = L(1600.0)
-    over = B.ledger("hall_c1_reference", loads, effs, fe)
+    over = B.ledger("hall_c1_reference", loads, effs, fe, power_basis="step_average")
     assert B.rfp_power_gate(over, [partial])["verdict"] == "FAIL"   # lower bound alone already fails
+    unstated = B.ledger("hall_c1_reference", loads, effs, fe)       # unstated basis: not shown to bound the 1 ms max
+    assert B.rfp_power_gate(unstated, [partial])["verdict"] == "NOT_EVALUABLE"
 
 
 def test_allocation_checks_are_owner_allocations():
@@ -415,7 +446,8 @@ def _seq(config, template_events, heater=None, flags=None, basis="p_bus_1ms_max"
         if heater is not None:
             h = heater[i]
             loads["c1_heater"] = {"P_W": "TBD", "tbd_requires": "C1 heater data"} if h == "TBD" else L(h)
-        st = {"step_id": f"s{i}", "event": ev, "loads": loads, "efficiencies": effs, "power_basis": basis}
+        st = {"step_id": f"s{i}", "event": ev, "loads": loads, "efficiencies": effs, "power_basis": basis,
+              "gate_measurement": GM_OK}
         if flags is not None:
             st["flags"] = flags[i]
         if i == len(template_events) - 1:

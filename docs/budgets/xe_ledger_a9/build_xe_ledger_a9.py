@@ -105,17 +105,17 @@ DELIVERABLES = {
     "H27": ("docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json",
             "d1813e153af37ebd45cb2ead964ead6c53c756d1a82f93ea89346a83168d0630", "H2-7 mechanical / mass BOM (verified)"),
     "BPB": ("docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-            "7ca8ed23652c4f3a1054461c7d14919c7e169d2ae97e20b318acba397ddeb3af", "A9-02 bus-power boundary (verified)"),
+            "dd888719d36e5de2fc9e622451ff2ea7b88522d12aacf32919be130dc225bcb3", "A9-02 bus-power boundary (verified)"),
     "ICD": ("schemas/interfaces/icp_neutralizer_icd_v1.json",
-            "4d16ee4d0e3425843f24c78b3dea038e46ca44360bf44a1451c36dcbad500fb8", "A9-03 ICP-neutralizer ICD (verified)"),
+            "0a2ec6666530e8464f63a9517eaff8b2eece61aac9c7b73b4e2de897f5387d75", "A9-03 ICP-neutralizer ICD (verified)"),
     "PRE": ("docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
-            "f22e12e73a664df26349642aa64e850ffd8e6581e7239effd8230410bb97264f", "A9-01 prereg framework (verified)"),
+            "1310a84fa9840792ab7ae9617c55fd1a041653064ccaa6eb364785214f45a4ee", "A9-01 prereg framework (verified)"),
     "UB": ("docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-           "650aa32b4b388aebba4c20a54ca35f762b09f7d04403f4f0b440d6fd8fda0983", "A9-04 uncertainty budget (verified)"),
+           "4c9f57fa28bf4465a80966a12661eddcd77dd37d487fd63fb111d60937426de6", "A9-04 uncertainty budget (verified)"),
     "VI": ("docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json",
-           "54ae028df1ea940d624e7caa074eed47fe8576ef1a0d631391601ddf855e6158", "A9-05 validation inputs (verified)"),
+           "e26c38ef0af4f56d8d7b21e024867e7c6ad0378841d2f9992ac8f0d904a9a2ed", "A9-05 validation inputs (verified)"),
     "INT": ("docs/experiments/hall_icp/integration/a9_core_integration_v1.json",
-            "425218cf84c6bb862924f3a3c125186b0ee00fc403c752f1e3c2ddb4f658386d", "A9 core integration (verified)"),
+            "86146f986e35e4d9e507c739aac9f8dd11b483be45fd7691bdccc585c734a09f", "A9 core integration (verified)"),
     "M16": ("docs/budgets/subsystem_maturity/subsystem_maturity_v2.json",
             "a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c", "M16 v2 subsystem maturity (verified)"),
     "R6": ("docs/procurement/web_track_v1/threads/R6_xe_inputs.json",
@@ -159,7 +159,7 @@ PENDING = {
     "A9-09": "OPEN after A9-09 (docs/procurement/rfq_a9/rfq_a9_v1.json, merged: RFQ specifications only, no "
              "quotation received; A9-10 re-evaluation)",
     "A9-10": "A9-10 reconciliation docs/experiments/hall_icp/integration/a9_10_reconciliation_v1.json / M16 refresh "
-             "docs/budgets/subsystem_maturity/v3/subsystem_maturity_v3.json",
+             "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",
 }
 HISTORICAL = {
     "phase1_prereg_framework": ("docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json",
