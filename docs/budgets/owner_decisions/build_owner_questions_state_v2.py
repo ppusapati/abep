@@ -157,14 +157,31 @@ def a91_rows(a91: dict, lane_q: list) -> list:
         base = did.replace("_accounting", "")
         answered = [q for q in lane_q if re.search(r"\b" + re.escape(base) + r"\b", q.get("_answered_by", ""))]
         rows = sorted({int(m) for q in answered for m in re.findall(r"\brows? (\d+)", q["question"])})
-        out.append({"id": did, "source": "A9.1 follow-up owner decisions (" + A91_REL + ")",
-                    "question": "A9.1 decision " + did, "status": "ANSWERED (A9.1)",
-                    "answer_pointer": f"{A91_REL} decisions.{did}",
-                    "answer_excerpt": _short(text if isinstance(text, str) else json.dumps(text)),
-                    "answers_lane_questions": sorted(q["id"] for q in answered),
-                    "refines_v1_rows_cited_by_those_questions": rows, "proposed": "", "needed_by": "",
-                    "kind": "a9_1"})
+        row = {"id": did, "source": "A9.1 follow-up owner decisions (" + A91_REL + ")",
+               "question": "A9.1 decision " + did, "status": "ANSWERED (A9.1)",
+               "answer_pointer": f"{A91_REL} decisions.{did}",
+               "answer_excerpt": _short(text if isinstance(text, str) else json.dumps(text)),
+               "answers_lane_questions": sorted(q["id"] for q in answered),
+               "refines_v1_rows_cited_by_those_questions": rows, "proposed": "", "needed_by": "",
+               "kind": "a9_1"}
+        if did in A91_SUPERSEDED_IN_PART_BY_A92:
+            row["superseded_in_part_by_a9_2"] = _a92_supersession(A91_SUPERSEDED_IN_PART_BY_A92[did])
+        out.append(row)
     return out
+
+
+# A9.2 OQ-A907-11 supersedes the matching-network LOCATION part of the A9.1 A9-03 clarification for the A9 baseline
+# (decision text: "supersedes that part of the A9.1 A9-03 'matching network location' clarification"). The A9.1 answer
+# stays ANSWERED (history); the row carries an explicit supersession pointer (A9-10 review repair 3).
+A91_SUPERSEDED_IN_PART_BY_A92 = {"A9-03-matching": "OQ-A907-11"}
+
+
+def _a92_supersession(item: str) -> str:
+    text = _load(A92_COPY)["decisions"][item]
+    if "A9.1 A9-03" not in text:
+        raise RuntimeError(f"A9.2 {item} does not state the A9.1 A9-03 supersession")
+    return (f"SUPERSEDED IN PART for the A9 baseline by A9.2 {item} ({A92_REL} decisions.{item}): "
+            + _short(text, 400) + " (the A9.1 answer is kept as history)")
 
 
 def a92_rows(a92: dict, lane_q: list) -> list:
@@ -194,6 +211,10 @@ def lane_rows(answers_file: dict) -> list:
                 need = f"{gate} (PROPOSED by A9-10 per row 144; the lane stated no gate)"
             row = {"id": q["id"], "source": f"{lane} ({rel})", "question": q["question"], "proposed": prop,
                    "needed_by": need, "kind": "lane", "lane": lane, "_answered_by": "", "_answered_by_a92": ""}
+            if q.get("superseded_in_part_by_a9_2"):      # A9-10 review repair 3: supersession pointer carried
+                row["superseded_in_part_by_a9_2"] = "SUPERSEDED IN PART by A9.2: " + q["superseded_in_part_by_a9_2"]
+            if q.get("a9_2_affected"):
+                row["a9_2_affected"] = q["a9_2_affected"]
             m91 = re.match(r"ANSWERED_BY_A9_1 \(([^)]*)\)", st)
             m92 = re.match(r"ANSWERED_BY_A9_2 \(([^)]*)\)", st)
             mrow = re.match(r"ANSWERED_BY_OWNER_ROW_(\d+)", st)
@@ -279,8 +300,10 @@ def build() -> dict:
 # ------------------------------------------------------------------------------------------------------------------
 def table(doc) -> list:
     return [[r["no"], r["id"], r["source"], r["question"], r["status"],
-             (r.get("answer_pointer") or "") + ((" - " + r["answer_excerpt"]) if r.get("answer_excerpt") else ""),
-             r.get("proposed") or "", r.get("needed_by") or "", ""] for r in doc["rows"]]
+             (r.get("answer_pointer") or "") + ((" - " + r["answer_excerpt"]) if r.get("answer_excerpt") else "")
+             + ((" | " + r["superseded_in_part_by_a9_2"]) if r.get("superseded_in_part_by_a9_2") else ""),
+             (r.get("proposed") or "") + ((" | A9.2-affected: " + r["a9_2_affected"]) if r.get("a9_2_affected") else ""),
+             r.get("needed_by") or "", ""] for r in doc["rows"]]
 
 
 def render_md(doc) -> str:
@@ -296,7 +319,8 @@ def render_md(doc) -> str:
     for r in doc["rows"]:
         if r["status"] == "OPEN":
             L.append(f"| {r['no']} | {esc(r['id'])} | {esc(r['source'])} | {esc(r['question'])} | "
-                     f"{esc(r['proposed'])} | {esc(r['needed_by'])} |")
+                     f"{esc(r['proposed'])}{esc(' | A9.2-affected: ' + r['a9_2_affected']) if r.get('a9_2_affected') else ''} | "
+                     f"{esc(r['needed_by'])} |")
     L += ["", "## All rows", "", "| " + " | ".join(HEAD[:-1]) + " |", "|" + "---|" * (len(HEAD) - 1)]
     for t in table(doc):
         L.append("| " + " | ".join(esc(c) for c in t[:-1]) + " |")

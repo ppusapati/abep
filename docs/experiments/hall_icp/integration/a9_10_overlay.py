@@ -852,7 +852,7 @@ def _a909() -> list:
 def records() -> dict:
     out = {"A9-01": _a901(), "A9-02": _a902(), "A9-03": _a903(), "A9-04": _a904(), "A9-05ev": _a905ev(),
            "A9-05vi": _a905vi(), "A9-06": _a906(), "A9-07": _a907(), "A9-08": _a908(), "A9-09": _a909()}
-    for extra in (_repair_code(), _repair(), _repair2(), _repair3(), _repair4(), _repair5(), _a92()):
+    for extra in (_repair_code(), _repair(), _repair2(), _repair3(), _repair4(), _repair5(), _a92(), _a92_repair()):
         for k, recs in extra.items():
             out[k] = out[k] + [dict(r) for r in recs]
     return out
@@ -2207,6 +2207,11 @@ def _apply_one(doc, r) -> int:
                 elif kk in cur:
                     raise OverlayError(f"{r['cid']}: {path}/{kk} exists but is not declared in old")
                 cur[kk] = copy.deepcopy(nv)
+        elif op == "a92_thermal_residual":
+            k_changed = _a92_thermal_residual(cur)
+            if k_changed == 0:
+                raise OverlayError(f"{r['cid']}: A9.2 residual thermal relabel matched nothing")
+            n += k_changed - 1
         elif op == "a92_thermal":
             k_changed = _a92_thermal(cur)
             if k_changed == 0:
@@ -3011,3 +3016,309 @@ def _a92_a901() -> list:
 def _a92() -> dict:
     return {"A9-01": _a92_a901(), "A9-02": _a92_a902(), "A9-03": _a92_a903(), "A9-04": _a92_a904(),
             "A9-06": _a92_a906(), "A9-07": _a92_a907(), "A9-09": _a92_a909()}
+
+
+# ------------------------------------------------------------------------------------------------------ A9.2 repair
+# A9-10 review repair 3 (A9.2 residual wording): the A9.2 overlay above relabelled the status-like fields, but key
+# findings, revision-register rows (REV-42 / REV-44 / REV-45 / REV-47), the IDA7-07 demand, the Curie-check clause,
+# the per-node nominal_closes flags and several supplier-facing RF texts still read as PASS / CLOSES or rated the RF
+# chain at 500 W. Every record below is a wording / label change required by A9.2 (icp_coupled_thermal: no thermal
+# PASS from a negligible-coupling calculation; rf_500W: 0-500 W is a delivered/operating capability, never a component
+# rating). No number changes; computed values are kept as uncoupled_sensitivity_* (history never deleted).
+UNRES_LABEL = "reported UNRESOLVED, A9.2 ICP_COUPLED_THERMAL"
+DELIV_500 = ("0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a "
+             "component rating)")
+GEN_RATING_TBD = ("generator forward-power rating and the ratings of the inline chain are TBD_AFTER_IMPEDANCE_MAP (A9.2 "
+                  "rf_500W: selected only after the expected mismatch envelope is characterized; with the A9-07 review "
+                  "sensitivity VSWR about 5.2, about 925 W forward is needed for 500 W delivered, which is why a 500 W "
+                  "rating alone is unacceptable)")
+A91_HISTORY_ROLE = ("history: A9.1 A9-03-matching quote kept for provenance; the off-platform location is superseded for "
+                    "the A9 baseline by A9.2 OQ-A907-11")
+
+
+def _a92_thermal_residual(th: dict) -> int:
+    """A9.2 ICP_COUPLED_THERMAL (residual): the per-node boolean nominal_closes of every hall_icp_neutralizer result
+    is an uncoupled-sensitivity flag; it is kept under uncoupled_sensitivity_nominal_closes (value unchanged).
+    Returns the number of renamed flags."""
+    n = 0
+    for _lv, cases in th["results"]["hall_icp_neutralizer"].items():
+        for _c, rec in cases.items():
+            for _node, e in rec["nodes"].items():
+                if "nominal_closes" in e:
+                    if "uncoupled_sensitivity_nominal_closes" in e:
+                        raise OverlayError("nominal_closes already relabelled")
+                    e["uncoupled_sensitivity_nominal_closes"] = e.pop("nominal_closes")
+                    n += 1
+    return n
+
+
+def _a92_repair_a907() -> list:
+    kf = "/key_findings[{}]"
+    th = "/recomputations/h25_thermal_rerun"
+    rv = "/revision_register[id={}]"
+    lab = {"a9_2_label": "uncoupled sensitivity only (0 W ICP heat, v1 exterior views); the reported status is "
+                         "UNRESOLVED (" + a92_src("icp_coupled_thermal") + ")"}
+    return [
+        R("A910-A92R-A907-01", "A9.2 icp_coupled_thermal", "a92_thermal_residual", th,
+          summary="per-node nominal_closes flags of every hall_icp_neutralizer result renamed "
+                  "uncoupled_sensitivity_nominal_closes (booleans unchanged)"),
+        R("A910-A92R-A907-02", "A9.2 icp_coupled_thermal", "replace", kf.format(5),
+          "necessary Curie checks: PI FAIL, PO PASS, BP PASS",
+          "necessary Curie checks: PI FAIL, PO UNRESOLVED, BP UNRESOLVED (" + UNRES_LABEL + "; uncoupled sensitivity "
+          "only: PO PASS, BP PASS)", "K6 Curie checks reported UNRESOLVED"),
+        R("A910-A92R-A907-03", "A9.2 icp_coupled_thermal", "replace", kf.format(1),
+          "Every hall_icp_neutralizer CLOSES is CONDITIONAL on",
+          "Every hall_icp_neutralizer uncoupled-sensitivity CLOSES above (" + UNRES_LABEL + ") would in addition be "
+          "CONDITIONAL on", "K2 conditional clause relabelled"),
+        R("A910-A92R-A907-04", "A9.2 rf_500W", "replace", kf.format(1), "(module sized for 0-500 W forward RF, row 72)",
+          "(" + DELIV_500 + ")", "K2 500 W wording"),
+        R("A910-A92R-A907-05", "A9.2 icp_coupled_thermal", "replace", kf.format(2),
+          "Single levers that close it in every case:",
+          "Uncoupled sensitivity (" + UNRES_LABEL + "): single levers that close it in every case:", "K3 relabelled"),
+        R("A910-A92R-A907-06", "A9.2 icp_coupled_thermal", "replace", kf.format(3),
+          "it closes in every case only with LV-ALL", "in the uncoupled sensitivity it closes in every case only with "
+          "LV-ALL", "K4 relabelled"),
+        R("A910-A92R-A907-07", "A9.2 icp_coupled_thermal", "replace", kf.format(3), "so the coil closure stays OPEN",
+          "so the coil closure stays OPEN (" + UNRES_LABEL + ")", "K4 status"),
+        R("A910-A92R-A907-08", "A9.2 icp_coupled_thermal", "replace", kf.format(4),
+          "minimal such closing sets per node:", "minimal such closing sets per node (uncoupled sensitivity; "
+          + UNRES_LABEL + "):", "K5 relabelled"),
+        R("A910-A92R-A907-09", "A9.2 icp_coupled_thermal", "merge", rv.format("REV-42") + "/new/value",
+          {"closure_CI": "CLOSES_ONLY_WITH_COMBINED_LEVERS", "closure_CO": "CLOSES",
+           "uncoupled_sensitivity_closure_CI": ABSENT, "uncoupled_sensitivity_closure_CO": ABSENT, "a9_2_label": ABSENT},
+          dict({"closure_CI": UNRES, "closure_CO": UNRES,
+                "uncoupled_sensitivity_closure_CI": "CLOSES_ONLY_WITH_COMBINED_LEVERS",
+                "uncoupled_sensitivity_closure_CO": "CLOSES"}, **lab), "REV-42 coil closures reported UNRESOLVED"),
+        R("A910-A92R-A907-10", "A9.2 icp_coupled_thermal", "merge", rv.format("REV-44") + "/new/value",
+          {"PO": ["PASS"], "BP": ["PASS"], "uncoupled_sensitivity_PO": ABSENT, "uncoupled_sensitivity_BP": ABSENT,
+           "a9_2_label": ABSENT},
+          dict({"PO": [UNRES], "BP": [UNRES], "uncoupled_sensitivity_PO": ["PASS"], "uncoupled_sensitivity_BP": ["PASS"]},
+               **lab), "REV-44 Curie checks PO / BP reported UNRESOLVED"),
+        R("A910-A92R-A907-11", "A9.2 icp_coupled_thermal", "merge", rv.format("REV-45") + "/new/value",
+          {"status": "CONDITIONALLY_RESOLVED", "uncoupled_sensitivity_status": ABSENT, "a9_2_label": ABSENT},
+          dict({"status": UNRES, "uncoupled_sensitivity_status": "CONDITIONALLY_RESOLVED"}, **lab),
+          "REV-45 BN wall reported UNRESOLVED (matches bn_wall_11_2K_case)"),
+        R("A910-A92R-A907-12", "A9.2 icp_coupled_thermal", "replace", rv.format("REV-47") + "/new/requirement",
+          "every hall_icp_neutralizer thermal CLOSES is evaluated with 0 W of it and holds only while",
+          "every hall_icp_neutralizer thermal result is an uncoupled sensitivity evaluated with 0 W of it and "
+          + UNRES_LABEL + " (the coupled terms Q_Hall->ICP, Q_collector, Q_RF/match, Q_plume and the ICP view effect are "
+          "required first); an uncoupled-sensitivity closure would hold only while", "REV-47 wording"),
+        R("A910-A92R-A907-13", "A9.2 icp_coupled_thermal", "replace", th + "/overall/open_items[0]",
+          "a condition on every hall_icp_neutralizer CLOSES",
+          "a condition on every hall_icp_neutralizer uncoupled-sensitivity closure (" + UNRES_LABEL + ")",
+          "open item 1 relabelled"),
+        R("A910-A92R-A907-14", "A9.2 icp_coupled_thermal", "replace", th + "/overall/open_items[1]",
+          "every hall_icp_neutralizer CLOSES is evaluated with 0 W of ICP heat and holds only while",
+          "every hall_icp_neutralizer thermal result is an uncoupled sensitivity evaluated with 0 W of ICP heat and "
+          + UNRES_LABEL + "; an uncoupled-sensitivity closure would hold only while", "open item 2 relabelled"),
+        R("A910-A92R-A907-15", "A9.2 icp_coupled_thermal", "replace", th + "/overall/open_items[4]",
+          "(every CLOSES is conditional)", "(every uncoupled-sensitivity CLOSES is conditional; hall_icp_neutralizer "
+          "results " + UNRES_LABEL + ")", "open item 5 relabelled"),
+        R("A910-A92R-A907-16", "A9.2 icp_coupled_thermal", "replace", th + "/bn_wall_11_2K_case/status_meaning",
+          "CONDITIONALLY_RESOLVED = the searched", "Uncoupled-sensitivity label (the reported status is UNRESOLVED, "
+          "A9.2 ICP_COUPLED_THERMAL): CONDITIONALLY_RESOLVED = the searched", "BN-wall status meaning relabelled"),
+        R("A910-A92R-A907-17", "A9.2 icp_coupled_thermal", "replace", th + "/hall_c1_reference_note",
+          "zero-coupling case equals the hall_icp_neutralizer ground rows",
+          "zero-coupling case equals the hall_icp_neutralizer ground rows, which are uncoupled sensitivities ("
+          + UNRES_LABEL + "); a CLOSES entry in this table is a sensitivity outcome only, never a thermal PASS",
+          "C1 sensitivity note relabelled"),
+        R("A910-A92R-A907-18", "A9.2 icp_coupled_thermal", "replace", th + "/icp_heat_into_h1/note",
+          "the thermal verdicts of hall_icp_neutralizer are evaluated with 0 W of it and are conditional on it",
+          "the thermal results of hall_icp_neutralizer are uncoupled sensitivities evaluated with 0 W of it ("
+          + UNRES_LABEL + ")", "ICP heat note relabelled"),
+        R("A910-A92R-A907-19", "A9.2 icp_coupled_thermal", "replace", "/interface_demands[id=IDA7-07]/quantity",
+          "Every hall_icp_neutralizer thermal CLOSES is conditional on the actual ICP-43 heat meeting this allowance",
+          "Every hall_icp_neutralizer thermal result is an uncoupled sensitivity (" + UNRES_LABEL + "); an "
+          "uncoupled-sensitivity closure would in addition be conditional on the actual ICP-43 heat meeting this "
+          "allowance", "IDA7-07 wording"),
+        R("A910-A92R-A907-20", "A9.2 icp_coupled_thermal", "code", None,
+          summary="H2_A9_REVISIONS.md thermal section: closure-summary vocabulary, table headers, overall line, BN-wall "
+                  "line and C1-sensitivity header relabelled as uncoupled sensitivity (render wrapper, each substitution "
+                  "must match exactly once)",
+          file="docs/hardware/h2_a9_revisions/build_h2_a9_revisions.py", marker="A92_MD_RELABEL", scope=[]),
+    ]
+
+
+def _a92_repair_a909() -> list:
+    rf = "/packages[id=RFQ-04]/requirements[id={}]"
+    def src(item):
+        return {"type": "a9_2", "key": "A9.2", "id": item, "path": A92_REL, "pointer": "/decisions/" + item,
+                "sha256": A92_SHA}
+    out = [
+        R("A910-A92R-A909-01", "A9.2 rf_500W", "supersede", rf.format("RFQ-04-R02"),
+          {"title": "laboratory forward-power capability", "requirement": "Generator and inline measurement chain sized "
+           "for this forward power range initially."},
+          {"title": "laboratory delivered/operating RF investigation capability (generator rating "
+                    "TBD_AFTER_IMPEDANCE_MAP)",
+           "requirement": "The laboratory RF source and inline measurement chain provide a " + DELIV_500 + ". This "
+                          "range is NOT a component rating: the " + GEN_RATING_TBD + ". This is a TEST CAPABILITY, "
+                          "not a flight allocation: the flight ICP must fit inside P_ICP,available = 1350 W - P_common - "
+                          "P_Hall - P_other,active at every registered condition."},
+          "RFQ-04-R02: 500 W is the delivered/operating capability, generator rating TBD after the impedance map"),
+        R("A910-A92R-A909-02", "A9.2 rf_500W", "merge", rf.format("RFQ-04-R02"),
+          {"rating": ABSENT, "rating_freeze_point": ABSENT, "status_detail_a9_2": ABSENT},
+          {"rating": RATINGS_TBD, "rating_freeze_point": "after-evidence",
+           "status_detail_a9_2": "OWNER_GIVEN applies to the delivered/operating capability only (A9.2 rf_500W); "
+                                 "ratings TBD_AFTER_IMPEDANCE_MAP"}, "RFQ-04-R02 rating field"),
+        R("A910-A92R-A909-03", "A9.2 rf_500W", "append", rf.format("RFQ-04-R02") + "/sources", None, src("rf_500W"),
+          "RFQ-04-R02 A9.2 source"),
+        R("A910-A92R-A909-04", "A9.2 rf_500W", "replace", "/packages[id=RFQ-04]/scope",
+          "(0-500 W forward test capability)", "(" + DELIV_500 + "; generator forward-power rating "
+          "TBD_AFTER_IMPEDANCE_MAP)", "RFQ-04 scope"),
+        R("A910-A92R-A909-05", "A9.2 rf_500W", "supersede", "/packages[id=RFQ-04]/quantities[0]",
+          {"item": "13.56 MHz generator, 0-500 W forward"},
+          {"item": "13.56 MHz generator for the " + DELIV_500 + "; forward-power rating TBD_AFTER_IMPEDANCE_MAP"},
+          "RFQ-04 generator quantity line"),
+        R("A910-A92R-A909-06", "A9.2 rf_500W", "replace", "/packages[id=RFQ-04]/acceptance[0]",
+          "over 0-500 W forward (row 72)", "over the forward-power range of the selected generator rating "
+          "(TBD_AFTER_IMPEDANCE_MAP), covering the " + DELIV_500 + " plus the characterized mismatch",
+          "RFQ-04 calibration acceptance"),
+        R("A910-A92R-A909-07", "A9.2 OQ-A907-11, icp_matching_strategy", "supersede", rf.format("RFQ-04-R15"),
+          {"requirement": "quoted only for the case that OQ-A907-11 option a is adopted; the tunable match stays "
+                          "off-platform (A9.1 A9-03-matching)",
+           "note": "added in A9-10"},
+          {"requirement": "SUPERSEDED_BY_A9_2 - not requested as a quotation line. The A9 baseline is the adjustable "
+                          "LOCAL matching network on / immediately adjacent to the ICP module with the coupler on the "
+                          "generator / 50-ohm side (A9.2 OQ-A907-11; RFQ-04-R06 / R17); a fixed on-module network is "
+                          "only one possible later flight implementation, decided after the ICP impedance map (A9.2 "
+                          "icp_matching_strategy). The earlier option-line text is kept as requirement_before_a9_2.",
+           "note": "added in A9-10; SUPERSEDED_BY_A9_2 (history kept in requirement_before_a9_2; quotation only, no "
+                   "purchase order)"}, "RFQ-04-R15 requirement / note superseded"),
+        R("A910-A92R-A909-08", "A9.2 OQ-A907-11", "merge", rf.format("RFQ-04-R15") + "/sources[1]",
+          {"id": "A9-03-matching", "role": ABSENT}, {"role": A91_HISTORY_ROLE}, "RFQ-04-R15 A9.1 source = history"),
+        R("A910-A92R-A909-09", "A9.2 OQ-A907-11", "supersede", rf.format("RFQ-04-R06"),
+          {"basis": "A9.1 clarification"},
+          {"basis": "A9.2 OQ-A907-11 (supersedes the A9.1 A9-03-matching location for the A9 baseline); the three A9.1 "
+                    "quotes are distinct clauses of A9-03-matching kept as history (matched sham routing still "
+                    "applies, row 133)"}, "RFQ-04-R06 basis"),
+    ]
+    for i in range(3):
+        out.append(R(f"A910-A92R-A909-1{i}", "A9.2 OQ-A907-11", "merge", rf.format("RFQ-04-R06") + f"/sources[{i}]",
+                     {"id": "A9-03-matching", "role": ABSENT}, {"role": A91_HISTORY_ROLE},
+                     f"RFQ-04-R06 A9.1 source {i + 1} = history"))
+    out.append(R("A910-A92R-A909-13", "A9.2 rf_500W", "replace",
+                 "/packages[id=RFQ-01]/requirements[id=RFQ-01-R14]/requirement", "(0-500 W source, RFQ-04)",
+                 "(RF source with a " + DELIV_500 + ", RFQ-04)", "RFQ-01-R14 500 W wording"))
+    return out
+
+
+def _a92_repair_a903() -> list:
+    it = "/items[id={}]"
+    return [
+        R("A910-A92R-A903-01", "A9.2 rf_500W", "supersede", it.format("ICP-12"),
+          {"title": "Laboratory forward-power range (initial)",
+           "requirement": "cover 0-500 W forward power initially (row 72). This is a laboratory capability range"},
+          {"title": "Laboratory delivered/operating RF investigation capability (initial; ratings TBD_AFTER_IMPEDANCE_MAP)",
+           "requirement": "The laboratory RF source and the inline measurement chain provide a " + DELIV_500 + "; the "
+                          + GEN_RATING_TBD + ". This is a laboratory capability range, not a power allocation: the ICP "
+                          "bus power must fit inside the internal ~1.35 kW design allocation without consuming the 1.35 "
+                          "-> 1.5 kW margin (row 109), and the full-system gate is P_bus < 1.5 kW at the spacecraft-DC "
+                          "boundary incl. start-up transients (row 108)."},
+          "ICP-12 requirement consistent with its A9.2 interpretation"),
+        R("A910-A92R-A903-02", "A9.2 rf_500W", "replace", it.format("ICP-36") + "/requirement",
+          "the full laboratory forward power (row 72)", "the full laboratory RF capability of row 72 (500 W, a "
+          "delivered/operating investigation capability per A9.2 rf_500W, not a component rating; used here only as a "
+          "heat-allocation term)", "ICP-36 wording"),
+        R("A910-A92R-A903-03", "A9.2 rf_500W", "replace", it.format("ICP-36") + "/basis", "500 W (row 72)",
+          "500 W (row 72; A9.2: delivered/operating capability, not a component rating)", "ICP-36 basis"),
+        R("A910-A92R-A903-04", "A9.2 rf_500W, icp_matching_strategy", "supersede", it.format("ICP-44"),
+          {"requirement": "computed at P_fwd,max = 500 W", "verification": "RF hipot at full forward power (500 W)",
+           "tbd": "TBD - requires the antenna/matching-network selection"},
+          {"requirement": "The antenna circuit (antenna, local matching-network output, RF feedthrough and in-vacuum "
+                          "leads) is rated separately from the 350 V DC discharge-circuit item (ICP-23). A 13.56 MHz ICP "
+                          "antenna can run at an RF voltage far above the DC discharge rating. The rating is k_RF x "
+                          "V_ant,peak, where V_ant,peak is computed at the maximum operating point of the characterized "
+                          "mismatch envelope (ICP antenna impedance map Z_antenna = R + jX, A9.2 P2; "
+                          "TBD_AFTER_IMPEDANCE_MAP) that delivers the " + DELIV_500 + ", from the selected antenna / "
+                          "local matching design and the MEASURED total circuit resistance R_total (antenna + plasma "
+                          "load; the analog infers its power-transfer efficiency from such measured resistances, annex "
+                          "TAK-12); the factor k_RF (> 1) is an owner/LOCK-1 value (ICPQ-11). Clearance/creepage and "
+                          "in-vacuum Paschen margins are set for the combined stress between antenna and collector/body: "
+                          "the collector/body DC potential relative to the antenna circuit reference (up to the ICP-23 "
+                          "DC rating) plus V_ant,peak.",
+           "verification": "RF hipot at the rated operating point of the characterized mismatch envelope "
+                           "(TBD_AFTER_IMPEDANCE_MAP; covering the " + DELIV_500 + ") on a dummy load and with plasma; RF "
+                           "probe of V_ant,peak; inspection of clearance/creepage",
+           "tbd": "TBD - requires the ICP antenna impedance map (A9.2 P2), the local-match selection (ICP-13, ICP-15), the "
+                  "measured R_total and the owner factor k_RF (" + RATINGS_TBD + ")"},
+          "ICP-44 rating basis on the impedance map"),
+        R("A910-A92R-A903-05", "A9.2 rf_500W", "replace", "/owner_answers_applied[row=72]/how_applied",
+          "0-500 W lab forward power", "0-500 W lab RF capability (A9.2 rf_500W: delivered/operating investigation "
+          "capability, not a component rating)", "row 72 application"),
+        R("A910-A92R-A903-06", "A9.2 rf_500W, icp_matching_strategy", "replace",
+          "/open_owner_questions[id=ICPQ-10]/proposed_answer", "(0-500 W) is a capability",
+          "(0-500 W; A9.2: a delivered/operating investigation capability, not a component rating) is a capability",
+          "ICPQ-10 proposal wording (proposal itself unchanged)"),
+        R("A910-A92R-A903-07", "A9.2 rf_500W, icp_matching_strategy", "merge", "/open_owner_questions[id=ICPQ-10]",
+          {"a9_2_affected": ABSENT, "needed_by": ABSENT},
+          {"a9_2_affected": "A9.2 rf_500W / icp_matching_strategy: P_fwd,max is no longer 500 W (0-500 W is the "
+                            "delivered/operating capability; forward-power ratings TBD_AFTER_IMPEDANCE_MAP) and the local "
+                            "match loss P_line/match,loss is dissipated on the module (ICP-36 a9_2_note); the question "
+                            "stays OPEN (owner call)",
+           "needed_by": "LOCK-1 (PROPOSED; after the ICP antenna impedance map, A9.2 P2, which sets P_fwd,max)"},
+          "ICPQ-10 marked A9.2-affected"),
+        R("A910-A92R-A903-08", "A9.2 rf_500W, icp_matching_strategy", "supersede", "/open_owner_questions[id=ICPQ-11]",
+          {"question": "computed V_ant,peak at 500 W (ICP-44)?"},
+          {"question": "Factor k_RF between the rated antenna-circuit RF voltage and the V_ant,peak computed at the "
+                       "maximum operating point of the characterized mismatch envelope (ICP antenna impedance map, A9.2 "
+                       "P2; not at a 500 W component rating) (ICP-44)?"}, "ICPQ-11 re-framed on the impedance-map basis"),
+        R("A910-A92R-A903-09", "A9.2 rf_500W, icp_matching_strategy", "merge", "/open_owner_questions[id=ICPQ-11]",
+          {"a9_2_affected": ABSENT, "needed_by": ABSENT},
+          {"a9_2_affected": "A9.2 rf_500W / icp_matching_strategy: V_ant,peak is computed on the impedance-map envelope, "
+                            "not at 500 W forward; the question stays OPEN (owner call, no value proposed)",
+           "needed_by": "LOCK-1 (PROPOSED; after the ICP antenna impedance map, A9.2 P2)"},
+          "ICPQ-11 marked A9.2-affected"),
+        R("A910-A92R-A903-10", "A9.2 rf_500W", "supersede", "/h3_h4_inputs/h3_procurement_quotation_only[0]",
+          {"item": "13.56 MHz RF generator, 0-500 W forward"},
+          {"item": "13.56 MHz RF generator for the " + DELIV_500 + " (forward-power rating TBD_AFTER_IMPEDANCE_MAP), "
+                   "interlock input, remote fwd/refl readout"}, "h3 generator line"),
+    ]
+
+
+def _a92_repair_a904() -> list:
+    it = "/items[id={}]"
+    return [
+        R("A910-A92R-A904-01", "A9.2 rf_500W", "supersede", it.format("UB-RF-01"),
+          {"name": "laboratory forward-power range of the RF source and inline chain"},
+          {"name": "laboratory delivered/operating RF investigation capability of the RF source and inline chain "
+                   "(row 72 as interpreted by A9.2 rf_500W; not a component rating)"},
+          "UB-RF-01 relabelled (value unchanged)"),
+        R("A910-A92R-A904-02", "A9.2 rf_500W", "merge", it.format("UB-RF-01"),
+          {"a9_2_interpretation": ABSENT, "rating": ABSENT, "status_detail_a9_2": ABSENT},
+          {"a9_2_interpretation": "0-500 W is a laboratory delivered/operating investigation capability, not a component "
+                                  "rating (" + a92_src("rf_500W") + "); P_forward != P_delivered",
+           "rating": RATINGS_TBD,
+           "status_detail_a9_2": "OWNER_GIVEN applies to the delivered/operating capability only (A9.2 rf_500W); "
+                                 "forward-power ratings TBD_AFTER_IMPEDANCE_MAP"}, "UB-RF-01 A9.2 interpretation"),
+        R("A910-A92R-A904-03", "A9.2 rf_500W", "replace", it.format("UB-RF-03") + "/name", "over 0-500 W",
+          "over the forward-power range of the selected generator rating (TBD_AFTER_IMPEDANCE_MAP; covering the "
+          + DELIV_500 + ")", "UB-RF-03 range wording"),
+        R("A910-A92R-A904-04", "A9.2 rf_500W", "replace", "/stop_rules/limit_aborts/limits[id=LA-02]/value",
+          "ratings inside the 0-500 W laboratory chain (row 72)", "ratings (TBD_AFTER_IMPEDANCE_MAP, A9.2) of the "
+          "laboratory chain with its " + DELIV_500, "LA-02 wording"),
+        R("A910-A92R-A904-05", "A9.2 rf_500W", "replace", "/interface_demands[id=IF-14]/quantity",
+          "forward/reflected sensors 0-500 W (row 72)", "forward/reflected sensors for the " + DELIV_500 + ", ratings "
+          "TBD_AFTER_IMPEDANCE_MAP", "IF-14 wording"),
+        R("A910-A92R-A904-06", "A9.2 rf_500W", "replace", "/owner_answers_applied[row=72]/how_applied",
+          "0-500 W lab chain", "0-500 W lab chain (A9.2 rf_500W: delivered/operating investigation capability, not a "
+          "component rating)", "row 72 application"),
+        R("A910-A92R-A904-07", "A9.2 rf_500W", "replace", "/h3_procurement_inputs[1]/spec_form",
+          "0-500 W forward (row 72)", "forward-power range of the selected generator rating (TBD_AFTER_IMPEDANCE_MAP) "
+          "covering the " + DELIV_500, "h3 coupler spec form"),
+    ]
+
+
+def _a92_repair_a902() -> list:
+    return [
+        R("A910-A92R-A902-01", "A9.2 rf_measurement_reference", "code", None,
+          summary="rf_power_planes() also returns |Gamma| and VSWR (derived from the measured forward / reflected power) "
+                  "and labels the coupler plane as the generator / 50-ohm side of the local match; arithmetic and "
+                  "ordering checks unchanged",
+          file="abep_sim/bus_boundary_a9.py", marker="generator / 50-ohm side of the local matching network (A9.2",
+          scope=[]),
+    ]
+
+
+def _a92_repair() -> dict:
+    return {"A9-02": _a92_repair_a902(), "A9-03": _a92_repair_a903(), "A9-04": _a92_repair_a904(),
+            "A9-07": _a92_repair_a907(), "A9-09": _a92_repair_a909()}

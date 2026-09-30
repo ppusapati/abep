@@ -33,6 +33,7 @@ PROTECTED = [
     "docs/budgets/owner_decisions/owner_questions_consolidated.xlsx",
     "docs/interfaces/preionizer_module", "schemas/interfaces/preionizer_module_icd_v1.json",
     "docs/experiments/phase1_prereg_framework", "docs/architecture_comparison/lock1", "abep_sim/arch_boundary.py",
+    "schemas/architecture_comparison/bus_power_boundary_v1.json",
 ]
 
 
@@ -405,3 +406,27 @@ def test_a9_2_supersession_blockers_and_next_lanes(doc):
     assert b["A9B-20"]["value"] is None and "ICP module" in b["A9B-20"]["name"]
     assert "NOT the MC-1 coil mass" in mass["lv_coil_sensitivity"]["a9_2_coil_mass_correction"]
     assert b["A9B-16"]["value"] == 3.504                                   # closure mass unchanged
+
+
+def test_a9_2_residual_wording_scan_is_clean_and_sensitive(doc):
+    """Review repair 3: the builder's text scan (pass-like values under any key, PASS / CLOSES sentences without an
+    uncoupled-sensitivity label, 500 W texts without the delivered/operating label) finds nothing now, and finds the
+    residual wording in the A9-10 base versions (sensitivity proof). Only the rules are taken from the builder."""
+    b = _mod(BUILDER, "a9_10_builder_text_scan")
+    assert doc["a9_2"]["text_scan"]["violations"] == []
+    assert {x["id"]: x for x in doc["items"]}["REC-12"]["value"] == 0
+    errs = []
+    now = b.a92_text_scan(errs)
+    assert now["violations"] == [] and errs == []
+    h2 = json.loads(_git("show", f"{BASE}:docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json"))
+    h2_md = _git("show", f"{BASE}:docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md").decode("utf-8")
+    files = ["docs/procurement/rfq_a9/rfq_a9_v1.json", "schemas/interfaces/icp_neutralizer_icd_v1.json",
+             "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json"]
+    w_docs = {f: json.loads(_git("show", f"{BASE}:{f}")) for f in files}
+    pk = "docs/procurement/rfq_a9/packages/RFQ-04_rf_chain.md"
+    w_mds = {pk: _git("show", f"{BASE}:{pk}").decode("utf-8")}
+    old = b.a92_text_scan([], h2=h2, h2_md=h2_md, w500_docs=w_docs, w500_mds=w_mds)
+    assert old["value_violations"] and old["wording_violations"] and old["w500_violations"]
+    assert any("Curie" in v["sentence"] for v in old["wording_violations"])
+    assert any("/revision_register" in v["pointer"] for v in old["value_violations"])
+    assert any("0-500 W forward" in v["text"] for v in old["w500_violations"])

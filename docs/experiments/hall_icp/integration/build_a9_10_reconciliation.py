@@ -738,6 +738,127 @@ def a92_status_scan(errors: list) -> dict:
             "files": A92_SCAN_FILES, "fields_checked": checked, "violations": hits}
 
 
+# A9-10 review repair 3: the key-based scan above cannot see pass-like values under non-status keys (REV-42 closure_CO,
+# REV-44 PO / BP), status fields outside the recomputation (REV-45) or free text (key findings, register requirements,
+# open items, the Curie-check clause, the Markdown), nor supplier-facing RF text rating anything at 500 W. Three more
+# scans close that gap; each is proven sensitive on the A9-10 base version in tests/test_a9_10_reconciliation.py.
+PASS_TOKEN = re.compile(r"\b(PASS|CLOSES\w*|CONDITIONALLY_RESOLVED)\b")
+SENS_LABEL = re.compile(r"uncoupled[ _-]sensitivity|UNRESOLVED|sensitivity only|never a thermal PASS", re.I)
+W500 = re.compile(r"(?<![\d.])(0\s*[-\u2013]\s*)?500 W\b")
+W500_LABEL = re.compile(r"delivered/operating|not a (sufficient )?component rating|not at (a )?500 W")
+W500_SKIP_KEYS = {"quote", "answer_verbatim", "owner_text", "owner_answer_verbatim", "verbatim"}
+H2_TEXT_ROOTS = ["/key_findings", "/revision_register", "/interface_demands",
+                 "/recomputations/h25_thermal_rerun/overall", "/recomputations/h25_thermal_rerun/bn_wall_11_2K_case",
+                 "/recomputations/h25_thermal_rerun/closure_summary_hall_icp_neutralizer",
+                 "/recomputations/h25_thermal_rerun/icp_heat_into_h1/note",
+                 "/recomputations/h25_thermal_rerun/hall_c1_reference_note"]
+H2_VALUE_ROOTS = ["/revision_register", "/recomputations/h25_thermal_rerun/results/hall_icp_neutralizer",
+                  "/recomputations/h25_thermal_rerun/closure_summary_hall_icp_neutralizer",
+                  "/recomputations/h25_thermal_rerun/bn_wall_11_2K_case",
+                  "/recomputations/h25_thermal_rerun/mount_heat_vs_row85", "/recomputations/h25_thermal_rerun/overall"]
+RFQ_PACKAGE_DIR = "docs/procurement/rfq_a9/packages/"
+W500_FILES = [OV.RFQ_A9, OV.ICD, OV.UB]
+
+
+def _leaf_items(o, p=""):
+    if isinstance(o, dict):
+        for k, v in o.items():
+            yield from _leaf_items(v, p + "/" + str(k))
+    elif isinstance(o, list):
+        for i, v in enumerate(o):
+            yield from _leaf_items(v, p + f"[{i}]")
+    else:
+        yield p, o
+
+
+def _skip(path: str) -> bool:
+    return "sensitivity" in path or "before_a9_2" in path or path.startswith("/a9_10_reconciliation")
+
+
+def _h2_icp_register(doc: dict, path: str) -> bool:
+    """True unless the path is inside a revision-register row that does not apply to hall_icp_neutralizer, or inside
+    its 'old' (historical v1) / 'driver' / 'source' subtrees."""
+    m = re.match(r"/revision_register\[(\d+)\](/[^/\[]+)?", path)
+    if not m:
+        return True
+    row = doc["revision_register"][int(m.group(1))]
+    return "hall_icp_neutralizer" in row.get("applies_to", []) and (m.group(2) or "") not in ("/old", "/driver",
+                                                                                              "/source")
+
+
+def _bad_sentences(text: str) -> list:
+    return [s for s in re.split(r"(?<=\.)\s+", text) if PASS_TOKEN.search(s) and not SENS_LABEL.search(s)]
+
+
+def a92_text_scan(errors: list, h2: dict = None, h2_md: str = None, w500_docs: dict = None,
+                  w500_mds: dict = None) -> dict:
+    """(i) pass-like VALUES under any key in the hall_icp_neutralizer thermal records and register rows; (ii) pass-like
+    WORDING in A9-07 key findings, register text, open items, Curie / closure summaries and the thermal Markdown without
+    an uncoupled-sensitivity / UNRESOLVED label in the same sentence; (iii) supplier-facing / rating text stating
+    500 W without the A9.2 delivered/operating label. Inputs default to the committed files (tests pass base copies)."""
+    h2 = load(OV.H2A9) if h2 is None else h2
+    if h2_md is None:
+        with open(os.path.join(ROOT, "docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md"), encoding="utf-8") as f:
+            h2_md = f.read()
+    if w500_docs is None:
+        w500_docs = {rel: load(rel) for rel in W500_FILES}
+    if w500_mds is None:
+        w500_mds = {}
+        for fn in sorted(os.listdir(os.path.join(ROOT, RFQ_PACKAGE_DIR))):
+            if fn.endswith(".md"):
+                with open(os.path.join(ROOT, RFQ_PACKAGE_DIR, fn), encoding="utf-8") as f:
+                    w500_mds[RFQ_PACKAGE_DIR + fn] = f.read()
+    values, wording, w500 = [], [], []
+    for path, v in _leaf_items(h2):
+        if _skip(path) or not any(path.startswith(r) for r in H2_VALUE_ROOTS) or not _h2_icp_register(h2, path):
+            continue
+        if isinstance(v, str) and OV.PASS_LIKE.match(v):
+            values.append({"pointer": path, "value": v})
+        elif v is True and re.search(r"closes", path.rsplit("/", 1)[-1]):
+            values.append({"pointer": path, "value": True})
+    for path, v in _leaf_items(h2):
+        if (not isinstance(v, str) or _skip(path) or not any(path.startswith(r) for r in H2_TEXT_ROOTS)
+                or not _h2_icp_register(h2, path) or OV.PASS_LIKE.match(v)):
+            continue
+        for s in _bad_sentences(v):
+            wording.append({"pointer": path, "sentence": s[:200]})
+    sec, keep = None, []
+    for line in h2_md.splitlines():
+        if line.startswith("### ") or line.startswith("## "):
+            sec = line
+        thermal = sec is not None and (sec.startswith("### Closure summary") or sec.startswith("### The v1 11.2 K"))
+        if line.startswith("- K") or line.startswith("| REV-") or (thermal and not line.startswith("|---")):
+            keep.append(line)
+    for line in keep:
+        if line.startswith("| REV-") and "hall_icp_neutralizer" not in line and "REV-4" not in line:
+            continue
+        for s in _bad_sentences(line):
+            wording.append({"pointer": "H2_A9_REVISIONS.md", "sentence": s[:200]})
+    for rel, d in w500_docs.items():
+        for path, v in _leaf_items(d):
+            key = path.rsplit("/", 1)[-1].split("[")[0]
+            if (not isinstance(v, str) or "before_a9_2" in path or path.startswith("/a9_10_reconciliation")
+                    or key in W500_SKIP_KEYS):
+                continue
+            if W500.search(v) and not W500_LABEL.search(v):
+                w500.append({"file": rel, "pointer": path, "text": v[:200]})
+    for rel, txt in w500_mds.items():
+        for line in txt.splitlines():
+            if W500.search(line) and not W500_LABEL.search(line) and not line.lstrip().startswith(">"):
+                w500.append({"file": rel, "pointer": "line", "text": line[:200]})
+    for h in (values + wording + w500)[:20]:
+        errors.append(f"A9.2 residual wording: {h}")
+    return {"rule": "(i) no PASS / CLOSES* / RESOLVED / CONDITIONALLY_RESOLVED value and no True *closes* flag under ANY "
+                    "key of the hall_icp_neutralizer thermal records or of a revision-register row applying to "
+                    "hall_icp_neutralizer (uncoupled_sensitivity_* / *_before_a9_2 excluded); (ii) every sentence of the "
+                    "A9-07 key findings, register text, demands, open items, Curie / closure summaries and thermal "
+                    "Markdown that uses PASS / CLOSES* / CONDITIONALLY_RESOLVED carries an uncoupled-sensitivity or "
+                    "UNRESOLVED label; (iii) every A9-03 / A9-04 / A9-09 text (JSON and RFQ package Markdown; verbatim "
+                    "owner / source quotes excluded) stating 500 W carries the A9.2 delivered/operating label",
+            "value_violations": values, "wording_violations": wording, "w500_violations": w500,
+            "violations": values + wording + w500}
+
+
 def a92_section(recs: dict, errors: list) -> dict:
     dec = load(OV.A92_COPY)
     for rel, sha in ((OV.A92_COPY, OV.A92_SHA), (OV.A92_MD_COPY, OV.A92_MD_SHA)):
@@ -799,6 +920,7 @@ def a92_section(recs: dict, errors: list) -> dict:
                  "record carries the RF / anode / thermal blockers; only then convert PR #33 to ready (orchestrator / "
                  "owner action, not performed by this lane)",
         "status_scan": a92_status_scan(errors),
+        "text_scan": a92_text_scan(errors),
     }
 
 
@@ -939,6 +1061,11 @@ def build():
          "value": len(a92["status_scan"]["violations"]), "units": "count", "basis": "A9.2 item 9",
          "source": "computed by this builder (a9_2.status_scan)", "evidence_class": "inferred",
          "status": "VERIFIED (must be 0)", "freeze_point": "NOW"},
+        {"id": "REC-12", "name": "residual A9.2 wording: pass-like values under any key, PASS / CLOSES sentences "
+         "without an uncoupled-sensitivity label, 500 W texts without the delivered/operating label",
+         "value": len(a92["text_scan"]["violations"]), "units": "count", "basis": "A9.2 icp_coupled_thermal, rf_500W",
+         "source": "computed by this builder (a9_2.text_scan)", "evidence_class": "inferred",
+         "status": "VERIFIED (must be 0)", "freeze_point": "NOW"},
         {"id": "REC-09", "name": "interface demands classified (A9 lanes + step-1 record)",
          "value": len(ifm["rows"]), "units": "count", "basis": "task scope (2)", "source": "computed by this builder",
          "evidence_class": "inferred", "status": "CLASSIFIED", "freeze_point": "NOW"},
@@ -1006,7 +1133,14 @@ def build():
         "new_open_questions": NEW_QUESTIONS,
         "open_owner_questions": NEW_QUESTIONS,
         "remaining_open_items": {
-            "owner_questions_state": OQ_V2 + " (OPEN rows with a yellow 'Your answer' column in the xlsx)",
+            "owner_questions_state": OQ_V2 + " (OPEN rows with a yellow 'Your answer' column in the xlsx; review "
+                                     "repair 3: the A9.1 A9-03-matching decision row and ICPQ-05 carry an explicit "
+                                     "A9.2 OQ-A907-11 supersession pointer; OPEN ICPQ-10 / ICPQ-11 are marked "
+                                     "A9.2-affected (rf_500W, icp_matching_strategy) with needed-by after the impedance "
+                                     "map, still OPEN)",
+            "m16_v3_location": "SD-A910-01: M16 v3 JSON kept at " + M16_V3 + " (the immutable H2-7 v1 builder globs "
+                               "docs/budgets/subsystem_maturity/*.json); acceptance of the location stays OPEN as "
+                               "OQ-A910-04 (owner / orchestrator call; file not moved)",
             "integration": ["OQ-INT-01 (consumer table PROPOSED)", "OQ-INT-02"],
             "pending_by_reason": pend["remaining_by_reason"],
             "interface_demands_open": ifm["counts"]["OPEN"] + ifm["counts"]["PARTIAL"],
@@ -1124,7 +1258,8 @@ def render_md(d) -> str:
         a(f"| {_c(x['item'])} | **{x['status']}** |")
     a("")
     a(g["statuses_rule"] + ". Status scan: " + f"{g['status_scan']['fields_checked']} status-like fields checked, "
-      f"{len(g['status_scan']['violations'])} violations.")
+      f"{len(g['status_scan']['violations'])} violations. Text scan (review repair 3): "
+      f"{len(g['text_scan']['violations'])} violations ({g['text_scan']['rule']}).")
     a("")
     sp = g["supersession"]
     a(f"* **{sp['id']}** superseded: {sp['superseded']}; by {sp['by']}; scope: {sp['scope']}.")

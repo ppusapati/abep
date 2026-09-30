@@ -26,9 +26,9 @@ Configurations: `hall_c1_reference`, `hall_icp_neutralizer`. Outcome vocabulary:
 
 | key | path | sha256 |
 |---|---|---|
-| ICD | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `05d6f20cb758eaaf71ad4598f6a57f6965ec8389d92a04931d63919dc3a5f097` |
-| BUS | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `3178d462d230656a313cd33060a42a74d99bc9ba3dc6afdc2036c0ca01664cb7` |
-| UB | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `46df69a1024d512d2880fd0528798c13ee9b8bb3ab155538550f597bc65d4822` |
+| ICD | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `d073133bf31a404bc10df50730bf61f658316eefebcf7c177b92ea80a7907724` |
+| BUS | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `f855cecaa1707bfe5c3a01bf7fd199ebdc7f9ae83cde6e132c2dfc16004558a3` |
+| UB | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `cc7d41c534f72731f7545c3396d7037b7e4721a3a20ff3591ee5da698b0fe2e8` |
 | PRE | `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` | `ef07a3ecdfadec2c5933de2683fc0cc09466b7a25de268a8ac4fde2dfc3256b8` |
 | EVI | `docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json` | `ec300df97864c84617d47a76138acc37177c9453f306cbb2bf139874f2c68621` |
 | VIN | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `4a54bd1e4d52af7073a6016c07d47d10330220b7c7f45778b3996930714ee5e2` |
@@ -130,7 +130,7 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | id | title | value | units | status | freeze | evidence class | sources |
 |---|---|---|---|---|---|---|---|
 | RFQ-04-R01 | frequency | 13.56 | MHz | OWNER_GIVEN | NOW | owner-allocation | row 72; UB-RF-00 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); ICP-11 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
-| RFQ-04-R02 | laboratory forward-power capability | `[0.0, 500.0]` | W | OWNER_GIVEN | NOW | owner-allocation | row 72; A9.1 OQ-A902-03; row 109; UB-RF-01 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
+| RFQ-04-R02 | laboratory delivered/operating RF investigation capability (generator rating TBD_AFTER_IMPEDANCE_MAP) | `[0.0, 500.0]` | W | OWNER_GIVEN | NOW | owner-allocation | row 72; A9.1 OQ-A902-03; row 109; UB-RF-01 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json#/decisions/rf_500W |
 | RFQ-04-R03 | generator interlock and telemetry | interlock + fwd/refl telemetry | - | OWNER_GIVEN | NOW | owner-allocation | row 62; row 130; ICP-16 (schemas/interfaces/icp_neutralizer_icd_v1.json); ICP-34 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
 | RFQ-04-R04 | generator input power and metering | TBD - requires owner answer to OQ-RFQ-06 and A902-21 (generator DC-input -> forward-power efficiency, LOCK-2) | W | TBD | LOCK-2 | - | A902-19 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json); A902-21 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json) |
 | RFQ-04-R05 | output spectrum and stability | TBD - requires S1a spectrum of the source output into the matched load (UB-RF-06) | relative | TBD | LOCK-2 | - | UB-RF-06 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
@@ -293,7 +293,7 @@ Never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`, `
 | RFQ-03-R06 | RFQ-03 | INS:INS-11; INS:INS-22; ICD:ICP-07 | TBD | LOCK-1 |
 | RFQ-03-R07 | RFQ-03 | R4:/items/9 | TBD | LOCK-1 |
 | RFQ-04-R01 | RFQ-04 | row 72; UB:UB-RF-00; ICD:ICP-11 | OWNER_GIVEN | NOW |
-| RFQ-04-R02 | RFQ-04 | row 72; A9.1 OQ-A902-03; row 109; UB:UB-RF-01 | OWNER_GIVEN | NOW |
+| RFQ-04-R02 | RFQ-04 | row 72; A9.1 OQ-A902-03; row 109; UB:UB-RF-01; A9.2:/decisions/rf_500W | OWNER_GIVEN | NOW |
 | RFQ-04-R03 | RFQ-04 | row 62; row 130; ICD:ICP-16; ICD:ICP-34 | OWNER_GIVEN | NOW |
 | RFQ-04-R04 | RFQ-04 | BUS:A902-19; BUS:A902-21 | TBD | LOCK-2 |
 | RFQ-04-R05 | RFQ-04 | UB:UB-RF-06 | TBD | LOCK-2 |
@@ -637,3 +637,16 @@ Changes applied by A9-10 after this lane's verified build (record `docs/experime
 | A910-A92-A909-15 | A9.2 OQ-A907-11, icp_matching_strategy, rf_500W | append | `/packages[id=RFQ-04]/requirements` | 1 | RFQ-04-R17 local match mass / V-I |
 | A910-A92-A909-16 | A9.2 OQ-A907-11 | append | `/packages[id=RFQ-05]/requirements` | 1 | RFQ-05-R13 on-module match provision |
 | A910-A92-A909-17 | A9.2 anode_316L, anode_approach | set | `/a9_2_anode_note` | 1 | no anode RFQ |
+| A910-A92R-A909-01 | A9.2 rf_500W | supersede | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R02]` | 1 | RFQ-04-R02: 500 W is the delivered/operating capability, generator rating TBD after the impedance map |
+| A910-A92R-A909-02 | A9.2 rf_500W | merge | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R02]` | 1 | RFQ-04-R02 rating field |
+| A910-A92R-A909-03 | A9.2 rf_500W | append | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R02]/sources` | 1 | RFQ-04-R02 A9.2 source |
+| A910-A92R-A909-04 | A9.2 rf_500W | replace | `/packages[id=RFQ-04]/scope` | 1 | RFQ-04 scope |
+| A910-A92R-A909-05 | A9.2 rf_500W | supersede | `/packages[id=RFQ-04]/quantities[0]` | 1 | RFQ-04 generator quantity line |
+| A910-A92R-A909-06 | A9.2 rf_500W | replace | `/packages[id=RFQ-04]/acceptance[0]` | 1 | RFQ-04 calibration acceptance |
+| A910-A92R-A909-07 | A9.2 OQ-A907-11, icp_matching_strategy | supersede | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R15]` | 1 | RFQ-04-R15 requirement / note superseded |
+| A910-A92R-A909-08 | A9.2 OQ-A907-11 | merge | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R15]/sources[1]` | 1 | RFQ-04-R15 A9.1 source = history |
+| A910-A92R-A909-09 | A9.2 OQ-A907-11 | supersede | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R06]` | 1 | RFQ-04-R06 basis |
+| A910-A92R-A909-10 | A9.2 OQ-A907-11 | merge | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R06]/sources[0]` | 1 | RFQ-04-R06 A9.1 source 1 = history |
+| A910-A92R-A909-11 | A9.2 OQ-A907-11 | merge | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R06]/sources[1]` | 1 | RFQ-04-R06 A9.1 source 2 = history |
+| A910-A92R-A909-12 | A9.2 OQ-A907-11 | merge | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R06]/sources[2]` | 1 | RFQ-04-R06 A9.1 source 3 = history |
+| A910-A92R-A909-13 | A9.2 rf_500W | replace | `/packages[id=RFQ-01]/requirements[id=RFQ-01-R14]/requirement` | 1 | RFQ-01-R14 500 W wording |

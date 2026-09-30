@@ -58,7 +58,7 @@ Freeze points:
 | ICP-09 | mechanical | Matched mechanical sham (stand parasitics only) | sham_module (stand-parasitic control only) | - | owner-allocation | OWNER_GIVEN | NOW | 63, 133 |
 | ICP-10 | mechanical | Downstream module mounted on the moving platform (system-thrust rule) | on moving platform | - | assumed | PROPOSED | LOCK-1 | 17, 122 |
 | ICP-11 | rf | RF frequency | 13.56 | MHz | owner-allocation | OWNER_GIVEN | NOW | 72 |
-| ICP-12 | rf | Laboratory forward-power range (initial) | `[0.0, 500.0]` | W | owner-allocation | OWNER_GIVEN | NOW | 72, 108, 109 |
+| ICP-12 | rf | Laboratory delivered/operating RF investigation capability (initial; ratings TBD_AFTER_IMPEDANCE_MAP) | `[0.0, 500.0]` | W | owner-allocation | OWNER_GIVEN | NOW | 72, 108, 109 |
 | ICP-13 | rf | Matching-network location | RF generator -> directional coupler -> 50-ohm transmission line -> LOCAL matching network on / immediately adjacent to the ICP module -> ICP antenna (A9.2 OQ-A907-11): the long flexible coax on the thrust stand stays approximately a controlled 50-ohm line; the matching network is ADJUSTABLE for the development article; the flight implementation (fixed / switched / electronically tuned / other) is deferred until Z_antenna = R + jX is measured vs mdot, P_RF, p, gas composition and the Hall operating point; RF reference planes: A9-07 recomputations.rf_reference_plane.a9_2_segments | - | owner-allocation | OWNER_GIVEN (A9.2 OQ-A907-11: LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT; supersedes the A9.1 A9-03-matching off-platform location for the baseline) | LOCK-1 | 72, 117 |
 | ICP-14 | rf | Directional-coupler forward/reflected measurement and RF load plane | **TBD** | W | - | TBD (value LOCK-2) | LOCK-2 | 72 |
 | ICP-15 | rf | Coax, vacuum RF feedthrough and connector ratings | **TBD** | W, V, ohm | - | TBD (TBD_AFTER_IMPEDANCE_MAP, A9.2) | LOCK-1 | 8, 72 |
@@ -224,9 +224,9 @@ Freeze points:
 * applies to: hall_icp_neutralizer
 * verification: generator setting record; spectrum check in the pickup test
 
-### ICP-12 Laboratory forward-power range (initial)
+### ICP-12 Laboratory delivered/operating RF investigation capability (initial; ratings TBD_AFTER_IMPEDANCE_MAP)
 
-**Requirement.** The laboratory RF source and the inline measurement chain cover 0-500 W forward power initially (row 72). This is a laboratory capability range, not a power allocation: the ICP bus power must fit inside the internal ~1.35 kW design allocation without consuming the 1.35 -> 1.5 kW margin (row 109), and the full-system gate is P_bus < 1.5 kW at the spacecraft-DC boundary incl. start-up transients (row 108).
+**Requirement.** The laboratory RF source and the inline measurement chain provide a 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating); the generator forward-power rating and the ratings of the inline chain are TBD_AFTER_IMPEDANCE_MAP (A9.2 rf_500W: selected only after the expected mismatch envelope is characterized; with the A9-07 review sensitivity VSWR about 5.2, about 925 W forward is needed for 500 W delivered, which is why a 500 W rating alone is unacceptable). This is a laboratory capability range, not a power allocation: the ICP bus power must fit inside the internal ~1.35 kW design allocation without consuming the 1.35 -> 1.5 kW margin (row 109), and the full-system gate is P_bus < 1.5 kW at the spacecraft-DC boundary incl. start-up transients (row 108).
 
 * value: `[0.0, 500.0]` [W]
 * basis: owner answer
@@ -508,10 +508,10 @@ Freeze points:
 
 ### ICP-36 ICP dissipation path and RF-path heat contribution (RF only, partial term)
 
-**Requirement.** All RF power not absorbed by the plasma, and part of the absorbed power, ends as heat in the antenna, collector, dielectric, matching network and cabling (analog: only ~10 % absorbed by the plasma, visible collector heating, annex TAK-12/13). The RF-path heat allocation term for the module is the full laboratory forward power (row 72) x the 20 % heat-load design margin (row 86). This value is a margin-inflated RF-ONLY PARTIAL ALLOCATION TERM (an allocation, not a physical bound); it is NOT a bound on the total module heat load. It covers RF power delivered past the directional coupler only; the RF generator's own conversion loss is a separate term (ICP-24, ICP-43). In hall_icp_neutralizer the Hall discharge loop closes through the ICP collector (ICP-22), so the collector collects an ion current matching the extracted electron current and receives particle heating of order I_coll x sheath voltage (analog ion impact energies, annex TAK-10), plus Hall-plume interception and plasma heat flux on the module (ICP-29). Those terms scale with the discharge current, not with the RF power, and are carried in the total module heat-load item ICP-43. Heat into H-1 + mount stays inside the H2-6 stand bound (copied).
+**Requirement.** All RF power not absorbed by the plasma, and part of the absorbed power, ends as heat in the antenna, collector, dielectric, matching network and cabling (analog: only ~10 % absorbed by the plasma, visible collector heating, annex TAK-12/13). The RF-path heat allocation term for the module is the full laboratory RF capability of row 72 (500 W, a delivered/operating investigation capability per A9.2 rf_500W, not a component rating; used here only as a heat-allocation term) x the 20 % heat-load design margin (row 86). This value is a margin-inflated RF-ONLY PARTIAL ALLOCATION TERM (an allocation, not a physical bound); it is NOT a bound on the total module heat load. It covers RF power delivered past the directional coupler only; the RF generator's own conversion loss is a separate term (ICP-24, ICP-43). In hall_icp_neutralizer the Hall discharge loop closes through the ICP collector (ICP-22), so the collector collects an ion current matching the extracted electron current and receives particle heating of order I_coll x sheath voltage (analog ion impact energies, annex TAK-10), plus Hall-plume interception and plasma heat flux on the module (ICP-29). Those terms scale with the discharge current, not with the RF power, and are carried in the total module heat-load item ICP-43. Heat into H-1 + mount stays inside the H2-6 stand bound (copied).
 
 * value: 600.0 [W]
-* basis: RF-only partial allocation term: 500 W (row 72) x 1.20 (row 86)
+* basis: RF-only partial allocation term: 500 W (row 72; A9.2: delivered/operating capability, not a component rating) x 1.20 (row 86)
 * sources: row 72; row 86; `docs/hardware/h2/h2_6_diagnostics_fixture/h2_6_diagnostics_fixture_v1.json#/design_parameters/43/value`
 * evidence class: model-derived (bound on owner values); status: DERIVED_BOUND; freeze point: LOCK-1
 * applies to: hall_icp_neutralizer
@@ -602,15 +602,15 @@ Freeze points:
 
 ### ICP-44 Antenna-circuit RF voltage, creepage/clearance and Paschen rating
 
-**Requirement.** The antenna circuit (antenna, matching-network output, RF feedthrough and in-vacuum leads) is rated separately from the 350 V DC discharge-circuit item (ICP-23). At the full laboratory forward power (row 72) a 13.56 MHz ICP antenna can run at an RF voltage far above the DC discharge rating. The rating is k_RF x V_ant,peak, where V_ant,peak is computed at P_fwd,max = 500 W from the selected antenna/matching design and the MEASURED total circuit resistance R_total (antenna + plasma load; the analog infers its power-transfer efficiency from such measured resistances, annex TAK-12); the factor k_RF (> 1) is an owner/LOCK-1 value. Clearance/creepage and in-vacuum Paschen margins are set for the combined stress between antenna and collector/body: the collector/body DC potential relative to the antenna circuit reference (up to the ICP-23 DC rating) plus V_ant,peak.
+**Requirement.** The antenna circuit (antenna, local matching-network output, RF feedthrough and in-vacuum leads) is rated separately from the 350 V DC discharge-circuit item (ICP-23). A 13.56 MHz ICP antenna can run at an RF voltage far above the DC discharge rating. The rating is k_RF x V_ant,peak, where V_ant,peak is computed at the maximum operating point of the characterized mismatch envelope (ICP antenna impedance map Z_antenna = R + jX, A9.2 P2; TBD_AFTER_IMPEDANCE_MAP) that delivers the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating), from the selected antenna / local matching design and the MEASURED total circuit resistance R_total (antenna + plasma load; the analog infers its power-transfer efficiency from such measured resistances, annex TAK-12); the factor k_RF (> 1) is an owner/LOCK-1 value (ICPQ-11). Clearance/creepage and in-vacuum Paschen margins are set for the combined stress between antenna and collector/body: the collector/body DC potential relative to the antenna circuit reference (up to the ICP-23 DC rating) plus V_ant,peak.
 
 * value: **TBD** [V (peak RF), mm (clearance/creepage)]
-* TBD - requires the antenna/matching-network selection (ICP-13, ICP-15), the measured R_total and the owner factor k_RF
+* TBD - requires the ICP antenna impedance map (A9.2 P2), the local-match selection (ICP-13, ICP-15), the measured R_total and the owner factor k_RF (TBD - requires the ICP antenna impedance map Z_antenna = R + jX versus mdot, P_RF, p, gas composition and the Hall operating point (A9.2 post-A9 priority P2): RF component ratings (generator, coupler, coax, connectors, matching elements incl. their voltage and current, feedthroughs) are TBD_AFTER_IMPEDANCE_MAP; the 0-500 W row-72 figure is a laboratory delivered/operating investigation capability, not a component rating (A9.2))
 * basis: row 72 (power); row 81 limited to the DC discharge circuit; analog R_total method (TAK-12)
 * sources: row 72; row 81; SRC-TAKAHASHI2024 p. 8
 * evidence class: - (TBD/PENDING); status: TBD; freeze point: LOCK-1
 * applies to: hall_icp_neutralizer
-* verification: RF hipot at full forward power (500 W) on a dummy load and with plasma; RF probe of V_ant,peak; inspection of clearance/creepage
+* verification: RF hipot at the rated operating point of the characterized mismatch envelope (TBD_AFTER_IMPEDANCE_MAP; covering the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating)) on a dummy load and with plasma; RF probe of V_ant,peak; inspection of clearance/creepage
 
 ### ICP-45 Electron-extraction (collector) current capability
 
@@ -715,7 +715,7 @@ Freeze points:
 | 69 | HWQ-06 | unmagnetized v1 ICP; assistance only as a new booked variant (ICP-32) |
 | 70 | HWQ-07 | floating body; separately controlled/measured collector bias; never hard-grounded by default (ICP-20, ICP-21) |
 | 71 | HWQ-15 | all ICP interfaces frozen before score-bearing Phase 1 (freeze points LOCK-1/LOCK-2) |
-| 72 | R4-Q7 | 13.56 MHz; 0-500 W lab forward power; directional coupler; calorimetry as cross-check (ICP-11..ICP-15) |
+| 72 | R4-Q7 | 13.56 MHz; 0-500 W lab RF capability (A9.2 rf_500W: delivered/operating investigation capability, not a component rating); directional coupler; calorimetry as cross-check (ICP-11..ICP-15) |
 | 77 | HWQ-20, H2-1 Q5, H25-Q2, OQ-R3-2, REFRESH-Q2 | Ni-clad/nickel perturbation measured (ICP-32) |
 | 79 | H2-1 Q6, H22-OQ-01 | external C1 reference; downstream/coaxial ICP interface; H-1 neutralizer-agnostic (ICP-02, ICP-05) |
 | 81 | HWQ-03 | DC discharge-circuit isolation rated to 350 V + margin (ICP-23); RF antenna circuit rated separately (ICP-44) |
@@ -754,8 +754,8 @@ Freeze points:
 * **ICPQ-07** Collector material for N2/O2-bearing operation (the analog's stainless steel sputtered and deposited)? Proposed: owner call; proposal: add collector candidates to the biased/floating coupon programme of row 106 before freezing
 * **ICPQ-08** B(z) mapping with RF energized may be corrupted by pickup; accept 'energized where the gaussmeter is shown RF-immune, otherwise immediately after RF-off' as the ICP-31 rule? Proposed: YES
 * **ICPQ-09** Plume interception by a Takahashi-type enclosing source is a real architecture consequence; report it inside the system boundary without correction (ICP-29)? Proposed: YES
-* **ICPQ-10** Total ICP module heat-load bound (ICP-43): use 1.20 x (P_fwd,max + P_d,max) with P_d,max from the A9-02 discharge slot, or, if every score-bearing stand point is held inside the P_bus < 1.5 kW ceiling (row 108), the envelope 1.20 x 1.5 kW used for the stand by H2-6 H26-44? Proposed: owner call; proposal: 1.20 x (P_fwd,max + P_d,max), because laboratory RF forward power (0-500 W) is a capability that is not itself held inside the P_bus ceiling
-* **ICPQ-11** Factor k_RF between the rated antenna-circuit RF voltage and the computed V_ant,peak at 500 W (ICP-44)? Proposed: owner call (LOCK-1); no value proposed here
+* **ICPQ-10** Total ICP module heat-load bound (ICP-43): use 1.20 x (P_fwd,max + P_d,max) with P_d,max from the A9-02 discharge slot, or, if every score-bearing stand point is held inside the P_bus < 1.5 kW ceiling (row 108), the envelope 1.20 x 1.5 kW used for the stand by H2-6 H26-44? Proposed: owner call; proposal: 1.20 x (P_fwd,max + P_d,max), because laboratory RF forward power (0-500 W; A9.2: a delivered/operating investigation capability, not a component rating) is a capability that is not itself held inside the P_bus ceiling
+* **ICPQ-11** Factor k_RF between the rated antenna-circuit RF voltage and the V_ant,peak computed at the maximum operating point of the characterized mismatch envelope (ICP antenna impedance map, A9.2 P2; not at a 500 W component rating) (ICP-44)? Proposed: owner call (LOCK-1); no value proposed here
 
 ## 6. Historical reuse (e)
 
@@ -800,7 +800,7 @@ Deliberately not reused:
 
 H3 (quotations only, row 8):
 
-* 13.56 MHz RF generator, 0-500 W forward, interlock input, remote fwd/refl readout - spec: ICP-11, ICP-12, ICP-16 (quotation only (row 8))
+* 13.56 MHz RF generator for the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating) (forward-power rating TBD_AFTER_IMPEDANCE_MAP), interlock input, remote fwd/refl readout - spec: ICP-11, ICP-12, ICP-16 (quotation only (row 8))
 * adjustable LOCAL matching network on / immediately adjacent to the ICP module (development article, A9.2); component ratings incl. matching-element voltage / current TBD_AFTER_IMPEDANCE_MAP - spec: ICP-13, ICP-15 (quotation only (row 8))
 * calibrated dual directional coupler + power sensors at the load plane - spec: ICP-14 (quotation only (row 8))
 * vacuum RF feedthrough and flexible low-stiffness coax (live + sham) - spec: ICP-15, ICP-18 (quotation only (row 8))
@@ -969,3 +969,13 @@ Changes applied by A9-10 after this lane's verified build (record `docs/experime
 | A910-A92-A903-15 | A9.2 OQ-A907-11 | supersede | `/h3_h4_inputs/h3_procurement_quotation_only[1]` | 1 | h3 matching item |
 | A910-A92-A903-16 | A9.2 rf_protection | append | `/h3_h4_inputs/h3_procurement_quotation_only` | 1 | h3 protection item |
 | A910-A92-A903-17 | A9.2 post_a9_priorities (P1, P2) | append | `/h3_h4_inputs/h4_tests` | 1 | h4 impedance map |
+| A910-A92R-A903-01 | A9.2 rf_500W | supersede | `/items[id=ICP-12]` | 1 | ICP-12 requirement consistent with its A9.2 interpretation |
+| A910-A92R-A903-02 | A9.2 rf_500W | replace | `/items[id=ICP-36]/requirement` | 1 | ICP-36 wording |
+| A910-A92R-A903-03 | A9.2 rf_500W | replace | `/items[id=ICP-36]/basis` | 1 | ICP-36 basis |
+| A910-A92R-A903-04 | A9.2 rf_500W, icp_matching_strategy | supersede | `/items[id=ICP-44]` | 1 | ICP-44 rating basis on the impedance map |
+| A910-A92R-A903-05 | A9.2 rf_500W | replace | `/owner_answers_applied[row=72]/how_applied` | 1 | row 72 application |
+| A910-A92R-A903-06 | A9.2 rf_500W, icp_matching_strategy | replace | `/open_owner_questions[id=ICPQ-10]/proposed_answer` | 1 | ICPQ-10 proposal wording (proposal itself unchanged) |
+| A910-A92R-A903-07 | A9.2 rf_500W, icp_matching_strategy | merge | `/open_owner_questions[id=ICPQ-10]` | 1 | ICPQ-10 marked A9.2-affected |
+| A910-A92R-A903-08 | A9.2 rf_500W, icp_matching_strategy | supersede | `/open_owner_questions[id=ICPQ-11]` | 1 | ICPQ-11 re-framed on the impedance-map basis |
+| A910-A92R-A903-09 | A9.2 rf_500W, icp_matching_strategy | merge | `/open_owner_questions[id=ICPQ-11]` | 1 | ICPQ-11 marked A9.2-affected |
+| A910-A92R-A903-10 | A9.2 rf_500W | supersede | `/h3_h4_inputs/h3_procurement_quotation_only[0]` | 1 | h3 generator line |

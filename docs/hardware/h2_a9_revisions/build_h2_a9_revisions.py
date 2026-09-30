@@ -3435,9 +3435,38 @@ def build(*args, **kwargs):
 _a910_md_core = render_md
 
 
+# A92_MD_RELABEL (A9-10 review repair 3, A9.2 icp_coupled_thermal): the lane's hard-coded thermal-section wording is
+# relabelled as uncoupled sensitivity; each substitution must match exactly once (no silent skip).
+A92_MD_RELABEL = [
+    ("Verdict vocabulary: `brief_verdict_at_baseline` is CLOSES",
+     "Verdict vocabulary (uncoupled sensitivity; every hall_icp_neutralizer status is reported UNRESOLVED, A9.2 "
+     "ICP_COUPLED_THERMAL): `brief_verdict_at_baseline` is CLOSES"),
+    ("**Every hall_icp_neutralizer CLOSES is conditional**: (1) ",
+     "**A9.2 ICP_COUPLED_THERMAL = UNRESOLVED: every hall_icp_neutralizer status in this table is reported UNRESOLVED; "
+     "the CLOSES vocabulary above describes the uncoupled sensitivity only (0 W ICP heat, v1 exterior views), and every "
+     "such uncoupled-sensitivity CLOSES would in addition be conditional**: (1) "),
+    ("| levers closing every case | minimal closing sets within 100 W (buildability) | necessary check |",
+     "| levers closing every case (uncoupled sensitivity) | minimal closing sets within 100 W (uncoupled sensitivity; "
+     "buildability) | necessary check |"),
+    ("\nConditions per closing lever set (",
+     "\nConditions per uncoupled-sensitivity closing lever set (reported UNRESOLVED, A9.2 ICP_COUPLED_THERMAL; "),
+    ("** (conditional on the ICP-43 heat allowance); minimal lever sets closing every live node within 100 W:",
+     "** (A9.2 ICP_COUPLED_THERMAL; the uncoupled sensitivity is also conditional on the ICP-43 heat allowance); "
+     "minimal lever sets closing every live node within 100 W (uncoupled sensitivity):"),
+    ("degC; levers closing: ", "degC; uncoupled-sensitivity levers closing: "),
+    ("| sensitivity outcome (not a verdict) |",
+     "| sensitivity outcome (not a verdict) - never a thermal PASS (A9.2) |"),
+]
+
+
 def render_md(doc):
     """Lane Markdown followed by the A9-10 reconciliation section generated from the same JSON."""
-    return _a910_md_core(doc).rstrip("\n") + "\n" + "\n".join(A910.md_section(doc)) + "\n"
+    txt = _a910_md_core(doc)
+    for a, b in A92_MD_RELABEL:
+        if txt.count(a) != 1:
+            raise RuntimeError(f"A92_MD_RELABEL: {a!r} matched {txt.count(a)} times (expected 1)")
+        txt = txt.replace(a, b)
+    return txt.rstrip("\n") + "\n" + "\n".join(A910.md_section(doc)) + "\n"
 
 
 if __name__ == "__main__":

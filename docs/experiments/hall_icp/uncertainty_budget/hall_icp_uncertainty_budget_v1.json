@@ -920,7 +920,7 @@
   {
    "id": "UB-RF-01",
    "dq": "UB-DQ-RF",
-   "name": "laboratory forward-power range of the RF source and inline chain",
+   "name": "laboratory delivered/operating RF investigation capability of the RF source and inline chain (row 72 as interpreted by A9.2 rf_500W; not a component rating)",
    "symbol": "P_fwd range",
    "type": "requirement",
    "value": [
@@ -940,7 +940,11 @@
    "configurations": [
     "hall_icp_neutralizer"
    ],
-   "note": "directional-coupler forward/reflected measurement is primary; calorimetry is an independent cross-check, not the sole primary measurement (row 72)"
+   "note": "directional-coupler forward/reflected measurement is primary; calorimetry is an independent cross-check, not the sole primary measurement (row 72)",
+   "name_before_a9_2": "laboratory forward-power range of the RF source and inline chain",
+   "a9_2_interpretation": "0-500 W is a laboratory delivered/operating investigation capability, not a component rating (docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json decisions.rf_500W (sha256 e5cd8fb426168b4407c2526539e670cbdeb0b33762a8b9737cc873ffb5bd2e03; verbatim docs/decisions/OD_2026_09_30_A9_2_A907_FOLLOWUP_OWNER_DECISIONS.md)); P_forward != P_delivered",
+   "rating": "TBD - requires the ICP antenna impedance map Z_antenna = R + jX versus mdot, P_RF, p, gas composition and the Hall operating point (A9.2 post-A9 priority P2): RF component ratings (generator, coupler, coax, connectors, matching elements incl. their voltage and current, feedthroughs) are TBD_AFTER_IMPEDANCE_MAP; the 0-500 W row-72 figure is a laboratory delivered/operating investigation capability, not a component rating (A9.2)",
+   "status_detail_a9_2": "OWNER_GIVEN applies to the delivered/operating capability only (A9.2 rf_500W); forward-power ratings TBD_AFTER_IMPEDANCE_MAP"
   },
   {
    "id": "UB-RF-02",
@@ -965,7 +969,7 @@
   {
    "id": "UB-RF-03",
    "dq": "UB-DQ-RF",
-   "name": "power-sensor calibration factor and linearity over 0-500 W",
+   "name": "power-sensor calibration factor and linearity over the forward-power range of the selected generator rating (TBD_AFTER_IMPEDANCE_MAP; covering the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating))",
    "symbol": "u_r(P_sens)",
    "type": "B",
    "value": "TBD - requires sensor certificates",
@@ -2982,7 +2986,7 @@
      "id": "LA-02",
      "quantity": "RF forward power",
      "symbol": "P_fwd,max",
-     "value": "TBD - requires generator / matching / coil ratings inside the 0-500 W laboratory chain (row 72)",
+     "value": "TBD - requires generator / matching / coil ratings (TBD_AFTER_IMPEDANCE_MAP, A9.2) of the laboratory chain with its 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating)",
      "configurations": [
       "hall_icp_neutralizer"
      ]
@@ -3269,7 +3273,7 @@
    "id": "IF-14",
    "direction": "from_this_lane_to_H2-6",
    "counterpart": "H2-6 docs/hardware/h2/h2_6_diagnostics_fixture/ (instrument list)",
-   "quantity": "instrument additions/changes: torsional stand (row 115) with >= 25 kg payload (row 116); 13.56 MHz directional coupler + forward/reflected sensors 0-500 W (row 72); calorimetric cross-check; floating-rated collector/bias V/I; ground-return current monitor; ICP telemetry subset (row 130); RGA ~200 amu (row 127); two C1 Xe controllers (row 125); sink-temperature sensors (row 131)",
+   "quantity": "instrument additions/changes: torsional stand (row 115) with >= 25 kg payload (row 116); 13.56 MHz directional coupler + forward/reflected sensors for the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating), ratings TBD_AFTER_IMPEDANCE_MAP; calorimetric cross-check; floating-rated collector/bias V/I; ground-return current monitor; ICP telemetry subset (row 130); RGA ~200 amu (row 127); two C1 Xe controllers (row 125); sink-temperature sensors (row 131)",
    "units": "-",
    "status": "PROPOSED",
    "value": "revision request (H2-6 v1 is sized for the historical pre-ionizer slot)"
@@ -3517,7 +3521,7 @@
    "row": 72,
    "question": "RF/ECR: select frequency and P_hi (to specify INS-03 sensors); accept calorimetric load-plane method if inline sensors can't reach u_src?",
    "answer_verbatim": "13.56 MHz. Size laboratory RF source and inline measurement chain for 0–500 W forward power initially, with directional-coupler forward/reflected measurements. Calorimetry is an independent cross-check, not the sole primary power measurement.",
-   "how_applied": "13.56 MHz; 0-500 W lab chain; coupler primary, calorimetry cross-check (UB-RF-00..09)"
+   "how_applied": "13.56 MHz; 0-500 W lab chain (A9.2 rf_500W: delivered/operating investigation capability, not a component rating); coupler primary, calorimetry cross-check (UB-RF-00..09)"
   },
   {
    "row": 79,
@@ -3977,7 +3981,7 @@
   },
   {
    "item": "13.56 MHz directional coupler, forward/reflected sensors, calibration at 13.56 MHz",
-   "spec_form": "0-500 W forward (row 72); certificate with uncertainty budget (A4)",
+   "spec_form": "forward-power range of the selected generator rating (TBD_AFTER_IMPEDANCE_MAP) covering the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating); certificate with uncertainty budget (A4)",
    "rows": [
     8,
     72
@@ -4858,6 +4862,62 @@
     "ptr": "/interface_demands[id=IF-08]",
     "count": 1,
     "summary": "IF-08"
+   },
+   {
+    "cid": "A910-A92R-A904-01",
+    "driver": "A9.2 rf_500W",
+    "op": "supersede",
+    "ptr": "/items[id=UB-RF-01]",
+    "count": 1,
+    "summary": "UB-RF-01 relabelled (value unchanged)"
+   },
+   {
+    "cid": "A910-A92R-A904-02",
+    "driver": "A9.2 rf_500W",
+    "op": "merge",
+    "ptr": "/items[id=UB-RF-01]",
+    "count": 1,
+    "summary": "UB-RF-01 A9.2 interpretation"
+   },
+   {
+    "cid": "A910-A92R-A904-03",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/items[id=UB-RF-03]/name",
+    "count": 1,
+    "summary": "UB-RF-03 range wording"
+   },
+   {
+    "cid": "A910-A92R-A904-04",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/stop_rules/limit_aborts/limits[id=LA-02]/value",
+    "count": 1,
+    "summary": "LA-02 wording"
+   },
+   {
+    "cid": "A910-A92R-A904-05",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/interface_demands[id=IF-14]/quantity",
+    "count": 1,
+    "summary": "IF-14 wording"
+   },
+   {
+    "cid": "A910-A92R-A904-06",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/owner_answers_applied[row=72]/how_applied",
+    "count": 1,
+    "summary": "row 72 application"
+   },
+   {
+    "cid": "A910-A92R-A904-07",
+    "driver": "A9.2 rf_500W",
+    "op": "replace",
+    "ptr": "/h3_procurement_inputs[1]/spec_form",
+    "count": 1,
+    "summary": "h3 coupler spec form"
    }
   ]
  }

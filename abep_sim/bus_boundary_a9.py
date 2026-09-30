@@ -805,10 +805,19 @@ def rf_power_planes(P_dc_in_W, P_forward_W, P_reflected_W, P_delivered_W, u_W) -
         dl = _real(P_delivered_W, "P_delivered_W")
         if dl < 0.0 or dl > net + u:
             raise BoundaryA9Error("delivered power must be in [0, forward - reflected] within the stated tolerance")
+    # A9.2 rf_measurement_reference: |Gamma| and VSWR are retained with P_forward / P_reflected / P_delivered.
+    # |Gamma| = sqrt(P_reflected / P_forward) (clipped to 1 only inside the stated tolerance already checked above);
+    # VSWR = (1 + |Gamma|) / (1 - |Gamma|), infinite for total reflection. None when P_forward = 0 (undefined).
+    gam = min(1.0, math.sqrt(rf / fw)) if fw > 0 else None
+    vswr = None if gam is None else (math.inf if gam >= 1.0 else (1.0 + gam) / (1.0 - gam))
     return {"bus_crossing_W": dc, "bus_crossing_plane": "generator_dc_input",
-            "measurement_only": {"forward_W": fw, "reflected_W": rf, "net_forward_W": net, "delivered_W": dl},
+            "measurement_only": {"forward_W": fw, "reflected_W": rf, "net_forward_W": net, "delivered_W": dl,
+                                 "coupler_plane": "generator / 50-ohm side of the local matching network (A9.2 "
+                                                  "OQ-A907-11, rf_measurement_reference); P_forward = P_plasma is "
+                                                  "never assumed"},
             "derived": {"generator_dc_to_forward": (fw / dc) if dc > 0 else None,
                         "reflection_fraction": (rf / fw) if fw > 0 else None,
+                        "gamma_magnitude": gam, "vswr": vswr,
                         "match_and_line_loss_W": None if dl is None else net - dl}}
 
 

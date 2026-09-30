@@ -431,6 +431,12 @@ def test_rf_power_planes():
     r = B.rf_power_planes(300.0, 200.0, 10.0, 180.0, 1.0)
     assert r["bus_crossing_W"] == 300.0 and r["measurement_only"]["net_forward_W"] == 190.0
     assert r["derived"]["match_and_line_loss_W"] == 10.0
+    # A9.2 rf_measurement_reference: |Gamma| and VSWR are retained; coupler plane on the generator / 50-ohm side
+    g = math.sqrt(10.0 / 200.0)
+    assert math.isclose(r["derived"]["gamma_magnitude"], g) and math.isclose(r["derived"]["vswr"], (1 + g) / (1 - g))
+    assert "generator / 50-ohm side" in r["measurement_only"]["coupler_plane"]
+    assert B.rf_power_planes(300.0, 0.0, 0.0, "TBD", 0.0)["derived"]["vswr"] is None
+    assert B.rf_power_planes(300.0, 200.0, 200.0, "TBD", 0.0)["derived"]["vswr"] == math.inf
     assert B.rf_power_planes(300.0, 200.0, 10.0, "TBD", 0.0)["measurement_only"]["delivered_W"] is None
     for args in ((300.0, 200.0, 250.0, "TBD", 1.0), (100.0, 200.0, 0.0, "TBD", 1.0), (300.0, 200.0, 10.0, 195.0, 1.0),
                  (300.0, 200.0, 10.0, "TBD", -1.0)):

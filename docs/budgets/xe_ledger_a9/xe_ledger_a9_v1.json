@@ -109,12 +109,12 @@
   },
   {
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "sha256": "3178d462d230656a313cd33060a42a74d99bc9ba3dc6afdc2036c0ca01664cb7",
+   "sha256": "f855cecaa1707bfe5c3a01bf7fd199ebdc7f9ae83cde6e132c2dfc16004558a3",
    "role": "A9-02 bus-power boundary (verified)"
   },
   {
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "05d6f20cb758eaaf71ad4598f6a57f6965ec8389d92a04931d63919dc3a5f097",
+   "sha256": "d073133bf31a404bc10df50730bf61f658316eefebcf7c177b92ea80a7907724",
    "role": "A9-03 ICP-neutralizer ICD (verified)"
   },
   {
@@ -124,7 +124,7 @@
   },
   {
    "path": "docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
-   "sha256": "46df69a1024d512d2880fd0528798c13ee9b8bb3ab155538550f597bc65d4822",
+   "sha256": "cc7d41c534f72731f7545c3396d7037b7e4721a3a20ff3591ee5da698b0fe2e8",
    "role": "A9-04 uncertainty budget (verified)"
   },
   {

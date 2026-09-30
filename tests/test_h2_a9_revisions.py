@@ -664,3 +664,32 @@ def test_a9_2_incorporation(doc):
     assert rp["sensitivity_loads"]["review_case_20+j50"]["P_fwd_W"] == 925.0      # numbers unchanged
     assert "NOT the MC-1 coil mass" in doc["recomputations"]["lv_coil_copper_delta"]["a9_2_coil_mass_correction"]["text"]
     assert "alternative estimates" in doc["key_findings"][11]
+
+
+def test_a9_2_repair_no_residual_thermal_pass_wording():
+    """Review repair 3 (A9.2 icp_coupled_thermal): K6 Curie checks, REV-42 / REV-44 / REV-45 / REV-47, the per-node
+    nominal_closes flags and the thermal Markdown never read as a hall_icp_neutralizer thermal PASS / closure; the
+    computed values survive as uncoupled_sensitivity_* (numbers unchanged)."""
+    doc = json.loads(JSON_PATH.read_text(encoding="utf-8"))
+    k6 = doc["key_findings"][5]
+    assert "PO UNRESOLVED, BP UNRESOLVED" in k6 and "uncoupled sensitivity only: PO PASS, BP PASS" in k6
+    reg = {r["id"]: r for r in doc["revision_register"]}
+    v42, v44, v45 = (reg[i]["new"]["value"] for i in ("REV-42", "REV-44", "REV-45"))
+    assert v42["closure_CI"] == v42["closure_CO"] == "UNRESOLVED" and v42["uncoupled_sensitivity_closure_CO"] == "CLOSES"
+    assert v44["PO"] == v44["BP"] == ["UNRESOLVED"] and v44["PI"] == ["FAIL"] and v44["uncoupled_sensitivity_PO"] == ["PASS"]
+    th = doc["recomputations"]["h25_thermal_rerun"]
+    assert v45["status"] == th["bn_wall_11_2K_case"]["status"] == "UNRESOLVED"
+    assert v45["uncoupled_sensitivity_status"] == th["bn_wall_11_2K_case"]["uncoupled_sensitivity_status"]
+    assert "thermal CLOSES" not in reg["REV-47"]["new"]["requirement"]
+    assert "uncoupled sensitivity" in reg["REV-47"]["new"]["requirement"]
+    for _lv, cases in th["results"]["hall_icp_neutralizer"].items():
+        for _c, rec in cases.items():
+            for _n, e in rec["nodes"].items():
+                assert "nominal_closes" not in e     # nodes without a live limit carry no such flag
+                if e.get("limit_C") is not None:
+                    assert isinstance(e["uncoupled_sensitivity_nominal_closes"], bool)
+    assert not any("hall_icp_neutralizer CLOSES" in x for x in th["overall"]["open_items"])
+    md = MD_PATH.read_text(encoding="utf-8")
+    assert "Every hall_icp_neutralizer CLOSES is conditional" not in md
+    assert "| levers closing every case (uncoupled sensitivity) |" in md
+    assert "PO PASS, BP PASS;" not in md and "necessary Curie checks: PI FAIL, PO UNRESOLVED, BP UNRESOLVED" in md

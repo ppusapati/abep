@@ -268,3 +268,25 @@ def test_a9_2_local_match_and_no_invented_ratings(doc):
     assert "not a component rating" in rq["RFQ-04-R02"]["a9_2_interpretation"]
     assert "No anode RFQ" in doc["a9_2_anode_note"]
     assert not any("anode" in r["title"].lower() and "xe anode path" not in r["title"].lower() for r in rq.values())
+
+
+def test_a9_2_repair_no_500w_rating_in_supplier_text(doc):
+    """Review repair 3 (A9.2 rf_500W): 0-500 W is a delivered/operating capability, never a component rating; every
+    supplier-facing RFQ-04 text that states 500 W carries that label; R15 no longer reads as an off-platform option."""
+    import re as _re
+    rq = {r["id"]: r for p in doc["packages"] for r in p["requirements"]}
+    r02 = rq["RFQ-04-R02"]
+    assert r02["value"] == [0.0, 500.0] and r02["status"] == "OWNER_GIVEN"
+    assert "delivered/operating" in r02["requirement"] and "TBD_AFTER_IMPEDANCE_MAP" in r02["requirement"]
+    assert "sized for this forward power range" in r02["requirement_before_a9_2"]
+    assert r02["rating"].startswith("TBD - requires the ICP antenna impedance map")
+    r15 = rq["RFQ-04-R15"]
+    assert r15["requirement"].startswith("SUPERSEDED_BY_A9_2") and "off-platform" not in r15["requirement"]
+    assert "SUPERSEDED_BY_A9_2" in r15["note"]
+    assert all("role" in s for s in rq["RFQ-04-R06"]["sources"] if s.get("id") == "A9-03-matching")
+    w500 = _re.compile(r"(?<![\d.])(0\s*[-–]\s*)?500 W\b")
+    lab = _re.compile(r"delivered/operating|not a (sufficient )?component rating|not at (a )?500 W")
+    for fn in sorted((REPO / "docs/procurement/rfq_a9/packages").glob("*.md")):
+        for line in fn.read_text(encoding="utf-8").splitlines():
+            if w500.search(line) and not line.lstrip().startswith(">"):
+                assert lab.search(line), (fn.name, line[:160])

@@ -189,12 +189,12 @@
   {
    "key": "BUS_A9",
    "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
-   "sha256": "3178d462d230656a313cd33060a42a74d99bc9ba3dc6afdc2036c0ca01664cb7"
+   "sha256": "f855cecaa1707bfe5c3a01bf7fd199ebdc7f9ae83cde6e132c2dfc16004558a3"
   },
   {
    "key": "ICD_A9",
    "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
-   "sha256": "05d6f20cb758eaaf71ad4598f6a57f6965ec8389d92a04931d63919dc3a5f097"
+   "sha256": "d073133bf31a404bc10df50730bf61f658316eefebcf7c177b92ea80a7907724"
   },
   {
    "key": "PREREG_A9",
@@ -209,12 +209,12 @@
   {
    "key": "XE_A9",
    "path": "docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json",
-   "sha256": "00752fb35e0821ca29b8b808c6fb143a0127f90376c1fd3f1074d2e2df36d766"
+   "sha256": "65d39aabeb7b6362aecfeabca8dca8d09a2474f948a686e7af9aa552ca69b466"
   },
   {
    "key": "H2_A9",
    "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
-   "sha256": "27978613fc09a1aa23ac55a616ab543ca59ad6d144d0ec25527f7a1fe904fd86"
+   "sha256": "7bd76fcb27761ddc6e014e5c58d079ecc9b9fa53bf845ade3dfc0576f6280b6a"
   }
  ],
  "never_pinned": [

@@ -13,7 +13,7 @@ Status **RECONCILIATION_RECORD_NOT_A_SCIENTIFIC_RESULT**; A9 stays **OWNER_AUTHO
 
 | id | name | value | units | basis | source | evidence class | status | freeze point |
 |---|---|---|---|---|---|---|---|---|
-| REC-01 | declared A9-10 changes to the A9 deliverables | 399 | count | a9_10_overlay.py records | computed by this builder | inferred | APPLIED | NOW |
+| REC-01 | declared A9-10 changes to the A9 deliverables | 450 | count | a9_10_overlay.py records | computed by this builder | inferred | APPLIED | NOW |
 | REC-02 | changed leaves not explained by a declared change | 0 | count | leaf diff vs the A9-10 base ecdad06e30bc5d2f172e862e4bd4843e86332d42 | computed by this builder | inferred | VERIFIED (must be 0) | NOW |
 | REC-03 | A9.1 decisions applied to at least one deliverable | 36 | count | A9.1 decisions | docs/decisions/OD_2026_09_30_A9_1_followup_owner_decisions.json | inferred | APPLIED | NOW |
 | REC-04 | PENDING occurrences at the A9-10 base / now | [634, 69] | count | OQ-INT-03 | computed by this builder | inferred | RE-EVALUATED (every remaining one carries a reason code) | NOW |
@@ -23,6 +23,7 @@ Status **RECONCILIATION_RECORD_NOT_A_SCIENTIFIC_RESULT**; A9 stays **OWNER_AUTHO
 | REC-08 | immutable / historical files byte-identical to the A9-10 base | 63 | count | A9 supersession rule | computed by this builder | inferred | VERIFIED | NOW |
 | REC-10 | A9.2 statuses carried verbatim (item 9) | 10 | count | owner decision A9.2 | docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json a9_10_statuses | owner-allocation | APPLIED (none converted to PASS) | NOW |
 | REC-11 | status-like fields claiming PASS / CLOSES / RESOLVED for an A9.2 item | 0 | count | A9.2 item 9 | computed by this builder (a9_2.status_scan) | inferred | VERIFIED (must be 0) | NOW |
+| REC-12 | residual A9.2 wording: pass-like values under any key, PASS / CLOSES sentences without an uncoupled-sensitivity label, 500 W texts without the delivered/operating label | 0 | count | A9.2 icp_coupled_thermal, rf_500W | computed by this builder (a9_2.text_scan) | inferred | VERIFIED (must be 0) | NOW |
 | REC-09 | interface demands classified (A9 lanes + step-1 record) | 199 | count | task scope (2) | computed by this builder | inferred | CLASSIFIED | NOW |
 
 ## Changes by deliverable (every change with its driver)
@@ -86,7 +87,7 @@ Changed leaves vs base: 415 (explained: {"op": 73, "gsub": 26, "code": 0, "pin":
 
 ### A9-02 - `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json`
 
-Changed leaves vs base: 436 (explained: {"op": 37, "gsub": 0, "code": 197, "pin": 0, "section": 202}; unexplained 0; numeric changed 41, unexplained numeric 0).
+Changed leaves vs base: 442 (explained: {"op": 37, "gsub": 0, "code": 197, "pin": 0, "section": 208}; unexplained 0; numeric changed 42, unexplained numeric 0).
 
 | change | driver | op | pointer / file | count | summary |
 |---|---|---|---|---|---|
@@ -121,10 +122,11 @@ Changed leaves vs base: 436 (explained: {"op": 37, "gsub": 0, "code": 197, "pin"
 | A910-A92-A902-02 | A9.2 OQ-A907-11, icp_matching_strategy | merge | `/slots[slot=icp_matching_network]` | 1 | icp_matching_network slot |
 | A910-A92-A902-03 | A9.2 OQ-A907-11 | replace | `/items[id=A902-22]/source` | 1 | A902-22 source |
 | A910-A92-A902-04 | A9.2 OQ-A907-11 | replace | `/h3_inputs[2]/basis` | 1 | h3 matching basis |
+| A910-A92R-A902-01 | A9.2 rf_measurement_reference | code | `abep_sim/bus_boundary_a9.py` | 0 | rf_power_planes() also returns \|Gamma\| and VSWR (derived from the measured forward / reflected power) and labels the coupler plane as the generator / 50-ohm side of the local match; arithmetic and ordering checks unchanged |
 
 ### A9-03 - `schemas/interfaces/icp_neutralizer_icd_v1.json`
 
-Changed leaves vs base: 643 (explained: {"op": 122, "gsub": 0, "code": 25, "pin": 0, "section": 496}; unexplained 0; numeric changed 84, unexplained numeric 0).
+Changed leaves vs base: 725 (explained: {"op": 144, "gsub": 0, "code": 25, "pin": 0, "section": 556}; unexplained 0; numeric changed 94, unexplained numeric 0).
 
 | change | driver | op | pointer / file | count | summary |
 |---|---|---|---|---|---|
@@ -208,10 +210,20 @@ Changed leaves vs base: 643 (explained: {"op": 122, "gsub": 0, "code": 25, "pin"
 | A910-A92-A903-15 | A9.2 OQ-A907-11 | supersede | `/h3_h4_inputs/h3_procurement_quotation_only[1]` | 1 | h3 matching item |
 | A910-A92-A903-16 | A9.2 rf_protection | append | `/h3_h4_inputs/h3_procurement_quotation_only` | 1 | h3 protection item |
 | A910-A92-A903-17 | A9.2 post_a9_priorities (P1, P2) | append | `/h3_h4_inputs/h4_tests` | 1 | h4 impedance map |
+| A910-A92R-A903-01 | A9.2 rf_500W | supersede | `/items[id=ICP-12]` | 1 | ICP-12 requirement consistent with its A9.2 interpretation |
+| A910-A92R-A903-02 | A9.2 rf_500W | replace | `/items[id=ICP-36]/requirement` | 1 | ICP-36 wording |
+| A910-A92R-A903-03 | A9.2 rf_500W | replace | `/items[id=ICP-36]/basis` | 1 | ICP-36 basis |
+| A910-A92R-A903-04 | A9.2 rf_500W, icp_matching_strategy | supersede | `/items[id=ICP-44]` | 1 | ICP-44 rating basis on the impedance map |
+| A910-A92R-A903-05 | A9.2 rf_500W | replace | `/owner_answers_applied[row=72]/how_applied` | 1 | row 72 application |
+| A910-A92R-A903-06 | A9.2 rf_500W, icp_matching_strategy | replace | `/open_owner_questions[id=ICPQ-10]/proposed_answer` | 1 | ICPQ-10 proposal wording (proposal itself unchanged) |
+| A910-A92R-A903-07 | A9.2 rf_500W, icp_matching_strategy | merge | `/open_owner_questions[id=ICPQ-10]` | 1 | ICPQ-10 marked A9.2-affected |
+| A910-A92R-A903-08 | A9.2 rf_500W, icp_matching_strategy | supersede | `/open_owner_questions[id=ICPQ-11]` | 1 | ICPQ-11 re-framed on the impedance-map basis |
+| A910-A92R-A903-09 | A9.2 rf_500W, icp_matching_strategy | merge | `/open_owner_questions[id=ICPQ-11]` | 1 | ICPQ-11 marked A9.2-affected |
+| A910-A92R-A903-10 | A9.2 rf_500W | supersede | `/h3_h4_inputs/h3_procurement_quotation_only[0]` | 1 | h3 generator line |
 
 ### A9-04 - `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json`
 
-Changed leaves vs base: 693 (explained: {"op": 148, "gsub": 19, "code": 0, "pin": 0, "section": 526}; unexplained 0; numeric changed 92, unexplained numeric 0).
+Changed leaves vs base: 745 (explained: {"op": 158, "gsub": 19, "code": 0, "pin": 0, "section": 568}; unexplained 0; numeric changed 99, unexplained numeric 0).
 
 | change | driver | op | pointer / file | count | summary |
 |---|---|---|---|---|---|
@@ -300,6 +312,13 @@ Changed leaves vs base: 693 (explained: {"op": 148, "gsub": 19, "code": 0, "pin"
 | A910-A92-A904-04 | A9.2 rf_measurement_reference | replace | `/items[id=UB-RF-04]/value` | 1 | UB-RF-04 \|Gamma\| |
 | A910-A92-A904-05 | A9.2 rf_measurement_reference | append | `/measurement_chains[dq=UB-DQ-RF]/equations` | 1 | P_delivered equation |
 | A910-A92-A904-06 | A9.2 OQ-A907-11, icp_matching_strategy | supersede | `/interface_demands[id=IF-08]` | 1 | IF-08 |
+| A910-A92R-A904-01 | A9.2 rf_500W | supersede | `/items[id=UB-RF-01]` | 1 | UB-RF-01 relabelled (value unchanged) |
+| A910-A92R-A904-02 | A9.2 rf_500W | merge | `/items[id=UB-RF-01]` | 1 | UB-RF-01 A9.2 interpretation |
+| A910-A92R-A904-03 | A9.2 rf_500W | replace | `/items[id=UB-RF-03]/name` | 1 | UB-RF-03 range wording |
+| A910-A92R-A904-04 | A9.2 rf_500W | replace | `/stop_rules/limit_aborts/limits[id=LA-02]/value` | 1 | LA-02 wording |
+| A910-A92R-A904-05 | A9.2 rf_500W | replace | `/interface_demands[id=IF-14]/quantity` | 1 | IF-14 wording |
+| A910-A92R-A904-06 | A9.2 rf_500W | replace | `/owner_answers_applied[row=72]/how_applied` | 1 | row 72 application |
+| A910-A92R-A904-07 | A9.2 rf_500W | replace | `/h3_procurement_inputs[1]/spec_form` | 1 | h3 coupler spec form |
 
 ### A9-05ev - `docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json`
 
@@ -365,7 +384,7 @@ Changed leaves vs base: 2260 (explained: {"op": 11, "gsub": 0, "code": 2161, "pi
 
 ### A9-07 - `docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json`
 
-Changed leaves vs base: 1938 (explained: {"op": 1571, "gsub": 3, "code": 0, "pin": 6, "section": 358}; unexplained 0; numeric changed 58, unexplained numeric 0).
+Changed leaves vs base: 3033 (explained: {"op": 2546, "gsub": 3, "code": 0, "pin": 6, "section": 478}; unexplained 0; numeric changed 78, unexplained numeric 0).
 
 | change | driver | op | pointer / file | count | summary |
 |---|---|---|---|---|---|
@@ -426,6 +445,26 @@ Changed leaves vs base: 1938 (explained: {"op": 1571, "gsub": 3, "code": 0, "pin
 | A910-A92-A907-40 | A9.2 rf_500W | replace | `/owner_answers_applied[row=72]/how_applied` | 1 | row 72 application |
 | A910-A92-A907-41 | A9.2 anode_316L | replace | `/owner_answers_applied[row=106]/how_applied` | 1 | row 106 application |
 | A910-A92-A907-42 | A9.2 a9_10_statuses | set | `/a9_2_statuses` | 1 | A9.2 statuses carried |
+| A910-A92R-A907-01 | A9.2 icp_coupled_thermal | a92_thermal_residual | `/recomputations/h25_thermal_rerun` | 476 | per-node nominal_closes flags of every hall_icp_neutralizer result renamed uncoupled_sensitivity_nominal_closes (booleans unchanged) |
+| A910-A92R-A907-02 | A9.2 icp_coupled_thermal | replace | `/key_findings[5]` | 1 | K6 Curie checks reported UNRESOLVED |
+| A910-A92R-A907-03 | A9.2 icp_coupled_thermal | replace | `/key_findings[1]` | 1 | K2 conditional clause relabelled |
+| A910-A92R-A907-04 | A9.2 rf_500W | replace | `/key_findings[1]` | 1 | K2 500 W wording |
+| A910-A92R-A907-05 | A9.2 icp_coupled_thermal | replace | `/key_findings[2]` | 1 | K3 relabelled |
+| A910-A92R-A907-06 | A9.2 icp_coupled_thermal | replace | `/key_findings[3]` | 1 | K4 relabelled |
+| A910-A92R-A907-07 | A9.2 icp_coupled_thermal | replace | `/key_findings[3]` | 1 | K4 status |
+| A910-A92R-A907-08 | A9.2 icp_coupled_thermal | replace | `/key_findings[4]` | 1 | K5 relabelled |
+| A910-A92R-A907-09 | A9.2 icp_coupled_thermal | merge | `/revision_register[id=REV-42]/new/value` | 1 | REV-42 coil closures reported UNRESOLVED |
+| A910-A92R-A907-10 | A9.2 icp_coupled_thermal | merge | `/revision_register[id=REV-44]/new/value` | 1 | REV-44 Curie checks PO / BP reported UNRESOLVED |
+| A910-A92R-A907-11 | A9.2 icp_coupled_thermal | merge | `/revision_register[id=REV-45]/new/value` | 1 | REV-45 BN wall reported UNRESOLVED (matches bn_wall_11_2K_case) |
+| A910-A92R-A907-12 | A9.2 icp_coupled_thermal | replace | `/revision_register[id=REV-47]/new/requirement` | 1 | REV-47 wording |
+| A910-A92R-A907-13 | A9.2 icp_coupled_thermal | replace | `/recomputations/h25_thermal_rerun/overall/open_items[0]` | 1 | open item 1 relabelled |
+| A910-A92R-A907-14 | A9.2 icp_coupled_thermal | replace | `/recomputations/h25_thermal_rerun/overall/open_items[1]` | 1 | open item 2 relabelled |
+| A910-A92R-A907-15 | A9.2 icp_coupled_thermal | replace | `/recomputations/h25_thermal_rerun/overall/open_items[4]` | 1 | open item 5 relabelled |
+| A910-A92R-A907-16 | A9.2 icp_coupled_thermal | replace | `/recomputations/h25_thermal_rerun/bn_wall_11_2K_case/status_meaning` | 1 | BN-wall status meaning relabelled |
+| A910-A92R-A907-17 | A9.2 icp_coupled_thermal | replace | `/recomputations/h25_thermal_rerun/hall_c1_reference_note` | 1 | C1 sensitivity note relabelled |
+| A910-A92R-A907-18 | A9.2 icp_coupled_thermal | replace | `/recomputations/h25_thermal_rerun/icp_heat_into_h1/note` | 1 | ICP heat note relabelled |
+| A910-A92R-A907-19 | A9.2 icp_coupled_thermal | replace | `/interface_demands[id=IDA7-07]/quantity` | 1 | IDA7-07 wording |
+| A910-A92R-A907-20 | A9.2 icp_coupled_thermal | code | `docs/hardware/h2_a9_revisions/build_h2_a9_revisions.py` | 0 | H2_A9_REVISIONS.md thermal section: closure-summary vocabulary, table headers, overall line, BN-wall line and C1-sensitivity header relabelled as uncoupled sensitivity (render wrapper, each substitution must match exactly once) |
 
 ### A9-08 - `docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json`
 
@@ -438,7 +477,7 @@ Changed leaves vs base: 134 (explained: {"op": 1, "gsub": 0, "code": 105, "pin":
 
 ### A9-09 - `docs/procurement/rfq_a9/rfq_a9_v1.json`
 
-Changed leaves vs base: 1047 (explained: {"op": 202, "gsub": 0, "code": 504, "pin": 7, "section": 334}; unexplained 0; numeric changed 75, unexplained numeric 0).
+Changed leaves vs base: 1153 (explained: {"op": 227, "gsub": 0, "code": 507, "pin": 7, "section": 412}; unexplained 0; numeric changed 88, unexplained numeric 0).
 
 | change | driver | op | pointer / file | count | summary |
 |---|---|---|---|---|---|
@@ -495,6 +534,19 @@ Changed leaves vs base: 1047 (explained: {"op": 202, "gsub": 0, "code": 504, "pi
 | A910-A92-A909-15 | A9.2 OQ-A907-11, icp_matching_strategy, rf_500W | append | `/packages[id=RFQ-04]/requirements` | 1 | RFQ-04-R17 local match mass / V-I |
 | A910-A92-A909-16 | A9.2 OQ-A907-11 | append | `/packages[id=RFQ-05]/requirements` | 1 | RFQ-05-R13 on-module match provision |
 | A910-A92-A909-17 | A9.2 anode_316L, anode_approach | set | `/a9_2_anode_note` | 1 | no anode RFQ |
+| A910-A92R-A909-01 | A9.2 rf_500W | supersede | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R02]` | 1 | RFQ-04-R02: 500 W is the delivered/operating capability, generator rating TBD after the impedance map |
+| A910-A92R-A909-02 | A9.2 rf_500W | merge | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R02]` | 1 | RFQ-04-R02 rating field |
+| A910-A92R-A909-03 | A9.2 rf_500W | append | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R02]/sources` | 1 | RFQ-04-R02 A9.2 source |
+| A910-A92R-A909-04 | A9.2 rf_500W | replace | `/packages[id=RFQ-04]/scope` | 1 | RFQ-04 scope |
+| A910-A92R-A909-05 | A9.2 rf_500W | supersede | `/packages[id=RFQ-04]/quantities[0]` | 1 | RFQ-04 generator quantity line |
+| A910-A92R-A909-06 | A9.2 rf_500W | replace | `/packages[id=RFQ-04]/acceptance[0]` | 1 | RFQ-04 calibration acceptance |
+| A910-A92R-A909-07 | A9.2 OQ-A907-11, icp_matching_strategy | supersede | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R15]` | 1 | RFQ-04-R15 requirement / note superseded |
+| A910-A92R-A909-08 | A9.2 OQ-A907-11 | merge | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R15]/sources[1]` | 1 | RFQ-04-R15 A9.1 source = history |
+| A910-A92R-A909-09 | A9.2 OQ-A907-11 | supersede | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R06]` | 1 | RFQ-04-R06 basis |
+| A910-A92R-A909-10 | A9.2 OQ-A907-11 | merge | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R06]/sources[0]` | 1 | RFQ-04-R06 A9.1 source 1 = history |
+| A910-A92R-A909-11 | A9.2 OQ-A907-11 | merge | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R06]/sources[1]` | 1 | RFQ-04-R06 A9.1 source 2 = history |
+| A910-A92R-A909-12 | A9.2 OQ-A907-11 | merge | `/packages[id=RFQ-04]/requirements[id=RFQ-04-R06]/sources[2]` | 1 | RFQ-04-R06 A9.1 source 3 = history |
+| A910-A92R-A909-13 | A9.2 rf_500W | replace | `/packages[id=RFQ-01]/requirements[id=RFQ-01-R14]/requirement` | 1 | RFQ-01-R14 500 W wording |
 
 ## A9.1 decision coverage
 
@@ -568,7 +620,7 @@ Decision `docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json` 
 | coupled H-1/ICP thermal closure | **UNRESOLVED** |
 | C1 conventional reference | **CONTROL_FALLBACK** |
 
-verbatim A9.2 item 9; none of them is converted into PASS to close A9-10 (a9_2_status_scan). Status scan: 3371 status-like fields checked, 0 violations.
+verbatim A9.2 item 9; none of them is converted into PASS to close A9-10 (a9_2_status_scan). Status scan: 3371 status-like fields checked, 0 violations. Text scan (review repair 3): 0 violations ((i) no PASS / CLOSES* / RESOLVED / CONDITIONALLY_RESOLVED value and no True *closes* flag under ANY key of the hall_icp_neutralizer thermal records or of a revision-register row applying to hall_icp_neutralizer (uncoupled_sensitivity_* / *_before_a9_2 excluded); (ii) every sentence of the A9-07 key findings, register text, demands, open items, Curie / closure summaries and thermal Markdown that uses PASS / CLOSES* / CONDITIONALLY_RESOLVED carries an uncoupled-sensitivity or UNRESOLVED label; (iii) every A9-03 / A9-04 / A9-09 text (JSON and RFQ package Markdown; verbatim owner / source quotes excluded) stating 500 W carries the A9.2 delivered/operating label).
 
 * **SUP-A92-01** superseded: A9.1 A9-03-matching: matching network off the moving platform, long flexible coax, coupler reference plane after the match; by A9.2 OQ-A907-11: RF generator -> directional coupler -> 50-ohm transmission line -> LOCAL matching network on / immediately adjacent to the ICP module -> ICP antenna; scope: the A9 baseline (history kept: the A9.1 value is preserved as *_before_a9_2 fields and in REV-34 / ICPQ-05 records; nothing deleted).
 * **RF chain**: RF generator -> directional coupler -> 50-ohm transmission line -> LOCAL matching network on / immediately adjacent to the ICP module -> ICP antenna. Measurement: forward and reflected power measured on the generator / 50-ohm side of the local matching network; retained quantities P_forward, P_reflected, \|Gamma\|, VSWR and, where possible, P_delivered = P_forward - P_reflected - P_line/match,loss; P_forward = P_plasma is never assumed. Ratings: TBD - requires the ICP antenna impedance map Z_antenna = R + jX versus mdot, P_RF, p, gas composition and the Hall operating point (A9.2 post-A9 priority P2): RF component ratings (generator, coupler, coax, connectors, matching elements incl. their voltage and current, feedthroughs) are TBD_AFTER_IMPEDANCE_MAP; the 0-500 W row-72 figure is a laboratory delivered/operating investigation capability, not a component rating (A9.2). Protection: reflected-power monitoring, mismatch / interlock threshold, arc detection where feasible, thermal monitoring, automatic RF reduction / shutdown; TBD - requires the ICP antenna / load characterization: exact reflected-power and VSWR trip thresholds are frozen after it, never invented now (A9.2 rf_protection). Matching strategy: adjustable local match for the development article; flight implementation (fixed / switched / electronically tuned / other) only after Z_antenna = R + jX is mapped vs mdot, P_RF, p, gas composition and the Hall operating point.
@@ -581,14 +633,14 @@ verbatim A9.2 item 9; none of them is converted into PASS to close A9-10 (a9_2_s
 
 | A9.2 item | applied by | status |
 |---|---|---|
-| OQ-A907-11 | A910-A92-A901-01, A910-A92-A902-01, A910-A92-A902-02, A910-A92-A902-03, A910-A92-A902-04, A910-A92-A903-01, A910-A92-A903-02, A910-A92-A903-08, A910-A92-A903-09, A910-A92-A903-11, A910-A92-A903-14, A910-A92-A903-15, A910-A92-A904-01, A910-A92-A904-02, A910-A92-A904-06, A910-A92-A906-01, A910-A92-A906-02, A910-A92-A906-03, A910-A92-A906-08, A910-A92-A906-09, A910-A92-A907-06, A910-A92-A907-07, A910-A92-A907-11, A910-A92-A907-12, A910-A92-A907-13, A910-A92-A907-14, A910-A92-A907-15, A910-A92-A907-16, A910-A92-A907-18, A910-A92-A907-24, A910-A92-A907-27, A910-A92-A907-28, A910-A92-A907-29, A910-A92-A907-30, A910-A92-A907-31, A910-A92-A907-33, A910-A92-A907-34, A910-A92-A907-37, A910-A92-A907-39, A910-A92-A907-Q01, A910-A92-A909-01, A910-A92-A909-02, A910-A92-A909-03, A910-A92-A909-04, A910-A92-A909-05, A910-A92-A909-06, A910-A92-A909-10, A910-A92-A909-12, A910-A92-A909-15, A910-A92-A909-16 | APPLIED |
-| rf_measurement_reference | A910-A92-A902-01, A910-A92-A903-03, A910-A92-A903-04, A910-A92-A904-01, A910-A92-A904-03, A910-A92-A904-04, A910-A92-A904-05, A910-A92-A907-11, A910-A92-A909-08, A910-A92-A909-09 | APPLIED |
-| rf_500W | A910-A92-A903-05, A910-A92-A903-07, A910-A92-A907-07, A910-A92-A907-16, A910-A92-A907-17, A910-A92-A907-28, A910-A92-A907-40, A910-A92-A909-07, A910-A92-A909-11, A910-A92-A909-13, A910-A92-A909-15 | APPLIED |
+| OQ-A907-11 | A910-A92-A901-01, A910-A92-A902-01, A910-A92-A902-02, A910-A92-A902-03, A910-A92-A902-04, A910-A92-A903-01, A910-A92-A903-02, A910-A92-A903-08, A910-A92-A903-09, A910-A92-A903-11, A910-A92-A903-14, A910-A92-A903-15, A910-A92-A904-01, A910-A92-A904-02, A910-A92-A904-06, A910-A92-A906-01, A910-A92-A906-02, A910-A92-A906-03, A910-A92-A906-08, A910-A92-A906-09, A910-A92-A907-06, A910-A92-A907-07, A910-A92-A907-11, A910-A92-A907-12, A910-A92-A907-13, A910-A92-A907-14, A910-A92-A907-15, A910-A92-A907-16, A910-A92-A907-18, A910-A92-A907-24, A910-A92-A907-27, A910-A92-A907-28, A910-A92-A907-29, A910-A92-A907-30, A910-A92-A907-31, A910-A92-A907-33, A910-A92-A907-34, A910-A92-A907-37, A910-A92-A907-39, A910-A92-A907-Q01, A910-A92-A909-01, A910-A92-A909-02, A910-A92-A909-03, A910-A92-A909-04, A910-A92-A909-05, A910-A92-A909-06, A910-A92-A909-10, A910-A92-A909-12, A910-A92-A909-15, A910-A92-A909-16, A910-A92R-A909-07, A910-A92R-A909-08, A910-A92R-A909-09, A910-A92R-A909-10, A910-A92R-A909-11, A910-A92R-A909-12 | APPLIED |
+| rf_measurement_reference | A910-A92-A902-01, A910-A92-A903-03, A910-A92-A903-04, A910-A92-A904-01, A910-A92-A904-03, A910-A92-A904-04, A910-A92-A904-05, A910-A92-A907-11, A910-A92-A909-08, A910-A92-A909-09, A910-A92R-A902-01 | APPLIED |
+| rf_500W | A910-A92-A903-05, A910-A92-A903-07, A910-A92-A907-07, A910-A92-A907-16, A910-A92-A907-17, A910-A92-A907-28, A910-A92-A907-40, A910-A92-A909-07, A910-A92-A909-11, A910-A92-A909-13, A910-A92-A909-15, A910-A92R-A903-01, A910-A92R-A903-02, A910-A92R-A903-03, A910-A92R-A903-04, A910-A92R-A903-05, A910-A92R-A903-06, A910-A92R-A903-07, A910-A92R-A903-08, A910-A92R-A903-09, A910-A92R-A903-10, A910-A92R-A904-01, A910-A92R-A904-02, A910-A92R-A904-03, A910-A92R-A904-04, A910-A92R-A904-05, A910-A92R-A904-06, A910-A92R-A904-07, A910-A92R-A907-04, A910-A92R-A909-01, A910-A92R-A909-02, A910-A92R-A909-03, A910-A92R-A909-04, A910-A92R-A909-05, A910-A92R-A909-06, A910-A92R-A909-13 | APPLIED |
 | rf_protection | A910-A92-A903-06, A910-A92-A903-16, A910-A92-A907-25, A910-A92-A909-14 | APPLIED |
-| icp_matching_strategy | A910-A92-A902-02, A910-A92-A903-01, A910-A92-A904-06, A910-A92-A906-01, A910-A92-A907-07, A910-A92-A907-13, A910-A92-A907-24, A910-A92-A907-27, A910-A92-A909-05, A910-A92-A909-07, A910-A92-A909-12, A910-A92-A909-15 | APPLIED |
+| icp_matching_strategy | A910-A92-A902-02, A910-A92-A903-01, A910-A92-A904-06, A910-A92-A906-01, A910-A92-A907-07, A910-A92-A907-13, A910-A92-A907-24, A910-A92-A907-27, A910-A92-A909-05, A910-A92-A909-07, A910-A92-A909-12, A910-A92-A909-15, A910-A92R-A903-04, A910-A92R-A903-06, A910-A92R-A903-07, A910-A92R-A903-08, A910-A92R-A903-09, A910-A92R-A909-07 | APPLIED |
 | anode_316L | A910-A92-A906-04, A910-A92-A907-05, A910-A92-A907-19, A910-A92-A907-20, A910-A92-A907-21, A910-A92-A907-41, A910-A92-A909-17 | APPLIED |
 | anode_approach | A910-A92-A906-04, A910-A92-A907-05, A910-A92-A907-19, A910-A92-A907-22, A910-A92-A907-23, A910-A92-A907-38, A910-A92-A909-17 | APPLIED |
-| icp_coupled_thermal | A910-A92-A903-09, A910-A92-A903-10, A910-A92-A903-11, A910-A92-A903-12, A910-A92-A907-01, A910-A92-A907-02, A910-A92-A907-04, A910-A92-A907-26, A910-A92-A907-32, A910-A92-A907-35, A910-A92-A907-36, A910-A92-A907-43 | APPLIED |
+| icp_coupled_thermal | A910-A92-A903-09, A910-A92-A903-10, A910-A92-A903-11, A910-A92-A903-12, A910-A92-A907-01, A910-A92-A907-02, A910-A92-A907-04, A910-A92-A907-26, A910-A92-A907-32, A910-A92-A907-35, A910-A92-A907-36, A910-A92-A907-43, A910-A92R-A907-01, A910-A92R-A907-02, A910-A92R-A907-03, A910-A92R-A907-05, A910-A92R-A907-06, A910-A92R-A907-07, A910-A92R-A907-08, A910-A92R-A907-09, A910-A92R-A907-10, A910-A92R-A907-11, A910-A92R-A907-12, A910-A92R-A907-13, A910-A92R-A907-14, A910-A92R-A907-15, A910-A92R-A907-16, A910-A92R-A907-17, A910-A92R-A907-18, A910-A92R-A907-19, A910-A92R-A907-20 | APPLIED |
 | radiative_view_requirement | A910-A92-A903-12, A910-A92-A903-13, A910-A92-A907-26 | APPLIED |
 | 13W_pole_allowance | A910-A92-A903-10, A910-A92-A903-13, A910-A92-A907-01, A910-A92-A907-03, A910-A92-A907-32 | APPLIED |
 | coil_mass_correction | A910-A92-A906-05, A910-A92-A906-06, A910-A92-A906-07, A910-A92-A907-08, A910-A92-A907-09, A910-A92-A907-10 | APPLIED |
@@ -857,7 +909,7 @@ every interface demand of every A9 lane (and of the step-1 integration record) i
 * **OQ-A910-04** Accept the location of the M16 v3 JSON at docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json instead of the brief-named docs/budgets/subsystem_maturity/subsystem_maturity_v3.json? The immutable H2-7 v1 mechanical BOM builder scans docs/budgets/subsystem_maturity/*.json non-recursively and pins every file it finds, so any new JSON there makes the H2-7 v1 --check stale (verified). The builder and the Markdown keep the brief-named paths (docs/budgets/subsystem_maturity/build_subsystem_maturity_v3.py, SUBSYSTEM_MATURITY_v3.md). Proposed: PROPOSED accept (the alternative is to change the immutable H2-7 v1 builder, which is not allowed); orchestrator / owner call. Needed by merge of this lane.
 * **OQ-A910-05** With the A9.2 local matching network on / adjacent to the ICP module (moving platform), the matched sham configuration (row 133) must present the same service-line parasitics. Should the hall_c1_reference sham carry a mass / stiffness / thermal equivalent of the on-module match (not only a sham coax), and which of the A9-06 allocation lines (AL-05 ICP head or AL-06 RF) books the local match hardware? Proposed: PROPOSED yes (sham equivalent of the on-module match, value TBD - requires the match selection); allocation line: owner call together with MQ-07 (A9-06 keeps it on AL-06, no number changed). Needed by LOCK-1 (ICD ICP-08 / ICP-18, A9-06 AL-05/06).
 
-Remaining open items: {"owner_questions_state": "docs/budgets/owner_decisions/owner_questions_state_v2.json (OPEN rows with a yellow 'Your answer' column in the xlsx)", "integration": ["OQ-INT-01 (consumer table PROPOSED)", "OQ-INT-02"], "pending_by_reason": {"NOT_A_CROSS_REFERENCE": 13, "HISTORICAL_COPY": 26, "H2_V1_REVISED_IN_A9_07": 7, "HISTORICAL_PREIONIZER": 1, "ASSIGNMENT_NOT_DEFINED_BY_TARGET": 0, "UNMAPPED_DQ_ID": 7, "DEPENDS_ON_LOCK_OR_OWNER": 4, "DEPENDS_ON_HARDWARE_OR_EVIDENCE": 3, "TARGET_CHECKED_NOT_DEFINED": 0, "A9_08_OPEN_AFTER_A9_07": 5, "A9_08_OPEN_AFTER_A9_09": 1, "H2_4_SELECTION": 2}, "interface_demands_open": 72, "m16": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json (every row BLOCKED or READY per the accepted scheduler rule; named owners missing)", "a9_2_blockers": ["RF component ratings TBD_AFTER_IMPEDANCE_MAP (P2)", "ICP electron-current capacity PENDING_ICP45 (P1)", "ICP RF power closure PENDING_HARDWARE", "coupled H-1/ICP thermal closure UNRESOLVED (P3; A9H-TH-01, ICD ICP-47)", "anode material OPEN (A9H-ANODE-01, P4)", "anode thermal closure UNRESOLVED (A9H-ANODE-02, P4)"]}
+Remaining open items: {"owner_questions_state": "docs/budgets/owner_decisions/owner_questions_state_v2.json (OPEN rows with a yellow 'Your answer' column in the xlsx; review repair 3: the A9.1 A9-03-matching decision row and ICPQ-05 carry an explicit A9.2 OQ-A907-11 supersession pointer; OPEN ICPQ-10 / ICPQ-11 are marked A9.2-affected (rf_500W, icp_matching_strategy) with needed-by after the impedance map, still OPEN)", "m16_v3_location": "SD-A910-01: M16 v3 JSON kept at docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json (the immutable H2-7 v1 builder globs docs/budgets/subsystem_maturity/*.json); acceptance of the location stays OPEN as OQ-A910-04 (owner / orchestrator call; file not moved)", "integration": ["OQ-INT-01 (consumer table PROPOSED)", "OQ-INT-02"], "pending_by_reason": {"NOT_A_CROSS_REFERENCE": 13, "HISTORICAL_COPY": 26, "H2_V1_REVISED_IN_A9_07": 7, "HISTORICAL_PREIONIZER": 1, "ASSIGNMENT_NOT_DEFINED_BY_TARGET": 0, "UNMAPPED_DQ_ID": 7, "DEPENDS_ON_LOCK_OR_OWNER": 4, "DEPENDS_ON_HARDWARE_OR_EVIDENCE": 3, "TARGET_CHECKED_NOT_DEFINED": 0, "A9_08_OPEN_AFTER_A9_07": 5, "A9_08_OPEN_AFTER_A9_09": 1, "H2_4_SELECTION": 2}, "interface_demands_open": 72, "m16": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json (every row BLOCKED or READY per the accepted scheduler rule; named owners missing)", "a9_2_blockers": ["RF component ratings TBD_AFTER_IMPEDANCE_MAP (P2)", "ICP electron-current capacity PENDING_ICP45 (P1)", "ICP RF power closure PENDING_HARDWARE", "coupled H-1/ICP thermal closure UNRESOLVED (P3; A9H-TH-01, ICD ICP-47)", "anode material OPEN (A9H-ANODE-01, P4)", "anode thermal closure UNRESOLVED (A9H-ANODE-02, P4)"]}
 
 ## Scope deviations (declared)
 
@@ -961,16 +1013,16 @@ docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json: v1 and 
 | A9-01 | `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` | `ef07a3ecdfadec2c5933de2683fc0cc09466b7a25de268a8ac4fde2dfc3256b8` | True |
 | A9-01 | `docs/experiments/hall_icp/prereg_framework/HALL_ICP_PREREG_FRAMEWORK.md` | `0276a37313f2a50129127285d4cbc5c0fdb5ced3867cd6770f61716132dfa66b` | True |
 | A9-01 | `docs/experiments/hall_icp/prereg_framework/build_hall_icp_prereg_framework.py` | `6500c9953087158f9911b60e245faf30c9d4d69c97dac1828910eed821110188` | True |
-| A9-02 | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `3178d462d230656a313cd33060a42a74d99bc9ba3dc6afdc2036c0ca01664cb7` | True |
-| A9-02 | `docs/architecture_comparison/power_boundary_a9/BUS_POWER_BOUNDARY_A9.md` | `bf97b53c2908a338ba39f65737bec79f45a2e9efb30951db852fef0e874a4030` | True |
+| A9-02 | `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` | `f855cecaa1707bfe5c3a01bf7fd199ebdc7f9ae83cde6e132c2dfc16004558a3` | True |
+| A9-02 | `docs/architecture_comparison/power_boundary_a9/BUS_POWER_BOUNDARY_A9.md` | `4780430719195b24f8015d1c674f345adf007ab2a3e44e4ea06492c7e8d8a1cb` | True |
 | A9-02 | `docs/architecture_comparison/power_boundary_a9/build_bus_power_boundary_a9.py` | `901ceea5ae68e8522d985253b353ab344b81a22172a2369be27932ad6f50d707` | True |
-| A9-02 | `abep_sim/bus_boundary_a9.py` | `78014f51bec31c8c05129e6fe7d7e3db528e30e3e78237c693342b9568c66a27` | True |
+| A9-02 | `abep_sim/bus_boundary_a9.py` | `7b23dbd23d39bd576691f877c0b32b64c14e83e796b2da9a662f0639319c878a` | True |
 | A9-02 | `schemas/interfaces/bus_power_boundary_a9_v1.json` | `64238d1526d8ce6bf3ca6b45f385f8948e6dcf916e4f2140cbcb6c46d2c7aa09` | True |
-| A9-03 | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `05d6f20cb758eaaf71ad4598f6a57f6965ec8389d92a04931d63919dc3a5f097` | True |
-| A9-03 | `docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md` | `b069201feaa1097d1be2acf6fcd254a4f2014ea92b7477360059e87756d3b07a` | True |
+| A9-03 | `schemas/interfaces/icp_neutralizer_icd_v1.json` | `d073133bf31a404bc10df50730bf61f658316eefebcf7c177b92ea80a7907724` | True |
+| A9-03 | `docs/interfaces/icp_neutralizer/ICP_NEUTRALIZER_ICD.md` | `f5b2f474f95bb6f59912dc419f3d88ee1716d9bec7dd5ca6a8ba188ba49fb669` | True |
 | A9-03 | `docs/interfaces/icp_neutralizer/build_icp_neutralizer_icd.py` | `20b7481b91c97f05b09ee50a720972bc21fe5943a16d5ec335c45971e3967ec3` | True |
-| A9-04 | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `46df69a1024d512d2880fd0528798c13ee9b8bb3ab155538550f597bc65d4822` | True |
-| A9-04 | `docs/experiments/hall_icp/uncertainty_budget/HALL_ICP_UNCERTAINTY_BUDGET.md` | `f03e3b8e0e734ab4d42e06d1670b3f0d63dff228f8edd02ccb739c80a5beca18` | True |
+| A9-04 | `docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json` | `cc7d41c534f72731f7545c3396d7037b7e4721a3a20ff3591ee5da698b0fe2e8` | True |
+| A9-04 | `docs/experiments/hall_icp/uncertainty_budget/HALL_ICP_UNCERTAINTY_BUDGET.md` | `8c60f62c30934d7b282580b36aa775662e51077c7142f2ecca0018402b9be57c` | True |
 | A9-04 | `docs/experiments/hall_icp/uncertainty_budget/build_hall_icp_uncertainty_budget.py` | `6078d48a6bb0957ff471783f9989d6e541d76ad442c494c8cc2e4399b49e0979` | True |
 | A9-05ev | `docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json` | `ec300df97864c84617d47a76138acc37177c9453f306cbb2bf139874f2c68621` | True |
 | A9-05ev | `docs/evidence/icp_neutralizer/ICP_NEUTRALIZER_EVIDENCE.md` | `a2777c6d1f57d24f4efabce2c3a3fe35d275abb38cd229f9c62a42b14f24d375` | True |
@@ -978,22 +1030,22 @@ docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json: v1 and 
 | A9-05vi | `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` | `4a54bd1e4d52af7073a6016c07d47d10330220b7c7f45778b3996930714ee5e2` | True |
 | A9-05vi | `docs/experiments/hall_icp/validation_inputs/HALL_ICP_VALIDATION_INPUTS.md` | `9b1a5258af649a522ad35cb7b697f15428d103370b71701e202e7d47e38a12d3` | True |
 | A9-05vi | `docs/experiments/hall_icp/validation_inputs/build_hall_icp_validation_inputs.py` | `484025b961b9d96392f896e2dbc77783b3f2f962d11b3b16a6445a76921c0483` | True |
-| A9-06 | `docs/budgets/mass_a9/mass_a9_v1.json` | `046cda4a07318d283d46ae05c0557113dbc72b7bfbf37469d58b979ab94b9f30` | True |
-| A9-06 | `docs/budgets/mass_a9/MASS_A9.md` | `8692fdc26e3758ff33170bdb4c6b2e222cfb92a20a6e868637ffc5b69df1711c` | True |
+| A9-06 | `docs/budgets/mass_a9/mass_a9_v1.json` | `40a057c6f86965c1ca0d4b5346c6ad449a255f3a2f1fc46f332a437512dc8659` | True |
+| A9-06 | `docs/budgets/mass_a9/MASS_A9.md` | `a6c6bd5bceb73bb5523bbed74c2a0d3bb5be6bec77ee0e7a7f316d6bbeb16922` | True |
 | A9-06 | `docs/budgets/mass_a9/build_mass_a9.py` | `9d719214b0e9d93e1a690a24473c5d42f1150b66295e2cdd720e1c60cfec36de` | True |
-| A9-07 | `docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json` | `27978613fc09a1aa23ac55a616ab543ca59ad6d144d0ec25527f7a1fe904fd86` | True |
-| A9-07 | `docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md` | `e9f420e0823491334b8a78dec5b7c92234aafa7b28e9ff1f7507fe7273e008b2` | True |
-| A9-07 | `docs/hardware/h2_a9_revisions/build_h2_a9_revisions.py` | `42d364b025182c8d753f9fdbb8cc60b4614f12a335de4ebf6e956482db9f7c3d` | True |
-| A9-08 | `docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json` | `00752fb35e0821ca29b8b808c6fb143a0127f90376c1fd3f1074d2e2df36d766` | True |
-| A9-08 | `docs/budgets/xe_ledger_a9/XE_LEDGER_A9.md` | `b382ff5a0b146fc535b772150ba28605bfb338b9702bb94854addfe9f331043a` | True |
-| A9-08 | `docs/budgets/xe_ledger_a9/build_xe_ledger_a9.py` | `7c3c32e09a8fe632fcc88ce0b005190c140370f2f91a3b24233c6a41ef36f717` | True |
-| A9-09 | `docs/procurement/rfq_a9/rfq_a9_v1.json` | `962f9c4a04df5f29db9f577c04d070b6921829986a1a0bb1d030f0075a4838dc` | True |
-| A9-09 | `docs/procurement/rfq_a9/RFQ_A9.md` | `66a9f9de7169c2c4cbf3a97c5cf560aaa5e6ac64b66e5a5adbbddf70d5a3a08a` | True |
+| A9-07 | `docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json` | `7bd76fcb27761ddc6e014e5c58d079ecc9b9fa53bf845ade3dfc0576f6280b6a` | True |
+| A9-07 | `docs/hardware/h2_a9_revisions/H2_A9_REVISIONS.md` | `ce5eecae9fc61d180182113630acb9cd3f1bc4eb1a60b2dca55d4de3a109ce3b` | True |
+| A9-07 | `docs/hardware/h2_a9_revisions/build_h2_a9_revisions.py` | `24be38b2555efff0051c0bb7e58b43246f661e56d05046452d784446eadfd5f0` | True |
+| A9-08 | `docs/budgets/xe_ledger_a9/xe_ledger_a9_v1.json` | `65d39aabeb7b6362aecfeabca8dca8d09a2474f948a686e7af9aa552ca69b466` | True |
+| A9-08 | `docs/budgets/xe_ledger_a9/XE_LEDGER_A9.md` | `cc489439d9d5388a57d1c807c6789ff0c3d709ee3ad20e97226560028a77f405` | True |
+| A9-08 | `docs/budgets/xe_ledger_a9/build_xe_ledger_a9.py` | `6841e23de03daf1669ffda2e2804c20ad5e85955e827d1b92f01353f914b4759` | True |
+| A9-09 | `docs/procurement/rfq_a9/rfq_a9_v1.json` | `6c0e8e5987b5967f7ed49eefbae2caa0112b002882e44a297ba3a26dd5be319a` | True |
+| A9-09 | `docs/procurement/rfq_a9/RFQ_A9.md` | `2b5817ac88416c6b08e8aa352a2c10810aac035dc0905e2d1067a2297cab4988` | True |
 | A9-09 | `docs/procurement/rfq_a9/build_rfq_a9.py` | `955862af1381dacabc0b1f22b5a51c182383c9b38ed6bb12359a9f93fed62bef` | True |
 | A9-INT | `docs/experiments/hall_icp/integration/a9_core_integration_v1.json` | `86146f986e35e4d9e507c739aac9f8dd11b483be45fd7691bdccc585c734a09f` | True |
 | A9-INT | `docs/experiments/hall_icp/integration/A9_CORE_INTEGRATION.md` | `a64e4ad5d309afb218aaaf130239691f2e3d524c02997f2c0b42220afcd6803f` | True |
 | A9-INT | `docs/experiments/hall_icp/integration/build_a9_core_integration.py` | `5438fbe0a88c3fb216c59711a7cfeb1d29855659d241494a71bda0558b9c7c76` | True |
-| A9-10 | `docs/experiments/hall_icp/integration/a9_10_overlay.py` | `a03ad5132a56088b658f365ff835eb74de69ebaad70697e97d7f8d844ce843c7` | True |
+| A9-10 | `docs/experiments/hall_icp/integration/a9_10_overlay.py` | `9c95836a044f0639607509503b679957a22715eaa940c5e88d21b3d1f6b728f6` | True |
 
 ## Authority pins
 

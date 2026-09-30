@@ -158,7 +158,10 @@ def test_rf_voltage_rating_separate_from_dc_isolation(doc):
     assert "antenna circuit is NOT covered" in dc["requirement"]
     rf = by["ICP-44"]
     assert rf["value"] is None and rf["tbd"].startswith("TBD - requires")
-    assert "RF hipot at full forward power" in rf["verification"] and "combined stress" in rf["requirement"]
+    # A9.2 rf_500W (A9-10 review repair 3): the hipot is at the rated point of the characterized mismatch envelope,
+    # not at a 500 W forward component rating; the pre-A9.2 text is kept as verification_before_a9_2
+    assert "RF hipot at full forward power" in rf["verification_before_a9_2"] and "combined stress" in rf["requirement"]
+    assert "TBD_AFTER_IMPEDANCE_MAP" in rf["verification"] and "delivered/operating" in rf["verification"]
 
 
 def test_freeze_points_defined_and_incompatibility_checked(doc):

@@ -368,3 +368,4 @@ Changes applied by A9-10 after this lane's verified build (record `docs/experime
 | A910-A92-A902-02 | A9.2 OQ-A907-11, icp_matching_strategy | merge | `/slots[slot=icp_matching_network]` | 1 | icp_matching_network slot |
 | A910-A92-A902-03 | A9.2 OQ-A907-11 | replace | `/items[id=A902-22]/source` | 1 | A902-22 source |
 | A910-A92-A902-04 | A9.2 OQ-A907-11 | replace | `/h3_inputs[2]/basis` | 1 | h3 matching basis |
+| A910-A92R-A902-01 | A9.2 rf_measurement_reference | code | `None` | 0 | rf_power_planes() also returns \|Gamma\| and VSWR (derived from the measured forward / reflected power) and labels the coupler plane as the generator / 50-ohm side of the local match; arithmetic and ordering checks unchanged |

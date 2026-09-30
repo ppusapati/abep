@@ -2538,6 +2538,14 @@
     "ptr": "/h3_inputs[2]/basis",
     "count": 1,
     "summary": "h3 matching basis"
+   },
+   {
+    "cid": "A910-A92R-A902-01",
+    "driver": "A9.2 rf_measurement_reference",
+    "op": "code",
+    "ptr": null,
+    "count": 0,
+    "summary": "rf_power_planes() also returns |Gamma| and VSWR (derived from the measured forward / reflected power) and labels the coupler plane as the generator / 50-ohm side of the local match; arithmetic and ordering checks unchanged"
    }
   ]
  }

@@ -130,3 +130,19 @@ def test_a9_2_rows_and_oq_a907_11(doc):
     assert "OQ-A907-11" in by[("A9.2 OQ-A907-11", "a9_2")]["answers_lane_questions"]
     assert "ANSWERED_BY_A9_2" in doc["status_vocabulary"]
     assert any(r["id"] == "OQ-A910-05" and r["status"] == "OPEN" for r in doc["rows"])
+
+
+def test_a9_2_supersession_pointers_and_affected_open_rows(doc):
+    """Review repair 3: the A9.1 off-platform matching answer carries an explicit A9.2 OQ-A907-11 supersession pointer
+    (A9.1 decision row and ICPQ-05); the OPEN ICPQ-10 / ICPQ-11 are marked A9.2-affected and stay OPEN."""
+    by = {(r["id"], r["kind"]): r for r in doc["rows"]}
+    for key in (("A9-03-matching", "a9_1"), ("ICPQ-05", "lane")):
+        r = by[key]
+        assert r["status"] in ("ANSWERED", "ANSWERED_BY_A9_1")
+        assert "OQ-A907-11" in r["superseded_in_part_by_a9_2"] and "SUPERSEDED IN PART" in r["superseded_in_part_by_a9_2"]
+    for qid in ("ICPQ-10", "ICPQ-11"):
+        r = by[(qid, "lane")]
+        assert r["status"] == "OPEN" and "A9.2 rf_500W" in r["a9_2_affected"] and "impedance map" in r["needed_by"]
+    assert "not at a 500 W component rating" in by[("ICPQ-11", "lane")]["question"]
+    csv_txt = (ROOT / "docs/budgets/owner_decisions/owner_questions_state_v2.csv").read_text(encoding="utf-8")
+    assert csv_txt.count("SUPERSEDED IN PART") >= 2 and "A9.2-affected" in csv_txt

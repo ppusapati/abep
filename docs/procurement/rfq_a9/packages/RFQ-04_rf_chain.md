@@ -6,13 +6,13 @@ Purchase gate: H3 procurement gate + frozen A9 interfaces (owner row 8; A9.1 'A9
 
 ## Scope
 
-Laboratory 13.56 MHz RF generator (0-500 W forward test capability), adjustable LOCAL matching network on / immediately adjacent to the ICP module (A9.2 OQ-A907-11), calibrated dual directional coupler with forward/reflected sensors on the generator / 50-ohm side of the local match (component ratings TBD_AFTER_IMPEDANCE_MAP), calorimetric cross-check load, vacuum RF feedthroughs, and an identical live/sham pair of flexible coax for the stand crossing.
+Laboratory 13.56 MHz RF generator (0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating); generator forward-power rating TBD_AFTER_IMPEDANCE_MAP), adjustable LOCAL matching network on / immediately adjacent to the ICP module (A9.2 OQ-A907-11), calibrated dual directional coupler with forward/reflected sensors on the generator / 50-ohm side of the local match (component ratings TBD_AFTER_IMPEDANCE_MAP), calorimetric cross-check load, vacuum RF feedthroughs, and an identical live/sham pair of flexible coax for the stand crossing.
 
 ## Quantities
 
 | item | qty | basis |
 |---|---|---|
-| 13.56 MHz generator, 0-500 W forward | 1 | row 72; row 8 |
+| 13.56 MHz generator for the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating); forward-power rating TBD_AFTER_IMPEDANCE_MAP | 1 | row 72; row 8 |
 | adjustable local matching network for on-module mounting (development article, A9.2) | 1 | row 8; A9-03-matching |
 | dual directional coupler + forward/reflected sensors (calibrated at 13.56 MHz) | 1 | row 72 |
 | calorimetric cross-check load | 1 | row 72; UBQ-04 |
@@ -24,7 +24,7 @@ Laboratory 13.56 MHz RF generator (0-500 W forward test capability), adjustable 
 | id | title | value | units | status | freeze | evidence class | sources |
 |---|---|---|---|---|---|---|---|
 | RFQ-04-R01 | frequency | 13.56 | MHz | OWNER_GIVEN | NOW | owner-allocation | row 72; UB-RF-00 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); ICP-11 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
-| RFQ-04-R02 | laboratory forward-power capability | `[0.0, 500.0]` | W | OWNER_GIVEN | NOW | owner-allocation | row 72; A9.1 OQ-A902-03; row 109; UB-RF-01 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
+| RFQ-04-R02 | laboratory delivered/operating RF investigation capability (generator rating TBD_AFTER_IMPEDANCE_MAP) | `[0.0, 500.0]` | W | OWNER_GIVEN | NOW | owner-allocation | row 72; A9.1 OQ-A902-03; row 109; UB-RF-01 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json); docs/decisions/OD_2026_09_30_A9_2_a907_followup_owner_decisions.json#/decisions/rf_500W |
 | RFQ-04-R03 | generator interlock and telemetry | interlock + fwd/refl telemetry | - | OWNER_GIVEN | NOW | owner-allocation | row 62; row 130; ICP-16 (schemas/interfaces/icp_neutralizer_icd_v1.json); ICP-34 (schemas/interfaces/icp_neutralizer_icd_v1.json) |
 | RFQ-04-R04 | generator input power and metering | TBD - requires owner answer to OQ-RFQ-06 and A902-21 (generator DC-input -> forward-power efficiency, LOCK-2) | W | TBD | LOCK-2 | - | A902-19 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json); A902-21 (docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json) |
 | RFQ-04-R05 | output spectrum and stability | TBD - requires S1a spectrum of the source output into the matched load (UB-RF-06) | relative | TBD | LOCK-2 | - | UB-RF-06 (docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json) |
@@ -43,14 +43,14 @@ Laboratory 13.56 MHz RF generator (0-500 W forward test capability), adjustable 
 
 Notes:
 
-- RFQ-04-R15: added in A9-10 (quotation only; no purchase order)
+- RFQ-04-R15: added in A9-10; SUPERSEDED_BY_A9_2 (history kept in requirement_before_a9_2; quotation only, no purchase order)
 - RFQ-04-R16: added in A9-10 for A9.2 (quotation only; no purchase order)
 - RFQ-04-R17: added in A9-10 for A9.2 (quotation only)
 
 Requirement text:
 
 - **RFQ-04-R01** 13.56 MHz.
-- **RFQ-04-R02** Generator and inline measurement chain sized for this forward power range initially. This is a TEST CAPABILITY, not a flight allocation: the flight ICP must fit inside P_ICP,available = 1350 W - P_common - P_Hall - P_other,active at every registered condition.
+- **RFQ-04-R02** The laboratory RF source and inline measurement chain provide a 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating). This range is NOT a component rating: the generator forward-power rating and the ratings of the inline chain are TBD_AFTER_IMPEDANCE_MAP (A9.2 rf_500W: selected only after the expected mismatch envelope is characterized; with the A9-07 review sensitivity VSWR about 5.2, about 925 W forward is needed for 500 W delivered, which is why a 500 W rating alone is unacceptable). This is a TEST CAPABILITY, not a flight allocation: the flight ICP must fit inside P_ICP,available = 1350 W - P_common - P_Hall - P_other,active at every registered condition.
 - **RFQ-04-R03** Hardware interlock input (RF inhibited unless permissives are true), reflected-power trip, remote forward/reflected readout and state telemetry.
 - **RFQ-04-R04** Supplier states the input power interface (AC mains or DC) and allows input-power metering. The quantity crossing the A9 bus boundary is the RF source's DC input; a mains-fed laboratory generator is GROUND/FACILITY-ONLY and its efficiency is not the flight slot efficiency.
 - **RFQ-04-R05** Supplier states harmonic content into a matched load and frequency stability.
@@ -63,13 +63,13 @@ Requirement text:
 - **RFQ-04-R12** RF-voltage, creepage/clearance and Paschen rating and combined RF + DC stress qualification (ICP-44; not replaced by the C1 keeper hipot); power / voltage / current ratings selected only after the mismatch envelope is characterized (A9.2; 0-500 W is not a component rating).
 - **RFQ-04-R13** Supplier states conducted/radiated emission data of generator and matching network; S1a measures pickup on all channels with a dummy load and with the ICP energized.
 - **RFQ-04-R14** Not a lab requirement: the flight-representative RF generator/matching is allocated mass in the owner's v0 dry budget (allocation, not a CBE); the supplier states mass for any flight-representative option.
-- **RFQ-04-R15** Optional quotation line: a fixed on-module 13.56 MHz pre-match / impedance transformation network (plus a sham-equivalent network) holding the coax/coupler segment at |Gamma| <= Gamma_max, quoted only for the case that OQ-A907-11 option a is adopted; the tunable match stays off-platform (A9.1 A9-03-matching).
+- **RFQ-04-R15** SUPERSEDED_BY_A9_2 - not requested as a quotation line. The A9 baseline is the adjustable LOCAL matching network on / immediately adjacent to the ICP module with the coupler on the generator / 50-ohm side (A9.2 OQ-A907-11; RFQ-04-R06 / R17); a fixed on-module network is only one possible later flight implementation, decided after the ICP impedance map (A9.2 icp_matching_strategy). The earlier option-line text is kept as requirement_before_a9_2.
 - **RFQ-04-R16** The RF source provides reflected-power monitoring, mismatch / interlock threshold, arc detection where feasible, thermal monitoring, automatic RF reduction / shutdown (A9.2). Exact reflected-power and VSWR trip thresholds are frozen after the ICP antenna/load characterization and are not stated in this RFQ.
 - **RFQ-04-R17** Supplier states the mass and envelope of the adjustable local matching network for on-module mounting and the voltage / current capability of its elements; required values are set after the impedance map (A9.2). No rating is stated in this RFQ.
 
 ## Acceptance
 
-- coupler/sensor calibration certificates at 13.56 MHz over 0-500 W forward (row 72)
+- coupler/sensor calibration certificates at 13.56 MHz over the forward-power range of the selected generator rating (TBD_AFTER_IMPEDANCE_MAP), covering the 0-500 W delivered/operating investigation capability (row 72 as interpreted by A9.2 rf_500W; not a component rating) plus the characterized mismatch
 - coupler vs calorimetry agreement with k_x = 2 (UBQ-04); failure -> EXCLUDED_INSTRUMENT
 - feedthrough RF + DC stress qualification (ICP-44)
 - interlock function test (RF inhibited on each permissive false) (ICP-16)
