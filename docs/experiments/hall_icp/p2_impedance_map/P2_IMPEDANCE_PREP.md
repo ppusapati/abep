@@ -181,13 +181,14 @@ Refusals:
 - `PlasmaStateError (SequenceError)`: lit plasma in a DUMMY_LOAD / COLD_ANTENNA_POWERED_UNLIT record, lit/mode inconsistent or lit not boolean, powered-unlit record without gas off (gas null, both mdot = 0, p_chamber logged) or without the optical unlit verification, a COLD_ANTENNA_POWERED_UNLIT / HOT_MAP record without the simultaneous photodiode, reflected-power, antenna-current, collector-response and pressure records or without the threshold basis, a HOT_MAP mode that differs from the photodiode classification, cold reference not from a verified-unlit source
 - `UncertainPlasmaStateError (PlasmaStateError)`: plasma state UNCERTAIN (A9.4 P2Q-05): optical UNLIT with electrical evidence of ignition / mode transition, lost line of sight, saturated photodiode, or lit without an E/H assignment; never a cold reference or map point without re-classification
 - `IgnitionDetectedError (PlasmaStateError)`: powered-unlit record whose optical signal reached the unlit threshold of the P1 registered procedure (abort and flag, S-08)
-- `RecordError`: malformed or non-finite values, P_reflected > P_forward, singular transforms, missing nested sub-fields, HOT_MAP without factors.gas; mismatch envelope mixing data classes / evidence statuses or evidence tags
+- `RecordError`: malformed or non-finite values, P_reflected > P_forward, singular transforms, missing nested sub-fields, HOT_MAP without factors.gas; mismatch envelope mixing data classes / evidence statuses or evidence tags; a declared tuning state without logged element positions, or logged positions differing from the characterized state (A9.6)
+- `MixedEvidenceError (RecordError)`: record and calibration set of different data classes, or a loss verification / cold reference of the other class (A9.6 sec. 14)
 
 Outputs:
 
 - at_RP_CPL: P_forward, P_reflected, P_net, |Gamma| (powers and complex), VSWR
 - Z_antenna per method at RP-ANT (R, X), primary method, method difference
-- P_line/match,loss, P_delivered, match/line efficiency (or TBD / declared-bound interval)
+- P_line/match,loss, P_delivered, match/line efficiency (or TBD / declared-bound interval) - only with a LOSS_MODEL_VERIFIED loss verification; otherwise REFUSED strings and loss_status UNVERIFIED (A9.6 sec. 14)
 - antenna-current cross-check, resistance split (reconstructed; its P_delivered_x_Rsplit_fraction_W is a diagnostic, never P_plasma evidence for any gate)
 - unlit_verification of powered-unlit records (state_class UNLIT, A9.4 P2Q-05); plasma_state_classification of HOT_MAP records (UNLIT / E_MODE / H_MODE; UNCERTAIN refused); classify_plasma_state(); cold_reference_from_reduced() for R_cold entries
 - evidence_tag per record (from factors.gas / engineering_control; Ar and OQ-VI-05 records are non-scoring)
@@ -227,6 +228,79 @@ Reducer self-check (SYNTHETIC_TEST_DATA_NOT_EVIDENCE, closed form):
 | LOCAL_MATCH_FLIGHT_IMPLEMENTATION | fixed / switched / electronically tuned / other (ICP-13) | Z_antenna = R + jX vs mdot, P_RF, p, gas, Hall operating point; fixed-tune sub-sweeps (HM-F08) | DEFERRED by A9.2 icp_matching_strategy |
 | RF_INTERLOCK_TRIP_THRESHOLDS | reflected-power / VSWR trips (ICP-16, A9H-RF-PROT-01, RFQ-04-R16, A9-04 LA-03) | characterized reflected-power / VSWR envelope incl. mode jumps and tuning transients | after-evidence (A9.2 rf_protection) |
 | VALIDATION_INPUTS | VI-RF-02..07, VI-RF-10 | reduced records | HARDWARE_ONLY (unchanged) |
+
+## 7. P2 framework (A9.6 sec. 9 / 14; implemented, not run on data)
+
+Follow-on `fo_a9_6_p2_framework_completion`, trigger `T_A9_6_P2_FRAMEWORK_COMPLETION`, base `1d67f99f88007982eff77670b64c6eb7c595bccd`; decision `docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json` (sha256 `d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327`), verbatim `docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md` (sha256 `c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634`). Module `docs/experiments/hall_icp/p2_impedance_map/p2_framework.py`; map schema `docs/experiments/hall_icp/p2_impedance_map/p2_impedance_map_schema_v1.json`; tests `tests/test_p2_impedance_framework.py`.
+
+**Status:** IMPLEMENTED_FRAMEWORK_NOT_RUN_ON_DATA (no measured record exists; physical ICP / RF chain unverified; verification deferred to fo_a9_6_consolidated_verification).
+
+Numbers: no Vyovrinda value is produced; every numeric output needs measured input and stays TBD_AFTER_EVIDENCE until then; synthetic values are labelled SYNTHETIC_TEST_DATA_NOT_EVIDENCE.
+
+| A9.6 sec. 9 item | implementation | data needed | status |
+|---|---|---|---|
+| reference planes | reference_planes (RP-GEN, RP-CPL, RP-MIN, RP-ANT, RP-VI); p2_framework.check_plane_chain; p2_framework.PLANE_ORDER | planes' physical locations TBD (module drawings) | IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output) |
+| VNA calibration | p2_framework.sol_error_terms; p2_framework.sol_correct; p2_framework.coupler_error_model | VNA / kit certificates and standard definitions (CAL-P2-01, MS-P2-02) | IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output) |
+| directional-coupler measurements | p2_framework.coupler_power_factor; p2_framework.term_from_dB; p2_framework.tracking_term_from_dB; p2_framework.reflection_worst_case_error; p2_framework.scalar_gamma_bounds | coupler / sensor certificates; D_min at LOCK-2 (CAL-P2-07) | IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output) |
+| V/I RF measurements | p2_framework.k_from_mag_phase; p2_framework.vi_calibration_from_known_load; p2_framework.vi_power_and_impedance; p2_impedance_reducer.reduce_record (method vi_probe) | probe selection and CAL-P2-05/06/15 data | IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output) |
+| local match settings | p2_impedance_reducer.network_cpl_to_ant (logged positions == characterized positions); p2_framework.ladder_element_stress; p2_framework.ladder_abcd | selected match, its tuning grid (CAL-P2-03) and topology / element values | IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output) |
+| S-parameter data | p2_framework.parse_touchstone; p2_framework.read_touchstone; p2_framework.write_touchstone; p2_framework.sparam_set; p2_framework.two_port_entry; p2_framework.one_port_gamma | Touchstone files of S-01..S-06 (IDP2-19) | IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output) |
+| antenna impedance | p2_impedance_reducer.reduce_record (Z_antenna at RP-ANT by vi_probe / deembed); p2_framework.z_deembed_function | calibrated records | IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output) |
+| delivered-power reconstruction | p2_impedance_reducer.reduce_record (P_delivered only with a VERIFIED loss model; else REFUSED strings, loss_status UNVERIFIED); p2_impedance_reducer.loss_verification_status | at-power loss verification (CAL-P2-09 / CAL-P2-10) | IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output) |
+| RF line/match loss | p2_framework.dissipated_fraction_matched; p2_framework.verify_line_match_loss; p2_impedance_reducer.transfer_efficiency | two-port data + calorimetric check; k TBD | IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output) |
+| plasma-state classification | p2_impedance_reducer.classify_plasma_state (UNLIT / E_MODE / H_MODE / UNCERTAIN) | frozen photodiode threshold HM-R15 | IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output) |
+| photodiode channel | record plasma_state.optical_signal_V / threshold_basis / line of sight / saturation; p2_framework.detect_eh_transitions (photodiode required) | INS-P2-10 hardware and P1 records IF-P1-23 | IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output) |
+| E/H-mode transition detection | p2_framework.detect_eh_transitions; p2_framework.hysteresis | criteria form P2Q-09 / agreement rule P2Q-03 (TBD_OWNER); thresholds TBD_AFTER_EVIDENCE | IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output) |
+| mismatch envelope | p2_impedance_reducer.mismatch_envelope; p2_framework.feedthrough_peaks_from_network | complete measured map of the P1 stable region | IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output) |
+| uncertainty propagation | p2_framework.propagate_linear; p2_framework.propagate_mc; p2_framework.gamma_vswr_pnet_uncertainty; p2_framework.z_from_gamma_uncertainty; p2_framework.p_delivered_uncertainty; p2_framework.z_deembed_function | calibration uncertainties UB-P2-Z-01..08, UB-RF-02..08 | IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output) |
+| impedance-map storage | p2_framework.map_point; p2_framework.ingest_records; p2_framework.build_map; p2_framework.write_map / read_map / validate_map; p2_framework.split_by_domain; docs/experiments/hall_icp/p2_impedance_map/p2_impedance_map_schema_v1.json | reduced measured records | IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output) |
+| rating derivation | p2_framework.rating_structure; p2_framework.ladder_element_stress; p2_framework.feedthrough_peaks_from_network | complete measured envelope + owner inputs ICPQ-10, ICPQ-11, P2Q-10 | IMPLEMENTED (framework; TBD_AFTER_EVIDENCE for every numeric output) |
+
+Fail-closed behaviour (A9.6 sec. 14):
+
+| requirement | P2 behaviour | applicability |
+|---|---|---|
+| missing required data -> no PASS | every missing input raises (MissingCalibrationError, RecordError, TouchstoneError, SParamError, CriteriaMissingError, UncertaintyMissingError, RatingInputError); no function returns PASS | applies |
+| mismatched sign convention -> excluded | P2 carries I_collector_A only as photodiode corroboration (A9.4 P2Q-05) and computes nothing from its sign; the capacity sign convention is the P1 registered network (A9.5 P1Q-15/16) | P1 reducer (not re-implemented here) |
+| missing current path -> excluded | not a P2 quantity (ICP-45 current closure) | P1 reducer |
+| mixed synthetic/measured evidence -> refused | MixedEvidenceError: record vs calibration set, loss verification, cold reference; build_map / validate_map refuse mixed points; mismatch_envelope refuses mixing | applies |
+| invalid RF-ON/RF-OFF pair -> excluded | not a P2 quantity (ICP-45 capacity I_ON - I_OFF) | P1 reducer |
+| unknown I_d,max,H1 -> NOT_EVALUATED | P2 map coverage of the H-1 registered maximum point stays PENDING (IDP2-10); split_by_domain returns NOT_EVALUATED for points whose factors or region bounds are missing | applies (coverage) |
+| missing uncertainty -> NOT_EVALUATED | map_point(uncertainty=None) -> status NOT_EVALUATED; verify_line_match_loss with a missing u -> NOT_EVALUATED (never verified); propagation without a covariance raises UncertaintyMissingError | applies |
+| unresolved plasma state -> UNCERTAIN | classify_plasma_state -> UNCERTAIN; reduce_record raises UncertainPlasmaStateError; ingest_records keeps the record as excluded with plasma_state UNCERTAIN; detect_eh_transitions reports UNCERTAIN_ELECTRICAL_ONLY / UNCERTAIN_PHOTODIODE_INVALID | applies |
+| unverified line loss -> no silently reconstructed plasma power | P_line/match,loss and P_delivered are REFUSED strings with loss_status UNVERIFIED unless a LOSS_MODEL_VERIFIED at-power verification covers the logged tuning state; P_plasma is never an input or output (ForwardAsPlasmaError) | applies |
+| OUT_OF_DOMAIN remains distinct from FAIL | split_by_domain labels points outside the P1 stable-region bounds OUT_OF_DOMAIN (excluded, not failed); verification statuses are LOSS_MODEL_VERIFIED / LOSS_MODEL_INCONSISTENT / NOT_EVALUATED - there is no PASS/FAIL score in P2 | applies |
+
+Reducer changes:
+
+- loss_verification (new required calibration field, nullable) and per-bound 'verification': P_line/match,loss and P_delivered reconstructed only with a LOSS_MODEL_VERIFIED record covering the logged tuning state; else REFUSED strings, loss_status UNVERIFIED
+- MixedEvidenceError: record vs calibration set, loss verification, cold reference
+- match_states entries carry the characterized element 'positions'; the record's logged positions must equal them
+- mismatch_envelope exclusion reasons name the loss_status
+
+ICPQ-10 heat-load bound (TBD_OWNER): Total ICP module heat-load bound (ICP-43): use 1.20 x (P_fwd,max + P_d,max) with P_d,max from the A9-02 discharge slot, or, if every score-bearing stand point is held inside the P_bus < 1.5 kW ceiling (row 108), the envelope 1.20 x 1.5 kW used for the stand by H2-6 H26-44? Alternatives: A: bound from P_fwd,max (P2 envelope) and P_d,max (A9-02 discharge slot) as stated in the question; B: envelope tied to the P_bus < 1.5 kW ceiling (row 108) as stated in the question. carried side by side; neither selected; the factor and ceiling are the question's own text (copied from the pinned state v3).
+
+References (open access; sha256 of the file read):
+
+| id | citation | locators | sha256 | use |
+|---|---|---|---|---|
+| REF-TOUCHSTONE11 | Touchstone(R) File Format Specification, Rev 1.1, EIA/IBIS Open Forum (copyright 2002; page footer dated 10/1/2003) (https://ibis.org/connector/touchstone_spec11.pdf) | p. 3 general rules ('!' comments, ASCII only, .snp extension, angles in degrees); pp. 4-5 option line '# <frequency unit> <parameter> <format> R <n>'; defaults GHz, S, MA, R 50; formats DB (20 log10 \|magnitude\|), MA, RI; p. 6 data lines: 1-port <f> <N11>; 2-port <f> <N11> <N21> <N12> <N22> ('21' precedes '12'); frequencies in increasing order; pp. 10-11 noise parameters after 2-port data | `180ff686cc8a77e4...` | Touchstone reader / writer (parse_touchstone, read_touchstone, write_touchstone) |
+| REF-WALKER2023 | B. Walker (Copper Mountain Technologies), 'What is the 12-Term VNA Calibration Model?', Microwaves & RF (mwrf.com; PDF hosted under document/2023/11 - publication date: verify) (https://img.mwrf.com/files/base/ebm/mwrf/document/2023/11/655bd7483b5d34001e6defc1-copper.pdf?dl=655bd7483b5d34001e6defc1-copper.pdf) | p. 3 Eq. (8) Gamma_in = e00 + e10e01 Gamma_L / (1 - e11 Gamma_L) (three unknowns); p. 3 C = [[Gamma_a1, 1, Gamma_a1 Gamma_m1], ...], V = [Gamma_m1, ...]; p. 4 E = (C^H C)^-1 C^H V; e00 = E2, e11 = E3, e10e01 = E1 + E2 E3; least squares with more standards | `f21809e84347ce79...` | sol_error_terms / sol_correct / coupler_error_model |
+| REF-AN1287-3 | Agilent Technologies, 'Applying Error Correction to Network Analyzer Measurements', Application Note 1287-3 (Keysight literature no. 5965-7709E) (https://anlage.umd.edu/Microwave%20Measurements%20for%20Personal%20Web%20Site/5965-7709E.pdf) | p. 4 one-port calibration: directivity, source match and reflection tracking from three known standards (open, short, load); p. 12 Fig. 14 reflection uncertainty S11m = S11a +/- (ED + S11a^2 ES + S21a S12a EL + S11a (1 - ERT)); worked numbers 47 dB -> .0045, 36 dB -> .0158, .019 dB -> .0022, total +/-.0088 | `77788abe195df147...` | reflection_worst_case_error / scalar_gamma_bounds / term_from_dB; FS-04 recomputes the published Fig. 14 example as a code check |
+| REF-GUM2008 | JCGM 100:2008 (GUM 1995 with minor corrections) (https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf) | 5.1.2 Eq. (10) law of propagation, uncorrelated inputs; 5.2.2 Eq. (13) correlated inputs | `41bbf068fbc0d798...` | gamma_vswr_pnet_uncertainty / p_delivered_uncertainty / propagate_linear |
+| REF-JCGM101 | JCGM 101:2008, Supplement 1 to the GUM - Propagation of distributions using a Monte Carlo method (https://www.bipm.org/documents/20126/2071204/JCGM_101_2008_E.pdf) | 6.4.8.4 sampling N(x, U_x) through the Cholesky factor; 7.2.1 number of trials M; 7.6 estimate and standard uncertainty; 7.7.2 probabilistically symmetric coverage interval (q = pM or integer part of pM + 1/2; r = (M - q)/2 or integer part of (M - q + 1)/2) | `6d8548af875df112...` | propagate_mc |
+| REF-JCGM102 | JCGM 102:2011, Supplement 2 to the GUM - Extension to any number of output quantities (https://www.bipm.org/documents/20126/2071204/JCGM_102_2011_E.pdf) | 6.2.1.3 Eq. (3) U_y = C_x U_x C_x^T; 6.4 propagation for models involving complex quantities (real and imaginary parts) | `98dffc68bd69c3b6...` | propagate_linear (multivariate) / z_from_gamma_uncertainty / z_deembed_function |
+
+Framework self-check:
+
+- **FS-01** (SYNTHETIC_TEST_DATA_NOT_EVIDENCE) Touchstone 1.1 write -> parse round trip of a synthetic 2-port, 3 points: `{"max_abs_error_below_1e-12": {"RI": true, "MA": true, "DB": true}, "ok": true}`
+- **FS-02** (SYNTHETIC_TEST_DATA_NOT_EVIDENCE) one-port SOL error terms recovered from synthetic ideal short / open / load (REF-WALKER2023 p. 4 matrix solution): `{"max_abs_error_below_1e-12": true, "ok": true}`
+- **FS-03** (SYNTHETIC_TEST_DATA_NOT_EVIDENCE) Z_antenna = 2 + j80 ohm de-embedded from Touchstone-derived two-ports against the closed-form input impedance of a lossless 30-degree 50-ohm line (Z0 (Z + j Z0 tan) / (Z0 + j Z tan)) loaded by a series/shunt ladder: `{"recovered_Z_ohm": [2.0, 80.0], "ok": true}`
+- **FS-04** (published worked example (code check)) REF-AN1287-3 p. 12 Fig. 14 reflection uncertainty recomputed from its stated inputs (47 dB directivity and load match, 36 dB source match, .019 dB tracking, |S11| .158, |S21| .891): `{"terms": {"E_D": 0.00447, "E_S": 0.0158, "E_RT": 0.00219}, "total": 0.00875, "published_total": 0.0088, "ok": true, "tolerance_note": "the publication adds terms rounded to 2 significant digits", "evidence_class_of_inputs": "published worked example (code check only; not a Vyovrinda value)"}`
+- **FS-05** (SYNTHETIC_TEST_DATA_NOT_EVIDENCE) u(|Gamma|) for synthetic P_fwd = 100 +/- 1 W, P_ref = 4 +/- 0.2 W: analytic GUM vs numerical-Jacobian GUM vs seeded Monte Carlo (M = 20000, seed 20260930): `{"u_analytic": 0.00509902, "u_linear": 0.00509902, "u_mc": 0.005123, "mc_coverage_interval_95": [0.18963, 0.2098], "ok": true}`
+- **FS-06** (SYNTHETIC_TEST_DATA_NOT_EVIDENCE) E/H jump detection on a synthetic 4-point up sweep (photodiode + reflected power + antenna current step between index 1 and 2): `{"events": [{"between": [1, 2], "class": "TRANSITION_CANDIDATE_CORROBORATED", "emission_step": "UP"}], "ok": true}`
+- **FS-07** (SYNTHETIC_TEST_DATA_NOT_EVIDENCE) map build -> JSON -> validate round trip with one reduced synthetic record and one refused record (measured record against a synthetic calibration set: MixedEvidenceError, kept as excluded): `{"content_sha256_verified": true, "excluded": [["SYN-REC-02", "MixedEvidenceError"]], "point_uncertainty_status": "NOT_EVALUATED", "ok": true}`
+- **FS-08** (SYNTHETIC_TEST_DATA_NOT_EVIDENCE) rating_structure without an envelope: every candidate TBD, RF_COMPONENT_RATINGS unchanged: `{"RF_COMPONENT_RATINGS": "TBD_AFTER_IMPEDANCE_MAP", "candidates": ["TBD_AFTER_EVIDENCE", "TBD_OWNER"], "ok": true}`
 
 ## (a) Items / parameters
 
@@ -304,6 +378,27 @@ Reducer self-check (SYNTHETIC_TEST_DATA_NOT_EVIDENCE, closed form):
 | INS-P2-10 | optical-emission photodiode + amplifier + DAQ channel, with optical access / window (REQUIRED independent ignition / unlit and E/H-mode indicator; S-08 unlit verification; A9.4 P2Q-05) | see required_specs | - | owner decision A9.4 P2Q-05 (PHOTODIODE_REQUIRED) | A9.3 P2; A9.3 OQ-RFQ-07; A9.4 P2Q-05 | owner-stated | OWNER_GIVEN | LOCK-1 |
 | INS-P2-11 | input power analyser for P_mains,in of the laboratory generator | see required_specs | - | P2 preparation (A9.3 authorizations.P2) | A9.3 P2; A9.3 OQ-RFQ-07 | assumed | PROPOSED | LOCK-1 |
 | INS-P2-12 | match element position read-out / encoders | see required_specs | - | P2 preparation (A9.3 authorizations.P2) | A9.3 P2; A9.3 OQ-RFQ-07 | assumed | PROPOSED | LOCK-1 |
+| FW-01 | Touchstone ingestion rule | Touchstone 1.1 .s1p / .s2p, S-parameters only; every option-line field explicit (spec defaults applied only when allowed AND recorded); ASCII; increasing frequency; 2-port order N11 N21 N12 N22; file sha256 recorded | - | A9.6 sec. 9 'S-parameter data' | REF-TOUCHSTONE11 | assumed | DEFINED | NOW |
+| FW-02 | calibration two-ports from stored S-parameter sets | exact drive-frequency point only (float tolerance FREQ_MATCH_RTOL); Z0 must equal the file reference R; no interpolation, no renormalization inside the reducer | - | A9.6 sec. 9 | this package CAL-P2-02/03 | assumed | DEFINED | NOW |
+| FW-03 | float-representation tolerance for frequency matching | 1e-12 | relative | numerical convention (not a physical quantity) | p2_framework.FREQ_MATCH_RTOL | assumed | DEFINED | NOW |
+| FW-04 | one-port SOL error terms and correction | three-term model, >= 3 known standards with definition sources, least squares for > 3 | - | A9.6 sec. 9 'VNA calibration' | REF-WALKER2023; REF-AN1287-3 | assumed | DEFINED | NOW |
+| FW-05 | coupler power factors and scalar \|Gamma\| bounds | CF = 10^((C + L)/10) / K (K = indicated / incident); worst-case one-port error E_D + \|G\|^2 E_S + \|G\| \|1 - E_RT\| | - | A9.6 sec. 9 'directional-coupler measurements' | REF-AN1287-3 | assumed | DEFINED | NOW |
+| FW-06 | V/I calibration on a known load | k_V / k_I = Z_known I_raw / V_raw; \|k_I\|^2 = P_known / (c R_known \|I_raw\|^2), c = 1/2 peak or 1 rms; phase of k_I declared 0 | - | A9.6 sec. 9 'V/I RF measurements' (closed form from Z = V/I and P = c Re(V I*)) | this package CAL-P2-05/15 | model-derived | DEFINED | NOW |
+| FW-07 | local-match state logging rule | a record declaring a tuning state logs its element positions; they must equal the positions logged when that state was characterized; otherwise refused | - | A9.6 sec. 9 'local match settings' | this package CAL-P2-03/04 | assumed | DEFINED | NOW |
+| FW-08 | line / match loss verification rule (form) | eta_meas = P_ref_load / P_net vs eta_pred; \|eta_meas - eta_pred\| / u_c <= k -> LOSS_MODEL_VERIFIED; otherwise LOSS_MODEL_INCONSISTENT; missing u -> NOT_EVALUATED; P_delivered reconstructed only when VERIFIED | - | A9.6 sec. 14 'unverified line loss' | this package CAL-P2-09/10; UB-RF-08 | assumed | PROPOSED | LOCK-1 |
+| FW-09 | coverage factor k of the loss verification | TBD - requires the owner-frozen value (LOCK-2; the UB-RF-08 coupler-vs-calorimetry k_x = 2 is a candidate, not adopted here) | - | LOCK-2 | UB-RF-08 | n/a (no numeric value; TBD / PENDING) | TBD | LOCK-2 |
+| FW-10 | E/H transition criteria form | TBD - requires the owner answer to P2Q-09 (absolute step or k x combined step uncertainty; both implemented side by side) | - | HM-R06 | P2Q-09; HM-R06 | n/a (no numeric value; TBD / PENDING) | TBD | LOCK-1 |
+| FW-11 | E/H transition thresholds | TBD - requires the P1 photodiode / reflected-power / antenna-current records (IF-P1-23) and their step uncertainties; frozen before the P2 map | V; W; A | HM-R06, HM-R15 | HM-R06 | n/a (no numeric value; TBD / PENDING) | TBD | LOCK-2 |
+| FW-12 | up / down hysteresis agreement rule | TBD - requires the owner answer to P2Q-03; hysteresis() reports widths in P_forward and P_delivered without judging | - | HM-R05 | P2Q-03; HM-R05 | n/a (no numeric value; TBD / PENDING) | TBD | LOCK-1 |
+| FW-13 | uncertainty propagation methods | GUM law of propagation (analytic or numerical Jacobian) and seeded Monte Carlo; complex quantities via real and imaginary parts | - | A9.6 sec. 9 | REF-GUM2008; REF-JCGM101; REF-JCGM102 | assumed | DEFINED | NOW |
+| FW-14 | numerical-derivative step as a fraction of u(x_i) | 0.001 | - | numerical convention (not a physical quantity); checked against analytic derivatives in the tests | p2_framework.STEP_FRACTION_OF_U | assumed | DEFINED | NOW |
+| FW-15 | Monte Carlo trial count and seed per campaign | TBD - requires the campaign declaration (fixed M or the JCGM 101 7.9 adaptive procedure) before the map is reduced | - | REF-JCGM101 7.2 | REF-JCGM101 | n/a (no numeric value; TBD / PENDING) | TBD | LOCK-2 |
+| FW-16 | impedance-map storage format | p2_impedance_map_v1 (p2_impedance_map_schema_v1.json): canonical JSON with content sha256, excluded records preserved with refusal class and reason, rating_status fixed TBD_AFTER_IMPEDANCE_MAP | - | A9.6 sec. 9 'impedance-map storage' | this package | assumed | DEFINED | NOW |
+| FW-17 | rating-derivation structure | candidate minimum = owner margin x complete measured envelope maximum, status CANDIDATE_FOR_OWNER_SELECTION; otherwise TBD_AFTER_EVIDENCE / TBD_OWNER; RF_COMPONENT_RATINGS stays TBD_AFTER_IMPEDANCE_MAP | - | A9.6 sec. 9 'rating derivation'; A9.2 rf_500W | A9.2 rf_500W | owner-allocation | DEFINED | NOW |
+| FW-18 | k_RF (antenna-circuit rated voltage / V_ant,peak) | TBD - requires the owner answer to ICPQ-11 (TBD_OWNER) | - | ICP-44 | ICPQ-11 | n/a (no numeric value; TBD / PENDING) | TBD | after-evidence |
+| FW-19 | ICP module heat-load bound (ICP-43) | TBD - requires the owner answer to ICPQ-10 (TBD_OWNER; both alternatives carried side by side in framework.heat_load_alternatives) | W | ICP-43 | ICPQ-10 | n/a (no numeric value; TBD / PENDING) | TBD | after-evidence |
+| FW-20 | rating margins of the other RF components | TBD - requires the owner answer to P2Q-10 (TBD_OWNER) | - | A9.2 rf_500W | P2Q-10 | n/a (no numeric value; TBD / PENDING) | TBD | after-evidence |
+| FW-21 | P1 stable-region factor bounds for OUT_OF_DOMAIN labelling | TBD - requires the P1 hand-over record (IF-P1-01) | W; mg/s; Pa; V; A | HM-R01 | IDP2-01 | n/a (no numeric value; TBD / PENDING) | PENDING | after-evidence |
 
 ## (b) Interface demands
 
@@ -327,6 +422,10 @@ Reducer self-check (SYNTHETIC_TEST_DATA_NOT_EVIDENCE, closed form):
 | IDP2-16 | P2 -> P1 | powered-step prerequisites HM-R13 (match pre-tuned on the VNA, calibrated coupler monitoring, P1 provisional limits / foldback, ICP-16 interlocks, facility RF safety) offered for the P1 bench RF-on sequence | - | OFFERED |
 | IDP2-17 | P1 -> P2 | photodiode dark / background, RF-powered known-unlit and known-lit P1 plasma records (with simultaneous P_reflected, antenna current, collector / current-path response, pressure) for the HM-R15 threshold, frozen before the P2 map (A9.4 P2Q-05) | V; W; A; Pa | OFFERED by P1 as IF-P1-23 (P1-M-28); records not yet taken |
 | IDP2-18 | P2 -> RFQ v2 | INS-P2-10 photodiode, optical access / window, amplifier and DAQ channel for the P1_NEEDED / P2 preparation instrumentation quote (A9.4 P2Q-05) | - | RECORDED in RFQ v2 as TH-L07, TH-L08 and VAC-L07 (quotation only) |
+| IDP2-19 | P1 -> P2 | Touchstone (.s2p / .s1p) files with calibration ids and certificates: line + feedthrough (S-02), every local-match tuning state with its logged element positions (S-03), cold antenna (S-06), SOL standards' definitions (S-01) | - | PENDING (no measurement yet; P1 bench hardware NOT_PROCURED) |
+| IDP2-20 | P2 -> P3 coupled thermal (PENDING docs/experiments/hall_icp/p3_coupled_thermal/) | P_line/match,loss envelope (verified-loss records only) and P_delivered envelope as Q_RF/match inputs | W | LATER (after the hot map); coupled thermal stays UNRESOLVED |
+| IDP2-21 | P2 -> mass / power (PENDING docs/budgets/mass_power_a9_v2/) | measured P_forward envelope at RP-CPL for generator sizing (a laboratory quantity; never P_bus evidence) | W | LATER |
+| IDP2-22 | owner -> P2 | ICPQ-10 (heat-load bound alternative), ICPQ-11 (k_RF), P2Q-10 (component margins), P2Q-09 (E/H criteria form), P2Q-03 (agreement rule), loss-check k (FW-09) | - | OPEN (TBD_OWNER; rating_structure and detect_eh_transitions take them as explicit inputs) |
 
 ## (c) Owner answers applied
 
@@ -370,6 +469,11 @@ Reducer self-check (SYNTHETIC_TEST_DATA_NOT_EVIDENCE, closed form):
 | A9.4 P1Q-14 | HM-F07: ICP body / collector bias levels stay inside the 350 V class with >= 525 V design withstand and the initial 1.05 kV DC / 60 s DWV before first HV/RF operation (P1 bench item); ICP-44 RF insulation stays OPEN |
 | A9.4 p1_needed_rfqs | instrument list: the owner / procurement may send the P1_NEEDED packages for quotation (RFQ, clarification, indicative lead time, commercial quotation, datasheets / certificates); no purchase order, advance payment or binding commitment; this lane contacts no supplier |
 | A9.5 execution | carried A9.4 minors fixed ('fix all the issues'): INS-P2-10 cites A9.4 P2Q-05 as source with evidence class owner-stated; every instrument maps to its RFQ v2 line ids or states that no line exists (instrument_list.rfq_v2_line); stale P1 / RFQ v2 PENDING references replaced by merged ids (merged_ids_cited, checked at build time); P1Q-15 / P1Q-16 change no P2 item |
+| A9.6 sec. 9 | P2 framework implemented for later data ingestion (framework.capabilities: all 16 listed items mapped to functions and tests); unknown numbers TBD_AFTER_EVIDENCE |
+| A9.6 sec. 14 | fail-closed behaviour (framework.fail_closed); P1-only items stated as such |
+| A9.6 sec. 5 | RF_COMPONENT_RATINGS = TBD_AFTER_IMPEDANCE_MAP kept; rating_structure produces candidates for owner selection only, never a rating; LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT kept (local-match state logging) |
+| A9.6 sec. 7 | ICPQ-10, ICPQ-11, P2Q-03, P2Q-09 stay open (TBD_OWNER inputs); ICPQ-10 alternatives carried side by side; no answer selected |
+| A9.6 sec. 17 | hygiene only: own tests (tests/test_p2_impedance_prep.py, tests/test_p2_impedance_framework.py) and builder --check; formal verification deferred to fo_a9_6_consolidated_verification |
 
 ## (d) Open owner questions (new)
 
@@ -383,6 +487,7 @@ Reducer self-check (SYNTHETIC_TEST_DATA_NOT_EVIDENCE, closed form):
 | P2Q-07 | Where no accredited scope exists for V/I-probe phase calibration at 13.56 MHz, accept an in-house procedure traceable through the VNA and its kit (MS-P2-03)? | owner call | LOCK-1 |
 | P2Q-08 | Does the A9.3 ICPQ-06 isolator qualification ('wherever ICP plumbing bridges isolated potentials') also cover the ICP-34 pressure-sensing line when the ICP body floats or the collector is biased during P2? | yes where that line bridges isolated potentials (PROPOSED; same plumbing logic) | before the first biased / floating P2 point (S-11) |
 | P2Q-09 | Which recorded signals and step criteria constitute the 'electrical evidence of an ignition / mode transition' that turns an optically UNLIT record into UNCERTAIN (A9.4 P2Q-05): the HM-R06 indicators (step in reflected power / \|Gamma\| at fixed tuning, antenna-current step, collector / current-path response step, pressure step) with the same declared multiple of the combined uncertainty? | yes (PROPOSED): reuse the HM-R06 indicator set; form frozen at LOCK-1, multiple at LOCK-2, before the P2 map; each record states the basis (electrical_indicator_basis) | LOCK-1 |
+| P2Q-10 | Rating margin policy for the RF components other than the antenna-circuit voltage (ICPQ-11): generator forward power, coupler / sensors, coax and connectors, vacuum feedthrough, local-match elements - one factor per component class applied to the complete measured P2 envelope maximum? | owner call; no value proposed (framework input FW-20, TBD_OWNER) | before any RF component rating is selected (after the complete P2 map) |
 
 ## (e) Historical reuse
 
@@ -398,9 +503,9 @@ Reducer self-check (SYNTHETIC_TEST_DATA_NOT_EVIDENCE, closed form):
 
 | row | key | how |
 |---|---|---|
-| 15 | sensors_diagnostics | supplies PROPOSED RF calibration procedures CAL-P2-01..15 and the P2 channel list toward the row's S1A-C4 blocker; state unchanged (BLOCKED; procedures not frozen, instruments not procured) |
-| 18 | icp_neutralizer_head | defines how Z_antenna and the antenna-terminal V/I envelope (ICP-44 input) will be measured; state unchanged (BLOCKED on ICP module design) |
-| 19 | flight_rf_chain | methodology and data model for the analysis_test_needed 'ICP impedance map'; ratings stay TBD_AFTER_IMPEDANCE_MAP; state unchanged |
+| 15 | sensors_diagnostics | supplies PROPOSED RF calibration procedures CAL-P2-01..15, the P2 channel list toward the row's S1A-C4 blocker and (A9.6) the ingestion software for VNA / coupler / V/I calibration data (Touchstone, SOL, coupler and V/I corrections); state unchanged (BLOCKED; procedures not frozen, instruments not procured; software is not hardware verification) |
+| 18 | icp_neutralizer_head | defines how Z_antenna and the antenna-terminal V/I envelope (ICP-44 input) will be measured and (A9.6) implements its reduction, uncertainty propagation and map storage; state unchanged (BLOCKED on ICP module design; the physical ICP is not verified by software) |
+| 19 | flight_rf_chain | methodology, data model and (A9.6) the rating-derivation structure for the analysis_test_needed 'ICP impedance map'; ratings stay TBD_AFTER_IMPEDANCE_MAP; state unchanged |
 | 17 | preionizer_interface | not touched (historical) |
 
 ## (g) H3 / H4 inputs
@@ -482,6 +587,8 @@ H4 (test):
 | A94MD | docs/decisions/OD_2026_09_30_A9_4_P1_P2_OWNER_DECISIONS.md | `53cc026d63f85bd416f8ed8f4e8f9f7e7d7fc4429dccc45b86a51390b5c08b1c` |
 | A95 | docs/decisions/OD_2026_09_30_A9_5_p1_closure_owner_decisions.json | `c9e101f2c409c2d28ad256818c22f13ee801bc532d7e4ef470f375d7bb1fe1d3` |
 | A95MD | docs/decisions/OD_2026_09_30_A9_5_P1_CLOSURE_OWNER_DECISIONS.md | `9e49e923328441c1fc82afd3eb64c13d85fc818e8fe534576ada61a16fa525f3` |
+| A96 | docs/decisions/OD_2026_09_30_A9_6_implementation_first_directive.json | `d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327` |
+| A96MD | docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md | `c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634` |
 | UB | docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json | `c6567e6d0bbc008bedd5b9c14a9716f117144ab6952b9c498f7b0c75e02a624d` |
 | ICD | schemas/interfaces/icp_neutralizer_icd_v1.json | `8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c` |
 | H2A9 | docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json | `b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa` |

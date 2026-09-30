@@ -75,11 +75,16 @@ def _series_shunt(zs, ys):
     return ((1 + 0j) + zs * ys, zs, ys, 1 + 0j)
 
 
+POS = {"C_series": "SYN-1", "C_shunt": "SYN-1"}
+LV = {"verification_id": "SYN-LV-01", "status": "LOSS_MODEL_VERIFIED", "method": "CAL-P2-09_calorimetric_at_power",
+      "evidence_record_ids": ["SYN-CALORIMETRY-01"], "tuning_states": ["TS1"], "data_class": "synthetic_test"}
+
+
 def _cal(red, line, match, e00=0j, e11=0j, e10e01=1 + 0j, fix=(1 + 0j, 0j, 0j, 1 + 0j)):
     def sp(abcd, a, b):
         s11, s12, s21, s22 = red.abcd_to_s(abcd, Z0)
         return {"from_plane": a, "to_plane": b, "S11": _c(s11), "S12": _c(s12), "S21": _c(s21), "S22": _c(s22),
-                "cal_id": "SYN-2P", "phase_calibrated": True}
+                "cal_id": "SYN-2P", "phase_calibrated": True, "positions": dict(POS)}
     return {"schema": red.CAL_SCHEMA_ID, "calibration_set_id": "SYN", "data_class": "synthetic_test", "f_Hz": 13.56e6,
             "Z0_ohm": Z0, "power_sensors": {"PS": {"CF_fwd": 1.0, "CF_ref": 1.0, "certificate": "SYNTHETIC"}},
             "coupler": {"cal_id": "CPL", "plane": "RP-CPL", "phase_calibrated": True, "e00": _c(e00), "e11": _c(e11),
@@ -88,12 +93,14 @@ def _cal(red, line, match, e00=0j, e11=0j, e10e01=1 + 0j, fix=(1 + 0j, 0j, 0j, 1
             "vi_probe": {"cal_id": "VI", "phase_calibrated": True, "k_V": [1.0, 0.0], "k_I": [1.0, 0.0],
                          "fixture_abcd": [[_c(fix[0]), _c(fix[1])], [_c(fix[2]), _c(fix[3])]],
                          "fixture_from_plane": "RP-VI", "fixture_to_plane": "RP-ANT", "amplitude_convention": "peak"},
-            "loss_bounds": {"LB1": {"loss_fraction_max": 0.1, "source": "SYNTHETIC", "evidence_class": "assumed"}},
+            "loss_bounds": {"LB1": {"loss_fraction_max": 0.1, "source": "SYNTHETIC", "evidence_class": "assumed",
+                                    "verification": dict(LV, verification_id="SYN-LV-LB1", tuning_states=[])}},
             "cold_references": {"CR1": {"R_cold_ohm": 1.5, "source_record_id": "SYN-COLD",
                                         "source_phase": "CAL-P2-08_VNA_UNPOWERED",
                                         "unlit_verification": {"basis": "SYNTHETIC CAL-P2-08 VNA record"},
-                                        "evidence_class": "measured", "antenna_temperature_K": 300.0}},
-            "antenna_current_probe": {"cal_id": "ACP", "k_mag": 1.0, "certificate": "SYNTHETIC"}}
+                                        "evidence_class": SYN, "antenna_temperature_K": 300.0}},
+            "antenna_current_probe": {"cal_id": "ACP", "k_mag": 1.0, "certificate": "SYNTHETIC"},
+            "loss_verification": dict(LV)}
 
 
 def _rec(red, cal, z_ant, p_fwd=100.0, phase="DUMMY_LOAD"):
@@ -115,7 +122,8 @@ def _rec(red, cal, z_ant, p_fwd=100.0, phase="DUMMY_LOAD"):
             "coupler": {"P_sens_fwd_W": p_fwd, "P_sens_ref_W": p_fwd * abs(g_in) ** 2, "power_sensor_cal_id": "PS",
                         "reflection_raw": _c(m)},
             "vi_probe": {"V_raw": _c(a * v_a + b * i_a), "I_raw": _c(c * v_a + dd * i_a), "vi_cal_id": "VI"},
-            "match_state": {"tuning_state_id": "TS1", "positions": {}, "auto_tune": False, "loss_bound_id": "LB1"},
+            "match_state": {"tuning_state_id": "TS1", "positions": dict(POS), "auto_tune": False,
+                            "loss_bound_id": "LB1"},
             "factors": {k: None for k in red.REQUIRED_FACTOR_FIELDS},
             "plasma_state": {"lit": False, "mode": "UNLIT", "optical_signal_V": None, "unlit_threshold_V": None,
                              "unlit_threshold_source": None, "threshold_basis": None,
@@ -135,10 +143,11 @@ def case(red):
 
 # ------------------------------------------------------------------------------------------------ reproduction / pins
 def test_builder_reproduces_outputs(mod):
-    js, md, sc = mod.render()
+    js, md, sc, ms = mod.render()
     assert OUT_JSON.read_text(encoding="utf-8") == js
     assert OUT_MD.read_text(encoding="utf-8") == md
     assert OUT_SCHEMA.read_text(encoding="utf-8") == sc
+    assert (LANE / "p2_impedance_map_schema_v1.json").read_text(encoding="utf-8") == ms
     assert mod.main(["--check"]) == 0
 
 
@@ -569,7 +578,8 @@ def test_no_winner_or_prediction_vocabulary(d):
 def test_lane_dir_contents():
     names = sorted(p.name for p in LANE.iterdir() if p.name != "__pycache__")
     assert names == sorted(["build_p2_impedance_prep.py", "p2_impedance_reducer.py", "p2_impedance_prep_v1.json",
-                            "P2_IMPEDANCE_PREP.md", "p2_impedance_record_schema_v1.json"])
+                            "P2_IMPEDANCE_PREP.md", "p2_impedance_record_schema_v1.json", "p2_framework.py",
+                            "p2_impedance_map_schema_v1.json"])
 
 
 # ------------------------------------------------------------------------------------------------ repair-round checks
