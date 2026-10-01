@@ -736,10 +736,10 @@ Consumed (sha256 at build time; drift reported by `--check`):
 - `docs/design_synthesis/f2_filter/f2_filter_stage_v1.json` 76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa
 - `docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json` d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794
 - `docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json` 2353460e8087c5d0911d3b7774cd02440e7c93dfb26629b2bf3c5d25e000980f
-- `docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json` 1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b
-- `docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json` 9830f0adad679a81867af3294c1c02c0b54cbae6c2d646ae282ca9981ef578d0
+- `docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json` 96ea3db5d462a8cd44a3d0718c42b08df0ea0690161f1dbdd1889a8211182620
+- `docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json` 315277897f63b2c855acac27cb97731e9abe7ae51598cd765735af1f6d5ddb8d
 - `docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json` eace9c279f09ab25ba0d3c5c7f2d2c4e42da682a16e2f3bd474d7c3fef755450
-- `docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json` 5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b
+- `docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json` 88900aac0d34e709b6ca612c37c6413d831faf744c00a8561ce2a9b21b22641f
 - `docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json` df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08
 - `docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json` 4232edffeb07ee6c09ad0fbf11e934ab06bdc49693d225924905cce69cfdb489
 - `docs/budgets/owner_decisions/owner_questions_state_v4.json` 6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67
@@ -747,7 +747,7 @@ Consumed (sha256 at build time; drift reported by `--check`):
 - `docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json` 875ba72423f9a6c3f47bbabe94a3a44410ffe70048a0f3586bbbfe7dbf9e1690
 - `docs/requirements/rvm_a9/rvm_a9_v1.json` c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc
 - `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` c1a7875fdd0e27b3425cc02ba915ab61bcf9760ac032d294b69a887a91e78459
-- `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` 1db1137ce1efdaeabb87ad59232f27478938e2036a806dbce51213f7cbc5e9c6
+- `docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json` 7599d59576ca9b9c8215b6fad7de1548c727f872df20adc0f076034ddb0a0582
 - `docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json` ad6102fc12df3ad6c4bcc85264c1893b8ab51857b0319b9881afecd8a6c4730a
 - `docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json` d7b23b90e86221124fcbf04b6964e099213c5131d074cd078ba8aecc26b8ed9a
 - `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` 9f6e074cc2cdd1e2445d00a14eec04b4cc33f239655f8619a789e7ae863c43e6
