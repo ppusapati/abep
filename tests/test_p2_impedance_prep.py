@@ -496,8 +496,10 @@ def test_owner_values_and_statuses_unchanged(d):
     for o in d["p2_outputs_later"]:
         assert "PASS" not in o["status"]
     outs = {o["id"]: o for o in d["p2_outputs_later"]}
-    for q in ("ICPQ-10", "ICPQ-11", "OQ-A910-06"):
+    for q in ("ICPQ-10", "OQ-A910-06"):
         assert outs[q]["status"].startswith("OPEN")
+    # A9.16 step 1 (owner A9.14 S8.4 ICPQ-11 K_RF_1_5): ICPQ-11 is owner-given; the rating stays TBD_AFTER_IMPEDANCE_MAP
+    assert outs["ICPQ-11"]["status"].startswith("OWNER_GIVEN") and "TBD_AFTER_IMPEDANCE_MAP" in outs["ICPQ-11"]["status"]
     assert outs["RF_COMPONENT_RATINGS"]["status"] == "TBD_AFTER_IMPEDANCE_MAP"
 
 
@@ -578,7 +580,8 @@ def test_a95_ins_p2_10_and_pins(d):
 
 def test_m16_rows_and_sections_present(d):
     assert {m["row"] for m in d["m16_impact"]} == {15, 17, 18, 19}
-    for k in ("interface_demands", "owner_answers_applied", "open_owner_questions", "historical_reuse", "m16_impact",
+    assert d["open_owner_questions"] == [] and d["answered_owner_questions"]      # A9.16 step 1: all answered
+    for k in ("interface_demands", "owner_answers_applied", "answered_owner_questions", "historical_reuse", "m16_impact",
               "h3_h4_inputs", "calibration_plan", "hot_map_methodology", "data_model", "instrument_list",
               "p2_outputs_later", "reference_planes", "z_antenna_methods", "z_antenna_recommendation"):
         assert d[k], k
@@ -612,7 +615,7 @@ def test_lane_dir_contents():
     names = sorted(p.name for p in LANE.iterdir() if p.name != "__pycache__")
     assert names == sorted(["build_p2_impedance_prep.py", "p2_impedance_reducer.py", "p2_impedance_prep_v1.json",
                             "P2_IMPEDANCE_PREP.md", "p2_impedance_record_schema_v1.json", "p2_framework.py",
-                            "p2_impedance_map_schema_v1.json"])
+                            "p2_impedance_map_schema_v1.json", "p2_a9_16_rules.py", "a9_16_application.py"])
 
 
 # ------------------------------------------------------------------------------------------------ repair-round checks
@@ -881,7 +884,8 @@ def test_a94_pinned_and_state_classes(red, d):
 
 def test_a94_p2q05_answered_and_items(d):
     qs = {q["id"] for q in d["open_owner_questions"]}
-    assert "P2Q-05" not in qs and "P2Q-09" in qs
+    answered = {q["id"] for q in d["answered_owner_questions"]}
+    assert "P2Q-05" not in qs and "P2Q-09" not in qs and "P2Q-09" in answered      # A9.16 step 1: A9.11 S4.7
     applied = [o for o in d["owner_answers_applied"] if isinstance(o["ref"], dict) and o["ref"].get("kind") == "A9.4"]
     by = {o["ref"]["decision"]: o for o in applied}
     assert by["P2Q-05"]["how"].startswith("ANSWERED") and "p1_needed_rfqs" in by

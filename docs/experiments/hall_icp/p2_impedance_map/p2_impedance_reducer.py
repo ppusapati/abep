@@ -44,6 +44,14 @@ Two-port convention: ABCD matrices with port 1 toward the generator and port 2 t
 V1 = A V2 + B I2, I1 = C V2 + D I2, I2 flowing into the load (Z_L = V2 / I2). S-parameters are referenced to Z0 at
 both ports. Complex numbers are carried in JSON as [re, im].
 
+A9.16 step 1 (owner decisions of 2026-10-01): k_loss = 2.0 is the single at-power loss-check factor of P1 AND P2
+(A9.10 P1Q-24, docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json): a registered loss-check
+protocol with any other k is refused (MET-07 registry reconciled) and, until the check passes, P_delivered is reported
+only as the upper bound P_net (P_delivered_upper_bound_W, UPPER_BOUND_UNVERIFIED_LOSS). ZM-A primary / ZM-B mandatory
+per-point cross-check / ZM-C independent R cross-check (A9.11 P2Q-01): a reduced record states zm_cross_check_status,
+and a record without a valid ZM-B never makes ZM-A independently verified; the agreement judgement (k_agreement = 2.0,
+P2Q-03) needs the per-method uncertainty budgets and lives in p2_a9_16_rules.method_agreement.
+
 Not wired into archengine (goldens do not move). Not imported by any abep_sim module.
 """
 from __future__ import annotations
@@ -69,6 +77,18 @@ THRESHOLD_BASIS_FIELDS = ("dark_background_record_id", "rf_powered_known_unlit_r
 # simultaneous corroboration signals recorded with the photodiode (A9.4 P2Q-05); P_reflected is the coupler reading
 CORROBORATION_FACTOR_FIELDS = ("I_collector_A", "p_chamber_Pa")
 RATING_STATUS = "TBD_AFTER_IMPEDANCE_MAP"
+# A9.16 step 1: owner A9.10 P1Q-24 (S3.8) - ONE coverage / agreement factor for the at-power RF loss-model verification of
+# P1 and P2 (CAL-P2-09 / CAL-P2-10); never relaxed separately in P2. Every registered loss-check protocol must carry it.
+K_LOSS = 2.0
+A910_P1Q24 = ("owner A9.10 P1Q-24 (docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json, sha256 "
+              "3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)")
+UPPER_BOUND_LABEL = "UPPER_BOUND_UNVERIFIED_LOSS"
+# A9.16 step 1: owner A9.11 P2Q-01 (S4.2) - ZM-A primary at RP-VI de-embedded to RP-ANT, ZM-B mandatory per-point
+# cross-check, ZM-C independent resistance cross-check; status vocabulary of a reduced record
+ZM_CROSS_CHECK_STATUSES = ("PENDING_AGREEMENT_EVALUATION", "ZM_A_NOT_INDEPENDENTLY_VERIFIED_ZM_B_MISSING",
+                           "ZM_B_ONLY_NO_ZM_A")
+A911_REF = ("owner A9.11 (docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json, sha256 "
+            "d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c)")
 # Phases in which no plasma may exist (the plasma impedance map is HOT_MAP only, after the P1 hand-over, A9.3).
 UNLIT_PHASES = ("DUMMY_LOAD", "COLD_ANTENNA_POWERED_UNLIT")
 # Admissible origins of a cold-antenna (R_cold) reference: the unpowered VNA measurement (CAL-P2-08) or a reduced,
@@ -600,7 +620,16 @@ def reduce_record(rec, calibrations):
     if len(z_ant) == 2:
         dz = z_ant["vi_probe"] - z_ant["deembed"]
         out["method_difference"] = {"dR_ohm": _r(dz.real), "dX_ohm": _r(dz.imag),
-                                    "acceptance": "TBD - agreement rule form LOCK-1, value LOCK-2 (P2Q-03)"}
+                                    "acceptance": "evaluated with the per-method uncertainty budgets by "
+                                                  "p2_a9_16_rules.method_agreement (z_R, z_X <= k_agreement = 2.0; "
+                                                  "METHOD_DISAGREEMENT keeps both raws, never averaged; " + A911_REF +
+                                                  " P2Q-03)"}
+        out["zm_cross_check_status"] = ZM_CROSS_CHECK_STATUSES[0]
+    elif primary == "vi_probe":
+        out["zm_cross_check_status"] = ZM_CROSS_CHECK_STATUSES[1]
+    else:
+        out["zm_cross_check_status"] = ZM_CROSS_CHECK_STATUSES[2]
+    out["zm_a_independently_verified"] = False      # set only by an AGREEMENT of p2_a9_16_rules.method_agreement
 
     # ---- P_line/match,loss and P_delivered (A9.2); reconstructed only from a VERIFIED loss model (A9.6 sec. 14)
     lm = rec["loss_method"]
@@ -650,6 +679,7 @@ def reduce_record(rec, calibrations):
         out["P_delivered_W"] = "TBD - requires P_line/match,loss; P_net at RP-CPL is not P_delivered"
         out["loss_basis"] = "not_available (declared in the record)"
         out["loss_status"] = "NOT_AVAILABLE"
+        _upper_bound(out, "no loss model available")
 
     # ---- antenna-current cross-check (method C) and cold/hot resistance split (anchor Eq. (1) method)
     ac = rec["antenna_current"]
@@ -735,6 +765,9 @@ def loss_check_protocol(cal, protocol_id, method, model_key):
         raise RecordError(f"protocol {protocol_id!r} needs finite k > 0, u_eta_pred / u_P_net_W / u_P_ref_load_W >= 0, "
                           f"the check operating point P_check_W > 0 with P_check_rel_tol >= 0, an application range "
                           f"apply_P_net_range_W [lo, hi] with 0 < lo <= hi, and a source (MET-07-R3/R4)")
+    if abs(vals["k"] - K_LOSS) > 1e-12:
+        raise RecordError(f"protocol {protocol_id!r}: k = {vals['k']!r}; the at-power loss-check factor is k_loss = "
+                          f"{K_LOSS} for P1 and P2 and is never relaxed separately ({A910_P1Q24}; MET-07 registry)")
     vals["apply_P_net_range_W"] = (lo, hi)
     zl = p.get("Z_load_ohm")                     # two_port checks: the characterized reference load (MET-07-R5)
     vals["Z_load_ohm"] = None
@@ -966,6 +999,22 @@ def _refuse_loss(out, why):
     out["P_delivered_W"] = ("REFUSED - not reconstructed while the line/match loss is unverified; P_net at RP-CPL is "
                             "not P_delivered (A9.6 sec. 14; A9.2 rf_measurement_reference)")
     out["loss_status"] = "UNVERIFIED"
+    _upper_bound(out, "line/match loss unverified")
+
+
+def _upper_bound(out, why):
+    """A9.10 P1Q-24 fail-closed rule: until the at-power loss verification passes, P_delivered is reported only as the
+    applicable upper bound P_net = P_forward - P_reflected at RP-CPL (a passive line / match dissipates >= 0); derived
+    quantities (C_e, ...) stay upper-bound / qualified; small-signal S-parameters alone never upgrade it. Without a
+    P_net at RP-CPL in ``out`` (helper called outside reduce_record) no bound is stated and nothing is reconstructed."""
+    p_net = (out.get("at_RP_CPL") or {}).get("P_net_W")
+    if p_net is None:
+        return
+    out["P_delivered_upper_bound_W"] = {
+        "value": p_net, "status": UPPER_BOUND_LABEL, "reason": why,
+        "rule": "P_delivered <= P_net at RP-CPL; reported only as an upper bound until the at-power loss-model "
+                "verification (CAL-P2-09 / CAL-P2-10, k_loss = 2.0) passes; quantities derived from delivered power "
+                "stay upper-bound / qualified; " + A910_P1Q24}
 
 
 def _threshold_basis_ok(tb):
@@ -1179,7 +1228,8 @@ def mismatch_envelope(reduced, phases):
     """Envelope of reduced records for LATER RF component rating. ``phases`` must be given explicitly.
 
     The result is an input to rating, never a rating: its rating_status stays TBD_AFTER_IMPEDANCE_MAP (A9.2 rf_500W /
-    a9_10_statuses) and it carries no margin or factor (k_RF is owner question ICPQ-11)."""
+    a9_10_statuses) and it carries no margin or factor (k_RF = 1.5 and the other stress-class factors of
+    owner A9.14 ICPQ-11 / P2Q-10 are applied by p2_framework.rating_structure, never here)."""
     if not isinstance(phases, (list, tuple)) or not phases or any(p not in RECORD_PHASES for p in phases):
         raise RecordError(f"phases must be a non-empty explicit subset of {RECORD_PHASES}")
     sel = [r for r in reduced if r["phase"] in phases]
