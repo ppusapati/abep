@@ -1580,9 +1580,9 @@
    }
   ],
   "closed_form_consistency": {
-   "C-52_vs_C-41_disk_algebra_abs_diff": 1.67e-16,
+   "C-52_vs_C-41_disk_algebra_abs_diff": 0.0,
    "C-40_vs_C-41_abs_diff": 0.0,
-   "C-80_vs_1_minus_C-41_abs_diff": 1.11e-16
+   "C-80_vs_1_minus_C-41_abs_diff": 0.0
   },
   "summation_rule_max_abs_error": 0.0,
   "reciprocity_max_rel_error_pairs_F_gt_1e-3": 0.00215,
@@ -1590,8 +1590,8 @@
  },
  "solver_verification": {
   "data_class": "SYNTHETIC_TEST_DATA_NOT_EVIDENCE",
-  "parallel_plates_rel_error": 5.91e-16,
-  "single_node_radiation_abs_error_K": 1.14e-13,
+  "parallel_plates_rel_error": 0.0,
+  "single_node_radiation_abs_error_K": 0.0,
   "conduction_chain_abs_error_K": 0.0
  },
  "h25_reproduction_check": {
@@ -1600,7 +1600,7 @@
    {
     "case": "ground",
     "finish": "bare_machined_stainless",
-    "max_abs_dT_K": 1.14e-13
+    "max_abs_dT_K": 0.0
    },
    {
     "case": "ground",
@@ -1610,17 +1610,17 @@
    {
     "case": "orbit_hot",
     "finish": "bare_machined_stainless",
-    "max_abs_dT_K": 1.14e-13
+    "max_abs_dT_K": 0.0
    },
    {
     "case": "orbit_hot",
     "finish": "z93_white_inorganic",
-    "max_abs_dT_K": 1.14e-13
+    "max_abs_dT_K": 0.0
    },
    {
     "case": "orbit_cold",
     "finish": "bare_machined_stainless",
-    "max_abs_dT_K": 1.14e-13
+    "max_abs_dT_K": 0.0
    },
    {
     "case": "orbit_cold",
@@ -1628,7 +1628,7 @@
     "max_abs_dT_K": 0.0
    }
   ],
-  "max_abs_dT_K": 1.14e-13,
+  "max_abs_dT_K": 0.0,
   "aperture_split": "AN / WI / WO pseudo-surface areas A_k F_k->exit (H2-5 crossed-string factors) sum exactly to the aperture annulus area (planar-slot reciprocity), so the split is exact"
  },
  "radiative_view_parametric_study": {
@@ -5855,5 +5855,6 @@
   "governance_files_not_pinned": true,
   "archengine_untouched": true,
   "outputs_regenerable": "python docs/experiments/hall_icp/p3_coupled_thermal/build_p3_coupled_thermal.py --check"
- }
+ },
+ "serialization_note": "floats written to 6 significant digits; machine-precision residuals |x| < 1e-10 (solver / algebra cross-checks) are written as 0.0 - they are below 1e-10, not exactly zero (platform-independent outputs)"
 }

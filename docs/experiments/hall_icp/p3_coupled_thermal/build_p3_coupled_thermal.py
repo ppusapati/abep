@@ -1401,8 +1401,28 @@ def render_md(doc):
     return "\n".join(L)
 
 
+def _canon(x):
+    """Platform-independent serialization (PR #35 CI): every float is written to 6 significant digits and
+    machine-precision residuals (|x| < 1e-10) as 0.0, so last-bit BLAS / summation-order differences between
+    machines never change the committed outputs. Computation stays at full precision; only the record is rounded."""
+    if isinstance(x, bool) or x is None:
+        return x
+    if isinstance(x, float):
+        if x != x or x in (float("inf"), float("-inf")):
+            return x
+        return 0.0 if abs(x) < 1e-10 else float(f"{x:.6g}")
+    if isinstance(x, dict):
+        return {k: _canon(v) for k, v in x.items()}
+    if isinstance(x, (list, tuple)):
+        return [_canon(v) for v in x]
+    return x
+
+
 def render():
-    doc = build()
+    doc = _canon(build())
+    doc["serialization_note"] = ("floats written to 6 significant digits; machine-precision residuals |x| < 1e-10 "
+                                 "(solver / algebra cross-checks) are written as 0.0 - they are below 1e-10, not "
+                                 "exactly zero (platform-independent outputs)")
     return json.dumps(doc, indent=1, ensure_ascii=False) + "\n", render_md(doc)
 
 

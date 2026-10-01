@@ -136,9 +136,9 @@ Resolution [16, 32, 64], tolerance 0.003 (absolute).
 | C-80 | `{"r1": 0.3, "r2": 0.4, "h": 1.0}` | 0.870798 | 0.870544 | 0.000254 |
 | C-81 | `{"r": 0.4, "h1": 0.5, "h2": 0.3}` | 0.123471 | 0.123901 | 0.000431 |
 
-Closed-form consistency: `{"C-52_vs_C-41_disk_algebra_abs_diff": 1.67e-16, "C-40_vs_C-41_abs_diff": 0.0, "C-80_vs_1_minus_C-41_abs_diff": 1.11e-16}`. Summation-rule max error 0.0; reciprocity max relative error (pairs F > 1e-3) 0.00215 (summation holds by construction (every ray ends on a surface or SPACE); reciprocity is a quadrature check; enforce_reciprocity() symmetrizes before any radiosity solve).
+Closed-form consistency: `{"C-52_vs_C-41_disk_algebra_abs_diff": 0.0, "C-40_vs_C-41_abs_diff": 0.0, "C-80_vs_1_minus_C-41_abs_diff": 0.0}`. Summation-rule max error 0.0; reciprocity max relative error (pairs F > 1e-3) 0.00215 (summation holds by construction (every ray ends on a surface or SPACE); reciprocity is a quadrature check; enforce_reciprocity() symmetrizes before any radiosity solve).
 
-Solver checks (SYNTHETIC): parallel plates rel. error 5.91e-16; single radiating node 1.14e-13 K; conduction chain 0.0 K.
+Solver checks (SYNTHETIC): parallel plates rel. error 0.0; single radiating node 0.0 K; conduction chain 0.0 K.
 
 ## H2-5 reproduction (coupled adapter with no ICP body)
 
@@ -146,11 +146,11 @@ H2-5 range midpoints of every uncertain input at P_d = 1350 W (H25-02 bound); te
 
 | case | finish | max abs dT (K) |
 |---|---|---|
-| ground | bare_machined_stainless | 1.14e-13 |
+| ground | bare_machined_stainless | 0.0 |
 | ground | z93_white_inorganic | 0.0 |
-| orbit_hot | bare_machined_stainless | 1.14e-13 |
-| orbit_hot | z93_white_inorganic | 1.14e-13 |
-| orbit_cold | bare_machined_stainless | 1.14e-13 |
+| orbit_hot | bare_machined_stainless | 0.0 |
+| orbit_hot | z93_white_inorganic | 0.0 |
+| orbit_cold | bare_machined_stainless | 0.0 |
 | orbit_cold | z93_white_inorganic | 0.0 |
 
 AN / WI / WO pseudo-surface areas A_k F_k->exit (H2-5 crossed-string factors) sum exactly to the aperture annulus area (planar-slot reciprocity), so the split is exact.
