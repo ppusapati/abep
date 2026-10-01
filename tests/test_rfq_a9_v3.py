@@ -2,7 +2,7 @@
 
 Checks that docs/procurement/rfq_a9_v3/ is reproducible from its builder, that it is a revision of the immutable v2
 packages (v2 pinned and unchanged; every v2 requirement carried exactly once; every v2 line carried or explicitly
-superseded), that each applied owner decision (A9.8 / A9.10 / A9.11 / A9.14 / A9.15) is cited by decision file + json
+superseded), that each applied owner decision (A9.8 / A9.10 / A9.11 / A9.14 / A9.15 / A9.19 / A9.20) is cited by decision file + json
 sha256 + question id with verbatim quotes, that the owner-decided package changes hold (RF-metrology package, H-1
 build-to-print package, required DWV tester, dedicated target, Xe capability in both configurations), that owner-deferred
 numbers stay TBD, and that every fail-closed rule function refuses incomplete evidence.
@@ -41,6 +41,10 @@ PINNED = {
         "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
     "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json":
         "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+    "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json":
+        "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+    "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json":
+        "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
 }
 # (decision key, question id) the lane must apply (lane list of the A9.16 RFQ step)
 REQUIRED_APPLIED = [
@@ -50,6 +54,7 @@ REQUIRED_APPLIED = [
     ("A9.14", "OQ-RFQ-03"), ("A9.14", "OQ-RFQ-04"), ("A9.14", "OQ-RFQ-08"), ("A9.14", "OQ-RFQ-09"),
     ("A9.14", "XA9Q-06"), ("A9.14", "OQ-A907-04"), ("A9.14", "XA9Q-07"), ("A9.14", "XA9Q-05"),
     ("A9.15", "governing_rule"), ("A9.15", "XA9Q-07"), ("A9.15", "XA9Q-05"),
+    ("A9.19", "architecture"), ("A9.19", "xenon_role"), ("A9.20", "answer"), ("A9.10", "P1Q-07"),
 ]
 PKGS = ["RFQ3-RF", "RFQ3-GAS", "RFQ3-VAC", "RFQ3-HALLEL", "RFQ3-MECH", "RFQ3-THRUST", "RFQ3-RFMET", "RFQ3-H1FAB"]
 
@@ -627,3 +632,83 @@ def test_owner_supplied_numbers_only(reqs):
         for n in nums:
             # 17025 = ISO/IEC 17025 (standard id); 13.56 MHz (row 72); 0.6 / 0.8 provisional C1 region (owner)
             assert n in allowed or n in (17025.0, 13.56, 1.05, 0.6, 0.8), (r["id"], n)
+
+
+# ------------------------------------------------------------------------------------------- A9.19 / A9.20
+def test_a919_a920_c1_lines_ground_only_lab_equipment(mod, reqs, lines, doc):
+    """A9.20: every C1 line (HE-L10/11/12 cathode / heater / keeper, C1 Xe branch, C1 getter option) is
+    GROUND_ONLY_LAB_EQUIPMENT for the H-1 reference characterization (A9.10 S3.5) and the C1-vs-ICP bench control;
+    A9.19: no flight C1 anywhere."""
+    for lid in mod.C1_GROUND_LINES + mod.C1_XE_LINES + ["GAS-O03"]:
+        li = lines[lid][1]
+        assert li["equipment_class"] == "GROUND_ONLY_LAB_EQUIPMENT", lid
+        keys = {(d["key"], d["id"]) for d in li["change_v3"]["decisions"]}
+        assert ("A9.20", "answer") in keys, lid
+        assert li["dispatch"] == "LATER", lid          # never pulled into the P1 dispatch-first set
+    for lid in mod.C1_GROUND_LINES:
+        g = lines[lid][1]["dispatch_gate"]
+        assert "S3.5" in g["role"] and "bench control" in g["role"] and "never flight" in g["role"]
+        assert g["flight"].startswith("NONE") and "RFQ3-HALLEL-N03" in lines[lid][1]["requirements"]
+        assert "GROUND-ONLY" in lines[lid][1]["item"]
+    for lid in mod.C1_XE_LINES:
+        assert "never flight Xe" in lines[lid][1]["c1_xe_condition"]
+    n03 = reqs["RFQ3-HALLEL-N03"]
+    assert n03["value"]["equipment_class"] == "GROUND_ONLY_LAB_EQUIPMENT" and n03["value"]["flight"].startswith("NONE")
+    assert n03["applies_to"] == ["hall_c1_reference"]
+    assert mod.c1_equipment_class("HE-L11") == "GROUND_ONLY_LAB_EQUIPMENT"
+    with pytest.raises(KeyError):
+        mod.c1_equipment_class("GAS-L08")                # the system Xe tank is not a C1 line
+
+
+def test_a919_no_flight_c1_wording_left(doc, reqs):
+    """No live requirement / line / NIR / CIF text treats C1 as flight hardware, a flight fallback or a flight backup
+    (history snapshots under before_*, change records and the carried A9.2 status are excluded)."""
+    bad = re.compile(r"(only if C1 is chosen for flight|C1 control/fallback|reference/control/fallback|"
+                     r"not co-installed as a flight backup|deferred until C1 is selected|mass on AL-C1|"
+                     r"C1 stays CONTROL_FALLBACK)")
+
+    def live(o):
+        if isinstance(o, dict):
+            return {k: live(v) for k, v in o.items() if not k.startswith("before") and k not in
+                    ("sources", "change", "change_v3", "v2_line")}
+        if isinstance(o, list):
+            return [live(v) for v in o]
+        return o
+    for part in ("packages", "common_interface", "not_in_this_revision", "interface_demands", "instrument_coverage"):
+        m = bad.search(json.dumps(live(doc[part]), ensure_ascii=False))
+        assert not m, (part, m.group(0) if m else None)
+    r09 = reqs["RFQ-07-R09"]["requirement"]
+    assert "no conventional hollow cathode" in r09 and "contingency / emergency" in r09
+    assert "flight backup" not in reqs["RFQ-07-R09"]["title"]
+    nir = {x["id"]: x for x in doc["not_in_this_revision"]}["NIR-04"]
+    assert "NONE" in nir["item"] and "A9.19" in nir["why"]
+
+
+def test_a919_xe_contingency_role_capability_retained(mod, reqs, doc):
+    """A9.19 amends A9.15 on the ROLE of Xe only: Xe = contingency / emergency supply mode; capability, separate tank /
+    path and system Xe lines retained; the A9.1 ICP gas-mode baseline (G-REUSE primary) is unchanged."""
+    n03 = reqs["RFQ3-GAS-N03"]
+    assert n03["change_v3"]["type"] == "NEW"
+    assert n03["value"]["xe_role"].startswith("CONTINGENCY_AND_EMERGENCY")
+    assert n03["value"]["system_xe_lines"] == mod.SYSTEM_XE_LINES
+    assert n03["value"]["c1_xe_lines_ground_only"] == mod.C1_XE_LINES
+    assert "contingency / emergency supply mode" in n03["requirement"] and "not a C1 contingency" in n03["requirement"]
+    assert n03["before_a9_19"]["requirement"] != n03["requirement"]
+    pol = doc["rfp_propellant_policy"]["a9_19_xe_role"]
+    assert pol["json_sha256"] == PINNED[pol["decision"]]
+    md = mod._norm((REPO / pol["verbatim"]).read_text(encoding="utf-8"))
+    assert all(mod._norm(q) in md for q in pol["owner_text"])
+    roles = doc["vocabulary"]["configuration_roles_a9_19_20"]
+    assert roles["hall_icp_neutralizer"].startswith("FLIGHT ARCHITECTURE")
+    assert roles["hall_c1_reference"].startswith("GROUND_ONLY_LABORATORY_REFERENCE")
+    assert reqs["RFQ-07-R07"]["value"] == 0.0                     # G-REUSE primary unchanged
+    assert any("A9.19" in b and "no conventional hollow cathode" in b for b in doc["banner"])
+
+
+def test_a919_a920_single_record_decisions_fail_closed(mod):
+    with pytest.raises(KeyError):
+        mod.OD("A9.19", "decisions", "One Hall accelerator.")
+    with pytest.raises(ValueError):
+        mod.OD("A9.20", "answer", "Remove C1 entirely and fly a hollow cathode.")
+    assert mod.OD("A9.20", "answer", "Ground-only reference (Recommended)")["answer"] == \
+        "C1_GROUND_ONLY_LABORATORY_REFERENCE"

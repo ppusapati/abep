@@ -106,7 +106,19 @@ DECISIONS = {
               "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
               "md": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
               "md_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903"},
+    # A9.19 (flight architecture: one Hall + one RF/ICP neutralizer, no conventional hollow cathode, Xe = contingency /
+    # emergency supply mode; amends A9.15 on the ROLE of Xe) and A9.20 (C1 = ground-only laboratory reference)
+    "A9.19": {"json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+              "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+              "md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+              "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749"},
+    "A9.20": {"json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+              "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+              "md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+              "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c"},
 }
+# single-record owner decisions (no per-question 'decisions' table in their json): the allowed record keys
+SINGLE_RECORD_KEYS = {"A9.19": ("architecture", "xenon_role", "amends"), "A9.20": ("answer",)}
 STATE_V4 = "docs/budgets/owner_decisions/owner_questions_state_v4.json"   # read for ids only; never pinned (mutable)
 NEVER_PINNED_V3 = [STATE_V4 + " (owner-question state; refreshed by the integration lane)",
                    "docs/orchestration/* (mutable governance)"]
@@ -203,6 +215,12 @@ def OD(key: str, qid: str, quote: str) -> dict:
         if qid != "governing_rule" and qid not in js["amendments"]:
             raise KeyError(f"A9.15 has no amendment {qid}")
         seq, ans = None, ("RFP_COMPLIANT_PROPELLANT_POLICY" if qid == "governing_rule" else js["amendments"][qid])
+    elif key in SINGLE_RECORD_KEYS:
+        if qid not in SINGLE_RECORD_KEYS[key] or qid not in js:
+            raise KeyError(f"{key} has no record {qid}")
+        if js.get("decided_by") != "owner":
+            raise KeyError(f"{key} is not an owner decision")
+        seq, ans = None, js["decision"]
     else:
         rec = js["decisions"].get(qid)
         if rec is None or rec.get("status") != "OWNER_DECIDED":
@@ -764,6 +782,19 @@ def S():
                           "is booked within the RFP-compliant Xe system; do not assume or exclude C1 Xe in advance."),
         "A915-OQ-A907-07": OD("A9.15", "OQ-A907-07", "S8.17 / OQ-A907-07: C1 flight integration may still be deferred "
                               "until C1 is selected, but not because Xe is contingency-only."),
+        # ---- A9.19 / A9.20 (2026-10-01; the verbatim .md governs)
+        "A919-ARCH": OD("A9.19", "architecture", "One Hall accelerator. One RF/ICP electron-source/neutralizer. Two "
+                        "propellant supply modes. No conventional hollow cathode."),
+        "A919-CATHODELESS": OD("A9.19", "architecture", "our thruster architecture should be cathode/electrodless for "
+                               "both the atmosphere gases and xenon"),
+        "A919-XE": OD("A9.19", "xenon_role", "xenon is not a parllel gas its just a contigency and emergency gas"),
+        "A919-C1MASS": OD("A9.19", "amends", "check C1 mass"),
+        "A920-GROUND": OD("A9.20", "answer", "Ground-only reference (Recommended)"),
+        "A920-ANS": OD("A9.20", "answer", "will go with your recommended"),
+        "A920-ROLE": OD("A9.20", "answer", "It's currently planned for the H-1 baseline characterization that "
+                        "registers I_d,max,H1 (your S3.5) and as the control in the C1-vs-ICP bench comparison."),
+        "P1Q-07-S35": OD("A9.10", "P1Q-07", "REGISTER `I_d,max,H1` FROM A DEDICATED H-1 CHARACTERIZATION WITH THE "
+                         "CONVENTIONAL C1 REFERENCE SOURCE."),
     }
 
 
@@ -1491,6 +1522,178 @@ def apply_stale_text_fixes(c: Ctx, s: dict) -> None:
                       "the voltage margin is closed by A9.8 OQ-RFQV2-06")
 
 
+# ============================================================== A9.19 / A9.20: flight architecture, Xe role, C1 role
+GROUND_ONLY = "GROUND_ONLY_LAB_EQUIPMENT"
+C1_GROUND_LINES = ["HE-L10", "HE-L11", "HE-L12"]
+C1_GROUND_ROLE = ("GROUND_ONLY_LAB_EQUIPMENT (A9.20): heated Xe-fed LaB6 C1 laboratory reference for (i) the dedicated "
+                  "H-1 reference characterization that registers I_d,max,H1,Ar independently of the ICP (A9.10 S3.5 "
+                  "P1Q-07) and (ii) the bench control in the C1-vs-ICP comparison; never flight hardware, never in the "
+                  "flight mass / power / Xe budgets (A9.19 / A9.20)")
+FLIGHT_ARCHITECTURE_A919 = ("one Hall accelerator + one RF/ICP electron-source/neutralizer (cathodeless / electrodeless) "
+                            "serving both atmospheric gases and Xe; two propellant supply modes with separate tanks / "
+                            "paths: ambient atmospheric propellant (primary) and Xe (contingency / emergency supply "
+                            "mode; capability retained as the RFP requires); no conventional hollow cathode (A9.19)")
+CONFIGURATION_ROLES = {
+    "hall_icp_neutralizer": "FLIGHT ARCHITECTURE (A9.19): " + FLIGHT_ARCHITECTURE_A919,
+    "hall_c1_reference": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a candidate flight configuration (A9.19); kept "
+                         "only as the labelled ground / laboratory reference for the H-1 reference characterization "
+                         "(A9.10 S3.5) and the C1-vs-ICP bench comparison",
+}
+
+
+def c1_equipment_class(line_id: str) -> str:
+    """A9.19 / A9.20: every C1 line (cathode, heater, keeper, C1 Xe branch, C1 getter option) is ground-only laboratory
+    equipment; no C1 line is flight hardware. Unknown ids raise (fail closed)."""
+    if line_id in C1_GROUND_LINES or line_id in C1_XE_LINES or line_id == "GAS-O03":
+        return GROUND_ONLY
+    raise KeyError(f"{line_id} is not a C1 line")
+
+
+def _amend_new_req(c: Ctx, rid: str, srcs: list, why: str, **fields) -> dict:
+    """Amend a requirement that is NEW in v3 (keeps change_v3 type NEW; records the pre-A9.19 text)."""
+    _p, r = c.req(rid)
+    if r["change_v3"]["type"] != "NEW":
+        raise ValueError(f"{rid}: not a v3-new requirement")
+    before = r.setdefault("before_a9_19", {})
+    for k, v in fields.items():
+        if k not in before:
+            before[k] = copy.deepcopy(r.get(k))
+        r[k] = v
+    r["sources"] = r["sources"] + [x for x in srcs if x not in r["sources"]]
+    ch = r["change_v3"]
+    ch["why"] = ch["why"] + "; " + why
+    ch["decisions"] += [d for d in _decisions_of(srcs) if d not in ch["decisions"]]
+    c._note(srcs, rid)
+    return r
+
+
+def apply_a9_19_20(c: Ctx, s: dict) -> None:
+    """A9.19 (flight architecture; Xe = contingency / emergency supply mode; no flight C1) and A9.20 (C1 = ground-only
+    laboratory reference). Quotation / specification only; no number is added or changed."""
+    arch = [s["A919-ARCH"], s["A919-CATHODELESS"]]
+    xe = [s["A919-XE"]]
+    ground = [s["A920-GROUND"], s["A920-ANS"], s["A920-ROLE"], s["P1Q-07-S35"]]
+    # ---- C1 cathode / heater / keeper: ground-only laboratory equipment
+    items = {"HE-L10": "heated Xe-fed LaB6 hollow cathode C1 - GROUND-ONLY laboratory reference (not flight hardware; "
+                       "A9.19 / A9.20)",
+             "HE-L11": "C1 heater supply - GROUND-ONLY laboratory equipment (A9.20)",
+             "HE-L12": "C1 pulsed keeper supply (300-600 V class) - GROUND-ONLY laboratory equipment (A9.20)"}
+    for lid in C1_GROUND_LINES:
+        _p, li = c.line(lid)
+        gate = dict(li["dispatch_gate"])
+        gate["role"] = C1_GROUND_ROLE
+        gate["flight"] = "NONE: the flight architecture has no conventional hollow cathode (A9.19)"
+        c.modify_line(lid, arch + ground, "A9.19 / A9.20: C1 is GROUND_ONLY_LAB_EQUIPMENT (H-1 reference "
+                                          "characterization, A9.10 S3.5; C1-vs-ICP bench control); never flight",
+                      item=items[lid], dispatch_gate=gate, equipment_class=c1_equipment_class(lid))
+    # ---- C1 Xe branch (GAS-L05 / L06 / L15) and C1 getter option
+    for lid in C1_XE_LINES:
+        c.modify_line(lid, ground + [s["A919-C1MASS"]],
+                      "A9.19 / A9.20: C1 Xe branch = ground-only laboratory equipment; never in the flight Xe "
+                      "accounting",
+                      equipment_class=c1_equipment_class(lid),
+                      c1_xe_condition="GROUND_ONLY_LAB_EQUIPMENT: Xe branch of the ground-only C1 laboratory reference "
+                                      "(H-1 reference characterization, A9.10 S3.5; C1-vs-ICP bench control); quoted "
+                                      "for the selected C1 that requires Xe; its Xe is laboratory test-campaign Xe, "
+                                      "never flight Xe accounting (A9.19 / A9.20)")
+    c.modify_line("GAS-O03", ground, "A9.20: C1 getter option = ground-only C1 laboratory branch",
+                  equipment_class=c1_equipment_class("GAS-O03"),
+                  item="OPTION: filter/getter (ground-only C1 laboratory Xe branch, only for a selected C1 that "
+                       "requires it; not flight hardware)")
+    # ---- C1 requirements: remove flight-C1 wording
+    _p, r19 = c.req("RFQ2-HALLEL-R19")
+    old = "as the conventional reference/control/fallback (not the primary flight neutralizer if the ICP succeeds)"
+    if old not in r19["requirement"]:
+        raise ValueError("RFQ2-HALLEL-R19: unexpected text")
+    c.modify_req("RFQ2-HALLEL-R19", arch + ground, "A9.19 / A9.20: C1 ground-only laboratory reference, never flight",
+                 requirement=r19["requirement"].replace(
+                     old, "as the GROUND-ONLY laboratory reference (A9.20): H-1 reference characterization registering "
+                          "I_d,max,H1,Ar independently of the ICP (A9.10 S3.5 P1Q-07) and bench control in the "
+                          "C1-vs-ICP comparison; never flight hardware - the flight architecture has no conventional "
+                          "hollow cathode (A9.19)"))
+    c.modify_req("RFQ-07-R09", arch + xe + ground,
+                 "A9.19 / A9.20: no flight C1; C1 ground-only; Xe = contingency / emergency supply mode",
+                 title="No C1 in the flight architecture; Xe hardware = RFP system Xe capability (contingency / "
+                       "emergency supply mode)",
+                 requirement="The flight architecture is " + FLIGHT_ARCHITECTURE_A919 + ". C1 is not flight hardware "
+                             "in any form (no flight C1, no flight backup); it is GROUND_ONLY_LAB_EQUIPMENT for the H-1 "
+                             "reference characterization (A9.10 S3.5) and the C1-vs-ICP bench control (A9.20). The Xe "
+                             "storage / flow hardware quoted here provides the RFP-required system Xe capability of "
+                             "hall_icp_neutralizer (RFQ3-GAS-N03); C1 Xe hardware (GAS-L05 / L06 / L15) is ground-only "
+                             "laboratory equipment and never enters the flight Xe accounting.",
+                 value="no C1 in the flight architecture; system Xe capability (contingency / emergency supply mode) "
+                       "with its own tank / path")
+    c.modify_req("RFQ-07-R06", ground, "A9.20: C1 flows belong to the ground-only C1 laboratory branch",
+                 requirement="Controllable flow covering the RFP-required system Xe propulsion operating flows (Xe "
+                             "contingency / emergency supply mode, A9.19) and the bounded Xe reference flows; the C1 "
+                             "steady (0.05-0.2 mg/s class) and provisional start (0.6-0.8 mg/s, not frozen) flows only "
+                             "for the ground-only C1 laboratory branch (A9.20) when the selected C1 requires Xe, booked "
+                             "as laboratory test-campaign Xe, never flight Xe; all Xe booked (purge, preheat, ignition, "
+                             "keeper, transition where applicable).",
+                 value="TBD - requires the registered Xe propulsion / reference operating point(s) and, for the "
+                       "ground-only C1 laboratory branch only, the C1 operating point")
+    c.modify_req("RFQ-07-R08", ground, "A9.20: C1 getter on the ground-only C1 laboratory branch; no flight AL-C1",
+                 title="filter/getter (ground-only C1 laboratory branch only)",
+                 requirement="C1-specific filter/getter for the ground-only C1 laboratory Xe branch (A9.20), only for a "
+                             "selected C1 that requires it: include it with an explicit <= 17 W-class load only after "
+                             "vendor/spec verification; account mass and pressure drop as laboratory equipment (no "
+                             "flight AL-C1: the flight architecture has no conventional hollow cathode, A9.19). An ICP "
+                             "Xe-path getter is a separate engineering / vendor requirement (RFQ3-GAS-N04).")
+    _p, r11 = c.req("RFQ-02-R11")
+    c.modify_req("RFQ-02-R11", ground, "A9.20: C1 start controller = ground-only laboratory option",
+                 requirement=r11["requirement"] + " The controller belongs to the ground-only C1 laboratory branch "
+                                                  "(A9.20); it is never flight hardware and its Xe is never flight Xe.")
+    # ---- v3-new requirements carrying A9.15 wording on the role of Xe / C1
+    _p, n03 = c.req("RFQ3-GAS-N03")
+    old = ("it is not a C1 contingency. C1 is an internal architecture element: C1 Xe hardware (GAS-L05, GAS-L06, "
+           "GAS-L15) is quoted only for a selected C1 that requires Xe and is then booked inside the system Xe "
+           "architecture (AL-08 / Xe accounting); no C1 Xe is invented or excluded in advance; the presence or absence "
+           "of C1 never removes the system Xe capability (rule function xe_capability_scope).")
+    if old not in n03["requirement"]:
+        raise ValueError("RFQ3-GAS-N03: unexpected text")
+    v = copy.deepcopy(n03["value"])
+    v["xe_role"] = "CONTINGENCY_AND_EMERGENCY supply mode (A9.19); capability retained (RFP-P17-05, RFP-P18-08)"
+    v["c1_xe_lines_ground_only"] = v.pop("c1_xe_lines_conditional")
+    v["configuration_roles"] = dict(CONFIGURATION_ROLES)
+    _amend_new_req(c, "RFQ3-GAS-N03", arch + xe + ground, "A9.19: Xe = contingency / emergency supply mode; A9.20: C1 "
+                                                          "Xe lines ground-only",
+                   requirement=n03["requirement"].replace(
+                       old, "it is not a C1 contingency. A9.19: Xe is the contingency / emergency supply mode of the "
+                            "single Hall + RF/ICP neutralizer flight architecture (not a parallel co-equal propellant); "
+                            "its capability, separate tank / path and flow control stay required. C1 is GROUND-ONLY "
+                            "laboratory equipment (A9.20): the C1 Xe hardware (GAS-L05, GAS-L06, GAS-L15) is quoted "
+                            "only for the ground C1 laboratory branch and never enters the flight Xe accounting; the "
+                            "presence or absence of C1 never removes the system Xe capability (rule function "
+                            "xe_capability_scope)."),
+                   value=v)
+    _p, n04 = c.req("RFQ3-GAS-N04")
+    old = "C1 getter / filter requirements stay separate and C1-specific (AL-C1, only for a selected C1)."
+    if old not in n04["requirement"]:
+        raise ValueError("RFQ3-GAS-N04: unexpected text")
+    v = copy.deepcopy(n04["value"])
+    v["c1_getter"] = "separate, C1-specific, ground-only C1 laboratory branch (A9.20; no flight AL-C1, A9.19)"
+    _amend_new_req(c, "RFQ3-GAS-N04", ground, "A9.20: C1 getter ground-only",
+                   requirement=n04["requirement"].replace(
+                       old, "C1 getter / filter requirements stay separate and C1-specific on the ground-only C1 "
+                            "laboratory branch (A9.20; no flight AL-C1, A9.19)."), value=v)
+    # ---- new requirement: classification of the C1 lines
+    c.new_req("RFQ3-HALLEL", "RFQ3-HALLEL-N03", "C1 = GROUND_ONLY_LAB_EQUIPMENT (no flight C1)",
+              "Every C1 line in these packages - cathode HE-L10, heater supply HE-L11, keeper supply HE-L12, the C1 Xe "
+              "branch GAS-L05 / GAS-L06 / GAS-L15 and the C1 getter option GAS-O03 - is quoted as ground-only "
+              "laboratory equipment for (i) the dedicated H-1 reference characterization that registers "
+              "I_d,max,H1,Ar independently of the ICP (A9.10 S3.5 P1Q-07) and (ii) the bench control in the "
+              "C1-vs-ICP comparison. No C1 line is flight hardware, a flight fallback or a flight-qualification item; "
+              "none enters the flight mass / power / Xe budgets. The flight architecture is " + FLIGHT_ARCHITECTURE_A919
+              + ". Supplier space-qualification data for C1 are not requested by this revision.",
+              {"equipment_class": GROUND_ONLY, "lines": C1_GROUND_LINES + C1_XE_LINES + ["GAS-O03"],
+               "uses": ["H-1 reference characterization (A9.10 S3.5 P1Q-07)", "C1-vs-ICP bench control"],
+               "flight": "NONE (A9.19)", "rule_function": "c1_equipment_class"},
+              "-", arch + ground, "owner-stated", "OWNER_GIVEN", "NOW", "LATER",
+              applies_to=["hall_c1_reference"], why="A9.19 / A9.20")
+    for lid in C1_GROUND_LINES:
+        c.modify_line(lid, ground, "A9.20 classification requirement", add_reqs=["RFQ3-HALLEL-N03"])
+
+
 def patch_interface_demands(doc, s) -> None:
     fixes = {
         "IFD-03": {"to": "RFQ3-RFMET (and RFQ3-RF for RF-N06 / N08 / N09 / N13 / N16)",
@@ -1507,9 +1710,10 @@ def patch_interface_demands(doc, s) -> None:
         "IFD-19": {"to": "RFQ3-GAS (Xe lines GAS-L04, GAS-L08..L11; C1 Xe lines conditional)",
                    "status": "DEFINED FOR QUOTATION, LATER (Xe tank / PMU / FCU / valves = RFP-required system Xe "
                              "capability for both configurations (A9.15); MEOP supplier-proposed (A9.14 OQ-RFQ-09); "
-                             "C1 Xe only for a selected C1 requiring it; flight C1 hardware NIR-04; GAS-O02 option "
-                             "only; RFQ only, no purchase)",
-                   "decisions": [s["A915-RULE"], s["OQ-RFQ-09"]]},
+                             "Xe = contingency / emergency supply mode (A9.19); C1 Xe lines = ground-only C1 "
+                             "laboratory branch, never flight (A9.20); no flight C1 at all (A9.19, NIR-04); GAS-O02 "
+                             "option only; RFQ only, no purchase)",
+                   "decisions": [s["A915-RULE"], s["OQ-RFQ-09"], s["A919-XE"], s["A920-GROUND"]]},
     }
     seen = set()
     for x in doc["interface_demands"]:
@@ -1526,7 +1730,8 @@ def patch_interface_demands(doc, s) -> None:
         row["how_touched"] = row["how_touched"].replace("placement P2Q-02", "RFQ3-RFMET per A9.8 P2Q-02")
     for e in doc["instrument_coverage"]["p1_hardware"]:
         if e["id"] == "P1-HW-32":
-            e["note"] = ("C1 stays CONTROL_FALLBACK and LATER; P1-S6 may run with C1 physically absent "
+            e["note"] = ("C1 is GROUND_ONLY_LAB_EQUIPMENT (A9.20; no longer a flight control / fallback, A9.19) and "
+                         "LATER; P1-S6 may run with C1 physically absent "
                          "(C1_NOT_INSTALLED); C1 readiness is scheduled against the H-1 reference characterization "
                          "gate (A9.10 OQ-RFQV2-09)")
 
@@ -1595,6 +1800,12 @@ def _banner() -> list:
         "both ambient atmospheric propellant (180-230 km) and Xenon propulsion capability with separate tanks/paths; Xe "
         "is an RFP-required system capability, not a C1 contingency; C1 Xe only if a selected C1 requires it, booked "
         "inside the system Xe architecture. The A9.1 ICP gas-mode baseline (G-REUSE primary) is unchanged.",
+        "Flight architecture (A9.19, amending A9.15 on the ROLE of Xe): one Hall accelerator + one RF/ICP "
+        "electron-source/neutralizer (cathodeless / electrodeless) for both atmospheric gases and Xe; two propellant "
+        "supply modes with separate tanks / paths - ambient atmospheric propellant (primary) and Xe (contingency / "
+        "emergency supply mode; the RFP-required Xe capability is retained); no conventional hollow cathode. C1 "
+        "(A9.20) is GROUND_ONLY_LAB_EQUIPMENT for the H-1 reference characterization (A9.10 S3.5) and the C1-vs-ICP "
+        "bench control: no C1 line in these packages is flight hardware or enters a flight mass / power / Xe budget.",
         "A9.4 / A9.6: the owner / procurement may SEND the lines tagged P1_NEEDED for quotation (requests for "
         "quotation, technical clarification, indicative lead time, commercial quotation, datasheets/certificates). The "
         "H-1 build-to-print package for the P1 article is sent only with the P9e configuration-controlled drawing set "
@@ -1640,6 +1851,7 @@ def build() -> dict:
     src = S()
     apply_decisions(c, src)
     apply_stale_text_fixes(c, src)
+    apply_a9_19_20(c, src)
     doc["packages"].sort(key=lambda p: PKG_ORDER.index(p["id"]))
     _rebuild_quote_sheets(doc)
     _finish_packages(doc, src)
@@ -1730,7 +1942,9 @@ def _common_interface(doc, s) -> None:
             x["value"] = dict(x["value"])
             x["value"]["Xe"] = ("RFP-required system Xe propulsion capability (separate Xe tank / path; both "
                                 "configurations); reference / health check; C1 Xe only if a selected C1 requires it, "
-                                "inside the system Xe architecture (A9.15)")
+                                "inside the system Xe architecture (A9.15); A9.19: Xe is the contingency / emergency "
+                                "supply mode (capability retained); A9.20: C1 Xe = ground-only C1 laboratory branch, "
+                                "never flight Xe")
             x["value"]["ambient air"] = "RFP-required ambient atmospheric propellant (180-230 km), separate tank / path"
             x["source"] = x["source"] + "; A9.15 governing_rule"
             x["change_v3"] = {"type": "CARRIED_MODIFIED", "decisions": _decisions_of([s["A915-RULE"]])}
@@ -1794,7 +2008,20 @@ def _top_level(doc, v2, c: Ctx, s) -> None:
                     "GAS-L04 / L08..L11 tagged system Xe", "C1 Xe lines conditional (GAS-L05 / L06 / L15)",
                     "RFQ3-GAS-N04 (ICP Xe getter = engineering requirement)", "CIF-S01 Xe / ambient-air labels"],
         "unchanged": "A9.1 ICP gas-mode baseline: G-REUSE primary (m_Xe,ICP = 0), G-XE a declared ICP-feed variant",
-        "rule_function": "xe_capability_scope"}
+        "rule_function": "xe_capability_scope",
+        "a9_19_xe_role": {
+            "decision": DECISIONS["A9.19"]["json"], "json_sha256": DECISIONS["A9.19"]["json_sha256"],
+            "verbatim": DECISIONS["A9.19"]["md"], "md_sha256": DECISIONS["A9.19"]["md_sha256"],
+            "owner_text": [s["A919-XE"]["quote"], s["A919-ARCH"]["quote"]],
+            "role": "Xe = CONTINGENCY / EMERGENCY supply mode (not a parallel co-equal propellant); Xe capability, "
+                    "separate tank / path and flow control stay required (RFP-P17-05, RFP-P18-08)",
+            "flight_architecture": FLIGHT_ARCHITECTURE_A919,
+            "amends": "A9.15 on the ROLE of Xe only (capability unchanged)"},
+        "a9_20_c1_role": {
+            "decision": DECISIONS["A9.20"]["json"], "json_sha256": DECISIONS["A9.20"]["json_sha256"],
+            "verbatim": DECISIONS["A9.20"]["md"], "md_sha256": DECISIONS["A9.20"]["md_sha256"],
+            "role": C1_GROUND_ROLE, "lines": C1_GROUND_LINES + C1_XE_LINES + ["GAS-O03"],
+            "requirement": "RFQ3-HALLEL-N03", "rule_function": "c1_equipment_class"}}
     sup = {x["id"]: x["superseded_by"] for x in doc["superseded_lines_v3"]}
     idx = _line_index(doc)
     # not in this revision
@@ -1802,10 +2029,17 @@ def _top_level(doc, v2, c: Ctx, s) -> None:
     for x in doc["not_in_this_revision"]:
         x = copy.deepcopy(x)
         if x["id"] == "NIR-04":
-            x["why"] = ("A9.14 OQ-A907-07 as amended by A9.15: flight C1 integration is deferred until C1 is selected "
-                        "as a flight fallback - not because Xe is contingency-only; development / reference C1 work "
-                        "continues separately (HE-L10..L12)")
-            x["source"] = "A9.14 OQ-A907-07; A9.15 OQ-A907-07"
+            x["before_a9_19"] = {"item": x["item"], "package_when_issued": x["package_when_issued"]}
+            x["item"] = "flight C1 integration hardware - NONE: there is no flight C1 (A9.19)"
+            x["package_when_issued"] = ("never (A9.19: the flight architecture has no conventional hollow cathode; "
+                                        "A9.20: C1 is ground-only laboratory equipment)")
+            x["why"] = ("A9.19 (amending A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 and the A9 C1 CONTROL_FALLBACK): the "
+                        "flight architecture is one Hall accelerator + one RF/ICP electron-source/neutralizer with no "
+                        "conventional hollow cathode, so no flight C1 hardware is ever specified; A9.20: C1 is "
+                        "GROUND_ONLY_LAB_EQUIPMENT quoted on HE-L10..L12 and the C1 Xe branch (RFQ3-HALLEL-N03)")
+            x["source"] = ("A9.19 (" + DECISIONS["A9.19"]["json"] + " sha256 " + DECISIONS["A9.19"]["json_sha256"]
+                           + "); A9.20 (" + DECISIONS["A9.20"]["json"] + " sha256 " + DECISIONS["A9.20"]["json_sha256"]
+                           + "); history: A9.14 OQ-A907-07; A9.15 OQ-A907-07")
         if x["id"] == "NIR-06":
             x["state_v3"] = "RESOLVED_BY_A9_10_OQ_RFQV2_10 (RFQ3-H1FAB issued in this revision)"
             continue_list = doc.setdefault("resolved_not_in_previous_revision", [])
@@ -1895,6 +2129,12 @@ def _top_level(doc, v2, c: Ctx, s) -> None:
                                        "gated on the H-1 reference characterization; V/I calibration route",
              "source": "A9.8 OQ-RFQV2-01..06, 08; A9.10 OQ-RFQV2-09; A9.11 P2Q-07"},
             {"id": "CL3-08", "change": "Langmuir-probe cross-check line TH-L10", "source": "A9.8 P3Q-01"},
+            {"id": "CL3-09", "change": "C1 lines HE-L10 / L11 / L12, the C1 Xe branch GAS-L05 / L06 / L15 and the C1 "
+                                       "getter option GAS-O03 reclassified GROUND_ONLY_LAB_EQUIPMENT (new RFQ3-HALLEL-N03; "
+                                       "H-1 reference characterization A9.10 S3.5 and C1-vs-ICP bench control); flight-C1 "
+                                       "wording removed (RFQ-07-R09 / R08 / R06, RFQ-08-R01, NIR-04, IFD-19, P1-HW-32); "
+                                       "Xe = contingency / emergency supply mode (RFQ3-GAS-N03)",
+             "source": "A9.19 architecture / xenon_role; A9.20 answer; A9.10 P1Q-07"},
         ],
         "per_requirement": per_req, "per_line_item": per_line, "counts": dict(sorted(counts.items()))}
     v2tm = {x["requirement"]: x for x in v2["traceability_matrix"]}
@@ -1915,7 +2155,7 @@ def _top_level(doc, v2, c: Ctx, s) -> None:
     for (key, qid), e in sorted(c.applied.items()):
         src = e["source"]
         js = _decision(key)[0]
-        rec = js["decisions"].get(qid) if key != "A9.15" else None
+        rec = js["decisions"].get(qid) if key not in ("A9.15",) + tuple(SINGLE_RECORD_KEYS) else None
         entries.setdefault(key.replace(".", "_").lower(), []).append({
             "decision_key": key, "question_id": qid,
             "sequenced_no": rec.get("sequenced_no") if rec else None,
@@ -1976,6 +2216,10 @@ def _top_level(doc, v2, c: Ctx, s) -> None:
                                       "questions (e.g. IFD-14 MQ-01, IFD-17 P4 IT-17) are not restated here"},
         {"id": "RF3-FLAG-04", "flag": "the RFP (RFP(1)) is owner-held and not yet registered in the repository "
                                       "(AG-15); A9.15 content is applied as owner-stated"},
+        {"id": "RF3-FLAG-05", "flag": "A9.20: the owner chose the recommended ground-only option and in the same message "
+                                      "asked 'is it good to remove hollow cathode' - recorded for the owner, not "
+                                      "answered here; A9.19 'check C1 mass' is a mass / budget-lane request (C1 is now "
+                                      "outside every flight budget), not an RFQ line change"},
     ]
     doc["merged_cross_lane"] = dict(doc["merged_cross_lane"])
     doc["merged_cross_lane"]["rule_v3"] = ("v2 cross-lane pairs carried as a snapshot; v3 does not run the xlane check "
@@ -2007,7 +2251,12 @@ def _top_level(doc, v2, c: Ctx, s) -> None:
     ]
     doc["standing_facts"] = dict(doc["standing_facts"])
     doc["standing_facts"]["rfp_propellant_policy"] = "A9.15: ambient air (180-230 km) + Xenon, separate tanks; Xe is " \
-                                                     "an RFP-required system capability"
+                                                     "an RFP-required system capability; A9.19: Xe is the " \
+                                                     "contingency / emergency supply mode, no conventional hollow " \
+                                                     "cathode in the flight architecture; A9.20: C1 ground-only"
+    doc["standing_facts"]["c1_role_a9_20"] = ("GROUND_ONLY_LAB_EQUIPMENT (A9.20); the carried A9.2 status "
+                                              "'C1 conventional reference: CONTROL_FALLBACK' is history - A9.19 removes "
+                                              "C1 as a flight fallback (hall_c1_reference is not a flight configuration)")
     doc["compliance"] = {
         "lane_paths": ["docs/procurement/rfq_a9_v3/**", TEST],
         "v2_untouched": "all v2 files pinned by sha256 and verified at every build",
@@ -2021,7 +2270,8 @@ def _top_level(doc, v2, c: Ctx, s) -> None:
               "dispatch_tags", "change_types"):
         if k in doc:
             doc.setdefault("carried_from_v2", {})[k] = doc.pop(k)
-    doc["vocabulary"] = {"configurations": CONFIGS, "freeze_points": FREEZE_POINTS, "requirement_statuses": STATUSES,
+    doc["vocabulary"] = {"configurations": CONFIGS, "configuration_roles_a9_19_20": dict(CONFIGURATION_ROLES),
+                         "equipment_classes": [GROUND_ONLY], "freeze_points": FREEZE_POINTS, "requirement_statuses": STATUSES,
                          "dispatch_tags": DISPATCH, "change_types_v3": CHANGE_TYPES_V3,
                          "evidence_classes": EVIDENCE_CLASSES}
     order = ["schema", "id", "title", "revision_of", "lane", "follow_on", "trigger", "status", "a9_status", "base_commit",

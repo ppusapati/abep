@@ -16,8 +16,8 @@
  "test": "tests/test_rvm_a9.py",
  "regenerate": "python docs/requirements/rvm_a9/build_rvm_a9.py  (check: --check)",
  "configurations": {
-  "hall_icp_neutralizer": "PRIMARY INVESTIGATION HYPOTHESIS (A9; A9.2 INVESTIGATION_HYPOTHESIS)",
-  "hall_c1_reference": "CONTROL / FALLBACK (A9; A9.2 CONTROL_FALLBACK)"
+  "hall_icp_neutralizer": "FLIGHT ARCHITECTURE (A9.19): one Hall accelerator + one RF/ICP electron-source/neutralizer (cathodeless / electrodeless) serving both atmospheric gases and Xe; two propellant supply modes with separate tanks / paths - ambient atmospheric propellant (primary) and Xe (contingency / emergency supply mode); no conventional hollow cathode; still OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE until evidence (A9)",
+  "hall_c1_reference": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a candidate flight configuration (A9.19); its cells are kept only as the labelled ground / laboratory reference (H-1 I_d,max,H1,Ar characterization, A9.10 S3.5; C1-vs-ICP bench control) and are never flight compliance evidence"
  },
  "what_this_is_not": [
   "not a compliance claim: implementation completeness is never compliance; no row is PASS",
@@ -239,6 +239,30 @@
    "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
    "sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
    "role": "owner decisions A9.15 (verbatim; governs)"
+  },
+  {
+   "key": "A919",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "role": "owner decision A9.19 (applied: a9_19_rvm)"
+  },
+  {
+   "key": "A919_MD",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "role": "owner decision A9.19 (verbatim; governs)"
+  },
+  {
+   "key": "A920",
+   "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "role": "owner decision A9.20 (applied: a9_19_rvm)"
+  },
+  {
+   "key": "A920_MD",
+   "path": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "role": "owner decision A9.20 (verbatim; governs)"
   }
  ],
  "referenced_not_pinned": [
@@ -407,7 +431,7 @@
   "hall_icp_neutralizer": {
    "PASS": 0,
    "FAIL": 0,
-   "NOT_EVALUATED": 24,
+   "NOT_EVALUATED": 27,
    "OUT_OF_DOMAIN": 0,
    "INCOMPLETE_EVIDENCE": 3,
    "NUMERICAL_FAILURE": 0
@@ -415,7 +439,7 @@
   "hall_c1_reference": {
    "PASS": 0,
    "FAIL": 0,
-   "NOT_EVALUATED": 24,
+   "NOT_EVALUATED": 27,
    "OUT_OF_DOMAIN": 0,
    "INCOMPLETE_EVIDENCE": 3,
    "NUMERICAL_FAILURE": 0
@@ -759,7 +783,8 @@
         "why": "delivered feed state vs altitude (upstream path)"
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "a9_16": {
@@ -1153,7 +1178,8 @@
         ]
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "requirement_origin": "RFP_CLAUSE",
@@ -1573,7 +1599,8 @@
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "requirement_origin": "RFP_CLAUSE",
@@ -2013,8 +2040,16 @@
         "why": ""
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
+   },
+   "a9_19": {
+    "decisions": [
+     "A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)",
+     "A9.20 (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6; verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
+    ],
+    "c1_supplies": "C1 supplies (heater, keeper) are NOT flight bus loads: there is no conventional hollow cathode in the flight architecture (A9.19); C1 is ground-only (A9.20). The requirement text as carried lists 'C1 supplies' for the hall_c1_reference ground reference only."
    },
    "requirement_origin": "RFP_CLAUSE",
    "rfp_clauses": [
@@ -2267,7 +2302,8 @@
         "why": ""
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "requirement_origin": "OWNER_ALLOCATION",
@@ -3087,7 +3123,8 @@
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "requirement_origin": "RFP_CLAUSE",
@@ -4216,7 +4253,8 @@
         ]
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "requirement_origin": "OWNER_ALLOCATION",
@@ -4671,7 +4709,8 @@
         "why": ""
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "a9_16": {
@@ -4978,7 +5017,8 @@
         ]
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "a9_16": {
@@ -5309,7 +5349,8 @@
         "why": ""
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "a9_16": {
@@ -5325,6 +5366,15 @@
     "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
    },
    "requirement_text_as_carried": "Demonstrate a bounded functional Xe-capable operating mode beyond bookkeeping (need not be continuous nominal operation) and book every Xe use (PHASE_TOTAL_FLOW); Xe reference / health checks are labelled and never atmospheric evidence.",
+   "a9_19": {
+    "decisions": [
+     "A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)",
+     "A9.20 (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6; verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
+    ],
+    "xe_role": "CONTINGENCY_AND_EMERGENCY supply mode (A9.19, amending A9.15 on the ROLE of Xe): Xe is not a parallel co-equal propellant; the RFP-required Xe capability, separate tank / path and a bounded functional Xe-capable mode on the one Hall + RF/ICP neutralizer stay required (RFP-P17-05, RFP-P18-08)",
+    "supersedes": "the a9_16 record's 'never a contingency interpretation' wording on the ROLE of Xe (kept as history); the a9_16 'configurations' reading (Xe capability in hall_c1_reference; C1 Xe booked inside the system Xe accounting) is superseded by A9.20: hall_c1_reference is a ground-only reference and C1 Xe is never flight Xe",
+    "icp_gas_mode": "unchanged: A9.1 G-REUSE primary; G-XE a declared ICP-feed variant"
+   },
    "requirement_origin": "RFP_CLAUSE",
    "rfp_clauses": [
     "RFP-P18-08",
@@ -5486,8 +5536,15 @@
         "why": "H-1 is the common scored Hall article (D-09-A)"
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
+   },
+   "a9_19": {
+    "decisions": [
+     "A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)"
+    ],
+    "architecture": "the one Hall accelerator of the A9.19 flight architecture (RVM-28)"
    },
    "requirement_origin": "RFP_CLAUSE",
    "rfp_clauses": [
@@ -5884,7 +5941,8 @@
         "why": ""
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "a9_16": {
@@ -5894,6 +5952,13 @@
     "icp_life_basis": ">= 15,000 h cumulative energized operating life (conservative design basis pending clarification); the literal RFP entry 'Ignition Time' > 15,000 h is preserved verbatim in the requirement record",
     "icp_cycles": "TBD from the frozen mission-mode profile (not invented)",
     "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
+   },
+   "a9_19": {
+    "decisions": [
+     "A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)",
+     "A9.20 (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6; verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
+    ],
+    "c1_life_basis": "the C1 15,000 h cathode basis in the carried text applies to no flight element (no conventional hollow cathode, A9.19); the flight life basis is the H-1 and the one ICP neutralizer (>= 15,000 h cumulative energized, A9.16 record)"
    },
    "requirement_origin": "RFP_CLAUSE",
    "rfp_clauses": [
@@ -6174,7 +6239,8 @@
         "why": ""
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "requirement_origin": "RFP_CLAUSE",
@@ -6586,7 +6652,8 @@
         "why": ""
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "a9_16": {
@@ -6607,6 +6674,13 @@
     ],
     "attempts": "max 1 initial attempt + 2 retries under registered dwell / thermal limits (values registered from the actual hardware before P1-S6, A9.10 P1Q-02; NOT_EVALUATED_REGISTRATION until registered; no dwell number is set for the ICP-first sequence)",
     "c1_variant": "a C1-selected variant uses its separately qualified heater / keeper sequence; its Xe booking uses 3 C1 ignition dwells (1 + 2 retries), each <= 120 s, 360 s maximum booking (A9.14 OQ-A907-01 / XA9Q-02; applies to the C1 variant only)"
+   },
+   "a9_19": {
+    "decisions": [
+     "A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)",
+     "A9.20 (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6; verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
+    ],
+    "c1_variant": "NOT A FLIGHT VARIANT (A9.19: no conventional hollow cathode; A9.20: C1 ground-only). The carried C1 ignition-dwell booking (3 x <= 120 s, 360 s) applies only to the ground C1 laboratory reference and its test-campaign Xe, never to a flight budget"
    },
    "requirement_origin": "DERIVED_PROJECT_REQUIREMENT",
    "rfp_clauses": [],
@@ -7084,8 +7158,16 @@
         "why": "hardware not procured"
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
+   },
+   "a9_19": {
+    "decisions": [
+     "A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)",
+     "A9.20 (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6; verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
+    ],
+    "hall_c1_reference": "ground-only bench control (C1-vs-ICP comparison, A9.20); the carried 'CONTROL_FALLBACK' sizing is not a flight fallback (A9.19). Flight neutralization is the one RF/ICP neutralizer only (ICP-45 capacity, PENDING_ICP45)"
    },
    "requirement_origin": "DERIVED_PROJECT_REQUIREMENT",
    "rfp_clauses": [],
@@ -7500,7 +7582,8 @@
         "why": ""
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "requirement_origin": "RFP_CLAUSE",
@@ -7756,7 +7839,8 @@
         "why": ""
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "a9_16": {
@@ -7932,7 +8016,8 @@
         "why": "quotation-only packages; no part selected"
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "a9_16": {
@@ -8132,7 +8217,8 @@
         "why": "supply partition exists; no FMEA"
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "a9_16": {
@@ -8335,7 +8421,8 @@
         "why": "power boundary only; no data interface defined"
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "requirement_origin": "RFP_CLAUSE",
@@ -8615,7 +8702,8 @@
         "why": "coupled thermal framework (inputs TBD)"
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "requirement_origin": "RFP_CLAUSE",
@@ -8910,7 +8998,8 @@
         "why": "4.1 d) the test-plan document reviewed / finalized by the expert committee and approved by PMMG / SPMMG"
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "requirement_origin": "RFP_CLAUSE",
@@ -9026,7 +9115,8 @@
         "why": "the company ISO certificate and the ATP document finalized after DDR / CDR (Para 2 parameters; MIL / ASTM / BIS / ESS test standards)"
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "requirement_origin": "RFP_CLAUSE",
@@ -9303,7 +9393,8 @@
         ]
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "requirement_origin": "RFP_CLAUSE",
@@ -9517,7 +9608,8 @@
         "why": "the approved milestone deliverables M1-M5 (PDR-1, PDR-2, CDR, EM intake + QM PSE / thruster, QM integration / ENTEST / delivery) against a set T0"
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "requirement_origin": "RFP_CLAUSE",
@@ -9804,7 +9896,8 @@
         "why": ""
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "requirement_origin": "RFP_CLAUSE",
@@ -9938,7 +10031,8 @@
         "why": "mount-heat report (25 / 50 / 100 W cases); coupled network inputs TBD"
        }
       }
-     ]
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
     }
    },
    "requirement_origin": "OWNER_ALLOCATION",
@@ -9961,6 +10055,633 @@
      "requirement_basis": "OWNER_ALLOCATION (A9.12 S5.4 OQ-A907-06): provisional until the spacecraft thermal ICD"
     },
     "requirement_frozen_note": "unchanged (True)"
+   }
+  },
+  {
+   "id": "RVM-28",
+   "key": "FLIGHT_ARCHITECTURE_SINGLE_HALL_ICP_NO_HOLLOW_CATHODE",
+   "category": "owner_architecture_decision",
+   "title": "Flight thruster architecture: one Hall accelerator + one RF/ICP electron-source/neutralizer for both atmospheric gases and Xe; no conventional hollow cathode (A9.19)",
+   "requirement_text": "The flight propulsion system has exactly ONE Hall accelerator and ONE RF/ICP electron-source/neutralizer (cathodeless / electrodeless) that serves BOTH the ambient atmospheric supply mode and the Xe supply mode; there is NO conventional hollow cathode in the flight architecture (A9.19 owner decision). The single-thruster reading is consistent with the registered RFP clauses RFP-P17-05 ('in same thruster'; Xe as 'an extra input system') and RFP-P18-08 (two separate tanks), which do not themselves prescribe the electron source. C1 is ground-only laboratory equipment (A9.20, RVM-30).",
+   "sources": [
+    {
+     "kind": "owner_decision",
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "decision_id": "A9.19 A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+     "key": "architecture",
+     "sha256_of_file": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "verbatim_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+     "verbatim_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+     "text": "One Hall accelerator. One RF/ICP electron-source/neutralizer. Two propellant supply modes. No conventional hollow cathode."
+    },
+    {
+     "kind": "owner_decision",
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "decision_id": "A9.19 A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+     "key": "cathodeless",
+     "sha256_of_file": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "verbatim_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+     "verbatim_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+     "text": "our thruster architecture should be cathode/electrodless for both the atmosphere gases and xenon"
+    }
+   ],
+   "requirement_basis": "OWNER_ARCHITECTURE_DECISION A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749) - owner-given design architecture, not an RFP gate; traced to RFP-P17-05 / RFP-P18-08 (verbatim in rfp_trace)",
+   "requirement_frozen": true,
+   "limit": {
+    "quantity": "flight Hall accelerators / RF-ICP neutralizers / conventional hollow cathodes",
+    "comparator": "==",
+    "value": [
+     1,
+     1,
+     0
+    ],
+    "units": "count"
+   },
+   "verification_methods": [
+    "inspection",
+    "demonstration"
+   ],
+   "verification_note": "inspection of the frozen flight design baseline (none exists: A9 is OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE) and demonstration that the one ICP serves both supply modes (ICP-45 capacity PENDING_ICP45; Xe operation of the ICP not yet measured); a design intent is not verification evidence",
+   "open_readings": [],
+   "rtm_xref": [],
+   "lane24_gates": [],
+   "m16_rows": [],
+   "configuration_applicability": {
+    "hall_icp_neutralizer": "FLIGHT (A9.19)",
+    "hall_c1_reference": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
+   },
+   "rfp_trace": [
+    {
+     "kind": "rfp_official_clause",
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "clause_id": "RFP-P17-05",
+     "page": 17,
+     "section": "Part III 1(A)iv row 3 Thruster",
+     "verbatim": "Capability to ionize N2, atomic oxygen in same thruster and It should have capability to use Xe as propellant, an extra input system to take care any problems on board unforeseen problems.",
+     "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+     "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+     "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)"
+    },
+    {
+     "kind": "rfp_official_clause",
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "clause_id": "RFP-P18-08",
+     "page": 18,
+     "section": "Part III 2 Propellant for propulsion system",
+     "verbatim": "Compatible for using Ambient air (at the functional orbit altitude of 180-230km) and Xenon as propellant. Two separate propellant tanks for ambient air and xenon.",
+     "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+     "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+     "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)"
+    }
+   ],
+   "configurations": {
+    "hall_icp_neutralizer": {
+     "status": "NOT_EVALUATED",
+     "rule": "R7-NOT-EVALUATED",
+     "reason": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P17-05:A9_19_ARCHITECTURE:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
+     "current_evidence_state": "NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: inspection of the frozen flight design baseline (Milestone C) showing exactly one Hall accelerator, one RF/ICP electron-source/neutralizer serving both the atmospheric and the Xe supply modes, and no conventional hollow cathode; plus the ICP-45 discharge-OFF capacity and Xe-mode operation records of that one ICP",
+     "artifacts": [
+      {
+       "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+       "id": "rfp_registration_v1:RFP-P17-05:A9_19_ARCHITECTURE:NO_VERIFICATION_ARTIFACT",
+       "role": "DETERMINING",
+       "kind": "VERIFICATION_ARTIFACT_ABSENT",
+       "evidence_state": "NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: inspection of the frozen flight design baseline (Milestone C) showing exactly one Hall accelerator, one RF/ICP electron-source/neutralizer serving both the atmospheric and the Xe supply modes, and no conventional hollow cathode; plus the ICP-45 discharge-OFF capacity and Xe-mode operation records of that one ICP",
+       "evaluated": false,
+       "verified": false,
+       "measured": false,
+       "synthetic": false,
+       "in_domain": null,
+       "meets": null,
+       "coverage_complete": false,
+       "evidenced_terms": 0,
+       "numerical_failure": false,
+       "lower_bound_verified": false,
+       "exceeds_limit_every_reading": null,
+       "detail": {
+        "name": "RFP-P17-05 (Part III 1(A)iv row 3 Thruster, p. 17)",
+        "why": "inspection of the frozen flight design baseline (Milestone C) showing exactly one Hall accelerator, one RF/ICP electron-source/neutralizer serving both the atmospheric and the Xe supply modes, and no conventional hollow cathode; plus the ICP-45 discharge-OFF capacity and Xe-mode operation records of that one ICP"
+       }
+      },
+      {
+       "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
+       "id": "icp_neutralizer_icd_v1",
+       "role": "SUPPORTING",
+       "kind": "PLAN_OR_FRAMEWORK",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_PENDING_OWNER",
+       "evaluated": false,
+       "verified": false,
+       "measured": false,
+       "synthetic": false,
+       "in_domain": null,
+       "meets": null,
+       "coverage_complete": false,
+       "evidenced_terms": 0,
+       "numerical_failure": false,
+       "lower_bound_verified": false,
+       "exceeds_limit_every_reading": null,
+       "detail": {
+        "name": "Downstream 13.56 MHz RF-ICP neutralizer interface control document (A9)",
+        "why": "one ICP neutralizer interface"
+       }
+      },
+      {
+       "path": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+       "id": "p1_icp_bench_v1:P1-S7",
+       "role": "SUPPORTING",
+       "kind": "PLAN_OR_FRAMEWORK",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status ENGINEERING_TEST_PLAN_DRAFT_NOT_SCORE_BEARING",
+       "evaluated": false,
+       "verified": false,
+       "measured": false,
+       "synthetic": false,
+       "in_domain": null,
+       "meets": null,
+       "coverage_complete": false,
+       "evidenced_terms": 0,
+       "numerical_failure": false,
+       "lower_bound_verified": false,
+       "exceeds_limit_every_reading": null,
+       "detail": {
+        "name": "ICP-45A discharge-OFF capacity at registered H-1 conditions (conditional)",
+        "why": "ICP-45A capacity (PENDING_ICP45)"
+       }
+      }
+     ]
+    },
+    "hall_c1_reference": {
+     "status": "NOT_EVALUATED",
+     "rule": "R7-NOT-EVALUATED",
+     "reason": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P17-05:A9_19_ARCHITECTURE:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
+     "current_evidence_state": "NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: inspection of the frozen flight design baseline (Milestone C) showing exactly one Hall accelerator, one RF/ICP electron-source/neutralizer serving both the atmospheric and the Xe supply modes, and no conventional hollow cathode; plus the ICP-45 discharge-OFF capacity and Xe-mode operation records of that one ICP",
+     "artifacts": [
+      {
+       "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+       "id": "rfp_registration_v1:RFP-P17-05:A9_19_ARCHITECTURE:NO_VERIFICATION_ARTIFACT",
+       "role": "DETERMINING",
+       "kind": "VERIFICATION_ARTIFACT_ABSENT",
+       "evidence_state": "NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: inspection of the frozen flight design baseline (Milestone C) showing exactly one Hall accelerator, one RF/ICP electron-source/neutralizer serving both the atmospheric and the Xe supply modes, and no conventional hollow cathode; plus the ICP-45 discharge-OFF capacity and Xe-mode operation records of that one ICP",
+       "evaluated": false,
+       "verified": false,
+       "measured": false,
+       "synthetic": false,
+       "in_domain": null,
+       "meets": null,
+       "coverage_complete": false,
+       "evidenced_terms": 0,
+       "numerical_failure": false,
+       "lower_bound_verified": false,
+       "exceeds_limit_every_reading": null,
+       "detail": {
+        "name": "RFP-P17-05 (Part III 1(A)iv row 3 Thruster, p. 17)",
+        "why": "inspection of the frozen flight design baseline (Milestone C) showing exactly one Hall accelerator, one RF/ICP electron-source/neutralizer serving both the atmospheric and the Xe supply modes, and no conventional hollow cathode; plus the ICP-45 discharge-OFF capacity and Xe-mode operation records of that one ICP"
+       }
+      }
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
+    }
+   },
+   "a9_19": {
+    "decisions": [
+     "A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)",
+     "A9.20 (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6; verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
+    ],
+    "added": "2026-10-01"
+   },
+   "requirement_origin": "OWNER_ALLOCATION",
+   "rfp_clauses": [],
+   "related_rfp_clauses": [
+    "RFP-P17-05",
+    "RFP-P18-08",
+    "RFP-P18-07"
+   ],
+   "rfp_rebase": {
+    "date": "2026-10-01",
+    "origin": "OWNER_ALLOCATION",
+    "basis": "owner-given internal design allocation, not an RFP gate",
+    "decisions": [
+     "A9.17 RFP (docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json sha256 9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad)",
+     "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)"
+    ],
+    "as_carried": {
+     "category": "owner_architecture_decision",
+     "title": "Flight thruster architecture: one Hall accelerator + one RF/ICP electron-source/neutralizer for both atmospheric gases and Xe; no conventional hollow cathode (A9.19)",
+     "requirement_basis": "OWNER_ARCHITECTURE_DECISION A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749) - owner-given design architecture, not an RFP gate; traced to RFP-P17-05 / RFP-P18-08 (verbatim in rfp_trace)"
+    },
+    "requirement_frozen_note": "unchanged (True)",
+    "note": "A9.19 owner architecture decision (one Hall + one RF/ICP neutralizer, no conventional hollow cathode); the RFP clauses are traced verbatim (rfp_trace) but do not prescribe the electron source; OWNER_ALLOCATION here means an owner-given design decision, not an RFP gate"
+   }
+  },
+  {
+   "id": "RVM-29",
+   "key": "TWO_SUPPLY_MODES_SEPARATE_TANKS_XE_CONTINGENCY",
+   "category": "rfp_registered",
+   "title": "Two propellant supply modes with separate tanks / paths: ambient atmospheric propellant (primary) and Xe (contingency / emergency supply mode) (RFP-P18-08, RFP-P17-05; A9.19)",
+   "requirement_text": "Two separate propellant supply modes with separate tanks / paths feed the one Hall accelerator + RF/ICP neutralizer: ambient atmospheric propellant at 180-230 km (primary mode) and Xe (contingency / emergency supply mode - the RFP's 'extra input system to take care any problems on board unforeseen problems', RFP-P17-05; 'Two separate propellant tanks for ambient air and xenon', RFP-P18-08). Xe is not a parallel co-equal propellant (A9.19, amending A9.15 on the ROLE of Xe); the Xe capability itself stays required (RVM-10). The A9.1 ICP feed-gas baseline is unchanged (G-REUSE primary; G-XE a declared variant).",
+   "sources": [
+    {
+     "kind": "rfp_official_clause",
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "clause_id": "RFP-P18-08",
+     "page": 18,
+     "section": "Part III 2 Propellant for propulsion system",
+     "verbatim": "Compatible for using Ambient air (at the functional orbit altitude of 180-230km) and Xenon as propellant. Two separate propellant tanks for ambient air and xenon.",
+     "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+     "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+     "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)"
+    },
+    {
+     "kind": "rfp_official_clause",
+     "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+     "clause_id": "RFP-P17-05",
+     "page": 17,
+     "section": "Part III 1(A)iv row 3 Thruster",
+     "verbatim": "Capability to ionize N2, atomic oxygen in same thruster and It should have capability to use Xe as propellant, an extra input system to take care any problems on board unforeseen problems.",
+     "rfp_number": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
+     "pdf_sha256": "a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00",
+     "evidence_class": "transcription (human-read from the scanned page images of the registered PDF)"
+    },
+    {
+     "kind": "owner_decision",
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "decision_id": "A9.19 A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+     "key": "xenon_role",
+     "sha256_of_file": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "verbatim_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+     "verbatim_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+     "text": "xenon is not a parllel gas its just a contigency and emergency gas"
+    },
+    {
+     "kind": "owner_decision",
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "decision_id": "A9.19 A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+     "key": "architecture",
+     "sha256_of_file": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "verbatim_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+     "verbatim_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+     "text": "One Hall accelerator. One RF/ICP electron-source/neutralizer. Two propellant supply modes. No conventional hollow cathode."
+    }
+   ],
+   "requirement_basis": "RFP_CLAUSE RFP-P18-08, RFP-P17-05 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...); Xe ROLE = owner decision A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)",
+   "requirement_frozen": false,
+   "limit": {
+    "quantity": "propellant supply modes / tanks",
+    "comparator": "is",
+    "value": "2 separate (ambient air primary; Xe contingency / emergency)",
+    "units": "-"
+   },
+   "verification_methods": [
+    "inspection",
+    "demonstration"
+   ],
+   "verification_note": "inspection of the frozen feed-system design (none exists; the ambient-air storage / feed path belongs to the upstream-architecture lanes) and a demonstrated, booked Xe contingency-mode operation on the one Hall + ICP (RVM-10)",
+   "open_readings": [],
+   "rtm_xref": [
+    "RFP-XE-OP"
+   ],
+   "lane24_gates": [
+    "G7_air_xenon"
+   ],
+   "m16_rows": [],
+   "configuration_applicability": {
+    "hall_icp_neutralizer": "FLIGHT (A9.19)",
+    "hall_c1_reference": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
+   },
+   "configurations": {
+    "hall_icp_neutralizer": {
+     "status": "NOT_EVALUATED",
+     "rule": "R7-NOT-EVALUATED",
+     "reason": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P18-08:A9_19_SUPPLY_MODES:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
+     "current_evidence_state": "NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: inspection of the frozen flight feed-system design showing separate ambient-air and Xe tanks / paths feeding the one Hall + ICP, a mode-selection record (atmospheric primary, Xe contingency / emergency) and a demonstrated, booked Xe contingency-mode operation",
+     "artifacts": [
+      {
+       "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+       "id": "rfp_registration_v1:RFP-P18-08:A9_19_SUPPLY_MODES:NO_VERIFICATION_ARTIFACT",
+       "role": "DETERMINING",
+       "kind": "VERIFICATION_ARTIFACT_ABSENT",
+       "evidence_state": "NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: inspection of the frozen flight feed-system design showing separate ambient-air and Xe tanks / paths feeding the one Hall + ICP, a mode-selection record (atmospheric primary, Xe contingency / emergency) and a demonstrated, booked Xe contingency-mode operation",
+       "evaluated": false,
+       "verified": false,
+       "measured": false,
+       "synthetic": false,
+       "in_domain": null,
+       "meets": null,
+       "coverage_complete": false,
+       "evidenced_terms": 0,
+       "numerical_failure": false,
+       "lower_bound_verified": false,
+       "exceeds_limit_every_reading": null,
+       "detail": {
+        "name": "RFP-P18-08 (Part III 2 Propellant for propulsion system, p. 18)",
+        "why": "inspection of the frozen flight feed-system design showing separate ambient-air and Xe tanks / paths feeding the one Hall + ICP, a mode-selection record (atmospheric primary, Xe contingency / emergency) and a demonstrated, booked Xe contingency-mode operation"
+       }
+      },
+      {
+       "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+       "id": "xe_accounting_a9_v2:evaluations[S1-FL-PRIMARY]",
+       "role": "SUPPORTING",
+       "kind": "BUDGET_EVALUATION",
+       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S1-FL-PRIMARY {\"RA-FUNC\": \"APPLIES\"}: REFUSED_TBD_INPUTS; S1-FL-PRIMARY {\"RA-FUNC\": \"NOT_APPLIED\"}: COMPUTED_EXACT_ZERO",
+       "evaluated": true,
+       "verified": false,
+       "measured": false,
+       "synthetic": false,
+       "in_domain": true,
+       "meets": null,
+       "coverage_complete": false,
+       "evidenced_terms": 0,
+       "numerical_failure": false,
+       "lower_bound_verified": false,
+       "exceeds_limit_every_reading": null
+      },
+      {
+       "path": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json",
+       "id": "feed_state_closure_v1",
+       "role": "SUPPORTING",
+       "kind": "PLAN_OR_FRAMEWORK",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT for owner review",
+       "evaluated": false,
+       "verified": false,
+       "measured": false,
+       "synthetic": false,
+       "in_domain": null,
+       "meets": null,
+       "coverage_complete": false,
+       "evidenced_terms": 0,
+       "numerical_failure": false,
+       "lower_bound_verified": false,
+       "exceeds_limit_every_reading": null,
+       "detail": {
+        "name": "feed-state closure (delivered feed vs altitude)",
+        "why": "delivered atmospheric feed state (primary mode)"
+       }
+      }
+     ]
+    },
+    "hall_c1_reference": {
+     "status": "NOT_EVALUATED",
+     "rule": "R7-NOT-EVALUATED",
+     "reason": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P18-08:A9_19_SUPPLY_MODES:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
+     "current_evidence_state": "NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: inspection of the frozen flight feed-system design showing separate ambient-air and Xe tanks / paths feeding the one Hall + ICP, a mode-selection record (atmospheric primary, Xe contingency / emergency) and a demonstrated, booked Xe contingency-mode operation",
+     "artifacts": [
+      {
+       "path": "docs/requirements/rfp_official/rfp_registration_v1.json",
+       "id": "rfp_registration_v1:RFP-P18-08:A9_19_SUPPLY_MODES:NO_VERIFICATION_ARTIFACT",
+       "role": "DETERMINING",
+       "kind": "VERIFICATION_ARTIFACT_ABSENT",
+       "evidence_state": "NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: inspection of the frozen flight feed-system design showing separate ambient-air and Xe tanks / paths feeding the one Hall + ICP, a mode-selection record (atmospheric primary, Xe contingency / emergency) and a demonstrated, booked Xe contingency-mode operation",
+       "evaluated": false,
+       "verified": false,
+       "measured": false,
+       "synthetic": false,
+       "in_domain": null,
+       "meets": null,
+       "coverage_complete": false,
+       "evidenced_terms": 0,
+       "numerical_failure": false,
+       "lower_bound_verified": false,
+       "exceeds_limit_every_reading": null,
+       "detail": {
+        "name": "RFP-P18-08 (Part III 2 Propellant for propulsion system, p. 18)",
+        "why": "inspection of the frozen flight feed-system design showing separate ambient-air and Xe tanks / paths feeding the one Hall + ICP, a mode-selection record (atmospheric primary, Xe contingency / emergency) and a demonstrated, booked Xe contingency-mode operation"
+       }
+      }
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
+    }
+   },
+   "a9_19": {
+    "decisions": [
+     "A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)",
+     "A9.20 (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6; verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
+    ],
+    "added": "2026-10-01"
+   },
+   "requirement_origin": "RFP_CLAUSE",
+   "rfp_clauses": [
+    "RFP-P18-08",
+    "RFP-P17-05"
+   ],
+   "related_rfp_clauses": [
+    "RFP-P16-02"
+   ],
+   "rfp_rebase": {
+    "date": "2026-10-01",
+    "origin": "RFP_CLAUSE",
+    "basis": "derived from the cited registered RFP clause(s)",
+    "decisions": [
+     "A9.17 RFP (docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json sha256 9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad)",
+     "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)"
+    ],
+    "as_carried": {
+     "category": "rfp_registered",
+     "title": "Two propellant supply modes with separate tanks / paths: ambient atmospheric propellant (primary) and Xe (contingency / emergency supply mode) (RFP-P18-08, RFP-P17-05; A9.19)",
+     "requirement_basis": "SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false); Xe ROLE = owner decision A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)"
+    },
+    "requirement_frozen_note": "stays false: the RFP transcription is registered (AG-15 step) but AG-15 closes only by owner verification; interpretation readings are listed in rfp_rebase.discrepancies",
+    "note": "the Xe contingency / emergency ROLE is the owner's A9.19 decision, consistent with the RFP's stated purpose of the Xe input (DISC-06); the capability stays mandatory (A9.15, RVM-10)"
+   }
+  },
+  {
+   "id": "RVM-30",
+   "key": "C1_GROUND_ONLY_LAB_REFERENCE_NOT_IN_FLIGHT_BUDGETS",
+   "category": "owner_architecture_decision",
+   "title": "C1 (heated Xe-fed LaB6) is a ground-only laboratory reference: never flight hardware, never in the flight mass / power / Xe budgets (A9.20)",
+   "requirement_text": "C1 is used only on the ground: (i) the dedicated H-1 reference characterization that registers I_d,max,H1,Ar independently of the ICP (A9.10 S3.5 P1Q-07) and (ii) the bench control in the C1-vs-ICP comparison. C1 is never flight hardware or a flight fallback, and no C1 mass, power or Xe (heater, keeper, ignition dwell, C1 Xe branch, AL-C1, C1 getter) is booked in any flight budget (A9.19 / A9.20). C1 laboratory Xe is test-campaign Xe.",
+   "sources": [
+    {
+     "kind": "owner_decision",
+     "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "decision_id": "A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE",
+     "key": "answer",
+     "sha256_of_file": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "verbatim_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+     "verbatim_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+     "text": "will go with your recommended"
+    },
+    {
+     "kind": "owner_decision",
+     "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "decision_id": "A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE",
+     "key": "option",
+     "sha256_of_file": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "verbatim_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+     "verbatim_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+     "text": "Ground-only reference (Recommended)"
+    },
+    {
+     "kind": "owner_decision",
+     "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "decision_id": "A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE",
+     "key": "role_asked",
+     "sha256_of_file": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "verbatim_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+     "verbatim_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+     "text": "It's currently planned for the H-1 baseline characterization that registers I_d,max,H1 (your S3.5) and as the control in the C1-vs-ICP bench comparison."
+    },
+    {
+     "kind": "owner_decision",
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "decision_id": "A9.19 A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+     "key": "c1_mass",
+     "sha256_of_file": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "verbatim_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+     "verbatim_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+     "text": "check C1 mass"
+    }
+   ],
+   "requirement_basis": "OWNER_ARCHITECTURE_DECISION A9.20 (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6; verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c) + A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)",
+   "requirement_frozen": true,
+   "limit": {
+    "quantity": "C1 mass / power / Xe booked in flight budgets",
+    "comparator": "==",
+    "value": 0,
+    "units": "kg / W / kg"
+   },
+   "verification_methods": [
+    "inspection"
+   ],
+   "verification_note": "inspection of the flight mass / power and Xe accounting refreshed for A9.19 / A9.20 (a separate budgets lane; the immutable v2 budgets still book hall_c1_reference as history) and of the RFQ v3 classification RFQ3-HALLEL-N03 (procurement, never evidence)",
+   "open_readings": [],
+   "rtm_xref": [],
+   "lane24_gates": [],
+   "m16_rows": [],
+   "configuration_applicability": {
+    "hall_icp_neutralizer": "FLIGHT budgets must exclude C1 (A9.20)",
+    "hall_c1_reference": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
+   },
+   "configurations": {
+    "hall_icp_neutralizer": {
+     "status": "NOT_EVALUATED",
+     "rule": "R7-NOT-EVALUATED",
+     "reason": "no determining evaluation with evidenced terms: fo_a9_6_mass_power_integration_v2 [PLAN_OR_FRAMEWORK], xe_accounting_a9_v2 [PLAN_OR_FRAMEWORK]",
+     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_IMPLEMENTATION_FIRST_PENDING_CONSOLIDATED_VERIFICATION || PLANNED / FRAMEWORK ONLY - nothing measured; package status PARAMETRIC_XE_ACCOUNTING_V2 - every total with a TBD input REFUSED; open owner questions carried as side-by-side readings; nothing frozen; no winner; no PASS",
+     "artifacts": [
+      {
+       "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
+       "id": "fo_a9_6_mass_power_integration_v2",
+       "role": "DETERMINING",
+       "kind": "PLAN_OR_FRAMEWORK",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_IMPLEMENTATION_FIRST_PENDING_CONSOLIDATED_VERIFICATION",
+       "evaluated": false,
+       "verified": false,
+       "measured": false,
+       "synthetic": false,
+       "in_domain": null,
+       "meets": null,
+       "coverage_complete": false,
+       "evidenced_terms": 0,
+       "numerical_failure": false,
+       "lower_bound_verified": false,
+       "exceeds_limit_every_reading": null,
+       "detail": {
+        "name": "A9 mass + power integration v2: BOM per configuration (allocation / evidence floor / CBE / measured), dry and wet roll-ups under every open reading, A9 bus-boundary power allocation",
+        "why": "flight mass / power roll-up to be refreshed without C1 (A9.19 / A9.20); v2 is immutable history"
+       }
+      },
+      {
+       "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
+       "id": "xe_accounting_a9_v2",
+       "role": "DETERMINING",
+       "kind": "PLAN_OR_FRAMEWORK",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PARAMETRIC_XE_ACCOUNTING_V2 - every total with a TBD input REFUSED; open owner questions carried as side-by-side readings; nothing frozen; no winner; no PASS",
+       "evaluated": false,
+       "verified": false,
+       "measured": false,
+       "synthetic": false,
+       "in_domain": null,
+       "meets": null,
+       "coverage_complete": false,
+       "evidenced_terms": 0,
+       "numerical_failure": false,
+       "lower_bound_verified": false,
+       "exceeds_limit_every_reading": null,
+       "detail": {
+        "name": "A9.6 Xe accounting v2",
+        "why": "flight Xe accounting to be refreshed without C1 Xe (A9.19 / A9.20)"
+       }
+      },
+      {
+       "path": "docs/procurement/rfq_a9_v2/rfq_a9_v2.json",
+       "id": "RFQ_A9_V2",
+       "role": "SUPPORTING",
+       "kind": "PROCUREMENT",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.6 sec. 13; consolidated verification pending)",
+       "evaluated": false,
+       "verified": false,
+       "measured": false,
+       "synthetic": false,
+       "in_domain": null,
+       "meets": null,
+       "coverage_complete": false,
+       "evidenced_terms": 0,
+       "numerical_failure": false,
+       "lower_bound_verified": false,
+       "exceeds_limit_every_reading": null,
+       "detail": {
+        "name": "A9 RFQ packages v2 - split by supplier speciality (quotations only; no purchase orders)",
+        "why": "RFQ v3 RFQ3-HALLEL-N03 classifies every C1 line GROUND_ONLY_LAB_EQUIPMENT"
+       }
+      }
+     ]
+    },
+    "hall_c1_reference": {
+     "status": "NOT_EVALUATED",
+     "rule": "R7-NOT-EVALUATED",
+     "reason": "no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1 [PLAN_OR_FRAMEWORK]",
+     "current_evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
+     "artifacts": [
+      {
+       "path": "docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json",
+       "id": "A9_01_hall_icp_prereg_framework_v1",
+       "role": "DETERMINING",
+       "kind": "PLAN_OR_FRAMEWORK",
+       "evidence_state": "PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK",
+       "evaluated": false,
+       "verified": false,
+       "measured": false,
+       "synthetic": false,
+       "in_domain": null,
+       "meets": null,
+       "coverage_complete": false,
+       "evidenced_terms": 0,
+       "numerical_failure": false,
+       "lower_bound_verified": false,
+       "exceeds_limit_every_reading": null,
+       "detail": {
+        "name": "A9-01 Hall->ICP pre-registration framework (stages, DQ-HI-*)",
+        "why": "ground / laboratory C1 reference: H-1 characterization and C1-vs-ICP bench control (labelled, never flight)"
+       }
+      }
+     ],
+     "applicability": "GROUND_ONLY_LABORATORY_REFERENCE (A9.20): not a flight configuration (A9.19); this cell is carried for the labelled ground / laboratory comparison only and is never flight compliance evidence"
+    }
+   },
+   "a9_19": {
+    "decisions": [
+     "A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)",
+     "A9.20 (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6; verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
+    ],
+    "added": "2026-10-01"
+   },
+   "requirement_origin": "OWNER_ALLOCATION",
+   "rfp_clauses": [],
+   "related_rfp_clauses": [],
+   "rfp_rebase": {
+    "date": "2026-10-01",
+    "origin": "OWNER_ALLOCATION",
+    "basis": "owner-given internal design allocation, not an RFP gate",
+    "decisions": [
+     "A9.17 RFP (docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json sha256 9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad)",
+     "A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23)"
+    ],
+    "as_carried": {
+     "category": "owner_architecture_decision",
+     "title": "C1 (heated Xe-fed LaB6) is a ground-only laboratory reference: never flight hardware, never in the flight mass / power / Xe budgets (A9.20)",
+     "requirement_basis": "OWNER_ARCHITECTURE_DECISION A9.20 (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6; verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c) + A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)"
+    },
+    "requirement_frozen_note": "unchanged (True)",
+    "note": "A9.20 owner decision (C1 ground-only laboratory reference); not an RFP requirement"
    }
   }
  ],
@@ -11818,6 +12539,133 @@
    "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
   }
  ],
+ "configurations_as_carried_a9_16": {
+  "hall_icp_neutralizer": "PRIMARY INVESTIGATION HYPOTHESIS (A9; A9.2 INVESTIGATION_HYPOTHESIS)",
+  "hall_c1_reference": "CONTROL / FALLBACK (A9; A9.2 CONTROL_FALLBACK)"
+ },
+ "a9_19_20": {
+  "decisions": [
+   "A9.19 (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16; verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)",
+   "A9.20 (docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json sha256 9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6; verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
+  ],
+  "amends": "A9.15 on the ROLE of Xe only (capability retained); A9 C1 CONTROL_FALLBACK; A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07 (no C1 flight variant)",
+  "flight_architecture": "one Hall accelerator + one RF/ICP electron-source/neutralizer (cathodeless / electrodeless) serving both atmospheric gases and Xe; two propellant supply modes with separate tanks / paths - ambient atmospheric propellant (primary) and Xe (contingency / emergency supply mode); no conventional hollow cathode",
+  "unchanged": "A9.1 ICP feed-gas baseline (G-REUSE primary, G-XE declared variant); every status still from rvm_rules (no PASS)",
+  "a9_2_status_note": "a9_2_statuses_carried['C1 conventional reference'] = CONTROL_FALLBACK is immutable A9.2 history; A9.19 removes C1 as a flight fallback and A9.20 makes it ground-only",
+  "rows_added": [
+   "RVM-28",
+   "RVM-29",
+   "RVM-30"
+  ],
+  "rows_recorded": [
+   "RVM-04",
+   "RVM-10",
+   "RVM-11",
+   "RVM-12",
+   "RVM-14",
+   "RVM-15"
+  ],
+  "owner_open_note": "A9.20 verbatim also asks 'is it good to remove hollow cathode' - recorded for the owner, not answered here (see recorder_proposals_open_for_owner)",
+  "downstream": "docs/requirements/rfp_official/rfp_registration_v1.json rvm_mapping is rebuilt from this RVM by its own builder (rfp_clauses_v1.py; outside this lane)"
+ },
+ "recorder_proposals_open_for_owner": [
+  {
+   "id": "RP-A919-01",
+   "status": "RECORDER_PROPOSAL_OPEN_FOR_OWNER",
+   "is_requirement": false,
+   "is_owner_decision": false,
+   "proposal": "ICP go / no-go before LOCK-1 for the single Hall + RF/ICP flight architecture (no hollow-cathode fallback exists after A9.19): (a) measured ICP electron-current capacity I_e,cap >= I_d,max with a pre-registered margin; (b) RF power per extracted ampere (W/A) within the power budget; (c) repeatable ignition on N2 and on Xe.",
+   "why_raised": "A9.19 removes the conventional hollow cathode from the flight architecture, so the ICP is the only flight electron source; the owner also asked (A9.20 verbatim) 'is it good to remove hollow cathode'. The recorder suggests this gate for the owner's consideration only.",
+   "numbers": "none proposed: the margin, the W/A budget and the ignition repeatability criterion would be owner / pre-registration values; nothing is invented here",
+   "handling": "carried for the owner; not a row, not a limit, not a gate in this RVM; no status depends on it",
+   "related_rows": [
+    "RVM-15",
+    "RVM-28",
+    "RVM-04",
+    "RVM-14"
+   ]
+  }
+ ],
+ "a9_19_owner_answers_applied": [
+  {
+   "decision": "A9.19",
+   "question_id": "architecture",
+   "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "record_ids": [
+    "RVM-28",
+    "RVM-11",
+    "configurations"
+   ],
+   "how_applied": "new row RVM-28: one Hall accelerator + one RF/ICP electron-source/neutralizer for both supply modes, no conventional hollow cathode (OWNER_ALLOCATION = owner architecture decision; RFP-P17-05 / RFP-P18-08 traced verbatim); hall_icp_neutralizer labelled the flight architecture",
+   "tests": [
+    "tests/test_rvm_a9.py"
+   ]
+  },
+  {
+   "decision": "A9.19",
+   "question_id": "xenon_role",
+   "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "record_ids": [
+    "RVM-29",
+    "RVM-10"
+   ],
+   "how_applied": "new row RVM-29 (RFP_CLAUSE RFP-P18-08 + RFP-P17-05): two supply modes with separate tanks / paths, ambient atmospheric primary, Xe contingency / emergency; RVM-10 a9_19 record supersedes the A9.16 'never a contingency' wording on the ROLE of Xe (capability still required)",
+   "tests": [
+    "tests/test_rvm_a9.py"
+   ]
+  },
+  {
+   "decision": "A9.19",
+   "question_id": "amends",
+   "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "record_ids": [
+    "RVM-04",
+    "RVM-12",
+    "RVM-14",
+    "RVM-15",
+    "configurations"
+   ],
+   "how_applied": "no C1 flight variant: C1 supplies, the C1 15,000 h cathode basis, the C1 ignition-dwell Xe booking and the C1 CONTROL_FALLBACK sizing are recorded as non-flight; hall_c1_reference is not a candidate flight configuration",
+   "tests": [
+    "tests/test_rvm_a9.py"
+   ]
+  },
+  {
+   "decision": "A9.20",
+   "question_id": "answer",
+   "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+   "record_ids": [
+    "RVM-30",
+    "configurations",
+    "RVM-10",
+    "RVM-15"
+   ],
+   "how_applied": "new row RVM-30: C1 ground-only laboratory reference (H-1 I_d,max,H1,Ar characterization A9.10 S3.5; C1-vs-ICP bench control); never flight hardware, never in the flight mass / power / Xe budgets; hall_c1_reference cells labelled GROUND_ONLY_LABORATORY_REFERENCE",
+   "tests": [
+    "tests/test_rvm_a9.py"
+   ]
+  }
+ ],
  "rfp_rebase": {
   "id": "rvm_a9_rfp_rebase_v1",
   "date": "2026-10-01",
@@ -11851,9 +12699,9 @@
   "rule": "every RVM row cites the RFP clause id(s) it derives from or is labelled DERIVED_PROJECT_REQUIREMENT / OWNER_ALLOCATION; every registered clause maps to at least one row or is a recorded programmatic item; statuses unchanged by the re-base (rvm_rules; no PASS without determining evidence, A9.13 S6.22); requirement_frozen stays false on RFP rows until the owner closes AG-15",
   "ag_15_status": "OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here)",
   "origin_counts": {
-   "RFP_CLAUSE": 21,
+   "RFP_CLAUSE": 22,
    "DERIVED_PROJECT_REQUIREMENT": 3,
-   "OWNER_ALLOCATION": 3
+   "OWNER_ALLOCATION": 5
   },
   "clause_coverage": [
    {
@@ -11876,7 +12724,9 @@
      "RVM-08",
      "RVM-10"
     ],
-    "related_rvm_rows": []
+    "related_rvm_rows": [
+     "RVM-29"
+    ]
    },
    {
     "clause_id": "RFP-P17-01",
@@ -11926,10 +12776,12 @@
     "section": "Part III 1(A)iv row 3 Thruster",
     "rvm_rows": [
      "RVM-09",
-     "RVM-10"
+     "RVM-10",
+     "RVM-29"
     ],
     "related_rvm_rows": [
-     "RVM-15"
+     "RVM-15",
+     "RVM-28"
     ]
    },
    {
@@ -11998,7 +12850,9 @@
     "rvm_rows": [
      "RVM-11"
     ],
-    "related_rvm_rows": []
+    "related_rvm_rows": [
+     "RVM-28"
+    ]
    },
    {
     "clause_id": "RFP-P18-08",
@@ -12006,9 +12860,12 @@
     "section": "Part III 2 Propellant for propulsion system",
     "rvm_rows": [
      "RVM-08",
-     "RVM-10"
+     "RVM-10",
+     "RVM-29"
     ],
-    "related_rvm_rows": []
+    "related_rvm_rows": [
+     "RVM-28"
+    ]
    },
    {
     "clause_id": "RFP-P18-09",
