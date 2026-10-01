@@ -47,7 +47,7 @@
   "not a thermal result and not a thermal PASS: ICP_COUPLED_THERMAL = UNRESOLVED, ANODE_THERMAL_CLOSURE = UNRESOLVED (A9.2, A9.6)",
   "not a Hall performance prediction: no Hall closure (credible set EMPTY), no 0-D model; beam current, ion energy, plume divergence and discharge current are measured inputs (TBD)",
   "not an ICP design: the geometry grid is an evaluation grid; no geometry is chosen",
-  "not an answer to any open owner question (existing ones carried; two new ones raised)",
+  "not an owner decision: the owner decisions A9.8 P3Q-01, A9.12 (ICPQ-10, OQ-A907-03/05/06/08/09/10, OQ-A910-06, P3Q-02) and A9.14 (ICPQ-03, ICPQ-09) are APPLIED here as fail-closed rules (a9_16_owner_rules); every number the owner deferred stays a registration slot",
   "not a change to H2-5, A9-07, the ICD, P1 or P2 (all read-only)",
   "not wired into abep_sim/archengine.py (goldens do not move)"
  ],
@@ -117,6 +117,54 @@
    "path": "docs/decisions/OD_2026_09_30_A9_6_IMPLEMENTATION_FIRST_DIRECTIVE.md",
    "sha256": "c6ee26e57ea5ca559f4fa4e4a8809b1aa8f3a217e50c534b943fc3ad99240634",
    "role": "A9.6 (verbatim; binds this lane)"
+  },
+  {
+   "key": "A98",
+   "path": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+   "role": "owner A9.8 (machine-readable; A9.16 step 1)"
+  },
+  {
+   "key": "A98MD",
+   "path": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md",
+   "sha256": "8e770d0edf056a0402f6ec8c86a2a2feec169ab971fae788c7a9a620211e1aa0",
+   "role": "owner A9.8 verbatim (governs over the json summary; A9.16 step 1)"
+  },
+  {
+   "key": "A912",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "role": "owner A9.12 (machine-readable; A9.16 step 1)"
+  },
+  {
+   "key": "A912MD",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "role": "owner A9.12 verbatim (governs over the json summary; A9.16 step 1)"
+  },
+  {
+   "key": "A914",
+   "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "role": "owner A9.14 (machine-readable; A9.16 step 1)"
+  },
+  {
+   "key": "A914MD",
+   "path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "role": "owner A9.14 verbatim (governs over the json summary; A9.16 step 1)"
+  },
+  {
+   "key": "A915",
+   "path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+   "sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+   "role": "owner A9.15 (machine-readable; A9.16 step 1)"
+  },
+  {
+   "key": "A915MD",
+   "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
+   "role": "owner A9.15 verbatim (governs over the json summary; A9.16 step 1)"
   }
  ],
  "deliverable_pins": [
@@ -377,6 +425,12 @@
     "P3-P1-05",
     "P3-P1-06"
    ],
+   "evidence_routes": {
+    "primary": "CALORIMETRIC_ENERGY_BALANCE (P3-P1-09; p3_a9_16_rules.q_collector_evidence)",
+    "cross_check": "PROBE_SHEATH_MODEL = this formula with the Langmuir-probe T_e / V_p (P3-P1-04 / P3-P1-05), preferably matched diagnostic runs; never replaces or is averaged with the primary",
+    "icp45_rule": "a probe present during an ICP45 capacity record refuses the record unless its perturbation was first shown negligible",
+    "decision": "A9.8 P3Q-01 (S1.7) option C"
+   },
    "note": "Hall-ON: the discharge loop closes through the ICP ion collector (ICD ICP-22), so its ion current scales with I_d; ICP-45 capacity (discharge OFF, A9.4 P1Q-10): the dedicated electron-collecting electrode takes 2 T_e (+ acceleration) per electron"
   },
   "Q_plume": {
@@ -734,11 +788,11 @@
   },
   {
    "id": "P3-K-02",
-   "name": "conductance KC-1 carrier <-> H-1 (through the stand / moving platform)",
-   "value": "TBD - requires the KC-1 / stand design; depends on the open owner question ICPQ-03 (moving platform)",
+   "name": "conductance KC-1 carrier <-> H-1 (through the moving thrust platform)",
+   "value": "TBD - requires the KC-1 / moving-platform design (A9.14 ICPQ-03: both downstream modules and their representative mounting on the moving thrust platform)",
    "units": "W/K",
    "basis": "pending",
-   "source": "ICD ICP-06 / ICP-10; owner question ICPQ-03 (OPEN)",
+   "source": "ICD ICP-06 / ICP-10; A9.14 ICPQ-03 (S8.1)",
    "evidence_class": null,
    "status": "TBD",
    "freeze_point": "LOCK-1",
@@ -888,34 +942,34 @@
   },
   {
    "id": "P3-P1-04",
-   "name": "plasma potential at the collector sheath edge",
-   "value": "TBD - requires a diagnostic not in the P1 measurement list (new owner question P3Q-01)",
+   "name": "plasma potential at the collector sheath edge (sheath-model CROSS-CHECK route only)",
+   "value": "TBD - requires the Langmuir probe near the collector in the Ar P1 campaign (A9.8 P3Q-01 option C: cross-check of the calorimetric primary, preferably in matched diagnostic runs; registration at P1-G0)",
    "units": "V",
-   "basis": "pending",
-   "source": "P1 measurement list (no plasma-potential channel)",
+   "basis": "owner decision A9.8 P3Q-01",
+   "source": "A9.8 P3Q-01; P1 conditional channel P1-M-30",
    "evidence_class": null,
    "status": "TBD",
    "freeze_point": "P1-G0",
    "supplier": "P1",
    "used_by": [
-    "Q_collector"
+    "Q_collector (cross-check)"
    ],
    "lib_key": "V_plasma_V",
    "note": ""
   },
   {
    "id": "P3-P1-05",
-   "name": "electron temperature at the collector sheath edge",
-   "value": "TBD - requires a diagnostic not in the P1 measurement list (new owner question P3Q-01)",
+   "name": "electron temperature at the collector sheath edge (sheath-model CROSS-CHECK route only)",
+   "value": "TBD - requires the Langmuir probe near the collector in the Ar P1 campaign (A9.8 P3Q-01 option C: cross-check only; never contaminates an ICP45 capacity record unless the probe perturbation is first shown negligible)",
    "units": "eV",
-   "basis": "pending",
-   "source": "P1 measurement list (no T_e channel)",
+   "basis": "owner decision A9.8 P3Q-01",
+   "source": "A9.8 P3Q-01; P1 conditional channel P1-M-30",
    "evidence_class": null,
    "status": "TBD",
    "freeze_point": "P1-G0",
    "supplier": "P1",
    "used_by": [
-    "Q_collector"
+    "Q_collector (cross-check)"
    ],
    "lib_key": "T_e_eV",
    "note": ""
@@ -950,6 +1004,23 @@
    "supplier": "P1",
    "used_by": [
     "verification"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-P1-09",
+   "name": "Q_collector PRIMARY evidence: calorimetric collector energy balance (calibrated temperature measurements, registered thermal conductances / thermal mass, RF-ON / RF-OFF comparison, collector-current / bias steps)",
+   "value": "TBD_AFTER_EVIDENCE - requires P1 data: calorimetric record per p3_a9_16_rules.q_collector_evidence (every element registered; missing -> INCOMPLETE_EVIDENCE)",
+   "units": "W",
+   "basis": "owner decision A9.8 P3Q-01 (option C, calorimetry primary)",
+   "source": "A9.8 P3Q-01; P1-M-21 temperatures, P1-M-10 / P1-M-11 collector bias / current",
+   "evidence_class": null,
+   "status": "TBD_AFTER_EVIDENCE",
+   "freeze_point": "after-evidence",
+   "supplier": "P1",
+   "used_by": [
+    "Q_collector (primary)"
    ],
    "lib_key": null,
    "note": ""
@@ -1211,11 +1282,11 @@
   },
   {
    "id": "P3-M-01",
-   "name": "heat-load design margin applied to the ICP heat terms",
+   "name": "heat-load design margin applied to the internally DISSIPATED heat loads (discharge, RF / match, coil, cathode, collector, plume interception, other dissipative)",
    "value": 1.2,
    "units": "-",
    "basis": "owner answer",
-   "source": "owner row 86; ICD ICP-37",
+   "source": "owner row 86; ICD ICP-37; A9.12 OQ-A907-09 (S5.6)",
    "evidence_class": "owner-allocation",
    "status": "OWNER_GIVEN",
    "freeze_point": "NOW",
@@ -1224,7 +1295,7 @@
     "network"
    ],
    "lib_key": null,
-   "note": "whether it also applies to environmental loads is the open question OQ-A907-09 (not answered)"
+   "note": "A9.12 OQ-A907-09: dissipated loads only; solar / albedo / outgoing-IR use the registered hot / cold envelope (p3_a9_16_rules.apply_heat_load_margin); never a blanket 1.20"
   },
   {
    "id": "P3-M-02",
@@ -1266,7 +1337,7 @@
    "value": "TBD - requires the selected materials' validated continuous-use limits (CR-01 of the merged P4 framework docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json: T_validated,continuous TBD_AFTER_EVIDENCE for every candidate; owner row 87: no unsourced anode target)",
    "units": "degC",
    "basis": "pending",
-   "source": "owner rows 86, 87; ICD ICP-37",
+   "source": "owner rows 86, 87; ICD ICP-37; A9.12 OQ-A907-05",
    "evidence_class": null,
    "status": "TBD",
    "freeze_point": "after-evidence",
@@ -1275,11 +1346,11 @@
     "verification"
    ],
    "lib_key": null,
-   "note": ""
+   "note": "A9.12 OQ-A907-05: supplier ratings (BN guide value, ceramic wire) are SUPPLIER_PROVISIONAL only - screening / protection / sensitivity / down-selection; dependent margins UNRESOLVED"
   },
   {
    "id": "P3-M-05",
-   "name": "mounting-interface cases (temperature and allowable conducted heat)",
+   "name": "mounting-interface cases (temperature and allowable conducted heat; isolated mount + dedicated radiator)",
    "value": {
     "T_mount_degC": [
      20,
@@ -1290,20 +1361,60 @@
      25,
      50,
      100
-    ]
+    ],
+    "Q_mount_roles_W": {
+     "governing_provisional": 50,
+     "contingency_sensitivity": 100,
+     "stretch": 25
+    }
    },
    "units": "degC; W",
    "basis": "owner answer",
-   "source": "owner row 85",
+   "source": "owner row 85; A9.12 OQ-A907-06 (S5.4)",
    "evidence_class": "owner-allocation",
    "status": "OWNER_GIVEN",
    "freeze_point": "NOW",
    "supplier": "owner",
    "used_by": [
-    "network"
+    "network",
+    "mount_heat_report"
+   ],
+   "lib_key": null,
+   "note": "owner design allocation until the spacecraft thermal ICD exists - not a claimed spacecraft requirement (A9.12 S5.4); meeting only 100 W is not closed; 25 / 50 / 100 W always reported"
+  },
+  {
+   "id": "P3-M-07",
+   "name": "exterior coating (Z-93-class or alternative) node limit T_op <= T_validated,continuous - 50 K",
+   "value": "TBD - requires a sourced / validated continuous-use temperature for the actual selected coating / substrate / application system (OPEN_COATING_LIMIT_NOT_SOURCED until then; no final thermal closure relying on the coating)",
+   "units": "degC",
+   "basis": "owner decision A9.12 OQ-A907-08 (S5.5)",
+   "source": "A9.12 OQ-A907-08; owner row 84",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "after-evidence",
+   "supplier": "hardware",
+   "used_by": [
+    "verification"
    ],
    "lib_key": null,
    "note": ""
+  },
+  {
+   "id": "P3-M-08",
+   "name": "SEARCH_SENSITIVE screen: margin to the design ceiling after the registered search allowance below which a result is labelled (label only)",
+   "value": 10.0,
+   "units": "K",
+   "basis": "owner decision",
+   "source": "A9.12 OQ-A907-10 (S5.7)",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW",
+   "supplier": "owner",
+   "used_by": [
+    "verification"
+   ],
+   "lib_key": null,
+   "note": "does not change status, does not replace 50 K, no 10 K requirement; independent bounding check before LOCK-1 use; the search allowance itself is registered by the A9-07 lane"
   },
   {
    "id": "P3-M-06",
@@ -1324,51 +1435,153 @@
   },
   {
    "id": "P3-B-01",
-   "name": "ICP-43 total module heat-load bound, alternative A: 1.20 x (P_fwd,max + P_d,max)",
-   "value": "TBD_OWNER - ICPQ-10 OPEN; P_fwd,max TBD_AFTER_IMPEDANCE_MAP, P_d,max TBD (A9.3 OQ-A907-02)",
+   "name": "ICP-43 total module heat-load bound (A9.12 ICPQ-10 alternative A): Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max)",
+   "value": "TBD_AFTER_IMPEDANCE_MAP - rule decided (A9.12 ICPQ-10); P_fwd,max = maximum admitted RF forward-power operating point of the registered ICP / P2 envelope (TBD_AFTER_IMPEDANCE_MAP), P_d,max = registered H-1 discharge-power bound (TBD, A9.3 OQ-A907-02); evaluated by p3_a9_16_rules.icp43_total_module_bound",
    "units": "W",
-   "basis": "owner question ICPQ-10 alternative A",
-   "source": "ICD ICP-43; owner row 86",
+   "basis": "owner decision A9.12 ICPQ-10 (S5.1)",
+   "source": "ICD ICP-43; owner row 86; A9.12 ICPQ-10",
    "evidence_class": null,
-   "status": "TBD_OWNER",
+   "status": "TBD_AFTER_IMPEDANCE_MAP",
    "freeze_point": "LOCK-1",
    "supplier": "owner",
    "used_by": [
     "network (bounding)"
    ],
    "lib_key": null,
-   "note": ""
+   "note": "deliberately conservative bounding rule, not a deposition statement; replaced by measured coupled heat terms (same 1.20) once P1 / P2 / P3 deposition and loss terms exist"
   },
   {
    "id": "P3-B-02",
    "name": "ICP-43 total module heat-load bound, alternative B: 1.20 x 1.5 kW envelope (H2-6 H26-44)",
-   "value": "TBD_OWNER - ICPQ-10 OPEN; arithmetic of the alternative if chosen: 1.2 x 1500 W = 1800 W (owner rows 86, 108)",
+   "value": "REJECTED - A9.12 ICPQ-10 selected alternative A; the 1.5 kW spacecraft / bus ceiling never silently becomes an ICP thermal bound (icp43_total_module_bound refuses a bus-ceiling basis)",
    "units": "W",
-   "basis": "owner question ICPQ-10 alternative B",
-   "source": "ICD ICP-43; owner rows 86, 108",
+   "basis": "owner decision A9.12 ICPQ-10 (S5.1)",
+   "source": "ICD ICP-43; owner rows 86, 108; A9.12 ICPQ-10",
    "evidence_class": null,
-   "status": "TBD_OWNER",
-   "freeze_point": "LOCK-1",
+   "status": "OWNER_REJECTED",
+   "freeze_point": "NOW",
    "supplier": "owner",
    "used_by": [
-    "network (bounding)"
+    "none (rejected alternative, kept as history)"
    ],
    "lib_key": null,
    "note": ""
   },
   {
    "id": "P3-B-03",
-   "name": "RF-path heat allocation basis ICP-36 (500 W x 1.2 = 600 W, allocation term, not a bound)",
-   "value": "TBD_OWNER - OQ-A910-06 OPEN (keep 600 W or re-derive from P2); P_line/match,loss adds on top (A9.2)",
+   "name": "ICP RF-path thermal allocation Q_RF,allocation = 500 W x 1.20 (TEMPORARY until P2)",
+   "value": 600.0,
    "units": "W",
-   "basis": "owner question OQ-A910-06",
-   "source": "ICD ICP-36",
-   "evidence_class": null,
-   "status": "TBD_OWNER",
-   "freeze_point": "LOCK-1",
+   "basis": "owner decision A9.12 OQ-A910-06 (S5.8)",
+   "source": "ICD ICP-36; A9.12 OQ-A910-06",
+   "evidence_class": "owner-allocation",
+   "status": "OWNER_GIVEN",
+   "freeze_point": "NOW",
    "supplier": "owner",
    "used_by": [
     "Q_RF/match (allocation cross-check)"
+   ],
+   "lib_key": null,
+   "note": "not a component rating; not a demonstrated flight operating point; not the ICP-43 total-module bound; not a substitute for measured delivered RF power; P_line/match,loss additional where applicable; superseded after P2 by 1.20 x the verified P2 envelope (p3_a9_16_rules.rf_thermal_basis)"
+  },
+  {
+   "id": "P3-A-01",
+   "name": "joint-state admissibility declaration of the bounding-corner factors (exclusions only for MUTUALLY_EXCLUSIVE_STATES / KNOWN_CORRELATED_EXTREMES, each sourced; registered before the evaluation)",
+   "value": "TBD - requires the registered bounding factors and their sourced exclusions (NOT_EVALUATED_ADMISSIBILITY_TBD until registered)",
+   "units": "-",
+   "basis": "owner decision A9.12 OQ-A907-03 (S5.2)",
+   "source": "A9.12 OQ-A907-03",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "this lane",
+   "used_by": [
+    "bounding cases"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-C-01",
+   "name": "P3Q-02 correlation plan slot 'sensor_locations': sensor (thermocouple) locations at the registered nodes",
+   "value": "TBD - registered before the correlation data are evaluated (NOT_EVALUATED_CORRELATION_PLAN_TBD until then; no value invented)",
+   "units": "-",
+   "basis": "owner decision A9.12 P3Q-02 (S5.9)",
+   "source": "A9.12 P3Q-02",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "this lane",
+   "used_by": [
+    "model class A correlation"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-C-02",
+   "name": "P3Q-02 correlation plan slot 'measurement_uncertainty': measurement uncertainty of each sensor",
+   "value": "TBD - registered before the correlation data are evaluated (NOT_EVALUATED_CORRELATION_PLAN_TBD until then; no value invented)",
+   "units": "-",
+   "basis": "owner decision A9.12 P3Q-02 (S5.9)",
+   "source": "A9.12 P3Q-02",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "this lane",
+   "used_by": [
+    "model class A correlation"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-C-03",
+   "name": "P3Q-02 correlation plan slot 'comparison_quantities': model-to-test comparison quantities (temperatures / thermal responses)",
+   "value": "TBD - registered before the correlation data are evaluated (NOT_EVALUATED_CORRELATION_PLAN_TBD until then; no value invented)",
+   "units": "-",
+   "basis": "owner decision A9.12 P3Q-02 (S5.9)",
+   "source": "A9.12 P3Q-02",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "this lane",
+   "used_by": [
+    "model class A correlation"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-C-04",
+   "name": "P3Q-02 correlation plan slot 'residual_band': admissible correlation residual band",
+   "value": "TBD - registered before the correlation data are evaluated (NOT_EVALUATED_CORRELATION_PLAN_TBD until then; no value invented)",
+   "units": "-",
+   "basis": "owner decision A9.12 P3Q-02 (S5.9)",
+   "source": "A9.12 P3Q-02",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "this lane",
+   "used_by": [
+    "model class A correlation"
+   ],
+   "lib_key": null,
+   "note": ""
+  },
+  {
+   "id": "P3-C-05",
+   "name": "P3Q-02 correlation plan slot 'sensor_placement_contact_treatment': treatment of sensor placement / contact uncertainty",
+   "value": "TBD - registered before the correlation data are evaluated (NOT_EVALUATED_CORRELATION_PLAN_TBD until then; no value invented)",
+   "units": "-",
+   "basis": "owner decision A9.12 P3Q-02 (S5.9)",
+   "source": "A9.12 P3Q-02",
+   "evidence_class": null,
+   "status": "TBD",
+   "freeze_point": "LOCK-1",
+   "supplier": "this lane",
+   "used_by": [
+    "model class A correlation"
    ],
    "lib_key": null,
    "note": ""
@@ -4941,6 +5154,10 @@
     "after-evidence"
    ],
    [
+    "P3-P1-09",
+    "after-evidence"
+   ],
+   [
     "P3-P1-08",
     "after-evidence"
    ],
@@ -5043,6 +5260,10 @@
    [
     "P3-K-06",
     "LOCK-1"
+   ],
+   [
+    "P3-M-07",
+    "after-evidence"
    ]
   ],
   "phase1_hall": [
@@ -5077,16 +5298,20 @@
     "NOW"
    ],
    [
+    "P3-M-08",
+    "NOW"
+   ],
+   [
     "P3-B-01",
     "LOCK-1"
    ],
    [
     "P3-B-02",
-    "LOCK-1"
+    "NOW"
    ],
    [
     "P3-B-03",
-    "LOCK-1"
+    "NOW"
    ]
   ],
   "H2-5/A9-07 (analog)": [
@@ -5142,6 +5367,30 @@
    ],
    [
     "P3-H-04",
+    "LOCK-1"
+   ],
+   [
+    "P3-A-01",
+    "LOCK-1"
+   ],
+   [
+    "P3-C-01",
+    "LOCK-1"
+   ],
+   [
+    "P3-C-02",
+    "LOCK-1"
+   ],
+   [
+    "P3-C-03",
+    "LOCK-1"
+   ],
+   [
+    "P3-C-04",
+    "LOCK-1"
+   ],
+   [
+    "P3-C-05",
     "LOCK-1"
    ],
    [
@@ -5201,7 +5450,8 @@
       "units": "V; eV",
       "status": "TBD_OWNER (P3Q-01 OPEN; registration at P1-G0)"
      }
-    ]
+    ],
+    "a9_16_note": "P3Q-01 decided by A9.8 S1.7 (option C): calorimetry primary (P3-P1-09), this probe sheath-edge pair is the cross-check route; the XL-18 pair text still reads 'P3Q-01 OPEN' until P1 and P3 re-state it together (integration re-pin)"
    },
    {
     "id": "P3-IF-N03",
@@ -5337,15 +5587,17 @@
    {
     "id": "P3-IF-N10",
     "from": "owner",
-    "what": "ICPQ-10 bound choice; P3Q-01; P3Q-02",
+    "what": "ICPQ-10 bound choice; P3Q-01; P3Q-02; OQ-A910-06 RF allocation",
     "items": [
      "P3-B-01",
      "P3-B-02",
-     "P3-B-03"
+     "P3-B-03",
+     "P3-P1-09",
+     "P3-C-01..05"
     ],
     "freeze": "LOCK-1",
     "units": "W; -",
-    "status": "TBD_OWNER (ICPQ-10, P3Q-01, P3Q-02 OPEN)",
+    "status": "OWNER_DECIDED (A9.8 P3Q-01; A9.12 ICPQ-10, P3Q-02, OQ-A910-06); P_fwd,max / P_d,max and the correlation-plan slots TBD",
     "xref": []
    }
   ],
@@ -5482,6 +5734,233 @@
     "units": "-",
     "status": "PROPOSED",
     "xref": []
+   }
+  ]
+ },
+ "a9_16_owner_rules": {
+  "rules_module": "docs/experiments/hall_icp/p3_coupled_thermal/p3_a9_16_rules.py",
+  "test": "tests/test_p3_a9_16_owner_rules.py",
+  "rule": "pure fail-closed functions; owner numbers only as given; deferred numbers are registration slots (NOT_EVALUATED_* / OPEN / INCOMPLETE_EVIDENCE); never a thermal PASS",
+  "owner_numbers": {
+   "heat_load_margin_dissipated": 1.2,
+   "temperature_margin_K": 50.0,
+   "mount_heat_allocation_W": {
+    "stretch": 25.0,
+    "governing_provisional": 50.0,
+    "contingency_sensitivity": 100.0
+   },
+   "search_sensitive_screen_K": 10.0,
+   "Q_RF_allocation_W_temporary": 600.0,
+   "source": "A9.12 owner_supplied_values (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d); owner row 86"
+  },
+  "q_collector_evidence": {
+   "primary_route": "CALORIMETRIC_ENERGY_BALANCE",
+   "primary_elements": [
+    "calibrated_temperature_measurements",
+    "registered_thermal_conductances",
+    "registered_thermal_mass",
+    "rf_on_off_comparison",
+    "collector_current_bias_steps"
+   ],
+   "cross_check_route": "PROBE_SHEATH_MODEL (Langmuir probe near the collector, Ar P1 campaign; matched diagnostic runs preferred)",
+   "cross_check_criterion": "registration slot (NOT_EVALUATED_CROSS_CHECK_CRITERION_TBD)",
+   "icp45_probe_rule": "PROBE_PERTURBATION_NOT_SHOWN_NEGLIGIBLE refuses an ICP45 record",
+   "registered_evaluation": {
+    "status": "INCOMPLETE_EVIDENCE",
+    "reason": "INCOMPLETE_EVIDENCE: no calorimetric Q_collector record (primary route, A9.8 P3Q-01)"
+   },
+   "decision": "A9.8 P3Q-01 (docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f)"
+  },
+  "icp43_bound": {
+   "formula": "Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max)",
+   "inputs": {
+    "P_fwd,max": "P3-B-01 (registered ICP / P2 envelope; TBD_AFTER_IMPEDANCE_MAP)",
+    "P_d,max": "P3-H-06 / A9.3 OQ-A907-02 (registered H-1 discharge-power bound; TBD)"
+   },
+   "rejected": "1.20 x 1.5 kW (P3-B-02)",
+   "registered_evaluation": {
+    "status": "INCOMPLETE_EVIDENCE",
+    "reason": "INCOMPLETE_EVIDENCE: P_fwd,max: registration incomplete, missing ['registration']"
+   },
+   "decision": "A9.12 ICPQ-10 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+  },
+  "bounding_corners": {
+   "admissibility_declaration": "P3-A-01 (TBD)",
+   "exclusion_reasons": [
+    "MUTUALLY_EXCLUSIVE_STATES",
+    "KNOWN_CORRELATED_EXTREMES"
+   ],
+   "per_case": [
+    "1.20 on dissipated loads",
+    "hot / cold environmental boundary",
+    "every temperature-limited node",
+    ">= 50 K below T_validated,continuous"
+   ],
+   "registered_evaluation": {
+    "status": "NOT_EVALUATED_ADMISSIBILITY_TBD",
+    "reason": "NOT_EVALUATED_ADMISSIBILITY_TBD: joint-state admissibility declaration not registered before the bounding evaluation (A9.12 S5.2)"
+   },
+   "decision": "A9.12 OQ-A907-03 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+  },
+  "node_limits": {
+   "limit_classes": [
+    "SUPPLIER_PROVISIONAL",
+    "T_VALIDATED_CONTINUOUS"
+   ],
+   "provisional_allowed_uses": [
+    "preliminary_thermal_screening",
+    "equipment_protection",
+    "design_sensitivity",
+    "procurement_down_selection"
+   ],
+   "refused_uses_for_provisional": [
+    "design_closure",
+    "flight_closure",
+    "lock1_thermal_closure"
+   ],
+   "coating_node": {
+    "node": "EXTERIOR_COATING",
+    "limit_state": "OPEN_COATING_LIMIT_NOT_SOURCED",
+    "missing": [
+     "coating",
+     "substrate",
+     "application"
+    ],
+    "note": "coating node limit T_op <= T_validated,continuous - 50 K applies once sourced / validated for the actual coating / substrate / application system (A9.12 S5.5)"
+   },
+   "decision": [
+    "A9.12 OQ-A907-05 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
+    "A9.12 OQ-A907-08 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+   ]
+  },
+  "heat_load_margin": {
+   "dissipated_categories": [
+    "discharge",
+    "rf_match",
+    "coil",
+    "cathode",
+    "collector",
+    "plume_interception",
+    "other_dissipative"
+   ],
+   "environmental_categories": [
+    "solar",
+    "albedo",
+    "outgoing_ir"
+   ],
+   "environmental_treatment": "registered hot / cold envelope case; never x1.20; an inadequate bound is enlarged explicitly",
+   "decision": "A9.12 OQ-A907-09 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+  },
+  "mount_heat": {
+   "allocations_W": {
+    "stretch": 25.0,
+    "governing_provisional": 50.0,
+    "contingency_sensitivity": 100.0
+   },
+   "label": "owner design allocation until the spacecraft thermal ICD exists - not a claimed spacecraft requirement (A9.12 S5.4)",
+   "classifications": [
+    "WITHIN_GOVERNING_ALLOCATION_CONDITIONAL",
+    "ONLY_WITHIN_100W_CONTINGENCY_NOT_CLOSED",
+    "EXCEEDS_100W_CONTINGENCY"
+   ],
+   "registered_evaluation": {
+    "status": "INCOMPLETE_EVIDENCE",
+    "reason": "no coupled mount-heat result (coupled_network INCOMPLETE_EVIDENCE)"
+   },
+   "decision": "A9.12 OQ-A907-06 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+  },
+  "search_sensitive": {
+   "screen_K": 10.0,
+   "independent_bound_methods": [
+    "global_optimization",
+    "interval_bounding_analysis",
+    "exhaustive_admissible_grid",
+    "demonstrated_bounding_method"
+   ],
+   "registered_evaluation": {
+    "status": "NOT_EVALUATED_SEARCH_ALLOWANCE_TBD",
+    "reason": "NOT_EVALUATED_SEARCH_ALLOWANCE_TBD: search allowance not registered before the outcome"
+   },
+   "decision": "A9.12 OQ-A907-10 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+  },
+  "rf_allocation": {
+   "Q_RF_allocation_W": 600.0,
+   "derivation": "500 W x 1.20 = 600 W",
+   "status": "TEMPORARY_ALLOCATION_UNTIL_P2",
+   "labels": [
+    "not a component rating",
+    "not a demonstrated flight operating point",
+    "not the ICP-43 total-module bound",
+    "not a substitute for measured delivered RF power"
+   ],
+   "additional": "P_line/match,loss remains additional where applicable",
+   "superseded_by": "P2-derived RF thermal envelope (P_delivered, line / matching losses, antenna / plasma loading, uncertainty) x 1.20",
+   "registered_total": {
+    "status": "INCOMPLETE_EVIDENCE",
+    "reason": "INCOMPLETE_EVIDENCE: 600 W allocation + P_line/match,loss: the loss term is not registered (TBD_AFTER_IMPEDANCE_MAP); the allocation alone is not the RF-path total"
+   },
+   "decision": "A9.12 OQ-A910-06 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+  },
+  "model_class": {
+   "accepted": "LUMPED_H2_5_NETWORK_PLUS_P3_RADIOSITY_ENCLOSURE (LOCK-1, conditional on correlation)",
+   "correlation_plan_slots": {
+    "sensor_locations": "P3-C-01 (TBD)",
+    "measurement_uncertainty": "P3-C-02 (TBD)",
+    "comparison_quantities": "P3-C-03 (TBD)",
+    "residual_band": "P3-C-04 (TBD)",
+    "sensor_placement_contact_treatment": "P3-C-05 (TBD)"
+   },
+   "escalation": "ESCALATE_TO_FINER_MODEL_MANDATORY (multi-node / FE) before any LOCK-1 thermal closure if correlation fails or gradients / hot spots are unrepresentable",
+   "registered_evaluation": {
+    "status": "NOT_EVALUATED_CORRELATION_PLAN_TBD",
+    "reason": "NOT_EVALUATED_CORRELATION_PLAN_TBD: no correlation plan registered"
+   },
+   "decision": "A9.12 P3Q-02 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
+  },
+  "out_of_lane": [
+   {
+    "path": "docs/hardware/h2_a9_revisions/ (A9-07 uncoupled thermal rerun: bounding corners, search allowance / search_sensitive flag, mount-heat levers, provisional BN / ceramic-wire ratings, coating limit, environmental margin treatment)",
+    "rules": [
+     "OQ-A907-03",
+     "OQ-A907-05",
+     "OQ-A907-06",
+     "OQ-A907-08",
+     "OQ-A907-09",
+     "OQ-A907-10"
+    ]
+   },
+   {
+    "path": "docs/experiments/hall_icp/p1_icp_bench/build_p1_icp_bench.py (pair XL-18 status text 'TBD_OWNER (P3Q-01 OPEN; registration at P1-G0)' and P1-M-30 'CONDITIONAL (TBD_OWNER P3Q-01)' - identical pair text on both sides, so P3 keeps it until both sides are re-pinned together)",
+    "rules": [
+     "P3Q-01"
+    ]
+   },
+   {
+    "path": "docs/experiments/hall_icp/p2_impedance_map/ (ICPQ-10 'not applied by this lane' in P2)",
+    "rules": [
+     "ICPQ-10"
+    ]
+   },
+   {
+    "path": "docs/budgets/mass_power_a9_v2/ (OQ-A910-06 recorded OPEN)",
+    "rules": [
+     "OQ-A910-06"
+    ]
+   },
+   {
+    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.* (rows still TBD_OWNER)",
+    "rules": [
+     "P3Q-01",
+     "P3Q-02",
+     "ICPQ-10",
+     "OQ-A907-03",
+     "OQ-A907-05",
+     "OQ-A907-06",
+     "OQ-A907-08",
+     "OQ-A907-09",
+     "OQ-A907-10",
+     "OQ-A910-06"
+    ]
    }
   ]
  },
@@ -5728,6 +6207,223 @@
    "sha256": "d8d8496f4141a7096496d3a893c95c3db524ca501055a26cc868fb35d0ae9327",
    "decision": "sec. 10 P3 / summary.fixed_statuses",
    "applied": "framework built now with every missing input TBD; no thermal PASS"
+  },
+  {
+   "kind": "A9.8",
+   "path": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+   "sha256": "e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_8_S1_P1_START_OWNER_DECISIONS.md",
+   "verbatim_sha256": "8e770d0edf056a0402f6ec8c86a2a2feec169ab971fae788c7a9a620211e1aa0",
+   "decision": "P3Q-01",
+   "sequenced_no": "S1.7",
+   "answer": "C_BOTH_CALORIMETRY_PRIMARY",
+   "applied": "option C: the calorimetric collector energy balance (calibrated temperatures, registered thermal conductances / thermal mass, RF-ON / RF-OFF comparison, collector-current / bias steps) is the PRIMARY Q_collector evidence; the Langmuir-probe sheath-model route (T_e, plasma potential: P3-P1-04 / P3-P1-05) is an independent cross-check, preferably in matched diagnostic runs, never replacing or averaged with the primary value; the agreement criterion is a registration slot (NOT_EVALUATED_CROSS_CHECK_CRITERION_TBD); a probe present during an ICP45 capacity record without prior evidence that its perturbation is negligible refuses the record (PROBE_PERTURBATION_NOT_SHOWN_NEGLIGIBLE)",
+   "implemented_in": "p3_a9_16_rules.q_collector_evidence, q_collector_cross_check, icp45_record_probe_admissibility; items P3-P1-04 / P3-P1-05 / P3-P1-09; heat_terms.Q_collector",
+   "tests": [
+    "test_p3_a9_16_q_collector_calorimetry_primary",
+    "test_p3_a9_16_probe_cross_check_criterion_slot",
+    "test_p3_a9_16_icp45_probe_contamination_refused"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "kind": "A9.12",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "decision": "ICPQ-10",
+   "sequenced_no": "S5.1",
+   "answer": "A_1_20_X_PFWD_PLUS_PD",
+   "applied": "ICP-43 total-module bound Q_ICP,bound = 1.20 x (P_fwd,max + P_d,max): P_fwd,max = maximum ADMITTED RF forward-power operating point of the registered ICP / P2 envelope, P_d,max = registered H-1 discharge-power bound; either missing -> INCOMPLETE_EVIDENCE; never 1.20 x 1.5 kW (a bus-ceiling basis is refused; alternative B rejected, P3-B-02); a thermal bounding rule, not a deposition statement; replaced by measured coupled heat terms (same 1.20, never relaxed) once P1 / P2 / P3 deposition and loss terms exist",
+   "implemented_in": "p3_a9_16_rules.icp43_total_module_bound; items P3-B-01 / P3-B-02; a9_16_owner_rules.icp43_bound_evaluation",
+   "tests": [
+    "test_p3_a9_16_icp43_bound_rule",
+    "test_p3_a9_16_icp43_refuses_bus_ceiling_and_missing",
+    "test_p3_a9_16_icp43_measured_terms_keep_margin",
+    "test_p3_a9_16_registered_inputs_refused"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "kind": "A9.12",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "decision": "OQ-A907-03",
+   "sequenced_no": "S5.2",
+   "answer": "BOUNDING_CORNER_ADMISSIBLE_JOINT_STATES",
+   "applied": "the >= 50 K rule is evaluated at the worst ADMISSIBLE combined corner: a joint-state admissibility declaration (registered before the evaluation) excludes a corner only by a sourced MUTUALLY_EXCLUSIVE_STATES / KNOWN_CORRELATED_EXTREMES exclusion; per admissible case the 1.20 dissipated-load margin and the hot / cold environmental boundary are applied and EVERY temperature-limited node is evaluated against T_validated,continuous - 50 K; the 50 K is never relaxed; analog ranges are replaced by measured deposition fractions when they exist; unregistered declaration -> NOT_EVALUATED_ADMISSIBILITY_TBD",
+   "implemented_in": "p3_a9_16_rules.admissible_corners, bounding_case_evaluation, node_margin; item P3-A-01",
+   "tests": [
+    "test_p3_a9_16_admissible_corners",
+    "test_p3_a9_16_bounding_case_every_node"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "kind": "A9.12",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "decision": "OQ-A907-05",
+   "sequenced_no": "S5.3",
+   "answer": "PROVISIONAL_ONLY",
+   "applied": "supplier continuous ratings (BN guide value, ceramic wire) are SUPPLIER_PROVISIONAL limits usable only for preliminary screening, equipment protection, design sensitivity and procurement down-selection; they never establish T_validated,continuous; a margin depending on one is UNRESOLVED_CONDITIONAL_ON_PROVISIONAL_LIMIT; design / flight / LOCK-1 closure use is refused",
+   "implemented_in": "p3_a9_16_rules.node_limit, limit_use_check, node_margin; item P3-M-04",
+   "tests": [
+    "test_p3_a9_16_provisional_supplier_limits"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "kind": "A9.12",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "decision": "OQ-A907-06",
+   "sequenced_no": "S5.4",
+   "answer": "ISOLATED_MOUNT_RADIATOR_50W_PROVISIONAL",
+   "applied": "thermally isolated H-1 mount + dedicated radiator; mount-heat allocations 50 W governing (provisional), 100 W contingency / sensitivity only, 25 W stretch; all three always reported; a result meeting only 100 W is ONLY_WITHIN_100W_CONTINGENCY_NOT_CLOSED; 50 W is an owner design allocation, not a spacecraft requirement, replaced by the spacecraft thermal ICD when it exists",
+   "implemented_in": "p3_a9_16_rules.mount_heat_report; item P3-M-05",
+   "tests": [
+    "test_p3_a9_16_mount_heat_allocations"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "kind": "A9.12",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "decision": "OQ-A907-08",
+   "sequenced_no": "S5.5",
+   "answer": "YES_COATING_NODE_LIMIT",
+   "applied": "the exterior coating is its own temperature-limited node, T_op <= T_validated,continuous - 50 K, once sourced / validated for the actual coating / substrate / application system (not the generic family name); until then OPEN_COATING_LIMIT_NOT_SOURCED and no configuration relying on the coating receives a final thermal closure; sensitivities retained as engineering information",
+   "implemented_in": "p3_a9_16_rules.node_limit (is_coating), node_margin; item P3-M-07",
+   "tests": [
+    "test_p3_a9_16_coating_node_open"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "kind": "A9.12",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "decision": "OQ-A907-09",
+   "sequenced_no": "S5.6",
+   "answer": "DISSIPATED_ONLY",
+   "applied": "the 1.20 heat-load margin multiplies internally dissipated loads only (discharge, RF / match, coil, cathode, collector, plume interception, other dissipative); solar / albedo / outgoing-IR use their registered hot / cold envelope case and are never multiplied; an inadequate environmental bound is enlarged explicitly through its own record; an untagged load is refused",
+   "implemented_in": "p3_a9_16_rules.apply_heat_load_margin; item P3-M-01",
+   "tests": [
+    "test_p3_a9_16_margin_dissipated_only"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "kind": "A9.12",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "decision": "OQ-A907-10",
+   "sequenced_no": "S5.7",
+   "answer": "YES_10K_SEARCH_SENSITIVE",
+   "applied": "margin to the design ceiling after the REGISTERED search allowance < 10 K -> label SEARCH_SENSITIVE (label only: status unchanged, does not replace 50 K, no 10 K requirement); before LOCK-1 use an independent bounding check (global optimisation / interval bounding / exhaustive admissible grid / demonstrated bounding method) is required; the more adverse result governs; the allowance is never increased after the outcome",
+   "implemented_in": "p3_a9_16_rules.search_sensitivity, lock1_use_of_search_result; item P3-M-08",
+   "tests": [
+    "test_p3_a9_16_search_sensitive_label_only",
+    "test_p3_a9_16_search_sensitive_needs_independent_bound"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "kind": "A9.12",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "decision": "OQ-A910-06",
+   "sequenced_no": "S5.8",
+   "answer": "YES_600W_TEMPORARY",
+   "applied": "Q_RF,allocation = 500 W x 1.20 = 600 W retained TEMPORARILY as the ICP RF-path thermal allocation, labelled not a component rating / not a demonstrated flight operating point / not the ICP-43 total-module bound / not a substitute for measured delivered RF power; P_line/match,loss additional (a total without it is refused); superseded after P2 by 1.20 x the VERIFIED P2 envelope of P_delivered + line / matching losses (antenna / plasma loading and uncertainty registered)",
+   "implemented_in": "p3_a9_16_rules.rf_allocation_record, rf_thermal_basis; item P3-B-03",
+   "tests": [
+    "test_p3_a9_16_rf_allocation_600w_labels",
+    "test_p3_a9_16_rf_allocation_superseded_by_p2"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "kind": "A9.12",
+   "path": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "verbatim_sha256": "d8baac842cfe574037427aef1ced2476ba96919d80ceacda9b2bf16502e0af62",
+   "decision": "P3Q-02",
+   "sequenced_no": "S5.9",
+   "answer": "A_LUMPED_PLUS_CORRELATION_CONDITIONAL",
+   "applied": "model class A (lumped H2-5 network + P3 radiosity enclosure) accepted for LOCK-1 conditionally: the correlation plan registers sensor locations, measurement uncertainty, comparison quantities, residual band and sensor placement / contact treatment BEFORE the correlation data (slots P3-C-01..05; missing -> NOT_EVALUATED_CORRELATION_PLAN_TBD); residual outside the band or unrepresentable gradients / hot spots -> ESCALATE_TO_FINER_MODEL_MANDATORY before any LOCK-1 thermal closure; finer local models allowed earlier",
+   "implemented_in": "p3_a9_16_rules.correlation_plan_check, correlation_outcome; items P3-C-01..05",
+   "tests": [
+    "test_p3_a9_16_correlation_plan_slots",
+    "test_p3_a9_16_correlation_escalation"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "kind": "A9.14",
+   "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "verbatim_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "decision": "ICPQ-03",
+   "sequenced_no": "S8.1",
+   "answer": "YES_BOTH_MODULES_ON_MOVING_PLATFORM",
+   "applied": "both interchangeable downstream modules and their representative mounting on the moving thrust platform: the carrier conduction path P3-K-02 is the moving-platform path (no fixed-mount alternative carried)",
+   "implemented_in": "item P3-K-02; existing_open_owner_questions_carried.ICPQ-03",
+   "tests": [
+    "test_p3_a9_16_carried_questions_answered"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "kind": "A9.14",
+   "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "verbatim_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "decision": "ICPQ-09",
+   "sequenced_no": "S8.3",
+   "answer": "PLUME_INTERCEPTION_INSIDE_SYSTEM_BOUNDARY",
+   "applied": "plume interception by the ICP structure stays inside the system boundary (Q_plume reported; never corrected away)",
+   "implemented_in": "heat_terms.Q_plume; existing_open_owner_questions_carried.ICPQ-09",
+   "tests": [
+    "test_p3_a9_16_carried_questions_answered"
+   ],
+   "step": "A9.16 step 1"
+  },
+  {
+   "kind": "A9.15",
+   "path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+   "sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+   "verbatim_path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "verbatim_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
+   "decision": "RFP-COMPLIANT PROPELLANT POLICY",
+   "sequenced_no": "-",
+   "answer": "RFP_GOVERNS_AIR_AND_XE",
+   "applied": "reviewed: the P3 package contains no 'Xe contingency-only for C1' text and no Xe heat term; the ICP gas-mode baseline (A9.1 G-REUSE primary) is unchanged; nothing to amend here",
+   "implemented_in": "-",
+   "tests": [
+    "test_p3_a9_16_no_xe_contingency_text"
+   ],
+   "step": "A9.16 step 1"
   }
  ],
  "open_owner_questions": [
@@ -5739,12 +6435,14 @@
     "B: calorimetric energy balance (direct heat route; sheath terms become a cross-check)",
     "C: both (probe + calorimetry)"
    ],
-   "status": "TBD_OWNER",
+   "status": "OWNER_DECIDED",
    "needed_by": "P1-G0",
    "blocks": [
     "Q_collector",
     "ICP-43"
-   ]
+   ],
+   "answer": "C_BOTH_CALORIMETRY_PRIMARY",
+   "decided_by": "A9.8 P3Q-01 (docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f)"
   },
   {
    "id": "P3Q-02",
@@ -5753,48 +6451,71 @@
     "A: lumped network (this framework) + S1a thermocouple correlation",
     "B: finer model required before closure"
    ],
-   "status": "TBD_OWNER",
+   "status": "OWNER_DECIDED",
    "needed_by": "LOCK-1",
    "blocks": [
     "ICP_COUPLED_THERMAL closure path"
-   ]
+   ],
+   "answer": "A_LUMPED_PLUS_CORRELATION_CONDITIONAL",
+   "decided_by": "A9.12 P3Q-02 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
   }
  ],
  "existing_open_owner_questions_carried": {
   "ICPQ-03": {
-   "status": "OPEN",
+   "status": "OWNER_DECIDED",
+   "status_v3_snapshot": "OPEN",
    "question": "Mount both downstream modules on the moving platform so plume-module forces are inside the measured system (ICP-10)?",
-   "p3_handling": "carrier conduction path P3-K-02 carried for both mountings (platform / fixed); no choice made"
+   "answer": "YES_BOTH_MODULES_ON_MOVING_PLATFORM",
+   "decided_by": "A9.14 ICPQ-03 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "p3_handling": "A9.14 S8.1: both modules on the moving thrust platform - carrier conduction path P3-K-02 is the moving-platform path"
   },
   "ICPQ-09": {
-   "status": "OPEN",
+   "status": "OWNER_DECIDED",
+   "status_v3_snapshot": "OPEN",
    "question": "Plume interception by a Takahashi-type enclosing source is a real architecture consequence; report it inside the system boundary without correction (ICP-29)?",
-   "p3_handling": "plume interception is computed and reported inside the system boundary (Q_plume); the reporting decision stays the owner's"
+   "answer": "PLUME_INTERCEPTION_INSIDE_SYSTEM_BOUNDARY",
+   "decided_by": "A9.14 ICPQ-09 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)",
+   "p3_handling": "A9.14 S8.3: plume interception stays inside the system boundary (Q_plume computed and reported, never corrected away)"
   },
   "ICPQ-10": {
-   "status": "OPEN",
+   "status": "OWNER_DECIDED",
+   "status_v3_snapshot": "OPEN",
    "question": "Total ICP module heat-load bound (ICP-43): use 1.20 x (P_fwd,max + P_d,max) with P_d,max from the A9-02 discharge slot, or, if every score-bearing stand point is held inside the P_bus < 1.5 kW ceiling (row 108), the envelope 1.20 x 1.5 kW used for the stand by H2-6 H26-44?",
-   "p3_handling": "both bounding alternatives carried side by side (P3-B-01, P3-B-02)"
+   "answer": "A_1_20_X_PFWD_PLUS_PD",
+   "decided_by": "A9.12 ICPQ-10 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
+   "p3_handling": "A9.12 S5.1: alternative A 1.20 x (P_fwd,max + P_d,max) (P3-B-01, inputs TBD); alternative B rejected (P3-B-02)"
   },
   "OQ-A907-06": {
-   "status": "OPEN",
+   "status": "OWNER_DECIDED",
+   "status_v3_snapshot": "OPEN",
    "question": "Heat conducted into the spacecraft mount stays within the row-85 100 W case at the searched corners only for LV-ALL-ISO, LV-COIL+ISO, LV-OPEN+ISO, LV-RAD+ISO; with LV-ALL-ISO the inner coil still has margin -12.3 K to its design ceiling; lever sets closing every live node within 100 W: none. Pursue a thermally isolated mount with a dedicated thruster radiator as the design direction, and which row-85 allowable-heat case (25/50/100 W) governs the H-1 design?",
-   "p3_handling": "mount-heat lever choice not made; P3 reports carrier / mount heat"
+   "answer": "ISOLATED_MOUNT_RADIATOR_50W_PROVISIONAL",
+   "decided_by": "A9.12 OQ-A907-06 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
+   "p3_handling": "A9.12 S5.4: 50 W governing provisional / 100 W contingency / 25 W stretch, all reported (mount_heat_report, P3-M-05)"
   },
   "OQ-A907-09": {
-   "status": "OPEN",
+   "status": "OWNER_DECIDED",
+   "status_v3_snapshot": "OPEN",
    "question": "Row 86 '20% heat-load design margin': this lane scales only the DISSIPATED loads (discharge fractions, coil I^2R, cathode) by 1.2 and keeps the environmental solar/albedo/OLR inputs at their v1 hot/cold bounds. Should the 20 % also apply to environmental loads?",
-   "p3_handling": "1.2 margin applied to dissipated ICP loads only; environmental application left open (P3-M-01)"
+   "answer": "DISSIPATED_ONLY",
+   "decided_by": "A9.12 OQ-A907-09 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
+   "p3_handling": "A9.12 S5.6: 1.20 on dissipated loads only; environmental via the registered hot / cold envelope (apply_heat_load_margin, P3-M-01)"
   },
   "OQ-A907-10": {
-   "status": "OPEN",
+   "status": "OWNER_DECIDED",
+   "status_v3_snapshot": "OPEN",
    "question": "The thermal worst case is found by a local search plus a heuristic search allowance (not an upper bound). Within-limit results (for hall_icp_neutralizer: UNCOUPLED_SENSITIVITY_WITHIN_LIMIT, reported UNRESOLVED under A9.2 ICP_COUPLED_THERMAL) whose margin to the design ceiling after the allowance is below 10 K are flagged search_sensitive. Accept this PROPOSED reporting threshold, and require a global-optimisation or interval-bound check of every search-sensitive verdict before LOCK-1?",
-   "p3_handling": "no search allowance rule is changed; P3 does not produce closures"
+   "answer": "YES_10K_SEARCH_SENSITIVE",
+   "decided_by": "A9.12 OQ-A907-10 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
+   "p3_handling": "A9.12 S5.7: SEARCH_SENSITIVE label below 10 K after the registered allowance; independent bound before LOCK-1 (P3-M-08)"
   },
   "OQ-A910-06": {
-   "status": "OPEN",
+   "status": "OWNER_DECIDED",
+   "status_v3_snapshot": "OPEN",
    "question": "Should ICP-36 keep 500 W x 1.2 = 600 W (row 72 delivered/operating capability x row 86 heat-load margin) as the RF-path heat-allocation basis of the ICP module thermal design (an allocation term, not a bound and not a component rating; P_line/match,loss added on top per A9.2 rf_measurement_reference), given that A9.2 rf_500W makes 500 W a delivered/operating investigation capability and not a rating?",
-   "p3_handling": "600 W allocation basis carried as P3-B-03 beside the P2-derived Q_RF/match formula"
+   "answer": "YES_600W_TEMPORARY",
+   "decided_by": "A9.12 OQ-A910-06 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)",
+   "p3_handling": "A9.12 S5.8: 600 W temporary allocation with the four labels, P_line/match,loss additional, superseded after P2 (P3-B-03, rf_thermal_basis)"
   }
  },
  "historical_reuse": [
