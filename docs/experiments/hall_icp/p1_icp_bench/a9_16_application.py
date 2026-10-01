@@ -254,7 +254,8 @@ ITEM_UPDATES = {
                        "before the first P1-S4 pair", "A9.8",
                  "immutable within the campaign; not registered -> NOT_EVALUATED_REGISTRATION; unmatched pair -> "
                  "P1-IT-51 exclusion"),
-    "P1-IT-45": (None, "OWNER_DECIDED (A9.14 P1Q-17 REVERIFICATION_700V_DC_60S_TRIGGERED_ONLY)", "A9.14",
+    "P1-IT-45": ("700 V DC / 60 s, current-limited, triggered only (owner development acceptance level, not ECSS)",
+                 "OWNER_DECIDED (A9.14 P1Q-17 REVERIFICATION_700V_DC_60S_TRIGGERED_ONLY)", "A9.14",
                  "700 V DC / 60 s current-limited, triggered only; per-path leakage criterion; owner development "
                  "acceptance level, not an ECSS clause; p1_a9_16_rules.reduce_dwv_reverification"),
     "P1-IT-49": (None, None, "A9.8",

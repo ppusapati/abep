@@ -1017,7 +1017,8 @@ def test_a94_items_owner_decided(doc):
     assert items["P1-IT-43"]["value"] == 525.0 and items["P1-IT-43"]["evidence_class"] == "owner-stated"
     assert items["P1-IT-44"]["value"] == {"V_test_V_DC": 1050.0, "duration_s": 60.0}
     assert "verify" in items["P1-IT-44"]["basis"] and "ICPQ-06" in items["P1-IT-44"]["note"]
-    assert items["P1-IT-45"]["value"].startswith("TBD") and items["P1-IT-45"]["evidence_class"] is None
+    # A9.4 left P1-IT-45 TBD; A9.14 P1Q-17 registered it (see test_rvf06_p1_it45_value_registered)
+    assert items["P1-IT-45"]["status"].startswith("OWNER_DECIDED (A9.14 P1Q-17")
     assert items["P1-IT-46"]["value"].startswith("TBD") and "ICP-44" in items["P1-IT-46"]["name"]
     assert items["P1-IT-47"]["status"].startswith("OWNER_DECIDED (A9.5 P1Q-15")          # A9.5 answered P1Q-15
     assert items["P1-IT-47"]["value"]["k_sigma"] == 3.0 and items["P1-IT-47"]["value"]["fraction_max"] == 0.02
@@ -2902,3 +2903,26 @@ def test_pr35_timestamps_ordered_chronologically(red, camp):
     rep = camp.run_campaign(b)
     assert rep["readiness"]["governing_record_id"] == "SYNTH-G0-LATER"
     assert rep["readiness"]["g0_status"] != "G0_ENTRY_CONDITIONS_RECORDED"
+
+
+def test_rvf06_p1_it45_value_registered(doc):
+    """RVF-06: an OWNER_DECIDED P1-IT-45 must carry the A9.14 P1Q-17 level, never the pre-decision TBD text;
+    the dependent safety rows P1-SI-05 / P1-SI-11 must not keep 'reverification level TBD'."""
+    items = {i["id"]: i for i in doc["items"]}
+    it = items["P1-IT-45"]
+    assert it["status"] == "OWNER_DECIDED (A9.14 P1Q-17 REVERIFICATION_700V_DC_60S_TRIGGERED_ONLY)"
+    assert it["value"] == ("700 V DC / 60 s, current-limited, triggered only (owner development acceptance level, "
+                           "not ECSS)")
+    assert "TBD" not in it["value"] and it["evidence_class"] == "owner-stated"
+    # every OWNER_DECIDED item with a str value: no leftover 'TBD - requires an owner-registered' text
+    for x in doc["items"]:
+        if str(x.get("status", "")).startswith("OWNER_DECIDED") and isinstance(x["value"], str):
+            assert "requires an owner-registered" not in x["value"], x["id"]
+    si = {s["id"]: s for s in doc["safety_interlocks"]}
+    for sid in ("P1-SI-05", "P1-SI-11"):
+        assert "reverification level TBD" not in si[sid]["threshold"], sid
+        assert "700 V DC / 60 s" in si[sid]["threshold"] and "P1Q-17" in si[sid]["source"], sid
+    assert "TBD (reverification level)" not in si["P1-SI-11"]["status"]
+    md = open(MD_PATH).read()
+    row = [l for l in md.splitlines() if l.startswith("| P1-IT-45 |")][0]
+    assert "| 700 V DC / 60 s, current-limited, triggered only" in row and "TBD - requires" not in row
