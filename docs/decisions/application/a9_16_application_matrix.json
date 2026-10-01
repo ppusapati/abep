@@ -12,7 +12,8 @@
   "PENDING_STEP_2_MODEL_CHANGE": "A9.9 production-model change, authorised; implemented in A9.16 step 2",
   "PENDING_STEP_3_ARCHITECTURE": "A9.13 decision whose application changes design-synthesis / optimizer code; record-level parts applied where listed; code in A9.16 step 3",
   "PENDING_CI_CHANGE": "needs a CI workflow change (.github/workflows), outside every A9.16 step-1 allowed path",
-  "BLOCKED": "cannot be applied yet (missing input or record outside the allowed paths; named in 'residual')"
+  "BLOCKED": "cannot be applied yet (missing input or record outside the allowed paths; named in 'residual')",
+  "PARTIAL": "the decision's rule is recorded in the governing artifact but a named part it requires (a selection, a registration) is still pending - not APPLIED until that part exists (named in 'residual')"
  },
  "residual_status_vocabulary": [
   "BLOCKED",
@@ -109,6 +110,29 @@
   "repin": "5acdcde8be7d41cfb0d6c26b1ad7cb899d279871",
   "records": "d681230d79e98de1f68085310950086e5e18048c"
  },
+ "repair_commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+ "repair_fixes": [
+  {
+   "id": "COR-01",
+   "what": "immutable state-v4 builder reproduces again: P1 / P2 keep their as-raised open_owner_questions (current status in owner_question_status_current / answered_owner_questions + owner_questions_open_now), P1 derived_resolutions keep the as-raised disposition (owner_decision beside it), P4 / RVM keep the as-raised status (status_current beside it), P3 v1 is the A9.6 package"
+  },
+  {
+   "id": "COR-02",
+   "what": "immutable RFQ v2 builder reproduces again: P1-IT-36 and P1-M-30 keep the read-back status / quantity text (status_a9_16 / quantity_a9_16 govern)"
+  },
+  {
+   "id": "COR-05",
+   "what": "build_p3_coupled_thermal.py and its v1 outputs restored byte-identical (F0-profiled source pinned through the parity pre-registration); every A9.16 P3 change moved to build_p3_coupled_thermal_v2.py -> p3_coupled_thermal_v2.json / P3_COUPLED_THERMAL_V2.md, which the current-state consumers read"
+  },
+  {
+   "id": "COR-03",
+   "what": "F4 regenerated (build_f4_plenum.py, build CPU 102 s): only its pin of the current H-1 freeze candidate changed; --check and tests/test_design_f4_plenum.py::test_pins_hold pass"
+  },
+  {
+   "id": "COR-04",
+   "what": "F7 / F8 NOT regenerated: its builder exceeds the 2-minute command limit (BLOCKED; pins to F6 / H-1 / F4 stay stale until a run without that limit)"
+  }
+ ],
  "lane_commits": {
   "P1": "b1bac8dc5df0a03e55954e0f0b26bf27bdcd86a4",
   "P2": "3ff91954875e69f2baf9ba41cca546c657d6260d",
@@ -128,19 +152,20 @@
   "A9.14": 61
  },
  "counts": {
-  "APPLIED": 110,
+  "APPLIED": 107,
   "BLOCKED": 2,
   "NOT_APPLICABLE_TO_ARTIFACTS": 1,
+  "PARTIAL": 1,
   "PENDING_CI_CHANGE": 1,
   "PENDING_STEP_2_MODEL_CHANGE": 5,
-  "PENDING_STEP_3_ARCHITECTURE": 17
+  "PENDING_STEP_3_ARCHITECTURE": 19
  },
  "residual_counts": {
-  "BLOCKED": 15,
+  "BLOCKED": 13,
   "OPEN_OWNER_QUESTION": 1,
-  "PENDING_EVIDENCE": 4,
+  "PENDING_EVIDENCE": 6,
   "PENDING_STEP_2_MODEL_CHANGE": 5,
-  "PENDING_STEP_3_ARCHITECTURE": 19
+  "PENDING_STEP_3_ARCHITECTURE": 21
  },
  "rules": [
   {
@@ -405,7 +430,7 @@
    "applications": [
     {
      "lane": "P3",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "commit": "c00f9b5c424feda2c653c87b3eb1b7d9d3a51009",
      "status": "APPLIED",
      "record_locations": [
@@ -428,6 +453,45 @@
      ]
     },
     {
+     "lane": "REPAIR",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/a9_16_incorporation/applied/14/question_id",
+      "/merged_cross_lane/packages/P3/ids_cited/7",
+      "/measurements/29/instrument_class",
+      "/measurements/29/status"
+     ],
+     "what": "F2: P1-M-30 REQUIRED Langmuir probe (matched diagnostic runs, calorimetry primary); capacity records exclude an undeclared / unevidenced probe; XL-18 / XL-25 re-stated"
+    },
+    {
+     "lane": "REPAIR",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/what_this_is_not/3",
+      "/heat_terms/Q_collector/evidence_routes/decision",
+      "/items/25/value",
+      "/items/25/basis"
+     ],
+     "what": "F2: XL-18 re-stated on the P3 side (P3-IF-N02)"
+    },
+    {
+     "lane": "REPAIR",
+     "artifact": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/items/18/source",
+      "/interface_demands/5/status",
+      "/interface_demands/5/xref/0/quantity",
+      "/interface_demands/5/xref/0/status"
+     ],
+     "what": "F2: XL-25 re-stated on the P4 side (ID-06)"
+    },
+    {
      "lane": "INTEGRATION",
      "artifact": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
      "commit": "d681230d79e98de1f68085310950086e5e18048c",
@@ -438,13 +502,7 @@
      "what": "state v5 row ANSWERED_BY_A9_8"
     }
    ],
-   "residual": [
-    {
-     "status": "BLOCKED",
-     "what": "XL-18 / XL-25 pair text 'TBD_OWNER (P3Q-01 OPEN ...)' still in P1 (IF-P1-34, P1-M-30); P1 and P3 must restate it together",
-     "where": "docs/experiments/hall_icp/p1_icp_bench/ (outside the allowed paths)"
-    }
-   ]
+   "residual": []
   },
   {
    "decision": "A9.8",
@@ -1188,9 +1246,9 @@
      "status": "APPLIED",
      "record_locations": [
       "/a9_6_incorporation/workflow/8/entry/1",
-      "/a9_16_incorporation/applied/14/question_id",
+      "/a9_16_incorporation/applied/15/question_id",
       "/items/32/status",
-      "/owner_answers_applied/77/id"
+      "/owner_answers_applied/78/id"
      ]
     },
     {
@@ -1228,6 +1286,19 @@
      ]
     },
     {
+     "lane": "REPAIR",
+     "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/a9_6_incorporation/gap_audit/11/gap_at_base",
+      "/a9_6_incorporation/gap_audit/11/closure",
+      "/a9_6_incorporation/workflow/9/entry/0",
+      "/a9_6_incorporation/derived_resolutions/0/id"
+     ],
+     "what": "F9: the rejected alternative is NOT_OWNER_SELECTED_INFORMATIONAL (no margin, no condition_met); docstrings follow the owner choice"
+    },
+    {
      "lane": "INTEGRATION",
      "artifact": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
      "commit": "d681230d79e98de1f68085310950086e5e18048c",
@@ -1256,7 +1327,7 @@
      "status": "APPLIED",
      "record_locations": [
       "/a9_6_incorporation/workflow/1/exit/1",
-      "/a9_16_incorporation/applied/16/question_id",
+      "/a9_16_incorporation/applied/17/question_id",
       "/items/57/source",
       "/items/57/status"
      ]
@@ -1302,7 +1373,7 @@
      "status": "APPLIED",
      "record_locations": [
       "/a9_6_incorporation/workflow/8/entry/1",
-      "/a9_16_incorporation/applied/17/question_id",
+      "/a9_16_incorporation/applied/18/question_id",
       "/a9_16_incorporation/not_applicable/0/why",
       "/scope/configurations/1"
      ]
@@ -1349,9 +1420,22 @@
      "record_locations": [
       "/banner/0",
       "/banner/2",
-      "/common_interface/banner/0",
-      "/common_interface/banner/2"
+      "/banner/6",
+      "/common_interface/banner/0"
      ]
+    },
+    {
+     "lane": "REPAIR",
+     "artifact": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/banner/0",
+      "/banner/2",
+      "/banner/6",
+      "/common_interface/banner/0"
+     ],
+     "what": "F4: RFQ3-H1FAB sent against the P9e configuration-controlled P1 engineering drawing set; LOCK-1 release kept for the flight H-1 only (recorder reading for the owner to confirm)"
     },
     {
      "lane": "INTEGRATION",
@@ -1383,7 +1467,7 @@
      "record_locations": [
       "/a9_6_incorporation/workflow/7/exit/0",
       "/a9_6_incorporation/workflow/7/exit/1",
-      "/a9_16_incorporation/applied/18/question_id",
+      "/a9_16_incorporation/applied/19/question_id",
       "/a9_16_incorporation/registration_slots_not_filled/4"
      ]
     },
@@ -1422,6 +1506,19 @@
      ]
     },
     {
+     "lane": "REPAIR",
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/z_antenna_methods/0/role",
+      "/z_antenna_methods/0/owner_answers_applied/0/question_id",
+      "/z_antenna_methods/1/role",
+      "/z_antenna_methods/1/owner_answers_applied/0/question_id"
+     ],
+     "what": "COR-07: method_agreement needs ZM-B valid = True at the same operating point / configuration"
+    },
+    {
      "lane": "INTEGRATION",
      "artifact": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
      "commit": "d681230d79e98de1f68085310950086e5e18048c",
@@ -1454,6 +1551,19 @@
       "/hot_map_methodology/rules/4/source/1",
       "/hot_map_methodology/rules/4/owner_answers_applied/0/question_id"
      ]
+    },
+    {
+     "lane": "REPAIR",
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/z_antenna_recommendation/transfer_rule",
+      "/z_antenna_recommendation/owner_answers_applied/1/question_id",
+      "/hot_map_methodology/rules/4/source/1",
+      "/hot_map_methodology/rules/4/owner_answers_applied/0/question_id"
+     ],
+     "what": "COR-07: as above"
     },
     {
      "lane": "INTEGRATION",
@@ -1566,7 +1676,7 @@
       "/owner_answers_applied/47/ref/decision",
       "/owner_answers_applied/47/how",
       "/owner_answers_applied/47/question_id",
-      "/answered_owner_questions/6/id"
+      "/open_owner_questions/6/id"
      ]
     },
     {
@@ -1627,7 +1737,7 @@
    "applications": [
     {
      "lane": "P3",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "commit": "c00f9b5c424feda2c653c87b3eb1b7d9d3a51009",
      "status": "APPLIED",
      "record_locations": [
@@ -1636,6 +1746,19 @@
       "/items/53/value",
       "/items/53/basis"
      ]
+    },
+    {
+     "lane": "REPAIR",
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/p2_outputs_later/0/id",
+      "/items/90/value",
+      "/items/90/source/0",
+      "/items/90/source/1"
+     ],
+     "what": "F1: P2 records ICPQ-10 OWNER_DECIDED (A9.12 S5.1 alternative A); alternative B only as rejected history; RC-HEAT references p3_a9_16_rules.icp43_total_module_bound and refuses any other heat_load_option"
     },
     {
      "lane": "INTEGRATION",
@@ -1650,9 +1773,9 @@
    ],
    "residual": [
     {
-     "status": "BLOCKED",
-     "what": "P2 RC-HEAT row / heat_load_alternatives still TBD_OWNER (IDP2-22)",
-     "where": "docs/experiments/hall_icp/p2_impedance_map/ (outside the allowed paths)"
+     "status": "PENDING_EVIDENCE",
+     "what": "Q_ICP,bound value needs the registered P_fwd,max (complete P2 envelope) and the registered H-1 P_d,max (form decided; RC-HEAT TBD_AFTER_EVIDENCE)",
+     "where": "docs/experiments/hall_icp/p2_impedance_map/, p3_coupled_thermal/"
     }
    ]
   },
@@ -1667,7 +1790,7 @@
    "applications": [
     {
      "lane": "P3",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "commit": "c00f9b5c424feda2c653c87b3eb1b7d9d3a51009",
      "status": "APPLIED",
      "record_locations": [
@@ -1718,7 +1841,7 @@
    "applications": [
     {
      "lane": "P3",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "commit": "c00f9b5c424feda2c653c87b3eb1b7d9d3a51009",
      "status": "APPLIED",
      "record_locations": [
@@ -1792,7 +1915,7 @@
    "applications": [
     {
      "lane": "P3",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "commit": "c00f9b5c424feda2c653c87b3eb1b7d9d3a51009",
      "status": "APPLIED",
      "record_locations": [
@@ -1843,7 +1966,7 @@
    "applications": [
     {
      "lane": "P3",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "commit": "c00f9b5c424feda2c653c87b3eb1b7d9d3a51009",
      "status": "APPLIED",
      "record_locations": [
@@ -1894,7 +2017,7 @@
    "applications": [
     {
      "lane": "P3",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "commit": "c00f9b5c424feda2c653c87b3eb1b7d9d3a51009",
      "status": "APPLIED",
      "record_locations": [
@@ -1945,7 +2068,7 @@
    "applications": [
     {
      "lane": "P3",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "commit": "c00f9b5c424feda2c653c87b3eb1b7d9d3a51009",
      "status": "APPLIED",
      "record_locations": [
@@ -1996,7 +2119,7 @@
    "applications": [
     {
      "lane": "P3",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "commit": "c00f9b5c424feda2c653c87b3eb1b7d9d3a51009",
      "status": "APPLIED",
      "record_locations": [
@@ -2005,6 +2128,30 @@
       "/items/55/source",
       "/interface_demands/p3_needs/9/what"
      ]
+    },
+    {
+     "lane": "REPAIR",
+     "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/p2_outputs_later/2/id",
+      "/owner_answers_applied/56/ref/decision",
+      "/owner_answers_applied/56/how",
+      "/owner_answers_applied/56/question_id"
+     ],
+     "what": "F5: P2 output OQ-A910-06 OWNER_DECIDED (A9.12 S5.8), P2 envelope consumed by p3_a9_16_rules.rf_thermal_basis"
+    },
+    {
+     "lane": "REPAIR",
+     "artifact": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/owner_answers_applied/23/id",
+      "/owner_answers_applied/23/how_applied"
+     ],
+     "what": "F5: open_register_status OQ-A910-06 OWNER_DECIDED (A9.12 S5.8)"
     },
     {
      "lane": "INTEGRATION",
@@ -2017,13 +2164,7 @@
      "what": "state v5 row ANSWERED_BY_A9_12"
     }
    ],
-   "residual": [
-    {
-     "status": "BLOCKED",
-     "what": "mass / power v3 carries OQ-A910-06 OPEN (600 W temporary RF heat allocation not recorded there)",
-     "where": "docs/budgets/mass_power_a9_v3/ (outside the allowed paths)"
-    }
-   ]
+   "residual": []
   },
   {
    "decision": "A9.12",
@@ -2036,7 +2177,7 @@
    "applications": [
     {
      "lane": "P3",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "commit": "c00f9b5c424feda2c653c87b3eb1b7d9d3a51009",
      "status": "APPLIED",
      "record_locations": [
@@ -2079,6 +2220,19 @@
       "/criteria/0/rule",
       "/items/11/basis"
      ]
+    },
+    {
+     "lane": "REPAIR",
+     "artifact": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/status",
+      "/screening_rules/3",
+      "/criteria/0/rule",
+      "/items/11/basis"
+     ],
+     "what": "COR-06: CR-01 admits T_validated_continuous only with a referenced stage record (id + sha256) classified by validation_stage_record; a bare declaration is INCOMPLETE_EVIDENCE"
     },
     {
      "lane": "INTEGRATION",
@@ -2652,7 +2806,8 @@
    "decision_code": "YES_PROVISIONAL",
    "decision_json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
    "decision_json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
-   "status": "APPLIED",
+   "status": "PENDING_STEP_3_ARCHITECTURE",
+   "status_reason": "F4 transient metrics accepted provisionally: annotation of the F4 record (F-lane regeneration)",
    "applications": [
     {
      "lane": "INTEGRATION",
@@ -2681,6 +2836,11 @@
      "status": "BLOCKED",
      "what": "F4 record annotation (provisional metric acceptance)",
      "where": "F-lane records F1 / F4 / F7-F8 not rebuilt: their builders exceed the 2-minute command limit of this step (pins verified unchanged); annotation of their open_owner_questions is part of the step-3 F-lane regeneration"
+    },
+    {
+     "status": "PENDING_STEP_3_ARCHITECTURE",
+     "what": "F4 transient metrics accepted provisionally: annotation of the F4 record (F-lane regeneration)",
+     "where": "design-synthesis / optimizer code (A9.16 step 3)"
     }
    ]
   },
@@ -2789,7 +2949,8 @@
    "decision_code": "ALL_ADMITTED_SCENARIOS",
    "decision_json": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
    "decision_json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
-   "status": "APPLIED",
+   "status": "PENDING_STEP_3_ARCHITECTURE",
+   "status_reason": "F7 / F8: all admitted scenarios carried: annotation of the F7 / F8 records (F-lane regeneration)",
    "applications": [
     {
      "lane": "INTEGRATION",
@@ -2818,6 +2979,11 @@
      "status": "BLOCKED",
      "what": "F7 / F8 record annotation (all admitted scenarios)",
      "where": "F-lane records F1 / F4 / F7-F8 not rebuilt: their builders exceed the 2-minute command limit of this step (pins verified unchanged); annotation of their open_owner_questions is part of the step-3 F-lane regeneration"
+    },
+    {
+     "status": "PENDING_STEP_3_ARCHITECTURE",
+     "what": "F7 / F8: all admitted scenarios carried: annotation of the F7 / F8 records (F-lane regeneration)",
+     "where": "design-synthesis / optimizer code (A9.16 step 3)"
     }
    ]
   },
@@ -2883,6 +3049,11 @@
     }
    ],
    "residual": [
+    {
+     "status": "BLOCKED",
+     "what": "F7 / F8 not regenerated in the repair lane (COR-04): its pins to F6 / H-1 / F4 are stale",
+     "where": "F-lane records F1 / F4 / F7-F8 not rebuilt: their builders exceed the 2-minute command limit of this step (pins verified unchanged); annotation of their open_owner_questions is part of the step-3 F-lane regeneration"
+    },
     {
      "status": "PENDING_STEP_3_ARCHITECTURE",
      "what": "F7 / F8: REFERENCE/PARAMETRIC sourced spacecraft geometry for interim drag studies",
@@ -3076,7 +3247,8 @@
    "decision_code": "SELECT_ENGINEERING_POINT_NONPERFORMANCE",
    "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
    "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
-   "status": "APPLIED",
+   "status": "PARTIAL",
+   "status_reason": "selection rule recorded (non-performance criteria, ENGINEERING_FREEZE_CANDIDATE); the engineering channel point is not yet selected (H1F-CH-11 NOT_SELECTED_PENDING_FEMM) - A9.16 repair F7",
    "applications": [
     {
      "lane": "INTEGRATION",
@@ -3100,7 +3272,13 @@
      "what": "selection rule on non-performance criteria recorded; point NOT_SELECTED_PENDING_FEMM, status when selected ENGINEERING_FREEZE_CANDIDATE; freeze_status TBD_OWNER -> TBD_AFTER_EVIDENCE"
     }
    ],
-   "residual": []
+   "residual": [
+    {
+     "status": "PENDING_EVIDENCE",
+     "what": "the engineering channel point itself is not yet selected: H1F-CH-11 NOT_SELECTED_PENDING_FEMM (the non-performance selection rule and the ENGINEERING_FREEZE_CANDIDATE label are recorded)",
+     "where": "docs/hardware/h1_freeze_candidate/ (after the authorised FEMM analysis points, F5-OQ-01)"
+    }
+   ]
   },
   {
    "decision": "A9.14",
@@ -3295,7 +3473,7 @@
      "commit": "b1bac8dc5df0a03e55954e0f0b26bf27bdcd86a4",
      "status": "APPLIED",
      "record_locations": [
-      "/a9_16_incorporation/applied/23/question_id",
+      "/a9_16_incorporation/applied/24/question_id",
       "/a9_16_incorporation/registration_slots_not_filled/11",
       "/items/60/name",
       "/items/60/source"
@@ -3380,7 +3558,7 @@
    "applications": [
     {
      "lane": "P3",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "commit": "c00f9b5c424feda2c653c87b3eb1b7d9d3a51009",
      "status": "APPLIED",
      "record_locations": [
@@ -3418,7 +3596,7 @@
      "commit": "b1bac8dc5df0a03e55954e0f0b26bf27bdcd86a4",
      "status": "APPLIED",
      "record_locations": [
-      "/a9_16_incorporation/applied/22/question_id",
+      "/a9_16_incorporation/applied/23/question_id",
       "/a9_16_incorporation/registration_slots_not_filled/10",
       "/items/59/name",
       "/items/59/source"
@@ -3448,7 +3626,7 @@
    "applications": [
     {
      "lane": "P3",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "commit": "c00f9b5c424feda2c653c87b3eb1b7d9d3a51009",
      "status": "APPLIED",
      "record_locations": [
@@ -3985,6 +4163,18 @@
      ]
     },
     {
+     "lane": "REPAIR",
+     "artifact": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/power/configurations/hall_c1_reference/phases/startup/steps/4/name",
+      "/power/configurations/hall_c1_reference/phases/startup/steps/4/decisions/0",
+      "/owner_answers_applied/24/id"
+     ],
+     "what": "F10: C-S4 keeper ignition <= 3 dwells (1 + 2 retries) x 120 s = 360 s maximum booking"
+    },
+    {
      "lane": "INTEGRATION",
      "artifact": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
      "commit": "d681230d79e98de1f68085310950086e5e18048c",
@@ -4308,9 +4498,22 @@
      "record_locations": [
       "/reading_axes_resolved/RA-FUNC/by/0",
       "/reading_axes_resolved/RA-FUNC/by/1",
-      "/ledger_lines/2/owner_answers_applied/0",
-      "/ledger_lines/2/owner_answers_applied/1"
+      "/ledger_lines/1/owner_answers_applied/2",
+      "/ledger_lines/1/scope_note"
      ]
+    },
+    {
+     "lane": "REPAIR",
+     "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/parameters/197/source/4/pointer",
+      "/parameters/197/source/4/note",
+      "/parameters/197/basis",
+      "/parameters/197/a9_16/decisions/1"
+     ],
+     "what": "F8: Xe rows re-pointed to xe_accounting_a9_v3 / mass_power_a9_v3 / state v5 (v2 / v4 sources marked history)"
     },
     {
      "lane": "INTEGRATION",
@@ -4692,7 +4895,7 @@
      "status": "APPLIED",
      "record_locations": [
       "/a9_6_incorporation/workflow/0/exit/1",
-      "/a9_16_incorporation/applied/20/question_id",
+      "/a9_16_incorporation/applied/21/question_id",
       "/a9_16_incorporation/registration_slots_not_filled/12",
       "/scope/orificed_variant_provisions/2"
      ]
@@ -4778,6 +4981,19 @@
       "/items/0/v3_scope",
       "/items/1/owner_answers_applied/1"
      ]
+    },
+    {
+     "lane": "REPAIR",
+     "artifact": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/propellant_policy/c1_flight_xe_now/rule",
+      "/items/0/owner_answers_applied/1",
+      "/items/0/v3_scope",
+      "/items/1/owner_answers_applied/1"
+     ],
+     "what": "F6: P-FL-C1 a configuration-scope zero (no C1 in hall_icp_neutralizer), not an owner Xe exclusion; XV2-02 and the C1 sensitivity labelled A5 design-target placeholders"
     },
     {
      "lane": "INTEGRATION",
@@ -4890,6 +5106,31 @@
      ]
     },
     {
+     "lane": "REPAIR",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/rows/13/open_readings/3/id",
+      "/rows/13/open_readings/3/decision",
+      "/rows/13/a9_16/decisions/3",
+      "/rows/13/a9_16/c1_variant"
+     ],
+     "what": "F3: 120 s / 360 s scoped to the C1 variant"
+    },
+    {
+     "lane": "REPAIR",
+     "artifact": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/power/configurations/hall_c1_reference/phases/startup/steps/4/name",
+      "/power/configurations/hall_c1_reference/phases/startup/steps/4/decisions/1",
+      "/owner_answers_applied/25/id"
+     ],
+     "what": "F10: as above"
+    },
+    {
      "lane": "INTEGRATION",
      "artifact": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
      "commit": "d681230d79e98de1f68085310950086e5e18048c",
@@ -4983,6 +5224,19 @@
      ]
     },
     {
+     "lane": "REPAIR",
+     "artifact": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/items/21/owner_answers_applied/0",
+      "/items/21/owner_answers_applied/1",
+      "/items/21/v3_scope",
+      "/items/30/owner_answers_applied/1"
+     ],
+     "what": "F11: ICP-feed 'contingency' label traced to A9.1 HIQ-06; whether A9.15 changes it is open owner question XV3Q-01"
+    },
+    {
      "lane": "INTEGRATION",
      "artifact": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
      "commit": "d681230d79e98de1f68085310950086e5e18048c",
@@ -5056,7 +5310,7 @@
      "commit": "b1bac8dc5df0a03e55954e0f0b26bf27bdcd86a4",
      "status": "APPLIED",
      "record_locations": [
-      "/a9_16_incorporation/applied/19/question_id",
+      "/a9_16_incorporation/applied/20/question_id",
       "/items/44/value",
       "/items/44/status",
       "/hardware_readiness/29/rfq_v1_package"
@@ -5208,11 +5462,37 @@
      "commit": "b1bac8dc5df0a03e55954e0f0b26bf27bdcd86a4",
      "status": "APPLIED",
      "record_locations": [
-      "/a9_16_incorporation/applied/21/question_id",
+      "/a9_16_incorporation/applied/22/question_id",
       "/a9_16_incorporation/registration_slots_not_filled/13",
       "/items/58/name",
       "/items/58/source"
      ]
+    },
+    {
+     "lane": "REPAIR",
+     "artifact": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/rows/13/open_readings/0/id",
+      "/rows/13/open_readings/0/decision",
+      "/rows/13/a9_16/decisions/0",
+      "/interface_demands/10/content"
+     ],
+     "what": "F3: RVM-14 ICP-first sequence limited by registered dwell / thermal limits only; 120 s / 360 s kept for the C1-selected variant's Xe booking"
+    },
+    {
+     "lane": "REPAIR",
+     "artifact": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json",
+     "commit": "1d515542e268dc042c9e48a4b1e496de4891f6e5",
+     "status": "APPLIED",
+     "record_locations": [
+      "/parameters/191/source/3/pointer",
+      "/parameters/191/source/3/note",
+      "/parameters/191/basis",
+      "/parameters/191/a9_16/decisions/0"
+     ],
+     "what": "F8: AFC-SY-CTL-01 sequence OWNER_DECIDED, dwell / thermal limits PENDING_REGISTRATION"
     },
     {
      "lane": "INTEGRATION",
@@ -5474,7 +5754,7 @@
    "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
    "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
    "status": "BLOCKED",
-   "status_reason": "thresholds (60 s / 10 s) already the preregistered values of scripts/perf/profile_baseline.py; the owner acceptance cannot be recorded in docs/performance/** (pins only in this step) nor in scripts/perf/** (outside the allowed paths); the baseline is also STALE (profiled P3 builder changed in c00f9b5)",
+   "status_reason": "thresholds (60 s / 10 s) already the preregistered values of scripts/perf/profile_baseline.py; the owner acceptance cannot be recorded in docs/performance/** (pins only; the baseline JSON is pinned by the parity pre-registration) nor in scripts/perf/** (outside the allowed paths); the baseline is CURRENT again (A9.16 repair COR-05: the profiled P3 builder is byte-identical to the measured source; A9.16 P3 changes live in build_p3_coupled_thermal_v2.py)",
    "applications": [
     {
      "lane": "INTEGRATION",
@@ -5605,7 +5885,7 @@
      "commit": "d008ac31daa11b6d0fcfe4ad78f9587e359bced3",
      "status": "APPLIED",
      "record_locations": [
-      "/pins/decisions/2/key",
+      "/pins/decisions/3/key",
       "/propellant_policy/source",
       "/items_v3/4/source/1",
       "/lines/hall_icp_neutralizer/7/owner_answers_applied/3"
@@ -5641,7 +5921,7 @@
     },
     {
      "lane": "P3",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "commit": "c00f9b5c424feda2c653c87b3eb1b7d9d3a51009",
      "status": "NOT_APPLICABLE_TO_ARTIFACTS",
      "what": "no Xe-contingency wording and no Xe heat term"
@@ -5710,5 +5990,5 @@
    "superseded_by": "A9.15 governing_rule"
   }
  ],
- "builders_check_summary": "see the A9.16 step-1 integration report: re-pinned M16 v4, H-1, F9; RVM, F6, state v5 rebuilt; RFQ v2 / state v4 / decision dossier / perf baseline stale outside the allowed paths; F1 / F4 / F7-F8 --check exceed 2 minutes (pins verified)"
+ "builders_check_summary": "A9.16 repair lane: state v4, RFQ v2, mass-power v2, Xe v2 and the F0 performance baseline --check reproduce again (COR-01 / 02 / 05); P1, P2, P3 v1 + v2, P4, RVM, mass-power v3, Xe v3, RFQ v3, state v5, M16 v4, H-1, F9 rebuilt; F4 regenerated (COR-03); F7 / F8 not regenerated (COR-04: the build did not finish inside the 2-minute command limit) - its pins to F6 / H-1 / F4 stay stale and tests/test_design_f7_f8_optimizer.py::test_pins_hold stays red until a run without that limit"
 }

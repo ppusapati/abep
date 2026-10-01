@@ -366,3 +366,23 @@ def test_matrix_refuses_unverifiable_lane_result(monkeypatch):
     monkeypatch.setattr(MX, "LANES", lanes)
     with pytest.raises(SystemExit):
         MX.build()
+
+
+
+def test_matrix_repair_lane_truthful_statuses():
+    """A9.16 repair F7 / F1 / F2 / F5: S6.12 / S6.16 are PENDING_STEP_3_ARCHITECTURE (records not rebuilt), S7.2 is
+    PARTIAL (rule recorded, point not selected); ICPQ-10 / OQ-A910-06 / P3Q-01 carry the repair-lane applications and
+    no 'outside the allowed paths' residual; COR-04 (F7 / F8 not regenerated) is stated."""
+    by = {e["question_id"]: e for e in MXDOC["entries"]}
+    assert by["OQ-F4-03"]["status"] == by["OQ-F78-02"]["status"] == "PENDING_STEP_3_ARCHITECTURE"
+    assert by["F5-OQ-02"]["status"] == "PARTIAL"
+    assert any("NOT_SELECTED_PENDING_FEMM" in r["what"] for r in by["F5-OQ-02"]["residual"])
+    for q in ("ICPQ-10", "OQ-A910-06", "P3Q-01", "P1Q-19", "OQ-RFQV2-10", "P4-OQ-01"):
+        e = by[q]
+        assert e["status"] == "APPLIED", q
+        assert any(a["lane"] == "REPAIR" and a["commit"] == MX.REPAIR_COMMIT for a in e["applications"]), q
+        assert not any("outside the allowed paths" in r["where"] for r in e["residual"]), q
+    assert re.fullmatch(r"[0-9a-f]{40}", MXDOC["repair_commit"])
+    fixes = {f["id"]: f["what"] for f in MXDOC["repair_fixes"]}
+    assert set(fixes) >= {"COR-01", "COR-02", "COR-03", "COR-04", "COR-05"} and "2-minute" in fixes["COR-04"]
+    assert "STALE" not in by["F0-OQ-01"]["status_reason"] and "CURRENT again" in by["F0-OQ-01"]["status_reason"]

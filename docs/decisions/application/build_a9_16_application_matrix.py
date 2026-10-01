@@ -44,7 +44,7 @@ INTEGRATION_COMMITS = {"repin": "5acdcde8be7d41cfb0d6c26b1ad7cb899d279871",
                        "records": "d681230d79e98de1f68085310950086e5e18048c"}
 # A9.16 repair lane (review findings F1-F11, COR-01..07): the commit that applied the decisions below. Every
 # application is verified at build time like a lane result (the question id must occur in the artifact).
-REPAIR_COMMIT = "REPAIR_COMMIT_PLACEHOLDER"
+REPAIR_COMMIT = "1d515542e268dc042c9e48a4b1e496de4891f6e5"
 REPAIR = [
     # (question id, artifact, what) - F1 / F5
     ("ICPQ-10", "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
