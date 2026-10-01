@@ -14,12 +14,16 @@ Random streams: the Rust kernels use their own generator (xoshiro256++). The wra
 from the caller's numpy Generator (``rng.integers(0, 2**64, dtype=np.uint64)``), so the same Generator state gives the
 same Rust result (deterministic seeding), but Python and Rust results differ draw by draw. Equivalence is therefore
 statistical and is decided only by the pre-registered parity campaign
-(docs/performance/abep_core/parity_prereg_v1.json, scripts/verify_abep_core.py,
-docs/performance/abep_core/parity_report_v1.json).
+(docs/performance/abep_core/parity_prereg_v2.json, scripts/verify_abep_core.py,
+docs/performance/abep_core/parity_report_v2.json). Registration v2 (A9.14 S10.4) re-pins the v1 campaign (same
+workloads, seeds and tolerance) to the reference as changed by A9.9 S2.5 / S2.1; parity_prereg_v1.json and
+parity_report_v1.* are immutable history and no longer gate this wrapper. Python stays canonical for frozen and
+score-bearing outputs whatever the verdict (A9.14 S10.3), so the default backend is 'python'.
 
 What this module is not: it is not wired into archengine, intake.py, the frozen intake surface build or any golden
 benchmark; nothing in the repository selects the Rust backend by default; no Rust result is authoritative.
-Documented divergences of the Rust backend (refusals for inputs the reference does not handle): max_hits < 1 (the
+Documented divergences of the Rust backend, as recorded at v1 (since A9.9 S2.5 MCC-05/06/07 the reference refuses
+these inputs as well, so they are historical; none is in the comparison set): max_hits < 1 (the
 reference never terminates), scattering other than 'maxwell' / 'cll' (the reference silently treats it as Maxwell),
 CLL accommodation outside [0, 1] (the reference raises or returns NaN). DIV-04 (recorded after registration, consolidated
 verification round 1, RUST-02; outside the registered comparison set): the Rust trace_channel refuses max_hits_cap < 1,
@@ -51,8 +55,8 @@ DEFAULT_BACKEND = "python"
 RUST_MODULE = "abep_core"
 RUST_REQUIRED_ATTRS = ("flux_weighted_entry", "diffuse", "cll", "trace_channel", "clausing_transmission", "K_B",
                        "RNG_ALGORITHM", "__version__")
-PARITY_PREREG = "docs/performance/abep_core/parity_prereg_v1.json"
-PARITY_REPORT = "docs/performance/abep_core/parity_report_v1.json"
+PARITY_PREREG = "docs/performance/abep_core/parity_prereg_v2.json"
+PARITY_REPORT = "docs/performance/abep_core/parity_report_v2.json"
 
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
