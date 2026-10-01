@@ -2466,3 +2466,13 @@ steps (experiment/procurement/budget records; A9.9 production-model changes; A9.
 - **Optional Rust parity CI** `.github/workflows/rust-parity.yml` (A9.14 S10.4); not a required check.
 - **Reference spacecraft drag basis** (A9.13 S6.18), labelled REFERENCE/PARAMETRIC, not the flight spacecraft.
 - **Species-resolved sputter-yield evidence register** `docs/evidence/sputter_yields_v1/` (A9.12 S5.13).
+
+## 2026-10-01 — Dedicated performance baseline registered (A9.14 S10.2, A9.17 PERF)
+
+The owner ran the unmodified F0 harness (`scripts/perf/profile_baseline.py`, identical workload spec and parameters) on an
+otherwise idle i7-11700K / Windows 11 / Python 3.13 machine (branch `perf/dedicated-baseline-2026-10-01`, commit 72669db).
+Registered in `docs/performance/dedicated_baseline_2026_10_01/` as the admission baseline for Rust performance decisions;
+the A9.7 shared-CPU baseline is historical only. Reference workloads ran about 2x faster than on the shared machine; with the
+S10.1 thresholds unchanged, every judgement is unchanged (uq_modular_run_uq and intake_response_surface_reduced remain
+PORT_CANDIDATE, archengine_close_architecture MARGINAL). Four determinism fingerprints differ at <= 1e-4 relative
+(platform floating point); they are not physics evidence.
