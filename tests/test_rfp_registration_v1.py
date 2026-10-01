@@ -41,3 +41,20 @@ def test_rvm_mapping_section_and_transcription_unchanged():
     for r in m["requirements_to_check_against_rvm_resolution"]:
         assert r["rvm_rows"], r["clause_id"]
     assert {"DISC-01", "DISC-02"} <= {x["id"] for x in m["discrepancies"]}
+
+
+def test_page_coverage_screens_part_iv_items():
+    """A9.16 repair RFP-07: every Part IV(B) item (no waivers) is a registered clause or a screened-out
+    PROGRAMMATIC_BID_QUALIFICATION item; Part IV(C) criteria other than 5 are recorded as evaluation scoring."""
+    d = json.loads((D / "rfp_registration_v1.json").read_text(encoding="utf-8"))
+    pc = d["page_coverage"]
+    so = {r["section"]: r for r in pc["screened_out"]}
+    for item in ("1", "2", "4"):
+        r = so[f"Part IV(B) {item}"]
+        assert r["class"] == "PROGRAMMATIC_BID_QUALIFICATION" and "RFP-P21-03" in r["no_waiver"]
+    reg = {c["section"] for c in d["clauses"]}
+    assert any(s.startswith("Part IV(B) 3") for s in reg) and any(s.startswith("Part IV(B) 5") for s in reg)
+    for item in ("1", "2", "3", "4", "6"):
+        assert so[f"Part IV(C) {item}"]["class"] == "BID_EVALUATION_CRITERION"
+    assert "UNSCREENED" in pc["pages_not_screened"]
+    assert set(pc["pages_with_registered_clauses"]) <= set(pc["pages_screened_for_clauses"])

@@ -153,3 +153,26 @@ Discrepancies (recorded for the owner / DRDO; see the RVM):
 - DISC-08 ignition / restart (no clause): DERIVED_PROJECT_REQUIREMENT (A9.14 S9.12 OD14)
 - DISC-09 ENTEST values (RFP-P19-04): RVM-21 carries no numeric level; levels TBD at PDR (not invented)
 - DISC-10 test-facility / thrust-measurement capability (RFP-P27-01, RFP-P30-01): new row RVM-26; the mN-level stand plan is not evidence of micro-newton capability
+
+## Page coverage and screened-out items (A9.16 repair RFP-07)
+
+Pages with registered clauses: 16, 17, 18, 19, 20, 21, 27, 30. Pages screened for clauses: 16-33. pages 1-15 and 34-40 were not screened for requirement-bearing clauses in this record (bid / legal / programmatic front and back matter per the document structure, not verified page by page): status UNSCREENED_PENDING_OWNER_PAGE_REVIEW of the owner-held PDF; nothing is assumed about their content.
+
+Rule: every Part IV(B) item (no waivers, RFP-P21-03) is either a registered clause (3: RFP-P27-01, 5: RFP-P27-02) or screened out here as PROGRAMMATIC_BID_QUALIFICATION; Part IV(C) criteria other than 5 (thrust measurement, RFP-P30-01) are bid-evaluation scoring.
+
+| Page | Section | Heading (as read) | Class | Why not registered |
+|---|---|---|---|---|
+| 26 | Part IV(B) preamble + Table B(1) notes 1-2 | Firm Essential Qualification Criteria: clause-by-clause compliance philosophy; COTS catalogue / brochure | PROGRAMMATIC_BID_QUALIFICATION | bid-submission format, not a system requirement (RFP-P21-03 'NO Waivers shall be given for PART (IV) (B)') |
+| 26 | Part IV(B) 1 | Financial Capabilities (no negative net worth as on 31st March 2026 / last financial year; CA-certified document) | PROGRAMMATIC_BID_QUALIFICATION | financial qualification of the bidder (no waiver, RFP-P21-03) (RFP-P21-03 'NO Waivers shall be given for PART (IV) (B)') |
+| 26 | Part IV(B) 2 | Details on in-house expertise to handle critical technologies (subsystem/module/components/ processes): i. complete indigenous realization of an electric propulsion system (space heritage data, indigenous content >50%); ii. space grade electronics and power system; iii. vacuum technology testing system for space qualification | PROGRAMMATIC_BID_QUALIFICATION | experience / heritage qualification of the bidder (no waiver, RFP-P21-03); no system requirement on the ABEP product (RFP-P21-03 'NO Waivers shall be given for PART (IV) (B)') |
+| 27 | Part IV(B) 4 | Availability of Experienced Manpower (at least 1 experienced person, > 3 years: i. High energy Physics; ii. Electric Propulsion; in-house) | PROGRAMMATIC_BID_QUALIFICATION | staffing qualification of the bidder (no waiver, RFP-P21-03) (RFP-P21-03 'NO Waivers shall be given for PART (IV) (B)') |
+| 28 | Part IV(C) preamble | Technical Capability Evaluation: qualify Part IV(B); maximum 100 marks, minimum 60 to qualify (Table B2 / Table-E Technical Evaluation Criteria) | BID_EVALUATION_CRITERION | evaluation procedure, not a system requirement |
+| 28 | Part IV(C) 1 | Expertise in Design and Development (based on completed projects only) (21 Marks): high power electronics, space structure and thermal design, high vacuum system | BID_EVALUATION_CRITERION | bidder track-record scoring |
+| 28 | Part IV(C) 2 | Initial Indigenous Content for Technologies (14 Marks): electric propulsion IC content and space grade electronics IC content (>75%: 7 marks; 50-75%: 4 marks) | BID_EVALUATION_CRITERION | bidder IC scoring; the project IC requirement is RFP-P19-05 / RFP-P18-03 (RVM-18) |
+| 29 | Part IV(C) 3 | Present TRL available with industry (15 Marks; indigenous electric propulsion system TRL bands) | BID_EVALUATION_CRITERION | bidder maturity scoring |
+| 29 | Part IV(C) 4 | Clarity and Quality of Submitted Proposal (25 Marks): a) idea / concept; b) sub-system details; c) qualification & test plan; d) modeling / simulation / analysis results; e) bench top prototype demonstration with test results | BID_EVALUATION_CRITERION | proposal-quality scoring (DPR content), not a system requirement |
+| 30 | Part IV(C) 5 Ultra High Vacuum Chamber | Development and Test Infrastructure (20 Marks): vacuum chamber for testing electric propulsion system (in house 10 / consortium 5 / sub-contract 0) | BID_EVALUATION_CRITERION | scoring of the infrastructure already required by RFP-P27-01 i (RVM-26 related); the thrust-measurement sub-item is RFP-P30-01 |
+| 30 | Part IV(C) 6 | Manpower HR Expertise (relevant to project requirement) (5 Marks): MTech or PhD in plasma physics and any mechanical engineering discipline with electric propulsion work experience | BID_EVALUATION_CRITERION | staffing scoring |
+| 31 | Part IV(C) Table B3 | Performance based score matrix for DA having already awarded TDF projects (over and above the evaluation score) | BID_EVALUATION_CRITERION | past-performance scoring |
+| 22 | Detailed Project Report (pp. 22-25) | DPR template (bidder-filled: project overview, critical technologies, approach) | PROGRAMMATIC_BID_QUALIFICATION | bid-form template (bidder-filled); screened from the PDF text layer only, not transcribed from the page images |
+| 32 | Industry Profile (pp. 32-33) | industry profile / firm-type document tables | PROGRAMMATIC_BID_QUALIFICATION | bid-form template; screened from the PDF text layer only, not transcribed from the page images |

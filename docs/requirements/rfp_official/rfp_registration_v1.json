@@ -848,5 +848,143 @@
    }
   ],
   "n_rvm_rows": 27
+ },
+ "page_coverage": {
+  "pages_with_registered_clauses": [
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   27,
+   30
+  ],
+  "pages_screened_for_clauses": [
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25,
+   26,
+   27,
+   28,
+   29,
+   30,
+   31,
+   32,
+   33
+  ],
+  "pages_not_screened": "pages 1-15 and 34-40 were not screened for requirement-bearing clauses in this record (bid / legal / programmatic front and back matter per the document structure, not verified page by page): status UNSCREENED_PENDING_OWNER_PAGE_REVIEW of the owner-held PDF; nothing is assumed about their content",
+  "screened_out": [
+   {
+    "page": 26,
+    "section": "Part IV(B) preamble + Table B(1) notes 1-2",
+    "heading_as_read": "Firm Essential Qualification Criteria: clause-by-clause compliance philosophy; COTS catalogue / brochure",
+    "class": "PROGRAMMATIC_BID_QUALIFICATION",
+    "why_not_registered": "bid-submission format, not a system requirement",
+    "no_waiver": "RFP-P21-03 'NO Waivers shall be given for PART (IV) (B)'"
+   },
+   {
+    "page": 26,
+    "section": "Part IV(B) 1",
+    "heading_as_read": "Financial Capabilities (no negative net worth as on 31st March 2026 / last financial year; CA-certified document)",
+    "class": "PROGRAMMATIC_BID_QUALIFICATION",
+    "why_not_registered": "financial qualification of the bidder (no waiver, RFP-P21-03)",
+    "no_waiver": "RFP-P21-03 'NO Waivers shall be given for PART (IV) (B)'"
+   },
+   {
+    "page": 26,
+    "section": "Part IV(B) 2",
+    "heading_as_read": "Details on in-house expertise to handle critical technologies (subsystem/module/components/ processes): i. complete indigenous realization of an electric propulsion system (space heritage data, indigenous content >50%); ii. space grade electronics and power system; iii. vacuum technology testing system for space qualification",
+    "class": "PROGRAMMATIC_BID_QUALIFICATION",
+    "why_not_registered": "experience / heritage qualification of the bidder (no waiver, RFP-P21-03); no system requirement on the ABEP product",
+    "no_waiver": "RFP-P21-03 'NO Waivers shall be given for PART (IV) (B)'"
+   },
+   {
+    "page": 27,
+    "section": "Part IV(B) 4",
+    "heading_as_read": "Availability of Experienced Manpower (at least 1 experienced person, > 3 years: i. High energy Physics; ii. Electric Propulsion; in-house)",
+    "class": "PROGRAMMATIC_BID_QUALIFICATION",
+    "why_not_registered": "staffing qualification of the bidder (no waiver, RFP-P21-03)",
+    "no_waiver": "RFP-P21-03 'NO Waivers shall be given for PART (IV) (B)'"
+   },
+   {
+    "page": 28,
+    "section": "Part IV(C) preamble",
+    "heading_as_read": "Technical Capability Evaluation: qualify Part IV(B); maximum 100 marks, minimum 60 to qualify (Table B2 / Table-E Technical Evaluation Criteria)",
+    "class": "BID_EVALUATION_CRITERION",
+    "why_not_registered": "evaluation procedure, not a system requirement"
+   },
+   {
+    "page": 28,
+    "section": "Part IV(C) 1",
+    "heading_as_read": "Expertise in Design and Development (based on completed projects only) (21 Marks): high power electronics, space structure and thermal design, high vacuum system",
+    "class": "BID_EVALUATION_CRITERION",
+    "why_not_registered": "bidder track-record scoring"
+   },
+   {
+    "page": 28,
+    "section": "Part IV(C) 2",
+    "heading_as_read": "Initial Indigenous Content for Technologies (14 Marks): electric propulsion IC content and space grade electronics IC content (>75%: 7 marks; 50-75%: 4 marks)",
+    "class": "BID_EVALUATION_CRITERION",
+    "why_not_registered": "bidder IC scoring; the project IC requirement is RFP-P19-05 / RFP-P18-03 (RVM-18)"
+   },
+   {
+    "page": 29,
+    "section": "Part IV(C) 3",
+    "heading_as_read": "Present TRL available with industry (15 Marks; indigenous electric propulsion system TRL bands)",
+    "class": "BID_EVALUATION_CRITERION",
+    "why_not_registered": "bidder maturity scoring"
+   },
+   {
+    "page": 29,
+    "section": "Part IV(C) 4",
+    "heading_as_read": "Clarity and Quality of Submitted Proposal (25 Marks): a) idea / concept; b) sub-system details; c) qualification & test plan; d) modeling / simulation / analysis results; e) bench top prototype demonstration with test results",
+    "class": "BID_EVALUATION_CRITERION",
+    "why_not_registered": "proposal-quality scoring (DPR content), not a system requirement"
+   },
+   {
+    "page": 30,
+    "section": "Part IV(C) 5 Ultra High Vacuum Chamber",
+    "heading_as_read": "Development and Test Infrastructure (20 Marks): vacuum chamber for testing electric propulsion system (in house 10 / consortium 5 / sub-contract 0)",
+    "class": "BID_EVALUATION_CRITERION",
+    "why_not_registered": "scoring of the infrastructure already required by RFP-P27-01 i (RVM-26 related); the thrust-measurement sub-item is RFP-P30-01"
+   },
+   {
+    "page": 30,
+    "section": "Part IV(C) 6",
+    "heading_as_read": "Manpower HR Expertise (relevant to project requirement) (5 Marks): MTech or PhD in plasma physics and any mechanical engineering discipline with electric propulsion work experience",
+    "class": "BID_EVALUATION_CRITERION",
+    "why_not_registered": "staffing scoring"
+   },
+   {
+    "page": 31,
+    "section": "Part IV(C) Table B3",
+    "heading_as_read": "Performance based score matrix for DA having already awarded TDF projects (over and above the evaluation score)",
+    "class": "BID_EVALUATION_CRITERION",
+    "why_not_registered": "past-performance scoring"
+   },
+   {
+    "page": 22,
+    "section": "Detailed Project Report (pp. 22-25)",
+    "heading_as_read": "DPR template (bidder-filled: project overview, critical technologies, approach)",
+    "class": "PROGRAMMATIC_BID_QUALIFICATION",
+    "why_not_registered": "bid-form template (bidder-filled); screened from the PDF text layer only, not transcribed from the page images"
+   },
+   {
+    "page": 32,
+    "section": "Industry Profile (pp. 32-33)",
+    "heading_as_read": "industry profile / firm-type document tables",
+    "class": "PROGRAMMATIC_BID_QUALIFICATION",
+    "why_not_registered": "bid-form template; screened from the PDF text layer only, not transcribed from the page images"
+   }
+  ],
+  "rule": "every Part IV(B) item (no waivers, RFP-P21-03) is either a registered clause (3: RFP-P27-01, 5: RFP-P27-02) or screened out here as PROGRAMMATIC_BID_QUALIFICATION; Part IV(C) criteria other than 5 (thrust measurement, RFP-P30-01) are bid-evaluation scoring"
  }
 }

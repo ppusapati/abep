@@ -1,8 +1,4 @@
-"""Tests for the A9 Xe accounting v3 (A9.16 step 1: owner decisions A9.14 / A9.15 applied; A9.19 / A9.20 applied).
-
-A9.19 / A9.20: one Hall + one RF/ICP neutralizer, no hollow cathode, Xe = contingency / emergency supply mode (capability
-still RFP-required, RFP-P17-05 / RFP-P18-08), hall_c1_reference retired as a flight configuration (history only), C1 a
-ground-only laboratory reference (ground-test Xe only), 2 kg sizing remark a recorder observation (not a selection).
+"""Tests for the A9 Xe accounting v3 (A9.16 step 1: owner decisions A9.14 / A9.15 applied).
 
 Checks reproducibility, immutability of v2, verbatim-checked owner-decision citations (file + json sha256 + question id),
 the RFP-compliant propellant policy (Xe capability in every flight configuration, never a C1 contingency; flight C1 Xe
@@ -37,17 +33,12 @@ V2 = {
         "2c279af73e9d322a501d8577f9dd916f0fc057459b9ec49618e8c11734ba235a",
 }
 DEC_SHA = {"A9.14": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
-           "A9.15": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
-           "A9.19": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
-           "A9.20": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"}
+           "A9.15": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309"}
 REQUIRED = [("A9.15", "governing_rule"), ("A9.14", "XA9Q-07"), ("A9.15", "XA9Q-07"), ("A9.14", "XV2Q-01"),
             ("A9.15", "XV2Q-01"), ("A9.14", "XA9Q-01"), ("A9.14", "MQ-09"), ("A9.14", "OQ-A910-01"),
             ("A9.14", "XA9Q-02"), ("A9.14", "OQ-A907-01"), ("A9.14", "XA9Q-03"), ("A9.14", "XA9Q-04"),
             ("A9.14", "XA9Q-06"), ("A9.14", "OQ-A907-07"), ("A9.15", "OQ-A907-07"), ("A9.14", "MPQ-01"),
-            ("A9.15", "MPQ-01"), ("A9.14", "XA9Q-05"), ("A9.15", "XA9Q-05"),
-            ("A9.19", "architecture"), ("A9.19", "xenon_role"), ("A9.19", "A9.15"),
-            ("A9.19", "A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07"), ("A9.19", "A9 C1 CONTROL_FALLBACK"),
-            ("A9.20", "answer")]
+            ("A9.15", "MPQ-01"), ("A9.14", "XA9Q-05"), ("A9.15", "XA9Q-05")]
 
 
 def _sha(p: Path) -> str:
@@ -123,70 +114,16 @@ def test_quote_not_verbatim_refused(m):
 
 
 # ------------------------------------------------------------------------------- RFP-compliant propellant policy
-def test_xe_capability_single_flight_configuration_role_contingency(m, d):
-    assert m.FLIGHT_CONFIGS == ("hall_icp_neutralizer",)
-    cap = m.xe_system_capability("hall_icp_neutralizer")
-    assert cap["xe_propulsion_capability"] == "PRESENT_RFP_REQUIRED"            # capability still required (RFP)
-    assert cap["xe_role"].startswith("CONTINGENCY_EMERGENCY")                    # role amended by A9.19
-    assert cap["normal_atmospheric_operation_cathode_xe"].startswith("NONE")
-    assert "no conventional hollow cathode" in cap["electron_source"]
-    for bad in ("hall_c1_reference", "hall_only_xe_free"):
-        with pytest.raises(m.BookingError):
-            m.xe_system_capability(bad)
+def test_xe_capability_every_configuration_independent_of_c1(m, d):
+    for cfg in m.CONFIGS:
+        for sel in (None, True, False):
+            assert m.xe_system_capability(cfg, sel)["xe_propulsion_capability"] == "PRESENT_RFP_REQUIRED"
+    with pytest.raises(m.BookingError):
+        m.xe_system_capability("hall_only_xe_free")
     caps = {c["configuration"]: c for c in d["propellant_policy"]["per_configuration"]}
-    assert set(caps) == {"hall_icp_neutralizer"}
+    assert set(caps) == {"hall_icp_neutralizer", "hall_c1_reference"}
+    assert all(c["xe_propulsion_capability"] == "PRESENT_RFP_REQUIRED" for c in caps.values())
     assert "contingency-only for C1" in d["propellant_policy"]["superseded_wording"]["A9.13 owner_statements.xenon"]
-
-
-def test_a9_19_architecture_and_xenon_role(d):
-    pp = d["propellant_policy"]
-    a = pp["architecture"]
-    assert a["hall_accelerators"] == 1 and a["conventional_hollow_cathode"].startswith("NONE")
-    assert len(a["propellant_supply_modes"]) == 2 and "A9.19 architecture" in a["source"]
-    xr = pp["xenon_role"]
-    assert xr["role"] == "CONTINGENCY_EMERGENCY" and xr["capability"].startswith("REQUIRED")
-    assert "A9.19 xenon_role" in xr["source"] and DEC_SHA["A9.19"][:12] in xr["source"]
-    reg = json.loads((REPO / "docs/requirements/rfp_official/rfp_registration_v1.json").read_text(encoding="utf-8"))
-    flat = json.dumps(reg)
-    assert {c["id"] for c in xr["rfp_clauses"]} == {"RFP-P17-05", "RFP-P18-08"}
-    for c in xr["rfp_clauses"]:
-        assert json.dumps(c["text"]) in flat
-    sw = pp["superseded_wording_a9_19"]
-    assert "not a contingency" in sw["A9.15 rules[0]"] and sw["superseded_on"].startswith("the ROLE")
-    assert "G-REUSE primary" in pp["icp_gas_mode_baseline_unchanged"]          # A9.1 ICP feed baseline unchanged
-    assert "GROUND_ONLY" in pp["ground_reference_c1"] and "never" in pp["ground_reference_c1"]
-
-
-def test_a9_19_sizing_observation_not_selection(d):
-    so = d["design_cases"]["sizing_observation_a9_19"]
-    assert so["label"] == "RECORDER_OBSERVATION_FOR_OWNER_NOT_A_SELECTION"
-    assert "2 kg loaded case is the natural sizing case" in so["observation"]
-    assert so["cases_kept_as_recorded"] == [2.0, 5.0, 10.0]
-    assert [r["case_kg"] for r in d["design_cases"]["loaded_split"]["rows"]] == [2.0, 5.0, 10.0]
-    items = {i["id"]: i for i in d["items"]}
-    assert items["XV2-30"]["value"] == [2.0, 5.0, 10.0]                          # owner-defined cases unchanged
-    assert "no case is selected" in so["case_status"]
-    for e in d["evaluations"]:
-        if e["scenario"].split("-")[1] == "FL":
-            assert e["booking"]["totals"] is None                                 # nothing frozen / sized
-
-
-def test_a9_19_c1_flight_column_retired_to_history(d):
-    cur = {x["id"] for x in d["ledger_lines"]}
-    h = d["retired_flight_configuration_history"]
-    assert h["label"].startswith("HISTORY")
-    hist = {x["id"]: x for x in h["ledger_lines"]}
-    assert set(hist) >= {"C1-FL-PURGE", "C1-FL-HEAT", "C1-FL-IGN", "C1-FL-KEEPER", "C1-FL-FLOWUNC", "C1-FL-FUNC"}
-    assert not (cur & set(hist))
-    assert all(x["configuration"] == "hall_c1_reference" and x["ledger"] == "FLIGHT" for x in hist.values())
-    assert all(x["a9_19_status"].startswith("HISTORY_RETIRED_FLIGHT_CONFIGURATION") for x in hist.values())
-    assert not any(x["configuration"] == "hall_c1_reference" and x["ledger"] == "FLIGHT" for x in d["ledger_lines"])
-    assert {s["id"] for s in d["scenarios"]}.isdisjoint({"S2-FL-C1"})
-    assert [s["id"] for s in h["scenarios"]] == ["S2-FL-C1"]
-    assert h["scenarios"][0]["role"].startswith("HISTORY_RETIRED_FLIGHT_CONFIGURATION")
-    assert all(r["scenario"] != "S2-FL-C1" for r in d["design_cases"]["headroom"]["rows"])
-    gt = next(s for s in d["scenarios"] if s["id"] == "S2-GT-C1")
-    assert gt["role"].startswith("GROUND_ONLY_LAB_REFERENCE")
 
 
 def test_no_xe_free_reading_remains(d):
@@ -208,30 +145,28 @@ def test_retired_presence_refused(m):
         m._validate_line(ln)
 
 
-def test_c1_never_flight_ground_only(m, d):
+def test_c1_flight_xe_neither_assumed_nor_excluded(m, d):
     st = m.c1_flight_xe_booking(False)
-    assert st == {"state": "NO_C1_IN_FLIGHT_ARCHITECTURE", "booked": False, "rule": st["rule"]}
+    assert st["state"] == "PENDING_C1_NOT_SELECTED" and st["booked"] is None
+    assert m.c1_flight_xe_booking(True)["state"] == "TBD_FROM_SELECTED_C1_HARDWARE"
+    assert m.c1_flight_xe_booking(True, True)["state"] == "BOOKED_IN_SYSTEM_XE_ARCHITECTURE"
+    assert m.c1_flight_xe_booking(True, False) == {"state": "NO_C1_XE", "booked": False,
+                                                   "rule": m.c1_flight_xe_booking(True, False)["rule"]}
     with pytest.raises(m.BookingError):
-        m.c1_flight_xe_booking(True)                 # A9.20: C1 never flight hardware
+        m.c1_flight_xe_booking(False, True)      # no Xe requirement without a selected C1
     with pytest.raises(m.BookingError):
         m.c1_flight_xe_booking(None)
-    hist = {x["id"]: x for x in d["retired_flight_configuration_history"]["ledger_lines"]}
+    lines = {x["id"]: x for x in d["ledger_lines"]}
     for lid in ("C1-FL-PURGE", "C1-FL-HEAT", "C1-FL-IGN", "C1-FL-KEEPER", "C1-FL-FLOWUNC"):
-        assert hist[lid]["presence"] == "CONDITIONAL_ON_C1_FLIGHT_SELECTION"      # the pre-A9.19 state, as history
-    ev = next(e for e in d["retired_flight_configuration_history"]["evaluations"] if e["scenario"] == "S2-FL-C1")
+        assert lines[lid]["presence"] == "CONDITIONAL_ON_C1_FLIGHT_SELECTION"
+    ev = next(e for e in d["evaluations"] if e["scenario"] == "S2-FL-C1")
     assert ev["booking"]["status"] == "REFUSED_TBD_INPUTS"
     k = next(x for x in ev["lines"] if x["line"] == "C1-FL-KEEPER")
-    assert k["kg"] is None and "retired as a flight configuration by A9.19" in k["missing"][0]["requires"]
-    lines = {x["id"]: x for x in d["ledger_lines"]}
-    assert lines["C1-GT-KEEPER"]["presence"] == "PRESENT"                     # ground lab-reference Xe stays booked
-    assert lines["P-FL-C1"]["presence"] == "ZERO_BY_SCOPE"                   # no cathode Xe in the flight column
+    assert k["kg"] is None and k["missing"]                       # not 0 (not excluded), not 5.4 kg (not assumed)
+    # ground (development / reference C1) lines stay booked
+    assert lines["C1-GT-KEEPER"]["presence"] == "PRESENT"
     items = {i["id"]: i for i in d["items"]}
-    assert items["XV3-01"]["value"] == "GROUND_ONLY_NEVER_FLIGHT" and items["XV3-01"]["value_pre_a9_19"] == "NOT_SELECTED"
-    assert items["XV3-02"]["value"] is None and items["XV3-02"]["status"].startswith("NOT_APPLICABLE")
-    for iid in ("XV2-01", "XV2-02", "XV2-04", "XV2-05", "XV2-09", "XV2-10", "XV2-11"):
-        assert items[iid]["v3_scope"].startswith("GROUND_ONLY (A9.20)"), iid
-    for iid in ("XV2-31", "XV2-32"):
-        assert "GROUND_ONLY_LAB_EQUIPMENT" in items[iid]["v3_scope"], iid
+    assert items["XV3-01"]["value"] == "NOT_SELECTED" and items["XV3-02"]["value"] is None
 
 
 def test_icp_gas_mode_baseline_unchanged(d):
@@ -281,8 +216,8 @@ def test_ignition_booking_three_by_120(m, d):
 
 
 def test_flow_class_inside_reserve_base(m, d):
-    hist = {x["id"]: x for x in d["retired_flight_configuration_history"]["ledger_lines"]}
-    assert hist["C1-FL-FLOWUNC"]["reserve_base"] is True
+    lines = {x["id"]: x for x in d["ledger_lines"]}
+    assert lines["C1-FL-FLOWUNC"]["reserve_base"] is True
     assert all(x["reserve_base"] is True for x in d["ledger_lines"] if x["ledger"] == "FLIGHT")
     ld = {"A": {"phase": "xe_mode", "reserve_base": "RA-FLOWUNC"}}
     with pytest.raises(m.BookingError):
@@ -352,8 +287,7 @@ def test_v2_ids_carried(d):
     v2 = json.loads((REPO / "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json").read_text(encoding="utf-8"))
     ids3 = {i["id"] for i in d["items"]}
     assert {i["id"] for i in v2["items"]} <= ids3
-    assert {x["id"] for x in v2["ledger_lines"]} <= {x["id"] for x in d["ledger_lines"]} | \
-        {x["id"] for x in d["retired_flight_configuration_history"]["ledger_lines"]}
+    assert {x["id"] for x in v2["ledger_lines"]} <= {x["id"] for x in d["ledger_lines"]}
     assert all(i.get("owner_answers_applied") is not None for i in d["items"])
 
 
@@ -385,13 +319,11 @@ def test_a9_16_repair_f6_f11_c1_scope_placeholder_and_icp_feed_label(d):
     assert "| within |" not in md and "XV3Q-01: OPEN" in md
 
 
-
-def test_rv19_08_pre_a9_19_c1_rows_marked_superseded(d):
-    """RV19-08: the A9.14 / A9.15 OQ-A907-07 and MPQ-01 'how applied' rows carry the A9.19 / A9.20 supersession."""
-    hits = [r for r in d["owner_answers_applied"] if r["id"] in ("OQ-A907-07", "MPQ-01")]
-    assert sorted((r["key"], r["id"]) for r in hits) == [("A9.14", "MPQ-01"), ("A9.14", "OQ-A907-07"),
-                                                          ("A9.15", "MPQ-01"), ("A9.15", "OQ-A907-07")]
-    tag = "superseded for flight by A9.19 / A9.20 (no flight C1; C1 Xe only in ground ledger S2-GT-C1)"
-    for r in hits:
-        assert r["how_applied"].endswith(tag), r
-    assert MD_PATH.read_text(encoding="utf-8").count(tag) >= 4
+def test_propellant_policy_cites_registered_rfp_clauses():
+    """A9.16 repair RFP-06: the propellant policy cites the registered RFP clauses, no 'pending registration' wording."""
+    d = json.loads(JSON_PATH.read_text(encoding="utf-8"))
+    rc = d["propellant_policy"]["rfp_clauses"]
+    assert [c["clause_id"] for c in rc["clauses"]] == ["RFP-P18-08", "RFP-P17-05", "RFP-P16-02"]
+    assert "Two separate propellant tanks" in rc["clauses"][0]["verbatim"]
+    for c in d["propellant_policy"]["per_configuration"]:
+        assert "pending" not in c["storage_paths"] and "RFP-P18-08" in c["storage_paths"]

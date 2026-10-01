@@ -85,6 +85,87 @@ CLAUSES = [
     ("RFP-P30-01", 30, "Part IV(C) 5 Thrust Measurement System", "Thrust Measurement System capable of measuring micro-Newton level thrust (In house: 10; Consortium: 5; Sub-contract: 0 marks)."),
 ]
 
+# Page screening (A9.16 repair RFP-07): what was screened on the evaluation / qualification pages and NOT registered as
+# a clause, and why. Headings are read from the page images of the registered PDF (2026-10-01); no clause text is
+# invented (headings / topics only; marks shown where printed). Part IV(B) carries no waivers (RFP-P21-03), so its
+# items are mapped as PROGRAMMATIC_BID_QUALIFICATION, like RFP-P27-02. (page, section, heading as printed, class, why)
+PROGRAMMATIC = "PROGRAMMATIC_BID_QUALIFICATION"
+EVALUATION = "BID_EVALUATION_CRITERION"
+PAGE_SCREENING = [
+    (26, "Part IV(B) preamble + Table B(1) notes 1-2", "Firm Essential Qualification Criteria: clause-by-clause "
+     "compliance philosophy; COTS catalogue / brochure", PROGRAMMATIC, "bid-submission format, not a system requirement"),
+    (26, "Part IV(B) 1", "Financial Capabilities (no negative net worth as on 31st March 2026 / last financial year; "
+     "CA-certified document)", PROGRAMMATIC, "financial qualification of the bidder (no waiver, RFP-P21-03)"),
+    (26, "Part IV(B) 2", "Details on in-house expertise to handle critical technologies (subsystem/module/components/ "
+     "processes): i. complete indigenous realization of an electric propulsion system (space heritage data, indigenous "
+     "content >50%); ii. space grade electronics and power system; iii. vacuum technology testing system for space "
+     "qualification", PROGRAMMATIC, "experience / heritage qualification of the bidder (no waiver, RFP-P21-03); "
+     "no system requirement on the ABEP product"),
+    (27, "Part IV(B) 4", "Availability of Experienced Manpower (at least 1 experienced person, > 3 years: i. High "
+     "energy Physics; ii. Electric Propulsion; in-house)", PROGRAMMATIC, "staffing qualification of the bidder (no "
+     "waiver, RFP-P21-03)"),
+    (28, "Part IV(C) preamble", "Technical Capability Evaluation: qualify Part IV(B); maximum 100 marks, minimum 60 to "
+     "qualify (Table B2 / Table-E Technical Evaluation Criteria)", EVALUATION, "evaluation procedure, not a system "
+     "requirement"),
+    (28, "Part IV(C) 1", "Expertise in Design and Development (based on completed projects only) (21 Marks): high "
+     "power electronics, space structure and thermal design, high vacuum system", EVALUATION, "bidder track-record "
+     "scoring"),
+    (28, "Part IV(C) 2", "Initial Indigenous Content for Technologies (14 Marks): electric propulsion IC content and "
+     "space grade electronics IC content (>75%: 7 marks; 50-75%: 4 marks)", EVALUATION, "bidder IC scoring; the "
+     "project IC requirement is RFP-P19-05 / RFP-P18-03 (RVM-18)"),
+    (29, "Part IV(C) 3", "Present TRL available with industry (15 Marks; indigenous electric propulsion system TRL "
+     "bands)", EVALUATION, "bidder maturity scoring"),
+    (29, "Part IV(C) 4", "Clarity and Quality of Submitted Proposal (25 Marks): a) idea / concept; b) sub-system "
+     "details; c) qualification & test plan; d) modeling / simulation / analysis results; e) bench top prototype "
+     "demonstration with test results", EVALUATION, "proposal-quality scoring (DPR content), not a system requirement"),
+    (30, "Part IV(C) 5 Ultra High Vacuum Chamber", "Development and Test Infrastructure (20 Marks): vacuum chamber for "
+     "testing electric propulsion system (in house 10 / consortium 5 / sub-contract 0)", EVALUATION, "scoring of the "
+     "infrastructure already required by RFP-P27-01 i (RVM-26 related); the thrust-measurement sub-item is RFP-P30-01"),
+    (30, "Part IV(C) 6", "Manpower HR Expertise (relevant to project requirement) (5 Marks): MTech or PhD in plasma "
+     "physics and any mechanical engineering discipline with electric propulsion work experience", EVALUATION,
+     "staffing scoring"),
+    (31, "Part IV(C) Table B3", "Performance based score matrix for DA having already awarded TDF projects (over and "
+     "above the evaluation score)", EVALUATION, "past-performance scoring"),
+    (22, "Detailed Project Report (pp. 22-25)", "DPR template (bidder-filled: project overview, critical technologies, "
+     "approach)", PROGRAMMATIC, "bid-form template (bidder-filled); screened from the PDF text layer only, not "
+     "transcribed from the page images"),
+    (32, "Industry Profile (pp. 32-33)", "industry profile / firm-type document tables", PROGRAMMATIC,
+     "bid-form template; screened from the PDF text layer only, not transcribed from the page images"),
+]
+PAGES_SCREENED_FOR_CLAUSES = list(range(16, 34))
+PAGES_NOT_SCREENED = "pages 1-15 and 34-40 were not screened for requirement-bearing clauses in this record " \
+                     "(bid / legal / programmatic front and back matter per the document structure, not verified page " \
+                     "by page): status UNSCREENED_PENDING_OWNER_PAGE_REVIEW of the owner-held PDF; nothing is assumed " \
+                     "about their content"
+
+
+def page_coverage():
+    """Coverage record (RFP-07): registered clause pages + screened-out items; fails closed on an unknown class or a
+    Part IV(B) item that is neither registered nor screened."""
+    reg_sections = {c[2] for c in CLAUSES}
+    out = []
+    for page, sec, heading, cls, why in PAGE_SCREENING:
+        if cls not in (PROGRAMMATIC, EVALUATION):
+            raise SystemExit(f"page screening: unknown class {cls}")
+        rec = {"page": page, "section": sec, "heading_as_read": heading, "class": cls, "why_not_registered": why}
+        if sec.startswith("Part IV(B)"):
+            rec["no_waiver"] = "RFP-P21-03 'NO Waivers shall be given for PART (IV) (B)'"
+        out.append(rec)
+    for item in ("1", "2", "3", "4", "5"):
+        sec = f"Part IV(B) {item}"
+        registered = any(r.startswith(sec) for r in reg_sections)
+        screened = any(r["section"] == sec for r in out)
+        if registered == screened:
+            raise SystemExit(f"{sec}: must be either registered or screened out (exactly one)")
+    return {"pages_with_registered_clauses": sorted({c[1] for c in CLAUSES}),
+            "pages_screened_for_clauses": PAGES_SCREENED_FOR_CLAUSES,
+            "pages_not_screened": PAGES_NOT_SCREENED,
+            "screened_out": out,
+            "rule": "every Part IV(B) item (no waivers, RFP-P21-03) is either a registered clause (3: RFP-P27-01, "
+                    "5: RFP-P27-02) or screened out here as PROGRAMMATIC_BID_QUALIFICATION; Part IV(C) criteria other "
+                    "than 5 (thrust measurement, RFP-P30-01) are bid-evaluation scoring"}
+
+
 # owner-stated 'RFP(1)' facts (A9.13-A9.15) checked against the transcription
 OWNER_FACT_CHECK = [
     ("180-230 km operation", "CONFIRMED", ["RFP-P18-04"]),
@@ -164,6 +245,7 @@ def build():
         "ag_15": "the official RFP is registered with immutable identity (sha256); RVM re-basing against these clauses is "
                  "the next AG-15 step (A9.16 step 3, after the step-1 RVM changes land)",
         "rvm_mapping": rvm_mapping([c[0] for c in CLAUSES]),
+        "page_coverage": page_coverage(),
     }
 
 
@@ -199,6 +281,14 @@ def render_md(d):
     L += ["", "Discrepancies (recorded for the owner / DRDO; see the RVM):", ""]
     L += [f"- {x['id']} {x['topic']} ({', '.join(x['rfp_clauses']) or 'no clause'}): {x['disposition']}"
           for x in m["discrepancies"]]
+    pc = d["page_coverage"]
+    L += ["", "## Page coverage and screened-out items (A9.16 repair RFP-07)", "",
+          f"Pages with registered clauses: {', '.join(str(p) for p in pc['pages_with_registered_clauses'])}. Pages "
+          f"screened for clauses: {pc['pages_screened_for_clauses'][0]}-{pc['pages_screened_for_clauses'][-1]}. "
+          f"{pc['pages_not_screened']}.", "", f"Rule: {pc['rule']}.", "",
+          "| Page | Section | Heading (as read) | Class | Why not registered |", "|---|---|---|---|---|"]
+    L += [f"| {r['page']} | {r['section']} | {r['heading_as_read']} | {r['class']} | {r['why_not_registered']}"
+          + (f" ({r['no_waiver']})" if r.get("no_waiver") else "") + " |" for r in pc["screened_out"]]
     L += [""]
     return "\n".join(L)
 

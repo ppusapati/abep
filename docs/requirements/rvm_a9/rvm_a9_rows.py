@@ -97,7 +97,8 @@ def build_rows(B, ctx):
         "requirement_text": "P_bus,1ms,max = max_t (1/1 ms) integral P_bus dt < 1500 W at the spacecraft-DC "
                             "propulsion boundary (every active load: Hall discharge, magnets, RF source / match, "
                             "collector bias, C1 supplies, compressor, flow control, housekeeping, thermal), for steady "
-                            "state AND start-up transients unless the official RFP grants a transient exception.",
+                            "state AND start-up transients; the registered RFP prints only '<1500W' (RFP-P18-10) and "
+                            "grants no transient exception.",
         "sources": [ctx.r2("(d) Power", "1,500 W"), ctx.hgm("R1", "< 1.5 kW"),
                     ctx.answer(108, "<1.5 kW"), ctx.answer(110, "Every active load gets a bus slot"),
                     ctx.decision("A91", "OQ-A902-01", "1 ms"),
@@ -150,8 +151,9 @@ def build_rows(B, ctx):
     rows.append({
         "id": "RVM-06", "key": "MASS_LT_40KG_WET", "category": "rfp_recorded",
         "title": "< 40 kg wet (incl. Xe + tank)",
-        "requirement_text": "Total propulsion-system mass < 40 kg, read as the wet system including Xe and tank unless "
-                            "the official RFP defines it as dry (row 5); 20 % internal development margin (row 52).",
+        "requirement_text": "Total propulsion-system mass < 40 kg, read as the wet system including Xe and tank (owner "
+                            "row 5; the registered RFP prints '< 40kg' without wet / dry, RFP-P18-11, recorded as "
+                            "DISC-02 for DRDO clarification); 20 % internal development margin (row 52).",
         "sources": [ctx.r2("(a) Mass", "under 40 kg"), ctx.hgm("R1", "< 40 kg"),
                     ctx.answer(5, "INCLUDES Xe + tank"), ctx.answer(52, "<40 kg wet"),
                     ctx.a9("requirement_discipline", "< 40 kg")],
@@ -299,11 +301,13 @@ def build_rows(B, ctx):
     rows.append({
         "id": "RVM-13", "key": "MISSION_LIFE_GE_26280H", "category": "rfp_recorded",
         "title": "Mission-life basis >= 26,280 h",
-        "requirement_text": "Mission life >= 26,280 h (three years), the conservative engineering basis versus the "
-                            "repository's 26,000 h until the official wording is verified (row 3).",
+        "requirement_text": "Mission life >= 26,280 h (three years = 3 x 8,760 h), the conservative engineering "
+                            "basis (row 3) against the registered RFP wording '3 years (Approx 26000 hrs)' "
+                            "(RFP-P19-01; DISC-04).",
         "sources": [ctx.r2("(d) Life", "three years"), ctx.hgm("R1", "26,000 h mission"),
                     ctx.answer(3, "≥26,280 h")],
-        "requirement_basis": "OWNER_ENGINEERING_BASIS (row 3) pending the official RFP wording",
+        "requirement_basis": "OWNER_ENGINEERING_BASIS (row 3; registered RFP-P19-01 '3 years (Approx 26000 hrs)', "
+                             "DISC-04)",
         "requirement_frozen": False,
         "limit": {"quantity": "mission life", "comparator": ">=", "value": 26280, "units": "h"},
         "verification_methods": ["analysis"],

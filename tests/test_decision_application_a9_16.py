@@ -266,7 +266,13 @@ def test_rvm_rows_rebased():
     assert "never a contingency" in by["RVM-10"]["a9_16"]["air_plus_xe"]
     assert ">= 15,000 h cumulative energized" in by["RVM-12"]["a9_16"]["icp_life_basis"]
     assert "Ignition Time" in by["RVM-12"]["a9_16"]["icp_life_basis"]
-    assert by["RVM-01"]["a9_16"]["design_states"].startswith("PENDING_ORBIT_RESOLVED_DATASET_BUILD")
+    # A9.16 repair RVF-03: the design-state set v2 is built; it is cited, but not yet consumed by the design layer
+    a16 = by["RVM-01"]["a9_16"]
+    assert a16["design_states"].startswith("REGISTERED_NOT_YET_CONSUMED: atmosphere_msis21_orbit_v1_design_states_v2")
+    assert a16["design_state_set"]["id"] == "atmosphere_msis21_orbit_v1_design_states_v2"
+    assert a16["design_state_set"]["n_states"] > 0 and len(a16["design_state_set"]["sha256"]) == 64
+    assert any("ENVELOPE_STATES" in c for c in a16["design_state_consumers_pending"])
+    assert a16["statewise_status"].startswith("NOT_EVALUATED")
     for r in RVMDOC["rows"]:
         if r["category"].startswith("rfp"):
             assert r["requirement_frozen"] is False                       # AG-15 still open
@@ -425,3 +431,14 @@ def test_matrix_repair_lane_truthful_statuses():
     f0 = by["F0-OQ-01"]
     assert f0["status"] == "APPLIED" and any(
         a["artifact"].endswith("dedicated_baseline_2026_10_01/REGISTRATION.json") for a in f0["applications"])
+
+
+def test_od3_partial_until_design_layer_consumes_design_states():
+    """A9.16 repair RVF-03: S9.8 is not APPLIED while the design-layer statewise evaluators still use the five
+    orbit-averaged ENVELOPE_STATES; the residual names them (and S6.14 carries the same BLOCKED residual)."""
+    by = {e["question_id"]: e for e in MXDOC["entries"] if e["decision"] not in ("A9.17", "A9.18")}
+    assert by["OD3"]["status"] == "PARTIAL"
+    for q in ("OD3", "OQ-F4-05"):
+        bl = [r for r in by[q]["residual"] if r["status"] == "BLOCKED"]
+        assert bl and "ENVELOPE_STATES" in bl[0]["what"] and "architecture_optimizer" in bl[0]["what"], q
+    assert any(r["status"] == "PENDING_FINALIZE_DESIGN_REGEN" for r in by["OQ-F4-05"]["residual"])

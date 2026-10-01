@@ -22,6 +22,8 @@ A9.19: 1 Hall accelerator; one RF/ICP electron-source/neutralizer (cathodeless/e
 
 AL-08 and the Xe load are `REQUIRED_RFP_XE_CAPABILITY` (role `CONTINGENCY_EMERGENCY`) in the flight configuration; C1 Xe branch now: `NO_C1_XE_BRANCH_IN_FLIGHT (A9.19 / A9.20)`; AL-C1 now: `NOT_IN_FLIGHT_ARCHITECTURE_A9_19_A9_20`.
 
+Registered RFP clauses (docs/requirements/rfp_official/rfp_registration_v1.json): RFP-P18-08 (p. 18): "Compatible for using Ambient air (at the functional orbit altitude of 180-230km) and Xenon as propellant. Two separate propellant tanks for ambient air and xenon."; RFP-P17-05 (p. 17): "Capability to ionize N2, atomic oxygen in same thruster and It should have capability to use Xe as propellant, an extra input system to take care any problems on board unforeseen problems."; RFP-P16-02 (p. 16): "Logical Block Diagram: Intake -> Filter -> Compressor -> Gas Chamber -> Valve -> Thruster (Ionization zone | Acceleration zone) -> Thrust; Xenon Gas -> Valve -> Thruster.".
+
 ## Owner budget reference (MQ-02)
 
 OWNER BUDGET REFERENCE (row-54 line allocations, MEV-level, summed as stated by the owner; not evidence; not a closure): 20 % system margin replaces the 4 kg reserve (A9.14 MQ-02).

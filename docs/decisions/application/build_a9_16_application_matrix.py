@@ -402,6 +402,9 @@ STEP3 = {
 
 # residual items (status, what, where)
 RESIDUAL = {
+    "OD3": [("BLOCKED", "design-layer consumers of the A9.14 S9.8 design-state set: abep_sim/design/intake_synthesis.py ENVELOPE_STATES (h200_f150 + four alt x F10.7 corners of the orbit-averaged atmosphere_msis21_v1) and abep_sim/design/architecture_optimizer.py STATES = isy.ENVELOPE_STATES (F1-F8; HC-09 'every orbit state', AG-12 / AG-13 statewise constraints) still evaluate five hand-picked orbit-averaged states, not atmosphere_msis21_orbit_v1_design_states_v2; the RVM cites the built set (RVM-01 design_states REGISTERED_NOT_YET_CONSUMED) - A9.16 repair RVF-03", "abep_sim/design/** (design lane)")],
+    "OQ-F4-05": [("PENDING_FINALIZE_DESIGN_REGEN", F_REGEN, F_REGEN_WHERE),
+                 ("BLOCKED", "design-layer consumers of the A9.14 S9.8 design-state set: abep_sim/design/intake_synthesis.py ENVELOPE_STATES (h200_f150 + four alt x F10.7 corners of the orbit-averaged atmosphere_msis21_v1) and abep_sim/design/architecture_optimizer.py STATES = isy.ENVELOPE_STATES (F1-F8; HC-09 'every orbit state', AG-12 / AG-13 statewise constraints) still evaluate five hand-picked orbit-averaged states, not atmosphere_msis21_orbit_v1_design_states_v2; the RVM cites the built set (RVM-01 design_states REGISTERED_NOT_YET_CONSUMED) - A9.16 repair RVF-03", "abep_sim/design/** (design lane)")],
     "OQ-A907-03": [("BLOCKED", "A9-07 uncoupled thermal rerun bounding corners", "docs/hardware/h2_a9_revisions/** "
                     "(outside the allowed paths)")],
     "OQ-A907-05": [("BLOCKED", "provisional BN / ceramic-wire limits in the A9-07 revisions",
@@ -454,6 +457,10 @@ NOT_APPLICABLE = {
                   "in state v5)",
 }
 SPECIAL = {
+    # A9.16 repair RVF-03: the set is built (A9.17) but no design consumer evaluates it yet
+    "OD3": ("PARTIAL", "design-state set v2 built from the frozen orbit-resolved dataset (A9.17) and cited by the RVM, "
+                       "but the design-layer statewise evaluators still use the five orbit-averaged ENVELOPE_STATES "
+                       "(no consumer of the set; residual BLOCKED)"),
     "F5-OQ-02": ("PARTIAL", "selection rule recorded (non-performance criteria, ENGINEERING_FREEZE_CANDIDATE); the "
                  "engineering channel point is not yet selected (H1F-CH-11 NOT_SELECTED_PENDING_FEMM) - A9.16 repair F7"),
 }

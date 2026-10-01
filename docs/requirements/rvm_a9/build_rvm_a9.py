@@ -50,7 +50,6 @@ LANE_REL = "docs/requirements/rvm_a9"
 sys.path.insert(0, str(HERE))
 import a9_16_rvm as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
 import rfp_rebase as RB  # noqa: E402  (AG-15 re-base on the registered official RFP, A9.16 step 3)
-import a9_19_rvm as A19  # noqa: E402  (A9.19 / A9.20 owner decisions: flight architecture, Xe role, C1 ground-only)
 JSON_NAME = "rvm_a9_v1.json"
 MD_NAME = "RVM_A9.md"
 TEST_REL = "tests/test_rvm_a9.py"
@@ -110,10 +109,6 @@ for _k in ("A9.12", "A9.13", "A9.14", "A9.15"):
         A16.L.LOADED[_k]["json"], A16.L.LOADED[_k]["json_sha256"], f"owner decisions {_k} (applied: A9.16 step 1)")
     PINS["A" + _k[1:].replace(".", "") + "_MD"] = (A16.L.LOADED[_k]["md"], A16.L.LOADED[_k]["md_sha256"],
                                                    f"owner decisions {_k} (verbatim; governs)")
-for _k in ("A9.19", "A9.20"):
-    _d = A19.DECISIONS[_k]
-    PINS["A" + _k[1:].replace(".", "")] = (_d["json"], _d["json_sha256"], f"owner decision {_k} (applied: a9_19_rvm)")
-    PINS["A" + _k[1:].replace(".", "") + "_MD"] = (_d["md"], _d["md_sha256"], f"owner decision {_k} (verbatim; governs)")
 HISTORICAL_KEYS = ("RTM", "HGM", "R2")
 HISTORICAL_EXTRA = {
     "docs/traceability/RTM.md": "ce5b608a5079a86d1b2096f222266f558fab2ebdabc1aa8dfef3153076faa802",
@@ -146,14 +141,12 @@ REFS = {
            "P3 coupled-thermal framework"),
     "P4": ("docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json", "id", "p4_anode_materials_v1",
            "P4 anode / collector materials framework"),
-    "MP": ("docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json", "id", "fo_a9_6_mass_power_integration_v2",
-           "A9.6 mass + power integration v2"),
-    "XE": ("docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json", "id", "xe_accounting_a9_v2",
-           "A9.6 Xe accounting v2"),
-    "MP3": ("docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json", "id", "mass_power_a9_v3",
-            "mass + power v3 (A9.16 step 1; to be refreshed for A9.19 / A9.20 by the budgets lane)"),
-    "XE3": ("docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json", "id", "xe_accounting_a9_v3",
-            "Xe accounting v3 (A9.16 step 1; to be refreshed for A9.19 / A9.20 by the budgets lane)"),
+    # A9.16 repair RFP-01: the A9.15-applied v3 packages (v2 are immutable history whose readings A9.14 / A9.15
+    # retired: XA9Q-07 = YES, XV2Q-01 NOT APPLICABLE, MQ-01 single MEV reading, XA9Q-01 / MQ-09 LOADED)
+    "MP": ("docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json", "id", "mass_power_a9_v3",
+           "A9.16 mass + power v3 (A9.14 / A9.15 applied)"),
+    "XE": ("docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json", "id", "xe_accounting_a9_v3",
+           "A9.16 Xe accounting v3 (A9.14 / A9.15 applied)"),
     "AOL": ("docs/experiments/lifetime_ao/ao_lifetime_register_v5.json", "schema", "ao_lifetime_register_v5",
             "AO / lifetime register v5"),
     "ENS": ("hallthruster_bridge/ensemble/transport_ensemble_v0.json", "schema", "transport_ensemble_v0",
@@ -162,8 +155,8 @@ REFS = {
             "feed_state_closure_v1", "feed-state closure (delivered feed vs altitude)"),
     "OO2": ("docs/chemistry/o_o2/v0/channel_status_v0.json", "id", "o_o2_channel_status_v0",
             "O / O2 chemistry v0 channel status"),
-    "RFQ2": ("docs/procurement/rfq_a9_v2/rfq_a9_v2.json", "id", "RFQ_A9_V2", "RFQ packages v2 (quotation only)"),
-    "RFQ3": ("docs/procurement/rfq_a9_v3/rfq_a9_v3.json", "id", "RFQ_A9_V3", "RFQ packages v3 (quotation only)"),
+    "RFQ2": ("docs/procurement/rfq_a9_v3/rfq_a9_v3.json", "id", "RFQ_A9_V3",
+             "RFQ packages v3 (quotation only; A9.16 owner-decision application)"),
     "M16": ("docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json", "id", "subsystem_maturity_v3",
             "M16 subsystem maturity v3"),
 }
@@ -341,7 +334,7 @@ def plan(ctx, pkg, ident, role="DETERMINING", key="id", why=""):
     if obj_status:
         state += f"; item status {obj_status}"
     shown = REFS[pkg][2] if ident == "@doc" else f"{REFS[pkg][2]}:{ident}"
-    kind = "PROCUREMENT" if pkg in ("RFQ2", "RFQ3") else "PLAN_OR_FRAMEWORK"
+    kind = "PROCUREMENT" if pkg == "RFQ2" else "PLAN_OR_FRAMEWORK"
     a = _art(REFS[pkg][0], shown, role, kind, state)
     a["detail"] = {"name": name, "why": why}
     return a
@@ -436,42 +429,44 @@ def probe_startup(ctx, cfg):
                 "BUDGET_EVALUATION", state, evaluated=True, in_domain=True, evidenced_terms=0)
 
 
-MASS_READINGS_ADMISSIBLE = ("MQ01_MEV_LEVEL", "MQ01_CBE_LEVEL")
+# A9.16 repair RFP-01: v3 carries ONE owner mass reading (A9.14 MQ-01 MEV_LEVEL_EVIDENCE_BASED; the CBE-level
+# alternative is decided away) and ONE Xe case reading (A9.14 XA9Q-01 / MQ-09: LOADED; USABLE retired); A9.15 makes
+# AL-08 / the Xe load RFP-required in BOTH configurations, so no 'no Xe in the ICP flight configuration' reading exists
+MASS_READING_V3 = "MEV_LEVEL_EVIDENCE_BASED"
+XE_CASE_READING_V3 = "LOADED"
 
 
 def mass_analysis(ctx, cfg, reference):
     """Per-reading mass evaluation (see the FAIL rule): floor-only sums vs the reference, plus a copy of the mass
-    package's mixed allocation + floor closure states (informational: allocations are not evidence)."""
+    package's single-owner-reading roll-up states (informational: allocations and MEV planning floors are not
+    evidence and not verified lower bounds)."""
     mp = ctx.r["MP"]
     ev_col = mp["value_columns"]["EVIDENCE_FLOOR"]
     if "not a physical lower bound" not in ev_col:
         raise BuildError("mass package EVIDENCE_FLOOR definition changed: review lower_bound_verified")
+    axes = ctx.r["XE"]["reading_axes_resolved"]
+    if axes["RA-CASE"]["v3"] != XE_CASE_READING_V3 or axes["RA-FUNC"]["v3"] != "APPLIES":
+        raise BuildError("Xe v3 reading axes changed: review the RVM mass readings")
+    pol = {p["configuration"]: p for p in mp["propellant_policy"]["per_configuration"]}
+    if pol[cfg]["AL-08"] != "REQUIRED_RFP_XE_CAPABILITY":
+        raise BuildError(f"AL-08 no longer RFP-required for {cfg}: review the RVM mass readings")
     lines = mp["lines"][cfg]
-    floors = [(ln["line"], ln["evidence_floor_kg"]) for ln in lines if ln["evidence_floor_kg"] is not None]
+    floors = [(ln["line"], ln["evidence_floor_cbe_kg"]) for ln in lines if ln["evidence_floor_cbe_kg"] is not None]
     if not floors:
         raise BuildError(f"no evidence floors for {cfg}")
-    xa9q07_variants = [("XA9Q07_XE_BOOKED", None)]
-    if cfg == "hall_icp_neutralizer":
-        xa9q07_variants.append(("XA9Q07_NO_XE_IN_ICP_FLIGHT", "AL-08"))
-    readings = []
-    for mq in MASS_READINGS_ADMISSIBLE:
-        for xr in ("LOADED_XA9Q01", "USABLE_MQ09"):
-            for case in (2.0, 5.0, 10.0):
-                for xv, drop in xa9q07_variants:
-                    s = sum(v for ln, v in floors if ln != drop)
-                    readings.append({"reading": f"{mq}|{xr}|xe_case={case}|{xv}", "floor_only_kg": round(s, 6)})
+    cases = [c["case_kg"] for c in mp["xe_v3_import"]["loaded_split"]]
+    readings = [{"reading": f"{MASS_READING_V3}|{XE_CASE_READING_V3}|xe_case={case}",
+                 "floor_only_kg": round(sum(v for _, v in floors), 6)} for case in cases]
     limit = {"HARD_40_WET": 40.0, "INTERNAL_34": 34.0, "INTERNAL_36": 36.0}[reference]
     strict = reference == "HARD_40_WET"
     chk = R.floor_fail_check(readings, limit, strict)
-    mixed = []
-    for ru in mp["rollups"]:
-        if ru["configuration"] != cfg or ru["reading"] not in MASS_READINGS_ADMISSIBLE:
-            continue
-        for w in ru["wet"]:
-            if w["reference"] == reference:
-                mixed.append({"reading": f"{ru['reading']}|{ru['basis']}|{w['xe_case_reading']}|"
-                                         f"xe_case={w['xe_case_kg']}", "wet_known_kg": w["wet_known_kg"],
-                              "state": w["state"]})
+    rolls = [ru for ru in mp["rollups"] if ru["configuration"] == cfg]
+    if len(rolls) != 1 or not rolls[0]["reading"].startswith(MASS_READING_V3):
+        raise BuildError(f"mass v3 roll-up for {cfg} is not the single owner reading: review the RVM rules")
+    ru = rolls[0]
+    mixed = [{"reading": f"{MASS_READING_V3}|{XE_CASE_READING_V3}|xe_case={w['xe_case_kg']}",
+              "dry_known_kg": ru["dry_known_kg"], "wet_known_kg": w["wet_known_kg"], "state": w["state"]}
+             for w in ru["wet"] if w["reference"] == reference]
     if not mixed:
         raise BuildError(f"no mass roll-ups for {cfg} / {reference}")
     if any(m["state"] == "CLOSES" for m in mixed):
@@ -483,10 +478,14 @@ def mass_analysis(ctx, cfg, reference):
             "mixed_basis_states": mixed,
             "mixed_basis_counts": {s: sum(1 for m in mixed if m["state"] == s)
                                    for s in ("DOES_NOT_CLOSE", "NOT_EVALUABLE", "CLOSES")},
-            "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible open "
-                         "reading (MQ-01 A/B, XA9Q-01/MQ-09, the 2/5/10 kg Xe design cases, XA9Q-07); the mixed "
-                         "allocation + floor states are informational because owner allocations are not evidence "
-                         "and are the MQ-10 closure lever"}
+            "v3_owner_reading": {"reading": ru["reading"], "dry_known_kg": ru["dry_known_kg"],
+                                 "lines_without_value": ru["lines_without_value"],
+                                 "all_terms_resolved": ru["all_terms_resolved"]},
+            "fail_rule": "FAIL only if a VERIFIED lower-bound floor exceeds the limit under EVERY admissible reading "
+                         "(v3: the single owner reading MEV_LEVEL_EVIDENCE_BASED x LOADED x the 2/5/10 kg Xe design "
+                         "cases); the v3 roll-up states (owner MEV allocations + MEV planning floors) are recorded as "
+                         "current evidence state but are not verified lower bounds, so a DOES_NOT_CLOSE there is not a "
+                         "FAIL (MQ-10 redesign lever)"}
 
 
 def probe_mass(ctx, cfg, references):
@@ -498,17 +497,22 @@ def probe_mass(ctx, cfg, references):
     for an in analyses:
         c = an["floor_fail_check"]
         mc = an["mixed_basis_counts"]
+        wets = " / ".join(f"{m['wet_known_kg']:.2f}" for m in an["mixed_basis_states"])
+        cases = "/".join(r["reading"].split("=")[-1] for r in an["floor_only_readings"])
         parts.append(f"{an['reference']}: floor-only {c['min_floor_kg']}-{c['max_floor_kg']} kg vs "
                      f"{'<' if an['strict'] else '<='} {an['limit_kg']} kg, exceeding in {c['n_exceeding']} of "
-                     f"{c['n_readings']} readings; mixed allocation+floor basis DOES_NOT_CLOSE "
-                     f"{mc['DOES_NOT_CLOSE']} / NOT_EVALUABLE {mc['NOT_EVALUABLE']}")
+                     f"{c['n_readings']} readings; v3 single owner reading {MASS_READING_V3} (dry_known "
+                     f"{an['v3_owner_reading']['dry_known_kg']:.2f} kg; wet_known {wets} kg at the {cases} kg Xe "
+                     f"cases) DOES_NOT_CLOSE {mc['DOES_NOT_CLOSE']} / NOT_EVALUABLE {mc['NOT_EVALUABLE']} of "
+                     f"{len(an['mixed_basis_states'])}")
     n_exc = sum(a["floor_fail_check"]["n_exceeding"] for a in analyses)
     n_all = sum(a["floor_fail_check"]["n_readings"] for a in analyses)
     verdict = ("FAIL not admissible: (a) floor-only sums exceed the limit in "
                f"{n_exc} of {n_all} admissible readings (FAIL needs all), and (b) the floors are not verified lower "
                "bounds; per-reading results reported, status INCOMPLETE_EVIDENCE")
-    state = ("BUDGET EVALUATED, INCONCLUSIVE - no CBE and no measured mass; evidence floors are analog planning "
-             "values declared 'not a physical lower bound' by the mass package; " + "; ".join(parts) + "; " + verdict)
+    state = ("BUDGET EVALUATED (mass_power_a9_v3, A9.14 / A9.15 applied), INCONCLUSIVE - no CBE and no measured mass; "
+             "evidence floors are analog planning values declared 'not a physical lower bound' by the mass package; "
+             + "; ".join(parts) + "; " + verdict)
     a = _art(REFS["MP"][0], f"{mp['id']}:rollups[{cfg}]", "DETERMINING", "BUDGET_EVALUATION", state,
              evaluated=True, in_domain=True, evidenced_terms=n_floor, lower_bound_verified=False,
              exceeds_limit_every_reading=exceeds_all)
@@ -522,7 +526,11 @@ def probe_xe(ctx, cfg):
     rows = []
     for e in xe["evaluations"]:
         if e["scenario"] in scen:
-            rows.append(f"{e['scenario']} {json.dumps(e['reading'], sort_keys=True)}: {e['booking']['status']}")
+            if "reading" in e:
+                raise BuildError("Xe v3 evaluation carries a reading axis again: review the RVM Xe rules")
+            rows.append(f"{e['scenario']} (RA-FUNC {xe['reading_axes_resolved']['RA-FUNC']['v3']}, RA-CASE "
+                        f"{xe['reading_axes_resolved']['RA-CASE']['v3']}): {e['booking']['status']} (TBD lines "
+                        f"{len(e['booking'].get('tbd_lines') or [])})")
     if not rows:
         raise BuildError(f"Xe accounting scenarios missing for {cfg}")
     state = "XE ACCOUNTING (supporting; never a capability demonstration): " + "; ".join(rows)
@@ -597,9 +605,9 @@ REGISTER_NOTE = ("question text from the pinned immutable v3 snapshot; current r
                  " (built after the RVM; agreement checked by M16 v4 rvm_register_reconciliation)")
 # lane-24 decisions that an owner answer supersedes (same question answered; S-01): id -> (owner row, what it settles)
 LANE24_SUPERSEDED_BY_OWNER = {
-    "OD13": (3, "owner row 3 retains > 15,000 h firing as a provisional hard requirement until the official RFP "
-                "confirms it; the remaining verification of the wording is the owner action of row 1 (RVM-ID-12), "
-                "not an open question"),
+    "OD13": (3, "owner row 3 retains > 15,000 h firing as a provisional hard requirement; the registered RFP prints "
+                "'Ignition Time: More than 15000 hrs' (RFP-P19-01; label recorded as DISC-05); AG-15 closure of the "
+                "wording is the owner's (RVM-ID-12), not an open question"),
 }
 
 
@@ -675,9 +683,6 @@ def evaluate_rows(ctx, rows):
             cells[c] = {"status": status, "rule": rule, "reason": reason,
                         "current_evidence_state": " || ".join(a["evidence_state"] for a in det),
                         "artifacts": arts}
-            if R.is_not_applicable_cell(arts):
-                cells[c]["applicability_marker"] = R.NOT_APPLICABLE_KIND
-                cells[c]["counts_as_compliance_evidence"] = False
         rr = {k: v for k, v in r.items() if k != "artifacts"}
         rr["m16_rows"] = [m16_state(ctx, n) for n in r["m16_rows"]]
         rr["configurations"] = cells
@@ -700,7 +705,7 @@ def build_items(ctx):
     items = [
         it("RVM-IT-01", "altitude band lower edge", 180, "km", "RFP as recorded",
            [ctx.r2("(d) Altitude", "180 km"), ctx.hgm("R1", "180–230 km")], "requirement-as-recorded", rec,
-           "after-evidence", "freezes when the official RFP is obtained (row 1)"),
+           "after-evidence"),
         it("RVM-IT-02", "altitude band upper edge", 230, "km", "RFP as recorded",
            [ctx.r2("(d) Altitude", "230 km"), ctx.hgm("R1", "180–230 km")], "requirement-as-recorded", rec,
            "after-evidence"),
@@ -719,7 +724,8 @@ def build_items(ctx):
         it("RVM-IT-08", "internal design allocation", 1350, "W", "row 109; A9.1 OQ-A902-03",
            [ctx.answer(109, "1.35 kW"), ctx.decision("A91", "OQ-A902-03", "1350")], "owner-allocation",
            "OWNER_ALLOCATION (not a gate)", "NOW"),
-        it("RVM-IT-09", "wet mass limit incl. Xe + tank (strict '<')", 40, "kg", "RFP as recorded; row 5",
+        it("RVM-IT-09", "mass limit (strict '<'); owner wet reading incl. Xe + tank", 40, "kg",
+           "RFP '< 40kg' (wet / dry not stated, DISC-02); OWNER_READING row 5: wet incl. Xe + tank",
            [ctx.r2("(a) Mass", "40 kg"), ctx.answer(5, "INCLUDES Xe + tank")], "requirement-as-recorded", rec,
            "after-evidence"),
         it("RVM-IT-10", "internal wet design allocation (lower)", 34, "kg", "row 53",
@@ -729,7 +735,8 @@ def build_items(ctx):
         it("RVM-IT-12", "internal development / system mass margin", 20, "%", "row 52",
            [ctx.answer(52, "20% internal")], "owner-stated", ow, "NOW"),
         it("RVM-IT-13", "mission-life engineering basis", 26280, "h", "row 3",
-           [ctx.answer(3, "26,280 h")], "owner-stated", ow + " (engineering basis until the RFP is verified)",
+           [ctx.answer(3, "26,280 h")], "owner-stated", ow + " (conservative engineering basis = 3 x 8,760 h; the "
+                                                              "RFP prints '3 years (Approx 26000 hrs)', DISC-04)",
            "after-evidence"),
         it("RVM-IT-14", "provisional firing-time requirement (strict '>')", 15000, "h", "row 3",
            [ctx.answer(3, ">15,000 h firing"), ctx.hgm("R1", "> 15,000 h firing")], "owner-stated",
@@ -765,12 +772,13 @@ def build_interface_demands(ctx):
         return {"id": iid, "direction": direction, "counterpart": counterpart, "content": content, "status": status}
 
     return [
-        idd("RVM-ID-01", "RVM <- mass/power v2", f"{REFS['MP'][0]} (MPV2-ID-11)",
-            "mass rows: < 40 kg wet and 34 / 36 kg from the roll-ups (no CBE); power rows: < 1.5 kW and 1.35 kW from "
-            "the A9 ledger (all loads TBD); consumed as RVM-04 / -05 / -06 / -07", "CONSUMED", ("MP", "MPV2-ID-11")),
-        idd("RVM-ID-02", "RVM <- Xe accounting v2", f"{REFS['XE'][0]} (XV2-IF-09)",
+        idd("RVM-ID-01", "RVM <- mass/power v3", f"{REFS['MP'][0]} (rollups, lines, power)",
+            "mass rows: < 40 kg wet and 34 / 36 kg from the v3 single-owner-reading roll-ups (no CBE); power rows: "
+            "< 1.5 kW and 1.35 kW from the A9 ledger (all loads TBD); consumed as RVM-04 / -05 / -06 / -07 (v2, "
+            "MPV2-ID-11, is immutable history)", "CONSUMED", ("MP", "@doc")),
+        idd("RVM-ID-02", "RVM <- Xe accounting v3", f"{REFS['XE'][0]} (evaluations, reading_axes_resolved)",
             "Xe accounting states (REFUSED totals with TBD inputs) as SUPPORTING evidence of RVM-03 / -06 / -10; never "
-            "a Xe-capability demonstration", "CONSUMED", ("XE", "XV2-IF-09")),
+            "a Xe-capability demonstration (v2, XV2-IF-09, is immutable history)", "CONSUMED", ("XE", "@doc")),
         idd("RVM-ID-03", "RVM <- P4", f"{REFS['P4'][0]} (ID-10)",
             "AO / material compatibility: INCOMPLETE_EVIDENCE for every candidate and application; consumed as RVM-16",
             "CONSUMED", ("P4", "ID-10")),
@@ -801,9 +809,11 @@ def build_interface_demands(ctx):
             "lane-24 open decisions carried by RVM rows but absent from owner_questions_state_v3: OD2, OD3, OD5, OD6, "
             "OD12, OD13, OD14 (registered in state v4: OD13 SUPERSEDED by owner row 3, the others TBD_OWNER; "
             "bookkeeping, no answer implied)", "CONSUMED"),
-        idd("RVM-ID-12", "RVM <- official RFP", "owner rows 1-2 (legitimate owner / portal route)",
-            "the canonical RFP PDF with sha256: every RVM row with requirement_frozen = false re-derives its basis",
-            "AWAITING_OWNER_ACTION"),
+        idd("RVM-ID-12", "RVM <- official RFP", "owner rows 1-2 (legitimate owner / portal route); registered in "
+                                                     + RB.REG_REL,
+            "the canonical RFP PDF with sha256 is registered with a verbatim clause transcription and every row is "
+            "re-based on it (rfp_rebase); AG-15 closure (requirement_frozen = true on RFP rows) is the owner's",
+            "REGISTERED_BY_HASH; AG-15 CLOSURE AWAITING_OWNER_ACTION"),
     ]
 
 
@@ -903,6 +913,9 @@ def build_open_questions():
                                 "re-base on the RFP clause (redundant PPU / RF electronics; mass and power impact)"],
         "status": "TBD_OWNER", "freeze_point": "after-evidence",
         "needed_by": "when the official RFP is obtained (row 1), before Milestone C",
+        "current_note": "as raised; the official RFP is now registered: 'Must cater to single point failure for "
+                        "electronics' (RFP-P18-09) and 'redundancy in Electronics level and sensor level if any' "
+                        "(RFP-P18-02); answered by the owner (A9.14 S9.13 RVMQ-01: RVM-19 re-based on those clauses)",
     }]
 
 
@@ -945,12 +958,7 @@ def build_doc():
     refs = load_refs()
     ctx = Ctx(pins, refs)
     rows_mod = load_rows_module()
-    ns = types.SimpleNamespace(**globals())
-    try:
-        new_rows = A19.build_rows(ns, ctx)
-    except A19.A919Error as e:
-        raise BuildError(str(e)) from e
-    rows = evaluate_rows(ctx, rows_mod.build_rows(ns, ctx) + new_rows)
+    rows = evaluate_rows(ctx, rows_mod.build_rows(types.SimpleNamespace(**globals()), ctx))
     counts = {c: {s: sum(1 for r in rows if r["configurations"][c]["status"] == s) for s in R.STATUSES}
               for c in CONFIGS}
     a92 = pins["A92"]["decisions"]["a9_10_statuses"]
@@ -1025,18 +1033,12 @@ def build_doc():
     }
     doc = A16.apply(doc)
     try:
-        doc = A19.apply(doc)
-    except A19.A919Error as e:
-        raise BuildError(str(e)) from e
-    rebase = dict(RB.REBASE)
-    rebase.update(A19.REBASE)
-    try:
-        RB.REBASE, saved = rebase, RB.REBASE
-        try:
-            doc = RB.apply(doc, ctx.reg, RFP_BASIS)
-        finally:
-            RB.REBASE = saved
+        doc = RB.apply(doc, ctx.reg, RFP_BASIS)
     except RB.RebaseError as e:
+        raise BuildError(str(e)) from e
+    try:
+        doc = A16.registered_rfp_citations(doc)   # A9.16 repair RFP-03 / RVF-04
+    except RuntimeError as e:
         raise BuildError(str(e)) from e
     R.assert_status_vocabulary(doc)
     R.assert_no_pass_without_measurement(doc)
@@ -1048,12 +1050,6 @@ def build_doc():
 
 
 # ------------------------------------------------------------------------------------------------ markdown
-def _cell_md(cell):
-    if cell.get("applicability_marker"):
-        return f"**{cell['applicability_marker']}** (never compliance evidence)"
-    return f"**{cell['status']}** ({cell['rule']})"
-
-
 def _esc(s):
     return str(s).replace("|", "\\|").replace("\n", " ")
 
@@ -1117,7 +1113,8 @@ def render_md(doc):
     for r in doc["rows"]:
         a(f"| {r['id']} | {_esc(r['title'])} | {_origin(r)} | {_esc(_limit(r['limit']))} | "
           f"{', '.join(r['verification_methods'])} | "
-          + " | ".join(_cell_md(r["configurations"][c]) for c in CONFIGS) + " |")
+          + " | ".join(f"**{r['configurations'][c]['status']}** ({r['configurations'][c]['rule']})"
+                       for c in CONFIGS) + " |")
     a("")
     a("## Status rules (applied in this order by `rvm_rules.assign_status`)")
     a("")
@@ -1162,11 +1159,7 @@ def render_md(doc):
               f"{', '.join(r['lane24_gates']) or '-'}")
         for c in CONFIGS:
             cell = r["configurations"][c]
-            if cell.get("applicability_marker"):
-                a(f"- **{c}: {cell['applicability_marker']}** (vocabulary status {cell['status']}, "
-                  f"`{cell['rule']}`; never compliance evidence)")
-            else:
-                a(f"- **{c}: {cell['status']}** (`{cell['rule']}`) - {cell['reason']}")
+            a(f"- **{c}: {cell['status']}** (`{cell['rule']}`) - {cell['reason']}")
             for art in cell["artifacts"]:
                 a(f"    - [{art['role']}/{art['kind']}] `{art['path']}` `{art['id']}`: {_esc(art['evidence_state'])}")
             for art in cell["artifacts"]:
@@ -1188,6 +1181,20 @@ def render_md(doc):
           f"{_origin(it)} | "
           f"{it['evidence_class']} | {_esc(it['status'])} | {it['freeze_point']} |")
     a("")
+    a("Registered RFP clauses of the RFP_CLAUSE items (verbatim; the secondary record R2 / lane-24 text is a historical "
+      "cross-reference superseded by the registration):")
+    a("")
+    for it in doc["items"]:
+        for src in it["source"]:
+            if src["kind"] == "rfp_official_clause":
+                a(f"- {it['id']}: **{src['clause_id']}** (p. {src['page']}, {src['section']}): "
+                  f"\"{_esc(src['verbatim'])}\"")
+        if it.get("owner_reading"):
+            a(f"- {it['id']} owner reading: {it['owner_reading']}")
+        if it.get("subsystem_minima"):
+            a(f"- {it['id']} subsystem minima: " + ", ".join(f"{k} {v}" for k, v in it["subsystem_minima"].items())
+              + f" ({it['subsystem_minima_source']})")
+    a("")
     a("## (b) Interface demands")
     a("")
     a("| id | direction | counterpart | content | status |")
@@ -1207,7 +1214,8 @@ def render_md(doc):
     for q in doc["open_owner_questions"]:
         a(f"- **{q['id']}** (as raised {q['status']}; now {q.get('status_current', q['status'])} "
           f"{q.get('decision_code', '')}, needed by {q['needed_by']}): {q['question']} "
-          "Readings: " + " / ".join(q["admissible_readings"]) + f". Why new: {q['why_new']}.")
+          "Readings: " + " / ".join(q["admissible_readings"]) + f". Why new: {q['why_new']}."
+          + (f" Current note: {q['current_note']}." if q.get("current_note") else ""))
     a("")
     a("## (d2) A9.16 owner decisions applied")
     a("")
@@ -1219,35 +1227,6 @@ def render_md(doc):
     for r in doc["rows"]:
         if "a9_16" in r:
             a(f"- {r['id']}: " + _esc("; ".join(f"{k}: {v}" for k, v in r["a9_16"].items() if k != "decisions")))
-    a("")
-    a("## (d2b) A9.19 / A9.20 owner decisions applied (flight architecture, Xe role, C1 ground-only)")
-    a("")
-    x = doc["a9_19_20"]
-    a(f"Decisions: {'; '.join(x['decisions'])}.")
-    a("")
-    a(f"- Flight architecture (A9.19): {x['flight_architecture']}.")
-    a(f"- Amends: {x['amends']}. Unchanged: {x['unchanged']}.")
-    for c in CONFIGS:
-        a(f"- `{c}`: {doc['configurations'][c]}")
-    a(f"- {x['a9_2_status_note']}.")
-    a(f"- {x['owner_open_note']}.")
-    for r in doc["rows"]:
-        if "a9_19" in r:
-            rest = {k: v for k, v in r["a9_19"].items() if k != "decisions"}
-            if rest:
-                a(f"- {r['id']}: " + _esc("; ".join(f"{k}: {v}" for k, v in rest.items())))
-    a("")
-    a("Owner answers applied (A9.19 / A9.20):")
-    a("")
-    for o in doc["a9_19_owner_answers_applied"]:
-        a(f"- {o['decision']} `{o['question_id']}` (json sha256 {o['decision_json_sha256'][:12]}..., verbatim md sha256 "
-          f"{o['decision_md_sha256'][:12]}...) -> {', '.join(o['record_ids'])}: {_esc(o['how_applied'])}")
-    a("")
-    a("### Recorder proposals open for the owner (NOT requirements, NOT owner decisions)")
-    a("")
-    for pr in doc["recorder_proposals_open_for_owner"]:
-        a(f"- **{pr['id']}** [{pr['status']}]: {_esc(pr['proposal'])} Why raised: {_esc(pr['why_raised'])} "
-          f"Numbers: {pr['numbers']}. Handling: {pr['handling']}.")
     a("")
     a("## (d3) RFP re-base (AG-15)")
     a("")
