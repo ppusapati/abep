@@ -299,10 +299,11 @@
    "S6": "A9.13 (22)",
    "S7-S10": "A9.14 (61)"
   },
-  "application": "A9.16 step 1 (experiment/procurement/mass/Xe/records) launching; step 2 = A9.9 production-model changes; step 3 = A9.13 architecture code",
+  "application": "A9.16 step 1 running (wf_db2a13f8-1bb); step 2 (A9.9 model changes) launched in parallel on owner instruction 'implement rest of the things meanwhile'; step 3 (A9.13 architecture code + full F-lane regeneration) after steps 1 and 2 are merged",
   "amendments": {
    "A9.15": "RFP-compliant propellant policy: Xe is an RFP-required system capability; amends A9.13 xenon statement and A9.14 OQ-A907-07, XA9Q-07, MPQ-01, XV2Q-01, XA9Q-05, OD6"
-  }
+  },
+  "icp_feed_gas_confirmation": "owner 2026-10-01: keep the A9.1 ICP feed-gas baseline unchanged (G-REUSE primary; G-XE declared ICP-feed variant); A9.15 concerns system propellant capability only"
  },
  "checkpoint_6": {
   "pr": "ppusapati/abep#36",
