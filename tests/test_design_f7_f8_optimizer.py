@@ -37,7 +37,8 @@ def inp():
 @pytest.fixture(scope="module")
 def small_ctx(inp):
     cands = ("A0.25_Ld10_phi0.8", "A0.5_Ld20_phi0.8", "A1.5_Ld3_phi0.9")
-    comps = ("T3-A1-U2-D0-Ti6Al4V-H0.25", "T6-A2-U1-D0-Ti6Al4V-H0.25")
+    # F3 front-union members (A1 = the 0.196 m^2 LI2015 area; the A2 grid bound moved with the W1 S6.8 re-pin)
+    comps = ("T3-A1-U2-D0-Ti6Al4V-H0.25", "T6-A1-U1-D0-Ti6Al4V-H0.25")
     return ao.upstream_context(inp, "cll_a0.8", "F4-FIL-NONE", "WALL-G0", candidates=cands, compressors=comps)
 
 
@@ -281,7 +282,7 @@ def test_supplied_objective_labels():
 
 # ------------------------------------------------------------------------------------------------- F8 helpers
 def test_plant_with_overrides_identity_and_effect(inp):
-    d = inp.designs["T6-A2-U1-D0-Ti6Al4V-H0.25"]
+    d = inp.designs["T6-A1-U1-D0-Ti6Al4V-H0.25"]
     p0, p1 = pf.CompressorPlant.from_design(d), ro.plant_with_overrides(d, {})
     assert p0.characteristic() == p1.characteristic() and p0.leak_m3_s == p1.leak_m3_s
     p2 = ro.plant_with_overrides(d, {"turbo_kK": 1.2 * 1.01})

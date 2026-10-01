@@ -19,7 +19,7 @@ wall WALL-G0), F8 asks how their feasibility and objectives move under every unc
   feed state                   NOT_EVALUATED                           H-1 inlet requirement TBD (F5 IFD-F4-01..05);
                                                                        P_set stays a requirement-level context axis
   Hall response                NOT_EVALUATED                           no admitted Hall response map
-  RF efficiency                NOT_EVALUATED                           TBD (P2 / RFQ v2: no impedance map, no source)
+  RF efficiency                NOT_EVALUATED                           TBD (P2 / RFQ v3: no impedance map, no source)
   thermal parameters           NOT_EVALUATED                           P3 inputs TBD; chain temperature assumed
 
 Probabilities (P_feasible, percentiles) are computed ONLY over the quantified TPMC statistics, conditional on each

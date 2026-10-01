@@ -124,10 +124,11 @@ def test_envelope_matches_w1_closure(doc):
     s = doc["requirement_summary"]
     assert s["candidate_cases"] == 9 * len(closed)
     assert 2.3 < s["CR_required_self_consistent"]["min"] < 2.4
-    # re-pinned after the A9.9 step-2 model changes + A9.16 regeneration of the W1 closure (DC-S25-G10 no longer closes)
-    assert 151 < s["CR_required_self_consistent"]["max"] < 153
+    # re-pinned after the A9.13 S6.8 pressure-domain gate in the W1 closure (only DC-S12-G20 closes, at 0.05 Pa;
+    # the > 0.1 Pa DC-S25-G20 / DC-S12-G10 closures are NOT_EVALUATED_OUT_OF_DOMAIN; review findings RVF-01 / PHY-01)
+    assert 30.2 < s["CR_required_self_consistent"]["max"] < 30.4
     assert 0.027 < s["mdot_valve_bracket_kgps"]["min"] * 1e6 < 0.029
-    assert 2.91 < s["mdot_valve_bracket_kgps"]["max"] * 1e6 < 2.93
+    assert 1.03 < s["mdot_valve_bracket_kgps"]["max"] * 1e6 < 1.04
 
 
 def test_matrix_complete_and_eliminations_explicit(doc):

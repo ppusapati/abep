@@ -608,7 +608,7 @@ def build_upstream(rows: list, us: dict) -> None:
       fs="OPEN", adv=["H-1 required inlet pressure (H1F-IN-04)", "owner answer OQ-F4-01 (setpoint policy)",
                       "owner answer OQ-F4-02 (design direction at <= 0.1 Pa)"])
     P(rows, "AFC-UP-PL-03", S, "plenum", "setpoint policy across orbit states (single vs scheduled)",
-      "TBD - owner question OQ-F4-01 (single-setpoint frontier 0.1101 mg/s vs scheduled 0.1308 mg/s, parametric)",
+      "TBD - owner question OQ-F4-01 (single-setpoint frontier 0.09832 mg/s vs scheduled 0.1192 mg/s, parametric)",
       units="-", tolerance="TBD", ec=None,
       sources=[ref("F4", find("F4", "/open_owner_questions", "id", "OQ-F4-01"))], basis="F4-01", fs="TBD_OWNER",
       adv=["owner answer OQ-F4-01"])
@@ -632,15 +632,15 @@ def build_upstream(rows: list, us: dict) -> None:
     wc = [m["mdot_delivered_min_kgps"] * 1e6 for m in mem]
     P(rows, "AFC-UP-PL-08", S, "plenum", "delivered total flow offered by the upstream chain (min over orbit states)",
       {"kind": "PARETO_SET", "robust_set_worst_case_range_mg_s": _rng(wc),
-       "all_state_single_setpoint_frontier_mg_s": 0.1100573, "all_state_scheduled_frontier_mg_s": 0.13075,
+       "all_state_single_setpoint_frontier_mg_s": 0.09832423, "all_state_scheduled_frontier_mg_s": 0.119186,
        "owner_ground_characterization_range_mg_s": get("F78", find("F78", "/items", "id", "F78-P-11") + "/value"),
        "pareto_members_reaching_0.38_mg_s_at_every_state": 0},
       units="mg/s", tolerance=T_PARAM, ec="model-derived", label="PARAMETRIC_SENSITIVITY",
-      sources=[rob, cite("F78", find("F78", "/findings", "id", "F78-02") + "/finding", "0.1100573",
+      sources=[rob, cite("F78", find("F78", "/findings", "id", "F78-02") + "/finding", "0.09832423",
                          "characterization coverage (A9.13 S6.21: coverage only, not a requirement or gate) at every "
                          "state: 0"),
-               cite("F4", find("F4", "/findings", "id", "F4-01") + "/finding", "0.1308 mg/s"),
-               cite("F4", find("F4", "/findings", "id", "F4-07") + "/finding", "0.13075"), ans(73)],
+               cite("F4", find("F4", "/findings", "id", "F4-01") + "/finding", "0.1192 mg/s"),
+               cite("F4", find("F4", "/findings", "id", "F4-07") + "/finding", "0.119186"), ans(73)],
       basis="F4 / F7 frontiers under parametric inputs; the owner range (row 73) is characterization context, not a "
             "flight requirement", fs="OPEN",
       adv=[FLOWREQ, "owner answer OQ-F4-04 (lever: capture, operating states or feed requirement)", T12, ACCOM])
@@ -1170,11 +1170,11 @@ def build_gates() -> list:
     n_f3 = len(get("F3", "/strict_mode/blockers"))
     G("AG-12", "upstream delivered-flow closure (UG-FLOW, proposed F9 gate)",
       "NOT_EVALUATED (strict mode); parametric frontier below the owner characterization range", False,
-      f"all-state frontier 0.1100573 mg/s (single setpoint) and robust worst case {_rng(wc)} mg/s under parametric "
+      f"all-state frontier 0.09832423 mg/s (single setpoint) and robust worst case {_rng(wc)} mg/s under parametric "
       "inputs vs 0.38-3.2 mg/s characterization and ~1.3 mg/s nominal sizing (row 73); compressor coefficients "
       f"uncited (F3 MODE_STRICT {n_f3} blockers), accommodation TBD, filter TBD; the delivered-flow requirement "
       "itself is not set (F9-OQ-02)", [ref("F4", "/strict_mode"), cite("F3", "/strict_mode/status", "NOT_EVALUATED"),
-                     cite("F78", find("F78", "/findings", "id", "F78-02"), "0.1100573")], ["EP-08", "EP-09", "EP-14"])
+                     cite("F78", find("F78", "/findings", "id", "F78-02"), "0.09832423")], ["EP-08", "EP-09", "EP-14"])
     G("AG-13", "drag compensation T - D_spacecraft", "NOT_EVALUATED", False,
       "thrust (AG-02) and spacecraft body / array drag (no spacecraft geometry; OQ-F78-04); whether HC-08 is a hard "
       "constraint is OQ-F78-01", [ref("F78", "/unlock_evidence/D_spacecraft"),
@@ -1353,7 +1353,7 @@ F9_QUESTIONS = [
      "question": "Set the delivered-flow requirement at the H-1 inlet that the proposed architecture gate AG-12 "
                  "(UG-FLOW) is scored against (owner row 73 gives a sizing flow ~1.3 mg/s and a characterization "
                  "range 0.38-3.2 mg/s, neither a flight requirement): which value, at which orbit states / averaging?",
-     "why_new": "no requirement exists; F4 / F7 report a parametric all-state frontier of 0.1101 mg/s and OQ-F4-04 asks "
+     "why_new": "no requirement exists; F4 / F7 report a parametric all-state frontier of 0.09832 mg/s and OQ-F4-04 asks "
                 "only which lever to study",
      "needed_by": "LOCK-1 (before any upstream freeze)", "status": "TBD_OWNER"},
     {"id": "F9-OQ-03",
@@ -1497,7 +1497,7 @@ def build() -> dict:
         {"id": "F9-03", "evidence_class": "model-derived (PARAMETRIC_SENSITIVITY inputs)",
          "finding": "upstream flow gap: robust worst-case delivered flow "
                     f"{_rng([m['mdot_delivered_min_kgps'] * 1e6 for m in us['members']])} mg/s and all-state "
-                    "frontier 0.1101 mg/s, low relative to the 0.38-3.2 mg/s ground-characterization coverage (row 73): "
+                    "frontier 0.09832 mg/s, low relative to the 0.38-3.2 mg/s ground-characterization coverage (row 73): "
                     "an engineering warning, not a demonstrated requirement failure; 0.38 and ~1.3 mg/s are not flight "
                     "requirements and AG-12 is the statewise feed-state sufficiency gate (A9.13 F9-OQ-02)"},
         {"id": "F9-04", "evidence_class": "inferred",

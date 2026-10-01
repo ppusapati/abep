@@ -2,7 +2,7 @@
 
 New design-synthesis code. ONE common design vector
 
-    x = [x_intake (F1), x_filter (F2), x_compressor (F3), x_plenum (F4), x_Hall (F5), x_ICP (F6), x_RF (P2 / RFQ v2),
+    x = [x_intake (F1), x_filter (F2), x_compressor (F3), x_plenum (F4), x_Hall (F5), x_ICP (F6), x_RF (P2 / RFQ v3),
          x_thermal (P3)]
 
 whose blocks, bounds and evidence status are read from the lanes that own them (``design_vector_blocks``), and for every
@@ -44,8 +44,10 @@ Design decisions recorded here (evidence discipline, CLAUDE.md rules 3, 6, 10; d
   * P_bus uses the A9-02 boundary module abep_sim.bus_boundary_a9 (called, never modified): the official ledger keeps
     the compressor slot TBD (row 22: the compressor ICD has not supplied it) and is PARTIAL_BOUNDARY; a separate,
     labelled parametric-sensitivity ledger books the F3/F4 compressor draw and reports its lower bound only.
-  * Mass: allocation, evidence floor, parametric design value and CBE are kept in separate columns (mass/power v2
-    rule); m_wet is EVALUATED only from a closed roll-up whose terms are all CBE or measured.
+  * Mass: allocation, evidence floor, parametric design value and CBE are kept in separate columns (mass/power
+    rule); m_wet is EVALUATED only from a closed roll-up whose terms are all CBE or measured. The budget read is the
+    A9.15-applied mass/power v3 (single MEV-level owner reading, Xe load cases 2 / 5 / 10 kg; review finding RFP-02),
+    with RFQ v3 and the P3 coupled-thermal v2 framework (supersedes v1 for the current state).
 
 Not wired into archengine; no existing module is modified; golden benchmarks cannot move. Nothing here is a design, a
 selection, a winner, a requirement or a PASS.
@@ -66,15 +68,6 @@ abep_sim/design/upstream_a9_13.py; requirement source docs/requirements/rfp_offi
   * S6.8 / S6.11: set pressures <= 0.1 Pa are the sensitivity / fallback branch; the higher-pressure primary direction
     is NOT_EVALUATED_OUT_OF_DOMAIN until admitted transitional evidence exists (``higher_pressure_branch``).
   * A9.15: HC-10 dual propellant capability (ambient air + Xe, two separate tanks / paths; RFP-P18-08).
-
-A9.19 / A9.20 owner decisions applied (abep_sim/design/a9_19_architecture.py; verbatim .md governs):
-  * the flight architecture is ONE Hall accelerator + ONE RF/ICP electron source / neutralizer serving both supply
-    modes (AIR_PRIMARY, XE_CONTINGENCY); ``CONFIGURATIONS`` lists only ``hall_icp_neutralizer``;
-  * ``hall_c1_reference`` is REFUSED as a flight configuration (C1 is GROUND_ONLY_LAB_EQUIPMENT, A9.20) and appears
-    only as the explicit GROUND_REFERENCE label (``GROUND_REFERENCE_CONFIGURATIONS``);
-  * no hollow-cathode element may appear in a flight configuration (``flight_configuration_elements`` +
-    a9_19_architecture.refuse_hollow_cathode_elements, checked by ``evaluate_system``);
-  * HC-10 marks the Xe path role CONTINGENCY_EMERGENCY (capability still required, RFP-P17-05 / RFP-P18-08).
 """
 from __future__ import annotations
 
@@ -95,7 +88,6 @@ from .. import rotor_strength as rs
 from ..constants import M_SPECIES
 from . import filter_stage as fs
 from . import intake_synthesis as isy
-from . import a9_19_architecture as a919
 from . import plenum_feed as pf
 from . import upstream_a9_13 as u13
 
@@ -123,13 +115,10 @@ F5_BUILDER_REL = "docs/hardware/h1_freeze_candidate/build_h1_freeze_candidate.py
 F6_REL = "docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json"
 P1_REL = "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json"
 P2_REL = "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json"
-P3_REL = "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json"
+P3_REL = "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json"   # supersedes v1 (A9.16)
 P4_REL = "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json"
-MP_REL = "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json"
-# RV19-11: the A9.19 hollow-cathode refusal reads the current mass / power package (v3), never the immutable v2
-# history (the other v2 readers are the F7/F8 identity-pinned inputs and stay unchanged here)
-MP_V3_REL = "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json"
-RFQ_REL = "docs/procurement/rfq_a9_v2/rfq_a9_v2.json"
+MP_REL = "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json"          # A9.15-applied (RFP-02); v2 = history
+RFQ_REL = "docs/procurement/rfq_a9_v3/rfq_a9_v3.json"                    # A9.15-applied (RFP-02); v2 = history
 RVM_REL = "docs/requirements/rvm_a9/rvm_a9_v1.json"
 ENS_REL = "hallthruster_bridge/ensemble/transport_ensemble_v0.json"
 VAL_REL = "hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json"
@@ -163,11 +152,7 @@ RANK_COMPUTED_SYNTHETIC = "PARETO_LAYERS_COMPUTED_SYNTHETIC_TEST_ONLY_NOT_EVIDEN
 RANK_STATUSES = (RANK_REFUSED_INCOMPLETE, RANK_REFUSED_NO_FEASIBLE, RANK_REFUSED_MIXED, RANK_COMPUTED,
                  RANK_COMPUTED_SYNTHETIC)
 
-# A9.19 / A9.20: the flight configurations are hall_icp_neutralizer only; hall_c1_reference (bb.CONFIGURATIONS keeps
-# it for the A9-02 boundary history) is a GROUND_REFERENCE label only, never a flight candidate
-CONFIGURATIONS = a919.FLIGHT_CONFIGURATIONS
-GROUND_REFERENCE_CONFIGURATIONS = (a919.GROUND_REFERENCE_CONFIGURATION,)
-assert set(CONFIGURATIONS) | set(GROUND_REFERENCE_CONFIGURATIONS) == set(bb.CONFIGURATIONS)
+CONFIGURATIONS = bb.CONFIGURATIONS                       # hall_c1_reference (control / fallback), hall_icp_neutralizer
 
 
 class OptimizerError(ValueError):
@@ -328,7 +313,7 @@ def design_vector_blocks(repo: Path = REPO) -> list[dict]:
     chain = mp["power"]["icp_rf_chain"]
     rv = [
         _var("x_RF.frequency", "x_RF", "f_RF", bb.RF_FREQUENCY_HZ, "Hz", "13.56 MHz ICP drive (row 72 / A9)",
-             f"{MP_REL} items MPV2-P07; abep_sim/bus_boundary_a9.py RF_FREQUENCY_HZ", "owner-allocation",
+             f"{MP_REL} items_v2 MPV2-P07; abep_sim/bus_boundary_a9.py RF_FREQUENCY_HZ", "owner-allocation",
              "OWNER_GIVEN"),
         _var("x_RF.chain_topology", "x_RF", "RF chain", chain["chain"], "-", "flight-representative DC-RF source, "
              "directional coupler, 50-ohm line, local adjustable match, antenna (A9.2 / A9.3 decisions)",
@@ -336,12 +321,12 @@ def design_vector_blocks(repo: Path = REPO) -> list[dict]:
         _var("x_RF.component_ratings", "x_RF", "ratings", "TBD", "W; V; A", "RF component ratings",
              f"{P2_REL}; {RFQ_REL}", "TBD", "TBD_AFTER_IMPEDANCE_MAP"),
         _var("x_RF.source_efficiency", "x_RF", "eta_DC->RF", "TBD", "-", chain["flight_source_efficiency"],
-             f"{MP_REL} items MPV2-P08", "TBD", "TBD"),
+             f"{MP_REL} items_v2 MPV2-P08", "TBD", "TBD"),
         _var("x_RF.lab_forward_range", "x_RF", "P_fwd lab", list(bb.LAB_RF_FORWARD_W_RANGE), "W", "laboratory "
              "source + inline chain sizing: a TEST capability, never a flight allowance (row 72)",
              "abep_sim/bus_boundary_a9.py LAB_RF_FORWARD_W_RANGE", "owner-allocation", "TEST_CAPABILITY_ONLY"),
     ]
-    blocks.append({"block": "x_RF", "lane": "P2 framework / RFQ v2 / mass-power v2", "path": P2_REL,
+    blocks.append({"block": "x_RF", "lane": "P2 framework / RFQ v3 / mass-power v3", "path": P2_REL,
                    "state": "NOT_SEARCHABLE_BOUNDS_TBD", "variables": rv})
 
     tv = []
@@ -754,7 +739,7 @@ UNLOCK = {
              "the registered H-1 envelope, coils from the frozen MC-1, RF generator DC input measured, compressor "
              "ICD row 22, valve drivers, thermal, housekeeping, front end) on the p_bus_1ms_max basis with a "
              "conformant gate measurement (A9.1 OQ-A902-01)",
-    "m_wet": "a CBE or measured mass for every mass/power v2 BOM line (no CBE exists) plus the Xe load case "
+    "m_wet": "a CBE or measured mass for every mass/power v3 BOM line (no CBE exists) plus the Xe load case "
              "(XA9Q-01 / MQ-09) and the MQ-01 margin reading decided by the owner",
     "Q_reject": "the P3 coupled network solved: ICP geometry P3-G-01..08, emittances P3-R-01..04, conductances "
                 "P3-K-01..06, heat terms from P1/P2 data (Q_RF/match, Q_collector) and Phase-1 plume data (Q_plume)",
@@ -819,13 +804,13 @@ def _slot_texts(mp: dict, config: str) -> dict:
 def _eff_path(text: str) -> str:
     m = re.search(r"path (internal_bus|direct)", text)
     if not m:
-        raise RuntimeError(f"no supply path in mass/power v2 efficiency text: {text!r}")
+        raise RuntimeError(f"no supply path in mass/power efficiency text: {text!r}")
     return m.group(1)
 
 
 def official_ledger(config: str, repo: Path = REPO, compressor_P_W: float | None = None,
                     compressor_source: str = "") -> dict:
-    """A9-02 steady ledger with every installed slot TBD as mass/power v2 records it. With compressor_P_W the
+    """A9-02 steady ledger with every installed slot TBD as mass/power v3 records it. With compressor_P_W the
     compressor slot carries that (model-derived, PARAMETRIC) draw: a labelled sensitivity ledger, never the official
     one (row 22: the compressor ICD has not supplied the load)."""
     mp = read_json(MP_REL, repo)
@@ -896,12 +881,18 @@ MASS_LINES_DESIGN = {"AL-01": "intake (+ filter / duct)", "AL-02": "compressor +
                      "AL-05": "ICP neutralizer"}
 
 
+def _mp_items(mp: dict) -> dict:
+    """Item lookup across the mass/power v2 (``items``) and v3 (``items_v2`` carried + ``items_v3``) schemas."""
+    its = list(mp.get("items", [])) + list(mp.get("items_v2", [])) + list(mp.get("items_v3", []))
+    return {i["id"]: i for i in its}
+
+
 def wet_mass(config: str, design_masses: Mapping | None = None, supplied: Mapping | None = None,
              repo: Path = REPO) -> dict:
     """m_wet objective. Allocation, evidence floor, parametric design value and CBE stay in separate columns (mass /
-    power v2 rule). EVALUATED only from a supplied closed roll-up {value, evidence_class, source,
-    all_terms_resolved: True}; otherwise NOT_EVALUATED with the mass/power v2 wet roll-up envelope (allocation
-    readings) and the per-line view."""
+    power rule). EVALUATED only from a supplied closed roll-up {value, evidence_class, source,
+    all_terms_resolved: True}; otherwise NOT_EVALUATED with the mass/power v3 wet roll-up (the single A9.14 MQ-01
+    MEV-level owner reading, one entry per Xe load case) against HARD_40_WET, and the per-line view."""
     mp = read_json(MP_REL, repo)
     if supplied is not None:
         if not supplied.get("all_terms_resolved"):
@@ -909,22 +900,35 @@ def wet_mass(config: str, design_masses: Mapping | None = None, supplied: Mappin
                         unlock=[UNLOCK["m_wet"]])
         o = supplied_objective("m_wet_kg", supplied, "kg")
         return o
-    wets = [w for r in mp["rollups"] if r["configuration"] == config for w in r["wet"]
-            if w["reference"] == "HARD_40_WET"]
+    rolls = [r for r in mp["rollups"] if r["configuration"] == config]
+    if len(rolls) != 1:
+        raise RuntimeError(f"mass/power v3: expected one owner-reading roll-up for {config}, got {len(rolls)}")
+    roll = rolls[0]
+    wets = [w for w in roll["wet"] if w["reference"] == "HARD_40_WET"]
+    if not wets:
+        raise RuntimeError(f"mass/power v3: no HARD_40_WET wet roll-up for {config}")
     known = [w["wet_known_kg"] for w in wets]
     states = sorted({w["state"] for w in wets})
+    by_xe = [{"xe_case_kg": w["xe_case_kg"], "wet_known_kg": w["wet_known_kg"], "state": w["state"],
+              "exceedance_kg": w.get("exceedance_kg")} for w in wets]
     lines = []
     dm = dict(design_masses or {})
     for ln in mp["lines"][config]:
         lid = ln["line"]
-        lines.append({"line": lid, "name": ln["owner_name"], "allocation_kg": ln.get("allocation_kg"),
-                      "evidence_floor_kg": ln.get("evidence_floor_kg"), "cbe_kg": None, "measured_kg": None,
-                      "design_parametric": dm.get(lid), "state": ln["state"]})
+        val = ln.get("value") or {}
+        lines.append({"line": lid, "name": ln["name"], "allocation_kg": ln.get("row54_allocation_kg"),
+                      "evidence_floor_kg": ln.get("evidence_floor_cbe_kg"), "cbe_kg": ln.get("cbe_kg"),
+                      "measured_kg": ln.get("measured_kg"), "design_parametric": dm.get(lid),
+                      "budget_value_kg": val.get("value_kg"), "budget_value_governs": val.get("governs")})
+    if any(x["cbe_kg"] is not None or x["measured_kg"] is not None for x in lines):
+        raise RuntimeError("mass/power v3 now carries a CBE / measured line mass: m_wet needs re-evaluation")
     return _obj("m_wet_kg", NOT_EVALUATED, None, "kg",
-                reason="no CBE or measured mass exists for any BOM line (mass/power v2); the wet roll-ups against "
-                       f"the 40 kg limit are {states} under every reading",
-                unlock=[UNLOCK["m_wet"]], wet_known_allocation_envelope_kg=[min(known), max(known)] if known else None,
-                wet_rollup_states=states, lines=lines,
+                reason="no CBE or measured mass exists for any BOM line (mass/power v3); the wet roll-ups of the "
+                       f"owner reading '{roll['reading']}' against the 40 kg wet limit are {states} for the Xe load "
+                       f"cases {[w['xe_case_kg'] for w in wets]} kg",
+                unlock=[UNLOCK["m_wet"]], wet_known_allocation_envelope_kg=[min(known), max(known)],
+                wet_rollup_states=states, wet_rollup_by_xe_case=by_xe, owner_reading=roll["reading"],
+                budget_source=f"{MP_REL} rollups[configuration={config}].wet[reference=HARD_40_WET]", lines=lines,
                 rule="allocation / evidence floor / design-parametric / CBE never merged")
 
 
@@ -953,11 +957,11 @@ def electron_margin(config: str, supplied: Mapping | None = None, repo: Path = R
     if supplied is not None:
         return supplied_objective("I_e_cap_minus_I_d_max_A", supplied, "A")
     mp = read_json(MP_REL, repo)
-    it = {i["id"]: i for i in mp["items"]}
+    it = _mp_items(mp)
     return _obj("I_e_cap_minus_I_d_max_A", NOT_EVALUATED, None, "A",
                 reason=("ICP-45 NOT_EVALUATED: I_d,max,H1 " + str(it["MPV2-P09"]["value"]) + " (not registered) and "
                         "no P1 data; ICP electron-current capacity PENDING_ICP45" if config == "hall_icp_neutralizer"
-                        else "not a flight configuration (A9.19 / A9.20: C1 ground-only)"),
+                        else "C1 emission capacity not registered; I_d,max,H1 TBD (C1 CONTROL_FALLBACK)"),
                 unlock=[UNLOCK["I_e_margin"]],
                 context={"bench_discharge_ceiling_A": it["MPV2-P10"]["value"],
                          "rule": "the 8.33 A stand ceiling is a ground rating, never I_d,max,H1"})
@@ -1143,62 +1147,6 @@ def evaluate_constraints(values: Mapping) -> list[dict]:
     return out
 
 
-def _line_hc_elements(ln: Mapping, config: str) -> list[dict]:
-    """Every name-bearing item of one v3 budget line: the line itself, each floor constituent and the c1_branch record.
-    A name worded as a conditional C1 provision ('if C1 selected') is flagged CONDITIONAL_NOT_BOOKED (A9.20: never
-    selected for flight); a c1_branch is flagged only while it is *NOT_SELECTED and books nothing, else it is a C1
-    element (refused)."""
-    lid = ln.get("line")
-    name = ln.get("name", ln.get("owner_name"))
-    el = {"id": lid, "name": name, "kind": "mass_line", "source": f"{MP_V3_REL} lines.{config}.{lid}"}
-    if a919.is_conditional_c1_text(name) and a919.hollow_cathode_elements([name]):
-        el["booking"] = a919.C1_BOOKING_CONDITIONAL
-    out = [el]
-    for i, fc in enumerate(ln.get("floor_constituents") or []):
-        what = fc.get("what")
-        e = {"id": f"{lid}.floor[{i}]", "name": what, "kind": "floor_constituent", "kg": fc.get("kg"),
-             "source": f"{MP_V3_REL} lines.{config}.{lid}.floor_constituents[{i}]"}
-        if a919.is_conditional_c1_text(what) and a919.hollow_cathode_elements([what]):
-            e["booking"] = a919.C1_BOOKING_CONDITIONAL
-        out.append(e)
-    br = ln.get("c1_branch")
-    if br is not None:
-        st = str(br.get("state"))
-        e = {"id": f"{lid}.c1_branch", "name": f"C1 branch ({st})", "kind": "c1_branch", "state": st,
-             "in_line": br.get("in_AL08"), "source": f"{MP_V3_REL} lines.{config}.{lid}.c1_branch"}
-        if "NOT_SELECTED" in st and not br.get("in_AL08"):
-            e["booking"] = a919.C1_BOOKING_CONDITIONAL
-        out.append(e)
-    return out
-
-
-_EMBEDDED_C1_RE = re.compile(r"C1 cathode Xe branch ([0-9.]+) kg \(([^)]*)\) is already inside the (AL-\d+) floor")
-
-
-def flight_configuration_elements(config: str, repo: Path = REPO) -> list[dict]:
-    """Every element a flight configuration books: the A9-02 installed power slots and the mass / power v3 lines with
-    their floor constituents and C1-branch records (RV19-11: v3, not the immutable v2 history; content, not line names
-    only). A C1 cathode branch that the ground reference's own C1 line states is already inside a flight line's floor
-    is surfaced as an EMBEDDED_IN_FLOOR element (kg quoted from that text, never invented).
-    A9.19: the hollow-cathode refusal is applied to this list (evaluate_system)."""
-    a919.require_flight_configuration(config)
-    mp = read_json(MP_V3_REL, repo)
-    els = [{"id": s, "kind": "power_slot"} for s in bb.installed_slots(config)]
-    flight_lines = mp["lines"][config]
-    for ln in flight_lines:
-        els += _line_hc_elements(ln, config)
-    present = {ln.get("line") for ln in flight_lines}
-    for gcfg in GROUND_REFERENCE_CONFIGURATIONS:
-        for ln in mp["lines"].get(gcfg, []):
-            m = _EMBEDDED_C1_RE.search(str(ln.get("floor_arithmetic", "")))
-            if m and m.group(3) in present:
-                els.append({"id": f"{m.group(3)}.embedded_c1_cathode_xe_branch", "name": "C1 cathode Xe branch",
-                            "kind": "embedded_floor_branch", "kg": float(m.group(1)), "ref": m.group(2),
-                            "booking": a919.C1_BOOKING_EMBEDDED,
-                            "source": f"{MP_V3_REL} lines.{gcfg}.{ln.get('line')}.floor_arithmetic"})
-    return els
-
-
 def evaluate_system(upstream_row: Mapping | None, config: str, design: Mapping | None = None,
                     supplied: Mapping | None = None, repo: Path = REPO) -> dict:
     """Every system objective of one design vector (upstream sub-vector from an F7 row; x_Hall / x_ICP / x_RF /
@@ -1210,12 +1158,8 @@ def evaluate_system(upstream_row: Mapping | None, config: str, design: Mapping |
     feed_state_sufficiency result, HC-11), ripple_feed_quality (upstream_a9_13.ripple_feed_quality result, HC-12),
     propellant_capability (a record, 1 = air AND Xe operation demonstrated, HC-10) and propellant_paths (the
     modelled paths; default MODELLED_PROPELLANT_PATHS, checked structurally against A9.15)."""
-    if config in GROUND_REFERENCE_CONFIGURATIONS:
-        raise OptimizerError(f"REFUSED: {config!r} is not a flight configuration (A9.19: no conventional hollow "
-                             "cathode; A9.20: C1 is a GROUND-ONLY laboratory reference)")
     if config not in CONFIGURATIONS:
         raise OptimizerError(f"unknown configuration {config!r}")
-    hc = a919.refuse_hollow_cathode_elements(config, flight_configuration_elements(config, repo))
     s = dict(supplied or {})
     row = dict(upstream_row or {})
     pel = row.get("P_compressor_el_max_W")
@@ -1253,8 +1197,7 @@ def evaluate_system(upstream_row: Mapping | None, config: str, design: Mapping |
     cons = evaluate_constraints(cvals)
     ne = [SYSTEM_OBJECTIVE_CODE[k] for k, v in objs.items() if v["status"] != EVALUATED]
     return {"configuration": config, "design_id": row.get("design_id"), "objectives": objs, "constraints": cons,
-            "propellant_paths": prop, "hollow_cathode_check": hc["check"],
-            "c1_provisions_flagged": [e["id"] for e in hc["c1_provisions_flagged"]],
+            "propellant_paths": prop,
             "system_not_evaluated": ne,
             "constraints_not_evaluated": [c["id"] for c in cons if c["status"] == C_NOT_EVALUATED],
             "constraints_violated": [c["id"] for c in cons if c["status"] == C_VIOLATED]}
@@ -1392,19 +1335,21 @@ def architecture_questions() -> list[dict]:
         {"id": "AQ-05", "question": "Does the system close P_bus < 1.5 kW (and the 1.35 kW allocation)?",
          "answer_state": cannot, "basis": "A9-02 ledger PARTIAL_BOUNDARY", "unlock": [UNLOCK["P_bus"]]},
         {"id": "AQ-06", "question": "Does the system close < 40 kg wet?", "answer_state": cannot,
-         "basis": "no CBE for any BOM line; wet roll-ups NOT_EVALUABLE", "unlock": [UNLOCK["m_wet"]]},
-        {"id": "AQ-07", "question": "Can the ICP neutralize the H-1 discharge current with margin (both supply modes; "
-         "no hollow cathode in flight, A9.19)?",
+         "basis": "no CBE for any BOM line (m_wet NOT_EVALUATED); mass/power v3 wet roll-ups against HARD_40_WET "
+                  "(MEV-level owner reading, Xe cases 2 / 5 / 10 kg): " + "; ".join(
+                      f"{c} {w['wet_rollup_states']} (known terms {w['wet_known_allocation_envelope_kg'][0]:.2f}-"
+                      f"{w['wet_known_allocation_envelope_kg'][1]:.2f} kg)"
+                      for c, w in ((c, wet_mass(c)) for c in ("hall_icp_neutralizer", "hall_c1_reference"))),
+         "unlock": [UNLOCK["m_wet"]]},
+        {"id": "AQ-07", "question": "Can the ICP (or C1) neutralize the H-1 discharge current with margin?",
          "answer_state": cannot, "basis": "ICP-45 NOT_EVALUATED; I_d,max,H1 not registered",
          "unlock": [UNLOCK["I_e_margin"]]},
         {"id": "AQ-08", "question": "Does the coupled H-1 / ICP thermal design close with >= 50 K margin?",
          "answer_state": cannot, "basis": "P3 INCOMPLETE_EVIDENCE; closures UNRESOLVED", "unlock": [UNLOCK["Q_reject"]]},
-        {"id": "AQ-09", "question": "Does the ICP neutralizer match or exceed the ground C1 reference (bench "
-         "control, GROUND_REFERENCE) in the C1-vs-ICP bench comparison?",
-         "answer_state": cannot, "basis": "A9.19 / A9.20: hall_c1_reference is no longer a flight configuration; the "
-         "comparison is a ground bench comparison with C1 as GROUND_ONLY_LAB_EQUIPMENT; no bench data (P1 / ICP-45 "
-         "NOT_EVALUATED)",
-         "unlock": [UNLOCK["I_e_margin"]]},
+        {"id": "AQ-09", "question": "hall_icp_neutralizer vs hall_c1_reference: which configuration is better?",
+         "answer_state": cannot, "basis": "every discriminating system objective is NOT_EVALUATED for both "
+         "configurations; the upstream chain is common to both (no discrimination there)",
+         "unlock": [UNLOCK["I_e_margin"], UNLOCK["P_bus"], UNLOCK["m_wet"]]},
         {"id": "AQ-10", "question": "Which H-1 geometry inside the F5 windows is preferable?", "answer_state": cannot,
          "basis": "every Hall performance quantity NOT_EVALUATED; only geometric admissibility is evaluable",
          "unlock": [UNLOCK["T"]]},

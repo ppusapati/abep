@@ -2270,7 +2270,9 @@ def main(argv=None) -> int:
         print("written:", ", ".join(outputs()))
         return 0
     if a.check:
-        errs = check()
+        # review finding SW-02: --check also verifies every consumed value against its live source, so a regenerated
+        # upstream (e.g. the W1 feed-state closure) can never leave a stale transcription passing the check
+        errs = check() + verify_sources()
     elif a.verify_sources:
         errs = verify_sources()
     else:
