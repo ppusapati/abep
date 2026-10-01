@@ -1,6 +1,6 @@
 {
  "dataset_id": "atmosphere_msis21_orbit_v1",
- "file": "atmosphere_msis21_orbit_v1.csv",
+ "file": "atmosphere_msis21_orbit_v1.csv.gz",
  "sha256": "c0ce282e99695be8cae0834270c5b9ff7853033255665abda7ec18c307566164",
  "row_count": 116736,
  "bytes": 17248377,
@@ -205,13 +205,27 @@
   "out_of_domain": "ValueError (no extrapolation); unknown scenario: ValueError"
  },
  "orbit_coverage": {
-  "inclination_source": "abep_sim/mission_env.py sso_inclination_deg(alt) (J2 sun-synchronous condition) and Spacecraft.inc_deg = 96.33 / ltan_h = 6.0 defaults",
-  "inclination_status": "MODEL_ASSUMPTION (not owner-registered); the grid covers the full latitude band -90..90 deg so any SSO inclination (180-230 km: 96.25-96.42 deg, max |lat| 83.6-83.75 deg) and any LTAN are inside the dataset",
+  "inclination_ltan_status": "CODE_DEFAULT / PARAMETRIC",
+  "requirement_input": false,
+  "code_default": "abep_sim/mission_env.py sso_inclination_deg(alt) (J2 sun-synchronous condition; ~96.3 deg, 96.25-96.42 deg over 180-230 km) and Spacecraft.inc_deg = 96.33 / ltan_h = 6.0 (dawn-dusk); a parametric code default, never a requirement input",
+  "real_orbit": "TBD from the official mission definition (DRDO / spacecraft ICD / PDR mission definition); the RFP fixes only 180-230 km. Once supplied, a new orbit-resolved dataset version is built; this default is never reinterpreted as the real orbit",
+  "dataset_grid_coverage": "full geodetic latitude band -90..90 deg, all local solar times, all longitudes, all days of year: any inclination and any LTAN lie inside the dataset",
+  "design_state_envelope": {
+   "local_time": "all local times (LTAN-agnostic)",
+   "latitude": "|lat| <= reachable_lat_max_deg(), the max |latitude| of the CODE_DEFAULT SSO family over 180-230 km (83.6-83.75 deg); covers every inclination i with min(i, 180 - i) <= that bound",
+   "latitude_status": "PARAMETRIC bound inherited from the v1 design-state rule (content unchanged by A9.17); inclinations strictly between ~83.75 and ~96.25 deg reach higher latitudes, which the dataset grid covers but the v1 design-state set does not -- OPEN for the next design-state version / owner"
+  },
   "sso_inclination_deg_at_grid_alt": {
    "180": 96.25,
    "195": 96.3005,
    "215": 96.3682,
    "230": 96.4193
+  },
+  "authority": {
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+   "decision_key": "ORBIT",
+   "answer": "ORBIT_INCLINATION_LTAN_TBD_FROM_OFFICIAL_MISSION_ICD"
   }
  },
  "not_provided": {
@@ -229,6 +243,14 @@
   "A9.14 S9.8 OD3": {
    "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
    "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c"
+  },
+  "A9.17 DATA_SIZE": {
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad"
+  },
+  "A9.17 ORBIT": {
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad"
   },
   "CLAUDE.md rule 1": "versioned rebuild; atmosphere_msis21_v1.* unchanged"
  },
@@ -433,7 +455,7 @@
  },
  "design_states_file": {
   "file": "atmosphere_msis21_orbit_v1_design_states.json",
-  "sha256": "b5ab3c7225d7e84b096a8e5ca3c2e8400a84cd3c42fc9daada46c379232ae598",
+  "sha256": "d8bd369bf4aa4ae321ecced094f2c02356be67e2c3f4acbe70264f700b419a40",
   "producer": "design_states() on this dataset (A9.14 S9.8 OD3)"
  },
  "rho_composition_check": {
@@ -542,6 +564,83 @@
    ],
    "now": "wind omission against OQ-F4-05 tracked as open item ATM-OI-01 for owner disposition",
    "data_file_changed": false
+  },
+  {
+   "id": "E3",
+   "date": "2026-10-01",
+   "decision": "A9.17 DATA_SIZE",
+   "authority": {
+    "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+    "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+    "decision_key": "DATA_SIZE"
+   },
+   "fields": [
+    "file",
+    "sha256_definition",
+    "bytes_definition",
+    "container",
+    "distribution"
+   ],
+   "was": {
+    "file": "atmosphere_msis21_orbit_v1.csv",
+    "storage": "uncompressed CSV, shipped as package data"
+   },
+   "now": "one canonical deterministic gzip copy (atmosphere_msis21_orbit_v1.csv.gz); manifest records the uncompressed-CSV sha256 (unchanged, c0ce282e99695be8cae0834270c5b9ff7853033255665abda7ec18c307566164) and the container sha256; excluded from the installed wheel/sdist",
+   "data_file_changed": false,
+   "quantitative_effect": "storage only: the decompressed bytes are identical to the v1 CSV (same sha256, same rows)"
+  },
+  {
+   "id": "E4",
+   "date": "2026-10-01",
+   "decision": "A9.17 ORBIT",
+   "authority": {
+    "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+    "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+    "decision_key": "ORBIT"
+   },
+   "fields": [
+    "orbit_coverage",
+    "design_states_file (rule / orbit_basis / authority labels)"
+   ],
+   "was": {
+    "orbit_coverage.inclination_status": "MODEL_ASSUMPTION (not owner-registered)"
+   },
+   "now": "the mission_env 96.3 deg / dawn-dusk orbit is labelled CODE_DEFAULT / PARAMETRIC, never a requirement input; inclination / LTAN TBD from the official mission ICD. Design-states file regenerated with label changes only (top-level rule / orbit_basis / authority; the 179 per-state records kept verbatim)",
+   "data_file_changed": false,
+   "known_v1_defect_not_changed": "per-state interp_max_rel_err_rho is null for the 26 interpolated latitude-boundary design states (build() generated them before interpolation_validation was written to the JSON); physical values unaffected; left as frozen, open for the next design-state version"
   }
- ]
+ ],
+ "sha256_definition": "sha256 of the UNCOMPRESSED CSV bytes (dataset identity; unchanged by the A9.17 repack)",
+ "bytes_definition": "size of the uncompressed CSV in bytes",
+ "container": {
+  "file": "atmosphere_msis21_orbit_v1.csv.gz",
+  "format": "gzip (RFC 1952), single member",
+  "mtime": 0,
+  "fname_in_header": false,
+  "flags": 0,
+  "xfl": 2,
+  "os_byte": 255,
+  "compresslevel": 9,
+  "deflate": "zlib raw deflate, wbits -15, memLevel 8, Z_DEFAULT_STRATEGY",
+  "writer": "abep_sim.atmosphere_orbit._gzip_bytes",
+  "sha256": "71ce01c377a355a3e706d50e79fe08b2336d0e60b8b3e294f1d8e2c5b6a18ace",
+  "bytes": 4624714,
+  "zlib_version": "1.3",
+  "note": "container hash identifies the stored file; the dataset identity is the uncompressed-CSV sha256 (field sha256). Another zlib build may encode the same CSV to different container bytes."
+ },
+ "distribution": {
+  "installed_package": "EXCLUDED: the .csv.gz, this manifest and the design-states file are not shipped in the abep-sim wheel/sdist (pyproject exclude-package-data + MANIFEST.in exclude); no installed production module imports abep_sim.atmosphere_orbit",
+  "repository_path": "abep_sim/data/atmosphere_msis21_orbit_v1.csv.gz",
+  "when_absent": "the accessor raises FileNotFoundError naming the repository path; no fallback",
+  "authority": {
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad",
+   "decision_key": "DATA_SIZE",
+   "answer": "KEEP_DATA_ARTIFACT_EXCLUDE_FROM_INSTALL_WHERE_POSSIBLE",
+   "verbatim": {
+    "path": "docs/decisions/OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md",
+    "sha256": "540212c0c8862528e549555244f0fd39f8f9c9272f84dfb450bfef9dc54eba13"
+   }
+  }
+ }
 }

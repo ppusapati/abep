@@ -2,7 +2,10 @@
 
 pyproject.toml must (i) require Python >= 3.11 (tomllib, locked environment), (ii) configure setuptools package discovery
 explicitly (flat-layout auto-discovery refuses abep_sim + hallthruster_bridge), distributing abep_sim only, and
-(iii) ship every file under abep_sim/data (frozen atmosphere, intake surface, goldens, rate tables) as package data, and
+(iii) ship every file under abep_sim/data (frozen atmosphere, intake surface, goldens, rate tables) as package data,
+except the repository-only orbit-resolved dataset atmosphere_msis21_orbit_v1.* (A9.17 DATA_SIZE,
+docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json: kept as repository evidence, excluded from the
+installed wheel/sdist; no installed production module imports abep_sim.atmosphere_orbit), and
 (iv) keep pymsis out of the hard dependencies: it lives only in the [msis] extra (owner decision 2026-09-27,
 fo_repo_decisions_batch; gate 1 runs without it), while requirements-lock.txt stays the pinned dependency source.
 Pure file inspection: no build, no install, no network.
@@ -100,14 +103,46 @@ def _data_files() -> list[str]:
     return sorted(out)
 
 
+# Repository-only data (A9.17 DATA_SIZE): never shipped in the wheel/sdist.
+REPO_ONLY_GLOB = "data/atmosphere_msis21_orbit_v1*"
+
+
+def _repo_only(f: str) -> bool:
+    return fnmatch.fnmatchcase(f, REPO_ONLY_GLOB)
+
+
 def test_package_data_covers_abep_sim_data(pyproject):
-    globs = pyproject["tool"]["setuptools"]["package-data"]["abep_sim"]
+    st = pyproject["tool"]["setuptools"]
+    globs = st["package-data"]["abep_sim"]
     files = _data_files()
     for must in ("data/atmosphere_msis21_v1.json", "data/atmosphere_msis21_v1.csv", "data/intake_surface_v1.json",
                  "data/intake_surface_v1.csv", "data/golden_v1.json", "data/rates/PROVENANCE.md"):
         assert must in files, must
-    uncovered = [f for f in files if not any(fnmatch.fnmatchcase(f, g) for g in globs)]
+    uncovered = [f for f in files if not _repo_only(f) and not any(fnmatch.fnmatchcase(f, g) for g in globs)]
     assert not uncovered, f"abep_sim/data files not declared as package data: {uncovered}"
+
+
+def test_orbit_dataset_excluded_from_distribution(pyproject):
+    """A9.17 DATA_SIZE: the orbit-resolved dataset stays repository evidence (one canonical .csv.gz + manifest +
+    design states) and is excluded from the installed package; the frozen orbit-averaged v1 files keep shipping."""
+    st = pyproject["tool"]["setuptools"]
+    globs = st["package-data"]["abep_sim"]
+    repo_only = [f for f in _data_files() if _repo_only(f)]
+    assert sorted(repo_only) == ["data/atmosphere_msis21_orbit_v1.csv.gz", "data/atmosphere_msis21_orbit_v1.json",
+                                 "data/atmosphere_msis21_orbit_v1_design_states.json"], repo_only
+    shipped = [f for f in repo_only if any(fnmatch.fnmatchcase(f, g) for g in globs)]
+    assert not shipped, f"repository-only files matched by package-data globs: {shipped}"
+    assert REPO_ONLY_GLOB in st["exclude-package-data"]["abep_sim"]
+    with open(os.path.join(ROOT, "MANIFEST.in")) as f:
+        lines = [ln.split() for ln in f if ln.strip() and not ln.lstrip().startswith("#")]
+    assert ["exclude", "abep_sim/" + REPO_ONLY_GLOB] in lines
+    # runtime need check: no other abep_sim module imports the accessor of the excluded data
+    pkg = os.path.join(ROOT, "abep_sim")
+    for d, _dirs, fns in os.walk(pkg):
+        for fn in fns:
+            if fn.endswith(".py") and fn != "atmosphere_orbit.py":
+                with open(os.path.join(d, fn), encoding="utf-8") as fh:
+                    assert "atmosphere_orbit" not in fh.read(), fn
 
 
 def test_manifest_in_carries_data():
@@ -115,7 +150,7 @@ def test_manifest_in_carries_data():
         lines = [ln.split() for ln in f if ln.strip() and not ln.lstrip().startswith("#")]
     rec = [ln for ln in lines if ln[:2] == ["recursive-include", "abep_sim/data"]]
     assert rec, "MANIFEST.in must include abep_sim/data for the sdist"
-    exts = {os.path.splitext(f)[1] for f in _data_files()}
+    exts = {os.path.splitext(f)[1] for f in _data_files() if not _repo_only(f)}
     assert exts <= {p.lstrip("*") for p in rec[0][2:]}, exts
 
 

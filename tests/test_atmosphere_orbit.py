@@ -4,10 +4,12 @@ Authority: A9.13 S6.14 / OQ-F4-05 (versioned orbit-resolved dataset), A9.14 S9.7
 S9.8 / OD3 (design states from the dataset). The accessor tests run without pymsis; the producer re-run (check mode)
 and the direct-MSIS spot checks are skipped when pymsis is absent (CI pymsis-absent leg).
 """
+import gzip
 import hashlib
 import json
 import math
 import os
+import zlib
 
 import numpy as np
 import pytest
@@ -15,6 +17,10 @@ import pytest
 from abep_sim import atmosphere_orbit as ao
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+# sha256 of the uncompressed v1 CSV as frozen at build time (commit 2c6693a); A9.17 repacked it without changing it.
+V1_CSV_SHA256 = "c0ce282e99695be8cae0834270c5b9ff7853033255665abda7ec18c307566164"
+# sha256 of json.dumps(design["states"], sort_keys=True) of the v1 design-state set (A9.17 changed labels only).
+V1_DESIGN_STATES_CONTENT_SHA256 = "3b854bc622e647810c6bd56008cb05a1b8a80f572cad4cd432c03f5fd01a84f3"
 
 
 @pytest.fixture(scope="module")
@@ -29,8 +35,8 @@ def design():
 
 # --- provenance / frozen data ----------------------------------------------------------------------------------------
 def test_csv_hash_rowcount_and_size(meta):
-    raw = open(ao.CSV_PATH, "rb").read()
-    assert hashlib.sha256(raw).hexdigest() == meta["sha256"]
+    raw = ao.read_csv_bytes()
+    assert hashlib.sha256(raw).hexdigest() == meta["sha256"] == V1_CSV_SHA256
     assert raw.count(b"\n") - 1 == meta["row_count"] == 4 * 19 * 8 * 6 * 8 * 4
     assert len(raw) == meta["bytes"] < 20e6
     assert meta["columns"] == list(ao.COLUMNS)
@@ -44,7 +50,8 @@ def test_provenance_fields(meta):
     assert meta["year_independence_check"]["max_abs_rel_diff"] == 0.0
     assert meta["grid"]["alt_km"][0] == 180.0 and meta["grid"]["alt_km"][-1] == 230.0
     assert meta["grid"]["lat_deg"][0] == -90.0 and meta["grid"]["lat_deg"][-1] == 90.0
-    assert meta["orbit_coverage"]["inclination_status"].startswith("MODEL_ASSUMPTION")
+    assert meta["orbit_coverage"]["inclination_ltan_status"] == "CODE_DEFAULT / PARAMETRIC"
+    assert meta["orbit_coverage"]["requirement_input"] is False
     assert "winds" in meta["not_provided"]
     for k in ("document", "table", "url", "evidence_level", "quantity_type"):
         assert k in meta["drivers"]["source"]
@@ -151,7 +158,7 @@ def test_direct_msis_spot_check(meta):
 # --- orbit sampling --------------------------------------------------------------------------------------------------
 def test_orbit_states_geometry():
     asm = ao.mission_env_orbit_assumption(205.0)
-    assert asm["status"] == "MODEL_ASSUMPTION" and asm["ltan_h"] == 6.0
+    assert asm["status"] == "CODE_DEFAULT / PARAMETRIC" and asm["requirement_input"] is False and asm["ltan_h"] == 6.0
     o = ao.orbit_states(205.0, asm["inclination_deg"], asm["ltan_h"], "ECSS_LT_MODERATE", 80, 0.0, 120)
     assert len(o) == 120 and math.isclose(sum(x["weight"] for x in o), 1.0)
     lats = [x["lat_deg"] for x in o]
@@ -286,7 +293,7 @@ def test_rho_metadata_excludes_no(meta):
     e1 = [e for e in meta["errata"] if e["id"] == "E1"][0]
     assert e1["review_finding"] == "ATM-2" and e1["data_file_changed"] is False
     # the correction left the frozen data file untouched
-    assert hashlib.sha256(open(ao.CSV_PATH, "rb").read()).hexdigest() == meta["sha256"]
+    assert hashlib.sha256(ao.read_csv_bytes()).hexdigest() == meta["sha256"]
 
 
 def test_rho_composition_regression_direct():
@@ -323,3 +330,96 @@ def test_wind_omission_tracked_as_open_item(meta):
     assert oi["authority"]["sha256"] == hashlib.sha256(rec).hexdigest()
     o = ao.orbit_states(205.0, 96.32, 6.0, "ECSS_LT_MODERATE", 80, 0.0, 8)
     assert all(x["wind_included"] is False and x["wind_open_item"] == "ATM-OI-01" for x in o)
+
+
+# --- A9.17 DATA_SIZE: one canonical compressed copy, excluded from the installed package ---------------------------
+A9_17 = "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json"
+
+
+def test_a9_17_authority_recorded(meta):
+    rec = open(os.path.join(ROOT, A9_17), "rb").read()
+    assert hashlib.sha256(rec).hexdigest() == ao.A9_17_SHA256
+    md = open(os.path.join(ROOT, ao.A9_17_MD), "rb").read()
+    assert hashlib.sha256(md).hexdigest() == ao.A9_17_MD_SHA256 == json.loads(rec)["verbatim"]["sha256"]
+    d = json.loads(rec)["decisions"]
+    assert d["DATA_SIZE"]["answer"] == meta["distribution"]["authority"]["answer"]
+    assert d["ORBIT"]["answer"] == meta["orbit_coverage"]["authority"]["answer"]
+
+
+def test_single_canonical_gzip_copy(meta):
+    assert not os.path.exists(ao.LEGACY_CSV_PATH), "uncompressed copy must not be kept next to the .csv.gz"
+    assert meta["file"] == os.path.basename(ao.GZ_PATH) == "atmosphere_msis21_orbit_v1.csv.gz"
+    gz = open(ao.GZ_PATH, "rb").read()
+    c = meta["container"]
+    assert hashlib.sha256(gz).hexdigest() == c["sha256"] and len(gz) == c["bytes"]
+    # deterministic header: magic, deflate, FLG 0 (no file name / comment / extra), MTIME 0, XFL 2, OS 255
+    assert gz[:10] == b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x02\xff"
+    assert c["mtime"] == 0 and c["fname_in_header"] is False and c["compresslevel"] == ao.GZIP_LEVEL
+    raw = gzip.decompress(gz)
+    assert hashlib.sha256(raw).hexdigest() == meta["sha256"] == V1_CSV_SHA256 and len(raw) == meta["bytes"]
+    if zlib.ZLIB_VERSION == c["zlib_version"]:
+        assert ao._gzip_bytes(raw) == gz                     # the writer reproduces the stored container
+    e3 = {e["id"]: e for e in meta["errata"]}["E3"]
+    assert e3["data_file_changed"] is False and V1_CSV_SHA256 in e3["now"]
+
+
+def test_load_verifies_uncompressed_hash(tmp_path, monkeypatch):
+    raw = ao.read_csv_bytes()
+    bad = raw.replace(b"ECSS_LT_LOW,65", b"ECSS_LT_LOW,66", 1)
+    p = tmp_path / "tampered.csv.gz"
+    p.write_bytes(ao._gzip_bytes(bad))
+    meta = json.load(open(ao.JSON_PATH))
+    meta["container"]["sha256"] = hashlib.sha256(p.read_bytes()).hexdigest()   # container hash "fixed up"
+    with pytest.raises(RuntimeError, match="uncompressed CSV sha256"):
+        monkeypatch.setattr(ao, "GZ_PATH", str(p))
+        ao.read_csv_bytes(meta)
+    monkeypatch.undo()
+    with pytest.raises(RuntimeError, match="container sha256"):
+        monkeypatch.setattr(ao, "GZ_PATH", str(p))
+        ao.read_csv_bytes()                                   # recorded container hash no longer matches
+
+
+def test_missing_data_raises_clear_error(tmp_path, monkeypatch):
+    monkeypatch.setattr(ao, "GZ_PATH", str(tmp_path / "absent.csv.gz"))
+    monkeypatch.setattr(ao, "_CACHE", {})
+    with pytest.raises(FileNotFoundError) as e:
+        ao.load()
+    msg = str(e.value)
+    assert "abep_sim/data/atmosphere_msis21_orbit_v1.csv.gz" in msg and "no fallback" in msg.lower()
+    assert "A9.17" in msg
+    with pytest.raises(FileNotFoundError):
+        ao.state(200.0, 0.0, 12.0, 0.0, 80.0, "ECSS_LT_MODERATE")
+
+
+def test_distribution_record(meta):
+    d = meta["distribution"]
+    assert d["installed_package"].startswith("EXCLUDED") and d["repository_path"] == ao.REPO_DATA_PATH
+    assert d["authority"]["decision_key"] == "DATA_SIZE" and d["authority"]["sha256"] == ao.A9_17_SHA256
+
+
+# --- A9.17 ORBIT: 96.3 deg / dawn-dusk is CODE_DEFAULT / PARAMETRIC, never a requirement input ----------------------
+def test_orbit_default_labelled_code_default(meta, design):
+    oc = meta["orbit_coverage"]
+    assert oc["inclination_ltan_status"] == ao.ORBIT_STATUS == "CODE_DEFAULT / PARAMETRIC"
+    assert oc["requirement_input"] is False and "TBD" in oc["real_orbit"]
+    assert oc["authority"]["decision_key"] == "ORBIT" and oc["authority"]["sha256"] == ao.A9_17_SHA256
+    assert "MODEL_ASSUMPTION" not in json.dumps(oc)
+    ob = design["orbit_basis"]
+    assert ob["status"] == "CODE_DEFAULT / PARAMETRIC" and ob["requirement_input"] is False
+    assert "all local times" in ob["local_time"]
+    assert "CODE_DEFAULT / PARAMETRIC" in design["rule"] and "A9.17 ORBIT" in design["authority"]
+    for fn in (ao.mission_env_orbit_assumption, ao.reachable_lat_max_deg, ao.design_states, ao.orbit_states):
+        assert "PARAMETRIC" in fn.__doc__, fn.__name__
+    o = ao.orbit_states(205.0, 96.32, 6.0, "ECSS_LT_MODERATE", 80, 0.0, 4)
+    assert all(x["orbit_inputs_status"].startswith("PARAMETRIC") for x in o)
+    e4 = {e["id"]: e for e in meta["errata"]}["E4"]
+    assert e4["data_file_changed"] is False
+
+
+def test_design_states_content_unchanged_by_labels(design):
+    # A9.17 regenerated the design-state file with label changes only: the 179 per-state records are the v1 ones.
+    h = hashlib.sha256(json.dumps(design["states"], sort_keys=True).encode()).hexdigest()
+    assert h == V1_DESIGN_STATES_CONTENT_SHA256 and design["n_states"] == len(design["states"]) == 179
+    lats = [abs(s["lat_deg"]) for s in design["states"]]
+    assert max(lats) == pytest.approx(design["reachable_lat_max_deg"])          # envelope still spans all LSTs
+    assert {s["lst_h"] for s in design["states"]} >= {0.0, 3.0, 6.0, 15.0}

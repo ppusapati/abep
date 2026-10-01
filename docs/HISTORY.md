@@ -2466,3 +2466,31 @@ steps (experiment/procurement/budget records; A9.9 production-model changes; A9.
 - **Optional Rust parity CI** `.github/workflows/rust-parity.yml` (A9.14 S10.4); not a required check.
 - **Reference spacecraft drag basis** (A9.13 S6.18), labelled REFERENCE/PARAMETRIC, not the flight spacecraft.
 - **Species-resolved sputter-yield evidence register** `docs/evidence/sputter_yields_v1/` (A9.12 S5.13).
+
+## 2026-10-01 — A9.17 DATA_SIZE / ORBIT applied to `atmosphere_msis21_orbit_v1` (storage + labels; content unchanged)
+
+Authority: `docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json` (sha256 9fd77c95…c3ad; verbatim
+`OD_2026_10_01_A9_17_DATA_ARTIFACT_OWNER_DECISIONS.md`, sha256 540212c0…ba13), decision keys DATA_SIZE and ORBIT.
+
+- **One canonical compressed copy.** The 17.2 MB `atmosphere_msis21_orbit_v1.csv` is replaced by
+  `atmosphere_msis21_orbit_v1.csv.gz` (4.6 MB; deterministic gzip: explicit header, MTIME 0, no file name, XFL 2, OS 255,
+  raw deflate level 9). The decompressed bytes are identical to the v1 CSV: sha256
+  c0ce282e99695be8cae0834270c5b9ff7853033255665abda7ec18c307566164, unchanged, checked byte-for-byte against the
+  committed blob. The manifest JSON now records both the uncompressed-CSV sha256 (`sha256`, the dataset identity) and
+  the container sha256 (`container.sha256` 71ce01c3…8ace, zlib 1.3). The accessor reads the .gz and verifies both hashes
+  on load. `build` writes the .gz. `check` verifies both hashes, re-encodes the CSV, and re-runs the pymsis subset (OK).
+  `correct-metadata` repacks a legacy CSV and applies errata E3/E4. No MSIS re-run was needed; the data did not change.
+- **Excluded from the installed package.** No installed production module imports `abep_sim.atmosphere_orbit`.
+  `pyproject.toml` package-data is now an explicit file list (the frozen orbit-averaged v1 atmosphere, intake surface,
+  goldens and rate tables still ship). `exclude-package-data` and `MANIFEST.in exclude` drop `atmosphere_msis21_orbit_v1*`;
+  a wheel and an sdist built locally were verified to omit the files. Without the data the accessor raises
+  FileNotFoundError naming `abep_sim/data/atmosphere_msis21_orbit_v1.csv.gz`; there is no fallback.
+- **Orbit labels.** The mission_env 96.3° / dawn-dusk orbit is labelled `CODE_DEFAULT / PARAMETRIC` (never a requirement
+  input; inclination and LTAN TBD from the official mission ICD). This applies to the manifest `orbit_coverage`,
+  `mission_env_orbit_assumption`, the `orbit_states` per-state status and the design-state rule and `orbit_basis`. The
+  design-states file was regenerated with **label changes only**: the 179 per-state records were kept verbatim, and the
+  content hash is pinned in the tests.
+- Open (not changed here): (1) the v1 design-state latitude bound (|lat| ≤ 83.75°) comes from the code-default SSO
+  family. Inclinations between ~83.75° and ~96.25° reach higher latitudes; the grid covers them, the design-state set
+  does not. (2) Per-state `interp_max_rel_err_rho` is null for the 26 interpolated boundary design states, a v1 build
+  ordering defect recorded in E4. Both are for the next design-state version.

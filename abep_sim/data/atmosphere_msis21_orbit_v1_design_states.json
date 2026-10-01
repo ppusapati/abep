@@ -3,13 +3,24 @@
  "dataset_sha256": "c0ce282e99695be8cae0834270c5b9ff7853033255665abda7ec18c307566164",
  "reachable_lat_max_deg": 83.74996155987297,
  "nominal_scenario": "ECSS_LT_MODERATE",
+ "orbit_basis": {
+  "status": "CODE_DEFAULT / PARAMETRIC",
+  "requirement_input": false,
+  "local_time": "all local times (LTAN-agnostic)",
+  "latitude": "|lat| <= reachable_lat_max_deg() of the CODE_DEFAULT SSO family (parametric)",
+  "real_orbit": "TBD from the official mission ICD; a new dataset version when supplied"
+ },
  "authority": {
   "A9.14 S9.8 OD3": {
    "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
    "sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c"
+  },
+  "A9.17 ORBIT": {
+   "path": "docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json",
+   "sha256": "9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad"
   }
  },
- "rule": "S9.8 design-state set, derived from the frozen dataset only (no hand-picked F10.7/density points).\n\nCandidate pool: every grid node with |lat| <= reachable_lat_max_deg() plus the interpolated latitude-boundary states\nat +/- reachable_lat_max_deg() for every other node coordinate (the SSO family reaches 83.6-83.75 deg, between the\n80 and 90 deg nodes). The pool is LTAN-agnostic (all local times), since the inclination/LTAN are not\nowner-registered. For every scenario x altitude node, the set contains: NOMINAL (state of median density), the\nmax/min of rho, x_O, x_N2, x_O2, T, and LST_PEAK / LST_TROUGH (median-density state at the local time whose\nlat/lon/season-mean density is highest / lowest). Envelope extrema over all scenarios and altitudes are included.\nThe mission nominal scenario is ECSS long-term moderate. Identical states are merged with all their labels.",
+ "rule": "S9.8 design-state set, derived from the frozen dataset only (no hand-picked F10.7/density points).\n\nCandidate pool: every grid node with |lat| <= reachable_lat_max_deg() plus the interpolated latitude-boundary states\nat +/- reachable_lat_max_deg() for every other node coordinate (the CODE_DEFAULT / PARAMETRIC SSO family of\nmission_env reaches 83.6-83.75 deg, between the 80 and 90 deg nodes; it is not a requirement input). The pool is\nLTAN-agnostic (all local times): inclination and LTAN are TBD from the official mission ICD (A9.17 ORBIT).\nFor every scenario x altitude node, the set contains: NOMINAL (state of median density), the max/min of rho, x_O, x_N2, x_O2, T, and LST_PEAK / LST_TROUGH (median-density state at the local time whose\nlat/lon/season-mean density is highest / lowest). Envelope extrema over all scenarios and altitudes are included.\nThe mission nominal scenario is ECSS long-term moderate. Identical states are merged with all their labels.",
  "n_states": 179,
  "states": [
   {
