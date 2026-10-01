@@ -429,6 +429,10 @@ def _load_sibling(fname, name):
 # A9.16 step 1 (owner decisions of 2026-10-01 A9.8 / A9.10 / A9.11 / A9.14 / A9.15): data module + rules module
 APP = _load_sibling("a9_16_application.py", "p1_a9_16_application_for_builder")
 PINS = PINS + APP.pins()
+# A9.19 / A9.20 (owner decisions of 2026-10-01: one Hall + one RF/ICP neutralizer, two supply modes, no hollow cathode;
+# C1 ground-only laboratory reference)
+APP19 = _load_sibling("p1_a9_19_application.py", "p1_a9_19_application_for_builder")
+PINS = PINS + APP19.pins()
 GOVERNANCE_NOT_PINNED = ["docs/orchestration/lane_registry_v1.json", "docs/orchestration/trigger_registry_v1.json",
                          "docs/orchestration/trigger_ledger_v2.jsonl", "docs/orchestration/fired_triggers.jsonl",
                          "docs/orchestration/runtime_state.json"]
@@ -1649,6 +1653,10 @@ def readiness():
                         "(quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the "
                         "owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance "
                         "payments or binding commitments)"})
+            if name.startswith("C1 (hall_c1_reference)"):
+                # A9.19 / A9.20: the item text is read back by the immutable RFQ v2 builder; the role goes here
+                out[-1]["c1_status"] = APP19.C1_STATUS_TEXT
+    assert sum("c1_status" in r for r in out) == 1, "A9.20: exactly one C1 readiness row expected"
     return out
 
 
@@ -1742,7 +1750,7 @@ def interface_demands():
          "status": "CONSUMED"},
         {"id": "IF-P1-21", "direction": "from", "counterpart": "H2-2 " + H22 + " / RFQ-08", "what": "C1 (C-1) module "
          "installed on KC-1 with a disconnect means and a verification that it supplies no electrons in P1-S6 "
-         "(OQ-VI-05 step 2)", "units": "-, A", "status": "REQUIRED (C1 stays CONTROL_FALLBACK)"},
+         "(OQ-VI-05 step 2)", "units": "-, A", "status": "REQUIRED (C1 = GROUND_ONLY_LAB_EQUIPMENT, A9.20)"},
         {"id": "IF-P1-22", "direction": "to", "counterpart": "A9-03 ICD " + ICD, "what": "P1-S4 extraction topology "
          "(P1-IT-36) and the interim connector/harness record as inputs to the ICD revision (P1Q-12)",
          "units": "mm, V, A", "status": "OFFERED (after P1-G0)"},
@@ -1798,7 +1806,8 @@ def interface_demands():
 
 def owner_answers_applied():
     rows = [
-        ("A9", "governing decision", "primary investigation Hall + downstream 13.56 MHz ICP; C1 CONTROL_FALLBACK; "
+        ("A9", "governing decision", "primary investigation Hall + downstream 13.56 MHz ICP; C1 CONTROL_FALLBACK (C1 "
+         "role superseded by A9.19 / A9.20: GROUND_ONLY_LAB_EQUIPMENT); "
          "evidence order Ar -> N2 -> O2 (P1 is the Ar step); status kept INVESTIGATION_HYPOTHESIS"),
         ("A9.3 OQ-VI-03", "decision", "first build open-tube coaxial only; orificed-variant provisions listed"),
         ("A9.3 OQ-VI-05", "decision", "P1-S6 seven steps verbatim; classification REQUIRED_ENGINEERING_CONTROL_NON_"
@@ -1935,7 +1944,8 @@ def owner_answers_applied():
         ("A9.6 sec. 14", A96_MD + " sec. 14", "APPLIED: fail-closed audit bullet by bullet with one explicit test each "
          "(a9_6_incorporation.fail_closed_audit); OUT_OF_DOMAIN outcome added, never counted as FAIL"),
     ]
-    return [{"id": r[0], "kind": r[1], "how_applied": r[2]} for r in rows] + APP.owner_answer_rows()
+    return ([{"id": r[0], "kind": r[1], "how_applied": r[2]} for r in rows] + APP.owner_answer_rows()
+            + APP19.owner_answer_rows())
 
 
 def open_questions():
@@ -2066,7 +2076,9 @@ def m16_impact():
          "hardware only"},
         {"row": 14, "key": "control_fdir", "impact": "RF protection / interlock functions exercised; thresholds "
          "frozen at P1-G2"},
-        {"row": 11, "key": "cathode", "impact": "C1 disconnected in P1-S6; stays CONTROL_FALLBACK"},
+        {"row": 11, "key": "cathode", "impact": "C1 disconnected or not installed in P1-S6; C1 = "
+                                                 "GROUND_ONLY_LAB_EQUIPMENT (A9.20), no hollow cathode in flight "
+                                                 "(A9.19)"},
         {"row": 9, "key": "hall_chamber", "impact": "H-1 Hall-on only in P1-S6/S7 on Ar, engineering-only"},
         {"row": 16, "key": "mechanical_structural", "impact": "KC-1 carrier provisions for a later "
          "ICP_ORIFICED_VARIANT"},
@@ -2465,9 +2477,7 @@ def build_doc():
                               "(A9.3 OQ-RFQ-10)",
             "gas": "Ar only; label ENGINEERING_ONLY_NON_SCORING on every record; never counts toward DRDO atmospheric "
                    "requirements (owner row 36; A9.3 OQ-RFQ-02)",
-            "configurations": ["hall_icp_neutralizer (P1 builds its ICP module)", "hall_c1_reference (C1 not "
-                               "installed or disconnected in P1-S6, A9.10 OQ-RFQV2-09; CONTROL_FALLBACK; C1 needed "
-                               "for the I_d,max,H1,Ar characterization gate, A9.10 P1Q-07)"],
+            "configurations": APP19.configurations(),
             "outcome_vocabulary_note": "P1 produces engineering records only; the architecture outcome vocabulary "
                                        "(incl. NO_VIABLE_CASE) belongs to the later comparison",
         },
@@ -2483,6 +2493,7 @@ def build_doc():
         "hardware_readiness": readiness(),
         "interface_demands": interface_demands(),
         "owner_answers_applied": owner_answers_applied(),
+        "a9_19_incorporation": APP19.incorporation(_reducer()),
         "open_owner_questions": open_questions(),
         "open_owner_questions_note": APP.AS_RAISED_QUESTIONS_NOTE,
         "owner_question_status_current": APP.owner_question_status_current(open_questions()),
@@ -2603,6 +2614,9 @@ def _stage_defs(red):
     ign = {"type": "object", "required": list(red.IGNITION_REQUIRED), "properties": dict(
         common, record_kind={"const": "ignition_attempt"}, stage_id={"const": "P1-S3"}, gas={"enum": list(red.P1_GASES)},
         gas_mode={"enum": list(red.GAS_MODES)}, hall_discharge_state={"const": "OFF"}, rf=rf,
+        supply_mode={"enum": list(red.ICP_RECORD_SUPPLY_MODES),
+                     "description": "A9.19 supply mode (optional; must agree with gas, p1_reducer.icp_supply_mode); "
+                                    "P1 reduces the Ar bench mode only"},
         ignited={"type": "boolean"}, ignition_delay_s={"type": ["number", "null"]}, extinguished={"type": "boolean"},
         optical=_optical_def(red), point_id={"type": "string", "minLength": 1},
         ignition_procedure_id={"type": "string", "minLength": 1}, h1_magnet_state={"enum": list(red.MAGNET_STATES)},
@@ -2649,6 +2663,9 @@ def build_schema():
             "timestamp_utc": {"type": "string"}, "synthetic": {"type": "boolean"},
             "labels": {"type": "array", "items": {"type": "string"}, "contains": {"const": red.REQUIRED_LABEL}},
             "gas": {"enum": list(red.P1_GASES)}, "gas_mode": {"enum": list(red.GAS_MODES)},
+            "supply_mode": {"enum": list(red.ICP_RECORD_SUPPLY_MODES),
+                            "description": "A9.19 supply mode (optional; must agree with gas, p1_reducer."
+                                           "icp_supply_mode); P1 reduces the Ar bench mode only"},
             "record_class": {"enum": list(red.RECORD_CLASSES),
                              "description": "A9.4 P1Q-10 / P1Q-13: only ICP45_CAPACITY records feed I_e,cap; Hall-ON "
                                             "records are NEUTRALIZATION_CONSISTENCY; METERED_RETURN anode only in a "

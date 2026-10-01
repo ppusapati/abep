@@ -506,6 +506,8 @@ values flow only P4 -> MP (candidate densities) and XE -> MP (Xe residual and he
 | A9.12 OQ-A910-06 | APPLIED A9.16 step 1 (YES_600W_TEMPORARY, S5.8 OQ-A910-06): Q_RF,allocation = 500 W x 1.20 = 600 W kept as the present RF-path thermal allocation (not a component rating, not a demonstrated flight operating point, not the ICP-43 bound, not delivered RF power; P_line/match,loss additional); after the P2 map the RF thermal input is re-derived from the measured / verified envelope of P_delivered, line / match losses, antenna / plasma loading and uncertainty, with the 1.20 margin - P2 supplies that envelope and p3_a9_16_rules.rf_thermal_basis consumes it [implemented in a9_16_application.apply (p2_outputs_later OQ-A910-06); tests test_p2_a9_16_oq_a910_06_owner_decided] |
 | A9.15 RFP | REVIEWED, NOT_APPLICABLE to the P2 artifacts: reviewed: no P2 text restricts Xe to a C1 contingency; P2 gas modes keep the A9.1 ICP gas-mode baseline (G-REUSE primary, G-XE a declared ICP-feed variant) unchanged; the RFP air + Xe dual-propellant capability is a system requirement outside the P2 impedance-map methodology |
 | A9.11 P1Q-01 | REVIEWED, NOT_APPLICABLE to the P2 artifacts: P1 stable-region criteria form (P1 lane); P2 consumes the handoff unchanged via p2_framework.p1_handoff_admissible (pair XL-01 text owned jointly with P1, not edited here) |
+| owner_decision A9.19 | one ICP for both supply modes: evidence tag TAG_XE (XE_CONTINGENCY) for Xe records, N2 / O2-bearing tags map to AIR_PRIMARY (p2_impedance_reducer.supply_mode_of_tag); optional factors.supply_mode checked against the gas; ICP feed-gas baseline G-REUSE / G-XE unchanged |
+| owner_decision A9.20 | C1 = GROUND_ONLY_LAB_EQUIPMENT (P2 does not operate C1); not CONTROL_FALLBACK |
 
 ## (d) Owner questions raised by P2 (all answered; none open now)
 
@@ -712,6 +714,10 @@ H4 (test):
 | A914MD | docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md | `2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07` |
 | A915 | docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json | `a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309` |
 | A915MD | docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md | `edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903` |
+| A919 | docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json | `20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16` |
+| A919MD | docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md | `d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749` |
+| A920 | docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json | `9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6` |
+| A920MD | docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md | `2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c` |
 | UB | docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json | `c6567e6d0bbc008bedd5b9c14a9716f117144ab6952b9c498f7b0c75e02a624d` |
 | ICD | schemas/interfaces/icp_neutralizer_icd_v1.json | `8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c` |
 | H2A9 | docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json | `b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa` |

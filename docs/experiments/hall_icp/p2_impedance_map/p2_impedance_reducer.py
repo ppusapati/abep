@@ -158,9 +158,26 @@ TAG_AR = "ENGINEERING_ONLY_NON_SCORING (A9.3 OQ-RFQ-02: Ar)"
 TAG_VI05 = "REQUIRED_ENGINEERING_CONTROL_NON_SCORING (A9.3 OQ-VI-05)"
 TAG_N2 = "N2_STAGE (A9 evidence order)"
 TAG_O2 = "O2_BEARING_NO_ATOMIC_O (A9 evidence order)"
+# OWNER A9.19 / A9.20 (docs/decisions/OD_2026_10_01_A9_19_* / *_A9_20_*; constants mirrored from
+# abep_sim/design/a9_19_architecture.py, equality checked by tests/test_p2_a9_19_owner_rules.py): ONE RF/ICP
+# neutralizer serves BOTH supply modes AIR_PRIMARY (N2-family / atmospheric) and XE_CONTINGENCY (Xe, contingency /
+# emergency); no conventional hollow cathode; C1 = GROUND_ONLY_LAB_EQUIPMENT (not operated by P2)
+TAG_XE = "XE_CONTINGENCY_SUPPLY_MODE (A9.19; ICP feed G-XE declared variant, A9.1)"
 TAG_OTHER = "OTHER_GAS_UNCLASSIFIED_NON_SCORING"
 TAG_NONE = "NO_GAS_NOT_APPLICABLE (calibration / dummy-load / unlit record)"
-EVIDENCE_TAGS = (TAG_AR, TAG_VI05, TAG_N2, TAG_O2, TAG_OTHER, TAG_NONE)
+EVIDENCE_TAGS = (TAG_AR, TAG_VI05, TAG_N2, TAG_O2, TAG_XE, TAG_OTHER, TAG_NONE)
+SUPPLY_MODES = ("AIR_PRIMARY", "XE_CONTINGENCY")
+BENCH_SUPPLY_MODE = "BENCH_AR_ENGINEERING_GROUND_ONLY"
+C1_LAB_STATUS = "GROUND_ONLY_LAB_EQUIPMENT"
+_SUPPLY_MODE_BY_TAG = {TAG_AR: BENCH_SUPPLY_MODE, TAG_VI05: BENCH_SUPPLY_MODE, TAG_N2: "AIR_PRIMARY",
+                       TAG_O2: "AIR_PRIMARY", TAG_XE: "XE_CONTINGENCY", TAG_OTHER: None, TAG_NONE: None}
+
+
+def supply_mode_of_tag(tag):
+    """A9.19 supply mode of an evidence tag (None for no gas / an unclassified gas)."""
+    if tag not in _SUPPLY_MODE_BY_TAG:
+        raise RecordError(f"unknown evidence tag {tag!r}")
+    return _SUPPLY_MODE_BY_TAG[tag]
 
 
 class P2ReducerError(ValueError):
@@ -482,6 +499,10 @@ def reduce_record(rec, calibrations):
     if rec["sweep"]["direction"] not in SWEEP_DIRECTIONS:
         raise RecordError(f"sweep.direction {rec['sweep']['direction']!r} not in {SWEEP_DIRECTIONS}")
     tag = evidence_tag(rec)
+    declared_mode = rec["factors"].get("supply_mode") if isinstance(rec["factors"], dict) else None
+    if declared_mode is not None and declared_mode != supply_mode_of_tag(tag):
+        raise RecordError(f"factors.supply_mode {declared_mode!r} contradicts factors.gas "
+                          f"{rec['factors'].get('gas')!r} (supply mode {supply_mode_of_tag(tag)!r}; A9.19)")
     methods = rec["methods"]
     if not isinstance(methods, list) or not methods or any(m not in METHODS for m in methods):
         raise RecordError(f"methods must be a non-empty subset of {METHODS}")
@@ -1221,6 +1242,8 @@ def evidence_tag(rec):
         return TAG_O2
     if g in ("N2", "NITROGEN"):
         return TAG_N2
+    if g in ("XE", "XENON"):
+        return TAG_XE
     return TAG_OTHER
 
 

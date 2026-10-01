@@ -738,6 +738,14 @@
       }
      }
     },
+    "supply_mode": {
+     "enum": [
+      "AIR_PRIMARY",
+      "XE_CONTINGENCY",
+      "BENCH_AR_ENGINEERING_GROUND_ONLY"
+     ],
+     "description": "A9.19 supply mode (optional; must agree with gas, p1_reducer.icp_supply_mode); P1 reduces the Ar bench mode only"
+    },
     "ignited": {
      "type": "boolean"
     },
@@ -999,6 +1007,14 @@
       "G-REUSE",
       "DIAGNOSTIC_DEDICATED_FEED"
      ]
+    },
+    "supply_mode": {
+     "enum": [
+      "AIR_PRIMARY",
+      "XE_CONTINGENCY",
+      "BENCH_AR_ENGINEERING_GROUND_ONLY"
+     ],
+     "description": "A9.19 supply mode (optional; must agree with gas, p1_reducer.icp_supply_mode); P1 reduces the Ar bench mode only"
     },
     "record_class": {
      "enum": [

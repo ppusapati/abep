@@ -35,6 +35,7 @@ MD_PATH = LANE_DIR / "H1_FREEZE_CANDIDATE.md"
 REL_SELF = "docs/hardware/h1_freeze_candidate/build_h1_freeze_candidate.py"
 sys.path.insert(0, str(LANE_DIR))
 import a9_16_h1 as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
+import a9_19_h1 as A19  # noqa: E402  (A9.19 / A9.20 owner-decision application, design + experiments lane)
 BASE_COMMIT = "1c9d7a648cd4ce739e587248693271e5115698e1"
 DATE = "2026-10-01"
 
@@ -73,6 +74,11 @@ PINS = {
     "A914_MD": (A16.L.LOADED["A9.14"]["md"], A16.L.LOADED["A9.14"]["md_sha256"]),
     "A915": (A16.L.DECISIONS["A9.15"][0], A16.L.DECISIONS["A9.15"][1]),
     "A915_MD": (A16.L.LOADED["A9.15"]["md"], A16.L.LOADED["A9.15"]["md_sha256"]),
+    # A9.19 / A9.20 (pinned in abep_sim/design/a9_19_architecture.py)
+    "A919": (A19.A.DECISIONS["A9.19"]["json"], A19.A.DECISIONS["A9.19"]["json_sha256"]),
+    "A919_MD": (A19.A.DECISIONS["A9.19"]["md"], A19.A.DECISIONS["A9.19"]["md_sha256"]),
+    "A920": (A19.A.DECISIONS["A9.20"]["json"], A19.A.DECISIONS["A9.20"]["json_sha256"]),
+    "A920_MD": (A19.A.DECISIONS["A9.20"]["md"], A19.A.DECISIONS["A9.20"]["md_sha256"]),
     "P5B16": ("hallthruster_bridge/bfield/p5_vacuum_Br_centerline_1p6kW.csv",
               "65216f4d713be929b9c59f101711301d933df7b2ae1ed3478b36aa3772926625"),
     "P5B30": ("hallthruster_bridge/bfield/p5_vacuum_Br_centerline_3p0kW.csv",
@@ -1007,6 +1013,7 @@ def build_document() -> dict:
 
     params = build_parameters()
     a916_touched = A16.apply_to_parameters(params, FEMM, COUPLED)
+    a919_touched = A19.apply_to_parameters(params)
     ids = [p["id"] for p in params]
     assert len(ids) == len(set(ids))
 
@@ -1074,7 +1081,7 @@ def build_document() -> dict:
             "hall_response_maps": "no admitted domain exists; none is used",
             "icp45": "NOT_EVALUATED (I_d,max,H1 not registered; no P1 data)",
             "p1_p2": "no data",
-            "a9": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; C1 CONTROL_FALLBACK",
+            "a9": A19.A9_STANDING,
             "a9_2_statuses": get("A92", "/decisions/a9_10_statuses"),
         },
         "what_this_is_not": [
@@ -1141,6 +1148,9 @@ def build_document() -> dict:
         "open_owner_questions": A16.answered_open_questions(open_owner_questions()),
         "a9_16_owner_answers_applied": A16.owner_answers_applied(),
         "a9_16_touched_parameters": a916_touched,
+        "flight_architecture": A19.A.FLIGHT_ARCHITECTURE,
+        "a9_19_owner_answers_applied": A19.owner_answers_applied(),
+        "a9_19_touched_parameters": a919_touched,
         "existing_owner_questions_touched": [
             {"id": q, "status": get("OQ5", find("OQ5", "/rows", "id", q) + "/status"),
              "v4_status": get("OQ4", find("OQ4", "/rows", "id", q) + "/status"),
@@ -1504,6 +1514,14 @@ def render_md(doc: dict) -> str:
     for r in doc["a9_16_owner_answers_applied"]:
         a(f"| {r['decision']} | {r['question_id']} | {r['decision_code']} | {', '.join(r['record_ids'])} | "
           f"{_fmt(r['how_applied'])} |")
+    a("")
+    a("A9.19 / A9.20 owner decisions applied (one Hall + one RF/ICP neutralizer, supply modes AIR_PRIMARY / "
+      "XE_CONTINGENCY, no conventional hollow cathode; C1 ground-only):")
+    a("")
+    a("| decision | item | records | how applied |")
+    a("|---|---|---|---|")
+    for r in doc["a9_19_owner_answers_applied"]:
+        a(f"| {r['decision']} | {r['question_id']} | {', '.join(r['record_ids'])} | {_fmt(r['how_applied'])} |")
     a("")
     a("Existing owner questions touched (not restated): " + ", ".join(
         f"{q['id']} ({q['status']})" for q in doc["existing_owner_questions_touched"]) + ".")

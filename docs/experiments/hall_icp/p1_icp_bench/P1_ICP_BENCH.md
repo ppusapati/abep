@@ -417,7 +417,7 @@ Not a prediction: levels are test settings, not predicted operating points (owne
 | IF-P1-18 | to | A9-06 docs/budgets/mass_a9/mass_a9_v1.json | measured mass of the P1 ICP ground article (context for IDA7-02; not a flight mass) | kg | OFFERED | - |
 | IF-P1-19 | from | A9-05 docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json | Takahashi anchor values with locators (anchor_check) | per item | CONSUMED (context only) | - |
 | IF-P1-20 | from | instrumentation docs/experiments/instrumentation/instrumentation_definition_v1.json / docs/experiments/instrumentation/metrology_spec/metrology_measurement_spec_v1.json | INS-04, INS-08, INS-10, INS-11, INS-17, INS-18; MS-G-01..03 for certificate traceability | - | CONSUMED | - |
-| IF-P1-21 | from | H2-2 docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json / RFQ-08 | C1 (C-1) module installed on KC-1 with a disconnect means and a verification that it supplies no electrons in P1-S6 (OQ-VI-05 step 2) | -, A | REQUIRED (C1 stays CONTROL_FALLBACK) | - |
+| IF-P1-21 | from | H2-2 docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json / RFQ-08 | C1 (C-1) module installed on KC-1 with a disconnect means and a verification that it supplies no electrons in P1-S6 (OQ-VI-05 step 2) | -, A | REQUIRED (C1 = GROUND_ONLY_LAB_EQUIPMENT, A9.20) | - |
 | IF-P1-22 | to | A9-03 ICD schemas/interfaces/icp_neutralizer_icd_v1.json | P1-S4 extraction topology (P1-IT-36) and the interim connector/harness record as inputs to the ICD revision (P1Q-12) | mm, V, A | OFFERED (after P1-G0) | - |
 | IF-P1-23 | to | P2 docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json IDP2-17 / HM-R15 | photodiode (INS-P2-10) dark/background, RF-powered known-unlit and known-lit P1 records with simultaneous P_refl, antenna current, collector/current-path response and pressure, from which the P2 unlit threshold is frozen before the P2 map (A9.4 P2Q-05) | V; W; A; Pa | TBD_AFTER_EVIDENCE (owning stages P1-S2, P1-S3..S5; records not yet taken) | XL-06 -> P2:IDP2-17 |
 | IF-P1-24 | to | RFQ v2 docs/procurement/rfq_a9_v2/rfq_a9_v2.json IFD-18 (TH-L07, TH-L08, VAC-L07, HE-L04, VAC-L03, HE-O02) | A9.4 procurement items: photodiode, optical access / window, amplifier, DAQ channel (P2Q-05); >= 525 V design withstand and 1.05 kV DC / 60 s initial DWV on the ICP body / collector isolation and feedthrough lines, DWV tester as option line (P1Q-14) | V; s | DEFINED (recorded in RFQ v2 as TH-L07, TH-L08, VAC-L07, VAC-L03, HE-L04 and option HE-O02; quotation only) | XL-13 -> RFQ:IFD-18 |
@@ -453,7 +453,7 @@ values flow only P4 -> MP (candidate densities) and XE -> MP (Xe residual and he
 
 | row / decision | kind | how applied |
 |---|---|---|
-| A9 | governing decision | primary investigation Hall + downstream 13.56 MHz ICP; C1 CONTROL_FALLBACK; evidence order Ar -> N2 -> O2 (P1 is the Ar step); status kept INVESTIGATION_HYPOTHESIS |
+| A9 | governing decision | primary investigation Hall + downstream 13.56 MHz ICP; C1 CONTROL_FALLBACK (C1 role superseded by A9.19 / A9.20: GROUND_ONLY_LAB_EQUIPMENT); evidence order Ar -> N2 -> O2 (P1 is the Ar step); status kept INVESTIGATION_HYPOTHESIS |
 | A9.3 OQ-VI-03 | decision | first build open-tube coaxial only; orificed-variant provisions listed |
 | A9.3 OQ-VI-05 | decision | P1-S6 seven steps verbatim; classification REQUIRED_ENGINEERING_CONTROL_NON_SCORING; P1-S6D diagnosis branch |
 | A9.3 OQ-A907-02 | decision | 8.33 A = stand ceiling for sizing only; I_e,required = I_d,max,H1; surface reported; reducer refuses STAND_CEILING / POWER_ENVELOPE_BOUND as registration basis |
@@ -543,6 +543,9 @@ values flow only P4 -> MP (candidate densities) and XE -> MP (Xe residual and he
 | A9.14 F6-OQ-03 | owner decision (A9.16 step 1) | APPLIED (MULTI_GEOMETRY_BENCH_FIRST_MODEL_AFTER_VALIDATION): registration slot icp_geometry_matrix {matrix_id, frozen_utc, geometries [{geometry_id, drawing_id, revision, within_drawing_envelope true}]}; operating points carry icp_geometry_id in the matrix (else OUT_OF_DOMAIN); each geometry reported MEASURED_GEOMETRY / NOT_YET_MEASURED; no surrogate between geometries before separate predictive validation; a geometry outside the drawing envelope is refused (F6-OQ-02) [decision docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c, S7.8 F6-OQ-03; verbatim docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md] |
 | A9.15 RFP-COMPLIANT | owner decision reviewed (A9.16 step 1) | NOT_APPLICABLE to the P1 artifacts: reviewed: the P1 package contains no wording that restricts Xe to a C1 contingency (nothing to amend); P1 is the Ar engineering step (G-REUSE, ICP gas-mode baseline A9.1 unchanged; G-XE stays a declared ICP-feed variant, a dedicated feed only as a labelled diagnostic booked in the corresponding atmospheric / Xe ledger); C1_NOT_INSTALLED in P1-S6 (A9.10 OQ-RFQV2-09) is a bench topology control and does not remove the RFP-required system Xe capability [decision docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309; verbatim docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md] |
 | A9.14 OQ-A907-07 | owner decision reviewed (A9.16 step 1) | NOT_APPLICABLE to the P1 artifacts: mass / Xe accounting / flight-configuration items; no P1 bench artifact carries them (owned by the mass / Xe and RFQ lanes) [decision docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c; verbatim docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md] |
+| A9.19 architecture | decision | flight configuration = hall_icp_neutralizer only (one Hall + one RF/ICP neutralizer for AIR_PRIMARY and XE_CONTINGENCY, no conventional hollow cathode); hall_c1_reference listed only as GROUND_REFERENCE |
+| A9.19 supply_modes | decision | ICP ignition / operation records allow both supply modes (AIR_PRIMARY N2-family, XE_CONTINGENCY Xe) via an optional supply_mode checked against the gas; P1 stays the Ar step and refuses N2 / Xe records naming the stage that reduces them; ICP feed-gas baseline G-REUSE / G-XE unchanged |
+| A9.20 c1_role | decision | C1 = GROUND_ONLY_LAB_EQUIPMENT (H-1 I_d,max,H1,Ar characterization, A9.10 S3.5; C1-vs-ICP bench control); not CONTROL_FALLBACK; P1-S6 C1_NOT_INSTALLED logic unchanged |
 
 ## 14. (d) Open owner questions: none open now (the P1 questions as raised, all answered)
 
@@ -596,7 +599,7 @@ Owner questions open now: 0.
 | 13 | thermal_control | temperatures recorded for the P3 coupled model; ICP_COUPLED_THERMAL stays UNRESOLVED |
 | 12 | ppu | collector/bias supply and stand-ceiling sizing (8.33 A) for ground hardware only |
 | 14 | control_fdir | RF protection / interlock functions exercised; thresholds frozen at P1-G2 |
-| 11 | cathode | C1 disconnected in P1-S6; stays CONTROL_FALLBACK |
+| 11 | cathode | C1 disconnected or not installed in P1-S6; C1 = GROUND_ONLY_LAB_EQUIPMENT (A9.20), no hollow cathode in flight (A9.19) |
 | 9 | hall_chamber | H-1 Hall-on only in P1-S6/S7 on Ar, engineering-only |
 | 16 | mechanical_structural | KC-1 carrier provisions for a later ICP_ORIFICED_VARIANT |
 
@@ -898,6 +901,10 @@ Pinning: the P1 json / reducer / campaign are sha-pinned or read by other packag
 - `docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md` - `2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07` (owner A9.14 verbatim (governs over the json summary; A9.16 step 1))
 - `docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json` - `a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309` (owner A9.15 (machine-readable; A9.16 step 1))
 - `docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md` - `edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903` (owner A9.15 verbatim (governs over the json summary; A9.16 step 1))
+- `docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json` - `20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16` (owner decision A9.19 (json))
+- `docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md` - `d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749` (owner decision A9.19 (verbatim md, governs))
+- `docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json` - `9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6` (owner decision A9.20 (json))
+- `docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md` - `2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c` (owner decision A9.20 (verbatim md, governs))
 
 Read but never pinned (mutable governance): `docs/orchestration/lane_registry_v1.json`; `docs/orchestration/trigger_registry_v1.json`; `docs/orchestration/trigger_ledger_v2.jsonl`; `docs/orchestration/fired_triggers.jsonl`; `docs/orchestration/runtime_state.json`
 

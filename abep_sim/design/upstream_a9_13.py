@@ -24,6 +24,8 @@ Owner decisions implemented here (immutable records; the verbatim .md governs; c
     S6.22 / F9-OQ-03   a gate closes only on determining evidence: never a PASS / MET on assumptions or parametrics
   A9.14 S9.7 / OD2     statewise envelope quantifier (abep_sim.atmosphere_orbit.statewise_quantifier)
   A9.15                RFP propellant policy: ambient air AND Xe capability, two separate propellant tanks / paths
+  A9.19 / A9.20        (abep_sim/design/a9_19_architecture.py) amend A9.15 on the ROLE of Xe: two supply modes
+                       AIR_PRIMARY / XE_CONTINGENCY; the HC-10 Xe path role is CONTINGENCY_EMERGENCY; no hollow cathode
   A9.17                the official RFP is registered (docs/requirements/rfp_official/rfp_registration_v1.json) and is
                        the requirement source (clause ids RFP-Pnn-mm)
 
@@ -38,6 +40,8 @@ import math
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Mapping, Sequence
+
+from . import a9_19_architecture as a919
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -809,11 +813,15 @@ class RobustParetoSet:
 AIR_PATH = ("intake", "filter", "compressor", "atmospheric_gas_chamber", "valve")
 XE_PATH = ("xe_tank", "valve")
 PROPELLANT_POLICY = {
-    "rule": "A9.15: the system supports BOTH ambient atmospheric propellant (180-230 km) and Xenon; two separate "
-            "propellant tanks / paths; both feed ionization / discharge -> acceleration. Xe is an RFP-required system "
-            "capability, not a contingency; C1-specific Xe needs (if any) come from the selected C1 hardware",
+    "rule": "A9.15 as amended by A9.19 on the ROLE of Xe: the system supports BOTH ambient atmospheric propellant "
+            "(180-230 km) and Xenon; two separate propellant tanks / paths (two supply modes AIR_PRIMARY and "
+            "XE_CONTINGENCY); both feed the ONE Hall accelerator and the ONE RF/ICP neutralizer. Xe capability is "
+            "RFP-required (RFP-P17-05 'an extra input system to take care any problems on board unforeseen problems'; "
+            "RFP-P18-08) and its role is contingency / emergency (A9.19); no hollow cathode, so no C1 Xe branch in "
+            "flight (A9.19 / A9.20: C1 ground-only)",
     "rfp_clauses": [RFP_CLAUSES["n2_o_xe"], RFP_CLAUSES["propellants"], RFP_CLAUSES["chain"]],
     "air_path": list(AIR_PATH), "xe_path": list(XE_PATH),
+    "supply_modes": list(a919.SUPPLY_MODES), "xe_path_role": a919.XE_PATH_ROLE, "air_path_role": a919.AIR_PATH_ROLE,
 }
 
 
@@ -844,9 +852,15 @@ def propellant_paths_check(paths: Mapping[str, Sequence[str]] | None) -> dict:
         problems.append("filter must sit between the intake and the compressor (S6.6 / S6.19)")
     if "filter" not in air and air:
         problems.append("air path lacks the filter element (RFP-P16-02 chain; FC-00 is a reference bound only)")
+    if any(n == "c1" or n.startswith(("c1_", "hollow_cathode", "cathode_")) for n in xe):
+        problems.append("Xe path feeds a hollow-cathode / C1 branch: no hollow cathode in flight (A9.19; C1 ground-only "
+                        "A9.20)")
     if problems:
         raise A913RuleError("; ".join(problems))
+    roles = a919.propellant_path_roles({"air": air, "xe": xe})
     return {"constraint": "HC-10 dual propellant capability", "structure": "TWO_SEPARATE_PATHS_DECLARED",
             "status": C_NOT_EVALUATED, "reason": "air and Xe operating capability not yet demonstrated (a declared "
             "path is not determining evidence, S6.22)", "air_path": air, "xe_path": xe,
-            "policy": PROPELLANT_POLICY, "authority": cite("A9.15", "A9.17")}
+            "supply_modes": {"air": roles["air"]["supply_mode"], "xe": roles["xe"]["supply_mode"]},
+            "path_roles": {"air": roles["air"]["role"], "xe": roles["xe"]["role"]},
+            "policy": PROPELLANT_POLICY, "authority": cite("A9.15", "A9.17") + a919.cite("A9.19")}
