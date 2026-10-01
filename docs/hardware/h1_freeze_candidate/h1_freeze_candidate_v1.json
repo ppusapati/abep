@@ -263,7 +263,7 @@
   "hall_response_maps": "no admitted domain exists; none is used",
   "icp45": "NOT_EVALUATED (I_d,max,H1 not registered; no P1 data)",
   "p1_p2": "no data",
-  "a9": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; C1 CONTROL_FALLBACK",
+  "a9": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE; A9.19 flight: one Hall + one RF/ICP neutralizer for AIR_PRIMARY and XE_CONTINGENCY, no conventional hollow cathode; A9.20: C1 GROUND_ONLY_LAB_EQUIPMENT (was CONTROL_FALLBACK)",
   "a9_2_statuses": {
    "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
    "ICP electron-current capacity": "PENDING_ICP45",
@@ -376,6 +376,22 @@
   "A915_MD": {
    "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
    "sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903"
+  },
+  "A919": {
+   "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16"
+  },
+  "A919_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749"
+  },
+  "A920": {
+   "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6"
+  },
+  "A920_MD": {
+   "path": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c"
   },
   "P5B16": {
    "path": "hallthruster_bridge/bfield/p5_vacuum_Br_centerline_1p6kW.csv",
@@ -788,6 +804,20 @@
      "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
      "pointer": "/revision_register/0/new/value",
      "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "pointer": "/",
+     "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "pinned": true,
+     "note": "A9.19 A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY (verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "pointer": "/",
+     "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "pinned": true,
+     "note": "A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE (verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
     }
    ],
    "basis": "H2-1 H21-04 (corners of H1F-CH-02 x H1F-CH-03)",
@@ -798,7 +828,13 @@
     "owner selection of the channel design point (h, d_mean, L) inside the windows (M16 row 9 blocking item)",
     "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item)"
    ],
-   "note": "the v1 central-cathode floor is removed (external C1, row 79, REV-01); the remaining floor is the solid-core inner-coil build (H1F-MC-04), binding only under worst-case assumptions"
+   "note": "the v1 central-cathode floor is removed (external C1, row 79, REV-01); the remaining floor is the solid-core inner-coil build (H1F-MC-04), binding only under worst-case assumptions; A9.19 / A9.20: the external C1 is a ground-only laboratory reference, flight has no hollow cathode, so the floor removal stands",
+   "a9_19": {
+    "decisions": [
+     "A9.19",
+     "A9.20"
+    ]
+   }
   },
   {
    "id": "H1F-CH-06",
@@ -2977,12 +3013,32 @@
      "path": "docs/hardware/h2_a9_revisions/h2_a9_revisions_v1.json",
      "pointer": "/revision_register/2/new/requirement",
      "sha256": "b428565299c1c41487d9ffa50c174986d2d52c544539f89ca21b7bdbc2ae44fa"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "pointer": "/",
+     "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "pinned": true,
+     "note": "A9.19 A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY (verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "pointer": "/",
+     "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "pinned": true,
+     "note": "A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE (verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
     }
    ],
-   "basis": "owner row 79",
+   "basis": "owner row 79; A9.19 (no conventional hollow cathode in flight: the ICP neutralizer is the only electron source); A9.20 (C1 ground-only, mounted off H-1 on the bench)",
    "freeze_status": "FREEZE_CANDIDATE",
    "freeze_point": "NOW",
-   "evidence_to_freeze_candidate": []
+   "evidence_to_freeze_candidate": [],
+   "a9_19": {
+    "decisions": [
+     "A9.19",
+     "A9.20"
+    ]
+   }
   },
   {
    "id": "H1F-EX-03",
@@ -3052,6 +3108,20 @@
      "path": "schemas/interfaces/icp_neutralizer_icd_v1.json",
      "pointer": "/interface_demands/12/status",
      "sha256": "8ec092f284505e7a538d17f568c0d9d763155f9a2ce4541223ddd114169a452c"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+     "pointer": "/",
+     "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+     "pinned": true,
+     "note": "A9.19 A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY (verbatim docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md sha256 d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749)"
+    },
+    {
+     "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+     "pointer": "/",
+     "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+     "pinned": true,
+     "note": "A9.20 C1_GROUND_ONLY_LABORATORY_REFERENCE (verbatim docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md sha256 2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c)"
     }
    ],
    "basis": "REV-17; ICD ICP-32 (unmagnetized ICP, no dedicated ICP magnet, v1)",
@@ -3060,7 +3130,15 @@
    "evidence_to_freeze_candidate": [
     "FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item)",
     "measured fringe-field map downstream of IP-EXIT"
-   ]
+   ],
+   "note": "IP-C1 is a GROUND-BENCH quantity only (C1 = GROUND_ONLY_LAB_EQUIPMENT in the C1-vs-ICP bench comparison and the I_d,max,H1,Ar characterization, A9.20); the flight configuration has no C1 (A9.19)",
+   "a9_19": {
+    "decisions": [
+     "A9.19",
+     "A9.20"
+    ],
+    "ip_c1_scope": "GROUND_BENCH_ONLY"
+   }
   },
   {
    "id": "H1F-EX-06",
@@ -4631,6 +4709,118 @@
   "H1F-TH-02",
   "H1F-MA-06",
   "H1F-CO-11"
+ ],
+ "flight_architecture": {
+  "configuration": "hall_icp_neutralizer",
+  "hall_accelerators": 1,
+  "electron_source_neutralizer": {
+   "count": 1,
+   "kind": "RF/ICP (13.56 MHz) electron source / neutralizer, cathodeless / electrodeless",
+   "serves_supply_modes": [
+    "AIR_PRIMARY",
+    "XE_CONTINGENCY"
+   ]
+  },
+  "supply_modes": [
+   {
+    "mode": "AIR_PRIMARY",
+    "role": "PRIMARY",
+    "propellant": "ambient atmospheric propellant (180-230 km)",
+    "path": [
+     "intake",
+     "filter",
+     "compressor",
+     "atmospheric_gas_chamber",
+     "valve"
+    ]
+   },
+   {
+    "mode": "XE_CONTINGENCY",
+    "role": "CONTINGENCY_EMERGENCY",
+    "propellant": "xenon",
+    "path": [
+     "xe_tank",
+     "valve"
+    ],
+    "note": "capability required by the RFP (RFP-P17-05 extra input system; RFP-P18-08 separate tank); role contingency / emergency, not a parallel co-equal propellant (A9.19)"
+   }
+  ],
+  "separate_tanks": true,
+  "conventional_hollow_cathode": "NONE",
+  "icp_feed_gas_baseline": {
+   "primary": "G-REUSE",
+   "declared_variant": "G-XE",
+   "status": "UNCHANGED (A9.1; A9.19 does not alter the ICP feed-gas baseline)"
+  },
+  "c1": {
+   "status": "GROUND_ONLY_LAB_EQUIPMENT",
+   "uses": [
+    "H-1 I_d,max,H1,Ar characterization (A9.10 S3.5, independent of the ICP)",
+    "bench control in the C1-vs-ICP comparison"
+   ],
+   "never": [
+    "flight hardware",
+    "flight mass budget",
+    "flight power budget",
+    "flight Xe budget",
+    "flight fallback / candidate flight configuration"
+   ],
+   "authority": "A9.20 (C1_GROUND_ONLY_LABORATORY_REFERENCE); A9.19 amends 'A9 C1 CONTROL_FALLBACK'"
+  },
+  "verbatim": [
+   "One Hall accelerator.",
+   "One RF/ICP electron-source/neutralizer.",
+   "Two propellant supply modes.",
+   "No conventional hollow cathode."
+  ],
+  "status": "OWNER_DECIDED_ARCHITECTURE_DEFINITION (A9 investigation; not a flight baseline, not a PASS)"
+ },
+ "a9_19_owner_answers_applied": [
+  {
+   "decision": "A9.19",
+   "question_id": "architecture",
+   "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "artifact": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "record_ids": [
+    "standing_facts.a9",
+    "flight_architecture",
+    "H1F-EX-02"
+   ],
+   "how_applied": "H-1 is the single Hall accelerator of the flight architecture (one Hall + one RF/ICP neutralizer, supply modes AIR_PRIMARY / XE_CONTINGENCY, no hollow cathode); no geometry value changed",
+   "tests": [
+    "tests/test_h1_freeze_candidate.py",
+    "tests/test_design_a9_19_architecture.py"
+   ]
+  },
+  {
+   "decision": "A9.20",
+   "question_id": "c1_role",
+   "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "artifact": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
+   "record_ids": [
+    "standing_facts.a9",
+    "H1F-EX-05",
+    "H1F-CH-05"
+   ],
+   "how_applied": "C1 GROUND_ONLY_LAB_EQUIPMENT: IP-C1 stray field is a ground-bench quantity; C1 not CONTROL_FALLBACK",
+   "tests": [
+    "tests/test_h1_freeze_candidate.py",
+    "tests/test_design_a9_19_architecture.py"
+   ]
+  }
+ ],
+ "a9_19_touched_parameters": [
+  "H1F-EX-02",
+  "H1F-EX-05",
+  "H1F-CH-05"
  ],
  "existing_owner_questions_touched": [
   {

@@ -244,3 +244,38 @@ def test_no_freeze_candidate_depends_on_open_row(doc):
         assert st[pid] != "FREEZE_CANDIDATE", pid
     ppu4 = next(r for r in rows if r["id"] == "AFC-SY-PPU-04")
     assert ppu4["evidence_class"] == "assumed"
+
+
+def test_a9_19_a9_20_single_flight_configuration(doc, b):
+    """A9.19: one Hall + one RF/ICP neutralizer for both supply modes (AIR_PRIMARY primary, XE_CONTINGENCY contingency
+    / emergency), no hollow cathode; A9.20: hall_c1_reference only as a labelled GROUND_REFERENCE."""
+    from abep_sim.design import a9_19_architecture as a919
+    cfg = doc["configuration"]
+    assert cfg["flight"] == "hall_icp_neutralizer" and cfg["flight_configurations"] == ["hall_icp_neutralizer"]
+    assert "control_fallback" not in cfg and "primary" not in cfg
+    assert cfg["ground_reference"] == {"configuration": "hall_c1_reference", "label": "GROUND_REFERENCE",
+                                       "c1_status": "GROUND_ONLY_LAB_EQUIPMENT", "flight_candidate": False,
+                                       "uses": a919.C1_ROLE["uses"]}
+    fa = cfg["flight_architecture"]
+    assert fa["hall_accelerators"] == 1 and fa["electron_source_neutralizer"]["count"] == 1
+    assert fa["conventional_hollow_cathode"] == "NONE"
+    assert fa["icp_feed_gas_baseline"]["primary"] == "G-REUSE"
+    assert [(m["mode"], m["role"]) for m in fa["supply_modes"]] == [("AIR_PRIMARY", "PRIMARY"),
+                                                                    ("XE_CONTINGENCY", "CONTINGENCY_EMERGENCY")]
+    by = {r["id"]: r for r in doc["parameters"]}
+    xe = by["AFC-SY-XE-01"]["value"]
+    assert "XE_CONTINGENCY" in xe and "RFP-P17-05" in xe and "RFP-P18-08" in xe and "not a contingency" not in xe
+    ctl = by["AFC-SY-CTL-01"]
+    assert "C1-selected variant uses" not in ctl["evidence_note"] and "ground" in ctl["basis"]
+    # AG-01: flight column always; any C1 column is labelled ground reference
+    for r in doc["architecture_gates"][0]["blocking_evidence"]["rows"]:
+        assert set(r["status"]) <= {"hall_icp_neutralizer", "ground_reference (hall_c1_reference)"}
+        assert "hall_icp_neutralizer" in r["status"]
+    rows = doc["a9_19_owner_answers_applied"]
+    assert {r["decision"] for r in rows} == {"A9.19", "A9.20"}
+    for r in rows:
+        assert r["decision_json_sha256"] == a919.DECISIONS[r["decision"]]["json_sha256"]
+        assert r["decision_md_sha256"] == a919.DECISIONS[r["decision"]]["md_sha256"]
+    assert "PASS" not in json.dumps(rows)
+    for k in ("A919", "A920", "A919_MD", "A920_MD"):
+        assert k in b.PINS

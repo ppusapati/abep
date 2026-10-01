@@ -265,6 +265,26 @@
    "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
    "sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
    "role": "owner A9.15 verbatim (governs over the json summary; A9.16 step 1)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "role": "owner decision A9.19 (json)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "role": "owner decision A9.19 (verbatim md, governs)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "role": "owner decision A9.20 (json)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "role": "owner decision A9.20 (verbatim md, governs)"
   }
  ],
  "governance_files_not_pinned": [
@@ -2072,8 +2092,8 @@
   "dedicated_feed": "only as an explicitly labelled DIAGNOSTIC variable (DIAGNOSTIC_VARIABLE_NOT_BASELINE), never baseline, booked in the corresponding atmospheric / Xe ledger if activated (A9.3 OQ-RFQ-10)",
   "gas": "Ar only; label ENGINEERING_ONLY_NON_SCORING on every record; never counts toward DRDO atmospheric requirements (owner row 36; A9.3 OQ-RFQ-02)",
   "configurations": [
-   "hall_icp_neutralizer (P1 builds its ICP module)",
-   "hall_c1_reference (C1 not installed or disconnected in P1-S6, A9.10 OQ-RFQV2-09; CONTROL_FALLBACK; C1 needed for the I_d,max,H1,Ar characterization gate, A9.10 P1Q-07)"
+   "hall_icp_neutralizer (the flight configuration: one Hall + one RF/ICP neutralizer serving AIR_PRIMARY and XE_CONTINGENCY, no conventional hollow cathode, A9.19; P1 builds its ICP module)",
+   "hall_c1_reference as GROUND_REFERENCE only (C1 = GROUND_ONLY_LAB_EQUIPMENT, A9.20: not installed or disconnected in P1-S6, A9.10 OQ-RFQV2-09; used for the I_d,max,H1,Ar characterization gate, A9.10 P1Q-07 / S3.5, and as the C1-vs-ICP bench control; never a flight candidate)"
   ],
   "outcome_vocabulary_note": "P1 produces engineering records only; the architecture outcome vocabulary (incl. NO_VIABLE_CASE) belongs to the later comparison"
  },
@@ -4469,7 +4489,8 @@
    "rfq_v1_package": "RFQ-08 (docs/procurement/rfq_a9/rfq_a9_v1.json; predates A9.2/A9.3)",
    "rfq_v2_package": "HE-L10, HE-L11, HE-L12 (dispatch LATER) (docs/procurement/rfq_a9_v2/rfq_a9_v2.json)",
    "h2_or_h1_items": "H2-2 C-1; ICD ICP-25, ICP-46; A9.1 ICP-46 (keeper isolation basis)",
-   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)"
+   "status": "NOT_PROCURED (quotations only; no purchase order; no supplier contact by this lane; A9.4 authorizes the owner / procurement to send the P1_NEEDED packages for quotation, not purchase orders, advance payments or binding commitments)",
+   "c1_status": "GROUND_ONLY_LAB_EQUIPMENT (A9.20): H-1 I_d,max,H1,Ar characterization (A9.10 S3.5 / P1Q-07) and bench control in the C1-vs-ICP comparison; never flight hardware, never in flight budgets; not CONTROL_FALLBACK (A9.19)"
   },
   {
    "id": "P1-HW-33",
@@ -4789,7 +4810,7 @@
    "counterpart": "H2-2 docs/hardware/h2/h2_2_cathode_integration/h2_2_cathode_integration_v1.json / RFQ-08",
    "what": "C1 (C-1) module installed on KC-1 with a disconnect means and a verification that it supplies no electrons in P1-S6 (OQ-VI-05 step 2)",
    "units": "-, A",
-   "status": "REQUIRED (C1 stays CONTROL_FALLBACK)"
+   "status": "REQUIRED (C1 = GROUND_ONLY_LAB_EQUIPMENT, A9.20)"
   },
   {
    "id": "IF-P1-22",
@@ -5062,7 +5083,7 @@
   {
    "id": "A9",
    "kind": "governing decision",
-   "how_applied": "primary investigation Hall + downstream 13.56 MHz ICP; C1 CONTROL_FALLBACK; evidence order Ar -> N2 -> O2 (P1 is the Ar step); status kept INVESTIGATION_HYPOTHESIS"
+   "how_applied": "primary investigation Hall + downstream 13.56 MHz ICP; C1 CONTROL_FALLBACK (C1 role superseded by A9.19 / A9.20: GROUND_ONLY_LAB_EQUIPMENT); evidence order Ar -> N2 -> O2 (P1 is the Ar step); status kept INVESTIGATION_HYPOTHESIS"
   },
   {
    "id": "A9.3 OQ-VI-03",
@@ -5762,8 +5783,224 @@
    "owner_answer": null,
    "implemented_in": null,
    "tests": []
+  },
+  {
+   "decision": "A9.19",
+   "question_id": "architecture",
+   "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "record_ids": [
+    "scope.configurations",
+    "a9_19_incorporation.flight_architecture"
+   ],
+   "how_applied": "flight configuration = hall_icp_neutralizer only (one Hall + one RF/ICP neutralizer for AIR_PRIMARY and XE_CONTINGENCY, no conventional hollow cathode); hall_c1_reference listed only as GROUND_REFERENCE",
+   "tests": [
+    "tests/test_p1_a9_19_owner_rules.py"
+   ],
+   "id": "A9.19 architecture",
+   "kind": "decision"
+  },
+  {
+   "decision": "A9.19",
+   "question_id": "supply_modes",
+   "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "decision_json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "decision_md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "record_ids": [
+    "record_schema ignition_attempt.supply_mode",
+    "record_schema icp_operating_point.supply_mode",
+    "p1_reducer.icp_supply_mode"
+   ],
+   "how_applied": "ICP ignition / operation records allow both supply modes (AIR_PRIMARY N2-family, XE_CONTINGENCY Xe) via an optional supply_mode checked against the gas; P1 stays the Ar step and refuses N2 / Xe records naming the stage that reduces them; ICP feed-gas baseline G-REUSE / G-XE unchanged",
+   "tests": [
+    "tests/test_p1_a9_19_owner_rules.py"
+   ],
+   "id": "A9.19 supply_modes",
+   "kind": "decision"
+  },
+  {
+   "decision": "A9.20",
+   "question_id": "c1_role",
+   "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "decision_json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "decision_md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "artifact": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
+   "record_ids": [
+    "IF-P1-21",
+    "P1-HW-32.c1_status",
+    "m16_impact row 11",
+    "a9_19_incorporation.c1"
+   ],
+   "how_applied": "C1 = GROUND_ONLY_LAB_EQUIPMENT (H-1 I_d,max,H1,Ar characterization, A9.10 S3.5; C1-vs-ICP bench control); not CONTROL_FALLBACK; P1-S6 C1_NOT_INSTALLED logic unchanged",
+   "tests": [
+    "tests/test_p1_a9_19_owner_rules.py"
+   ],
+   "id": "A9.20 c1_role",
+   "kind": "decision"
   }
  ],
+ "a9_19_incorporation": {
+  "decisions": [
+   {
+    "decision": "A9.19",
+    "md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+    "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+    "json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+    "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+    "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY"
+   },
+   {
+    "decision": "A9.20",
+    "md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+    "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+    "json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+    "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+    "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE"
+   }
+  ],
+  "reading_rule": "the verbatim .md of A9.19 / A9.20 was read in full and governs; A9.19 amends A9.15 on the ROLE of Xe only (capability and two separate tanks stay)",
+  "flight_architecture": {
+   "configuration": "hall_icp_neutralizer",
+   "hall_accelerators": 1,
+   "electron_source_neutralizer": {
+    "count": 1,
+    "kind": "RF/ICP (13.56 MHz) electron source / neutralizer, cathodeless / electrodeless",
+    "serves_supply_modes": [
+     "AIR_PRIMARY",
+     "XE_CONTINGENCY"
+    ]
+   },
+   "supply_modes": [
+    {
+     "mode": "AIR_PRIMARY",
+     "role": "PRIMARY",
+     "propellant": "ambient atmospheric propellant (180-230 km)",
+     "path": [
+      "intake",
+      "filter",
+      "compressor",
+      "atmospheric_gas_chamber",
+      "valve"
+     ]
+    },
+    {
+     "mode": "XE_CONTINGENCY",
+     "role": "CONTINGENCY_EMERGENCY",
+     "propellant": "xenon",
+     "path": [
+      "xe_tank",
+      "valve"
+     ],
+     "note": "capability required by the RFP (RFP-P17-05 extra input system; RFP-P18-08 separate tank); role contingency / emergency, not a parallel co-equal propellant (A9.19)"
+    }
+   ],
+   "separate_tanks": true,
+   "conventional_hollow_cathode": "NONE",
+   "icp_feed_gas_baseline": {
+    "primary": "G-REUSE",
+    "declared_variant": "G-XE",
+    "status": "UNCHANGED (A9.1; A9.19 does not alter the ICP feed-gas baseline)"
+   },
+   "c1": {
+    "status": "GROUND_ONLY_LAB_EQUIPMENT",
+    "uses": [
+     "H-1 I_d,max,H1,Ar characterization (A9.10 S3.5, independent of the ICP)",
+     "bench control in the C1-vs-ICP comparison"
+    ],
+    "never": [
+     "flight hardware",
+     "flight mass budget",
+     "flight power budget",
+     "flight Xe budget",
+     "flight fallback / candidate flight configuration"
+    ],
+    "authority": "A9.20 (C1_GROUND_ONLY_LABORATORY_REFERENCE); A9.19 amends 'A9 C1 CONTROL_FALLBACK'"
+   },
+   "verbatim": [
+    "One Hall accelerator.",
+    "One RF/ICP electron-source/neutralizer.",
+    "Two propellant supply modes.",
+    "No conventional hollow cathode."
+   ],
+   "status": "OWNER_DECIDED_ARCHITECTURE_DEFINITION (A9 investigation; not a flight baseline, not a PASS)"
+  },
+  "c1": {
+   "status": "GROUND_ONLY_LAB_EQUIPMENT",
+   "uses": [
+    "H-1 I_d,max,H1,Ar characterization (A9.10 S3.5, independent of the ICP)",
+    "bench control in the C1-vs-ICP comparison"
+   ],
+   "never": [
+    "flight hardware",
+    "flight mass budget",
+    "flight power budget",
+    "flight Xe budget",
+    "flight fallback / candidate flight configuration"
+   ],
+   "p1_s6_configurations_unchanged": [
+    "C1_NOT_INSTALLED",
+    "C1_INSTALLED_DISCONNECTED"
+   ],
+   "i_d_max_electron_source": "C1_CONVENTIONAL_REFERENCE"
+  },
+  "icp_record_supply_modes": {
+   "modes": [
+    "AIR_PRIMARY",
+    "XE_CONTINGENCY",
+    "BENCH_AR_ENGINEERING_GROUND_ONLY"
+   ],
+   "gases": {
+    "AIR_PRIMARY": [
+     "N2",
+     "NITROGEN",
+     "O2",
+     "OXYGEN",
+     "O",
+     "AIR",
+     "N2/O2",
+     "N2+O2",
+     "N2_O2",
+     "AMBIENT_AIR",
+     "ATMOSPHERIC"
+    ],
+    "XE_CONTINGENCY": [
+     "XE",
+     "XENON"
+    ],
+    "BENCH_AR_ENGINEERING_GROUND_ONLY": [
+     "AR",
+     "ARGON"
+    ]
+   },
+   "stage": {
+    "BENCH_AR_ENGINEERING_GROUND_ONLY": "P1 (this reducer)",
+    "AIR_PRIMARY": "ICP-45N / N2 ICP stage (A9 evidence order Ar -> N2 -> O2-bearing)",
+    "XE_CONTINGENCY": "Xe ICP stage (G-XE declared ICP-feed variant, A9.1; Xe supply mode A9.19)"
+   },
+   "rule": "an ICP ignition / operation record may declare supply_mode; it must agree with the gas (SupplyModeError otherwise); both flight modes are valid ICP record modes (one ICP for both); P1 reduces the Ar bench mode only"
+  },
+  "icp_feed_gas_baseline": {
+   "primary": "G-REUSE",
+   "declared_variant": "G-XE",
+   "status": "UNCHANGED (A9.1; A9.19 does not alter the ICP feed-gas baseline)"
+  },
+  "not_changed": [
+   "P1 stage gas (Ar only, A9.3)",
+   "P1-S6 C1_NOT_INSTALLED logic (A9.10 OQ-RFQV2-09)",
+   "I_d,max,H1,Ar registration via the dedicated H-1 + C1 characterization (A9.10 P1Q-07)",
+   "hardware_readiness item texts and measurement quantities read back by RFQ v2 (immutable)"
+  ],
+  "statuses": "ICP45 = NOT_EVALUATED until registered; ICP_COUPLED_THERMAL UNRESOLVED; RF ratings TBD_AFTER_IMPEDANCE_MAP; anode material OPEN; C1 GROUND_ONLY_LAB_EQUIPMENT; no PASS anywhere"
+ },
  "open_owner_questions": [
   {
    "id": "P1Q-01",
@@ -6281,7 +6518,7 @@
   {
    "row": 11,
    "key": "cathode",
-   "impact": "C1 disconnected in P1-S6; stays CONTROL_FALLBACK"
+   "impact": "C1 disconnected or not installed in P1-S6; C1 = GROUND_ONLY_LAB_EQUIPMENT (A9.20), no hollow cathode in flight (A9.19)"
   },
   {
    "row": 9,

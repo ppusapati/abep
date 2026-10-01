@@ -284,6 +284,24 @@ SEQUENCE_REQUIRED = ("schema", "record_kind", "record_id", "run_id", "stage_id",
 # absent / open and documented) - stated as such, never as a pretended disconnected C1; C1 is scheduled against the
 # I_d,max,H1,Ar characterization gate (P1Q-07), not against P1-S6
 C1_CONFIGURATIONS = ("C1_NOT_INSTALLED", "C1_INSTALLED_DISCONNECTED")
+# OWNER A9.19 / A9.20 (docs/decisions/OD_2026_10_01_A9_19_* / OD_2026_10_01_A9_20_*; constants mirrored from
+# abep_sim/design/a9_19_architecture.py, equality checked by tests/test_p1_a9_19_owner_rules.py; this module stays pure):
+# the flight thruster has ONE RF/ICP electron source / neutralizer serving BOTH supply modes, AIR_PRIMARY (N2-family /
+# atmospheric gases) and XE_CONTINGENCY (Xe, contingency / emergency), and no conventional hollow cathode; C1 is
+# GROUND_ONLY_LAB_EQUIPMENT (H-1 I_d,max,H1,Ar characterization and bench control), never flight hardware. The P1-S6
+# C1_NOT_INSTALLED / C1_INSTALLED_DISCONNECTED logic above is unchanged.
+C1_LAB_STATUS = "GROUND_ONLY_LAB_EQUIPMENT"
+SUPPLY_MODES = ("AIR_PRIMARY", "XE_CONTINGENCY")
+P1_SUPPLY_MODE = "BENCH_AR_ENGINEERING_GROUND_ONLY"      # Ar: engineering-only bench gas, not a flight supply mode
+ICP_RECORD_SUPPLY_MODES = SUPPLY_MODES + (P1_SUPPLY_MODE,)
+SUPPLY_MODE_GASES = {"AIR_PRIMARY": ("N2", "NITROGEN", "O2", "OXYGEN", "O", "AIR", "N2/O2", "N2+O2", "N2_O2",
+                                     "AMBIENT_AIR", "ATMOSPHERIC"),
+                     "XE_CONTINGENCY": ("XE", "XENON"),
+                     P1_SUPPLY_MODE: ("AR", "ARGON")}
+# where an ICP ignition / operation record of each supply mode is reduced (P1 itself is the Ar step, A9.3 / A9)
+SUPPLY_MODE_STAGE = {P1_SUPPLY_MODE: "P1 (this reducer)",
+                     "AIR_PRIMARY": "ICP-45N / N2 ICP stage (A9 evidence order Ar -> N2 -> O2-bearing)",
+                     "XE_CONTINGENCY": "Xe ICP stage (G-XE declared ICP-feed variant, A9.1; Xe supply mode A9.19)"}
 # OWNER A9.10 P1Q-08: P1-S0..S5 belong to HI-ENG / HI-S1A; HI-HOLDOUT-A is required immediately before the first
 # Hall-on reading, i.e. at P1-S6 (the sequence names the signed HI-HOLDOUT-A record)
 HOLDOUT_STAGE = "P1-S6"
@@ -368,6 +386,10 @@ class RegistrationError(P1RecordError):
 
 class SequenceError(P1RecordError):
     """The OQ-VI-05 seven-step topology-control record is incomplete or out of order."""
+
+
+class SupplyModeError(P1RecordError):
+    """An ICP record's supply_mode contradicts its gas, or is not an A9.19 supply mode (or the Ar bench mode)."""
 
 
 class GasModeError(P1RecordError):
@@ -459,6 +481,39 @@ def p_bus_from_generator_input(record):
         "engineering quantity only" % gen.get("generator_class"))
 
 
+# ------------------------------------------------------------------------------------------------ supply modes
+def icp_supply_mode(gas, supply_mode=None, where="record"):
+    """A9.19 supply mode of an ICP ignition / operation record: AIR_PRIMARY (N2-family / atmospheric gases),
+    XE_CONTINGENCY (Xe) or the ground-only Ar bench mode. A declared supply_mode must agree with the gas; both flight
+    modes are valid record modes (the ONE ICP serves both). Returns the mode."""
+    if not isinstance(gas, str) or not gas.strip():
+        raise SupplyModeError("%s: gas must be a non-empty string, got %r" % (where, gas))
+    g = gas.strip().upper().replace(" ", "")
+    mode = next((m for m, names in SUPPLY_MODE_GASES.items() if g in names), None)
+    if mode is None:
+        raise SupplyModeError("%s: gas %r belongs to no A9.19 supply mode (AIR_PRIMARY N2-family, XE_CONTINGENCY Xe) "
+                              "and is not the Ar bench gas" % (where, gas))
+    if supply_mode is not None:
+        if supply_mode not in ICP_RECORD_SUPPLY_MODES:
+            raise SupplyModeError("%s: supply_mode %r not in %s" % (where, supply_mode, ICP_RECORD_SUPPLY_MODES))
+        if supply_mode != mode:
+            raise SupplyModeError("%s: gas %r is supply mode %s but the record declares %s"
+                                  % (where, gas, mode, supply_mode))
+    return mode
+
+
+def _p1_gas_scope(rec, rid):
+    """P1 is the Ar step: an N2-family (AIR_PRIMARY) or Xe (XE_CONTINGENCY) ICP record is a valid ICP record of its
+    supply mode but is reduced by its own stage, not by P1 (refused here, naming the stage that owns it)."""
+    if not isinstance(rec.get("gas"), str):
+        return None                    # the existing gas checks report a malformed gas
+    mode = icp_supply_mode(rec.get("gas"), rec.get("supply_mode"), rid)
+    if mode != P1_SUPPLY_MODE:
+        raise P1RecordError("%s: gas %r is supply mode %s - a valid ICP record mode (A9.19), reduced by %s, not by "
+                            "P1 (Ar only, A9.3 P1 authorization)" % (rid, rec.get("gas"), mode, SUPPLY_MODE_STAGE[mode]))
+    return mode
+
+
 # ------------------------------------------------------------------------------------------------ validation
 def validate_operating_point(rec):
     """Raise on any missing or contradictory input of an 'icp_operating_point' record; return None if valid."""
@@ -470,9 +525,13 @@ def validate_operating_point(rec):
         raise P1RecordError("%s: record_kind %r is not icp_operating_point" % (rid, rec["record_kind"]))
     if not isinstance(rec["synthetic"], bool):
         raise MissingInputError("%s: 'synthetic' must be true or false" % rid)
+    if isinstance(rec["gas"], str) and rec["gas"].strip().upper() not in ("AR", "ARGON"):
+        _p1_gas_scope(rec, rid)
     if rec["gas"] not in P1_GASES:
         raise P1RecordError("%s: gas %r is outside P1 (Ar only, A9.3 P1 authorization; N2 is ICP-45N, not P1)"
                             % (rid, rec["gas"]))
+    if rec.get("supply_mode") is not None:
+        icp_supply_mode(rec["gas"], rec["supply_mode"], rid)
     _labels_ok(rec, rid)
     _refuse_p_bus_claim(rec, rid)
     if rec["hall_discharge_state"] not in HALL_STATES:
@@ -3091,6 +3150,10 @@ def validate_ignition(rec):
             raise MissingInputError("%s: missing required key '%s'" % (rid, k))
     if rec["stage_id"] != "P1-S3":
         raise P1RecordError("%s: ignition records belong to P1-S3, not %r" % (rid, rec["stage_id"]))
+    if isinstance(rec["gas"], str) and rec["gas"].strip().upper() not in ("AR", "ARGON"):
+        _p1_gas_scope(rec, rid)
+    if rec.get("supply_mode") is not None:
+        icp_supply_mode(rec["gas"], rec["supply_mode"], rid)
     if rec["gas"] not in P1_GASES:
         raise P1RecordError("%s: gas %r outside P1 (Ar only)" % (rid, rec["gas"]))
     if rec["hall_discharge_state"] != "OFF":

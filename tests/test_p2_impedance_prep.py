@@ -619,7 +619,8 @@ def test_lane_dir_contents():
     names = sorted(p.name for p in LANE.iterdir() if p.name != "__pycache__")
     assert names == sorted(["build_p2_impedance_prep.py", "p2_impedance_reducer.py", "p2_impedance_prep_v1.json",
                             "P2_IMPEDANCE_PREP.md", "p2_impedance_record_schema_v1.json", "p2_framework.py",
-                            "p2_impedance_map_schema_v1.json", "p2_a9_16_rules.py", "a9_16_application.py"])
+                            "p2_impedance_map_schema_v1.json", "p2_a9_16_rules.py", "a9_16_application.py",
+                            "p2_a9_19_application.py"])
 
 
 # ------------------------------------------------------------------------------------------------ repair-round checks

@@ -66,6 +66,15 @@ abep_sim/design/upstream_a9_13.py; requirement source docs/requirements/rfp_offi
   * S6.8 / S6.11: set pressures <= 0.1 Pa are the sensitivity / fallback branch; the higher-pressure primary direction
     is NOT_EVALUATED_OUT_OF_DOMAIN until admitted transitional evidence exists (``higher_pressure_branch``).
   * A9.15: HC-10 dual propellant capability (ambient air + Xe, two separate tanks / paths; RFP-P18-08).
+
+A9.19 / A9.20 owner decisions applied (abep_sim/design/a9_19_architecture.py; verbatim .md governs):
+  * the flight architecture is ONE Hall accelerator + ONE RF/ICP electron source / neutralizer serving both supply
+    modes (AIR_PRIMARY, XE_CONTINGENCY); ``CONFIGURATIONS`` lists only ``hall_icp_neutralizer``;
+  * ``hall_c1_reference`` is REFUSED as a flight configuration (C1 is GROUND_ONLY_LAB_EQUIPMENT, A9.20) and appears
+    only as the explicit GROUND_REFERENCE label (``GROUND_REFERENCE_CONFIGURATIONS``);
+  * no hollow-cathode element may appear in a flight configuration (``flight_configuration_elements`` +
+    a9_19_architecture.refuse_hollow_cathode_elements, checked by ``evaluate_system``);
+  * HC-10 marks the Xe path role CONTINGENCY_EMERGENCY (capability still required, RFP-P17-05 / RFP-P18-08).
 """
 from __future__ import annotations
 
@@ -86,6 +95,7 @@ from .. import rotor_strength as rs
 from ..constants import M_SPECIES
 from . import filter_stage as fs
 from . import intake_synthesis as isy
+from . import a9_19_architecture as a919
 from . import plenum_feed as pf
 from . import upstream_a9_13 as u13
 
@@ -116,6 +126,9 @@ P2_REL = "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json"
 P3_REL = "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json"
 P4_REL = "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json"
 MP_REL = "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json"
+# RV19-11: the A9.19 hollow-cathode refusal reads the current mass / power package (v3), never the immutable v2
+# history (the other v2 readers are the F7/F8 identity-pinned inputs and stay unchanged here)
+MP_V3_REL = "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json"
 RFQ_REL = "docs/procurement/rfq_a9_v2/rfq_a9_v2.json"
 RVM_REL = "docs/requirements/rvm_a9/rvm_a9_v1.json"
 ENS_REL = "hallthruster_bridge/ensemble/transport_ensemble_v0.json"
@@ -150,7 +163,11 @@ RANK_COMPUTED_SYNTHETIC = "PARETO_LAYERS_COMPUTED_SYNTHETIC_TEST_ONLY_NOT_EVIDEN
 RANK_STATUSES = (RANK_REFUSED_INCOMPLETE, RANK_REFUSED_NO_FEASIBLE, RANK_REFUSED_MIXED, RANK_COMPUTED,
                  RANK_COMPUTED_SYNTHETIC)
 
-CONFIGURATIONS = bb.CONFIGURATIONS                       # hall_c1_reference (control / fallback), hall_icp_neutralizer
+# A9.19 / A9.20: the flight configurations are hall_icp_neutralizer only; hall_c1_reference (bb.CONFIGURATIONS keeps
+# it for the A9-02 boundary history) is a GROUND_REFERENCE label only, never a flight candidate
+CONFIGURATIONS = a919.FLIGHT_CONFIGURATIONS
+GROUND_REFERENCE_CONFIGURATIONS = (a919.GROUND_REFERENCE_CONFIGURATION,)
+assert set(CONFIGURATIONS) | set(GROUND_REFERENCE_CONFIGURATIONS) == set(bb.CONFIGURATIONS)
 
 
 class OptimizerError(ValueError):
@@ -939,7 +956,7 @@ def electron_margin(config: str, supplied: Mapping | None = None, repo: Path = R
     return _obj("I_e_cap_minus_I_d_max_A", NOT_EVALUATED, None, "A",
                 reason=("ICP-45 NOT_EVALUATED: I_d,max,H1 " + str(it["MPV2-P09"]["value"]) + " (not registered) and "
                         "no P1 data; ICP electron-current capacity PENDING_ICP45" if config == "hall_icp_neutralizer"
-                        else "C1 emission capacity not registered; I_d,max,H1 TBD (C1 CONTROL_FALLBACK)"),
+                        else "not a flight configuration (A9.19 / A9.20: C1 ground-only)"),
                 unlock=[UNLOCK["I_e_margin"]],
                 context={"bench_discharge_ceiling_A": it["MPV2-P10"]["value"],
                          "rule": "the 8.33 A stand ceiling is a ground rating, never I_d,max,H1"})
@@ -1125,6 +1142,62 @@ def evaluate_constraints(values: Mapping) -> list[dict]:
     return out
 
 
+def _line_hc_elements(ln: Mapping, config: str) -> list[dict]:
+    """Every name-bearing item of one v3 budget line: the line itself, each floor constituent and the c1_branch record.
+    A name worded as a conditional C1 provision ('if C1 selected') is flagged CONDITIONAL_NOT_BOOKED (A9.20: never
+    selected for flight); a c1_branch is flagged only while it is *NOT_SELECTED and books nothing, else it is a C1
+    element (refused)."""
+    lid = ln.get("line")
+    name = ln.get("name", ln.get("owner_name"))
+    el = {"id": lid, "name": name, "kind": "mass_line", "source": f"{MP_V3_REL} lines.{config}.{lid}"}
+    if a919.is_conditional_c1_text(name) and a919.hollow_cathode_elements([name]):
+        el["booking"] = a919.C1_BOOKING_CONDITIONAL
+    out = [el]
+    for i, fc in enumerate(ln.get("floor_constituents") or []):
+        what = fc.get("what")
+        e = {"id": f"{lid}.floor[{i}]", "name": what, "kind": "floor_constituent", "kg": fc.get("kg"),
+             "source": f"{MP_V3_REL} lines.{config}.{lid}.floor_constituents[{i}]"}
+        if a919.is_conditional_c1_text(what) and a919.hollow_cathode_elements([what]):
+            e["booking"] = a919.C1_BOOKING_CONDITIONAL
+        out.append(e)
+    br = ln.get("c1_branch")
+    if br is not None:
+        st = str(br.get("state"))
+        e = {"id": f"{lid}.c1_branch", "name": f"C1 branch ({st})", "kind": "c1_branch", "state": st,
+             "in_line": br.get("in_AL08"), "source": f"{MP_V3_REL} lines.{config}.{lid}.c1_branch"}
+        if "NOT_SELECTED" in st and not br.get("in_AL08"):
+            e["booking"] = a919.C1_BOOKING_CONDITIONAL
+        out.append(e)
+    return out
+
+
+_EMBEDDED_C1_RE = re.compile(r"C1 cathode Xe branch ([0-9.]+) kg \(([^)]*)\) is already inside the (AL-\d+) floor")
+
+
+def flight_configuration_elements(config: str, repo: Path = REPO) -> list[dict]:
+    """Every element a flight configuration books: the A9-02 installed power slots and the mass / power v3 lines with
+    their floor constituents and C1-branch records (RV19-11: v3, not the immutable v2 history; content, not line names
+    only). A C1 cathode branch that the ground reference's own C1 line states is already inside a flight line's floor
+    is surfaced as an EMBEDDED_IN_FLOOR element (kg quoted from that text, never invented).
+    A9.19: the hollow-cathode refusal is applied to this list (evaluate_system)."""
+    a919.require_flight_configuration(config)
+    mp = read_json(MP_V3_REL, repo)
+    els = [{"id": s, "kind": "power_slot"} for s in bb.installed_slots(config)]
+    flight_lines = mp["lines"][config]
+    for ln in flight_lines:
+        els += _line_hc_elements(ln, config)
+    present = {ln.get("line") for ln in flight_lines}
+    for gcfg in GROUND_REFERENCE_CONFIGURATIONS:
+        for ln in mp["lines"].get(gcfg, []):
+            m = _EMBEDDED_C1_RE.search(str(ln.get("floor_arithmetic", "")))
+            if m and m.group(3) in present:
+                els.append({"id": f"{m.group(3)}.embedded_c1_cathode_xe_branch", "name": "C1 cathode Xe branch",
+                            "kind": "embedded_floor_branch", "kg": float(m.group(1)), "ref": m.group(2),
+                            "booking": a919.C1_BOOKING_EMBEDDED,
+                            "source": f"{MP_V3_REL} lines.{gcfg}.{ln.get('line')}.floor_arithmetic"})
+    return els
+
+
 def evaluate_system(upstream_row: Mapping | None, config: str, design: Mapping | None = None,
                     supplied: Mapping | None = None, repo: Path = REPO) -> dict:
     """Every system objective of one design vector (upstream sub-vector from an F7 row; x_Hall / x_ICP / x_RF /
@@ -1136,8 +1209,12 @@ def evaluate_system(upstream_row: Mapping | None, config: str, design: Mapping |
     feed_state_sufficiency result, HC-11), ripple_feed_quality (upstream_a9_13.ripple_feed_quality result, HC-12),
     propellant_capability (a record, 1 = air AND Xe operation demonstrated, HC-10) and propellant_paths (the
     modelled paths; default MODELLED_PROPELLANT_PATHS, checked structurally against A9.15)."""
+    if config in GROUND_REFERENCE_CONFIGURATIONS:
+        raise OptimizerError(f"REFUSED: {config!r} is not a flight configuration (A9.19: no conventional hollow "
+                             "cathode; A9.20: C1 is a GROUND-ONLY laboratory reference)")
     if config not in CONFIGURATIONS:
         raise OptimizerError(f"unknown configuration {config!r}")
+    hc = a919.refuse_hollow_cathode_elements(config, flight_configuration_elements(config, repo))
     s = dict(supplied or {})
     row = dict(upstream_row or {})
     pel = row.get("P_compressor_el_max_W")
@@ -1175,7 +1252,8 @@ def evaluate_system(upstream_row: Mapping | None, config: str, design: Mapping |
     cons = evaluate_constraints(cvals)
     ne = [SYSTEM_OBJECTIVE_CODE[k] for k, v in objs.items() if v["status"] != EVALUATED]
     return {"configuration": config, "design_id": row.get("design_id"), "objectives": objs, "constraints": cons,
-            "propellant_paths": prop,
+            "propellant_paths": prop, "hollow_cathode_check": hc["check"],
+            "c1_provisions_flagged": [e["id"] for e in hc["c1_provisions_flagged"]],
             "system_not_evaluated": ne,
             "constraints_not_evaluated": [c["id"] for c in cons if c["status"] == C_NOT_EVALUATED],
             "constraints_violated": [c["id"] for c in cons if c["status"] == C_VIOLATED]}
@@ -1314,15 +1392,18 @@ def architecture_questions() -> list[dict]:
          "answer_state": cannot, "basis": "A9-02 ledger PARTIAL_BOUNDARY", "unlock": [UNLOCK["P_bus"]]},
         {"id": "AQ-06", "question": "Does the system close < 40 kg wet?", "answer_state": cannot,
          "basis": "no CBE for any BOM line; wet roll-ups NOT_EVALUABLE", "unlock": [UNLOCK["m_wet"]]},
-        {"id": "AQ-07", "question": "Can the ICP (or C1) neutralize the H-1 discharge current with margin?",
+        {"id": "AQ-07", "question": "Can the ICP neutralize the H-1 discharge current with margin (both supply modes; "
+         "no hollow cathode in flight, A9.19)?",
          "answer_state": cannot, "basis": "ICP-45 NOT_EVALUATED; I_d,max,H1 not registered",
          "unlock": [UNLOCK["I_e_margin"]]},
         {"id": "AQ-08", "question": "Does the coupled H-1 / ICP thermal design close with >= 50 K margin?",
          "answer_state": cannot, "basis": "P3 INCOMPLETE_EVIDENCE; closures UNRESOLVED", "unlock": [UNLOCK["Q_reject"]]},
-        {"id": "AQ-09", "question": "hall_icp_neutralizer vs hall_c1_reference: which configuration is better?",
-         "answer_state": cannot, "basis": "every discriminating system objective is NOT_EVALUATED for both "
-         "configurations; the upstream chain is common to both (no discrimination there)",
-         "unlock": [UNLOCK["I_e_margin"], UNLOCK["P_bus"], UNLOCK["m_wet"]]},
+        {"id": "AQ-09", "question": "Does the ICP neutralizer match or exceed the ground C1 reference (bench "
+         "control, GROUND_REFERENCE) in the C1-vs-ICP bench comparison?",
+         "answer_state": cannot, "basis": "A9.19 / A9.20: hall_c1_reference is no longer a flight configuration; the "
+         "comparison is a ground bench comparison with C1 as GROUND_ONLY_LAB_EQUIPMENT; no bench data (P1 / ICP-45 "
+         "NOT_EVALUATED)",
+         "unlock": [UNLOCK["I_e_margin"]]},
         {"id": "AQ-10", "question": "Which H-1 geometry inside the F5 windows is preferable?", "answer_state": cannot,
          "basis": "every Hall performance quantity NOT_EVALUATED; only geometric admissibility is evaluable",
          "unlock": [UNLOCK["T"]]},

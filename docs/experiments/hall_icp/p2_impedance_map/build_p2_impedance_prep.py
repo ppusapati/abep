@@ -31,7 +31,9 @@ p2_impedance_map_schema_v1.json.
 A9.16 step 1 (owner instruction 2026-10-01; lane P2 IMPEDANCE MAP): the owner decisions A9.8 P2Q-02, A9.10 P1Q-24,
 A9.11 P2Q-01/03/04/07/08/09 and A9.14 ICPQ-11 / P2Q-10 / P2Q-06 / F6-OQ-02 are applied by a9_16_application.py (data +
 document transformation, pinned decision files) and p2_a9_16_rules.py (fail-closed rules), with the reducer / framework
-changes listed in a9_16_incorporation; A9.15 reviewed (no P2 Xe-contingency text).
+changes listed in a9_16_incorporation; A9.15 reviewed (no P2 Xe-contingency text). A9.19 / A9.20 (one Hall + one RF/ICP
+neutralizer for both supply modes AIR_PRIMARY / XE_CONTINGENCY, no hollow cathode; C1 ground-only) applied by
+p2_a9_19_application.py (a9_19_incorporation; Xe evidence tag TAG_XE).
 
     python docs/experiments/hall_icp/p2_impedance_map/build_p2_impedance_prep.py          # (re)write outputs
     python docs/experiments/hall_icp/p2_impedance_map/build_p2_impedance_prep.py --check  # exit 1 unless reproduced
@@ -82,6 +84,9 @@ _fspec.loader.exec_module(FW)
 _aspec = importlib.util.spec_from_file_location("p2_a9_16_application", str(HERE / "a9_16_application.py"))
 APP = importlib.util.module_from_spec(_aspec)
 _aspec.loader.exec_module(APP)
+_a19spec = importlib.util.spec_from_file_location("p2_a9_19_application", str(HERE / "p2_a9_19_application.py"))
+APP19 = importlib.util.module_from_spec(_a19spec)
+_a19spec.loader.exec_module(APP19)
 _rspec = importlib.util.spec_from_file_location("p2_a9_16_rules", str(HERE / "p2_a9_16_rules.py"))
 RULES = importlib.util.module_from_spec(_rspec)
 _rspec.loader.exec_module(RULES)
@@ -131,6 +136,7 @@ DECISIONS = {
               "A9.6 (verbatim; sec. 9 and 14 bind the framework)"),
 }
 DECISIONS.update(APP.decision_pins())        # A9.16 step 1: A9.8, A9.10, A9.11, A9.14, A9.15 (json + verbatim)
+DECISIONS.update(APP19.decision_pins())      # A9.19 / A9.20 (json + verbatim)
 DELIVERABLES = {
     "UB": ("docs/experiments/hall_icp/uncertainty_budget/hall_icp_uncertainty_budget_v1.json",
            "c6567e6d0bbc008bedd5b9c14a9716f117144ab6952b9c498f7b0c75e02a624d", "A9-04 uncertainty budget"),
@@ -1701,6 +1707,8 @@ def build():
     }
     doc = APP.apply(doc, oq_rows)
     doc["a9_16_incorporation"] = APP.incorporation(RED, FW, RULES, a9_16_selfcheck())
+    doc["owner_answers_applied"] = doc["owner_answers_applied"] + APP19.owner_answer_rows()
+    doc["a9_19_incorporation"] = APP19.incorporation(RED)
     return doc
 
 

@@ -216,6 +216,30 @@
    "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
    "sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
    "what": "owner A9.15 verbatim (governs over the json summary; A9.16 step 1)"
+  },
+  {
+   "key": "A919",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+   "sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+   "what": "A9.19 owner decision (json)"
+  },
+  {
+   "key": "A919MD",
+   "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+   "sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+   "what": "A9.19 owner decision (verbatim md, governs)"
+  },
+  {
+   "key": "A920",
+   "path": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+   "sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+   "what": "A9.20 owner decision (json)"
+  },
+  {
+   "key": "A920MD",
+   "path": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+   "sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+   "what": "A9.20 owner decision (verbatim md, governs)"
   }
  ],
  "deliverable_pins": [
@@ -2307,6 +2331,7 @@
    "REQUIRED_ENGINEERING_CONTROL_NON_SCORING (A9.3 OQ-VI-05)",
    "N2_STAGE (A9 evidence order)",
    "O2_BEARING_NO_ATOMIC_O (A9 evidence order)",
+   "XE_CONTINGENCY_SUPPLY_MODE (A9.19; ICP feed G-XE declared variant, A9.1)",
    "OTHER_GAS_UNCLASSIFIED_NON_SCORING",
    "NO_GAS_NOT_APPLICABLE (calibration / dummy-load / unlit record)"
   ],
@@ -5777,6 +5802,40 @@
    "owner_answer": null,
    "implemented_in": null,
    "tests": []
+  },
+  {
+   "ref": {
+    "kind": "owner_decision",
+    "decision": "A9.19",
+    "item": "supply_modes",
+    "json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+    "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+    "md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+    "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+    "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY"
+   },
+   "how": "one ICP for both supply modes: evidence tag TAG_XE (XE_CONTINGENCY) for Xe records, N2 / O2-bearing tags map to AIR_PRIMARY (p2_impedance_reducer.supply_mode_of_tag); optional factors.supply_mode checked against the gas; ICP feed-gas baseline G-REUSE / G-XE unchanged",
+   "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+   "tests": [
+    "tests/test_p2_a9_19_owner_rules.py"
+   ]
+  },
+  {
+   "ref": {
+    "kind": "owner_decision",
+    "decision": "A9.20",
+    "item": "c1_role",
+    "json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+    "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+    "md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+    "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+    "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE"
+   },
+   "how": "C1 = GROUND_ONLY_LAB_EQUIPMENT (P2 does not operate C1); not CONTROL_FALLBACK",
+   "artifact": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
+   "tests": [
+    "tests/test_p2_a9_19_owner_rules.py"
+   ]
   }
  ],
  "open_owner_questions": [
@@ -7153,5 +7212,111 @@
   ],
   "pinning_note": "the P2 json / reducer / framework are read or sha-pinned by other packages (P1, P3, RFQ v2, state v4, RVM, M16 v4, F6, freeze candidate): the integration lane re-pins / rebuilds; nothing outside this lane's paths was edited; cross-lane pair texts (XL-nn) unchanged",
   "statuses_unchanged": "RF_COMPONENT_RATINGS TBD_AFTER_IMPEDANCE_MAP; ICP_COUPLED_THERMAL UNRESOLVED; anode OPEN; ICP45 NOT_EVALUATED; C1 CONTROL_FALLBACK; no PASS anywhere"
+ },
+ "a9_19_incorporation": {
+  "decisions": [
+   {
+    "decision": "A9.19",
+    "md": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+    "md_sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749",
+    "json": "docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json",
+    "json_sha256": "20364847febc240d06779d26dbca0236059ab4471754df4452401eb0ed050b16",
+    "decision_code": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY"
+   },
+   {
+    "decision": "A9.20",
+    "md": "docs/decisions/OD_2026_10_01_A9_20_C1_GROUND_ONLY_OWNER_DECISION.md",
+    "md_sha256": "2b90a7a7f851ac571791ea6ba2fbafac8cf69a086a4a3724e2f66196b6b4d60c",
+    "json": "docs/decisions/OD_2026_10_01_A9_20_c1_ground_only_owner_decision.json",
+    "json_sha256": "9b88e441b5c3454a20c4696897c525ef5818f0cfd9f32c7a3b4fa8e1a204dcc6",
+    "decision_code": "C1_GROUND_ONLY_LABORATORY_REFERENCE"
+   }
+  ],
+  "reading_rule": "the verbatim .md of A9.19 / A9.20 was read in full and governs; A9.19 amends A9.15 on the ROLE of Xe only",
+  "flight_architecture": {
+   "configuration": "hall_icp_neutralizer",
+   "hall_accelerators": 1,
+   "electron_source_neutralizer": {
+    "count": 1,
+    "kind": "RF/ICP (13.56 MHz) electron source / neutralizer, cathodeless / electrodeless",
+    "serves_supply_modes": [
+     "AIR_PRIMARY",
+     "XE_CONTINGENCY"
+    ]
+   },
+   "supply_modes": [
+    {
+     "mode": "AIR_PRIMARY",
+     "role": "PRIMARY",
+     "propellant": "ambient atmospheric propellant (180-230 km)",
+     "path": [
+      "intake",
+      "filter",
+      "compressor",
+      "atmospheric_gas_chamber",
+      "valve"
+     ]
+    },
+    {
+     "mode": "XE_CONTINGENCY",
+     "role": "CONTINGENCY_EMERGENCY",
+     "propellant": "xenon",
+     "path": [
+      "xe_tank",
+      "valve"
+     ],
+     "note": "capability required by the RFP (RFP-P17-05 extra input system; RFP-P18-08 separate tank); role contingency / emergency, not a parallel co-equal propellant (A9.19)"
+    }
+   ],
+   "separate_tanks": true,
+   "conventional_hollow_cathode": "NONE",
+   "icp_feed_gas_baseline": {
+    "primary": "G-REUSE",
+    "declared_variant": "G-XE",
+    "status": "UNCHANGED (A9.1; A9.19 does not alter the ICP feed-gas baseline)"
+   },
+   "c1": {
+    "status": "GROUND_ONLY_LAB_EQUIPMENT",
+    "uses": [
+     "H-1 I_d,max,H1,Ar characterization (A9.10 S3.5, independent of the ICP)",
+     "bench control in the C1-vs-ICP comparison"
+    ],
+    "never": [
+     "flight hardware",
+     "flight mass budget",
+     "flight power budget",
+     "flight Xe budget",
+     "flight fallback / candidate flight configuration"
+    ],
+    "authority": "A9.20 (C1_GROUND_ONLY_LABORATORY_REFERENCE); A9.19 amends 'A9 C1 CONTROL_FALLBACK'"
+   },
+   "verbatim": [
+    "One Hall accelerator.",
+    "One RF/ICP electron-source/neutralizer.",
+    "Two propellant supply modes.",
+    "No conventional hollow cathode."
+   ],
+   "status": "OWNER_DECIDED_ARCHITECTURE_DEFINITION (A9 investigation; not a flight baseline, not a PASS)"
+  },
+  "evidence_tag_supply_modes": {
+   "ENGINEERING_ONLY_NON_SCORING (A9.3 OQ-RFQ-02: Ar)": "BENCH_AR_ENGINEERING_GROUND_ONLY",
+   "REQUIRED_ENGINEERING_CONTROL_NON_SCORING (A9.3 OQ-VI-05)": "BENCH_AR_ENGINEERING_GROUND_ONLY",
+   "N2_STAGE (A9 evidence order)": "AIR_PRIMARY",
+   "O2_BEARING_NO_ATOMIC_O (A9 evidence order)": "AIR_PRIMARY",
+   "XE_CONTINGENCY_SUPPLY_MODE (A9.19; ICP feed G-XE declared variant, A9.1)": "XE_CONTINGENCY",
+   "OTHER_GAS_UNCLASSIFIED_NON_SCORING": null,
+   "NO_GAS_NOT_APPLICABLE (calibration / dummy-load / unlit record)": null
+  },
+  "rule": "the one ICP is mapped for both supply modes; an Xe HOT_MAP record is tagged XE_CONTINGENCY (no longer OTHER_GAS_UNCLASSIFIED); the mismatch envelope never mixes tags (unchanged); factors.supply_mode, when given, must agree with factors.gas",
+  "c1": {
+   "status": "GROUND_ONLY_LAB_EQUIPMENT",
+   "p2_operates_c1": false
+  },
+  "icp_feed_gas_baseline": {
+   "primary": "G-REUSE",
+   "declared_variant": "G-XE",
+   "status": "UNCHANGED (A9.1; A9.19 does not alter the ICP feed-gas baseline)"
+  },
+  "statuses": "RF_COMPONENT_RATINGS TBD_AFTER_IMPEDANCE_MAP; ICP_COUPLED_THERMAL UNRESOLVED; anode OPEN; ICP45 NOT_EVALUATED; C1 GROUND_ONLY_LAB_EQUIPMENT; no PASS anywhere"
  }
 }
