@@ -6,6 +6,10 @@ evidence class of every text below (human-read from scanned pages, not OCR).
     python docs/requirements/rfp_official/rfp_clauses_v1.py          # write rfp_registration_v1.{json,md}
     python docs/requirements/rfp_official/rfp_clauses_v1.py --check  # outputs current; PDF hash verified if a local copy is given
     python docs/requirements/rfp_official/rfp_clauses_v1.py --check --pdf <path>
+
+The 'rvm_mapping' section (A9.17 RFP: requirement extraction / RVM mapping) is read from the re-based RVM
+(docs/requirements/rvm_a9/rvm_a9_v1.json, rfp_rebase); build the RVM first. The clause transcription is never changed by
+it (the RVM pins the transcription by sha256 and refuses any change).
 """
 import hashlib
 import json
@@ -13,6 +17,8 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[2]
+RVM_REL = "docs/requirements/rvm_a9/rvm_a9_v1.json"   # RVM re-base output (built FIRST: build_rvm_a9.py, then this file)
 OUT_JSON = HERE / "rfp_registration_v1.json"
 OUT_MD = HERE / "RFP_REGISTRATION_v1.md"
 
@@ -106,6 +112,46 @@ NEW_REQUIREMENTS_NOT_IN_RVM_CHECK = [
 ]
 
 
+def rvm_mapping(clause_ids):
+    """RVM mapping section (A9.17 RFP: the provenance record carries the requirement extraction / RVM mapping). Read
+    from the re-based RVM; the clause transcription above is never changed by it. Fails closed on any unmapped or
+    unknown clause."""
+    p = ROOT / RVM_REL
+    if not p.exists():
+        raise SystemExit(f"RVM missing: {RVM_REL} (build docs/requirements/rvm_a9/build_rvm_a9.py first)")
+    rvm = json.loads(p.read_text(encoding="utf-8"))
+    rb = rvm.get("rfp_rebase")
+    if rvm.get("id") != "rvm_a9_v1" or not rb:
+        raise SystemExit("RVM has no rfp_rebase section: rebuild the RVM")
+    cov = rb["clause_coverage"]
+    if [c["clause_id"] for c in cov] != list(clause_ids):
+        raise SystemExit("RVM clause coverage does not match the registered clauses")
+    for c in cov:
+        if not c["rvm_rows"] and "not_system_requirement" not in c:
+            raise SystemExit(f"clause {c['clause_id']} is not mapped to an RVM row")
+    rows = {r["id"]: r for r in rvm["rows"]}
+    return {
+        "source": RVM_REL + " rfp_rebase (" + rb["id"] + ")",
+        "regenerate": "python docs/requirements/rvm_a9/build_rvm_a9.py && python docs/requirements/rfp_official/rfp_clauses_v1.py",
+        "rule": rb["rule"],
+        "ag_15_status": rb["ag_15_status"],
+        "clauses_sha256": rb["registration"]["clauses_sha256"],
+        "clauses": [{"clause_id": c["clause_id"], "rvm_rows": c["rvm_rows"], "related_rvm_rows": c["related_rvm_rows"],
+                     **({"not_system_requirement": c["not_system_requirement"]} if "not_system_requirement" in c else {}),
+                     **({"partial_programmatic": c["partial_programmatic"]} if "partial_programmatic" in c else {})}
+                    for c in cov],
+        "rows_not_from_rfp": [{"rvm_row": r["id"], "origin": r["requirement_origin"],
+                               "related_clauses": r["related_rfp_clauses"], "title": r["title"]}
+                              for r in rvm["rows"] if r["requirement_origin"] != "RFP_CLAUSE"],
+        "requirements_to_check_against_rvm_resolution": [
+            {"clause_id": cid, "rvm_rows": next(c["rvm_rows"] for c in cov if c["clause_id"] == cid)}
+            for cid, _ in NEW_REQUIREMENTS_NOT_IN_RVM_CHECK],
+        "discrepancies": [{"id": d["id"], "topic": d["topic"], "rfp_clauses": d["rfp_clauses"],
+                           "disposition": d["disposition"]} for d in rb["discrepancies"]],
+        "n_rvm_rows": len(rows),
+    }
+
+
 def build():
     return {
         "schema": "rfp_registration_v1",
@@ -117,6 +163,7 @@ def build():
         "requirements_to_check_against_rvm": [{"clause_id": c, "summary": s} for c, s in NEW_REQUIREMENTS_NOT_IN_RVM_CHECK],
         "ag_15": "the official RFP is registered with immutable identity (sha256); RVM re-basing against these clauses is "
                  "the next AG-15 step (A9.16 step 3, after the step-1 RVM changes land)",
+        "rvm_mapping": rvm_mapping([c[0] for c in CLAUSES]),
     }
 
 
@@ -136,6 +183,23 @@ def render_md(d):
     L += ["", "## Requirements to check against the RVM", ""]
     L += [f"- {r['clause_id']}: {r['summary']}" for r in d["requirements_to_check_against_rvm"]]
     L += ["", d["ag_15"], ""]
+    m = d["rvm_mapping"]
+    L += ["## RVM mapping (re-base, AG-15)", "", f"Source: `{m['source']}`; regenerate: `{m['regenerate']}`.", "",
+          f"Rule: {m['rule']}.", "", f"AG-15: {m['ag_15_status']}.", "",
+          "| Clause | RVM rows (derived) | Related rows | Note |", "|---|---|---|---|"]
+    for c in m["clauses"]:
+        note = "; ".join(x for x in (c.get("not_system_requirement", {}).get("class", ""),
+                                     c.get("partial_programmatic", "")) if x)
+        L.append(f"| {c['clause_id']} | {', '.join(c['rvm_rows']) or '-'} | {', '.join(c['related_rvm_rows']) or '-'} | "
+                 f"{note} |")
+    L += ["", "Rows not derived from an RFP clause:", ""]
+    L += [f"- {r['rvm_row']} {r['origin']}: {r['title']}" for r in m["rows_not_from_rfp"]]
+    L += ["", "Requirements flagged for the RVM check, resolved:", ""]
+    L += [f"- {r['clause_id']}: {', '.join(r['rvm_rows'])}" for r in m["requirements_to_check_against_rvm_resolution"]]
+    L += ["", "Discrepancies (recorded for the owner / DRDO; see the RVM):", ""]
+    L += [f"- {x['id']} {x['topic']} ({', '.join(x['rfp_clauses']) or 'no clause'}): {x['disposition']}"
+          for x in m["discrepancies"]]
+    L += [""]
     return "\n".join(L)
 
 

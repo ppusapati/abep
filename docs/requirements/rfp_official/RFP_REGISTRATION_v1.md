@@ -74,3 +74,82 @@
 - RFP-P30-01: micro-newton-level thrust measurement capability (evaluation criterion)
 
 the official RFP is registered with immutable identity (sha256); RVM re-basing against these clauses is the next AG-15 step (A9.16 step 3, after the step-1 RVM changes land)
+
+## RVM mapping (re-base, AG-15)
+
+Source: `docs/requirements/rvm_a9/rvm_a9_v1.json rfp_rebase (rvm_a9_rfp_rebase_v1)`; regenerate: `python docs/requirements/rvm_a9/build_rvm_a9.py && python docs/requirements/rfp_official/rfp_clauses_v1.py`.
+
+Rule: every RVM row cites the RFP clause id(s) it derives from or is labelled DERIVED_PROJECT_REQUIREMENT / OWNER_ALLOCATION; every registered clause maps to at least one row or is a recorded programmatic item; statuses unchanged by the re-base (rvm_rules; no PASS without determining evidence, A9.13 S6.22); requirement_frozen stays false on RFP rows until the owner closes AG-15.
+
+AG-15: OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here).
+
+| Clause | RVM rows (derived) | Related rows | Note |
+|---|---|---|---|
+| RFP-P16-01 | RVM-21 | RVM-08, RVM-25 |  |
+| RFP-P16-02 | RVM-08, RVM-10 | - |  |
+| RFP-P17-01 | RVM-25 | - |  |
+| RFP-P17-02 | RVM-09, RVM-16 | RVM-08, RVM-22 |  |
+| RFP-P17-03 | RVM-08 | RVM-01 |  |
+| RFP-P17-04 | RVM-08 | - |  |
+| RFP-P17-05 | RVM-09, RVM-10 | RVM-15 |  |
+| RFP-P18-01 | RVM-04, RVM-20 | - |  |
+| RFP-P18-02 | RVM-19 | - |  |
+| RFP-P18-03 | RVM-18 | - | items b) (technical-evaluation presentation) and c) (consortium agreement proof) are programmatic bid items; item a) (indigenous content > 60 %) is mapped to RVM-18 |
+| RFP-P18-04 | RVM-01 | - |  |
+| RFP-P18-05 | RVM-01 | - |  |
+| RFP-P18-06 | RVM-02, RVM-03 | RVM-15 |  |
+| RFP-P18-07 | RVM-11 | - |  |
+| RFP-P18-08 | RVM-08, RVM-10 | - |  |
+| RFP-P18-09 | RVM-19 | - |  |
+| RFP-P18-10 | RVM-03, RVM-04 | RVM-05 |  |
+| RFP-P18-11 | RVM-06 | RVM-07 |  |
+| RFP-P18-12 | RVM-20 | RVM-14 |  |
+| RFP-P19-01 | RVM-12, RVM-13 | - |  |
+| RFP-P19-02 | RVM-16, RVM-21 | - |  |
+| RFP-P19-03 | RVM-08 | - |  |
+| RFP-P19-04 | RVM-16, RVM-21 | RVM-17, RVM-27 |  |
+| RFP-P19-05 | RVM-18 | - |  |
+| RFP-P19-06 | RVM-16, RVM-22 | - |  |
+| RFP-P20-01 | RVM-23 | RVM-21 | 4.3 'The Company shall be ISO certified' is an organisational requirement carried by RVM-23 |
+| RFP-P20-02 | RVM-22 | - |  |
+| RFP-P20-03 | RVM-24 | RVM-09 |  |
+| RFP-P20-04 | RVM-25 | - |  |
+| RFP-P20-05 | RVM-25 | - |  |
+| RFP-P20-06 | RVM-25 | - |  |
+| RFP-P21-01 | RVM-25 | RVM-24 |  |
+| RFP-P21-02 | RVM-25 | RVM-21 |  |
+| RFP-P21-03 | RVM-26 | - |  |
+| RFP-P27-01 | RVM-26 | - |  |
+| RFP-P27-02 | - | RVM-16 | PROGRAMMATIC_BID_QUALIFICATION |
+| RFP-P30-01 | RVM-26 | - |  |
+
+Rows not derived from an RFP clause:
+
+- RVM-05 OWNER_ALLOCATION: Internal ~1.35 kW design allocation (row 109)
+- RVM-07 OWNER_ALLOCATION: Internal 34 kg and 36 kg design allocations (row 53)
+- RVM-14 DERIVED_PROJECT_REQUIREMENT: Start-up / restart (ignition, Hall ignition with the electron source, restart, transients)
+- RVM-15 DERIVED_PROJECT_REQUIREMENT: Beam neutralization / electron-current capacity (ICP-45 or C1)
+- RVM-17 DERIVED_PROJECT_REQUIREMENT: Thermal closure (>= 50 K below validated limits, 20 % heat-load margin)
+- RVM-27 OWNER_ALLOCATION: Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner allocation; 100 W contingency, 25 W stretch)
+
+Requirements flagged for the RVM check, resolved:
+
+- RFP-P18-12: RVM-20
+- RFP-P19-04: RVM-16, RVM-21
+- RFP-P19-06: RVM-16, RVM-22
+- RFP-P20-03: RVM-24
+- RFP-P20-06: RVM-25
+- RFP-P30-01: RVM-26
+
+Discrepancies (recorded for the owner / DRDO; see the RVM):
+
+- DISC-01 bid due / closing date (no clause): UNVERIFIED_BY_RFP_DOCUMENT - programmatic, not a system requirement (excluded candidate PRG-BID); verify on the DefProc tender document; CLAUDE.md is not edited here
+- DISC-02 mass wet / dry (RFP-P18-11): the wet reading is the conservative owner reading and is retained; recorded for DRDO clarification; requirement_frozen stays false
+- DISC-03 indigenous content (RFP-P18-03, RFP-P19-05): recorded for DRDO clarification (A9.14 OD12)
+- DISC-04 mission life hours (RFP-P19-01): consistent within the RFP's 'Approx'; the 26,280 h basis is conservative and retained
+- DISC-05 'Ignition Time' label (RFP-P19-01): literal wording preserved; conservative design basis pending clarification (A9.14 S8.5)
+- DISC-06 stated purpose of the Xe input (RFP-P17-05, RFP-P18-08): capability mandatory (A9.15 stands); stated purpose recorded for the owner; no rule changed
+- DISC-07 thrust range reading (RFP-P18-06): owner engineering reading retained; the RFP gives no split between sustained and capability
+- DISC-08 ignition / restart (no clause): DERIVED_PROJECT_REQUIREMENT (A9.14 S9.12 OD14)
+- DISC-09 ENTEST values (RFP-P19-04): RVM-21 carries no numeric level; levels TBD at PDR (not invented)
+- DISC-10 test-facility / thrust-measurement capability (RFP-P27-01, RFP-P30-01): new row RVM-26; the mN-level stand plan is not evidence of micro-newton capability

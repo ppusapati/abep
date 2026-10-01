@@ -207,7 +207,11 @@ def test_floor_fail_rule():
 REQUIRED_KEYS = ("ALTITUDE_ENVELOPE", "THRUST_12MN_SUSTAINED", "THRUST_25MN_CAPABILITY", "PBUS_LT_1500W_FULL_BUS",
                  "INTERNAL_1350W_ALLOCATION", "MASS_LT_40KG_WET", "ATMOSPHERIC_PROPELLANT", "XE_CAPABILITY",
                  "HALL_PREFERENCE", "FIRING_GT_15000H_PROVISIONAL", "MISSION_LIFE_GE_26280H", "STARTUP_RESTART",
-                 "NEUTRALIZATION", "AO_MATERIAL_COMPATIBILITY")
+                 "NEUTRALIZATION", "AO_MATERIAL_COMPATIBILITY",
+                 # AG-15 RFP re-base rows
+                 "ELECTRICAL_INTERFACE_MIL1553B", "ENVIRONMENTAL_QUALIFICATION_ENTEST", "RFP_TEST_APPROACH",
+                 "ISO_CERTIFICATION_ATP", "MILESTONE4_EXIT_QUALIFIED_THRUSTER_O_N2", "MILESTONE_SCHEDULE_DELIVERABLES",
+                 "THRUST_MEASUREMENT_AND_TEST_INFRASTRUCTURE", "MOUNT_HEAT_50W_ALLOCATION")
 
 
 def test_required_rows_present_for_both_configurations(doc):
@@ -228,7 +232,8 @@ def test_required_rows_present_for_both_configurations(doc):
 
 def test_rfp_rows_not_frozen_and_no_interpretation_frozen(doc):
     for r in doc["rows"]:
-        if r["category"] in ("rfp_recorded", "rfp_inferred_from_repo_text"):
+        if r["category"] in ("rfp_recorded", "rfp_inferred_from_repo_text", "rfp_registered") \
+                or r["requirement_origin"] == "RFP_CLAUSE":
             assert r["requirement_frozen"] is False, r["id"]
     assert doc["rfp_document_in_repository"] is False
 
@@ -390,3 +395,110 @@ def test_rvm14_od5_atmospheric_sequence_has_no_c1_dwell_number(doc):
     assert "registered dwell / thermal limits" in r["attempts"] and "P1Q-02" in r["attempts"]
     assert "120 s" not in r["attempts"] and "360 s" not in r["attempts"]
     assert "120 s" in r["c1_variant"] and "360 s" in r["c1_variant"] and "C1 variant only" in r["c1_variant"]
+
+
+# ------------------------------------------------------------------------------------------ AG-15 RFP re-base
+RB = _load("rfp_rebase_t", LANE / "rfp_rebase.py")
+REG = json.loads((REPO / "docs/requirements/rfp_official/rfp_registration_v1.json").read_text(encoding="utf-8"))
+CLAUSE = {c["id"]: c for c in REG["clauses"]}
+
+
+def test_every_row_cites_rfp_clauses_or_is_labelled(doc):
+    for r in doc["rows"]:
+        assert r["requirement_origin"] in ("RFP_CLAUSE", "DERIVED_PROJECT_REQUIREMENT", "OWNER_ALLOCATION"), r["id"]
+        if r["requirement_origin"] == "RFP_CLAUSE":
+            assert r["rfp_clauses"], r["id"]
+            assert r["requirement_basis"].startswith("RFP_CLAUSE "), r["id"]
+            assert r["requirement_frozen"] is False, r["id"]          # AG-15 closure is the owner's
+            cited = {s["clause_id"]: s for s in r["sources"] if s["kind"] == "rfp_official_clause"}
+            assert set(cited) == set(r["rfp_clauses"]), r["id"]
+            for cid, s in cited.items():            # verbatim copy of the registered transcription
+                assert s["verbatim"] == CLAUSE[cid]["text"] and s["page"] == CLAUSE[cid]["page"]
+                assert s["pdf_sha256"] == REG["document"]["sha256"]
+        else:
+            assert r["rfp_clauses"] == [], r["id"]
+        assert set(r["related_rfp_clauses"]) <= set(CLAUSE), r["id"]
+    by = {r["id"]: r for r in doc["rows"]}
+    assert by["RVM-14"]["requirement_origin"] == "DERIVED_PROJECT_REQUIREMENT"          # A9.14 S9.12 OD14
+    assert by["RVM-14"]["requirement_basis"].startswith("DERIVED_PROJECT_REQUIREMENT")
+    for rid in ("RVM-05", "RVM-07", "RVM-27"):
+        assert by[rid]["requirement_origin"] == "OWNER_ALLOCATION", rid
+    for it in doc["items"]:
+        assert it["requirement_origin"] in RB.ORIGINS
+        if it["requirement_origin"] == "RFP_CLAUSE":
+            assert it["rfp_clauses"] and set(it["rfp_clauses"]) <= set(CLAUSE)
+
+
+def test_every_registered_clause_is_mapped(doc):
+    cov = doc["rfp_rebase"]["clause_coverage"]
+    assert [c["clause_id"] for c in cov] == [c["id"] for c in REG["clauses"]]
+    for c in cov:
+        assert c["rvm_rows"] or c["not_system_requirement"], c["clause_id"]
+    by = {c["clause_id"]: set(c["rvm_rows"]) for c in cov}
+    expected = {"RFP-P18-12": "RVM-20", "RFP-P19-04": "RVM-21", "RFP-P19-06": "RVM-22", "RFP-P20-01": "RVM-23",
+                "RFP-P20-03": "RVM-24", "RFP-P20-04": "RVM-25", "RFP-P20-05": "RVM-25", "RFP-P20-06": "RVM-25",
+                "RFP-P21-01": "RVM-25", "RFP-P21-02": "RVM-25", "RFP-P30-01": "RVM-26", "RFP-P18-02": "RVM-19",
+                "RFP-P18-09": "RVM-19", "RFP-P19-05": "RVM-18", "RFP-P18-03": "RVM-18", "RFP-P19-01": "RVM-12"}
+    for cid, rid in expected.items():
+        assert rid in by[cid], (cid, rid)
+    for x in REG["requirements_to_check_against_rvm"]:
+        assert by[x["clause_id"]], x["clause_id"]
+    gates = {g["id"]: g["rfp_clauses"] for g in doc["a9_16_compliance_gates"]}
+    assert gates == {"CG-IC": ["RFP-P19-05", "RFP-P18-03"], "CG-SPF": ["RFP-P18-09", "RFP-P18-02"],
+                     "CG-N2-AO": ["RFP-P17-05", "RFP-P17-02", "RFP-P20-03"]}
+
+
+def test_rebased_rows_keep_owner_readings(doc):
+    by = {r["id"]: r for r in doc["rows"]}
+    r12 = by["RVM-12"]
+    assert "Ignition Time: More than 15000 hrs" in r12["requirement_text"]          # A9.14 S8.5 literal preserved
+    assert ">= 15,000 h cumulative energized" in r12["requirement_text"]
+    r19 = by["RVM-19"]
+    assert r19["rfp_clauses"] == ["RFP-P18-09", "RFP-P18-02"]                      # A9.14 S9.13
+    assert "duplicate thrusters" in r19["requirement_text"] and "FMEA" in r19["requirement_text"]
+    r18 = by["RVM-18"]
+    assert ">60%" in CLAUSE["RFP-P18-03"]["text"] and ">60%" in r18["requirement_text"]
+    assert "DRDO" in r18["requirement_text"] and "75 %" in r18["requirement_text"]
+    assert by["RVM-26"]["rfp_clauses"][0] == "RFP-P30-01" and "micro-newton" in by["RVM-26"]["requirement_text"]
+    assert by["RVM-21"]["limit"] is None and "PSLV / SSLV" in by["RVM-21"]["requirement_text"]
+    assert [m["due"] for m in by["RVM-25"]["milestones"]] == ["T0+09 months", "T0+12 months", "T0+20 months",
+                                                              "T0+24 months", "T0+36 months"]
+    assert [m["share"] for m in by["RVM-25"]["milestones"]] == ["15%", "10%", "20%", "35%", "20%"]
+    assert [x["item"] for x in by["RVM-22"]["sub_requirements"]] == ["a", "b", "c", "d"]
+    for c in B.CONFIGS:
+        for rid in ("RVM-20", "RVM-21", "RVM-22", "RVM-23", "RVM-24", "RVM-25", "RVM-26", "RVM-27"):
+            assert by[rid]["configurations"][c]["status"] == "NOT_EVALUATED", (rid, c)   # no determining evidence
+    absent = [a for r in doc["rows"] for cell in r["configurations"].values() for a in cell["artifacts"]
+              if a["kind"] == "VERIFICATION_ARTIFACT_ABSENT"]
+    assert absent and all(not a["evaluated"] and a["meets"] is None
+                          and "NO VERIFICATION ARTIFACT" in a["evidence_state"] for a in absent)
+
+
+def test_discrepancies_recorded(doc):
+    d = {x["id"]: x for x in doc["rfp_rebase"]["discrepancies"]}
+    assert "05 Oct 2026" in d["DISC-01"]["repository"] and d["DISC-01"]["rfp_clauses"] == []
+    assert d["DISC-01"]["disposition"].startswith("UNVERIFIED_BY_RFP_DOCUMENT")
+    assert d["DISC-02"]["rfp_clauses"] == ["RFP-P18-11"] and "wet or dry not stated" in d["DISC-02"]["rfp"]
+    assert set(d["DISC-03"]["rfp_clauses"]) == {"RFP-P18-03", "RFP-P19-05"}
+    assert "AG-15" in doc["rfp_rebase"]["gate"] and doc["rfp_rebase"]["ag_15_status"].startswith("OPEN")
+
+
+def test_absent_artifact_kind_never_passes():
+    assert R.assign_status([_a(kind="VERIFICATION_ARTIFACT_ABSENT")], True)[0] == "NOT_EVALUATED"
+    with pytest.raises(R.RvmError):
+        R.assign_status([_a(kind="VERIFICATION_ARTIFACT_ABSENT", evaluated=True, in_domain=True)], True)
+
+
+def test_changed_transcription_or_unmapped_clause_refused(tmp_path):
+    bad = copy.deepcopy(REG)
+    bad["clauses"][0]["text"] += " "
+    p = tmp_path / "reg.json"
+    p.write_text(json.dumps(bad), encoding="utf-8")
+    with pytest.raises(RB.RebaseError):
+        RB.load_registration(p)
+    extra = copy.deepcopy(REG)
+    extra["clauses"].append({"id": "RFP-P99-01", "page": 40, "section": "x", "text": "y"})
+    with pytest.raises(RB.RebaseError):
+        RB.coverage(extra, [{"id": "RVM-X", "rfp_clauses": ["RFP-P18-04"], "related_rfp_clauses": []}])
+    with pytest.raises(RB.RebaseError):
+        RB.clause_record(REG, "RFP-P18-11", "< 40 kg wet")      # token not in the verbatim clause

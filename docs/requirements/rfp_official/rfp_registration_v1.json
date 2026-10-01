@@ -361,5 +361,492 @@
    "summary": "micro-newton-level thrust measurement capability (evaluation criterion)"
   }
  ],
- "ag_15": "the official RFP is registered with immutable identity (sha256); RVM re-basing against these clauses is the next AG-15 step (A9.16 step 3, after the step-1 RVM changes land)"
+ "ag_15": "the official RFP is registered with immutable identity (sha256); RVM re-basing against these clauses is the next AG-15 step (A9.16 step 3, after the step-1 RVM changes land)",
+ "rvm_mapping": {
+  "source": "docs/requirements/rvm_a9/rvm_a9_v1.json rfp_rebase (rvm_a9_rfp_rebase_v1)",
+  "regenerate": "python docs/requirements/rvm_a9/build_rvm_a9.py && python docs/requirements/rfp_official/rfp_clauses_v1.py",
+  "rule": "every RVM row cites the RFP clause id(s) it derives from or is labelled DERIVED_PROJECT_REQUIREMENT / OWNER_ALLOCATION; every registered clause maps to at least one row or is a recorded programmatic item; statuses unchanged by the re-base (rvm_rules; no PASS without determining evidence, A9.13 S6.22); requirement_frozen stays false on RFP rows until the owner closes AG-15",
+  "ag_15_status": "OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here)",
+  "clauses_sha256": "fd51a951a1d06ea8bebd39416147686aedb1f596170fb81b6583f4564148a8aa",
+  "clauses": [
+   {
+    "clause_id": "RFP-P16-01",
+    "rvm_rows": [
+     "RVM-21"
+    ],
+    "related_rvm_rows": [
+     "RVM-08",
+     "RVM-25"
+    ]
+   },
+   {
+    "clause_id": "RFP-P16-02",
+    "rvm_rows": [
+     "RVM-08",
+     "RVM-10"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P17-01",
+    "rvm_rows": [
+     "RVM-25"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P17-02",
+    "rvm_rows": [
+     "RVM-09",
+     "RVM-16"
+    ],
+    "related_rvm_rows": [
+     "RVM-08",
+     "RVM-22"
+    ]
+   },
+   {
+    "clause_id": "RFP-P17-03",
+    "rvm_rows": [
+     "RVM-08"
+    ],
+    "related_rvm_rows": [
+     "RVM-01"
+    ]
+   },
+   {
+    "clause_id": "RFP-P17-04",
+    "rvm_rows": [
+     "RVM-08"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P17-05",
+    "rvm_rows": [
+     "RVM-09",
+     "RVM-10"
+    ],
+    "related_rvm_rows": [
+     "RVM-15"
+    ]
+   },
+   {
+    "clause_id": "RFP-P18-01",
+    "rvm_rows": [
+     "RVM-04",
+     "RVM-20"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P18-02",
+    "rvm_rows": [
+     "RVM-19"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P18-03",
+    "rvm_rows": [
+     "RVM-18"
+    ],
+    "related_rvm_rows": [],
+    "partial_programmatic": "items b) (technical-evaluation presentation) and c) (consortium agreement proof) are programmatic bid items; item a) (indigenous content > 60 %) is mapped to RVM-18"
+   },
+   {
+    "clause_id": "RFP-P18-04",
+    "rvm_rows": [
+     "RVM-01"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P18-05",
+    "rvm_rows": [
+     "RVM-01"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P18-06",
+    "rvm_rows": [
+     "RVM-02",
+     "RVM-03"
+    ],
+    "related_rvm_rows": [
+     "RVM-15"
+    ]
+   },
+   {
+    "clause_id": "RFP-P18-07",
+    "rvm_rows": [
+     "RVM-11"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P18-08",
+    "rvm_rows": [
+     "RVM-08",
+     "RVM-10"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P18-09",
+    "rvm_rows": [
+     "RVM-19"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P18-10",
+    "rvm_rows": [
+     "RVM-03",
+     "RVM-04"
+    ],
+    "related_rvm_rows": [
+     "RVM-05"
+    ]
+   },
+   {
+    "clause_id": "RFP-P18-11",
+    "rvm_rows": [
+     "RVM-06"
+    ],
+    "related_rvm_rows": [
+     "RVM-07"
+    ]
+   },
+   {
+    "clause_id": "RFP-P18-12",
+    "rvm_rows": [
+     "RVM-20"
+    ],
+    "related_rvm_rows": [
+     "RVM-14"
+    ]
+   },
+   {
+    "clause_id": "RFP-P19-01",
+    "rvm_rows": [
+     "RVM-12",
+     "RVM-13"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P19-02",
+    "rvm_rows": [
+     "RVM-16",
+     "RVM-21"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P19-03",
+    "rvm_rows": [
+     "RVM-08"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P19-04",
+    "rvm_rows": [
+     "RVM-16",
+     "RVM-21"
+    ],
+    "related_rvm_rows": [
+     "RVM-17",
+     "RVM-27"
+    ]
+   },
+   {
+    "clause_id": "RFP-P19-05",
+    "rvm_rows": [
+     "RVM-18"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P19-06",
+    "rvm_rows": [
+     "RVM-16",
+     "RVM-22"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P20-01",
+    "rvm_rows": [
+     "RVM-23"
+    ],
+    "related_rvm_rows": [
+     "RVM-21"
+    ],
+    "partial_programmatic": "4.3 'The Company shall be ISO certified' is an organisational requirement carried by RVM-23"
+   },
+   {
+    "clause_id": "RFP-P20-02",
+    "rvm_rows": [
+     "RVM-22"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P20-03",
+    "rvm_rows": [
+     "RVM-24"
+    ],
+    "related_rvm_rows": [
+     "RVM-09"
+    ]
+   },
+   {
+    "clause_id": "RFP-P20-04",
+    "rvm_rows": [
+     "RVM-25"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P20-05",
+    "rvm_rows": [
+     "RVM-25"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P20-06",
+    "rvm_rows": [
+     "RVM-25"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P21-01",
+    "rvm_rows": [
+     "RVM-25"
+    ],
+    "related_rvm_rows": [
+     "RVM-24"
+    ]
+   },
+   {
+    "clause_id": "RFP-P21-02",
+    "rvm_rows": [
+     "RVM-25"
+    ],
+    "related_rvm_rows": [
+     "RVM-21"
+    ]
+   },
+   {
+    "clause_id": "RFP-P21-03",
+    "rvm_rows": [
+     "RVM-26"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P27-01",
+    "rvm_rows": [
+     "RVM-26"
+    ],
+    "related_rvm_rows": []
+   },
+   {
+    "clause_id": "RFP-P27-02",
+    "rvm_rows": [],
+    "related_rvm_rows": [
+     "RVM-16"
+    ],
+    "not_system_requirement": {
+     "class": "PROGRAMMATIC_BID_QUALIFICATION",
+     "why": "collaboration with academia / research institute on material compatibility with nascent oxygen (LoI / MoU to be produced; Part IV(B), no waivers per RFP-P21-03); a bid-qualification item, related technical row RVM-16"
+    }
+   },
+   {
+    "clause_id": "RFP-P30-01",
+    "rvm_rows": [
+     "RVM-26"
+    ],
+    "related_rvm_rows": []
+   }
+  ],
+  "rows_not_from_rfp": [
+   {
+    "rvm_row": "RVM-05",
+    "origin": "OWNER_ALLOCATION",
+    "related_clauses": [
+     "RFP-P18-10"
+    ],
+    "title": "Internal ~1.35 kW design allocation (row 109)"
+   },
+   {
+    "rvm_row": "RVM-07",
+    "origin": "OWNER_ALLOCATION",
+    "related_clauses": [
+     "RFP-P18-11"
+    ],
+    "title": "Internal 34 kg and 36 kg design allocations (row 53)"
+   },
+   {
+    "rvm_row": "RVM-14",
+    "origin": "DERIVED_PROJECT_REQUIREMENT",
+    "related_clauses": [
+     "RFP-P18-12"
+    ],
+    "title": "Start-up / restart (ignition, Hall ignition with the electron source, restart, transients)"
+   },
+   {
+    "rvm_row": "RVM-15",
+    "origin": "DERIVED_PROJECT_REQUIREMENT",
+    "related_clauses": [
+     "RFP-P17-05",
+     "RFP-P18-06"
+    ],
+    "title": "Beam neutralization / electron-current capacity (ICP-45 or C1)"
+   },
+   {
+    "rvm_row": "RVM-17",
+    "origin": "DERIVED_PROJECT_REQUIREMENT",
+    "related_clauses": [
+     "RFP-P19-04"
+    ],
+    "title": "Thermal closure (>= 50 K below validated limits, 20 % heat-load margin)"
+   },
+   {
+    "rvm_row": "RVM-27",
+    "origin": "OWNER_ALLOCATION",
+    "related_clauses": [
+     "RFP-P19-04"
+    ],
+    "title": "Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner allocation; 100 W contingency, 25 W stretch)"
+   }
+  ],
+  "requirements_to_check_against_rvm_resolution": [
+   {
+    "clause_id": "RFP-P18-12",
+    "rvm_rows": [
+     "RVM-20"
+    ]
+   },
+   {
+    "clause_id": "RFP-P19-04",
+    "rvm_rows": [
+     "RVM-16",
+     "RVM-21"
+    ]
+   },
+   {
+    "clause_id": "RFP-P19-06",
+    "rvm_rows": [
+     "RVM-16",
+     "RVM-22"
+    ]
+   },
+   {
+    "clause_id": "RFP-P20-03",
+    "rvm_rows": [
+     "RVM-24"
+    ]
+   },
+   {
+    "clause_id": "RFP-P20-06",
+    "rvm_rows": [
+     "RVM-25"
+    ]
+   },
+   {
+    "clause_id": "RFP-P30-01",
+    "rvm_rows": [
+     "RVM-26"
+    ]
+   }
+  ],
+  "discrepancies": [
+   {
+    "id": "DISC-01",
+    "topic": "bid due / closing date",
+    "rfp_clauses": [],
+    "disposition": "UNVERIFIED_BY_RFP_DOCUMENT - programmatic, not a system requirement (excluded candidate PRG-BID); verify on the DefProc tender document; CLAUDE.md is not edited here"
+   },
+   {
+    "id": "DISC-02",
+    "topic": "mass wet / dry",
+    "rfp_clauses": [
+     "RFP-P18-11"
+    ],
+    "disposition": "the wet reading is the conservative owner reading and is retained; recorded for DRDO clarification; requirement_frozen stays false"
+   },
+   {
+    "id": "DISC-03",
+    "topic": "indigenous content",
+    "rfp_clauses": [
+     "RFP-P18-03",
+     "RFP-P19-05"
+    ],
+    "disposition": "recorded for DRDO clarification (A9.14 OD12)"
+   },
+   {
+    "id": "DISC-04",
+    "topic": "mission life hours",
+    "rfp_clauses": [
+     "RFP-P19-01"
+    ],
+    "disposition": "consistent within the RFP's 'Approx'; the 26,280 h basis is conservative and retained"
+   },
+   {
+    "id": "DISC-05",
+    "topic": "'Ignition Time' label",
+    "rfp_clauses": [
+     "RFP-P19-01"
+    ],
+    "disposition": "literal wording preserved; conservative design basis pending clarification (A9.14 S8.5)"
+   },
+   {
+    "id": "DISC-06",
+    "topic": "stated purpose of the Xe input",
+    "rfp_clauses": [
+     "RFP-P17-05",
+     "RFP-P18-08"
+    ],
+    "disposition": "capability mandatory (A9.15 stands); stated purpose recorded for the owner; no rule changed"
+   },
+   {
+    "id": "DISC-07",
+    "topic": "thrust range reading",
+    "rfp_clauses": [
+     "RFP-P18-06"
+    ],
+    "disposition": "owner engineering reading retained; the RFP gives no split between sustained and capability"
+   },
+   {
+    "id": "DISC-08",
+    "topic": "ignition / restart",
+    "rfp_clauses": [],
+    "disposition": "DERIVED_PROJECT_REQUIREMENT (A9.14 S9.12 OD14)"
+   },
+   {
+    "id": "DISC-09",
+    "topic": "ENTEST values",
+    "rfp_clauses": [
+     "RFP-P19-04"
+    ],
+    "disposition": "RVM-21 carries no numeric level; levels TBD at PDR (not invented)"
+   },
+   {
+    "id": "DISC-10",
+    "topic": "test-facility / thrust-measurement capability",
+    "rfp_clauses": [
+     "RFP-P27-01",
+     "RFP-P30-01"
+    ],
+    "disposition": "new row RVM-26; the mN-level stand plan is not evidence of micro-newton capability"
+   }
+  ],
+  "n_rvm_rows": 27
+ }
 }

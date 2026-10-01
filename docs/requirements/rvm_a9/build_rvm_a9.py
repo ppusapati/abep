@@ -49,6 +49,7 @@ REPO = HERE.parents[2]
 LANE_REL = "docs/requirements/rvm_a9"
 sys.path.insert(0, str(HERE))
 import a9_16_rvm as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
+import rfp_rebase as RB  # noqa: E402  (AG-15 re-base on the registered official RFP, A9.16 step 3)
 JSON_NAME = "rvm_a9_v1.json"
 MD_NAME = "RVM_A9.md"
 TEST_REL = "tests/test_rvm_a9.py"
@@ -229,6 +230,10 @@ class Ctx:
         self.p = pins
         self.r = refs
         self.answers = {a["row"]: a for a in pins["ANS"]["answers"]}
+        try:
+            self.reg = RB.load_registration()   # official RFP registration (AG-15): identity + clause hash checked
+        except RB.RebaseError as e:
+            raise BuildError(str(e)) from e
 
     def answer(self, row, token=None):
         a = self.answers.get(row)
@@ -280,6 +285,12 @@ class Ctx:
         return {"kind": "owner_decision", "path": PINS["A9"][0], "decision_id": self.p["A9"]["id"], "key": field,
                 "sha256_of_file": PINS["A9"][1], "text": v}
 
+    def rfp(self, cid, token=None):
+        try:
+            return RB.clause_record(self.reg, cid, token)
+        except RB.RebaseError as e:
+            raise BuildError(str(e)) from e
+
     def rtm(self, rid):
         r = find_by(self.p["RTM"]["requirements"], rid)
         if r is None:
@@ -323,6 +334,17 @@ def plan(ctx, pkg, ident, role="DETERMINING", key="id", why=""):
     kind = "PROCUREMENT" if pkg == "RFQ2" else "PLAN_OR_FRAMEWORK"
     a = _art(REFS[pkg][0], shown, role, kind, state)
     a["detail"] = {"name": name, "why": why}
+    return a
+
+
+def absent(ctx, cid, would_verify, suffix=""):
+    """No verification artifact exists in the repository for this RFP requirement: name what would verify it (an
+    explicit absence record, never a placeholder value; evaluates nothing -> NOT_EVALUATED)."""
+    c = ctx.rfp(cid)
+    a = _art(RB.REG_REL, f"rfp_registration_v1:{cid}{suffix}:NO_VERIFICATION_ARTIFACT", "DETERMINING",
+             "VERIFICATION_ARTIFACT_ABSENT",
+             "NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: " + would_verify)
+    a["detail"] = {"name": f"{cid} ({c['section']}, p. {c['page']})", "why": would_verify}
     return a
 
 
@@ -948,6 +970,8 @@ def build_doc():
                          "FAIL only from such a measurement or from a VERIFIED lower-bound floor exceeding the limit "
                          "under every admissible open reading (docs/EVIDENCE.md; CLAUDE.md rules 6, 10)",
         "rfp_document_in_repository": False,
+        "rfp_registered_in_repository": "BY_HASH_WITH_VERBATIM_CLAUSE_TRANSCRIPTION (" + RB.REG_REL + "; PDF kept in the "
+                                        "controlled project evidence store, A9.17)",
         "hall_status": {"credible_set": "EMPTY", "p5_n2_v1": "INCONCLUSIVE (permanent)",
                         "absolute_0d_results": "WITHDRAWN"},
         "a9_2_statuses_carried": a92,
@@ -975,12 +999,17 @@ def build_doc():
                                                  "requirement"},
         ],
         "compliance": {
-            "allowed_paths": [f"{LANE_REL}/**", TEST_REL],
+            "allowed_paths": [f"{LANE_REL}/**", TEST_REL, "docs/requirements/rfp_official/** (RVM mapping section only)",
+                              "tests/test_rfp_registration_v1.py"],
             "no_hall_performance_source": True, "no_screening_candidate": True, "no_winner": True,
             "no_archengine_wiring": True, "pins_mutable_governance": False, "no_pass_row": True,
         },
     }
     doc = A16.apply(doc)
+    try:
+        doc = RB.apply(doc, ctx.reg, RFP_BASIS)
+    except RB.RebaseError as e:
+        raise BuildError(str(e)) from e
     R.assert_status_vocabulary(doc)
     R.assert_no_pass_without_measurement(doc)
     for r in rows:
@@ -1007,6 +1036,14 @@ def _limit(lim):
     return f"{lim['quantity']} {lim['comparator']} {v} {lim['units']}"
 
 
+def _origin(r):
+    o = r.get("requirement_origin", "?")
+    if o == "RFP_CLAUSE":
+        return "RFP " + ", ".join(r["rfp_clauses"])
+    rel = r.get("related_rfp_clauses") or []
+    return o + (" (related " + ", ".join(rel) + ")" if rel else "")
+
+
 def render_md(doc):
     L = []
     a = L.append
@@ -1021,8 +1058,12 @@ def render_md(doc):
     a("")
     for w in doc["what_this_is_not"]:
         a(f"- {w}")
-    a(f"- The official RFP is not in the repository (owner rows 1-2); every RFP-recorded requirement is a secondary "
-      f"transcription and carries `requirement_frozen = false`.")
+    rb = doc["rfp_rebase"]
+    a(f"- The official RFP {rb['registration']['rfp_number']} is registered by hash (PDF sha256 "
+      f"`{rb['registration']['pdf_sha256']}`, not committed; A9.17) with a verbatim clause transcription in "
+      f"`{rb['registration']['path']}`. Every row cites the RFP clause(s) it derives from or is labelled "
+      f"DERIVED_PROJECT_REQUIREMENT / OWNER_ALLOCATION (AG-15 re-base). RFP rows keep `requirement_frozen = false` "
+      f"until the owner closes AG-15; the interpretation readings are recorded as discrepancies below.")
     a(f"- Hall: credible set {doc['hall_status']['credible_set']}; P5-N2 v1 {doc['hall_status']['p5_n2_v1']}; "
       f"0-D absolute results {doc['hall_status']['absolute_0d_results']} - no thrust, power or life analysis "
       f"evidence exists.")
@@ -1037,10 +1078,11 @@ def render_md(doc):
     a("")
     a("## Matrix")
     a("")
-    a("| id | requirement | limit | method | hall_icp_neutralizer | hall_c1_reference |")
-    a("|---|---|---|---|---|---|")
+    a("| id | requirement | origin / RFP clauses | limit | method | hall_icp_neutralizer | hall_c1_reference |")
+    a("|---|---|---|---|---|---|---|")
     for r in doc["rows"]:
-        a(f"| {r['id']} | {_esc(r['title'])} | {_esc(_limit(r['limit']))} | {', '.join(r['verification_methods'])} | "
+        a(f"| {r['id']} | {_esc(r['title'])} | {_origin(r)} | {_esc(_limit(r['limit']))} | "
+          f"{', '.join(r['verification_methods'])} | "
           + " | ".join(f"**{r['configurations'][c]['status']}** ({r['configurations'][c]['rule']})"
                        for c in CONFIGS) + " |")
     a("")
@@ -1054,7 +1096,7 @@ def render_md(doc):
         a("")
         a(f"### {r['id']} - {r['title']}")
         a("")
-        a(f"- Category: `{r['category']}`; key `{r['key']}`")
+        a(f"- Category: `{r['category']}`; key `{r['key']}`; origin {_origin(r)}")
         a(f"- Requirement: {r['requirement_text']}")
         a(f"- Limit: {_limit(r['limit'])}")
         a(f"- Basis: {r['requirement_basis']} (frozen: {r['requirement_frozen']})")
@@ -1065,11 +1107,20 @@ def render_md(doc):
                 srcs.append(f"owner row {s['row']} (sha256 {s['answer_sha256'][:12]}...)")
             elif s["kind"] == "owner_decision":
                 srcs.append(f"{s['decision_id']} `{s['key']}`")
+            elif s["kind"] == "rfp_official_clause":
+                srcs.append(f"**{s['clause_id']}** (p. {s['page']}, {s['section']}): \"{_esc(s['verbatim'])}\"")
             elif s["kind"] == "rfp_secondary_record":
-                srcs.append(f"R2 {s['locator']}: \"{s['quote']}\" ({s['source_locator']})")
+                srcs.append(f"R2 {s['locator']}: \"{s['quote']}\" ({s['source_locator']}; historical, superseded by "
+                            f"the RFP registration)")
             else:
                 srcs.append(f"{s['locator']} ({s['ref']})")
         a("- Sources: " + "; ".join(srcs))
+        if r.get("rfp_rebase", {}).get("note"):
+            a(f"- RFP re-base note: {r['rfp_rebase']['note']}")
+        for m in r.get("milestones", []):
+            a(f"- Milestone {m['milestone']} ({m['rfp_clause']}): due {m['due']}, share {m['share']}")
+        for sr in r.get("sub_requirements", []):
+            a(f"- Sub-requirement {sr['item']}) ({sr['rfp_clause']}): \"{sr['token']}\"")
         if r["open_readings"]:
             a("- Open readings (TBD_OWNER, carried side by side): " + "; ".join(
                 f"{o['id']} ({o['status'].split(' ')[0]}): {_esc(_short(o['question']))}" for o in r["open_readings"]))
@@ -1093,10 +1144,11 @@ def render_md(doc):
     a("")
     a("## (a) Items")
     a("")
-    a("| id | name | value | units | basis | evidence class | status | freeze point |")
-    a("|---|---|---|---|---|---|---|---|")
+    a("| id | name | value | units | basis | origin / RFP clauses | evidence class | status | freeze point |")
+    a("|---|---|---|---|---|---|---|---|---|")
     for it in doc["items"]:
         a(f"| {it['id']} | {_esc(it['name'])} | {_esc(it['value'])} | {it['units']} | {_esc(it['basis'])} | "
+          f"{_origin(it)} | "
           f"{it['evidence_class']} | {_esc(it['status'])} | {it['freeze_point']} |")
     a("")
     a("## (b) Interface demands")
@@ -1125,10 +1177,40 @@ def render_md(doc):
     a(doc["a9_16_rfp_rule"] + ".")
     a("")
     for g in doc["a9_16_compliance_gates"]:
-        a(f"- compliance gate {g['id']} ({g['gate']}; {g['rvm_row']}): {g['status']}")
+        a(f"- compliance gate {g['id']} ({g['gate']}; {g['rvm_row']}; RFP {', '.join(g['rfp_clauses'])}): "
+          f"{g['status']}")
     for r in doc["rows"]:
         if "a9_16" in r:
             a(f"- {r['id']}: " + _esc("; ".join(f"{k}: {v}" for k, v in r["a9_16"].items() if k != "decisions")))
+    a("")
+    a("## (d3) RFP re-base (AG-15)")
+    a("")
+    a(f"Rule: {rb['rule']}. AG-15: {rb['ag_15_status']}.")
+    a("")
+    a(f"Registration `{rb['registration']['path']}` ({rb['registration']['n_clauses']} clauses, transcription sha256 "
+      f"`{rb['registration']['clauses_sha256']}`, {rb['registration']['clauses_hash_rule']}). Decisions: "
+      + "; ".join(rb["decisions"]) + ".")
+    a("")
+    a("Origins: " + ", ".join(f"{k} {v}" for k, v in rb["origin_counts"].items()) + ".")
+    a("")
+    a("| RFP clause | page | section | RVM rows (derived) | related rows | note |")
+    a("|---|---|---|---|---|---|")
+    for c in rb["clause_coverage"]:
+        note = []
+        if "not_system_requirement" in c:
+            note.append(c["not_system_requirement"]["class"] + ": " + c["not_system_requirement"]["why"])
+        if "partial_programmatic" in c:
+            note.append(c["partial_programmatic"])
+        a(f"| {c['clause_id']} | {c['page']} | {_esc(c['section'])} | {', '.join(c['rvm_rows']) or '-'} | "
+          f"{', '.join(c['related_rvm_rows']) or '-'} | {_esc('; '.join(note))} |")
+    a("")
+    a("### RFP-vs-repository discrepancies (recorded, not resolved here)")
+    a("")
+    a("| id | topic | RFP clauses | RFP | repository | disposition | action |")
+    a("|---|---|---|---|---|---|---|")
+    for d in rb["discrepancies"]:
+        a(f"| {d['id']} | {_esc(d['topic'])} | {', '.join(d['rfp_clauses']) or '-'} | {_esc(d['rfp'])} | "
+          f"{_esc(d['repository'])} | {_esc(d['disposition'])} | {_esc(d['owner_or_drdo_action'])} |")
     a("")
     a("## (e) Historical reuse")
     a("")

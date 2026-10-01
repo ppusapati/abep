@@ -10,7 +10,7 @@
 - not a thermal, RF-rating, anode or ICP-capacity PASS (A9.2 / A9.6 fixed statuses carried)
 - not an answer to any open owner question and not a freeze of any RFP interpretation (rows 1-3)
 - not wired into archengine; goldens unaffected
-- The official RFP is not in the repository (owner rows 1-2); every RFP-recorded requirement is a secondary transcription and carries `requirement_frozen = false`.
+- The official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01 is registered by hash (PDF sha256 `a128a419414b571983d46be9b27f7bf2c4279693408399e0b92148f598e5dd00`, not committed; A9.17) with a verbatim clause transcription in `docs/requirements/rfp_official/rfp_registration_v1.json`. Every row cites the RFP clause(s) it derives from or is labelled DERIVED_PROJECT_REQUIREMENT / OWNER_ALLOCATION (AG-15 re-base). RFP rows keep `requirement_frozen = false` until the owner closes AG-15; the interpretation readings are recorded as discrepancies below.
 - Hall: credible set EMPTY; P5-N2 v1 INCONCLUSIVE (permanent); 0-D absolute results WITHDRAWN - no thrust, power or life analysis evidence exists.
 - Evidence rule: PASS only with a DETERMINING artifact of kind MEASUREMENT that is measured, verified, non-synthetic, in domain, meets and covers the requirement, and a frozen requirement basis; FAIL only from such a measurement or from a VERIFIED lower-bound floor exceeding the limit under every admissible open reading (docs/EVIDENCE.md; CLAUDE.md rules 6, 10).
 
@@ -20,34 +20,42 @@
 |---|---|---|
 | PASS | 0 | 0 |
 | FAIL | 0 | 0 |
-| NOT_EVALUATED | 16 | 16 |
+| NOT_EVALUATED | 24 | 24 |
 | OUT_OF_DOMAIN | 0 | 0 |
 | INCOMPLETE_EVIDENCE | 3 | 3 |
 | NUMERICAL_FAILURE | 0 | 0 |
 
 ## Matrix
 
-| id | requirement | limit | method | hall_icp_neutralizer | hall_c1_reference |
-|---|---|---|---|---|---|
-| RVM-01 | Altitude envelope 180-230 km | orbital altitude within 180 / 230 km | analysis, test | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
-| RVM-02 | >= 12 mN minimum sustained thrust on atmospheric propellant | sustained thrust on atmospheric propellant >= 12 mN | test | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
-| RVM-03 | 25 mN demonstrated system capability inside P_bus < 1.5 kW | demonstrated thrust capability at P_bus < 1500 W >= 25 mN | test, demonstration | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
-| RVM-04 | < 1.5 kW full bus power (A9-02 boundary, steady and start-up, 1 ms window) | P_bus,1ms,max (steady and start-up) < 1500 W | test, analysis | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
-| RVM-05 | Internal ~1.35 kW design allocation (row 109) | system bus power at every registered condition (internal allocation) <= 1350 W | test, analysis | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
-| RVM-06 | < 40 kg wet (incl. Xe + tank) | wet propulsion-system mass < 40 kg | inspection, analysis | **INCOMPLETE_EVIDENCE** (R6-INCOMPLETE) | **INCOMPLETE_EVIDENCE** (R6-INCOMPLETE) |
-| RVM-07 | Internal 34 kg and 36 kg design allocations (row 53) | wet propulsion-system mass (internal allocation) <= 34 / 36 kg | inspection, analysis | **INCOMPLETE_EVIDENCE** (R6-INCOMPLETE) | **INCOMPLETE_EVIDENCE** (R6-INCOMPLETE) |
-| RVM-08 | Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels) | propellant is delivered atmospheric air - | test, demonstration | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
-| RVM-09 | Ionise nascent (atomic) O (recorded as an RFP statement; verify) | no numeric threshold recorded | test, analysis | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
-| RVM-10 | Xe capability (air + Xe; bounded functional Xe mode) | Xe-capable operating mode demonstrated bounded functional - | demonstration, analysis | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
-| RVM-11 | Hall-effect thruster preferred | no numeric threshold recorded | inspection | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
-| RVM-12 | > 15,000 h firing (provisional hard requirement) | cumulative firing time > 15000 h | test, analysis | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
-| RVM-13 | Mission-life basis >= 26,280 h | mission life >= 26280 h | analysis | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
-| RVM-14 | Start-up / restart (ignition, Hall ignition with the electron source, restart, transients) | C1 ignition dwell per attempt (preliminary protocol) <= 120 s | test, demonstration | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
-| RVM-15 | Beam neutralization / electron-current capacity (ICP-45 or C1) | I_e,cap - I_d,max,H1 (one-sided lower confidence bound) > 0 A | test | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
-| RVM-16 | Atomic-oxygen / material compatibility (AO-beam test; anode, collector, keeper, gas path) | no numeric threshold recorded | test, inspection | **INCOMPLETE_EVIDENCE** (R6-INCOMPLETE) | **INCOMPLETE_EVIDENCE** (R6-INCOMPLETE) |
-| RVM-17 | Thermal closure (>= 50 K below validated limits, 20 % heat-load margin) | margin below validated continuous-use limit >= 50 K | analysis, test | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
-| RVM-18 | Indigenous content >= 75 % total | indigenous content (total) >= 75 % | inspection | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
-| RVM-19 | No single-point failure in electronics (recorded; verify) vs limited redundancy (row 55) | no numeric threshold recorded | analysis, inspection | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| id | requirement | origin / RFP clauses | limit | method | hall_icp_neutralizer | hall_c1_reference |
+|---|---|---|---|---|---|---|
+| RVM-01 | Altitude envelope 180-230 km | RFP RFP-P18-04, RFP-P18-05 | orbital altitude within 180 / 230 km | analysis, test | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-02 | >= 12 mN minimum sustained thrust on atmospheric propellant | RFP RFP-P18-06 | sustained thrust on atmospheric propellant >= 12 mN | test | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-03 | 25 mN demonstrated system capability inside P_bus < 1.5 kW | RFP RFP-P18-06, RFP-P18-10 | demonstrated thrust capability at P_bus < 1500 W >= 25 mN | test, demonstration | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-04 | < 1.5 kW full bus power (A9-02 boundary, steady and start-up, 1 ms window) | RFP RFP-P18-10, RFP-P18-01 | P_bus,1ms,max (steady and start-up) < 1500 W | test, analysis | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-05 | Internal ~1.35 kW design allocation (row 109) | OWNER_ALLOCATION (related RFP-P18-10) | system bus power at every registered condition (internal allocation) <= 1350 W | test, analysis | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-06 | < 40 kg wet (incl. Xe + tank) | RFP RFP-P18-11 | wet propulsion-system mass < 40 kg | inspection, analysis | **INCOMPLETE_EVIDENCE** (R6-INCOMPLETE) | **INCOMPLETE_EVIDENCE** (R6-INCOMPLETE) |
+| RVM-07 | Internal 34 kg and 36 kg design allocations (row 53) | OWNER_ALLOCATION (related RFP-P18-11) | wet propulsion-system mass (internal allocation) <= 34 / 36 kg | inspection, analysis | **INCOMPLETE_EVIDENCE** (R6-INCOMPLETE) | **INCOMPLETE_EVIDENCE** (R6-INCOMPLETE) |
+| RVM-08 | Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels) | RFP RFP-P18-08, RFP-P16-02, RFP-P17-03, RFP-P17-04, RFP-P19-03 | propellant is delivered atmospheric air - | test, demonstration | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-09 | Ionise N2 and nascent (atomic) O in the same thruster (RFP-P17-05, RFP-P17-02) | RFP RFP-P17-05, RFP-P17-02 | no numeric threshold recorded | test, analysis | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-10 | Xe capability (air + Xe; bounded functional Xe mode) | RFP RFP-P18-08, RFP-P17-05, RFP-P16-02 | Xe-capable operating mode demonstrated bounded functional - | demonstration, analysis | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-11 | Hall-effect thruster preferred | RFP RFP-P18-07 | no numeric threshold recorded | inspection | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-12 | 'Ignition Time: More than 15000 hrs' (RFP-P19-01, literal); design basis >= 15,000 h cumulative energized operation | RFP RFP-P19-01 | cumulative firing time > 15000 h | test, analysis | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-13 | Mission-life basis >= 26,280 h | RFP RFP-P19-01 | mission life >= 26280 h | analysis | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-14 | Start-up / restart (ignition, Hall ignition with the electron source, restart, transients) | DERIVED_PROJECT_REQUIREMENT (related RFP-P18-12) | C1 ignition dwell per attempt (preliminary protocol) <= 120 s | test, demonstration | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-15 | Beam neutralization / electron-current capacity (ICP-45 or C1) | DERIVED_PROJECT_REQUIREMENT (related RFP-P17-05, RFP-P18-06) | I_e,cap - I_d,max,H1 (one-sided lower confidence bound) > 0 A | test | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-16 | Atomic-oxygen / material compatibility (AO-beam test; anode, collector, keeper, gas path) | RFP RFP-P17-02, RFP-P19-04, RFP-P19-06, RFP-P19-02 | no numeric threshold recorded | test, inspection | **INCOMPLETE_EVIDENCE** (R6-INCOMPLETE) | **INCOMPLETE_EVIDENCE** (R6-INCOMPLETE) |
+| RVM-17 | Thermal closure (>= 50 K below validated limits, 20 % heat-load margin) | DERIVED_PROJECT_REQUIREMENT (related RFP-P19-04) | margin below validated continuous-use limit >= 50 K | analysis, test | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-18 | Indigenous content: >= 75 % project, thruster > 80 %, intake > 80 %, compressor / storage > 60 %, PSE > 70 % (RFP-P19-05; > 60 % statement RFP-P18-03 recorded) | RFP RFP-P19-05, RFP-P18-03 | indigenous content (total) >= 75 % | inspection | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-19 | Electronics: cater to single-point failure (RFP-P18-09); redundancy at electronics and sensor level (RFP-P18-02) | RFP RFP-P18-09, RFP-P18-02 | no numeric threshold recorded | analysis, inspection | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-20 | MIL-1553B interface with the satellite onboard computer + discrete thruster interface + hardware drivers inside the propulsion system | RFP RFP-P18-12, RFP-P18-01 | spacecraft data / command interface is MIL-1553B + discrete thruster-operation interface (as printed) - | inspection, test, demonstration | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-21 | Environmental qualification (ENTEST): launch vibration / shock (PSLV / SSLV or DRDO-decided LV), AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life | RFP RFP-P19-04, RFP-P19-02, RFP-P16-01 | no numeric threshold recorded | test, analysis | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-22 | RFP test approach 4.1 a-d (AO-beam coating tests; rarefied-gas intake erosion; EM / QM force, Isp, efficiency; expert-committee-approved test plan) and ground demonstration | RFP RFP-P19-06, RFP-P20-02 | no numeric threshold recorded | test, inspection | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-23 | ISO certification; acceptance / qualification per ATP (finalized after DDR / CDR); testing to MIL / ASTM / BIS / ESS standards | RFP RFP-P20-01 | no numeric threshold recorded | inspection | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-24 | Exit criterion: EM of the ABEP system + qualified electric thruster with O and N2 as propellant at milestone 4 (partial success) | RFP RFP-P20-03 | propellants of the qualified electric thruster at milestone 4 includes O and N2 - | test, demonstration | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-25 | Milestone schedule and deliverables M1-M5 (T0+9 / +12 / +20 / +24 / +36 months) and the EM -> QM processing flow | RFP RFP-P20-04, RFP-P20-05, RFP-P20-06, RFP-P21-01, RFP-P21-02, RFP-P17-01 | QM integration, ENTEST qualification and delivery (milestone 5) <= T0+36 months | inspection, demonstration | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-26 | Micro-newton-level thrust measurement system; UHV test facility and low-thrust measurement setup (Part IV(B), no waivers) | RFP RFP-P30-01, RFP-P27-01, RFP-P21-03 | thrust measurement capability resolves micro-newton level (as printed; no numeric resolution stated) - | inspection, demonstration, test | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
+| RVM-27 | Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner allocation; 100 W contingency, 25 W stretch) | OWNER_ALLOCATION (related RFP-P19-04) | steady heat conducted into the spacecraft mounting interface <= 50 W | analysis, test | **NOT_EVALUATED** (R7-NOT-EVALUATED) | **NOT_EVALUATED** (R7-NOT-EVALUATED) |
 
 ## Status rules (applied in this order by `rvm_rules.assign_status`)
 
@@ -66,12 +74,12 @@
 
 ### RVM-01 - Altitude envelope 180-230 km
 
-- Category: `rfp_recorded`; key `ALTITUDE_ENVELOPE`
+- Category: `rfp_registered`; key `ALTITUDE_ENVELOPE`; origin RFP RFP-P18-04, RFP-P18-05
 - Requirement: Operate the ABEP propulsion system in very low Earth orbit over the altitude band 180-230 km: every required state of the frozen 180-230 km mission / environment dataset must satisfy the applicable hard requirements (A9.14 OD2); design atmosphere states come from the versioned orbit-resolved dataset (A9.14 OD3; pending its build).
 - Limit: orbital altitude within 180 / 230 km
-- Basis: SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false) (frozen: False)
+- Basis: RFP_CLAUSE RFP-P18-04, RFP-P18-05 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (frozen: False)
 - Verification: analysis, test - analysis of drag vs delivered thrust over the band on the frozen NRLMSIS atmosphere (abep_sim/data/atmosphere_msis21_v1.*: a model input, not compliance evidence) plus thrust tests at delivered feed states representative of the band
-- Sources: R2 clauses[topic='(d) Altitude']: "orbital altitudes ranging between 180 km and 230 km" (S1 para 4); rfp.recorded_in[id=R1] (CLAUDE.md, section 'What this is'); owner row 1 (sha256 e16fbaa3a781...)
+- Sources: **RFP-P18-04** (p. 18, Part III 2 Functional Orbit altitude): "180 to 230 km"; **RFP-P18-05** (p. 18, Part III 2 Air intake Specification): "Shall be decided by air density based on solar activity and altitude"; R2 clauses[topic='(d) Altitude']: "orbital altitudes ranging between 180 km and 230 km" (S1 para 4; historical, superseded by the RFP registration); rfp.recorded_in[id=R1] (CLAUDE.md, section 'What this is'); owner row 1 (sha256 e16fbaa3a781...)
 - Open readings (TBD_OWNER, carried side by side): OD2 (OWNER_DECIDED): Envelope quantifier over 180–230 km × atmosphere states; OD3 (OWNER_DECIDED): Atmosphere design states
 - Historical cross-reference: RTM RFP-ALT; lane-24 gates G1_thrust, G2_bus_power, G6_ignition_sustainment
 - **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-ABS [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-TABS [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]
@@ -87,12 +95,13 @@
 
 ### RVM-02 - >= 12 mN minimum sustained thrust on atmospheric propellant
 
-- Category: `rfp_recorded`; key `THRUST_12MN_SUSTAINED`
+- Category: `rfp_registered`; key `THRUST_12MN_SUSTAINED`; origin RFP RFP-P18-06
 - Requirement: Demonstrate >= 12 mN sustained atmospheric operation (owner row 4 reading of '12-25 mN'), measured on the full system inside the < 1.5 kW spacecraft-DC boundary.
 - Limit: sustained thrust on atmospheric propellant >= 12 mN
-- Basis: SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false); owner engineering reading row 4 (frozen: False)
+- Basis: RFP_CLAUSE RFP-P18-06 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...); owner engineering reading row 4 (frozen: False)
 - Verification: test - torsional thrust stand (row 115), 1 % target (row 121, A9.1 UBQ-01), S1a u_T acceptance test at 12 mN (row 120); Ar data never count (row 36, A9.1 HIQ-08)
-- Sources: R2 clauses[topic='(c) Thrust']: "demonstrate sustained thrust levels between 12 mN and 25 mN" (S1 para 4 (news paraphrase)); rfp.recorded_in[id=R1] (CLAUDE.md, section 'What this is'); owner row 4 (sha256 a855c0b49429...); owner row 120 (sha256 a6ad1cf6e8a2...); OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer `requirement_discipline`
+- Sources: **RFP-P18-06** (p. 18, Part III 2 Thrust Requirement): "12 mN to 25 mN (From expected drag to compensate)"; R2 clauses[topic='(c) Thrust']: "demonstrate sustained thrust levels between 12 mN and 25 mN" (S1 para 4 (news paraphrase); historical, superseded by the RFP registration); rfp.recorded_in[id=R1] (CLAUDE.md, section 'What this is'); owner row 4 (sha256 a855c0b49429...); owner row 120 (sha256 a6ad1cf6e8a2...); OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer `requirement_discipline`
+- RFP re-base note: the RFP prints '12 mN to 25 mN (From expected drag to compensate)'; the >= 12 mN sustained / 25 mN capability split is the owner's engineering reading (row 4), recorded as reading R-THR
 - Historical cross-reference: RTM RFP-THR-MIN; lane-24 gates G1_thrust
 - **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:DQ-HI-TABS [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-SUST [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:HI-ABS [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]
     - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `A9_01_hall_icp_prereg_framework_v1:DQ-HI-TABS`: PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK
@@ -109,12 +118,12 @@
 
 ### RVM-03 - 25 mN demonstrated system capability inside P_bus < 1.5 kW
 
-- Category: `rfp_recorded`; key `THRUST_25MN_CAPABILITY`
+- Category: `rfp_registered`; key `THRUST_25MN_CAPABILITY`; origin RFP RFP-P18-06, RFP-P18-10
 - Requirement: Demonstrate 25 mN system capability inside the same full spacecraft-DC propulsion boundary with P_bus < 1.5 kW (16.67 mN/kW absolute full-system floor at that point); Xe is not required for 25 mN, any Xe use is booked, and XE_AUGMENTED_PEAK points are never atmospheric-only evidence.
 - Limit: demonstrated thrust capability at P_bus < 1500 W >= 25 mN
-- Basis: SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false); owner engineering reading rows 4, 27 (frozen: False)
+- Basis: RFP_CLAUSE RFP-P18-06, RFP-P18-10 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...); owner engineering reading rows 4, 27 (frozen: False)
 - Verification: test, demonstration - same boundary as RVM-04 (A9-02); thrust per bus power >= 16.67 mN/kW at the 25 mN point (row 27)
-- Sources: R2 clauses[topic='(c) Thrust']: "demonstrate sustained thrust levels between 12 mN and 25 mN" (S1 para 4 (news paraphrase)); owner row 4 (sha256 a855c0b49429...); owner row 27 (sha256 a5e26d5d06b8...); owner row 26 (sha256 3549676dc536...)
+- Sources: **RFP-P18-06** (p. 18, Part III 2 Thrust Requirement): "12 mN to 25 mN (From expected drag to compensate)"; **RFP-P18-10** (p. 18, Part III 2 Power): "<1500W"; R2 clauses[topic='(c) Thrust']: "demonstrate sustained thrust levels between 12 mN and 25 mN" (S1 para 4 (news paraphrase); historical, superseded by the RFP registration); owner row 4 (sha256 a855c0b49429...); owner row 27 (sha256 a5e26d5d06b8...); owner row 26 (sha256 3549676dc536...)
 - Historical cross-reference: RTM RFP-THR-MAX; lane-24 gates G1_thrust, G2_bus_power
 - **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-ABS [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-TABS [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]
     - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `A9_01_hall_icp_prereg_framework_v1:HI-ABS`: PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK
@@ -133,12 +142,13 @@
 
 ### RVM-04 - < 1.5 kW full bus power (A9-02 boundary, steady and start-up, 1 ms window)
 
-- Category: `rfp_recorded`; key `PBUS_LT_1500W_FULL_BUS`
+- Category: `rfp_registered`; key `PBUS_LT_1500W_FULL_BUS`; origin RFP RFP-P18-10, RFP-P18-01
 - Requirement: P_bus,1ms,max = max_t (1/1 ms) integral P_bus dt < 1500 W at the spacecraft-DC propulsion boundary (every active load: Hall discharge, magnets, RF source / match, collector bias, C1 supplies, compressor, flow control, housekeeping, thermal), for steady state AND start-up transients unless the official RFP grants a transient exception.
 - Limit: P_bus,1ms,max (steady and start-up) < 1500 W
-- Basis: SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false); owner rows 108, 110; A9.1 OQ-A902-01 engineering definition (frozen: False)
+- Basis: RFP_CLAUSE RFP-P18-10, RFP-P18-01 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...); owner rows 108, 110; A9.1 OQ-A902-01 engineering definition (frozen: False)
 - Verification: test, analysis - time-resolved spacecraft-side bus power: synchronized channels, >= 100 kSa/s, >= 20 kHz, documented anti-aliasing (A9.1 OQ-A902-01); a ledger alone never PASSes; a mains-powered laboratory RF generator is GROUND/FACILITY_ONLY and never flight P_bus evidence (A9.3 OQ-RFQ-06)
-- Sources: R2 clauses[topic='(d) Power']: "strict power budget of less than 1,500 W" (S1 para 6); rfp.recorded_in[id=R1] (CLAUDE.md, section 'What this is'); owner row 108 (sha256 caedb1162f6e...); owner row 110 (sha256 5227bccf1810...); OD_HARDWARE_PIVOT_2026_09_30_A9_1_followup_owner_decisions `OQ-A902-01`; OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer `requirement_discipline`
+- Sources: **RFP-P18-10** (p. 18, Part III 2 Power): "<1500W"; **RFP-P18-01** (p. 18, Part III 1(A)iv row 4 Power System Electronics): "Power system electronics shall capable taking power from satellite bus and provide the total ABEP system required voltages and Current requirements."; R2 clauses[topic='(d) Power']: "strict power budget of less than 1,500 W" (S1 para 6; historical, superseded by the RFP registration); rfp.recorded_in[id=R1] (CLAUDE.md, section 'What this is'); owner row 108 (sha256 caedb1162f6e...); owner row 110 (sha256 5227bccf1810...); OD_HARDWARE_PIVOT_2026_09_30_A9_1_followup_owner_decisions `OQ-A902-01`; OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer `requirement_discipline`
+- RFP re-base note: the RFP prints '<1500W' with no averaging window or transient clause; the 1 ms window is the owner's engineering definition (A9.1 OQ-A902-01)
 - Open readings (TBD_OWNER, carried side by side): OQ-A910-03 (OWNER_DECIDED): May a ledger declared 'peak_sampled' (the unaveraged sampled peak) PASS the 1.5 kW gate when the peak is below 1500 W and the record meets the A9.1 OQ-A902-01 ...
 - Historical cross-reference: RTM RFP-PWR; lane-24 gates G2_bus_power
 - **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: fo_a9_6_mass_power_integration_v2:power.configurations.hall_icp_neutralizer.rfp_gate_1ms [BUDGET_EVALUATION], A9_01_hall_icp_prereg_framework_v1:DQ-HI-PBUS [PLAN_OR_FRAMEWORK]
@@ -157,7 +167,7 @@
 
 ### RVM-05 - Internal ~1.35 kW design allocation (row 109)
 
-- Category: `owner_internal_allocation`; key `INTERNAL_1350W_ALLOCATION`
+- Category: `owner_internal_allocation`; key `INTERNAL_1350W_ALLOCATION`; origin OWNER_ALLOCATION (related RFP-P18-10)
 - Requirement: The downstream ICP power must fit inside the internal ~1.35 kW design allocation; the 1.35 -> 1.5 kW margin is not consumed nominally; P_ICP,available = 1350 - P_common - P_Hall - P_other,active at every registered condition (no fixed Hall/ICP split). An owner allocation, not an RFP gate.
 - Limit: system bus power at every registered condition (internal allocation) <= 1350 W
 - Basis: OWNER_ALLOCATION (row 109; A9.1 OQ-A902-03 / -07): owner-given internal design allocation (frozen: True)
@@ -175,12 +185,13 @@
 
 ### RVM-06 - < 40 kg wet (incl. Xe + tank)
 
-- Category: `rfp_recorded`; key `MASS_LT_40KG_WET`
+- Category: `rfp_registered`; key `MASS_LT_40KG_WET`; origin RFP RFP-P18-11
 - Requirement: Total propulsion-system mass < 40 kg, read as the wet system including Xe and tank unless the official RFP defines it as dry (row 5); 20 % internal development margin (row 52).
 - Limit: wet propulsion-system mass < 40 kg
-- Basis: SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false); owner wet reading row 5 (frozen: False)
+- Basis: RFP_CLAUSE RFP-P18-11 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...); owner wet reading row 5 (frozen: False)
 - Verification: inspection, analysis - weighed flight-representative hardware (inspection) and a CBE roll-up (analysis); allocation vs CBE vs measured kept distinct (A9.6 sec. 11)
-- Sources: R2 clauses[topic='(a) Mass']: "maintain a total mass under 40 kg" (S1 para 6 (news paraphrase; RFP clause not seen)); rfp.recorded_in[id=R1] (CLAUDE.md, section 'What this is'); owner row 5 (sha256 033b66092382...); owner row 52 (sha256 14168ed8540b...); OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer `requirement_discipline`
+- Sources: **RFP-P18-11** (p. 18, Part III 2 Mass): "< 40kg"; R2 clauses[topic='(a) Mass']: "maintain a total mass under 40 kg" (S1 para 6 (news paraphrase; RFP clause not seen); historical, superseded by the RFP registration); rfp.recorded_in[id=R1] (CLAUDE.md, section 'What this is'); owner row 5 (sha256 033b66092382...); owner row 52 (sha256 14168ed8540b...); OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer `requirement_discipline`
+- RFP re-base note: the RFP prints '< 40kg' without stating wet or dry (discrepancy DISC-02); the wet reading incl. Xe + tank is the owner's conservative reading (row 5)
 - Open readings (TBD_OWNER, carried side by side): MQ-01 (OWNER_DECIDED): Are the row-54 allocations MEV-level line budgets (row-57 equipment margin inside) or CBE-level budgets (row-57 margin on top)? RFQ ceilings and closure depend ...; MQ-02 (OWNER_DECIDED): Is the 4 kg dry development reserve (row 54) the row-52 20 % internal system margin, or additional to it?; MQ-09 (OWNER_DECIDED): Do the 2 / 5 / 10 kg Xe design cases (row 48) include the row-43 20 % reserve, with the row-45 residual on top?; MQ-10 (OWNER_DECIDED): Under the primary policy reading with the three evidence floors (R2E) the dry mass alone exceeds 40 kg. Accept that closure requires reducing the six ...; XA9Q-01 (OWNER_DECIDED): Are the row-48 design cases (2 / 5 / 10 kg) LOADED Xe (usable + residual) or usable Xe?; XA9Q-07 (OWNER_DECIDED): Does the row-6 functional Xe mode apply to the hall_icp_neutralizer flight configuration (so it also carries a Xe tank and Xe flow control)?; OQ-A910-01 (OWNER_DECIDED): Which content do the row-48 Xe design cases have for BOTH the A9 Xe ledger and the A9 mass BOM: LOADED Xe incl. reserve and residual (A9-08 XA9Q-01) or usable ...
 - Historical cross-reference: RTM RFP-MASS; lane-24 gates G3_mass
 - **hall_icp_neutralizer: INCOMPLETE_EVIDENCE** (`R6-INCOMPLETE`) - evaluation run with evidenced terms but inconclusive: fo_a9_6_mass_power_integration_v2:rollups[hall_icp_neutralizer] (3 evidenced term(s))
@@ -196,7 +207,7 @@
 
 ### RVM-07 - Internal 34 kg and 36 kg design allocations (row 53)
 
-- Category: `owner_internal_allocation`; key `INTERNAL_34_36KG_ALLOCATION`
+- Category: `owner_internal_allocation`; key `INTERNAL_34_36KG_ALLOCATION`; origin OWNER_ALLOCATION (related RFP-P18-11)
 - Requirement: Evaluate the 34 kg and 36 kg internal design allocations side by side; 40 kg remains the hard wet limit. An owner allocation, not an RFP gate.
 - Limit: wet propulsion-system mass (internal allocation) <= 34 / 36 kg
 - Basis: OWNER_ALLOCATION (row 53): both values carried, neither selected (frozen: True)
@@ -214,12 +225,12 @@
 
 ### RVM-08 - Atmospheric propellant (air: N2 / O2 path; NO_ATOMIC_O labels)
 
-- Category: `rfp_recorded`; key `ATMOSPHERIC_PROPELLANT`
+- Category: `rfp_registered`; key `ATMOSPHERIC_PROPELLANT`; origin RFP RFP-P18-08, RFP-P16-02, RFP-P17-03, RFP-P17-04, RFP-P19-03
 - Requirement: Operate on intake-collected atmospheric air through the RFP architecture path (intake -> filter -> compressor -> atmospheric gas chamber -> valve -> ionization/discharge -> acceleration). Evidence order: Ar (engineering-only, never counts) -> N2 -> O2-bearing surrogate labelled NO_ATOMIC_O -> separate atomic-O programme; no N2 + O2 test is AO proof.
 - Limit: propellant is delivered atmospheric air -
-- Basis: SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false); owner rows 36, 132; A9 evidence_sequence (frozen: False)
+- Basis: RFP_CLAUSE RFP-P18-08, RFP-P16-02, RFP-P17-03, RFP-P17-04, RFP-P19-03 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...); owner rows 36, 132; A9 evidence_sequence (frozen: False)
 - Verification: test, demonstration - Hall-on sustainment on N2 and O2-bearing surrogates in HI-S1 / HI-CMP (NO_ATOMIC_O); atomic-O effects only through HI-AO (RVM-09, RVM-16)
-- Sources: R2 clauses[topic='(b) Air + Xe']: "ambient atmospheric air supplemented with Xenon" (S1 para 5 (news paraphrase)); rfp.recorded_in[id=R4] (docs/HISTORY.md (Hall uncertainty scope rule) and CLAUDE.md Next work 1, 'Scope'); owner row 36 (sha256 eda83de4a8ab...); owner row 132 (sha256 fe6f23c2ddd4...); OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer `evidence_sequence`; OD_HARDWARE_PIVOT_2026_09_30_A9_1_followup_owner_decisions `HIQ-08`
+- Sources: **RFP-P18-08** (p. 18, Part III 2 Propellant for propulsion system): "Compatible for using Ambient air (at the functional orbit altitude of 180-230km) and Xenon as propellant. Two separate propellant tanks for ambient air and xenon."; **RFP-P16-02** (p. 16, Part III 1(A)ii Figure 1): "Logical Block Diagram: Intake -> Filter -> Compressor -> Gas Chamber -> Valve -> Thruster (Ionization zone \| Acceleration zone) -> Thrust; Xenon Gas -> Valve -> Thruster."; **RFP-P17-03** (p. 17, Part III 1(A)iv row 1 Air Intake): "Air intake system captures residual atmospheric particles (mainly atomic oxygen and nitrogen) at VLEO altitudes (< 250 km). Most challenging in total system."; **RFP-P17-04** (p. 17, Part III 1(A)iv row 2 Compressor and gas Reservoir): "Increases the density of the collected atmospheric gases to a usable level of ionization"; **RFP-P19-03** (p. 19, Part III 2 Subsystems): "The overall system shall consist of the following sub-systems a. Air Intake and Compressor storage b. Power Supply Electronics c. Thruster"; R2 clauses[topic='(b) Air + Xe']: "ambient atmospheric air supplemented with Xenon" (S1 para 5 (news paraphrase); historical, superseded by the RFP registration); rfp.recorded_in[id=R4] (docs/HISTORY.md (Hall uncertainty scope rule) and CLAUDE.md Next work 1, 'Scope'); owner row 36 (sha256 eda83de4a8ab...); owner row 132 (sha256 fe6f23c2ddd4...); OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer `evidence_sequence`; OD_HARDWARE_PIVOT_2026_09_30_A9_1_followup_owner_decisions `HIQ-08`
 - Historical cross-reference: RTM RFP-PROP, RFP-IGN-SUST; lane-24 gates G6_ignition_sustainment
 - **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-CMP [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-SUST [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]
     - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `A9_01_hall_icp_prereg_framework_v1:HI-CMP`: PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK
@@ -234,14 +245,14 @@
     - [SUPPORTING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` `hall_icp_validation_inputs_v1:VI-GAS-07`: PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_FOR_OWNER_REVIEW; item status HARDWARE_ONLY
     - [SUPPORTING/PLAN_OR_FRAMEWORK] `docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json` `feed_state_closure_v1`: PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT for owner review
 
-### RVM-09 - Ionise nascent (atomic) O (recorded as an RFP statement; verify)
+### RVM-09 - Ionise N2 and nascent (atomic) O in the same thruster (RFP-P17-05, RFP-P17-02)
 
-- Category: `rfp_inferred_from_repo_text`; key `IONISE_NASCENT_O`
-- Requirement: The ABEP ionises nascent (atomic) O from the collected atmosphere. Recorded only in-repo (R6); no threshold recorded; whether it needs its own gate is lane-24 OD12.
+- Category: `rfp_registered`; key `IONISE_NASCENT_O`; origin RFP RFP-P17-05, RFP-P17-02
+- Requirement: The thruster ionizes N2 and atomic oxygen in the same thruster (RFP-P17-05; critical technology 1 'Electric propulsion thruster to Ionize and accelerate N2 and nascent O', RFP-P17-02). No numeric threshold is printed. N2 + O2 surrogate data are NO_ATOMIC_O and never atomic-O evidence; compliance gate CG-N2-AO (A9.14 OD12).
 - Limit: no numeric threshold recorded
-- Basis: RFP_INFERRED_FROM_REPO_TEXT - verify against the RFP document (frozen: False)
+- Basis: RFP_CLAUSE RFP-P17-05, RFP-P17-02 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (as carried: RFP_INFERRED_FROM_REPO_TEXT - verify against the RFP document) (frozen: False)
 - Verification: test, analysis - delivered species state measured (row 102); the O / O2 chemistry v0 tables are unvalidated (not evidence); N2 + O2 surrogate data are NO_ATOMIC_O
-- Sources: rfp.recorded_in[id=R6] (docs/HISTORY.md, wall recombination section); owner row 132 (sha256 fe6f23c2ddd4...); owner row 102 (sha256 22d2ffa98a73...)
+- Sources: **RFP-P17-05** (p. 17, Part III 1(A)iv row 3 Thruster): "Capability to ionize N2, atomic oxygen in same thruster and It should have capability to use Xe as propellant, an extra input system to take care any problems on board unforeseen problems."; **RFP-P17-02** (p. 17, Part III 1(A)iii): "List of critical technologies required for the solution: 1. Electric propulsion thruster to Ionize and accelerate N2 and nascent O. 2. Material compatibility to with stand VLEO atmospheric nascent oxygen. 3. Air Intake system design and compressor technology. 4. Test facility to simulate air mixture conditions in VLEO environment."; rfp.recorded_in[id=R6] (docs/HISTORY.md, wall recombination section); owner row 132 (sha256 fe6f23c2ddd4...); owner row 102 (sha256 22d2ffa98a73...)
 - Open readings (TBD_OWNER, carried side by side): OD12 (OWNER_DECIDED): RFP requirements recorded but not gated (indigenous content, no single-point failure, 'ionise nascent O')
 - Historical cross-reference: RTM RFP-NASCENT-O; lane-24 gates -
 - **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-AO [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]
@@ -255,12 +266,13 @@
 
 ### RVM-10 - Xe capability (air + Xe; bounded functional Xe mode)
 
-- Category: `rfp_recorded`; key `XE_CAPABILITY`
+- Category: `rfp_registered`; key `XE_CAPABILITY`; origin RFP RFP-P18-08, RFP-P17-05, RFP-P16-02
 - Requirement: Provide RFP-required Xenon propulsion capability alongside ambient atmospheric propellant (A9.15): separate selectable ambient-air and Xe operating modes with separate tanks / paths, in both configurations and independent of C1; demonstrate a bounded functional Xe-capable operating mode beyond bookkeeping and book every Xe use (PHASE_TOTAL_FLOW, LOADED cases); Xe reference / health checks are labelled and never atmospheric evidence.
 - Limit: Xe-capable operating mode demonstrated bounded functional -
-- Basis: SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false); owner reading row 6 (frozen: False)
+- Basis: RFP_CLAUSE RFP-P18-08, RFP-P17-05, RFP-P16-02 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...); owner reading row 6 (frozen: False)
 - Verification: demonstration, analysis - Xe mode demonstrated on H-1 (XE_REFERENCE / XE_AUGMENTED_PEAK labels); the Xe accounting is supporting only (XV2-IF-09); whether the row-6 mode applies to the hall_icp_neutralizer flight configuration is XA9Q-07 (OPEN, carried side by side)
-- Sources: R2 clauses[topic='(b) Air + Xe']: "ambient atmospheric air supplemented with Xenon" (S1 para 5 (news paraphrase)); rfp.recorded_in[id=R1] (CLAUDE.md, section 'What this is'); owner row 6 (sha256 a2df92d79838...); owner row 42 (sha256 afb93b0c07cf...); owner row 26 (sha256 3549676dc536...); OD_HARDWARE_PIVOT_2026_09_30_A9_1_followup_owner_decisions `HIQ-03`
+- Sources: **RFP-P18-08** (p. 18, Part III 2 Propellant for propulsion system): "Compatible for using Ambient air (at the functional orbit altitude of 180-230km) and Xenon as propellant. Two separate propellant tanks for ambient air and xenon."; **RFP-P17-05** (p. 17, Part III 1(A)iv row 3 Thruster): "Capability to ionize N2, atomic oxygen in same thruster and It should have capability to use Xe as propellant, an extra input system to take care any problems on board unforeseen problems."; **RFP-P16-02** (p. 16, Part III 1(A)ii Figure 1): "Logical Block Diagram: Intake -> Filter -> Compressor -> Gas Chamber -> Valve -> Thruster (Ionization zone \| Acceleration zone) -> Thrust; Xenon Gas -> Valve -> Thruster."; R2 clauses[topic='(b) Air + Xe']: "ambient atmospheric air supplemented with Xenon" (S1 para 5 (news paraphrase); historical, superseded by the RFP registration); rfp.recorded_in[id=R1] (CLAUDE.md, section 'What this is'); owner row 6 (sha256 a2df92d79838...); owner row 42 (sha256 afb93b0c07cf...); owner row 26 (sha256 3549676dc536...); OD_HARDWARE_PIVOT_2026_09_30_A9_1_followup_owner_decisions `HIQ-03`
+- RFP re-base note: the RFP describes the Xe input as 'an extra input system to take care any problems on board unforeseen problems'; the capability is mandatory (A9.15), the stated purpose is recorded (DISC-06), no rule changed
 - Open readings (TBD_OWNER, carried side by side): XA9Q-07 (OWNER_DECIDED): Does the row-6 functional Xe mode apply to the hall_icp_neutralizer flight configuration (so it also carries a Xe tank and Xe flow control)?; XA9Q-01 (OWNER_DECIDED): Are the row-48 design cases (2 / 5 / 10 kg) LOADED Xe (usable + residual) or usable Xe?; OD6 (OWNER_DECIDED): Meaning of 'air + Xe'
 - Historical cross-reference: RTM RFP-XE-OP; lane-24 gates G7_air_xenon
 - **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:HI-CMP [PLAN_OR_FRAMEWORK]
@@ -273,26 +285,26 @@
 
 ### RVM-11 - Hall-effect thruster preferred
 
-- Category: `rfp_recorded`; key `HALL_PREFERENCE`
+- Category: `rfp_registered`; key `HALL_PREFERENCE`; origin RFP RFP-P18-07
 - Requirement: Preference (not mandate) for a Hall-effect thruster configuration. Both A9 configurations use the H-1 Hall accelerator; A9 keeps the Hall family (CLAUDE.md rule 8).
 - Limit: no numeric threshold recorded
-- Basis: SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false) (frozen: False)
+- Basis: RFP_CLAUSE RFP-P18-07 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (frozen: False)
 - Verification: inspection - inspection of a frozen design baseline (Milestone C); the A9 architecture is OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE, so there is no baseline to inspect; a design intent is not verification evidence
-- Sources: R2 clauses[topic='(d) Hall preferred']: "preference for a Hall-effect thruster configuration" (S1 para 5); rfp.recorded_in[id=R1] (CLAUDE.md, section 'What this is'); OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer `primary_hypothesis`; OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer `control_fallback`
+- Sources: **RFP-P18-07** (p. 18, Part III 2 Thruster Type): "Hall effect preferable"; R2 clauses[topic='(d) Hall preferred']: "preference for a Hall-effect thruster configuration" (S1 para 5; historical, superseded by the RFP registration); rfp.recorded_in[id=R1] (CLAUDE.md, section 'What this is'); OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer `primary_hypothesis`; OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer `control_fallback`
 - Historical cross-reference: RTM RFP-HALL; lane-24 gates -
 - **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1 [PLAN_OR_FRAMEWORK]
     - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `A9_01_hall_icp_prereg_framework_v1`: PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK
 - **hall_c1_reference: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1 [PLAN_OR_FRAMEWORK]
     - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `A9_01_hall_icp_prereg_framework_v1`: PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK
 
-### RVM-12 - > 15,000 h firing (provisional hard requirement)
+### RVM-12 - 'Ignition Time: More than 15000 hrs' (RFP-P19-01, literal); design basis >= 15,000 h cumulative energized operation
 
-- Category: `rfp_recorded`; key `FIRING_GT_15000H_PROVISIONAL`
-- Requirement: Cumulative firing time > 15,000 h, retained as a provisional hard requirement until the official RFP confirms it (row 3). C1 carries the 15,000 h cathode basis; the ICP neutralizer must carry its own RF-neutralizer lifetime / cycle requirement (row 46; not yet defined: OQ-VI-04).
+- Category: `rfp_registered`; key `FIRING_GT_15000H_PROVISIONAL`; origin RFP RFP-P19-01
+- Requirement: The RFP prints 'Ignition Time: More than 15000 hrs' (RFP-P19-01; literal wording preserved). Design basis: >= 15,000 h cumulative energized operating life (conservative reading pending clarification, A9.14 S8.5 OQ-VI-04); restart / cycle count from the frozen mission-mode profile (TBD, not invented). C1 carries the 15,000 h cathode basis; the ICP neutralizer carries its own >= 15,000 h life basis.
 - Limit: cumulative firing time > 15000 h
-- Basis: PROVISIONAL (row 3) - verify against the RFP; no accessed source mentions it (R2) (frozen: False)
+- Basis: RFP_CLAUSE RFP-P19-01 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (as carried: PROVISIONAL (row 3) - verify against the RFP; no accessed source mentions it (R2)) (frozen: False)
 - Verification: test, analysis - pre-registered wear / endurance segments (AOL-LF-02) plus a life analysis that uses no Hall map, screening candidate or withdrawn number (AOL-LF-01)
-- Sources: rfp.recorded_in[id=R1] (CLAUDE.md, section 'What this is'); owner row 3 (sha256 d4b082801ab7...); owner row 46 (sha256 49ccf1043315...)
+- Sources: **RFP-P19-01** (p. 19, Part III 2 Life Cycle and Maintainability): "Mission life: 3 years (Approx 26000 hrs). Ignition Time: More than 15000 hrs"; rfp.recorded_in[id=R1] (CLAUDE.md, section 'What this is'); owner row 3 (sha256 d4b082801ab7...); owner row 46 (sha256 49ccf1043315...)
 - Open readings (TBD_OWNER, carried side by side): OQ-VI-04 (OWNER_DECIDED): ICP-neutralizer lifetime and cycle requirement (VI-LF-05); OD13 (SUPERSEDED): '>15,000 h ignition' wording
 - Historical cross-reference: RTM RFP-FIRING; lane-24 gates G4_firing_life, P2_cathode
 - **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: ao_lifetime_register_v5:AOL-LF-02 [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-LIFE [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS], hall_icp_validation_inputs_v1:VI-LF-05 [PLAN_OR_FRAMEWORK]
@@ -310,12 +322,13 @@
 
 ### RVM-13 - Mission-life basis >= 26,280 h
 
-- Category: `rfp_recorded`; key `MISSION_LIFE_GE_26280H`
+- Category: `rfp_registered`; key `MISSION_LIFE_GE_26280H`; origin RFP RFP-P19-01
 - Requirement: Mission life >= 26,280 h (three years), the conservative engineering basis versus the repository's 26,000 h until the official wording is verified (row 3).
 - Limit: mission life >= 26280 h
-- Basis: OWNER_ENGINEERING_BASIS (row 3) pending the official RFP wording (frozen: False)
+- Basis: RFP_CLAUSE RFP-P19-01 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (as carried: OWNER_ENGINEERING_BASIS (row 3) pending the official RFP wording) (frozen: False)
 - Verification: analysis - mission analysis combining life, propellant and duty cycle; each input needs its own evidence (RVM-06, RVM-10, RVM-12)
-- Sources: R2 clauses[topic='(d) Life']: "mission life requirement has been set at three years" (S1 para 7); rfp.recorded_in[id=R1] (CLAUDE.md, section 'What this is'); owner row 3 (sha256 d4b082801ab7...)
+- Sources: **RFP-P19-01** (p. 19, Part III 2 Life Cycle and Maintainability): "Mission life: 3 years (Approx 26000 hrs). Ignition Time: More than 15000 hrs"; R2 clauses[topic='(d) Life']: "mission life requirement has been set at three years" (S1 para 7; historical, superseded by the RFP registration); rfp.recorded_in[id=R1] (CLAUDE.md, section 'What this is'); owner row 3 (sha256 d4b082801ab7...)
+- RFP re-base note: the RFP prints '3 years (Approx 26000 hrs)'; 26,280 h (= 3 x 8,760 h) is the owner's conservative engineering basis (row 3), recorded as DISC-04
 - Historical cross-reference: RTM RFP-MISSION; lane-24 gates G5_mission
 - **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: transport_ensemble_v0:members [VALIDATED_ANALYSIS], A9_01_hall_icp_prereg_framework_v1:DQ-HI-LIFE [PLAN_OR_FRAMEWORK]
     - [DETERMINING/VALIDATED_ANALYSIS] `hallthruster_bridge/ensemble/transport_ensemble_v0.json` `transport_ensemble_v0:members`: UNAVAILABLE - credible Hall transport set EMPTY (transport_ensemble_v0 members = []; Credible set is EMPTY (P5-Xe blind validation failed; no can...); P5-N2 v1 p5_n2_campaign_v1_vacuum: promotable [], inconclusive 9 of 9 candidates (permanent INCONCLUSIVE); all absolute 0-D Hall results withdrawn - no thrust / power / life analysis evidence exists
@@ -328,12 +341,13 @@
 
 ### RVM-14 - Start-up / restart (ignition, Hall ignition with the electron source, restart, transients)
 
-- Category: `rfp_inferred_from_repo_text`; key `STARTUP_RESTART`
+- Category: `derived_project`; key `STARTUP_RESTART`; origin DERIVED_PROJECT_REQUIREMENT (related RFP-P18-12)
 - Requirement: Ignite and restart from the off state and record ICP ignition, Hall ignition with ICP electrons, restart success and cycle count (row 24); C1 ignition dwell <= 120 s with at most two retries in the preliminary protocol, all Xe booked (row 93); start-up transients inside < 1.5 kW (row 108) with sequenced peaks (row 112, A9.1 SEQ-*). No ignition / restart clause is recorded from the RFP (lane-24 OD14).
 - Limit: C1 ignition dwell per attempt (preliminary protocol) <= 120 s
-- Basis: RFP_INFERRED (lane-24 G6 ignition inferred) + owner rows 24, 93, 108, 112 (frozen: False)
+- Basis: DERIVED_PROJECT_REQUIREMENT (A9.14 S9.12 OD14: atmospheric off-state ignition / restart is not RFP_EXPLICIT) + owner rows 24, 93, 108, 112 (frozen: False)
 - Verification: test, demonstration - DQ-HI-IGN hard gate and DQ-HI-RESTART Pareto quantity; the OQ-VI-05 Ar topology control is engineering-only, not an architecture gate
 - Sources: owner row 24 (sha256 f512c61dcb42...); owner row 93 (sha256 70360d5a7cdd...); owner row 108 (sha256 caedb1162f6e...); owner row 112 (sha256 a2f14a719852...); OD_HARDWARE_PIVOT_2026_09_30_A9_1_followup_owner_decisions `SEQ-peaks`; OD_HARDWARE_PIVOT_2026_09_30_A9_3_post_a9_tier1_owner_decisions `OQ-VI-05`
+- RFP re-base note: no RFP ignition / restart clause is registered; the 'Discrete interface for thruster operation' (RFP-P18-12) is context only, not an ignition requirement (A9.14 S9.12: do not claim DRDO specified an ignition / restart clause)
 - Open readings (TBD_OWNER, carried side by side): OD5 (OWNER_DECIDED): Ignition start sequence and restart count; OD14 (OWNER_DECIDED): Is ignition from the off state on atmospheric propellant an RFP requirement? (G6.ignition is inferred from 'air + Xe' and the RFP architecture; no ignition or ...; OQ-A907-01 (OWNER_DECIDED): Row 93 'cap each ignition dwell at 120 s and allow at most two retries': book 3 attempts (1 + 2 retries, literal) or 2 (the '120 s x 2' shorthand used in the ...; XA9Q-02 (OWNER_DECIDED): Row 93 'at most two retries': is the per-start bound 3 dwells (1 + 2 retries, 360 s) or 2 dwells (240 s)?
 - Historical cross-reference: RTM RFP-IGN-SUST; lane-24 gates G6_ignition_sustainment, P2_cathode
 - **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: A9_01_hall_icp_prereg_framework_v1:DQ-HI-IGN [PLAN_OR_FRAMEWORK], hall_icp_validation_inputs_v1:VI-SU-01 [PLAN_OR_FRAMEWORK], hall_icp_validation_inputs_v1:VI-SU-02 [PLAN_OR_FRAMEWORK]
@@ -351,7 +365,7 @@
 
 ### RVM-15 - Beam neutralization / electron-current capacity (ICP-45 or C1)
 
-- Category: `derived_from_owner_decision`; key `NEUTRALIZATION`
+- Category: `derived_from_owner_decision`; key `NEUTRALIZATION`; origin DERIVED_PROJECT_REQUIREMENT (related RFP-P17-05, RFP-P18-06)
 - Requirement: hall_icp_neutralizer: ICP-45 capacity I_e,cap = I_e,collector,RFON - I_e,collector,RFOFF (signed, discharge-OFF, anode disconnected and floating, Kirchhoff admission) >= I_d,max,H1 with the pre-registered one-sided margin before any score-bearing point; Hall-ON is NEUTRALIZATION_CONSISTENCY only. hall_c1_reference: heated Xe-fed LaB6 C1 sized to the measured / derived current demand (CONTROL_FALLBACK).
 - Limit: I_e,cap - I_d,max,H1 (one-sided lower confidence bound) > 0 A
 - Basis: OWNER_DECIDED criterion form (A9.1 ICP-45, A9.3-A9.5); I_d,max,H1 is TBD - requires measured / registered H-1 operation (frozen: False)
@@ -375,12 +389,12 @@
 
 ### RVM-16 - Atomic-oxygen / material compatibility (AO-beam test; anode, collector, keeper, gas path)
 
-- Category: `rfp_inferred_from_repo_text`; key `AO_MATERIAL_COMPATIBILITY`
-- Requirement: AO-exposed and O / O2-wetted materials qualified in a dedicated AO programme (AO-beam test recorded as 'RFP 4.1a', verify); 316L REJECTED_AS_CURRENT_BASELINE for the flight anode; final anode / collector material OPEN until coupon evidence; no graphite flight keeper for O / AO exposure; no silver in O / AO-wetted gas-path parts.
+- Category: `rfp_registered`; key `AO_MATERIAL_COMPATIBILITY`; origin RFP RFP-P17-02, RFP-P19-04, RFP-P19-06, RFP-P19-02
+- Requirement: All parts in intake, compressor and thruster take care of nascent atomic-oxygen erosion for the lifetime (RFP-P19-04); materials compatible with VLEO nascent oxygen (RFP-P17-02); coating and surface tests with atomic-oxygen beam exposure and erosion-yield measurement (RFP-P19-06 a); space-qualified materials and processes for the QM (RFP-P19-02). Owner rules carried: 316L REJECTED_AS_CURRENT_BASELINE for the flight anode; final anode / collector material OPEN until coupon evidence; no graphite flight keeper for O / AO exposure; no silver in O / AO-wetted gas-path parts.
 - Limit: no numeric threshold recorded
-- Basis: RFP_INFERRED_FROM_REPO_TEXT (R6) + owner rows 94, 103, 106, 132; A9.1 / A9.2 (frozen: False)
+- Basis: RFP_CLAUSE RFP-P17-02, RFP-P19-04, RFP-P19-06, RFP-P19-02 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (as carried: RFP_INFERRED_FROM_REPO_TEXT (R6) + owner rows 94, 103, 106, 132; A9.1 / A9.2) (frozen: False)
 - Verification: test, inspection - biased and floating coupons (row 106), ground AO exposure with a fluence witness (AOL-EX-01 / -02), post-test SEM/EDS/XPS; P4 screens every candidate fail-closed
-- Sources: rfp.recorded_in[id=R6] (docs/HISTORY.md, wall recombination section); owner row 132 (sha256 fe6f23c2ddd4...); owner row 106 (sha256 7ea19b29bcfb...); owner row 94 (sha256 964e5c0b6634...); owner row 103 (sha256 8d6289fe3b11...); OD_HARDWARE_PIVOT_2026_09_30_A9_2_a907_followup_owner_decisions `anode_316L`; OD_HARDWARE_PIVOT_2026_09_30_A9_1_followup_owner_decisions `A9-03-collector`
+- Sources: **RFP-P17-02** (p. 17, Part III 1(A)iii): "List of critical technologies required for the solution: 1. Electric propulsion thruster to Ionize and accelerate N2 and nascent O. 2. Material compatibility to with stand VLEO atmospheric nascent oxygen. 3. Air Intake system design and compressor technology. 4. Test facility to simulate air mixture conditions in VLEO environment."; **RFP-P19-04** (p. 19, Part III 2 Environment): "The product should qualify the launch vibrations and shock. The product shall qualify atomic oxygen erosion, radiation, thermal and ThermoVac specifications for a VLEO orbit with a mission life of 3 years. Atomic oxygen erosion environment, All parts in Intake, Compressor and Thruster design shall take care of nascent atomic oxygen erosion for lifetime. ENTEST Specifications (The specifications will be provided at the time PDR): The system has to qualify for VLEO environment for a lifetime 03 yrs and for launch loads of PSLV/ SSLV or any other Launch Vehicle decided by DRDO at the time of PDR."; **RFP-P19-06** (p. 19, Part III 4.1 Testing): "The system performance should be demonstrated by means of following tests: a) Coating materials and surface tests with Atomic Oxygen beam exposure, Erosion yield measurement. b) Creation of rarefied gas with prescribed mg/sec and velocity to test Intake system Erosion process. c) Minimum functional performance testing for EM and QM in integration mode for force calculation, with variable air intake (mg/sec), Isp, Efficiency of the total system etc. d) The test plan document for different tests shall be reviewed/ finalized through an expert committee and approved by PMMG/SPMMG."; **RFP-P19-02** (p. 19, Part III 2 Material Specifications): "All materials and processes used in the product realization should be space qualified for Qualified model."; rfp.recorded_in[id=R6] (docs/HISTORY.md, wall recombination section); owner row 132 (sha256 fe6f23c2ddd4...); owner row 106 (sha256 7ea19b29bcfb...); owner row 94 (sha256 964e5c0b6634...); owner row 103 (sha256 8d6289fe3b11...); OD_HARDWARE_PIVOT_2026_09_30_A9_2_a907_followup_owner_decisions `anode_316L`; OD_HARDWARE_PIVOT_2026_09_30_A9_1_followup_owner_decisions `A9-03-collector`
 - Open readings (TBD_OWNER, carried side by side): OD12 (OWNER_DECIDED): RFP requirements recorded but not gated (indigenous content, no single-point failure, 'ionise nascent O')
 - Historical cross-reference: RTM RFP-AO-TEST; lane-24 gates -
 - **hall_icp_neutralizer: INCOMPLETE_EVIDENCE** (`R6-INCOMPLETE`) - evaluation run with evidenced terms but inconclusive: p4_anode_materials_v1:candidate_screening_states (21 evidenced term(s))
@@ -398,7 +412,7 @@
 
 ### RVM-17 - Thermal closure (>= 50 K below validated limits, 20 % heat-load margin)
 
-- Category: `derived_project`; key `THERMAL_CLOSURE`
+- Category: `derived_project`; key `THERMAL_CLOSURE`; origin DERIVED_PROJECT_REQUIREMENT (related RFP-P19-04)
 - Requirement: Every component >= 50 K below its validated continuous-use limit with a 20 % heat-load margin (row 86); no unsourced anode target (row 87); ICP_COUPLED_THERMAL and ANODE_THERMAL_CLOSURE stay UNRESOLVED until the coupled model has its inputs; never a thermal PASS from a negligible-coupling calculation (A9.2).
 - Limit: margin below validated continuous-use limit >= 50 K
 - Basis: DERIVED_PROJECT (not an RFP clause; RTM DER-THERMAL): owner rows 86, 87; A9.2 (frozen: True)
@@ -413,14 +427,14 @@
     - [DETERMINING/FRAMEWORK_EVALUATION] `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` `p3_coupled_thermal_v2:fail_closed_evaluations`: FRAMEWORK RUN, FAIL-CLOSED - ANODE_THERMAL_CLOSURE UNRESOLVED (shared H-1 anode; A9.2 anode_approach); the ICP heat terms do not apply to this configuration; the H-1 network is only method-checked against H2-5 (no temperatures reported); 0 heat term(s) / network evaluated on evidenced inputs (every one refused as INCOMPLETE_EVIDENCE when 0); 6 analog / model-derived framework input(s) exist but are not evaluated terms; never a thermal PASS (A9.2, A9.6)
     - [SUPPORTING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` `hall_icp_validation_inputs_v1:VI-LF-04`: PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_FOR_OWNER_REVIEW; item status HARDWARE_ONLY
 
-### RVM-18 - Indigenous content >= 75 % total
+### RVM-18 - Indigenous content: >= 75 % project, thruster > 80 %, intake > 80 %, compressor / storage > 60 %, PSE > 70 % (RFP-P19-05; > 60 % statement RFP-P18-03 recorded)
 
-- Category: `rfp_recorded`; key `INDIGENOUS_CONTENT`
-- Requirement: Total indigenous content >= 75 % (project target) with subsystem targets thruster > 80 %, intake > 80 %, compressor / storage > 60 %, power electronics > 70 % (A9.14 OD12, owner-stated RFP content pending registration; the RFP's > 60 % statement is a recorded discrepancy for DRDO clarification).
+- Category: `rfp_registered`; key `INDIGENOUS_CONTENT`; origin RFP RFP-P19-05, RFP-P18-03
+- Requirement: Minimum 75 % indigenous content in the project deliverables with subsystem minima: space qualified thruster > 80 %, intake system > 80 %, compressor and storage > 60 %, power supply electronics > 70 % (RFP-P19-05); the RFP also prints 'Indigenous Content: >60%' (RFP-P18-03 a). The stricter / more specific targets are used internally; the discrepancy is recorded for DRDO clarification (DISC-03; A9.14 S9.11 OD12). Compliance gate CG-IC.
 - Limit: indigenous content (total) >= 75 %
-- Basis: SECONDARY_RECORD_VERIFY_AGAINST_RFP - the official RFP is not in the repository (owner rows 1-2: obtain it, freeze no interpretation from secondary sources; web track R2 rfp_obtained = false) (frozen: False)
+- Basis: RFP_CLAUSE RFP-P19-05, RFP-P18-03 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (frozen: False)
 - Verification: inspection - inspection of the selected-part bill of materials and supplier origin; no part is selected (quotation only)
-- Sources: R2 clauses[topic='(d) Indigenous content']: "minimum of 75 percent" (S1 para 8); rfp.recorded_in[id=R2] (abep_sim/constants.py, class RFPConstraints)
+- Sources: **RFP-P19-05** (p. 19, Part III 3 Indigenous Content): "The firm should provide a detailed plan for achieving the minimum 75% IC in the project deliverables. Minimum Indigenization Desired: 1. Space Qualified Thruster >80%; 2. Intake system >80%; 3. Compressor and Storage >60%; 4. Power Supply Electronics >70%."; **RFP-P18-03** (p. 18, Part III 1(A)iv row 6 Any other Points): "a) Indigenous Content: >60% to mitigate International Traffic in Arm Regulations (ITAR)/ export control restrictions b) Development partner shall be called for a presentation as part of Technical Evaluation to present the technical proposal in detail (design, realization, testing and schedules) to a technical evaluation committee. c) Consortium of different industries (if proposed) should be supported by documentary proof of consortium agreement."; R2 clauses[topic='(d) Indigenous content']: "minimum of 75 percent" (S1 para 8; historical, superseded by the RFP registration); rfp.recorded_in[id=R2] (abep_sim/constants.py, class RFPConstraints)
 - Open readings (TBD_OWNER, carried side by side): OD12 (OWNER_DECIDED): RFP requirements recorded but not gated (indigenous content, no single-point failure, 'ionise nascent O')
 - Historical cross-reference: RTM RFP-IC; lane-24 gates -
 - **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: RFQ_A9_V2 [PROCUREMENT]
@@ -428,14 +442,14 @@
 - **hall_c1_reference: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: RFQ_A9_V2 [PROCUREMENT]
     - [DETERMINING/PROCUREMENT] `docs/procurement/rfq_a9_v2/rfq_a9_v2.json` `RFQ_A9_V2`: PLANNED / FRAMEWORK ONLY - nothing measured; package status COMPLETED_FOR_OWNER_DISPATCH_QUOTATION_ONLY (A9.6 sec. 13; consolidated verification pending)
 
-### RVM-19 - No single-point failure in electronics (recorded; verify) vs limited redundancy (row 55)
+### RVM-19 - Electronics: cater to single-point failure (RFP-P18-09); redundancy at electronics and sensor level (RFP-P18-02)
 
-- Category: `rfp_inferred_from_repo_text`; key `ELECTRONICS_REDUNDANCY`
-- Requirement: Electronics and sensors: no single-point failure that defeats the mission / safe state (RFP clause, owner-stated pending registration): redundant / independent critical control, power-switching, telemetry and sensor paths, proven by a single-point-failure / FMEA analysis; duplicate thrusters, ICP modules or complete mechanical chains are not required (A9.14 RVMQ-01).
+- Category: `rfp_registered`; key `ELECTRONICS_REDUNDANCY`; origin RFP RFP-P18-09, RFP-P18-02
+- Requirement: 'Must cater to single point failure for electronics' (RFP-P18-09) and 'redundancy in Electronics level and sensor level if any' (RFP-P18-02): redundant / independent critical control, power-switching, telemetry and sensor paths where an individual failure would defeat the mission / safe state, proven by a single-point-failure / FMEA analysis (compliance gate CG-SPF); duplicate thrusters, ICP modules or complete mechanical chains are not required (A9.14 S9.13 RVMQ-01); row-55 limited redundancy remains for the physical thruster / ICP hardware, never as a waiver of electronics / sensor redundancy.
 - Limit: no numeric threshold recorded
-- Basis: RFP_INFERRED_FROM_REPO_TEXT (R7) - verify against the RFP document (frozen: False)
+- Basis: RFP_CLAUSE RFP-P18-09, RFP-P18-02 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (as carried: RFP_INFERRED_FROM_REPO_TEXT (R7) - verify against the RFP document) (frozen: False)
 - Verification: analysis, inspection - FMEA / failure-tree analysis of the selected electronics (none selected)
-- Sources: rfp.recorded_in[id=R7] (abep_sim/ppu.py, module docstring); owner row 55 (sha256 44214bd428d2...); owner row 90 (sha256 77c6b2a2e6be...)
+- Sources: **RFP-P18-09** (p. 18, Part III 2 Redundancy): "Must cater to single point failure for electronics."; **RFP-P18-02** (p. 18, Part III 1(A)iv row 5 Reliability): "The system should have redundancy in Electronics level and sensor level if any."; rfp.recorded_in[id=R7] (abep_sim/ppu.py, module docstring); owner row 55 (sha256 44214bd428d2...); owner row 90 (sha256 77c6b2a2e6be...)
 - Open readings (TBD_OWNER, carried side by side): OD12 (OWNER_DECIDED): RFP requirements recorded but not gated (indigenous content, no single-point failure, 'ionise nascent O')
 - Historical cross-reference: RTM RFP-REDUND; lane-24 gates -
 - **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: bus_power_boundary_a9_v1 [PLAN_OR_FRAMEWORK]
@@ -443,30 +457,169 @@
 - **hall_c1_reference: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: bus_power_boundary_a9_v1 [PLAN_OR_FRAMEWORK]
     - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` `bus_power_boundary_a9_v1`: PLANNED / FRAMEWORK ONLY - nothing measured; package status PRELIMINARY_DRAFT_FOR_OWNER
 
+### RVM-20 - MIL-1553B interface with the satellite onboard computer + discrete thruster interface + hardware drivers inside the propulsion system
+
+- Category: `rfp_registered`; key `ELECTRICAL_INTERFACE_MIL1553B`; origin RFP RFP-P18-12, RFP-P18-01
+- Requirement: MIL-1553B interface with the satellite onboard computer for configuration and for high-rate data-logging with the data recorder; discrete interface for thruster operation; the necessary hardware drivers are part of the propulsion system (RFP-P18-12). The power system electronics take power from the satellite bus and provide the ABEP voltages and currents (RFP-P18-01).
+- Limit: spacecraft data / command interface is MIL-1553B + discrete thruster-operation interface (as printed) -
+- Basis: RFP_CLAUSE RFP-P18-12, RFP-P18-01 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (frozen: False)
+- Verification: inspection, test, demonstration - interface control document (inspection), MIL-1553B configuration / data-logging test with a representative onboard-computer bus, discrete-line thruster operation demonstrated with the drivers inside the propulsion system; no data-interface artifact exists
+- Sources: **RFP-P18-12** (p. 18, Part III 2 Electrical Interface): "MIL-1553B with satellite onboard computer for configuration and for high rate data-logging with data recorder. Discrete interface for thruster operation. Necessary hardware drivers to be part of propulsion system."; **RFP-P18-01** (p. 18, Part III 1(A)iv row 4 Power System Electronics): "Power system electronics shall capable taking power from satellite bus and provide the total ABEP system required voltages and Current requirements."
+- **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P18-12:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P18-12:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: an interface control document and a MIL-1553B configuration / high-rate data-logging test with the satellite onboard computer plus a discrete-interface thruster-operation demonstration, drivers inside the propulsion system
+    - [SUPPORTING/PLAN_OR_FRAMEWORK] `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` `bus_power_boundary_a9_v1`: PLANNED / FRAMEWORK ONLY - nothing measured; package status PRELIMINARY_DRAFT_FOR_OWNER
+- **hall_c1_reference: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P18-12:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P18-12:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: an interface control document and a MIL-1553B configuration / high-rate data-logging test with the satellite onboard computer plus a discrete-interface thruster-operation demonstration, drivers inside the propulsion system
+    - [SUPPORTING/PLAN_OR_FRAMEWORK] `docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json` `bus_power_boundary_a9_v1`: PLANNED / FRAMEWORK ONLY - nothing measured; package status PRELIMINARY_DRAFT_FOR_OWNER
+
+### RVM-21 - Environmental qualification (ENTEST): launch vibration / shock (PSLV / SSLV or DRDO-decided LV), AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life
+
+- Category: `rfp_registered`; key `ENVIRONMENTAL_QUALIFICATION_ENTEST`; origin RFP RFP-P19-04, RFP-P19-02, RFP-P16-01
+- Requirement: The product qualifies the launch vibrations and shock (launch loads of PSLV / SSLV or any other launch vehicle decided by DRDO at PDR) and the atomic-oxygen erosion, radiation, thermal and ThermoVac specifications for a VLEO orbit with a 3-year mission life; all intake, compressor and thruster parts take care of nascent atomic-oxygen erosion for the lifetime (RFP-P19-04). ENTEST specifications are provided at PDR: no numeric level is carried (not invented). Space-qualified materials and processes for the QM (RFP-P19-02).
+- Limit: no numeric threshold recorded
+- Basis: RFP_CLAUSE RFP-P19-04, RFP-P19-02, RFP-P16-01 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (frozen: False)
+- Verification: test, analysis - QM ENTEST campaign against the PDR-issued specification (milestone 5, RFP-P21-02); AO erosion through the AO programme (RVM-16); thermal / ThermoVac with the coupled thermal model inputs (RVM-17)
+- Sources: **RFP-P19-04** (p. 19, Part III 2 Environment): "The product should qualify the launch vibrations and shock. The product shall qualify atomic oxygen erosion, radiation, thermal and ThermoVac specifications for a VLEO orbit with a mission life of 3 years. Atomic oxygen erosion environment, All parts in Intake, Compressor and Thruster design shall take care of nascent atomic oxygen erosion for lifetime. ENTEST Specifications (The specifications will be provided at the time PDR): The system has to qualify for VLEO environment for a lifetime 03 yrs and for launch loads of PSLV/ SSLV or any other Launch Vehicle decided by DRDO at the time of PDR."; **RFP-P19-02** (p. 19, Part III 2 Material Specifications): "All materials and processes used in the product realization should be space qualified for Qualified model."; **RFP-P16-01** (p. 16, Part III 1(A)i): "1. Development of Air Breathing Electric Propulsion (ABEP) which will work in the VLEO environment. 2. Testing and space qualification of the Air Breathing Electric Propulsion (ABEP)."
+- **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P19-04:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], ao_lifetime_register_v5:AOL-EX-01 [PLAN_OR_FRAMEWORK]
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P19-04:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: ENTEST qualification test reports of the QM units against the ENTEST specification issued at PDR (launch vibration / shock, AO erosion, radiation, thermal, ThermoVac)
+    - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/lifetime_ao/ao_lifetime_register_v5.json` `ao_lifetime_register_v5:AOL-EX-01`: PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_FOR_OWNER_REVIEW; item status PROPOSED
+    - [SUPPORTING/PLAN_OR_FRAMEWORK] `docs/experiments/lifetime_ao/ao_lifetime_register_v5.json` `ao_lifetime_register_v5:AOL-EX-02`: PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_FOR_OWNER_REVIEW; item status PROPOSED
+    - [SUPPORTING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` `p3_coupled_thermal_v2`: PLANNED / FRAMEWORK ONLY - nothing measured; package status FRAMEWORK_IMPLEMENTED_INPUTS_TBD
+- **hall_c1_reference: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P19-04:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], ao_lifetime_register_v5:AOL-EX-01 [PLAN_OR_FRAMEWORK]
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P19-04:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: ENTEST qualification test reports of the QM units against the ENTEST specification issued at PDR (launch vibration / shock, AO erosion, radiation, thermal, ThermoVac)
+    - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/lifetime_ao/ao_lifetime_register_v5.json` `ao_lifetime_register_v5:AOL-EX-01`: PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_FOR_OWNER_REVIEW; item status PROPOSED
+    - [SUPPORTING/PLAN_OR_FRAMEWORK] `docs/experiments/lifetime_ao/ao_lifetime_register_v5.json` `ao_lifetime_register_v5:AOL-EX-02`: PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_FOR_OWNER_REVIEW; item status PROPOSED
+    - [SUPPORTING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` `p3_coupled_thermal_v2`: PLANNED / FRAMEWORK ONLY - nothing measured; package status FRAMEWORK_IMPLEMENTED_INPUTS_TBD
+
+### RVM-22 - RFP test approach 4.1 a-d (AO-beam coating tests; rarefied-gas intake erosion; EM / QM force, Isp, efficiency; expert-committee-approved test plan) and ground demonstration
+
+- Category: `rfp_registered`; key `RFP_TEST_APPROACH`; origin RFP RFP-P19-06, RFP-P20-02
+- Requirement: System performance demonstrated by: a) coating-material and surface tests with atomic-oxygen beam exposure and erosion-yield measurement; b) rarefied gas created with prescribed mg/s and velocity to test the intake erosion process; c) minimum functional performance testing of EM and QM in integration mode for force, with variable air intake (mg/s), Isp and total-system efficiency; d) test-plan document reviewed / finalized by an expert committee and approved by PMMG / SPMMG (RFP-P19-06). Only ground demonstration in a simulated environment and space-qualification testing is desired (RFP-P20-02).
+- Limit: no numeric threshold recorded
+- Basis: RFP_CLAUSE RFP-P19-06, RFP-P20-02 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (frozen: False)
+- Verification: test, inspection - a) AO programme (AOL-EX-01 / -02); b) no rarefied-gas intake-erosion facility or test record exists; c) HI-ABS absolute demonstration plan (force at registered delivered feed states; Isp and total-system efficiency need the same measured thrust); d) committee / PMMG approval record (inspection)
+- Sources: **RFP-P19-06** (p. 19, Part III 4.1 Testing): "The system performance should be demonstrated by means of following tests: a) Coating materials and surface tests with Atomic Oxygen beam exposure, Erosion yield measurement. b) Creation of rarefied gas with prescribed mg/sec and velocity to test Intake system Erosion process. c) Minimum functional performance testing for EM and QM in integration mode for force calculation, with variable air intake (mg/sec), Isp, Efficiency of the total system etc. d) The test plan document for different tests shall be reviewed/ finalized through an expert committee and approved by PMMG/SPMMG."; **RFP-P20-02** (p. 20, Part III 5): "Trial and Performance Evaluation on system, if required: Only ground demonstration in simulated environment and space qualification testing is desired."
+- Sub-requirement a) (RFP-P19-06): "Coating materials and surface tests with Atomic Oxygen beam exposure"
+- Sub-requirement b) (RFP-P19-06): "Creation of rarefied gas with prescribed mg/sec and velocity"
+- Sub-requirement c) (RFP-P19-06): "Minimum functional performance testing for EM and QM"
+- Sub-requirement d) (RFP-P19-06): "approved by PMMG/SPMMG"
+- **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: ao_lifetime_register_v5:AOL-EX-01 [PLAN_OR_FRAMEWORK], rfp_registration_v1:RFP-P19-06-b:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], A9_01_hall_icp_prereg_framework_v1:HI-ABS [PLAN_OR_FRAMEWORK], rfp_registration_v1:RFP-P19-06-d:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]
+    - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/lifetime_ao/ao_lifetime_register_v5.json` `ao_lifetime_register_v5:AOL-EX-01`: PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_FOR_OWNER_REVIEW; item status PROPOSED
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P19-06-b:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: 4.1 b) a rarefied-gas source with prescribed mg/s and velocity and an intake erosion test record
+    - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `A9_01_hall_icp_prereg_framework_v1:HI-ABS`: PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P19-06-d:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: 4.1 d) the test-plan document reviewed / finalized by the expert committee and approved by PMMG / SPMMG
+- **hall_c1_reference: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: ao_lifetime_register_v5:AOL-EX-01 [PLAN_OR_FRAMEWORK], rfp_registration_v1:RFP-P19-06-b:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], A9_01_hall_icp_prereg_framework_v1:HI-ABS [PLAN_OR_FRAMEWORK], rfp_registration_v1:RFP-P19-06-d:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]
+    - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/lifetime_ao/ao_lifetime_register_v5.json` `ao_lifetime_register_v5:AOL-EX-01`: PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_FOR_OWNER_REVIEW; item status PROPOSED
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P19-06-b:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: 4.1 b) a rarefied-gas source with prescribed mg/s and velocity and an intake erosion test record
+    - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `A9_01_hall_icp_prereg_framework_v1:HI-ABS`: PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P19-06-d:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: 4.1 d) the test-plan document reviewed / finalized by the expert committee and approved by PMMG / SPMMG
+
+### RVM-23 - ISO certification; acceptance / qualification per ATP (finalized after DDR / CDR); testing to MIL / ASTM / BIS / ESS standards
+
+- Category: `rfp_registered`; key `ISO_CERTIFICATION_ATP`; origin RFP RFP-P20-01
+- Requirement: Deliverables match the Para 2 parameters (4.2 acceptance); the company is ISO certified; acceptance / qualification based on the ATP document prepared from the Para 2 parameters and finalized after DDR / CDR; testing as per applicable standards (MIL / ASTM / BIS etc.) / ESS specification (RFP-P20-01).
+- Limit: no numeric threshold recorded
+- Basis: RFP_CLAUSE RFP-P20-01 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (frozen: False)
+- Verification: inspection - inspection of the ISO certificate and of the ATP document after DDR / CDR; no ATP exists (the RVM is not an ATP)
+- Sources: **RFP-P20-01** (p. 20, Part III 4.2-4.3): "4.2 Acceptance Criteria: Deliverable of the project should be matched with parameters given below in Para 2. 4.3 Certification: The Company shall be ISO certified. i. Acceptance/Qualification based on ATP Document. Preparation of ATP document will be carried out based on parameters listed in Para 2 above and will be finalized after DDR/CDR. ii. Testing as per Applicable Standards (MIL / ASTM/ BIS etc) / ESS Specification"
+- **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P20-01:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P20-01:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: the company ISO certificate and the ATP document finalized after DDR / CDR (Para 2 parameters; MIL / ASTM / BIS / ESS test standards)
+- **hall_c1_reference: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P20-01:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P20-01:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: the company ISO certificate and the ATP document finalized after DDR / CDR (Para 2 parameters; MIL / ASTM / BIS / ESS test standards)
+
+### RVM-24 - Exit criterion: EM of the ABEP system + qualified electric thruster with O and N2 as propellant at milestone 4 (partial success)
+
+- Category: `rfp_registered`; key `MILESTONE4_EXIT_QUALIFIED_THRUSTER_O_N2`; origin RFP RFP-P20-03
+- Requirement: Successful realization of the Engineering Model of the ABEP system and realization of a qualified electric thruster with O and N2 as propellant at milestone 4 can be considered a partial success of the project (RFP-P20-03; milestone 4 = QM PSE and thruster testing, RFP-P21-01). N2 + O2 surrogate data are NO_ATOMIC_O and never atomic-O evidence; compliance gate CG-N2-AO (A9.14 OD12).
+- Limit: propellants of the qualified electric thruster at milestone 4 includes O and N2 -
+- Basis: RFP_CLAUSE RFP-P20-03 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (frozen: False)
+- Verification: test, demonstration - qualification test record of the thruster on N2 and on O (atomic-O source, HI-AO) at milestone 4; Ar / Xe data never count
+- Sources: **RFP-P20-03** (p. 20, Part III 6): "Exit criteria / Risk Management: Successful realization of Engineering Model of ABEP system, realization of qualified electric thruster with O and N2 as propellant at milestone 4 can be considered as a partial success of the project."
+- **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P20-03:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], A9_01_hall_icp_prereg_framework_v1:HI-AO [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-SUST [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P20-03:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: a qualification test record of the electric thruster operated on O and on N2 at milestone 4
+    - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `A9_01_hall_icp_prereg_framework_v1:HI-AO`: PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK
+    - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `A9_01_hall_icp_prereg_framework_v1:DQ-HI-SUST`: PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK
+    - [DETERMINING/VALIDATED_ANALYSIS] `hallthruster_bridge/ensemble/transport_ensemble_v0.json` `transport_ensemble_v0:members`: UNAVAILABLE - credible Hall transport set EMPTY (transport_ensemble_v0 members = []; Credible set is EMPTY (P5-Xe blind validation failed; no can...); P5-N2 v1 p5_n2_campaign_v1_vacuum: promotable [], inconclusive 9 of 9 candidates (permanent INCONCLUSIVE); all absolute 0-D Hall results withdrawn - no thrust / power / life analysis evidence exists
+- **hall_c1_reference: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P20-03:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], A9_01_hall_icp_prereg_framework_v1:HI-AO [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-SUST [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P20-03:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: a qualification test record of the electric thruster operated on O and on N2 at milestone 4
+    - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `A9_01_hall_icp_prereg_framework_v1:HI-AO`: PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK
+    - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `A9_01_hall_icp_prereg_framework_v1:DQ-HI-SUST`: PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK
+    - [DETERMINING/VALIDATED_ANALYSIS] `hallthruster_bridge/ensemble/transport_ensemble_v0.json` `transport_ensemble_v0:members`: UNAVAILABLE - credible Hall transport set EMPTY (transport_ensemble_v0 members = []; Credible set is EMPTY (P5-Xe blind validation failed; no can...); P5-N2 v1 p5_n2_campaign_v1_vacuum: promotable [], inconclusive 9 of 9 candidates (permanent INCONCLUSIVE); all absolute 0-D Hall results withdrawn - no thrust / power / life analysis evidence exists
+
+### RVM-25 - Milestone schedule and deliverables M1-M5 (T0+9 / +12 / +20 / +24 / +36 months) and the EM -> QM processing flow
+
+- Category: `rfp_registered`; key `MILESTONE_SCHEDULE_DELIVERABLES`; origin RFP RFP-P20-04, RFP-P20-05, RFP-P20-06, RFP-P21-01, RFP-P21-02, RFP-P17-01
+- Requirement: Milestones and deliverables as printed (RFP-P20-04 .. RFP-P21-02): M1 PDR-1 hardware (T0+09, 15 %), M2 PDR-2 algorithms / software / test plan (T0+12, 10 %), M3 CDR with EM thruster and PSE demonstrated with storage input, not intake (T0+20, 20 %), M4 EM intake + QM PSE and thruster (T0+24, 35 %), M5 QM integration, ENTEST and delivery (T0+36, 20 %); EM -> QM processing flow (RFP-P17-01). T0 is not set.
+- Limit: QM integration, ENTEST qualification and delivery (milestone 5) <= T0+36 months
+- Basis: RFP_CLAUSE RFP-P20-04, RFP-P20-05, RFP-P20-06, RFP-P21-01, RFP-P21-02, RFP-P17-01 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (frozen: False)
+- Verification: inspection, demonstration - inspection of the approved milestone deliverables (design documents, CAD / EDA models, test plans and results) at each review; none exists and T0 is not set
+- Sources: **RFP-P20-04** (p. 20, Part III 7 Milestone 1): "Preliminary Design Review-1 (Hardware); PDC T0+09 months; 15%: completion of preliminary design (mechanical and electrical), finalization of BoM; preliminary test plan review; clearance for EM hardware realization. Deliverables: approved PDR document, design documents, CAD & EDA models; preliminary test plan and test facility document."; **RFP-P20-05** (p. 20, Part III 7 Milestone 2): "Preliminary Design Review-2 (Algorithms and Software and Test plan); T0+12 months; 10%: electric power supply system software preliminary design, FDIR, Telemetry (MATLAB and C); review of test facility readiness. Deliverable: approved GNC design document and codes."; **RFP-P20-06** (p. 20, Part III 7 Milestone 3 (continues p21)): "Critical Design Review; T0+20 months; 20%: realization of Engineering Models of thruster, power supply electronics; demonstration of functionality of EM hardware with Storage input not with INTAKE; clearance for qualification unit realization except Intake system. Deliverables: EM units power electronics and thruster mechanical and electrical drawings, CAD models; test results documents, test plan documents; simulation models (mechanical and electrical); test software."; **RFP-P21-01** (p. 21, Part III 7 Milestone 4): "Engineering model Intake system; Qualification model for Power Supply Electronics and Thruster; T0+24 months; 35%: realization of Engineering model Intake System with Compressor and Storage; complete Qualification model PSE and Thruster testing with Storage Atomic reminants. Deliverables: EM Intake with compressor and Storage unit design details, CAD & EDA models, drawings etc; QM PSE, Thruster units design details, CAD & EDA models, drawings etc."; **RFP-P21-02** (p. 21, Part III 7 Milestone 5): "QM integration and testing Delivery; T0+36 months; 20%: realization of QM Intake system and integration as total QM model ABEP; ENTEST qualification of QM units, documentation and delivery; documentation and final delivery, completion of project closure formalities."; **RFP-P17-01** (p. 17, Part III Figure 2): "Processing block diagram of EM QM Testing of ABEP System: EM Air Intake System, Compressor storage; EM Power processing unit (PPU); EM Thruster -> EM Integration -> EM Integration Test -> Qualification Model Intake and compressor; Qualification Model Power Electronics; Qualification Model Thruster -> QM Integration Test."
+- Milestone 1 (RFP-P20-04): due T0+09 months, share 15%
+- Milestone 2 (RFP-P20-05): due T0+12 months, share 10%
+- Milestone 3 (RFP-P20-06): due T0+20 months, share 20%
+- Milestone 4 (RFP-P21-01): due T0+24 months, share 35%
+- Milestone 5 (RFP-P21-02): due T0+36 months, share 20%
+- **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P20-04:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P20-04:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: the approved milestone deliverables M1-M5 (PDR-1, PDR-2, CDR, EM intake + QM PSE / thruster, QM integration / ENTEST / delivery) against a set T0
+- **hall_c1_reference: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P20-04:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P20-04:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: the approved milestone deliverables M1-M5 (PDR-1, PDR-2, CDR, EM intake + QM PSE / thruster, QM integration / ENTEST / delivery) against a set T0
+
+### RVM-26 - Micro-newton-level thrust measurement system; UHV test facility and low-thrust measurement setup (Part IV(B), no waivers)
+
+- Category: `rfp_registered`; key `THRUST_MEASUREMENT_AND_TEST_INFRASTRUCTURE`; origin RFP RFP-P30-01, RFP-P27-01, RFP-P21-03
+- Requirement: Thrust measurement system capable of measuring micro-newton-level thrust (Part IV(C) 5 evaluation criterion: in-house 10 / consortium 5 / sub-contract 0 marks, RFP-P30-01); ultra-high-vacuum test facility for propulsion-system testing and a low-thrust measurement setup, in-house / consortium / sub-contract (RFP-P27-01; no waivers for Part IV(B), RFP-P21-03).
+- Limit: thrust measurement capability resolves micro-newton level (as printed; no numeric resolution stated) -
+- Basis: RFP_CLAUSE RFP-P30-01, RFP-P27-01, RFP-P21-03 (official RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, registered docs/requirements/rfp_official/rfp_registration_v1.json, PDF sha256 a128a419414b5719...) (frozen: False)
+- Verification: inspection, demonstration, test - calibration / resolution demonstration of the stand at micro-newton level and a facility availability record; the mN-level torsional-stand plan of RVM-02 (row 115) is not evidence of micro-newton capability
+- Sources: **RFP-P30-01** (p. 30, Part IV(C) 5 Thrust Measurement System): "Thrust Measurement System capable of measuring micro-Newton level thrust (In house: 10; Consortium: 5; Sub-contract: 0 marks)."; **RFP-P27-01** (p. 27, Part IV(B) 3 Infrastructure): "i. Ultra High Vacuum Test Facility for propulsion system testing (In-house/ Consortium/ Sub contract); ii. Low Thrust measurement setup (In-house/ Consortium/ Sub contract)."; **RFP-P21-03** (p. 21, Part III 8): "NO Waivers shall be given for PART (IV) (B)."
+- **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P30-01:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], rfp_registration_v1:RFP-P27-01:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P30-01:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: a calibration record demonstrating micro-newton-level thrust resolution of the thrust measurement system
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P27-01:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: an availability record of the UHV test facility and the low-thrust measurement setup (in-house / consortium / sub-contract)
+    - [SUPPORTING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `A9_01_hall_icp_prereg_framework_v1:DQ-HI-TABS`: PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK
+    - [SUPPORTING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` `hall_icp_validation_inputs_v1:VI-HD-03`: PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_FOR_OWNER_REVIEW; item status HARDWARE_ONLY
+- **hall_c1_reference: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P30-01:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], rfp_registration_v1:RFP-P27-01:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P30-01:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: a calibration record demonstrating micro-newton-level thrust resolution of the thrust measurement system
+    - [DETERMINING/VERIFICATION_ARTIFACT_ABSENT] `docs/requirements/rfp_official/rfp_registration_v1.json` `rfp_registration_v1:RFP-P27-01:NO_VERIFICATION_ARTIFACT`: NO VERIFICATION ARTIFACT EXISTS IN THE REPOSITORY - would be verified by: an availability record of the UHV test facility and the low-thrust measurement setup (in-house / consortium / sub-contract)
+    - [SUPPORTING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/prereg_framework/hall_icp_prereg_framework_v1.json` `A9_01_hall_icp_prereg_framework_v1:DQ-HI-TABS`: PLANNED / FRAMEWORK ONLY - nothing measured; package status PROPOSED_FRAMEWORK_NOT_A_LOCK
+    - [SUPPORTING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/validation_inputs/hall_icp_validation_inputs_v1.json` `hall_icp_validation_inputs_v1:VI-HD-03`: PLANNED / FRAMEWORK ONLY - nothing measured; package status DRAFT_FOR_OWNER_REVIEW; item status HARDWARE_ONLY
+
+### RVM-27 - Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner allocation; 100 W contingency, 25 W stretch)
+
+- Category: `owner_internal_allocation`; key `MOUNT_HEAT_50W_ALLOCATION`; origin OWNER_ALLOCATION (related RFP-P19-04)
+- Requirement: Thermally isolated H-1 mount + dedicated radiator; 50 W is the provisional governing allocation for steady heat conducted into the spacecraft mounting interface until the spacecraft thermal ICD exists (100 W contingency / sensitivity only, 25 W stretch; a design meeting only 100 W is not closed). An owner allocation, not a spacecraft or RFP requirement.
+- Limit: steady heat conducted into the spacecraft mounting interface <= 50 W
+- Basis: OWNER_ALLOCATION (A9.12 S5.4 OQ-A907-06): provisional until the spacecraft thermal ICD (frozen: True)
+- Verification: analysis, test - P3 mount-heat report at the 25 / 50 / 100 W cases (no coupled result: inputs INCOMPLETE_EVIDENCE) plus a thermal-vacuum measurement of the conducted interface heat
+- Sources: OD_HARDWARE_PIVOT_2026_10_01_A9_12_s5_p3_p4_owner_decisions `OQ-A907-06`
+- **hall_icp_neutralizer: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: p3_coupled_thermal_v2 [PLAN_OR_FRAMEWORK]
+    - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` `p3_coupled_thermal_v2`: PLANNED / FRAMEWORK ONLY - nothing measured; package status FRAMEWORK_IMPLEMENTED_INPUTS_TBD
+- **hall_c1_reference: NOT_EVALUATED** (`R7-NOT-EVALUATED`) - no determining evaluation with evidenced terms: p3_coupled_thermal_v2 [PLAN_OR_FRAMEWORK]
+    - [DETERMINING/PLAN_OR_FRAMEWORK] `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` `p3_coupled_thermal_v2`: PLANNED / FRAMEWORK ONLY - nothing measured; package status FRAMEWORK_IMPLEMENTED_INPUTS_TBD
+
 ## (a) Items
 
-| id | name | value | units | basis | evidence class | status | freeze point |
-|---|---|---|---|---|---|---|---|
-| RVM-IT-01 | altitude band lower edge | 180 | km | RFP as recorded | requirement-as-recorded | REQUIREMENT_AS_RECORDED (verify against the official RFP) | after-evidence |
-| RVM-IT-02 | altitude band upper edge | 230 | km | RFP as recorded | requirement-as-recorded | REQUIREMENT_AS_RECORDED (verify against the official RFP) | after-evidence |
-| RVM-IT-03 | minimum sustained atmospheric thrust | 12 | mN | owner reading of '12-25 mN' (row 4) | owner-stated | OWNER_GIVEN | NOW |
-| RVM-IT-04 | demonstrated system thrust capability | 25 | mN | owner reading (rows 4, 27) | owner-stated | OWNER_GIVEN | NOW |
-| RVM-IT-05 | absolute full-system thrust-per-bus-power floor at the 25 mN point | 16.67 | mN/kW | row 27 | owner-stated | OWNER_GIVEN | NOW |
-| RVM-IT-06 | bus-power requirement (strict '<') | 1500 | W | RFP as recorded; row 108 | requirement-as-recorded | REQUIREMENT_AS_RECORDED (verify against the official RFP) | after-evidence |
-| RVM-IT-07 | averaging window of the gate quantity P_bus,1ms,max | 0.001 | s | A9.1 OQ-A902-01 | owner-stated | OWNER_GIVEN (A9 engineering definition pending the RFP wording) | NOW |
-| RVM-IT-08 | internal design allocation | 1350 | W | row 109; A9.1 OQ-A902-03 | owner-allocation | OWNER_ALLOCATION (not a gate) | NOW |
-| RVM-IT-09 | wet mass limit incl. Xe + tank (strict '<') | 40 | kg | RFP as recorded; row 5 | requirement-as-recorded | REQUIREMENT_AS_RECORDED (verify against the official RFP) | after-evidence |
-| RVM-IT-10 | internal wet design allocation (lower) | 34 | kg | row 53 | owner-allocation | OWNER_ALLOCATION (carried with RVM-IT-11) | NOW |
-| RVM-IT-11 | internal wet design allocation (upper) | 36 | kg | row 53 | owner-allocation | OWNER_ALLOCATION (carried with RVM-IT-10) | NOW |
-| RVM-IT-12 | internal development / system mass margin | 20 | % | row 52 | owner-stated | OWNER_GIVEN | NOW |
-| RVM-IT-13 | mission-life engineering basis | 26280 | h | row 3 | owner-stated | OWNER_GIVEN (engineering basis until the RFP is verified) | after-evidence |
-| RVM-IT-14 | provisional firing-time requirement (strict '>') | 15000 | h | row 3 | owner-stated | PROVISIONAL_HARD_REQUIREMENT (row 3) | after-evidence |
-| RVM-IT-15 | C1 ignition dwell cap per attempt (preliminary protocol) | 120 | s | row 93 | owner-stated | OWNER_GIVEN (final bound frozen before score-bearing C1 testing) | LOCK-2 |
-| RVM-IT-16 | C1 ignition retries per start (preliminary protocol) | 2 | - | row 93 | owner-stated | OWNER_GIVEN; Xe booking of 2 vs 3 dwells is OPEN (OQ-A907-01 / XA9Q-02) | LOCK-2 |
-| RVM-IT-17 | indigenous content, total | 75 | % | RFP as recorded (secondary) | requirement-as-recorded | REQUIREMENT_AS_RECORDED (verify against the official RFP) | after-evidence |
-| RVM-IT-18 | thermal margin below validated continuous-use limits | 50 | K | row 86 | owner-stated | OWNER_GIVEN | NOW |
-| RVM-IT-19 | ICP-45 required electron current I_d,max,H1 | TBD - requires the registered maximum H-1 discharge current from measured / registered H-1 operation (A9.3 OQ-A907-02; not the 8.33 A stand ceiling) | A | A9.1 ICP-45; A9.3 OQ-A907-02 | owner-stated | TBD_AFTER_EVIDENCE | after-evidence |
-| RVM-IT-20 | ICP-neutralizer lifetime / cycle requirement | TBD_OWNER - OQ-VI-04 (row 46 requires one; none defined) | h; cycles | row 46 | owner-stated | TBD_OWNER | LOCK-1 |
+| id | name | value | units | basis | origin / RFP clauses | evidence class | status | freeze point |
+|---|---|---|---|---|---|---|---|---|
+| RVM-IT-01 | altitude band lower edge | 180 | km | RFP as recorded | RFP RFP-P18-04 | requirement-as-recorded | REQUIREMENT_AS_RECORDED (verify against the official RFP) | after-evidence |
+| RVM-IT-02 | altitude band upper edge | 230 | km | RFP as recorded | RFP RFP-P18-04 | requirement-as-recorded | REQUIREMENT_AS_RECORDED (verify against the official RFP) | after-evidence |
+| RVM-IT-03 | minimum sustained atmospheric thrust | 12 | mN | owner reading of '12-25 mN' (row 4) | RFP RFP-P18-06 | owner-stated | OWNER_GIVEN | NOW |
+| RVM-IT-04 | demonstrated system thrust capability | 25 | mN | owner reading (rows 4, 27) | RFP RFP-P18-06 | owner-stated | OWNER_GIVEN | NOW |
+| RVM-IT-05 | absolute full-system thrust-per-bus-power floor at the 25 mN point | 16.67 | mN/kW | row 27 | DERIVED_PROJECT_REQUIREMENT (related RFP-P18-06, RFP-P18-10) | owner-stated | OWNER_GIVEN | NOW |
+| RVM-IT-06 | bus-power requirement (strict '<') | 1500 | W | RFP as recorded; row 108 | RFP RFP-P18-10 | requirement-as-recorded | REQUIREMENT_AS_RECORDED (verify against the official RFP) | after-evidence |
+| RVM-IT-07 | averaging window of the gate quantity P_bus,1ms,max | 0.001 | s | A9.1 OQ-A902-01 | DERIVED_PROJECT_REQUIREMENT (related RFP-P18-10) | owner-stated | OWNER_GIVEN (A9 engineering definition pending the RFP wording) | NOW |
+| RVM-IT-08 | internal design allocation | 1350 | W | row 109; A9.1 OQ-A902-03 | OWNER_ALLOCATION (related RFP-P18-10) | owner-allocation | OWNER_ALLOCATION (not a gate) | NOW |
+| RVM-IT-09 | wet mass limit incl. Xe + tank (strict '<') | 40 | kg | RFP as recorded; row 5 | RFP RFP-P18-11 | requirement-as-recorded | REQUIREMENT_AS_RECORDED (verify against the official RFP) | after-evidence |
+| RVM-IT-10 | internal wet design allocation (lower) | 34 | kg | row 53 | OWNER_ALLOCATION (related RFP-P18-11) | owner-allocation | OWNER_ALLOCATION (carried with RVM-IT-11) | NOW |
+| RVM-IT-11 | internal wet design allocation (upper) | 36 | kg | row 53 | OWNER_ALLOCATION (related RFP-P18-11) | owner-allocation | OWNER_ALLOCATION (carried with RVM-IT-10) | NOW |
+| RVM-IT-12 | internal development / system mass margin | 20 | % | row 52 | OWNER_ALLOCATION (related RFP-P18-11) | owner-stated | OWNER_GIVEN | NOW |
+| RVM-IT-13 | mission-life engineering basis | 26280 | h | row 3 | RFP RFP-P19-01 | owner-stated | OWNER_GIVEN (engineering basis until the RFP is verified) | after-evidence |
+| RVM-IT-14 | provisional firing-time requirement (strict '>') | 15000 | h | row 3 | RFP RFP-P19-01 | owner-stated | PROVISIONAL_HARD_REQUIREMENT (row 3) | after-evidence |
+| RVM-IT-15 | C1 ignition dwell cap per attempt (preliminary protocol) | 120 | s | row 93 | DERIVED_PROJECT_REQUIREMENT | owner-stated | OWNER_GIVEN (final bound frozen before score-bearing C1 testing) | LOCK-2 |
+| RVM-IT-16 | C1 ignition retries per start (preliminary protocol) | 2 | - | row 93 | DERIVED_PROJECT_REQUIREMENT | owner-stated | OWNER_GIVEN; Xe booking of 2 vs 3 dwells is OPEN (OQ-A907-01 / XA9Q-02) | LOCK-2 |
+| RVM-IT-17 | indigenous content, total | 75 | % | RFP as recorded (secondary) | RFP RFP-P19-05 | requirement-as-recorded | REQUIREMENT_AS_RECORDED (verify against the official RFP) | after-evidence |
+| RVM-IT-18 | thermal margin below validated continuous-use limits | 50 | K | row 86 | DERIVED_PROJECT_REQUIREMENT (related RFP-P19-04) | owner-stated | OWNER_GIVEN | NOW |
+| RVM-IT-19 | ICP-45 required electron current I_d,max,H1 | TBD - requires the registered maximum H-1 discharge current from measured / registered H-1 operation (A9.3 OQ-A907-02; not the 8.33 A stand ceiling) | A | A9.1 ICP-45; A9.3 OQ-A907-02 | DERIVED_PROJECT_REQUIREMENT | owner-stated | TBD_AFTER_EVIDENCE | after-evidence |
+| RVM-IT-20 | ICP-neutralizer lifetime / cycle requirement | TBD_OWNER - OQ-VI-04 (row 46 requires one; none defined) | h; cycles | row 46 | RFP RFP-P19-01 | owner-stated | TBD_OWNER | LOCK-1 |
 
 ## (b) Interface demands
 
@@ -546,9 +699,9 @@
 
 'RFP(1)' cites the official RFP held by the owner; the document is not registered in the repository (AG-15), so every RFP-cited fact is OWNER_STATED_PENDING_RFP_REGISTRATION; requirement_frozen stays false for every RFP row until AG-15 closes.
 
-- compliance gate CG-IC (indigenous content; RVM-18): NOT_EVALUATED
-- compliance gate CG-SPF (single-point-failure / FMEA for electronics and sensors; RVM-19): NOT_EVALUATED
-- compliance gate CG-N2-AO (N2 + nascent / atomic O operation qualification; RVM-08 / RVM-09): NOT_EVALUATED
+- compliance gate CG-IC (indigenous content; RVM-18; RFP RFP-P19-05, RFP-P18-03): NOT_EVALUATED
+- compliance gate CG-SPF (single-point-failure / FMEA for electronics and sensors; RVM-19; RFP RFP-P18-09, RFP-P18-02): NOT_EVALUATED
+- compliance gate CG-N2-AO (N2 + nascent / atomic O operation qualification; RVM-08 / RVM-09; RFP RFP-P17-05, RFP-P17-02, RFP-P20-03): NOT_EVALUATED
 - RVM-01: envelope_quantifier: EVERY_REQUIRED_ENVIRONMENT_STATE_FAIL_CLOSED (worst state and orbit average reported additionally; an orbit average cannot conceal a statewise violation); design_states: PENDING_ORBIT_RESOLVED_DATASET_BUILD: nominal states and physical extrema of density / species / temperature / local time / solar activity from the versioned orbit-resolved frozen dataset (authorised by A9.13 OQ-F4-05) with provenance and hashes; no hand-picked points; evaluator: docs/requirements/rvm_a9/a9_16_rvm.py:statewise_envelope
 - RVM-08: compliance_gate: N2_PLUS_ATOMIC_O_OPERATION_QUALIFICATION (A9.14 OD12): evidence that the same propulsion architecture ionizes / operates on the required atmospheric species, not only Ar / Xe
 - RVM-09: compliance_gate: N2_PLUS_ATOMIC_O_OPERATION_QUALIFICATION (A9.14 OD12); rfp_citation_status: OWNER_STATED_PENDING_RFP_REGISTRATION; note: the owner states the RFP requires ionizing N2 and nascent / atomic O (A9.13 S6.3, A9.15); pending RFP registration (AG-15)
@@ -558,6 +711,69 @@
 - RVM-17: bounding_corner: physically admissible joint states only; 1.20 on dissipated loads, environmental loads by the registered hot / cold envelope; >= 50 K never relaxed; supplier_ratings: SUPPLIER_PROVISIONAL only (no design / flight closure); search_sensitive: 10 K screen label; independent bound before LOCK-1; thermal_status: UNRESOLVED (never PASS)
 - RVM-18: compliance_gate: INDIGENOUS_CONTENT (A9.14 OD12); project_target_total: >= 75 %; subsystem_targets: {'thruster': '> 80 %', 'intake': '> 80 %', 'compressor_storage': '> 60 %', 'power_electronics': '> 70 %'}; source_discrepancy: the RFP contains a > 60 % statement on one page and a more specific minimum 75 % project-deliverable target with subsystem targets; the stricter / more specific targets are used internally and the discrepancy is recorded for DRDO clarification; rfp_citation_status: OWNER_STATED_PENDING_RFP_REGISTRATION
 - RVM-19: rebased_on: RFP electronics single-point-failure clause and electronics / sensor redundancy clause (owner-stated, pending registration); compliance_gate: SINGLE_POINT_FAILURE_FMEA_ELECTRONICS_SENSORS (A9.14 OD12); required: redundant / independent critical control, power-switching, telemetry and sensor paths where an individual failure would defeat the mission / safe state, proven by the single-point-failure analysis; not_required: duplicate thrusters, duplicate ICP modules or duplicate complete mechanical propulsion chains; row55: limited redundancy may remain for the physical thruster / ICP hardware, never as a waiver of electronics / sensor redundancy; rfp_citation_status: OWNER_STATED_PENDING_RFP_REGISTRATION
+
+## (d3) RFP re-base (AG-15)
+
+Rule: every RVM row cites the RFP clause id(s) it derives from or is labelled DERIVED_PROJECT_REQUIREMENT / OWNER_ALLOCATION; every registered clause maps to at least one row or is a recorded programmatic item; statuses unchanged by the re-base (rvm_rules; no PASS without determining evidence, A9.13 S6.22); requirement_frozen stays false on RFP rows until the owner closes AG-15. AG-15: OPEN - RFP registered by hash with verbatim transcription and the RVM re-based; closure is the owner's (not declared here).
+
+Registration `docs/requirements/rfp_official/rfp_registration_v1.json` (37 clauses, transcription sha256 `fd51a951a1d06ea8bebd39416147686aedb1f596170fb81b6583f4564148a8aa`, sha256 of json.dumps(clauses, ensure_ascii=False, sort_keys=True, separators=(',', ':'))). Decisions: A9.13 F9-OQ-03 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json sha256 9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23); A9.17 RFP (docs/decisions/OD_2026_10_01_A9_17_data_artifact_owner_decisions.json sha256 9fd77c95c2f3142bb3e2faf68145e1225a29b307d22f86bf93a8cd562914c3ad); A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309); A9.14 OD12 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); A9.14 OD14 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); A9.14 RVMQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); A9.14 OQ-VI-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); A9.12 OQ-A907-06 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d).
+
+Origins: RFP_CLAUSE 21, DERIVED_PROJECT_REQUIREMENT 3, OWNER_ALLOCATION 3.
+
+| RFP clause | page | section | RVM rows (derived) | related rows | note |
+|---|---|---|---|---|---|
+| RFP-P16-01 | 16 | Part III 1(A)i | RVM-21 | RVM-08, RVM-25 |  |
+| RFP-P16-02 | 16 | Part III 1(A)ii Figure 1 | RVM-08, RVM-10 | - |  |
+| RFP-P17-01 | 17 | Part III Figure 2 | RVM-25 | - |  |
+| RFP-P17-02 | 17 | Part III 1(A)iii | RVM-09, RVM-16 | RVM-08, RVM-22 |  |
+| RFP-P17-03 | 17 | Part III 1(A)iv row 1 Air Intake | RVM-08 | RVM-01 |  |
+| RFP-P17-04 | 17 | Part III 1(A)iv row 2 Compressor and gas Reservoir | RVM-08 | - |  |
+| RFP-P17-05 | 17 | Part III 1(A)iv row 3 Thruster | RVM-09, RVM-10 | RVM-15 |  |
+| RFP-P18-01 | 18 | Part III 1(A)iv row 4 Power System Electronics | RVM-04, RVM-20 | - |  |
+| RFP-P18-02 | 18 | Part III 1(A)iv row 5 Reliability | RVM-19 | - |  |
+| RFP-P18-03 | 18 | Part III 1(A)iv row 6 Any other Points | RVM-18 | - | items b) (technical-evaluation presentation) and c) (consortium agreement proof) are programmatic bid items; item a) (indigenous content > 60 %) is mapped to RVM-18 |
+| RFP-P18-04 | 18 | Part III 2 Functional Orbit altitude | RVM-01 | - |  |
+| RFP-P18-05 | 18 | Part III 2 Air intake Specification | RVM-01 | - |  |
+| RFP-P18-06 | 18 | Part III 2 Thrust Requirement | RVM-02, RVM-03 | RVM-15 |  |
+| RFP-P18-07 | 18 | Part III 2 Thruster Type | RVM-11 | - |  |
+| RFP-P18-08 | 18 | Part III 2 Propellant for propulsion system | RVM-08, RVM-10 | - |  |
+| RFP-P18-09 | 18 | Part III 2 Redundancy | RVM-19 | - |  |
+| RFP-P18-10 | 18 | Part III 2 Power | RVM-03, RVM-04 | RVM-05 |  |
+| RFP-P18-11 | 18 | Part III 2 Mass | RVM-06 | RVM-07 |  |
+| RFP-P18-12 | 18 | Part III 2 Electrical Interface | RVM-20 | RVM-14 |  |
+| RFP-P19-01 | 19 | Part III 2 Life Cycle and Maintainability | RVM-12, RVM-13 | - |  |
+| RFP-P19-02 | 19 | Part III 2 Material Specifications | RVM-16, RVM-21 | - |  |
+| RFP-P19-03 | 19 | Part III 2 Subsystems | RVM-08 | - |  |
+| RFP-P19-04 | 19 | Part III 2 Environment | RVM-16, RVM-21 | RVM-17, RVM-27 |  |
+| RFP-P19-05 | 19 | Part III 3 Indigenous Content | RVM-18 | - |  |
+| RFP-P19-06 | 19 | Part III 4.1 Testing | RVM-16, RVM-22 | - |  |
+| RFP-P20-01 | 20 | Part III 4.2-4.3 | RVM-23 | RVM-21 | 4.3 'The Company shall be ISO certified' is an organisational requirement carried by RVM-23 |
+| RFP-P20-02 | 20 | Part III 5 | RVM-22 | - |  |
+| RFP-P20-03 | 20 | Part III 6 | RVM-24 | RVM-09 |  |
+| RFP-P20-04 | 20 | Part III 7 Milestone 1 | RVM-25 | - |  |
+| RFP-P20-05 | 20 | Part III 7 Milestone 2 | RVM-25 | - |  |
+| RFP-P20-06 | 20 | Part III 7 Milestone 3 (continues p21) | RVM-25 | - |  |
+| RFP-P21-01 | 21 | Part III 7 Milestone 4 | RVM-25 | RVM-24 |  |
+| RFP-P21-02 | 21 | Part III 7 Milestone 5 | RVM-25 | RVM-21 |  |
+| RFP-P21-03 | 21 | Part III 8 | RVM-26 | - |  |
+| RFP-P27-01 | 27 | Part IV(B) 3 Infrastructure | RVM-26 | - |  |
+| RFP-P27-02 | 27 | Part IV(B) 5 | - | RVM-16 | PROGRAMMATIC_BID_QUALIFICATION: collaboration with academia / research institute on material compatibility with nascent oxygen (LoI / MoU to be produced; Part IV(B), no waivers per RFP-P21-03); a bid-qualification item, related technical row RVM-16 |
+| RFP-P30-01 | 30 | Part IV(C) 5 Thrust Measurement System | RVM-26 | - |  |
+
+### RFP-vs-repository discrepancies (recorded, not resolved here)
+
+| id | topic | RFP clauses | RFP | repository | disposition | action |
+|---|---|---|---|---|---|---|
+| DISC-01 | bid due / closing date | - | not stated in the registered RFP document (registration document.not_in_document: bid due / closing date (the RFP refers to the tender document on DefProc for important dates, Part I note 5); the 05 Oct 2026 date in CLAUDE.md is therefore NOT verified by this file) | CLAUDE.md 'bid close 05 Oct 2026' | UNVERIFIED_BY_RFP_DOCUMENT - programmatic, not a system requirement (excluded candidate PRG-BID); verify on the DefProc tender document; CLAUDE.md is not edited here | owner: confirm the date from the DefProc tender document |
+| DISC-02 | mass wet / dry | RFP-P18-11 | '< 40kg' - wet or dry not stated | RVM-06 / owner row 5: < 40 kg WET incl. Xe + tank; CLAUDE.md '< 40 kg'; A9 '< 40 kg (wet)' | the wet reading is the conservative owner reading and is retained; recorded for DRDO clarification; requirement_frozen stays false | DRDO clarification (wet or dry) |
+| DISC-03 | indigenous content | RFP-P18-03, RFP-P19-05 | 'Indigenous Content: >60%' (RFP-P18-03 a) vs 'minimum 75% IC in the project deliverables' with subsystem minima > 80 / > 80 / > 60 / > 70 % (RFP-P19-05) | RVM-18 (A9.14 S9.11 OD12): stricter / more specific targets used internally | recorded for DRDO clarification (A9.14 OD12) | DRDO clarification |
+| DISC-04 | mission life hours | RFP-P19-01 | 'Mission life: 3 years (Approx 26000 hrs)' | CLAUDE.md '26,000 h mission'; RVM-13 owner engineering basis >= 26,280 h (row 3) | consistent within the RFP's 'Approx'; the 26,280 h basis is conservative and retained | none required |
+| DISC-05 | 'Ignition Time' label | RFP-P19-01 | 'Ignition Time: More than 15000 hrs' | CLAUDE.md '> 15,000 h firing'; RVM-12 >= 15,000 h cumulative energized operation (A9.14 S8.5) | literal wording preserved; conservative design basis pending clarification (A9.14 S8.5) | DRDO clarification of 'Ignition Time' |
+| DISC-06 | stated purpose of the Xe input | RFP-P17-05, RFP-P18-08 | Xe 'an extra input system to take care any problems on board unforeseen problems'; two separate tanks | A9.15: Xe capability mandatory, dual-propellant separate modes (RVM-10) | capability mandatory (A9.15 stands); stated purpose recorded for the owner; no rule changed | none required (recorded) |
+| DISC-07 | thrust range reading | RFP-P18-06 | '12 mN to 25 mN (From expected drag to compensate)' | RVM-02 / RVM-03: >= 12 mN sustained + 25 mN capability (owner row 4 reading) | owner engineering reading retained; the RFP gives no split between sustained and capability | none required (recorded) |
+| DISC-08 | ignition / restart | - | no ignition / restart clause registered | RVM-14 start-up / restart (earlier labelled RFP-inferred) | DERIVED_PROJECT_REQUIREMENT (A9.14 S9.12 OD14) | none required |
+| DISC-09 | ENTEST values | RFP-P19-04 | 'ENTEST Specifications (The specifications will be provided at the time PDR)' | no ENTEST levels in the repository | RVM-21 carries no numeric level; levels TBD at PDR (not invented) | DRDO supplies ENTEST specifications at PDR |
+| DISC-10 | test-facility / thrust-measurement capability | RFP-P27-01, RFP-P30-01 | UHV test facility + low-thrust measurement setup (Part IV(B), no waivers); micro-newton-level thrust measurement (evaluation criterion) | torsional thrust stand plan at mN level for RVM-02 (row 115, 1 % target); no micro-newton capability record | new row RVM-26; the mN-level stand plan is not evidence of micro-newton capability | owner: facility / stand capability evidence (in-house, consortium or sub-contract) |
 
 ## (e) Historical reuse
 
@@ -572,7 +788,7 @@
 
 ## (f) M16 impact
 
-- Row 1 `intake` (v3 BLOCKED): RVM RVM-01, RVM-08, RVM-09 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
+- Row 1 `intake` (v3 BLOCKED): RVM RVM-01, RVM-08, RVM-09, RVM-22 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
 - Row 2 `filter` (v3 BLOCKED): RVM RVM-08, RVM-09 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
 - Row 3 `compressor` (v3 BLOCKED): RVM RVM-01, RVM-08 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
 - Row 4 `buffer_plenum` (v3 BLOCKED): RVM RVM-08 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
@@ -580,13 +796,13 @@
 - Row 6 `xe_tank` (v3 BLOCKED): RVM RVM-06, RVM-07, RVM-10, RVM-13 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
 - Row 7 `xe_regulator` (v3 BLOCKED): RVM RVM-10 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
 - Row 8 `xe_metering` (v3 BLOCKED): RVM RVM-10 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
-- Row 9 `hall_chamber` (v3 BLOCKED): RVM RVM-01, RVM-02, RVM-03, RVM-08, RVM-09, RVM-11, RVM-12, RVM-13 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
+- Row 9 `hall_chamber` (v3 BLOCKED): RVM RVM-01, RVM-02, RVM-03, RVM-08, RVM-09, RVM-11, RVM-12, RVM-13, RVM-22, RVM-24, RVM-26 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
 - Row 10 `magnetic_circuit` (v3 BLOCKED): RVM RVM-02, RVM-11 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
 - Row 11 `cathode` (v3 BLOCKED): RVM RVM-12, RVM-13, RVM-14, RVM-15, RVM-16 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
-- Row 12 `ppu` (v3 BLOCKED): RVM RVM-02, RVM-03, RVM-04, RVM-05, RVM-06, RVM-07, RVM-14, RVM-19 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
-- Row 13 `thermal_control` (v3 BLOCKED): RVM RVM-17 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
-- Row 14 `control_fdir` (v3 BLOCKED): RVM RVM-14, RVM-19 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
-- Row 16 `mechanical_structural` (v3 BLOCKED): RVM RVM-06, RVM-07 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
+- Row 12 `ppu` (v3 BLOCKED): RVM RVM-02, RVM-03, RVM-04, RVM-05, RVM-06, RVM-07, RVM-14, RVM-19, RVM-20 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
+- Row 13 `thermal_control` (v3 BLOCKED): RVM RVM-17, RVM-21, RVM-27 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
+- Row 14 `control_fdir` (v3 BLOCKED): RVM RVM-14, RVM-19, RVM-20 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
+- Row 16 `mechanical_structural` (v3 BLOCKED): RVM RVM-06, RVM-07, RVM-21, RVM-27 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
 - Row 18 `icp_neutralizer_head` (v3 BLOCKED): RVM RVM-05, RVM-12, RVM-13, RVM-14, RVM-15, RVM-16 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
 - Row 19 `flight_rf_chain` (v3 BLOCKED): RVM RVM-04, RVM-05, RVM-15 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
 - Row 20 `h1_anode_material` (v3 BLOCKED): RVM RVM-12, RVM-16, RVM-17 - none (requirement-status input to the M16 v4 refresh, fo_a9_6_m16_refresh - a downstream consumer; no row READY/VERIFIED)
