@@ -1,0 +1,90 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-10-01",
+ "decision": "A9_10_S3_P1_LATER_STAGE_DECISIONS_RECORDED",
+ "applies_to": "group S3 of docs/budgets/owner_decisions/OWNER_QUESTIONS_SEQUENCED_v1.md (rows of owner_questions_state_v4) on execution branch claude/nifty-ramanujan-w68f9z",
+ "parents": [
+  "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json",
+  "docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_01_A9_10_S3_P1_LATER_STAGE_OWNER_DECISIONS.md",
+  "sha256": "6845f54a97192eaa934cc67d5f415c94e317707c97411353aa2325bf5f9b0491"
+ },
+ "decisions": {
+  "P1Q-02": {
+   "sequenced_no": "S3.1",
+   "status": "OWNER_DECIDED",
+   "answer": "HARDWARE_DERIVED_LIMITS_BEFORE_P1_S6",
+   "summary": "register max V_d, supply current limit, max attempt duration, max attempts, cool-down/reset before the first P1-S6 attempt, from the actual H-1, supply, isolation qualification, thermal limits and interlocks; V_d within the qualified H-1 operating/isolation envelope; current limit <= min(safe H-1 limit, lab supply capability, 8.33 A stand/supply ceiling); 8.33 A never I_d,max,H1; duration/retries never increased after an unsuccessful ignition"
+  },
+  "P1Q-03": {
+   "sequenced_no": "S3.2",
+   "status": "OWNER_DECIDED",
+   "answer": "PREREGISTERED_CURRENT_AND_TIME_CRITERION",
+   "summary": "SUSTAINED only if supply enabled+connected, I_d above a pre-registered threshold over the measured P1-M-22 RF-on/plasma-off pickup/noise floor (from its level and uncertainty), continuously for a pre-registered minimum duration (from DAQ bandwidth and start-transient timescale, registered before P1-S6), not a spike/capacitive/RF-pickup/switching artifact, no invalidating interlock; values never chosen after seeing a run"
+  },
+  "P1Q-05": {
+   "sequenced_no": "S3.3",
+   "status": "OWNER_DECIDED",
+   "answer": "MIN_3_INDEPENDENT_REIGNITIONS",
+   "summary": ">= 3 independent re-ignition attempts per candidate point for the P2 handoff, each from extinguished/RF-off, registered restart condition, same operating point, recorded independently; all attempts count, failures never discarded; repeatability evidence only, not a PASS by itself"
+  },
+  "P1Q-06": {
+   "sequenced_no": "S3.4",
+   "status": "OWNER_DECIDED",
+   "answer": "BOTH_AS_FACTOR_F6",
+   "summary": "P1-S3..S5: F6 = magnet OFF baseline first, then registered H-1 magnet setting(s); coil currents/field-setting ids recorded for every magnet-on record; fringe-field influence never assumed negligible until measured"
+  },
+  "P1Q-07": {
+   "sequenced_no": "S3.5",
+   "status": "OWNER_DECIDED",
+   "answer": "DEDICATED_H1_C1_CHARACTERIZATION",
+   "summary": "dedicated H-1 + C1 characterization in the registered HI-AR envelope registers I_d,max,H1,Ar (max measured I_d inside the qualified envelope, with uncertainty), frozen before P1-S7 and used by P1-S7 ICP-45A (never 8.33 A); Ar value is an engineering reference only; a flight-relevant I_d,max,H1 is registered separately on N2/O2/O or delivered propellant and never alters the historical Ar result"
+  },
+  "P1Q-08": {
+   "sequenced_no": "S3.6",
+   "status": "OWNER_DECIDED",
+   "answer": "YES",
+   "summary": "P1-S0..S5 in the HI-ENG / HI-S1A envelope; HI-HOLDOUT-A required immediately before the first Hall-on reading at P1-S6; nothing from S0..S5 consumes or contaminates the held-out partition"
+  },
+  "P1Q-19": {
+   "sequenced_no": "S3.7",
+   "status": "OWNER_DECIDED",
+   "answer": "REQUIRE_REGISTERED_GE_CHANNEL",
+   "summary": "before the first P1-S7 point u_I_e,registered >= u(I_e,cap)_channels under the registered covariance treatment; otherwise ICP-45 is NOT_EVALUATED_REGISTRATION; never silently replaced by the larger value; correctable before acquisition from calibration evidence, never after the result"
+  },
+  "P1Q-24": {
+   "sequenced_no": "S3.8",
+   "status": "OWNER_DECIDED",
+   "answer": "K_LOSS_2_FAIL_CLOSED_CONFIRMED",
+   "summary": "k_loss = 2.0 for the at-power RF loss-model verification in P1 and P2 (CAL-P2-09/10): |eta_meas - eta_pred| / u_c <= 2, never relaxed separately; consistent with k_x = 2; until it passes P_delivered is an upper bound / unverified-loss quantity and C_e an upper-bound quantity; small-signal S-parameters alone never verify the loss model; a failure is investigated, never widened"
+  },
+  "OQ-RFQV2-09": {
+   "sequenced_no": "S3.9",
+   "status": "OWNER_DECIDED",
+   "answer": "C1_ABSENT_ALLOWED_P1_S6",
+   "summary": "P1-S6 may run with C1 physically absent (electrical and gas connections absent/open and documented), recorded as C1_NOT_INSTALLED; HE-L10/11/12 stay LATER for P1-S6 but are scheduled against the S3.5 H-1 reference characterization gate (needed before I_d,max,H1,Ar and P1-S7)"
+  },
+  "OQ-RFQV2-10": {
+   "sequenced_no": "S3.10",
+   "status": "OWNER_DECIDED",
+   "answer": "SEPARATE_H1_FABRICATION_RFQ_IN_HOUSE_DESIGN",
+   "summary": "dedicated H-1 build-to-print fabrication RFQ (channel/body, anode + distributor/plenum, gas-path interfaces, ceramics, MC-1 magnetic-circuit parts, coil formers/winding, thermal/mechanical mounts, feedthrough provisions, dimensional inspection, material certs), not inside the ICP mechanical RFQ; design authority, magnetic/channel/anode design, interfaces, configuration control, final integration, instrumentation, acceptance testing stay in-house; quotation/specification only, no purchase order"
+  }
+ },
+ "owner_supplied_values": {
+  "k_loss": 2.0
+ },
+ "recorder_notes": [
+  "the only numerical value set by this record is k_loss = 2.0 (owner-supplied); start-attempt limits, sustained-discharge threshold/duration and I_d,max,H1,Ar remain registrations from real hardware before P1-S6 / P1-S7",
+  "S3.5 introduces two distinct quantities: I_d,max,H1,Ar (engineering reference, P1-S7) and a later flight-relevant I_d,max,H1"
+ ],
+ "execution": {
+  "instruction": "apply to the P1/P2/RFQ artifacts together with A9.8 after the A9.7 consolidated verification lands",
+  "merge": "no merge to main is authorized by this addendum"
+ },
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}
