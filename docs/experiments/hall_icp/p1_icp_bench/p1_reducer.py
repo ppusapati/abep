@@ -1,5 +1,10 @@
 """P1 ICP electron-source bench - pure, deterministic analysis reducer (lane fo_a9_p1_icp_bench, A9.3 P1;
-A9.4 incorporated by fo_a9_4_incorporation; owner A9.5 P1Q-15 / P1Q-16 applied by fo_a9_5_closure_rule).
+A9.4 incorporated by fo_a9_4_incorporation; owner A9.5 P1Q-15 / P1Q-16 applied by fo_a9_5_closure_rule; owner decisions
+of 2026-10-01 A9.8 / A9.10 / A9.11 / A9.14 applied by A9.16 step 1 - chamber wall refused as electron collector, six
+metered terminals with verified open circuits and DWV leakage terms, per-path DWV limits, UBQ-06 thermal limits at
+P1-G0, start-attempt limits and the current-and-time sustainment criterion, >= 3 independent re-ignitions, factor F6,
+I_d,max,H1,Ar registration, REQUIRE_REGISTERED_GE_CHANNEL, k_loss = 2.0, frozen and hashed stable criteria; the
+campaign-level registration checks are in p1_a9_16_rules.py).
 
 What it does
 ------------
@@ -122,12 +127,22 @@ RECORD_CLASSES_BY_HALL_STATE = {"OFF": (CAPACITY_LABEL, DIAGNOSTIC_LABEL, SURFAC
 CAPACITY_MONITORING_REQUIRED = ("h1_body_ground_config", "I_body_to_ground_continuous", "V_anode_channel",
                                 "V_icp_body_V", "V_electron_collector_V", "sign_convention_id",
                                 "unintended_ground_path_found", "ground_path_check_id")
+# A9.8 S1.7 P3Q-01 (option C; A9.16 repair F2): the Ar P1 development campaign carries a Langmuir probe near the collector
+# (P1-M-30, matched DIAGNOSTIC runs); a probe must not contaminate an ICP45_CAPACITY record unless its perturbation has
+# first been shown negligible. Every capacity record therefore declares capacity_monitoring.langmuir_probe_present
+# (true / false); true needs a registered probe_perturbation_negligible_evidence_id. Undeclared or unevidenced ->
+# EXCLUDED capacity point (kept with its reason), never silently admitted.
+PROBE_PRESENT_KEY = "langmuir_probe_present"
+PROBE_EVIDENCE_KEY = "probe_perturbation_negligible_evidence_id"
 H1_BODY_GROUND_CONFIG = "SINGLE_POINT_METERED_FACILITY_GROUND"
 V_ANODE_CHANNEL = "HIGH_IMPEDANCE_ISOLATED"
 CAPACITY_EXTRA_TERMINALS = ("h1_body",)     # I_body->ground (single metered return), measured continuously
 # ICP-45 status vocabulary: NOT_EVALUATED is the only status before I_d,max,H1 is registered (A9.4); it stays
 # NOT_EVALUATED whenever no admissible capacity point exists (A9.5 P1Q-16)
-ICP45A_STATUSES = ("NOT_EVALUATED", "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE", "EVALUATED_ENGINEERING_ONLY")
+# NOT_EVALUATED_REGISTRATION (owner A9.10 P1Q-19, REQUIRE_REGISTERED_GE_CHANNEL): the preregistered u_I_e is below the
+# uncertainty propagated from its calibrated channels -> the registration is inadmissible (never silently replaced)
+ICP45A_STATUSES = ("NOT_EVALUATED", "NOT_EVALUATED_REGISTRATION", "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE",
+                   "EVALUATED_ENGINEERING_ONLY")
 # per capacity point (RF-ON ICP45_CAPACITY record with its matched RF-OFF record) outcome vocabulary (A9.5 P1Q-15)
 # NOT_EVALUATED_UNCERTAINTY: a required channel uncertainty is missing (A9.6 sec. 14 bullet 7). NOT_EVALUATED_REGISTRATION
 # and OUT_OF_DOMAIN are assigned by the campaign driver (p1_campaign.py): I_d,max,H1 / its registered points or the
@@ -152,7 +167,17 @@ CLOSURE_FRACTION_MAX = 0.02
 U_COMPONENTS = ("u_calibration_A", "u_zero_offset_A", "u_resolution_A", "u_repeatability_A", "u_rf_pickup_A")
 U_EXPLICIT_ABSENT = {"u_repeatability_A": "NOT_APPLICABLE", "u_rf_pickup_A": "NONE_REGISTERED"}
 CLOSURE_RULE_REQUIRED = ("rule_id", "sign_convention", "sign_convention_id", "I_scale_min_A", "I_scale_min_basis")
-CLOSURE_RULE_ALLOWED = CLOSURE_RULE_REQUIRED + ("covariance", "open_by_construction_terminals")
+CLOSURE_RULE_ALLOWED = CLOSURE_RULE_REQUIRED + ("covariance", "open_by_construction_terminals",
+                                               "leakage_negligibility_ratio_max", "dwv_leakage_by_path")
+# OWNER A9.8 P1Q-20 / P1-IT-55: an OPEN_CIRCUIT_BY_CONSTRUCTION terminal (floating H-1 anode, a registered open terminal)
+# is never given u = 0 automatically. Its insulation leakage measured in the accepted P1-S0 DWV / isolation
+# configuration enters u_R as the zero-offset / leakage contribution: terminal.leakage = {dwv_path_id,
+# leakage_upper_bound_A (>= the leakage measured on that accepted DWV path), u_leakage_A (> 0, registered from it)}.
+# Only when the closure rule REGISTERS a negligibility ratio (leakage_negligibility_ratio_max; no default) and the
+# leakage upper bound is <= ratio x u_R(measured channels) does the open-circuit term contribute zero
+# (DEMONSTRABLY_NEGLIGIBLE). dwv_leakage_by_path {path_id: measured leakage A} = the accepted DWV paths of the governing
+# P1-G0 readiness record (the campaign derives it; a missing / untraceable leakage -> NOT_EVALUATED_UNCERTAINTY).
+LEAKAGE_REQUIRED = ("dwv_path_id", "leakage_upper_bound_A", "u_leakage_A")
 # OPEN_CIRCUIT_BY_CONSTRUCTION in a capacity record (consolidated verification E2): the owner sanctions I = 0 by
 # construction only for the physically disconnected, floating H-1 anode (A9.5 P1Q-15 floating_anode; P1-IT-47). Any
 # other terminal may be declared open by construction only when it is listed, with its basis, in the registered
@@ -187,19 +212,47 @@ REFUSED_GENERATOR_CLASSES = ("FLIGHT_REPRESENTATIVE_DC_RF_SOURCE",)
 TERMINAL_BASES = ("MEASURED", "OPEN_CIRCUIT_BY_CONSTRUCTION", "NOT_MEASURED")
 # Electron-extraction topology (the electrode that SINKS the extracted electrons; the ICP 'collector' is the
 # ion-collecting electrode inside the source, TK-13 / ICD ICP-21). Registered per run at P1-G0 (P1-IT-36, P1Q-09).
-EXTRACTION_ELECTRODES = ("DEDICATED_ELECTRON_COLLECTOR_TARGET", "CHAMBER_WALL_FACILITY_GROUND", "H1_ANODE")
+# OWNER A9.8 P1Q-09 (docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json decisions.P1Q-09): a
+# dedicated, isolated, instrumented electron-collecting target for ICP45_CAPACITY AND the comparable P1-S4
+# ENGINEERING_SURFACE records; 'The grounded chamber wall shall not be used as the electron collector, including for the
+# comparable P1-S4 engineering-surface records' - CHAMBER_WALL_FACILITY_GROUND is REFUSED (never a valid electrode).
+A98_REF = "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json"
+A910_REF = "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json"
+A911_REF = "docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json"
+A914_REF = "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json"
+EXTRACTION_ELECTRODES = ("DEDICATED_ELECTRON_COLLECTOR_TARGET", "H1_ANODE")
+REFUSED_EXTRACTION_ELECTRODES = ("CHAMBER_WALL_FACILITY_GROUND",)
 EXTRACTION_ELECTRODES_BY_HALL_STATE = {
-    "OFF": ("DEDICATED_ELECTRON_COLLECTOR_TARGET", "CHAMBER_WALL_FACILITY_GROUND"),
+    "OFF": ("DEDICATED_ELECTRON_COLLECTOR_TARGET",),
     "ON": ("H1_ANODE",),
 }
 REFERENCE_POTENTIALS = ("FACILITY_GROUND", "ICP_BODY", "ELECTRON_COLLECTOR_ELECTRODE")
 EXTRACTION_REQUIRED = ("topology_id", "electron_collecting_electrode")
+# A9.8 P1Q-09: the dedicated target's geometry (planar / annular, centred on the ICP axis, immediately downstream of the
+# ICP outlet on a registered adjustable axial datum) is taken from the actual ICP module drawing and REGISTERED at P1-G0;
+# every dedicated-target record names that registration (never an invented dimension)
+TARGET_GEOMETRY_FIELD = "target_geometry_id"
+# A9.8 P1Q-09: 'the ICP ion-collecting electrode is biased negative with respect to the dedicated electron-collecting
+# target. Record the collector/reference potential explicitly.' -> with the dedicated target V_collector is referenced to
+# the target (ELECTRON_COLLECTOR_ELECTRODE) and must be < 0
+DEDICATED_TARGET_REFERENCE = "ELECTRON_COLLECTOR_ELECTRODE"
+# A9.8 P1Q-09: the six metered terminals; a terminal may be OPEN_CIRCUIT_BY_CONSTRUCTION 'only where that physical state
+# is verified' -> every OPEN_CIRCUIT_BY_CONSTRUCTION terminal carries the id of its recorded physical verification
+P1Q09_TERMINALS = ("collector_supply", "icp_body", "facility_ground", "electron_collector", "h1_body", "hall_anode")
+OPEN_CIRCUIT_VERIFICATION_FIELD = "physical_verification_id"
 REQUIRED_TERMINALS = {
-    ("OFF", "DEDICATED_ELECTRON_COLLECTOR_TARGET"): ("collector_supply", "icp_body", "facility_ground",
-                                                     "electron_collector", "hall_anode"),
-    ("OFF", "CHAMBER_WALL_FACILITY_GROUND"): ("collector_supply", "icp_body", "facility_ground", "hall_anode"),
+    ("OFF", "DEDICATED_ELECTRON_COLLECTOR_TARGET"): P1Q09_TERMINALS,
     ("ON", "H1_ANODE"): ("collector_supply", "icp_body", "facility_ground", "hall_anode"),
 }
+# A9.10 P1Q-06: factor F6 = H-1 magnet state in the ICP-only stages (OFF first, then the registered setting(s)); every
+# magnet-on record names its field-setting id and records the actual coil currents
+MAGNET_STATES = ("OFF", "REGISTERED_SETTING")
+MAGNET_ON_REQUIRED = ("h1_magnet_field_setting_id", "h1_coil_currents_A")
+# A9.10 P1Q-05: at least three INDEPENDENT re-ignition attempts per candidate point (each from an extinguished / RF-off
+# state with the registered restart condition re-established, same registered point, recorded independently); all
+# attempts count (failed / abnormal ones are never discarded); the minimum is repeatability evidence, never a PASS
+IGNITION_START_STATES = ("EXTINGUISHED_RF_OFF", "NOT_FROM_EXTINGUISHED_STATE")
+MIN_INDEPENDENT_REIGNITIONS = 3
 # I_e sign convention (declared per record): I_e_A > 0 = net electrons extracted from the ICP; the collector_supply
 # terminal carries the same current, I_A = +I_e_A, as conventional current INTO the isolated network (the owner's
 # global convention, A9.5 P1Q-15 / KIRCHHOFF_SIGN_CONVENTION)
@@ -217,6 +270,7 @@ OPERATING_POINT_REQUIRED = (
     "schema", "record_kind", "record_id", "run_id", "stage_id", "timestamp_utc", "synthetic", "labels", "gas",
     "gas_mode", "record_class", "hall_discharge_state", "hall_discharge_sustained", "h1_electrical", "rf", "generator", "collector",
     "extraction", "pressures", "flows", "impedance", "terminals", "temperatures", "rf_pickup_check",
+    "h1_magnet_state",
 )
 RF_REQUIRED = ("reference_plane", "P_fwd_W", "P_refl_W", "line_match_loss", "match_setting_id")
 GENERATOR_REQUIRED = ("generator_class", "P_generator_input_W", "input_boundary", "instrument")
@@ -224,7 +278,32 @@ COLLECTOR_REQUIRED = ("I_e_A", "I_e_sign_convention", "I_e_resolution_A", "V_col
 FLOWS_REQUIRED = ("mdot_Ar_H1_mg_s", "mdot_icp_dedicated_mg_s")
 IMPEDANCE_REQUIRED = ("status",)
 SEQUENCE_REQUIRED = ("schema", "record_kind", "record_id", "run_id", "stage_id", "synthetic", "labels", "gas",
-                     "classification", "c1_disconnected", "hall_start_registration_id", "steps")
+                     "classification", "c1_disconnected", "hall_start_registration_id", "steps", "c1_configuration",
+                     "hi_holdout_a_id")
+# OWNER A9.10 OQ-RFQV2-09: C1 may be physically absent in P1-S6 (C1_NOT_INSTALLED, its electrical and gas connections
+# absent / open and documented) - stated as such, never as a pretended disconnected C1; C1 is scheduled against the
+# I_d,max,H1,Ar characterization gate (P1Q-07), not against P1-S6
+C1_CONFIGURATIONS = ("C1_NOT_INSTALLED", "C1_INSTALLED_DISCONNECTED")
+# OWNER A9.10 P1Q-08: P1-S0..S5 belong to HI-ENG / HI-S1A; HI-HOLDOUT-A is required immediately before the first
+# Hall-on reading, i.e. at P1-S6 (the sequence names the signed HI-HOLDOUT-A record)
+HOLDOUT_STAGE = "P1-S6"
+# OWNER A9.10 P1Q-03: SUSTAINED only when the discharge supply is enabled and connected, I_d exceeds a preregistered
+# threshold above the measured RF-on / plasma-off pickup floor (P1-M-22) continuously for a preregistered minimum
+# duration, the condition is not an ignition spike / capacitive transient / RF pickup / switching artifact and no
+# protection / interlock condition invalidates it. Threshold and duration are registered before P1-S6.
+SUSTAIN_STEP_FLAGS = ("supply_enabled_connected", "artifact_or_transient_only", "interlock_invalidates")
+SUSTAINMENT_DEFINITION_REQUIRED = ("definition_id", "I_threshold_A", "pickup_floor_A", "u_pickup_floor_A",
+                                   "pickup_floor_record_id", "min_duration_s", "daq_bandwidth_Hz",
+                                   "start_transient_basis", "frozen_utc")
+# OWNER A9.10 P1Q-02: Hall start-attempt limits registered before the first P1-S6 attempt from the actual H-1, the
+# discharge-supply capability, the isolation qualification, thermal limits and interlock settings; the current limit is
+# <= min(safe H-1 limit, laboratory supply capability, 8.33 A stand ceiling) - the 8.33 A is an infrastructure ceiling
+# only, never I_d,max,H1; attempt duration and retry count are never increased after an unsuccessful ignition
+START_LIMITS_REQUIRED = ("registration_id", "V_d_max_V", "V_qualified_envelope_V", "I_limit_A", "I_h1_safe_A",
+                         "I_supply_capability_A", "attempt_duration_max_s", "max_attempts", "cooldown_condition",
+                         "thermal_transient_basis_id", "isolation_qualification_id", "interlock_settings_id",
+                         "frozen_utc")
+STAND_CEILING_A = 1500.0 / 180.0
 SEQUENCE_SIGNALS = ("t_s", "V_d_V", "I_d_A", "I_e_icp_A", "P_rf_fwd_W", "P_rf_refl_W", "V_collector_V",
                     "V_reference_V")
 SEQUENCE_STEPS = (
@@ -542,9 +621,31 @@ def validate_operating_point(rec):
     if not isinstance(ext["topology_id"], str) or not ext["topology_id"].strip():
         raise ExtractionTopologyError("%s: extraction.topology_id must be the id registered at P1-G0" % rid)
     electrode = ext["electron_collecting_electrode"]
+    if electrode in REFUSED_EXTRACTION_ELECTRODES:
+        raise ExtractionTopologyError("%s: electron_collecting_electrode %r refused: the grounded chamber wall shall not "
+                                      "be used as the electron collector, including for the comparable P1-S4 "
+                                      "engineering-surface records (owner A9.8 P1Q-09; %s decisions.P1Q-09)"
+                                      % (rid, electrode, A98_REF))
     if electrode not in EXTRACTION_ELECTRODES:
         raise ExtractionTopologyError("%s: electron_collecting_electrode %r not in %s"
                                       % (rid, electrode, EXTRACTION_ELECTRODES))
+    if electrode == "DEDICATED_ELECTRON_COLLECTOR_TARGET":
+        geo = ext.get(TARGET_GEOMETRY_FIELD)
+        if not isinstance(geo, str) or not geo.strip():
+            raise ExtractionTopologyError("%s: extraction.%s must name the dedicated-target geometry registered at "
+                                          "P1-G0 from the actual ICP module drawing (owner A9.8 P1Q-09: final diameter, "
+                                          "axial distance and support dimensions are registered, never invented)"
+                                          % (rid, TARGET_GEOMETRY_FIELD))
+        if col["reference_potential"] != DEDICATED_TARGET_REFERENCE:
+            raise ExtractionTopologyError("%s: with the dedicated electron-collecting target V_collector is referenced "
+                                          "to that target (reference_potential %s; owner A9.8 P1Q-09: the ICP "
+                                          "ion-collecting electrode is biased negative w.r.t. the target and the "
+                                          "collector/reference potential is recorded explicitly); got %r"
+                                          % (rid, DEDICATED_TARGET_REFERENCE, col["reference_potential"]))
+        if not float(col["V_collector_V"]) < 0.0:
+            raise ExtractionTopologyError("%s: V_collector = %r V w.r.t. the dedicated target: the ICP ion-collecting "
+                                          "electrode must be biased NEGATIVE w.r.t. the electron-collecting target "
+                                          "(owner A9.8 P1Q-09)" % (rid, col["V_collector_V"]))
     # pressures, impedance, temperatures, pickup
     _req(rec["pressures"], PRESSURE_FIELDS, rid + " pressures")
     for k in PRESSURE_FIELDS:
@@ -592,8 +693,14 @@ def validate_operating_point(rec):
                                     "channel carries no value (never a silent zero, A9.5 P1Q-15)" % (rid, name, t["I_A"]))
             continue
         _num(t.get("I_A"), "%s terminals.%s.I_A" % (rid, name))
-        if t["basis"] == "OPEN_CIRCUIT_BY_CONSTRUCTION" and float(t["I_A"]) != 0.0:
-            raise P1RecordError("%s: terminal '%s' declared open circuit but carries %r A" % (rid, name, t["I_A"]))
+        if t["basis"] == "OPEN_CIRCUIT_BY_CONSTRUCTION":
+            if float(t["I_A"]) != 0.0:
+                raise P1RecordError("%s: terminal '%s' declared open circuit but carries %r A" % (rid, name, t["I_A"]))
+            pv = t.get(OPEN_CIRCUIT_VERIFICATION_FIELD)
+            if not isinstance(pv, str) or not pv.strip():
+                raise MissingInputError("%s: terminal '%s' declared OPEN_CIRCUIT_BY_CONSTRUCTION without '%s': a terminal "
+                                        "may be declared open by construction only where that physical state is "
+                                        "verified (owner A9.8 P1Q-09)" % (rid, name, OPEN_CIRCUIT_VERIFICATION_FIELD))
     if terms["collector_supply"]["basis"] != "MEASURED":
         raise MissingInputError("%s: terminal 'collector_supply' must be MEASURED (it carries I_e, P1-IT-42)" % rid)
     # the H-1 anode terminal basis follows the registered anode state
@@ -607,11 +714,33 @@ def validate_operating_point(rec):
         raise P1RecordError("%s: collector.I_e_A = %r A and terminals.collector_supply.I_A = %r A differ by more "
                             "than the channel resolution %r A (same current under %s)"
                             % (rid, i_e, cs, res, I_E_SIGN_CONVENTION))
+    check_magnet_state(rec, rid)
     if rc == CAPACITY_LABEL:
         _check_capacity_record(rec, rid)
     if "optical" in rec:                        # optional channel; when recorded it must be complete (P1-M-28)
         classify_plasma_state(rec["optical"], rid + " optical")
     return None
+
+
+def check_magnet_state(rec, rid):
+    """A9.10 P1Q-06 factor F6: h1_magnet_state is OFF or REGISTERED_SETTING; a magnet-on record names its registered
+    field-setting id and records the actual coil currents (non-empty {coil_id: A}). Raises otherwise. The magnet-OFF-first
+    order is a campaign-level rule (p1_campaign)."""
+    st = rec.get("h1_magnet_state")
+    if st not in MAGNET_STATES:
+        raise P1RecordError("%s: h1_magnet_state %r not in %s (factor F6, owner A9.10 P1Q-06)" % (rid, st, MAGNET_STATES))
+    if st == "REGISTERED_SETTING":
+        fs = rec.get("h1_magnet_field_setting_id")
+        if not isinstance(fs, str) or not fs.strip():
+            raise MissingInputError("%s: a magnet-on record needs h1_magnet_field_setting_id (owner A9.10 P1Q-06: record "
+                                    "the actual coil currents / field-setting ids for every magnet-on record)" % rid)
+        cc = rec.get("h1_coil_currents_A")
+        if not isinstance(cc, dict) or not cc:
+            raise MissingInputError("%s: a magnet-on record needs h1_coil_currents_A {coil_id: measured current} "
+                                    "(owner A9.10 P1Q-06)" % rid)
+        for k, v in cc.items():
+            _num(v, "%s h1_coil_currents_A.%s" % (rid, k))
+    return st
 
 
 def _check_capacity_record(rec, rid):
@@ -694,6 +823,15 @@ def capacity_structural_reasons(rec):
         out.append("unintended ground path found or its check not recorded (capacity_monitoring."
                    "unintended_ground_path_found = %r, check %r; A9.5 P1Q-15 exclusion)"
                    % (cm.get("unintended_ground_path_found"), cm.get("ground_path_check_id")))
+    probe = cm.get(PROBE_PRESENT_KEY)
+    if not isinstance(probe, bool):
+        out.append("Langmuir-probe state not declared (capacity_monitoring.%s = %r must be true / false): a probe "
+                   "must not contaminate an ICP45 capacity record unless its perturbation is shown negligible "
+                   "(A9.8 P3Q-01)" % (PROBE_PRESENT_KEY, probe))
+    elif probe and not _ref_ok(cm.get(PROBE_EVIDENCE_KEY)):
+        out.append("Langmuir probe present during the ICP45 capacity record without registered evidence that its "
+                   "perturbation is negligible (capacity_monitoring.%s = %r; A9.8 P3Q-01: probe data belong to "
+                   "matched diagnostic runs)" % (PROBE_EVIDENCE_KEY, cm.get(PROBE_EVIDENCE_KEY)))
     return out
 
 
@@ -1019,7 +1157,46 @@ def _check_closure_rule(closure_rule):
                                        % name)
             reg_open[name] = basis
     out["open_by_construction_terminals"] = [{"terminal": k, "basis": reg_open[k]} for k in sorted(reg_open)]
+    ratio = closure_rule.get("leakage_negligibility_ratio_max")
+    if ratio is not None:
+        ratio = _num(ratio, "closure_rule.leakage_negligibility_ratio_max", allow_negative=False)
+        if ratio <= 0.0:
+            raise ClosureRuleError("closure_rule.leakage_negligibility_ratio_max must be > 0 when registered (P1Q-20)")
+    out["leakage_negligibility_ratio_max"] = ratio
+    dl = closure_rule.get("dwv_leakage_by_path")
+    if dl is not None:
+        if not isinstance(dl, dict):
+            raise ClosureRuleError("closure_rule.dwv_leakage_by_path must be {path_id: measured DWV leakage A}")
+        dl = {k: _num(v, "closure_rule.dwv_leakage_by_path." + str(k), allow_negative=False) for k, v in dl.items()}
+    out["dwv_leakage_by_path"] = dl
     return out
+
+
+def _leakage_uncertainty(t, name, rule):
+    """P1Q-20 leakage term of one OPEN_CIRCUIT_BY_CONSTRUCTION terminal: (u_A, bound_A, path_id, None) or
+    (None, None, None, reason) - never a silent zero."""
+    lk = t.get("leakage")
+    if not isinstance(lk, dict) or any(lk.get(k) is None for k in LEAKAGE_REQUIRED):
+        return None, None, None, ("u(I_%s) unavailable: OPEN_CIRCUIT_BY_CONSTRUCTION terminal %r carries no measured "
+                                  "insulation-leakage term %s (owner A9.8 P1Q-20: never u = 0 merely because the "
+                                  "terminal is open / floating by construction; P1-IT-55 DWV leakage feeds it)"
+                                  % (name, name, list(LEAKAGE_REQUIRED)))
+    path = lk["dwv_path_id"]
+    bound = _num(lk["leakage_upper_bound_A"], "terminal %s leakage_upper_bound_A" % name, allow_negative=False)
+    u = _num(lk["u_leakage_A"], "terminal %s u_leakage_A" % name, allow_negative=False)
+    if u <= 0.0:
+        return None, None, None, ("u(I_%s) unavailable: u_leakage_A = %r is not a valid leakage uncertainty (> 0 "
+                                  "required; P1Q-20)" % (name, u))
+    table = rule.get("dwv_leakage_by_path")
+    if table is None or path not in table:
+        return None, None, None, ("u(I_%s) unavailable: leakage path %r is not an accepted DWV path of the governing "
+                                  "P1-G0 readiness record (owner A9.8 P1Q-20 / P1-IT-55: the measured leakage of the "
+                                  "accepted DWV / isolation configuration feeds the term)" % (name, path))
+    if bound < table[path]:
+        return None, None, None, ("u(I_%s) unavailable: leakage_upper_bound_A %r A is below the leakage %r A measured "
+                                  "on accepted DWV path %r (P1Q-20: a measured leakage is never reduced silently)"
+                                  % (name, bound, table[path], path))
+    return u, bound, path, None
 
 
 def _channel_uncertainty(t, name):
@@ -1053,8 +1230,9 @@ def kirchhoff_closure(rec, closure_rule):
     """Owner Kirchhoff current-closure rule for one ICP45_CAPACITY record (A9.5 P1Q-15).
 
     R_I = sum_k I_k over every terminal crossing the registered network boundary (signed, conventional current INTO
-    the network positive; OPEN_CIRCUIT_BY_CONSTRUCTION terminals contribute I = 0 and u = 0 by construction, e.g. the
-    floating H-1 anode, whose potential is still recorded). u_R = sqrt(sum_k u^2(I_k)) for independent channels, or
+    the network positive; OPEN_CIRCUIT_BY_CONSTRUCTION terminals contribute I = 0, e.g. the floating H-1 anode, whose
+    potential is still recorded; their u is the measured DWV insulation-leakage term, never 0 by default - owner A9.8
+    P1Q-20, zero only when DEMONSTRABLY_NEGLIGIBLE under a registered ratio). u_R = sqrt(sum_k u^2(I_k)) for independent channels, or
     sqrt(sum_ij r_ij u(I_i) u(I_j)) with a registered correlation (full covariance form). closure_valid only if
     |R_I| <= 3 u_R AND |R_I| / max(I_e,collector, I_scale,min) <= 0.02. instrument_adequate = 3 u_R <= 0.02
     I_e,collector (applied by icp45a_candidates at the RF-ON candidate point). Structural reasons (sign conventions
@@ -1087,7 +1265,15 @@ def kirchhoff_closure(rec, closure_rule):
         t = terms[name]
         basis = t["basis"]
         if basis == "OPEN_CIRCUIT_BY_CONSTRUCTION":
-            channels[name] = {"basis": basis, "I_A": 0.0, "u_A": 0.0, "u_basis": "ZERO_BY_CONSTRUCTION",
+            lu, lb, lp, lwhy = _leakage_uncertainty(t, name, rule)
+            if lwhy:
+                reasons.append(lwhy)
+                u_reasons.append(lwhy)
+                u_ok = False
+            channels[name] = {"basis": basis, "I_A": 0.0, "u_A": lu,
+                              "u_basis": "LEAKAGE_ZERO_OFFSET_TERM (owner A9.8 P1Q-20)" if lu is not None else None,
+                              "leakage_upper_bound_A": lb, "dwv_path_id": lp,
+                              "physical_verification_id": t.get(OPEN_CIRCUIT_VERIFICATION_FIELD),
                               "open_basis": (reg_open.get(name) or ("floating H-1 anode (A9.5 P1Q-15)"
                                                                     if name in OPEN_BY_CONSTRUCTION_IMPLICIT
                                                                     else "NOT_REGISTERED"))}
@@ -1118,7 +1304,9 @@ def kirchhoff_closure(rec, closure_rule):
            "V_anode_V": float(rec["h1_electrical"]["V_anode_V"])}
     if not reasons:
         meas = [n for n in sorted(channels) if channels[n]["basis"] == "MEASURED"]
+        opens = [n for n in sorted(channels) if channels[n]["basis"] == "OPEN_CIRCUIT_BY_CONSTRUCTION"]
         cov = rule.get("covariance")
+        u_r, method = None, None
         if cov is None:
             u_r = math.sqrt(sum(channels[n]["u_A"] ** 2 for n in meas))
             method = "INDEPENDENT_CHANNELS: u_R = sqrt(sum_k u^2(I_k))"
@@ -1145,6 +1333,24 @@ def kirchhoff_closure(rec, closure_rule):
                 u_r = math.sqrt(s) if s > 0.0 else None
                 method = ("FULL_COVARIANCE (registered %s): u_R^2 = sum_ij r_ij u(I_i) u(I_j)"
                           % cov["covariance_id"])
+        if u_r is not None and opens:
+            # P1Q-20: the leakage terms of the open-by-construction terminals, independent of the measured channels;
+            # zero only when DEMONSTRABLY_NEGLIGIBLE under a registered ratio
+            ratio = rule["leakage_negligibility_ratio_max"]
+            u_meas = u_r
+            add = 0.0
+            for n in opens:
+                c = channels[n]
+                if ratio is not None and c["leakage_upper_bound_A"] <= ratio * u_meas:
+                    c["u_basis"] = ("DEMONSTRABLY_NEGLIGIBLE: leakage upper bound %.6g A <= registered ratio %g x "
+                                    "u_R(measured) %.6g A (owner A9.8 P1Q-20)" % (c["leakage_upper_bound_A"], ratio,
+                                                                                  u_meas))
+                    c["u_A_registered_leakage"] = c["u_A"]
+                    c["u_A"] = 0.0
+                else:
+                    add += c["u_A"] ** 2
+            u_r = math.sqrt(u_meas ** 2 + add)
+            method += "; + open-circuit leakage terms in quadrature (owner A9.8 P1Q-20)"
     if reasons:
         out.update({"evaluable": False, "R_I_A": None, "u_R_A": None, "I_e_collector_A": None,
                     "statistical_ok": None, "fractional_ok": None, "closure_valid": False,
@@ -1290,20 +1496,47 @@ def dwell_metrics(dwell):
     return out
 
 
-STABLE_CRITERIA_REQUIRED = ("criteria_id", "max_abs_drift_rel_I_e", "max_abs_drift_rel_P_refl", "max_step_over_std",
-                            "min_duration_s", "min_ignition_success_fraction")
+STABLE_CRITERIA_LIMITS = ("max_abs_drift_rel_I_e", "max_abs_drift_rel_P_refl", "max_step_over_std", "min_duration_s",
+                          "min_ignition_success_fraction")
+# OWNER A9.11 P1Q-01 (docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json decisions.P1Q-01): the
+# classify_stable_region form is frozen; the numbers are derived from P1-S2..S4 commissioning / characterization evidence
+# and the independent re-ignition evidence (A9.10 P1Q-05), under a versioned criteria_id, frozen AND hashed before the
+# first P1-S5 dwell is classified for the P2 handoff (frozen_utc before the earliest P1-S5 dwell; criteria_sha256 =
+# sha256 of the canonical JSON of the record without that field - verified by p1_campaign); unregistered -> NOT_EVALUATED
+# (raw dwells kept); passing = WITHIN_OWNER_CRITERIA only (not an architecture PASS, not a flight qualification)
+STABLE_CRITERIA_REGISTRATION = ("frozen_utc", "criteria_sha256", "derived_from_record_ids", "derivation_basis")
+STABLE_CRITERIA_REQUIRED = ("criteria_id",) + STABLE_CRITERIA_LIMITS + STABLE_CRITERIA_REGISTRATION
 
 
 def check_stable_criteria(criteria):
-    """Owner stable-region criteria (P1Q-01): a registered criteria_id and finite, non-negative limits; the minimum
-    ignition success fraction lies in [0, 1]. Raises on anything else (a NaN limit would make every comparison false
-    and report WITHIN_OWNER_CRITERIA - consolidated verification SW-01). Returns a normalised copy."""
+    """Owner stable-region criteria (P1Q-01, A9.11): a registered versioned criteria_id, finite non-negative limits (the
+    minimum ignition success fraction in [0, 1]), the freeze time, the sha256 of the frozen record (64 hex), the
+    P1-S2..S4 evidence record ids it was derived from and its derivation basis. Raises on anything else (a NaN limit
+    would make every comparison false and report WITHIN_OWNER_CRITERIA - consolidated verification SW-01). Returns a
+    normalised copy."""
     _req(criteria, STABLE_CRITERIA_REQUIRED, "criteria")
     if not isinstance(criteria["criteria_id"], str) or not criteria["criteria_id"].strip():
         raise MissingInputError("criteria.criteria_id must be a non-empty registered id")
     out = {"criteria_id": criteria["criteria_id"]}
-    for k in STABLE_CRITERIA_REQUIRED[1:]:
+    for k in STABLE_CRITERIA_LIMITS:
         out[k] = _num(criteria[k], "criteria." + k, allow_negative=False)
+    out["frozen_utc"] = criteria["frozen_utc"]
+    parse_utc(criteria["frozen_utc"], "criteria.frozen_utc (owner A9.11 P1Q-01: frozen before the first P1-S5 "
+                                      "handoff classification)")
+    h = criteria["criteria_sha256"]
+    if not isinstance(h, str) or len(h) != 64 or any(c not in "0123456789abcdef" for c in h):
+        raise MissingInputError("criteria.criteria_sha256 must be the lower-case sha256 of the frozen criteria record "
+                                "(owner A9.11 P1Q-01: freeze and hash)")
+    out["criteria_sha256"] = h
+    ids = criteria["derived_from_record_ids"]
+    if not isinstance(ids, list) or not ids or not all(isinstance(i, str) and i.strip() for i in ids):
+        raise MissingInputError("criteria.derived_from_record_ids must list the P1-S2..S4 evidence records the limits "
+                                "were derived from (owner A9.11 P1Q-01)")
+    out["derived_from_record_ids"] = list(ids)
+    if not isinstance(criteria["derivation_basis"], str) or not criteria["derivation_basis"].strip():
+        raise MissingInputError("criteria.derivation_basis must state how the limits follow from instrument noise, "
+                                "repeatability, time-base resolution, ignition transients and stable traces (P1Q-01)")
+    out["derivation_basis"] = criteria["derivation_basis"]
     if out["min_ignition_success_fraction"] > 1.0:
         raise P1RecordError("criteria.min_ignition_success_fraction = %r is not a fraction in [0, 1]"
                             % out["min_ignition_success_fraction"])
@@ -1311,14 +1544,17 @@ def check_stable_criteria(criteria):
 
 
 def _check_ignition_counts(ignition):
-    _req(ignition, ("attempts", "successes"), "ignition")
-    a, n = ignition["attempts"], ignition["successes"]
-    for k, v in (("attempts", a), ("successes", n)):
+    _req(ignition, ("attempts", "successes", "independent_attempts"), "ignition")
+    a, n, ind = ignition["attempts"], ignition["successes"], ignition["independent_attempts"]
+    for k, v in (("attempts", a), ("successes", n), ("independent_attempts", ind)):
         if isinstance(v, bool) or not isinstance(v, int) or v < 0:
             raise MissingInputError("ignition.%s must be a non-negative integer, got %r" % (k, v))
     if n > a:
         raise P1RecordError("ignition: successes %d > attempts %d" % (n, a))
-    return a, n
+    if ind > a:
+        raise P1RecordError("ignition: independent_attempts %d > attempts %d (all attempts count, A9.10 P1Q-05)"
+                            % (ind, a))
+    return a, n, ind
 
 
 def classify_stable_region(metrics, criteria=None, ignition=None):
@@ -1330,7 +1566,13 @@ def classify_stable_region(metrics, criteria=None, ignition=None):
     crit = check_stable_criteria(criteria)
     if ignition is None:
         raise MissingInputError("stable region: ignition repeatability record required with criteria")
-    attempts, successes = _check_ignition_counts(ignition)
+    attempts, successes, independent = _check_ignition_counts(ignition)
+    if independent < MIN_INDEPENDENT_REIGNITIONS:
+        return {"verdict": "NOT_EVALUATED", "criteria_id": crit["criteria_id"],
+                "reason": "INSUFFICIENT_REIGNITION_EVIDENCE: %d independent re-ignition attempt(s) < %d required at a "
+                          "candidate point (owner A9.10 P1Q-05; all %d attempts counted, none discarded)"
+                          % (independent, MIN_INDEPENDENT_REIGNITIONS, attempts),
+                "ignition_success_fraction": (successes / attempts) if attempts else None}
     fails = []
     dur = metrics.get("duration_s")
     if dur is None or not math.isfinite(float(dur)) or float(dur) < crit["min_duration_s"]:
@@ -1348,10 +1590,23 @@ def classify_stable_region(metrics, criteria=None, ignition=None):
         fails.append("ignition repeatability")
     return {"verdict": "WITHIN_OWNER_CRITERIA" if not fails else "OUTSIDE_OWNER_CRITERIA",
             "criteria_id": crit["criteria_id"], "failed": fails, "ignition_success_fraction": frac,
-            "note": "engineering handoff classification for P2 only; not an architecture gate"}
+            "independent_reignitions": independent,
+            "note": "engineering handoff classification for P2 only (WITHIN_OWNER_CRITERIA; owner A9.11 P1Q-01: not an "
+                    "architecture PASS or a flight qualification); >= 3 independent re-ignitions are repeatability "
+                    "evidence, not a PASS (A9.10 P1Q-05)"}
 
 
-REGISTRATION_REQUIRED = ("registration_id", "I_d_max_H1_A", "basis", "source", "registered_point_ids")
+REGISTRATION_REQUIRED = ("registration_id", "I_d_max_H1_A", "basis", "source", "registered_point_ids",
+                         "propellant", "characterization_id", "electron_source", "envelope_id", "u_I_d_max_H1_A",
+                         "frozen_utc", "scope")
+# OWNER A9.10 P1Q-07: I_d,max,H1,Ar comes from a DEDICATED H-1 characterization with the conventional C1 reference
+# electron source in the registered HI-AR envelope, with its uncertainty, frozen before P1-S7 (the campaign checks the
+# freeze time against the first P1-S7 record); it is an Ar engineering qualification reference only, distinct from the
+# later flight-relevant I_d,max,H1 (registered separately, never retroactively altering the Ar P1 result); never 8.33 A.
+I_D_MAX_PROPELLANT = "Ar"
+I_D_MAX_ELECTRON_SOURCE = "C1_CONVENTIONAL_REFERENCE"
+I_D_MAX_ENVELOPE = "HI-AR"
+I_D_MAX_SCOPE = "AR_ENGINEERING_QUALIFICATION_REFERENCE_NOT_FLIGHT_RELEVANT"
 MARGIN_RULE_REQUIRED = ("rule_id", "k_one_sided", "alpha_one_sided", "k_basis")
 # owner alpha of the one-sided margin gate (P1-IT-29; A9.1 UBQ-02 / UBQ-07: 'one-sided lower confidence bound > 0;
 # one-sided alpha 0.05 per absolute gate'); k_one_sided may not be below the normal one-sided quantile of that alpha
@@ -1373,6 +1628,19 @@ def _check_registration(registration, margin_rule):
         raise RegistrationError("I_d,max,H1 basis %r refused: only %s (the 8.33 A stand ceiling and the 7.5 A "
                                 "power-envelope bound are not the ICP-45 requirement, A9.3 OQ-A907-02)"
                                 % (registration["basis"], REGISTRATION_BASIS))
+    for key, want in (("propellant", I_D_MAX_PROPELLANT), ("electron_source", I_D_MAX_ELECTRON_SOURCE),
+                      ("envelope_id", I_D_MAX_ENVELOPE), ("scope", I_D_MAX_SCOPE)):
+        if registration[key] != want:
+            raise RegistrationError("registration.%s = %r: owner A9.10 P1Q-07 registers I_d,max,H1,Ar from a dedicated "
+                                    "H-1 + conventional C1 characterization in HI-AR as an Ar engineering reference "
+                                    "(required %r; a later flight-relevant I_d,max,H1 is a separate registration)"
+                                    % (key, registration[key], want))
+    if not isinstance(registration["characterization_id"], str) or not registration["characterization_id"].strip():
+        raise RegistrationError("registration.characterization_id must name the dedicated H-1 + C1 characterization "
+                                "(owner A9.10 P1Q-07)")
+    _pos(registration["u_I_d_max_H1_A"], "registration.u_I_d_max_H1_A (owner A9.10 P1Q-07: with its registered "
+                                          "uncertainty)")
+    parse_utc(registration["frozen_utc"], "registration.frozen_utc")
     pts = registration["registered_point_ids"]
     if not isinstance(pts, list) or not pts or not all(isinstance(x, str) and x.strip() for x in pts):
         raise RegistrationError("registration.registered_point_ids must be a non-empty list of registered H-1 "
@@ -1683,32 +1951,40 @@ def neutralization_consistency(records, facility_checks, registered_point_ids=No
 
 
 P1Q19_ALTERNATIVES = ("REQUIRE_REGISTERED_GE_CHANNEL", "USE_LARGER_OF_REGISTERED_AND_CHANNEL")
+# OWNER A9.10 P1Q-19 (docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json decisions.P1Q-19):
+# REQUIRE_REGISTERED_GE_CHANNEL - u_I_e,registered >= u(I_e,cap)_channels before the first P1-S7 point, else the ICP-45
+# evaluation is NOT_EVALUATED_REGISTRATION; never silently replaced by the larger value during evaluation. The other
+# alternative (USE_LARGER_OF_REGISTERED_AND_CHANNEL) is NOT owner-selected: it is listed by name only, with no margin
+# and no condition_met, so that no evaluated larger-value margin can be read as a result (A9.16 repair F9).
+P1Q19_OWNER_SELECTED = P1Q19_ALTERNATIVES[0]
+P1Q19_NOT_SELECTED_STATUS = "NOT_OWNER_SELECTED_INFORMATIONAL"
 
 
 def _p1q19_alternatives(best, idm, k, ue, ud):
-    """P1Q-19 (TBD_OWNER part): both admissible treatments of a registered u_I_e_A are carried side by side.
-    DERIVED part: a registered u(I_e,cap) below the GUM propagation of its own channel uncertainties (JCGM 100:2008
-    5.1.2 / 5.2.2) is never used as it stands. Alternative A (REQUIRE_REGISTERED_GE_CHANNEL): the registration is
-    inadmissible -> NOT_EVALUATED; alternative B (USE_LARGER_OF_REGISTERED_AND_CHANNEL): M_n with the larger value.
-    When registered >= channel both alternatives are identical."""
+    """P1Q-19, OWNER_DECIDED by A9.10 S3.7: REQUIRE_REGISTERED_GE_CHANNEL. DERIVED part: a registered u(I_e,cap) below
+    the GUM propagation of its own channel uncertainties (JCGM 100:2008 5.1.2 / 5.2.2) is never used as it stands.
+    The owner-selected treatment: registered >= channel -> the registration is admissible and M_n uses it
+    (EVALUABLE); registered < channel -> the registration is inadmissible, NOT_EVALUATED_REGISTRATION, no M_n. The
+    rejected alternative USE_LARGER_OF_REGISTERED_AND_CHANNEL is never evaluated: it is reported as
+    NOT_OWNER_SELECTED_INFORMATIONAL without a margin or a condition_met (the owner: 'Do not silently replace it during
+    evaluation with the larger value')."""
     u_ch = best["u_I_e_cap_from_channels_A"]
     i_cap = best["I_e_cap_A"]
+    rejected = {"status": P1Q19_NOT_SELECTED_STATUS,
+                "note": "rejected by the owner (A9.10 P1Q-19 S3.7); never evaluated, never decides a status"}
+    common = {"u_registered_A": ue, "u_channels_A": u_ch, "u_channels_basis": best["u_I_e_cap_from_channels_basis"],
+              "owner_selected": P1Q19_OWNER_SELECTED}
     if ue >= u_ch:
         m = icp45a_margin(i_cap, idm, k, ue, ud)
         alt = {"u_I_e_cap_A": ue, "status": "EVALUABLE", "condition_met": bool(m["M_n_lower"] > 0.0)}
         alt.update(m)
-        return {"agree": True, "u_registered_A": ue, "u_channels_A": u_ch,
-                "u_channels_basis": best["u_I_e_cap_from_channels_basis"],
-                P1Q19_ALTERNATIVES[0]: dict(alt), P1Q19_ALTERNATIVES[1]: dict(alt)}
-    m_b = icp45a_margin(i_cap, idm, k, u_ch, ud)
-    alt_b = {"u_I_e_cap_A": u_ch, "status": "EVALUABLE", "condition_met": bool(m_b["M_n_lower"] > 0.0)}
-    alt_b.update(m_b)
-    alt_a = {"u_I_e_cap_A": None, "status": "NOT_EVALUATED", "condition_met": None,
-             "reason": "registered u_I_e_A = %.6g A < channel propagation %.6g A: registration inadmissible under "
-                       "this alternative" % (ue, u_ch)}
-    return {"agree": False, "u_registered_A": ue, "u_channels_A": u_ch,
-            "u_channels_basis": best["u_I_e_cap_from_channels_basis"],
-            P1Q19_ALTERNATIVES[0]: alt_a, P1Q19_ALTERNATIVES[1]: alt_b}
+        return dict(common, registration_admissible=True, **{P1Q19_ALTERNATIVES[0]: alt,
+                                                             P1Q19_ALTERNATIVES[1]: rejected})
+    alt_a = {"u_I_e_cap_A": None, "status": "NOT_EVALUATED_REGISTRATION", "condition_met": None,
+             "reason": "registered u_I_e_A = %.6g A < channel propagation %.6g A: registration inadmissible (owner "
+                       "A9.10 P1Q-19 REQUIRE_REGISTERED_GE_CHANNEL)" % (ue, u_ch)}
+    return dict(common, registration_admissible=False, **{P1Q19_ALTERNATIVES[0]: alt_a,
+                                                          P1Q19_ALTERNATIVES[1]: rejected})
 
 
 def icp45a_evaluate(records, registration=None, margin_rule=None, facility_checks=None, closure_rule=None):
@@ -1718,9 +1994,10 @@ def icp45a_evaluate(records, registration=None, margin_rule=None, facility_check
     uncertainties are available (u(I_k) of every channel; u_I_e_A and u_I_d_max_A of the margin rule, a zero value
     being no uncertainty statement - DERIVED P1Q-19 ext) and (4) I_d,max,H1 is registered from the H-1 envelope and
     measured behaviour (never the 8.33 A bench ceiling); until all four exist the status is exactly NOT_EVALUATED; never
-    PASS / FAIL. Per capacity point the outcome is one of POINT_OUTCOMES. The two admissible P1Q-19 treatments of a
-    registered u_I_e_A below the channel propagation are carried side by side; when they disagree the status is
-    NOT_EVALUATED (TBD_OWNER P1Q-19). Hall-ON records only feed the NEUTRALIZATION_CONSISTENCY list."""
+    PASS / FAIL. Per capacity point the outcome is one of POINT_OUTCOMES. A registered u_I_e_A below the channel
+    propagation makes the registration inadmissible: status NOT_EVALUATED_REGISTRATION (owner A9.10 P1Q-19
+    REQUIRE_REGISTERED_GE_CHANNEL; the larger value is never substituted). Hall-ON records only feed the
+    NEUTRALIZATION_CONSISTENCY list."""
     base = {"i_e_cap_definition": I_E_CAP_DEFINITION, "capacity_label": CAPACITY_LABEL,
             "consistency_label": CONSISTENCY_LABEL, "status_vocabulary": list(ICP45A_STATUSES),
             "point_outcome_vocabulary": list(POINT_OUTCOMES),
@@ -1786,10 +2063,10 @@ def icp45a_evaluate(records, registration=None, margin_rule=None, facility_check
     if i_cap < 0.0:
         flags.append("I_E_CAP_NEGATIVE: the RF-OFF (facility/background) collector current exceeds the RF-ON value; "
                      "reported signed, no absolute-value correction and no zero-clipping (A9.5 P1Q-16)")
-    if not alts["agree"]:
+    if not alts["registration_admissible"]:
         flags.append("REGISTERED_u_I_e_BELOW_CHANNEL_PROPAGATION: margin_rule.u_I_e_A = %.6g A < channel propagation "
-                     "%.6g A (%s); never used as it stands (DERIVED P1Q-19, JCGM 100:2008 5.1.2 / 5.2.2); the two "
-                     "admissible treatments are carried side by side (TBD_OWNER P1Q-19)"
+                     "%.6g A (%s); owner A9.10 P1Q-19 REQUIRE_REGISTERED_GE_CHANNEL: the registration is inadmissible "
+                     "and is never replaced by the larger value during evaluation"
                      % (ue, best["u_I_e_cap_from_channels_A"], best["u_I_e_cap_from_channels_basis"]))
     base.update({"I_e_cap_A": i_cap, "I_e_cap_record": best["record_id"], "candidates": cands,
                  "u_I_e_cap_registered_A": ue, "u_I_e_cap_registered_basis": "margin_rule.u_I_e_A (preregistered, "
@@ -1799,12 +2076,14 @@ def icp45a_evaluate(records, registration=None, margin_rule=None, facility_check
                  "p1q19_alternatives": alts,
                  "eligibility": dict(best["eligibility"], **{"3_required_margin_rule_uncertainties_available": True}),
                  "flags": flags})
-    if not alts["agree"]:
-        base.update({"status": "NOT_EVALUATED", "condition_met": None,
-                     "reason": "TBD_OWNER P1Q-19: the registered u_I_e_A is below the channel propagation and the two "
-                               "admissible treatments (%s) give different results; ICP45 = NOT_EVALUATED until the "
-                               "owner selects one (never a FAIL; no alternative selected artificially)"
-                               % ", ".join(P1Q19_ALTERNATIVES)})
+    if not alts["registration_admissible"]:
+        base.update({"status": "NOT_EVALUATED_REGISTRATION", "condition_met": None,
+                     "reason": "owner A9.10 P1Q-19 REQUIRE_REGISTERED_GE_CHANNEL: the preregistered u_I_e_A = %.6g A is "
+                               "below u(I_e,cap)_channels = %.6g A propagated from the calibrated channels under the "
+                               "registered correlation treatment; the registration is inadmissible and the ICP-45 "
+                               "evaluation is NOT_EVALUATED_REGISTRATION until a valid registration exists (corrected "
+                               "only before data acquisition, never after seeing the ICP-45 result; never a FAIL)"
+                               % (ue, best["u_I_e_cap_from_channels_A"])})
         return base
     base.update(icp45a_margin(i_cap, idm, k, ue, ud))
     base.update({"u_I_e_cap_used_A": ue, "u_I_e_cap_used_basis": "margin_rule.u_I_e_A (preregistered, P1-IT-29; not "
@@ -1949,8 +2228,10 @@ def reduce_operating_points(records, registration=None, margin_rule=None, facili
     }
 
 
-def reduce_topology_control(seq):
-    """OQ-VI-05 seven-step Ar topology-control record -> observation class (never PASS/FAIL)."""
+def reduce_topology_control(seq, sustainment_definition=None, start_limits=None):
+    """OQ-VI-05 seven-step Ar topology-control record -> observation class (never PASS/FAIL). SUSTAINED is decided by
+    the registered A9.10 P1Q-03 definition from the recorded I_d signals (steps 5 and 7); the step-4 attempt must stay
+    inside the registered A9.10 P1Q-02 limits. Without both registrations the observation is NOT_EVALUATED_REGISTRATION."""
     rid = "sequence %r" % (seq.get("record_id") if isinstance(seq, dict) else None)
     _req(seq, SEQUENCE_REQUIRED, rid)
     if seq["schema"] != SCHEMA_ID or seq["record_kind"] != "topology_control_sequence":
@@ -1962,6 +2243,20 @@ def reduce_topology_control(seq):
         raise LabelError("%s: classification must be %s (A9.3 OQ-VI-05)" % (rid, TOPOLOGY_CONTROL_LABEL))
     if seq["c1_disconnected"] is not True:
         raise SequenceError("%s: step 2 requires C1 disconnected / not supplying electrons" % rid)
+    if seq["c1_configuration"] not in C1_CONFIGURATIONS:
+        raise SequenceError("%s: c1_configuration %r not in %s (owner A9.10 OQ-RFQV2-09)"
+                            % (rid, seq["c1_configuration"], C1_CONFIGURATIONS))
+    if seq["c1_configuration"] == "C1_NOT_INSTALLED":
+        ab = seq.get("c1_absence_record_id")
+        if not isinstance(ab, str) or not ab.strip():
+            raise SequenceError("%s: C1_NOT_INSTALLED needs c1_absence_record_id documenting that C1 and its electrical "
+                                "and gas connections are absent / open (owner A9.10 OQ-RFQV2-09)" % rid)
+    if seq["stage_id"] != HOLDOUT_STAGE:
+        raise SequenceError("%s: the topology-control sequence is the first Hall-on reading and belongs to %s"
+                            % (rid, HOLDOUT_STAGE))
+    if not isinstance(seq["hi_holdout_a_id"], str) or not seq["hi_holdout_a_id"].strip():
+        raise SequenceError("%s: HI-HOLDOUT-A must be signed immediately before the first Hall-on reading at P1-S6 "
+                            "(hi_holdout_a_id; owner A9.10 P1Q-08, A9.1 HIQ-04)" % rid)
     if not isinstance(seq["hall_start_registration_id"], str) or not seq["hall_start_registration_id"].strip():
         raise SequenceError("%s: the Hall start attempt must be preregistered inside registered limits (step 4); "
                             "no registration id" % rid)
@@ -1983,23 +2278,155 @@ def reduce_topology_control(seq):
         if not isinstance(steps[n - 1].get("sustained_discharge_observed"), bool):
             raise MissingInputError("%s: step %d needs sustained_discharge_observed (true/false) recorded against "
                                     "the registered sustainment definition" % (rid, n))
+        for k in SUSTAIN_STEP_FLAGS:
+            if not isinstance(steps[n - 1].get(k), bool):
+                raise MissingInputError("%s: step %d needs %s (true/false) for the owner sustainment definition (A9.10 "
+                                        "P1Q-03)" % (rid, n, k))
     if not isinstance(steps[4].get("sustainment_definition_id"), str) or not steps[4]["sustainment_definition_id"]:
-        raise SequenceError("%s: step 5 needs the registered sustainment definition id (owner question P1Q-03)" % rid)
-    icp_off = steps[4]["sustained_discharge_observed"]
-    icp_on = steps[6]["sustained_discharge_observed"]
+        raise SequenceError("%s: step 5 needs the registered sustainment definition id (owner A9.10 P1Q-03)" % rid)
+    out = {"record_id": seq["record_id"], "synthetic": seq["synthetic"], "classification": TOPOLOGY_CONTROL_LABEL,
+           "c1_configuration": seq["c1_configuration"], "hi_holdout_a_id": seq["hi_holdout_a_id"],
+           "recorded_sustained_icp_off": steps[4]["sustained_discharge_observed"],
+           "recorded_sustained_icp_on": steps[6]["sustained_discharge_observed"],
+           "note": "not a PASS/FAIL gate; 'Hall must not run without ICP' is NOT a requirement (A9.3 OQ-VI-05); this "
+                   "deliberate ICP-OFF-first control experiment is not the OD5 baseline start sequence (A9.14 OD5)"}
+    if sustainment_definition is None or start_limits is None:
+        out.update({"observation": "NOT_EVALUATED_REGISTRATION", "branch": None, "sustained_icp_off": None,
+                    "sustained_icp_on": None,
+                    "reason": "Hall start-attempt limits (A9.10 P1Q-02) and/or the sustained-discharge definition "
+                              "(A9.10 P1Q-03) not registered: SUSTAINED is defined only by the registered current-and-"
+                              "time criterion"})
+        return out
+    sd = check_sustainment_definition(sustainment_definition)
+    lim = check_start_attempt_limits(start_limits)
+    if seq["hall_start_registration_id"] != lim["registration_id"]:
+        raise SequenceError("%s: hall_start_registration_id %r is not the registered start-attempt limits %r (A9.10 "
+                            "P1Q-02)" % (rid, seq["hall_start_registration_id"], lim["registration_id"]))
+    if steps[4]["sustainment_definition_id"] != sd["definition_id"]:
+        raise SequenceError("%s: step 5 sustainment_definition_id %r is not the registered definition %r (A9.10 P1Q-03)"
+                            % (rid, steps[4]["sustainment_definition_id"], sd["definition_id"]))
+    sig4 = steps[3]["signals"]
+    t4 = [float(x) for x in sig4["t_s"]]
+    v4 = max(float(x) for x in sig4["V_d_V"])
+    i4 = max(float(x) for x in sig4["I_d_A"])
+    over = []
+    if v4 > lim["V_d_max_V"]:
+        over.append("step 4 V_d max %r V > registered V_d,max %r V" % (v4, lim["V_d_max_V"]))
+    if i4 > lim["I_limit_A"]:
+        over.append("step 4 I_d max %r A > registered current limit %r A" % (i4, lim["I_limit_A"]))
+    if t4[-1] - t4[0] > lim["attempt_duration_max_s"]:
+        over.append("step 4 attempt duration %r s > registered maximum %r s" % (t4[-1] - t4[0],
+                                                                             lim["attempt_duration_max_s"]))
+    s5 = classify_sustained(steps[4], sd)
+    s7 = classify_sustained(steps[6], sd)
+    out.update({"sustainment_definition_id": sd["definition_id"], "start_limits_id": lim["registration_id"],
+                "sustained_icp_off": s5["sustained"], "sustained_icp_on": s7["sustained"],
+                "sustainment_step5": s5, "sustainment_step7": s7, "start_limit_violations": over})
+    contradict = [n for n, c in ((5, s5), (7, s7))
+                  if c["sustained"] != steps[n - 1]["sustained_discharge_observed"]]
+    if over:
+        out.update({"observation": "OUT_OF_DOMAIN_START_LIMITS_EXCEEDED", "branch": "RECORD_AND_REVIEW (no verdict)",
+                    "reason": "; ".join(over) + " (A9.10 P1Q-02: attempts only inside the registered limits)"})
+        return out
+    if contradict:
+        out.update({"observation": "RECORDED_SUSTAINMENT_CONTRADICTS_REGISTERED_DEFINITION",
+                    "branch": "RECORD_AND_REVIEW (no verdict)",
+                    "reason": "steps %s: the recorded sustained_discharge_observed differs from the registered "
+                              "current-and-time criterion (A9.10 P1Q-03); never resolved by choosing values after the "
+                              "run" % contradict})
+        return out
+    icp_off, icp_on = s5["sustained"], s7["sustained"]
     if not icp_off and icp_on:
         obs, branch = "TAKAHASHI_LIKE_OBSERVATION", None
     elif icp_off:
         obs, branch = "UNEXPECTED_SUSTAINED_DISCHARGE_ICP_OFF", "CURRENT_PATH_DIAGNOSIS_REQUIRED (P1-S6D)"
     else:
         obs, branch = "NO_SUSTAINED_DISCHARGE_WITH_ICP_ON", "RECORD_AND_REVIEW (no verdict)"
-    return {"record_id": seq["record_id"], "synthetic": seq["synthetic"], "classification": TOPOLOGY_CONTROL_LABEL,
-            "observation": obs, "branch": branch, "sustained_icp_off": icp_off, "sustained_icp_on": icp_on,
-            "note": "not a PASS/FAIL gate; 'Hall must not run without ICP' is NOT a requirement (A9.3 OQ-VI-05)"}
+    out.update({"observation": obs, "branch": branch})
+    return out
+
+
+def check_sustainment_definition(d):
+    """A9.10 P1Q-03 registered sustained-discharge definition; raises when incomplete / inconsistent. The threshold
+    lies above the measured RF-on / plasma-off pickup floor (P1-M-22) and is never chosen after a run."""
+    _req(d, SUSTAINMENT_DEFINITION_REQUIRED, "sustainment_definition")
+    for k in ("definition_id", "pickup_floor_record_id", "start_transient_basis"):
+        if not isinstance(d[k], str) or not d[k].strip():
+            raise MissingInputError("sustainment_definition.%s must be a non-empty registered string" % k)
+    thr = _num(d["I_threshold_A"], "sustainment_definition.I_threshold_A", allow_negative=False)
+    floor = _num(d["pickup_floor_A"], "sustainment_definition.pickup_floor_A", allow_negative=False)
+    _pos(d["u_pickup_floor_A"], "sustainment_definition.u_pickup_floor_A")
+    if not thr > floor:
+        raise P1RecordError("sustainment_definition: I_threshold_A %r is not above the measured pickup floor %r A (A9.10 "
+                            "P1Q-03)" % (thr, floor))
+    dur = _pos(d["min_duration_s"], "sustainment_definition.min_duration_s")
+    _pos(d["daq_bandwidth_Hz"], "sustainment_definition.daq_bandwidth_Hz")
+    parse_utc(d["frozen_utc"], "sustainment_definition.frozen_utc")
+    return {"definition_id": d["definition_id"], "I_threshold_A": thr, "pickup_floor_A": floor, "min_duration_s": dur,
+            "frozen_utc": d["frozen_utc"]}
+
+
+def classify_sustained(step, definition):
+    """A9.10 P1Q-03: SUSTAINED iff supply enabled + connected, no artifact / transient-only flag, no invalidating
+    interlock, and I_d > threshold continuously over >= min_duration_s (longest contiguous above-threshold run of the
+    recorded samples). Arithmetic only; never a PASS."""
+    sig = step["signals"]
+    t = [float(x) for x in sig["t_s"]]
+    i = [float(x) for x in sig["I_d_A"]]
+    thr, dmin = definition["I_threshold_A"], definition["min_duration_s"]
+    best, start = 0.0, None
+    for tk, ik in zip(t, i):
+        if ik > thr:
+            if start is None:
+                start = tk
+            best = max(best, tk - start)
+        else:
+            start = None
+    why = []
+    if step["supply_enabled_connected"] is not True:
+        why.append("discharge supply not enabled and connected")
+    if step["artifact_or_transient_only"] is not False:
+        why.append("ignition spike / capacitive transient / RF pickup / switching artifact")
+    if step["interlock_invalidates"] is not False:
+        why.append("protection / interlock condition invalidates the observation")
+    if best < dmin:
+        why.append("I_d above %r A for at most %r s continuously < registered %r s" % (thr, best, dmin))
+    return {"sustained": not why, "longest_above_threshold_s": best, "not_sustained_reasons": why,
+            "definition_id": definition["definition_id"]}
+
+
+def check_start_attempt_limits(lim):
+    """A9.10 P1Q-02 registered Hall start-attempt limits; raises when incomplete or outside the owner bounds:
+    V_d,max <= the qualified H-1 operating / isolation envelope; I_limit <= min(safe H-1 limit, supply capability,
+    8.33 A stand ceiling); duration > 0; max_attempts a positive integer; cool-down / reset condition stated."""
+    _req(lim, START_LIMITS_REQUIRED, "start_attempt_limits")
+    for k in ("registration_id", "cooldown_condition", "thermal_transient_basis_id", "isolation_qualification_id",
+              "interlock_settings_id"):
+        if not isinstance(lim[k], str) or not lim[k].strip():
+            raise MissingInputError("start_attempt_limits.%s must be a non-empty registered string (A9.10 P1Q-02)" % k)
+    vd = _pos(lim["V_d_max_V"], "start_attempt_limits.V_d_max_V")
+    venv = _pos(lim["V_qualified_envelope_V"], "start_attempt_limits.V_qualified_envelope_V")
+    if vd > venv:
+        raise RegistrationError("start_attempt_limits: V_d,max %r V exceeds the qualified H-1 operating / isolation "
+                                "envelope %r V (A9.10 P1Q-02)" % (vd, venv))
+    il = _pos(lim["I_limit_A"], "start_attempt_limits.I_limit_A")
+    cap = min(_pos(lim["I_h1_safe_A"], "start_attempt_limits.I_h1_safe_A"),
+              _pos(lim["I_supply_capability_A"], "start_attempt_limits.I_supply_capability_A"), STAND_CEILING_A)
+    if il > cap:
+        raise RegistrationError("start_attempt_limits: current limit %r A exceeds min(safe H-1 limit, supply "
+                                "capability, 8.33 A stand ceiling) = %r A (A9.10 P1Q-02; 8.33 A is never I_d,max,H1)"
+                                % (il, cap))
+    dur = _pos(lim["attempt_duration_max_s"], "start_attempt_limits.attempt_duration_max_s")
+    na = lim["max_attempts"]
+    if isinstance(na, bool) or not isinstance(na, int) or na < 1:
+        raise MissingInputError("start_attempt_limits.max_attempts must be a positive integer (A9.10 P1Q-02)")
+    parse_utc(lim["frozen_utc"], "start_attempt_limits.frozen_utc")
+    return {"registration_id": lim["registration_id"], "V_d_max_V": vd, "I_limit_A": il,
+            "I_limit_cap_A": cap, "attempt_duration_max_s": dur, "max_attempts": na, "frozen_utc": lim["frozen_utc"]}
 
 
 def reduce(bundle, registration=None, margin_rule=None, stable_criteria=None, facility_match=None, closure_rule=None,
-           loss_verification=None):
+           loss_verification=None, sustainment_definition=None, start_limits=None):
     """Top-level reducer. bundle = {"operating_points": [...], "topology_control": [...] (optional),
     "dwells": [{"record_id", "dwell", "ignition"}] (optional), "facility_pairs": [[on_id, off_id]] (optional)}.
     facility_match = {"criteria_id", "p_chamber_rel_tol"} is required whenever facility_pairs are given (P1-IT-37);
@@ -2017,7 +2444,8 @@ def reduce(bundle, registration=None, margin_rule=None, stable_criteria=None, fa
         m = dwell_metrics(d["dwell"])
         dwells.append({"record_id": d["record_id"], "metrics": m,
                        "stable_region": classify_stable_region(m, stable_criteria, d.get("ignition"))})
-    topo = [reduce_topology_control(s) for s in bundle.get("topology_control") or []]
+    topo = [reduce_topology_control(s, sustainment_definition, start_limits)
+            for s in bundle.get("topology_control") or []]
     return {"operating_points": ops, "facility_electron_checks": ops["facility_electron_checks"], "dwells": dwells,
             "topology_control": topo,
             "any_synthetic": ops["any_synthetic"] or any(t["synthetic"] for t in topo)}
@@ -2040,11 +2468,37 @@ DWV_V_TEST_V = 1050.0
 DWV_DURATION_S = 60.0
 ICPQ06_CLASS_V = 1000.0     # A9.3 ICPQ-06 / A9.6 sec. 5 '~1 kV' representative-gas qualification class (owner wording)
 READINESS_INTERLOCK_IDS = tuple("P1-SI-%02d" % i for i in range(1, 12))     # = safety_interlocks ids of the plan
+# A9.8 P1Q-09: the dedicated-target geometry is registered at P1-G0 from the actual ICP module drawing; A9.14 P1Q-12:
+# P1 builds to a controlled interim IP-NEU harness drawing until the LOCK-1 ICD revision defines the interface;
+# A9.8 P1Q-04: the validated continuous-use temperature limits of the UBQ-06 abort / derate rule are registered at P1-G0
 READINESS_REGISTRATIONS = ("extraction_topology_id", "h1_electrical_config_id", "facility_match_rule_id",
-                           "closure_rule_id", "ignition_procedure_id", "time_base_id")
+                           "closure_rule_id", "ignition_procedure_id", "time_base_id",
+                           "electron_collector_target_geometry_id", "ip_neu_interim_harness_drawing_id")
 READINESS_REQUIRED = COMMON_REQUIRED + ("interlocks", "isolation_class", "dwv_tests", "gas_lines", "ar_mfcs",
                                         "ar_sweep_bounds_mg_s", "second_mfc_necessity", "generator_class",
-                                        "registrations")
+                                        "registrations", "thermal_limits")
+# OWNER A9.8 P1Q-04 (UBQ-06 applied to ALL P1 operation incl. non-scoring engineering runs): abort / derate when a
+# component reaches its validated continuous-use temperature limit minus 50 K
+THERMAL_ABORT_MARGIN_K = 50.0
+THERMAL_LIMIT_REQUIRED = ("temperature_field", "component", "validated_continuous_limit_C", "basis")
+THERMAL_LIMITED_FIELDS = tuple(f for f in ("T_icp_dielectric_C", "T_antenna_C", "T_collector_C", "T_match_C",
+                                           "T_rf_source_C", "T_h1_pole_inner_C", "T_h1_pole_outer_C"))
+# OWNER A9.8 P1-IT-55 / OQ-RFQV2-06 / OQ-RFQV2-08 (1.05 kV DC / 60 s initial DWV): per-path leakage limit taken from the
+# most restrictive documented component / feedthrough / insulator qualification or supplier acceptance specification
+# with the assembled-system measurement uncertainty included, registered BEFORE the test and never changed after; no
+# flashover, breakdown, tracking, disruptive discharge or protective trip; no documented basis -> G0_NOT_EVALUATED_TBD
+# (never a generic invented uA limit); the H-1 anode / discharge-supply isolation and feedthrough paths are in the same
+# 350 V class (OQ-RFQV2-06); every path is tested in-house on the ASSEMBLED configuration, current-limited, before the
+# first HV / RF operation, in addition to a supplier / factory DWV certificate wherever the rating permits (OQ-RFQV2-08)
+DWV_PATH_CLASSES = ("ICP_BODY_COLLECTOR_350V_CLASS", "H1_ANODE_DISCHARGE_SUPPLY_350V_CLASS", "OTHER_REGISTERED_PATH")
+DWV_REQUIRED_PATH_CLASSES = ("ICP_BODY_COLLECTOR_350V_CLASS", "H1_ANODE_DISCHARGE_SUPPLY_350V_CLASS")
+DWV_TEST_CONFIGURATION = "ASSEMBLED_SYSTEM_IN_HOUSE"
+DWV_APPLICABLE_REQUIRED = ("V_test_V", "duration_s", "current_limited", "leakage_A", "breakdown_or_flashover",
+                           "tracking_or_disruptive_discharge", "protective_trip", "test_configuration",
+                           "configuration_id", "supplier_certificate", "test_utc")
+LEAKAGE_ACCEPTANCE_REQUIRED = ("criterion_id", "max_leakage_A", "basis_document_id", "u_measurement_A",
+                               "uncertainty_treatment", "registered_utc")
+A98_DWV = A98_REF + " decisions.P1-IT-55 / OQ-RFQV2-06 / OQ-RFQV2-08"
 G0_STATUSES = ("G0_ENTRY_CONDITIONS_RECORDED", "G0_NOT_MET", "G0_NOT_EVALUATED_TBD")
 # RF cold checkout (P1-S1 dummy load, P1-S2 installed unlit antenna through the local match)
 COLD_KINDS = {"DUMMY_LOAD": "P1-S1", "INSTALLED_UNLIT_ANTENNA_VIA_LOCAL_MATCH": "P1-S2"}
@@ -2064,10 +2518,15 @@ AT_POWER_REQUIRED = ("verification_id", "method", "eta_pred", "u_eta_pred", "P_n
                      "u_P_ref_load_W", "k", "k_registration_id", "evidence_record_ids", "tuning_states")
 AT_POWER_VERIFIED = "LOSS_MODEL_VERIFIED"
 CROSS_CHECK_K_X = 2.0       # owner value A9.1 UBQ-04 / UB-RF-08 (P1-IT-24, freeze LOCK-1)
+# OWNER A9.10 P1Q-24: one coverage / agreement factor k_loss = 2.0 for the at-power RF loss-model verification of BOTH
+# P1 and P2 (CAL-P2-09 / CAL-P2-10); |eta_meas - eta_pred| / u_c <= 2; never relaxed independently in P1 or P2; until it
+# passes P_delivered and C_e stay upper bounds; a failed verification is investigated, the tolerance is never widened
+K_LOSS = 2.0
+K_LOSS_REF = A910_REF + " decisions.P1Q-24 (k_loss = 2.0, P1 and P2)"
 # ignition (P1-S3)
 IGNITION_REQUIRED = COMMON_REQUIRED + ("gas", "gas_mode", "hall_discharge_state", "ignition_procedure_id", "point_id",
                                        "rf", "flows", "pressures", "ignited", "ignition_delay_s", "extinguished",
-                                       "optical", "h1_magnet_state")
+                                       "optical", "h1_magnet_state", "start_state", "restart_condition_met")
 # stability dwell (P1-S5)
 DWELL_REQUIRED = COMMON_REQUIRED + ("operating_point_record_id", "ignition_point_id", "dwell")
 HANDOFF_STATUSES = ("NOT_EVALUATED", "REGION_OF_TESTED_POINTS_WITHIN_OWNER_CRITERIA", "NO_TESTED_POINT_WITHIN_CRITERIA")
@@ -2147,10 +2606,10 @@ def reduce_readiness(rec):
     rid = "readiness %r" % (rec.get("record_id") if isinstance(rec, dict) else None)
     _common(rec, "p1_g0_readiness", rid)
     _req(rec, ("interlocks", "isolation_class", "dwv_tests", "gas_lines", "ar_mfcs"), rid)
-    for k in ("ar_sweep_bounds_mg_s", "second_mfc_necessity", "generator_class", "registrations"):
+    for k in ("ar_sweep_bounds_mg_s", "second_mfc_necessity", "generator_class", "registrations", "thermal_limits"):
         if k not in rec:
-            raise MissingInputError("%s: missing required key '%s' (null allowed only for the sweep bounds and the "
-                                    "second-MFC justification)" % (rid, k))
+            raise MissingInputError("%s: missing required key '%s' (null allowed only for the sweep bounds, the "
+                                    "second-MFC justification and the not-yet-registered thermal limits)" % (rid, k))
     if rec["stage_id"] != "P1-S0":
         raise P1RecordError("%s: readiness records belong to P1-S0 (gate P1-G0), not %r" % (rid, rec["stage_id"]))
     defic, tbd, rows = [], [], {}
@@ -2194,23 +2653,32 @@ def reduce_readiness(rec):
     rows["dwv_tests"] = []
     if isinstance(dwv, list):
         _no_duplicate_ids(dwv, "path_id", rid + " dwv_tests")
+    classes_seen = set()
     for d in dwv:
-        _req(d, ("path_id", "applicable"), rid + " dwv_test")
+        _req(d, ("path_id", "applicable", "path_class"), rid + " dwv_test")
+        if d["path_class"] not in DWV_PATH_CLASSES:
+            raise P1RecordError("%s: DWV path %r: path_class %r not in %s (%s)" % (rid, d["path_id"], d["path_class"],
+                                                                                 DWV_PATH_CLASSES, A98_DWV))
+        classes_seen.add(d["path_class"])
         if d["applicable"] is not True:
             why = d.get("not_applicable_reason")
             if d["applicable"] is not False or not isinstance(why, str) or not why.strip():
                 raise MissingInputError("%s: DWV path %r not applicable needs not_applicable_reason (A9.4: 'where "
                                         "component ratings permit')" % (rid, d["path_id"]))
-            rows["dwv_tests"].append({"path_id": d["path_id"], "state": "NOT_APPLICABLE_RECORDED", "reason": why})
+            rows["dwv_tests"].append({"path_id": d["path_id"], "path_class": d["path_class"],
+                                      "state": "NOT_APPLICABLE_RECORDED", "reason": why})
             continue
-        _req(d, ("V_test_V", "duration_s", "current_limited", "leakage_A", "breakdown_or_flashover"),
-             rid + " dwv_test " + str(d["path_id"]))
+        _req(d, DWV_APPLICABLE_REQUIRED, rid + " dwv_test " + str(d["path_id"]))
         if "leakage_acceptance" not in d:
             raise MissingInputError("%s: DWV path %r: 'leakage_acceptance' must be present (null = not registered)"
                                     % (rid, d["path_id"]))
         v = _num(d["V_test_V"], rid + " dwv V_test_V", allow_negative=False)
         t = _num(d["duration_s"], rid + " dwv duration_s", allow_negative=False)
         leak = _num(d["leakage_A"], rid + " dwv leakage_A", allow_negative=False)
+        t_test = parse_utc(d["test_utc"], rid + " dwv test_utc")
+        if not isinstance(d["configuration_id"], str) or not d["configuration_id"].strip():
+            raise MissingInputError("%s: DWV path %r: configuration_id must name the assembled insulation configuration "
+                                    "(OQ-RFQV2-08)" % (rid, d["path_id"]))
         why = []
         if v < DWV_V_TEST_V:
             why.append("V_test %r V < 1.05 kV DC" % v)
@@ -2218,22 +2686,92 @@ def reduce_readiness(rec):
             why.append("duration %r s < 60 s" % t)
         if d["current_limited"] is not True:
             why.append("not current-limited")
-        if d["breakdown_or_flashover"] is not False:
-            why.append("breakdown / flashover recorded")
+        for k, txt in (("breakdown_or_flashover", "breakdown / flashover recorded"),
+                       ("tracking_or_disruptive_discharge", "tracking / disruptive discharge recorded (P1-IT-55)"),
+                       ("protective_trip", "protective trip recorded (P1-IT-55)")):
+            if d[k] is not False:
+                why.append(txt)
+        if d["test_configuration"] != DWV_TEST_CONFIGURATION:
+            why.append("test configuration %r: an in-house current-limited DWV on the assembled insulation configuration "
+                       "is required before the first HV / RF operation; a supplier test does not replace it "
+                       "(OQ-RFQV2-08)" % d["test_configuration"])
+        sc = d["supplier_certificate"]
+        if not isinstance(sc, dict) or not ((isinstance(sc.get("certificate_id"), str) and sc["certificate_id"].strip())
+                                            or (isinstance(sc.get("not_permitted_reason"), str)
+                                                and sc["not_permitted_reason"].strip())):
+            why.append("no supplier / factory DWV certificate id and no recorded reason why the component rating does "
+                       "not permit the 1.05 kV / 60 s test (OQ-RFQV2-08)")
         acc = d["leakage_acceptance"]
         state = "PERFORMED_AT_OWNER_LEVEL_LEAKAGE_RECORDED"
+        accepted = False
         if acc is None:
-            tbd.append("DWV path %r: leakage acceptance not registered (P1-IT-44: TBD - requires the insulation-path / "
-                       "feedthrough ratings)" % d["path_id"])
+            tbd.append("DWV path %r: no registered per-path leakage limit (P1-IT-55: G0_NOT_EVALUATED_TBD until a limit "
+                       "from the documented component / feedthrough / insulator basis is registered before the test; "
+                       "never a generic invented value)" % d["path_id"])
             state += "_ACCEPTANCE_TBD"
         else:
             _req(acc, ("criterion_id", "max_leakage_A"), rid + " dwv leakage_acceptance")
-            if leak > _num(acc["max_leakage_A"], rid + " dwv max_leakage_A", allow_negative=False):
-                why.append("leakage %r A above registered criterion %s" % (leak, acc["criterion_id"]))
+            for k in LEAKAGE_ACCEPTANCE_REQUIRED:
+                if k not in acc:
+                    raise MissingInputError("%s: DWV path %r leakage_acceptance.%s must be present (null = not "
+                                            "documented; P1-IT-55)" % (rid, d["path_id"], k))
+            if not isinstance(acc["basis_document_id"], str) or not acc["basis_document_id"].strip():
+                tbd.append("DWV path %r: leakage limit %r has no documented component / feedthrough / insulator basis "
+                           "(P1-IT-55: G0_NOT_EVALUATED_TBD; never declared qualified on an invented limit)"
+                           % (d["path_id"], acc["criterion_id"]))
+                state += "_ACCEPTANCE_TBD"
+            else:
+                lim = _num(acc["max_leakage_A"], rid + " dwv max_leakage_A", allow_negative=False)
+                _num(acc["u_measurement_A"], rid + " dwv u_measurement_A", allow_negative=False)
+                if not isinstance(acc["uncertainty_treatment"], str) or not acc["uncertainty_treatment"].strip():
+                    raise MissingInputError("%s: DWV path %r: uncertainty_treatment must state how the assembled-system "
+                                            "measurement uncertainty is included in the limit (P1-IT-55)"
+                                            % (rid, d["path_id"]))
+                if parse_utc(acc["registered_utc"], rid + " dwv registered_utc") >= t_test:
+                    why.append("leakage limit %r registered at %s, not before the test at %s (P1-IT-55: registered "
+                               "before the DWV test, never changed after seeing the result)"
+                               % (acc["criterion_id"], acc["registered_utc"], d["test_utc"]))
+                if leak > lim:
+                    why.append("leakage %r A above registered per-path limit %r A (%s)" % (leak, lim,
+                                                                                         acc["criterion_id"]))
+                accepted = not why
         for w in why:
-            defic.append("DWV path %r: %s (%s)" % (d["path_id"], w, A94_P1Q14))
-        rows["dwv_tests"].append({"path_id": d["path_id"], "V_test_V": v, "duration_s": t, "leakage_A": leak,
-                                  "state": "DEFICIENT" if why else state, "deficiencies": why})
+            defic.append("DWV path %r: %s (%s; %s)" % (d["path_id"], w, A94_P1Q14, A98_DWV))
+        rows["dwv_tests"].append({"path_id": d["path_id"], "path_class": d["path_class"], "V_test_V": v,
+                                  "duration_s": t, "leakage_A": leak, "configuration_id": d["configuration_id"],
+                                  "state": "DEFICIENT" if why else state, "deficiencies": why,
+                                  "accepted_leakage_for_p1q20": accepted})
+    for c in DWV_REQUIRED_PATH_CLASSES:
+        if c not in classes_seen:
+            defic.append("no DWV record (tested or not-applicable with reason) for insulation path class %s (A9.4 "
+                         "P1Q-14; owner A9.8 OQ-RFQV2-06 extends the 350 V class / >= 525 V / 1.05 kV DC 60 s DWV to "
+                         "the H-1 anode / discharge-supply isolation and feedthrough paths)" % c)
+    # A9.8 P1Q-04: thermal abort / derate limits registered for every component temperature channel
+    tl = rec["thermal_limits"]
+    rows["thermal_limits"] = []
+    if tl is None:
+        tbd.append("thermal abort limits not registered (owner A9.8 P1Q-04 / A9.1 UBQ-06: validated continuous-use "
+                   "limit - 50 K applies to ALL P1 operation incl. non-scoring runs)")
+    else:
+        if not isinstance(tl, list):
+            raise MissingInputError("%s: thermal_limits must be a list or null" % rid)
+        _no_duplicate_ids(tl, "temperature_field", rid + " thermal_limits")
+        seen_t = set()
+        for x in tl:
+            _req(x, THERMAL_LIMIT_REQUIRED, rid + " thermal_limit")
+            if x["temperature_field"] not in THERMAL_LIMITED_FIELDS:
+                raise P1RecordError("%s: thermal limit for %r: not a component temperature channel %s"
+                                    % (rid, x["temperature_field"], THERMAL_LIMITED_FIELDS))
+            lim_c = _num(x["validated_continuous_limit_C"], rid + " thermal validated_continuous_limit_C")
+            if not isinstance(x["basis"], str) or not x["basis"].strip():
+                raise MissingInputError("%s: thermal limit %r needs its validation basis" % (rid, x["temperature_field"]))
+            seen_t.add(x["temperature_field"])
+            rows["thermal_limits"].append({"temperature_field": x["temperature_field"], "component": x["component"],
+                                           "validated_continuous_limit_C": lim_c,
+                                           "abort_derate_at_C": lim_c - THERMAL_ABORT_MARGIN_K, "basis": x["basis"]})
+        miss = [f for f in THERMAL_LIMITED_FIELDS if f not in seen_t]
+        if miss:
+            tbd.append("thermal abort limits missing for %s (owner A9.8 P1Q-04)" % miss)
     # ICPQ-06 gas lines
     gl = rec["gas_lines"]
     if not isinstance(gl, list) or not gl:
@@ -2354,6 +2892,8 @@ def reduce_readiness(rec):
         if not isinstance(v, str) or not v.strip():
             tbd.append("registration %s not recorded at P1-G0" % k)
     status = "G0_NOT_MET" if defic else ("G0_NOT_EVALUATED_TBD" if tbd else "G0_ENTRY_CONDITIONS_RECORDED")
+    rows["dwv_leakage_by_path"] = {r["path_id"]: r["leakage_A"] for r in rows["dwv_tests"]
+                                   if r.get("accepted_leakage_for_p1q20")}
     return {"record_id": rec["record_id"], "g0_status": status, "deficiencies": defic, "tbd": tbd, "rows": rows,
             "registrations": {k: reg.get(k) for k in READINESS_REGISTRATIONS},
             "note": "P1-G0 engineering readiness record; never a PASS; the leakage acceptance, sweep bounds and "
@@ -2410,8 +2950,9 @@ def validate_cold_checkout(rec):
 
 def at_power_loss_check(v, where="at_power_verification"):
     """At-power line/match-loss model verification (MET-02; same statistic as p2_framework.verify_line_match_loss):
-    returns {'status': LOSS_MODEL_VERIFIED | LOSS_MODEL_INCONSISTENT | NOT_EVALUATED, ...}. k is a registered owner value
-    (P1Q-24, TBD_OWNER); k null -> NOT_EVALUATED (never a default). Malformed inputs raise."""
+    returns {'status': LOSS_MODEL_VERIFIED | LOSS_MODEL_INCONSISTENT, ...}. k is the OWNER value k_loss = 2.0 (A9.10
+    P1Q-24, one factor for P1 and P2): a record's k is null (the owner constant applies) or exactly 2.0; any other k is
+    refused (never relaxed or tightened per record). Malformed inputs raise."""
     _req(v, AT_POWER_REQUIRED[:8] + AT_POWER_REQUIRED[10:], where)
     if "k" not in v or "k_registration_id" not in v:
         raise MissingInputError("%s: 'k' and 'k_registration_id' must be present (null = not registered)" % where)
@@ -2436,14 +2977,18 @@ def at_power_loss_check(v, where="at_power_verification"):
     u_pr = _pos(v["u_P_ref_load_W"], where + ".u_P_ref_load_W")
     out = {"verification_id": v["verification_id"], "method": v["method"], "tuning_states": list(ts),
            "evidence_record_ids": list(ids), "k_registration_id": v["k_registration_id"]}
-    if v["k"] is None:
-        out.update({"status": "NOT_EVALUATED", "reason": "k of the at-power loss check not registered (TBD_OWNER P1Q-24; "
-                                                         "never defaulted)"})
-        return out
-    k = _pos(v["k"], where + ".k")
-    if not _ref_ok(v["k_registration_id"]):
-        raise MissingInputError("%s: a supplied k needs its registered k_registration_id (not empty / PENDING / TBD; k "
-                                "stays TBD_OWNER P1Q-24 until registered, never defaulted - MET-06)" % where)
+    if v["k"] is not None:
+        k_in = _pos(v["k"], where + ".k")
+        if k_in != K_LOSS:
+            raise P1RecordError("%s: k = %r refused: the owner fixed k_loss = %g for the at-power loss verification of "
+                                "P1 and P2 (%s); it may not be relaxed or changed per record" % (where, k_in, K_LOSS,
+                                                                                               K_LOSS_REF))
+        if not _ref_ok(v["k_registration_id"]):
+            raise MissingInputError("%s: a supplied k needs its registered k_registration_id (not empty / PENDING / "
+                                    "TBD - MET-06)" % where)
+    k = K_LOSS
+    out["k_registration_id"] = v["k_registration_id"] if v["k"] is not None else K_LOSS_REF
+    out["k_source"] = K_LOSS_REF
     eta_m = pr / pn
     u_m = eta_m * math.hypot(u_pr / pr if pr else 0.0, u_pn / pn)
     stat = abs(eta_m - eta_p) / math.hypot(u_m, u_p)
@@ -2502,7 +3047,8 @@ def reduce_rf_cold_checkout(records):
         ap = at_power_loss_check(apv) if apv is not None else None
         if ap is None:
             why.append("no at-power verification of the line/match-loss model (the dummy-load cross-check tests the "
-                       "coupler, not the loss; CAL-P2-09 / CAL-P2-10 form, k TBD_OWNER P1Q-24)")
+                       "coupler, not the loss; CAL-P2-09 / CAL-P2-10 form, k_loss = 2.0 owner A9.10 P1Q-24): "
+                       "P_delivered and C_e stay upper bounds")
         elif ap["status"] != AT_POWER_VERIFIED:
             why.append("at-power loss verification %r status %s%s" % (ap["verification_id"], ap["status"],
                                                                       (": " + ap["reason"]) if ap.get("reason") else ""))
@@ -2571,9 +3117,16 @@ def validate_ignition(rec):
         _num(rec["ignition_delay_s"], rid + " ignition_delay_s", allow_negative=False)
     elif rec["ignition_delay_s"] is not None:
         raise P1RecordError("%s: no ignition but an ignition delay recorded" % rid)
-    for k in ("ignition_procedure_id", "point_id", "h1_magnet_state"):
+    for k in ("ignition_procedure_id", "point_id"):
         if not isinstance(rec[k], str) or not rec[k].strip():
             raise MissingInputError("%s: %s must be a registered non-empty string" % (rid, k))
+    check_magnet_state(rec, rid)
+    if rec["start_state"] not in IGNITION_START_STATES:
+        raise P1RecordError("%s: start_state %r not in %s (owner A9.10 P1Q-05: an independent re-ignition begins from an "
+                            "extinguished plasma / RF-off state)" % (rid, rec["start_state"], IGNITION_START_STATES))
+    if not isinstance(rec["restart_condition_met"], bool):
+        raise MissingInputError("%s: restart_condition_met must be true or false (owner A9.10 P1Q-05: the state "
+                                "variables returned to their registered restart condition)" % rid)
     return classify_plasma_state(rec["optical"], rid + " optical")
 
 
@@ -2594,14 +3147,25 @@ def reduce_ignition(records):
                      "match_setting_id": rec["rf"]["match_setting_id"],
                      "mdot_Ar_H1_mg_s": float(rec["flows"]["mdot_Ar_H1_mg_s"]),
                      "p_chamber_Pa": float(rec["pressures"]["p_chamber_Pa"]), "gas_mode": rec["gas_mode"],
-                     "h1_magnet_state": rec["h1_magnet_state"], "ignited": rec["ignited"],
+                     "h1_magnet_state": rec["h1_magnet_state"],
+                     "h1_magnet_field_setting_id": rec.get("h1_magnet_field_setting_id"),
+                     "h1_coil_currents_A": rec.get("h1_coil_currents_A"),
+                     "start_state": rec["start_state"], "restart_condition_met": rec["restart_condition_met"],
+                     "independent_attempt": (rec["start_state"] == "EXTINGUISHED_RF_OFF"
+                                             and rec["restart_condition_met"] is True),
+                     "ignited": rec["ignited"],
                      "ignition_delay_s": rec["ignition_delay_s"], "extinguished": rec["extinguished"],
                      "plasma_state": st, "plasma_state_reason": why, "flag": flag})
-        p = points.setdefault(rec["point_id"], {"point_id": rec["point_id"], "attempts": 0, "successes": 0})
-        p["attempts"] += 1
+        p = points.setdefault(rec["point_id"], {"point_id": rec["point_id"], "attempts": 0, "successes": 0,
+                                                "independent_attempts": 0})
+        p["attempts"] += 1                              # every attempt counts (owner A9.10 P1Q-05)
         p["successes"] += 1 if rec["ignited"] else 0
+        p["independent_attempts"] += 1 if rows[-1]["independent_attempt"] else 0
     for p in points.values():
         p["ignition_success_fraction"] = p["successes"] / p["attempts"]
+        p["reignition_evidence"] = ("MINIMUM_INDEPENDENT_REIGNITIONS_RECORDED"
+                                    if p["independent_attempts"] >= MIN_INDEPENDENT_REIGNITIONS
+                                    else "INSUFFICIENT_REIGNITION_EVIDENCE")
     rows.sort(key=lambda r: r["record_id"])
     return {"attempts": rows, "points": [points[k] for k in sorted(points)],
             "note": "descriptive ignition map incl. non-ignition regions; no verdict (P1-S3 exit)"}
@@ -2622,20 +3186,41 @@ def stable_region_handoff(dwell_records, operating_points_by_id, ignition_points
     repeatability of its registered ignition point (P1-D-09). The region is the SET of tested points within the
     criteria; its factor envelope is reported as the envelope of tested points, never as a stability claim between
     them. Without criteria the status is NOT_EVALUATED and the raw metrics are handed over."""
+    frozen_late = None
     if criteria is not None:
-        check_stable_criteria(criteria)
+        crit = check_stable_criteria(criteria)
+        t_frozen = parse_utc(crit["frozen_utc"], "criteria.frozen_utc")
+        late = sorted(rec["record_id"] for rec in dwell_records
+                      if isinstance(rec, dict) and isinstance(rec.get("timestamp_utc"), str)
+                      and parse_utc(rec["timestamp_utc"], "dwell timestamp_utc") <= t_frozen)
+        if late:
+            # owner A9.11 P1Q-01: frozen and hashed BEFORE the first P1-S5 dwell; criteria frozen at / after a dwell
+            # could have been chosen after seeing it -> NOT_EVALUATED, raw dwells retained
+            frozen_late = ("stable-region criteria %r frozen at %s, not before P1-S5 dwell(s) %s (owner A9.11 P1Q-01: "
+                           "registered before the first P1-S5 handoff dwell; the raw dwells are kept and never used to "
+                           "choose retrospective limits)" % (crit["criteria_id"], crit["frozen_utc"], late))
+            criteria = None
     per = []
     for rec in dwell_records:
         m = validate_dwell(rec)
         op = operating_points_by_id.get(rec["operating_point_record_id"])
         ign = ignition_points.get(rec["ignition_point_id"])
         entry = {"record_id": rec["record_id"], "operating_point_record_id": rec["operating_point_record_id"],
-                 "ignition_point_id": rec["ignition_point_id"], "metrics": m}
+                 "ignition_point_id": rec["ignition_point_id"], "metrics": m,
+                 # owner A9.11 P1Q-01: Z stability carried into the handoff where the calibrated P2 impedance chain is
+                 # available during P1 (dwell R / X series); the H-1 magnet state (factor F6, A9.10 P1Q-06) beside it
+                 "Z_stability": ({k: m.get(k) for k in ("R_ohm", "X_ohm")}
+                                 if m.get("R_ohm") is not None or m.get("X_ohm") is not None
+                                 else "NOT_RECORDED_P2_CHAIN_NOT_AVAILABLE"),
+                 "h1_magnet_state": (operating_points_by_id.get(rec["operating_point_record_id"]) or {}).get(
+                     "h1_magnet_state")}
         if op is None:
             entry["verdict"] = {"verdict": "NOT_EVALUATED", "reason": "operating point %r not among the reduced "
                                 "records" % rec["operating_point_record_id"]}
         elif criteria is None:
             entry["verdict"] = classify_stable_region(m)
+            if frozen_late:
+                entry["verdict"] = {"verdict": "NOT_EVALUATED", "reason": frozen_late}
         elif ign is None:
             entry["verdict"] = {"verdict": "NOT_EVALUATED", "reason": "no ignition-repeatability record for point %r "
                                 "(P1-S3)" % rec["ignition_point_id"]}
@@ -2676,4 +3261,8 @@ def stable_region_handoff(dwell_records, operating_points_by_id, ignition_points
             "points_within_criteria": pts, "envelope_of_tested_points": env,
             "envelope_note": "ENVELOPE_OF_TESTED_POINTS_NOT_A_STABILITY_CLAIM_BETWEEN_POINTS",
             "dwells": per,
-            "note": "engineering handoff for P2 only; not an architecture gate; criteria are owner inputs (P1Q-01)"}
+            "note": "engineering handoff for P2 only; not an architecture gate; criteria are owner inputs (P1Q-01); "
+                    "passing = WITHIN_OWNER_CRITERIA only, never an architecture PASS or a flight qualification (owner "
+                    "A9.11 P1Q-01)" + ("; criteria sha256 %s" % criteria["criteria_sha256"] if criteria is not None
+                                       else ("; NOT_EVALUATED: " + (frozen_late or "stable-region criteria not "
+                                                                    "registered (owner A9.11 P1Q-01)")))}

@@ -274,7 +274,9 @@ def test_consistency_checks(committed):
 def test_design_point_not_selected(committed):
     by_id = {p["id"]: p for p in committed["parameters"]}
     cp = by_id["H1F-CH-11"]
-    assert cp["freeze_status"] == "TBD_OWNER" and cp["value"].startswith("TBD")
+    # A9.14 F5-OQ-02 (owner decision): the selection rule is owner-given, the point itself is not selected yet
+    assert cp["freeze_status"] == "TBD_AFTER_EVIDENCE" and cp["value"].startswith("TBD")
+    assert cp["a9_16"]["point_status"] == "NOT_SELECTED_PENDING_FEMM"
     assert "NOT a design selection" in cp["note"]
     for pid in ("H1F-CH-02", "H1F-CH-03", "H1F-CH-04", "H1F-CH-05", "H1F-CH-10"):
         assert by_id[pid]["freeze_status"] == "OPEN"

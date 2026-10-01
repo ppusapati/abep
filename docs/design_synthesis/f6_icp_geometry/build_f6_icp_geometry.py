@@ -75,6 +75,13 @@ PENDING_LANES = {
     "F9": "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json (fo_a9_7_f9_freeze_candidate; "
           "F9-ID-06)",
 }
+sys.path.insert(0, str(HERE))
+import a9_16_f6 as A16  # noqa: E402  (A9.16 step 1 owner-decision application, integration lane)
+for _k in ("A9.14", "A9.15"):
+    DECISION_PINS[_k.replace(".", "") + "_JSON"] = (A16.L.LOADED[_k]["json"], A16.L.LOADED[_k]["json_sha256"],
+                                                    f"{_k} owner decisions (applied: A9.16 step 1)")
+    DECISION_PINS[_k.replace(".", "") + "_MD"] = (A16.L.LOADED[_k]["md"], A16.L.LOADED[_k]["md_sha256"],
+                                                  f"{_k} verbatim record (governs)")
 CONV_TOL_ABS_F = 0.01      # acceptance of the screening-resolution F_to_ICP vs the convergence resolution (numerical)
 
 
@@ -356,7 +363,9 @@ def build():
         "items": build_items(h1, al05, grid),
         "geometric_screening": screening(h1, al05, grid),
         "interface_demands": interface_demands(),
-        "open_owner_questions": open_owner_questions(),
+        "open_owner_questions": A16.answered(open_owner_questions()),
+        "a9_16_owner_decisions": A16.section(list(F.REQUIRED_OBJECTIVES)),
+        "owner_answers_applied": A16.owner_answers_applied(),
         "m16_impact": m16_impact(),
         "compliance": {"no_pass_status": True, "no_winner": True, "no_tbd_converted_to_value": True,
                        "archengine_untouched": True, "p1_p2_p3_files_unmodified": True,
@@ -425,8 +434,12 @@ def render_md(doc):
           for n in doc["interface_demands"]["f6_needs"]]
     L += ["", "F6 supplies:", ""]
     L += [f"- {s['id']} to {s['to']}: {s['what']} - {s['status']}" for s in doc["interface_demands"]["f6_supplies"]]
-    L += ["", "## New open owner questions", ""]
-    L += [f"- {q['id']} ({q['status']}; blocks {q['blocks']}): {q['question']}" for q in doc["open_owner_questions"]]
+    L += ["", "## Owner questions raised by F6 (answered by A9.14)", ""]
+    L += [f"- {q['id']} ({q['status']} {q['decision_code']}; blocks {q['blocks']}): {q['question']}"
+          for q in doc["open_owner_questions"]]
+    L += ["", "## A9.16 owner decisions applied", ""]
+    L += [f"- **{k}** {v['status']}: " + _fmt({x: y for x, y in v.items() if x not in ("status",)})
+          for k, v in doc["a9_16_owner_decisions"].items()]
     L += ["", "## M16 impact", ""]
     L += [f"- row {m['row']} {m['key']}: {m['proposed_change']} - {m['note']}" for m in doc["m16_impact"]]
     L += ["", "## Pins", ""]

@@ -20,7 +20,7 @@
   "not an architecture selection (no winner)",
   "not a requirement verdict (see the RVM)",
   "not a change to v1 / v2 / v3",
-  "not an owner decision: blocking-item selection, roles and latest decision points are PROPOSED",
+  "not an owner decision itself: the blocking-item selection, roles and latest decision points were PROPOSED here and accepted by the owner (A9.14 M16-V3-Q-01); named persons come only from the project staffing ledger",
   "software / framework completeness is not physical readiness"
  ],
  "state_vocabulary": [
@@ -227,8 +227,8 @@
    },
    {
     "key": "P3",
-    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
-    "identity": "p3_coupled_thermal_v1",
+    "path": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
+    "identity": "p3_coupled_thermal_v2",
     "lane": "fo_a9_6_p3_coupled_thermal"
    },
    {
@@ -266,6 +266,12 @@
     "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
     "identity": "owner_questions_state_v4",
     "lane": "fo_a9_6_decision_propagation (+ register completion by fo_a9_6_m16_refresh)"
+   },
+   {
+    "key": "OQ5",
+    "path": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "identity": "owner_questions_state_v5",
+    "lane": "A9.16 step 1 integration (owner answers A9.8 .. A9.15)"
    },
    {
     "key": "ICD",
@@ -360,7 +366,9 @@
      "blocks": [
       "NOTHING_IMMEDIATE"
      ],
-     "group": "DG-RFP-ENVELOPE"
+     "group": "DG-RFP-ENVELOPE",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 OD2 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -372,21 +380,24 @@
      "blocks": [
       "NOTHING_IMMEDIATE"
      ],
-     "group": "DG-RFP-ENVELOPE"
+     "group": "DG-RFP-ENVELOPE",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 OD3 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     }
    ],
    "worked_by": null,
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "owner decision",
    "latest_decision_point": "FLIGHT_DESIGN_FREEZE",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "proposal-only documentation gap",
    "owner": {
     "functional_role": "atmospheric intake lead",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: a named responsible engineer is needed before the row can become READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {},
    "rvm_requirement_status": [
@@ -488,21 +499,24 @@
      "blocks": [
       "NOTHING_IMMEDIATE"
      ],
-     "group": "DG-RFP-UNGATED"
+     "group": "DG-RFP-UNGATED",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 OD12 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     }
    ],
    "worked_by": null,
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "owner decision",
    "latest_decision_point": "FLIGHT_DESIGN_FREEZE",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "proposal-only documentation gap",
    "owner": {
     "functional_role": "atmospheric intake lead",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: a named responsible engineer is needed before the row can become READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {},
    "rvm_requirement_status": [
@@ -596,21 +610,24 @@
      "blocks": [
       "NOTHING_IMMEDIATE"
      ],
-     "group": "DG-RFP-ENVELOPE"
+     "group": "DG-RFP-ENVELOPE",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 OD2 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     }
    ],
    "worked_by": null,
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "first-hand source verification",
    "latest_decision_point": "FLIGHT_DESIGN_FREEZE",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "proposal-only documentation gap",
    "owner": {
     "functional_role": "compressor / gas-path lead",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: a named responsible engineer is needed before the row can become READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {},
    "rvm_requirement_status": [
@@ -697,14 +714,15 @@
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "design work outside every registered scope",
    "latest_decision_point": "FLIGHT_DESIGN_FREEZE",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "proposal-only documentation gap",
    "owner": {
     "functional_role": "gas-path lead",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: a named responsible engineer is needed before the row can become READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {},
    "rvm_requirement_status": [
@@ -783,14 +801,15 @@
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "owner decision",
    "latest_decision_point": "S1a",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "test-readiness blocker",
    "owner": {
     "functional_role": "gas-path / flow-control lead",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: a named responsible engineer is needed before the row can become READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {},
    "rvm_requirement_status": [
@@ -923,7 +942,9 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": "DG-XE-FUNC"
+     "group": "DG-XE-FUNC",
+     "state_v5": "AMENDED_BY_A9_15",
+     "decision": "A9.14 XA9Q-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -935,7 +956,9 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": "DG-XE-CASE"
+     "group": "DG-XE-CASE",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 XA9Q-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -947,7 +970,9 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": "DG-MEOP"
+     "group": "DG-MEOP",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 XA9Q-06 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -959,7 +984,9 @@
      "blocks": [
       "NOTHING_IMMEDIATE"
      ],
-     "group": "DG-XE-FUNC"
+     "group": "DG-XE-FUNC",
+     "state_v5": "AMENDED_BY_A9_15",
+     "decision": "A9.14 OD6 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)"
     },
     {
      "kind": "VENDOR_QUOTE",
@@ -974,14 +1001,15 @@
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)",
    "latest_decision_point": "architecture closure (A7 blocker 3 unchanged)",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "architecture blocker",
    "owner": {
     "functional_role": "Xe feed-system lead",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: a named responsible engineer is needed before the row can become READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {},
    "rvm_requirement_status": [
@@ -1138,7 +1166,9 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": "DG-MEOP"
+     "group": "DG-MEOP",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 XA9Q-06 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -1150,21 +1180,24 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": "DG-MEOP"
+     "group": "DG-MEOP",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 OQ-RFQ-09 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     }
    ],
    "worked_by": null,
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
    "latest_decision_point": "LOCK-1 (A9-01 GD-01 interfaces)",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "proposal-only documentation gap",
    "owner": {
     "functional_role": "Xe feed-system lead",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: a named responsible engineer is needed before the row can become READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {},
    "rvm_requirement_status": [
@@ -1304,21 +1337,24 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 XA9Q-03 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     }
    ],
    "worked_by": null,
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
    "latest_decision_point": "before HI-S1A (instrument/valve availability)",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "procurement blocker",
    "owner": {
     "functional_role": "Xe feed-system lead",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: a named responsible engineer is needed before the row can become READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {},
    "rvm_requirement_status": [
@@ -1442,7 +1478,9 @@
      "blocks": [
       "BLOCKS_P1_LATER_STAGE"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_10",
+     "decision": "A9.10 OQ-RFQV2-10 (docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -1454,7 +1492,9 @@
      "blocks": [
       "BLOCKS_P1_LATER_STAGE"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_10",
+     "decision": "A9.10 P1Q-07 (docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)"
     },
     {
      "kind": "P1_MEASUREMENT",
@@ -1469,14 +1509,15 @@
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "design work outside every registered scope",
    "latest_decision_point": "before HI-S1 (A9-01 GD-02 / GD-03)",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "architecture blocker",
    "owner": {
     "functional_role": "Hall thruster (H-1) lead",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: a named responsible engineer is needed before the row can become READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {},
    "rvm_requirement_status": [
@@ -1644,7 +1685,9 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 OQ-A907-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -1656,7 +1699,9 @@
      "blocks": [
       "BLOCKS_P1_LATER_STAGE"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_10",
+     "decision": "A9.10 P1Q-06 (docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)"
     },
     {
      "kind": "VENDOR_QUOTE",
@@ -1671,14 +1716,15 @@
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "first-hand source verification",
    "latest_decision_point": "before HI-LOCK2 (A9-01 GD-11 field tolerance)",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "hardware-definition blocker",
    "owner": {
     "functional_role": "magnetic circuit (MC-1) lead",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: a named responsible engineer is needed before the row can become READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {},
    "rvm_requirement_status": [
@@ -1835,7 +1881,9 @@
      "blocks": [
       "BLOCKS_P1_LATER_STAGE"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_10",
+     "decision": "A9.10 P1Q-07 (docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -1847,7 +1895,9 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": "DG-C1-FLIGHT"
+     "group": "DG-C1-FLIGHT",
+     "state_v5": "AMENDED_BY_A9_15",
+     "decision": "A9.14 MPQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -1859,7 +1909,9 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": "DG-C1-FLIGHT"
+     "group": "DG-C1-FLIGHT",
+     "state_v5": "AMENDED_BY_A9_15",
+     "decision": "A9.14 OQ-A907-07 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c); amended by A9.15 (docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json sha256 a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -1871,7 +1923,9 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": "DG-IGN-DWELL"
+     "group": "DG-IGN-DWELL",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 OQ-A907-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -1883,7 +1937,9 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 OQ-RFQ-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     },
     {
      "kind": "VENDOR_QUOTE",
@@ -1898,14 +1954,15 @@
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "owner decision",
    "latest_decision_point": "LOCK-1 (OQ-A907-02: stand I_d,max registered before LOCK-1)",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "procurement blocker",
    "owner": {
     "functional_role": "electron-source lead (C1 reference / fallback)",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: a named responsible engineer is needed before the row can become READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {
     "C1 conventional reference": "CONTROL_FALLBACK"
@@ -2090,7 +2147,9 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": "DG-MASS-CLOSURE"
+     "group": "DG-MASS-CLOSURE",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 MQ-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -2102,7 +2161,9 @@
      "blocks": [
       "NOTHING_IMMEDIATE"
      ],
-     "group": "DG-RFP-UNGATED"
+     "group": "DG-RFP-UNGATED",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 RVMQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     },
     {
      "kind": "BUS_ITEM_OPEN",
@@ -2117,14 +2178,15 @@
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
    "latest_decision_point": "before HI-LOCK2 (A9-01 GD-14)",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "proposal-only documentation gap",
    "owner": {
     "functional_role": "power / PPU lead",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: a named responsible engineer is needed before the row can become READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {},
    "rvm_requirement_status": [
@@ -2206,7 +2268,7 @@
    "v3_ref": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json#/rows/12",
    "a9_6_implemented": [
     {
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "container": "items",
      "ids": [
       "P3-B-01",
@@ -2220,7 +2282,7 @@
      "counts_as_evidence": false
     },
     {
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "kind": "SOFTWARE",
      "paths": [
       "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py"
@@ -2269,7 +2331,7 @@
     },
     {
      "lane": "fo_a9_6_p3_coupled_thermal",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "how": "coupled H-1 / ICP thermal framework exists (software); thermal closure UNRESOLVED; blocking inputs P3-G/K/R (hardware), P1/P2 data",
      "stated_readiness_change": "none to maturity (framework only)"
     },
@@ -2308,13 +2370,13 @@
    "blocking_item": {
     "carried_from_v3": false,
     "text": "coupled H-1 / ICP thermal CLOSURE INPUTS: the P3 coupled model now exists as software (FRAMEWORK_IMPLEMENTED_INPUTS_TBD), but the ICP module geometry, conductances, ICP emittances and validated continuous-use limits it needs are TBD (A9.2 ICP_COUPLED_THERMAL = UNRESOLVED)",
-    "source": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "source": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "kind": "P3_INPUT",
     "items": [
      {
       "kind": "P3_INPUT",
       "id": "P3-G-01",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-G-01]",
       "state": "TBD",
       "detail": "axial standoff L of the ICP module datum IP-NEU downstream of IP-EXIT"
@@ -2322,7 +2384,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-G-02",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-G-02]",
       "state": "TBD",
       "detail": "ICP clear aperture radius r_ap (plume passage; open-tube coaxial first build, A9.3 OQ-VI-03)"
@@ -2330,7 +2392,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-G-03",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-G-03]",
       "state": "TBD",
       "detail": "ICP module outer radius r_mod (minimum necessary downstream obstruction, A9.2)"
@@ -2338,7 +2400,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-G-04",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-G-04]",
       "state": "TBD",
       "detail": "ICP module axial length H"
@@ -2346,7 +2408,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-G-05",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-G-05]",
       "state": "TBD",
       "detail": "open-frame support open-area fraction tau (A9.2 open-frame support; gray, direction-independent approximation in the engine)"
@@ -2354,7 +2416,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-G-06",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-G-06]",
       "state": "TBD",
       "detail": "ICP surface -> thermal node map (dielectric tube, antenna, collector, body, match) and the surfaces' zoning"
@@ -2362,7 +2424,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-G-07",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-G-07]",
       "state": "TBD",
       "detail": "collector geometry and position relative to the bore / plume (Takahashi-type ion collector)"
@@ -2370,7 +2432,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-K-01",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-K-01]",
       "state": "TBD",
       "detail": "conductance ICP body <-> KC-1 carrier (A9.2 objective: thermally isolated mounting)"
@@ -2378,15 +2440,15 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-K-02",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-K-02]",
       "state": "TBD",
-      "detail": "conductance KC-1 carrier <-> H-1 (through the stand / moving platform)"
+      "detail": "conductance KC-1 carrier <-> H-1 (through the moving thrust platform)"
      },
      {
       "kind": "P3_INPUT",
       "id": "P3-K-03",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-K-03]",
       "state": "TBD",
       "detail": "conductance KC-1 carrier <-> stand / spacecraft boundary"
@@ -2394,7 +2456,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-K-04",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-K-04]",
       "state": "TBD",
       "detail": "conductance antenna <-> ICP body"
@@ -2402,7 +2464,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-K-05",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-K-05]",
       "state": "TBD",
       "detail": "conductance collector <-> ICP body (through its 350 V-class insulator)"
@@ -2410,7 +2472,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-K-06",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-K-06]",
       "state": "TBD",
       "detail": "conductance local match <-> ICP body / carrier (match on / immediately adjacent to the module, A9.2 OQ-A907-11)"
@@ -2418,7 +2480,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-R-01",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-R-01]",
       "state": "TBD",
       "detail": "ICP upstream-face (Hall-facing) hemispherical emittance"
@@ -2426,7 +2488,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-R-02",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-R-02]",
       "state": "TBD",
       "detail": "ICP outward-facing surfaces emittance (A9.2 objective: high-emittance outward surfaces)"
@@ -2434,7 +2496,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-R-03",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-R-03]",
       "state": "TBD",
       "detail": "ICP bore / dielectric tube emittance"
@@ -2442,7 +2504,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-R-04",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-R-04]",
       "state": "TBD",
       "detail": "collector emittance"
@@ -2450,7 +2512,7 @@
      {
       "kind": "P3_INPUT",
       "id": "P3-M-04",
-      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+      "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
       "locator": "items[id=P3-M-04]",
       "state": "TBD",
       "detail": "validated continuous-use temperature limits of ICP parts (dielectric, antenna insulation, collector, feedthrough, match components, carrier interface) and of the H-1 anode"
@@ -2483,7 +2545,9 @@
       "BLOCKS_LOCK_1",
       "BLOCKS_P3_P4"
      ],
-     "group": "DG-THERMAL-METHOD"
+     "group": "DG-THERMAL-METHOD",
+     "state_v5": "ANSWERED_BY_A9_12",
+     "decision": "A9.12 P3Q-02 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -2496,7 +2560,9 @@
       "BLOCKS_LOCK_1",
       "BLOCKS_P3_P4"
      ],
-     "group": "DG-THERMAL-METHOD"
+     "group": "DG-THERMAL-METHOD",
+     "state_v5": "ANSWERED_BY_A9_12",
+     "decision": "A9.12 OQ-A907-03 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -2509,7 +2575,9 @@
       "BLOCKS_LOCK_1",
       "BLOCKS_P3_P4"
      ],
-     "group": "DG-THERMAL-METHOD"
+     "group": "DG-THERMAL-METHOD",
+     "state_v5": "ANSWERED_BY_A9_12",
+     "decision": "A9.12 OQ-A907-09 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -2522,7 +2590,9 @@
       "BLOCKS_LOCK_1",
       "BLOCKS_P3_P4"
      ],
-     "group": "DG-THERMAL-METHOD"
+     "group": "DG-THERMAL-METHOD",
+     "state_v5": "ANSWERED_BY_A9_12",
+     "decision": "A9.12 OQ-A907-10 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -2535,7 +2605,9 @@
       "BLOCKS_LOCK_1",
       "BLOCKS_P3_P4"
      ],
-     "group": "DG-ICP-HEAT-BOUND"
+     "group": "DG-ICP-HEAT-BOUND",
+     "state_v5": "ANSWERED_BY_A9_12",
+     "decision": "A9.12 ICPQ-10 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -2548,12 +2620,14 @@
       "BLOCKS_LOCK_1",
       "BLOCKS_P3_P4"
      ],
-     "group": "DG-ICP-HEAT-BOUND"
+     "group": "DG-ICP-HEAT-BOUND",
+     "state_v5": "ANSWERED_BY_A9_12",
+     "decision": "A9.12 OQ-A910-06 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
     },
     {
      "kind": "P3_INPUT",
      "id": "P3-P2-03",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "locator": "items[id=P3-P2-03]",
      "state": "TBD_AFTER_IMPEDANCE_MAP",
      "detail": "P_line/match,loss (line + local match, at the logged tuning state)"
@@ -2561,7 +2635,7 @@
     {
      "kind": "P3_INPUT",
      "id": "P3-P1-07",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "locator": "items[id=P3-P1-07]",
      "state": "TBD_AFTER_EVIDENCE",
      "detail": "ICP-module temperatures for model verification (antenna, dielectric, collector, match, H-1 inner / outer pole, sink)"
@@ -2579,14 +2653,15 @@
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "design work outside every registered scope",
    "latest_decision_point": "before any thermal closure of hall_icp_neutralizer and before HI-S1 (A9.2 ICP_COUPLED_THERMAL = UNRESOLVED; score-bearing aborts at limit - 50 K, A9.1 UBQ-06)",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "proposal-only documentation gap",
    "owner": {
     "functional_role": "thermal lead",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: a named responsible engineer is needed before the row can become READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {
     "coupled H-1/ICP thermal closure": "UNRESOLVED"
@@ -2719,7 +2794,9 @@
      "blocks": [
       "NOTHING_IMMEDIATE"
      ],
-     "group": "DG-RFP-START"
+     "group": "DG-RFP-START",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 OD14 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -2731,21 +2808,24 @@
      "blocks": [
       "NOTHING_IMMEDIATE"
      ],
-     "group": "DG-RFP-UNGATED"
+     "group": "DG-RFP-UNGATED",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 RVMQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     }
    ],
    "worked_by": null,
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
    "latest_decision_point": "before HI-S1A (A4 minimum interlocks)",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "test-readiness blocker",
    "owner": {
     "functional_role": "controls / FDIR lead",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: a named responsible engineer is needed before the row can become READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {},
    "rvm_requirement_status": [
@@ -2934,7 +3014,9 @@
       "BLOCKS_LOCK_1",
       "BLOCKS_P2"
      ],
-     "group": "DG-Z-METHOD"
+     "group": "DG-Z-METHOD",
+     "state_v5": "ANSWERED_BY_A9_11",
+     "decision": "A9.11 P2Q-01 (docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json sha256 d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -2947,7 +3029,9 @@
       "BLOCKS_LOCK_1",
       "BLOCKS_P2"
      ],
-     "group": "DG-Z-METHOD"
+     "group": "DG-Z-METHOD",
+     "state_v5": "ANSWERED_BY_A9_11",
+     "decision": "A9.11 P2Q-03 (docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json sha256 d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -2960,7 +3044,9 @@
       "BLOCKS_LOCK_1",
       "BLOCKS_P2"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_11",
+     "decision": "A9.11 P2Q-07 (docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json sha256 d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -2972,7 +3058,9 @@
      "blocks": [
       "BLOCKS_P1_START"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_8",
+     "decision": "A9.8 P2Q-02 (docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f)"
     },
     {
      "kind": "VENDOR_QUOTE",
@@ -2995,14 +3083,15 @@
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)",
    "latest_decision_point": "before the RF component ratings are frozen (A9.2: TBD_AFTER_IMPEDANCE_MAP; trip thresholds after the load characterization)",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "test-readiness blocker",
    "owner": {
     "functional_role": "test and diagnostics lead",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: a named responsible engineer is needed before the row can become READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {
     "RF component ratings": "TBD_AFTER_IMPEDANCE_MAP"
@@ -3141,7 +3230,7 @@
     {
      "kind": "P3_INPUT",
      "id": "P3-G-01",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "locator": "items[id=P3-G-01]",
      "state": "TBD",
      "detail": "axial standoff L of the ICP module datum IP-NEU downstream of IP-EXIT"
@@ -3149,7 +3238,7 @@
     {
      "kind": "P3_INPUT",
      "id": "P3-G-05",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "locator": "items[id=P3-G-05]",
      "state": "TBD",
      "detail": "open-frame support open-area fraction tau (A9.2 open-frame support; gray, direction-independent approximation in the engine)"
@@ -3172,7 +3261,9 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 ICPQ-03 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -3184,21 +3275,24 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": "DG-MASS-MAP"
+     "group": "DG-MASS-MAP",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 OQ-A910-05 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     }
    ],
    "worked_by": null,
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "design work outside every registered scope",
    "latest_decision_point": "before HI-S1 (A9-01 GD-01)",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "hardware-definition blocker",
    "owner": {
     "functional_role": "mechanical / structures lead",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: a named responsible engineer is needed before the row can become READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {},
    "rvm_requirement_status": [
@@ -3269,13 +3363,14 @@
    "not_worked_reason": null,
    "waits_on": null,
    "latest_decision_point": null,
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": null,
    "owner": {
     "functional_role": "electron-source lead (historical row)",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {},
    "rvm_requirement_status": [],
@@ -3328,7 +3423,7 @@
      "counts_as_evidence": false
     },
     {
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "container": "items",
      "ids": [
       "P3-B-01",
@@ -3411,7 +3506,7 @@
     },
     {
      "lane": "fo_a9_6_p3_coupled_thermal",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "how": "ICP-43 / ICP-47 now have calculators; values TBD; physical ICP not VERIFIED",
      "stated_readiness_change": "none to maturity (framework only)"
     },
@@ -3523,7 +3618,9 @@
      "blocks": [
       "BLOCKS_P1_LATER_STAGE"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_10",
+     "decision": "A9.10 P1Q-07 (docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json sha256 3a99f16dd957f533b6b7afb7539d27be132fae386148e1683e417db0ede26544)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -3535,7 +3632,9 @@
      "blocks": [
       "BLOCKS_P1_START"
      ],
-     "group": "DG-COLLECTOR"
+     "group": "DG-COLLECTOR",
+     "state_v5": "ANSWERED_BY_A9_8",
+     "decision": "A9.8 P1Q-09 (docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -3547,7 +3646,9 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 OQ-VI-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -3560,7 +3661,9 @@
       "BLOCKS_LOCK_1",
       "BLOCKS_P3_P4"
      ],
-     "group": "DG-ICP-HEAT-BOUND"
+     "group": "DG-ICP-HEAT-BOUND",
+     "state_v5": "ANSWERED_BY_A9_12",
+     "decision": "A9.12 ICPQ-10 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -3572,7 +3675,9 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": "DG-RF-RATING-MARGIN"
+     "group": "DG-RF-RATING-MARGIN",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 ICPQ-11 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -3585,7 +3690,9 @@
       "BLOCKS_P1_START",
       "BLOCKS_P3_P4"
      ],
-     "group": "DG-COLLECTOR"
+     "group": "DG-COLLECTOR",
+     "state_v5": "ANSWERED_BY_A9_8",
+     "decision": "A9.8 P3Q-01 (docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json sha256 e96b8bc0a27f5fbc03d48d36db6e470dfc60c4960d6ba02cdaac8871752b537f)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -3597,12 +3704,14 @@
      "blocks": [
       "BLOCKS_P3_P4"
      ],
-     "group": "DG-COLLECTOR"
+     "group": "DG-COLLECTOR",
+     "state_v5": "ANSWERED_BY_A9_12",
+     "decision": "A9.12 P4-OQ-05 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
     },
     {
      "kind": "P3_INPUT",
      "id": "P3-G-07",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "locator": "items[id=P3-G-07]",
      "state": "TBD",
      "detail": "collector geometry and position relative to the bore / plume (Takahashi-type ion collector)"
@@ -3620,14 +3729,15 @@
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "design work outside every registered scope",
    "latest_decision_point": "before HI-S1 (A9-01 GD-01: downstream ICP interfaces frozen)",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "hardware-definition blocker",
    "owner": {
     "functional_role": "electron-source lead (ICP neutralizer)",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: named engineer needed before READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {
     "Hall->ICP architecture": "INVESTIGATION_HYPOTHESIS",
@@ -3871,7 +3981,9 @@
      "blocks": [
       "BLOCKS_LOCK_1"
      ],
-     "group": "DG-RF-RATING-MARGIN"
+     "group": "DG-RF-RATING-MARGIN",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 ICPQ-11 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -3883,7 +3995,9 @@
      "blocks": [
       "NOTHING_IMMEDIATE"
      ],
-     "group": "DG-RF-RATING-MARGIN"
+     "group": "DG-RF-RATING-MARGIN",
+     "state_v5": "ANSWERED_BY_A9_14",
+     "decision": "A9.14 P2Q-10 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -3896,21 +4010,24 @@
       "BLOCKS_LOCK_1",
       "BLOCKS_P2"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_11",
+     "decision": "A9.11 P2Q-04 (docs/decisions/OD_2026_10_01_A9_11_s4_p2_owner_decisions.json sha256 d8baf59a5b92739698e29d893e89a30995559ee7167814c096dc24599679156c)"
     }
    ],
    "worked_by": null,
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
    "latest_decision_point": "proposal / flight design freeze (Milestone C); A902-21 value at LOCK-2",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": "proposal-only documentation gap",
    "owner": {
     "functional_role": "power / PPU lead (RF chain)",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: named engineer needed before READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {
     "RF matching architecture": "LOCAL_MATCH_SELECTED_FOR_DEVELOPMENT",
@@ -4083,7 +4200,9 @@
      "blocks": [
       "BLOCKS_P3_P4"
      ],
-     "group": "DG-THERMAL-LIMITS"
+     "group": "DG-THERMAL-LIMITS",
+     "state_v5": "ANSWERED_BY_A9_12",
+     "decision": "A9.12 P4-OQ-01 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -4095,7 +4214,9 @@
      "blocks": [
       "BLOCKS_P3_P4"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_12",
+     "decision": "A9.12 P4-OQ-02 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -4108,7 +4229,9 @@
       "BLOCKS_P3_P4",
       "BLOCKS_LOCK_1"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_12",
+     "decision": "A9.12 P4-OQ-03 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -4120,7 +4243,9 @@
      "blocks": [
       "BLOCKS_P3_P4"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_12",
+     "decision": "A9.12 P4-OQ-04 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -4133,7 +4258,9 @@
       "BLOCKS_LOCK_1",
       "BLOCKS_P3_P4"
      ],
-     "group": "DG-THERMAL-LIMITS"
+     "group": "DG-THERMAL-LIMITS",
+     "state_v5": "ANSWERED_BY_A9_12",
+     "decision": "A9.12 OQ-A907-05 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -4146,21 +4273,24 @@
       "BLOCKS_LOCK_1",
       "BLOCKS_P3_P4"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_12",
+     "decision": "A9.12 OQ-A907-08 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
     }
    ],
    "worked_by": null,
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "design work outside every registered scope",
    "latest_decision_point": "before any design-representative / score-bearing anode is built (A9.2; owner call on the trade)",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": null,
    "owner": {
     "functional_role": "Hall thruster (H-1) lead (anode material)",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: named engineer needed before READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {
     "316L flight anode": "REJECTED_AS_CURRENT_BASELINE",
@@ -4216,7 +4346,7 @@
      "counts_as_evidence": false
     },
     {
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "kind": "SOFTWARE",
      "paths": [
       "docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py"
@@ -4248,7 +4378,7 @@
    "a9_6_lanes": [
     {
      "lane": "fo_a9_6_p3_coupled_thermal",
-     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+     "artifact": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
      "how": "anode heat path is a network input; ANODE_THERMAL_CLOSURE UNRESOLVED (P4 merged: FINAL_ANODE_MATERIAL OPEN, no validated limit)",
      "stated_readiness_change": "none to maturity (framework only)"
     },
@@ -4313,7 +4443,9 @@
       "BLOCKS_LOCK_1",
       "BLOCKS_P3_P4"
      ],
-     "group": "DG-THERMAL-METHOD"
+     "group": "DG-THERMAL-METHOD",
+     "state_v5": "ANSWERED_BY_A9_12",
+     "decision": "A9.12 P3Q-02 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
     },
     {
      "kind": "OWNER_QUESTION",
@@ -4326,21 +4458,24 @@
       "BLOCKS_LOCK_1",
       "BLOCKS_P3_P4"
      ],
-     "group": null
+     "group": null,
+     "state_v5": "ANSWERED_BY_A9_12",
+     "decision": "A9.12 OQ-A907-06 (docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json sha256 1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d)"
     }
    ],
    "worked_by": null,
    "not_worked_reason": "every A9.6 implementation lane touching the row is a complete framework deliverable; none produces the missing input (owner decision, measurement, quotation, design drawing or source verification); fo_a9_6_consolidated_verification verifies and produces no input",
    "waits_on": "design work outside every registered scope",
    "latest_decision_point": "before the anode material selection (A9.2 order: heat path first, then material)",
-   "latest_decision_point_status": "PROPOSED (carried from v3; owner question M16-V3-Q-01 TBD_OWNER)",
+   "latest_decision_point_status": "OWNER_ACCEPTED (A9.14 M16-V3-Q-01; carried from v3)",
    "a7_category": null,
    "owner": {
     "functional_role": "thermal lead (H-1 anode heat-removal path)",
     "accountable": "Praveen (accountable system owner, owner row 140)",
     "named_engineer": null,
     "rule": "row 140: named engineer needed before READY",
-    "owner_question": "M16-V3-Q-01 (TBD_OWNER in owner_questions_state_v4)"
+    "owner_question": "M16-V3-Q-01 (A9.14 S9.4 ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER: role map accepted; named persons from the project staffing ledger before the work package starts)",
+    "named_engineer_status": "FROM_STAFFING_LEDGER_BEFORE_WORK_PACKAGE_START (none fabricated)"
    },
    "a9_2_statuses": {
     "anode thermal closure": "UNRESOLVED"
@@ -4612,232 +4747,264 @@
   "XA9Q-07"
  ],
  "rvm_register_reconciliation": {
-  "rule": "every RVM open reading has the same status as its row in owner_questions_state_v4 (S-01); checked after both are built (build order ... RVM, state v4, M16 v4)",
+  "rule": "every RVM open reading agrees with the register it names (S-01): state v4 by status equality; state v5 (A9.16) OWNER_DECIDED matches ANSWERED_BY_A9_* / AMENDED_BY_A9_15; checked after both are built (build order: RVM, state v5, M16 v4)",
   "n_readings": 32,
   "all_agree": true,
   "rows": [
    {
     "rvm_row": "RVM-01",
     "id": "OD2",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-01",
     "id": "OD3",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-04",
     "id": "OQ-A910-03",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-06",
     "id": "MQ-01",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-06",
     "id": "MQ-02",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-06",
     "id": "MQ-09",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-06",
     "id": "MQ-10",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-06",
     "id": "XA9Q-01",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-06",
     "id": "XA9Q-07",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "AMENDED_BY_A9_15",
     "agrees": true
    },
    {
     "rvm_row": "RVM-06",
     "id": "OQ-A910-01",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-07",
     "id": "MQ-01",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-07",
     "id": "MQ-02",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-07",
     "id": "MQ-09",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-07",
     "id": "MQ-10",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-07",
     "id": "XA9Q-07",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "AMENDED_BY_A9_15",
     "agrees": true
    },
    {
     "rvm_row": "RVM-09",
     "id": "OD12",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-10",
     "id": "XA9Q-07",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "AMENDED_BY_A9_15",
     "agrees": true
    },
    {
     "rvm_row": "RVM-10",
     "id": "XA9Q-01",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-10",
     "id": "OD6",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "AMENDED_BY_A9_15",
     "agrees": true
    },
    {
     "rvm_row": "RVM-12",
     "id": "OQ-VI-04",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-12",
     "id": "OD13",
     "rvm_status": "SUPERSEDED",
-    "state_v4_status": "SUPERSEDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
+    "register_status": "SUPERSEDED",
     "agrees": true
    },
    {
     "rvm_row": "RVM-14",
     "id": "OD5",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-14",
     "id": "OD14",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-14",
     "id": "OQ-A907-01",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-14",
     "id": "XA9Q-02",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-16",
     "id": "OD12",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-17",
     "id": "OQ-A907-03",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_12",
     "agrees": true
    },
    {
     "rvm_row": "RVM-17",
     "id": "OQ-A907-05",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_12",
     "agrees": true
    },
    {
     "rvm_row": "RVM-17",
     "id": "OQ-A907-09",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_12",
     "agrees": true
    },
    {
     "rvm_row": "RVM-17",
     "id": "OQ-A907-10",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_12",
     "agrees": true
    },
    {
     "rvm_row": "RVM-18",
     "id": "OD12",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    },
    {
     "rvm_row": "RVM-19",
     "id": "OD12",
-    "rvm_status": "TBD_OWNER",
-    "state_v4_status": "TBD_OWNER",
+    "rvm_status": "OWNER_DECIDED",
+    "register": "docs/budgets/owner_decisions/owner_questions_state_v5.json",
+    "register_status": "ANSWERED_BY_A9_14",
     "agrees": true
    }
   ]
@@ -5013,7 +5180,7 @@
    "direction": "provides",
    "counterpart": "owner (M16-V3-Q-01)",
    "quantity": "PROPOSED blocking items, roles and latest decision points for acceptance; named engineers",
-   "status": "AWAITING_OWNER_DECISION"
+   "status": "OWNER_DECIDED (A9.14 M16-V3-Q-01: accepted; names from the staffing ledger)"
   }
  ],
  "owner_answers_applied": [
@@ -5047,7 +5214,80 @@
   }
  ],
  "open_owner_questions": [],
- "open_owner_questions_note": "no new owner question: M16-V3-Q-01 (TBD_OWNER, state v4) is carried and covers acceptance of the v4 blocking-item selection, roles and latest decision points",
+ "open_owner_questions_note": "no new owner question: M16-V3-Q-01 (TBD_OWNER in state v4) is answered by A9.14 (state v5 ANSWERED_BY_A9_14)",
+ "a9_16_owner_answers_applied": [
+  {
+   "decision": "A9.14",
+   "question_id": "M16-V3-Q-01",
+   "sequenced_no": "S9.4",
+   "decision_code": "ACCEPT_ROLE_MAP_NAMES_FROM_STAFFING_LEDGER",
+   "decision_json": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "decision_json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "decision_md": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "decision_md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "artifact": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
+   "record_ids": [
+    "rows[*].owner",
+    "rows[*].latest_decision_point_status",
+    "M16V4-ID-07"
+   ],
+   "how_applied": "role map / blocking items / decision points accepted; named persons only from the staffing ledger (R-M16V4-05 unchanged: no READY without a named engineer)",
+   "tests": [
+    "tests/test_m16_v4.py"
+   ]
+  }
+ ],
+ "a9_16_owner_question_blockers_answered_since_v4": {
+  "ids": [
+   "ICPQ-03",
+   "ICPQ-10",
+   "ICPQ-11",
+   "MPQ-01",
+   "MQ-04",
+   "OD12",
+   "OD14",
+   "OD2",
+   "OD3",
+   "OD6",
+   "OQ-A907-01",
+   "OQ-A907-03",
+   "OQ-A907-04",
+   "OQ-A907-05",
+   "OQ-A907-06",
+   "OQ-A907-07",
+   "OQ-A907-08",
+   "OQ-A907-09",
+   "OQ-A907-10",
+   "OQ-A910-05",
+   "OQ-A910-06",
+   "OQ-RFQ-04",
+   "OQ-RFQ-09",
+   "OQ-RFQV2-10",
+   "OQ-VI-04",
+   "P1Q-06",
+   "P1Q-07",
+   "P1Q-09",
+   "P2Q-01",
+   "P2Q-02",
+   "P2Q-03",
+   "P2Q-04",
+   "P2Q-07",
+   "P2Q-10",
+   "P3Q-01",
+   "P3Q-02",
+   "P4-OQ-01",
+   "P4-OQ-02",
+   "P4-OQ-03",
+   "P4-OQ-04",
+   "P4-OQ-05",
+   "RVMQ-01",
+   "XA9Q-01",
+   "XA9Q-03",
+   "XA9Q-06",
+   "XA9Q-07"
+  ],
+  "rule": "blockers are resolved against the immutable state v4 snapshot (historical); each OWNER_QUESTION blocker carries its state v5 status and decision; re-deriving the scheduler blocking items from the owner answers (what evidence each answer now waits on) is a follow-on M16 v5 refresh, not done here; no row changes state"
+ },
  "historical_reuse": [
   {
    "path": "docs/experiments/hall_icp/integration/m16_v3/subsystem_maturity_v3.json",

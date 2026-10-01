@@ -38,15 +38,22 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 _spec = importlib.util.spec_from_file_location("p1_reducer_for_campaign", os.path.join(_HERE, "p1_reducer.py"))
 red = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(red)
+_rspec = importlib.util.spec_from_file_location("p1_a9_16_rules_for_campaign", os.path.join(_HERE, "p1_a9_16_rules.py"))
+rules = importlib.util.module_from_spec(_rspec)
+_rspec.loader.exec_module(rules)
 
 BUNDLE_SCHEMA = "p1_campaign_bundle_v1"
 REPORT_SCHEMA = "p1_campaign_report_v1"
 EVIDENCE_KINDS = ("SYNTHETIC_TEST_ONLY", "MEASURED")
 MANIFEST_REQUIRED = ("campaign_id", "evidence_kind", "description")
 # every key must be present; null is the explicit 'not registered' state for the nullable ones (no hidden default)
+# A9.16 step 1 adds the owner registration slots of A9.10 P1Q-02 (start_attempt_limits), A9.10 P1Q-03
+# (sustainment_definition) and A9.14 F6-OQ-03 (icp_geometry_matrix); null = not registered (never a default)
 REGISTRATION_KEYS = ("registration_set_id", "operating_domains", "facility_pairs", "facility_match", "closure_rule",
-                     "i_d_max_registration", "margin_rule", "stable_criteria")
-REGISTRATION_NULLABLE = ("facility_match", "closure_rule", "i_d_max_registration", "margin_rule", "stable_criteria")
+                     "i_d_max_registration", "margin_rule", "stable_criteria", "sustainment_definition",
+                     "start_attempt_limits", "icp_geometry_matrix")
+REGISTRATION_NULLABLE = ("facility_match", "closure_rule", "i_d_max_registration", "margin_rule", "stable_criteria",
+                         "sustainment_definition", "start_attempt_limits", "icp_geometry_matrix")
 DISPOSITIONS = ("REDUCED", "OUT_OF_DOMAIN", "REFUSED_INVALID_RECORD")
 # factors of a registered operating domain (per stage): [min, max] inclusive; P_fwd is not checked on RF-OFF records
 DOMAIN_FACTORS = {"P_fwd_W": ("rf", "P_fwd_W"), "p_chamber_Pa": ("pressures", "p_chamber_Pa"),
@@ -57,7 +64,7 @@ REPORT_REQUIRED = ("schema", "campaign_id", "evidence_kind", "any_synthetic", "e
                    "registration_set_id", "workflow", "readiness", "rf_cold_checkout", "ignition_map", "surface",
                    "facility_corrections", "kirchhoff_closures", "capacity", "icp45_status", "stable_region",
                    "topology_control", "neutralization_consistency", "excluded_records", "raw_record_index",
-                   "raw_records", "statements")
+                   "raw_records", "statements", "owner_rules_a9_16")
 KIND_STAGES = {"p1_g0_readiness": ("P1-S0",), "rf_cold_checkout": ("P1-S1", "P1-S2"), "ignition_attempt": ("P1-S3",),
                "icp_operating_point": ("P1-S4", "P1-S6D", "P1-S7", "P1-S7H"), "stability_dwell": ("P1-S5",),
                "topology_control_sequence": ("P1-S6",)}
@@ -84,6 +91,11 @@ WORKFLOW = [
               "with leakage recorded against a registered acceptance (A9.4 P1Q-14); ICPQ-06 ~1 kV representative-gas "
               "qualification ONLY on gas lines that bridge isolated potentials (A9.3); one Ar MFC (two overlapping "
               "only if necessary, A9.6 sec. 5); GROUND/FACILITY_ONLY generator; P1-G0 registrations recorded",
+              "owner A9.8 (A9.16 step 1): per-path leakage limit with documented basis registered before the test, no "
+              "flashover / breakdown / tracking / trip (P1-IT-55); in-house assembled-system DWV plus supplier "
+              "certificate (OQ-RFQV2-08); H-1 anode / discharge-supply path class recorded (OQ-RFQV2-06); validated "
+              "thermal limits registered (P1Q-04: limit - 50 K abort / derate on all P1 operation); target geometry and "
+              "interim IP-NEU harness drawing registered (P1Q-09, A9.14 P1Q-12)",
               "otherwise G0_NOT_MET (deficiency) or G0_NOT_EVALUATED_TBD (input missing); every later stage record is "
               "OUT_OF_DOMAIN until G0 is met"],
      "record_template": _tpl("p1_g0_readiness", red.READINESS_REQUIRED),
@@ -143,21 +155,27 @@ WORKFLOW = [
     {"id": "P1-W08", "name": "stable-region determination and P2 handoff (IF-P1-01 -> IDP2-01)",
      "stage_ids": ["P1-S5"], "entry": ["surface from P1-W04; ignition repeatability from P1-W03"],
      "exit": ["handoff record: points within OWNER criteria (P1Q-01) and the envelope of tested points; "
-              "NOT_EVALUATED without criteria (raw metrics handed over)"],
+              "NOT_EVALUATED without criteria (raw metrics handed over)",
+              "owner A9.11 P1Q-01: criteria frozen and hashed before the first P1-S5 dwell, derived from P1-S2..S4 "
+              "evidence; >= 3 independent re-ignitions per point (A9.10 P1Q-05); WITHIN_OWNER_CRITERIA only"],
      "record_template": _tpl("stability_dwell", red.DWELL_REQUIRED),
      "required_channels": ["P1-M-02", "P1-M-11", "P1-M-21", "P1-M-23", "P1-M-26"],
      "reducer": "p1_reducer.stable_region_handoff"},
     {"id": "P1-W09", "name": "Takahashi-like topology control (ICP OFF Hall start attempt; ICP ON repeat)",
      "stage_ids": ["P1-S6"],
      "entry": ["HI-HOLDOUT-A signed; Hall start limits (P1-IT-31) and sustainment definition (P1-IT-32) registered; "
-               "C1 disconnected"],
+               "C1 disconnected",
+               "owner A9.10 (A9.16 step 1): HI-HOLDOUT-A starts here (P1Q-08); start-attempt limits (P1Q-02) and the "
+               "current-and-time sustainment definition (P1Q-03) frozen before the first P1-S6 record, else "
+               "OUT_OF_DOMAIN; C1 may be C1_NOT_INSTALLED (OQ-RFQV2-09)"],
      "exit": ["observation class only; engineering-only, non-scoring, never a gate (A9.3 OQ-VI-05; A9.6 sec. 8)"],
      "record_template": _tpl("topology_control_sequence", red.SEQUENCE_REQUIRED),
      "required_channels": ["P1-M-01", "P1-M-02", "P1-M-10", "P1-M-11", "P1-M-14", "P1-M-15"],
      "reducer": "p1_reducer.reduce_topology_control"},
     {"id": "P1-W10", "name": "Hall-ON NEUTRALIZATION_CONSISTENCY after capacity", "stage_ids": ["P1-S7H"],
      "entry": ["discharge-OFF capacity shown at the same registered H-1 point (a CLOSURE_VALID_CANDIDATE with "
-               "M_n,LB > 0 under both P1Q-19 treatments); otherwise the row is OUT_OF_DOMAIN (entry not met)"],
+               "M_n,LB > 0 under the owner-selected P1Q-19 treatment, A9.10 REQUIRE_REGISTERED_GE_CHANNEL); otherwise "
+               "the row is OUT_OF_DOMAIN (entry not met)"],
      "exit": ["descriptive consistency rows (sustainment, closure, I_e,ICP vs I_d, potentials, RF power); never "
               "ICP45_CAPACITY and never I_e,cap (A9.4 P1Q-10; A9.6 sec. 2)"],
      "record_template": _tpl("icp_operating_point", red.OPERATING_POINT_REQUIRED),
@@ -199,25 +217,27 @@ def _check_bundle(bundle):
     if not isinstance(reg["registration_set_id"], str) or not reg["registration_set_id"].strip():
         raise CampaignInputError("registrations.registration_set_id must be a non-empty string")
     doms = reg["operating_domains"]
-    if not isinstance(doms, dict):
-        raise CampaignInputError("registrations.operating_domains must be an object {stage_id: domain}")
-    for st, d in doms.items():
-        if not isinstance(d, dict) or not isinstance(d.get("domain_id"), str) or not d["domain_id"].strip():
-            raise CampaignInputError("operating domain of %r needs a domain_id" % st)
-        for f, v in d.items():
-            if f == "domain_id":
-                continue
-            if f not in DOMAIN_FACTORS:
-                raise CampaignInputError("operating domain of %r: unknown factor %r (allowed %s)"
-                                         % (st, f, sorted(DOMAIN_FACTORS)))
-            if (not isinstance(v, list) or len(v) != 2 or any(isinstance(x, bool) or not isinstance(x, (int, float))
-                                                               for x in v) or v[0] > v[1]):
-                raise CampaignInputError("operating domain of %r: factor %r must be [min, max]" % (st, f))
+    try:      # owner A9.8 P1-IT-52: unique domain_id, frozen_utc, basis, [min, max] factors
+        rules.check_operating_domains(doms, DOMAIN_FACTORS)
+    except rules.RuleError as e:
+        raise CampaignInputError("registrations.operating_domains invalid: %s" % e)
     if reg["stable_criteria"] is not None:
         try:
             red.check_stable_criteria(reg["stable_criteria"])
-        except red.P1RecordError as e:
+            rules.check_stable_criteria_registration(reg["stable_criteria"], [])   # hash (owner A9.11 P1Q-01)
+        except (red.P1RecordError, rules.RuleError) as e:
             raise CampaignInputError("registrations.stable_criteria invalid: %s" % e)
+    for key, chk in (("sustainment_definition", red.check_sustainment_definition),
+                     ("start_attempt_limits", red.check_start_attempt_limits),
+                     ("icp_geometry_matrix", rules.check_geometry_matrix)):
+        if reg[key] is not None:
+            try:
+                chk(reg[key])
+            except (red.P1RecordError, rules.RuleError) as e:
+                raise CampaignInputError("registrations.%s invalid: %s" % (key, e))
+    if isinstance(reg["closure_rule"], dict) and "dwv_leakage_by_path" in reg["closure_rule"]:
+        raise CampaignInputError("registrations.closure_rule.dwv_leakage_by_path is derived from the governing P1-G0 "
+                                 "readiness record (accepted DWV paths, owner A9.8 P1Q-20 / P1-IT-55), never supplied")
     if not isinstance(reg["facility_pairs"], list):
         raise CampaignInputError("registrations.facility_pairs must be a list (empty when none)")
     recs = bundle["records"]
@@ -294,7 +314,8 @@ def _walk_no_pass(obj, path="report"):
 
 def _capacity_shown_points(icp, margin_rule):
     """h1_point_ids at which discharge-OFF capacity is shown (P1-W10 entry): a CLOSURE_VALID_CANDIDATE whose own
-    M_n,LB > 0 under both P1Q-19 treatments, with the ICP-45 evaluation not NOT_EVALUATED."""
+    M_n,LB > 0 under the owner-selected P1Q-19 treatment (A9.10 REQUIRE_REGISTERED_GE_CHANNEL: admissible registration),
+    with the ICP-45 evaluation not NOT_EVALUATED."""
     if icp.get("status") not in ("EVALUATED_ENGINEERING_ONLY", "SYNTHETIC_TEST_ONLY_NOT_EVIDENCE"):
         return {}
     k = float(margin_rule["k_one_sided"])
@@ -302,7 +323,7 @@ def _capacity_shown_points(icp, margin_rule):
     for c in icp.get("candidates", []):
         alts = red._p1q19_alternatives(c, icp["I_d_max_H1_A"], k, float(margin_rule["u_I_e_A"]),
                                        float(margin_rule["u_I_d_max_A"]))
-        if alts["agree"] and alts[red.P1Q19_ALTERNATIVES[0]]["condition_met"] is True:
+        if alts["registration_admissible"] and alts[red.P1Q19_OWNER_SELECTED]["condition_met"] is True:
             shown.setdefault(c["h1_point_id"], []).append(c["record_id"])
     return shown
 
@@ -353,8 +374,31 @@ def run_campaign(bundle):
         g0_ts = g0_recs[-1][0]
     g0_met = g0 is not None and g0["g0_status"] == "G0_ENTRY_CONDITIONS_RECORDED"
     doms = reg["operating_domains"]
+    vrecs = [valid[i] for i in ids if i in valid]
+    # owner A9.16 step-1 rules evaluated on the validated records (p1_a9_16_rules)
+    dom_freeze = rules.domain_freeze_reasons(doms, vrecs)                               # A9.8 P1-IT-52
+    magnet = rules.magnet_order_reasons(vrecs)                                          # A9.10 P1Q-06
+    geo = rules.geometry_matrix_report(reg["icp_geometry_matrix"],
+                                       [r for r in vrecs if r["record_kind"] == "icp_operating_point"])  # F6-OQ-03
+    thermal_limits = g0["rows"].get("thermal_limits", []) if g0 else []
+    thermal = []
+    s6_why = (rules.freeze_before_stage_reasons(reg["start_attempt_limits"], "Hall start-attempt limits", "P1-S6",
+                                                vrecs, "owner A9.10 P1Q-02: registered before the first P1-S6 attempt")
+              + rules.freeze_before_stage_reasons(reg["sustainment_definition"], "sustained-discharge definition",
+                                                  "P1-S6", vrecs, "owner A9.10 P1Q-03: registered before P1-S6"))
     for i, r in valid.items():
         why = _domain_reasons(r, doms)
+        if r["stage_id"] != G0_STAGE:
+            why += dom_freeze.get(i, []) + magnet.get(i, []) + geo["out_of_matrix"].get(i, [])
+            rows_t = rules.thermal_abort_rows(r, thermal_limits)
+            thermal += rows_t
+            for t in rows_t:
+                if t["status"] == "ABORT_DERATE_REQUIRED":
+                    why.append("UBQ-06 abort / derate limit reached: %s = %r degC >= validated continuous-use limit - "
+                               "50 K = %r degC (owner A9.8 P1Q-04: applies to all P1 operation incl. non-scoring)"
+                               % (t["temperature_field"], t["T_C"], t["abort_derate_at_C"]))
+            if r["stage_id"] == "P1-S6":
+                why += ["P1-S6 entry not met: " + w for w in s6_why]
         if r["stage_id"] != G0_STAGE:
             if not g0_met:
                 why.append("stage entry not met: P1-G0 status %s (every stage after P1-S0 needs "
@@ -381,6 +425,8 @@ def run_campaign(bundle):
     ops = by_kind.get("icp_operating_point", [])
     op_ids = {r["record_id"] for r in ops}
     pairs, pair_notes = [], {}
+    pm_why = rules.check_pressure_match_registration(
+        reg["facility_match"], vrecs, [x for p in reg["facility_pairs"] if isinstance(p, list) for x in p])
     for p in reg["facility_pairs"]:
         if not isinstance(p, list) or len(p) != 2 or p[0] not in index or p[1] not in index:
             raise CampaignInputError("registered facility pair %r refers to records not in the bundle" % (p,))
@@ -389,20 +435,30 @@ def run_campaign(bundle):
             d = index[member]["disposition"]
             if d != "REDUCED":
                 bad.append((d, "paired %s record %r is %s: %s" % (tag, member, d, "; ".join(index[member]["reasons"]))))
-        if reg["facility_match"] is None:
-            bad.append(("REDUCED", "facility pressure-match rule not registered (P1-IT-37): the RF-OFF correction "
-                                   "cannot be formed"))
+        if pm_why:
+            bad.append(("REGISTRATION", "facility pressure-match tolerance not validly registered (P1-IT-37; owner "
+                                        "A9.8 P1Q-11): the RF-OFF correction cannot be formed - " + "; ".join(pm_why)))
         if bad:
             pair_notes[p[0]] = (p[1], bad)
         else:
             pairs.append(p)
     cap_rec = {r["record_id"] for r in ops if r["record_class"] == red.CAPACITY_LABEL
                and r["hall_discharge_state"] == "OFF" and float(r["rf"]["P_fwd_W"]) > 0.0}
-    registered = reg["i_d_max_registration"] is not None and reg["margin_rule"] is not None
-    ic_reg = reg["i_d_max_registration"] if registered else None
+    # owner A9.10 P1Q-07: I_d,max,H1,Ar frozen before P1-S7 (else not usable: NOT_EVALUATED_REGISTRATION)
+    id_freeze = ([] if reg["i_d_max_registration"] is None else rules.freeze_before_stage_reasons(
+        reg["i_d_max_registration"], "I_d,max,H1,Ar registration", "P1-S7", vrecs,
+        "owner A9.10 P1Q-07: frozen before P1-S7"))
+    id_reg = reg["i_d_max_registration"] if not id_freeze else None
+    # owner A9.8 P1Q-20: the open-circuit leakage terms trace to the accepted DWV paths of the governing P1-G0 record
+    clo_rule = None
+    if reg["closure_rule"] is not None:
+        clo_rule = dict(reg["closure_rule"], dwv_leakage_by_path=dict(g0["rows"].get("dwv_leakage_by_path", {}))
+                        if g0 else {})
+    registered = id_reg is not None and reg["margin_rule"] is not None
+    ic_reg = id_reg if registered else None
     ic_mr = reg["margin_rule"] if registered else None
     if ops:
-        opr = red.reduce_operating_points(ops, ic_reg, ic_mr, pairs, reg["facility_match"], reg["closure_rule"], lv)
+        opr = red.reduce_operating_points(ops, ic_reg, ic_mr, pairs, reg["facility_match"], clo_rule, lv)
     else:
         opr = {"surface": [], "facility_electron_checks": [], "summary": {"icp45a": red.icp45a_evaluate([], None)}}
     icp = opr["summary"]["icp45a"]
@@ -418,18 +474,19 @@ def run_campaign(bundle):
             for e in icp.get(key, []):
                 if e["record_id"] in cap_rec:
                     outcomes[e["record_id"]] = dict(e)
-    elif reg["i_d_max_registration"] is not None:        # margin rule missing: outcomes still formed per point
-        c, ex, ins, unc = red.icp45a_candidates(ops, reg["i_d_max_registration"], fac_by_on, reg["closure_rule"])
+    elif id_reg is not None:        # margin rule missing: outcomes still formed per point
+        c, ex, ins, unc = red.icp45a_candidates(ops, id_reg, fac_by_on, clo_rule)
         for e in c + ex + ins + unc:
             if e["record_id"] in cap_rec:
                 outcomes[e["record_id"]] = dict(e)
         icp = dict(icp, reason="margin rule not registered (P1-IT-29): ICP45 = NOT_EVALUATED; " + icp["reason"])
     else:
         for rid in sorted(cap_rec):
-            clo = red.kirchhoff_closure(use[rid], reg["closure_rule"]) if reg["closure_rule"] is not None else None
+            clo = red.kirchhoff_closure(use[rid], clo_rule) if clo_rule is not None else None
             outcomes[rid] = {"record_id": rid, "outcome": "NOT_EVALUATED_REGISTRATION", "closure": clo,
                              "reasons": ["I_d,max,H1 and its registered H-1 points not registered (A9.4 "
-                                         "execution_decisions.i_d_max_h1; A9.5 P1Q-16 condition 4): NOT_EVALUATED"]}
+                                         "execution_decisions.i_d_max_h1; A9.5 P1Q-16 condition 4): NOT_EVALUATED"]
+                             + id_freeze}
     for rid in sorted(cap_rec):
         o = outcomes.setdefault(rid, {"record_id": rid, "outcome": "EXCLUDED", "reasons": []})
         o["reasons"] = list(o.get("reasons") or [])
@@ -437,6 +494,8 @@ def run_campaign(bundle):
             o["reasons"].append(note)
             if d == "OUT_OF_DOMAIN":
                 o["outcome"] = "OUT_OF_DOMAIN"
+            elif d == "REGISTRATION" and o["outcome"] != "OUT_OF_DOMAIN":
+                o["outcome"] = "NOT_EVALUATED_REGISTRATION"
     for i, r in valid.items():                            # RF-ON capacity records outside the domain
         if (index[i]["disposition"] == "OUT_OF_DOMAIN" and r["record_kind"] == "icp_operating_point"
                 and r["record_class"] == red.CAPACITY_LABEL and float(r["rf"]["P_fwd_W"]) > 0.0):
@@ -447,10 +506,10 @@ def run_campaign(bundle):
         index[o["record_id"]]["capacity_point_outcome"] = o["outcome"]
     # Kirchhoff closures (every capacity-class record, RF-ON and RF-OFF)
     closures = []
-    if reg["closure_rule"] is not None:
+    if clo_rule is not None:
         for r in ops:
             if r["record_class"] == red.CAPACITY_LABEL:
-                closures.append(red.kirchhoff_closure(r, reg["closure_rule"]))
+                closures.append(red.kirchhoff_closure(r, clo_rule))
     # P1-W10 consistency rows with the 'after capacity' entry rule
     shown = _capacity_shown_points(icp, reg["margin_rule"]) if registered else {}
     cons = []
@@ -475,12 +534,16 @@ def run_campaign(bundle):
                                                                                   r["rf"]["P_fwd_W"]))
     # P1-W08 stable region
     ign_pts = {p["point_id"]: p for p in ign["points"]}
+    crit_why = (rules.check_stable_criteria_registration(reg["stable_criteria"], vrecs)
+                if reg["stable_criteria"] is not None else [])
     stable = red.stable_region_handoff(by_kind.get("stability_dwell", []), {r["record_id"]: r for r in ops}, ign_pts,
-                                       reg["stable_criteria"])
+                                       None if crit_why else reg["stable_criteria"])
+    if crit_why:
+        stable["note"] += "; registered criteria not admissible: " + "; ".join(crit_why)
     # P1-W09 topology control
     topo = []
     for s in by_kind.get("topology_control_sequence", []):
-        t = red.reduce_topology_control(s)
+        t = red.reduce_topology_control(s, reg["sustainment_definition"], reg["start_attempt_limits"])
         t.update({"gate": False, "scoring": False, "evidence_class": red.REQUIRED_LABEL})
         topo.append(t)
     # excluded records (verbatim reasons) - never dropped
@@ -525,6 +588,26 @@ def run_campaign(bundle):
                          "m16_state": "PENDING_ICP45 (A9.2; unchanged by any P1 software result)",
                          "reason": icp.get("reason")},
         "stable_region": stable, "topology_control": topo, "neutralization_consistency": cons,
+        "owner_rules_a9_16": {
+            "thermal_protection": thermal,
+            "thermal_status": ("NO_REGISTERED_LIMITS" if not thermal_limits else
+                               ("ABORT_DERATE_REQUIRED_RECORDED" if any(t["status"] == "ABORT_DERATE_REQUIRED"
+                                                                        for t in thermal)
+                                else "NO_ABORT_DERATE_CONDITION_RECORDED")),
+            "pressure_match_registration": {"status": "NOT_EVALUATED_REGISTRATION" if pm_why else "REGISTERED",
+                                            "reasons": pm_why},
+            "i_d_max_h1_ar_registration": {"status": ("NOT_REGISTERED" if reg["i_d_max_registration"] is None else
+                                                      ("NOT_EVALUATED_REGISTRATION" if id_freeze else
+                                                       "REGISTERED_BEFORE_P1_S7")), "reasons": id_freeze},
+            "stable_criteria_registration": {"status": ("NOT_REGISTERED" if reg["stable_criteria"] is None else
+                                                        ("NOT_EVALUATED_REGISTRATION" if crit_why else
+                                                         "FROZEN_AND_HASHED")), "reasons": crit_why},
+            "p1_s6_entry": {"status": "NOT_MET" if s6_why else "REGISTERED_BEFORE_P1_S6", "reasons": s6_why},
+            "geometry_matrix": geo,
+            "magnet_factor_f6_order_violations": {k: magnet[k] for k in sorted(magnet)},
+            "operating_domain_freeze_violations": {k: dom_freeze[k] for k in sorted(dom_freeze)},
+            "decisions": [rules.A98, rules.A910, rules.A911, rules.A914],
+        },
         "excluded_records": excluded,
         "raw_record_index": [index[i] for i in ids], "raw_records": raw,
         "statements": ["engineering-only, non-scoring (ENGINEERING_ONLY_NON_SCORING); no performance prediction",

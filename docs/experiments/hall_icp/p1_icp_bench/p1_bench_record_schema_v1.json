@@ -43,7 +43,8 @@
     "ar_sweep_bounds_mg_s",
     "second_mfc_necessity",
     "generator_class",
-    "registrations"
+    "registrations",
+    "thermal_limits"
    ],
    "properties": {
     "schema": {
@@ -102,9 +103,20 @@
       "type": "object",
       "required": [
        "path_id",
-       "applicable"
+       "applicable",
+       "path_class"
       ],
       "properties": {
+       "path_class": {
+        "enum": [
+         "ICP_BODY_COLLECTOR_350V_CLASS",
+         "H1_ANODE_DISCHARGE_SUPPLY_350V_CLASS",
+         "OTHER_REGISTERED_PATH"
+        ]
+       },
+       "test_configuration": {
+        "const": "ASSEMBLED_SYSTEM_IN_HOUSE"
+       },
        "leakage_acceptance": {
         "anyOf": [
          {
@@ -114,13 +126,62 @@
           "type": "object",
           "required": [
            "criterion_id",
-           "max_leakage_A"
+           "max_leakage_A",
+           "basis_document_id",
+           "u_measurement_A",
+           "uncertainty_treatment",
+           "registered_utc"
           ]
          }
         ]
        }
-      }
+      },
+      "x-required-when-applicable": [
+       "V_test_V",
+       "duration_s",
+       "current_limited",
+       "leakage_A",
+       "breakdown_or_flashover",
+       "tracking_or_disruptive_discharge",
+       "protective_trip",
+       "test_configuration",
+       "configuration_id",
+       "supplier_certificate",
+       "test_utc"
+      ]
      }
+    },
+    "thermal_limits": {
+     "anyOf": [
+      {
+       "type": "null"
+      },
+      {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "required": [
+         "temperature_field",
+         "component",
+         "validated_continuous_limit_C",
+         "basis"
+        ],
+        "properties": {
+         "temperature_field": {
+          "enum": [
+           "T_icp_dielectric_C",
+           "T_antenna_C",
+           "T_collector_C",
+           "T_match_C",
+           "T_rf_source_C",
+           "T_h1_pole_inner_C",
+           "T_h1_pole_outer_C"
+          ]
+         }
+        }
+       }
+      }
+     ]
     },
     "gas_lines": {
      "type": "array",
@@ -253,6 +314,18 @@
         "string",
         "null"
        ]
+      },
+      "electron_collector_target_geometry_id": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "ip_neu_interim_harness_drawing_id": {
+       "type": [
+        "string",
+        "null"
+       ]
       }
      }
     }
@@ -276,7 +349,13 @@
      "P1-SI-11"
     ],
     "source": "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json decisions.P1Q-14",
-    "icpq06_class_V": 1000.0
+    "icpq06_class_V": 1000.0,
+    "dwv_required_path_classes": [
+     "ICP_BODY_COLLECTOR_350V_CLASS",
+     "H1_ANODE_DISCHARGE_SUPPLY_350V_CLASS"
+    ],
+    "thermal_abort_margin_K": 50.0,
+    "a9_16_source": "docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json decisions.P1-IT-55 / OQ-RFQV2-06 / OQ-RFQV2-08; docs/decisions/OD_2026_10_01_A9_8_s1_p1_start_owner_decisions.json decisions.P1Q-04"
    }
   },
   "rf_cold_checkout": {
@@ -587,7 +666,9 @@
     "ignition_delay_s",
     "extinguished",
     "optical",
-    "h1_magnet_state"
+    "h1_magnet_state",
+    "start_state",
+    "restart_condition_met"
    ],
    "properties": {
     "schema": {
@@ -759,8 +840,30 @@
      "minLength": 1
     },
     "h1_magnet_state": {
+     "enum": [
+      "OFF",
+      "REGISTERED_SETTING"
+     ]
+    },
+    "h1_magnet_field_setting_id": {
      "type": "string",
      "minLength": 1
+    },
+    "h1_coil_currents_A": {
+     "type": "object",
+     "minProperties": 1,
+     "additionalProperties": {
+      "type": "number"
+     }
+    },
+    "start_state": {
+     "enum": [
+      "EXTINGUISHED_RF_OFF",
+      "NOT_FROM_EXTINGUISHED_STATE"
+     ]
+    },
+    "restart_condition_met": {
+     "type": "boolean"
     }
    }
   },
@@ -852,7 +955,8 @@
     "impedance",
     "terminals",
     "temperatures",
-    "rf_pickup_check"
+    "rf_pickup_check",
+    "h1_magnet_state"
    ],
    "properties": {
     "schema": {
@@ -960,6 +1064,15 @@
       "ground_path_check_id": {
        "type": "string",
        "minLength": 1
+      },
+      "langmuir_probe_present": {
+       "type": "boolean",
+       "description": "A9.8 P3Q-01: Langmuir probe present during this capacity record; undeclared -> the point is excluded"
+      },
+      "probe_perturbation_negligible_evidence_id": {
+       "type": "string",
+       "minLength": 1,
+       "description": "registered evidence that the probe perturbation is negligible; required when the probe is present"
       }
      }
     },
@@ -1166,15 +1279,21 @@
       "electron_collecting_electrode": {
        "enum": [
         "DEDICATED_ELECTRON_COLLECTOR_TARGET",
-        "CHAMBER_WALL_FACILITY_GROUND",
         "H1_ANODE"
        ]
+      },
+      "target_geometry_id": {
+       "type": "string",
+       "minLength": 1
       }
      },
+     "x-refused-electrodes": [
+      "CHAMBER_WALL_FACILITY_GROUND"
+     ],
+     "x-dedicated-target-rules": "owner A9.8 P1Q-09: target_geometry_id registered at P1-G0; collector.reference_potential = ELECTRON_COLLECTOR_ELECTRODE and V_collector_V < 0",
      "x-allowed-by-hall-state": {
       "OFF": [
-       "DEDICATED_ELECTRON_COLLECTOR_TARGET",
-       "CHAMBER_WALL_FACILITY_GROUND"
+       "DEDICATED_ELECTRON_COLLECTOR_TARGET"
       ],
       "ON": [
        "H1_ANODE"
@@ -1310,8 +1429,25 @@
           ]
          }
         }
+       },
+       "physical_verification_id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "leakage": {
+        "type": "object",
+        "required": [
+         "dwv_path_id",
+         "leakage_upper_bound_A",
+         "u_leakage_A"
+        ],
+        "description": "owner A9.8 P1Q-20: measured DWV insulation-leakage term of an OPEN_CIRCUIT_BY_CONSTRUCTION terminal"
        }
       },
+      "x-required-when-open-circuit": [
+       "physical_verification_id",
+       "leakage (capacity closure; else NOT_EVALUATED_UNCERTAINTY)"
+      ],
       "x-I_A-required-unless-basis": "NOT_MEASURED"
      },
      "x-required-by-hall-state-and-electrode": {
@@ -1320,12 +1456,7 @@
        "icp_body",
        "facility_ground",
        "electron_collector",
-       "hall_anode"
-      ],
-      "OFF/CHAMBER_WALL_FACILITY_GROUND": [
-       "collector_supply",
-       "icp_body",
-       "facility_ground",
+       "h1_body",
        "hall_anode"
       ],
       "ON/H1_ANODE": [
@@ -1438,8 +1569,35 @@
        "type": "string"
       }
      }
+    },
+    "h1_magnet_state": {
+     "enum": [
+      "OFF",
+      "REGISTERED_SETTING"
+     ],
+     "description": "factor F6 (owner A9.10 P1Q-06): OFF first, then registered settings"
+    },
+    "h1_magnet_field_setting_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "h1_coil_currents_A": {
+     "type": "object",
+     "minProperties": 1,
+     "additionalProperties": {
+      "type": "number"
+     }
+    },
+    "icp_geometry_id": {
+     "type": "string",
+     "minLength": 1,
+     "description": "registered ICP geometry variant (owner A9.14 F6-OQ-03)"
     }
    },
+   "x-required-when-magnet-on": [
+    "h1_magnet_field_setting_id",
+    "h1_coil_currents_A"
+   ],
    "propertyNames": {
     "not": {
      "pattern": "[Bb][^A-Za-z0-9]*[Uu][^A-Za-z0-9]*[Ss]"
@@ -1461,7 +1619,9 @@
     "classification",
     "c1_disconnected",
     "hall_start_registration_id",
-    "steps"
+    "steps",
+    "c1_configuration",
+    "hi_holdout_a_id"
    ],
    "properties": {
     "schema": {
@@ -1482,6 +1642,20 @@
      "const": true
     },
     "hall_start_registration_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "c1_configuration": {
+     "enum": [
+      "C1_NOT_INSTALLED",
+      "C1_INSTALLED_DISCONNECTED"
+     ]
+    },
+    "c1_absence_record_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "hi_holdout_a_id": {
      "type": "string",
      "minLength": 1
     },
@@ -1514,6 +1688,15 @@
        },
        "sustainment_definition_id": {
         "type": "string"
+       },
+       "supply_enabled_connected": {
+        "type": "boolean"
+       },
+       "artifact_or_transient_only": {
+        "type": "boolean"
+       },
+       "interlock_invalidates": {
+        "type": "boolean"
        },
        "signals": {
         "type": "object",
@@ -1579,7 +1762,9 @@
    "I_scale_min_A",
    "I_scale_min_basis",
    "covariance",
-   "open_by_construction_terminals"
+   "open_by_construction_terminals",
+   "leakage_negligibility_ratio_max",
+   "dwv_leakage_by_path"
   ],
   "sign_convention": "CONVENTIONAL_CURRENT_INTO_THE_DEFINED_ISOLATED_ELECTRICAL_NETWORK_IS_POSITIVE",
   "owner_constants": {

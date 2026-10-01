@@ -233,12 +233,19 @@ F6 supplies:
 - F6-IF-S05 to F0 docs/performance/PERFORMANCE_BASELINE_98fbbb9.json (fo_a9_7_f0_profiling): a P3 ray / view-factor workload (96 envelopes x 4 emitters at (16, 32, 64) plus 8 at (32, 64, 128)) for profiling (Rust order item 6) - AVAILABLE (builder)
 - F6-IF-S06 to F1 / F2 / F3 / F4 (abep_sim/design/intake_synthesis.py (fo_a9_7_f1_intake_synthesis); abep_sim/design/filter_stage.py (fo_a9_7_f2_filter_stage); abep_sim/design/compressor_synthesis.py (fo_a9_7_f3_compressor_synthesis); abep_sim/design/plenum_feed.py (fo_a9_7_f4_plenum_feed)): no direct geometric interface; carried flag: the ICP gas feed is unbooked (A9 recorder flag) and the dedicated ICP gas port stays capped (A9.3 OQ-RFQ-10) - any ICP gas demand on the feed path comes from P1 records, not from F6 - NO_INTERFACE_NOW
 
-## New open owner questions
+## Owner questions raised by F6 (answered by A9.14)
 
-- F6-OQ-01 (TBD_OWNER; blocks any F6 Pareto set): Approve the F6 objective definitions and directions (eight objectives; worst-case P2 loss fraction as the matching metric; P_RF,delivered at the ICP45 capacity point as the RF power metric; sum A_z F_z->ICP as the view-factor metric) and the fail-closed Pareto rule (no subset ranking)?
-- F6-OQ-02 (TBD_OWNER; blocks search()): Which source fixes the design-variable bounds F6-X-01..17: the KC-1 / ICP module drawing envelope at LOCK-1, or a registered P1 / P2 bench geometry matrix?
-- F6-OQ-03 (TBD_OWNER; blocks geometry search beyond built articles): P1 / P2 measure built geometries only. Does the owner want (a) a multi-geometry P1 / P2 bench matrix (each candidate built and measured) or (b) a separately validated model of I_e,cap and Z_antenna vs geometry? Without one, the F6 'search' is an evaluation over built geometries.
-- F6-OQ-04 (TBD_OWNER; blocks hall_b_field_disturbance): Define the Hall magnetic-field disturbance metric (e.g. max |dB|/|B| in the acceleration region vs at IP-EXIT) and its acceptance threshold.
+- F6-OQ-01 (OWNER_DECIDED APPROVE_F6_OBJECTIVES_FAIL_CLOSED; blocks any F6 Pareto set): Approve the F6 objective definitions and directions (eight objectives; worst-case P2 loss fraction as the matching metric; P_RF,delivered at the ICP45 capacity point as the RF power metric; sum A_z F_z->ICP as the view-factor metric) and the fail-closed Pareto rule (no subset ranking)?
+- F6-OQ-02 (OWNER_DECIDED DRAWING_HARD_BOUNDS_BENCH_EVIDENCE_POINTS; blocks search()): Which source fixes the design-variable bounds F6-X-01..17: the KC-1 / ICP module drawing envelope at LOCK-1, or a registered P1 / P2 bench geometry matrix?
+- F6-OQ-03 (OWNER_DECIDED MULTI_GEOMETRY_BENCH_FIRST_MODEL_AFTER_VALIDATION; blocks geometry search beyond built articles): P1 / P2 measure built geometries only. Does the owner want (a) a multi-geometry P1 / P2 bench matrix (each candidate built and measured) or (b) a separately validated model of I_e,cap and Z_antenna vs geometry? Without one, the F6 'search' is an evaluation over built geometries.
+- F6-OQ-04 (OWNER_DECIDED DELTA_B_ACC_MAX_5_PERCENT_PROVISIONAL; blocks hall_b_field_disturbance): Define the Hall magnetic-field disturbance metric (e.g. max |dB|/|B| in the acceleration region vs at IP-EXIT) and its acceptance threshold.
+
+## A9.16 owner decisions applied
+
+- **objectives** OWNER_APPROVED: {"decision": "A9.14 F6-OQ-01 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)", "pareto_rule": "fail closed: REFUSED_INCOMPLETE while any required objective is missing; no ranking from an incomplete subset", "required": ["electron_current_capacity", "plume_interception_fraction", "rf_match_loss_fraction", "rf_power_delivered", "hall_b_field_disturbance", "view_factor_obstruction", "collector_heating", "module_mass"]}
+- **bounds** OWNER_DECIDED: {"decision": "A9.14 F6-OQ-02 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)", "evaluator": "docs/design_synthesis/f6_icp_geometry/a9_16_f6.py:geometry_scope", "evidence_points": "registered P1 / P2 geometry matrix (P1 icp_geometry_matrix slot, P1-IT-61)", "hard_bounds": "KC-1 / ICP LOCK-1 drawing envelope (not yet registered: NOT_EVALUATED_REGISTRATION)", "rule": "a test matrix never enlarges the mechanical envelope without a drawing revision"}
+- **search_scope** BUILT_GEOMETRIES_ONLY: {"decision": "A9.14 F6-OQ-03 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)", "surrogate": "none; a geometry-response surrogate only after a separate predictive validation"}
+- **hall_b_field_disturbance** OWNER_DEFINED_PROVISIONAL: {"also_report": ["absolute stray field at IP-EXIT", "absolute stray field through the ICP volume"], "decision": "A9.14 F6-OQ-04 (docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json sha256 c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c)", "evaluator": "docs/design_synthesis/f6_icp_geometry/a9_16_f6.py:delta_b_acc", "metric": "delta_B_acc = max_ROI |B_H1+ICP - B_H1| / max_ROI |B_H1|", "module_change": "PENDING_STEP_3_ARCHITECTURE (abep_sim/design/icp_geometry_synthesis.b_field_objective keeps its contract)", "provisional_max": 0.05, "roi": "preregistered H-1 acceleration-region ROI and relevant magnet states (TBD)", "today": "NOT_EVALUATED (no FEMM of MC-1 covering the ICP region; F6-IF-N02)"}
 
 ## M16 impact
 
@@ -252,6 +259,10 @@ F6 supplies:
 - `docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md` sha256 `fb51328d6fe07a6eaf257ef9ef9592cb0c0039ae3e8cf04ef0420007c985b129` (A9.7 verbatim owner directive (F6 section))
 - `docs/decisions/OD_2026_10_01_A9_7_architecture_freeze_design_synthesis.json` sha256 `3199a670c901967ae4dca930022470b024cac14b263335da0adc3d423c37f372` (A9.7 machine-readable record (f6_condition, optimizer_rule, recorder_notes))
 - `docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json` sha256 `74ef1a727c3656841ef115122c6d60865f7d2d93cfa29f7fb0081886484d2a1f` (A9 governing decision (Hall + downstream 13.56 MHz RF ICP neutralizer; INVESTIGATION_HYPOTHESIS))
+- `docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json` sha256 `c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c` (A9.14 owner decisions (applied: A9.16 step 1))
+- `docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md` sha256 `2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07` (A9.14 verbatim record (governs))
+- `docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json` sha256 `a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309` (A9.15 owner decisions (applied: A9.16 step 1))
+- `docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md` sha256 `edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903` (A9.15 verbatim record (governs))
 
 Referenced, not pinned (mutable deliverables; reproduction is checked byte-for-byte by --check):
 

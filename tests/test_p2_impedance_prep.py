@@ -496,8 +496,12 @@ def test_owner_values_and_statuses_unchanged(d):
     for o in d["p2_outputs_later"]:
         assert "PASS" not in o["status"]
     outs = {o["id"]: o for o in d["p2_outputs_later"]}
-    for q in ("ICPQ-10", "ICPQ-11", "OQ-A910-06"):
-        assert outs[q]["status"].startswith("OPEN")
+    # A9.16 repair F1 / F5: ICPQ-10 (A9.12 S5.1) and OQ-A910-06 (A9.12 S5.8) are owner-decided (updated test; they
+    # were carried OPEN in step 1); neither is a PASS or a rating
+    for q in ("ICPQ-10", "OQ-A910-06"):
+        assert outs[q]["status"].startswith("OWNER_DECIDED (A9.12 S5.")
+    # A9.16 step 1 (owner A9.14 S8.4 ICPQ-11 K_RF_1_5): ICPQ-11 is owner-given; the rating stays TBD_AFTER_IMPEDANCE_MAP
+    assert outs["ICPQ-11"]["status"].startswith("OWNER_GIVEN") and "TBD_AFTER_IMPEDANCE_MAP" in outs["ICPQ-11"]["status"]
     assert outs["RF_COMPONENT_RATINGS"]["status"] == "TBD_AFTER_IMPEDANCE_MAP"
 
 
@@ -578,7 +582,10 @@ def test_a95_ins_p2_10_and_pins(d):
 
 def test_m16_rows_and_sections_present(d):
     assert {m["row"] for m in d["m16_impact"]} == {15, 17, 18, 19}
-    for k in ("interface_demands", "owner_answers_applied", "open_owner_questions", "historical_reuse", "m16_impact",
+    # A9.16 step 1: all answered; repair COR-01: open_owner_questions keeps the as-raised record (state-v4 read-back)
+    assert d["owner_questions_open_now"] == [] and d["answered_owner_questions"]
+    assert {q["id"] for q in d["open_owner_questions"]} == {q["id"] for q in d["answered_owner_questions"]}
+    for k in ("interface_demands", "owner_answers_applied", "answered_owner_questions", "historical_reuse", "m16_impact",
               "h3_h4_inputs", "calibration_plan", "hot_map_methodology", "data_model", "instrument_list",
               "p2_outputs_later", "reference_planes", "z_antenna_methods", "z_antenna_recommendation"):
         assert d[k], k
@@ -612,7 +619,7 @@ def test_lane_dir_contents():
     names = sorted(p.name for p in LANE.iterdir() if p.name != "__pycache__")
     assert names == sorted(["build_p2_impedance_prep.py", "p2_impedance_reducer.py", "p2_impedance_prep_v1.json",
                             "P2_IMPEDANCE_PREP.md", "p2_impedance_record_schema_v1.json", "p2_framework.py",
-                            "p2_impedance_map_schema_v1.json"])
+                            "p2_impedance_map_schema_v1.json", "p2_a9_16_rules.py", "a9_16_application.py"])
 
 
 # ------------------------------------------------------------------------------------------------ repair-round checks
@@ -880,8 +887,9 @@ def test_a94_pinned_and_state_classes(red, d):
 
 
 def test_a94_p2q05_answered_and_items(d):
-    qs = {q["id"] for q in d["open_owner_questions"]}
-    assert "P2Q-05" not in qs and "P2Q-09" in qs
+    qs = set(d["owner_questions_open_now"])           # A9.16 repair COR-01 (open_owner_questions = as raised)
+    answered = {q["id"] for q in d["answered_owner_questions"]}
+    assert "P2Q-05" not in qs and "P2Q-09" not in qs and "P2Q-09" in answered      # A9.16 step 1: A9.11 S4.7
     applied = [o for o in d["owner_answers_applied"] if isinstance(o["ref"], dict) and o["ref"].get("kind") == "A9.4"]
     by = {o["ref"]["decision"]: o for o in applied}
     assert by["P2Q-05"]["how"].startswith("ANSWERED") and "p1_needed_rfqs" in by
@@ -991,7 +999,7 @@ _XL_SELF = 'P2'
 _XL_JSON = {
     "P1": "docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json",
     "P2": "docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json",
-    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json",
+    "P3": "docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json",
     "P4": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
     "MP": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
     "XE": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",

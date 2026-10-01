@@ -227,8 +227,8 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 
 ### Row 13: thermal_control (BLOCKED)
 
-* now exists [FRAMEWORK]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json` P3-B-01, P3-B-02, P3-M-01, P3-M-02, P3-M-03 - coupled H-1 / ICP thermal framework: heat-load bound alternatives, owner margins
-* now exists [SOFTWARE]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json` docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py - coupled thermal network library (fail-closed on REFUSED inputs)
+* now exists [FRAMEWORK]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` P3-B-01, P3-B-02, P3-M-01, P3-M-02, P3-M-03 - coupled H-1 / ICP thermal framework: heat-load bound alternatives, owner margins
+* now exists [SOFTWARE]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py - coupled thermal network library (fail-closed on REFUSED inputs)
 * now exists [BUDGET]: `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` A9B-30, MPV2-N05 - thermal-control hardware; active-cooling variant only
 * now exists [PLAN]: `docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json` P1-M-21 - temperatures recorded for the P3 model
 * now exists [REQUIREMENT_MATRIX]: `docs/requirements/rvm_a9/rvm_a9_v1.json` RVM-17 - thermal closure
@@ -297,7 +297,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 * now exists [PLAN]: `docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json` P1-S3, P1-S4, P1-S5, P1-S7, P1-S7H - ICP ignition map (G-REUSE), electron-current sweep, stable region, ICP-45A discharge-OFF capacity, Hall-ON NEUTRALIZATION_CONSISTENCY
 * now exists [SOFTWARE]: `docs/experiments/hall_icp/p1_icp_bench/p1_icp_bench_v1.json` docs/experiments/hall_icp/p1_icp_bench/p1_reducer.py, docs/experiments/hall_icp/p1_icp_bench/p1_campaign.py - signed I_e,cap = I_RFON - I_RFOFF and Kirchhoff admission (fail-closed)
 * now exists [FRAMEWORK]: `docs/experiments/hall_icp/p2_impedance_map/p2_impedance_prep_v1.json` ZM-A, ZM-B, ZM-C - Z_antenna measurement methods
-* now exists [FRAMEWORK]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json` P3-B-01, P3-B-02 - ICP-43 total module heat-load bound alternatives (TBD_OWNER)
+* now exists [FRAMEWORK]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` P3-B-01, P3-B-02 - ICP-43 total module heat-load bound alternatives (TBD_OWNER)
 * now exists [FRAMEWORK]: `docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json` APP-COLLECTOR - collector material comparison (material OPEN)
 * now exists [BUDGET]: `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` A9B-17, A9B-18, MPV2-N01 - ICP head, collector / bias electrode, isolation hardware
 * now exists [LEDGER]: `docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json` P-FL-ICP-XE - dedicated ICP Xe line; A9.6 sec. 12: m_Xe,ICP = 0 under the primary G-REUSE mode
@@ -349,7 +349,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 ### Row 21: h1_anode_heat_path (BLOCKED)
 
 * now exists [FRAMEWORK]: `docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json` ID-01, ID-02 - P3 <-> P4 interface (T_operating, k(T))
-* now exists [SOFTWARE]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v1.json` docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py - anode heat path is a network input of the coupled model
+* now exists [SOFTWARE]: `docs/experiments/hall_icp/p3_coupled_thermal/p3_coupled_thermal_v2.json` docs/experiments/hall_icp/p3_coupled_thermal/p3_thermal_lib.py - anode heat path is a network input of the coupled model
 * now exists [BUDGET]: `docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json` MPV2-N03 - H-1 anode heat-removal path hardware line
 * now exists [REQUIREMENT_MATRIX]: `docs/requirements/rvm_a9/rvm_a9_v1.json` RVM-17 - thermal closure
 * evidence: none new: the A9.6 implementation batch produced frameworks, software, plans, RFQ packages, ledgers and budgets only; nothing was measured on project hardware
@@ -387,7 +387,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 | M16V4-ID-04 | consumes | docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json interface_demands[id=ID-11] | rows 18, 20, 21: framework implemented; readiness unchanged | APPLIED |
 | M16V4-ID-05 | consumes | docs/budgets/owner_decisions/owner_questions_state_v4.json (IF-V4-08) | owner-question ids used as blockers; each must be one TBD_OWNER row | APPLIED |
 | M16V4-ID-06 | provides | fo_a9_6_consolidated_verification (A9.6 sec. 18) | readiness rules R-M16V4-01..08, derive_state(), per-row blockers and the v3 -> v4 diff | OFFERED |
-| M16V4-ID-07 | provides | owner (M16-V3-Q-01) | PROPOSED blocking items, roles and latest decision points for acceptance; named engineers | AWAITING_OWNER_DECISION |
+| M16V4-ID-07 | provides | owner (M16-V3-Q-01) | PROPOSED blocking items, roles and latest decision points for acceptance; named engineers | OWNER_DECIDED (A9.14 M16-V3-Q-01: accepted; names from the staffing ledger) |
 
 ## Owner answers applied
 
@@ -401,7 +401,7 @@ Roll-up: {"execution_states": {"BLOCKED": 20, "SUPERSEDED_FOR_PRIMARY_LINE": 1},
 
 ## Open owner questions
 
-no new owner question: M16-V3-Q-01 (TBD_OWNER, state v4) is carried and covers acceptance of the v4 blocking-item selection, roles and latest decision points
+no new owner question: M16-V3-Q-01 (TBD_OWNER in state v4) is answered by A9.14 (state v5 ANSWERED_BY_A9_14)
 
 Owner-question v4 ids used as blockers: ICPQ-03, ICPQ-10, ICPQ-11, MPQ-01, MQ-04, OD12, OD14, OD2, OD3, OD6, OQ-A907-01, OQ-A907-03, OQ-A907-04, OQ-A907-05, OQ-A907-06, OQ-A907-07, OQ-A907-08, OQ-A907-09, OQ-A907-10, OQ-A910-05, OQ-A910-06, OQ-RFQ-04, OQ-RFQ-09, OQ-RFQV2-10, OQ-VI-04, P1Q-06, P1Q-07, P1Q-09, P2Q-01, P2Q-02, P2Q-03, P2Q-04, P2Q-07, P2Q-10, P3Q-01, P3Q-02, P4-OQ-01, P4-OQ-02, P4-OQ-03, P4-OQ-04, P4-OQ-05, RVMQ-01, XA9Q-01, XA9Q-03, XA9Q-06, XA9Q-07.
 
