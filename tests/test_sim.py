@@ -185,7 +185,10 @@ def test_compressor_pumping_speed_limit():
     small = DragCompressor(turbo_area_m2=0.05, turbo_radius_m=0.12, rotor_material="Ti6Al4V").size_for(0.005, md, 5)
     big = DragCompressor(turbo_area_m2=0.45, turbo_radius_m=0.40, rotor_material="CFRP").size_for(0.005, md, 5)
     assert not small["sized"] and big["sized"]
-    assert big["CR_by_species"]["N2"] > big["CR_by_species"]["O"] and big["rotor_ok"]
+    # A9.9 S2.3 / MCC-03 (owner decision changes this behaviour): no registered rotor-strength basis exists, so the
+    # rotor is a PARAMETRIC_SENSITIVITY result inside the labelled legacy cap, never a qualified rotor_ok.
+    assert big["CR_by_species"]["N2"] > big["CR_by_species"]["O"] and big["rotor_within_legacy_sensitivity_cap"]
+    assert big["rotor_ok"] is False and big["rotor_qualification"] == "NOT_EVALUATED_MATERIAL_BASIS"
 
 
 def test_reservoir_mass_conservation_and_recombination():
@@ -348,7 +351,12 @@ def test_archengine_enumeration_and_closure():
     grids = close_architecture(pick["ecr+grids+lab6_xe"], gf, sc, DesignConstraints(P_bus_max_W=1500), gas_vars=gv)
     # v1.5: with species-resolved grid optics, grids can out-thrust a sub-threshold Hall at small intakes;
     # the robust difference is life (CEX with unionised air)
-    assert hall["feasible"] and grids["feasible"] and hall["life_sys_h"] > grids["life_sys_h"]
+    # A9.9 S2.3/S2.4 review fix D-02/D-03 (owner decision changes this behaviour): no rotor-strength basis is registered
+    # and the 0.7 m2 'nominal' orifice setpoint is unbracketed, so neither closure is admissible evidence: status is its
+    # evidence class and feasible False; the raw closure (closes_constraints) is still computed for diagnostics.
+    for r in (hall, grids):
+        assert r["feasible"] is False and r["status"] == r["evidence_class"] != "OK" and r["closes_constraints"]
+    assert hall["life_sys_h"] > grids["life_sys_h"]
     assert grids["life_limiting"] == "grids"                    # the accel grid, not another component, limits life
 
 
@@ -382,13 +390,16 @@ def test_v12_branches_execute_and_constraints_bind_inside_search():
     sc = Spacecraft(bus_frontal_m2=0.10, array_area_m2=5.0, pointing_sigma_deg=0.5); gf = make_gas_fn()
     pick = {arch_name(a): a for a in enumerate_architectures()}
     gv = {"area": [0.7], "p_level": ["nominal"]}
-    assert close_architecture(pick["self+resistojet"], gf, sc, DesignConstraints(1500), gas_vars=gv, strict=True)["status"] == "OK"
+    # A9.9 review fix D-02/D-03 (owner decision changes this behaviour): a closure on a non-admissible gas state is
+    # reported under its evidence class (never 'OK'); closes_constraints marks the raw closure.
+    rj = close_architecture(pick["self+resistojet"], gf, sc, DesignConstraints(1500), gas_vars=gv, strict=True)
+    assert rj["closes_constraints"] and rj["status"] == rj["evidence_class"] != "OK" and rj["feasible"] is False
     arc = close_architecture(pick["arc+arcjet"], gf, sc, DesignConstraints(1500), gas_vars=gv, strict=True)
     assert arc["status"] == "INFEASIBLE" and "envelope" in arc["reason"]          # pressure envelope, not a crash
     r = close_architecture(pick["hall_internal+hall+lab6_xe"], gf, sc, DesignConstraints(1500, None, 12, 25, None), gas_vars=gv)
-    assert r["status"] == "OK" and r["T_mN"] <= 25.0 + 1e-9                         # T_max enforced inside the search
+    assert r.get("closes_constraints") and r["T_mN"] <= 25.0 + 1e-9                  # T_max enforced inside the search
     m = close_architecture(pick["hall_internal+hall+mw_air"], gf, sc, DesignConstraints(1500), gas_vars=gv)
-    assert (m["status"] != "OK") or m["I_neut_req_A"] <= m["I_neut_max_A"] + 1e-9   # cathode current closed if OK
+    assert (not m.get("closes_constraints")) or m["I_neut_req_A"] <= m["I_neut_max_A"] + 1e-9   # cathode current closed
 
 
 @_SUPERSEDED

@@ -52,9 +52,10 @@ def _tpmc_surface(atm: dict, scattering: str = "maxwell"):
     through sqrt(T/m), which varies < 10 % across 180-230 km and the solar cycle.)"""
     if scattering not in _SURF_CACHE:
         import pandas as pd
-        from .intake_tpmc import frozen_surface_path, IntakeSurface
+        from .intake_tpmc import frozen_surface_path, IntakeSurface, frozen_surface_build_atmosphere
         df = pd.read_csv(frozen_surface_path())
-        _SURF_CACHE[scattering] = IntakeSurface(df[df.scattering == scattering].reset_index(drop=True))
+        _SURF_CACHE[scattering] = IntakeSurface(df[df.scattering == scattering].reset_index(drop=True),
+                                                m_mean_build_kg=frozen_surface_build_atmosphere()["m_mean"])
     return _SURF_CACHE[scattering]
 
 
@@ -62,9 +63,13 @@ def collection(intake: IntakeParams, atm: dict) -> dict:
     passive_override = None
     if intake.use_tpmc:
         fr = {"O": atm["fO"], "N2": atm["fN2"], "O2": atm["fO2"]}
-        r = _tpmc_surface(atm, intake.scattering)(intake.L_over_d, intake.phi, min(max(intake.accommodation, 0.0), 1.0),
-                                                 min(intake.off_axis_deg, 5.0), fractions=fr)
+        # No clamping (A9.13 S6.2 / S2.2 fail closed, finding FE-01): accommodation and pointing go to the frozen surface
+        # as given, and IntakeSurface refuses anything outside its frozen domain. Until 2026-10-01 off_axis_deg was
+        # silently evaluated at min(off_axis_deg, 5) and accommodation clipped to [0, 1].
+        r = _tpmc_surface(atm, intake.scattering)(intake.L_over_d, intake.phi, intake.accommodation,
+                                                 intake.off_axis_deg, fractions=fr)
         eta_c = r["eta_c"]; cd = r["C_D"]; passive_override = r["CR_passive"]
+        species_rows = r.get("species")
         from .intake_tpmc import IntakeGeometry, intake_response
         m_int = r["mass_kg"] * (intake.area_m2 / 0.5)      # surface built at 0.5 m2; mass scales with area
         if intake.filter:
@@ -77,12 +82,16 @@ def collection(intake: IntakeParams, atm: dict) -> dict:
         m_int = intake.mass_per_m2 * intake.area_m2 + intake.mass_fixed
     mdot_inc = atm["flux_kg_m2_s"] * intake.area_m2
     mdot_col = eta_c * mdot_inc
+    # species-resolved collected flow from the species collection efficiencies (A9.9 S2.1); parametric path: None
+    mdot_col_sp = ({s: v["eta_c"] * v["mass_fraction"] * mdot_inc for s, v in species_rows.items()}
+                   if intake.use_tpmc and species_rows else None)
     a_front = max(intake.area_m2, 0.0) + intake.body_area_m2
     V = atm.get("V_rel", atm["V"])
     drag = 0.5 * atm["rho"] * V ** 2 * cd * a_front
     return {
         "eta_c": eta_c, "mdot_incident": mdot_inc, "mdot_collected": mdot_col, "C_D": cd,
         "drag_N": drag, "intake_mass_kg": m_int, "passive_override": passive_override,
+        "mdot_collected_species": mdot_col_sp,
     }
 
 

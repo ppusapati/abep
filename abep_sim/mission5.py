@@ -35,8 +35,10 @@ def run_phase5(cfg: Config, sc: Spacecraft, hours: float = RFP.mission_hours, dt
         f107 = f107_mean + f107_amp * math.sin(2 * math.pi * (t_h / 8766.0 + phase_yr) / 11.0)
         atm = _atm_at(alt, f107)
         # AO ageing of the intake surface
+        # AO-aged alpha goes to the intake unclipped (review fix D-08, 2026-10-01): IntakeSurface refuses an
+        # out-of-domain value instead of a silent min(alpha, 1) substitution.
         alpha = surface_ageing_alpha(alpha0, state["fluence"], phi_c=intake_phi_c, alpha_inf=alpha_inf)
-        ip = IntakeParams(area_m2=cfg.intake.area_m2, accommodation=min(alpha, 1.0), use_tpmc=cfg.intake.use_tpmc,
+        ip = IntakeParams(area_m2=cfg.intake.area_m2, accommodation=alpha, use_tpmc=cfg.intake.use_tpmc,
                           L_over_d=cfg.intake.L_over_d, phi=cfg.intake.phi, off_axis_deg=sc.pointing_sigma_deg * 0.8)
         col = collection(ip, atm)
         d = spacecraft_drag(sc, atm["rho"], atm.get("V_rel", atm["V"]), cfg.intake.area_m2, col["C_D"])
@@ -130,8 +132,8 @@ def run_mission_generic(arch_result: dict, sc: Spacecraft, gas: dict, hours: flo
     def drag_fn(alt, t_h):
         f107 = f107_mean + f107_amp * math.sin(2 * math.pi * (t_h / 8766.0 + phase_yr) / 11.0)
         atm = _atm_at(alt, f107)
-        alpha = surface_ageing_alpha(alpha0, state["fluence"], phi_c=intake_phi_c)
-        ip = IntakeParams(area_m2=area, accommodation=min(alpha, 1.0), use_tpmc=True, L_over_d=L_over_d, off_axis_deg=sc.pointing_sigma_deg * 0.8)
+        alpha = surface_ageing_alpha(alpha0, state["fluence"], phi_c=intake_phi_c)   # unclipped (review fix D-08)
+        ip = IntakeParams(area_m2=area, accommodation=alpha, use_tpmc=True, L_over_d=L_over_d, off_axis_deg=sc.pointing_sigma_deg * 0.8)
         col = collection(ip, atm)
         d = spacecraft_drag(sc, atm["rho"], atm.get("V_rel", atm["V"]), area, col["C_D"])
         atm["_col"] = col; atm["_drag"] = d
@@ -171,4 +173,9 @@ def run_mission_generic(arch_result: dict, sc: Spacecraft, gas: dict, hours: flo
             "hours_throttled": float((df.P_bus_W < 0.9 * df.P_bus_W.max()).sum() * dt_h), "mean_eclipse": prop["mean_eclipse"],
             "alpha_end": min(surface_ageing_alpha(alpha0, state["fluence"], phi_c=intake_phi_c), 1.0),
             "ao_fluence_m2": state["fluence"], "fired_hours": state["fired_h"], "P_bus_peak_W": state.get("P_peak", 0.0),
-            "xe_cathode_kg_actual": 0.05e-6 * state["fired_h"] * 3600 if "lab6" in arch_result["architecture"] else 0.0}
+            "xe_cathode_kg_actual": 0.05e-6 * state["fired_h"] * 3600 if "lab6" in arch_result["architecture"] else 0.0,
+            # evidence label of the architecture result the mission propagates (review fix D-02, 2026-10-01): a mission
+            # built on a non-admissible design is a diagnostic, never a successful mission closure
+            "architecture_status": arch_result.get("status"),
+            "evidence_class": arch_result.get("evidence_class", "NOT_REPORTED"),
+            "evidence_admissible": bool(arch_result.get("evidence_admissible", False))}

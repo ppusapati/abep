@@ -401,6 +401,15 @@ def test_design_conditional_chain(committed, tmp_path, modes):
         assert n_ok == 0 and set(statuses.values()) <= {"MODEL_ERROR", "INFEASIBLE"}
         assert doc["envelope_ranges"]["feed_state"]["status"] == "TBD"
         return
+    # A9.9 S2.3 / MCC-03 (owner decision changes this behaviour): no rotor-strength basis is registered, so every
+    # sized compressor has rotor_ok False (NOT_EVALUATED_MATERIAL_BASIS) and the builder refuses every case (fail
+    # closed). Before this change size_for produced >= 1 OK case. Re-registering a basis (or a builder-side
+    # PARAMETRIC_SENSITIVITY label) is the feed-envelope owner's step.
+    from abep_sim import rotor_strength
+    if not rotor_strength.REGISTRY:
+        assert n_ok == 0 and set(statuses.values()) <= {"MODEL_ERROR", "INFEASIBLE"}
+        assert any(any("rotor_ok" in r for r in c["status_reasons"]) for c in by.values())
+        return
     assert n_ok >= 1
     assert doc["envelope_ranges"]["feed_state"]["n_ok_cases"] == n_ok
     # the fixture mirrors the historical reference gas state; at 200 km mean its setpoint lies outside the orifice
