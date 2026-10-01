@@ -7,7 +7,7 @@
 | S1 | Blocks the start of P1 (answer first) | 16 | 16 |
 | S2 | Production-model change decisions (move goldens / need a HISTORY entry) | 5 | 5 |
 | S3 | Blocks a later P1 stage | 10 | 10 |
-| S4 | Blocks P2 | 7 | 0 |
+| S4 | Blocks P2 | 7 | 7 |
 | S5 | Blocks P3 / P4 | 14 | 0 |
 | S6 | Upstream architecture (intake, filter, compressor, plenum, system optimizer, freeze candidate) | 22 | 0 |
 | S7 | H-1 and downstream-ICP design | 9 | 0 |
@@ -65,13 +65,13 @@
 
 | # | ID | Question | Proposed | Source | Owner answer |
 |---|---|---|---|---|---|
-| S4.1 | P1Q-01 | Freeze the 'stable ICP operating region' criteria for the P1 -> P2 handoff: minimum dwell duration, maximum relative drift of I_e and P_refl (and Z where measured) over the dwell, maximum step/std (mode jump), minimum ignition success fraction? | owner call on the values; PROPOSED form as implemented by p1_reducer.classify_stable_region; values set after the first P1-S5 dwells are seen, before the P2 map | owner_questions_state_v4 row 295 | OPEN |
-| S4.2 | P2Q-01 | Adopt ZM-A (V/I probe at the antenna terminals) as the primary Z_antenna method on the P1/P2 bench, with ZM-B (de-embedding) as the per-point cross-check and ZM-C (antenna current) for R? | yes (PROPOSED) | owner_questions_state_v4 row 317 | OPEN |
-| S4.3 | P2Q-03 | Agreement rules for ZM-A vs ZM-B and for up/down sweeps (hysteresis): same normalized-statistic form as UB-RF-08 with a k frozen at LOCK-1? | owner call on the form; no value proposed | owner_questions_state_v4 row 319 | OPEN |
-| S4.4 | P2Q-04 | Hot-map tuning policy: re-tune for minimum reflected power at every point, plus fixed-tune sub-sweeps around representative points to inform the flight match implementation? | yes (PROPOSED) | owner_questions_state_v4 row 320 | OPEN |
-| S4.5 | P2Q-07 | Where no accredited scope exists for V/I-probe phase calibration at 13.56 MHz, accept an in-house procedure traceable through the VNA and its kit (MS-P2-03)? | owner call | owner_questions_state_v4 row 322 | OPEN |
-| S4.6 | P2Q-08 | Does the A9.3 ICPQ-06 isolator qualification ('wherever ICP plumbing bridges isolated potentials') also cover the ICP-34 pressure-sensing line when the ICP body floats or the collector is biased during P2? | yes where that line bridges isolated potentials (PROPOSED; same plumbing logic) | owner_questions_state_v4 row 323 | OPEN |
-| S4.7 | P2Q-09 | Which recorded signals and step criteria constitute the 'electrical evidence of an ignition / mode transition' that turns an optically UNLIT record into UNCERTAIN (A9.4 P2Q-05): the HM-R06 indicators (step in reflected power / \|Gamma\| at fixed tuning, antenna-current step, collector / current-path response step, pressure step) with the same declared multiple of the combined uncertainty? | yes (PROPOSED): reuse the HM-R06 indicator set; form frozen at LOCK-1, multiple at LOCK-2, before the P2 map; each record states the basis (electrical_indicator_basis) | owner_questions_state_v4 row 324 | OPEN |
+| S4.1 | P1Q-01 | Freeze the 'stable ICP operating region' criteria for the P1 -> P2 handoff: minimum dwell duration, maximum relative drift of I_e and P_refl (and Z where measured) over the dwell, maximum step/std (mode jump), minimum ignition success fraction? | owner call on the values; PROPOSED form as implemented by p1_reducer.classify_stable_region; values set after the first P1-S5 dwells are seen, before the P2 map | owner_questions_state_v4 row 295 | FORM_FROZEN_VALUES_PREREGISTERED_BEFORE_P1_S5_HANDOFF (OD_2026_10_01_A9_11_s4_p2_owner_decisions.json) |
+| S4.2 | P2Q-01 | Adopt ZM-A (V/I probe at the antenna terminals) as the primary Z_antenna method on the P1/P2 bench, with ZM-B (de-embedding) as the per-point cross-check and ZM-C (antenna current) for R? | yes (PROPOSED) | owner_questions_state_v4 row 317 | YES_ZM_A_PRIMARY (OD_2026_10_01_A9_11_s4_p2_owner_decisions.json) |
+| S4.3 | P2Q-03 | Agreement rules for ZM-A vs ZM-B and for up/down sweeps (hysteresis): same normalized-statistic form as UB-RF-08 with a k frozen at LOCK-1? | owner call on the form; no value proposed | owner_questions_state_v4 row 319 | K_AGREEMENT_2 (OD_2026_10_01_A9_11_s4_p2_owner_decisions.json) |
+| S4.4 | P2Q-04 | Hot-map tuning policy: re-tune for minimum reflected power at every point, plus fixed-tune sub-sweeps around representative points to inform the flight match implementation? | yes (PROPOSED) | owner_questions_state_v4 row 320 | YES_RETUNE_PLUS_FIXED_TUNE (OD_2026_10_01_A9_11_s4_p2_owner_decisions.json) |
+| S4.5 | P2Q-07 | Where no accredited scope exists for V/I-probe phase calibration at 13.56 MHz, accept an in-house procedure traceable through the VNA and its kit (MS-P2-03)? | owner call | owner_questions_state_v4 row 322 | YES_IN_HOUSE_TRACEABLE (OD_2026_10_01_A9_11_s4_p2_owner_decisions.json) |
+| S4.6 | P2Q-08 | Does the A9.3 ICPQ-06 isolator qualification ('wherever ICP plumbing bridges isolated potentials') also cover the ICP-34 pressure-sensing line when the ICP body floats or the collector is biased during P2? | yes where that line bridges isolated potentials (PROPOSED; same plumbing logic) | owner_questions_state_v4 row 323 | YES_WHERE_BRIDGING (OD_2026_10_01_A9_11_s4_p2_owner_decisions.json) |
+| S4.7 | P2Q-09 | Which recorded signals and step criteria constitute the 'electrical evidence of an ignition / mode transition' that turns an optically UNLIT record into UNCERTAIN (A9.4 P2Q-05): the HM-R06 indicators (step in reflected power / \|Gamma\| at fixed tuning, antenna-current step, collector / current-path response step, pressure step) with the same declared multiple of the combined uncertainty? | yes (PROPOSED): reuse the HM-R06 indicator set; form frozen at LOCK-1, multiple at LOCK-2, before the P2 map; each record states the basis (electrical_indicator_basis) | owner_questions_state_v4 row 324 | HM_R06_K_TRANSITION_2 (OD_2026_10_01_A9_11_s4_p2_owner_decisions.json) |
 
 ## S5 - Blocks P3 / P4
 

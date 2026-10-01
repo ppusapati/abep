@@ -1,0 +1,73 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_10_01_A9_11_s4_p2_owner_decisions",
+ "decided_by": "owner",
+ "date": "2026-10-01",
+ "decision": "A9_11_S4_P2_DECISIONS_RECORDED",
+ "applies_to": "group S4 of docs/budgets/owner_decisions/OWNER_QUESTIONS_SEQUENCED_v1.md (rows of owner_questions_state_v4) on execution branch claude/nifty-ramanujan-w68f9z",
+ "parents": [
+  "docs/decisions/OD_2026_10_01_A9_10_s3_p1_later_stage_owner_decisions.json",
+  "docs/decisions/OD_2026_09_30_A9_4_p1_p2_owner_decisions.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_01_A9_11_S4_P2_OWNER_DECISIONS.md",
+  "sha256": "4a9fd171abc6a63266a34e6a7c4cb25c4d67ed16615715e158902a57f7071a41"
+ },
+ "decisions": {
+  "P1Q-01": {
+   "sequenced_no": "S4.1",
+   "status": "OWNER_DECIDED",
+   "answer": "FORM_FROZEN_VALUES_PREREGISTERED_BEFORE_P1_S5_HANDOFF",
+   "summary": "classify_stable_region form (min_duration_s, max_abs_drift_rel_I_e, max_abs_drift_rel_P_refl, max_step_over_std, min_ignition_success_fraction; Z stability carried where the P2 chain is available); values derived from P1-S2..S4 commissioning evidence and S3.3 re-ignitions, versioned criteria_id, frozen and hashed before the first P1-S5 handoff classification; unregistered -> NOT_EVALUATED (raw kept, never used to choose limits); pass = WITHIN_OWNER_CRITERIA only"
+  },
+  "P2Q-01": {
+   "sequenced_no": "S4.2",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_ZM_A_PRIMARY",
+   "summary": "ZM-A V/I at RP-VI de-embedded to RP-ANT primary Z = R + jX; ZM-B S-parameter de-embedding from RP-CPL mandatory cross-check at every valid map point; ZM-C antenna current + verified delivered power independent R cross-check; individual uncertainty budgets; missing/invalid ZM-B never makes ZM-A independently verified"
+  },
+  "P2Q-03": {
+   "sequenced_no": "S4.3",
+   "status": "OWNER_DECIDED",
+   "answer": "K_AGREEMENT_2",
+   "summary": "k_agreement = 2.0: ZM-A vs ZM-B on R and X (or covariance-aware complex form), disagreement -> METHOD_DISAGREEMENT, both raw kept, no averaging, ZM-B not qualified for stand-only use until resolved; up/down z_hyst <= 2 -> NO_HYSTERESIS_RESOLVED_AT_REGISTERED_UNCERTAINTY, > 2 -> RESOLVED_HYSTERESIS (physical finding, preserved, not a FAIL), reported vs P_forward and verified P_delivered (HM-R05)"
+  },
+  "P2Q-04": {
+   "sequenced_no": "S4.4",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_RETUNE_PLUS_FIXED_TUNE",
+   "summary": "primary hot map re-tuned to the registered minimum-reflected-power condition at every point (matching-state id, encoder values, tune time, residual reflection logged; characterized states or verified CAL-P2-03/04 interpolation only); plus fixed-tune sub-sweeps around pre-registered representative regions (nominal, envelope edge, near E/H or impedance transitions, flight-match-relevant), selection rule recorded before interpretation; supplements, never replaces"
+  },
+  "P2Q-07": {
+   "sequenced_no": "S4.5",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_IN_HOUSE_TRACEABLE",
+   "summary": "where no accredited 13.56 MHz V/I magnitude/phase scope exists, in-house calibration traceable through VNA + kit with the listed minimum content (incl. reactive reference, fixture RP-VI->RP-ANT, drift, repeatability, magnitude and relative-phase uncertainty, ids/raw/hashes), followed by CAL-P2-15 at-power validation; labelled in-house traceable, not accredited; inadequate uncertainty -> NOT_EVALUATED_INSTRUMENT, never reduced administratively"
+  },
+  "P2Q-08": {
+   "sequenced_no": "S4.6",
+   "status": "OWNER_DECIDED",
+   "answer": "YES_WHERE_BRIDGING",
+   "summary": "ICPQ-06 covers ICP-34 (and any ICP plumbing/sensing path) wherever it can bridge intended isolated potentials (grounded transducer, facility ground, grounded tubing, DAQ chassis, other reference): rated isolating section, qualification of the complete installed path under representative gas/pressure and floating/bias configuration, demonstrating no unintended return path; a demonstrably non-conductive non-bridging line is documented instead of re-tested"
+  },
+  "P2Q-09": {
+   "sequenced_no": "S4.7",
+   "status": "OWNER_DECIDED",
+   "answer": "HM_R06_K_TRANSITION_2",
+   "summary": "photodiode stays the required optical indicator; with optical UNLIT, indicators (P_refl/|Gamma| step at fixed tune, R/X step, antenna-current step, collector/current-path step, pressure step) resolved when |Delta y|/u_c > 2.0 (covariance when established); UNLIT + none -> may stay UNLIT; UNLIT + any -> UNCERTAIN; optical lost/saturated/no threshold -> UNCERTAIN; optical lit -> registered E/H rule; electrical_indicator_basis names the indicator(s); form and k frozen before the first P2 hot-map reduction"
+  }
+ },
+ "owner_supplied_values": {
+  "k_agreement": 2.0,
+  "k_transition": 2.0
+ },
+ "recorder_notes": [
+  "S4.1 replaces the stored proposal 'values set after the first P1-S5 dwells are seen' (recorder flagged it as contrary to pre-registration); values are now preregistered from P1-S2..S4 evidence",
+  "all three owner k factors (k_loss, k_agreement, k_transition) are 2.0, consistent with the frozen k_x = 2"
+ ],
+ "execution": {
+  "instruction": "apply to the P1/P2 artifacts together with A9.8 and A9.10 in the decision-application step",
+  "merge": "no merge to main is authorized by this addendum"
+ },
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}

@@ -273,18 +273,29 @@
   "directive": "docs/decisions/OD_2026_10_01_A9_7_architecture_freeze_design_synthesis.json",
   "main_baseline": "98fbbb9 (no merges authorized)",
   "lanes": {
-   "fo_a9_7_f0_profiling": "IMPLEMENTED (7ba1ff0)",
-   "fo_a9_7_f1_intake_synthesis": "IMPLEMENTED (ff5c897)",
-   "fo_a9_7_f2_filter_stage": "IMPLEMENTED (80a08b0)",
-   "fo_a9_7_f3_compressor_synthesis": "IMPLEMENTED (d6f0a97)",
-   "fo_a9_7_f5_h1_freeze_candidate": "IMPLEMENTED (3a1eb07)",
-   "fo_a9_7_f6_icp_geometry": "IMPLEMENTED (99b755f)",
-   "fo_a9_7_f4_plenum_feed": "IMPLEMENTED (d13708b)",
-   "fo_a9_7_rust_kernels": "IMPLEMENTED (e2aeb3f); K1-K5 ADMITTED under parity_prereg_v1 (optional, non-authoritative; 5.4-8.2x)",
-   "fo_a9_7_f7_f8_coupled_optimizer": "IMPLEMENTED (89cafce)",
-   "fo_a9_7_f9_freeze_candidate": "IMPLEMENTED (232c1af); INVESTIGATION_HYPOTHESIS, 204 parameters"
+   "fo_a9_7_f0_profiling": "VERIFIED (7ba1ff0)",
+   "fo_a9_7_f1_intake_synthesis": "VERIFIED (ff5c897)",
+   "fo_a9_7_f2_filter_stage": "VERIFIED (80a08b0)",
+   "fo_a9_7_f3_compressor_synthesis": "VERIFIED (d6f0a97)",
+   "fo_a9_7_f5_h1_freeze_candidate": "VERIFIED (3a1eb07)",
+   "fo_a9_7_f6_icp_geometry": "VERIFIED (99b755f)",
+   "fo_a9_7_f4_plenum_feed": "VERIFIED (d13708b)",
+   "fo_a9_7_rust_kernels": "VERIFIED (e2aeb3f); K1-K5 ADMITTED under parity_prereg_v1 (optional, non-authoritative; 5.4-8.2x)",
+   "fo_a9_7_f7_f8_coupled_optimizer": "VERIFIED (89cafce)",
+   "fo_a9_7_f9_freeze_candidate": "VERIFIED (232c1af); INVESTIGATION_HYPOTHESIS, 204 parameters"
   },
-  "hygiene": "implementation complete: full suite 2849/5/1, golden OK, ci 10/10",
-  "phase": "IMPLEMENTATION COMPLETE; consolidated verification launched"
+  "hygiene": "post-merge d63b113: full suite 2901/5/1, golden OK, ci 10/10, production modules / frozen data / decision files unchanged vs main 98fbbb9",
+  "phase": "VERIFIED; awaiting owner merge approval (checkpoint 6)",
+  "consolidated_verification": "wf_ba93b973-628: six dimensions, 25 findings (14 blocker/major), 2 repair rounds, 0 blocker/major remaining; repairs merged d63b113"
+ },
+ "owner_question_sequencing": {
+  "list": "docs/budgets/owner_decisions/OWNER_QUESTIONS_SEQUENCED_v1.md (135 questions, groups S1-S10)",
+  "answered": {
+   "S1": "A9.8 (16)",
+   "S2": "A9.9 (5)",
+   "S3": "A9.10 (10)",
+   "S4": "A9.11 (7)"
+  },
+  "application": "A9.8/A9.10/A9.11 to P1/P2/P3/RFQ artifacts and the A9.9 production-model changes are pending (not yet implemented)"
  }
 }
