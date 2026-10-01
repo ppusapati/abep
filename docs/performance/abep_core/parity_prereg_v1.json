@@ -1,0 +1,173 @@
+{
+ "schema": "abep_core_parity_prereg_v1",
+ "id": "PARITY-PREREG-ABEP-CORE-TPMC-V1",
+ "lane": "fo_a9_7_rust_kernels",
+ "directive": "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md (Computational-language decision; Rust acceleration admission order item 1)",
+ "date": "2026-10-01",
+ "status": "PRE_REGISTERED_BEFORE_ANY_COMPARISON",
+ "registration_statement": "Written and committed in its own commit before any Python-vs-Rust comparison was executed. At the time of this commit no abep_core kernel had been compiled or run and no comparison of any kind existed. Every tolerance, observable, vector set, seed, sample size and decision rule below is fixed for v1; none may be changed after the first scoring campaign. A change requires parity_prereg_v2 with fresh campaign seeds, and every v1 campaign stays on record.",
+ "what_this_is_not": [
+  "not physics evidence: parity with the Python reference shows only that the Rust code reproduces abep_sim/intake_tpmc.py in distribution; it says nothing about whether the TPMC model is right",
+  "not a validation of the intake, of the frozen intake surface or of any design",
+  "not authority: no Rust result becomes authoritative because it is faster or because it is ADMITTED (A9.7); the Python reference stays authoritative, the frozen intake_surface_v1 data and goldens are never rebuilt with Rust",
+  "not a performance requirement: the measured speed-up is reported, it does not decide admission"
+ ],
+ "reference_implementation": {
+  "module": "abep_sim/intake_tpmc.py",
+  "functions": ["_drifting_maxwellian", "_flux_weighted_entry", "_diffuse", "_cll", "trace_channel", "clausing_transmission"],
+  "sha256_at_registration": "ea0100b96f9066b20a5ca13832e27250773962c8ddda16dcf9ccaecef621288c",
+  "rule": "the campaign refuses to score (status REFUSED_REFERENCE_CHANGED) if the reference file sha256 differs from this value; a changed reference needs a new pre-registration"
+ },
+ "pinned_inputs_sha256": {
+  "abep_sim/constants.py": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+  "abep_sim/data/intake_surface_v1.json": "5b26b7fd60272537dd0e719a122cb874233c6dd777202ab164b159cc7215d425",
+  "abep_sim/data/intake_surface_v1.csv": "62b804924d801f913420a05142d4fe62137a7619eca17ae7786da5bef005c09a",
+  "abep_sim/data/atmosphere_msis21_v1.json": "38a6f662521a8795b28186ccab5fbb007da59a861f59fde50400e7092e181160",
+  "abep_sim/data/atmosphere_msis21_v1.csv": "5e108c6e5cb7c03ed9b741233fafbc71c7813987e1ff3d0596b04c99c4a9bff7",
+  "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json": "93145d612f03fcd62da7ea7e0d61d8bfca767429dd6117203b417758a0d8c672"
+ },
+ "kernels": [
+  {"id": "K1_entry", "rust_function": "abep_core.flux_weighted_entry", "reference": "abep_sim.intake_tpmc._flux_weighted_entry (with _drifting_maxwellian)",
+   "algorithm_to_reproduce": "draw 3n drifting-Maxwellian velocities (component sd sqrt(k_B T/m), drift V cos(theta) on z, V sin(theta) on x), keep v_z > 0, resample n with replacement with probability proportional to v_z"},
+  {"id": "K2_diffuse", "rust_function": "abep_core.diffuse", "reference": "abep_sim.intake_tpmc._diffuse",
+   "algorithm_to_reproduce": "v_n = vth sqrt(-2 ln U), U ~ U[1e-12, 1); two tangential N(0, vth); tangent basis t1 = normal x z (normal x x when |t1| < 1e-9), normalised; t2 = normal x t1"},
+  {"id": "K3_cll", "rust_function": "abep_core.cll", "reference": "abep_sim.intake_tpmc._cll",
+   "algorithm_to_reproduce": "Lord 1991 sampling exactly as coded: v_t,out = sqrt(1-alpha_t) v_t + sqrt(alpha_t) N3(0, v_mp/sqrt 2), normal component projected out; r = sqrt(-alpha_n ln U), th = 2 pi U, vm = sqrt(1-alpha_n)|v_n|/v_mp, v_n,out = v_mp sqrt(r^2 + vm^2 + 2 r vm cos th)"},
+  {"id": "K4_trace", "rust_function": "abep_core.trace_channel", "reference": "abep_sim.intake_tpmc.trace_channel",
+   "algorithm_to_reproduce": "uniform entry position on the disc (r = R sqrt U, phi = 2 pi U), ballistic flight to wall / back plane z = L / front plane z = 0 with the same tie rules (exit_back if t_back <= t_wall and t_back <= t_front; exit_front if t_front < t_wall and t_front < t_back), Maxwell (diffuse with probability alpha, else specular) or CLL (alpha_n, alpha_t default alpha) wall kernel, hit budget max_hits doubled up to max_hits_cap while unresolved fraction > unresolved_tol; unresolved molecules reported, never assigned"},
+  {"id": "K5_clausing", "rust_function": "abep_core.clausing_transmission", "reference": "abep_sim.intake_tpmc.clausing_transmission",
+   "algorithm_to_reproduce": "diffuse entry about +z at T_w, Maxwell trace (scattering default), returns collected fraction"}
+ ],
+ "random_streams": {
+  "statement": "numpy and Rust random streams differ by construction. Parity is statistical, plus exact invariants. The Rust generator is xoshiro256++ (Blackman and Vigna) seeded through SplitMix64 from one 64-bit seed; normal deviates by the Marsaglia polar method; uniform doubles on [0,1) from the top 53 bits. Implemented in abep_core without external RNG crates so that the stream does not depend on crate versions.",
+  "wrapper_seeding": "abep_sim/design/tpmc_backend.py derives the Rust seed from one draw of the caller's numpy Generator: int(rng.integers(0, 2**64, dtype=numpy.uint64)). The same Generator state therefore gives the same Rust output (deterministic seeding)."
+ },
+ "campaign_seeds": {
+  "scoring_master_seed": 20261001,
+  "development_master_seed": 1,
+  "derivation": "vector k (0-based, in the registered order of its kernel) of kernel index j (K1=1 .. K5=5) uses numpy.random.default_rng(numpy.random.SeedSequence([master, j, k, s])) with s = 0 for the Python-backend generator, s = 1 for the generator from which the Rust seed is drawn, s = 2 for shared inputs (v0 for K4, v_in / normals for K2 and K3), s = 3 for the randomized-domain draws (k = 0 for the whole draw). K1 replicate r uses s = 10 + 2 r (Python) and s = 11 + 2 r (Rust).",
+  "development_rule": "development and debugging comparisons use development_master_seed only and are never scored or reported as a verdict. Every execution of the scoring campaign is appended to the report's campaign history; no execution may be discarded."
+ },
+ "comparison_set": {
+  "golden_vectors": {
+   "source": "abep_sim/data/intake_surface_v1.json grid (frozen), cross-checked against the unique values in intake_surface_v1.csv",
+   "axes": {"L_over_d": [3, 5, 10, 20], "alpha": [0.0, 0.2, 0.5, 0.8, 1.0], "theta_deg": [0, 2, 5], "species": ["O", "N2", "O2"], "scattering": ["maxwell", "cll"], "phi": [0.8, 0.9]},
+   "conditions": "atmosphere(200.0, 'mean') from the frozen NRLMSIS dataset (V, T); T_w = 350 K and d = 10 mm (IntakeGeometry defaults used to build the frozen surface); CLL with alpha_n = alpha_t = alpha (intake_response passes neither)",
+   "phi_note": "phi enters only the intake_response bookkeeping, never trace_channel; the 2 phi values are therefore one trace vector each (recorded as covered, not traced twice)",
+   "K4_vectors": "4 L/d x 5 alpha x 3 theta x 3 species x 2 scattering = 360, n = 8000 particles each, v0 from the Python entry kernel (shared by both backends)",
+   "K5_vectors": "4 L/d x 5 alpha x 3 species = 60 (Maxwell, as clausing_transmission calls trace_channel), n = 20000 each (the value intake_response uses)",
+   "K1_vectors": "3 theta x 3 species = 9",
+   "K2_vectors": "3 species x 2 normal sets (+z wall normal; random unit normals in the x-y plane as on the channel wall) = 6, T_w = 350 K, n = 20000",
+   "K3_vectors": "3 species x 9 (alpha_n, alpha_t) pairs {(0,0),(1,1),(0,1),(1,0),(0.2,0.2),(0.5,0.5),(0.8,0.8),(0.3,0.9),(0.9,0.3)} = 27, T_w = 350 K, n = 20000; v_in = Python-entry velocities at 200 km mean, theta 5 deg, random x-y wall normals, normal component sign forced into the wall"
+  },
+  "edge_cases": {
+   "K4": [
+    {"id": "E4-01", "L_over_d": 1e-3, "alpha": 1.0, "scattering": "maxwell", "theta_deg": 0, "note": "L/d -> 0"},
+    {"id": "E4-02", "L_over_d": 0.1, "alpha": 0.5, "scattering": "maxwell", "theta_deg": 5},
+    {"id": "E4-03", "L_over_d": 5, "alpha": 0.0, "scattering": "maxwell", "theta_deg": 0, "note": "pure specular"},
+    {"id": "E4-04", "L_over_d": 5, "alpha": 1.0, "scattering": "maxwell", "theta_deg": 0, "note": "pure diffuse"},
+    {"id": "E4-05", "L_over_d": 5, "alpha_n": 0.0, "alpha_t": 0.0, "scattering": "cll", "theta_deg": 5, "note": "CLL specular limit"},
+    {"id": "E4-06", "L_over_d": 5, "alpha_n": 1.0, "alpha_t": 1.0, "scattering": "cll", "theta_deg": 5, "note": "CLL diffuse limit"},
+    {"id": "E4-07", "L_over_d": 5, "alpha_n": 0.0, "alpha_t": 1.0, "scattering": "cll", "theta_deg": 5},
+    {"id": "E4-08", "L_over_d": 5, "alpha_n": 1.0, "alpha_t": 0.0, "scattering": "cll", "theta_deg": 5},
+    {"id": "E4-09", "L_over_d": 5, "alpha": 0.8, "scattering": "maxwell", "theta_deg": 30},
+    {"id": "E4-10", "L_over_d": 5, "alpha": 0.8, "scattering": "maxwell", "theta_deg": 60},
+    {"id": "E4-11", "L_over_d": 5, "alpha": 0.8, "scattering": "maxwell", "theta_deg": 85, "note": "theta extreme"},
+    {"id": "E4-12", "L_over_d": 2, "alpha": 0.8, "scattering": "cll", "theta_deg": 90, "note": "theta = 90 deg: thermal-only axial entry"},
+    {"id": "E4-13", "L_over_d": 50, "alpha": 1.0, "scattering": "maxwell", "theta_deg": 0, "note": "long channel: exercises the budget doubling"},
+    {"id": "E4-14", "L_over_d": 20, "alpha": 1.0, "scattering": "maxwell", "theta_deg": 0, "max_hits": 2, "max_hits_cap": 4, "note": "forced unresolved remainder"},
+    {"id": "E4-15", "L_over_d": 5, "alpha": 0.5, "scattering": "maxwell", "theta_deg": 0, "species": "Xe", "note": "heavy species (abep_sim.constants M_SPECIES)"},
+    {"id": "E4-16", "L_over_d": 5, "alpha": 0.5, "scattering": "maxwell", "theta_deg": 0, "T_w_K": 100.0, "note": "cold wall"},
+    {"id": "E4-17", "L_over_d": 5, "alpha": 0.5, "scattering": "cll", "theta_deg": 0, "T_w_K": 1000.0, "note": "hot wall"}
+   ],
+   "K4_defaults": "species N2, atmosphere(200.0, 'mean'), T_w 350 K, d 10 mm, max_hits 200, max_hits_cap 5000, unresolved_tol 1e-3, n = 4000",
+   "K5": [
+    {"id": "E5-01", "L_over_d": 1e-3, "alpha": 1.0},
+    {"id": "E5-02", "L_over_d": 50, "alpha": 1.0},
+    {"id": "E5-03", "L_over_d": 5, "alpha": 0.0}
+   ],
+   "K5_defaults": "species N2, T_w 350 K, d 10 mm, n = 20000",
+   "K1": [
+    {"id": "E1-01", "theta_deg": 30}, {"id": "E1-02", "theta_deg": 60}, {"id": "E1-03", "theta_deg": 85}, {"id": "E1-04", "theta_deg": 90},
+    {"id": "E1-05", "theta_deg": 0, "species": "Xe"}
+   ],
+   "K1_defaults": "species N2, atmosphere(200.0, 'mean')",
+   "K2": [
+    {"id": "E2-01", "T_w_K": 100.0, "normal_set": "x_y_wall"}, {"id": "E2-02", "T_w_K": 1000.0, "normal_set": "x_y_wall"},
+    {"id": "E2-03", "T_w_K": 350.0, "normal_set": "minus_z"}, {"id": "E2-04", "T_w_K": 350.0, "normal_set": "plus_x"}
+   ],
+   "K2_defaults": "species N2, n = 20000; minus_z and plus_z exercise the fallback tangent basis (normal parallel to z)",
+   "K3": [
+    {"id": "E3-01", "alpha_n": 1.0, "alpha_t": 1.0, "T_w_K": 100.0}, {"id": "E3-02", "alpha_n": 0.5, "alpha_t": 0.5, "T_w_K": 1000.0}
+   ],
+   "K3_defaults": "species N2, n = 20000"
+  },
+  "randomized_domain": {
+   "K4_count": 48,
+   "K5_count": 12,
+   "K1_count": 16,
+   "K2_count": 8,
+   "K3_count": 16,
+   "draw": "one numpy Generator per kernel (s = 3). K4: L/d log-uniform on [0.5, 30]; scattering maxwell or cll with probability 1/2; maxwell alpha ~ U[0,1]; cll alpha_n, alpha_t ~ U[0,1] independently; theta ~ U[0, 15] deg; species uniformly from (O, N2, O2, mean molecular mass); altitude from (180, 200, 230) km and solar from (low, mean, high), frozen atmosphere; T_w ~ U[250, 450] K; d = 10 mm; n = 8000. K5: L/d log-uniform [0.5, 30], alpha ~ U[0,1], species as K4, T_w ~ U[250, 450] K, n = 20000. K1: theta ~ U[0, 15] deg, species, altitude and solar as K4. K2: T_w ~ U[250, 450] K, species as K4, normal set x_y_wall, n = 20000. K3: alpha_n, alpha_t ~ U[0,1], T_w ~ U[250, 450] K, species as K4, n = 20000. Draws are made in exactly this field order per vector.",
+   "domain_note": "numerical parity domain only; the ranges are not physics, design or evidence claims"
+  },
+  "vector_totals": {"K1_entry": 30, "K2_diffuse": 18, "K3_cll": 45, "K4_trace": 425, "K5_clausing": 75}
+ },
+ "observables": {
+  "K1_entry": {"replicates_per_backend": 32, "n_per_replicate": 2000,
+   "list": ["mean_vx", "mean_vy", "mean_vz", "mean_vz2", "mean_vperp2"],
+   "se_method": "replicate: each backend's value is the mean over its 32 replicate means; se = sample sd of the replicate means / sqrt(32). Replicates are used because the reference resamples with replacement from a finite pool, so particle-level se would be optimistic."},
+  "K2_diffuse": {"list": ["mean_vn", "mean_vn2", "mean_vt2"], "se_method": "particle-level (iid samples): se = sd / sqrt(n)",
+   "definitions": "vn = v . normal; vt2 = |v|^2 - vn^2"},
+  "K3_cll": {"list": ["mean_vn_out", "mean_vn_out2", "mean_vt_out2", "mean_vt_retention"], "se_method": "particle-level (iid given identical inputs)",
+   "definitions": "vn_out = v_out . normal; vt_out2 = |v_out|^2 - vn_out^2; vt_retention = (v_out,t . v_in,t) / |v_in,t|^2 per particle (0 when |v_in,t| = 0)"},
+  "K4_trace": {"list": ["f_trans", "f_back", "f_unres", "mean_hits", "mean_hits2", "mean_vz_trans", "mean_v2_trans", "mean_vz_back", "mean_v2_back", "mean_dpz"],
+   "definitions": "f_trans = collected fraction (transmission); f_back = backscatter fraction; f_unres = returned unresolved fraction (lost); mean_hits, mean_hits2 = mean of wall hits and of their square; mean_vz_trans, mean_v2_trans = mean v_z and |v|^2 of the final velocity over collected molecules; mean_vz_back, mean_v2_back = the same over backscattered molecules; mean_dpz = mean over all molecules of (v0_z - [back] v_out_z), the per-unit-mass momentum transfer intake_response uses for C_D",
+   "se_method": "particle-level, conditional on the shared v0: given identical inputs the molecules are independent in both backends, so se = sd / sqrt(n_subset) is valid; because the sd also contains the spread of v0 across molecules it over-estimates the conditional se (conservative)",
+   "conditional_min_count": 50},
+  "K5_clausing": {"list": ["K_back"], "se_method": "binomial: se = sqrt(p (1 - p) / n)"}
+ },
+ "decision_rules": {
+  "per_test": "for every kernel, vector and observable: |mean_rust - mean_py| <= z * sqrt(se_py^2 + se_rust^2) with z = 5.0",
+  "z": 5.0,
+  "z_basis": "about 5,000 registered tests; two-sided normal tail at z = 5 is 5.7e-7, so the expected number of false rejections over the campaign is about 0.003 (K1 uses replicate se with 31 degrees of freedom per side; its tail at 5 is below 1e-5, about 2e-3 expected false rejections over its 150 tests)",
+  "zero_se_rule": "if se_py = se_rust = 0 the observable is deterministic under both backends and must agree to |diff| <= 1e-12 * max(1, |mean_py|)",
+  "not_scored_rule": "a conditional observable (K4 *_trans, *_back) is NOT_SCORED for a vector when either backend has fewer than conditional_min_count molecules in the subset; NOT_SCORED is reported, never counted as agreement",
+  "aggregate_bias": "per kernel and observable, over all scored vectors with nonzero combined se: |sum_i z_i| / sqrt(N) <= 4.0, z_i = (mean_rust - mean_py) / sqrt(se_py^2 + se_rust^2); detects a systematic bias too small for any single vector",
+  "aggregate_threshold": 4.0,
+  "exact_invariants_required": true,
+  "kernel_verdict": "ADMITTED iff every exact invariant of the kernel holds in BOTH backends, every scored per-test check holds, every aggregate check holds, and the Rust build provenance is recorded; otherwise NOT_ADMITTED. An invariant that the Python reference itself violates is reported as REFERENCE_INVARIANT_FINDING and the kernel is NOT_ADMITTED (no Rust kernel is admitted against a reference behaviour the campaign could not confirm).",
+  "verdict_vocabulary": ["ADMITTED", "NOT_ADMITTED", "NOT_RUN_ABEP_CORE_UNAVAILABLE", "REFUSED_REFERENCE_CHANGED"],
+  "meaning_of_ADMITTED": "the kernel may be selected explicitly (backend='rust') as an optional, switchable acceleration of the TPMC trace inside the tested parity domain. It is never the default, never silently substituted, never used to rebuild frozen data or goldens, and never authoritative; the Python reference reproduces every result.",
+  "no_retuning": "z, the aggregate threshold, the observables, the vectors, n and the seeds are fixed. A NOT_ADMITTED verdict can be followed only by a code fix plus parity_prereg_v2 with a new scoring_master_seed; the v1 record stays."
+ },
+ "exact_invariants": [
+  {"id": "INV-01", "kernels": ["K4_trace"], "statement": "partition: every molecule is exactly one of collected, backscattered or unresolved (never both collected and back); counts sum to n; the returned unresolved fraction equals the unresolved count / n"},
+  {"id": "INV-02", "kernels": ["K4_trace"], "statement": "I/O shapes and types: collected bool (n,), v float64 (n,3), hits integer (n,), back bool (n,), unresolved Python float"},
+  {"id": "INV-03", "kernels": ["K1_entry", "K2_diffuse", "K3_cll", "K4_trace", "K5_clausing"], "statement": "deterministic seeding: the same Generator seed gives bitwise-identical outputs (both backends); a different seed gives different outputs for a nondegenerate vector"},
+  {"id": "INV-04", "kernels": ["K4_trace", "K5_clausing"], "statement": "L = 0: every molecule collected with zero hits and v_out identical to v0; K_back = 1"},
+  {"id": "INV-05", "kernels": ["K4_trace"], "statement": "specular limits (Maxwell alpha = 0; CLL alpha_n = alpha_t = 0) with theta = 0 entry: f_trans = 1, f_back = 0, v_out_z identical to v0_z for every molecule, |v_out| = |v0| to 1e-9 relative"},
+  {"id": "INV-06", "kernels": ["K4_trace"], "statement": "hit budget: an unresolved molecule has hits equal to the final budget; with max_hits = 2, max_hits_cap = 4 (E4-14) the final budget is 4 and the unresolved molecules are reported and never counted collected"},
+  {"id": "INV-07", "kernels": ["K4_trace"], "statement": "exit direction: collected molecules have v_out_z > 0, backscattered molecules have v_out_z < 0"},
+  {"id": "INV-08", "kernels": ["K2_diffuse"], "statement": "every diffuse sample satisfies v . normal > 0"},
+  {"id": "INV-09", "kernels": ["K3_cll"], "statement": "v_out . normal >= 0 for every sample; alpha_n = alpha_t = 0 reproduces specular reflection v_in - 2 (v_in . n) n to 1e-9 relative"},
+  {"id": "INV-10", "kernels": ["K4_trace"], "statement": "n = 0: empty outputs of the declared shapes and an unresolved fraction that is NaN in both backends (the reference takes the mean of an empty array)"},
+  {"id": "INV-11", "kernels": ["K1_entry"], "statement": "every entry velocity has v_z > 0; output shape (n,3) float64"},
+  {"id": "INV-12", "kernels": ["K4_trace"], "statement": "all final velocities of collected and backscattered molecules are finite"}
+ ],
+ "documented_divergence": [
+  {"id": "DIV-01", "statement": "max_hits < 1: the reference never terminates (budget stays 0); the Rust backend refuses with ValueError instead. The Python backend of the wrapper passes the call through unchanged. Not part of the comparison set."}
+ ],
+ "speedup_measurement": {
+  "status": "reported, not a decision criterion",
+  "workload_W1": "F0 workload tpmc_trace_channel exactly: atmosphere(200.0, 'mean'), mean molecular mass, IntakeGeometry(area 0.5, L/d 5, phi 0.85) -> R, L; numpy.random.default_rng(11); entry (n = 20000, theta 0) + trace_channel Maxwell alpha 0.8, T_w 350 K",
+  "workload_W2": "response-point kernel composite: W1 plus clausing_transmission(n = 20000) on the same geometry (the TPMC part of one intake_response point)",
+  "repeats": 3,
+  "statistic": "median wall-clock and median process CPU per backend in one session on one machine; speed-up = median_python / median_rust; the F0 recorded python median is quoted for reference, not reused",
+  "backends_timed": "python = abep_sim.intake_tpmc functions directly; rust = abep_sim.design.tpmc_backend with backend='rust' (wrapper overhead included)"
+ },
+ "outputs": {
+  "report": "docs/performance/abep_core/parity_report_v1.json (+ .md generated from it)",
+  "script": "scripts/verify_abep_core.py"
+ }
+}
