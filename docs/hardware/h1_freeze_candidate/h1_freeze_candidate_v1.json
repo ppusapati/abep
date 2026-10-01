@@ -2485,7 +2485,7 @@
    "freeze_status": "TBD_AFTER_EVIDENCE",
    "freeze_point": "LOCK-1",
    "evidence_to_freeze_candidate": [
-    "F4 plenum / feed synthesis output (PENDING)",
+    "F4 plenum / feed offered-state records with evidenced inputs (F4-ID-07; today PARAMETRIC_SENSITIVITY only)",
     "H-1 inlet-state sensitivity measured in Phase 1 (no admitted Hall map can derive tolerances)"
    ]
   },

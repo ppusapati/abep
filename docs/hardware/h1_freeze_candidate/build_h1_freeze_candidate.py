@@ -764,7 +764,7 @@ def build_parameters() -> list:
       sources=[ref("A97_MD", "", note="A9.7 F4: the final output offered to H-1 is mdot_s, P, T, x_s, transient "
                                       "quality, not merely total mass flow")],
       basis="A9.7 F4 / F5", freeze_status="TBD_AFTER_EVIDENCE", freeze_point="LOCK-1",
-      evidence_to_freeze=["F4 plenum / feed synthesis output (PENDING)", "H-1 inlet-state sensitivity measured in "
+      evidence_to_freeze=["F4 plenum / feed offered-state records with evidenced inputs (F4-ID-07; today PARAMETRIC_SENSITIVITY only)", "H-1 inlet-state sensitivity measured in "
                           "Phase 1 (no admitted Hall map can derive tolerances)"])
 
     # ---------------- EX exit plane ----------------

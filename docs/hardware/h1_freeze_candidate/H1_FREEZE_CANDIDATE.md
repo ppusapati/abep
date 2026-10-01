@@ -241,7 +241,7 @@ A9.7 F5 bullet coverage:
 | H1F-TH-03 | OPEN | coupled H-1 / ICP thermal closure (A9.2 ICP_COUPLED_THERMAL; P3 framework inputs: ICP geometry, view factors, conductances; >= 50 K + 20 % rule, row 86); ICP module drawings (ICP-02/04/07) from F6 / the ICD |
 | H1F-IN-03 | OPEN | owner selection of the channel design point (h, d_mean, L) inside the windows (M16 row 9 blocking item) |
 | H1F-IN-04 | TBD_AFTER_EVIDENCE | owner selection of the channel design point (h, d_mean, L) inside the windows (M16 row 9 blocking item); distributor drawing; cold-flow conductance measured on the built H-1 (S1a) |
-| H1F-IN-05 | TBD_AFTER_EVIDENCE | F4 plenum / feed synthesis output (PENDING); H-1 inlet-state sensitivity measured in Phase 1 (no admitted Hall map can derive tolerances) |
+| H1F-IN-05 | TBD_AFTER_EVIDENCE | F4 plenum / feed offered-state records with evidenced inputs (F4-ID-07; today PARAMETRIC_SENSITIVITY only); H-1 inlet-state sensitivity measured in Phase 1 (no admitted Hall map can derive tolerances) |
 | H1F-EX-03 | TBD_AFTER_EVIDENCE | F6 ICP geometry synthesis with P1 / P2 evidence; coupled view-factor calculation (A9.2 sec. 6) |
 | H1F-EX-04 | TBD_AFTER_EVIDENCE | owner selection of the channel design point (h, d_mean, L) inside the windows (M16 row 9 blocking item) |
 | H1F-EX-05 | TBD_AFTER_EVIDENCE | FEMM-class axisymmetric magnetostatics of MC-1 with supplier B-H curves at the selected design point (M16 row 10 blocking item); measured fringe-field map downstream of IP-EXIT |

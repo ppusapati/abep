@@ -428,6 +428,7 @@ Freeze-status roll-up (204 parameters): {"FREEZE_CANDIDATE": 50, "OPEN": 61, "TB
 | MCC-05 | Rust parity DIV-01 | abep_sim/intake_tpmc.py trace_channel / _cll (Python reference behaviour) | F9-OQ-04 (new) | none expected for valid inputs (input validation only); to be checked |
 | MCC-06 | Rust parity DIV-02 | abep_sim/intake_tpmc.py trace_channel / _cll (Python reference behaviour) | F9-OQ-04 (new) | none expected for valid inputs (input validation only); to be checked |
 | MCC-07 | Rust parity DIV-03 | abep_sim/intake_tpmc.py trace_channel / _cll (Python reference behaviour) | F9-OQ-04 (new) | none expected for valid inputs (input validation only); to be checked |
+| MCC-08 | Rust parity DIV-04 | abep_sim/intake_tpmc.py trace_channel / _cll (Python reference behaviour) | F9-OQ-04 (new) | none expected for valid inputs (input validation only); to be checked |
 
 ## Minimal evidence plan (INVESTIGATION_HYPOTHESIS toward a frozen reference)
 
@@ -647,15 +648,15 @@ Pinned (immutable, sha256 verified):
 Consumed (sha256 at build time; drift reported by `--check`):
 
 - `docs/performance/PERFORMANCE_BASELINE_98fbbb9.json` 93145d612f03fcd62da7ea7e0d61d8bfca767429dd6117203b417758a0d8c672
-- `docs/performance/abep_core/parity_report_v1.json` c0b772c9f3760b061b28d879d140b85f0bbd0a621882bc502d4239a7300d9cd5
+- `docs/performance/abep_core/parity_report_v1.json` 9d6ff37343f1d77a56e8288d2463864c3414326b2e758724f2b08606049796ca
 - `docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json` dc0bfce93a0dc14cd03f8c76410d273649c1453c1c55f3e0f0c9bae0691146c7
 - `docs/design_synthesis/f2_filter/f2_filter_stage_v1.json` 4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808
 - `docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json` fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd
 - `docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json` a559776da6c10c2bb8c1eb66fbff308a7b3634c62275bdd39c17d77e4055d8a1
-- `docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json` 6c54b8e2b4aa26ff920e9126b9977584bef0bfb43ed110d881efb8352432c745
-- `docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json` faa14dcb6c70ae0557699cbaf2ef3d086b3e26178069f00e1e6aa48e1a637829
+- `docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json` 75eb63615eb2e73065d70fb43640e47da2d86283a46aa66ce17bd9ef47f029cf
+- `docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json` 7f1da752d755de00bff4376c4f949b2c26fa80071e7399bf04aaf2f24707d037
 - `docs/design_synthesis/f6_icp_geometry/f6_icp_geometry_v1.json` 4dc815541ddbaed2acb4d3f05c07bbf98c19f1ddb9c7f8ada7ba687d61498def
-- `docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json` 06dddbea0b9bd413e57e10cfba88e8cfae3a376e39b560c895ec0ba496944c5e
+- `docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json` b793387dfa801a7735b3f1b9f9035e6536cf39842826394020b2b659437629f6
 - `docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json` b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525
 - `docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json` 67a0279989756e0a125970f3d08668ccb9570d780b35f0e699a656824907ff1f
 - `docs/budgets/owner_decisions/owner_questions_state_v4.json` 6ba74803f9577cb63f3e719d176702eb47e05a55a3c054eba926649a5c23bf67

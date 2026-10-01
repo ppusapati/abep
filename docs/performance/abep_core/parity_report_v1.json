@@ -485,73 +485,73 @@
   "W1_tpmc_trace_channel": {
    "python": {
     "wall_s": [
-     0.11756877499919938,
-     0.12067262300024595,
-     0.1166381109997019
+     0.14419054899917683,
+     0.18639517100018566,
+     0.14856311100083985
     ],
     "cpu_s": [
-     0.11752322799999604,
-     0.12046633299999598,
-     0.11656248700001015
+     0.13737763899999322,
+     0.18338408800001105,
+     0.13879749200000902
     ],
-    "median_wall_s": 0.11756877499919938,
-    "median_cpu_s": 0.11752322799999604
+    "median_wall_s": 0.14856311100083985,
+    "median_cpu_s": 0.13879749200000902
    },
    "rust": {
     "wall_s": [
-     0.021985167000821093,
-     0.02161238200005755,
-     0.017629648999900382
+     0.020306785001594108,
+     0.016380976001528325,
+     0.015815467002539663
     ],
     "cpu_s": [
-     0.02198907800000427,
-     0.021620540000000688,
-     0.0175938790000032
+     0.02030887800000869,
+     0.01623257600000727,
+     0.0158230310000107
     ],
-    "median_wall_s": 0.02161238200005755,
-    "median_cpu_s": 0.021620540000000688
+    "median_wall_s": 0.016380976001528325,
+    "median_cpu_s": 0.01623257600000727
    },
-   "speedup_wall": 5.4398804814243205,
-   "speedup_cpu": 5.435721216953522
+   "speedup_wall": 9.069246605756526,
+   "speedup_cpu": 8.550552420019278
   },
   "W2_response_point_kernel": {
    "python": {
     "wall_s": [
-     0.2768954510002004,
-     0.2739786150004875,
-     0.27177109199965344
+     0.32134548900285154,
+     0.3148131670022849,
+     0.31199172800188535
     ],
     "cpu_s": [
-     0.2767193810000066,
-     0.27380774400000973,
-     0.27159193100000323
+     0.31764868100000854,
+     0.3104643980000077,
+     0.3045551999999958
     ],
-    "median_wall_s": 0.2739786150004875,
-    "median_cpu_s": 0.27380774400000973
+    "median_wall_s": 0.3148131670022849,
+    "median_cpu_s": 0.3104643980000077
    },
    "rust": {
     "wall_s": [
-     0.03333062000001519,
-     0.03368171700003586,
-     0.03339389899974776
+     0.03560980499969446,
+     0.035261234999779845,
+     0.03665428800013615
     ],
     "cpu_s": [
-     0.033332231999992246,
-     0.03363793799999826,
-     0.03339951099999894
+     0.035381420000007324,
+     0.03467025199999796,
+     0.03663784200000464
     ],
-    "median_wall_s": 0.03339389899974776,
-    "median_cpu_s": 0.03339951099999894
+    "median_wall_s": 0.03560980499969446,
+    "median_cpu_s": 0.035381420000007324
    },
-   "speedup_wall": 8.204451208364647,
-   "speedup_cpu": 8.197956670683546
+   "speedup_wall": 8.840631590231569,
+   "speedup_cpu": 8.77478625787047
   },
   "F0_recorded_python_tpmc_trace_channel_median_wall_s": 0.1205,
   "warm_up": "one untimed call per backend and workload before the timed repeats",
   "load_average": [
-   1.015625,
-   0.77294921875,
-   0.64794921875
+   0.8486328125,
+   0.49267578125,
+   0.61376953125
   ]
  },
  "build_provenance": {
@@ -562,7 +562,8 @@
    "abep_core/src/lib.rs": "2d8cf0e117bed74bd2922c43ce7c45d80d2073c7c78028d8481e85f37e651169",
    "abep_core/src/rng.rs": "eadfe1a0417353f2baf9522c722ac8035989c54ae3565fc23681fea8257a5777",
    "abep_core/src/tpmc.rs": "96867112eee01ab0cdcecbfcc7433d0dbc6a7cf8bc17ed3ef67fdbb5eb3d614c",
-   "abep_sim/design/tpmc_backend.py": "30a2c2496b67819d1b82a013eea7ffcc86cda1f68c2fc9a00771aa2b9c155a29"
+   "abep_sim/design/tpmc_backend.py": "9a2f08a68ba2087d50890ad99fe66644917ada7654734b962dacc353be7d4467",
+   "abep_sim/intake_tpmc.py": "ea0100b96f9066b20a5ca13832e27250773962c8ddda16dcf9ccaecef621288c"
   },
   "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
   "cargo": "cargo 1.94.1 (29ea6fb6a 2026-03-24)",
@@ -575,7 +576,7 @@
   "python": "3.11.15",
   "numpy": "2.4.4",
   "platform": "Linux 6.18.44-fc-v50 x86_64",
-  "git_head": "ee87fe7f4baade0fb5447d77c53d4f05b6851de5",
+  "git_head": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
   "git_dirty": false
  },
  "items": [
@@ -853,6 +854,10 @@
   {
    "id": "DIV-03",
    "statement": "CLL alpha_n or alpha_t outside [0, 1]: the reference raises (alpha_t) or returns NaN (alpha_n); the Rust backend refuses with ValueError. Not in the comparison set (documented after registration; does not affect scoring)."
+  },
+  {
+   "id": "DIV-04",
+   "statement": "trace_channel max_hits_cap < 1: the reference accepts max_hits_cap = 0 (its hit-budget doubling then stops after max_hits steps); the Rust extension refuses it (its error text cites max_hits, which is inaccurate for the cap), and abep_sim/design/tpmc_backend.py refuses it for backend='rust' with a correct message before the extension is called. Not in the comparison set (recorded in consolidated verification round 1, RUST-02; does not affect scoring)."
   }
  ],
  "campaign_history": [
@@ -879,6 +884,31 @@
     "K5_clausing": "ADMITTED"
    },
    "wall_s": 99.5
+  },
+  {
+   "utc": "2026-10-01T08:15:47Z",
+   "git_head": "fddd66d7fccb54ed261793dc6ff435ace4a6102d",
+   "git_dirty": false,
+   "master_seed": 20261001,
+   "prereg_sha256": "dd12856bc384cb96643ffb5f8cd4fbc7df1c4d1adcc619bd210ddfa26c8102a8",
+   "source_sha256": {
+    "abep_core/Cargo.toml": "cfb3054985ea94ccc54b9c7b370b6ca39b5d3c4dac6e59228f527c69320c123d",
+    "abep_core/Cargo.lock": "5d1ae2c3c0e4092ba8add152cb67f6b767ec2e29b4babdf3d4a8d826a6ca5aaa",
+    "abep_core/pyproject.toml": "309994da507b37a6cf43300f42e0c888ad68462d0a3ace843c7a1b1f7b94806d",
+    "abep_core/src/lib.rs": "2d8cf0e117bed74bd2922c43ce7c45d80d2073c7c78028d8481e85f37e651169",
+    "abep_core/src/rng.rs": "eadfe1a0417353f2baf9522c722ac8035989c54ae3565fc23681fea8257a5777",
+    "abep_core/src/tpmc.rs": "96867112eee01ab0cdcecbfcc7433d0dbc6a7cf8bc17ed3ef67fdbb5eb3d614c",
+    "abep_sim/design/tpmc_backend.py": "9a2f08a68ba2087d50890ad99fe66644917ada7654734b962dacc353be7d4467",
+    "abep_sim/intake_tpmc.py": "ea0100b96f9066b20a5ca13832e27250773962c8ddda16dcf9ccaecef621288c"
+   },
+   "verdicts": {
+    "K1_entry": "ADMITTED",
+    "K2_diffuse": "ADMITTED",
+    "K3_cll": "ADMITTED",
+    "K4_trace": "ADMITTED",
+    "K5_clausing": "ADMITTED"
+   },
+   "wall_s": 107.0
   }
  ],
  "vectors": {
