@@ -1,0 +1,1241 @@
+{
+ "id": "sputter_yield_inputs_v1",
+ "purpose": "Hand-transcribed inputs for docs/evidence/sputter_yields_v1/build_sputter_yields_v1.py. Every number below was read by the lane from the cited page image (or, for atomic weights, from the cited web table) on the stated date. Nothing here is an alloy or coating value. The builder derives the register JSON and MD from this file only; it refuses missing or unknown fields.",
+ "date": "2026-10-01",
+ "base_commit": "5497be14befa95dd87b58a3d42d4ab1c8235fcf5",
+ "decisions": [
+  {
+   "id": "A9.12",
+   "json": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "json_sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_md": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "question_ids": [
+    "P4-OQ-04 (S5.13)",
+    "P4-OQ-02 (S5.11)",
+    "P4-OQ-03 (S5.12)"
+   ],
+   "applied": [
+    "P4-OQ-04 / S5.13 answer BOTH: lawful acquisition of species-resolved N+, N2+, O+, O2+ sputtering-yield information (library, inter-library loan, publisher purchase, institutional subscription, other licensed routes) plus project ion-beam measurement of down-selected candidates; literature is used for prior bounds, test-matrix selection, comparison and model initialisation; project measurements provide candidate-specific evidence; elemental-target literature yields are never silently substituted for an alloy/coating.",
+    "P4-OQ-02 / S5.11 answer BROAD_Q0_DOWNSELECT_Q1: the Q0 matrix rows used in q0_matrix below; coatings must record composition, thickness, deposition process, substrate, surface preparation and lot/process provenance; Ti, TiN/ZrN, bulk Cu and bulk Ir are reserve only (not in this register's matrix).",
+    "P4-OQ-03 / S5.12 answer LOCK_2_AFTER_METROLOGY_BEFORE_EXPOSURE: sputter/erosion acceptance thresholds are frozen at LOCK-2 after metrology commissioning; this register sets no threshold."
+   ]
+  },
+  {
+   "id": "A9.15",
+   "json": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+   "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+   "verbatim_md": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "question_ids": [
+    "RFP-COMPLIANT PROPELLANT POLICY (governing rule)"
+   ],
+   "applied": [
+    "Xenon is an RFP-required system capability; Xe+ therefore stays a required projectile of the P4 sputtering criterion CR-04. P4-OQ-04 (the acquisition authorisation implemented here) names N+, N2+, O+, O2+ only, so Xe+ (and engineering-only Ar+) are listed as NOT_ASSESSED_IN_THIS_LANE, never as covered."
+   ]
+  }
+ ],
+ "read_only_references": [
+  {
+   "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+   "sha256_at_base_commit": "42ef3a3e2e3aea09bbf852520fc9c21c9d6c9c8a5c134d7e5360b429ee8afa06",
+   "ids_used": [
+    "CR-04",
+    "IT-22",
+    "TP-04",
+    "NIFS_DATA_23",
+    "CAND-01",
+    "CAND-02A",
+    "CAND-02B",
+    "CAND-02C",
+    "CAND-02D",
+    "CAND-03A",
+    "CAND-03B",
+    "CAND-03C",
+    "CAND-04",
+    "CAND-05",
+    "CAND-06",
+    "CAND-07",
+    "CAND-08",
+    "CAND-09"
+   ],
+   "note": "owned by the step-1 lane; read only; never modified here"
+  },
+  {
+   "path": "docs/evidence/wall_life/sputter_yield_db_v1.json",
+   "sha256_at_base_commit": "315fbd44da2ee16246edb95830be09e0f05b9237cd5ca0a4c86a02a7e25bfffa",
+   "ids_used": [
+    "S11",
+    "S12",
+    "S13",
+    "S21"
+   ],
+   "note": "existing Hall-wall ceramic database (lane_32); source records reused as pointers only"
+  }
+ ],
+ "species_required": [
+  "N+",
+  "N2+",
+  "O+",
+  "O2+"
+ ],
+ "species_context_not_assessed": [
+  {
+   "species": "Xe+",
+   "why": "CR-04 lists Xe+ and A9.15 makes Xe an RFP-required capability, but P4-OQ-04 (this lane's authorisation) names N+, N2+, O+, O2+ only; open Xe+ elemental fits are pointed to by docs/evidence/wall_life S11 (Yim, IEPC-2017-060) and were not re-read here"
+  },
+  {
+   "species": "Ar+",
+   "why": "engineering-only projectile in CR-04 / A9 evidence order; not part of P4-OQ-04"
+  }
+ ],
+ "reporting_energy_grid_eV": [
+  50,
+  100,
+  200,
+  300,
+  500,
+  1000
+ ],
+ "reporting_energy_grid_note": "tabulation grid for the semi-empirical evaluations only. It is NOT a sheath energy or operating point: the CR-04 domain 'sheath_energy_range' is not registered (TBD from the H-1 / ICP electrode envelopes).",
+ "sources": [
+  {
+   "id": "SRC-IPP-9-132",
+   "citation": "W. Eckstein, 'Calculated Sputtering, Reflection and Range Values', IPP-Report 9/132, Max-Planck-Institut fuer Plasmaphysik, Garching, June 2002",
+   "url": "https://pure.mpg.de/rest/items/item_2138250_2/component/file_3587319/content",
+   "doi": null,
+   "access": "OPEN",
+   "access_detail": "MPG PuRe open repository; scanned report with OCR text layer; every value used was read from the rendered page image (OCR is noisy)",
+   "retrieved": "2026-10-01",
+   "sha256": "2a5726734b3b13038def69bf6000629ccf6373c4eb498a1bb3424949ece74fe8",
+   "same_file_as": "docs/evidence/wall_life/sputter_yield_db_v1.json S12 (identical sha256)",
+   "evidence_level": 4,
+   "kind": "TRIM.SP binary-collision Monte Carlo tables (calculated, not measured)",
+   "scope_note": "index (report pp. 5-6): among the Q0-relevant elements only C, Fe, Ni, Mo (not in Q0 as bulk), Ti, Pt, W are targets; N projectiles only on Be, C (15-30 keV only, out of range) and W; O projectiles only on Be, B, C, Mo, W and compounds (BeO, B4C, B2O3, B(OH)3, WO3, WO4, layered WO3 on W). No N or O projectile on Fe, Ni, Cr, Al, Pt, Rh, Ir, Ru. The report states the values are valid for nearly flat surfaces; statistical errors usually < 3 % for yields > 1e-5, up to 100 % at the lowest values; several O tables are flagged 'only low fluence!' (no oxide / compound build-up)."
+  },
+  {
+   "id": "SRC-NIFS-DATA-23",
+   "citation": "Y. Yamamura, H. Tawara, 'Energy Dependence of Ion-Induced Sputtering Yields from Monoatomic Solids at Normal Incidence', NIFS-DATA-23, National Institute for Fusion Science, Nagoya, March 1995",
+   "url": "https://www.nifs.ac.jp/report/NIFS-DATA-023.pdf",
+   "doi": null,
+   "access": "OPEN",
+   "access_detail": "NIFS open report; scanned PDF (114 pages) with no text layer; formulas (report pp. 7-8, Eqs. 4, 15-22), worked example (p. 12), Table 1 (p. 14), Table 3 (p. 16) and figure captions read from page images rendered at 130-220 dpi",
+   "retrieved": "2026-10-01",
+   "sha256": "bc3c8d1aa2c5a238fa346484ccf93cf0e494a08aa1e956ab141a0ed130979ef7",
+   "same_file_as": "P4 source_register NIFS_DATA_23 (identical sha256; P4 recorded it as LOCATED ONLY, not digitized)",
+   "evidence_level": 5,
+   "kind": "compilation of published experimental yields (graphs) plus ACAT calculations, with a semi-empirical formula whose parameters were best-fitted to the compiled data",
+   "scope_note": "monoatomic (elemental) targets only; per Table 3, N or O projectile graphs exist for C (O: 2 refs), Fe (N: 2), Ni (N: 1, O: 1), Mo (N: 1, O: 1), W (N: 1, O: 6) among Q0-relevant elements; none for Cr, Al, Ti, Nb, Ru, Rh, Ir, Pt. The journal version (At. Data Nucl. Data Tables 62 (1996) 149, pointer from docs/evidence/wall_life S21) was not accessed; equivalence of the two versions is not established (verify)."
+  },
+  {
+   "id": "SRC-IAEA-APID-7B",
+   "citation": "Atomic and Plasma-Material Interaction Data for Fusion, Volume 7, Part B (physical sputtering and radiation-enhanced sublimation of Be, C and W), International Atomic Energy Agency, Vienna, 2001",
+   "url": "https://www-pub.iaea.org/MTCD/Publications/PDF/Pub23APID7b_web.pdf",
+   "doi": null,
+   "access": "OPEN",
+   "access_detail": "IAEA open publication PDF; fit formula (report p. 18) and the N+/O+ on C/W fit tables (sections 2.1.2.6, 2.1.2.7, 2.1.3.6, 2.1.3.7; PDF pages 45, 46, 54, 55) read from rendered page images",
+   "retrieved": "2026-10-01",
+   "sha256": "29852d832b1a5170fdc174c9c79046db8f992cd8a06835c7f565c389d97a92ff",
+   "evidence_level": 4,
+   "kind": "evaluated data compilation with analytic fits (Bayesian fits to calculated and measured points)",
+   "scope_note": "targets Be, C, W and selected compounds only. For N+ and O+ on C and W the fits use calculated (TRIM.SP) values only, because measured data are affected by chemical interactions; the printed comments are transcribed in apid_fit_params below."
+  },
+  {
+   "id": "SRC-CIAAW-2024",
+   "citation": "IUPAC Commission on Isotopic Abundances and Atomic Weights (CIAAW), Abridged Standard Atomic Weights (2024 table)",
+   "url": "https://www.ciaaw.org/abridged-atomic-weights.htm",
+   "doi": null,
+   "access": "OPEN",
+   "access_detail": "read via the WebFetch tool (model-summarised page text, not a byte copy); cross-checked by the builder against the mass ratios A = M2/M1 printed in the NIFS-DATA-23 figure captions (agreement to 0.01)",
+   "retrieved": "2026-10-01",
+   "sha256": null,
+   "evidence_level": 4,
+   "kind": "evaluated physical constants"
+  },
+  {
+   "id": "SRC-DOBES-2011",
+   "citation": "K. Dobes, P. Naderer, N. Lachaud, C. Eisenmenger-Sittner, F. Aumayr, 'Sputtering of tungsten by N+ and N2+ ions: investigations of molecular effects', Physica Scripta T145 (2011) 014017",
+   "url": "https://www.osti.gov/etdeweb/biblio/22044966",
+   "doi": "10.1088/0031-8949/2011/T145/014017",
+   "access": "PAYWALLED_ACQUISITION_NEEDED",
+   "access_detail": "abstract read on the OSTI ETDEWEB record; the publisher page (iopscience.iop.org) answered with a bot-management redirect (validate.perfdrive.com), which was not followed; open-access status of the full text not established",
+   "retrieved": "2026-10-01",
+   "sha256": null,
+   "evidence_level": 3,
+   "kind": "primary measurement (quartz-crystal microbalance), polycrystalline W, N+ and N2+",
+   "abstract_statement": "OSTI abstract: total sputtering yield of polycrystalline W under N+ and N2+ by QCM; below 1 keV the yield per N atom for N2+ is up to 25 % higher than for N+ at the same velocity (a molecular effect). No numeric yield transcribed."
+  },
+  {
+   "id": "SRC-PHADKE-2020",
+   "citation": "P. Phadke, J. M. Sturm, R. W. E. van de Kruijs, F. Bijkerk, 'Sputtering and nitridation of transition metal surfaces under low energy, steady state nitrogen ion bombardment', Applied Surface Science 505 (2020) 144529",
+   "url": "https://research.utwente.nl/en/publications/sputtering-and-nitridation-of-transition-metal-surfaces-under-low/",
+   "doi": "10.1016/j.apsusc.2019.144529",
+   "access": "OPEN_NOT_RETRIEVABLE_AUTOMATED",
+   "access_detail": "University of Twente record states open access under CC BY; the PDF link (research.utwente.nl/files/517482203/...) and ScienceDirect both returned a bot challenge / HTTP 403 to automated fetch; not bypassed. Abstract read on the Twente record page.",
+   "retrieved": "2026-10-01",
+   "sha256": null,
+   "evidence_level": 3,
+   "kind": "primary measurement on Mo, Ru, Pd, W thin films; nitrogen ion beam (search snippet: N2+-dominated, N+ fraction 10-20 %; verify against full text); 50-500 eV; steady-state fluence 1e18 ions/cm2; TRIDYN interpretation; XPS shows nitride formation",
+   "abstract_statement": "Twente abstract: nitrogen-ion-induced sputter yields of Mo, Ru, Pd and W thin films at 50-500 eV and steady-state fluence (1e18 ions/cm2), interpreted with TRIDYN; all metals formed a nitride. No numeric yield transcribed."
+  },
+  {
+   "id": "SRC-ESPY-1993",
+   "citation": "S. L. Espy, I. F. Urazgil'din, A. V. Barnes, Y. Yao, J. L. Allen, R. G. Albridge, N. H. Tolk, 'Low-energy sputtering yield measurements of O+, O2+, N+, and N2+ incident on Al and Al2O3 surfaces', Proc. SPIE 1761, pp. 130-140 (1993)",
+   "url": null,
+   "doi": "10.1117/12.138921",
+   "access": "PAYWALLED_ACQUISITION_NEEDED",
+   "access_detail": "pointer reused from docs/evidence/wall_life/sputter_yield_db_v1.json S13 (closed access; abstract read there via OpenAlex); not re-read in this lane",
+   "retrieved": null,
+   "sha256": null,
+   "evidence_level": 3,
+   "kind": "primary measurement, 50-200 eV, QCM, Al and Al2O3 thin films, all four required species (per S13 record)"
+  },
+  {
+   "id": "SRC-TSUNOYAMA-1976",
+   "citation": "K. Tsunoyama, T. Suzuki, Y. Ohashi, 'Sputtering of iron with ion beams of O2+, N2+ and Ar+', Japanese Journal of Applied Physics 15 (2) (1976) 349-355",
+   "url": "https://www.osti.gov/etdeweb/biblio/7236559",
+   "doi": null,
+   "access": "PAYWALLED_ACQUISITION_NEEDED",
+   "access_detail": "OSTI ETDEWEB bibliographic record and abstract only; full text not indicated as available there; DOI not retrieved (verify)",
+   "retrieved": "2026-10-01",
+   "sha256": null,
+   "evidence_level": 3,
+   "kind": "primary measurement, pure Fe, O2+ and N2+ (abstract: 20 keV, far above any expected sheath energy)",
+   "abstract_statement": "abstract reports yields at 20 keV and an oxygen-enhanced surface layer under O2+; values not transcribed (energy far outside the domain of interest; abstract read through a summarising fetch tool, verify)."
+  },
+  {
+   "id": "SRC-ECKSTEIN-2007",
+   "citation": "W. Eckstein, 'Sputtering yields', in R. Behrisch, W. Eckstein (eds.), Sputtering by Particle Bombardment, Topics in Applied Physics 110 (Springer, 2007)",
+   "url": null,
+   "doi": null,
+   "access": "PAYWALLED_ACQUISITION_NEEDED",
+   "access_detail": "pointer reused from docs/evidence/wall_life S21 (not accessed; closed); DOI not retrieved (verify)",
+   "retrieved": null,
+   "sha256": null,
+   "evidence_level": 4,
+   "kind": "evaluated compilation / fits (elemental targets)"
+  },
+  {
+   "id": "SRC-YT-ADNDT-1996",
+   "citation": "Y. Yamamura, H. Tawara, 'Energy dependence of ion-induced sputtering yields from monatomic solids at normal incidence', Atomic Data and Nuclear Data Tables 62 (1996) 149-253",
+   "url": null,
+   "doi": null,
+   "access": "PAYWALLED_ACQUISITION_NEEDED",
+   "access_detail": "pointer reused from docs/evidence/wall_life S21 (not accessed); journal version of SRC-NIFS-DATA-23 (relationship not verified)",
+   "retrieved": null,
+   "sha256": null,
+   "evidence_level": 5,
+   "kind": "compilation + semi-empirical fits (elemental targets)"
+  },
+  {
+   "id": "SRC-NIFS-LEGEND-REFS",
+   "citation": "Primary experimental references named only as 'first author (year)' in the NIFS-DATA-23 figure legends: Bader M. (1960) and (1961) [N+ on Fe, Ni, Mo, W]; Roth J. (1979) [O+ on Ni, W]; Hechtl E. (1981), (1984), (1986), (1991) [O+ on W, Mo, C]; Tsunoyama K. (1980) [O+ on W]; Eckstein W. (1993) [O+ on C]",
+   "url": "https://www.nifs.ac.jp/report/NIFS-DATA-023.pdf",
+   "doi": null,
+   "access": "PAYWALLED_ACQUISITION_NEEDED",
+   "access_detail": "full bibliographic records not resolved (the figure legends give first author and year only); to be resolved by the library route (verify)",
+   "retrieved": "2026-10-01",
+   "sha256": null,
+   "evidence_level": 3,
+   "kind": "primary measurements on elemental targets (as plotted in NIFS-DATA-23)"
+  }
+ ],
+ "atomic_weights": {
+  "source": "SRC-CIAAW-2024",
+  "values": {
+   "He": 4.0026,
+   "C": 12.011,
+   "N": 14.007,
+   "O": 15.999,
+   "Al": 26.982,
+   "Ti": 47.867,
+   "Cr": 51.996,
+   "Fe": 55.845,
+   "Ni": 58.693,
+   "Nb": 92.906,
+   "Mo": 95.95,
+   "Ru": 101.07,
+   "Rh": 102.91,
+   "W": 183.84,
+   "Ir": 192.22,
+   "Pt": 195.08,
+   "Au": 196.97
+  }
+ },
+ "atomic_numbers": {
+  "He": 2,
+  "C": 6,
+  "N": 7,
+  "O": 8,
+  "Al": 13,
+  "Ti": 22,
+  "Cr": 24,
+  "Fe": 26,
+  "Ni": 28,
+  "Nb": 41,
+  "Mo": 42,
+  "Ru": 44,
+  "Rh": 45,
+  "W": 74,
+  "Ir": 77,
+  "Pt": 78,
+  "Au": 79
+ },
+ "nifs_table1": {
+  "source": "SRC-NIFS-DATA-23",
+  "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+  "columns": [
+   "Us_eV",
+   "Q",
+   "W",
+   "s"
+  ],
+  "rows": {
+   "C": [
+    7.37,
+    1.7,
+    1.84,
+    2.5
+   ],
+   "Al": [
+    3.39,
+    1.0,
+    2.17,
+    2.5
+   ],
+   "Ti": [
+    4.85,
+    0.54,
+    2.57,
+    2.5
+   ],
+   "Cr": [
+    4.1,
+    0.93,
+    1.44,
+    2.5
+   ],
+   "Fe": [
+    4.28,
+    0.75,
+    1.2,
+    2.5
+   ],
+   "Ni": [
+    4.44,
+    0.94,
+    1.33,
+    2.5
+   ],
+   "Nb": [
+    7.57,
+    0.93,
+    2.65,
+    2.8
+   ],
+   "Mo": [
+    6.82,
+    0.85,
+    2.39,
+    2.8
+   ],
+   "Ru": [
+    6.74,
+    1.31,
+    2.36,
+    2.5
+   ],
+   "Rh": [
+    5.75,
+    1.14,
+    2.59,
+    2.5
+   ],
+   "W": [
+    8.9,
+    0.72,
+    2.14,
+    2.8
+   ],
+   "Ir": [
+    6.94,
+    0.96,
+    2.43,
+    2.5
+   ],
+   "Pt": [
+    5.84,
+    1.03,
+    3.21,
+    2.5
+   ],
+   "Au": [
+    3.81,
+    1.08,
+    1.64,
+    2.8
+   ]
+  }
+ },
+ "nifs_worked_example": {
+  "source": "SRC-NIFS-DATA-23",
+  "locator": "Section 7 'A sample calculation of the sputtering yield', report pp. 11-12",
+  "projectile": "He",
+  "target": "Au",
+  "energy_eV": 1000,
+  "printed_yield": 0.14,
+  "printed_Eth_eV": 54.0,
+  "note": "the printed example mixes 195.1 and 197 for the Au mass and prints gamma = 0.07878 (our arithmetic with its own masses gives 0.0781); the builder accepts a 2 % tolerance on the yield and records the residual"
+ },
+ "nifs_formula_reading": {
+  "source": "SRC-NIFS-DATA-23",
+  "locator": "Eqs. (4), (15)-(22), report pp. 3, 7-8",
+  "alpha_branch_note": "Eq. (17) as printed labels 0.249(M2/M1)^0.56 + 0.0035(M2/M1)^1.5 'M1 >= M2' and 0.088(M2/M1)^-0.15 + 0.165(M2/M1) 'M1 <= M2'. The paper's own worked example (He -> Au, M2/M1 = 48.75, i.e. M1 < M2) and Fig. 1 use the 0.249 branch for M2/M1 > 1, so the labels as printed are inconsistent with the paper's use. The builder uses the branch the paper itself uses (0.249 branch for M1 <= M2); the two branches agree at M2/M1 = 1 (0.2525 vs 0.253). Only O+ / N+ on C (M1 > M2) is affected.",
+  "threshold_note": "Eq. (18): Eth/Us = 6.7/gamma for M1 >= M2 and (1 + 5.7 M1/M2)/gamma for M1 <= M2 (labels consistent with the worked example)."
+ },
+ "nifs_caption_fits": {
+  "source": "SRC-NIFS-DATA-23",
+  "note": "per-combination best-fit parameters printed in the figure captions ('A = M2/M1, Q, Us, s, W = k*Us'); read at 220 dpi. 'THE BEST-FIT SURFACE BINDING ENERGY IS USED' means Us was fitted for that combination instead of the Table 1 heat of sublimation.",
+  "rows": [
+   {
+    "id": "NIFS-F19",
+    "projectile": "O",
+    "target": "C",
+    "figure": "Fig. 19",
+    "report_page": 22,
+    "pdf_page": 24,
+    "A": 0.75,
+    "Q": 1.7,
+    "Us_eV": 7.37,
+    "s": 2.5,
+    "W_factor_of_Us": 0.25,
+    "best_fit_Us": false,
+    "legend": [
+     "Hechtl E. (1986)",
+     "Eckstein W. (1993)"
+    ],
+    "caption_remark": "EXPERIMENTAL DATA FOR DIFFERENT KINDS OF GRAPHITE ARE INCLUDED. THE CHEMICAL EROSION IS FOUND EVEN AT ROOM TEMPERATURE.",
+    "data_vs_curve": "plotted measured points lie well above the formula curve over the whole plotted range (chemical erosion); the formula curve is a physical-sputtering curve only"
+   },
+   {
+    "id": "NIFS-F81",
+    "projectile": "N",
+    "target": "Fe",
+    "figure": "Fig. 81",
+    "report_page": 38,
+    "pdf_page": 39,
+    "A": 3.99,
+    "Q": 0.75,
+    "Us_eV": 5.14,
+    "s": 2.5,
+    "W_factor_of_Us": 0.28,
+    "best_fit_Us": true,
+    "legend": [
+     "Bader M. (1960)",
+     "Bader M. (1961)"
+    ],
+    "caption_remark": "THE BEST-FIT SURFACE BINDING ENERGY IS USED.",
+    "data_vs_curve": "plotted points start near 0.3 keV; no measured point in the 50-200 eV range"
+   },
+   {
+    "id": "NIFS-F102",
+    "projectile": "N",
+    "target": "Ni",
+    "figure": "Fig. 102",
+    "report_page": 42,
+    "pdf_page": 43,
+    "A": 4.19,
+    "Q": 0.94,
+    "Us_eV": 5.77,
+    "s": 2.5,
+    "W_factor_of_Us": 0.3,
+    "best_fit_Us": true,
+    "legend": [
+     "Bader M. (1961)"
+    ],
+    "caption_remark": "THE BEST-FIT SURFACE BINDING ENERGY IS USED.",
+    "data_vs_curve": "plotted points from about 50 eV upward"
+   },
+   {
+    "id": "NIFS-F103",
+    "projectile": "O",
+    "target": "Ni",
+    "figure": "Fig. 103",
+    "report_page": 44,
+    "pdf_page": 45,
+    "A": 3.67,
+    "Q": 0.94,
+    "Us_eV": 10.21,
+    "s": 2.5,
+    "W_factor_of_Us": 0.3,
+    "best_fit_Us": true,
+    "legend": [
+     "Roth J. (1979)"
+    ],
+    "caption_remark": "THE BEST-FIT SURFACE BINDING ENERGY IS USED.",
+    "data_vs_curve": "plotted points from about 100 eV to a few keV"
+   },
+   {
+    "id": "NIFS-F168",
+    "projectile": "N",
+    "target": "Mo",
+    "figure": "Fig. 168",
+    "report_page": 60,
+    "pdf_page": 61,
+    "A": 6.85,
+    "Q": 0.85,
+    "Us_eV": 13.64,
+    "s": 2.8,
+    "W_factor_of_Us": 0.45,
+    "best_fit_Us": true,
+    "legend": [
+     "Bader M. (1960)"
+    ],
+    "caption_remark": "THE BEST-FIT SURFACE BINDING ENERGY IS USED.",
+    "data_vs_curve": "plotted points start near 0.3 keV"
+   },
+   {
+    "id": "NIFS-F169",
+    "projectile": "O",
+    "target": "Mo",
+    "figure": "Fig. 169",
+    "report_page": 60,
+    "pdf_page": 61,
+    "A": 6.0,
+    "Q": 0.85,
+    "Us_eV": 8.18,
+    "s": 2.8,
+    "W_factor_of_Us": 0.45,
+    "best_fit_Us": true,
+    "legend": [
+     "Hechtl E. (1984)"
+    ],
+    "caption_remark": "THE BEST-FIT SURFACE BINDING ENERGY IS USED.",
+    "data_vs_curve": "four plotted points, about 0.15 keV to 10 keV"
+   },
+   {
+    "id": "NIFS-F259",
+    "projectile": "N",
+    "target": "W",
+    "figure": "Fig. 259",
+    "report_page": 83,
+    "pdf_page": 84,
+    "A": 13.12,
+    "Q": 0.72,
+    "Us_eV": 13.35,
+    "s": 2.8,
+    "W_factor_of_Us": 0.24,
+    "best_fit_Us": true,
+    "legend": [
+     "Bader M. (1961)"
+    ],
+    "caption_remark": "THE BEST-FIT SURFACE BINDING ENERGY IS USED.",
+    "data_vs_curve": "plotted points start near 0.3 keV"
+   },
+   {
+    "id": "NIFS-F260",
+    "projectile": "O",
+    "target": "W",
+    "figure": "Fig. 260",
+    "report_page": 83,
+    "pdf_page": 84,
+    "A": 11.49,
+    "Q": 0.72,
+    "Us_eV": 15.13,
+    "s": 2.8,
+    "W_factor_of_Us": 0.24,
+    "best_fit_Us": true,
+    "legend": [
+     "Roth J. (1979)",
+     "Tsunoyama K. (1980)",
+     "Hechtl E. (1981)",
+     "Hechtl E. (1991)"
+    ],
+    "caption_remark": "THE BEST-FIT SURFACE BINDING ENERGY IS USED.",
+    "data_vs_curve": "plotted points from about 0.1 keV scatter by up to roughly a factor of 3-5 about the curve at 0.2-0.5 keV"
+   }
+  ],
+  "w_inconsistency_note": "Table 1 W equals the caption factor times the Table 1 Us for Fe (0.28*4.28), Ni (0.30*4.44) and W (0.24*8.9), but not for Mo (Table 1 W = 2.39 = 0.35*6.82, caption 'W = 0.45Us'). For best-fit-Us combinations it is also not stated whether k multiplies the Table 1 or the fitted Us. The builder evaluates all three readings (Table 1 W; k * Table 1 Us; k * fitted Us) and reports the spread."
+ },
+ "trim_tables": {
+  "source": "SRC-IPP-9-132",
+  "note": "values read from the rendered page images; 0 deg = normal incidence; 'Eo' = projectile energy in eV (per atom). The numbers are TRIM.SP output for a flat, pure elemental target at low fluence.",
+  "tables": [
+   {
+    "id": "TRIM-N-W",
+    "projectile": "N",
+    "target": "W",
+    "locator": "'N -> W', 'Sputtering yield of W by N', report p. 221 (PDF p. 225)",
+    "header": "z1=7, m1=14.01, z2=74, m2=183.85, sbe=8.68 eV, rho=19.29 g/cm3, ef=0.98 eV, esb=1.00 eV, KrC potential, program trvmc",
+    "angles_deg": [
+     0,
+     45
+    ],
+    "rows": [
+     [
+      47,
+      9.3e-06,
+      null
+     ],
+     [
+      48,
+      1.82e-05,
+      5.7e-06
+     ],
+     [
+      50,
+      5.7e-05,
+      2.11e-05
+     ],
+     [
+      52,
+      0.000135,
+      5.06e-05
+     ],
+     [
+      55,
+      0.00036,
+      0.000152
+     ],
+     [
+      60,
+      0.000973,
+      0.000474
+     ],
+     [
+      70,
+      0.00326,
+      0.00202
+     ],
+     [
+      80,
+      0.007,
+      0.00461
+     ],
+     [
+      90,
+      0.0117,
+      0.00858
+     ],
+     [
+      100,
+      0.0172,
+      0.013
+     ],
+     [
+      120,
+      0.0277,
+      0.0253
+     ],
+     [
+      140,
+      0.0399,
+      0.0406
+     ],
+     [
+      200,
+      0.0757,
+      0.087
+     ],
+     [
+      300,
+      0.132,
+      0.171
+     ],
+     [
+      500,
+      0.213,
+      0.31
+     ],
+     [
+      1000,
+      0.339,
+      0.535
+     ],
+     [
+      2000,
+      0.469,
+      null
+     ],
+     [
+      3000,
+      0.54,
+      null
+     ],
+     [
+      5000,
+      0.605,
+      null
+     ],
+     [
+      10000,
+      0.654,
+      null
+     ]
+    ],
+    "flags": []
+   },
+   {
+    "id": "TRIM-O-W",
+    "projectile": "O",
+    "target": "W",
+    "locator": "'O -> W', 'Sputtering yield of W by O', report p. 224 (PDF p. 228)",
+    "header": "z1=8, m1=16.00, z2=74, m2=183.85, sbe=8.68 eV, rho=19.30 g/cm3, ef=0.95 eV, esb=1.00 eV, KrC potential, program 'IPP 9/82'",
+    "angles_deg": [
+     0
+    ],
+    "rows": [
+     [
+      50,
+      0.000363
+     ],
+     [
+      100,
+      0.0217
+     ],
+     [
+      200,
+      0.09
+     ],
+     [
+      300,
+      0.152
+     ],
+     [
+      500,
+      0.245
+     ],
+     [
+      1000,
+      0.371
+     ],
+     [
+      2000,
+      0.533
+     ],
+     [
+      5000,
+      0.689
+     ],
+     [
+      6000,
+      0.764
+     ]
+    ],
+    "flags": [
+     "only low fluence (printed)",
+     "values taken over from IPP 9/82 (program line)"
+    ]
+   },
+   {
+    "id": "TRIM-O-C",
+    "projectile": "O",
+    "target": "C",
+    "locator": "'O -> C', 'Sputtering yield of C by O', report p. 65 (PDF p. 69)",
+    "header": "z1=8, m1=16.00, z2=6, m2=12.01, sbe=7.41 eV, rho=1.85, 2.00 g/cm3 (two values printed), ef=0.95, 2.10 eV, esb=1.00, 2.60 eV (two values printed), KrC potential, programs trvmc95, newtrim",
+    "angles_deg": [
+     0
+    ],
+    "rows": [
+     [
+      38,
+      4.6e-06
+     ],
+     [
+      40,
+      7.98e-06
+     ],
+     [
+      42,
+      1.3e-05
+     ],
+     [
+      45,
+      2.56e-05
+     ],
+     [
+      50,
+      6.56e-05
+     ],
+     [
+      60,
+      0.000287
+     ],
+     [
+      70,
+      0.000779
+     ],
+     [
+      100,
+      0.00459
+     ],
+     [
+      150,
+      0.018
+     ],
+     [
+      300,
+      0.0685
+     ],
+     [
+      1000,
+      0.215
+     ],
+     [
+      3000,
+      0.323
+     ],
+     [
+      6000,
+      0.34
+     ]
+    ],
+    "flags": [
+     "only low fluence (printed)",
+     "two density / cutoff / esb values and two programs printed for one column; which rows used which set is not stated",
+     "physical sputtering only: no chemical erosion (CO/CO2 formation)"
+    ]
+   }
+  ]
+ },
+ "apid_fit_params": {
+  "source": "SRC-IAEA-APID-7B",
+  "formula_locator": "report p. 18 (PDF p. 20): Y(E0) = 0.5 q (E0/Eth - 1)^mu ln(1 + 1.2288 eps) / { lambda + (E0/Eth - 1)^mu [eps + 0.1728 sqrt(eps) + 0.008 eps^0.1504] }, eps = E0 * eps_L; the bracket multiplies only the threshold term (E0/Eth - 1)^mu, not lambda (corrected reading 2026-10-01, page image re-read; the v1 reading divided by (lambda + x) * bracket)",
+  "rows": [
+   {
+    "id": "APID-2.1.2.6",
+    "projectile": "N",
+    "target": "C",
+    "pdf_page": 45,
+    "lambda": 1.9555,
+    "q": 0.45004,
+    "mu": 1.7579,
+    "eps_L_per_eV": 0.00013549,
+    "Eth_eV": 36.13,
+    "avg_error_pct": 15.2,
+    "Emax_eV": 1000.0,
+    "comments": [
+     "Only calculated values.",
+     "Fit valid only for low fluence due to chemical reaction with nitrogen and nitrogen implantation."
+    ]
+   },
+   {
+    "id": "APID-2.1.2.7",
+    "projectile": "O",
+    "target": "C",
+    "pdf_page": 46,
+    "lambda": 0.28214,
+    "q": 1.0579,
+    "mu": 1.7248,
+    "eps_L_per_eV": 1.1109e-05,
+    "Eth_eV": 42.683,
+    "avg_error_pct": 7.3,
+    "Emax_eV": 6000.0,
+    "comments": [
+     "Only calculated points used for fit because experimental data are dominated by chemical erosion.",
+     "Fit only valid for low fluence due to chemical reaction of O with C (oxide formation)."
+    ]
+   },
+   {
+    "id": "APID-2.1.3.6",
+    "projectile": "N",
+    "target": "W",
+    "pdf_page": 54,
+    "lambda": 0.016012,
+    "q": 4.9256,
+    "mu": 1.8338,
+    "eps_L_per_eV": 8.882e-07,
+    "Eth_eV": 46.767,
+    "avg_error_pct": 9.8,
+    "Emax_eV": 5000.0,
+    "comments": [
+     "Only calculated values are used for the fit because of chemical interactions and old data."
+    ]
+   },
+   {
+    "id": "APID-2.1.3.7",
+    "projectile": "O",
+    "target": "W",
+    "pdf_page": 55,
+    "lambda": 0.1173,
+    "q": 1.7372,
+    "mu": 0.81924,
+    "eps_L_per_eV": 2.7649e-05,
+    "Eth_eV": 49.347,
+    "avg_error_pct": 14.7,
+    "Emax_eV": 10000.0,
+    "comments": [
+     "Only calculated values are used for the fit because of chemical interactions.",
+     "Low temperature data are probably due to tungsten oxide at the surface (25 A)."
+    ]
+   }
+  ]
+ },
+ "q0_matrix": [
+  {
+   "row": "R8-C01",
+   "p4_candidate": "CAND-01",
+   "label": "316L (engineering / reference control)",
+   "material_class": "alloy",
+   "exact_specification_status": "grade named (316L); heat / lot composition not registered",
+   "surface_state_in_service": "unknown; oxide / nitride surface expected under O / N exposure but not characterised",
+   "elements_named_in_registered_label": [],
+   "label_basis": "P4 CAND-01 name 'Austenitic stainless 316L' names no element"
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02A",
+   "label": "INCONEL alloy 600",
+   "material_class": "alloy",
+   "exact_specification_status": "grade named; lot composition not registered",
+   "surface_state_in_service": "chromia-forming (per P4 family label)",
+   "elements_named_in_registered_label": [
+    "Ni",
+    "Cr"
+   ],
+   "label_basis": "P4 family 'chromia-forming Ni alloy' (chromia = Cr2O3)"
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02B",
+   "label": "INCONEL alloy 625",
+   "material_class": "alloy",
+   "exact_specification_status": "grade named; lot composition not registered",
+   "surface_state_in_service": "chromia-forming (per P4 family label)",
+   "elements_named_in_registered_label": [
+    "Ni",
+    "Cr"
+   ],
+   "label_basis": "P4 family 'chromia-forming Ni alloy'"
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02C",
+   "label": "Haynes 230",
+   "material_class": "alloy",
+   "exact_specification_status": "grade named; lot composition not registered",
+   "surface_state_in_service": "chromia-forming (per P4 family label)",
+   "elements_named_in_registered_label": [
+    "Ni",
+    "Cr"
+   ],
+   "label_basis": "P4 family 'chromia-forming Ni alloy'"
+  },
+  {
+   "row": "R8-C02 (additional, if readily available)",
+   "p4_candidate": "CAND-02D",
+   "label": "INCONEL alloy X-750",
+   "material_class": "alloy",
+   "exact_specification_status": "grade named; lot composition not registered",
+   "surface_state_in_service": "chromia-forming (per P4 family label)",
+   "elements_named_in_registered_label": [
+    "Ni",
+    "Cr"
+   ],
+   "label_basis": "P4 family 'chromia-forming Ni alloy'"
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03A",
+   "label": "INCONEL alloy 601",
+   "material_class": "alloy",
+   "exact_specification_status": "grade named; lot composition not registered",
+   "surface_state_in_service": "alumina-forming (per P4 family label)",
+   "elements_named_in_registered_label": [
+    "Ni",
+    "Cr",
+    "Al"
+   ],
+   "label_basis": "P4 CAND-03A name 'alumina-forming Ni-Cr-Al alloy'"
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03C",
+   "label": "Haynes 214",
+   "material_class": "alloy",
+   "exact_specification_status": "grade named; lot composition not registered",
+   "surface_state_in_service": "alumina-forming (per P4 family label)",
+   "elements_named_in_registered_label": [
+    "Al"
+   ],
+   "label_basis": "P4 family 'alumina-forming alloy' (alumina = Al2O3)"
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03B",
+   "label": "FeCrAl (one explicitly specified grade, TBD)",
+   "material_class": "alloy",
+   "exact_specification_status": "GRADE NOT YET DECLARED (owner S5.11 requires one explicitly specified grade)",
+   "surface_state_in_service": "alumina-forming (per P4 family label)",
+   "elements_named_in_registered_label": [
+    "Fe",
+    "Cr",
+    "Al"
+   ],
+   "label_basis": "the family name FeCrAl"
+  },
+  {
+   "row": "R8-C04",
+   "p4_candidate": "CAND-04",
+   "label": "Rh-coated 316L",
+   "material_class": "coating",
+   "exact_specification_status": "coating composition, thickness, process, substrate preparation and lot not registered (S5.11 requires them)",
+   "surface_state_in_service": "Rh surface; state under O / N exposure not characterised",
+   "elements_named_in_registered_label": [
+    "Rh"
+   ],
+   "label_basis": "coating element named by the owner"
+  },
+  {
+   "row": "R8-C05",
+   "p4_candidate": "CAND-05",
+   "label": "Pt-clad / plated 316L",
+   "material_class": "coating",
+   "exact_specification_status": "coating details and lot not registered",
+   "surface_state_in_service": "Pt surface; state under O / N exposure not characterised",
+   "elements_named_in_registered_label": [
+    "Pt"
+   ],
+   "label_basis": "coating element named by the owner"
+  },
+  {
+   "row": "R8-C06",
+   "p4_candidate": "CAND-06",
+   "label": "Cr-plated 316L",
+   "material_class": "coating",
+   "exact_specification_status": "coating details and lot not registered",
+   "surface_state_in_service": "conductive-oxide former (P4 family label); oxide surface expected",
+   "elements_named_in_registered_label": [
+    "Cr"
+   ],
+   "label_basis": "coating element named by the owner"
+  },
+  {
+   "row": "R8-C07",
+   "p4_candidate": "CAND-07",
+   "label": "IrO2 / RuO2-type conductive-oxide (MMO) coating",
+   "material_class": "oxide_coating",
+   "exact_specification_status": "EXACT COATING SYSTEM AND SUBSTRATE NOT YET DECLARED (owner S5.11 requires them)",
+   "surface_state_in_service": "mixed metal oxide",
+   "elements_named_in_registered_label": [
+    "Ir",
+    "Ru",
+    "Ti"
+   ],
+   "label_basis": "P4 CAND-07 name 'IrO2- or RuO2-based conductive-oxide coating (e.g. MMO on Ti)'; the metal-element priors are NOT representative of an oxide"
+  },
+  {
+   "row": "R8-C08",
+   "p4_candidate": "CAND-08",
+   "label": "bare tungsten (negative / reference control only)",
+   "material_class": "element",
+   "exact_specification_status": "purity / form / lot not registered",
+   "surface_state_in_service": "W oxide expected in O-bearing exposure (P4 role: known insulating oxide)",
+   "elements_named_in_registered_label": [
+    "W"
+   ],
+   "label_basis": "elemental material"
+  },
+  {
+   "row": "R8-C09",
+   "p4_candidate": "CAND-09",
+   "label": "specified isotropic graphite (reference / control coupon)",
+   "material_class": "element",
+   "exact_specification_status": "GRADE NOT YET SPECIFIED (owner S5.11 'specified isotropic graphite')",
+   "surface_state_in_service": "volatile oxide (CO / CO2) under O exposure",
+   "elements_named_in_registered_label": [
+    "C"
+   ],
+   "label_basis": "elemental material"
+  }
+ ],
+ "acquisition_requests": [
+  {
+   "id": "AR-01",
+   "source": "SRC-PHADKE-2020",
+   "provides": "measured nitrogen-beam (N2+/N+ mix) yields on W and Ru thin films (plus Mo, Pd) at 50-500 eV, steady-state fluence, with nitride formation",
+   "lawful_route": "owner downloads the CC BY full text manually from the University of Twente repository or the publisher open-access page (automated retrieval was bot-challenged and not bypassed)",
+   "priority_note": "only open measurement located in the 50-500 eV range with a molecular nitrogen beam on a Q0 element",
+   "relevant_cells_text": "CAND-08 x N2+; CAND-08 x N+; CAND-07 x N2+ (Ru metal only; not an oxide)",
+   "applies_to": {
+    "candidates": [
+     "CAND-08",
+     "CAND-07"
+    ],
+    "species": [
+     "N+",
+     "N2+"
+    ]
+   }
+  },
+  {
+   "id": "AR-02",
+   "source": "SRC-DOBES-2011",
+   "provides": "separate N+ and N2+ yields on polycrystalline W (QCM), molecular-effect magnitude below 1 keV",
+   "lawful_route": "library / inter-library loan / publisher purchase / institutional subscription (IOP Physica Scripta)",
+   "relevant_cells_text": "CAND-08 x N+; CAND-08 x N2+",
+   "applies_to": {
+    "candidates": [
+     "CAND-08"
+    ],
+    "species": [
+     "N+",
+     "N2+"
+    ]
+   }
+  },
+  {
+   "id": "AR-03",
+   "source": "SRC-ESPY-1993",
+   "provides": "O+, O2+, N+, N2+ yields on Al and Al2O3 at 50-200 eV (the only located four-species low-energy set; Al2O3 is the scale of the alumina-forming candidates, but a thin-film Al2O3 is not an alloy scale)",
+   "lawful_route": "SPIE Digital Library purchase / institutional subscription / inter-library loan",
+   "relevant_cells_text": "CAND-03A, CAND-03B, CAND-03C x all four species (scale context only)",
+   "applies_to": {
+    "candidates": [
+     "CAND-03A",
+     "CAND-03B",
+     "CAND-03C"
+    ],
+    "species": [
+     "N+",
+     "N2+",
+     "O+",
+     "O2+"
+    ]
+   }
+  },
+  {
+   "id": "AR-04",
+   "source": "SRC-TSUNOYAMA-1976",
+   "provides": "O2+ and N2+ yields on pure Fe (20 keV per abstract; out of the energy domain; surface-layer evidence)",
+   "lawful_route": "library / inter-library loan (JJAP 1976)",
+   "relevant_cells_text": "CAND-01 / CAND-03B constituent context only",
+   "applies_to": {
+    "candidates": [
+     "CAND-01",
+     "CAND-03B"
+    ],
+    "species": [
+     "N2+",
+     "O2+"
+    ]
+   }
+  },
+  {
+   "id": "AR-05",
+   "source": "SRC-NIFS-LEGEND-REFS",
+   "provides": "the primary measurements behind the NIFS-DATA-23 N / O graphs (Bader 1960/1961 N on Fe, Ni, Mo, W; Roth 1979 O on Ni, W; Hechtl O on W, Mo, C; Tsunoyama 1980 O on W)",
+   "lawful_route": "resolve the full citations through the library (NIFS-DATA-23 reference list / ADNDT 1996 version), then library / inter-library loan",
+   "relevant_cells_text": "elemental priors for Fe, Ni, W, C",
+   "applies_to": {
+    "candidates": [
+     "CAND-01",
+     "CAND-02A",
+     "CAND-02B",
+     "CAND-02C",
+     "CAND-02D",
+     "CAND-03A",
+     "CAND-03B",
+     "CAND-08",
+     "CAND-09"
+    ],
+    "species": [
+     "N+",
+     "O+"
+    ]
+   }
+  },
+  {
+   "id": "AR-06",
+   "source": "SRC-ECKSTEIN-2007",
+   "provides": "evaluated elemental yield compilation (may include N / O projectiles beyond IPP 9/132)",
+   "lawful_route": "library / publisher purchase (Springer)",
+   "relevant_cells_text": "elemental priors",
+   "applies_to": {
+    "candidates": "ALL",
+    "species": [
+     "N+",
+     "N2+",
+     "O+",
+     "O2+"
+    ]
+   }
+  },
+  {
+   "id": "AR-07",
+   "source": "SRC-YT-ADNDT-1996",
+   "provides": "journal version of the Yamamura-Tawara compilation (check for corrections relative to NIFS-DATA-23, e.g. the Eq. (17) branch labels and the Mo W(Z2) inconsistency)",
+   "lawful_route": "library / publisher purchase (Elsevier)",
+   "relevant_cells_text": "elemental priors",
+   "applies_to": {
+    "candidates": "ALL",
+    "species": [
+     "N+",
+     "O+"
+    ]
+   }
+  },
+  {
+   "id": "AR-08",
+   "source": null,
+   "provides": "UNRESOLVED search target: any species-resolved N+, N2+, O+, O2+ yield on 316L, Inconel 600/625/601/X-750, Haynes 230/214, FeCrAl, electroplated Rh / Pt / Cr, or IrO2 / RuO2 MMO. None was located in open sources in this lane (search_log).",
+   "lawful_route": "library literature search (subscription databases) by the owner / procurement",
+   "relevant_cells_text": "every alloy / coating cell",
+   "applies_to": {
+    "candidates": "ALL_NON_ELEMENTAL",
+    "species": [
+     "N+",
+     "N2+",
+     "O+",
+     "O2+"
+    ]
+   }
+  }
+ ],
+ "search_log": [
+  {
+   "query": "open compilations: IPP 9/132 index (pp. 5-6)",
+   "result": "N on W; O on C, W, Mo, WO3; no N/O on Fe, Ni, Cr, Al, Pt, Rh, Ir, Ru"
+  },
+  {
+   "query": "open compilations: NIFS-DATA-23 Table 3 (p. 16)",
+   "result": "N/O graphs for C, Fe, Ni, Mo, W only among Q0-relevant elements"
+  },
+  {
+   "query": "IAEA open report sputtering yields oxygen nitrogen ions metals 'Atomic and Plasma-Material Interaction Data for Fusion'",
+   "result": "APID vol. 7 part B (open): N+ and O+ on C and W fits (calculated points only)"
+  },
+  {
+   "query": "sputtering yield stainless steel nitrogen ions N2+ measured low energy open access",
+   "result": "Phadke 2020 (OA CC BY, bot-challenged); Nishi et al. 1979 PPPL report (open, OSTI purl 6159404, sha256 c0adfa3ff1d68378c2695f476ede0c9f9343af929a5aa8675d2a57fcc4505c45: H, D, He, Ar only - no N or O, not used); a SciELO Braz. J. Phys. glow-discharge paper (bot-challenged; citation not resolved)"
+  },
+  {
+   "query": "molecular ion sputtering yield N2+ O2+ equal to atoms at half energy additivity measured metals",
+   "result": "Dobes 2011 (W, N+ / N2+; molecular effect up to +25 %); Tsunoyama 1976 (Fe, O2+ / N2+ at 20 keV)"
+  },
+  {
+   "query": "sputtering yield Inconel OR stainless steel oxygen ion O+ O2+ low energy measurement thesis pdf",
+   "result": "nothing species-resolved for any Q0 alloy"
+  },
+  {
+   "query": "air-breathing electric propulsion electrode erosion sputtering yield N2+ O2+ SRIM atomic oxygen open access",
+   "result": "ABEP reviews only; no species-resolved yield data"
+  }
+ ],
+ "access_log": [
+  {
+   "url": "https://research.utwente.nl/files/517482203/1-s2.0-S0169433219333458-main.pdf",
+   "result": "bot challenge ('Just a moment...') to curl; HTTP 403 to WebFetch; not bypassed"
+  },
+  {
+   "url": "https://www.sciencedirect.com/science/article/pii/S0169433219333458",
+   "result": "HTTP 403; not bypassed"
+  },
+  {
+   "url": "https://iopscience.iop.org/article/10.1088/0031-8949/2011/T145/014017",
+   "result": "302 redirect to a bot-management validation page; not followed"
+  },
+  {
+   "url": "https://www.scielo.br/j/bjp/a/rNyzTjBTPx4q7Kj9MtYcTkh/?lang=en",
+   "result": "HTTP 403 / shield challenge (one curl attempt with a browser user-agent string also met the challenge); not bypassed"
+  }
+ ]
+}

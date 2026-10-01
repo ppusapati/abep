@@ -1,0 +1,5896 @@
+{
+ "id": "sputter_yields_v1",
+ "version": "1.0",
+ "date": "2026-10-01",
+ "base_commit": "5497be14befa95dd87b58a3d42d4ab1c8235fcf5",
+ "generated_by": "docs/evidence/sputter_yields_v1/build_sputter_yields_v1.py (--check reproduces JSON and MD exactly) from docs/evidence/sputter_yields_v1/sputter_yield_inputs_v1.json",
+ "inputs_sha256": "3f7d20898a97ea2ab39f3f70524397f58aeb0118846729faebf16bb93f1bdcdf",
+ "companion_document": "docs/evidence/sputter_yields_v1/SPUTTER_YIELDS_V1.md",
+ "test": "tests/test_sputter_yields_v1.py",
+ "status": "EVIDENCE REGISTER ONLY. Not wired into any simulator module. No alloy or coating sputter yield exists in this register; no molecular-ion (N2+, O2+) number exists in this register. Every numeric yield is an elemental-target literature or semi-empirical value usable only as a prior bound / for test-matrix selection / comparison / model initialisation (S5.13), never as a candidate value, and never as a CR-04 recession or life input.",
+ "evidence_policy": "docs/EVIDENCE.md (CLAUDE.md rules 6, 10): evidence_level = strength / proximity of the source (1-7); evidence_class = quantity type; evaluation of a published formula does not raise the level",
+ "owner_decisions": [
+  {
+   "id": "A9.12",
+   "json": "docs/decisions/OD_2026_10_01_A9_12_s5_p3_p4_owner_decisions.json",
+   "json_sha256": "1485f00b7abe7e621f8dc2d32d8d97704e10e71d53c97b4f617bc022d1f2359d",
+   "verbatim_md": "docs/decisions/OD_2026_10_01_A9_12_S5_P3_P4_OWNER_DECISIONS.md",
+   "question_ids": [
+    "P4-OQ-04 (S5.13)",
+    "P4-OQ-02 (S5.11)",
+    "P4-OQ-03 (S5.12)"
+   ],
+   "applied": [
+    "P4-OQ-04 / S5.13 answer BOTH: lawful acquisition of species-resolved N+, N2+, O+, O2+ sputtering-yield information (library, inter-library loan, publisher purchase, institutional subscription, other licensed routes) plus project ion-beam measurement of down-selected candidates; literature is used for prior bounds, test-matrix selection, comparison and model initialisation; project measurements provide candidate-specific evidence; elemental-target literature yields are never silently substituted for an alloy/coating.",
+    "P4-OQ-02 / S5.11 answer BROAD_Q0_DOWNSELECT_Q1: the Q0 matrix rows used in q0_matrix below; coatings must record composition, thickness, deposition process, substrate, surface preparation and lot/process provenance; Ti, TiN/ZrN, bulk Cu and bulk Ir are reserve only (not in this register's matrix).",
+    "P4-OQ-03 / S5.12 answer LOCK_2_AFTER_METROLOGY_BEFORE_EXPOSURE: sputter/erosion acceptance thresholds are frozen at LOCK-2 after metrology commissioning; this register sets no threshold."
+   ]
+  },
+  {
+   "id": "A9.15",
+   "json": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+   "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+   "verbatim_md": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "question_ids": [
+    "RFP-COMPLIANT PROPELLANT POLICY (governing rule)"
+   ],
+   "applied": [
+    "Xenon is an RFP-required system capability; Xe+ therefore stays a required projectile of the P4 sputtering criterion CR-04. P4-OQ-04 (the acquisition authorisation implemented here) names N+, N2+, O+, O2+ only, so Xe+ (and engineering-only Ar+) are listed as NOT_ASSESSED_IN_THIS_LANE, never as covered."
+   ]
+  }
+ ],
+ "read_only_references": [
+  {
+   "path": "docs/experiments/hall_icp/p4_anode_materials/p4_anode_materials_v1.json",
+   "sha256_at_base_commit": "42ef3a3e2e3aea09bbf852520fc9c21c9d6c9c8a5c134d7e5360b429ee8afa06",
+   "ids_used": [
+    "CR-04",
+    "IT-22",
+    "TP-04",
+    "NIFS_DATA_23",
+    "CAND-01",
+    "CAND-02A",
+    "CAND-02B",
+    "CAND-02C",
+    "CAND-02D",
+    "CAND-03A",
+    "CAND-03B",
+    "CAND-03C",
+    "CAND-04",
+    "CAND-05",
+    "CAND-06",
+    "CAND-07",
+    "CAND-08",
+    "CAND-09"
+   ],
+   "note": "owned by the step-1 lane; read only; never modified here"
+  },
+  {
+   "path": "docs/evidence/wall_life/sputter_yield_db_v1.json",
+   "sha256_at_base_commit": "315fbd44da2ee16246edb95830be09e0f05b9237cd5ca0a4c86a02a7e25bfffa",
+   "ids_used": [
+    "S11",
+    "S12",
+    "S13",
+    "S21"
+   ],
+   "note": "existing Hall-wall ceramic database (lane_32); source records reused as pointers only"
+  }
+ ],
+ "hard_statements": [
+  "NO_SILENT_SUBSTITUTION: no record in this register is an alloy or coating value; coverage cells carry candidate_specific_value = null and status NO_CANDIDATE_SPECIFIC_DATA for every Q0 candidate and every required species (owner S5.13).",
+  "NO_MOLECULAR_NUMBERS: N2+ and O2+ cells carry no prior number. The common mapping 'molecule = atoms at the same velocity' is not applied; the only located evidence on it (Dobes 2011 abstract, W) reports up to +25 % per-atom enhancement below 1 keV.",
+  "REACTIVE_PROJECTILES: for N and/or O on Fe, Mo, Ni, W the source compilation had to refit the surface binding energy (best-fit Us 1.20x to 2.30x the Table 1 value); generic Table-1 evaluations for elements without N/O data (Al, Cr, Ir, Nb, Pt, Rh, Ru, Ti) are unvalidated for these projectiles (evidence level 6).",
+  "CHEMICAL_EROSION: for O on carbon (isotropic graphite control) physical-sputtering values are a lower bound only.",
+  "NO_ENERGY_DOMAIN: the reporting grid is a tabulation grid, not a sheath energy; CR-04 'sheath_energy_range' is not registered.",
+  "NO_ACCEPTANCE: thresholds are set at LOCK-2 (S5.12); this register sets none."
+ ],
+ "species_required": [
+  "N+",
+  "N2+",
+  "O+",
+  "O2+"
+ ],
+ "species_context_not_assessed": [
+  {
+   "species": "Xe+",
+   "why": "CR-04 lists Xe+ and A9.15 makes Xe an RFP-required capability, but P4-OQ-04 (this lane's authorisation) names N+, N2+, O+, O2+ only; open Xe+ elemental fits are pointed to by docs/evidence/wall_life S11 (Yim, IEPC-2017-060) and were not re-read here"
+  },
+  {
+   "species": "Ar+",
+   "why": "engineering-only projectile in CR-04 / A9 evidence order; not part of P4-OQ-04"
+  }
+ ],
+ "reporting_energy_grid_eV": [
+  50,
+  100,
+  200,
+  300,
+  500,
+  1000
+ ],
+ "reporting_energy_grid_note": "tabulation grid for the semi-empirical evaluations only. It is NOT a sheath energy or operating point: the CR-04 domain 'sheath_energy_range' is not registered (TBD from the H-1 / ICP electrode envelopes).",
+ "formula_reading_notes": {
+  "alpha_branch": "Eq. (17) as printed labels 0.249(M2/M1)^0.56 + 0.0035(M2/M1)^1.5 'M1 >= M2' and 0.088(M2/M1)^-0.15 + 0.165(M2/M1) 'M1 <= M2'. The paper's own worked example (He -> Au, M2/M1 = 48.75, i.e. M1 < M2) and Fig. 1 use the 0.249 branch for M2/M1 > 1, so the labels as printed are inconsistent with the paper's use. The builder uses the branch the paper itself uses (0.249 branch for M1 <= M2); the two branches agree at M2/M1 = 1 (0.2525 vs 0.253). Only O+ / N+ on C (M1 > M2) is affected.",
+  "threshold": "Eq. (18): Eth/Us = 6.7/gamma for M1 >= M2 and (1 + 5.7 M1/M2)/gamma for M1 <= M2 (labels consistent with the worked example).",
+  "W_inconsistency": "Table 1 W equals the caption factor times the Table 1 Us for Fe (0.28*4.28), Ni (0.30*4.44) and W (0.24*8.9), but not for Mo (Table 1 W = 2.39 = 0.35*6.82, caption 'W = 0.45Us'). For best-fit-Us combinations it is also not stated whether k multiplies the Table 1 or the fitted Us. The builder evaluates all three readings (Table 1 W; k * Table 1 Us; k * fitted Us) and reports the spread.",
+  "worked_example": "the printed example mixes 195.1 and 197 for the Au mass and prints gamma = 0.07878 (our arithmetic with its own masses gives 0.0781); the builder accepts a 2 % tolerance on the yield and records the residual"
+ },
+ "sources": [
+  {
+   "id": "SRC-IPP-9-132",
+   "citation": "W. Eckstein, 'Calculated Sputtering, Reflection and Range Values', IPP-Report 9/132, Max-Planck-Institut fuer Plasmaphysik, Garching, June 2002",
+   "url": "https://pure.mpg.de/rest/items/item_2138250_2/component/file_3587319/content",
+   "doi": null,
+   "access": "OPEN",
+   "access_detail": "MPG PuRe open repository; scanned report with OCR text layer; every value used was read from the rendered page image (OCR is noisy)",
+   "retrieved": "2026-10-01",
+   "sha256": "2a5726734b3b13038def69bf6000629ccf6373c4eb498a1bb3424949ece74fe8",
+   "same_file_as": "docs/evidence/wall_life/sputter_yield_db_v1.json S12 (identical sha256)",
+   "evidence_level": 4,
+   "kind": "TRIM.SP binary-collision Monte Carlo tables (calculated, not measured)",
+   "scope_note": "index (report pp. 5-6): among the Q0-relevant elements only C, Fe, Ni, Mo (not in Q0 as bulk), Ti, Pt, W are targets; N projectiles only on Be, C (15-30 keV only, out of range) and W; O projectiles only on Be, B, C, Mo, W and compounds (BeO, B4C, B2O3, B(OH)3, WO3, WO4, layered WO3 on W). No N or O projectile on Fe, Ni, Cr, Al, Pt, Rh, Ir, Ru. The report states the values are valid for nearly flat surfaces; statistical errors usually < 3 % for yields > 1e-5, up to 100 % at the lowest values; several O tables are flagged 'only low fluence!' (no oxide / compound build-up).",
+   "numeric_values_used": true
+  },
+  {
+   "id": "SRC-NIFS-DATA-23",
+   "citation": "Y. Yamamura, H. Tawara, 'Energy Dependence of Ion-Induced Sputtering Yields from Monoatomic Solids at Normal Incidence', NIFS-DATA-23, National Institute for Fusion Science, Nagoya, March 1995",
+   "url": "https://www.nifs.ac.jp/report/NIFS-DATA-023.pdf",
+   "doi": null,
+   "access": "OPEN",
+   "access_detail": "NIFS open report; scanned PDF (114 pages) with no text layer; formulas (report pp. 7-8, Eqs. 4, 15-22), worked example (p. 12), Table 1 (p. 14), Table 3 (p. 16) and figure captions read from page images rendered at 130-220 dpi",
+   "retrieved": "2026-10-01",
+   "sha256": "bc3c8d1aa2c5a238fa346484ccf93cf0e494a08aa1e956ab141a0ed130979ef7",
+   "same_file_as": "P4 source_register NIFS_DATA_23 (identical sha256; P4 recorded it as LOCATED ONLY, not digitized)",
+   "evidence_level": 5,
+   "kind": "compilation of published experimental yields (graphs) plus ACAT calculations, with a semi-empirical formula whose parameters were best-fitted to the compiled data",
+   "scope_note": "monoatomic (elemental) targets only; per Table 3, N or O projectile graphs exist for C (O: 2 refs), Fe (N: 2), Ni (N: 1, O: 1), Mo (N: 1, O: 1), W (N: 1, O: 6) among Q0-relevant elements; none for Cr, Al, Ti, Nb, Ru, Rh, Ir, Pt. The journal version (At. Data Nucl. Data Tables 62 (1996) 149, pointer from docs/evidence/wall_life S21) was not accessed; equivalence of the two versions is not established (verify).",
+   "numeric_values_used": true
+  },
+  {
+   "id": "SRC-IAEA-APID-7B",
+   "citation": "Atomic and Plasma-Material Interaction Data for Fusion, Volume 7, Part B (physical sputtering and radiation-enhanced sublimation of Be, C and W), International Atomic Energy Agency, Vienna, 2001",
+   "url": "https://www-pub.iaea.org/MTCD/Publications/PDF/Pub23APID7b_web.pdf",
+   "doi": null,
+   "access": "OPEN",
+   "access_detail": "IAEA open publication PDF; fit formula (report p. 18) and the N+/O+ on C/W fit tables (sections 2.1.2.6, 2.1.2.7, 2.1.3.6, 2.1.3.7; PDF pages 45, 46, 54, 55) read from rendered page images",
+   "retrieved": "2026-10-01",
+   "sha256": "29852d832b1a5170fdc174c9c79046db8f992cd8a06835c7f565c389d97a92ff",
+   "evidence_level": 4,
+   "kind": "evaluated data compilation with analytic fits (Bayesian fits to calculated and measured points)",
+   "scope_note": "targets Be, C, W and selected compounds only. For N+ and O+ on C and W the fits use calculated (TRIM.SP) values only, because measured data are affected by chemical interactions; the printed comments are transcribed in apid_fit_params below.",
+   "numeric_values_used": false
+  },
+  {
+   "id": "SRC-CIAAW-2024",
+   "citation": "IUPAC Commission on Isotopic Abundances and Atomic Weights (CIAAW), Abridged Standard Atomic Weights (2024 table)",
+   "url": "https://www.ciaaw.org/abridged-atomic-weights.htm",
+   "doi": null,
+   "access": "OPEN",
+   "access_detail": "read via the WebFetch tool (model-summarised page text, not a byte copy); cross-checked by the builder against the mass ratios A = M2/M1 printed in the NIFS-DATA-23 figure captions (agreement to 0.01)",
+   "retrieved": "2026-10-01",
+   "sha256": null,
+   "evidence_level": 4,
+   "kind": "evaluated physical constants",
+   "numeric_values_used": true
+  },
+  {
+   "id": "SRC-DOBES-2011",
+   "citation": "K. Dobes, P. Naderer, N. Lachaud, C. Eisenmenger-Sittner, F. Aumayr, 'Sputtering of tungsten by N+ and N2+ ions: investigations of molecular effects', Physica Scripta T145 (2011) 014017",
+   "url": "https://www.osti.gov/etdeweb/biblio/22044966",
+   "doi": "10.1088/0031-8949/2011/T145/014017",
+   "access": "PAYWALLED_ACQUISITION_NEEDED",
+   "access_detail": "abstract read on the OSTI ETDEWEB record; the publisher page (iopscience.iop.org) answered with a bot-management redirect (validate.perfdrive.com), which was not followed; open-access status of the full text not established",
+   "retrieved": "2026-10-01",
+   "sha256": null,
+   "evidence_level": 3,
+   "kind": "primary measurement (quartz-crystal microbalance), polycrystalline W, N+ and N2+",
+   "abstract_statement": "OSTI abstract: total sputtering yield of polycrystalline W under N+ and N2+ by QCM; below 1 keV the yield per N atom for N2+ is up to 25 % higher than for N+ at the same velocity (a molecular effect). No numeric yield transcribed.",
+   "numeric_values_used": false
+  },
+  {
+   "id": "SRC-PHADKE-2020",
+   "citation": "P. Phadke, J. M. Sturm, R. W. E. van de Kruijs, F. Bijkerk, 'Sputtering and nitridation of transition metal surfaces under low energy, steady state nitrogen ion bombardment', Applied Surface Science 505 (2020) 144529",
+   "url": "https://research.utwente.nl/en/publications/sputtering-and-nitridation-of-transition-metal-surfaces-under-low/",
+   "doi": "10.1016/j.apsusc.2019.144529",
+   "access": "OPEN_NOT_RETRIEVABLE_AUTOMATED",
+   "access_detail": "University of Twente record states open access under CC BY; the PDF link (research.utwente.nl/files/517482203/...) and ScienceDirect both returned a bot challenge / HTTP 403 to automated fetch; not bypassed. Abstract read on the Twente record page.",
+   "retrieved": "2026-10-01",
+   "sha256": null,
+   "evidence_level": 3,
+   "kind": "primary measurement on Mo, Ru, Pd, W thin films; nitrogen ion beam (search snippet: N2+-dominated, N+ fraction 10-20 %; verify against full text); 50-500 eV; steady-state fluence 1e18 ions/cm2; TRIDYN interpretation; XPS shows nitride formation",
+   "abstract_statement": "Twente abstract: nitrogen-ion-induced sputter yields of Mo, Ru, Pd and W thin films at 50-500 eV and steady-state fluence (1e18 ions/cm2), interpreted with TRIDYN; all metals formed a nitride. No numeric yield transcribed.",
+   "numeric_values_used": false
+  },
+  {
+   "id": "SRC-ESPY-1993",
+   "citation": "S. L. Espy, I. F. Urazgil'din, A. V. Barnes, Y. Yao, J. L. Allen, R. G. Albridge, N. H. Tolk, 'Low-energy sputtering yield measurements of O+, O2+, N+, and N2+ incident on Al and Al2O3 surfaces', Proc. SPIE 1761, pp. 130-140 (1993)",
+   "url": null,
+   "doi": "10.1117/12.138921",
+   "access": "PAYWALLED_ACQUISITION_NEEDED",
+   "access_detail": "pointer reused from docs/evidence/wall_life/sputter_yield_db_v1.json S13 (closed access; abstract read there via OpenAlex); not re-read in this lane",
+   "retrieved": null,
+   "sha256": null,
+   "evidence_level": 3,
+   "kind": "primary measurement, 50-200 eV, QCM, Al and Al2O3 thin films, all four required species (per S13 record)",
+   "numeric_values_used": false
+  },
+  {
+   "id": "SRC-TSUNOYAMA-1976",
+   "citation": "K. Tsunoyama, T. Suzuki, Y. Ohashi, 'Sputtering of iron with ion beams of O2+, N2+ and Ar+', Japanese Journal of Applied Physics 15 (2) (1976) 349-355",
+   "url": "https://www.osti.gov/etdeweb/biblio/7236559",
+   "doi": null,
+   "access": "PAYWALLED_ACQUISITION_NEEDED",
+   "access_detail": "OSTI ETDEWEB bibliographic record and abstract only; full text not indicated as available there; DOI not retrieved (verify)",
+   "retrieved": "2026-10-01",
+   "sha256": null,
+   "evidence_level": 3,
+   "kind": "primary measurement, pure Fe, O2+ and N2+ (abstract: 20 keV, far above any expected sheath energy)",
+   "abstract_statement": "abstract reports yields at 20 keV and an oxygen-enhanced surface layer under O2+; values not transcribed (energy far outside the domain of interest; abstract read through a summarising fetch tool, verify).",
+   "numeric_values_used": false
+  },
+  {
+   "id": "SRC-ECKSTEIN-2007",
+   "citation": "W. Eckstein, 'Sputtering yields', in R. Behrisch, W. Eckstein (eds.), Sputtering by Particle Bombardment, Topics in Applied Physics 110 (Springer, 2007)",
+   "url": null,
+   "doi": null,
+   "access": "PAYWALLED_ACQUISITION_NEEDED",
+   "access_detail": "pointer reused from docs/evidence/wall_life S21 (not accessed; closed); DOI not retrieved (verify)",
+   "retrieved": null,
+   "sha256": null,
+   "evidence_level": 4,
+   "kind": "evaluated compilation / fits (elemental targets)",
+   "numeric_values_used": false
+  },
+  {
+   "id": "SRC-YT-ADNDT-1996",
+   "citation": "Y. Yamamura, H. Tawara, 'Energy dependence of ion-induced sputtering yields from monatomic solids at normal incidence', Atomic Data and Nuclear Data Tables 62 (1996) 149-253",
+   "url": null,
+   "doi": null,
+   "access": "PAYWALLED_ACQUISITION_NEEDED",
+   "access_detail": "pointer reused from docs/evidence/wall_life S21 (not accessed); journal version of SRC-NIFS-DATA-23 (relationship not verified)",
+   "retrieved": null,
+   "sha256": null,
+   "evidence_level": 5,
+   "kind": "compilation + semi-empirical fits (elemental targets)",
+   "numeric_values_used": false
+  },
+  {
+   "id": "SRC-NIFS-LEGEND-REFS",
+   "citation": "Primary experimental references named only as 'first author (year)' in the NIFS-DATA-23 figure legends: Bader M. (1960) and (1961) [N+ on Fe, Ni, Mo, W]; Roth J. (1979) [O+ on Ni, W]; Hechtl E. (1981), (1984), (1986), (1991) [O+ on W, Mo, C]; Tsunoyama K. (1980) [O+ on W]; Eckstein W. (1993) [O+ on C]",
+   "url": "https://www.nifs.ac.jp/report/NIFS-DATA-023.pdf",
+   "doi": null,
+   "access": "PAYWALLED_ACQUISITION_NEEDED",
+   "access_detail": "full bibliographic records not resolved (the figure legends give first author and year only); to be resolved by the library route (verify)",
+   "retrieved": "2026-10-01",
+   "sha256": null,
+   "evidence_level": 3,
+   "kind": "primary measurements on elemental targets (as plotted in NIFS-DATA-23)",
+   "numeric_values_used": false
+  }
+ ],
+ "atomic_weights": {
+  "source": "SRC-CIAAW-2024",
+  "values": {
+   "He": 4.0026,
+   "C": 12.011,
+   "N": 14.007,
+   "O": 15.999,
+   "Al": 26.982,
+   "Ti": 47.867,
+   "Cr": 51.996,
+   "Fe": 55.845,
+   "Ni": 58.693,
+   "Nb": 92.906,
+   "Mo": 95.95,
+   "Ru": 101.07,
+   "Rh": 102.91,
+   "W": 183.84,
+   "Ir": 192.22,
+   "Pt": 195.08,
+   "Au": 196.97
+  }
+ },
+ "records": [
+  {
+   "id": "TRIM-N-W",
+   "kind": "TRIM_SP_TABLE",
+   "source": "SRC-IPP-9-132",
+   "locator": "'N -> W', 'Sputtering yield of W by N', report p. 221 (PDF p. 225)",
+   "projectile": "N+",
+   "projectile_note": "TRIM.SP projectile atom; charge state not modelled (neutral and singly charged ions equivalent at these energies in BCA)",
+   "target": "W (pure element, flat, low fluence)",
+   "target_element": "W",
+   "energy_range_eV": [
+    47,
+    10000
+   ],
+   "angles_deg": [
+    0,
+    45
+   ],
+   "values": [
+    {
+     "E_eV": 47,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 9.3e-06
+    },
+    {
+     "E_eV": 48,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 1.82e-05
+    },
+    {
+     "E_eV": 48,
+     "angle_deg": 45,
+     "Y_atoms_per_ion": 5.7e-06
+    },
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 5.7e-05
+    },
+    {
+     "E_eV": 50,
+     "angle_deg": 45,
+     "Y_atoms_per_ion": 2.11e-05
+    },
+    {
+     "E_eV": 52,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.000135
+    },
+    {
+     "E_eV": 52,
+     "angle_deg": 45,
+     "Y_atoms_per_ion": 5.06e-05
+    },
+    {
+     "E_eV": 55,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.00036
+    },
+    {
+     "E_eV": 55,
+     "angle_deg": 45,
+     "Y_atoms_per_ion": 0.000152
+    },
+    {
+     "E_eV": 60,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.000973
+    },
+    {
+     "E_eV": 60,
+     "angle_deg": 45,
+     "Y_atoms_per_ion": 0.000474
+    },
+    {
+     "E_eV": 70,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.00326
+    },
+    {
+     "E_eV": 70,
+     "angle_deg": 45,
+     "Y_atoms_per_ion": 0.00202
+    },
+    {
+     "E_eV": 80,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.007
+    },
+    {
+     "E_eV": 80,
+     "angle_deg": 45,
+     "Y_atoms_per_ion": 0.00461
+    },
+    {
+     "E_eV": 90,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.0117
+    },
+    {
+     "E_eV": 90,
+     "angle_deg": 45,
+     "Y_atoms_per_ion": 0.00858
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.0172
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 45,
+     "Y_atoms_per_ion": 0.013
+    },
+    {
+     "E_eV": 120,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.0277
+    },
+    {
+     "E_eV": 120,
+     "angle_deg": 45,
+     "Y_atoms_per_ion": 0.0253
+    },
+    {
+     "E_eV": 140,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.0399
+    },
+    {
+     "E_eV": 140,
+     "angle_deg": 45,
+     "Y_atoms_per_ion": 0.0406
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.0757
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 45,
+     "Y_atoms_per_ion": 0.087
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.132
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 45,
+     "Y_atoms_per_ion": 0.171
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.213
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 45,
+     "Y_atoms_per_ion": 0.31
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.339
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 45,
+     "Y_atoms_per_ion": 0.535
+    },
+    {
+     "E_eV": 2000,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.469
+    },
+    {
+     "E_eV": 3000,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.54
+    },
+    {
+     "E_eV": 5000,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.605
+    },
+    {
+     "E_eV": 10000,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.654
+    }
+   ],
+   "header_as_printed": "z1=7, m1=14.01, z2=74, m2=183.85, sbe=8.68 eV, rho=19.29 g/cm3, ef=0.98 eV, esb=1.00 eV, KrC potential, program trvmc",
+   "flags": [],
+   "evidence_level": 4,
+   "evidence_class": "model-derived",
+   "measured_or_model": "TRIM.SP binary-collision Monte Carlo (calculated)",
+   "uncertainty": "source: statistical error usually < 3 % (1 sigma) for Y > 1e-5, up to 100 % at the lowest values; model-form uncertainty (surface binding energy, compound / nitride / oxide formation at steady-state fluence) not quantified",
+   "transformation_chain": "TRIM.SP output -> IPP 9/132 printed table -> read from rendered page image by this lane (no conversion)",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "TRIM-O-W",
+   "kind": "TRIM_SP_TABLE",
+   "source": "SRC-IPP-9-132",
+   "locator": "'O -> W', 'Sputtering yield of W by O', report p. 224 (PDF p. 228)",
+   "projectile": "O+",
+   "projectile_note": "TRIM.SP projectile atom; charge state not modelled (neutral and singly charged ions equivalent at these energies in BCA)",
+   "target": "W (pure element, flat, low fluence)",
+   "target_element": "W",
+   "energy_range_eV": [
+    50,
+    6000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.000363
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.0217
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.09
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.152
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.245
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.371
+    },
+    {
+     "E_eV": 2000,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.533
+    },
+    {
+     "E_eV": 5000,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.689
+    },
+    {
+     "E_eV": 6000,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.764
+    }
+   ],
+   "header_as_printed": "z1=8, m1=16.00, z2=74, m2=183.85, sbe=8.68 eV, rho=19.30 g/cm3, ef=0.95 eV, esb=1.00 eV, KrC potential, program 'IPP 9/82'",
+   "flags": [
+    "only low fluence (printed)",
+    "values taken over from IPP 9/82 (program line)"
+   ],
+   "evidence_level": 4,
+   "evidence_class": "model-derived",
+   "measured_or_model": "TRIM.SP binary-collision Monte Carlo (calculated)",
+   "uncertainty": "source: statistical error usually < 3 % (1 sigma) for Y > 1e-5, up to 100 % at the lowest values; model-form uncertainty (surface binding energy, compound / nitride / oxide formation at steady-state fluence) not quantified",
+   "transformation_chain": "TRIM.SP output -> IPP 9/132 printed table -> read from rendered page image by this lane (no conversion)",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "TRIM-O-C",
+   "kind": "TRIM_SP_TABLE",
+   "source": "SRC-IPP-9-132",
+   "locator": "'O -> C', 'Sputtering yield of C by O', report p. 65 (PDF p. 69)",
+   "projectile": "O+",
+   "projectile_note": "TRIM.SP projectile atom; charge state not modelled (neutral and singly charged ions equivalent at these energies in BCA)",
+   "target": "C (pure element, flat, low fluence)",
+   "target_element": "C",
+   "energy_range_eV": [
+    38,
+    6000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 38,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 4.6e-06
+    },
+    {
+     "E_eV": 40,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 7.98e-06
+    },
+    {
+     "E_eV": 42,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 1.3e-05
+    },
+    {
+     "E_eV": 45,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 2.56e-05
+    },
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 6.56e-05
+    },
+    {
+     "E_eV": 60,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.000287
+    },
+    {
+     "E_eV": 70,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.000779
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.00459
+    },
+    {
+     "E_eV": 150,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.018
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.0685
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.215
+    },
+    {
+     "E_eV": 3000,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.323
+    },
+    {
+     "E_eV": 6000,
+     "angle_deg": 0,
+     "Y_atoms_per_ion": 0.34
+    }
+   ],
+   "header_as_printed": "z1=8, m1=16.00, z2=6, m2=12.01, sbe=7.41 eV, rho=1.85, 2.00 g/cm3 (two values printed), ef=0.95, 2.10 eV, esb=1.00, 2.60 eV (two values printed), KrC potential, programs trvmc95, newtrim",
+   "flags": [
+    "only low fluence (printed)",
+    "two density / cutoff / esb values and two programs printed for one column; which rows used which set is not stated",
+    "physical sputtering only: no chemical erosion (CO/CO2 formation)"
+   ],
+   "evidence_level": 4,
+   "evidence_class": "model-derived",
+   "measured_or_model": "TRIM.SP binary-collision Monte Carlo (calculated)",
+   "uncertainty": "source: statistical error usually < 3 % (1 sigma) for Y > 1e-5, up to 100 % at the lowest values; model-form uncertainty (surface binding energy, compound / nitride / oxide formation at steady-state fluence) not quantified",
+   "transformation_chain": "TRIM.SP output -> IPP 9/132 printed table -> read from rendered page image by this lane (no conversion)",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-FIT-NIFS-F19",
+   "kind": "YAMAMURA_TAWARA_CAPTION_FIT",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "NIFS-DATA-23 Fig. 19 caption, report p. 22 (PDF p. 24)",
+   "projectile": "O+",
+   "target": "C (pure element)",
+   "target_element": "C",
+   "parameters_as_printed": {
+    "A": 0.75,
+    "Q": 1.7,
+    "Us_eV": 7.37,
+    "s": 2.5,
+    "W": "0.25 Us",
+    "best_fit_Us": false
+   },
+   "caption_remark": "EXPERIMENTAL DATA FOR DIFFERENT KINDS OF GRAPHITE ARE INCLUDED. THE CHEMICAL EROSION IS FOUND EVEN AT ROOM TEMPERATURE.",
+   "measured_data_in_figure": [
+    "Hechtl E. (1986)",
+    "Eckstein W. (1993)"
+   ],
+   "data_vs_curve_as_seen": "plotted measured points lie well above the formula curve over the whole plotted range (chemical erosion); the formula curve is a physical-sputtering curve only",
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y_min": 0.0,
+     "Y_max": 0.0,
+     "W_reading_spread_rel": 0.0,
+     "below_formula_threshold": true,
+     "Eth_eV": 50.4
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y_min": 0.01763,
+     "Y_max": 0.01763,
+     "W_reading_spread_rel": 5.75e-06,
+     "below_formula_threshold": false,
+     "Eth_eV": 50.4
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y_min": 0.08306,
+     "Y_max": 0.08306,
+     "W_reading_spread_rel": 7.08e-06,
+     "below_formula_threshold": false,
+     "Eth_eV": 50.4
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y_min": 0.1406,
+     "Y_max": 0.1406,
+     "W_reading_spread_rel": 7.99e-06,
+     "below_formula_threshold": false,
+     "Eth_eV": 50.4
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y_min": 0.2265,
+     "Y_max": 0.2265,
+     "W_reading_spread_rel": 9.3e-06,
+     "below_formula_threshold": false,
+     "Eth_eV": 50.4
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y_min": 0.3521,
+     "Y_max": 0.3521,
+     "W_reading_spread_rel": 1.14e-05,
+     "below_formula_threshold": false,
+     "Eth_eV": 50.4
+    }
+   ],
+   "evidence_level": 5,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with parameters best-fitted to measured elemental data (normal incidence)",
+   "uncertainty": "not stated by the source per point; the W(Z2) reading ambiguity is carried as Y_min..Y_max; values below the lowest plotted measured energy are formula extrapolation",
+   "transformation_chain": "measured yields (legend refs) -> NIFS-DATA-23 best fit -> caption parameters read from page image -> Eq. (15) evaluated by this builder at the reporting grid",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-FIT-NIFS-F81",
+   "kind": "YAMAMURA_TAWARA_CAPTION_FIT",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "NIFS-DATA-23 Fig. 81 caption, report p. 38 (PDF p. 39)",
+   "projectile": "N+",
+   "target": "Fe (pure element)",
+   "target_element": "Fe",
+   "parameters_as_printed": {
+    "A": 3.99,
+    "Q": 0.75,
+    "Us_eV": 5.14,
+    "s": 2.5,
+    "W": "0.28 Us",
+    "best_fit_Us": true
+   },
+   "caption_remark": "THE BEST-FIT SURFACE BINDING ENERGY IS USED.",
+   "measured_data_in_figure": [
+    "Bader M. (1960)",
+    "Bader M. (1961)"
+   ],
+   "data_vs_curve_as_seen": "plotted points start near 0.3 keV; no measured point in the 50-200 eV range",
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y_min": 0.03171,
+     "Y_max": 0.03175,
+     "W_reading_spread_rel": 0.00137,
+     "below_formula_threshold": false,
+     "Eth_eV": 19.48
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y_min": 0.1106,
+     "Y_max": 0.1108,
+     "W_reading_spread_rel": 0.00168,
+     "below_formula_threshold": false,
+     "Eth_eV": 19.48
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y_min": 0.2354,
+     "Y_max": 0.2359,
+     "W_reading_spread_rel": 0.00206,
+     "below_formula_threshold": false,
+     "Eth_eV": 19.48
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y_min": 0.3258,
+     "Y_max": 0.3266,
+     "W_reading_spread_rel": 0.00233,
+     "below_formula_threshold": false,
+     "Eth_eV": 19.48
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y_min": 0.4529,
+     "Y_max": 0.4541,
+     "W_reading_spread_rel": 0.00271,
+     "below_formula_threshold": false,
+     "Eth_eV": 19.48
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y_min": 0.6378,
+     "Y_max": 0.6399,
+     "W_reading_spread_rel": 0.00332,
+     "below_formula_threshold": false,
+     "Eth_eV": 19.48
+    }
+   ],
+   "evidence_level": 5,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with parameters best-fitted to measured elemental data (normal incidence)",
+   "uncertainty": "not stated by the source per point; the W(Z2) reading ambiguity is carried as Y_min..Y_max; values below the lowest plotted measured energy are formula extrapolation",
+   "transformation_chain": "measured yields (legend refs) -> NIFS-DATA-23 best fit -> caption parameters read from page image -> Eq. (15) evaluated by this builder at the reporting grid",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-FIT-NIFS-F102",
+   "kind": "YAMAMURA_TAWARA_CAPTION_FIT",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "NIFS-DATA-23 Fig. 102 caption, report p. 42 (PDF p. 43)",
+   "projectile": "N+",
+   "target": "Ni (pure element)",
+   "target_element": "Ni",
+   "parameters_as_printed": {
+    "A": 4.19,
+    "Q": 0.94,
+    "Us_eV": 5.77,
+    "s": 2.5,
+    "W": "0.3 Us",
+    "best_fit_Us": true
+   },
+   "caption_remark": "THE BEST-FIT SURFACE BINDING ENERGY IS USED.",
+   "measured_data_in_figure": [
+    "Bader M. (1961)"
+   ],
+   "data_vs_curve_as_seen": "plotted points from about 50 eV upward",
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y_min": 0.02756,
+     "Y_max": 0.02762,
+     "W_reading_spread_rel": 0.00232,
+     "below_formula_threshold": false,
+     "Eth_eV": 21.89
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y_min": 0.111,
+     "Y_max": 0.1113,
+     "W_reading_spread_rel": 0.00285,
+     "below_formula_threshold": false,
+     "Eth_eV": 21.89
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y_min": 0.2495,
+     "Y_max": 0.2504,
+     "W_reading_spread_rel": 0.0035,
+     "below_formula_threshold": false,
+     "Eth_eV": 21.89
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y_min": 0.3519,
+     "Y_max": 0.3533,
+     "W_reading_spread_rel": 0.00395,
+     "below_formula_threshold": false,
+     "Eth_eV": 21.89
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y_min": 0.4974,
+     "Y_max": 0.4997,
+     "W_reading_spread_rel": 0.00459,
+     "below_formula_threshold": false,
+     "Eth_eV": 21.89
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y_min": 0.7114,
+     "Y_max": 0.7154,
+     "W_reading_spread_rel": 0.00562,
+     "below_formula_threshold": false,
+     "Eth_eV": 21.89
+    }
+   ],
+   "evidence_level": 5,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with parameters best-fitted to measured elemental data (normal incidence)",
+   "uncertainty": "not stated by the source per point; the W(Z2) reading ambiguity is carried as Y_min..Y_max; values below the lowest plotted measured energy are formula extrapolation",
+   "transformation_chain": "measured yields (legend refs) -> NIFS-DATA-23 best fit -> caption parameters read from page image -> Eq. (15) evaluated by this builder at the reporting grid",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-FIT-NIFS-F103",
+   "kind": "YAMAMURA_TAWARA_CAPTION_FIT",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "NIFS-DATA-23 Fig. 103 caption, report p. 44 (PDF p. 45)",
+   "projectile": "O+",
+   "target": "Ni (pure element)",
+   "target_element": "Ni",
+   "parameters_as_printed": {
+    "A": 3.67,
+    "Q": 0.94,
+    "Us_eV": 10.21,
+    "s": 2.5,
+    "W": "0.3 Us",
+    "best_fit_Us": true
+   },
+   "caption_remark": "THE BEST-FIT SURFACE BINDING ENERGY IS USED.",
+   "measured_data_in_figure": [
+    "Roth J. (1979)"
+   ],
+   "data_vs_curve_as_seen": "plotted points from about 100 eV to a few keV",
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y_min": 0.001257,
+     "Y_max": 0.001265,
+     "W_reading_spread_rel": 0.00606,
+     "below_formula_threshold": false,
+     "Eth_eV": 38.73
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y_min": 0.02887,
+     "Y_max": 0.02908,
+     "W_reading_spread_rel": 0.00745,
+     "below_formula_threshold": false,
+     "Eth_eV": 38.73
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y_min": 0.09853,
+     "Y_max": 0.09944,
+     "W_reading_spread_rel": 0.00914,
+     "below_formula_threshold": false,
+     "Eth_eV": 38.73
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y_min": 0.1572,
+     "Y_max": 0.1588,
+     "W_reading_spread_rel": 0.0103,
+     "below_formula_threshold": false,
+     "Eth_eV": 38.73
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y_min": 0.2461,
+     "Y_max": 0.2491,
+     "W_reading_spread_rel": 0.012,
+     "below_formula_threshold": false,
+     "Eth_eV": 38.73
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y_min": 0.3845,
+     "Y_max": 0.3903,
+     "W_reading_spread_rel": 0.0147,
+     "below_formula_threshold": false,
+     "Eth_eV": 38.73
+    }
+   ],
+   "evidence_level": 5,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with parameters best-fitted to measured elemental data (normal incidence)",
+   "uncertainty": "not stated by the source per point; the W(Z2) reading ambiguity is carried as Y_min..Y_max; values below the lowest plotted measured energy are formula extrapolation",
+   "transformation_chain": "measured yields (legend refs) -> NIFS-DATA-23 best fit -> caption parameters read from page image -> Eq. (15) evaluated by this builder at the reporting grid",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-FIT-NIFS-F168",
+   "kind": "YAMAMURA_TAWARA_CAPTION_FIT",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "NIFS-DATA-23 Fig. 168 caption, report p. 60 (PDF p. 61)",
+   "projectile": "N+",
+   "target": "Mo (pure element)",
+   "target_element": "Mo",
+   "parameters_as_printed": {
+    "A": 6.85,
+    "Q": 0.85,
+    "Us_eV": 13.64,
+    "s": 2.8,
+    "W": "0.45 Us",
+    "best_fit_Us": true
+   },
+   "caption_remark": "THE BEST-FIT SURFACE BINDING ENERGY IS USED.",
+   "measured_data_in_figure": [
+    "Bader M. (1960)"
+   ],
+   "data_vs_curve_as_seen": "plotted points start near 0.3 keV",
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y_min": 0.0,
+     "Y_max": 0.0,
+     "W_reading_spread_rel": 0.0,
+     "below_formula_threshold": true,
+     "Eth_eV": 56.2
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y_min": 0.004213,
+     "Y_max": 0.004362,
+     "W_reading_spread_rel": 0.0344,
+     "below_formula_threshold": false,
+     "Eth_eV": 56.2
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y_min": 0.03129,
+     "Y_max": 0.03266,
+     "W_reading_spread_rel": 0.0417,
+     "below_formula_threshold": false,
+     "Eth_eV": 56.2
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y_min": 0.0603,
+     "Y_max": 0.06326,
+     "W_reading_spread_rel": 0.0467,
+     "below_formula_threshold": false,
+     "Eth_eV": 56.2
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y_min": 0.1091,
+     "Y_max": 0.1153,
+     "W_reading_spread_rel": 0.0538,
+     "below_formula_threshold": false,
+     "Eth_eV": 56.2
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y_min": 0.191,
+     "Y_max": 0.2043,
+     "W_reading_spread_rel": 0.0649,
+     "below_formula_threshold": false,
+     "Eth_eV": 56.2
+    }
+   ],
+   "evidence_level": 5,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with parameters best-fitted to measured elemental data (normal incidence)",
+   "uncertainty": "not stated by the source per point; the W(Z2) reading ambiguity is carried as Y_min..Y_max; values below the lowest plotted measured energy are formula extrapolation",
+   "transformation_chain": "measured yields (legend refs) -> NIFS-DATA-23 best fit -> caption parameters read from page image -> Eq. (15) evaluated by this builder at the reporting grid",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-FIT-NIFS-F169",
+   "kind": "YAMAMURA_TAWARA_CAPTION_FIT",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "NIFS-DATA-23 Fig. 169 caption, report p. 60 (PDF p. 61)",
+   "projectile": "O+",
+   "target": "Mo (pure element)",
+   "target_element": "Mo",
+   "parameters_as_printed": {
+    "A": 6.0,
+    "Q": 0.85,
+    "Us_eV": 8.18,
+    "s": 2.8,
+    "W": "0.45 Us",
+    "best_fit_Us": true
+   },
+   "caption_remark": "THE BEST-FIT SURFACE BINDING ENERGY IS USED.",
+   "measured_data_in_figure": [
+    "Hechtl E. (1984)"
+   ],
+   "data_vs_curve_as_seen": "four plotted points, about 0.15 keV to 10 keV",
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y_min": 0.002925,
+     "Y_max": 0.002942,
+     "W_reading_spread_rel": 0.00601,
+     "below_formula_threshold": false,
+     "Eth_eV": 32.56
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y_min": 0.03617,
+     "Y_max": 0.03644,
+     "W_reading_spread_rel": 0.00737,
+     "below_formula_threshold": false,
+     "Eth_eV": 32.56
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y_min": 0.1172,
+     "Y_max": 0.1183,
+     "W_reading_spread_rel": 0.00903,
+     "below_formula_threshold": false,
+     "Eth_eV": 32.56
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y_min": 0.1867,
+     "Y_max": 0.1886,
+     "W_reading_spread_rel": 0.0102,
+     "below_formula_threshold": false,
+     "Eth_eV": 32.56
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y_min": 0.2943,
+     "Y_max": 0.2978,
+     "W_reading_spread_rel": 0.0118,
+     "below_formula_threshold": false,
+     "Eth_eV": 32.56
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y_min": 0.4667,
+     "Y_max": 0.4736,
+     "W_reading_spread_rel": 0.0144,
+     "below_formula_threshold": false,
+     "Eth_eV": 32.56
+    }
+   ],
+   "evidence_level": 5,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with parameters best-fitted to measured elemental data (normal incidence)",
+   "uncertainty": "not stated by the source per point; the W(Z2) reading ambiguity is carried as Y_min..Y_max; values below the lowest plotted measured energy are formula extrapolation",
+   "transformation_chain": "measured yields (legend refs) -> NIFS-DATA-23 best fit -> caption parameters read from page image -> Eq. (15) evaluated by this builder at the reporting grid",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-FIT-NIFS-F259",
+   "kind": "YAMAMURA_TAWARA_CAPTION_FIT",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "NIFS-DATA-23 Fig. 259 caption, report p. 83 (PDF p. 84)",
+   "projectile": "N+",
+   "target": "W (pure element)",
+   "target_element": "W",
+   "parameters_as_printed": {
+    "A": 13.12,
+    "Q": 0.72,
+    "Us_eV": 13.35,
+    "s": 2.8,
+    "W": "0.24 Us",
+    "best_fit_Us": true
+   },
+   "caption_remark": "THE BEST-FIT SURFACE BINDING ENERGY IS USED.",
+   "measured_data_in_figure": [
+    "Bader M. (1961)"
+   ],
+   "data_vs_curve_as_seen": "plotted points start near 0.3 keV",
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y_min": 0.0,
+     "Y_max": 0.0,
+     "W_reading_spread_rel": 0.0,
+     "below_formula_threshold": true,
+     "Eth_eV": 72.77
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y_min": 0.0008281,
+     "Y_max": 0.0008407,
+     "W_reading_spread_rel": 0.015,
+     "below_formula_threshold": false,
+     "Eth_eV": 72.77
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y_min": 0.0174,
+     "Y_max": 0.01773,
+     "W_reading_spread_rel": 0.0183,
+     "below_formula_threshold": false,
+     "Eth_eV": 72.77
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y_min": 0.04003,
+     "Y_max": 0.04087,
+     "W_reading_spread_rel": 0.0205,
+     "below_formula_threshold": false,
+     "Eth_eV": 72.77
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y_min": 0.08246,
+     "Y_max": 0.08446,
+     "W_reading_spread_rel": 0.0237,
+     "below_formula_threshold": false,
+     "Eth_eV": 72.77
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y_min": 0.161,
+     "Y_max": 0.1658,
+     "W_reading_spread_rel": 0.0287,
+     "below_formula_threshold": false,
+     "Eth_eV": 72.77
+    }
+   ],
+   "evidence_level": 5,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with parameters best-fitted to measured elemental data (normal incidence)",
+   "uncertainty": "not stated by the source per point; the W(Z2) reading ambiguity is carried as Y_min..Y_max; values below the lowest plotted measured energy are formula extrapolation",
+   "transformation_chain": "measured yields (legend refs) -> NIFS-DATA-23 best fit -> caption parameters read from page image -> Eq. (15) evaluated by this builder at the reporting grid",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-FIT-NIFS-F260",
+   "kind": "YAMAMURA_TAWARA_CAPTION_FIT",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "NIFS-DATA-23 Fig. 260 caption, report p. 83 (PDF p. 84)",
+   "projectile": "O+",
+   "target": "W (pure element)",
+   "target_element": "W",
+   "parameters_as_printed": {
+    "A": 11.49,
+    "Q": 0.72,
+    "Us_eV": 15.13,
+    "s": 2.8,
+    "W": "0.24 Us",
+    "best_fit_Us": true
+   },
+   "caption_remark": "THE BEST-FIT SURFACE BINDING ENERGY IS USED.",
+   "measured_data_in_figure": [
+    "Roth J. (1979)",
+    "Tsunoyama K. (1980)",
+    "Hechtl E. (1981)",
+    "Hechtl E. (1991)"
+   ],
+   "data_vs_curve_as_seen": "plotted points from about 0.1 keV scatter by up to roughly a factor of 3-5 about the curve at 0.2-0.5 keV",
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y_min": 0.0,
+     "Y_max": 0.0,
+     "W_reading_spread_rel": 0.0,
+     "below_formula_threshold": true,
+     "Eth_eV": 76.83
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y_min": 0.0005006,
+     "Y_max": 0.0005071,
+     "W_reading_spread_rel": 0.0128,
+     "below_formula_threshold": false,
+     "Eth_eV": 76.83
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y_min": 0.01532,
+     "Y_max": 0.01556,
+     "W_reading_spread_rel": 0.0156,
+     "below_formula_threshold": false,
+     "Eth_eV": 76.83
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y_min": 0.037,
+     "Y_max": 0.03766,
+     "W_reading_spread_rel": 0.0175,
+     "below_formula_threshold": false,
+     "Eth_eV": 76.83
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y_min": 0.07893,
+     "Y_max": 0.08056,
+     "W_reading_spread_rel": 0.0203,
+     "below_formula_threshold": false,
+     "Eth_eV": 76.83
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y_min": 0.1589,
+     "Y_max": 0.1629,
+     "W_reading_spread_rel": 0.0247,
+     "below_formula_threshold": false,
+     "Eth_eV": 76.83
+    }
+   ],
+   "evidence_level": 5,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with parameters best-fitted to measured elemental data (normal incidence)",
+   "uncertainty": "not stated by the source per point; the W(Z2) reading ambiguity is carried as Y_min..Y_max; values below the lowest plotted measured energy are formula extrapolation",
+   "transformation_chain": "measured yields (legend refs) -> NIFS-DATA-23 best fit -> caption parameters read from page image -> Eq. (15) evaluated by this builder at the reporting grid",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-N-Al",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "N+",
+   "target": "Al (pure element)",
+   "target_element": "Al",
+   "parameters_as_printed": {
+    "Us_eV": 3.39,
+    "Q": 1.0,
+    "W": 2.17,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.08438,
+     "below_formula_threshold": false,
+     "Eth_eV": 14.92
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.2275,
+     "below_formula_threshold": false,
+     "Eth_eV": 14.92
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.4285,
+     "below_formula_threshold": false,
+     "Eth_eV": 14.92
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.5648,
+     "below_formula_threshold": false,
+     "Eth_eV": 14.92
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.747,
+     "below_formula_threshold": false,
+     "Eth_eV": 14.92
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.9939,
+     "below_formula_threshold": false,
+     "Eth_eV": 14.92
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-O-Al",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "O+",
+   "target": "Al (pure element)",
+   "target_element": "Al",
+   "parameters_as_printed": {
+    "Us_eV": 3.39,
+    "Q": 1.0,
+    "W": 2.17,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.08072,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.88
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.2299,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.88
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.4459,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.88
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.5953,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.88
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.7983,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.88
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 1.08,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.88
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-N-C",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "N+",
+   "target": "C (pure element)",
+   "target_element": "C",
+   "parameters_as_printed": {
+    "Us_eV": 7.37,
+    "Q": 1.7,
+    "W": 1.84,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 1.889e-07,
+     "below_formula_threshold": false,
+     "Eth_eV": 49.67
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.01787,
+     "below_formula_threshold": false,
+     "Eth_eV": 49.67
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.08117,
+     "below_formula_threshold": false,
+     "Eth_eV": 49.67
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.1358,
+     "below_formula_threshold": false,
+     "Eth_eV": 49.67
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.2159,
+     "below_formula_threshold": false,
+     "Eth_eV": 49.67
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.3295,
+     "below_formula_threshold": false,
+     "Eth_eV": 49.67
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-O-C",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "O+",
+   "target": "C (pure element)",
+   "target_element": "C",
+   "parameters_as_printed": {
+    "Us_eV": 7.37,
+    "Q": 1.7,
+    "W": 1.84,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.0,
+     "below_formula_threshold": true,
+     "Eth_eV": 50.4
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.01763,
+     "below_formula_threshold": false,
+     "Eth_eV": 50.4
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.08306,
+     "below_formula_threshold": false,
+     "Eth_eV": 50.4
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.1406,
+     "below_formula_threshold": false,
+     "Eth_eV": 50.4
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.2265,
+     "below_formula_threshold": false,
+     "Eth_eV": 50.4
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.3521,
+     "below_formula_threshold": false,
+     "Eth_eV": 50.4
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": true,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; the figure caption for this combination prints the Table 1 parameters themselves (identity, not a refit; see YT-FIT record and caption remark)",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-N-Cr",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "N+",
+   "target": "Cr (pure element)",
+   "target_element": "Cr",
+   "parameters_as_printed": {
+    "Us_eV": 4.1,
+    "Q": 0.93,
+    "W": 1.44,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.07298,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.55
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.2068,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.55
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.4034,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.55
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.5417,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.55
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.7327,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.55
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 1.006,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.55
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-O-Cr",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "O+",
+   "target": "Cr (pure element)",
+   "target_element": "Cr",
+   "parameters_as_printed": {
+    "Us_eV": 4.1,
+    "Q": 0.93,
+    "W": 1.44,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.07766,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.69
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.223,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.69
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.4395,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.69
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.5935,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.69
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.8086,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.69
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 1.121,
+     "below_formula_threshold": false,
+     "Eth_eV": 15.69
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-N-Fe",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "N+",
+   "target": "Fe (pure element)",
+   "target_element": "Fe",
+   "parameters_as_printed": {
+    "Us_eV": 4.28,
+    "Q": 0.75,
+    "W": 1.2,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.05352,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.22
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.1572,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.22
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.3122,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.22
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.4222,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.22
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.5752,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.22
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.796,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.22
+    }
+   ],
+   "has_combination_specific_fit": true,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; a combination-specific best fit exists (see YT-FIT record) and differs",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-O-Fe",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "O+",
+   "target": "Fe (pure element)",
+   "target_element": "Fe",
+   "parameters_as_printed": {
+    "Us_eV": 4.28,
+    "Q": 0.75,
+    "W": 1.2,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.05752,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.28
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.1705,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.28
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.3414,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.28
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.4639,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.28
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.6361,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.28
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.8886,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.28
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-N-Ir",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "N+",
+   "target": "Ir (pure element)",
+   "target_element": "Ir",
+   "parameters_as_printed": {
+    "Us_eV": 6.94,
+    "Q": 0.96,
+    "W": 2.43,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.001694,
+     "below_formula_threshold": false,
+     "Eth_eV": 38.79
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.04018,
+     "below_formula_threshold": false,
+     "Eth_eV": 38.79
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.1408,
+     "below_formula_threshold": false,
+     "Eth_eV": 38.79
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.2283,
+     "below_formula_threshold": false,
+     "Eth_eV": 38.79
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.3654,
+     "below_formula_threshold": false,
+     "Eth_eV": 38.79
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.5889,
+     "below_formula_threshold": false,
+     "Eth_eV": 38.79
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-O-Ir",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "O+",
+   "target": "Ir (pure element)",
+   "target_element": "Ir",
+   "parameters_as_printed": {
+    "Us_eV": 6.94,
+    "Q": 0.96,
+    "W": 2.43,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.003379,
+     "below_formula_threshold": false,
+     "Eth_eV": 36.06
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.05176,
+     "below_formula_threshold": false,
+     "Eth_eV": 36.06
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.1696,
+     "below_formula_threshold": false,
+     "Eth_eV": 36.06
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.2711,
+     "below_formula_threshold": false,
+     "Eth_eV": 36.06
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.4302,
+     "below_formula_threshold": false,
+     "Eth_eV": 36.06
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.6921,
+     "below_formula_threshold": false,
+     "Eth_eV": 36.06
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-N-Mo",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "N+",
+   "target": "Mo (pure element)",
+   "target_element": "Mo",
+   "parameters_as_printed": {
+    "Us_eV": 6.82,
+    "Q": 0.85,
+    "W": 2.39,
+    "s": 2.8
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.006652,
+     "below_formula_threshold": false,
+     "Eth_eV": 28.1
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.05089,
+     "below_formula_threshold": false,
+     "Eth_eV": 28.1
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.1453,
+     "below_formula_threshold": false,
+     "Eth_eV": 28.1
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.2226,
+     "below_formula_threshold": false,
+     "Eth_eV": 28.1
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.3392,
+     "below_formula_threshold": false,
+     "Eth_eV": 28.1
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.5214,
+     "below_formula_threshold": false,
+     "Eth_eV": 28.1
+    }
+   ],
+   "has_combination_specific_fit": true,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; a combination-specific best fit exists (see YT-FIT record) and differs",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-O-Mo",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "O+",
+   "target": "Mo (pure element)",
+   "target_element": "Mo",
+   "parameters_as_printed": {
+    "Us_eV": 6.82,
+    "Q": 0.85,
+    "W": 2.39,
+    "s": 2.8
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.008406,
+     "below_formula_threshold": false,
+     "Eth_eV": 27.15
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.05935,
+     "below_formula_threshold": false,
+     "Eth_eV": 27.15
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.1665,
+     "below_formula_threshold": false,
+     "Eth_eV": 27.15
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.2544,
+     "below_formula_threshold": false,
+     "Eth_eV": 27.15
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.3878,
+     "below_formula_threshold": false,
+     "Eth_eV": 27.15
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.599,
+     "below_formula_threshold": false,
+     "Eth_eV": 27.15
+    }
+   ],
+   "has_combination_specific_fit": true,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; a combination-specific best fit exists (see YT-FIT record) and differs",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-N-Nb",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "N+",
+   "target": "Nb (pure element)",
+   "target_element": "Nb",
+   "parameters_as_printed": {
+    "Us_eV": 7.57,
+    "Q": 0.93,
+    "W": 2.65,
+    "s": 2.8
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.00421,
+     "below_formula_threshold": false,
+     "Eth_eV": 30.91
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.04272,
+     "below_formula_threshold": false,
+     "Eth_eV": 30.91
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.1313,
+     "below_formula_threshold": false,
+     "Eth_eV": 30.91
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.2055,
+     "below_formula_threshold": false,
+     "Eth_eV": 30.91
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.3186,
+     "below_formula_threshold": false,
+     "Eth_eV": 30.91
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.4963,
+     "below_formula_threshold": false,
+     "Eth_eV": 30.91
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-O-Nb",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "O+",
+   "target": "Nb (pure element)",
+   "target_element": "Nb",
+   "parameters_as_printed": {
+    "Us_eV": 7.57,
+    "Q": 0.93,
+    "W": 2.65,
+    "s": 2.8
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.005434,
+     "below_formula_threshold": false,
+     "Eth_eV": 29.92
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.04995,
+     "below_formula_threshold": false,
+     "Eth_eV": 29.92
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.1506,
+     "below_formula_threshold": false,
+     "Eth_eV": 29.92
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.2351,
+     "below_formula_threshold": false,
+     "Eth_eV": 29.92
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.3646,
+     "below_formula_threshold": false,
+     "Eth_eV": 29.92
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.5708,
+     "below_formula_threshold": false,
+     "Eth_eV": 29.92
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-N-Ni",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "N+",
+   "target": "Ni (pure element)",
+   "target_element": "Ni",
+   "parameters_as_printed": {
+    "Us_eV": 4.44,
+    "Q": 0.94,
+    "W": 1.33,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.06148,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.84
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.1869,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.84
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.377,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.84
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.513,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.84
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.7034,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.84
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.9801,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.84
+    }
+   ],
+   "has_combination_specific_fit": true,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; a combination-specific best fit exists (see YT-FIT record) and differs",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-O-Ni",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "O+",
+   "target": "Ni (pure element)",
+   "target_element": "Ni",
+   "parameters_as_printed": {
+    "Us_eV": 4.44,
+    "Q": 0.94,
+    "W": 1.33,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.06661,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.84
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.2036,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.84
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.4137,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.84
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.5654,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.84
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.7799,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.84
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 1.096,
+     "below_formula_threshold": false,
+     "Eth_eV": 16.84
+    }
+   ],
+   "has_combination_specific_fit": true,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; a combination-specific best fit exists (see YT-FIT record) and differs",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-N-Pt",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "N+",
+   "target": "Pt (pure element)",
+   "target_element": "Pt",
+   "parameters_as_printed": {
+    "Us_eV": 5.84,
+    "Q": 1.03,
+    "W": 3.21,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.00673,
+     "below_formula_threshold": false,
+     "Eth_eV": 32.92
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.06869,
+     "below_formula_threshold": false,
+     "Eth_eV": 32.92
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.2056,
+     "below_formula_threshold": false,
+     "Eth_eV": 32.92
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.3192,
+     "below_formula_threshold": false,
+     "Eth_eV": 32.92
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.4931,
+     "below_formula_threshold": false,
+     "Eth_eV": 32.92
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.7709,
+     "below_formula_threshold": false,
+     "Eth_eV": 32.92
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-O-Pt",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "O+",
+   "target": "Pt (pure element)",
+   "target_element": "Pt",
+   "parameters_as_printed": {
+    "Us_eV": 5.84,
+    "Q": 1.03,
+    "W": 3.21,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.01075,
+     "below_formula_threshold": false,
+     "Eth_eV": 30.58
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.08672,
+     "below_formula_threshold": false,
+     "Eth_eV": 30.58
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.247,
+     "below_formula_threshold": false,
+     "Eth_eV": 30.58
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.3794,
+     "below_formula_threshold": false,
+     "Eth_eV": 30.58
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.5827,
+     "below_formula_threshold": false,
+     "Eth_eV": 30.58
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.9121,
+     "below_formula_threshold": false,
+     "Eth_eV": 30.58
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-N-Rh",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "N+",
+   "target": "Rh (pure element)",
+   "target_element": "Rh",
+   "parameters_as_printed": {
+    "Us_eV": 5.75,
+    "Q": 1.14,
+    "W": 2.59,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.02609,
+     "below_formula_threshold": false,
+     "Eth_eV": 24.21
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.1236,
+     "below_formula_threshold": false,
+     "Eth_eV": 24.21
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.2966,
+     "below_formula_threshold": false,
+     "Eth_eV": 24.21
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.4291,
+     "below_formula_threshold": false,
+     "Eth_eV": 24.21
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.6222,
+     "below_formula_threshold": false,
+     "Eth_eV": 24.21
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.916,
+     "below_formula_threshold": false,
+     "Eth_eV": 24.21
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-O-Rh",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "O+",
+   "target": "Rh (pure element)",
+   "target_element": "Rh",
+   "parameters_as_printed": {
+    "Us_eV": 5.75,
+    "Q": 1.14,
+    "W": 2.59,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.032,
+     "below_formula_threshold": false,
+     "Eth_eV": 23.28
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.1434,
+     "below_formula_threshold": false,
+     "Eth_eV": 23.28
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.3396,
+     "below_formula_threshold": false,
+     "Eth_eV": 23.28
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.4904,
+     "below_formula_threshold": false,
+     "Eth_eV": 23.28
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.7122,
+     "below_formula_threshold": false,
+     "Eth_eV": 23.28
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 1.054,
+     "below_formula_threshold": false,
+     "Eth_eV": 23.28
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-N-Ru",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "N+",
+   "target": "Ru (pure element)",
+   "target_element": "Ru",
+   "parameters_as_printed": {
+    "Us_eV": 6.74,
+    "Q": 1.31,
+    "W": 2.36,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.01549,
+     "below_formula_threshold": false,
+     "Eth_eV": 28.21
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.09915,
+     "below_formula_threshold": false,
+     "Eth_eV": 28.21
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.2609,
+     "below_formula_threshold": false,
+     "Eth_eV": 28.21
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.3881,
+     "below_formula_threshold": false,
+     "Eth_eV": 28.21
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.5761,
+     "below_formula_threshold": false,
+     "Eth_eV": 28.21
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.8649,
+     "below_formula_threshold": false,
+     "Eth_eV": 28.21
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-O-Ru",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "O+",
+   "target": "Ru (pure element)",
+   "target_element": "Ru",
+   "parameters_as_printed": {
+    "Us_eV": 6.74,
+    "Q": 1.31,
+    "W": 2.36,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.01955,
+     "below_formula_threshold": false,
+     "Eth_eV": 27.17
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.1156,
+     "below_formula_threshold": false,
+     "Eth_eV": 27.17
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.299,
+     "below_formula_threshold": false,
+     "Eth_eV": 27.17
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.4437,
+     "below_formula_threshold": false,
+     "Eth_eV": 27.17
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.6589,
+     "below_formula_threshold": false,
+     "Eth_eV": 27.17
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.9941,
+     "below_formula_threshold": false,
+     "Eth_eV": 27.17
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-N-Ti",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "N+",
+   "target": "Ti (pure element)",
+   "target_element": "Ti",
+   "parameters_as_printed": {
+    "Us_eV": 4.85,
+    "Q": 0.54,
+    "W": 2.57,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.02589,
+     "below_formula_threshold": false,
+     "Eth_eV": 18.47
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.0849,
+     "below_formula_threshold": false,
+     "Eth_eV": 18.47
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.1754,
+     "below_formula_threshold": false,
+     "Eth_eV": 18.47
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.2399,
+     "below_formula_threshold": false,
+     "Eth_eV": 18.47
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.3291,
+     "below_formula_threshold": false,
+     "Eth_eV": 18.47
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.4563,
+     "below_formula_threshold": false,
+     "Eth_eV": 18.47
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-O-Ti",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "O+",
+   "target": "Ti (pure element)",
+   "target_element": "Ti",
+   "parameters_as_printed": {
+    "Us_eV": 4.85,
+    "Q": 0.54,
+    "W": 2.57,
+    "s": 2.5
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 0.0271,
+     "below_formula_threshold": false,
+     "Eth_eV": 18.76
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.09091,
+     "below_formula_threshold": false,
+     "Eth_eV": 18.76
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.1906,
+     "below_formula_threshold": false,
+     "Eth_eV": 18.76
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.2625,
+     "below_formula_threshold": false,
+     "Eth_eV": 18.76
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.3633,
+     "below_formula_threshold": false,
+     "Eth_eV": 18.76
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.5098,
+     "below_formula_threshold": false,
+     "Eth_eV": 18.76
+    }
+   ],
+   "has_combination_specific_fit": false,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; no N/O measurement on this element in NIFS-DATA-23 Table 3, so the result is unvalidated for this projectile",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-N-W",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "N+",
+   "target": "W (pure element)",
+   "target_element": "W",
+   "parameters_as_printed": {
+    "Us_eV": 8.9,
+    "Q": 0.72,
+    "W": 2.14,
+    "s": 2.8
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 1.59e-06,
+     "below_formula_threshold": false,
+     "Eth_eV": 48.51
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.009606,
+     "below_formula_threshold": false,
+     "Eth_eV": 48.51
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.05295,
+     "below_formula_threshold": false,
+     "Eth_eV": 48.51
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.09699,
+     "below_formula_threshold": false,
+     "Eth_eV": 48.51
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.171,
+     "below_formula_threshold": false,
+     "Eth_eV": 48.51
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.2988,
+     "below_formula_threshold": false,
+     "Eth_eV": 48.51
+    }
+   ],
+   "has_combination_specific_fit": true,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; a combination-specific best fit exists (see YT-FIT record) and differs",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  },
+  {
+   "id": "YT-GEN-O-W",
+   "kind": "YAMAMURA_TAWARA_GENERIC_TABLE1",
+   "source": "SRC-NIFS-DATA-23",
+   "locator": "Table 1 'The surface binding energies Us and best-fit values of Q(Z2), W(Z2) and s(Z2)', report p. 14 (PDF p. 15), read at 150 dpi",
+   "projectile": "O+",
+   "target": "W (pure element)",
+   "target_element": "W",
+   "parameters_as_printed": {
+    "Us_eV": 8.9,
+    "Q": 0.72,
+    "W": 2.14,
+    "s": 2.8
+   },
+   "energy_range_eV": [
+    50,
+    1000
+   ],
+   "angles_deg": [
+    0
+   ],
+   "values": [
+    {
+     "E_eV": 50,
+     "angle_deg": 0,
+     "Y": 4.912e-05,
+     "below_formula_threshold": false,
+     "Eth_eV": 45.2
+    },
+    {
+     "E_eV": 100,
+     "angle_deg": 0,
+     "Y": 0.01327,
+     "below_formula_threshold": false,
+     "Eth_eV": 45.2
+    },
+    {
+     "E_eV": 200,
+     "angle_deg": 0,
+     "Y": 0.06517,
+     "below_formula_threshold": false,
+     "Eth_eV": 45.2
+    },
+    {
+     "E_eV": 300,
+     "angle_deg": 0,
+     "Y": 0.1166,
+     "below_formula_threshold": false,
+     "Eth_eV": 45.2
+    },
+    {
+     "E_eV": 500,
+     "angle_deg": 0,
+     "Y": 0.2027,
+     "below_formula_threshold": false,
+     "Eth_eV": 45.2
+    },
+    {
+     "E_eV": 1000,
+     "angle_deg": 0,
+     "Y": 0.3519,
+     "below_formula_threshold": false,
+     "Eth_eV": 45.2
+    }
+   ],
+   "has_combination_specific_fit": true,
+   "caption_uses_table1_parameters": false,
+   "evidence_level": 6,
+   "evidence_class": "model-derived",
+   "measured_or_model": "semi-empirical formula with element parameters (Table 1) applied to a reactive projectile; a combination-specific best fit exists (see YT-FIT record) and differs",
+   "uncertainty": "large and unquantified: where measured N/O data exist the source had to refit Us (1.20x to 2.30x the Table 1 value), see CHK-GENERIC-VS-FIT",
+   "transformation_chain": "Table 1 parameters read from page image -> Eq. (15) evaluated by this builder",
+   "use": "ELEMENTAL_PRIOR_BOUND_ONLY"
+  }
+ ],
+ "apid_fits_transcribed": [
+  {
+   "id": "APID-2.1.2.6",
+   "projectile": "N+",
+   "target": "C",
+   "parameters_as_printed": {
+    "lambda": 1.9555,
+    "q": 0.45004,
+    "mu": 1.7579,
+    "eps_L_per_eV": 0.00013549,
+    "Eth_eV": 36.13,
+    "avg_error_pct": 15.2,
+    "Emax_eV": 1000.0
+   },
+   "comments_as_printed": [
+    "Only calculated values.",
+    "Fit valid only for low fluence due to chemical reaction with nitrogen and nitrogen implantation."
+   ],
+   "locator": "IAEA APID 7B PDF p. 45",
+   "reproduction_check_vs_TRIM_SP": [],
+   "worst_factor_all_points": null,
+   "worst_factor_E_ge_1p1_Eth": null,
+   "reproduction": "NO_TRIM_TABLE_TRANSCRIBED",
+   "status": "NOT_USED_NUMERICALLY",
+   "status_reason": "the fit is an analytic fit to TRIM.SP calculated points (source comment); it adds no evidence independent of the TRIM.SP calculations, which are carried as records where transcribed"
+  },
+  {
+   "id": "APID-2.1.2.7",
+   "projectile": "O+",
+   "target": "C",
+   "parameters_as_printed": {
+    "lambda": 0.28214,
+    "q": 1.0579,
+    "mu": 1.7248,
+    "eps_L_per_eV": 1.1109e-05,
+    "Eth_eV": 42.683,
+    "avg_error_pct": 7.3,
+    "Emax_eV": 6000.0
+   },
+   "comments_as_printed": [
+    "Only calculated points used for fit because experimental data are dominated by chemical erosion.",
+    "Fit only valid for low fluence due to chemical reaction of O with C (oxide formation)."
+   ],
+   "locator": "IAEA APID 7B PDF p. 46",
+   "reproduction_check_vs_TRIM_SP": [
+    {
+     "E_eV": 45,
+     "TRIM_SP": 2.56e-05,
+     "fit": 7.563e-06,
+     "ratio": 0.295,
+     "near_threshold": true
+    },
+    {
+     "E_eV": 50,
+     "TRIM_SP": 6.56e-05,
+     "fit": 6.1e-05,
+     "ratio": 0.93,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 60,
+     "TRIM_SP": 0.000287,
+     "fit": 0.000322,
+     "ratio": 1.12,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 70,
+     "TRIM_SP": 0.000779,
+     "fit": 0.0008181,
+     "ratio": 1.05,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 100,
+     "TRIM_SP": 0.00459,
+     "fit": 0.004021,
+     "ratio": 0.876,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 150,
+     "TRIM_SP": 0.018,
+     "fit": 0.01561,
+     "ratio": 0.867,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 300,
+     "TRIM_SP": 0.0685,
+     "fit": 0.07346,
+     "ratio": 1.07,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 1000,
+     "TRIM_SP": 0.215,
+     "fit": 0.2066,
+     "ratio": 0.961,
+     "near_threshold": false
+    }
+   ],
+   "worst_factor_all_points": 3.39,
+   "worst_factor_E_ge_1p1_Eth": 1.15,
+   "reproduction": "REPRODUCED_AWAY_FROM_THRESHOLD",
+   "status": "NOT_USED_NUMERICALLY",
+   "status_reason": "the fit is an analytic fit to TRIM.SP calculated points (source comment); it adds no evidence independent of the TRIM.SP calculations, which are carried as records where transcribed"
+  },
+  {
+   "id": "APID-2.1.3.6",
+   "projectile": "N+",
+   "target": "W",
+   "parameters_as_printed": {
+    "lambda": 0.016012,
+    "q": 4.9256,
+    "mu": 1.8338,
+    "eps_L_per_eV": 8.882e-07,
+    "Eth_eV": 46.767,
+    "avg_error_pct": 9.8,
+    "Emax_eV": 5000.0
+   },
+   "comments_as_printed": [
+    "Only calculated values are used for the fit because of chemical interactions and old data."
+   ],
+   "locator": "IAEA APID 7B PDF p. 54",
+   "reproduction_check_vs_TRIM_SP": [
+    {
+     "E_eV": 47,
+     "TRIM_SP": 9.3e-06,
+     "fit": 4.727e-07,
+     "ratio": 0.0508,
+     "near_threshold": true
+    },
+    {
+     "E_eV": 48,
+     "TRIM_SP": 1.82e-05,
+     "fit": 1.025e-05,
+     "ratio": 0.563,
+     "near_threshold": true
+    },
+    {
+     "E_eV": 50,
+     "TRIM_SP": 5.7e-05,
+     "fit": 6.245e-05,
+     "ratio": 1.1,
+     "near_threshold": true
+    },
+    {
+     "E_eV": 52,
+     "TRIM_SP": 0.000135,
+     "fit": 0.0001568,
+     "ratio": 1.16,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 55,
+     "TRIM_SP": 0.00036,
+     "fit": 0.0003789,
+     "ratio": 1.05,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 60,
+     "TRIM_SP": 0.000973,
+     "fit": 0.0009758,
+     "ratio": 1.0,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 70,
+     "TRIM_SP": 0.00326,
+     "fit": 0.003082,
+     "ratio": 0.945,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 80,
+     "TRIM_SP": 0.007,
+     "fit": 0.00644,
+     "ratio": 0.92,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 90,
+     "TRIM_SP": 0.0117,
+     "fit": 0.01097,
+     "ratio": 0.937,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 100,
+     "TRIM_SP": 0.0172,
+     "fit": 0.01648,
+     "ratio": 0.958,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 120,
+     "TRIM_SP": 0.0277,
+     "fit": 0.02946,
+     "ratio": 1.06,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 140,
+     "TRIM_SP": 0.0399,
+     "fit": 0.04356,
+     "ratio": 1.09,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 200,
+     "TRIM_SP": 0.0757,
+     "fit": 0.08295,
+     "ratio": 1.1,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 300,
+     "TRIM_SP": 0.132,
+     "fit": 0.1315,
+     "ratio": 0.996,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 500,
+     "TRIM_SP": 0.213,
+     "fit": 0.1964,
+     "ratio": 0.922,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 1000,
+     "TRIM_SP": 0.339,
+     "fit": 0.3025,
+     "ratio": 0.892,
+     "near_threshold": false
+    }
+   ],
+   "worst_factor_all_points": 19.7,
+   "worst_factor_E_ge_1p1_Eth": 1.16,
+   "reproduction": "REPRODUCED_AWAY_FROM_THRESHOLD",
+   "status": "NOT_USED_NUMERICALLY",
+   "status_reason": "the fit is an analytic fit to TRIM.SP calculated points (source comment); it adds no evidence independent of the TRIM.SP calculations, which are carried as records where transcribed"
+  },
+  {
+   "id": "APID-2.1.3.7",
+   "projectile": "O+",
+   "target": "W",
+   "parameters_as_printed": {
+    "lambda": 0.1173,
+    "q": 1.7372,
+    "mu": 0.81924,
+    "eps_L_per_eV": 2.7649e-05,
+    "Eth_eV": 49.347,
+    "avg_error_pct": 14.7,
+    "Emax_eV": 10000.0
+   },
+   "comments_as_printed": [
+    "Only calculated values are used for the fit because of chemical interactions.",
+    "Low temperature data are probably due to tungsten oxide at the surface (25 A)."
+   ],
+   "locator": "IAEA APID 7B PDF p. 55",
+   "reproduction_check_vs_TRIM_SP": [
+    {
+     "E_eV": 50,
+     "TRIM_SP": 0.000363,
+     "fit": 0.0003625,
+     "ratio": 0.999,
+     "near_threshold": true
+    },
+    {
+     "E_eV": 100,
+     "TRIM_SP": 0.0217,
+     "fit": 0.02267,
+     "ratio": 1.04,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 200,
+     "TRIM_SP": 0.09,
+     "fit": 0.08519,
+     "ratio": 0.947,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 300,
+     "TRIM_SP": 0.152,
+     "fit": 0.1495,
+     "ratio": 0.984,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 500,
+     "TRIM_SP": 0.245,
+     "fit": 0.2545,
+     "ratio": 1.04,
+     "near_threshold": false
+    },
+    {
+     "E_eV": 1000,
+     "TRIM_SP": 0.371,
+     "fit": 0.4062,
+     "ratio": 1.09,
+     "near_threshold": false
+    }
+   ],
+   "worst_factor_all_points": 1.09,
+   "worst_factor_E_ge_1p1_Eth": 1.09,
+   "reproduction": "REPRODUCED_AWAY_FROM_THRESHOLD",
+   "status": "NOT_USED_NUMERICALLY",
+   "status_reason": "the fit is an analytic fit to TRIM.SP calculated points (source comment); it adds no evidence independent of the TRIM.SP calculations, which are carried as records where transcribed"
+  }
+ ],
+ "consistency_checks": [
+  {
+   "id": "CHK-YT-WORKED-EXAMPLE",
+   "what": "NIFS-DATA-23 sec. 7: 1 keV He -> Au",
+   "printed_yield": 0.14,
+   "computed_yield": 0.1392,
+   "relative_residual": -0.00554,
+   "printed_Eth_eV": 54.0,
+   "computed_Eth_eV": 54.45,
+   "tolerance": 0.02,
+   "pass": true
+  },
+  {
+   "id": "CHK-MASS-RATIOS",
+   "what": "CIAAW atomic weights vs caption A = M2/M1 (8 captions)",
+   "max_abs_difference": 0.00487,
+   "tolerance": 0.006,
+   "pass": true
+  },
+  {
+   "id": "CHK-GENERIC-VS-FIT",
+   "what": "Table-1 generic yield / caption-fit yield (max of W readings) for the 7 N/O combinations whose caption parameters are refitted, over the reporting grid where both are above threshold",
+   "ratio_min": 1.24,
+   "ratio_max": 52.7,
+   "refitted_combinations": [
+    "N+ -> Fe",
+    "N+ -> Mo",
+    "N+ -> Ni",
+    "N+ -> W",
+    "O+ -> Mo",
+    "O+ -> Ni",
+    "O+ -> W"
+   ],
+   "identity_combinations_excluded": [
+    "O+ -> C"
+   ],
+   "identity_rule": "caption row with best_fit_Us false, Us, Q and s equal to Table 1 and |k * Us - W_table1| <= 0.005 eV: the caption curve is the Table-1 evaluation itself, so its points (ratio about 1) carry identity_row = true and are excluded from ratio_min / ratio_max",
+   "points": [
+    {
+     "combo": "O+ -> C",
+     "E_eV": 100,
+     "generic_over_fit": 1.0,
+     "identity_row": true
+    },
+    {
+     "combo": "O+ -> C",
+     "E_eV": 200,
+     "generic_over_fit": 1.0,
+     "identity_row": true
+    },
+    {
+     "combo": "O+ -> C",
+     "E_eV": 300,
+     "generic_over_fit": 1.0,
+     "identity_row": true
+    },
+    {
+     "combo": "O+ -> C",
+     "E_eV": 500,
+     "generic_over_fit": 1.0,
+     "identity_row": true
+    },
+    {
+     "combo": "O+ -> C",
+     "E_eV": 1000,
+     "generic_over_fit": 1.0,
+     "identity_row": true
+    },
+    {
+     "combo": "N+ -> Fe",
+     "E_eV": 50,
+     "generic_over_fit": 1.69,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> Fe",
+     "E_eV": 100,
+     "generic_over_fit": 1.42,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> Fe",
+     "E_eV": 200,
+     "generic_over_fit": 1.32,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> Fe",
+     "E_eV": 300,
+     "generic_over_fit": 1.29,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> Fe",
+     "E_eV": 500,
+     "generic_over_fit": 1.27,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> Fe",
+     "E_eV": 1000,
+     "generic_over_fit": 1.24,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> Ni",
+     "E_eV": 50,
+     "generic_over_fit": 2.23,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> Ni",
+     "E_eV": 100,
+     "generic_over_fit": 1.68,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> Ni",
+     "E_eV": 200,
+     "generic_over_fit": 1.51,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> Ni",
+     "E_eV": 300,
+     "generic_over_fit": 1.45,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> Ni",
+     "E_eV": 500,
+     "generic_over_fit": 1.41,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> Ni",
+     "E_eV": 1000,
+     "generic_over_fit": 1.37,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> Ni",
+     "E_eV": 50,
+     "generic_over_fit": 52.7,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> Ni",
+     "E_eV": 100,
+     "generic_over_fit": 7.0,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> Ni",
+     "E_eV": 200,
+     "generic_over_fit": 4.16,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> Ni",
+     "E_eV": 300,
+     "generic_over_fit": 3.56,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> Ni",
+     "E_eV": 500,
+     "generic_over_fit": 3.13,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> Ni",
+     "E_eV": 1000,
+     "generic_over_fit": 2.81,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> Mo",
+     "E_eV": 100,
+     "generic_over_fit": 11.7,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> Mo",
+     "E_eV": 200,
+     "generic_over_fit": 4.45,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> Mo",
+     "E_eV": 300,
+     "generic_over_fit": 3.52,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> Mo",
+     "E_eV": 500,
+     "generic_over_fit": 2.94,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> Mo",
+     "E_eV": 1000,
+     "generic_over_fit": 2.55,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> Mo",
+     "E_eV": 50,
+     "generic_over_fit": 2.86,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> Mo",
+     "E_eV": 100,
+     "generic_over_fit": 1.63,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> Mo",
+     "E_eV": 200,
+     "generic_over_fit": 1.41,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> Mo",
+     "E_eV": 300,
+     "generic_over_fit": 1.35,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> Mo",
+     "E_eV": 500,
+     "generic_over_fit": 1.3,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> Mo",
+     "E_eV": 1000,
+     "generic_over_fit": 1.26,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> W",
+     "E_eV": 100,
+     "generic_over_fit": 11.4,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> W",
+     "E_eV": 200,
+     "generic_over_fit": 2.99,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> W",
+     "E_eV": 300,
+     "generic_over_fit": 2.37,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> W",
+     "E_eV": 500,
+     "generic_over_fit": 2.03,
+     "identity_row": false
+    },
+    {
+     "combo": "N+ -> W",
+     "E_eV": 1000,
+     "generic_over_fit": 1.8,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> W",
+     "E_eV": 100,
+     "generic_over_fit": 26.2,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> W",
+     "E_eV": 200,
+     "generic_over_fit": 4.19,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> W",
+     "E_eV": 300,
+     "generic_over_fit": 3.1,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> W",
+     "E_eV": 500,
+     "generic_over_fit": 2.52,
+     "identity_row": false
+    },
+    {
+     "combo": "O+ -> W",
+     "E_eV": 1000,
+     "generic_over_fit": 2.16,
+     "identity_row": false
+    }
+   ],
+   "reading": "the generic Table-1 evaluation is not a reliable N/O prior: it departs from the data-fitted curve by the ratio range shown, mostly upward (the fits raise Us for N/O)",
+   "pass": null
+  },
+  {
+   "id": "CHK-YT-FIT-VS-TRIM",
+   "what": "caption-fit semi-empirical yield vs TRIM.SP (IPP 9/132) at common energies, normal incidence",
+   "points": [
+    {
+     "combo": "O+ -> C",
+     "E_eV": 50,
+     "TRIM_SP": 6.56e-05,
+     "YT_fit_max": 0.0,
+     "YT_over_TRIM": null,
+     "YT_below_formula_threshold": true
+    },
+    {
+     "combo": "O+ -> C",
+     "E_eV": 100,
+     "TRIM_SP": 0.00459,
+     "YT_fit_max": 0.01763,
+     "YT_over_TRIM": 3.84,
+     "YT_below_formula_threshold": false
+    },
+    {
+     "combo": "O+ -> C",
+     "E_eV": 300,
+     "TRIM_SP": 0.0685,
+     "YT_fit_max": 0.1406,
+     "YT_over_TRIM": 2.05,
+     "YT_below_formula_threshold": false
+    },
+    {
+     "combo": "O+ -> C",
+     "E_eV": 1000,
+     "TRIM_SP": 0.215,
+     "YT_fit_max": 0.3521,
+     "YT_over_TRIM": 1.64,
+     "YT_below_formula_threshold": false
+    },
+    {
+     "combo": "N+ -> W",
+     "E_eV": 50,
+     "TRIM_SP": 5.7e-05,
+     "YT_fit_max": 0.0,
+     "YT_over_TRIM": null,
+     "YT_below_formula_threshold": true
+    },
+    {
+     "combo": "N+ -> W",
+     "E_eV": 100,
+     "TRIM_SP": 0.0172,
+     "YT_fit_max": 0.0008407,
+     "YT_over_TRIM": 0.0489,
+     "YT_below_formula_threshold": false
+    },
+    {
+     "combo": "N+ -> W",
+     "E_eV": 200,
+     "TRIM_SP": 0.0757,
+     "YT_fit_max": 0.01773,
+     "YT_over_TRIM": 0.234,
+     "YT_below_formula_threshold": false
+    },
+    {
+     "combo": "N+ -> W",
+     "E_eV": 300,
+     "TRIM_SP": 0.132,
+     "YT_fit_max": 0.04087,
+     "YT_over_TRIM": 0.31,
+     "YT_below_formula_threshold": false
+    },
+    {
+     "combo": "N+ -> W",
+     "E_eV": 500,
+     "TRIM_SP": 0.213,
+     "YT_fit_max": 0.08446,
+     "YT_over_TRIM": 0.397,
+     "YT_below_formula_threshold": false
+    },
+    {
+     "combo": "N+ -> W",
+     "E_eV": 1000,
+     "TRIM_SP": 0.339,
+     "YT_fit_max": 0.1658,
+     "YT_over_TRIM": 0.489,
+     "YT_below_formula_threshold": false
+    },
+    {
+     "combo": "O+ -> W",
+     "E_eV": 50,
+     "TRIM_SP": 0.000363,
+     "YT_fit_max": 0.0,
+     "YT_over_TRIM": null,
+     "YT_below_formula_threshold": true
+    },
+    {
+     "combo": "O+ -> W",
+     "E_eV": 100,
+     "TRIM_SP": 0.0217,
+     "YT_fit_max": 0.0005071,
+     "YT_over_TRIM": 0.0234,
+     "YT_below_formula_threshold": false
+    },
+    {
+     "combo": "O+ -> W",
+     "E_eV": 200,
+     "TRIM_SP": 0.09,
+     "YT_fit_max": 0.01556,
+     "YT_over_TRIM": 0.173,
+     "YT_below_formula_threshold": false
+    },
+    {
+     "combo": "O+ -> W",
+     "E_eV": 300,
+     "TRIM_SP": 0.152,
+     "YT_fit_max": 0.03766,
+     "YT_over_TRIM": 0.248,
+     "YT_below_formula_threshold": false
+    },
+    {
+     "combo": "O+ -> W",
+     "E_eV": 500,
+     "TRIM_SP": 0.245,
+     "YT_fit_max": 0.08056,
+     "YT_over_TRIM": 0.329,
+     "YT_below_formula_threshold": false
+    },
+    {
+     "combo": "O+ -> W",
+     "E_eV": 1000,
+     "TRIM_SP": 0.371,
+     "YT_fit_max": 0.1629,
+     "YT_over_TRIM": 0.439,
+     "YT_below_formula_threshold": false
+    }
+   ],
+   "reading": "model-to-model spread for the same elemental target and projectile; it is a lower limit of the prior-bound width, not an error estimate",
+   "pass": null
+  },
+  {
+   "id": "CHK-APID-REPRODUCTION",
+   "what": "IAEA APID 7B fit formula (report p. 18, PDF p. 20) with the printed parameters vs the TRIM.SP points the fits were made to (<= 1 keV); gate: worst factor <= 1.25 for E >= 1.1 Eth",
+   "rows": [
+    {
+     "id": "APID-2.1.2.6",
+     "worst_factor_all_points": null,
+     "worst_factor_E_ge_1p1_Eth": null,
+     "reproduction": "NO_TRIM_TABLE_TRANSCRIBED",
+     "status": "NOT_USED_NUMERICALLY"
+    },
+    {
+     "id": "APID-2.1.2.7",
+     "worst_factor_all_points": 3.39,
+     "worst_factor_E_ge_1p1_Eth": 1.15,
+     "reproduction": "REPRODUCED_AWAY_FROM_THRESHOLD",
+     "status": "NOT_USED_NUMERICALLY"
+    },
+    {
+     "id": "APID-2.1.3.6",
+     "worst_factor_all_points": 19.7,
+     "worst_factor_E_ge_1p1_Eth": 1.16,
+     "reproduction": "REPRODUCED_AWAY_FROM_THRESHOLD",
+     "status": "NOT_USED_NUMERICALLY"
+    },
+    {
+     "id": "APID-2.1.3.7",
+     "worst_factor_all_points": 1.09,
+     "worst_factor_E_ge_1p1_Eth": 1.09,
+     "reproduction": "REPRODUCED_AWAY_FROM_THRESHOLD",
+     "status": "NOT_USED_NUMERICALLY"
+    }
+   ],
+   "reading": "the printed fits reproduce the TRIM.SP points they were fitted to, consistent with the printed average errors, except within a few eV of the fitted threshold (fitted Eth slightly above the TRIM.SP onset); they are still not evaluated as priors because they carry no information beyond the TRIM.SP calculations",
+   "pass": true
+  }
+ ],
+ "q0_matrix": [
+  {
+   "row": "R8-C01",
+   "p4_candidate": "CAND-01",
+   "label": "316L (engineering / reference control)",
+   "material_class": "alloy",
+   "exact_specification_status": "grade named (316L); heat / lot composition not registered",
+   "surface_state_in_service": "unknown; oxide / nitride surface expected under O / N exposure but not characterised",
+   "elements_named_in_registered_label": [],
+   "label_basis": "P4 CAND-01 name 'Austenitic stainless 316L' names no element"
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02A",
+   "label": "INCONEL alloy 600",
+   "material_class": "alloy",
+   "exact_specification_status": "grade named; lot composition not registered",
+   "surface_state_in_service": "chromia-forming (per P4 family label)",
+   "elements_named_in_registered_label": [
+    "Ni",
+    "Cr"
+   ],
+   "label_basis": "P4 family 'chromia-forming Ni alloy' (chromia = Cr2O3)"
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02B",
+   "label": "INCONEL alloy 625",
+   "material_class": "alloy",
+   "exact_specification_status": "grade named; lot composition not registered",
+   "surface_state_in_service": "chromia-forming (per P4 family label)",
+   "elements_named_in_registered_label": [
+    "Ni",
+    "Cr"
+   ],
+   "label_basis": "P4 family 'chromia-forming Ni alloy'"
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02C",
+   "label": "Haynes 230",
+   "material_class": "alloy",
+   "exact_specification_status": "grade named; lot composition not registered",
+   "surface_state_in_service": "chromia-forming (per P4 family label)",
+   "elements_named_in_registered_label": [
+    "Ni",
+    "Cr"
+   ],
+   "label_basis": "P4 family 'chromia-forming Ni alloy'"
+  },
+  {
+   "row": "R8-C02 (additional, if readily available)",
+   "p4_candidate": "CAND-02D",
+   "label": "INCONEL alloy X-750",
+   "material_class": "alloy",
+   "exact_specification_status": "grade named; lot composition not registered",
+   "surface_state_in_service": "chromia-forming (per P4 family label)",
+   "elements_named_in_registered_label": [
+    "Ni",
+    "Cr"
+   ],
+   "label_basis": "P4 family 'chromia-forming Ni alloy'"
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03A",
+   "label": "INCONEL alloy 601",
+   "material_class": "alloy",
+   "exact_specification_status": "grade named; lot composition not registered",
+   "surface_state_in_service": "alumina-forming (per P4 family label)",
+   "elements_named_in_registered_label": [
+    "Ni",
+    "Cr",
+    "Al"
+   ],
+   "label_basis": "P4 CAND-03A name 'alumina-forming Ni-Cr-Al alloy'"
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03C",
+   "label": "Haynes 214",
+   "material_class": "alloy",
+   "exact_specification_status": "grade named; lot composition not registered",
+   "surface_state_in_service": "alumina-forming (per P4 family label)",
+   "elements_named_in_registered_label": [
+    "Al"
+   ],
+   "label_basis": "P4 family 'alumina-forming alloy' (alumina = Al2O3)"
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03B",
+   "label": "FeCrAl (one explicitly specified grade, TBD)",
+   "material_class": "alloy",
+   "exact_specification_status": "GRADE NOT YET DECLARED (owner S5.11 requires one explicitly specified grade)",
+   "surface_state_in_service": "alumina-forming (per P4 family label)",
+   "elements_named_in_registered_label": [
+    "Fe",
+    "Cr",
+    "Al"
+   ],
+   "label_basis": "the family name FeCrAl"
+  },
+  {
+   "row": "R8-C04",
+   "p4_candidate": "CAND-04",
+   "label": "Rh-coated 316L",
+   "material_class": "coating",
+   "exact_specification_status": "coating composition, thickness, process, substrate preparation and lot not registered (S5.11 requires them)",
+   "surface_state_in_service": "Rh surface; state under O / N exposure not characterised",
+   "elements_named_in_registered_label": [
+    "Rh"
+   ],
+   "label_basis": "coating element named by the owner"
+  },
+  {
+   "row": "R8-C05",
+   "p4_candidate": "CAND-05",
+   "label": "Pt-clad / plated 316L",
+   "material_class": "coating",
+   "exact_specification_status": "coating details and lot not registered",
+   "surface_state_in_service": "Pt surface; state under O / N exposure not characterised",
+   "elements_named_in_registered_label": [
+    "Pt"
+   ],
+   "label_basis": "coating element named by the owner"
+  },
+  {
+   "row": "R8-C06",
+   "p4_candidate": "CAND-06",
+   "label": "Cr-plated 316L",
+   "material_class": "coating",
+   "exact_specification_status": "coating details and lot not registered",
+   "surface_state_in_service": "conductive-oxide former (P4 family label); oxide surface expected",
+   "elements_named_in_registered_label": [
+    "Cr"
+   ],
+   "label_basis": "coating element named by the owner"
+  },
+  {
+   "row": "R8-C07",
+   "p4_candidate": "CAND-07",
+   "label": "IrO2 / RuO2-type conductive-oxide (MMO) coating",
+   "material_class": "oxide_coating",
+   "exact_specification_status": "EXACT COATING SYSTEM AND SUBSTRATE NOT YET DECLARED (owner S5.11 requires them)",
+   "surface_state_in_service": "mixed metal oxide",
+   "elements_named_in_registered_label": [
+    "Ir",
+    "Ru",
+    "Ti"
+   ],
+   "label_basis": "P4 CAND-07 name 'IrO2- or RuO2-based conductive-oxide coating (e.g. MMO on Ti)'; the metal-element priors are NOT representative of an oxide"
+  },
+  {
+   "row": "R8-C08",
+   "p4_candidate": "CAND-08",
+   "label": "bare tungsten (negative / reference control only)",
+   "material_class": "element",
+   "exact_specification_status": "purity / form / lot not registered",
+   "surface_state_in_service": "W oxide expected in O-bearing exposure (P4 role: known insulating oxide)",
+   "elements_named_in_registered_label": [
+    "W"
+   ],
+   "label_basis": "elemental material"
+  },
+  {
+   "row": "R8-C09",
+   "p4_candidate": "CAND-09",
+   "label": "specified isotropic graphite (reference / control coupon)",
+   "material_class": "element",
+   "exact_specification_status": "GRADE NOT YET SPECIFIED (owner S5.11 'specified isotropic graphite')",
+   "surface_state_in_service": "volatile oxide (CO / CO2) under O exposure",
+   "elements_named_in_registered_label": [
+    "C"
+   ],
+   "label_basis": "elemental material"
+  }
+ ],
+ "coverage_matrix": [
+  {
+   "row": "R8-C01",
+   "p4_candidate": "CAND-01",
+   "label": "316L (engineering / reference control)",
+   "species": "N+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_CONSTITUENT_REGISTERED (no element named in the registered label; mapping needs the exact-grade / lot composition)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-05",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C01",
+   "p4_candidate": "CAND-01",
+   "label": "316L (engineering / reference control)",
+   "species": "N2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C01",
+   "p4_candidate": "CAND-01",
+   "label": "316L (engineering / reference control)",
+   "species": "O+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_CONSTITUENT_REGISTERED (no element named in the registered label; mapping needs the exact-grade / lot composition)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-05",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C01",
+   "p4_candidate": "CAND-01",
+   "label": "316L (engineering / reference control)",
+   "species": "O2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02A",
+   "label": "INCONEL alloy 600",
+   "species": "N+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-FIT-NIFS-F102",
+    "YT-GEN-N-Cr",
+    "YT-GEN-N-Ni"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "CONSTITUENT_ELEMENT_PRIOR_BOUND_ONLY (elements named in the registered label; alloy composition, preferential sputtering and oxide / nitride scales not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-05",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02A",
+   "label": "INCONEL alloy 600",
+   "species": "N2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02A",
+   "label": "INCONEL alloy 600",
+   "species": "O+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-FIT-NIFS-F103",
+    "YT-GEN-O-Cr",
+    "YT-GEN-O-Ni"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "CONSTITUENT_ELEMENT_PRIOR_BOUND_ONLY (elements named in the registered label; alloy composition, preferential sputtering and oxide / nitride scales not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-05",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02A",
+   "label": "INCONEL alloy 600",
+   "species": "O2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02B",
+   "label": "INCONEL alloy 625",
+   "species": "N+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-FIT-NIFS-F102",
+    "YT-GEN-N-Cr",
+    "YT-GEN-N-Ni"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "CONSTITUENT_ELEMENT_PRIOR_BOUND_ONLY (elements named in the registered label; alloy composition, preferential sputtering and oxide / nitride scales not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-05",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02B",
+   "label": "INCONEL alloy 625",
+   "species": "N2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02B",
+   "label": "INCONEL alloy 625",
+   "species": "O+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-FIT-NIFS-F103",
+    "YT-GEN-O-Cr",
+    "YT-GEN-O-Ni"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "CONSTITUENT_ELEMENT_PRIOR_BOUND_ONLY (elements named in the registered label; alloy composition, preferential sputtering and oxide / nitride scales not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-05",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02B",
+   "label": "INCONEL alloy 625",
+   "species": "O2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02C",
+   "label": "Haynes 230",
+   "species": "N+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-FIT-NIFS-F102",
+    "YT-GEN-N-Cr",
+    "YT-GEN-N-Ni"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "CONSTITUENT_ELEMENT_PRIOR_BOUND_ONLY (elements named in the registered label; alloy composition, preferential sputtering and oxide / nitride scales not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-05",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02C",
+   "label": "Haynes 230",
+   "species": "N2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02C",
+   "label": "Haynes 230",
+   "species": "O+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-FIT-NIFS-F103",
+    "YT-GEN-O-Cr",
+    "YT-GEN-O-Ni"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "CONSTITUENT_ELEMENT_PRIOR_BOUND_ONLY (elements named in the registered label; alloy composition, preferential sputtering and oxide / nitride scales not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-05",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C02",
+   "p4_candidate": "CAND-02C",
+   "label": "Haynes 230",
+   "species": "O2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C02 (additional, if readily available)",
+   "p4_candidate": "CAND-02D",
+   "label": "INCONEL alloy X-750",
+   "species": "N+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-FIT-NIFS-F102",
+    "YT-GEN-N-Cr",
+    "YT-GEN-N-Ni"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "CONSTITUENT_ELEMENT_PRIOR_BOUND_ONLY (elements named in the registered label; alloy composition, preferential sputtering and oxide / nitride scales not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-05",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C02 (additional, if readily available)",
+   "p4_candidate": "CAND-02D",
+   "label": "INCONEL alloy X-750",
+   "species": "N2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C02 (additional, if readily available)",
+   "p4_candidate": "CAND-02D",
+   "label": "INCONEL alloy X-750",
+   "species": "O+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-FIT-NIFS-F103",
+    "YT-GEN-O-Cr",
+    "YT-GEN-O-Ni"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "CONSTITUENT_ELEMENT_PRIOR_BOUND_ONLY (elements named in the registered label; alloy composition, preferential sputtering and oxide / nitride scales not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-05",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C02 (additional, if readily available)",
+   "p4_candidate": "CAND-02D",
+   "label": "INCONEL alloy X-750",
+   "species": "O2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03A",
+   "label": "INCONEL alloy 601",
+   "species": "N+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-FIT-NIFS-F102",
+    "YT-GEN-N-Al",
+    "YT-GEN-N-Cr",
+    "YT-GEN-N-Ni"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "CONSTITUENT_ELEMENT_PRIOR_BOUND_ONLY (elements named in the registered label; alloy composition, preferential sputtering and oxide / nitride scales not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-03",
+    "AR-05",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03A",
+   "label": "INCONEL alloy 601",
+   "species": "N2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-03",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03A",
+   "label": "INCONEL alloy 601",
+   "species": "O+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-FIT-NIFS-F103",
+    "YT-GEN-O-Al",
+    "YT-GEN-O-Cr",
+    "YT-GEN-O-Ni"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "CONSTITUENT_ELEMENT_PRIOR_BOUND_ONLY (elements named in the registered label; alloy composition, preferential sputtering and oxide / nitride scales not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-03",
+    "AR-05",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03A",
+   "label": "INCONEL alloy 601",
+   "species": "O2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-03",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03C",
+   "label": "Haynes 214",
+   "species": "N+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-GEN-N-Al"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "CONSTITUENT_ELEMENT_PRIOR_BOUND_ONLY (elements named in the registered label; alloy composition, preferential sputtering and oxide / nitride scales not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-03",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03C",
+   "label": "Haynes 214",
+   "species": "N2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-03",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03C",
+   "label": "Haynes 214",
+   "species": "O+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-GEN-O-Al"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "CONSTITUENT_ELEMENT_PRIOR_BOUND_ONLY (elements named in the registered label; alloy composition, preferential sputtering and oxide / nitride scales not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-03",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03C",
+   "label": "Haynes 214",
+   "species": "O2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-03",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03B",
+   "label": "FeCrAl (one explicitly specified grade, TBD)",
+   "species": "N+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-FIT-NIFS-F81",
+    "YT-GEN-N-Al",
+    "YT-GEN-N-Cr",
+    "YT-GEN-N-Fe"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "CONSTITUENT_ELEMENT_PRIOR_BOUND_ONLY (elements named in the registered label; alloy composition, preferential sputtering and oxide / nitride scales not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-03",
+    "AR-05",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03B",
+   "label": "FeCrAl (one explicitly specified grade, TBD)",
+   "species": "N2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-03",
+    "AR-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03B",
+   "label": "FeCrAl (one explicitly specified grade, TBD)",
+   "species": "O+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-GEN-O-Al",
+    "YT-GEN-O-Cr",
+    "YT-GEN-O-Fe"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "CONSTITUENT_ELEMENT_PRIOR_BOUND_ONLY (elements named in the registered label; alloy composition, preferential sputtering and oxide / nitride scales not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-03",
+    "AR-05",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C03",
+   "p4_candidate": "CAND-03B",
+   "label": "FeCrAl (one explicitly specified grade, TBD)",
+   "species": "O2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-03",
+    "AR-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C04",
+   "p4_candidate": "CAND-04",
+   "label": "Rh-coated 316L",
+   "species": "N+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-GEN-N-Rh"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "COATING_ELEMENT_PRIOR_BOUND_ONLY (pure-element values; coating microstructure, impurities and O/N surface chemistry not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C04",
+   "p4_candidate": "CAND-04",
+   "label": "Rh-coated 316L",
+   "species": "N2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C04",
+   "p4_candidate": "CAND-04",
+   "label": "Rh-coated 316L",
+   "species": "O+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-GEN-O-Rh"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "COATING_ELEMENT_PRIOR_BOUND_ONLY (pure-element values; coating microstructure, impurities and O/N surface chemistry not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C04",
+   "p4_candidate": "CAND-04",
+   "label": "Rh-coated 316L",
+   "species": "O2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C05",
+   "p4_candidate": "CAND-05",
+   "label": "Pt-clad / plated 316L",
+   "species": "N+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-GEN-N-Pt"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "COATING_ELEMENT_PRIOR_BOUND_ONLY (pure-element values; coating microstructure, impurities and O/N surface chemistry not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C05",
+   "p4_candidate": "CAND-05",
+   "label": "Pt-clad / plated 316L",
+   "species": "N2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C05",
+   "p4_candidate": "CAND-05",
+   "label": "Pt-clad / plated 316L",
+   "species": "O+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-GEN-O-Pt"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "COATING_ELEMENT_PRIOR_BOUND_ONLY (pure-element values; coating microstructure, impurities and O/N surface chemistry not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C05",
+   "p4_candidate": "CAND-05",
+   "label": "Pt-clad / plated 316L",
+   "species": "O2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C06",
+   "p4_candidate": "CAND-06",
+   "label": "Cr-plated 316L",
+   "species": "N+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-GEN-N-Cr"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "COATING_ELEMENT_PRIOR_BOUND_ONLY (pure-element values; coating microstructure, impurities and O/N surface chemistry not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C06",
+   "p4_candidate": "CAND-06",
+   "label": "Cr-plated 316L",
+   "species": "N2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C06",
+   "p4_candidate": "CAND-06",
+   "label": "Cr-plated 316L",
+   "species": "O+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-GEN-O-Cr"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "COATING_ELEMENT_PRIOR_BOUND_ONLY (pure-element values; coating microstructure, impurities and O/N surface chemistry not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C06",
+   "p4_candidate": "CAND-06",
+   "label": "Cr-plated 316L",
+   "species": "O2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C07",
+   "p4_candidate": "CAND-07",
+   "label": "IrO2 / RuO2-type conductive-oxide (MMO) coating",
+   "species": "N+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [
+    "YT-GEN-N-Ir",
+    "YT-GEN-N-Ru",
+    "YT-GEN-N-Ti"
+   ],
+   "prior_applicability": "NOT_REPRESENTATIVE (metal-element values listed as context only; the surface is a mixed metal oxide)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-01",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C07",
+   "p4_candidate": "CAND-07",
+   "label": "IrO2 / RuO2-type conductive-oxide (MMO) coating",
+   "species": "N2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-01",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C07",
+   "p4_candidate": "CAND-07",
+   "label": "IrO2 / RuO2-type conductive-oxide (MMO) coating",
+   "species": "O+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [
+    "YT-GEN-O-Ir",
+    "YT-GEN-O-Ru",
+    "YT-GEN-O-Ti"
+   ],
+   "prior_applicability": "NOT_REPRESENTATIVE (metal-element values listed as context only; the surface is a mixed metal oxide)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-07",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C07",
+   "p4_candidate": "CAND-07",
+   "label": "IrO2 / RuO2-type conductive-oxide (MMO) coating",
+   "species": "O2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06",
+    "AR-08"
+   ]
+  },
+  {
+   "row": "R8-C08",
+   "p4_candidate": "CAND-08",
+   "label": "bare tungsten (negative / reference control only)",
+   "species": "N+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "TRIM-N-W",
+    "YT-FIT-NIFS-F259",
+    "YT-GEN-N-W"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "MATERIAL_MATCHED_ELEMENT__SURFACE_STATE_NOT_MATCHED (low-fluence pure-element models / fits; in-service oxide or nitride not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-01",
+    "AR-02",
+    "AR-05",
+    "AR-06",
+    "AR-07"
+   ]
+  },
+  {
+   "row": "R8-C08",
+   "p4_candidate": "CAND-08",
+   "label": "bare tungsten (negative / reference control only)",
+   "species": "N2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-01",
+    "AR-02",
+    "AR-06"
+   ]
+  },
+  {
+   "row": "R8-C08",
+   "p4_candidate": "CAND-08",
+   "label": "bare tungsten (negative / reference control only)",
+   "species": "O+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "TRIM-O-W",
+    "YT-FIT-NIFS-F260",
+    "YT-GEN-O-W"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "MATERIAL_MATCHED_ELEMENT__SURFACE_STATE_NOT_MATCHED (low-fluence pure-element models / fits; in-service oxide or nitride not represented)",
+   "bound_direction_note": "IAEA APID 7B 2.1.3.7 comment: low-temperature O -> W data probably reflect a tungsten-oxide surface; the elemental values do not bound an oxidised surface",
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-05",
+    "AR-06",
+    "AR-07"
+   ]
+  },
+  {
+   "row": "R8-C08",
+   "p4_candidate": "CAND-08",
+   "label": "bare tungsten (negative / reference control only)",
+   "species": "O2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": "IAEA APID 7B 2.1.3.7 comment: low-temperature O -> W data probably reflect a tungsten-oxide surface; the elemental values do not bound an oxidised surface",
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06"
+   ]
+  },
+  {
+   "row": "R8-C09",
+   "p4_candidate": "CAND-09",
+   "label": "specified isotropic graphite (reference / control coupon)",
+   "species": "N+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "YT-GEN-N-C"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "MATERIAL_MATCHED_ELEMENT__SURFACE_STATE_NOT_MATCHED (low-fluence pure-element models / fits; in-service oxide or nitride not represented)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-05",
+    "AR-06",
+    "AR-07"
+   ]
+  },
+  {
+   "row": "R8-C09",
+   "p4_candidate": "CAND-09",
+   "label": "specified isotropic graphite (reference / control coupon)",
+   "species": "N2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": null,
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06"
+   ]
+  },
+  {
+   "row": "R8-C09",
+   "p4_candidate": "CAND-09",
+   "label": "specified isotropic graphite (reference / control coupon)",
+   "species": "O+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [
+    "TRIM-O-C",
+    "YT-FIT-NIFS-F19",
+    "YT-GEN-O-C"
+   ],
+   "non_representative_context_records": [],
+   "prior_applicability": "MATERIAL_MATCHED_ELEMENT__SURFACE_STATE_NOT_MATCHED (low-fluence pure-element models / fits; in-service oxide or nitride not represented)",
+   "bound_direction_note": "PHYSICAL_SPUTTERING_IS_A_LOWER_BOUND_ONLY: O on carbon is dominated by chemical erosion (NIFS-DATA-23 Fig. 19 caption; IAEA APID 7B 2.1.2.7 comment); measured points lie well above the physical-sputtering curve",
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-05",
+    "AR-06",
+    "AR-07"
+   ]
+  },
+  {
+   "row": "R8-C09",
+   "p4_candidate": "CAND-09",
+   "label": "specified isotropic graphite (reference / control coupon)",
+   "species": "O2+",
+   "candidate_specific_value": null,
+   "status": "NO_CANDIDATE_SPECIFIC_DATA",
+   "elemental_prior_records": [],
+   "non_representative_context_records": [],
+   "prior_applicability": "NO_PRIOR_NUMBER (molecular ion: no open species-resolved data on any Q0 element; the per-atom equal-velocity mapping is not applied - SRC-DOBES-2011 abstract reports up to +25 % per-atom enhancement for N2+ on W below 1 keV)",
+   "bound_direction_note": "PHYSICAL_SPUTTERING_IS_A_LOWER_BOUND_ONLY: O on carbon is dominated by chemical erosion (NIFS-DATA-23 Fig. 19 caption; IAEA APID 7B 2.1.2.7 comment); measured points lie well above the physical-sputtering curve",
+   "dispositions": [
+    "MEASUREMENT_NEEDED:TP-04",
+    "AR-06"
+   ]
+  }
+ ],
+ "acquisition_requests": [
+  {
+   "id": "AR-01",
+   "source": "SRC-PHADKE-2020",
+   "provides": "measured nitrogen-beam (N2+/N+ mix) yields on W and Ru thin films (plus Mo, Pd) at 50-500 eV, steady-state fluence, with nitride formation",
+   "lawful_route": "owner downloads the CC BY full text manually from the University of Twente repository or the publisher open-access page (automated retrieval was bot-challenged and not bypassed)",
+   "priority_note": "only open measurement located in the 50-500 eV range with a molecular nitrogen beam on a Q0 element",
+   "relevant_cells_text": "CAND-08 x N2+; CAND-08 x N+; CAND-07 x N2+ (Ru metal only; not an oxide)",
+   "applies_to": {
+    "candidates": [
+     "CAND-08",
+     "CAND-07"
+    ],
+    "species": [
+     "N+",
+     "N2+"
+    ]
+   }
+  },
+  {
+   "id": "AR-02",
+   "source": "SRC-DOBES-2011",
+   "provides": "separate N+ and N2+ yields on polycrystalline W (QCM), molecular-effect magnitude below 1 keV",
+   "lawful_route": "library / inter-library loan / publisher purchase / institutional subscription (IOP Physica Scripta)",
+   "relevant_cells_text": "CAND-08 x N+; CAND-08 x N2+",
+   "applies_to": {
+    "candidates": [
+     "CAND-08"
+    ],
+    "species": [
+     "N+",
+     "N2+"
+    ]
+   }
+  },
+  {
+   "id": "AR-03",
+   "source": "SRC-ESPY-1993",
+   "provides": "O+, O2+, N+, N2+ yields on Al and Al2O3 at 50-200 eV (the only located four-species low-energy set; Al2O3 is the scale of the alumina-forming candidates, but a thin-film Al2O3 is not an alloy scale)",
+   "lawful_route": "SPIE Digital Library purchase / institutional subscription / inter-library loan",
+   "relevant_cells_text": "CAND-03A, CAND-03B, CAND-03C x all four species (scale context only)",
+   "applies_to": {
+    "candidates": [
+     "CAND-03A",
+     "CAND-03B",
+     "CAND-03C"
+    ],
+    "species": [
+     "N+",
+     "N2+",
+     "O+",
+     "O2+"
+    ]
+   }
+  },
+  {
+   "id": "AR-04",
+   "source": "SRC-TSUNOYAMA-1976",
+   "provides": "O2+ and N2+ yields on pure Fe (20 keV per abstract; out of the energy domain; surface-layer evidence)",
+   "lawful_route": "library / inter-library loan (JJAP 1976)",
+   "relevant_cells_text": "CAND-01 / CAND-03B constituent context only",
+   "applies_to": {
+    "candidates": [
+     "CAND-01",
+     "CAND-03B"
+    ],
+    "species": [
+     "N2+",
+     "O2+"
+    ]
+   }
+  },
+  {
+   "id": "AR-05",
+   "source": "SRC-NIFS-LEGEND-REFS",
+   "provides": "the primary measurements behind the NIFS-DATA-23 N / O graphs (Bader 1960/1961 N on Fe, Ni, Mo, W; Roth 1979 O on Ni, W; Hechtl O on W, Mo, C; Tsunoyama 1980 O on W)",
+   "lawful_route": "resolve the full citations through the library (NIFS-DATA-23 reference list / ADNDT 1996 version), then library / inter-library loan",
+   "relevant_cells_text": "elemental priors for Fe, Ni, W, C",
+   "applies_to": {
+    "candidates": [
+     "CAND-01",
+     "CAND-02A",
+     "CAND-02B",
+     "CAND-02C",
+     "CAND-02D",
+     "CAND-03A",
+     "CAND-03B",
+     "CAND-08",
+     "CAND-09"
+    ],
+    "species": [
+     "N+",
+     "O+"
+    ]
+   }
+  },
+  {
+   "id": "AR-06",
+   "source": "SRC-ECKSTEIN-2007",
+   "provides": "evaluated elemental yield compilation (may include N / O projectiles beyond IPP 9/132)",
+   "lawful_route": "library / publisher purchase (Springer)",
+   "relevant_cells_text": "elemental priors",
+   "applies_to": {
+    "candidates": "ALL",
+    "species": [
+     "N+",
+     "N2+",
+     "O+",
+     "O2+"
+    ]
+   }
+  },
+  {
+   "id": "AR-07",
+   "source": "SRC-YT-ADNDT-1996",
+   "provides": "journal version of the Yamamura-Tawara compilation (check for corrections relative to NIFS-DATA-23, e.g. the Eq. (17) branch labels and the Mo W(Z2) inconsistency)",
+   "lawful_route": "library / publisher purchase (Elsevier)",
+   "relevant_cells_text": "elemental priors",
+   "applies_to": {
+    "candidates": "ALL",
+    "species": [
+     "N+",
+     "O+"
+    ]
+   }
+  },
+  {
+   "id": "AR-08",
+   "source": null,
+   "provides": "UNRESOLVED search target: any species-resolved N+, N2+, O+, O2+ yield on 316L, Inconel 600/625/601/X-750, Haynes 230/214, FeCrAl, electroplated Rh / Pt / Cr, or IrO2 / RuO2 MMO. None was located in open sources in this lane (search_log).",
+   "lawful_route": "library literature search (subscription databases) by the owner / procurement",
+   "relevant_cells_text": "every alloy / coating cell",
+   "applies_to": {
+    "candidates": "ALL_NON_ELEMENTAL",
+    "species": [
+     "N+",
+     "N2+",
+     "O+",
+     "O2+"
+    ]
+   }
+  }
+ ],
+ "measurement_needed": [
+  {
+   "p4_candidate": "CAND-01",
+   "label": "316L (engineering / reference control)",
+   "route": "TP-04 (P4 test plan; ion source with energy / species control; profilometer; witness holders)",
+   "species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+"
+   ],
+   "exact_specification_prerequisite": "grade named (316L); heat / lot composition not registered",
+   "variables_to_register_before_measurement": [
+    "ion species and charge state (N+, N2+, O+, O2+ separately; mass-selected or with measured beam composition)",
+    "ion energy range: TBD from the registered H-1 / ICP electrode sheath-energy envelope (CR-04 domain 'sheath_energy_range'; not registered)",
+    "angle of incidence: TBD from the electrode geometry",
+    "fluence to steady state (compound / oxide / nitride build-up) and target temperature: TBD",
+    "surface composition after exposure (S5.12 metrology list includes SEM / XPS)"
+   ],
+   "applies_when": "candidate survives Q0 and is down-selected for Q1 (S5.11); S5.13 'project ion-beam / materials test route for the down-selected candidate materials / coatings'",
+   "acceptance": "TBD at LOCK-2 after metrology commissioning (S5.12); never set from candidate performance"
+  },
+  {
+   "p4_candidate": "CAND-02A",
+   "label": "INCONEL alloy 600",
+   "route": "TP-04 (P4 test plan; ion source with energy / species control; profilometer; witness holders)",
+   "species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+"
+   ],
+   "exact_specification_prerequisite": "grade named; lot composition not registered",
+   "variables_to_register_before_measurement": [
+    "ion species and charge state (N+, N2+, O+, O2+ separately; mass-selected or with measured beam composition)",
+    "ion energy range: TBD from the registered H-1 / ICP electrode sheath-energy envelope (CR-04 domain 'sheath_energy_range'; not registered)",
+    "angle of incidence: TBD from the electrode geometry",
+    "fluence to steady state (compound / oxide / nitride build-up) and target temperature: TBD",
+    "surface composition after exposure (S5.12 metrology list includes SEM / XPS)"
+   ],
+   "applies_when": "candidate survives Q0 and is down-selected for Q1 (S5.11); S5.13 'project ion-beam / materials test route for the down-selected candidate materials / coatings'",
+   "acceptance": "TBD at LOCK-2 after metrology commissioning (S5.12); never set from candidate performance"
+  },
+  {
+   "p4_candidate": "CAND-02B",
+   "label": "INCONEL alloy 625",
+   "route": "TP-04 (P4 test plan; ion source with energy / species control; profilometer; witness holders)",
+   "species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+"
+   ],
+   "exact_specification_prerequisite": "grade named; lot composition not registered",
+   "variables_to_register_before_measurement": [
+    "ion species and charge state (N+, N2+, O+, O2+ separately; mass-selected or with measured beam composition)",
+    "ion energy range: TBD from the registered H-1 / ICP electrode sheath-energy envelope (CR-04 domain 'sheath_energy_range'; not registered)",
+    "angle of incidence: TBD from the electrode geometry",
+    "fluence to steady state (compound / oxide / nitride build-up) and target temperature: TBD",
+    "surface composition after exposure (S5.12 metrology list includes SEM / XPS)"
+   ],
+   "applies_when": "candidate survives Q0 and is down-selected for Q1 (S5.11); S5.13 'project ion-beam / materials test route for the down-selected candidate materials / coatings'",
+   "acceptance": "TBD at LOCK-2 after metrology commissioning (S5.12); never set from candidate performance"
+  },
+  {
+   "p4_candidate": "CAND-02C",
+   "label": "Haynes 230",
+   "route": "TP-04 (P4 test plan; ion source with energy / species control; profilometer; witness holders)",
+   "species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+"
+   ],
+   "exact_specification_prerequisite": "grade named; lot composition not registered",
+   "variables_to_register_before_measurement": [
+    "ion species and charge state (N+, N2+, O+, O2+ separately; mass-selected or with measured beam composition)",
+    "ion energy range: TBD from the registered H-1 / ICP electrode sheath-energy envelope (CR-04 domain 'sheath_energy_range'; not registered)",
+    "angle of incidence: TBD from the electrode geometry",
+    "fluence to steady state (compound / oxide / nitride build-up) and target temperature: TBD",
+    "surface composition after exposure (S5.12 metrology list includes SEM / XPS)"
+   ],
+   "applies_when": "candidate survives Q0 and is down-selected for Q1 (S5.11); S5.13 'project ion-beam / materials test route for the down-selected candidate materials / coatings'",
+   "acceptance": "TBD at LOCK-2 after metrology commissioning (S5.12); never set from candidate performance"
+  },
+  {
+   "p4_candidate": "CAND-02D",
+   "label": "INCONEL alloy X-750",
+   "route": "TP-04 (P4 test plan; ion source with energy / species control; profilometer; witness holders)",
+   "species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+"
+   ],
+   "exact_specification_prerequisite": "grade named; lot composition not registered",
+   "variables_to_register_before_measurement": [
+    "ion species and charge state (N+, N2+, O+, O2+ separately; mass-selected or with measured beam composition)",
+    "ion energy range: TBD from the registered H-1 / ICP electrode sheath-energy envelope (CR-04 domain 'sheath_energy_range'; not registered)",
+    "angle of incidence: TBD from the electrode geometry",
+    "fluence to steady state (compound / oxide / nitride build-up) and target temperature: TBD",
+    "surface composition after exposure (S5.12 metrology list includes SEM / XPS)"
+   ],
+   "applies_when": "candidate survives Q0 and is down-selected for Q1 (S5.11); S5.13 'project ion-beam / materials test route for the down-selected candidate materials / coatings'",
+   "acceptance": "TBD at LOCK-2 after metrology commissioning (S5.12); never set from candidate performance"
+  },
+  {
+   "p4_candidate": "CAND-03A",
+   "label": "INCONEL alloy 601",
+   "route": "TP-04 (P4 test plan; ion source with energy / species control; profilometer; witness holders)",
+   "species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+"
+   ],
+   "exact_specification_prerequisite": "grade named; lot composition not registered",
+   "variables_to_register_before_measurement": [
+    "ion species and charge state (N+, N2+, O+, O2+ separately; mass-selected or with measured beam composition)",
+    "ion energy range: TBD from the registered H-1 / ICP electrode sheath-energy envelope (CR-04 domain 'sheath_energy_range'; not registered)",
+    "angle of incidence: TBD from the electrode geometry",
+    "fluence to steady state (compound / oxide / nitride build-up) and target temperature: TBD",
+    "surface composition after exposure (S5.12 metrology list includes SEM / XPS)"
+   ],
+   "applies_when": "candidate survives Q0 and is down-selected for Q1 (S5.11); S5.13 'project ion-beam / materials test route for the down-selected candidate materials / coatings'",
+   "acceptance": "TBD at LOCK-2 after metrology commissioning (S5.12); never set from candidate performance"
+  },
+  {
+   "p4_candidate": "CAND-03C",
+   "label": "Haynes 214",
+   "route": "TP-04 (P4 test plan; ion source with energy / species control; profilometer; witness holders)",
+   "species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+"
+   ],
+   "exact_specification_prerequisite": "grade named; lot composition not registered",
+   "variables_to_register_before_measurement": [
+    "ion species and charge state (N+, N2+, O+, O2+ separately; mass-selected or with measured beam composition)",
+    "ion energy range: TBD from the registered H-1 / ICP electrode sheath-energy envelope (CR-04 domain 'sheath_energy_range'; not registered)",
+    "angle of incidence: TBD from the electrode geometry",
+    "fluence to steady state (compound / oxide / nitride build-up) and target temperature: TBD",
+    "surface composition after exposure (S5.12 metrology list includes SEM / XPS)"
+   ],
+   "applies_when": "candidate survives Q0 and is down-selected for Q1 (S5.11); S5.13 'project ion-beam / materials test route for the down-selected candidate materials / coatings'",
+   "acceptance": "TBD at LOCK-2 after metrology commissioning (S5.12); never set from candidate performance"
+  },
+  {
+   "p4_candidate": "CAND-03B",
+   "label": "FeCrAl (one explicitly specified grade, TBD)",
+   "route": "TP-04 (P4 test plan; ion source with energy / species control; profilometer; witness holders)",
+   "species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+"
+   ],
+   "exact_specification_prerequisite": "GRADE NOT YET DECLARED (owner S5.11 requires one explicitly specified grade)",
+   "variables_to_register_before_measurement": [
+    "ion species and charge state (N+, N2+, O+, O2+ separately; mass-selected or with measured beam composition)",
+    "ion energy range: TBD from the registered H-1 / ICP electrode sheath-energy envelope (CR-04 domain 'sheath_energy_range'; not registered)",
+    "angle of incidence: TBD from the electrode geometry",
+    "fluence to steady state (compound / oxide / nitride build-up) and target temperature: TBD",
+    "surface composition after exposure (S5.12 metrology list includes SEM / XPS)"
+   ],
+   "applies_when": "candidate survives Q0 and is down-selected for Q1 (S5.11); S5.13 'project ion-beam / materials test route for the down-selected candidate materials / coatings'",
+   "acceptance": "TBD at LOCK-2 after metrology commissioning (S5.12); never set from candidate performance"
+  },
+  {
+   "p4_candidate": "CAND-04",
+   "label": "Rh-coated 316L",
+   "route": "TP-04 (P4 test plan; ion source with energy / species control; profilometer; witness holders)",
+   "species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+"
+   ],
+   "exact_specification_prerequisite": "coating composition, thickness, process, substrate preparation and lot not registered (S5.11 requires them)",
+   "variables_to_register_before_measurement": [
+    "ion species and charge state (N+, N2+, O+, O2+ separately; mass-selected or with measured beam composition)",
+    "ion energy range: TBD from the registered H-1 / ICP electrode sheath-energy envelope (CR-04 domain 'sheath_energy_range'; not registered)",
+    "angle of incidence: TBD from the electrode geometry",
+    "fluence to steady state (compound / oxide / nitride build-up) and target temperature: TBD",
+    "surface composition after exposure (S5.12 metrology list includes SEM / XPS)"
+   ],
+   "applies_when": "candidate survives Q0 and is down-selected for Q1 (S5.11); S5.13 'project ion-beam / materials test route for the down-selected candidate materials / coatings'",
+   "acceptance": "TBD at LOCK-2 after metrology commissioning (S5.12); never set from candidate performance"
+  },
+  {
+   "p4_candidate": "CAND-05",
+   "label": "Pt-clad / plated 316L",
+   "route": "TP-04 (P4 test plan; ion source with energy / species control; profilometer; witness holders)",
+   "species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+"
+   ],
+   "exact_specification_prerequisite": "coating details and lot not registered",
+   "variables_to_register_before_measurement": [
+    "ion species and charge state (N+, N2+, O+, O2+ separately; mass-selected or with measured beam composition)",
+    "ion energy range: TBD from the registered H-1 / ICP electrode sheath-energy envelope (CR-04 domain 'sheath_energy_range'; not registered)",
+    "angle of incidence: TBD from the electrode geometry",
+    "fluence to steady state (compound / oxide / nitride build-up) and target temperature: TBD",
+    "surface composition after exposure (S5.12 metrology list includes SEM / XPS)"
+   ],
+   "applies_when": "candidate survives Q0 and is down-selected for Q1 (S5.11); S5.13 'project ion-beam / materials test route for the down-selected candidate materials / coatings'",
+   "acceptance": "TBD at LOCK-2 after metrology commissioning (S5.12); never set from candidate performance"
+  },
+  {
+   "p4_candidate": "CAND-06",
+   "label": "Cr-plated 316L",
+   "route": "TP-04 (P4 test plan; ion source with energy / species control; profilometer; witness holders)",
+   "species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+"
+   ],
+   "exact_specification_prerequisite": "coating details and lot not registered",
+   "variables_to_register_before_measurement": [
+    "ion species and charge state (N+, N2+, O+, O2+ separately; mass-selected or with measured beam composition)",
+    "ion energy range: TBD from the registered H-1 / ICP electrode sheath-energy envelope (CR-04 domain 'sheath_energy_range'; not registered)",
+    "angle of incidence: TBD from the electrode geometry",
+    "fluence to steady state (compound / oxide / nitride build-up) and target temperature: TBD",
+    "surface composition after exposure (S5.12 metrology list includes SEM / XPS)"
+   ],
+   "applies_when": "candidate survives Q0 and is down-selected for Q1 (S5.11); S5.13 'project ion-beam / materials test route for the down-selected candidate materials / coatings'",
+   "acceptance": "TBD at LOCK-2 after metrology commissioning (S5.12); never set from candidate performance"
+  },
+  {
+   "p4_candidate": "CAND-07",
+   "label": "IrO2 / RuO2-type conductive-oxide (MMO) coating",
+   "route": "TP-04 (P4 test plan; ion source with energy / species control; profilometer; witness holders)",
+   "species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+"
+   ],
+   "exact_specification_prerequisite": "EXACT COATING SYSTEM AND SUBSTRATE NOT YET DECLARED (owner S5.11 requires them)",
+   "variables_to_register_before_measurement": [
+    "ion species and charge state (N+, N2+, O+, O2+ separately; mass-selected or with measured beam composition)",
+    "ion energy range: TBD from the registered H-1 / ICP electrode sheath-energy envelope (CR-04 domain 'sheath_energy_range'; not registered)",
+    "angle of incidence: TBD from the electrode geometry",
+    "fluence to steady state (compound / oxide / nitride build-up) and target temperature: TBD",
+    "surface composition after exposure (S5.12 metrology list includes SEM / XPS)"
+   ],
+   "applies_when": "candidate survives Q0 and is down-selected for Q1 (S5.11); S5.13 'project ion-beam / materials test route for the down-selected candidate materials / coatings'",
+   "acceptance": "TBD at LOCK-2 after metrology commissioning (S5.12); never set from candidate performance"
+  },
+  {
+   "p4_candidate": "CAND-08",
+   "label": "bare tungsten (negative / reference control only)",
+   "route": "TP-04 (P4 test plan; ion source with energy / species control; profilometer; witness holders)",
+   "species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+"
+   ],
+   "exact_specification_prerequisite": "purity / form / lot not registered",
+   "variables_to_register_before_measurement": [
+    "ion species and charge state (N+, N2+, O+, O2+ separately; mass-selected or with measured beam composition)",
+    "ion energy range: TBD from the registered H-1 / ICP electrode sheath-energy envelope (CR-04 domain 'sheath_energy_range'; not registered)",
+    "angle of incidence: TBD from the electrode geometry",
+    "fluence to steady state (compound / oxide / nitride build-up) and target temperature: TBD",
+    "surface composition after exposure (S5.12 metrology list includes SEM / XPS)"
+   ],
+   "applies_when": "candidate survives Q0 and is down-selected for Q1 (S5.11); S5.13 'project ion-beam / materials test route for the down-selected candidate materials / coatings'",
+   "acceptance": "TBD at LOCK-2 after metrology commissioning (S5.12); never set from candidate performance"
+  },
+  {
+   "p4_candidate": "CAND-09",
+   "label": "specified isotropic graphite (reference / control coupon)",
+   "route": "TP-04 (P4 test plan; ion source with energy / species control; profilometer; witness holders)",
+   "species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+"
+   ],
+   "exact_specification_prerequisite": "GRADE NOT YET SPECIFIED (owner S5.11 'specified isotropic graphite')",
+   "variables_to_register_before_measurement": [
+    "ion species and charge state (N+, N2+, O+, O2+ separately; mass-selected or with measured beam composition)",
+    "ion energy range: TBD from the registered H-1 / ICP electrode sheath-energy envelope (CR-04 domain 'sheath_energy_range'; not registered)",
+    "angle of incidence: TBD from the electrode geometry",
+    "fluence to steady state (compound / oxide / nitride build-up) and target temperature: TBD",
+    "surface composition after exposure (S5.12 metrology list includes SEM / XPS)"
+   ],
+   "applies_when": "candidate survives Q0 and is down-selected for Q1 (S5.11); S5.13 'project ion-beam / materials test route for the down-selected candidate materials / coatings'",
+   "acceptance": "TBD at LOCK-2 after metrology commissioning (S5.12); never set from candidate performance"
+  }
+ ],
+ "search_log": [
+  {
+   "query": "open compilations: IPP 9/132 index (pp. 5-6)",
+   "result": "N on W; O on C, W, Mo, WO3; no N/O on Fe, Ni, Cr, Al, Pt, Rh, Ir, Ru"
+  },
+  {
+   "query": "open compilations: NIFS-DATA-23 Table 3 (p. 16)",
+   "result": "N/O graphs for C, Fe, Ni, Mo, W only among Q0-relevant elements"
+  },
+  {
+   "query": "IAEA open report sputtering yields oxygen nitrogen ions metals 'Atomic and Plasma-Material Interaction Data for Fusion'",
+   "result": "APID vol. 7 part B (open): N+ and O+ on C and W fits (calculated points only)"
+  },
+  {
+   "query": "sputtering yield stainless steel nitrogen ions N2+ measured low energy open access",
+   "result": "Phadke 2020 (OA CC BY, bot-challenged); Nishi et al. 1979 PPPL report (open, OSTI purl 6159404, sha256 c0adfa3ff1d68378c2695f476ede0c9f9343af929a5aa8675d2a57fcc4505c45: H, D, He, Ar only - no N or O, not used); a SciELO Braz. J. Phys. glow-discharge paper (bot-challenged; citation not resolved)"
+  },
+  {
+   "query": "molecular ion sputtering yield N2+ O2+ equal to atoms at half energy additivity measured metals",
+   "result": "Dobes 2011 (W, N+ / N2+; molecular effect up to +25 %); Tsunoyama 1976 (Fe, O2+ / N2+ at 20 keV)"
+  },
+  {
+   "query": "sputtering yield Inconel OR stainless steel oxygen ion O+ O2+ low energy measurement thesis pdf",
+   "result": "nothing species-resolved for any Q0 alloy"
+  },
+  {
+   "query": "air-breathing electric propulsion electrode erosion sputtering yield N2+ O2+ SRIM atomic oxygen open access",
+   "result": "ABEP reviews only; no species-resolved yield data"
+  }
+ ],
+ "access_log": [
+  {
+   "url": "https://research.utwente.nl/files/517482203/1-s2.0-S0169433219333458-main.pdf",
+   "result": "bot challenge ('Just a moment...') to curl; HTTP 403 to WebFetch; not bypassed"
+  },
+  {
+   "url": "https://www.sciencedirect.com/science/article/pii/S0169433219333458",
+   "result": "HTTP 403; not bypassed"
+  },
+  {
+   "url": "https://iopscience.iop.org/article/10.1088/0031-8949/2011/T145/014017",
+   "result": "302 redirect to a bot-management validation page; not followed"
+  },
+  {
+   "url": "https://www.scielo.br/j/bjp/a/rNyzTjBTPx4q7Kj9MtYcTkh/?lang=en",
+   "result": "HTTP 403 / shield challenge (one curl attempt with a browser user-agent string also met the challenge); not bypassed"
+  }
+ ],
+ "scope_rules_followed": [
+  "published / openly accessible sources only; no contact with any person, lab or supplier; no e-mail; nothing purchased",
+  "LXCat not used",
+  "no paywall or bot-challenge bypass (access_log); TLS settings unchanged",
+  "numbers transcribed only from page images actually read; abstract-level statements carry no number",
+  "downloaded PDFs kept in the session scratchpad only (not committed); sha256 recorded per source",
+  "docs/experiments/hall_icp/p4_anode_materials/** read only"
+ ]
+}
