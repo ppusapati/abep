@@ -26,6 +26,8 @@ still does.
 * Package data: all 8 files under `abep_sim/data` — `atmosphere_msis21_v1.{csv,json}`, `intake_surface_v1.{csv,json}`,
   `golden_v1.json`, `rates/{PROVENANCE.md, elastic_N2.dat, ionization_N2_N2+.dat}`. These are located at run time via
   `os.path.dirname(__file__)/data`, so they resolve inside `site-packages` for a wheel install.
+  (A9.18, 2026-10-01: `golden_v2.json` was added under the same `data/*.json` glob and is the file `golden check` reads;
+  `golden_v1.json` stays shipped, unchanged, as history.)
 * setuptools prints a "Package 'abep_sim.data' is absent from the `packages` configuration" warning when building. It is
   benign here: `abep_sim/data` is a data directory, not an importable package (`namespaces = false`), and the files are
   shipped as package data (verified in the wheel listing below).

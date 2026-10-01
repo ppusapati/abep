@@ -2904,3 +2904,66 @@ APID-reproduction screen); never P4 material acceptance, lifetime or qualificati
 inputs differ from the first build only by the inserted provenance block (a test restores the first-build sha256 by
 removing it). Regenerated screening outcomes vs first build: IDENTICAL (4 APID rows, 0 differences); all records,
 coverage cells and other checks unchanged. Minor fix: the CHK-MASS-RATIOS caption count is derived from the inputs.
+
+## 2026-10-01 — A9.18 GOLDEN: new admissible converged golden (golden_v2); golden_v1 point kept as non-converged reference
+
+Owner decision A9.18 GOLDEN (`docs/decisions/OD_2026_10_01_A9_18_GOLDEN_AND_BASELINE_OWNER_DECISIONS.md`, item 1:
+`NEW_ADMISSIBLE_CONVERGED_GOLDEN; RETAIN_OLD_AS_NONCONVERGED_REGRESSION_REFERENCE`). Why: after A9.9 S2.4/S2.5 the golden_v1
+gas-path-dependent cases sit on non-admissible states — architecture_closure / mission at intake area 1.3 m², p_level
+0.05 Pa (orifice setpoint unbracketed, G-05; Gaede OUT_OF_MODEL_DOMAIN, MCC-02; status MODEL_NOT_CONVERGED), gas_path
+A0.7 / A1.3 at the default 3 × p_min setpoint (orifice unbracketed), and accelerators on `make_gas_fn()(0.7, "nominal")`
+(the same unbracketed A0.7 state). A non-converged canonical golden conflicts with the fail-closed convergence policy.
+What:
+- `abep_sim/golden.py` now reads/writes `abep_sim/data/golden_v2.json` (`GOLDEN_FILE`); `golden_v1.json` is unchanged
+  (sha256 1f7fbb62…) and kept as history. CLAUDE.md still names golden_v1.json in rule 1; not edited here (owner's file).
+- Regression fixture `cases.nonconverged_reference` (role NONCONVERGED_REFERENCE, expectation EXPECTED_NONCONVERGENCE):
+  the golden_v1 gas_path, accelerators, architecture_closure and mission values verbatim (copied from golden_v1.json, not
+  recomputed), plus refusal labels. `golden check` recomputes them at the old inputs, compares to 1e-6 and fails if any
+  is no longer refused (gas_path MODEL_NOT_CONVERGED / chk_compressor_feasible False; closure and mission status
+  MODEL_NOT_CONVERGED, evidence_admissible False, feasible False).
+- Selection rule A9.18-SEL-1 FIRST_ADMISSIBLE_IN_DEFAULT_GRID_ORDER: walk the default `close_architecture` gas grid
+  (area [0.6, 0.7, 0.85] m² × p_level [0.02, 0.05, 0.1] Pa) in the solver's own loop order (area outer, p_level inner)
+  and take the first admissible point. Admissible = inputs pass validation; frozen NRLMSIS + frozen TPMC surface; G-03,
+  G-04 converged; G-05 converged and bracketed; Gaede in domain with unclipped K_min >= 1; compressor sized (no unsized
+  fallback); rotor inside the labelled legacy cap; and `close_architecture` at that one point closes (status OK or
+  PARAMETRIC_SENSITIVITY, closes_constraints, |ledger_resid| < 2 %). Neutral: the grid and order are fixed by the code
+  before any result is seen and only pass/fail verdicts are read (no performance optimum, no fit to v1 numbers). Visited:
+  0.6/0.02 GASPATH_MODEL_NOT_CONVERGED, 0.6/0.05 and 0.6/0.1 CLOSURE_INFEASIBLE (mission envelope), 0.7/0.02
+  GASPATH_MODEL_NOT_CONVERGED, **0.7 m² / 0.05 Pa ADMISSIBLE** (full scan in provenance: 0.7/0.1 and 0.85/0.1 also
+  admissible; 0.85/0.02, 0.85/0.05 not converged). Cross-check (not used to choose): the admissible point closest to the
+  v1 point (same p_level first, then smallest |Δarea|) is the same point.
+- Rotor: no rotor-strength basis is registered, so the new point carries `comp_rotor_qualification =
+  NOT_EVALUATED_MATERIAL_BASIS`, `comp_sizing_mode = PARAMETRIC_SENSITIVITY`, closure / mission status and evidence class
+  PARAMETRIC_SENSITIVITY, feasible False. A9.9 S2.3 allows exploring a rotor as PARAMETRIC_SENSITIVITY and forbids only a
+  qualified rotor_ok; the golden checks reproducibility of a converged numerical state, not qualification, so it carries
+  this labelled state (not design evidence).
+- New canonical cases at the selected point: `design_point_selection` (rule id, grid, visited verdicts, selected point;
+  re-run by check), `gas_path` (`A0.7_p0.05`, values plus G-03..G-05 / MCC-02 / S2.3 labels), `accelerators` (gas state
+  `make_gas_fn()(0.7, 0.05)`), `architecture_closure`, `mission` (same architecture, 2.5 kW constraint, spacecraft and
+  mission settings as golden_v1; only the gas point changed). atmosphere, intake, source_plasma, hall are unchanged.
+- Provenance block: owner decision, previous golden sha256, sha256 of the frozen inputs (atmosphere_msis21_v1.{csv,json},
+  intake_surface_v1.{csv,json}), git HEAD at generation + modified paths, python/numpy/pandas/scipy versions, selection
+  rule, admissibility criteria, full grid scan, rotor label. Regenerated with `python -m abep_sim.golden generate`;
+  `golden check` → OK (runtime about 3.3 min, was about 1 min, because the selection closures and the fixture run too).
+Old (golden_v1, non-converged 1.3 m² / 0.05 Pa) -> new (golden_v2, 0.7 m² / 0.05 Pa):
+architecture_closure ext_hall_2p5kW: status MODEL_NOT_CONVERGED -> PARAMETRIC_SENSITIVITY, x_Vd 300 -> 325, x_L_ch 0.12
+-> 0.20, T_mN 51.273 -> 22.320, P_bus_W 2458.73 -> 1183.34, P_jet_W 1269.04 -> 568.67, T_over_D_sc 1.8505 -> 1.3321,
+Q_waste_W 753.32 -> 400.42, A_rad_m2 1.2651 -> 0.5058, A_array_m2 12.204 -> 8.221, CBE_kg 59.665 -> 42.949, MEV_kg
+69.700 -> 49.880, m_system_kg 108.753 -> 76.186, ledger_resid 1.8e-16 -> -1.9e-16 (round-off), life_sys_h 28225.4 and
+xe_kg 5.616 unchanged.
+mission: mission_4000h D_mean_mN = T_mean_mN 28.923 -> 17.490, P_bus_mean_W 1693.56 -> 1014.85, P_bus_peak_W 1770.63 ->
+1059.25 (mission_closed True, min_alt 200 km, fired 3996 h, AO fluence unchanged); map_T_N (N) 0.3: 4.8775e-3 ->
+1.0745e-3, 0.45: 0.014553 -> 0.005005, 0.6: 0.024569 -> 0.009588, 0.75: 0.034554 -> 0.014331, 0.9: 0.044568 -> 0.019115,
+1.0: 0.051273 -> 0.022320, 1.15: 0.061370 -> 0.027151, 1.3: 0.071488 -> 0.032013, 1.5: 0.084960 -> 0.038533.
+gas_path A0.7 (default setpoint, unbracketed) -> A0.7_p0.05 (converged): p_in_Pa 0.0498443 -> 0.0500000, fO_inlet
+0.397834 -> 0.397816, fO2_inlet 0.0755668 -> 0.0755844, mdot_air_mgps 0.97534260 -> 0.97534259; C_D, eta_c, drag,
+P_comp_W 26.647, m_comp_kg 6.667, m_intake_kg unchanged (same sized compressor layout). gas_path A1.3 is now only in the
+fixture.
+accelerators (gas state 0.7/'nominal' -> 0.7/0.05 Pa; all < 1e-4 relative): ecr_grids T_N 0.03003709 -> 0.03003730,
+P_acc_W 1454.333 -> 1454.339, life_h 6278.59 -> 6278.58; ecr_hall T_N 0.02052792 -> 0.02052743, P_acc_W 919.722 ->
+919.703; ecr_nozzle T_N 2.374578e-3 -> 2.374599e-3.
+These remain historical 0-D / withdrawn-Hall benchmarks (CLAUDE.md "Superseded / withdrawn"): reproducibility references,
+not quotable performance. Tests: new `tests/test_golden_a9_18.py`; `tests/test_golden_cli.py` now points at golden_v2.json
+(path only). Docs: `docs/ci/CI.md`, `docs/ci/PACKAGING.md` (golden file note). Not changed (other owners):
+`docs/traceability/RTM.md` / `build_rtm.py` still cite golden_v1.json as evidence. The dedicated performance-baseline rerun
+(A9.18 item 2) waits for the step-3 merge and is not part of this change.
