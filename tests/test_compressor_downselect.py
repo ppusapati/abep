@@ -21,9 +21,9 @@ import pytest
 REPO = Path(__file__).resolve().parents[1]
 DIR = REPO / "docs" / "architecture_comparison" / "compressor_downselect"
 SCRIPT = DIR / "build_compressor_downselect.py"
-JSON_PATH = DIR / "compressor_downselect_v1.json"
-MD_PATH = DIR / "COMPRESSOR_DOWNSELECT.md"
-CLOSURE = REPO / "docs" / "architecture_comparison" / "feed_state_closure" / "feed_state_closure_v1.json"
+JSON_PATH = DIR / "compressor_downselect_v2.json"
+MD_PATH = DIR / "COMPRESSOR_DOWNSELECT_v2.md"
+CLOSURE = REPO / "docs" / "architecture_comparison" / "feed_state_closure" / "feed_state_closure_v2.json"
 EVIDENCE = {"measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"}
 CASES = {f"alt{a}_{l}" for a in (180, 200, 230) for l in ("low", "mean", "high")}
 FORBIDDEN_TOKENS = ("ensemble_member_id", "sgb-screen", "screening_candidate", "coil_shape", "beam_efficiency",

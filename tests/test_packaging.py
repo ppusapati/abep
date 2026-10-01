@@ -12,6 +12,7 @@ Pure file inspection: no build, no install, no network.
 """
 from __future__ import annotations
 
+import ast
 import fnmatch
 import os
 import tomllib
@@ -145,13 +146,55 @@ def test_orbit_dataset_excluded_from_distribution(pyproject):
     for g in REPO_ONLY_GLOBS:
         assert g in st["exclude-package-data"]["abep_sim"], g
         assert ["exclude", "abep_sim/" + g] in lines, g
-    # runtime need check: no other abep_sim module imports the accessor of the excluded data
+    # runtime need check: no other abep_sim module imports the accessor of the excluded data. Checked on the import
+    # statements (ast), not on a substring: a string literal naming the accessor (e.g. an error message, or the
+    # immutable A9.16 application-matrix token in upstream_a9_13.py) is not a runtime need.
     pkg = os.path.join(ROOT, "abep_sim")
     for d, _dirs, fns in os.walk(pkg):
         for fn in fns:
             if fn.endswith(".py") and fn not in REPO_ONLY_MODULES:
-                with open(os.path.join(d, fn), encoding="utf-8") as fh:
-                    assert "atmosphere_orbit" not in fh.read(), fn
+                path = os.path.join(d, fn)
+                with open(path, encoding="utf-8") as fh:
+                    offenders = _orbit_accessor_imports(fh.read())
+                assert not offenders, (os.path.relpath(path, ROOT), offenders)
+
+
+def _orbit_accessor_imports(src):
+    """Import statements in `src` that load abep_sim.atmosphere_orbit (absolute, relative or `from pkg import`),
+    including importlib.import_module("...atmosphere_orbit") calls with a literal name."""
+    bad = []
+    for node in ast.walk(ast.parse(src)):
+        if isinstance(node, ast.Import):
+            bad += [a.name for a in node.names if "atmosphere_orbit" in a.name.split(".")]
+        elif isinstance(node, ast.ImportFrom):
+            mod = node.module or ""
+            if "atmosphere_orbit" in mod.split("."):
+                bad.append("." * node.level + mod)
+            elif any(a.name == "atmosphere_orbit" for a in node.names):
+                bad.append("." * node.level + mod + ":atmosphere_orbit")
+        elif isinstance(node, ast.Call) and node.args and isinstance(node.args[0], ast.Constant) \
+                and isinstance(node.args[0].value, str) and node.args[0].value.split(".")[-1] == "atmosphere_orbit":
+            f = node.func
+            name = f.attr if isinstance(f, ast.Attribute) else getattr(f, "id", "")
+            if name in ("import_module", "__import__"):
+                bad.append(node.args[0].value)
+    return bad
+
+
+@pytest.mark.parametrize("src, flagged", [
+    ("import abep_sim.atmosphere_orbit", True),
+    ("import abep_sim.atmosphere_orbit as ao", True),
+    ("from abep_sim.atmosphere_orbit import orbit_states", True),
+    ("from .atmosphere_orbit import orbit_states", True),
+    ("from ..atmosphere_orbit import orbit_states", True),
+    ("from abep_sim import atmosphere_orbit", True),
+    ("from .. import atmosphere_orbit", True),
+    ("import importlib\nimportlib.import_module('abep_sim.atmosphere_orbit')", True),
+    ("raise ValueError('use abep_sim.atmosphere_orbit.orbit_states (repository-only)')", False),
+    ("from abep_sim import atmosphere", False),
+])
+def test_orbit_accessor_import_scan(src, flagged):
+    assert bool(_orbit_accessor_imports(src)) is flagged
 
 
 def test_manifest_in_carries_data():

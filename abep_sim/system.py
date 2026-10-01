@@ -9,6 +9,14 @@ from .intake import IntakeParams, CompressorParams, collection, compress
 from .thruster import CARDS, performance, xe_for_thrust
 from .aochem import AOParams, inlet_composition, ao_flux, fluence, erosion_depth_um
 
+# A9.13 S6.8 (docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json): production/design
+# evidence above the 0.1 Pa free-molecular domain stays NOT_EVALUATED_OUT_OF_DOMAIN. Same value as
+# abep_sim.design.compressor_synthesis.P_MOLECULAR_LIMIT_PA and upstream_a9_13.P_FREE_MOLECULAR_LIMIT_PA (F3
+# P-MOLECULAR-LIMIT, Chiggiato 2013 Sec. 4.1.2; a test checks they agree).
+P_FREE_MOLECULAR_LIMIT_PA = 0.1
+NOT_EVALUATED_OUT_OF_DOMAIN = "NOT_EVALUATED_OUT_OF_DOMAIN"
+PRESSURE_DOMAIN_TAG = "free_molecular_pressure_limit_0.1Pa"
+
 
 @dataclass
 class Budgets:
@@ -128,6 +136,24 @@ def evaluate(cfg: Config) -> dict:
         # stage-capacity domain (unclipped K < 1) is outside the admitted model; its clipped values are diagnostics
         # only and the compressor branch is not feasible (fail closed). Reported separately from convergence.
         ood = ["compressor_gaede_stage_capacity"] if not cres["gaede_domain_ok"] else []
+        # A9.13 S6.8 (owner decision; PHY-02 repair): the admitted compressor / feed model is free-molecular and ends at
+        # 0.1 Pa. A state whose target (compressor-outlet / valve setpoint) or operating reservoir pressure (the
+        # compressor discharges into the reservoir) exceeds that limit is NOT_EVALUATED_OUT_OF_DOMAIN: its values are
+        # extrapolations, never a valid architecture point (fail closed; a non-finite pressure is out of domain).
+        # The free-discharge outlet of the compressor sizing search (cres p_out, before the orifice throttles the
+        # reservoir to p_target) is reported explicitly next to it (comp_sizing_p_out_Pa / ..._above_limit), never
+        # silently: whether that sizing-search state is itself production evidence is an owner question.
+        # The setpoint is compared exactly; the reservoir pressure reaches the orifice target only to the orifice
+        # solver's own declared tolerance (reservoir.ORIFICE_P_RTOL), so it is compared within that tolerance (a
+        # converged 0.1 Pa setpoint is not pushed out of domain by rounding).
+        from .reservoir import ORIFICE_P_RTOL
+        p_res = float(rs["p_total_Pa"])
+        p_domain_max = max(float(p_target), p_res)
+        pressure_ood = not (math.isfinite(float(p_target)) and math.isfinite(p_res)
+                            and float(p_target) <= P_FREE_MOLECULAR_LIMIT_PA
+                            and p_res <= P_FREE_MOLECULAR_LIMIT_PA * (1.0 + ORIFICE_P_RTOL))
+        if pressure_ood:
+            ood = ood + [PRESSURE_DOMAIN_TAG]
         gaspath_in_domain = not ood
         mdot_air = sum(rs["mdot_anode"].values())
         p_in = rs["p_total_Pa"]
@@ -155,7 +181,11 @@ def evaluate(cfg: Config) -> dict:
                "comp_gaede_K_unclipped": cres["gaede_K_unclipped"],
                "comp_n_rejected_out_of_gaede_domain": cres["n_rejected_out_of_gaede_domain"],
                "gaspath_in_domain": gaspath_in_domain,
-               "gaspath_domain_status": "IN_DOMAIN" if gaspath_in_domain else "OUT_OF_MODEL_DOMAIN",
+               "gaspath_domain_status": ("IN_DOMAIN" if gaspath_in_domain else
+                                         NOT_EVALUATED_OUT_OF_DOMAIN if pressure_ood else "OUT_OF_MODEL_DOMAIN"),
+               "gaspath_p_domain_max_Pa": p_domain_max, "gaspath_p_domain_limit_Pa": P_FREE_MOLECULAR_LIMIT_PA,
+               "comp_sizing_p_out_Pa": float(cres["p_out_Pa"]),
+               "comp_sizing_p_out_above_limit": not (float(cres["p_out_Pa"]) <= P_FREE_MOLECULAR_LIMIT_PA),
                "gaspath_out_of_domain": ood,
                # A9.9 S2.3 / MCC-03: rotor structural acceptance needs a registered rotor-strength basis. Without one
                # the compressor is a PARAMETRIC_SENSITIVITY result (mass/power from the labelled legacy tip-speed cap)

@@ -70,7 +70,7 @@ Rule: recorded as PLACEHOLDER_NOT_A_FLIGHT_DESIGN; never used silently. Filter e
 | PH-08 | `abep_sim/intake_tpmc.py:270` | law | kg | filter mass added to the intake mass (direct TPMC) |
 | PH-09 | `abep_sim/intake.py:29` | False | - | IntakeParams.filter switch (production path); default off |
 | PH-10 | `abep_sim/intake.py:76` | 0.8 | kg/m^2 | production path adds filter MASS only (no flow effect: UPSTREAM_ICD G-01) |
-| PH-11 | `abep_sim/system.py:357` | 0.8 | kg/m^2 | BOM filter line in system.evaluate |
+| PH-11 | `abep_sim/system.py:387` | 0.8 | kg/m^2 | BOM filter line in system.evaluate |
 
 - related, not used: abep_sim/aochem.py RECOMB_GAMMA and EROSION_YIELD_CM3_PER_ATOM ('literature-class priors' without per-entry sources): not filter values, not used by F2
 

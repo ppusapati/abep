@@ -18,7 +18,7 @@
  ],
  "determinism": "no random numbers are used (grid search); outputs rounded to 10 significant digits",
  "pins": {
-  "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json": "4c4b2375c38e43fd1e2cff4ea0e5a59e22eb5e1675b877a92176ff94ae1b6112",
+  "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json": "7672e024f20d932244a22b73d6d3a90875c9f71e1677a06946e2e5a0f3d5a73c",
   "docs/procurement/web_track_v1/threads/R1_compressor.json": "d30c49cef7ecabe0e957b566cc1bb8b0e0e43552db627b1bc8eb7d6cdb510bca",
   "docs/decisions/OD_2026_09_29_owner_answers_147.json": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1",
   "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md": "fb51328d6fe07a6eaf257ef9ef9592cb0c0039ae3e8cf04ef0420007c985b129",
@@ -68,7 +68,7 @@
    "note": "the A-basis value is quoted by the handbook from MMPDS-06 (MMPDS itself not accessed): a secondary quotation of a design-allowables handbook"
   },
   "SRC-DOWNSELECT": {
-   "citation": "repository: docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json (DI-1.4 compressor down-selection v1)",
+   "citation": "repository: docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json (DI-1.4 compressor down-selection, v2 = A9.16 regeneration; v1 kept as history)",
    "access_level": "repository",
    "note": "requirement envelope (W1 feed-state closure cases), CD-01..CD-08, EV-01..EV-20, T-1..T-9"
   },
@@ -180,7 +180,7 @@
    "basis": "safety factor on the allowable (DragCompressor.stress_safety code default); the flight factor is an owner/design-policy decision",
    "source": "SRC-COMPRESSOR-PY",
    "evidence_class": "assumed",
-   "status": "CODE_DEFAULT_UNCITED; LEGACY_PARAMETRIC_SENSITIVITY only (A9.9 S2.3 / OQ-F3-01: flight rotor acceptance only through a registered strength basis, rotor_strength.qualify_rotor)"
+   "status": "CODE_DEFAULT_UNCITED; TBD_OWNER for flight"
   },
   {
    "id": "P-RPM-SEARCH-MIN",
@@ -222,10 +222,10 @@
    "id": "P-A-INLET-MIN-RANGE",
    "value": [
     0.1128299365,
-    0.1137287437
+    0.2369348826
    ],
    "units": "m^2",
-   "basis": "minimum inlet area for the PROPOSED backflow target b = 0.25 over the W1 candidate-cases (in-domain closures, A9.13 S6.8), max(2S/u_ref, 4S/c_bar) (compressor_downselect CD-02); ends of the A_turbo search range",
+   "basis": "minimum inlet area for the PROPOSED backflow target b = 0.25 over the 36 W1 candidate-cases, max(2S/u_ref, 4S/c_bar) (compressor_downselect CD-02); ends of the A_turbo search range",
    "source": "SRC-DOWNSELECT requirement_summary.A_inlet_min_m2['0.25']",
    "evidence_class": "model-derived",
    "status": "PROPOSED-DERIVED (from PROPOSED b and W1 inputs)"
@@ -525,7 +525,7 @@
    "value": [
     0.1128299365,
     0.1963495408,
-    0.1137287437
+    0.2369348826
    ],
    "units": "m^2",
    "basis": "ends: minimum inlet area range for the PROPOSED b = 0.25 target (P-A-INLET-MIN-RANGE); interior point: Li 2015 inlet area pi*0.25^2 (P-LI2015-INLET-DIAMETER, verify)",
@@ -888,7 +888,7 @@
    },
    {
     "id": "INLET",
-    "what": "inlet record DC-S12-G20/alt180_low",
+    "what": "inlet record DC-S12-G10/alt180_low",
     "status": "PARAMETRIC_SENSITIVITY",
     "needs": "an F1/F2 interface record (abep_sim/design/intake_synthesis.py F1-ID-03, abep_sim/design/filter_stage.py F2-IF-03) with non-assumed evidence"
    },
@@ -908,6 +908,1783 @@
  },
  "cases": [
   {
+   "case": "DC-S12-G10/alt180_low",
+   "inlet": {
+    "record_id": "DC-S12-G10/alt180_low",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 3.238711863e-07,
+     "N2": 5.477647916e-07,
+     "O2": 6.706678916e-08
+    },
+    "p_total_Pa": 0.01226058643,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G10/cases/alt180_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 180.0,
+     "solar_level": "low",
+     "setpoint_Pa": 0.1,
+     "CR_required_upper_bound_flow_basis": 8.156216715,
+     "CR_required_self_consistent_backflow": 13.32896375
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 68,
+   "n_rejected": 2092,
+   "rejection_counts": {
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 71,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1908,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 500
+   },
+   "pareto_ids": [
+    "T1-A1-U1-D0-Ti6Al4V-H0.75",
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A1-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A1-U2-D0-Ti6Al4V-H0.25",
+    "T6-A1-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A1-U1-D0-Ti6Al4V-H0.75",
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A1-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A1-U2-D0-Ti6Al4V-H0.25",
+    "T6-A1-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G10/alt180_low/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.01243139697,
+     0.0976424522
+    ],
+    "CR_total": [
+     1.013931678,
+     7.963930009
+    ],
+    "CR_O": [
+     1.011321348,
+     4.90376255
+    ],
+    "P_compressor_el_W": [
+     8.432038216,
+     15.0745304
+    ],
+    "m_compressor_kg": [
+     2.559535838,
+     12.56850294
+    ],
+    "T_compressor_K": [
+     313.883746,
+     330.3320047
+    ],
+    "S_turbo_m3_s": [
+     10.14425719,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.2837268688,
+     0.4818483171
+    ],
+    "x_O_delivered_flow": [
+     0.4830920198,
+     0.4830920198
+    ]
+   },
+   "reference_setpoint_Pa": 0.1,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 8.156216715,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.01226058643,
+      "CR_active": 1.0,
+      "P_el_W": 10.02464772,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 8.156216715,
+     "size_for": {
+      "sized": true,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.1484092613,
+      "CR_active": 12.10458098,
+      "P_el_W": 17.64747531,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 8.156216715,
+     "size_for": {
+      "sized": true,
+      "turbo_rows": 5,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.1258576388,
+      "CR_active": 10.26522178,
+      "P_el_W": 17.32248644,
+      "mass_kg": 10.62208578,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S12-G10/alt180_mean",
+   "inlet": {
+    "record_id": "DC-S12-G10/alt180_mean",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 4.923175915e-07,
+     "N2": 7.238988346e-07,
+     "O2": 5.177453992e-08
+    },
+    "p_total_Pa": 0.0167953986,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G10/cases/alt180_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 180.0,
+     "solar_level": "mean",
+     "setpoint_Pa": 0.1,
+     "CR_required_upper_bound_flow_basis": 5.954011713,
+     "CR_required_self_consistent_backflow": 8.140561264
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 66,
+   "n_rejected": 2094,
+   "rejection_counts": {
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 104,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1908,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 550
+   },
+   "pareto_ids": [
+    "T1-A1-U1-D0-Ti6Al4V-H0.75",
+    "T1-A1-U2-D0-Ti6Al4V-H0.25",
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A1-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A1-U2-D0-Ti6Al4V-H0.25",
+    "T6-A1-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A1-U1-D0-Ti6Al4V-H0.75",
+    "T1-A1-U2-D0-Ti6Al4V-H0.25",
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A1-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A1-U2-D0-Ti6Al4V-H0.25",
+    "T6-A1-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G10/alt180_mean/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.01685661068,
+     0.09186470213
+    ],
+    "CR_total": [
+     1.003644575,
+     5.469635125
+    ],
+    "CR_O": [
+     1.003017052,
+     3.395534149
+    ],
+    "P_compressor_el_W": [
+     8.513290146,
+     14.49831164
+    ],
+    "m_compressor_kg": [
+     2.559535838,
+     10.90721503
+    ],
+    "T_compressor_K": [
+     314.0868758,
+     328.8681617
+    ],
+    "S_turbo_m3_s": [
+     10.14425719,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.3279705728,
+     0.5279860346
+    ],
+    "x_O_delivered_flow": [
+     0.5283163613,
+     0.5283163613
+    ]
+   },
+   "reference_setpoint_Pa": 0.1,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 5.954011713,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.0167953986,
+      "CR_active": 1.0,
+      "P_el_W": 10.51559929,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 5.954011713,
+     "size_for": {
+      "sized": true,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.1824803709,
+      "CR_active": 10.86490266,
+      "P_el_W": 19.93024335,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 5.954011713,
+     "size_for": {
+      "sized": true,
+      "turbo_rows": 5,
+      "n_stages": 0,
+      "rpm": 10000.0,
+      "p_out_Pa": 0.1012351322,
+      "CR_active": 6.027551631,
+      "P_el_W": 15.3219769,
+      "mass_kg": 10.62208578,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "NOT_EVALUATED_OUT_OF_DOMAIN",
+     "gate_reasons": [
+      "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S12-G10/alt180_high",
+   "inlet": {
+    "record_id": "DC-S12-G10/alt180_high",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 6.890914325e-07,
+     "N2": 8.936658554e-07,
+     "O2": 3.429403933e-08
+    },
+    "p_total_Pa": 0.02167475257,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G10/cases/alt180_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 180.0,
+     "solar_level": "high",
+     "setpoint_Pa": 0.1,
+     "CR_required_upper_bound_flow_basis": 4.613662817,
+     "CR_required_self_consistent_backflow": 7.352357422
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 52,
+   "n_rejected": 2108,
+   "rejection_counts": {
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 110,
+    "DRAG_CHANNEL_KNUDSEN_BELOW_FREE_MOLECULAR_LIMIT": 16,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1920,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 590
+   },
+   "pareto_ids": [
+    "T1-A1-U2-D0-Ti6Al4V-H0.25",
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A1-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A1-U2-D0-Ti6Al4V-H0.25",
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A1-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G10/alt180_high/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.02177959299,
+     0.0956609359
+    ],
+    "CR_total": [
+     1.004836983,
+     4.41347303
+    ],
+    "CR_O": [
+     1.004094781,
+     3.17309049
+    ],
+    "P_compressor_el_W": [
+     8.599223811,
+     14.82129709
+    ],
+    "m_compressor_kg": [
+     2.559535838,
+     10.62208578
+    ],
+    "T_compressor_K": [
+     314.30171,
+     329.8058438
+    ],
+    "S_turbo_m3_s": [
+     10.30168246,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.4071149047,
+     0.5658474936
+    ],
+    "x_O_delivered_flow": [
+     0.5662657543,
+     0.5662657543
+    ]
+   },
+   "reference_setpoint_Pa": 0.1,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 4.613662817,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.02167475257,
+      "CR_active": 1.0,
+      "P_el_W": 11.03670616,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 4.613662817,
+     "size_for": {
+      "sized": true,
+      "turbo_rows": 5,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.117934452,
+      "CR_active": 5.441097961,
+      "P_el_W": 16.44946489,
+      "mass_kg": 9.237679188,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 4.613662817,
+     "size_for": {
+      "sized": true,
+      "turbo_rows": 4,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.1073056997,
+      "CR_active": 4.950723168,
+      "P_el_W": 16.19918296,
+      "mass_kg": 8.675668624,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S12-G10/alt200_low",
+   "inlet": {
+    "record_id": "DC-S12-G10/alt200_low",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 1.861315043e-07,
+     "N2": 2.181744045e-07,
+     "O2": 2.350115592e-08
+    },
+    "p_total_Pa": 0.005745526083,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G10/cases/alt200_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 200.0,
+     "solar_level": "low",
+     "setpoint_Pa": 0.1,
+     "CR_required_upper_bound_flow_basis": 17.40484658,
+     "CR_required_self_consistent_backflow": 30.07481397
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 60,
+   "n_rejected": 2100,
+   "rejection_counts": {
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 20,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1920,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 320
+   },
+   "pareto_ids": [
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A1-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A1-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A1-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A1-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G10/alt200_low/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.005773501825,
+     0.07278718576
+    ],
+    "CR_total": [
+     1.004869135,
+     12.66849801
+    ],
+    "CR_O": [
+     1.004127715,
+     7.401548897
+    ],
+    "P_compressor_el_W": [
+     8.303010014,
+     13.28093007
+    ],
+    "m_compressor_kg": [
+     2.559535838,
+     12.56850294
+    ],
+    "T_compressor_K": [
+     313.5611755,
+     325.8480039
+    ],
+    "S_turbo_m3_s": [
+     10.30168246,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.3371140487,
+     0.5766310439
+    ],
+    "x_O_delivered_flow": [
+     0.577056812,
+     0.577056812
+    ]
+   },
+   "reference_setpoint_Pa": 0.1,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 17.40484658,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.005745526083,
+      "CR_active": 1.0,
+      "P_el_W": 9.262459607,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 17.40484658,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.05706533572,
+      "CR_active": 9.932134133,
+      "P_el_W": 12.10572604,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 17.40484658,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.09849095331,
+      "CR_active": 17.14219932,
+      "P_el_W": 15.26953128,
+      "mass_kg": 12.56850294,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S12-G10/alt200_mean",
+   "inlet": {
+    "record_id": "DC-S12-G10/alt200_mean",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 3.076244512e-07,
+     "N2": 3.387992099e-07,
+     "O2": 2.106345285e-08
+    },
+    "p_total_Pa": 0.00904296048,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G10/cases/alt200_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 200.0,
+     "solar_level": "mean",
+     "setpoint_Pa": 0.1,
+     "CR_required_upper_bound_flow_basis": 11.05832545,
+     "CR_required_self_consistent_backflow": 15.81023265
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 59,
+   "n_rejected": 2101,
+   "rejection_counts": {
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 40,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1920,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 385
+   },
+   "pareto_ids": [
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A1-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A1-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A1-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A1-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G10/alt200_mean/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.009047204695,
+     0.08770430025
+    ],
+    "CR_total": [
+     1.000469339,
+     9.698626954
+    ],
+    "CR_O": [
+     1.000401949,
+     6.046083285
+    ],
+    "P_compressor_el_W": [
+     8.362491799,
+     14.28292569
+    ],
+    "m_compressor_kg": [
+     2.559535838,
+     12.56850294
+    ],
+    "T_compressor_K": [
+     313.70988,
+     328.3250766
+    ],
+    "S_turbo_m3_s": [
+     10.30168246,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.3747131134,
+     0.601075307
+    ],
+    "x_O_delivered_flow": [
+     0.601115797,
+     0.601115797
+    ]
+   },
+   "reference_setpoint_Pa": 0.1,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 11.05832545,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.00904296048,
+      "CR_active": 1.0,
+      "P_el_W": 9.620976861,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 11.05832545,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.08405927421,
+      "CR_active": 9.295548112,
+      "P_el_W": 13.88342448,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 11.05832545,
+     "size_for": {
+      "sized": true,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.1475079116,
+      "CR_active": 16.31190492,
+      "P_el_W": 18.70939932,
+      "mass_kg": 12.56850294,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S12-G10/alt200_high",
+   "inlet": {
+    "record_id": "DC-S12-G10/alt200_high",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 4.520287354e-07,
+     "N2": 4.567175504e-07,
+     "O2": 1.481892127e-08
+    },
+    "p_total_Pa": 0.01262577301,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G10/cases/alt200_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 200.0,
+     "solar_level": "high",
+     "setpoint_Pa": 0.1,
+     "CR_required_upper_bound_flow_basis": 7.920307129,
+     "CR_required_self_consistent_backflow": 12.12533219
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 45,
+   "n_rejected": 2115,
+   "rejection_counts": {
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 45,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1932,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 445
+   },
+   "pareto_ids": [
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A1-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A1-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A1-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A1-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A1-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A1-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G10/alt200_high/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.01306660179,
+     0.08283408742
+    ],
+    "CR_total": [
+     1.034914993,
+     6.560714132
+    ],
+    "CR_O": [
+     1.03014695,
+     4.506701287
+    ],
+    "P_compressor_el_W": [
+     8.543847442,
+     14.08630144
+    ],
+    "m_compressor_kg": [
+     2.559535838,
+     12.56850294
+    ],
+    "T_compressor_K": [
+     314.0842832,
+     327.8614323
+    ],
+    "S_turbo_m3_s": [
+     11.03312961,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.4240748115,
+     0.62456119
+    ],
+    "x_O_delivered_flow": [
+     0.6274519765,
+     0.6274519765
+    ]
+   },
+   "reference_setpoint_Pa": 0.1,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 7.920307129,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.01262577301,
+      "CR_active": 1.0,
+      "P_el_W": 10.00450351,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 7.920307129,
+     "size_for": {
+      "sized": true,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.1095603589,
+      "CR_active": 8.677516918,
+      "P_el_W": 15.61093533,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 7.920307129,
+     "size_for": {
+      "sized": true,
+      "turbo_rows": 5,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.1047252267,
+      "CR_active": 8.294559601,
+      "P_el_W": 15.97841793,
+      "mass_kg": 10.62208578,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S12-G10/alt230_low",
+   "inlet": {
+    "record_id": "DC-S12-G10/alt230_low",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 8.648929809e-08,
+     "N2": 6.02276722e-08,
+     "O2": 5.453794613e-09
+    },
+    "p_total_Pa": 0.002129516315,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G10/cases/alt230_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 230.0,
+     "solar_level": "low",
+     "setpoint_Pa": 0.1,
+     "CR_required_upper_bound_flow_basis": 46.95902037,
+     "CR_required_self_consistent_backflow": 69.76100711
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 48,
+   "n_rejected": 2112,
+   "rejection_counts": {
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1932,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 125
+   },
+   "pareto_ids": [
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G10/alt230_low/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.002251204764,
+     0.02179575255
+    ],
+    "CR_total": [
+     1.057143703,
+     10.23507188
+    ],
+    "CR_O": [
+     1.050217019,
+     6.842359068
+    ],
+    "P_compressor_el_W": [
+     8.311827285,
+     9.863318784
+    ],
+    "m_compressor_kg": [
+     2.559535838,
+     12.56850294
+    ],
+    "T_compressor_K": [
+     313.5321692,
+     317.3039757
+    ],
+    "S_turbo_m3_s": [
+     11.41536836,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.4676511349,
+     0.6949866684
+    ],
+    "x_O_delivered_flow": [
+     0.6995704384,
+     0.6995704384
+    ]
+   },
+   "reference_setpoint_Pa": 0.1,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 46.95902037,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.002129516315,
+      "CR_active": 1.0,
+      "P_el_W": 8.851900518,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 46.95902037,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.01588066346,
+      "CR_active": 7.45740399,
+      "P_el_W": 9.53762216,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 46.95902037,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.02956244249,
+      "CR_active": 13.88223339,
+      "P_el_W": 10.51668416,
+      "mass_kg": 12.56850294,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S12-G10/alt230_mean",
+   "inlet": {
+    "record_id": "DC-S12-G10/alt230_mean",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 1.658444297e-07,
+     "N2": 1.223525376e-07,
+     "O2": 6.509233745e-09
+    },
+    "p_total_Pa": 0.004121167448,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G10/cases/alt230_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 230.0,
+     "solar_level": "mean",
+     "setpoint_Pa": 0.1,
+     "CR_required_upper_bound_flow_basis": 24.26496891,
+     "CR_required_self_consistent_backflow": 53.95887689
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 48,
+   "n_rejected": 2112,
+   "rejection_counts": {
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1932,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 245
+   },
+   "pareto_ids": [
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G10/alt230_mean/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.004225086125,
+     0.04235111279
+    ],
+    "CR_total": [
+     1.025215835,
+     10.27648435
+    ],
+    "CR_O": [
+     1.022302388,
+     6.859734449
+    ],
+    "P_compressor_el_W": [
+     8.360906744,
+     11.28479191
+    ],
+    "m_compressor_kg": [
+     2.559535838,
+     12.56850294
+    ],
+    "T_compressor_K": [
+     313.6269315,
+     320.8576585
+    ],
+    "S_turbo_m3_s": [
+     11.03312961,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.4631420858,
+     0.691895009
+    ],
+    "x_O_delivered_flow": [
+     0.6938668315,
+     0.6938668315
+    ]
+   },
+   "reference_setpoint_Pa": 0.1,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 24.26496891,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.004121167448,
+      "CR_active": 1.0,
+      "P_el_W": 9.065845504,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 24.26496891,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.0309295597,
+      "CR_active": 7.505048046,
+      "P_el_W": 10.54382657,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 24.26496891,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.05741746558,
+      "CR_active": 13.93233017,
+      "P_el_W": 12.4809102,
+      "mass_kg": 12.56850294,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S12-G10/alt230_high",
+   "inlet": {
+    "record_id": "DC-S12-G10/alt230_high",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 2.626775962e-07,
+     "N2": 1.88206117e-07,
+     "O2": 5.208162938e-09
+    },
+    "p_total_Pa": 0.006406179301,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G10/cases/alt230_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 230.0,
+     "solar_level": "high",
+     "setpoint_Pa": 0.1,
+     "CR_required_upper_bound_flow_basis": 15.60992837,
+     "CR_required_self_consistent_backflow": 26.17640951
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 48,
+   "n_rejected": 2112,
+   "rejection_counts": {
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 20,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1932,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 285
+   },
+   "pareto_ids": [
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G10/alt230_high/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.006554805975,
+     0.06425748904
+    ],
+    "CR_total": [
+     1.023200517,
+     10.03054801
+    ],
+    "CR_O": [
+     1.020617632,
+     6.800989414
+    ],
+    "P_compressor_el_W": [
+     8.407725975,
+     12.81318577
+    ],
+    "m_compressor_kg": [
+     2.559535838,
+     12.56850294
+    ],
+    "T_compressor_K": [
+     313.7439795,
+     324.6786432
+    ],
+    "S_turbo_m3_s": [
+     11.03312961,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.4776818336,
+     0.7027757916
+    ],
+    "x_O_delivered_flow": [
+     0.7045543117,
+     0.7045543117
+    ]
+   },
+   "reference_setpoint_Pa": 0.1,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 15.60992837,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.006406179301,
+      "CR_active": 1.0,
+      "P_el_W": 9.308513503,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 15.60992837,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.0465264567,
+      "CR_active": 7.262746563,
+      "P_el_W": 11.60922313,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 15.60992837,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.08711804911,
+      "CR_active": 13.59906506,
+      "P_el_W": 14.58871079,
+      "mass_kg": 12.56850294,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
    "case": "DC-S12-G20/alt180_low",
    "inlet": {
     "record_id": "DC-S12-G20/alt180_low",
@@ -919,7 +2696,7 @@
     },
     "p_total_Pa": 0.01370576923,
     "T_K": 350.0,
-    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt180_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G20/cases/alt180_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
     "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
@@ -934,14 +2711,14 @@
    "label": "PARAMETRIC_SENSITIVITY",
    "status": "EVALUATED",
    "n_designs": 2160,
-   "n_feasible": 92,
-   "n_rejected": 2068,
+   "n_feasible": 121,
+   "n_rejected": 2039,
    "rejection_counts": {
-    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 100,
-    "DRAG_CHANNEL_KNUDSEN_BELOW_FREE_MOLECULAR_LIMIT": 16,
-    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1836,
-    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1110,
-    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 670
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 140,
+    "DRAG_CHANNEL_KNUDSEN_BELOW_FREE_MOLECULAR_LIMIT": 32,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1788,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 790
    },
    "pareto_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -952,41 +2729,63 @@
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.25",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
     "T2-A1-U1-D0-Ti6Al4V-H0.25",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.25",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A0-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
     "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.5",
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.25",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
     "T4-A0-U2-D0-Ti6Al4V-H0.75",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
     "T4-A1-U1-D0-Ti6Al4V-H0.5",
+    "T4-A1-U1-D0-Ti6Al4V-H0.75",
     "T4-A1-U2-D0-Ti6Al4V-H0.25",
     "T4-A1-U2-D0-Ti6Al4V-H0.5",
-    "T4-A2-U2-D0-Ti6Al4V-H0.5",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
     "T5-A1-U1-D0-Ti6Al4V-H0.25",
-    "T5-A2-U2-D0-Ti6Al4V-H0.25",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
+    "T5-A2-U0-D0-Ti6Al4V-H0.75",
+    "T5-A2-U1-D0-Ti6Al4V-H0.25",
+    "T5-A2-U1-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.25",
     "T6-A0-U2-D0-Ti6Al4V-H0.5",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
     "T6-A1-U1-D0-Ti6Al4V-H0.25",
     "T6-A1-U1-D0-Ti6Al4V-H0.5",
-    "T6-A2-U2-D0-Ti6Al4V-H0.25"
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5"
    ],
    "pareto_with_S_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -997,22 +2796,42 @@
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.25",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
     "T2-A1-U1-D0-Ti6Al4V-H0.25",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.25",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A0-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
     "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.5",
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.25",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
     "T3-A2-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
     "T4-A0-U2-D0-Ti6Al4V-H0.75",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
@@ -1020,20 +2839,27 @@
     "T4-A1-U1-D0-Ti6Al4V-H0.75",
     "T4-A1-U2-D0-Ti6Al4V-H0.25",
     "T4-A1-U2-D0-Ti6Al4V-H0.5",
-    "T4-A2-U2-D0-Ti6Al4V-H0.5",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
+    "T4-A2-U1-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
     "T5-A1-U1-D0-Ti6Al4V-H0.25",
     "T5-A1-U1-D0-Ti6Al4V-H0.5",
-    "T5-A2-U2-D0-Ti6Al4V-H0.25",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
+    "T5-A2-U0-D0-Ti6Al4V-H0.75",
+    "T5-A2-U1-D0-Ti6Al4V-H0.25",
+    "T5-A2-U1-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.25",
     "T6-A0-U2-D0-Ti6Al4V-H0.5",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
     "T6-A1-U1-D0-Ti6Al4V-H0.25",
     "T6-A1-U1-D0-Ti6Al4V-H0.5",
-    "T6-A2-U2-D0-Ti6Al4V-H0.25"
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5"
    ],
    "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G20/alt180_low/feasible (ids above)",
    "front_ranges": {
@@ -1055,7 +2881,7 @@
     ],
     "m_compressor_kg": [
      1.989748393,
-     10.90721503
+     12.56850294
     ],
     "T_compressor_K": [
      313.5597704,
@@ -1063,7 +2889,7 @@
     ],
     "S_turbo_m3_s": [
      5.90077036,
-     11.41536836
+     14.19821927
     ],
     "x_O_out_partial_pressure": [
      0.314314597,
@@ -1076,7 +2902,7 @@
    },
    "reference_setpoint_Pa": 0.05,
    "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
-   "n_feasible_reaching_reference_setpoint": 15,
+   "n_feasible_reaching_reference_setpoint": 24,
    "size_for_comparison": [
     {
      "a_turbo_m2": 0.1128299365,
@@ -1125,27 +2951,25 @@
      "dominated_by_front": null
     },
     {
-     "a_turbo_m2": 0.1137287437,
+     "a_turbo_m2": 0.2369348826,
      "material": "Ti6Al4V",
      "cr_target": 3.64809878,
      "size_for": {
       "sized": true,
-      "turbo_rows": 4,
+      "turbo_rows": 3,
       "n_stages": 0,
-      "rpm": 15817.0,
-      "p_out_Pa": 0.05788545256,
-      "CR_active": 4.223436977,
-      "P_el_W": 10.77576467,
-      "mass_kg": 5.313520941,
+      "rpm": 10000.0,
+      "p_out_Pa": 0.05593253125,
+      "CR_active": 4.08094798,
+      "P_el_W": 11.38419157,
+      "mass_kg": 6.729251468,
       "rotor_ok_uncited_db_yield": false,
       "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
      },
-     "gate_status": "REJECTED",
-     "gate_reasons": [
-      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
-     ],
+     "gate_status": "FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS",
+     "gate_reasons": [],
      "on_front": false,
-     "dominated_by_front": null
+     "dominated_by_front": true
     }
    ]
   },
@@ -1161,7 +2985,7 @@
     },
     "p_total_Pa": 0.01874485241,
     "T_K": 350.0,
-    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt180_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G20/cases/alt180_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
     "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
@@ -1176,14 +3000,14 @@
    "label": "PARAMETRIC_SENSITIVITY",
    "status": "EVALUATED",
    "n_designs": 2160,
-   "n_feasible": 88,
-   "n_rejected": 2072,
+   "n_feasible": 114,
+   "n_rejected": 2046,
    "rejection_counts": {
-    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 100,
-    "DRAG_CHANNEL_KNUDSEN_BELOW_FREE_MOLECULAR_LIMIT": 16,
-    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1836,
-    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1110,
-    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 785
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 140,
+    "DRAG_CHANNEL_KNUDSEN_BELOW_FREE_MOLECULAR_LIMIT": 32,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1788,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 925
    },
    "pareto_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -1194,13 +3018,27 @@
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.25",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
     "T2-A1-U1-D0-Ti6Al4V-H0.25",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.25",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
     "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.25",
@@ -1208,23 +3046,33 @@
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.25",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
     "T4-A0-U2-D0-Ti6Al4V-H0.75",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
     "T4-A1-U1-D0-Ti6Al4V-H0.5",
     "T4-A1-U1-D0-Ti6Al4V-H0.75",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
     "T5-A1-U1-D0-Ti6Al4V-H0.25",
     "T5-A1-U1-D0-Ti6Al4V-H0.5",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
+    "T5-A2-U0-D0-Ti6Al4V-H0.75",
+    "T5-A2-U1-D0-Ti6Al4V-H0.25",
     "T6-A0-U2-D0-Ti6Al4V-H0.5",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
     "T6-A1-U1-D0-Ti6Al4V-H0.25",
-    "T6-A2-U2-D0-Ti6Al4V-H0.25",
-    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5"
    ],
    "pareto_with_S_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -1235,13 +3083,28 @@
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.25",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
     "T2-A1-U1-D0-Ti6Al4V-H0.25",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.25",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
     "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.25",
@@ -1249,56 +3112,69 @@
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.25",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
     "T4-A0-U2-D0-Ti6Al4V-H0.75",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
     "T4-A1-U1-D0-Ti6Al4V-H0.5",
     "T4-A1-U1-D0-Ti6Al4V-H0.75",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
+    "T4-A2-U1-D0-Ti6Al4V-H0.5",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
     "T5-A1-U1-D0-Ti6Al4V-H0.25",
     "T5-A1-U1-D0-Ti6Al4V-H0.5",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
+    "T5-A2-U0-D0-Ti6Al4V-H0.75",
+    "T5-A2-U1-D0-Ti6Al4V-H0.25",
     "T6-A0-U2-D0-Ti6Al4V-H0.5",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
     "T6-A1-U1-D0-Ti6Al4V-H0.25",
-    "T6-A2-U2-D0-Ti6Al4V-H0.25",
-    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5"
    ],
    "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G20/alt180_mean/feasible (ids above)",
    "front_ranges": {
     "P_out_Pa": [
      0.01920906042,
-     0.09502464808
+     0.09535658482
     ],
     "CR_total": [
      1.024764559,
-     5.069372967
+     5.087081121
     ],
     "CR_O": [
      1.020909607,
-     3.602476885
+     3.745524362
     ],
     "P_compressor_el_W": [
      8.339014926,
-     11.99520655
+     12.90382396
     ],
     "m_compressor_kg": [
      1.989748393,
-     10.90721503
+     12.56850294
     ],
     "T_compressor_K": [
      313.6511878,
-     322.6856999
+     324.9052386
     ],
     "S_turbo_m3_s": [
      5.935644539,
-     11.41536836
+     14.19821927
     ],
     "x_O_out_partial_pressure": [
-     0.3585426708,
+     0.3628849564,
      0.5263289445
     ],
     "x_O_delivered_flow": [
@@ -1308,7 +3184,7 @@
    },
    "reference_setpoint_Pa": 0.05,
    "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
-   "n_feasible_reaching_reference_setpoint": 19,
+   "n_feasible_reaching_reference_setpoint": 27,
    "size_for_comparison": [
     {
      "a_turbo_m2": 0.1128299365,
@@ -1353,25 +3229,27 @@
      "dominated_by_front": false
     },
     {
-     "a_turbo_m2": 0.1137287437,
+     "a_turbo_m2": 0.2369348826,
      "material": "Ti6Al4V",
      "cr_target": 2.667398969,
      "size_for": {
       "sized": true,
-      "turbo_rows": 4,
+      "turbo_rows": 2,
       "n_stages": 0,
-      "rpm": 15000.0,
-      "p_out_Pa": 0.05761630678,
-      "CR_active": 3.073713546,
-      "P_el_W": 10.75169219,
-      "mass_kg": 5.313520941,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.05026234519,
+      "CR_active": 2.681394555,
+      "P_el_W": 10.98583888,
+      "mass_kg": 4.782834312,
       "rotor_ok_uncited_db_yield": false,
       "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
      },
-     "gate_status": "FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS",
-     "gate_reasons": [],
-     "on_front": true,
-     "dominated_by_front": false
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
     }
    ]
   },
@@ -1387,7 +3265,7 @@
     },
     "p_total_Pa": 0.02416022465,
     "T_K": 350.0,
-    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt180_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G20/cases/alt180_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
     "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
@@ -1402,14 +3280,14 @@
    "label": "PARAMETRIC_SENSITIVITY",
    "status": "EVALUATED",
    "n_designs": 2160,
-   "n_feasible": 85,
-   "n_rejected": 2075,
+   "n_feasible": 107,
+   "n_rejected": 2053,
    "rejection_counts": {
-    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 100,
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 150,
     "DRAG_CHANNEL_KNUDSEN_BELOW_FREE_MOLECULAR_LIMIT": 48,
-    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1836,
-    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1110,
-    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 865
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1788,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 1025
    },
    "pareto_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -1420,13 +3298,26 @@
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.25",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
-    "T2-A1-U1-D0-Ti6Al4V-H0.25",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.25",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
     "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.25",
@@ -1434,20 +3325,29 @@
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
     "T4-A0-U2-D0-Ti6Al4V-H0.75",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
     "T4-A1-U1-D0-Ti6Al4V-H0.5",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
+    "T4-A2-U1-D0-Ti6Al4V-H0.5",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
     "T5-A1-U1-D0-Ti6Al4V-H0.25",
     "T5-A1-U1-D0-Ti6Al4V-H0.5",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.5",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
-    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5"
    ],
    "pareto_with_S_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -1458,13 +3358,27 @@
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.25",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
-    "T2-A1-U1-D0-Ti6Al4V-H0.25",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.25",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
     "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.25",
@@ -1472,20 +3386,30 @@
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
     "T4-A0-U2-D0-Ti6Al4V-H0.75",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
     "T4-A1-U1-D0-Ti6Al4V-H0.5",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
+    "T4-A2-U1-D0-Ti6Al4V-H0.5",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
     "T5-A1-U1-D0-Ti6Al4V-H0.25",
     "T5-A1-U1-D0-Ti6Al4V-H0.5",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.5",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
-    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5"
    ],
    "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G20/alt180_high/feasible (ids above)",
    "front_ranges": {
@@ -1499,26 +3423,26 @@
     ],
     "CR_O": [
      1.017616608,
-     3.135956749
+     3.13903037
     ],
     "P_compressor_el_W": [
      8.377696057,
-     12.31822988
+     13.43066132
     ],
     "m_compressor_kg": [
      1.989748393,
-     10.90721503
+     12.56850294
     ],
     "T_compressor_K": [
      313.7478906,
-     323.4179573
+     326.1944156
     ],
     "S_turbo_m3_s": [
      5.935644539,
-     11.41536836
+     14.19821927
     ],
     "x_O_out_partial_pressure": [
-     0.4014921718,
+     0.406813106,
      0.5646215338
     ],
     "x_O_delivered_flow": [
@@ -1528,7 +3452,7 @@
    },
    "reference_setpoint_Pa": 0.05,
    "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
-   "n_feasible_reaching_reference_setpoint": 26,
+   "n_feasible_reaching_reference_setpoint": 37,
    "size_for_comparison": [
     {
      "a_turbo_m2": 0.1128299365,
@@ -1577,27 +3501,25 @@
      "dominated_by_front": null
     },
     {
-     "a_turbo_m2": 0.1137287437,
+     "a_turbo_m2": 0.2369348826,
      "material": "Ti6Al4V",
      "cr_target": 2.069517181,
      "size_for": {
       "sized": true,
-      "turbo_rows": 3,
+      "turbo_rows": 2,
       "n_stages": 0,
-      "rpm": 15817.0,
-      "p_out_Pa": 0.0557754465,
-      "CR_active": 2.308564896,
-      "P_el_W": 10.64569135,
-      "mass_kg": 4.207640706,
+      "rpm": 10000.0,
+      "p_out_Pa": 0.05586303229,
+      "CR_active": 2.312190102,
+      "P_el_W": 10.86728848,
+      "mass_kg": 4.782834312,
       "rotor_ok_uncited_db_yield": false,
       "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
      },
-     "gate_status": "REJECTED",
-     "gate_reasons": [
-      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
-     ],
-     "on_front": false,
-     "dominated_by_front": null
+     "gate_status": "FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS",
+     "gate_reasons": [],
+     "on_front": true,
+     "dominated_by_front": false
     }
    ]
   },
@@ -1613,7 +3535,7 @@
     },
     "p_total_Pa": 0.006407448874,
     "T_K": 350.0,
-    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt200_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G20/cases/alt200_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
     "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
@@ -1628,13 +3550,13 @@
    "label": "PARAMETRIC_SENSITIVITY",
    "status": "EVALUATED",
    "n_designs": 2160,
-   "n_feasible": 99,
-   "n_rejected": 2061,
+   "n_feasible": 137,
+   "n_rejected": 2023,
    "rejection_counts": {
-    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 20,
-    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1836,
-    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1110,
-    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 455
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 40,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1788,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 545
    },
    "pareto_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -1643,26 +3565,47 @@
     "T1-A1-U1-D0-Ti6Al4V-H0.5",
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
-    "T2-A1-U1-D0-Ti6Al4V-H0.25",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.25",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
     "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.5",
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.25",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
     "T4-A0-U2-D0-Ti6Al4V-H0.75",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
     "T4-A1-U1-D0-Ti6Al4V-H0.5",
     "T4-A1-U1-D0-Ti6Al4V-H0.75",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
+    "T4-A2-U1-D0-Ti6Al4V-H0.5",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
     "T5-A1-U1-D0-Ti6Al4V-H0.25",
@@ -1670,13 +3613,23 @@
     "T5-A1-U1-D0-Ti6Al4V-H0.75",
     "T5-A1-U2-D0-Ti6Al4V-H0.25",
     "T5-A1-U2-D0-Ti6Al4V-H0.5",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
+    "T5-A2-U0-D0-Ti6Al4V-H0.75",
+    "T5-A2-U1-D0-Ti6Al4V-H0.25",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.75",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
     "T6-A1-U1-D0-Ti6Al4V-H0.25",
     "T6-A1-U1-D0-Ti6Al4V-H0.75",
-    "T6-A2-U2-D0-Ti6Al4V-H0.75"
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5",
+    "T6-A2-U0-D0-Ti6Al4V-H0.75",
+    "T6-A2-U1-D0-Ti6Al4V-H0.25",
+    "T6-A2-U1-D0-Ti6Al4V-H0.5"
    ],
    "pareto_with_S_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -1685,20 +3638,40 @@
     "T1-A1-U1-D0-Ti6Al4V-H0.5",
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
-    "T2-A1-U1-D0-Ti6Al4V-H0.25",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.25",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
     "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.5",
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.25",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
     "T4-A0-U2-D0-Ti6Al4V-H0.75",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
@@ -1706,7 +3679,13 @@
     "T4-A1-U1-D0-Ti6Al4V-H0.75",
     "T4-A1-U2-D0-Ti6Al4V-H0.25",
     "T4-A1-U2-D0-Ti6Al4V-H0.5",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
+    "T4-A2-U1-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
     "T5-A1-U1-D0-Ti6Al4V-H0.25",
@@ -1714,47 +3693,58 @@
     "T5-A1-U1-D0-Ti6Al4V-H0.75",
     "T5-A1-U2-D0-Ti6Al4V-H0.25",
     "T5-A1-U2-D0-Ti6Al4V-H0.5",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
+    "T5-A2-U0-D0-Ti6Al4V-H0.75",
+    "T5-A2-U1-D0-Ti6Al4V-H0.25",
+    "T5-A2-U1-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.75",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
     "T6-A1-U1-D0-Ti6Al4V-H0.25",
     "T6-A1-U1-D0-Ti6Al4V-H0.5",
     "T6-A1-U1-D0-Ti6Al4V-H0.75",
-    "T6-A2-U2-D0-Ti6Al4V-H0.75"
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5",
+    "T6-A2-U0-D0-Ti6Al4V-H0.75",
+    "T6-A2-U1-D0-Ti6Al4V-H0.25",
+    "T6-A2-U1-D0-Ti6Al4V-H0.5"
    ],
    "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G20/alt200_low/feasible (ids above)",
    "front_ranges": {
     "P_out_Pa": [
      0.006540163051,
-     0.07534617504
+     0.08934764875
     ],
     "CR_total": [
      1.020712483,
-     11.75915353
+     13.94434049
     ],
     "CR_O": [
      1.017754048,
-     7.4515609
+     8.900476572
     ],
     "P_compressor_el_W": [
      8.244386592,
-     11.87088292
+     13.81093737
     ],
     "m_compressor_kg": [
      1.989748393,
-     10.90721503
+     12.56850294
     ],
     "T_compressor_K": [
      313.4146169,
-     322.29959
+     327.1730222
     ],
     "S_turbo_m3_s": [
      5.935644539,
-     11.41536836
+     14.19821927
     ],
     "x_O_out_partial_pressure": [
-     0.3613680551,
+     0.3634698342,
      0.5753842692
     ],
     "x_O_delivered_flow": [
@@ -1764,7 +3754,7 @@
    },
    "reference_setpoint_Pa": 0.05,
    "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
-   "n_feasible_reaching_reference_setpoint": 4,
+   "n_feasible_reaching_reference_setpoint": 9,
    "size_for_comparison": [
     {
      "a_turbo_m2": 0.1128299365,
@@ -1813,25 +3803,27 @@
      "dominated_by_front": null
     },
     {
-     "a_turbo_m2": 0.1137287437,
+     "a_turbo_m2": 0.2369348826,
      "material": "Ti6Al4V",
      "cr_target": 7.803417707,
      "size_for": {
       "sized": true,
-      "turbo_rows": 6,
+      "turbo_rows": 4,
       "n_stages": 0,
-      "rpm": 15000.0,
-      "p_out_Pa": 0.05319273325,
-      "CR_active": 8.301702331,
-      "P_el_W": 10.4747462,
-      "mass_kg": 7.525281412,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.05645373524,
+      "CR_active": 8.810641545,
+      "P_el_W": 11.99455091,
+      "mass_kg": 8.675668624,
       "rotor_ok_uncited_db_yield": false,
       "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
      },
-     "gate_status": "FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS",
-     "gate_reasons": [],
-     "on_front": true,
-     "dominated_by_front": false
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
     }
    ]
   },
@@ -1847,7 +3839,7 @@
     },
     "p_total_Pa": 0.01007417906,
     "T_K": 350.0,
-    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt200_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G20/cases/alt200_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
     "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
@@ -1862,13 +3854,13 @@
    "label": "PARAMETRIC_SENSITIVITY",
    "status": "EVALUATED",
    "n_designs": 2160,
-   "n_feasible": 97,
-   "n_rejected": 2063,
+   "n_feasible": 132,
+   "n_rejected": 2028,
    "rejection_counts": {
-    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 25,
-    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1836,
-    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1110,
-    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 585
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 70,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1788,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 680
    },
    "pareto_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -1878,39 +3870,72 @@
     "T1-A1-U1-D0-Ti6Al4V-H0.5",
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
-    "T2-A1-U1-D0-Ti6Al4V-H0.25",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.25",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
     "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.5",
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.25",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
     "T4-A0-U2-D0-Ti6Al4V-H0.75",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
     "T4-A1-U1-D0-Ti6Al4V-H0.5",
     "T4-A1-U1-D0-Ti6Al4V-H0.75",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A1-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
+    "T4-A2-U1-D0-Ti6Al4V-H0.5",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
     "T5-A1-U1-D0-Ti6Al4V-H0.25",
     "T5-A1-U1-D0-Ti6Al4V-H0.5",
     "T5-A1-U1-D0-Ti6Al4V-H0.75",
     "T5-A1-U2-D0-Ti6Al4V-H0.25",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
+    "T5-A2-U0-D0-Ti6Al4V-H0.75",
+    "T5-A2-U1-D0-Ti6Al4V-H0.25",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
     "T6-A0-U2-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.75",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
     "T6-A1-U1-D0-Ti6Al4V-H0.25",
-    "T6-A2-U2-D0-Ti6Al4V-H0.5",
-    "T6-A2-U2-D0-Ti6Al4V-H0.75"
+    "T6-A1-U1-D0-Ti6Al4V-H0.5",
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5",
+    "T6-A2-U0-D0-Ti6Al4V-H0.75",
+    "T6-A2-U1-D0-Ti6Al4V-H0.25",
+    "T6-A2-U1-D0-Ti6Al4V-H0.5"
    ],
    "pareto_with_S_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -1920,20 +3945,41 @@
     "T1-A1-U1-D0-Ti6Al4V-H0.5",
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
-    "T2-A1-U1-D0-Ti6Al4V-H0.25",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.25",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
     "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.5",
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.25",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
     "T4-A0-U2-D0-Ti6Al4V-H0.75",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
@@ -1941,54 +3987,68 @@
     "T4-A1-U1-D0-Ti6Al4V-H0.75",
     "T4-A1-U2-D0-Ti6Al4V-H0.25",
     "T4-A1-U2-D0-Ti6Al4V-H0.5",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
+    "T4-A2-U1-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
     "T5-A1-U1-D0-Ti6Al4V-H0.25",
     "T5-A1-U1-D0-Ti6Al4V-H0.5",
     "T5-A1-U1-D0-Ti6Al4V-H0.75",
     "T5-A1-U2-D0-Ti6Al4V-H0.25",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
+    "T5-A2-U0-D0-Ti6Al4V-H0.75",
+    "T5-A2-U1-D0-Ti6Al4V-H0.25",
+    "T5-A2-U1-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
     "T6-A0-U2-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.75",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
     "T6-A1-U1-D0-Ti6Al4V-H0.25",
     "T6-A1-U1-D0-Ti6Al4V-H0.5",
-    "T6-A2-U2-D0-Ti6Al4V-H0.5",
-    "T6-A2-U2-D0-Ti6Al4V-H0.75"
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5",
+    "T6-A2-U0-D0-Ti6Al4V-H0.75",
+    "T6-A2-U1-D0-Ti6Al4V-H0.25",
+    "T6-A2-U1-D0-Ti6Al4V-H0.5"
    ],
    "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G20/alt200_mean/feasible (ids above)",
    "front_ranges": {
     "P_out_Pa": [
      0.01025446077,
-     0.09336892866
+     0.09890102678
     ],
     "CR_total": [
      1.017895425,
-     9.268142655
+     9.817279025
     ],
     "CR_O": [
      1.01548618,
-     6.346013554
+     6.764802491
     ],
     "P_compressor_el_W": [
      8.27115836,
-     12.95867454
+     13.76269916
     ],
     "m_compressor_kg": [
      1.989748393,
-     10.90721503
+     12.56850294
     ],
     "T_compressor_K": [
      313.4815464,
-     324.9884029
+     327.1593489
     ],
     "S_turbo_m3_s": [
      5.935644539,
-     11.41536836
+     14.19821927
     ],
     "x_O_out_partial_pressure": [
-     0.3884844463,
+     0.3907847791,
      0.5996930229
     ],
     "x_O_delivered_flow": [
@@ -1998,7 +4058,7 @@
    },
    "reference_setpoint_Pa": 0.05,
    "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
-   "n_feasible_reaching_reference_setpoint": 9,
+   "n_feasible_reaching_reference_setpoint": 18,
    "size_for_comparison": [
     {
      "a_turbo_m2": 0.1128299365,
@@ -2047,27 +4107,25 @@
      "dominated_by_front": null
     },
     {
-     "a_turbo_m2": 0.1137287437,
+     "a_turbo_m2": 0.2369348826,
      "material": "Ti6Al4V",
      "cr_target": 4.963183571,
      "size_for": {
       "sized": true,
-      "turbo_rows": 5,
+      "turbo_rows": 4,
       "n_stages": 0,
-      "rpm": 15817.0,
-      "p_out_Pa": 0.06318271312,
-      "CR_active": 6.271748074,
-      "P_el_W": 10.98033667,
-      "mass_kg": 6.419401176,
+      "rpm": 10000.0,
+      "p_out_Pa": 0.06601275483,
+      "CR_active": 6.552668405,
+      "P_el_W": 12.16090408,
+      "mass_kg": 8.675668624,
       "rotor_ok_uncited_db_yield": false,
       "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
      },
-     "gate_status": "REJECTED",
-     "gate_reasons": [
-      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
-     ],
-     "on_front": false,
-     "dominated_by_front": null
+     "gate_status": "FEASIBLE_UNDER_PARAMETRIC_SENSITIVITY_INPUTS",
+     "gate_reasons": [],
+     "on_front": true,
+     "dominated_by_front": false
     }
    ]
   },
@@ -2083,7 +4141,7 @@
     },
     "p_total_Pa": 0.01405222348,
     "T_K": 350.0,
-    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt200_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G20/cases/alt200_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
     "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
@@ -2098,13 +4156,13 @@
    "label": "PARAMETRIC_SENSITIVITY",
    "status": "EVALUATED",
    "n_designs": 2160,
-   "n_feasible": 95,
-   "n_rejected": 2065,
+   "n_feasible": 127,
+   "n_rejected": 2033,
    "rejection_counts": {
-    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 85,
-    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1836,
-    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1110,
-    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 630
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 125,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1788,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 740
    },
    "pareto_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -2115,37 +4173,67 @@
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.25",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
-    "T2-A1-U1-D0-Ti6Al4V-H0.25",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.25",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
-    "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.5",
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.25",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
     "T4-A0-U2-D0-Ti6Al4V-H0.75",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
     "T4-A1-U1-D0-Ti6Al4V-H0.5",
     "T4-A1-U1-D0-Ti6Al4V-H0.75",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A1-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
+    "T4-A2-U1-D0-Ti6Al4V-H0.5",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
     "T5-A1-U1-D0-Ti6Al4V-H0.25",
     "T5-A1-U1-D0-Ti6Al4V-H0.5",
     "T5-A1-U1-D0-Ti6Al4V-H0.75",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
+    "T5-A2-U0-D0-Ti6Al4V-H0.75",
+    "T5-A2-U1-D0-Ti6Al4V-H0.25",
+    "T5-A2-U1-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.75",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
     "T6-A1-U1-D0-Ti6Al4V-H0.25",
-    "T6-A2-U2-D0-Ti6Al4V-H0.5",
-    "T6-A2-U2-D0-Ti6Al4V-H0.75"
+    "T6-A1-U1-D0-Ti6Al4V-H0.5",
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5",
+    "T6-A2-U0-D0-Ti6Al4V-H0.75",
+    "T6-A2-U1-D0-Ti6Al4V-H0.25"
    ],
    "pareto_with_S_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -2156,20 +4244,40 @@
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.25",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
-    "T2-A1-U1-D0-Ti6Al4V-H0.25",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.25",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
-    "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.5",
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.25",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
     "T4-A0-U2-D0-Ti6Al4V-H0.75",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
@@ -2177,52 +4285,63 @@
     "T4-A1-U1-D0-Ti6Al4V-H0.75",
     "T4-A1-U2-D0-Ti6Al4V-H0.25",
     "T4-A1-U2-D0-Ti6Al4V-H0.5",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
+    "T4-A2-U1-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
     "T5-A1-U1-D0-Ti6Al4V-H0.25",
     "T5-A1-U1-D0-Ti6Al4V-H0.5",
     "T5-A1-U1-D0-Ti6Al4V-H0.75",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
+    "T5-A2-U0-D0-Ti6Al4V-H0.75",
+    "T5-A2-U1-D0-Ti6Al4V-H0.25",
+    "T5-A2-U1-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.75",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
     "T6-A1-U1-D0-Ti6Al4V-H0.25",
     "T6-A1-U1-D0-Ti6Al4V-H0.5",
-    "T6-A2-U2-D0-Ti6Al4V-H0.5",
-    "T6-A2-U2-D0-Ti6Al4V-H0.75"
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5",
+    "T6-A2-U0-D0-Ti6Al4V-H0.75",
+    "T6-A2-U1-D0-Ti6Al4V-H0.25"
    ],
    "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G20/alt200_high/feasible (ids above)",
    "front_ranges": {
     "P_out_Pa": [
      0.01426404158,
-     0.09287036708
+     0.09898771633
     ],
     "CR_total": [
      1.015073636,
-     6.608944643
+     7.044274273
     ],
     "CR_O": [
      1.013173072,
-     4.851091211
+     5.125175909
     ],
     "P_compressor_el_W": [
      8.299678448,
-     12.4651008
+     13.6152242
     ],
     "m_compressor_kg": [
      1.989748393,
-     10.90721503
+     12.56850294
     ],
     "T_compressor_K": [
      313.5528466,
-     323.9064567
+     326.6558228
     ],
     "S_turbo_m3_s": [
      5.935644539,
-     11.41536836
+     14.19821927
     ],
     "x_O_out_partial_pressure": [
-     0.418576817,
+     0.4211020236,
      0.6262771727
     ],
     "x_O_delivered_flow": [
@@ -2232,7 +4351,7 @@
    },
    "reference_setpoint_Pa": 0.05,
    "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
-   "n_feasible_reaching_reference_setpoint": 12,
+   "n_feasible_reaching_reference_setpoint": 25,
    "size_for_comparison": [
     {
      "a_turbo_m2": 0.1128299365,
@@ -2279,18 +4398,18 @@
      "dominated_by_front": null
     },
     {
-     "a_turbo_m2": 0.1137287437,
+     "a_turbo_m2": 0.2369348826,
      "material": "Ti6Al4V",
      "cr_target": 3.558155767,
      "size_for": {
       "sized": true,
-      "turbo_rows": 5,
+      "turbo_rows": 3,
       "n_stages": 0,
-      "rpm": 15000.0,
-      "p_out_Pa": 0.06027146223,
-      "CR_active": 4.289105017,
-      "P_el_W": 10.89481896,
-      "mass_kg": 6.419401176,
+      "rpm": 10000.0,
+      "p_out_Pa": 0.05233586584,
+      "CR_active": 3.724383256,
+      "P_el_W": 11.16277075,
+      "mass_kg": 6.729251468,
       "rotor_ok_uncited_db_yield": false,
       "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
      },
@@ -2313,7 +4432,7 @@
     },
     "p_total_Pa": 0.002366924925,
     "T_K": 350.0,
-    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt230_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G20/cases/alt230_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
     "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
@@ -2328,12 +4447,12 @@
    "label": "PARAMETRIC_SENSITIVITY",
    "status": "EVALUATED",
    "n_designs": 2160,
-   "n_feasible": 102,
-   "n_rejected": 2058,
+   "n_feasible": 144,
+   "n_rejected": 2016,
    "rejection_counts": {
-    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1836,
-    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1110,
-    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 220
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1788,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 280
    },
    "pareto_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -2341,25 +4460,45 @@
     "T1-A1-U0-D0-Ti6Al4V-H0.75",
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
-    "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.5",
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
-    "T4-A0-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.25",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
     "T4-A1-U1-D0-Ti6Al4V-H0.5",
     "T4-A1-U1-D0-Ti6Al4V-H0.75",
+    "T4-A1-U2-D0-Ti6Al4V-H0.25",
     "T4-A1-U2-D0-Ti6Al4V-H0.5",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
+    "T4-A2-U1-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
     "T5-A1-U1-D0-Ti6Al4V-H0.25",
@@ -2367,15 +4506,28 @@
     "T5-A1-U1-D0-Ti6Al4V-H0.75",
     "T5-A1-U2-D0-Ti6Al4V-H0.25",
     "T5-A1-U2-D0-Ti6Al4V-H0.5",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
+    "T5-A2-U0-D0-Ti6Al4V-H0.75",
+    "T5-A2-U1-D0-Ti6Al4V-H0.25",
+    "T5-A2-U1-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.75",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
-    "T6-A1-U1-D0-Ti6Al4V-H0.25",
     "T6-A1-U1-D0-Ti6Al4V-H0.5",
     "T6-A1-U1-D0-Ti6Al4V-H0.75",
     "T6-A1-U2-D0-Ti6Al4V-H0.25",
     "T6-A1-U2-D0-Ti6Al4V-H0.5",
-    "T6-A2-U2-D0-Ti6Al4V-H0.75"
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5",
+    "T6-A2-U0-D0-Ti6Al4V-H0.75",
+    "T6-A2-U1-D0-Ti6Al4V-H0.25",
+    "T6-A2-U1-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
    ],
    "pareto_with_S_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -2383,26 +4535,48 @@
     "T1-A1-U0-D0-Ti6Al4V-H0.75",
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
-    "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.5",
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
-    "T4-A0-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.25",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
     "T4-A1-U1-D0-Ti6Al4V-H0.5",
     "T4-A1-U1-D0-Ti6Al4V-H0.75",
     "T4-A1-U2-D0-Ti6Al4V-H0.25",
     "T4-A1-U2-D0-Ti6Al4V-H0.5",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
+    "T4-A2-U1-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
     "T5-A1-U1-D0-Ti6Al4V-H0.25",
@@ -2410,48 +4584,61 @@
     "T5-A1-U1-D0-Ti6Al4V-H0.75",
     "T5-A1-U2-D0-Ti6Al4V-H0.25",
     "T5-A1-U2-D0-Ti6Al4V-H0.5",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
+    "T5-A2-U0-D0-Ti6Al4V-H0.75",
+    "T5-A2-U1-D0-Ti6Al4V-H0.25",
+    "T5-A2-U1-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.75",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
-    "T6-A1-U1-D0-Ti6Al4V-H0.25",
     "T6-A1-U1-D0-Ti6Al4V-H0.5",
     "T6-A1-U1-D0-Ti6Al4V-H0.75",
     "T6-A1-U2-D0-Ti6Al4V-H0.25",
     "T6-A1-U2-D0-Ti6Al4V-H0.5",
-    "T6-A2-U2-D0-Ti6Al4V-H0.75"
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5",
+    "T6-A2-U0-D0-Ti6Al4V-H0.75",
+    "T6-A2-U1-D0-Ti6Al4V-H0.25",
+    "T6-A2-U1-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
    ],
    "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G20/alt230_low/feasible (ids above)",
    "front_ranges": {
     "P_out_Pa": [
      0.002389349692,
-     0.03996024816
+     0.05299479653
     ],
     "CR_total": [
      1.00947422,
-     16.8827696
+     22.38972431
     ],
     "CR_O": [
      1.008474811,
-     11.20939216
+     14.5292629
     ],
     "P_compressor_el_W": [
      8.21336072,
-     10.38783732
+     11.60517598
     ],
     "m_compressor_kg": [
      1.989748393,
-     10.90721503
+     12.56850294
     ],
     "T_compressor_K": [
      313.3370523,
-     318.5919759
+     321.6586187
     ],
     "S_turbo_m3_s": [
      5.935644539,
-     11.41536836
+     14.19821927
     ],
     "x_O_out_partial_pressure": [
-     0.4643973972,
+     0.4538493296,
      0.6988778433
     ],
     "x_O_delivered_flow": [
@@ -2461,7 +4648,7 @@
    },
    "reference_setpoint_Pa": 0.05,
    "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
-   "n_feasible_reaching_reference_setpoint": 0,
+   "n_feasible_reaching_reference_setpoint": 1,
    "size_for_comparison": [
     {
      "a_turbo_m2": 0.1128299365,
@@ -2510,18 +4697,18 @@
      "dominated_by_front": null
     },
     {
-     "a_turbo_m2": 0.1137287437,
+     "a_turbo_m2": 0.2369348826,
      "material": "Ti6Al4V",
      "cr_target": 21.12445539,
      "size_for": {
-      "sized": false,
+      "sized": true,
       "turbo_rows": 6,
       "n_stages": 0,
-      "rpm": 15817.0,
-      "p_out_Pa": 0.02265021463,
-      "CR_active": 9.569468972,
-      "P_el_W": 9.447248394,
-      "mass_kg": 7.525281412,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.06624841979,
+      "CR_active": 27.98923578,
+      "P_el_W": 12.70535443,
+      "mass_kg": 12.56850294,
       "rotor_ok_uncited_db_yield": false,
       "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
      },
@@ -2546,7 +4733,7 @@
     },
     "p_total_Pa": 0.004579924164,
     "T_K": 350.0,
-    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt230_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G20/cases/alt230_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
     "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
@@ -2561,12 +4748,13 @@
    "label": "PARAMETRIC_SENSITIVITY",
    "status": "EVALUATED",
    "n_designs": 2160,
-   "n_feasible": 102,
-   "n_rejected": 2058,
+   "n_feasible": 143,
+   "n_rejected": 2017,
    "rejection_counts": {
-    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1836,
-    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1110,
-    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 350
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 20,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1788,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 415
    },
    "pareto_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -2575,27 +4763,49 @@
     "T1-A1-U1-D0-Ti6Al4V-H0.5",
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
-    "T2-A1-U1-D0-Ti6Al4V-H0.25",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.25",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
-    "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.5",
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
-    "T4-A0-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.25",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
     "T4-A1-U1-D0-Ti6Al4V-H0.5",
     "T4-A1-U1-D0-Ti6Al4V-H0.75",
+    "T4-A1-U2-D0-Ti6Al4V-H0.25",
     "T4-A1-U2-D0-Ti6Al4V-H0.5",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
+    "T4-A2-U1-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
     "T5-A1-U1-D0-Ti6Al4V-H0.25",
@@ -2603,7 +4813,14 @@
     "T5-A1-U1-D0-Ti6Al4V-H0.75",
     "T5-A1-U2-D0-Ti6Al4V-H0.25",
     "T5-A1-U2-D0-Ti6Al4V-H0.5",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
+    "T5-A2-U0-D0-Ti6Al4V-H0.75",
+    "T5-A2-U1-D0-Ti6Al4V-H0.25",
+    "T5-A2-U1-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.75",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
     "T6-A1-U1-D0-Ti6Al4V-H0.25",
@@ -2611,7 +4828,13 @@
     "T6-A1-U1-D0-Ti6Al4V-H0.75",
     "T6-A1-U2-D0-Ti6Al4V-H0.25",
     "T6-A1-U2-D0-Ti6Al4V-H0.5",
-    "T6-A2-U2-D0-Ti6Al4V-H0.75"
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5",
+    "T6-A2-U0-D0-Ti6Al4V-H0.75",
+    "T6-A2-U1-D0-Ti6Al4V-H0.25",
+    "T6-A2-U1-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25"
    ],
    "pareto_with_S_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -2620,28 +4843,52 @@
     "T1-A1-U1-D0-Ti6Al4V-H0.5",
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
-    "T2-A1-U1-D0-Ti6Al4V-H0.25",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.25",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
-    "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.5",
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
-    "T4-A0-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.25",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
     "T4-A1-U1-D0-Ti6Al4V-H0.5",
     "T4-A1-U1-D0-Ti6Al4V-H0.75",
     "T4-A1-U2-D0-Ti6Al4V-H0.25",
     "T4-A1-U2-D0-Ti6Al4V-H0.5",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
+    "T4-A2-U1-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
     "T5-A1-U1-D0-Ti6Al4V-H0.25",
@@ -2649,7 +4896,14 @@
     "T5-A1-U1-D0-Ti6Al4V-H0.75",
     "T5-A1-U2-D0-Ti6Al4V-H0.25",
     "T5-A1-U2-D0-Ti6Al4V-H0.5",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
+    "T5-A2-U0-D0-Ti6Al4V-H0.75",
+    "T5-A2-U1-D0-Ti6Al4V-H0.25",
+    "T5-A2-U1-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.75",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
     "T6-A1-U1-D0-Ti6Al4V-H0.25",
@@ -2657,40 +4911,46 @@
     "T6-A1-U1-D0-Ti6Al4V-H0.75",
     "T6-A1-U2-D0-Ti6Al4V-H0.25",
     "T6-A1-U2-D0-Ti6Al4V-H0.5",
-    "T6-A2-U2-D0-Ti6Al4V-H0.75"
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5",
+    "T6-A2-U0-D0-Ti6Al4V-H0.75",
+    "T6-A2-U1-D0-Ti6Al4V-H0.25",
+    "T6-A2-U1-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25"
    ],
    "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G20/alt230_mean/feasible (ids above)",
    "front_ranges": {
     "P_out_Pa": [
      0.00462462704,
-     0.07749625572
+     0.0881942769
     ],
     "CR_total": [
      1.009760615,
-     16.92086003
+     19.25671119
     ],
     "CR_O": [
      1.008721462,
-     11.2180543
+     12.74991963
     ],
     "P_compressor_el_W": [
      8.229302459,
-     12.27569898
+     13.60477466
     ],
     "m_compressor_kg": [
      1.989748393,
-     10.90721503
+     12.56850294
     ],
     "T_compressor_K": [
      313.3769066,
-     323.3116301
+     326.629699
     ],
     "S_turbo_m3_s": [
      5.935644539,
-     11.41536836
+     14.19821927
     ],
     "x_O_out_partial_pressure": [
-     0.4599289093,
+     0.4593138982,
      0.6931527676
     ],
     "x_O_delivered_flow": [
@@ -2700,7 +4960,7 @@
    },
    "reference_setpoint_Pa": 0.05,
    "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
-   "n_feasible_reaching_reference_setpoint": 3,
+   "n_feasible_reaching_reference_setpoint": 7,
    "size_for_comparison": [
     {
      "a_turbo_m2": 0.1128299365,
@@ -2749,18 +5009,18 @@
      "dominated_by_front": null
     },
     {
-     "a_turbo_m2": 0.1137287437,
+     "a_turbo_m2": 0.2369348826,
      "material": "Ti6Al4V",
      "cr_target": 10.91721133,
      "size_for": {
-      "sized": false,
-      "turbo_rows": 6,
+      "sized": true,
+      "turbo_rows": 5,
       "n_stages": 0,
-      "rpm": 15817.0,
-      "p_out_Pa": 0.04401758918,
-      "CR_active": 9.610986471,
-      "P_el_W": 10.22544649,
-      "mass_kg": 7.525281412,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.06755585676,
+      "CR_active": 14.7504313,
+      "P_el_W": 12.7704108,
+      "mass_kg": 10.62208578,
       "rotor_ok_uncited_db_yield": false,
       "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
      },
@@ -2785,7 +5045,7 @@
     },
     "p_total_Pa": 0.007115737314,
     "T_K": 350.0,
-    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json#requirement_envelope/DC-S12-G20/cases/alt230_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S12-G20/cases/alt230_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
     "evidence_class": "model-derived",
     "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
     "p_species_Pa": null,
@@ -2800,13 +5060,13 @@
    "label": "PARAMETRIC_SENSITIVITY",
    "status": "EVALUATED",
    "n_designs": 2160,
-   "n_feasible": 100,
-   "n_rejected": 2060,
+   "n_feasible": 138,
+   "n_rejected": 2022,
    "rejection_counts": {
-    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 20,
-    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1836,
-    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1110,
-    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 435
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 40,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1788,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 530
    },
    "pareto_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -2815,40 +5075,71 @@
     "T1-A1-U1-D0-Ti6Al4V-H0.5",
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
-    "T2-A1-U1-D0-Ti6Al4V-H0.25",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.25",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
-    "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.5",
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.25",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
     "T4-A1-U1-D0-Ti6Al4V-H0.5",
     "T4-A1-U1-D0-Ti6Al4V-H0.75",
+    "T4-A1-U2-D0-Ti6Al4V-H0.25",
     "T4-A1-U2-D0-Ti6Al4V-H0.5",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
+    "T4-A2-U1-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
-    "T5-A1-U1-D0-Ti6Al4V-H0.25",
     "T5-A1-U1-D0-Ti6Al4V-H0.5",
     "T5-A1-U1-D0-Ti6Al4V-H0.75",
     "T5-A1-U2-D0-Ti6Al4V-H0.25",
     "T5-A1-U2-D0-Ti6Al4V-H0.5",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
+    "T5-A2-U0-D0-Ti6Al4V-H0.75",
+    "T5-A2-U1-D0-Ti6Al4V-H0.5",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.75",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
     "T6-A1-U1-D0-Ti6Al4V-H0.25",
     "T6-A1-U1-D0-Ti6Al4V-H0.5",
     "T6-A1-U1-D0-Ti6Al4V-H0.75",
-    "T6-A2-U2-D0-Ti6Al4V-H0.75"
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5",
+    "T6-A2-U0-D0-Ti6Al4V-H0.75",
+    "T6-A2-U1-D0-Ti6Al4V-H0.25",
+    "T6-A2-U1-D0-Ti6Al4V-H0.5"
    ],
    "pareto_with_S_ids": [
     "T1-A0-U2-D0-Ti6Al4V-H0.75",
@@ -2857,71 +5148,106 @@
     "T1-A1-U1-D0-Ti6Al4V-H0.5",
     "T1-A1-U1-D0-Ti6Al4V-H0.75",
     "T1-A1-U2-D0-Ti6Al4V-H0.5",
-    "T1-A2-U2-D0-Ti6Al4V-H0.75",
+    "T1-A2-U0-D0-Ti6Al4V-H0.25",
+    "T1-A2-U0-D0-Ti6Al4V-H0.5",
+    "T1-A2-U0-D0-Ti6Al4V-H0.75",
+    "T1-A2-U1-D0-Ti6Al4V-H0.25",
+    "T1-A2-U1-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
     "T2-A1-U0-D0-Ti6Al4V-H0.75",
-    "T2-A1-U1-D0-Ti6Al4V-H0.25",
     "T2-A1-U1-D0-Ti6Al4V-H0.5",
     "T2-A1-U1-D0-Ti6Al4V-H0.75",
     "T2-A1-U2-D0-Ti6Al4V-H0.25",
     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.25",
+    "T2-A2-U0-D0-Ti6Al4V-H0.5",
+    "T2-A2-U0-D0-Ti6Al4V-H0.75",
+    "T2-A2-U1-D0-Ti6Al4V-H0.25",
+    "T2-A2-U1-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
     "T3-A0-U2-D0-Ti6Al4V-H0.75",
-    "T3-A1-U0-D0-Ti6Al4V-H0.75",
     "T3-A1-U1-D0-Ti6Al4V-H0.5",
     "T3-A1-U1-D0-Ti6Al4V-H0.75",
     "T3-A1-U2-D0-Ti6Al4V-H0.25",
     "T3-A1-U2-D0-Ti6Al4V-H0.5",
-    "T3-A2-U2-D0-Ti6Al4V-H0.75",
+    "T3-A2-U0-D0-Ti6Al4V-H0.25",
+    "T3-A2-U0-D0-Ti6Al4V-H0.5",
+    "T3-A2-U0-D0-Ti6Al4V-H0.75",
+    "T3-A2-U1-D0-Ti6Al4V-H0.25",
+    "T3-A2-U1-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
     "T4-A1-U0-D0-Ti6Al4V-H0.75",
     "T4-A1-U1-D0-Ti6Al4V-H0.25",
     "T4-A1-U1-D0-Ti6Al4V-H0.5",
     "T4-A1-U1-D0-Ti6Al4V-H0.75",
     "T4-A1-U2-D0-Ti6Al4V-H0.25",
     "T4-A1-U2-D0-Ti6Al4V-H0.5",
-    "T4-A2-U2-D0-Ti6Al4V-H0.75",
+    "T4-A2-U0-D0-Ti6Al4V-H0.5",
+    "T4-A2-U0-D0-Ti6Al4V-H0.75",
+    "T4-A2-U1-D0-Ti6Al4V-H0.25",
+    "T4-A2-U1-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
     "T5-A0-U2-D0-Ti6Al4V-H0.75",
     "T5-A1-U0-D0-Ti6Al4V-H0.75",
-    "T5-A1-U1-D0-Ti6Al4V-H0.25",
     "T5-A1-U1-D0-Ti6Al4V-H0.5",
     "T5-A1-U1-D0-Ti6Al4V-H0.75",
     "T5-A1-U2-D0-Ti6Al4V-H0.25",
     "T5-A1-U2-D0-Ti6Al4V-H0.5",
-    "T5-A2-U2-D0-Ti6Al4V-H0.75",
+    "T5-A2-U0-D0-Ti6Al4V-H0.25",
+    "T5-A2-U0-D0-Ti6Al4V-H0.5",
+    "T5-A2-U0-D0-Ti6Al4V-H0.75",
+    "T5-A2-U1-D0-Ti6Al4V-H0.25",
+    "T5-A2-U1-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
     "T6-A0-U2-D0-Ti6Al4V-H0.75",
     "T6-A1-U0-D0-Ti6Al4V-H0.75",
     "T6-A1-U1-D0-Ti6Al4V-H0.25",
     "T6-A1-U1-D0-Ti6Al4V-H0.5",
     "T6-A1-U1-D0-Ti6Al4V-H0.75",
-    "T6-A2-U2-D0-Ti6Al4V-H0.75"
+    "T6-A2-U0-D0-Ti6Al4V-H0.25",
+    "T6-A2-U0-D0-Ti6Al4V-H0.5",
+    "T6-A2-U0-D0-Ti6Al4V-H0.75",
+    "T6-A2-U1-D0-Ti6Al4V-H0.25",
+    "T6-A2-U1-D0-Ti6Al4V-H0.5"
    ],
    "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S12-G20/alt230_high/feasible (ids above)",
    "front_ranges": {
     "P_out_Pa": [
      0.007177038828,
-     0.07096425658
+     0.08586908758
     ],
     "CR_total": [
      1.008614921,
-     9.972860639
+     12.06748982
     ],
     "CR_O": [
      1.007731361,
-     7.175914911
+     8.721962395
     ],
     "P_compressor_el_W": [
      8.247329203,
-     11.73228485
+     13.59200096
     ],
     "m_compressor_kg": [
      1.989748393,
-     10.90721503
+     12.56850294
     ],
     "T_compressor_K": [
      313.4219735,
-     321.9530948
+     326.6256811
     ],
     "S_turbo_m3_s": [
      5.935644539,
-     11.41536836
+     14.19821927
     ],
     "x_O_out_partial_pressure": [
      0.5069151443,
@@ -2934,7 +5260,7 @@
    },
    "reference_setpoint_Pa": 0.05,
    "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
-   "n_feasible_reaching_reference_setpoint": 5,
+   "n_feasible_reaching_reference_setpoint": 10,
    "size_for_comparison": [
     {
      "a_turbo_m2": 0.1128299365,
@@ -2983,18 +5309,1700 @@
      "dominated_by_front": null
     },
     {
-     "a_turbo_m2": 0.1137287437,
+     "a_turbo_m2": 0.2369348826,
      "material": "Ti6Al4V",
      "cr_target": 7.026678725,
      "size_for": {
       "sized": true,
+      "turbo_rows": 4,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.05560438336,
+      "CR_active": 7.814282752,
+      "P_el_W": 11.92550419,
+      "mass_kg": 8.675668624,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S25-G20/alt180_low",
+   "inlet": {
+    "record_id": "DC-S25-G20/alt180_low",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 4.133907442e-07,
+     "N2": 6.991696217e-07,
+     "O2": 8.560437313e-08
+    },
+    "p_total_Pa": 0.01370576923,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S25-G20/cases/alt180_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 180.0,
+     "solar_level": "low",
+     "setpoint_Pa": 0.2,
+     "CR_required_upper_bound_flow_basis": 14.59239512,
+     "CR_required_self_consistent_backflow": 29.0831007
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 28,
+   "n_rejected": 2132,
+   "rejection_counts": {
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 70,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1974,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 420
+   },
+   "pareto_ids": [
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A1-U2-D0-Ti6Al4V-H0.5",
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S25-G20/alt180_low/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.01376531245,
+     0.07750432176
+    ],
+    "CR_total": [
+     1.004344391,
+     5.654868433
+    ],
+    "CR_O": [
+     1.00350629,
+     3.609405739
+    ],
+    "P_compressor_el_W": [
+     8.681880111,
+     14.19716761
+    ],
+    "m_compressor_kg": [
+     2.559535838,
+     12.56850294
+    ],
+    "T_compressor_K": [
+     314.4573013,
+     328.1385978
+    ],
+    "S_turbo_m3_s": [
+     11.41536836,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.3008449563,
+     0.4826888912
+    ],
+    "x_O_delivered_flow": [
+     0.4830920198,
+     0.4830920198
+    ]
+   },
+   "reference_setpoint_Pa": 0.2,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 14.59239512,
+     "size_for": {
+      "sized": false,
       "turbo_rows": 6,
       "n_stages": 0,
-      "rpm": 15817.0,
-      "p_out_Pa": 0.06648725445,
-      "CR_active": 9.343691527,
-      "P_el_W": 11.05468612,
-      "mass_kg": 7.525281412,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.01370576923,
+      "CR_active": 1.0,
+      "P_el_W": 10.18979163,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 14.59239512,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.07761734839,
+      "CR_active": 5.663115078,
+      "P_el_W": 14.36061375,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 14.59239512,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.1993343362,
+      "CR_active": 14.54382697,
+      "P_el_W": 22.80140718,
+      "mass_kg": 12.56977851,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S25-G20/alt180_mean",
+   "inlet": {
+    "record_id": "DC-S25-G20/alt180_mean",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 6.272206453e-07,
+     "N2": 9.22258928e-07,
+     "O2": 6.596160873e-08
+    },
+    "p_total_Pa": 0.01874485241,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S25-G20/cases/alt180_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 180.0,
+     "solar_level": "mean",
+     "setpoint_Pa": 0.2,
+     "CR_required_upper_bound_flow_basis": 10.66959588,
+     "CR_required_self_consistent_backflow": 13.8649373
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 21,
+   "n_rejected": 2139,
+   "rejection_counts": {
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 80,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1980,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 445
+   },
+   "pareto_ids": [
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S25-G20/alt180_mean/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.02033184863,
+     0.09724582842
+    ],
+    "CR_total": [
+     1.084663041,
+     5.18786845
+    ],
+    "CR_O": [
+     1.069875453,
+     3.459135733
+    ],
+    "P_compressor_el_W": [
+     8.829956299,
+     15.81147674
+    ],
+    "m_compressor_kg": [
+     2.836417156,
+     12.56850294
+    ],
+    "T_compressor_K": [
+     314.8274918,
+     332.1743706
+    ],
+    "S_turbo_m3_s": [
+     12.98004362,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.3466325524,
+     0.5211136404
+    ],
+    "x_O_delivered_flow": [
+     0.5283163613,
+     0.5283163613
+    ]
+   },
+   "reference_setpoint_Pa": 0.2,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 10.66959588,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.01874485241,
+      "CR_active": 1.0,
+      "P_el_W": 10.73520428,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 10.66959588,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.08810313574,
+      "CR_active": 4.70012427,
+      "P_el_W": 15.56544207,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 10.66959588,
+     "size_for": {
+      "sized": true,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.2477113854,
+      "CR_active": 13.21490188,
+      "P_el_W": 26.47889526,
+      "mass_kg": 12.58003364,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S25-G20/alt180_high",
+   "inlet": {
+    "record_id": "DC-S25-G20/alt180_high",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 8.765232325e-07,
+     "N2": 1.136741581e-06,
+     "O2": 4.36219648e-08
+    },
+    "p_total_Pa": 0.02416022465,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S25-G20/cases/alt180_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 180.0,
+     "solar_level": "high",
+     "setpoint_Pa": 0.2,
+     "CR_required_upper_bound_flow_basis": 8.278068723,
+     "CR_required_self_consistent_backflow": 12.53856964
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 20,
+   "n_rejected": 2140,
+   "rejection_counts": {
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 105,
+    "DRAG_CHANNEL_KNUDSEN_BELOW_FREE_MOLECULAR_LIMIT": 16,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1980,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 495
+   },
+   "pareto_ids": [
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S25-G20/alt180_high/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.02599045899,
+     0.09707692923
+    ],
+    "CR_total": [
+     1.075754028,
+     4.018047458
+    ],
+    "CR_O": [
+     1.063497437,
+     2.762175645
+    ],
+    "P_compressor_el_W": [
+     8.986220272,
+     16.08545611
+    ],
+    "m_compressor_kg": [
+     2.836417156,
+     12.56850294
+    ],
+    "T_compressor_K": [
+     315.2181517,
+     332.9662413
+    ],
+    "S_turbo_m3_s": [
+     12.98004362,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.3878473998,
+     0.5598140118
+    ],
+    "x_O_delivered_flow": [
+     0.5662657543,
+     0.5662657543
+    ]
+   },
+   "reference_setpoint_Pa": 0.2,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 8.278068723,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.02416022465,
+      "CR_active": 1.0,
+      "P_el_W": 11.31341947,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 8.278068723,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.09617134843,
+      "CR_active": 3.980565157,
+      "P_el_W": 16.68999947,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 8.278068723,
+     "size_for": {
+      "sized": true,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.2947055214,
+      "CR_active": 12.1979628,
+      "P_el_W": 30.10900423,
+      "mass_kg": 12.59015665,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S25-G20/alt200_low",
+   "inlet": {
+    "record_id": "DC-S25-G20/alt200_low",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 2.367764127e-07,
+     "N2": 2.775379323e-07,
+     "O2": 2.989563435e-08
+    },
+    "p_total_Pa": 0.006407448874,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S25-G20/cases/alt200_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 200.0,
+     "solar_level": "low",
+     "setpoint_Pa": 0.2,
+     "CR_required_upper_bound_flow_basis": 31.21367083,
+     "CR_required_self_consistent_backflow": 64.63345006
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 24,
+   "n_rejected": 2136,
+   "rejection_counts": {
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 20,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1980,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 265
+   },
+   "pareto_ids": [
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S25-G20/alt200_low/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.00689418746,
+     0.05424249897
+    ],
+    "CR_total": [
+     1.07596449,
+     8.465537539
+    ],
+    "CR_O": [
+     1.063763635,
+     5.095851083
+    ],
+    "P_compressor_el_W": [
+     8.443118239,
+     12.35660805
+    ],
+    "m_compressor_kg": [
+     2.836417156,
+     12.56850294
+    ],
+    "T_compressor_K": [
+     313.8603966,
+     323.5371989
+    ],
+    "S_turbo_m3_s": [
+     12.98004362,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.3473456866,
+     0.5705133002
+    ],
+    "x_O_delivered_flow": [
+     0.577056812,
+     0.577056812
+    ]
+   },
+   "reference_setpoint_Pa": 0.2,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 31.21367083,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.006407448874,
+      "CR_active": 1.0,
+      "P_el_W": 9.336059772,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 31.21367083,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.02567823611,
+      "CR_active": 4.007560048,
+      "P_el_W": 10.65931964,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 31.21367083,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.07837702532,
+      "CR_active": 12.23217334,
+      "P_el_W": 14.19250885,
+      "mass_kg": 12.56850294,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S25-G20/alt200_mean",
+   "inlet": {
+    "record_id": "DC-S25-G20/alt200_mean",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 3.908526205e-07,
+     "N2": 4.304617481e-07,
+     "O2": 2.676219564e-08
+    },
+    "p_total_Pa": 0.01007417906,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S25-G20/cases/alt200_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 200.0,
+     "solar_level": "mean",
+     "setpoint_Pa": 0.2,
+     "CR_required_upper_bound_flow_basis": 19.85273429,
+     "CR_required_self_consistent_backflow": 30.27961361
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 24,
+   "n_rejected": 2136,
+   "rejection_counts": {
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 40,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1980,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 330
+   },
+   "pareto_ids": [
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S25-G20/alt200_mean/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.01077909663,
+     0.08018107051
+    ],
+    "CR_total": [
+     1.069972706,
+     7.959067437
+    ],
+    "CR_O": [
+     1.059371135,
+     4.948484647
+    ],
+    "P_compressor_el_W": [
+     8.551722259,
+     14.33544958
+    ],
+    "m_compressor_kg": [
+     2.836417156,
+     12.56850294
+    ],
+    "T_compressor_K": [
+     314.1319067,
+     328.4843027
+    ],
+    "S_turbo_m3_s": [
+     12.98004362,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.373724418,
+     0.5951597835
+    ],
+    "x_O_delivered_flow": [
+     0.601115797,
+     0.601115797
+    ]
+   },
+   "reference_setpoint_Pa": 0.2,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 19.85273429,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.01007417906,
+      "CR_active": 1.0,
+      "P_el_W": 9.734712537,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 19.85273429,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.03564893951,
+      "CR_active": 3.538644617,
+      "P_el_W": 11.65924398,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 19.85273429,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.1162571285,
+      "CR_active": 11.54010941,
+      "P_el_W": 17.03996904,
+      "mass_kg": 12.56850294,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S25-G20/alt200_high",
+   "inlet": {
+    "record_id": "DC-S25-G20/alt200_high",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 5.736168874e-07,
+     "N2": 5.79566915e-07,
+     "O2": 1.880496266e-08
+    },
+    "p_total_Pa": 0.01405222348,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S25-G20/cases/alt200_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 200.0,
+     "solar_level": "high",
+     "setpoint_Pa": 0.2,
+     "CR_required_upper_bound_flow_basis": 14.23262307,
+     "CR_required_self_consistent_backflow": 26.11885995
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 23,
+   "n_rejected": 2137,
+   "rejection_counts": {
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 40,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1980,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 370
+   },
+   "pareto_ids": [
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.25",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S25-G20/alt200_high/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.01495125591,
+     0.07888003671
+    ],
+    "CR_total": [
+     1.063977948,
+     5.613349149
+    ],
+    "CR_O": [
+     1.054891013,
+     3.765969423
+    ],
+    "P_compressor_el_W": [
+     8.667088242,
+     14.49763207
+    ],
+    "m_compressor_kg": [
+     2.836417156,
+     12.56850294
+    ],
+    "T_compressor_K": [
+     314.4203216,
+     328.8618425
+    ],
+    "S_turbo_m3_s": [
+     12.98004362,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.4209479931,
+     0.6220932038
+    ],
+    "x_O_delivered_flow": [
+     0.6274519765,
+     0.6274519765
+    ]
+   },
+   "reference_setpoint_Pa": 0.2,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 14.23262307,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.01405222348,
+      "CR_active": 1.0,
+      "P_el_W": 10.16051627,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 14.23262307,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.0434139209,
+      "CR_active": 3.089469859,
+      "P_el_W": 12.58163198,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 14.23262307,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.1527871681,
+      "CR_active": 10.87281087,
+      "P_el_W": 19.83458474,
+      "mass_kg": 12.56850294,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S25-G20/alt230_low",
+   "inlet": {
+    "record_id": "DC-S25-G20/alt230_low",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 1.094558155e-07,
+     "N2": 7.622063216e-08,
+     "O2": 6.902004642e-09
+    },
+    "p_total_Pa": 0.002366924925,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S25-G20/cases/alt230_low (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 230.0,
+     "solar_level": "low",
+     "setpoint_Pa": 0.2,
+     "CR_required_upper_bound_flow_basis": 84.49782157,
+     "CR_required_self_consistent_backflow": 152.280439
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 24,
+   "n_rejected": 2136,
+   "rejection_counts": {
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1980,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 120
+   },
+   "pareto_ids": [
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S25-G20/alt230_low/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.002489983752,
+     0.015434806
+    ],
+    "CR_total": [
+     1.051991014,
+     6.521037419
+    ],
+    "CR_O": [
+     1.045791226,
+     4.492853952
+    ],
+    "P_compressor_el_W": [
+     8.316276353,
+     9.550720271
+    ],
+    "m_compressor_kg": [
+     2.836417156,
+     12.56850294
+    ],
+    "T_compressor_K": [
+     313.5432919,
+     316.5224794
+    ],
+    "S_turbo_m3_s": [
+     12.98004362,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.481976726,
+     0.6954476006
+    ],
+    "x_O_delivered_flow": [
+     0.6995704384,
+     0.6995704384
+    ]
+   },
+   "reference_setpoint_Pa": 0.2,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 84.49782157,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.002366924925,
+      "CR_active": 1.0,
+      "P_el_W": 8.877351861,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 84.49782157,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.005340427402,
+      "CR_active": 2.256272409,
+      "P_el_W": 9.058676915,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 84.49782157,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.02265680654,
+      "CR_active": 9.572253984,
+      "P_el_W": 10.15168656,
+      "mass_kg": 12.56850294,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S25-G20/alt230_mean",
+   "inlet": {
+    "record_id": "DC-S25-G20/alt230_mean",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 2.098922615e-07,
+     "N2": 1.548490405e-07,
+     "O2": 8.238068615e-09
+    },
+    "p_total_Pa": 0.004579924164,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S25-G20/cases/alt230_mean (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 230.0,
+     "solar_level": "mean",
+     "setpoint_Pa": 0.2,
+     "CR_required_upper_bound_flow_basis": 43.66884534,
+     "CR_required_self_consistent_backflow": 67.11822042
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 24,
+   "n_rejected": 2136,
+   "rejection_counts": {
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1980,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 215
+   },
+   "pareto_ids": [
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U1-D0-Ti6Al4V-H0.75",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S25-G20/alt230_mean/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.0048208096,
+     0.0300201887
+    ],
+    "CR_total": [
+     1.052595944,
+     6.554734887
+    ],
+    "CR_O": [
+     1.04626895,
+     4.508886526
+    ],
+    "P_compressor_el_W": [
+     8.380843666,
+     10.6786755
+    ],
+    "m_compressor_kg": [
+     2.836417156,
+     12.56850294
+    ],
+    "T_compressor_K": [
+     313.7047102,
+     319.3423675
+    ],
+    "S_turbo_m3_s": [
+     12.98004362,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.4772865614,
+     0.6896961035
+    ],
+    "x_O_delivered_flow": [
+     0.6938668315,
+     0.6938668315
+    ]
+   },
+   "reference_setpoint_Pa": 0.2,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 43.66884534,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.004579924164,
+      "CR_active": 1.0,
+      "P_el_W": 9.11507434,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 43.66884534,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.01050456179,
+      "CR_active": 2.293610421,
+      "P_el_W": 9.615645991,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 43.66884534,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.04403051983,
+      "CR_active": 9.613809805,
+      "P_el_W": 11.77321527,
+      "mass_kg": 12.56850294,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    }
+   ]
+  },
+  {
+   "case": "DC-S25-G20/alt230_high",
+   "inlet": {
+    "record_id": "DC-S25-G20/alt230_high",
+    "label": "PARAMETRIC_SENSITIVITY",
+    "mdot_kgps": {
+     "O": 3.322333979e-07,
+     "N2": 2.380422185e-07,
+     "O2": 6.587260181e-09
+    },
+    "p_total_Pa": 0.007115737314,
+    "T_K": 350.0,
+    "source": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json#requirement_envelope/DC-S25-G20/cases/alt230_high (forward_flow_to_compressor_kgps x w_s_inlet, p_passive_Pa, T_plenum_K)",
+    "evidence_class": "model-derived",
+    "status": "PROPOSED (candidate-conditional); model-derived (from assumed design inputs and cited model forms); PARAMETRIC_SENSITIVITY inlet (down-selection envelope, not the F1/F2 records)",
+    "p_species_Pa": null,
+    "extra": {
+     "altitude_km": 230.0,
+     "solar_level": "high",
+     "setpoint_Pa": 0.2,
+     "CR_required_upper_bound_flow_basis": 28.1067149,
+     "CR_required_self_consistent_backflow": 55.33582602
+    }
+   },
+   "label": "PARAMETRIC_SENSITIVITY",
+   "status": "EVALUATED",
+   "n_designs": 2160,
+   "n_feasible": 24,
+   "n_rejected": 2136,
+   "rejection_counts": {
+    "COMPRESSOR_TEMPERATURE_ABOVE_MATERIAL_SERVICE_LIMIT": 20,
+    "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY": 1980,
+    "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR": 1140,
+    "STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN": 235
+   },
+   "pareto_ids": [
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_with_S_ids": [
+    "T1-A2-U1-D0-Ti6Al4V-H0.75",
+    "T1-A2-U2-D0-Ti6Al4V-H0.5",
+    "T2-A2-U1-D0-Ti6Al4V-H0.75",
+    "T2-A2-U2-D0-Ti6Al4V-H0.25",
+    "T2-A2-U2-D0-Ti6Al4V-H0.5",
+    "T3-A2-U2-D0-Ti6Al4V-H0.25",
+    "T3-A2-U2-D0-Ti6Al4V-H0.5",
+    "T4-A2-U1-D0-Ti6Al4V-H0.75",
+    "T4-A2-U2-D0-Ti6Al4V-H0.25",
+    "T4-A2-U2-D0-Ti6Al4V-H0.5",
+    "T5-A2-U1-D0-Ti6Al4V-H0.75",
+    "T5-A2-U2-D0-Ti6Al4V-H0.25",
+    "T5-A2-U2-D0-Ti6Al4V-H0.5",
+    "T6-A2-U1-D0-Ti6Al4V-H0.75",
+    "T6-A2-U2-D0-Ti6Al4V-H0.25",
+    "T6-A2-U2-D0-Ti6Al4V-H0.5"
+   ],
+   "pareto_records_in": "f3_compressor_designs_v1.json#cases/DC-S25-G20/alt230_high/feasible (ids above)",
+   "front_ranges": {
+    "P_out_Pa": [
+     0.007472710671,
+     0.04527082782
+    ],
+    "CR_total": [
+     1.050166742,
+     6.362071254
+    ],
+    "CR_O": [
+     1.044351282,
+     4.444542751
+    ],
+    "P_compressor_el_W": [
+     8.453711165,
+     11.88170608
+    ],
+    "m_compressor_kg": [
+     2.836417156,
+     12.56850294
+    ],
+    "T_compressor_K": [
+     313.8868789,
+     322.3499439
+    ],
+    "S_turbo_m3_s": [
+     12.98004362,
+     14.19821927
+    ],
+    "x_O_out_partial_pressure": [
+     0.4921898696,
+     0.7006527337
+    ],
+    "x_O_delivered_flow": [
+     0.7045543117,
+     0.7045543117
+    ]
+   },
+   "reference_setpoint_Pa": 0.2,
+   "reference_setpoint_status": "PROPOSED (W1 setpoint ladder; informational, not a gate)",
+   "n_feasible_reaching_reference_setpoint": 0,
+   "size_for_comparison": [
+    {
+     "a_turbo_m2": 0.1128299365,
+     "material": "Ti6Al4V",
+     "cr_target": 28.1067149,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 15880.0,
+      "p_out_Pa": 0.007115737314,
+      "CR_active": 1.0,
+      "P_el_W": 9.384374868,
+      "mass_kg": 7.488490357,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR",
+      "GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.1963495408,
+     "material": "Ti6Al4V",
+     "cr_target": 28.1067149,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 12038.0,
+      "p_out_Pa": 0.01516101584,
+      "CR_active": 2.130631749,
+      "P_el_W": 10.1866191,
+      "mass_kg": 10.90721503,
+      "rotor_ok_uncited_db_yield": false,
+      "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
+     },
+     "gate_status": "REJECTED",
+     "gate_reasons": [
+      "ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR"
+     ],
+     "on_front": false,
+     "dominated_by_front": null
+    },
+    {
+     "a_turbo_m2": 0.2369348826,
+     "material": "Ti6Al4V",
+     "cr_target": 28.1067149,
+     "size_for": {
+      "sized": false,
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 10958.0,
+      "p_out_Pa": 0.06650611595,
+      "CR_active": 9.346342202,
+      "P_el_W": 13.50104913,
+      "mass_kg": 12.56850294,
       "rotor_ok_uncited_db_yield": false,
       "objective": "mass + 0.02 x P_el (size_for's hard-coded scalar)"
      },
@@ -3011,7 +7019,7 @@
  "findings": [
   {
    "id": "F3-01",
-   "finding": "no design with drag stages is feasible: 15552 of 15552 drag-stage design evaluations have an unclipped Gaede K < 1 (throughput above the stage capacity S0 p at the code-default channel h, w, L, xi; since A9.9 S2.5 / MCC-02 the module reports the unclipped K and flags the stage OUT_OF_MODEL_DOMAIN_STAGE_CAPACITY instead of silently using K = 1). Feasible drag-stage designs: 0. Agrees with the down-selection drag-only probe (S_required / S0 ~ 1e3)",
+   "finding": "no design with drag stages is feasible: 46656 of 46656 drag-stage design evaluations have an unclipped Gaede K < 1 (throughput above the stage capacity S0 p at the code-default channel h, w, L, xi; since A9.9 S2.5 / MCC-02 the module reports the unclipped K and flags the stage OUT_OF_MODEL_DOMAIN_STAGE_CAPACITY instead of silently using K = 1). Feasible drag-stage designs: 0. Agrees with the down-selection drag-only probe (S_required / S0 ~ 1e3)",
    "evidence_class": "model-derived (from assumed code-default coefficients)"
   },
   {
@@ -3021,22 +7029,22 @@
   },
   {
    "id": "F3-03",
-   "finding": "evidence domain: every stage outlet is capped at 0.1 Pa (free-molecular, Chiggiato Sec. 4.1.2 / CD-04). Cases where a feasible design reaches the PROPOSED W1 setpoint: 8 of 9; PROPOSED setpoints above the domain: [] Pa (cannot be evaluated by this model at all; needs T-1 data or a transitional-regime model)",
+   "finding": "evidence domain: every stage outlet is capped at 0.1 Pa (free-molecular, Chiggiato Sec. 4.1.2 / CD-04). Cases where a feasible design reaches the PROPOSED W1 setpoint: 9 of 27; PROPOSED setpoints above the domain: [0.2] Pa (cannot be evaluated by this model at all; needs T-1 data or a transitional-regime model)",
    "evidence_class": "inferred"
   },
   {
    "id": "F3-04",
-   "finding": "mdot_delivered is invariant across converged designs at a fixed inlet record (DragCompressor.run delivers the captured flow in steady state), so it does not discriminate designs; the compressor's effect on delivered flow enters through the inlet pumping speed S_turbo and the plenum backflow (F1/F4 coupling), reported as a secondary Pareto objective. The delivered-flow composition equals the inlet composition; the outlet PARTIAL-PRESSURE composition is O-depleted (x_O [0.31431459698894554, 0.7039371130412178] on the fronts vs delivered-flow x_O [0.48309201980918165, 0.7045543116607601])",
+   "finding": "mdot_delivered is invariant across converged designs at a fixed inlet record (DragCompressor.run delivers the captured flow in steady state), so it does not discriminate designs; the compressor's effect on delivered flow enters through the inlet pumping speed S_turbo and the plenum backflow (F1/F4 coupling), reported as a secondary Pareto objective. The delivered-flow composition equals the inlet composition; the outlet PARTIAL-PRESSURE composition is O-depleted (x_O [0.28372686883217557, 0.7039371130412178] on the fronts vs delivered-flow x_O [0.48309201980918165, 0.7045543116607601])",
    "evidence_class": "model-derived (from assumed code-default coefficients)"
   },
   {
    "id": "F3-05",
-   "finding": "Pareto fronts (all cases): P_out [0.002389349692287779, 0.09893078632703001] Pa, P_compressor (electrical, eta_motor 0.8 code default) [8.213360720364031, 12.958674535577627] W, m_compressor [1.9897483927903004, 10.907215025495107] kg vs the owner v0 allocation 5.5 kg (allocation, not CBE), T_compressor [313.3370522600607, 324.9884028634689] K. PARAMETRIC_SENSITIVITY values under uncited coefficients: not a CBE, not a design value",
+   "finding": "Pareto fronts (all cases): P_out [0.0022512047637562893, 0.09898771633427174] Pa, P_compressor (electrical, eta_motor 0.8 code default) [8.213360720364031, 16.085456109196443] W, m_compressor [1.9897483927903004, 12.56850293644232] kg vs the owner v0 allocation 5.5 kg (allocation, not CBE), T_compressor [313.3370522600607, 332.9662413054484] K. PARAMETRIC_SENSITIVITY values under uncited coefficients: not a CBE, not a design value",
    "evidence_class": "model-derived (from assumed code-default coefficients)"
   },
   {
    "id": "F3-06",
-   "finding": "size_for() consistency check (27 calls = 9 cases x 3 A_turbo): sized=23; rejected by this module's gates=21 (reasons {'ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR': 21}); on the synthesis front=6; feasible but dominated=0. size_for optimises the scalar mass + 0.02 P_el, checks only rotor_ok with an uncited yield, and applies no convergence, clipping or domain gate",
+   "finding": "size_for() consistency check (81 calls = 27 cases x 3 A_turbo): sized=36; rejected by this module's gates=73 (reasons {'GAEDE_CHARACTERISTIC_CLIPPED_THROUGHPUT_ABOVE_STAGE_CAPACITY': 18, 'ROTOR_STRESS_ABOVE_CITED_ALLOWABLE_WITH_SAFETY_FACTOR': 73, 'STAGE_PRESSURE_OUTSIDE_FREE_MOLECULAR_DOMAIN': 13}); on the synthesis front=6; feasible but dominated=1. size_for optimises the scalar mass + 0.02 P_el, checks only rotor_ok with an uncited yield, and applies no convergence, clipping or domain gate",
    "evidence_class": "model-derived"
   },
   {
@@ -3104,7 +7112,7 @@
    "direction": "provides",
    "counterpart": "F0 (fo_a9_7_f0_profiling)",
    "path": "docs/performance/PERFORMANCE_BASELINE_98fbbb9.json",
-   "what": "compressor design-space search workload: 2160 designs x 9 inlets via `python docs/design_synthesis/f3_compressor/build_f3_compressor.py` (a few CPU seconds); size_for comparison 27 calls",
+   "what": "compressor design-space search workload: 2160 designs x 27 inlets via `python docs/design_synthesis/f3_compressor/build_f3_compressor.py` (a few CPU seconds); size_for comparison 81 calls",
    "status": "AVAILABLE"
   },
   {
@@ -3129,45 +7137,25 @@
    "id": "OQ-F3-01",
    "question": "Safety factor and allowable basis for the compressor rotor: the module uses an uncited factor 2.0; the only cited allowable accessed is the Ti-6Al-4V annealed-plate A-basis Fty 827 MPa (MMPDS-06 via NASA-HDBK-6025, room temperature). Which factor and which product-form / temperature allowable govern?",
    "proposed_answer": "none proposed (design-policy decision)",
-   "needed_by": "any F3 result used beyond PARAMETRIC_SENSITIVITY",
-   "status_as_raised": "TBD_OWNER",
-   "status": "ANSWERED (A9.9 S2.3, decision code REGISTERED_ROTOR_STRENGTH_BASIS_FAIL_CLOSED)",
-   "owner_decision": "A9.9 S2.3",
-   "decision_code": "REGISTERED_ROTOR_STRENGTH_BASIS_FAIL_CLOSED",
-   "owner_state_source": "docs/budgets/owner_decisions/owner_questions_state_v5.json rows[id=OQ-F3-01]"
+   "needed_by": "any F3 result used beyond PARAMETRIC_SENSITIVITY"
   },
   {
    "id": "OQ-F3-02",
    "question": "Turbo-stage geometry definition: hub ratio / blade span relating R_turbo to A_turbo (the search uses the zero-hub limit R = sqrt(A/pi))?",
    "proposed_answer": "none proposed",
-   "needed_by": "F7 coupled vector",
-   "status_as_raised": "TBD_OWNER",
-   "status": "ANSWERED (A9.13 S6.7, decision code EXPLICIT_HUB_RATIO)",
-   "owner_decision": "A9.13 S6.7",
-   "decision_code": "EXPLICIT_HUB_RATIO",
-   "owner_state_source": "docs/budgets/owner_decisions/owner_questions_state_v5.json rows[id=OQ-F3-02]"
+   "needed_by": "F7 coupled vector"
   },
   {
    "id": "OQ-F3-03",
    "question": "The free-molecular domain caps every stage at 0.1 Pa while W1 PROPOSED setpoints reach 0.2 Pa: wait for T-1 data, or commission an open-literature transitional-regime stage model before any outlet above 0.1 Pa is evaluated?",
    "proposed_answer": "wait for T-1 (no extrapolation meanwhile)",
-   "needed_by": "F4 plenum/feed closure",
-   "status_as_raised": "TBD_OWNER",
-   "status": "ANSWERED (A9.13 S6.8, decision code MODEL_AND_TEST_PARALLEL_FAIL_CLOSED)",
-   "owner_decision": "A9.13 S6.8",
-   "decision_code": "MODEL_AND_TEST_PARALLEL_FAIL_CLOSED",
-   "owner_state_source": "docs/budgets/owner_decisions/owner_questions_state_v5.json rows[id=OQ-F3-03]"
+   "needed_by": "F4 plenum/feed closure"
   },
   {
    "id": "OQ-F3-04",
    "question": "Re-admit aluminium-alloy or CFRP rotors to the search once a cited allowable is supplied (CFRP also subject to the AO policy OD-C3)?",
    "proposed_answer": "only with a cited A/B-basis allowable and an AO disposition",
-   "needed_by": "next F3 revision",
-   "status_as_raised": "TBD_OWNER",
-   "status": "ANSWERED (A9.13 S6.9, decision code YES_VIA_S2_3_GATE)",
-   "owner_decision": "A9.13 S6.9",
-   "decision_code": "YES_VIA_S2_3_GATE",
-   "owner_state_source": "docs/budgets/owner_decisions/owner_questions_state_v5.json rows[id=OQ-F3-04]"
+   "needed_by": "next F3 revision"
   }
  ],
  "m16_impact": [

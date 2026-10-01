@@ -148,8 +148,8 @@ SOURCES = {
                 "quotation of a design-allowables handbook",
     },
     "SRC-DOWNSELECT": {
-        "citation": "repository: docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json "
-                    "(DI-1.4 compressor down-selection v1)",
+        "citation": "repository: docs/architecture_comparison/compressor_downselect/compressor_downselect_v2.json "
+                    "(DI-1.4 compressor down-selection, v2 = A9.16 regeneration; v1 kept as history)",
         "access_level": "repository",
         "note": "requirement envelope (W1 feed-state closure cases), CD-01..CD-08, EV-01..EV-20, T-1..T-9",
     },
@@ -196,8 +196,8 @@ SIZE_FOR_MAX_TURBO_ROWS = 6         # DragCompressor.size_for(max_turbo_rows=6) 
 SIZE_FOR_MAX_DRAG_STAGES = 4        # DragCompressor.size_for(max_drag_stages=4) default
 OWNER_MASS_ALLOCATION_KG = 5.5      # row 54 (allocation, not CBE)
 LI2015_INLET_DIAMETER_M = 0.5       # reconstructed, verify (R1 thread)
-# compressor_downselect_v1.json requirement_summary.A_inlet_min_m2["0.25"] (min, max): PROPOSED b = 0.25 target
-A_INLET_MIN_B025_RANGE_M2 = (0.1128299365, 0.1137287437)   # re-pinned after the W1 S6.8 domain gate (only DC-S12-G20 closes in domain)
+# compressor_downselect_v2.json requirement_summary.A_inlet_min_m2["0.25"] (min, max): PROPOSED b = 0.25 target
+A_INLET_MIN_B025_RANGE_M2 = (0.1128299365, 0.2369348826)
 
 CITED_VALUES = [
     _p("P-MOLECULAR-LIMIT", P_MOLECULAR_LIMIT_PA, "Pa",
@@ -237,8 +237,7 @@ CITED_VALUES = [
        "module's lumped compressor temperature", "SRC-MATERIALS-PY", "assumed", "UNCITED_DB_PRIOR (verify)"),
     _p("P-STRESS-SAFETY", DragCompressor.stress_safety, "-", "safety factor on the allowable (DragCompressor."
        "stress_safety code default); the flight factor is an owner/design-policy decision",
-       "SRC-COMPRESSOR-PY", "assumed", "CODE_DEFAULT_UNCITED; LEGACY_PARAMETRIC_SENSITIVITY only (A9.9 S2.3 / "
-       "OQ-F3-01: flight rotor acceptance only through a registered strength basis, rotor_strength.qualify_rotor)"),
+       "SRC-COMPRESSOR-PY", "assumed", "CODE_DEFAULT_UNCITED; TBD_OWNER for flight"),
     _p("P-RPM-SEARCH-MIN", RPM_SEARCH_MIN, "rpm", "lower end of the size_for rpm search (range(5000, ...)); used as the "
        "lower end of the tip-speed range", "SRC-COMPRESSOR-PY", "assumed", "MODULE_LIMIT"),
     _p("P-RECIRC-RTOL", RECIRC_RTOL, "-", "DragCompressor.run leak-recirculation fixed-point stopping criterion; a "
@@ -251,7 +250,7 @@ CITED_VALUES = [
        "via search-engine excerpts only); one A_turbo grid point = pi (D/2)^2", "SRC-R1-THREAD (LI2015)",
        "reconstructed", "VERIFY (first-hand text not accessed)"),
     _p("P-A-INLET-MIN-RANGE", list(A_INLET_MIN_B025_RANGE_M2), "m^2", "minimum inlet area for the PROPOSED backflow "
-       "target b = 0.25 over the W1 candidate-cases (in-domain closures, A9.13 S6.8), max(2S/u_ref, 4S/c_bar) (compressor_downselect CD-02); ends of "
+       "target b = 0.25 over the 36 W1 candidate-cases, max(2S/u_ref, 4S/c_bar) (compressor_downselect CD-02); ends of "
        "the A_turbo search range", "SRC-DOWNSELECT requirement_summary.A_inlet_min_m2['0.25']",
        "model-derived", "PROPOSED-DERIVED (from PROPOSED b and W1 inputs)"),
 ]

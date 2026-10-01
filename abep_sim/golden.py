@@ -129,6 +129,24 @@ ADMISSIBILITY_CRITERIA = (
     "close_architecture at that single gas point returns a closed design: status / evidence_class in {OK, "
     "PARAMETRIC_SENSITIVITY}, closes_constraints True, |ledger_resid| < 0.02 (gate 4)",
 )
+# PHY-06 repair: A9.18 item 1 asks for a golden point "inside the registered model domain". The 0-D Hall calibration
+# envelope (archengine.CALIBRATION / calibration_status: Marchioni & Cappelli 2021 N2 extended channel, SPT-100 Xe) is
+# NOT an admissibility criterion here; it is recorded for every closed grid point (hall_calibration,
+# hall_calibration_extrapolation) and never silent.
+HALL_CALIBRATION_DOMAIN = {
+    "criterion": "0-D Hall calibration envelope (archengine.CALIBRATION['hall'], calibration_status)",
+    "status": "RECORDED_NOT_GATING_OWNER_CONFIRMATION_REQUESTED",
+    "statement": ("The 0-D Hall closure and its calibration envelope are withdrawn (CLAUDE.md 'Superseded / withdrawn': "
+                  "all absolute Hall results of the 0-D closure, incl. the Marchioni calibration on an invented "
+                  "geometry). This golden is a reproducibility reference of a converged numerical state, not physics "
+                  "evidence, so the withdrawn envelope is not treated as part of the 'registered model domain' of A9.18 "
+                  "item 1 for golden purposes. The selected point carries calibration = 'extrapolation' (worst relative "
+                  "excursion recorded in cases.architecture_closure and in the grid scan); every closed point of the "
+                  "default grid is an extrapolation (provenance.full_grid_scan). If the owner rules the envelope part "
+                  "of the registered domain, SELECTION_RULE finds no admissible point and the golden must be re-decided; "
+                  "it is never re-picked silently."),
+    "basis": "docs/decisions/OD_2026_10_01_A9_18_GOLDEN_AND_BASELINE_OWNER_DECISIONS.md item 1; CLAUDE.md withdrawn list",
+}
 ROTOR_LABEL = ("comp_rotor_qualification = NOT_EVALUATED_MATERIAL_BASIS, comp_sizing_mode = PARAMETRIC_SENSITIVITY, "
                "architecture status / evidence_class = PARAMETRIC_SENSITIVITY, feasible False. A9.9 S2.3 allows a rotor "
                "to be explored as PARAMETRIC_SENSITIVITY while no rotor-strength basis is registered; it forbids only a "
@@ -192,6 +210,8 @@ def admissibility(area: float, p_level: float) -> dict:
     out["closure_status"] = c.get("status")
     closed = (c.get("status") in ("OK", "PARAMETRIC_SENSITIVITY") and c.get("evidence_class") == c.get("status")
               and c.get("closes_constraints") is True and abs(c.get("ledger_resid", 1.0)) < 0.02)
+    # recorded, never gating (HALL_CALIBRATION_DOMAIN)
+    out["hall_calibration"] = c.get("calibration"); out["hall_calibration_extrapolation"] = c.get("extrapolation")
     if not closed:
         return {**out, "verdict": f"CLOSURE_{c.get('status')}", "admissible": False, "reason": str(c.get("reason", ""))}
     return {**out, "verdict": "ADMISSIBLE", "admissible": True, "reason": ""}
@@ -217,7 +237,11 @@ def case_design_point_selection():
     _, visited = select_design_point()
     return {"rule_id": SELECTION_RULE["id"], "grid_area_m2": {str(i): float(a) for i, a in enumerate(DEFAULT_GAS_GRID["area"])},
             "grid_p_level_Pa": {str(i): float(p) for i, p in enumerate(DEFAULT_GAS_GRID["p_level"])},
-            "visited": {f"A{v['area']}_p{v['p_level']}": {"verdict": v["verdict"], "admissible": v["admissible"]} for v in visited},
+            "visited": {f"A{v['area']}_p{v['p_level']}": {"verdict": v["verdict"], "admissible": v["admissible"],
+                                                          **({"hall_calibration": v["hall_calibration"]}
+                                                             if v.get("hall_calibration") is not None else {})}
+                        for v in visited},
+            "hall_calibration_domain_status": HALL_CALIBRATION_DOMAIN["status"],
             "selected": _flt({"area_m2": visited[-1]["area"], "p_level_Pa": visited[-1]["p_level"]}) if visited[-1]["admissible"] else {}}
 
 
@@ -411,6 +435,7 @@ def _provenance(full_scan: list) -> dict:
                         "scipy": scipy.__version__},
         "selection_rule": SELECTION_RULE,
         "admissibility_criteria": list(ADMISSIBILITY_CRITERIA),
+        "hall_calibration_domain": HALL_CALIBRATION_DOMAIN,
         "selected_design_point": {"area_m2": GOLDEN_DESIGN_POINT["area"], "p_level_Pa": GOLDEN_DESIGN_POINT["p_level"]},
         "previous_design_point": {"area_m2": V1_DESIGN_POINT["area"], "p_level_Pa": V1_DESIGN_POINT["p_level"],
                                   "status": "MODEL_NOT_CONVERGED (orifice setpoint unbracketed; Gaede OUT_OF_MODEL_DOMAIN)"},
