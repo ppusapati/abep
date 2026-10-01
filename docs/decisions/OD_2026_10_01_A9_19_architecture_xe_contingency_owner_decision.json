@@ -1,0 +1,39 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_10_01_A9_19_architecture_xe_contingency_owner_decision",
+ "decided_by": "owner",
+ "date": "2026-10-01",
+ "decision": "A9_19_SINGLE_HALL_ICP_NEUTRALIZER_NO_HOLLOW_CATHODE_XE_CONTINGENCY",
+ "parents": [
+  "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json"
+ ],
+ "verbatim": {
+  "path": "docs/decisions/OD_2026_10_01_A9_19_ARCHITECTURE_XE_CONTINGENCY_OWNER_DECISION.md",
+  "sha256": "d3eae1d65f9b679a8538ce4a7c701a40a3f5d3b07d72baae944b685256931749"
+ },
+ "architecture": {
+  "hall_accelerators": 1,
+  "electron_source_neutralizer": "one RF/ICP electron-source/neutralizer (cathodeless/electrodeless) for both atmospheric gases and xenon",
+  "propellant_supply_modes": [
+   "ambient atmospheric propellant (primary)",
+   "xenon (contingency / emergency)"
+  ],
+  "conventional_hollow_cathode": "NONE in the thruster architecture"
+ },
+ "xenon_role": "CONTINGENCY_AND_EMERGENCY - not a parallel/co-equal propellant; Xe capability is retained (the RFP requires the capability and describes the Xe input as 'an extra input system to take care any problems on board unforeseen problems', RFP-P17-05, with separate tanks RFP-P18-08), but its role is contingency",
+ "amends": {
+  "A9.15": "the statements 'Xenon is an RFP-required system capability, not merely a contingency' and S9.10 'should not be weakened into a contingency interpretation' are superseded on the ROLE of Xe: Xe capability stays required (two separate supply modes/tanks), Xe is the contingency/emergency mode",
+  "A9.14 S8.33 MPQ-01 / S8.17 OQ-A907-07": "no C1 flight variant: the flight architecture has no conventional hollow cathode; AL-C1 and C1 Xe/electronics bookings are removed from the flight architecture",
+  "A9 C1 CONTROL_FALLBACK": "C1 is not a flight fallback; hall_c1_reference is no longer a candidate flight configuration (its ground/laboratory role is an open recorder question to the owner)"
+ },
+ "owner_request": "check C1 mass",
+ "recorder_notes": [
+  "open to owner: whether C1 remains as a GROUND-ONLY laboratory reference (A9 bench control comparison; A9.10 S3.5 I_d,max,H1,Ar characterization with C1) - the decision text addresses the thruster architecture"
+ ],
+ "execution": {
+  "instruction": "apply after the running A9.16 finalize (mass/power + Xe accounting, RVM, RFQ, design-layer configurations, freeze candidate)",
+  "merge": "no merge to main is authorized by this addendum"
+ },
+ "immutability": "never edited after commit; later owner amendments are new addendum files"
+}
