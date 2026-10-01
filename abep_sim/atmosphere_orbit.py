@@ -29,7 +29,7 @@ from ECSS-E-ST-10-04C Rev.1 (15 June 2020) Table 6-3. Scenarios are discrete: th
 Usage (repository checkout only; the data files are not part of the installed package)::
 
     python -m abep_sim.atmosphere_orbit build   # regenerate the .csv.gz + JSON (rule 1: intentional rebuild only)
-    python -m abep_sim.atmosphere_orbit check   # verify hashes and re-run a deterministic subset with pymsis
+    python -m abep_sim.atmosphere_orbit check   # verify hashes; re-run a deterministic subset with pymsis (if installed)
     python -m abep_sim.atmosphere_orbit correct-metadata   # apply ERRATA / storage / labels to the JSON (data untouched)
     python -m abep_sim.atmosphere_orbit design-states-v2   # write the broad-envelope design-state set v2 (A9.17 ORBIT)
 
@@ -590,8 +590,18 @@ def _authority() -> dict:
             "CLAUDE.md rule 1": "versioned rebuild; atmosphere_msis21_v1.* unchanged"}
 
 
+def _pymsis_version():
+    """Installed pymsis version, or None when pymsis is absent (check() then reports the producer re-run NOT_RUN)."""
+    try:
+        import pymsis
+    except ImportError:
+        return None
+    return pymsis.__version__
+
+
 def _metadata(raw: bytes, gz: bytes, n_rows: int) -> dict:
-    import pymsis
+    # build() imports pymsis and refuses any other version before calling this, so the recorded producer version is
+    # always the real one; check() compares only fields that do not depend on pymsis and also runs without it.
     st = storage_fields(raw, gz)
     return {
         "dataset_id": DATASET_ID,
@@ -608,7 +618,7 @@ def _metadata(raw: bytes, gz: bytes, n_rows: int) -> dict:
         "row_order": "scenario (as in scenarios), then doy, alt_km, lat_deg, lon_deg, lst_h (lst fastest)",
         "float_format": FLOAT_FMT,
         "producer": {"model": "NRLMSIS 2.1", "msis_version_argument": MSIS_VERSION, "package": "pymsis",
-                     "pymsis_version": pymsis.__version__, "python": sys.version.split()[0],
+                     "pymsis_version": _pymsis_version(), "python": sys.version.split()[0],
                      "numpy": np.__version__, "call": "pymsis.calculate(dates, lons, lats, alts, f107s, f107as, aps, "
                      "version=2.1) in fly-through mode; default model switches; geomagnetic_activity = 1 (pymsis "
                      "default, msis.py: daily Ap mode, aps[1:] unused); aps given as [Ap]*7",
@@ -1111,6 +1121,48 @@ def _design_v2_record(text: str) -> dict:
             "authority": {"path": A9_17_JSON, "sha256": A9_17_SHA256, "decision_key": "ORBIT"}}
 
 
+# Re-derivation tolerance for the frozen design-state v2 file (A9.17 CI repair, 2026-10-01). design_states_v2() is pure
+# float64 numpy on the frozen dataset, but numpy dispatches its float64 SIMD kernels by CPU (X86_V4 / AVX512 on the build
+# machine vs X86_V3 / AVX2 elsewhere), so the last bits are machine-specific. Measured: with NPY_DISABLE_CPU_FEATURES=
+# X86_V4 on the build machine, 163 floats differ by at most 4.19e-16 relative (1-2 float64 ulps), and under qemu-x86_64
+# (baseline-SSE numpy, non-FMA libm) 1299 floats by at most 1.42e-14; every state id, label, string and the structure
+# are identical. Pass criterion: structure, ids, labels and every non-float value exact;
+# floats within DESIGN_V2_REL_TOL (float64 round-off scale, far below the 1e-9 the v1 design-state check uses). Byte
+# identity is reported. Never widen this to absorb a selection or label change.
+DESIGN_V2_REL_TOL = 1e-12
+
+
+def _design_v2_compare(frozen, fresh) -> dict:
+    """Compare a frozen and a re-derived design-state v2 document: exact except floats (DESIGN_V2_REL_TOL)."""
+    res = {"exact_mismatches": [], "floats_differing": 0, "max_abs_rel_diff": 0.0}
+
+    def walk(a, b, path):
+        if isinstance(a, dict) and isinstance(b, dict):
+            if list(a) != list(b):
+                res["exact_mismatches"].append(f"{path}: keys differ")
+                return
+            for k in a:
+                walk(a[k], b[k], f"{path}.{k}")
+        elif isinstance(a, list) and isinstance(b, list):
+            if len(a) != len(b):
+                res["exact_mismatches"].append(f"{path}: length {len(a)} != {len(b)}")
+                return
+            for i, (x, y) in enumerate(zip(a, b)):
+                walk(x, y, f"{path}[{i}]")
+        elif isinstance(a, float) and isinstance(b, float):
+            if a != b:
+                res["floats_differing"] += 1
+                d = abs(a - b) / max(abs(a), abs(b)) if math.isfinite(a) and math.isfinite(b) else float("inf")
+                res["max_abs_rel_diff"] = max(res["max_abs_rel_diff"], d)
+        elif type(a) is not type(b) or a != b:
+            res["exact_mismatches"].append(f"{path}: {a!r} != {b!r}"[:200])
+
+    walk(frozen, fresh, "")
+    res["ok"] = not res["exact_mismatches"] and res["max_abs_rel_diff"] <= DESIGN_V2_REL_TOL
+    res["rel_tol"] = DESIGN_V2_REL_TOL
+    return res
+
+
 def write_design_states_v2() -> dict:
     """Write the v2 design-state file and record it in the manifest. Deterministic and idempotent; refuses to overwrite
     an existing v2 file whose content differs (that is a new version, CLAUDE.md rule 1). The dataset is not touched."""
@@ -1256,9 +1308,84 @@ def _check_subset_record(raw: bytes) -> dict:
     return {"stride": CHECK_STRIDE, "n_rows": len(idx), "sha256": hashlib.sha256(sub.encode()).hexdigest()}
 
 
+# Producer re-run tolerance (A9.17 CI repair, 2026-10-01). Manifest-independent: a property of the producer, not of the
+# frozen file, and never read from the JSON.
+#
+# Why byte identity is not portable: the PyPI pymsis 0.13.0 wheel (cp311 manylinux_2_27/2_28 x86_64; msis21f .so sha256
+# 3bf5b39c...) evaluates NRLMSIS 2.1 in single precision (the stored values are exact float32 numbers) and forms
+# reciprocals with ``rcpps`` + one Newton step (39 sites; GCC -mrecip code). ``rcpps`` is an approximation whose bits are
+# CPU-implementation specific (Intel vs AMD tables), so the same binary gives outputs that differ by float32 round-off
+# between machines; the exponential altitude profiles amplify that to tens of float32 ulps. The frozen file was built on
+# an Intel Xeon (byte-identical re-run there); the GitHub-hosted runners differ in 812 of 1204 subset rows at FLOAT_FMT.
+#
+# Basis (measured, not assumed): the subset re-run under qemu-x86_64 8.2.2 (TCG computes rcpps as an exact reciprocal: a
+# second, independent rcpps implementation running the identical wheel) differs from the native Intel output by at most
+# 7.69e-6 relative on raw outputs (He/O, 125 float32 ulps; rho/N2/O2/Ar/N <= 3.96e-6, <= 65 ulps; T_K 0), and in 960 of
+# 1204 printed rows. Two CPU implementations each lie within that distance of the exact-reciprocal result, so their mutual
+# difference is bounded by 2 x 7.69e-6; each printed side adds at most half a unit in the 7th significant digit of
+# FLOAT_FMT (5e-7 relative). Tolerance = 2 x 7.69e-6 + 2 x 5e-7 = 1.638e-5, applied to every output column. This is
+# float32 round-off scale (single-precision eps 1.19e-7, conditioned by exp()). Never widen it to absorb a larger
+# difference: a re-run beyond it is a FAIL (a model/package change, not round-off).
+CHECK_RERUN_MEASURED_MAX_REL = 7.69e-6      # qemu exact-rcpps vs native Intel, raw outputs, 1204-row subset
+CHECK_PRINT_HALF_UNIT_REL = 5e-7            # half a unit in the 7th significant digit of FLOAT_FMT (%.6e)
+CHECK_REL_TOL = 2 * CHECK_RERUN_MEASURED_MAX_REL + 2 * CHECK_PRINT_HALF_UNIT_REL   # = 1.638e-5
+CHECK_TOLERANCE_BASIS = ("per output column |a-b|/max(|a|,|b|) <= 2 x 7.69e-6 (measured cross-rcpps difference: qemu "
+                         "exact reciprocal vs native Intel, pymsis 0.13.0 PyPI wheel, float32 NRLMSIS 2.1) + 2 x 5e-7 "
+                         "(FLOAT_FMT %.6e half unit, each side); input columns byte-identical; byte/hash identity of the "
+                         "recomputed subset is reported, not required (rcpps bits are CPU-specific)")
+
+
+def _rel_diff(a: float, b: float) -> float:
+    if a == b:
+        return 0.0
+    if not (math.isfinite(a) and math.isfinite(b)):
+        return float("inf")
+    return abs(a - b) / max(abs(a), abs(b))
+
+
+def _compare_subset(stored: list, regen: list, problems: list) -> dict:
+    """Numerical comparison of recomputed vs frozen subset rows: input columns exact, output columns within
+    CHECK_REL_TOL. Byte identity is reported (informational)."""
+    k = len(OUT_COLS)
+    worst = {c: 0.0 for c in OUT_COLS}
+    n_text_diff = n_input_diff = n_out_of_tol = 0
+    for a, b in zip(stored, regen):
+        if a == b:
+            continue
+        n_text_diff += 1
+        fa, fb = a.split(","), b.split(",")
+        if len(fa) != len(fb) or fa[:-k] != fb[:-k]:
+            n_input_diff += 1
+            continue
+        row_bad = False
+        for c, x, y in zip(OUT_COLS, fa[-k:], fb[-k:]):
+            d = _rel_diff(float(x), float(y))
+            worst[c] = max(worst[c], d)
+            row_bad = row_bad or d > CHECK_REL_TOL
+        n_out_of_tol += row_bad
+    if len(stored) != len(regen):
+        problems.append(f"recomputed subset has {len(regen)} rows, frozen subset {len(stored)}")
+    if n_input_diff:
+        problems.append(f"{n_input_diff} recomputed subset rows differ in their input columns from the frozen file")
+    if n_out_of_tol:
+        problems.append(f"{n_out_of_tol} of {len(stored)} recomputed subset rows differ from the frozen file by more "
+                        f"than CHECK_REL_TOL = {CHECK_REL_TOL:.4g} (max relative {max(worst.values()):.3e})")
+    return {"rows": len(stored), "rows_text_identical": len(stored) - n_text_diff, "rows_text_differing": n_text_diff,
+            "rows_input_differing": n_input_diff, "rows_beyond_tolerance": n_out_of_tol,
+            "max_abs_rel_diff": max(worst.values()),
+            "max_abs_rel_diff_by_column": {c: float(f"{v:.3e}") for c, v in worst.items()},
+            "rel_tol": CHECK_REL_TOL, "tolerance_basis": CHECK_TOLERANCE_BASIS}
+
+
 def check() -> dict:
-    """Verify file hash + metadata, then recompute the deterministic subset with pymsis and compare bytes/hashes."""
-    import pymsis
+    """Verify file hash + metadata from the frozen files (no pymsis needed), then, if pymsis is installed, recompute the
+    deterministic subset and the rho composition regression with it.
+
+    Producer re-run pass criterion: input columns byte-identical and every output column within CHECK_REL_TOL (float32
+    round-off; basis at the constant). Byte / sha256 identity of the recomputed subset is reported as information only
+    (``producer_rerun.subset_sha256_matches_record`` and a note), because the pymsis wheel's rcpps-based float32
+    arithmetic is CPU-specific. Without pymsis the re-run is ``NOT_RUN`` with the reason and the frozen-data checks
+    decide ``ok``."""
     if not (os.path.exists(GZ_PATH) and os.path.exists(JSON_PATH)):
         raise _missing_data_error()
     meta = json.load(open(JSON_PATH))
@@ -1282,8 +1409,9 @@ def check() -> dict:
             problems.append(msg)
         else:   # different zlib build: identity is the uncompressed sha256 (checked above); record, do not fail
             notes.append(f"{msg} (zlib {zlib.ZLIB_VERSION} here vs {cont.get('zlib_version')} recorded)")
-    if pymsis.__version__ != meta["producer"]["pymsis_version"]:
-        problems.append(f"pymsis {pymsis.__version__} != recorded {meta['producer']['pymsis_version']}")
+    pv = _pymsis_version()
+    if pv is not None and pv != meta["producer"]["pymsis_version"]:
+        problems.append(f"pymsis {pv} != recorded {meta['producer']['pymsis_version']}")
     lines = raw.decode().splitlines()
     if lines[0].split(",") != list(COLUMNS):
         problems.append("header mismatch")
@@ -1295,17 +1423,27 @@ def check() -> dict:
     rec = meta["check_subset"]
     if hashlib.sha256(("\n".join(stored) + "\n").encode()).hexdigest() != rec["sha256"]:
         problems.append("stored check-subset hash mismatch")
-    regen = []
-    for line in stored:
-        f = line.split(",")
-        s = f[0]
-        doy, alt, lat, lon, lst = (float(x) for x in f[4:9])
-        out = msis_points(s, [doy], [alt], [lat], [lon], [lst])
-        regen += _rows_text(s, np.array([doy]), np.array([alt]), np.array([lat]), np.array([lon]), np.array([lst]), out)
-    n_diff = sum(1 for a, b in zip(stored, regen) if a != b)
-    if n_diff:
-        problems.append(f"{n_diff} of {len(stored)} recomputed subset rows differ from the frozen file")
-    regen_sha = hashlib.sha256(("\n".join(regen) + "\n").encode()).hexdigest()
+    if pv is None:
+        rerun = {"status": "NOT_RUN", "reason": "pymsis is not installed (optional [msis] extra): the frozen-data checks "
+                 "decide ok; the producer subset re-run and the rho composition regression need pymsis "
+                 f"{meta['producer']['pymsis_version']}"}
+    else:
+        regen = []
+        for line in stored:
+            f = line.split(",")
+            s = f[0]
+            doy, alt, lat, lon, lst = (float(x) for x in f[4:9])
+            out = msis_points(s, [doy], [alt], [lat], [lon], [lst])
+            regen += _rows_text(s, np.array([doy]), np.array([alt]), np.array([lat]), np.array([lon]), np.array([lst]),
+                                out)
+        regen_sha = hashlib.sha256(("\n".join(regen) + "\n").encode()).hexdigest()
+        rerun = {"status": "RUN", "pymsis_version": pv, **_compare_subset(stored, regen, problems),
+                 "subset_sha256": regen_sha, "subset_sha256_matches_record": regen_sha == rec["sha256"]}
+        if regen_sha != rec["sha256"]:
+            notes.append(f"recomputed subset is not byte-identical to the frozen file ({rerun['rows_text_differing']} of "
+                         f"{len(stored)} rows differ in text, max relative difference {rerun['max_abs_rel_diff']:.3e}); "
+                         f"the pass criterion is CHECK_REL_TOL = {CHECK_REL_TOL:.4g} (rcpps float32 round-off is "
+                         "CPU-specific)")
     ds_raw = open(DESIGN_PATH, "rb").read() if os.path.exists(DESIGN_PATH) else b""
     if hashlib.sha256(ds_raw).hexdigest() != meta.get("design_states_file", {}).get("sha256"):
         problems.append("design-states file hash differs from the metadata")
@@ -1326,13 +1464,20 @@ def check() -> dict:
     if hashlib.sha256(v2_raw).hexdigest() != v2_rec.get("sha256"):
         problems.append("design-states v2 file hash differs from the metadata (or file / record missing)")
     elif not problems:
-        if _design_states_v2_text().encode() != v2_raw:
-            problems.append("design states v2 do not reproduce byte-identically from the frozen dataset")
+        v2_text = _design_states_v2_text()
+        if v2_text.encode() != v2_raw:
+            cmp_ = _design_v2_compare(json.loads(v2_raw), json.loads(v2_text))
+            if not cmp_["ok"]:
+                problems.append(f"design states v2 do not reproduce from the frozen dataset (exact mismatches: "
+                                f"{cmp_['exact_mismatches'][:3]}; max float relative difference "
+                                f"{cmp_['max_abs_rel_diff']:.3e} vs DESIGN_V2_REL_TOL {DESIGN_V2_REL_TOL:g})")
+            else:
+                notes.append(f"design states v2 re-derive within float64 round-off but not byte-identically "
+                             f"({cmp_['floats_differing']} floats, max relative {cmp_['max_abs_rel_diff']:.3e} <= "
+                             f"{DESIGN_V2_REL_TOL:g}; numpy SIMD dispatch is CPU-specific)")
         if {k: v for k, v in v2_rec.items() if k != "sha256"} != \
                 {k: v for k, v in json.loads(json.dumps(_design_v2_record(""))).items() if k != "sha256"}:
             problems.append("design_states_file_v2 record differs from the module definition")
-    if regen_sha != rec["sha256"]:
-        problems.append("recomputed subset hash differs from the recorded subset hash")
     expected = _metadata(raw, gz, meta["row_count"])
     for k in ("dataset_id", "file", "sha256_definition", "bytes_definition", "distribution", "columns", "grid",
               "drivers", "authority", "build_command", "interpolation", "domain", "units", "open_items",
@@ -1343,20 +1488,23 @@ def check() -> dict:
         problems.append("dropped_species.in_rho differs from DROPPED_IN_RHO")
     if meta.get("errata") != json.loads(json.dumps(list(ERRATA))):
         problems.append("errata record differs from the module definition")
-    rc = _rho_composition_check()
-    rec_rc = meta.get("rho_composition_check") or {}
-    if any(rc[k] != json.loads(json.dumps(rec_rc.get(k))) for k in ("method", "points", "n_points", "in_rho",
-                                                                     "threshold_amu")) \
-            or any(abs(v - rec_rc.get("implied_mass_amu", {}).get(k, float("inf"))) > 0.01
-                   for k, v in rc["implied_mass_amu"].items()):
-        problems.append("rho composition check does not reproduce the recorded one")
-    if {k: rc["in_rho"][k] for k in DROPPED_IN_RHO} != DROPPED_IN_RHO:
-        problems.append(f"rho composition regression contradicts DROPPED_IN_RHO: {rc['in_rho']}")
+    if pv is not None:
+        rc = _rho_composition_check()
+        rec_rc = meta.get("rho_composition_check") or {}
+        if any(rc[k] != json.loads(json.dumps(rec_rc.get(k))) for k in ("method", "points", "n_points", "in_rho",
+                                                                         "threshold_amu")) \
+                or any(abs(v - rec_rc.get("implied_mass_amu", {}).get(k, float("inf"))) > 0.01
+                       for k, v in rc["implied_mass_amu"].items()):
+            problems.append("rho composition check does not reproduce the recorded one")
+        if {k: rc["in_rho"][k] for k in DROPPED_IN_RHO} != DROPPED_IN_RHO:
+            problems.append(f"rho composition regression contradicts DROPPED_IN_RHO: {rc['in_rho']}")
+    rerun["rho_composition_check"] = "RUN" if pv is not None else "NOT_RUN"
     exp_c = {k: v for k, v in expected["container"].items() if k not in ("sha256", "bytes", "zlib_version")}
     if any(cont.get(k) != json.loads(json.dumps(v)) for k, v in exp_c.items()):
         problems.append("container record differs from GZIP_SPEC")
     return {"ok": not problems, "problems": problems, "notes": notes, "subset_rows": len(stored),
-            "subset_sha256": regen_sha, "csv_sha256": sha, "container_sha256": gz_sha}
+            "producer_rerun": rerun, "subset_sha256": rerun.get("subset_sha256"), "csv_sha256": sha,
+            "container_sha256": gz_sha}
 
 
 def main(argv=None) -> int:
