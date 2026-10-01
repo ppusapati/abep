@@ -1,0 +1,1656 @@
+{
+ "schema": "abep.spacecraft_reference_drag.v1",
+ "status": "REFERENCE_PARAMETRIC_NOT_FLIGHT",
+ "freeze_status": "NOT_EVALUATED",
+ "label": "REFERENCE/PARAMETRIC",
+ "lane": "reference spacecraft drag basis (A9.16 parallel lane)",
+ "retrieval_date": "2026-10-01",
+ "decisions": [
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_13_S6_UPSTREAM_ARCHITECTURE_OWNER_DECISIONS.md",
+   "md_sha256": "adf11923c07f773276ee893d6ad01cd51c4988ba4bfb8865ec1d781a4978c8bf",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+   "json_sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+   "question_ids": [
+    "S6.18 / OQ-F78-04",
+    "S6.15 / OQ-F78-01",
+    "S6.21 / F9-OQ-02",
+    "S6.22 / F9-OQ-03 (AG-13, AG-15)",
+    "S6.17 / OQ-F78-03 (drag minimized in Pareto comparison)"
+   ],
+   "used_for": "authorisation of REFERENCE/PARAMETRIC sourcing (S6.18); statewise T - D >= 0 definition (S6.15); owner-stated 12-25 mN band and derivation of required thrust from the registered drag basis (S6.21); AG-13 / AG-15 gate clarifications (S6.22)"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_15_RFP_PROPELLANT_POLICY_OWNER_DECISION.md",
+   "md_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
+   "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
+   "question_ids": [
+    "A9.15 (RFP-compliant propellant policy; amends A9.13 owner statement on Xe)"
+   ],
+   "used_for": "read for consistency only: it confirms 'RFP(1)' is the owner-held RFP, not yet registered (AG-15); it sets no drag value and changes nothing in this lane"
+  },
+  {
+   "path": "docs/decisions/OD_2026_10_01_A9_14_S7_S10_OWNER_DECISIONS.md",
+   "md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
+   "json_path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
+   "json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
+   "question_ids": [],
+   "used_for": "checked: contains no spacecraft-drag decision; cited only for the AG-15 'RFP not registered' note"
+  }
+ ],
+ "scope": {
+  "is": "documented/public/official spacecraft geometry and C_D basis for INTERIM PARAMETRIC drag studies",
+  "is_not": "the flight/host spacecraft, an ICD, a drag closure, or an AG-13 verdict",
+  "drag_equation": "D = 0.5 rho v_rel^2 C_D A_ref (Romano 2018 Eq. 1) + caller-supplied intake term (F1)",
+  "atmosphere_interface": "rho_kg_m3, v_rel_m_s and atmosphere_state supplied by the caller from the orbit-resolved atmosphere; this module imports no atmosphere module"
+ },
+ "rfp_thrust_band": {
+  "min_mN": 12.0,
+  "max_mN": 25.0,
+  "requirement_status": "OWNER_STATED_RFP_NOT_REGISTERED",
+  "source": "A9.13 S6.21 verbatim: 'The official RFP instead defines the functional orbit and thrust requirement: 180-230 km, intake specification dependent on air density/solar activity, and 12-25 mN thrust for expected drag compensation. RFP(1)'",
+  "note": "RFP(1) is the owner-held RFP, not registered in the repository (AG-15). Shown for orientation only; it is not a drag result and the statewise gate is T_available(state) - D_spacecraft(state) >= 0 (S6.15)."
+ },
+ "sources": {
+  "SRC-JAXA-2019": {
+   "citation": "JAXA press release, 'Super Low Altitude Test Satellite (SLATS) “TSUBAME” has set a GUINESS WORLD RECORDS(R)', December 24, 2019 (JST)",
+   "url": "https://global.jaxa.jp/press/2019/12/20191224a.html",
+   "access": "official agency web page, public",
+   "retrieved_sha256": "ee70c5330e8efc2d6e147c5fd95481389dd6999485a5c58d29df8ece91b48769",
+   "verbatim_check": "text extracted from the retrieved HTML and matched verbatim"
+  },
+  "SRC-ESA-GOCE": {
+   "citation": "ESA Earth Online, 'GOCE Overview' (missions/goce/description), undated web page",
+   "url": "https://earth.esa.int/eogateway/missions/goce/description",
+   "access": "official agency web page, public (JavaScript-rendered)",
+   "retrieved_sha256": null,
+   "verbatim_check": "quotes obtained through a rendering fetch tool; a plain HTTP download returns only the page shell, so the quotes are NOT independently byte-verified (verify)"
+  },
+  "SRC-ROMANO-2018": {
+   "citation": "Romano F., Massuti-Ballester B., Binder T., Herdrich G., Fasoulas S., Schoenherr T., 'System Analysis and Test-bed for an Atmosphere-Breathing Electric Propulsion System using an Inductive Plasma Thruster', Acta Astronautica 147 (2018) 114-126, doi:10.1016/j.actaastro.2018.03.031; accepted manuscript arXiv:2103.02328v2",
+   "url": "https://arxiv.org/pdf/2103.02328",
+   "access": "open accepted manuscript (CC-BY-NC-ND 4.0, as stated on each page)",
+   "retrieved_sha256": "5e008fb8e025fc37a82e960a7f073c78de73214dfec99763ff936e4b9e056ca2",
+   "verbatim_check": "text extracted from the retrieved PDF (pdftotext) and matched"
+  },
+  "SRC-ANDREUSSI-2022": {
+   "citation": "Andreussi T., Ferrato E., Giannetti V., 'A review of air-breathing electric propulsion: from mission studies to technology verification', J. Electr. Propuls. 1:31 (2022), doi:10.1007/s44205-022-00024-9, Table 1 and Sect. 2",
+   "url": "https://link.springer.com/content/pdf/10.1007/s44205-022-00024-9.pdf",
+   "access": "open access (CC BY 4.0, as stated in the article)",
+   "retrieved_sha256": "490ca6f6b763fe4ee1089d9815d4075a94223ec74d577f61d67986708c3ce3b7",
+   "verbatim_check": "text extracted from the retrieved PDF (pdftotext) and matched"
+  },
+  "SRC-MEHTA-2022": {
+   "citation": "Mehta P.M., Paul S.N., Crisp N.H., Sheridan P.L., Siemes C., March G., Bruinsma S., 'Satellite drag coefficient modeling for thermosphere science and mission operations', Adv. Space Res. 72(12) (2023) 5443-5459, doi:10.1016/j.asr.2022.05.064",
+   "url": "https://pure.tudelft.nl/ws/portalfiles/portal/172534820/1_s2.0_S0273117722004458_main.pdf",
+   "access": "open access (CC BY, TU Delft repository, final published version)",
+   "retrieved_sha256": "684dcb620c9e581229b935722175ea225f781341b18db1ee47fd7e33ba982389",
+   "verbatim_check": "text extracted from the retrieved PDF (pdftotext) and matched"
+  },
+  "SRC-SINPETRU-2022": {
+   "citation": "Sinpetru L.A., Crisp N.H., Mostaza-Prieto D., Livadiotti S., Roberts P.C.E., 'ADBSat: Methodology of a novel panel method tool for aerodynamic analysis of satellites', Comput. Phys. Commun. (2022); preprint arXiv:2104.05543v2",
+   "url": "https://arxiv.org/pdf/2104.05543",
+   "access": "open preprint (arXiv)",
+   "retrieved_sha256": "bd5029dc49cd3c174a90cd83832a8eb3b22773c48dda0701e9016e591754fc20",
+   "verbatim_check": "text extracted; equations are typeset and only partly recoverable as text (see C_D model basis notes)"
+  }
+ },
+ "not_accessed": [
+  {
+   "ref": "Vaidya S. et al., CEAS Space J. (2022), doi:10.1007/s12567-022-00436-1",
+   "why": "publisher page states access 'No' for this session; no open copy located",
+   "consequence": "C_D = 3.7 for the GOCE-like case is carried as-reported (secondary) via Andreussi 2022; its underlying derivation (measured / model / assumed) is TBD"
+  },
+  {
+   "ref": "ESA, GOCE System Critical Design Review (CDR), Alenia Spazio, May 2005 (Romano 2018 ref. [1])",
+   "why": "technical report, not publicly available",
+   "consequence": "GOCE frontal area 1.1 m^2 carried as-reported (secondary) via Romano 2018"
+  },
+  {
+   "ref": "March G. et al. 2019b (GOCE energy accommodation selection), cited by Mehta 2022",
+   "why": "not retrieved in this lane",
+   "consequence": "alpha = 0.82 carried as stated by Mehta 2022"
+  },
+  {
+   "ref": "Di Cara D. et al., IEPC-2007-162; Diamant; Nishiyama 2003; Tisaev 2021; Crandall & Wirz 2022 (Andreussi 2022 Table 1 refs.)",
+   "why": "not retrieved in this lane",
+   "consequence": "their Table 1 values are carried as-reported (secondary) via Andreussi 2022"
+  }
+ ],
+ "records": [
+  {
+   "id": "REF-GOCE",
+   "label": "REFERENCE/PARAMETRIC",
+   "name": "ESA GOCE (flown; mission ended November 2013 per Romano 2018)",
+   "kind": "flown spacecraft, official agency description",
+   "access": "official public web page + open papers",
+   "applicability": "reference spacecraft only; not the Vyovrinda host spacecraft (S6.18)",
+   "orbit": {
+    "value": "sun-synchronous",
+    "unit": "-",
+    "source": "SRC-ROMANO-2018 Sect. 1.1",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": "'orbited into a 250 (finally 235)-265 km SSO'"
+   },
+   "altitude_km": {
+    "value": [
+     235.0,
+     265.0
+    ],
+    "unit": "km",
+    "source": "SRC-ROMANO-2018 Sect. 1.1",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": "Romano: '250 (finally 235)-265 km SSO'. ESA page (verify): 'designed to skim above Earth at a height of just 250 km', 'mean altitude approximately 263 km'"
+   },
+   "mass_kg": {
+    "value": 1050.0,
+    "unit": "kg",
+    "source": "SRC-ESA-GOCE; SRC-ROMANO-2018 Sect. 1.1",
+    "evidence_level": 3,
+    "quantity_type": "as-reported (secondary)",
+    "note": "ESA (verify): 'weighed in at about 1050 kg'; Romano: 'The S/C had a mass of 1050 kg'"
+   },
+   "length_m": {
+    "value": [
+     5.0,
+     5.3
+    ],
+    "unit": "m",
+    "source": "SRC-ESA-GOCE",
+    "evidence_level": 3,
+    "quantity_type": "as-reported (secondary)",
+    "note": "same page gives 'slim 5 metre-long satellite' and '5.3 m long' (verify)"
+   },
+   "frontal_area_m2": {
+    "value": [
+     0.8,
+     1.1
+    ],
+    "unit": "m^2",
+    "source": "SRC-ESA-GOCE; SRC-ROMANO-2018 Sect. 1.1",
+    "evidence_level": 3,
+    "quantity_type": "as-reported (secondary)",
+    "note": "SOURCE CONFLICT carried, not resolved: ESA page (verify) 'cross sectional area of about 1 m2' AND 'octagonal structure with fixed solar wings, 5.3 m long, cross-section of 0.8 m2'; Romano 2018: 'The frontal area was of 1.1 m2 [1]' (ref. [1] = GOCE CDR, not accessed). Interval [0.8, 1.1] m^2 spans all three statements"
+   },
+   "body_array_configuration": {
+    "value": "octagonal body; fixed (non-deployable) solar wings and winglets for aerodynamic stabilisation; no moving parts",
+    "unit": "-",
+    "source": "SRC-ESA-GOCE",
+    "evidence_level": 3,
+    "quantity_type": "as-reported (secondary)",
+    "note": "verify (rendered-page quotes)"
+   },
+   "attitude_assumption": {
+    "value": "flies along the velocity vector with the wings in the flow ('a configuration can be found in the GOCE spacecraft': solar arrays parallel to the direction of flight)",
+    "unit": "-",
+    "source": "SRC-ROMANO-2018 Sect. 2.4 (Drag)",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "cd": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-MEHTA-2022 Fig. 5 (plotted only)",
+    "evidence_level": 4,
+    "quantity_type": "TBD",
+    "note": "no GOCE flight C_D value is stated in text or table by the sources read (Mehta 2022 plots it in Fig. 5; not digitized here). The 'GOCE-like' C_D = 3.7 of Vaidya (via Andreussi 2022: 'a reference GOCE-like spacecraft having a 1 m2 intake frontal area, a drag coefficient of 3.7') belongs to a different ABEP body and is carried only as REF-T1-VAIDYA / RC-VAIDYA-GOCELIKE"
+   },
+   "cd_model_basis": {
+    "value": "GSI used for GOCE density processing: diffuse reflection with incomplete accommodation (DRIA), energy accommodation alpha = 0.82 (constant)",
+    "unit": "-",
+    "source": "SRC-MEHTA-2022 Sect. 2.2 (citing March et al. 2019b) and Sect. 5.1",
+    "evidence_level": 4,
+    "quantity_type": "model-derived",
+    "note": "Mehta: 'The GSIs were modeled as DRIA, where a was set to the carefully selected constant values of 0.85 and 0.82 for the CHAMP and GOCE satellites, respectively'; 'For GOCE, the largest difference in C D of about 10% is between DUT-DRIA-0.85 and RSM-CLL-WLK.' The GOCE C_D time series is only plotted (Fig. 5), not tabulated; not digitized here"
+   },
+   "a_ref_scope": "body_without_intake (GOCE has no intake); the GOCE-like C_D = 3.7 case is a different body",
+   "note": "GOCE thrust capability (ESA page, verify): 'throttled between 1 and 20 millinewtons'; Romano: 'thrust between T = 1.5 and 20 mN' - recorded for orientation only, not a requirement"
+  },
+  {
+   "id": "REF-SLATS",
+   "label": "REFERENCE/PARAMETRIC",
+   "name": "JAXA SLATS 'TSUBAME' (flown 23 Dec 2017 - 1 Oct 2019 per JAXA)",
+   "kind": "flown spacecraft, official agency description",
+   "access": "official public web page",
+   "applicability": "reference spacecraft only; not the Vyovrinda host spacecraft (S6.18)",
+   "orbit": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-JAXA-2019",
+    "evidence_level": 3,
+    "quantity_type": "TBD",
+    "note": "orbit type not stated on the page read"
+   },
+   "altitude_km": {
+    "value": [
+     167.4,
+     181.1,
+     216.8,
+     230.0,
+     240.0,
+     250.0,
+     271.5
+    ],
+    "unit": "km",
+    "source": "SRC-JAXA-2019",
+    "evidence_level": 3,
+    "quantity_type": "as-reported (secondary)",
+    "note": "'271.5 km and 216.8 km each for 38 days 250 km, 240 km, 230 km, 181.1 km, and 167.4 km each for 7 days (At 167.4 km altitude, Tsubame used both its ion engine system and RCS because of the large atmospheric drag.)'"
+   },
+   "mass_kg": {
+    "value": 383.0,
+    "unit": "kg",
+    "source": "SRC-JAXA-2019",
+    "evidence_level": 3,
+    "quantity_type": "as-reported (secondary)",
+    "note": "'Weight 383 kg'"
+   },
+   "envelope_m": {
+    "value": [
+     2.5,
+     5.2,
+     0.9
+    ],
+    "unit": "m",
+    "source": "SRC-JAXA-2019",
+    "evidence_level": 3,
+    "quantity_type": "as-reported (secondary)",
+    "note": "'Size 2.5 m (X) x 5.2 m (Y) x 0.9m (Z) (when expanded in orbit)'"
+   },
+   "frontal_area_m2": {
+    "value": null,
+    "unit": "m^2",
+    "source": "SRC-JAXA-2019",
+    "evidence_level": 3,
+    "quantity_type": "TBD",
+    "note": "not published on the page read; the axis-to-velocity mapping is not stated, so no frontal area is derived from the envelope (deriving one would be an invented attitude)"
+   },
+   "body_array_configuration": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-JAXA-2019",
+    "evidence_level": 3,
+    "quantity_type": "TBD",
+    "note": "envelope is 'when expanded in orbit'; array geometry not stated"
+   },
+   "attitude_assumption": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-JAXA-2019",
+    "evidence_level": 3,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "cd": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-JAXA-2019",
+    "evidence_level": 3,
+    "quantity_type": "TBD",
+    "note": "no C_D on the page read"
+   },
+   "cd_model_basis": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-JAXA-2019",
+    "evidence_level": 3,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "a_ref_scope": "unstated",
+   "note": "Generated power '1,140 W or more'. Kept as a flown VLEO anchor (lowest altitude 167.4 km, inside and below the RFP band) but NOT usable for a drag case until frontal area and C_D are sourced"
+  },
+  {
+   "id": "REF-ROMANO2018",
+   "label": "REFERENCE/PARAMETRIC",
+   "name": "Romano et al. 2018 IPG6-S ABEP system analysis reference",
+   "kind": "published ABEP system study (not flown)",
+   "access": "open accepted manuscript (arXiv)",
+   "applicability": "reference spacecraft only; not the Vyovrinda host spacecraft (S6.18)",
+   "orbit": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ROMANO-2018",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "altitude_km": {
+    "value": [
+     150.0,
+     250.0
+    ],
+    "unit": "km",
+    "source": "SRC-ANDREUSSI-2022 Table 1 row 'Romano [48]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "mass_kg": {
+    "value": "<1050",
+    "unit": "kg",
+    "source": "SRC-ANDREUSSI-2022 Table 1 row 'Romano [48]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "frontal_area_m2": {
+    "value": 1.0,
+    "unit": "m^2",
+    "source": "SRC-ROMANO-2018 Sect. 1.1",
+    "evidence_level": 5,
+    "quantity_type": "assumed",
+    "note": "'using a reference frontal area Af equal to that of the intake area Ain of 1 m2 for the estimation of the drag and the collectible mass flow'"
+   },
+   "body_array_configuration": {
+    "value": "solar arrays parallel to the direction of flight, their drag neglected; lateral surfaces not evaluated",
+    "unit": "-",
+    "source": "SRC-ROMANO-2018 Sect. 2.4 (Drag)",
+    "evidence_level": 7,
+    "quantity_type": "assumed",
+    "note": "'the contribution of solar arrays is neglected by considering them to be parallel to the direction of flight'; 'Lateral surfaces also have impact on the drag, however, these require DSMC simulation and will be evaluated in further work'"
+   },
+   "attitude_assumption": {
+    "value": "frontal area normal to the flow ('normal facing area')",
+    "unit": "-",
+    "source": "SRC-ROMANO-2018 Sect. 2.4",
+    "evidence_level": 7,
+    "quantity_type": "assumed",
+    "note": ""
+   },
+   "cd": {
+    "value": 2.2,
+    "unit": "-",
+    "source": "SRC-ROMANO-2018 Sect. 2.4",
+    "evidence_level": 6,
+    "quantity_type": "assumed",
+    "note": "'A drag coefficient of CD = 2.2 has been exemplary selected, which is a typical average in literature for small S/C in LEO, and for normal facing area'"
+   },
+   "cd_model_basis": {
+    "value": "constant literature-typical C_D; full accommodation at front and intake surfaces ('a worst condition is chosen assuming full accommodation')",
+    "unit": "-",
+    "source": "SRC-ROMANO-2018 Sect. 2.4",
+    "evidence_level": 6,
+    "quantity_type": "assumed",
+    "note": ""
+   },
+   "a_ref_scope": "includes_intake",
+   "note": "A_ref = A_in: the intake IS the reference area in this case"
+  },
+  {
+   "id": "REF-T1-NISHIYAMA",
+   "label": "REFERENCE/PARAMETRIC",
+   "name": "Nishiyama ABEP concept (as tabulated by Andreussi 2022)",
+   "kind": "published ABEP concept study (not flown)",
+   "access": "open access review (secondary for this row)",
+   "applicability": "reference spacecraft only; not the Vyovrinda host spacecraft (S6.18)",
+   "orbit": {
+    "value": "SSO 6am",
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Nishiyama [5]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "altitude_km": {
+    "value": [
+     140.0,
+     160.0
+    ],
+    "unit": "km",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Nishiyama [5]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "mass_kg": {
+    "value": null,
+    "unit": "kg",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Nishiyama [5]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "power_kW": {
+    "value": [
+     0.5,
+     3.3
+    ],
+    "unit": "kW",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Nishiyama [5]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "frontal_area_m2": {
+    "value": 1.5,
+    "unit": "m^2",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Nishiyama [5]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "cd": {
+    "value": 2.0,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Nishiyama [5]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "body_array_configuration": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Nishiyama [5]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "attitude_assumption": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Nishiyama [5]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "cd_model_basis": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Nishiyama [5]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "Table 1 gives the value only; GSI model / accommodation not stated there"
+   },
+   "a_ref_scope": "unstated",
+   "note": "Romano 2018 Sect. 1.1 describes the same JAXA ABIE concept at 'h = 170 km' with 'inlet area of 0.48 m2' - altitude conflict with Table 1 carried, not resolved"
+  },
+  {
+   "id": "REF-T1-DICARA",
+   "label": "REFERENCE/PARAMETRIC",
+   "name": "Di Cara ABEP concept (as tabulated by Andreussi 2022)",
+   "kind": "published ABEP concept study (not flown)",
+   "access": "open access review (secondary for this row)",
+   "applicability": "reference spacecraft only; not the Vyovrinda host spacecraft (S6.18)",
+   "orbit": {
+    "value": "SSO 10:30",
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Di Cara [43]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "altitude_km": {
+    "value": [
+     200.0,
+     250.0
+    ],
+    "unit": "km",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Di Cara [43]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "mass_kg": {
+    "value": 1000.0,
+    "unit": "kg",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Di Cara [43]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "power_kW": {
+    "value": 2.9,
+    "unit": "kW",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Di Cara [43]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "frontal_area_m2": {
+    "value": 1.0,
+    "unit": "m^2",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Di Cara [43]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "cd": {
+    "value": 2.0,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Di Cara [43]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "body_array_configuration": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Di Cara [43]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "attitude_assumption": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Di Cara [43]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "cd_model_basis": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Di Cara [43]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "Table 1 gives the value only; GSI model / accommodation not stated there"
+   },
+   "a_ref_scope": "unstated",
+   "note": "Andreussi text: '1000 kg spacecraft with a 1 m2 frontal area and equipped with a 0.6 m2 intake'; Romano 2018: 'Solar array (SA) surface is of 19.74 m2'"
+  },
+  {
+   "id": "REF-T1-HRUBY",
+   "label": "REFERENCE/PARAMETRIC",
+   "name": "Hruby ABEP concept (as tabulated by Andreussi 2022)",
+   "kind": "published ABEP concept study (not flown)",
+   "access": "open access review (secondary for this row)",
+   "applicability": "reference spacecraft only; not the Vyovrinda host spacecraft (S6.18)",
+   "orbit": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Hruby [44]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "altitude_km": {
+    "value": 150.0,
+    "unit": "km",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Hruby [44]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "mass_kg": {
+    "value": null,
+    "unit": "kg",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Hruby [44]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "power_kW": {
+    "value": [
+     2.0,
+     3.0
+    ],
+    "unit": "kW",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Hruby [44]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "frontal_area_m2": {
+    "value": null,
+    "unit": "m^2",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Hruby [44]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "cd": {
+    "value": 2.2,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Hruby [44]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "body_array_configuration": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Hruby [44]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "attitude_assumption": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Hruby [44]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "cd_model_basis": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Hruby [44]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "Table 1 gives the value only; GSI model / accommodation not stated there"
+   },
+   "a_ref_scope": "unstated",
+   "note": ""
+  },
+  {
+   "id": "REF-T1-DIAMANT",
+   "label": "REFERENCE/PARAMETRIC",
+   "name": "Diamant ABEP concept (as tabulated by Andreussi 2022)",
+   "kind": "published ABEP concept study (not flown)",
+   "access": "open access review (secondary for this row)",
+   "applicability": "reference spacecraft only; not the Vyovrinda host spacecraft (S6.18)",
+   "orbit": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Diamant [45]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "altitude_km": {
+    "value": 200.0,
+    "unit": "km",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Diamant [45]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "mass_kg": {
+    "value": 400.0,
+    "unit": "kg",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Diamant [45]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "power_kW": {
+    "value": 1.0,
+    "unit": "kW",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Diamant [45]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "frontal_area_m2": {
+    "value": 0.5,
+    "unit": "m^2",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Diamant [45]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "cd": {
+    "value": 2.2,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Diamant [45]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "body_array_configuration": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Diamant [45]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "attitude_assumption": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Diamant [45]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "cd_model_basis": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Diamant [45]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "Table 1 gives the value only; GSI model / accommodation not stated there"
+   },
+   "a_ref_scope": "unstated",
+   "note": ""
+  },
+  {
+   "id": "REF-T1-SHABSHELOWITZ",
+   "label": "REFERENCE/PARAMETRIC",
+   "name": "Shabelowitz ABEP concept (as tabulated by Andreussi 2022)",
+   "kind": "published ABEP concept study (not flown)",
+   "access": "open access review (secondary for this row)",
+   "applicability": "reference spacecraft only; not the Vyovrinda host spacecraft (S6.18)",
+   "orbit": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Shabelowitz [46]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "altitude_km": {
+    "value": [
+     180.0,
+     200.0
+    ],
+    "unit": "km",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Shabelowitz [46]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "mass_kg": {
+    "value": 325.0,
+    "unit": "kg",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Shabelowitz [46]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "power_kW": {
+    "value": 0.3,
+    "unit": "kW",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Shabelowitz [46]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "frontal_area_m2": {
+    "value": 0.36,
+    "unit": "m^2",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Shabelowitz [46]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "cd": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Shabelowitz [46]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "body_array_configuration": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Shabelowitz [46]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "attitude_assumption": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Shabelowitz [46]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "cd_model_basis": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Shabelowitz [46]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "Table 1 gives the value only; GSI model / accommodation not stated there"
+   },
+   "a_ref_scope": "unstated",
+   "note": "Table 1 prints 'Shabelowitz'; Andreussi text 'Shabshelowitz [57]' gives 0.36 m2, Romano 2018 gives 'The frontal area is of 0.39 m2' and 'Af /Ainlet = 0.5' - conflict carried"
+  },
+  {
+   "id": "REF-T1-SCHONHERR",
+   "label": "REFERENCE/PARAMETRIC",
+   "name": "Schonherr ABEP concept (as tabulated by Andreussi 2022)",
+   "kind": "published ABEP concept study (not flown)",
+   "access": "open access review (secondary for this row)",
+   "applicability": "reference spacecraft only; not the Vyovrinda host spacecraft (S6.18)",
+   "orbit": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Schonherr [47]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "altitude_km": {
+    "value": 200.0,
+    "unit": "km",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Schonherr [47]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "mass_kg": {
+    "value": null,
+    "unit": "kg",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Schonherr [47]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "power_kW": {
+    "value": null,
+    "unit": "kW",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Schonherr [47]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "frontal_area_m2": {
+    "value": 0.3,
+    "unit": "m^2",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Schonherr [47]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "cd": {
+    "value": 2.2,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Schonherr [47]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "body_array_configuration": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Schonherr [47]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "attitude_assumption": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Schonherr [47]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "cd_model_basis": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Schonherr [47]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "Table 1 gives the value only; GSI model / accommodation not stated there"
+   },
+   "a_ref_scope": "unstated",
+   "note": ""
+  },
+  {
+   "id": "REF-T1-ROMANO",
+   "label": "REFERENCE/PARAMETRIC",
+   "name": "Romano ABEP concept (as tabulated by Andreussi 2022)",
+   "kind": "published ABEP concept study (not flown)",
+   "access": "open access review (secondary for this row)",
+   "applicability": "reference spacecraft only; not the Vyovrinda host spacecraft (S6.18)",
+   "orbit": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Romano [48]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "altitude_km": {
+    "value": [
+     150.0,
+     250.0
+    ],
+    "unit": "km",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Romano [48]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "mass_kg": {
+    "value": "<1050",
+    "unit": "kg",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Romano [48]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "power_kW": {
+    "value": 3.5,
+    "unit": "kW",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Romano [48]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "frontal_area_m2": {
+    "value": 1.0,
+    "unit": "m^2",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Romano [48]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "cd": {
+    "value": 2.2,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Romano [48]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "body_array_configuration": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Romano [48]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "attitude_assumption": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Romano [48]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "cd_model_basis": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Romano [48]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "Table 1 gives the value only; GSI model / accommodation not stated there"
+   },
+   "a_ref_scope": "unstated",
+   "note": "same study as REF-ROMANO2018 (primary record there)"
+  },
+  {
+   "id": "REF-T1-ANDREUSSI",
+   "label": "REFERENCE/PARAMETRIC",
+   "name": "Andreussi ABEP concept (as tabulated by Andreussi 2022)",
+   "kind": "published ABEP concept study (not flown)",
+   "access": "open access review (secondary for this row)",
+   "applicability": "reference spacecraft only; not the Vyovrinda host spacecraft (S6.18)",
+   "orbit": {
+    "value": "SSO 6am",
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Andreussi [49]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "altitude_km": {
+    "value": [
+     190.0,
+     240.0
+    ],
+    "unit": "km",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Andreussi [49]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "mass_kg": {
+    "value": [
+     500.0,
+     750.0
+    ],
+    "unit": "kg",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Andreussi [49]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "power_kW": {
+    "value": [
+     2.5,
+     3.0
+    ],
+    "unit": "kW",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Andreussi [49]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "frontal_area_m2": {
+    "value": 0.7,
+    "unit": "m^2",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Andreussi [49]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "cd": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Andreussi [49]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "body_array_configuration": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Andreussi [49]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "attitude_assumption": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Andreussi [49]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "cd_model_basis": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Andreussi [49]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "Table 1 gives the value only; GSI model / accommodation not stated there"
+   },
+   "a_ref_scope": "unstated",
+   "note": ""
+  },
+  {
+   "id": "REF-T1-TISAEV",
+   "label": "REFERENCE/PARAMETRIC",
+   "name": "Tisaev ABEP concept (as tabulated by Andreussi 2022)",
+   "kind": "published ABEP concept study (not flown)",
+   "access": "open access review (secondary for this row)",
+   "applicability": "reference spacecraft only; not the Vyovrinda host spacecraft (S6.18)",
+   "orbit": {
+    "value": "SSO 6am",
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Tisaev [50]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "altitude_km": {
+    "value": [
+     170.0,
+     200.0
+    ],
+    "unit": "km",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Tisaev [50]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "mass_kg": {
+    "value": 200.0,
+    "unit": "kg",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Tisaev [50]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "power_kW": {
+    "value": 0.6,
+    "unit": "kW",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Tisaev [50]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "frontal_area_m2": {
+    "value": 0.1,
+    "unit": "m^2",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Tisaev [50]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "cd": {
+    "value": [
+     3.2,
+     4.2
+    ],
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Tisaev [50]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "body_array_configuration": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Tisaev [50]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "attitude_assumption": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Tisaev [50]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "cd_model_basis": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Tisaev [50]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "Table 1 gives the value only; GSI model / accommodation not stated there"
+   },
+   "a_ref_scope": "unstated",
+   "note": ""
+  },
+  {
+   "id": "REF-T1-OVCHINNIKOV",
+   "label": "REFERENCE/PARAMETRIC",
+   "name": "Ovchinnikov ABEP concept (as tabulated by Andreussi 2022)",
+   "kind": "published ABEP concept study (not flown)",
+   "access": "open access review (secondary for this row)",
+   "applicability": "reference spacecraft only; not the Vyovrinda host spacecraft (S6.18)",
+   "orbit": {
+    "value": "SSO 6am",
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Ovchinnikov [51]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "altitude_km": {
+    "value": 175.0,
+    "unit": "km",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Ovchinnikov [51]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "mass_kg": {
+    "value": 120.0,
+    "unit": "kg",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Ovchinnikov [51]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "power_kW": {
+    "value": [
+     0.2,
+     0.4
+    ],
+    "unit": "kW",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Ovchinnikov [51]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "frontal_area_m2": {
+    "value": 0.2,
+    "unit": "m^2",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Ovchinnikov [51]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "cd": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Ovchinnikov [51]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "body_array_configuration": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Ovchinnikov [51]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "attitude_assumption": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Ovchinnikov [51]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "cd_model_basis": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Ovchinnikov [51]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "Table 1 gives the value only; GSI model / accommodation not stated there"
+   },
+   "a_ref_scope": "unstated",
+   "note": ""
+  },
+  {
+   "id": "REF-T1-VAIDYA",
+   "label": "REFERENCE/PARAMETRIC",
+   "name": "Vaidya ABEP concept (as tabulated by Andreussi 2022)",
+   "kind": "published ABEP concept study (not flown)",
+   "access": "open access review (secondary for this row)",
+   "applicability": "reference spacecraft only; not the Vyovrinda host spacecraft (S6.18)",
+   "orbit": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Vaidya [52]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": ""
+   },
+   "altitude_km": {
+    "value": [
+     160.0,
+     250.0
+    ],
+    "unit": "km",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Vaidya [52]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "mass_kg": {
+    "value": 1000.0,
+    "unit": "kg",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Vaidya [52]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "power_kW": {
+    "value": 1.6,
+    "unit": "kW",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Vaidya [52]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "frontal_area_m2": {
+    "value": 1.0,
+    "unit": "m^2",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Vaidya [52]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "cd": {
+    "value": 3.7,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Vaidya [52]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "body_array_configuration": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Vaidya [52]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "attitude_assumption": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Vaidya [52]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "cd_model_basis": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Vaidya [52]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "Table 1 gives the value only; GSI model / accommodation not stated there"
+   },
+   "a_ref_scope": "unstated",
+   "note": "Andreussi text: 'a reference GOCE-like spacecraft having a 1 m2 intake frontal area, a drag coefficient of 3.7, and 1.6 kW of power'"
+  },
+  {
+   "id": "REF-T1-CRANDALL",
+   "label": "REFERENCE/PARAMETRIC",
+   "name": "Crandall ABEP concept (as tabulated by Andreussi 2022)",
+   "kind": "published ABEP concept study (not flown)",
+   "access": "open access review (secondary for this row)",
+   "applicability": "reference spacecraft only; not the Vyovrinda host spacecraft (S6.18)",
+   "orbit": {
+    "value": "0-90 deg inclination",
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Crandall [53]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "altitude_km": {
+    "value": [
+     160.0,
+     250.0
+    ],
+    "unit": "km",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Crandall [53]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "mass_kg": {
+    "value": [
+     7.5,
+     10.5
+    ],
+    "unit": "kg",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Crandall [53]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "power_kW": {
+    "value": [
+     0.01,
+     0.1
+    ],
+    "unit": "kW",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Crandall [53]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "frontal_area_m2": {
+    "value": 0.01,
+    "unit": "m^2",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Crandall [53]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "cd": {
+    "value": [
+     3.0,
+     6.0
+    ],
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Crandall [53]'",
+    "evidence_level": 5,
+    "quantity_type": "as-reported (secondary)",
+    "note": ""
+   },
+   "body_array_configuration": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Crandall [53]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "attitude_assumption": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Crandall [53]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "not stated in Table 1"
+   },
+   "cd_model_basis": {
+    "value": null,
+    "unit": "-",
+    "source": "SRC-ANDREUSSI-2022 Table 1, row 'Crandall [53]'",
+    "evidence_level": 5,
+    "quantity_type": "TBD",
+    "note": "Table 1 gives the value only; GSI model / accommodation not stated there"
+   },
+   "a_ref_scope": "unstated",
+   "note": ""
+  }
+ ],
+ "cases": [
+  {
+   "case_id": "RC-ROMANO2018",
+   "record_id": "REF-ROMANO2018",
+   "a_ref_m2": 1.0,
+   "cd": 2.2,
+   "a_ref_scope": "includes_intake",
+   "source": "SRC-ROMANO-2018 Sect. 1.1 and 2.4, Eq. 1",
+   "evidence_level": 6,
+   "quantity_type": "assumed",
+   "array_treatment": "arrays parallel to flight, neglected (source assumption)",
+   "note": "worst condition, full accommodation (source wording)"
+  },
+  {
+   "case_id": "RC-VAIDYA-GOCELIKE",
+   "record_id": "REF-T1-VAIDYA",
+   "a_ref_m2": 1.0,
+   "cd": 3.7,
+   "a_ref_scope": "includes_intake",
+   "source": "SRC-ANDREUSSI-2022 Sect. 2 and Table 1 (Vaidya [52], not accessed)",
+   "evidence_level": 5,
+   "quantity_type": "as-reported (secondary)",
+   "array_treatment": "not stated (TBD)",
+   "note": "'1 m2 intake frontal area' -> reference area treated as containing the intake"
+  },
+  {
+   "case_id": "RC-DICARA-ESA",
+   "record_id": "REF-T1-DICARA",
+   "a_ref_m2": 1.0,
+   "cd": 2.0,
+   "a_ref_scope": "unstated",
+   "source": "SRC-ANDREUSSI-2022 Table 1 (Di Cara [43])",
+   "evidence_level": 5,
+   "quantity_type": "as-reported (secondary)",
+   "array_treatment": "not stated (TBD)",
+   "note": "1 m2 frontal with a 0.6 m2 intake: whether A_f contains the intake is not stated"
+  },
+  {
+   "case_id": "RC-DIAMANT",
+   "record_id": "REF-T1-DIAMANT",
+   "a_ref_m2": 0.5,
+   "cd": 2.2,
+   "a_ref_scope": "unstated",
+   "source": "SRC-ANDREUSSI-2022 Table 1 (Diamant [45])",
+   "evidence_level": 5,
+   "quantity_type": "as-reported (secondary)",
+   "array_treatment": "not stated (TBD)",
+   "note": ""
+  },
+  {
+   "case_id": "RC-SCHONHERR",
+   "record_id": "REF-T1-SCHONHERR",
+   "a_ref_m2": 0.3,
+   "cd": 2.2,
+   "a_ref_scope": "unstated",
+   "source": "SRC-ANDREUSSI-2022 Table 1 (Schonherr [47])",
+   "evidence_level": 5,
+   "quantity_type": "as-reported (secondary)",
+   "array_treatment": "not stated (TBD)",
+   "note": ""
+  },
+  {
+   "case_id": "RC-NISHIYAMA",
+   "record_id": "REF-T1-NISHIYAMA",
+   "a_ref_m2": 1.5,
+   "cd": 2.0,
+   "a_ref_scope": "unstated",
+   "source": "SRC-ANDREUSSI-2022 Table 1 (Nishiyama [5])",
+   "evidence_level": 5,
+   "quantity_type": "as-reported (secondary)",
+   "array_treatment": "not stated (TBD)",
+   "note": ""
+  },
+  {
+   "case_id": "RC-TISAEV-LOW",
+   "record_id": "REF-T1-TISAEV",
+   "a_ref_m2": 0.1,
+   "cd": 3.2,
+   "a_ref_scope": "unstated",
+   "source": "SRC-ANDREUSSI-2022 Table 1 (Tisaev [50])",
+   "evidence_level": 5,
+   "quantity_type": "as-reported (secondary)",
+   "array_treatment": "not stated (TBD)",
+   "note": "lower end of the tabulated C_D range 3.2-4.2"
+  },
+  {
+   "case_id": "RC-TISAEV-HIGH",
+   "record_id": "REF-T1-TISAEV",
+   "a_ref_m2": 0.1,
+   "cd": 4.2,
+   "a_ref_scope": "unstated",
+   "source": "SRC-ANDREUSSI-2022 Table 1 (Tisaev [50])",
+   "evidence_level": 5,
+   "quantity_type": "as-reported (secondary)",
+   "array_treatment": "not stated (TBD)",
+   "note": "upper end of the tabulated C_D range 3.2-4.2"
+  }
+ ],
+ "density_free_table": [
+  {
+   "case_id": "RC-ROMANO2018",
+   "record_id": "REF-ROMANO2018",
+   "cd": 2.2,
+   "a_ref_m2": 1.0,
+   "cd_a_m2": 2.2,
+   "a_ref_scope": "includes_intake",
+   "q_at_12mN_Pa": 0.005454545,
+   "q_at_25mN_Pa": 0.011363636,
+   "evidence_level": 6,
+   "quantity_type": "assumed"
+  },
+  {
+   "case_id": "RC-VAIDYA-GOCELIKE",
+   "record_id": "REF-T1-VAIDYA",
+   "cd": 3.7,
+   "a_ref_m2": 1.0,
+   "cd_a_m2": 3.7,
+   "a_ref_scope": "includes_intake",
+   "q_at_12mN_Pa": 0.003243243,
+   "q_at_25mN_Pa": 0.006756757,
+   "evidence_level": 5,
+   "quantity_type": "as-reported (secondary)"
+  },
+  {
+   "case_id": "RC-DICARA-ESA",
+   "record_id": "REF-T1-DICARA",
+   "cd": 2.0,
+   "a_ref_m2": 1.0,
+   "cd_a_m2": 2.0,
+   "a_ref_scope": "unstated",
+   "q_at_12mN_Pa": 0.006,
+   "q_at_25mN_Pa": 0.0125,
+   "evidence_level": 5,
+   "quantity_type": "as-reported (secondary)"
+  },
+  {
+   "case_id": "RC-DIAMANT",
+   "record_id": "REF-T1-DIAMANT",
+   "cd": 2.2,
+   "a_ref_m2": 0.5,
+   "cd_a_m2": 1.1,
+   "a_ref_scope": "unstated",
+   "q_at_12mN_Pa": 0.010909091,
+   "q_at_25mN_Pa": 0.022727273,
+   "evidence_level": 5,
+   "quantity_type": "as-reported (secondary)"
+  },
+  {
+   "case_id": "RC-SCHONHERR",
+   "record_id": "REF-T1-SCHONHERR",
+   "cd": 2.2,
+   "a_ref_m2": 0.3,
+   "cd_a_m2": 0.66,
+   "a_ref_scope": "unstated",
+   "q_at_12mN_Pa": 0.018181818,
+   "q_at_25mN_Pa": 0.037878788,
+   "evidence_level": 5,
+   "quantity_type": "as-reported (secondary)"
+  },
+  {
+   "case_id": "RC-NISHIYAMA",
+   "record_id": "REF-T1-NISHIYAMA",
+   "cd": 2.0,
+   "a_ref_m2": 1.5,
+   "cd_a_m2": 3.0,
+   "a_ref_scope": "unstated",
+   "q_at_12mN_Pa": 0.004,
+   "q_at_25mN_Pa": 0.008333333,
+   "evidence_level": 5,
+   "quantity_type": "as-reported (secondary)"
+  },
+  {
+   "case_id": "RC-TISAEV-LOW",
+   "record_id": "REF-T1-TISAEV",
+   "cd": 3.2,
+   "a_ref_m2": 0.1,
+   "cd_a_m2": 0.32,
+   "a_ref_scope": "unstated",
+   "q_at_12mN_Pa": 0.0375,
+   "q_at_25mN_Pa": 0.078125,
+   "evidence_level": 5,
+   "quantity_type": "as-reported (secondary)"
+  },
+  {
+   "case_id": "RC-TISAEV-HIGH",
+   "record_id": "REF-T1-TISAEV",
+   "cd": 4.2,
+   "a_ref_m2": 0.1,
+   "cd_a_m2": 0.42,
+   "a_ref_scope": "unstated",
+   "q_at_12mN_Pa": 0.028571429,
+   "q_at_25mN_Pa": 0.05952381,
+   "evidence_level": 5,
+   "quantity_type": "as-reported (secondary)"
+  }
+ ],
+ "findings": [
+  {
+   "id": "SRD-01",
+   "finding": "abep_sim/mission_env.py Spacecraft defaults (bus_frontal_m2 = 0.25, bus_cd = 2.2, intake_cd_ref = 2.05) and spacecraft_drag() array C_D 2.4 carry no source in that module; this lane does not modify or call it. They are not REFERENCE/PARAMETRIC records and must not be quoted as a spacecraft drag basis",
+   "action": "owner/step-3 decision whether mission_env adopts a registered reference case (not done here)"
+  },
+  {
+   "id": "SRD-02",
+   "finding": "GOCE frontal area is reported as about 1 m2 and 0.8 m2 on the same ESA page and as 1.1 m2 by Romano 2018 (citing the CDR); the conflict is carried as an interval",
+   "action": "none; no GOCE drag case is declared because no source pairs a GOCE flight C_D with its area"
+  },
+  {
+   "id": "SRD-03",
+   "finding": "C_D spans 2.0-4.2 across the declared reference cases (C_D*A_ref 0.32-3.7 m^2); the sources read do not state the GSI/accommodation basis of most values, so the spread cannot be attributed to physics or convention and is not measurement scatter",
+   "action": "parametric studies evaluate all declared cases (envelope), no single 'representative' case"
+  },
+  {
+   "id": "SRD-04",
+   "finding": "Several reference areas already contain the intake (Romano: A_f = A_in); naive addition of an F1 intake term double-counts",
+   "action": "enforced by the required intake_accounting argument"
+  },
+  {
+   "id": "SRD-05",
+   "finding": "A closed-form Sentman flat-plate C_D (Sinpetru 2022 Eq. 6-7) was considered but not implemented: the incident-temperature definition is not recoverable from the text read, and implementing it from memory would violate rule 6",
+   "action": "open item; implement only from a fully read open source"
+  }
+ ],
+ "open_items": [
+  "AG-13 closure requires the host-spacecraft ICD (body frontal geometry, intake projected area, arrays/deployed surfaces, attitude/pointing states, C_D/model basis, accommodation/surface state) - S6.18",
+  "Official RFP registration (AG-15); the 12-25 mN band is owner-stated until then",
+  "Orbit-resolved atmosphere producer (S6.14) supplies rho and v_rel; no state evaluated here",
+  "SLATS frontal area and C_D: not in the open sources read",
+  "Vaidya 2022 (GOCE-like C_D 3.7) not accessed; derivation TBD",
+  "Sentman / DRIA flat-plate closed form from a fully readable open source (SRD-05)"
+ ],
+ "provenance": {
+  "builder": "docs/design_synthesis/spacecraft_reference_drag/build_spacecraft_reference_drag.py",
+  "module": "abep_sim/spacecraft_reference_drag.py",
+  "module_sha256": "3a96ede5705622e29c161229c1abf916817a5fc197a0e93914df6937022a90a2"
+ }
+}
