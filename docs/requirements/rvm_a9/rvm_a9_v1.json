@@ -367,24 +367,6 @@
    "why": "mutable package: read at build time, identity checked, never pinned"
   },
   {
-   "key": "MP3",
-   "path": "docs/budgets/mass_power_a9_v3/mass_power_a9_v3.json",
-   "identity": {
-    "id": "mass_power_a9_v3"
-   },
-   "role": "mass + power v3 (A9.16 step 1; to be refreshed for A9.19 / A9.20 by the budgets lane)",
-   "why": "mutable package: read at build time, identity checked, never pinned"
-  },
-  {
-   "key": "XE3",
-   "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
-   "identity": {
-    "id": "xe_accounting_a9_v3"
-   },
-   "role": "Xe accounting v3 (A9.16 step 1; to be refreshed for A9.19 / A9.20 by the budgets lane)",
-   "why": "mutable package: read at build time, identity checked, never pinned"
-  },
-  {
    "key": "AOL",
    "path": "docs/experiments/lifetime_ao/ao_lifetime_register_v5.json",
    "identity": {
@@ -427,15 +409,6 @@
     "id": "RFQ_A9_V3"
    },
    "role": "RFQ packages v3 (quotation only; A9.16 owner-decision application)",
-   "why": "mutable package: read at build time, identity checked, never pinned"
-  },
-  {
-   "key": "RFQ3",
-   "path": "docs/procurement/rfq_a9_v3/rfq_a9_v3.json",
-   "identity": {
-    "id": "RFQ_A9_V3"
-   },
-   "role": "RFQ packages v3 (quotation only)",
    "why": "mutable package: read at build time, identity checked, never pinned"
   },
   {
@@ -9582,11 +9555,11 @@
        }
       },
       {
-       "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
-       "id": "xe_accounting_a9_v2:evaluations[S1-FL-PRIMARY]",
+       "path": "docs/budgets/xe_accounting_a9_v3/xe_accounting_a9_v3.json",
+       "id": "xe_accounting_a9_v3:evaluations[S1-FL-PRIMARY]",
        "role": "SUPPORTING",
        "kind": "BUDGET_EVALUATION",
-       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S1-FL-PRIMARY {\"RA-FUNC\": \"APPLIES\"}: REFUSED_TBD_INPUTS; S1-FL-PRIMARY {\"RA-FUNC\": \"NOT_APPLIED\"}: COMPUTED_EXACT_ZERO",
+       "evidence_state": "XE ACCOUNTING (supporting; never a capability demonstration): S1-FL-PRIMARY (RA-FUNC APPLIES, RA-CASE LOADED): REFUSED_TBD_INPUTS (TBD lines 6)",
        "evaluated": true,
        "verified": false,
        "measured": false,
@@ -9800,7 +9773,7 @@
        "lower_bound_verified": false,
        "exceeds_limit_every_reading": null,
        "detail": {
-        "name": "Xe accounting v3 (A9.16 step 1; to be refreshed for A9.19 / A9.20 by the budgets lane)",
+        "name": "A9.16 Xe accounting v3 (A9.14 / A9.15 applied)",
         "why": "flight Xe accounting v3, to be refreshed for A9.19 / A9.20 without C1 Xe (budgets lane); the immutable v2 is history, not evidence here"
        }
       },
@@ -11975,6 +11948,8 @@
     "marker": "NOT_APPLICABLE_GROUND_REFERENCE"
    }
   ],
+  "budget_retired_ground_reference_cells": [],
+  "budget_retired_note": "rows whose hall_c1_reference evidence is a v3 flight budget carry the marker only once those budgets retire the column to history (A9.19 / A9.20 budgets refresh); while the budgets still carry it, the cell stays the labelled ground-reference evaluation",
   "na_note": "flight-architecture rows RVM-28..30 are not evaluated against the ground-only hall_c1_reference (RV19-10); the cell keeps a vocabulary status (rvm_rules, R7) but carries applicability_marker NOT_APPLICABLE_GROUND_REFERENCE and counts_as_compliance_evidence = false",
   "owner_open_note": "A9.20 verbatim also asks 'is it good to remove hollow cathode' - recorded for the owner, not answered here (see recorder_proposals_open_for_owner)",
   "downstream": "docs/requirements/rfp_official/rfp_registration_v1.json rvm_mapping is rebuilt from this RVM by its own builder (rfp_clauses_v1.py; outside this lane)"

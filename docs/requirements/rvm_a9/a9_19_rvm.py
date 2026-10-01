@@ -256,12 +256,12 @@ def build_rows(B, ctx) -> list:
         "configuration_applicability": {"hall_icp_neutralizer": "FLIGHT budgets must exclude C1 (A9.20)",
                                         "hall_c1_reference": CELL_APPLICABILITY_C1},
         "artifacts": cells(
-            lambda: [plan(ctx, "MP3", "@doc", why="flight mass / power v3, to be refreshed for A9.19 / A9.20 without C1 "
+            lambda: [plan(ctx, "MP", "@doc", why="flight mass / power v3, to be refreshed for A9.19 / A9.20 without C1 "
                                                   "(budgets lane); the immutable v2 still books hall_c1_reference as "
                                                   "history and is not evidence here"),
-                     plan(ctx, "XE3", "@doc", why="flight Xe accounting v3, to be refreshed for A9.19 / A9.20 without C1 "
+                     plan(ctx, "XE", "@doc", why="flight Xe accounting v3, to be refreshed for A9.19 / A9.20 without C1 "
                                                   "Xe (budgets lane); the immutable v2 is history, not evidence here"),
-                     plan(ctx, "RFQ3", "RFQ3-HALLEL-N03", role="SUPPORTING",
+                     plan(ctx, "RFQ2", "RFQ3-HALLEL-N03", role="SUPPORTING",
                           why="RFQ v3 RFQ3-HALLEL-N03 classifies every C1 line GROUND_ONLY_LAB_EQUIPMENT "
                               "(procurement, never evidence)")],
             "RVM-30"),
@@ -381,6 +381,11 @@ def apply(doc: dict) -> dict:
         cell = by[rid]["configurations"]["hall_c1_reference"]
         if cell.get("applicability_marker") != "NOT_APPLICABLE_GROUND_REFERENCE":
             raise A919Error(f"{rid}: hall_c1_reference cell is not the NOT_APPLICABLE_GROUND_REFERENCE marker")
+    budget_na = [r["id"] for r in doc["rows"] if r["id"] not in NA_ROWS
+                 and r["configurations"]["hall_c1_reference"].get("applicability_marker")]
+    for rid in budget_na:
+        if not by[rid]["configurations"]["hall_c1_reference"].get("retired_flight_budget_probes"):
+            raise A919Error(f"{rid}: NOT_APPLICABLE_GROUND_REFERENCE marker without a retired flight-budget basis")
     for r in doc["rows"]:
         r["configurations"]["hall_c1_reference"]["applicability"] = CELL_APPLICABILITY_C1
     doc["configurations_as_carried_a9_16"] = doc["configurations"]
@@ -397,6 +402,13 @@ def apply(doc: dict) -> dict:
         "rows_added": ["RVM-28", "RVM-29", "RVM-30"], "rows_recorded": sorted(ROW_RECORDS),
         "not_applicable_ground_reference_cells": [{"row": rid, "configuration": "hall_c1_reference",
                                                    "marker": "NOT_APPLICABLE_GROUND_REFERENCE"} for rid in NA_ROWS],
+        "budget_retired_ground_reference_cells": [
+            {"row": rid, "configuration": "hall_c1_reference", "marker": "NOT_APPLICABLE_GROUND_REFERENCE",
+             "probes": by[rid]["configurations"]["hall_c1_reference"]["retired_flight_budget_probes"]}
+            for rid in budget_na],
+        "budget_retired_note": "rows whose hall_c1_reference evidence is a v3 flight budget carry the marker only once "
+                               "those budgets retire the column to history (A9.19 / A9.20 budgets refresh); while the "
+                               "budgets still carry it, the cell stays the labelled ground-reference evaluation",
         "na_note": "flight-architecture rows RVM-28..30 are not evaluated against the ground-only hall_c1_reference "
                    "(RV19-10); the cell keeps a vocabulary status (rvm_rules, R7) but carries applicability_marker "
                    "NOT_APPLICABLE_GROUND_REFERENCE and counts_as_compliance_evidence = false",
