@@ -21,18 +21,18 @@ Recomputed read-only from the W1 design-input documents (`abep_sim.intake.collec
 
 | quantity | range | basis |
 |---|---|---|
-| required active CR (self-consistent backflow) | 2.38–152 | W1 SC-BACKFLOW |
-| required active CR (upper-bound flow basis) | 2.07–84.5 | setpoint / p_passive |
-| passive plenum pressure [Pa] | 0.00213–0.0242 | frozen TPMC |
-| valve flow bracket [mg/s] | 0.0278–2.92 | W1 (candidate range) |
-| inlet pumping speed for b = 0.5 [m³/s] | 5.45–12.1 (×1.82–4.02 of 3000 l/s) | FC-01 model; EV-03 |
-| inlet pumping speed for b = 0.25 [m³/s] | 16.4–36.2 (×5.45–12.1 of 3000 l/s) | FC-01 model; EV-03 |
-| inlet pumping speed for b = 0.1 [m³/s] | 49.1–108 (×16.4–36.2 of 3000 l/s) | FC-01 model; EV-03 |
-| min inlet area, b = 0.25 [m²] | 0.113–0.237 | max(2S/u at 500 m/s, EV-01; 4S/c̄, EV-20 orifice limit; c̄ 575–615 m/s) |
-| pneumatic power, eta 10 % / 1 % [W] | ≤ 5.95 / ≤ 59.5 | EV-05 |
-| chain-sized code-default machine P_el [W] | 13.7–82.1 | assumed inputs |
-| jet power of 12 mN at delivered flow [W] | 35–2.59e+03 | RFP, efficiency 1 |
-| ln CR_O / ln CR_N2 (chain machine) | 0.731–0.748 | EV-02 |
+| required active CR (self-consistent backflow) | 2.38–30.3 | W1 SC-BACKFLOW |
+| required active CR (upper-bound flow basis) | 2.07–21.1 | setpoint / p_passive |
+| passive plenum pressure [Pa] | 0.00237–0.0242 | frozen TPMC |
+| valve flow bracket [mg/s] | 0.0278–1.04 | W1 (candidate range) |
+| inlet pumping speed for b = 0.5 [m³/s] | 5.45–5.79 (×1.82–1.93 of 3000 l/s) | FC-01 model; EV-03 |
+| inlet pumping speed for b = 0.25 [m³/s] | 16.4–17.4 (×5.45–5.79 of 3000 l/s) | FC-01 model; EV-03 |
+| inlet pumping speed for b = 0.1 [m³/s] | 49.1–52.1 (×16.4–17.4 of 3000 l/s) | FC-01 model; EV-03 |
+| min inlet area, b = 0.25 [m²] | 0.113–0.114 | max(2S/u at 500 m/s, EV-01; 4S/c̄, EV-20 orifice limit; c̄ 575–615 m/s) |
+| pneumatic power, eta 10 % / 1 % [W] | ≤ 1.02 / ≤ 10.2 | EV-05 |
+| chain-sized code-default machine P_el [W] | 13.7–21.6 | assumed inputs |
+| jet power of 12 mN at delivered flow [W] | 72.9–2.59e+03 | RFP, efficiency 1 |
+| ln CR_O / ln CR_N2 (chain machine) | 0.744–0.748 | EV-02 |
 | CFRP ram-yield recession, 26,000 h [m] | 0.000514–0.0165 | EV-16 (upper bound, EV-17) |
 
 Cases where 12 mN at the self-consistent flow already exceeds 1.5 kW (efficiency 1): `DC-S12-G20/alt230_low`, `DC-S12-G20/alt230_mean`. Upper-bound flow: none.
@@ -41,15 +41,6 @@ Cases where 12 mN at the self-consistent flow already exceeds 1.5 kW (efficiency
 
 | candidate | case | p_passive [Pa] | setpoint [Pa] | CR req (SC / UB) | ṁ SC–UB [mg/s] | S(b=0.25) [m³/s] | P_pn η1 % [W] | P_jet 12 mN SC [W] | x_O valve (chain) |
 |---|---|---|---|---|---|---|---|---|---|
-| DC-S12-G10 | alt180_low | 0.0123 | 0.1 | 13.3 / 8.16 | 0.364–0.939 | 29.8 | 25.6 | 198 | 0.449 |
-| DC-S12-G10 | alt180_mean | 0.0168 | 0.1 | 8.14 / 5.95 | 0.341–1.27 | 30.3 | 30.2 | 211 | 0.495 |
-| DC-S12-G10 | alt180_high | 0.0217 | 0.1 | 7.35 / 4.61 | 0.602–1.62 | 30.6 | 33.8 | 120 | 0.534 |
-| DC-S12-G10 | alt200_low | 0.00575 | 0.1 | 30.1 / 17.4 | 0.18–0.428 | 30.6 | 16.8 | 400 | 0.517 |
-| DC-S12-G10 | alt200_mean | 0.00904 | 0.1 | 15.8 / 11.1 | 0.201–0.667 | 30.9 | 22.4 | 359 | 0.549 |
-| DC-S12-G10 | alt200_high | 0.0126 | 0.1 | 12.1 / 7.92 | 0.32–0.924 | 31.1 | 27.1 | 225 | 0.587 |
-| DC-S12-G10 | alt230_low | 0.00213 | 0.1 | 69.8 / 47 | 0.0497–0.152 | 31.7 | 8.66 | 1.45e+03 | 0.579 |
-| DC-S12-G10 | alt230_mean | 0.00412 | 0.1 | 54 / 24.3 | 0.162–0.295 | 31.6 | 13.9 | 444 | 0.604 |
-| DC-S12-G10 | alt230_high | 0.00641 | 0.1 | 26.2 / 15.6 | 0.184–0.456 | 31.8 | 18.6 | 391 | 0.639 |
 | DC-S12-G20 | alt180_low | 0.0137 | 0.05 | 4.3 / 3.65 | 0.0868–0.575 | 16.4 | 9.67 | 830 | 0.459 |
 | DC-S12-G20 | alt180_mean | 0.0187 | 0.05 | 4.02 / 2.67 | 0.261–0.775 | 16.6 | 10.2 | 276 | 0.505 |
 | DC-S12-G20 | alt180_high | 0.0242 | 0.05 | 2.38 / 2.07 | 0.128–0.987 | 16.8 | 9.83 | 561 | 0.552 |
@@ -59,15 +50,6 @@ Cases where 12 mN at the self-consistent flow already exceeds 1.5 kW (efficiency
 | DC-S12-G20 | alt230_low | 0.00237 | 0.05 | 30.3 / 21.1 | 0.028–0.0924 | 17.3 | 4.17 | 2.57e+03 | 0.6 |
 | DC-S12-G20 | alt230_mean | 0.00458 | 0.05 | 12.9 / 10.9 | 0.0278–0.179 | 17.3 | 6.31 | 2.59e+03 | 0.633 |
 | DC-S12-G20 | alt230_high | 0.00712 | 0.05 | 11.9 / 7.03 | 0.113–0.277 | 17.4 | 8.03 | 637 | 0.654 |
-| DC-S25-G20 | alt180_low | 0.0137 | 0.2 | 29.1 / 14.6 | 0.597–1.2 | 34.1 | 41.7 | 121 | 0.43 |
-| DC-S25-G20 | alt180_mean | 0.0187 | 0.2 | 13.9 / 10.7 | 0.372–1.62 | 34.6 | 51.1 | 193 | 0.49 |
-| DC-S25-G20 | alt180_high | 0.0242 | 0.2 | 12.5 / 8.28 | 0.699–2.06 | 35 | 59.5 | 103 | 0.528 |
-| DC-S25-G20 | alt200_low | 0.00641 | 0.2 | 64.6 / 31.2 | 0.281–0.544 | 34.9 | 25.7 | 256 | 0.486 |
-| DC-S25-G20 | alt200_mean | 0.0101 | 0.2 | 30.3 / 19.9 | 0.292–0.848 | 35.2 | 35.3 | 247 | 0.537 |
-| DC-S25-G20 | alt200_high | 0.0141 | 0.2 | 26.1 / 14.2 | 0.533–1.17 | 35.5 | 44.2 | 135 | 0.567 |
-| DC-S25-G20 | alt230_low | 0.00237 | 0.2 | 152 / 84.5 | 0.0857–0.193 | 36.1 | 12.6 | 840 | 0.527 |
-| DC-S25-G20 | alt230_mean | 0.00458 | 0.2 | 67.1 / 43.7 | 0.13–0.373 | 36 | 20.8 | 553 | 0.583 |
-| DC-S25-G20 | alt230_high | 0.00712 | 0.2 | 55.3 / 28.1 | 0.284–0.577 | 36.2 | 28.6 | 254 | 0.608 |
 
 ## 2. Hard gates
 
@@ -96,12 +78,12 @@ Cases where 12 mN at the self-consistent flow already exceeds 1.5 kW (efficiency
 Gate bases (with evidence ids and class):
 
 - **C1** (molecular-drag / turbomolecular-type (active mechanical)):
-  - HG-1 CONDITIONAL: pneumatic band <= 59.5 W at eta = 1 % (fixed loads TBD; the chain-sized code-default machine gives 13.7-82.1 W); with the 12 mN jet-power bound the bus closes at 27/27 candidate-cases on the upper-bound flow and 25/27 on the self-consistent flow; the misses (DC-S12-G20/alt230_low, DC-S12-G20/alt230_mean) fail for any compressor: the delivered flow is too low (raise it via HG-5) [EV-05; model-derived]
+  - HG-1 CONDITIONAL: pneumatic band <= 10.2 W at eta = 1 % (fixed loads TBD; the chain-sized code-default machine gives 13.7-21.6 W); with the 12 mN jet-power bound the bus closes at 9/9 candidate-cases on the upper-bound flow and 7/9 on the self-consistent flow; the misses (DC-S12-G20/alt230_low, DC-S12-G20/alt230_mean) fail for any compressor: the delivered flow is too low (raise it via HG-5) [EV-05; model-derived]
   - HG-1b CONDITIONAL: within the PROPOSED 300 W allocation only if the fixed motor, bearing and control loads are; requires measured input power [EV-05; model-derived]
   - HG-2 NOT_EVALUABLE: no published mass for an ABEP-scale unit; LI2015 excerpt calls the device complex and heavy (verify) [EV-08; inferred]
   - HG-3 CONDITIONAL: metallic (Al alloy / Ti) or coated wetted parts: thermal-AO data TBD; bare CFRP or polymer wetted parts fail the ram-yield bound unless the thermal yield is lower by >= 165x (EV-17 says 'orders of magnitude' lower: verify with a test) [EV-16, EV-17, EV-18; inferred]
-  - HG-4 CONDITIONAL: single secondary-cited data point: published CR >= 3500 (LI2015) would cover the required 2.38-152 for heavy species; scaled to atomic O (EV-02, assuming the published CR is for N2): >= 478, covering 27/27 self-consistent cases (27/27 upper-bound basis); species, inlet pressure and throughput of the published value unverified (not read first-hand) [EV-08, EV-02; inferred]
-  - HG-5 CONDITIONAL: inlet pumping speed must be 5.45-12.1x the largest published commercial TMP speed for b = 0.25; minimum inlet area 0.113-0.237 m^2 (max of drag form 2S/u at 500 m/s and orifice limit 4S/c_bar, EV-01/EV-20) -> a throat-spanning rotor (as in LI2015, secondary), not a catalogue pump; stopped-rotor back-streaming needs an isolation valve (EV-04) [EV-01, EV-20, EV-03, EV-04, EV-08; model-derived]
+  - HG-4 CONDITIONAL: single secondary-cited data point: published CR >= 3500 (LI2015) would cover the required 2.38-30.3 for heavy species; scaled to atomic O (EV-02, assuming the published CR is for N2): >= 478, covering 9/9 self-consistent cases (9/9 upper-bound basis); species, inlet pressure and throughput of the published value unverified (not read first-hand) [EV-08, EV-02; inferred]
+  - HG-5 CONDITIONAL: inlet pumping speed must be 5.45-5.79x the largest published commercial TMP speed for b = 0.25; minimum inlet area 0.113-0.114 m^2 (max of drag form 2S/u at 500 m/s and orifice limit 4S/c_bar, EV-01/EV-20) -> a throat-spanning rotor (as in LI2015, secondary), not a catalogue pump; stopped-rotor back-streaming needs an isolation valve (EV-04) [EV-01, EV-20, EV-03, EV-04, EV-08; model-derived]
   - HG-6 PASS: upstream of the valve; identical for hall_only / rf_hall / ecr_hall [—; assumed]
 - **C2** (molecular-drag (active mechanical)):
   - HG-1 NOT_EVALUABLE: no sourced power data [—; assumed]
@@ -109,18 +91,18 @@ Gate bases (with evidence ids and class):
   - HG-2 NOT_EVALUABLE: no sourced mass data [—; assumed]
   - HG-3 CONDITIONAL: same material logic as C1 [EV-16, EV-17; inferred]
   - HG-4 CONDITIONAL: K0 can be made large (EV-02); not the binding constraint [EV-02; model-derived]
-  - HG-5 FAIL: as first stage: S_required(b = 0.5) / S0 = 1.24e+03-2.58e+03 with the code-default channel (worst case per candidate; DragCompressor then gives CR_active = 1, i.e. no compression at that throughput); raising b h to the needed area turns it into a throat-spanning rotor (C1). Retained only as a back stage of C1 [EV-01; model-derived]
+  - HG-5 FAIL: as first stage: S_required(b = 0.5) / S0 = 1.24e+03-1.24e+03 with the code-default channel (worst case per candidate; DragCompressor then gives CR_active = 1, i.e. no compression at that throughput); raising b h to the needed area turns it into a throat-spanning rotor (C1). Retained only as a back stage of C1 [EV-01; model-derived]
   - HG-6 PASS: upstream of the valve; architecture-neutral [—; assumed]
 - **C3** (passive collimated-intake compression):
   - HG-1 PASS: no compressor load [—; model-derived]
   - HG-1b PASS: no compressor load [—; model-derived]
   - HG-2 PASS: no compressor mass [—; model-derived]
   - HG-3 NOT_EVALUABLE: intake-wall AO is an intake-lane item [—; assumed]
-  - HG-4 FAIL: CR_active = 1 < required 2.38-152: P_feed <= 0.0242 Pa is below every ladder setpoint (>= 0.05 Pa). The gate rests on the PROPOSED setpoint ladder, not on the RFP: C3 is eliminated only WITHIN the tested (W1 ladder) envelope and returns if the Phase-1 knee shows sustainment at the passive plenum pressure with a direct-feed channel [—; model-derived]
+  - HG-4 FAIL: CR_active = 1 < required 2.38-30.3: P_feed <= 0.0242 Pa is below every ladder setpoint (>= 0.05 Pa). The gate rests on the PROPOSED setpoint ladder, not on the RFP: C3 is eliminated only WITHIN the tested (W1 ladder) envelope and returns if the Phase-1 knee shows sustainment at the passive plenum pressure with a direct-feed channel [—; model-derived]
   - HG-5 NOT_EVALUABLE: backflow is the passive flux balance itself (FC-01) [—; inferred]
   - HG-6 PASS: architecture-neutral [—; assumed]
 - **C4** (cryo / storage-based):
-  - HG-1 CONDITIONAL: 1200 W < 1.5 kW leaves 300 W for the Hall discharge and all other loads during condensation; if thruster and condensation run concurrently, the 12 mN jet-power bound fits at 23/27 (upper-bound flow) and 12/27 (self-consistent flow) W1 candidate-cases before any thruster loss (W1 flows used as a proxy; CRAID's own delivered flow differs) [EV-10; model-derived]
+  - HG-1 CONDITIONAL: 1200 W < 1.5 kW leaves 300 W for the Hall discharge and all other loads during condensation; if thruster and condensation run concurrently, the 12 mN jet-power bound fits at 7/9 (upper-bound flow) and 1/9 (self-consistent flow) W1 candidate-cases before any thruster loss (W1 flows used as a proxy; CRAID's own delivered flow differs) [EV-10; model-derived]
   - HG-1b FAIL_AT_PUBLISHED_POINT: 1200 W > PROPOSED allocation 300 W; a scaled variant is NOT_EVALUABLE (no published scaling) [EV-10; model-derived]
   - HG-2 NOT_EVALUABLE: no mass in accessed text [—; assumed]
   - HG-3 NOT_EVALUABLE: AO handling is an assumption of the source (EV-12) [EV-12; assumed]
@@ -175,7 +157,7 @@ DragCompressor parameters required: `turbo_rows`, `turbo_area_m2 (>= A_inlet_min
 - model change: plenum backflow coupling (W1 FC-01 / DI-1.12): compressor sized for the self-consistent plenum, not the passive plenum
 - model change: wiring measured parameters into the chain is a model change (goldens may move; HISTORY entry)
 
-Implied states at the nine cases: **availability**: PARTIAL - requirement-derived only; no published parameter set exists to run DragCompressor for this concept; **mdot**: between the W1 SC-BACKFLOW flow and the upper bound, depending on the achieved inlet pumping speed (per-case S_required for b = 0.5 / 0.25 / 0.1 in requirement_envelope); **P_feed**: valve setpoint (W1 ladder, PROPOSED); requires the concept to reach CR_required; **T_feed**: TBD - requires measured gas temperature rise; W1 value is the DragCompressor lumped model with the 300-500 K clamp convention (FC-04); **x_s**: model-derived from the chain-sized code-default machine (heavy species compressed more; W1 valve x_s); a measured species-resolved K replaces it; **P_compressor**: pneumatic band <= 59.5 W at eta 1 % (all 36 candidate-cases); fixed motor/bearing/control loads TBD
+Implied states at the nine cases: **availability**: PARTIAL - requirement-derived only; no published parameter set exists to run DragCompressor for this concept; **mdot**: between the W1 SC-BACKFLOW flow and the upper bound, depending on the achieved inlet pumping speed (per-case S_required for b = 0.5 / 0.25 / 0.1 in requirement_envelope); **P_feed**: valve setpoint (W1 ladder, PROPOSED); requires the concept to reach CR_required; **T_feed**: TBD - requires measured gas temperature rise; W1 value is the DragCompressor lumped model with the 300-500 K clamp convention (FC-04); **x_s**: model-derived from the chain-sized code-default machine (heavy species compressed more; W1 valve x_s); a measured species-resolved K replaces it; **P_compressor**: pneumatic band <= 10.2 W at eta 1 % (all 36 candidate-cases); fixed motor/bearing/control loads TBD
 
 ### C2 — molecular-drag (Holweck / Gaede) stages only, fed from the passive plenum
 
@@ -292,7 +274,7 @@ DragCompressor parameters required: none. Sourced today: **none**.
 
 Implied states at the nine cases: **availability**: OUT OF SCOPE for DI-1.4; **mdot**: n/a; **P_feed**: n/a; **T_feed**: n/a; **x_s**: n/a; **P_compressor**: n/a
 
-C2 probe (DragCompressor, turbo_rows = 0, code-default channel, assumed): DC-S12-G10 rpm 6.89e+04, worst S_req(b=0.5)/S0 = 2.26e+03 at alt230_high; DC-S12-G20 rpm 6.89e+04, worst S_req(b=0.5)/S0 = 1.24e+03 at alt230_high; DC-S25-G20 rpm 6.89e+04, worst S_req(b=0.5)/S0 = 2.58e+03 at alt230_high.
+C2 probe (DragCompressor, turbo_rows = 0, code-default channel, assumed): DC-S12-G20 rpm 6.89e+04, worst S_req(b=0.5)/S0 = 1.24e+03 at alt230_high.
 
 ## 5. Recommendation (PROPOSED)
 
@@ -301,14 +283,14 @@ Status: **PROPOSED for owner review (not a design freeze, not an architecture ra
 - **Primary: C1** — a throat-spanning bladed turbomolecular-type rotor as first stage (optionally followed by a drag or second TMP stage), metallic or coated AO-compatible wetted parts (no bare CFRP or polymer), with an isolation valve against stopped-rotor back-streaming.
   - why: only continuous active concept with a published ABEP-specific compression data point in the required range, and that point is a single secondary citation (EV-08, LI2015; needs first-hand verification)
   - why: the only surveyed mechanism that can supply the required inlet pumping speed continuously, at throat-scale inlet area (EV-01 / EV-20 / EV-03 bound; not demonstrated at ABEP scale)
-  - why: pneumatic power is small (<= 59.5 W at eta 1 %); the fixed loads are the unknown
+  - why: pneumatic power is small (<= 10.2 W at eta 1 %); the fixed loads are the unknown
   - condition: measured CR vs inlet pressure for N2, O2 and O (or an owner-accepted surrogate) covering 142 on O
   - condition: measured inlet pumping speed at throat scale meeting S_required(b = 0.25)
   - condition: measured electrical input power within the owner allocation
   - condition: mass within the BOM allocation
   - condition: thermal-AO compatibility of wetted materials
   - condition: life evidence toward > 15,000 h firing
-- **Reference: C3** — passive intake without compressor is kept only as a reference branch: it fails HG-4 on the PROPOSED setpoint ladder and returns only if the Phase-1 Hall-only knee is sustainable at the passive plenum pressure (0.00213-0.0242 Pa).
+- **Reference: C3** — passive intake without compressor is kept only as a reference branch: it fails HG-4 on the PROPOSED setpoint ladder and returns only if the Phase-1 Hall-only knee is sustainable at the passive plenum pressure (0.00237-0.0242 Pa).
 - **Watch: C4** — cryocondensation fails the PROPOSED power allocation at its published point (1.2 kW cryocooler); re-enters only with a published scaling of cryocooler power to the W1 flows.
 - not carried: **C2** — not viable as first stage (pumping speed); kept as a C1 back stage.
 - not carried: **C5** — compression far beyond need; storage not required by a continuous feed.
@@ -333,11 +315,11 @@ Status: **PROPOSED for owner review (not a design freeze, not an architecture ra
 ## 7. Findings
 
 - **CD-01** (inferred): every DragCompressor parameter used by the W1 closure is an uncited code default; no accessed open source gives an ABEP compressor parameter set, so no concept can be run through the chain with sourced inputs today
-- **CD-02** (model-derived): the required inlet pumping speed for b = 0.25 is 16.4-36.2 m^3/s, 5.45-12.1x the largest published commercial TMP speed (3000 l/s, EV-03); the minimum inlet area, max(2S/u at 500 m/s (EV-01, valid for u << c_bar), 4S/c_bar (orifice limit, EV-20)), is 0.113-0.237 m^2 (throat scale; c_bar = 575-615 m/s, binding: orifice_limit)
-- **CD-03** (model-derived): atomic O is the least-compressed species (ln K ~ sqrt(m), EV-02); the chain-sized code-default machine gives ln CR_O / ln CR_N2 = 0.731-0.748 (sqrt(16/28) = 0.756), so the valve is O-depleted relative to the inlet and HG-4 must be met on O
+- **CD-02** (model-derived): the required inlet pumping speed for b = 0.25 is 16.4-17.4 m^3/s, 5.45-5.79x the largest published commercial TMP speed (3000 l/s, EV-03); the minimum inlet area, max(2S/u at 500 m/s (EV-01, valid for u << c_bar), 4S/c_bar (orifice limit, EV-20)), is 0.113-0.114 m^2 (throat scale; c_bar = 575-615 m/s, binding: orifice_limit)
+- **CD-03** (model-derived): atomic O is the least-compressed species (ln K ~ sqrt(m), EV-02); the chain-sized code-default machine gives ln CR_O / ln CR_N2 = 0.744-0.748 (sqrt(16/28) = 0.756), so the valve is O-depleted relative to the inlet and HG-4 must be met on O
 - **CD-04** (inferred): the compressor outlet (setpoints 0.05-1 Pa) reaches/exceeds the 0.1 Pa molecular-regime limit of TMPs (EV-03): DragCompressor's free-molecular Gaede characteristic is out of domain at the outlet; the stage characteristic there must come from data (T-1)
-- **CD-05** (model-derived): pneumatic compression power is small (<= 59.5 W at eta = 1 %, EV-05); the compressor power is dominated by fixed motor/bearing/control loads that no accessed source quantifies (T-4)
-- **CD-06** (model-derived): RFP-derived power bound: 12 mN at the delivered flow needs jet power 35-2.59e+03 W (efficiency 1); at 2 candidate-case(s) on the self-consistent flow the 1.5 kW bus is exceeded before any compressor or loss (DC-S12-G20/alt230_low, DC-S12-G20/alt230_mean): those flows cannot give 12 mN within the RFP whatever the compressor, so DI-1.4 must raise the delivered flow (pumping speed, HG-5), not only compress
+- **CD-05** (model-derived): pneumatic compression power is small (<= 10.2 W at eta = 1 %, EV-05); the compressor power is dominated by fixed motor/bearing/control loads that no accessed source quantifies (T-4)
+- **CD-06** (model-derived): RFP-derived power bound: 12 mN at the delivered flow needs jet power 72.9-2.59e+03 W (efficiency 1); at 2 candidate-case(s) on the self-consistent flow the 1.5 kW bus is exceeded before any compressor or loss (DC-S12-G20/alt230_low, DC-S12-G20/alt230_mean): those flows cannot give 12 mN within the RFP whatever the compressor, so DI-1.4 must raise the delivered flow (pumping speed, HG-5), not only compress
 - **CD-07** (inferred): bare CFRP wetted blades (the repository rotor default) would recede 0.000514-0.0165 m over 26,000 h at the ram-energy yield (EV-16); thermal gas erodes far less (EV-17) but by an unmeasured factor (needed: >= 165x) -> metallic/coated parts or test T-6
 - **CD-08** (inferred): published ABEP compressor data are few, partly secondary and all need verification: the only active-compressor point (EV-08) is a secondary citation; EV-09 (ZHENG2021) is a passive DSMC intake, not compressor evidence (v1 mis-attribution corrected); none reports power, mass, T_feed or life; the down-selection therefore stays PROPOSED and the 0.030-3.14 mg/s flow range stays a candidate range (owner addendum A3)
 
@@ -410,7 +392,7 @@ Status: **PROPOSED for owner review (not a design freeze, not an architecture ra
 - decision `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json` sha256 `04c5a6f46ed2cb3e3fb174bcc7305d129e15ef53af2349d2a8abc4f6d8975992`
 - decision `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json` sha256 `f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6`
 - decision `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json` sha256 `10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e`
-- input `docs/architecture_comparison/feed_state_closure/feed_state_closure_v2.json` sha256 `b5ba8233bb530241847a9c30ca1b2bbc513e2b0ec4ded7d20a9c3de41c174721`
+- input `docs/architecture_comparison/feed_state_closure/feed_state_closure_v2.json` sha256 `be5c7f97d755d9c67678e5a017db9c27fe86c21155c5e512acf1a9501f4a6db8`
 - input `scripts/architecture/build_feed_envelope.py` sha256 `32f96ba06ed01efaed3e827e09b66c8d794073fc53ebef474b7dff512d39d99e`
 - input `abep_sim/compressor.py` sha256 `7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75`
 - input `abep_sim/intake.py` sha256 `d46c23af40d413094babbe9d2121238c7b6f768341ffb3789d3d50c1d0f66687`
