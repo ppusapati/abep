@@ -932,6 +932,10 @@ def design_cases(v2: dict, items: dict, evals: list, s: dict) -> dict:
 
 
 # ------------------------------------------------------------------------------------------------ document
+SUPERSEDED_FOR_FLIGHT_A9_19 = ("; superseded for flight by A9.19 / A9.20 (no flight C1; C1 Xe only in "
+                               "ground ledger S2-GT-C1)")
+SUPERSEDED_ROWS_A9_19 = ("OQA90707", "OQA90707_A", "MPQ01", "MPQ01_A")
+
 APPLIED = [
     ("GOV", "governing rule for every Xe line: the RFP requires air + Xe capability (kept); the A9.15 'never a "
             "contingency' ROLE wording is superseded by A9.19 (Xe = contingency / emergency supply mode)"),
@@ -952,10 +956,12 @@ APPLIED = [
     ("XA9Q03", "RA-FLOWUNC resolved: flow-class lines additive and inside the reserve base"),
     ("XA9Q04", "0.20 ground-test logistics margin; explicit purge / conditioning / line-fill / vendor lines (ground_supply)"),
     ("XA9Q06", "75-bar row removed from the MEOP axis; MEOP TBD_FROM_QUOTATIONS (meop_basis refuses the placeholder)"),
-    ("OQA90707", "flight C1 integration deferred until selected; ground (development / reference) C1 lines unchanged"),
-    ("OQA90707_A", "deferral reason restated: not because Xe is contingency-only"),
-    ("MPQ01", "a selected C1's Xe branch belongs inside AL-08 (mass / power v3) and inside this system accounting"),
-    ("MPQ01_A", "C1 Xe neither assumed nor excluded in advance (c1_flight_xe_booking)"),
+    ("OQA90707", "flight C1 integration deferred until selected; ground (development / reference) C1 lines unchanged"
+                 + SUPERSEDED_FOR_FLIGHT_A9_19),
+    ("OQA90707_A", "deferral reason restated: not because Xe is contingency-only" + SUPERSEDED_FOR_FLIGHT_A9_19),
+    ("MPQ01", "a selected C1's Xe branch belongs inside AL-08 (mass / power v3) and inside this system accounting"
+              + SUPERSEDED_FOR_FLIGHT_A9_19),
+    ("MPQ01_A", "C1 Xe neither assumed nor excluded in advance (c1_flight_xe_booking)" + SUPERSEDED_FOR_FLIGHT_A9_19),
     ("XA9Q05", "no default getter / filter on a G-XE ICP feed (icp_xe_getter)"),
     ("XA9Q05_A", "getter need is an engineering / vendor requirement, not a policy choice"),
     ("A919_ARCH", "propellant_policy.architecture: one Hall accelerator + one RF/ICP electron-source / neutralizer for "

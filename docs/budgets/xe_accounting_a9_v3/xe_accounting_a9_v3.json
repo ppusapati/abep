@@ -6181,7 +6181,7 @@
    "md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
    "json_path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
    "json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
-   "how_applied": "flight C1 integration deferred until selected; ground (development / reference) C1 lines unchanged"
+   "how_applied": "flight C1 integration deferred until selected; ground (development / reference) C1 lines unchanged; superseded for flight by A9.19 / A9.20 (no flight C1; C1 Xe only in ground ledger S2-GT-C1)"
   },
   {
    "key": "A9.15",
@@ -6193,7 +6193,7 @@
    "md_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
    "json_path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
    "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
-   "how_applied": "deferral reason restated: not because Xe is contingency-only"
+   "how_applied": "deferral reason restated: not because Xe is contingency-only; superseded for flight by A9.19 / A9.20 (no flight C1; C1 Xe only in ground ledger S2-GT-C1)"
   },
   {
    "key": "A9.14",
@@ -6205,7 +6205,7 @@
    "md_sha256": "2a61c761120863c4b5821043ab78b6f9b28227584f7d83cb48ecd6598ed0af07",
    "json_path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
    "json_sha256": "c6c00b7fda6f220d299f5101d7181199507708684ea195ebcd3e5f54ffc4f62c",
-   "how_applied": "a selected C1's Xe branch belongs inside AL-08 (mass / power v3) and inside this system accounting"
+   "how_applied": "a selected C1's Xe branch belongs inside AL-08 (mass / power v3) and inside this system accounting; superseded for flight by A9.19 / A9.20 (no flight C1; C1 Xe only in ground ledger S2-GT-C1)"
   },
   {
    "key": "A9.15",
@@ -6217,7 +6217,7 @@
    "md_sha256": "edcf3019124084066501863ee314acc570e41f3b09757bcc8f8919b6295e3903",
    "json_path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
    "json_sha256": "a928e87fa37aa6ad875fa1505041f21ea145919ebb86286df0e34629c966e309",
-   "how_applied": "C1 Xe neither assumed nor excluded in advance (c1_flight_xe_booking)"
+   "how_applied": "C1 Xe neither assumed nor excluded in advance (c1_flight_xe_booking); superseded for flight by A9.19 / A9.20 (no flight C1; C1 Xe only in ground ledger S2-GT-C1)"
   },
   {
    "key": "A9.14",

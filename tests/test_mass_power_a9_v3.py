@@ -435,3 +435,14 @@ def test_a9_16_repair_f5_f10_register_and_c1_dwell_wording():
     assert {("A9.12", "OQ-A910-06"), ("A9.14", "OQ-A907-01"), ("A9.14", "XA9Q-02")} <= applied
     txt = json.dumps({k: v for k, v in d.items() if k != "power"})
     assert "OPEN (not this lane)" not in txt
+
+
+
+def test_rv19_09_c1_mass_check_flight_bullet_qualified(d):
+    """RV19-09: the flight bullet must not flatly deny a C1 Xe branch inside the kept AL-08 H2-7 floor."""
+    flight = d["c1_mass_check"]["flight"]
+    assert "no C1 Xe branch in AL-08 in the flight" not in flight
+    assert "no C1 Xe branch booked as a line in AL-08" in flight
+    assert "two-branch valve set" in flight and "recorder_flags" in flight
+    assert any("two-branch valve set" in f for f in d["recorder_flags"])
+    assert "no C1 Xe branch in AL-08 in the flight architecture" not in MD_PATH.read_text(encoding="utf-8")

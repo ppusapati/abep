@@ -1014,8 +1014,11 @@ def build_doc() -> dict:
             "source": cite(s["A919_CF"]),
             "flight": "no C1 kg was ever booked in a flight roll-up: AL-C1 had no value (A9.14 MPQ-01: no kg before "
                       "selection) and the hall_icp_neutralizer column never contained C1 lines; after A9.19 / A9.20 "
-                      "there is no C1 line, no C1 electronics in AL-07 and no C1 Xe branch in AL-08 in the flight "
-                      "architecture",
+                      "there is no C1 line, no C1 electronics in AL-07 and no C1 Xe branch booked as a line in AL-08 "
+                      "in the flight architecture; however, the owner's AL-08 planning floor (H2-7, 5.044 kg, MQ-05) "
+                      "kept in the flight roll-up may still embed a two-branch valve set (0.57 kg) that v2 describes "
+                      "as including the C1 cathode Xe branch (see recorder_flags, owner observation); no number "
+                      "changes",
             "v2_c1_evidence_floor_kg": next(x["evidence_floor_kg"] for x in v2["lines"]["hall_c1_reference"]
                                             if x["line"] == "AL-C1"),
             "v2_c1_floor_is_partial": next(x["floor_is_partial"] for x in v2["lines"]["hall_c1_reference"]

@@ -383,3 +383,15 @@ def test_a9_16_repair_f6_f11_c1_scope_placeholder_and_icp_feed_label(d):
     assert " ".join(q["a9_1_basis_verbatim"].split()) in " ".join(a91.split())
     md = (REPO / "docs/budgets/xe_accounting_a9_v3/XE_ACCOUNTING_A9_V3.md").read_text(encoding="utf-8")
     assert "| within |" not in md and "XV3Q-01: OPEN" in md
+
+
+
+def test_rv19_08_pre_a9_19_c1_rows_marked_superseded(d):
+    """RV19-08: the A9.14 / A9.15 OQ-A907-07 and MPQ-01 'how applied' rows carry the A9.19 / A9.20 supersession."""
+    hits = [r for r in d["owner_answers_applied"] if r["id"] in ("OQ-A907-07", "MPQ-01")]
+    assert sorted((r["key"], r["id"]) for r in hits) == [("A9.14", "MPQ-01"), ("A9.14", "OQ-A907-07"),
+                                                          ("A9.15", "MPQ-01"), ("A9.15", "OQ-A907-07")]
+    tag = "superseded for flight by A9.19 / A9.20 (no flight C1; C1 Xe only in ground ledger S2-GT-C1)"
+    for r in hits:
+        assert r["how_applied"].endswith(tag), r
+    assert MD_PATH.read_text(encoding="utf-8").count(tag) >= 4

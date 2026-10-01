@@ -2687,7 +2687,7 @@
  "c1_mass_check": {
   "owner_request": "check C1 mass",
   "source": "A9.19 A9 C1 CONTROL_FALLBACK (docs/decisions/OD_2026_10_01_A9_19_architecture_xe_contingency_owner_decision.json sha256 20364847febc)",
-  "flight": "no C1 kg was ever booked in a flight roll-up: AL-C1 had no value (A9.14 MPQ-01: no kg before selection) and the hall_icp_neutralizer column never contained C1 lines; after A9.19 / A9.20 there is no C1 line, no C1 electronics in AL-07 and no C1 Xe branch in AL-08 in the flight architecture",
+  "flight": "no C1 kg was ever booked in a flight roll-up: AL-C1 had no value (A9.14 MPQ-01: no kg before selection) and the hall_icp_neutralizer column never contained C1 lines; after A9.19 / A9.20 there is no C1 line, no C1 electronics in AL-07 and no C1 Xe branch booked as a line in AL-08 in the flight architecture; however, the owner's AL-08 planning floor (H2-7, 5.044 kg, MQ-05) kept in the flight roll-up may still embed a two-branch valve set (0.57 kg) that v2 describes as including the C1 cathode Xe branch (see recorder_flags, owner observation); no number changes",
   "v2_c1_evidence_floor_kg": 0.2,
   "v2_c1_floor_is_partial": true,
   "v2_c1_floor_arithmetic": "floor = C1 cathode unit analog low end 0.2 kg (A9B-C01, H2-7 H27-16, inferred); shield/mount (A9B-C02) and filter/getter (A9B-C05) TBD; the C1 cathode Xe branch 0.285 kg (A9B-C04) is already inside the AL-08 floor (H2-7 H27-12 two-branch 0.57 kg) and C1 supplies (A9B-C03) inside the AL-07 PPU analogs: not added twice",
