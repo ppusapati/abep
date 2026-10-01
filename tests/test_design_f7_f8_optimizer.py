@@ -37,7 +37,7 @@ def inp():
 @pytest.fixture(scope="module")
 def small_ctx(inp):
     cands = ("A0.25_Ld10_phi0.8", "A0.5_Ld20_phi0.8", "A1.5_Ld3_phi0.9")
-    comps = ("T3-A1-U2-D0-Ti6Al4V", "T6-A2-U1-D0-Ti6Al4V")
+    comps = ("T3-A1-U2-D0-Ti6Al4V-H0.25", "T6-A2-U1-D0-Ti6Al4V-H0.25")
     return ao.upstream_context(inp, "cll_a0.8", "F4-FIL-NONE", "WALL-G0", candidates=cands, compressors=comps)
 
 
@@ -281,7 +281,7 @@ def test_supplied_objective_labels():
 
 # ------------------------------------------------------------------------------------------------- F8 helpers
 def test_plant_with_overrides_identity_and_effect(inp):
-    d = inp.designs["T6-A2-U1-D0-Ti6Al4V"]
+    d = inp.designs["T6-A2-U1-D0-Ti6Al4V-H0.25"]
     p0, p1 = pf.CompressorPlant.from_design(d), ro.plant_with_overrides(d, {})
     assert p0.characteristic() == p1.characteristic() and p0.leak_m3_s == p1.leak_m3_s
     p2 = ro.plant_with_overrides(d, {"turbo_kK": 1.2 * 1.01})
@@ -299,12 +299,12 @@ def test_perturbed_zero_draw_is_identity(inp):
 
 
 def test_mc_deterministic_and_theta_node(inp):
-    cand = {"design_id": "t", "candidate": "A0.25_Ld10_phi0.8", "compressor": "T3-A1-U2-D0-Ti6Al4V",
+    cand = {"design_id": "t", "candidate": "A0.25_Ld10_phi0.8", "compressor": "T3-A1-U2-D0-Ti6Al4V-H0.25",
             "V_m3": 0.001, "P_set_Pa": 0.01, "filter": "F4-FIL-NONE"}
     a = ro.tpmc_monte_carlo(inp, [cand], ["cll_a0.8"], n=4)
     b = ro.tpmc_monte_carlo(inp, [cand], ["cll_a0.8"], n=4)
     assert a == b
-    rec = a[("A0.25_Ld10_phi0.8", "F4-FIL-NONE", "T3-A1-U2-D0-Ti6Al4V", 0.01)]["cll_a0.8"]
+    rec = a[("A0.25_Ld10_phi0.8", "F4-FIL-NONE", "T3-A1-U2-D0-Ti6Al4V-H0.25", 0.01)]["cll_a0.8"]
     assert 0.0 <= rec["P_feasible"] <= 1.0 and rec["n"] == 4
     tr = ro.theta_ratio_index(inp.f1)
     assert len(tr) == 10 * 4 * 2 * 3 and all(0 < e <= 1.0 + 1e-9 for e, _ in tr.values())

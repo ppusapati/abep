@@ -60,17 +60,17 @@ Rule: recorded as PLACEHOLDER_NOT_A_FLIGHT_DESIGN; never used silently. Filter e
 
 | id | location | value | units | what |
 |---|---|---|---|---|
-| PH-01 | `abep_sim/intake_tpmc.py:43` | False | - | IntakeGeometry.filter switch (filter branch of the direct TPMC); default off |
-| PH-02 | `abep_sim/intake_tpmc.py:44` | 0.7 | - | open-area fraction of the filter element; multiplies eta_c and the passive-compression area |
-| PH-03 | `abep_sim/intake_tpmc.py:45` | 0.6 | - | 'thermal Clausing factor of the filter element' (code comment); no source |
-| PH-04 | `abep_sim/intake_tpmc.py:46` | 0.8 | kg/m^2 | filter areal mass; no source |
-| PH-05 | `abep_sim/intake_tpmc.py:193` | law | - | forward law 'hyperthermal, mostly transmitted' (code comment): eta_c x open_frac x transmission^0.5; no source |
-| PH-06 | `abep_sim/intake_tpmc.py:194` | law | - | backflow law: K_back x transmission; no source |
-| PH-07 | `abep_sim/intake_tpmc.py:195` | law | - | effective open fraction for the passive compression ratio |
-| PH-08 | `abep_sim/intake_tpmc.py:205` | law | kg | filter mass added to the intake mass (direct TPMC) |
+| PH-01 | `abep_sim/intake_tpmc.py:44` | False | - | IntakeGeometry.filter switch (filter branch of the direct TPMC); default off |
+| PH-02 | `abep_sim/intake_tpmc.py:45` | 0.7 | - | open-area fraction of the filter element; multiplies eta_c and the passive-compression area |
+| PH-03 | `abep_sim/intake_tpmc.py:46` | 0.6 | - | 'thermal Clausing factor of the filter element' (code comment); no source |
+| PH-04 | `abep_sim/intake_tpmc.py:47` | 0.8 | kg/m^2 | filter areal mass; no source |
+| PH-05 | `abep_sim/intake_tpmc.py:258` | law | - | forward law 'hyperthermal, mostly transmitted' (code comment): eta_c x open_frac x transmission^0.5; no source |
+| PH-06 | `abep_sim/intake_tpmc.py:259` | law | - | backflow law: K_back x transmission; no source |
+| PH-07 | `abep_sim/intake_tpmc.py:260` | law | - | effective open fraction for the passive compression ratio |
+| PH-08 | `abep_sim/intake_tpmc.py:270` | law | kg | filter mass added to the intake mass (direct TPMC) |
 | PH-09 | `abep_sim/intake.py:29` | False | - | IntakeParams.filter switch (production path); default off |
-| PH-10 | `abep_sim/intake.py:71` | 0.8 | kg/m^2 | production path adds filter MASS only (no flow effect: UPSTREAM_ICD G-01) |
-| PH-11 | `abep_sim/system.py:309` | 0.8 | kg/m^2 | BOM filter line in system.evaluate |
+| PH-10 | `abep_sim/intake.py:76` | 0.8 | kg/m^2 | production path adds filter MASS only (no flow effect: UPSTREAM_ICD G-01) |
+| PH-11 | `abep_sim/system.py:357` | 0.8 | kg/m^2 | BOM filter line in system.evaluate |
 
 - related, not used: abep_sim/aochem.py RECOMB_GAMMA and EROSION_YIELD_CM3_PER_ATOM ('literature-class priors' without per-entry sources): not filter values, not used by F2
 

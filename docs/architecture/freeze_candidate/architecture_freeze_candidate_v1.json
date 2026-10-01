@@ -141,19 +141,19 @@
   },
   "F2": {
    "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
-   "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+   "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
   },
   "F3": {
    "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
-   "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+   "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
   },
   "F3D": {
    "path": "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json",
-   "sha256": "a559776da6c10c2bb8c1eb66fbff308a7b3634c62275bdd39c17d77e4055d8a1"
+   "sha256": "2353460e8087c5d0911d3b7774cd02440e7c93dfb26629b2bf3c5d25e000980f"
   },
   "F4": {
    "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
-   "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+   "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
   },
   "F5": {
    "path": "docs/hardware/h1_freeze_candidate/h1_freeze_candidate_v1.json",
@@ -165,15 +165,15 @@
   },
   "F78": {
    "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
-   "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+   "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
   },
   "F7P": {
    "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
-   "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525"
+   "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08"
   },
   "F8R": {
    "path": "docs/design_synthesis/f7_f8_optimizer/f8_robust_candidates_v1.json",
-   "sha256": "67a0279989756e0a125970f3d08668ccb9570d780b35f0e699a656824907ff1f"
+   "sha256": "4232edffeb07ee6c09ad0fbf11e934ab06bdc49693d225924905cce69cfdb489"
   },
   "OQ4": {
    "path": "docs/budgets/owner_decisions/owner_questions_state_v4.json",
@@ -189,7 +189,7 @@
   },
   "RVM": {
    "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
-   "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+   "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
   },
   "MP2": {
    "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -245,19 +245,19 @@
   },
   "MOD_TPMC": {
    "path": "abep_sim/intake_tpmc.py",
-   "sha256": "ea0100b96f9066b20a5ca13832e27250773962c8ddda16dcf9ccaecef621288c"
+   "sha256": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433"
   },
   "MOD_INTAKE": {
    "path": "abep_sim/intake.py",
-   "sha256": "602df2bffde25d56c089b191e2559578890bfedbe43bc928630e3bbe8fc94cad"
+   "sha256": "d46c23af40d413094babbe9d2121238c7b6f768341ffb3789d3d50c1d0f66687"
   },
   "MOD_COMP": {
    "path": "abep_sim/compressor.py",
-   "sha256": "44d9dac86cac2ca889d051b7a0090fed81781b33f00293dedaf836f8ebb8da92"
+   "sha256": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75"
   },
   "MOD_RES": {
    "path": "abep_sim/reservoir.py",
-   "sha256": "da11cfd45372c56f726652eaff515312887f7fba81219a716e08762789105047"
+   "sha256": "9a7894a47169f1d77e8c66a196002c5456e955b9eb72d81bb9e1440c90ae29af"
   }
  },
  "freeze_status_vocabulary": {
@@ -422,290 +422,542 @@
    "rule": "candidates nominally feasible in EVERY surface scenario (fail closed), compared on worst-case objectives over the scenario set plus the minimum TPMC P_feasible; per set pressure; a set, never a winner; evidence-gate statuses unchanged (gate_snapshot before == after)",
    "members": [
     {
-     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.001|P0.01",
+     "design_id": "A0.25_Ld10_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
+     "intake": "A0.25_Ld10_phi0.9",
+     "area_m2": 0.25,
+     "L_over_d": 10.0,
+     "phi": 0.9,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.5",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 1.523801e-08,
+     "drag_intake_max_N": 0.01058755,
+     "P_compressor_el_max_W": 10.14031,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 4.5,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|P0.01",
      "intake": "A0.25_Ld3_phi0.8",
      "area_m2": 0.25,
      "L_over_d": 3.0,
      "phi": 0.8,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
+     "compressor": "T6-A0-U2-D0-Ti6Al4V-H0.75",
      "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.134276e-09,
+     "mdot_delivered_min_kgps": 7.101047e-09,
      "drag_intake_max_N": 0.01044394,
-     "P_compressor_el_max_W": 9.586583,
-     "m_compressor_max_kg": 10.90722,
+     "P_compressor_el_max_W": 9.229227,
+     "m_compressor_max_kg": 7.48849,
      "intake_wall_area_m2": 1.2,
      "plenum_V_m3": 0.001,
-     "ripple_transfer_shaft": 0.95743,
      "P_feasible_tpmc_min": 1.0
     },
     {
-     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.01|P0.01",
+     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01",
      "intake": "A0.25_Ld3_phi0.8",
      "area_m2": 0.25,
      "L_over_d": 3.0,
      "phi": 0.8,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
-     "V_m3": 0.01,
+     "compressor": "T6-A1-U2-D0-Ti6Al4V-H0.25",
+     "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.134276e-09,
+     "mdot_delivered_min_kgps": 8.754536e-09,
      "drag_intake_max_N": 0.01044394,
-     "P_compressor_el_max_W": 9.586583,
+     "P_compressor_el_max_W": 9.594151,
      "m_compressor_max_kg": 10.90722,
      "intake_wall_area_m2": 1.2,
-     "plenum_V_m3": 0.01,
-     "ripple_transfer_shaft": 0.3148104,
+     "plenum_V_m3": 0.001,
      "P_feasible_tpmc_min": 1.0
     },
     {
-     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.1|P0.01",
+     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
      "intake": "A0.25_Ld3_phi0.8",
      "area_m2": 0.25,
      "L_over_d": 3.0,
      "phi": 0.8,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
-     "V_m3": 0.1,
+     "compressor": "T6-A1-U2-D0-Ti6Al4V-H0.5",
+     "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.134276e-09,
+     "mdot_delivered_min_kgps": 1.09637e-08,
      "drag_intake_max_N": 0.01044394,
-     "P_compressor_el_max_W": 9.586583,
+     "P_compressor_el_max_W": 9.627535,
      "m_compressor_max_kg": 10.90722,
      "intake_wall_area_m2": 1.2,
-     "plenum_V_m3": 0.1,
-     "ripple_transfer_shaft": 0.03314922,
+     "plenum_V_m3": 0.001,
      "P_feasible_tpmc_min": 1.0
     },
     {
-     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.001|P0.01",
+     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U1-D0-Ti6Al4V-H0.75|V0.001|P0.01",
+     "intake": "A0.25_Ld3_phi0.8",
+     "area_m2": 0.25,
+     "L_over_d": 3.0,
+     "phi": 0.8,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A2-U1-D0-Ti6Al4V-H0.75",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 7.968321e-09,
+     "drag_intake_max_N": 0.01044394,
+     "P_compressor_el_max_W": 9.537498,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 1.2,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01",
+     "intake": "A0.25_Ld3_phi0.8",
+     "area_m2": 0.25,
+     "L_over_d": 3.0,
+     "phi": 0.8,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.25",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 1.206766e-08,
+     "drag_intake_max_N": 0.01044394,
+     "P_compressor_el_max_W": 9.78379,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 1.2,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
+     "intake": "A0.25_Ld3_phi0.8",
+     "area_m2": 0.25,
+     "L_over_d": 3.0,
+     "phi": 0.8,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.5",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 1.465276e-08,
+     "drag_intake_max_N": 0.01044394,
+     "P_compressor_el_max_W": 9.834154,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 1.2,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T5-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
      "intake": "A0.25_Ld3_phi0.9",
      "area_m2": 0.25,
      "L_over_d": 3.0,
      "phi": 0.9,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
+     "compressor": "T5-A2-U2-D0-Ti6Al4V-H0.5",
      "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.403918e-09,
+     "mdot_delivered_min_kgps": 4.499364e-10,
      "drag_intake_max_N": 0.01040334,
-     "P_compressor_el_max_W": 9.632097,
+     "P_compressor_el_max_W": 9.668935,
+     "m_compressor_max_kg": 10.62209,
+     "intake_wall_area_m2": 1.35,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.001|P0.01",
+     "intake": "A0.25_Ld3_phi0.9",
+     "area_m2": 0.25,
+     "L_over_d": 3.0,
+     "phi": 0.9,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A1-U1-D0-Ti6Al4V-H0.75",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 2.933262e-09,
+     "drag_intake_max_N": 0.01040334,
+     "P_compressor_el_max_W": 9.331351,
      "m_compressor_max_kg": 10.90722,
      "intake_wall_area_m2": 1.35,
      "plenum_V_m3": 0.001,
-     "ripple_transfer_shaft": 0.9620205,
      "P_feasible_tpmc_min": 1.0
     },
     {
-     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.01|P0.01",
+     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01",
      "intake": "A0.25_Ld3_phi0.9",
      "area_m2": 0.25,
      "L_over_d": 3.0,
      "phi": 0.9,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
-     "V_m3": 0.01,
+     "compressor": "T6-A1-U2-D0-Ti6Al4V-H0.25",
+     "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.403918e-09,
+     "mdot_delivered_min_kgps": 9.046324e-09,
      "drag_intake_max_N": 0.01040334,
-     "P_compressor_el_max_W": 9.632097,
+     "P_compressor_el_max_W": 9.64062,
      "m_compressor_max_kg": 10.90722,
      "intake_wall_area_m2": 1.35,
-     "plenum_V_m3": 0.01,
-     "ripple_transfer_shaft": 0.3323811,
+     "plenum_V_m3": 0.001,
      "P_feasible_tpmc_min": 1.0
     },
     {
-     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.1|P0.01",
+     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
      "intake": "A0.25_Ld3_phi0.9",
      "area_m2": 0.25,
      "L_over_d": 3.0,
      "phi": 0.9,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
-     "V_m3": 0.1,
+     "compressor": "T6-A1-U2-D0-Ti6Al4V-H0.5",
+     "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.403918e-09,
+     "mdot_delivered_min_kgps": 1.133642e-08,
      "drag_intake_max_N": 0.01040334,
-     "P_compressor_el_max_W": 9.632097,
+     "P_compressor_el_max_W": 9.677633,
      "m_compressor_max_kg": 10.90722,
      "intake_wall_area_m2": 1.35,
-     "plenum_V_m3": 0.1,
-     "ripple_transfer_shaft": 0.03521991,
+     "plenum_V_m3": 0.001,
      "P_feasible_tpmc_min": 1.0
     },
     {
-     "design_id": "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.001|P0.01",
+     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A2-U1-D0-Ti6Al4V-H0.75|V0.001|P0.01",
+     "intake": "A0.25_Ld3_phi0.9",
+     "area_m2": 0.25,
+     "L_over_d": 3.0,
+     "phi": 0.9,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A2-U1-D0-Ti6Al4V-H0.75",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 8.267615e-09,
+     "drag_intake_max_N": 0.01040334,
+     "P_compressor_el_max_W": 9.589594,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 1.35,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01",
+     "intake": "A0.25_Ld3_phi0.9",
+     "area_m2": 0.25,
+     "L_over_d": 3.0,
+     "phi": 0.9,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.25",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 1.25348e-08,
+     "drag_intake_max_N": 0.01040334,
+     "P_compressor_el_max_W": 9.842368,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 1.35,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
+     "intake": "A0.25_Ld3_phi0.9",
+     "area_m2": 0.25,
+     "L_over_d": 3.0,
+     "phi": 0.9,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.5",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 1.523135e-08,
+     "drag_intake_max_N": 0.01040334,
+     "P_compressor_el_max_W": 9.897397,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 1.35,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
      "intake": "A0.25_Ld5_phi0.9",
      "area_m2": 0.25,
      "L_over_d": 5.0,
      "phi": 0.9,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
+     "compressor": "T6-A1-U2-D0-Ti6Al4V-H0.5",
      "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.409471e-09,
+     "mdot_delivered_min_kgps": 1.134189e-08,
      "drag_intake_max_N": 0.0104758,
-     "P_compressor_el_max_W": 9.750941,
+     "P_compressor_el_max_W": 9.802569,
      "m_compressor_max_kg": 10.90722,
      "intake_wall_area_m2": 2.25,
      "plenum_V_m3": 0.001,
-     "ripple_transfer_shaft": 0.9708024,
      "P_feasible_tpmc_min": 1.0
     },
     {
-     "design_id": "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.01|P0.01",
+     "design_id": "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
      "intake": "A0.25_Ld5_phi0.9",
      "area_m2": 0.25,
      "L_over_d": 5.0,
      "phi": 0.9,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
-     "V_m3": 0.01,
+     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.5",
+     "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.409471e-09,
+     "mdot_delivered_min_kgps": 1.523734e-08,
      "drag_intake_max_N": 0.0104758,
-     "P_compressor_el_max_W": 9.750941,
-     "m_compressor_max_kg": 10.90722,
+     "P_compressor_el_max_W": 10.02274,
+     "m_compressor_max_kg": 12.5685,
      "intake_wall_area_m2": 2.25,
-     "plenum_V_m3": 0.01,
-     "ripple_transfer_shaft": 0.3751453,
+     "plenum_V_m3": 0.001,
      "P_feasible_tpmc_min": 1.0
     },
     {
-     "design_id": "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.1|P0.01",
-     "intake": "A0.25_Ld5_phi0.9",
-     "area_m2": 0.25,
-     "L_over_d": 5.0,
+     "design_id": "A0.5_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
+     "intake": "A0.5_Ld3_phi0.8",
+     "area_m2": 0.5,
+     "L_over_d": 3.0,
+     "phi": 0.8,
+     "filter": "F4-FIL-NONE",
+     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.5",
+     "V_m3": 0.001,
+     "P_set_Pa": 0.01,
+     "mdot_delivered_min_kgps": 1.767558e-08,
+     "drag_intake_max_N": 0.02088789,
+     "P_compressor_el_max_W": 10.21288,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 2.4,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 1.0
+    },
+    {
+     "design_id": "A0.5_Ld3_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01",
+     "intake": "A0.5_Ld3_phi0.9",
+     "area_m2": 0.5,
+     "L_over_d": 3.0,
      "phi": 0.9,
      "filter": "F4-FIL-NONE",
-     "compressor": "T6-A1-U2-D0-Ti6Al4V",
-     "V_m3": 0.1,
+     "compressor": "T6-A2-U2-D0-Ti6Al4V-H0.5",
+     "V_m3": 0.001,
      "P_set_Pa": 0.01,
-     "mdot_delivered_min_kgps": 8.409471e-09,
-     "drag_intake_max_N": 0.0104758,
-     "P_compressor_el_max_W": 9.750941,
-     "m_compressor_max_kg": 10.90722,
-     "intake_wall_area_m2": 2.25,
-     "plenum_V_m3": 0.1,
-     "ripple_transfer_shaft": 0.04043713,
-     "P_feasible_tpmc_min": 1.0
+     "mdot_delivered_min_kgps": 1.809056e-08,
+     "drag_intake_max_N": 0.02080668,
+     "P_compressor_el_max_W": 10.27587,
+     "m_compressor_max_kg": 12.5685,
+     "intake_wall_area_m2": 2.7,
+     "plenum_V_m3": 0.001,
+     "P_feasible_tpmc_min": 0.93
     }
    ],
    "per_member_f7_extremes": {
-    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.001|P0.01": {
+    "A0.25_Ld10_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.653,
-      316.549
+      316.259,
+      317.996
      ],
      "xO_flow": [
-      0.414581,
-      0.663919
+      0.418719,
+      0.679596
      ],
-     "kn_upper_min": 5.90312
+     "kn_upper_min": 4.82751
     },
-    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.01|P0.01": {
+    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A0-U2-D0-Ti6Al4V-H0.75|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.653,
-      316.549
+      314.894,
+      315.693
      ],
      "xO_flow": [
-      0.414581,
-      0.663919
+      0.411034,
+      0.658188
      ],
-     "kn_upper_min": 5.90312
+     "kn_upper_min": 6.67097
     },
-    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.1|P0.01": {
+    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.653,
-      316.549
+      315.67,
+      316.577
      ],
      "xO_flow": [
-      0.414581,
-      0.663919
+      0.414999,
+      0.664262
      ],
-     "kn_upper_min": 5.90312
+     "kn_upper_min": 5.89123
     },
-    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.001|P0.01": {
+    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.683,
-      316.662
+      315.74,
+      316.691
      ],
      "xO_flow": [
-      0.413365,
-      0.662407
+      0.416525,
+      0.665508
      ],
-     "kn_upper_min": 5.70758
+     "kn_upper_min": 5.84884
     },
-    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.01|P0.01": {
+    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U1-D0-Ti6Al4V-H0.75|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.683,
-      316.662
+      315.693,
+      316.596
      ],
      "xO_flow": [
-      0.413365,
-      0.662407
+      0.415852,
+      0.665655
      ],
-     "kn_upper_min": 5.70758
+     "kn_upper_min": 5.70938
     },
-    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.1|P0.01": {
+    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.683,
-      316.662
+      316.105,
+      317.077
      ],
      "xO_flow": [
-      0.413365,
-      0.662407
+      0.418443,
+      0.667725
      ],
-     "kn_upper_min": 5.70758
+     "kn_upper_min": 5.64929
     },
-    "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.001|P0.01": {
+    "A0.25_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.683,
-      316.96
+      316.212,
+      317.231
      ],
      "xO_flow": [
-      0.413236,
-      0.670738
+      0.420158,
+      0.669078
      ],
-     "kn_upper_min": 5.33966
+     "kn_upper_min": 5.61127
     },
-    "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.01|P0.01": {
+    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T5-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.683,
-      316.96
+      316.371,
+      316.818
      ],
      "xO_flow": [
-      0.413236,
-      0.670738
+      0.433193,
+      0.662842
      ],
-     "kn_upper_min": 5.33966
+     "kn_upper_min": 5.41961
     },
-    "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V|V0.1|P0.01": {
+    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U1-D0-Ti6Al4V-H0.75|V0.001|P0.01": {
      "T_comp_max_K": [
-      315.683,
-      316.96
+      315.637,
+      316.072
      ],
      "xO_flow": [
-      0.413236,
-      0.670738
+      0.428529,
+      0.659663
      ],
-     "kn_upper_min": 5.33966
+     "kn_upper_min": 5.81174
+    },
+    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01": {
+     "T_comp_max_K": [
+      315.7,
+      316.693
+     ],
+     "xO_flow": [
+      0.413769,
+      0.662743
+     ],
+     "kn_upper_min": 5.69535
+    },
+    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
+     "T_comp_max_K": [
+      315.773,
+      316.816
+     ],
+     "xO_flow": [
+      0.415244,
+      0.663962
+     ],
+     "kn_upper_min": 5.65167
+    },
+    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A2-U1-D0-Ti6Al4V-H0.75|V0.001|P0.01": {
+     "T_comp_max_K": [
+      315.729,
+      316.727
+     ],
+     "xO_flow": [
+      0.41456,
+      0.66418
+     ],
+     "kn_upper_min": 5.50665
+    },
+    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.25|V0.001|P0.01": {
+     "T_comp_max_K": [
+      316.148,
+      317.224
+     ],
+     "xO_flow": [
+      0.417065,
+      0.666215
+     ],
+     "kn_upper_min": 5.44466
+    },
+    "A0.25_Ld3_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
+     "T_comp_max_K": [
+      316.259,
+      317.389
+     ],
+     "xO_flow": [
+      0.418725,
+      0.667548
+     ],
+     "kn_upper_min": 5.40537
+    },
+    "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A1-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
+     "T_comp_max_K": [
+      315.773,
+      317.129
+     ],
+     "xO_flow": [
+      0.415116,
+      0.67193
+     ],
+     "kn_upper_min": 5.29718
+    },
+    "A0.25_Ld5_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
+     "T_comp_max_K": [
+      316.259,
+      317.703
+     ],
+     "xO_flow": [
+      0.418605,
+      0.675045
+     ],
+     "kn_upper_min": 5.10927
+    },
+    "A0.5_Ld3_phi0.8|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
+     "T_comp_max_K": [
+      316.458,
+      318.178
+     ],
+     "xO_flow": [
+      0.412724,
+      0.659897
+     ],
+     "kn_upper_min": 4.61453
+    },
+    "A0.5_Ld3_phi0.9|F4-FIL-NONE|T6-A2-U2-D0-Ti6Al4V-H0.5|V0.001|P0.01": {
+     "T_comp_max_K": [
+      316.492,
+      318.335
+     ],
+     "xO_flow": [
+      0.411713,
+      0.658366
+     ],
+     "kn_upper_min": 4.4905
     }
    },
-   "n_members": 9,
+   "n_members": 18,
    "n_all_scenario_feasible": {
-    "0.01": 15
+    "0.01": 53
    },
    "source": {
     "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
     "pointer": "/robust/robust_pareto_by_P_set",
-    "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+    "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
    }
   },
   "nominal_pareto_union": {
-   "n_members": 1233,
+   "n_members": 1217,
    "value_sets": {
     "area_m2": [
      0.25,
@@ -722,34 +974,77 @@
      0.9
     ],
     "compressor": [
-     "T2-A1-U1-D0-Ti6Al4V",
-     "T2-A1-U2-D0-Ti6Al4V",
-     "T2-A2-U0-D0-Ti6Al4V",
-     "T2-A2-U1-D0-Ti6Al4V",
-     "T3-A1-U1-D0-Ti6Al4V",
-     "T3-A1-U2-D0-Ti6Al4V",
-     "T3-A2-U0-D0-Ti6Al4V",
-     "T3-A2-U1-D0-Ti6Al4V",
-     "T4-A1-U1-D0-Ti6Al4V",
-     "T4-A1-U2-D0-Ti6Al4V",
-     "T4-A2-U0-D0-Ti6Al4V",
-     "T4-A2-U1-D0-Ti6Al4V",
-     "T5-A0-U2-D0-Ti6Al4V",
-     "T5-A1-U1-D0-Ti6Al4V",
-     "T5-A1-U2-D0-Ti6Al4V",
-     "T5-A2-U0-D0-Ti6Al4V",
-     "T5-A2-U1-D0-Ti6Al4V",
-     "T6-A0-U2-D0-Ti6Al4V",
-     "T6-A1-U0-D0-Ti6Al4V",
-     "T6-A1-U1-D0-Ti6Al4V",
-     "T6-A1-U2-D0-Ti6Al4V",
-     "T6-A2-U0-D0-Ti6Al4V",
-     "T6-A2-U1-D0-Ti6Al4V"
+     "T1-A2-U2-D0-Ti6Al4V-H0.5",
+     "T2-A1-U1-D0-Ti6Al4V-H0.5",
+     "T2-A1-U1-D0-Ti6Al4V-H0.75",
+     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+     "T2-A2-U0-D0-Ti6Al4V-H0.75",
+     "T2-A2-U1-D0-Ti6Al4V-H0.25",
+     "T2-A2-U1-D0-Ti6Al4V-H0.5",
+     "T2-A2-U1-D0-Ti6Al4V-H0.75",
+     "T2-A2-U2-D0-Ti6Al4V-H0.25",
+     "T2-A2-U2-D0-Ti6Al4V-H0.5",
+     "T3-A0-U2-D0-Ti6Al4V-H0.75",
+     "T3-A1-U1-D0-Ti6Al4V-H0.25",
+     "T3-A1-U1-D0-Ti6Al4V-H0.5",
+     "T3-A1-U1-D0-Ti6Al4V-H0.75",
+     "T3-A1-U2-D0-Ti6Al4V-H0.25",
+     "T3-A1-U2-D0-Ti6Al4V-H0.5",
+     "T3-A2-U0-D0-Ti6Al4V-H0.75",
+     "T3-A2-U1-D0-Ti6Al4V-H0.25",
+     "T3-A2-U1-D0-Ti6Al4V-H0.5",
+     "T3-A2-U1-D0-Ti6Al4V-H0.75",
+     "T3-A2-U2-D0-Ti6Al4V-H0.25",
+     "T3-A2-U2-D0-Ti6Al4V-H0.5",
+     "T4-A0-U2-D0-Ti6Al4V-H0.75",
+     "T4-A1-U0-D0-Ti6Al4V-H0.75",
+     "T4-A1-U1-D0-Ti6Al4V-H0.25",
+     "T4-A1-U1-D0-Ti6Al4V-H0.5",
+     "T4-A1-U1-D0-Ti6Al4V-H0.75",
+     "T4-A1-U2-D0-Ti6Al4V-H0.25",
+     "T4-A1-U2-D0-Ti6Al4V-H0.5",
+     "T4-A2-U0-D0-Ti6Al4V-H0.5",
+     "T4-A2-U0-D0-Ti6Al4V-H0.75",
+     "T4-A2-U1-D0-Ti6Al4V-H0.25",
+     "T4-A2-U1-D0-Ti6Al4V-H0.5",
+     "T4-A2-U1-D0-Ti6Al4V-H0.75",
+     "T4-A2-U2-D0-Ti6Al4V-H0.25",
+     "T4-A2-U2-D0-Ti6Al4V-H0.5",
+     "T5-A0-U2-D0-Ti6Al4V-H0.75",
+     "T5-A1-U0-D0-Ti6Al4V-H0.75",
+     "T5-A1-U1-D0-Ti6Al4V-H0.25",
+     "T5-A1-U1-D0-Ti6Al4V-H0.5",
+     "T5-A1-U1-D0-Ti6Al4V-H0.75",
+     "T5-A1-U2-D0-Ti6Al4V-H0.25",
+     "T5-A1-U2-D0-Ti6Al4V-H0.5",
+     "T5-A2-U0-D0-Ti6Al4V-H0.25",
+     "T5-A2-U0-D0-Ti6Al4V-H0.5",
+     "T5-A2-U0-D0-Ti6Al4V-H0.75",
+     "T5-A2-U1-D0-Ti6Al4V-H0.25",
+     "T5-A2-U1-D0-Ti6Al4V-H0.5",
+     "T5-A2-U1-D0-Ti6Al4V-H0.75",
+     "T5-A2-U2-D0-Ti6Al4V-H0.25",
+     "T5-A2-U2-D0-Ti6Al4V-H0.5",
+     "T6-A0-U2-D0-Ti6Al4V-H0.25",
+     "T6-A0-U2-D0-Ti6Al4V-H0.5",
+     "T6-A0-U2-D0-Ti6Al4V-H0.75",
+     "T6-A1-U0-D0-Ti6Al4V-H0.75",
+     "T6-A1-U1-D0-Ti6Al4V-H0.25",
+     "T6-A1-U1-D0-Ti6Al4V-H0.5",
+     "T6-A1-U1-D0-Ti6Al4V-H0.75",
+     "T6-A1-U2-D0-Ti6Al4V-H0.25",
+     "T6-A1-U2-D0-Ti6Al4V-H0.5",
+     "T6-A2-U0-D0-Ti6Al4V-H0.25",
+     "T6-A2-U0-D0-Ti6Al4V-H0.5",
+     "T6-A2-U0-D0-Ti6Al4V-H0.75",
+     "T6-A2-U1-D0-Ti6Al4V-H0.25",
+     "T6-A2-U1-D0-Ti6Al4V-H0.5",
+     "T6-A2-U1-D0-Ti6Al4V-H0.75",
+     "T6-A2-U2-D0-Ti6Al4V-H0.25",
+     "T6-A2-U2-D0-Ti6Al4V-H0.5"
     ],
     "V_m3": [
-     0.001,
-     0.01,
-     0.1
+     0.001
     ],
     "P_set_Pa": [
      0.005,
@@ -762,7 +1057,7 @@
    "source": {
     "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
     "pointer": "/contexts",
-    "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525"
+    "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08"
    },
    "check": "equals the F8 survivor set (f8_robust_candidates_v1 rows)"
   },
@@ -798,7 +1093,8 @@
    "value": {
     "kind": "PARETO_SET",
     "robust_set_values": [
-     0.25
+     0.25,
+     0.5
     ],
     "nominal_pareto_union_values": [
      0.25,
@@ -814,18 +1110,18 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/7/finding",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/design_synthesis/f1_intake/f1_intake_synthesis_v1.json",
@@ -852,7 +1148,8 @@
     "kind": "PARETO_SET",
     "robust_set_values": [
      3.0,
-     5.0
+     5.0,
+     10.0
     ],
     "nominal_pareto_union_values": [
      3.0,
@@ -869,12 +1166,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
@@ -915,12 +1212,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
@@ -959,7 +1256,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/design_vector/blocks/0/variables/1",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    ],
    "basis": "F1-02; F7 collapses d",
@@ -1035,7 +1332,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/1/question",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    ],
    "basis": "no measured accommodation for any Vyovrinda surface",
@@ -1068,7 +1365,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/9/finding",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -1123,25 +1420,25 @@
     "kind": "PARETO_SET",
     "robust_set_range_N": [
      0.0104033,
-     0.0104758
+     0.0208879
     ],
     "hard_constraint": "HC-09 intake-face drag <= 25 mN (necessary, not sufficient; below the limit on PARAMETRIC values for every nominal Pareto evaluation, so sensitivity only: never counted as met)"
    },
    "units": "N",
    "tolerance": "TPMC statistical SE ~1e-4 relative (F8-02); the TBD surface scenario dominates",
    "evidence_class": "model-derived",
-   "evidence_note": "HC-09 MET_ON_PARAMETRIC_VALUES_SENSITIVITY_ONLY_NOT_MET in hall_c1_reference: 4218, hall_icp_neutralizer: 4218 evaluations (F7; a parametric value is sensitivity information only and never counts as a met hard constraint)",
+   "evidence_note": "HC-09 MET_ON_PARAMETRIC_VALUES_SENSITIVITY_ONLY_NOT_MET in hall_c1_reference: 3945, hall_icp_neutralizer: 3945 evaluations (F7; a parametric value is sensitivity information only and never counts as a met hard constraint)",
    "value_label": "PARETO_SET",
    "source": [
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/8",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    ],
    "basis": "F8 worst case over the 10 scenarios; spacecraft body / array drag excluded (TBD, OQ-F78-04)",
@@ -1192,17 +1489,17 @@
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/candidate_concepts",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     },
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     },
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -1254,7 +1551,7 @@
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -1288,12 +1585,12 @@
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/items/2",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     },
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/items/14",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     }
    ],
    "basis": "F2 interface model; no open-literature ABEP filter numbers located",
@@ -1317,7 +1614,7 @@
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/items/26",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     }
    ],
    "basis": "F2 interface model",
@@ -1337,12 +1634,12 @@
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/items/0",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     },
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/items/1",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     }
    ],
    "basis": "no concept",
@@ -1364,7 +1661,7 @@
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/candidate_concepts/1/ao_applicability",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     },
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -1396,7 +1693,7 @@
     {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/repository_placeholders/rule",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_7_ARCHITECTURE_FREEZE_DESIGN_SYNTHESIS.md",
@@ -1429,18 +1726,18 @@
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/findings/0/finding",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    ],
    "basis": "F3 bounded design search; F7 / F8 Pareto",
@@ -1459,40 +1756,148 @@
    "value": {
     "kind": "PARETO_SET",
     "robust_set": {
-     "T6-A1-U2-D0-Ti6Al4V": {
+     "T5-A2-U2-D0-Ti6Al4V-H0.5": {
+      "N_turbo": 5,
+      "A_turbo_m2": 0.2369348826,
+      "R_turbo_m": 0.3171092672,
+      "u_tip_turbo_mps": 299.6228144,
+      "rpm": 9022.716819,
+      "N_drag": 0,
+      "rotor_material": "Ti6Al4V"
+     },
+     "T6-A0-U2-D0-Ti6Al4V-H0.75": {
+      "N_turbo": 6,
+      "A_turbo_m2": 0.1128299365,
+      "R_turbo_m": 0.2865155563,
+      "u_tip_turbo_mps": 290.0115167,
+      "rpm": 9665.813689,
+      "N_drag": 0,
+      "rotor_material": "Ti6Al4V"
+     },
+     "T6-A1-U1-D0-Ti6Al4V-H0.75": {
       "N_turbo": 6,
       "A_turbo_m2": 0.1963495408,
-      "R_turbo_m": 0.25,
-      "u_tip_turbo_mps": 278.5398163,
-      "rpm": 10639.43727,
+      "R_turbo_m": 0.377964473,
+      "u_tip_turbo_mps": 258.3213882,
+      "rpm": 6526.506396,
+      "N_drag": 0,
+      "rotor_material": "Ti6Al4V"
+     },
+     "T6-A1-U2-D0-Ti6Al4V-H0.25": {
+      "N_turbo": 6,
+      "A_turbo_m2": 0.1963495408,
+      "R_turbo_m": 0.2581988897,
+      "u_tip_turbo_mps": 281.1155735,
+      "rpm": 10396.85333,
+      "N_drag": 0,
+      "rotor_material": "Ti6Al4V"
+     },
+     "T6-A1-U2-D0-Ti6Al4V-H0.5": {
+      "N_turbo": 6,
+      "A_turbo_m2": 0.1963495408,
+      "R_turbo_m": 0.2886751346,
+      "u_tip_turbo_mps": 290.6899682,
+      "rpm": 9615.946745,
+      "N_drag": 0,
+      "rotor_material": "Ti6Al4V"
+     },
+     "T6-A2-U1-D0-Ti6Al4V-H0.75": {
+      "N_turbo": 6,
+      "A_turbo_m2": 0.2369348826,
+      "R_turbo_m": 0.4151934916,
+      "u_tip_turbo_mps": 273.9158431,
+      "rpm": 6299.962976,
+      "N_drag": 0,
+      "rotor_material": "Ti6Al4V"
+     },
+     "T6-A2-U2-D0-Ti6Al4V-H0.25": {
+      "N_turbo": 6,
+      "A_turbo_m2": 0.2369348826,
+      "R_turbo_m": 0.2836311511,
+      "u_tip_turbo_mps": 289.1053541,
+      "rpm": 9733.602108,
+      "N_drag": 0,
+      "rotor_material": "Ti6Al4V"
+     },
+     "T6-A2-U2-D0-Ti6Al4V-H0.5": {
+      "N_turbo": 6,
+      "A_turbo_m2": 0.2369348826,
+      "R_turbo_m": 0.3171092672,
+      "u_tip_turbo_mps": 299.6228144,
+      "rpm": 9022.716819,
       "N_drag": 0,
       "rotor_material": "Ti6Al4V"
      }
     },
     "nominal_pareto_union_ids": [
-     "T2-A1-U1-D0-Ti6Al4V",
-     "T2-A1-U2-D0-Ti6Al4V",
-     "T2-A2-U0-D0-Ti6Al4V",
-     "T2-A2-U1-D0-Ti6Al4V",
-     "T3-A1-U1-D0-Ti6Al4V",
-     "T3-A1-U2-D0-Ti6Al4V",
-     "T3-A2-U0-D0-Ti6Al4V",
-     "T3-A2-U1-D0-Ti6Al4V",
-     "T4-A1-U1-D0-Ti6Al4V",
-     "T4-A1-U2-D0-Ti6Al4V",
-     "T4-A2-U0-D0-Ti6Al4V",
-     "T4-A2-U1-D0-Ti6Al4V",
-     "T5-A0-U2-D0-Ti6Al4V",
-     "T5-A1-U1-D0-Ti6Al4V",
-     "T5-A1-U2-D0-Ti6Al4V",
-     "T5-A2-U0-D0-Ti6Al4V",
-     "T5-A2-U1-D0-Ti6Al4V",
-     "T6-A0-U2-D0-Ti6Al4V",
-     "T6-A1-U0-D0-Ti6Al4V",
-     "T6-A1-U1-D0-Ti6Al4V",
-     "T6-A1-U2-D0-Ti6Al4V",
-     "T6-A2-U0-D0-Ti6Al4V",
-     "T6-A2-U1-D0-Ti6Al4V"
+     "T1-A2-U2-D0-Ti6Al4V-H0.5",
+     "T2-A1-U1-D0-Ti6Al4V-H0.5",
+     "T2-A1-U1-D0-Ti6Al4V-H0.75",
+     "T2-A1-U2-D0-Ti6Al4V-H0.5",
+     "T2-A2-U0-D0-Ti6Al4V-H0.75",
+     "T2-A2-U1-D0-Ti6Al4V-H0.25",
+     "T2-A2-U1-D0-Ti6Al4V-H0.5",
+     "T2-A2-U1-D0-Ti6Al4V-H0.75",
+     "T2-A2-U2-D0-Ti6Al4V-H0.25",
+     "T2-A2-U2-D0-Ti6Al4V-H0.5",
+     "T3-A0-U2-D0-Ti6Al4V-H0.75",
+     "T3-A1-U1-D0-Ti6Al4V-H0.25",
+     "T3-A1-U1-D0-Ti6Al4V-H0.5",
+     "T3-A1-U1-D0-Ti6Al4V-H0.75",
+     "T3-A1-U2-D0-Ti6Al4V-H0.25",
+     "T3-A1-U2-D0-Ti6Al4V-H0.5",
+     "T3-A2-U0-D0-Ti6Al4V-H0.75",
+     "T3-A2-U1-D0-Ti6Al4V-H0.25",
+     "T3-A2-U1-D0-Ti6Al4V-H0.5",
+     "T3-A2-U1-D0-Ti6Al4V-H0.75",
+     "T3-A2-U2-D0-Ti6Al4V-H0.25",
+     "T3-A2-U2-D0-Ti6Al4V-H0.5",
+     "T4-A0-U2-D0-Ti6Al4V-H0.75",
+     "T4-A1-U0-D0-Ti6Al4V-H0.75",
+     "T4-A1-U1-D0-Ti6Al4V-H0.25",
+     "T4-A1-U1-D0-Ti6Al4V-H0.5",
+     "T4-A1-U1-D0-Ti6Al4V-H0.75",
+     "T4-A1-U2-D0-Ti6Al4V-H0.25",
+     "T4-A1-U2-D0-Ti6Al4V-H0.5",
+     "T4-A2-U0-D0-Ti6Al4V-H0.5",
+     "T4-A2-U0-D0-Ti6Al4V-H0.75",
+     "T4-A2-U1-D0-Ti6Al4V-H0.25",
+     "T4-A2-U1-D0-Ti6Al4V-H0.5",
+     "T4-A2-U1-D0-Ti6Al4V-H0.75",
+     "T4-A2-U2-D0-Ti6Al4V-H0.25",
+     "T4-A2-U2-D0-Ti6Al4V-H0.5",
+     "T5-A0-U2-D0-Ti6Al4V-H0.75",
+     "T5-A1-U0-D0-Ti6Al4V-H0.75",
+     "T5-A1-U1-D0-Ti6Al4V-H0.25",
+     "T5-A1-U1-D0-Ti6Al4V-H0.5",
+     "T5-A1-U1-D0-Ti6Al4V-H0.75",
+     "T5-A1-U2-D0-Ti6Al4V-H0.25",
+     "T5-A1-U2-D0-Ti6Al4V-H0.5",
+     "T5-A2-U0-D0-Ti6Al4V-H0.25",
+     "T5-A2-U0-D0-Ti6Al4V-H0.5",
+     "T5-A2-U0-D0-Ti6Al4V-H0.75",
+     "T5-A2-U1-D0-Ti6Al4V-H0.25",
+     "T5-A2-U1-D0-Ti6Al4V-H0.5",
+     "T5-A2-U1-D0-Ti6Al4V-H0.75",
+     "T5-A2-U2-D0-Ti6Al4V-H0.25",
+     "T5-A2-U2-D0-Ti6Al4V-H0.5",
+     "T6-A0-U2-D0-Ti6Al4V-H0.25",
+     "T6-A0-U2-D0-Ti6Al4V-H0.5",
+     "T6-A0-U2-D0-Ti6Al4V-H0.75",
+     "T6-A1-U0-D0-Ti6Al4V-H0.75",
+     "T6-A1-U1-D0-Ti6Al4V-H0.25",
+     "T6-A1-U1-D0-Ti6Al4V-H0.5",
+     "T6-A1-U1-D0-Ti6Al4V-H0.75",
+     "T6-A1-U2-D0-Ti6Al4V-H0.25",
+     "T6-A1-U2-D0-Ti6Al4V-H0.5",
+     "T6-A2-U0-D0-Ti6Al4V-H0.25",
+     "T6-A2-U0-D0-Ti6Al4V-H0.5",
+     "T6-A2-U0-D0-Ti6Al4V-H0.75",
+     "T6-A2-U1-D0-Ti6Al4V-H0.25",
+     "T6-A2-U1-D0-Ti6Al4V-H0.5",
+     "T6-A2-U1-D0-Ti6Al4V-H0.75",
+     "T6-A2-U2-D0-Ti6Al4V-H0.25",
+     "T6-A2-U2-D0-Ti6Al4V-H0.5"
     ]
    },
    "units": "-; m^2; m; m/s; rpm",
@@ -1503,18 +1908,18 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_designs_v1.json",
      "pointer": "/design_grid",
-     "sha256": "a559776da6c10c2bb8c1eb66fbff308a7b3634c62275bdd39c17d77e4055d8a1"
+     "sha256": "2353460e8087c5d0911d3b7774cd02440e7c93dfb26629b2bf3c5d25e000980f"
     }
    ],
    "basis": "F3 grid decoded from F3 design ids",
@@ -1539,12 +1944,12 @@
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/materials_excluded",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     }
    ],
    "basis": "F3 evidence rule (ROTOR_MATERIAL_ALLOWABLE_TBD gate)",
@@ -1572,12 +1977,12 @@
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/findings/1/finding",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_9_s2_model_change_owner_decisions.json",
@@ -1608,12 +2013,12 @@
    "value": {
     "kind": "PARETO_SET",
     "robust_set_range_W": [
-     9.58658,
-     9.75094
+     9.22923,
+     10.2759
     ],
     "nominal_pareto_range_W": [
-     8.378346,
-     14.27457
+     8.36703,
+     16.09038
     ]
    },
    "units": "W",
@@ -1625,17 +2030,17 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/efficiency_basis",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/5",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    ],
    "basis": "DragCompressor model through F3 / F4 / F7",
@@ -1653,12 +2058,12 @@
    "value": {
     "kind": "PARETO_SET",
     "robust_set_range_kg": [
-     10.9072,
-     10.9072
+     7.48849,
+     12.5685
     ],
     "nominal_pareto_range_kg": [
-     4.229072,
-     18.28933
+     2.836417,
+     12.5685
     ],
     "AL-02_allocation_kg": 5.5
    },
@@ -1670,17 +2075,17 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/mass_basis",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/6",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -1709,12 +2114,12 @@
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/parameters/0",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     }
    ],
    "basis": "model evidence domain, not a design value; PROPOSED W1 setpoint 0.2 Pa lies outside it (F3-03)",
@@ -1732,8 +2137,8 @@
    "value": {
     "kind": "PARETO_SET",
     "robust_set_range_K": [
-     315.653,
-     316.96
+     314.894,
+     318.335
     ]
    },
    "units": "K",
@@ -1745,13 +2150,13 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/thermal_basis",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     }
    ],
    "basis": "F7 nominal-context rows of the robust members",
@@ -1768,8 +2173,8 @@
    "value": {
     "kind": "PARETO_SET",
     "robust_set_range": [
-     0.413236,
-     0.670738
+     0.411034,
+     0.679596
     ]
    },
    "units": "-",
@@ -1780,13 +2185,13 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/findings/3/finding",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     }
    ],
    "basis": "the delivered flow keeps the inlet composition; the outlet partial-pressure composition is O-depleted (F3-04)",
@@ -1804,14 +2209,10 @@
    "value": {
     "kind": "PARETO_SET",
     "robust_set_values": [
-     0.001,
-     0.01,
-     0.1
+     0.001
     ],
     "nominal_pareto_union_values": [
-     0.001,
-     0.01,
-     0.1
+     0.001
     ]
    },
    "units": "m^3",
@@ -1822,18 +2223,18 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/search_variables/0",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     }
    ],
    "basis": "volume trades the mass proxy against shaft-frequency ripple attenuation; the plenum is not an orbit-scale buffer at <= 0.1 Pa (F4-05)",
@@ -1870,18 +2271,18 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_upstream_pareto_v1.json",
      "pointer": "/contexts",
-     "sha256": "b8ba34d60c8ae997dea87cdf3c99ce626c0174f1027e8f7b4622c6ad719ad525",
+     "sha256": "df06ffeb060b109568dd76794dad91d5374a3b04c9d28c130f066b457a705c08",
      "note": "nominal context (filter F4-FIL-NONE, wall WALL-G0) Pareto union over the 10 surface scenarios and every set pressure; equals the F8 survivor set"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/2/finding",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    ],
    "basis": "robust members exist only at P_set 0.01 Pa; all-state-feasible contexts exist for 0.005-0.1 Pa",
@@ -1905,7 +2306,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -1938,7 +2339,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/0",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     }
    ],
    "basis": "F4-P-01 = F1 T_wall",
@@ -1983,12 +2384,12 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/5",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/10/finding",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    ],
    "basis": "F4-P-06; owner GP-D03",
@@ -1996,7 +2397,7 @@
    "evidence_to_advance": [
     "coupon / witness evidence of the selected lining (GP-D03)"
    ],
-   "note": "robust members lose feasibility in most scenarios under WALL-TI64-DB (F8-04)"
+   "note": "robust members lose feasibility in 2-5 of the 10 surface scenarios under WALL-TI64-DB (F8-04)"
   },
   {
    "id": "AFC-UP-PL-07",
@@ -2011,7 +2412,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/4",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     }
    ],
    "basis": "F4-P-05",
@@ -2028,11 +2429,11 @@
    "value": {
     "kind": "PARETO_SET",
     "robust_set_worst_case_range_mg_s": [
-     0.00813428,
-     0.00840947
+     0.000449936,
+     0.0180906
     ],
-    "all_state_single_setpoint_frontier_mg_s": 0.1027382,
-    "all_state_scheduled_frontier_mg_s": 0.142955,
+    "all_state_single_setpoint_frontier_mg_s": 0.1100573,
+    "all_state_scheduled_frontier_mg_s": 0.13075,
     "owner_ground_characterization_range_mg_s": [
      0.38,
      3.2
@@ -2047,22 +2448,22 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/robust/robust_pareto_by_P_set",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/1/finding",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/0/finding",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/6/finding",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     },
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -2094,7 +2495,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/15",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     },
     {
      "path": "docs/budgets/mass_power_a9_v2/mass_power_a9_v2.json",
@@ -2132,12 +2533,12 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/search_variables/1",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/pareto",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     },
     {
      "path": "docs/experiments/hall_icp/integration/m16_v4/subsystem_maturity_v4.json",
@@ -2165,12 +2566,12 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/7",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/8/finding",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     }
    ],
    "basis": "F4-P-08",
@@ -2192,7 +2593,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/8",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     }
    ],
    "basis": "F4-P-09",
@@ -2219,17 +2620,17 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/steady/conductance_demand",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/findings/2/finding",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     }
    ],
    "basis": "F4-03: the H2-3 analog IF-A5 pressure 5.74-1216 Pa lies above the compressor domain cap",
@@ -2257,7 +2658,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/9",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     }
    ],
    "basis": "F5 IFD-F4-01..05; F4-P-10",
@@ -2274,14 +2675,14 @@
    "name": "feed-state records offered to H-1 (mdot_s, P, T, x_s, transient quality)",
    "value": {
     "kind": "PARETO_SET",
-    "n_records": 185,
+    "n_records": 463,
     "P_range_Pa": [
      0.005,
      0.05
     ],
     "mdot_total_range_mg_s_design_state": [
-     0.101854,
-     0.446803
+     0.0702635,
+     0.549203
     ],
     "T_K": [
      350.0
@@ -2298,7 +2699,7 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/offered_to_h1",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     }
    ],
    "basis": "F4 transient Pareto members at the design state h200_f150 (single-state values; the all-state frontier is AFC-UP-PL-08)",
@@ -6477,7 +6878,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/4",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    ],
    "basis": "I_e,cap = I_on - I_off (discharge OFF, signed; A9.4 P1Q-10 / A9.5 P1Q-16)",
@@ -6833,7 +7234,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+     "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_14_s7_s10_owner_decisions.json",
@@ -7021,7 +7422,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/3/configurations/hall_icp_neutralizer",
-     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+     "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
     }
    ],
    "basis": "mass_power v2 (A9-02 boundary)",
@@ -7039,8 +7440,8 @@
    "value": {
     "kind": "PARETO_SET",
     "nominal_pareto_range_W": [
-     8.378346,
-     14.27457
+     8.36703,
+     16.09038
     ],
     "official_ledger": "TBD"
    },
@@ -7052,7 +7453,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/system_evaluation/parametric_P_bus_lower_bound_W_range",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/architecture_comparison/power_boundary_a9/bus_power_boundary_a9_v1.json",
@@ -7457,7 +7858,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/5",
-     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+     "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
     },
     {
      "path": "docs/budgets/xe_accounting_a9_v2/xe_accounting_a9_v2.json",
@@ -7495,7 +7896,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/6",
-     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+     "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
     }
    ],
    "basis": "owner row 53 (both evaluated; 40 kg stays the hard limit)",
@@ -7721,12 +8122,12 @@
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/thermal_basis",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/items/0",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     }
    ],
    "basis": "UPSTREAM_ICD G-07",
@@ -7873,12 +8274,12 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     },
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/metric_definitions",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -7994,7 +8395,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/9",
-     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+     "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_15_rfp_propellant_policy_owner_decision.json",
@@ -8520,8 +8921,8 @@
  "architecture_gates": [
   {
    "id": "AG-01",
-   "gate": "RVM rows (19 system requirements, both configurations)",
-   "current_status": "hall_icp_neutralizer: NOT_EVALUATED 16, INCOMPLETE_EVIDENCE 3; hall_c1_reference: NOT_EVALUATED 16, INCOMPLETE_EVIDENCE 3",
+   "gate": "RVM rows (27 system requirements, both configurations)",
+   "current_status": "hall_icp_neutralizer: NOT_EVALUATED 24, INCOMPLETE_EVIDENCE 3; hall_c1_reference: NOT_EVALUATED 24, INCOMPLETE_EVIDENCE 3",
    "evidence_sufficient_for_freeze": false,
    "blocking_evidence": {
     "rows": [
@@ -8538,7 +8939,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/0/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
@@ -8554,7 +8955,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/1/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
@@ -8570,7 +8971,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/2/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
@@ -8586,7 +8987,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/3/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
@@ -8602,7 +9003,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/4/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
@@ -8618,7 +9019,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/5/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
@@ -8634,7 +9035,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/6/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
@@ -8650,12 +9051,12 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/7/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
       "id": "RVM-09",
-      "title": "Ionise nascent (atomic) O (recorded as an RFP statement; verify)",
+      "title": "Ionise N2 and nascent (atomic) O in the same thruster (RFP-P17-05, RFP-P17-02)",
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
@@ -8666,7 +9067,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/8/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
@@ -8682,7 +9083,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/9/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
@@ -8698,12 +9099,12 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/10/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
       "id": "RVM-12",
-      "title": "> 15,000 h firing (provisional hard requirement)",
+      "title": "'Ignition Time: More than 15000 hrs' (RFP-P19-01, literal); design basis >= 15,000 h cumulative energized operation",
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
@@ -8714,7 +9115,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/11/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
@@ -8730,7 +9131,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/12/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
@@ -8746,7 +9147,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/13/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
@@ -8762,7 +9163,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/14/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
@@ -8778,7 +9179,7 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/15/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
@@ -8794,12 +9195,12 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/16/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
       "id": "RVM-18",
-      "title": "Indigenous content >= 75 % total",
+      "title": "Indigenous content: >= 75 % project, thruster > 80 %, intake > 80 %, compressor / storage > 60 %, PSE > 70 % (RFP-P19-05; > 60 % statement RFP-P18-03 recorded)",
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
@@ -8810,12 +9211,12 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/17/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      },
      {
       "id": "RVM-19",
-      "title": "No single-point failure in electronics (recorded; verify) vs limited redundancy (row 55)",
+      "title": "Electronics: cater to single-point failure (RFP-P18-09); redundancy at electronics and sensor level (RFP-P18-02)",
       "requirement_frozen": false,
       "status": {
        "hall_icp_neutralizer": "NOT_EVALUATED",
@@ -8826,22 +9227,150 @@
       "source": {
        "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
        "pointer": "/rows/18/configurations",
-       "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
+      }
+     },
+     {
+      "id": "RVM-20",
+      "title": "MIL-1553B interface with the satellite onboard computer + discrete thruster interface + hardware drivers inside the propulsion system",
+      "requirement_frozen": false,
+      "status": {
+       "hall_icp_neutralizer": "NOT_EVALUATED",
+       "hall_c1_reference": "NOT_EVALUATED"
+      },
+      "rule": "R7-NOT-EVALUATED",
+      "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P18-12:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
+      "source": {
+       "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+       "pointer": "/rows/19/configurations",
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
+      }
+     },
+     {
+      "id": "RVM-21",
+      "title": "Environmental qualification (ENTEST): launch vibration / shock (PSLV / SSLV or DRDO-decided LV), AO erosion, radiation, thermal, ThermoVac, 3-year VLEO life",
+      "requirement_frozen": false,
+      "status": {
+       "hall_icp_neutralizer": "NOT_EVALUATED",
+       "hall_c1_reference": "NOT_EVALUATED"
+      },
+      "rule": "R7-NOT-EVALUATED",
+      "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P19-04:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], ao_lifetime_register_v5:AOL-EX-01 [PLAN_OR_FRAMEWORK]",
+      "source": {
+       "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+       "pointer": "/rows/20/configurations",
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
+      }
+     },
+     {
+      "id": "RVM-22",
+      "title": "RFP test approach 4.1 a-d (AO-beam coating tests; rarefied-gas intake erosion; EM / QM force, Isp, efficiency; expert-committee-approved test plan) and ground demonstration",
+      "requirement_frozen": false,
+      "status": {
+       "hall_icp_neutralizer": "NOT_EVALUATED",
+       "hall_c1_reference": "NOT_EVALUATED"
+      },
+      "rule": "R7-NOT-EVALUATED",
+      "blocking": "no determining evaluation with evidenced terms: ao_lifetime_register_v5:AOL-EX-01 [PLAN_OR_FRAMEWORK], rfp_registration_v1:RFP-P19-06-b:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], A9_01_hall_icp_prereg_framework_v1:HI-ABS [PLAN_OR_FRAMEWORK], rfp_registration_v1:RFP-P19-06-d:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
+      "source": {
+       "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+       "pointer": "/rows/21/configurations",
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
+      }
+     },
+     {
+      "id": "RVM-23",
+      "title": "ISO certification; acceptance / qualification per ATP (finalized after DDR / CDR); testing to MIL / ASTM / BIS / ESS standards",
+      "requirement_frozen": false,
+      "status": {
+       "hall_icp_neutralizer": "NOT_EVALUATED",
+       "hall_c1_reference": "NOT_EVALUATED"
+      },
+      "rule": "R7-NOT-EVALUATED",
+      "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P20-01:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
+      "source": {
+       "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+       "pointer": "/rows/22/configurations",
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
+      }
+     },
+     {
+      "id": "RVM-24",
+      "title": "Exit criterion: EM of the ABEP system + qualified electric thruster with O and N2 as propellant at milestone 4 (partial success)",
+      "requirement_frozen": false,
+      "status": {
+       "hall_icp_neutralizer": "NOT_EVALUATED",
+       "hall_c1_reference": "NOT_EVALUATED"
+      },
+      "rule": "R7-NOT-EVALUATED",
+      "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P20-03:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], A9_01_hall_icp_prereg_framework_v1:HI-AO [PLAN_OR_FRAMEWORK], A9_01_hall_icp_prereg_framework_v1:DQ-HI-SUST [PLAN_OR_FRAMEWORK], transport_ensemble_v0:members [VALIDATED_ANALYSIS]",
+      "source": {
+       "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+       "pointer": "/rows/23/configurations",
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
+      }
+     },
+     {
+      "id": "RVM-25",
+      "title": "Milestone schedule and deliverables M1-M5 (T0+9 / +12 / +20 / +24 / +36 months) and the EM -> QM processing flow",
+      "requirement_frozen": false,
+      "status": {
+       "hall_icp_neutralizer": "NOT_EVALUATED",
+       "hall_c1_reference": "NOT_EVALUATED"
+      },
+      "rule": "R7-NOT-EVALUATED",
+      "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P20-04:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
+      "source": {
+       "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+       "pointer": "/rows/24/configurations",
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
+      }
+     },
+     {
+      "id": "RVM-26",
+      "title": "Micro-newton-level thrust measurement system; UHV test facility and low-thrust measurement setup (Part IV(B), no waivers)",
+      "requirement_frozen": false,
+      "status": {
+       "hall_icp_neutralizer": "NOT_EVALUATED",
+       "hall_c1_reference": "NOT_EVALUATED"
+      },
+      "rule": "R7-NOT-EVALUATED",
+      "blocking": "no determining evaluation with evidenced terms: rfp_registration_v1:RFP-P30-01:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT], rfp_registration_v1:RFP-P27-01:NO_VERIFICATION_ARTIFACT [VERIFICATION_ARTIFACT_ABSENT]",
+      "source": {
+       "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+       "pointer": "/rows/25/configurations",
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
+      }
+     },
+     {
+      "id": "RVM-27",
+      "title": "Steady heat conducted into the spacecraft mounting interface <= 50 W (A9.12 S5.4 provisional owner allocation; 100 W contingency, 25 W stretch)",
+      "requirement_frozen": true,
+      "status": {
+       "hall_icp_neutralizer": "NOT_EVALUATED",
+       "hall_c1_reference": "NOT_EVALUATED"
+      },
+      "rule": "R7-NOT-EVALUATED",
+      "blocking": "no determining evaluation with evidenced terms: p3_coupled_thermal_v2 [PLAN_OR_FRAMEWORK]",
+      "source": {
+       "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
+       "pointer": "/rows/26/configurations",
+       "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
       }
      }
     ],
-    "summary": "no row is PASS (hall_icp_neutralizer: NOT_EVALUATED 16, INCOMPLETE_EVIDENCE 3; hall_c1_reference: NOT_EVALUATED 16, INCOMPLETE_EVIDENCE 3); requirements frozen: 3 of 19 (official RFP not in the repository)"
+    "summary": "no row is PASS (hall_icp_neutralizer: NOT_EVALUATED 24, INCOMPLETE_EVIDENCE 3; hall_c1_reference: NOT_EVALUATED 24, INCOMPLETE_EVIDENCE 3); requirements frozen: 4 of 27 (official RFP not in the repository)"
    },
    "sources": [
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/status_counts",
-     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+     "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
     },
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rfp_document_in_repository",
-     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+     "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
     }
    ],
    "evidence_plan_steps": [
@@ -8887,7 +9416,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/T",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    ],
    "evidence_plan_steps": [
@@ -8982,7 +9511,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/I_e_margin",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    ],
    "evidence_plan_steps": [
@@ -9030,7 +9559,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/Q_reject",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    ],
    "evidence_plan_steps": [
@@ -9246,7 +9775,7 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/P_bus",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    ],
    "evidence_plan_steps": [
@@ -9285,12 +9814,12 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rows/5/configurations/hall_icp_neutralizer",
-     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+     "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/m_wet",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    ],
    "evidence_plan_steps": [
@@ -9341,7 +9870,7 @@
      3.2
     ],
     "characterization_coverage_role": "CHARACTERIZATION_COVERAGE_ONLY_NOT_A_PASS_FAIL_REQUIREMENT",
-    "engineering_warning": "the parametric upstream frontier (0.1027382 mg/s all-state, single setpoint) is low relative to the ground-characterization envelope: an engineering warning, not a demonstrated requirement failure (A9.13 owner_statements.flight_flow_requirement)",
+    "engineering_warning": "the parametric upstream frontier (0.1100573 mg/s all-state, single setpoint) is low relative to the ground-characterization envelope: an engineering warning, not a demonstrated requirement failure (A9.13 owner_statements.flight_flow_requirement)",
     "evaluator": "a9_16_f9.ag12_feed_state_sufficiency (fail closed; refuses a fixed mg/s gate)",
     "rfp_citation_status": "OWNER_STATED_PENDING_RFP_REGISTRATION"
    },
@@ -9349,17 +9878,17 @@
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/strict_mode",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/strict_mode/status",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/findings/1",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -9419,12 +9948,12 @@
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/unlock_evidence/D_spacecraft",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/hard_constraints/7",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     },
     {
      "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
@@ -9518,7 +10047,7 @@
     {
      "path": "docs/requirements/rvm_a9/rvm_a9_v1.json",
      "pointer": "/rfp_document_in_repository",
-     "sha256": "6aa6af7a6b7ec73dab6263dfbebe1f6b2441e249c16e3666c212224c82a6c51b"
+     "sha256": "c0bb1846b98f7458cb9fa569bce5f4868505ac1eeb23052341d59481c7a100dc"
     },
     {
      "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
@@ -9788,12 +10317,12 @@
     {
      "path": "abep_sim/intake_tpmc.py",
      "locator": "class IntakeSurface:",
-     "sha256": "ea0100b96f9066b20a5ca13832e27250773962c8ddda16dcf9ccaecef621288c"
+     "sha256": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433"
     },
     {
      "path": "abep_sim/intake.py",
      "locator": "IntakeSurface(",
-     "sha256": "602df2bffde25d56c089b191e2559578890bfedbe43bc928630e3bbe8fc94cad"
+     "sha256": "d46c23af40d413094babbe9d2121238c7b6f768341ffb3789d3d50c1d0f66687"
     }
    ],
    "required": [
@@ -9813,24 +10342,25 @@
    "finding": "F3-01 silent Gaede clipping",
    "module": "abep_sim/compressor.py DragCompressor._run_once",
    "issue": "K = max(min(K, K0), 1.0) hides an overloaded stage (throughput above S0 p): the module reports K = 1 instead of a non-convergence / overload status (CLAUDE.md rule 3: no silent fallbacks)",
-   "magnitude": "15552 of 15552 drag-stage design evaluations in F3 have an unclipped K < 1 (F3-01)",
+   "magnitude": "46656 of 46656 drag-stage design evaluations in F3 have an unclipped K < 1 (F3-01)",
    "golden_impact": "unknown: a status flag alone does not change values; refusing clipped states would move any golden that passes through a clipped stage (to be checked at implementation)",
    "owner_question": "F9-OQ-04 (new)",
    "sources": [
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/findings/0",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/gates/6",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "abep_sim/compressor.py",
-     "locator": "K = max(min(K, K0), 1.0)",
-     "sha256": "44d9dac86cac2ca889d051b7a0090fed81781b33f00293dedaf836f8ebb8da92"
+     "locator": "# MCC-02 (owner decision A9.9 S2.5, finding F3-01): Gaede stage-capacity domain.",
+     "sha256": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75",
+     "note": "the clip quoted in 'issue' (K = max(min(K, K0), 1.0)) was removed by the A9.9 S2.5 step-2 change; the locator points at its replacement"
     }
    ],
    "required": [
@@ -9850,24 +10380,24 @@
    "finding": "F3-02 uncited rotor allowable",
    "module": "abep_sim/compressor.py DragCompressor.u_max (rotor_ok) with abep_sim/materials.py DB yield",
    "issue": "the module's tip-speed cap uses an uncited DB yield (880 MPa for Ti-6Al-4V) and an uncited safety factor 2.0; with the cited A-basis Fty 827 MPa the cap is 305.5 m/s vs the module's 315.2 m/s, so size_for can return rotors the F3 search rejects",
-   "magnitude": "rotor stress: with the cited Ti-6Al-4V A-basis Fty 827 MPa and the module safety factor 2 (uncited), sigma = rho u^2 caps the tip speed at 305.5 m/s; the module's own rotor_ok (uncited DB yield 880 MPa) allows 315.2 m/s, so size_for can return rotors this search rejects. Both are below the 500 m/s published TMP practice (Al alloys)",
+   "magnitude": "rotor stress: with the cited Ti-6Al-4V A-basis Fty 827 MPa and the module safety factor 2 (uncited), sigma = rho u^2 caps the tip speed at 305.5 m/s; the module's legacy sensitivity tip-speed cap (uncited DB yield 880 MPa; since A9.9 S2.3 not a qualification: rotor_ok is False without a registered strength basis) allows 315.2 m/s, so size_for in PARAMETRIC_SENSITIVITY mode can return rotors this search rejects. Both are below the 500 m/s published TMP practice (Al alloys)",
    "golden_impact": "possible (size_for results near the cap change); to be checked at implementation",
    "owner_question": "OQ-F3-01 (existing, allowable basis) + F9-OQ-04 (new, model change)",
    "sources": [
     {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/findings/1",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     },
     {
      "path": "abep_sim/compressor.py",
      "locator": "stress_safety: float = 2.0",
-     "sha256": "44d9dac86cac2ca889d051b7a0090fed81781b33f00293dedaf836f8ebb8da92"
+     "sha256": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75"
     },
     {
      "path": "abep_sim/compressor.py",
      "locator": "return math.sqrt(m.yield_MPa * 1e6 / (self.stress_safety * m.density))",
-     "sha256": "44d9dac86cac2ca889d051b7a0090fed81781b33f00293dedaf836f8ebb8da92"
+     "sha256": "7a8dfe5b64d269474863410f6e42a886c6d3f57015c05491880d65251dfafc75"
     }
    ],
    "required": [
@@ -9887,14 +10417,14 @@
    "finding": "F4 / UPSTREAM_ICD G-05 orifice sizing bracket",
    "module": "abep_sim/reservoir.py size_orifice_for_pressure",
    "issue": "60-step bisection in [1e-8, 3e-2] m^2 with no residual: an unreachable target returns the bracket end with no flag; at low plenum targets the F4 A_eq exceeds 3e-2 m^2 (F4 does not use the routine for sizing)",
-   "magnitude": "reservoir.size_orifice_for_pressure (60-step bisection in [1e-8, 3e-2] m^2, no residual: ICD G-05) vs the F4 90-step log bisection (residual reported). At low plenum targets the F4 A_eq exceeds 3e-2 m^2 and that routine would silently return the bracket end: F4 does not use it for sizing",
+   "magnitude": "reservoir.size_orifice_for_pressure (60-step bisection in [1e-8, 3e-2] m^2) vs the F4 90-step log bisection (residual reported). Since the A9.9 S2.4 G-05 change the routine reports its pressure residual, bracketing and convergence status (report=True; reported above at the check point); at low plenum targets the F4 A_eq exceeds 3e-2 m^2, where the routine reports bracketed False / MODEL_NOT_CONVERGED instead of a silent bracket end. F4 still does not use it for sizing (its bracket is too narrow)",
    "golden_impact": "none if only a convergence flag / residual is added; values unchanged (UPSTREAM_ICD sec. 9 Q7)",
    "owner_question": "UPSTREAM_ICD sec. 9 question 7 (existing: convergence flags G-03 to G-05)",
    "sources": [
     {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/checks/size_orifice_note",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     },
     {
      "path": "docs/interfaces/UPSTREAM_ICD.md",
@@ -9909,7 +10439,7 @@
     {
      "path": "abep_sim/reservoir.py",
      "locator": "def size_orifice_for_pressure(",
-     "sha256": "da11cfd45372c56f726652eaff515312887f7fba81219a716e08762789105047"
+     "sha256": "9a7894a47169f1d77e8c66a196002c5456e955b9eb72d81bb9e1440c90ae29af"
     }
    ],
    "required": [
@@ -9941,7 +10471,7 @@
     {
      "path": "abep_sim/intake_tpmc.py",
      "locator": "def trace_channel(",
-     "sha256": "ea0100b96f9066b20a5ca13832e27250773962c8ddda16dcf9ccaecef621288c"
+     "sha256": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433"
     }
    ],
    "required": [
@@ -9973,7 +10503,7 @@
     {
      "path": "abep_sim/intake_tpmc.py",
      "locator": "def trace_channel(",
-     "sha256": "ea0100b96f9066b20a5ca13832e27250773962c8ddda16dcf9ccaecef621288c"
+     "sha256": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433"
     }
    ],
    "required": [
@@ -10005,7 +10535,7 @@
     {
      "path": "abep_sim/intake_tpmc.py",
      "locator": "def trace_channel(",
-     "sha256": "ea0100b96f9066b20a5ca13832e27250773962c8ddda16dcf9ccaecef621288c"
+     "sha256": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433"
     }
    ],
    "required": [
@@ -10037,7 +10567,7 @@
     {
      "path": "abep_sim/intake_tpmc.py",
      "locator": "def trace_channel(",
-     "sha256": "ea0100b96f9066b20a5ca13832e27250773962c8ddda16dcf9ccaecef621288c"
+     "sha256": "dcddf947c273d71d2f030895cd8ea9916919f816401c20e30b7ca4d177172433"
     }
    ],
    "required": [
@@ -11799,7 +12329,7 @@
     "source": {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     }
    },
    {
@@ -11809,7 +12339,7 @@
     "source": {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     }
    },
    {
@@ -11819,7 +12349,7 @@
     "source": {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     }
    },
    {
@@ -11829,7 +12359,7 @@
     "source": {
      "path": "docs/design_synthesis/f2_filter/f2_filter_stage_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "4250a5371cbc7585c3169c91e3f2b5e2787128aea620b45693e06f7caaf35808"
+     "sha256": "76149ac4851b75c5ef146dbbb8df7d8c38e16d5765bd2f56ff8b5eb0321d06aa"
     }
    },
    {
@@ -11839,7 +12369,7 @@
     "source": {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     }
    },
    {
@@ -11849,7 +12379,7 @@
     "source": {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     }
    },
    {
@@ -11859,7 +12389,7 @@
     "source": {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     }
    },
    {
@@ -11869,7 +12399,7 @@
     "source": {
      "path": "docs/design_synthesis/f3_compressor/f3_compressor_synthesis_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "fe6774abc27e0405b8238aac2422524d9800c4adcc492722be7a6a468cbf08fd"
+     "sha256": "d2981216258332d2e3d80facc87a37cea9f218befbbdb5871d4b94cf939e3794"
     }
    },
    {
@@ -11879,7 +12409,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     }
    },
    {
@@ -11889,7 +12419,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     }
    },
    {
@@ -11899,7 +12429,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     }
    },
    {
@@ -11909,7 +12439,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     }
    },
    {
@@ -11919,7 +12449,7 @@
     "source": {
      "path": "docs/design_synthesis/f4_plenum/f4_plenum_feed_v1.json",
      "pointer": "/open_owner_questions/4",
-     "sha256": "6907c5515f16d950cd22588fd2803d7cec629e06d4af49d8c1de5d8c6fd9dfc4"
+     "sha256": "1d9fa0249824b078924ef39d00294f799b8169d4c0b3986a6ff7849a8fad465b"
     }
    },
    {
@@ -12019,7 +12549,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/0",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    },
    {
@@ -12029,7 +12559,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/1",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    },
    {
@@ -12039,7 +12569,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/2",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    },
    {
@@ -12049,7 +12579,7 @@
     "source": {
      "path": "docs/design_synthesis/f7_f8_optimizer/f7_f8_optimizer_v1.json",
      "pointer": "/open_owner_questions/3",
-     "sha256": "c23d82b2dbef8b173ac0a9e0170f1747ef04658340e9db5b17e0f98b6f91ddf0"
+     "sha256": "5972a222ec1792ae8decde5b66b971106c520c94ddc45686a604adfd4e98a13b"
     }
    },
    {
@@ -12266,7 +12796,7 @@
   {
    "id": "F9-OQ-02",
    "question": "Set the delivered-flow requirement at the H-1 inlet that the proposed architecture gate AG-12 (UG-FLOW) is scored against (owner row 73 gives a sizing flow ~1.3 mg/s and a characterization range 0.38-3.2 mg/s, neither a flight requirement): which value, at which orbit states / averaging?",
-   "why_new": "no requirement exists; F4 / F7 report a parametric all-state frontier of 0.1027 mg/s and OQ-F4-04 asks only which lever to study",
+   "why_new": "no requirement exists; F4 / F7 report a parametric all-state frontier of 0.1101 mg/s and OQ-F4-04 asks only which lever to study",
    "needed_by": "LOCK-1 (before any upstream freeze)",
    "status": "OWNER_DECIDED",
    "status_when_raised": "TBD_OWNER",
@@ -13149,12 +13679,12 @@
   {
    "id": "F9-02",
    "evidence_class": "model-derived (PARAMETRIC_SENSITIVITY inputs)",
-   "finding": "upstream Pareto: robust set 9 members (all at P_set 0.01 Pa, filter context none, compressor T6-A1-U2-D0-Ti6Al4V); nominal-context Pareto union 1233 members; carried as sets, no representative selected (F9-OQ-01)"
+   "finding": "upstream Pareto: robust set 18 members (all at P_set 0.01 Pa, filter context none, compressor T5-A2-U2-D0-Ti6Al4V-H0.5, T6-A0-U2-D0-Ti6Al4V-H0.75, T6-A1-U1-D0-Ti6Al4V-H0.75, T6-A1-U2-D0-Ti6Al4V-H0.25, T6-A1-U2-D0-Ti6Al4V-H0.5, T6-A2-U1-D0-Ti6Al4V-H0.75, T6-A2-U2-D0-Ti6Al4V-H0.25, T6-A2-U2-D0-Ti6Al4V-H0.5); nominal-context Pareto union 1217 members; carried as sets, no representative selected (F9-OQ-01)"
   },
   {
    "id": "F9-03",
    "evidence_class": "model-derived (PARAMETRIC_SENSITIVITY inputs)",
-   "finding": "upstream flow gap: robust worst-case delivered flow [0.00813428, 0.00840947] mg/s and all-state frontier 0.1027 mg/s, low relative to the 0.38-3.2 mg/s ground-characterization coverage (row 73): an engineering warning, not a demonstrated requirement failure; 0.38 and ~1.3 mg/s are not flight requirements and AG-12 is the statewise feed-state sufficiency gate (A9.13 F9-OQ-02)"
+   "finding": "upstream flow gap: robust worst-case delivered flow [0.000449936, 0.0180906] mg/s and all-state frontier 0.1101 mg/s, low relative to the 0.38-3.2 mg/s ground-characterization coverage (row 73): an engineering warning, not a demonstrated requirement failure; 0.38 and ~1.3 mg/s are not flight requirements and AG-12 is the statewise feed-state sufficiency gate (A9.13 F9-OQ-02)"
   },
   {
    "id": "F9-04",
