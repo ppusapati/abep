@@ -19,6 +19,7 @@ Usage::
 
     python -m abep_sim.atmosphere_orbit build   # regenerate the CSV + JSON (rule 1: intentional rebuild only)
     python -m abep_sim.atmosphere_orbit check   # verify hashes and re-run a deterministic subset with pymsis
+    python -m abep_sim.atmosphere_orbit correct-metadata   # apply ERRATA to the JSON only (CSV untouched, idempotent)
 
 Nothing in the existing simulator imports this module (it is not wired into atmosphere.py / mission_env.py).
 """
@@ -109,7 +110,13 @@ NOMINAL_SCENARIO = "ECSS_LT_MODERATE"
 
 # Output columns (number densities m^-3, mass density kg m^-3, temperature K) straight from pymsis.Variable.
 SPECIES = ("N2", "O2", "O", "He", "Ar", "N")
-DROPPED_SPECIES = ("H", "ANOMALOUS_O", "NO")   # in rho, not stored; build records their max share
+DROPPED_SPECIES = ("H", "ANOMALOUS_O", "NO")   # not stored; build records their max share
+# Whether each dropped species is contained in the stored pymsis MASS_DENSITY (rho_kg_m3). Derived, not asserted: the
+# rho composition regression (_rho_composition_check, run at build/check/correct-metadata) must reproduce this map.
+# NRLMSIS 2.1 / pymsis 0.13.0 MASS_DENSITY excludes NO (erratum E1, review finding ATM-2).
+DROPPED_IN_RHO = {"H": True, "ANOMALOUS_O": True, "NO": False}
+RHO_UNITS = ("kg m-3 total mass density as output by pymsis/NRLMSIS 2.1 (Variable.MASS_DENSITY): mass-weighted sum of "
+             "N2, O2, O, He, H, Ar, N and anomalous O; EXCLUDES NO (see rho_composition_check, erratum E1)")
 OUT_COLS = ("rho_kg_m3",) + tuple(f"n_{s}_m3" for s in SPECIES) + ("T_K",)
 IN_COLS = ("scenario", "f107", "f107a", "ap", "doy", "alt_km", "lat_deg", "lon_deg", "lst_h", "ut_h")
 COLUMNS = IN_COLS + OUT_COLS
@@ -132,6 +139,101 @@ GRID_TRADE = (
     "Grid 4 alt x 19 lat x 8 LST x 6 lon x 8 doy x 4 scenarios = 116,736 rows. H, anomalous O and NO are not stored "
     "(dropped_species). The joint interpolation error is measured at build time for every scenario "
     "(interpolation_validation) and reported by the accessor with every interpolated state.")
+
+
+# Owner-listed content that v1 does not deliver (fail-closed disclosure + tracked deviation; review finding ATM-4).
+OPEN_ITEMS = (
+    {"id": "ATM-OI-01",
+     "title": "thermospheric wind not provided",
+     "against": "A9.13 S6.14 OQ-F4-05 (dataset content 'relative flow/wind state'; json summary lists 'wind')",
+     "authority": {"path": A9_13_JSON, "sha256": A9_13_SHA256, "question_id": "OQ-F4-05"},
+     "status": "OPEN_DEVIATION_FOR_OWNER_DISPOSITION",
+     "what_v1_provides": "geometric relative speed against a rigidly co-rotating atmosphere only (orbit_states "
+                         "v_rel_corot_m_s / flux_corot_kg_m2_s, each state flagged wind_included = False)",
+     "why": "NRLMSIS 2.1 has no wind output; ECSS-E-ST-10-04C Rev.1 clause 7.2.2 names HWM07 for winds, and no wind "
+            "model is installed in the project environment",
+     "consequence": "downstream drag / captured-flux users must not treat v_rel_corot_m_s as wind-inclusive; any wind "
+                    "contribution is unquantified (TBD), not zero",
+     "candidate_resolution": "owner decision: a v2 dataset adding a horizontal wind model (e.g. HWM14 via an open "
+                             "package - verify availability and licence) under a new rule-1 version, or an explicit "
+                             "owner acceptance of the co-rotating-atmosphere approximation for v1 users"},
+)
+
+# Controlled metadata corrections applied to the frozen JSON without regenerating the CSV (rule 1: the data file and
+# its sha256 are unchanged; only descriptive metadata is corrected). Applied by ``correct-metadata``; idempotent.
+ERRATA = (
+    {"id": "E1", "date": "2026-10-01", "review_finding": "ATM-2",
+     "fields": ["units.rho_kg_m3", "dropped_species.in_rho", "rho_composition_check"],
+     "was": {"units.rho_kg_m3": "kg m-3 total mass density (includes all MSIS species and anomalous O)",
+             "dropped_species.in_rho": True},
+     "now": "rho_kg_m3 excludes NO; in_rho = {H: true, ANOMALOUS_O: true, NO: false}, derived by the rho composition "
+            "regression recorded under rho_composition_check",
+     "data_file_changed": False,
+     "quantitative_effect": "descriptive only; the stored rho values are unchanged. NO's number-density share over the "
+                            "grid is recorded under dropped_species (<= 0.21 %)"},
+    {"id": "E2", "date": "2026-10-01", "review_finding": "ATM-4", "fields": ["open_items"],
+     "now": "wind omission against OQ-F4-05 tracked as open item ATM-OI-01 for owner disposition",
+     "data_file_changed": False},
+)
+
+# Rho composition regression: an independent, mass-table-free determination of which pymsis species MASS_DENSITY
+# contains. Over a fixed point set spanning 100-2000 km (wide altitude range so H, He and anomalous O are resolvable),
+# solve rho = sum_i c_i n_i by least squares on rho-normalised rows; c_i is the implied particle mass. A species is
+# "in rho" iff |c_i| exceeds RHO_COEF_THRESHOLD_AMU (the lightest resolved species, H, implies ~1 amu).
+RHO_CHECK_POINTS = {"alt_km": (100.0, 150.0, 200.0, 300.0, 450.0, 600.0, 800.0, 1000.0, 1500.0, 2000.0),
+                    "lat_deg": (-80.0, -30.0, 0.0, 40.0, 75.0), "lon_deg": (0.0, 90.0, 180.0, 270.0),
+                    "date": "2027-03-01T12:00", "scenarios": ("ECSS_LT_LOW", "ECSS_LT_MODERATE", "ECSS_LT_HIGH")}
+RHO_CHECK_SPECIES = ("N2", "O2", "O", "HE", "H", "AR", "N", "ANOMALOUS_O", "NO")
+RHO_COEF_THRESHOLD_AMU = 0.1
+
+
+def _rho_composition_check() -> dict:
+    import pymsis
+    from .constants import AMU
+    V = pymsis.Variable
+    P = RHO_CHECK_POINTS
+    rows = []
+    for s in P["scenarios"]:
+        sc = SCENARIOS[s]
+        o = pymsis.calculate(np.datetime64(P["date"]), list(P["lon_deg"]), list(P["lat_deg"]), list(P["alt_km"]),
+                             [sc["f107"]], [sc["f107a"]], [[sc["ap"]] * 7], version=MSIS_VERSION)
+        o = np.asarray(o, float)
+        rows.append(o.reshape(-1, o.shape[-1]))
+    o = np.concatenate(rows)
+    rho = o[:, int(V.MASS_DENSITY)]
+    A = np.nan_to_num(o[:, [int(getattr(V, k)) for k in RHO_CHECK_SPECIES]])
+    c, *_ = np.linalg.lstsq(A / rho[:, None], np.ones(len(rho)), rcond=None)
+    amu = {k: float(v / AMU) for k, v in zip(RHO_CHECK_SPECIES, c)}
+    resid = float(np.max(np.abs(A @ c / rho - 1.0)))
+    name = {"HE": "He", "AR": "Ar"}
+    in_rho = {name.get(k, k): bool(abs(v) > RHO_COEF_THRESHOLD_AMU) for k, v in amu.items()}
+    return {"method": "least squares rho = sum_i c_i n_i on rho-normalised rows (no mass table assumed)",
+            "points": {k: list(v) if isinstance(v, tuple) else v for k, v in P.items()},
+            "n_points": int(len(rho)), "max_abs_rel_residual": float(f"{resid:.3e}"),
+            "implied_mass_amu": {name.get(k, k): round(v, 3) + 0.0 for k, v in amu.items()},
+            "threshold_amu": RHO_COEF_THRESHOLD_AMU, "in_rho": in_rho,
+            "evidence": "model-derived (pymsis NRLMSIS 2.1 output); amu values diagnostic, AMU from abep_sim/constants.py"}
+
+
+def correct_metadata() -> dict:
+    """Apply ERRATA to the frozen JSON (descriptive fields only; the CSV and its sha256 are untouched). Idempotent."""
+    meta = json.load(open(JSON_PATH))
+    raw = open(CSV_PATH, "rb").read()
+    if hashlib.sha256(raw).hexdigest() != meta["sha256"]:
+        raise RuntimeError("csv sha256 does not match the metadata; refusing to correct metadata of altered data")
+    rc = _rho_composition_check()
+    if {k: rc["in_rho"][k] for k in DROPPED_IN_RHO} != DROPPED_IN_RHO:
+        raise RuntimeError(f"rho composition regression {rc['in_rho']} contradicts DROPPED_IN_RHO {DROPPED_IN_RHO}")
+    meta["units"]["rho_kg_m3"] = RHO_UNITS
+    meta["dropped_species"]["in_rho"] = dict(DROPPED_IN_RHO)
+    meta["rho_composition_check"] = rc
+    meta["open_items"] = [dict(x) for x in OPEN_ITEMS]
+    meta["errata"] = [dict(e) for e in ERRATA]
+    with open(JSON_PATH, "w") as f:
+        json.dump(meta, f, indent=1, sort_keys=False)
+        f.write("\n")
+    _CACHE.clear()
+    return meta
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -229,9 +331,11 @@ def build() -> dict:
     sha = hashlib.sha256(text.encode()).hexdigest()
     _CACHE.clear()
     meta = _metadata(sha, len(lines) - 1)
-    meta["dropped_species"] = {"species": list(DROPPED_SPECIES), "in_rho": True,
+    meta["dropped_species"] = {"species": list(DROPPED_SPECIES), "in_rho": dict(DROPPED_IN_RHO),
                                "reason": "not requested by the lane; keeps the CSV < 20 MB",
                                "max_number_density_share_over_grid": dropped}
+    meta["rho_composition_check"] = _rho_composition_check()
+    meta["errata"] = [dict(e) for e in ERRATA]
     with open(JSON_PATH, "w") as f:      # provisional (hash + grid) so the accessor can load for validation
         json.dump(meta, f)
     meta["year_independence_check"] = _year_independence()
@@ -262,7 +366,7 @@ def _metadata(sha: str, n_rows: int) -> dict:
         "units": {"f107": "sfu (1e-22 W m-2 Hz-1)", "f107a": "sfu, 81-day average", "ap": "daily Ap", "doy": "day of year",
                   "alt_km": "km, geodetic (WGS84)", "lat_deg": "deg, geodetic (WGS84)", "lon_deg": "deg east",
                   "lst_h": "h, local solar time = UT + lon/15", "ut_h": "h, UT = (lst_h - lon_deg/15) mod 24",
-                  "rho_kg_m3": "kg m-3 total mass density (includes all MSIS species and anomalous O)",
+                  "rho_kg_m3": RHO_UNITS,
                   **{f"n_{s}_m3": "m-3 number density" for s in SPECIES}, "T_K": "K, local neutral temperature"},
         "row_order": "scenario (as in scenarios), then doy, alt_km, lat_deg, lon_deg, lst_h (lst fastest)",
         "float_format": FLOAT_FMT,
@@ -298,6 +402,7 @@ def _metadata(sha: str, n_rows: int) -> dict:
         "not_provided": {"winds": "NRLMSIS has no wind output; ECSS 7.2.2 names HWM07, which is not installed. The "
                                   "accessor reports the geometric co-rotating-atmosphere relative speed only "
                                   "(status: no thermospheric wind)."},
+        "open_items": [dict(x) for x in OPEN_ITEMS],
         "authority": {"A9.13 S6.14 OQ-F4-05": {"path": A9_13_JSON, "sha256": A9_13_SHA256},
                       "A9.14 S9.7 OD2": {"path": A9_14_JSON, "sha256": A9_14_SHA256},
                       "A9.14 S9.8 OD3": {"path": A9_14_JSON, "sha256": A9_14_SHA256},
@@ -489,6 +594,8 @@ def orbit_states(alt_km: float, inclination_deg: float, ltan_h: float, scenario:
         raise ValueError("inclination_deg must be in [0, 180]")
     if int(doy) != doy:
         raise ValueError("doy must be integral (MSIS day of year)")
+    if not DOMAIN.doy[0] <= doy <= DOMAIN.doy[1]:
+        raise ValueError(f"doy = {doy} outside the {DATASET_ID} domain {list(DOMAIN.doy)}")
     a = R_EARTH + alt_km * 1e3
     v_orb = math.sqrt(MU_EARTH / a)
     T_orb = 2 * math.pi * math.sqrt(a ** 3 / MU_EARTH)
@@ -502,7 +609,7 @@ def orbit_states(alt_km: float, inclination_deg: float, ltan_h: float, scenario:
         lst = (ltan_h + dalpha / 15.0) % 24.0
         ut = (ut_start_h + t / 3600.0) % 24.0
         doy_k = int(doy) + int((ut_start_h + t / 3600.0) // 24.0)
-        if doy_k > DOY[-1]:
+        if doy_k > DOMAIN.doy[1]:      # domain end (365), not the last grid node (ATM-1)
             raise ValueError("orbit crosses the end of the dataset year; choose doy/ut_start_h inside it")
         lon = (15.0 * (lst - ut)) % 360.0
         r = a * np.array([math.cos(u), math.cos(inc) * math.sin(u), math.sin(inc) * math.sin(u)])
@@ -512,6 +619,7 @@ def orbit_states(alt_km: float, inclination_deg: float, ltan_h: float, scenario:
         s.update({"t_s": t, "u_deg": math.degrees(u), "ut_h": ut, "inclination_deg": inclination_deg, "ltan_h": ltan_h,
                   "v_orb_m_s": v_orb, "v_rel_corot_m_s": float(np.linalg.norm(v_rel)),
                   "flux_corot_kg_m2_s": s["rho_kg_m3"] * float(np.linalg.norm(v_rel)),
+                  "wind_included": False, "wind_open_item": OPEN_ITEMS[0]["id"],
                   "weight": 1.0 / n_samples, "state_id": f"orbit:{scenario}:alt{alt_km:g}:doy{doy_k}:k{k}",
                   "geometry": "circular, constant geodetic altitude, sun-fixed node at LTAN, co-rotating atmosphere, "
                               "no winds"})
@@ -625,12 +733,23 @@ def statewise_quantifier(states, margin_fn, requirement_id: str) -> dict:
     Verdict is PASS only if every state passes; a non-finite or failing evaluation is fail-closed (MODEL_ERROR is
     reported separately from FAIL). The worst state (minimum margin) is always reported. An orbit average is reported
     only when every state carries a time ``weight`` (orbit_states); it is informational and never enters the verdict.
+    Weights, where given, must be finite and >= 0, and a fully weighted set must have a positive sum (else ValueError).
     """
     states = list(states)
     if not states:
         raise ValueError("statewise_quantifier: no states supplied; an empty set cannot satisfy a requirement")
     if not requirement_id:
         raise ValueError("requirement_id is required")
+    weights = [st.get("weight") for st in states]
+    if any(w is not None for w in weights):
+        for st, w in zip(states, weights):
+            if w is None:
+                continue
+            if isinstance(w, (bool, np.bool_)) or not isinstance(w, (int, float, np.floating, np.integer)) \
+                    or not math.isfinite(float(w)) or float(w) < 0.0:
+                raise ValueError(f"state {st.get('state_id')!r}: weight must be a finite number >= 0, got {w!r}")
+        if all(w is not None for w in weights) and not sum(float(w) for w in weights) > 0.0:
+            raise ValueError("statewise_quantifier: state weights sum to 0; no orbit average can be formed")
     per, errors = [], []
     for st in states:
         sid = st.get("state_id")
@@ -656,11 +775,10 @@ def statewise_quantifier(states, margin_fn, requirement_id: str) -> dict:
     worst = min(finite, key=lambda p: p["margin"]) if finite else None
     n_fail = sum(1 for p in per if p["status"] == "FAIL")
     verdict = "MODEL_ERROR" if errors else ("PASS" if n_fail == 0 else "FAIL")
-    weights = [st.get("weight") for st in states]
     orbit_avg = None
     if not errors and all(w is not None for w in weights):
-        W = sum(weights)
-        orbit_avg = sum(w * p["margin"] for w, p in zip(weights, per)) / W
+        W = sum(float(w) for w in weights)
+        orbit_avg = sum(float(w) * p["margin"] for w, p in zip(weights, per)) / W
     return {"requirement_id": requirement_id, "verdict": verdict, "n_states": len(per), "n_fail": n_fail,
             "n_model_error": len(errors), "worst_state": worst, "orbit_average_margin": orbit_avg,
             "orbit_average_note": ("informational only; verdict is statewise (A9.14 S9.7 OD2, A9.13 S6.15)"
@@ -760,9 +878,23 @@ def check() -> dict:
     if regen_sha != rec["sha256"]:
         problems.append("recomputed subset hash differs from the recorded subset hash")
     expected = _metadata(meta["sha256"], meta["row_count"])
-    for k in ("dataset_id", "columns", "grid", "drivers", "authority", "build_command", "interpolation", "domain"):
-        if json.loads(json.dumps(expected[k])) != meta[k]:
+    for k in ("dataset_id", "columns", "grid", "drivers", "authority", "build_command", "interpolation", "domain",
+              "units", "open_items", "not_provided"):
+        if json.loads(json.dumps(expected[k])) != meta.get(k):
             problems.append(f"metadata field {k} differs from the module definition")
+    if meta.get("dropped_species", {}).get("in_rho") != DROPPED_IN_RHO:
+        problems.append("dropped_species.in_rho differs from DROPPED_IN_RHO")
+    if meta.get("errata") != json.loads(json.dumps(list(ERRATA))):
+        problems.append("errata record differs from the module definition")
+    rc = _rho_composition_check()
+    rec_rc = meta.get("rho_composition_check") or {}
+    if any(rc[k] != json.loads(json.dumps(rec_rc.get(k))) for k in ("method", "points", "n_points", "in_rho",
+                                                                     "threshold_amu")) \
+            or any(abs(v - rec_rc.get("implied_mass_amu", {}).get(k, float("inf"))) > 0.01
+                   for k, v in rc["implied_mass_amu"].items()):
+        problems.append("rho composition check does not reproduce the recorded one")
+    if {k: rc["in_rho"][k] for k in DROPPED_IN_RHO} != DROPPED_IN_RHO:
+        problems.append(f"rho composition regression contradicts DROPPED_IN_RHO: {rc['in_rho']}")
     return {"ok": not problems, "problems": problems, "subset_rows": len(stored), "subset_sha256": regen_sha,
             "csv_sha256": sha}
 
@@ -777,7 +909,11 @@ def main(argv=None) -> int:
         r = check()
         print(("OK " if r["ok"] else "FAIL ") + json.dumps({k: v for k, v in r.items() if k != "ok"}))
         return 0 if r["ok"] else 1
-    print("usage: python -m abep_sim.atmosphere_orbit build | check", file=sys.stderr)
+    if argv[:1] == ["correct-metadata"]:
+        meta = correct_metadata()
+        print(f"{JSON_PATH}: errata {[e['id'] for e in meta['errata']]} applied; csv sha256 {meta['sha256']} unchanged")
+        return 0
+    print("usage: python -m abep_sim.atmosphere_orbit build | check | correct-metadata", file=sys.stderr)
     return 2
 
 

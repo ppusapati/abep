@@ -254,3 +254,72 @@ def test_check_mode_reproduces_subset():
     r = ao.check()
     assert r["ok"], r["problems"]
     assert r["subset_rows"] > 1000
+
+
+# --- repair lane ATM (review findings ATM-1..ATM-4) ------------------------------------------------------------------
+@pytest.mark.parametrize("doy", [320, 321, 335, 350, 365])
+def test_orbit_states_late_year_inside_domain(doy):
+    # ATM-1: the year-end guard compares against the domain end (365), not the last grid node (320).
+    o = ao.orbit_states(200.0, 96.3, 6.0, "ECSS_LT_MODERATE", doy, 0.0, 8)
+    assert len(o) == 8 and all(x["doy"] == float(doy) for x in o)
+    assert all(math.isfinite(x["rho_kg_m3"]) and x["rho_kg_m3"] > 0 for x in o)
+
+
+def test_orbit_states_year_end_and_doy_domain_refused():
+    with pytest.raises(ValueError, match="end of the dataset year"):
+        ao.orbit_states(200.0, 96.3, 6.0, "ECSS_LT_MODERATE", 365, 23.9, 8)
+    for doy in (0, 366):
+        with pytest.raises(ValueError):
+            ao.orbit_states(200.0, 96.3, 6.0, "ECSS_LT_MODERATE", doy, 0.0, 8)
+    # crossing midnight inside the year moves to the next day and is fine
+    o = ao.orbit_states(200.0, 96.3, 6.0, "ECSS_LT_MODERATE", 364, 23.9, 8)
+    assert {x["doy"] for x in o} == {364.0, 365.0}
+
+
+def test_rho_metadata_excludes_no(meta):
+    # ATM-2: rho_kg_m3 is pymsis MASS_DENSITY, which excludes NO.
+    assert meta["dropped_species"]["in_rho"] == {"H": True, "ANOMALOUS_O": True, "NO": False} == ao.DROPPED_IN_RHO
+    assert "EXCLUDES NO" in meta["units"]["rho_kg_m3"] and "includes all MSIS species" not in meta["units"]["rho_kg_m3"]
+    rc = meta["rho_composition_check"]
+    assert rc["in_rho"]["NO"] is False
+    assert all(rc["in_rho"][k] for k in ("N2", "O2", "O", "He", "H", "Ar", "N", "ANOMALOUS_O"))
+    e1 = [e for e in meta["errata"] if e["id"] == "E1"][0]
+    assert e1["review_finding"] == "ATM-2" and e1["data_file_changed"] is False
+    # the correction left the frozen data file untouched
+    assert hashlib.sha256(open(ao.CSV_PATH, "rb").read()).hexdigest() == meta["sha256"]
+
+
+def test_rho_composition_regression_direct():
+    pytest.importorskip("pymsis")
+    rc = ao._rho_composition_check()
+    assert rc["in_rho"]["NO"] is False and abs(rc["implied_mass_amu"]["NO"]) < ao.RHO_COEF_THRESHOLD_AMU
+    assert rc["max_abs_rel_residual"] < 1e-5
+    for k in ("H", "ANOMALOUS_O"):
+        assert rc["in_rho"][k] is True
+
+
+@pytest.mark.parametrize("weights", [(0.0, 0.0), (1.0, -0.5), (1.0, float("nan")), (1.0, float("inf")),
+                                     (1.0, True), (1.0, "1")])
+def test_quantifier_rejects_invalid_weights(weights):
+    # ATM-3: zero-sum, negative, non-finite or non-numeric weights are refused (no ZeroDivisionError, no silent avg).
+    st = [{"state_id": "a", "weight": weights[0]}, {"state_id": "b", "weight": weights[1]}]
+    with pytest.raises(ValueError):
+        ao.statewise_quantifier(st, lambda s: 1.0, "TEST")
+
+
+def test_quantifier_valid_zero_weight_member_allowed():
+    st = [{"state_id": "a", "weight": 0.0}, {"state_id": "b", "weight": 2.0}]
+    r = ao.statewise_quantifier(st, lambda s: -1.0 if s["state_id"] == "a" else 3.0, "TEST")
+    assert r["verdict"] == "FAIL" and r["orbit_average_margin"] == 3.0 and r["average_hides_violation"] is True
+    assert r["worst_state"]["state_id"] == "a"
+
+
+def test_wind_omission_tracked_as_open_item(meta):
+    # ATM-4: OQ-F4-05 lists wind; v1 does not deliver it -> explicit open deviation for owner disposition.
+    oi = {x["id"]: x for x in meta["open_items"]}["ATM-OI-01"]
+    assert oi["status"] == "OPEN_DEVIATION_FOR_OWNER_DISPOSITION"
+    assert oi["authority"]["question_id"] == "OQ-F4-05"
+    rec = open(os.path.join(ROOT, oi["authority"]["path"]), "rb").read()
+    assert oi["authority"]["sha256"] == hashlib.sha256(rec).hexdigest()
+    o = ao.orbit_states(205.0, 96.32, 6.0, "ECSS_LT_MODERATE", 80, 0.0, 8)
+    assert all(x["wind_included"] is False and x["wind_open_item"] == "ATM-OI-01" for x in o)

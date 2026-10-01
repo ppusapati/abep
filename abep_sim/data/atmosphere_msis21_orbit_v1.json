@@ -34,7 +34,7 @@
   "lon_deg": "deg east",
   "lst_h": "h, local solar time = UT + lon/15",
   "ut_h": "h, UT = (lst_h - lon_deg/15) mod 24",
-  "rho_kg_m3": "kg m-3 total mass density (includes all MSIS species and anomalous O)",
+  "rho_kg_m3": "kg m-3 total mass density as output by pymsis/NRLMSIS 2.1 (Variable.MASS_DENSITY): mass-weighted sum of N2, O2, O, He, H, Ar, N and anomalous O; EXCLUDES NO (see rho_composition_check, erratum E1)",
   "n_N2_m3": "m-3 number density",
   "n_O2_m3": "m-3 number density",
   "n_O_m3": "m-3 number density",
@@ -247,7 +247,11 @@
    "ANOMALOUS_O",
    "NO"
   ],
-  "in_rho": true,
+  "in_rho": {
+   "H": true,
+   "ANOMALOUS_O": true,
+   "NO": false
+  },
   "reason": "not requested by the lane; keeps the CSV < 20 MB",
   "max_number_density_share_over_grid": {
    "ECSS_LT_LOW": {
@@ -431,5 +435,113 @@
   "file": "atmosphere_msis21_orbit_v1_design_states.json",
   "sha256": "b5ab3c7225d7e84b096a8e5ca3c2e8400a84cd3c42fc9daada46c379232ae598",
   "producer": "design_states() on this dataset (A9.14 S9.8 OD3)"
- }
+ },
+ "rho_composition_check": {
+  "method": "least squares rho = sum_i c_i n_i on rho-normalised rows (no mass table assumed)",
+  "points": {
+   "alt_km": [
+    100.0,
+    150.0,
+    200.0,
+    300.0,
+    450.0,
+    600.0,
+    800.0,
+    1000.0,
+    1500.0,
+    2000.0
+   ],
+   "lat_deg": [
+    -80.0,
+    -30.0,
+    0.0,
+    40.0,
+    75.0
+   ],
+   "lon_deg": [
+    0.0,
+    90.0,
+    180.0,
+    270.0
+   ],
+   "date": "2027-03-01T12:00",
+   "scenarios": [
+    "ECSS_LT_LOW",
+    "ECSS_LT_MODERATE",
+    "ECSS_LT_HIGH"
+   ]
+  },
+  "n_points": 600,
+  "max_abs_rel_residual": 1.413e-07,
+  "implied_mass_amu": {
+   "N2": 28.013,
+   "O2": 31.999,
+   "O": 15.999,
+   "He": 4.0,
+   "H": 1.0,
+   "Ar": 39.948,
+   "N": 14.007,
+   "ANOMALOUS_O": 15.999,
+   "NO": -0.001
+  },
+  "threshold_amu": 0.1,
+  "in_rho": {
+   "N2": true,
+   "O2": true,
+   "O": true,
+   "He": true,
+   "H": true,
+   "Ar": true,
+   "N": true,
+   "ANOMALOUS_O": true,
+   "NO": false
+  },
+  "evidence": "model-derived (pymsis NRLMSIS 2.1 output); amu values diagnostic, AMU from abep_sim/constants.py"
+ },
+ "open_items": [
+  {
+   "id": "ATM-OI-01",
+   "title": "thermospheric wind not provided",
+   "against": "A9.13 S6.14 OQ-F4-05 (dataset content 'relative flow/wind state'; json summary lists 'wind')",
+   "authority": {
+    "path": "docs/decisions/OD_2026_10_01_A9_13_s6_upstream_architecture_owner_decisions.json",
+    "sha256": "9afaca459efe27556033d836814f71bd03203711627899f3ffc494567d763b23",
+    "question_id": "OQ-F4-05"
+   },
+   "status": "OPEN_DEVIATION_FOR_OWNER_DISPOSITION",
+   "what_v1_provides": "geometric relative speed against a rigidly co-rotating atmosphere only (orbit_states v_rel_corot_m_s / flux_corot_kg_m2_s, each state flagged wind_included = False)",
+   "why": "NRLMSIS 2.1 has no wind output; ECSS-E-ST-10-04C Rev.1 clause 7.2.2 names HWM07 for winds, and no wind model is installed in the project environment",
+   "consequence": "downstream drag / captured-flux users must not treat v_rel_corot_m_s as wind-inclusive; any wind contribution is unquantified (TBD), not zero",
+   "candidate_resolution": "owner decision: a v2 dataset adding a horizontal wind model (e.g. HWM14 via an open package - verify availability and licence) under a new rule-1 version, or an explicit owner acceptance of the co-rotating-atmosphere approximation for v1 users"
+  }
+ ],
+ "errata": [
+  {
+   "id": "E1",
+   "date": "2026-10-01",
+   "review_finding": "ATM-2",
+   "fields": [
+    "units.rho_kg_m3",
+    "dropped_species.in_rho",
+    "rho_composition_check"
+   ],
+   "was": {
+    "units.rho_kg_m3": "kg m-3 total mass density (includes all MSIS species and anomalous O)",
+    "dropped_species.in_rho": true
+   },
+   "now": "rho_kg_m3 excludes NO; in_rho = {H: true, ANOMALOUS_O: true, NO: false}, derived by the rho composition regression recorded under rho_composition_check",
+   "data_file_changed": false,
+   "quantitative_effect": "descriptive only; the stored rho values are unchanged. NO's number-density share over the grid is recorded under dropped_species (<= 0.21 %)"
+  },
+  {
+   "id": "E2",
+   "date": "2026-10-01",
+   "review_finding": "ATM-4",
+   "fields": [
+    "open_items"
+   ],
+   "now": "wind omission against OQ-F4-05 tracked as open item ATM-OI-01 for owner disposition",
+   "data_file_changed": false
+  }
+ ]
 }
