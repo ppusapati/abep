@@ -16,6 +16,7 @@ V4 = ROOT / "docs/budgets/owner_decisions/owner_questions_state_v4.json"
 F9 = ROOT / "docs/architecture/freeze_candidate/architecture_freeze_candidate_v1.json"
 OUT_MD = ROOT / "docs/budgets/owner_decisions/OWNER_QUESTIONS_SEQUENCED_v1.md"
 OUT_CSV = ROOT / "docs/budgets/owner_decisions/owner_questions_sequenced_v1.csv"
+DEC = ROOT / "docs/decisions"
 
 GROUPS = [
     ("S1", "Blocks the start of P1 (answer first)"),
@@ -39,6 +40,17 @@ A97_DEFAULT = {"F5": "S7", "F6": "S7"}
 
 def _text(x):
     return " ".join(str(x or "").split())
+
+
+def answers():
+    """Owner answers recorded in decision addenda that cite this list (decisions[id].sequenced_no)."""
+    out = {}
+    for p in sorted(DEC.glob("OD_*.json")):
+        d = json.loads(p.read_text(encoding="utf-8"))
+        for qid, v in (d.get("decisions") or {}).items():
+            if isinstance(v, dict) and "sequenced_no" in v:
+                out[qid] = "%s (%s)" % (v["answer"], p.name)
+    return out
 
 
 def build():
@@ -66,6 +78,9 @@ def build():
                      "proposed": _text(q.get("proposed", "")), "blocks": "",
                      "source": "A9.7 %s" % (lane or "existing ICD")})
     rows.sort(key=lambda x: (ORDER.index(x["group"])))
+    ans = answers()
+    for r in rows:
+        r["answered"] = ans.get(r["id"], "")
     seq = {}
     for r in rows:
         seq[r["group"]] = seq.get(r["group"], 0) + 1
@@ -81,15 +96,17 @@ def render(rows):
            " that block the start of P1 first. Sources: owner-question state v4 (TBD_OWNER rows) and the A9.7 lane "
            "questions rolled up in the F9 freeze candidate. Answer by number (e.g. 'S1.3: ...'); answers are recorded as "
            "a new owner-decision addendum. 'Proposed' is the recorder's proposal where one exists, never an answer.", "",
-           "| Group | Topic | Count |", "|---|---|---|"]
+           "| Group | Topic | Count | Answered |", "|---|---|---|---|"]
     for g, t in GROUPS:
-        out.append(f"| {g} | {t} | {len([r for r in rows if r['group'] == g])} |")
+        sub = [r for r in rows if r["group"] == g]
+        out.append(f"| {g} | {t} | {len(sub)} | {len([r for r in sub if r['answered']])} |")
     for g, t in GROUPS:
         sub = [r for r in rows if r["group"] == g]
         if not sub:
             continue
-        out += ["", f"## {g} - {t}", "", "| # | ID | Question | Proposed | Source |", "|---|---|---|---|---|"]
-        out += [f"| {r['seq']} | {r['id']} | {cell(r['question'])} | {cell(r['proposed'])} | {cell(r['source'])} |"
+        out += ["", f"## {g} - {t}", "", "| # | ID | Question | Proposed | Source | Owner answer |", "|---|---|---|---|---|---|"]
+        out += [f"| {r['seq']} | {r['id']} | {cell(r['question'])} | {cell(r['proposed'])} | {cell(r['source'])} | "
+                f"{cell(r['answered']) or 'OPEN'} |"
                 for r in sub]
     return "\n".join(out) + "\n"
 
@@ -99,7 +116,7 @@ def render_csv(rows):
     w = csv.writer(buf, lineterminator="\n")
     w.writerow(["seq", "group", "id", "question", "proposed", "blocks", "source", "owner_answer"])
     for r in rows:
-        w.writerow([r["seq"], r["group"], r["id"], r["question"], r["proposed"], r["blocks"], r["source"], ""])
+        w.writerow([r["seq"], r["group"], r["id"], r["question"], r["proposed"], r["blocks"], r["source"], r["answered"]])
     return buf.getvalue()
 
 
